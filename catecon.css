@@ -1,0 +1,614 @@
+/*
+vim: ts=4 sw=4
+*/
+
+body
+{
+	margin:	0px 4px 0px 4px;
+	font:	12px "Fira Sans", sans-serif;
+}
+
+small
+{
+	margin:	2px;
+}
+
+div
+{
+	margin:	2px 4px 2px 4px;
+}
+
+.smallPrint
+{
+	font-size:		10px;
+	font-style:		italic;
+	font-weight:	lighter;
+	margin:			5px;
+}
+
+.italic
+{
+	font-style:		italic;
+}
+
+h1
+{
+	font-size:		26px;
+	font-weight:	bold;
+	margin:			2px 4px 2px 4px;
+	text-align:		center;
+}
+
+h2
+{
+	font-size:		22px;
+	font-weight:	bold;
+	margin:			2px 4px 2px 4px;
+	text-align:		center;
+}
+
+h3
+{
+	font-size:	18px;
+	font-weight:bold;
+	text-align:	center;
+	margin:		2px 4px 2px 4px;
+}
+
+h4
+{
+	font-size:	14px;
+	font-weight:bold;
+	text-align:	center;
+	margin:		2px 4px 2px 4px;
+}
+
+h5
+{
+	font-size:		12px;
+	font-weight:	500;
+	font-style:		bold;
+	text-align:		left;
+	margin:			2px 4px 2px 4px;
+}
+
+.sidenavPnl
+{
+	background-color:	#f7f7f7;
+	height:				100%;
+	margin:				0px;
+	overflow-x:			hidden;
+	position:			fixed;
+	top:				32px;
+	transition:			0.5s;
+	width:				0;
+	z-index:			3;
+}
+
+table
+{
+	border-collapse:	collapse;
+	vertical-align:		middle;
+	width:				100%;
+}
+
+td
+{
+	text-align:	center;
+}
+
+.left
+{
+	text-align:	left;
+}
+
+br
+{
+	display:	block;
+	line-height:0px;
+	margin:		0px;
+	content:	" ";
+}
+
+.sidenavLeftPnl
+{
+	left:	0;
+}
+
+.sidenavRightPnl
+{
+	right:	0;
+}
+
+a
+{
+	padding: 2px 2px 2px 2px;
+	text-decoration: none;
+	font-size: 12px;
+	color: black;
+	background-color:	#eee;
+	display: block;
+	transition: 0.3s
+}
+
+tr.sidenavRow:hover
+{
+	/* background-color:	#777; */
+	/* color: 				#eee; */
+	background-color:	#fff;
+	color: 				#000;
+}
+
+p
+{
+	margin:	2px 4px 8px 4px;
+}
+
+a:hover, .offcanvas a:focus
+{
+	color: #ddd;
+	background-color:	#333;
+}
+
+.closeBtnLeft
+{
+	background-color:	gainsboro;	/* same as .sidenav */
+	right:				0px;
+	padding:			0px;
+}
+
+.closeBtnRight
+{
+	background-color:	gainsboro;	/* same as .sidenav */
+	left: 				0px;
+	padding:			0px;
+}
+
+a:hover
+{
+	color: #ddd;
+	background-color:	#333;
+}
+
+#main
+{
+	transition: margin-left .5s;
+	padding: 20px;
+}
+
+.parseError
+{
+	background-color:	#F77;
+	color:	#dff;
+}
+
+#navbar
+{
+	background-color:	#333;
+	color:				#fff;
+	margin:				0;
+	overflow:			hidden;
+	position:			fixed;
+	width:				100%;
+	z-index:			1;
+}
+
+.w20
+{
+	width:	20%;
+	height:	32px;
+}
+
+.w33
+{
+	width:	33%;
+	height:	32px;
+}
+
+.navbarTbl
+{
+	width:				100%;
+	border-collapse:	collapse;
+	border-spacing:		0px;
+	padding:			0px;
+}
+
+#navbar a
+{
+	color:				#fff;
+	font-weight:		bold;
+	padding:			0px;
+	text-align:			center;
+	text-decoration:	none;
+}
+#navbar a:hover
+{
+	color:	#777;
+}
+
+#navbar td
+{
+	padding:		0px;
+	vertical-align:	middle;
+}
+
+#navbar div
+{
+	height:		32px;
+	margin:		0px;
+	overflow:	hidden;
+	padding:	0px;
+	width:		32px;
+}
+
+.navbar-inset
+{
+	font-size:			14px;
+	margin:				2px 4px 2px 4px;
+	padding:			0px;
+	text-align:			center;
+}
+
+.grabbable
+{
+	cursor:			pointer;
+	user-select:	none;
+}
+
+#toolbar
+{
+	background-color:	#eee;
+	border-width: 		0px;
+	border-radius:		4px;
+	box-shadow:			8px 8px 4px 2px #bbbb;
+	display:			inline-block;
+	margin:				0px;
+	opacity:			0;
+	overflow:			hidden;
+	padding:			0px;
+	position:			absolute;
+	text-align:			left;
+	z-index:			2;
+}
+
+#statusbar
+{
+	background-color:	#ffe;
+	border-width: 		0px;
+	border-radius:		4px;
+	box-shadow:			4px 4px 2px 1px #bdde;
+	cursor:				none;
+	display:			inline-block;
+	margin:				0px;
+	opacity:			0;
+	overflow:			hidden;
+	padding:			0px;
+	position:			absolute;
+	z-index:			4;
+}
+
+.svgstr0 {stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
+.svgstr1 {stroke:black; stroke-width:20px; stroke-linejoin:round; stroke-miterlimit:2.61313;}
+.svgstr2 {fill:none; stroke:black; stroke-width:15px; stroke-linejoin:round; stroke-miterlimit:2.61313; stroke-linecap:"round";}
+.svgstr3 {fill:none; stroke:black; stroke-width:10px}
+.svgstr4 {fill:none; stroke:black; stroke-width:20px}
+.svgstr_3 {fill:none; stroke:#333; stroke-width:20px;}
+.svgstr_6 {fill:none; stroke:#666; stroke-width:20px;}
+.svgstr_9 {fill:none; stroke:#999; stroke-width:20px;}
+.svgstrThinGray {fill:none; stroke:#777; stroke-width:10px;}
+.svgfilNone {fill:none;}
+.svgfil0 {fill:black;fill-rule:nonzero;}
+.svgfil1
+{
+	fill:#CCCCCC;
+	fill-opacity:	0.7;
+}
+.svgfil2 {fill:#999999;}
+.svgfil3 {fill:#333333;}
+.svgfil4
+{
+	border-style:	solid;
+	border-width:	1px;
+	border-color:	#aaa;
+	fill:			#eeeeee
+}
+
+.svgunk
+{
+	stroke:				red;
+	stroke-width:		20px;
+	stroke-miterlimit:	2.61313;
+}
+
+.sidenavAccordion
+{
+	background-color:	#ddd;
+	border:				none;
+	color:				#444;
+	cursor:				pointer;
+	font-size:			14px;
+	font-weight:		bold;
+	margin:				8px 0px 0px 0px;
+	outline:			none;
+	text-align:			center;
+	transition:			0.4s;
+	width:				100%;
+}
+
+.sidenavAccordion:hover
+{
+	background-color:	#777;
+	color:				#fff;
+}
+
+.sidenavAccordion::after
+{
+	content:	'\02795';
+	float:		right;
+	margin-left:	5px;
+}
+
+.accordionPnl
+{
+	display:	none;
+	overflow:	hidden;
+}
+
+.active::after
+{
+	background-color:	#aaa;
+	content:	'\02796';
+}
+
+.in100
+{
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;    
+	box-sizing:	border-box;
+}
+
+.nodisplay
+{
+	display:	none;
+}
+
+.title
+{
+	font-size:		22px;
+	font-weight:	bold;
+	text-align:		center;
+}
+
+.btn
+{
+	fill-opacity:	0;
+}
+
+.btn:hover
+{
+	fill:	#888;
+	fill-opacity:	0.5;
+}
+
+.tty
+{
+	display:		block;
+	font:			12px "monospace", sans-serif;
+	margin:			5px;
+	unicode-bidi:	embed;
+	/* white-space:	pre-wrap; */
+	white-space:	pre;
+}
+
+.toolbarTbl
+{
+	width:	100%;
+}
+
+table.buttonBar
+{
+	background-color:	#fff;
+	border-spacing:		0px;
+	border-collapse:	collapse;
+	padding:			0px;
+	width:				auto;
+}
+
+td.buttonBar
+{
+	padding:			0px;
+	vertical-align:		top;
+	/* line-height:		21px; */
+}
+
+.buttonBarRight
+{
+	background-color:	#fff;
+	border-collapse:	collapse;
+	width:			auto;
+	margin-right:	0px;
+	margin-left:	auto;
+	padding:		0px;
+}
+
+.buttonBarLeft
+{
+	background-color:	#fff;
+	/* border-collapse:	collapse; */
+	width:				auto;
+	margin-right:		auto;
+	margin-left:		0px;
+	padding:			0px;
+}
+
+.svg
+{
+	position:	fixed;
+	margin:		0px;
+	z-index:	0;
+}
+
+svg:hover
+{
+	fill:	#333;
+}
+
+.object
+{
+	fill:			black;
+	font:			30px "Century";
+	margin:			2px;
+	user-select:	none;
+}
+
+.object:hover
+{
+	cursor:	grab;
+	fill:	#3f3;
+	font:	30px "Century";
+	margin:	2px;
+}
+
+.morphTxt
+{
+	fill:			black;
+	font:			24px "Century";
+	margin:			2px;
+	user-select:	none;
+}
+
+.morphTxt:hover
+{
+	cursor:		pointer;
+	fill:		#3f3;
+	font:		24px "Century";
+	margin:		2px;
+}
+
+.morphism
+{
+	cursor:			grab;
+	fill:			none;
+	margin:			2px;
+	padding:		2px;
+	stroke:			black;
+	stroke-width:	2.5px;
+	user-select:	none;
+}
+
+.morphism:hover
+{
+	margin:		2px;
+	padding:	2px;
+	stroke:		#3f3;
+}
+
+.element
+{
+	fill:			black;
+	font:			20px "Century";
+	margin:			2px;
+	user-select:	none;
+	text-align:		left;
+}
+
+.element:hover
+{
+	cursor:	grab;
+	fill:	#3f3;
+	font:	20px "Century";
+	margin:	2px;
+}
+
+.selected
+{
+	margin:		2px;
+	stroke:		#3f3;
+}
+
+.selRow
+{
+	background-color:	#000;
+	color: 				#fff;
+}
+
+.fusible
+{
+	fill:		blue;
+	font:		30px "Century";
+	margin:		2px;
+	stroke:		blue;
+	stroke-width:	2px;
+}
+
+#diagramSVG
+{
+	overflow:			visible;
+	transform-origin:	0px 0px;
+}
+
+#threeDiv
+{
+	width:	100%;
+	height:	95%;
+	max-height:	100%;
+	max-width:	100%;
+}
+
+[contenteditable="true"]
+{
+	background:	white;
+	outline:	1px solid blue;
+	color:		blue;
+}
+
+canvas
+{
+	width:	100%;
+	height:	100%;
+}
+
+.unknownMorph
+{
+	cursor:			grab;
+	fill:			none;
+	margin:			2px;
+	padding:		2px;
+	stroke:			red;
+	stroke-width:	2.5px;
+	user-select:	none;
+}
+
+.unknownObject
+{
+	fill:			red;
+	font:			30px "Century";
+	margin:			2px;
+	user-select:	none;
+	stroke:			red;
+}
+
+.string
+{
+	fill:				none;
+	opacity:			.8;
+/*	box-shadow:			2px 2px 4px 2px #bbbb;	// TODO does not work, filter also fails for vertical segments	*/
+	/* stroke:				red; */
+	stroke-width:		4px;
+	stroke-linecap:		round;
+	stroke-linejoin:	round;
+	stroke-miterlimit:	2.6;
+}
+
+#uiSVG
+{
+	fill:				none;
+	stroke:				green;
+	stroke-dasharray:	5;
+	stroke-linecap:		round;
+	stroke-linejoin:	round;
+	stroke-miterlimit:	2;
+	stroke-width:		1px;
+	position:			absolute;
+	z-index:			-1;
+}
