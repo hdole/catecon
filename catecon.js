@@ -2057,8 +2057,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
 					H.h3('Login') +
 					H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login()"') +
-					H.div(`User ${Cat.user.name}`) +
-					H.div(`Email ${Cat.user.email}`);
+					H.div(`User: ${Cat.user.name}`) +
+					H.div(`Email: ${Cat.user.email}`);
 					/*
 					H.button('Account', 'sidenavAccordion', '', 'Create an account to store diagrams on this catolite', `onclick="Cat.display.accordion.toggle(this, \'createAccountPnl\')"`) +
 					H.div(H.table(H.tr(H.td(Cat.display.input('', 'userName', 'User Name')), 'sidenavRow') +
@@ -2822,7 +2822,7 @@ ${this.svg.button(onclick)}
 		{
 			const options = {scope:'profile'};
 			amazon.Login.setClientId(Cat.Amazon.clientId);
-			amazon.Login.authorize(options, function amazonAuth(response)
+			const ar = amazon.Login.authorize(options, function(response)
 			{
 				if (response.error)
 				{
@@ -2834,13 +2834,15 @@ ${this.svg.button(onclick)}
 					ProviderId:		'www.amazon.com',
 					WebIdentityToken: response.access_token
 				});
-				amazon.Login.retrieveProfile(response.access_token, function()
+				amazon.Login.retrieveProfile(response.access_token, function(response)
 				{
+console.log('retrieveProfile');
 					Cat.user.name = response.profile.Name;
 					Cat.user.email = response.profile.PrimaryEmail;
+					Cat.display.login.setPanelContent();
 				});
-				Cat.display.login.setPanelContent();
 			});
+console.log('ar',ar);
 		},
 	},
 
