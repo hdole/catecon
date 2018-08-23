@@ -2814,7 +2814,7 @@ ${this.svg.button(onclick)}
 	Amazon:
 	{
 		clientId:		'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
-		stdUserPool:	{UserPoolId:us-west-2_I3PJM3KPM, ClientId: Cat.Amazon.clientId},
+		stdUserPool:	{UserPoolId:'us-west-2_I3PJM3KPM', ClientId: this.clientId},
 		cognitoIdentity:	null,
 		initialize()
 		{
