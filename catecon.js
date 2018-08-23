@@ -190,7 +190,6 @@ class operator
 const Cat =
 {
 	debug:	true,
-	role:	'arn:aws:iam::395668725886:role/CateconWebIdentity',
 	getError(err)
 	{
 		return typeof err === 'string' ? err : err.message;
@@ -2056,7 +2055,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			{
 				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
-					H.h3('Login') + H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.display.login.Amazon()"') +
+					H.h3('Login') +
+					H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login()"') +
 					H.div(`User ${Cat.user.name}`) +
 					H.div(`Email ${Cat.user.email}`);
 					/*
@@ -2070,30 +2070,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					*/
 				document.getElementById('login-sidenav').innerHTML = html;
 			},
-			Amazon()
-			{
-				const options = {scope:'profile'};
-//				amazon.Login.setClientId('amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77');
-				amazon.Login.setClientId(Cat.Amazon.clientId);
-				amazon.Login.authorize(options, function amazonAuth(response)
-				{
-					if (response.error)
-					{
-						console.log(response.error);
-						return;
-					}
-					AWS.config.credentials = new AWS.WebIdentityCredentials({
-						RoleArn:		Cat.role,
-						ProviderId:		'www.amazon.com',
-						WebIdentityToken: response.access_token
-					});
-					amazon.Login.retrieveProfile(response.access_token, function()
-					{
-						Cat.user.name = response.profile.Name;
-						Cat.user.email = response.profile.PrimaryEmail;
-					});
-				});
-			}
 		},
 		morphism:
 		{
@@ -2813,11 +2789,58 @@ ${this.svg.button(onclick)}
 	},
 	Amazon:
 	{
-		clientId:		'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
-		stdUserPool:	{UserPoolId:'us-west-2_I3PJM3KPM', ClientId: this.clientId},
+		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
+		stdUserPool:		{UserPoolId:'us-west-2_I3PJM3KPM', ClientId: this.clientId},
 		cognitoIdentity:	null,
+		role:				'arn:aws:iam::395668725886:role/CateconWebIdentity',
 		initialize()
 		{
+			/*
+			AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+			  IdentityPoolId: 'us-east-1:1699ebc0-7900-4099-b910-2df94f52a030',
+			  Logins: { // optional tokens, used for authenticated login
+				'graph.facebook.com': 'FBTOKEN',
+				'www.amazon.com': 'AMAZONTOKEN',
+				'accounts.google.com': 'GOOGLETOKEN'
+			  }
+			});
+			AWS.config.update(
+			{
+				region: "us-west-1",
+				endpoint: 'http://localhost:8000',
+				// accessKeyId default can be used while using the downloadable version of DynamoDB. 
+				// For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
+				accessKeyId: "fakeMyKeyId",
+				// secretAccessKey default can be used while using the downloadable version of DynamoDB. 
+				// For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
+				secretAccessKey: "fakeSecretAccessKey"
+			});
+			*/
+			Cat.Amazon.dynamoDB = new AWS.DynamoDB.DocumentClient();
+		},
+		login()
+		{
+			const options = {scope:'profile'};
+			amazon.Login.setClientId(Cat.Amazon.clientId);
+			amazon.Login.authorize(options, function amazonAuth(response)
+			{
+				if (response.error)
+				{
+					console.log(response.error);
+					return;
+				}
+				AWS.config.credentials = new AWS.WebIdentityCredentials({
+					RoleArn:		Cat.Amazon.role,
+					ProviderId:		'www.amazon.com',
+					WebIdentityToken: response.access_token
+				});
+				amazon.Login.retrieveProfile(response.access_token, function()
+				{
+					Cat.user.name = response.profile.Name;
+					Cat.user.email = response.profile.PrimaryEmail;
+				});
+				Cat.display.login.setPanelContent();
+			});
 		},
 	},
 
