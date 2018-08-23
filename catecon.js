@@ -2056,7 +2056,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			{
 				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
-					H.h3('Login') + H.button(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.display.login.Amazon()"') +
+					H.h3('Login') + H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.display.login.Amazon()"') +
 					H.div(`User ${Cat.user.name}`) +
 					H.div(`Email ${Cat.user.email}`);
 					/*
@@ -2073,7 +2073,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			Amazon()
 			{
 				const options = {scope:'profile'};
-				amazon.Login.setClientId('amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77');
+//				amazon.Login.setClientId('amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77');
+				amazon.Login.setClientId(Cat.Amazon.clientId);
 				amazon.Login.authorize(options, function amazonAuth(response)
 				{
 					if (response.error)
@@ -2810,6 +2811,16 @@ ${this.svg.button(onclick)}
 		Cat.display.uiSVG.innerHTML = '';
 		return w;
 	},
+	Amazon:
+	{
+		clientId:		'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
+		stdUserPool:	{UserPoolId:us-west-2_I3PJM3KPM, ClientId: Cat.Amazon.clientId},
+		cognitoIdentity:	null,
+		initialize()
+		{
+		},
+	},
+
 };
 
 class element
@@ -2855,11 +2866,13 @@ class element
 	}
 	decrRefcnt()
 	{
-console.log('element.decrRefcnt',this.category.name,this.name,this.refcnt);
+		if (Cat.debug)
+			console.log('element.decrRefcnt',this.category.name,this.name,this.refcnt);
 		--this.refcnt;
 		if (this.refcnt <= 0)
 		{
-console.log('element.decrRefcnt delete',this.category.name,this.name);
+			if (Cat.debug)
+				console.log('element.decrRefcnt delete',this.category.name,this.name);
 			if (this.class === 'element')
 				this.diagram.texts.splice(this.diagram.texts.indexOf(this), 1);
 			this.removeSVG();
