@@ -1,3 +1,4 @@
+// (C) 2018 Harry Dole
 // Catecon:  The Categorical Console, Harry Dole
 // vim: ts=4 sw=4
 'use strict';
@@ -34,8 +35,6 @@ function segmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
 		return false;
 	return {x: x, y: y};
 }
-// const aho = Math.sqrt(3)/2;
-
 function dist2(v, w)
 {
 	const dx = v.x - w.x;
@@ -51,14 +50,12 @@ function segmentDistance(p, v, w)
 	t = Math.max(0, Math.min(1, t));
 	return D2.dist(p, {x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y)});
 }
-
 function getCat()
 {
 	if ($Cat === null)
-		throw 'Cat is null';
+		throw '$Cat is null';
 	return $Cat.getObject(Cat.selected.category);
 }
-
 function getDiagram(name = null)
 {
 	const cat = getCat();
@@ -449,6 +446,7 @@ const Cat =
 			Cat.getLocalDiagramList();
 			Cat.display.setNavbarHtml();
 			Cat.display.initialize();
+			Cat.Amazon.initialize();
 			initialize();	// TODO remove when download done
 			Cat.updatePanels();
 			document.addEventListener('dragover', function(e)
@@ -2056,18 +2054,9 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
 					H.h3('Login') +
-					H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login()"') +
-					H.div(`User: ${Cat.user.name}`) +
-					H.div(`Email: ${Cat.user.email}`);
-					/*
-					H.button('Account', 'sidenavAccordion', '', 'Create an account to store diagrams on this catolite', `onclick="Cat.display.accordion.toggle(this, \'createAccountPnl\')"`) +
-					H.div(H.table(H.tr(H.td(Cat.display.input('', 'userName', 'User Name')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'userEmail', 'Email')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'userPassword', 'Password')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'userPassword2', 'Confirm')), 'sidenavRow')), 'accordionPnl', 'createAccountPnl') +
-					H.div('Catolite') +
-					H.span('logout');
-					*/
+					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login()"') : H.div('Logged in with Amazon')) +
+					H.div('User: ' + H.span(Cat.user.name, 'italic')) +
+					H.div('Email: ' + H.span(Cat.user.email, 'italic'));
 				document.getElementById('login-sidenav').innerHTML = html;
 			},
 		},
@@ -2792,6 +2781,7 @@ ${this.svg.button(onclick)}
 		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
 		stdUserPool:		{UserPoolId:'us-west-2_I3PJM3KPM', ClientId: this.clientId},
 		cognitoIdentity:	null,
+		loggedIn:			false,
 		role:				'arn:aws:iam::395668725886:role/CateconWebIdentity',
 		initialize()
 		{
@@ -2816,17 +2806,26 @@ ${this.svg.button(onclick)}
 				secretAccessKey: "fakeSecretAccessKey"
 			});
 			*/
-			Cat.Amazon.dynamoDB = new AWS.DynamoDB.DocumentClient();
+			if (typeof amazon === 'object')
+			{
+				amazon.Login.setClientId(Cat.Amazon.clientId);
+				this.login(false);
+				Cat.Amazon.dynamoDB = new AWS.DynamoDB.DocumentClient();
+			}
 		},
-		login()
+		login(check = true)
 		{
 			const options = {scope:'profile'};
-			amazon.Login.setClientId(Cat.Amazon.clientId);
+			if (check)
+				options.interactive = 'never';
 			const ar = amazon.Login.authorize(options, function(response)
 			{
 				if (response.error)
 				{
-					console.log(response.error);
+					Cat.Amazon.loggedIn = false;
+					Cat.display.login.setPanelContent();
+					if (debug)
+						console.log('login failed', check, response.error);
 					return;
 				}
 				AWS.config.credentials = new AWS.WebIdentityCredentials({
@@ -2839,13 +2838,29 @@ ${this.svg.button(onclick)}
 console.log('retrieveProfile');
 					Cat.user.name = response.profile.Name;
 					Cat.user.email = response.profile.PrimaryEmail;
+					Cat.Amazon.loggedIn = true;
 					Cat.display.login.setPanelContent();
 				});
 			});
-console.log('ar',ar);
+		},
+		registerCognito()
+		{
+			const poolData = {UserPoolId: 'us-west-2_I3PJM3KPM', ClientId: '2ls6mhu925qfi0lgt2tmlr56s2'};
+			const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+			let attributeList = [{Name:'email', Value:Cat.user.email}];
+			userPool.signUp( 'username', 'password', attributeList, null, function(err, result)
+			{
+				if (err)
+				{
+					alert(err);
+					return;
+				}
+				Cat.Amazon.cognito = result.user;
+				if (Cat.debug)
+					console.log('user name is ' + Cat.Amazon.cognito.getUsername());
+			});
 		},
 	},
-
 };
 
 class element
