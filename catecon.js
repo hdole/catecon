@@ -186,6 +186,7 @@ class operator
 
 const Cat =
 {
+	service:'Amazon',	// 'php'
 	debug:	true,
 	getError(err)
 	{
@@ -592,52 +593,93 @@ const Cat =
 	},
 	getCategories(fn = null)
 	{
-		fetch('catecon.php?action=getCategories').then(function(response)
+		if (Cat.service === 'Amazon')
 		{
-			if (response.ok)
-				response.json().then(function(data)
-				{
-					data.map(cat =>
+			fetch(Cat.Amazon.diagramURL() + '/categories.json').then(function(response)
+			{
+				if (response.ok)
+					response.json().then(function(data)
 					{
-						if (!$Cat.hasObject(cat.name))
-							new category({name:cat.name, code:cat.code, html:cat.html, description:cat.description});
-					});	// TODO cid?
-					Cat.display.category.setCategoryTable();
-					if (fn != null)
-						fn(data);
-				});
-			else
-				console.log('getCategories request failed');
-		});
+						data.map(cat =>
+						{
+							if (!$Cat.hasObject(cat.name))
+								new category({name:cat.name, code:cat.code, html:cat.html, description:cat.description, cid:cat.cid});
+						});
+						Cat.display.category.setCategoryTable();
+						if (fn != null)
+							fn(data);
+					});
+				else
+					console.log('getCategories request failed', response);
+			});
+		}
+		else
+			fetch('catecon.php?action=getCategories').then(function(response)
+			{
+				if (response.ok)
+					response.json().then(function(data)
+					{
+						data.map(cat =>
+						{
+							if (!$Cat.hasObject(cat.name))
+								new category({name:cat.name, code:cat.code, html:cat.html, description:cat.description});
+						});	// TODO cid?
+						Cat.display.category.setCategoryTable();
+						if (fn != null)
+							fn(data);
+					});
+				else
+					console.log('getCategories request failed');
+			});
 	},
 	getDiagrams(cat, fn = null)
 	{
-		fetch(`catecon.php?action=getDiagrams&cat=${Cat.htmlSafe(cat)}`).then(function(response)
+		if (Cat.service === 'Amazon')
 		{
-			if (response.ok)
-				response.json().then(function(data)
-				{
-					Cat.catalog[cat] = data;
-					if (fn != null)
-						fn(data);
-				});
-			else
-				console.log('getCategories request failed');
-		});
+			fetch(Cat.Amazon.diagramURL() + `/${cat}/diagrams.json`).then(function(response)
+			{
+				if (response.ok)
+					response.json().then(function(data)
+					{
+						Cat.catalog[cat] = data;
+						if (fn != null)
+							fn(data);
+					});
+				else
+					cat.recordError('Cannot get list of diagrams from servers');
+			});
+		}
+		else
+			fetch(`catecon.php?action=getDiagrams&cat=${Cat.htmlSafe(cat)}`).then(function(response)
+			{
+				if (response.ok)
+					response.json().then(function(data)
+					{
+						Cat.catalog[cat] = data;
+						if (fn != null)
+							fn(data);
+					});
+				else
+					console.log('getDiagrams request failed');
+			});
 	},
 	deleteDiagram(cat, dgrmName)
 	{
-		fetch(`catecon.php?action=deleteDiagram&cat=${Cat.htmlSafe(cat)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
+		if (Cat.service === 'Amazon')
 		{
-			if (response.ok)
-				response.json().then(function(r)
-				{
-					if (r.ok === 'true')
-						Cat.display.downloadCatalogTable(cat);
-				});
-			else
-				console.log('deleteDiagram request failed',cat,dgrmName);
-		});
+		}
+		else
+			fetch(`catecon.php?action=deleteDiagram&cat=${Cat.htmlSafe(cat)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
+			{
+				if (response.ok)
+					response.json().then(function(r)
+					{
+						if (r.ok === 'true')
+							Cat.display.downloadCatalogTable(cat);	// TODO
+					});
+				else
+					console.log('deleteDiagram request failed',cat,dgrmName);
+			});
 	},
 	default:
 	{
@@ -2781,7 +2823,14 @@ ${this.svg.button(onclick)}
 		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
 		stdUserPool:		{UserPoolId:'us-west-2_I3PJM3KPM', ClientId: this.clientId},
 		cognitoIdentity:	null,
+		diagramBucket:		'cat-diagrams',
+		diagramURL(dgrm)
+		{
+			if (typeof dgrm === 'undefined')
+				return `https://s3-${this.region}.amazonaws.com/${this.diagramBucket}`;
+		},
 		loggedIn:			false,
+		region:				'us-west-1',
 		role:				'arn:aws:iam::395668725886:role/CateconWebIdentity',
 		initialize()
 		{
@@ -7222,39 +7271,47 @@ class ${this.name} extends diagram
 		const data = new FormData();
 		data.append("json", JSON.stringify(this.json()));
 		const cat = getDiagram().codomain.name;
-		fetch('catecon.php?action=uploadDiagram',
+		if (Cat.service === 'Amazon')
 		{
-			method:	'POST',
-			body:	JSON.stringify(this.json()),
-		}).then(function(response)
-		{
-			if (response.ok)
-				response.json().then(function(data)
-				{
-					if (fn != null)
-						fn(data);
-					Cat.display.downloadCatalogTable(cat);
-					Cat.status(e, `Uploaded diagram`);
-				});
-			else
-				console.log('upload diagram request failed');
-		});
+		}
+		else
+			fetch('catecon.php?action=uploadDiagram',
+			{
+				method:	'POST',
+				body:	JSON.stringify(this.json()),
+			}).then(function(response)
+			{
+				if (response.ok)
+					response.json().then(function(data)
+					{
+						if (fn != null)
+							fn(data);
+						Cat.display.downloadCatalogTable(cat);	// TODO
+						Cat.status(e, `Uploaded diagram`);
+					});
+				else
+					console.log('upload diagram request failed');
+			});
 	}
 	static downloadFromCatolite(catName, dgrmName, fn = null)
 	{
-		fetch(`catecon.php?action=downloadDiagram&cat=${Cat.htmlSafe(catName)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
+		if (Cat.service === 'Amazon')
 		{
-			if (response.ok)
-				response.text().then(function(txt)
-				{
-					const dgrm = new diagram(JSON.parse(txt));
-					dgrm.sha256 = Cat.sha256(txt);
-					if (fn != null)
-						fn(dgrm);
-				});
-			else
-				console.log('download diagram request failed');
-		});
+		}
+		else
+			fetch(`catecon.php?action=downloadDiagram&cat=${Cat.htmlSafe(catName)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
+			{
+				if (response.ok)
+					response.text().then(function(txt)
+					{
+						const dgrm = new diagram(JSON.parse(txt));
+						dgrm.sha256 = Cat.sha256(txt);
+						if (fn != null)
+							fn(dgrm);
+					});
+				else
+					console.log('download diagram request failed');
+			});
 	}
 	guiDetach(e, dir)
 	{
@@ -7709,7 +7766,7 @@ function initialize()	// TODO replace with diagram downloads
 	{
 		name:				'Graph',
 		code:				'Graph',
-		html:				'&#1d5d8;',
+		html:				'&#120126;',
 		description:		'Graph category',
 		isCartesian:		true,
 		isClosed:			true,
