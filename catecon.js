@@ -450,6 +450,7 @@ const Cat =
 			Cat.Amazon.initialize();
 			initialize();	// TODO remove when download done
 			Cat.updatePanels();
+			Cat.getCategories();
 			document.addEventListener('dragover', function(e)
 			{
 				e.preventDefault();
@@ -593,50 +594,68 @@ const Cat =
 	},
 	getCategories(fn = null)
 	{
-		if (Cat.service === 'Amazon')
+		fetch(Cat.Amazon.URL() + '/categories.json').then(function(response)
 		{
-			fetch(Cat.Amazon.diagramURL() + '/categories.json').then(function(response)
-			{
-				if (response.ok)
-					response.json().then(function(data)
+			if (response.ok)
+				response.json().then(function(data)
+				{
+					data.map(cat =>
 					{
-						data.map(cat =>
+						if (!$Cat.hasObject(cat.name))
 						{
-							if (!$Cat.hasObject(cat.name))
-								new category({name:cat.name, code:cat.code, html:cat.html, description:cat.description, cid:cat.cid});
-						});
-						Cat.display.category.setCategoryTable();
-						if (fn != null)
-							fn(data);
+							const cat = new category({name:cat.name, code:cat.code, html:cat.html, description:cat.description, cid:cat.cid});
+							Cat.catalog[cat] = {};
+						}
 					});
-				else
-					console.log('getCategories request failed', response);
-			});
-		}
-		else
-			fetch('catecon.php?action=getCategories').then(function(response)
-			{
-				if (response.ok)
-					response.json().then(function(data)
-					{
-						data.map(cat =>
-						{
-							if (!$Cat.hasObject(cat.name))
-								new category({name:cat.name, code:cat.code, html:cat.html, description:cat.description});
-						});	// TODO cid?
-						Cat.display.category.setCategoryTable();
-						if (fn != null)
-							fn(data);
-					});
-				else
-					console.log('getCategories request failed');
-			});
+					Cat.display.category.setCategoryTable();
+					if (fn != null)
+						fn(data);
+				});
+			else
+				Cat.recorrdError('Categories request failed.', response);
+		});
 	},
+	getCategoryUsers(cat, fn = null)
+	{
+		fetch(Cat.Amazon.URL(cat) + `/users.json`).then(function(response)
+		{
+			if (response.ok)
+				response.json().then(function(data)
+				{
+//					data.map(u => Cat.catalog[cat][u] = {});
+					cat.users = data;
+					if (fn != null)
+						fn(data);
+				});
+			else
+				Cat.recordError(`Cannot get list of diagrams for category ${cat}`);
+		});
+	},
+	getUserDiagrams(cat, user, fn = null)
+	{
+		fetch(Cat.Amazon.URL(cat, user) + `/diagrams.json`).then(function(response)
+		{
+			if (response.ok)
+				response.json().then(function(data)
+				{
+					Object.keys(data).forEach(function(basename)
+					{
+						const name = diagram.genName(cat, user, basename);
+						Cat.catalog[cat][name] = data[basename];
+					});
+					if (fn != null)
+						fn(data);
+				});
+			else
+				Cat.recordError(`Cannot get list of diagrams for category ${cat} and user ${user}.`);
+		});
+	},
+	/*
 	getDiagrams(cat, fn = null)
 	{
 		if (Cat.service === 'Amazon')
 		{
-			fetch(Cat.Amazon.diagramURL() + `/${cat}/diagrams.json`).then(function(response)
+			fetch(Cat.Amazon.URL() + `/${cat}/diagrams.json`).then(function(response)
 			{
 				if (response.ok)
 					response.json().then(function(data)
@@ -646,7 +665,7 @@ const Cat =
 							fn(data);
 					});
 				else
-					cat.recordError('Cannot get list of diagrams from servers');
+					Cat.recordError('Cannot get list of diagrams from servers');
 			});
 		}
 		else
@@ -663,6 +682,22 @@ const Cat =
 					console.log('getDiagrams request failed');
 			});
 	},
+	getDiagrams(cat, fn = null)
+	{
+		fetch(Cat.Amazon.URL() + `/${cat}/users.json`).then(function(response)
+		{
+			if (response.ok)
+				response.json().then(function(data)
+				{
+					Cat.catalog[cat] = data;
+					if (fn != null)
+						fn(data);
+				});
+			else
+				Cat.recordError('Cannot get list of diagrams from servers');
+		});
+	},
+	*/
 	deleteDiagram(cat, dgrmName)
 	{
 		if (Cat.service === 'Amazon')
@@ -674,8 +709,8 @@ const Cat =
 				if (response.ok)
 					response.json().then(function(r)
 					{
-						if (r.ok === 'true')
-							Cat.display.downloadCatalogTable(cat);	// TODO
+//						if (r.ok === 'true')
+//							Cat.display.downloadCatalogTable(cat);	// TODO
 					});
 				else
 					console.log('deleteDiagram request failed',cat,dgrmName);
@@ -958,7 +993,7 @@ const Cat =
 				localStorage.setItem('Cat.default.category', catName);
 				this.saveAsDefaultDiagram(catName, name);
 				Cat.display.diagram.update();
-				Cat.display.downloadCatalogTable(catName);
+				Cat.display.downloadCatalogTable(catName, Cat.user.name);
 			}
 			catch(err)
 			{
@@ -984,7 +1019,8 @@ const Cat =
 			}
 			else if (!abort && Cat.selected.category in Cat.catalog && name in Cat.catalog[Cat.selected.category])
 			{
-				diagram.downloadFromCatolite(Cat.selected.category, name, function(dgrm)
+//				diagram.downloadFromCatolite(Cat.selected.category, name, function(dgrm)
+				Cat.Amazon.downloadDiagram(Cat.selected.category, name, function(dgrm)
 				{
 console.log('selectDiagram download from catolite',dgrm.name);
 					Cat.selected.selectDiagram(dgrm.name, true);
@@ -1447,9 +1483,9 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			return H.button(header, 'sidenavAccordion', buttonId, title, `onclick="${action};Cat.display.accordion.toggle(this, \'${panelId}')"`) +
 					H.div('', 'accordionPnl', panelId);
 		},
-		downloadCatalogTable(cat)
+		downloadCatalogTable(cat, user)
 		{
-			Cat.getDiagrams(cat, function()
+			Cat.getUserDiagrams(cat, user, function()
 			{
 				Cat.display.diagram.setCatalogTable(cat);
 			});
@@ -1464,8 +1500,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					let html = H.table(H.tr(Cat.display.closeBtnCell('category', false)), 'buttonBarRight');
 					html += H.h3('Categories') + H.small('Select a category') + H.div('', '', 'categoryTbl') + this.newCategoryPnl();
 					document.getElementById('category-sidenav').innerHTML = html;
-					Cat.display.diagram.setLocalDiagramsTable(cat.name);
-					Cat.getCategories();
+					Cat.display.diagram.setUserDiagramsTable(cat.name);
+//					Cat.getCategories();
 				}
 			},
 			setCategoryTable()
@@ -1831,11 +1867,17 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					H.p(H.span(dgrm ? Cat.cap(dgrm.description) : '', '', 'dgrmDescElt', 'Description') + H.span('', '', 'dgrmDescriptionEditBtn')) +
 					this.newDiagramPnl() +
 					(cat !== null ? H.button(`${cat.getText()} Diagrams`, 'sidenavAccordion', '', 'Available diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
+/*
 					H.div(	H.small('Diagrams on this machine.') +
 							H.div('', '', 'localDiagrams') +
 							H.small('Catolitic diagrams') +
 							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
-					H.div('', 'accordionPnl', 'diagramCatalogDisplay') +
+*/
+					H.div(	H.small('User diagrams.') +
+							H.div('', '', 'userDiagrams') +
+							H.small('Standard diagrams') +
+							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
+//					H.div('', 'accordionPnl', 'diagramCatalogDisplay') +
 					H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'diagramReferenceDiv\')"') +
 					H.div('', 'accordionPnl', 'diagramReferenceDiv') +
 					H.button('New Term', 'sidenavAccordion', '', 'New Term', `onclick="Cat.display.accordion.toggle(this, \'newTermPnl\')"`) +
@@ -1856,7 +1898,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				{
 					this.updateDecorations(dgrm);
 					Cat.display.diagram.setCatalogTable(dgrm.codomain.name);
-					Cat.display.diagram.setLocalDiagramsTable(dgrm.codomain.name);
+					Cat.display.diagram.setUserDiagramsTable(dgrm.codomain.name);
 					document.getElementById('dgrmHtmlEditBtn').innerHTML = dgrm.readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('dgrmHtmlElt', 'html')`, 'Retitle', Cat.default.button.tiny);
 					document.getElementById('dgrmDescriptionEditBtn').innerHTML =
 						dgrm.readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
@@ -1978,8 +2020,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				let html = '';
 				if (cat in Cat.catalog)
 				{
-					html = H.table(Object.keys(Cat.catalog[cat]).
-									map(name =>
+					html = H.table(Object.keys(Cat.catalog[cat]).map(name =>
 									{
 										const description = name in Cat.diagrams[cat] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[cat][name].description))) : '';
 										return H.tr(
@@ -1992,23 +2033,38 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				}
 				document.getElementById('catalog').innerHTML = html;
 			},
+			/*
 			setLocalDiagramsTable(catName)
 			{
 				const currentDiagram = getDiagram().name;
-				let html = Object.keys(Cat.localDiagrams[catName]).
-								map(dgrmName =>
+				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
 								{
 									const dgrm = Cat.getDiagram(catName, dgrmName, false);
 									const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
 									return H.tr(
-												H.td(H.table(H.tr(
-													H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
-															Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')
-														),
-													'buttonBarLeft')) +
-												H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
+											H.td(H.table(H.tr(
+												H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
+															Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')), 'buttonBarLeft')) +
+											H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
 								}).join('');
 				document.getElementById('localDiagrams').innerHTML = H.table(html);
+			},
+			*/
+			setUserDiagramsTable(catName)
+			{
+				//TODO
+				const currentDiagram = getDiagram().name;
+				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
+								{
+									const dgrm = Cat.getDiagram(catName, dgrmName, false);
+									const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
+									return H.tr(
+											H.td(H.table(H.tr(
+												H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
+															Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')), 'buttonBarLeft')) +
+											H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
+								}).join('');
+				document.getElementById('userDiagrams').innerHTML = H.table(html);
 			},
 		},
 		functor:
@@ -2071,7 +2127,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 							H.h5('Z') +
 								H.span('[Shift-n]', 'italic') + H.p('Place the integers object if it exists.')
 							, 'accordionPnl', 'catActionHelpPnl') +
-					H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References to Category Theory', `onclick="Cat.display.accordion.toggle(this, \'catHelpPnl\')"`) +
+				H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References to Category Theory', `onclick="Cat.display.accordion.toggle(this, \'catHelpPnl\')"`) +
 					H.div(H.p(H.a('Categories For The Working Mathematician', '', '', '', 'href="https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician" target="_blank"')), 'accordionPnl', 'catHelpPnl') +
 					H.button('References', 'sidenavAccordion', 'referencesPnlBtn', '', `onclick="Cat.display.accordion.toggle(this, \'referencesPnl\')"`) +
 					H.div(	H.p(H.a('Intro To Categorical Programming', '', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"')) +
@@ -2823,11 +2879,19 @@ ${this.svg.button(onclick)}
 		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
 		stdUserPool:		{UserPoolId:'us-west-2_I3PJM3KPM', ClientId: this.clientId},
 		cognitoIdentity:	null,
-		diagramBucket:		'cat-diagrams',
-		diagramURL(dgrm)
+		diagramBucket:		'catecon-diagrams',
+		URL(cat, user, basename)
 		{
-			if (typeof dgrm === 'undefined')
-				return `https://s3-${this.region}.amazonaws.com/${this.diagramBucket}`;
+			let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucket}`;
+			if (typeof cat === 'undefined')
+				return url;
+			url += `/${cat}`;
+			if (typeof user === 'undefined')
+				return url;
+			url += `/${user}`;
+			if (typeof basename === 'undefined')
+				return url;
+			return `${url}/${basename}`;
 		},
 		loggedIn:			false,
 		region:				'us-west-1',
@@ -2873,7 +2937,7 @@ ${this.svg.button(onclick)}
 				{
 					Cat.Amazon.loggedIn = false;
 					Cat.display.login.setPanelContent();
-					if (debug)
+					if (Cat.debug)
 						console.log('login failed', check, response.error);
 					return;
 				}
@@ -2909,6 +2973,22 @@ console.log('retrieveProfile');
 					console.log('user name is ' + Cat.Amazon.cognito.getUsername());
 			});
 		},
+		downloadDiagram(catName, user, dgrmBasename, fn = null)
+		{
+			fetch(this.URL(catName, user, dgrmBasename)).then(function(response)
+			{
+				if (response.ok)
+					response.text().then(function(txt)
+					{
+						const dgrm = new diagram(JSON.parse(txt));
+						dgrm.sha256 = Cat.sha256(txt);
+						if (fn != null)
+							fn(dgrm);
+					});
+				else
+					Cat.recordError(`Download diagram request failed for category ${catName}, user ${user}, and diagram base name ${dgrmBasename}.`);
+			});
+		}
 	},
 };
 
@@ -5791,6 +5871,14 @@ class diagram extends functor
 		nuArgs.domain = domain;
 		nuArgs.codomain = new category({name:args.codomain, subobject:args.codomain});
 		super(nuArgs);
+		if (isExtendedName)
+		{
+			const tokens = args.name.split('_');
+			this.basename = tokens[tokens.length -1];
+		}
+		else
+			this.basename = args.name;
+		this.user = Cat.getArg(args, 'user', 'Anon');
 		this.name = name;
 		this.isStandard = Cat.getArg(args, 'isStandard', false);
 		const mainCat = $Cat.getObject(args.codomain);
@@ -5882,13 +5970,6 @@ class diagram extends functor
 					Cat.recordError(e);
 				}
 			}
-		if (isExtendedName)
-		{
-			const tokens = args.name.split('_');
-			this.basename = tokens[tokens.length -1];
-		}
-		else
-			this.basename = args.name;
 		this.textId = Cat.getArg(args, 'textId', 0);
 		this.graphCat = new category({name:'Graph', subobject:'Graph'});
 		this.makeHomSets();
@@ -5898,16 +5979,22 @@ class diagram extends functor
 		this.link2colorIndex = {};
 		this.colorIndex = 0;
 	}
+	static genName(catName, userName, baseName)
+	{
+		return `D_${catName}_${userName}_${baseName}`;
+	}
 	static nameCheck(catName, basename, regexTst = true, namexTst = true)
 	{
 		if (basename === '')
 			throw 'Diagram name must be specified.';
+		// TODO check server for uniqueness
 		let name = '';
 		if (!Cat.isExtendedName(basename))
 		{
 			if (regexTst && !RegExp(Cat.userNameEx).test(basename))
 				throw 'Invalid diagram name.';
-			name = `D_${catName}_${Cat.user.name}_${basename}`;
+//			name = `D_${catName}_${Cat.user.name}_${basename}`;
+			name = diagram.genName(catName, Cat.user.name, basename);
 		}
 		else
 			name = basename;
@@ -7286,13 +7373,14 @@ class ${this.name} extends diagram
 					{
 						if (fn != null)
 							fn(data);
-						Cat.display.downloadCatalogTable(cat);	// TODO
+//						Cat.display.downloadCatalogTable(cat);	// TODO
 						Cat.status(e, `Uploaded diagram`);
 					});
 				else
 					console.log('upload diagram request failed');
 			});
 	}
+/*
 	static downloadFromCatolite(catName, dgrmName, fn = null)
 	{
 		if (Cat.service === 'Amazon')
@@ -7313,6 +7401,7 @@ class ${this.name} extends diagram
 					console.log('download diagram request failed');
 			});
 	}
+	*/
 	guiDetach(e, dir)
 	{
 		try
@@ -7709,6 +7798,10 @@ function getDiagram()
 		a.download = `${this.name}.js`;
 		document.body.appendChild(a);
 		a.click();
+	}
+	baseURL(ext = '.json')
+	{
+		return `${this.user}/${this.basename}${ext}`;
 	}
 }
 
