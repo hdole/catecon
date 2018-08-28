@@ -223,7 +223,7 @@ const Cat =
 	autosave:	false,
 	nameEx:	RegExp('^[a-zA-Z_]+[a-zA-Z0-9_]*$'),
 	userNameEx:	RegExp('^[a-zA-Z]+[a-zA-Z0-9]*$'),
-	user:	{name:'hdole', email:''},	// TODO fix after bootstrap removed
+	user:	{name:'hdole', email:'', nickname:'hdole'},	// TODO fix after bootstrap removed
 	diagrams:	{},
 	localDiagrams:	{},
 	catalog:	{},
@@ -581,6 +581,7 @@ const Cat =
 			else
 				Cat.selected.selectCategory(null, 'PFS', false);
 			Cat.autosave = true;
+			Cat.Amazon.registerCognito();
 		}
 		catch(e)
 		{
@@ -622,7 +623,6 @@ const Cat =
 			if (response.ok)
 				response.json().then(function(data)
 				{
-//					data.map(u => Cat.catalog[cat][u] = {});
 					cat.users = data;
 					if (fn != null)
 						fn(data);
@@ -633,7 +633,7 @@ const Cat =
 	},
 	getUserDiagrams(cat, user, fn = null)
 	{
-		fetch(Cat.Amazon.URL(cat, user) + `/diagrams.json`).then(function(response)
+		fetch(Cat.Amazon.URL(cat, user) + `/_diagrams.json`).then(function(response)
 		{
 			if (response.ok)
 				response.json().then(function(data)
@@ -641,6 +641,8 @@ const Cat =
 					Object.keys(data).forEach(function(basename)
 					{
 						const name = diagram.genName(cat, user, basename);
+						if (!(cat in Cat.catalog))
+							Cat.catalog[cat] = {};
 						Cat.catalog[cat][name] = data[basename];
 					});
 					if (fn != null)
@@ -650,54 +652,6 @@ const Cat =
 				Cat.recordError(`Cannot get list of diagrams for category ${cat} and user ${user}.`);
 		});
 	},
-	/*
-	getDiagrams(cat, fn = null)
-	{
-		if (Cat.service === 'Amazon')
-		{
-			fetch(Cat.Amazon.URL() + `/${cat}/diagrams.json`).then(function(response)
-			{
-				if (response.ok)
-					response.json().then(function(data)
-					{
-						Cat.catalog[cat] = data;
-						if (fn != null)
-							fn(data);
-					});
-				else
-					Cat.recordError('Cannot get list of diagrams from servers');
-			});
-		}
-		else
-			fetch(`catecon.php?action=getDiagrams&cat=${Cat.htmlSafe(cat)}`).then(function(response)
-			{
-				if (response.ok)
-					response.json().then(function(data)
-					{
-						Cat.catalog[cat] = data;
-						if (fn != null)
-							fn(data);
-					});
-				else
-					console.log('getDiagrams request failed');
-			});
-	},
-	getDiagrams(cat, fn = null)
-	{
-		fetch(Cat.Amazon.URL() + `/${cat}/users.json`).then(function(response)
-		{
-			if (response.ok)
-				response.json().then(function(data)
-				{
-					Cat.catalog[cat] = data;
-					if (fn != null)
-						fn(data);
-				});
-			else
-				Cat.recordError('Cannot get list of diagrams from servers');
-		});
-	},
-	*/
 	deleteDiagram(cat, dgrmName)
 	{
 		if (Cat.service === 'Amazon')
@@ -976,7 +930,7 @@ const Cat =
 				let dgrm = Cat.getDiagram(cat.name, fullname);
 				if (dgrm === null && diagram.fromLocalStorage(cat.name, fullname) === null)
 				{
-					dgrm = new diagram({name, codomain:cat.name, code:name, html:'Draft', description:'Scratch diagram'});
+					dgrm = new diagram({name, codomain:cat.name, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
 					dgrm.saveToLocalStorage();
 				}
 				Cat.display.diagram.setPanelContent();
@@ -993,7 +947,7 @@ const Cat =
 				localStorage.setItem('Cat.default.category', catName);
 				this.saveAsDefaultDiagram(catName, name);
 				Cat.display.diagram.update();
-				Cat.display.downloadCatalogTable(catName, Cat.user.name);
+				Cat.display.downloadCatalogTable(catName, Cat.user.nickname);
 			}
 			catch(err)
 			{
@@ -1979,7 +1933,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					const html = htmlElt.value;
 					const descriptionElt = document.getElementById('newDiagramDescription');
 					const description = descriptionElt.value;
-					let dgrm = new diagram({name:fullname, codomain, html:document.getElementById('diagramHtml').value, description:document.getElementById('newDiagramDescription').value});
+					let dgrm = new diagram({name:fullname, codomain, html:document.getElementById('diagramHtml').value, description:document.getElementById('newDiagramDescription').value, user:Cat.user.nickname});
 					nameElt.value = '';
 					htmlElt.value = '';
 					descriptionElt.value = '';
@@ -2152,7 +2106,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
 					H.h3('Login') +
-					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login()"') : H.div('Logged in with Amazon')) +
+					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon')) +
 					H.div('User: ' + H.span(Cat.user.name, 'italic')) +
 					H.div('Email: ' + H.span(Cat.user.email, 'italic'));
 				document.getElementById('login-sidenav').innerHTML = html;
@@ -2877,12 +2831,13 @@ ${this.svg.button(onclick)}
 	Amazon:
 	{
 		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
-		stdUserPool:		{UserPoolId:'us-west-2_I3PJM3KPM', ClientId: this.clientId},
-		cognitoIdentity:	null,
-		diagramBucket:		'catecon-diagrams',
+		identityPoolId:		'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
+		cognitoRegion:		'us-west-2',
+		diagramBucketName:	'catecon-diagrams',
+		diagramBucket:		null,
 		URL(cat, user, basename)
 		{
-			let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucket}`;
+			let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
 			if (typeof cat === 'undefined')
 				return url;
 			url += `/${cat}`;
@@ -2895,39 +2850,57 @@ ${this.svg.button(onclick)}
 		},
 		loggedIn:			false,
 		region:				'us-west-1',
-		role:				'arn:aws:iam::395668725886:role/CateconWebIdentity',
+		role:				'arn:aws:iam::395668725886:role/Cognito_CateconUnauth_Role',
 		initialize()
 		{
-			/*
-			AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-			  IdentityPoolId: 'us-east-1:1699ebc0-7900-4099-b910-2df94f52a030',
-			  Logins: { // optional tokens, used for authenticated login
-				'graph.facebook.com': 'FBTOKEN',
-				'www.amazon.com': 'AMAZONTOKEN',
-				'accounts.google.com': 'GOOGLETOKEN'
-			  }
-			});
 			AWS.config.update(
 			{
-				region: "us-west-1",
-				endpoint: 'http://localhost:8000',
-				// accessKeyId default can be used while using the downloadable version of DynamoDB. 
-				// For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
-				accessKeyId: "fakeMyKeyId",
-				// secretAccessKey default can be used while using the downloadable version of DynamoDB. 
-				// For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
-				secretAccessKey: "fakeSecretAccessKey"
+				region:	this.region,
+				credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:this.identityPoolId}),
+			});
+console.log('AWS.config',AWS.config);
+			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
+			this.lambda = new AWS.Lambda({region: us-west-1, apiVersion: '2015-03-31'});
+		},
+		saveDiagram(dgrm)
+		{
+			const key = `PFS/${Cat.user.nickname}/${dgrm.basename}.json`;
+console.log('saveDiagram key',key);
+//			const Body = JSON.stringify(dgrm.json()).replace(/hdole/g, 'std');
+			this.diagramBucket.putObject(
+			{
+				Bucket:			this.diagramBucketName,
+				ContentType:	'json',
+				Key:			key,
+				Body:			JSON.stringify(dgrm.json()),
+				ACL:			'public-read',
+			}, function(err, data)
+			{
+				if (err)
+				{
+					Cat.recordError(`Cannot save diagram: ${err.message}`);
+					return;
+				}
+				if (Cat.debug)
+					console.log('saved diagram',dgrm.name);
+			});
+			/*
+			this.diagramBucket.listObjects({Delimiter: '/'}, function(err, data)
+			{
+console.log('listObjects',data);
+				const items = data.CommonPrefixes.map(function(commonPrefix)
+				{
+					const prefix = commonPrefix.Prefix;
+					const folder = decodeURIComponent(prefix.replace('/', ''));
+					return folder;
+				});
+console.log('items from remote',items);
 			});
 			*/
-			if (typeof amazon === 'object')
-			{
-				amazon.Login.setClientId(Cat.Amazon.clientId);
-				this.login(false);
-				Cat.Amazon.dynamoDB = new AWS.DynamoDB.DocumentClient();
-			}
 		},
 		login(check = true)
 		{
+			amazon.Login.setClientId(Cat.Amazon.clientId);
 			const options = {scope:'profile'};
 			if (check)
 				options.interactive = 'never';
@@ -2948,9 +2921,10 @@ ${this.svg.button(onclick)}
 				});
 				amazon.Login.retrieveProfile(response.access_token, function(response)
 				{
-console.log('retrieveProfile');
+console.log('retrieveProfile', response.profile);
 					Cat.user.name = response.profile.Name;
 					Cat.user.email = response.profile.PrimaryEmail;
+					Cat.user.nickname = 'hdole';	// TODO
 					Cat.Amazon.loggedIn = true;
 					Cat.display.login.setPanelContent();
 				});
@@ -2958,8 +2932,20 @@ console.log('retrieveProfile');
 		},
 		registerCognito()
 		{
-			const poolData = {UserPoolId: 'us-west-2_I3PJM3KPM', ClientId: '2ls6mhu925qfi0lgt2tmlr56s2'};
-			const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+			AWS.config.region = this.cognitoRegion;
+			AWS.config.credentials = new AWS.CognitoIdentityCredentials(
+			{
+				IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
+				/*
+				Logins:			{
+									'www.amazon.com':			'AMAZONTOKEN',
+									'graph.facebook.com':		'FBTOKEN',
+									'accounts.amazon.com':		'GOOGLETOKEN',
+								},
+				*/
+			});
+			AWS.config.credentials.get();
+return;
 			let attributeList = [{Name:'email', Value:Cat.user.email}];
 			userPool.signUp( 'username', 'password', attributeList, null, function(err, result)
 			{
@@ -2988,7 +2974,28 @@ console.log('retrieveProfile');
 				else
 					Cat.recordError(`Download diagram request failed for category ${catName}, user ${user}, and diagram base name ${dgrmBasename}.`);
 			});
-		}
+		},
+		ingestDiagramLambda(dgrm, fn)
+		{
+			const params =
+			{
+				FunctionName:	'CateconIngestDiagram',
+				InvocationType:	'RequestResponse',
+				LogType:		'None',
+				Payload:		JSON.stringify(dgrm.json()),
+			};
+			this.lambda.invoke(params, function(error, data)
+			{
+				if (error)
+				{
+					Cat.recordError(error);
+					return;
+				}
+				const result = JSON.parse(data.Payload);
+				if (fn)
+					fn(result);
+			});
+		},
 	},
 };
 
@@ -5914,7 +5921,6 @@ class diagram extends functor
 		this.morphisms = new Map();
 		this.texts = 'texts' in args ? args.texts.map(d => new element(this.domain, d)) : [];
 		this.texts.map(t => t.diagram = this);
-		this.user = Cat.getArg(args, 'user', '');
 		Cat.addDiagram(this.codomain.name, this);
 		if ('codomainData' in args)
 		{
@@ -5993,8 +5999,7 @@ class diagram extends functor
 		{
 			if (regexTst && !RegExp(Cat.userNameEx).test(basename))
 				throw 'Invalid diagram name.';
-//			name = `D_${catName}_${Cat.user.name}_${basename}`;
-			name = diagram.genName(catName, Cat.user.name, basename);
+			name = diagram.genName(catName, Cat.user.nickname, basename);
 		}
 		else
 			name = basename;
@@ -7355,30 +7360,10 @@ class ${this.name} extends diagram
 	upload(e, fn = null)
 	{
 		document.getElementById('diagramUploadBtn').classList.add('vanish');
-		const data = new FormData();
-		data.append("json", JSON.stringify(this.json()));
-		const cat = getDiagram().codomain.name;
-		if (Cat.service === 'Amazon')
+		Cat.Amazon.ingestDiagramLambda(this, function(data)
 		{
-		}
-		else
-			fetch('catecon.php?action=uploadDiagram',
-			{
-				method:	'POST',
-				body:	JSON.stringify(this.json()),
-			}).then(function(response)
-			{
-				if (response.ok)
-					response.json().then(function(data)
-					{
-						if (fn != null)
-							fn(data);
-//						Cat.display.downloadCatalogTable(cat);	// TODO
-						Cat.status(e, `Uploaded diagram`);
-					});
-				else
-					console.log('upload diagram request failed');
-			});
+			Cat.status(e, `Uploaded diagram`);
+		});
 	}
 /*
 	static downloadFromCatolite(catName, dgrmName, fn = null)
@@ -7950,33 +7935,33 @@ function initialize()	// TODO replace with diagram downloads
 	// basics
 	//
 	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_basics');
-	const basics = new diagram({name:'basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[]});
+	const basics = new diagram({name:'basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
 	const basicObjects =
 		[{diagram:basics, code:'Null', html:'&#x2205', description:'empty set', isInitial:true, isFinite:0},
 		{diagram:basics, code:'One', html:'1', description:'Terminal object, or one point set', isTerminal:true, isFinite:1}];
 	basicObjects.map(objectData => new object(basics.codomain, objectData));
-	const basicMorphisms = [{name:'Null2one', diagram:'D_PFS_hdole_basics', domain:'Null', codomain:'One', function:	'null', 	html:	'&#x2203!', description:	'null to one'}];
+	const basicMorphisms = [{name:'Null2one', diagram:'D_PFS_hdole_basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
 	basics.placeMultipleMorphisms(basicMorphisms);
 	//
 	// first order logic
 	//
 	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_FOL');
-	const fol = new diagram({name:'FOL', codomain:'PFS', html:'First Order Logic', references:['D_PFS_hdole_basics'], readonly:true, isStandard:true});
+	const fol = new diagram({name:'FOL', codomain:'PFS', html:'First Order Logic', references:['D_PFS_hdole_basics'], readonly:true, isStandard:true, user:'std'});
 	const folObjects = [{diagram:'D_PFS_hdole_FOL', code:'Omega', html:'&#x03a9', description:'sub-object classifier', isFinite:2},
 						{code:'Omega*Omega'}];
 	folObjects.map(objectData => new object(fol.codomain, objectData));
-	const folMorphisms = [	{name:'False', diagram:'D_PFS_hdole_FOL', domain:'One', codomain:'Omega', function:	'false', html:	'&#x22a5', description:	'false'},
-							{name:'True', diagram:'D_PFS_hdole_FOL', domain:'One', codomain:'Omega', function:	'true', 	html:	'&#x22a4', description:	'true'},
-							{name:'not', diagram:'D_PFS_hdole_FOL', domain:'Omega', codomain:'Omega', function:	'not', html:	'&#x00ac', description:	'not'},
-							{name:'and', diagram:'D_PFS_hdole_FOL', domain:'Omega*Omega', codomain:'Omega', function:	'and', html:	'&#x2227', description:	'logical and'},
-							{name:'or', diagram:'D_PFS_hdole_FOL', domain:'Omega*Omega', codomain:'Omega', function:'or', html:	'&#x2228', description:	'logical or'}];
+	const folMorphisms = [	{name:'False', diagram:'D_PFS_hdole_FOL', domain:'One', codomain:'Omega', function:'false', html:'&#x22a5', description:'false'},
+							{name:'True', diagram:'D_PFS_hdole_FOL', domain:'One', codomain:'Omega', function:'true', 	html:'&#x22a4', description:'true'},
+							{name:'not', diagram:'D_PFS_hdole_FOL', domain:'Omega', codomain:'Omega', function:'not', html:'&#x00ac', description:'not'},
+							{name:'and', diagram:'D_PFS_hdole_FOL', domain:'Omega*Omega', codomain:'Omega', function:'and', html:'&#x2227', description:'logical and'},
+							{name:'or', diagram:'D_PFS_hdole_FOL', domain:'Omega*Omega', codomain:'Omega', function:'or', html:'&#x2228', description:'logical or'}];
 	fol.placeMultipleMorphisms(folMorphisms);
 	//
 	// arithmetic operations
 	//
 	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_arithmetics');
 	const arithmetics = new diagram({name:'arithmetics', codomain:'PFS', html:'Arithmetics', description:'Artithmetic operations on natural numbers, integers, and floating point numbers.',
-				references:['D_PFS_hdole_basics', 'D_PFS_hdole_FOL'], readonly:true, isStandard:true});
+				references:['D_PFS_hdole_basics', 'D_PFS_hdole_FOL'], readonly:true, isStandard:true, user:'std'});
 	xyDom = {x: 300, y:Cat.default.font.height};
 	xyCod = {x: 600, y:Cat.default.font.height};
 
@@ -7994,32 +7979,32 @@ function initialize()	// TODO replace with diagram downloads
 	arithObjects.map(objectData => new object(arithmetics.codomain, objectData));
 
 	const arithMorphData = [
-		{name:'Nzero', diagram:arithmetics, domain:'One', codomain:'N', function:	'natZero', html:	`'0'`, description:	'The natural number zero' },
-		{name:'None', diagram:arithmetics, domain:'One', codomain:'N', function:	'natOne', html:	`'1'`, description:	'The natural number one' },
-		{name:'Nplus', diagram:arithmetics, domain:'N*N', codomain:'N', function:	'natAdd', html:	'+', description:	'Addition of natural numbers' },
-		{name:'Nsucc', diagram:arithmetics, domain:'N', codomain:'N', function:	'natSucc', html:	'++', description:	'Increment natural numbers' },
-		{name:'Npred', diagram:arithmetics, domain:'N', codomain:'N', function:	'natPred', html:	'--', description:	'Decrement natural numbers where zero goes to zero' },
-		{name:'Nmult', diagram:arithmetics, domain:'N*N', codomain:'N', 	function:	'natMult', html:	'*', description:	'Multiplication of natural numbers'},
-		{name:'Ncomp', diagram:arithmetics, domain:'N*N', codomain:'Omega', function:	'natStrict', html:	'<', description:	'Strict order of natural numbers'},
-		{name:'NcompEq', diagram:arithmetics, domain:'N*N', codomain:'Omega', function:	'natOrder', html:	'&#x2264', description:	'Order of natural numbers with equality'},
-		{name:'Zplus', diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:	'intAdd', html:	'+', description:	'Integer addition'},
-		{name:'Zsub', 	diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:	'intSub', html:	'-', description:	'Integer subtraction'},
-		{name:'Zmult', diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:	'intMult', html:	'*', description:	'Integer multiplication'},
-		{name:'Zcomp', diagram:arithmetics, domain:'Z*Z', codomain:'Omega', function:	'intStrict', html:	'<', description:	'Strict order of integers'},
-		{name:'ZcompEq', diagram:arithmetics, domain:'Z*Z', codomain:'Omega', function:	'intOrder', html:	'&#x2264', description:	'Strict order of integers with equality'},
-		{name:'Zmod', 	diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:	'intModulo', html:	'%', description:	'Modulo'},
-		{name:'Fplus', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:	'floatAdd', html:	'+', description:	'Floating point addition'},
-		{name:'Fsub', 	diagram:arithmetics, domain:'F*F', codomain:'F', 	function:	'floatSub', html:	'-', description:	'Floating point subtraction'},
-		{name:'Fmult', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:	'floatMult', html:	'*', description:	'Floating point multiplication'},
-		{name:'Fdiv', diagram:arithmetics, domain:'F*F', codomain:'F+1', 	function:	'floatDiv', html:	'/', description:	'Floating point division'},
-		{name:'Fcomp', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:	'floatStrict', html:	'<', description:	'Strict order of floats'},
-		{name:'FcompEq', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:	'floatOrder', html:	'&#x2264', description:	'Strict order of floats with equality'},
-		{name:'N2Z', diagram:arithmetics, domain:'N', codomain:'Z', function:	'nat2int', html:	'&#x21aa', description:	'Embed natural numbers into integers'},
-		{name:'Z2F', diagram:arithmetics, domain:'Z', codomain:'F', function:	'int2float', html:	'&#x21aa', description:	'Embed integers into floats'}];
+		{name:'Nzero', diagram:arithmetics, domain:'One', codomain:'N', function:'natZero', html:`'0'`, description:'The natural number zero' },
+		{name:'None', diagram:arithmetics, domain:'One', codomain:'N', function:'natOne', html:`'1'`, description:'The natural number one' },
+		{name:'Nplus', diagram:arithmetics, domain:'N*N', codomain:'N', function:'natAdd', html:'+', description:'Addition of natural numbers' },
+		{name:'Nsucc', diagram:arithmetics, domain:'N', codomain:'N', function:'natSucc', html:'++', description:'Increment natural numbers' },
+		{name:'Npred', diagram:arithmetics, domain:'N', codomain:'N', function:'natPred', html:'--', description:'Decrement natural numbers where zero goes to zero' },
+		{name:'Nmult', diagram:arithmetics, domain:'N*N', codomain:'N', 	function:'natMult', html:'*', description:'Multiplication of natural numbers'},
+		{name:'Ncomp', diagram:arithmetics, domain:'N*N', codomain:'Omega', function:'natStrict', html:'<', description:'Strict order of natural numbers'},
+		{name:'NcompEq', diagram:arithmetics, domain:'N*N', codomain:'Omega', function:'natOrder', html:'&#x2264', description:'Order of natural numbers with equality'},
+		{name:'Zplus', diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intAdd', html:'+', description:'Integer addition'},
+		{name:'Zsub', 	diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intSub', html:'-', description:'Integer subtraction'},
+		{name:'Zmult', diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intMult', html:'*', description:'Integer multiplication'},
+		{name:'Zcomp', diagram:arithmetics, domain:'Z*Z', codomain:'Omega', function:'intStrict', html:'<', description:'Strict order of integers'},
+		{name:'ZcompEq', diagram:arithmetics, domain:'Z*Z', codomain:'Omega', function:'intOrder', html:'&#x2264', description:'Strict order of integers with equality'},
+		{name:'Zmod', 	diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intModulo', html:'%', description:'Modulo'},
+		{name:'Fplus', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatAdd', html:'+', description:'Floating point addition'},
+		{name:'Fsub', 	diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatSub', html:'-', description:'Floating point subtraction'},
+		{name:'Fmult', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatMult', html:'*', description:'Floating point multiplication'},
+		{name:'Fdiv', diagram:arithmetics, domain:'F*F', codomain:'F+1', 	function:'floatDiv', html:'/', description:'Floating point division'},
+		{name:'Fcomp', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:'floatStrict', html:'<', description:'Strict order of floats'},
+		{name:'FcompEq', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:'floatOrder', html:'&#x2264', description:'Strict order of floats with equality'},
+		{name:'N2Z', diagram:arithmetics, domain:'N', codomain:'Z', function:'nat2int', html:'&#x21aa', description:'Embed natural numbers into integers'},
+		{name:'Z2F', diagram:arithmetics, domain:'Z', codomain:'F', function:'int2float', html:'&#x21aa', description:'Embed integers into floats'}];
 	arithmetics.placeMultipleMorphisms(arithMorphData);
 
 	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_strings');
-	const strings = new diagram({name:'strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D_PFS_hdole_arithmetics'], readonly:true, isStandard:true});
+	const strings = new diagram({name:'strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D_PFS_hdole_arithmetics'], readonly:true, isStandard:true, user:'std'});
 	const stringObjects = [
 		{diagram:strings, code:'Str', html:'Str', description:'The space of finite strings'},
 		{diagram:strings, code:'Str*Str'}];
@@ -8038,7 +8023,7 @@ function initialize()	// TODO replace with diagram downloads
 	// console
 	//
 	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_console');
-	const console = new diagram({name:'console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D_PFS_hdole_strings'], readonly:true, isStandard:true});
+	const console = new diagram({name:'console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D_PFS_hdole_strings'], readonly:true, isStandard:true, user:'std'});
 	const consoleObjects = [{diagram:console, code:'tty', html:'tty', description:'Write-only console'}];
 	consoleObjects.map(objectData => new object(console.codomain, objectData));
 	const consoleMorphisms = [{name:'print', diagram:console, domain:'Str', codomain:'tty', function:'ttyOut', html:'&#128438;', description:'Print to tty'}];
@@ -8047,7 +8032,7 @@ function initialize()	// TODO replace with diagram downloads
 	// threeD
 	//
 	Cat.deleteLocalDiagram('PFS', 'D_PFS_hdole_threeD', false);
-	const threeD = new diagram({name:'threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D_PFS_hdole_arithmetics', 'D_PFS_hdole_strings'], readonly:true, isStandard:true});
+	const threeD = new diagram({name:'threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D_PFS_hdole_arithmetics', 'D_PFS_hdole_strings'], readonly:true, isStandard:true, user:'std'});
 	const threeDObjects = [{diagram:threeD, code:'threeD', html:'3D', description:'Rendering in 3D'},
 							{diagram:threeD, code:'N*N*N'},
 							{diagram:threeD, code:'Z*Z*Z'},
@@ -8080,3 +8065,13 @@ function initialize()	// TODO replace with diagram downloads
 }
 
 Cat.initialize();	// boot-up
+
+/*
+Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_basics);
+Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_FOL);
+Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_strings);
+Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_arithmetics);
+Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_console);
+Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_threeD);
+*/
+Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_Draft);
