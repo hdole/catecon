@@ -281,18 +281,24 @@ const Cat =
 	},
 	getDiagram(catName, dgrmName, checkLocal = true)
 	{
+		let dgrm = null;
 		if (catName in Cat.diagrams && dgrmName in Cat.diagrams[catName])
 			return Cat.diagrams[catName][dgrmName];
 		if (checkLocal && Cat.hasLocalDiagram(catName, dgrmName))
 		{
-			const dgrm = diagram.fromLocalStorage(catName, dgrmName);
+			dgrm = diagram.fromLocalStorage(catName, dgrmName);
 			if (!(catName in Cat.diagrams))
 				Cat.diagrams[catName] = {};
 			if (!(name in Cat.diagrams[catName]))
 				Cat.diagrams[catName][dgrmName] = dgrm;
 			return dgrm;
 		}
-		return null;
+		else
+//			downloadDiagram(catName, user, dgrmBasename, fn = null)
+			return Cat.Amazon.downloadDiagram(dgrmName, function(dgrm)
+			{
+			}, false);
+		return dgrm;
 	},
 	hasLocalDiagram(catName, dgrmName)
 	{
@@ -613,7 +619,7 @@ const Cat =
 						fn(data);
 				});
 			else
-				Cat.recorrdError('Categories request failed.', response);
+				Cat.recordError('Categories request failed.', response);
 		});
 	},
 	getCategoryUsers(cat, fn = null)
@@ -974,7 +980,8 @@ const Cat =
 			else if (!abort && Cat.selected.category in Cat.catalog && name in Cat.catalog[Cat.selected.category])
 			{
 //				diagram.downloadFromCatolite(Cat.selected.category, name, function(dgrm)
-				Cat.Amazon.downloadDiagram(Cat.selected.category, name, function(dgrm)
+//				Cat.Amazon.downloadDiagram(Cat.selected.category, name, function(dgrm)
+				Cat.Amazon.downloadDiagram(name, function(dgrm)
 				{
 console.log('selectDiagram download from catolite',dgrm.name);
 					Cat.selected.selectDiagram(dgrm.name, true);
@@ -1829,7 +1836,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 */
 					H.div(	H.small('User diagrams.') +
 							H.div('', '', 'userDiagrams') +
-							H.small('Standard diagrams') +
+							H.small('Catalog') +
 							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
 //					H.div('', 'accordionPnl', 'diagramCatalogDisplay') +
 					H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'diagramReferenceDiv\')"') +
@@ -1987,6 +1994,21 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				}
 				document.getElementById('catalog').innerHTML = html;
 			},
+			setUserDiagramsTable(catName)
+			{
+				const currentDiagram = getDiagram().name;
+				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
+								{
+									const dgrm = Cat.getDiagram(catName, dgrmName, false);
+									const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
+									return H.tr(
+											H.td(H.table(H.tr(
+												H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
+															Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')), 'buttonBarLeft')) +
+											H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
+								}).join('');
+				document.getElementById('userDiagrams').innerHTML = H.table(html);
+			},
 			/*
 			setLocalDiagramsTable(catName)
 			{
@@ -2004,22 +2026,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				document.getElementById('localDiagrams').innerHTML = H.table(html);
 			},
 			*/
-			setUserDiagramsTable(catName)
-			{
-				//TODO
-				const currentDiagram = getDiagram().name;
-				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
-								{
-									const dgrm = Cat.getDiagram(catName, dgrmName, false);
-									const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
-									return H.tr(
-											H.td(H.table(H.tr(
-												H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
-															Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')), 'buttonBarLeft')) +
-											H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
-								}).join('');
-				document.getElementById('userDiagrams').innerHTML = H.table(html);
-			},
 		},
 		functor:
 		{
@@ -2833,6 +2839,7 @@ ${this.svg.button(onclick)}
 		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
 		identityPoolId:		'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
 		cognitoRegion:		'us-west-2',
+		region:				'us-west-1',
 		diagramBucketName:	'catecon-diagrams',
 		diagramBucket:		null,
 		URL(cat, user, basename)
@@ -2849,7 +2856,6 @@ ${this.svg.button(onclick)}
 			return `${url}/${basename}`;
 		},
 		loggedIn:			false,
-		region:				'us-west-1',
 		role:				'arn:aws:iam::395668725886:role/Cognito_CateconUnauth_Role',
 		initialize()
 		{
@@ -2860,13 +2866,12 @@ ${this.svg.button(onclick)}
 			});
 console.log('AWS.config',AWS.config);
 			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
-			this.lambda = new AWS.Lambda({region: us-west-1, apiVersion: '2015-03-31'});
+			this.lambda = new AWS.Lambda({region: Cat.Amazon.region, apiVersion: '2015-03-31'});
 		},
 		saveDiagram(dgrm)
 		{
-			const key = `PFS/${Cat.user.nickname}/${dgrm.basename}.json`;
+			const key = `${dgrm.codomain.name}/${Cat.user.nickname}/${dgrm.basename}.json`;
 console.log('saveDiagram key',key);
-//			const Body = JSON.stringify(dgrm.json()).replace(/hdole/g, 'std');
 			this.diagramBucket.putObject(
 			{
 				Bucket:			this.diagramBucketName,
@@ -2959,9 +2964,47 @@ return;
 					console.log('user name is ' + Cat.Amazon.cognito.getUsername());
 			});
 		},
-		downloadDiagram(catName, user, dgrmBasename, fn = null)
+		diagramFetchResponse(response)
 		{
-			fetch(this.URL(catName, user, dgrmBasename)).then(function(response)
+			dgrm = null;
+			if (response.ok)
+			{
+				/*
+				response.text().then(function(txt)
+				{
+					const dgrm = new diagram(JSON.parse(txt));
+					dgrm.sha256 = Cat.sha256(txt);
+					if (fn != null)
+						fn(dgrm);
+				});
+				*/
+				const request = async() =>
+				{
+					const json = await response.text();
+					dgrm = new diagram(JSON.parse(json));
+					dgrm.sha256 = Cat.sha256(json);
+					return dgrm;
+				};
+				request().then(response => console.log(response));
+			}
+			else
+				Cat.recordError(`Download diagram request failed for category ${catName}, user ${user}, and diagram base name ${basename}.`);
+			return dgrm;
+		},
+		async downloadURL(url)
+		{
+			return await fetch(url);
+		},
+//		downloadDiagram(catName, user, dgrmBasename, fn = null)
+		downloadDiagram(name, fn, async = true )
+		{
+			const tokens = name.split('_');
+			const basename = tokens[tokens.length -1];
+			const catName = tokens[1];
+			const user = tokens[2];
+			const url = this.URL(catName, user, basename + '.json');
+			/*
+			fetch(this.URL(catName, user, basename)).then(function(response)
 			{
 				if (response.ok)
 					response.text().then(function(txt)
@@ -2972,10 +3015,27 @@ return;
 							fn(dgrm);
 					});
 				else
-					Cat.recordError(`Download diagram request failed for category ${catName}, user ${user}, and diagram base name ${dgrmBasename}.`);
+					Cat.recordError(`Download diagram request failed for category ${catName}, user ${user}, and diagram base name ${basename}.`);
 			});
+			*/
+			if (async)
+				fetch(url).then(diagramFetchResponse);
+			else
+			{
+				/*
+				const request = async() =>
+				{
+					return await fetch(url);
+//					const response = await fetch(url);
+//					return diagramFetchResponse(response);
+				};
+				request().then(response => console.log('response',response));
+				*/
+				const txt = Cat.Amazon.downloadURL(url).then();
+				console.log('txt',txt);
+			}
 		},
-		ingestDiagramLambda(dgrm, fn)
+		ingestDiagramLambda(e, dgrm, fn)
 		{
 			const params =
 			{
@@ -2993,7 +3053,7 @@ return;
 				}
 				const result = JSON.parse(data.Payload);
 				if (fn)
-					fn(result);
+					fn(e, result);
 			});
 		},
 	},
@@ -3707,7 +3767,8 @@ class object extends element
 	{
 		return ('basetype' in this && 'regexp' in this.basetype) ? this.basetype.regexp : '';
 	}
-	static process(cat, dgrm, data)
+//	static process(cat, dgrm, data)
+	static process(cat, data)
 	{
 		try
 		{
@@ -3740,6 +3801,7 @@ class diagramObject extends object
 	constructor(cat, args)
 	{
 		const nuArgs = Cat.clone(args);
+		nuArgs.diagram = null;
 		nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
 		super(cat, nuArgs);
 		this.subClass = 'diagramObject';
@@ -3840,7 +3902,8 @@ class category extends object
 				{
 					try
 					{
-						const obj = object.process(this, dgrm, args.objects[key]);
+//						const obj = object.process(this, dgrm, args.objects[key]);
+						const obj = object.process(this, args.objects[key]);
 					}
 					catch(x)
 					{
@@ -4386,6 +4449,7 @@ class diagramMorphism extends morphism
 	constructor(cat, args)
 	{
 		const nuArgs = Cat.clone(args);
+		nuArgs.diagram = null;
 		nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
 		super(cat, nuArgs);
 		this.to = null;
@@ -6010,6 +6074,7 @@ class diagram extends functor
 	json()
 	{
 		let d = super.json();
+		d.basename = this.basename;
 		d.objectMap = [];
 		for(const [o1, o2] of this.objects)
 			if (o2 !== null)
@@ -7360,9 +7425,11 @@ class ${this.name} extends diagram
 	upload(e, fn = null)
 	{
 		document.getElementById('diagramUploadBtn').classList.add('vanish');
-		Cat.Amazon.ingestDiagramLambda(this, function(data)
+		const start = Date.now();
+		Cat.Amazon.ingestDiagramLambda(e, this, function(e, data)
 		{
-			Cat.status(e, `Uploaded diagram`);
+			const delta = Date.now() - start;
+			Cat.status(e, `Uploaded diagram.  Elapsed ${delta}ms`);
 		});
 	}
 /*
@@ -7840,6 +7907,7 @@ function initialize()	// TODO replace with diagram downloads
 		hasCoproducts:	true,
 		referenceDiagrams:	['D_PFS_hdole_basics', 'D_PFS_hdole_FOL', 'D_PFS_hdole_arithmetics', 'D_PFS_hdole_strings', 'D_PFS_hdole_console', 'D_PFS_hdole_threeD'],
 	});
+return;
 	new category(
 	{
 		name:				'Graph',
@@ -8073,5 +8141,5 @@ Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_strings);
 Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_arithmetics);
 Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_console);
 Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_threeD);
-*/
 Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_Draft);
+*/
