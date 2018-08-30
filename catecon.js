@@ -276,11 +276,13 @@ const Cat =
 	},
 	hasDiagram(catName, dgrmName)
 	{
-		const name = typeof catName === 'string' ? catName : catName.name;
+		const name = typeof catName === 'string' ? catName : catName;
 		return Cat.hasLocalDiagram(name, dgrmName) || (name in Cat.diagrams ? dgrmName in Cat.diagrams[name] : false);
 	},
 	getDiagram(catName, dgrmName, checkLocal = true)
 	{
+		if (dgrmName === '')
+			return null;
 		let dgrm = null;
 		if (catName in Cat.diagrams && dgrmName in Cat.diagrams[catName])
 			return Cat.diagrams[catName][dgrmName];
@@ -295,9 +297,10 @@ const Cat =
 		}
 		else
 //			downloadDiagram(catName, user, dgrmBasename, fn = null)
-			return Cat.Amazon.downloadDiagram(dgrmName, function(dgrm)
-			{
-			}, false);
+//			return Cat.Amazon.downloadDiagram(dgrmName, function(dgrm)
+//			{
+//				console.log('dgrm',dgrm);
+//			}, false);
 		return dgrm;
 	},
 	hasLocalDiagram(catName, dgrmName)
@@ -441,6 +444,114 @@ const Cat =
 		}
 		return txt + '.';
 	},
+	initializeCT(fn)
+	{
+		$Cat = new category(
+		{
+			name:	'Cat',
+			code:	'Cat',
+			html:	'&#x2102;&#x1D552;&#x1D565;',
+			description:	'Category of small categories',
+			isCartesian:	true,
+			isClosed:		true,
+			hasProducts:	true,
+			hasCoproducts:	true,
+		});
+		PFS = new category(
+		{
+			name:	'PFS',
+			code:	'PFS',
+			html:	'&#8473;&#120125;&#120138;',
+			description:	'Category of partial finite sets',
+			isCartesian:	true,
+			isClosed:		true,
+			allObjectsFinite:		true,
+			hasProducts:	true,
+			hasCoproducts:	true,
+			referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'],
+		});
+		Graph = new category(
+		{
+			name:				'Graph',
+			code:				'Graph',
+			html:				'&#120126;',
+			description:		'Graph category',
+			isCartesian:		true,
+			isClosed:			true,
+			allObjectsFinite:	true,
+			hasProducts:		true,
+			hasCoproducts:		true,
+			referenceDiagrams:	[],
+		});
+		new transform(
+		{
+			name:		'id_PFS',
+			transform:	'identity',
+			domain:		'PFS',
+			codomain:	'PFS',
+			html:		'Identity',
+			description:'Identity morphism on an object',
+		});
+		new transform(
+		{
+			name:	'diagonal_PFS',
+			html:	'&#x0394;',
+			code:	'',
+			transform:	'diagonal',
+			domain:	'PFS',
+			codomain:	'PFS',
+			description:'Diagonal morphism on an object',
+		});
+		new transform(
+		{
+			name:	'terminal_PFS',
+			html:	'&#8594;1',
+			code:	'',
+			transform:	'terminal',
+			domain:	'PFS',
+			codomain:	'PFS',
+			description:'Unique morphism to terminal object',
+		});
+		new transform(
+		{
+			name:	'equals_PFS',
+			html:	'=',
+			code:	'',
+			transform:	'equals',
+			domain:	'PFS',
+			codomain:	'PFS',
+			description:'Test for equality on an object',
+			testFunction:	function(dgrm, obj)
+			{
+				return obj.isSquared();
+			},
+		});
+		new transform(
+		{
+			name:	'eval_PFS',
+			html:	'e',
+			code:	'',
+			transform:	'apply',
+			domain:	'PFS',
+			codomain:	'PFS',
+			description:'Evaluate morphism with arguments',
+			testFunction:	function(dgrm, obj)
+			{
+				return dgrm.canEvaluate(obj);
+			},
+		});
+		new functor(
+		{
+			name:		'Graph',
+			html:		'&#1d5d8;',
+			code:		'Graph',
+			functor:	'graph',
+			domain:		'PFS',
+			codomain:	'Graph',
+			description:'Gives the graph of a morphism',
+		});
+		this.fetchCategories(fn);	// TODO check for local TODO refresh flag
+	},
 	initialize()
 	{
 		try
@@ -450,144 +561,55 @@ const Cat =
 				console.log('clearing local storage');
 				this.clearLocalStorage();
 			}
+			Cat.autosave = true;
 			Cat.getLocalDiagramList();
-			Cat.display.setNavbarHtml();
 			Cat.display.initialize();
 			Cat.Amazon.initialize();
-			initialize();	// TODO remove when download done
-			Cat.updatePanels();
-			Cat.getCategories();
-			document.addEventListener('dragover', function(e)
+			Cat.initializeCT(function()
 			{
-				e.preventDefault();
-			}, false);
-			document.addEventListener('drop', function(e)
-			{
-				e.preventDefault();
-			}, true);
-			document.addEventListener('keydown', function(e)
-			{
-				if (e.target === document.body)
-				{
-					const dgrm = getDiagram();
-					switch(e.keyCode)
-					{
-					case 32:	// 'space'
-						Cat.display.tool = 'pan';
-						break;
-					case 36:	// 'home'
-						getDiagram().home();
-						break;
-					}
-					Cat.display.shiftKey = e.shiftKey;
-					Cat.display.setCursor();
-				}
+				let catName = localStorage.getItem('Cat.default.category');
+				catName = catName === null ? 'PFS' : catName;
+	console.log('initialize category', catName);
+				let dgrmName = localStorage.getItem(`Cat.default.diagram ${catName}`);
+				dgrmName = dgrmName === null ? diagram.genName(catName, Cat.user.nickname, 'Draft') : dgrmName;
+				if (Cat.debug)
+					console.log('initialize diagram', dgrmName);
+
+				Cat.selected.selectCategoryDiagram(catName);
+				Cat.selected.selectDiagram(dgrmName, false);
+				console.log(dgrm);
+				Cat.updatePanels();
 			});
-			document.addEventListener('keyup', function(e)
+
+			/*
+			const referenceDiagrams =	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'];
+			Promise.all(referenceDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(function(d)
 			{
-				if (e.target === document.body)
-				{
-					const dgrm = getDiagram();
-					const xy = dgrm.userToDiagramCoords(Cat.mouse.xy);
-					Cat.display.shiftKey = e.shiftKey;
-					const placeSquare = false;
-					switch(e.keyCode)
-					{
-					case 32:	// 'space'
-						Cat.display.tool = 'select';
-						Cat.display.drag = false;
-						break;
-					case 46:	// delete
-						dgrm.removeSelected();
-						break;
-					case 49:	// 1
-						dgrm.placeObject(e, dgrm.getObjectByCode('One'), xy);
-						break;
-					case 51:	// 3
-						Cat.display.panel.toggle('threeD');
-						break;
-					case 67:	// c
-						if (!e.shiftKey)
-							Cat.display.panel.toggle('category');
-						break;
-					case 68:	// d
-						if (!e.shiftKey)
-							Cat.display.panel.toggle('diagram');
-						break;
-					case 70:	// F
-						if (e.shiftKey)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'F*F' : 'F'), xy);
-						break;
-					case 72:	// H
-						Cat.display.panel.toggle('help');
-						break;
-					case 77:	// M
-						Cat.display.panel.toggle('morphism');
-						break;
-					case 78:	// N
-						if (e.shiftKey)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'N*N' : 'N'), xy);
-						break;
-					case 79:	// O
-						if (e.shiftKey)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Omega*Omega' : 'Omega'), xy);
-						else
-							Cat.display.panel.toggle('object');
-						break;
-					case 83:	// S
-						if (e.shiftKey)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Str*Str' : 'Str'), xy);
-						break;
-					case 84:	// T
-						if (e.shiftKey)
-						{
-							const txt = new element(dgrm.domain, {name:`Text${dgrm.textId++}`, diagram:dgrm, html:'Lorem ipsum dolor', xy});
-							dgrm.texts.push(txt);
-							dgrm.placeElement(e, txt);
-						}
-						else
-							Cat.display.panel.toggle('element');
-						break;
-					case 90:	// Z
-						dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Z*Z' : 'Z'), xy);
-						break;
-					}
-					Cat.display.setCursor();
-				}
+
+				dgrmName = 'Draft';
+				const dgrm = new diagram({name:dgrmName, codomain:catName, code:dgrmName, html:dgrmName, description:'Scratch diagram', user:Cat.user.nickname});
+				dgrm.saveToLocalStorage();
+
+				Cat.selected.selectCategoryDiagram(catName);
+				Cat.selected.selectDiagram(dgrmName, false);
+				console.log(dgrm);
+				Cat.updatePanels();
 			});
-			document.addEventListener('wheel', function(e)
+			*/
+
+
+			/*
+			if (!Cat.hasDiagram(catName, dgrmName))
 			{
-				if (e.target.id === 'topSVG')
-				{
-					Cat.display.deactivateToolbar();
-					const dgrm = getDiagram();
-					let mouseInc = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-					let inc = Math.log(dgrm.viewport.scale)/Math.log(Cat.default.scale.base) + mouseInc;
-					let nuScale = Cat.default.scale.base ** inc;
-					nuScale = nuScale < Cat.default.scale.limit.min ? Cat.default.scale.limit.min : nuScale;
-					nuScale = nuScale > Cat.default.scale.limit.max ? Cat.default.scale.limit.max : nuScale;
-					dgrm.viewport.scale = nuScale;
-					let pnt = {x:e.clientX, y:e.clientY};
-					const dx = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.x - dgrm.viewport.x);
-					const dy = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.y - dgrm.viewport.y);
-					const s = Cat.default.scale.base;
-					dgrm.viewport.x = dgrm.viewport.x - dx;
-					dgrm.viewport.y = dgrm.viewport.y - dy;
-					dgrm.setView();
-				}
-			}, false);
-			const catName = localStorage.getItem('Cat.default.category');
-			if (catName != null)
-			{
-				if ($Cat.hasObject(catName))
-					Cat.selected.selectCategory(null, catName, false);
-				else
-					throw `Default category ${catName} is not found in Cat.`;
+				dgrmName = 'Draft';
+				const dgrm = new diagram({name:dgrmName, codomain:catName, code:dgrmName, html:dgrmName, description:'Scratch diagram', user:Cat.user.nickname});
+				dgrm.saveToLocalStorage();
 			}
 			else
-				Cat.selected.selectCategory(null, 'PFS', false);
-			Cat.autosave = true;
-			Cat.Amazon.registerCognito();
+				getDiagram(catName, dgrmName, true);
+			Cat.selected.selectCategoryDiagram(catName);
+			Cat.selected.selectDiagram(dgrmName, false);
+*/
 		}
 		catch(e)
 		{
@@ -599,7 +621,7 @@ const Cat =
 		Cat.display.panel.panelNames['left'].map(pnl => Cat.display[pnl].setPanelContent());
 		Cat.display.panel.panelNames['right'].map(pnl => Cat.display[pnl].setPanelContent());
 	},
-	getCategories(fn = null)
+	fetchCategories(fn = null)
 	{
 		fetch(Cat.Amazon.URL() + '/categories.json').then(function(response)
 		{
@@ -614,7 +636,7 @@ const Cat =
 							Cat.catalog[cat] = {};
 						}
 					});
-					Cat.display.category.setCategoryTable();
+// TODO					Cat.display.category.setCategoryTable();
 					if (fn != null)
 						fn(data);
 				});
@@ -924,6 +946,7 @@ const Cat =
 	{
 		category:	'',
 		diagram:	'',
+		/*
 		selectCategory(e, catName, update = true)
 		{
 			Cat.selected.category = catName;
@@ -960,7 +983,55 @@ const Cat =
 				Cat.recordError(err);
 			}
 		},
-		selectDiagram(name, abort = false)
+		*/
+		selectCategory(catName)
+		{
+			Cat.selected.category = catName;
+			localStorage.setItem('Cat.default.category', catName);
+			Cat.selected.diagram = null;
+			const nbCat = document.getElementById('navbar_category');
+			const cat = $Cat.getObject(catName);
+			nbCat.innerHTML = cat.getText();
+			nbCat.title = Cat.cap(cat.description);
+		},
+		selectCategoryDiagram(cat)
+		{
+			this.selectCategory(cat);
+			let name = localStorage.getItem(`Cat.default.diagram ${cat}`);
+			name = name === null ? 'Draft' : name;
+			const fullname = diagram.nameCheck(cat, name, false, false);
+			let dgrm = Cat.getDiagram(cat, fullname);
+			if (dgrm === null && diagram.fromLocalStorage(cat, fullname) === null)
+			{
+				dgrm = new diagram({name, codomain:cat, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
+				dgrm.saveToLocalStorage();
+			}
+			this.selectDiagram(fullname);
+			this.saveDefaultDiagram();
+		},
+		/*
+		updateCategoryDisplay()
+		{
+			try
+			{
+//				Cat.display.diagram.setPanelContent();
+//				Cat.display.object.setPanelContent();
+//				Cat.display.morphism.setPanelContent();
+				const nbCat = document.getElementById('navbar_category');
+				nbCat.innerHTML = cat.getText();
+				nbCat.title = Cat.cap(cat.description);
+//				Cat.display.category.setPanelContent();
+//				Cat.display.diagram.update();
+//				Cat.display.downloadCatalogTable(catName, Cat.user.nickname);
+			}
+			catch(err)
+			{
+				Cat.recordError(err);
+			}
+		},
+		*/
+		/*
+		selectDiagram(name)
 		{
 			Cat.display.deactivateToolbar();
 			const cat = getCat();
@@ -979,8 +1050,6 @@ const Cat =
 			}
 			else if (!abort && Cat.selected.category in Cat.catalog && name in Cat.catalog[Cat.selected.category])
 			{
-//				diagram.downloadFromCatolite(Cat.selected.category, name, function(dgrm)
-//				Cat.Amazon.downloadDiagram(Cat.selected.category, name, function(dgrm)
 				Cat.Amazon.downloadDiagram(name, function(dgrm)
 				{
 console.log('selectDiagram download from catolite',dgrm.name);
@@ -988,9 +1057,33 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				});
 			}
 		},
-		saveAsDefaultDiagram(catName, dgrmName)
+		*/
+		selectDiagram(name, update = true)
 		{
-			localStorage.setItem(`Cat.default.diagram ${catName}`, dgrmName);
+			Cat.display.deactivateToolbar();
+			const cat = getCat();
+			if (Cat.hasDiagram(cat, name))
+			{
+				Cat.selected.diagram = name;
+				this.saveDefaultDiagram();
+				if (update)
+					this.updateDiagramDisplay(name);
+			}
+		},
+		updateDiagramDisplay(name)
+		{
+			Cat.display.object.setPanelContent();
+			Cat.display.morphism.setPanelContent();
+			Cat.display.element.setPanelContent();
+			Cat.display.diagram.update();
+			Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + getDiagram().makeAllSVG();
+			const dgrm = getDiagram();
+			dgrm.update(null, 'diagram', null, true, false);
+			dgrm.updateMorphisms();
+		},
+		saveAsDefaultDiagram()
+		{
+			localStorage.setItem(`Cat.default.diagram ${Cat.default.category}`, Cat.default.diagram);
 		},
 	},
 	display:
@@ -1020,25 +1113,26 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			const scale = dgrm !== null ? dgrm.viewport.scale : 1.0;
 			const w = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 			const h = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
-			Cat.display.topSVG.setAttribute('width', w);
-			Cat.display.topSVG.setAttribute('height', h);
-			Cat.display.uiSVG.setAttribute('width', w);
-			Cat.display.uiSVG.setAttribute('height', h);
+			this.topSVG.setAttribute('width', w);
+			this.topSVG.setAttribute('height', h);
+			this.uiSVG.setAttribute('width', w);
+			this.uiSVG.setAttribute('height', h);
 		},
 		initialize()
 		{
-			Cat.display.diagramSVG = document.getElementById('diagramSVG');
-			Cat.display.topSVG = document.getElementById('topSVG');
-			Cat.display.topSVG.addEventListener('mousemove', this.mousemove, true);
-			Cat.display.topSVG.addEventListener('mousedown', this.mousedown, true);
-			Cat.display.topSVG.addEventListener('mouseup', this.mouseup, true);
-			Cat.display.tty.setPanelContent();
-			Cat.display.statusbar = document.getElementById('statusbar');
-			Cat.display.uiSVG = document.getElementById('uiSVG');
-			Cat.display.uiSVG.style.left = '0px';
-			Cat.display.uiSVG.style.top = '0px';
-			document.addEventListener('mousemove', this.winMousemove);
-			Cat.display.resize();
+			this.setNavbarHtml();
+			this.diagramSVG = document.getElementById('diagramSVG');
+			this.topSVG = document.getElementById('topSVG');
+			this.topSVG.addEventListener('mousemove', this.mousemove, true);
+			this.topSVG.addEventListener('mousedown', this.mousedown, true);
+			this.topSVG.addEventListener('mouseup', this.mouseup, true);
+			this.statusbar = document.getElementById('statusbar');
+			this.uiSVG = document.getElementById('uiSVG');
+			this.uiSVG.style.left = '0px';
+			this.uiSVG.style.top = '0px';
+			this.resize();
+			this.addEventListeners();
+			this.tty.setPanelContent();	// for early errors
 		},
 		mousedown(e)
 		{
@@ -1048,16 +1142,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			Cat.display.callbacks.map(f => f());
 			Cat.display.callbacks = [];
 			const pnt = dgrm.mousePosition(e);
-			if (e.shiftKey)
-			{
-				if (Cat.display.mouseover)
-				{
-				}
-				else
-				{
-				}
-			}
-			else if (Cat.display.mouseover)
+			if (Cat.display.mouseover)
 			{
 				if (!dgrm.isSelected(Cat.display.mouseover))
 					dgrm.deselectAll();
@@ -1077,12 +1162,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					Cat.display.drag = true;
 				}
 			}
-		},
-		winMousemove(e)
-		{
-			const s = Cat.display.statusbar;
-			if (s.style.display === 'block' && D2.dist(Cat.statusXY, {x:e.clientX, y:e.clientY}) > 50)
-				s.style.display = 'none';
 		},
 		mousemove(e)
 		{
@@ -1471,7 +1550,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				for(const [catName, cat] of $Cat.objects)
 					if (catName.substr(0, 2) !== 'D_')
 						cats.push(cat);
-				const tbl = H.table(cats.map(c => H.tr(H.td(`<a onclick="Cat.selected.selectCategory(event, '${c.name}')">${c.getText()}</a>`), 'sidenavRow')).join(''));
+				const tbl = H.table(cats.map(c => H.tr(H.td(`<a onclick="Cat.selected.selectCategoryDiagram('${c.name}')">${c.getText()}</a>`), 'sidenavRow')).join(''));
 				document.getElementById('categoryTbl').innerHTML = tbl;
 			},
 			newCategoryPnl()
@@ -1983,7 +2062,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				{
 					html = H.table(Object.keys(Cat.catalog[cat]).map(name =>
 									{
-										const description = name in Cat.diagrams[cat] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[cat][name].description))) : '';
+										const description = (cat in Cat.diagrams && name in Cat.diagrams[cat]) ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[cat][name].description))) : '';
 										return H.tr(
 											H.td(H.table(H.tr(
 												H.td(Cat.display.getButton('delete', `Cat.deleteDiagram('${cat}', '${name}')`, 'Delete diagram from catolite'), 'buttonBar') +
@@ -1996,7 +2075,10 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			},
 			setUserDiagramsTable(catName)
 			{
-				const currentDiagram = getDiagram().name;
+				const crntDgrm = getDiagram();
+				if (crntDgrm === null)
+					return;
+				const currentDiagram = crntDgrm.name;
 				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
 								{
 									const dgrm = Cat.getDiagram(catName, dgrmName, false);
@@ -2743,6 +2825,134 @@ ${this.svg.button(onclick)}
 		{
 			return `elt_${Cat.display.id++}`;
 		},
+		addEventListeners()
+		{
+			document.addEventListener('mousemove', function(e)
+			{
+				const s = Cat.display.statusbar;
+				if (s.style.display === 'block' && D2.dist(Cat.statusXY, {x:e.clientX, y:e.clientY}) > 50)
+					s.style.display = 'none';
+			});
+			document.addEventListener('dragover', function(e)
+			{
+				e.preventDefault();
+			}, false);
+			document.addEventListener('drop', function(e)
+			{
+				e.preventDefault();
+			}, true);
+			document.addEventListener('keydown', function(e)
+			{
+				if (e.target === document.body)
+				{
+					const dgrm = getDiagram();
+					switch(e.keyCode)
+					{
+					case 32:	// 'space'
+						Cat.display.tool = 'pan';
+						break;
+					case 36:	// 'home'
+						getDiagram().home();
+						break;
+					}
+					Cat.display.shiftKey = e.shiftKey;
+					Cat.display.setCursor();
+				}
+			});
+			document.addEventListener('keyup', function(e)
+			{
+				if (e.target === document.body)
+				{
+					const dgrm = getDiagram();
+					const xy = dgrm.userToDiagramCoords(Cat.mouse.xy);
+					Cat.display.shiftKey = e.shiftKey;
+					const placeSquare = false;
+					switch(e.keyCode)
+					{
+					case 32:	// 'space'
+						Cat.display.tool = 'select';
+						Cat.display.drag = false;
+						break;
+					case 46:	// delete
+						dgrm.removeSelected();
+						break;
+					case 49:	// 1
+						dgrm.placeObject(e, dgrm.getObjectByCode('One'), xy);
+						break;
+					case 51:	// 3
+						Cat.display.panel.toggle('threeD');
+						break;
+					case 67:	// c
+						if (!e.shiftKey)
+							Cat.display.panel.toggle('category');
+						break;
+					case 68:	// d
+						if (!e.shiftKey)
+							Cat.display.panel.toggle('diagram');
+						break;
+					case 70:	// F
+						if (e.shiftKey)
+							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'F*F' : 'F'), xy);
+						break;
+					case 72:	// H
+						Cat.display.panel.toggle('help');
+						break;
+					case 77:	// M
+						Cat.display.panel.toggle('morphism');
+						break;
+					case 78:	// N
+						if (e.shiftKey)
+							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'N*N' : 'N'), xy);
+						break;
+					case 79:	// O
+						if (e.shiftKey)
+							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Omega*Omega' : 'Omega'), xy);
+						else
+							Cat.display.panel.toggle('object');
+						break;
+					case 83:	// S
+						if (e.shiftKey)
+							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Str*Str' : 'Str'), xy);
+						break;
+					case 84:	// T
+						if (e.shiftKey)
+						{
+							const txt = new element(dgrm.domain, {name:`Text${dgrm.textId++}`, diagram:dgrm, html:'Lorem ipsum dolor', xy});
+							dgrm.texts.push(txt);
+							dgrm.placeElement(e, txt);
+						}
+						else
+							Cat.display.panel.toggle('element');
+						break;
+					case 90:	// Z
+						dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Z*Z' : 'Z'), xy);
+						break;
+					}
+					Cat.display.setCursor();
+				}
+			});
+			document.addEventListener('wheel', function(e)
+			{
+				if (e.target.id === 'topSVG')
+				{
+					Cat.display.deactivateToolbar();
+					const dgrm = getDiagram();
+					let mouseInc = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+					let inc = Math.log(dgrm.viewport.scale)/Math.log(Cat.default.scale.base) + mouseInc;
+					let nuScale = Cat.default.scale.base ** inc;
+					nuScale = nuScale < Cat.default.scale.limit.min ? Cat.default.scale.limit.min : nuScale;
+					nuScale = nuScale > Cat.default.scale.limit.max ? Cat.default.scale.limit.max : nuScale;
+					dgrm.viewport.scale = nuScale;
+					let pnt = {x:e.clientX, y:e.clientY};
+					const dx = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.x - dgrm.viewport.x);
+					const dy = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.y - dgrm.viewport.y);
+					const s = Cat.default.scale.base;
+					dgrm.viewport.x = dgrm.viewport.x - dx;
+					dgrm.viewport.y = dgrm.viewport.y - dy;
+					dgrm.setView();
+				}
+			}, false);
+		},
 	},
 	jsonAssoc(assoc)
 	{
@@ -2867,6 +3077,29 @@ ${this.svg.button(onclick)}
 console.log('AWS.config',AWS.config);
 			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
 			this.lambda = new AWS.Lambda({region: Cat.Amazon.region, apiVersion: '2015-03-31'});
+			this.registerCognito();
+		},
+		saveCategory(cat)
+		{
+			const key = `${cat.name}/${cat.name}.json`;
+console.log('saveCategory key',key);
+			this.diagramBucket.putObject(
+			{
+				Bucket:			this.diagramBucketName,
+				ContentType:	'json',
+				Key:			key,
+				Body:			JSON.stringify(cat.json()),
+				ACL:			'public-read',
+			}, function(err, data)
+			{
+				if (err)
+				{
+					Cat.recordError(`Cannot save category: ${err.message}`);
+					return;
+				}
+				if (Cat.debug)
+					console.log('saved category', cat.name);
+			});
 		},
 		saveDiagram(dgrm)
 		{
@@ -2889,19 +3122,6 @@ console.log('saveDiagram key',key);
 				if (Cat.debug)
 					console.log('saved diagram',dgrm.name);
 			});
-			/*
-			this.diagramBucket.listObjects({Delimiter: '/'}, function(err, data)
-			{
-console.log('listObjects',data);
-				const items = data.CommonPrefixes.map(function(commonPrefix)
-				{
-					const prefix = commonPrefix.Prefix;
-					const folder = decodeURIComponent(prefix.replace('/', ''));
-					return folder;
-				});
-console.log('items from remote',items);
-			});
-			*/
 		},
 		login(check = true)
 		{
@@ -2950,6 +3170,7 @@ console.log('retrieveProfile', response.profile);
 				*/
 			});
 			AWS.config.credentials.get();
+console.log('User', Cat.user.nickname);
 return;
 			let attributeList = [{Name:'email', Value:Cat.user.email}];
 			userPool.signUp( 'username', 'password', attributeList, null, function(err, result)
@@ -2964,76 +3185,18 @@ return;
 					console.log('user name is ' + Cat.Amazon.cognito.getUsername());
 			});
 		},
-		diagramFetchResponse(response)
-		{
-			dgrm = null;
-			if (response.ok)
-			{
-				/*
-				response.text().then(function(txt)
-				{
-					const dgrm = new diagram(JSON.parse(txt));
-					dgrm.sha256 = Cat.sha256(txt);
-					if (fn != null)
-						fn(dgrm);
-				});
-				*/
-				const request = async() =>
-				{
-					const json = await response.text();
-					dgrm = new diagram(JSON.parse(json));
-					dgrm.sha256 = Cat.sha256(json);
-					return dgrm;
-				};
-				request().then(response => console.log(response));
-			}
-			else
-				Cat.recordError(`Download diagram request failed for category ${catName}, user ${user}, and diagram base name ${basename}.`);
-			return dgrm;
-		},
-		async downloadURL(url)
-		{
-			return await fetch(url);
-		},
-//		downloadDiagram(catName, user, dgrmBasename, fn = null)
-		downloadDiagram(name, fn, async = true )
+		async fetchDiagram(name)
 		{
 			const tokens = name.split('_');
 			const basename = tokens[tokens.length -1];
 			const catName = tokens[1];
 			const user = tokens[2];
 			const url = this.URL(catName, user, basename + '.json');
-			/*
-			fetch(this.URL(catName, user, basename)).then(function(response)
-			{
-				if (response.ok)
-					response.text().then(function(txt)
-					{
-						const dgrm = new diagram(JSON.parse(txt));
-						dgrm.sha256 = Cat.sha256(txt);
-						if (fn != null)
-							fn(dgrm);
-					});
-				else
-					Cat.recordError(`Download diagram request failed for category ${catName}, user ${user}, and diagram base name ${basename}.`);
-			});
-			*/
-			if (async)
-				fetch(url).then(diagramFetchResponse);
-			else
-			{
-				/*
-				const request = async() =>
-				{
-					return await fetch(url);
-//					const response = await fetch(url);
-//					return diagramFetchResponse(response);
-				};
-				request().then(response => console.log('response',response));
-				*/
-				const txt = Cat.Amazon.downloadURL(url).then();
-				console.log('txt',txt);
-			}
+console.log('fetchDiagram url', url);
+			const json = await (await fetch(url)).json();
+			const dgrm = new diagram(json);
+			dgrm.sha256 = Cat.sha256(json);
+			return dgrm;
 		},
 		ingestDiagramLambda(e, dgrm, fn)
 		{
@@ -3853,7 +4016,7 @@ class category extends object
 		const attrs = ['hasProducts', 'hasCoproducts', 'isClosed', 'isCartesian', 'allObjectsFinite'];
 		attrs.map(a => this[a] = Cat.getArg(args, a, false));
 		this.parser = {};
-		this.referenceDiagrams = [];
+		this.referenceDiagrams = Cat.getArg(args, 'referenceDiagrams', []);
 		if ('subobject' in args)
 		{
 			const mainCat = $Cat.getObject(args.subobject);
@@ -3957,6 +4120,7 @@ class category extends object
 		cat.transforms = Cat.jsonMap(this.transforms);
 		if ('subobject' in this)
 			cat.subobject = this.subobject.name;
+		cat.referenceDiagrams = this.referenceDiagrams.map(d => d.name);
 		return cat;
 	}
 	hasObject(name)
@@ -4986,6 +5150,11 @@ class factorMorphism extends morphism
 `
 		return code;
 	}
+	fetchDiagrams(diagrams, fn)
+	{
+		const someDiagrams = diagrams.filter(d => !Cat.hasDiagram(this.name, d));
+		Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(dg => fn(dg));
+	}
 }
 
 class curryMorphism extends morphism
@@ -5962,9 +6131,11 @@ class diagram extends functor
 			this.references = [...$Cat.getObject(this.codomain.name).referenceDiagrams];
 		const refHashes = this.references.map(r =>
 		{
-			r.incrRefcnt();
+			if (typeof r !== 'string')
+				r.incrRefcnt();
+			return null;
 			// TODO these are not defined when we create the diagrams during the run
-			return r.sha256;
+//			return r.sha256;
 		});
 		if ('referenceHashes' in args)
 		{
@@ -7880,7 +8051,11 @@ class monoidal extends category
 	}
 }
 
+
+
 // BOOTSTRAP
+let PFS = null;
+let Graph = null;
 function initialize()	// TODO replace with diagram downloads
 {
 	$Cat = new category(
@@ -7894,7 +8069,7 @@ function initialize()	// TODO replace with diagram downloads
 		hasProducts:	true,
 		hasCoproducts:	true,
 	});
-	new category(
+	PFS = new category(
 	{
 		name:	'PFS',
 		code:	'PFS',
@@ -7905,10 +8080,9 @@ function initialize()	// TODO replace with diagram downloads
 		allObjectsFinite:		true,
 		hasProducts:	true,
 		hasCoproducts:	true,
-		referenceDiagrams:	['D_PFS_hdole_basics', 'D_PFS_hdole_FOL', 'D_PFS_hdole_arithmetics', 'D_PFS_hdole_strings', 'D_PFS_hdole_console', 'D_PFS_hdole_threeD'],
+		referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'],
 	});
-return;
-	new category(
+	Graph = new category(
 	{
 		name:				'Graph',
 		code:				'Graph',
@@ -7997,6 +8171,8 @@ return;
 		codomain:	'Graph',
 		description:'Gives the graph of a morphism',
 	});
+return;
+
 	let xyDom = {x: 300, y:Cat.default.font.height};
 	let xyCod = {x: 600, y:Cat.default.font.height};
 	//
@@ -8010,6 +8186,7 @@ return;
 	basicObjects.map(objectData => new object(basics.codomain, objectData));
 	const basicMorphisms = [{name:'Null2one', diagram:'D_PFS_hdole_basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
 	basics.placeMultipleMorphisms(basicMorphisms);
+
 	//
 	// first order logic
 	//
@@ -8134,6 +8311,9 @@ return;
 
 Cat.initialize();	// boot-up
 
+Cat.Amazon.saveCategory($Cat);
+Cat.Amazon.saveCategory(PFS);
+Cat.Amazon.saveCategory(Graph);
 /*
 Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_basics);
 Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_FOL);
