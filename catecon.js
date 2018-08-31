@@ -276,8 +276,8 @@ const Cat =
 	},
 	hasDiagram(catName, dgrmName)
 	{
-		const name = typeof catName === 'string' ? catName : catName;
-		return Cat.hasLocalDiagram(name, dgrmName) || (name in Cat.diagrams ? dgrmName in Cat.diagrams[name] : false);
+//		const name = typeof catName === 'string' ? catName : catName;
+		return Cat.hasLocalDiagram(catName, dgrmName) || (catName in Cat.diagrams ? dgrmName in Cat.diagrams[catName] : false);
 	},
 	getDiagram(catName, dgrmName, checkLocal = true)
 	{
@@ -312,6 +312,7 @@ const Cat =
 		Cat.localDiagrams = JSON.parse(localStorage.getItem('Cat.diagrams.local'));
 		if (Cat.localDiagrams === null)
 			Cat.localDiagrams = {};
+		// TODO debug, clean-up, remove, eventually
 		for (let cat in Cat.localDiagrams)
 			for (let d in Cat.localDiagrams[cat])
 				if (!localStorage.getItem(diagram.storageName(cat, d)))
@@ -580,36 +581,6 @@ const Cat =
 				console.log(dgrm);
 				Cat.updatePanels();
 			});
-
-			/*
-			const referenceDiagrams =	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'];
-			Promise.all(referenceDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(function(d)
-			{
-
-				dgrmName = 'Draft';
-				const dgrm = new diagram({name:dgrmName, codomain:catName, code:dgrmName, html:dgrmName, description:'Scratch diagram', user:Cat.user.nickname});
-				dgrm.saveToLocalStorage();
-
-				Cat.selected.selectCategoryDiagram(catName);
-				Cat.selected.selectDiagram(dgrmName, false);
-				console.log(dgrm);
-				Cat.updatePanels();
-			});
-			*/
-
-
-			/*
-			if (!Cat.hasDiagram(catName, dgrmName))
-			{
-				dgrmName = 'Draft';
-				const dgrm = new diagram({name:dgrmName, codomain:catName, code:dgrmName, html:dgrmName, description:'Scratch diagram', user:Cat.user.nickname});
-				dgrm.saveToLocalStorage();
-			}
-			else
-				getDiagram(catName, dgrmName, true);
-			Cat.selected.selectCategoryDiagram(catName);
-			Cat.selected.selectDiagram(dgrmName, false);
-*/
 		}
 		catch(e)
 		{
@@ -1062,13 +1033,18 @@ console.log('selectDiagram download from catolite',dgrm.name);
 		{
 			Cat.display.deactivateToolbar();
 			const cat = getCat();
-			if (Cat.hasDiagram(cat, name))
+			function setup(name)
 			{
 				Cat.selected.diagram = name;
-				this.saveDefaultDiagram();
+				Cat.selected.saveDefaultDiagram();
 				if (update)
-					this.updateDiagramDisplay(name);
+					Cat.selected.updateDiagramDisplay(name);
 			}
+			if (Cat.hasDiagram(cat, name))
+				setup(name);
+			else
+				// TODO turn on/off busy cursor
+				diagram.fetchDiagram(cat, name, setup);
 		},
 		updateDiagramDisplay(name)
 		{
@@ -3194,6 +3170,10 @@ return;
 			const url = this.URL(catName, user, basename + '.json');
 console.log('fetchDiagram url', url);
 			const json = await (await fetch(url)).json();
+			return json;
+		}
+		processJson(json)
+		{
 			const dgrm = new diagram(json);
 			dgrm.sha256 = Cat.sha256(json);
 			return dgrm;
@@ -3218,6 +3198,20 @@ console.log('fetchDiagram url', url);
 				if (fn)
 					fn(e, result);
 			});
+		},
+		fetchDiagramJsons(cat, diagrams, fn)
+		{
+			const someDiagrams = diagrams.filter(d => !Cat.hasDiagram(cat, d));
+			jsons = [];
+			while(someDiagrams.length > 0)
+				Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(fetchedJsons =>
+				{
+					jsons.push(...fetchedJsons);
+					someDiagrams.push(...fetchedJsons.map(j => j.references.map.filter(r => !Cat.hasDiagram(cat, r))));
+				});
+			if (fn)
+				fn(jsons);
+			return jsons;
 		},
 	},
 };
@@ -5150,11 +5144,6 @@ class factorMorphism extends morphism
 `
 		return code;
 	}
-	fetchDiagrams(diagrams, fn)
-	{
-		const someDiagrams = diagrams.filter(d => !Cat.hasDiagram(this.name, d));
-		Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(dg => fn(dg));
-	}
 }
 
 class curryMorphism extends morphism
@@ -5199,7 +5188,7 @@ class curryMorphism extends morphism
 	static factorName(dgrm, fctr, dom, cod)
 	{
 		const idx = fctr[1];
-		return fctr[0] === 0 ? `_D_${dgrm.getFactor(dom, idx).name}_${idx}` : `_C_${dgrm.getFactor(cod, idx).name}_${idx}`;
+		return fctr[0] === 0 ? `_Do_${dgrm.getFactor(dom, idx).name}_${idx}` : `_Co_${dgrm.getFactor(cod, idx).name}_${idx}`;
 	}
 	static getFactorsName(dgrm, factors, expr, data)
 	{
@@ -6124,7 +6113,6 @@ class diagram extends functor
 		const mainCat = $Cat.getObject(args.codomain);
 		if (this.isStandard)
 			mainCat.referenceDiagrams.push(this);
-		this.updateElements();
 		if ('references' in args)
 			this.references = args.references.length > 0 ? args.references.map(ref => Cat.getDiagram(this.codomain.name, ref)) : [];
 		else
@@ -6133,9 +6121,9 @@ class diagram extends functor
 		{
 			if (typeof r !== 'string')
 				r.incrRefcnt();
-			return null;
+//			return null;
 			// TODO these are not defined when we create the diagrams during the run
-//			return r.sha256;
+			return r.sha256;
 		});
 		if ('referenceHashes' in args)
 		{
@@ -6146,6 +6134,8 @@ class diagram extends functor
 		}
 		else
 			this.referenceHashes = refHashes;
+		this.makeHomSets();
+		this.updateElements();
 		this.subClass = 'diagram';
 		this.selected = [];
 		this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:window.innerWidth, height:window.innerHeight});
@@ -6213,13 +6203,33 @@ class diagram extends functor
 			}
 		this.textId = Cat.getArg(args, 'textId', 0);
 		this.graphCat = new category({name:'Graph', subobject:'Graph'});
-		this.makeHomSets();
 		this.cleanse();
 		this.colorIndex2colorIndex = {};
 		this.colorIndex2color = {};
 		this.link2colorIndex = {};
 		this.colorIndex = 0;
+		if (this.isStandard)
+			mainCat.referenceDiagrams.push(this);
 	}
+
+
+	static fetchDiagram(catName, dgrmName, fn)
+	{
+		Cat.Amazon.fetchDiagramJsons(this.codomain.name, refs, function(jsons)
+		{
+			jsons.reverse().map(j =>
+			{
+				const dgrm = new diagram(j);
+				Cat.addDiagram(catName, dgrm);
+				dgrm.saveToLocalStorage();
+				dgrm.sha256 = Cat.sha256(j);
+			});
+			if (fn)
+				fn(dgrmName);
+		});
+	}
+
+
 	static genName(catName, userName, baseName)
 	{
 		return `D_${catName}_${userName}_${baseName}`;
@@ -6591,7 +6601,6 @@ class diagram extends functor
 				else if (!this.readonly)
 					btns += H.td(Cat.display.getButton('toHere', `getDiagram().toolbarHandler('codomain', 'toolbarTip')`, 'Morphisms to here'), 'buttonBar') +
 							H.td(Cat.display.getButton('fromHere', `getDiagram().toolbarHandler('domain', 'toolbarTip')`, 'Morphisms from here'), 'buttonBar') +
-//							(('op' in from.to.expr && from.to.expr.op === 'product') ? H.td(Cat.display.getButton('project', `getDiagram().gui(event, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar') : '');
 							H.td(Cat.display.getButton('project', `getDiagram().gui(event, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar');
 			}
 		}
@@ -7358,14 +7367,6 @@ class ${this.name} extends diagram
 		this.references = [${this.references.map(r => 'diagrams.' + r.name).join()}];
 `;
 		let foundMorphism = {};
-		/*
-		for(const [name, mor] of this.morphisms)
-			if (!(mor.name in foundMorphism))
-			{
-				js += mor.js(this.name);
-				foundMorphism[mor.name] = true;
-			}
-			*/
 		for(const [name, mor] of this.codomain.morphisms)
 			if (!(mor.name in foundMorphism))
 			{
@@ -7603,28 +7604,6 @@ class ${this.name} extends diagram
 			Cat.status(e, `Uploaded diagram.  Elapsed ${delta}ms`);
 		});
 	}
-/*
-	static downloadFromCatolite(catName, dgrmName, fn = null)
-	{
-		if (Cat.service === 'Amazon')
-		{
-		}
-		else
-			fetch(`catecon.php?action=downloadDiagram&cat=${Cat.htmlSafe(catName)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
-			{
-				if (response.ok)
-					response.text().then(function(txt)
-					{
-						const dgrm = new diagram(JSON.parse(txt));
-						dgrm.sha256 = Cat.sha256(txt);
-						if (fn != null)
-							fn(dgrm);
-					});
-				else
-					console.log('download diagram request failed');
-			});
-	}
-	*/
 	guiDetach(e, dir)
 	{
 		try
@@ -7941,7 +7920,6 @@ class ${this.name} extends diagram
 	{
 		let funText = functions[name].toString();
 		funText = funText.replace(new RegExp(name), 'function');
-//		return `CatFns.${type}['${name}'] = function(${args})\n\t\t${funText.slice(funText.indexOf('{'), funText.lastIndexOf('}') +1)}\n`;
 		return `CatFns.${type}['${name}'] = ${funText};\n`;
 	}
 	downloadJS()
@@ -7963,16 +7941,6 @@ const CatFns = {function:{}, functor:{}, transform:{}, util:{}};
 			else
 				js += diagram.functionBody('function', name, CatFns.function);
 		});
-		/*
-		Object.keys(CatFns.functor).forEach(function(name)
-		{
-			js += diagram.functionBody('functor', name, CatFns.functor);
-		});
-		Object.keys(CatFns.transform).forEach(function(name)
-		{
-			js += diagram.functionBody('transform', name, CatFns.transform);
-		});
-		*/
 		Object.keys(CatFns.util).forEach(function(name)
 		{
 			js += diagram.functionBody('util', name, CatFns.util);
@@ -8056,6 +8024,8 @@ class monoidal extends category
 // BOOTSTRAP
 let PFS = null;
 let Graph = null;
+
+
 function initialize()	// TODO replace with diagram downloads
 {
 	$Cat = new category(
@@ -8171,8 +8141,10 @@ function initialize()	// TODO replace with diagram downloads
 		codomain:	'Graph',
 		description:'Gives the graph of a morphism',
 	});
-return;
+}
 
+function bootstrap()
+{
 	let xyDom = {x: 300, y:Cat.default.font.height};
 	let xyCod = {x: 600, y:Cat.default.font.height};
 	//
@@ -8290,7 +8262,7 @@ return;
 							{diagram:threeD, name:'Blue', code:'Blue', html:'B', description:'The color blue'},
 							{diagram:threeD, code:'Red*Green*Blue', html:'RGB'},
 							{diagram:threeD, name:'color', code:'Red*Green*Blue', html:'Color', description:'Full color spectrum'},
-							];
+						];
 	threeDObjects.map(objectData => new object(threeD.codomain, objectData));
 	const threeDMorphisms = [
 								{name:'Nto3D', diagram:threeD, domain:'N', codomain:'threeD', function:'Ato3D', html:'&#128438;Points', description:'Plot a natural number in 3D with a random color.'},
@@ -8305,7 +8277,7 @@ return;
 								{name:'FxFxFx2toLine', diagram:threeD, domain:'point*point', codomain:'threeD', function:'AxAxAx2toLine', html:'&#128438;Lines', description:'Plot a line segment in 3D with a random color.'},
 								{name:'FxFxFx2toQuadraticBezierCurve3', diagram:threeD, domain:'point*point*point', codomain:'threeD', function:'AxAxAToQuadraticBezierCurve3', html:'&#128438;Beziers', description:'Plot a 3D Bezier curve with a random color.'},
 								{name:'Str2Color', diagram:threeD, domain:'Str', codomain:'color', function:'AxAxAToQuadraticBezierCurve3', html:'Str2Color', description:'Convert string to color.'},
-								];
+							];
 	threeD.placeMultipleMorphisms(threeDMorphisms);
 }
 
