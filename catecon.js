@@ -186,8 +186,9 @@ class operator
 
 const Cat =
 {
-	service:'Amazon',	// 'php'
-	debug:	true,
+	bootstrap:		true,
+	debug:			true,
+	initialized:	false,
 	getError(err)
 	{
 		return typeof err === 'string' ? err : err.message;
@@ -223,7 +224,7 @@ const Cat =
 	autosave:	false,
 	nameEx:	RegExp('^[a-zA-Z_]+[a-zA-Z0-9_]*$'),
 	userNameEx:	RegExp('^[a-zA-Z]+[a-zA-Z0-9]*$'),
-	user:	{name:'hdole', email:'', nickname:'hdole'},	// TODO fix after bootstrap removed
+	user:	{name:'Anon', email:'', nickname:'anon'},	// TODO fix after bootstrap removed
 	diagrams:	{},
 	localDiagrams:	{},
 	catalog:	{},
@@ -359,8 +360,10 @@ const Cat =
 			if (catName in Cat.diagrams && dgrmName in Cat.diagrams[catName])
 			{
 				const dgrm = Cat.diagrams[catName][dgrmName];
-				if (dgrm !== null && dgrm.refcnt == 1)
+//				if (dgrm !== null && dgrm.refcnt == 1)
+				if (dgrm !== null)
 				{
+					dgrm.refcnt = 1;// FORCE DELETE
 					dgrm.decrRefcnt();
 					delete Cat.diagrams[catName][dgrmName];
 					if (Cat.debug)
@@ -368,7 +371,6 @@ const Cat =
 				}
 			}
 			Cat.removeFromLocalDiagramList(catName, dgrmName);
-			delete Cat.diagrams[catName][dgrmName];
 			if (update)
 				Cat.display.diagram.setLocalDiagramsTable(catName);
 		}
@@ -421,7 +423,7 @@ const Cat =
 	renameDiagram(dgrm, name)
 	{
 		// TODO all *deep* names must be changed:  elements.diagram
-		const fullname = diagram.nameCheck(dgrm.codomain.name, name);
+		const fullname = diagram.nameCheck(dgrm.codomain.name, Cat.user.nickname, name);
 		dgrm.basename = name;
 //		delete Cat.diagrams[dgrm.category.name][dgrm.name];
 //		Cat.removeFromLocalDiagramList(dgrm.codomain.name, dgrm.name);
@@ -469,7 +471,7 @@ const Cat =
 			allObjectsFinite:		true,
 			hasProducts:	true,
 			hasCoproducts:	true,
-			referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'],
+			referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'].reverse(),
 		});
 		Graph = new category(
 		{
@@ -575,7 +577,13 @@ const Cat =
 console.log('initialize category', catName, 'diagram', dgrmName);
 				if (Cat.debug)
 					console.log('initialize diagram', dgrmName);
-				Cat.selected.selectCategoryDiagram(catName);
+				Cat.selected.selectCategoryDiagram(catName, function()
+				{
+					Cat.initialized = true;
+					if (Cat.bootstrap)
+						bootstrap();
+					Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+				});
 			});
 		}
 		catch(e)
@@ -604,6 +612,12 @@ console.log('initialize category', catName, 'diagram', dgrmName);
 						}
 					});
 // TODO					Cat.display.category.setCategoryTable();
+					if (Cat.bootstrap)
+					{
+						Cat.Amazon.saveCategory($Cat);
+						Cat.Amazon.saveCategory(PFS);
+						Cat.Amazon.saveCategory(Graph);
+					}
 					if (fn != null)
 						fn(data);
 				});
@@ -649,21 +663,17 @@ console.log('initialize category', catName, 'diagram', dgrmName);
 	},
 	deleteDiagram(cat, dgrmName)
 	{
-		if (Cat.service === 'Amazon')
+		fetch(`catecon.php?action=deleteDiagram&cat=${Cat.htmlSafe(cat)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
 		{
-		}
-		else
-			fetch(`catecon.php?action=deleteDiagram&cat=${Cat.htmlSafe(cat)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
-			{
-				if (response.ok)
-					response.json().then(function(r)
-					{
+			if (response.ok)
+				response.json().then(function(r)
+				{
 //						if (r.ok === 'true')
 //							Cat.display.downloadCatalogTable(cat);	// TODO
-					});
-				else
-					console.log('deleteDiagram request failed',cat,dgrmName);
-			});
+				});
+			else
+				console.log('deleteDiagram request failed',cat,dgrmName);
+		});
 	},
 	default:
 	{
@@ -960,23 +970,25 @@ console.log('initialize category', catName, 'diagram', dgrmName);
 			const cat = $Cat.getObject(catName);
 			nbCat.innerHTML = cat.getText();
 			nbCat.title = Cat.cap(cat.description);
-			category.fetchReferenceDiagrams(catName, fn);
+			category.fetchReferenceDiagrams(cat, fn);
 		},
-		selectCategoryDiagram(cat)
+		selectCategoryDiagram(cat, fn)
 		{
 			this.selectCategory(cat, function()
 			{
 				let name = localStorage.getItem(`Cat.default.diagram ${cat}`);
-				name = name === null ? 'Draft' : name;
-				const fullname = diagram.nameCheck(cat, name, false, false);
-				let dgrm = Cat.getDiagram(cat, fullname);
-				if (dgrm === null && diagram.fromLocalStorage(cat, fullname) === null)
+//				name = name === null ? genName(cat, Cat.user.nickname, 'Draft') : name;
+//				const fullname = name === null ? genName(cat, Cat.user.nickname, 'Draft') : diagram.nameCheck(cat, name, false, false);
+				name = name === null ? diagram.genName(cat, Cat.user.nickname, 'Draft') : name;
+				let dgrm = Cat.getDiagram(cat, name);
+				if (dgrm === null && diagram.fromLocalStorage(cat, name) === null)
 				{
 					dgrm = new diagram({name, codomain:cat, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
 					dgrm.saveToLocalStorage();
 				}
-				this.selectDiagram(fullname);
-				this.saveDefaultDiagram();
+				Cat.selected.selectDiagram(name);
+				if (fn)
+					fn();
 				Cat.updatePanels();
 			});
 		},
@@ -1036,11 +1048,11 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			function setup(name)
 			{
 				Cat.selected.diagram = name;
-				Cat.selected.saveDefaultDiagram();
+				Cat.selected.saveAsDefaultDiagram();
 				if (update)
 					Cat.selected.updateDiagramDisplay(name);
 			}
-			if (Cat.hasDiagram(cat, name))
+			if (Cat.hasDiagram(cat.name, name))
 				setup(name);
 			else
 				// TODO turn on/off busy cursor
@@ -1048,6 +1060,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 		},
 		updateDiagramDisplay(name)
 		{
+			if (!Cat.initialized)
+				return;
 			Cat.display.object.setPanelContent();
 			Cat.display.morphism.setPanelContent();
 			Cat.display.element.setPanelContent();
@@ -1146,6 +1160,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			{
 				Cat.display.shiftKey = e.shiftKey;
 				let dgrm = getDiagram();
+				if (!dgrm)
+					return;
 				const pnt = dgrm.mousePosition(e);
 				if (Cat.display.drag)
 				{
@@ -1516,7 +1532,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					let html = H.table(H.tr(Cat.display.closeBtnCell('category', false)), 'buttonBarRight');
 					html += H.h3('Categories') + H.small('Select a category') + H.div('', '', 'categoryTbl') + this.newCategoryPnl();
 					document.getElementById('category-sidenav').innerHTML = html;
-					Cat.display.diagram.setUserDiagramsTable(cat.name);
+//					Cat.display.diagram.setUserDiagramsTable(cat.name);
 //					Cat.getCategories();
 				}
 			},
@@ -1642,8 +1658,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					const skyMat = new THREE.ShaderMaterial({ vertexShader: vertexShader, fragmentShader: fragmentShader, uniforms: uniforms, side: THREE.BackSide } );
 					const sky = new THREE.Mesh(skyGeo, skyMat);
 					this.scene.add(sky );
-
-
 					let light = new THREE.DirectionalLight(0xffffff, 1);
 					light.position.set(-1, 1, -1).normalize();
 					light.position.multiplyScalar(30);
@@ -1657,7 +1671,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					if (this.threeDiv.children.length > 0)
 						this.threeDiv.removeChild(this.threeDiv.children[0]);
 					this.threeDiv.appendChild(this.renderer.domElement);
-
 					this.renderer.gammaInput = true;
 					this.renderer.gammaOutput = true;
 					this.renderer.shadowMap.enabled = true;
@@ -3055,7 +3068,7 @@ console.log('AWS.config',AWS.config);
 			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
 			this.lambda = new AWS.Lambda({region: Cat.Amazon.region, apiVersion: '2015-03-31'});
 			this.registerCognito();
-			this.registerUserPool();
+//			this.registerUserPool();
 		},
 		saveCategory(cat)
 		{
@@ -3081,7 +3094,7 @@ console.log('saveCategory key',key);
 		},
 		saveDiagram(dgrm)
 		{
-			const key = `${dgrm.codomain.name}/${Cat.user.nickname}/${dgrm.basename}.json`;
+			const key = `${dgrm.codomain.name}/${dgrm.user}/${dgrm.basename}.json`;
 console.log('saveDiagram key',key);
 			this.diagramBucket.putObject(
 			{
@@ -3163,6 +3176,7 @@ return;
 					console.log('user name is ' + Cat.Amazon.cognito.getUsername());
 			});
 		},
+		/*
 		registerUserPool()
 		{
 			const poolInfo =
@@ -3202,6 +3216,7 @@ return;
 				console.log('user name is ' + cognitoUser.getUsername());
 			});
 		},
+		*/
 		async fetchDiagram(name)
 		{
 			const tokens = name.split('_');
@@ -3242,19 +3257,28 @@ console.log('fetchDiagram url', url);
 					fn(e, result);
 			});
 		},
-		fetchDiagramJsons(cat, diagrams, fn)
+		fetchDiagramJsons(cat, diagrams, fn, jsons = [], refs = {})
 		{
-			const someDiagrams = diagrams.filter(d => !Cat.hasDiagram(cat, d));
-			jsons = [];
-			while(someDiagrams.length > 0)
-				Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(fetchedJsons =>
+			let someDiagrams = diagrams.filter(d => !Cat.hasDiagram(cat, d));
+			Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(fetchedJsons =>
+			{
+				jsons.push(...fetchedJsons);
+				fetchedJsons.map(j => {refs[j.name] = true; return true;});
+				const nextRound = [];
+				for (let i=0; i<fetchedJsons.length; ++i)
 				{
-					jsons.push(...fetchedJsons);
-					someDiagrams.push(...fetchedJsons.map(j => j.references.map.filter(r => !Cat.hasDiagram(cat, r))));
-				});
-			if (fn)
-				fn(jsons);
-			return jsons;
+//					const more = fetchedJsons[i].references.filter(r => !(r in refs));
+					nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && nextRound.indexOf(r) < 0));
+//					for (let j=0; j<more.length; ++j)
+//						if (nextRound.indexOf(more[j]) < 0)
+//							nextRound.push(more[j]);
+				}
+//				fetchedJsons.map(j => j.references.filter(r => !(r in refs)));
+				if (nextRound.length > 0)
+					fetchDiagrams(cat, nextRound, fn, jsons, refs);
+				else if (fn)
+					fn(jsons);
+			});
 		},
 	},
 };
@@ -4124,7 +4148,6 @@ class category extends object
 				{
 					try
 					{
-//						const obj = object.process(this, dgrm, args.objects[key]);
 						const obj = object.process(this, args.objects[key]);
 					}
 					catch(x)
@@ -4179,7 +4202,9 @@ class category extends object
 		cat.transforms = Cat.jsonMap(this.transforms);
 		if ('subobject' in this)
 			cat.subobject = this.subobject.name;
-		cat.referenceDiagrams = this.referenceDiagrams.map(d => d.name);
+//		cat.referenceDiagrams = this.referenceDiagrams.map(d => d.name);
+//		cat.referenceDiagrams = this.referenceDiagrams;
+		cat.referenceDiagrams = this.referenceDiagrams.map(d => typeof d === 'string' ? d : d.name);
 		return cat;
 	}
 	hasObject(name)
@@ -4476,19 +4501,18 @@ ws "white space" = [ \t\\r\\n]+
 return true; // TODO
 		return false;
 	}
-	static fetchReferenceDiagrams(catName, fn)
+	static fetchReferenceDiagrams(cat, fn)
 	{
-		Cat.Amazon.fetchDiagramJsons(this.name, this.referenceDiagrams, function(jsons)
+		Cat.Amazon.fetchDiagramJsons(cat.name, cat.referenceDiagrams, function(jsons)
 		{
 			jsons.reverse().map(j =>
 			{
 				const dgrm = new diagram(j);
-				Cat.addDiagram(catName, dgrm);
 				dgrm.saveToLocalStorage();
-				dgrm.sha256 = Cat.sha256(j);
 			});
 			if (fn)
-				fn(dgrmName);
+				fn(jsons);
+			return jsons;
 		});
 	}
 }
@@ -6187,12 +6211,13 @@ class diagram extends functor
 		}
 		else
 			this.basename = args.name;
-		this.user = Cat.getArg(args, 'user', 'Anon');
+		this.user = Cat.getArg(args, 'user', Cat.user.nickname);
+console.log('diagram',this.user, name);
 		this.name = name;
 		this.isStandard = Cat.getArg(args, 'isStandard', false);
 		const mainCat = $Cat.getObject(args.codomain);
 		if (this.isStandard)
-			mainCat.referenceDiagrams.push(this);
+			mainCat.referenceDiagrams[mainCat.referenceDiagrams.indexOf(this.name)] = this;
 		if ('references' in args)
 			this.references = args.references.length > 0 ? args.references.map(ref => Cat.getDiagram(this.codomain.name, ref)) : [];
 		else
@@ -6201,8 +6226,6 @@ class diagram extends functor
 		{
 			if (typeof r !== 'string')
 				r.incrRefcnt();
-//			return null;
-			// TODO these are not defined when we create the diagrams during the run
 			return r.sha256;
 		});
 		if ('referenceHashes' in args)
@@ -6288,11 +6311,8 @@ class diagram extends functor
 		this.colorIndex2color = {};
 		this.link2colorIndex = {};
 		this.colorIndex = 0;
-		if (this.isStandard)
-			mainCat.referenceDiagrams.push(this);
+		this.sha256 = Cat.sha256(args);
 	}
-
-
 	static fetchDiagram(catName, dgrmName, fn)
 	{
 		Cat.Amazon.fetchDiagramJsons(this.codomain.name, refs, function(jsons)
@@ -6300,21 +6320,18 @@ class diagram extends functor
 			jsons.reverse().map(j =>
 			{
 				const dgrm = new diagram(j);
-				Cat.addDiagram(catName, dgrm);
 				dgrm.saveToLocalStorage();
-				dgrm.sha256 = Cat.sha256(j);
 			});
 			if (fn)
 				fn(dgrmName);
 		});
 	}
-
-
 	static genName(catName, userName, baseName)
 	{
 		return `D_${catName}_${userName}_${baseName}`;
 	}
-	static nameCheck(catName, basename, regexTst = true, namexTst = true)
+//	static nameCheck(catName, basename, regexTst = true, namexTst = true)
+	static nameCheck(catName, userName, basename, regexTst = true, namexTst = true)
 	{
 		if (basename === '')
 			throw 'Diagram name must be specified.';
@@ -6324,7 +6341,7 @@ class diagram extends functor
 		{
 			if (regexTst && !RegExp(Cat.userNameEx).test(basename))
 				throw 'Invalid diagram name.';
-			name = diagram.genName(catName, Cat.user.nickname, basename);
+			name = diagram.genName(catName, userName, basename);
 		}
 		else
 			name = basename;
@@ -6436,10 +6453,9 @@ class diagram extends functor
 		}
 		return null;
 	}
-	setObject(from, to, incr = true)
+	setObject(from, to)
 	{
-		if (incr)
-			to.incrRefcnt();
+		to.incrRefcnt();
 		this.objects.set(from, to);
 		from.to = to;
 		from.w = Cat.textWidth(to.getText());
@@ -6455,24 +6471,19 @@ class diagram extends functor
 	}
 	saveToLocalStorage()
 	{
-		const data = this.stringify();
 		if (Cat.debug)
 			console.log('save to local storage', diagram.storageName(this.codomain.name, this.name));
+		const data = this.stringify();
 		localStorage.setItem(diagram.storageName(this.codomain.name, this.name), data);
 	}
 	static fromLocalStorage(catName, dgrmName)
 	{
-		if (Cat.debug)
-			console.log('fromLocalStorage',catName,dgrmName);
 		const data = localStorage.getItem(diagram.storageName(catName, dgrmName));
 		let dgrm = null;
 		if (data !== null)
-		{
 			dgrm = new diagram(JSON.parse(data));
-			dgrm.sha256 = Cat.sha256(data);
-			if (Cat.debug)
-				console.log('diagram local sha256', dgrmName, dgrm.sha256);
-		}
+		if (Cat.debug)
+			console.log('fromLocalStorage',catName,dgrmName,dgrm);
 		return dgrm;
 	}
 	static storageName(catName, dgrmName)
@@ -8106,6 +8117,7 @@ let PFS = null;
 let Graph = null;
 
 
+/*
 function initialize()	// TODO replace with diagram downloads
 {
 	$Cat = new category(
@@ -8185,15 +8197,13 @@ function initialize()	// TODO replace with diagram downloads
 		description:'Test for equality on an object',
 		testFunction:	function(dgrm, obj)
 		{
-		/*
-			if ('data' in obj.expr && obj.expr.data.length === 2 && obj.expr.op === 'product')
-			{
-				const cod0 = element.getCode(dgrm, obj.expr.data[0], true, true);
-				const cod1 = element.getCode(dgrm, obj.expr.data[1], true, true);
-				return cod0 === cod1;
-			}
-			return false;
-			*/
+//			if ('data' in obj.expr && obj.expr.data.length === 2 && obj.expr.op === 'product')
+//			{
+//				const cod0 = element.getCode(dgrm, obj.expr.data[0], true, true);
+//				const cod1 = element.getCode(dgrm, obj.expr.data[1], true, true);
+//				return cod0 === cod1;
+//			}
+//			return false;
 			return obj.isSquared();
 		},
 	});
@@ -8222,6 +8232,7 @@ function initialize()	// TODO replace with diagram downloads
 		description:'Gives the graph of a morphism',
 	});
 }
+*/
 
 function bootstrap()
 {
@@ -8230,35 +8241,35 @@ function bootstrap()
 	//
 	// basics
 	//
-	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_basics');
-	const basics = new diagram({name:'basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_basics', false);
+	const basics = new diagram({name:'D_PFS_std_basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
 	const basicObjects =
 		[{diagram:basics, code:'Null', html:'&#x2205', description:'empty set', isInitial:true, isFinite:0},
 		{diagram:basics, code:'One', html:'1', description:'Terminal object, or one point set', isTerminal:true, isFinite:1}];
 	basicObjects.map(objectData => new object(basics.codomain, objectData));
-	const basicMorphisms = [{name:'Null2one', diagram:'D_PFS_hdole_basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
+	const basicMorphisms = [{name:'Null2one', diagram:'D_PFS_std_basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
 	basics.placeMultipleMorphisms(basicMorphisms);
 
 	//
 	// first order logic
 	//
-	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_FOL');
-	const fol = new diagram({name:'FOL', codomain:'PFS', html:'First Order Logic', references:['D_PFS_hdole_basics'], readonly:true, isStandard:true, user:'std'});
-	const folObjects = [{diagram:'D_PFS_hdole_FOL', code:'Omega', html:'&#x03a9', description:'sub-object classifier', isFinite:2},
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_FOL', false);
+	const fol = new diagram({name:'D_PFS_std_FOL', codomain:'PFS', html:'First Order Logic', references:['D_PFS_std_basics'], readonly:true, isStandard:true, user:'std'});
+	const folObjects = [{diagram:'D_PFS_std_FOL', code:'Omega', html:'&#x03a9', description:'sub-object classifier', isFinite:2},
 						{code:'Omega*Omega'}];
 	folObjects.map(objectData => new object(fol.codomain, objectData));
-	const folMorphisms = [	{name:'False', diagram:'D_PFS_hdole_FOL', domain:'One', codomain:'Omega', function:'false', html:'&#x22a5', description:'false'},
-							{name:'True', diagram:'D_PFS_hdole_FOL', domain:'One', codomain:'Omega', function:'true', 	html:'&#x22a4', description:'true'},
-							{name:'not', diagram:'D_PFS_hdole_FOL', domain:'Omega', codomain:'Omega', function:'not', html:'&#x00ac', description:'not'},
-							{name:'and', diagram:'D_PFS_hdole_FOL', domain:'Omega*Omega', codomain:'Omega', function:'and', html:'&#x2227', description:'logical and'},
-							{name:'or', diagram:'D_PFS_hdole_FOL', domain:'Omega*Omega', codomain:'Omega', function:'or', html:'&#x2228', description:'logical or'}];
+	const folMorphisms = [	{name:'False', diagram:'D_PFS_std_FOL', domain:'One', codomain:'Omega', function:'false', html:'&#x22a5', description:'false'},
+							{name:'True', diagram:'D_PFS_std_FOL', domain:'One', codomain:'Omega', function:'true', 	html:'&#x22a4', description:'true'},
+							{name:'not', diagram:'D_PFS_std_FOL', domain:'Omega', codomain:'Omega', function:'not', html:'&#x00ac', description:'not'},
+							{name:'and', diagram:'D_PFS_std_FOL', domain:'Omega*Omega', codomain:'Omega', function:'and', html:'&#x2227', description:'logical and'},
+							{name:'or', diagram:'D_PFS_std_FOL', domain:'Omega*Omega', codomain:'Omega', function:'or', html:'&#x2228', description:'logical or'}];
 	fol.placeMultipleMorphisms(folMorphisms);
 	//
 	// arithmetic operations
 	//
-	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_arithmetics');
-	const arithmetics = new diagram({name:'arithmetics', codomain:'PFS', html:'Arithmetics', description:'Artithmetic operations on natural numbers, integers, and floating point numbers.',
-				references:['D_PFS_hdole_basics', 'D_PFS_hdole_FOL'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_arithmetics', false);
+	const arithmetics = new diagram({name:'D_PFS_std_arithmetics', codomain:'PFS', html:'Arithmetics', description:'Artithmetic operations on natural numbers, integers, and floating point numbers.',
+				references:['D_PFS_std_basics', 'D_PFS_std_FOL'], readonly:true, isStandard:true, user:'std'});
 	xyDom = {x: 300, y:Cat.default.font.height};
 	xyCod = {x: 600, y:Cat.default.font.height};
 
@@ -8300,8 +8311,8 @@ function bootstrap()
 		{name:'Z2F', diagram:arithmetics, domain:'Z', codomain:'F', function:'int2float', html:'&#x21aa', description:'Embed integers into floats'}];
 	arithmetics.placeMultipleMorphisms(arithMorphData);
 
-	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_strings');
-	const strings = new diagram({name:'strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D_PFS_hdole_arithmetics'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_strings', false);
+	const strings = new diagram({name:'D_PFS_std_strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D_PFS_std_arithmetics'], readonly:true, isStandard:true, user:'std'});
 	const stringObjects = [
 		{diagram:strings, code:'Str', html:'Str', description:'The space of finite strings'},
 		{diagram:strings, code:'Str*Str'}];
@@ -8319,8 +8330,8 @@ function bootstrap()
 	//
 	// console
 	//
-	Cat.removeFromLocalDiagramList('PFS', 'D_PFS_hdole_console');
-	const console = new diagram({name:'console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D_PFS_hdole_strings'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_console', false);
+	const console = new diagram({name:'D_PFS_std_console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D_PFS_std_strings'], readonly:true, isStandard:true, user:'std'});
 	const consoleObjects = [{diagram:console, code:'tty', html:'tty', description:'Write-only console'}];
 	consoleObjects.map(objectData => new object(console.codomain, objectData));
 	const consoleMorphisms = [{name:'print', diagram:console, domain:'Str', codomain:'tty', function:'ttyOut', html:'&#128438;', description:'Print to tty'}];
@@ -8328,8 +8339,8 @@ function bootstrap()
 	//
 	// threeD
 	//
-	Cat.deleteLocalDiagram('PFS', 'D_PFS_hdole_threeD', false);
-	const threeD = new diagram({name:'threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D_PFS_hdole_arithmetics', 'D_PFS_hdole_strings'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_threeD', false);
+	const threeD = new diagram({name:'D_PFS_std_threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D_PFS_std_arithmetics', 'D_PFS_std_strings'], readonly:true, isStandard:true, user:'std'});
 	const threeDObjects = [{diagram:threeD, code:'threeD', html:'3D', description:'Rendering in 3D'},
 							{diagram:threeD, code:'N*N*N'},
 							{diagram:threeD, code:'Z*Z*Z'},
@@ -8359,19 +8370,13 @@ function bootstrap()
 								{name:'Str2Color', diagram:threeD, domain:'Str', codomain:'color', function:'AxAxAToQuadraticBezierCurve3', html:'Str2Color', description:'Convert string to color.'},
 							];
 	threeD.placeMultipleMorphisms(threeDMorphisms);
+	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_basics);
+	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_FOL);
+	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_strings);
+	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_arithmetics);
+	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_console);
+	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_threeD);
+	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_anon_Draft);
 }
 
 Cat.initialize();	// boot-up
-
-Cat.Amazon.saveCategory($Cat);
-Cat.Amazon.saveCategory(PFS);
-Cat.Amazon.saveCategory(Graph);
-/*
-Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_basics);
-Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_FOL);
-Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_strings);
-Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_arithmetics);
-Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_console);
-Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_threeD);
-Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_hdole_Draft);
-*/
