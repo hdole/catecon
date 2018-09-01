@@ -570,16 +570,12 @@ const Cat =
 			{
 				let catName = localStorage.getItem('Cat.default.category');
 				catName = catName === null ? 'PFS' : catName;
-	console.log('initialize category', catName);
 				let dgrmName = localStorage.getItem(`Cat.default.diagram ${catName}`);
 				dgrmName = dgrmName === null ? diagram.genName(catName, Cat.user.nickname, 'Draft') : dgrmName;
+console.log('initialize category', catName, 'diagram', dgrmName);
 				if (Cat.debug)
 					console.log('initialize diagram', dgrmName);
-
 				Cat.selected.selectCategoryDiagram(catName);
-				Cat.selected.selectDiagram(dgrmName, false);
-				console.log(dgrm);
-				Cat.updatePanels();
 			});
 		}
 		catch(e)
@@ -955,7 +951,7 @@ const Cat =
 			}
 		},
 		*/
-		selectCategory(catName)
+		selectCategory(catName, fn)
 		{
 			Cat.selected.category = catName;
 			localStorage.setItem('Cat.default.category', catName);
@@ -964,21 +960,25 @@ const Cat =
 			const cat = $Cat.getObject(catName);
 			nbCat.innerHTML = cat.getText();
 			nbCat.title = Cat.cap(cat.description);
+			category.fetchReferenceDiagrams(catName, fn);
 		},
 		selectCategoryDiagram(cat)
 		{
-			this.selectCategory(cat);
-			let name = localStorage.getItem(`Cat.default.diagram ${cat}`);
-			name = name === null ? 'Draft' : name;
-			const fullname = diagram.nameCheck(cat, name, false, false);
-			let dgrm = Cat.getDiagram(cat, fullname);
-			if (dgrm === null && diagram.fromLocalStorage(cat, fullname) === null)
+			this.selectCategory(cat, function()
 			{
-				dgrm = new diagram({name, codomain:cat, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
-				dgrm.saveToLocalStorage();
-			}
-			this.selectDiagram(fullname);
-			this.saveDefaultDiagram();
+				let name = localStorage.getItem(`Cat.default.diagram ${cat}`);
+				name = name === null ? 'Draft' : name;
+				const fullname = diagram.nameCheck(cat, name, false, false);
+				let dgrm = Cat.getDiagram(cat, fullname);
+				if (dgrm === null && diagram.fromLocalStorage(cat, fullname) === null)
+				{
+					dgrm = new diagram({name, codomain:cat, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
+					dgrm.saveToLocalStorage();
+				}
+				this.selectDiagram(fullname);
+				this.saveDefaultDiagram();
+				Cat.updatePanels();
+			});
 		},
 		/*
 		updateCategoryDisplay()
@@ -3028,6 +3028,7 @@ ${this.svg.button(onclick)}
 		region:				'us-west-1',
 		diagramBucketName:	'catecon-diagrams',
 		diagramBucket:		null,
+		userPoolId:			'us-west-2_HKN5CKGDz',
 		URL(cat, user, basename)
 		{
 			let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
@@ -3054,6 +3055,7 @@ console.log('AWS.config',AWS.config);
 			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
 			this.lambda = new AWS.Lambda({region: Cat.Amazon.region, apiVersion: '2015-03-31'});
 			this.registerCognito();
+			this.registerUserPool();
 		},
 		saveCategory(cat)
 		{
@@ -3146,7 +3148,7 @@ console.log('retrieveProfile', response.profile);
 				*/
 			});
 			AWS.config.credentials.get();
-console.log('User', Cat.user.nickname);
+console.log('User', Cat.user.nickname,AWS.config.credentials);
 return;
 			let attributeList = [{Name:'email', Value:Cat.user.email}];
 			userPool.signUp( 'username', 'password', attributeList, null, function(err, result)
@@ -3161,6 +3163,45 @@ return;
 					console.log('user name is ' + Cat.Amazon.cognito.getUsername());
 			});
 		},
+		registerUserPool()
+		{
+			const poolInfo =
+			{
+				UserPoolId:	'us-west-2_HKN5CKGDz',
+				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
+			};
+//			this.userPool = new AWS.CognitoIdentity.CognitoUserPool(poolInfo);
+			this.userPool = new CognitoUserPool(poolInfo);
+
+			var attributeList = [];
+
+			var dataEmail =
+			{
+				Name : 'email',
+				Value : 'email@mydomain.com'
+			};
+			var dataPhoneNumber =
+			{
+				Name : 'phone_number',
+				Value : '+15555555555'
+			};
+			var attributeEmail = new AWS.CognitoIdentity.CognitoUserAttribute(dataEmail);
+			var attributePhoneNumber = new AWS.CognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
+
+			attributeList.push(attributeEmail);
+			attributeList.push(attributePhoneNumber);
+
+			userPool.signUp('username', 'password', attributeList, null, function(err, result)
+			{
+				if (err)
+				{
+					alert(err);
+					return;
+				}
+				cognitoUser = result.user;
+				console.log('user name is ' + cognitoUser.getUsername());
+			});
+		},
 		async fetchDiagram(name)
 		{
 			const tokens = name.split('_');
@@ -3171,13 +3212,15 @@ return;
 console.log('fetchDiagram url', url);
 			const json = await (await fetch(url)).json();
 			return json;
-		}
+		},
+		/*
 		processJson(json)
 		{
 			const dgrm = new diagram(json);
 			dgrm.sha256 = Cat.sha256(json);
 			return dgrm;
 		},
+		*/
 		ingestDiagramLambda(e, dgrm, fn)
 		{
 			const params =
@@ -3690,7 +3733,7 @@ class element
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
-					return data.start + data.i;
+				return data.start + data.i;
 			},
 			function(dgrm, expr, first, data)
 			{
@@ -3740,6 +3783,28 @@ class element
 				fctr = j === 0 ? fctr.lhs : fctr.rhs;
 		}
 		return fctr;
+	}
+	static objectSignature(cat, expr, first, data)	// data = 
+	{
+		return element.expandExpression(cat, expr,
+			function(cat, expr, first, data)
+			{
+				let obj = 'token' in expr ? cat.getObject(expr.token) : cat.getObjectByExpr(expr);
+				if (obj)
+					return obj.cid;
+				throw 'bad expression for object signature';
+			},
+			function(cat, expr, first, data)
+			{
+				// TODO assumes associative due to sort()
+				return Cat.sha256(expr.data.map((x, i) => element.objectSignature(cat, x, false, null)).sort().join(''));
+			},
+			function(cat, expr, first, data)
+			{
+				return Cat.sha256(element.objectSignature(cat, expr.lhs, false, null) + element.objectSignature(cat, expr.rhs, false, null));
+			},
+			function(){},
+			first, data);
 	}
 	makeSVG(group = true)
 	{
@@ -4410,6 +4475,21 @@ ws "white space" = [ \t\\r\\n]+
 		}
 return true; // TODO
 		return false;
+	}
+	static fetchReferenceDiagrams(catName, fn)
+	{
+		Cat.Amazon.fetchDiagramJsons(this.name, this.referenceDiagrams, function(jsons)
+		{
+			jsons.reverse().map(j =>
+			{
+				const dgrm = new diagram(j);
+				Cat.addDiagram(catName, dgrm);
+				dgrm.saveToLocalStorage();
+				dgrm.sha256 = Cat.sha256(j);
+			});
+			if (fn)
+				fn(dgrmName);
+		});
 	}
 }
 
@@ -6385,15 +6465,15 @@ class diagram extends functor
 		if (Cat.debug)
 			console.log('fromLocalStorage',catName,dgrmName);
 		const data = localStorage.getItem(diagram.storageName(catName, dgrmName));
+		let dgrm = null;
 		if (data !== null)
 		{
-			const dgrm = new diagram(JSON.parse(data));
+			dgrm = new diagram(JSON.parse(data));
 			dgrm.sha256 = Cat.sha256(data);
 			if (Cat.debug)
 				console.log('diagram local sha256', dgrmName, dgrm.sha256);
-			return dgrm;
 		}
-		return null;
+		return dgrm;
 	}
 	static storageName(catName, dgrmName)
 	{
