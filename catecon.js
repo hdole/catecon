@@ -2186,7 +2186,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					H.div('User: ' + H.span(Cat.user.name, 'italic')) +
 					H.div('Email: ' + H.span(Cat.user.email, 'italic')) +
 					H.div('Nickname: ' + H.span(Cat.user.nickname, 'italic')) +
-					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon'));
+					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon') + 
+						H.button('Log out', 'sidenavAccordion', '', 'Log out of the current session', `onclick="Cat.Amazon.user.signOut()"`));
 				document.getElementById('login-sidenav').innerHTML = html;
 			},
 		},
@@ -2952,7 +2953,7 @@ ${this.svg.button(onclick)}
 				case 'registered':
 					c = '#333';
 					break;
-				case 'logged-in';
+				case 'logged-in':
 					c = '#AAA';
 					break;
 			}
@@ -3052,12 +3053,20 @@ ${this.svg.button(onclick)}
 	Amazon:
 	{
 		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
-		identityPoolId:		'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
 		cognitoRegion:		'us-west-2',
+		user:				null,
 		region:				'us-west-1',
 		diagramBucketName:	'catecon-diagrams',
 		diagramBucket:		null,
 		userPoolId:			'us-west-2_HKN5CKGDz',
+		userPool:			null,
+		loginInfo:			{
+								IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
+								Logins:			{
+													'cognito-idp.us-west-2.amazonaws.com/us-west-2_HKN5CKGDz': '',
+												},
+								RoleArn:		'arn:aws:iam::395668725886:role/Cognito_CateconUnauth_Role',
+							},
 		URL(cat, user, basename)
 		{
 			let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
@@ -3072,18 +3081,21 @@ ${this.svg.button(onclick)}
 			return `${url}/${basename}`;
 		},
 		loggedIn:			false,
-		role:				'arn:aws:iam::395668725886:role/Cognito_CateconUnauth_Role',
 		initialize()
 		{
 			AWS.config.update(
 			{
 				region:	this.region,
-				credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:this.identityPoolId}),
+//				credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:this.identityPoolId}),
+				credentials:	new AWS.CognitoIdentityCredentials(this.loginInfo),
 			});
 console.log('AWS.config',AWS.config);
+			this.registerCognito();
+		},
+		updateServiceObjects()
+		{
 			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
 			this.lambda = new AWS.Lambda({region: Cat.Amazon.region, apiVersion: '2015-03-31'});
-			this.registerCognito();
 		},
 		saveCategory(cat)
 		{
@@ -3165,23 +3177,68 @@ console.log('AWS.config.credentials 2',AWS.config.credentials);
 				});
 			});
 		},
+		/*
 		registerCognito()
 		{
 			AWS.config.region = this.cognitoRegion;
 			AWS.config.credentials = new AWS.CognitoIdentityCredentials(
 			{
 				IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
-				/*
 				Logins:			{
 									'www.amazon.com':			'AMAZONTOKEN',
 									'graph.facebook.com':		'FBTOKEN',
 									'accounts.amazon.com':		'GOOGLETOKEN',
 								},
-				*/
 			});
 			AWS.config.credentials.get();
 			if (Cat.debug)
 				console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
+			return;
+		},
+	*/
+		registerCognito()
+		{
+			const poolInfo =
+			{
+				UserPoolId:	this.userPoolId,
+				ClientId:	this.clientId,
+			};
+			AWS.config.region = this.cognitoRegion;
+			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
+			Cat.Amazon.user = this.userPool.getCurrentUser();
+			if (Cat.Amazon.user !== null)
+			{
+				if (Cat.debug)
+					console.log('RegisterCognito has current user');
+			}
+			else
+			{
+				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
+				AWS.config.credentials.get();
+				if (Cat.debug)
+					console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
+				Cat.Amazon.user = this.userPool.getCurrentUser();
+			}
+			if (Cat.Amazon.user)
+				Cat.Amazon.user.getSession(function(err, session)
+				{
+					if (err)
+					{
+						alert(err.message);
+						return;
+					}
+					AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
+					if (Cat.debug)
+						console.log('registerCognito session validity', session.isValid());
+				});
+			AWS.config.credentials.refresh((error) =>
+			{
+				if (error)
+					console.error(error);
+				else
+					console.log('Successfully logged!');
+			});
+			this.updateServiceObjects();
 			return;
 		},
 		registerUserPool()
