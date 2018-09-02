@@ -52,9 +52,7 @@ function segmentDistance(p, v, w)
 }
 function getCat()
 {
-	if ($Cat === null)
-		throw '$Cat is null';
-	return $Cat.getObject(Cat.selected.category);
+	return $Cat ? $Cat.getObject(Cat.selected.category) : null;
 }
 function getDiagram(name = null)
 {
@@ -186,7 +184,7 @@ class operator
 
 const Cat =
 {
-	bootstrap:		true,
+	bootstrap:		false,
 	debug:			true,
 	initialized:	false,
 	getError(err)
@@ -568,15 +566,15 @@ const Cat =
 			Cat.getLocalDiagramList();
 			Cat.display.initialize();
 			Cat.Amazon.initialize();
+			Cat.display.setNavbarBackground();
 			Cat.initializeCT(function()
 			{
 				let catName = localStorage.getItem('Cat.default.category');
 				catName = catName === null ? 'PFS' : catName;
 				let dgrmName = localStorage.getItem(`Cat.default.diagram ${catName}`);
 				dgrmName = dgrmName === null ? diagram.genName(catName, Cat.user.nickname, 'Draft') : dgrmName;
-console.log('initialize category', catName, 'diagram', dgrmName);
 				if (Cat.debug)
-					console.log('initialize diagram', dgrmName);
+					console.log('initialize', catName, dgrmName);
 				Cat.selected.selectCategoryDiagram(catName, function()
 				{
 					Cat.initialized = true;
@@ -1123,6 +1121,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			this.resize();
 			this.addEventListeners();
 			this.tty.setPanelContent();	// for early errors
+			Cat.updatePanels();
 		},
 		mousedown(e)
 		{
@@ -2105,8 +2104,9 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				let html = H.table(H.tr(Cat.display.closeBtnCell('functor', false)), 'buttonBarRight');
 				html += H.h3('Functors');
 				let morphs = [];
-				for(const [key, mor] of $Cat.morphisms)
-					morphs.push(mor);
+				if ($Cat)
+					for(const [key, mor] of $Cat.morphisms)
+						morphs.push(mor);
 				html += H.table(Cat.display.morphismTableRows(morphs, `onclick=""`));
 				document.getElementById('functor-sidenav').innerHTML = html;
 			},
@@ -2183,9 +2183,10 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
 					H.h3('Login') +
-					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon')) +
 					H.div('User: ' + H.span(Cat.user.name, 'italic')) +
-					H.div('Email: ' + H.span(Cat.user.email, 'italic'));
+					H.div('Email: ' + H.span(Cat.user.email, 'italic')) +
+					H.div('Nickname: ' + H.span(Cat.user.nickname, 'italic')) +
+					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon'));
 				document.getElementById('login-sidenav').innerHTML = html;
 			},
 		},
@@ -2304,8 +2305,9 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				let html = H.table(H.tr(Cat.display.closeBtnCell('transform', false)), 'buttonBarRight');
 				html += H.h3('Transforms');
 				let morphs = [];
-				for(const [key, trn] of $Cat.transforms)
-					morphs.push(trn);
+				if ($Cat)
+					for(const [key, trn] of $Cat.transforms)
+						morphs.push(trn);
 				html += H.table(Cat.display.morphismTableRows(morphs, `onclick=""`));
 				document.getElementById('transform-sidenav').innerHTML = html;
 			},
@@ -2942,6 +2944,20 @@ ${this.svg.button(onclick)}
 				}
 			}, false);
 		},
+		setNavbarBackground()
+		{
+			let c = '#CCC';
+			switch(Cat.user.status)
+			{
+				case 'registered':
+					c = '#333';
+					break;
+				case 'logged-in';
+					c = '#AAA';
+					break;
+			}
+			document.getElementById('navbar').style.background = c;
+		},
 	},
 	jsonAssoc(assoc)
 	{
@@ -3068,7 +3084,6 @@ console.log('AWS.config',AWS.config);
 			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
 			this.lambda = new AWS.Lambda({region: Cat.Amazon.region, apiVersion: '2015-03-31'});
 			this.registerCognito();
-//			this.registerUserPool();
 		},
 		saveCategory(cat)
 		{
@@ -3130,6 +3145,7 @@ console.log('saveDiagram key',key);
 						console.log('login failed', check, response.error);
 					return;
 				}
+console.log('AWS.config.credentials',AWS.config.credentials);
 				AWS.config.credentials = new AWS.WebIdentityCredentials({
 					RoleArn:		Cat.Amazon.role,
 					ProviderId:		'www.amazon.com',
@@ -3138,11 +3154,14 @@ console.log('saveDiagram key',key);
 				amazon.Login.retrieveProfile(response.access_token, function(response)
 				{
 console.log('retrieveProfile', response.profile);
+console.log('AWS.config.credentials 2',AWS.config.credentials);
 					Cat.user.name = response.profile.Name;
 					Cat.user.email = response.profile.PrimaryEmail;
-					Cat.user.nickname = 'hdole';	// TODO
+					Cat.user.nickname = '';	// TODO
+					Cat.user.status = 'logged-in';
 					Cat.Amazon.loggedIn = true;
 					Cat.display.login.setPanelContent();
+					Cat.display.setNavbarBackground();
 				});
 			});
 		},
@@ -3161,22 +3180,10 @@ console.log('retrieveProfile', response.profile);
 				*/
 			});
 			AWS.config.credentials.get();
-console.log('User', Cat.user.nickname,AWS.config.credentials);
-return;
-			let attributeList = [{Name:'email', Value:Cat.user.email}];
-			userPool.signUp( 'username', 'password', attributeList, null, function(err, result)
-			{
-				if (err)
-				{
-					alert(err);
-					return;
-				}
-				Cat.Amazon.cognito = result.user;
-				if (Cat.debug)
-					console.log('user name is ' + Cat.Amazon.cognito.getUsername());
-			});
+			if (Cat.debug)
+				console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
+			return;
 		},
-		/*
 		registerUserPool()
 		{
 			const poolInfo =
@@ -3185,7 +3192,7 @@ return;
 				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
 			};
 //			this.userPool = new AWS.CognitoIdentity.CognitoUserPool(poolInfo);
-			this.userPool = new CognitoUserPool(poolInfo);
+			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
 
 			var attributeList = [];
 
@@ -3199,13 +3206,13 @@ return;
 				Name : 'phone_number',
 				Value : '+15555555555'
 			};
-			var attributeEmail = new AWS.CognitoIdentity.CognitoUserAttribute(dataEmail);
-			var attributePhoneNumber = new AWS.CognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
+			var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+			var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
 
 			attributeList.push(attributeEmail);
 			attributeList.push(attributePhoneNumber);
 
-			userPool.signUp('username', 'password', attributeList, null, function(err, result)
+			this.userPool.signUp('username', 'password', attributeList, null, function(err, result)
 			{
 				if (err)
 				{
@@ -3216,7 +3223,6 @@ return;
 				console.log('user name is ' + cognitoUser.getUsername());
 			});
 		},
-		*/
 		async fetchDiagram(name)
 		{
 			const tokens = name.split('_');
@@ -7687,13 +7693,18 @@ class ${this.name} extends diagram
 	}
 	upload(e, fn = null)
 	{
-		document.getElementById('diagramUploadBtn').classList.add('vanish');
-		const start = Date.now();
-		Cat.Amazon.ingestDiagramLambda(e, this, function(e, data)
+		if (Cat.user.status === 'registered')
 		{
-			const delta = Date.now() - start;
-			Cat.status(e, `Uploaded diagram.  Elapsed ${delta}ms`);
-		});
+			document.getElementById('diagramUploadBtn').classList.add('vanish');
+			const start = Date.now();
+			Cat.Amazon.ingestDiagramLambda(e, this, function(e, data)
+			{
+				const delta = Date.now() - start;
+				Cat.status(e, `Uploaded diagram.  Elapsed ${delta}ms`);
+			});
+		}
+		else
+			Cat.status('You need to register to upload your work.');
 	}
 	guiDetach(e, dir)
 	{
