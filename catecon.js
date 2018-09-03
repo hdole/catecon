@@ -135,6 +135,7 @@ class H
 	static h4	(h, c, i, t, x)	{ return H.x('h4', h, c, i, t, x); }
 	static h5	(h, c, i, t, x)	{ return H.x('h5', h, c, i, t, x); }
 	static hr	()				{ return '<hr/>'; }
+	static input(h, c, i, t, x) { return `<input id="${i}" class="${c}" type="${t}" value="${h}" placeholder="${x.ph}" ${'x' in x ? x.x : ''}/>`; }
 	static p	(h, c, i, t, x)	{ return H.x('p', h, c, i, t, x); }
 	static pre	(h, c, i, t, x)	{ return H.x('pre', h, c, i, t, x); }
 	static small(h, c, i, t, x)	{ return H.x('small', h, c, i, t, x); }
@@ -187,6 +188,19 @@ const Cat =
 	bootstrap:		false,
 	debug:			true,
 	initialized:	false,
+	statusXY:		{x:0, y:0},
+	autosave:		false,
+	nameEx:			RegExp('^[a-zA-Z_]+[a-zA-Z0-9_]*$'),
+	userNameEx:		RegExp('^[a-zA-Z]+[a-zA-Z0-9]*$'),
+	user:			{name:'Anon', email:'', nickname:'anon', status:'unauthorized'},	// TODO fix after bootstrap removed
+	diagrams:		{},
+	localDiagrams:	{},
+	catalog:		{},
+	mouse:
+	{
+		down:	{x:0, y:0},
+		xy:		{x:0, y:0},
+	},
 	getError(err)
 	{
 		return typeof err === 'string' ? err : err.message;
@@ -217,19 +231,6 @@ const Cat =
 		s.style.opacity = 1;
 		s.style.display = 'block';
 		Cat.statusXY = {x:e.clientX, y:e.clientY};
-	},
-	statusXY:	{x:0, y:0},
-	autosave:	false,
-	nameEx:	RegExp('^[a-zA-Z_]+[a-zA-Z0-9_]*$'),
-	userNameEx:	RegExp('^[a-zA-Z]+[a-zA-Z0-9]*$'),
-	user:	{name:'Anon', email:'', nickname:'anon'},	// TODO fix after bootstrap removed
-	diagrams:	{},
-	localDiagrams:	{},
-	catalog:	{},
-	mouse:
-	{
-		down:	{x:0, y:0},
-		xy:		{x:0, y:0},
 	},
 	barycenter(ary)
 	{
@@ -2187,7 +2188,23 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					H.div('Email: ' + H.span(Cat.user.email, 'italic')) +
 					H.div('Nickname: ' + H.span(Cat.user.nickname, 'italic')) +
 					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon') + 
-						H.button('Log out', 'sidenavAccordion', '', 'Log out of the current session', `onclick="Cat.Amazon.user.signOut()"`));
+						H.button('Log out', '', '', 'Log out of the current session', `onclick="Cat.Amazon.user.signOut()"`));
+					if (Cat.user.status !== 'logged-in')
+						html += H.h3('Login') +
+								H.table(H.tr(H.td('User name (no spaces)') + H.td(H.input('', '', 'loginUserName', 'text', {ph:'Name'}))) +
+										H.tr(H.td('Password') + H.td(H.input('', '', 'loginPassword', 'password', {ph:'********'})))) +
+										H.button('Log in to Catecon', '', '', '', 'onclick=Cat.Amazon.login()');
+					if (Cat.user.status === 'unauthorized')
+						html += H.h3('Signup') +
+								H.table(H.tr(H.td('User name (no spaces)') + H.td(H.input('', '', 'signupUserName', 'text', {ph:'Name'}))) +
+										H.tr(H.td('Email') + H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
+										H.tr(H.td('Password') + H.td(H.input('', '', 'signupUserPassword', 'password', {ph:'Password'}))) +
+										H.tr(H.td('Confirm password') + H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Password'})))) +
+										H.button('Sign up for Catecon', '', '', '', 'onclick=Cat.Amazon.signup()');
+					if (Cat.user.status === 'registered')
+						html += H.h3('Confirmation Code') +
+								H.table(H.tr(H.td('Confirmation code') + H.td(H.input('', '', 'confirmationCode', 'text', {ph:'Name'})))) +
+									H.button('Submit Confirmation Code', '', '', '', 'onclick=Cat.Amazon.confirm()');
 				document.getElementById('login-sidenav').innerHTML = html;
 			},
 		},
@@ -2782,7 +2799,8 @@ ${this.svg.button(onclick)}
 		},
 		input(val, id, ph, x='', cls='in100', type='text')
 		{
-			return `<input id="${id}" class="${cls}" type="${type}" value="${val}" placeholder="${ph}" ${x}/>`;
+//			return `<input id="${id}" class="${cls}" type="${type}" value="${val}" placeholder="${ph}" ${x}/>`;
+			return H.input(val, cls, id, type, {ph});
 		},
 		morphismTableRows(morphisms, action = null, drag = true)
 		{
@@ -2951,10 +2969,16 @@ ${this.svg.button(onclick)}
 			switch(Cat.user.status)
 			{
 				case 'registered':
-					c = '#333';
+					c = '#A33';
+					break;
+				case 'confirmed':
+					c = '#AA0';
+					break;
+				case 'unauthorized':
+					c = '#CCC';
 					break;
 				case 'logged-in':
-					c = '#AAA';
+					c = '#333';
 					break;
 			}
 			document.getElementById('navbar').style.background = c;
@@ -3052,6 +3076,7 @@ ${this.svg.button(onclick)}
 	},
 	Amazon:
 	{
+		accessToken:		null,
 		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
 		cognitoRegion:		'us-west-2',
 		user:				null,
@@ -3062,10 +3087,9 @@ ${this.svg.button(onclick)}
 		userPool:			null,
 		loginInfo:			{
 								IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
-								Logins:			{
-													'cognito-idp.us-west-2.amazonaws.com/us-west-2_HKN5CKGDz': '',
-												},
-								RoleArn:		'arn:aws:iam::395668725886:role/Cognito_CateconUnauth_Role',
+//								Logins:			{
+//													'cognito-idp.us-west-2.amazonaws.com/us-west-2_HKN5CKGDz': '',
+//												},
 							},
 		URL(cat, user, basename)
 		{
@@ -3141,7 +3165,48 @@ console.log('saveDiagram key',key);
 					console.log('saved diagram',dgrm.name);
 			});
 		},
-		login(check = true)
+		login()
+		{
+			const userName = document.getElementById('loginUserName').value;
+			const password = document.getElementById('loginPassword').value;
+			const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username:userName, Password:password});
+			const userData = {Username:userName, Pool:Cat.Amazon.userPool};
+			Cat.Amazon.user = new AmazonCognitoIdentity.CognitoUser(userData);
+			Cat.Amazon.user.authenticateUser(authenticationDetails,
+			{
+				onSuccess:function(result)
+				{
+					Cat.Amazon.accessToken = result.getAccessToken().getJwtToken();
+console.log('result',result);
+console.log('Cat.Amazon.accessToken',Cat.Amazon.accessToken);
+					Cat.Amazon.loggedIn = true;
+					Cat.user.status = 'logged-in';
+					const idPro = new AWS.CognitoIdentityServiceProvider();
+					idPro.getUser({AccessToken:Cat.Amazon.accessToken}, function(err, data)
+					{
+						if (err)
+							console.log('getUser error',err);
+						console.log('user data',data);
+						Cat.user.name = data.Username;
+						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
+						Cat.display.setNavbarBackground();
+						Cat.display.login.setPanelContent();
+						Cat.display.panel.toggle('login');
+					});
+				},
+				onFailure:function(err)
+				{
+					alert(err.message);
+				},
+				mfaRequired:function(codeDeliveryDetails)
+				{
+					let verificationCode = '';
+					Cat.Amazon.user.sendMFACode(verificationCode, this);
+				},
+			});
+		},
+		/*
+		login2(check = true)
 		{
 			amazon.Login.setClientId(Cat.Amazon.clientId);
 			const options = {scope:'profile'};
@@ -3163,6 +3228,7 @@ console.log('AWS.config.credentials',AWS.config.credentials);
 					ProviderId:		'www.amazon.com',
 					WebIdentityToken: response.access_token
 				});
+Cat.Amazon.registerCognito();
 				amazon.Login.retrieveProfile(response.access_token, function(response)
 				{
 console.log('retrieveProfile', response.profile);
@@ -3177,49 +3243,72 @@ console.log('AWS.config.credentials 2',AWS.config.credentials);
 				});
 			});
 		},
-		/*
-		registerCognito()
+		*/
+		logout()
 		{
-			AWS.config.region = this.cognitoRegion;
-			AWS.config.credentials = new AWS.CognitoIdentityCredentials(
-			{
-				IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
-				Logins:			{
-									'www.amazon.com':			'AMAZONTOKEN',
-									'graph.facebook.com':		'FBTOKEN',
-									'accounts.amazon.com':		'GOOGLETOKEN',
-								},
-			});
-			AWS.config.credentials.get();
-			if (Cat.debug)
-				console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
-			return;
+			Cat.Amazon.user.signOut();
+			Cat.Amazon.loggedIn = false;
+			Cat.display.login.setPanelContent();
 		},
-	*/
+		signup()
+		{
+//			const nickname = document.getElementById('signupUserName').value;
+//			const email = document.getElementById('signupUserEmail').value;
+//			const password = document.getElementById('signupUserPassword').value;
+			Cat.user.email = 'harry@harrydole.com';
+			const password = 'abcdeF1~';
+			Cat.user.name = 'hdole';
+			let cognitoUser = null;
+			const attributes =
+			[
+//				ClientId:	this.clientId,
+//				Password:	password,
+//				Username:	'hdole',
+//				UserAttributes: [{Name: 'name', Value: 'hdole'},{Name: 'email', Value: 'harry@harrydole.com'}],
+				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:Cat.user.email}),
+//				ValidationData: [{Name: 'STRING_VALUE', Value: 'Harry Dole'}],
+//				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'preferred_username', Value:nickname}),
+			];
+			this.userPool.signUp(nickname, password, attributes, null, function(err, result)
+			{
+				if (err)
+				{
+					alert(err.message);
+					return;
+				}
+				Cat.Amazon.user = result.user;
+				Cat.user.status = 'registered';
+				Cat.display.setNavbarBackground();
+				if (debug)
+					console.log('user name is ' + Cat.Amazon.user.getUsername());
+			});
+		},
+		confirm()
+		{
+			const code = document.getElementById('confirmationCode').value;
+			Cat.Amazon.user.confirmRegistration(code, true, function(err, result)
+			{
+				if (err)
+				{
+					alert(err.message);
+					return;
+				}
+				Cat.user.status = 'confirmed';
+				Cat.display.setNavbarBackground();
+			});
+		},
 		registerCognito()
 		{
 			const poolInfo =
 			{
 				UserPoolId:	this.userPoolId,
-				ClientId:	this.clientId,
+				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
 			};
 			AWS.config.region = this.cognitoRegion;
 			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
 			Cat.Amazon.user = this.userPool.getCurrentUser();
-			if (Cat.Amazon.user !== null)
-			{
-				if (Cat.debug)
-					console.log('RegisterCognito has current user');
-			}
-			else
-			{
-				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
-				AWS.config.credentials.get();
-				if (Cat.debug)
-					console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
-				Cat.Amazon.user = this.userPool.getCurrentUser();
-			}
 			if (Cat.Amazon.user)
+			{
 				Cat.Amazon.user.getSession(function(err, session)
 				{
 					if (err)
@@ -3227,58 +3316,44 @@ console.log('AWS.config.credentials 2',AWS.config.credentials);
 						alert(err.message);
 						return;
 					}
-					AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
+					AWS.config.credentials = new AWS.CognitoIdentityCredentials(Cat.Amazon.loginInfo);
+					Cat.Amazon.accessToken = session.getAccessToken().getJwtToken();
 					if (Cat.debug)
-						console.log('registerCognito session validity', session.isValid());
+						console.log('registerCognito session validity', session, session.isValid());
+					const idPro = new AWS.CognitoIdentityServiceProvider();
+					idPro.getUser({AccessToken:Cat.Amazon.accessToken}, function(err, data)
+					{
+						if (err)
+						{
+							console.log('getUser error',err);
+							return;
+						}
+						Cat.Amazon.loggedIn = true;
+						Cat.user.name = data.Username;
+						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
+						Cat.user.status = 'logged-in';
+						Cat.display.setNavbarBackground();
+						Cat.display.login.setPanelContent();
+					});
 				});
-			AWS.config.credentials.refresh((error) =>
-			{
-				if (error)
-					console.error(error);
-				else
-					console.log('Successfully logged!');
-			});
-			this.updateServiceObjects();
-			return;
-		},
-		registerUserPool()
-		{
-			const poolInfo =
-			{
-				UserPoolId:	'us-west-2_HKN5CKGDz',
-				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
-			};
-//			this.userPool = new AWS.CognitoIdentity.CognitoUserPool(poolInfo);
-			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
-
-			var attributeList = [];
-
-			var dataEmail =
-			{
-				Name : 'email',
-				Value : 'email@mydomain.com'
-			};
-			var dataPhoneNumber =
-			{
-				Name : 'phone_number',
-				Value : '+15555555555'
-			};
-			var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-			var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
-
-			attributeList.push(attributeEmail);
-			attributeList.push(attributePhoneNumber);
-
-			this.userPool.signUp('username', 'password', attributeList, null, function(err, result)
-			{
-				if (err)
+				/*
+				AWS.config.credentials.refresh((error) =>
 				{
-					alert(err);
-					return;
-				}
-				cognitoUser = result.user;
-				console.log('user name is ' + cognitoUser.getUsername());
-			});
+					if (error)
+						console.error(error);
+					if (Cat.debug)
+						console.log('Got current user creds refreshed');
+				});
+				*/
+				this.updateServiceObjects();
+			}
+			else
+			{
+				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
+				AWS.config.credentials.get();
+				if (Cat.debug)
+					console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
+			}
 		},
 		async fetchDiagram(name)
 		{
@@ -3291,14 +3366,6 @@ console.log('fetchDiagram url', url);
 			const json = await (await fetch(url)).json();
 			return json;
 		},
-		/*
-		processJson(json)
-		{
-			const dgrm = new diagram(json);
-			dgrm.sha256 = Cat.sha256(json);
-			return dgrm;
-		},
-		*/
 		ingestDiagramLambda(e, dgrm, fn)
 		{
 			const params =
@@ -7750,7 +7817,7 @@ class ${this.name} extends diagram
 	}
 	upload(e, fn = null)
 	{
-		if (Cat.user.status === 'registered')
+		if (Cat.user.status === 'logged-in')
 		{
 			document.getElementById('diagramUploadBtn').classList.add('vanish');
 			const start = Date.now();
@@ -7761,7 +7828,7 @@ class ${this.name} extends diagram
 			});
 		}
 		else
-			Cat.status('You need to register to upload your work.');
+			Cat.recordError('You need to be logged in to upload your work.');
 	}
 	guiDetach(e, dir)
 	{
