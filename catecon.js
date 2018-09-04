@@ -192,7 +192,6 @@ const Cat =
 	autosave:		false,
 	nameEx:			RegExp('^[a-zA-Z_]+[a-zA-Z0-9_]*$'),
 	userNameEx:		RegExp('^[a-zA-Z]+[a-zA-Z0-9]*$'),
-//	user:			{name:'Anon', email:'', nickname:'anon', status:'unauthorized'},	// TODO fix after bootstrap removed
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
 	diagrams:		{},
 	localDiagrams:	{},
@@ -980,14 +979,10 @@ const Cat =
 			this.selectCategory(cat, function()
 			{
 				let name = localStorage.getItem(`Cat.default.diagram ${cat}`);
-//				name = name === null ? genName(cat, Cat.user.nickname, 'Draft') : name;
-//				const fullname = name === null ? genName(cat, Cat.user.nickname, 'Draft') : diagram.nameCheck(cat, name, false, false);
-//				name = name === null ? diagram.genName(cat, Cat.user.nickname, 'Draft') : name;
 				name = name === null ? diagram.genName(cat, Cat.user.name, 'Draft') : name;
 				let dgrm = Cat.getDiagram(cat, name);
 				if (dgrm === null && diagram.fromLocalStorage(cat, name) === null)
 				{
-//					dgrm = new diagram({name, codomain:cat, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
 					dgrm = new diagram({name, codomain:cat, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.name});
 					dgrm.saveToLocalStorage();
 				}
@@ -1083,14 +1078,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 	},
 	display:
 	{
-		width()
-		{
-			return window.innerWidth;
-		},
-		height()
-		{
-			return window.innerHeight;
-		},
 		shiftKey:	false,
 		drag:		false,
 		fuseObject:	null,
@@ -1102,6 +1089,14 @@ console.log('selectDiagram download from catolite',dgrm.name);
 		tool:		'select',	// select|pan
 		statusbar:	null,
 		id:			0,
+		width()
+		{
+			return window.innerWidth;
+		},
+		height()
+		{
+			return window.innerHeight;
+		},
 		resize()
 		{
 			const dgrm = $Cat !== null ? getDiagram() : null;
@@ -1636,13 +1631,11 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					const horizon = 100000;
 					const fogDistance = this.horizon/2;
 					this.scene.fog = new THREE.Fog(this.scene.background, 1, fogDistance);
-
 					const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
 					hemiLight.color.setHSL(0.6, 1, 0.6);
 					hemiLight.groundColor.setHSL(0.095, 1, 0.74);
 					hemiLight.position.set(0, 50, 0);
 					this.scene.add(hemiLight);
-
 					const groundGeo = new THREE.PlaneBufferGeometry(this.horizon, this.horizon );
 					const groundMat = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x050505 } );
 					groundMat.color.set(0xf0e68c);
@@ -2197,8 +2190,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					H.h3('Login') +
 					H.div('User: ' + H.span(Cat.user.name, 'italic')) +
 					H.div('Email: ' + H.span(Cat.user.email, 'italic')) +
-//					H.div('Nickname: ' + H.span(Cat.user.nickname, 'italic')) +
-//					H.div('Nickname: ' + H.span(Cat.user.name, 'italic')) +
 					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon') + 
 						H.button('Log out', '', '', 'Log out of the current session', `onclick="Cat.Amazon.logout()"`));
 					if (Cat.user.status !== 'logged-in' && Cat.user.status !== 'registered')
@@ -2275,23 +2266,20 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					document.getElementById('objectError').innerHTML = '';
 					const nameElt = document.getElementById('objectName');
 					const name = nameElt.value;
-					if (name !== '')
-					{
-						if (!RegExp(Cat.userNameEx).test(name))
+					if (name !== '' && !RegExp(Cat.userNameEx).test(name))
 							throw 'Invalid object name.';
-					}
 					nameElt.value = '';
 					const codeElt = document.getElementById('objectCode');
 					let code = codeElt.value;
 					codeElt.value = '';
 					code = code === '' ? name : code;
-					const dgrm = getDiagram();
 					const htmlElt = document.getElementById('objectHtml');
 					const html = htmlElt.value;
 					htmlElt.value = '';
 					const descriptionElt = document.getElementById('objectDescription');
 					const description = descriptionElt.value;
 					descriptionElt.value = '';
+					const dgrm = getDiagram();
 					const to = dgrm.newObject({name, code, html, description});
 					dgrm.placeObject(e, to);
 				}
@@ -2351,9 +2339,9 @@ console.log('selectDiagram download from catolite',dgrm.name);
 										H.td(Cat.display.expandPanelBtn('element', false))
 										), 'buttonBarRight');
 				html += H.h3('Text') + this.newElementPnl();
-				const dgrm = getDiagram();
-				if (!dgrm)
-					return;
+//				const dgrm = getDiagram();
+//				if (!dgrm)
+//					return;
 				html += H.button('Text', 'sidenavAccordion', '', 'New Text', `onclick="Cat.display.accordion.toggle(this, \'elementPnl\')"`) +
 					H.div('', 'accordionPnl', 'elementPnl');
 				document.getElementById('element-sidenav').innerHTML = html;
@@ -2868,7 +2856,6 @@ ${this.svg.button(onclick)}
 			{
 				if (e.target === document.body)
 				{
-					const dgrm = getDiagram();
 					switch(e.keyCode)
 					{
 					case 32:	// 'space'
@@ -2959,8 +2946,8 @@ ${this.svg.button(onclick)}
 				if (e.target.id === 'topSVG')
 				{
 					Cat.display.deactivateToolbar();
-					const dgrm = getDiagram();
 					let mouseInc = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+					const dgrm = getDiagram();
 					let inc = Math.log(dgrm.viewport.scale)/Math.log(Cat.default.scale.base) + mouseInc;
 					let nuScale = Cat.default.scale.base ** inc;
 					nuScale = nuScale < Cat.default.scale.limit.min ? Cat.default.scale.limit.min : nuScale;
@@ -3208,11 +3195,6 @@ ${this.svg.button(onclick)}
 						Cat.display.login.setPanelContent();
 						Cat.display.panel.toggle('login');
 						getDiagram().renameDraft();
-						/*
-						AWS.config.credentials.params.Logins = AWS.config.credentials.params.Logins || {};
-						creds.params.Logins[providerName] = Cat.Amazon.accessToken;
-						AWS.config.credentials.expired = true;
-						*/
 					});
 				},
 				onFailure:function(err)
@@ -3315,15 +3297,6 @@ ${this.svg.button(onclick)}
 						Cat.display.login.setPanelContent();
 					});
 				});
-				/*
-				AWS.config.credentials.refresh((error) =>
-				{
-					if (error)
-						console.error(error);
-					if (Cat.debug)
-						console.log('Got current user creds refreshed');
-				});
-				*/
 				this.updateServiceObjects();
 			}
 			else
@@ -3371,7 +3344,6 @@ ${this.svg.button(onclick)}
 		},
 		fetchDiagramJsons(cat, diagrams, fn, jsons = [], refs = {})
 		{
-//			let someDiagrams = diagrams.filter(d => !Cat.hasDiagram(cat, d));
 			let someDiagrams = diagrams.reverse().filter(d => Cat.getDiagram(cat, d) === null);
 			if (someDiagrams.length > 0)
 				Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(fetchedJsons =>
@@ -3380,14 +3352,7 @@ ${this.svg.button(onclick)}
 					fetchedJsons.map(j => {refs[j.name] = true; return true;});
 					const nextRound = [];
 					for (let i=0; i<fetchedJsons.length; ++i)
-					{
-	//					const more = fetchedJsons[i].references.filter(r => !(r in refs));
 						nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && nextRound.indexOf(r) < 0));
-	//					for (let j=0; j<more.length; ++j)
-	//						if (nextRound.indexOf(more[j]) < 0)
-	//							nextRound.push(more[j]);
-					}
-	//				fetchedJsons.map(j => j.references.filter(r => !(r in refs)));
 					if (nextRound.length > 0)
 						fetchDiagrams(cat, nextRound, fn, jsons, refs);
 					else if (fn)
@@ -4129,7 +4094,6 @@ class object extends element
 	{
 		return ('basetype' in this && 'regexp' in this.basetype) ? this.basetype.regexp : '';
 	}
-//	static process(cat, dgrm, data)
 	static process(cat, data)
 	{
 		try
@@ -6239,7 +6203,7 @@ class functorTensor extends functor
 		let nuArgs = Cat.clone(args);
 		nuArgs.domain = `${cat.name}${Cat.basetypes.operators.product.symCode}${cat.name}`;
 		nuArgs.codomain = cat.name;
-		nuArgs.diagram = dgrm.name;
+//		nuArgs.diagram = dgrm.name;
 		nuArgs.function = 'functorTensor';
 		super($Cat, nuArgs);
 		this.subClass = 'functorTensor';
@@ -8245,129 +8209,9 @@ class monoidal extends category
 	}
 }
 
-
-
 // BOOTSTRAP
 let PFS = null;
 let Graph = null;
-
-
-/*
-function initialize()	// TODO replace with diagram downloads
-{
-	$Cat = new category(
-	{
-		name:	'Cat',
-		code:	'Cat',
-		html:	'&#x2102;&#x1D552;&#x1D565;',
-		description:	'Category of small categories',
-		isCartesian:	true,
-		isClosed:		true,
-		hasProducts:	true,
-		hasCoproducts:	true,
-	});
-	PFS = new category(
-	{
-		name:	'PFS',
-		code:	'PFS',
-		html:	'&#8473;&#120125;&#120138;',
-		description:	'Category of partial finite sets',
-		isCartesian:	true,
-		isClosed:		true,
-		allObjectsFinite:		true,
-		hasProducts:	true,
-		hasCoproducts:	true,
-		referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'],
-	});
-	Graph = new category(
-	{
-		name:				'Graph',
-		code:				'Graph',
-		html:				'&#120126;',
-		description:		'Graph category',
-		isCartesian:		true,
-		isClosed:			true,
-		allObjectsFinite:	true,
-		hasProducts:		true,
-		hasCoproducts:		true,
-		referenceDiagrams:	[],
-	});
-	new transform(
-	{
-		name:		'id_PFS',
-		transform:	'identity',
-		domain:		'PFS',
-		codomain:	'PFS',
-		html:		'Identity',
-		description:'Identity morphism on an object',
-	});
-	new transform(
-	{
-		name:	'diagonal_PFS',
-		html:	'&#x0394;',
-		code:	'',
-		transform:	'diagonal',
-		domain:	'PFS',
-		codomain:	'PFS',
-		description:'Diagonal morphism on an object',
-	});
-	new transform(
-	{
-		name:	'terminal_PFS',
-		html:	'&#8594;1',
-		code:	'',
-		transform:	'terminal',
-		domain:	'PFS',
-		codomain:	'PFS',
-		description:'Unique morphism to terminal object',
-	});
-	new transform(
-	{
-		name:	'equals_PFS',
-		html:	'=',
-		code:	'',
-		transform:	'equals',
-		domain:	'PFS',
-		codomain:	'PFS',
-		description:'Test for equality on an object',
-		testFunction:	function(dgrm, obj)
-		{
-//			if ('data' in obj.expr && obj.expr.data.length === 2 && obj.expr.op === 'product')
-//			{
-//				const cod0 = element.getCode(dgrm, obj.expr.data[0], true, true);
-//				const cod1 = element.getCode(dgrm, obj.expr.data[1], true, true);
-//				return cod0 === cod1;
-//			}
-//			return false;
-			return obj.isSquared();
-		},
-	});
-	new transform(
-	{
-		name:	'eval_PFS',
-		html:	'e',
-		code:	'',
-		transform:	'apply',
-		domain:	'PFS',
-		codomain:	'PFS',
-		description:'Evaluate morphism with arguments',
-		testFunction:	function(dgrm, obj)
-		{
-			return dgrm.canEvaluate(obj);
-		},
-	});
-	new functor(
-	{
-		name:		'Graph',
-		html:		'&#1d5d8;',
-		code:		'Graph',
-		functor:	'graph',
-		domain:		'PFS',
-		codomain:	'Graph',
-		description:'Gives the graph of a morphism',
-	});
-}
-*/
 
 function bootstrap()
 {
@@ -8384,7 +8228,6 @@ function bootstrap()
 	basicObjects.map(objectData => new object(basics.codomain, objectData));
 	const basicMorphisms = [{name:'Null2one', diagram:'D_PFS_std_basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
 	basics.placeMultipleMorphisms(basicMorphisms);
-
 	//
 	// first order logic
 	//
