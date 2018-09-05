@@ -111,18 +111,26 @@ class D2
 
 class H
 {
+	static ok(a)
+	{
+		return !(typeof a === 'undefined') && a !== '' && a !== null;
+	}
 	static x(tag, h, c, i, t, x)
 	{
+		/*
 		let a = '';
-		if (!(typeof c === 'undefined') && c !== '' && c !== null)
+		if (H.ok(c))
 			a += ` class="${c}"`;
-		if (!(typeof i === 'undefined') && i !== '' && i !== null)
+		if (H.ok(i))
 			a += ` id="${i}"`;
-		if (!(typeof t === 'undefined') && t !== '' && t !== null)
+		if (H.ok(t))
 			a += ` title="${t}"`;
-		if (!(typeof x === 'undefined') && x !== '' && x !== null)
+		if (H.ok(x))
 			a += ` ${x}`;
-		return `<${tag}${a}>${h}</${tag}>`;
+//		return `<${tag}${a}>${h}</${tag}>`;
+		*/
+//		return `<${tag}${H.ok(c) ? 'class="' + c + '"' : ''}
+		return `<${tag}${H.ok(c) ? ` class="${c}"` : ''}${H.ok(i) ? ` id="${i}"` : ''}${H.ok(t) ? ` title="${t}"` : ''}${H.ok(x) ? ` ${x}` : ''}>${h}</${tag}>`;
 	}
 	static a	(h, c, i, t, x)	{ return H.x('a', h, c, i, t, x); }
 	static br	()				{ return '<br/>'; }
@@ -186,6 +194,7 @@ class operator
 const Cat =
 {
 	bootstrap:		false,
+	clear:			false,
 	debug:			true,
 	initialized:	false,
 	statusXY:		{x:0, y:0},
@@ -351,7 +360,7 @@ const Cat =
 		const bitArray = sjcl.hash.sha256.hash(msg);
 		return sjcl.codec.hex.fromBits(bitArray);
 	},
-	deleteLocalDiagram(catName, dgrmName, update = true)
+	deleteLocalDiagram(catName, dgrmName) //, update = true)
 	{
 		try
 		{
@@ -370,8 +379,8 @@ const Cat =
 				}
 			}
 			Cat.removeFromLocalDiagramList(catName, dgrmName);
-			if (update)
-				Cat.display.diagram.setLocalDiagramsTable(catName);
+//			if (update)
+//				Cat.display.diagram.setLocalDiagramsTable(catName);
 		}
 		catch(e)
 		{
@@ -553,13 +562,33 @@ const Cat =
 			codomain:	'Graph',
 			description:'Gives the graph of a morphism',
 		});
+		if (Cat.bootstrap)
+			bootstrap();
 		this.fetchCategories(fn);	// TODO check for local TODO refresh flag
+	},
+	getLocalStorageCategoryName()
+	{
+		let catName = localStorage.getItem(`Cat.selected.category ${Cat.user.name}`);
+		catName = catName === null ? 'PFS' : catName;
+		return catName;
+	},
+	setLocalStorageDefaultCategory()
+	{
+		localStorage.setItem(`Cat.selected.category ${Cat.user.name}`, Cat.selected.category);
+	},
+	getLocalStorageDiagramName()
+	{
+		return localStorage.getItem(`Cat.selected.diagram ${Cat.user.name} ${cat}`);
+	},
+	setLocalStorageDiagramName()
+	{
+		localStorage.setItem(`Cat.selected.diagram ${Cat.user.name} ${Cat.selected.category}`, Cat.selected.diagram);
 	},
 	initialize()
 	{
 		try
 		{
-			if (window.location.search.substr(1) === 'clear')
+			if (Cat.clear || window.location.search.substr(1) === 'clear')
 			{
 				console.log('clearing local storage');
 				this.clearLocalStorage();
@@ -571,20 +600,20 @@ const Cat =
 			Cat.display.setNavbarBackground();
 			Cat.initializeCT(function()
 			{
-				let catName = localStorage.getItem('Cat.default.category');
+				/*
+				let catName = localStorage.getItem('Cat.selected.category');
 				catName = catName === null ? 'PFS' : catName;
-				let dgrmName = localStorage.getItem(`Cat.default.diagram ${catName}`);
+				let dgrmName = localStorage.getItem(`Cat.selected.diagram ${catName}`);
 //				dgrmName = dgrmName === null ? diagram.genName(catName, Cat.user.nickname, 'Draft') : dgrmName;
 				dgrmName = dgrmName === null ? diagram.genName(catName, Cat.user.name, 'Draft') : dgrmName;
 				if (Cat.debug)
 					console.log('initialize', catName, dgrmName);
-				Cat.selected.selectCategoryDiagram(catName, function()
+				*/
+				Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
 				{
 					Cat.initialized = true;
-					if (Cat.bootstrap)
-						bootstrap();
 					Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
-					getDiagram().renameDraft();
+//					getDiagram().renameDraft();
 				});
 			});
 		}
@@ -932,7 +961,7 @@ const Cat =
 			try
 			{
 				const cat = getCat();
-				let name = localStorage.getItem(`Cat.default.diagram ${cat.name}`);
+				let name = localStorage.getItem(`Cat.selected.diagram ${cat.name}`);
 				name = name === null ? 'Draft' : name;
 				const fullname = diagram.nameCheck(cat.name, name, false, false);
 				let dgrm = Cat.getDiagram(cat.name, fullname);
@@ -952,8 +981,8 @@ const Cat =
 				nbCat.innerHTML = cat.getText();
 				nbCat.title = Cat.cap(cat.description);
 				Cat.display.category.setPanelContent();
-				localStorage.setItem('Cat.default.category', catName);
-				this.saveAsDefaultDiagram(catName, name);
+				localStorage.setItem('Cat.selected.category', catName);
+				this.setLocalStorageDiagramName(catName, name);
 				Cat.display.diagram.update();
 				Cat.display.downloadCatalogTable(catName, Cat.user.nickname);
 			}
@@ -966,7 +995,8 @@ const Cat =
 		selectCategory(catName, fn)
 		{
 			Cat.selected.category = catName;
-			localStorage.setItem('Cat.default.category', catName);
+//			localStorage.setItem(`Cat.selected.category ${Cat.user.name}`, catName);
+			Cat.setLocalStorageDefaultCategory();
 			Cat.selected.diagram = null;
 			const nbCat = document.getElementById('navbar_category');
 			const cat = $Cat.getObject(catName);
@@ -978,7 +1008,7 @@ const Cat =
 		{
 			this.selectCategory(cat, function()
 			{
-				let name = localStorage.getItem(`Cat.default.diagram ${cat}`);
+				let name = localStorage.getItem(`Cat.selected.diagram ${Cat.user.name} ${cat}`);
 				name = name === null ? diagram.genName(cat, Cat.user.name, 'Draft') : name;
 				let dgrm = Cat.getDiagram(cat, name);
 				if (dgrm === null && diagram.fromLocalStorage(cat, name) === null)
@@ -990,6 +1020,7 @@ const Cat =
 				if (fn)
 					fn();
 				Cat.updatePanels();
+				Cat.setLocalStorageDiagramName();
 			});
 		},
 		/*
@@ -1048,7 +1079,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			function setup(name)
 			{
 				Cat.selected.diagram = name;
-				Cat.selected.saveAsDefaultDiagram();
+				Cat.setLocalStorageDiagramName();
 				if (update)
 					Cat.selected.updateDiagramDisplay(name);
 			}
@@ -1070,10 +1101,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			const dgrm = getDiagram();
 			dgrm.update(null, 'diagram', null, true, false);
 			dgrm.updateMorphisms();
-		},
-		saveAsDefaultDiagram()
-		{
-			localStorage.setItem(`Cat.default.diagram ${Cat.default.category}`, Cat.default.diagram);
 		},
 	},
 	display:
@@ -2005,20 +2032,20 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					const nameElt = document.getElementById('diagramName');
 					const name = nameElt.value;
 					let codomain = getCat().name;
-					const fullname = diagram.nameCheck(codomain, name);
+					const fullname = diagram.nameCheck(codomain, Cat.user.name, name);
 					// TODO make it <> safe
 					const htmlElt = document.getElementById('diagramHtml');
 					const html = htmlElt.value;
 					const descriptionElt = document.getElementById('newDiagramDescription');
 					const description = descriptionElt.value;
 //					let dgrm = new diagram({name:fullname, codomain, html:document.getElementById('diagramHtml').value, description:document.getElementById('newDiagramDescription').value, user:Cat.user.nickname});
-					let dgrm = new diagram({name:fullname, codomain, html:document.getElementById('diagramHtml').value, description:document.getElementById('newDiagramDescription').value, user:Cat.user.name});
+					const dgrm = new diagram({name:fullname, codomain, html:document.getElementById('diagramHtml').value, description:document.getElementById('newDiagramDescription').value, user:Cat.user.name});
 					nameElt.value = '';
 					htmlElt.value = '';
 					descriptionElt.value = '';
 					dgrm.saveToLocalStorage();
 					Cat.selected.selectDiagram(fullname);
-					Cat.display.diagram.setLocalDiagramsTable(codomain);
+//					Cat.display.diagram.setLocalDiagramsTable(codomain);
 					Cat.display.accordion.close('newDiagramPnl');
 					Cat.display.panel.close('diagram');
 					dgrm.update();
@@ -2339,9 +2366,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 										H.td(Cat.display.expandPanelBtn('element', false))
 										), 'buttonBarRight');
 				html += H.h3('Text') + this.newElementPnl();
-//				const dgrm = getDiagram();
-//				if (!dgrm)
-//					return;
 				html += H.button('Text', 'sidenavAccordion', '', 'New Text', `onclick="Cat.display.accordion.toggle(this, \'elementPnl\')"`) +
 					H.div('', 'accordionPnl', 'elementPnl');
 				document.getElementById('element-sidenav').innerHTML = html;
@@ -2385,11 +2409,12 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			update()
 			{
 				const dgrm = getDiagram();
-				document.getElementById('elementPnl').innerHTML = H.table(dgrm.texts.map((t, i) =>
-					H.tr(	H.td(H.table(H.tr(H.td(Cat.display.getButton('delete', `Cat.display.element.delete(${i})`, 'Delete text'))), 'buttonBarLeft')) +
-							H.td(H.span(Cat.htmlSafe(t.html), 'tty', `text_${i}`) +
-								(this.readonly ? '' : Cat.display.getButton('edit', `getDiagram().getElement('${t.name}').editText('text_${i}', 'html')`, 'Edit', Cat.default.button.tiny)), 'left'), 'sidenavRow')
-						).join(''));
+				if (dgrm)
+					document.getElementById('elementPnl').innerHTML = H.table(dgrm.texts.map((t, i) =>
+						H.tr(	H.td(H.table(H.tr(H.td(Cat.display.getButton('delete', `Cat.display.element.delete(${i})`, 'Delete text'))), 'buttonBarLeft')) +
+								H.td(H.span(Cat.htmlSafe(t.html), 'tty', `text_${i}`) +
+									(this.readonly ? '' : Cat.display.getButton('edit', `getDiagram().getElement('${t.name}').editText('text_${i}', 'html')`, 'Edit', Cat.default.button.tiny)), 'left'), 'sidenavRow')
+							).join(''));
 			},
 			delete(i)
 			{
@@ -2874,6 +2899,8 @@ ${this.svg.button(onclick)}
 				if (e.target === document.body)
 				{
 					const dgrm = getDiagram();
+					if (!dgrm)
+						return;
 					const xy = dgrm.userToDiagramCoords(Cat.mouse.xy);
 					Cat.display.shiftKey = e.shiftKey;
 					const placeSquare = false;
@@ -3140,9 +3167,9 @@ ${this.svg.button(onclick)}
 					console.log('saved category', cat.name);
 			});
 		},
-		saveDiagram(dgrm)
+		saveDiagram(dgrm)	// for bootstrapping
 		{
-			const key = `${dgrm.codomain.name}/${dgrm.user}/${dgrm.basename}.json`;
+			const key = `${dgrm.codomain.name}/${dgrm.user}/${dgrm.name}.json`;
 			this.diagramBucket.putObject(
 			{
 				Bucket:			this.diagramBucketName,
@@ -3193,8 +3220,14 @@ ${this.svg.button(onclick)}
 						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 						Cat.display.setNavbarBackground();
 						Cat.display.login.setPanelContent();
+						Cat.display.morphism.setPanelContent();
 						Cat.display.panel.toggle('login');
-						getDiagram().renameDraft();
+						Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
+						{
+							Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+						});
+						Cat.setLocalStorageDefaultCategory();
+						Cat.setLocalStorageDiagramName();
 					});
 				},
 				onFailure:function(err)
@@ -3305,15 +3338,15 @@ ${this.svg.button(onclick)}
 				AWS.config.credentials.get();
 				if (Cat.debug)
 					console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
+				this.updateServiceObjects();
 			}
 		},
 		async fetchDiagram(name)
 		{
 			const tokens = name.split('_');
-			const basename = tokens[tokens.length -1];
 			const catName = tokens[1];
 			const user = tokens[2];
-			const url = this.URL(catName, user, basename + '.json');
+			const url = this.URL(catName, user, name + '.json');
 			const json = await (await fetch(url)).json();
 			return json;
 		},
@@ -3344,7 +3377,7 @@ ${this.svg.button(onclick)}
 		},
 		fetchDiagramJsons(cat, diagrams, fn, jsons = [], refs = {})
 		{
-			let someDiagrams = diagrams.reverse().filter(d => Cat.getDiagram(cat, d) === null);
+			let someDiagrams = diagrams.reverse().filter(d => typeof d === 'string' && Cat.getDiagram(cat, d) === null);
 			if (someDiagrams.length > 0)
 				Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(fetchedJsons =>
 				{
@@ -3996,9 +4029,11 @@ class element
 	{
 		if ('data' in this.expr && this.expr.data.length === 2 && this.expr.op === 'product')
 		{
-			const cod0 = element.getCode(this.diagram, this.expr.data[0], true, true);
-			const cod1 = element.getCode(this.diagram, this.expr.data[1], true, true);
-			return cod0 === cod1;
+//			const cod0 = element.getCode(this.diagram, this.expr.data[0], true, true);
+//			const cod1 = element.getCode(this.diagram, this.expr.data[1], true, true);
+//			return cod0 === cod1;
+			const codes = this.expr.data.map(d => element.getCode(this.diagram, d, true, true));
+			return codes[0] === codes[1];
 		}
 		return false;
 	}
@@ -4070,6 +4105,7 @@ class object extends element
 				}
 			}
 		}
+if (this.name === '1') throw "This is not good!";
 	}
 	decrRefcnt()
 	{
@@ -4585,7 +4621,8 @@ return true; // TODO
 	{
 		Cat.Amazon.fetchDiagramJsons(cat.name, cat.referenceDiagrams, function(jsons)
 		{
-			jsons.reverse().map(j =>
+//			jsons.reverse().map(j =>
+			jsons.map(j =>
 			{
 				const dgrm = new diagram(j);
 				dgrm.saveToLocalStorage();
@@ -4594,6 +4631,14 @@ return true; // TODO
 				fn(jsons);
 			return jsons;
 		});
+	}
+	rename(nuName)	// only for diagram's domain category
+	{
+		const olName = this.name;
+		this.name = nuName;
+		this.code = nuName;
+		this.html = nuName;
+		this.expr.token = nuName; // TODO recompute width
 	}
 }
 
@@ -6292,7 +6337,6 @@ class diagram extends functor
 		else
 			this.basename = args.name;
 		this.user = Cat.getArg(args, 'user', Cat.user.nickname);
-console.log('diagram',this.user, name);
 		this.name = name;
 		this.isStandard = Cat.getArg(args, 'isStandard', false);
 		const mainCat = $Cat.getObject(args.codomain);
@@ -6426,7 +6470,7 @@ console.log('diagram',this.user, name);
 		else
 			name = basename;
 		if (namexTst && Cat.hasDiagram(catName, name))
-			throw 'Diagram name already used. Pick another.';
+			throw `Diagram name ${name} already used. Pick another.`;
 		return name;
 	}
 	json()
@@ -8178,10 +8222,12 @@ function getDiagram()
 			this.user = Cat.user.name;
 			const cat = this.codomain.name;
 			this.name = diagram.genName(cat, Cat.user.name, 'Draft')
+			this.domain.rename(this.name);
 			this.code = this.name;
 			delete Cat.diagrams[cat][origName];
 			Cat.diagrams[cat][this.name] = this;
 			Cat.selected.diagram = this.name;
+			Cat.display.login.setPanelContent();
 		}
 	}
 }
@@ -8220,7 +8266,7 @@ function bootstrap()
 	//
 	// basics
 	//
-	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_basics', false);
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_basics');
 	const basics = new diagram({name:'D_PFS_std_basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
 	const basicObjects =
 		[{diagram:basics, code:'Null', html:'&#x2205', description:'empty set', isInitial:true, isFinite:0},
@@ -8231,7 +8277,7 @@ function bootstrap()
 	//
 	// first order logic
 	//
-	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_FOL', false);
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_FOL');
 	const fol = new diagram({name:'D_PFS_std_FOL', codomain:'PFS', html:'First Order Logic', references:['D_PFS_std_basics'], readonly:true, isStandard:true, user:'std'});
 	const folObjects = [{diagram:'D_PFS_std_FOL', code:'Omega', html:'&#x03a9', description:'sub-object classifier', isFinite:2},
 						{code:'Omega*Omega'}];
@@ -8245,7 +8291,7 @@ function bootstrap()
 	//
 	// arithmetic operations
 	//
-	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_arithmetics', false);
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_arithmetics');
 	const arithmetics = new diagram({name:'D_PFS_std_arithmetics', codomain:'PFS', html:'Arithmetics', description:'Artithmetic operations on natural numbers, integers, and floating point numbers.',
 				references:['D_PFS_std_basics', 'D_PFS_std_FOL'], readonly:true, isStandard:true, user:'std'});
 	xyDom = {x: 300, y:Cat.default.font.height};
@@ -8258,8 +8304,8 @@ function bootstrap()
 		{diagram:arithmetics, code:'N*N'},
 		{diagram:arithmetics, code:'Z*Z'},
 		{diagram:arithmetics, code:'F*F'},
-		{diagram:arithmetics, code:'N+1', description:'A natural number or an exception'},
-		{diagram:arithmetics, code:'F+1', description:'A floating point number or an exception'},
+		{diagram:arithmetics, code:'N+One', description:'A natural number or an exception'},
+		{diagram:arithmetics, code:'F+One', description:'A floating point number or an exception'},
 	];
 
 	arithObjects.map(objectData => new object(arithmetics.codomain, objectData));
@@ -8282,14 +8328,14 @@ function bootstrap()
 		{name:'Fplus', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatAdd', html:'+', description:'Floating point addition'},
 		{name:'Fsub', 	diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatSub', html:'-', description:'Floating point subtraction'},
 		{name:'Fmult', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatMult', html:'*', description:'Floating point multiplication'},
-		{name:'Fdiv', diagram:arithmetics, domain:'F*F', codomain:'F+1', 	function:'floatDiv', html:'/', description:'Floating point division'},
+		{name:'Fdiv', diagram:arithmetics, domain:'F*F', codomain:'F+One', 	function:'floatDiv', html:'/', description:'Floating point division'},
 		{name:'Fcomp', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:'floatStrict', html:'<', description:'Strict order of floats'},
 		{name:'FcompEq', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:'floatOrder', html:'&#x2264', description:'Strict order of floats with equality'},
 		{name:'N2Z', diagram:arithmetics, domain:'N', codomain:'Z', function:'nat2int', html:'&#x21aa', description:'Embed natural numbers into integers'},
 		{name:'Z2F', diagram:arithmetics, domain:'Z', codomain:'F', function:'int2float', html:'&#x21aa', description:'Embed integers into floats'}];
 	arithmetics.placeMultipleMorphisms(arithMorphData);
 
-	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_strings', false);
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_strings');
 	const strings = new diagram({name:'D_PFS_std_strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D_PFS_std_arithmetics'], readonly:true, isStandard:true, user:'std'});
 	const stringObjects = [
 		{diagram:strings, code:'Str', html:'Str', description:'The space of finite strings'},
@@ -8308,7 +8354,7 @@ function bootstrap()
 	//
 	// console
 	//
-	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_console', false);
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_console');
 	const console = new diagram({name:'D_PFS_std_console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D_PFS_std_strings'], readonly:true, isStandard:true, user:'std'});
 	const consoleObjects = [{diagram:console, code:'tty', html:'tty', description:'Write-only console'}];
 	consoleObjects.map(objectData => new object(console.codomain, objectData));
@@ -8317,7 +8363,7 @@ function bootstrap()
 	//
 	// threeD
 	//
-	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_threeD', false);
+	Cat.deleteLocalDiagram('PFS', 'D_PFS_std_threeD');
 	const threeD = new diagram({name:'D_PFS_std_threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D_PFS_std_arithmetics', 'D_PFS_std_strings'], readonly:true, isStandard:true, user:'std'});
 	const threeDObjects = [{diagram:threeD, code:'threeD', html:'3D', description:'Rendering in 3D'},
 							{diagram:threeD, code:'N*N*N'},
@@ -8354,7 +8400,7 @@ function bootstrap()
 	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_arithmetics);
 	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_console);
 	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_std_threeD);
-	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_anon_Draft);
+//	Cat.Amazon.saveDiagram(Cat.diagrams.PFS.D_PFS_anon_Draft);
 }
 
 Cat.initialize();	// boot-up
