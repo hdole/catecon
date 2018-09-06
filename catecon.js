@@ -285,7 +285,6 @@ const Cat =
 	},
 	hasDiagram(catName, dgrmName)
 	{
-//		const name = typeof catName === 'string' ? catName : catName;
 		return Cat.hasLocalDiagram(catName, dgrmName) || (catName in Cat.diagrams ? dgrmName in Cat.diagrams[catName] : false);
 	},
 	getDiagram(catName, dgrmName, checkLocal = true)
@@ -302,14 +301,7 @@ const Cat =
 				Cat.diagrams[catName] = {};
 			if (!(name in Cat.diagrams[catName]))
 				Cat.diagrams[catName][dgrmName] = dgrm;
-			return dgrm;
 		}
-		else
-//			downloadDiagram(catName, user, dgrmBasename, fn = null)
-//			return Cat.Amazon.downloadDiagram(dgrmName, function(dgrm)
-//			{
-//				console.log('dgrm',dgrm);
-//			}, false);
 		return dgrm;
 	},
 	hasLocalDiagram(catName, dgrmName)
@@ -360,7 +352,7 @@ const Cat =
 		const bitArray = sjcl.hash.sha256.hash(msg);
 		return sjcl.codec.hex.fromBits(bitArray);
 	},
-	deleteLocalDiagram(catName, dgrmName) //, update = true)
+	deleteLocalDiagram(catName, dgrmName)
 	{
 		try
 		{
@@ -2100,15 +2092,15 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					return;
 				const currentDiagram = crntDgrm.name;
 				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
-								{
-									const dgrm = Cat.getDiagram(catName, dgrmName, false);
-									const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
-									return H.tr(
-											H.td(H.table(H.tr(
-												H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
-															Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')), 'buttonBarLeft')) +
-											H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
-								}).join('');
+				{
+					const dgrm = Cat.getDiagram(catName, dgrmName, false);
+					const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
+					return H.tr(
+							H.td(H.table(H.tr(
+								H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
+											Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')), 'buttonBarLeft')) +
+							H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
+				}).join('');
 				document.getElementById('userDiagrams').innerHTML = H.table(html);
 			},
 			/*
@@ -2825,7 +2817,6 @@ ${this.svg.button(onclick)}
 		},
 		input(val, id, ph, x='', cls='in100', type='text')
 		{
-//			return `<input id="${id}" class="${cls}" type="${type}" value="${val}" placeholder="${ph}" ${x}/>`;
 			return H.input(val, cls, id, type, {ph});
 		},
 		morphismTableRows(morphisms, action = null, drag = true)
@@ -3194,6 +3185,98 @@ ${this.svg.button(onclick)}
 			creds.params.Logins[providerName] = token;
 			creds.expired = true;
 		},
+		registerCognito()
+		{
+			const poolInfo =
+			{
+				UserPoolId:	this.userPoolId,
+				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
+			};
+			AWS.config.region = this.cognitoRegion;
+			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
+			Cat.Amazon.user = this.userPool.getCurrentUser();
+			if (Cat.Amazon.user)
+			{
+				Cat.Amazon.user.getSession(function(err, session)
+				{
+					if (err)
+					{
+						alert(err.message);
+						return;
+					}
+					AWS.config.credentials = new AWS.CognitoIdentityCredentials(Cat.Amazon.loginInfo);
+					Cat.Amazon.accessToken = session.getAccessToken().getJwtToken();
+					if (Cat.debug)
+						console.log('registerCognito session validity', session, session.isValid());
+					const idPro = new AWS.CognitoIdentityServiceProvider();
+					idPro.getUser({AccessToken:Cat.Amazon.accessToken}, function(err, data)
+					{
+						if (err)
+						{
+							console.log('getUser error',err);
+							return;
+						}
+						Cat.Amazon.loggedIn = true;
+						Cat.user.name = data.Username;
+						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
+						Cat.user.status = 'logged-in';
+						Cat.display.setNavbarBackground();
+						Cat.display.login.setPanelContent();
+					});
+				});
+				this.updateServiceObjects();
+			}
+			else
+			{
+				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
+				AWS.config.credentials.get();
+				if (Cat.debug)
+					console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
+				this.updateServiceObjects();
+			}
+		},
+		signup()
+		{
+			const userName = document.getElementById('signupUserName').value;
+			const email = document.getElementById('signupUserEmail').value;
+			const password = document.getElementById('signupUserPassword').value;
+			let cognitoUser = null;
+			const attributes =
+			[
+				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
+			];
+			this.userPool.signUp(userName, password, attributes, null, function(err, result)
+			{
+				if (err)
+				{
+					alert(err.message);
+					return;
+				}
+				Cat.Amazon.user = result.user;
+				Cat.user.name = userName;
+				Cat.user.email = email;
+				Cat.user.status = 'registered';
+				Cat.display.setNavbarBackground();
+				Cat.display.login.setPanelContent();
+				if (Cat.debug)
+					console.log('user name is ' + Cat.Amazon.user.getUsername());
+			});
+		},
+		confirm()
+		{
+			const code = document.getElementById('confirmationCode').value;
+			Cat.Amazon.user.confirmRegistration(code, true, function(err, result)
+			{
+				if (err)
+				{
+					alert(err.message);
+					return;
+				}
+				Cat.user.status = 'confirmed';
+				Cat.display.setNavbarBackground();
+				Cat.display.login.setPanelContent();
+			});
+		},
 		login()
 		{
 			const userName = document.getElementById('loginUserName').value;
@@ -3248,98 +3331,6 @@ ${this.svg.button(onclick)}
 			Cat.user.status = 'unauthorized';
 			Cat.display.setNavbarBackground();
 			Cat.display.login.setPanelContent();
-		},
-		signup()
-		{
-			const userName = document.getElementById('signupUserName').value;
-			const email = document.getElementById('signupUserEmail').value;
-			const password = document.getElementById('signupUserPassword').value;
-			let cognitoUser = null;
-			const attributes =
-			[
-				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
-			];
-			this.userPool.signUp(userName, password, attributes, null, function(err, result)
-			{
-				if (err)
-				{
-					alert(err.message);
-					return;
-				}
-				Cat.Amazon.user = result.user;
-				Cat.user.name = userName;
-				Cat.user.email = email;
-				Cat.user.status = 'registered';
-				Cat.display.setNavbarBackground();
-				Cat.display.login.setPanelContent();
-				if (Cat.debug)
-					console.log('user name is ' + Cat.Amazon.user.getUsername());
-			});
-		},
-		confirm()
-		{
-			const code = document.getElementById('confirmationCode').value;
-			Cat.Amazon.user.confirmRegistration(code, true, function(err, result)
-			{
-				if (err)
-				{
-					alert(err.message);
-					return;
-				}
-				Cat.user.status = 'confirmed';
-				Cat.display.setNavbarBackground();
-				Cat.display.login.setPanelContent();
-			});
-		},
-		registerCognito()
-		{
-			const poolInfo =
-			{
-				UserPoolId:	this.userPoolId,
-				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
-			};
-			AWS.config.region = this.cognitoRegion;
-			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
-			Cat.Amazon.user = this.userPool.getCurrentUser();
-			if (Cat.Amazon.user)
-			{
-				Cat.Amazon.user.getSession(function(err, session)
-				{
-					if (err)
-					{
-						alert(err.message);
-						return;
-					}
-					AWS.config.credentials = new AWS.CognitoIdentityCredentials(Cat.Amazon.loginInfo);
-					Cat.Amazon.accessToken = session.getAccessToken().getJwtToken();
-					if (Cat.debug)
-						console.log('registerCognito session validity', session, session.isValid());
-					const idPro = new AWS.CognitoIdentityServiceProvider();
-					idPro.getUser({AccessToken:Cat.Amazon.accessToken}, function(err, data)
-					{
-						if (err)
-						{
-							console.log('getUser error',err);
-							return;
-						}
-						Cat.Amazon.loggedIn = true;
-						Cat.user.name = data.Username;
-						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
-						Cat.user.status = 'logged-in';
-						Cat.display.setNavbarBackground();
-						Cat.display.login.setPanelContent();
-					});
-				});
-				this.updateServiceObjects();
-			}
-			else
-			{
-				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
-				AWS.config.credentials.get();
-				if (Cat.debug)
-					console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
-				this.updateServiceObjects();
-			}
 		},
 		async fetchDiagram(name)
 		{
@@ -6279,15 +6270,6 @@ class transform extends morphism
 	}
 }
 
-class transformAssociator extends transform
-{
-	constructor(args)
-	{
-		super($Cat, args);
-		this.subClass = 'transformAssociator';
-	}
-}
-
 class term extends object
 {
 	constructor(args)
@@ -6454,7 +6436,6 @@ class diagram extends functor
 	{
 		return `D_${catName}_${userName}_${baseName}`;
 	}
-//	static nameCheck(catName, basename, regexTst = true, namexTst = true)
 	static nameCheck(catName, userName, basename, regexTst = true, namexTst = true)
 	{
 		if (basename === '')
@@ -8146,7 +8127,7 @@ class ${this.name} extends diagram
 	{
 		let js = 
 `//
-// Catelitical version of diagram ${this.name} for Ecmascript
+// Catelitical version of ${this.user}'s diagram ${this.basename} for Ecmascript
 //
 // Date: ${Date()}
 // CID:  ${this.cid}
@@ -8232,6 +8213,15 @@ function getDiagram()
 	}
 }
 
+class transformAssociator extends transform
+{
+	constructor(args)
+	{
+		super($Cat, args);
+		this.subClass = 'transformAssociator';
+	}
+}
+
 class monoidal extends category
 {
 	constructor(args)
@@ -8240,10 +8230,8 @@ class monoidal extends category
 		const c = this.code;
 		const dom2 = `${c}*${c}`;
 		const dom3 = `${c}*${c}*${c}`;
-
 		this.monoidal = {};
 		this.monoidal.tensor = new functorTensor(dgrm, {name:`${this.name}_tensor`});
-
 //		args.tensor.domain = object.fromData(Cat, {code:dom2code}).name;
 //		args.tensor.codomain = this.name;
 //		this.tensor = new functor(args.tensor);
