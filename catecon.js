@@ -1907,14 +1907,17 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				const cat = getCat();
 				let html = H.div('', '', 'diagramInfoDiv') +
 					H.table(H.tr((dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "getDiagram().clear(event)", 'Erase diagram!'), 'buttonBar')) +
-											H.td(Cat.display.getButton('share', 'getDiagram().upload(event)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') +
-											H.td(Cat.display.getButton('download', "getDiagram().download()", 'Download'), 'buttonBar') +
-											H.td(Cat.display.downloadButtonJS('getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
-											Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight') +
+							H.td(Cat.display.getButton('share', 'getDiagram().upload(event)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') +
+							H.td(Cat.display.getButton('download', "getDiagram().download()", 'Download'), 'buttonBar') +
+							H.td(Cat.display.downloadButtonJS('getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
+							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight') +
 					H.h3(H.span('Diagram')) +
 							H.h4(H.span(dgrm ? dgrm.getText() : '', '', 'dgrmHtmlElt') + H.span('', '', 'dgrmHtmlEditBtn')) +
 					H.p(H.span(dgrm ? Cat.cap(dgrm.description) : '', '', 'dgrmDescElt', 'Description') + H.span('', '', 'dgrmDescriptionEditBtn')) +
 					this.newDiagramPnl();
+					(cat !== null ? H.button(`${cat.getText()} Diagrams`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
+					H.div(	H.small('User diagrams.') +
+							H.div('', '', 'userDiagrams');
 					/*
 					(cat !== null ? H.button(`${cat.getText()} Diagrams`, 'sidenavAccordion', '', 'Available diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
 					H.div(	H.small('Diagrams on this machine.') +
@@ -3222,6 +3225,11 @@ ${this.svg.button(onclick)}
 						Cat.user.status = 'logged-in';
 						Cat.display.setNavbarBackground();
 						Cat.display.login.setPanelContent();
+						diagram.cateconGetUserDiagrams(function(dgrms)
+						{
+							console.log('user diagrams on server',dgrms);
+							Cat.user.serverDiagrams = dgrms;
+						});
 					});
 				});
 				this.updateServiceObjects();
@@ -3311,6 +3319,10 @@ ${this.svg.button(onclick)}
 						});
 						Cat.setLocalStorageDefaultCategory();
 						Cat.setLocalStorageDiagramName();
+						diagram.cateconGetUserDiagrams(function(dgrms)
+						{
+							console.log('user diagrams on server',dgrms);
+						});
 					});
 				},
 				onFailure:function(err)
@@ -6418,6 +6430,7 @@ class diagram extends functor
 		this.link2colorIndex = {};
 		this.colorIndex = 0;
 		this.sha256 = Cat.sha256(args);
+		this.entryDate = Cat.getArg(args, 'entryDate', Date.now());
 	}
 	static fetchDiagram(catName, dgrmName, fn)
 	{
@@ -6474,6 +6487,7 @@ class diagram extends functor
 		d.isStandard = this.isStandard;
 		d.texts = this.texts.map(t => t.json());
 		d.textId = this.textId;
+		d.entryDate = this.entryDate;
 		return d;
 	}
 	cleanse()
@@ -6578,6 +6592,7 @@ class diagram extends functor
 	{
 		if (Cat.debug)
 			console.log('save to local storage', diagram.storageName(this.codomain.name, this.name));
+		this.entryDate = Date.now();
 		const data = this.stringify();
 		localStorage.setItem(diagram.storageName(this.codomain.name, this.name), data);
 	}
@@ -8210,6 +8225,31 @@ function getDiagram()
 			Cat.selected.diagram = this.name;
 			Cat.display.login.setPanelContent();
 		}
+	}
+	static cateconGetUserDiagrams(fn)
+	{
+		const params =
+		{
+			FunctionName:	'CateconGetUserDiagrams',
+			InvocationType:	'RequestResponse',
+			LogType:		'None',
+			Payload:		JSON.stringify(
+							{
+								username:Cat.user.name,
+							}),
+		};
+		Cat.Amazon.lambda.invoke(params, function(error, data)
+		{
+			if (error)
+			{
+				Cat.recordError(error);
+				return;
+			}
+			const payload = JSON.parse(data.Payload);
+			const dgrms = payload.Items.map(i => [i.subkey.S, Number.parseInt(i.entryDate.N)]);
+			if (fn)
+				fn(dgrms);
+		});
 	}
 }
 
