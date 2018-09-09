@@ -592,10 +592,20 @@ const Cat =
 			Cat.display.setNavbarBackground();
 			Cat.initializeCT(function()
 			{
+				/*
+				let catName = localStorage.getItem('Cat.selected.category');
+				catName = catName === null ? 'PFS' : catName;
+				let dgrmName = localStorage.getItem(`Cat.selected.diagram ${catName}`);
+//				dgrmName = dgrmName === null ? diagram.genName(catName, Cat.user.nickname, 'Draft') : dgrmName;
+				dgrmName = dgrmName === null ? diagram.genName(catName, Cat.user.name, 'Draft') : dgrmName;
+				if (Cat.debug)
+					console.log('initialize', catName, dgrmName);
+				*/
 				Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
 				{
 					Cat.initialized = true;
 					Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+//					getDiagram().renameDraft();
 				});
 			});
 		}
@@ -936,6 +946,44 @@ const Cat =
 	{
 		category:	'',
 		diagram:	'',
+		/*
+		selectCategory(e, catName, update = true)
+		{
+			Cat.selected.category = catName;
+			try
+			{
+				const cat = getCat();
+				let name = localStorage.getItem(`Cat.selected.diagram ${cat.name}`);
+				name = name === null ? 'Draft' : name;
+				const fullname = diagram.nameCheck(cat.name, name, false, false);
+				let dgrm = Cat.getDiagram(cat.name, fullname);
+				if (dgrm === null && diagram.fromLocalStorage(cat.name, fullname) === null)
+				{
+					dgrm = new diagram({name, codomain:cat.name, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
+					dgrm.saveToLocalStorage();
+				}
+				Cat.display.diagram.setPanelContent();
+				this.selectDiagram(fullname);
+				if (update)
+				{
+					Cat.display.object.setPanelContent();
+					Cat.display.morphism.setPanelContent();
+				}
+				const nbCat = document.getElementById('navbar_category');
+				nbCat.innerHTML = cat.getText();
+				nbCat.title = Cat.cap(cat.description);
+				Cat.display.category.setPanelContent();
+				localStorage.setItem('Cat.selected.category', catName);
+				this.setLocalStorageDiagramName(catName, name);
+				Cat.display.diagram.update();
+				Cat.display.downloadCatalogTable(catName, Cat.user.nickname);
+			}
+			catch(err)
+			{
+				Cat.recordError(err);
+			}
+		},
+		*/
 		selectCategory(catName, fn)
 		{
 			Cat.selected.category = catName;
@@ -1489,6 +1537,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			return H.button(header, 'sidenavAccordion', buttonId, title, `onclick="${action};Cat.display.accordion.toggle(this, \'${panelId}')"`) +
 					H.div('', 'accordionPnl', panelId);
 		},
+/*
 		downloadCatalogTable(cat, user)
 		{
 			Cat.getUserDiagrams(cat, user, function()
@@ -1496,6 +1545,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				Cat.display.diagram.setCatalogTable(cat);
 			});
 		},
+*/
 		category:
 		{
 			setPanelContent()
@@ -1506,7 +1556,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					let html = H.table(H.tr(Cat.display.closeBtnCell('category', false)), 'buttonBarRight');
 					html += H.h3('Categories') + H.small('Select a category') + H.div('', '', 'categoryTbl') + this.newCategoryPnl();
 					document.getElementById('category-sidenav').innerHTML = html;
-					Cat.display.diagram.setUserDiagramsTable(cat.name);
+//					Cat.display.diagram.setUserDiagramsTable(cat.name);
 //					Cat.getCategories();
 				}
 			},
@@ -2046,9 +2096,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				if (crntDgrm === null)
 					return;
 				const currentDiagram = crntDgrm.name;
-							Cat.user.serverDiagrams = dgrms;
-//				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
-				let html = Object.keys(Cat.user.serverDiagrams).map(dgrmName =>
+				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
 				{
 					const dgrm = Cat.getDiagram(catName, dgrmName, false);
 					const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
