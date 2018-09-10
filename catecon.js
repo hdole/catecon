@@ -283,7 +283,7 @@ const Cat =
 	},
 	hasDiagram(dgrmName)
 	{
-		return Cat.hasLocalDiagram(dgrmName) || dgrmName in Cat.diagrams;
+		return Cat.hasLocalDiagram(dgrmName) || dgrmName in Cat.diagrams || dgrmName in Cat.serverDiagrams;
 	},
 	getDiagram(dgrmName, checkLocal = true)
 	{
@@ -325,7 +325,9 @@ const Cat =
 	},
 	addToLocalDiagramList(dgrm)
 	{
-		Cat.localDiagrams[dgrm.name] = {text:dgrm.getText(), entryDate:dgrm.entryDate};
+		if (dgrm.name in Cat.localDiagrams)
+			return;
+		Cat.localDiagrams[dgrm.name] = {fancyName:dgrm.getText(), entryDate:dgrm.entryDate, description:dgrm.description, user:dgrm.user};
 		Cat.saveLocalDiagramList();
 	},
 	removeFromLocalDiagramList(dgrmName)
@@ -409,7 +411,6 @@ const Cat =
 	renameDiagram(dgrm, name)
 	{
 		// TODO all *deep* names must be changed:  elements.diagram
-//		const fullname = diagram.nameCheck(dgrm.codomain.name, Cat.user.nickname, name);
 		const fullname = diagram.nameCheck(dgrm.codomain.name, Cat.user.name, name);
 		dgrm.basename = name;
 //		delete Cat.diagrams[dgrm.category.name][dgrm.name];
@@ -458,7 +459,7 @@ const Cat =
 			allObjectsFinite:		true,
 			hasProducts:	true,
 			hasCoproducts:	true,
-			referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'].reverse(),
+			referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'],
 		});
 		Graph = new category(
 		{
@@ -924,48 +925,9 @@ const Cat =
 	{
 		category:	'',
 		diagram:	'',
-		/*
-		selectCategory(e, catName, update = true)
-		{
-			Cat.selected.category = catName;
-			try
-			{
-				const cat = getCat();
-				let name = localStorage.getItem(`Cat.selected.diagram ${cat.name}`);
-				name = name === null ? 'Draft' : name;
-				const fullname = diagram.nameCheck(cat.name, name, false, false);
-				let dgrm = Cat.getDiagram(cat.name, fullname);
-				if (dgrm === null && diagram.fromLocalStorage(cat.name, fullname) === null)
-				{
-					dgrm = new diagram({name, codomain:cat.name, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.nickname});
-					dgrm.saveToLocalStorage();
-				}
-				Cat.display.diagram.setPanelContent();
-				this.selectDiagram(fullname);
-				if (update)
-				{
-					Cat.display.object.setPanelContent();
-					Cat.display.morphism.setPanelContent();
-				}
-				const nbCat = document.getElementById('navbar_category');
-				nbCat.innerHTML = cat.getText();
-				nbCat.title = Cat.cap(cat.description);
-				Cat.display.category.setPanelContent();
-				localStorage.setItem('Cat.selected.category', catName);
-				this.setLocalStorageDiagramName(catName, name);
-				Cat.display.diagram.update();
-				Cat.display.downloadCatalogTable(catName, Cat.user.nickname);
-			}
-			catch(err)
-			{
-				Cat.recordError(err);
-			}
-		},
-		*/
 		selectCategory(catName, fn)
 		{
 			Cat.selected.category = catName;
-//			localStorage.setItem(`Cat.selected.category ${Cat.user.name}`, catName);
 			Cat.setLocalStorageDefaultCategory();
 			Cat.selected.diagram = null;
 			const nbCat = document.getElementById('navbar_category');
@@ -993,55 +955,6 @@ const Cat =
 				Cat.setLocalStorageDiagramName();
 			});
 		},
-		/*
-		updateCategoryDisplay()
-		{
-			try
-			{
-//				Cat.display.diagram.setPanelContent();
-//				Cat.display.object.setPanelContent();
-//				Cat.display.morphism.setPanelContent();
-				const nbCat = document.getElementById('navbar_category');
-				nbCat.innerHTML = cat.getText();
-				nbCat.title = Cat.cap(cat.description);
-//				Cat.display.category.setPanelContent();
-//				Cat.display.diagram.update();
-//				Cat.display.downloadCatalogTable(catName, Cat.user.nickname);
-			}
-			catch(err)
-			{
-				Cat.recordError(err);
-			}
-		},
-		*/
-		/*
-		selectDiagram(name)
-		{
-			Cat.display.deactivateToolbar();
-			const cat = getCat();
-			if (Cat.hasDiagram(cat, name))
-			{
-				Cat.selected.diagram = name;
-				Cat.display.object.setPanelContent();
-				Cat.display.morphism.setPanelContent();
-				Cat.display.element.setPanelContent();
-				Cat.display.diagram.update();
-				Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + getDiagram().makeAllSVG();
-				const dgrm = getDiagram();
-				dgrm.update(null, 'diagram', null, true, false);
-				dgrm.updateMorphisms();
-				this.saveAsDefaultDiagram(cat.name, name);
-			}
-			else if (!abort && Cat.selected.category in Cat.catalog && name in Cat.catalog[Cat.selected.category])
-			{
-				Cat.Amazon.downloadDiagram(name, function(dgrm)
-				{
-console.log('selectDiagram download from catolite',dgrm.name);
-					Cat.selected.selectDiagram(dgrm.name, true);
-				});
-			}
-		},
-		*/
 		selectDiagram(name, update = true)
 		{
 			Cat.display.deactivateToolbar();
@@ -1515,15 +1428,6 @@ console.log('selectDiagram download from catolite',dgrm.name);
 			return H.button(header, 'sidenavAccordion', buttonId, title, `onclick="${action};Cat.display.accordion.toggle(this, \'${panelId}')"`) +
 					H.div('', 'accordionPnl', panelId);
 		},
-/*
-		downloadCatalogTable(cat, user)
-		{
-			Cat.getUserDiagrams(cat, user, function()
-			{
-				Cat.display.diagram.setCatalogTable(cat);
-			});
-		},
-*/
 		category:
 		{
 			setPanelContent()
@@ -1532,7 +1436,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				if (cat !== null)
 				{
 					let html = H.table(H.tr(Cat.display.closeBtnCell('category', false)), 'buttonBarRight');
-					html += H.h3('Categories') + H.small('Select a category') + H.div('', '', 'categoryTbl') + this.newCategoryPnl();
+					html += H.h3('Categories') + H.div('', '', 'categoryTbl') + this.newCategoryPnl();
 					document.getElementById('category-sidenav').innerHTML = html;
 				}
 			},
@@ -1885,7 +1789,7 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				const cat = getCat();
 				let html = H.div('', '', 'diagramInfoDiv') +
 					H.table(H.tr((dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "getDiagram().clear(event)", 'Erase diagram!'), 'buttonBar')) +
-							H.td(Cat.display.getButton('share', 'getDiagram().upload(event)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') +
+							H.td(Cat.display.getButton('upload', 'getDiagram().upload(event)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') +
 							H.td(Cat.display.getButton('download', "getDiagram().download()", 'Download'), 'buttonBar') +
 							H.td(Cat.display.downloadButtonJS('getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
 							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight') +
@@ -1897,30 +1801,8 @@ console.log('selectDiagram download from catolite',dgrm.name);
 						H.div(	H.small('User diagrams.') +
 							H.div('', '', 'userDiagrams') +
 							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay');
-					/*
-					(cat !== null ? H.button(`${cat.getText()} Diagrams`, 'sidenavAccordion', '', 'Available diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
-					H.div(	H.small('Diagrams on this machine.') +
-							H.div('', '', 'localDiagrams') +
-							H.small('Catolitic diagrams') +
-							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
-					H.div(	H.small('User diagrams.') +
-							H.div('', '', 'userDiagrams') +
-							H.small('Catalog') +
-							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
-							*/
-//					H.div('', 'accordionPnl', 'diagramCatalogDisplay') +
-					html += H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'diagramReferenceDiv\')"') +
-					H.div('', 'accordionPnl', 'diagramReferenceDiv');
-					/*
-					H.button('New Term', 'sidenavAccordion', '', 'New Term', `onclick="Cat.display.accordion.toggle(this, \'newTermPnl\')"`) +
-					H.div(H.table(H.tr(H.td(Cat.display.input('', `termObjectCode`, 'Object code')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', `termElementCode`, 'Element code')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', `termDescription`, 'Description')), 'sidenavRow')) +
-							Cat.display.getButton('edit', 'Cat.display.diagram.newTerm()', 'Create new term for this diagram', Cat.default.button.small, false) +
-							H.span('', 'parseError', 'diagramTermError'), 'accordionPnl', 'newTermPnl') +
-					H.button('Terms', 'sidenavAccordion', '', 'Terms used to define this diagram', 'onclick="Cat.display.accordion.toggle(this, \'diagramTermDisplay\')"') +
-					H.div(H.div(this.termTable(), '', 'termTable'), 'accordionPnl', 'diagramTermDisplay');
-					*/
+					html += H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'referenceDiagrams\')"') +
+								H.div(H.div('', 'accordionPnl', 'referenceDiagrams'));
 				document.getElementById('diagram-sidenav').innerHTML = html;
 				this.update();
 			},
@@ -1930,12 +1812,11 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				if (dgrm !== null)
 				{
 					this.updateDecorations(dgrm);
-// TODO					Cat.display.diagram.setCatalogTable(dgrm.codomain.name);
-// TOD
 					document.getElementById('dgrmHtmlEditBtn').innerHTML = dgrm.readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('dgrmHtmlElt', 'html')`, 'Retitle', Cat.default.button.tiny);
 					document.getElementById('dgrmDescriptionEditBtn').innerHTML =
 						dgrm.readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
-					document.getElementById('diagramReferenceDiv').innerHTML = H.span('Diagrams referenced by this diagram.', 'smallPrint') + H.table(dgrm.references.map(d => H.tr(H.td(d.getText()))).join(''));
+					Cat.display.diagram.setUserDiagramTable();
+					Cat.display.diagram.setReferencesDiagramTable();
 				}
 			},
 			deleteTerm(ndx)
@@ -2012,16 +1893,16 @@ console.log('selectDiagram download from catolite',dgrm.name);
 					const html = htmlElt.value;
 					const descriptionElt = document.getElementById('newDiagramDescription');
 					const description = descriptionElt.value;
-//					let dgrm = new diagram({name:fullname, codomain, html:document.getElementById('diagramHtml').value, description:document.getElementById('newDiagramDescription').value, user:Cat.user.nickname});
 					const dgrm = new diagram({name:fullname, codomain, html:document.getElementById('diagramHtml').value, description:document.getElementById('newDiagramDescription').value, user:Cat.user.name});
 					nameElt.value = '';
 					htmlElt.value = '';
 					descriptionElt.value = '';
 					dgrm.saveToLocalStorage();
 					Cat.selected.selectDiagram(fullname);
-//					Cat.display.diagram.setLocalDiagramsTable(codomain);
 					Cat.display.accordion.close('newDiagramPnl');
 					Cat.display.panel.close('diagram');
+					this.setUserDiagramTable();
+					this.setReferencesDiagramTable();
 					dgrm.update();
 				}
 				catch(e)
@@ -2037,95 +1918,50 @@ console.log('selectDiagram download from catolite',dgrm.name);
 				document.getElementById('dgrmHtmlElt').innerHTML = dgrm.getText();
 				document.getElementById('dgrmDescElt').innerHTML = nbDgrm.title;
 			},
-			referenceTable(dgrm)
+			diagramRow(dgrmName)
 			{
-				let html = H.span('Available diagrams to reference.', 'smallPrint');	// TODO put in handler
-				const catName = dgrm.codomain.name;
-				if (catName in Cat.catalog)
-					for (let k in Cat.catalog[catName])
-					{
-						const d = Cat.catalog[catName][k];
-						html += H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${d.name}')">${d.html}</a>`, 'sidenavRow'));
-					}
-				return html;
-			},
-			/*
-			setCatalogTable(cat)
-			{
+				const serverInfo = dgrmName in Cat.serverDiagrams ? Cat.serverDiagrams[dgrmName] : null;
+				const localInfo = dgrmName in Cat.localDiagrams ? Cat.localDiagrams[dgrmName] : null;
+				const serverTime = serverInfo ? serverInfo.entryDate : 0;
+				const localTime = localInfo ? localInfo.entryDate : 0;
+//				const downloadBtn = dgrmName in Cat.serverDiagrams ? H.td(Cat.display.getButton('download', 'TODO', 'Download from catelite')) : '';
+//				const uploadBtn = (dgrmName in Cat.localDiagrams && Cat.localDiagrams[dgrmName].user === Cat.user.name) ? H.td(Cat.display.getButton('upload', 'TODO', 'Upload to catelite')) : '';
+				let description = localInfo ? localInfo.description : (serverInfo ? serverInfo.description : '');
+//				let delBtn = '';
 				let html = '';
-				if (cat in Cat.catalog)
+				let text = serverTime < localTime ? localInfo.fancyName : serverInfo.fancyName;
+				if (dgrmName in Cat.diagrams)
 				{
-					html = H.table(Object.keys(Cat.catalog[cat]).map(name =>
-									{
-										const description = name in Cat.diagrams ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[name].description))) : '';
-										return H.tr(
-											H.td(H.table(H.tr(
-												H.td(Cat.display.getButton('delete', `Cat.deleteDiagram('${cat}', '${name}')`, 'Delete diagram from catolite'), 'buttonBar') +
-												H.td(Cat.display.getButton('download', `Cat.selected.selectDiagram('${name}')`, 'Download and make active'), 'buttonBar')
-												), 'buttonBarLeft')) +
-											H.td(`${Cat.catalog[cat][name].html}`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`),'sidenavRow');
-									}).join('\n'), 'navbarTbl');
+					const dgrm = Cat.diagrams[dgrmName];
+					description = dgrm.description;
+//					delBtn = dgrm.refcnt == 1 ? H.td(Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${dgrmName}')`, 'Remove diagram from this machine')) : '';
+					text = dgrm.getText();
 				}
-				document.getElementById('catalog').innerHTML = html;
+				description = Cat.htmlSafe(Cat.htmlSafe(Cat.cap(description)));
+				return H.tr(	// H.td(H.table(H.tr(delBtn), 'buttonBarLeft'), 'w20') +
+								H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${text}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
 			},
-			*/
-			diagramRow(dgrm)
+			setUserDiagramTable()
 			{
-				const serverInfo = dgrm in Cat.serverDiagrams ? Cat.serverDiagrams : null;
-				const localInfo = dgrm in Cat.localDiagrams ? Cat.localDiagrams : null;
-				const serverBtn = serverInfo ? Cat.display.getButton('download', 'TODO', 'Download from catelite') : '';
-				const localBtn = dgrm in Cat.localDiagrams ? Cat.display.getButton('upload', 'TODO', 'Upload to catelite') : '';
-
-				const description = dgrm in Cat.diagrams ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[dgrmName].description))) : '';
-					const delBtn = (dgrm !== null && dgrm.refcnt == 1) ? Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${dgrm.name}')`, 'Delete diagram from this machine') : '';
-					return H.tr(	H.td(H.table(H.tr(H.td((delBtn), 'buttonBar')), 'buttonBarLeft')) +
-									H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[dgrmName].text}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
-			}
-			setUserDiagramsTable()
-			{
-				const crntDgrm = getDiagram();
-				if (crntDgrm === null)
+				const dgrm = getDiagram();
+				if (dgrm === null)
 					return;
-				const currentDiagram = crntDgrm.name;
-
-				Object.keys(Cat.localDiagrams).map(d =>
-				{
-					const dd = Cat.localDiagrams[d];
-					dd.local = true;
-					if (d in dgrms)
-					{
-						if (dgrms[d].entryDate < dd.entryDate)
-					}
-					else
-						dgrms[d] = dd;
-				});
-				let html = Object.keys(dgrms).map(dgrmName =>
-				{
-					const dgrm = Cat.getDiagram(dgrmName, false);
-					const description = dgrm && dgrm.name in Cat.diagrams ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[dgrmName].description))) : '';
-					const delBtn = (dgrm !== null && dgrm.refcnt == 1) ? Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${dgrm.name}')`, 'Delete diagram from this machine') : '';
-					return H.tr(	H.td(H.table(H.tr(H.td((delBtn), 'buttonBar')), 'buttonBarLeft')) +
-									H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[dgrmName].text}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
-				}).join('');
+				const dgrms = {};
+				for (const d in Cat.localDiagrams)
+					if (d.user === Cat.user.name)
+						dgrms[d] = true;
+				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = true);
+				let html = Object.keys(dgrms).map(d => this.diagramRow(d)).join('');
 				document.getElementById('userDiagrams').innerHTML = H.table(html);
 			},
-			/*
-			setLocalDiagramsTable(catName)
+			setReferencesDiagramTable()
 			{
-				const currentDiagram = getDiagram().name;
-				let html = Object.keys(Cat.localDiagrams[catName]).map(dgrmName =>
-								{
-									const dgrm = Cat.getDiagram(catName, dgrmName, false);
-									const description = dgrm && dgrm.name in Cat.diagrams[catName] ? Cat.htmlSafe(Cat.htmlSafe(Cat.cap(Cat.diagrams[catName][dgrmName].description))) : '';
-									return H.tr(
-											H.td(H.table(H.tr(
-												H.td((dgrmName !== currentDiagram && dgrm !== null && dgrm.refcnt == 1 ?
-															Cat.display.getButton('delete', `Cat.deleteLocalDiagram('${catName}', '${dgrm.name}')`, 'Delete diagram from this machine') : ''), 'buttonBar')), 'buttonBarLeft')) +
-											H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${Cat.localDiagrams[catName][dgrmName]}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
-								}).join('');
-				document.getElementById('localDiagrams').innerHTML = H.table(html);
+				const dgrm = getDiagram();
+				if (dgrm === null)
+					return;
+				let html = H.small('References for this diagram') + dgrm.references.map(d => this.diagramRow(d.name)).join('');
+				document.getElementById('referenceDiagrams').innerHTML = H.table(html);
 			},
-			*/
 		},
 		functor:
 		{
@@ -2195,10 +2031,11 @@ console.log('selectDiagram download from catolite',dgrm.name);
 							H.p(H.a('V Is For Vortex - More Categorical Programming', '', '', '', 'href="https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"')), 'accordionPnl', 'referencesPnl') +
 					H.button('The Math License', 'sidenavAccordion', 'licensePnlBtn', '', `onclick="Cat.display.accordion.toggle(this, \'licensePnl\')"`) +
 					H.div(	H.p('Vernacular code generated by the Categorical Console is freely usable by those with a cortex. Machines are good to go, too.') +
-							H.p('Upload a diagram to a catolite and others there are expected to make full use of it.  Get your own local catolite if need be.') +
+							H.p('Upload a diagram to Catecon and others there are expected to make full use of it.') +
 							H.p('Inelegant or unreferenced diagrams are removed.'), 'accordionPnl', 'licensePnl') +
 					H.button('Credits', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="Cat.display.accordion.toggle(this, \'creditsPnl\')"`) +
-					H.div(H.p('Saunders Mac Lane<br/>Harry Dole'), 'accordionPnl', 'creditsPnl') +
+					H.div(	H.a('Saunder Mac Lane', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"') +
+							H.a('Harry Dole', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"'), 'accordionPnl', 'creditsPnl') +
 					H.button('Third Party Software', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="Cat.display.accordion.toggle(this, \'thirdPartySoftwarePnl\')"`) +
 					H.div(H.p('Parser: peg.js') +
 							H.p('Crypto: sjcl.js') +
@@ -2219,21 +2056,27 @@ console.log('selectDiagram download from catolite',dgrm.name);
 						H.button('Log out', '', '', 'Log out of the current session', `onclick="Cat.Amazon.logout()"`));
 					if (Cat.user.status !== 'logged-in' && Cat.user.status !== 'registered')
 						html += H.h3('Login') +
-								H.table(H.tr(H.td('User name') + H.td(H.input('', '', 'loginUserName', 'text', {ph:'Name'}))) +
-										H.tr(H.td('Password') + H.td(H.input('', '', 'loginPassword', 'password', {ph:'********'})))) +
-										H.button('Log in to Catecon', '', '', '', 'onclick=Cat.Amazon.login()');
+								H.table(	H.tr(H.td('User name')) +
+											H.tr(H.td(H.input('', '', 'loginUserName', 'text', {ph:'Name'}))) +
+											H.tr(H.td('Password')) +
+											H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********'}))) +
+											H.tr(H.td(H.button('Log in to Catecon', '', '', '', 'onclick=Cat.Amazon.login()'))));
 					if (Cat.user.status === 'unauthorized')
 						html += H.h3('Signup') +
-								H.table(H.tr(H.td('User name') + H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
-										H.tr(H.td('Email') + H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
+								H.table(H.tr(H.td('User name')) +
+										H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
+										H.tr(H.td('Email')) +
+										H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 										H.tr(H.td('Password') + H.td(H.input('', '', 'signupUserPassword', 'password', {ph:'Password'}))) +
-										H.tr(H.td('Confirm password') + H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Password'})))) +
-										H.button('Sign up for Catecon', '', '', '', 'onclick=Cat.Amazon.signup()');
+										H.tr(H.td('Confirm password')) +
+										H.tr(H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Password'}))) +
+										H.tr(H.td(H.button('Sign up for Catecon', '', '', '', 'onclick=Cat.Amazon.signup()'))));
 					if (Cat.user.status === 'registered')
 						html += H.h3('Confirmation Code') +
 								H.span('The confirmation code is sent by email to the address you specified.') +
-								H.table(H.tr(H.td('Confirmation code') + H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code'})))) +
-									H.button('Submit Confirmation Code', '', '', '', 'onclick=Cat.Amazon.confirm()');
+								H.table(	H.tr(H.td('Confirmation code')) +
+											H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code'}))) +
+											H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=Cat.Amazon.confirm()'))));
 				document.getElementById('login-sidenav').innerHTML = html;
 			},
 		},
@@ -2763,16 +2606,16 @@ console.log('selectDiagram download from catolite',dgrm.name);
 <line class="svgstr3" x1="90" y1="120" x2="200" y2="120"/>
 <line class="svgstr3" x1="90" y1="160" x2="160" y2="160"/>
 <line class="svgstr3" x1="90" y1="200" x2="120" y2="200"/>`,
-				share:
+				upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
 <line class="svgstr0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead")/>`,
 			},
-			header(scale)
+			header(scale, bgColor = '#ffffff')
 			{
 				const v = 0.32 * (typeof scale !== 'undefined' ? scale : 1.0);
 				const html = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${v}in" height="${v}in" version="1.1" viewBox="0 0 320 320">
-<rect x="0" y="0" width="320" height="320" style="fill:#ffffff"/>`;
+<rect x="0" y="0" width="320" height="320" style="fill:${bgColor}"/>`;
 				return html;
 			},
 			button(onclick)
@@ -2790,12 +2633,12 @@ ${this.svg.button(onclick)}
 </svg>`;
 			return html;
 		},
-		getButton(buttonName, onclick, title, scale = Cat.default.button.small, addNew = false, id = null)
+		getButton(buttonName, onclick, title, scale = Cat.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
 		{
 			let btn = this.svg.buttons[buttonName];
 			if (id !== null)
 				btn = `<g id="${id}">${btn}</g>`;
-			return H.span(this.svg.header(scale) + btn + (addNew ? this.svg.buttons.new : '') + this.svg.button(onclick) + '</svg>', '', id, title);
+			return H.span(this.svg.header(scale, bgColor) + btn + (addNew ? this.svg.buttons.new : '') + this.svg.button(onclick) + '</svg>', '', id, title);
 		},
 		setNavbarHtml()
 		{
@@ -3235,6 +3078,7 @@ ${this.svg.button(onclick)}
 						Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
 						{
 							Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+console.log('updating diagram display from registerCognito');
 						});
 					});
 				});
@@ -3245,7 +3089,7 @@ ${this.svg.button(onclick)}
 				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
 				AWS.config.credentials.get();
 				if (Cat.debug)
-					console.log('RegisterCognito', Cat.user.nickname,AWS.config.credentials);
+					console.log('RegisterCognito', Cat.user.name,AWS.config.credentials);
 				this.updateServiceObjects();
 			}
 		},
@@ -3359,6 +3203,32 @@ ${this.svg.button(onclick)}
 			const json = await (await fetch(url)).json();
 			return json;
 		},
+		standardLambdaHandler(error, data)
+		{
+			if (error)
+			{
+				Cat.recordError(error);
+				return;
+			}
+			const result = JSON.parse(data.Payload);
+			if (fn)
+				fn(e, result);
+		});
+		ingestCategoryLambda(e, cat, fn)
+		{
+			const params =
+			{
+				FunctionName:	'CateconIngestCategory',
+				InvocationType:	'RequestResponse',
+				LogType:		'None',
+				Payload:		JSON.stringify(
+								{
+									category:cat.json(),
+									username:Cat.user.name,
+								}),
+			};
+			Cat.Amazon.lambda.invoke(params, standardLambdaHandler);
+		},
 		ingestDiagramLambda(e, dgrm, fn)
 		{
 			const params =
@@ -3372,21 +3242,11 @@ ${this.svg.button(onclick)}
 									username:Cat.user.name,
 								}),
 			};
-			Cat.Amazon.lambda.invoke(params, function(error, data)
-			{
-				if (error)
-				{
-					Cat.recordError(error);
-					return;
-				}
-				const result = JSON.parse(data.Payload);
-				if (fn)
-					fn(e, result);
-			});
+			Cat.Amazon.lambda.invoke(params, standardLambdaHandler);
 		},
 		fetchDiagramJsons(diagrams, fn, jsons = [], refs = {})
 		{
-			let someDiagrams = diagrams.reverse().filter(d => typeof d === 'string' && Cat.getDiagram(d) === null);
+			let someDiagrams = diagrams.filter(d => typeof d === 'string' && Cat.getDiagram(d) === null);
 			if (someDiagrams.length > 0)
 				Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(fetchedJsons =>
 				{
@@ -3396,7 +3256,7 @@ ${this.svg.button(onclick)}
 					for (let i=0; i<fetchedJsons.length; ++i)
 						nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && nextRound.indexOf(r) < 0));
 					if (nextRound.length > 0)
-						fetchDiagramJsons(nextRound, fn, jsons, refs);
+						Cat.Amazon.fetchDiagramJsons(nextRound, fn, jsons, refs);
 					else if (fn)
 						fn(jsons);
 				});
@@ -3931,9 +3791,10 @@ class element
 		}
 		return fctr;
 	}
-	static objectSignature(cat, expr, first, data)	// data = 
+	static signature(cat, expr, first, data)	// data = 
 	{
 		return element.expandExpression(cat, expr,
+				/*
 			function(cat, expr, first, data)
 			{
 				let obj = 'token' in expr ? cat.getObject(expr.token) : cat.getObjectByExpr(expr);
@@ -3941,14 +3802,33 @@ class element
 					return obj.cid;
 				throw 'bad expression for object signature';
 			},
-			function(cat, expr, first, data)
+			*/
+			function(dgrm, expr, first)
 			{
-				// TODO assumes associative due to sort()
-				return Cat.sha256(expr.data.map((x, i) => element.objectSignature(cat, x, false, null)).sort().join(''));
+				let obj = null;
+				if (dgrm.subClass === 'diagram')
+					obj = dgrm.getObject(expr.token, true);
+				else
+					obj = dgrm.getObjectByExpr(expr);
+				if (obj)
+				{
+					if ('token' in obj.expr)
+						return obj.cid;
+					else
+						return element.signature(dgrm, obj.expr, first, extended);
+				}
+				else if ('token' in expr)
+					return obj.cid;
+				throw 'no signature for expression';
 			},
 			function(cat, expr, first, data)
 			{
-				return Cat.sha256(element.objectSignature(cat, expr.lhs, false, null) + element.objectSignature(cat, expr.rhs, false, null));
+				// TODO assumes associative due to sort()
+				return Cat.sha256(expr.data.map((x, i) => element.signature(cat, x, false, null)).sort().join(''));
+			},
+			function(cat, expr, first, data)
+			{
+				return Cat.sha256(element.signature(cat, expr.lhs, false, null) + element.signature(cat, expr.rhs, false, null));
 			},
 			function(){},
 			first, data);
@@ -4038,9 +3918,6 @@ class element
 	{
 		if ('data' in this.expr && this.expr.data.length === 2 && this.expr.op === 'product')
 		{
-//			const cod0 = element.getCode(this.diagram, this.expr.data[0], true, true);
-//			const cod1 = element.getCode(this.diagram, this.expr.data[1], true, true);
-//			return cod0 === cod1;
 			const codes = this.expr.data.map(d => element.getCode(this.diagram, d, true, true));
 			return codes[0] === codes[1];
 		}
@@ -4246,6 +4123,7 @@ class category extends object
 		this.objects = new Map();
 		this.morphisms = new Map();
 		this.transforms = new Map();
+		this.user = Cat.getArg(args, 'user', Cat.user.name);
 		if ($Cat === null)	// undefined at initialization
 		{
 			$Cat = this;
@@ -4327,9 +4205,8 @@ class category extends object
 		cat.transforms = Cat.jsonMap(this.transforms);
 		if ('subobject' in this)
 			cat.subobject = this.subobject.name;
-//		cat.referenceDiagrams = this.referenceDiagrams.map(d => d.name);
-//		cat.referenceDiagrams = this.referenceDiagrams;
 		cat.referenceDiagrams = this.referenceDiagrams.map(d => typeof d === 'string' ? d : d.name);
+		cat.user = this.user;
 		return cat;
 	}
 	hasObject(name)
@@ -4628,18 +4505,24 @@ return true; // TODO
 	}
 	static fetchReferenceDiagrams(cat, fn)
 	{
-		Cat.Amazon.fetchDiagramJsons(cat.referenceDiagrams, function(jsons)
-		{
-//			jsons.reverse().map(j =>
-			jsons.map(j =>
+		const dgrms = cat.referenceDiagrams.filter(d => !Cat.getDiagram(d));
+		const refs = {};
+		for (const d in Cat.digrams)
+			refs[d] = true;
+		if (dgrms.length > 0)
+			Cat.Amazon.fetchDiagramJsons(dgrms, function(jsons)
 			{
-				const dgrm = new diagram(j);
-				dgrm.saveToLocalStorage();
-			});
-			if (fn)
-				fn(jsons);
-			return jsons;
-		});
+				jsons.map(j =>
+				{
+					const dgrm = new diagram(j);
+					dgrm.saveToLocalStorage();
+				});
+				if (fn)
+					fn(jsons);
+				return jsons;
+			}, [], refs);
+		else if (fn)
+			fn([]);
 	}
 	rename(nuName)	// only for diagram's domain category
 	{
@@ -6336,7 +6219,7 @@ class diagram extends functor
 		}
 		else
 			this.basename = args.name;
-		this.user = Cat.getArg(args, 'user', Cat.user.nickname);
+		this.user = Cat.getArg(args, 'user', Cat.user.name);
 		this.name = name;
 		this.isStandard = Cat.getArg(args, 'isStandard', false);
 		const mainCat = $Cat.getObject(args.codomain);
@@ -6373,6 +6256,7 @@ class diagram extends functor
 		this.morphisms = new Map();
 		this.texts = 'texts' in args ? args.texts.map(d => new element(this.domain, d)) : [];
 		this.texts.map(t => t.diagram = this);
+		this.entryDate = Cat.getArg(args, 'entryDate', Date.now());
 		Cat.addDiagram(this.codomain.name, this);
 		if ('codomainData' in args)
 		{
@@ -6436,7 +6320,6 @@ class diagram extends functor
 		this.link2colorIndex = {};
 		this.colorIndex = 0;
 		this.sha256 = Cat.sha256(args);
-		this.entryDate = Cat.getArg(args, 'entryDate', Date.now());
 	}
 	static fetchDiagram(catName, dgrmName, fn)
 	{
@@ -8236,10 +8119,10 @@ function getDiagram()
 				return;
 			}
 			const payload = JSON.parse(data.Payload);
-			const dgrms = payload.Items.map(i => [i.subkey.S, Number.parseInt(i.entryDate.N)]);
-			Cat.serverDiagrams = dgrms;
+			payload.Items.map(i => Cat.serverDiagrams[i.subkey.S] = {entryDate:Number.parseInt(i.entryDate.N), description:i.description.S, fancyName:i.fancyName.S});
+			Cat.display.diagram.setUserDiagramTable();
 			if (fn)
-				fn(dgrms);
+				fn(payload.Items);
 		});
 	}
 }
