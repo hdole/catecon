@@ -682,7 +682,7 @@ const Cat =
 		category:	'',
 		diagram:	'',
 		button:		{tiny:0.4, small:0.66, large:1.0},
-		panel:		{width:	200},
+		panel:		{width:	230},
 		dragDelay:	100,	// ms
 		font:		{height:24},
 		arrow:		{length:150, height:20, margin:16, spacer:1.0, lineDash:[], strokeStyle:'#000', lineWidth:2},
@@ -1045,7 +1045,7 @@ const Cat =
 			const pnt = dgrm.mousePosition(e);
 			if (Cat.display.mouseover)
 			{
-				if (!dgrm.isSelected(Cat.display.mouseover))
+				if (!dgrm.isSelected(Cat.display.mouseover) && !Cat.display.shiftKey)
 					dgrm.deselectAll();
 			}
 			else
@@ -2024,7 +2024,7 @@ const Cat =
 							H.h5('Z') +
 								H.span('[Shift-n]', 'italic') + H.p('Place the integers object if it exists.')
 							, 'accordionPnl', 'catActionHelpPnl') +
-				H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References to Category Theory', `onclick="Cat.display.accordion.toggle(this, \'catHelpPnl\')"`) +
+					H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References to Category Theory', `onclick="Cat.display.accordion.toggle(this, \'catHelpPnl\')"`) +
 					H.div(H.p(H.a('Categories For The Working Mathematician', '', '', '', 'href="https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician" target="_blank"')), 'accordionPnl', 'catHelpPnl') +
 					H.button('References', 'sidenavAccordion', 'referencesPnlBtn', '', `onclick="Cat.display.accordion.toggle(this, \'referencesPnl\')"`) +
 					H.div(	H.p(H.a('Intro To Categorical Programming', '', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"')) +
@@ -2062,15 +2062,16 @@ const Cat =
 											H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********'}))) +
 											H.tr(H.td(H.button('Log in to Catecon', '', '', '', 'onclick=Cat.Amazon.login()'))));
 					if (Cat.user.status === 'unauthorized')
-						html += H.h3('Signup') +
-								H.table(H.tr(H.td('User name')) +
-										H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
-										H.tr(H.td('Email')) +
-										H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
-										H.tr(H.td('Password') + H.td(H.input('', '', 'signupUserPassword', 'password', {ph:'Password'}))) +
-										H.tr(H.td('Confirm password')) +
-										H.tr(H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Password'}))) +
-										H.tr(H.td(H.button('Sign up for Catecon', '', '', '', 'onclick=Cat.Amazon.signup()'))));
+						html += H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.display.accordion.toggle(this, \'signupPnl\')"`) +
+								H.div( H.table(H.tr(H.td('User name')) +
+											H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
+											H.tr(H.td('Email')) +
+											H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
+											H.tr(H.td('Password')) +
+											H.tr(H.td(H.input('', '', 'signupUserPassword', 'password', {ph:'Password'}))) +
+											H.tr(H.td('Confirm password')) +
+											H.tr(H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Password'}))) +
+											H.tr(H.td(H.button('Sign up for Catecon', '', '', '', 'onclick=Cat.Amazon.signup()')))), 'accordionPnl', 'signupPnl');
 					if (Cat.user.status === 'registered')
 						html += H.h3('Confirmation Code') +
 								H.span('The confirmation code is sent by email to the address you specified.') +
@@ -3213,7 +3214,7 @@ console.log('updating diagram display from registerCognito');
 			const result = JSON.parse(data.Payload);
 			if (fn)
 				fn(e, result);
-		});
+		},
 		ingestCategoryLambda(e, cat, fn)
 		{
 			const params =
@@ -4016,7 +4017,7 @@ if (this.name === '1') throw "This is not good!";
 	{
 		return ('basetype' in this && 'regexp' in this.basetype) ? this.basetype.regexp : '';
 	}
-	static process(cat, data)
+	static process(cat, data, dgrm)
 	{
 		try
 		{
@@ -4027,7 +4028,9 @@ if (this.name === '1') throw "This is not good!";
 				r = new object(cat, data);
 				break;
 			case 'diagramObject':
-				r = new diagramObject(cat, data);
+				const info = Cat.clone(data);
+				info.digram = dgrm;
+				r = new diagramObject(cat, info);
 				break;
 			default:
 				break;
@@ -4151,7 +4154,7 @@ class category extends object
 				{
 					try
 					{
-						const obj = object.process(this, args.objects[key]);
+						const obj = object.process(this, args.objects[key], dgrm);
 					}
 					catch(x)
 					{
@@ -4671,7 +4674,9 @@ class morphism extends element
 			switch(data.subClass)
 			{
 			case 'diagramMorphism':
-				return new diagramMorphism(cat, data);
+				const info = Cat.clone(data);
+				info.diagram = dgrm;
+				return new diagramMorphism(cat, info);
 				break;
 			case 'composite':
 				return new composite(cat, data);
@@ -4728,7 +4733,8 @@ class diagramMorphism extends morphism
 	constructor(cat, args)
 	{
 		const nuArgs = Cat.clone(args);
-		nuArgs.diagram = null;
+//		nuArgs.diagram = null;
+		nuArgs.diagram = Cat.getArg(args, 'diagram', null);
 		nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
 		super(cat, nuArgs);
 		this.to = null;
@@ -6767,10 +6773,6 @@ class diagram extends functor
 		const xyCod = D2.add(s.codomain, D2.scale(Cat.default.arrow.length, normV));
 		this.placeMorphism(e, m, xyDom, xyCod);
 	}
-	curryForm(event, from)
-	{
-		this.lambdaBtnForm(from.to.domain.expr, from.to.codomain.expr, from.to.domain.name);
-	}
 	displayString(event, from)
 	{
 		this.showString(this.getSelected());
@@ -6797,6 +6799,11 @@ class diagram extends functor
 		else
 			html += H.button(this.getObjectByExpr(expr).getText(), '', Cat.display.elementId(), '', `data-factor="${data.dir} -1" onclick="H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 		return html;
+	}
+	curryForm(event, elt)
+	{
+		const from = this.getSelected();
+		this.lambdaBtnForm(from.to.domain.expr, from.to.codomain.expr, from.to.domain.name);
 	}
 	lambdaBtnForm(domExpr, codExpr, root)
 	{
