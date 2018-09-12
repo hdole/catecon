@@ -199,8 +199,8 @@ const Cat =
 	initialized:	false,
 	statusXY:		{x:0, y:0},
 	autosave:		false,
-	nameEx:			RegExp('^[a-zA-Z_]+[a-zA-Z0-9_]*$'),
-	userNameEx:		RegExp('^[a-zA-Z]+[a-zA-Z0-9]*$'),
+	nameEx:			RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_-]*$'),
+	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
 	diagrams:		{},
 	localDiagrams:	{},
@@ -241,6 +241,7 @@ const Cat =
 		s.style.opacity = 1;
 		s.style.display = 'block';
 		Cat.statusXY = {x:e.clientX, y:e.clientY};
+		document.getElementById('tty-out').innerHTML += msg + "\n";
 	},
 	barycenter(ary)
 	{
@@ -459,7 +460,7 @@ const Cat =
 			allObjectsFinite:		true,
 			hasProducts:	true,
 			hasCoproducts:	true,
-			referenceDiagrams:	['D_PFS_std_basics', 'D_PFS_std_FOL', 'D_PFS_std_arithmetics', 'D_PFS_std_strings', 'D_PFS_std_console', 'D_PFS_std_threeD'],
+			referenceDiagrams:	['D-PFS-std-basics', 'D-PFS-std-FOL', 'D-PFS-std-arithmetics', 'D-PFS-std-strings', 'D-PFS-std-console', 'D-PFS-std-threeD'],
 		});
 		Graph = new category(
 		{
@@ -476,7 +477,7 @@ const Cat =
 		});
 		new transform(
 		{
-			name:		'id_PFS',
+			name:		'id-PFS',
 			transform:	'identity',
 			domain:		'PFS',
 			codomain:	'PFS',
@@ -485,7 +486,7 @@ const Cat =
 		});
 		new transform(
 		{
-			name:	'diagonal_PFS',
+			name:	'diagonal-PFS',
 			html:	'&#x0394;',
 			code:	'',
 			transform:	'diagonal',
@@ -495,7 +496,7 @@ const Cat =
 		});
 		new transform(
 		{
-			name:	'terminal_PFS',
+			name:	'terminal-PFS',
 			html:	'&#8594;1',
 			code:	'',
 			transform:	'terminal',
@@ -505,7 +506,7 @@ const Cat =
 		});
 		new transform(
 		{
-			name:	'equals_PFS',
+			name:	'equals-PFS',
 			html:	'=',
 			code:	'',
 			transform:	'equals',
@@ -519,7 +520,7 @@ const Cat =
 		});
 		new transform(
 		{
-			name:	'eval_PFS',
+			name:	'eval-PFS',
 			html:	'e',
 			code:	'',
 			transform:	'apply',
@@ -640,29 +641,6 @@ const Cat =
 				Cat.recordError(`Cannot get list of diagrams for category ${cat}`);
 		});
 	},
-	/*
-	getUserDiagrams(cat, user, fn = null)
-	{
-		fetch(Cat.Amazon.URL(cat, user) + `/_diagrams.json`).then(function(response)
-		{
-			if (response.ok)
-				response.json().then(function(data)
-				{
-					Object.keys(data).forEach(function(basename)
-					{
-						const name = diagram.genName(cat, user, basename);
-						if (!(cat in Cat.catalog))
-							Cat.catalog[cat] = {};
-						Cat.catalog[cat][name] = data[basename];
-					});
-					if (fn != null)
-						fn(data);
-				});
-			else
-				Cat.recordError(`Cannot get list of diagrams for category ${cat} and user ${user}.`);
-		});
-	},
-	*/
 	deleteDiagram(cat, dgrmName)
 	{
 		fetch(`catecon.php?action=deleteDiagram&cat=${Cat.htmlSafe(cat)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
@@ -703,10 +681,10 @@ const Cat =
 	{
 		parens:
 		{
-			left: {sym:'(', symCode:'(', nameCode:'__P_'},
-			right: {sym:')', symCode:')', nameCode:'_P__'},
+			left: {sym:'(', symCode:'(', nameCode:'--P-'},
+			right: {sym:')', symCode:')', nameCode:'-P--'},
 		},
-		comma: {sym:',', symCode:',', nameCode:'_c_'},
+		comma: {sym:',', symCode:',', nameCode:'-c-'},
 		objects:
 		{
 			Null:
@@ -839,11 +817,11 @@ const Cat =
 		},
 		operators:
 		{
-			compose:	// new operator({sym:'&#8728;', symCode:'.', nameCode:'_o_', reverse:true}),
+			compose:	// new operator({sym:'&#8728;', symCode:'.', nameCode:'-o-', reverse:true}),
 			{
 				sym:'&#8728;',
 				symCode:'.',
-				nameCode:'_o_',
+				nameCode:'-o-',
 				toName(tokens)
 				{
 					let name = '';
@@ -870,14 +848,14 @@ const Cat =
 					return tokens.slice().reverse().join(this.sym);
 				},
 			},
-			coproduct:	new operator({sym:'+', symCode:'+', nameCode:'_C_',}),
-			product:	new operator({sym:'&#215;', symCode:'*', nameCode:'_X_',}),
+			coproduct:	new operator({sym:'+', symCode:'+', nameCode:'-C-',}),
+			product:	new operator({sym:'&#215;', symCode:'*', nameCode:'-X-',}),
 			sequence:	new operator({sym:',', symCode:',',}),
 			hom:
 			{
 				html:	'[%1, %2]',
 				code:	'[%1,%2]',
-				name:	'__B_%1__%2_B__',
+				name:	'--B-%1--%2-B--',
 				toName(tokens)
 				{
 					return this.name.replace('%1', tokens[0]).replace('%2', tokens[1]);
@@ -1227,7 +1205,7 @@ const Cat =
 											{
 												if (toTargetObject.isTerminal)
 												{
-													const to = $Cat.getTransform(`terminal_${dgrm.codomain.name}`).$(dgrm, from.to.domain);
+													const to = $Cat.getTransform(`terminal-${dgrm.codomain.name}`).$(dgrm, from.to.domain);
 													from.removeSVG();
 													dgrm.setMorphism(from, to);
 													from.addSVG();
@@ -1444,7 +1422,7 @@ const Cat =
 			{
 				let cats = [];
 				for(const [catName, cat] of $Cat.objects)
-					if (catName.substr(0, 2) !== 'D_')
+					if (catName.substr(0, 2) !== 'D-')
 						cats.push(cat);
 				const tbl = H.table(cats.map(c => H.tr(H.td(`<a onclick="Cat.selected.selectCategoryDiagram('${c.name}')">${c.getText()}</a>`), 'sidenavRow')).join(''));
 				document.getElementById('categoryTbl').innerHTML = tbl;
@@ -1798,7 +1776,7 @@ const Cat =
 					H.p(H.span(dgrm ? Cat.cap(dgrm.description) : '', '', 'dgrmDescElt', 'Description') + H.span('', '', 'dgrmDescriptionEditBtn')) +
 					this.newDiagramPnl();
 				html += (cat !== null ? H.button(`${Cat.user.name} Diagrams`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
-						H.div(	H.small('User diagrams.') +
+						H.div(	H.small('User diagrams') +
 							H.div('', '', 'userDiagrams') +
 							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay');
 					html += H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'referenceDiagrams\')"') +
@@ -1948,8 +1926,11 @@ const Cat =
 					return;
 				const dgrms = {};
 				for (const d in Cat.localDiagrams)
-					if (d.user === Cat.user.name)
+				{
+					const dgrm = Cat.localDiagrams[d];
+					if (dgrm.user === Cat.user.name)
 						dgrms[d] = true;
+				}
 				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = true);
 				let html = Object.keys(dgrms).map(d => this.diagramRow(d)).join('');
 				document.getElementById('userDiagrams').innerHTML = H.table(html);
@@ -2901,7 +2882,7 @@ ${this.svg.button(onclick)}
 	},
 	isExtendedName(name)
 	{
-		return name.indexOf('_') > -1;
+		return name.indexOf('-') > -1;
 	},
 	arrayEquals(a, b)
 	{
@@ -3197,13 +3178,14 @@ console.log('updating diagram display from registerCognito');
 		},
 		async fetchDiagram(name)
 		{
-			const tokens = name.split('_');
+			const tokens = name.split('-');
 			const catName = tokens[1];
 			const user = tokens[2];
 			const url = this.URL(catName, user, name + '.json');
 			const json = await (await fetch(url)).json();
 			return json;
 		},
+		/*
 		standardLambdaHandler(error, data)
 		{
 			if (error)
@@ -3215,6 +3197,7 @@ console.log('updating diagram display from registerCognito');
 			if (fn)
 				fn(e, result);
 		},
+		*/
 		ingestCategoryLambda(e, cat, fn)
 		{
 			const params =
@@ -3228,7 +3211,18 @@ console.log('updating diagram display from registerCognito');
 									username:Cat.user.name,
 								}),
 			};
-			Cat.Amazon.lambda.invoke(params, standardLambdaHandler);
+			const handler = function(error, data)
+			{
+				if (error)
+				{
+					Cat.recordError(error);
+					return;
+				}
+				const result = JSON.parse(data.Payload);
+				if (fn)
+					fn(e, result);
+			};
+			Cat.Amazon.lambda.invoke(params, handler);
 		},
 		ingestDiagramLambda(e, dgrm, fn)
 		{
@@ -3243,7 +3237,18 @@ console.log('updating diagram display from registerCognito');
 									username:Cat.user.name,
 								}),
 			};
-			Cat.Amazon.lambda.invoke(params, standardLambdaHandler);
+			const handler = function(error, data)
+			{
+				if (error)
+				{
+					Cat.recordError(error);
+					return;
+				}
+				const result = JSON.parse(data.Payload);
+				if (fn)
+					fn(e, result);
+			};
+			Cat.Amazon.lambda.invoke(params, handler);
 		},
 		fetchDiagramJsons(diagrams, fn, jsons = [], refs = {})
 		{
@@ -4052,7 +4057,7 @@ class diagramObject extends object
 	constructor(cat, args)
 	{
 		const nuArgs = Cat.clone(args);
-		nuArgs.diagram = null;
+		nuArgs.diagram = 'diagram' in args && typeof args.diagram === 'object' ? args.diagram: null;
 		nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
 		super(cat, nuArgs);
 		this.subClass = 'diagramObject';
@@ -4488,7 +4493,7 @@ NameToken = nameChar+
 {
 	return {token:text()};
 }
-nameChar = [a-zA-Z0-9$_]
+nameChar = [a-zA-Z0-9$_-]
 _ "optional white space" = ws*
 ws "white space" = [ \t\\r\\n]+
 	`;
@@ -4734,7 +4739,8 @@ class diagramMorphism extends morphism
 	{
 		const nuArgs = Cat.clone(args);
 //		nuArgs.diagram = null;
-		nuArgs.diagram = Cat.getArg(args, 'diagram', null);
+//		nuArgs.diagram = Cat.getArg(args, 'diagram', null);
+		nuArgs.diagram = 'diagram' in args && typeof args.diagram === 'object' ? args.diagram: null;
 		nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
 		super(cat, nuArgs);
 		this.to = null;
@@ -5166,7 +5172,7 @@ class productAssemblyMorphism extends morphism
 	}
 	static form(morphisms)
 	{
-		return {name:	`_A__${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}__A_`,
+		return {name:	`-A--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--A-`,
 				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
 				code:	morphisms.map(m => Cat.parens(m.codomain.code, Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, false)).join(Cat.basetypes.operators.product.symCode)};
 	}
@@ -5202,7 +5208,7 @@ class coproductAssemblyMorphism extends morphism
 	}
 	static form(morphisms)
 	{
-		return {name:	`_A__${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}__A_`,
+		return {name:	`-A--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--A-`,
 				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
 				code:	morphisms.map(m => m.domain.code).join(Cat.basetypes.operators.coproduct.symCode)};	// TODO parens?
 	}
@@ -5235,7 +5241,7 @@ class factorMorphism extends morphism
 	static form(dgrm, domain, factors)
 	{
 		let fctrs = [];
-		let name = '_R__';
+		let name = '-R--';
 		let html = '&lt;';
 		for (let i=0; i<factors.length; ++i)
 		{
@@ -5244,7 +5250,7 @@ class factorMorphism extends morphism
 			fctrs.push(`(${f.code})`);
 			if (f.name !== 'One')
 			{
-				name += f.name + '_' + indices.join('_');
+				name += f.name + '-' + indices.join('-');
 				html += `<tspan>${f.getText()}</tspan>` + Cat.subscript(...indices);
 			}
 			else
@@ -5259,7 +5265,7 @@ class factorMorphism extends morphism
 			}
 		}
 		html += '&gt;';
-		name += '__R_';
+		name += '--R-';
 		return {name, html, code:fctrs.join(Cat.basetypes.operators.product.symCode)};	/// TODO code
 	}
 	js(className)
@@ -5315,7 +5321,7 @@ class curryMorphism extends morphism
 	static factorName(dgrm, fctr, dom, cod)
 	{
 		const idx = fctr[1];
-		return fctr[0] === 0 ? `_Do_${dgrm.getFactor(dom, idx).name}_${idx}` : `_Co_${dgrm.getFactor(cod, idx).name}_${idx}`;
+		return fctr[0] === 0 ? `-Do-${dgrm.getFactor(dom, idx).name}-${idx}` : `-Co-${dgrm.getFactor(cod, idx).name}-${idx}`;
 	}
 	static getFactorsName(dgrm, factors, expr, data)
 	{
@@ -5338,14 +5344,14 @@ class curryMorphism extends morphism
 		let fctrs = [];
 		const dom = preCurry.domain;
 		const cod = preCurry.codomain;
-		const data = {name:`_L__${preCurry.name}${Cat.basetypes.comma.nameCode}__`, html:`&#955;.${preCurry.getText()}&lt;`};
+		const data = {name:`-L--${preCurry.name}${Cat.basetypes.comma.nameCode}--`, html:`&#955;.${preCurry.getText()}&lt;`};
 		const expr = preCurry.domCodExpr();
 		curryMorphism.getFactorsName(dgrm, domFactors, expr, data);
-		data.name += '__';
+		data.name += '--';
 		data.html += ':';
 		curryMorphism.getFactorsName(dgrm, homFactors, expr, data);
 		data.html += '&gt;';
-		data.name += '__C_';
+		data.name += '--C-';
 		data.domCode = domFactors.map(f => element.getCode(dgrm, element.getExprFactor(expr, f))).join(Cat.basetypes.operators.product.symCode);
 		data.homCode = homFactors.map(f => element.getCode(dgrm, element.getExprFactor(expr, f))).join(Cat.basetypes.operators.product.symCode);
 		data.preCurry = preCurry;
@@ -5458,7 +5464,7 @@ class coproductMorphism extends morphism
 	}
 	static form(morphisms)
 	{
-		return {name:	`_p__${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}__p_`,
+		return {name:	`-p--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--p-`,
 				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
 				code:	morphisms.map(m => m.codomain.name).join(Cat.basetypes.operators.product.symCode)};	/// TODO code
 	}
@@ -6220,7 +6226,7 @@ class diagram extends functor
 		super(nuArgs);
 		if (isExtendedName)
 		{
-			const tokens = args.name.split('_');
+			const tokens = args.name.split('-');
 			this.basename = tokens[tokens.length -1];
 		}
 		else
@@ -6342,7 +6348,7 @@ class diagram extends functor
 	}
 	static genName(catName, userName, baseName)
 	{
-		return `D_${catName}_${userName}_${baseName}`;
+		return `D-${catName}-${userName}-${baseName}`;
 	}
 	static nameCheck(catName, userName, basename, regexTst = true, namexTst = true)
 	{
@@ -6635,6 +6641,8 @@ class diagram extends functor
 				this.addSelected(e, elt, !Cat.display.shiftKey);
 			else
 				Cat.display.activateToolbar(e);
+			if (elt.class === 'object')
+				elt.orig = {x:elt.x, y:elt.y};
 		}
 		else if (!Cat.display.shiftKey)
 			this.deselectAll();
@@ -7462,14 +7470,15 @@ class diagram extends functor
 			js += r.js(foundDiagram);
 			foundDiagram[r.name] = true;
 		}
+		const jsName = this.name.replace('-', '_');
 		js +=
 `
-class ${this.name} extends diagram
+class ${jsName} extends diagram
 {
 	constructor()
 	{
 		super();
-		this.name = '${this.name}';
+		this.name = '${jsName}';
 		this.cid = '${this.cid}';
 		this.references = [${this.references.map(r => 'diagrams.' + r.name).join()}];
 `;
@@ -7616,7 +7625,7 @@ class ${this.name} extends diagram
 	}
 	getIdentityMorphism(objName)
 	{
-		return this.hasMorphism(objName) ? this.getMorphism(objName) : $Cat.getTransform(`id_${this.codomain.name}`).$(this, this.getObject(objName));
+		return this.hasMorphism(objName) ? this.getMorphism(objName) : $Cat.getTransform(`id-${this.codomain.name}`).$(this, this.getObject(objName));
 	}
 	newDataMorphism(dom, cod)
 	{
@@ -8152,11 +8161,11 @@ class monoidal extends category
 		const dom2 = `${c}*${c}`;
 		const dom3 = `${c}*${c}*${c}`;
 		this.monoidal = {};
-		this.monoidal.tensor = new functorTensor(dgrm, {name:`${this.name}_tensor`});
+		this.monoidal.tensor = new functorTensor(dgrm, {name:`${this.name}-tensor`});
 //		args.tensor.domain = object.fromData(Cat, {code:dom2code}).name;
 //		args.tensor.codomain = this.name;
 //		this.tensor = new functor(args.tensor);
-		this.associator = new transformAssociator({name:`${this.name}_associator`});
+		this.associator = new transformAssociator({name:`${this.name}-associator`});
 		this.unit = new object(this, args.unit);
 		this.leftUnitor = new functor(args.leftUnitor);
 		this.rightUnitor = new functor(args.rightUnitor);
@@ -8175,34 +8184,34 @@ function bootstrap()
 	//
 	// basics
 	//
-	Cat.deleteLocalDiagram('D_PFS_std_basics');
-	const basics = new diagram({name:'D_PFS_std_basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
+	Cat.deleteLocalDiagram('D-PFS-std-basics');
+	const basics = new diagram({name:'D-PFS-std-basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
 	const basicObjects =
 		[{diagram:basics, code:'Null', html:'&#x2205', description:'empty set', isInitial:true, isFinite:0},
 		{diagram:basics, code:'One', html:'1', description:'Terminal object, or one point set', isTerminal:true, isFinite:1}];
 	basicObjects.map(objectData => new object(basics.codomain, objectData));
-	const basicMorphisms = [{name:'Null2one', diagram:'D_PFS_std_basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
+	const basicMorphisms = [{name:'Null2one', diagram:'D-PFS-std-basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
 	basics.placeMultipleMorphisms(basicMorphisms);
 	//
 	// first order logic
 	//
-	Cat.deleteLocalDiagram('D_PFS_std_FOL');
-	const fol = new diagram({name:'D_PFS_std_FOL', codomain:'PFS', html:'First Order Logic', references:['D_PFS_std_basics'], readonly:true, isStandard:true, user:'std'});
-	const folObjects = [{diagram:'D_PFS_std_FOL', code:'Omega', html:'&#x03a9', description:'sub-object classifier', isFinite:2},
+	Cat.deleteLocalDiagram('D-PFS-std-FOL');
+	const fol = new diagram({name:'D-PFS-std-FOL', codomain:'PFS', html:'First Order Logic', references:['D-PFS-std-basics'], readonly:true, isStandard:true, user:'std'});
+	const folObjects = [{diagram:'D-PFS-std-FOL', code:'Omega', html:'&#x03a9', description:'sub-object classifier', isFinite:2},
 						{code:'Omega*Omega'}];
 	folObjects.map(objectData => new object(fol.codomain, objectData));
-	const folMorphisms = [	{name:'False', diagram:'D_PFS_std_FOL', domain:'One', codomain:'Omega', function:'false', html:'&#x22a5', description:'false'},
-							{name:'True', diagram:'D_PFS_std_FOL', domain:'One', codomain:'Omega', function:'true', 	html:'&#x22a4', description:'true'},
-							{name:'not', diagram:'D_PFS_std_FOL', domain:'Omega', codomain:'Omega', function:'not', html:'&#x00ac', description:'not'},
-							{name:'and', diagram:'D_PFS_std_FOL', domain:'Omega*Omega', codomain:'Omega', function:'and', html:'&#x2227', description:'logical and'},
-							{name:'or', diagram:'D_PFS_std_FOL', domain:'Omega*Omega', codomain:'Omega', function:'or', html:'&#x2228', description:'logical or'}];
+	const folMorphisms = [	{name:'False', diagram:'D-PFS-std-FOL', domain:'One', codomain:'Omega', function:'false', html:'&#x22a5', description:'false'},
+							{name:'True', diagram:'D-PFS-std-FOL', domain:'One', codomain:'Omega', function:'true', 	html:'&#x22a4', description:'true'},
+							{name:'not', diagram:'D-PFS-std-FOL', domain:'Omega', codomain:'Omega', function:'not', html:'&#x00ac', description:'not'},
+							{name:'and', diagram:'D-PFS-std-FOL', domain:'Omega*Omega', codomain:'Omega', function:'and', html:'&#x2227', description:'logical and'},
+							{name:'or', diagram:'D-PFS-std-FOL', domain:'Omega*Omega', codomain:'Omega', function:'or', html:'&#x2228', description:'logical or'}];
 	fol.placeMultipleMorphisms(folMorphisms);
 	//
 	// arithmetic operations
 	//
-	Cat.deleteLocalDiagram('D_PFS_std_arithmetics');
-	const arithmetics = new diagram({name:'D_PFS_std_arithmetics', codomain:'PFS', html:'Arithmetics', description:'Artithmetic operations on natural numbers, integers, and floating point numbers.',
-				references:['D_PFS_std_basics', 'D_PFS_std_FOL'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('D-PFS-std-arithmetics');
+	const arithmetics = new diagram({name:'D-PFS-std-arithmetics', codomain:'PFS', html:'Arithmetics', description:'Artithmetic operations on natural numbers, integers, and floating point numbers.',
+				references:['D-PFS-std-basics', 'D-PFS-std-FOL'], readonly:true, isStandard:true, user:'std'});
 	xyDom = {x: 300, y:Cat.default.font.height};
 	xyCod = {x: 600, y:Cat.default.font.height};
 
@@ -8244,8 +8253,8 @@ function bootstrap()
 		{name:'Z2F', diagram:arithmetics, domain:'Z', codomain:'F', function:'int2float', html:'&#x21aa', description:'Embed integers into floats'}];
 	arithmetics.placeMultipleMorphisms(arithMorphData);
 
-	Cat.deleteLocalDiagram('D_PFS_std_strings');
-	const strings = new diagram({name:'D_PFS_std_strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D_PFS_std_arithmetics'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('D-PFS-std-strings');
+	const strings = new diagram({name:'D-PFS-std-strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D-PFS-std-arithmetics'], readonly:true, isStandard:true, user:'std'});
 	const stringObjects = [
 		{diagram:strings, code:'Str', html:'Str', description:'The space of finite strings'},
 		{diagram:strings, code:'Str*Str'}];
@@ -8263,8 +8272,8 @@ function bootstrap()
 	//
 	// console
 	//
-	Cat.deleteLocalDiagram('D_PFS_std_console');
-	const console = new diagram({name:'D_PFS_std_console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D_PFS_std_strings'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('D-PFS-std-console');
+	const console = new diagram({name:'D-PFS-std-console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D-PFS-std-strings'], readonly:true, isStandard:true, user:'std'});
 	const consoleObjects = [{diagram:console, code:'tty', html:'tty', description:'Write-only console'}];
 	consoleObjects.map(objectData => new object(console.codomain, objectData));
 	const consoleMorphisms = [{name:'print', diagram:console, domain:'Str', codomain:'tty', function:'ttyOut', html:'&#128438;', description:'Print to tty'}];
@@ -8272,8 +8281,8 @@ function bootstrap()
 	//
 	// threeD
 	//
-	Cat.deleteLocalDiagram('D_PFS_std_threeD');
-	const threeD = new diagram({name:'D_PFS_std_threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D_PFS_std_arithmetics', 'D_PFS_std_strings'], readonly:true, isStandard:true, user:'std'});
+	Cat.deleteLocalDiagram('D-PFS-std-threeD');
+	const threeD = new diagram({name:'D-PFS-std-threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D-PFS-std-arithmetics', 'D-PFS-std-strings'], readonly:true, isStandard:true, user:'std'});
 	const threeDObjects = [{diagram:threeD, code:'threeD', html:'3D', description:'Rendering in 3D'},
 							{diagram:threeD, code:'N*N*N'},
 							{diagram:threeD, code:'Z*Z*Z'},
@@ -8281,11 +8290,11 @@ function bootstrap()
 							{diagram:threeD, name:'point', html:'Point', description:'3D point', code:'F*F*F'},
 							{diagram:threeD, code:'point*point'},
 							{diagram:threeD, code:'point*point*point'},
-							{diagram:threeD, name:'Red', code:'Red', html:'R', description:'The color red'},
-							{diagram:threeD, name:'Green', code:'Green', html:'G', description:'The color green'},
-							{diagram:threeD, name:'Blue', code:'Blue', html:'B', description:'The color blue'},
-							{diagram:threeD, code:'Red*Green*Blue', html:'RGB'},
-							{diagram:threeD, name:'color', code:'Red*Green*Blue', html:'Color', description:'Full color spectrum'},
+//							{diagram:threeD, name:'Red', code:'Red', html:'Red', description:'The color red'},
+//							{diagram:threeD, name:'Green', code:'Green', html:'Green', description:'The color green'},
+//							{diagram:threeD, name:'Blue', code:'Blue', html:'Blue', description:'The color blue'},
+							{diagram:threeD, code:'N*N*N', html:'RGB'},	// TODO should be bytes
+							{diagram:threeD, name:'color', code:'N*N*N', html:'Color', description:'Full color spectrum'},
 						];
 	threeDObjects.map(objectData => new object(threeD.codomain, objectData));
 	const threeDMorphisms = [
@@ -8303,13 +8312,13 @@ function bootstrap()
 								{name:'Str2Color', diagram:threeD, domain:'Str', codomain:'color', function:'AxAxAToQuadraticBezierCurve3', html:'Str2Color', description:'Convert string to color.'},
 							];
 	threeD.placeMultipleMorphisms(threeDMorphisms);
-	Cat.Amazon.saveDiagram(Cat.diagrams.D_PFS_std_basics);
-	Cat.Amazon.saveDiagram(Cat.diagrams.D_PFS_std_FOL);
-	Cat.Amazon.saveDiagram(Cat.diagrams.D_PFS_std_strings);
-	Cat.Amazon.saveDiagram(Cat.diagrams.D_PFS_std_arithmetics);
-	Cat.Amazon.saveDiagram(Cat.diagrams.D_PFS_std_console);
-	Cat.Amazon.saveDiagram(Cat.diagrams.D_PFS_std_threeD);
-//	Cat.Amazon.saveDiagram(Cat.diagrams.D_PFS_anon_Draft);
+	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-basics']);
+	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-FOL']);
+	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-strings']);
+	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-arithmetics']);
+	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-console']);
+	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-threeD']);
+//	Cat.Amazon.saveDiagram(Cat.diagrams.D-PFS-anon-Draft);
 }
 
 Cat.initialize();	// boot-up
