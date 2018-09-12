@@ -306,7 +306,7 @@ var CatFns =
 		},
 		diagonal(dgrm, obj)
 		{
-			const name = 'diagonal_'+obj.name;
+			const name = 'diagonal-'+obj.name;
 			if (dgrm.hasMorphism(name))
 				return dgrm.getMorphism(name)
 			const code = `(${obj.code})*(${obj.code})`;
@@ -317,7 +317,7 @@ var CatFns =
 		},
 		terminal(dgrm, obj)
 		{
-			const name = `${obj.name}_2_terminal`;
+			const name = `${obj.name}-2-terminal`;
 			if (dgrm.hasMorphism(name))
 				return dgrm.getMorphism(name);
 			return new morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain:dgrm.getObject('One'), function:'terminal', html:'&#x2203!', description:`Unique morphism from ${obj.getText()} to the terminal object`});
@@ -326,7 +326,7 @@ var CatFns =
 		{
 			if (!dgrm.canEvaluate(obj))
 				throw `Cannot apply an evaluation to ${obj.getText()}.`;
-			const name = `${obj.name}_2_eval`;
+			const name = `${obj.name}-2-eval`;
 			if (dgrm.hasMorphism(name))
 				return dgrm.getMorphism(name);
 			const factors = dgrm.getProductFactors(obj);
@@ -337,7 +337,7 @@ var CatFns =
 		},
 		equals(dgrm, obj)
 		{
-			const name = `${obj.name}_equals`;
+			const name = `${obj.name}-equals`;
 			if (dgrm.hasMorphism(name))
 				return dgrm.getMorphism(name);
 			return new morphism(dgrm.codomain, {name:name, description:`Test for equality on ${obj.name}`, diagram:dgrm.name, domain:obj, codomain:'Omega', function:'equals', html:'=', readonly:true});
