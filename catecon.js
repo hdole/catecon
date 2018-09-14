@@ -117,19 +117,6 @@ class H
 	}
 	static x(tag, h, c, i, t, x)
 	{
-		/*
-		let a = '';
-		if (H.ok(c))
-			a += ` class="${c}"`;
-		if (H.ok(i))
-			a += ` id="${i}"`;
-		if (H.ok(t))
-			a += ` title="${t}"`;
-		if (H.ok(x))
-			a += ` ${x}`;
-//		return `<${tag}${a}>${h}</${tag}>`;
-		*/
-//		return `<${tag}${H.ok(c) ? 'class="' + c + '"' : ''}
 		return `<${tag}${H.ok(c) ? ` class="${c}"` : ''}${H.ok(i) ? ` id="${i}"` : ''}${H.ok(t) ? ` title="${t}"` : ''}${H.ok(x) ? ` ${x}` : ''}>${h}</${tag}>`;
 	}
 	static a	(h, c, i, t, x)	{ return H.x('a', h, c, i, t, x); }
@@ -3185,19 +3172,6 @@ console.log('updating diagram display from registerCognito');
 			const json = await (await fetch(url)).json();
 			return json;
 		},
-		/*
-		standardLambdaHandler(error, data)
-		{
-			if (error)
-			{
-				Cat.recordError(error);
-				return;
-			}
-			const result = JSON.parse(data.Payload);
-			if (fn)
-				fn(e, result);
-		},
-		*/
 		ingestCategoryLambda(e, cat, fn)
 		{
 			const params =
@@ -3997,7 +3971,6 @@ class object extends element
 				}
 			}
 		}
-if (this.name === '1') throw "This is not good!";
 	}
 	decrRefcnt()
 	{
@@ -4738,8 +4711,6 @@ class diagramMorphism extends morphism
 	constructor(cat, args)
 	{
 		const nuArgs = Cat.clone(args);
-//		nuArgs.diagram = null;
-//		nuArgs.diagram = Cat.getArg(args, 'diagram', null);
 		nuArgs.diagram = 'diagram' in args && typeof args.diagram === 'object' ? args.diagram: null;
 		nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
 		super(cat, nuArgs);
@@ -6216,7 +6187,7 @@ class diagram extends functor
 		let nuArgs = Cat.clone(args);
 		let domain = null;
 		const isExtendedName = Cat.isExtendedName(args.name);
-		const name = !isExtendedName ? diagram.nameCheck(args.codomain, args.name, false) : args.name;
+		const name = !isExtendedName ? diagram.nameCheck(args.codomain, Cat.user.name, args.name, false) : args.name;
 		if (!$Cat.hasObject(name))
 			domain = new category('domainData' in args ? args.domainData : {name});
 		else
@@ -6852,7 +6823,7 @@ class diagram extends functor
 			html = H.h4(H.span(from.to.getText(), '', 'htmlElt') +
 							(readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('htmlElt', 'html')`, 'Rename', Cat.default.button.tiny))) +
 							H.p(H.span(Cat.cap(from.to.description), '', 'descriptionElt') +
-							(readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('descriptionElt', 'description')`, 'Edit description', Cat.default.button.tiny)));
+							(readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('descriptionElt', 'Description')`, 'Edit description', Cat.default.button.tiny)));
 			let title = '';
 			switch(from.to.subClass)
 			{
