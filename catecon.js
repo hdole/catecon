@@ -1757,6 +1757,7 @@ const Cat =
 							H.td(Cat.display.getButton('upload', 'getDiagram().upload(event)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') +
 							H.td(Cat.display.getButton('download', "getDiagram().download()", 'Download'), 'buttonBar') +
 							H.td(Cat.display.downloadButtonJS('getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
+							H.td(Cat.display.expandPanelBtn('diagram', false)) +
 							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight') +
 					H.h3(H.span('Diagram')) +
 							H.h4(H.span(dgrm ? dgrm.getText() : '', '', 'dgrmHtmlElt') + H.span('', '', 'dgrmHtmlEditBtn')) +
@@ -2035,14 +2036,16 @@ const Cat =
 											H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
 											H.tr(H.td('Email')) +
 											H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
+											H.tr(H.td('Secret Key for Access')) +
+											H.tr(H.td(H.input('', '', 'signupSecret', 'text', {ph:'Email'}))) +
 											H.tr(H.td('Password')) +
 											H.tr(H.td(H.input('', '', 'signupUserPassword', 'password', {ph:'Password'}))) +
 											H.tr(H.td('Confirm password')) +
-											H.tr(H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Password'}))) +
+											H.tr(H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Confirm'}))) +
 											H.tr(H.td(H.button('Sign up for Catecon', '', '', '', 'onclick=Cat.Amazon.signup()')))), 'accordionPnl', 'signupPnl');
 					if (Cat.user.status === 'registered')
 						html += H.h3('Confirmation Code') +
-								H.span('The confirmation code is sent by email to the address you specified.') +
+								H.span('The confirmation code is sent by email to the specified address.') +
 								H.table(	H.tr(H.td('Confirmation code')) +
 											H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code'}))) +
 											H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=Cat.Amazon.confirm()'))));
@@ -3047,7 +3050,6 @@ ${this.svg.button(onclick)}
 						Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
 						{
 							Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
-console.log('updating diagram display from registerCognito');
 						});
 					});
 				});
@@ -3066,7 +3068,20 @@ console.log('updating diagram display from registerCognito');
 		{
 			const userName = document.getElementById('signupUserName').value;
 			const email = document.getElementById('signupUserEmail').value;
+			const secret = document.getElementById('signupSecret').value;
+Cat.secret = Cat.sha256('ILCT');
+			if (Cat.secret !== Cat.sha256(secret))
+			{
+				alert('Your secret is not good enough');
+				return;
+			}
 			const password = document.getElementById('signupUserPassword').value;
+			const confirmPassword = document.getElementById('signupUserPasswordConfirm').value;
+			if (password !== confirmPassword)
+			{
+				alert('Please confirm your password properly by making sure the password and confirmation are the same.');
+				return;
+			}
 			let cognitoUser = null;
 			const attributes =
 			[
@@ -7353,7 +7368,7 @@ class diagram extends functor
 				Cat.display.accordion.open('ttyOutPnl');
 			}
 			const delta = Date.now() - start;
-			Cat.status(e, `Elapsed ${delta}ms`);
+			Cat.status(e, `\nElapsed ${delta}ms`);
 		}
 		Cat.display.drag = false;
 	}
@@ -7690,7 +7705,7 @@ class ${jsName} extends diagram
 			Cat.Amazon.ingestDiagramLambda(e, this, function(e, data)
 			{
 				const delta = Date.now() - start;
-				Cat.status(e, `Uploaded diagram.  Elapsed ${delta}ms`);
+				Cat.status(e, `Uploaded diagram.\nElapsed ${delta}ms`);
 			});
 		}
 		else
