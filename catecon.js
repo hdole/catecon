@@ -6252,10 +6252,10 @@ class diagram extends functor
 			args.terms.map(t => new term(this, t));
 		this.objects = new Map();
 		this.morphisms = new Map();
+		Cat.addDiagram(this.codomain.name, this);
 		this.texts = 'texts' in args ? args.texts.map(d => new element(this.domain, d)) : [];
 		this.texts.map(t => t.diagram = this);
 		this.entryDate = Cat.getArg(args, 'entryDate', Date.now());
-		Cat.addDiagram(this.codomain.name, this);
 		if ('codomainData' in args)
 		{
 			this.codomain.process(this, args.codomainData);
