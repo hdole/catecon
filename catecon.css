@@ -26,6 +26,34 @@ div
 	margin:			5px;
 }
 
+.author
+{
+	color:			inherit;
+	font-size:		8px;
+	font-weight:	600;
+	margin:			10px;
+	text-align:		left;
+}
+
+.description
+{
+	color:			inherit;
+	font-size:		10px;
+	margin:			5px 10px 5px 10px;
+	overflow:		hidden;
+	text-align:		left;
+	text-overflow:	ellipsis;
+}
+
+.date
+{
+	color:			#888;
+	font-size:		8px;
+	font-weight:	400;
+	margin:			10px;
+	text-align:		right;
+}
+
 .italic
 {
 	font-style:		italic;
@@ -66,8 +94,7 @@ h4
 h5
 {
 	font-size:		12px;
-	font-weight:	500;
-	font-style:		bold;
+	font-weight:	bold;
 	text-align:		left;
 	margin:			2px 4px 2px 4px;
 }
@@ -133,8 +160,6 @@ a
 
 tr.sidenavRow:hover
 {
-	/* background-color:	#777; */
-	/* color: 				#eee; */
 	background-color:	#fff;
 	color: 				#000;
 }
