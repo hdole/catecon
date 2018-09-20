@@ -565,6 +565,7 @@ const Cat =
 			Cat.display.initialize();
 			Cat.Amazon.initialize();
 			Cat.display.setNavbarBackground();
+Cat.secret = Cat.sha256('ILCT');
 			Cat.updatePanels();
 			Cat.initializeCT(function()
 			{
@@ -948,6 +949,7 @@ const Cat =
 			Cat.display.diagram.update();
 			Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + getDiagram().makeAllSVG();
 			const dgrm = getDiagram();
+			Cat.display.diagram.setToolbar(dgrm);
 			dgrm.update(null, 'diagram', null, true, false);
 			dgrm.updateMorphisms();
 		},
@@ -1649,7 +1651,7 @@ const Cat =
 			{
 				let html = H.table(H.tr(Cat.display.closeBtnCell('data', false) +
 										Cat.display.expandPanelBtn('data', true) +
-										H.td(Cat.display.getButton('delete', `getDiagram().gui(event, this, 'clearDataMorphism')`, 'Clear all data'))), 'buttonBarLeft');
+										H.td(Cat.display.getButton('delete', `getDiagram().gui(evt, this, 'clearDataMorphism')`, 'Clear all data'))), 'buttonBarLeft');
 				let dgrm = getDiagram();
 				if (dgrm !== null)
 				{
@@ -1755,14 +1757,17 @@ const Cat =
 				const dgrm = getDiagram();
 				const dt = new Date(dgrm ? dgrm.entryDate : 0);
 				const cat = getCat();
-				let html = H.div('', '', 'diagramInfoDiv') +
+				let html =	H.div('', '', 'diagramInfoDiv') +
+							H.div('', '', 'diagramPanelToolbar') +
+							/*
 					H.table(H.tr(
-							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "getDiagram().clear(event)", 'Erase diagram!'), 'buttonBar')) +
-							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'getDiagram().upload(event)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
+							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "getDiagram().clear(evt)", 'Erase diagram!'), 'buttonBar')) +
+							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
 							H.td(Cat.display.getButton('download', "getDiagram().download()", 'Download'), 'buttonBar') +
 							H.td(Cat.display.downloadButtonJS('getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
 							H.td(Cat.display.expandPanelBtn('diagram', false)) +
 							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight') +
+							*/
 					H.h3(H.span('Diagram')) +
 					H.h4(H.span(dgrm ? dgrm.getText() : '', '', 'dgrmHtmlElt') + H.span('', '', 'dgrmHtmlEditBtn')) +
 					H.p(H.span(dgrm ? Cat.cap(dgrm.description) : '', 'description', 'dgrmDescElt', 'Description') + H.span('', '', 'dgrmDescriptionEditBtn')) +
@@ -1792,6 +1797,7 @@ const Cat =
 						dgrm.readonly ? '' : Cat.display.getButton('edit', `getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
 					Cat.display.diagram.setUserDiagramTable();
 					Cat.display.diagram.setReferencesDiagramTable();
+					Cat.display.diagram.setToolbar(dgrm);
 				}
 			},
 			deleteTerm(ndx)
@@ -2029,6 +2035,17 @@ const Cat =
 							});
 					});
 			},
+			setToolbar(dgrm)
+			{
+				const html = H.table(H.tr(
+							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "getDiagram().clear(evt)", 'Erase diagram!'), 'buttonBar')) +
+							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
+							H.td(Cat.display.getButton('download', "getDiagram().download()", 'Download'), 'buttonBar') +
+							H.td(Cat.display.downloadButtonJS('getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
+							H.td(Cat.display.expandPanelBtn('diagram', false)) +
+							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight');
+				document.getElementById('diagramPanelToolbar').innerHTML = html;
+			},
 		},
 		functor:
 		{
@@ -2114,13 +2131,13 @@ const Cat =
 		{
 			setPanelContent()
 			{
-				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
+//				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
 					H.h3('Login') +
-					H.div('User: ' + H.span(Cat.user.name, 'italic')) +
-					H.div('Email: ' + H.span(Cat.user.email, 'italic')) +
-					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon') + 
-						H.button('Log out', '', '', 'Log out of the current session', `onclick="Cat.Amazon.logout()"`));
+					H.div('User: ' + H.span(Cat.user.name, 'smallBold')) +
+					H.div('Email: ' + H.span(Cat.user.email, 'smallBold')) +
+//					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon') + 
+					(!Cat.Amazon.loggedIn ? '' : H.button('Logout', '', '', 'Logout of the current session', `onclick="Cat.Amazon.logout()"`));
 					if (Cat.user.status !== 'logged-in' && Cat.user.status !== 'registered')
 						html += H.h3('Login') +
 								H.table(	H.tr(H.td('User name')) +
@@ -2135,7 +2152,7 @@ const Cat =
 											H.tr(H.td('Email')) +
 											H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 											H.tr(H.td('Secret Key for Access')) +
-											H.tr(H.td(H.input('', '', 'signupSecret', 'text', {ph:'Email'}))) +
+											H.tr(H.td(H.input('', '', 'signupSecret', 'text', {ph:'????????'}))) +
 											H.tr(H.td('Password')) +
 											H.tr(H.td(H.input('', '', 'signupUserPassword', 'password', {ph:'Password'}))) +
 											H.tr(H.td('Confirm password')) +
@@ -2206,6 +2223,9 @@ const Cat =
 					const name = nameElt.value;
 					if (name !== '' && !RegExp(Cat.userNameEx).test(name))
 							throw 'Invalid object name.';
+					const dgrm = getDiagram();
+					if (dgrm.getObject(name))
+						throw `Object with name ${name} already exists.`;
 					nameElt.value = '';
 					const codeElt = document.getElementById('objectCode');
 					let code = codeElt.value;
@@ -2217,7 +2237,6 @@ const Cat =
 					const descriptionElt = document.getElementById('objectDescription');
 					const description = descriptionElt.value;
 					descriptionElt.value = '';
-					const dgrm = getDiagram();
 					const to = dgrm.newObject({name, code, html, description});
 					dgrm.placeObject(e, to);
 				}
@@ -2233,7 +2252,7 @@ const Cat =
 											H.tr(H.td(Cat.display.input('', 'objectCode', 'Code')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'objectHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')) +
-									H.span(Cat.display.getButton('edit', 'Cat.display.object.new(event)', 'Create new object for this diagram')) +
+									H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
 									H.span('', 'parseError', 'objectError'), 'accordionPnl', 'newObjectPnl');
 				return html;
 			},
@@ -2291,7 +2310,7 @@ const Cat =
 				{
 					html = H.button('New Text', 'sidenavAccordion', '', 'New Text', `onclick="Cat.display.accordion.toggle(this, \'newElementPnl\')"`) +
 								H.div(	H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'elementHtml')), 'sidenavRow')) +
-										H.span(Cat.display.getButton('edit', 'Cat.display.element.new(event)', 'Create new text for this diagram')) +
+										H.span(Cat.display.getButton('edit', 'Cat.display.element.new(evt)', 'Create new text for this diagram')) +
 										H.span('', 'parseError', 'elementError'), 'accordionPnl', 'newElementPnl');
 				}
 				return html;
@@ -2360,32 +2379,32 @@ const Cat =
 					const form = dgrm.domain.hasForm(dgrm.selected);
 					const htmlLength = html.length;
 					if (form.composite)
-						html += H.td(this.getButton('compose', `getDiagram().gui(event, this, 'compose')`, 'Compose'), 'buttonBar');
+						html += H.td(this.getButton('compose', `getDiagram().gui(evt, this, 'compose')`, 'Compose'), 'buttonBar');
 					if (form.sink)
 					{
 						if (dgrm.codomain.isCartesian)
-							html += H.td(this.getButton('pullback', `getDiagram().gui(event, this, 'pullback')`, 'Pullback'), 'buttonBar');
+							html += H.td(this.getButton('pullback', `getDiagram().gui(evt, this, 'pullback')`, 'Pullback'), 'buttonBar');
 						if (dgrm.codomain.hasCoproducts)
-							html += H.td(this.getButton('coproductAssembly', `getDiagram().gui(event, this, 'coproductAssembly')`, 'Coproduct assembly'), 'buttonBar');
+							html += H.td(this.getButton('coproductAssembly', `getDiagram().gui(evt, this, 'coproductAssembly')`, 'Coproduct assembly'), 'buttonBar');
 					}
 					if (form.source)
 					{
 						if (dgrm.codomain.hasCoproducts)
-							html += H.td(this.getButton('pushout', `getDiagram().gui(event, this, 'pushout')`, 'Pushout'), 'buttonBar');
+							html += H.td(this.getButton('pushout', `getDiagram().gui(evt, this, 'pushout')`, 'Pushout'), 'buttonBar');
 						if (dgrm.codomain.isCartesian)
-							html += H.td(this.getButton('productAssembly', `getDiagram().gui(event, this, 'productAssembly')`, 'Product assembly'), 'buttonBar');
+							html += H.td(this.getButton('productAssembly', `getDiagram().gui(evt, this, 'productAssembly')`, 'Product assembly'), 'buttonBar');
 					}
 					if (form.distinct && dgrm.codomain.isCartesian)
-						html += H.td(this.getButton('product', `getDiagram().gui(event, this, 'product')`, 'Product'), 'buttonBar');
+						html += H.td(this.getButton('product', `getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
 					if (html.length !== htmlLength)
 						xyOffset = false;
 					if (dgrm.selectedCanRecurse())
-						html += H.td(this.getButton('recursion', `getDiagram().gui(event, this, 'recursion')`, 'Recursion'), 'buttonBar');
+						html += H.td(this.getButton('recursion', `getDiagram().gui(evt, this, 'recursion')`, 'Recursion'), 'buttonBar');
 				}
 				else if (type === 'object')
 				{
 					if (dgrm.codomain.isCartesian)
-						html += H.td(this.getButton('product', `getDiagram().gui(event, this, 'product')`, 'Product'), 'buttonBar');
+						html += H.td(this.getButton('product', `getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
 				}
 				tb.innerHTML = H.table(H.tr(html), 'buttonBarLeft');
 			}
@@ -2721,7 +2740,7 @@ ${this.svg.button(onclick)}
 				H.td(H.div(this.getButton('text', "Cat.display.panel.toggle('element')", 'Text', Cat.default.button.large)));
 			let right =
 				H.td(H.div(this.getButton('cateapsis', "getDiagram().home()", 'Catecon', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('string', "getDiagram().showStrings(event)", 'Graph', Cat.default.button.large))) +
+				H.td(H.div(this.getButton('string', "getDiagram().showStrings(evt)", 'Graph', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('threeD', "Cat.display.panel.toggle('threeD');Cat.display.threeD.resizeCanvas()", '3D view', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('tty', "Cat.display.panel.toggle('tty')", 'Console', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('help', "Cat.display.panel.toggle('help')", 'Help', Cat.default.button.large))) +
@@ -3171,7 +3190,6 @@ ${this.svg.button(onclick)}
 			const userName = document.getElementById('signupUserName').value;
 			const email = document.getElementById('signupUserEmail').value;
 			const secret = document.getElementById('signupSecret').value;
-Cat.secret = Cat.sha256('ILCT');
 			if (Cat.secret !== Cat.sha256(secret))
 			{
 				alert('Your secret is not good enough');
@@ -3276,6 +3294,9 @@ Cat.secret = Cat.sha256('ILCT');
 		{
 			Cat.Amazon.user.signOut();
 			Cat.Amazon.loggedIn = false;
+			Cat.user.status = 'unauthorized';
+			Cat.user.name = 'Anon';
+			Cat.user.email = '';
 			Cat.user.status = 'unauthorized';
 			Cat.display.setNavbarBackground();
 			Cat.display.login.setPanelContent();
@@ -3939,7 +3960,7 @@ class element
 				let lines = this.html.split('\n').map(t => `<tspan x="0" dy="1.2em">${t}</tspan>`);
 				let html = group ? `<g id="${this.elementId()}" transform="translate(${this.x} ${this.y + Cat.default.font.height/2})">` : '';
 				html +=
-`<text data-type="element" data-name="${this.name}" x="0" y="0" text-anchor="left" class="${this.class} grabbable" onmousedown="getDiagram().pickElement(event, '${this.name}', 'element')"> ${lines.join('')} </text>`;
+`<text data-type="element" data-name="${this.name}" x="0" y="0" text-anchor="left" class="${this.class} grabbable" onmousedown="getDiagram().pickElement(evt, '${this.name}', 'element')"> ${lines.join('')} </text>`;
 				html += group ? '</g>' : '';
 				return html;
 			}
@@ -3948,7 +3969,7 @@ class element
 				if (isNaN(this.x) || isNaN(this.y))
 					throw 'Nan!';
 				return `<text data-type="element" data-name="${this.name}" text-anchor="middle" class="${this.class} grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + Cat.default.font.height/2}"
-					onmousedown="getDiagram().pickElement(event, '${this.name}', 'element')">${this.html}</text>`;
+					onmousedown="getDiagram().pickElement(evt, '${this.name}', 'element')">${this.html}</text>`;
 			}
 		}
 	}
@@ -4182,7 +4203,7 @@ class diagramObject extends object
 		if (isNaN(this.x) || isNaN(this.y))
 			throw 'Nan!';
 		return `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + Cat.default.font.height/2}"
-			onmousedown="getDiagram().pickElement(event, '${this.name}', 'object')">${this.to.getText()}</text>`;
+			onmousedown="getDiagram().pickElement(evt, '${this.name}', 'object')">${this.to.getText()}</text>`;
 	}
 	getBBox()
 	{
@@ -4598,8 +4619,7 @@ ws "white space" = [ \t\\r\\n]+
 		case 'F':
 			return true;
 		}
-return true; // TODO
-		return false;
+		return true; // TODO everything cannot be numeric
 	}
 	static fetchReferenceDiagrams(cat, fn)
 	{
@@ -4884,14 +4904,14 @@ class diagramMorphism extends morphism
 		let svg = `
 <g id="${this.elementId()}">
 <path data-type="morphism" data-name="${this.name}" class="${this.to.function !== 'unknown' ? 'morphism' : 'unknownMorph'} grabbable" id="${this.elementId()}_path" d="M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}"
-onmousedown="getDiagram().pickElement(event, '${this.name}', 'morphism')" marker-end="url(#arrowhead)"/>
-<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}" onmousedown="getDiagram().pickElement(event, '${this.name}', 'morphism')">${this.to.getText()}</text>`;
+onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')" marker-end="url(#arrowhead)"/>
+<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}" onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${this.to.getText()}</text>`;
 		if (this.to.subClass === 'composite' && 'morphisms' in this)
 		{
 			const xy = Cat.barycenter(this.morphisms);
 			if (isNaN(xy.x) || isNaN(xy.y))
 				throw 'Nan!';
-			svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}" onmousedown="getDiagram().pickElement(event, '${this.name}', 'morphism')">${Cat.default.composite}</text></g>`;
+			svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}" onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${Cat.default.composite}</text></g>`;
 		}
 		svg += '</g>';
 		return svg;
@@ -6102,7 +6122,7 @@ class stringMorphism extends morphism
 						color = Math.round(Math.random() * 0xffffff).toString(16);
 						dgrm.colorIndex2color[colorIndex] = color;
 					}
-					svg += `<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${d}" filter="url(#softGlow)" onmouseover="Cat.status(event, '${fs}')"/>\n`;
+					svg += `<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${d}" filter="url(#softGlow)" onmouseover="Cat.status(evt, '${fs}')"/>\n`;
 					data.visited.push(idxStr + ' ' + lnkStr);
 					data.visited.push(lnkStr + ' ' + idxStr);
 				}
@@ -6308,7 +6328,7 @@ class diagram extends functor
 		let nuArgs = Cat.clone(args);
 		let domain = null;
 		const isExtendedName = Cat.isExtendedName(args.name);
-		const name = !isExtendedName ? diagram.nameCheck(args.codomain, Cat.user.name, args.name, false) : args.name;
+		const name = !isExtendedName ? diagram.nameCheck(args.codomain, 'username' in args ? args.username : Cat.user.name, args.name, false) : args.name;
 		if (!$Cat.hasObject(name))
 			domain = new category('domainData' in args ? args.domainData : {name});
 		else
@@ -6316,6 +6336,7 @@ class diagram extends functor
 		nuArgs.domain = domain;
 		nuArgs.codomain = new category({name:args.codomain, subobject:args.codomain});
 		super(nuArgs);
+		this.name = name;
 		if (isExtendedName)
 		{
 			const tokens = args.name.split('-');
@@ -6326,7 +6347,7 @@ class diagram extends functor
 		// TODO fix when everything is settled on 'username'
 //		this.username = Cat.getArg(args, 'username', Cat.user.name);
 		this.username = 'username' in args ? args.username : ('user' in args ? args.user : 'unknown user');
-		this.name = name;
+		this.readonly = this.readonly || (Cat.user.name !== this.username);
 		this.isStandard = Cat.getArg(args, 'isStandard', false);
 		const mainCat = $Cat.getObject(args.codomain);
 		if (this.isStandard)
@@ -6784,7 +6805,7 @@ class diagram extends functor
 	{
 		const del = !this.readonly && from.isDeletable();
 		let btns = H.td(Cat.display.getButton('close', 'Cat.display.deactivateToolbar()', 'Close'), 'buttonBar') +
-					(del ? H.td(Cat.display.getButton('delete', `getDiagram().gui(event, this, 'removeSelected')`, 'Delete'), 'buttonBar') : '');
+					(del ? H.td(Cat.display.getButton('delete', `getDiagram().gui(evt, this, 'removeSelected')`, 'Delete'), 'buttonBar') : '');
 		if (from.class !== 'element')
 		{
 			if (!this.readonly)
@@ -6793,26 +6814,26 @@ class diagram extends functor
 				{
 					const domMorphs = this.domain.obj2morphs.get(from.domain);
 					if (del && domMorphs.dom.length + domMorphs.cod.length > 1)
-						btns += H.td(Cat.display.getButton('detachDomain', `getDiagram().guiDetach(event, 'domain')`, 'Detach domain'), 'buttonBar');
+						btns += H.td(Cat.display.getButton('detachDomain', `getDiagram().guiDetach(evt, 'domain')`, 'Detach domain'), 'buttonBar');
 					const codMorphs = this.domain.obj2morphs.get(from.codomain);
 					if (del && codMorphs.dom.length + codMorphs.cod.length > 1)
-						btns += H.td(Cat.display.getButton('detachCodomain', `getDiagram().guiDetach(event, 'codomain')`, 'Detach codomain'), 'buttonBar');
+						btns += H.td(Cat.display.getButton('detachCodomain', `getDiagram().guiDetach(evt, 'codomain')`, 'Detach codomain'), 'buttonBar');
 					const isEditable = this.isMorphismEditable(from);
 					if (isEditable)
-						btns += H.td(Cat.display.getButton('edit', `getDiagram().gui(event, this, 'editSelected')`, 'Edit data'), 'buttonBar');
+						btns += H.td(Cat.display.getButton('edit', `getDiagram().gui(evt, this, 'editSelected')`, 'Edit data'), 'buttonBar');
 					else if (from.to.function === 'compose' && this.isRunnable(from))
-						btns += (!this.readonly ? H.td(Cat.display.getButton('run', `getDiagram().gui(event, this, 'run')`, 'Evaluate'), 'buttonBar') : '');
+						btns += (!this.readonly ? H.td(Cat.display.getButton('run', `getDiagram().gui(evt, this, 'run')`, 'Evaluate'), 'buttonBar') : '');
 					if (this.codomain.isClosed && (('op' in from.to.domain.expr && from.to.domain.expr.op === 'product') || ('op' in from.to.codomain.expr && from.to.codomain.expr.op === 'hom')))
-						btns += H.td(Cat.display.getButton('lambda', `getDiagram().gui(event, this, 'curryForm')`, 'Curry'), 'buttonBar');
-					btns += H.td(Cat.display.getButton('string', `getDiagram().gui(event, this, 'displayString')`, 'String'), 'buttonBar');
+						btns += H.td(Cat.display.getButton('lambda', `getDiagram().gui(evt, this, 'curryForm')`, 'Curry'), 'buttonBar');
+					btns += H.td(Cat.display.getButton('string', `getDiagram().gui(evt, this, 'displayString')`, 'String'), 'buttonBar');
 				}
 				else if (!this.readonly)
 					btns += H.td(Cat.display.getButton('toHere', `getDiagram().toolbarHandler('codomain', 'toolbarTip')`, 'Morphisms to here'), 'buttonBar') +
 							H.td(Cat.display.getButton('fromHere', `getDiagram().toolbarHandler('domain', 'toolbarTip')`, 'Morphisms from here'), 'buttonBar') +
-							H.td(Cat.display.getButton('project', `getDiagram().gui(event, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar');
+							H.td(Cat.display.getButton('project', `getDiagram().gui(evt, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar');
 			}
 		}
-		btns += H.td(Cat.display.getButton('help', `getDiagram().gui(event, this, 'elementHelp')`, 'Description'), 'buttonBar');
+		btns += H.td(Cat.display.getButton('help', `getDiagram().gui(evt, this, 'elementHelp')`, 'Description'), 'buttonBar');
 		let html = H.table(H.tr(btns), 'buttonBarLeft') + H.br();
 		html += H.div('', '', 'toolbarTip');
 		return html;
@@ -6933,7 +6954,7 @@ class diagram extends functor
 												}
 											)
 				: '', '', 'codomainDiv') +
-			H.span(Cat.display.getButton('edit', `getDiagram().gui(event, this, 'curryMorphism')`, 'Curry morphism'));
+			H.span(Cat.display.getButton('edit', `getDiagram().gui(evt, this, 'curryMorphism')`, 'Curry morphism'));
 		document.getElementById('toolbarTip').innerHTML = html;
 	}
 	elementHelp()
@@ -7498,7 +7519,7 @@ class diagram extends functor
 	{
 		let div = document.getElementById(id);
 		if (div.innerHTML === '')
-			div.innerHTML = H.span(Cat.display.getButton('edit', `getDiagram().${fname}(event)`, 'Create morphism'));
+			div.innerHTML = H.span(Cat.display.getButton('edit', `getDiagram().${fname}(evt)`, 'Create morphism'));
 		let expr = this.getObject(root).expr;
 		let sub = indices.join();
 		for (let i=0; i<indices.length; ++i)
@@ -7755,7 +7776,7 @@ class ${jsName} extends diagram
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-							H.td(m.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `getDiagram('${this.name}').removeMorphism(event, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
+							H.td(m.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `getDiagram('${this.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
 							H.td(m.getText()) +
 							H.td(m.domain.getText()) +
 							H.td('&rarr;') +
@@ -7767,7 +7788,7 @@ class ${jsName} extends diagram
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-							H.td(m.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `getDiagram('${this.name}').removeCodomainMorphism(event, '${m.name}');`, 'Delete dangling codomain morphism') : '', 'buttonBar') +
+							H.td(m.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `getDiagram('${this.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') : '', 'buttonBar') +
 							H.td(m.getText()) +
 							H.td(m.domain.getText()) +
 							H.td('&rarr;') +
@@ -8218,10 +8239,7 @@ function getDiagram()
 			FunctionName:	'CateconGetUserDiagrams',
 			InvocationType:	'RequestResponse',
 			LogType:		'None',
-			Payload:		JSON.stringify(
-							{
-								username:Cat.user.name,
-							}),
+			Payload:		JSON.stringify({username:Cat.user.name}),
 		};
 		Cat.Amazon.lambda.invoke(params, function(error, data)
 		{
