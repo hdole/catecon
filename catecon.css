@@ -26,6 +26,13 @@ div
 	margin:			5px;
 }
 
+.smallBold
+{
+	font-size:		10px;
+	font-weight:	bold;
+	margin:			5px;
+}
+
 .author
 {
 	color:			inherit;
