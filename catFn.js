@@ -1,3 +1,4 @@
+// (C) 2018 Harry Dole
 // Catecon Functions for Javascript:  The Categorical Console, Harry Dole
 // vim: ts=4 sw=4
 'use strict';
@@ -14,6 +15,12 @@ var CatFns =
 		{
 			if (args in this.data)
 				return this.data[args];
+			for (let i=0; i<this.ranges.length; ++i)
+			{
+				const r = this.ranges[i];
+				if (args >= r.startIndex && args <= r.startIndex + r.count)
+					return args - r.startIndex + r.startValue;
+			}
 			return null;
 		},
 		recurse(args)
