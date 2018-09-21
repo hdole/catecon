@@ -1,6 +1,5 @@
 // (C) 2018 Harry Dole
-// Catecon:  The Categorical Console, Harry Dole
-// vim: ts=4 sw=4
+// Catecon:  The Categorical Console
 'use strict';
 
 var $Cat = null;	// Cat of cats
@@ -33,7 +32,7 @@ function segmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
 		return false;
 	if (!(inbetween(x2, x, x1) && inbetween(y2, y, y1) && inbetween(x3, x, x4) && inbetween(y3, y, y4)))
 		return false;
-	return {x: x, y: y};
+	return {x, y};
 }
 function dist2(v, w)
 {
@@ -1891,26 +1890,6 @@ Cat.secret = Cat.sha256('ILCT');
 				document.getElementById('dgrmHtmlElt').innerHTML = dgrm.getText();
 				document.getElementById('dgrmDescElt').innerHTML = nbDgrm.title;
 			},
-			/*
-			diagramRow(dgrmName)
-			{
-				const serverInfo = dgrmName in Cat.serverDiagrams ? Cat.serverDiagrams[dgrmName] : null;
-				const localInfo = dgrmName in Cat.localDiagrams ? Cat.localDiagrams[dgrmName] : null;
-				const serverTime = serverInfo ? serverInfo.entryDate : 0;
-				const localTime = localInfo ? localInfo.entryDate : 0;
-				let description = localInfo ? localInfo.description : (serverInfo ? serverInfo.description : '');
-				let html = '';
-				let text = serverTime < localTime ? localInfo.fancyName : serverInfo.fancyName;
-				if (dgrmName in Cat.diagrams)
-				{
-					const dgrm = Cat.diagrams[dgrmName];
-					description = dgrm.description;
-					text = dgrm.getText();
-				}
-				description = Cat.htmlSafe(Cat.htmlSafe(Cat.cap(description)));
-				return H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">${text}</a>`, '', '', '', `onmouseenter="Cat.status(event, '${description}')"`), 'sidenavRow');
-			},
-			*/
 			getDiagramInfo(obj)
 			{
 				if (typeof obj === 'string')
@@ -1939,30 +1918,6 @@ Cat.secret = Cat.sha256('ILCT');
 				};
 				return info;
 			},
-			/*
-			diagramRow(dgrmName)
-			{
-				const serverInfo = dgrmName in Cat.serverDiagrams ? Cat.serverDiagrams[dgrmName] : null;
-				const localInfo = dgrmName in Cat.localDiagrams ? Cat.localDiagrams[dgrmName] : null;
-				const serverTime = serverInfo ? serverInfo.entryDate : 0;
-				const localTime = localInfo ? localInfo.entryDate : 0;
-				let description = localInfo ? localInfo.description : (serverInfo ? serverInfo.description : '');
-				let author = localInfo ? localInfo.user : (serverInfo ? serverInfo.user : '');
-				let html = '';
-				let text = serverTime < localTime ? localInfo.fancyName : serverInfo.fancyName;
-				if (dgrmName in Cat.diagrams)
-				{
-					const dgrm = Cat.diagrams[dgrmName];
-					description = dgrm.description;
-					text = dgrm.getText();
-				}
-				description = Cat.htmlSafe(Cat.htmlSafe(Cat.cap(description)));
-				const tbl = H.table(H.tr(H.td(H.h4(text))) +
-									H.tr(H.td(description, 'description')) +
-									H.tr(H.td(author, 'author')));
-				return H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${dgrmName}')">` + tbl + '</a>', 'sidenavRow'));
-			},
-		*/
 			diagramRow(info)
 			{
 				const dt = new Date(info.entryDate);
@@ -2006,8 +1961,6 @@ Cat.secret = Cat.sha256('ILCT');
 							response.json().then(function(data)
 							{
 								Cat.recentDiagrams = data;
-	//							let html = H.small('Recent diagrams') + Cat.recent.map(d => this.diagramRow(d.name)).join('');
-	//							document.getElementById('recentDiagrams').innerHTML = H.table(html);
 								let html = data.map(d => Cat.display.diagram.diagramRow(d)).join('');
 								document.getElementById('recentDiagrams').innerHTML = H.table(html);
 							});
@@ -2123,12 +2076,10 @@ Cat.secret = Cat.sha256('ILCT');
 		{
 			setPanelContent()
 			{
-//				const amazonBtn = '<img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />';
 				let html = H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
 					H.h3('Login') +
 					H.div('User: ' + H.span(Cat.user.name, 'smallBold')) +
 					H.div('Email: ' + H.span(Cat.user.email, 'smallBold')) +
-//					(!Cat.Amazon.loggedIn ? H.div(amazonBtn, '', '', 'Login with Amazon', 'onclick="Cat.Amazon.login(false)"') : H.div('Logged in with Amazon') + 
 					(!Cat.Amazon.loggedIn ? '' : H.button('Logout', '', '', 'Logout of the current session', `onclick="Cat.Amazon.logout()"`));
 					if (Cat.user.status !== 'logged-in' && Cat.user.status !== 'registered')
 						html += H.h3('Login') +
@@ -3037,12 +2988,7 @@ ${this.svg.button(onclick)}
 		diagramBucket:		null,
 		userPoolId:			'us-west-2_HKN5CKGDz',
 		userPool:			null,
-		loginInfo:			{
-								IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf',
-//								Logins:			{
-//													'cognito-idp.us-west-2.amazonaws.com/us-west-2_HKN5CKGDz': '',
-//												},
-							},
+		loginInfo:			{IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf'},
 		URL(cat, user, basename)
 		{
 			let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
@@ -4897,13 +4843,15 @@ class diagramMorphism extends morphism
 <g id="${this.elementId()}">
 <path data-type="morphism" data-name="${this.name}" class="${this.to.function !== 'unknown' ? 'morphism' : 'unknownMorph'} grabbable" id="${this.elementId()}_path" d="M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}"
 onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')" marker-end="url(#arrowhead)"/>
-<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}" onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${this.to.getText()}</text>`;
+<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}"
+    onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${this.to.getText()}</text>`;
 		if (this.to.subClass === 'composite' && 'morphisms' in this)
 		{
 			const xy = Cat.barycenter(this.morphisms);
 			if (isNaN(xy.x) || isNaN(xy.y))
 				throw 'Nan!';
-			svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}" onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${Cat.default.composite}</text></g>`;
+			svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}"
+    onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${Cat.default.composite}</text></g>`;
 		}
 		svg += '</g>';
 		return svg;
@@ -6247,28 +6195,6 @@ class functor extends morphism
 	{}	// FITB
 	mapMorphism(m)
 	{}	// FITB
-}
-
-class functorTensor extends functor
-{
-	constructor(args)
-	{
-		let nuArgs = Cat.clone(args);
-		nuArgs.domain = `${cat.name}${Cat.basetypes.operators.product.symCode}${cat.name}`;
-		nuArgs.codomain = cat.name;
-//		nuArgs.diagram = dgrm.name;
-		nuArgs.function = 'functorTensor';
-		super($Cat, nuArgs);
-		this.subClass = 'functorTensor';
-	}
-	mapObject(o1, o2)
-	{
-		return this.diagram.getObject(`${o1.code}*${o2.code}`);	// TODO * symbol?
-	}
-	mapMorphism(m1, m2)
-	{
-		return this.diagram.getMorphism(`${m1.code}*${m2.code}`);	// TODO * symbol?
-	}
 }
 
 class transform extends morphism
@@ -8249,40 +8175,11 @@ function getDiagram()
 	}
 }
 
-class transformAssociator extends transform
-{
-	constructor(args)
-	{
-		super($Cat, args);
-		this.subClass = 'transformAssociator';
-	}
-}
-
-class monoidal extends category
-{
-	constructor(args)
-	{
-		super(args);
-		const c = this.code;
-		const dom2 = `${c}*${c}`;
-		const dom3 = `${c}*${c}*${c}`;
-		this.monoidal = {};
-		this.monoidal.tensor = new functorTensor(dgrm, {name:`${this.name}-tensor`});
-//		args.tensor.domain = object.fromData(Cat, {code:dom2code}).name;
-//		args.tensor.codomain = this.name;
-//		this.tensor = new functor(args.tensor);
-		this.associator = new transformAssociator({name:`${this.name}-associator`});
-		this.unit = new object(this, args.unit);
-		this.leftUnitor = new functor(args.leftUnitor);
-		this.rightUnitor = new functor(args.rightUnitor);
-//		this.diagrams = ['triangle', 'pentagon'];
-	}
-}
-
 // BOOTSTRAP
 let PFS = null;
 let Graph = null;
 
+/*
 function bootstrap()
 {
 	let xyDom = {x: 300, y:Cat.default.font.height};
@@ -8426,5 +8323,6 @@ function bootstrap()
 	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-threeD']);
 //	Cat.Amazon.saveDiagram(Cat.diagrams.D-PFS-anon-Draft);
 }
+*/
 
 Cat.initialize();	// boot-up
