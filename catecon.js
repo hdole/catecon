@@ -193,6 +193,7 @@ const Cat =
 	localDiagrams:	{},
 	serverDiagrams:	{},
 	catalog:		{},
+	sep:			'-',
 	mouse:
 	{
 		down:	{x:0, y:0},
@@ -1413,7 +1414,7 @@ Cat.secret = Cat.sha256('ILCT');
 			{
 				let cats = [];
 				for(const [catName, cat] of $Cat.objects)
-					if (catName.substr(0, 2) !== 'D-')
+					if (catName.substr(0, 2) !== `D${Cat.sep}`)
 						cats.push(cat);
 				const tbl = H.table(cats.map(c => H.tr(H.td(`<a onclick="Cat.selected.selectCategoryDiagram('${c.name}')">${c.getText()}</a>`), 'sidenavRow')).join(''));
 				document.getElementById('categoryTbl').innerHTML = tbl;
@@ -1759,29 +1760,20 @@ Cat.secret = Cat.sha256('ILCT');
 				const cat = getCat();
 				let html =	H.div('', '', 'diagramInfoDiv') +
 							H.div('', '', 'diagramPanelToolbar') +
-							/*
-					H.table(H.tr(
-							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "getDiagram().clear(evt)", 'Erase diagram!'), 'buttonBar')) +
-							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
-							H.td(Cat.display.getButton('download', "getDiagram().download()", 'Download'), 'buttonBar') +
-							H.td(Cat.display.downloadButtonJS('getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
-							H.td(Cat.display.expandPanelBtn('diagram', false)) +
-							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight') +
-							*/
-					H.h3(H.span('Diagram')) +
-					H.h4(H.span(dgrm ? dgrm.getText() : '', '', 'dgrmHtmlElt') + H.span('', '', 'dgrmHtmlEditBtn')) +
-					H.p(H.span(dgrm ? Cat.cap(dgrm.description) : '', 'description', 'dgrmDescElt', 'Description') + H.span('', '', 'dgrmDescriptionEditBtn')) +
-					H.table(H.tr(H.td(H.p(dgrm ? ('user' in dgrm ? dgrm.user : ('username' in dgrm ? dgrm.username : '')) : ''), 'author') + H.td(H.p(dt.toLocaleString()), 'date'))) +
-					H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'referenceDiagrams\')"') +
+							H.h3(H.span('Diagram')) +
+							H.h4(H.span(dgrm ? dgrm.getText() : '', '', 'dgrmHtmlElt') + H.span('', '', 'dgrmHtmlEditBtn')) +
+							H.p(H.span(dgrm ? Cat.cap(dgrm.description) : '', 'description', 'dgrmDescElt', 'Description') + H.span('', '', 'dgrmDescriptionEditBtn')) +
+							H.table(H.tr(H.td(H.p(dgrm ? ('user' in dgrm ? dgrm.user : ('username' in dgrm ? dgrm.username : '')) : ''), 'author') + H.td(H.p(dt.toLocaleString()), 'date'))) +
+							H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'referenceDiagrams\')"') +
 							H.div(H.div('', 'accordionPnl', 'referenceDiagrams')) +
-					this.newDiagramPnl() +
-					(cat !== null ? H.button(`${Cat.user.name} Diagrams`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
-					H.div(	H.small('User diagrams') +
-						H.div('', '', 'userDiagrams') +
-						H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
-					H.button('Recent Diagrams', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.setRecentDiagramTable()"') +
+							this.newDiagramPnl() +
+							(cat !== null ? H.button(`${Cat.user.name} Diagrams`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
+							H.div(	H.small('User diagrams') +
+							H.div('', '', 'userDiagrams') +
+							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
+							H.button('Recent Diagrams', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.setRecentDiagramTable()"') +
 							H.div(H.div('', 'accordionPnl', 'recentDiagrams')) +
-					H.button('Diagram Catalog', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.setCatalogDiagramTable()"') +
+							H.button('Diagram Catalog', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.setCatalogDiagramTable()"') +
 							H.div(H.div('', 'accordionPnl', 'catalogDiagrams'));
 				document.getElementById('diagram-sidenav').innerHTML = html;
 				this.update();
@@ -3303,7 +3295,7 @@ ${this.svg.button(onclick)}
 		},
 		async fetchDiagram(name)
 		{
-			const tokens = name.split('-');
+			const tokens = name.split(Cat.sep);
 			const catName = tokens[1];
 			const user = tokens[2];
 			const url = this.URL(catName, user, name + '.json');
@@ -6339,7 +6331,7 @@ class diagram extends functor
 		this.name = name;
 		if (isExtendedName)
 		{
-			const tokens = args.name.split('-');
+			const tokens = args.name.split(Cat.sep);
 			this.basename = tokens[tokens.length -1];
 		}
 		else
@@ -6463,7 +6455,7 @@ class diagram extends functor
 	}
 	static genName(catName, userName, baseName)
 	{
-		return `D-${catName}-${userName}-${baseName}`;
+		return `D${Cat.sep}${catName}${Cat.sep}${userName}${Cat.sep}${baseName}`;
 	}
 	static nameCheck(catName, userName, basename, regexTst = true, namexTst = true)
 	{
