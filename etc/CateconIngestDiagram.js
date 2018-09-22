@@ -1,18 +1,11 @@
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
+const C = require('./AWSconstants.js');
 
-const REGION = 'us-west-1';
-const COGNITOREGION = 'us-west-2';
-const DIAGRAMBUCKETNAME = 'catecon-diagrams';
-const DIAGRAMTABLE = 'Catecon-users';
-const RECENTDIAGRAMTABLE = 'Catecon-recent';
-const IDENTITYPOOLID = 'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf';
-const TOPIC_ARN = 'arn:aws:sns:us-west-1:395668725886:Catecon';
-
-const credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId:IDENTITYPOOLID});
+const credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID});
 
 AWS.config.update(
 {
-    region: COGNITOREGION,
+    region:		C.COGNITO_REGION,
     credentials
 });
 
@@ -33,13 +26,13 @@ exports.handler = (event, context, callback) =>
     // TODO: category check
     // TODO: diagram name check
     //
-    const URL = `https://s3-${REGION}.amazonaws.com/${DIAGRAMBUCKETNAME}`;
-    const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: DIAGRAMBUCKETNAME}});
+    const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
+    const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
     const Key = `${dgrm.codomain}/${dgrm.user}/${dgrm.name}.json`;
     const Body = JSON.stringify(dgrm);
     bucket.putObject(
     {
-       Bucket:  DIAGRAMBUCKETNAME,
+       Bucket:  C.DIAGRAM_BUCKET_NAME,
        ContentType: 'json',
        Key,
        Body,
@@ -51,10 +44,10 @@ exports.handler = (event, context, callback) =>
             console.log('Error',err);
             return;
         }
-        const db = new AWS.DynamoDB({region:REGION});
+        const db = new AWS.DynamoDB({region:C.REGION});
         const params =
         {
-            TableName:  DIAGRAMTABLE,
+            TableName:  C.DIAGRAM_TABLE,
             Item:
             {
                 username:   {S:username},
@@ -71,11 +64,11 @@ exports.handler = (event, context, callback) =>
                 console.log("Error", err, data);
                 return;
             }
-            AWS.config.update({region: REGION, credentials});
+            AWS.config.update({region:C.REGION, credentials});
             const msg =
             {
                 Message:    JSON.stringify({username, name:dgrm.name, entryDate:dgrm.entryDate, cat:dgrm.codomain}),
-                TopicArn:   TOPIC_ARN
+                TopicArn:   C.CATECON_TOPIC
             };
             var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(msg).promise();
             publishTextPromise.then(  function(data)
@@ -84,7 +77,7 @@ exports.handler = (event, context, callback) =>
                 console.log("MessageID is " + data.MessageId);
                 const params =
                 {
-                    TableName:  RECENTDIAGRAMTABLE,
+                    TableName:  C.RECENT_DIAGRAM_TABLE,
                     Item:
                     {
                         name:       {S:dgrm.name},
@@ -101,7 +94,7 @@ exports.handler = (event, context, callback) =>
                         console.log("Error", err, data);
                         return;
                     }
-                    console.log(RECENTDIAGRAMTABLE, 'putItem succeeded', err, data);
+                    console.log(C.RECENT_DIAGRAM_TABLE, 'putItem succeeded', err, data);
                     callback(err, data);
                 });
             }).catch(function(err)

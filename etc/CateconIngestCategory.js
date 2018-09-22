@@ -1,14 +1,10 @@
-var AWS = require('aws-sdk');
-
-const REGION = 'us-west-1';
-const COGNITOREGION = 'us-west-2';
-const DIAGRAMBUCKETNAME = 'catecon-diagrams';
-const IDENTITYPOOLID = 'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf';
+const AWS = require('aws-sdk');
+const C = require('./AWSconstants.js');
 
 AWS.config.update(
 {
-    region: COGNITOREGION,
-    credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:IDENTITYPOOLID}),
+    region:			C.COGNITO_REGION,
+    credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID}),
 });
 
 const S3 = new AWS.S3({apiVersion: '2006-03-01'});
@@ -28,12 +24,12 @@ exports.handler = (event, context, callback) =>
     // TODO: category check
     // TODO: diagram name check
     //
-    const URL = `https://s3-${REGION}.amazonaws.com/${DIAGRAMBUCKETNAME}`;
-    const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: DIAGRAMBUCKETNAME}});
+    const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
+    const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
     const Key = `${cat.name}/${cat.name}.json`;
     bucket.putObject(
     {
-       Bucket:  DIAGRAMBUCKETNAME,
+       Bucket:  C.DIAGRAM_BUCKET_NAME,
        ContentType: 'json',
        Key,
        Body:    JSON.stringify(cat),
@@ -45,7 +41,7 @@ exports.handler = (event, context, callback) =>
             console.log('Error',err);
             return;
         }
-        const db = new AWS.DynamoDB({region:REGION});
+        const db = new AWS.DynamoDB({region:C.REGION});
         const params =
         {
             TableName:  'Catecon-categories',

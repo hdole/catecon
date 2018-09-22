@@ -1,9 +1,7 @@
-const REGION = 'us-west-2';
-const QueueUrl = 'https://sqs.us-west-2.amazonaws.com/395668725886/CateconNewUserQueue';
-const TopicArn = 'arn:aws:sns:us-west-2:395668725886:CateconNewUser';
-
 const AWS = require('aws-sdk');
-AWS.config.update({region:REGION});
+const C = require('./AWSconstants.js');
+
+AWS.config.update({region:C.REGION});
 
 exports.handler = (event, context, callback) =>
 {
@@ -14,7 +12,7 @@ exports.handler = (event, context, callback) =>
         AttributeNames: ['SentTimeStamp'],
         MaxNumberOfMessages:    10,
         MessageAttributeNames:  ['All'],
-        QueueUrl,
+        QueueUrl:				C.NEW_USER_QUEUE
     };
     sqs.receiveMessage(info, function(err, data)
     {
@@ -39,7 +37,7 @@ exports.handler = (event, context, callback) =>
         const msg =
         {
             Message,
-            TopicArn
+            TopicArn:	C.NEW_USER_QUEUE
         };
         if (Message !== '')
         {
@@ -57,7 +55,7 @@ exports.handler = (event, context, callback) =>
                 const Entries = data.Messages.map((m, i) => { return {Id: i.toString(), ReceiptHandle: m.ReceiptHandle}});
                 for (let i=0; i<data.Messages.length; ++i)
                 {
-                    var delInfo = {QueueUrl, Entries};
+                    var delInfo = {QueueUrl: C.NEW_USER_QUEUE, Entries};
                     console.log('About to delete messages');
                     sqs.deleteMessageBatch(delInfo, function(err, data)
                     {

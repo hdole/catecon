@@ -1,8 +1,10 @@
-const REGION = 'us-west-1';
 const AWS = require('aws-sdk');
-AWS.config.update({region:REGION});
+const C = require('./AWSconstants.js');
 
-exports.handler = (event, context, callback) => {
+AWS.config.update({region:C.REGION});
+
+exports.handler = (event, context, callback) =>
+{
     // TODO implement
     const response = {
         statusCode: 200,
@@ -21,12 +23,10 @@ exports.handler = (event, context, callback) => {
     
     const email = attrs.email;
 
-    const db = new AWS.DynamoDB({region:REGION});
+    const db = new AWS.DynamoDB({region:C.REGION});
     const params =
     {
-//        Key:    {'username': {N: 'hdole'}},
         TableName:  'catecon-diagrams',
-//        ProjectionExpression:   'diagrams',
         Item:{username, email},
     };
 

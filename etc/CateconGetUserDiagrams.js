@@ -1,22 +1,19 @@
 //
 // Return the diagrams that belong to the event's user.
 //
-var AWS = require('aws-sdk');
-
-const REGION = 'us-west-1';
-const COGNITOREGION = 'us-west-2';
-const IDENTITYPOOLID = 'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf';
+const AWS = require('aws-sdk');
+const C = require('./AWSconstants.js');
 
 AWS.config.update(
 {
-    region:         COGNITOREGION,
-    credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:IDENTITYPOOLID}),
+    region:         C.COGNITO_REGION,
+    credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID}),
 });
 
 exports.handler = (event, context, callback) =>
 {
     const username = event.username;
-    const db = new AWS.DynamoDB({region:REGION});
+    const db = new AWS.DynamoDB({region:C.REGION});
     const params =
     {
         TableName:  'Catecon-users',

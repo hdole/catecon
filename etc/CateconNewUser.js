@@ -1,8 +1,8 @@
-const REGION = 'us-west-2';
-const QueueUrl = 'https://sqs.us-west-2.amazonaws.com/395668725886/CateconNewUserQueue';
 
 const AWS = require('aws-sdk');
-AWS.config.update({region:REGION});
+const C = require('./AWSconstants.js');
+
+AWS.config.update({region:C.REGION});
 
 exports.handler = (event, context, callback) => {
     const username = 'userName' in event ? event.userName : 'stdFOO';
@@ -10,7 +10,7 @@ exports.handler = (event, context, callback) => {
     if (attrs['cognito:user_status'] !== 'CONFIRMED' || attrs.email_verified !== 'true')
         return callback(null, 'Status is not confirmed');
     const email = attrs.email;
-    const db = new AWS.DynamoDB({region:REGION});
+    const db = new AWS.DynamoDB({region:C.REGION});
     const now = Date.now();
     const params =
     {
@@ -34,7 +34,7 @@ exports.handler = (event, context, callback) => {
         const info =
         {
             MessageBody: JSON.stringify(params),
-            QueueUrl
+            QueueUrl:		C.NEW_USER_QUEUE
         };
         sqs.sendMessage(info, function(err, data)
         {

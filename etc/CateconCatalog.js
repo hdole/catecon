@@ -1,19 +1,13 @@
 //
 // Return the most recent diagrams.
 //
-var AWS = require('aws-sdk');
-
-const REGION = 'us-west-1';
-const COGNITOREGION = 'us-west-2';
-const IDENTITYPOOLID = 'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf';
-const DIAGRAMTABLE = 'Catecon-users';
-const RECENTDIAGRAMTABLE = 'Catecon-recent';
-const DIAGRAMBUCKETNAME = 'catecon-diagrams';
+const AWS = require('aws-sdk');
+const C = require('./AWSconstants.js');
 
 AWS.config.update(
 {
-    region:         COGNITOREGION,
-    credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:IDENTITYPOOLID}),
+    region:         C.COGNITO_REGION,
+    credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID}),
 });
 
 //
@@ -34,10 +28,10 @@ function convert(data)
 
 exports.handler = (event, context, callback) =>
 {
-    const db = new AWS.DynamoDB({region:REGION});
+    const db = new AWS.DynamoDB({region:C.REGION});
     const params =
     {
-        TableName:  DIAGRAMTABLE,
+        TableName:  C.DIAGRAM_TABLE,
         ProjectionExpression:   'username, subkey, entryDate, fancyName, description'
     };
     db.scan(params, function(err, data)
@@ -63,13 +57,13 @@ exports.handler = (event, context, callback) =>
                 dgrms[d.name] = d;
         }
         const S3 = new AWS.S3({apiVersion: '2006-03-01'});
-        const URL = `https://s3-${REGION}.amazonaws.com/${DIAGRAMBUCKETNAME}`;
-        const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: DIAGRAMBUCKETNAME}});
+        const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
+        const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
         const Key = 'catalog.json';
         const Body = JSON.stringify(Object.values(dgrms));
         bucket.putObject(
         {
-           Bucket:  DIAGRAMBUCKETNAME,
+           Bucket:  C.DIAGRAM_BUCKET_NAME,
            ContentType: 'json',
            Key,
            Body,
