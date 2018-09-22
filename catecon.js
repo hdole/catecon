@@ -118,31 +118,31 @@ class H
 	{
 		return `<${tag}${H.ok(c) ? ` class="${c}"` : ''}${H.ok(i) ? ` id="${i}"` : ''}${H.ok(t) ? ` title="${t}"` : ''}${H.ok(x) ? ` ${x}` : ''}>${h}</${tag}>`;
 	}
-	static a	(h, c, i, t, x)	{ return H.x('a', h, c, i, t, x); }
-	static br	()				{ return '<br/>'; }
-	static button	(h, c, i, t, x)	{ return H.x('button', h, c, i, t, x); }
-	static div	(h, c, i, t, x)	{ return H.x('div', h, c, i, t, x); }
-	static form	(h, c, i, t, x)	{ return H.x('form', h, c, i, t, x); }
-	static h1	(h, c, i, t, x)	{ return H.x('h1', h, c, i, t, x); }
-	static h2	(h, c, i, t, x)	{ return H.x('h2', h, c, i, t, x); }
-	static h3	(h, c, i, t, x)	{ return H.x('h3', h, c, i, t, x); }
-	static h4	(h, c, i, t, x)	{ return H.x('h4', h, c, i, t, x); }
-	static h5	(h, c, i, t, x)	{ return H.x('h5', h, c, i, t, x); }
-	static hr	()				{ return '<hr/>'; }
-	static input(h, c, i, t, x) { return `<input id="${i}" class="${c}" type="${t}" value="${h}" placeholder="${x.ph}" ${'x' in x ? x.x : ''}/>`; }
-	static p	(h, c, i, t, x)	{ return H.x('p', h, c, i, t, x); }
-	static pre	(h, c, i, t, x)	{ return H.x('pre', h, c, i, t, x); }
-	static small(h, c, i, t, x)	{ return H.x('small', h, c, i, t, x); }
-	static span	(h, c, i, t, x)	{ return H.x('span', h, c, i, t, x); }
-	static sub	(h, c, i, t, x)	{ return H.x('sub', h, c, i, t, x); }
-	static table(h, c, i, t, x)	{ return H.x('table', h, c, i, t, x); }
-	static td	(h, c, i, t, x)	{ return H.x('td', h, c, i, t, x); }
-	static textarea	(h, c, i, t, x)	{ return H.x('textarea', h, c, i, t, x); }
-	static th	(h, c, i, t, x)	{ return H.x('th', h, c, i, t, x); }
-	static tr	(h, c, i, t, x)	{ return H.x('tr', h, c, i, t, x); }
-	static del(elt) { elt.parentElement.removeChild(elt);	}
-	static move(elt, toId) { document.getElementById(toId).appendChild(elt); }
-	static toggle(elt, here, there) { elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
+	static a	(h, c, i, t, x)	{return H.x('a', h, c, i, t, x); }
+	static br	()				{return '<br/>'; }
+	static button	(h, c, i, t, x)	{return H.x('button', h, c, i, t, x); }
+	static div	(h, c, i, t, x)	{return H.x('div', h, c, i, t, x); }
+	static form	(h, c, i, t, x)	{return H.x('form', h, c, i, t, x); }
+	static h1	(h, c, i, t, x)	{return H.x('h1', h, c, i, t, x); }
+	static h2	(h, c, i, t, x)	{return H.x('h2', h, c, i, t, x); }
+	static h3	(h, c, i, t, x)	{return H.x('h3', h, c, i, t, x); }
+	static h4	(h, c, i, t, x)	{return H.x('h4', h, c, i, t, x); }
+	static h5	(h, c, i, t, x)	{return H.x('h5', h, c, i, t, x); }
+	static hr	()				{return '<hr/>'; }
+	static input(h, c, i, t, x) {return `<input id="${i}" class="${c}" type="${t}" value="${h}" placeholder="${x.ph}" ${'x' in x ? x.x : ''}/>`; }
+	static p	(h, c, i, t, x)	{return H.x('p', h, c, i, t, x); }
+	static pre	(h, c, i, t, x)	{return H.x('pre', h, c, i, t, x); }
+	static small(h, c, i, t, x)	{return H.x('small', h, c, i, t, x); }
+	static span	(h, c, i, t, x)	{return H.x('span', h, c, i, t, x); }
+	static sub	(h, c, i, t, x)	{return H.x('sub', h, c, i, t, x); }
+	static table(h, c, i, t, x)	{return H.x('table', h, c, i, t, x); }
+	static td	(h, c, i, t, x)	{return H.x('td', h, c, i, t, x); }
+	static textarea	(h, c, i, t, x)	{return H.x('textarea', h, c, i, t, x); }
+	static th	(h, c, i, t, x)	{return H.x('th', h, c, i, t, x); }
+	static tr	(h, c, i, t, x)	{return H.x('tr', h, c, i, t, x); }
+	static del(elt) {elt.parentElement.removeChild(elt);	}
+	static move(elt, toId) {document.getElementById(toId).appendChild(elt); }
+	static toggle(elt, here, there) {elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
 }
 
 class operator
@@ -179,25 +179,22 @@ class operator
 
 const Cat =
 {
+	autosave:		false,
 	bootstrap:		false,
+	catalog:		{},
 	clear:			false,
 	debug:			true,
-	initialized:	false,
-	statusXY:		{x:0, y:0},
-	autosave:		false,
-	nameEx:			RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_-]*$'),
-	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
-	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
 	diagrams:		{},
+	initialized:	false,
+	nameEx:			RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_-]*$'),
 	localDiagrams:	{},
+	secret:			'8b1ff7749bda89c084bba7fa1b7e9015e952bb455100fbe518c86f71c7f3592c',
+	sep:			' ',
 	serverDiagrams:	{},
-	catalog:		{},
-	sep:			'-',
-	mouse:
-	{
-		down:	{x:0, y:0},
-		xy:		{x:0, y:0},
-	},
+	statusXY:		{x:0, y:0},
+	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
+	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
+	mouse:			{down:{x:0, y:0}, xy:{x:0, y:0}},
 	getError(err)
 	{
 		return typeof err === 'string' ? err : err.message;
@@ -447,7 +444,8 @@ const Cat =
 			allObjectsFinite:		true,
 			hasProducts:	true,
 			hasCoproducts:	true,
-			referenceDiagrams:	['D-PFS-std-basics', 'D-PFS-std-FOL', 'D-PFS-std-arithmetics', 'D-PFS-std-strings', 'D-PFS-std-console', 'D-PFS-std-threeD'],
+			referenceDiagrams:	[`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}basics`, `D${Cat.sep}PFS${Cat.sep}std${Cat.sep}FOL`, `D${Cat.sep}PFS${Cat.sep}std${Cat.sep}arithmetics`, `D${Cat.sep}PFS${Cat.sep}std${Cat.sep}strings`,
+				`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}console`, `D${Cat.sep}PFS${Cat.sep}std${Cat.sep}threeD`],
 		});
 		Graph = new category(
 		{
@@ -529,8 +527,8 @@ const Cat =
 			codomain:	'Graph',
 			description:'Gives the graph of a morphism',
 		});
-		if (Cat.bootstrap)
-			bootstrap();
+//		if (Cat.bootstrap)
+//			bootstrap();
 		this.fetchCategories(fn);	// TODO check for local TODO refresh flag
 	},
 	getLocalStorageCategoryName()
@@ -565,7 +563,6 @@ const Cat =
 			Cat.display.initialize();
 			Cat.Amazon.initialize();
 			Cat.display.setNavbarBackground();
-Cat.secret = Cat.sha256('ILCT');
 			Cat.updatePanels();
 			Cat.initializeCT(function()
 			{
@@ -801,7 +798,7 @@ Cat.secret = Cat.sha256('ILCT');
 				token:			'Str',
 				description:	'strings',
 				editable:		true,
-				$(string) { return string; }
+				$(string) {return string;}
 			},
 		},
 		operators:
@@ -937,7 +934,7 @@ Cat.secret = Cat.sha256('ILCT');
 				setup(name);
 			else
 				// TODO turn on/off busy cursor
-				diagram.fetchDiagram(cat, name, setup);
+				diagram.fetchDiagram(name, setup);
 		},
 		updateDiagramDisplay(name)
 		{
@@ -1507,7 +1504,7 @@ Cat.secret = Cat.sha256('ILCT');
 					hemiLight.position.set(0, 50, 0);
 					this.scene.add(hemiLight);
 					const groundGeo = new THREE.PlaneBufferGeometry(this.horizon, this.horizon );
-					const groundMat = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x050505 } );
+					const groundMat = new THREE.MeshPhongMaterial({color: 0xffffff, specular: 0x050505});
 					groundMat.color.set(0xf0e68c);
 					const ground = new THREE.Mesh(groundGeo, groundMat);
 					ground.rotation.x = -Math.PI/2;
@@ -1516,17 +1513,17 @@ Cat.secret = Cat.sha256('ILCT');
 					const vertexShader = document.getElementById('vertexShader').textContent;
 					const fragmentShader = document.getElementById('fragmentShader').textContent;
 					const uniforms = {
-						topColor:	 { value: new THREE.Color(0x0077ff ) },
-						bottomColor: { value: new THREE.Color(0xffffff ) },
-						offset:		 { value: 33 },
-						exponent:	 { value: 0.6 }
+						topColor:	 {value: new THREE.Color(0x0077ff ) },
+						bottomColor: {value: new THREE.Color(0xffffff ) },
+						offset:		 {value: 33 },
+						exponent:	 {value: 0.6 }
 					};
 					uniforms.topColor.value.copy(hemiLight.color);
 //					this.scene.fog.color.copy(uniforms.bottomColor.value);
 					const skyGeo = new THREE.SphereBufferGeometry( this.horizon, 32, 15 );
 //					skyGeo.renderDepth = this.horizon;
 //					const skyGeo = new THREE.SphereBufferGeometry(5000, 32, 15 );
-					const skyMat = new THREE.ShaderMaterial({ vertexShader: vertexShader, fragmentShader: fragmentShader, uniforms: uniforms, side: THREE.BackSide } );
+					const skyMat = new THREE.ShaderMaterial({vertexShader: vertexShader, fragmentShader: fragmentShader, uniforms: uniforms, side: THREE.BackSide } );
 					const sky = new THREE.Mesh(skyGeo, skyMat);
 					this.scene.add(sky );
 					let light = new THREE.DirectionalLight(0xffffff, 1);
@@ -2936,7 +2933,7 @@ ${this.svg.button(onclick)}
 	},
 	isExtendedName(name)
 	{
-		return name.indexOf('-') > -1;
+		return name.indexOf(Cat.sep) > -1;
 	},
 	arrayEquals(a, b)
 	{
@@ -4145,7 +4142,7 @@ class diagramObject extends object
 	}
 	getBBox()
 	{
-		return { x:this.x - this.w/2, y:this.y + this.h/2 - Cat.default.font.height, w:this.w, h:this.h};
+		return {x:this.x - this.w/2, y:this.y + this.h/2 - Cat.default.font.height, w:this.w, h:this.h};
 	}
 }
 
@@ -4844,14 +4841,14 @@ class diagramMorphism extends morphism
 <path data-type="morphism" data-name="${this.name}" class="${this.to.function !== 'unknown' ? 'morphism' : 'unknownMorph'} grabbable" id="${this.elementId()}_path" d="M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}"
 onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')" marker-end="url(#arrowhead)"/>
 <text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}"
-    onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${this.to.getText()}</text>`;
+	onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${this.to.getText()}</text>`;
 		if (this.to.subClass === 'composite' && 'morphisms' in this)
 		{
 			const xy = Cat.barycenter(this.morphisms);
 			if (isNaN(xy.x) || isNaN(xy.y))
 				throw 'Nan!';
 			svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}"
-    onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${Cat.default.composite}</text></g>`;
+	onmousedown="getDiagram().pickElement(evt, '${this.name}', 'morphism')">${Cat.default.composite}</text></g>`;
 		}
 		svg += '</g>';
 		return svg;
@@ -6280,6 +6277,7 @@ class diagram extends functor
 				r.incrRefcnt();
 			return r.sha256;
 		});
+		// TODO referencesHashes ????
 		if ('referenceHashes' in args)
 		{
 			const argHashes = args.referenceHashes;
@@ -6306,7 +6304,7 @@ class diagram extends functor
 		if ('codomainData' in args)
 		{
 			this.codomain.process(this, args.codomainData);
-			this.codomain.objects.forEach(function(o) { o.refcnt = 1; });
+			this.codomain.objects.forEach(function(o) {o.refcnt = 1;});
 		}
 		if ('objectMap' in args)
 			for(let i=0; i<args.objectMap.length; ++i)
@@ -6315,6 +6313,8 @@ class diagram extends functor
 				try
 				{
 					const a0 = this.domain.getObject(a[0]);
+					if (a0.refcnt === 0)	// TODO ???
+						a0.incrRefcnt();
 					const a1 = this.getObject(a[1], this);
 					if (a1 !== null)
 						this.setObject(a0, a1);
@@ -6342,33 +6342,14 @@ class diagram extends functor
 					Cat.recordError(e);
 				}
 			}
-		if ('objectMap' in args)
-			for(let i=0; i<args.objectMap.length; ++i)
-			{
-				const a = args.objectMap[i];
-				try
-				{
-					const a0 = this.domain.getObject(a[0]);
-					if (a0.refcnt === 0)
-						a0.incrRefcnt();
-				}
-				catch(e)
-				{
-					Cat.recordError(e);
-				}
-			}
 		this.textId = Cat.getArg(args, 'textId', 0);
 		this.graphCat = new category({name:'Graph', subobject:'Graph'});
 		this.cleanse();
-		this.colorIndex2colorIndex = {};
-		this.colorIndex2color = {};
-		this.link2colorIndex = {};
-		this.colorIndex = 0;
 		this.sha256 = Cat.sha256(args);
 	}
-	static fetchDiagram(catName, dgrmName, fn)
+	static fetchDiagram(dgrmName, fn)
 	{
-		Cat.Amazon.fetchDiagramJsons(refs, function(jsons)
+		Cat.Amazon.fetchDiagramJsons([dgrmName], function(jsons)
 		{
 			jsons.reverse().map(j =>
 			{
@@ -6451,6 +6432,10 @@ class diagram extends functor
 			this.makeHomSets();
 			this.saveToLocalStorage();
 		}
+		this.colorIndex2colorIndex = {};
+		this.colorIndex2color = {};
+		this.link2colorIndex = {};
+		this.colorIndex = 0;
 	}
 	gui(e, elt, fn)
 	{
@@ -6852,25 +6837,13 @@ class diagram extends functor
 		let html = H.h4('Curry A &#8855 B -> [C, D]') +
 			H.h5('Domain Factors: A &#8855 B') +
 			H.small('Click to move to C') +
-			H.div(this.getSubFactorBtnCode( domExpr,
-											{
-												dir:	0,
-												fromId:	'domainDiv',
-												toId:	'codomainDiv',
-											}
-										),
+			H.div(this.getSubFactorBtnCode( domExpr, {dir:	0, fromId:'domainDiv', toId:'codomainDiv'}),
 				'', 'domainDiv') +
 			H.h5('Codomain Factors: C') +
 			(codIsHom ? H.small('Merge to codomain hom') + Cat.display.getButton('codhom', `getDiagram().toggleCodHom()`, 'Merge codomain hom', Cat.default.button.tiny) + H.br() : '') +
 			H.small('Click to move to A &#8855 B') +
 			H.div(('op' in codExpr && codExpr.op === 'hom') ?
-					this.getSubFactorBtnCode( codExpr.lhs,
-												{
-													dir:	1,
-													fromId:	'codomainDiv',
-													toId:	'domainDiv',
-												}
-											)
+					this.getSubFactorBtnCode( codExpr.lhs, {dir:1, fromId:'codomainDiv', toId:'domainDiv'})
 				: '', '', 'codomainDiv') +
 			H.span(Cat.display.getButton('edit', `getDiagram().gui(evt, this, 'curryMorphism')`, 'Curry morphism'));
 		document.getElementById('toolbarTip').innerHTML = html;
@@ -8175,154 +8148,7 @@ function getDiagram()
 	}
 }
 
-// BOOTSTRAP
 let PFS = null;
 let Graph = null;
-
-/*
-function bootstrap()
-{
-	let xyDom = {x: 300, y:Cat.default.font.height};
-	let xyCod = {x: 600, y:Cat.default.font.height};
-	//
-	// basics
-	//
-	Cat.deleteLocalDiagram('D-PFS-std-basics');
-	const basics = new diagram({name:'D-PFS-std-basics', codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
-	const basicObjects =
-		[{diagram:basics, code:'Null', html:'&#x2205', description:'empty set', isInitial:true, isFinite:0},
-		{diagram:basics, code:'One', html:'1', description:'Terminal object, or one point set', isTerminal:true, isFinite:1}];
-	basicObjects.map(objectData => new object(basics.codomain, objectData));
-	const basicMorphisms = [{name:'Null2one', diagram:'D-PFS-std-basics', domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
-	basics.placeMultipleMorphisms(basicMorphisms);
-	//
-	// first order logic
-	//
-	Cat.deleteLocalDiagram('D-PFS-std-FOL');
-	const fol = new diagram({name:'D-PFS-std-FOL', codomain:'PFS', html:'First Order Logic', references:['D-PFS-std-basics'], readonly:true, isStandard:true, user:'std'});
-	const folObjects = [{diagram:'D-PFS-std-FOL', code:'Omega', html:'&#x03a9', description:'sub-object classifier', isFinite:2},
-						{code:'Omega*Omega'}];
-	folObjects.map(objectData => new object(fol.codomain, objectData));
-	const folMorphisms = [	{name:'False', diagram:'D-PFS-std-FOL', domain:'One', codomain:'Omega', function:'false', html:'&#x22a5', description:'false'},
-							{name:'True', diagram:'D-PFS-std-FOL', domain:'One', codomain:'Omega', function:'true', 	html:'&#x22a4', description:'true'},
-							{name:'not', diagram:'D-PFS-std-FOL', domain:'Omega', codomain:'Omega', function:'not', html:'&#x00ac', description:'not'},
-							{name:'and', diagram:'D-PFS-std-FOL', domain:'Omega*Omega', codomain:'Omega', function:'and', html:'&#x2227', description:'logical and'},
-							{name:'or', diagram:'D-PFS-std-FOL', domain:'Omega*Omega', codomain:'Omega', function:'or', html:'&#x2228', description:'logical or'}];
-	fol.placeMultipleMorphisms(folMorphisms);
-	//
-	// arithmetic operations
-	//
-	Cat.deleteLocalDiagram('D-PFS-std-arithmetics');
-	const arithmetics = new diagram({name:'D-PFS-std-arithmetics', codomain:'PFS', html:'Arithmetics', description:'Artithmetic operations on natural numbers, integers, and floating point numbers.',
-				references:['D-PFS-std-basics', 'D-PFS-std-FOL'], readonly:true, isStandard:true, user:'std'});
-	xyDom = {x: 300, y:Cat.default.font.height};
-	xyCod = {x: 600, y:Cat.default.font.height};
-
-	let arithObjects = [
-		{diagram:arithmetics, code:'N', html:'&#x2115', description:'Natural numbers', isFinite:'n'},
-		{diagram:arithmetics, code:'Z', html:'&#x2124', description:'Integers', isFinite:'n'},
-		{diagram:arithmetics, code:'F', html:'&#120125;', description:'Floating point numbers', isFinite:'n'},
-		{diagram:arithmetics, code:'N*N'},
-		{diagram:arithmetics, code:'Z*Z'},
-		{diagram:arithmetics, code:'F*F'},
-		{diagram:arithmetics, code:'N+One', description:'A natural number or an exception'},
-		{diagram:arithmetics, code:'F+One', description:'A floating point number or an exception'},
-	];
-
-	arithObjects.map(objectData => new object(arithmetics.codomain, objectData));
-
-	const arithMorphData = [
-		{name:'Nzero', diagram:arithmetics, domain:'One', codomain:'N', function:'natZero', html:`'0'`, description:'The natural number zero' },
-		{name:'None', diagram:arithmetics, domain:'One', codomain:'N', function:'natOne', html:`'1'`, description:'The natural number one' },
-		{name:'Nplus', diagram:arithmetics, domain:'N*N', codomain:'N', function:'natAdd', html:'+', description:'Addition of natural numbers' },
-		{name:'Nsucc', diagram:arithmetics, domain:'N', codomain:'N', function:'natSucc', html:'++', description:'Increment natural numbers' },
-		{name:'Npred', diagram:arithmetics, domain:'N', codomain:'N', function:'natPred', html:'--', description:'Decrement natural numbers where zero goes to zero' },
-		{name:'Nmult', diagram:arithmetics, domain:'N*N', codomain:'N', 	function:'natMult', html:'*', description:'Multiplication of natural numbers'},
-		{name:'Ncomp', diagram:arithmetics, domain:'N*N', codomain:'Omega', function:'natStrict', html:'<', description:'Strict order of natural numbers'},
-		{name:'NcompEq', diagram:arithmetics, domain:'N*N', codomain:'Omega', function:'natOrder', html:'&#x2264', description:'Order of natural numbers with equality'},
-		{name:'Zplus', diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intAdd', html:'+', description:'Integer addition'},
-		{name:'Zsub', 	diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intSub', html:'-', description:'Integer subtraction'},
-		{name:'Zmult', diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intMult', html:'*', description:'Integer multiplication'},
-		{name:'Zcomp', diagram:arithmetics, domain:'Z*Z', codomain:'Omega', function:'intStrict', html:'<', description:'Strict order of integers'},
-		{name:'ZcompEq', diagram:arithmetics, domain:'Z*Z', codomain:'Omega', function:'intOrder', html:'&#x2264', description:'Strict order of integers with equality'},
-		{name:'Zmod', 	diagram:arithmetics, domain:'Z*Z', codomain:'Z', 	function:'intModulo', html:'%', description:'Modulo'},
-		{name:'Fplus', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatAdd', html:'+', description:'Floating point addition'},
-		{name:'Fsub', 	diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatSub', html:'-', description:'Floating point subtraction'},
-		{name:'Fmult', diagram:arithmetics, domain:'F*F', codomain:'F', 	function:'floatMult', html:'*', description:'Floating point multiplication'},
-		{name:'Fdiv', diagram:arithmetics, domain:'F*F', codomain:'F+One', 	function:'floatDiv', html:'/', description:'Floating point division'},
-		{name:'Fcomp', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:'floatStrict', html:'<', description:'Strict order of floats'},
-		{name:'FcompEq', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:'floatOrder', html:'&#x2264', description:'Strict order of floats with equality'},
-		{name:'N2Z', diagram:arithmetics, domain:'N', codomain:'Z', function:'nat2int', html:'&#x21aa', description:'Embed natural numbers into integers'},
-		{name:'Z2F', diagram:arithmetics, domain:'Z', codomain:'F', function:'int2float', html:'&#x21aa', description:'Embed integers into floats'}];
-	arithmetics.placeMultipleMorphisms(arithMorphData);
-
-	Cat.deleteLocalDiagram('D-PFS-std-strings');
-	const strings = new diagram({name:'D-PFS-std-strings', codomain:'PFS', html:'Strings', description:'Operations on strings.', references:['D-PFS-std-arithmetics'], readonly:true, isStandard:true, user:'std'});
-	const stringObjects = [
-		{diagram:strings, code:'Str', html:'Str', description:'The space of finite strings'},
-		{diagram:strings, code:'Str*Str'}];
-	stringObjects.map(objectData => new object(strings.codomain, objectData));
-	const stringMorphisms =
-		[
-			{diagram:strings, name:'append', domain:'Str*Str', codomain:'Str', function:'strAppend', html:'+', description:'Append two strings'},
-			{diagram:strings, name:'strlen', domain:'Str', codomain:'N', function:'strLength', html:'#', description:'Length of a string'},
-			{diagram:strings, name:'NtoStr', domain:'N', codomain:'Str', function:'nat2str', html:'&#x5316', description:'Convert natural numbers to a string'},
-			{diagram:strings, name:'ZtoStr', domain:'Z', codomain:'Str', function:'int2str', html:'&#x5316', description:'Convert integers to a string'},
-			{diagram:strings, name:'FtoStr', domain:'F', codomain:'Str', function:'float2str', html:'&#x5316', description:'Convert floating point numbers to a string'},
-			{diagram:strings, name:'OmegaToStr', domain:'Omega', codomain:'Str', function:'omega2str', html:'&#x5316', description:'Convert truth values to a string'},
-		];
-	strings.placeMultipleMorphisms(stringMorphisms);
-	//
-	// console
-	//
-	Cat.deleteLocalDiagram('D-PFS-std-console');
-	const console = new diagram({name:'D-PFS-std-console', codomain:'PFS', html:'Console', description:'Print to the console\'s tty.', references:['D-PFS-std-strings'], readonly:true, isStandard:true, user:'std'});
-	const consoleObjects = [{diagram:console, code:'tty', html:'tty', description:'Write-only console'}];
-	consoleObjects.map(objectData => new object(console.codomain, objectData));
-	const consoleMorphisms = [{name:'print', diagram:console, domain:'Str', codomain:'tty', function:'ttyOut', html:'&#128438;', description:'Print to tty'}];
-	console.placeMultipleMorphisms(consoleMorphisms);
-	//
-	// threeD
-	//
-	Cat.deleteLocalDiagram('D-PFS-std-threeD');
-	const threeD = new diagram({name:'D-PFS-std-threeD', codomain:'PFS', html:'3D', description:'Print to three dimensions.', references:['D-PFS-std-arithmetics', 'D-PFS-std-strings'], readonly:true, isStandard:true, user:'std'});
-	const threeDObjects = [{diagram:threeD, code:'threeD', html:'3D', description:'Rendering in 3D'},
-							{diagram:threeD, code:'N*N*N'},
-							{diagram:threeD, code:'Z*Z*Z'},
-							{diagram:threeD, code:'F*F*F'},
-							{diagram:threeD, name:'point', html:'Point', description:'3D point', code:'F*F*F'},
-							{diagram:threeD, code:'point*point'},
-							{diagram:threeD, code:'point*point*point'},
-//							{diagram:threeD, name:'Red', code:'Red', html:'Red', description:'The color red'},
-//							{diagram:threeD, name:'Green', code:'Green', html:'Green', description:'The color green'},
-//							{diagram:threeD, name:'Blue', code:'Blue', html:'Blue', description:'The color blue'},
-							{diagram:threeD, code:'N*N*N', html:'RGB'},	// TODO should be bytes
-							{diagram:threeD, name:'color', code:'N*N*N', html:'Color', description:'Full color spectrum'},
-						];
-	threeDObjects.map(objectData => new object(threeD.codomain, objectData));
-	const threeDMorphisms = [
-								{name:'Nto3D', diagram:threeD, domain:'N', codomain:'threeD', function:'Ato3D', html:'&#128438;Points', description:'Plot a natural number in 3D with a random color.'},
-								{name:'NxNto3D', diagram:threeD, domain:'N*N', codomain:'threeD', function:'AxAto3D', html:'&#128438;Points', description:'Plot a pair of natural numbers in 3D with a random color.'},
-								{name:'NxNxNto3D', diagram:threeD, domain:'N*N*N', codomain:'threeD', function:'AxAxAto3D', html:'&#128438;Points', description:'Plot a triple of natural numbers in 3D with a random color.'},
-								{name:'Zto3D', diagram:threeD, domain:'Z', codomain:'threeD', function:'Ato3D', html:'&#128438;Points', description:'Plot an integer in 3D with a random color.'},
-								{name:'ZxZto3D', diagram:threeD, domain:'Z*Z', codomain:'threeD', function:'AxAto3D', html:'&#128438;Points', description:'Plot a pair of integers in 3D with a random color.'},
-								{name:'ZxZxZto3D', diagram:threeD, domain:'Z*Z*Z', codomain:'threeD', function:'AxAxAto3D', html:'&#128438;Points', description:'Plot a triple of integers in 3D with a random color.'},
-								{name:'Fto3D', diagram:threeD, domain:'F', codomain:'threeD', function:'Ato3D', html:'&#128438;Points', description:'Plot a floating point number in 3D with a random color.'},
-								{name:'FxFto3D', diagram:threeD, domain:'F*F', codomain:'threeD', function:'AxAto3D', html:'&#128438;Points', description:'Plot a pair of floating point numbers in 3D with a random color.'},
-								{name:'FxFxFto3D', diagram:threeD, domain:'F*F*F', codomain:'threeD', function:'AxAxAto3D', html:'&#128438;Points', description:'Plot a triple of floating point numbers in 3D with a random color.'},
-								{name:'FxFxFx2toLine', diagram:threeD, domain:'point*point', codomain:'threeD', function:'AxAxAx2toLine', html:'&#128438;Lines', description:'Plot a line segment in 3D with a random color.'},
-								{name:'FxFxFx2toQuadraticBezierCurve3', diagram:threeD, domain:'point*point*point', codomain:'threeD', function:'AxAxAToQuadraticBezierCurve3', html:'&#128438;Beziers', description:'Plot a 3D Bezier curve with a random color.'},
-								{name:'Str2Color', diagram:threeD, domain:'Str', codomain:'color', function:'AxAxAToQuadraticBezierCurve3', html:'Str2Color', description:'Convert string to color.'},
-							];
-	threeD.placeMultipleMorphisms(threeDMorphisms);
-	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-basics']);
-	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-FOL']);
-	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-strings']);
-	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-arithmetics']);
-	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-console']);
-	Cat.Amazon.saveDiagram(Cat.diagrams['D-PFS-std-threeD']);
-//	Cat.Amazon.saveDiagram(Cat.diagrams.D-PFS-anon-Draft);
-}
-*/
 
 Cat.initialize();	// boot-up
