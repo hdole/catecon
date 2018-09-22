@@ -1,3 +1,5 @@
+// (C) 2018 Harry Dole
+// Catecon:  The Categorical Console
 //
 // Return the most recent diagrams.
 //

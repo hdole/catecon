@@ -1,3 +1,6 @@
+// (C) 2018 Harry Dole
+// Catecon:  The Categorical Console
+//
 if(typeof exports == "undefined")
 {
 	exports = this;

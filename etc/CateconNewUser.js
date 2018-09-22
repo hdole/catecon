@@ -1,4 +1,6 @@
-
+// (C) 2018 Harry Dole
+// Catecon:  The Categorical Console
+//
 const AWS = require('aws-sdk');
 const C = require('./AWSconstants.js');
 
