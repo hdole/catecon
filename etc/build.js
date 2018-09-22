@@ -2,7 +2,6 @@
 // Catecon:  The Categorical Console
 //
 const AWS = require('aws-sdk');
-const https = require('https');
 const fs = require('fs');
 const proc = require('child_process');
 
@@ -30,41 +29,3 @@ lambdas.map(f =>
 	proc.exec('rm index.js');
 	proc.exec(`aws lambda update-function-code --function-name ${f} --zip-file fileb://./${f}.zip`);
 });
-
-/*
-function lambdaHandler(err, data)
-{
-	if (err)
-	{
-		console.log('Error',err);
-		return;
-	}
-	const functions = data.Functions.map(f => f.FunctionName);
-	console.log(functions);
-	Promise.all(functions.map(FunctionName => lambda.getFunction({FunctionName}, function(err, data)
-	{
-		if (err)
-		{
-			console.log('Error', err, err.stack);
-			return;
-		}
-		const jsName = `${FunctionName}.js`;
-		const zipName = `${jsName}.zip`;
-		const zipFile = fs.createWriteStream(zipName);
-		https.get(data.Code.Location, (response) =>
-		{
-			response.pipe(zipFile);
-			zipFile.on('finish', function(response)
-			{
-				zipFile.close();
-				proc.exec(`zcat -d ${zipName} > ${jsName}`);
-			});
-		}).on('error', (e) =>
-		{
-			console.log('Error in download',e);
-		});
-	}))).then(data => {});
-}
-
-lambda.listFunctions({}, lambdaHandler);
-*/
