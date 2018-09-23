@@ -393,6 +393,7 @@ const Cat =
 	{
 		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\'/g, '&#39;');
 	},
+	/*
 	renameDiagram(dgrm, name)
 	{
 		// TODO all *deep* names must be changed:  elements.diagram
@@ -405,6 +406,7 @@ const Cat =
 		Cat.addDiagram(dgrm);
 		Cat.selected.selectDiagram(dgrm.name);
 	},
+	*/
 	textify(preface, elements, reverse = false)
 	{
 		let txt = `${preface} `;
@@ -2475,7 +2477,7 @@ const Cat =
 <line class="svgstr_9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
 <line class="svgstr_9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
 				delete:
-`<line class="svgstr0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead")/>
+`<line class="svgstr0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
 <path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
 				detachDomain:
 `<circle cx="40" cy="160" r="60" fill="url(#radgrad1)"/>
@@ -2492,7 +2494,7 @@ const Cat =
 <line class="svgstr0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
 				download:
 `<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead")/>`,
+<line class="svgstr0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 				edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
 				eval:
@@ -2637,7 +2639,7 @@ const Cat =
 <line class="svgstr3" x1="90" y1="200" x2="120" y2="200"/>`,
 				upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead")/>`,
+<line class="svgstr0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 			},
 			header(scale, bgColor = '#ffffff')
 			{
