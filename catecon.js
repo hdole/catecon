@@ -1,6 +1,26 @@
 // (C) 2018 Harry Dole
 // Catecon:  The Categorical Console
+//
 'use strict';
+
+
+(function(exports)
+{
+let AWS = null;
+let ACI = null;
+let peg = null;
+let CatFns = null;
+let sjcl = null;
+
+if (typeof require !== 'undefined')
+{
+	AWS = require('aws-sdk');
+	if (typeof AmazonCognitoIdentity === 'undefined')
+		ACI = require('amazon-cognito-identity.min');
+	peg = require('./peg-0.10.0.min.js');
+	sjcl = require('./sjcl.js');
+	CatFns = require('./CatFns.js');
+}
 
 var $Cat = null;	// Cat of cats
 
@@ -167,15 +187,17 @@ class operator
 	}
 }
 
-(function(d)
-{
-	var a = d.createElement('script');
-	a.type = 'text/javascript';
-	a.async = true;
-	a.id = 'amazon-login-sdk'; 
-	a.src = 'https://api-cdn.amazon.com/sdk/login1.js?v=3';
-	d.getElementById('navbar').appendChild(a);
-})(document);
+const isGUI = typeof document === 'object';
+if (isGUI)
+	(function(d)
+	{
+		var a = d.createElement('script');
+		a.type = 'text/javascript';
+		a.async = true;
+		a.id = 'amazon-login-sdk'; 
+		a.src = 'https://api-cdn.amazon.com/sdk/login1.js?v=3';
+		d.getElementById('navbar').appendChild(a);
+	})(document);
 
 const Cat =
 {
@@ -186,10 +208,10 @@ const Cat =
 	debug:			true,
 	diagrams:		{},
 	initialized:	false,
-	nameEx:			RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_-]*$'),
+	nameEx:			RegExp('^[a-zA-Z_-]+[@a-zA-Z0-9_-]*$'),
 	localDiagrams:	{},
 	secret:			'8b1ff7749bda89c084bba7fa1b7e9015e952bb455100fbe518c86f71c7f3592c',
-	sep:			' ',
+	sep:			'@',
 	serverDiagrams:	{},
 	statusXY:		{x:0, y:0},
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
@@ -202,13 +224,18 @@ const Cat =
 	recordError(err)
 	{
 		let txt = Cat.getError(err);
-		if (typeof err === 'object' && 'stack' in err && err.stack != '')
-			txt += H.br() + H.small('Stack Trace') + H.pre(err.stack);
-		if (Cat.debug)
-			console.log('recordError', err);
-		document.getElementById('error-out').innerHTML += '<br/>' + txt;
-		Cat.display.panel.open('tty');
-		Cat.display.accordion.open('errorOutPnl');
+		console.log('Error: ', txt, err);
+debugger;
+		if (isGUI)
+		{
+			if (typeof err === 'object' && 'stack' in err && err.stack != '')
+				txt += H.br() + H.small('Stack Trace') + H.pre(err.stack);
+			document.getElementById('error-out').innerHTML += '<br/>' + txt;
+			Cat.display.panel.open('tty');
+			Cat.display.accordion.open('errorOutPnl');
+		}
+		else
+			process.exit(1);
 	},
 	status(e, msg)
 	{
@@ -306,13 +333,13 @@ const Cat =
 	},
 	saveLocalDiagramList()
 	{
-		localStorage.setItem('Cat.diagrams.local', JSON.stringify(Cat.localDiagrams));
+		isGUI && localStorage.setItem('Cat.diagrams.local', JSON.stringify(Cat.localDiagrams));
 	},
 	addToLocalDiagramList(dgrm)
 	{
 		if (dgrm.name in Cat.localDiagrams)
 			return;
-		Cat.localDiagrams[dgrm.name] = {name:dgrm.name, fancyName:dgrm.getText(), entryDate:dgrm.entryDate, description:dgrm.description, user:dgrm.username};
+		Cat.localDiagrams[dgrm.name] = {name:dgrm.name, fancyName:dgrm.getText(), timestamp:dgrm.timestamp, description:dgrm.description, user:dgrm.username};
 		Cat.saveLocalDiagramList();
 	},
 	removeFromLocalDiagramList(dgrmName)
@@ -332,7 +359,7 @@ const Cat =
 	{
 		try
 		{
-			localStorage.removeItem(diagram.storageName(dgrmName));
+			isGUI && localStorage.removeItem(diagram.storageName(dgrmName));
 			if (dgrmName in Cat.diagrams)
 			{
 				const dgrm = Cat.diagrams[dgrmName];
@@ -531,7 +558,7 @@ const Cat =
 		});
 //		if (Cat.bootstrap)
 //			bootstrap();
-		this.fetchCategories(fn);	// TODO check for local TODO refresh flag
+		isGUI && this.fetchCategories(fn);	// TODO check for local TODO refresh flag
 	},
 	getLocalStorageCategoryName()
 	{
@@ -555,17 +582,17 @@ const Cat =
 	{
 		try
 		{
-			if (Cat.clear || window.location.search.substr(1) === 'clear')
+			if (Cat.clear || (isGUI && window.location.search.substr(1) === 'clear'))
 			{
 				console.log('clearing local storage');
 				this.clearLocalStorage();
 			}
-			Cat.autosave = true;
-			Cat.getLocalDiagramList();
-			Cat.display.initialize();
-			Cat.Amazon.initialize();
-			Cat.display.setNavbarBackground();
-			Cat.updatePanels();
+			if (isGUI)
+			{
+				Cat.autosave = true;
+				Cat.getLocalDiagramList();
+				Cat.display.initialize();
+			}
 			Cat.initializeCT(function()
 			{
 				Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
@@ -574,6 +601,9 @@ const Cat =
 					Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
 				});
 			});
+			Cat.Amazon.initialize();
+			isGUI && Cat.display.setNavbarBackground();
+			isGUI && Cat.updatePanels();
 		}
 		catch(e)
 		{
@@ -601,12 +631,12 @@ const Cat =
 						}
 					});
 // TODO					Cat.display.category.setCategoryTable();
-					if (Cat.bootstrap)
-					{
-						Cat.Amazon.saveCategory($Cat);
-						Cat.Amazon.saveCategory(PFS);
-						Cat.Amazon.saveCategory(Graph);
-					}
+//					if (Cat.bootstrap)
+//					{
+//						Cat.Amazon.saveCategory($Cat);
+//						Cat.Amazon.saveCategory(PFS);
+//						Cat.Amazon.saveCategory(Graph);
+//					}
 					if (fn)
 						fn(data);
 				});
@@ -1478,7 +1508,7 @@ const Cat =
 				this.initialize();
 				this.animate();
 			},
-			mouse:	new THREE.Vector2(),
+			mouse:	typeof THREE === 'object' ? new THREE.Vector2() : null,
 			camera:	null,
 			scene:	null,
 			raycaster:	null,
@@ -1754,7 +1784,7 @@ const Cat =
 			setPanelContent()
 			{
 				const dgrm = getDiagram();
-				const dt = new Date(dgrm ? dgrm.entryDate : 0);
+				const dt = new Date(dgrm ? dgrm.timestamp : 0);
 				const cat = getCat();
 				let html =	H.div('', '', 'diagramInfoDiv') +
 							H.div('', '', 'diagramPanelToolbar') +
@@ -1895,15 +1925,15 @@ const Cat =
 				{
 					const serverInfo = obj in Cat.serverDiagrams ? Cat.serverDiagrams[obj] : null;
 					const localInfo = obj in Cat.localDiagrams ? Cat.localDiagrams[obj] : null;
-					const serverTime = serverInfo ? serverInfo.entryDate : 0;
-					const localTime = localInfo ? localInfo.entryDate : 0;
+					const serverTime = serverInfo ? serverInfo.timestamp : 0;
+					const localTime = localInfo ? localInfo.timestamp : 0;
 					const info =
 					{
 						description:	localInfo ? localInfo.description : (serverInfo ? serverInfo.description : ''),
 						username:		localInfo ? ('user' in localInfo ? localInfo.user : localInfo.username) : (serverInfo ? ('user' in serverInfo ? serverInfo.user : serverInfo.username) : ''),
 						name:			obj,
 						fancyName:		localInfo ? ('html' in localInfo ? localInfo.html : localInfo.fancyName) : (serverInfo ? ('html' in serverInfo ? serverInfo.html : serverInfo.fancyName) : ''),
-						entryDate:		localInfo ? localInfo.entryDate : (serverInfo ? serverInfo.entryDate : ''),
+						timestamp:		localInfo ? localInfo.timestamp : (serverInfo ? serverInfo.timestamp : ''),
 					};
 					return info;
 				}
@@ -1913,13 +1943,13 @@ const Cat =
 					username:		obj.username,
 					name:			obj.name,
 					fancyName:		obj.getText(),
-					entryDate:		obj.entryDate,
+					timestamp:		obj.timestamp,
 				};
 				return info;
 			},
 			diagramRow(info)
 			{
-				const dt = new Date(info.entryDate);
+				const dt = new Date(info.timestamp);
 				const user = 'user' in info ? info.user : info.username;	// TODO should just be username eventually
 				const tbl = H.table(H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
 									H.tr(H.td(info.description, 'description', '', '', 'colspan="2"')) +
@@ -2969,12 +2999,16 @@ ${this.svg.button(onclick)}
 	},
 	textWidth(txt)
 	{
-		let svg = `<text text-anchor="middle" class="object" x="0" y="0" id="testTextWidthElt">${txt}</text>`;
-		Cat.display.uiSVG.innerHTML = svg;
-		const txtElt = document.getElementById('testTextWidthElt');
-		const w = txtElt.parentNode.getBBox().width;
-		Cat.display.uiSVG.innerHTML = '';
-		return w;
+		if (isGUI)
+		{
+			let svg = `<text text-anchor="middle" class="object" x="0" y="0" id="testTextWidthElt">${txt}</text>`;
+			Cat.display.uiSVG.innerHTML = svg;
+			const txtElt = document.getElementById('testTextWidthElt');
+			const w = txtElt.parentNode.getBBox().width;
+			Cat.display.uiSVG.innerHTML = '';
+			return w;
+		}
+		return 10;
 	},
 	Amazon:
 	{
@@ -3072,7 +3106,12 @@ ${this.svg.button(onclick)}
 				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
 			};
 			AWS.config.region = this.cognitoRegion;
-			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
+//			this.userPool = new ACI.CognitoUserPool(poolInfo);
+//			this.userPool = ACI ? new ACI.CognitoUserPool(poolInfo) : new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
+			if (ACI)
+				this.userPool = new ACI.CognitoUserPool(poolInfo);
+			else
+				this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
 			Cat.Amazon.user = this.userPool.getCurrentUser();
 			if (Cat.Amazon.user)
 			{
@@ -3117,8 +3156,6 @@ ${this.svg.button(onclick)}
 			{
 				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
 				AWS.config.credentials.get();
-				if (Cat.debug)
-					console.log('RegisterCognito', Cat.user.name,AWS.config.credentials);
 				this.updateServiceObjects();
 			}
 		},
@@ -3349,12 +3386,18 @@ class element
 			this.cid = args.cid;
 		else
 		{
-			const ary = new Uint8Array(16);
-			window.crypto.getRandomValues(ary);
-			let cid = '';
-			for (let i=0; i<16; ++i)
-				cid += ary[i].toString(16);
-			this.cid = cid;
+			// TODO replace with signatures
+			if (isGUI)
+			{
+				const ary = new Uint8Array(16);
+				window.crypto.getRandomValues(ary);
+				let cid = '';
+				for (let i=0; i<16; ++i)
+					cid += ary[i].toString(16);
+				this.cid = cid;
+			}
+//			else
+//				this.cid = null;	// TODO remove
 		}
 		this.readonly = Cat.getArg(args, 'readonly', false);
 	}
@@ -3373,7 +3416,7 @@ class element
 				console.log('element.decrRefcnt delete',this.category.name,this.name);
 			if (this.class === 'element')
 				this.diagram.texts.splice(this.diagram.texts.indexOf(this), 1);
-			this.removeSVG();
+			isGUI && this.removeSVG();
 		}
 	}
 	getText()
@@ -3538,7 +3581,7 @@ class element
 					expr.width = Cat.textWidth(html);
 					return html;
 				}
-				expr.width = Cat.textWidth(expr.token);
+				expr.width = isGUI ? Cat.textWidth(expr.token) : 0;
 				return expr.token;
 			},
 			function(dgrm, expr, first, data)
@@ -4008,7 +4051,7 @@ class object extends element
 			if (!('subobject' in args))
 			{
 				if ((this.diagram !== null && !this.diagram.validateAvailableObject(this.name)) || cat.hasObject(this.name))
-					throw `Name ${this.name} is already taken.`;
+					throw `Object name ${this.name} is already taken.`;
 				cat.addObject(this);
 			}
 		}
@@ -4541,7 +4584,7 @@ NameToken = nameChar+
 {
 	return {token:text()};
 }
-nameChar = [a-zA-Z0-9$_-]
+nameChar = [@a-zA-Z0-9$_-]
 _ "optional white space" = ws*
 ws "white space" = [ \t\\r\\n]+
 	`;
@@ -4618,7 +4661,7 @@ class morphism extends element
 			throw `Cannot parse code [${this.code}]: ${Cat.getError(e)}`;
 		}
 		if ((this.diagram !== null && !this.diagram.validateAvailableMorphism(this.name)) || cat.hasMorphism(this.name))
-			throw `Name ${this.name} is already taken.`;
+			throw `Morphism name ${this.name} is already taken.`;
 		if (this.html === '' && this.code !== '')
 			this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'morphism', position:0});
 		if ('function' in args)
@@ -6293,7 +6336,7 @@ class diagram extends functor
 		this.updateElements();
 		this.subClass = 'diagram';
 		this.selected = [];
-		this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:window.innerWidth, height:window.innerHeight});
+		this.viewport = isGUI ? Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:window.innerWidth, height:window.innerHeight}) : {x:0, y:0, width:0, height:0};
 		this.terms = [];
 		if ('terms' in args)
 			args.terms.map(t => new term(this, t));
@@ -6302,7 +6345,7 @@ class diagram extends functor
 		Cat.addDiagram(this.codomain.name, this);
 		this.texts = 'texts' in args ? args.texts.map(d => new element(this.domain, d)) : [];
 		this.texts.map(t => t.diagram = this);
-		this.entryDate = Cat.getArg(args, 'entryDate', Date.now());
+		this.timestamp = Cat.getArg(args, 'timestamp', Date.now());
 		if ('codomainData' in args)
 		{
 			this.codomain.process(this, args.codomainData);
@@ -6404,7 +6447,7 @@ class diagram extends functor
 		d.isStandard = this.isStandard;
 		d.texts = this.texts.map(t => t.json());
 		d.textId = this.textId;
-		d.entryDate = this.entryDate;
+		d.timestamp = this.timestamp;
 		return d;
 	}
 	cleanse()
@@ -6513,7 +6556,7 @@ class diagram extends functor
 	{
 		if (Cat.debug)
 			console.log('save to local storage', diagram.storageName(this.name));
-		this.entryDate = Date.now();
+		this.timestamp = Date.now();
 		const data = this.stringify();
 		localStorage.setItem(diagram.storageName(this.name), data);
 	}
@@ -6970,11 +7013,14 @@ class diagram extends functor
 		const from = new diagramMorphism(this.domain, {diagram:this, domain:domain.name, codomain:codomain.name});
 		from.incrRefcnt();
 		this.setMorphism(from, to);
-		domain.addSVG();
-		codomain.addSVG();
-		from.update();
-		from.addSVG();
-		this.update(e, '', from, true, true);
+		if (isGUI)
+		{
+			domain.addSVG();
+			codomain.addSVG();
+			from.update();
+			from.addSVG();
+			this.update(e, '', from, true, true);
+		}
 	}
 	objectPlaceMorphism(e, dir, objName, morphName)
 	{
@@ -7625,11 +7671,11 @@ class ${jsName} extends diagram
 	}
 	validateAvailableObject(name)
 	{
-		return this.name !== '' && !this.hasObject(this.name);
+		return name !== '' && !this.hasObject(name);
 	}
 	validateAvailableMorphism(name)
 	{
-		return this.name !== '' && !this.hasMorphism(this.name);
+		return name !== '' && !this.hasMorphism(name);
 	}
 	getIdentityMorphism(objName)
 	{
@@ -8142,7 +8188,7 @@ function getDiagram()
 				return;
 			}
 			const payload = JSON.parse(data.Payload);
-			payload.Items.map(i => Cat.serverDiagrams[i.subkey.S] = {entryDate:Number.parseInt(i.entryDate.N), description:i.description.S, fancyName:i.fancyName.S});
+			payload.Items.map(i => Cat.serverDiagrams[i.subkey.S] = {timestamp:Number.parseInt(i.timestamp.N), description:i.description.S, fancyName:i.fancyName.S});
 			Cat.display.diagram.setUserDiagramTable();
 			if (fn)
 				fn(payload.Items);
@@ -8154,3 +8200,22 @@ let PFS = null;
 let Graph = null;
 
 Cat.initialize();	// boot-up
+
+if (!isGUI)
+{
+	exports.Amazon =				Cat.Amazon;
+	exports.default =				Cat.default;
+	exports.deleteLocalDiagram =	Cat.deleteLocalDiagram;
+	exports.diagrams =				Cat.diagrams;
+	exports.sep =					Cat.sep;
+	exports.user =					Cat.user;
+	exports.$Cat =					$Cat;
+	exports.PFS =					PFS;
+	exports.Graph =					Graph;
+
+	exports.diagram =				diagram;
+	exports.object =				object;
+}
+else
+	window.Cat = Cat;
+})(typeof exports === 'undefined' ? this['Cat'] = this.Cat : exports);
