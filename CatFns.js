@@ -3,19 +3,12 @@
 // vim: ts=4 sw=4
 'use strict';
 
-if (typeof exports === 'undefined')
-	exports = this;
-
-const CatFns = function()
+(function(exports)
 {
-	this.init();
-}
 
-CatFns.prototype =
-{
-	init:	function()
+	const CatFns =
 	{
-		exports.function =
+		function:
 		{
 			compose(args)
 			{
@@ -306,15 +299,15 @@ CatFns.prototype =
 			unknown(args)
 			{
 			},
-		};
-		exports.functor =
+		},
+		functor:
 		{
 			graph(dgrm, args)
 			{
 				return stringMorphism.graph(dgrm, args);
 			},
-		};
-		exports.transform =
+		},
+		transform:
 		{
 			identity(dgrm, obj)
 			{
@@ -359,8 +352,8 @@ CatFns.prototype =
 					return dgrm.getMorphism(name);
 				return new morphism(dgrm.codomain, {name:name, description:`Test for equality on ${obj.name}`, diagram:dgrm.name, domain:obj, codomain:'Omega', function:'equals', html:'=', readonly:true});
 			}
-		};
-		exports.util =
+		},
+		util:
 		{
 			checkGeometry(elt)
 			{
@@ -378,8 +371,30 @@ CatFns.prototype =
 				min.z = Math.min(min.z, z);
 				max.z = Math.max(max.z, z);
 			},
-		};
-	}
-}
+		},
+	};
 
-exports.CatFns = new CatFns();
+	if (typeof exports !== 'undefined')
+	{
+		exports.function =	CatFns.function;
+		exports.functor =	CatFns.functor;
+		exports.transform =	CatFns.transform;
+		exports.util =		CatFns.util;
+	}
+	else
+	{
+		window.CatFns = CatFns;
+		/*
+		this.CatFns =
+		{
+			function:	CatFns.function,
+			functor:	CatFns.functor,
+			transform:	CatFns.transform,
+			util:		CatFns.util,
+		};
+		*/
+	}
+
+})
+.call(this);
+// (typeof exports === 'undefined' ? this['CatFns'] = this.CatFns : exports);
