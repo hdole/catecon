@@ -59,7 +59,7 @@ exports.handler = (event, context, callback) =>
                 subkey:     {S:dgrm.name},
                 timestamp:  {N:dgrm.timestamp.toString()},
 //                description:    {S:dgrm.description !== '' ? dgrm.description : 'no description'},
-                description,
+                description:    {S:description},
                 fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
             },
         };
@@ -89,7 +89,7 @@ exports.handler = (event, context, callback) =>
                         name:       {S:dgrm.name},
                         timestamp:  {N:dgrm.timestamp.toString()},
                         username:   {S:username},
-						description,
+						description:    {S:description},
                         fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
                     },
                 };
