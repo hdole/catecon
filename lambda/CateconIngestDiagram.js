@@ -31,16 +31,17 @@ exports.handler = (event, context, callback) =>
     //
     const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
     const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
-    const Key = `${dgrm.codomain}/${dgrm.user}/${dgrm.name}.json`;
+    const Key = `${dgrm.codomain}/${dgrm.username}/${dgrm.name}.json`;
     const Body = JSON.stringify(dgrm);
-    bucket.putObject(
-    {
+    const s3params =
+	{
        Bucket:  C.DIAGRAM_BUCKET_NAME,
        ContentType: 'json',
        Key,
        Body,
        ACL:     'public-read',
-    }, function(err, data)
+    };
+    bucket.putObject(s3params, function(err, data)
     {
         if (err)
         {
@@ -48,6 +49,7 @@ exports.handler = (event, context, callback) =>
             return;
         }
         const db = new AWS.DynamoDB({region:C.REGION});
+		const description = dgrm.description !== '' ? dgrm.description : 'no description';
         const params =
         {
             TableName:  C.DIAGRAM_TABLE,
@@ -56,7 +58,8 @@ exports.handler = (event, context, callback) =>
                 username:   {S:username},
                 subkey:     {S:dgrm.name},
                 timestamp:  {N:dgrm.timestamp.toString()},
-                description:    {S:dgrm.description},
+//                description:    {S:dgrm.description !== '' ? dgrm.description : 'no description'},
+                description,
                 fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
             },
         };
@@ -86,7 +89,7 @@ exports.handler = (event, context, callback) =>
                         name:       {S:dgrm.name},
                         timestamp:  {N:dgrm.timestamp.toString()},
                         username:   {S:username},
-                        description:{S:dgrm.description},
+						description,
                         fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
                     },
                 };
