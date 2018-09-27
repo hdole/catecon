@@ -233,7 +233,7 @@ const Cat =
 	{
 		let txt = Cat.getError(err);
 		console.log('Error: ', txt, err);
-debugger;
+		debugger;
 		if (isGUI)
 		{
 			if (typeof err === 'object' && 'stack' in err && err.stack != '')
@@ -564,8 +564,6 @@ debugger;
 			codomain:	'Graph',
 			description:'Gives the graph of a morphism',
 		});
-//		if (Cat.bootstrap)
-//			bootstrap();
 		isGUI && this.fetchCategories(fn);	// TODO check for local TODO refresh flag
 	},
 	getLocalStorageCategoryName()
@@ -638,13 +636,6 @@ debugger;
 							Cat.catalog[cat] = {};
 						}
 					});
-// TODO					Cat.display.category.setCategoryTable();
-//					if (Cat.bootstrap)
-//					{
-//						Cat.Amazon.saveCategory($Cat);
-//						Cat.Amazon.saveCategory(PFS);
-//						Cat.Amazon.saveCategory(Graph);
-//					}
 					if (fn)
 						fn(data);
 				});
@@ -1732,14 +1723,14 @@ debugger;
 									html += H.button('Add Random Range', 'sidenavAccordion', '', 'Add random entries to this map', `onclick="Cat.display.accordion.toggle(this, \'randomDataInputPnl\')"`) +
 											H.div(
 												H.table(
-														H.tr(H.td('Domain Start Value'), 'sidenavRow') +
-														H.tr(H.td(Cat.display.input('', 'inputStartIdx', 'Start ' + to.domain.getText(), irx, '')), 'sidenavRow') +
-														H.tr(H.td(Cat.display.input('', 'inputEndIdx', 'End ' + to.domain.getText(), irx, '')), 'sidenavRow') +
-														H.tr(H.td('Codomain'), 'sidenavRow') +
-														H.tr(H.td(H.small('Minimum value')), 'sidenavRow') +
-														H.tr(H.td(minForm), 'sidenavRow') +
-														H.tr(H.td(H.small('Maximum value')), 'sidenavRow') +
-														H.tr(H.td(maxForm), 'sidenavRow')) +
+													H.tr(H.td('Domain Start Value'), 'sidenavRow') +
+													H.tr(H.td(Cat.display.input('', 'inputStartIdx', 'Start ' + to.domain.getText(), irx, '')), 'sidenavRow') +
+													H.tr(H.td(Cat.display.input('', 'inputEndIdx', 'End ' + to.domain.getText(), irx, '')), 'sidenavRow') +
+													H.tr(H.td('Codomain'), 'sidenavRow') +
+													H.tr(H.td(H.small('Minimum value')), 'sidenavRow') +
+													H.tr(H.td(minForm), 'sidenavRow') +
+													H.tr(H.td(H.small('Maximum value')), 'sidenavRow') +
+													H.tr(H.td(maxForm), 'sidenavRow')) +
 											Cat.display.getButton('edit', `Cat.display.data.handler('${from.name}', 'random')`, 'Create random range'), 'accordionPnl', 'randomDataInputPnl');
 								}
 								html += H.div('', 'parseError', 'editError');
@@ -1810,9 +1801,11 @@ debugger;
 							H.div(	H.small('User diagrams') +
 							H.div('', '', 'userDiagrams') +
 							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
-							H.button('Recent Diagrams', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.setRecentDiagramTable()"') +
+							H.button('Recent Diagrams', 'sidenavAccordion', '', 'Diagrams referenced by this diagram',
+								'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.setRecentDiagramTable()"') +
 							H.div(H.div('', 'accordionPnl', 'recentDiagrams')) +
-							H.button('Diagram Catalog', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.setCatalogDiagramTable()"') +
+							H.button('Diagram Catalog', 'sidenavAccordion', '', 'Diagrams referenced by this diagram',
+								'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.setCatalogDiagramTable()"') +
 							H.div(H.div('', 'accordionPnl', 'catalogDiagrams'));
 				document.getElementById('diagram-sidenav').innerHTML = html;
 				this.update();
@@ -1871,7 +1864,7 @@ debugger;
 					for(let i=0; i<dgrm.terms.length; ++i)
 					{
 						let term = dgrm.terms[i];
-						html += H.tr(H.td(Cat.display.getButton('delete', `Cat.display.diagram.deleteTerm(${i});`, 'Delete term')) +
+						html += H.tr(	H.td(Cat.display.getButton('delete', `Cat.display.diagram.deleteTerm(${i});`, 'Delete term')) +
 										H.td(Cat.basetypes.quantifiers[term.quantifier]) +
 										H.td(H.span(term.member.getText()), 'grabbable', '', '', `draggable="true" ondragstart="Cat.display.morphism.drag(event, '${term.name}')"`) +
 										H.td('&#8712;') +
@@ -1883,7 +1876,7 @@ debugger;
 			newDiagramPnl()
 			{
 				let html = H.button('New Diagram', 'sidenavAccordion', '', 'New Diagram', `onclick="Cat.display.accordion.toggle(this, \'newDiagramPnl\')"`) +
-							H.div( H.table(H.tr(H.td(Cat.display.input('', 'diagramName', 'Name')), 'sidenavRow') +
+							H.div( H.table(	H.tr(H.td(Cat.display.input('', 'diagramName', 'Name')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'diagramHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'newDiagramDescription', 'Description')), 'sidenavRow'),
 										'sidenav') +
@@ -2026,7 +2019,7 @@ debugger;
 							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!'), 'buttonBar')) +
 							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
 							H.td(Cat.display.getButton('download', 'Cat.getDiagram().download()', 'Download'), 'buttonBar') +
-							H.td(Cat.display.downloadButtonJS('Cat.getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJS('Cat.getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') : '' ) +
 							H.td(Cat.display.expandPanelBtn('diagram', false)) +
 							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight');
 				document.getElementById('diagramPanelToolbar').innerHTML = html;
@@ -5199,6 +5192,7 @@ class dataMorphism extends morphism
 	makeRandomValue(expr, min, max)
 	{
 		// TODO fix 'N'
+		// TODO what to do for 'Str'?
 		return expr.token in Cat.basetypes.objects ? Cat.basetypes.objects[expr.token].random(min,max) : Cat.basetypes.objects['N'].random(min,max);
 	}
 	addRandomData()
@@ -5580,7 +5574,8 @@ class stringMorphism extends morphism
 {
 	constructor(dgrm, m)
 	{
-		super(dgrm.graphCat, {domain:m.domain, codomain:m.codomain, name:m.name, diagram:dgrm});
+//		super(dgrm.graphCat, {domain:m.domain, codomain:m.codomain, name:m.name, diagram:dgrm});
+		super(dgrm.graphCat, {domain:m.domain, codomain:m.codomain, name:m.name, diagram:null});
 		this.graph = m.domCodExpr();
 		if ('function' in m)
 			stringMorphism.tagGraph(this.diagram, this.graph, true, m.function);
@@ -6317,8 +6312,8 @@ class diagram extends functor
 		else
 			this.basename = args.name;
 		// TODO fix when everything is settled on 'username'
-//		this.username = Cat.getArg(args, 'username', Cat.user.name);
-		this.username = 'username' in args ? args.username : ('user' in args ? args.user : 'unknown user');
+//		this.username = 'username' in args ? args.username : ('user' in args ? args.user : 'unknown user');
+		this.username = Cat.getArg(args, 'username', Cat.user.name);
 		this.readonly = this.readonly || (Cat.user.name !== this.username);
 		this.isStandard = Cat.getArg(args, 'isStandard', false);
 		const mainCat = $Cat.getObject(args.codomain);
@@ -8234,8 +8229,16 @@ if (!isGUI)
 	exports.Graph =					Graph;
 
 	exports.diagram =				diagram;
+	exports.element =				element;
 	exports.object =				object;
+	exports.morphism =				morphism;
+	exports.stringMorphism =		stringMorphism;
 }
 else
-	window.Cat = Cat;
+{
+	window.Cat			= Cat;
+	Cat.element			= element;
+	Cat.morphism		= morphism;
+	Cat.stringMorphism	= stringMorphism;
+}
 })(typeof exports === 'undefined' ? this['Cat'] = this.Cat : exports);
