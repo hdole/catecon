@@ -63,22 +63,23 @@ exports.handler = (event, context, callback) =>
         const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
         const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
         const Key = 'catalog.json';
-        const Body = JSON.stringify(Object.values(dgrms));
-        bucket.putObject(
-        {
-           Bucket:  C.DIAGRAM_BUCKET_NAME,
-           ContentType: 'json',
-           Key,
-           Body,
-           ACL:     'public-read',
-        }, function(err, data)
-        {
-            if (err)
-            {
-                console.log('Error',err);
-                return;
-            }
-            callback(err, 'ok');
-        });
-    });
+		const timestamp = Date.now();
+		const Body = JSON.stringify({timestamp, diagrams:Object.values(dgrms)});
+		bucket.putObject(
+		{
+		   Bucket:  C.DIAGRAM_BUCKET_NAME,
+		   ContentType: 'json',
+		   Key,
+		   Body,
+		   ACL:     'public-read',
+		}, function(err, data)
+		{
+			if (err)
+			{
+				console.log('Error',err);
+				return;
+			}
+			callback(err, 'ok');
+		});
+	});
 };
