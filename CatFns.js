@@ -304,7 +304,7 @@
 		{
 			graph(dgrm, args)
 			{
-				return stringMorphism.graph(dgrm, args);
+				return Cat.stringMorphism.graph(dgrm, args);
 			},
 		},
 		transform:
@@ -312,7 +312,7 @@
 			identity(dgrm, obj)
 			{
 				return dgrm.hasMorphism(obj.name) ? dgrm.getMorphism(obj.name) :
-					new morphism(dgrm.codomain, {name:obj.name, description:'Identity morphism', diagram:dgrm.name, domain:obj.name, codomain:obj.name, code:obj.code, function:'identity', html:'1', readonly:true});
+					new Cat.morphism(dgrm.codomain, {name:obj.name, description:'Identity morphism', diagram:dgrm.name, domain:obj.name, codomain:obj.name, code:obj.code, function:'identity', html:'1', readonly:true});
 			},
 			diagonal(dgrm, obj)
 			{
@@ -320,17 +320,17 @@
 				if (dgrm.hasMorphism(name))
 					return dgrm.getMorphism(name)
 				const code = `(${obj.code})*(${obj.code})`;
-				const codename = element.codename(dgrm, this.domain.parseObject(code));
+				const codename = Cat.element.codename(dgrm, this.domain.parseObject(code));
 				if (!dgrm.hasObject(codename))
 					dgrm.newObject({code, diagram:dgrm, html:obj.html + Cat.basetypes.operators.product.sym+obj.html});
-				return new morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain:codename, function:'diagonal', html:'&#x0394', description:`The diagonal morphism on the object ${obj.getText()}`});
+				return new Cat.morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain:codename, function:'diagonal', html:'&#x0394', description:`The diagonal morphism on the object ${obj.getText()}`});
 			},
 			terminal(dgrm, obj)
 			{
 				const name = `${obj.name}-2-terminal`;
 				if (dgrm.hasMorphism(name))
 					return dgrm.getMorphism(name);
-				return new morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain:dgrm.getObject('One'), function:'terminal', html:'&#x2203!', description:`Unique morphism from ${obj.getText()} to the terminal object`});
+				return new Cat.morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain:dgrm.getObject('One'), function:'terminal', html:'&#x2203!', description:`Unique morphism from ${obj.getText()} to the terminal object`});
 			},
 			apply(dgrm, obj)
 			{
@@ -343,14 +343,14 @@
 				if (factors.length !== 2)
 					throw `Not enough factors in object ${obj.getText()} for applying.`;
 				const codomain = dgrm.getHomCodomain(factors[0]);
-				return new morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain, function:'eval', html:'e', description:`Evalution of morphisms in ${factors[0].getText()}`});
+				return new Cat.morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain, function:'eval', html:'e', description:`Evalution of morphisms in ${factors[0].getText()}`});
 			},
 			equals(dgrm, obj)
 			{
 				const name = `${obj.name}-equals`;
 				if (dgrm.hasMorphism(name))
 					return dgrm.getMorphism(name);
-				return new morphism(dgrm.codomain, {name:name, description:`Test for equality on ${obj.name}`, diagram:dgrm.name, domain:obj, codomain:'Omega', function:'equals', html:'=', readonly:true});
+				return new Cat.morphism(dgrm.codomain, {name:name, description:`Test for equality on ${obj.name}`, diagram:dgrm.name, domain:obj, codomain:'Omega', function:'equals', html:'=', readonly:true});
 			}
 		},
 		util:
