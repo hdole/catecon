@@ -347,7 +347,7 @@ const Cat =
 	{
 		if (dgrm.name in Cat.localDiagrams)
 			return;
-		Cat.localDiagrams[dgrm.name] = {name:dgrm.name, fancyName:dgrm.getText(), timestamp:dgrm.timestamp, description:dgrm.description, user:dgrm.username};
+		Cat.localDiagrams[dgrm.name] = {name:dgrm.name, fancyName:dgrm.getText(), timestamp:dgrm.timestamp, description:dgrm.description, username:dgrm.username};
 		Cat.saveLocalDiagramList();
 	},
 	removeFromLocalDiagramList(dgrmName)
@@ -1670,8 +1670,7 @@ const Cat =
 									H.td(Cat.display.getButton('download', `Cat.download(document.getElementById('tty-out').innerHTML, 'text', 'console.log')`, 'Download tty log'), 'buttonBar')), 'buttonBarLeft') +
 								H.pre('', 'tty', 'tty-out'), 'accordionPnl', 'ttyOutPnl') +
 							H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.display.accordion.toggle(this, \'errorOutPnl\')"`) +
-							H.div(
-								Cat.display.getButton('delete', `document.getElementById('error-out').innerHTML = ''`, 'Clear errors') +
+							H.div(H.table(H.tr(H.td(Cat.display.getButton('delete', `document.getElementById('error-out').innerHTML = ''`, 'Clear errors'))), 'buttonBarLeft') +
 								H.span('', 'tty', 'error-out'), 'accordionPnl', 'errorOutPnl');
 				document.getElementById('tty-sidenav').innerHTML = html;
 			},
@@ -1797,14 +1796,13 @@ const Cat =
 							H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="Cat.display.accordion.toggle(this, \'referenceDiagrams\')"') +
 							H.div(H.div('', 'accordionPnl', 'referenceDiagrams')) +
 							this.newDiagramPnl() +
-							(cat !== null ? H.button(`${Cat.user.name} Diagrams`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
+							(cat !== null ? H.button(`${Cat.user.name}`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'diagramCatalogDisplay\')"') : '') +
 							H.div(	H.small('User diagrams') +
-							H.div('', '', 'userDiagrams') +
-							H.div('', '', 'catalog'), 'accordionPnl', 'diagramCatalogDisplay') +
-							H.button('Recent Diagrams', 'sidenavAccordion', '', 'Diagrams referenced by this diagram',
+							H.div('', '', 'userDiagrams'), 'accordionPnl', 'diagramCatalogDisplay') +
+							H.button('Recent', 'sidenavAccordion', '', 'Diagrams referenced by this diagram',
 								'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.setRecentDiagramTable()"') +
 							H.div(H.div('', 'accordionPnl', 'recentDiagrams')) +
-							H.button('Diagram Catalog', 'sidenavAccordion', '', 'Diagrams referenced by this diagram',
+							H.button('Catalog', 'sidenavAccordion', '', 'Diagrams referenced by this diagram',
 								'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.setCatalogDiagramTable()"') +
 							H.div(H.div('', 'accordionPnl', 'catalogDiagrams'));
 				document.getElementById('diagram-sidenav').innerHTML = html;
@@ -1875,7 +1873,7 @@ const Cat =
 			},
 			newDiagramPnl()
 			{
-				let html = H.button('New Diagram', 'sidenavAccordion', '', 'New Diagram', `onclick="Cat.display.accordion.toggle(this, \'newDiagramPnl\')"`) +
+				let html = H.button('New', 'sidenavAccordion', '', 'New Diagram', `onclick="Cat.display.accordion.toggle(this, \'newDiagramPnl\')"`) +
 							H.div( H.table(	H.tr(H.td(Cat.display.input('', 'diagramName', 'Name')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'diagramHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'newDiagramDescription', 'Description')), 'sidenavRow'),
@@ -1951,14 +1949,17 @@ const Cat =
 				};
 				return info;
 			},
-			diagramRow(info)
+			diagramRow(info, tb = null)
 			{
 				const dt = new Date(info.timestamp);
 				const user = 'user' in info ? info.user : info.username;	// TODO should just be username eventually
-				const tbl = H.table(H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
+				const tbl = H.table((tb ? H.tr(H.td(tb)) : '') +
+									H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
 									H.tr(H.td(info.description, 'description', '', '', 'colspan="2"')) +
 									H.tr(H.td(user, 'author') + H.td(dt.toLocaleString(), 'date')));
-				return H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${info.name}')">` + tbl + '</a>', 'sidenavRow'));
+				if (!tb)
+					return H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${info.name}')">` + tbl + '</a>'), 'sidenavRow');
+				return H.tr(H.td(tbl), 'sidenavRow');
 			},
 			setUserDiagramTable()
 			{
@@ -1982,7 +1983,14 @@ const Cat =
 				const dgrm = Cat.getDiagram();
 				if (dgrm === null)
 					return;
-				let html = H.small('References for this diagram') + dgrm.references.map(d => this.diagramRow(this.getDiagramInfo(d))).join('');
+				const refcnts = dgrm.getReferenceCounts();
+				let html = H.small('References for this diagram') + dgrm.references.map(d =>
+				{
+					const del = refcnts[d.name] === 1 ? H.td(Cat.display.getButton('delete', `Cat.getDiagram().removeReference(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
+//					const tb = H.table(H.tr(H.td(Cat.display.getButton('delete', `Cat.getDiagram().removeReference(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') +
+					const tb = H.table(H.tr(del + H.td(Cat.display.getButton('diagram', `Cat.selected.selectDiagram('${d.name}')`, 'View diagram'), 'buttonBar')), 'buttonBarLeft');
+					return this.diagramRow(this.getDiagramInfo(d), tb);
+				}).join('');
 				document.getElementById('referenceDiagrams').innerHTML = H.table(html);
 			},
 			setRecentDiagramTable()
@@ -1993,9 +2001,10 @@ const Cat =
 						if (response.ok)
 							response.json().then(function(data)
 							{
-								Cat.recentDiagrams = data;
-								let html = data.map(d => Cat.display.diagram.diagramRow(d)).join('');
-								document.getElementById('recentDiagrams').innerHTML = H.table(html);
+								Cat.recentDiagrams = data.diagrams;
+								let html = data.diagrams.map(d => Cat.display.diagram.diagramRow(d)).join('');
+								const dt = new Date(data.timestamp);
+								document.getElementById('recentDiagrams').innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
 							});
 					});
 			},
@@ -2007,9 +2016,10 @@ const Cat =
 						if (response.ok)
 							response.json().then(function(data)
 							{
-								Cat.catalogDiagrams = data;
-								let html = data.map(d => Cat.display.diagram.diagramRow(d)).join('');
-								document.getElementById('catalogDiagrams').innerHTML = H.table(html);
+								Cat.catalogDiagrams = data.diagrams;
+								let html = data.diagrams.map(d => Cat.display.diagram.diagramRow(d)).join('');
+								const dt = new Date(data.timestamp);
+								document.getElementById('catalogDiagrams').innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
 							});
 					});
 			},
@@ -2119,7 +2129,7 @@ const Cat =
 								H.table(	H.tr(H.td('User name')) +
 											H.tr(H.td(H.input('', '', 'loginUserName', 'text', {ph:'Name'}))) +
 											H.tr(H.td('Password')) +
-											H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********'}))) +
+											H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********', x:'onclick=Cat.Amazon.login()'}))) +
 											H.tr(H.td(H.button('Log in to Catecon', '', '', '', 'onclick=Cat.Amazon.login()'))));
 					if (Cat.user.status === 'unauthorized')
 						html += H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.display.accordion.toggle(this, \'signupPnl\')"`) +
@@ -2859,7 +2869,7 @@ ${this.svg.button(onclick)}
 					case 84:	// T
 						if (e.shiftKey)
 						{
-							const txt = new element(dgrm.domain, {name:`Text${dgrm.textId++}`, diagram:dgrm, html:'Lorem ipsum dolor', xy});
+							const txt = new element(dgrm.domain, {name:`Text${dgrm.textId++}`, diagram:dgrm, html:'Lorem ipsum cateconium', xy});
 							dgrm.texts.push(txt);
 							dgrm.placeElement(e, txt);
 						}
@@ -6311,8 +6321,6 @@ class diagram extends functor
 		}
 		else
 			this.basename = args.name;
-		// TODO fix when everything is settled on 'username'
-//		this.username = 'username' in args ? args.username : ('user' in args ? args.user : 'unknown user');
 		this.username = Cat.getArg(args, 'username', Cat.user.name);
 		this.readonly = this.readonly || (Cat.user.name !== this.username);
 		this.isStandard = Cat.getArg(args, 'isStandard', false);
@@ -6356,10 +6364,10 @@ class diagram extends functor
 			args.terms.map(t => new term(this, t));
 		this.objects = new Map();
 		this.morphisms = new Map();
+		this.timestamp = Cat.getArg(args, 'timestamp', Date.now());
 		Cat.addDiagram(this.codomain.name, this);
 		this.texts = 'texts' in args ? args.texts.map(d => new element(this.domain, d)) : [];
 		this.texts.map(t => t.diagram = this);
-		this.timestamp = Cat.getArg(args, 'timestamp', Date.now());
 		if ('codomainData' in args)
 		{
 			this.codomain.process(this, args.codomainData);
@@ -8208,6 +8216,18 @@ function getDiagram()
 			if (fn)
 				fn(payload.Items);
 		});
+	}
+	getReferenceCounts(refs = {})
+	{
+		this.references.map(r =>
+		{
+			if (r.name in refs)
+				refs[r.name] = 1 + refs[r.name];
+			else
+				refs[r.name] = 1;
+			r.getReferenceCounts(refs);
+		});
+		return refs;
 	}
 }
 
