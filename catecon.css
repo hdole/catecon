@@ -156,18 +156,22 @@ br
 
 a
 {
-	padding: 2px 2px 2px 2px;
 	text-decoration: none;
 	font-size: 12px;
 	color: black;
-	background-color:	#eee;
 	display: block;
 	transition: 0.3s
 }
 
+tr.sidenavRow
+{
+	padding: 2px 2px 2px 2px;
+	background-color:	inherit;
+}
+
 tr.sidenavRow:hover
 {
-	background-color:	#fff;
+	background-color:	#eee;
 	color: 				#000;
 }
 
@@ -194,12 +198,6 @@ a:hover, .offcanvas a:focus
 	background-color:	gainsboro;	/* same as .sidenav */
 	left: 				0px;
 	padding:			0px;
-}
-
-a:hover
-{
-	color: #ddd;
-	background-color:	#333;
 }
 
 #main
@@ -457,6 +455,7 @@ td.buttonBar
 {
 	background-color:	#fff;
 	border-collapse:	collapse;
+	box-shadow:			2px 2px 2px 2px #bbbb;
 	width:			auto;
 	margin-right:	0px;
 	margin-left:	auto;
@@ -466,7 +465,8 @@ td.buttonBar
 .buttonBarLeft
 {
 	background-color:	#fff;
-	/* border-collapse:	collapse; */
+	border-collapse:	collapse;
+	box-shadow:			2px 2px 2px 2px #bbbb;
 	width:				auto;
 	margin-right:		auto;
 	margin-left:		0px;
