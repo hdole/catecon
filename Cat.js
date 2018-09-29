@@ -1986,8 +1986,7 @@ const Cat =
 				const refcnts = dgrm.getReferenceCounts();
 				let html = H.small('References for this diagram') + dgrm.references.map(d =>
 				{
-					const del = refcnts[d.name] === 1 ? H.td(Cat.display.getButton('delete', `Cat.getDiagram().removeReference(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
-//					const tb = H.table(H.tr(H.td(Cat.display.getButton('delete', `Cat.getDiagram().removeReference(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') +
+					const del = refcnts[d.name] === 1 ? H.td(Cat.display.getButton('delete', `Cat.getDiagram().removeReferenceDiagram(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
 					const tb = H.table(H.tr(del + H.td(Cat.display.getButton('diagram', `Cat.selected.selectDiagram('${d.name}')`, 'View diagram'), 'buttonBar')), 'buttonBarLeft');
 					return this.diagramRow(this.getDiagramInfo(d), tb);
 				}).join('');
@@ -3879,7 +3878,6 @@ class element
 			},
 			function(dgrm, expr, first, data)
 			{
-				const op = Cat.basetypes.operators[expr.op];
 				return expr.data.map((x, i) => element.makeRandomData(dgrm, x, false, {min:data.min[i], max:data.max[i], dm:data.dm}));
 			},
 			function(dgrm, expr, first, data)
@@ -3942,6 +3940,32 @@ class element
 			function(cat, expr, first, data)
 			{
 				return Cat.sha256(element.signature(cat, expr.lhs, false, null) + element.signature(cat, expr.rhs, false, null));
+			},
+			function(){},
+			first, data);
+	}
+	static hasDiagramElement(dgrm, expr, first, data)	// data = {dgrm}
+	{
+		return element.expandExpression(dgrm, expr,
+			function(dgrm, expr, first, data)
+			{
+				const obj = dgrm.getObjectByExpr(expr);
+				if (obj.diagram.name === data.dgrm)
+					return true;
+			},
+			function(dgrm, expr, first, data)
+			{
+				const obj = dgrm.getObjectByExpr(expr);
+				if (obj.diagram.name === data.dgrm)
+					return true;
+				return expr.data.reduce((v, f) => v || element.hasDiagramElement(dgrm, f, false, data);
+			},
+			function(dgrm, expr, first, data)
+			{
+				const obj = dgrm.getObjectByExpr(expr);
+				if (obj.diagram.name === data.dgrm)
+					return true;
+				return element.hasDiagramElement(dgrm, expr.lhs, false, data) || element.hasDiagramElement(dgrm, expr.rhs, false, data);
 			},
 			function(){},
 			first, data);
@@ -8228,6 +8252,21 @@ function getDiagram()
 			r.getReferenceCounts(refs);
 		});
 		return refs;
+	}
+	isExprInDiagram(expr, dgrm)
+	{
+		const obj = this.getObjectByExpr(expr);
+		return obj.diagram.name === dgrm;
+	}
+	canRemoveReferenceDiagram(name)
+	{
+		const ref = Cat.getDiagram(name);
+		for(const [objName, obj] of this.objects)
+		{
+		}
+	}
+	removeReferenceDiagram(e, name)
+	{
 	}
 }
 
