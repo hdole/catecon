@@ -10,14 +10,11 @@ if (typeof require !== 'undefined')
 {
 	var AWS = null;
 	var ACI = null;
-//	var peg = null;
 	var CatFns = null;
 	var sjcl = null;
 	AWS = require('aws-sdk');
 	if (typeof AmazonCognitoIdentity === 'undefined')
-//		ACI = require('amazon-cognito-identity.min');	// WORKS ON LAMBDA
 		ACI = require('amazon-cognito-identity-js');
-//	peg = require('./peg-0.10.0.min.js');
 	sjcl = require('./sjcl.js');
 	CatFns = require('./CatFns.js');
 }
@@ -405,7 +402,7 @@ const Cat =
 		//
 		localStorage.clear();
 		if ($Cat !== null)
-			getDiagram().deleteAll();
+			Cat.getDiagram().deleteAll();
 		Cat.localDiagrams = {};
 	},
 	clone(o)
@@ -435,15 +432,7 @@ const Cat =
 	downloadString(string, type, filename)
 	{
 		const blob = new Blob([string], {type:`application/${type}`});
-//		const domUrl = window.URL || window.webkitURL || window;
 		Cat.download(Cat.url.createObjectURL(blob), filename);
-		/*
-		let a = document.createElement('a');
-		a.href = window.URL.createObjectURL(blob);
-		a.download = filename;
-		document.body.appendChild(a);
-		a.click();
-		*/
 	},
 	getArg(args, key, dflt)
 	{
@@ -457,20 +446,6 @@ const Cat =
 	{
 		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\'/g, '&#39;');
 	},
-	/*
-	renameDiagram(dgrm, name)
-	{
-		// TODO all *deep* names must be changed:  elements.diagram
-		const fullname = diagram.nameCheck(dgrm.codomain.name, Cat.user.name, name);
-		dgrm.basename = name;
-//		delete Cat.diagrams[dgrm.category.name][dgrm.name];
-//		Cat.removeFromLocalDiagramList(dgrm.codomain.name, dgrm.name);
-		Cat.deleteLocalDiagram(dgrm.name);
-		dgrm.name = fullname;
-		Cat.addDiagram(dgrm);
-		Cat.selected.selectDiagram(dgrm.name);
-	},
-	*/
 	textify(preface, elements, reverse = false)
 	{
 		let txt = `${preface} `;
@@ -1858,7 +1833,7 @@ const Cat =
 			{
 				try
 				{
-					getDiagram().deleteTerm(ndx);
+					Cat.getDiagram().deleteTerm(ndx);
 					document.getElementById('termTable').innerHTML = this.termTable();
 				}
 				catch(e)
@@ -1986,14 +1961,19 @@ const Cat =
 				const dt = new Date(info.timestamp);
 				const tokens = info.name.split('@');
 				const url = Cat.Amazon.URL(tokens[1], info.username, info.name + '.png');
-				const tbl = H.table((tb ? H.tr(H.td(tb)) : '') +
+				const tbTbl = H.table(H.tr( (tb ? tb : '') +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJSON('Cat.getDiagram().downloadJSON()', Cat.default.button.small), 'buttonBar', '', 'Download diagram JSON') : '' ) +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJS('Cat.getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar', '', 'Download diagram ecmascript') : '' ) +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonPNG('Cat.getDiagram().downloadPNG()', Cat.default.button.small), 'buttonBar', '', 'Download diagram PNG') : '' )), 'buttonBarLeft');
+//				const tbl = H.table((tb ? H.tr(H.td(tb)) : '') +
+				const tbl = H.table(H.tr(H.td(tbTbl, '', '', '', 'colspan="2"')) +
 									H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
 									H.tr(H.td(`<img src="${url}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
 									H.tr(H.td(info.description, 'description', '', '', 'colspan="2"')) +
 									H.tr(H.td(info.username, 'author') + H.td(dt.toLocaleString(), 'date')));
-				if (!tb)
+//				if (!tb)
 					return H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${info.name}')">` + tbl + '</a>'), 'sidenavRow');
-				return H.tr(H.td(tbl), 'sidenavRow');
+//				return H.tr(H.td(tbl), 'sidenavRow');
 			},
 			setUserDiagramTable()
 			{
@@ -2004,16 +1984,18 @@ const Cat =
 				for (const d in Cat.localDiagrams)
 				{
 					const dgrm = Cat.localDiagrams[d];
-					const user = 'user' in dgrm ? dgrm.user : dgrm.username;	// TODO should just be username eventually
-					if (user === Cat.user.name)
+//					const user = 'user' in dgrm ? dgrm.user : dgrm.username;	// TODO should just be username eventually
+					if (dgrm.username === Cat.user.name)
 						dgrms[d] = true;
 				}
 				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = true);
 				let html = Object.keys(dgrms).map(d =>
 				{
 					const refBtn = !(dgrm.name == d || dgrm.hasReference(d)) ? H.td(Cat.display.getButton('reference', `Cat.getDiagram().addReferenceDiagram(evt, '${d}')`, 'Add reference diagram'), 'buttonBar') : '';
-					const tb = H.table(H.tr(refBtn + H.td(Cat.display.getButton('diagram', `Cat.selected.selectDiagram('${d}')`, 'View diagram'), 'buttonBar')), 'buttonBarLeft');
-					return this.diagramRow(this.getDiagramInfo(d), tb);
+//					const tb = H.table(H.tr(
+//							refBtn +
+//							H.td(Cat.display.getButton('diagram', `Cat.selected.selectDiagram('${d}')`, 'View diagram'), 'buttonBar') +
+					return this.diagramRow(this.getDiagramInfo(d), refBtn);
 				}).join('');
 				document.getElementById('userDiagrams').innerHTML = H.table(html);
 			},
@@ -2026,8 +2008,9 @@ const Cat =
 				let html = H.small('References for this diagram') + dgrm.references.map(d =>
 				{
 					const del = refcnts[d.name] === 1 ? H.td(Cat.display.getButton('delete', `Cat.getDiagram().removeReferenceDiagram(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
-					const tb = H.table(H.tr(del + H.td(Cat.display.getButton('diagram', `Cat.selected.selectDiagram('${d.name}')`, 'View diagram'), 'buttonBar')), 'buttonBarLeft');
-					return this.diagramRow(this.getDiagramInfo(d), tb);
+//					const tb = H.table(H.tr(del), 'buttonBarLeft');
+//							H.td(Cat.display.getButton('diagram', `Cat.selected.selectDiagram('${d.name}')`, 'View diagram'), 'buttonBar')
+					return this.diagramRow(this.getDiagramInfo(d), del);
 				}).join('');
 				document.getElementById('referenceDiagrams').innerHTML = H.table(html);
 			},
@@ -2066,11 +2049,13 @@ const Cat =
 				const html = H.table(H.tr(
 							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!'), 'buttonBar')) +
 							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
-							H.td(Cat.display.getButton('download', 'Cat.getDiagram().download()', 'Download'), 'buttonBar') +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJS('Cat.getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') : '' ) +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonPNG('Cat.getDiagram().downloadPNG()', Cat.default.button.small), 'buttonBar') : '' ) +
-							H.td(Cat.display.expandPanelBtn('diagram', false)) +
-							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight');
+//							H.td(Cat.display.getButton('download', 'Cat.getDiagram().download()', 'Download'), 'buttonBar') +
+//							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJSON('Cat.getDiagram().downloadJSON()', Cat.default.button.small), 'buttonBar') : '' ) +
+//							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJS('Cat.getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') : '' ) +
+//							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonPNG('Cat.getDiagram().downloadPNG()', Cat.default.button.small), 'buttonBar') : '' ) +
+							Cat.display.expandPanelBtn('diagram', false) +
+							Cat.display.closeBtnCell('diagram', true)
+												), 'buttonBarRight');
 				document.getElementById('diagramPanelToolbar').innerHTML = html;
 			},
 		},
@@ -2453,7 +2438,8 @@ const Cat =
 		},
 		expandPanelBtn(panelName, right)
 		{
-			return H.td(H.div(this.getButton(right ? 'chevronLeft' : 'chevronRight', `Cat.display.panel.expand('${panelName}', ${right})`, 'Expand'), '', `${panelName}-expandBtn`), 'buttonBar');
+//			return H.td(H.div(this.getButton(right ? 'chevronLeft' : 'chevronRight', `Cat.display.panel.expand('${panelName}', ${right})`, 'Expand'), '', `${panelName}-expandBtn`), 'buttonBar');
+			return H.td(this.getButton(right ? 'chevronLeft' : 'chevronRight', `Cat.display.panel.expand('${panelName}', ${right})`, 'Expand'), 'buttonBar', `${panelName}-expandBtn`);
 		},
 		clickDeleteBtn(id, fn)
 		{
@@ -2576,8 +2562,8 @@ const Cat =
 <line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
 				download:
-`<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+//<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 				edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
 				eval:
@@ -2666,8 +2652,10 @@ const Cat =
 <line class="arrow6" x1="40" y1="180" x2="200" y2="180" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="40" y1="240" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
 				reference:
-`<line class="arrow9" x1="120" y1="100" x2="260" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="100" y1="120" x2="100" y2="260" marker-end="url(#arrowhead)"/>
+//<line class="arrow9" x1="120" y1="100" x2="260" y2="100" marker-end="url(#arrowhead)"/>
+//<line class="arrow9" x1="100" y1="120" x2="100" y2="260" marker-end="url(#arrowhead)"/>
+`<line class="arrow9" x1="120" y1="100" x2="260" y2="100"/>
+<line class="arrow9" x1="100" y1="120" x2="100" y2="260"/>
 <line class="arrow9" x1="120" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="280" y1="120" x2="280" y2="250" marker-end="url(#arrowhead)"/>
 
@@ -2748,20 +2736,28 @@ const Cat =
 			},
 		},
 		id:	0,	// unique id's
+		downloadButtonJSON(onclick, scale = Cat.default.button.small)
+		{
+			const html = this.svg.header(scale) +
+				this.svg.buttons.download +
+`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">JSON</text>
+${this.svg.button(onclick)}
+</svg>`;
+			return html;
+		},
 		downloadButtonJS(onclick, scale = Cat.default.button.small)
 		{
 			const html = this.svg.header(scale) +
 				this.svg.buttons.download +
-`<text text-anchor="middle" x="160" y="160" style="font-size:120px;stroke:#0F0;">JS</text>
+`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">JS</text>
 ${this.svg.button(onclick)}
 </svg>`;
 			return html;
 		},
 		downloadButtonPNG(onclick, scale = Cat.default.button.small)
 		{
-			const html = this.svg.header(scale) +
-				this.svg.buttons.download +
-`<text text-anchor="middle" x="160" y="160" style="font-size:120px;stroke:#0F0;">PNG</text>
+			const html = this.svg.header(scale) + this.svg.buttons.download +
+`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">PNG</text>
 ${this.svg.button(onclick)}
 </svg>`;
 			return html;
@@ -2860,7 +2856,7 @@ ${this.svg.button(onclick)}
 						Cat.display.tool = 'pan';
 						break;
 					case 36:	// 'home'
-						getDiagram().home();
+						Cat.getDiagram().home();
 						break;
 					}
 					Cat.display.shiftKey = e.shiftKey;
@@ -3179,8 +3175,6 @@ ${this.svg.button(onclick)}
 				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
 			};
 			AWS.config.region = this.cognitoRegion;
-//			this.userPool = new ACI.CognitoUserPool(poolInfo);
-//			this.userPool = ACI ? new ACI.CognitoUserPool(poolInfo) : new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
 			if (ACI)
 				this.userPool = new ACI.CognitoUserPool(poolInfo);
 			else
@@ -3439,16 +3433,11 @@ ${this.svg.button(onclick)}
 		copyStylesInline(copy, svg);
 		const canvas = document.createElement('canvas');
 		const bbox = svg.getBBox();
-	//	canvas.width = bbox.width;
-	//	canvas.height = bbox.height;
-	//	canvas.width = Cat.display.width();
-	//	canvas.height = Cat.display.height();
 		canvas.width = Cat.display.svgPngWidth;
 		canvas.height = Cat.display.svgPngHeight;
 		var ctx = canvas.getContext('2d');
 		ctx.clearRect(0, 0, Cat.display.width(), Cat.display.height());
 		const data = (new XMLSerializer()).serializeToString(copy);
-//		const domUrl = window.URL || window.webkitURL || window;
 		const svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
 		const url = Cat.url.createObjectURL(svgBlob);
 		const img = new Image();
@@ -3456,18 +3445,6 @@ ${this.svg.button(onclick)}
 		{
 			ctx.drawImage(img, 0, 0);
 			Cat.url.revokeObjectURL(url);
-			/*
-			if (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob)
-			{
-				var blob = canvas.msToBlob();
-				navigator.msSaveOrOpenBlob(blob, filename);
-			}
-			else
-			{
-				var url = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-//				Cat.download(url, filename);
-			}
-			*/
 			const cargo = (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) ? navigator.msSaveOrOpenBlob(canvas.msToBlob(), filename) : canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 			if (fn)
 				fn(cargo, filename);
@@ -3589,7 +3566,7 @@ class element
 		this.x = Cat.display.shiftKey ? d * Math.round(xy.x / d) : xy.x;
 		this.y = Cat.display.shiftKey ? d * Math.round(xy.y / d) : xy.y;
 	}
-	download()
+	downloadJSON()
 	{
 		Cat.downloadString(this.stringify(), 'json', `${this.name}.json`);
 	}
@@ -4135,7 +4112,7 @@ class element
 		{
 			if (h.contentEditable === 'true')
 			{
-				getDiagram().updateElementAttribute(this, null, attr, h.innerText);
+				Cat.getDiagram().updateElementAttribute(this, null, attr, h.innerText);
 				h.contentEditable = false;
 				this.update();
 			}
@@ -5141,7 +5118,6 @@ onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'morphism')" mark
 			start = D2.round(diagram.closest(this, domBBox, this.codomain));
 			end = D2.round(diagram.closest(this, codBBox, this.domain));
 		}
-//if (Number.isNaN(start.x)) throw 'no start!';
 		this.angle = Cat.getAngle(deltaX, deltaY);
 		this.start = start;
 		this.end = end;
@@ -5174,7 +5150,6 @@ onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'morphism')" mark
 		const svg = this.svg('_path');
 		if (svg !== null && typeof this.start.x !== 'undefined')
 		{
-//if (!('start' in this && 'x' in this.start && !Number.isNaN(this.start.x))) throw 'no start!';
 			if ('bezier' in this)
 				svg.setAttribute('d', `M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`);
 			else
@@ -5342,11 +5317,11 @@ class dataMorphism extends morphism
 	deleteData(term)
 	{
 		delete this.data[term];
-		getDiagram().update(null, 'data');
+		Cat.getDiagram().update(null, 'data');
 	}
 	editData(term)
 	{
-		getDiagram().update(null, 'data');
+		Cat.getDiagram().update(null, 'data');
 	}
 	clear()
 	{
@@ -5709,7 +5684,6 @@ class stringMorphism extends morphism
 {
 	constructor(dgrm, m)
 	{
-//		super(dgrm.graphCat, {domain:m.domain, codomain:m.codomain, name:m.name, diagram:dgrm});
 		super(dgrm.graphCat, {domain:m.domain, codomain:m.codomain, name:m.name, diagram:null});
 		this.graph = m.domCodExpr();
 		if ('function' in m)
@@ -7621,7 +7595,7 @@ class diagram extends functor
 				expr = this.getObjectByExpr(expr).expr;
 			expr = expr.data[k];
 		}
-		div.innerHTML += H.button(this.getObjectByExpr(expr).getText() + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this);${action}"`);
+		div.innerHTML += H.button(this.getObjectByExpr(expr).getText() + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this);${action}"`);
 	}
 	static getFactorsById(id)
 	{
@@ -8309,7 +8283,6 @@ function getDiagram()
 }
 `;
 		const blob = new Blob([js], {type:'application/json'});
-//		const domUrl = window.URL || window.webkitURL || window;
 		const url = Cat.url.createObjectURL(blob);
 		Cat.download(url, `${this.name}.js`);
 	}
@@ -8410,8 +8383,8 @@ function getDiagram()
 	}
 	hasReference(name)
 	{
-		const dgrm = Cat.getDiagram(name);
-		return this.references.indexOf(dgrm) > -1;
+//		return this.references.indexOf(Cat.getDiagram(name)) > -1;
+		return this.references.filter(d => d.name === name).length > 0;
 	}
 }
 
@@ -8444,5 +8417,6 @@ else
 	Cat.element			= element;
 	Cat.morphism		= morphism;
 	Cat.stringMorphism	= stringMorphism;
+	Cat.H				= H;
 }
 })(typeof exports === 'undefined' ? this['Cat'] = this.Cat : exports);
