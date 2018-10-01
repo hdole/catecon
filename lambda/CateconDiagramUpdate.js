@@ -29,7 +29,7 @@ exports.handler = (event, context, callback) =>
     const db = new AWS.DynamoDB({region:C.REGION});
     const params =
     {
-        TableName:  'catecon-diagrams',
+        TableName:  C.DIAGRAM_TABLE,
         Item:{username, email},
     };
 
