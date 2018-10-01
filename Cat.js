@@ -79,18 +79,6 @@ function getCat()
 {
 	return $Cat ? $Cat.getObject(Cat.selected.category) : null;
 }
-/*
-function getDiagram(name = null)
-{
-	const cat = getCat();
-	if (cat != null)
-	{
-		const w = Cat.getDiagram(name === null ? Cat.selected.diagram : name);
-		return w;
-	}
-	return null;
-}
-*/
 
 class D2
 {
@@ -168,7 +156,7 @@ class H
 	static textarea	(h, c, i, t, x)	{return H.x('textarea', h, c, i, t, x); }
 	static th	(h, c, i, t, x)	{return H.x('th', h, c, i, t, x); }
 	static tr	(h, c, i, t, x)	{return H.x('tr', h, c, i, t, x); }
-	static del(elt) {elt.parentElement.removeChild(elt);	}
+	static del(elt) {elt.parentElement.removeChild(elt);}
 	static move(elt, toId) {document.getElementById(toId).appendChild(elt); }
 	static toggle(elt, here, there) {elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
 }
@@ -202,10 +190,32 @@ if (isGUI)
 		var a = d.createElement('script');
 		a.type = 'text/javascript';
 		a.async = true;
-		a.id = 'amazon-login-sdk'; 
+		a.id = 'amazon-login-sdk';
 		a.src = 'https://api-cdn.amazon.com/sdk/login1.js?v=3';
 		d.getElementById('navbar').appendChild(a);
 	})(document);
+
+function copyStylesInline(destinationNode, sourceNode)
+{
+	var containerElements = ["svg","g"];
+	for (var cd = 0; cd < destinationNode.childNodes.length; cd++)
+	{
+		var dstChild = destinationNode.childNodes[cd];
+		if (containerElements.indexOf(dstChild.tagName) != -1)
+		{
+			copyStylesInline(dstChild, sourceNode.childNodes[cd]);
+			continue;
+		}
+		const srcChild = sourceNode.childNodes[cd];
+		if ('data' in srcChild)
+			continue;
+		var style = srcChild.currentStyle || window.getComputedStyle(srcChild);
+		if (style == "undefined" || style == null)
+			continue;
+		for (var st = 0; st < style.length; st++)
+			dstChild.style.setProperty(style[st], style.getPropertyValue(style[st]));
+	}
+}
 
 const Cat =
 {
@@ -225,6 +235,7 @@ const Cat =
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
 	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
 	mouse:			{down:{x:0, y:0}, xy:{x:0, y:0}},
+	url:			'',
 	getError(err)
 	{
 		return typeof err === 'string' ? err : err.message;
@@ -407,14 +418,32 @@ const Cat =
 				c[a] = Cat.clone(o[a]);
 		return c;
 	},
-	download(string, type, filename)
+	download(href, filename)
+	{
+		var evt = new MouseEvent("click",
+		{
+			view: window,
+			bubbles: false,
+			cancelable: true
+		});
+		const a = document.createElement('a');
+		a.setAttribute("download", filename);
+		a.setAttribute("href", href);
+		a.setAttribute("target", '_blank');
+		a.dispatchEvent(evt);
+	},
+	downloadString(string, type, filename)
 	{
 		const blob = new Blob([string], {type:`application/${type}`});
+//		const domUrl = window.URL || window.webkitURL || window;
+		Cat.download(Cat.url.createObjectURL(blob), filename);
+		/*
 		let a = document.createElement('a');
 		a.href = window.URL.createObjectURL(blob);
 		a.download = filename;
 		document.body.appendChild(a);
 		a.click();
+		*/
 	},
 	getArg(args, key, dflt)
 	{
@@ -588,6 +617,7 @@ const Cat =
 	{
 		try
 		{
+			Cat.url = isGUI ? (window.URL || window.webkitURL || window) : null;
 			if (Cat.clear || (isGUI && window.location.search.substr(1) === 'clear'))
 			{
 				console.log('clearing local storage');
@@ -992,6 +1022,8 @@ const Cat =
 		dragStart:	{x:0, y:0},
 		topSVG:		null,
 		diagramSVG:	null,
+		svgPngWidth:	1024,
+		svgPngHeight:	768,
 		tool:		'select',	// select|pan
 		statusbar:	null,
 		id:			0,
@@ -1667,7 +1699,7 @@ const Cat =
 							H.div(
 								H.table(H.tr(
 									H.td(Cat.display.getButton('delete', `document.getElementById('tty-out').innerHTML = ''`, 'Clear output'), 'buttonBar') +
-									H.td(Cat.display.getButton('download', `Cat.download(document.getElementById('tty-out').innerHTML, 'text', 'console.log')`, 'Download tty log'), 'buttonBar')), 'buttonBarLeft') +
+									H.td(Cat.display.getButton('download', `Cat.downloadString(document.getElementById('tty-out').innerHTML, 'text', 'console.log')`, 'Download tty log'), 'buttonBar')), 'buttonBarLeft') +
 								H.pre('', 'tty', 'tty-out'), 'accordionPnl', 'ttyOutPnl') +
 							H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.display.accordion.toggle(this, \'errorOutPnl\')"`) +
 							H.div(H.table(H.tr(H.td(Cat.display.getButton('delete', `document.getElementById('error-out').innerHTML = ''`, 'Clear errors'))), 'buttonBarLeft') +
@@ -1814,8 +1846,8 @@ const Cat =
 				if (dgrm !== null)
 				{
 					this.updateDecorations(dgrm);
-					document.getElementById('dgrmHtmlEditBtn').innerHTML = dgrm.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmHtmlElt', 'html')`, 'Retitle', Cat.default.button.tiny);
-					document.getElementById('dgrmDescriptionEditBtn').innerHTML =
+// TODO fix					document.getElementById('dgrmHtmlEditBtn').innerHTML = dgrm.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmHtmlElt', 'html')`, 'Retitle', Cat.default.button.tiny);
+// TODO fix					document.getElementById('dgrmDescriptionEditBtn').innerHTML =
 						dgrm.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
 					Cat.display.diagram.setUserDiagramTable();
 					Cat.display.diagram.setReferencesDiagramTable();
@@ -1952,11 +1984,13 @@ const Cat =
 			diagramRow(info, tb = null)
 			{
 				const dt = new Date(info.timestamp);
-				const user = 'user' in info ? info.user : info.username;	// TODO should just be username eventually
+				const tokens = info.name.split('@');
+				const url = Cat.Amazon.URL(tokens[1], info.username, info.name + '.png');
 				const tbl = H.table((tb ? H.tr(H.td(tb)) : '') +
 									H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
+									H.tr(H.td(`<img src="${url}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
 									H.tr(H.td(info.description, 'description', '', '', 'colspan="2"')) +
-									H.tr(H.td(user, 'author') + H.td(dt.toLocaleString(), 'date')));
+									H.tr(H.td(info.username, 'author') + H.td(dt.toLocaleString(), 'date')));
 				if (!tb)
 					return H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${info.name}')">` + tbl + '</a>'), 'sidenavRow');
 				return H.tr(H.td(tbl), 'sidenavRow');
@@ -1975,7 +2009,12 @@ const Cat =
 						dgrms[d] = true;
 				}
 				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = true);
-				let html = Object.keys(dgrms).map(d => this.diagramRow(this.getDiagramInfo(d))).join('');
+				let html = Object.keys(dgrms).map(d =>
+				{
+					const refBtn = !(dgrm.name == d || dgrm.hasReference(d)) ? H.td(Cat.display.getButton('reference', `Cat.getDiagram().addReferenceDiagram(evt, '${d}')`, 'Add reference diagram'), 'buttonBar') : '';
+					const tb = H.table(H.tr(refBtn + H.td(Cat.display.getButton('diagram', `Cat.selected.selectDiagram('${d}')`, 'View diagram'), 'buttonBar')), 'buttonBarLeft');
+					return this.diagramRow(this.getDiagramInfo(d), tb);
+				}).join('');
 				document.getElementById('userDiagrams').innerHTML = H.table(html);
 			},
 			setReferencesDiagramTable()
@@ -2029,6 +2068,7 @@ const Cat =
 							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
 							H.td(Cat.display.getButton('download', 'Cat.getDiagram().download()', 'Download'), 'buttonBar') +
 							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJS('Cat.getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') : '' ) +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonPNG('Cat.getDiagram().downloadPNG()', Cat.default.button.small), 'buttonBar') : '' ) +
 							H.td(Cat.display.expandPanelBtn('diagram', false)) +
 							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight');
 				document.getElementById('diagramPanelToolbar').innerHTML = html;
@@ -2487,9 +2527,9 @@ const Cat =
 		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
 	</radialGradient>
 	<g id="threeD_base">
-		<line class="svgstr0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
-		<line class="svgstr0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
-		<line class="svgstr0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>
+		<line class="arrow0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
+		<line class="arrow0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
+		<line class="arrow0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>
 	</g>
 </defs>`,
 			buttons:
@@ -2499,13 +2539,13 @@ const Cat =
 <path class="svgstr4" d="M40,280 40,160 110,90" marker-end="url(#arrowhead)"/>
 <path class="svgstr4" d="M280,280 280,160 210,90" marker-end="url(#arrowhead)"/>`,
 				category:
-`<line class="svgstr0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
 				compose:
-`<line class="svgstr_9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="svgstr_9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
 				chevronLeft:
 `<path class="svgfilNone svgstr1" d="M120,40 80,160 120,280"/>
 <path class="svgfilNone svgstr1" d="M200,40 160,160 200,280"/>`,
@@ -2513,31 +2553,31 @@ const Cat =
 `<path class="svgfilNone svgstr1" d="M120,40 160,160 120,280"/>
 <path class="svgfilNone svgstr1" d="M200,40 240,160 200,280"/>`,
 				close:
-`<line class="svgstr0 str0" x1="40" y1="40" x2="280" y2= "280" />
-<line class="svgstr0 str0" x1="280" y1="40" x2="40" y2= "280" />`,
+`<line class="arrow0 str0" x1="40" y1="40" x2="280" y2= "280" />
+<line class="arrow0 str0" x1="280" y1="40" x2="40" y2= "280" />`,
 				coproductAssembly:
-`<line class="svgstr0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="svgstr_9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
-<line class="svgstr_9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
 				delete:
-`<line class="svgstr0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
 <path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
 				detachDomain:
 `<circle cx="40" cy="160" r="60" fill="url(#radgrad1)"/>
 <circle cx="100" cy="200" r="60" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
 				detachCodomain:
 `<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
 <circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,
 				diagram:
-`<line class="svgstr0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
 				download:
 `<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 				edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
 				eval:
@@ -2547,27 +2587,27 @@ const Cat =
 <polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
 <circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
 <circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
 				folderOpen:
 `<polyline class="svgfil2" points="90,240 230,160 90,80"/>`,
 				fromHere:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
 				toHere:
 `<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="30" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="30" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>`,
 				functor:
-`<line class="svgstr0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
 				help:
 `<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
 <path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,
 				lambda2:
 `<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="200" y1="200" x2="280" y2="280" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="120" y1="200" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="200" y1="200" x2="280" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="200" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
 				lambda:
 `<circle cx="120" cy="80" r="60" fill="url(#radgrad1)"/>
 <circle cx="200" cy="80" r="60" fill="url(#radgrad1)"/>
@@ -2575,7 +2615,7 @@ const Cat =
 <circle cx="200" cy="240" r="60" fill="url(#radgrad1)"/>
 <polyline class="svgstr3" points="80,200 60,200 60,280 100,280"/>
 <polyline class="svgstr3" points="240,200 260,200 260,280 240,280"/>
-<line class="svgstr0" x1="160" y1="100" x2="160" y2="200" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="160" y1="100" x2="160" y2="200" marker-end="url(#arrowhead)"/>`,
 				login:
 `<polyline class="svgstr4" points="160,60 160,200 70,280 70,40 250,40 250,280"/>`,
 				morphism:
@@ -2588,70 +2628,80 @@ const Cat =
 <marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 	<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
 </marker>
-<line class="svgstr0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
 				name:
-`<line class="svgstr0" x1="80" y1="80" x2="240" y2="80" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="160" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>
+`<line class="arrow0" x1="80" y1="80" x2="240" y2="80" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="160" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>
 <path class="svgstr3" d="M80,40 L240,40 A40,40 0 0 1 280,80 L280,240 A40,40 0 0 1 240,280 L80,280 A40,40 0 0 1 40,240 L40,80 A40,40 0 0 1 80,40"/>`,
 				new:
 `<circle class="svgfil4" cx="80" cy="70" r="70"/>
-<line class="svgfilNone svgstr0" x1="80" y1="20" x2="80" y2= "120" />
-<line class="svgfilNone svgstr0" x1="30" y1="70" x2="130" y2= "70" />`,
+<line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
+<line class="svgfilNone arrow0" x1="30" y1="70" x2="130" y2= "70" />`,
 				object:
 `<circle cx="160" cy="160" r="140" fill="url(#radgrad1)"/>`,
 				product:
 `<circle class="svgstr4" cx="160" cy="160" r="80"/>
-<line class="svgstr0" x1="103" y1="216" x2="216" y2="103"/>
-<line class="svgstr0" x1="216" y1="216" x2="103" y2="103"/>`,
+<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
+<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
 				productAssembly:
-`<line class="svgstr0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="svgstr_9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="svgstr_9" x1="60" y1="80" x2="120" y2="260" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="60" y1="80" x2="120" y2="260" marker-end="url(#arrowhead)"/>`,
 				project:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,
 				pullback:
 `<path class="svgstr4" d="M60,120 120,120 120,60"/>
-<line class="svgstr0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
 				pushout:
-`<line class="svgstr0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
+`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
 <path class="svgstr4" d="M200,260 200,200 260,200"/>`,
 				recursion:
-`<line class="svgstr0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="svgstr_3" x1="40" y1="120" x2="240" y2="120" marker-end="url(#arrowhead)"/>
-<line class="svgstr_6" x1="40" y1="180" x2="200" y2="180" marker-end="url(#arrowhead)"/>
-<line class="svgstr_9" x1="40" y1="240" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow3" x1="40" y1="120" x2="240" y2="120" marker-end="url(#arrowhead)"/>
+<line class="arrow6" x1="40" y1="180" x2="200" y2="180" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="40" y1="240" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
+				reference:
+`<line class="arrow9" x1="120" y1="100" x2="260" y2="100" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="100" y1="120" x2="100" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="120" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="280" y1="120" x2="280" y2="250" marker-end="url(#arrowhead)"/>
+
+<line class="arrow0" x1="60" y1="40" x2="200" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="40" y2="200" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="60" y1="220" x2="190" y2="220" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="220" y1="60" x2="220" y2="190" marker-end="url(#arrowhead)"/>`,
 				run:
-`<line class="svgstr0" x1="20" y1="160" x2="100" y2="160" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="120" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="220" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="20" y1="160" x2="100" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="220" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,
 				save:
 `<path class="svgstr3" d="M149.72 93.72l0 -72.67 20 0 0 72.67 -20 0zm4.8 12.98l10.39 -6.74 -10.39 0 31.69 -48.89 10.4 6.74 -31.7 48.89 -10.39 0zm0 0l10.39 0 -5.2 8.02 -5.2 -8.02zm-26.52 -52.26l5.2 -3.37 31.72 48.89 -10.39 6.74 -31.72 -48.89 5.2 -3.37z"/>
 <path class="svgstr3" d="M200 115c52.41,3.81 80,17.39 80,32.09 0,17.95 -53.72,32.5 -120,32.5 -66.28,0 -120,-14.55 -120,-32.5 0,-14.89 26.7,-28.44 80,-32.09"/>
 <path class="svgstr3" d="M280 147.09l-20 112.91c-2.53,14.31 -48.59,35 -100,35 -51.41,0 -97.47,-20.68 -100,-35l-20 -112.91"/>`,
 				settings:
-`<line class="svgstr0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="160" y1="40" x2="160" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="80" y1="60" x2="240" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="80" y1="260" x2="240" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+`<line class="arrow0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="160" y1="40" x2="160" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="80" y1="60" x2="240" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="80" y1="260" x2="240" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
 <circle class="svgfil4" cx="160" cy="160" r="60"/>
 <circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>`,
 				string:
-`<line class="svgstr0" x1="60" y1="40" x2="260" y2="200"/>
+`<line class="arrow0" x1="60" y1="40" x2="260" y2="200"/>
 <path class="svgstr4" d="M60,120 C120,120 120,200 60,200"/>
 <path class="svgstr4" d="M260,40 C200,40 200,120 260,120"/>
-<line class="svgstr0" x1="60" y1="260" x2="260" y2="260"/>`,
+<line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>`,
 				text:
-`<line class="svgstr0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="160" y1="280" x2="160" y2="60"/>`,
+`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="160" y1="280" x2="160" y2="60"/>`,
 				threeD:
-`<line class="svgstr0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
-<line class="svgstr0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
 				threeD_bottom:
 `<polygon class="svgfil1" points="120,180 280,180 200,280 40,280"/>
 <use xlink:href="#threeD_base" x="0" y="0"/>`,
@@ -2682,7 +2732,7 @@ const Cat =
 <line class="svgstr3" x1="90" y1="200" x2="120" y2="200"/>`,
 				upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
-<line class="svgstr0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 			},
 			header(scale, bgColor = '#ffffff')
 			{
@@ -2702,7 +2752,16 @@ const Cat =
 		{
 			const html = this.svg.header(scale) +
 				this.svg.buttons.download +
-`<text text-anchor="middle" x="200" y="160" style="font-size:90px;stroke:#0F0;">JS</text>
+`<text text-anchor="middle" x="160" y="160" style="font-size:120px;stroke:#0F0;">JS</text>
+${this.svg.button(onclick)}
+</svg>`;
+			return html;
+		},
+		downloadButtonPNG(onclick, scale = Cat.default.button.small)
+		{
+			const html = this.svg.header(scale) +
+				this.svg.buttons.download +
+`<text text-anchor="middle" x="160" y="160" style="font-size:120px;stroke:#0F0;">PNG</text>
 ${this.svg.button(onclick)}
 </svg>`;
 			return html;
@@ -2928,6 +2987,7 @@ ${this.svg.button(onclick)}
 			}
 			document.getElementById('navbar').style.background = c;
 		},
+
 	},
 	jsonAssoc(assoc)
 	{
@@ -3325,30 +3385,33 @@ ${this.svg.button(onclick)}
 		},
 		ingestDiagramLambda(e, dgrm, fn)
 		{
-			const params =
+			Cat.svg2canvas(Cat.display.topSVG, `${this.name}.png`, function(url, filename)
 			{
-				FunctionName:	'CateconIngestDiagram',
-				InvocationType:	'RequestResponse',
-				LogType:		'None',
-				Payload:		JSON.stringify(
-								{
-									diagram:dgrm.json(),
-									username:Cat.user.name,
-								}),
-			};
-console.log('ingestDiagramLambda params',params);
-			const handler = function(error, data)
-			{
-				if (error)
+				const params =
 				{
-					Cat.recordError(error);
-					return;
-				}
-				const result = JSON.parse(data.Payload);
-				if (fn)
-					fn(error, result);
-			};
-			Cat.Amazon.lambda.invoke(params, handler);
+					FunctionName:	'CateconIngestDiagram',
+					InvocationType:	'RequestResponse',
+					LogType:		'None',
+					Payload:		JSON.stringify(
+									{
+										diagram:dgrm.json(),
+										username:Cat.user.name,
+										png:url,
+									}),
+				};
+				const handler = function(error, data)
+				{
+					if (error)
+					{
+						Cat.recordError(error);
+						return;
+					}
+					const result = JSON.parse(data.Payload);
+					if (fn)
+						fn(error, result);
+				};
+				Cat.Amazon.lambda.invoke(params, handler);
+			});
 		},
 		fetchDiagramJsons(diagrams, fn, jsons = [], refs = {})
 		{
@@ -3369,6 +3432,48 @@ console.log('ingestDiagramLambda params',params);
 			else if (fn)
 				fn([]);
 		},
+	},
+	svg2canvas(svg, filename, fn)
+	{
+		var copy = svg.cloneNode(true);
+		copyStylesInline(copy, svg);
+		const canvas = document.createElement('canvas');
+		const bbox = svg.getBBox();
+	//	canvas.width = bbox.width;
+	//	canvas.height = bbox.height;
+	//	canvas.width = Cat.display.width();
+	//	canvas.height = Cat.display.height();
+		canvas.width = Cat.display.svgPngWidth;
+		canvas.height = Cat.display.svgPngHeight;
+		var ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, Cat.display.width(), Cat.display.height());
+		const data = (new XMLSerializer()).serializeToString(copy);
+//		const domUrl = window.URL || window.webkitURL || window;
+		const svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
+		const url = Cat.url.createObjectURL(svgBlob);
+		const img = new Image();
+		img.onload = function()
+		{
+			ctx.drawImage(img, 0, 0);
+			Cat.url.revokeObjectURL(url);
+			/*
+			if (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob)
+			{
+				var blob = canvas.msToBlob();
+				navigator.msSaveOrOpenBlob(blob, filename);
+			}
+			else
+			{
+				var url = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+//				Cat.download(url, filename);
+			}
+			*/
+			const cargo = (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) ? navigator.msSaveOrOpenBlob(canvas.msToBlob(), filename) : canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+			if (fn)
+				fn(cargo, filename);
+	// TODO?		document.removeChild(canvas);
+		};
+		img.src = url;
 	},
 };
 
@@ -3486,7 +3591,7 @@ class element
 	}
 	download()
 	{
-		Cat.download(this.stringify(), 'json', `${this.name}.json`);
+		Cat.downloadString(this.stringify(), 'json', `${this.name}.json`);
 	}
 	static expandExpression(dgrm, expr, tokenFn, seqFn, exprFn, typeFn, first, that = null)
 	{
@@ -3611,7 +3716,7 @@ class element
 					position += parenWidth;
 					html += '(';
 				}
-				const tokens = expr.data.map((d, i) => 
+				const tokens = expr.data.map((d, i) =>
 				{
 					const html = element.html(dgrm, d, false, {class:data.class, position});
 					position += d.width;
@@ -3902,7 +4007,7 @@ class element
 		}
 		return fctr;
 	}
-	static signature(cat, expr, first, data)	// data = 
+	static signature(cat, expr, first, data)	// data =
 	{
 		return element.expandExpression(cat, expr,
 				/*
@@ -3944,26 +4049,22 @@ class element
 			function(){},
 			first, data);
 	}
-	static hasDiagramElement(dgrm, expr, first, data)	// data = {dgrm}
+	static hasDiagramElement(dgrm, expr, first, data)	// data = null
 	{
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
-				const obj = dgrm.getObjectByExpr(expr);
-				if (obj.diagram.name === data.dgrm)
-					return true;
+				return dgrm.isExprInDiagram(expr, dgrm);
 			},
 			function(dgrm, expr, first, data)
 			{
-				const obj = dgrm.getObjectByExpr(expr);
-				if (obj.diagram.name === data.dgrm)
+				if (dgrm.isExprInDiagram(expr, dgrm))
 					return true;
-				return expr.data.reduce((v, f) => v || element.hasDiagramElement(dgrm, f, false, data);
+				return expr.data.reduce((v, f) => v || element.hasDiagramElement(dgrm, f, false, data));
 			},
 			function(dgrm, expr, first, data)
 			{
-				const obj = dgrm.getObjectByExpr(expr);
-				if (obj.diagram.name === data.dgrm)
+				if (dgrm.isExprInDiagram(expr, dgrm))
 					return true;
 				return element.hasDiagramElement(dgrm, expr.lhs, false, data) || element.hasDiagramElement(dgrm, expr.rhs, false, data);
 			},
@@ -4551,7 +4652,7 @@ class category extends object
 	{
 		let p = `
 start = Expression
-Expression = 
+Expression =
   sequence
 `;
 		p += this.isClosed ? this.getHom() : '';
@@ -4644,7 +4745,7 @@ ws "white space" = [ \t\\r\\n]+
 	{
 		const dgrms = cat.referenceDiagrams.filter(d => !Cat.getDiagram(d));
 		const refs = {};
-		for (const d in Cat.digrams)
+		for (const d in Cat.diagrams)
 			refs[d] = true;
 		if (dgrms.length > 0)
 			Cat.Amazon.fetchDiagramJsons(dgrms, function(jsons)
@@ -4763,7 +4864,7 @@ class morphism extends element
 	{
 		let code =
 `		// ${this.html}
-		this.morphisms.set('${this.name}', 
+		this.morphisms.set('${this.name}',
 		{
 			name:	'${this.name}',
 			$:		CatFns.function['${this.function}'],
@@ -6361,7 +6462,7 @@ class diagram extends functor
 				r.incrRefcnt();
 			return r.sha256;
 		});
-		// TODO referencesHashes ????
+		// TODO referenceHashes ????
 		if ('referenceHashes' in args)
 		{
 			const argHashes = args.referenceHashes;
@@ -8148,7 +8249,7 @@ class ${jsName} extends diagram
 	}
 	downloadJS()
 	{
-		let js = 
+		let js =
 `//
 // Catelitical version of ${this.user}'s diagram ${this.basename} for Ecmascript
 //
@@ -8208,11 +8309,13 @@ function getDiagram()
 }
 `;
 		const blob = new Blob([js], {type:'application/json'});
-		let a = document.createElement('a');
-		a.href = window.URL.createObjectURL(blob);
-		a.download = `${this.name}.js`;
-		document.body.appendChild(a);
-		a.click();
+//		const domUrl = window.URL || window.webkitURL || window;
+		const url = Cat.url.createObjectURL(blob);
+		Cat.download(url, `${this.name}.js`);
+	}
+	downloadPNG()
+	{
+		Cat.svg2canvas(Cat.display.topSVG, `${this.name}.png`, Cat.download);
 	}
 	baseURL(ext = '.json')
 	{
@@ -8261,12 +8364,54 @@ function getDiagram()
 	canRemoveReferenceDiagram(name)
 	{
 		const ref = Cat.getDiagram(name);
-		for(const [objName, obj] of this.objects)
-		{
-		}
+		for(const [name, elt] of this.objects)
+			if (element.hasDiagramElement(dgrm, elt.expr, true, null))
+				return false;
+		for(const [name, elt] of this.morphisms)
+			if (element.hasDiagramElement(dgrm, elt.expr, true, null))
+				return false;
+		return true;
 	}
 	removeReferenceDiagram(e, name)
 	{
+		if (this.canRemoveReferenceDiagram(name))
+		{
+			for (let i=0; i<this.references.length; ++i)
+				if (this.references[i].name === name)
+				{
+					this.references.splice(idx, 1);
+					this.setReferencesDiagramTable()
+					Cat.status(`Reference diagram ${name} removed`);
+					break;
+				}
+		}
+		else
+			Cat.status(`Reference diagram ${name} cannot be removed since references to it still exist`);
+	}
+	addReferenceDiagram(e, name, silent = true)
+	{
+		const dgrm = Cat.getDiagram(name);
+		const idx = this.references.indexOf(dgrm);
+		if (idx >= 0)
+		{
+			const refs = {};
+			const dgrms = dgrm.getReferenceCounts(refs);
+			Objects.keys(dgrms).map(r => this.addReferenceDiagram(e, r.name, true));
+			this.references.unshift(dgrm);
+			if (!silent)
+			{
+				this.setReferencesDiagramTable()
+				Cat.status(`Reference diagram ${name} is now referenced.`);
+			}
+		}
+		else
+			if (!silent)
+				Cat.status(`Reference diagram ${name} is already referenced.`);
+	}
+	hasReference(name)
+	{
+		const dgrm = Cat.getDiagram(name);
+		return this.references.indexOf(dgrm) > -1;
 	}
 }
 
