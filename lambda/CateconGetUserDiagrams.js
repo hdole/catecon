@@ -18,13 +18,13 @@ exports.handler = (event, context, callback) =>
     const db = new AWS.DynamoDB({region:C.REGION});
     const params =
     {
-        TableName:  'Catecon-users',
+        TableName:				C.DIAGRAM_TABLE,
         KeyConditionExpression: 'username = :u AND begins_with(subkey, :sk)',
         ExpressionAttributeNames: {'#ts':'timestamp'},
         ExpressionAttributeValues:
         {
             ':u':   {S: username},
-            ':sk':  {S: 'D-'}
+            ':sk':  {S: 'D@'}
         },
         ProjectionExpression:   'subkey, #ts, fancyName, description'
     };
