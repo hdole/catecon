@@ -16,7 +16,7 @@ exports.handler = (event, context, callback) => {
     const now = Date.now();
     const params =
     {
-        TableName:  'Catecon-users',
+        TableName:  C.DIAGRAM_TABLE,
         Item:
         {
             username:   {S:username},
