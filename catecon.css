@@ -47,9 +47,9 @@ div
 	color:			inherit;
 	font-size:		10px;
 	margin:			5px 10px 5px 10px;
-	overflow:		hidden;
+	/* overflow:		hidden; */
 	text-align:		left;
-	text-overflow:	ellipsis;
+	/* text-overflow:	ellipsis; */
 }
 
 .date
@@ -123,7 +123,7 @@ table
 {
 	border-collapse:	collapse;
 	vertical-align:		middle;
-	width:				100%;
+	/* width:				100%; */
 }
 
 td
@@ -317,14 +317,14 @@ a:hover, .offcanvas a:focus
 	z-index:			4;
 }
 
-.svgstr0 {stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
 .svgstr1 {stroke:black; stroke-width:20px; stroke-linejoin:round; stroke-miterlimit:2.61313;}
-.svgstr2 {fill:none; stroke:black; stroke-width:15px; stroke-linejoin:round; stroke-miterlimit:2.61313; stroke-linecap:"round";}
+/* .svgstr2 {fill:none; stroke:black; stroke-width:15px; stroke-linejoin:round; stroke-miterlimit:2.61313; stroke-linecap:"round";} */
 .svgstr3 {fill:none; stroke:black; stroke-width:10px}
 .svgstr4 {fill:none; stroke:black; stroke-width:20px}
-.svgstr_3 {fill:none; stroke:#333; stroke-width:20px;}
-.svgstr_6 {fill:none; stroke:#666; stroke-width:20px;}
-.svgstr_9 {fill:none; stroke:#999; stroke-width:20px;}
+.arrow0 {stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
+.arrow3 {fill:none; stroke:#333; stroke-width:20px;}
+.arrow6 {fill:none; stroke:#666; stroke-width:20px;}
+.arrow9 {fill:none; stroke:#999; stroke-width:20px;}
 .svgstrThinGray {fill:none; stroke:#777; stroke-width:10px;}
 .svgfilNone {fill:none;}
 .svgfil0 {fill:black;fill-rule:nonzero;}
@@ -448,7 +448,11 @@ td.buttonBar
 {
 	padding:			0px;
 	vertical-align:		top;
-	/* line-height:		21px; */
+}
+
+td.white
+{
+	background-color:	#fff;
 }
 
 .buttonBarRight
