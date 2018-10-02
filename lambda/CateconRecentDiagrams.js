@@ -55,9 +55,8 @@ exports.handler = (event, context, callback) =>
         }
         const S3 = new AWS.S3({apiVersion: '2006-03-01'});
         const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
-//        const Body = JSON.stringify(Object.values(dgrms));
 		const timestamp = Date.now();
-		const Body = JSON.stringify({timestamp, diagrams:Object.values(dgrms)});
+		const Body = JSON.stringify({timestamp, diagrams:Object.values(dgrms).sort(function(left, right) {return right.timestamp - left.timestamp;})});
         const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
         bucket.putObject(
         {
