@@ -67,6 +67,7 @@ exports.handler = (event, context, callback) =>
 
 			const db = new AWS.DynamoDB({region:C.REGION});
 			const description = dgrm.description !== '' ? dgrm.description : 'no description';
+			const dt = Date();
 			const params =
 			{
 				TableName:  C.DIAGRAM_TABLE,
@@ -74,7 +75,8 @@ exports.handler = (event, context, callback) =>
 				{
 					username:	{S:username},
 					subkey:	 {S:dgrm.name},
-					timestamp:  {N:dgrm.timestamp.toString()},
+//					timestamp:  {N:dgrm.timestamp.toString()},
+					timestamp:  {N:dt.toString()},
 	//				description:	{S:dgrm.description !== '' ? dgrm.description : 'no description'},
 					description:	{S:description},
 					fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
