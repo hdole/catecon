@@ -6,12 +6,17 @@ body
 
 small
 {
-	margin:	2px;
+	margin:	4px;
 }
 
 div
 {
 	margin:	2px 4px 2px 4px;
+}
+
+img
+{
+	box-shadow:			2px 2px 2px 2px #bbbb;
 }
 
 .smallPrint
@@ -167,7 +172,7 @@ tr.sidenavRow
 
 tr.sidenavRow:hover
 {
-	background-color:	#eee;
+	background-color:	#ddd;
 	color: 				#000;
 }
 
