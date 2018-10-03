@@ -77,7 +77,7 @@
 			eval(args)
 			{
 				if (typeof args[0] === 'string')
-					args[0] = getDiagram().getMorphism(args[0]);
+					args[0] = Cat.getDiagram().getMorphism(args[0]);
 				return args[0].$([args[1]]);
 			},
 			initial(args)
