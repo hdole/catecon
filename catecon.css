@@ -147,12 +147,14 @@ br
 
 .sidenavLeftPnl
 {
-	left:	0;
+	box-shadow:	4px 0px 2px 0px #dddd;
+	left:		0;
 }
 
 .sidenavRightPnl
 {
-	right:	0;
+	box-shadow:-4px 0px 2px 0px #dddd;
+	right:		0;
 }
 
 a
