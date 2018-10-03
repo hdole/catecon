@@ -972,7 +972,7 @@ const Cat =
 		shiftKey:	false,
 		drag:		false,
 		fuseObject:	null,
-		gridding:	false,
+		gridding:	true,
 		mouseDown:	false,
 		mouseover:	null,
 		dragStart:	{x:0, y:0},
@@ -2872,74 +2872,86 @@ ${this.svg.button(onclick)}
 					const xy = dgrm.userToDiagramCoords(Cat.mouse.xy);
 					Cat.display.shiftKey = e.shiftKey;
 					const placeSquare = false;
+					const plain = !(e.shiftKey || e.ctrlKey || e.altKey);
+					const plainShift = e.shiftKey && !(e.ctrlKey || e.altKey);
 					switch(e.keyCode)
 					{
 					case 32:	// 'space'
-						Cat.display.tool = 'select';
-						Cat.display.drag = false;
+						if (plain)
+						{
+							Cat.display.tool = 'select';
+							Cat.display.drag = false;
+						}
 						break;
 					case 46:	// delete
-						dgrm.removeSelected();
+						if (plain)
+							dgrm.removeSelected();
 						break;
 					case 49:	// 1
-						dgrm.placeObject(e, dgrm.getObjectByCode('One'), xy);
+						if (plain)
+							dgrm.placeObject(e, dgrm.getObjectByCode('One'), xy);
 						break;
 					case 51:	// 3
-						Cat.display.panel.toggle('threeD');
+						if (plain)
+							Cat.display.panel.toggle('threeD');
 						break;
 					case 67:	// c
-						if (!e.shiftKey)
+						if (plain)
 							Cat.display.panel.toggle('category');
 						break;
 					case 68:	// d
-						if (!e.shiftKey)
+						if (plain)
 							Cat.display.panel.toggle('diagram');
 						break;
-					case 70:	// F
-						if (e.shiftKey)
+					case 70:	// f
+						if (plain)
 							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'F*F' : 'F'), xy);
 						break;
-					case 72:	// H
-						Cat.display.panel.toggle('help');
+					case 72:	// h
+						if (plain)
+							Cat.display.panel.toggle('help');
 						break;
 					case 76:	// l
-						Cat.display.panel.toggle('login');
+						if (plain)
+							Cat.display.panel.toggle('login');
 						break;
-					case 77:	// M
-						Cat.display.panel.toggle('morphism');
+					case 77:	// m
+						if (plain)
+							Cat.display.panel.toggle('morphism');
 						break;
 					case 78:	// N
-						if (e.shiftKey)
+						if (plainShift)
 							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'N*N' : 'N'), xy);
 						break;
 					case 79:	// O
-						if (e.shiftKey)
+						if (plainShift)
 							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Omega*Omega' : 'Omega'), xy);
-						else
+						else if (plain)
 							Cat.display.panel.toggle('object');
 						break;
 					case 83:	// S
-						if (e.shiftKey)
+						if (plainShift)
 							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Str*Str' : 'Str'), xy);
-						else
+						else if (plain)
 							Cat.display.panel.toggle('settings');
 						break;
 					case 84:	// T
-						if (e.shiftKey)
+						if (plainShift)
 						{
 							const txt = new element(dgrm.domain, {name:`Text${dgrm.textId++}`, diagram:dgrm, html:'Lorem ipsum cateconium', xy});
 							dgrm.texts.push(txt);
 							dgrm.placeElement(e, txt);
 						}
-						else
+						else if (plain)
 							Cat.display.panel.toggle('element');
 						break;
 					case 89:	// y
-						if (!e.shiftKey)
+						if (plain)
 							Cat.display.panel.toggle('tty');
 						break;
 					case 90:	// Z
-						dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Z*Z' : 'Z'), xy);
+						if (plainShift)
+							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Z*Z' : 'Z'), xy);
 						break;
 					}
 					Cat.display.setCursor();
@@ -3423,7 +3435,7 @@ ${this.svg.button(onclick)}
 		},
 		ingestDiagramLambda(e, dgrm, fn)
 		{
-			Cat.svg2canvas(Cat.display.topSVG, this.name, function(url, filename)
+			Cat.svg2canvas(Cat.display.topSVG, dgrm.name, function(url, filename)
 			{
 				const params =
 				{
@@ -3558,7 +3570,8 @@ class element
 			this.x = Math.round(args.x);
 			this.y = Math.round(args.y);
 		}
-		if ('cid' in args && args.cid.indexOf(',') === -1)	// TODO get rid of indexOf
+//		if ('cid' in args && args.cid.indexOf(',') === -1)	// TODO get rid of indexOf
+		if ('cid' in args)
 			this.cid = args.cid;
 		else
 		{
@@ -4136,8 +4149,7 @@ class element
 			{
 				let lines = this.html.split('\n').map(t => `<tspan x="0" dy="1.2em">${t}</tspan>`);
 				let html = group ? `<g id="${this.elementId()}" transform="translate(${this.x} ${this.y + Cat.default.font.height/2})">` : '';
-				html +=
-`<text data-type="element" data-name="${this.name}" x="0" y="0" text-anchor="left" class="${this.class} grabbable" onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'element')"> ${lines.join('')} </text>`;
+				html += `<text data-type="element" data-name="${this.name}" x="0" y="0" text-anchor="left" class="${this.class} grabbable" onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'element')"> ${lines.join('')} </text>`;
 				html += group ? '</g>' : '';
 				return html;
 			}
@@ -4174,11 +4186,14 @@ class element
 		this.setXY(D2.round(xy));
 		const svg = this.svg();
 		if (svg.hasAttribute('transform'))
-			svg.setAttribute('transform', `translate(${xy.x} ${xy.y})`);
+			svg.setAttribute('transform', `translate(${this.x} ${this.y})`);
 		else
 		{
-			svg.setAttribute('x', this.x);
-			svg.setAttribute('y', this.y + ('h' in this ? this.h/2 : 0));
+			if (svg.hasAttribute('x'))
+			{
+				svg.setAttribute('x', this.x);
+				svg.setAttribute('y', this.y + ('h' in this ? this.h/2 : 0));
+			}
 		}
 	}
 	showSelected(state = true)
@@ -7503,6 +7518,26 @@ class diagram extends functor
 				if (segmentDistance(pnt, bbox, upperRight) < 5)
 					elt = this.domain.getMorphism(m.dataset.name);
 			}, this);
+		const texts = Cat.display.topSVG.querySelectorAll('.element');
+		if (elt === null)
+			texts.forEach(function(t)
+			{
+				if (t.dataset.name === except)
+					return;
+				let bbox = t.getBBox();
+				if ('childNodes' in t && t.childNodes.length > 0)	// for newlines
+				{
+					const transform = t.parentNode.transform.baseVal.getItem(0);
+					if (transform.type === SVGTransform.SVG_TRANSFORM_TRANSLATE)
+					{
+						bbox.x = transform.matrix.e;
+						bbox.y = transform.matrix.f;
+					}
+				}
+				const upperRight = {x:bbox.x + bbox.width, y:bbox.y + bbox.height};
+				if (inside(bbox, pnt, upperRight))
+					elt = this.getElement(t.dataset.name);
+			}, this);
 		return elt;
 	}
 	canFuseObjects(dragFrom, targetFrom)
@@ -8048,7 +8083,7 @@ class ${jsName} extends diagram
 			if (to)
 			{
 				to[attr] = val;
-				if (attr === 'name')
+				if (attr === 'html')
 				{
 					let svg = from.class === 'morphism' ? from.svg('_name') : from.svg();
 					if (svg)
