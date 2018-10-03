@@ -74,10 +74,8 @@ exports.handler = (event, context, callback) =>
 				Item:
 				{
 					username:	{S:username},
-					subkey:	 {S:dgrm.name},
-//					timestamp:  {N:dgrm.timestamp.toString()},
-					timestamp:  {N:dt.toString()},
-	//				description:	{S:dgrm.description !== '' ? dgrm.description : 'no description'},
+					subkey:		{S:dgrm.name},
+					timestamp:  {N:Date.now().toString()},
 					description:	{S:description},
 					fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
 				},
