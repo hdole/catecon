@@ -205,7 +205,7 @@ const Cat =
 	initialized:	false,
 	nameEx:			RegExp('^[a-zA-Z_-]+[@a-zA-Z0-9_-]*$'),
 	localDiagrams:	{},
-	secret:			'8b1ff7749bda89c084bba7fa1b7e9015e952bb455100fbe518c86f71c7f3592c',
+	secret:			'0afd575e4ad6d1b5076a20bf53fcc9d2b110d3f0aa7f64a66f4eee36ec8d201f',
 	sep:			'@',
 	serverDiagrams:	{},
 	statusXY:		{x:0, y:0},
@@ -213,6 +213,52 @@ const Cat =
 	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
 	mouse:			{down:{x:0, y:0}, xy:{x:0, y:0}},
 	url:			'',
+	intro()
+	{
+		let html = H.h1('Catecon') +
+					H.h2('The Categorical Console') +
+					H.h3('Shareable Executable Diagrams') +
+					H.div(
+						H.h4('Extreme Alpha Edition') +
+						H.small('Likely to break', 'italic txtCenter') +
+						H.h4('Catecon Uses Cookies') +
+						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and preferences.', 'italic') +
+						H.p('Accept cookies by entering the secret access code into the text box below:', 'txtCenter') +
+						H.table(
+								((!!window.chrome && !!window.chrome.webstore) ?
+									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="8"'}))) +
+									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
+									H.tr(H.td(H.h4('Use the Chrome web browser', 'error')))), 'center') +
+						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@factorial.png" width="300" height="225">' +
+						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@Fibonacci.png" width="300" height="225">' +
+						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@LoopN.png" width="300" height="225">' +
+						'<br/>' +
+						H.small('(C) 2018 Harry Dole') +
+						H.br() +
+						H.small('harry@harrydole.com', 'italic')
+					, 'txtCenter');
+		return html;
+	},
+	getUserSecret(s)
+	{
+		return Cat.sha256(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
+	},
+	cookieAccept()
+	{
+		if (Cat.secret !== Cat.getUserSecret(document.getElementById('cookieSecret').value))
+		{
+			alert('Your secret is not good enough');
+			return;
+		}
+		localStorage.setItem('CateconCookiesAccepted', JSON.stringify(Date.now()));
+		const intro = document.getElementById('intro');
+		intro.parentNode.removeChild(intro);
+		Cat.initialize();	// boot-up
+	},
+	hasAcceptedCookies()
+	{
+		return localStorage.getItem('CateconCookiesAccepted') !== null;
+	},
 	getError(err)
 	{
 		return typeof err === 'string' ? err : err.message;
@@ -578,6 +624,12 @@ const Cat =
 				console.log('clearing local storage');
 				this.clearLocalStorage();
 			}
+			if (Cat.hasAcceptedCookies())
+			{
+				const intro = document.getElementById('intro')
+				if (intro)
+					intro.parentNode.removeChild(intro);
+			}
 			if (isGUI)
 			{
 				Cat.autosave = true;
@@ -595,6 +647,32 @@ const Cat =
 			Cat.Amazon.initialize();
 			isGUI && Cat.display.setNavbarBackground();
 			isGUI && Cat.updatePanels();
+			if (!isGUI)
+			{
+				exports.Amazon =				Cat.Amazon;
+				exports.default =				Cat.default;
+				exports.deleteLocalDiagram =	Cat.deleteLocalDiagram;
+				exports.diagrams =				Cat.diagrams;
+				exports.sep =					Cat.sep;
+				exports.user =					Cat.user;
+				exports.$Cat =					$Cat;
+				exports.PFS =					PFS;
+				exports.Graph =					Graph;
+
+				exports.diagram =				diagram;
+				exports.element =				element;
+				exports.object =				object;
+				exports.morphism =				morphism;
+				exports.stringMorphism =		stringMorphism;
+			}
+			else
+			{
+				window.Cat			= Cat;
+				Cat.element			= element;
+				Cat.morphism		= morphism;
+				Cat.stringMorphism	= stringMorphism;
+				Cat.H				= H;
+			}
 		}
 		catch(e)
 		{
@@ -645,17 +723,7 @@ const Cat =
 	},
 	deleteDiagram(cat, dgrmName)
 	{
-		fetch(`catecon.php?action=deleteDiagram&cat=${Cat.htmlSafe(cat)}&name=${Cat.htmlSafe(dgrmName)}`).then(function(response)
-		{
-			if (response.ok)
-				response.json().then(function(r)
-				{
-//						if (r.ok === 'true')
-//							Cat.display.downloadCatalogTable(cat);	// TODO
-				});
-			else
-				console.log('deleteDiagram request failed',cat,dgrmName);
-		});
+		alert('Not implemented!');
 	},
 	default:
 	{
@@ -997,10 +1065,13 @@ const Cat =
 			const scale = dgrm !== null ? dgrm.viewport.scale : 1.0;
 			const w = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 			const h = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
-			this.topSVG.setAttribute('width', w);
-			this.topSVG.setAttribute('height', h);
-			this.uiSVG.setAttribute('width', w);
-			this.uiSVG.setAttribute('height', h);
+			if ('topSVG' in this)
+			{
+				this.topSVG.setAttribute('width', w);
+				this.topSVG.setAttribute('height', h);
+				this.uiSVG.setAttribute('width', w);
+				this.uiSVG.setAttribute('height', h);
+			}
 		},
 		initialize()
 		{
@@ -1453,7 +1524,7 @@ const Cat =
 											H.tr(H.td(Cat.display.input('', 'allObjectsFinite', '', '', 'in100', 'checkbox') + '<label for="allObjectsFinite">Finite objects?</label>', 'left'), 'sidenavRow'),
 										'sidenav') +
 									H.span(Cat.display.getButton('edit', 'Cat.display.category.new()', 'Create new category for this diagram')) +
-									H.span('', 'parseError', 'categoryError'), 'accordionPnl', 'newCategoryPnl');
+									H.span('', 'error', 'categoryError'), 'accordionPnl', 'newCategoryPnl');
 				return html;
 			},
 			new()
@@ -1720,7 +1791,7 @@ const Cat =
 													H.tr(H.td(maxForm), 'sidenavRow')) +
 											Cat.display.getButton('edit', `Cat.display.data.handler('${from.name}', 'random')`, 'Create random range'), 'accordionPnl', 'randomDataInputPnl');
 								}
-								html += H.div('', 'parseError', 'editError');
+								html += H.div('', 'error', 'editError');
 							}
 							html += H.button('Current Data', 'sidenavAccordion', 'dataPnlBtn', 'Current data in this morphism', `onclick="Cat.display.accordion.toggle(this, \'dataPnl\')"`);
 							tbl = H.tr(H.th(to.domain.getText()) + H.th(to.codomain.getText()));
@@ -1866,7 +1937,7 @@ const Cat =
 											H.tr(H.td(Cat.display.input('', 'diagramHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'newDiagramDescription', 'Description')), 'sidenavRow'), 'sidenav') +
 									H.span(Cat.display.getButton('edit', 'Cat.display.diagram.new()', 'Create new diagram')) +
-									H.span('', 'parseError', 'diagramError'), 'accordionPnl', 'newDiagramPnl');
+									H.span('', 'error', 'diagramError'), 'accordionPnl', 'newDiagramPnl');
 				return html;
 			},
 			new()
@@ -1903,7 +1974,7 @@ const Cat =
 			updateDecorations(dgrm)
 			{
 				const nbDgrm = document.getElementById('navbar_diagram');
-				nbDgrm.innerHTML = `${dgrm.getText()} by ${dgrm.username}`;
+				nbDgrm.innerHTML = `${dgrm.getText()} ${H.span('by '+dgrm.username, 'italic')}`;
 				nbDgrm.title = Cat.cap(dgrm.description);
 				document.getElementById('dgrmHtmlElt').innerHTML = dgrm.getText();
 				document.getElementById('dgrmDescElt').innerHTML = nbDgrm.title;
@@ -1947,7 +2018,6 @@ const Cat =
 							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonPNG(`Cat.getDiagram('${info.name}').downloadPNG()`, Cat.default.button.small), 'buttonBar', '', 'Download diagram PNG') : '' )),
 					'buttonBarLeft');
 				const tbl = H.table(
-//									H.tr(H.td(tbTbl, '', '', '', 'colspan="2"')) +
 									H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
 									H.tr(H.td(`<img src="${url}" id="img_${info.name}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
 									H.tr(H.td(info.description, 'description', '', '', 'colspan="2"')) +
@@ -2052,6 +2122,7 @@ const Cat =
 										Cat.display.expandPanelBtn('help', true)), 'buttonBarLeft');
 				html += H.h3('Catecon') +
 					H.h4('The Categorical Console')	+
+					H.h5('Extreme Alpha Version') +
 					H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Interactive actions', `onclick="Cat.display.accordion.toggle(this, \'catActionHelpPnl\')"`) +
 					H.div(	H.h4('Mouse Actions') +
 							H.h5('Select With Mouse') +
@@ -2113,7 +2184,10 @@ const Cat =
 					H.button('Third Party Software', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="Cat.display.accordion.toggle(this, \'thirdPartySoftwarePnl\')"`) +
 					H.div(H.p('Parser: peg.js') +
 							H.p('Crypto: sjcl.js') +
-							H.p('3D: three.js'), 'accordionPnl', 'thirdPartySoftwarePnl');
+							H.p('3D: three.js'), 'accordionPnl', 'thirdPartySoftwarePnl') +
+					H.hr() +
+					H.small('(C) 2018 Harry Dole') + H.br() +
+					H.small('harry@harrydole.com', 'italic');
 				document.getElementById('help-sidenav').innerHTML = html;
 			}
 		},
@@ -2142,12 +2216,6 @@ const Cat =
 										H.tr(H.td('Email')) +
 										H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 										Cat.display.login.passwordForm() +
-//										H.tr(H.td('Secret Key for Access')) +
-//										H.tr(H.td(H.input('', '', 'signupSecret', 'text', {ph:'????????'}))) +
-//										H.tr(H.td('Password')) +
-//										H.tr(H.td(H.input('', '', 'signupUserPassword', 'password', {ph:'Password'}))) +
-//										H.tr(H.td('Confirm password')) +
-//										H.tr(H.td(H.input('', '', 'signupUserPasswordConfirm', 'password', {ph:'Confirm'}))) +
 										H.tr(H.td(H.button('Sign up', '', '', '', 'onclick=Cat.Amazon.signup()')))), 'accordionPnl', 'signupPnl');
 				if (Cat.user.status === 'registered')
 					html += H.h3('Confirmation Code') +
@@ -2237,10 +2305,10 @@ const Cat =
 					codeElt.value = '';
 					code = code === '' ? name : code;
 					const htmlElt = document.getElementById('objectHtml');
-					const html = htmlElt.value;
+					const html = Cat.htmlEntitySafe(htmlElt.value);
 					htmlElt.value = '';
 					const descriptionElt = document.getElementById('objectDescription');
-					const description = descriptionElt.value;
+					const description = Cat.htmlEntitySafe(descriptionElt.value);
 					descriptionElt.value = '';
 					const to = dgrm.newObject({name, code, html, description});
 					dgrm.placeObject(e, to);
@@ -2258,7 +2326,7 @@ const Cat =
 											H.tr(H.td(Cat.display.input('', 'objectHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')) +
 									H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
-									H.span('', 'parseError', 'objectError'), 'accordionPnl', 'newObjectPnl');
+									H.span('', 'error', 'objectError'), 'accordionPnl', 'newObjectPnl');
 				return html;
 			},
 			update()
@@ -2316,7 +2384,7 @@ const Cat =
 					html = H.button('New Text', 'sidenavAccordion', '', 'New Text', `onclick="Cat.display.accordion.toggle(this, \'newElementPnl\')"`) +
 								H.div(	H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'elementHtml')), 'sidenavRow')) +
 										H.span(Cat.display.getButton('edit', 'Cat.display.element.new(evt)', 'Create new text for this diagram')) +
-										H.span('', 'parseError', 'elementError'), 'accordionPnl', 'newElementPnl');
+										H.span('', 'error', 'elementError'), 'accordionPnl', 'newElementPnl');
 				}
 				return html;
 			},
@@ -2433,7 +2501,6 @@ const Cat =
 		},
 		expandPanelBtn(panelName, right)
 		{
-//			return H.td(H.div(this.getButton(right ? 'chevronLeft' : 'chevronRight', `Cat.display.panel.expand('${panelName}', ${right})`, 'Expand'), '', `${panelName}-expandBtn`), 'buttonBar');
 			return H.td(this.getButton(right ? 'chevronLeft' : 'chevronRight', `Cat.display.panel.expand('${panelName}', ${right})`, 'Expand'), 'buttonBar', `${panelName}-expandBtn`);
 		},
 		clickDeleteBtn(id, fn)
@@ -3245,8 +3312,7 @@ ${this.svg.button(onclick)}
 		{
 			const userName = document.getElementById('signupUserName').value;
 			const email = document.getElementById('signupUserEmail').value;
-			const secret = document.getElementById('SignupSecret').value;
-			if (Cat.secret !== Cat.sha256(secret))
+			if (Cat.secret !== Cat.getUserSecret(document.getElementById('SignupSecret').value))
 			{
 				alert('Your secret is not good enough');
 				return;
@@ -3284,8 +3350,7 @@ ${this.svg.button(onclick)}
 		{
 			const userName = document.getElementById('signupUserName').value;
 			const email = document.getElementById('signupUserEmail').value;
-			const secret = document.getElementById('SignupSecret').value;
-			if (Cat.secret !== Cat.sha256(secret))
+			if (Cat.secret !== Cat.getUserSecret(document.getElementById('SignupSecret').value))
 			{
 				alert('Your secret is not good enough');
 				return;
@@ -3395,7 +3460,6 @@ ${this.svg.button(onclick)}
 			Cat.user.email = '';
 			Cat.user.status = 'unauthorized';
 			Cat.display.setNavbarBackground();
-//			Cat.display.login.setPanelContent();
 			Cat.updatePanels();
 		},
 		async fetchDiagram(name)
@@ -3570,7 +3634,6 @@ class element
 			this.x = Math.round(args.x);
 			this.y = Math.round(args.y);
 		}
-//		if ('cid' in args && args.cid.indexOf(',') === -1)	// TODO get rid of indexOf
 		if ('cid' in args)
 			this.cid = args.cid;
 		else
@@ -3583,10 +3646,8 @@ class element
 				let cid = '';
 				for (let i=0; i<16; ++i)
 					cid += ary[i].toString(16);
-				this.cid = cid;
+				this.cid = Cat.sha256(cid);
 			}
-//			else
-//				this.cid = null;	// TODO remove
 		}
 		this.readonly = Cat.getArg(args, 'readonly', false);
 	}
@@ -4077,19 +4138,10 @@ class element
 		}
 		return fctr;
 	}
-	static signature(cat, expr, first, data)	// data =
+	static signature(cat, expr)
 	{
 		return element.expandExpression(cat, expr,
-				/*
-			function(cat, expr, first, data)
-			{
-				let obj = 'token' in expr ? cat.getObject(expr.token) : cat.getObjectByExpr(expr);
-				if (obj)
-					return obj.cid;
-				throw 'bad expression for object signature';
-			},
-			*/
-			function(dgrm, expr, first)
+			function(dgrm, expr, first = false, data = null)
 			{
 				let obj = null;
 				if (dgrm.subClass === 'diagram')
@@ -4101,23 +4153,23 @@ class element
 					if ('token' in obj.expr)
 						return obj.cid;
 					else
-						return element.signature(dgrm, obj.expr, first, extended);
+						return element.signature(dgrm, obj.expr, false, null);
 				}
 				else if ('token' in expr)
-					return obj.cid;
+					return Cat.sha256(expr.token);
 				throw 'no signature for expression';
 			},
-			function(cat, expr, first, data)
+			function(cat, expr, first = false, data = null)
 			{
 				// TODO assumes associative due to sort()
 				return Cat.sha256(expr.data.map((x, i) => element.signature(cat, x, false, null)).sort().join(''));
 			},
-			function(cat, expr, first, data)
+			function(cat, expr, first = false, data = null)
 			{
 				return Cat.sha256(element.signature(cat, expr.lhs, false, null) + element.signature(cat, expr.rhs, false, null));
 			},
 			function(){},
-			first, data);
+			false, null);
 	}
 	static hasDiagramElement(dgrm, expr, first, data)	// data = null
 	{
@@ -4301,6 +4353,7 @@ class object extends element
 				}
 			}
 		}
+		this.cid = 'expr' in this ? element.signature(cat, this.expr) : this.cid;
 	}
 	decrRefcnt()
 	{
@@ -4902,6 +4955,7 @@ class morphism extends element
 			cat.addMorphism(this);
 		else if (level === 'transform')
 			cat.addTransform(this);
+		this.cid = element.signature(cat, this.expr);
 	}
 	decrRefcnt()
 	{
@@ -8101,7 +8155,8 @@ class ${jsName} extends diagram
 			const from = this.getSelected();
 			const to = this.mapElement(from);
 			h.contentEditable = false;
-			this.updateElementAttribute(from, to, attr, h.innerText);
+//			this.updateElementAttribute(from, to, attr, h.innerText);
+			this.updateElementAttribute(from, to, attr, Cat.htmlEntitySafe(h.innerText));
 			this.elementHelp();
 			from.showSelected();
 			this.saveToLocalStorage();
@@ -8502,7 +8557,6 @@ function getDiagram()
 	}
 	hasReference(name)
 	{
-//		return this.references.indexOf(Cat.getDiagram(name)) > -1;
 		return this.references.filter(d => d.name === name).length > 0;
 	}
 }
@@ -8510,32 +8564,16 @@ function getDiagram()
 let PFS = null;
 let Graph = null;
 
+if (isGUI)
+{
+	if (!Cat.hasAcceptedCookies())
+	{
+		document.getElementById('intro').innerHTML = Cat.intro();
+		window.Cat			= Cat;
+		return;
+	}
+}
+
 Cat.initialize();	// boot-up
 
-if (!isGUI)
-{
-	exports.Amazon =				Cat.Amazon;
-	exports.default =				Cat.default;
-	exports.deleteLocalDiagram =	Cat.deleteLocalDiagram;
-	exports.diagrams =				Cat.diagrams;
-	exports.sep =					Cat.sep;
-	exports.user =					Cat.user;
-	exports.$Cat =					$Cat;
-	exports.PFS =					PFS;
-	exports.Graph =					Graph;
-
-	exports.diagram =				diagram;
-	exports.element =				element;
-	exports.object =				object;
-	exports.morphism =				morphism;
-	exports.stringMorphism =		stringMorphism;
-}
-else
-{
-	window.Cat			= Cat;
-	Cat.element			= element;
-	Cat.morphism		= morphism;
-	Cat.stringMorphism	= stringMorphism;
-	Cat.H				= H;
-}
 })(typeof exports === 'undefined' ? this['Cat'] = this.Cat : exports);
