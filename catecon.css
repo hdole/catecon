@@ -1,7 +1,13 @@
-body
+html, body
 {
-	margin:	0px 4px 0px 4px;
 	font:	12px "Fira Sans", sans-serif;
+	height:	100%;
+	margin:	0px 4px 0px 4px;
+}
+
+#intro
+{
+	min-height:	100%;
 }
 
 small
@@ -17,6 +23,15 @@ div
 img
 {
 	box-shadow:			2px 2px 2px 2px #bbbb;
+}
+
+img.intro
+{
+	margin:	15px;
+}
+
+div.intro
+{
 }
 
 .smallPrint
@@ -147,13 +162,13 @@ br
 
 .sidenavLeftPnl
 {
-	box-shadow:	4px 0px 2px 0px #dddd;
+	box-shadow:	4px 0px 2px 0px #e5e5e5d0;
 	left:		0;
 }
 
 .sidenavRightPnl
 {
-	box-shadow:-4px 0px 2px 0px #dddd;
+	box-shadow:-4px 0px 2px 0px #e5e5e5d0;
 	right:		0;
 }
 
@@ -209,10 +224,10 @@ a:hover, .offcanvas a:focus
 	padding: 20px;
 }
 
-.parseError
+.error
 {
 	background-color:	#F77;
-	color:	#dff;
+	color:				#dff;
 }
 
 #navbar
@@ -409,6 +424,17 @@ a:hover, .offcanvas a:focus
 	font-size:		22px;
 	font-weight:	bold;
 	text-align:		center;
+}
+
+table.center
+{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.txtCenter
+{
+	text-align:	center;
 }
 
 .btn
