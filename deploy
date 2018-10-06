@@ -39,24 +39,19 @@ fs.readFile(bldFilename, 'utf8', function bldReadFileCB(err, data)
 			return;
 		}
 		const deployed = JSON.parse(data);
-		const deployMe = files.filter(f => timestamps[f] > deployed[f]).join(' ');
-		if (deployMe !== '')
-		{
-			process.stdout.write(`Deploying ${deployMe}...\n`);
-			files.map(f =>
+		const deployMe = files.filter(f => timestamps[f] > (f in deployed ? deployed[f] : 0));
+		deployMe.map(f =>
 			{
-				switch(fileInfo[f])
+				const info = fileInfo[f];
+				switch(info.method)
 				{
 				case 'copyCat':
-					const cmd = `scp -i ~/hdole-norcal.pem ${deployMe} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/catecon`;
-	//				process.stdout.write(`${cmd}\n`);
+					const cmd = `scp -i ~/hdole-norcal.pem ${deployMe} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/${info.target}`;
+					process.stdout.write(`${cmd}\n`);
 					proc.execSync(cmd);
 					break;
 				}
 			});
-			fs.writeFileSync(tsFilename, JSON.stringify(timestamps), 'utf8');
-		}
-		else
-			process.stdout.write('Nothing to deploy.\n');
+		fs.writeFileSync(tsFilename, JSON.stringify(timestamps), 'utf8');
 	});
 });
