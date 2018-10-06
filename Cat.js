@@ -212,6 +212,7 @@ const Cat =
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
 	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
 	mouse:			{down:{x:0, y:0}, xy:{x:0, y:0}},
+	uploadLimit:	1000000,
 	url:			'',
 	intro()
 	{
@@ -222,7 +223,7 @@ const Cat =
 						H.h4('Extreme Alpha Edition') +
 						H.small('Likely to break', 'italic txtCenter') +
 						H.h4('Catecon Uses Cookies') +
-						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and preferences.', 'italic') +
+						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
 						H.p('Accept cookies by entering the secret access code into the text box below:', 'txtCenter') +
 						H.table(
 								((!!window.chrome && !!window.chrome.webstore) ?
@@ -1258,8 +1259,9 @@ const Cat =
 							{
 								if (dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
 								{
-									const code = Cat.basetypes.operators.product.toCode([targetObject.to.code, dragObject.to.code]);
-									const to = dgrm.newObject({code});
+//									const code = Cat.basetypes.operators.product.toCode([targetObject.to.code, dragObject.to.code]);
+									const code = Cat.basetypes.operators.product.toCode([targetObject.to.name, dragObject.to.name]);
+									const to = dgrm.newObject({code, name:element.codename(dgrm, dgrm.codomain.parseObject(code))});
 									dgrm.setObject(targetObject, to);
 									dgrm.deselectAll(false);
 									targetObject.removeSVG();
@@ -3499,6 +3501,13 @@ ${this.svg.button(onclick)}
 		},
 		ingestDiagramLambda(e, dgrm, fn)
 		{
+			const dgrmJson = dgrm.json();
+			const dgrmPayload = JSON.stringify(dgrmJson);
+			if (dgrmPayload.length > Cat.uploadLimit)
+			{
+				Cat.status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
+				return;
+			}
 			Cat.svg2canvas(Cat.display.topSVG, dgrm.name, function(url, filename)
 			{
 				const params =
@@ -3506,12 +3515,7 @@ ${this.svg.button(onclick)}
 					FunctionName:	'CateconIngestDiagram',
 					InvocationType:	'RequestResponse',
 					LogType:		'None',
-					Payload:		JSON.stringify(
-									{
-										diagram:dgrm.json(),
-										username:Cat.user.name,
-										png:url,
-									}),
+					Payload:		JSON.stringify({diagram:dgrmJson, username:Cat.user.name, png:url}),
 				};
 				const handler = function(error, data)
 				{
@@ -3750,6 +3754,8 @@ class element
 				{
 					if ('token' in obj.expr)
 						return obj.expr.token;
+					if (!extended)
+						return obj.name;
 				}
 				else if ('token' in expr)
 					return expr.token;
