@@ -29,10 +29,17 @@ exports.handler = (event, context, callback) =>
 	// TODO: category check
 	// TODO: diagram name check
 	//
+	const Body = JSON.stringify(dgrm);
+	if (Body.length > 1000000)
+	{
+		const message = 'Error:  Diagram is too large to load';
+		console.log(message);
+		callback(message, null);
+		return;
+	}
 	const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
 	const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
 	const Key = `${dgrm.codomain}/${dgrm.username}/${dgrm.name}.json`;
-	const Body = JSON.stringify(dgrm);
 	const s3params =
 	{
 		Bucket:  C.DIAGRAM_BUCKET_NAME,
@@ -76,7 +83,7 @@ exports.handler = (event, context, callback) =>
 					username:	{S:username},
 					subkey:		{S:dgrm.name},
 					timestamp:  {N:Date.now().toString()},
-					description:	{S:description},
+					description:{S:description},
 					fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
 				},
 			};
