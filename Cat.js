@@ -144,7 +144,7 @@ class H
 	static h4	(h, c, i, t, x)	{return H.x('h4', h, c, i, t, x); }
 	static h5	(h, c, i, t, x)	{return H.x('h5', h, c, i, t, x); }
 	static hr	()				{return '<hr/>'; }
-	static input(h, c, i, t, x) {return `<input id="${i}" class="${c}" type="${t}" value="${h}" placeholder="${x.ph}" ${'x' in x ? x.x : ''}/>`; }
+	static input(h, c, i, t, x) {return `<input id="${i}" class="${c}" type="${t}" value="${h}" placeholder="${x.ph}" ${'x' in x ? x.x : ''}/>`;}
 	static p	(h, c, i, t, x)	{return H.x('p', h, c, i, t, x); }
 	static pre	(h, c, i, t, x)	{return H.x('pre', h, c, i, t, x); }
 	static small(h, c, i, t, x)	{return H.x('small', h, c, i, t, x); }
@@ -221,13 +221,13 @@ const Cat =
 					H.h3('Shareable Executable Diagrams') +
 					H.div(
 						H.h4('Extreme Alpha Edition') +
-						H.small('Likely to break', 'italic txtCenter') +
+						H.small('Likely to break and you lose all your stuff', 'italic txtCenter') +
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
 						H.p('Accept cookies by entering the secret access code into the text box below:', 'txtCenter') +
 						H.table(
 								((!!window.chrome && !!window.chrome.webstore) ?
-									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="8"'}))) +
+									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
 									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
 									H.tr(H.td(H.h4('Use the Chrome web browser', 'error')))), 'center') +
 						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@factorial.png" width="300" height="225">' +
@@ -255,6 +255,7 @@ const Cat =
 		const intro = document.getElementById('intro');
 		intro.parentNode.removeChild(intro);
 		Cat.initialize();	// boot-up
+		Cat.Amazon.onCT();
 	},
 	hasAcceptedCookies()
 	{
@@ -1052,6 +1053,11 @@ const Cat =
 		tool:		'select',	// select|pan
 		statusbar:	null,
 		id:			0,
+		onEnter(e, fn)
+		{
+			if (e.key === 'Enter')
+				fn(e);
+		},
 		width()
 		{
 			return window.innerWidth;
@@ -2202,14 +2208,13 @@ const Cat =
 					H.div('User: ' + H.span(Cat.user.name, 'smallBold')) +
 					H.div('Email: ' + H.span(Cat.user.email, 'smallBold')) +
 					(!Cat.Amazon.loggedIn ? '' : H.button('Logout', '', '', 'Logout of the current session', `onclick="Cat.Amazon.logout()"`)) +
-					H.button('Reset password', '', '', 'Reset your password', `onclick="Cat.Display.login.showResetForm()"`) +
+					(Cat.user.name !== 'Anon' ? H.button('Reset password', '', '', 'Reset your password', `onclick="Cat.Display.login.showResetForm()"`) : '') +
 					H.div('', 'passwordResetForm');
 				if (Cat.user.status !== 'logged-in' && Cat.user.status !== 'registered')
-					html += H.h3('Login') +
-							H.table(	H.tr(H.td('User name')) +
+					html += H.table(	H.tr(H.td('User name')) +
 										H.tr(H.td(H.input('', '', 'loginUserName', 'text', {ph:'Name'}))) +
 										H.tr(H.td('Password')) +
-										H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********', x:'onclick=Cat.Amazon.login()'}))) +
+										H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********', x:'onkeydown="Cat.display.onEnter(event, Cat.Amazon.login)"'}))) +
 										H.tr(H.td(H.button('Login', '', '', '', 'onclick=Cat.Amazon.login()'))));
 				if (Cat.user.status === 'unauthorized')
 					html += H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.display.accordion.toggle(this, \'signupPnl\')"`) +
@@ -3326,7 +3331,6 @@ ${this.svg.button(onclick)}
 				alert('Please confirm your password properly by making sure the password and confirmation are the same.');
 				return;
 			}
-			let cognitoUser = null;
 			const attributes =
 			[
 				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
@@ -3364,7 +3368,6 @@ ${this.svg.button(onclick)}
 				alert('Please confirm your password properly by making sure the password and confirmation are the same.');
 				return;
 			}
-			let cognitoUser = null;
 			const attributes =
 			[
 				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
@@ -3472,6 +3475,37 @@ ${this.svg.button(onclick)}
 			const url = this.URL(catName, user, name + '.json');
 			const json = await (await fetch(url)).json();
 			return json;
+		},
+		onCT()
+		{
+			const url = 'https://api.ipify.org';
+			fetch(url).then(function(response)
+			{
+				if (response.ok)
+					response.text().then(function(ip)
+					{
+			console.log('ip',ip);
+						const params =
+						{
+							FunctionName:	'CateconCT',
+							InvocationType:	'RequestResponse',
+							LogType:		'None',
+			//				Payload:		JSON.stringify({IP:"$context.identity.sourceIp"}),
+			//				Payload:		JSON.stringify({IP:'$context.identity.sourceIp'}),
+//							Payload:		JSON.stringify({IP:ip.toString()})
+							Payload:		JSON.stringify({IP:ip})
+						};
+						const handler = function(error, data)
+						{
+							if (error)
+							{
+								Cat.recordError(error);
+								return;
+							}
+						};
+						Cat.Amazon.lambda.invoke(params, handler);
+					});
+			});
 		},
 		ingestCategoryLambda(e, cat, fn)
 		{
