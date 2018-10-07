@@ -16,8 +16,10 @@ let lambdas = [
 				'CateconGetUserDiagrams',
 				'CateconIngestCategory',
 				'CateconIngestDiagram',
-//				'CateconNewUser',
 				'CateconRecentDiagrams',
+				'CateconCT',
+
+//				'CateconNewUser',
 //				'CateconUserScanner',
 			];
 
@@ -27,11 +29,12 @@ const lambdaRoot = `${root}/lambda`;
 
 const dependencies =
 {
-	CateconBootstrap:	['Cat.js', 'CatFns.js', 'sha256.js', 'sjcl.js', 'peg-0.10.0.min.js', 'amazon-cognito-identity.min.js', 'AWSconstants.js'],
-	CateconCatalog:		['AWSconstants.js'],
+	CateconBootstrap:			['Cat.js', 'CatFns.js', 'sha256.js', 'sjcl.js', 'peg-0.10.0.min.js', 'amazon-cognito-identity.min.js', 'AWSconstants.js'],
+	CateconCatalog:				['AWSconstants.js'],
 	CateconGetUserDiagrams:		['AWSconstants.js'],
 	CateconIngestDiagram:		['AWSconstants.js'],
 	CateconRecentDiagrams:		['AWSconstants.js'],
+	CateconCT:					['AWSconstants.js'],
 };
 
 const locations =
@@ -51,7 +54,20 @@ if (!fs.existsSync(buildDir))
 	fs.mkdirSync(buildDir);
 process.chdir(buildDir);
 
-lambdas.map(f =>
+let updateLambdas = lambdas;
+
+if (process.argv.length > 2)
+{
+	updateLambdas = [];
+	for (let i=2; i<process.argv.length; ++i)
+	{
+		const arg = process.argv[i];
+		if (lambdas.indexOf(arg) >= 0)
+			updateLambdas.push(arg);
+	}
+}
+
+updateLambdas.map(f =>
 {
 	console.log(`Diagram ${f} uploading...`);
 	let deps = [];
