@@ -13,6 +13,24 @@ const tsFilename = '.timestamps.json';
 
 let lambda = new AWS.Lambda();
 
+function deploy(files, timestamps, fileInfo, deployed)
+{
+	const deployMe = files.filter(f => timestamps[f] > (f in deployed ? deployed[f] : 0));
+	deployMe.map(f =>
+		{
+			const info = fileInfo[f];
+			switch(info.method)
+			{
+			case 'copyCat':
+				const cmd = `scp -i ~/hdole-norcal.pem ${f} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/catecon/${info.target}`;
+				process.stdout.write(`${cmd}\n`);
+				proc.execSync(cmd);
+				break;
+			}
+		});
+	fs.writeFileSync(tsFilename, JSON.stringify(timestamps), 'utf8');
+}
+
 fs.readFile(bldFilename, 'utf8', function bldReadFileCB(err, data)
 {
 	if (err)
@@ -22,7 +40,6 @@ fs.readFile(bldFilename, 'utf8', function bldReadFileCB(err, data)
 	}
 	const fileInfo = JSON.parse(data);
 	const timestamps = {};
-
 	const files = Object.keys(fileInfo);
 	//
 	// get current timestamps
@@ -31,27 +48,17 @@ fs.readFile(bldFilename, 'utf8', function bldReadFileCB(err, data)
 	//
 	// get last deployment state
 	//
-	fs.readFile(tsFilename, 'utf8', function tsReadFileCB(err, data)
-	{
-		if (err)
+	if (fs.existsSync(tsFilename))
+		fs.readFile(tsFilename, 'utf8', function tsReadFileCB(err, data)
 		{
-			console.log('Error: ', err);
-			return;
-		}
-		const deployed = JSON.parse(data);
-		const deployMe = files.filter(f => timestamps[f] > (f in deployed ? deployed[f] : 0));
-		deployMe.map(f =>
+			if (err)
 			{
-				const info = fileInfo[f];
-				switch(info.method)
-				{
-				case 'copyCat':
-					const cmd = `scp -i ~/hdole-norcal.pem ${deployMe} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/${info.target}`;
-					process.stdout.write(`${cmd}\n`);
-					proc.execSync(cmd);
-					break;
-				}
-			});
-		fs.writeFileSync(tsFilename, JSON.stringify(timestamps), 'utf8');
-	});
+				console.log('Error: ', err);
+				return;
+			}
+			const deployed = JSON.parse(data);
+			deploy(files, timestamps, fileInfo, deployed);
+		});
+	else
+		deploy(files, timestamps, fileInfo, {});
 });
