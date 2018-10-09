@@ -139,7 +139,7 @@ table
 {
 	border-collapse:	collapse;
 	vertical-align:		middle;
-	/* width:				100%; */
+	width:				100%;
 }
 
 td
@@ -150,6 +150,11 @@ td
 .left
 {
 	text-align:	left;
+}
+
+.right
+{
+	text-align:	right;
 }
 
 br
@@ -179,6 +184,14 @@ a
 	color: black;
 	display: block;
 	transition: 0.3s
+}
+
+a.intro
+{
+	text-decoration:	none;
+	color:				blue;
+	font-size:			10px;
+	transition:			0.3s;
 }
 
 tr.sidenavRow
@@ -237,6 +250,16 @@ a:hover, .offcanvas a:focus
 	margin:				0;
 	overflow:			hidden;
 	position:			fixed;
+	width:				100%;
+	z-index:			1;
+}
+
+#footbar
+{
+	background-color:	#fff;
+	color:				#000;
+	margin:				0;
+	overflow:			hidden;
 	width:				100%;
 	z-index:			1;
 }
