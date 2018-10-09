@@ -222,6 +222,7 @@ const Cat =
 					H.div(
 						H.h4('Extreme Alpha Edition') +
 						H.small('Likely to break and you lose all your stuff', 'italic txtCenter') +
+						H.small('Current work: coproducts', 'txtCenter') +
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
 						H.p('Accept cookies by entering the secret access code into the text box below:', 'txtCenter') +
@@ -234,9 +235,13 @@ const Cat =
 						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@Fibonacci.png" width="300" height="225">' +
 						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@LoopN.png" width="300" height="225">' +
 						'<br/>' +
-						H.small('(C) 2018 Harry Dole') +
-						H.br() +
-						H.small('harry@harrydole.com', 'italic')
+						H.table(H.tr(H.td(H.h5('Articles', 'txtCenter'))) +
+								H.tr(H.td(H.a('Intro To Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"'))) +
+								H.tr(H.td(H.a('V Is For Vortex - More Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"'))) +
+								H.tr(H.td(H.a('Catecon: Visualizing Coherence in the Categorical Console', 'intro', '', '', 'href="https://harrydole.com/wp/2018/06/28/catecon/"'))) +
+								H.tr(H.td(H.a('Catecon: Factorial', 'intro', '', '', 'href="https://harrydole.com/wp/2018/07/05/catecon-factorial/"'))) +
+								H.tr(H.td(H.a('Catecon: Fibonacci', 'intro', '', '', 'href="https://harrydole.com/wp/2018/07/10/catecon-fibonacci/"'))), 'center') +
+						H.table(H.tr(H.td(H.small('(C) 2018 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
 					, 'txtCenter');
 		return html;
 	},
@@ -2330,6 +2335,7 @@ const Cat =
 				let html = H.button('New Object', 'sidenavAccordion', '', 'New Object', `onclick="Cat.display.accordion.toggle(this, \'newObjectPnl\')"`) +
 							H.div( H.table(H.tr(H.td(Cat.display.input('', 'objectName', 'Name')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'objectCode', 'Code')), 'sidenavRow') +
+											H.tr(H.td(H.small('The following tokens may be used to form an object: One, Omega, N, Z, F, ...')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'objectHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')) +
 									H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
@@ -2476,6 +2482,8 @@ const Cat =
 					}
 					if (form.distinct && dgrm.codomain.isCartesian)
 						html += H.td(this.getButton('product', `Cat.getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
+					if (form.distinct && dgrm.codomain.hasCoproducts)
+						html += H.td(this.getButton('coproduct', `Cat.getDiagram().gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
 					if (html.length !== htmlLength)
 						xyOffset = false;
 					if (dgrm.selectedCanRecurse())
@@ -2485,6 +2493,8 @@ const Cat =
 				{
 					if (dgrm.codomain.isCartesian)
 						html += H.td(this.getButton('product', `Cat.getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
+					if (dgrm.codomain.hasCoproducts)
+						html += H.td(this.getButton('coproduct', `Cat.getDiagram().gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
 				}
 				tb.innerHTML = H.table(H.tr(html), 'buttonBarLeft');
 			}
@@ -2617,6 +2627,10 @@ const Cat =
 				close:
 `<line class="arrow0 str0" x1="40" y1="40" x2="280" y2= "280" />
 <line class="arrow0 str0" x1="280" y1="40" x2="40" y2= "280" />`,
+				coproduct:
+`<circle class="svgstr4" cx="160" cy="160" r="80"/>
+<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
+<line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>`,
 				coproductAssembly:
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
@@ -3478,21 +3492,16 @@ ${this.svg.button(onclick)}
 		},
 		onCT()
 		{
-			const url = 'https://api.ipify.org';
-			fetch(url).then(function(response)
+			fetch('https://api.ipify.org').then(function(response)
 			{
 				if (response.ok)
 					response.text().then(function(ip)
 					{
-			console.log('ip',ip);
 						const params =
 						{
 							FunctionName:	'CateconCT',
 							InvocationType:	'RequestResponse',
 							LogType:		'None',
-			//				Payload:		JSON.stringify({IP:"$context.identity.sourceIp"}),
-			//				Payload:		JSON.stringify({IP:'$context.identity.sourceIp'}),
-//							Payload:		JSON.stringify({IP:ip.toString()})
 							Payload:		JSON.stringify({IP:ip})
 						};
 						const handler = function(error, data)
@@ -3832,7 +3841,7 @@ class element
 			{
 				const op = Cat.basetypes.operators[expr.op];
 				const codes = expr.data.map(d => element.getCode(dgrm, d, false, full));
-				return Cat.parens(codes.join(Cat.basetypes.operators.product.symCode), Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, first, full);
+				return Cat.parens(codes.join(op.symCode), Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, first, full);
 			},
 			function(dgrm, expr, first, full)
 			{
@@ -5640,7 +5649,7 @@ class factorMorphism extends morphism
 	static form(dgrm, domain, factors)
 	{
 		let fctrs = [];
-		let name = '-R--';
+		let name = `-R--D--${domain.name}--D-`;
 		let html = '&lt;';
 		for (let i=0; i<factors.length; ++i)
 		{
@@ -5809,7 +5818,7 @@ class productMorphism extends morphism
 	}
 	static form(dgrm, morphisms)
 	{
-		const code = '(' + morphisms.map(m => m.name).join(')*(') + ')';
+		const code = '(' + morphisms.map(m => m.name).join(`)${Cat.basetypes.operators.product.symCode}(`) + ')';
 		const expr = dgrm.codomain.parseObject(code);
 		return {
 			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
@@ -5861,11 +5870,23 @@ class coproductMorphism extends morphism
 		mor.morphisms = this.morphisms.map(r => r.name);
 		return mor;
 	}
-	static form(morphisms)
+	/*
+	static form(dgrm, morphisms)
 	{
 		return {name:	`-p--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--p-`,
 				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
 				code:	morphisms.map(m => m.codomain.name).join(Cat.basetypes.operators.product.symCode)};	/// TODO code
+	}
+	*/
+	static form(dgrm, morphisms)
+	{
+		const code = '(' + morphisms.map(m => m.name).join(`)${Cat.basetypes.operators.coproduct.symCode}(`) + ')';		// ***
+		const expr = dgrm.codomain.parseObject(code);
+		return {
+			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
+			code:element.getCode(dgrm, expr, true, true),
+			name:element.codename(dgrm, expr),
+		};
 	}
 }
 
@@ -7452,6 +7473,38 @@ class diagram extends functor
 			this.update(e, this.selected[0].class);
 		}
 	}
+	coproduct(e)
+	{
+		let from = null;
+		if (this.selected[0].class === 'morphism')
+		{
+			const morphisms = this.selected.map(m => m.to);
+			const form = coproductMorphism.form(this, morphisms);		// ***
+			let m = this.getMorphism(form.name);
+			if (m === null)
+				m = new coproductMorphism(this, {morphisms});		// ***
+			m.incrRefcnt();
+			from = this.trackMorphism(this.mousePosition(e), m);
+		}
+		else if (this.selected[0].class === 'object')
+		{
+			const xy = Cat.barycenter(this.selected);
+			const codes = this.selected.map(obj => this.mapObject(obj).code);
+			const code = Cat.basetypes.operators.coproduct.toCode(codes);		// ***
+			from = new diagramObject(this.domain, {diagram:this, xy});
+			from.incrRefcnt();
+			const to = this.newObject({code});
+			this.setObject(from, to);
+			from.addSVG();
+		}
+		if (from)
+		{
+			const selected = this.selected.slice();
+			this.addSelected(e, from, true);
+			selected.map(o => this.isIsolated(o) ? o.decrRefcnt() : null);
+			this.update(e, this.selected[0].class);
+		}
+	}
 	trackMorphism(pnt, to, src = null)
 	{
 		let domain = null;
@@ -7997,7 +8050,7 @@ class ${jsName} extends diagram
 		const nuArgs = Cat.clone(args);
 		nuArgs.diagram = this;
 		const obj = new object(this.codomain, nuArgs);
-		const codename = element.codename(this, obj.expr);
+//		const codename = element.codename(this, obj.expr);
 		return obj;
 	}
 	validateAvailableObject(name)
@@ -8032,8 +8085,10 @@ class ${jsName} extends diagram
 				objects.push(obj);
 				found[obj.name] = true;
 			}
-		document.getElementById(pnlName).innerHTML = H.table(objects.map(o => H.tr(H.td(o.getText()), 'grabbable sidenavRow', '', Cat.cap(o.description),
-						`draggable="true" ondragstart="Cat.display.object.drag(event, '${o.name}')"`)).join(''));
+		document.getElementById(pnlName).innerHTML = H.table(objects.map(o => H.tr(
+							H.td(o.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeObject(evt, '${o.name}')`, 'Delete object') : '', 'buttonBar') +
+							H.td(o.getText()),
+							'grabbable sidenavRow', '', Cat.cap(o.description), `draggable="true" ondragstart="Cat.display.object.drag(event, '${o.name}')"`)).join(''));
 	}
 	updateMorphismTableRows(pnlName)
 	{
@@ -8046,7 +8101,8 @@ class ${jsName} extends diagram
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-							H.td(m.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
+				H.td(m.refcnt) +
+							H.td(m.refcnt <= 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
 							H.td(m.getText()) +
 							H.td(m.domain.getText()) +
 							H.td('&rarr;') +
@@ -8058,7 +8114,8 @@ class ${jsName} extends diagram
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-							H.td(m.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
+				H.td(m.refcnt) +
+							H.td(m.refcnt <= 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
 								'', 'buttonBar') +
 							H.td(m.getText()) +
 							H.td(m.domain.getText()) +
@@ -8312,6 +8369,18 @@ class ${jsName} extends diagram
 			sel0.setRecursor(sel1);
 			this.saveToLocalStorage();
 			Cat.status(e, `Recursor for ${sel0.getText()} has been set`);
+		}
+	}
+	removeObject(e, name)
+	{
+		const o = this.codomain.getObject(name);
+		if (o !== null)
+		{
+			while(o.refcnt>0)
+				o.decrRefcnt();
+			this.updateObjectTableRows(`${this.name}_ObjPnl`);
+			this.update(e);
+			this.saveToLocalStorage();
 		}
 	}
 	removeMorphism(e, name)
