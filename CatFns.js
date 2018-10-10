@@ -46,7 +46,7 @@
 			{
 				return this.morphisms.map(m => m.$(args));
 			},
-			coproductAssembly(args)
+			fold(args)
 			{
 				return args[1];
 			},
@@ -324,6 +324,17 @@
 				if (!dgrm.hasObject(codename))
 					dgrm.newObject({code, diagram:dgrm, html:obj.html + Cat.basetypes.operators.product.sym+obj.html});
 				return new Cat.morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain:codename, function:'diagonal', html:'&#x0394', description:`The diagonal morphism on the object ${obj.getText()}`});
+			},
+			fold(dgrm, obj)
+			{
+				const name = 'fold-'+obj.name;
+				if (dgrm.hasMorphism(name))
+					return dgrm.getMorphism(name)
+				const code = obj.getFirstFactor().code;
+				const codename = Cat.element.codename(dgrm, this.domain.parseObject(code));
+				if (!dgrm.hasObject(codename))
+					dgrm.newObject({code, diagram:dgrm, html:obj.html + Cat.basetypes.operators.product.sym+obj.html});
+				return new Cat.morphism(dgrm.codomain, {name, diagram:dgrm.name, domain:obj, codomain:codename, function:'fold', html:'&nabla;', description:`The fold morphism on the object ${obj.getText()}`});
 			},
 			terminal(dgrm, obj)
 			{
