@@ -167,13 +167,13 @@ br
 
 .sidenavLeftPnl
 {
-	box-shadow:	4px 0px 2px 0px #e5e5e5d0;
+	box-shadow:	4px 0px 2px 0px #f0f0f0d0;
 	left:		0;
 }
 
 .sidenavRightPnl
 {
-	box-shadow:-4px 0px 2px 0px #e5e5e5d0;
+	box-shadow:-4px 0px 2px 0px #f0f0f0d0;
 	right:		0;
 }
 
@@ -361,7 +361,7 @@ a:hover, .offcanvas a:focus
 .svgstr1 {stroke:black; stroke-width:20px; stroke-linejoin:round; stroke-miterlimit:2.61313;}
 .svgstr3 {fill:none; stroke:black; stroke-width:10px}
 .svgstr4 {fill:none; stroke:black; stroke-width:20px}
-.arrow0 {stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
+.arrow0 {fill:none;	stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
 .arrow6 {fill:none; stroke:#666; stroke-width:20px;}
 .arrow9 {fill:none; stroke:#999; stroke-width:20px;}
