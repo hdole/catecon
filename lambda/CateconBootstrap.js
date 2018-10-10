@@ -6,9 +6,26 @@
 const AWS = require('aws-sdk');
 const Cat = require('./Cat');
 
-const isLambda = true;
-
 Cat.user.name = 'std';
+
+function placeMultipleMorphisms(dgrm, morphs)
+{
+	let xyDom = {x: 300, y:4 * Cat.default.font.height};
+	let xyCod = {x: 600, y:4 * Cat.default.font.height};
+	morphs.map(morphData =>
+	{
+		const args = Cat.clone(morphData);
+		args.diagram = dgrm.name;
+		return morphism.process(dgrm.codomain, dgrm, args);
+	}).
+	map(m =>
+	{
+		dgrm.placeMorphism(null, m, xyDom, xyCod);
+		xyDom.y += 4 * Cat.default.font.height;
+		xyCod.y += 4 * Cat.default.font.height;
+		return null;
+	});
+}
 
 function bootstrap()
 {
@@ -24,7 +41,7 @@ function bootstrap()
 		{diagram:basics, code:'One', html:'1', description:'Terminal object, or one point set', isTerminal:true, isFinite:1}];
 	basicObjects.map(objectData => new Cat.object(basics.codomain, objectData));
 	const basicMorphisms = [{name:'Null2one', diagram:`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}basics`, domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
-	basics.placeMultipleMorphisms(basicMorphisms);
+	placeMultipleMorphisms(basics, basicMorphisms);
 	//
 	// first order logic
 	//
@@ -38,7 +55,7 @@ function bootstrap()
 							{name:'not', diagram:`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}FOL`, domain:'Omega', codomain:'Omega', function:'not', html:'&#x00ac', description:'not'},
 							{name:'and', diagram:`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}FOL`, domain:'Omega*Omega', codomain:'Omega', function:'and', html:'&#x2227', description:'logical and'},
 							{name:'or', diagram:`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}FOL`, domain:'Omega*Omega', codomain:'Omega', function:'or', html:'&#x2228', description:'logical or'}];
-	fol.placeMultipleMorphisms(folMorphisms);
+	placeMultipleMorphisms(fol, folMorphisms);
 	//
 	// arithmetic operations
 	//
@@ -84,7 +101,7 @@ function bootstrap()
 		{name:'FcompEq', diagram:arithmetics, domain:'F*F', codomain:'Omega', function:'floatOrder', html:'&#x2264', description:'Strict order of floats with equality'},
 		{name:'N2Z', diagram:arithmetics, domain:'N', codomain:'Z', function:'nat2int', html:'&#x21aa', description:'Embed natural numbers into integers'},
 		{name:'Z2F', diagram:arithmetics, domain:'Z', codomain:'F', function:'int2float', html:'&#x21aa', description:'Embed integers into floats'}];
-	arithmetics.placeMultipleMorphisms(arithMorphData);
+	placeMultipleMorphisms(arithmetics, arithMorphData);
 	//
 	// strings
 	//
@@ -103,7 +120,7 @@ function bootstrap()
 			{diagram:strings, name:'FtoStr', domain:'F', codomain:'Str', function:'float2str', html:'&#x5316', description:'Convert floating point numbers to a string'},
 			{diagram:strings, name:'OmegaToStr', domain:'Omega', codomain:'Str', function:'omega2str', html:'&#x5316', description:'Convert truth values to a string'},
 		];
-	strings.placeMultipleMorphisms(stringMorphisms);
+	placeMultipleMorphisms(strings, stringMorphisms);
 	//
 	// console
 	//
@@ -112,7 +129,7 @@ function bootstrap()
 	const consoleObjects = [{diagram:con, code:'tty', html:'tty', description:'Write-only console'}];
 	consoleObjects.map(objectData => new Cat.object(con.codomain, objectData));
 	const consoleMorphisms = [{name:'print', diagram:con, domain:'Str', codomain:'tty', function:'ttyOut', html:'&#128438;', description:'Print to tty'}];
-	con.placeMultipleMorphisms(consoleMorphisms);
+	placeMultipleMorphisms(con, consoleMorphisms);
 	//
 	// threeD
 	//
@@ -146,7 +163,7 @@ function bootstrap()
 								{name:'FxFxFx2toQuadraticBezierCurve3', diagram:threeD, domain:'point*point*point', codomain:'threeD', function:'AxAxAToQuadraticBezierCurve3', html:'&#128438;Beziers', description:'Plot a 3D Bezier curve with a random color.'},
 								{name:'Str2Color', diagram:threeD, domain:'Str', codomain:'color', function:'AxAxAToQuadraticBezierCurve3', html:'Str2Color', description:'Convert string to color.'},
 							];
-	threeD.placeMultipleMorphisms(threeDMorphisms);
+	placeMultipleMorphisms(threeD, threeDMorphisms);
 	//
 	// save categories
 	//
