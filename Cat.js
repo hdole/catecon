@@ -222,7 +222,7 @@ const Cat =
 					H.div(
 						H.h4('Extreme Alpha Edition') +
 						H.small('Likely to break and you lose all your stuff', 'italic txtCenter') + H.br() +
-						H.small('Current work: references, coproducts', 'txtCenter') +
+						H.small('Current work: coproducts', 'txtCenter') +
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
 						H.p('Accept cookies by entering the secret access code into the text box below:', 'txtCenter') +
@@ -244,6 +244,15 @@ const Cat =
 						H.table(H.tr(H.td(H.small('(C) 2018 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
 					, 'txtCenter');
 		return html;
+	},
+	random()
+	{
+		const ary = new Uint8Array(16);
+		window.crypto.getRandomValues(ary);
+		let cid = '';
+		for (let i=0; i<16; ++i)
+			cid += ary[i].toString(16);
+		return Cat.sha256(cid);
 	},
 	getUserSecret(s)
 	{
@@ -344,7 +353,8 @@ const Cat =
 	},
 	hasDiagram(dgrmName)
 	{
-		return Cat.hasLocalDiagram(dgrmName) || dgrmName in Cat.diagrams || dgrmName in Cat.serverDiagrams;
+//		return Cat.hasLocalDiagram(dgrmName) || dgrmName in Cat.diagrams || dgrmName in Cat.serverDiagrams;
+		return Cat.hasLocalDiagram(dgrmName) || dgrmName in Cat.diagrams;
 	},
 	getDiagram(dgrmName, checkLocal = true)
 	{
@@ -368,6 +378,7 @@ const Cat =
 	getLocalDiagramList()
 	{
 		Cat.localDiagrams = JSON.parse(localStorage.getItem('Cat.diagrams.local'));
+console.log('getLocalDiagramList',Cat.localDiagrams);
 		if (Cat.localDiagrams === null)
 			Cat.localDiagrams = {};
 		// TODO debug, clean-up, remove, eventually
@@ -1753,10 +1764,12 @@ const Cat =
 							H.div(
 								H.table(H.tr(
 									H.td(Cat.display.getButton('delete', `document.getElementById('tty-out').innerHTML = ''`, 'Clear output'), 'buttonBar') +
-									H.td(Cat.display.getButton('download', `Cat.downloadString(document.getElementById('tty-out').innerHTML, 'text', 'console.log')`, 'Download tty log'), 'buttonBar')), 'buttonBarLeft') +
+									H.td(Cat.display.downloadButton('LOG', `Cat.downloadString(document.getElementById('tty-out').innerHTML, 'text', 'console.log')`), 'buttonBar')), 'buttonBarLeft') +
 								H.pre('', 'tty', 'tty-out'), 'accordionPnl', 'ttyOutPnl') +
 							H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.display.accordion.toggle(this, \'errorOutPnl\')"`) +
-							H.div(H.table(H.tr(H.td(Cat.display.getButton('delete', `document.getElementById('error-out').innerHTML = ''`, 'Clear errors'))), 'buttonBarLeft') +
+							H.div(H.table(H.tr(
+									H.td(Cat.display.getButton('delete', `document.getElementById('error-out').innerHTML = ''`, 'Clear errors')) +
+									H.td(Cat.display.downloadButton('ERR', `Cat.downloadString(document.getElementById('error-out').innerHTML, 'text', 'console.err')`), 'buttonBar')), 'buttonBarLeft') +
 								H.span('', 'tty', 'error-out'), 'accordionPnl', 'errorOutPnl');
 				document.getElementById('tty-sidenav').innerHTML = html;
 			},
@@ -2010,14 +2023,16 @@ const Cat =
 			{
 				if (typeof obj === 'string')
 				{
-					const serverInfo = obj in Cat.serverDiagrams ? Cat.serverDiagrams[obj] : null;
-					const localInfo = obj in Cat.localDiagrams ? Cat.localDiagrams[obj] : null;
+					const serverInfo = obj in Cat.serverDiagrams ? Cat.serverDiagrams[obj] : false;
+					const localInfo = obj in Cat.localDiagrams ? Cat.localDiagrams[obj] : false;
 					const serverTime = serverInfo ? serverInfo.timestamp : 0;
 					const localTime = localInfo ? localInfo.timestamp : 0;
+					const tokens = obj.split(Cat.sep);
 					const info =
 					{
 						description:	localInfo ? localInfo.description : (serverInfo ? serverInfo.description : ''),
-						username:		localInfo ? ('user' in localInfo ? localInfo.user : localInfo.username) : (serverInfo ? ('user' in serverInfo ? serverInfo.user : serverInfo.username) : ''),
+//						username:		localInfo ? ('user' in localInfo ? localInfo.user : localInfo.username) : (serverInfo ? ('user' in serverInfo ? serverInfo.user : serverInfo.username) : ''),
+						username:		tokens[2],
 						name:			obj,
 						fancyName:		localInfo ? ('html' in localInfo ? localInfo.html : localInfo.fancyName) : (serverInfo ? ('html' in serverInfo ? serverInfo.html : serverInfo.fancyName) : ''),
 						timestamp:		localInfo ? localInfo.timestamp : (serverInfo ? serverInfo.timestamp : ''),
@@ -2037,12 +2052,12 @@ const Cat =
 			diagramRow(info, tb = null)
 			{
 				const dt = new Date(info.timestamp);
-				const tokens = info.name.split('@');
+				const tokens = info.name.split(Cat.sep);
 				const url = Cat.Amazon.URL(tokens[1], info.username, info.name + '.png');
 				const tbTbl = H.table(H.tr( (tb ? tb : '') +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJSON(`Cat.getDiagram('${info.name}').downloadJSON()`, Cat.default.button.small), 'buttonBar', '', 'Download diagram JSON') : '' ) +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJS(`Cat.getDiagram('${info.name}').downloadJS()`, Cat.default.button.small), 'buttonBar', '', 'Download diagram ecmascript') : '' ) +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonPNG(`Cat.getDiagram('${info.name}').downloadPNG()`, Cat.default.button.small), 'buttonBar', '', 'Download diagram PNG') : '' )),
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JSON', `Cat.getDiagram('${info.name}').downloadJSON()`), 'buttonBar', '', 'Download diagram JSON') : '' ) +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JS', `Cat.getDiagram('${info.name}').downloadJS()`), 'buttonBar', '', 'Download diagram ecmascript') : '' ) +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('PNG', `Cat.getDiagram('${info.name}').downloadPNG()`), 'buttonBar', '', 'Download diagram PNG') : '' )),
 					'buttonBarLeft');
 				const tbl = H.table(
 									H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
@@ -2121,7 +2136,7 @@ const Cat =
 			},
 			getEraseBtn(dgrm)
 			{
-				return dgrm.readonly ? '' : Cat.display.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!', 'eraseBtn');
+				return dgrm.readonly ? '' : Cat.display.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!', Cat.default.button.small, false, 'eraseBtn');
 			},
 			updateLockBtn(dgrm)
 			{
@@ -2130,20 +2145,25 @@ const Cat =
 //					const lockable = dgrm.readonly ? 'unlock' : 'lock';
 //					const lockBtn = Cat.display.getButton(lockable, `Cat.getDiagram().${lockable}(evt)`, Cat.cap(lockable), Cat.default.button.small, false);
 					document.getElementById('lockBtn').innerHTML = this.getLockBtn(dgrm);
-					document.getElementById('eraseBtn').innerHTML = this.getEraseBtn(dgrm);
+//					document.getElementById('eraseBtn').innerHTML = this.getEraseBtn(dgrm);
+					const eb = document.getElementById('eraseBtn');
+					if (eb)
+						eb.innerHTML = this.getEraseBtn(dgrm);
 //				}
 			},
 			setToolbar(dgrm)
 			{
+				const nonAnon = Cat.user.name !== 'Anon';
+				const isUsers = dgrm && (Cat.user.name === dgrm.username);
 				const html = H.table(H.tr(
-							(dgrm && Cat.user.name === dgrm.username ? H.td(this.getLockBtn(dgrm), 'buttonBar', 'lockBtn') : '') +
+							(isUsers ? H.td(this.getLockBtn(dgrm), 'buttonBar', 'lockBtn') : '') +
 //							(dgrm && Cat.user.name === dgrm.username && !dgrm.readonly ? H.td(Cat.display.getButton('lock', 'Cat.getDiagram().lock(evt)', 'Lock', Cat.default.button.small, false), 'buttonBar') : '') +
 //							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!', 'eraseBtn'), 'buttonBar')) +
-							(dgrm && Cat.user.name === dgrm.username ? '' : H.td(this.getEraseBtn(dgrm), 'buttonBar')) +
-							(dgrm && Cat.user.name === dgrm.username ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJSON('Cat.getDiagram().downloadJSON()', Cat.default.button.small), 'buttonBar') : '' ) +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonJS('Cat.getDiagram().downloadJS()', Cat.default.button.small), 'buttonBar') : '' ) +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButtonPNG('Cat.getDiagram().downloadPNG()', Cat.default.button.small), 'buttonBar') : '' ) +
+							(isUsers ? H.td(this.getEraseBtn(dgrm), 'buttonBar', 'eraseBtn') : '') +
+							(nonAnon && isUsers ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
+							(nonAnon ? H.td(Cat.display.downloadButton('JSON', 'Cat.getDiagram().downloadJSON()'), 'buttonBar') : '' ) +
+							(nonAnon ? H.td(Cat.display.downloadButton('JS', 'Cat.getDiagram().downloadJS()'), 'buttonBar') : '' ) +
+							(nonAnon ? H.td(Cat.display.downloadButton('PNG', 'Cat.getDiagram().downloadPNG()'), 'buttonBar') : '' ) +
 							Cat.display.expandPanelBtn('diagram', false) +
 							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight');
 				document.getElementById('diagramPanelToolbar').innerHTML = html;
@@ -2339,6 +2359,7 @@ const Cat =
 			{
 				try
 				{
+					const dgrm = Cat.getDiagram();
 					if (dgrm.readonly)
 						throw 'Diagram is read only';
 					document.getElementById('objectError').innerHTML = '';
@@ -2346,7 +2367,6 @@ const Cat =
 					const name = nameElt.value;
 					if (name !== '' && !RegExp(Cat.userNameEx).test(name))
 							throw 'Invalid object name.';
-					const dgrm = Cat.getDiagram();
 					if (dgrm.getObject(name))
 						throw `Object with name ${name} already exists.`;
 					nameElt.value = '';
@@ -2868,28 +2888,10 @@ const Cat =
 			},
 		},
 		id:	0,	// unique id's
-		downloadButtonJSON(onclick, scale = Cat.default.button.small)
-		{
-			const html = this.svg.header(scale) +
-				this.svg.buttons.download +
-`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">JSON</text>
-${this.svg.button(onclick)}
-</svg>`;
-			return html;
-		},
-		downloadButtonJS(onclick, scale = Cat.default.button.small)
-		{
-			const html = this.svg.header(scale) +
-				this.svg.buttons.download +
-`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">JS</text>
-${this.svg.button(onclick)}
-</svg>`;
-			return html;
-		},
-		downloadButtonPNG(onclick, scale = Cat.default.button.small)
+		downloadButton(txt, onclick, scale = Cat.default.button.small)
 		{
 			const html = this.svg.header(scale) + this.svg.buttons.download +
-`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">PNG</text>
+`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">${txt}</text>
 ${this.svg.button(onclick)}
 </svg>`;
 			return html;
@@ -3630,8 +3632,9 @@ ${this.svg.button(onclick)}
 					const nextRound = [];
 					for (let i=0; i<fetchedJsons.length; ++i)
 						nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && nextRound.indexOf(r) < 0));
-					if (nextRound.length > 0)
-						Cat.Amazon.fetchDiagramJsons(nextRound, fn, jsons, refs);
+					const filteredRound = nextRound.filter(d => typeof d === 'string' && Cat.getDiagram(d) === null);
+					if (filteredRound.length > 0)
+						Cat.Amazon.fetchDiagramJsons(filteredRound, null, jsons, refs);
 					else if (fn)
 						fn(jsons);
 				});
@@ -3710,7 +3713,21 @@ ${this.svg.button(onclick)}
 		case 'object':
 			return {x:Cat.grid(x.x), y:Cat.grid(x.y)};
 		}
-	}
+	},
+	fetchDiagrams(dgrms, refs, fn)
+	{
+		Cat.Amazon.fetchDiagramJsons(dgrms, function(jsons)
+		{
+			jsons.map(j =>
+			{
+				const dgrm = new diagram(j);
+				dgrm.saveToLocalStorage();
+			});
+			if (fn)
+				fn(jsons);
+			return jsons;
+		}, [], refs);
+	},
 };
 
 class element
@@ -4603,7 +4620,7 @@ class category extends object
 			$Cat.addObject($Cat);
 			$Cat.expr = this.parseObject(args.code);
 		}
-		this.anonCount = 0;
+//		this.anonCount = 0;
 		this.process(this.diagram, args);
 	}
 	clear()
@@ -4612,7 +4629,7 @@ class category extends object
 		this.morphisms.clear();
 		this.transforms.clear();
 		this.texts = [];
-		this.anonCount =0;
+//		this.anonCount =0;
 	}
 	process(dgrm, args)
 	{
@@ -4803,7 +4820,8 @@ class category extends object
 	{
 		while(true)
 		{
-			const name = `${s}${this.anonCount++}`;
+//			const name = `${s}${this.anonCount++}`;
+			const name = `${s}_${Cat.random()}`;
 			if (!this.hasObject(name) && !this.hasMorphism(name))
 				return name;
 		}
@@ -4982,17 +5000,7 @@ ws "white space" = [ \t\\r\\n]+
 		for (const d in Cat.diagrams)
 			refs[d] = true;
 		if (dgrms.length > 0)
-			Cat.Amazon.fetchDiagramJsons(dgrms, function(jsons)
-			{
-				jsons.map(j =>
-				{
-					const dgrm = new diagram(j);
-					dgrm.saveToLocalStorage();
-				});
-				if (fn)
-					fn(jsons);
-				return jsons;
-			}, [], refs);
+			Cat.fetchDiagrams(dgrms, refs, fn);
 		else if (fn)
 			fn([]);
 	}
@@ -6807,7 +6815,8 @@ class diagram extends functor
 		}
 		else
 			name = basename;
-		if (namexTst && Cat.hasDiagram(name))
+		// TODO need different test; remove hasDiagram
+		if (namexTst && (Cat.hasDiagram(name) || dgrmName in Cat.serverDiagrams))
 			throw `Diagram name ${name} already used. Pick another.`;
 		return name;
 	}
@@ -8101,7 +8110,7 @@ class ${jsName} extends diagram
 	}
 	newDataMorphism(dom, cod)
 	{
-		return new dataMorphism(this.codomain, {name:this.codomain.getAnon('Data'), diagram:this.name, domain:dom.name, codomain:cod.name});
+		return new dataMorphism(this.codomain, {name:this.codomain.getAnon('Data'), html:'Data', diagram:this.name, domain:dom.name, codomain:cod.name});
 	}
 	updateObjectTableRows(pnlName)
 	{
@@ -8120,7 +8129,7 @@ class ${jsName} extends diagram
 				found[obj.name] = true;
 			}
 		document.getElementById(pnlName).innerHTML = H.table(objects.map(o => H.tr(
-							H.td(o.refcnt === 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeObject(evt, '${o.name}')`, 'Delete object') : '', 'buttonBar') +
+							H.td(o.refcnt === 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeObject(evt, '${o.name}')`, 'Delete object') : '', 'buttonBar') +
 							H.td(o.getText()),
 							'grabbable sidenavRow', '', Cat.cap(o.description), `draggable="true" ondragstart="Cat.display.object.drag(event, '${o.name}')"`)).join(''));
 	}
@@ -8135,8 +8144,8 @@ class ${jsName} extends diagram
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-				H.td(m.refcnt) +
-							H.td(m.refcnt <= 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
+//				H.td(m.refcnt) +
+							H.td(m.refcnt <= 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
 							H.td(m.getText()) +
 							H.td(m.domain.getText()) +
 							H.td('&rarr;') +
@@ -8148,8 +8157,8 @@ class ${jsName} extends diagram
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-				H.td(m.refcnt) +
-							H.td(m.refcnt <= 1 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
+//				H.td(m.refcnt) +
+							H.td(m.refcnt <= 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
 								'', 'buttonBar') +
 							H.td(m.getText()) +
 							H.td(m.domain.getText()) +
