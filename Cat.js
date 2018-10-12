@@ -12,17 +12,22 @@ if (typeof require !== 'undefined')
 	var ACI = null;
 	var CatFns = null;
 	var sjcl = null;
+	var peg = null;
 	AWS = require('aws-sdk');
-	if (typeof AmazonCognitoIdentity === 'undefined')
-		ACI = require('amazon-cognito-identity-js');
+	// TODO how to do this for AWS Lambda?
+//	if (typeof AmazonCognitoIdentity === 'undefined')
+//		ACI = require('amazon-cognito-identity-js');
 	sjcl = require('./sjcl.js');
 	CatFns = require('./CatFns.js');
+	peg = require('./peg-0.10.0.min.js');
+	var crypto = require('crypto');
 }
 else
 {
 	var CatFns = window.CatFns;
 	var AWS = window.AWS;
 	var sjcl = window.sjcl;
+	var peg = window.peg;
 }
 
 var $Cat = null;	// Cat of cats
@@ -248,7 +253,7 @@ const Cat =
 	random()
 	{
 		const ary = new Uint8Array(16);
-		window.crypto.getRandomValues(ary);
+		isGUI ? window.crypto.getRandomValues(ary) : crypto.randomFillSync(ary);
 		let cid = '';
 		for (let i=0; i<16; ++i)
 			cid += ary[i].toString(16);
@@ -273,7 +278,7 @@ const Cat =
 	},
 	hasAcceptedCookies()
 	{
-		return localStorage.getItem('CateconCookiesAccepted') !== null;
+		return isGUI && localStorage.getItem('CateconCookiesAccepted') !== null;
 	},
 	getError(err)
 	{
@@ -353,7 +358,6 @@ const Cat =
 	},
 	hasDiagram(dgrmName)
 	{
-//		return Cat.hasLocalDiagram(dgrmName) || dgrmName in Cat.diagrams || dgrmName in Cat.serverDiagrams;
 		return Cat.hasLocalDiagram(dgrmName) || dgrmName in Cat.diagrams;
 	},
 	getDiagram(dgrmName, checkLocal = true)
@@ -377,8 +381,9 @@ const Cat =
 	},
 	getLocalDiagramList()
 	{
+		if (!isGUI)
+			return {};
 		Cat.localDiagrams = JSON.parse(localStorage.getItem('Cat.diagrams.local'));
-console.log('getLocalDiagramList',Cat.localDiagrams);
 		if (Cat.localDiagrams === null)
 			Cat.localDiagrams = {};
 		// TODO debug, clean-up, remove, eventually
@@ -444,7 +449,7 @@ console.log('getLocalDiagramList',Cat.localDiagrams);
 		//
 		// Danger!
 		//
-		localStorage.clear();
+		isGUI && localStorage.clear();
 		if ($Cat !== null)
 			Cat.getDiagram().deleteAll();
 		Cat.localDiagrams = {};
@@ -2031,7 +2036,6 @@ console.log('getLocalDiagramList',Cat.localDiagrams);
 					const info =
 					{
 						description:	localInfo ? localInfo.description : (serverInfo ? serverInfo.description : ''),
-//						username:		localInfo ? ('user' in localInfo ? localInfo.user : localInfo.username) : (serverInfo ? ('user' in serverInfo ? serverInfo.user : serverInfo.username) : ''),
 						username:		tokens[2],
 						name:			obj,
 						fancyName:		localInfo ? ('html' in localInfo ? localInfo.html : localInfo.fancyName) : (serverInfo ? ('html' in serverInfo ? serverInfo.html : serverInfo.fancyName) : ''),
@@ -2141,15 +2145,12 @@ console.log('getLocalDiagramList',Cat.localDiagrams);
 			updateLockBtn(dgrm)
 			{
 				if (dgrm && Cat.user.name === dgrm.username)
-//				{
-//					const lockable = dgrm.readonly ? 'unlock' : 'lock';
-//					const lockBtn = Cat.display.getButton(lockable, `Cat.getDiagram().${lockable}(evt)`, Cat.cap(lockable), Cat.default.button.small, false);
+				{
 					document.getElementById('lockBtn').innerHTML = this.getLockBtn(dgrm);
-//					document.getElementById('eraseBtn').innerHTML = this.getEraseBtn(dgrm);
 					const eb = document.getElementById('eraseBtn');
 					if (eb)
 						eb.innerHTML = this.getEraseBtn(dgrm);
-//				}
+				}
 			},
 			setToolbar(dgrm)
 			{
@@ -2157,8 +2158,6 @@ console.log('getLocalDiagramList',Cat.localDiagrams);
 				const isUsers = dgrm && (Cat.user.name === dgrm.username);
 				const html = H.table(H.tr(
 							(isUsers ? H.td(this.getLockBtn(dgrm), 'buttonBar', 'lockBtn') : '') +
-//							(dgrm && Cat.user.name === dgrm.username && !dgrm.readonly ? H.td(Cat.display.getButton('lock', 'Cat.getDiagram().lock(evt)', 'Lock', Cat.default.button.small, false), 'buttonBar') : '') +
-//							(dgrm && dgrm.readonly ? '' : H.td(Cat.display.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!', 'eraseBtn'), 'buttonBar')) +
 							(isUsers ? H.td(this.getEraseBtn(dgrm), 'buttonBar', 'eraseBtn') : '') +
 							(nonAnon && isUsers ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
 							(nonAnon ? H.td(Cat.display.downloadButton('JSON', 'Cat.getDiagram().downloadJSON()'), 'buttonBar') : '' ) +
@@ -3262,7 +3261,7 @@ ${this.svg.button(onclick)}
 				region:			this.region,
 				credentials:	new AWS.CognitoIdentityCredentials(this.loginInfo),
 			});
-			this.registerCognito();
+			isGUI && this.registerCognito();
 		},
 		updateServiceObjects()
 		{
@@ -6721,7 +6720,7 @@ class diagram extends functor
 		this.updateElements();
 		this.subClass = 'diagram';
 		this.selected = [];
-		this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:window.innerWidth, height:window.innerHeight});
+		this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:isGUI ? window.innerWidth : 1024, height:isGUI ? window.innerHeight : 768});
 		if (isGUI && this.viewport.width === 0)
 		{
 			this.viewport.width = window.innerWidth;
@@ -8546,6 +8545,69 @@ class ${jsName} extends diagram
 		let funText = functions[name].toString();
 		funText = funText.replace(new RegExp(name), 'function');
 		return `CatFns.${type}['${name}'] = ${funText};\n`;
+	}
+	formJS()
+	{
+		let js =
+`//
+// Catelitical version of ${this.user}'s diagram ${this.basename} for Ecmascript
+//
+// Date: ${Date()}
+// CID:  ${this.cid}
+//
+const CatFns = {function:{}, functor:{}, transform:{}, util:{}};
+
+`;
+		Object.keys(CatFns.function).forEach(function(name)
+		{
+			if (name === 'ttyOut')
+				js += `CatFns.function['ttyOut'] = function(args)\n\t\t{\n\t\t\tconsole.log(args);\n\t\t\treturn null;\n\t\t};`;
+			else
+				js += diagram.functionBody('function', name, CatFns.function);
+		});
+		Object.keys(CatFns.util).forEach(function(name)
+		{
+			js += diagram.functionBody('util', name, CatFns.util);
+		});
+		js = js.replace(/\r/g, '');
+		js +=
+`
+class diagram
+{
+	constructor()
+	{
+		this.morphisms = new Map();
+		this.references = [];
+	}
+	getMorphism(name)
+	{
+		let m = null;
+		for (let i=0; i<this.references.length; ++i)
+		{
+			const r = this.references[i];
+			m = r.getMorphism(name);
+			if (m)
+				return m;
+		}
+		return this.morphisms.has(name) ? this.morphisms.get(name) : null;
+	}
+}
+`;
+		let found = {};
+		js += this.js(found);
+		found[this.name] = true;
+		js += 'const diagrams = {};\n';
+		Object.keys(found).forEach(function(d)
+		{
+			js += `diagrams['${d}'] = \tnew ${d}();\n`;
+		});
+		js += `
+function getDiagram()
+{
+	return diagrams.${this.name};
+}
+`;
+		return js;
 	}
 	downloadJS()
 	{
