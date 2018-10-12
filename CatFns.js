@@ -392,6 +392,13 @@
 		exports.transform =	CatFns.transform;
 		exports.util =		CatFns.util;
 	}
+	else if (typeof module !== 'undefined')
+	{
+		module.exports.function =	CatFns.function;
+		module.exports.functor =	CatFns.functor;
+		module.exports.transform =	CatFns.transform;
+		module.exports.util =		CatFns.util;
+	}
 	else
 	{
 		window.CatFns = CatFns;
