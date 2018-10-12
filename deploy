@@ -13,20 +13,64 @@ const tsFilename = '.timestamps.json';
 
 let lambda = new AWS.Lambda();
 
-function deploy(files, timestamps, fileInfo, deployed)
+function uploadLambda(info)
 {
-	const deployMe = files.filter(f => timestamps[f] > (f in deployed ? deployed[f] : 0));
-	deployMe.map(f =>
+	const copyDeps = info.dependencies.map(d => `cp -p ${d} build`).join(';\n');
+	const f = info.file;
+	const n = info.name;
+	const script =
+`
+${copyDeps}
+cp ${f} build/index.js
+cd build
+zip ${n}.zip index.js ${info.dependencies.join(' ')}
+rm index.js
+aws lambda update-function-code --function-name ${n} --zip-file fileb://./${n}.zip
+`;
+	proc.execSync(script); //.on('exit', function(code, signal) {console.log(`${n} uploaded with status ${code}`)});
+}
+
+function deploy(actions, timestamps, deployed)
+{
+//	const deployMe = files.filter(f => timestamps[f] > (f in deployed ? deployed[f] : 0));
+	actions.map(info =>
 		{
-			const info = fileInfo[f];
-			switch(info.method)
+			const f = info.file;
+			if (timestamps[f] > (f in deployed ? deployed[f] : -1))
 			{
-			case 'copyCat':
-				const cmd = `scp -i ~/hdole-norcal.pem ${f} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/catecon/${info.target}`;
-				process.stdout.write(`${cmd}\n`);
-				proc.execSync(cmd);
-				break;
+				switch(info.method)
+				{
+				case 'mkdir':
+					console.log('mkdir', f);
+					if (!fs.existsSync(f))
+					{
+						fs.mkdirSync(f);
+						timestamps[f] = fs.statSync(f).mtime.getTime();
+					}
+					else
+					{
+						const stats = fs.lstatSync(f);
+						if (!stats.isDirectory())
+							throw `Error: file exists but is not a directory: ${f}`;
+					}
+					break;
+				case 'copyCat':
+					console.log('copyCat', f);
+					const cmd = `scp -i ~/hdole-norcal.pem ${f} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/catecon/${info.target}`;
+					process.stdout.write(`${cmd}\n`);
+					proc.execSync(cmd);
+					break;
+				case 'uploadLambda':
+					console.log('uploadLambda', f);
+					uploadLambda(info);
+					break;
+				default:
+					console.log('Error: action not understood: ', info.method);
+					break;
+				}
 			}
+			else
+				console.log('up to date', f);
 		});
 	fs.writeFileSync(tsFilename, JSON.stringify(timestamps), 'utf8');
 }
@@ -39,12 +83,13 @@ fs.readFile(bldFilename, 'utf8', function bldReadFileCB(err, data)
 		return;
 	}
 	const fileInfo = JSON.parse(data);
+	const actions = fileInfo.actions;
 	const timestamps = {};
-	const files = Object.keys(fileInfo);
+	const files = actions.map(info => info.file).filter((f, i, a) => i === a.indexOf(f));
 	//
 	// get current timestamps
 	//
-	files.map(f => timestamps[f] = fs.statSync(f).mtime.getTime());
+	files.map(f => timestamps[f] = fs.existsSync(f) ? fs.statSync(f).mtime.getTime() : 0);
 	//
 	// get last deployment state
 	//
@@ -57,8 +102,8 @@ fs.readFile(bldFilename, 'utf8', function bldReadFileCB(err, data)
 				return;
 			}
 			const deployed = JSON.parse(data);
-			deploy(files, timestamps, fileInfo, deployed);
+			deploy(actions, timestamps, deployed);
 		});
 	else
-		deploy(files, timestamps, fileInfo, {});
+		deploy(actions, timestamps, {});
 });
