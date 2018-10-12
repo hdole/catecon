@@ -1,0 +1,137 @@
+{
+	"actions":
+	[
+		{
+			"file":		"build",
+			"method":	"mkdir"
+		},
+		{
+			"file":		"lambda/AWSconstants.js",
+			"method":	"copy",
+			"target":	"build"
+		},
+		{
+			"file":		"Cat.js",
+			"method":	"link",
+			"target":	"build"
+		},
+		{
+			"file":		"Cat.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"index.html",
+			"method":	"copyCat",
+			"target":	"."
+		},
+		{
+			"file":		"catecon.css",
+			"method":	"copyCat",
+			"target":	"."
+		},
+		{
+			"file":		"category.ico",
+			"method":	"copyCat",
+			"target":	"favicon.ico"
+		},
+		{
+			"file":		"Cat.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"OrbitControls.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"sha256.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"three.min.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"CatFns.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"peg-0.10.0.min.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"sjcl.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
+			"file":		"lambda/CateconBootstrap.js",
+			"name":		"CateconBootstrap",
+			"method":	"uploadLambda",
+			"dependencies"	: ["Cat.js", "CatFns.js", "sha256.js", "sjcl.js", "peg-0.10.0.min.js", "/mnt/f/xampp/htdocs/node_modules/amazon-cognito-identity-js/dist/amazon-cognito-identity.min.js", "lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconCatalog.js",
+			"name":		"CateconCatalog",
+			"method":	"uploadLambda",
+			"dependencies"	: ["lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconDiagramUpdate.js",
+			"name":		"CateconDiagramUpdate",
+			"method":	"uploadLambda",
+			"dependencies"	: [],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconDownloadJS.js",
+			"name":		"CateconDownloadJS",
+			"method":	"uploadLambda",
+			"dependencies"	: ["Cat.js", "CatFns.js", "sha256.js", "sjcl.js", "peg-0.10.0.min.js", "/mnt/f/xampp/htdocs/node_modules/amazon-cognito-identity-js/dist/amazon-cognito-identity.min.js", "lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconGetUserDiagrams.js",
+			"name":		"CateconGetUserDiagrams",
+			"method":	"uploadLambda",
+			"dependencies"	: ["lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconIngestCategory.js",
+			"name":		"CateconIngestCategory",
+			"method":	"uploadLambda",
+			"dependencies"	: ["lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconIngestDiagram.js",
+			"name":		"CateconIngestDiagram",
+			"method":	"uploadLambda",
+			"dependencies"	: ["lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconRecentDiagrams.js",
+			"name":		"CateconRecentDiagrams",
+			"method":	"uploadLambda",
+			"dependencies"	: ["lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
+			"file":		"lambda/CateconCT.js",
+			"name":		"CateconCT",
+			"method":	"uploadLambda",
+			"dependencies"	: ["lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		}
+	]
+}
