@@ -222,25 +222,20 @@ const Cat =
 	intro()
 	{
 		let html = H.h1('Catecon') +
-					H.h2('The Categorical Console') +
+					H.h4('The Categorical Console') +
 					H.h3('Shareable Executable Diagrams') +
 					H.div(
 						H.h4('Extreme Alpha Edition') +
-						H.small('Likely to break and you lose all your stuff', 'italic txtCenter') + H.br() +
-						H.small('Current work: coproducts', 'txtCenter') +
+						H.small('Will break and you will lose all your stuff', 'italic txtCenter') + H.br() +
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
-						H.p('Accept cookies by entering the secret access code into the text box below:', 'txtCenter') +
+						H.p('Accept cookies by entering the categorical access code into the text box below:', 'txtCenter') +
 						H.table(
 								((!!window.chrome && !!window.chrome.webstore) ?
 									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
 									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
-									H.tr(H.td(H.h4('Use Chrome', 'error')))), 'center') +
-						H.span('', '', 'introPngs') +
-//						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@factorial.png" width="300" height="225">' +
-//						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@Fibonacci.png" width="300" height="225">' +
-//						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@LoopN.png" width="300" height="225">' +
-						'<br/>' +
+									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
+						H.span('', '', 'introPngs') + '<br/>' +
 						H.table(H.tr(H.td(H.h5('Articles', 'txtCenter'))) +
 								H.tr(H.td(H.a('Intro To Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"'))) +
 								H.tr(H.td(H.a('V Is For Vortex - More Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"'))) +
@@ -1904,9 +1899,9 @@ const Cat =
 							(cat !== null ? H.button(`${Cat.user.name}`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'userDiagramDisplay\')"') : '') +
 							H.div(	H.small('User diagrams') +
 							H.div('', '', 'userDiagrams'), 'accordionPnl', 'userDiagramDisplay') +
-							H.button('Recent', 'sidenavAccordion', '', 'Recent diagrams from Catecon', 'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.setRecentDiagramTable()"') +
+							H.button('Recent', 'sidenavAccordion', '', 'Recent diagrams from Catecon', 'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.fetchRecentDiagrams()"') +
 							H.div(H.div('', 'accordionPnl', 'recentDiagrams')) +
-							H.button('Catalog', 'sidenavAccordion', '', 'Catalog of available diagrams', 'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.setCatalogDiagramTable()"') +
+							H.button('Catalog', 'sidenavAccordion', '', 'Catalog of available diagrams', 'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.fetchCatalogDiagramTable()"') +
 							H.div(H.div('', 'accordionPnl', 'catalogDiagrams'));
 				document.getElementById('diagram-sidenav').innerHTML = html;
 				this.update();
@@ -1925,6 +1920,7 @@ const Cat =
 					Cat.display.diagram.setToolbar(dgrm);
 				}
 			},
+			/*
 			deleteTerm(ndx)
 			{
 				try
@@ -1974,6 +1970,7 @@ const Cat =
 					}
 				return H.table(H.tr(H.th('&nbsp;') + H.th('&nbsp;') + H.th('Element') + H.th('&nbsp;') + H.th('Term') + H.th('&nbsp;'), 'sidenavRow') + html);
 			},
+			*/
 			newDiagramPnl()
 			{
 				let html =	H.button('New', 'sidenavAccordion', '', 'New Diagram', `onclick="Cat.display.accordion.toggle(this, \'newDiagramPnl\')"`) +
@@ -2104,7 +2101,7 @@ const Cat =
 				}).join('');
 				document.getElementById('referenceDiagrams').innerHTML = H.table(html);
 			},
-			setRecentDiagramTable()
+			fetchRecentDiagrams()
 			{
 				if (!('recentDiagrams' in Cat))
 					fetch(Cat.Amazon.URL() + '/recent.json').then(function(response)
@@ -2120,15 +2117,16 @@ const Cat =
 									recentDiagrams.innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
 								const introPngs = document.getElementById('introPngs');
 								if (introPngs)
-									introPngs.innerHTML = data.diagrams.map(d => 
+									introPngs.innerHTML = data.diagrams.map(d =>
 									{
 										const tokens = d.name.split('@');
-										return `<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/${tokens[1]}/${d.username}/${d.name}.png" width="300" height="225" title="${d.fancyName}: ${d.description}"/>`;
+										return `<img class="intro" src="${Cat.Amazon.URL(tokens[1], d.username, d.name)}.png" width="300" height="225" title="${d.fancyName} by ${d.username}: ${d.description}"/>`;
+//										return `<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/${tokens[1]}/${d.username}/${d.name}.png" width="300" height="225" title="${d.fancyName}: ${d.description}"/>`;
 									}).join('');
 							});
 					});
 			},
-			setCatalogDiagramTable()
+			fetchCatalogDiagramTable()
 			{
 				if (!('catalogDiagrams' in Cat))
 					fetch(Cat.Amazon.URL() + '/catalog.json').then(function(response)
@@ -3048,7 +3046,7 @@ ${this.svg.button(onclick)}
 							Cat.display.panel.toggle('diagram');
 						break;
 					case 70:	// f
-						if (plain && !dgrm.readonly)
+						if (plainShift && !dgrm.readonly)
 							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'F*F' : 'F'), xy);
 						break;
 					case 72:	// h
@@ -3786,12 +3784,12 @@ class element
 	decrRefcnt()
 	{
 		if (Cat.debug)
-			console.log('element.decrRefcnt',this.category.name,this.name,this.refcnt);
+			console.log('element.decrRefcnt', this.category.name, this.name, this.refcnt);
 		--this.refcnt;
 		if (this.refcnt <= 0)
 		{
 			if (Cat.debug)
-				console.log('element.decrRefcnt delete',this.category.name,this.name);
+				console.log('element.decrRefcnt delete', this.category.name, this.name);
 			if (this.class === 'element')
 				this.diagram.texts.splice(this.diagram.texts.indexOf(this), 1);
 			isGUI && this.removeSVG();
@@ -3844,7 +3842,6 @@ class element
 	}
 	setXY(xy)
 	{
-		const d = Cat.default.layoutGrid;
 		this.x = Cat.grid(xy.x);
 		this.y = Cat.grid(xy.y);
 	}
@@ -3926,10 +3923,8 @@ class element
 			},
 			function(dgrm, expr, first, full)
 			{
-				const leftCodeName = element.codename(dgrm, expr.lhs);
 				const lCode = element.getCode(dgrm, expr.lhs, false, full);
 				const rCode = element.getCode(dgrm, expr.rhs, false, full);
-				const rightCodeName = element.codename(dgrm, expr.rhs);
 				const op = Cat.basetypes.operators[expr.op];
 				let code = op.code;
 				return op.toCode(lCode, rCode);
@@ -5009,6 +5004,7 @@ ws "white space" = [ \t\\r\\n]+
 		else if (fn)
 			fn([]);
 	}
+	/*
 	rename(nuName)	// only for diagram's domain category
 	{
 		const olName = this.name;
@@ -5017,6 +5013,7 @@ ws "white space" = [ \t\\r\\n]+
 		this.html = nuName;
 		this.expr.token = nuName; // TODO recompute width
 	}
+	*/
 }
 
 class morphism extends element
@@ -6588,6 +6585,7 @@ class transform extends morphism
 	}
 }
 
+/*
 class term extends object
 {
 	constructor(args)
@@ -6613,6 +6611,7 @@ class term extends object
 		return trm;
 	}
 }
+*/
 
 class diagram extends functor
 {
@@ -7788,6 +7787,7 @@ class diagram extends functor
 		from.addSVG();
 		this.update(e, 'morphism', from, true);
 	}
+	/*
 	addTerm(t)
 	{
 		this.terms.push(t);	// TODO lots of validation
@@ -7796,6 +7796,7 @@ class diagram extends functor
 	{
 		this.terms.splice(ndx, 1);
 	}
+	*/
 	run(e)
 	{
 		const from = this.getSelected();
@@ -8002,7 +8003,6 @@ class diagram extends functor
 		const nuArgs = Cat.clone(args);
 		nuArgs.diagram = this;
 		const obj = new object(this.codomain, nuArgs);
-//		const codename = element.codename(this, obj.expr);
 		return obj;
 	}
 	validateAvailableObject(name)
@@ -8053,7 +8053,6 @@ class diagram extends functor
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-//				H.td(m.refcnt) +
 							H.td(m.refcnt <= 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
 							H.td(m.getText()) +
 							H.td(m.domain.getText()) +
@@ -8066,7 +8065,6 @@ class diagram extends functor
 				continue;
 			found[m.name] = true;
 			html += H.tr(
-//				H.td(m.refcnt) +
 							H.td(m.refcnt <= 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
 								'', 'buttonBar') +
 							H.td(m.getText()) +
@@ -8204,7 +8202,6 @@ class diagram extends functor
 			const from = this.getSelected();
 			const to = this.mapElement(from);
 			h.contentEditable = false;
-//			this.updateElementAttribute(from, to, attr, h.innerText);
 			this.updateElementAttribute(from, to, attr, Cat.htmlEntitySafe(h.innerText));
 			this.elementHelp();
 			from.showSelected();
@@ -8450,18 +8447,9 @@ class diagram extends functor
 	{
 		return this.texts[this.texts.indexOf(name)];
 	}
-	/*
-	static functionBody(type, name, functions)
-	{
-		let funText = functions[name].toString();
-		funText = funText.replace(new RegExp(name), 'function');
-		return `\tCatFns.${type}['${name}'] = ${funText};\n`;
-	}
-	*/
 	downloadJS(e)
 	{
 		const start = Date.now();
-//		const diagrams = this.references.map(r => r.json());
 		const diagrams = Object.keys(this.getReferenceCounts()).map(r => Cat.getDiagram(r).json());
 		diagrams.push(this.json());
 		const params =
@@ -8605,7 +8593,7 @@ if (isGUI)
 	if (!Cat.hasAcceptedCookies())
 	{
 		document.getElementById('intro').innerHTML = Cat.intro();
-		Cat.display.diagram.setRecentDiagramTable();
+		Cat.display.diagram.fetchRecentDiagrams();
 		window.Cat			= Cat;
 		return;
 	}
