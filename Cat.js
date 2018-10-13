@@ -235,7 +235,7 @@ const Cat =
 								((!!window.chrome && !!window.chrome.webstore) ?
 									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
 									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
-									H.tr(H.td(H.h4('Use the Chrome web browser', 'error')))), 'center') +
+									H.tr(H.td(H.h4('Use Chrome', 'error')))), 'center') +
 						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@factorial.png" width="300" height="225">' +
 						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@Fibonacci.png" width="300" height="225">' +
 						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@LoopN.png" width="300" height="225">' +
@@ -1769,12 +1769,12 @@ const Cat =
 							H.div(
 								H.table(H.tr(
 									H.td(Cat.display.getButton('delete', `document.getElementById('tty-out').innerHTML = ''`, 'Clear output'), 'buttonBar') +
-									H.td(Cat.display.downloadButton('LOG', `Cat.downloadString(document.getElementById('tty-out').innerHTML, 'text', 'console.log')`), 'buttonBar')), 'buttonBarLeft') +
+									H.td(Cat.display.downloadButton('LOG', `Cat.downloadString(document.getElementById('tty-out').innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBar')), 'buttonBarLeft') +
 								H.pre('', 'tty', 'tty-out'), 'accordionPnl', 'ttyOutPnl') +
 							H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.display.accordion.toggle(this, \'errorOutPnl\')"`) +
 							H.div(H.table(H.tr(
 									H.td(Cat.display.getButton('delete', `document.getElementById('error-out').innerHTML = ''`, 'Clear errors')) +
-									H.td(Cat.display.downloadButton('ERR', `Cat.downloadString(document.getElementById('error-out').innerHTML, 'text', 'console.err')`), 'buttonBar')), 'buttonBarLeft') +
+									H.td(Cat.display.downloadButton('ERR', `Cat.downloadString(document.getElementById('error-out').innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBar')), 'buttonBarLeft') +
 								H.span('', 'tty', 'error-out'), 'accordionPnl', 'errorOutPnl');
 				document.getElementById('tty-sidenav').innerHTML = html;
 			},
@@ -2059,9 +2059,9 @@ const Cat =
 				const tokens = info.name.split(Cat.sep);
 				const url = Cat.Amazon.URL(tokens[1], info.username, info.name + '.png');
 				const tbTbl = H.table(H.tr( (tb ? tb : '') +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JSON', `Cat.getDiagram('${info.name}').downloadJSON()`), 'buttonBar', '', 'Download diagram JSON') : '' ) +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JS', `Cat.getDiagram('${info.name}').downloadJS()`), 'buttonBar', '', 'Download diagram ecmascript') : '' ) +
-							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('PNG', `Cat.getDiagram('${info.name}').downloadPNG()`), 'buttonBar', '', 'Download diagram PNG') : '' )),
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JSON', `Cat.getDiagram('${info.name}').downloadJSON(evt)`, 'Download JSON'), 'buttonBar', '', 'Download diagram JSON') : '' ) +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JS', `Cat.getDiagram('${info.name}').downloadJS(evt)`, 'Download Ecmascript'), 'buttonBar', '', 'Download diagram ecmascript') : '' ) +
+							(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('PNG', `Cat.getDiagram('${info.name}').downloadPNG(evt)`, 'Download PNG'), 'buttonBar', '', 'Download diagram PNG') : '' )),
 					'buttonBarLeft');
 				const tbl = H.table(
 									H.tr(H.td(H.h5(info.fancyName), '', '', '', 'colspan="2"')) +
@@ -2160,9 +2160,9 @@ const Cat =
 							(isUsers ? H.td(this.getLockBtn(dgrm), 'buttonBar', 'lockBtn') : '') +
 							(isUsers ? H.td(this.getEraseBtn(dgrm), 'buttonBar', 'eraseBtn') : '') +
 							(nonAnon && isUsers ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
-							(nonAnon ? H.td(Cat.display.downloadButton('JSON', 'Cat.getDiagram().downloadJSON()'), 'buttonBar') : '' ) +
-							(nonAnon ? H.td(Cat.display.downloadButton('JS', 'Cat.getDiagram().downloadJS()'), 'buttonBar') : '' ) +
-							(nonAnon ? H.td(Cat.display.downloadButton('PNG', 'Cat.getDiagram().downloadPNG()'), 'buttonBar') : '' ) +
+							(nonAnon ? H.td(Cat.display.downloadButton('JSON', 'Cat.getDiagram().downloadJSON(evt)', 'Download JSON'), 'buttonBar') : '' ) +
+							(nonAnon ? H.td(Cat.display.downloadButton('JS', 'Cat.getDiagram().downloadJS(evt)', 'Download Ecmascript'), 'buttonBar') : '' ) +
+							(nonAnon ? H.td(Cat.display.downloadButton('PNG', 'Cat.getDiagram().downloadPNG(evt)', 'Download PNG'), 'buttonBar') : '' ) +
 							Cat.display.expandPanelBtn('diagram', false) +
 							Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight');
 				document.getElementById('diagramPanelToolbar').innerHTML = html;
@@ -2887,12 +2887,12 @@ const Cat =
 			},
 		},
 		id:	0,	// unique id's
-		downloadButton(txt, onclick, scale = Cat.default.button.small)
+		downloadButton(txt, onclick, title, scale = Cat.default.button.small)
 		{
-			const html = this.svg.header(scale) + this.svg.buttons.download +
+			const html = H.span(this.svg.header(scale) + this.svg.buttons.download +
 `<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">${txt}</text>
 ${this.svg.button(onclick)}
-</svg>`;
+</svg>`, '', '', title);
 			return html;
 		},
 		getButton(buttonName, onclick, title, scale = Cat.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
@@ -3691,7 +3691,6 @@ ${this.svg.button(onclick)}
 		{
 			ctx.drawImage(img, 0, 0);
 			Cat.url.revokeObjectURL(url);
-//			const cargo = (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) ? navigator.msSaveOrOpenBlob(canvas.msToBlob(), filename) : canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 			const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 			const dgrmImg = document.getElementById(`img_${name}`);
 			if (dgrmImg)
@@ -4619,7 +4618,6 @@ class category extends object
 			$Cat.addObject($Cat);
 			$Cat.expr = this.parseObject(args.code);
 		}
-//		this.anonCount = 0;
 		this.process(this.diagram, args);
 	}
 	clear()
@@ -4628,7 +4626,6 @@ class category extends object
 		this.morphisms.clear();
 		this.transforms.clear();
 		this.texts = [];
-//		this.anonCount =0;
 	}
 	process(dgrm, args)
 	{
@@ -4819,7 +4816,6 @@ class category extends object
 	{
 		while(true)
 		{
-//			const name = `${s}${this.anonCount++}`;
 			const name = `${s}_${Cat.random()}`;
 			if (!this.hasObject(name) && !this.hasMorphism(name))
 				return name;
@@ -5101,31 +5097,6 @@ class morphism extends element
 		mor.codomain =	this.codomain.name;
 		mor.function =	this.function;
 		return mor;
-	}
-	js(close = true)
-	{
-		let code =
-`		// ${this.html}
-		this.morphisms.set('${this.name}',
-		{
-			name:	'${this.name}',
-			$:		CatFns.function['${this.function}'],
-`;
-		if ('morphisms' in this)
-			code +=
-`			morphisms:[${this.morphisms.map(m => "this.getMorphism('" + m.name + "')").join()}],
-`;
-		if (close)
-			code += '		});\n';
-		if ('recursor' in this)
-			code +=
-`			updateRecursor:	function()
-			{
-				if (typeof this.recursor === 'string')
-					this.recursor = Cat.getDiagram().getMorphism(this.recursor);
-			},
-`;
-		return code;
 	}
 	isRunnable()
 	{
@@ -5601,20 +5572,6 @@ class dataMorphism extends morphism
 					return true;
 		return false;
 	}
-	js()
-	{
-		let code = super.js(false);
-		code +=
-`
-			data:${JSON.stringify(this.data)},
-`;
-		if (this.recursor !== null)
-			code += `
-			recursor:'${typeof this.recursor === 'string' ? this.recursor : this.recursor.name}',
-`;
-		code += '		});\n';
-		return code;
-	}
 }
 
 class productAssemblyMorphism extends morphism
@@ -5743,15 +5700,6 @@ class factorMorphism extends morphism
 		name += '--R-';
 		return {name, html, code:fctrs.join(Cat.basetypes.operators.product.symCode)};	/// TODO code
 	}
-	js(className)
-	{
-		let code = super.js(className, false);
-		code +=
-`			factors:${JSON.stringify(this.factors)},
-		});
-`
-		return code;
-	}
 }
 
 class curryMorphism extends morphism
@@ -5833,17 +5781,6 @@ class curryMorphism extends morphism
 		data.domFactors = domFactors.map(f => [f[0], f[1]]);
 		data.homFactors = homFactors.map(f => [f[0], f[1]]);
 		return data;
-	}
-	js(className)
-	{
-		let code =
-`//			domFactors:${JSON.stringify(this.domFactors)},
-//			homFactors:${JSON.stringify(this.homFactors)},
-			factors:${JSON.stringify(this.factors)},
-			preCurry:${this.preCurry.name},
-		};
-`
-		return code;
 	}
 }
 
@@ -6727,7 +6664,6 @@ class diagram extends functor
 			this.viewport.height = window.innerHeight;
 			this.viewport.scale = 1;
 		}
-//		this.viewport = isGUI ? Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:window.innerWidth, height:window.innerHeight}) : {x:0, y:0, width:0, height:0};
 		this.terms = [];
 		if ('terms' in args)
 			args.terms.map(t => new term(this, t));
@@ -7957,42 +7893,6 @@ class diagram extends functor
 		const m = this.addFactorMorphism(this.mapObject(this.getSelected()), diagram.getFactorsById('codomainDiv'));
 		this.objectPlaceMorphism(e, 'domain', this.getSelected().name, m.name)
 	}
-	js(foundDiagram = {})
-	{
-		let js = '';
-		for (let i=0; i<this.references.length; ++i)
-		{
-			const r = this.references[i];
-			if (r.name in foundDiagram)
-				continue;
-			js += r.js(foundDiagram);
-			foundDiagram[r.name] = true;
-		}
-		const jsName = this.name.replace('-', '_');
-		js +=
-`
-class ${jsName} extends diagram
-{
-	constructor()
-	{
-		super();
-		this.name = '${jsName}';
-		this.cid = '${this.cid}';
-		this.references = [${this.references.map(r => 'diagrams.' + r.name).join()}];
-`;
-		let foundMorphism = {};
-		for(const [name, mor] of this.codomain.morphisms)
-			if (!(mor.name in foundMorphism))
-			{
-				js += mor.js();
-				foundMorphism[mor.name] = true;
-			}
-		js +=
-`	}
-}
-`;
-		return js;
-	}
 	hasObject(name)
 	{
 		if (this.codomain.hasObject(name))
@@ -8540,139 +8440,41 @@ class ${jsName} extends diagram
 	{
 		return this.texts[this.texts.indexOf(name)];
 	}
+	/*
 	static functionBody(type, name, functions)
 	{
 		let funText = functions[name].toString();
 		funText = funText.replace(new RegExp(name), 'function');
-		return `CatFns.${type}['${name}'] = ${funText};\n`;
+		return `\tCatFns.${type}['${name}'] = ${funText};\n`;
 	}
-	formJS()
+	*/
+	downloadJS(e)
 	{
-		let js =
-`//
-// Catelitical version of ${this.user}'s diagram ${this.basename} for Ecmascript
-//
-// Date: ${Date()}
-// CID:  ${this.cid}
-//
-const CatFns = {function:{}, functor:{}, transform:{}, util:{}};
-
-`;
-		Object.keys(CatFns.function).forEach(function(name)
+		const start = Date.now();
+//		const diagrams = this.references.map(r => r.json());
+		const diagrams = Object.keys(this.getReferenceCounts()).map(r => Cat.getDiagram(r).json());
+		diagrams.push(this.json());
+		const params =
 		{
-			if (name === 'ttyOut')
-				js += `CatFns.function['ttyOut'] = function(args)\n\t\t{\n\t\t\tconsole.log(args);\n\t\t\treturn null;\n\t\t};`;
-			else
-				js += diagram.functionBody('function', name, CatFns.function);
+			FunctionName:	'CateconDownloadJS',
+			InvocationType:	'RequestResponse',
+			LogType:		'None',
+			Payload:		JSON.stringify({diagrams})
+		};
+		const name = this.name;
+		Cat.Amazon.lambda.invoke(params, function(error, data)
+		{
+			if (error)
+			{
+				Cat.recordError(error);
+				return;
+			}
+			const blob = new Blob([JSON.parse(data.Payload)], {type:'application/json'});
+			const url = Cat.url.createObjectURL(blob);
+			Cat.download(url, `${name}.js`);
+			const delta = Date.now() - start;
+			Cat.status(e, `Diagram ${name} Ecmascript generated<br/>Elapsed ${delta}ms`);
 		});
-		Object.keys(CatFns.util).forEach(function(name)
-		{
-			js += diagram.functionBody('util', name, CatFns.util);
-		});
-		js = js.replace(/\r/g, '');
-		js +=
-`
-class diagram
-{
-	constructor()
-	{
-		this.morphisms = new Map();
-		this.references = [];
-	}
-	getMorphism(name)
-	{
-		let m = null;
-		for (let i=0; i<this.references.length; ++i)
-		{
-			const r = this.references[i];
-			m = r.getMorphism(name);
-			if (m)
-				return m;
-		}
-		return this.morphisms.has(name) ? this.morphisms.get(name) : null;
-	}
-}
-`;
-		let found = {};
-		js += this.js(found);
-		found[this.name] = true;
-		js += 'const diagrams = {};\n';
-		Object.keys(found).forEach(function(d)
-		{
-			js += `diagrams['${d}'] = \tnew ${d}();\n`;
-		});
-		js += `
-function getDiagram()
-{
-	return diagrams.${this.name};
-}
-`;
-		return js;
-	}
-	downloadJS()
-	{
-		let js =
-`//
-// Catelitical version of ${this.user}'s diagram ${this.basename} for Ecmascript
-//
-// Date: ${Date()}
-// CID:  ${this.cid}
-//
-const CatFns = {function:{}, functor:{}, transform:{}, util:{}};
-
-`;
-		Object.keys(CatFns.function).forEach(function(name)
-		{
-			if (name === 'ttyOut')
-				js += `CatFns.function['ttyOut'] = function(args)\n\t\t{\n\t\t\tconsole.log(args);\n\t\t\treturn null;\n\t\t};`;
-			else
-				js += diagram.functionBody('function', name, CatFns.function);
-		});
-		Object.keys(CatFns.util).forEach(function(name)
-		{
-			js += diagram.functionBody('util', name, CatFns.util);
-		});
-		js = js.replace(/\r/g, '');
-		js +=
-`
-class diagram
-{
-	constructor()
-	{
-		this.morphisms = new Map();
-		this.references = [];
-	}
-	getMorphism(name)
-	{
-		let m = null;
-		for (let i=0; i<this.references.length; ++i)
-		{
-			const r = this.references[i];
-			m = r.getMorphism(name);
-			if (m)
-				return m;
-		}
-		return this.morphisms.has(name) ? this.morphisms.get(name) : null;
-	}
-}
-`;
-		let found = {};
-		js += this.js(found);
-		found[this.name] = true;
-		js += 'const diagrams = {};\n';
-		Object.keys(found).forEach(function(d)
-		{
-			js += `diagrams['${d}'] = \tnew ${d}();\n`;
-		});
-		js += `
-function getDiagram()
-{
-	return diagrams.${this.name};
-}
-`;
-		const blob = new Blob([js], {type:'application/json'});
-		const url = Cat.url.createObjectURL(blob);
-		Cat.download(url, `${this.name}.js`);
 	}
 	downloadPNG()
 	{
