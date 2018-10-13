@@ -2,17 +2,8 @@
 	"actions":
 	[
 		{
-			"file":		"build",
-			"method":	"mkdir"
-		},
-		{
 			"file":		"lambda/AWSconstants.js",
 			"method":	"copy",
-			"target":	"build"
-		},
-		{
-			"file":		"Cat.js",
-			"method":	"link",
 			"target":	"build"
 		},
 		{
@@ -34,11 +25,6 @@
 			"file":		"category.ico",
 			"method":	"copyCat",
 			"target":	"favicon.ico"
-		},
-		{
-			"file":		"Cat.js",
-			"method":	"copyCat",
-			"target":	"js"
 		},
 		{
 			"file":		"OrbitControls.js",
