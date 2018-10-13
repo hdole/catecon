@@ -15,24 +15,27 @@ let lambda = new AWS.Lambda();
 
 function uploadLambda(info)
 {
-	const copyDeps = info.dependencies.map(d => `cp -p ${d} build`).join(';\n');
+	const copyDeps = info.dependencies.map(d => `cp -p ${d} $wd`).join(';\n');
 	const f = info.file;
 	const n = info.name;
 	const script =
 `
+wd=\`mktemp -d CAT.XXXXXX\`;
 ${copyDeps}
-cp ${f} build/index.js
-cd build
-zip ${n}.zip index.js ${info.dependencies.join(' ')}
-rm index.js
+cp ${f} $wd/index.js
+cd $wd
+zip ${n}.zip *.js
 aws lambda update-function-code --function-name ${n} --zip-file fileb://./${n}.zip
+cd -
+rm -rf $wd;
 `;
-	proc.execSync(script); //.on('exit', function(code, signal) {console.log(`${n} uploaded with status ${code}`)});
+proc.execSync(script); //.on('exit', function(code, signal) {console.log(`${n} uploaded with status ${code}`)});
 }
+
+let debug = false;
 
 function deploy(actions, timestamps, deployed)
 {
-//	const deployMe = files.filter(f => timestamps[f] > (f in deployed ? deployed[f] : 0));
 	actions.map(info =>
 		{
 			const f = info.file;
@@ -40,8 +43,22 @@ function deploy(actions, timestamps, deployed)
 			{
 				switch(info.method)
 				{
+				case 'link':
+					process.stdout.write(`link ${f}\n`);
+					if (!fs.existsSync(f))
+					{
+						fs.symlinkSync(info.target, f);
+						timestamps[f] = fs.statSync(f).mtime.getTime();
+					}
+					else
+					{
+						const stats = fs.lstatSync(f);
+						if (!stats.isDirectory())
+							throw `Error: file exists but is not a directory: ${f}`;
+					}
+					break;
 				case 'mkdir':
-					console.log('mkdir', f);
+					process.stdout.write(`mkdir ${f}\n`);
 					if (!fs.existsSync(f))
 					{
 						fs.mkdirSync(f);
@@ -55,21 +72,22 @@ function deploy(actions, timestamps, deployed)
 					}
 					break;
 				case 'copyCat':
-					console.log('copyCat', f);
+					process.stdout.write(`copyCat ${f}\n`);
 					const cmd = `scp -i ~/hdole-norcal.pem ${f} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/catecon/${info.target}`;
-					process.stdout.write(`${cmd}\n`);
+					if (debug)
+						process.stdout.write(`${cmd}\n`);
 					proc.execSync(cmd);
 					break;
 				case 'uploadLambda':
-					console.log('uploadLambda', f);
+					process.stdout.write(`uploadLambda ${f}\n`);
 					uploadLambda(info);
 					break;
 				default:
-					console.log('Error: action not understood: ', info.method);
+					process.stdout.write(`Error: action not understood: ${info.method}\n`);
 					break;
 				}
 			}
-			else
+			else if (debug)
 				console.log('up to date', f);
 		});
 	fs.writeFileSync(tsFilename, JSON.stringify(timestamps), 'utf8');
