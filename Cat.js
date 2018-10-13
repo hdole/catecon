@@ -236,9 +236,10 @@ const Cat =
 									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
 									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
 									H.tr(H.td(H.h4('Use Chrome', 'error')))), 'center') +
-						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@factorial.png" width="300" height="225">' +
-						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@Fibonacci.png" width="300" height="225">' +
-						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@LoopN.png" width="300" height="225">' +
+						H.span('', '', 'introPngs') +
+//						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@factorial.png" width="300" height="225">' +
+//						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@Fibonacci.png" width="300" height="225">' +
+//						'<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/PFS/hdole/D@PFS@hdole@LoopN.png" width="300" height="225">' +
 						'<br/>' +
 						H.table(H.tr(H.td(H.h5('Articles', 'txtCenter'))) +
 								H.tr(H.td(H.a('Intro To Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"'))) +
@@ -2114,7 +2115,16 @@ const Cat =
 								Cat.recentDiagrams = data.diagrams;
 								let html = data.diagrams.map(d => Cat.display.diagram.diagramRow(d)).join('');
 								const dt = new Date(data.timestamp);
-								document.getElementById('recentDiagrams').innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
+								const recentDiagrams = document.getElementById('recentDiagrams');
+								if (recentDiagrams)
+									recentDiagrams.innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
+								const introPngs = document.getElementById('introPngs');
+								if (introPngs)
+									introPngs.innerHTML = data.diagrams.map(d => 
+									{
+										const tokens = d.name.split('@');
+										return `<img class="intro" src="https://s3-us-west-1.amazonaws.com/catecon-diagrams/${tokens[1]}/${d.username}/${d.name}.png" width="300" height="225" title="${d.fancyName}: ${d.description}"/>`;
+									}).join('');
 							});
 					});
 			},
@@ -8595,6 +8605,7 @@ if (isGUI)
 	if (!Cat.hasAcceptedCookies())
 	{
 		document.getElementById('intro').innerHTML = Cat.intro();
+		Cat.display.diagram.setRecentDiagramTable();
 		window.Cat			= Cat;
 		return;
 	}
