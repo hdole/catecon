@@ -284,7 +284,6 @@ const Cat =
 	{
 		let txt = Cat.getError(err);
 		console.log('Error: ', txt);
-		debugger;
 		if (isGUI)
 		{
 			if (typeof err === 'object' && 'stack' in err && err.stack != '')
@@ -1313,7 +1312,7 @@ const Cat =
 									if (morphs.cods.length > 0)
 									{
 										let from = morphs.cods[0];
-										if (morphs.cods.length === 1 && morphs.doms.length === 0 && from.to.function === 'identity' && !from.to.domain.isInitial)
+										if (morphs.cods.length === 1 && morphs.doms.length === 0 && from.to.function === 'identity' && !from.to.domain.isInitial && from.to.subclass !== 'namedIdentity')
 										{
 											const cod = dgrm.mapObject(dragObject);
 											const toTargetObject = dgrm.mapObject(targetObject);
@@ -1562,7 +1561,7 @@ const Cat =
 											H.tr(H.td(Cat.display.input('', 'isCartesian', '', '', 'in100', 'checkbox') + '<label for="isCartesian">Cartesian?</label>', 'left'), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'allObjectsFinite', '', '', 'in100', 'checkbox') + '<label for="allObjectsFinite">Finite objects?</label>', 'left'), 'sidenavRow'),
 										'sidenav') +
-									H.span(Cat.display.getButton('edit', 'Cat.display.category.new()', 'Create new category for this diagram')) +
+									H.span(Cat.display.getButton('edit', 'Cat.display.category.new()', 'Create new category for this diagram')) + H.br() +
 									H.span('', 'error', 'categoryError'), 'accordionPnl', 'newCategoryPnl');
 				return html;
 			},
@@ -1914,7 +1913,7 @@ const Cat =
 					this.updateDecorations(dgrm);
 // TODO fix					document.getElementById('dgrmHtmlEditBtn').innerHTML = dgrm.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmHtmlElt', 'html')`, 'Retitle', Cat.default.button.tiny);
 // TODO fix					document.getElementById('dgrmDescriptionEditBtn').innerHTML =
-						dgrm.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
+//						dgrm.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
 					Cat.display.diagram.setUserDiagramTable();
 					Cat.display.diagram.setReferencesDiagramTable();
 					Cat.display.diagram.setToolbar(dgrm);
@@ -2362,7 +2361,7 @@ const Cat =
 					document.getElementById('object-sidenav').innerHTML = html;
 				}
 			},
-			new(e)
+			newOrig(e)
 			{
 				try
 				{
@@ -2395,16 +2394,65 @@ const Cat =
 					document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
 				}
 			},
+			new(e)
+			{
+				try
+				{
+					const dgrm = Cat.getDiagram();
+					if (dgrm.readonly)
+						throw 'Diagram is read only';
+					document.getElementById('objectError').innerHTML = '';
+//					const nameElt = document.getElementById('objectName');
+//					const name = nameElt.value;
+//					if (name !== '' && !RegExp(Cat.userNameEx).test(name))
+//							throw 'Invalid object name.';
+//					if (dgrm.getObject(name))
+//						throw `Object with name ${name} already exists.`;
+//					nameElt.value = '';
+					const codeElt = document.getElementById('objectCode');
+					let code = codeElt.value;
+					codeElt.value = '';
+					code = code === '' ? name : code;
+//					const htmlElt = document.getElementById('objectHtml');
+//					const html = Cat.htmlEntitySafe(htmlElt.value);
+//					htmlElt.value = '';
+					const descriptionElt = document.getElementById('objectDescription');
+					const description = Cat.htmlEntitySafe(descriptionElt.value);
+					descriptionElt.value = '';
+//					const to = dgrm.newObject({name, code, html, description});
+					const to = dgrm.newObject({code, description});
+					dgrm.placeObject(e, to);
+				}
+				catch(e)
+				{
+					document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
+				}
+			},
 			newObjectPnl()
 			{
 				let html = H.button('New Object', 'sidenavAccordion', '', 'New Object', `onclick="Cat.display.accordion.toggle(this, \'newObjectPnl\')"`) +
-							H.div( H.table(H.tr(H.td(Cat.display.input('', 'objectName', 'Name')), 'sidenavRow') +
-											H.tr(H.td(Cat.display.input('', 'objectCode', 'Code')), 'sidenavRow') +
-											H.tr(H.td(H.small('The following tokens may be used to form an object: One, Omega, N, Z, F, ...')), 'sidenavRow') +
-											H.tr(H.td(Cat.display.input('', 'objectHtml', 'HTML Entities')), 'sidenavRow') +
-											H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')) +
-									H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
-									H.span('', 'error', 'objectError'), 'accordionPnl', 'newObjectPnl');
+							H.div
+							(
+								H.table
+								(
+									H.tr(H.td(H.small('The following tokens may be used to form an object: One, Omega, N, Z, F, ...')), 'sidenavRow') +
+									H.tr(H.td(H.small('Operators are *, +, []')), 'sidenavRow') +
+									H.tr(H.td(H.small('Example: [N, N*N] as the hom set from N to the product N*N')), 'sidenavRow') +
+									H.tr(H.td(Cat.display.input('', 'objectCode', 'Code')), 'sidenavRow') +
+									H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')
+								) +
+								H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
+								/*
+								H.h3('Create by Name') +
+								H.table
+								(
+									H.tr(H.td(Cat.display.input('', 'objectName', 'Name')), 'sidenavRow') +
+									H.tr(H.td(Cat.display.input('', 'objectHtml', 'HTML Entities')), 'sidenavRow') +
+									H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')
+								) +
+								H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
+								*/
+								H.span('', 'error', 'objectError'), 'accordionPnl', 'newObjectPnl');
 				return html;
 			},
 			update()
@@ -2729,8 +2777,8 @@ const Cat =
 <circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
 <circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
-				folderOpen:
-`<polyline class="svgfil2" points="90,240 230,160 90,80"/>`,
+//				folderOpen:
+//`<polyline class="svgfil2" points="90,240 230,160 90,80"/>`,
 				fromHere:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
@@ -2804,8 +2852,6 @@ const Cat =
 <line class="arrow6" x1="40" y1="180" x2="200" y2="180" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="40" y1="240" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
 				reference:
-//<line class="arrow9" x1="120" y1="100" x2="260" y2="100" marker-end="url(#arrowhead)"/>
-//<line class="arrow9" x1="100" y1="120" x2="100" y2="260" marker-end="url(#arrowhead)"/>
 `<line class="arrow9" x1="120" y1="100" x2="260" y2="100"/>
 <line class="arrow9" x1="100" y1="120" x2="100" y2="260"/>
 <line class="arrow9" x1="120" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
@@ -2819,10 +2865,10 @@ const Cat =
 `<line class="arrow0" x1="20" y1="160" x2="100" y2="160" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="120" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="220" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,
-				save:
-`<path class="svgstr3" d="M149.72 93.72l0 -72.67 20 0 0 72.67 -20 0zm4.8 12.98l10.39 -6.74 -10.39 0 31.69 -48.89 10.4 6.74 -31.7 48.89 -10.39 0zm0 0l10.39 0 -5.2 8.02 -5.2 -8.02zm-26.52 -52.26l5.2 -3.37 31.72 48.89 -10.39 6.74 -31.72 -48.89 5.2 -3.37z"/>
-<path class="svgstr3" d="M200 115c52.41,3.81 80,17.39 80,32.09 0,17.95 -53.72,32.5 -120,32.5 -66.28,0 -120,-14.55 -120,-32.5 0,-14.89 26.7,-28.44 80,-32.09"/>
-<path class="svgstr3" d="M280 147.09l-20 112.91c-2.53,14.31 -48.59,35 -100,35 -51.41,0 -97.47,-20.68 -100,-35l-20 -112.91"/>`,
+//				save:
+//`<path class="svgstr3" d="M149.72 93.72l0 -72.67 20 0 0 72.67 -20 0zm4.8 12.98l10.39 -6.74 -10.39 0 31.69 -48.89 10.4 6.74 -31.7 48.89 -10.39 0zm0 0l10.39 0 -5.2 8.02 -5.2 -8.02zm-26.52 -52.26l5.2 -3.37 31.72 48.89 -10.39 6.74 -31.72 -48.89 5.2 -3.37z"/>
+//<path class="svgstr3" d="M200 115c52.41,3.81 80,17.39 80,32.09 0,17.95 -53.72,32.5 -120,32.5 -66.28,0 -120,-14.55 -120,-32.5 0,-14.89 26.7,-28.44 80,-32.09"/>
+//<path class="svgstr3" d="M280 147.09l-20 112.91c-2.53,14.31 -48.59,35 -100,35 -51.41,0 -97.47,-20.68 -100,-35l-20 -112.91"/>`,
 				settings:
 `<line class="arrow0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="160" y1="40" x2="160" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
@@ -3868,9 +3914,9 @@ class element
 			{
 				let obj = null;
 				if (dgrm.subClass === 'diagram')
-					obj = extended ? dgrm.getObjectByExpr(expr) : dgrm.getObject(expr.token, extended);
+					obj = extended ? dgrm.getObject(expr) : dgrm.getObject(expr.token, extended);
 				else
-					obj = extended ? dgrm.getObjectByExpr(expr) : dgrm.getObject(expr.token, null, extended);
+					obj = extended ? dgrm.getObject(expr) : dgrm.getObject(expr.token, null, extended);
 				if (obj)
 				{
 					if ('token' in obj.expr)
@@ -3905,7 +3951,7 @@ class element
 			{
 				if (!full)
 					return expr.token;
-				const obj = dgrm.getObjectByExpr(expr);
+				const obj = dgrm.getObject(expr);
 				if (obj)
 				{
 					if ('token' in obj.expr)
@@ -3999,7 +4045,7 @@ class element
 				let position = data.position;
 				let html = '[';
 				position += bracketWidth;
-				const op = Cat.basetypes.operators[expr.op];
+//				const op = Cat.basetypes.operators[expr.op];
 				html += element.html(dgrm, expr.lhs, false, {class:data.class, position});
 				html += ', ';
 				position += expr.lhs.width + commaWidth + spaceWidth;
@@ -4027,7 +4073,7 @@ class element
 				}
 				if (dgrm.codomain.allObjectsFinite)
 				{
-					const obj = dgrm.getObjectByExpr(expr);
+					const obj = dgrm.getObject(expr);
 					if ('token' in obj.expr)
 						return expr.token;
 					return element.inputCode(dgrm, obj.expr, false, uid);
@@ -4044,8 +4090,8 @@ class element
 			{
 				if (expr.op === 'hom')
 				{
-					const domain = dgrm.getObjectByExpr(expr.lhs);
-					const codomain = dgrm.getObjectByExpr(expr.rhs);
+					const domain = dgrm.getObject(expr.lhs);
+					const codomain = dgrm.getObject(expr.rhs);
 					const homKey = category.homKey(domain, codomain);
 					const homset = dgrm.getHomSet(domain, codomain);
 					++uid.uid;
@@ -4077,7 +4123,7 @@ class element
 				}
 				if (dgrm.codomain.allObjectsFinite)
 				{
-					const obj = dgrm.getObjectByExpr(expr);
+					const obj = dgrm.getObject(expr);
 					if ('token' in obj.expr)
 					{
 						++uid.uid;
@@ -4095,7 +4141,7 @@ class element
 				switch(expr.op)
 				{
 				case 'product':
-					const op = Cat.basetypes.operators[expr.op];
+//					const op = Cat.basetypes.operators[expr.op];
 					return expr.data.map(x => element.fromExpression(dgrm, x, false, uid));
 				case 'coproduct':
 					// TODO
@@ -4179,7 +4225,7 @@ class element
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
-				const obj = dgrm.getObjectByExpr(expr);
+				const obj = dgrm.getObject(expr);
 				if ('token' in obj.expr)
 					return H.button(obj.getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
 						`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`);
@@ -4187,7 +4233,7 @@ class element
 			},
 			function(dgrm, expr, first, data)
 			{
-				const op = Cat.basetypes.operators[expr.op];
+//				const op = Cat.basetypes.operators[expr.op];
 				let html = '';
 				for(let i=0; i<expr.data.length; ++i)
 				{
@@ -4195,14 +4241,14 @@ class element
 					subIndex.push(i);
 					html += H.td(element.getFactorBtnCode(dgrm, expr.data[i], false, {fname:data.fname, root:data.root, index:subIndex, id:data.id, x:data.x, action:data.action}));
 				}
-				return H.table(H.tr(H.td(H.button(dgrm.getObjectByExpr(expr).getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
+				return H.table(H.tr(H.td(H.button(dgrm.getObject(expr).getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
 							`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`),
 									'sidenav', '', '', `colspan="${expr.data.length}"`)) +
 							H.tr(html));
 			},
 			function(dgrm, expr, first, data)
 			{
-				return H.button(dgrm.getObjectByExpr(expr).getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
+				return H.button(dgrm.getObject(expr).getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
 						`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`);
 			},
 			function(){},
@@ -4217,7 +4263,7 @@ class element
 			},
 			function(dgrm, expr, first, data)
 			{
-				const op = Cat.basetypes.operators[expr.op];
+//				const op = Cat.basetypes.operators[expr.op];
 				return expr.data.map((x, i) => element.makeRangeData(dgrm, x, false, {i:data.i, start:data.start[i], dm:data.dm}));
 			},
 			function(dgrm, expr, first, data)
@@ -4232,7 +4278,7 @@ class element
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
-				const obj = dgrm.getObjectByExpr(expr);
+				const obj = dgrm.getObject(expr);
 				if ('token' in obj.expr)
 					return data.dm.makeRandomValue(obj.expr, data.min, data.max);
 				return element.makeRandomData(dgrm, obj.expr, false, data);
@@ -4272,7 +4318,7 @@ class element
 				if (dgrm.subClass === 'diagram')
 					obj = dgrm.getObject(expr.token, true);
 				else
-					obj = dgrm.getObjectByExpr(expr);
+					obj = dgrm.getObject(expr);
 				if (obj)
 				{
 					if ('token' in obj.expr)
@@ -4410,9 +4456,15 @@ class element
 		}
 		return false;
 	}
+	isComplex()
+	{
+		if (this.class === 'object')
+			return 'data' in this.diagram.getObject(this.expr).expr;
+		return null;	// TODO
+	}
 	getFirstFactor()
 	{
-		return 'data' in this.expr ? this.diagram.getObjectByExpr(this.expr.data[0]) : null;
+		return 'data' in this.expr ? this.diagram.getObject(this.expr.data[0]) : null;
 	}
 }
 
@@ -4452,9 +4504,9 @@ class object extends element
 			this.category = this;
 		if (this.diagram !== null)
 		{
-			let obj = this.category.getObjectByExpr(this.expr);
+			let obj = this.category.getObject(this.expr);
 			if (obj === null && this.diagram !== null)
-				obj = this.diagram.getObjectByExpr(this.expr);
+				obj = this.diagram.getObject(this.expr);
 			if (obj !== null && !obj.isEquivalent(this))
 			{
 				const expr = obj.expr;
@@ -4467,16 +4519,16 @@ class object extends element
 				{
 					let isFinite = false;
 					if ('data' in expr)
-						isFinite = expr.data.reduce((isFinite, factor) => ('isFinite' in this.diagram.getObjectByExpr(factor)) && isFinite, true);
+						isFinite = expr.data.reduce((isFinite, factor) => ('isFinite' in this.diagram.getObject(factor)) && isFinite, true);
 					else if ('lhs' in expr)
-						isFinite = 'isFinite' in this.diagram.getObjectByExpr(expr.lhs) && 'isFinite' in this.diagram.getObjectByExpr(expr.rhs);
+						isFinite = 'isFinite' in this.diagram.getObject(expr.lhs) && 'isFinite' in this.diagram.getObject(expr.rhs);
 					if (isFinite)
 						this.isFinite = 'n';	// TODO
 				}
 				else if ('lhs' in expr)
 				{
-					const lhs = this.diagram.getObjectByExpr(expr.op.lhs);
-					const rhs = this.diagram.getObjectByExpr(expr.op.rhs);
+					const lhs = this.diagram.getObject(expr.op.lhs);
+					const rhs = this.diagram.getObject(expr.op.rhs);
 					if (('isFinite' in lhs) && lhs.isFinite !== null && ('isFinite' in rhs) && rhs.isFinite !== null)
 						this.isFinite = 'n';	// TODO
 				}
@@ -4525,8 +4577,8 @@ class object extends element
 			default:
 				break;
 			}
-			if (r)
-				r.incrRefcnt();
+//			if (r)
+//				r.incrRefcnt();
 			return r;
 		}
 		catch(e)
@@ -4706,29 +4758,33 @@ class category extends object
 	}
 	getObject(name, dgrm = null, extended=true)
 	{
-		if (name === null || name === '')
-			return null;
-		let obj = null;
-		if (dgrm !== null)
+		if (typeof name === 'string')
 		{
-			dgrm = typeof dgrm === 'string' ? Cat.getDiagram(dgrm) : dgrm;
+			if (name === null || name === '')
+				return null;
+			let obj = null;
 			if (dgrm !== null)
-				obj = dgrm.getObject(name, extended);
+			{
+				dgrm = typeof dgrm === 'string' ? Cat.getDiagram(dgrm) : dgrm;
+				if (dgrm !== null)
+					obj = dgrm.getObject(name, extended);
+				if (obj !== null)
+					return obj;
+			}
+			obj = this.objects.has(name) ? this.objects.get(name) : null;
 			if (obj !== null)
 				return obj;
+			if (extended)
+			{
+				let prsd = this.parseObject(name);
+				let codeName = element.codename(this, prsd);
+				obj = this.getObject(codeName, dgrm, false);
+				if (obj !== null)
+					return obj;
+			}
+			return null;
 		}
-		obj = this.objects.has(name) ? this.objects.get(name) : null;
-		if (obj !== null)
-			return obj;
-		if (extended)
-		{
-			let prsd = this.parseObject(name);
-			let codeName = element.codename(this, prsd);
-			obj = this.getObject(codeName, dgrm, false);
-			if (obj !== null)
-				return obj;
-		}
-		return null;
+		return this.getObject(element.codename(this, name));
 	}
 	addObject(obj)
 	{
@@ -4740,10 +4796,12 @@ class category extends object
 	{
 		return this.getObject(name, 'diagram' in args ? args.diagram : null, true);
 	}
+	/*
 	getObjectByExpr(expr)
 	{
 		return this.getObject(element.codename(this, expr));
 	}
+	*/
 	hasMorphism(mName)
 	{
 		return this.morphisms.has(mName);
@@ -5157,6 +5215,9 @@ class morphism extends element
 			case 'curryMorphism':
 				return new curryMorphism(dgrm, data);
 				break;
+			case 'namedIdentity':
+				return new namedIdentity(dgrm, data);
+				break;
 			default:
 				return new morphism(cat, data);
 				break;
@@ -5507,11 +5568,11 @@ class dataMorphism extends morphism
 	}
 	static checkEditableObject(dgrm, obj)
 	{
-		return 'token' in dgrm.getObjectByExpr(obj.expr).expr;
+		return 'token' in dgrm.getObject(obj.expr).expr;
 	}
 	static checkEditable(dgrm, x)
 	{
-		const expr = dgrm.getObjectByExpr(x).expr;
+		const expr = dgrm.getObject(x).expr;
 		if ('token' in expr && expr.token in Cat.basetypes.objects)
 			return Cat.basetypes.objects[expr.token].editable;
 		else if ('op' in expr && expr.op == 'product')
@@ -5572,7 +5633,7 @@ class dataMorphism extends morphism
 	}
 	hasSelfMorph()
 	{
-		const expr = dgrm.getObjectByExpr(this.domain).expr;
+		const expr = dgrm.getObject(this.domain).expr;
 		if ('token' in expr && expr.token in Cat.basetypes.objects && expr.token === 'N')
 			for(const [m1, m2] of this.diagram.morphisms)
 				if (m2.subClass === 'composite' && ms.hasMorphism(this))
@@ -5759,7 +5820,7 @@ class curryMorphism extends morphism
 		{
 			const f = factors[i];
 			const fx = element.getExprFactor(expr, f);
-			const fo = dgrm.getObjectByExpr(fx);
+			const fo = dgrm.getObject(fx);
 			data.name += fo.name;
 			data.html += `<tspan>${fo.getText()}</tspan>` + Cat.subscript(f[1]);
 			if (i !== factors.length -1)
@@ -6585,6 +6646,28 @@ class transform extends morphism
 	}
 }
 
+class namedIdentity extends morphism
+{
+	constructor(dgrm, args)
+	{
+		const nuArgs = Cat.clone(args);
+		nuArgs.name = `id-${args.name}`;
+		nuArgs.domain = args.name;
+		nuArgs.codomain = args.identity;
+		nuArgs.function = 'identity';
+		nuArgs.html = '=';
+		super(dgrm.codomain, nuArgs);
+		this.identity = typeof args.identity === 'string' ? dgrm.getObject(args.identity) : args.identity;
+		this.subclass = 'namedIdentity';
+	}
+	json()
+	{
+		let t = super.json();
+		t.identity = this.identity.name;
+		return t;
+	}
+}
+
 /*
 class term extends object
 {
@@ -6685,7 +6768,7 @@ class diagram extends functor
 		if ('codomainData' in args)
 		{
 			this.codomain.process(this, args.codomainData);
-			this.codomain.objects.forEach(function(o) {o.refcnt = 1;});
+//			this.codomain.objects.forEach(function(o) {o.refcnt = 1;});
 		}
 		if ('objectMap' in args)
 			for(let i=0; i<args.objectMap.length; ++i)
@@ -7084,7 +7167,7 @@ class diagram extends functor
 	{
 		return from.to.function === 'data' ||
 			from.to.function === 'recurse' ||
-			(from.to.function === 'identity' && from.refcnt === 1 && !from.to.domain.isInitial && !from.to.codomain.isTerminal && dataMorphism.checkEditableObject(this, from.to.domain));
+			(from.to.subclass !== 'namedIdentity' && from.to.function === 'identity' && from.refcnt === 1 && !from.to.domain.isInitial && !from.to.codomain.isTerminal && dataMorphism.checkEditableObject(this, from.to.domain));
 	}
 	toolbar(from)
 	{
@@ -7152,7 +7235,7 @@ class diagram extends functor
 			document.getElementById(id).innerHTML = html;
 		}
 	}
-	factorBtnCode()
+	factorBtnCode2()
 	{
 		const from = this.getSelected();
 		let html = H.h4('Create Factor Morphism') +
@@ -7161,6 +7244,67 @@ class diagram extends functor
 						H.button('1', '', Cat.display.elementId(), 'Terminal object',
 						`onclick="Cat.getDiagram().addFactor('codomainDiv', 'selectedFactorMorphism', 'One', '', -1)"`) +
 					element.getFactorBtnCode(this, from.to.expr, true, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:''}) +
+					H.h5('Codomain Factors') + H.br() +
+					H.small('Click to remove from codomain') +
+					H.div('', '', 'codomainDiv');
+		document.getElementById('toolbarTip').innerHTML = html;
+	}
+	getFactorButton(txt, data, action, title)
+	{
+		return H.td(H.button(txt, '', Cat.display.elementId(), title,
+				`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().${action}('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`));
+	}
+	getFactorButtonCode(fancyName, expr, data)	//	data: {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:''}
+	{
+		let html = '';
+		let expand = '';
+		const xobj = this.getObject(expr);
+		if ('token' in expr)
+		{
+
+			const txt = fancyName !== '' ? fancyName : this.getObject(expr.token).obj.getText();
+//			html = H.td(H.button(txt + H.sub(data.index.join()), '', Cat.display.elementId(), '',
+//				`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`));
+			html = this.getFactorButton(txt + H.sub(data.index.join()), data, 'addFactor', 'Add factor');
+			if (!('token' in xobj.expr) && data.op === xobj.expr.op)
+//				expand = H.td(H.button(xobj.getText(), '', Cat.display.elementId(), '',
+//				`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().expandFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`));
+				expand = this.getFactorButton(xobj.getText(), data, 'expandFactor', 'Expand factor');
+		}
+		else
+		{
+			html = H.tr(this.getFactorButton(xobj.getText(), data, 'addFactor', 'Add factor'), 'sidename');
+			let tbl = '';
+			switch(expr.op)
+			{
+			case 'product':
+				for(let i=0; i<expr.data.length; ++i)
+				{
+					let subIndex = data.index.slice();
+					subIndex.push(i);
+					const subx = expr.data[i];
+					const name = 'token' in subx ? this.getObject(subx.token).getText() : this.getObject(subx).getText();
+//					tbl += H.td(this.getFactorButtonCode('token' in subx ? subx.token : '', subx, {fname:data.fname, root:data.root, index:subIndex, id:data.id, x:data.x, action:data.action, op:data.op}));
+					tbl += H.td(this.getFactorButtonCode(name, subx, {fname:data.fname, root:data.root, index:subIndex, id:data.id, x:data.x, action:data.action, op:data.op}));
+				}
+				break;
+			}
+			html = html + H.tr(H.td(H.table(H.tr(tbl))), 'sidename');
+		}
+		return H.table(html + (expand !== '' ? H.tr(expand) : ''), 'sidenav', '', '');
+	}
+	factorBtnCode()
+	{
+		const from = this.getSelected();
+		const expr = from.to.expr;
+		const text = from.to.getText();
+		let html = H.h4('Create Factor Morphism') +
+					H.h5('Domain Factors') +
+					H.small('Click to place in codomain') +
+						H.button('1', '', Cat.display.elementId(), 'Add terminal object',
+						`onclick="Cat.getDiagram().addFactor('codomainDiv', 'selectedFactorMorphism', 'One', '', -1)"`) +
+//					element.getFactorBtnCode(this, from.to.expr, true, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:''}) +
+					this.getFactorButtonCode(text, expr, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:'product'}) +
 					H.h5('Codomain Factors') + H.br() +
 					H.small('Click to remove from codomain') +
 					H.div('', '', 'codomainDiv');
@@ -7203,9 +7347,9 @@ class diagram extends functor
 		let html = '';
 		if ('data' in expr)
 			for(let i=0; i<expr.data.length; ++i)
-				html += H.button(this.getObjectByExpr(expr.data[i]).getText() + H.sub(i), '', Cat.display.elementId(), '', `data-factor="${data.dir} ${i}" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
+				html += H.button(this.getObject(expr.data[i]).getText() + H.sub(i), '', Cat.display.elementId(), '', `data-factor="${data.dir} ${i}" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 		else
-			html += H.button(this.getObjectByExpr(expr).getText(), '', Cat.display.elementId(), '', `data-factor="${data.dir} -1" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
+			html += H.button(this.getObject(expr).getText(), '', Cat.display.elementId(), '', `data-factor="${data.dir} -1" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 		return html;
 	}
 	curryForm(event, elt)
@@ -7230,17 +7374,83 @@ class diagram extends functor
 			H.span(Cat.display.getButton('edit', `Cat.getDiagram().gui(evt, this, 'curryMorphism')`, 'Curry morphism'));
 		document.getElementById('toolbarTip').innerHTML = html;
 	}
+	activateNamedElementForm(e)
+	{
+		const nameElt = document.getElementById('nameElt');
+		if (nameElt.contentEditable === 'true' && nameElt.textContent !== '' && !this.readonly)
+		{
+//			const from = this.getSelected();
+//			const to = this.mapElement(from);
+//			nameElt.contentEditable = false;
+			this.createNamedIdentity(e);
+//			const from = new diagramObject(this.domain, {diagram:this, xy:this.screenCenter()});
+//			this.setObject(from, to);
+		}
+		else
+		{
+			nameElt.contentEditable = true;
+//			nameElt.focus();
+			document.getElementById('descriptionElt').contentEditable = true;
+			const htmlElt = document.getElementById('htmlElt');
+			htmlElt.contentEditable = true;
+			htmlElt.focus();
+		}
+	}
+	createNamedIdentity(e)
+	{
+		try
+		{
+			if (this.readonly)
+				throw 'Diagram is read only';
+			const from = this.getSelected();
+			if (from.class === 'morphism')	// TODO
+				throw 'Not implemented';
+			document.getElementById('namedElementError').innerHTML = '';
+			const nameElt = document.getElementById('nameElt');
+			const name = nameElt.innerText;
+			const htmlElt = document.getElementById('htmlElt');
+			const html = Cat.htmlEntitySafe(htmlElt.innerText);
+			const descriptionElt = document.getElementById('descriptionElt');
+			const description = Cat.htmlEntitySafe(descriptionElt.innerText);
+			if (name !== '' && !RegExp(Cat.userNameEx).test(name))
+					throw 'Invalid object name.';
+			if (this.getObject(name))
+				throw `Object with name ${name} already exists.`;
+			let toNI = this.newObject({code:name, html, description});
+			const iso = new namedIdentity(this, {name, identity:from.to});
+			const iso2 = new namedIdentity(this, {name:from.to.name, identity:toNI});
+			this.deselectAll();
+			const isoFrom = this.objectPlaceMorphism(e, 'codomain', from.name, iso.name)
+			isoFrom.incrRefcnt();
+			const iso2From = new diagramMorphism(this.domain, {diagram:this, domain:isoFrom.codomain.name, codomain:isoFrom.domain.name});
+			iso2From.incrRefcnt();
+			this.setMorphism(iso2From, iso2);
+			iso2From.addSVG();
+			Cat.display.deactivateToolbar();
+			this.makeHomSets();
+//			this.addSelected(e, iso2From, true);
+//			iso2From.showSelected();
+			this.saveToLocalStorage();
+		}
+		catch(e)
+		{
+			document.getElementById('namedElementError').innerHTML = 'Error: ' + Cat.getError(e);
+		}
+	}
 	elementHelp()
 	{
 		const from = this.getSelected();
 		const readonly = from.diagram.readonly;
 		let html = '';
+		const create = (!readonly && from.to.isComplex()) ? Cat.display.getButton('edit', `Cat.getDiagram().activateNamedElementForm(evt)`, 'Create named identity', Cat.default.button.tiny) : '';
 		if (from.to)
 		{
-			html = H.h4(H.span(from.to.getText(), '', 'htmlElt') +
-							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('htmlElt', 'html')`, 'Rename', Cat.default.button.tiny))) +
-							H.p(H.span(Cat.cap(from.to.description), '', 'descriptionElt') +
-							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('descriptionElt', 'Description')`, 'Edit description', Cat.default.button.tiny)));
+			html = H.h4(H.span(from.to.getText() + create, '', 'htmlElt')) +
+//							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('htmlElt', 'html')`, 'Rename', Cat.default.button.tiny))) +
+							H.p(H.span(Cat.cap(from.to.description), '', 'descriptionElt')) +
+//								(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('descriptionElt', 'Description')`, 'Edit description', Cat.default.button.tiny))) +
+							H.p(H.span(from.to.name, '', 'nameElt')) +
+							H.div('', 'error', 'namedElementError');
 			let title = '';
 			switch(from.to.subClass)
 			{
@@ -7272,9 +7482,9 @@ class diagram extends functor
 				html += this.elementHelpMorphTbl(from.to.morphisms);
 			html += !from.diagram.isEquivalent(this) ? H.small(`From diagram: ${from.diagram.getText()}`) : '';
 		}
-		else
-			html = H.p(H.span(from.html, 'tty', 'htmlElt') +
-							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('htmlElt', 'html')`, 'Edit text', Cat.default.button.tiny)));
+//		else
+//			html = H.p(H.span(from.html, 'tty', 'htmlElt') +
+//							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('htmlElt', 'html')`, 'Edit text', Cat.default.button.tiny)));
 		document.getElementById('toolbarTip').innerHTML = html;
 	}
 	elementHelpMorphTbl(morphs)
@@ -7332,7 +7542,7 @@ class diagram extends functor
 		if (typeof xy === 'undefined')
 		{
 			
-			const xy = this.userToDiagramCoords({x:Cat.grid(Cat.display.width()/2), y:Cat.grid(Cat.display.height()/2)});
+			const xy = Cat.grid(this.userToDiagramCoords({x:Cat.grid(Cat.display.width()/2), y:Cat.grid(Cat.display.height()/2)}));
 			srcObj = new diagramObject(this.domain, {diagram:this, xy});
 		}
 		else
@@ -7340,6 +7550,7 @@ class diagram extends functor
 		srcObj.incrRefcnt();
 		this.setObject(srcObj, obj);
 		this.placeElement(e, srcObj);
+		return srcObj;
 	}
 	placeMorphism(e, to, xyDom, xyCod)
 	{
@@ -7415,6 +7626,7 @@ class diagram extends functor
 			newElt.addSVG();
 			from.addSVG();
 			this.update(e, '', from);
+			return from;
 		}
 		catch(x)
 		{
@@ -7708,7 +7920,7 @@ class diagram extends functor
 			if (morphs.cods.length > 0)
 			{
 				const to = morphs.cods[0].to;
-				b = morphs.cods.length === 1 && morphs.doms.length === 0 && to.function === 'identity';
+				b = morphs.cods.length === 1 && morphs.doms.length === 0 && to.function === 'identity' && to.subclass !== 'namedIdentity';
 			}
 			return a||b;
 		}
@@ -7861,11 +8073,12 @@ class diagram extends functor
 				sub = '';
 				break;
 			}
-			if ('token' in expr)
-				expr = this.getObjectByExpr(expr).expr;
+//			if ('token' in expr)
+//				expr = this.getObjectByExpr(expr).expr;
 			expr = expr.data[k];
 		}
-		div.innerHTML += H.button(this.getObjectByExpr(expr).getText() + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this);${action}"`);
+//		div.innerHTML += H.button(this.getObjectByExpr(expr).getText() + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this);${action}"`);
+		div.innerHTML += H.button(this.getObject(expr).getText() + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this);${action}"`);
 	}
 	static getFactorsById(id)
 	{
@@ -7913,17 +8126,34 @@ class diagram extends functor
 				return true;
 		return false;
 	}
-	getObject(name, extended=true)
+//	getObject(name, extended=true)
+	getObject(name, extended=false)
 	{
-		let obj = this.codomain.getObject(name, null, extended);
-		if (obj === null)
-			for (let i=0; i<this.references.length; ++i)
+		let obj = null;
+		if (typeof name === 'string')
+		{
+			obj = this.codomain.getObject(name, null, extended);
+			if (obj === null)
+				for (let i=0; i<this.references.length; ++i)
+				{
+					let r = this.references[i];
+					obj = r.getObject(name, null, extended);
+					if (obj !== null)
+						return obj;
+				}
+		}
+		else
+		{
+			if (!extended && 'token' in name)
+				obj = this.getObject(name.token);
+			else
 			{
-				let r = this.references[i];
-				obj = r.getObject(name, null, extended);
-				if (obj !== null)
-					return obj;
+				const codename = element.codename(this, name, true, extended);
+				obj = this.getObject(codename);
+				if (obj === null)
+					obj = this.newObject({code:element.getCode(this, name, true, extended)});
 			}
+		}
 		return obj;
 	}
 	getMorphism(name)
@@ -7946,6 +8176,7 @@ class diagram extends functor
 			return true;
 		return false;
 	}
+	/*
 	getObjectByExpr(expr, extended = false)
 	{
 		const codename = element.codename(this, expr, true, extended);
@@ -7954,6 +8185,7 @@ class diagram extends functor
 			obj = this.newObject({code:element.getCode(this, expr, true, extended)});
 		return obj;
 	}
+	*/
 	getFactor(obj, ...indices)
 	{
 		let fctr = obj.expr;
@@ -7966,11 +8198,12 @@ class diagram extends functor
 				fctr = fctr.data[k];
 			else
 			{
-				const obj = this.getObjectByExpr(fctr);
+				const obj = this.getObject(fctr);
 				fctr = obj.expr.data[k];
 			}
 		}
-		return this.getObjectByExpr(fctr);
+//		return this.getObjectByExpr(fctr);
+		return 'token' in fctr ? this.getObject(fctr.token) : this.getObject(fctr);
 	}
 	getObjectByCode(code)
 	{
@@ -8038,6 +8271,7 @@ class diagram extends functor
 				found[obj.name] = true;
 			}
 		document.getElementById(pnlName).innerHTML = H.table(objects.map(o => H.tr(
+			H.td(o.refcnt) +
 							H.td(o.refcnt === 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeObject(evt, '${o.name}')`, 'Delete object') : '', 'buttonBar') +
 							H.td(o.getText()),
 							'grabbable sidenavRow', '', Cat.cap(o.description), `draggable="true" ondragstart="Cat.display.object.drag(event, '${o.name}')"`)).join(''));
@@ -8194,6 +8428,7 @@ class diagram extends functor
 			break;
 		}
 	}
+	/*
 	editElementText(id, attr)
 	{
 		const h = document.getElementById(id);
@@ -8213,6 +8448,7 @@ class diagram extends functor
 			h.focus();
 		}
 	}
+	*/
 	clearDataMorphism()
 	{
 		const from = this.getSelected();
@@ -8243,26 +8479,26 @@ class diagram extends functor
 	}
 	getHomDomain(elt)
 	{
-		let obj = this.getObjectByExpr(elt.expr);
-		return ('op' in obj.expr && obj.expr.op === 'hom') ? this.getObjectByExpr(obj.expr.lhs) : null;
+		let obj = this.getObject(elt.expr);
+		return ('op' in obj.expr && obj.expr.op === 'hom') ? this.getObject(obj.expr.lhs) : null;
 	}
 	getHomCodomain(elt)	// used in CatFn.js
 	{
-		let obj = this.getObjectByExpr(elt.expr);
-		return ('op' in obj.expr && obj.expr.op === 'hom') ? this.getObjectByExpr(obj.expr.rhs) : null;
+		let obj = this.getObject(elt.expr);
+		return ('op' in obj.expr && obj.expr.op === 'hom') ? this.getObject(obj.expr.rhs) : null;
 	}
 	getProductFactors(elt)
 	{
-		let obj = this.getObjectByExpr(elt.expr);
+		let obj = this.getObject(elt.expr);
 		let factors = [];
-		factors = 'op' in obj.expr && obj.expr.op === 'product' && obj.expr.data.map(x => this.getObjectByExpr(x));
+		factors = 'op' in obj.expr && obj.expr.op === 'product' && obj.expr.data.map(x => this.getObject(x));
 		return factors;
 	}
 	canEvaluate(elt)
 	{
 		if (!this.codomain.isClosed)
 			return false;
-		let obj = this.getObjectByExpr(elt.expr);
+		let obj = this.getObject(elt.expr);
 		let factors = this.getProductFactors(obj);
 		if (factors !== null && factors.length == 2)
 		{
@@ -8295,14 +8531,14 @@ class diagram extends functor
 					r = 'op' in domain.expr &&
 						domain.expr.op === 'product' &&
 						domain.expr.data.length === 3 &&
-						N.isEquivalent(this.getObjectByExpr(domain.expr.data[0]));
+						N.isEquivalent(this.getObject(domain.expr.data[0]));
 					if (r)
 					{
-						const factor1 = this.getObjectByExpr(domain.expr.data[1]);
-						const factor2 = this.getObjectByExpr(domain.expr.data[2]);
+						const factor1 = this.getObject(domain.expr.data[1]);
+						const factor2 = this.getObject(domain.expr.data[2]);
 						r = factor1.expr.op === 'hom' &&
-							factor2.isEquivalent(this.getObjectByExpr(factor1.expr.lhs)) &&
-							factor2.isEquivalent(this.getObjectByExpr(factor1.expr.rhs));
+							factor2.isEquivalent(this.getObject(factor1.expr.lhs)) &&
+							factor2.isEquivalent(this.getObject(factor1.expr.rhs));
 					}
 				}
 			}
@@ -8325,7 +8561,7 @@ class diagram extends functor
 		const o = this.codomain.getObject(name);
 		if (o !== null)
 		{
-			while(o.refcnt>0)
+			while(o.refcnt>=0)
 				o.decrRefcnt();
 			this.updateObjectTableRows(`${this.name}_ObjPnl`);
 			this.update(e);
@@ -8519,7 +8755,7 @@ class diagram extends functor
 	}
 	isExprInDiagram(expr, dgrm)
 	{
-		const obj = this.getObjectByExpr(expr);
+		const obj = this.getObject(expr);
 		return obj.diagram.name === dgrm;
 	}
 	canRemoveReferenceDiagram(name)
@@ -8582,6 +8818,10 @@ class diagram extends functor
 	{
 		this.readonly = true;
 		Cat.display.diagram.updateLockBtn(this);
+	}
+	screenCenter()
+	{
+		return Cat.grid(this.userToDiagramCoords({x:Cat.grid(Cat.display.width()/2), y:Cat.grid(Cat.display.height()/2)}));
 	}
 }
 
