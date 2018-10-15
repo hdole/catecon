@@ -2917,12 +2917,23 @@ const Cat =
 <line class="svgstr3" x1="90" y1="160" x2="160" y2="160"/>
 <line class="svgstr3" x1="90" y1="200" x2="120" y2="200"/>`,
 				lock:
-`<rect class="svgfil0" x="60" y="160" width="200" height="120"/>
-<path class="svgstr4" d="M80,160 C80,40 240,40 240,160"/>`,
+//`<rect class="svgfil0" x="60" y="160" width="200" height="120"/>
+//<path class="svgstr4" d="M80,160 C80,40 240,40 240,160"/>`,
+//<line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+//<line class="arrow0" x1="160" y1="60" x2="160" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+`<rect class="svgfil5" x="20" y="20" width="280" height="280"/>
+<line class="arrow0" x1="60" y1="60" x2="260" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="60" y1="260" x2="260" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<circle class="svgfil4" cx="160" cy="160" r="40"/>`,
 				unlock:
-`<rect class="svgfil0" x="60" y="160" width="200" height="120"/>
-<path class="svgstr4" d="M80,160 L80,120 C80,0 240,0 240,100"/>`,
+//`<rect class="svgfil0" x="60" y="160" width="200" height="120"/>
+//<path class="svgstr4" d="M80,160 L80,120 C80,0 240,0 240,100"/>`,
 // <path class="arrow0" d="M80,160 C-5,75 194,-10 240,85"/>`,
+`
+<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="280" x2="280" y2="40" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<rect class="svgfil5" x="120" y="120" width="80" height="80"/>
+`,
 				upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
@@ -6375,7 +6386,8 @@ class stringMorphism extends morphism
 		switch(m.function)
 		{
 		case 'identity':
-			g.makeIdentityGraph();
+			if (m.subClass !== 'namedIdentity')
+				g.makeIdentityGraph();
 			break;
 		case 'diagonal':
 			g.makeDiagonalGraph();
@@ -6658,7 +6670,7 @@ class namedIdentity extends morphism
 		nuArgs.html = '=';
 		super(dgrm.codomain, nuArgs);
 		this.identity = typeof args.identity === 'string' ? dgrm.getObject(args.identity) : args.identity;
-		this.subclass = 'namedIdentity';
+		this.subClass = 'namedIdentity';
 	}
 	json()
 	{
@@ -7445,7 +7457,7 @@ class diagram extends functor
 		const create = (!readonly && from.to.isComplex()) ? Cat.display.getButton('edit', `Cat.getDiagram().activateNamedElementForm(evt)`, 'Create named identity', Cat.default.button.tiny) : '';
 		if (from.to)
 		{
-			html = H.h4(H.span(from.to.getText() + create, '', 'htmlElt')) +
+			html = H.h4(H.span(from.to.getText(), '', 'htmlElt') + create) +
 //							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('htmlElt', 'html')`, 'Rename', Cat.default.button.tiny))) +
 							H.p(H.span(Cat.cap(from.to.description), '', 'descriptionElt')) +
 //								(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('descriptionElt', 'Description')`, 'Edit description', Cat.default.button.tiny))) +
