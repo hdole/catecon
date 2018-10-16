@@ -84,7 +84,7 @@ function diagramJS(dgrm, foundDiagram = {})
 			super();
 			this.name = '${jsName}';
 			this.cid = '${dgrm.cid}';
-			this.references = [${dgrm.references.map(r => 'diagrams.' + r.name).join(',\n')}];
+			this.references = [${dgrm.references.map(r => 'diagrams.' + r.name).join('\t\t\t\t,\n')}];
 			Cat.diagrams[${jsName}] = this;
 `;
 	let foundMorphism = {};
