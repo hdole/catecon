@@ -82,11 +82,16 @@ div.intro
 	font-style:		italic;
 }
 
+.code
+{
+	font-family:	courier;
+}
+
 h1
 {
 	font-size:		26px;
 	font-weight:	bold;
-	margin:			2px 4px 2px 4px;
+	margin:			5px 4px 2px 4px;
 	text-align:		center;
 }
 
@@ -94,7 +99,7 @@ h2
 {
 	font-size:		22px;
 	font-weight:	bold;
-	margin:			2px 4px 2px 4px;
+	margin:			5px 4px 2px 4px;
 	text-align:		center;
 }
 
@@ -103,7 +108,7 @@ h3
 	font-size:	18px;
 	font-weight:bold;
 	text-align:	center;
-	margin:		2px 4px 2px 4px;
+	margin:		5px 4px 2px 4px;
 }
 
 h4
@@ -111,7 +116,7 @@ h4
 	font-size:	14px;
 	font-weight:bold;
 	text-align:	center;
-	margin:		2px 4px 2px 4px;
+	margin:		5px 4px 2px 4px;
 }
 
 h5
@@ -119,7 +124,7 @@ h5
 	font-size:		12px;
 	font-weight:	bold;
 	text-align:		left;
-	margin:			2px 4px 2px 4px;
+	margin:			4px 4px 2px 4px;
 }
 
 .sidenavPnl
@@ -217,20 +222,6 @@ a:hover, .offcanvas a:focus
 	background-color:	#333;
 }
 
-.closeBtnLeft
-{
-	background-color:	gainsboro;	/* same as .sidenav */
-	right:				0px;
-	padding:			0px;
-}
-
-.closeBtnRight
-{
-	background-color:	gainsboro;	/* same as .sidenav */
-	left: 				0px;
-	padding:			0px;
-}
-
 #main
 {
 	transition: margin-left .5s;
@@ -239,7 +230,7 @@ a:hover, .offcanvas a:focus
 
 .error
 {
-	background-color:	#F77;
+	background-color:	#f77;
 	color:				#dff;
 }
 
@@ -377,12 +368,14 @@ a:hover, .offcanvas a:focus
 .svgfil3 {fill:#333333;}
 .svgfil4
 {
-	border-style:	solid;
-	border-width:	1px;
-	border-color:	#aaa;
-	fill:			#eeeeee
+	fill:			#fff
 }
-
+.svgfil5
+{
+	fill:			#fff;
+	stroke:			#333;
+	stroke-width:	20px;
+}
 .svgunk
 {
 	stroke:				red;
@@ -392,13 +385,13 @@ a:hover, .offcanvas a:focus
 
 .sidenavAccordion
 {
-	background-color:	#ddd;
+	background-color:	#eee;
 	border:				none;
 	color:				#444;
 	cursor:				pointer;
 	font-size:			14px;
 	font-weight:		bold;
-	margin:				8px 0px 0px 0px;
+	margin:				4px 0px 4px 0px;
 	outline:			none;
 	text-align:			center;
 	transition:			0.4s;
