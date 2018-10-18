@@ -222,14 +222,14 @@ const Cat =
 	intro()
 	{
 		let html = H.h1('Catecon') +
-					H.h4('The Categorical Console') +
+					H.h2('The Categorical Console') +
 					H.h3('Shareable Executable Diagrams') +
 					H.div(
 						H.h4('Extreme Alpha Edition') +
 						H.small('Will break and you will lose all your stuff', 'italic txtCenter') + H.br() +
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
-						H.p('Accept cookies by entering the categorical access code into the text box below:', 'txtCenter') +
+						H.p('Accept cookies by entering the categorical access code below:', 'txtCenter') +
 						H.table(
 								((!!window.chrome && !!window.chrome.webstore) ?
 									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
@@ -2651,6 +2651,17 @@ const Cat =
 		svg:
 		{
 			basics:
+			/*
+	<radialGradient id="radgrad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+		<stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
+		<stop offset="25%" style="stop-color:rgb(0,0,0);stop-opacity:1"/>
+		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
+	</radialGradient>
+	<radialGradient id="radgrad3" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+		<stop offset="0%" style="stop-color:rgb(63,63,63);stop-opacity:1"/>
+		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
+	</radialGradient>
+	*/
 `<defs>
 	<filter id="softGlow" height="300%" width="300%">
 		<feMorphology operator="dilate" radius="2" in="SourceAlpha" result="thicken" />
@@ -2667,12 +2678,7 @@ const Cat =
 		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
 	</radialGradient>
 	<radialGradient id="radgrad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
-		<stop offset="25%" style="stop-color:rgb(0,0,0);stop-opacity:1"/>
-		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
-	</radialGradient>
-	<radialGradient id="radgrad3" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(63,63,63);stop-opacity:1"/>
+		<stop offset="0%" style="stop-color:rgb(127,127,127);stop-opacity:1"/>
 		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
 	</radialGradient>
 	<g id="threeD_base">
@@ -2719,6 +2725,10 @@ const Cat =
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
+				copy:
+`<circle cx="200" cy="200" r="160" fill="#fff"/>
+<circle cx="200" cy="200" r="160" fill="url(#radgrad1)"/>
+<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>`,
 				delete:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
 <path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
@@ -2941,7 +2951,7 @@ ${this.svg.button(onclick)}
 				H.td(H.div(this.getButton('transform', "Cat.display.panel.toggle('transform')", 'Transforms', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('text', "Cat.display.panel.toggle('element')", 'Text', Cat.default.button.large)));
 			let right =
-				H.td(H.div(this.getButton('cateapsis', "Cat.getDiagram().home()", 'Catecon', Cat.default.button.large))) +
+				H.td(H.div(this.getButton('cateapsis', "Cat.getDiagram().home()", 'Cateapsis', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('string', "Cat.getDiagram().showStrings(evt)", 'Graph', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('threeD', "Cat.display.panel.toggle('threeD');Cat.display.threeD.resizeCanvas()", '3D view', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('tty', "Cat.display.panel.toggle('tty')", 'Console', Cat.default.button.large))) +
@@ -7142,7 +7152,8 @@ class diagram extends functor
 					btns += H.td(Cat.display.getButton('string', `Cat.getDiagram().gui(evt, this, 'displayString')`, 'String'), 'buttonBar');
 				}
 				else if (!this.readonly)
-					btns += H.td(Cat.display.getButton('toHere', `Cat.getDiagram().toolbarHandler('codomain', 'toolbarTip')`, 'Morphisms to here'), 'buttonBar') +
+					btns += H.td(Cat.display.getButton('copy', `Cat.getDiagram().copyObject(evt)`, 'Copy object'), 'buttonBar') +
+							H.td(Cat.display.getButton('toHere', `Cat.getDiagram().toolbarHandler('codomain', 'toolbarTip')`, 'Morphisms to here'), 'buttonBar') +
 							H.td(Cat.display.getButton('fromHere', `Cat.getDiagram().toolbarHandler('domain', 'toolbarTip')`, 'Morphisms from here'), 'buttonBar') +
 							H.td(Cat.display.getButton('project', `Cat.getDiagram().gui(evt, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar');
 			}
@@ -7355,8 +7366,8 @@ class diagram extends functor
 			if (this.getObject(name))
 				throw `Object with name ${name} already exists.`;
 			let toNI = this.newObject({code:name, html, description});
-			const iso = new namedIdentity(this, {domain:toNI.name, codomain:from.to.name});
-			const iso2 = new namedIdentity(this, {domain:from.to.name, codomain:toNI.name});
+			const iso = new namedIdentity(this, {domain:toNI.name, codomain:from.to.name, description:`Named identity from ${toNI.getText()} to ${from.to.getText()}`});
+			const iso2 = new namedIdentity(this, {domain:from.to.name, codomain:toNI.name, description:`Named identity from ${from.to.getText()} to ${toNI.getText()}`});
 			this.deselectAll();
 			const isoFrom = this.objectPlaceMorphism(e, 'codomain', from.name, iso.name)
 			const iso2From = new diagramMorphism(this.domain, {diagram:this, domain:isoFrom.codomain.name, codomain:isoFrom.domain.name});
@@ -7612,7 +7623,6 @@ class diagram extends functor
 			const codes = this.selected.map(obj => this.mapObject(obj).code);
 			const code = Cat.basetypes.operators.product.toCode(codes);
 			from = new diagramObject(this.domain, {diagram:this, xy});
-//			from.incrRefcnt();
 			const to = this.newObject({code});
 			this.setObject(from, to);
 			from.addSVG();
@@ -7621,7 +7631,8 @@ class diagram extends functor
 		{
 			const selected = this.selected.slice();
 			this.addSelected(e, from, true);
-			selected.map(o => this.isIsolated(o) ? o.decrRefcnt() : null);
+			if (!e.shiftKey)
+				selected.map(o => this.isIsolated(o) ? o.decrRefcnt() : null);
 			this.update(e, this.selected[0].class);
 		}
 	}
@@ -7653,7 +7664,8 @@ class diagram extends functor
 		{
 			const selected = this.selected.slice();
 			this.addSelected(e, from, true);
-			selected.map(o => this.isIsolated(o) ? o.decrRefcnt() : null);
+			if (!e.shiftKey)
+				selected.map(o => this.isIsolated(o) ? o.decrRefcnt() : null);
 			this.update(e, this.selected[0].class);
 		}
 	}
@@ -8756,6 +8768,12 @@ class diagram extends functor
 	screenCenter()
 	{
 		return Cat.grid(this.userToDiagramCoords({x:Cat.grid(Cat.display.width()/2), y:Cat.grid(Cat.display.height()/2)}));
+	}
+	copyObject(e)
+	{
+		const from = this.getSelected();
+		const xy = D2.add(from, D2.scale(Cat.default.arrow.length/2, {x:1, y:1}));
+		this.placeObject(e, from.to, xy);
 	}
 }
 
