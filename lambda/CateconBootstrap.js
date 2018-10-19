@@ -37,8 +37,8 @@ function bootstrap()
 	Cat.deleteLocalDiagram(`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}basics`);
 	const basics = new Cat.diagram({name:`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}basics`, codomain:'PFS', html:'Basics', description:'', readonly:true, isStandard:true, references:[], user:'std'});
 	const basicObjects =
-		[{diagram:basics, code:'Null', html:'&#x2205', description:'empty set', isInitial:true, isFinite:0},
-		{diagram:basics, code:'One', html:'1', description:'Terminal object, or one point set', isTerminal:true, isFinite:1}];
+		[{diagram:basics, code:'Null', html:'&#x2205', description:'empty set', isInitial:true, isFinite:0, cid:0},
+		{diagram:basics, code:'One', html:'1', description:'Terminal object, or one point set', isTerminal:true, isFinite:1, cid:1}];
 	basicObjects.map(objectData => new Cat.object(basics.codomain, objectData));
 	const basicMorphisms = [{name:'Null2one', diagram:`D${Cat.sep}PFS${Cat.sep}std${Cat.sep}basics`, domain:'Null', codomain:'One', function:'null', 	html:'&#x2203!', description:'null to one'}];
 	placeMultipleMorphisms(basics, basicMorphisms);
