@@ -1179,7 +1179,6 @@ const Cat =
 						{
 							const to = dgrm.mapObject(from);
 							Cat.display.fuseObject = new diagramObject(dgrm.domain, {diagram:dgrm, xy:pnt});
-//							Cat.display.fuseObject.incrRefcnt();
 							dgrm.deselectAll();
 							const fromMorph = new diagramMorphism(dgrm.domain, {diagram:dgrm, domain:from.name, codomain:Cat.display.fuseObject.name});
 							const id = dgrm.getIdentityMorphism(to.name);
@@ -1198,9 +1197,7 @@ const Cat =
 						{
 							dgrm.deselectAll();
 							const dom = new diagramObject(dgrm.domain, {diagram:dgrm, xy:from.domain});
-//							dom.incrRefcnt();
 							const cod = new diagramObject(dgrm.domain, {diagram:dgrm, xy:from.codomain});
-//							cod.incrRefcnt();
 							const fromCopy = new diagramMorphism(dgrm.domain, {diagram:dgrm, domain:dom, codomain:cod});
 							fromCopy.incrRefcnt();
 							dgrm.setMorphism(fromCopy, from.to);
@@ -1422,7 +1419,6 @@ const Cat =
 				{
 				case 'object':
 					from = new diagramObject(dgrm.domain, {diagram:dgrm, xy:pnt});
-//					from.incrRefcnt();
 					to = dgrm.getObject(name);
 					dgrm.setObject(from, to);
 					break;
@@ -1431,12 +1427,10 @@ const Cat =
 					if (to === null)
 						throw `Morphism ${name} does not exist in category ${cat.getText()}`;
 					const dom = new diagramObject(dgrm.domain, {diagram:dgrm, name:dgrm.domain.getAnon(), xy:pnt});
-//					dom.incrRefcnt();
 					const codLen = Cat.textWidth(to.domain.getText())/2;
 					const domLen = Cat.textWidth(to.codomain.getText())/2;
 					const namLen = Cat.textWidth(to.getText());
 					const cod = new diagramObject(dgrm.domain, {diagram:dgrm, xy:{x:pnt.x + Math.max(Cat.default.arrow.length, domLen + namLen + codLen + Cat.default.arrow.length/4), y:pnt.y}});
-//					cod.incrRefcnt();
 					from = new diagramMorphism(dgrm.domain, {diagram:dgrm, domain:dom.name, codomain:cod.name});
 					from.incrRefcnt();
 					dgrm.setMorphism(from, to);
@@ -2380,16 +2374,6 @@ const Cat =
 									H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')
 								) +
 								H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
-								/*
-								H.h3('Create by Name') +
-								H.table
-								(
-									H.tr(H.td(Cat.display.input('', 'objectName', 'Name')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'objectHtml', 'HTML Entities')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')
-								) +
-								H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
-								*/
 								H.span('', 'error', 'objectError'), 'accordionPnl', 'newObjectPnl');
 				return html;
 			},
@@ -2473,10 +2457,6 @@ const Cat =
 				let html = '';
 				if (dgrm && !dgrm.readonly)
 				{
-//					html = H.button('New Text', 'sidenavAccordion', '', 'New Text', `onclick="Cat.display.accordion.toggle(this, \'newElementPnl\')"`) +
-//								H.div(	H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'elementHtml')), 'sidenavRow')) +
-//										H.span(Cat.display.getButton('edit', 'Cat.display.element.new(evt)', 'Create new text for this diagram')) +
-//										H.span('', 'error', 'elementError'), 'accordionPnl', 'newElementPnl');
 					html = H.h4('New Text') +
 								H.div(	H.span('Create a new text element.', 'small') +
 										H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'elementHtml')), 'sidenavRow')) +
@@ -2651,17 +2631,6 @@ const Cat =
 		svg:
 		{
 			basics:
-			/*
-	<radialGradient id="radgrad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
-		<stop offset="25%" style="stop-color:rgb(0,0,0);stop-opacity:1"/>
-		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
-	</radialGradient>
-	<radialGradient id="radgrad3" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(63,63,63);stop-opacity:1"/>
-		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
-	</radialGradient>
-	*/
 `<defs>
 	<filter id="softGlow" height="300%" width="300%">
 		<feMorphology operator="dilate" radius="2" in="SourceAlpha" result="thicken" />
@@ -2746,7 +2715,6 @@ const Cat =
 <line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
 				download:
-//<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 				edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
@@ -2758,8 +2726,6 @@ const Cat =
 <circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
 <circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
-//				folderOpen:
-//`<polyline class="svgfil2" points="90,240 230,160 90,80"/>`,
 				fromHere:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
@@ -2796,12 +2762,6 @@ const Cat =
 	<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
 </marker>
 <line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
-	/*
-				name:
-`<line class="arrow0" x1="80" y1="80" x2="240" y2="80" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="160" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>
-<path class="svgstr3" d="M80,40 L240,40 A40,40 0 0 1 280,80 L280,240 A40,40 0 0 1 240,280 L80,280 A40,40 0 0 1 40,240 L40,80 A40,40 0 0 1 80,40"/>`,
-*/
 				new:
 `<circle class="svgfil4" cx="80" cy="70" r="70"/>
 <line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
@@ -4203,6 +4163,7 @@ class element
 			function(){},
 			first);
 	}
+	/*
 	static getFactorBtnCode(dgrm, expr, first, data)	// data = {id, fname, root, action, index, [x]}
 	{
 		return element.expandExpression(dgrm, expr,
@@ -4236,6 +4197,7 @@ class element
 			function(){},
 			first, data);
 	}
+	*/
 	static makeRangeData(dgrm, expr, first, data)	// data = {i, start, dm}
 	{
 		return element.expandExpression(dgrm, expr,
@@ -4778,12 +4740,6 @@ class category extends object
 	{
 		return this.getObject(name, 'diagram' in args ? args.diagram : null, true);
 	}
-	/*
-	getObjectByExpr(expr)
-	{
-		return this.getObject(element.codename(this, expr));
-	}
-	*/
 	hasMorphism(mName)
 	{
 		return this.morphisms.has(mName);
@@ -4851,7 +4807,6 @@ class category extends object
 		if (this.hasForm(ary).sink)
 		{
 			r.object = new diagramObject(this, {diagram:this});
-//			r.object.incrRefcnt();
 			r.morphs = ary.map(a => new morphism(this, {domain:r.object.name, codomain:a.codomain.name}));
 			// TODO
 		}
@@ -5044,16 +4999,6 @@ ws "white space" = [ \t\\r\\n]+
 		else if (fn)
 			fn([]);
 	}
-	/*
-	rename(nuName)	// only for diagram's domain category
-	{
-		const olName = this.name;
-		this.name = nuName;
-		this.code = nuName;
-		this.html = nuName;
-		this.expr.token = nuName; // TODO recompute width
-	}
-	*/
 }
 
 class morphism extends element
@@ -5948,11 +5893,13 @@ class stringMorphism extends morphism
 		if ('function' in m)
 			stringMorphism.tagGraph(this.diagram, this.graph, true, m.function);
 	}
-	static bindGraph(dgrm, expr, first, data)	// data: {cod, link, function, domRoot, codRoot}
+	static bindGraph(dgrm, expr, first, data)	// data: {cod, link, function, domRoot, codRoot, offset}
 	{
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				const domRoot = data.domRoot.slice();
 				const codRoot = data.codRoot.slice();
 				domRoot.push(...data.link);
@@ -5967,11 +5914,12 @@ class stringMorphism extends morphism
 				for(let i=0; i<expr.data.length; ++i)
 				{
 					let subIndex = data.link.slice();
-					subIndex.push(i);
+					subIndex.push(i + data.offset);
 					const e = expr.data[i];
 					const args = Cat.clone(data);
 					args.link = subIndex;
-					args.cod = data.cod.data[i];
+					if ('data' in data.cod)
+						args.cod = data.cod.data[i + data.offset];
 					stringMorphism.bindGraph(dgrm, e, false, args);
 				}
 			},
@@ -5997,6 +5945,8 @@ class stringMorphism extends morphism
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				if ('links' in data.from)
 				{
 					const links = data.from.links.map(lnk =>
@@ -6035,6 +5985,8 @@ class stringMorphism extends morphism
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				if (!('functions' in expr))
 					expr.functions = [data];
 				else if (expr.functions.indexOf(data) === -1)
@@ -6079,6 +6031,8 @@ class stringMorphism extends morphism
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				const links = expr.links.slice();
 				expr.visited = [];
 				while(links.length > 0)
@@ -6122,6 +6076,8 @@ class stringMorphism extends morphism
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				const factorLink = data.index.slice();
 				if (factorLink[0] === 1)
 					factorLink[0] = data.cnt;
@@ -6167,6 +6123,8 @@ class stringMorphism extends morphism
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				expr.functions = data.expr.functions.slice();
 				for (let i=0; i<data.expr.links.length; ++i)
 				{
@@ -6247,15 +6205,15 @@ class stringMorphism extends morphism
 	}
 	makeIdentityGraph()
 	{
-		stringMorphism.bindGraph(this.diagram, this.graph.data[0], true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1]});
+		stringMorphism.bindGraph(this.diagram, this.graph.data[0], true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
 		this.tagGraphFunction('identity');
 	}
 	makeDiagonalGraph()
 	{
 		const dom = this.graph.data[0];
 		const cod = this.graph.data[1];
-		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[0], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 0]});
-		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[1], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 1]});
+		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[0], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 0], offset:0});
+		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[1], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 1], offset:0});
 		this.tagGraphFunction('diagonal');
 	}
 	makeEvalGraph()
@@ -6263,8 +6221,8 @@ class stringMorphism extends morphism
 		const dom = this.graph.data[0];
 		const domHom = dom.data[0];
 		const cod = this.graph.data[1];
-		stringMorphism.bindGraph(this.diagram, dom.data[1], true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0]});
-		stringMorphism.bindGraph(this.diagram, domHom.rhs, true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1]});
+		stringMorphism.bindGraph(this.diagram, dom.data[1], true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0], offset:0});
+		stringMorphism.bindGraph(this.diagram, domHom.rhs, true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1], offset:0});
 		this.tagGraphFunction('eval');
 	}
 	makeCompositeGraph(m)
@@ -6294,26 +6252,29 @@ class stringMorphism extends morphism
 	{
 		const domExpr = this.graph.data[0];
 		const codExpr = this.graph.data[1];
+		let offset = 0;
+		if (m.factors.length === 1)
+		{
+			const f = m.factors[0];
+			const dom = element.getExprFactor(domExpr, f);
+			if (dom === null)
+				return;
+			const cod = codExpr;
+			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot:f.slice(), codRoot:[1], offset});
+		}
+		else
 		m.factors.map((r, i) =>
 		{
 			const dom = element.getExprFactor(domExpr, r);
 			if (dom === null)
+			{
+				++offset;
 				return;
-			let cod, domRoot, codRoot = null;
-			if (r.length > 0)
-			{
-				cod = 'data' in codExpr ? element.getExprFactor(codExpr, [i]) : codExpr;
-				domRoot = r.slice();
-				domRoot.unshift(0);
-				codRoot = 'data' in codExpr ? [1, i] : [1];
 			}
-			else
-			{
-				cod = element.getExprFactor(codExpr, []);
-				domRoot = [0];
-				codRoot = [1];
-			}
-			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot, codRoot});
+			const cod = element.getExprFactor(codExpr, [i]);
+			const domRoot = r.slice();
+			domRoot.unshift(0);
+			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot, codRoot:[1, i], offset});
 		});
 		this.tagGraphFunction('factor');
 	}
@@ -6431,11 +6392,17 @@ class stringMorphism extends morphism
 	{
 		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;
 	}
+	static isGraphable(expr)
+	{
+		return 'token' in expr && !(expr.token === 'One' || expr.token === 'Null');
+	}
 	static graphSVG(dgrm, expr, first, data)	// data {index, graph, dom:{x,y, name}, cod:{x,y, name}, visited, elementId}
 	{
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				let svg = '';
 				const dom = {x:Math.round(expr.position + (expr.width/2.0) + (data.index[0] === 0 ? data.dom.x : data.cod.x)), y:data.index[0] === 0 ? data.dom.y : data.cod.y};
 				let colorIndex = Number.MAX_VALUE;
@@ -6524,6 +6491,8 @@ class stringMorphism extends morphism
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
+				if (!stringMorphism.isGraphable(expr))
+					return;
 				const dom = {x:Math.round(expr.position + (expr.width/2.0) + (data.index[0] === 0 ? data.dom.x : data.cod.x)), y:data.index[0] === 0 ? data.dom.y : data.cod.y};
 				const color = Math.round(Math.random() * 0xffffff).toString(16);
 				const srcKey = stringMorphism.linkColorKey(data.index, data.dom.name, data.cod.name);
@@ -7192,6 +7161,7 @@ class diagram extends functor
 			document.getElementById(id).innerHTML = html;
 		}
 	}
+	/*
 	factorBtnCode2()
 	{
 		const from = this.getSelected();
@@ -7206,12 +7176,13 @@ class diagram extends functor
 					H.div('', '', 'codomainDiv');
 		document.getElementById('toolbarTip').innerHTML = html;
 	}
-	getFactorButton(txt, data, action, title)
+	*/
+	getFactorButton(obj, txt, data, action, title)
 	{
-		return H.td(H.button(txt, '', Cat.display.elementId(), title,
+		return H.td(H.button(obj.getText() + txt, '', Cat.display.elementId(), title,
 				`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().${action}('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`));
 	}
-	getFactorButtonCode(fancyName, expr, data)	//	data: {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:''}
+	getFactorButtonCode(obj, expr, data)	//	data: {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:''}
 	{
 		let html = '';
 		let expand = '';
@@ -7219,18 +7190,15 @@ class diagram extends functor
 		if ('token' in expr)
 		{
 
-			const txt = fancyName !== '' ? fancyName : this.getObject(expr.token).obj.getText();
-//			html = H.td(H.button(txt + H.sub(data.index.join()), '', Cat.display.elementId(), '',
-//				`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`));
-			html = this.getFactorButton(txt + H.sub(data.index.join()), data, 'addFactor', 'Add factor');
+//			const txt = fancyName !== '' ? fancyName : this.getObject(expr.token).obj.getText();
+			const txt = xobj.getText();
+			html = this.getFactorButton(xobj, H.sub(data.index.join()), data, 'addFactor', 'Add factor');
 			if (!('token' in xobj.expr) && data.op === xobj.expr.op)
-//				expand = H.td(H.button(xobj.getText(), '', Cat.display.elementId(), '',
-//				`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().expandFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`));
-				expand = this.getFactorButton(xobj.getText(), data, 'expandFactor', 'Expand factor');
+				expand = this.getFactorButton(xobj, '', data, 'expandFactor', 'Expand factor');
 		}
 		else
 		{
-			html = H.tr(this.getFactorButton(xobj.getText(), data, 'addFactor', 'Add factor'), 'sidename');
+			html = H.tr(this.getFactorButton(xobj, '', data, 'addFactor', 'Add factor'), 'sidename');
 			let tbl = '';
 			switch(expr.op)
 			{
@@ -7240,9 +7208,8 @@ class diagram extends functor
 					let subIndex = data.index.slice();
 					subIndex.push(i);
 					const subx = expr.data[i];
-					const name = 'token' in subx ? this.getObject(subx.token).getText() : this.getObject(subx).getText();
-//					tbl += H.td(this.getFactorButtonCode('token' in subx ? subx.token : '', subx, {fname:data.fname, root:data.root, index:subIndex, id:data.id, x:data.x, action:data.action, op:data.op}));
-					tbl += H.td(this.getFactorButtonCode(name, subx, {fname:data.fname, root:data.root, index:subIndex, id:data.id, x:data.x, action:data.action, op:data.op}));
+					const obj = 'token' in subx ? this.getObject(subx.token) : this.getObject(subx);
+					tbl += H.td(this.getFactorButtonCode(obj, subx, {fname:data.fname, root:data.root, index:subIndex, id:data.id, x:data.x, action:data.action, op:data.op}));
 				}
 				break;
 			}
@@ -7261,7 +7228,7 @@ class diagram extends functor
 						H.button('1', '', Cat.display.elementId(), 'Add terminal object',
 						`onclick="Cat.getDiagram().addFactor('codomainDiv', 'selectedFactorMorphism', 'One', '', -1)"`) +
 //					element.getFactorBtnCode(this, from.to.expr, true, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:''}) +
-					this.getFactorButtonCode(text, expr, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:'product'}) +
+					this.getFactorButtonCode(from.to, expr, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:'product'}) +
 					H.h5('Codomain Factors') + H.br() +
 					H.small('Click to remove from codomain') +
 					H.div('', '', 'codomainDiv');
@@ -8015,11 +7982,14 @@ class diagram extends functor
 		{
 			const k = indices[i];
 			if (k === -1)
+				continue;
+			/*
 			{
 				expr = this.getObject('One').expr;
 				sub = '';
 				break;
 			}
+			*/
 //			if ('token' in expr)
 //				expr = this.getObjectByExpr(expr).expr;
 			expr = expr.data[k];
@@ -8033,7 +8003,10 @@ class diagram extends functor
 		let factors = [];
 		btns.forEach(function(b)
 		{
-			factors.push(JSON.parse(`[${b.dataset.indices}]`));
+//			const idx = JSON.parse(`[${b.dataset.indices}]`);
+			const idx = JSON.parse(`[${b.dataset.indices}]`);
+//			if (!(idx.length === 1 && idx[0] === -1))
+				factors.push(idx);
 		});
 		if (factors.length === 0)
 			throw 'No factors for factor morphism.';
