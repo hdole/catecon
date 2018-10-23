@@ -376,6 +376,18 @@ a:hover, .offcanvas a:focus
 	stroke:			#333;
 	stroke-width:	20px;
 }
+#upSVG
+{
+	fill:				none;
+	stroke:				blue;
+	stroke-dasharray:	5;
+	stroke-linecap:		round;
+	stroke-linejoin:	round;
+	stroke-miterlimit:	2;
+	stroke-width:		1px;
+	position:			absolute;
+	z-index:			-1;
+}
 .svgunk
 {
 	stroke:				red;
