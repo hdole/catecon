@@ -217,6 +217,7 @@ const Cat =
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
 	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
 	mouse:			{down:{x:0, y:0}, xy:{x:0, y:0}},
+	textDisplayLimit:	60,
 	uploadLimit:	1000000,
 	url:			'',
 	intro()
@@ -226,7 +227,7 @@ const Cat =
 					H.h3('Shareable Executable Diagrams') +
 					H.div(
 						H.h4('Extreme Alpha Edition') +
-						H.small('Will break and you will lose all your stuff', 'italic txtCenter') + H.br() +
+						H.small('Breaks and you lose all your stuff', 'italic txtCenter') + H.br() +
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
 						H.p('Accept cookies by entering the categorical access code below:', 'txtCenter') +
@@ -1079,8 +1080,9 @@ const Cat =
 		topSVG:		null,
 		diagramSVG:	null,
 		showRefcnts:	true,
-		svgPngWidth:	1024,
-		svgPngHeight:	768,
+		showUploadArea:	false,
+		snapWidth:	1024,
+		snapHeight:	768,
 		tool:		'select',	// select|pan
 		statusbar:	null,
 		id:			0,
@@ -1091,11 +1093,11 @@ const Cat =
 		},
 		width()
 		{
-			return window.innerWidth;
+			return isGUI ? window.innerWidth : 1024;
 		},
 		height()
 		{
-			return window.innerHeight;
+			return isGUI ? window.innerHeight : 768;
 		},
 		resize()
 		{
@@ -1103,12 +1105,14 @@ const Cat =
 			const scale = dgrm !== null ? dgrm.viewport.scale : 1.0;
 			const w = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 			const h = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
-			if ('topSVG' in this)
+			if ('topSVG' in this && this.topSVG)
 			{
 				this.topSVG.setAttribute('width', w);
 				this.topSVG.setAttribute('height', h);
 				this.uiSVG.setAttribute('width', w);
 				this.uiSVG.setAttribute('height', h);
+				this.upSVG.setAttribute('width', w);
+				this.upSVG.setAttribute('height', h);
 			}
 		},
 		initialize()
@@ -1123,7 +1127,11 @@ const Cat =
 			this.uiSVG = document.getElementById('uiSVG');
 			this.uiSVG.style.left = '0px';
 			this.uiSVG.style.top = '0px';
+			this.upSVG = document.getElementById('upSVG');
+			this.upSVG.style.left = '0px';
+			this.upSVG.style.top = '0px';
 			this.resize();
+			this.upSVG.style.display = Cat.display.showUploadArea ? 'block' : 'none';
 			this.addEventListeners();
 			this.tty.setPanelContent();	// for early errors
 			Cat.updatePanels();
@@ -2409,7 +2417,9 @@ const Cat =
 					H.table(
 						H.tr(H.td(`<input type="checkbox" ${Cat.display.gridding ? 'checked' : ''} onchange="Cat.display.gridding = !Cat.display.gridding">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
 						H.tr(	H.td(`<input type="checkbox" ${Cat.display.showRefcnts ? 'checked' : ''} onchange="Cat.display.settings.toggleShowRefcnts()">`) +
-								H.td('Show reference counts for objects and morphisms in their respective panels.', 'left'), 'sidenavRow')
+								H.td('Show reference counts for objects and morphisms in their respective panels.', 'left'), 'sidenavRow') +
+						H.tr(	H.td(`<input type="checkbox" ${Cat.display.showUploadArea ? 'checked' : ''} onchange="Cat.display.settings.toggleShowUploadArea()">`) +
+								H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow')
 					);
 				document.getElementById('settings-sidenav').innerHTML = html;
 			},
@@ -2421,6 +2431,11 @@ const Cat =
 				dgrm.references.map(r => r.updateObjectTableRows());
 				dgrm.updateMorphismTableRows();
 				dgrm.references.map(r => r.updateMorphismTableRows());
+			},
+			toggleShowUploadArea()
+			{
+				Cat.display.showUploadArea = !Cat.display.showUploadArea;
+				Cat.display.upSVG.style.display = Cat.display.showUploadArea ? 'block' : 'none';
 			},
 		},
 		transform:
@@ -2917,7 +2932,8 @@ ${this.svg.button(onclick)}
 				H.td(H.div(this.getButton('tty', "Cat.display.panel.toggle('tty')", 'Console', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('help', "Cat.display.panel.toggle('help')", 'Help', Cat.default.button.large))) +
 				H.td(H.div(this.getButton('login', "Cat.display.panel.toggle('login')", 'Login', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('settings', "Cat.display.panel.toggle('settings')", 'Settings', Cat.default.button.large)));
+				H.td(H.div(this.getButton('settings', "Cat.display.panel.toggle('settings')", 'Settings', Cat.default.button.large))) +
+				H.td('&nbsp;&nbsp;&nbsp;');
 			let navbar = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
 										H.td(H.span('', 'navbar-inset', 'navbar_category'), 'w20') +
 										H.td(H.span('Catecon', 'title'), 'w20') +
@@ -3357,7 +3373,8 @@ ${this.svg.button(onclick)}
 						Cat.display.login.setPanelContent();
 						diagram.cateconGetUserDiagrams(function(dgrms)
 						{
-							console.log('user diagrams on server',dgrms);
+							if (Cat.debug)
+								console.log('user diagrams on server',dgrms);
 						});
 						Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
 						{
@@ -3678,10 +3695,11 @@ ${this.svg.button(onclick)}
 		Cat.copyStyles(copy, svg);
 		const canvas = document.createElement('canvas');
 		const bbox = svg.getBBox();
-		canvas.width = Cat.display.svgPngWidth;
-		canvas.height = Cat.display.svgPngHeight;
+		canvas.width = Cat.display.snapWidth;
+		canvas.height = Cat.display.snapHeight;
 		var ctx = canvas.getContext('2d');
-		ctx.clearRect(0, 0, Cat.display.width(), Cat.display.height());
+//		ctx.clearRect(0, 0, Cat.display.width(), Cat.display.height());
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		const data = (new XMLSerializer()).serializeToString(copy);
 		const svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
 		const url = Cat.url.createObjectURL(svgBlob);
@@ -3725,6 +3743,10 @@ ${this.svg.button(onclick)}
 			return jsons;
 		}, [], refs);
 	},
+	limit(s)
+	{
+		return s.length > Cat.textDisplayLimit ? s.slice(Cat.textDisplayLimit) + '...' : s;
+	}
 };
 
 class element
@@ -4314,7 +4336,8 @@ class element
 			if (this.html.indexOf('\n') > -1)
 			{
 				let lines = this.html.split('\n').map(t => `<tspan x="0" dy="1.2em">${t}</tspan>`);
-				let html = group ? `<g id="${this.elementId()}" transform="translate(${this.x} ${this.y + Cat.default.font.height/2})">` : '';
+//				let html = group ? `<g id="${this.elementId()}" transform="translate(${this.x} ${this.y + Cat.default.font.height/2})">` : '';
+				let html = group ? `<g id="${this.elementId()}" transform="translate(${Cat.grid(this.x)} ${Cat.grid(this.y + Cat.default.font.height/2)})">` : '';
 				html += `<text data-type="element" data-name="${this.name}" x="0" y="0" text-anchor="left" class="${this.class} grabbable" onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'element')"> ${lines.join('')} </text>`;
 				html += group ? '</g>' : '';
 				return html;
@@ -4352,7 +4375,7 @@ class element
 		this.setXY(D2.round(xy));
 		const svg = this.svg();
 		if (svg.hasAttribute('transform'))
-			svg.setAttribute('transform', `translate(${this.x} ${this.y})`);
+			svg.setAttribute('transform', `translate(${Cat.grid(this.x)} ${Cat.grid(this.y)})`);
 		else
 		{
 			if (svg.hasAttribute('x'))
@@ -4408,6 +4431,10 @@ class element
 	getFirstFactor()
 	{
 		return 'data' in this.expr ? this.diagram.getObject(this.expr.data[0]) : null;
+	}
+	help()
+	{
+		return H.p(`Element ${this.getText()} in category ${this.category.getText()}`);
 	}
 }
 
@@ -4530,6 +4557,10 @@ class object extends element
 		}
 		return null;
 	}
+	help()
+	{
+		return H.p(`Object ${this.getText()} in category ${this.category.getText()}`);
+	}
 }
 
 class diagramObject extends object
@@ -4578,6 +4609,10 @@ class diagramObject extends object
 	getBBox()
 	{
 		return {x:this.x - this.w/2, y:this.y + this.h/2 - Cat.default.font.height, w:this.w, h:this.h};
+	}
+	help()
+	{
+		return H.p(`Diagram object ${this.getText()} in category ${this.category.getText()}`);
 	}
 }
 
@@ -4999,6 +5034,10 @@ ws "white space" = [ \t\\r\\n]+
 		else if (fn)
 			fn([]);
 	}
+	help()
+	{
+		return H.p(`Category ${this.getText()}.`);
+	}
 }
 
 class morphism extends element
@@ -5170,6 +5209,10 @@ class morphism extends element
 	domCodExpr()
 	{
 		return $Cat.parseObject(`${this.domain.code},${this.codomain.code}`);
+	}
+	help()
+	{
+		return H.p(`Category ${this.category.getText()}`);
 	}
 }
 
@@ -5392,6 +5435,10 @@ onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'morphism')" mark
 		if (document.getElementById(stringMorphism.graphId(this)))
 			stringMorphism.update(dgrm, this);
 	}
+	help()
+	{
+		return H.p(`Diagram morphism ${this.getText()} in category ${this.category.getText()}`);
+	}
 }
 
 class composite extends morphism
@@ -5430,6 +5477,11 @@ class composite extends morphism
 	isRunnable()
 	{
 		return element.isRunnable(this.diagram, this.morphisms[0].expr);
+	}
+	help()
+	{
+		return H.h4('Composite') +
+			H.p(`Category ${this.category.getText()}`);
 	}
 }
 
@@ -5569,6 +5621,20 @@ class dataMorphism extends morphism
 					return true;
 		return false;
 	}
+	help()
+	{
+		const title = 'Data Morphism';
+		const html = '';
+		if ('recursor' in from.to && from.to.recursor !== null)
+		{
+			title = 'Recursion';
+//			from.to.updateRecursor();
+			html = this.diagram.elementHelpMorphTbl(from.to.recursor.morphisms);
+		}
+		return H.h4(title) +
+			H.p(`Category ${this.category.getText()}`) +
+			html;
+	}
 }
 
 class productAssemblyMorphism extends morphism
@@ -5605,6 +5671,12 @@ class productAssemblyMorphism extends morphism
 				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
 				code:	morphisms.map(m => Cat.parens(m.codomain.code, Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, false)).join(Cat.basetypes.operators.product.symCode)};
 	}
+	help()
+	{
+		return H.h4('Product Assembly Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
+	}
 }
 
 class coproductAssemblyMorphism extends morphism
@@ -5640,6 +5712,12 @@ class coproductAssemblyMorphism extends morphism
 		return {name:	`-A--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--A-`,
 				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
 				code:	morphisms.map(m => m.domain.code).join(Cat.basetypes.operators.coproduct.symCode)};	// TODO parens?
+	}
+	help()
+	{
+		return H.h4('Coproduct Assembly Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
 	}
 }
 
@@ -5696,6 +5774,13 @@ class factorMorphism extends morphism
 		html += '&gt;';
 		name += '--R-';
 		return {name, html, code:fctrs.join(Cat.basetypes.operators.product.symCode)};	/// TODO code
+	}
+	help()
+	{
+		return H.h4('Factor Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			H.table(H.tr(H.th('Indices')) +
+					this.factors.map(f => H.tr(H.td(f.toString()))).join(''));
 	}
 }
 
@@ -5779,6 +5864,11 @@ class curryMorphism extends morphism
 		data.homFactors = homFactors.map(f => [f[0], f[1]]);
 		return data;
 	}
+	help()
+	{
+		return H.h4('Lambda Morphism') +
+			H.p(`Lambda morphism of ${this.preCurry.getText()} in category ${this.category.getText()}`);
+	}
 }
 
 class productMorphism extends morphism
@@ -5833,6 +5923,12 @@ class productMorphism extends morphism
 		if (this.refcnt <= 0)
 			this.morphisms.map(m => m.decrRefcnt());
 	}
+	help()
+	{
+		return H.h4('Product Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
+	}
 }
 
 class coproductMorphism extends morphism
@@ -5880,6 +5976,12 @@ class coproductMorphism extends morphism
 			code:element.getCode(dgrm, expr, true, true),
 			name:element.codename(dgrm, expr),
 		};
+	}
+	help()
+	{
+		return H.h4('Coproduct Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
 	}
 }
 
@@ -6253,6 +6355,7 @@ class stringMorphism extends morphism
 		const domExpr = this.graph.data[0];
 		const codExpr = this.graph.data[1];
 		let offset = 0;
+		/*
 		if (m.factors.length === 1)
 		{
 			const f = m.factors[0];
@@ -6263,6 +6366,7 @@ class stringMorphism extends morphism
 			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot:f.slice(), codRoot:[1], offset});
 		}
 		else
+		*/
 		m.factors.map((r, i) =>
 		{
 			const dom = element.getExprFactor(domExpr, r);
@@ -6274,7 +6378,7 @@ class stringMorphism extends morphism
 			const cod = element.getExprFactor(codExpr, [i]);
 			const domRoot = r.slice();
 			domRoot.unshift(0);
-			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot, codRoot:[1, i], offset});
+			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot, codRoot:m.factors.length > 1 ? [1, i] : [1], offset});
 		});
 		this.tagGraphFunction('factor');
 	}
@@ -6396,6 +6500,13 @@ class stringMorphism extends morphism
 	{
 		return 'token' in expr && !(expr.token === 'One' || expr.token === 'Null');
 	}
+	static colorWheel(data)
+	{
+		const tran = ['ff', 'ff', 'ff', 'ff', 'ff', '90', '00', '00', '00', '00', '00', '90'];
+		const cnt = tran.length;
+		data.color = (data.color + 5) % cnt;
+		return `${tran[(data.color + 2) % cnt]}${tran[(data.color + 10) % cnt]}${tran[(data.color + 6) % cnt]}`;
+	}
 	static graphSVG(dgrm, expr, first, data)	// data {index, graph, dom:{x,y, name}, cod:{x,y, name}, visited, elementId}
 	{
 		return element.expandExpression(dgrm, expr,
@@ -6454,7 +6565,7 @@ class stringMorphism extends morphism
 						color = dgrm.colorIndex2color[colorIndex];
 					else
 					{
-						color = Math.round(Math.random() * 0xffffff).toString(16);
+						color = stringMorphism.colorWheel(data);
 						dgrm.colorIndex2color[colorIndex] = color;
 					}
 					svg += `<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${d}" filter="url(#softGlow)" onmouseover="Cat.status(evt, '${fs}')"/>\n`;
@@ -6520,7 +6631,6 @@ class stringMorphism extends morphism
 						dgrm.link2colorIndex[lnkKey] = colorIndex;
 						dgrm.colorIndex2colorIndex[linkColorIndex] = colorIndex;
 					}
-
 					const color = dgrm.colorIndex2color[colorIndex];
 					const idxStr = data.index.toString();
 					if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
@@ -6579,6 +6689,11 @@ class stringMorphism extends morphism
 		}
 		return false;
 	}
+	help()
+	{
+		return H.h4('String morphism') +
+			H.p(`Category ${this.category.getText()}`);
+	}
 }
 
 class functor extends morphism
@@ -6592,6 +6707,11 @@ class functor extends morphism
 	{}	// FITB
 	mapMorphism(m)
 	{}	// FITB
+	help()
+	{
+		return H.h4('Functor') +
+			H.p(`Category ${this.category.getText()}`);
+	}
 }
 
 class transform extends morphism
@@ -6608,6 +6728,11 @@ class transform extends morphism
 		let t = super.json();
 		return t;
 	}
+	help()
+	{
+		return H.h4('Transform') +
+				H.p(`Category ${this.category.getText()}`);
+	}
 }
 
 class namedIdentity extends morphism
@@ -6621,6 +6746,11 @@ class namedIdentity extends morphism
 		super(dgrm.codomain, nuArgs);
 		this.subClass = 'namedIdentity';
 		this.diagram = dgrm;
+	}
+	help()
+	{
+		return H.h4('Named Identity Morphism') +
+			H.p(`From ${this.domain.getText()} to ${this.codomain.getText()} in category ${this.category.getText()}`);
 	}
 }
 
@@ -6677,7 +6807,7 @@ class diagram extends functor
 		this.updateElements();
 		this.subClass = 'diagram';
 		this.selected = [];
-		this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:isGUI ? window.innerWidth : 1024, height:isGUI ? window.innerHeight : 768});
+		this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:Cat.display.width(), height:Cat.display.height()});
 		if (isGUI && this.viewport.width === 0)
 		{
 			this.viewport.width = window.innerWidth;
@@ -6768,7 +6898,7 @@ class diagram extends functor
 		else
 			name = basename;
 		// TODO need different test; remove hasDiagram
-		if (namexTst && (Cat.hasDiagram(name) || dgrmName in Cat.serverDiagrams))
+		if (namexTst && (Cat.hasDiagram(name) || name in Cat.serverDiagrams))
 			throw `Diagram name ${name} already used. Pick another.`;
 		return name;
 	}
@@ -7189,7 +7319,6 @@ class diagram extends functor
 		const xobj = this.getObject(expr);
 		if ('token' in expr)
 		{
-
 //			const txt = fancyName !== '' ? fancyName : this.getObject(expr.token).obj.getText();
 			const txt = xobj.getText();
 			html = this.getFactorButton(xobj, H.sub(data.index.join()), data, 'addFactor', 'Add factor');
@@ -7263,7 +7392,7 @@ class diagram extends functor
 		from.stringMorphism = sm;
 		const dom = {x:from.domain.x - from.to.domain.expr.width/2, y:from.domain.y, name:from.domain.name};
 		const cod = {x:from.codomain.x - from.to.codomain.expr.width/2, y:from.codomain.y, name:from.codomain.name};
-		const svg = `<g id="${id}">${stringMorphism.graphSVG(this, sm.graph, true, {index:[], graph:sm.graph, dom, cod, visited:[], elementId:from.elementId()})}</g>`;
+		const svg = `<g id="${id}">${stringMorphism.graphSVG(this, sm.graph, true, {index:[], graph:sm.graph, dom, cod, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
 		Cat.display.diagramSVG.innerHTML += svg;
 	}
 	getSubFactorBtnCode(expr, data)
@@ -7362,8 +7491,10 @@ class diagram extends functor
 //							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('htmlElt', 'html')`, 'Rename', Cat.default.button.tiny))) +
 							H.p(H.span(Cat.cap(from.to.description), '', 'descriptionElt')) +
 //								(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('descriptionElt', 'Description')`, 'Edit description', Cat.default.button.tiny))) +
-							H.p(H.span(from.to.name, '', 'nameElt')) +
+							H.p(H.span(Cat.limit(from.to.name), '', 'nameElt', from.to.name)) +
 							H.div('', 'error', 'namedElementError');
+			html += from.to.help();
+			/*
 			let title = '';
 			switch(from.to.subClass)
 			{
@@ -7394,6 +7525,7 @@ class diagram extends functor
 			if ('morphisms' in from.to)
 				html += this.elementHelpMorphTbl(from.to.morphisms);
 			html += !from.diagram.isEquivalent(this) ? H.small(`From diagram: ${from.diagram.getText()}`) : '';
+							*/
 		}
 		else
 			html = H.p(H.span(from.html, 'tty', 'htmlElt') +
@@ -8747,6 +8879,10 @@ class diagram extends functor
 		const from = this.getSelected();
 		const xy = D2.add(from, D2.scale(Cat.default.arrow.length/2, {x:1, y:1}));
 		this.placeObject(e, from.to, xy);
+	}
+	help()
+	{
+		return H.p(`Diagram ${this.getText()} in category ${this.category.getText()}`);
 	}
 }
 
