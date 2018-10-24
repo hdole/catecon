@@ -22,7 +22,14 @@
 				{
 					const r = this.ranges[i];
 					if (args >= r.startIndex && args <= r.startIndex + r.count)
-						return args - r.startIndex + r.startValue;
+						switch(r.type)
+						{
+						case 'contiguous':
+//						return args - r.startIndex + r.startValue;
+							return element.makeRangeData(null, this.codomain.expr, true, {idx:args, startIndex:r.startIndex, startValue:r.startValue});
+						case 'random':
+							return element.makeRandomData(null, this.codomain.expr, true, {idx:args, min:r.min[i], max:r.max[i]});
+						}
 				}
 				return null;
 			},

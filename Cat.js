@@ -238,6 +238,7 @@ const Cat =
 									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
 						H.span('', '', 'introPngs') + '<br/>' +
 						H.table(H.tr(H.td(H.h5('Articles', 'txtCenter'))) +
+								H.tr(H.td(H.a('Blog', 'intro', '', '', 'href="https://harrydole.com/wp/tag/catecon/"'))) +
 								H.tr(H.td(H.a('Intro To Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"'))) +
 								H.tr(H.td(H.a('V Is For Vortex - More Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"'))) +
 								H.tr(H.td(H.a('Catecon: Visualizing Coherence in the Categorical Console', 'intro', '', '', 'href="https://harrydole.com/wp/2018/06/28/catecon/"'))) +
@@ -1825,7 +1826,7 @@ const Cat =
 												H.table(
 													H.tr(H.td('Domain Start Value'), 'sidenavRow') +
 													H.tr(H.td(Cat.display.input('', 'inputStartIdx', 'Start ' + to.domain.getText(), irx, '')), 'sidenavRow') +
-													H.tr(H.td(Cat.display.input('', 'inputEndIdx', 'End ' + to.domain.getText(), irx, '')), 'sidenavRow') +
+													H.tr(H.td(Cat.display.input('', 'randomCount', 'Count', irx, '')), 'sidenavRow') +
 													H.tr(H.td('Codomain'), 'sidenavRow') +
 													H.tr(H.td(H.small('Minimum value')), 'sidenavRow') +
 													H.tr(H.td(minForm), 'sidenavRow') +
@@ -1835,20 +1836,26 @@ const Cat =
 								}
 								html += H.div('', 'error', 'editError');
 							}
-							html += H.button('Current Data', 'sidenavAccordion', 'dataPnlBtn', 'Current data in this morphism', `onclick="Cat.display.accordion.toggle(this, \'dataPnl\')"`);
+							html += H.button('Current Data', 'sidenavAccordion', 'dataPnlBtn', 'Current data in this morphism', `onclick="Cat.display.accordion.toggle(this, \'dataPnl\')"`) +
+									H.small('To determine the value of an index, first the data values are consulted then the data ranges.');
 							tbl = H.tr(H.th(to.domain.getText()) + H.th(to.codomain.getText()));
 							for(let i in to.data)
 							{
 								let d = to.data[i];
 								if (d === null)
 									continue;
-	// TODO change to toolbar on row select
 								tbl += H.tr(H.td(i) + H.td(d));
 							}
-							html += H.div(H.table(tbl), 'accordionPnl', 'dataPnl');
+							html += H.div(
+										H.h5('Values') +
+										H.table(tbl) +
+										H.h5('Ranges') +
+										H.small('The list of ranges is consulted in sequence for a range containing the given index.  When found the range is evaluated and returned for that index.') +
+										H.div('', '', 'dataRanges'), 'accordionPnl', 'dataPnl');
+							document.getElementById('data-sidenav').innerHTML = html;
+							Cat.display.data.updateDataRanges(from.to);
 						}
 					}
-					document.getElementById('data-sidenav').innerHTML = html;
 					const dpb = document.getElementById('dataPnlBtn');
 					if (dpb !== null)
 						Cat.display.accordion.toggle(dpb, 'dataPnl');
@@ -1879,7 +1886,39 @@ const Cat =
 				{
 					document.getElementById('editError').innerHTML = 'Error: ' + Cat.getError(err);
 				}
-			}
+			},
+			updateDataRanges(m)
+			{
+				if (!isGUI)
+					return;
+				const dgrm = Cat.getDiagram();
+				const editable = !dgrm.readonly;
+				let html = H.tr((editable ? H.th('') : '') + H.th('Type') + H.th('Start') + H.th('Count') + H.th(m.codomain.getText()));
+				for (let i=0; i<m.ranges.length; ++i)
+				{
+					const r = m.ranges[i];
+					const del = editable ? H.td(Cat.display.getButton('delete', `Cat.display.data.deleteRange(evt, '${m.name}', ${i})`, 'Remove range')) : '';
+					switch(r.type)
+					{
+					case 'range':
+						html += H.tr(del + H.td(r.type) + H.td(r.startIndex) + H.td(r.count) + H.td(r.startValue));
+						break;
+					case 'random':
+						html += H.tr(del + H.td(r.type) + H.td(r.startIndex) + H.td(r.count) + H.td(`${r.min.toString()} &le; ${r.max.toString()}`));
+						break;
+					}
+				}
+				const dataRangesElt = document.getElementById('dataRanges');
+				dataRangesElt.innerHTML = H.table(html);
+			},
+			deleteRange(e, nm, idx)
+			{
+				const dgrm = Cat.getDiagram();
+				const m = dgrm.codomain.getMorphism(nm);
+				m.ranges.splice(idx, 1);
+				Cat.display.data.updateDataRanges(m);
+				dgrm.saveToLocalStorage();
+			},
 		},
 		diagram:
 		{
@@ -3200,6 +3239,7 @@ ${this.svg.button(onclick)}
 	{
 		return name.indexOf(Cat.sep) > -1;
 	},
+	/*
 	arrayEquals(a, b)
 	{
 		if (Array.isArray(a))
@@ -3216,6 +3256,7 @@ ${this.svg.button(onclick)}
 		}
 		return a === b;
 	},
+	*/
 	arraySet(a, f, v)
 	{
 		if (f in a)
@@ -3745,7 +3786,7 @@ ${this.svg.button(onclick)}
 	},
 	limit(s)
 	{
-		return s.length > Cat.textDisplayLimit ? s.slice(Cat.textDisplayLimit) + '...' : s;
+		return s.length > Cat.textDisplayLimit ? s.slice(0, Cat.textDisplayLimit) + '...' : s;
 	}
 };
 
@@ -4219,8 +4260,7 @@ class element
 			function(){},
 			first, data);
 	}
-	*/
-	static makeRangeData(dgrm, expr, first, data)	// data = {i, start, dm}
+	static makeRangeData2(dgrm, expr, first, data)	// data = {i, start, dm}
 	{
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
@@ -4230,6 +4270,27 @@ class element
 			function(dgrm, expr, first, data)
 			{
 				return expr.data.map((x, i) => element.makeRangeData(dgrm, x, false, {i:data.i, start:data.start[i], dm:data.dm}));
+			},
+			function(dgrm, expr, first, data)
+			{
+				return null;
+			},
+			function(){},
+			first, data);
+	}
+	*/
+	static makeRangeData(dgrm, expr, first, data)	// data = {idx, startIndex, startValue}
+	{
+		return element.expandExpression(dgrm, expr,
+			function(dgrm, expr, first, data)
+			{
+//				return data.start + data.i;
+				return data.idx - data.startIndex + data.startValue;
+			},
+			function(dgrm, expr, first, data)
+			{
+//				return expr.data.map((x, i) => element.makeRangeData(dgrm, x, false, {i:data.i, start:data.start[i]}));
+				return expr.data.map((x, i) => element.makeRangeData(null, x, false, {idx:data.idx, startIndex:data.startIndex, startValue:data.startValue[i]}));
 			},
 			function(dgrm, expr, first, data)
 			{
@@ -4336,7 +4397,6 @@ class element
 			if (this.html.indexOf('\n') > -1)
 			{
 				let lines = this.html.split('\n').map(t => `<tspan x="0" dy="1.2em">${t}</tspan>`);
-//				let html = group ? `<g id="${this.elementId()}" transform="translate(${this.x} ${this.y + Cat.default.font.height/2})">` : '';
 				let html = group ? `<g id="${this.elementId()}" transform="translate(${Cat.grid(this.x)} ${Cat.grid(this.y + Cat.default.font.height/2)})">` : '';
 				html += `<text data-type="element" data-name="${this.name}" x="0" y="0" text-anchor="left" class="${this.class} grabbable" onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'element')"> ${lines.join('')} </text>`;
 				html += group ? '</g>' : '';
@@ -4883,12 +4943,29 @@ class category extends object
 		let data = m.morphisms[0];
 		let dataOut = (m.codomain.name !== 'tty' && m.codomain.name !== 'threeD') ? dgrm.newDataMorphism(m.domain, m.codomain) : null;
 		const elts = data.function === 'data' ? data.data : {0:data.$(element.initialObject(dgrm, m.domain.expr))};
-		for(let i in elts)
+		for (let i in elts)
 		{
 			let d = m.$(i);
 			if (dataOut !== null)
 				dataOut.data[i] = d;
 		}
+		if (data.function === 'data')
+			data.ranges.map(r =>
+			{
+				switch(r.type)
+				{
+				case 'range':
+					for (let i=r.startIndex; i<r.startIndex + r.count; ++i)
+						if (!(i in dataOut.data))
+							dataOut.data[i] = element.makeRangeData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, startValue:r.startValue});
+					break;
+				case 'random':
+					for (let i=r.startIndex; i<r.startIndex + r.count; ++i)
+						if (!(i in dataOut.data))
+							dataOut.data[i] = element.makeRandomData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, min:r.min, max:r.max});
+					break;
+				}
+			});
 		return dataOut;
 	}
 	static homKey(domain, codomain)
@@ -5578,11 +5655,13 @@ class dataMorphism extends morphism
 	{
 		const startIndex = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('startTerm').value));
 		const count = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('rangeTerm').value));
-		// TODO convert to this.ranges
 		const startValue = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'strt'});
-		for (let i=0; i<count; ++i)
-			this.data[startIndex + i] = element.makeRangeData(this.diagram, this.codomain.expr, true, {i, start:startValue, dm:this});
-		this.ranges.push({startIndex, count, startValue});
+		// TODO convert to this.ranges
+//		for (let i=0; i<count; ++i)
+//			this.data[startIndex + i] = element.makeRangeData(this.diagram, this.codomain.expr, true, {i, startValue, dm:this});
+//			this.data[startIndex + i] = element.makeRangeData(null, this.codomain.expr, true, {idx:startIndex + i, startIndex, startValue});
+		this.ranges.push({type:'range', startIndex, count, startValue});
+		Cat.display.data.updateDataRanges(this);
 	}
 	makeRandomValue(expr, min, max)
 	{
@@ -5592,12 +5671,14 @@ class dataMorphism extends morphism
 	}
 	addRandomData()
 	{
-		const inputStartIdx = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('inputStartIdx').value));
-		const inputEndIdx = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('inputEndIdx').value));
+		const startIndex = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('inputStartIdx').value));
+		const count = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('randomCount').value));
 		const min = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'min'});
 		const max = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'max'});
-		for (let i=inputStartIdx; i <= inputEndIdx; ++i)
-			this.data[i] = element.makeRandomData(this.diagram, this.codomain.expr, true, {min, max, dm:this});
+//		for (let i=startIndex; i <= count; ++i)
+//			this.data[i] = element.makeRandomData(this.diagram, this.codomain.expr, true, {min, max, dm:this});
+		this.ranges.push({type:'random', startIndex, count, min, max});
+		Cat.display.data.updateDataRanges(this);
 	}
 	deleteData(term)
 	{
@@ -5625,11 +5706,11 @@ class dataMorphism extends morphism
 	{
 		const title = 'Data Morphism';
 		const html = '';
-		if ('recursor' in from.to && from.to.recursor !== null)
+		if ('recursor' in this && this.recursor !== null)
 		{
 			title = 'Recursion';
-//			from.to.updateRecursor();
-			html = this.diagram.elementHelpMorphTbl(from.to.recursor.morphisms);
+//			this.updateRecursor();
+			html = this.diagram.elementHelpMorphTbl(this.recursor.morphisms);
 		}
 		return H.h4(title) +
 			H.p(`Category ${this.category.getText()}`) +
@@ -7840,7 +7921,6 @@ class diagram extends functor
 //??			const dom = new object(this, morphs[0].domain, xy);
 //??			for(let i=0; i<morphs.length; ++i)
 //??				new morphism(this, morphs[i], dom, morphs[i].domain);
-			this.addSelected(e, dm, true);
 		}
 	}
 	deselectAll(toolbarOff = true)
