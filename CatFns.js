@@ -24,11 +24,12 @@
 					if (args >= r.startIndex && args <= r.startIndex + r.count)
 						switch(r.type)
 						{
-						case 'contiguous':
-//						return args - r.startIndex + r.startValue;
-							return element.makeRangeData(null, this.codomain.expr, true, {idx:args, startIndex:r.startIndex, startValue:r.startValue});
+						case 'range':
+							return Cat.element.makeRangeData(null, this.codomain.expr, true, {idx:args, startIndex:r.startIndex, startValue:r.startValue});
 						case 'random':
-							return element.makeRandomData(null, this.codomain.expr, true, {idx:args, min:r.min[i], max:r.max[i]});
+							return Cat.element.makeRandomData(null, this.codomain.expr, true, {idx:args, min:r.min[i], max:r.max[i]});
+						case 'url':
+							return Cat.element.makeUrlData(null, this.codomain.expr, true, r.data[args]);
 						}
 				}
 				return null;
@@ -409,17 +410,7 @@
 	else
 	{
 		window.CatFns = CatFns;
-		/*
-		this.CatFns =
-		{
-			function:	CatFns.function,
-			functor:	CatFns.functor,
-			transform:	CatFns.transform,
-			util:		CatFns.util,
-		};
-		*/
 	}
 
 })
 .call(this);
-// (typeof exports === 'undefined' ? this['CatFns'] = this.CatFns : exports);

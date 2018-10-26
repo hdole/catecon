@@ -457,7 +457,7 @@ const Cat =
 	},
 	clone(o)
 	{
-		if (null === o || 'object' !== typeof o || o instanceof element)
+		if (null === o || 'object' !== typeof o || o instanceof element || o instanceof Blob)
 			return o;
 		let c = o.constructor();
 		for(const a in o)
@@ -4281,12 +4281,30 @@ class element
 			{
 				const obj = dgrm.getObject(expr);
 				if ('token' in obj.expr)
-					return data.dm.makeRandomValue(obj.expr, data.min, data.max);
+					return data.dm.getRandomValue(obj.expr, data.min, data.max);
 				return element.makeRandomData(dgrm, obj.expr, false, data);
 			},
 			function(dgrm, expr, first, data)
 			{
 				return expr.data.map((x, i) => element.makeRandomData(dgrm, x, false, {min:data.min[i], max:data.max[i], dm:data.dm}));
+			},
+			function(dgrm, expr, first, data)
+			{
+				return null;
+			},
+			function(){},
+			first, data);
+	}
+	static makeUrlData(dgrm, expr, first, data)
+	{
+		return element.expandExpression(dgrm, expr,
+			function(dgrm, expr, first, data)
+			{
+				return data;
+			},
+			function(dgrm, expr, first, data)
+			{
+				return expr.data.map((x, i) => element.makeUrlData(null, x, false, data[i]));
 			},
 			function(dgrm, expr, first, data)
 			{
@@ -4930,17 +4948,20 @@ class category extends object
 				case 'range':
 					for (let i=r.startIndex; i<r.startIndex + r.count; ++i)
 						if (!(i in dataOut.data))
-							dataOut.data[i] = element.makeRangeData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, startValue:r.startValue});
+//							dataOut.data[i] = m.$(element.makeRangeData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, startValue:r.startValue}));
+							dataOut.data[i] = m.$(i);
 					break;
 				case 'random':
 					for (let i=r.startIndex; i<r.startIndex + r.count; ++i)
 						if (!(i in dataOut.data))
-							dataOut.data[i] = element.makeRandomData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, min:r.min, max:r.max});
+//							dataOut.data[i] = m.$(element.makeRandomData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, min:r.min, max:r.max}));
+							dataOut.data[i] = m.$(i);
 					break;
 				case 'url':
 					for (let i=r.startIndex; i<r.startIndex + r.data.length; ++i)
 						if (!(i in dataOut.data))
-							dataOut.data[i] = r.data[i];
+//							dataOut.data[i] = m.$(element.makeUrlData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, min:r.min, max:r.max, data:r.data}));
+							dataOut.data[i] = m.$(i);
 					break;
 				}
 			});
@@ -5569,16 +5590,7 @@ class dataMorphism extends morphism
 		mor.data = this.data;
 		if (this.recursor !== null)
 			mor.recursor = typeof this.recursor === 'object' ? this.recursor.name : this.recursor;
-		mor.ranges = this.ranges.map(r =>
-		{
-			let rr = r;
-			if (r.type === 'url')
-			{
-				const rr = Cat.clone(r);
-				delete rr['data'];
-			}
-			return r;
-		});
+		mor.ranges = this.ranges.map(r => r.type === 'url' ? {type:'url', startIndex:r.startIndex, url:r.url, fileType:r.fileType, skipRows:1} : r);	// drop url data
 		return mor;
 	}
 	setRecursor(r)
@@ -5610,6 +5622,7 @@ class dataMorphism extends morphism
 	{
 		return 'token' in dgrm.getObject(obj.expr).expr;
 	}
+	/*
 	static checkEditable(dgrm, x)
 	{
 		const expr = dgrm.getObject(x).expr;
@@ -5623,6 +5636,7 @@ class dataMorphism extends morphism
 		}
 		return true;
 	}
+	*/
 	upperLimit()
 	{
 		return this.domain.isFinite === 'n' ? Number.MAX_SAFE_INTEGER : this.domain.isFinite;
@@ -5638,10 +5652,10 @@ class dataMorphism extends morphism
 		const startIndex = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('startTerm').value));
 		const count = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('rangeTerm').value));
 		const startValue = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'strt'});
-		this.ranges.push({type:'range', startIndex, count, startValue});
+		this.ranges.push({type:'range', startIndex, count, startValue, skipRows:1});
 		Cat.display.data.updateDataRanges(this);
 	}
-	makeRandomValue(expr, min, max)
+	getRandomValue(expr, min, max)
 	{
 		// TODO fix 'N'
 		// TODO what to do for 'Str'?
@@ -5692,51 +5706,49 @@ class dataMorphism extends morphism
 			{
 				return (response.status === 200 || response.status === 0) ? Promise.resolve(response) : Promise.reject(new Error(`Error loading: ${r.url}`));
 			};
-			/*
-			fetch(r.url).then(function(response)
+			fetch(r.url).then(checkStatus).then(function(response)
 			{
 				if (response.ok)
-					response.json().then(function(data)
+				{
+					switch(r.fileType)
 					{
-						r.data = data;
-					});
-				else
-					Cat.status(e, 'ERROR: Failed to download URL');
-			});
-			*/
-			switch(r.fileType)
-			{
-			case 'csv':
-				fetch(r.url, {headers: {'Content-Type':'text'}}).then(checkStatus).
-					then(function(response)
-					{
-						response.blob().then(function(data)
-						{
-							r.data = dataMorphism.processCSV(data, '\t');
-						});
-					});
-					break;
-			case 'csv.gz':
-				fetch(r.url, {headers: {'Content-Type':'application/gzip'}}).then(checkStatus).
-					then(function(response)
-					{
-						response.json().then(function(data)
-						{
-							r.data = dataMorphism.processCSV(data, '\t');
-						});
-					});
-				break;
-			case 'json':
-				fetch(r.url, {headers: {'Content-Type':'application/json; charset=utf-8'}}).then(checkStatus).
-					then(function(response)
-					{
+					case 'json':
 						response.json().then(function(data)
 						{
 							r.data = data;
+							r.count = r.data.length;
 						});
-					});
-				break;
-			}
+						break;
+					case 'csv':
+						response.text().then(function(data)
+						{
+							r.data = dataMorphism.processCSV(data, ',');
+							r.count = r.data.length;
+						});
+						break;
+					case 'csv.gz':
+						response.blob().then(function(data)
+						{
+							var rdr = new FileReader();
+							rdr.onload = function(e)
+							{
+								var c = new Uint8Array(rdr.result, 0, rdr.result.byteLength);
+								const u = new Zlib.Gunzip(c);
+								const decom = u.decompress();
+								const s = new TextDecoder('utf-8').decode(decom);
+								const csv = dataMorphism.processCSV(s, ',');
+								csv.shift();	// TODO fix remove first row banner
+								r.data = csv;
+								r.count = r.data.length;
+							};
+							rdr.readAsArrayBuffer(data);
+						});
+						break;
+					}
+				}
+				else
+					Cat.status(e, 'ERROR: Failed to download URL');
+			});
 		});
 	}
 	deleteData(term)
@@ -5765,13 +5777,32 @@ class dataMorphism extends morphism
 	help()
 	{
 		const title = 'Data Morphism';
-		const html = '';
+		let html = '';
 		if ('recursor' in this && this.recursor !== null)
 		{
 			title = 'Recursion';
 //			this.updateRecursor();
 			html = this.diagram.elementHelpMorphTbl(this.recursor.morphisms);
 		}
+		if (this.ranges.length > 0)
+			html += H.table(H.tr(H.th('Ranges')) +
+				this.ranges.map(r =>
+				{
+					let row = '';
+					switch(r.type)
+					{
+					case 'range':
+						row = `Contiguous range from ${r.startIndex} for ${r.count} indices starting at value ${r.startValue.toString()}`;
+						break;
+					case 'random':
+						row = `Random range from ${r.startIndex} for ${r.count} indices with min at ${r.min.toString()} and max ${r.max.toString()}`;
+						break;
+					case 'url':
+						row = `URL range from ${r.startIndex} for ${r.count} indices from ${r.url}`;
+						break;
+					}
+					return H.tr(H.td(row));
+				}).join(''));
 		return H.h4(title) +
 			H.p(`Category ${this.category.getText()}`) +
 			html;
