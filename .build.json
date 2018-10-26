@@ -57,6 +57,11 @@
 			"target":	"js"
 		},
 		{
+			"file":		"zlib_and_gzip.min.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
 			"file":		"lambda/CateconBootstrap.js",
 			"name":		"CateconBootstrap",
 			"method":	"uploadLambda",
