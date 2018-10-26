@@ -24,7 +24,7 @@ exports.handler = (event, context, callback) =>
 		console.log(message);
 		callback(message, null);
 		return;
-	}	
+	}
 	// TODO: name check
 	// TODO: category check
 	// TODO: diagram name check
@@ -71,7 +71,6 @@ exports.handler = (event, context, callback) =>
 				console.log('Error',err);
 				return;
 			}
-
 			const db = new AWS.DynamoDB({region:C.REGION});
 			const description = dgrm.description !== '' ? dgrm.description : 'no description';
 			const dt = Date();
