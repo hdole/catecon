@@ -82,6 +82,16 @@ div.intro
 	font-style:		italic;
 }
 
+.underline
+{
+	text-decoration:	underline dotted;
+}
+
+.bold
+{
+	font-weight:	bold;
+}
+
 .code
 {
 	font-family:	courier;
@@ -529,6 +539,15 @@ td.white
 	width:				auto;
 	margin-right:		auto;
 	margin-left:		0px;
+	padding:			0px;
+}
+
+.buttonBar
+{
+	background-color:	#fff;
+	border-collapse:	collapse;
+	box-shadow:			2px 2px 2px 2px #bbbb;
+	width:				auto;
 	padding:			0px;
 }
 
