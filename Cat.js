@@ -13,6 +13,7 @@ if (typeof require !== 'undefined')
 	var CatFns = null;
 	var sjcl = null;
 	var peg = null;
+	var zlib = null;
 	AWS = require('aws-sdk');
 	// TODO how to do this for AWS Lambda?
 //	if (typeof AmazonCognitoIdentity === 'undefined')
@@ -20,6 +21,7 @@ if (typeof require !== 'undefined')
 	sjcl = require('./sjcl.js');
 	CatFns = require('./CatFns.js');
 	peg = require('./peg-0.10.0.min.js');
+	zlib = require('./zlib_and_gzip.min.js');
 	var crypto = require('crypto');
 }
 else
@@ -28,6 +30,7 @@ else
 	var AWS = window.AWS;
 	var sjcl = window.sjcl;
 	var peg = window.peg;
+	var zlib = window.zlib;
 }
 
 var $Cat = null;	// Cat of cats
@@ -222,10 +225,13 @@ const Cat =
 	url:			'',
 	intro()
 	{
+		let btns = [['cateapsis', 'category', 'compose', 'coproduct', 'product', 'copy', 'delete', 'detachCodomain', 'detachDomain', 'diagram', 'edit', 'eval', 'fromHere', 'toHere', 'functor', 'help', 'lambda', 'login'],
+					['morphism', 'object', 'coproductAssembly', 'productAssembly', 'project', 'pullback', 'pushout', 'recursion', 'reference', 'run', 'settings', 'text', 'threeD', 'transform', 'tty', 'lock', 'unlock', 'upload']];
 		let html = H.h1('Catecon') +
-					H.h2('The Categorical Console') +
-					H.h3('Shareable Executable Diagrams') +
 					H.div(
+						H.small('The Categorical Console', 'italic underline bold') + H.br() +
+						H.small('Shareable Executable Diagrams') +
+						H.table(H.tr(H.td(H.a('Blog', 'intro', '', '', 'href="https://harrydole.com/wp/tag/catecon/"'))), 'center') +
 						H.h4('Extreme Alpha Edition') +
 						H.small('Breaks and you lose all your stuff', 'italic txtCenter') + H.br() +
 						H.h4('Catecon Uses Cookies') +
@@ -236,14 +242,8 @@ const Cat =
 									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
 									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
 									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
+						H.table(btns.map(row => H.tr(row.map(b => H.td(Cat.display.getButton(b))).join(''))).join(''), 'buttonBar center') +
 						H.span('', '', 'introPngs') + '<br/>' +
-						H.table(H.tr(H.td(H.h5('Articles', 'txtCenter'))) +
-								H.tr(H.td(H.a('Blog', 'intro', '', '', 'href="https://harrydole.com/wp/tag/catecon/"'))) +
-								H.tr(H.td(H.a('Intro To Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"'))) +
-								H.tr(H.td(H.a('V Is For Vortex - More Categorical Programming', 'intro', '', '', 'href="https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"'))) +
-								H.tr(H.td(H.a('Catecon: Visualizing Coherence in the Categorical Console', 'intro', '', '', 'href="https://harrydole.com/wp/2018/06/28/catecon/"'))) +
-								H.tr(H.td(H.a('Catecon: Factorial', 'intro', '', '', 'href="https://harrydole.com/wp/2018/07/05/catecon-factorial/"'))) +
-								H.tr(H.td(H.a('Catecon: Fibonacci', 'intro', '', '', 'href="https://harrydole.com/wp/2018/07/10/catecon-fibonacci/"'))), 'center') +
 						H.table(H.tr(H.td(H.small('(C) 2018 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
 					, 'txtCenter');
 		return html;
@@ -1067,7 +1067,8 @@ const Cat =
 			Cat.display.element.setPanelContent();
 			Cat.display.diagram.update();
 			const dgrm = Cat.getDiagram();
-			Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + dgrm.makeAllSVG();
+//			Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + dgrm.makeAllSVG();
+			Cat.display.diagramSVG.innerHTML = dgrm.makeAllSVG();
 			Cat.display.diagram.setToolbar(dgrm);
 			dgrm.update(null, 'diagram', null, true, false);
 			dgrm.updateMorphisms();
@@ -1844,7 +1845,13 @@ const Cat =
 													H.tr(H.td('Domain Start Index'), 'sidenavRow') +
 													H.tr(H.td(Cat.display.input('', 'urlStartIdx', 'Start ' + to.domain.getText(), irx, '')), 'sidenavRow') +
 													H.tr(H.td('Data URL'), 'sidenavRow') +
-													H.tr(H.td(Cat.display.input('', 'urlInput', 'URL', irx, '')), 'sidenavRow')) +
+													H.tr(H.td(Cat.display.input('', 'urlInput', 'URL', irx, '')), 'sidenavRow') +
+													H.tr(H.td('File Type'), 'sidenavRow') +
+													H.tr(H.td(
+																'<input type="radio" name="urlType" id="urlCSV" checked value="csv"/><label for="urlCSV">CSV</label>' +
+																'<input type="radio" name="urlType" id="urlCSVgz" value="csv.gz"/><label for="urlCSVjz">CSV.gz</label>' +
+																'<input type="radio" name="urlType" id="urlJSON" value="json"/><label for="urlJSON">JSON</label>'
+															), 'sidenavRow')) +
 											Cat.display.getButton('edit', `Cat.display.data.handler(evt, '${from.name}', 'url')`, 'Create URL range'), 'accordionPnl', 'urlInputPnl');
 								}
 								html += H.div('', 'error', 'editError');
@@ -2706,39 +2713,6 @@ const Cat =
 		},
 		svg:
 		{
-			basics:
-`<defs>
-	<filter id="softGlow" height="300%" width="300%">
-		<feMorphology operator="dilate" radius="2" in="SourceAlpha" result="thicken" />
-		<feGaussianBlur in="thicken" stdDeviation="2" result="blurred" />
-		<feFlood flood-color="rgb(192,192,192)" result="glowColor" />
-		<feComposite in="glowColor" in2="blurred" operator="in" result="softGlow_colored" />
-		<feMerge>
-			<feMergeNode in="softGlow_colored"/>
-			<feMergeNode in="SourceGraphic"/>
-		</feMerge>
-	</filter>
-	<radialGradient id="radgrad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:1"/>
-		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
-	</radialGradient>
-	<radialGradient id="radgrad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(127,127,127);stop-opacity:1"/>
-		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"/>
-	</radialGradient>
-	<g id="threeD_base">
-		<line class="arrow0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
-		<line class="arrow0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
-		<line class="arrow0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-	</g>
-</defs>
-<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-	<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
-</marker>
-<marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-	<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
-</marker>
-`,
 			buttons:
 			{
 				cateapsis:
@@ -5198,12 +5172,6 @@ class morphism extends element
 			}
 		}
 	}
-	/*
-	incrRefcnt()	// TODO debug only
-	{
-		super.incrRefcnt();
-	}
-	*/
 	json()
 	{
 		let mor = super.json();
@@ -5587,7 +5555,7 @@ class dataMorphism extends morphism
 		else
 			this.recursor = null;
 		this.ranges = Cat.getArg(args, 'ranges', []);
-		this.fetchData();
+		this.fetchData(null);	// no event
 	}
 	decrRefcnt()
 	{
@@ -5695,17 +5663,36 @@ class dataMorphism extends morphism
 			throw 'URL cannot be empty';
 		const idx = Number.parseInt(document.getElementById('urlStartIdx').value);
 		const startIndex = Math.min(this.upperLimit(), idx !== null ? idx : 0);
-		const r = {type:'url', startIndex, url};
-		this.ranges.push(r);
+		const types = document.getElementsByName('urlType');
+		let fileType = null;
+		for (let i=0; i<types.length; ++i)
+			if (types[i].checked)
+			{
+				fileType = types[i].value;
+				break;
+			}
+		this.ranges.push({type:'url', startIndex, url, fileType});
 		Cat.display.data.updateDataRanges(this);
 		this.fetchData(e);
 	}
+	static processCSV(csv, c)
+	{
+		const r = [];
+		const lines = csv.split('\n');
+		return lines.map(l => l.split(c));
+	}
 	fetchData(e)
 	{
+		
 		this.ranges.map(r =>
 		{
 			if (r.type !== 'url' || ('data' in r))
 				return;
+			const checkStatus = function (response)
+			{
+				return (response.status === 200 || response.status === 0) ? Promise.resolve(response) : Promise.reject(new Error(`Error loading: ${r.url}`));
+			};
+			/*
 			fetch(r.url).then(function(response)
 			{
 				if (response.ok)
@@ -5716,6 +5703,40 @@ class dataMorphism extends morphism
 				else
 					Cat.status(e, 'ERROR: Failed to download URL');
 			});
+			*/
+			switch(r.fileType)
+			{
+			case 'csv':
+				fetch(r.url, {headers: {'Content-Type':'text'}}).then(checkStatus).
+					then(function(response)
+					{
+						response.blob().then(function(data)
+						{
+							r.data = dataMorphism.processCSV(data, '\t');
+						});
+					});
+					break;
+			case 'csv.gz':
+				fetch(r.url, {headers: {'Content-Type':'application/gzip'}}).then(checkStatus).
+					then(function(response)
+					{
+						response.json().then(function(data)
+						{
+							r.data = dataMorphism.processCSV(data, '\t');
+						});
+					});
+				break;
+			case 'json':
+				fetch(r.url, {headers: {'Content-Type':'application/json; charset=utf-8'}}).then(checkStatus).
+					then(function(response)
+					{
+						response.json().then(function(data)
+						{
+							r.data = data;
+						});
+					});
+				break;
+			}
 		});
 	}
 	deleteData(term)
@@ -6475,18 +6496,6 @@ class stringMorphism extends morphism
 		const domExpr = this.graph.data[0];
 		const codExpr = this.graph.data[1];
 		let offset = 0;
-		/*
-		if (m.factors.length === 1)
-		{
-			const f = m.factors[0];
-			const dom = element.getExprFactor(domExpr, f);
-			if (dom === null)
-				return;
-			const cod = codExpr;
-			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot:f.slice(), codRoot:[1], offset});
-		}
-		else
-		*/
 		m.factors.map((r, i) =>
 		{
 			const dom = element.getExprFactor(domExpr, r);
@@ -7205,7 +7214,8 @@ class diagram extends functor
 		this.selected = [];
 		this.makeHomSets();
 		this.texts = [];
-		Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + Cat.getDiagram().makeAllSVG();
+//		Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + Cat.getDiagram().makeAllSVG();
+		Cat.display.diagramSVG.innerHTML = Cat.getDiagram().makeAllSVG();
 		Cat.updatePanels();
 		if ('orig' in this.viewport)
 			delete this.viewport.orig;
