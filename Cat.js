@@ -244,7 +244,7 @@ const Cat =
 									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
 						H.table(btns.map(row => H.tr(row.map(b => H.td(Cat.display.getButton(b))).join(''))).join(''), 'buttonBar center') +
 						H.span('', '', 'introPngs') + '<br/>' +
-						H.table(H.tr(H.td(H.small('(C) 2018 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
+						H.table(H.tr(H.td(H.small('&copy;2018 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
 					, 'txtCenter');
 		return html;
 	},
@@ -841,12 +841,16 @@ const Cat =
 				token:			'F',
 				description:	'floating point numbers',
 				regexp:			'^[-\\+]?[0-9]+[.]?[0-9]*([eE][-\\+]?[0-9]\\+)?$',
-				editable:	true,
+				editable:		true,
+				default:		null,
 				$(string)
 				{
-					const f = Number.parseFloat(string);
+					let f = Number.parseFloat(string);
 					if (Number.isNaN(f))
-						throw `Not a floating point number: ${string}`;
+						if (string === '')
+							f = this.default;
+						else
+							throw `Not a floating point number: ${string}`;
 					return f;
 				},
 				random(min, max)
@@ -861,11 +865,15 @@ const Cat =
 				description:	'integers',
 				regexp:			'^(\\+|-)?\\d*',
 				editable:		true,
+				default:		null,
 				$(string)
 				{
-					const i = Number.parseInt(string);
+					let i = Number.parseInt(string);
 					if (Number.isNaN(i))
-						throw `Not an integer: ${string}`;
+						if (string === '')
+							i = this.default;
+						else
+							throw `Not an integer: ${string}`;
 					return i;
 				},
 				random(min, max)
@@ -880,11 +888,15 @@ const Cat =
 				description:	'natural numbers',
 				regexp:			'\\d',
 				editable:		true,
+				default:		null,
 				$(string)
 				{
-					const i = Number.parseInt(string);
+					let i = Number.parseInt(string);
 					if (Number.isNaN(i) || i < 0)
-						throw `Not a natural number: ${string}`;
+						if (string === '')
+							i = this.default;
+						else
+							throw `Not a natural number: ${string}`;
 					return i;
 				},
 				random(min, max)
@@ -1847,8 +1859,7 @@ const Cat =
 													H.tr(H.td('Data URL'), 'sidenavRow') +
 													H.tr(H.td(Cat.display.input('', 'urlInput', 'URL', irx, '')), 'sidenavRow') +
 													H.tr(H.td('File Type'), 'sidenavRow') +
-													H.tr(H.td(
-																'<input type="radio" name="urlType" id="urlCSV" checked value="csv"/><label for="urlCSV">CSV</label>' +
+													H.tr(H.td( '<input type="radio" name="urlType" id="urlCSV" checked value="csv"/><label for="urlCSV">CSV</label>' +
 																'<input type="radio" name="urlType" id="urlCSVgz" value="csv.gz"/><label for="urlCSVjz">CSV.gz</label>' +
 																'<input type="radio" name="urlType" id="urlJSON" value="json"/><label for="urlJSON">JSON</label>'
 															), 'sidenavRow')) +
@@ -1868,6 +1879,7 @@ const Cat =
 							}
 							html += H.div(
 										H.h5('Values') +
+								// TODO needs to work for clearing data
 										H.table(tbl) +
 										H.h5('Ranges') +
 										H.small('The list of ranges is consulted in sequence for a range containing the given index.  When found the range is evaluated and returned for that index.') +
@@ -2279,7 +2291,7 @@ const Cat =
 								H.a('Parser', '', '', '', 'href="https://pegjs.org/"')
 						, 'accordionPnl', 'thirdPartySoftwarePnl') +
 					H.hr() +
-					H.small('(C) 2018 Harry Dole') + H.br() +
+					H.small('&copy;2018 Harry Dole') + H.br() +
 					H.small('harry@harrydole.com', 'italic');
 				document.getElementById('help-sidenav').innerHTML = html;
 			}
@@ -2487,7 +2499,9 @@ const Cat =
 						H.tr(	H.td(`<input type="checkbox" ${Cat.display.showRefcnts ? 'checked' : ''} onchange="Cat.display.settings.toggleShowRefcnts()">`) +
 								H.td('Show reference counts for objects and morphisms in their respective panels.', 'left'), 'sidenavRow') +
 						H.tr(	H.td(`<input type="checkbox" ${Cat.display.showUploadArea ? 'checked' : ''} onchange="Cat.display.settings.toggleShowUploadArea()">`) +
-								H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow')
+								H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow') +
+						H.tr(	H.td(`<input type="checkbox" ${Cat.debug ? 'checked' : ''} onchange="Cat.debug = !Cat.debug">`) +
+								H.td('Debug', 'left'), 'sidenavRow')
 					);
 				document.getElementById('settings-sidenav').innerHTML = html;
 			},
@@ -5689,11 +5703,22 @@ class dataMorphism extends morphism
 		Cat.display.data.updateDataRanges(this);
 		this.fetchData(e);
 	}
-	static processCSV(csv, c)
+	static processCSV(skip, csv, c, expr)
 	{
 		const r = [];
 		const lines = csv.split('\n');
-		return lines.map(l => l.split(c));
+		for (let l=skip; l<lines.length; ++l)
+		{
+			const ln = lines[l];
+			if (ln === '')
+				continue;
+			let tokens = ln.split(c);
+			if ('data' in expr)
+				r.push(expr.data.map((d, i) => Cat.basetypes.objects[d.token].$(tokens[i])));
+			else
+				r.push(Cat.basetypes.objects[expr.token].$(tokens[0]));
+		}
+		return r;
 	}
 	fetchData(e)
 	{
@@ -5706,6 +5731,7 @@ class dataMorphism extends morphism
 			{
 				return (response.status === 200 || response.status === 0) ? Promise.resolve(response) : Promise.reject(new Error(`Error loading: ${r.url}`));
 			};
+			const m = this;
 			fetch(r.url).then(checkStatus).then(function(response)
 			{
 				if (response.ok)
@@ -5722,7 +5748,7 @@ class dataMorphism extends morphism
 					case 'csv':
 						response.text().then(function(data)
 						{
-							r.data = dataMorphism.processCSV(data, ',');
+							r.data = dataMorphism.processCSV(r.skipRows, data, ',', m.codomain.expr);
 							r.count = r.data.length;
 						});
 						break;
@@ -5736,8 +5762,8 @@ class dataMorphism extends morphism
 								const u = new Zlib.Gunzip(c);
 								const decom = u.decompress();
 								const s = new TextDecoder('utf-8').decode(decom);
-								const csv = dataMorphism.processCSV(s, ',');
-								csv.shift();	// TODO fix remove first row banner
+								const csv = dataMorphism.processCSV(r.skipRows, s, ',', m.codomain.expr);
+								csv.shift();	// TODO fix remove first row banner with option
 								r.data = csv;
 								r.count = r.data.length;
 							};
@@ -6900,6 +6926,7 @@ class namedIdentity extends morphism
 	constructor(dgrm, args)
 	{
 		const nuArgs = Cat.clone(args);
+		nuArgs.diagram = dgrm;
 		nuArgs.name = `id--${args.domain}--${args.codomain}--`;
 		nuArgs.function = 'identity';
 		nuArgs.html = '=';
@@ -8585,7 +8612,9 @@ class diagram extends functor
 		const from = this.getSelected();
 		if (from.to.subClass === 'dataMorphism')
 		{
-			document.getElementById('dataPnl').innerHTML = '';
+//			document.getElementById('dataPnl').innerHTML = '';
+			if ('range' in from.to)
+				document.getElementById('dataRanges').innerHTML = '';
 			from.to.clear();
 			this.saveToLocalStorage();
 		}
