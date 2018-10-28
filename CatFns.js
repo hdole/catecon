@@ -27,7 +27,7 @@
 						case 'range':
 							return Cat.element.makeRangeData(null, this.codomain.expr, true, {idx:args, startIndex:r.startIndex, startValue:r.startValue});
 						case 'random':
-							return Cat.element.makeRandomData(null, this.codomain.expr, true, {idx:args, min:r.min[i], max:r.max[i]});
+							return Cat.element.makeRandomData(null, this.codomain.expr, true, {idx:args, min:this.ranges.length > 1 ? r.min[i] : r.min, max:this.ranges.length > 1 ? r.max[i] : r.max});
 						case 'url':
 							return Cat.element.makeUrlData(null, this.codomain.expr, true, r.data[args]);
 						}
@@ -50,22 +50,10 @@
 					return this.recursor.$(args);
 				return null;
 			},
-			productAssembly(args)
-			{
-				return this.morphisms.map(m => m.$(args));
-			},
-			fold(args)
-			{
-				return args[1];
-			},
-			product(args)
-			{
-				return this.morphisms.map((m, i) => m.$(args[i]));
-			},
-			coproduct(args)
-			{
-				return [args[0], this.morphisms[args[0]].$(args[1])];
-			},
+			productAssembly(args)	{ return this.morphisms.map(m => m.$(args)); },
+			fold(args)				{ return args[1]; },
+			product(args)			{ return this.morphisms.map((m, i) => m.$(args[i])); },
+			coproduct(args)			{ return [args[0], this.morphisms[args[0]].$(args[1])]; },
 			factor(args)
 			{
 				const r = this.factors.map(r => r.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
@@ -88,44 +76,16 @@
 					args[0] = Cat.getDiagram().getMorphism(args[0]);
 				return args[0].$([args[1]]);
 			},
-			initial(args)
-			{},
-			terminal(args)
-			{
-				return 0;
-			},
-			equals(args)
-			{
-				return args[0] === args[1];
-			},
-			and(args)
-			{
-				return args[0] && args[1];
-			},
-			or(args)
-			{
-				return args[0] || args[1];
-			},
-			false(args)
-			{
-				return false;
-			},
-			true(args)
-			{
-				return true;
-			},
-			not(args)
-			{
-				return !args;
-			},
-			null(args)
-			{
-				return null;
-			},
-			natAdd(args)
-			{
-				return args[0] + args[1];
-			},
+			initial(args)	{},
+			terminal(args)	{ return 0; },
+			equals(args)	{ return args[0] === args[1]; },
+			and(args)		{ return args[0] && args[1]; },
+			or(args)		{ return args[0] || args[1]; },
+			false(args)		{ return false; },
+			true(args)		{ return true; },
+			not(args)		{ return !args; },
+			null(args)		{ return null; },
+			natAdd(args)	{ return args[0] + args[1]; },
 			natPred(args)
 			{
 				let val = args;
@@ -136,54 +96,18 @@
 				let val = args[0];
 				return ++val;
 			},
-			natMult(args)
-			{
-				return args[0] * args[1];
-			},
-			natStrict(args)
-			{
-				return args[0] < args[1];
-			},
-			natOrder(args)
-			{
-				return args[0] <= args[1];
-			},
-			intAdd(args)
-			{
-				return args[0] + args[1];
-			},
-			intSub(args)
-			{
-				return args[0] - args[1];
-			},
-			intMult(args)
-			{
-				return args[0] * args[1];
-			},
-			intStrict(args)
-			{
-				return args[0] < args[1];
-			},
-			intOrder(args)
-			{
-				return args[0] <= args[1];
-			},
-			intModulo(args)
-			{
-				return args[0] % args[1];
-			},
-			floatAdd(args)
-			{
-				return args[0] + args[1];
-			},
-			floatSub(args)
-			{
-				return args[0] - args[1];
-			},
-			floatMult(args)
-			{
-				return args[0] * args[1];
-			},
+			natMult(args)	{ return args[0] * args[1]; },
+			natStrict(args)	{ return args[0] < args[1]; },
+			natOrder(args)	{ return args[0] <= args[1]; },
+			intAdd(args)	{ return args[0] + args[1]; },
+			intSub(args)	{ return args[0] - args[1]; },
+			intMult(args)	{ return args[0] * args[1]; },
+			intStrict(args)	{ return args[0] < args[1]; },
+			intOrder(args)	{ return args[0] <= args[1]; },
+			intModulo(args)	{ return args[0] % args[1]; },
+			floatAdd(args)	{ return args[0] + args[1]; },
+			floatSub(args)	{ return args[0] - args[1]; },
+			floatMult(args)	{ return args[0] * args[1]; },
 			floatDiv(args)
 			{
 				const a1 = args[1];
@@ -192,59 +116,39 @@
 				const r = args[0] / args[1];
 				return Number.isNaN(r) ? [1, true] : [0, r];
 			},
-			floatStrict(args)
-			{
-				return args[0] < args[1];
-			},
-			floatOrder(args)
-			{
-				return args[0] <= args[1];
-			},
-			nat2int(args)
-			{
-				return args;
-			},
-			int2float(args)
-			{
-				return args;
-			},
-			strAppend(args) 
-			{
-				return args[0] + args[1];
-			},
-			strLength(args)
-			{
-				return args !== null ? args.length : null;
-			},
-			nat2str(args)
-			{
-				return args.toString();
-			},
-			int2str(args)
-			{
-				return args.toString();
-			},
-			omega2str(args)
-			{
-				return args.toString();
-			},
-			float2str(args)
-			{
-				return args.toString();
-			},
+			floatStrict(args)	{ return args[0] < args[1]; },
+			floatOrder(args)	{ return args[0] <= args[1]; },
+			nat2int(args)	{ return args; },
+			int2float(args)	{ return args; },
+			strAppend(args)	{ return args[0] + args[1]; },
+			strLength(args)	{ return args !== null ? args.length : null; },
+			nat2str(args)	{ return args.toString(); },
+			int2str(args)	{ return args.toString(); },
+			omega2str(args)	{ return args.toString(); },
+			float2str(args)	{ return args.toString(); },
 			ttyOut(args)
 			{
 				document.getElementById('tty-out').innerHTML += args + "\n";
 				return null;
 			},
-			identity(args)
-			{
-				return args;
-			},
-			diagonal(args)
-			{
-				return [args, args];
-			},
+			identity(args)	{ return args; },
+			diagonal(args)	{ return [args, args]; },
+			// trig
+			pi()			{ return Math.PI; },
+			acos(args)		{ return Math.acos(args); },
+			acosh(args)		{ return Math.acosh(args); },
+			asin(args)		{ return Math.asin(args); },
+			asinh(args)		{ return Math.asinh(args); },
+			atan(args)		{ return Math.atan(args); },
+			atanh(args)		{ return Math.atanh(args); },
+			atan2(args)		{ return Math.atan2(args); },
+			cos(args)		{ return Math.cos(args); },
+			cosh(args)		{ return Math.cosh(args); },
+			sin(args)		{ return Math.sin(args); },
+			sinh(args)		{ return Math.sinh(args); },
+			tan(args)		{ return Math.tan(args); },
+			tanh(args)		{ return Math.tanh(args); },
+			// threeD
 			Ato3D(args)
 			{
 				CatFns.util.checkGeometry(this);

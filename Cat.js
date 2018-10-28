@@ -644,7 +644,7 @@ const Cat =
 	{
 		localStorage.setItem(`Cat.selected.category ${Cat.user.name}`, Cat.selected.category);
 	},
-	getLocalStorageDiagramName()
+	getLocalStorageDiagramName(cat)
 	{
 		return localStorage.getItem(`Cat.selected.diagram ${Cat.user.name} ${cat}`);
 	},
@@ -1038,7 +1038,8 @@ const Cat =
 		{
 			this.selectCategory(cat, function()
 			{
-				let name = localStorage.getItem(`Cat.selected.diagram ${Cat.user.name} ${cat}`);
+//				let name = localStorage.getItem(`Cat.selected.diagram ${Cat.user.name} ${cat}`);
+				let name = Cat.getLocalStorageDiagramName(cat);
 				name = name === null ? diagram.genName(cat, Cat.user.name, 'Draft') : name;
 				let dgrm = Cat.getDiagram(name);
 				if (dgrm === null && diagram.fromLocalStorage(name) === null)
@@ -2305,7 +2306,7 @@ const Cat =
 					H.div('User: ' + H.span(Cat.user.name, 'smallBold')) +
 					H.div('Email: ' + H.span(Cat.user.email, 'smallBold')) +
 					(!Cat.Amazon.loggedIn ? '' : H.button('Logout', '', '', 'Logout of the current session', `onclick="Cat.Amazon.logout()"`)) +
-					(Cat.user.name !== 'Anon' ? H.button('Reset password', '', '', 'Reset your password', `onclick="Cat.Display.login.showResetForm()"`) : '') +
+//					(Cat.user.name !== 'Anon' ? H.button('Reset password', '', '', 'Reset your password', `onclick="Cat.Display.login.showResetForm()"`) : '') +
 					H.div('', 'passwordResetForm');
 				if (Cat.user.status !== 'logged-in' && Cat.user.status !== 'registered')
 					html += H.table(	H.tr(H.td('User name')) +
@@ -2325,7 +2326,7 @@ const Cat =
 					html += H.h3('Confirmation Code') +
 							H.span('The confirmation code is sent by email to the specified address above.') +
 							H.table(	H.tr(H.td('Confirmation code')) +
-										H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code'}))) +
+										H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.display.onEnter(event, Cat.Amazon.confirm)"'}))) +
 										H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=Cat.Amazon.confirm()'))));
 				document.getElementById('login-sidenav').innerHTML = html;
 			},
@@ -2356,8 +2357,21 @@ const Cat =
 				let dgrm = Cat.getDiagram();
 				if (dgrm !== null)
 				{
+					const functions = Object.keys(CatFns.function).sort().map(f => `<option value="${f}">${f}</option>`).join('');
 					let html = H.table(H.tr(Cat.display.expandPanelBtn('morphism', false) + Cat.display.closeBtnCell('morphism', true)), 'buttonBarRight') +
 								H.h3('Morphisms') +
+								H.h4('New Morphism') +
+								H.div(H.table(	H.tr(H.td(H.small('Create a new morphism bound to an underlying embedded function.'), 'left'), 'sidenavRow') +
+												H.tr(H.td(Cat.display.input('', 'morphismName', 'Name')), 'sidenavRow') +
+												H.tr(H.td(Cat.display.input('', 'morphismHtml', 'HTML')), 'sidenavRow') +
+//												H.tr(H.td(Cat.display.input('', 'morphismFunction', 'Function name')), 'sidenavRow') +
+												H.tr(H.td(`<select id="morphismFunction"><option value=""></option>${functions}</select>`), 'sidenavRow') +
+												H.tr(H.td(Cat.display.input('', 'morphismDescription', 'Description')), 'sidenavRow') +
+												H.tr(H.td(Cat.display.input('', 'morphismDomain', 'Domain')), 'sidenavRow') +
+												H.tr(H.td(Cat.display.input('', 'morphismCodomain', 'Codomain')), 'sidenavRow')
+										) +
+									H.span(Cat.display.getButton('edit', 'Cat.display.morphism.new(evt)', 'Create new morphism for this diagram')) +
+									H.span('', 'error', 'morphismError')) +
 								dgrm.setupDiagramElementPnl('_MorPnl', 'updateMorphismTableRows') +
 								H.h4('References') +
 								dgrm.references.map(r => r.setupDiagramElementPnl('_MorPnl', 'updateMorphismTableRows')).join('');
@@ -2368,6 +2382,44 @@ const Cat =
 			{
 				let dgrm = Cat.getDiagram();
 				dgrm.updateMorphismTableRows();
+			},
+			new(e)
+			{
+				try
+				{
+					const dgrm = Cat.getDiagram();
+					if (dgrm.readonly)
+						throw 'Diagram is read only';
+					document.getElementById('morphismError').innerHTML = '';
+					const nameElt = document.getElementById('morphismName');
+					let name = nameElt.value;
+					if (name === '')
+						throw 'Must have name';
+					nameElt.value = '';
+					const htmlElt = document.getElementById('morphismHtml');
+					const descriptionElt = document.getElementById('morphismDescription');
+					const functionElt = document.getElementById('morphismFunction');
+					const domainElt = document.getElementById('morphismDomain');
+					const codomainElt = document.getElementById('morphismCodomain');
+					const description = Cat.htmlEntitySafe(descriptionElt.value);
+					const html = Cat.htmlEntitySafe(htmlElt.value);
+					const func = Cat.htmlEntitySafe(functionElt.value);
+					const domain = dgrm.newObject({code:domainElt.value});
+					const codomain = dgrm.newObject({code:codomainElt.value});
+					const to = new morphism(dgrm.codomain, {name, html, domain, codomain, diagram:dgrm, function:func, description});
+					const xyDom = {x:Cat.display.width()/2 - (Cat.default.arrow.length/2), y:Cat.display.height()/2};
+					const xyCod = D2.add(xyDom, {x:Cat.default.arrow.length, y:0});
+					dgrm.placeMorphism(e, to, xyDom, xyCod);
+					htmlElt.value = '';
+					descriptionElt.value = '';
+					functionElt.value = '';
+					domainElt.value = '';
+					codomainElt.value = '';
+				}
+				catch(e)
+				{
+					document.getElementById('morphismError').innerHTML = 'Error: ' + Cat.getError(e);
+				}
 			},
 		},
 		object:
@@ -2391,6 +2443,7 @@ const Cat =
 					document.getElementById('object-sidenav').innerHTML = html;
 				}
 			},
+				/*
 			newOrig(e)
 			{
 				try
@@ -2424,6 +2477,7 @@ const Cat =
 					document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
 				}
 			},
+			*/
 			new(e)
 			{
 				try
@@ -2448,6 +2502,7 @@ const Cat =
 					document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
 				}
 			},
+				/*
 			newObjectPnlOrig()
 			{
 				let html = H.button('New Object', 'sidenavAccordion', '', 'New Object', `onclick="Cat.display.accordion.toggle(this, \'newObjectPnl\')"`) +
@@ -2465,6 +2520,7 @@ const Cat =
 								H.span('', 'error', 'objectError'), 'accordionPnl', 'newObjectPnl');
 				return html;
 			},
+			*/
 			newObjectPnl()
 			{
 				let html = H.h4('New Object') +
@@ -3573,6 +3629,10 @@ ${this.svg.button(onclick)}
 			Cat.user.name = 'Anon';
 			Cat.user.email = '';
 			Cat.user.status = 'unauthorized';
+			Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
+			{
+				Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+			});
 			Cat.display.setNavbarBackground();
 			Cat.updatePanels();
 		},
@@ -4293,10 +4353,11 @@ class element
 		return element.expandExpression(dgrm, expr,
 			function(dgrm, expr, first, data)
 			{
-				const obj = dgrm.getObject(expr);
-				if ('token' in obj.expr)
-					return data.dm.getRandomValue(obj.expr, data.min, data.max);
-				return element.makeRandomData(dgrm, obj.expr, false, data);
+//				const obj = dgrm.getObject(expr);
+//				if ('token' in obj.expr)
+//					return data.dm.getRandomValue(obj.expr, data.min, data.max);
+//				return element.makeRandomData(dgrm, obj.expr, false, data);
+				return dataMorphism.getRandomValue(expr, data.min, data.max);
 			},
 			function(dgrm, expr, first, data)
 			{
@@ -4962,19 +5023,16 @@ class category extends object
 				case 'range':
 					for (let i=r.startIndex; i<r.startIndex + r.count; ++i)
 						if (!(i in dataOut.data))
-//							dataOut.data[i] = m.$(element.makeRangeData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, startValue:r.startValue}));
 							dataOut.data[i] = m.$(i);
 					break;
 				case 'random':
 					for (let i=r.startIndex; i<r.startIndex + r.count; ++i)
 						if (!(i in dataOut.data))
-//							dataOut.data[i] = m.$(element.makeRandomData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, min:r.min, max:r.max}));
 							dataOut.data[i] = m.$(i);
 					break;
 				case 'url':
 					for (let i=r.startIndex; i<r.startIndex + r.data.length; ++i)
 						if (!(i in dataOut.data))
-//							dataOut.data[i] = m.$(element.makeUrlData(null, m.codomain.expr, true, {idx:i, startIndex:r.startIndex, min:r.min, max:r.max, data:r.data}));
 							dataOut.data[i] = m.$(i);
 					break;
 				}
@@ -5669,7 +5727,7 @@ class dataMorphism extends morphism
 		this.ranges.push({type:'range', startIndex, count, startValue, skipRows:1});
 		Cat.display.data.updateDataRanges(this);
 	}
-	getRandomValue(expr, min, max)
+	static getRandomValue(expr, min, max)
 	{
 		// TODO fix 'N'
 		// TODO what to do for 'Str'?
@@ -5821,7 +5879,7 @@ class dataMorphism extends morphism
 						row = `Contiguous range from ${r.startIndex} for ${r.count} indices starting at value ${r.startValue.toString()}`;
 						break;
 					case 'random':
-						row = `Random range from ${r.startIndex} for ${r.count} indices with min at ${r.min.toString()} and max ${r.max.toString()}`;
+						row = `Random range from ${r.startIndex} for ${r.count} indices with min ${r.min.toString()} and max ${r.max.toString()}`;
 						break;
 					case 'url':
 						row = `URL range from ${r.startIndex} for ${r.count} indices from ${r.url}`;
