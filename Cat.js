@@ -225,8 +225,11 @@ const Cat =
 	url:			'',
 	intro()
 	{
-		let btns = [['cateapsis', 'category', 'compose', 'coproduct', 'product', 'copy', 'delete', 'detachCodomain', 'detachDomain', 'diagram', 'edit', 'eval', 'fromHere', 'toHere', 'functor', 'help', 'lambda', 'login'],
-					['morphism', 'object', 'coproductAssembly', 'productAssembly', 'project', 'pullback', 'pushout', 'recursion', 'reference', 'run', 'settings', 'text', 'threeD', 'transform', 'tty', 'lock', 'unlock', 'upload']];
+//		let btns = [['cateapsis', 'category', 'compose', 'coproduct', 'product', 'copy', 'delete', 'detachCodomain', 'detachDomain', 'diagram', 'edit', 'eval', 'fromHere', 'toHere', 'functor', 'help', 'lambda', 'login'],
+//					['morphism', 'object', 'coproductAssembly', 'productAssembly', 'project', 'pullback', 'pushout', 'recursion', 'reference', 'run', 'settings', 'text', 'threeD', 'transform', 'tty', 'lock', 'unlock', 'upload']];
+		let btns = '';
+		for (const b in Cat.display.svg.buttons)
+			btns += Cat.display.getButton(b);
 		let html = H.h1('Catecon') +
 					H.div(
 						H.small('The Categorical Console', 'italic underline bold') + H.br() +
@@ -242,7 +245,8 @@ const Cat =
 									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
 									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
 									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
-						H.table(btns.map(row => H.tr(row.map(b => H.td(Cat.display.getButton(b))).join(''))).join(''), 'buttonBar center') +
+//						H.table(btns.map(row => H.tr(row.map(b => H.td(Cat.display.getButton(b))).join(''))).join(''), 'buttonBar center') +
+						H.table(H.tr(H.td(btns)), 'buttonBar center') +
 						H.span('', '', 'introPngs') + '<br/>' +
 						H.table(H.tr(H.td(H.small('&copy;2018 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
 					, 'txtCenter');
@@ -1403,6 +1407,9 @@ const Cat =
 					if (!dgrm.readonly)
 						dgrm.saveToLocalStorage();
 				}
+				else if (e.ctrlKey)
+				{
+				}
 				else
 					dgrm.addWindowSelect(e);
 				Cat.display.fuseObject = null;
@@ -1977,7 +1984,7 @@ const Cat =
 							this.newDiagramPnl() +
 							(cat !== null ? H.button(`${Cat.user.name}`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Cat.display.accordion.toggle(this, \'userDiagramDisplay\')"') : '') +
 							H.div(	H.small('User diagrams') +
-							H.div('', '', 'userDiagrams'), 'accordionPnl', 'userDiagramDisplay') +
+									H.div('', '', 'userDiagrams'), 'accordionPnl', 'userDiagramDisplay') +
 							H.button('Recent', 'sidenavAccordion', '', 'Recent diagrams from Catecon', 'onclick="Cat.display.accordion.toggle(this, \'recentDiagrams\');Cat.display.diagram.fetchRecentDiagrams()"') +
 							H.div(H.div('', 'accordionPnl', 'recentDiagrams')) +
 							H.button('Catalog', 'sidenavAccordion', '', 'Catalog of available diagrams', 'onclick="Cat.display.accordion.toggle(this, \'catalogDiagrams\');Cat.display.diagram.fetchCatalogDiagramTable()"') +
@@ -2108,7 +2115,8 @@ const Cat =
 					if (dgrm.username === Cat.user.name)
 						dgrms[d] = true;
 				}
-				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = true);
+//				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = true);
+				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = dgrm.username === Cat.user.name);
 				let html = Object.keys(dgrms).map(d =>
 				{
 					const refBtn = !(dgrm.name == d || dgrm.hasReference(d)) ? H.td(Cat.display.getButton('reference', `Cat.getDiagram().addReferenceDiagram(evt, '${d}')`, 'Add reference diagram'), 'buttonBar') : '';
@@ -2385,8 +2393,10 @@ const Cat =
 			},
 			new(e)
 			{
+				const errDisplay = document.getElementById('morphismError');
 				try
 				{
+					errDisplay.innerHTML = '';
 					const dgrm = Cat.getDiagram();
 					if (dgrm.readonly)
 						throw 'Diagram is read only';
@@ -2395,7 +2405,6 @@ const Cat =
 					let name = nameElt.value;
 					if (name === '')
 						throw 'Must have name';
-					nameElt.value = '';
 					const htmlElt = document.getElementById('morphismHtml');
 					const descriptionElt = document.getElementById('morphismDescription');
 					const functionElt = document.getElementById('morphismFunction');
@@ -2410,6 +2419,7 @@ const Cat =
 					const xyDom = {x:Cat.display.width()/2 - (Cat.default.arrow.length/2), y:Cat.display.height()/2};
 					const xyCod = D2.add(xyDom, {x:Cat.default.arrow.length, y:0});
 					dgrm.placeMorphism(e, to, xyDom, xyCod);
+					nameElt.value = '';
 					htmlElt.value = '';
 					descriptionElt.value = '';
 					functionElt.value = '';
@@ -2418,7 +2428,7 @@ const Cat =
 				}
 				catch(e)
 				{
-					document.getElementById('morphismError').innerHTML = 'Error: ' + Cat.getError(e);
+					errDisplay.innerHTML = 'Error: ' + Cat.getError(e);
 				}
 			},
 		},
@@ -2882,10 +2892,12 @@ const Cat =
 	<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
 </marker>
 <line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
+	/*
 				new:
 `<circle class="svgfil4" cx="80" cy="70" r="70"/>
 <line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
 <line class="svgfilNone arrow0" x1="30" y1="70" x2="130" y2= "70" />`,
+*/
 				object:
 `<circle cx="160" cy="160" r="140" fill="url(#radgrad1)"/>`,
 				product:
@@ -2940,6 +2952,12 @@ const Cat =
 <path class="svgstr4" d="M60,120 C120,120 120,200 60,200"/>
 <path class="svgstr4" d="M260,40 C200,40 200,120 260,120"/>
 <line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>`,
+				symmetry:
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="280"/>
+<line class="arrow0" x1="80" y1="120" x2="80" y2="220"/>
+<line class="arrow0" x1="240" y1="120" x2="240" y2="220"/>
+<line class="arrow0" x1="40" y1="120" x2="120" y2="120"/>
+<line class="arrow0" x1="200" y1="120" x2="280" y2="120"/>`,
 				text:
 `<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="160" y1="280" x2="160" y2="60"/>`,
@@ -3848,7 +3866,7 @@ class element
 		this.refcnt = 0;
 		this.class = 'element';
 		this.name = Cat.getArg(args, 'name', '');
-		if (this.name != '' && !Cat.nameEx.test(this.name))
+		if (this.name !== '' && !Cat.nameEx.test(this.name))
 			throw `Element name ${this.name} is not allowed.`;
 		this.html = Cat.getArg(args, 'html', '');
 		this.code = Cat.getArg(args, 'code', '');
@@ -4585,7 +4603,11 @@ class object extends element
 			this.expr = cat.parseObject(this.code);
 			this.code = element.getCode(cat, this.expr);
 			if (this.name === '')
+			{
 				this.name = element.codename(this.diagram === null ? this.category : this.diagram, this.expr);
+				if (!Cat.nameEx.test(this.name))
+					throw `Object name ${this.name} is not allowed.`;
+			}
 			if (this.html === '')
 				this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'object', position:0});
 			else
@@ -4669,7 +4691,7 @@ class object extends element
 				break;
 			case 'diagramObject':
 				const info = Cat.clone(data);
-				info.digram = dgrm;
+				info.diagram = dgrm;
 				r = new diagramObject(cat, info);
 				break;
 			default:
@@ -5037,6 +5059,8 @@ class category extends object
 					break;
 				}
 			});
+		else if (m.domain.code === 'One')
+			dataOut.data[0] = m.$();
 		return dataOut;
 	}
 	static homKey(domain, codomain)
@@ -5371,6 +5395,7 @@ class diagramMorphism extends morphism
 		this.start = Cat.getArg(args, 'start', {x:0, y:0});
 		this.end = Cat.getArg(args, 'end', {x:100, y:0});
 		this.angle = Cat.getArg(args, 'angle', 0.0);
+		this.flipName = Cat.getArg(args, 'flipName', false);
 		if ('morphisms' in args)
 		{
 			this.morphisms = args.morphisms.map(m => typeof m === 'string' ? this.category.getMorphism(m) : m);
@@ -5403,12 +5428,13 @@ class diagramMorphism extends morphism
 		}
 		if ('morphisms' in this)
 			mor.morphisms = this.morphisms.map(m => m.name);
+		mor.flipName = this.flipName;
 		return mor;
 	}
 	getNameOffset()
 	{
 		let mid = 'bezier' in this ? this.bezier.cp2 : D2.scale(0.5, D2.add(this.start, this.end));
-		let normal = D2.norm(D2.normal(D2.subtract(this.codomain, this.domain)));
+		let normal = D2.norm(D2.scale(this.flipName ? -1 : 1, D2.normal(D2.subtract(this.codomain, this.domain))));
 		if (normal.y > 0.0)
 			normal.y *= 0.5;
 		return D2.add(mid, D2.scale(-Cat.default.font.height, normal));
@@ -5462,9 +5488,9 @@ onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'morphism')" mark
 		const angle = this.angle;
 		const bnd = Math.PI/12;
 		if (angle > Math.PI + bnd && angle < 2 * Math.PI - bnd)
-			anchor = 'end';
+			anchor = this.flipName ? 'start' : 'end';
 		else if (angle > bnd && angle < Math.PI - bnd)
-			anchor = 'start';
+			anchor = this.flipName ? 'end' : 'start';
 		svg.setAttribute('text-anchor', anchor);
 		if (this.to.subClass === 'composite' && 'morphisms' in this)
 		{
@@ -5618,7 +5644,9 @@ class composite extends morphism
 	}
 	isRunnable()
 	{
-		return element.isRunnable(this.diagram, this.morphisms[0].expr);
+		const m = this.morphisms[0];
+		// TODO needs an iso for One
+		return m.domain.code === 'One' ? true : element.isRunnable(this.diagram, m.expr);
 	}
 	help()
 	{
@@ -7288,7 +7316,17 @@ class diagram extends functor
 			dgrm = new diagram(JSON.parse(data));
 		if (Cat.debug)
 			console.log('fromLocalStorage',dgrmName,dgrm);
+		dgrm.repair();
 		return dgrm;
+	}
+	repair()
+	{
+		for (const [name, obj] of this.domain.objects)
+			if (!this.objects.has(obj))
+			{
+				console.log(`bad domain object ${obj.name}`);
+				this.domain.objects.delete(obj.name);
+			}
 	}
 	static storageName(dgrmName)
 	{
@@ -7503,6 +7541,7 @@ class diagram extends functor
 							H.td(Cat.display.getButton('project', `Cat.getDiagram().gui(evt, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar');
 			}
 		}
+		btns += H.td(Cat.display.getButton('symmetry', `Cat.getDiagram().gui(evt, this, 'flipName')`, 'Flip text'), 'buttonBar');
 		btns += H.td(Cat.display.getButton('help', `Cat.getDiagram().gui(evt, this, 'elementHelp')`, 'Description'), 'buttonBar');
 		let html = H.table(H.tr(btns), 'buttonBarLeft') + H.br();
 		html += H.div('', '', 'toolbarTip');
@@ -7722,6 +7761,13 @@ class diagram extends functor
 		{
 			document.getElementById('namedElementError').innerHTML = 'Error: ' + Cat.getError(e);
 		}
+	}
+	flipName()
+	{
+		const from = this.getSelected();
+		from.flipName = !from.flipName;
+		from.update();
+		this.saveToLocalStorage();
 	}
 	elementHelp()
 	{
