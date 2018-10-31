@@ -6647,7 +6647,7 @@ class stringMorphism extends morphism
 				++offset;
 				return;
 			}
-			const cod = element.getExprFactor(codExpr, [i]);
+			const cod = m.factors.length === 1 ? codExpr : element.getExprFactor(codExpr, [i]);
 			const domRoot = r.slice();
 			domRoot.unshift(0);
 			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot, codRoot:m.factors.length > 1 ? [1, i] : [1], offset});
@@ -7766,7 +7766,7 @@ class diagram extends functor
 	{
 		const from = this.getSelected();
 		from.flipName = !from.flipName;
-		from.update();
+		from.update(this);
 		this.saveToLocalStorage();
 	}
 	elementHelp()
