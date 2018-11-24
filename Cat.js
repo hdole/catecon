@@ -225,8 +225,6 @@ const Cat =
 	url:			'',
 	intro()
 	{
-//		let btns = [['cateapsis', 'category', 'compose', 'coproduct', 'product', 'copy', 'delete', 'detachCodomain', 'detachDomain', 'diagram', 'edit', 'eval', 'fromHere', 'toHere', 'functor', 'help', 'lambda', 'login'],
-//					['morphism', 'object', 'coproductAssembly', 'productAssembly', 'project', 'pullback', 'pushout', 'recursion', 'reference', 'run', 'settings', 'text', 'threeD', 'transform', 'tty', 'lock', 'unlock', 'upload']];
 		let btns = '';
 		for (const b in Cat.display.svg.buttons)
 			btns += Cat.display.getButton(b);
@@ -2844,6 +2842,19 @@ const Cat =
 <line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
+				distribute:
+`<circle class="svgstr4" cx="80" cy="80" r="60"/>
+<line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
+<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
+<circle class="svgstr4" cx="240" cy="80" r="60"/>
+<line class="arrow0" x1="240" y1="40" x2="240" y2="140"/>
+<line class="arrow0" x1="180" y1="80" x2="300" y2="80"/>
+<circle class="svgstr4" cx="80" cy="240" r="60"/>
+<line class="arrow0" x1="80" y1="180" x2="80" y2="300"/>
+<line class="arrow0" x1="20" y1="240" x2="140" y2="240"/>
+<circle class="svgstr4" cx="240" cy="240" r="60"/>
+<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
+<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
 				download:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 				edit:
@@ -7316,17 +7327,21 @@ class diagram extends functor
 			dgrm = new diagram(JSON.parse(data));
 		if (Cat.debug)
 			console.log('fromLocalStorage',dgrmName,dgrm);
-		dgrm.repair();
+		if (dgrm)
+			dgrm.repair();
 		return dgrm;
 	}
 	repair()
 	{
+		let repair = false;
 		for (const [name, obj] of this.domain.objects)
 			if (!this.objects.has(obj))
 			{
-				console.log(`bad domain object ${obj.name}`);
+				console.log(`${this.name}: bad domain object ${obj.name}`);
 				this.domain.objects.delete(obj.name);
+				repair = true;
 			}
+		return repair;
 	}
 	static storageName(dgrmName)
 	{
@@ -7538,10 +7553,11 @@ class diagram extends functor
 					btns += H.td(Cat.display.getButton('copy', `Cat.getDiagram().copyObject(evt)`, 'Copy object'), 'buttonBar') +
 							H.td(Cat.display.getButton('toHere', `Cat.getDiagram().toolbarHandler('codomain', 'toolbarTip')`, 'Morphisms to here'), 'buttonBar') +
 							H.td(Cat.display.getButton('fromHere', `Cat.getDiagram().toolbarHandler('domain', 'toolbarTip')`, 'Morphisms from here'), 'buttonBar') +
-							H.td(Cat.display.getButton('project', `Cat.getDiagram().gui(evt, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar');
+							H.td(Cat.display.getButton('project', `Cat.getDiagram().gui(evt, this, 'factorBtnCode')`, 'Factor morphism'), 'buttonBar') +
+							(this.hasDualSubExpr(from.to.expr) ? H.td(Cat.display.getButton('distribute', `Cat.getDiagram().gui(evt, this, 'distribute')`, 'Distribute terms'), 'buttonBar') : '');
 			}
 		}
-		btns += H.td(Cat.display.getButton('symmetry', `Cat.getDiagram().gui(evt, this, 'flipName')`, 'Flip text'), 'buttonBar');
+		btns += from.class === 'morphism' ? H.td(Cat.display.getButton('symmetry', `Cat.getDiagram().gui(evt, this, 'flipName')`, 'Flip text'), 'buttonBar') : '';
 		btns += H.td(Cat.display.getButton('help', `Cat.getDiagram().gui(evt, this, 'elementHelp')`, 'Description'), 'buttonBar');
 		let html = H.table(H.tr(btns), 'buttonBarLeft') + H.br();
 		html += H.div('', '', 'toolbarTip');
@@ -7576,22 +7592,51 @@ class diagram extends functor
 			document.getElementById(id).innerHTML = html;
 		}
 	}
-	/*
-	factorBtnCode2()
+	hasDualSubExpr(expr)
+	{
+		if ('data' in expr)
+		{
+			const opp = expr.op == 'product' ? 'coproduct' : 'product';
+			for (let i=0; i<expr.data.length; ++i)
+			{
+				const subExpr = expr.data[i];
+				if ('op' in subExpr && subExpr.op === opp)
+					return true;
+			}
+		}
+		return false;
+	}
+	findDualSubExpr(expr)
+	{
+		let subs = [];
+		if ('data' in expr)
+		{
+			const opp = expr.op == 'product' ? 'coproduct' : 'product';
+			for (let i=0; i<expr.data.length; ++i)
+			{
+				const subExpr = expr.data[i];
+				if ('op' in subExpr && subExpr.op === opp)
+					subs.push([i, subExpr]);
+			}
+		}
+		return subs;
+	}
+	distributeBtnCode()
 	{
 		const from = this.getSelected();
-		let html = H.h4('Create Factor Morphism') +
+		const expr = from.to.expr;
+		const text = from.to.getText();
+		let html = H.h4('Distribute') +
 					H.h5('Domain Factors') +
 					H.small('Click to place in codomain') +
-						H.button('1', '', Cat.display.elementId(), 'Terminal object',
+						H.button('1', '', Cat.display.elementId(), 'Add terminal object',
 						`onclick="Cat.getDiagram().addFactor('codomainDiv', 'selectedFactorMorphism', 'One', '', -1)"`) +
-					element.getFactorBtnCode(this, from.to.expr, true, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:''}) +
+					this.getFactorButtonCode(from.to, expr, {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:'product'}) +
 					H.h5('Codomain Factors') + H.br() +
 					H.small('Click to remove from codomain') +
 					H.div('', '', 'codomainDiv');
 		document.getElementById('toolbarTip').innerHTML = html;
 	}
-	*/
 	getFactorButton(obj, txt, data, action, title)
 	{
 		return H.td(H.button(obj.getText() + txt, '', Cat.display.elementId(), title,
@@ -8056,7 +8101,7 @@ class diagram extends functor
 			m = new productAssemblyMorphism(this, args);
 		m.incrRefcnt();
 		const name = this.getSelected().domain.name;
-		this.removeSelected();
+//		this.removeSelected(e);
 		this.objectPlaceMorphism(e, 'domain', name, m.name);
 	}
 	coproductAssembly(e)
@@ -8072,8 +8117,11 @@ class diagram extends functor
 			m = new coproductAssemblyMorphism(this, args);
 		m.incrRefcnt();
 		const name = this.getSelected().codomain.name;
-		this.removeSelected();
+//		this.removeSelected();
 		this.objectPlaceMorphism(e, 'codomain', name, m.name);
+	}
+	distribute(e)
+	{
 	}
 	pullback(e)
 	{
