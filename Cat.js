@@ -264,8 +264,7 @@ const Cat =
 		return Cat.sha256(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
 	},
 	cookieAccept()
-	{
-		if (Cat.secret !== Cat.getUserSecret(document.getElementById('cookieSecret').value))
+	{ if (Cat.secret !== Cat.getUserSecret(document.getElementById('cookieSecret').value))
 		{
 			alert('Your secret is not good enough');
 			return;
@@ -1323,7 +1322,8 @@ const Cat =
 								if (dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
 								{
 									const code = Cat.basetypes.operators.product.toCode([targetObject.to.name, dragObject.to.name]);
-									const to = dgrm.newObject({code, name:element.codename(dgrm, dgrm.codomain.parseObject(code))});
+//									const to = dgrm.newObject({code, name:element.codename(dgrm, dgrm.codomain.parseObject(code))});
+									const to = dgrm.newObject({code, name:dgrm.parseObject(code).codename()});
 									dgrm.setObject(targetObject, to);
 									dgrm.deselectAll(false);
 									targetObject.removeSVG();
@@ -1391,7 +1391,8 @@ const Cat =
 								const targetMorphTo = dgrm.mapMorphism(targetObject);
 								const morphisms = [targetMorphTo, dragMorphTo];
 								const form = productMorphism.form(dgrm, morphisms);
-								let newTo = dgrm.getMorphism(element.codename(dgrm, dgrm.codomain.parseMorphism(form.code)));
+//								let newTo = dgrm.getMorphism(element.codename(dgrm, dgrm.codomain.parseMorphism(form.code)));
+								let newTo = dgrm.getMorphism(dgrm.codomain.parseMorphism(form.code).codename());
 								if (newTo === null)
 									newTo = new productMorphism(dgrm, {morphisms:[targetMorphTo, dragMorphTo]});
 								newTo.incrRefcnt();
@@ -1826,7 +1827,7 @@ const Cat =
 								html += H.button('Add Data', 'sidenavAccordion', '', 'Add entries to this map', `onclick="Cat.display.accordion.toggle(this, \'dataInputPnl\')"`);
 								const irx = to.domain.hasRegexp() ? `pattern="${to.domain.getRegexp()}"`: '';
 								const inputForm = Cat.display.input('', 'inputTerm', to.domain.getText(), irx);
-								const outputForm = element.inputCode(dgrm, to.codomain.expr);
+								const outputForm = to.codomain.expr.inputCode();
 								tbl = H.tr(H.td('Domain')) +
 										H.tr(H.td(inputForm)) +
 										H.tr(H.td('Codomain')) +
@@ -1840,10 +1841,10 @@ const Cat =
 											H.tr(H.td('Range Count'), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'rangeTerm', Cat.basetypes.objects.N.html, Cat.basetypes.objects.N.regexp)), 'sidenavRow') +
 											H.tr(H.td('Codomain Start Values'), 'sidenavRow') +
-											H.tr(H.td(element.inputCode(dgrm, to.codomain.expr, true, {uid:0, idp:'strt'})), 'sidenavRow');
+											H.tr(H.td(to.codomain.expr.inputCode(true, {uid:0, idp:'strt'})), 'sidenavRow');
 									html += H.div(H.table(tbl) + Cat.display.getButton('edit', `Cat.display.data.handler(evt, '${from.name}', 'range')`, 'Edit data'), 'accordionPnl', 'rangeInputPnl');
-									const minForm = element.inputCode(dgrm, to.codomain.expr, true, {uid:0, idp:'min'});
-									const maxForm = element.inputCode(dgrm, to.codomain.expr, true, {uid:0, idp:'max'});
+									const minForm = to.codomain.expr.inputCode(true, {uid:0, idp:'min'});
+									const maxForm = to.codomain.expr.inputCode(true, {uid:0, idp:'max'});
 									html += H.button('Add Random Range', 'sidenavAccordion', '', 'Add random entries to this map', `onclick="Cat.display.accordion.toggle(this, \'randomDataInputPnl\')"`) +
 											H.div(
 												H.table(
@@ -3870,6 +3871,777 @@ ${this.svg.button(onclick)}
 	}
 };
 
+class expression
+{
+	constructor(args)
+	{
+		this.diagram = null;
+		this.expr = Cat.clone(args);
+		if ('token' in args)
+			this.token = args.token;
+		else
+		{
+			this.op = args.op;
+			if ('data' in args)
+				this.data = args.data;
+			else if ('lhs' in args)
+			{
+				this.lhs = args.lhs;
+				this.rhs = args.rhs;
+			}
+		}
+	}
+	getObject(extended)
+	{
+		if (this.diagram.subClass === 'diagram')
+			return extended ? this.diagram.getObject(this) : this.diagram.getObject(this.token, extended);
+		return extended ? this.diagram.getObject(this) : this.diagram.getObject(this.token, null, extended);
+	}
+	expandExpression(base, first, that = null)
+	{
+		if ('op' in this && ('sequence' === this.op || 'product' === this.op || 'coproduct' === this.op || 'compose' === this.op))
+			return this[`${base}_op`](first, that);
+		else if ('token' in this)
+			return this[`${base}_token`](first, that);
+		else if ('lhs' in this)
+			return this[`${base}_bracket`](first, that);
+		else if ('arg' in this)
+			return typeFn(this, first, that);
+		return null;
+	}
+	//
+	// codename
+	//
+	codename(extended = false, first = true)
+	{
+		return this.expandExpression('codename', first, extended);
+	}
+	codename_token(first, extended)
+	{
+		const obj = this.getObject(extended);
+		if (obj)
+		{
+			if ('token' in obj.expr)
+				return obj.expr.token;
+			if (!extended)
+				return obj.name;
+		}
+		else if ('token' in this)
+			return this.token;
+		return obj.expr.codename(extended, first);
+	}
+	codename_op(first, extended)
+	{
+		const op = Cat.basetypes.operators[this.op];
+		const codenames = this.data.map(d => d.codename(extended, false));
+		return Cat.parens(op.toName(codenames), Cat.basetypes.parens.left.nameCode, Cat.basetypes.parens.right.nameCode, first);
+	}
+	codename_bracket(first, extended)
+	{
+		const lCode = this.lhs.codename(extended, true);
+		const rCode = this.rhs.codename(extended, true);
+		const op = Cat.basetypes.operators[this.op];
+		return op.toName([lCode, rCode]);
+	}
+	//
+	//
+	hasDualSubExpr()
+	{
+		if ('data' in this)
+		{
+			const opp = this.op == 'product' ? 'coproduct' : 'product';
+			for (let i=0; i<this.data.length; ++i)
+			{
+				const subExpr = this.data[i];
+				if ('op' in subExpr && subExpr.op === opp)
+					return true;
+				else if ('token' in subExpr)
+				{
+					const obj = subExpr.getObject(true);
+					if ('op' in obj.expr && obj.expr.op === opp)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+	//
+	// getCode
+	//
+	getCode(full = false, first = true)
+	{
+		return this.expandExpression('getCode', first, full);
+	}
+	getCode_token(first, full)
+	{
+		if (!full)
+			return this.token;
+		const obj = this.getObject(true);
+		if (obj)
+		{
+			if ('token' in obj.expr)
+				return this.token;
+		}
+		else
+			return this.token;
+		return obj.expr.getCode(full, false);
+	}
+	getCode_op(first, full)
+	{
+		const op = Cat.basetypes.operators[this.op];
+		const codes = this.data.map(d => d.getCode(full, false));
+		return Cat.parens(codes.join(op.symCode), Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, first, full);
+	}
+	getCode_bracket(first, full)
+	{
+		const lCode = this.lhs.getCode(full, false);
+		const rCode = this.rhs.getCode(full, false);
+		const op = Cat.basetypes.operators[this.op];
+		let code = op.code;
+		return op.toCode(lCode, rCode);
+	}
+	//
+	// html
+	//
+	html(data, first = true)	// data: class, position
+	{
+		return this.expandExpression('html', first, data);
+	}
+	html_token(first, data)
+	{
+		this.position = data.position;
+		if (this.token in Cat.basetypes.objects)
+		{
+			const html = Cat.basetypes.objects[this.token].html;
+			this.width = Cat.textWidth(html);
+			return html;
+		}
+		const elt = data.class === 'object' ? this.getObject() : this.diagram.getMorphism(this.token);
+		if (elt !== null)
+		{
+			const html = element.getParenthesized(elt);
+			this.width = Cat.textWidth(html);
+			return html;
+		}
+		this.width = isGUI ? Cat.textWidth(this.token) : 0;
+		return this.token;
+	}
+	html_op(first, data)
+	{
+		this.position = data.position;
+		const op = Cat.basetypes.operators[this.op];
+		const symWidth = Cat.textWidth(op.sym);	// TODO move
+		const parenWidth = Cat.textWidth('(');	// TODO move
+		let html = '';
+		let position = data.position;
+		if (!first)
+		{
+			position += parenWidth;
+			html += '(';
+		}
+		const tokens = this.data.map((d, i) =>
+		{
+			const html = d.html({class:data.class, position}, false);
+			position += d.width;
+			if (i !== this.data.length -1)
+				position += symWidth;
+			return html;
+		});
+		html += op.toHtml(tokens);
+		if (!first)
+		{
+			position += parenWidth;
+			html += ')';
+		}
+		this.width = position - data.position;
+		data.position = position;
+		return html;
+	}
+	html_bracket(first, data)
+	{
+		this.position = data.position;
+		const bracketWidth = Cat.textWidth('[');	// TODO move
+		const spaceWidth = Cat.textWidth(' ');	// TODO move
+		const commaWidth = Cat.textWidth(', ');	// TODO move
+		let position = data.position;
+		let html = '[';
+		position += bracketWidth;
+		html += this.lhs.html({class:data.class, position}, false);
+		html += ', ';
+		position += this.lhs.width + commaWidth + spaceWidth;
+		html += this.rhs.html({class:data.class, position}, false);
+		position += this.rhs.width + bracketWidth;
+		html += ']';
+		this.width = position - data.position;
+		data.position = position;
+		return html;
+	}
+	//
+	// inputCode
+	//
+	inputCode(first=true, uid={uid:0, idp:'data'})
+	{
+		return this.expandExpression('inputCode', first, uid);
+	}
+	inputCode_token(first, uid)
+	{
+		if (this.token in Cat.basetypes.objects)
+		{
+			++uid.uid;
+			const obj = Cat.basetypes.objects[this.token];
+			const rx = 'regexp' in obj ? `pattern="${obj.regexp}"`: '';
+			return Cat.display.input('', `${uid.idp}_${uid.uid}`, obj.html, rx, '');
+		}
+		if (this.diagram.codomain.allObjectsFinite)
+		{
+			const obj = this.getObject(true);
+			if ('token' in obj.expr)
+				return this.token;
+			return obj.expr.inputCode(false, uid);
+		}
+		return null;
+	}
+	inputCode_op(first, uid)
+	{
+		const op = Cat.basetypes.operators[this.op];
+		const codes = this.data.map(d => {uid.uid; return d.inputCode(false, uid)});
+		return Cat.parens(codes.join(op.sym), '(', ')', first);
+	}
+	inputCode_bracket(first, uid)
+	{
+		if (this.op === 'hom')
+		{
+			const domain = this.lhs.getObject();
+			const codomain = this.rhs.getObject();
+			const homKey = category.homKey(domain, codomain);
+			const homset = this.diagram.getHomSet(domain, codomain);
+			++uid.uid;
+			const id = `${uid.idp}_${uid.uid}`;
+			const th = H.tr(H.td(this.html(first, {class:'object', position:0}), '', '', '', `colspan='4'`));
+			return H.table(th + Cat.display.morphismTableRows(homset, `data-name="%1" onclick="Cat.getDiagram().toggleTableMorphism(event, '${id}', '%1')"`, false), 'toolbarTbl', id);
+		}
+	}
+	//
+	// fromExpression
+	//
+	fromExpression(first = true, uid={uid:0, idp:'data'})
+	{
+		return this.expandExpression('fromExpression', first, uid)
+	}
+	fromExpression_token(first, uid)
+	{
+		if (this.token in Cat.basetypes.objects)
+		{
+			++uid.uid;
+			const obj = Cat.basetypes.objects[this.token];
+			const val = document.getElementById(`${uid.idp}_${uid.uid}`).value;
+			if ('regexp' in obj)
+			{
+				const rx = RegExp(obj.regexp);
+				if (!rx.test(val))
+					throw `Input term ${val} is invalid.`;
+			}
+			return obj.$(val);
+		}
+		if (this.diagram.codomain.allObjectsFinite)
+		{
+			const obj = this.getObject(true);
+			if ('token' in obj.expr)
+			{
+				++uid.uid;
+				const val = document.getElementById(`${uid.idp}_${uid.uid}`).value;
+				const rx = RegExp(obj.regexp);
+				if (!rx.test(val))
+					throw `Input term ${val} is invalid.`;
+				return obj.$(val);
+			}
+			return obj.expr.fromExpression(false, uid);
+		}
+	}
+	fromExpression_op(first, uid)
+	{
+		return this.data.map(x => x.fromExpression(false, uid));
+	}
+	fromExpression_bracket(first, uid)
+	{
+		++uid.uid;
+		const row = document.getElementById(`${uid.idp}_${uid.uid}`).querySelectorAll('.selRow');
+		const name = row[0].dataset.name;
+		return name;
+	}
+	//
+	// isRunnable
+	//
+	isRunnable(first = true)
+	{
+		return this.expandExpression('isRunnable', first);
+	}
+	isRunnable_token(first)
+	{
+		const dm = this.diagram.getMorphism(this.token);
+		switch (dm.function)
+		{
+		case 'data':
+		case 'One':
+			return true;
+		case 'compose':
+			return dm.isRunnable();
+		case 'productAssembly':
+			return dm.morphisms.reduce((isRunnable, factor) => factor.expr.isRunnable(false) && isRunnable, true);
+		}
+		return false;
+	}
+	isRunnable_op(first)
+	{
+		switch(this.op)
+		{
+		case 'compose':
+			return this.data[0].isRunnable(false);
+		case 'product':
+		case 'coproduct':
+			let r = true;
+			for(let i=0; i<this.data.length; ++i)
+				r &= this.data[i].isRunnable(false);
+			return r;
+		}
+	}
+	isRunnable_bracket(first)
+	{
+		return this.lhs.isRunnable(false) && this.rhs.isRunnable(false);
+	}
+	//
+	// initialObject
+	//
+	initialObject(first = true)
+	{
+		return this.expandExpression('initialObject', first);
+	}
+	initialObject_token(first)
+	{
+		if (this.token === 'One')
+			return 0;
+		throw 'No implementation';
+	}
+	initialObject_op(first)
+	{
+		return this.data.map(d => d.initialObject(false));
+	}
+	initialObject_bracket(first)	// binary
+	{
+	}
+	//
+	// makeRangeData
+	//
+	makeRangeData(first, data)	// data = {idx, startIndex, startValue}
+	{
+		return this.expandExpression('makeRangeData', data);
+	}
+	makeRangeData_token(first, data)
+	{
+		return data.idx - data.startIndex + data.startValue;
+	}
+	makeRangeData_op(first, data)
+	{
+		return this.data.map((x, i) => x.makeRangeData(false, {idx:data.idx, startIndex:data.startIndex, startValue:data.startValue[i]}));
+	}
+	makeRangeData_bracket(first, data)
+	{
+		return null;
+	}
+	//
+	// makeRandomData
+	//
+	makeRandomData(first, data)	// data = {min, max, dm}
+	{
+		return this.expandExpression('makeRandomData', first, data);
+	}
+	makeRandomData_token(first, data)
+	{
+		return dataMorphism.getRandomValue(this, data.min, data.max); // TODO Absorb?
+	}
+	makeRandomData_op(first, data)
+	{
+		return this.data.map((x, i) => x.makeRandomData(false, {min:data.min[i], max:data.max[i], dm:data.dm}));
+	}
+	makeRandomData_bracket(first, data)
+	{
+		return null;
+	}
+	//
+	// makeUrlData
+	//
+	makeUrlData(first, data)
+	{
+		return this.expandExpression('makeUrlData', first, data);
+	}
+	makeUrlData_token(first, data)
+	{
+		return data;
+	}
+	makeUrlData_op(first, data)
+	{
+		return this.data.map((x, i) => x.makeUrlData(false, data[i]));
+	}
+	makeUrlData_bracket(first, data)
+	{
+		return null;
+	}
+	//
+	// getExprFactor
+	//
+	getExprFactor(indices)
+	{
+		if (indices.length === 1 && indices[0] === -1)	// terminal object
+			return null;
+		let fctr = this;
+		for (let i=0; i<indices.length; ++i)
+		{
+			const j = indices[i];
+			if ('data' in fctr)
+				fctr = fctr.data[j];
+			else if ('lhs' in fctr)
+				fctr = j === 0 ? fctr.lhs : fctr.rhs;
+		}
+		return fctr;
+	}
+	isGraphable()
+	{
+		return 'token' in this && !(this.token === 'One' || expr.this === 'Null');
+	}
+	//
+	// signature
+	//
+	signature()
+	{
+		return this.expandExpression();
+	}
+	signature_token()
+	{
+		let obj = this.getObject(true);
+		if (obj)
+		{
+			if ('token' in obj.expr)
+				return obj.cid;
+			else
+				return obj.expr.signature();
+		}
+		else if ('token' in this)
+			return Cat.sha256(this.token);
+		throw 'no signature for expression';
+	}
+	signature_op()
+	{
+		// TODO assumes associative due to sort()
+		return Cat.sha256(this.data.map(x => x.signature()).sort().join(''));
+	}
+	signature_bracket()
+	{
+		return Cat.sha256(this.lhs.signature() + this.rhs.signature());
+	}
+	//
+	// hasDiagramElement
+	//
+	isExprInDiagram()
+	{
+		const obj = this.getObject();
+		return obj.diagram.name === this.diagram.name;
+	}
+	hasDiagramElement()	// data = null
+	{
+		return this.expandExpression('hasDiagramElement');
+	}
+	hasDiagramElement_token()
+	{
+		return this.isExprInDiagram();
+	}
+	hasDiagramElement_op()
+	{
+		if (this.isExprInDiagram())
+			return true;
+		return this.data.reduce((v, f) => v || f.hasDiagramElement());
+	}
+	hasDiagramElement_bracket()
+	{
+		if (this.isExprInDiagram())
+			return true;
+		return this.lhs.hasDiagramElement() || this.rhs.hasDiagramElement();
+	}
+	//
+	// bindGraph
+	//
+	bindGraph(first, data)	// data: {cod, link, function, domRoot, codRoot, offset}
+	{
+		return this.expandExpression('bindGraph', first, data);
+	}
+	bindGraph_token(first, data)
+	{
+		if (!stringMorphism.isGraphable(expr))
+			return;
+		const domRoot = data.domRoot.slice();
+		const codRoot = data.codRoot.slice();
+		domRoot.push(...data.link);
+		codRoot.push(...data.link);
+		Cat.arraySet(this, 'links', codRoot);
+		Cat.arraySet(data.cod, 'links', domRoot);
+		Cat.arrayInclude(this, 'functions', data.function);
+		Cat.arrayInclude(data.cod, 'functions', data.function);
+	}
+	bindGraph_op(first, data)
+	{
+		for(let i=0; i<this.data.length; ++i)
+		{
+			let subIndex = data.link.slice();
+			subIndex.push(i + data.offset);
+			const e = this.data[i];
+			const args = Cat.clone(data);
+			args.link = subIndex;
+			if ('data' in data.cod)
+				args.cod = data.cod.data[i + data.offset];
+			this.bindGraph(false, args);
+		}
+	}
+	bindGraph_bracket(first, data)
+	{
+		const lhsNdx = data.link.slice();
+		lhsNdx.push(0);
+		const rhsNdx = data.link.slice();
+		rhsNdx.push(1);
+		const args = Cat.clone(data);
+		args.link = lhsNdx;
+		args.cod = data.cod.lhs;
+		this.lhs.bindGraph(false, args);
+		args.link = rhsNdx;
+		args.cod = data.cod.rhs;
+		this.rhs.bindGraph(false, args);
+	}
+	//
+	// mergeGraphs
+	//
+	mergeGraphs(first, data)	// data: {from, base, inbound, outbound}
+	{
+		return this.expandExpression('mergeGraphs', first, data);
+	}
+	mergeGraphs_token(first, data)
+	{
+		if (!stringMorphism.isGraphable(this))
+			return;
+		if ('links' in data.from)
+		{
+			const links = data.from.links.map(lnk =>
+			{
+				let nuLnk = data.base.reduce((isSelfLink, f, i) => isSelfLink && f === lnk[i], true) ? data.inbound.slice() : data.outbound.slice();
+				nuLnk.push(...lnk.slice(data.base.length));
+				return nuLnk;
+			});
+			if (!('links' in this))
+				this.links = links;
+			else links.map(lnk => this.links.indexOf(lnk) === -1 ? this.links.push(lnk) : null);
+		}
+		if (!('functions' in this))
+			this.functions = [];
+		if ('functions' in data.from)
+			data.from.functions.map(f => this.functions.indexOf(f) === -1 ? this.functions.push(f) : null);
+	}
+	mergeGraphs_op(first, data)
+	{
+		this.data.map((d, i) =>
+		{
+			const from = 'data' in data.from ? data.from.data[i] : data.from;
+			d.mergeGraphs(false, {from, base:data.base, inbound:data.inbound, outbound:data.outbound});
+		});
+	}
+	mergeGraphs_bracket(first, data)
+	{
+		this.lhs.mergeGraphs(false, {from:data.from.lhs, base:data.base, inbound:data.inbound, outbound:data.outbound});
+		this.rhs.mergeGraphs(false, {from:data.from.rhs, base:data.base, inbound:data.inbound, outbound:data.outbound});
+	}
+	//
+	// tagGraph
+	//
+	tagGraph(first, data)	// data: function name
+	{
+		return this.expandExpression('tagGraph', first, data);
+	}
+	tagGraph_token(first, data)
+	{
+		if (!this.isGraphable())
+			return;
+		if (!('functions' in this))
+			this.functions = [data];
+		else if (this.functions.indexOf(data) === -1)
+			this.functions.push(data);
+		if (!('links' in this))
+			this.links = [];
+	}
+	tagGraph_op(first, data)
+	{
+		this.data.map(e => e.tagGraph(false, data));
+	}
+	tagGraph_bracket(first, data)
+	{
+		this.lhs.tagGraph(false, data);
+		this.rhs.tagGraph(false, data);
+	}
+	//
+	// componentGraph
+	//
+	componentGraph(first, data)
+	{
+		return this.expandExpression('componentGraph', first, data);
+	}
+	componentGraph_token(first, data)
+	{
+		if ('links' in this)
+			this.links.map(lnk => lnk.splice(1, 0, data));
+	}
+	componentGraph_op(first, data)
+	{
+		this.data.map(e => e.componentGraph(false, data));
+	}
+	componentGraph_bracket(first, data)
+	{
+		expr.lhs.componentGraph(false, data);
+		expr.rhs.componentGraph(false, data);
+	}
+	//
+	// traceLinks
+	//
+	traceLinks(first, data)	// data {index, expr}
+	{
+		return this.expandExpression('traceLinks', first, data);
+	}
+	traceLinks_token(first, data)
+	{
+		if (!this.isGraphable())
+			return;
+		const links = this.links.slice();
+		this.visited = [];
+		while(links.length > 0)
+		{
+			const lnk = links.pop();
+			if (this.visited.indexOf(lnk) > -1)
+				continue;
+			const f = data.expr.getExprFactor(lnk);
+			if ('links' in f)
+				f.links.map(k => (links.indexOf(k) === -1 && k[0] !== data.index[0]) ? links.push(k) : null);
+			f.functions.map(r => this.functions.indexOf(r) === -1 ? this.functions.push(r) : null);
+			if (data.index.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
+				continue;
+			if (this.visited.indexOf(lnk) === -1)
+				this.visited.push(lnk);
+		}
+	}
+	traceLinks_op(first, data)
+	{
+		this.data.map((e, i) =>
+		{
+			let index = data.index.slice();
+			index.push(i);
+			e.traceLinks(false, {expr:data.expr, index});
+		});
+	}
+	traceLinks_bracket(first, data)
+	{
+		let lIndex = data.index.slice();
+		lIndex.push(0);
+		stringMorphism.traceLinks(dgrm, this.lhs, false, {expr:data.expr, index:lIndex});
+		let rIndex = data.index.slice();
+		rIndex.push(1);
+		stringMorphism.traceLinks(dgrm, this.rhs, false, {expr:data.expr, index:rIndex});
+	}
+	//
+	// copyDomCodLinks
+	//
+	copyDomCodLinks(first, data)	// data {cnt, expr, index}
+	{
+		return element.expandExpression('copyDomCodLinks', first, data);
+	}
+	copyDomCodLinks_token(first, data)
+	{
+		if (!this.isGraphable())
+			return;
+		const factorLink = data.index.slice();
+		if (factorLink[0] === 1)
+			factorLink[0] = data.cnt;
+		const f = data.expr.getExprFactor(factorLink);
+		const v = f.visited;
+		if (typeof v === 'undefined')
+			throw 'Not visited';
+		for (let i=0; i<v.length; ++i)
+		{
+			const lnk = v[i].slice();
+			if (lnk[0] > 0 && lnk[0] < data.cnt)
+				continue;
+			if (lnk[0] === data.cnt)
+				lnk[0] = 1;
+			if (this.links.indexOf(lnk) === -1)	// TODO needed?
+				this.links.push(lnk);
+		}
+		f.functions.map(r => this.functions.indexOf(r) === -1 ? this.functions.push(r) : null);
+	}
+	copyDomCodLinks_op(first, data)
+	{
+		this.data.map((e, i) =>
+		{
+			let index = data.index.slice();
+			index.push(i);
+			this.data[i].copyDomCodLinks(false, {expr:data.expr, index, cnt:data.cnt});
+		});
+	}
+	copyDomCodLinks_bracket(first, data)
+	{
+		let lIndex = data.index.slice();
+		lIndex.push(0);
+		expr.lhs.copyDomCodLinks(false, {expr:data.expr, index:lIndex, cnt:data.cnt});
+		let rIndex = data.index.slice();
+		rIndex.push(1);
+		expr.rhs.copyDomCodLinks(false, {expr:data.expr, index:rIndex, cnt:data.cnt});
+	}
+	//
+	// copyGraph
+	//
+	copyGraph(first, data)	// data {map, expr}
+	{
+		return this.expandExpression('copyGraph', first, data);
+	}
+	copyGraph_token(first, data)
+	{
+		if (!this.isGraphable())
+			return;
+		this.functions = data.expr.functions.slice();
+		for (let i=0; i<data.expr.links.length; ++i)
+		{
+			const lnk = data.expr.links[i];
+			for (let j=0; j<data.map.length; ++j)
+			{
+				const pair = data.map[j];
+				const fromLnk = pair[0];
+				const toLnk = pair[1].slice();
+				if (fromLnk.reduce((isEqual, ml, i) => ml === lnk[i] && isEqual, true))
+				{
+					const lnkClip = lnk.slice(fromLnk.length);
+					toLnk.push(...lnkClip);
+					this.links.push(toLnk);
+				}
+			}
+		}
+	}
+	copyGraph_op(first, data)
+	{
+		this.data.map((e, i) =>
+		{
+			this.data[i].copyGraph(false, {expr:data.expr.data[i], map:data.map});
+		});
+	}
+	copyGraph_bracket(first, data)
+	{
+		lIndex.push(0);
+		this.lhs.copyGraph(false, {expr:data.expr.lhs, map:data.map});
+		rIndex.push(1);
+		this.rhs.copyGraph(false, {expr:data.expr.rhs, map:data.map});
+	}
+}
+
 class element
 {
 	constructor(cat, args)
@@ -3983,6 +4755,7 @@ class element
 	{
 		Cat.downloadString(this.stringify(), 'json', `${this.name}.json`);
 	}
+	/*
 	static expandExpression(dgrm, expr, tokenFn, seqFn, exprFn, typeFn, first, that = null)
 	{
 		if ('op' in expr && ('sequence' === expr.op || 'product' === expr.op || 'coproduct' === expr.op || 'compose' === expr.op))
@@ -4066,11 +4839,13 @@ class element
 			function(){},
 			first, full);
 	}
+	*/
 	static getParenthesized(elt)
 	{
 		const useParens = (elt.html.indexOf(Cat.basetypes.operators.coproduct.sym) > -1) || (elt.html.indexOf(Cat.basetypes.operators.product.sym) > -1);	// TODO replace
 		return useParens ? `(${elt.html})` : elt.html;
 	}
+	/*
 	static html(dgrm, expr, first, data)	// data: class, position
 	{
 		return element.expandExpression(dgrm, expr,
@@ -4306,59 +5081,6 @@ class element
 			function(){},
 			first);
 	}
-	/*
-	static getFactorBtnCode(dgrm, expr, first, data)	// data = {id, fname, root, action, index, [x]}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				const obj = dgrm.getObject(expr);
-				if ('token' in obj.expr)
-					return H.button(obj.getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
-						`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`);
-				return element.getFactorBtnCode(dgrm, obj.expr, false, data);
-			},
-			function(dgrm, expr, first, data)
-			{
-				let html = '';
-				for(let i=0; i<expr.data.length; ++i)
-				{
-					let subIndex = data.index.slice();
-					subIndex.push(i);
-					html += H.td(element.getFactorBtnCode(dgrm, expr.data[i], false, {fname:data.fname, root:data.root, index:subIndex, id:data.id, x:data.x, action:data.action}));
-				}
-				return H.table(H.tr(H.td(H.button(dgrm.getObject(expr).getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
-							`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`),
-									'sidenav', '', '', `colspan="${expr.data.length}"`)) +
-							H.tr(html));
-			},
-			function(dgrm, expr, first, data)
-			{
-				return H.button(dgrm.getObject(expr).getText() + H.sub(data.index.join()), '', Cat.display.elementId(), '',
-						`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().addFactor('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`);
-			},
-			function(){},
-			first, data);
-	}
-	static makeRangeData2(dgrm, expr, first, data)	// data = {i, start, dm}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				return data.start + data.i;
-			},
-			function(dgrm, expr, first, data)
-			{
-				return expr.data.map((x, i) => element.makeRangeData(dgrm, x, false, {i:data.i, start:data.start[i], dm:data.dm}));
-			},
-			function(dgrm, expr, first, data)
-			{
-				return null;
-			},
-			function(){},
-			first, data);
-	}
-	*/
 	static makeRangeData(dgrm, expr, first, data)	// data = {idx, startIndex, startValue}
 	{
 		return element.expandExpression(dgrm, expr,
@@ -4487,6 +5209,7 @@ class element
 			function(){},
 			first, data);
 	}
+	*/
 	makeSVG(group = true)
 	{
 		if ('x' in this)	// TODO make text class subClass element
@@ -4574,7 +5297,8 @@ class element
 	{
 		if ('data' in this.expr && this.expr.data.length === 2 && this.expr.op === op)
 		{
-			const codes = this.expr.data.map(d => element.getCode(this.diagram, d, true, true));
+//			const codes = this.expr.data.map(d => element.getCode(this.diagram, d, true, true));
+			const codes = this.expr.data.map(d => d.getCode(true));
 			return codes[0] === codes[1];
 		}
 		return false;
@@ -4612,17 +5336,21 @@ class object extends element
 			this.category = cat;
 			this.code = this.code !== '' ? this.code : this.name;
 			this.expr = cat.parseObject(this.code);
-			this.code = element.getCode(cat, this.expr);
+//			this.code = element.getCode(cat, this.expr);
+			this.code = this.expr.getCode();
 			if (this.name === '')
 			{
-				this.name = element.codename(this.diagram === null ? this.category : this.diagram, this.expr);
+//				this.name = element.codename(this.diagram === null ? this.category : this.diagram, this.expr);
+				this.name = this.expr.codename();
 				if (!Cat.nameEx.test(this.name))
 					throw `Object name ${this.name} is not allowed.`;
 			}
 			if (this.html === '')
-				this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'object', position:0});
+//				this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'object', position:0});
+				this.html = this.expr.html(true, {class:'object', position:0});
 			else
-				element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'object', position:0});
+//				element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'object', position:0});
+				this.expr.html(true, {class:'object', position:0});
 			this.h = Cat.getArg(args, 'h', Cat.default.font.height);
 			if (!('subobject' in args))
 			{
@@ -4635,6 +5363,7 @@ class object extends element
 			this.category = this;
 		if (this.diagram !== null)
 		{
+			this.expr.diagram = this.diagram;
 			let obj = this.category.getObject(this.expr);
 			if (obj === null && this.diagram !== null)
 				obj = this.diagram.getObject(this.expr);
@@ -4915,14 +5644,16 @@ class category extends object
 			if (extended)
 			{
 				let prsd = this.parseObject(name);
-				let codeName = element.codename(this, prsd);
+//				let codeName = element.codename(this, prsd);
+				let codeName = prsd.codename();
 				obj = this.getObject(codeName, dgrm, false);
 				if (obj !== null)
 					return obj;
 			}
 			return null;
 		}
-		return this.getObject(element.codename(this, name));
+//		return this.getObject(element.codename(this, name));
+		return this.getObject(name.codename());
 	}
 	addObject(obj)
 	{
@@ -5019,7 +5750,9 @@ class category extends object
 	{
 		try
 		{
-			return this.parser.object.parse(code);
+			const obj = new expression(this.parser.object.parse(code));
+			obj.diagram = this;
+			return obj;
 		}
 		catch(e)
 		{
@@ -5030,7 +5763,9 @@ class category extends object
 	{
 		try
 		{
-			return this.parser.morphism.parse(code);
+			const obj = new expression(this.parser.morphism.parse(code));
+			obj.diagram = this;
+			return obj;
 		}
 		catch(e)
 		{
@@ -5123,7 +5858,7 @@ Expression =
 		p += this.isClosed ? this.getHom() : '';
 		p += this.isCartesian ? '/ product\n' : '';
 		p += this.hasCoproducts ? '/ coproduct\n' : '';
-		p += `/ '(' expression:Expression ')'\n`;
+		p += `/ '(' express:Expression ')'\n`;
 		if (cls === 'object')
 		{
 			const terms = ['sequence', 'product', 'coproduct', 'Primary'];
@@ -5146,7 +5881,7 @@ Expression =
 	let r = [head];
 	for (let i=0; i<tail.length; ++i)
 		r.push(tail[i][3]);
-	return {op:'${op1}', data:${op1 === 'compose' ? 'r.reverse()' : 'r'}};
+	return new expression({op:'${op1}', data:${op1 === 'compose' ? 'r.reverse()' : 'r'}});
 }
 / ${op2}
 `
@@ -5155,7 +5890,7 @@ Expression =
 	{
 		return `Hom = lhs:Primary _ ',' _ rhs:Expression
 {
-	return {'lhs':lhs, 'op':'hom', 'rhs':rhs};
+	return new expression({'lhs':lhs, 'op':'hom', 'rhs':rhs});
 }
 / Primary
 `;
@@ -5172,14 +5907,14 @@ Operator "operators" = arg:NameToken ':' op:[${ops}]*
 	return {'arg':arg, 'operators':op};
 }
 / NameToken
-Primary = '(' expression:Expression ')'
+Primary = '(' express:Expression ')'
 {
-	return expression;
+	return new expression(express);
 }`;
 	p += this.isClosed ? `
-/ '[' _ expression:Hom _ ']'
+/ '[' _ express:Hom _ ']'
 {
-	return expression;
+	return new express;
 }
 ` : '';
 	p += `/ '{' _ Provisioning _ '}'
@@ -5187,7 +5922,7 @@ Primary = '(' expression:Expression ')'
 / NameToken
 NameToken = nameChar+
 {
-	return {token:text()};
+	return new expression({token:text()});
 }
 nameChar = [@a-zA-Z0-9$_-]
 _ "optional white space" = ws*
@@ -5195,6 +5930,7 @@ ws "white space" = [ \t\\r\\n]+
 	`;
 		return p;
 	}
+	// TODO move to expression class?
 	isNumeric(obj)
 	{
 		switch(obj.code)
@@ -5245,7 +5981,8 @@ class morphism extends element
 		{
 			this.expr = cat.parseMorphism(this.code);
 			if (this.name === '')
-				this.name = element.codename(this.diagram === null ? this.category : this.diagram, this.expr);
+//				this.name = element.codename(this.diagram === null ? this.category : this.diagram, this.expr);
+				this.name = this.expr.codename();
 		}
 		catch(e)
 		{
@@ -5253,8 +5990,10 @@ class morphism extends element
 		}
 		if ((this.diagram !== null && !this.diagram.validateAvailableMorphism(this.name)) || cat.hasMorphism(this.name))
 			throw `Morphism name ${this.name} is already taken.`;
+		this.expr.diagram = this.diagram;
 		if (this.html === '' && this.code !== '')
-			this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'morphism', position:0});
+//			this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'morphism', position:0});
+			this.html = this.expr.html(true, {class:'morphism', position:0});
 		if ('function' in args)
 			this.setFunction(args.function);
 		else if ('functor' in args)
@@ -5281,7 +6020,7 @@ class morphism extends element
 			cat.addMorphism(this);
 		else if (level === 'transform')
 			cat.addTransform(this);
-		this.cid = element.signature(cat, this.expr);
+		this.cid = this.expr.signature();
 	}
 	decrRefcnt()
 	{
@@ -5310,7 +6049,8 @@ class morphism extends element
 	}
 	isRunnable()
 	{
-		return this.diagram !== null ? element.isRunnable(this.diagram, this.expr, true) : false;
+//		return this.diagram !== null ? element.isRunnable(this.diagram, this.expr, true) : false;
+		return this.diagram !== null ? this.expr.isRunnable() : false;
 	}
 	setFunction(fn)
 	{
@@ -5385,7 +6125,7 @@ class morphism extends element
 	}
 	domCodExpr()
 	{
-		return $Cat.parseObject(`${this.domain.code},${this.codomain.code}`);
+		return this.diagram.parseObject(`${this.domain.code},${this.codomain.code}`);
 	}
 	help()
 	{
@@ -5637,7 +6377,8 @@ class composite extends morphism
 		this.subClass = 'composite';
 		this.morphisms = morphisms;
 		this.morphisms.map(m => m.incrRefcnt());
-		this.html = this.html === '' ? element.html(this.diagram === null ? cat : this.diagram, this.expr, true, {class:'morphism', position:0}) : this.html;
+//		this.html = this.html === '' ? element.html(this.diagram === null ? cat : this.diagram, this.expr, true, {class:'morphism', position:0}) : this.html;
+		this.html = this.html === '' ? this.expr.html(true, {class:'morphism', position:0}) : this.html;
 		if (!('description' in args))
 			this.Description = Cat.textify('The composite of ', this.morphisms, true);
 	}
@@ -5657,7 +6398,8 @@ class composite extends morphism
 	{
 		const m = this.morphisms[0];
 		// TODO needs an iso for One
-		return m.domain.code === 'One' ? true : element.isRunnable(this.diagram, m.expr);
+//		return m.domain.code === 'One' ? true : element.isRunnable(this.diagram, m.expr);
+		return m.domain.code === 'One' ? true : m.expr.isRunnable();
 	}
 	help()
 	{
@@ -5733,21 +6475,6 @@ class dataMorphism extends morphism
 	{
 		return 'token' in dgrm.getObject(obj.expr).expr;
 	}
-	/*
-	static checkEditable(dgrm, x)
-	{
-		const expr = dgrm.getObject(x).expr;
-		if ('token' in expr && expr.token in Cat.basetypes.objects)
-			return Cat.basetypes.objects[expr.token].editable;
-		else if ('op' in expr && expr.op == 'product')
-		{
-			for (let i=0; i<expr.data.length; ++i)
-				if (!dataMorphism.checkEditable(dgrm, expr.data[i]))
-					return false;
-		}
-		return true;
-	}
-	*/
 	upperLimit()
 	{
 		return this.domain.isFinite === 'n' ? Number.MAX_SAFE_INTEGER : this.domain.isFinite;
@@ -5755,14 +6482,14 @@ class dataMorphism extends morphism
 	addData(e)
 	{
 		const i = Math.min(this.upperLimit(), document.getElementById('inputTerm').value);
-		const elt = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'data'});
+		const elt = this.codomain.expr.fromExpression(true, {uid:0, idp:'data'});
 		this.data[i] = elt;
 	}
 	addRange(e)
 	{
 		const startIndex = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('startTerm').value));
 		const count = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('rangeTerm').value));
-		const startValue = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'strt'});
+		const startValue = this.codomain.expr.fromExpression(true, {uid:0, idp:'strt'});
 		this.ranges.push({type:'range', startIndex, count, startValue, skipRows:1});
 		Cat.display.data.updateDataRanges(this);
 	}
@@ -5776,8 +6503,8 @@ class dataMorphism extends morphism
 	{
 		const startIndex = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('inputStartIdx').value));
 		const count = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('randomCount').value));
-		const min = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'min'});
-		const max = element.fromExpression(this.diagram, this.codomain.expr, true, {uid:0, idp:'max'});
+		const min = this.codomain.expr.fromExpression(true, {uid:0, idp:'min'});
+		const max = this.codomain.expr.fromExpression(true, {uid:0, idp:'max'});
 		this.ranges.push({type:'random', startIndex, count, min, max});
 		Cat.display.data.updateDataRanges(this);
 	}
@@ -6128,7 +6855,7 @@ class curryMorphism extends morphism
 		for (let i=0; i<factors.length; ++i)
 		{
 			const f = factors[i];
-			const fx = element.getExprFactor(expr, f);
+			const fx = expr.getExprFactor(f);
 			const fo = dgrm.getObject(fx);
 			data.name += fo.name;
 			data.html += `<tspan>${fo.getText()}</tspan>` + Cat.subscript(f[1]);
@@ -6152,8 +6879,10 @@ class curryMorphism extends morphism
 		curryMorphism.getFactorsName(dgrm, homFactors, expr, data);
 		data.html += '&gt;';
 		data.name += '--C-';
-		data.domCode = domFactors.map(f => element.getCode(dgrm, element.getExprFactor(expr, f))).join(Cat.basetypes.operators.product.symCode);
-		data.homCode = homFactors.map(f => element.getCode(dgrm, element.getExprFactor(expr, f))).join(Cat.basetypes.operators.product.symCode);
+//		data.domCode = domFactors.map(f => element.getCode(dgrm, expr.getExprFactor(f))).join(Cat.basetypes.operators.product.symCode);
+//		data.homCode = homFactors.map(f => element.getCode(dgrm, expr.getExprFactor(f))).join(Cat.basetypes.operators.product.symCode);
+		data.domCode = domFactors.map(f => expr.getExprFactor(f).getCode()).join(Cat.basetypes.operators.product.symCode);
+		data.homCode = homFactors.map(f => expr.getExprFactor(f).getCode()).join(Cat.basetypes.operators.product.symCode);
 		data.preCurry = preCurry;
 		data.domFactors = domFactors.map(f => [f[0], f[1]]);
 		data.homFactors = homFactors.map(f => [f[0], f[1]]);
@@ -6205,11 +6934,15 @@ class productMorphism extends morphism
 	static form(dgrm, morphisms)
 	{
 		const code = '(' + morphisms.map(m => m.name).join(`)${Cat.basetypes.operators.product.symCode}(`) + ')';
-		const expr = dgrm.codomain.parseObject(code);
+//		const expr = dgrm.codomain.parseObject(code);
+		const expr = dgrm.parseObject(code);
 		return {
-			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
-			code:element.getCode(dgrm, expr, true, true),
-			name:element.codename(dgrm, expr),
+//			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
+			html:expr.html(true, {class:'morphism', position:0}),	// data: class, position
+//			code:element.getCode(dgrm, expr, true, true),
+			code:expr.getCode(true),
+//			name:element.codename(dgrm, expr),
+			name:expr.codename(),
 		};
 	}
 	decrRefcnt()
@@ -6265,11 +6998,15 @@ class coproductMorphism extends morphism
 	static form(dgrm, morphisms)
 	{
 		const code = '(' + morphisms.map(m => m.name).join(`)${Cat.basetypes.operators.coproduct.symCode}(`) + ')';		// ***
-		const expr = dgrm.codomain.parseObject(code);
+//		const expr = dgrm.codomain.parseObject(code);
+		const expr = dgrm.parseObject(code);
 		return {
-			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
-			code:element.getCode(dgrm, expr, true, true),
-			name:element.codename(dgrm, expr),
+//			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
+			html:expr.html(true, {class:'morphism', position:0}),	// data: class, position
+//			code:element.getCode(dgrm, expr, true, true),
+			code:expr.getCode(true),
+//			name:element.codename(dgrm, expr),
+			name:expr.codename(),
 		};
 	}
 	help()
@@ -6288,8 +7025,10 @@ class stringMorphism extends morphism
 		this.diagram = dgrm;
 		this.graph = m.domCodExpr();
 		if ('function' in m)
-			stringMorphism.tagGraph(this.diagram, this.graph, true, m.function);
+//			stringMorphism.tagGraph(this.diagram, this.graph, true, m.function);
+			this.graph.tagGraph(true, m.function);
 	}
+	/*
 	static bindGraph(dgrm, expr, first, data)	// data: {cod, link, function, domRoot, codRoot, offset}
 	{
 		return element.expandExpression(dgrm, expr,
@@ -6437,7 +7176,7 @@ class stringMorphism extends morphism
 					const lnk = links.pop();
 					if (expr.visited.indexOf(lnk) > -1)
 						continue;
-					const f = element.getExprFactor(data.expr, lnk);
+					const f = data.expr.getExprFactor(lnk);
 					if ('links' in f)
 						f.links.map(k => (links.indexOf(k) === -1 && k[0] !== data.index[0]) ? links.push(k) : null);
 					f.functions.map(r => expr.functions.indexOf(r) === -1 ? expr.functions.push(r) : null);
@@ -6478,7 +7217,7 @@ class stringMorphism extends morphism
 				const factorLink = data.index.slice();
 				if (factorLink[0] === 1)
 					factorLink[0] = data.cnt;
-				const f = element.getExprFactor(data.expr, factorLink);
+				const f = data.expr.getExprFactor(factorLink);
 				const v = f.visited;
 				if (typeof v === 'undefined')
 					throw 'Not visited';
@@ -6557,9 +7296,11 @@ class stringMorphism extends morphism
 			function(){},
 			first, data);
 	}
+	*/
 	tagGraphFunction(func)
 	{
-		stringMorphism.tagGraph(this.diagram, this.graph, true, func);
+//		stringMorphism.tagGraph(this.diagram, this.graph, true, func);
+		this.graph.tagGraph(true, func);
 	}
 	mergeMorphismGraphs(morph, dual = false)
 	{
@@ -6568,11 +7309,12 @@ class stringMorphism extends morphism
 		{
 			const dom = dual ? 1 : 0;
 			const cod = dual ? 0 : 1;
-			stringMorphism.mergeGraphs(this.diagram, this.graph.data[dom], true, {from:g.graph.data[dom], base:[dom], inbound:[], outbound:[cod, i]});
+//			stringMorphism.mergeGraphs(this.diagram, this.graph.data[dom], true, {from:g.graph.data[dom], base:[dom], inbound:[], outbound:[cod, i]});
+			this.graph.data[dom].mergeGraphs(true, {from:g.graph.data[dom], base:[dom], inbound:[], outbound:[cod, i]});
 			const gCod = g.graph.data[cod];
 			const tCod = this.graph.data[cod];
 			const thisGraph = 'data' in tCod ? tCod.data[i] : tCod;
-			stringMorphism.mergeGraphs(this.diagram, thisGraph, true, {from:gCod, base:[cod, i], inbound:[cod, i], outbound:[]});
+			thisGraph.mergeGraphs(true, {from:gCod, base:[cod, i], inbound:[cod, i], outbound:[]});
 		});
 		const cod = this.graph.data[1];
 		graphs.map((g, i) =>
@@ -6602,15 +7344,18 @@ class stringMorphism extends morphism
 	}
 	makeIdentityGraph()
 	{
-		stringMorphism.bindGraph(this.diagram, this.graph.data[0], true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
+//		stringMorphism.bindGraph(this.diagram, this.graph.data[0], true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
+		this.graph.data[0].bindGraph(true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
 		this.tagGraphFunction('identity');
 	}
 	makeDiagonalGraph()
 	{
 		const dom = this.graph.data[0];
 		const cod = this.graph.data[1];
-		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[0], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 0], offset:0});
-		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[1], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 1], offset:0});
+//		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[0], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 0], offset:0});
+//		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[1], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 1], offset:0});
+		dom.bindGraph(true, {cod:cod.data[0], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 0], offset:0});
+		dom.bindGraph(true, {cod:cod.data[1], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 1], offset:0});
 		this.tagGraphFunction('diagonal');
 	}
 	makeEvalGraph()
@@ -6618,8 +7363,10 @@ class stringMorphism extends morphism
 		const dom = this.graph.data[0];
 		const domHom = dom.data[0];
 		const cod = this.graph.data[1];
-		stringMorphism.bindGraph(this.diagram, dom.data[1], true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0], offset:0});
-		stringMorphism.bindGraph(this.diagram, domHom.rhs, true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1], offset:0});
+//		stringMorphism.bindGraph(this.diagram, dom.data[1], true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0], offset:0});
+//		stringMorphism.bindGraph(this.diagram, domHom.rhs, true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1], offset:0});
+		dom.data[1].bindGraph(true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0], offset:0});
+		domHom.rhs.bindGraph(true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1], offset:0});
 		this.tagGraphFunction('eval');
 	}
 	makeCompositeGraph(m)
@@ -6629,8 +7376,10 @@ class stringMorphism extends morphism
 		const expr = m.category.parseObject(graphs.map(m => m.domain.code).join() + ',' + graphs[graphs.length -1].codomain.code);
 		graphs.map((g, i) =>
 		{
-			stringMorphism.mergeGraphs(this.diagram, expr.data[i], true, {from:g.graph.data[0], base:[0], inbound:[i], outbound:[i+1]});
-			stringMorphism.mergeGraphs(this.diagram, expr.data[i+1], true, {from:g.graph.data[1], base:[1], inbound:[i+1], outbound:[i]});
+//			stringMorphism.mergeGraphs(this.diagram, expr.data[i], true, {from:g.graph.data[0], base:[0], inbound:[i], outbound:[i+1]});
+//			stringMorphism.mergeGraphs(this.diagram, expr.data[i+1], true, {from:g.graph.data[1], base:[1], inbound:[i+1], outbound:[i]});
+			expr.data[i].mergeGraphs(true, {from:g.graph.data[0], base:[0], inbound:[i], outbound:[i+1]});
+			expr.data[i+1].mergeGraphs(true, {from:g.graph.data[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
 		stringMorphism.traceLinks(this.diagram, expr, true, {expr, index:[]});
 		stringMorphism.copyDomCodLinks(this.diagram, this.graph, true, {cnt:m.morphisms.length, expr, index:[]});
@@ -6652,16 +7401,17 @@ class stringMorphism extends morphism
 		let offset = 0;
 		m.factors.map((r, i) =>
 		{
-			const dom = element.getExprFactor(domExpr, r);
+			const dom = domExpr.getExprFactor(r);
 			if (dom === null)
 			{
 				++offset;
 				return;
 			}
-			const cod = m.factors.length === 1 ? codExpr : element.getExprFactor(codExpr, [i]);
+			const cod = m.factors.length === 1 ? codExpr : codExpr.getExprFactor([i]);
 			const domRoot = r.slice();
 			domRoot.unshift(0);
-			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot, codRoot:m.factors.length > 1 ? [1, i] : [1], offset});
+//			stringMorphism.bindGraph(this.diagram, dom, true, {cod, link:[], function:'factor', domRoot, codRoot:m.factors.length > 1 ? [1, i] : [1], offset});
+			dom.bindGraph(true, {cod, link:[], function:'factor', domRoot, codRoot:m.factors.length > 1 ? [1, i] : [1], offset});
 		});
 		this.tagGraphFunction('factor');
 	}
@@ -6686,9 +7436,12 @@ class stringMorphism extends morphism
 		}
 		map.push(...homMap);
 		map.push([[1], [1, 1]]);
-		m.domFactors.map((f, i) => stringMorphism.copyGraph(m.diagram, 'data' in dom ? dom.data[i] : dom, true, {map, expr:element.getExprFactor(preCurryGraph.graph, f)}));
-		m.homFactors.map((f, i) => stringMorphism.copyGraph(m.diagram, 'data' in homDom ? homDom.data[i] : homDom, true, {map, expr:element.getExprFactor(preCurryGraph.graph, f)}));
-		stringMorphism.copyGraph(m.diagram, homCod, true, {map, expr:preCurryGraph.graph.data[1]});
+//		m.domFactors.map((f, i) => stringMorphism.copyGraph(m.diagram, 'data' in dom ? dom.data[i] : dom, true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
+//		m.homFactors.map((f, i) => stringMorphism.copyGraph(m.diagram, 'data' in homDom ? homDom.data[i] : homDom, true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
+		m.domFactors.map((f, i) => ('data' in dom ? dom.data[i] : dom).copyGraph(true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
+		m.homFactors.map((f, i) => ('data' in homDom ? homDom.data[i] : homDom).copyGraph(true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
+//		stringMorphism.copyGraph(m.diagram, homCod, true, {map, expr:preCurryGraph.graph.data[1]});
+		homCod.copyGraph(true, {map, expr:preCurryGraph.graph.data[1]});
 		this.tagGraphFunction('lambda');
 	}
 	makeProductGraph(m)
@@ -6751,14 +7504,16 @@ class stringMorphism extends morphism
 			g = g.makeRecurseGraph(m);
 			break;
 		}
-		element.html(dgrm, g.graph.data[0], true, {class:'object', position:0});
-		element.html(dgrm, g.graph.data[1], true, {class:'object', position:0});
+//		element.html(dgrm, g.graph.data[0], true, {class:'object', position:0});
+//		element.html(dgrm, g.graph.data[1], true, {class:'object', position:0});
+		g.graph.data[0].html(true, {class:'object', position:0});
+		g.graph.data[1].html(true, {class:'object', position:0});
 		return g;
 	}
 	static svgLinkUpdate(dom, lnk, data)	// data {graph, dom:{x,y}, cod:{x,y}}
 	{
 		const isDomLink = lnk[0] === 0;
-		const f = element.getExprFactor(data.graph, lnk);
+		const f = data.graph.getExprFactor(lnk);
 		const cod = {x:Math.round(f.position + (f.width/2.0) + (isDomLink ? data.dom.x : data.cod.x)), y:isDomLink ? data.dom.y : data.cod.y};
 		const dx = cod.x - dom.x;
 		const dy = cod.y - dom.y;
@@ -6779,10 +7534,12 @@ class stringMorphism extends morphism
 	{
 		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;
 	}
+	/*
 	static isGraphable(expr)
 	{
 		return 'token' in expr && !(expr.token === 'One' || expr.token === 'Null');
 	}
+	*/
 	static colorWheel(data)
 	{
 		const tran = ['ff', 'ff', 'ff', 'ff', 'ff', '90', '00', '00', '00', '00', '00', '90'];
@@ -7592,6 +8349,7 @@ class diagram extends functor
 			document.getElementById(id).innerHTML = html;
 		}
 	}
+	/*
 	hasDualSubExpr(expr)
 	{
 		if ('data' in expr)
@@ -7606,6 +8364,7 @@ class diagram extends functor
 		}
 		return false;
 	}
+	*/
 	findDualSubExpr(expr)
 	{
 		let subs = [];
@@ -7621,13 +8380,13 @@ class diagram extends functor
 		}
 		return subs;
 	}
-	distributeBtnCode()
+	distribute(e)
 	{
 		const from = this.getSelected();
 		const expr = from.to.expr;
 		const text = from.to.getText();
 		let html = H.h4('Distribute') +
-					H.h5('Domain Factors') +
+					H.h5(`Domain Factors`) +
 					H.small('Click to place in codomain') +
 						H.button('1', '', Cat.display.elementId(), 'Add terminal object',
 						`onclick="Cat.getDiagram().addFactor('codomainDiv', 'selectedFactorMorphism', 'One', '', -1)"`) +
@@ -8120,9 +8879,6 @@ class diagram extends functor
 //		this.removeSelected();
 		this.objectPlaceMorphism(e, 'codomain', name, m.name);
 	}
-	distribute(e)
-	{
-	}
 	pullback(e)
 	{
 		if (this.codomain.hasForm(this.selected).sink)
@@ -8471,10 +9227,12 @@ class diagram extends functor
 				obj = this.getObject(name.token);
 			else
 			{
-				const codename = element.codename(this, name, true, extended);
+//				const codename = element.codename(this, name, true, extended);
+				const codename = name.codename(extended);
 				obj = this.getObject(codename);
 				if (obj === null)
-					obj = this.newObject({code:element.getCode(this, name, true, extended)});
+//					obj = this.newObject({code:element.getCode(this, name, true, extended)});
+					obj = this.newObject({code:name.getCode(extended)});
 			}
 		}
 		return obj;
@@ -8519,7 +9277,8 @@ class diagram extends functor
 	}
 	getObjectByCode(code)
 	{
-		return this.getObject(element.codename(this, this.codomain.parseObject(code)));
+//		return this.getObject(element.codename(this, this.codomain.parseObject(code)));
+		return this.getObject(this.parseObject(code).codename());
 	}
 	newObject(args)
 	{
@@ -8969,7 +9728,8 @@ class diagram extends functor
 	getProductName(obj)
 	{
 		const code = `(${obj.code})*(${obj.code})`;
-		return element.codename(this, this.codomain.parseObject(code));
+//		return element.codename(this, this.codomain.parseObject(code));
+		return this.parseObject(code).codename();
 	}
 	addWindowSelect(e)
 	{
@@ -9065,11 +9825,13 @@ class diagram extends functor
 		});
 		return refs;
 	}
+/*
 	isExprInDiagram(expr, dgrm)
 	{
 		const obj = this.getObject(expr);
 		return obj.diagram.name === dgrm;
 	}
+*/
 	canRemoveReferenceDiagram(name)
 	{
 		const ref = Cat.getDiagram(name);
@@ -9144,6 +9906,12 @@ class diagram extends functor
 	help()
 	{
 		return H.p(`Diagram ${this.getText()} in category ${this.category.getText()}`);
+	}
+	parseObject(code)
+	{
+		const obj = this.codomain.parseObject(code);
+		obj.diagram = this;
+		return obj;
 	}
 }
 
