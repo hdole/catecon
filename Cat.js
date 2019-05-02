@@ -1,4 +1,4 @@
-// (C) 2018 Harry Dole
+// (C) 2018-2019 Harry Dole
 // Catecon:  The Categorical Console
 //
 'use strict';
@@ -176,18 +176,6 @@ class operator
 		this.symCode = args.symCode;
 		this.nameCode = args.nameCode;
 	}
-	toName(tokens)
-	{
-		return tokens.join(this.nameCode);
-	}
-	toCode(tokens)
-	{
-		return tokens.map(t => `(${t})`).join(this.symCode);
-	}
-	toHtml(tokens)
-	{
-		return tokens.join(this.sym);
-	}
 }
 
 const isGUI = typeof window === 'object';
@@ -214,7 +202,7 @@ const Cat =
 	nameEx:			RegExp('^[a-zA-Z_-]+[@a-zA-Z0-9_-]*$'),
 	localDiagrams:	{},
 	secret:			'0afd575e4ad6d1b5076a20bf53fcc9d2b110d3f0aa7f64a66f4eee36ec8d201f',
-	sep:			'@',
+	sep:			'-',
 	serverDiagrams:	{},
 	statusXY:		{x:0, y:0},
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
@@ -238,15 +226,14 @@ const Cat =
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
 						H.p('Accept cookies by entering the categorical access code below:', 'txtCenter') +
-						H.table(
-								((!!window.chrome && !!window.chrome.webstore) ?
+						H.table((!!window.chrome ?
 									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
 									H.tr(H.td(H.button('OK', '', '', '', 'onclick=Cat.cookieAccept()'))) :
 									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
 //						H.table(btns.map(row => H.tr(row.map(b => H.td(Cat.display.getButton(b))).join(''))).join(''), 'buttonBar center') +
 						H.table(H.tr(H.td(btns)), 'buttonBar center') +
 						H.span('', '', 'introPngs') + '<br/>' +
-						H.table(H.tr(H.td(H.small('&copy;2018 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
+						H.table(H.tr(H.td(H.small('&copy;2018-2019 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
 					, 'txtCenter');
 		return html;
 	},
@@ -371,7 +358,7 @@ const Cat =
 			return Cat.diagrams[dgrmName];
 		if (checkLocal && Cat.hasLocalDiagram(dgrmName))
 		{
-			dgrm = diagram.fromLocalStorage(dgrmName);
+			dgrm = diagram.readLocal(dgrmName);
 			if (!(name in Cat.diagrams))
 				Cat.diagrams[dgrmName] = dgrm;
 		}
@@ -525,6 +512,7 @@ const Cat =
 			hasProducts:	true,
 			hasCoproducts:	true,
 		});
+		/*
 		PFS = new category(
 		{
 			name:	'PFS',
@@ -633,7 +621,9 @@ const Cat =
 			codomain:	'Graph',
 			description:'Gives the graph of a morphism',
 		});
-		isGUI && this.fetchCategories(fn);	// TODO check for local TODO refresh flag
+		*/
+// TODO restore		isGUI && this.fetchCategories(fn);	// TODO check for local TODO refresh flag
+		fn();
 	},
 	getLocalStorageCategoryName()
 	{
@@ -697,7 +687,6 @@ const Cat =
 				exports.$Cat =					$Cat;
 				exports.PFS =					PFS;
 				exports.Graph =					Graph;
-
 				exports.diagram =				diagram;
 				exports.element =				element;
 				exports.object =				object;
@@ -734,8 +723,8 @@ const Cat =
 					{
 						if (!$Cat.hasObject(cat.name))
 						{
-							const cat = new category({name:cat.name, code:cat.code, html:cat.html, description:cat.description, cid:cat.cid});
-							Cat.catalog[cat] = {};
+							const nuCat = new category({name:cat.name, code:cat.code, html:cat.properName, description:cat.description, cid:cat.cid});
+							Cat.catalog[nuCat] = {};
 						}
 					});
 					if (fn)
@@ -794,6 +783,7 @@ const Cat =
 			right: {sym:')', symCode:')', nameCode:'-P--'},
 		},
 		comma: {sym:',', symCode:',', nameCode:'-c-'},
+		/*
 		objects:
 		{
 			Null:
@@ -993,6 +983,7 @@ const Cat =
 			exists:		'&#8707;',
 			existsNot:	'&#8708;',
 		},
+		*/
 	},
 	submap:
 	{
@@ -1039,14 +1030,13 @@ const Cat =
 		{
 			this.selectCategory(cat, function()
 			{
-//				let name = localStorage.getItem(`Cat.selected.diagram ${Cat.user.name} ${cat}`);
 				let name = Cat.getLocalStorageDiagramName(cat);
 				name = name === null ? diagram.genName(cat, Cat.user.name, 'Draft') : name;
 				let dgrm = Cat.getDiagram(name);
-				if (dgrm === null && diagram.fromLocalStorage(name) === null)
+				if (dgrm === null && diagram.readLocal(name) === null)
 				{
 					dgrm = new diagram({name, codomain:cat, code:name, html:'Draft', description:'Scratch diagram', user:Cat.user.name});
-					dgrm.saveToLocalStorage();
+					dgrm.saveLocal();
 				}
 				Cat.selected.selectDiagram(name);
 				if (fn)
@@ -1081,7 +1071,6 @@ const Cat =
 			Cat.display.element.setPanelContent();
 			Cat.display.diagram.update();
 			const dgrm = Cat.getDiagram();
-//			Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + dgrm.makeAllSVG();
 			Cat.display.diagramSVG.innerHTML = dgrm.makeAllSVG();
 			Cat.display.diagram.setToolbar(dgrm);
 			dgrm.update(null, 'diagram', null, true, false);
@@ -1205,7 +1194,7 @@ const Cat =
 						const isolated = from.refcnt === 1;
 						if (from.class === 'object')
 						{
-							const to = dgrm.mapObject(from);
+							const to = from.to;
 							Cat.display.fuseObject = new diagramObject(dgrm.domain, {diagram:dgrm, xy:pnt});
 							dgrm.deselectAll();
 							const fromMorph = new diagramMorphism(dgrm.domain, {diagram:dgrm, domain:from.name, codomain:Cat.display.fuseObject.name});
@@ -1218,7 +1207,7 @@ const Cat =
 							from = Cat.display.fuseObject;
 							dgrm.addSelected(e, Cat.display.fuseObject);
 							from.setXY(pnt);
-							dgrm.saveToLocalStorage();
+							dgrm.saveLocal();
 							dgrm.checkFusible(pnt);
 						}
 						else if (from.class === 'morphism')
@@ -1234,7 +1223,7 @@ const Cat =
 							cod.addSVG();
 							fromCopy.addSVG();
 							dgrm.addSelected(e, fromCopy);
-							dgrm.saveToLocalStorage();
+							dgrm.saveLocal();
 							Cat.display.fuseObject = fromCopy;
 							dgrm.checkFusible(pnt);
 						}
@@ -1319,11 +1308,12 @@ const Cat =
 						{
 							if (dragObject.class === 'object' && targetObject.class === 'object')
 							{
+								//
+								// TODO * is Monoidal
+								//
 								if (dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
 								{
-									const code = Cat.basetypes.operators.product.toCode([targetObject.to.name, dragObject.to.name]);
-//									const to = dgrm.newObject({code, name:element.codename(dgrm, dgrm.codomain.parseObject(code))});
-									const to = dgrm.newObject({code, name:dgrm.parseObject(code).codename()});
+									const to = productObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
 									dgrm.setObject(targetObject, to);
 									dgrm.deselectAll(false);
 									targetObject.removeSVG();
@@ -1338,12 +1328,15 @@ const Cat =
 									if (morphs.cods.length > 0)
 									{
 										let from = morphs.cods[0];
-										if (morphs.cods.length === 1 && morphs.doms.length === 0 && from.to.function === 'identity' && !from.to.domain.isInitial && from.to.subClass !== 'namedIdentity')
+										if (morphs.cods.length === 1 && morphs.doms.length === 0 && from.to.subClass === 'identity' && !from.to.domain.isInitial)
 										{
-											const cod = dgrm.mapObject(dragObject);
-											const toTargetObject = dgrm.mapObject(targetObject);
+											const cod = dragObject.to;
+											const toTargetObject = targetObject.to;
 											if (cod.code !== toTargetObject.code)
 											{
+												//
+												// TODO cat has terminal object
+												//
 												if (toTargetObject.isTerminal)
 												{
 													const to = $Cat.getTransform(`terminal-${dgrm.codomain.name}`).$(dgrm, from.to.domain);
@@ -1351,6 +1344,9 @@ const Cat =
 													dgrm.setMorphism(from, to);
 													from.addSVG();
 												}
+												//
+												// TODO convert identity to some morphism
+												//
 												else
 												{
 													const to = Cat.getDiagram().newDataMorphism(cod, toTargetObject);
@@ -1364,9 +1360,11 @@ const Cat =
 											dragObject.decrRefcnt();
 										}
 									}
+									//
+									// graph merge
+									//
 									for(const [from, to] of dgrm.morphisms)
 									{
-										// TODO
 										if (from.domain.isEquivalent(dragObject))
 										{
 											from.domain.decrRefcnt();
@@ -1384,17 +1382,22 @@ const Cat =
 									dgrm.update(e, '', null, true);
 								}
 							}
+							//
+							// TODO * is monoidal
+							//
 							else if (dgrm.codomain.hasProducts && dragObject.class === 'morphism' && targetObject.class === 'morphism' && dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
 							{
 								dgrm.deselectAll();
-								const dragMorphTo = dgrm.mapMorphism(dragObject);
-								const targetMorphTo = dgrm.mapMorphism(targetObject);
+								const dragMorphTo = dragObject.to;
+								const targetMorphTo = targetObject.to;
 								const morphisms = [targetMorphTo, dragMorphTo];
+								/*
 								const form = productMorphism.form(dgrm, morphisms);
-//								let newTo = dgrm.getMorphism(element.codename(dgrm, dgrm.codomain.parseMorphism(form.code)));
 								let newTo = dgrm.getMorphism(dgrm.codomain.parseMorphism(form.code).codename());
 								if (newTo === null)
 									newTo = new productMorphism(dgrm, {morphisms:[targetMorphTo, dragMorphTo]});
+									*/
+								const newTo = productMorphism.get(dgrm.codomain, morphisms);
 								newTo.incrRefcnt();
 								dgrm.placeMorphism(e, newTo, targetObject.domain, targetObject.codomain);
 								dragObject.decrRefcnt();
@@ -1404,7 +1407,7 @@ const Cat =
 						}
 					}
 					if (!dgrm.readonly)
-						dgrm.saveToLocalStorage();
+						dgrm.saveLocal();
 				}
 				else if (e.ctrlKey)
 				{
@@ -1423,8 +1426,7 @@ const Cat =
 		{
 			dragObject.decrRefcnt();
 			targetObject.incrRefcnt();
-			const to = dgrm.mapObject(targetObject);
-			to.incrRefcnt();
+			targetObject.to.incrRefcnt();
 		},
 		drop(e)
 		{
@@ -1577,7 +1579,6 @@ const Cat =
 			{
 				let html = H.button('New Category', 'sidenavAccordion', '', 'New Category', `onclick="Cat.display.accordion.toggle(this, \'newCategoryPnl\')"`) +
 							H.div(H.table(H.tr(H.td(Cat.display.input('', 'categoryName', 'Name')), 'sidenavRow') +
-											H.tr(H.td(Cat.display.input('', 'categoryCode', 'Code')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'categoryHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'categoryDescription', 'Description')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'isMonoidal', '', '', 'in100', 'checkbox') + '<label for="isMonoidal">Monoidal?</label>', 'left'), 'sidenavRow') +
@@ -1588,7 +1589,7 @@ const Cat =
 											H.tr(H.td(Cat.display.input('', 'isCartesian', '', '', 'in100', 'checkbox') + '<label for="isCartesian">Cartesian?</label>', 'left'), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'allObjectsFinite', '', '', 'in100', 'checkbox') + '<label for="allObjectsFinite">Finite objects?</label>', 'left'), 'sidenavRow'),
 										'sidenav') +
-									H.span(Cat.display.getButton('edit', 'Cat.display.category.new()', 'Create new category for this diagram')) + H.br() +
+									H.span(Cat.display.getButton('edit', 'Cat.display.category.new()', 'Create new category')) + H.br() +
 									H.span('', 'error', 'categoryError'), 'accordionPnl', 'newCategoryPnl');
 				return html;
 			},
@@ -1599,13 +1600,12 @@ const Cat =
 					document.getElementById('categoryError').innerHTML = '';
 					const name = document.getElementById('categoryName').value;
 					if (name === '')
-						throw 'Object name must be specified.';
+						throw 'Category name must be specified.';
 					if (!RegExp(Cat.userNameEx).test(name))
 						throw 'Invalid category name.';
 					let code = document.getElementById('categoryCode').value;
 					code = code === '' ? name : code;
-					const dgrm = Cat.getDiagram();
-					dgrm.newObject({name, code, html:document.getElementById('categoryHtml').value, description:document.getElementById('categoryDescription').value });
+					new category($Cat, {name, code, html:document.getElementById('categoryHtml').value, description:document.getElementById('categoryDescription').value});
 				}
 				catch(err)
 				{
@@ -1839,7 +1839,7 @@ const Cat =
 									tbl =	H.tr(H.td('Domain Start'), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'startTerm', to.domain.getText(), irx)), 'sidenavRow') +
 											H.tr(H.td('Range Count'), 'sidenavRow') +
-											H.tr(H.td(Cat.display.input('', 'rangeTerm', Cat.basetypes.objects.N.html, Cat.basetypes.objects.N.regexp)), 'sidenavRow') +
+											H.tr(H.td(Cat.display.input('', 'rangeTerm', Cat.basetypes.objects.N.properName, Cat.basetypes.objects.N.regexp)), 'sidenavRow') +
 											H.tr(H.td('Codomain Start Values'), 'sidenavRow') +
 											H.tr(H.td(to.codomain.expr.inputCode(true, {uid:0, idp:'strt'})), 'sidenavRow');
 									html += H.div(H.table(tbl) + Cat.display.getButton('edit', `Cat.display.data.handler(evt, '${from.name}', 'range')`, 'Edit data'), 'accordionPnl', 'rangeInputPnl');
@@ -1905,7 +1905,7 @@ const Cat =
 				try
 				{
 					const dgrm = Cat.getDiagram();
-					const m = dgrm.mapMorphismByName(nm);
+					const m = dgrm.domain.getMorphism(nm).to;
 					switch(style)
 					{
 					case 'one':
@@ -1922,7 +1922,7 @@ const Cat =
 						break;
 					}
 					Cat.display.data.setPanelContent();
-					dgrm.saveToLocalStorage();
+					dgrm.saveLocal();
 				}
 				catch(err)
 				{
@@ -1962,7 +1962,7 @@ const Cat =
 				const m = dgrm.codomain.getMorphism(nm);
 				m.ranges.splice(idx, 1);
 				Cat.display.data.updateDataRanges(m);
-				dgrm.saveToLocalStorage();
+				dgrm.saveLocal();
 			},
 		},
 		diagram:
@@ -2010,7 +2010,7 @@ const Cat =
 				let html =	H.button('New', 'sidenavAccordion', '', 'New Diagram', `onclick="Cat.display.accordion.toggle(this, \'newDiagramPnl\')"`) +
 							H.div(
 									H.small('The chosen name must have no spaces and must be unique among the diagrams you have in this category.') +
-									H.table(	H.tr(H.td(Cat.display.input('', 'diagramName', 'Name')), 'sidenavRow') +
+									H.table(H.tr(H.td(Cat.display.input('', 'diagramName', 'Name')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'diagramHtml', 'HTML Entities')), 'sidenavRow') +
 											H.tr(H.td(Cat.display.input('', 'newDiagramDescription', 'Description')), 'sidenavRow'), 'sidenav') +
 									H.span(Cat.display.getButton('edit', 'Cat.display.diagram.new()', 'Create new diagram')) +
@@ -2035,7 +2035,7 @@ const Cat =
 					nameElt.value = '';
 					htmlElt.value = '';
 					descriptionElt.value = '';
-					dgrm.saveToLocalStorage();
+					dgrm.saveLocal();
 					Cat.selected.selectDiagram(fullname);
 					Cat.display.accordion.close('newDiagramPnl');
 					Cat.display.panel.close('diagram');
@@ -2070,7 +2070,7 @@ const Cat =
 						description:	localInfo ? localInfo.description : (serverInfo ? serverInfo.description : ''),
 						username:		tokens[2],
 						name:			obj,
-						fancyName:		localInfo ? ('html' in localInfo ? localInfo.html : localInfo.fancyName) : (serverInfo ? ('html' in serverInfo ? serverInfo.html : serverInfo.fancyName) : ''),
+						fancyName:		localInfo ? ('html' in localInfo ? localInfo.properName : localInfo.fancyName) : (serverInfo ? ('html' in serverInfo ? serverInfo.properName : serverInfo.fancyName) : ''),
 						timestamp:		localInfo ? localInfo.timestamp : (serverInfo ? serverInfo.timestamp : ''),
 					};
 					return info;
@@ -2114,7 +2114,6 @@ const Cat =
 					if (dgrm.username === Cat.user.name)
 						dgrms[d] = true;
 				}
-//				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = true);
 				Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = dgrm.username === Cat.user.name);
 				let html = Object.keys(dgrms).map(d =>
 				{
@@ -2296,10 +2295,9 @@ const Cat =
 								H.a('3D', '', '', '', 'href="https://threejs.org/"') +
 								H.a('Compressors', '', '', '', 'href="https://github.com/imaya/zlib.js"') +
 								H.a('Crypto', '', '', '', 'href="http://bitwiseshiftleft.github.io/sjcl/"') +
-								H.a('Parser', '', '', '', 'href="https://pegjs.org/"')
 						, 'accordionPnl', 'thirdPartySoftwarePnl') +
 					H.hr() +
-					H.small('&copy;2018 Harry Dole') + H.br() +
+					H.small('&copy;2018-2019 Harry Dole') + H.br() +
 					H.small('harry@harrydole.com', 'italic');
 				document.getElementById('help-sidenav').innerHTML = html;
 			}
@@ -2367,18 +2365,6 @@ const Cat =
 					const functions = Object.keys(CatFns.function).sort().map(f => `<option value="${f}">${f}</option>`).join('');
 					let html = H.table(H.tr(Cat.display.expandPanelBtn('morphism', false) + Cat.display.closeBtnCell('morphism', true)), 'buttonBarRight') +
 								H.h3('Morphisms') +
-								H.h4('New Morphism') +
-								H.div(H.table(	H.tr(H.td(H.small('Create a new morphism bound to an underlying embedded function.'), 'left'), 'sidenavRow') +
-												H.tr(H.td(Cat.display.input('', 'morphismName', 'Name')), 'sidenavRow') +
-												H.tr(H.td(Cat.display.input('', 'morphismHtml', 'HTML')), 'sidenavRow') +
-//												H.tr(H.td(Cat.display.input('', 'morphismFunction', 'Function name')), 'sidenavRow') +
-												H.tr(H.td(`<select id="morphismFunction"><option value=""></option>${functions}</select>`), 'sidenavRow') +
-												H.tr(H.td(Cat.display.input('', 'morphismDescription', 'Description')), 'sidenavRow') +
-												H.tr(H.td(Cat.display.input('', 'morphismDomain', 'Domain')), 'sidenavRow') +
-												H.tr(H.td(Cat.display.input('', 'morphismCodomain', 'Codomain')), 'sidenavRow')
-										) +
-									H.span(Cat.display.getButton('edit', 'Cat.display.morphism.new(evt)', 'Create new morphism for this diagram')) +
-									H.span('', 'error', 'morphismError')) +
 								dgrm.setupDiagramElementPnl('_MorPnl', 'updateMorphismTableRows') +
 								H.h4('References') +
 								dgrm.references.map(r => r.setupDiagramElementPnl('_MorPnl', 'updateMorphismTableRows')).join('');
@@ -2389,46 +2375,6 @@ const Cat =
 			{
 				let dgrm = Cat.getDiagram();
 				dgrm.updateMorphismTableRows();
-			},
-			new(e)
-			{
-				const errDisplay = document.getElementById('morphismError');
-				try
-				{
-					errDisplay.innerHTML = '';
-					const dgrm = Cat.getDiagram();
-					if (dgrm.readonly)
-						throw 'Diagram is read only';
-					document.getElementById('morphismError').innerHTML = '';
-					const nameElt = document.getElementById('morphismName');
-					let name = nameElt.value;
-					if (name === '')
-						throw 'Must have name';
-					const htmlElt = document.getElementById('morphismHtml');
-					const descriptionElt = document.getElementById('morphismDescription');
-					const functionElt = document.getElementById('morphismFunction');
-					const domainElt = document.getElementById('morphismDomain');
-					const codomainElt = document.getElementById('morphismCodomain');
-					const description = Cat.htmlEntitySafe(descriptionElt.value);
-					const html = Cat.htmlEntitySafe(htmlElt.value);
-					const func = Cat.htmlEntitySafe(functionElt.value);
-					const domain = dgrm.newObject({code:domainElt.value});
-					const codomain = dgrm.newObject({code:codomainElt.value});
-					const to = new morphism(dgrm.codomain, {name, html, domain, codomain, diagram:dgrm, function:func, description});
-					const xyDom = {x:Cat.display.width()/2 - (Cat.default.arrow.length/2), y:Cat.display.height()/2};
-					const xyCod = D2.add(xyDom, {x:Cat.default.arrow.length, y:0});
-					dgrm.placeMorphism(e, to, xyDom, xyCod);
-					nameElt.value = '';
-					htmlElt.value = '';
-					descriptionElt.value = '';
-					functionElt.value = '';
-					domainElt.value = '';
-					codomainElt.value = '';
-				}
-				catch(e)
-				{
-					errDisplay.innerHTML = 'Error: ' + Cat.getError(e);
-				}
 			},
 		},
 		object:
@@ -2445,107 +2391,11 @@ const Cat =
 				{
 					let html = H.table(H.tr(Cat.display.expandPanelBtn('object', false) + Cat.display.closeBtnCell('object', true)), 'buttonBarRight') +
 								H.h3('Objects') +
-								this.newObjectPnl() +
 								dgrm.setupDiagramElementPnl('_ObjPnl', 'updateObjectTableRows') +
 								H.h4('References') +
 								dgrm.references.map(r => r.setupDiagramElementPnl('_ObjPnl', 'updateObjectTableRows')).join('');
 					document.getElementById('object-sidenav').innerHTML = html;
 				}
-			},
-				/*
-			newOrig(e)
-			{
-				try
-				{
-					const dgrm = Cat.getDiagram();
-					if (dgrm.readonly)
-						throw 'Diagram is read only';
-					document.getElementById('objectError').innerHTML = '';
-					const nameElt = document.getElementById('objectName');
-					const name = nameElt.value;
-					if (name !== '' && !RegExp(Cat.userNameEx).test(name))
-							throw 'Invalid object name.';
-					if (dgrm.getObject(name))
-						throw `Object with name ${name} already exists.`;
-					nameElt.value = '';
-					const codeElt = document.getElementById('objectCode');
-					let code = codeElt.value;
-					codeElt.value = '';
-					code = code === '' ? name : code;
-					const htmlElt = document.getElementById('objectHtml');
-					const html = Cat.htmlEntitySafe(htmlElt.value);
-					htmlElt.value = '';
-					const descriptionElt = document.getElementById('objectDescription');
-					const description = Cat.htmlEntitySafe(descriptionElt.value);
-					descriptionElt.value = '';
-					const to = dgrm.newObject({name, code, html, description});
-					dgrm.placeObject(e, to);
-				}
-				catch(e)
-				{
-					document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
-				}
-			},
-			*/
-			new(e)
-			{
-				try
-				{
-					const dgrm = Cat.getDiagram();
-					if (dgrm.readonly)
-						throw 'Diagram is read only';
-					document.getElementById('objectError').innerHTML = '';
-					const codeElt = document.getElementById('objectCode');
-					let code = codeElt.value;
-					if (code === '')
-						throw 'Must have code';
-					codeElt.value = '';
-					const descriptionElt = document.getElementById('objectDescription');
-					const description = Cat.htmlEntitySafe(descriptionElt.value);
-					descriptionElt.value = '';
-					const to = dgrm.newObject({code, description});
-					dgrm.placeObject(e, to);
-				}
-				catch(e)
-				{
-					document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
-				}
-			},
-				/*
-			newObjectPnlOrig()
-			{
-				let html = H.button('New Object', 'sidenavAccordion', '', 'New Object', `onclick="Cat.display.accordion.toggle(this, \'newObjectPnl\')"`) +
-							H.div
-							(
-								H.table
-								(
-									H.tr(H.td(H.small('The following tokens may be used to form an object: One, Omega, N, Z, F, ...')), 'sidenavRow') +
-									H.tr(H.td(H.small('Operators are *, +, []')), 'sidenavRow') +
-									H.tr(H.td(H.small('Example: [N, N*N] as the hom set from N to the product N*N')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'objectCode', 'Code')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')
-								) +
-								H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
-								H.span('', 'error', 'objectError'), 'accordionPnl', 'newObjectPnl');
-				return html;
-			},
-			*/
-			newObjectPnl()
-			{
-				let html = H.h4('New Object') +
-							H.div
-							(
-								H.table
-								(
-									H.tr(H.td(H.small('The following tokens may be used to form an object depending on your category: One, Omega, N, Z, F, ...'), 'left'), 'sidenavRow') +
-									H.tr(H.td(H.small('Usual operators are *, +, []'), 'left'), 'sidenavRow') +
-									H.tr(H.td(H.small('Example: <span class="code">[N,N*N]</span> as the hom set from N to the product N*N'), 'left'), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'objectCode', 'Code')), 'sidenavRow') +
-									H.tr(H.td(Cat.display.input('', 'objectDescription', 'Description')), 'sidenavRow')
-								) +
-								H.span(Cat.display.getButton('edit', 'Cat.display.object.new(evt)', 'Create new object for this diagram')) +
-								H.span('', 'error', 'objectError'));
-				return html;
 			},
 			update()
 			{
@@ -2654,7 +2504,7 @@ const Cat =
 				if (dgrm)
 					document.getElementById('elementPnl').innerHTML = H.table(dgrm.texts.map((t, i) =>
 						H.tr(	H.td(H.table(H.tr(H.td(Cat.display.getButton('delete', `Cat.display.element.delete(${i})`, 'Delete text'))), 'buttonBarLeft')) +
-								H.td(H.span(Cat.htmlSafe(t.html), 'tty', `text_${i}`) +
+								H.td(H.span(Cat.htmlSafe(t.properName), 'tty', `text_${i}`) +
 									(this.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().getElement('${t.name}').editText('text_${i}', 'html')`, 'Edit', Cat.default.button.tiny)), 'left'), 'sidenavRow')
 							).join(''));
 			},
@@ -2794,6 +2644,17 @@ const Cat =
 		{
 			buttons:
 			{
+				alignObjectHorizontal:
+`<circle cx="80" cy="160" r="80" fill="url(#radgrad1)"/>
+<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
+<circle cx="240" cy="160" r="80" fill="url(#radgrad1)"/>
+<line class="arrow6" x1="0" y1="160" x2="320" y2="160" marker-end="url(#arrowhead)"/>`,
+				alignObjectVertical:
+`<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
+<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
+<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
+<line class="arrow6" x1="160" y1="0" x2="160" y2="320" marker-end="url(#arrowhead)"/>`,
+
 				cateapsis:
 `<circle cx="160" cy="60" r="60" fill="url(#radgrad1)"/>
 <path class="svgstr4" d="M40,280 40,160 110,90" marker-end="url(#arrowhead)"/>
@@ -2881,6 +2742,12 @@ const Cat =
 				help:
 `<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
 <path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,
+				homFactor:
+`<circle cx="80" cy="240" r="100" fill="url(#radgrad1)"/>
+<circle cx="160" cy="160" r="80" fill="url(#radgrad2)"/>
+<circle cx="240" cy="160" r="80" fill="url(#radgrad2)"/>
+<circle cx="240" cy="80" r="80" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>`,
 				lambda2:
 `<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
@@ -3153,9 +3020,9 @@ ${this.svg.button(onclick)}
 					const dgrm = Cat.getDiagram();
 					if (!dgrm)
 						return;
+					const cat = dgrm.codomain;
 					const xy = dgrm.userToDiagramCoords(Cat.mouse.xy);
 					Cat.display.shiftKey = e.shiftKey;
-					const placeSquare = false;
 					const plain = !(e.shiftKey || e.ctrlKey || e.altKey);
 					const plainShift = e.shiftKey && !(e.ctrlKey || e.altKey);
 					switch(e.keyCode)
@@ -3173,7 +3040,7 @@ ${this.svg.button(onclick)}
 						break;
 					case 49:	// 1
 						if (plain && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObjectByCode('One'), xy);
+							dgrm.placeObject(e, cat.getObject('One'), xy);
 						break;
 					case 51:	// 3
 						if (plain)
@@ -3189,7 +3056,7 @@ ${this.svg.button(onclick)}
 						break;
 					case 70:	// f
 						if (plainShift && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'F*F' : 'F'), xy);
+							dgrm.placeObject(e, cat.getObject('F'), xy);
 						break;
 					case 72:	// h
 						if (plain)
@@ -3205,17 +3072,17 @@ ${this.svg.button(onclick)}
 						break;
 					case 78:	// N
 						if (plainShift && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'N*N' : 'N'), xy);
+							dgrm.placeObject(e, cat.getObject('N'), xy);
 						break;
 					case 79:	// O
 						if (plainShift && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Omega*Omega' : 'Omega'), xy);
+							dgrm.placeObject(e, cat.getObject('Omega'), xy);
 						else if (plain)
 							Cat.display.panel.toggle('object');
 						break;
 					case 83:	// S
 						if (plainShift && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Str*Str' : 'Str'), xy);
+							dgrm.placeObject(e, cat.getObject('Str'), xy);
 						else if (plain)
 							Cat.display.panel.toggle('settings');
 						break;
@@ -3235,7 +3102,7 @@ ${this.svg.button(onclick)}
 						break;
 					case 90:	// Z
 						if (plainShift && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObjectByCode(placeSquare ? 'Z*Z' : 'Z'), xy);
+							dgrm.placeObject(e, cat.getObject('Z'), xy);
 						break;
 					}
 					Cat.display.setCursor();
@@ -3858,7 +3725,7 @@ ${this.svg.button(onclick)}
 			jsons.map(j =>
 			{
 				const dgrm = new diagram(j);
-				dgrm.saveToLocalStorage();
+				dgrm.saveLocal();
 			});
 			if (fn)
 				fn(jsons);
@@ -3876,205 +3743,8 @@ class expression
 	constructor(args)
 	{
 		this.diagram = null;
-		this.expr = Cat.clone(args);
 		if ('token' in args)
 			this.token = args.token;
-		else
-		{
-			this.op = args.op;
-			if ('data' in args)
-				this.data = args.data;
-			else if ('lhs' in args)
-			{
-				this.lhs = args.lhs;
-				this.rhs = args.rhs;
-			}
-		}
-	}
-	getObject(extended)
-	{
-		if (this.diagram.subClass === 'diagram')
-			return extended ? this.diagram.getObject(this) : this.diagram.getObject(this.token, extended);
-		return extended ? this.diagram.getObject(this) : this.diagram.getObject(this.token, null, extended);
-	}
-	expandExpression(base, first, that = null)
-	{
-		if ('op' in this && ('sequence' === this.op || 'product' === this.op || 'coproduct' === this.op || 'compose' === this.op))
-			return this[`${base}_op`](first, that);
-		else if ('token' in this)
-			return this[`${base}_token`](first, that);
-		else if ('lhs' in this)
-			return this[`${base}_bracket`](first, that);
-		else if ('arg' in this)
-			return typeFn(this, first, that);
-		return null;
-	}
-	//
-	// codename
-	//
-	codename(extended = false, first = true)
-	{
-		return this.expandExpression('codename', first, extended);
-	}
-	codename_token(first, extended)
-	{
-		const obj = this.getObject(extended);
-		if (obj)
-		{
-			if ('token' in obj.expr)
-				return obj.expr.token;
-			if (!extended)
-				return obj.name;
-		}
-		else if ('token' in this)
-			return this.token;
-		return obj.expr.codename(extended, first);
-	}
-	codename_op(first, extended)
-	{
-		const op = Cat.basetypes.operators[this.op];
-		const codenames = this.data.map(d => d.codename(extended, false));
-		return Cat.parens(op.toName(codenames), Cat.basetypes.parens.left.nameCode, Cat.basetypes.parens.right.nameCode, first);
-	}
-	codename_bracket(first, extended)
-	{
-		const lCode = this.lhs.codename(extended, true);
-		const rCode = this.rhs.codename(extended, true);
-		const op = Cat.basetypes.operators[this.op];
-		return op.toName([lCode, rCode]);
-	}
-	//
-	//
-	hasDualSubExpr()
-	{
-		if ('data' in this)
-		{
-			const opp = this.op == 'product' ? 'coproduct' : 'product';
-			for (let i=0; i<this.data.length; ++i)
-			{
-				const subExpr = this.data[i];
-				if ('op' in subExpr && subExpr.op === opp)
-					return true;
-				else if ('token' in subExpr)
-				{
-					const obj = subExpr.getObject(true);
-					if ('op' in obj.expr && obj.expr.op === opp)
-						return true;
-				}
-			}
-		}
-		return false;
-	}
-	//
-	// getCode
-	//
-	getCode(full = false, first = true)
-	{
-		return this.expandExpression('getCode', first, full);
-	}
-	getCode_token(first, full)
-	{
-		if (!full)
-			return this.token;
-		const obj = this.getObject(true);
-		if (obj)
-		{
-			if ('token' in obj.expr)
-				return this.token;
-		}
-		else
-			return this.token;
-		return obj.expr.getCode(full, false);
-	}
-	getCode_op(first, full)
-	{
-		const op = Cat.basetypes.operators[this.op];
-		const codes = this.data.map(d => d.getCode(full, false));
-		return Cat.parens(codes.join(op.symCode), Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, first, full);
-	}
-	getCode_bracket(first, full)
-	{
-		const lCode = this.lhs.getCode(full, false);
-		const rCode = this.rhs.getCode(full, false);
-		const op = Cat.basetypes.operators[this.op];
-		let code = op.code;
-		return op.toCode(lCode, rCode);
-	}
-	//
-	// html
-	//
-	html(data, first = true)	// data: class, position
-	{
-		return this.expandExpression('html', first, data);
-	}
-	html_token(first, data)
-	{
-		this.position = data.position;
-		if (this.token in Cat.basetypes.objects)
-		{
-			const html = Cat.basetypes.objects[this.token].html;
-			this.width = Cat.textWidth(html);
-			return html;
-		}
-		const elt = data.class === 'object' ? this.getObject() : this.diagram.getMorphism(this.token);
-		if (elt !== null)
-		{
-			const html = element.getParenthesized(elt);
-			this.width = Cat.textWidth(html);
-			return html;
-		}
-		this.width = isGUI ? Cat.textWidth(this.token) : 0;
-		return this.token;
-	}
-	html_op(first, data)
-	{
-		this.position = data.position;
-		const op = Cat.basetypes.operators[this.op];
-		const symWidth = Cat.textWidth(op.sym);	// TODO move
-		const parenWidth = Cat.textWidth('(');	// TODO move
-		let html = '';
-		let position = data.position;
-		if (!first)
-		{
-			position += parenWidth;
-			html += '(';
-		}
-		const tokens = this.data.map((d, i) =>
-		{
-			const html = d.html({class:data.class, position}, false);
-			position += d.width;
-			if (i !== this.data.length -1)
-				position += symWidth;
-			return html;
-		});
-		html += op.toHtml(tokens);
-		if (!first)
-		{
-			position += parenWidth;
-			html += ')';
-		}
-		this.width = position - data.position;
-		data.position = position;
-		return html;
-	}
-	html_bracket(first, data)
-	{
-		this.position = data.position;
-		const bracketWidth = Cat.textWidth('[');	// TODO move
-		const spaceWidth = Cat.textWidth(' ');	// TODO move
-		const commaWidth = Cat.textWidth(', ');	// TODO move
-		let position = data.position;
-		let html = '[';
-		position += bracketWidth;
-		html += this.lhs.html({class:data.class, position}, false);
-		html += ', ';
-		position += this.lhs.width + commaWidth + spaceWidth;
-		html += this.rhs.html({class:data.class, position}, false);
-		position += this.rhs.width + bracketWidth;
-		html += ']';
-		this.width = position - data.position;
-		data.position = position;
-		return html;
 	}
 	//
 	// inputCode
@@ -4090,7 +3760,7 @@ class expression
 			++uid.uid;
 			const obj = Cat.basetypes.objects[this.token];
 			const rx = 'regexp' in obj ? `pattern="${obj.regexp}"`: '';
-			return Cat.display.input('', `${uid.idp}_${uid.uid}`, obj.html, rx, '');
+			return Cat.display.input('', `${uid.idp}_${uid.uid}`, obj.properName, rx, '');
 		}
 		if (this.diagram.codomain.allObjectsFinite)
 		{
@@ -4117,7 +3787,7 @@ class expression
 			const homset = this.diagram.getHomSet(domain, codomain);
 			++uid.uid;
 			const id = `${uid.idp}_${uid.uid}`;
-			const th = H.tr(H.td(this.html(first, {class:'object', position:0}), '', '', '', `colspan='4'`));
+			const th = H.tr(H.td(this.ProperName(first, {position:0}), '', '', '', `colspan='4'`));
 			return H.table(th + Cat.display.morphismTableRows(homset, `data-name="%1" onclick="Cat.getDiagram().toggleTableMorphism(event, '${id}', '%1')"`, false), 'toolbarTbl', id);
 		}
 	}
@@ -4286,6 +3956,7 @@ class expression
 	{
 		return null;
 	}
+	/*
 	//
 	// getExprFactor
 	//
@@ -4304,6 +3975,7 @@ class expression
 		}
 		return fctr;
 	}
+	*/
 	isGraphable()
 	{
 		return 'token' in this && !(this.token === 'One' || expr.this === 'Null');
@@ -4651,8 +4323,8 @@ class element
 		this.name = Cat.getArg(args, 'name', '');
 		if (this.name !== '' && !Cat.nameEx.test(this.name))
 			throw `Element name ${this.name} is not allowed.`;
-		this.html = Cat.getArg(args, 'html', '');
-		this.code = Cat.getArg(args, 'code', '');
+		if ('properName' in args)
+			this.properName = args.properName;
 		this.Description = Cat.getArg(args, 'description', '');
 		this.category = cat;
 		this.diagram = 'diagram' in args ? (typeof args.diagram === 'object' ? args.diagram : Cat.getDiagram(args.diagram)) : null;
@@ -4703,7 +4375,7 @@ class element
 	}
 	getText()
 	{
-		return this.html === '' ? this.name : this.html;
+		return this.properName === '' ? this.name : this.properName;
 	}
 	json()
 	{
@@ -4718,7 +4390,7 @@ class element
 			mode:				this.mode,
 			name:				this.name,
 			subClass:			'subClass' in this ? this.subClass : '',
-			html:				this.html,
+			properName:			this.properName,
 			readonly:			this.readonly,
 		};
 		if ('x' in this)
@@ -4755,468 +4427,13 @@ class element
 	{
 		Cat.downloadString(this.stringify(), 'json', `${this.name}.json`);
 	}
-	/*
-	static expandExpression(dgrm, expr, tokenFn, seqFn, exprFn, typeFn, first, that = null)
-	{
-		if ('op' in expr && ('sequence' === expr.op || 'product' === expr.op || 'coproduct' === expr.op || 'compose' === expr.op))
-			return seqFn(dgrm, expr, first, that);
-		else if ('token' in expr)
-			return tokenFn(dgrm, expr, first, that);
-		else if ('lhs' in expr)
-			return exprFn(dgrm, expr, first, that);
-		else if ('arg' in expr)
-			return typeFn(dgrm, expr, first, that);
-		return null;
-	}
-	static codename(dgrm, expr, first = true, extended = false)
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first)
-			{
-				let obj = null;
-				if (dgrm.subClass === 'diagram')
-					obj = extended ? dgrm.getObject(expr) : dgrm.getObject(expr.token, extended);
-				else
-					obj = extended ? dgrm.getObject(expr) : dgrm.getObject(expr.token, null, extended);
-				if (obj)
-				{
-					if ('token' in obj.expr)
-						return obj.expr.token;
-					if (!extended)
-						return obj.name;
-				}
-				else if ('token' in expr)
-					return expr.token;
-				return element.codename(dgrm, obj.expr, first, extended);
-			},
-			function(dgrm, expr, first)
-			{
-				const op = Cat.basetypes.operators[expr.op];
-				const codenames = expr.data.map(d => element.codename(dgrm, d, false, extended));
-				return Cat.parens(op.toName(codenames), Cat.basetypes.parens.left.nameCode, Cat.basetypes.parens.right.nameCode, first);
-			},
-			function(dgrm, expr, first)
-			{
-				const lCode = element.codename(dgrm, expr.lhs, true, extended);
-				const rCode = element.codename(dgrm, expr.rhs, true, extended);
-				const op = Cat.basetypes.operators[expr.op];
-				return op.toName([lCode, rCode]);
-			},
-			function(){},
-			first);
-	}
-	static getCode(dgrm, expr, first = true, full = false)
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, full)
-			{
-				if (!full)
-					return expr.token;
-				const obj = dgrm.getObject(expr);
-				if (obj)
-				{
-					if ('token' in obj.expr)
-						return expr.token;
-				}
-				else
-					return expr.token;
-				return element.getCode(dgrm, obj.expr, false, full);
-			},
-			function(dgrm, expr, first, full)
-			{
-				const op = Cat.basetypes.operators[expr.op];
-				const codes = expr.data.map(d => element.getCode(dgrm, d, false, full));
-				return Cat.parens(codes.join(op.symCode), Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, first, full);
-			},
-			function(dgrm, expr, first, full)
-			{
-				const lCode = element.getCode(dgrm, expr.lhs, false, full);
-				const rCode = element.getCode(dgrm, expr.rhs, false, full);
-				const op = Cat.basetypes.operators[expr.op];
-				let code = op.code;
-				return op.toCode(lCode, rCode);
-			},
-			function(){},
-			first, full);
-	}
-	*/
-	static getParenthesized(elt)
-	{
-		const useParens = (elt.html.indexOf(Cat.basetypes.operators.coproduct.sym) > -1) || (elt.html.indexOf(Cat.basetypes.operators.product.sym) > -1);	// TODO replace
-		return useParens ? `(${elt.html})` : elt.html;
-	}
-	/*
-	static html(dgrm, expr, first, data)	// data: class, position
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				expr.position = data.position;
-				if (expr.token in Cat.basetypes.objects)
-				{
-					const html = Cat.basetypes.objects[expr.token].html;
-					expr.width = Cat.textWidth(html);
-					return html;
-				}
-				const elt = data.class === 'object' ? dgrm.getObject(expr.token) : dgrm.getMorphism(expr.token);
-				if (elt !== null)
-				{
-					const html = element.getParenthesized(elt);
-					expr.width = Cat.textWidth(html);
-					return html;
-				}
-				expr.width = isGUI ? Cat.textWidth(expr.token) : 0;
-				return expr.token;
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.position = data.position;
-				const op = Cat.basetypes.operators[expr.op];
-				const symWidth = Cat.textWidth(op.sym);	// TODO move
-				const parenWidth = Cat.textWidth('(');	// TODO move
-				let html = '';
-				let position = data.position;
-				if (!first)
-				{
-					position += parenWidth;
-					html += '(';
-				}
-				const tokens = expr.data.map((d, i) =>
-				{
-					const html = element.html(dgrm, d, false, {class:data.class, position});
-					position += d.width;
-					if (i !== expr.data.length -1)
-						position += symWidth;
-					return html;
-				});
-				html += op.toHtml(tokens);
-				if (!first)
-				{
-					position += parenWidth;
-					html += ')';
-				}
-				expr.width = position - data.position;
-				data.position = position;
-				return html;
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.position = data.position;
-				const bracketWidth = Cat.textWidth('[');	// TODO move
-				const spaceWidth = Cat.textWidth(' ');	// TODO move
-				const commaWidth = Cat.textWidth(', ');	// TODO move
-				let position = data.position;
-				let html = '[';
-				position += bracketWidth;
-				html += element.html(dgrm, expr.lhs, false, {class:data.class, position});
-				html += ', ';
-				position += expr.lhs.width + commaWidth + spaceWidth;
-				html += element.html(dgrm, expr.rhs, false, {class:data.class, position});
-				position += expr.rhs.width + bracketWidth;
-				html += ']';
-				expr.width = position - data.position;
-				data.position = position;
-				return html;
-			},
-			function(){},
-			first, data);
-	}
-	static inputCode(dgrm, expr, first=true, uid={uid:0, idp:'data'})
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, uid)
-			{
-				if (expr.token in Cat.basetypes.objects)
-				{
-					++uid.uid;
-					const obj = Cat.basetypes.objects[expr.token];
-					const rx = 'regexp' in obj ? `pattern="${obj.regexp}"`: '';
-					return Cat.display.input('', `${uid.idp}_${uid.uid}`, obj.html, rx, '');
-				}
-				if (dgrm.codomain.allObjectsFinite)
-				{
-					const obj = dgrm.getObject(expr);
-					if ('token' in obj.expr)
-						return expr.token;
-					return element.inputCode(dgrm, obj.expr, false, uid);
-				}
-				return null;
-			},
-			function(dgrm, expr, first, uid)
-			{
-				const op = Cat.basetypes.operators[expr.op];
-				const codes = expr.data.map(d => {uid.uid; return element.inputCode(dgrm, d, false, uid)});
-				return Cat.parens(codes.join(op.sym), '(', ')', first);
-			},
-			function(dgrm, expr, first, uid)
-			{
-				if (expr.op === 'hom')
-				{
-					const domain = dgrm.getObject(expr.lhs);
-					const codomain = dgrm.getObject(expr.rhs);
-					const homKey = category.homKey(domain, codomain);
-					const homset = dgrm.getHomSet(domain, codomain);
-					++uid.uid;
-					const id = `${uid.idp}_${uid.uid}`;
-					const th = H.tr(H.td(element.html(dgrm, expr, first, {class:'object', position:0}), '', '', '', `colspan='4'`));
-					return H.table(th + Cat.display.morphismTableRows(homset, `data-name="%1" onclick="Cat.getDiagram().toggleTableMorphism(event, '${id}', '%1')"`, false), 'toolbarTbl', id);
-				}
-			},
-			function(){},
-			first, uid);
-	}
-	static fromExpression(dgrm, expr, first = true, uid={uid:0, idp:'data'})
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, uid)
-			{
-				if (expr.token in Cat.basetypes.objects)
-				{
-					++uid.uid;
-					const obj = Cat.basetypes.objects[expr.token];
-					const val = document.getElementById(`${uid.idp}_${uid.uid}`).value;
-					if ('regexp' in obj)
-					{
-						const rx = RegExp(obj.regexp);
-						if (!rx.test(val))
-							throw `Input term ${val} is invalid.`;
-					}
-					return obj.$(val);
-				}
-				if (dgrm.codomain.allObjectsFinite)
-				{
-					const obj = dgrm.getObject(expr);
-					if ('token' in obj.expr)
-					{
-						++uid.uid;
-						const val = document.getElementById(`${uid.idp}_${uid.uid}`).value;
-						const rx = RegExp(obj.regexp);
-						if (!rx.test(val))
-							throw `Input term ${val} is invalid.`;
-						return obj.$(val);
-					}
-					return element.fromExpression(dgrm, obj.expr, false, uid);
-				}
-			},
-			function(dgrm, expr, first, uid)
-			{
-				switch(expr.op)
-				{
-				case 'product':
-					return expr.data.map(x => element.fromExpression(dgrm, x, false, uid));
-				case 'coproduct':
-					// TODO
-					return;
-				}
-			},
-			function(dgrm, expr, first, uid)
-			{
-				switch(expr.op)
-				{
-				case 'hom':
-					++uid.uid;
-					const row = document.getElementById(`${uid.idp}_${uid.uid}`).querySelectorAll('.selRow');
-					const name = row[0].dataset.name;
-					return name;
-				}
-			},
-			function(){},
-			first, uid);
-	}
-	static isRunnable(dgrm, expr, first = true)
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first)
-			{
-				const dm = dgrm.getMorphism(expr.token);
-				switch (dm.function)
-				{
-				case 'data':
-				case 'One':
-					return true;
-				case 'compose':
-					return dm.isRunnable();
-				case 'productAssembly':
-					return dm.morphisms.reduce((isRunnable, factor) => element.isRunnable(dgrm, factor.expr, false) && isRunnable, true);
-				}
-				return false;
-			},
-			function(dgrm, expr, first)
-			{
-				switch(expr.op)
-				{
-				case 'compose':
-					return element.isRunnable(dgrm, expr.data[0], false);
-				case 'product':
-				case 'coproduct':
-					let r = true;
-					for(let i=0; i<expr.data.length; ++i)
-						r &= element.isRunnable(dgrm, expr.data[i], false);
-					return r;
-				}
-			},
-			function(dgrm, expr, first)
-			{
-				return element.isRunnable(dgrm, expr.lhs, false) && element.isRunnable(dgrm, expr.rhs, false);
-			},
-			function(){},
-			first);
-	}
-	static initialObject(dgrm, expr, first = true)
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first)
-			{
-				if (expr.token === 'One')
-					return 0;
-				throw 'No implementation';
-			},
-			function(dgrm, expr, first)
-			{
-				return expr.data.map((d, i) => element.initialObject(dgrm, expr.data[i], false));
-			},
-			function(dgrm, expr, first)	// binary
-			{
-			},
-			function(){},
-			first);
-	}
-	static makeRangeData(dgrm, expr, first, data)	// data = {idx, startIndex, startValue}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				return data.idx - data.startIndex + data.startValue;
-			},
-			function(dgrm, expr, first, data)
-			{
-				return expr.data.map((x, i) => element.makeRangeData(null, x, false, {idx:data.idx, startIndex:data.startIndex, startValue:data.startValue[i]}));
-			},
-			function(dgrm, expr, first, data)
-			{
-				return null;
-			},
-			function(){},
-			first, data);
-	}
-	static makeRandomData(dgrm, expr, first, data)	// data = {min, max, dm}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-//				const obj = dgrm.getObject(expr);
-//				if ('token' in obj.expr)
-//					return data.dm.getRandomValue(obj.expr, data.min, data.max);
-//				return element.makeRandomData(dgrm, obj.expr, false, data);
-				return dataMorphism.getRandomValue(expr, data.min, data.max);
-			},
-			function(dgrm, expr, first, data)
-			{
-				return expr.data.map((x, i) => element.makeRandomData(dgrm, x, false, {min:data.min[i], max:data.max[i], dm:data.dm}));
-			},
-			function(dgrm, expr, first, data)
-			{
-				return null;
-			},
-			function(){},
-			first, data);
-	}
-	static makeUrlData(dgrm, expr, first, data)
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				return data;
-			},
-			function(dgrm, expr, first, data)
-			{
-				return expr.data.map((x, i) => element.makeUrlData(null, x, false, data[i]));
-			},
-			function(dgrm, expr, first, data)
-			{
-				return null;
-			},
-			function(){},
-			first, data);
-	}
-	static getExprFactor(expr, indices)
-	{
-		if (indices.length === 1 && indices[0] === -1)	// terminal object
-			return null;
-		let fctr = expr;
-		for (let i=0; i<indices.length; ++i)
-		{
-			const j = indices[i];
-			if ('data' in fctr)
-				fctr = fctr.data[j];
-			else if ('lhs' in fctr)
-				fctr = j === 0 ? fctr.lhs : fctr.rhs;
-		}
-		return fctr;
-	}
-	static signature(cat, expr)
-	{
-		return element.expandExpression(cat, expr,
-			function(dgrm, expr, first = false, data = null)
-			{
-				let obj = null;
-				if (dgrm.subClass === 'diagram')
-					obj = dgrm.getObject(expr.token, true);
-				else
-					obj = dgrm.getObject(expr);
-				if (obj)
-				{
-					if ('token' in obj.expr)
-						return obj.cid;
-					else
-						return element.signature(dgrm, obj.expr, false, null);
-				}
-				else if ('token' in expr)
-					return Cat.sha256(expr.token);
-				throw 'no signature for expression';
-			},
-			function(cat, expr, first = false, data = null)
-			{
-				// TODO assumes associative due to sort()
-				return Cat.sha256(expr.data.map((x, i) => element.signature(cat, x, false, null)).sort().join(''));
-			},
-			function(cat, expr, first = false, data = null)
-			{
-				return Cat.sha256(element.signature(cat, expr.lhs, false, null) + element.signature(cat, expr.rhs, false, null));
-			},
-			function(){},
-			false, null);
-	}
-	static hasDiagramElement(dgrm, expr, first, data)	// data = null
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				return dgrm.isExprInDiagram(expr, dgrm);
-			},
-			function(dgrm, expr, first, data)
-			{
-				if (dgrm.isExprInDiagram(expr, dgrm))
-					return true;
-				return expr.data.reduce((v, f) => v || element.hasDiagramElement(dgrm, f, false, data));
-			},
-			function(dgrm, expr, first, data)
-			{
-				if (dgrm.isExprInDiagram(expr, dgrm))
-					return true;
-				return element.hasDiagramElement(dgrm, expr.lhs, false, data) || element.hasDiagramElement(dgrm, expr.rhs, false, data);
-			},
-			function(){},
-			first, data);
-	}
-	*/
 	makeSVG(group = true)
 	{
 		if ('x' in this)	// TODO make text class subClass element
 		{
-			if (this.html.indexOf('\n') > -1)
+			if (this.properName.indexOf('\n') > -1)
 			{
-				let lines = this.html.split('\n').map(t => `<tspan x="0" dy="1.2em">${t}</tspan>`);
+				let lines = this.properName.split('\n').map(t => `<tspan x="0" dy="1.2em">${t}</tspan>`);
 				let html = group ? `<g id="${this.elementId()}" transform="translate(${Cat.grid(this.x)} ${Cat.grid(this.y + Cat.default.font.height/2)})">` : '';
 				html += `<text data-type="element" data-name="${this.name}" x="0" y="0" text-anchor="left" class="${this.class} grabbable" onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'element')"> ${lines.join('')} </text>`;
 				html += group ? '</g>' : '';
@@ -5227,7 +4444,7 @@ class element
 				if (isNaN(this.x) || isNaN(this.y))
 					throw 'Nan!';
 				return `<text data-type="element" data-name="${this.name}" text-anchor="middle" class="${this.class} grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + Cat.default.font.height/2}"
-					onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'element')">${this.html}</text>`;
+					onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'element')">${this.properName}</text>`;
 			}
 		}
 	}
@@ -5293,31 +4510,7 @@ class element
 			this.update();
 		Cat.display.diagramSVG.innerHTML += typeof this === 'string' ? this : this.makeSVG();
 	}
-	isSquared(op = 'product')
-	{
-		if ('data' in this.expr && this.expr.data.length === 2 && this.expr.op === op)
-		{
-//			const codes = this.expr.data.map(d => element.getCode(this.diagram, d, true, true));
-			const codes = this.expr.data.map(d => d.getCode(true));
-			return codes[0] === codes[1];
-		}
-		return false;
-	}
-	isComplex()
-	{
-		if (this.class === 'object')
-			return 'data' in this.diagram.getObject(this.expr).expr;
-		return null;	// TODO
-	}
-	getFirstFactor()
-	{
-		return 'data' in this.expr ? this.diagram.getObject(this.expr.data[0]) : null;
-	}
-	help()
-	{
-		return H.p(`Element ${this.getText()} in category ${this.category.getText()}`);
-	}
-}
+}	// element
 
 class object extends element
 {
@@ -5326,31 +4519,10 @@ class object extends element
 		super(cat, args);
 		this.class = 'object';
 		this.subClass = 'object';
-		this.isTerminal = Cat.getArg(args, 'isTerminal', false);
-		this.isInitial = Cat.getArg(args, 'isInitial', false);
-		this.isFinite = Cat.getArg(args, 'isFinite', false) || (cat !== null ? (cat.allObjectsFinite ? 'n' : false) : false);
-		if (this.code in Cat.basetypes.objects)
-			this.basetype = Cat.basetypes.objects[this.code];
 		if (cat !== null)
 		{
 			this.category = cat;
-			this.code = this.code !== '' ? this.code : this.name;
-			this.expr = cat.parseObject(this.code);
-//			this.code = element.getCode(cat, this.expr);
-			this.code = this.expr.getCode();
-			if (this.name === '')
-			{
-//				this.name = element.codename(this.diagram === null ? this.category : this.diagram, this.expr);
-				this.name = this.expr.codename();
-				if (!Cat.nameEx.test(this.name))
-					throw `Object name ${this.name} is not allowed.`;
-			}
-			if (this.html === '')
-//				this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'object', position:0});
-				this.html = this.expr.html(true, {class:'object', position:0});
-			else
-//				element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'object', position:0});
-				this.expr.html(true, {class:'object', position:0});
+			// TODO diagram object only?
 			this.h = Cat.getArg(args, 'h', Cat.default.font.height);
 			if (!('subobject' in args))
 			{
@@ -5361,40 +4533,6 @@ class object extends element
 		}
 		else if ($Cat === null && this.name === 'Cat')	// bootstrap
 			this.category = this;
-		if (this.diagram !== null)
-		{
-			this.expr.diagram = this.diagram;
-			let obj = this.category.getObject(this.expr);
-			if (obj === null && this.diagram !== null)
-				obj = this.diagram.getObject(this.expr);
-			if (obj !== null && !obj.isEquivalent(this))
-			{
-				const expr = obj.expr;
-				if ('token' in expr)
-				{
-					if ('isFinite' in obj)
-						this.isFinite = obj.isFinite;
-				}
-				else if ('op' in expr)
-				{
-					let isFinite = false;
-					if ('data' in expr)
-						isFinite = expr.data.reduce((isFinite, factor) => ('isFinite' in this.diagram.getObject(factor)) && isFinite, true);
-					else if ('lhs' in expr)
-						isFinite = 'isFinite' in this.diagram.getObject(expr.lhs) && 'isFinite' in this.diagram.getObject(expr.rhs);
-					if (isFinite)
-						this.isFinite = 'n';	// TODO
-				}
-				else if ('lhs' in expr)
-				{
-					const lhs = this.diagram.getObject(expr.op.lhs);
-					const rhs = this.diagram.getObject(expr.op.rhs);
-					if (('isFinite' in lhs) && lhs.isFinite !== null && ('isFinite' in rhs) && rhs.isFinite !== null)
-						this.isFinite = 'n';	// TODO
-				}
-			}
-		}
-		this.cid = 'expr' in this ? element.signature(cat, this.expr) : this.cid;
 	}
 	decrRefcnt()
 	{
@@ -5449,6 +4587,171 @@ class object extends element
 	{
 		return H.p(`Object ${this.getText()} in category ${this.category.getText()}`);
 	}
+	isSquaredProduct()
+	{
+		return this.subClass === 'productObject' && this.objects.length === 2;
+	}
+	isSquaredCoproduct()
+	{
+		return this.subClass === 'coproductObject' && this.objects.length === 2;
+	}
+	getFactor(factor)
+	{
+		return this;
+	}
+}	// object
+
+class multiObject extends object
+{
+	constructor(cat, args)
+	{
+		super(cat, args);
+		this.objects = args.objects.map(o => (typeof o === 'string' ? cat.getObject(o) : o));
+		this.objects.map(o => o.incrRefcnt());
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt === 0)
+			this.objects.map(o => o.decrRefcnt());
+		super.decrRefcnt();
+	}
+	json()
+	{
+		let obj = super.json();
+		obj.objects = this.objects.map(o => o.name);
+		return obj;
+	}
+	getFactor(factor)
+	{
+		return factor.length > 0 ? objects[factor[0]].getFactor(factor.slice(1)) : this;
+	}
+	getFactorName(factor)
+	{
+		return factor.length > 0 ? objects[factor[0]].getFactorName(factor.slice(1)) : this.name;
+	}
+	getFactorProperName(indices, first = true, data = {})
+	{
+		this.position = data.position;
+		const f = this.getFactor(indices);
+		const fn = `<tspan>${f.getText()}</tspan>${Cat.subscript(indices)}`;
+		return (first || this.subClass !== 'homObject') ? fn : `(${fn})`;
+	}
+	ProperName(s, first = true, data = {})
+	{
+		let n = '';
+		const symWidth = Cat.textWidth(s);
+	const parenWidth = Cat.textWidth('(');	// TODO move
+		let doPos = 'position' in data;
+		if (doPos)
+			this.position = data.position;
+		if (!first)
+		{
+			n += '(';
+			if (doPos)
+				data.position += parenWidth;
+		}
+		let n = this.objects.map(o => o.ProperName(false, data)).join(s);
+		if (!first)
+		{
+			n += ')';
+			if (doPos)
+				data.position += parenWidth;
+		}
+	}
+}
+
+class productObject extends multiObject
+{
+	static codename(objs)
+	{
+		return objs.map(o => typeof o === 'string' ? o : o.name).join('-X-');
+	}
+	static get(cat, objects)
+	{
+		const name = productObject.codename(objects);
+		let obj = cat.getObject(name);
+		return obj === null ? new productObject(cat, {objects}) : obj;
+	}
+	constructor(cat, args)
+	{
+		super(cat, args);
+		this.subClass = 'productObject';
+		this.size = this.objects.reduce((sz, o) => sz += o.size, 0);
+		this.name = this.name === '' ? productObject.codename() : this.name;
+		this.properName = this.properName === '' ? this.ProperName(cat, this.objects) : this.properName;
+	}
+	ProperName(first = true, data = {})
+	{
+		return super.ProperName('&times;', first, data);
+	}
+}
+
+class coproductObject extends multiObject
+{
+	static codename(objects)
+	{
+		return objects.map(o => typeof o === 'string' ? o : o.name).join('-X-');
+	}
+	static get(cat, objects)
+	{
+		const name = coproductObject.codename(objects);
+		let obj = cat.getObject(name);
+		return obj === null ? new coproductObject(cat, {objects}) : obj;
+	}
+	constructor(cat, args)
+	{
+		super(cat, args);
+		this.subClass = 'coproductObject';
+		this.size = 1 + this.objects.reduce((sz, o) => sz = Math.max(o.size, sz), 0);
+		this.name = this.name === '' ? coproductObject.codename() : this.name;
+		this.properName = this.properName === '' ? coproductObject.ProperName(cat, morphisms) : this.properName;
+	}
+	ProperName(first = true, data = {})
+	{
+		return super.ProperName('&plus;', first, data);
+	}
+}
+
+class homObject extends multiObject
+{
+	static codename(objects)
+	{
+		return `-H--${objects.map(o => typeof o === 'string' ? o : o.name).join('-c-')}--H-`;
+	}
+	static get(cat, objects)
+	{
+		const name = homObject.codename(objects);
+		let obj = cat.getObject(name);
+		return obj === null ? new homObject(cat, {objects}) : obj;
+	}
+	constructor(cat, args)
+	{
+		super(cat, args);
+		this.subClass = 'homObject';
+		this.size = 1;
+		this.name = this.name === '' ? homObject.codename(this.objects) : this.name;
+		this.properName = this.properName === '' ? homObject.ProperName(cat, this.objects) : this.properName;
+	}
+	ProperName(first = true, data = {})
+	{
+		let doPos = 'position' in data;
+	const bw = Cat.textWidth('[');	// TODO move
+	const cw = Cat.textWidth(', ');	// TODO move
+		if (doPos)
+		{
+			this.position = data.position;
+			data.position += bw;
+		}
+		let nm = '[';
+		nm += this.objects[0].ProperName(true, data);
+		nm += ', ';
+		if (doPos)
+			data.position += cw;
+		nm += this.objects[1].ProperName(true, data);
+		if (doPos)
+			data.position += bw;
+		return nm;
+	}
 }
 
 class diagramObject extends object
@@ -5460,20 +4763,17 @@ class diagramObject extends object
 		nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
 		super(cat, nuArgs);
 		this.subClass = 'diagramObject';
-		this.refcnt = 1; // they're visible
-	}
-	incrRefcnt()	// TODO for debug; remove
-	{
-		super.incrRefcnt();
 	}
 	decrRefcnt()
 	{
-		super.decrRefcnt();
 		if (this.refcnt <= 0)
 		{
 			this.to.decrRefcnt();
+			if (this.to.refcnt === 0)
+				this.to.decrRefcnt();
 			this.diagram.objects.delete(this);
 		}
+		super.decrRefcnt();
 	}
 	json()
 	{
@@ -5512,25 +4812,13 @@ class category extends object
 		this.subClass = 'category';
 		const attrs = ['hasProducts', 'hasCoproducts', 'isClosed', 'isCartesian', 'allObjectsFinite'];
 		attrs.map(a => this[a] = Cat.getArg(args, a, false));
-		this.parser = {};
 		this.referenceDiagrams = Cat.getArg(args, 'referenceDiagrams', []);
+		this.references = this.referenceDiagrams.map(r => Cat.getDiagram(r));
 		if ('subobject' in args)
 		{
 			const mainCat = $Cat.getObject(args.subobject);
-			this.parsers = mainCat.parsers;
 			attrs.map(a => this[a] = mainCat[a]);
 			this.subobject = args.subobject;
-		}
-		else
-			this.parsers = [this.makeParser('object'), this.makeParser('morphism')];
-		try
-		{
-			this.parser.object = peg.generate(this.parsers[0]);
-			this.parser.morphism = peg.generate(this.parsers[1]);
-		}
-		catch(e)
-		{
-			Cat.recordError(e);
 		}
 		this.objects = new Map();
 		this.morphisms = new Map();
@@ -5540,7 +4828,7 @@ class category extends object
 		{
 			$Cat = this;
 			$Cat.addObject($Cat);
-			$Cat.expr = this.parseObject(args.code);
+			$Cat.token = 'Cat';
 		}
 		this.process(this.diagram, args);
 	}
@@ -5621,39 +4909,22 @@ class category extends object
 	}
 	hasObject(name)
 	{
-		return this.objects.has(name);
+		return this.references.find(r => r.codomain.hasObject(name)) !== null || this.objects.has(name);
 	}
-	getObject(name, dgrm = null, extended=true)
+	getObject(name, checkRefs=true)
 	{
+		let obj = null;
 		if (typeof name === 'string')
 		{
-			if (name === null || name === '')
-				return null;
-			let obj = null;
-			if (dgrm !== null)
+			if (checkRefs)
 			{
-				dgrm = typeof dgrm === 'string' ? Cat.getDiagram(dgrm) : dgrm;
-				if (dgrm !== null)
-					obj = dgrm.getObject(name, extended);
+				obj = this.references.find(ref => ref.codomain.getObject(name, true));
 				if (obj !== null)
 					return obj;
 			}
 			obj = this.objects.has(name) ? this.objects.get(name) : null;
-			if (obj !== null)
-				return obj;
-			if (extended)
-			{
-				let prsd = this.parseObject(name);
-//				let codeName = element.codename(this, prsd);
-				let codeName = prsd.codename();
-				obj = this.getObject(codeName, dgrm, false);
-				if (obj !== null)
-					return obj;
-			}
-			return null;
 		}
-//		return this.getObject(element.codename(this, name));
-		return this.getObject(name.codename());
+		return obj;
 	}
 	addObject(obj)
 	{
@@ -5661,13 +4932,9 @@ class category extends object
 			throw `Object name ${obj.name} already exists in category ${this.name}`;
 		this.objects.set(obj.name, obj);
 	}
-	getObjectByArgs(name, args)
+	hasMorphism(name)
 	{
-		return this.getObject(name, 'diagram' in args ? args.diagram : null, true);
-	}
-	hasMorphism(mName)
-	{
-		return this.morphisms.has(mName);
+		return this.references.find(r => r.codomain.hasMorphism(name)) !== null || this.morphisms.has(name);
 	}
 	getMorphism(name, dgrmName = null)
 	{
@@ -5746,37 +5013,11 @@ class category extends object
 				return name;
 		}
 	}
-	parseObject(code)
-	{
-		try
-		{
-			const obj = new expression(this.parser.object.parse(code));
-			obj.diagram = this;
-			return obj;
-		}
-		catch(e)
-		{
-			Cat.recordError(`Cannot parse object code: ${code}<br/>Message: ${Cat.getError(e)}`);
-		}
-	}
-	parseMorphism(code)
-	{
-		try
-		{
-			const obj = new expression(this.parser.morphism.parse(code));
-			obj.diagram = this;
-			return obj;
-		}
-		catch(e)
-		{
-			Cat.recordError(`Cannot parse morphism code: ${code}<br/>Message: ${Cat.getError(e)}`);
-		}
-	}
 	run(m, dgrm)
 	{
 		let data = m.morphisms[0];
 		let dataOut = (m.codomain.name !== 'tty' && m.codomain.name !== 'threeD') ? dgrm.newDataMorphism(m.domain, m.codomain) : null;
-		const elts = data.function === 'data' ? data.data : {0:data.$(element.initialObject(dgrm, m.domain.expr))};
+		const elts = data.function === 'data' ? data.data : {0:data.$(element.initialObject(dgrm, m.domain))};
 		for (let i in elts)
 		{
 			let d = m.$(i);
@@ -5848,100 +5089,6 @@ class category extends object
 		this.obj2morphs = new Map();
 		this.addHomSets(this.homSets, this.obj2morphs);
 	}
-	makeParser(cls)
-	{
-		let p = `
-start = Expression
-Expression =
-  sequence
-`;
-		p += this.isClosed ? this.getHom() : '';
-		p += this.isCartesian ? '/ product\n' : '';
-		p += this.hasCoproducts ? '/ coproduct\n' : '';
-		p += `/ '(' express:Expression ')'\n`;
-		if (cls === 'object')
-		{
-			const terms = ['sequence', 'product', 'coproduct', 'Primary'];
-			for (let i=0; i<terms.length -1; ++i)
-				p += this.getOperatorParser(terms[i], terms[i+1]);
-		}
-		else
-		{
-			const terms = ['sequence', 'compose', 'product', 'coproduct', 'Primary'];
-			for (let i=0; i<terms.length -1; ++i)
-				p += this.getOperatorParser(terms[i], terms[i+1]);
-		}
-		p += this.getParserEnd('*+');
-		return p;
-	}
-	getOperatorParser(op1, op2)
-	{
-		return `${op1} = head:${op2} _ tail:(_ '${Cat.basetypes.operators[op1].symCode}' _ ${op2})+
-{
-	let r = [head];
-	for (let i=0; i<tail.length; ++i)
-		r.push(tail[i][3]);
-	return new expression({op:'${op1}', data:${op1 === 'compose' ? 'r.reverse()' : 'r'}});
-}
-/ ${op2}
-`
-	}
-	getHom()
-	{
-		return `Hom = lhs:Primary _ ',' _ rhs:Expression
-{
-	return new expression({'lhs':lhs, 'op':'hom', 'rhs':rhs});
-}
-/ Primary
-`;
-	}
-	getParserEnd(ops)		//?? TODO Drop operators?
-	{
-		let p = `
-Provisioning = '{' _ x:Expression _ '}'
-{
-	return {'provision:':x};
-}
-Operator "operators" = arg:NameToken ':' op:[${ops}]*
-{
-	return {'arg':arg, 'operators':op};
-}
-/ NameToken
-Primary = '(' express:Expression ')'
-{
-	return new expression(express);
-}`;
-	p += this.isClosed ? `
-/ '[' _ express:Hom _ ']'
-{
-	return new express;
-}
-` : '';
-	p += `/ '{' _ Provisioning _ '}'
-/ Operator
-/ NameToken
-NameToken = nameChar+
-{
-	return new expression({token:text()});
-}
-nameChar = [@a-zA-Z0-9$_-]
-_ "optional white space" = ws*
-ws "white space" = [ \t\\r\\n]+
-	`;
-		return p;
-	}
-	// TODO move to expression class?
-	isNumeric(obj)
-	{
-		switch(obj.code)
-		{
-		case 'N':
-		case 'Z':
-		case 'F':
-			return true;
-		}
-		return true; // TODO everything cannot be numeric
-	}
 	static fetchReferenceDiagrams(cat, fn)
 	{
 		const dgrms = cat.referenceDiagrams.filter(d => !Cat.getDiagram(d));
@@ -5957,7 +5104,7 @@ ws "white space" = [ \t\\r\\n]+
 	{
 		return H.p(`Category ${this.getText()}.`);
 	}
-}
+}	// category
 
 class morphism extends element
 {
@@ -5976,27 +5123,9 @@ class morphism extends element
 		this.codomain.incrRefcnt();
 		this.category = cat;
 		this.arrowType = 'standard';	// TODO mono, epi, ...
-		this.code = this.code !== '' ? this.code : this.name;
-		try
-		{
-			this.expr = cat.parseMorphism(this.code);
-			if (this.name === '')
-//				this.name = element.codename(this.diagram === null ? this.category : this.diagram, this.expr);
-				this.name = this.expr.codename();
-		}
-		catch(e)
-		{
-			throw `Cannot parse code [${this.code}]: ${Cat.getError(e)}`;
-		}
 		if ((this.diagram !== null && !this.diagram.validateAvailableMorphism(this.name)) || cat.hasMorphism(this.name))
 			throw `Morphism name ${this.name} is already taken.`;
-		this.expr.diagram = this.diagram;
-		if (this.html === '' && this.code !== '')
-//			this.html = element.html(this.diagram === null ? this.category : this.diagram, this.expr, true, {class:'morphism', position:0});
-			this.html = this.expr.html(true, {class:'morphism', position:0});
-		if ('function' in args)
-			this.setFunction(args.function);
-		else if ('functor' in args)
+		if ('functor' in args)
 		{
 			if (args.functor in CatFns.functor)
 			{
@@ -6020,17 +5149,14 @@ class morphism extends element
 			cat.addMorphism(this);
 		else if (level === 'transform')
 			cat.addTransform(this);
-		this.cid = this.expr.signature();
+		this.cid = this.signature();
 	}
 	decrRefcnt()
 	{
-		super.decrRefcnt();
 		if (this.refcnt <= 0)
 		{
 			this.domain.decrRefcnt();
 			this.codomain.decrRefcnt();
-			if (Cat.debug)
-				console.log('morphism.decrRefcnt delete',this.category.name,this.name);
 			this.category.morphisms.delete(this.name);
 			if ('stringMorphism' in this)
 			{
@@ -6038,32 +5164,18 @@ class morphism extends element
 				stringMorphism.removeStringSvg(this);
 			}
 		}
+		super.decrRefcnt();
 	}
 	json()
 	{
 		let mor = super.json();
 		mor.domain =	this.domain.name;
 		mor.codomain =	this.codomain.name;
-		mor.function =	this.function;
 		return mor;
 	}
-	isRunnable()
+	isRunnable()	// FITB
 	{
-//		return this.diagram !== null ? element.isRunnable(this.diagram, this.expr, true) : false;
-		return this.diagram !== null ? this.expr.isRunnable() : false;
-	}
-	setFunction(fn)
-	{
-		if (fn in CatFns.function)
-		{
-			this.function = fn;
-			this.$ = CatFns.function[fn];
-		}
-		else
-		{
-			this.function = 'unknown';
-			this.$ = CatFns.function.unknown;
-		}
+		return false;
 	}
 	static process(cat, dgrm, data)
 	{
@@ -6083,25 +5195,22 @@ class morphism extends element
 				return new dataMorphism(cat, data);
 				break;
 			case 'coproductMorphism':
-				return new coproductMorphism(dgrm, data);
+				return new coproductMorphism(cat, data);
 				break;
 			case 'coproductAssemblyMorphism':
-				return new coproductAssemblyMorphism(dgrm, data);
+				return new coproductAssemblyMorphism(cat, data);
 				break;
 			case 'productMorphism':
-				return new productMorphism(dgrm, data);
+				return new productMorphism(cat, data);
 				break;
 			case 'productAssemblyMorphism':
-				return new productAssemblyMorphism(dgrm, data);
+				return new productAssemblyMorphism(cat, data);
 				break;
 			case 'factorMorphism':
-				return new factorMorphism(dgrm, data);
+				return new factorMorphism(cat, data);
 				break;
 			case 'curryMorphism':
-				return new curryMorphism(dgrm, data);
-				break;
-			case 'namedIdentity':
-				return new namedIdentity(dgrm, data);
+				return new curryMorphism(cat, data);
 				break;
 			default:
 				return new morphism(cat, data);
@@ -6123,15 +5232,11 @@ class morphism extends element
 					return true;
 		return false;
 	}
-	domCodExpr()
-	{
-		return this.diagram.parseObject(`${this.domain.code},${this.codomain.code}`);
-	}
 	help()
 	{
 		return H.p(`Category ${this.category.getText()}`);
 	}
-}
+}	// morphism
 
 class diagramMorphism extends morphism
 {
@@ -6358,35 +5463,25 @@ onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'morphism')" mark
 	{
 		return H.p(`Diagram morphism ${this.getText()} in category ${this.category.getText()}`);
 	}
-}
+}	// diagramMorphism
 
-class composite extends morphism
+class multiMorphism extends morphism
 {
- 	constructor(cat, args, level)
+	static setupMorphisms(cat, morphs)
 	{
-		if (args.morphisms.length <= 1)
-			throw 'Not enough morphisms to compose.';
-		let nuArgs = Cat.clone(args);
-		const morphisms = args.morphisms.map(m => (typeof m === 'string' ? cat.getMorphism(m, args.diagram) : m));
-		for (let i=0; i<morphisms.length; ++i)
-			if (morphisms[i] === null)
-				throw `Cannot find morphism ${args.morphisms[i]}`;
-		nuArgs.code = Cat.basetypes.operators.compose.toCode(morphisms.map(m => m.name));
-		nuArgs.function = 'compose';
-		super(cat, nuArgs);
-		this.subClass = 'composite';
-		this.morphisms = morphisms;
-		this.morphisms.map(m => m.incrRefcnt());
-//		this.html = this.html === '' ? element.html(this.diagram === null ? cat : this.diagram, this.expr, true, {class:'morphism', position:0}) : this.html;
-		this.html = this.html === '' ? this.expr.html(true, {class:'morphism', position:0}) : this.html;
-		if (!('description' in args))
-			this.Description = Cat.textify('The composite of ', this.morphisms, true);
+		return args.morphisms.map(m => (typeof m === 'string' ? cat.getMorphism(m) : m));
+	}
+	constructor(cat, args)
+	{
+		super(cat, args);
+		this.morphisms = multiMorphism.setupMorphisms(cat, args.morphisms);
+		this.morphisms.map(m => m.incrRefCnt());
 	}
 	decrRefcnt()
 	{
-		super.decrRefcnt();
-		if (this.refcnt <= 0)
+		if (this.refcnt === 0)
 			this.morphisms.map(m => m.decrRefcnt());
+		super.decrRefcnt();
 	}
 	json()
 	{
@@ -6394,17 +5489,298 @@ class composite extends morphism
 		mor.morphisms = this.morphisms.map(r => r.name);
 		return mor;
 	}
+}
+
+class composite extends multiMorphism
+{
+	static codename(morphisms)
+	{
+		return morphisms(m => m.codename(extended, false)).join('-o-');
+	}
+	static domain(morphisms)
+	{
+		return morphisms[0].domain;
+	}
+	static codomain(morphisms)
+	{
+		return morphisms[morphisms.length - 1].codomain;
+	}
+	static get(cat, morphisms)
+	{
+		const name = composite.codename(morphisms);
+		const m = cat.getMorphism(name);
+		return m === null ? new composite(cat, {morphisms}) : m;
+	}
+	static ProperName(cat, morphisms)
+	{
+		return morphisms.map(m => m.getText()).join('&#8728;');
+	}
+ 	constructor(cat, args, level)
+	{
+		const morphisms = multiMorphism.setupMorphisms(cat, args.morphisms);
+		const nuArgs = Cat.clone(args);
+		nuArgs.domain = composite.domain(cat, morphisms);
+		nuArgs.codomain = composite.codomain(cat, morphisms);
+		super(cat, args);
+		this.subClass = 'composite';
+		this.name = this.name === '' ? composite.codename() : this.name;
+		this.properName = this.properName === '' ? composite.ProperName(cat, morphisms) : this.properName;
+	}
 	isRunnable()
 	{
 		const m = this.morphisms[0];
 		// TODO needs an iso for One
-//		return m.domain.code === 'One' ? true : element.isRunnable(this.diagram, m.expr);
-		return m.domain.code === 'One' ? true : m.expr.isRunnable();
+		return m.domain.code === 'One' ? true : m.isRunnable();
 	}
 	help()
 	{
 		return H.h4('Composite') +
 			H.p(`Category ${this.category.getText()}`);
+	}
+}
+
+class productMorphism extends multiMorphism
+{
+	static codename(morphs)
+	{
+		return morphs(m => m.codename(extended, false)).join('-X-');
+	}
+	static domain(cat, morphs)
+	{
+		return productObject.get(cat, morphs.map(m => m.domain));
+	}
+	static codomain(morphs)
+	{
+		return productObject.get(cat, morphs.map(m => m.codomain));
+	}
+	static get(cat, morphisms)
+	{
+		const name = productMorphism.codename(morphisms);
+		const m = cat.getMorphism(name);
+		return m === null ? new productMorphism(cat, {morphisms}) : m;
+	}
+	static ProperName(cat, morphisms)
+	{
+		return morphisms.map(m => m.getText()).join('&times;');
+	}
+	constructor(cat, args)
+	{
+		const morphisms = multiMorphism.setupMorphisms(cat, args.morphisms);
+		const nuArgs = Cat.clone(args);
+		nuArgs.domain = productMorphism.domain(cat, morphisms);
+		nuArgs.codomain = productMorphism.codomain(cat, morphisms);
+		super(cat, nuArgs);
+		this.subClass = 'productMorphism';
+		this.name = this.name === '' ? productMorphism.codename() : this.name;
+		this.properName = this.properName === '' ? productMorphism.ProperName(cat, morphisms) : this.properName;
+	}
+	help()
+	{
+		return H.h4('Product Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
+	}
+}
+
+class coproductMorphism extends multiMorphism
+{
+	static codename(morphs)
+	{
+		return morphs(m => m.codename(extended, false)).join('-C-');
+	}
+	static domain(cat, morphs)
+	{
+		return coproductObject.get(cat, morphs.map(m => m.domain));
+	}
+	static codomain(morphs)
+	{
+		return coproductObject.get(cat, morphs.map(m => m.codomain));
+	}
+	static get(cat, morphisms)
+	{
+		const name = coproductMorphism.codename(morphisms);
+		const m = cat.getMorphism(name);
+		return m === null ? new coproductMorphism(cat, {morphisms}) : m;
+	}
+	static ProperName(cat, morphisms)
+	{
+		return morphisms.map(m => m.getText()).join('&plus;');
+	}
+	constructor(cat, args)
+	{
+		const morphisms = multiMorphism.setupMorphisms(cat, args.morphisms);
+		let nuArgs = Cat.clone(args);
+		nuArgs.domain = coproductMorphism.domain(cat, morphisms);
+		nuArgs.codomain = coproductMorphism.codomain(cat, morphisms);
+		super(cat, nuArgs);
+		this.subClass = 'coproductMorphism';
+		this.name = this.name === '' ? coproductMorphism.codename() : this.name;
+		this.properName = this.properName === '' ? coproductMorphism.ProperName(cat, morphisms) : this.properName;
+	}
+	help()
+	{
+		return H.h4('Coproduct Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
+	}
+}
+
+class productAssemblyMorphism extends multiMorphism
+{
+	static codename(morphisms)
+	{
+		return `-A--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--A-`;
+	}
+	static domain(cat, morphisms)
+	{
+		return morphisms[0].domain;
+	}
+	static codomain(morphisms)
+	{
+		return productObject.get(cat, morphisms.map(m => m.codomain));
+	}
+	static get(cat, morphisms)
+	{
+		const name = productAssemblyMorphism.codename(morphisms);
+		const m = cat.getMorphism(name);
+		return m === null ? new productAssemblyMorphism(cat, {morphisms}) : m;
+	}
+	static ProperName(cat, morphisms)
+	{
+		return `<${morphisms.map(m => m.codomain.getText()).join(',')}>`;
+	}
+	constructor(cat, args)
+	{
+		const morphisms = multiMorphism.setupMorphisms(args.morphisms);
+		const nuArgs = Cat.clone(args);
+		nuArgs.domain = coproductAssemblyMorphism.domain(cat, morphisms);
+		nuArgs.codomain = coproductAssemblyMorphism.codomain(cat, morphisms);
+		nuArgs.codomain = codomain;
+		super(cat, nuArgs);
+		this.subClass = 'productAssemblyMorphism';
+		this.name = this.name === '' ? productAssemblyMorphism.codename() : this.name;
+		this.properName = this.properName === '' ? productAssemblyMorphism.ProperName(cat, morphisms) : this.properName;
+	}
+	help()
+	{
+		return H.h4('Product Assembly Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
+	}
+}
+
+class coproductAssemblyMorphism extends multiMorphism
+{
+	static codename(morphisms)
+	{
+		return `-C--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--C-`;
+	}
+	static domain(cat, morphisms)
+	{
+		return coproductObject.get(cat, morphisms.map(m => m.domain));
+	}
+	static codomain(morphisms)
+	{
+		return morphisms[0].codomain;
+	}
+	static get(cat, morphisms)
+	{
+		const name = coproductAssemblyMorphism.codename(morphisms);
+		const m = cat.getMorphism(name);
+		return m === null ? new coproductAssemblyMorphism(cat, {morphisms}) : m;
+	}
+	static ProperName(cat, morphisms)
+	{
+		return `(${morphisms.map(m => m.getText()).join(',')})`;
+	}
+	constructor(cat, args)
+	{
+		const morphisms = multiMorphism.setupMorphisms(args.morphisms);
+		const nuArgs = Cat.clone(args);
+		nuArgs.domain = coproductAssemblyMorphism.domain(cat, morphisms);
+		nuArgs.codomain = coproductAssemblyMorphism.codomain(cat, morphisms);
+		super(cat, nuArgs);
+		this.subClass = 'coproductAssemblyMorphism';
+		this.name = this.name === '' ? coproductAssemblyMorphism.codename() : this.name;
+		this.properName = this.properName === '' ? coproductAssemblyMorphism.ProperName(cat, morphisms) : this.properName;
+	}
+	json()
+	{
+		let mor = super.json();
+		mor.morphisms = this.morphisms.map(r => r.name);
+		return mor;
+	}
+	static codename(extended = false, first = true)
+	{
+		return `-CA--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--AC-`;
+	}
+	help()
+	{
+		return H.h4('Coproduct Assembly Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			this.diagram.elementHelpMorphTbl(this.morphisms);
+	}
+}
+
+class factorMorphism extends morphism
+{
+	static codename(cat, domain, factors)
+	{
+		let name = `-R--D--${domain.name}--D-`;
+		for (let i=0; i<factors.length; ++i)
+		{
+			const indices = factors[i];
+			const f = domain.getFactor(indices);
+			if (f.name !== 'One')
+				name += f.name + '-' + indices.join('-');
+			else
+				name += f.name;
+			if (i !== factors.length -1)
+				name += '-c-';
+		}
+		name += '--R-';
+		return name;
+	}
+	static domain(cat, domain, factors)
+	{
+		return domain;
+	}
+	static codomain(cat, domain, factors)
+	{
+		return productObject.get(cat, factors.map(f => domain.getFactor(f)));
+	}
+	static get(cat, domain, factors)
+	{
+		const name = factorMorphism.codename(domain, factors);
+		const m = cat.getMorphism(name);
+		return m === null ? new factorMorphism(cat, {domain, factors}) : m;
+	}
+	static ProperName(cat, domain, factors)
+	{
+		return `&lt;${factors.map(f => domain.getFactorProperName(f)).join(',')}&gt;`;
+	}
+	constructor(cat, args)
+	{
+		let nuArgs = Cat.clone(args);
+		nuArgs.codomain = factorMorphism.codomain(cat, args.domain, args.factors);
+		super(cat, nuArgs);
+		this.subClass = 'factorMorphism';
+		this.name = 'name' in args ? args.name : factorMorphism.codename(cat, domain, factors);
+		this.properName = this.properName === '' ? factorMorphism.ProperName(cat, domain, factors) : this.properName;
+		this.factors = args.factors;
+	}
+	json()
+	{
+		let mor = super.json();
+		mor.factors = this.factors;
+		return mor;
+	}
+	help()
+	{
+		return H.h4('Factor Morphism') +
+			H.p(`Category ${this.category.getText()}`) +
+			H.table(H.tr(H.th('Indices')) +
+					this.factors.map(f => H.tr(H.td(f.toString()))).join(''));
 	}
 }
 
@@ -6441,35 +5817,7 @@ class dataMorphism extends morphism
 	{
 		let mor = super.json();
 		mor.data = this.data;
-		if (this.recursor !== null)
-			mor.recursor = typeof this.recursor === 'object' ? this.recursor.name : this.recursor;
-		mor.ranges = this.ranges.map(r => r.type === 'url' ? {type:'url', startIndex:r.startIndex, url:r.url, fileType:r.fileType, skipRows:1} : r);	// drop url data
 		return mor;
-	}
-	setRecursor(r)
-	{
-		const rcrs = typeof r === 'string' ? this.category.getMorphism(r) : r;
-		if ('recursor' in this && this.recursor !== null && typeof this.recursor !== 'string')
-			this.recursor.decrRefcnt();
-		if (rcrs !== null)
-		{
-			if (!rcrs.hasMorphism(this))
-				throw `The data morphism ${this.html} does not refer to itself so no recursion.`;
-			this.recursor = rcrs;
-			this.recursor.incrRefcnt();
-			this.setFunction('recurse');
-		}
-		else
-			this.recursor = r;
-	}
-	updateRecursor()
-	{
-		if (typeof this.recursor === 'string')
-		{
-			const r = this.category.getMorphism(this.recursor);
-			if (typeof r === 'object')
-				this.recursor = r;
-		}
 	}
 	static checkEditableObject(dgrm, obj)
 	{
@@ -6482,124 +5830,8 @@ class dataMorphism extends morphism
 	addData(e)
 	{
 		const i = Math.min(this.upperLimit(), document.getElementById('inputTerm').value);
-		const elt = this.codomain.expr.fromExpression(true, {uid:0, idp:'data'});
+		const elt = this.codomain.fromExpression(true, {uid:0, idp:'data'});
 		this.data[i] = elt;
-	}
-	addRange(e)
-	{
-		const startIndex = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('startTerm').value));
-		const count = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('rangeTerm').value));
-		const startValue = this.codomain.expr.fromExpression(true, {uid:0, idp:'strt'});
-		this.ranges.push({type:'range', startIndex, count, startValue, skipRows:1});
-		Cat.display.data.updateDataRanges(this);
-	}
-	static getRandomValue(expr, min, max)
-	{
-		// TODO fix 'N'
-		// TODO what to do for 'Str'?
-		return expr.token in Cat.basetypes.objects ? Cat.basetypes.objects[expr.token].random(min,max) : Cat.basetypes.objects['N'].random(min,max);
-	}
-	addRandomData(e)
-	{
-		const startIndex = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('inputStartIdx').value));
-		const count = Math.min(this.upperLimit(), Number.parseInt(document.getElementById('randomCount').value));
-		const min = this.codomain.expr.fromExpression(true, {uid:0, idp:'min'});
-		const max = this.codomain.expr.fromExpression(true, {uid:0, idp:'max'});
-		this.ranges.push({type:'random', startIndex, count, min, max});
-		Cat.display.data.updateDataRanges(this);
-	}
-	addDataURL(e)
-	{
-		const url = document.getElementById('urlInput').value;
-		if (url === '')
-			throw 'URL cannot be empty';
-		const idx = Number.parseInt(document.getElementById('urlStartIdx').value);
-		const startIndex = Math.min(this.upperLimit(), idx !== null ? idx : 0);
-		const types = document.getElementsByName('urlType');
-		let fileType = null;
-		for (let i=0; i<types.length; ++i)
-			if (types[i].checked)
-			{
-				fileType = types[i].value;
-				break;
-			}
-		this.ranges.push({type:'url', startIndex, url, fileType});
-		Cat.display.data.updateDataRanges(this);
-		this.fetchData(e);
-	}
-	static processCSV(skip, csv, c, expr)
-	{
-		const r = [];
-		const lines = csv.split('\n');
-		for (let l=skip; l<lines.length; ++l)
-		{
-			const ln = lines[l];
-			if (ln === '')
-				continue;
-			let tokens = ln.split(c);
-			if ('data' in expr)
-				r.push(expr.data.map((d, i) => Cat.basetypes.objects[d.token].$(tokens[i])));
-			else
-				r.push(Cat.basetypes.objects[expr.token].$(tokens[0]));
-		}
-		return r;
-	}
-	fetchData(e)
-	{
-		
-		this.ranges.map(r =>
-		{
-			if (r.type !== 'url' || ('data' in r))
-				return;
-			const checkStatus = function (response)
-			{
-				return (response.status === 200 || response.status === 0) ? Promise.resolve(response) : Promise.reject(new Error(`Error loading: ${r.url}`));
-			};
-			const m = this;
-			fetch(r.url).then(checkStatus).then(function(response)
-			{
-				if (response.ok)
-				{
-					switch(r.fileType)
-					{
-					case 'json':
-						response.json().then(function(data)
-						{
-							r.data = data;
-							r.count = r.data.length;
-						});
-						break;
-					case 'csv':
-						response.text().then(function(data)
-						{
-							r.data = dataMorphism.processCSV(r.skipRows, data, ',', m.codomain.expr);
-							r.count = r.data.length;
-						});
-						break;
-					case 'csv.gz':
-						response.blob().then(function(data)
-						{
-							var rdr = new FileReader();
-							rdr.onload = function(e)
-							{
-								var c = new Uint8Array(rdr.result, 0, rdr.result.byteLength);
-								const u = new Zlib.Gunzip(c);
-								const decom = u.decompress();
-								const s = new TextDecoder('utf-8').decode(decom);
-								const csv = dataMorphism.processCSV(r.skipRows, s, ',', m.codomain.expr);
-								csv.shift();	// TODO fix remove first row banner with option
-								r.data = csv;
-								r.count = r.data.length;
-							};
-							rdr.readAsArrayBuffer(data);
-						});
-						break;
-					}
-				}
-				else
-					Cat.status(e, 'ERROR: Failed to download URL');
-			});
-		});
 	}
 	deleteData(term)
 	{
@@ -6617,8 +5849,8 @@ class dataMorphism extends morphism
 	}
 	hasSelfMorph()
 	{
-		const expr = dgrm.getObject(this.domain).expr;
-		if ('token' in expr && expr.token in Cat.basetypes.objects && expr.token === 'N')
+		const obj = dgrm.codomain.getObject(this.domain);
+		if ('token' in obj && obj.token in Cat.basetypes.objects && obj.token === 'N')
 			for(const [m1, m2] of this.diagram.morphisms)
 				if (m2.subClass === 'composite' && ms.hasMorphism(this))
 					return true;
@@ -6631,7 +5863,6 @@ class dataMorphism extends morphism
 		if ('recursor' in this && this.recursor !== null)
 		{
 			title = 'Recursion';
-//			this.updateRecursor();
 			html = this.diagram.elementHelpMorphTbl(this.recursor.morphisms);
 		}
 		if (this.ranges.length > 0)
@@ -6657,178 +5888,107 @@ class dataMorphism extends morphism
 			H.p(`Category ${this.category.getText()}`) +
 			html;
 	}
-}
+}	// dataMorphism
 
-class productAssemblyMorphism extends morphism
+class recursive extends dataMorphism
 {
-	constructor(dgrm, args)
+ 	constructor(cat, args)
 	{
-		if (args.morphisms.length < 2)
-			throw 'Product assembly morphisms need two or more elements.';
-		const morphisms = args.morphisms.map(m => dgrm.getMorphism(m));
-		const d = productAssemblyMorphism.form(morphisms);
-		let codomain = dgrm.getObjectByCode(d.code);
-		if (codomain === null)
-			codomain = dgrm.newObject({code:d.code});
-		let nuArgs = Cat.clone(args);
-		nuArgs.codomain = codomain.name;
-		nuArgs.name = d.name;
-		nuArgs.diagram = dgrm.name;
-		nuArgs.function = 'productAssembly';
-		super(dgrm.codomain, nuArgs);
-		this.subClass = 'productAssemblyMorphism';
-		this.morphisms = morphisms;
-		this.morphisms.map(m => m.incrRefcnt());
-		this.html = d.html;
+		super(cat, args);
+		this.subClass = 'recursive';
+		this.setRecursor(args.recursor);
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt <= 0 && this.recursor)
+			this.recursor.decrRefcnt();
+		super.decrRefcnt();
 	}
 	json()
 	{
 		let mor = super.json();
-		mor.morphisms = this.morphisms.map(r => r.name);
+		mor.recursor = typeof this.recursor === 'object' ? this.recursor.name : this.recursor;
 		return mor;
 	}
-	static form(morphisms)
+	setRecursor(r)
 	{
-		return {name:	`-A--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--A-`,
-				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
-				code:	morphisms.map(m => Cat.parens(m.codomain.code, Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, false)).join(Cat.basetypes.operators.product.symCode)};
-	}
-	help()
-	{
-		return H.h4('Product Assembly Morphism') +
-			H.p(`Category ${this.category.getText()}`) +
-			this.diagram.elementHelpMorphTbl(this.morphisms);
-	}
-}
-
-class coproductAssemblyMorphism extends morphism
-{
-	constructor(dgrm, args)
-	{
-		if (args.morphisms.length < 2)
-			throw 'Coproduct assembly morphisms need two or more elements.';
-		const morphisms = args.morphisms.map(m => dgrm.getMorphism(m));
-		const d = coproductAssemblyMorphism.form(morphisms);
-		let domain = dgrm.getObjectByCode(d.code);
-		if (domain === null)
-			domain = dgrm.newObject({code:d.code});
-		let nuArgs = Cat.clone(args);
-		nuArgs.domain = domain.name;
-		nuArgs.name = d.name;
-		nuArgs.diagram = dgrm.name;
-		nuArgs.function = 'fold';
-		super(dgrm.codomain, nuArgs);
-		this.subClass = 'coproductAssemblyMorphism';
-		this.morphisms = morphisms;
-		this.morphisms.map(m => m.incrRefcnt());
-		this.html = d.html;
-	}
-	json()
-	{
-		let mor = super.json();
-		mor.morphisms = this.morphisms.map(r => r.name);
-		return mor;
-	}
-	static form(morphisms)
-	{
-		return {name:	`-A--${morphisms.map(m => m.name).join(Cat.basetypes.comma.nameCode)}--A-`,
-				html:	`(${morphisms.map(m => m.getText()).join(',')})`,
-				code:	morphisms.map(m => m.domain.code).join(Cat.basetypes.operators.coproduct.symCode)};	// TODO parens?
-	}
-	help()
-	{
-		return H.h4('Coproduct Assembly Morphism') +
-			H.p(`Category ${this.category.getText()}`) +
-			this.diagram.elementHelpMorphTbl(this.morphisms);
-	}
-}
-
-class factorMorphism extends morphism
-{
-	constructor(dgrm, args)
-	{
-		const d = factorMorphism.form(dgrm, typeof args.domain === 'object' ? args.domain : dgrm.getObject(args.domain), args.factors);
-		let codomain = dgrm.getObjectByCode(d.code);
-		if (codomain === null)
-			codomain = dgrm.newObject({code:d.code});
-		let nuArgs = Cat.clone(args);
-		nuArgs.name = d.name;
-		nuArgs.codomain = codomain.name;
-		nuArgs.diagram = dgrm.name;
-		nuArgs.function = 'factor';
-		super(dgrm.codomain, nuArgs);
-		this.subClass = 'factorMorphism';
-		this.factors = args.factors;
-		this.html = 'html' in args ? args.html : d.html;
-	}
-	json()
-	{
-		let mor = super.json();
-		mor.factors = this.factors;
-		return mor;
-	}
-	static form(dgrm, domain, factors)
-	{
-		let fctrs = [];
-		let name = `-R--D--${domain.name}--D-`;
-		let html = '&lt;';
-		for (let i=0; i<factors.length; ++i)
+		const rcrs = typeof r === 'string' ? this.category.getMorphism(r) : r;
+		if ('recursor' in this && this.recursor !== null && typeof this.recursor !== 'string')
+			this.recursor.decrRefcnt();
+		if (rcrs !== null)
 		{
-			const indices = factors[i];
-			const f = dgrm.getFactor(domain, ...indices);
-			fctrs.push(`(${f.code})`);
-			if (f.name !== 'One')
-			{
-				name += f.name + '-' + indices.join('-');
-				html += `<tspan>${f.getText()}</tspan>` + Cat.subscript(...indices);
-			}
-			else
-			{
-				name += f.name;
-				html += `<tspan>${f.getText()}</tspan>`;
-			}
-			if (i !== factors.length -1)
-			{
-				name += Cat.basetypes.comma.nameCode;
-				html += Cat.basetypes.comma.sym;
-			}
+			if (!rcrs.hasMorphism(this))
+				throw `The data morphism ${this.getText()} does not refer to itself so no recursion.`;
+			this.recursor = rcrs;
+			this.recursor.incrRefcnt();
+			this.setFunction('recurse');
 		}
-		html += '&gt;';
-		name += '--R-';
-		return {name, html, code:fctrs.join(Cat.basetypes.operators.product.symCode)};	/// TODO code
+		else
+			this.recursor = r;
+	}
+	updateRecursor()
+	{
+		if (typeof this.recursor === 'string')
+		{
+			const r = this.category.getMorphism(this.recursor);
+			if (typeof r === 'object')
+				this.recursor = r;
+		}
 	}
 	help()
 	{
-		return H.h4('Factor Morphism') +
+		return H.h4('Recursive Morphism') +
 			H.p(`Category ${this.category.getText()}`) +
-			H.table(H.tr(H.th('Indices')) +
-					this.factors.map(f => H.tr(H.td(f.toString()))).join(''));
+			H.p(`Recursion morphism: ${typeof this.recursor === 'object' ? this.recursor.getText() : this.recursor}`) +
+			html;
 	}
-}
+}	// recursive
 
 class curryMorphism extends morphism
 {
-	constructor(dgrm, args)
+	static codename(cat, preCurry, domFactors, homFactors)
 	{
-		const preCurry = typeof args.preCurry === 'object' ? args.preCurry : dgrm.getMorphism(args.preCurry);
-		const data = curryMorphism.form(dgrm, preCurry, args.domFactors, args.homFactors, args.includeCodDom);
+		const preCur = typeof preCurry === 'string' ? cat.getMorphism(preCurry) : preCurry;
+		const hom = homObject.get(cat, [preCurry.domain, preCurry.codomain]);
+		return `-L--${preCur.name}-c--${productObject.codename(domFactors.map(f => hom.getFactorName(f)))}--${productObject.codename(codFactors.map(f => hom.getFactorName(f)))}--L-';
+	}
+	static domain(cat, preCurry, factors)
+	{
+		return productObject.get(cat, factors.map(f => preCurry.domain.getFactor(f)));
+	}
+	static codomain(cat, preCurry, factors)
+	{
+		const codDom = productObject.get(cat, factors.map(f => preCurry.domain.getFactor(f)));
+		return homObject.get(cat, [codDom, preCurry.codomain]);
+	}
+	static get(cat, preCurry, domFactors, homFactors)
+	{
+		const name = curryMorphism.codename(cat, preCurry, domFactors, homFactors);
+		const m = cat.getMorphism(name);
+		return m === null ? new curryMorphism(cat, {preCurry, domFactors, homFactors}) : m;
+	}
+	static properName(cat, preCurry, domFactors, homFactors)
+	{
+		return `&lambda;.${preCurry.getText()}&lt;${domFactors}:${homFactors}`;
+	}
+	constructor(cat, args)
+	{
+		const preCurry = typeof args.preCurry === 'object' ? args.preCurry : cat.getMorphism(args.preCurry);
 		let nuArgs = Cat.clone(args);
-		nuArgs.name = data.name;
-		nuArgs.domain = dgrm.getObjectByCode(data.domCode);
-		nuArgs.codomain = dgrm.newObject({code:`[${data.homCode},${preCurry.codomain.code}]`});
-		nuArgs.diagram = dgrm;
-		nuArgs.function = 'lambda';
-		super(dgrm.codomain, nuArgs);
+		nuArgs.domain = curryMorphism.domain(cat, preCurry, arg.domFactors);
+		nuArgs.codomain = curryMorphism.codomain(cat, preCurry, arg.homFactors);
+		super(cat, nuArgs);
 		this.subClass = 'curryMorphism';
-		this.html = 'html' in args ? args.html : data.html;
-		this.preCurry = data.preCurry;
+		this.name = 'name' in args ? args.name : curryMorphism.codename(cat, preCurry, args.domFactors, args.homFactors);
+		this.properName = this.properName === '' ? curryMorphism.ProperName(cat, preCurry, args.domFactors, args.homFactors) : this.properName;
+		this.preCurry = preCurry;
 		this.preCurry.incrRefcnt();
-		this.domFactors = data.domFactors;
-		this.homFactors = data.homFactors;
-		const domPermutation = data.domFactors.map(f => f[1]);
-		const homPermutation = data.homFactors.map(f => f[1]);
-		const centralDomain = dgrm.newObject({code:`${data.homCode}*${data.domCode}`});
-		this.factors = dgrm.addFactorMorphism(centralDomain, [homPermutation, domPermutation]);
+		this.domFactors = args.domFactors;
+		this.homFactors = args.homFactors;
+		const domPermutation = args.domFactors.map(f => f[1]);
+		const homPermutation = args.homFactors.map(f => f[1]);
+		const centralDomain = productObject.get(cat, [this.codomain.objects[0], this.domain]);
+		this.factors = cat.addFactorMorphism(centralDomain, [homPermutation, domPermutation]);
 		this.Description = 'description' in args ? args.description : `The currying of the morphism ${this.preCurry.getText()} by the factors ${this.homFactors.toString()}`;
 	}
 	json()
@@ -6845,461 +6005,26 @@ class curryMorphism extends morphism
 		if (this.refcnt <= 0)
 			this.preCurry.decrRefcnt();
 	}
-	static factorName(dgrm, fctr, dom, cod)
-	{
-		const idx = fctr[1];
-		return fctr[0] === 0 ? `-Do-${dgrm.getFactor(dom, idx).name}-${idx}` : `-Co-${dgrm.getFactor(cod, idx).name}-${idx}`;
-	}
-	static getFactorsName(dgrm, factors, expr, data)
-	{
-		for (let i=0; i<factors.length; ++i)
-		{
-			const f = factors[i];
-			const fx = expr.getExprFactor(f);
-			const fo = dgrm.getObject(fx);
-			data.name += fo.name;
-			data.html += `<tspan>${fo.getText()}</tspan>` + Cat.subscript(f[1]);
-			if (i !== factors.length -1)
-			{
-				data.name += Cat.basetypes.comma.nameCode;
-				data.html += Cat.basetypes.comma.sym;
-			}
-		}
-	}
-	static form(dgrm, preCurry, domFactors, homFactors, includeCodDom = true)
-	{
-		let fctrs = [];
-		const dom = preCurry.domain;
-		const cod = preCurry.codomain;
-		const data = {name:`-L--${preCurry.name}${Cat.basetypes.comma.nameCode}--`, html:`&#955;.${preCurry.getText()}&lt;`};
-		const expr = preCurry.domCodExpr();
-		curryMorphism.getFactorsName(dgrm, domFactors, expr, data);
-		data.name += '--';
-		data.html += ':';
-		curryMorphism.getFactorsName(dgrm, homFactors, expr, data);
-		data.html += '&gt;';
-		data.name += '--C-';
-//		data.domCode = domFactors.map(f => element.getCode(dgrm, expr.getExprFactor(f))).join(Cat.basetypes.operators.product.symCode);
-//		data.homCode = homFactors.map(f => element.getCode(dgrm, expr.getExprFactor(f))).join(Cat.basetypes.operators.product.symCode);
-		data.domCode = domFactors.map(f => expr.getExprFactor(f).getCode()).join(Cat.basetypes.operators.product.symCode);
-		data.homCode = homFactors.map(f => expr.getExprFactor(f).getCode()).join(Cat.basetypes.operators.product.symCode);
-		data.preCurry = preCurry;
-		data.domFactors = domFactors.map(f => [f[0], f[1]]);
-		data.homFactors = homFactors.map(f => [f[0], f[1]]);
-		return data;
-	}
 	help()
 	{
 		return H.h4('Lambda Morphism') +
 			H.p(`Lambda morphism of ${this.preCurry.getText()} in category ${this.category.getText()}`);
 	}
-}
-
-class productMorphism extends morphism
-{
-	constructor(dgrm, args)
-	{
-		if (args.morphisms.length < 2)
-			throw 'Product morphisms need two or more elements.';
-		const morphisms = args.morphisms.map(m => (typeof m === 'string' ? dgrm.getMorphism(m) : m));
-		const data = productMorphism.form(dgrm, morphisms);
-		const domain = dgrm.newObject({code:morphisms.map(m =>
-		{
-			return Cat.parens(m.domain.code, Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, false);
-		}).join(Cat.basetypes.operators.product.symCode)});
-		const codomain = dgrm.newObject({code:morphisms.map(m =>
-		{
-			return Cat.parens(m.codomain.code, Cat.basetypes.parens.left.symCode, Cat.basetypes.parens.right.symCode, false);
-		}).join(Cat.basetypes.operators.product.symCode)});
-		let nuArgs = Cat.clone(args);
-		nuArgs.domain = domain;
-		nuArgs.codomain = codomain;
-		nuArgs.diagram = dgrm;
-		nuArgs.function = 'product';
-		nuArgs.code = data.code;
-		super(dgrm.codomain, nuArgs);
-		this.subClass = 'productMorphism';
-		this.morphisms = morphisms;
-		this.morphisms.map(m => m.incrRefcnt());
-		if (!('description' in args))
-			this.Description = Cat.textify('Product of', morphisms);
-		this.html = 'html' in args ? args.html : data.html;
-	}
-	json()
-	{
-		let mor = super.json();
-		mor.morphisms = this.morphisms.map(r => r.name);
-		return mor;
-	}
-	static form(dgrm, morphisms)
-	{
-		const code = '(' + morphisms.map(m => m.name).join(`)${Cat.basetypes.operators.product.symCode}(`) + ')';
-//		const expr = dgrm.codomain.parseObject(code);
-		const expr = dgrm.parseObject(code);
-		return {
-//			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
-			html:expr.html(true, {class:'morphism', position:0}),	// data: class, position
-//			code:element.getCode(dgrm, expr, true, true),
-			code:expr.getCode(true),
-//			name:element.codename(dgrm, expr),
-			name:expr.codename(),
-		};
-	}
-	decrRefcnt()
-	{
-		super.decrRefcnt();
-		if (this.refcnt <= 0)
-			this.morphisms.map(m => m.decrRefcnt());
-	}
-	help()
-	{
-		return H.h4('Product Morphism') +
-			H.p(`Category ${this.category.getText()}`) +
-			this.diagram.elementHelpMorphTbl(this.morphisms);
-	}
-}
-
-class coproductMorphism extends morphism
-{
-	constructor(dgrm, args)
-	{
-		if (args.morphisms.length < 2)
-			throw 'Coproduct morphisms need two or more elements.';
-		const morphisms = args.morphisms.map(m => (typeof m === 'string' ? dgrm.getMorphism(m) : m));
-		const domain = dgrm.newObject({code:morphisms.map(m =>
-		{
-			m.domain.incrRefcnt();
-			return m.domain.name;
-		}).join(Cat.basetypes.operators.coproduct.symCode)});
-		const codomain = dgrm.newObject({code:morphisms.map(m =>
-		{
-			m.codomain.incrRefcnt();
-			return m.codomain.name;
-		}).join(Cat.basetypes.operators.coproduct.symCode)});
-		let nuArgs = Cat.clone(args);
-		nuArgs.domain = domain;
-		nuArgs.codomain = codomain;
-		nuArgs.diagram = dgrm;
-		nuArgs.function = 'coproduct';
-		nuArgs.code = morphisms.map(m => m.name).join(Cat.basetypes.operators.coproduct.symCode);
-		super(dgrm.codomain, nuArgs);
-		this.subClass = 'coproductMorphism';
-		this.morphisms = morphisms;
-		this.morphisms.map(m => m.incrRefcnt());
-		if (!('description' in args))
-			this.Description = Cat.textify('Coproduct of', morphisms);
-	}
-	json()
-	{
-		let mor = super.json();
-		mor.morphisms = this.morphisms.map(r => r.name);
-		return mor;
-	}
-	static form(dgrm, morphisms)
-	{
-		const code = '(' + morphisms.map(m => m.name).join(`)${Cat.basetypes.operators.coproduct.symCode}(`) + ')';		// ***
-//		const expr = dgrm.codomain.parseObject(code);
-		const expr = dgrm.parseObject(code);
-		return {
-//			html:element.html(dgrm, expr, true, {class:'morphism', position:0}),	// data: class, position
-			html:expr.html(true, {class:'morphism', position:0}),	// data: class, position
-//			code:element.getCode(dgrm, expr, true, true),
-			code:expr.getCode(true),
-//			name:element.codename(dgrm, expr),
-			name:expr.codename(),
-		};
-	}
-	help()
-	{
-		return H.h4('Coproduct Morphism') +
-			H.p(`Category ${this.category.getText()}`) +
-			this.diagram.elementHelpMorphTbl(this.morphisms);
-	}
-}
+}	// curryMorphism
 
 class stringMorphism extends morphism
 {
-	constructor(dgrm, m)
+	constructor(cat, m)
 	{
-		super(dgrm.graphCat, {domain:m.domain, codomain:m.codomain, name:m.name, diagram:null});
-		this.diagram = dgrm;
-		this.graph = m.domCodExpr();
+		super(cat.graphCat, {domain:m.domain, codomain:m.codomain, name:m.name, diagram:null});
+//		this.graph = m.domCodExpr();
+		//		TODO This needs to be a copy;
+		this.graph = homObject.get(cat, [preCurry.domain, preCurry.codomain]);
 		if ('function' in m)
-//			stringMorphism.tagGraph(this.diagram, this.graph, true, m.function);
 			this.graph.tagGraph(true, m.function);
 	}
-	/*
-	static bindGraph(dgrm, expr, first, data)	// data: {cod, link, function, domRoot, codRoot, offset}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				if (!stringMorphism.isGraphable(expr))
-					return;
-				const domRoot = data.domRoot.slice();
-				const codRoot = data.codRoot.slice();
-				domRoot.push(...data.link);
-				codRoot.push(...data.link);
-				Cat.arraySet(expr, 'links', codRoot);
-				Cat.arraySet(data.cod, 'links', domRoot);
-				Cat.arrayInclude(expr, 'functions', data.function);
-				Cat.arrayInclude(data.cod, 'functions', data.function);
-			},
-			function(dgrm, expr, first, data)
-			{
-				for(let i=0; i<expr.data.length; ++i)
-				{
-					let subIndex = data.link.slice();
-					subIndex.push(i + data.offset);
-					const e = expr.data[i];
-					const args = Cat.clone(data);
-					args.link = subIndex;
-					if ('data' in data.cod)
-						args.cod = data.cod.data[i + data.offset];
-					stringMorphism.bindGraph(dgrm, e, false, args);
-				}
-			},
-			function(dgrm, expr, first, data)
-			{
-				const lhsNdx = data.link.slice();
-				lhsNdx.push(0);
-				const rhsNdx = data.link.slice();
-				rhsNdx.push(1);
-				const args = Cat.clone(data);
-				args.link = lhsNdx;
-				args.cod = data.cod.lhs;
-				stringMorphism.bindGraph(dgrm, expr.lhs, false, args);
-				args.link = rhsNdx;
-				args.cod = data.cod.rhs;
-				stringMorphism.bindGraph(dgrm, expr.rhs, false, args);
-			},
-			function(){},
-			first, data);
-	}
-	static mergeGraphs(dgrm, expr, first, data)	// data: {from, base, inbound, outbound}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				if (!stringMorphism.isGraphable(expr))
-					return;
-				if ('links' in data.from)
-				{
-					const links = data.from.links.map(lnk =>
-					{
-						let nuLnk = data.base.reduce((isSelfLink, f, i) => isSelfLink && f === lnk[i], true) ? data.inbound.slice() : data.outbound.slice();
-						nuLnk.push(...lnk.slice(data.base.length));
-						return nuLnk;
-					});
-					if (!('links' in expr))
-						expr.links = links;
-					else links.map(lnk => expr.links.indexOf(lnk) === -1 ? expr.links.push(lnk) : null);
-				}
-				if (!('functions' in expr))
-					expr.functions = [];
-				if ('functions' in data.from)
-					data.from.functions.map(f => expr.functions.indexOf(f) === -1 ? expr.functions.push(f) : null);
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.data.map((d, i) =>
-				{
-					const from = 'data' in data.from ? data.from.data[i] : data.from;
-					stringMorphism.mergeGraphs(dgrm, d, false, {from, base:data.base, inbound:data.inbound, outbound:data.outbound});
-				});
-			},
-			function(dgrm, expr, first, data)
-			{
-				stringMorphism.mergeGraphs(dgrm, expr.lhs, false, {from:data.from.lhs, base:data.base, inbound:data.inbound, outbound:data.outbound});
-				stringMorphism.mergeGraphs(dgrm, expr.rhs, false, {from:data.from.rhs, base:data.base, inbound:data.inbound, outbound:data.outbound});
-			},
-			function(){},
-			first, data);
-	}
-	static tagGraph(dgrm, expr, first, data)	// data: function name
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				if (!stringMorphism.isGraphable(expr))
-					return;
-				if (!('functions' in expr))
-					expr.functions = [data];
-				else if (expr.functions.indexOf(data) === -1)
-					expr.functions.push(data);
-				if (!('links' in expr))
-					expr.links = [];
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.data.map((e, i) => stringMorphism.tagGraph(dgrm, expr.data[i], false, data));
-			},
-			function(dgrm, expr, first, data)
-			{
-				stringMorphism.tagGraph(dgrm, expr.lhs, false, data);
-				stringMorphism.tagGraph(dgrm, expr.rhs, false, data);
-			},
-			function(){},
-			first, data);
-	}
-	static componentGraph(dgrm, expr, first, data)
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				if ('links' in expr)
-					expr.links.map(lnk => lnk.splice(1, 0, data));
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.data.map((e, i) => stringMorphism.componentGraph(dgrm, expr.data[i], false, data));
-			},
-			function(dgrm, expr, first, data)
-			{
-				stringMorphism.componentGraph(dgrm, expr.lhs, false, data);
-				stringMorphism.componentGraph(dgrm, expr.rhs, false, data);
-			},
-			function(){},
-			first, data);
-	}
-	static traceLinks(dgrm, expr, first, data)	// data {index, expr}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				if (!stringMorphism.isGraphable(expr))
-					return;
-				const links = expr.links.slice();
-				expr.visited = [];
-				while(links.length > 0)
-				{
-					const lnk = links.pop();
-					if (expr.visited.indexOf(lnk) > -1)
-						continue;
-					const f = data.expr.getExprFactor(lnk);
-					if ('links' in f)
-						f.links.map(k => (links.indexOf(k) === -1 && k[0] !== data.index[0]) ? links.push(k) : null);
-					f.functions.map(r => expr.functions.indexOf(r) === -1 ? expr.functions.push(r) : null);
-					if (data.index.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
-						continue;
-					if (expr.visited.indexOf(lnk) === -1)
-						expr.visited.push(lnk);
-				}
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.data.map((e, i) =>
-				{
-					let index = data.index.slice();
-					index.push(i);
-					stringMorphism.traceLinks(dgrm, expr.data[i], false, {expr:data.expr, index});
-				});
-			},
-			function(dgrm, expr, first, data)
-			{
-				let lIndex = data.index.slice();
-				lIndex.push(0);
-				stringMorphism.traceLinks(dgrm, expr.lhs, false, {expr:data.expr, index:lIndex});
-				let rIndex = data.index.slice();
-				rIndex.push(1);
-				stringMorphism.traceLinks(dgrm, expr.rhs, false, {expr:data.expr, index:rIndex});
-			},
-			function(){},
-			first, data);
-	}
-	static copyDomCodLinks(dgrm, expr, first, data)	// data {cnt, expr, index}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				if (!stringMorphism.isGraphable(expr))
-					return;
-				const factorLink = data.index.slice();
-				if (factorLink[0] === 1)
-					factorLink[0] = data.cnt;
-				const f = data.expr.getExprFactor(factorLink);
-				const v = f.visited;
-				if (typeof v === 'undefined')
-					throw 'Not visited';
-				for (let i=0; i<v.length; ++i)
-				{
-					const lnk = v[i].slice();
-					if (lnk[0] > 0 && lnk[0] < data.cnt)
-						continue;
-					if (lnk[0] === data.cnt)
-						lnk[0] = 1;
-					if (expr.links.indexOf(lnk) === -1)	// TODO needed?
-						expr.links.push(lnk);
-				}
-				f.functions.map(r => expr.functions.indexOf(r) === -1 ? expr.functions.push(r) : null);
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.data.map((e, i) =>
-				{
-					let index = data.index.slice();
-					index.push(i);
-					stringMorphism.copyDomCodLinks(dgrm, expr.data[i], false, {expr:data.expr, index, cnt:data.cnt});
-				});
-			},
-			function(dgrm, expr, first, data)
-			{
-				let lIndex = data.index.slice();
-				lIndex.push(0);
-				stringMorphism.copyDomCodLinks(dgrm, expr.lhs, false, {expr:data.expr, index:lIndex, cnt:data.cnt});
-				let rIndex = data.index.slice();
-				rIndex.push(1);
-				stringMorphism.copyDomCodLinks(dgrm, expr.rhs, false, {expr:data.expr, index:rIndex, cnt:data.cnt});
-			},
-			function(){},
-			first, data);
-	}
-	static copyGraph(dgrm, expr, first, data)	// data {map, expr}
-	{
-		return element.expandExpression(dgrm, expr,
-			function(dgrm, expr, first, data)
-			{
-				if (!stringMorphism.isGraphable(expr))
-					return;
-				expr.functions = data.expr.functions.slice();
-				for (let i=0; i<data.expr.links.length; ++i)
-				{
-					const lnk = data.expr.links[i];
-					for (let j=0; j<data.map.length; ++j)
-					{
-						const pair = data.map[j];
-						const fromLnk = pair[0];
-						const toLnk = pair[1].slice();
-						if (fromLnk.reduce((isEqual, ml, i) => ml === lnk[i] && isEqual, true))
-						{
-							const lnkClip = lnk.slice(fromLnk.length);
-							toLnk.push(...lnkClip);
-							expr.links.push(toLnk);
-						}
-					}
-				}
-			},
-			function(dgrm, expr, first, data)
-			{
-				expr.data.map((e, i) =>
-				{
-					stringMorphism.copyGraph(dgrm, expr.data[i], false, {expr:data.expr.data[i], map:data.map});
-				});
-			},
-			function(dgrm, expr, first, data)
-			{
-				lIndex.push(0);
-				stringMorphism.copyGraph(dgrm, expr.lhs, false, {expr:data.expr.lhs, map:data.map});
-				rIndex.push(1);
-				stringMorphism.copyGraph(dgrm, expr.rhs, false, {expr:data.expr.rhs, map:data.map});
-			},
-			function(){},
-			first, data);
-	}
-	*/
 	tagGraphFunction(func)
 	{
-//		stringMorphism.tagGraph(this.diagram, this.graph, true, func);
 		this.graph.tagGraph(true, func);
 	}
 	mergeMorphismGraphs(morph, dual = false)
@@ -7309,7 +6034,6 @@ class stringMorphism extends morphism
 		{
 			const dom = dual ? 1 : 0;
 			const cod = dual ? 0 : 1;
-//			stringMorphism.mergeGraphs(this.diagram, this.graph.data[dom], true, {from:g.graph.data[dom], base:[dom], inbound:[], outbound:[cod, i]});
 			this.graph.data[dom].mergeGraphs(true, {from:g.graph.data[dom], base:[dom], inbound:[], outbound:[cod, i]});
 			const gCod = g.graph.data[cod];
 			const tCod = this.graph.data[cod];
@@ -7363,8 +6087,6 @@ class stringMorphism extends morphism
 		const dom = this.graph.data[0];
 		const domHom = dom.data[0];
 		const cod = this.graph.data[1];
-//		stringMorphism.bindGraph(this.diagram, dom.data[1], true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0], offset:0});
-//		stringMorphism.bindGraph(this.diagram, domHom.rhs, true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1], offset:0});
 		dom.data[1].bindGraph(true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0], offset:0});
 		domHom.rhs.bindGraph(true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1], offset:0});
 		this.tagGraphFunction('eval');
@@ -7426,8 +6148,10 @@ class stringMorphism extends morphism
 		}
 		const dom = this.graph.data[0];
 		const cod = this.graph.data[1];
-		const homDom = cod.lhs;
-		const homCod = cod.rhs;
+//		const homDom = cod.lhs;
+//		const homCod = cod.rhs;
+		const homDom = cod.objects[0];
+		const homCod = cod.objects[1];
 		const homMap = m.homFactors.map((f, i) => [f, [1, 0, i]]);
 		if (m.homFactors.length === 1)
 		{
@@ -7436,11 +6160,8 @@ class stringMorphism extends morphism
 		}
 		map.push(...homMap);
 		map.push([[1], [1, 1]]);
-//		m.domFactors.map((f, i) => stringMorphism.copyGraph(m.diagram, 'data' in dom ? dom.data[i] : dom, true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
-//		m.homFactors.map((f, i) => stringMorphism.copyGraph(m.diagram, 'data' in homDom ? homDom.data[i] : homDom, true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
 		m.domFactors.map((f, i) => ('data' in dom ? dom.data[i] : dom).copyGraph(true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
 		m.homFactors.map((f, i) => ('data' in homDom ? homDom.data[i] : homDom).copyGraph(true, {map, expr:preCurryGraph.graph.getExprFactor(f)}));
-//		stringMorphism.copyGraph(m.diagram, homCod, true, {map, expr:preCurryGraph.graph.data[1]});
 		homCod.copyGraph(true, {map, expr:preCurryGraph.graph.data[1]});
 		this.tagGraphFunction('lambda');
 	}
@@ -7470,8 +6191,7 @@ class stringMorphism extends morphism
 		switch(m.function)
 		{
 		case 'identity':
-			if (m.subClass !== 'namedIdentity')
-				g.makeIdentityGraph();
+			g.makeIdentityGraph();
 			break;
 		case 'diagonal':
 			g.makeDiagonalGraph();
@@ -7504,10 +6224,8 @@ class stringMorphism extends morphism
 			g = g.makeRecurseGraph(m);
 			break;
 		}
-//		element.html(dgrm, g.graph.data[0], true, {class:'object', position:0});
-//		element.html(dgrm, g.graph.data[1], true, {class:'object', position:0});
-		g.graph.data[0].html(true, {class:'object', position:0});
-		g.graph.data[1].html(true, {class:'object', position:0});
+		g.graph.data[0].properName(true, {position:0});
+		g.graph.data[1].properName(true, {position:0});
 		return g;
 	}
 	static svgLinkUpdate(dom, lnk, data)	// data {graph, dom:{x,y}, cod:{x,y}}
@@ -7534,12 +6252,6 @@ class stringMorphism extends morphism
 	{
 		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;
 	}
-	/*
-	static isGraphable(expr)
-	{
-		return 'token' in expr && !(expr.token === 'One' || expr.token === 'Null');
-	}
-	*/
 	static colorWheel(data)
 	{
 		const tran = ['ff', 'ff', 'ff', 'ff', 'ff', '90', '00', '00', '00', '00', '00', '90'];
@@ -7627,10 +6339,10 @@ class stringMorphism extends morphism
 			function(dgrm, expr, first, data)
 			{
 				data.index.push(0);
-				let svg = stringMorphism.graphSVG(dgrm, expr.lhs, false, data);
+				let svg = stringMorphism.graphSVG(dgrm, expr.objects[0], false, data);
 				data.index.pop();
 				data.index.push(1);
-				svg += stringMorphism.graphSVG(dgrm, expr.rhs, false, data);
+				svg += stringMorphism.graphSVG(dgrm, expr.objects[1], false, data);
 				data.index.pop();
 				return svg;
 			},
@@ -7775,26 +6487,6 @@ class transform extends morphism
 	}
 }
 
-class namedIdentity extends morphism
-{
-	constructor(dgrm, args)
-	{
-		const nuArgs = Cat.clone(args);
-		nuArgs.diagram = dgrm;
-		nuArgs.name = `id--${args.domain}--${args.codomain}--`;
-		nuArgs.function = 'identity';
-		nuArgs.html = '=';
-		super(dgrm.codomain, nuArgs);
-		this.subClass = 'namedIdentity';
-		this.diagram = dgrm;
-	}
-	help()
-	{
-		return H.h4('Named Identity Morphism') +
-			H.p(`From ${this.domain.getText()} to ${this.codomain.getText()} in category ${this.category.getText()}`);
-	}
-}
-
 class diagram extends functor
 {
 	constructor(args)
@@ -7914,7 +6606,7 @@ class diagram extends functor
 			jsons.reverse().map(j =>
 			{
 				const dgrm = new diagram(j);
-				dgrm.saveToLocalStorage();
+				dgrm.saveLocal();
 			});
 			if (fn)
 				fn(dgrmName);
@@ -7980,8 +6672,7 @@ class diagram extends functor
 		}
 		for (const [n, from] of this.domain.morphisms)
 		{
-			const to = this.mapMorphism(from);
-			if (!to)
+			if (!from.to)
 			{
 				console.log(`diagram.cleanse [2] ${this.name} ${from.getText()}`);
 				this.domain.morphisms.delete(n);
@@ -7991,7 +6682,7 @@ class diagram extends functor
 		if (found)
 		{
 			this.makeHomSets();
-			this.saveToLocalStorage();
+			this.saveLocal();
 		}
 		this.colorIndex2colorIndex = {};
 		this.colorIndex2color = {};
@@ -8021,37 +6712,6 @@ class diagram extends functor
 		this.updateFn(this.codomain.objects);
 		this.updateFn(this.codomain.morphisms);
 	}
-	mapObject(obj)
-	{
-		if (typeof obj === 'object')
-			return this.objects.get(obj);
-		else
-			return this.objects.get(this.domain.getObject(obj));
-	}
-	mapMorphism(m)
-	{
-		return this.morphisms.get(m);
-	}
-	mapMorphismByName(nm)
-	{
-		return this.mapMorphism(this.domain.getMorphism(nm));
-	}
-	mapElement(elt)
-	{
-		switch(elt.class)
-		{
-		case 'element':
-			return this.getTextElement
-			break;
-		case 'object':
-			return this.mapObject(elt);
-			break;
-		case 'morphism':
-			return this.mapMorphism(elt);
-			break;
-		}
-		return null;
-	}
 	setObject(from, to)
 	{
 		to.incrRefcnt();
@@ -8068,7 +6728,7 @@ class diagram extends functor
 		from.to = to;
 		return this.morphisms.set(from, to);
 	}
-	saveToLocalStorage()
+	saveLocal()
 	{
 		if (Cat.debug)
 			console.log('save to local storage', diagram.storageName(this.name));
@@ -8076,14 +6736,14 @@ class diagram extends functor
 		const data = this.stringify();
 		localStorage.setItem(diagram.storageName(this.name), data);
 	}
-	static fromLocalStorage(dgrmName)
+	static readLocal(dgrmName)
 	{
 		const data = localStorage.getItem(diagram.storageName(dgrmName));
 		let dgrm = null;
 		if (data !== null)
 			dgrm = new diagram(JSON.parse(data));
 		if (Cat.debug)
-			console.log('fromLocalStorage',dgrmName,dgrm);
+			console.log('readLocal',dgrmName,dgrm);
 		if (dgrm)
 			dgrm.repair();
 		return dgrm;
@@ -8117,7 +6777,7 @@ class diagram extends functor
 			this.makeHomSets();
 		this.updateMorphisms();
 		if (save && Cat.autosave)
-			this.saveToLocalStorage();
+			this.saveLocal();
 		if (pnl !== '')
 		{
 			const p = Cat.display[pnl];
@@ -8140,7 +6800,6 @@ class diagram extends functor
 		this.selected = [];
 		this.makeHomSets();
 		this.texts = [];
-//		Cat.display.diagramSVG.innerHTML = Cat.display.svg.basics + Cat.getDiagram().makeAllSVG();
 		Cat.display.diagramSVG.innerHTML = Cat.getDiagram().makeAllSVG();
 		Cat.updatePanels();
 		if ('orig' in this.viewport)
@@ -8149,8 +6808,6 @@ class diagram extends functor
 	}
 	addSelected(e, eltOrig, clear = false, cls = 'object')
 	{
-		if (Cat.debug)
-			console.log('addSelected',eltOrig, this.mapElement(eltOrig));
 		let elt = eltOrig;
 		if (clear)
 			this.deselectAll(false);
@@ -8260,7 +6917,7 @@ class diagram extends functor
 			const newTo = this.newDataMorphism(from.to.domain, from.to.codomain);
 			from.to.decrRefcnt();
 			this.setMorphism(from, newTo);
-			this.updateElementAttribute(from, newTo, 'html', newTo.html);
+			this.updateElementAttribute(from, newTo, 'html', newTo.properName);
 			this.update(e, '', from, true);
 		}
 		Cat.display.data.setPanelContent();
@@ -8278,7 +6935,7 @@ class diagram extends functor
 	{
 		return from.to.function === 'data' ||
 			from.to.function === 'recurse' ||
-			(from.to.subClass !== 'namedIdentity' && from.to.function === 'identity' && from.refcnt === 1 && !from.to.domain.isInitial && !from.to.codomain.isTerminal && dataMorphism.checkEditableObject(this, from.to.domain));
+			(from.to.function === 'identity' && from.refcnt === 1 && !from.to.domain.isInitial && !from.to.codomain.isTerminal && dataMorphism.checkEditableObject(this, from.to.domain));
 	}
 	toolbar(from)
 	{
@@ -8330,14 +6987,14 @@ class diagram extends functor
 			let morphs = [];
 			for(const [key, m] of this.codomain.morphisms)
 			{
-				if (from.to.name === m[dir].name || from.to.code === m[dir].code)
+				if (from.to.name === m[dir].name || from.to.name === m[dir].name)
 					morphs.push(m);
 			}
 			this.references.map(r =>
 			{
 				for(const [key, m] of r.morphisms)
 				{
-					if (from.to.code === m[dir].code)
+					if (from.to.name === m[dir].name)
 						morphs.push(m);
 				}
 			});
@@ -8348,37 +7005,6 @@ class diagram extends functor
 			html += H.table(Cat.display.morphismTableRows(morphs, `onclick="Cat.getDiagram().placeTransformMorphism(event, '%1', '${dir}', '${from.name}')"`), 'toolbarTbl');
 			document.getElementById(id).innerHTML = html;
 		}
-	}
-	/*
-	hasDualSubExpr(expr)
-	{
-		if ('data' in expr)
-		{
-			const opp = expr.op == 'product' ? 'coproduct' : 'product';
-			for (let i=0; i<expr.data.length; ++i)
-			{
-				const subExpr = expr.data[i];
-				if ('op' in subExpr && subExpr.op === opp)
-					return true;
-			}
-		}
-		return false;
-	}
-	*/
-	findDualSubExpr(expr)
-	{
-		let subs = [];
-		if ('data' in expr)
-		{
-			const opp = expr.op == 'product' ? 'coproduct' : 'product';
-			for (let i=0; i<expr.data.length; ++i)
-			{
-				const subExpr = expr.data[i];
-				if ('op' in subExpr && subExpr.op === opp)
-					subs.push([i, subExpr]);
-			}
-		}
-		return subs;
 	}
 	distribute(e)
 	{
@@ -8452,17 +7078,14 @@ class diagram extends functor
 	}
 	curryMorphism(e)
 	{
-		const s = this.getSelected();
+		const from = this.getSelected();
 		let domFactors = diagram.getFactorsByDomCodId('domainDiv');
 		let homFactors = diagram.getFactorsByDomCodId('codomainDiv');
-		let data = curryMorphism.form(this, s.to, domFactors, homFactors);
-		let m = this.getMorphism(data.name);
-		if (m === null)
-			m = new curryMorphism(this, data);
-		const v = D2.subtract(s.codomain, s.domain);
+		const m = curryMorphism.get(this.codomain, {preCurry:from.to, domFactors, homFactors});
+		const v = D2.subtract(from.codomain, from.domain);
 		const normV = D2.norm(D2.normal(v));
-		const xyDom = D2.add(s.domain, D2.scale(Cat.default.arrow.length, normV));
-		const xyCod = D2.add(s.codomain, D2.scale(Cat.default.arrow.length, normV));
+		const xyDom = D2.add(from.domain, D2.scale(Cat.default.arrow.length, normV));
+		const xyCod = D2.add(from.codomain, D2.scale(Cat.default.arrow.length, normV));
 		this.placeMorphism(e, m, xyDom, xyCod);
 	}
 	displayString(event, from)
@@ -8548,18 +7171,17 @@ class diagram extends functor
 					throw 'Invalid object name.';
 			if (this.getObject(name))
 				throw `Object with name ${name} already exists.`;
-			let toNI = this.newObject({code:name, html, description});
-			const iso = new namedIdentity(this, {domain:toNI.name, codomain:from.to.name, description:`Named identity from ${toNI.getText()} to ${from.to.getText()}`});
-			const iso2 = new namedIdentity(this, {domain:from.to.name, codomain:toNI.name, description:`Named identity from ${from.to.getText()} to ${toNI.getText()}`});
+			let toNI = new object(this.codomain, {name, html, description});
+			const iso = new identity(this.codomain, {domain:toNI, codomain:from.to, description:`Named identity from ${toNI.getText()} to ${from.to.getText()}`});
+			const iso2 = new identity(this.codomain, {domain:from.to, codomain:toNI, description:`Named identity from ${from.to.getText()} to ${toNI.getText()}`});
 			this.deselectAll();
 			const isoFrom = this.objectPlaceMorphism(e, 'codomain', from.name, iso.name)
 			const iso2From = new diagramMorphism(this.domain, {diagram:this, domain:isoFrom.codomain.name, codomain:isoFrom.domain.name});
-			iso2From.incrRefcnt();
 			this.setMorphism(iso2From, iso2);
 			iso2From.addSVG();
 			Cat.display.deactivateToolbar();
 			this.makeHomSets();
-			this.saveToLocalStorage();
+			this.saveLocal();
 		}
 		catch(e)
 		{
@@ -8571,7 +7193,7 @@ class diagram extends functor
 		const from = this.getSelected();
 		from.flipName = !from.flipName;
 		from.update(this);
-		this.saveToLocalStorage();
+		this.saveLocal();
 	}
 	elementHelp()
 	{
@@ -8586,7 +7208,7 @@ class diagram extends functor
 							H.div('', 'error', 'namedElementError') +
 					from.to.help();
 		else
-			html = H.p(H.span(from.html, 'tty', 'htmlElt') +
+			html = H.p(H.span(from.properName, 'tty', 'htmlElt') +
 							(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('htmlElt', 'html')`, 'Edit text', Cat.default.button.tiny)));
 		document.getElementById('toolbarTip').innerHTML = html;
 	}
@@ -8676,9 +7298,9 @@ class diagram extends functor
 		{
 			const to = this.getMorphism(morphName);
 			const fromObj = this.domain.getObject(objName);
-			const toObj = this.mapObject(fromObj);
-			if (to[dir].code !== toObj.code)
-				throw `Source and target do not have same code: ${to[dir].code} vs ${toObj.code}`;
+			const toObj = fromObj.to;
+			if (to[dir].name !== toObj.name)
+				throw `Source and target do not have same code: ${to[dir].name} vs ${toObj.name}`;
 			let angles = [];
 			for(const [from, tox] of this.morphisms)
 				if (fromObj.isEquivalent(from.domain))
@@ -8736,7 +7358,7 @@ class diagram extends functor
 	{
 		try
 		{
-			const obj = this.mapObject(this.domain.getObject(name));
+			const obj = this.domain.getObject(name).to;
 			const trn = $Cat.getTransform(tranName);
 			const m = trn.$(this, obj);
 			this.objectPlaceMorphism(e, dir, name, m.name);
@@ -8763,7 +7385,7 @@ class diagram extends functor
 		if (this.selected[0].class === 'morphism')
 		{
 			const morphisms = this.selected.map(m => m.to);
-			const form = productMorphism.form(this, morphisms);
+			const form = productMorphism.get(this.codomain, morphisms);
 			let m = this.getMorphism(form.name);
 			if (m === null)
 				m = new productMorphism(this, {morphisms});
@@ -8773,10 +7395,8 @@ class diagram extends functor
 		else if (this.selected[0].class === 'object')
 		{
 			const xy = Cat.barycenter(this.selected);
-			const codes = this.selected.map(obj => this.mapObject(obj).code);
-			const code = Cat.basetypes.operators.product.toCode(codes);
 			from = new diagramObject(this.domain, {diagram:this, xy});
-			const to = this.newObject({code});
+			const to = productObject.get(this.codomain, this.getSelectedObjects());
 			this.setObject(from, to);
 			from.addSVG();
 		}
@@ -8805,10 +7425,8 @@ class diagram extends functor
 		else if (this.selected[0].class === 'object')
 		{
 			const xy = Cat.barycenter(this.selected);
-			const codes = this.selected.map(obj => this.mapObject(obj).code);
-			const code = Cat.basetypes.operators.coproduct.toCode(codes);		// ***
 			from = new diagramObject(this.domain, {diagram:this, xy});
-			const to = this.newObject({code});
+			const to = coproductObject.get(this.codomain, this.getSelectedObjects());
 			this.setObject(from, to);
 			from.addSVG();
 		}
@@ -8849,34 +7467,12 @@ class diagram extends functor
 	}
 	productAssembly(e)
 	{
-		const code = this.selected.map(m => m.to.codomain.name).join(Cat.basetypes.operators.product.symCode);
-		let codomain = this.getObjectByCode(code);
-		if (codomain === null)
-			codomain = this.newObject({code});
-		const args = {domain:this.mapObject(this.getSelected().domain).name, morphisms:this.selected.map(m => m.to.name)};
-		const data = productAssemblyMorphism.form(args.morphisms.map(m => this.getMorphism(m)));
-		let m = this.getMorphism(data.name);
-		if (m === null)
-			m = new productAssemblyMorphism(this, args);
-		m.incrRefcnt();
-		const name = this.getSelected().domain.name;
-//		this.removeSelected(e);
+		const m = productAssembly.get(this.codomain, this.getSeletectedMorphisms());
 		this.objectPlaceMorphism(e, 'domain', name, m.name);
 	}
 	coproductAssembly(e)
 	{
-		const code = this.selected.map(m => m.to.domain.name).join(Cat.basetypes.operators.coproduct.symCode);
-		let domain = this.getObjectByCode(code);
-		if (domain === null)
-			domain = this.newObject({code});
-		const args = {codomain:this.mapObject(this.getSelected().codomain).name, morphisms:this.selected.map(m => m.to.name)};
-		const data = coproductAssemblyMorphism.form(args.morphisms.map(m => this.getMorphism(m)));
-		let m = this.getMorphism(data.name);
-		if (m === null)
-			m = new coproductAssemblyMorphism(this, args);
-		m.incrRefcnt();
-		const name = this.getSelected().codomain.name;
-//		this.removeSelected();
+		const m = coproductAssembly.get(this.codomain, this.getSeletectedMorphisms());
 		this.objectPlaceMorphism(e, 'codomain', name, m.name);
 	}
 	pullback(e)
@@ -9004,19 +7600,19 @@ class diagram extends functor
 	{
 		if (dragFrom.class === 'object')
 		{
-			const dragTo = this.mapObject(dragFrom);
-			const targetTo = this.mapObject(targetFrom);
+			const dragTo = dragFrom.to;
+			const targetTo = targetFrom.to;
 			if ((dragTo.isInitial && !targetTo.isInitial) || (!dragTo.isInitial && targetTo.isInitial))
 				return false;
 			const morphs = this.getObjectMorphisms(dragFrom);
 			if (morphs.doms.length === 0 && morphs.cods.length === 0)
 				return true;
-			const a = dragTo.code === targetTo.code && !dragFrom.isEquivalent(targetFrom);
+			const a = dragTo.name === targetTo.name && !dragFrom.isEquivalent(targetFrom);
 			let b = false;
 			if (morphs.cods.length > 0)
 			{
 				const to = morphs.cods[0].to;
-				b = morphs.cods.length === 1 && morphs.doms.length === 0 && to.function === 'identity' && to.subClass !== 'namedIdentity';
+				b = morphs.cods.length === 1 && morphs.doms.length === 0 && to.function === 'identity';
 			}
 			return a||b;
 		}
@@ -9077,20 +7673,18 @@ class diagram extends functor
 	{
 		return this.selected.length > 0 ? this.selected[0] : null;
 	}
+	getSelectedObjects()
+	{
+		return this.selected.filter(s => s.class === 'object').map(o => o.to);
+	}
+	getSelectedMorphisms()
+	{
+		return this.selected.filter(s => s.class === 'morphism').map(m => m.to);
+	}
 	compose(e)
 	{
-		const morphisms = this.selected.map(m => m.to);
-		const morphNames = morphisms.map(m => m.name);
-		const compositeName = Cat.basetypes.operators.compose.toName(morphNames);
-		let to = null;
-		if (!this.hasMorphism(compositeName))
-			to = new composite(this.codomain, {diagram:this, codomain:morphisms[morphisms.length -1].codomain.name, domain:morphisms[0].domain.name, morphisms});
-		else
-			to = this.getMorphism(compositeName);
-		const domain = this.selected[0].domain;
-		const codomain = this.selected[this.selected.length -1].codomain;
 		const from = new diagramMorphism(this.domain, {diagram:this, domain:this.selected[0].domain.name, codomain:this.selected[this.selected.length -1].codomain.name, morphisms:this.selected});
-		from.incrRefcnt();
+		const to = composite.get(this.codomain, this.getSelectedMorphisms());
 		this.setMorphism(from, to);
 		from.addSVG();
 		this.update(e, 'morphism', from, true);
@@ -9197,129 +7791,17 @@ class diagram extends functor
 		const m = this.addFactorMorphism(this.getSelected().to, diagram.getFactorsById('codomainDiv'));
 		this.objectPlaceMorphism(e, 'domain', this.getSelected().name, m.name)
 	}
-	hasObject(name)
-	{
-		if (this.codomain.hasObject(name))
-			return true;
-		for (let i=0; i<this.references.length; ++i)
-			if (this.references[i].hasObject(name))
-				return true;
-		return false;
-	}
-	getObject(name, extended=false)
-	{
-		let obj = null;
-		if (typeof name === 'string')
-		{
-			obj = this.codomain.getObject(name, null, extended);
-			if (obj === null)
-				for (let i=0; i<this.references.length; ++i)
-				{
-					let r = this.references[i];
-					obj = r.getObject(name, null, extended);
-					if (obj !== null)
-						return obj;
-				}
-		}
-		else
-		{
-			if (!extended && 'token' in name)
-				obj = this.getObject(name.token);
-			else
-			{
-//				const codename = element.codename(this, name, true, extended);
-				const codename = name.codename(extended);
-				obj = this.getObject(codename);
-				if (obj === null)
-//					obj = this.newObject({code:element.getCode(this, name, true, extended)});
-					obj = this.newObject({code:name.getCode(extended)});
-			}
-		}
-		return obj;
-	}
-	getMorphism(name)
-	{
-		let m = null;
-		for (let i=0; i<this.references.length; ++i)
-		{
-			m = this.references[i].getMorphism(name);
-			if (m !== null)
-				return m;
-		}
-		return this.codomain.getMorphism(name);
-	}
-	hasMorphism(name)
-	{
-		for (let i=0; i<this.references.length; ++i)
-			if (this.references[i].hasMorphism(name))
-				return true;
-		if (this.codomain.hasMorphism(name))
-			return true;
-		return false;
-	}
-	getFactor(obj, ...indices)
-	{
-		let fctr = obj.expr;
-		for (let i=0; i<indices.length; ++i)
-		{
-			const k = indices[i];
-			if (k === -1)
-				return this.getObject('One');
-			if ('data' in fctr)
-				fctr = fctr.data[k];
-			else
-			{
-				const obj = this.getObject(fctr);
-				fctr = obj.expr.data[k];
-			}
-		}
-		return 'token' in fctr ? this.getObject(fctr.token) : this.getObject(fctr);
-	}
-	getObjectByCode(code)
-	{
-//		return this.getObject(element.codename(this, this.codomain.parseObject(code)));
-		return this.getObject(this.parseObject(code).codename());
-	}
-	newObject(args)
-	{
-		const goodName = 'name' in args && args.name !== null && args.name !== '';
-		if (goodName)
-		{
-			const obj = this.getObject(args.name);
-			if (obj !== null)
-				return obj;
-		}
-		if ('code' in args)
-		{
-			const obj = this.getObjectByCode(args.code);
-			if (obj !== null)
-			{
-				if (goodName)
-				{
-					// TODO this has *got* to go
-					if (obj.name === args.name)
-						return obj;
-				}
-				else
-					return obj;
-			}
-		}
-		const nuArgs = Cat.clone(args);
-		nuArgs.diagram = this;
-		const obj = new object(this.codomain, nuArgs);
-		return obj;
-	}
 	validateAvailableObject(name)
 	{
-		return name !== '' && !this.hasObject(name);
+		return name !== '' && !this.codomain.hasObject(name);
 	}
 	validateAvailableMorphism(name)
 	{
-		return name !== '' && !this.hasMorphism(name);
+		return name !== '' && !this.codomain.hasMorphism(name);
 	}
 	getIdentityMorphism(objName)
 	{
-		return this.hasMorphism(objName) ? this.getMorphism(objName) : $Cat.getTransform(`id-${this.codomain.name}`).$(this, this.getObject(objName));
+		return this.codomain.hasMorphism(objName) ? this.codomain.getMorphism(objName) : $Cat.getTransform(`id-${this.codomain.name}`).$(this, this.getObject(objName));
 	}
 	newDataMorphism(dom, cod)
 	{
@@ -9471,7 +7953,7 @@ class diagram extends functor
 		this.viewport.y = 0;
 		this.viewport.scale = 1;
 		this.setView();
-		this.saveToLocalStorage();
+		this.saveLocal();
 	}
 	updateElementAttribute(from, to, attr, val)
 	{
@@ -9505,12 +7987,11 @@ class diagram extends functor
 		if (h.contentEditable === 'true' && h.textContent !== '' && !this.readonly)
 		{
 			const from = this.getSelected();
-			const to = this.mapElement(from);
 			h.contentEditable = false;
-			this.updateElementAttribute(from, to, attr, Cat.htmlEntitySafe(h.innerText));
+			this.updateElementAttribute(from, from.to, attr, Cat.htmlEntitySafe(h.innerText));
 			this.elementHelp();
 			from.showSelected();
-			this.saveToLocalStorage();
+			this.saveLocal();
 		}
 		else
 		{
@@ -9523,11 +8004,10 @@ class diagram extends functor
 		const from = this.getSelected();
 		if (from.to.subClass === 'dataMorphism')
 		{
-//			document.getElementById('dataPnl').innerHTML = '';
 			if ('range' in from.to)
 				document.getElementById('dataRanges').innerHTML = '';
 			from.to.clear();
-			this.saveToLocalStorage();
+			this.saveLocal();
 		}
 	}
 	updateMorphisms()
@@ -9584,8 +8064,8 @@ class diagram extends functor
 		let r = false;
 		if (this.selected.length == 2)
 		{
-			const sel0 = this.mapElement(this.selected[0]);
-			const sel1 = this.mapElement(this.selected[1]);
+			const sel0 = this.selected[0].to;
+			const sel1 = this.selected[1].to;
 			if (sel0 && sel1 && sel0.class === 'morphism' && sel1.class === 'morphism')
 			{
 				const domain = sel0.domain;
@@ -9623,7 +8103,7 @@ class diagram extends functor
 			const sel0 = this.selected[0].to;
 			const sel1 = this.selected[1].to;
 			sel0.setRecursor(sel1);
-			this.saveToLocalStorage();
+			this.saveLocal();
 			Cat.status(e, `Recursor for ${sel0.getText()} has been set`);
 		}
 	}
@@ -9636,7 +8116,7 @@ class diagram extends functor
 				o.decrRefcnt();
 			this.updateObjectTableRows();
 			this.update(e);
-			this.saveToLocalStorage();
+			this.saveLocal();
 		}
 	}
 	removeMorphism(e, name)
@@ -9647,7 +8127,7 @@ class diagram extends functor
 			m.decrRefcnt();
 			this.updateMorphismTableRows();
 			this.update(e);
-			this.saveToLocalStorage();
+			this.saveLocal();
 		}
 	}
 	removeCodomainMorphism(e, name)
@@ -9658,7 +8138,7 @@ class diagram extends functor
 			m.decrRefcnt();
 			this.updateMorphismTableRows();
 			this.update(e);
-			this.saveToLocalStorage();
+			this.saveLocal();
 		}
 	}
 	getElement(name)
@@ -9728,7 +8208,6 @@ class diagram extends functor
 	getProductName(obj)
 	{
 		const code = `(${obj.code})*(${obj.code})`;
-//		return element.codename(this, this.codomain.parseObject(code));
 		return this.parseObject(code).codename();
 	}
 	addWindowSelect(e)
@@ -9825,13 +8304,6 @@ class diagram extends functor
 		});
 		return refs;
 	}
-/*
-	isExprInDiagram(expr, dgrm)
-	{
-		const obj = this.getObject(expr);
-		return obj.diagram.name === dgrm;
-	}
-*/
 	canRemoveReferenceDiagram(name)
 	{
 		const ref = Cat.getDiagram(name);
@@ -9892,10 +8364,6 @@ class diagram extends functor
 	{
 		this.readonly = true;
 		Cat.display.diagram.updateLockBtn(this);
-	}
-	screenCenter()
-	{
-		return Cat.grid(this.userToDiagramCoords({x:Cat.grid(Cat.display.width()/2), y:Cat.grid(Cat.display.height()/2)}));
 	}
 	copyObject(e)
 	{
