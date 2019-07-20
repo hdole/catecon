@@ -3,7 +3,6 @@
 //
 'use strict';
 
-
 (function(exports)
 {
 if (typeof require !== 'undefined')
@@ -164,18 +163,6 @@ class H
 	static move(elt, toId) {document.getElementById(toId).appendChild(elt); }
 	static toggle(elt, here, there) {elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
 }
-
-/*
-class operator
-{
-	constructor(args)
-	{
-		this.sym = args.sym;
-		this.symCode = args.symCode;
-		this.nameCode = args.nameCode;
-	}
-}
-*/
 
 //
 // Global to determine if we are running in a browser window or not
@@ -1161,9 +1148,8 @@ const Cat =
 				switch(type)
 				{
 				case 'object':
-					from = new DiagramObject(dgrm, {xy});
 					to = dgrm.getObject(name);
-					from.setObject(to);
+					from = new DiagramObject(dgrm, {xy, to});
 					break;
 				case 'morphism':
 					to = dgrm.getMorphism(name);
@@ -3521,8 +3507,8 @@ class expression
 		codRoot.push(...data.link);
 		Cat.arraySet(this, 'links', codRoot);
 		Cat.arraySet(data.cod, 'links', domRoot);
-		Cat.arrayInclude(this, 'functions', data.prototype.name);
-		Cat.arrayInclude(data.cod, 'functions', data.prototype.name);
+		Cat.arrayInclude(this, 'tags', data.prototype.name);
+		Cat.arrayInclude(data.cod, 'tags', data.prototype.name);
 	}
 	bindGraph_op(first, data)
 	{
@@ -3575,10 +3561,10 @@ class expression
 				this.links = links;
 			else links.map(lnk => this.links.indexOf(lnk) === -1 ? this.links.push(lnk) : null);
 		}
-		if (!('functions' in this))
-			this.functions = [];
-		if ('functions' in data.from)
-			data.from.functions.map(f => this.functions.indexOf(f) === -1 ? this.functions.push(f) : null);
+		if (!('tags' in this))
+			this.tags = [];
+		if ('tags' in data.from)
+			data.from.tags.map(f => this.tags.indexOf(f) === -1 ? this.tags.push(f) : null);
 	}
 	mergeGraphs_op(first, data)
 	{
@@ -3592,35 +3578,6 @@ class expression
 	{
 		this.lhs.mergeGraphs(false, {from:data.from.lhs, base:data.base, inbound:data.inbound, outbound:data.outbound});
 		this.rhs.mergeGraphs(false, {from:data.from.rhs, base:data.base, inbound:data.inbound, outbound:data.outbound});
-	}
-	//
-	// tagGraph
-	//
-	/*
-	tagGraph(first, data)	// data: function name
-	{
-		return this.expandExpression('tagGraph', first, data);
-	}
-	tagGraph_token(first, data)
-	{
-		if (!this.isGraphable())
-			return;
-		if (!('functions' in this))
-			this.functions = [data];
-		else if (this.functions.indexOf(data) === -1)
-			this.functions.push(data);
-		if (!('links' in this))
-			this.links = [];
-	}
-	*/
-	tagGraph_op(first, data)
-	{
-		this.data.map(e => e.tagGraph(false, data));
-	}
-	tagGraph_bracket(first, data)
-	{
-		this.lhs.tagGraph(false, data);
-		this.rhs.tagGraph(false, data);
 	}
 	//
 	// componentGraph
@@ -3664,7 +3621,7 @@ class expression
 			const f = data.getFactor(lnk);
 			if ('links' in f)
 				f.links.map(k => (links.indexOf(k) === -1 && k[0] !== data.index[0]) ? links.push(k) : null);
-			f.functions.map(r => this.functions.indexOf(r) === -1 ? this.functions.push(r) : null);
+			f.tags.map(r => this.tags.indexOf(r) === -1 ? this.tags.push(r) : null);
 			if (data.index.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
 				continue;
 			if (this.visited.indexOf(lnk) === -1)
@@ -3717,7 +3674,7 @@ class expression
 			if (this.links.indexOf(lnk) === -1)	// TODO needed?
 				this.links.push(lnk);
 		}
-		f.functions.map(r => this.functions.indexOf(r) === -1 ? this.functions.push(r) : null);
+		f.tags.map(r => this.tags.indexOf(r) === -1 ? this.tags.push(r) : null);
 	}
 	copyDomCodLinks_op(first, data)
 	{
@@ -3748,7 +3705,7 @@ class expression
 	{
 		if (!this.isGraphable())
 			return;
-		this.functions = data.expr.functions.slice();
+		this.tags = data.expr.tags.slice();
 		for (let i=0; i<data.expr.links.length; ++i)
 		{
 			const lnk = data.expr.links[i];
@@ -3783,7 +3740,7 @@ class expression
 }
 
 //
-// Element
+// Element is the root class for Catecon objects and morphisms
 //
 // The name of an element has the form:  category::user::diagram::basename
 // The category is the target category of the diagram, say Set.
@@ -3892,7 +3849,6 @@ Element.prototype.setArg(a, k, v)
 }
 Element.prototype.json(a = {})
 {
-	a.category =	Element.setArg(a, 'category', this.category.name);
 	a.description =	Element.setArg(a, 'description', this.description);
 	a.signature =	Element.setArg(a, 'signature', this.signature);
 	a.basename =	Element.setArg(a, 'basename', this.name);
@@ -3904,6 +3860,13 @@ Element.prototype.json(a = {})
 	return a;
 }
 //
+// FITB
+//
+Element.prototype.js(catVarName = 'cat')
+{
+	return `		new ${this.prototype.name}((${catVarName}, ${this.stringify());\n`;
+}
+//
 // Return a string representing the element.  Reconstitute it with process().
 //
 Element.prototype.stringify()
@@ -3911,11 +3874,11 @@ Element.prototype.stringify()
 	return JSON.stringify(this.json());
 }
 //
-// If two objects have the same signature then they are the same.
+// If two elements have the same signature then they are the same.
 //
-Element.prototype.isEquivalent(obj)
+Element.prototype.isEquivalent(elt)
 {
-	return obj ? this.signature === obj.signature : false;
+	return elt ? this.signature === elt.signature : false;
 }
 //
 // isDeleteable means that the reference count is 0 or 1.  In other words, already being at zero means
@@ -3929,13 +3892,13 @@ Element.prototype.isDeletable()
 //
 // Element static methods
 //
-Element.prototype.Codename(catName, dgrmName, userName, basename)
+Element.prototype.Codename(catName, userName, dgrmName, basename)
 {
-	return `${catName}${Cat.sep}${dgrmName}${Cat.sep}${userName}${Cat.sep}${basename}`;
+	return `${catName}${Cat.sep}${userName}${Cat.sep}${dgrmName}${Cat.sep}${basename}`;
 }
 
 //
-// CatObject
+// CatObject is an Element
 //
 // A CatObject is an Element.
 // Have to call this CatObject since Object is a javascript reserved keyword.
@@ -3960,7 +3923,7 @@ CatObject.prototype.help()
 	return H.p(`Object ${this.properName} in category ${this.category.properName}`);
 }
 //
-// With no further info the ony factor we could possibly return is the object itself.
+// With no further structure the ony factor we could possibly return is the object itself.
 //
 CatObject.prototype.getFactor(factor)
 {
@@ -3998,7 +3961,7 @@ CatObject.prototype.formPort(data = {position:0, w:0}, first = true)
 //
 // CatObject static methods
 //
-CatObject.process(cat, args, dgrm)
+CatObject.process(cat, args)
 {
 	try
 	{
@@ -4021,9 +3984,8 @@ CatObject.process(cat, args, dgrm)
 			r = new HomObject(cat, args);
 			break;
 		case 'DiagramObject':
-			const nuArgs = Cat.clone(args);
-			nuArgs.diagram = dgrm;
-			r = new DiagramObject(dgrm, nuArgs);
+			const dgrm = Cat.getDiagram(args.diagram);
+			r = new DiagramObject(dgrm, args);
 			break;
 		}
 		return r;
@@ -4036,29 +3998,16 @@ CatObject.process(cat, args, dgrm)
 }
 CatObject.prototype.tagGraph(graph, tag, first = true)
 {
-	if (!('functions' in graph))
-		graph.tags = [tag];
-	else if (graph.tags.indexOf(tag) === -1)
+//	if (!('tags' in graph))
+//		graph.tags = [tag];
+	if (graph.tags.indexOf(tag) === -1)
 		graph.tags.push(tag);
-	if (!('links' in graph))
-		graph.links = [];
-}
-
-function NamedObject(cat, args)
-{
-	CatObject.call(this, cat, args);
-	this.setSignature();
-}
-//
-// NamedObject static methods
-//
-NamedObject.prototype.Codename(cat, args)
-{
-	// TODO
+//	if (!('links' in graph))
+//		graph.links = [];
 }
 
 //
-// MultiObject
+// MultiObject is an CatObject
 //
 // an object comprised of a list of other objects
 //
@@ -4067,13 +4016,17 @@ function MultiObject(cat, args)
 	CatObject.call(this, cat, args);
 	this.objects = args.objects.map(o => cat.getObject(o));
 	this.objects.map(o => o.incrRefcnt());
+	this.seperatorWidth = Cat.textWidth(', ');
 }
-MultiObject.prototype.signature(sig = null)
+MultiObject.prototype.signature(sig = '')
 {
 	return Cat.sha256(`${sig}${this.category.name}${Cat.sep}${this.prototype.name} ${objects.map(o => o.signature()).join()}`);
 }
 MultiObject.prototype.decrRefcnt()
 {
+	//
+	// if at zero, then we're going away so release our holds on our comprising objects
+	//
 	if (this.refcnt === 0)
 		this.objects.map(o => o.decrRefcnt());
 	super.decrRefcnt();
@@ -4090,13 +4043,16 @@ MultiObject.prototype.getFactor(factor)
 }
 MultiObject.prototype.getFactorName(factor)
 {
-	return factor.length > 0 ? this.objects[factor[0]].getFactorName(factor.slice(1)) : this.name;
+//	return factor.length > 0 ? this.objects[factor[0]].getFactorName(factor.slice(1)) : this.name;
+	return this.getFactor(factor).name;
 }
 MultiObject.prototype.getFactorProperName(indices, first = true, data = {})
 {
-	this.position = data.position;	// TODO ???
 	const f = this.getFactor(indices);
 	const fn = `<tspan>${f.properName}</tspan>${Cat.subscript(indices)}`;
+	//
+	// use parens if not the first expression
+	//
 	return first ? fn : `(${fn})`;
 }
 //
@@ -4114,51 +4070,43 @@ MultiObject.prototype.isGraphable()
 {
 	return false;
 }
-MultiObject.formPort(data = {position:0, w:0}, first = true)
+MultiObject.formPort(parenWidth, sepWidth, graph = {position:0, tags:[], w:0}, first = true)
 {
-	let d = Cat.clone(data);
-	if (!first)
-		d.w = d.w + Cat.parenWidth;
-	d.ports = this.objects.map(o => d = Cat.clone(o.formPort(d, false)));
-	d.prototype = this.prototype.name;
-	const lastPort = d.ports[d.ports.length -1];
-	if (!first)
-		d.w = d.w + Cat.parenWidth;
-	d.w = d.position + d.w;
-	d.position = data.position;
+	let d = Cat.clone(graph);
+	this.tagGraph(graph, this.prototype.name);
+	d.w += parenWidth;
+	//
+	// update the position and port by reusing d across the sub-ports
+	//
+	d.ports = this.objects.map(o =>
+		{
+			d = Cat.clone(o.formPort(d, false));
+			d.position += sepWidth;
+		});
+	d.w += parenWidth;
+	d.w += d.position;
+	d.position = graph.position;
 	return d;
 }
 MultiObject.prototype.tagGraph(graph, tag, first = true)
 {
-	this.objects.map((e, i) => e.tagGraph(graph.ports[i], false));
+	this.objects.map((e, i) => e.tagGraph(graph.ports[i], tag, false));
 }
 //
 // MultiObject static methods
 //
-MultiObject.prototype.ProperName(s, objects, first = true, data = {})
+MultiObject.prototype.ProperName(sep, objects, first = true, data = {})
 {
 	let n = '';
-//	const symWidth = Cat.textWidth(s);
-//	let doPos = 'position' in data;
-//	if (doPos)
-//		this.position = data.position;
 	if (!first)
-	{
 		n += '(';
-//		if (doPos)
-//			data.position += Cat.parenWidth;
-	}
-	let n = objects.map(o => o.ProperName(false, data)).join(s);
+	let n = objects.map(o => o.ProperName(false, data)).join(sep);
 	if (!first)
-	{
 		n += ')';
-//		if (doPos)
-//			data.position += Cat.parenWidth;
-	}
 }
 
 //
-// ProductObject
+// ProductObject is a MultiObject
 //
 function ProductObject(cat, args)
 {
@@ -4168,6 +4116,7 @@ function ProductObject(cat, args)
 	MultiObject.call(this, cat, nuArgs);
 	this.size = this.objects.reduce((sz, o) => sz += o.size, 0);
 	this.setSignature();
+	this.seperatorWidth = Cat.textWidth('&times');
 }
 ProductObject.prototype.fromHTML(first = true, {uid:0, id:'data'})
 {
@@ -4200,6 +4149,10 @@ ProductObject.prototype.factorButton(data)
 	}
 	return html + H.tr(H.td(H.table(H.tr(tbl))), 'sidename');
 }
+ProductObject.formPort(graph = {position:0, tags:[], w:0}, first = true)
+{
+	return super.formPort(Cat.textWidth('('), Cat.textWidth('&times;'), graph, first);
+}
 //
 // ProductObject static methods
 //
@@ -4219,15 +4172,23 @@ ProductObject.prototype.ProperName(objects, first = true, data = {})
 }
 
 //
-// CoproductObject
+// CoproductObject is a MultiObject
 //
 function CoproductObject(cat, args)
 {
 	MultiObject.call(this, cat, args);
+	//
+	// the size of a coproduct is one plus the size of the largest component object
+	//
 	this.size = 1 + this.objects.reduce((sz, o) => sz = Math.max(o.size, sz), 0);
 	this.name = this.name === '' ? CoproductObject.Codename() : this.name;
 	this.properName = this.properName === '' ? CoproductObject.ProperName(cat, morphisms) : this.properName;
+	this.seperatorWidth = Cat.textWidth('&plus');
 	this.setSignature();
+}
+CoproductObject.formPort(graph = {position:0, tags:[], w:0}, first = true)
+{
+	return MultiObject.formPort(Cat.textWidth('('), Cat.textWidth('&plus;'), graph, first);
 }
 //
 // CoproductObject static methods
@@ -4251,9 +4212,15 @@ CoproductObject.prototype.fromHTML(first = true, {uid:0, id:'data'})
 	return {};	// TODO
 }
 
+//
+// HomObject is a MultiObject
+//
 function HomObject(cat, args)
 {
 	Multiobject.call(this, cat, args);
+	//
+	// A hom object has a size of one for a pointer
+	//
 	this.size = 1;
 	this.name = this.name === '' ? homObject.Codename(this.objects) : this.name;
 	this.properName = this.properName === '' ? homObject.ProperName(cat, this.objects) : this.properName;
@@ -4285,7 +4252,7 @@ HomObject.prototype.getFactorProperName(indices, first = true, data = {})
 //
 HomObject.prototype.Codename(objects)
 {
-	return `-H--${objects.map(o => typeof o === 'string' ? o : o.name).join('-c-')}--H-`;
+	return `H--${objects.map(o => typeof o === 'string' ? o : o.name).join('-c-')}--H`;
 }
 HomObject.prototype.Get(cat, objects)
 {
@@ -4295,21 +4262,11 @@ HomObject.prototype.Get(cat, objects)
 }
 HomObject.prototype.ProperName(objects, first = true, data = {})
 {
-//	let doPos = 'position' in data;
-//	if (doPos)
-//	{
-//		this.position = data.position;
-//		data.position += Cat.bracketWidth;
-//	}
-	let nm = '[';
-	nm += objects[0].ProperName(true, data);
-	nm += ', ';
-//	if (doPos)
-//		data.position += Cat.commaWidth;
-	nm += objects[1].ProperName(true, data);
-//	if (doPos)
-//		data.position += Cat.bracketWidth;
-	return nm;
+//	let nm = '[';
+//	nm += objects[0].ProperName(true, data);
+//	nm += ', ';
+//	nm += objects[1].ProperName(true, data);
+	return `[${objects[0].properName}, ${objects[1].properName]`;
 }
 HomObject.prototype.FromInput(first = true, uid={uid:9, idp:'data'})
 {
@@ -4317,9 +4274,13 @@ HomObject.prototype.FromInput(first = true, uid={uid:9, idp:'data'})
 	const morphism = document.getElementById(`${uid.idp}_${uid.uid}`).querySelectorAll('.selRow');
 	// TODO
 }
+HomObject.formPort(graph = {position:0, tags:[], w:0}, first = true)
+{
+	return MultiObject.formPort(Cat.textWidth('['), Cat.textWidth(', '), graph, first)
+}
 
 //
-// DiagramElement
+// DiagramElement is an Element
 //
 // a text element placed on the diagram.
 //
@@ -4373,13 +4334,15 @@ DiagramElement.prototype.isGraphable()
 }
 
 //
-// DiagramText
+// DiagramText is a DiagramElement
 //
 function DiagramText(dgrm, args)
 {
 	DiagramElement.call(dgrm, args)
 	this.h = Cat.getArg(args, 'h', Cat.default.font.height);
-	this.xy = Cat.getArg(args, 'xy', {x:0, y:0});
+	const xy = Cat.getArg(args, 'xy', {x:0, y:0});
+	this.x = xy.x;
+	this.y = xy.y;
 	this.w = Cat.getArg(args, 'w', 0);
 }
 DiagramText.prototype.json()
@@ -4410,7 +4373,7 @@ DiagramText.prototype.editText(id, attr)
 }
 
 //
-// DiagramObject
+// DiagramObject is a DiagramElement
 //
 // This is the object for the source category in a diagram.
 // It points to the object in the target category of the diagram.
@@ -4423,12 +4386,14 @@ function DiagramObject(dgrm, args)
 	// the object in the target category that this object maps to, if any
 	//
 	if ('to' in args)
-		this.to = dgrm.codomain.getObject(args.to);
+		this.setObject(dgrm.codomain.getObject(args.to));
 	//
 	// dimensional aspects of the diagram source object
 	//
 	this.h = Cat.getArg(args, 'h', Cat.default.font.height);
-	this.xy = Cat.getArg(args, 'xy', {x:0, y:0});
+	const xy = Cat.getArg(args, 'xy', {x:0, y:0});
+	this.x = xy.x;
+	this.y = xy.y;
 	this.w = Cat.getArg(args, 'w', 0);
 }
 DiagramObject.prototype.json()
@@ -4454,6 +4419,9 @@ DiagramObject.prototype.decrRefcnt()
 	if (this.refcnt <= 0)
 	{
 		this.to.decrRefcnt();
+		//
+		// if the target is no longer referred to, then decrement again to remove it
+		//
 		if (this.to.refcnt === 0)
 			this.to.decrRefcnt();
 		this.removeSVG();
@@ -4463,7 +4431,7 @@ DiagramObject.prototype.decrRefcnt()
 DiagramObject.prototype.makeSVG()
 {
 	if (isNaN(this.x) || isNaN(this.y))
-		throw 'Nan!';
+		throw `Nan in ${this.name}`;
 	return `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + Cat.default.font.height/2}"
 		onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'object')">${this.to.properName}</text>`;
 }
@@ -4471,6 +4439,9 @@ DiagramObject.prototype.getBBox()
 {
 	return {x:this.x - this.w/2, y:this.y + this.h/2 - Cat.default.font.height, w:this.w, h:this.h};
 }
+//
+// This should be practically never seen.
+//
 DiagramObject.prototype.help()
 {
 	return H.p(`Diagram object ${this.properName} in category ${this.category.properName} supporting diagram ${this.diagram.properName}`);
@@ -4490,7 +4461,7 @@ DiagramObject.prototype.removeSVG()
 }
 DiagramObject.prototype.elementId()
 {
-	return `dobj_${this.name}`;
+	return `do_${this.name}`;
 }
 DiagramObject.prototype.updatePosition(xy)
 {
@@ -4527,7 +4498,7 @@ DiagramObject.prototype.isGraphable()
 }
 
 //
-// Category
+// Category is a CatObject
 //
 function Category(args)
 {
@@ -4541,7 +4512,10 @@ function Category(args)
 	//
 	this.objects = 'objects' in args ? args.objects : new Map();
 	this.morphisms = new Map();
-	if ($Cat === null)	// boot sequence
+	//
+	// part of the boot sequence
+	//
+	if ($Cat === null)
 	{
 		$Cat = this;
 		$Cat.addObject($Cat);
@@ -4552,17 +4526,23 @@ Category.prototype.signature()
 {
 	let s = '';
 	for ([key, o] of this.objects)
-		s += o.sig;
+		s += o.signature;
 	for ([key, m] of this.morphisms)
-		s += m.sig;
+		s += m.signature;
 	return Cat.sha256(`Cat ${this.name} ${this.prototype.name} ${s});
 }
+//
+// TODO remove?  currently doesn't set ref counts correctly
+//
 Category.prototype.clear()
 {
 	this.objects.clear();
 	this.morphisms.clear();
 	this.texts = [];
 }
+//
+// Reconstitute this category from its saved contents.
+//
 Category.prototype.process(dgrm, args)
 {
 	let errMsg = '';
@@ -4573,7 +4553,7 @@ Category.prototype.process(dgrm, args)
 			{
 				try
 				{
-					const obj = CatObject.process(this, args.objects[key], dgrm);
+					const obj = CatObject.Process(this, args.objects[key]);
 				}
 				catch(x)
 				{
@@ -4588,7 +4568,7 @@ Category.prototype.process(dgrm, args)
 			{
 				try
 				{
-					const m = morphism.process(this, dgrm, args.morphisms[key]);
+					const m = Morphism.Process(this, args.morphisms[key]);
 				}
 				catch(x)
 				{
@@ -4599,10 +4579,10 @@ Category.prototype.process(dgrm, args)
 	if (errMsg != '')
 		Cat.recordError(errMsg);
 	//
-	// for our recursive methods, setup the their recursors now that all morphisms are loaded and the searches can be satisfied
+	// for our recursive morphisms, setup the their recursors now that all morphisms are loaded and the searches can be satisfied
 	//
 	for(const [key, m] of this.morphisms)
-		if (Recursive.isPrototypeOf(m) && typeof m.recursor === 'string')
+		if (Recursive.isPrototypeOf(m) && String.isPrototypeOf(m.recursor))
 			m.setRecursor(m.recursor);
 }
 Category.prototype.json(a = {})
@@ -4631,6 +4611,24 @@ Category.prototype.json(a = {})
 	if (!('referenceDiagrams' in a))
 		a.referenceDiagrams = this.referenceDiagrams.map(d => typeof d === 'string' ? d : d.name);
 	return cat;
+}
+Category.prototype.js()
+{
+	const js =
+`
+	const cat = new Category(
+		{
+			name:	'${this.name}.,
+			properName:	'${this.properName}',	// TODO make safe
+			description:	'${this.description}',	// TODO make safe
+			subobject:	'${this.subobject}',
+		});
+`;
+	for (const [name, o] in this.objects)
+		js += `		const ${name} = ${o.js()}`;
+	for (const [name, m] in this.morphisms)
+		js += `		const ${name} = ${m.js()}`;
+	return js;
 }
 Category.prototype.hasObject(name)
 {
@@ -4844,7 +4842,7 @@ function StringObject(cat, args)
 }
 
 //
-// Morphism
+// Morphism is an Element
 //
 function Morphism(cat, args)
 {
@@ -4905,13 +4903,11 @@ Morphism.prototype.help()
 {
 	return H.p(`Morphism ${this.properName}`) + (this.description !== '' ? H.p(this.description) : '');
 }
-Morphism.prototype.graph()
-{
-	return new StringMorphism(this);
-}
 Morphism.prototype.$(args)
 {
+	throw `Unknow action in morphism ${this.name}`;
 }
+// TODO move?  this only uses properName
 Morphism.prototype.factorButton(txt, data, action, title)
 {
 	return H.td(H.button(this.properName + txt, '', Cat.display.elementId(), title,
@@ -4920,7 +4916,7 @@ Morphism.prototype.factorButton(txt, data, action, title)
 //
 // static Morphism methods
 //
-Morphism.prototype.process(cat, args)
+Morphism.prototype.Process(cat, args)
 {
 	let m = null;
 	try
@@ -4931,7 +4927,8 @@ Morphism.prototype.process(cat, args)
 			m = new Identity(cat, args);
 			break;
 		case 'DiagramMorphism':
-			m = new DiagramMorphism(cat, args);
+			const dgrm = Cat.getDiagram(args.diagram);
+			m = new DiagramMorphism(dgrm, args);
 			break;
 		case 'Composite':
 			m = new Composite(cat, args);
@@ -4970,7 +4967,7 @@ Morphism.prototype.process(cat, args)
 }
 
 //
-// Identity morphism
+// Identity is a Morphism
 //
 function Identity(cat, args)
 {
@@ -4984,7 +4981,7 @@ function Identity(cat, args)
 	this.setSignature();
 }
 //
-// Identity static functions
+// Identity static methods
 //
 Identity.prototype.Codename(domain)
 {
@@ -5008,21 +5005,24 @@ Identity.prototype.bindGraph(s, data)
 //
 Identity.prototype.ProperName(domain)
 {
-	return `1(${domain.properName})`;
+	return `1_(${domain.properName})`;
 }
 
 //
-// DiagramMorphism
+// DiagramMorphism is a Morphism
 //
 // Supports the placement and drawing of a morphism in a diagram.
 //
-function DiagramMorphism(cat, args)
+function DiagramMorphism(dgrm, args)
 {
 	const nuArgs = Cat.clone(args);
+	//
+	// usually the names for diagram morphisms are auto-generated
+	//
 	if (!('name' in this))
-		nuArgs.name = cat.getAnon('dgrm');
-	Morphism.call(this, cat, nuArgs);
-	this.diagram = typeof args.diagram === 'string' ? Cat.getDiagram(args.diagram) : args.diagram;
+		nuArgs.name = dgrm.domain.getAnon('dgrm');
+	Morphism.call(this, dgrm.domain, nuArgs);
+	this.diagram = dgrm;
 	//
 	// graphical attributes
 	//
@@ -5031,10 +5031,10 @@ function DiagramMorphism(cat, args)
 	this.angle = Cat.getArg(args, 'angle', 0.0);
 	this.flipName = Cat.getArg(args, 'flipName', false);
 	//
-	// the object in the target category that this object maps to, if any
+	// the morphism in the target category that this morphism maps to, if any
 	//
-	const target = Category.isPrototypeOf(args.target) ? args.target : $Cat.getObject(args.target);
-	this.to = target.getMorphism(args.to);
+	if ('to' in args)
+		this.setMorphism(this.codomain.getMorphism(args.to));
 }
 DiagramMorphism.prototype.decrRefcnt()
 {
@@ -5062,6 +5062,13 @@ DiagramMorphism.prototype.json()
 	}
 	mor.flipName = this.flipName;
 	return mor;
+}
+Diagram.prototype.setMorphism(to)
+{
+	to.incrRefcnt();
+	this.to = to;
+	this.domain.setObject(to.domain);
+	this.codomain.setObject(to.codomain);
 }
 DiagramMorphism.prototype.getNameOffset()
 {
@@ -5238,6 +5245,17 @@ DiagramMorphism.prototype.update()
 DiagramMorphism.prototype.help()
 {
 	return H.p(`Diagram morphism ${this.properName} in category ${this.category.properName} in diagram ${this.diagram.properName}`);
+}
+
+//
+// DiagramCategory is a Category
+//
+function DiagramCategory(args)
+{
+	Category.call(this, args);
+}
+DiagramCategory.prototype.js()
+{
 }
 
 //
@@ -5810,14 +5828,9 @@ function StringMorphism(diagram, src)
 {
 	Morphism.call(this, diagram.graphCat, {domain:src.domain, codomain:src.codomain, name:src.name, diagram});
 	this.source = src;
-	const sequence = ProductObject.Get(diagram.codomain, {objects: [src.domain, src.codomain]});
-	this.graph = sequence.formPort();	// a graph is like a net list between the ports
-//	this.tagGraph(true, src.prototype.name);
-	src.tagGraph(this.graph);
-}
-StringMorphism.prototype.tagGraphFunction(func)
-{
-	this.graph.tagGraph(func);
+	this.sequence = ProductObject.Get(diagram.codomain, {objects: [src.domain, src.codomain]});
+	this.graph = this.sequence.formPort();	// a graph is like a net list between the ports
+	this.sequence.tagGraph(this.graph, src.prototype.name);
 }
 StringMorphism.prototype.mergeMorphismGraphs(morph, dual = false)
 {
@@ -5852,12 +5865,14 @@ StringMorphism.prototype.makeParallelGraph(morphisms)
 		StringMorphism.componentGraph(this.diagram, cod.data[i], true, i);
 	});
 }
+/*
 StringMorphism.prototype.makeIdentityGraph()
 {
 //		stringMorphism.bindGraph(this.diagram, this.graph.data[0], true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
 	this.graph.data[0].bindGraph(true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
-	this.tagGraphFunction('identity');
+	this.tagGraph('identity');
 }
+*/
 StringMorphism.prototype.makeDiagonalGraph()
 {
 	const dom = this.graph.data[0];
@@ -5866,7 +5881,7 @@ StringMorphism.prototype.makeDiagonalGraph()
 //		stringMorphism.bindGraph(this.diagram, dom, true, {cod:cod.data[1], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 1], offset:0});
 	dom.bindGraph(true, {cod:cod.data[0], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 0], offset:0});
 	dom.bindGraph(true, {cod:cod.data[1], link:[], function:'diagonal', domRoot:[0], codRoot:[1, 1], offset:0});
-	this.tagGraphFunction('diagonal');
+	this.tagGraph('diagonal');
 }
 StringMorphism.prototype.makeEvalGraph()
 {
@@ -5875,7 +5890,7 @@ StringMorphism.prototype.makeEvalGraph()
 	const cod = this.graph.data[1];
 	dom.data[1].bindGraph(true, {cod:domHom.lhs, link:[], function:'eval', domRoot:[0, 1], codRoot:[0, 0, 0], offset:0});
 	domHom.rhs.bindGraph(true, {cod, link:[], function:'eval', domRoot:[0, 0, 1], codRoot:[1], offset:0});
-	this.tagGraphFunction('eval');
+	this.tagGraph('eval');
 }
 StringMorphism.prototype.makeCompositeGraph(m)
 {
@@ -5895,12 +5910,12 @@ StringMorphism.prototype.makeCompositeGraph(m)
 StringMorphism.prototype.makeProductAssemblyGraph(m)
 {
 	this.mergeMorphismGraphs(m);
-	this.tagGraphFunction('productAssembly');
+	this.tagGraph('productAssembly');
 }
 StringMorphism.prototype.makeCoproductAssemblyGraph(m)
 {
 	this.mergeMorphismGraphs(m, true);
-	this.tagGraphFunction('coproductAssembly');
+	this.tagGraph('coproductAssembly');
 }
 StringMorphism.prototype.makeLambdaGraph(m)
 {
@@ -5926,17 +5941,17 @@ StringMorphism.prototype.makeLambdaGraph(m)
 	m.domFactors.map((f, i) => ('data' in dom ? dom.data[i] : dom).copyGraph(true, {map, expr:preCurryGraph.graph.getFactor(f)}));
 	m.homFactors.map((f, i) => ('data' in homDom ? homDom.data[i] : homDom).copyGraph(true, {map, expr:preCurryGraph.graph.getFactor(f)}));
 	homCod.copyGraph(true, {map, expr:preCurryGraph.graph.data[1]});
-	this.tagGraphFunction('lambda');
+	this.tagGraph('lambda');
 }
 StringMorphism.prototype.makeProductGraph(m)
 {
 	this.makeParallelGraph(m.morphisms)
-	this.tagGraphFunction('product');
+	this.tagGraph('product');
 }
 StringMorphism.prototype.makeCoproductGraph(m)
 {
 	this.makeParallelGraph(m.morphisms)
-	this.tagGraphFunction('coproduct');
+	this.tagGraph('coproduct');
 }
 StringMorphism.prototype.makeRecurseGraph(m)
 {
@@ -6006,7 +6021,7 @@ StringMorphism.prototype.GraphSVG(dgrm, expr, first, data)	// data {index, graph
 				if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
 					continue;
 				const d = stringMorphism.svgLinkUpdate(dom, lnk, data);
-				const fs = expr.functions.sort().join();
+				const fs = expr.tags.sort().join();
 				const linkId = stringMorphism.linkId(data, lnk);
 				const lnkKey = stringMorphism.linkColorKey(lnk, data.dom.name, data.cod.name);
 				if (lnkKey in dgrm.link2colorIndex)
@@ -6170,8 +6185,8 @@ StringMorphism.bindGraph(first, data)	// data: {cod, link, function, domRoot, co
 	codRoot.push(...data.link);
 	Cat.arraySet(this, 'links', codRoot);
 	Cat.arraySet(data.cod, 'links', domRoot);
-	Cat.arrayInclude(this, 'functions', this.prototype.name);
-	Cat.arrayInclude(data.cod, 'functions', this.prototype.name);
+	Cat.arrayInclude(this, 'tags', this.prototype.name);
+	Cat.arrayInclude(data.cod, 'tags', this.prototype.name);
 }
 //
 // StringGraph static methods
@@ -6251,7 +6266,7 @@ function Diagram(args)
 	//
 	nuArgs.name = Diagram.Codename(args);
 	if (!$Cat.hasObject(name))
-		domain = new Category('domainData' in args ? args.domainData : {name});
+		domain = new DiagramCategory('domainData' in args ? args.domainData : {name});
 	else
 		throw `Diagram domain category ${name} already exists.`;
 	nuArgs.domain = domain;
@@ -6350,20 +6365,13 @@ Diagram.prototype.gui(e, elt, fn)
 		Cat.recordError(x);
 	}
 }
-/*
-Diagram.prototype.setObject(from, to)
-{
-	to.incrRefcnt();
-	from.to = to;
-	from.w = Cat.textWidth(to.properName);
-}
-*/
 Diagram.prototype.setMorphism(from, to)
 {
-	from.to = to;
-	to.incrRefcnt();
-	from.domain.setObject(to.domain);
-	from.codomain.setObject(to.codomain);
+//	from.to = to;
+//	to.incrRefcnt();
+//	from.domain.setObject(to.domain);
+//	from.codomain.setObject(to.codomain);
+	from.setMorphism(to);
 	this.makeHomSets();
 }
 Diagram.prototype.saveLocal()
@@ -6855,11 +6863,10 @@ Diagram.prototype.placeObject(e, to, xy)
 	{
 		
 		const xy = Cat.grid(this.userToDiagramCoords({x:Cat.grid(Cat.display.width()/2), y:Cat.grid(Cat.display.height()/2)}));
-		from = new DiagramObject(this, {xy});
+		from = new DiagramObject(this, {xy, to});
 	}
 	else
-		from = new DiagramObject(this, {xy:Cat.grid(xy)});
-	from.setObject(to);
+		from = new DiagramObject(this, {xy:Cat.grid(xy), to});
 	this.placeElement(e, from);
 	return from;
 }
@@ -6867,7 +6874,7 @@ Diagram.prototype.placeMorphism(e, to, xyDom, xyCod)
 {
 	const domain = new DiagramObject(this, {xy:Cat.grid(xyDom)});
 	const codomain = new DiagramObject(this, {xy:Cat.grid(xyCod)});
-	const from = new DiagramMorphism(this, {domain:domain.name, codomain:codomain.name});
+	const from = new DiagramMorphism(this, {domain, codomain});
 	from.incrRefcnt();
 	this.setMorphism(from, to);
 	if (isGUI)
@@ -6981,9 +6988,8 @@ Diagram.prototype.product(e)
 	}
 	else if (this.selected[0].class === 'object')
 	{
-		from = new DiagramObject(this, {xy:Cat.barycenter(this.selected)});
 		const to = ProductObject.Get(this.codomain, this.getSelectedObjects());
-		from.setObject(to);
+		from = new DiagramObject(this, {xy:Cat.barycenter(this.selected), to});
 		from.addSVG();
 	}
 	if (from)
@@ -7010,9 +7016,8 @@ Diagram.prototype.coproduct(e)
 	}
 	else if (this.selected[0].class === 'object')
 	{
-		from = new DiagramObject(this, {xy:Cat.barycenter(this.selected)});
 		const to = CoproductObject.Get(this.codomain, this.getSelectedObjects());
-		from.setObject(to);
+		from = new DiagramObject(this, {xy:Cat.barycenter(this.selected), to});
 		from.addSVG();
 	}
 	if (from)
