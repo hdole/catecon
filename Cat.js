@@ -339,7 +339,7 @@ const Cat =
 		xy = D2.scale(1.0/cnt, xy);
 		return xy;
 	},
-	addDiagram(cat, dgrm)
+	addDiagram(dgrm)
 	{
 		if (!(dgrm.name in Cat.diagrams))
 			Cat.diagrams[dgrm.name] = dgrm;
@@ -3750,37 +3750,38 @@ class expression
 //
 // $Cat is the magic global variable for the working Cat
 //
-function Element(cat, args)
+function Element(dgrm, args)
 {
 	//
-	// Every element belongs to a category, except CAT ...
+	// Every element belongs to a diagram, except CAT ...
 	//
-	if (cat && !Category.isPrototypeOf(cat))
-		throw 'Not a category';
+	const diagram = Cat.getDiagram(dgrm);
+	if (!diagram)
+		throw 'Not a diagram';
 	else if ($Cat === null && args.name === 'Cat')	// bootstrap
-		cat = this;
+		diagram = this;
 	//
 	// If we're chaining/polymorphing, then don't redefine our category
 	//
-	if (!('category' in this))
-		Object.defineProperty(this, 'category', {value: cat, enumerable: true});
+	if (!('diagram' in this))
+		Object.defineProperty(this, 'diagram', {value: diagram, enumerable: true});
+	if (!('origin' in this))
+		Object.defineProperty(this, 'origin', {value: (args.origin === '' || args.origin === 'codomain') ? 'codomain' : 'domain', enumerable: true});
+	Object.defineProperty(this, 'category',
+		{
+			get()
+			{
+				this.diagram[this.origin];
+			}
+		});
 	//
 	// Nothing refers to an element with a reference count of zero.
 	//
 	this.refcnt = 0;
 	//
-	// Many elements belong to a diagram.
-	//
-	if ('diagram' in args)
-		this.diagram = String.isPrototypeOf(args.diagram) ? Cat.getDiagram(args.diagram) : (Diagram.isPrototypeOf(args.diagram) ? args.diagram : null);
-	//
 	// a user owns this element?
 	//
-	if (!('user' in this) && 'user' in args)
-		Object.defineProperty(this, 'user', {value: args.user, enumerable: true});
-	//
-	// see if the owning category will take the basename
-	//
+	Object.defineProperty(this, 'user', {value: diagram.user, enumerable: true});
 	if (Cat.nameEx.test(args.basename))
 		Object.defineProperty(this, 'basename', {value: args.basename, enumerable: true});
 	else
@@ -3788,7 +3789,7 @@ function Element(cat, args)
 	//
 	// set the name of this element
 	//
-	this.name = Element.Codename(cat.name, 'diagram' in this ? this.diagram.name : '', 'user' in this ? this.user : '', this.basename);
+	this.name = Element.Codename(diagram, this.basename);
 	//
 	// Subcats have duplicate names, that of the master cat.
 	//
@@ -3835,7 +3836,7 @@ Eleemnt.prototype.incrRefcnt()
 Eleemnt.prototype.decrRefcnt()
 {
 	if (Cat.debug)
-		console.log('element.decrRefcnt', this.name, this.refcnt);
+		console.log('Element.decrRefcnt', this.name, this.refcnt);
 	--this.refcnt;
 }
 //
@@ -3892,9 +3893,9 @@ Element.prototype.isDeletable()
 //
 // Element static methods
 //
-Element.prototype.Codename(catName, userName, dgrmName, basename)
+Element.prototype.Codename(diagram, cat, basename)
 {
-	return `${catName}${Cat.sep}${userName}${Cat.sep}${dgrmName}${Cat.sep}${basename}`;
+	return `${cat.basename}${Cat.sep}${diagram.user}${Cat.sep}${diagram.basename}${Cat.sep}${basename}`;
 }
 
 //
@@ -3903,9 +3904,9 @@ Element.prototype.Codename(catName, userName, dgrmName, basename)
 // A CatObject is an Element.
 // Have to call this CatObject since Object is a javascript reserved keyword.
 //
-function CatObject(cat, args)
+function CatObject(diagram, args)
 {
-	Element.call(this, cat, args);
+	Element.call(this, diagram, args);
 	this.category.addObject(this);
 }
 CatObject.prototype.decrRefcnt()
@@ -3961,7 +3962,7 @@ CatObject.prototype.formPort(data = {position:0, w:0}, first = true)
 //
 // CatObject static methods
 //
-CatObject.process(cat, args)
+CatObject.process(diagram, args)
 {
 	try
 	{
@@ -3969,19 +3970,19 @@ CatObject.process(cat, args)
 		switch(args.prototype)
 		{
 		case 'CatObject':
-			r = new CatObject(cat, args);	// TODO should not happen?
+			r = new CatObject(diagram, args);	// TODO should not happen?
 			break;
 		case 'NamedObject':
-			r = new NamedObject(cat, args);
+			r = new NamedObject(diagram, args);
 			break;
 		case 'ProductObject':
-			r = new ProductObject(cat, args);
+			r = new ProductObject(diagram, args);
 			break;
 		case 'CoproductObject':
-			r = new CoproductObject(cat, args);
+			r = new CoproductObject(diagram, args);
 			break;
 		case 'HomObject':
-			r = new HomObject(cat, args);
+			r = new HomObject(diagram, args);
 			break;
 		case 'DiagramObject':
 			const dgrm = Cat.getDiagram(args.diagram);
@@ -4011,10 +4012,10 @@ CatObject.prototype.tagGraph(graph, tag, first = true)
 //
 // an object comprised of a list of other objects
 //
-function MultiObject(cat, args)
+function MultiObject(diagram, args)
 {
-	CatObject.call(this, cat, args);
-	this.objects = args.objects.map(o => cat.getObject(o));
+	CatObject.call(this, diagram, args);
+	this.objects = args.objects.map(o => this.category.getObject(o));
 	this.objects.map(o => o.incrRefcnt());
 	this.seperatorWidth = Cat.textWidth(', ');
 }
@@ -4108,12 +4109,12 @@ MultiObject.prototype.ProperName(sep, objects, first = true, data = {})
 //
 // ProductObject is a MultiObject
 //
-function ProductObject(cat, args)
+function ProductObject(diagram, args)
 {
 	const nuArgs = Cat.clone(args);
 	nuArgs.name = ProductObject.Codename(args.objects);
 	nuArgs.properName = 'properName' in args ? args.properName : ProductObject.ProperName(args.objects);
-	MultiObject.call(this, cat, nuArgs);
+	MultiObject.call(this, diagram, nuArgs);
 	this.size = this.objects.reduce((sz, o) => sz += o.size, 0);
 	this.setSignature();
 	this.seperatorWidth = Cat.textWidth('&times');
@@ -4160,11 +4161,11 @@ ProductObject.prototype.Codename(objs)
 {
 	return objs.map(o => typeof o === 'string' ? o : o.name).join('-X-');
 }
-ProductObject.prototype.Get(cat, objects)
+ProductObject.prototype.Get(diagram, objects)
 {
 	const name = ProductObject.Codename(objects);
-	let obj = cat.getObject(name);
-	return obj === null ? new ProductObject(cat, {objects}) : obj;
+	let obj = diagram.codomain.getObject(name);		// no products in the diagram domain cats
+	return obj === null ? new ProductObject(diagram, {objects}) : obj;
 }
 ProductObject.prototype.ProperName(objects, first = true, data = {})
 {
@@ -4174,15 +4175,15 @@ ProductObject.prototype.ProperName(objects, first = true, data = {})
 //
 // CoproductObject is a MultiObject
 //
-function CoproductObject(cat, args)
+function CoproductObject(diagram, args)
 {
-	MultiObject.call(this, cat, args);
+	MultiObject.call(this, diagram, args);
 	//
 	// the size of a coproduct is one plus the size of the largest component object
 	//
 	this.size = 1 + this.objects.reduce((sz, o) => sz = Math.max(o.size, sz), 0);
 	this.name = this.name === '' ? CoproductObject.Codename() : this.name;
-	this.properName = this.properName === '' ? CoproductObject.ProperName(cat, morphisms) : this.properName;
+	this.properName = this.properName === '' ? CoproductObject.ProperName(this.diagram.codomain, morphisms) : this.properName;
 	this.seperatorWidth = Cat.textWidth('&plus');
 	this.setSignature();
 }
@@ -4197,11 +4198,11 @@ CoproductObject.prototoype.Codename(objects)
 {
 	return objects.map(o => typeof o === 'string' ? o : o.name).join('-X-');
 }
-CoproductObject.prototoype.Get(cat, objects)
+CoproductObject.prototoype.Get(diagram, objects)
 {
 	const name = CoproductObject.Codename(objects);
-	let obj = cat.getObject(name);
-	return obj === null ? new CoproductObject(cat, {objects}) : obj;
+	let obj = diagram.codoamin.getObject(name);
+	return obj === null ? new CoproductObject(diagram, {objects}) : obj;
 }
 CoproductObject.prototoype.ProperName(first = true, data = {})
 {
@@ -4215,15 +4216,15 @@ CoproductObject.prototype.fromHTML(first = true, {uid:0, id:'data'})
 //
 // HomObject is a MultiObject
 //
-function HomObject(cat, args)
+function HomObject(diagram, args)
 {
-	Multiobject.call(this, cat, args);
+	Multiobject.call(this, diagram, args);
 	//
 	// A hom object has a size of one for a pointer
 	//
 	this.size = 1;
 	this.name = this.name === '' ? homObject.Codename(this.objects) : this.name;
-	this.properName = this.properName === '' ? homObject.ProperName(cat, this.objects) : this.properName;
+	this.properName = this.properName === '' ? homObject.ProperName(diagram, this.objects) : this.properName;
 	this.setSignature();
 }
 HomObject.prototype.toHTML(first=true, uid={uid:0, idp:'data'})
@@ -4254,11 +4255,11 @@ HomObject.prototype.Codename(objects)
 {
 	return `H--${objects.map(o => typeof o === 'string' ? o : o.name).join('-c-')}--H`;
 }
-HomObject.prototype.Get(cat, objects)
+HomObject.prototype.Get(diagram, objects)
 {
 	const name = HomObject.Codename(objects);
-	let obj = cat.getObject(name);
-	return obj === null ? new HomObject(cat, {objects}) : obj;
+	let obj = diagram.codomain.getObject(name);
+	return obj === null ? new HomObject(diagram, {objects}) : obj;
 }
 HomObject.prototype.ProperName(objects, first = true, data = {})
 {
@@ -4284,15 +4285,14 @@ HomObject.formPort(graph = {position:0, tags:[], w:0}, first = true)
 //
 // a text element placed on the diagram.
 //
-function DiagramElement(dgrm, args)
+function DiagramElement(diagram, args)
 {
-	if (!Diagram.isPrototypeOf(dgrm))
+	if (!Diagram.isPrototypeOf(diagram))
 		throw 'Not a diagram';
 	const nuArgs = Cat.clone(args);
-	nuArgs.diagram = dgrm;
-	nuArgs.name = Cat.getArg(args, 'name', cat.getAnon());
-	Element.call(dgrm.domain, nuArgs);
-	this.diagram = dgrm;
+	nuArgs.name = Cat.getArg(args, 'name', diagram.domain.getAnon());
+	nuArgs.origin = 'domain';
+	Element.call(diagram, nuArgs);
 }
 DiagramElement.prototype.decrRefcnt()
 {
@@ -4336,9 +4336,9 @@ DiagramElement.prototype.isGraphable()
 //
 // DiagramText is a DiagramElement
 //
-function DiagramText(dgrm, args)
+function DiagramText(diagram, args)
 {
-	DiagramElement.call(dgrm, args)
+	DiagramElement.call(diagram, args)
 	this.h = Cat.getArg(args, 'h', Cat.default.font.height);
 	const xy = Cat.getArg(args, 'xy', {x:0, y:0});
 	this.x = xy.x;
@@ -4378,7 +4378,7 @@ DiagramText.prototype.editText(id, attr)
 // This is the object for the source category in a diagram.
 // It points to the object in the target category of the diagram.
 //
-function DiagramObject(dgrm, args)
+function DiagramObject(diagram, args)
 {
 	CatObject.call(this, args);
 	DiagramElement.call(this, args);
@@ -4386,7 +4386,7 @@ function DiagramObject(dgrm, args)
 	// the object in the target category that this object maps to, if any
 	//
 	if ('to' in args)
-		this.setObject(dgrm.codomain.getObject(args.to));
+		this.setObject(diagram.codomain.getObject(args.to));
 	//
 	// dimensional aspects of the diagram source object
 	//
@@ -4543,7 +4543,7 @@ Category.prototype.clear()
 //
 // Reconstitute this category from its saved contents.
 //
-Category.prototype.process(dgrm, args)
+Category.prototype.process(args)
 {
 	let errMsg = '';
 	if ('objects' in args)
@@ -4809,7 +4809,7 @@ Category.prototype.HasForm(ary)
 	return good;
 }
 // TODO which category owns this?
-Category.prototype.Run(m, dgrm)
+Category.prototype.Run(m, diagram)
 {
 	let dm = m.morphisms[0];
 	if (!DataMorphism.isPrototypeOf(dm))
@@ -4817,7 +4817,7 @@ Category.prototype.Run(m, dgrm)
 	//
 	// there is no output morphism for the codomains tty and threeD
 	//
-	let dataOut = (m.codomain.basename !== 'tty' && m.codomain.basename !== 'threeD') ? dgrm.newDataMorphism(m.domain, m.codomain) : null;
+	let dataOut = (m.codomain.basename !== 'tty' && m.codomain.basename !== 'threeD') ? diagram.newDataMorphism(m.domain, m.codomain) : null;
 	//
 	// we can run from a data mophism
 	//
