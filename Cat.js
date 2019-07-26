@@ -2927,6 +2927,13 @@ ${this.svg.button(onclick)}
 		else
 			a[f] = [v];
 	},
+	//
+	// merge array b to a
+	//
+	arrayMerge(a, b)
+	{
+		b.map(v => a.indexOf(v) === -1 ? a.push(v) : null);
+	},
 	textWidth(txt)
 	{
 		if (isGUI)
@@ -3494,6 +3501,7 @@ ${this.svg.button(onclick)}
 
 class expression
 {
+	/*
 	// bindGraph
 	//
 	bindGraph(first, data)	// data: {cod, link, function, domRoot, codRoot, offset}
@@ -3739,6 +3747,7 @@ class expression
 		rIndex.push(1);
 		this.rhs.copyGraph(false, {expr:data.expr.rhs, map:data.map});
 	}
+	*/
 }
 
 //
@@ -3865,9 +3874,9 @@ Element.prototype.json(a = {})
 //
 // FITB
 //
-Element.prototype.js(catVarName = 'cat')
+Element.prototype.js(dgrmVarName = 'dgrm')
 {
-	return `		new ${this.prototype.name}((${catVarName}, ${this.stringify());\n`);
+	return `		new ${this.prototype.name}((${dgrmVarName}), ${this.stringify()};\n`;
 }
 //
 // Return a string representing the element.  Reconstitute it with process().
@@ -3940,11 +3949,236 @@ function Graph(tag, position, width, graphs = [])
 	this.links = [];
 	this.visited = [];
 }
+Graph.prototype.isLeaf()
+{
+	return this.graphs.length === 0;
+}
+Graph.prototype.getFactor(...indices)
+{
+	let fctr = this;
+	for (let i=0; i<indices.length; ++i)
+	{
+		const k = indices[i];
+		if (k === -1)
+			return null;	// object is terminal object One
+		fctr = fctr.graphs[k];
+	}
+	return fctr;
+}
 Graph.prototype.tagGraph(tag)
 {
 	if (this.tags.indexOf(tag) === -1)
 		graph.tags.push(tag);
 	this.graphs.map(g => g.tagGraph(tag));
+}
+Graph.componentGraph(graph)
+{
+	this.links.map(lnk => lnk.splice(1, 0, graph));
+	this.graphs.map((g, i) => g.componentGraph(graph.graphs[i]));
+}
+Graph.prototype.traceLinks(link = [])
+{
+	if (this.isLeaf())
+	{
+		//
+		// copy our links
+		//
+		const links = this.links.slice();
+		//
+		// clear which links have been visited
+		//
+		this.visited = [];
+		//
+		// for each link...
+		//
+		while(links.length > 0)
+		{
+			const lnk = links.pop();
+			//
+			// have we seen this link before?
+			//
+			if (this.visited.indexOf(lnk) > -1)
+				continue;
+			//
+			// get the graph that the link specifies
+			//
+			const g = this.getFactor(lnk);
+			//
+			// if a link in g has not been seen in our links,
+			// and the link's root is not the graph's what?  TODO
+			//
+			g.links.map(k => (links.indexOf(k) === -1 && k[0] !== link[0]) ? links.push(k) : null);
+//			g.tags.map(r => this.tags.indexOf(r) === -1 ? this.tags.push(r) : null);
+			Cat.arrayMerge(this.tags, g.tags);
+			if (link.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
+				continue;
+			//
+			// remember that we've been here
+			//
+			if (this.visited.indexOf(lnk) === -1)
+				this.visited.push(lnk);
+		}
+	}
+	else
+	{
+		this.graphs.map((g, i) =>
+		{
+			const lnk = link.slice();
+			//
+			// add a level to the link
+			//
+			lnk.push(i);
+			g.traceLinks(lnk});
+		});
+	}
+}
+//
+// builds string graphs from other graphs
+//
+Graph.prototype.mergeGraphs(data) // data: {from, base, inbound, outbound}
+{
+	if (data.from.isLeaf())
+	{
+		//
+		// adjust the lnks to merge
+		//
+		const links = data.from.links.map(lnk =>
+		{
+			let nuLnk = data.base.reduce((isSelfLink, f, i) => isSelfLink && f === lnk[i], true) ? data.inbound.slice() : data.outbound.slice();
+			nuLnk.push(...lnk.slice(data.base.length));
+			return nuLnk;
+		});
+		//
+		// merge the links to our links
+		//
+		Cat.arrayMerge(this.links, links);
+		//
+		// merge the tags to our tags
+		//
+		Cat.arrayMerge(this.tags, data.from.tags);
+	}
+	else
+		this.graphs.map((g, i) => g.mergeGraphs({from:data.from.graphs[i], base:data.base, inbound:data.inbound, outbound:data.outbound}));
+}
+Graph.prototype.bindGraph(data)	// data: {cod, link, tag, domRoot, codRoot, offset}
+{
+	if (this.isLeaf())
+	{
+		const domRoot = data.domRoot.slice();
+		const codRoot = data.codRoot.slice();
+		domRoot.push(...data.link);
+		codRoot.push(...data.link);
+		Cat.arraySet(this, 'links', codRoot);
+		Cat.arraySet(data.cod, 'links', domRoot);
+		Cat.arrayInclude(this, 'tags', data.tag);
+		Cat.arrayInclude(data.cod, 'tags', data.tag);
+	}
+	else this.graphs.map((g, i) =>
+	{
+		//
+		// add a level to our link
+		//
+		const subIndex = data.link.slice();
+		subIndex.push(i + data.offset);
+		const args = Cat.clone(data);
+		args.link = subIndex;
+		args.cod = data.cod.graphs[i + data.offset];
+		g.bindGraph(args);
+	});
+}
+//
+// Copy out of the composite's sequence object to the final two object sequence giving the omposite's graph
+//
+// data.cnt is the number of morphisms
+//
+Graph.prototype.copyDomCodLinks(seqGraph, data)	// data {cnt, link}
+{
+	const factorLink = data.link.slice();
+	if (this.isLeaf())
+	{
+		//
+		// reset the link to get info from the composite's sequence graph
+		//
+		if (factorLink[0] === 1)
+			factorLink[0] = data.cnt;
+		//
+		// get our factor of interest
+		//
+		const f = seqGraph.getFactor(factorLink);
+		//
+		// for all the links we have visited in the factor...
+		//
+		for (let i=0; i<f.visited.length; ++i)
+		{
+			//
+			// copy the link
+			//
+			const lnk = f.visited[i].slice();
+			//
+			// if not the beginning or end, skip it
+			//
+			if (lnk[0] > 0 && lnk[0] < data.cnt)
+				continue;
+			//
+			// reset the link back to the final two object sequence
+			//
+			if (lnk[0] === data.cnt)
+				lnk[0] = 1;
+			//
+			// remember the link
+			//
+			if (this.links.indexOf(lnk) === -1)	// TODO needed?
+				this.links.push(lnk);
+		}
+		f.tags.map(r => this.tags.indexOf(r) === -1 ? this.tags.push(r) : null);
+	}
+	else this.graphs.map((g, i) =>
+	{
+		let link = data.link.slice();
+		//
+		// add our location to the link
+		//
+		link.push(i);
+		g.copyDomCodLinks(seqGraph, {link, cnt:data.cnt});
+	});
+}
+//
+// copyGraph
+//
+// Support for lambda morphisms
+//
+Graph.prototype.copyGraph(data)	// data {map, src}
+{
+	if (this.isLeaf())
+	{
+		//
+		// copy the tags from the source
+		//
+		this.tags = data.src.tags.slice();
+		//
+		// for every source link...
+		//
+		for (let i=0; i<data.src.links.length; ++i)
+		{
+			const lnk = data.src.links[i];
+			for (let j=0; j<data.map.length; ++j)
+			{
+				const pair = data.map[j];
+				const fromLnk = pair[0];
+				const toLnk = pair[1].slice();
+				if (fromLnk.reduce((isEqual, ml, i) => ml === lnk[i] && isEqual, true))
+				{
+					const lnkClip = lnk.slice(fromLnk.length);
+					toLnk.push(...lnkClip);
+					this.links.push(toLnk);
+				}
+			}
+		}
+	}
+	else this.graphs.map((e, i) =>
+	{
+		e.copyGraph({src:data.src.graphs[i], map:data.map});
+	});
 }
 
 //
@@ -4001,9 +4235,13 @@ CatObject.prototype.getGraph(data = {position:0}, first = true)
 	data.position += w;
 	return new Graph(this.prototype.name, position, w);
 }
-CatObject.prototype.factorButton(data)
+//
+// data: {fname, root, index, id, action, op}
+// e.g., {fname:'selectedFactorMorphism', root:from.to.name, index:[], id:'codomainDiv', action:'', op:'product'}
+//
+CatObject.prototype.factorButton(properName, data)
 {
-	return H.table(H.tr(H.td(H.button(this.properName + data.txt, '', Cat.display.elementId(), data.title,
+	return H.table(H.tr(H.td(H.button(properName + data.txt, '', Cat.display.elementId(), data.title,
 		`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().${action}('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`))));
 }
 //
@@ -4153,6 +4391,9 @@ MultiObject.getGraph(tag, data, parenWidth, sepWidth, first = true)	// data: {po
 	const graphs = this.objects.map(o =>
 		{
 			const g = o.getGraph(data, false);
+			//
+			// for sequence and plotting strings
+			//
 			if (this.resetPosition())
 				data.position = 0;
 			else
@@ -4175,6 +4416,23 @@ MultiObject.prototype.resetPosition()
 MultiObject.prototype.moreHelp()
 {
 	return H.table(H.tr(H.th('Objects', '', '', '', 'colspan=2')) + this.objects.map(o => H.tr(H.td(o.diagram.properName) + H.td(o.properName, 'left'))).join(''));
+}
+//
+// Return my button plus my objects' buttons.
+//
+MultiObject.prototype.factorButton(data)
+{
+	let html = H.tr(this.factorButton(data), 'sidename');
+	let tbl = '';
+	this.objects.map((o, i) =>
+	{
+		const subIndex = data.index.slice();
+		subIndex.push(i);
+		const d = Cat.clone(data);
+		d.index = subIndex;
+		tbl += H.td(o.factorButton(d);
+	});
+	return html + H.tr(H.td(H.table(H.tr(tbl))), 'sidename');
 }
 //
 // MultiObject static methods
@@ -4217,23 +4475,6 @@ ProductObject.prototype.toHTML(first=true, uid={uid:0, idp:'data'})
 	// TODO
 //	const codes = this.objects.map(d => {uid.uid; return d.toHTML(false, uid)});
 //	return Cat.parens(codes.join(op.sym), '(', ')', first);
-}
-//
-// Return my button plus my objects' buttons.
-//
-ProductObject.prototype.factorButton(data)
-{
-	let html = H.tr(this.factorButton(xobj, '', data, 'addFactor', 'Add factor'), 'sidename');
-	let tbl = '';
-	this.objects.map((o, i) =>
-	{
-		const subIndex = data.index.slice();
-		subIndex.push(i);
-		const d = Cat.clone(data);
-		d.index = subIndex;
-		tbl += H.td(o.factorButton(d);
-	});
-	return html + H.tr(H.td(H.table(H.tr(tbl))), 'sidename');
 }
 ProductObject.getGraph(data = {position:0}, first = true)
 {
@@ -4989,24 +5230,16 @@ Morphism.prototype.hasMorphism(mor, start = true)
 }
 Morphism.prototype.$(args)
 {
-	throw `Unknow action in morphism ${this.name}`;
+	throw `Unknown action in morphism ${this.name}`;
 }
 //
-// A generic morphism has an empty graph.
+// A generic morphism has an empty graph constructe from its domain and codomain.
 //
-Morphism.prototype.getGraph()
+Morphism.prototype.getGraph(data = {position:0}, first = true)
 {
 	const s = Sequence.Get(this.diagram, [this.domain, this.codomain]);
-	return s.getGraph();
+	return s.getGraph(data, first);
 }
-/*
-// TODO move?  this only uses properName
-Morphism.prototype.factorButton(txt, data, action, title)
-{
-	return H.td(H.button(this.properName + txt, '', Cat.display.elementId(), title,
-			`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().${action}('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`));
-}
-*/
 //
 // static Morphism methods
 //
@@ -5015,6 +5248,8 @@ Morphism.prototype.Process(diagram, args)
 	let m = null;
 	try
 	{
+		// TODO does this work?
+		m = new `args.prototype`(digram, args);
 		switch(args.prototype)
 		{
 		case 'Identity':
@@ -5075,6 +5310,15 @@ function Identity(diagram, args)
 	Morphism.call(this, diagram, nuArgs);
 	this.setSignature();
 }
+Identity.prototype.getGraph(data = {position:0}, first = true)
+{
+//		StringMorphism.bindGraph(this.diagram, this.graph.data[0], true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
+//	this.graph.data[0].bindGraph(true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
+	const g = super.getGraph(data);
+	g.bindGraph({cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
+	g.tagGraph('identity');
+	return g;
+}
 //
 // Identity static methods
 //
@@ -5090,15 +5334,6 @@ Identity.prototype.Get(diagram, dom, cod)
 	const m = diagram.codomain.getMorphism(name);
 	return m === null ? new Identity(diagram, {domain, codomain}) : m;
 }
-Identity.prototype.bindGraph(s, data)
-{
-//		StringMorphism.bindGraph(this.diagram, this.graph.data[0], true, {cod:this.graph.data[1], link:[], function:'identity', domRoot:[0], codRoot:[1], offset:0});
-	s.bindGraph(true, {cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
-	s.tagGraph(s.graph, 'identity');
-}
-//
-// Identity static methods
-//
 Identity.prototype.ProperName(domain, codomain = null)
 {
 	return (codomain && domain.name !== codomain.name) ? `Id<${domain.properName}, ${codomain.properName}>` : `Id<${domain.properName}>`;
@@ -5396,21 +5631,40 @@ MultiMorphism.prototype.isIterable()
 {
 	return this.morphisms.reduce((m, r) => r &= m.isIterable(), true);
 }
-MultiMorphism.prototype.getGraph()
+MultiMorphism.prototype.getGraph(data = {position:0}, first = true)
 {
-	const dom = graph.data[0];
-	const cod = graph.data[1];
+	const graph = super.getGraph(data);
+	const dom = graph.graphs[0];
+	const cod = graph.graphs[1];
 	const graphs = this.morphisms.map((m, i) => m.getGraph()).map((g, i) =>
 	{
-		dom.data[i] = Cat.clone(g.data[0]);
-		cod.data[i] = Cat.clone(g.data[1]);
-		StringMorphism.componentGraph(this.diagram, dom.data[i], true, i);
-		StringMorphism.componentGraph(this.diagram, cod.data[i], true, i);
+		g.componentGraph(dom.data[i]);
+		g.componentGraph(cod.data[i])
 	});
 }
 MultiMorphism.prototype.moreHelp()
 {
 	return H.table(H.tr(H.th('Morphisms', '', '', '', 'colspan=2')) + this.morphisms.map(m => H.tr(H.td(m.diagram.properName) + H.td(m.properName, 'left'))).join(''));
+}
+MultiMorphism.prototype.mergeMorphismGraphs(dual = false)
+{
+	const graphs = this.morphisms.map(m => m.getGraph());
+	graphs.map((g, i) =>
+	{
+		const dom = dual ? 1 : 0;
+		const cod = dual ? 0 : 1;
+		this.graph.data[dom].mergeGraphs({from:g.graph.data[dom], base:[dom], inbound:[], outbound:[cod, i]});
+		const gCod = g.graph.data[cod];
+		const tCod = this.graph.data[cod];
+		const thisGraph = 'data' in tCod ? tCod.data[i] : tCod;
+		thisGraph.mergeGraphs({from:gCod, base:[cod, i], inbound:[cod, i], outbound:[]});
+	});
+	const cod = this.graph.data[1];
+	graphs.map((g, i) =>
+	{
+		cod.data[i] = Cat.clone(g.graph.data[dual ? 0 : 1]);
+//??			StringMorphism.componentGraph(this.diagram, cod.data[i], true, i);
+	});
 }
 /*
 MultiMorphism.prototype.getGraph(graph, dual = false)
@@ -5466,19 +5720,40 @@ Composite.prototype.isIterable()
 {
 	return this.morphisms[0].isIterable();
 }
-Composite.prototype.getGraph(graph)
+Composite.prototype.getGraph(data = {position:0}, first = true)
 {
-	const graphs = this.morphisms.map((m, i) => m.getGraph());
-//		const expr = m.category.parseObject(graphs.map(m => m.domain.code).join() + ',' + graphs[graphs.length -1].codomain.code);
-	graphs.map((g, i) =>
+	//
+	// First get the graphs of the comprising morphisms.
+	//
+	const graph = super.getGraph();
+	//
+	// Next build a sequence of all the domains and last coodmain.
+	// Note that the number of items in the sequence is one greater than the number of morphisms.
+	//
+	const objects = this.morphisms.map(m => m.domain);
+	objects.push(this.morphisms[this.morphisms.length -1].codomain);
+	const sequence = Sequence.get(diagram, objects);
+	//
+	// get the sequence's graph
+	//
+	const seqGraph = sequence.getGraph(data);
+	//
+	// Copy the links from the comprising morphisms to the sequence.
+	//
+	graph.graphs.map((g, i) =>
 	{
-//			StringMorphism.mergeGraphs(this.diagram, expr.data[i], true, {from:g.graph.data[0], base:[0], inbound:[i], outbound:[i+1]});
-//			StringMorphism.mergeGraphs(this.diagram, expr.data[i+1], true, {from:g.graph.data[1], base:[1], inbound:[i+1], outbound:[i]});
-		expr.data[i].mergeGraphs(true, {from:g.data[0], base:[0], inbound:[i], outbound:[i+1]});
-		expr.data[i+1].mergeGraphs(true, {from:g.data[1], base:[1], inbound:[i+1], outbound:[i]});
+		seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
+		seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 	});
-	StringMorphism.traceLinks(this.diagram, graph, true, {graph, index:[]});
-	StringMorphism.copyDomCodLinks(this.diagram, graph, true, {cnt:this.morphisms.length, graph, index:[]});
+	//
+	// Trace the links in the sequence.
+	//
+	seqGraph.traceLinks();
+	//
+	// Copy the links of the initial domain and final codomain to the returned graph.
+	//
+	graph.copyDomCodLinks(seqGraph, {cnt:this.morphisms.length, link:[]});
+	return graph;
 }
 //
 // Composite static methods
@@ -5598,10 +5873,10 @@ function ProductAssembly(diagram, args)
 	nuArgs.properName = 'properName' in args ? args.properName : ProductAssembly.ProperName(nuArgs.morphisms);
 	MultiMorphism.call(this, diagram, nuArgs);
 }
-ProductAssembly.prototype.getGraph(data = {position:0})
+ProductAssembly.prototype.getGraph(data = {position:0}, first = true)
 {
 	// TODO
-	this.mergeMorphismGraphs(graph);
+	this.mergeMorphismGraphs(graph, first);
 }
 //
 // ProductAssembly static methods
@@ -5642,9 +5917,9 @@ function CoproductAssembly(diagram, args)
 	nuArgs.properName = 'properName' in args ? args.properName : CoproductAssembly.ProperName(nuArgs.morphisms);
 	MultiMorphism.call(this, diagram, nuArgs);
 }
-CoproductAssembly.prototype.getGraph()
+CoproductAssembly.prototype.getGraph(data = {position:0}, first = true)
 {
-	this.mergeMorphismGraphs(graph);
+	this.mergeMorphismGraphs(graph, first);
 	// TODO
 }
 //
@@ -5695,7 +5970,7 @@ FactorMorphism.prototype.json()
 	a.factors = this.factors;
 	return a;
 }
-FactorMorphism.prototype.bindGraph(s, data)
+FactorMorphism.prototype.getGraph(s, data)
 {
 //	const domExpr = this.graph.data[0];
 //	const codExpr = this.graph.data[1];
@@ -5896,7 +6171,6 @@ LambdaMorphism.prototype.decrRefcnt()
 }
 LambdaMorphism.prototype.getGraph(data = {position:0})
 {
-//	const preCurryGraph = StringMorphism.getGraph(m.preCurry);
 	const preCurryGraph = this.preCurry.getGraph(data);
 	const map = this.domFactors.map((f, i) => [f, [0, i]]);
 	if (this.domFactors.length === 1)
@@ -5904,10 +6178,10 @@ LambdaMorphism.prototype.getGraph(data = {position:0})
 		const f = map[0];
 		map[0] = [f[0], [f[1][1]]];
 	}
-	const dom = graph.data[0];
-	const cod = graph.data[1];
-	const homDom = cod.objects[0];	// TODO objects???
-	const homCod = cod.objects[1];	// TODO objects???
+	const dom = graph.graphs[0];
+	const cod = graph.graphs[1];
+	const homDom = cod.graphs[0];
+	const homCod = cod.graphs[1];
 	const homMap = this.homFactors.map((f, i) => [f, [1, 0, i]]);
 	if (this.homFactors.length === 1)
 	{
@@ -5916,9 +6190,9 @@ LambdaMorphism.prototype.getGraph(data = {position:0})
 	}
 	map.push(...homMap);
 	map.push([[1], [1, 1]]);
-	this.domFactors.map((f, i) => ('data' in dom ? dom.data[i] : dom).copyGraph(true, {map, expr:preCurryGraph.graph.getFactor(f)}));
-	this.homFactors.map((f, i) => ('data' in homDom ? homDom.data[i] : homDom).copyGraph(true, {map, expr:preCurryGraph.graph.getFactor(f)}));
-	homCod.copyGraph(true, {map, expr:preCurryGraph.graph.data[1]});
+	this.domFactors.map((f, i) => (dom.isLeaf() ? dom : dom.data[i]).copyGraph({map, src:preCurryGraph.getFactor(f)}));
+	this.homFactors.map((f, i) => (homDom.isLeaf() ? homDom : homDom.data[i]).copyGraph({map, src:preCurryGraph.getFactor(f)}));
+	homCod.copyGraph({map, src:preCurryGraph.graph.data[1]});
 	this.tagGraph(this.prototype.name);
 }
 //
@@ -5957,9 +6231,10 @@ function StringMorphism(diagram, src)
 {
 	Morphism.call(this, diagram, {origin:graph, domain:src.domain, codomain:src.codomain, name:src.name, diagram});
 	this.source = src;
-	this.sequence = Sequence.Get(diagram, {[src.domain, src.codomain]});
+//	this.sequence = Sequence.Get(diagram, {[src.domain, src.codomain]});
 	this.graph = src.getGraph();	// a graph is like a net list between the ports
 }
+/*
 StringMorphism.prototype.mergeMorphismGraphs(morph, dual = false)
 {
 	const data = {position:0};
@@ -5981,7 +6256,6 @@ StringMorphism.prototype.mergeMorphismGraphs(morph, dual = false)
 //??			StringMorphism.componentGraph(this.diagram, cod.data[i], true, i);
 	});
 }
-/*
 StringMorphism.prototype.makeParallelGraph(morphisms)
 {
 	const dom = this.graph.data[0];
@@ -6935,6 +7209,7 @@ Diagram.prototype.lambdaBtnForm(domain, codomain, root)
 		H.h5('Codomain Factors: C') +
 		(HomObject.isPrototypeOf(codomain) ? H.small('Merge to codomain hom') + Cat.display.getButton('codhom', `Cat.getDiagram().toggleCodHom()`, 'Merge codomain hom', Cat.default.button.tiny) + H.br() : '') +
 		H.small('Click to move to A &otimes; B') +
+		// TODO this factorButton arguments are not correct
 		H.div(HomObject.isPrototypeOf(codomain) ? codomain.homDomain().factorButton({dir:1, fromId:'codomainDiv', toId:'domainDiv'}) : '', '', 'codomainDiv') +
 		H.span(Cat.display.getButton('edit', `Cat.getDiagram().gui(evt, this, 'lambdaMorphism')`, 'Curry morphism'));
 	document.getElementById('toolbarTip').innerHTML = html;
@@ -8158,7 +8433,7 @@ Diagram.prototype.copyObject(e)
 	const xy = D2.add(from, D2.scale(Cat.default.arrow.length/2, {x:1, y:1}));
 	this.placeObject(e, from.to, xy);
 }
-Diagram.prototype.getGraph(m)
+Diagram.prototype.getMorphismGraph(m)
 {
 	if (this.graphCat.hasMorphism(m.name))
 		return this.graphCat.getMorphism(m.name);
