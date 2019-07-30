@@ -205,6 +205,7 @@ const Cat =
 	// regular expression for for validating basic names
 	//
 	basenameEx:		RegExp('^[a-zA-Z_]+[@a-zA-Z0-9_-]*[a-zA-Z]$'),
+	opEx:			RegExp('^..{'),
 	localDiagrams:	{},
 	parenWidth:		0;
 	secret:			'0afd575e4ad6d1b5076a20bf53fcc9d2b110d3f0aa7f64a66f4eee36ec8d201f',
@@ -506,7 +507,7 @@ const Cat =
 	{
 		$Cat = new Category(
 		{
-			name:			'Cat',
+			basename:		'Cat',
 			properName:		'&#x2102;&#x1D552;&#x1D565;',
 			description:	'Category of small categories',
 		});
@@ -612,9 +613,9 @@ const Cat =
 				{
 					data.map(cat =>
 					{
-						if (!$Cat.hasObject(cat.name))
+						if (!$Cat.getObject(cat.basename))
 						{
-							const nuCat = new Category({name:cat.name, properName:cat.properName, description:cat.description, signature:cat.signature});
+							const nuCat = new Category({basename:cat.basename, properName:cat.properName, description:cat.description, signature:cat.signature});
 							Cat.catalog[nuCat] = {};
 						}
 					});
@@ -1287,12 +1288,12 @@ const Cat =
 				try
 				{
 					document.getElementById('categoryError').innerHTML = '';
-					const name = document.getElementById('categoryName').value;
-					if (name === '')
+					const basename = document.getElementById('categoryName').value;
+					if (basename === '')
 						throw 'Category name must be specified.';
-					if (!RegExp(Cat.userNameEx).test(name))
+					if (!RegExp(Cat.nameEx).test(basename))
 						throw 'Invalid category name.';
-					new Category($Cat, {name, properName:document.getElementById('categoryHtml').value, description:document.getElementById('categoryDescription').value});
+					new Category($Cat, {basename, properName:document.getElementById('categoryHtml').value, description:document.getElementById('categoryDescription').value});
 				}
 				catch(err)
 				{
@@ -2780,15 +2781,15 @@ ${this.svg.button(onclick)}
 							//
 					case 68:	// d
 						if (plain && !dgrm.readonly)
-							dgrm.placeObject(e, cat.getObject('D'), xy);
+							dgrm.placeObject(e, dgrm.getObject('D'), xy);
 						break;
 					case 70:	// f
 						if (plain && !dgrm.readonly)
-							dgrm.placeObject(e, cat.getObject('F'), xy);
+							dgrm.placeObject(e, dgrm.getObject('F'), xy);
 						break;
 					case 83:	// S
 						if (plainShift && !dgrm.readonly)
-							dgrm.placeObject(e, cat.getObject('Str'), xy);
+							dgrm.placeObject(e, dgrm.getObject('Str'), xy);
 						break;
 
 					case 79:	// O
@@ -3682,16 +3683,25 @@ Element.prototype.Codename(diagram, basename)
 {
 	return `${diagram.codomain.basename}:${diagram.user}:${diagram.basename}:${basename}`;
 }
-Element.prototype.Names(name)
+Element.prototype.NameTokens(name)
 {
 	const tokens = name.split(':');
 	const a =
 	{
-		basename:	tokens[3],
-		user:		tokens[1],
-		diagram:	tokens[2],
-		category:	tokens[0],
+		basename:	'',
+		user:		'',
+		diagram:	'',
+		category:	'',
 	};
+	if (tokens.length > 1)
+	{
+		a.basename = tokens[3];
+		a.user = tokens[1];
+		a.diagram = tokens[2];
+		a.category = tokens[0];
+	}
+	else
+		a.basename = name;
 	return a;
 }
 
@@ -4083,33 +4093,7 @@ CatObject.prototype.factorButton(properName, data)
 //
 CatObject.Process(diagram, args)
 {
-	return new window[args.prototype](args);
-		/*
-		let r = null;
-		switch(args.prototype)
-		{
-		case 'CatObject':
-			r = new CatObject(diagram, args);	// TODO should not happen?
-			break;
-		case 'NamedIdentityObject':
-			r = new NamedIdentityObject(diagram, args);
-			break;
-		case 'ProductObject':
-			r = new ProductObject(diagram, args);
-			break;
-		case 'CoproductObject':
-			r = new CoproductObject(diagram, args);
-			break;
-		case 'HomObject':
-			r = new HomObject(diagram, args);
-			break;
-		case 'DiagramObject':
-			const dgrm = Cat.getDiagram(args.diagram);
-			r = new DiagramObject(dgrm, args);
-			break;
-		}
-		return r;
-		*/
+	return new Cat[args.prototype](args);
 }
 
 //
@@ -4311,7 +4295,7 @@ Sequence.prototype.resetPosition()
 //
 Sequence.prototype.Codename(diagram, objects)
 {
-	return Element.Codename(diagram, `Sq{${objects.map(o => o.name).join(','))}}qS`;
+	return Element.Codename(diagram, `So{${objects.map(o => o.name).join(','))}}oS`;
 }
 Sequence.prototype.Get(diagram, objects)
 {
@@ -4639,8 +4623,6 @@ DiagramObject.prototype.isGraphable()
 function Category(args)
 {
 	CatObject.call(this, $Cat, args);	// TODO $Cat should be a diagram object
-//	this.referenceDiagrams = Cat.getArg(args, 'referenceDiagrams', []);
-//	this.references = this.referenceDiagrams.map(r => Cat.getDiagram(r));
 	if ('subobject' in args)
 		this.subobject = $Cat.getObject(args.subobject);
 	//
@@ -4667,6 +4649,7 @@ Category.prototype.signature()
 		s += m.signature;
 	return Cat.sha256(`Cat ${this.name} ${this.prototype.name} ${s});
 }
+/*
 //
 // TODO remove?  currently doesn't set ref counts correctly
 //
@@ -4676,6 +4659,7 @@ Category.prototype.clear()
 	this.morphisms.clear();
 	this.texts = [];
 }
+*/
 //
 // Reconstitute this category from its saved contents.
 //
@@ -4685,7 +4669,7 @@ Category.prototype.process(args)
 	if ('objects' in args)
 		Object.keys(args.objects).forEach(function(key)
 		{
-			if (!this.hasObject(key))
+			if (!this.getObject(key))
 			{
 				try
 				{
@@ -4696,11 +4680,13 @@ Category.prototype.process(args)
 					errMsg += x;
 				}
 			}
+			else
+				throw 'object already exists';
 		}, this);
 	if ('morphisms' in args)
 		Object.keys(args.morphisms).forEach(function(key)
 		{
-			if (!this.hasMorphism(key))
+			if (!this.getMorphism(key))
 			{
 				try
 				{
@@ -4711,6 +4697,8 @@ Category.prototype.process(args)
 					errMsg += x;
 				}
 			}
+			else
+				throw 'morphism already exists';
 		}, this);
 	if (errMsg != '')
 		Cat.recordError(errMsg);
@@ -4754,7 +4742,7 @@ Category.prototype.js()
 `
 	const cat = new Category(
 		{
-			name:	'${this.name}.,
+			basename:	'${this.basename}.,
 			properName:	'${this.properName}',	// TODO make safe
 			description:	'${this.description}',	// TODO make safe
 			subobject:	'${this.subobject}',
@@ -4766,53 +4754,87 @@ Category.prototype.js()
 		js += `		const ${name} = ${m.js()}`;
 	return js;
 }
-Category.prototype.hasObject(name)
-{
-	//
-	// search reference diagrams as well
-	//
-	return this.references.find(r => r.codomain.hasObject(name)) !== null || this.objects.has(name);
-}
 Category.prototype.getObject(name)
 {
-	let obj = null;
-	if (String.isPrototypeOf(name))
-	{
-		obj = this.references.find(ref => ref.codomain.getObject(name));
-		if (obj === null)
-			obj = this.objects.has(name) ? this.objects.get(name) : null;
-	}
-	return obj;
+	//
+	// if it is already an object, return it
+	//
+	if (CatObject.isPrototypeOf(name))
+		return name;
+	//
+	// if it is an operator name, then it must be for this category
+	//
+	if (Cat.opEx(name))
+		return this.objects.get(name);
+	//
+	// it is a complex name, so break it down
+	//
+	const attrs = Element.NameTokens(name);
+	//
+	// if the names do not match who we are, then we cannot find it
+	//
+	if (attrs.category !== this.basename || attrs.diagram !== this.diagram.basename || attrs.user !== this.diagram.user)
+		return null;
+	//
+	// see what we got
+	//
+	return this.objects.get(attrs.basename);
 }
 Category.prototype.addObject(obj)
 {
-	if (this.hasObject(obj.name))
-		throw `Object name ${obj.name} already exists in category ${this.name}`;
-	this.objects.set(obj.name, obj);
+	if (this.objects.has(obj.basename))
+		throw `Object with basename ${obj.basename} already exists in category ${this.basename}`;
+	this.objects.set(obj.basename, obj);
 }
-Category.prototype.hasMorphism(name)
+Category.prototype.getMorphism(basename)
 {
-	return this.references.find(r => r.codomain.hasMorphism(name)) !== null || this.morphisms.has(name);
+	if (Morphism.isPrototypeOf(basename))
+		return basename;
+	return this.morphisms.has(basename) ? this.morphisms.get(basename) : null;
 }
 Category.prototype.getMorphism(name)
 {
+	//
+	// if it is already an object, return it
+	//
 	if (Morphism.isPrototypeOf(name))
 		return name;
-	return this.morphisms.has(name) ? this.morphisms.get(name) : null;
+	//
+	// if it is an operator name, then it must be for this category
+	//
+	if (Cat.opEx(name))
+		return this.morphisms.get(name);
+	//
+	// it is a complex name, so break it down
+	//
+	const attrs = Element.NameTokens(name);
+	//
+	// if the names do not match who we are, then we cannot find it
+	//
+	if (attrs.category !== this.basename || attrs.diagram !== this.diagram.basename || attrs.user !== this.diagram.user)
+		return null;
+	//
+	// see what we got
+	//
+	return this.morphisms.get(attrs.basename);
 }
 Category.prototype.addMorphism(m)
 {
-	if (this.hasMorphism(m.name))
-		throw `Morphism name ${m.name} already exists in category ${this.name}`;
-	this.morphisms.set(m.name, m);
+	if (this.morphisms.has(m.basename))
+		throw `Morphism with basename ${m.basename} already exists in category ${this.basename}`;
+	this.morphisms.set(m.basename, m);
+}
+Category.prototype.basenameIsUsed(basename)
+{
+	return this.getObject(basename) || this.getMorphism(basename);
 }
 Category.prototype.getAnon(s = 'Anon')
 {
 	while(true)
 	{
-		const name = `${s}_${Cat.random()}`;
-		if (!this.hasObject(name) && !this.hasMorphism(name))
-			return name;
+		const basename = `${s}_${Cat.random()}`;
+		if (!this.basenameIsUsed(basename))
+			return basename;
 	}
 }
 Category.prototype.addHom(m)
@@ -4858,7 +4880,7 @@ Category.prototype.toolbarMorphism(form)
 }
 Category.prototype.validateName(name)
 {
-	return name !== '' && !(this.hasObject(name) || this.hasMorphism(name)) && Cat.nameEx.test(name);
+	return name !== '' && !this.basenameIsUsed(name) && Cat.nameEx.test(name);
 }
 //
 // Category static methods
@@ -4950,19 +4972,20 @@ function StringObject(diagram, args)
 function Morphism(diagram, args)
 {
 	Element.call(this, diagram, args);
-	let obj = typeof args.domain === 'string' ? this.category.getObject(args.domain) : args.domain;
-	if (obj === null)
+	const domain = this.diagram.getObject(args.domain);
+	if (domain === null)
 		throw `Domain ${args.domain} does not exist in category ${this.category.properName}`;
-	Object.defineProperty(this, 'domain', {value: obj, enumerable: true});
-	this.domain.incrRefcnt();
-	obj = typeof args.codomain === 'string' ? this.category.getObject(args.codomain) : args.codomain;
-	if (obj === null)
+	Object.defineProperty(this, 'domain', {value: domain, enumerable: true});
+	const codomain this.diagram.getObject(args.codomain);
+	if (codomain === null)
 		throw `Codomain ${args.codomain} does not exist in category ${this.category.properName}`;
-	Object.defineProperty(this, 'codomain', {value: obj, enumerable: true});
-	this.codomain.incrRefcnt();
-	if ((this.category.validateName(this.name)) || this.category.hasMorphism(this.name))
-		throw `Morphism name ${this.name} is already taken.`;
+	Object.defineProperty(this, 'codomain', {value: codomain, enumerable: true});
+	//
+	// this can fail so do the increments afterwards
+	//
 	this.category.addMorphism(this);
+	this.codomain.incrRefcnt();
+	this.domain.incrRefcnt();
 }
 Morphism.prototype.decrRefcnt()
 {
@@ -5014,50 +5037,6 @@ Morphism.prototype.getGraph(data = {position:0}, first = true)
 Morphism.prototype.Process(diagram, args)
 {
 	return new window[args.prototype](args);
-		/*
-		switch(args.prototype)
-		{
-		case 'Identity':
-			m = new Identity(diagram, args);
-			break;
-		case 'DiagramMorphism':
-			m = new DiagramMorphism(diagram, args);
-			break;
-		case 'Composite':
-			m = new Composite(diagram, args);
-			break;
-		case 'CoproductMorphism':
-			m = new CoproductMorphism(diagram, args);
-			break;
-		case 'CoproductAssembly':
-			m = new CoproductAssemblyMorphism(diagram, args);
-			break;
-		case 'DataMorphism':
-			m = new DataMorphism(diagram, args);
-			break;
-		case 'DiagonalMorphism':
-			m = new DiagonalMorphism(diagram, args);
-			break;
-		case 'FoldMorphism':
-			m = new FoldMorphism(diagram, args);
-			break;
-		case 'ProductMorphism':
-			m = new ProductMorphism(diagram, args);
-			break;
-		case 'ProductAssembly':
-			m = new ProductAssemblyMorphism(diagram, args);
-			break;
-		case 'FactorMorphism':
-			m = new FactorMorphism(diagram, args);
-			break;
-		case 'LambdaMorphism':
-			m = new LambdaMorphism(diagram, args);
-			break;
-		default:
-			m = new Morphism(diagram, args);
-			break;
-		}
-		*/
 }
 
 //
@@ -5510,7 +5489,7 @@ Composite.prototype.getGraph(data = {position:0}, first = true)
 //
 Composite.prototype.Codename(diagram, morphisms)
 {
-	return Element.Codename(diagram, `Cp{${morphisms(m => m.name).join(',')}}pC`);
+	return Element.Codename(diagram, `Cm{${morphisms(m => m.name).join(',')}}mC`);
 }
 Composite.prototype.Domain(diagram, morphisms)
 {
@@ -5597,7 +5576,7 @@ CoproductMorphism.prototype.$(args)
 //
 CoproductMorphism.prototype.Codename(diagram, morphs)
 {
-	return Element.Codename(diagram, `Cm{${morphs(m => m.name).join(',')}}mC`);	// TODO parenthesis
+	return Element.Codename(diagram, `Cm{${morphs(m => m.name).join(',')}}mC`);
 }
 CoproductMorphism.prototype.Domain(diagram, morphs)
 {
@@ -5644,7 +5623,7 @@ ProductAssembly.prototype.getGraph(data = {position:0})
 //
 ProductAssembly.prototype.Codename(diagram, morphisms)
 {
-	return `As{${morphisms.map(m => m.name).join(',')}}sA`;
+	return `Pa{${morphisms.map(m => m.name).join(',')}}aP`;
 }
 ProductAssembly.prototype.Domain(diagram, morphisms)
 {
@@ -5818,7 +5797,7 @@ DiagonalMorphism.prototype.$(args)
 //
 DiagonalMorphism.prototype.Codename(domain, count)
 {
-	return `Dl{${domain.name}:${count}}lD`;
+	return `Dm{${domain.name}:${count}}mD`;
 }
 DiagonalMorphism.prototype.Domain(domain)
 {
@@ -5864,7 +5843,7 @@ FoldMorphism.prototype.$(args)
 //
 FoldMorphism.prototype.Codename(domain, count)
 {
-	return `Fo{${domain.name}:${count}}oF`;
+	return `Fm{${domain.name}:${count}}mF`;
 }
 FoldMorphism.prototype.Domain(domain)
 {
@@ -5890,7 +5869,7 @@ FoldMorphism.prototype.ProperName(domain, factors)
 }
 
 //
-// DataMorphism
+// DataMorphism is a Morphism
 //
 // These do not live in the diagram source categories.
 //
@@ -6079,7 +6058,7 @@ LambdaMorphism.prototype.Codename(diagram, preCurry, domFactors, homFactors)
 {
 	const preCur = diagram.codomain.getMorphism(preCurry);
 	const hom = HomObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
-	return `La{${preCur.name},${ProductObject.Codename(domFactors.map(f => hom.getFactorName(f)))},${ProductObject.Codename(codFactors.map(f => hom.getFactorName(f)))}}aL';
+	return `Lm{${preCur.name},${ProductObject.Codename(domFactors.map(f => hom.getFactorName(f)))},${ProductObject.Codename(codFactors.map(f => hom.getFactorName(f)))}}mL';
 }
 LambdaMorphism.prototype.Domain(diagram, preCurry, factors)
 {
@@ -6277,8 +6256,9 @@ StringMorphism.bindGraph(data)	// data: {cod, link, function, domRoot, codRoot, 
 //
 StringMorphism.Get(graphCat, m)
 {
-	if (graphCat.hasMorphism(m.name))
-		return graphCat.getMorphism(m.name);
+	const s = graphCat.getMorphism(m.name);
+	if (s)
+		return s;
 	return StringMorphism.makeGraph(graphCat, m);
 }
 StringMorphism.prototype.GraphId(m)
@@ -6346,18 +6326,19 @@ function Diagram(args)
 	let nuArgs = Cat.clone(args);
 	let domain = null;
 	//
-	// the diagram's name is the target category's name, the user name, and the name provided by the uer
+	// the diagram's name is the target category's name, the user name, and the name provided by the user
 	//
-	nuArgs.name = Diagram.Codename(args);
-	if (!$Cat.hasObject(name))
-		domain = new DiagramCategory('domainData' in args ? args.domainData : {name});
-	else
+	const basename = Element.Codename(args)'
+	trackingName = `${args.codomain}:${args.user}:${args.basename}`;
+	if ($Cat.getMorphism(trackingName))
 		throw `Diagram domain category ${name} already exists.`;
+	const domain = new DiagramCategory('domainData' in args ? args.domainData : {name});
+	nuArgs.name = Diagram.Codename(args);
 	nuArgs.domain = domain;
 	//
 	// new diagrams always target new sub-categories
 	//
-	nuArgs.codomain = new Category({name:args.codomain, subobject:args.codomain});
+	nuArgs.codomain = new Category({basename:args.codomain, subobject:args.codomain});
 	Morphism.call(this, $Cat, nuArgs);	// TODO $Cat should be a diagram
 	this.basename = args.name;
 	//
@@ -6417,7 +6398,7 @@ function Diagram(args)
 	//
 	// the graph category for the string morphisms
 	//
-	this.graphCat = new Category({name:'Graph', subobject:'Graph', objects:this.codomain.objects});
+	this.graphCat = new Category({basename:'Graph', subobject:'Graph', objects:this.codomain.objects});
 	this.colorIndex2colorIndex = {};
 	this.colorIndex2color = {};
 	this.link2colorIndex = {};
@@ -6437,6 +6418,33 @@ Diagram.prototype.json()
 	d.textId =		this.textId;
 	d.timestamp =	this.timestamp;
 	return d;
+}
+Diagram.prototype.getObject(name)
+{
+	//
+	// if it is already an object, return it
+	//
+	if (CatObject.isPrototypeOf(name))
+		return name;
+	//
+	// if it is an operator name, then it must be for this diagram's category
+	//
+	if (Cat.opEx(name))
+		return this.codomain.getObject(name);
+	//
+	// it is a complex name, so break it down
+	//
+	const attrs = Element.NameTokens(name);
+	//
+	// if the names do not match who we are, then we cannot find it
+	//
+	if (attrs.category === this.codomain.basename || attrs.diagram === this.basename || attrs.user === this.user)
+		return this.codomain.getObject(attrs.basename);
+	//
+	// see if we can find the diagram
+	//
+	const dgrm = Cat.getDiagram(`${attrs.category}:${attrs.user}:${attrs.diagram}`);
+	return dgrm ? dgrm.getObject(name) ; null;
 }
 Diagram.prototype.gui(e, elt, fn)
 {
@@ -6773,7 +6781,6 @@ Diagram.prototype.getSubFactorBtnCode(obj, data)
 	else
 		html += H.button(this.getObject(expr).properName, '', Cat.display.elementId(), '', `data-factor="${data.dir} -1" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 		*/
-
 	return html;
 }
 Diagram.prototype.lambdaForm(event, elt)
@@ -7738,7 +7745,7 @@ selectedCanRecurse()
 				sel0.codomain.isEquivalent(sel1.codomain) &&
 				DataMorphism.isPrototypeOf(sel0) &&
 				Composite.isPrototypeOf(sel1) &&
-				sel1.hasMorphism(sel0);
+				sel1.getMorphism(sel0);
 			const N = this.getObject('N');
 			if (r && N)
 			{
@@ -8011,7 +8018,7 @@ Diagram.prototype.copyObject(e)
 }
 Diagram.prototype.getMorphismGraph(m)
 {
-	if (this.graphCat.hasMorphism(m.name))
+	if (this.graphCat.getMorphism(m.name))
 		return this.graphCat.getMorphism(m.name);
 	const sm = StringMorphism.graph(this, m);
 	return sm;
@@ -8021,7 +8028,7 @@ Diagram.prototype.getMorphismGraph(m)
 //
 Diagram.prototype.Codename(args);
 {
-	return Element.codename(this, '');
+	return Element.Codename(this, '');
 }
 Diagram.prototype.FetchDiagram(dgrmName, fn)
 {
