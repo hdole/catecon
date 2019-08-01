@@ -28,16 +28,92 @@ else
 
 var $Cat = null;	// Cat of cats
 
-const eps = 0.0000001;
-function inbetween(a, b, c)
+function getCat()
 {
-	return (a - eps <= b && b <= c + eps) || (c - eps <= b && b <= a + eps);
+	return $Cat ? $Cat.getObject(Cat.selected.category) : null;
 }
-function inside(a, b, c)
+
+//
+// 2-D vector support
+//
+function D2()
 {
-	return inbetween(a.x, b.x, c.x) && inbetween(a.y, b.y, c.y);
+	this.x = 0;
+	this.y = 0;
 }
-function segmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
+D2.prototype.eps = 0.0000001;
+D2.prototype.add(v, w)
+{
+	return {x:v.x + w.x, y:v.y + w.y};
+}
+D2.prototype.inner(v)
+{
+	return v.x * v.x + v.y * v.y;
+}
+D2.prototype.length(v)
+{
+	return Math.sqrt(D2.inner(v));
+}
+D2.prototype.norm(v)
+{
+	const length = D2.length(v);
+	return {x:v.x / length, y:v.y / length};
+}
+D2.prototype.scale(a, v)
+{
+	return {x:v.x*a, y:v.y*a};
+}
+D2.prototype.subtract(v, w)
+{
+	return {x:v.x - w.x, y:v.y - w.y};
+}
+D2.prototype.normal(v)
+{
+	return {x:-v.y, y:v.x};
+}
+D2.prototype.round(v)
+{
+	return {x:Math.round(v.x), y:Math.round(v.y)};
+}
+D2.prototype.multiply(mtrx, vctr)
+{
+	const r =
+	{
+		x:mtrx[0][0] * vctr.x + mtrx[0][1] * vctr.y,
+		y:mtrx[1][0] * vctr.x + mtrx[1][1] * vctr.y
+	};
+	return r;
+}
+D2.prototype.dist2(v, w)
+{
+	return D2.inner(D2.subtract(v, w));
+}
+D2.prototype.dist(v, w)
+{
+	return Math.sqrt(D2.dist2(v, w));
+}
+D2.prototype.segmentDistance(p, v, w)
+{
+	const l2 = D2.dist2(v, w);
+	if (l2 === 0)
+		return D2.dist(p, v);
+	let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+	t = Math.max(0, Math.min(1, t));
+	return D2.dist(p, {x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y)});
+}
+D2.prototype.updatePoint(p, c, basePoint)
+{
+	return D2.dist2(c, basePoint) < D2.dist2(p, basePoint) ? c : p;
+}
+D2.prototype.inbetween(a, b, c)
+{
+	return (a - D2.eps <= b && b <= c + D2.eps) || (c - D2.eps <= b && b <= a + D2.eps);
+}
+D2.prototype.inside(a, b, c)
+{
+	return D2.inbetween(a.x, b.x, c.x) && D2.inbetween(a.y, b.y, c.y);
+}
+D2.prototype.segmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
 {
 	const deltaX12 = x1 - x2;
 	const deltaX34 = x3 - x4;
@@ -54,76 +130,14 @@ function segmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
 	const y = (deltaX1Y1_X2Y1 * deltaY34 - deltaY12 * deltaX3Y4_X4Y3) / denom;
 	if (denom === 0.0)
 		return false;
-	if (!(inbetween(x2, x, x1) && inbetween(y2, y, y1) && inbetween(x3, x, x4) && inbetween(y3, y, y4)))
+	if (!(D2.inbetween(x2, x, x1) && D2.inbetween(y2, y, y1) && D2.inbetween(x3, x, x4) && D2.inbetween(y3, y, y4)))
 		return false;
 	return {x, y};
 }
-function dist2(v, w)
-{
-	const dx = v.x - w.x;
-	const dy = v.y - w.y;
-	return dx * dx + dy * dy;
-}
-function segmentDistance(p, v, w)
-{
-	const l2 = dist2(v, w);
-	if (l2 === 0)
-		return D2.dist(p, v);
-	let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-	t = Math.max(0, Math.min(1, t));
-	return D2.dist(p, {x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y)});
-}
-function getCat()
-{
-	return $Cat ? $Cat.getObject(Cat.selected.category) : null;
-}
 
-class D2
-{
-	static add(v, w)
-	{
-		return {x:v.x + w.x, y:v.y + w.y};
-	}
-	static length(v)
-	{
-		return Math.sqrt(v.x * v.x + v.y * v.y);
-	}
-	static norm(v)
-	{
-		const length = D2.length(v);
-		return {x:v.x / length, y:v.y / length};
-	}
-	static scale(a, v)
-	{
-		return {x:v.x*a, y:v.y*a};
-	}
-	static subtract(v, w)
-	{
-		return {x:v.x - w.x, y:v.y - w.y};
-	}
-	static normal(v)
-	{
-		return {x:-v.y, y:v.x};
-	}
-	static round(v)
-	{
-		return {x:Math.round(v.x), y:Math.round(v.y)};
-	}
-	static multiply(mtrx, vctr)
-	{
-		const r =
-		{
-			x:mtrx[0][0] * vctr.x + mtrx[0][1] * vctr.y,
-			y:mtrx[1][0] * vctr.x + mtrx[1][1] * vctr.y
-		};
-		return r;
-	}
-	static dist(v, w)
-	{
-		return Math.sqrt(dist2(v, w));
-	}
-}
-
+//
+// HTML support
+//
 class H
 {
 	static ok(a)
@@ -207,17 +221,18 @@ const Cat =
 	parenWidth:		0;
 	secret:			'0afd575e4ad6d1b5076a20bf53fcc9d2b110d3f0aa7f64a66f4eee36ec8d201f',
 	serverDiagrams:	{},
-	statusXY:		{x:0, y:0},
+	statusXY:		new D2,
 	user:			{name:'Anon', email:'', status:'unauthorized'},	// TODO fix after bootstrap removed
 	userNameEx:		RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),
-	mouse:			{down:{x:0, y:0}, xy:{x:0, y:0}},
+	mouse:			{down:new D2, xy:new D2},
 	textDisplayLimit:	60,
 	uploadLimit:	1000000,
 	url:			'',
+	// TODO move to Display
 	intro()
 	{
 		let btns = '';
-		for (const b in Cat.display.svg.buttons)
+		for (const b in display.svg.Buttons)
 			btns += Cat.display.getButton(b);
 		let html = H.h1('Catecon') +
 					H.div(
@@ -254,7 +269,8 @@ const Cat =
 		return Cat.sha256(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
 	},
 	cookieAccept()
-	{ if (Cat.secret !== Cat.getUserSecret(document.getElementById('cookieSecret').value))
+	{
+		if (Cat.secret !== Cat.getUserSecret(document.getElementById('cookieSecret').value))
 		{
 			alert('Your secret is not good enough');
 			return;
@@ -282,7 +298,7 @@ const Cat =
 			if (typeof err === 'object' && 'stack' in err && err.stack != '')
 				txt += H.br() + H.small('Stack Trace') + H.pre(err.stack);
 			document.getElementById('error-out').innerHTML += '<br/>' + txt;
-			Cat.display.panel.open('tty');
+			ttyPanel.open();
 			Cat.display.accordion.open('errorOutPnl');
 		}
 		else
@@ -326,7 +342,7 @@ const Cat =
 					elts[elt.codomain.name] = elt.codomain;
 			}
 		}
-		let xy = {x:0, y:0};
+		let xy = new D2;
 		let cnt = 0;
 		for(let i in elts)
 		{
@@ -578,7 +594,7 @@ const Cat =
 			});
 			Cat.Amazon.initialize();
 			isGUI && Cat.display.setNavbarBackground();
-			isGUI && Cat.updatePanels();
+			isGUI && Panels.update();
 			if (!isGUI)
 			{
 				exports.Amazon =				Cat.Amazon;
@@ -609,11 +625,6 @@ const Cat =
 		{
 			Cat.recordError(e);
 		}
-	},
-	updatePanels()
-	{
-		Cat.display.panel.panelNames['left'].map(pnl => Cat.display[pnl].setPanelContent());
-		Cat.display.panel.panelNames['right'].map(pnl => Cat.display[pnl].setPanelContent());
 	},
 	fetchCategories(fn = null)
 	{
@@ -734,7 +745,7 @@ const Cat =
 				Cat.selected.selectDiagram(name);
 				if (fn)
 					fn();
-				Cat.updatePanels();
+				Panels.update();
 				Cat.setLocalStorageDiagramName();
 			});
 		},
@@ -759,1235 +770,18 @@ const Cat =
 		{
 			if (!Cat.initialized)
 				return;
-			Cat.display.object.setPanelContent();
-			Cat.display.morphism.setPanelContent();
-			Cat.display.element.setPanelContent();
+//			Cat.display.object.setPanelContent();
+//			Cat.display.morphism.setPanelContent();
+//			Cat.display.element.setPanelContent();
 			Cat.display.diagram.update();
+			objectPanel.update();
+			morphismPanel.update();
+			elementPanel.update();
 			const dgrm = Cat.getDiagram();
 			Cat.display.diagramSVG.innerHTML = dgrm.makeAllSVG();
-			Cat.display.diagram.setToolbar(dgrm);
+			diagramPanel.setToolbar(dgrm);
 			dgrm.update(null, 'diagram', null, true, false);
 			dgrm.updateMorphisms();
-		},
-	},
-	display:
-	{
-		shiftKey:	false,
-		drag:		false,
-		fuseObject:	null,
-		gridding:	true,
-		mouseDown:	false,
-		mouseover:	null,
-		dragStart:	{x:0, y:0},
-		topSVG:		null,
-		diagramSVG:	null,
-		showRefcnts:	true,
-		showUploadArea:	false,
-		snapWidth:	1024,
-		snapHeight:	768,
-		tool:		'select',	// select|pan
-		statusbar:	null,
-		id:			0,
-		onEnter(e, fn)
-		{
-			if (e.key === 'Enter')
-				fn(e);
-		},
-		width()
-		{
-			return isGUI ? window.innerWidth : 1024;
-		},
-		height()
-		{
-			return isGUI ? window.innerHeight : 768;
-		},
-		resize()
-		{
-			const dgrm = $Cat !== null ? Cat.getDiagram() : null;
-			const scale = dgrm !== null ? dgrm.viewport.scale : 1.0;
-			const w = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
-			const h = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
-			if ('topSVG' in this && this.topSVG)
-			{
-				this.topSVG.setAttribute('width', w);
-				this.topSVG.setAttribute('height', h);
-				this.uiSVG.setAttribute('width', w);
-				this.uiSVG.setAttribute('height', h);
-				this.upSVG.setAttribute('width', w);
-				this.upSVG.setAttribute('height', h);
-			}
-		},
-		initialize()
-		{
-			this.setNavbarHtml();
-			this.diagramSVG = document.getElementById('diagramSVG');
-			this.topSVG = document.getElementById('topSVG');
-			this.topSVG.addEventListener('mousemove', this.mousemove, true);
-			this.topSVG.addEventListener('mousedown', this.mousedown, true);
-			this.topSVG.addEventListener('mouseup', this.mouseup, true);
-			this.statusbar = document.getElementById('statusbar');
-			this.uiSVG = document.getElementById('uiSVG');
-			this.uiSVG.style.left = '0px';
-			this.uiSVG.style.top = '0px';
-			this.upSVG = document.getElementById('upSVG');
-			this.upSVG.style.left = '0px';
-			this.upSVG.style.top = '0px';
-			this.resize();
-			this.upSVG.style.display = Cat.display.showUploadArea ? 'block' : 'none';
-			this.addEventListeners();
-			this.tty.setPanelContent();	// for early errors
-			Cat.updatePanels();
-		},
-		mousedown(e)
-		{
-			Cat.display.mouseDown = true;
-			Cat.mouse.down = {x:e.clientX, y:e.clientY};
-			const dgrm = Cat.getDiagram();
-			Cat.display.callbacks.map(f => f());
-			Cat.display.callbacks = [];
-			const pnt = dgrm.mousePosition(e);
-			if (Cat.display.mouseover)
-			{
-				if (!dgrm.isSelected(Cat.display.mouseover) && !Cat.display.shiftKey)
-					dgrm.deselectAll();
-			}
-			else
-				dgrm.deselectAll();
-			if (e.which === 2)
-				Cat.display.tool = 'pan';
-			if (Cat.display.tool === 'pan')
-			{
-				if (!Cat.display.drag)
-				{
-					dgrm.viewport.orig = Cat.clone(dgrm.viewport);
-					if ('orig' in dgrm.viewport.orig)
-						delete dgrm.viewport.orig.orig;
-					Cat.display.dragStart = pnt;
-					Cat.display.drag = true;
-				}
-			}
-		},
-		mousemove(e)
-		{
-			Cat.mouse.xy = {x:e.clientX, y:e.clientY};
-			try
-			{
-				Cat.display.shiftKey = e.shiftKey;
-				let dgrm = Cat.getDiagram();
-				if (!dgrm)
-					return;
-				const xy = dgrm.mousePosition(e);
-				if (Cat.display.drag)
-				{
-					Cat.display.deactivateToolbar();
-					if (!dgrm.readonly && e.ctrlKey && dgrm.selected.length == 1 && Cat.display.fuseObject === null)
-					{
-						let from = dgrm.getSelected();
-						Cat.display.mouseover = dgrm.findElement(xy, from.name);
-						const isolated = from.refcnt === 1;
-						if (CatObject.isPrototypeOf(from.to))
-						{
-							const to = from.to;
-							Cat.display.fuseObject = new DiagramObject(dgrm, {xy});
-							dgrm.deselectAll();
-							const id = Identity.Get(dgrm, to);
-							const fromMorph = new DiagramMorphism(dgrm, {to:id, domain:from.name, codomain:Cat.display.fuseObject.name});
-							fromMorph.incrRefcnt();
-							Cat.display.fuseObject.addSVG();
-							fromMorph.addSVG();
-							fromMorph.update();
-							from = Cat.display.fuseObject;
-							dgrm.addSelected(e, Cat.display.fuseObject);
-							from.setXY(xy);
-							dgrm.saveLocal();
-							dgrm.checkFusible(xy);
-						}
-						else if (Morphism.isPrototypeOf(from.to))
-						{
-							dgrm.deselectAll();
-							const domain = new DiagramObject(dgrm, {xy:from.domain.getXY()});
-							const codomain = new DiagramObject(dgrm, {xy:from.codomain.getXY()});
-							const fromCopy = new DiagramMorphism(dgrm, {to, domain, codomain});
-							fromCopy.incrRefcnt();
-							fromCopy.update();
-							domain.addSVG();
-							codomain.addSVG();
-							fromCopy.addSVG();
-							dgrm.addSelected(e, fromCopy);
-							dgrm.saveLocal();
-							Cat.display.fuseObject = fromCopy;
-							dgrm.checkFusible(xy);
-						}
-					}
-					else
-					{
-						const skip = dgrm.getSelected();
-						Cat.display.mouseover = dgrm.findElement(xy, skip ? skip.name : '');
-						switch(Cat.display.tool)
-						{
-						case 'select':
-							if (!dgrm.readonly)
-							{
-								dgrm.updateDragObjects(xy);
-								dgrm.checkFusible(xy);
-							}
-							break;
-						case 'pan':
-							const loc = dgrm.userToDiagramCoords(Cat.mouse.xy, true);
-							const delta = D2.scale(dgrm.viewport.orig.scale, D2.subtract(loc, Cat.display.dragStart));
-							dgrm.viewport.x = dgrm.viewport.orig.x + delta.x;
-							dgrm.viewport.y = dgrm.viewport.orig.y + delta.y;
-							dgrm.setView();
-							break;
-						}
-					}
-				}
-				else if (Cat.display.mouseDown === true)
-				{
-					Cat.display.mouseover = dgrm.findElement(xy);
-					const x = Math.min(Cat.mouse.xy.x, Cat.mouse.down.x);
-					const y = Math.min(Cat.mouse.xy.y, Cat.mouse.down.y);
-					const w = Math.abs(Cat.mouse.xy.x - Cat.mouse.down.x);
-					const h = Math.abs(Cat.mouse.xy.y - Cat.mouse.down.y);
-					const svg = document.getElementById('selectRect');
-					if (svg)
-					{
-						svg.setAttribute('x', x);
-						svg.setAttribute('y', y);
-						svg.setAttribute('width', w);
-						svg.setAttribute('height', h);
-					}
-					else
-					{
-						const s = `<rect id="selectRect" x="${x}" y="${y}" width="${w}" height="${h}">`;
-						Cat.display.uiSVG.innerHTML += s;
-					}
-				}
-				else
-				{
-					Cat.display.mouseover = dgrm.findElement(xy);
-					const svg = document.getElementById('selectRect');
-					if (svg)
-						svg.parentNode.removeChild(svg);
-				}
-			}
-			catch(e)
-			{
-				Cat.recordError(e);
-			}
-		},
-		mouseup(e)
-		{
-			Cat.display.mouseDown = false;
-			if (e.which === 2)
-			{
-				Cat.display.tool = 'select';
-				Cat.display.drag = false;
-				return;
-			}
-			try
-			{
-				const dgrm = Cat.getDiagram();
-				const cat = dgrm.codomain;
-				let pnt = dgrm.mousePosition(e);
-				if (Cat.display.drag)
-				{
-					if (dgrm.selected.length === 1)
-					{
-						let dragObject = dgrm.getSelected();
-						let targetObject = dragObject.isEquivalent(Cat.display.mouseover) ? null : Cat.display.mouseover;
-						if (targetObject !== null)
-						{
-							if (CatObject.isPrototypeOf(dragObject.to) && CatObject.isPrototypeOf(targetObject.to))
-							{
-								if (dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
-								{
-									//
-									// product
-									//
-									// TODO add coproduct, hom
-									//
-									let to = null;
-									if (e.shiftKey && cat.coproducts)
-										to = coproductObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
-									else if (e.altKey && cat.closed)
-										to = homObject.get(dgrm.codomain, [dragObject.to, targetObject.to]);
-									else if (cat.cartesian)
-										to = productObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
-//									dgrm.setObject(targetObject, to);
-									targetObject.setObject(to);
-									dgrm.deselectAll(false);
-									targetObject.removeSVG();
-									targetObject.addSVG();
-									dgrm.addSelected(e, targetObject);
-									dragObject.decrRefcnt();
-								}
-								else if(dgrm.canFuseObjects(dragObject, targetObject))
-								{
-									dgrm.deselectAll();
-									let morphs = dgrm.getObjectMorphisms(dragObject);
-									if (morphs.cods.length > 0)
-									{
-										let from = morphs.cods[0];
-										if (morphs.cods.length === 1 && morphs.doms.length === 0 && Identity.isPrototypeOf(from.to) && !from.to.domain.isInitial)
-										{
-											const cod = dragObject.to;
-											const toTargetObject = targetObject.to;
-											if (cod.signature !== toTargetObject.signature)
-											{
-												//
-												// TODO cat has terminal object
-												//
-												if (toTargetObject.isTerminal)
-												{
-													const to = $Cat.getTransform(`terminal-${dgrm.codomain.name}`).$(dgrm, from.to.domain);
-													from.removeSVG();
-													dgrm.setMorphism(from, to);
-													from.addSVG();
-												}
-												//
-												// TODO ability to convert identity to some morphism?
-												//
-												else
-												{
-													const to = Cat.getDiagram().newDataMorphism(cod, toTargetObject);
-													from.removeSVG();
-													dgrm.setMorphism(from, to);
-													from.addSVG();
-												}
-											}
-											from.codomain = targetObject;
-											targetObject.incrRefcnt();
-											dragObject.decrRefcnt();
-										}
-									}
-									//
-									// graph merge
-									//
-									for(const [from, to] of dgrm.morphisms)
-									{
-										if (from.domain.isEquivalent(dragObject))
-										{
-											from.domain.decrRefcnt();
-											from.domain = targetObject;
-											Cat.display.mergeObjectsRefCnt(dgrm, dragObject, targetObject);
-										}
-										else if (from.codomain.isEquivalent(dragObject))
-										{
-											from.codomain.decrRefcnt();
-											from.codomain = targetObject;
-											Cat.display.mergeObjectsRefCnt(dgrm, dragObject, targetObject);
-										}
-									}
-									dragObject.decrRefcnt();
-									dgrm.update(e, '', null, true);
-								}
-							}
-							//
-							// TODO * is monoidal
-							//
-							else if (dgrm.codomain.hasProducts && Morphism.isPrototypeOf(dragObject.to) && Morphism.isPrototypeOf(targetObject.to) && dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
-							{
-								dgrm.deselectAll();
-								const dragMorphTo = dragObject.to;
-								const targetMorphTo = targetObject.to;
-								const morphisms = [targetMorphTo, dragMorphTo];
-								const newTo = ProductMorphism.Get(dgrm, morphisms);
-								newTo.incrRefcnt();
-								dgrm.placeMorphism(e, newTo, targetObject.domain, targetObject.codomain);
-								dragObject.decrRefcnt();
-								targetObject.decrRefcnt();
-								targetObject.update();
-							}
-						}
-					}
-					if (!dgrm.readonly)
-						dgrm.saveLocal();
-				}
-				else if (e.ctrlKey)
-				{
-				}
-				else
-					dgrm.addWindowSelect(e);
-				Cat.display.fuseObject = null;
-			}
-			catch(x)
-			{
-				Cat.recordError(x);
-			}
-			Cat.display.drag = false;
-		},
-		mergeObjectsRefCnt(dgrm, dragObject, targetObject)
-		{
-			dragObject.decrRefcnt();
-			targetObject.incrRefcnt();
-			targetObject.to.incrRefcnt();
-		},
-		drop(e)
-		{
-			try
-			{
-				e.preventDefault();
-				Cat.display.drag = false;
-				let cat = getCat();
-				let dgrm = Cat.getDiagram();
-				if (dgrm.readonly)
-				{
-					Cat.status(e, 'Diagram is not editable!');
-					return;
-				}
-				const xy = dgrm.mousePosition(e);
-				const dropText = e.dataTransfer.getData('text');
-				if (dropText.length === 0)
-					return;
-				const tokens = dropText.split(' ');
-				const type = tokens[0];
-				const name = tokens[1];
-				let from = null;
-				let to = null;
-				switch(type)
-				{
-				case 'object':
-					to = dgrm.getObject(name);
-					from = new DiagramObject(dgrm, {xy, to});
-					break;
-				case 'morphism':
-					to = dgrm.getMorphism(name);
-					if (to === null)
-						throw `Morphism ${name} does not exist in category ${cat.properName}`;
-					const domain = new DiagramObject(dgrm, {xy});
-					const codLen = Cat.textWidth(to.domain.properName)/2;
-					const domLen = Cat.textWidth(to.codomain.properName)/2;
-					const namLen = Cat.textWidth(to.properName);
-					const codomain = new DiagramObject(dgrm,
-						{
-							xy:
-							{
-								x:pnt.x + Math.max(Cat.default.arrow.length, domLen + namLen + codLen + Cat.default.arrow.length/4),
-								y:pnt.y
-							}
-						});
-					from = new DiagramMorphism(dgrm, {to, domain, codomain});
-					from.incrRefcnt();	// TODO ???
-					from.update();
-					domain.addSVG();
-					codomain.addSVG();
-					break;
-				}
-				from.addSVG();
-				dgrm.update(e, type, from);
-			}
-			catch(err)
-			{
-				Cat.recordError(err);
-			}
-		},
-		functor:
-		{
-			setPanelContent()
-			{
-				let html = H.table(H.tr(Cat.display.closeBtnCell('functor', false)), 'buttonBarRight');
-				html += H.h3('Functors');
-				let morphs = [];
-				if ($Cat)
-					for(const [key, mor] of $Cat.morphisms)
-						morphs.push(mor);
-				html += H.table(Cat.display.morphismTableRows(morphs, `onclick=""`));
-				document.getElementById('functor-sidenav').innerHTML = html;
-			},
-		},
-		object:		// TODO move to class object?
-		{
-			drag(e, name)
-			{
-				Cat.display.deactivateToolbar();
-				e.dataTransfer.setData('text/plain', 'object ' + name);
-			},
-			setPanelContent()
-			{
-				let dgrm = Cat.getDiagram();
-				if (dgrm !== null)
-				{
-					let html = H.table(H.tr(Cat.display.expandPanelBtn('object', false) + Cat.display.closeBtnCell('object', true)), 'buttonBarRight') +
-								H.h3('Objects') +
-								dgrm.setupDiagramElementPnl('_ObjPnl', 'updateObjectTableRows') +
-								H.h4('References') +
-								dgrm.references.map(r => r.setupDiagramElementPnl('_ObjPnl', 'updateObjectTableRows')).join('');
-					document.getElementById('object-sidenav').innerHTML = html;
-				}
-			},
-			update()
-			{
-				let dgrm = Cat.getDiagram();
-				dgrm.updateObjectTableRows();
-			},
-		},
-		settings:
-		{
-			setPanelContent()
-			{
-				const html = H.table(H.tr(Cat.display.closeBtnCell('settings', false)), 'buttonBarLeft') +
-					H.h3('Settings') +
-					H.table(
-						H.tr(H.td(`<input type="checkbox" ${Cat.display.gridding ? 'checked' : ''} onchange="Cat.display.gridding = !Cat.display.gridding">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
-						H.tr(	H.td(`<input type="checkbox" ${Cat.display.showRefcnts ? 'checked' : ''} onchange="Cat.display.settings.toggleShowRefcnts()">`) +
-								H.td('Show reference counts for objects and morphisms in their respective panels.', 'left'), 'sidenavRow') +
-						H.tr(	H.td(`<input type="checkbox" ${Cat.display.showUploadArea ? 'checked' : ''} onchange="Cat.display.settings.toggleShowUploadArea()">`) +
-								H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow') +
-						H.tr(	H.td(`<input type="checkbox" ${Cat.debug ? 'checked' : ''} onchange="Cat.debug = !Cat.debug">`) +
-								H.td('Debug', 'left'), 'sidenavRow')
-					);
-				document.getElementById('settings-sidenav').innerHTML = html;
-			},
-			toggleShowRefcnts()
-			{
-				Cat.display.showRefcnts = !Cat.display.showRefcnts;
-				const dgrm = Cat.getDiagram();
-				dgrm.updateObjectTableRows();
-				dgrm.references.map(r => r.updateObjectTableRows());
-				dgrm.updateMorphismTableRows();
-				dgrm.references.map(r => r.updateMorphismTableRows());
-			},
-			toggleShowUploadArea()
-			{
-				Cat.display.showUploadArea = !Cat.display.showUploadArea;
-				Cat.display.upSVG.style.display = Cat.display.showUploadArea ? 'block' : 'none';
-			},
-		},
-		transform:
-		{
-			setPanelContent()
-			{
-				let html = H.table(H.tr(Cat.display.closeBtnCell('transform', false)), 'buttonBarRight');
-				html += H.h3('Transforms');
-				let morphs = [];
-				if ($Cat)
-					for(const [key, trn] of $Cat.transforms)
-						morphs.push(trn);
-				html += H.table(Cat.display.morphismTableRows(morphs, `onclick=""`));
-				document.getElementById('transform-sidenav').innerHTML = html;
-			},
-		},
-		element:		// TODO move to class element?
-		{
-			setPanelContent()
-			{
-				let html = H.table(H.tr(Cat.display.closeBtnCell('element', false) +
-										H.td(Cat.display.expandPanelBtn('element', false))
-										), 'buttonBarRight');
-				html += H.h3('Text') + this.newElementPnl();
-				html += H.button('Text', 'sidenavAccordion', '', 'New Text', `onclick="Panel.AccordionToggle(this, \'elementPnl\')"`) +
-					H.div('', 'accordionPnl', 'elementPnl');
-				document.getElementById('element-sidenav').innerHTML = html;
-				this.update();
-				Cat.display.accordion.open('elementPnl');
-			},
-			newElementPnl()
-			{
-				const dgrm = Cat.getDiagram();
-				let html = '';
-				if (dgrm && !dgrm.readonly)
-				{
-					html = H.h4('New Text') +
-								H.div(	H.span('Create a new text element.', 'small') +
-										H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'elementHtml')), 'sidenavRow')) +
-										H.span(Cat.display.getButton('edit', 'Cat.display.element.new(evt)', 'Create new text for this diagram')) +
-										H.span('', 'error', 'elementError'));
-				}
-				return html;
-			},
-			new(e)
-			{
-				try
-				{
-					document.getElementById('elementError').innerHTML = '';
-					const dgrm = Cat.getDiagram();
-					const mdl = {x:Cat.display.width()/2, y:Cat.display.height()/2};
-					const xy = D2.subtract(dgrm.userToDiagramCoords(mdl), dgrm.viewport);
-					const hElt = document.getElementById('elementHtml');
-					const txt = new DiagramElement(dgrm, {name:`Text${dgrm.textId++}`, diagram:dgrm, properName:hElt.value, xy});
-					hElt.value = '';
-					dgrm.elements.push(txt);
-					dgrm.placeElement(e, txt);
-					this.update();
-					Cat.display.accordion.open('elementPnl');
-				}
-				catch(e)
-				{
-					document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
-				}
-			},
-			update()
-			{
-				const dgrm = Cat.getDiagram();
-				if (dgrm)
-					document.getElementById('elementPnl').innerHTML = H.table(dgrm.elements.map((t, i) =>
-						H.tr(	H.td(H.table(H.tr(H.td(Cat.display.getButton('delete', `Cat.display.element.delete(${i})`, 'Delete text'))), 'buttonBarLeft')) +
-								H.td(H.span(Cat.htmlSafe(t.properName), 'tty', `text_${i}`) +
-									(this.readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().getElement('${t.name}').editText('text_${i}', 'properName')`, 'Edit', Cat.default.button.tiny)), 'left'), 'sidenavRow')
-							).join(''));
-			},
-			delete(i)
-			{
-				const dgrm = Cat.getDiagram();
-				dgrm.elements[i].decrRefcnt();
-				this.update();
-				dgrm.update();
-			},
-		},	// element
-		activateToolbar(e)
-		{
-			let dgrm = Cat.getDiagram();
-			if (dgrm.selected.length === 0)
-				return;
-			let tb = document.getElementById('toolbar');
-			tb.style.opacity = 1;
-			tb.style.display = 'block';
-			let xy = 'clientX' in e ? {x:e.clientX, y:e.clientY} : Cat.mouse.xy;
-			let xyOffset = true;
-			const elt = dgrm.getSelected();
-			if (dgrm.selected.length === 1)
-				tb.innerHTML = dgrm.toolbar(elt);
-			else if (dgrm.selected.length > 1)
-			{
-				let html = H.td(Cat.display.getButton('close', 'Cat.display.deactivateToolbar()', 'Close'), 'buttonBar');
-//				let type = dgrm.selected[0].class;
-				if (Morphism.isPrototypeOf(elt))
-				{
-					const form = dgrm.domain.hasForm(dgrm.selected);
-					const htmlLength = html.length;
-					if (form.composite)		// moved
-						html += H.td(this.getButton('compose', `Cat.getDiagram().gui(evt, this, 'compose')`, 'Compose'), 'buttonBar');
-					if (form.sink)
-					{
-						if (dgrm.codomain.isCartesian)		// TODO moved
-							html += H.td(this.getButton('pullback', `Cat.getDiagram().gui(evt, this, 'pullback')`, 'Pullback'), 'buttonBar');
-						if (dgrm.codomain.hasCoproducts)
-							html += H.td(this.getButton('coproductAssembly', `Cat.getDiagram().gui(evt, this, 'coproductAssembly')`, 'Coproduct assembly'), 'buttonBar');
-					}
-					if (form.source)
-					{
-						if (dgrm.codomain.hasCoproducts)
-							html += H.td(this.getButton('pushout', `Cat.getDiagram().gui(evt, this, 'pushout')`, 'Pushout'), 'buttonBar');
-						if (dgrm.codomain.isCartesian)		// TODO moved
-							html += H.td(this.getButton('productAssembly', `Cat.getDiagram().gui(evt, this, 'productAssembly')`, 'Product assembly'), 'buttonBar');
-					}
-					if (form.distinct && dgrm.codomain.isCartesian)		// TODO moved
-						html += H.td(this.getButton('product', `Cat.getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
-					if (form.distinct && dgrm.codomain.hasCoproducts)
-						html += H.td(this.getButton('coproduct', `Cat.getDiagram().gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
-					if (html.length !== htmlLength)
-						xyOffset = false;
-					if (dgrm.selectedCanRecurse())
-						html += H.td(this.getButton('recursion', `Cat.getDiagram().gui(evt, this, 'recursion')`, 'Recursion'), 'buttonBar');
-				}
-				else if (CatObject.isPrototypeOf(elt))
-				{
-					if (dgrm.codomain.isCartesian)		// TODO moved
-						html += H.td(this.getButton('product', `Cat.getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
-					if (dgrm.codomain.hasCoproducts)
-						html += H.td(this.getButton('coproduct', `Cat.getDiagram().gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
-				}
-				tb.innerHTML = H.table(H.tr(html), 'buttonBarLeft');
-			}
-			const rect = Cat.display.topSVG.getBoundingClientRect();
-			let left = rect.left + xy.x + (xyOffset ? Cat.default.toolbar.x : 0);
-			left = left >= 0 ? left : 0;
-			left = (left + tb.clientWidth) >= window.innerWidth ? window.innerWidth - tb.clientWidth : left;
-			tb.style.left = `${left}px`;
-			let top = rect.top + xy.y - (xyOffset ? Cat.default.toolbar.y : 0);
-			top = top >= 0 ? top : 0;
-			top = (top + tb.clientHeight) >= window.innerHeight ? window.innerHeight - tb.clientHeight : top;
-			tb.style.top = `${top}px`;
-		},
-		deactivateToolbar()
-		{
-			document.getElementById('toolbar').style.display = 'none';
-		},
-		closeBtnCell(typeName)
-		{
-			return H.td(this.getButton('close', `Cat.display.panel.toggle('${typeName}')`, 'Close'), 'buttonBar');
-		},
-		expandPanelBtn(panelName, right)
-		{
-			return H.td(this.getButton(right ? 'chevronLeft' : 'chevronRight', `${panelName}.expand(}`, 'Expand'), 'buttonBar', `${panelName}-expandBtn`);
-		},
-		clickDeleteBtn(id, fn)
-		{
-			try
-			{
-				const delBtn = document.getElementById(`delBtn${id}`);
-				if ('hit' in delBtn)
-				{
-					delBtn.parentNode.replaceChild(delBtn.cloneNode(true), delBtn);
-					if (fn in window)
-						window[fn]();
-				}
-				else
-				{
-					delBtn.hit = true;
-					Cat.display.callbacks.push(function()
-					{
-						var elm = delBtn;
-						var newElm = elm.cloneNode(true);
-					});
-				}
-			}
-			catch(e)
-			{
-				Cat.recordError(e);
-			}
-		},
-		deleteBtn(fn, title)
-		{
-			const uid = ++Cat.display.id;
-			const html = H.span(
-`<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg id="svg${uid}" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="0.32in" height="0.32in" version="1.1" viewBox="0 0 320 320" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<rect id="delBtn${uid}" x="0" y="0" width="320" height="320" fill="white">
-		<animate attributeName="fill" values="white;yellow" dur="0.25s" begin="anim${uid}.begin" fill="freeze"/>
-	</rect>
-	<g>
-		${this.svg.buttons['delete']}
-		<rect class="btn" x="0" y="0" width="320" height="320" onclick="Cat.display.clickDeleteBtn(${uid}, '${fn}')"/>
-		<animateTransform id="anim${uid}" attributename="transform" type="rotate" from="0 160 160" to="360 160 160" begin="click" dur="0.25s" fill="freeze"/>
-	</g>
-</svg>`, '', '', title);
-			return H.td(H.div(html), 'buttonBar');
-		},
-		svg:
-		{
-			buttons:
-			{
-				alignObjectHorizontal:
-`<circle cx="80" cy="160" r="80" fill="url(#radgrad1)"/>
-<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
-<circle cx="240" cy="160" r="80" fill="url(#radgrad1)"/>
-<line class="arrow6" x1="0" y1="160" x2="320" y2="160" marker-end="url(#arrowhead)"/>`,
-				alignObjectVertical:
-`<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
-<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
-<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
-<line class="arrow6" x1="160" y1="0" x2="160" y2="320" marker-end="url(#arrowhead)"/>`,
-				cateapsis:
-`<circle cx="160" cy="60" r="60" fill="url(#radgrad1)"/>
-<path class="svgstr4" d="M40,280 40,160 110,90" marker-end="url(#arrowhead)"/>
-<path class="svgstr4" d="M280,280 280,160 210,90" marker-end="url(#arrowhead)"/>`,
-				category:
-`<line class="arrow0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
-				compose:
-`<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
-				chevronLeft:
-`<path class="svgfilNone svgstr1" d="M120,40 80,160 120,280"/>
-<path class="svgfilNone svgstr1" d="M200,40 160,160 200,280"/>`,
-				chevronRight:
-`<path class="svgfilNone svgstr1" d="M120,40 160,160 120,280"/>
-<path class="svgfilNone svgstr1" d="M200,40 240,160 200,280"/>`,
-				close:
-`<line class="arrow0 str0" x1="40" y1="40" x2="280" y2= "280" />
-<line class="arrow0 str0" x1="280" y1="40" x2="40" y2= "280" />`,
-				coproduct:
-`<circle class="svgstr4" cx="160" cy="160" r="80"/>
-<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
-<line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>`,
-				coproductAssembly:
-`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
-				copy:
-`<circle cx="200" cy="200" r="160" fill="#fff"/>
-<circle cx="200" cy="200" r="160" fill="url(#radgrad1)"/>
-<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>`,
-				delete:
-`<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
-<path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
-				detachDomain:
-`<circle cx="40" cy="160" r="60" fill="url(#radgrad1)"/>
-<circle cx="100" cy="200" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
-				detachCodomain:
-`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
-<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,
-				diagram:
-`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
-				distribute:
-`<circle class="svgstr4" cx="80" cy="80" r="60"/>
-<line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
-<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
-<circle class="svgstr4" cx="240" cy="80" r="60"/>
-<line class="arrow0" x1="240" y1="40" x2="240" y2="140"/>
-<line class="arrow0" x1="180" y1="80" x2="300" y2="80"/>
-<circle class="svgstr4" cx="80" cy="240" r="60"/>
-<line class="arrow0" x1="80" y1="180" x2="80" y2="300"/>
-<line class="arrow0" x1="20" y1="240" x2="140" y2="240"/>
-<circle class="svgstr4" cx="240" cy="240" r="60"/>
-<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
-<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
-				download:
-`<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
-				edit:
-`<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
-				eval:
-`<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
-<polyline class="svgstr3" points="50,40 30,40 30,120 50,120"/>
-<polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
-<circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
-				fromHere:
-`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
-				toHere:
-`<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="30" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>`,
-				functor:
-`<line class="arrow0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
-				help:
-`<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
-<path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,
-				homFactor:
-`<circle cx="80" cy="240" r="100" fill="url(#radgrad1)"/>
-<circle cx="160" cy="160" r="80" fill="url(#radgrad2)"/>
-<circle cx="240" cy="160" r="80" fill="url(#radgrad2)"/>
-<circle cx="240" cy="80" r="80" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>`,
-				lambda2:
-`<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="200" y1="200" x2="280" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="120" y1="200" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
-				lambda:
-`<circle cx="120" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="200" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="120" cy="240" r="60" fill="url(#radgrad1)"/>
-<circle cx="200" cy="240" r="60" fill="url(#radgrad1)"/>
-<polyline class="svgstr3" points="80,200 60,200 60,280 100,280"/>
-<polyline class="svgstr3" points="240,200 260,200 260,280 240,280"/>
-<line class="arrow0" x1="160" y1="100" x2="160" y2="200" marker-end="url(#arrowhead)"/>`,
-				login:
-`<polyline class="svgstr4" points="160,60 160,200 70,280 70,40 250,40 250,280"/>`,
-				morphism:
-`<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-	<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
-</marker>
-<marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-	<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
-</marker>
-<line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
-	/*
-				new:
-`<circle class="svgfil4" cx="80" cy="70" r="70"/>
-<line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
-<line class="svgfilNone arrow0" x1="30" y1="70" x2="130" y2= "70" />`,
-*/
-				object:
-`<circle cx="160" cy="160" r="140" fill="url(#radgrad1)"/>`,
-				product:
-`<circle class="svgstr4" cx="160" cy="160" r="80"/>
-<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
-<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
-				productAssembly:
-`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="60" y1="80" x2="120" y2="260" marker-end="url(#arrowhead)"/>`,
-				project:
-`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,
-				pullback:
-`<path class="svgstr4" d="M60,120 120,120 120,60"/>
-<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
-				pushout:
-`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
-<path class="svgstr4" d="M200,260 200,200 260,200"/>`,
-				recursion:
-`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow3" x1="40" y1="120" x2="240" y2="120" marker-end="url(#arrowhead)"/>
-<line class="arrow6" x1="40" y1="180" x2="200" y2="180" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="40" y1="240" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
-				reference:
-`<line class="arrow9" x1="120" y1="100" x2="260" y2="100"/>
-<line class="arrow9" x1="100" y1="120" x2="100" y2="260"/>
-<line class="arrow9" x1="120" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="280" y1="120" x2="280" y2="250" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="40" x2="200" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="40" y2="200" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="220" x2="190" y2="220" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="220" y1="60" x2="220" y2="190" marker-end="url(#arrowhead)"/>`,
-				run:
-`<line class="arrow0" x1="20" y1="160" x2="100" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="120" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="220" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,
-				settings:
-`<line class="arrow0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="160" y1="40" x2="160" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="80" y1="60" x2="240" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="80" y1="260" x2="240" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<circle class="svgfil4" cx="160" cy="160" r="60"/>
-<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>`,
-				string:
-`<line class="arrow0" x1="60" y1="40" x2="260" y2="200"/>
-<path class="svgstr4" d="M60,120 C120,120 120,200 60,200"/>
-<path class="svgstr4" d="M260,40 C200,40 200,120 260,120"/>
-<line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>`,
-				symmetry:
-`<line class="arrow0" x1="160" y1="40" x2="160" y2="280"/>
-<line class="arrow0" x1="80" y1="120" x2="80" y2="220"/>
-<line class="arrow0" x1="240" y1="120" x2="240" y2="220"/>
-<line class="arrow0" x1="40" y1="120" x2="120" y2="120"/>
-<line class="arrow0" x1="200" y1="120" x2="280" y2="120"/>`,
-				text:
-`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="160" y1="280" x2="160" y2="60"/>`,
-				threeD:
-`<line class="arrow0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
-				threeD_bottom:
-`<polygon class="svgfil1" points="120,180 280,180 200,280 40,280"/>
-<use xlink:href="#threeD_base" x="0" y="0"/>`,
-				threeD_front:
-`<polygon class="svgfil1" points="40,120 200,120 200,280 40,280"/>
-<use xlink:href="#threeD_base" x="0" y="0"/>`,
-				threeD_back:
-`<polygon class="svgfil1" points="120,40 280,40 280,180 120,180"/>
-<use xlink:href="#threeD_base" x="0" y="0"/>`,
-				threeD_top:
-`<polygon class="svgfil1" points="120,40 280,40 200,140 40,140"/>
-<use xlink:href="#threeD_base" x="0" y="0"/>`,
-				threeD_left:
-`<polygon class="svgfil1" points="120,20 120,180 40,280 40,120"/>
-<use xlink:href="#threeD_base" x="0" y="0"/>`,
-				threeD_right:
-`<polygon class="svgfil1" points="280,20 280,180 200,280 200,120"/>
-<use xlink:href="#threeD_base" x="0" y="0"/>`,
-				transform:
-// <path class="svgfil0" d="M228.03 165l-127.89 0 0 -20 127.89 0 0 20zm12.98 -4.8l-6.74 -10.39 0 10.39 -48.89 -31.69 6.74 -10.4 48.89 31.7 0 10.39zm0 0l0 -10.39 8.02 5.2 -8.02 5.2zm-52.26 26.52l-3.37 -5.2 48.89 -31.72 6.74 10.39 -48.89 31.72 -3.37 -5.2z"/>
-// <path class="svgfil0" d="M260 273.03l0 -243.03 20 0 0 243.03 -20 0zm4.8 12.98l10.39 -6.74 -10.39 0 31.69 -48.89 10.4 6.74 -31.7 48.89 -10.39 0zm0 0l10.39 0 -5.2 8.02 -5.2 -8.02zm-26.52 -52.26l5.2 -3.37 31.72 48.89 -10.39 6.74 -31.72 -48.89 5.2 -3.37z"/>`,
-`<circle cx="50" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="100" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
-				tty:
-`<path class="svgstrThinGray" d="M70,40 240,40 240,280 70,280 70,40"/>
-<line class="svgstr3" x1="90" y1="80" x2="220" y2="80"/>
-<line class="svgstr3" x1="90" y1="120" x2="200" y2="120"/>
-<line class="svgstr3" x1="90" y1="160" x2="160" y2="160"/>
-<line class="svgstr3" x1="90" y1="200" x2="120" y2="200"/>`,
-				lock:
-`<rect class="svgfil5" x="20" y="20" width="280" height="280"/>
-<line class="arrow0" x1="60" y1="60" x2="260" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="260" x2="260" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<circle class="svgfil4" cx="160" cy="160" r="40"/>`,
-				unlock:
-`
-<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="280" x2="280" y2="40" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<rect class="svgfil5" x="120" y="120" width="80" height="80"/>
-`,
-				upload:
-`<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
-			},
-			header(scale, bgColor = '#ffffff')
-			{
-				const v = 0.32 * (typeof scale !== 'undefined' ? scale : 1.0);
-				const html = `
-<svg xmlns="http://www.w3.org/2000/svg" width="${v}in" height="${v}in" version="1.1" viewBox="0 0 320 320">
-<rect x="0" y="0" width="320" height="320" style="fill:${bgColor}"/>`;
-				return html;
-			},
-			button(onclick)
-			{
-				return `<rect class="btn" x="0" y="0" width="320" height="320" onclick="${onclick}"/>`;
-			},
-		},
-		id:	0,	// unique id's
-		downloadButton(txt, onclick, title, scale = Cat.default.button.small)
-		{
-			const html = H.span(this.svg.header(scale) + this.svg.buttons.download +
-`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">${txt}</text>
-${this.svg.button(onclick)}
-</svg>`, '', '', title);
-			return html;
-		},
-		getButton(buttonName, onclick, title, scale = Cat.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
-		{
-			let btn = this.svg.buttons[buttonName];
-			if (id !== null)
-				btn = `<g id="${id}">${btn}</g>`;
-			return H.span(this.svg.header(scale, bgColor) + btn + (addNew ? this.svg.buttons.new : '') + this.svg.button(onclick) + '</svg>', '', id, title);
-		},
-		setNavbarHtml()
-		{
-			let left = H.td(H.div(this.getButton('category', "Cat.display.panel.toggle('category')", 'Categories', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('diagram', "Cat.display.panel.toggle('diagram')", 'Diagrams', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('object', "Cat.display.panel.toggle('object')", 'Objects', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('morphism', "Cat.display.panel.toggle('morphism')", 'Morphisms', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('functor', "Cat.display.panel.toggle('functor')", 'Functors', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('transform', "Cat.display.panel.toggle('transform')", 'Transforms', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('text', "Cat.display.panel.toggle('element')", 'Text', Cat.default.button.large)));
-			let right =
-				H.td(H.div(this.getButton('cateapsis', "Cat.getDiagram().home()", 'Cateapsis', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('string', "Cat.getDiagram().showStrings(evt)", 'Graph', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('threeD', "Cat.display.panel.toggle('threeD');Cat.display.threeD.resizeCanvas()", '3D view', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('tty', "Cat.display.panel.toggle('tty')", 'Console', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('help', "Cat.display.panel.toggle('help')", 'Help', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('login', "Cat.display.panel.toggle('login')", 'Login', Cat.default.button.large))) +
-				H.td(H.div(this.getButton('settings', "Cat.display.panel.toggle('settings')", 'Settings', Cat.default.button.large))) +
-				H.td('&nbsp;&nbsp;&nbsp;');
-			let navbar = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
-										H.td(H.span('', 'navbar-inset', 'categroy-navbar'), 'w20') +
-										H.td(H.span('Catecon', 'title'), 'w20') +
-										H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
-										H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
-			document.getElementById('navbar').innerHTML = navbar;
-		},
-		input(val, id, ph, x='', cls='in100', type='text')
-		{
-			return H.input(val, cls, id, type, {ph});
-		},
-		morphismTableRows(morphisms, action = null, drag = true)
-		{
-			let html = '';
-			let found = {};
-			for(let i=0; i<morphisms.length; ++i)
-			{
-				let m = morphisms[i];
-				if (m.name in found)
-					continue;
-				found[m.name] = true;
-				const act = action !== null ? action.replace(/%1/g, m.name) : '';
-				html += H.tr(H.td(m.properName) + H.td(m.domain.properName) + H.td('&rarr;') + H.td(m.codomain.properName),
-						`${drag ? 'grabbable ' : ''}sidenavRow`, '', Cat.cap(m.description), drag ? `draggable="true" ondragstart="Cat.display.morphism.drag(event, '${m.name}')" ${act}` : act);
-			}
-			return html;
-		},
-		setCursor()
-		{
-			switch(Cat.display.tool)
-			{
-			case 'select':
-				this.topSVG.style.cursor = 'default';
-				break;
-			case 'pan':
-				this.topSVG.style.cursor = 'all-scroll';
-				break;
-			}
-		},
-		callbacks:	[],
-		elementId()
-		{
-			return `elt_${Cat.display.id++}`;
-		},
-		addEventListeners()
-		{
-			document.addEventListener('mousemove', function(e)
-			{
-				const s = Cat.display.statusbar;
-				if (s.style.display === 'block' && D2.dist(Cat.statusXY, {x:e.clientX, y:e.clientY}) > 50)
-					s.style.display = 'none';
-			});
-			document.addEventListener('dragover', function(e)
-			{
-				e.preventDefault();
-			}, false);
-			document.addEventListener('drop', function(e)
-			{
-				e.preventDefault();
-			}, true);
-			document.addEventListener('keydown', function(e)
-			{
-				if (e.target === document.body)
-				{
-					switch(e.keyCode)
-					{
-					case 32:	// 'space'
-						Cat.display.tool = 'pan';
-						break;
-					case 36:	// 'home'
-						Cat.getDiagram().home();
-						break;
-					}
-					Cat.display.shiftKey = e.shiftKey;
-					Cat.display.setCursor();
-				}
-			});
-			document.addEventListener('keyup', function(e)
-			{
-				if (e.target === document.body)
-				{
-					const dgrm = Cat.getDiagram();
-					if (!dgrm)
-						return;
-					const cat = dgrm.codomain;
-					const xy = dgrm.userToDiagramCoords(Cat.mouse.xy);
-					Cat.display.shiftKey = e.shiftKey;
-					const plain = !(e.shiftKey || e.ctrlKey || e.altKey);
-					const plainShift = e.shiftKey && !(e.ctrlKey || e.altKey);
-					switch(e.keyCode)
-					{
-					case 32:	// 'space'
-						if (plain)
-						{
-							Cat.display.tool = 'select';
-							Cat.display.drag = false;
-						}
-						break;
-					case 46:	// delete
-						if (plain && !dgrm.readonly)
-							dgrm.removeSelected();
-						break;
-
-					case 49:	// 1
-						if (plain && !dgrm.readonly && 'terminalObject' in cat)
-							dgrm.placeObject(e, cat.terminalObject, xy);
-						break;
-
-					//
-					// toggle panels
-					//
-					case 51:	// 3
-						if (plain)
-							Cat.display.panel.toggle('threeD');
-						break;
-					case 67:	// c
-						if (plainShift)
-							Cat.display.panel.toggle('category');
-						break;
-					case 68:	// d
-						if (plainShift)
-							Cat.display.panel.toggle('diagram');
-						break;
-					case 72:	// h
-						if (plainShift)
-							Cat.display.panel.toggle('help');
-						break;
-					case 76:	// l
-						if (plainShift)
-							Cat.display.panel.toggle('login');
-						break;
-					case 77:	// m
-						if (plainShift)
-							Cat.display.panel.toggle('morphism');
-						break;
-					case 79:	// O
-						if (plain)
-							Cat.display.panel.toggle('object');
-						break;
-					case 83:	// S
-						if (plain)
-							Cat.display.panel.toggle('settings');
-						break;
-
-					//
-					//
-					case 78:	// N
-						if (plain && !dgrm.readonly && 'enumerator' in cat)
-							dgrm.placeObject(e, cat.enumerator, xy);
-						break;
-
-					case 90:	// Z
-						if (plain && !dgrm.readonly && 'integers' in cat)
-							dgrm.placeObject(e, cat.integers, xy);
-						break;
-
-							//
-							// TODO move to PFS
-							//
-					case 68:	// d
-						if (plain && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObject('D'), xy);
-						break;
-					case 70:	// f
-						if (plain && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObject('F'), xy);
-						break;
-					case 83:	// S
-						if (plainShift && !dgrm.readonly)
-							dgrm.placeObject(e, dgrm.getObject('Str'), xy);
-						break;
-
-					case 79:	// O
-						if (plainShift && !dgrm.readonly && 'subobjectClassifer' in cat)
-							dgrm.placeObject(e, cat.subobjectClassifer, xy);
-						break;
-
-
-					case 84:	// T
-						if (plainShift && !dgrm.readonly)
-						{
-							const txt = new DiagramElement(dgrm, {name:`Text${dgrm.textId++}`, diagram:dgrm, properName:'Lorem ipsum cateconium', xy});
-							dgrm.elements.push(txt);
-							dgrm.placeElement(e, txt);
-						}
-						else if (plain)
-							Cat.display.panel.toggle('element');
-						break;
-					case 89:	// y
-						if (plainShift)
-							Cat.display.panel.toggle('tty');
-						break;
-
-					}
-					Cat.display.setCursor();
-				}
-			});
-			document.addEventListener('wheel', function(e)
-			{
-				if (e.target.id === 'topSVG')
-				{
-					Cat.display.deactivateToolbar();
-					let mouseInc = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-					const dgrm = Cat.getDiagram();
-					let inc = Math.log(dgrm.viewport.scale)/Math.log(Cat.default.scale.base) + mouseInc;
-					let nuScale = Cat.default.scale.base ** inc;
-					nuScale = nuScale < Cat.default.scale.limit.min ? Cat.default.scale.limit.min : nuScale;
-					nuScale = nuScale > Cat.default.scale.limit.max ? Cat.default.scale.limit.max : nuScale;
-					dgrm.viewport.scale = nuScale;
-					let pnt = {x:e.clientX, y:e.clientY};
-					const dx = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.x - dgrm.viewport.x);
-					const dy = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.y - dgrm.viewport.y);
-					const s = Cat.default.scale.base;
-					dgrm.viewport.x = dgrm.viewport.x - dx;
-					dgrm.viewport.y = dgrm.viewport.y - dy;
-					dgrm.setView();
-				}
-			}, false);
-		},
-		setNavbarBackground()
-		{
-			let c = '#CCC';
-			switch(Cat.user.status)
-			{
-				case 'registered':
-					c = '#A33';
-					break;
-				case 'confirmed':
-					c = '#0A0';
-					break;
-				case 'unauthorized':
-					c = '#CCC';
-					break;
-				case 'logged-in':
-					c = '#333';
-					break;
-			}
-			document.getElementById('navbar').style.background = c;
 		},
 	},
 	jsonAssoc(assoc)
@@ -2202,7 +996,7 @@ ${this.svg.button(onclick)}
 						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 						Cat.user.status = 'logged-in';
 						Cat.display.setNavbarBackground();
-						Cat.display.login.setPanelContent();
+						loginPanel.update();
 						Cat.Amazon.getUserDiagramsFromServer(function(dgrms)
 						{
 							if (Cat.debug)
@@ -2255,7 +1049,7 @@ ${this.svg.button(onclick)}
 				Cat.user.email = email;
 				Cat.user.status = 'registered';
 				Cat.display.setNavbarBackground();
-				Cat.display.login.setPanelContent();
+				loginPanel.update();
 				if (Cat.debug)
 					console.log('user name is ' + Cat.Amazon.user.getUsername());
 			});
@@ -2293,7 +1087,7 @@ ${this.svg.button(onclick)}
 				Cat.user.email = email;
 				Cat.user.status = 'registered';
 				Cat.display.setNavbarBackground();
-				Cat.display.login.setPanelContent();
+				loginPanel.update();
 				if (Cat.debug)
 					console.log('user name is ' + Cat.Amazon.user.getUsername());
 			});
@@ -2310,7 +1104,7 @@ ${this.svg.button(onclick)}
 				}
 				Cat.user.status = 'confirmed';
 				Cat.display.setNavbarBackground();
-				Cat.display.login.setPanelContent();
+				loginPanel.update();
 			});
 		},
 		login()
@@ -2338,9 +1132,9 @@ ${this.svg.button(onclick)}
 						Cat.user.name = data.Username;
 						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 						Cat.display.setNavbarBackground();
-						Cat.display.login.setPanelContent();
-						Cat.display.morphism.setPanelContent();
-						Cat.display.panel.toggle('login');
+						loginPanel.update();
+						morphismPanel.update();
+						loginPanel.toggle();
 						Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
 						{
 							Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
@@ -2377,7 +1171,7 @@ ${this.svg.button(onclick)}
 				Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
 			});
 			Cat.display.setNavbarBackground();
-			Cat.updatePanels();
+			Panels.update();
 		},
 		async fetchDiagram(name)
 		{
@@ -2510,7 +1304,7 @@ ${this.svg.button(onclick)}
 				}
 				const payload = JSON.parse(data.Payload);
 				payload.Items.map(i => Cat.serverDiagrams[i.subkey.S] = {timestamp:Number.parseInt(i.timestamp.N), description:i.description.S, properName:i.properName.S});
-				Cat.display.diagram.setUserDiagramTable();
+				diagramPanel.setUserDiagramTable();
 				if (fn)
 					fn(payload.Items);
 			});
@@ -2627,9 +1421,1007 @@ ${this.svg.button(onclick)}
 	},
 };	// Cat
 
+
+function Display()
+{
+	this.shiftKey =		false;
+	this.callbacks =	[];
+	this.drag =			false;
+	this.fuseObject =	null;
+	this.gridding =		true;
+	this.mouseDown =	false;
+	this.mouseover =	null;
+	this.dragStart =	new D2;
+	this.topSVG =		null;
+	this.diagramSVG =	null;
+	this.showRefcnts =	true;
+	this.showUploadArea =	false;
+	this.snapWidth =	1024;
+	this.snapHeight =	768;
+	this.tool =		'select';	// select|pan
+	this.statusbar =	null;
+	this.id =			0;
+	this.diagramSVG =	document.getElementById('diagramSVG');
+	this.topSVG =		document.getElementById('topSVG');
+	this.uiSVG =		document.getElementById('uiSVG');
+	this.upSVG =		document.getElementById('upSVG');
+	this.navbarElt =	document.getElementById('navbar');
+	this.statusbarElt = document.getElementById('statusbar');
+	this.svg =
+	{
+		alignObjectHorizontal:
+`<circle cx="80" cy="160" r="80" fill="url(#radgrad1)"/>
+<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
+<circle cx="240" cy="160" r="80" fill="url(#radgrad1)"/>
+<line class="arrow6" x1="0" y1="160" x2="320" y2="160" marker-end="url(#arrowhead)"/>`,
+		alignObjectVertical:
+`<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
+<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
+<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
+<line class="arrow6" x1="160" y1="0" x2="160" y2="320" marker-end="url(#arrowhead)"/>`,
+		cateapsis:
+`<circle cx="160" cy="60" r="60" fill="url(#radgrad1)"/>
+<path class="svgstr4" d="M40,280 40,160 110,90" marker-end="url(#arrowhead)"/>
+<path class="svgstr4" d="M280,280 280,160 210,90" marker-end="url(#arrowhead)"/>`,
+		category:
+`<line class="arrow0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
+		compose:
+`<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
+		chevronLeft:
+`<path class="svgfilNone svgstr1" d="M120,40 80,160 120,280"/>
+<path class="svgfilNone svgstr1" d="M200,40 160,160 200,280"/>`,
+		chevronRight:
+`<path class="svgfilNone svgstr1" d="M120,40 160,160 120,280"/>
+<path class="svgfilNone svgstr1" d="M200,40 240,160 200,280"/>`,
+		close:
+`<line class="arrow0 str0" x1="40" y1="40" x2="280" y2= "280" />
+<line class="arrow0 str0" x1="280" y1="40" x2="40" y2= "280" />`,
+		coproduct:
+`<circle class="svgstr4" cx="160" cy="160" r="80"/>
+<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
+<line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>`,
+		coproductAssembly:
+`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
+		copy:
+`<circle cx="200" cy="200" r="160" fill="#fff"/>
+<circle cx="200" cy="200" r="160" fill="url(#radgrad1)"/>
+<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>`,
+		delete:
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
+<path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
+		detachDomain:
+`<circle cx="40" cy="160" r="60" fill="url(#radgrad1)"/>
+<circle cx="100" cy="200" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
+		detachCodomain:
+`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
+<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,
+		diagram:
+`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
+		distribute:
+`<circle class="svgstr4" cx="80" cy="80" r="60"/>
+<line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
+<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
+<circle class="svgstr4" cx="240" cy="80" r="60"/>
+<line class="arrow0" x1="240" y1="40" x2="240" y2="140"/>
+<line class="arrow0" x1="180" y1="80" x2="300" y2="80"/>
+<circle class="svgstr4" cx="80" cy="240" r="60"/>
+<line class="arrow0" x1="80" y1="180" x2="80" y2="300"/>
+<line class="arrow0" x1="20" y1="240" x2="140" y2="240"/>
+<circle class="svgstr4" cx="240" cy="240" r="60"/>
+<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
+<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
+		download:
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+		edit:
+`<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
+		eval:
+`<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
+<polyline class="svgstr3" points="50,40 30,40 30,120 50,120"/>
+<polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
+<circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
+		fromHere:
+`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
+		toHere:
+`<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="30" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>`,
+		functor:
+`<line class="arrow0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
+		help:
+`<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
+<path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,
+		homFactor:
+`<circle cx="80" cy="240" r="100" fill="url(#radgrad1)"/>
+<circle cx="160" cy="160" r="80" fill="url(#radgrad2)"/>
+<circle cx="240" cy="160" r="80" fill="url(#radgrad2)"/>
+<circle cx="240" cy="80" r="80" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>`,
+		lambda2:
+`<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="200" y1="200" x2="280" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="200" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
+		lambda:
+`<circle cx="120" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="200" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="120" cy="240" r="60" fill="url(#radgrad1)"/>
+<circle cx="200" cy="240" r="60" fill="url(#radgrad1)"/>
+<polyline class="svgstr3" points="80,200 60,200 60,280 100,280"/>
+<polyline class="svgstr3" points="240,200 260,200 260,280 240,280"/>
+<line class="arrow0" x1="160" y1="100" x2="160" y2="200" marker-end="url(#arrowhead)"/>`,
+		login:
+`<polyline class="svgstr4" points="160,60 160,200 70,280 70,40 250,40 250,280"/>`,
+		morphism:
+`<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
+<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
+</marker>
+<marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
+<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
+</marker>
+<line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
+		new:
+`<circle class="svgfil4" cx="80" cy="70" r="70"/>
+<line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
+<line class="svgfilNone arrow0" x1="30" y1="70" x2="130" y2= "70" />`,
+		object:
+`<circle cx="160" cy="160" r="140" fill="url(#radgrad1)"/>`,
+		product:
+`<circle class="svgstr4" cx="160" cy="160" r="80"/>
+<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
+<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
+		productAssembly:
+`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="60" y1="80" x2="120" y2="260" marker-end="url(#arrowhead)"/>`,
+		project:
+`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,
+		pullback:
+`<path class="svgstr4" d="M60,120 120,120 120,60"/>
+<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
+		pushout:
+`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
+<path class="svgstr4" d="M200,260 200,200 260,200"/>`,
+		recursion:
+`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow3" x1="40" y1="120" x2="240" y2="120" marker-end="url(#arrowhead)"/>
+<line class="arrow6" x1="40" y1="180" x2="200" y2="180" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="40" y1="240" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
+		reference:
+`<line class="arrow9" x1="120" y1="100" x2="260" y2="100"/>
+<line class="arrow9" x1="100" y1="120" x2="100" y2="260"/>
+<line class="arrow9" x1="120" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="280" y1="120" x2="280" y2="250" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="60" y1="40" x2="200" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="40" y2="200" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="60" y1="220" x2="190" y2="220" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="220" y1="60" x2="220" y2="190" marker-end="url(#arrowhead)"/>`,
+		run:
+`<line class="arrow0" x1="20" y1="160" x2="100" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="220" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,
+		settings:
+`<line class="arrow0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="160" y1="40" x2="160" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="80" y1="60" x2="240" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="80" y1="260" x2="240" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<circle class="svgfil4" cx="160" cy="160" r="60"/>
+<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>`,
+		string:
+`<line class="arrow0" x1="60" y1="40" x2="260" y2="200"/>
+<path class="svgstr4" d="M60,120 C120,120 120,200 60,200"/>
+<path class="svgstr4" d="M260,40 C200,40 200,120 260,120"/>
+<line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>`,
+		symmetry:
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="280"/>
+<line class="arrow0" x1="80" y1="120" x2="80" y2="220"/>
+<line class="arrow0" x1="240" y1="120" x2="240" y2="220"/>
+<line class="arrow0" x1="40" y1="120" x2="120" y2="120"/>
+<line class="arrow0" x1="200" y1="120" x2="280" y2="120"/>`,
+		text:
+`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="160" y1="280" x2="160" y2="60"/>`,
+		threeD:
+`<line class="arrow0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
+		threeD_bottom:
+`<polygon class="svgfil1" points="120,180 280,180 200,280 40,280"/>
+<use xlink:href="#threeD_base" x="0" y="0"/>`,
+		threeD_front:
+`<polygon class="svgfil1" points="40,120 200,120 200,280 40,280"/>
+<use xlink:href="#threeD_base" x="0" y="0"/>`,
+		threeD_back:
+`<polygon class="svgfil1" points="120,40 280,40 280,180 120,180"/>
+<use xlink:href="#threeD_base" x="0" y="0"/>`,
+		threeD_top:
+`<polygon class="svgfil1" points="120,40 280,40 200,140 40,140"/>
+<use xlink:href="#threeD_base" x="0" y="0"/>`,
+		threeD_left:
+`<polygon class="svgfil1" points="120,20 120,180 40,280 40,120"/>
+<use xlink:href="#threeD_base" x="0" y="0"/>`,
+		threeD_right:
+`<polygon class="svgfil1" points="280,20 280,180 200,280 200,120"/>
+<use xlink:href="#threeD_base" x="0" y="0"/>`,
+		transform:
+// <path class="svgfil0" d="M228.03 165l-127.89 0 0 -20 127.89 0 0 20zm12.98 -4.8l-6.74 -10.39 0 10.39 -48.89 -31.69 6.74 -10.4 48.89 31.7 0 10.39zm0 0l0 -10.39 8.02 5.2 -8.02 5.2zm-52.26 26.52l-3.37 -5.2 48.89 -31.72 6.74 10.39 -48.89 31.72 -3.37 -5.2z"/>
+// <path class="svgfil0" d="M260 273.03l0 -243.03 20 0 0 243.03 -20 0zm4.8 12.98l10.39 -6.74 -10.39 0 31.69 -48.89 10.4 6.74 -31.7 48.89 -10.39 0zm0 0l10.39 0 -5.2 8.02 -5.2 -8.02zm-26.52 -52.26l5.2 -3.37 31.72 48.89 -10.39 6.74 -31.72 -48.89 5.2 -3.37z"/>`,
+`<circle cx="50" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="100" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
+		tty:
+`<path class="svgstrThinGray" d="M70,40 240,40 240,280 70,280 70,40"/>
+<line class="svgstr3" x1="90" y1="80" x2="220" y2="80"/>
+<line class="svgstr3" x1="90" y1="120" x2="200" y2="120"/>
+<line class="svgstr3" x1="90" y1="160" x2="160" y2="160"/>
+<line class="svgstr3" x1="90" y1="200" x2="120" y2="200"/>`,
+		lock:
+`<rect class="svgfil5" x="20" y="20" width="280" height="280"/>
+<line class="arrow0" x1="60" y1="60" x2="260" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="60" y1="260" x2="260" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<circle class="svgfil4" cx="160" cy="160" r="40"/>`,
+		unlock:
+`
+<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="280" x2="280" y2="40" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+<rect class="svgfil5" x="120" y="120" width="80" height="80"/>
+`,
+		upload:
+`<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+	};
+}
+Display.prototype.resize()
+{
+	const dgrm = $Cat !== null ? Cat.getDiagram() : null;
+	const scale = dgrm !== null ? dgrm.viewport.scale : 1.0;
+	const w = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
+	const h = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
+	if ('topSVG' in this && this.topSVG)
+	{
+		this.topSVG.setAttribute('width', w);
+		this.topSVG.setAttribute('height', h);
+		this.uiSVG.setAttribute('width', w);
+		this.uiSVG.setAttribute('height', h);
+		this.upSVG.setAttribute('width', w);
+		this.upSVG.setAttribute('height', h);
+	}
+}
+Display.prototype.initialize()
+{
+	this.setNavbarHtml();
+	this.topSVG.addEventListener('mousemove', this.mousemove, true);
+	this.topSVG.addEventListener('mousedown', this.mousedown, true);
+	this.topSVG.addEventListener('mouseup', this.mouseup, true);
+	this.uiSVG.style.left = '0px';
+	this.uiSVG.style.top = '0px';
+	this.upSVG.style.left = '0px';
+	this.upSVG.style.top = '0px';
+	this.resize();
+	this.upSVG.style.display = this.showUploadArea ? 'block' : 'none';
+	this.addEventListeners();
+	Panels.update();
+}
+Display.prototype.mousedown(e)
+{
+	this.mouseDown = true;
+	Cat.mouse.down = {x:e.clientX, y:e.clientY};
+	const dgrm = Cat.getDiagram();
+	this.callbacks.map(f => f());
+	this.callbacks = [];
+	const pnt = dgrm.mousePosition(e);
+	if (this.mouseover)
+	{
+		if (!dgrm.isSelected(this.mouseover) && !this.shiftKey)
+			dgrm.deselectAll();
+	}
+	else
+		dgrm.deselectAll();
+	if (e.which === 2)
+		this.tool = 'pan';
+	if (this.tool === 'pan')
+	{
+		if (!this.drag)
+		{
+			dgrm.viewport.orig = Cat.clone(dgrm.viewport);
+			if ('orig' in dgrm.viewport.orig)
+				delete dgrm.viewport.orig.orig;
+			this.dragStart = pnt;
+			this.drag = true;
+		}
+	}
+}
+Display.prototype.mousemove(e)
+{
+	Cat.mouse.xy = {x:e.clientX, y:e.clientY};
+	try
+	{
+		this.shiftKey = e.shiftKey;
+		let dgrm = Cat.getDiagram();
+		if (!dgrm)
+			return;
+		const xy = dgrm.mousePosition(e);
+		if (this.drag)
+		{
+			this.deactivateToolbar();
+			if (!dgrm.readonly && e.ctrlKey && dgrm.selected.length == 1 && this.fuseObject === null)
+			{
+				let from = dgrm.getSelected();
+				this.mouseover = dgrm.findElement(xy, from.name);
+				const isolated = from.refcnt === 1;
+				if (CatObject.isPrototypeOf(from.to))
+				{
+					const to = from.to;
+					this.fuseObject = new DiagramObject(dgrm, {xy});
+					dgrm.deselectAll();
+					const id = Identity.Get(dgrm, to);
+					const fromMorph = new DiagramMorphism(dgrm, {to:id, domain:from.name, codomain:this.fuseObject.name});
+					fromMorph.incrRefcnt();
+					this.fuseObject.addSVG();
+					fromMorph.addSVG();
+					fromMorph.update();
+					from = this.fuseObject;
+					dgrm.addSelected(e, this.fuseObject);
+					from.setXY(xy);
+					dgrm.saveLocal();
+					dgrm.checkFusible(xy);
+				}
+				else if (Morphism.isPrototypeOf(from.to))
+				{
+					dgrm.deselectAll();
+					const domain = new DiagramObject(dgrm, {xy:from.domain.getXY()});
+					const codomain = new DiagramObject(dgrm, {xy:from.codomain.getXY()});
+					const fromCopy = new DiagramMorphism(dgrm, {to, domain, codomain});
+					fromCopy.incrRefcnt();
+					fromCopy.update();
+					domain.addSVG();
+					codomain.addSVG();
+					fromCopy.addSVG();
+					dgrm.addSelected(e, fromCopy);
+					dgrm.saveLocal();
+					this.fuseObject = fromCopy;
+					dgrm.checkFusible(xy);
+				}
+			}
+			else
+			{
+				const skip = dgrm.getSelected();
+				this.mouseover = dgrm.findElement(xy, skip ? skip.name : '');
+				switch(this.tool)
+				{
+				case 'select':
+					if (!dgrm.readonly)
+					{
+						dgrm.updateDragObjects(xy);
+						dgrm.checkFusible(xy);
+					}
+					break;
+				case 'pan':
+					const loc = dgrm.userToDiagramCoords(Cat.mouse.xy, true);
+					const delta = D2.scale(dgrm.viewport.orig.scale, D2.subtract(loc, this.dragStart));
+					dgrm.viewport.x = dgrm.viewport.orig.x + delta.x;
+					dgrm.viewport.y = dgrm.viewport.orig.y + delta.y;
+					dgrm.setView();
+					break;
+				}
+			}
+		}
+		else if (this.mouseDown === true)
+		{
+			this.mouseover = dgrm.findElement(xy);
+			const x = Math.min(Cat.mouse.xy.x, Cat.mouse.down.x);
+			const y = Math.min(Cat.mouse.xy.y, Cat.mouse.down.y);
+			const w = Math.abs(Cat.mouse.xy.x - Cat.mouse.down.x);
+			const h = Math.abs(Cat.mouse.xy.y - Cat.mouse.down.y);
+			const svg = document.getElementById('selectRect');
+			if (svg)
+			{
+				svg.setAttribute('x', x);
+				svg.setAttribute('y', y);
+				svg.setAttribute('width', w);
+				svg.setAttribute('height', h);
+			}
+			else
+			{
+				const s = `<rect id="selectRect" x="${x}" y="${y}" width="${w}" height="${h}">`;
+				this.uiSVG.innerHTML += s;
+			}
+		}
+		else
+		{
+			this.mouseover = dgrm.findElement(xy);
+			const svg = document.getElementById('selectRect');
+			if (svg)
+				svg.parentNode.removeChild(svg);
+		}
+	}
+	catch(e)
+	{
+		Cat.recordError(e);
+	}
+}
+Display.prototype.mouseup(e)
+{
+	this.mouseDown = false;
+	if (e.which === 2)
+	{
+		this.tool = 'select';
+		this.drag = false;
+		return;
+	}
+	try
+	{
+		const dgrm = Cat.getDiagram();
+		const cat = dgrm.codomain;
+		let pnt = dgrm.mousePosition(e);
+		if (this.drag)
+		{
+			if (dgrm.selected.length === 1)
+			{
+				let dragObject = dgrm.getSelected();
+				let targetObject = dragObject.isEquivalent(this.mouseover) ? null : this.mouseover;
+				if (targetObject !== null)
+				{
+					if (CatObject.isPrototypeOf(dragObject.to) && CatObject.isPrototypeOf(targetObject.to))
+					{
+						if (dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
+						{
+							//
+							// product
+							//
+							// TODO add coproduct, hom
+							//
+							let to = null;
+							if (e.shiftKey && cat.coproducts)
+								to = coproductObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
+							else if (e.altKey && cat.closed)
+								to = homObject.get(dgrm.codomain, [dragObject.to, targetObject.to]);
+							else if (cat.cartesian)
+								to = productObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
+//									dgrm.setObject(targetObject, to);
+							targetObject.setObject(to);
+							dgrm.deselectAll(false);
+							targetObject.removeSVG();
+							targetObject.addSVG();
+							dgrm.addSelected(e, targetObject);
+							dragObject.decrRefcnt();
+						}
+						else if(dgrm.canFuseObjects(dragObject, targetObject))
+						{
+							dgrm.deselectAll();
+							let morphs = dgrm.getObjectMorphisms(dragObject);
+							if (morphs.cods.length > 0)
+							{
+								let from = morphs.cods[0];
+								if (morphs.cods.length === 1 && morphs.doms.length === 0 && Identity.isPrototypeOf(from.to) && !from.to.domain.isInitial)
+								{
+									const cod = dragObject.to;
+									const toTargetObject = targetObject.to;
+									if (cod.signature !== toTargetObject.signature)
+									{
+										//
+										// TODO cat has terminal object
+										//
+										if (toTargetObject.isTerminal)
+										{
+											const to = $Cat.getTransform(`terminal-${dgrm.codomain.name}`).$(dgrm, from.to.domain);
+											from.removeSVG();
+											dgrm.setMorphism(from, to);
+											from.addSVG();
+										}
+										//
+										// TODO ability to convert identity to some morphism?
+										//
+										else
+										{
+											const to = Cat.getDiagram().newDataMorphism(cod, toTargetObject);
+											from.removeSVG();
+											dgrm.setMorphism(from, to);
+											from.addSVG();
+										}
+									}
+									from.codomain = targetObject;
+									targetObject.incrRefcnt();
+									dragObject.decrRefcnt();
+								}
+							}
+							//
+							// graph merge
+							//
+							for(const [from, to] of dgrm.morphisms)
+							{
+								if (from.domain.isEquivalent(dragObject))
+								{
+									from.domain.decrRefcnt();
+									from.domain = targetObject;
+									Display.MergeObjectsRefCnt(dgrm, dragObject, targetObject);
+								}
+								else if (from.codomain.isEquivalent(dragObject))
+								{
+									from.codomain.decrRefcnt();
+									from.codomain = targetObject;
+									Display.MergeObjectsRefCnt(dgrm, dragObject, targetObject);
+								}
+							}
+							dragObject.decrRefcnt();
+							dgrm.update(e, '', null, true);
+						}
+					}
+					//
+					// TODO * is monoidal
+					//
+					else if (dgrm.codomain.hasProducts &&
+						Morphism.isPrototypeOf(dragObject.to) &&
+						Morphism.isPrototypeOf(targetObject.to) &&
+						dgrm.isIsolated(dragObject) &&
+						dgrm.isIsolated(targetObject))
+					{
+						dgrm.deselectAll();
+						const dragMorphTo = dragObject.to;
+						const targetMorphTo = targetObject.to;
+						const morphisms = [targetMorphTo, dragMorphTo];
+						const newTo = ProductMorphism.Get(dgrm, morphisms);
+						newTo.incrRefcnt();
+						dgrm.placeMorphism(e, newTo, targetObject.domain, targetObject.codomain);
+						dragObject.decrRefcnt();
+						targetObject.decrRefcnt();
+						targetObject.update();
+					}
+				}
+			}
+			if (!dgrm.readonly)
+				dgrm.saveLocal();
+		}
+		else if (e.ctrlKey)
+		{
+		}
+		else
+			dgrm.addWindowSelect(e);
+		this.fuseObject = null;
+	}
+	catch(x)
+	{
+		Cat.recordError(x);
+	}
+	this.drag = false;
+}
+Display.prototype.drop(e)
+{
+	try
+	{
+		e.preventDefault();
+		this.drag = false;
+		let cat = getCat();
+		let dgrm = Cat.getDiagram();
+		if (dgrm.readonly)
+		{
+			Cat.status(e, 'Diagram is not editable!');
+			return;
+		}
+		const xy = dgrm.mousePosition(e);
+		const dropText = e.dataTransfer.getData('text');
+		if (dropText.length === 0)
+			return;
+		const tokens = dropText.split(' ');
+		const type = tokens[0];
+		const name = tokens[1];
+		let from = null;
+		let to = null;
+		switch(type)
+		{
+		case 'object':
+			to = dgrm.getObject(name);
+			from = new DiagramObject(dgrm, {xy, to});
+			break;
+		case 'morphism':
+			to = dgrm.getMorphism(name);
+			if (to === null)
+				throw `Morphism ${name} does not exist in category ${cat.properName}`;
+			const domain = new DiagramObject(dgrm, {xy});
+			const codLen = Cat.textWidth(to.domain.properName)/2;
+			const domLen = Cat.textWidth(to.codomain.properName)/2;
+			const namLen = Cat.textWidth(to.properName);
+			const codomain = new DiagramObject(dgrm,
+				{
+					xy:
+					{
+						x:pnt.x + Math.max(Cat.default.arrow.length, domLen + namLen + codLen + Cat.default.arrow.length/4),
+						y:pnt.y
+					}
+				});
+			from = new DiagramMorphism(dgrm, {to, domain, codomain});
+			from.incrRefcnt();	// TODO ???
+			from.update();
+			domain.addSVG();
+			codomain.addSVG();
+			break;
+		}
+		from.addSVG();
+		dgrm.update(e, type, from);
+	}
+	catch(err)
+	{
+		Cat.recordError(err);
+	}
+}
+Display.prototype.deactivateToolbar()
+{
+	this.toolbar.style.display = 'none';
+}
+Display.prototype.closeBtnCell(typeName)
+{
+	return H.td(this.getButton('close', `${typeName}Panel.close()`, 'Close'), 'buttonBar');
+}
+Display.prototype.expandPanelBtn(panelName, right)
+{
+	return H.td(this.getButton(right ? 'chevronLeft' : 'chevronRight', `${panelName}.expand()`, 'Expand'), 'buttonBar', `${panelName}-expandBtn`));
+}
+Display.prototype.clickDeleteBtn(id, fn)
+{
+	try
+	{
+		const delBtn = document.getElementById(`delBtn${id}`);
+		if ('hit' in delBtn)
+		{
+			delBtn.parentNode.replaceChild(delBtn.cloneNode(true), delBtn);
+			if (fn in window)
+				window[fn]();
+		}
+		else
+		{
+			delBtn.hit = true;
+			this.callbacks.push(function()
+			{
+				var elm = delBtn;
+				var newElm = elm.cloneNode(true);
+			});
+		}
+	}
+	catch(e)
+	{
+		Cat.recordError(e);
+	}
+}
+Display.prototype.deleteBtn(fn, title)
+{
+	const uid = ++this.id;
+	const html = H.span(
+`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg id="svg${uid}" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="0.32in" height="0.32in" version="1.1" viewBox="0 0 320 320" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect id="delBtn${uid}" x="0" y="0" width="320" height="320" fill="white">
+<animate attributeName="fill" values="white;yellow" dur="0.25s" begin="anim${uid}.begin" fill="freeze"/>
+</rect>
+<g>
+${this.svg.delete}
+<rect class="btn" x="0" y="0" width="320" height="320" onclick="display.clickDeleteBtn(${uid}, '${fn}')"/>
+<animateTransform id="anim${uid}" attributename="transform" type="rotate" from="0 160 160" to="360 160 160" begin="click" dur="0.25s" fill="freeze"/>
+</g>
+</svg>`, '', '', title);
+	return H.td(H.div(html), 'buttonBar');
+}
+Display.prototype.downloadButton(txt, onclick, title, scale = Cat.default.button.small)
+{
+	const html = H.span(Display.SvgHeeader(scale) + this.svg.download +
+`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">${txt}</text>
+${Display.Button(onclick)}
+</svg>`, '', '', title);
+	return html;
+}
+Display.prototype.getButton(buttonName, onclick, title, scale = Cat.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
+{
+	let btn = this.svg[buttonName];
+	if (id !== null)
+		btn = `<g id="${id}">${btn}</g>`;
+	return H.span(Display.SvgHeader(scale, bgColor) + btn + (addNew ? this.svg.new : '') + Display.Button(onclick) + '</svg>', '', id, title);
+}
+Display.prototype.setNavbarHtml()
+{
+	const left = H.td(H.div(this.getButton('category', "categoryPanel.toggle()", 'Categories', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('diagram', "diagramPanel.toggle()", 'Diagrams', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('object', "objectPanel.toggle()", 'Objects', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('morphism', "morphismPanel.toggle()", 'Morphisms', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('functor', "functorPanel.toggle()", 'Functors', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('transform', "transformPanel.toggle()", 'Transforms', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('text', "elementPanel.toggle()", 'Text', Cat.default.button.large)));
+	const right =
+		H.td(H.div(this.getButton('cateapsis', "Cat.getDiagram().home()", 'Cateapsis', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('string', "Cat.getDiagram().showStrings(evt)", 'Graph', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('threeD', "threeDpanel.toggle();threeDPanel.resizeCanvas()", '3D view', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('tty', "ttyPanel.toggle()", 'Console', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('help', "helpPanel.toggle()", 'Help', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('login', "loginPanel.toggle()", 'Login', Cat.default.button.large))) +
+		H.td(H.div(this.getButton('settings', "settingsPanel.toggle()", 'Settings', Cat.default.button.large))) +
+		H.td('&nbsp;&nbsp;&nbsp;');
+	let navbar = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
+								H.td(H.span('', 'navbar-inset', 'categroy-navbar'), 'w20') +
+								H.td(H.span('Catecon', 'title'), 'w20') +
+								H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
+								H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
+	this.navbarElt.innerHTML = navbar;
+}
+Display.prototype.setCursor()
+{
+	switch(this.tool)
+	{
+	case 'select':
+		this.topSVG.style.cursor = 'default';
+		break;
+	case 'pan':
+		this.topSVG.style.cursor = 'all-scroll';
+		break;
+	}
+}
+Display.prototype.elementId()
+{
+	return `elt_${this.id++}`;
+}
+Display.prototype.addEventListeners()
+{
+	document.addEventListener('mousemove', function(e)
+	{
+		if (this.statusbarElt.style.display === 'block' && D2.dist(Cat.statusXY, {x:e.clientX, y:e.clientY}) > 50)
+			this.statusbarElt.style.display = 'none';
+	});
+	document.addEventListener('dragover', function(e)
+	{
+		e.preventDefault();
+	}, false);
+	document.addEventListener('drop', function(e)
+	{
+		e.preventDefault();
+	}, true);
+	document.addEventListener('keydown', function(e)
+	{
+		if (e.target === document.body)
+		{
+			switch(e.keyCode)
+			{
+			case 32:	// 'space'
+				display.tool = 'pan';
+				break;
+			case 36:	// 'home'
+				Cat.getDiagram().home();
+				break;
+			}
+			display.shiftKey = e.shiftKey;
+			display.setCursor();
+		}
+	});
+	document.addEventListener('keyup', function(e)
+	{
+		if (e.target === document.body)
+		{
+			const dgrm = Cat.getDiagram();
+			if (!dgrm)
+				return;
+			const cat = dgrm.codomain;
+			const xy = dgrm.userToDiagramCoords(Cat.mouse.xy);
+			display.shiftKey = e.shiftKey;
+			const plain = !(e.shiftKey || e.ctrlKey || e.altKey);
+			const plainShift = e.shiftKey && !(e.ctrlKey || e.altKey);
+			switch(e.keyCode)
+			{
+			case 32:	// 'space'
+				if (plain)
+				{
+					display.tool = 'select';
+					display.drag = false;
+				}
+				break;
+			case 46:	// delete
+				if (plain && !dgrm.readonly)
+					dgrm.removeSelected();
+				break;
+			case 49:	// 1
+				if (plain && !dgrm.readonly && 'terminalObject' in cat)
+					dgrm.placeObject(e, cat.terminalObject, xy);
+				break;
+			//
+			// toggle panels
+			//
+			case 51:	// 3
+				if (plain)
+					threeDPanel.toggle();
+				break;
+			case 67:	// c
+				if (plainShift)
+					categoryPanel.toggle();
+				break;
+			case 68:	// d
+				if (plainShift)
+					diagramPanel.toggle();
+				break;
+			case 72:	// h
+				if (plainShift)
+					helpPanel.toggle();
+				break;
+			case 76:	// l
+				if (plainShift)
+					loginPanel.toggle();
+				break;
+			case 77:	// m
+				if (plainShift)
+					morphismPanel.toggle();
+				break;
+			case 79:	// O
+				if (plain)
+					objectdPanel.toggle();
+				break;
+			case 83:	// S
+				if (plain)
+					settingsPanel.toggle();
+				break;
+			//
+			//
+			case 78:	// N
+				if (plain && !dgrm.readonly && 'enumerator' in cat)
+					dgrm.placeObject(e, cat.enumerator, xy);
+				break;
+			case 90:	// Z
+				if (plain && !dgrm.readonly && 'integers' in cat)
+					dgrm.placeObject(e, cat.integers, xy);
+				break;
+					//
+					// TODO move to PFS
+					//
+			case 68:	// d
+				if (plain && !dgrm.readonly)
+					dgrm.placeObject(e, dgrm.getObject('D'), xy);
+				break;
+			case 70:	// f
+				if (plain && !dgrm.readonly)
+					dgrm.placeObject(e, dgrm.getObject('F'), xy);
+				break;
+			case 83:	// S
+				if (plainShift && !dgrm.readonly)
+					dgrm.placeObject(e, dgrm.getObject('Str'), xy);
+				break;
+			case 79:	// O
+				if (plainShift && !dgrm.readonly && 'subobjectClassifer' in cat)
+					dgrm.placeObject(e, cat.subobjectClassifer, xy);
+				break;
+			case 84:	// T
+				if (plainShift && !dgrm.readonly)
+				{
+					const txt = new DiagramElement(dgrm, {name:`Text${dgrm.textId++}`, diagram:dgrm, properName:'Lorem ipsum cateconium', xy});
+					dgrm.elements.push(txt);
+					dgrm.placeElement(e, txt);
+				}
+				else if (plain)
+					elementPanel.toggle();
+				break;
+			case 89:	// y
+				if (plainShift)
+					ttyPanel.toggle();
+				break;
+			}
+			display.setCursor();
+		}
+	});
+	document.addEventListener('wheel', function(e)
+	{
+		if (e.target.id === 'topSVG')
+		{
+			display.deactivateToolbar();
+			let mouseInc = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+			const dgrm = Cat.getDiagram();
+			let inc = Math.log(dgrm.viewport.scale)/Math.log(Cat.default.scale.base) + mouseInc;
+			let nuScale = Cat.default.scale.base ** inc;
+			nuScale = nuScale < Cat.default.scale.limit.min ? Cat.default.scale.limit.min : nuScale;
+			nuScale = nuScale > Cat.default.scale.limit.max ? Cat.default.scale.limit.max : nuScale;
+			dgrm.viewport.scale = nuScale;
+			let pnt = {x:e.clientX, y:e.clientY};
+			const dx = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.x - dgrm.viewport.x);
+			const dy = mouseInc * (1.0 - 1.0 / Cat.default.scale.base) * (pnt.y - dgrm.viewport.y);
+			const s = Cat.default.scale.base;
+			dgrm.viewport.x = dgrm.viewport.x - dx;
+			dgrm.viewport.y = dgrm.viewport.y - dy;
+			dgrm.setView();
+		}
+	}, false);
+}
+Display.prototype.setNavbarBackground()
+{
+	let c = '#CCC';
+	switch(Cat.user.status)
+	{
+		case 'registered':
+			c = '#A33';
+			break;
+		case 'confirmed':
+			c = '#0A0';
+			break;
+		case 'unauthorized':
+			c = '#CCC';
+			break;
+		case 'logged-in':
+			c = '#333';
+			break;
+	}
+	this.navbarElt.style.background = c;
+}
+//
+// Display static methods
+//
+Diaplay.prototype.OnEnter(e, fn)
+{
+	if (e.key === 'Enter')
+		fn(e);
+}
+Display.prototype.Width()
+{
+	return isGUI ? window.innerWidth : 1024;
+}
+Display.prototype.Height()
+{
+	return isGUI ? window.innerHeight : 768;
+}
+Display.prototype.SvgHeader(scale, bgColor = '#ffffff')
+{
+	const v = 0.32 * (typeof scale !== 'undefined' ? scale : 1.0);
+	const html =
+`<svg xmlns="http://www.w3.org/2000/svg" width="${v}in" height="${v}in" version="1.1" viewBox="0 0 320 320">
+<rect x="0" y="0" width="320" height="320" style="fill:${bgColor}"/>`;
+	return html;
+}
+Display.prototype.Button(onclick)
+{
+	return `<rect class="btn" x="0" y="0" width="320" height="320" onclick="${onclick}"/>`;
+}
+Display.prototype.MergeObjectsRefCnt(dgrm, dragObject, targetObject)
+{
+	dragObject.decrRefcnt();
+	targetObject.incrRefcnt();
+	targetObject.to.incrRefcnt();
+}
+Display.prototype.Input(val, id, ph, x='', cls='in100', type='text')
+{
+	return H.input(val, cls, id, type, {ph});
+}
+Display.prototype.MorphismTableRows(morphisms, action = null, drag = true)
+{
+	let html = '';
+	let found = {};
+	for(let i=0; i<morphisms.length; ++i)
+	{
+		let m = morphisms[i];
+		if (m.name in found)
+			continue;
+		found[m.name] = true;
+		const act = action !== null ? action.replace(/%1/g, m.name) : '';
+		html += H.tr(H.td(m.properName) + H.td(m.domain.properName) + H.td('&rarr;') + H.td(m.codomain.properName),
+				`${drag ? 'grabbable ' : ''}sidenavRow`, '', Cat.cap(m.description), drag ? `draggable="true" ondragstart="morphismPanel.drag(event, '${m.name}')" ${act}` : act);
+	}
+	return html;
+}
+
+//
+// Panels
+//
 function Panels()
 {
-	this.panels = [];
+	this.panels = {};
 }
 Panels.prototype.closeAll(side)
 {
@@ -2646,6 +2438,11 @@ Panels.prototype.closeAll(side)
 			panel.close();
 	}
 }
+Panels.prototype.update()
+{
+	for (const [name, panel] of this.panels)
+		panel.update();
+}
 
 panels = new Panels();
 
@@ -2655,17 +2452,18 @@ function Panel(name, right = false, width = Cat.default.panel.width)
 	this.width = width;
 	this.right = right;
 	this.elt = document.getElementById(`${this.name}-sidenav`);
+	this.expandBtnElt = document.getElementById(`${this.name}-expandBtn`);
 	panels.panels[this.name] = this;;
 }
 Panel.prototype.collapse()
 {
 	this.elt.style.width = this.width + 'px';
-	document.getElementById(`${this.name}-expandBtn`).innerHTML = Cat.display.getButton(this.right ? 'chevronLeft' : 'chevronRight', `${this.name}.expand()`, 'Collapse');
+	this.expandBtnElt.innerHTML = display.getButton(this.right ? 'chevronLeft' : 'chevronRight', `${this.name}.expand()`, 'Collapse');
 }
 Panel.prototype.expand()
 {
 	this.elt.style.width = 'auto';
-	document.getElementById(`${this.name}-expandBtn`).innerHTML = Cat.display.getButton(this.right ? 'chevronRight' : 'chevronLeft', `${this.name}.collapse()`, 'Expand');
+	this.expandBtnElt.innerHTML = display.getButton(this.right ? 'chevronRight' : 'chevronLeft', `${this.name}.collapse()`, 'Expand');
 }
 Panel.prototype.open()
 {
@@ -2711,22 +2509,22 @@ Panel.prototype.AccordionPanelDyn(header, action, panelId, title = '', buttonId 
 function CategoryPanel()
 {
 	Panel.call(this, 'category');
-	this.elt.innerHTML = H.table(H.tr(Cat.display.closeBtnCell('category', false)), 'buttonBarRight') +
+	this.elt.innerHTML = H.table(H.tr(display.closeBtnCell('category', false)), 'buttonBarRight') +
 					H.h3('Categories') + H.div('', '', 'categoryTbl') +
 					H.button('New Category', 'sidenavAccordion', '', 'New Category', `onclick="Panel.AccordionToggle(this, \'categoryPanel.create()\')"`) +
 					H.div(H.table(
-						H.tr(H.td(Cat.display.input('', 'categoryName', 'Name')), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'categoryProperName', 'HTML Entities')), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'categoryDescription', 'Description')), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'isMonoidal', '', '', 'in100', 'checkbox') + '<label for="isMonoidal">Monoidal?</label>', 'left'), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'isBraided', '', '', 'in100', 'checkbox') + '<label for="isBraided">Braided?</label>', 'left'), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'isClosed', '', '', 'in100', 'checkbox') + '<label for="isClosed">Closed?</label>', 'left'), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'isSymmetric', '', '', 'in100', 'checkbox') + '<label for="isSymmetric">Symmetric?</label>', 'left'), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'isCompact', '', '', 'in100', 'checkbox') + '<label for="isCompact">Compact?</label>', 'left'), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'isCartesian', '', '', 'in100', 'checkbox') + '<label for="isCartesian">Cartesian?</label>', 'left'), 'sidenavRow') +
-						H.tr(H.td(Cat.display.input('', 'allObjectsFinite', '', '', 'in100', 'checkbox') + '<label for="allObjectsFinite">Finite objects?</label>', 'left'), 'sidenavRow'),
+						H.tr(H.td(Display.Input('', 'categoryName', 'Name')), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'categoryProperName', 'HTML Entities')), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'categoryDescription', 'Description')), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'isMonoidal', '', '', 'in100', 'checkbox') + '<label for="isMonoidal">Monoidal?</label>', 'left'), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'isBraided', '', '', 'in100', 'checkbox') + '<label for="isBraided">Braided?</label>', 'left'), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'isClosed', '', '', 'in100', 'checkbox') + '<label for="isClosed">Closed?</label>', 'left'), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'isSymmetric', '', '', 'in100', 'checkbox') + '<label for="isSymmetric">Symmetric?</label>', 'left'), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'isCompact', '', '', 'in100', 'checkbox') + '<label for="isCompact">Compact?</label>', 'left'), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'isCartesian', '', '', 'in100', 'checkbox') + '<label for="isCartesian">Cartesian?</label>', 'left'), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'allObjectsFinite', '', '', 'in100', 'checkbox') + '<label for="allObjectsFinite">Finite objects?</label>', 'left'), 'sidenavRow'),
 							'sidenav') +
-				H.span(Cat.display.getButton('edit', 'CategoryPanel.Create()', 'Create new category')) + H.br() +
+				H.span(display.getButton('edit', 'CategoryPanel.Create()', 'Create new category')) + H.br() +
 				H.span('', 'error', 'categoryError'), 'accordionPnl', 'newCategoryPnl');
 	this.tableElt = document.getElementById('categoryTbl');
 	this.errorElt = document.getElementById('categoryError');
@@ -2758,7 +2556,7 @@ CategoryPanel.prototype.create()
 
 const categoryPanel = new CategoryPanel();
 
-function ThreeD()
+function ThreeDPanel()
 {
 	Panel.call(this, 'threeD', true);
 	this.mouse =	typeof THREE === 'object' ? new THREE.Vector2() : null,
@@ -2772,26 +2570,26 @@ function ThreeD()
 	this.axesHelperSize =	1000,
 	this.max =		10000,
 	this.horizon =	100000,
-	this.elt.innerHTML = H.table(H.tr(Cat.display.closeBtnCell('threeD', false) +
-							Cat.display.expandPanelBtn('threeD', true) +
-						H.td(Cat.display.getButton('delete', 'threeD.initialize()', 'Clear display'), 'buttonBar') +
-						H.td(Cat.display.getButton('threeD_left', `Cat.display.threeD.view('left')`, 'Left'), 'buttonBar') +
-						H.td(Cat.display.getButton('threeD_top', `Cat.display.threeD.view('top')`, 'Top'), 'buttonBar') +
-						H.td(Cat.display.getButton('threeD_back', `Cat.display.threeD.view('back')`, 'Back'), 'buttonBar') +
-						H.td(Cat.display.getButton('threeD_right', `Cat.display.threeD.view('right')`, 'Right'), 'buttonBar') +
-						H.td(Cat.display.getButton('threeD_bottom', `Cat.display.threeD.view('bottom')`, 'Bottom'), 'buttonBar') +
-						H.td(Cat.display.getButton('threeD_front', `Cat.display.threeD.view('front')`, 'Front'), 'buttonBar')
+	this.elt.innerHTML = H.table(H.tr(display.closeBtnCell('threeD', false) +
+							display.expandPanelBtn('threeD', true) +
+						H.td(display.getButton('delete', 'threeD.initialize()', 'Clear display'), 'buttonBar') +
+						H.td(display.getButton('threeD_left', `display.threeD.view('left')`, 'Left'), 'buttonBar') +
+						H.td(display.getButton('threeD_top', `display.threeD.view('top')`, 'Top'), 'buttonBar') +
+						H.td(display.getButton('threeD_back', `display.threeD.view('back')`, 'Back'), 'buttonBar') +
+						H.td(display.getButton('threeD_right', `display.threeD.view('right')`, 'Right'), 'buttonBar') +
+						H.td(display.getButton('threeD_bottom', `display.threeD.view('bottom')`, 'Bottom'), 'buttonBar') +
+						H.td(display.getButton('threeD_front', `display.threeD.view('front')`, 'Front'), 'buttonBar')
 						), 'buttonBarLeft') +
 					H.div('', '', 'threeDiv');
 	this.threeDiv = document.getElementById('threeDiv');
 	this.initialize();
 	this.animate();
 }
-ThreeD.prototype.initialize()
+ThreeDPanel.prototype.initialize()
 {
 	try
 	{
-		Cat.display.threeD.bbox =
+		display.threeD.bbox =
 		{
 			min:{x:Number.POSITIVE_INFINITY, y:Number.POSITIVE_INFINITY, z:Number.POSITIVE_INFINITY},
 			max:{x:Number.NEGATIVE_INFINITY, y:Number.NEGATIVE_INFINITY, z:Number.NEGATIVE_INFINITY}
@@ -2853,18 +2651,18 @@ ThreeD.prototype.initialize()
 		Cat.recordError(e);
 	}
 }
-ThreeD.prototype.animate()
+ThreeDPanel.prototype.animate()
 {
 	this.resizeCanvas();
 	requestAnimationFrame(this.animate);
 	this.renderer.setViewport(0, 0, this.threeDiv.clientWidth, this.threeDiv.clientHeight);
 	this.renderer.render(this.scene, this.camera);
 }
-ThreeD.prototype.constrain(w)
+ThreeDPanel.prototype.constrain(w)
 {
 	return w < - this.max ? -this.max : (w > this.max ? this.max : w);
 }
-ThreeD.prototype.view(dir)
+ThreeDPanel.prototype.view(dir)
 {
 	let bbox = Cat.clone(this.bbox);
 	if (bbox.min.x === Number.POSITIVE_INFINITY)
@@ -2907,13 +2705,13 @@ ThreeD.prototype.view(dir)
 	this.camera.updateProjectionMatrix();
 	this.controls.update();
 }
-ThreeD.prototype.expand()
+ThreeDPanel.prototype.expand()
 {
 	this.elt.style.width = '100%';
-	document.getElementById('threeD-expandBtn').innerHTML = Cat.display.getButton('chevronRight', `Cat.display.panel.collapse('threeD', true)`, 'Expand');
+	this.expandBtnElt.innerHTML = display.getButton('chevronRight', `threeDPanel.collapse(true)`, 'Expand');
 	this.resizeCanvas();
 }
-ThreeD.prototype.resizeCanvas()
+ThreeDPanel.prototype.resizeCanvas()
 {
 	const canvas = this.renderer.domElement;
 	let width = canvas.clientWidth;
@@ -2926,40 +2724,40 @@ ThreeD.prototype.resizeCanvas()
 	}
 }
 
-const threeD = new ThreeD();
+const threeDPanel = new ThreeDPanel();
 
-function Tty()
+function TtyPanel()
 {
 	Panel.call(this, 'tty', true);
 	this.elt.innerHTML =
-		H.table(H.tr(Cat.display.closeBtnCell('tty', false) + Cat.display.expandPanelBtn('tty', true)), 'buttonBarLeft') +
+		H.table(H.tr(display.closeBtnCell('tty', false) + display.expandPanelBtn('tty', true)), 'buttonBarLeft') +
 		H.h3('TTY') +
 		H.button('Output', 'sidenavAccordion', '', 'TTY output from some composite', `onclick="Panel.AccordionToggle(this, \'ttyOutPnl\')"`) +
 		H.div(
 			H.table(H.tr(
-				H.td(Cat.display.getButton('delete', `tty.ttyOut.innerHTML = ''`, 'Clear output'), 'buttonBar') +
-				H.td(Cat.display.downloadButton('LOG', `Cat.downloadString(tty.out.innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBar')), 'buttonBarLeft') +
+				H.td(display.getButton('delete', `tty.ttyOut.innerHTML = ''`, 'Clear output'), 'buttonBar') +
+				H.td(display.downloadButton('LOG', `Cat.downloadString(tty.out.innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBar')), 'buttonBarLeft') +
 			H.pre('', 'tty', 'tty-out'), 'accordionPnl', 'ttyOutPnl') +
 		H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Panel.AccordionToggle(this, \'errorOutPnl\')"`) +
 		H.div(H.table(H.tr(
-				H.td(Cat.display.getButton('delete', `tty.out.innerHTML = ''`, 'Clear errors')) +
-				H.td(Cat.display.downloadButton('ERR', `Cat.downloadString(tty.error.innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBar')), 'buttonBarLeft') +
+				H.td(display.getButton('delete', `tty.out.innerHTML = ''`, 'Clear errors')) +
+				H.td(display.downloadButton('ERR', `Cat.downloadString(tty.error.innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBar')), 'buttonBarLeft') +
 			H.span('', 'tty', 'error-out'), 'accordionPnl', 'errorOutPnl');
 	this.out = document.getElementById('tty-out');
 	this.error = document.getElementById('tty-error');
 }
 
-const tty = new Tty();
+const ttyPanel = new TtyPanel();
 
 function DataPanel()
 {
 	Panel.call(this, 'data', true);
 	this.elt.innerHTML =
 		H.table(
-			H.tr(	Cat.display.closeBtnCell('data', false) +
-					Cat.display.expandPanelBtn('data', true) +
-					H.td(Cat.display.getButton('delete', `Cat.getDiagram().gui(evt, this, 'clearDataMorphism')`, 'Clear all data'))), 'buttonBarLeft') +
-		H.div('', 'data-view');
+			H.tr(	display.closeBtnCell('data', false) +
+					display.expandPanelBtn('data', true) +
+					H.td(display.getButton('delete', `Cat.getDiagram().gui(evt, this, 'clearDataMorphism')`, 'Clear all data'))), 'buttonBarLeft') +
+		H.div('', '', 'data-view');
 	this.dataView = document.getElementById('data-view');
 }
 DataPanel.prototype.update()
@@ -2983,13 +2781,13 @@ DataPanel.prototype.update()
 				{
 					html += H.button('Add Data', 'sidenavAccordion', '', 'Add entries to this map', `onclick="Panel.AccordionToggle(this, \'dataInputPnl\')"`);
 					const irx = 'regexp' in to.domain ? `pattern="${to.regexp}"`: '';
-					const inputForm = Cat.display.input('', 'inputTerm', to.domain.properName, irx);
+					const inputForm = Display.Input('', 'inputTerm', to.domain.properName, irx);
 					const outputForm = to.codomain.toHTML();
 					tbl =	H.tr(H.td('Domain')) +
 							H.tr(H.td(inputForm)) +
 							H.tr(H.td('Codomain')) +
 							H.tr(H.td(outputForm));
-					html += H.div(H.table(tbl) + Cat.display.getButton('edit', `dataPanel.handler(evt, '${from.name}')`, 'Edit data'), 'accordionPnl', 'dataInputPnl');
+					html += H.div(H.table(tbl) + display.getButton('edit', `dataPanel.handler(evt, '${from.name}')`, 'Edit data'), 'accordionPnl', 'dataInputPnl');
 					html += H.div('', 'error', 'editError');
 				}
 				html += H.button('Current Data', 'sidenavAccordion', 'dataPnlBtn', 'Current data in this morphism', `onclick="Panel.AccordionToggle(this, \'dataPnl\')"`) +
@@ -3048,17 +2846,17 @@ function DiagramPanel()
 			H.div(
 				H.small('The chosen name must have no spaces and must be unique among the diagrams you have in this category.') +
 				H.table(
-					H.tr(H.td(Cat.display.input('', 'diagram-basename-new', 'Basename')), 'sidenavRow') +
-					H.tr(H.td(Cat.display.input('', 'diagram-properName-new', 'Proper Name')), 'sidenavRow') +
-					H.tr(H.td(Cat.display.input('', 'diagram-description-new', 'Description')), 'sidenavRow'), 'sidenav') +
-				H.span(Cat.display.getButton('edit', 'diagramPanel.create()', 'Create new diagram')) +
+					H.tr(H.td(Display.Input('', 'diagram-basename-new', 'Basename')), 'sidenavRow') +
+					H.tr(H.td(Display.Input('', 'diagram-properName-new', 'Proper Name')), 'sidenavRow') +
+					H.tr(H.td(Display.Input('', 'diagram-description-new', 'Description')), 'sidenavRow'), 'sidenav') +
+				H.span(display.getButton('edit', 'diagramPanel.create()', 'Create new diagram')) +
 				H.span('', 'error', 'diagram-error'), 'accordionPnl', 'newDiagramPnl');
 		H.button(`${Cat.user.name}`, 'sidenavAccordion', '', 'User diagrams', 'onclick="Panel.AccordionToggle(this, \'userDiagramDisplay\')"') +
 		H.div(	H.small('User diagrams') +
 				H.div('', '', 'userDiagrams'), 'accordionPnl', 'userDiagramDisplay') +
-		H.button('Recent', 'sidenavAccordion', '', 'Recent diagrams from Catecon', 'onclick="Panel.AccordionToggle(this, \'recentDiagrams\');Cat.display.diagram.fetchRecentDiagrams()"') +
+		H.button('Recent', 'sidenavAccordion', '', 'Recent diagrams from Catecon', 'onclick="Panel.AccordionToggle(this, \'recentDiagrams\');DiagramPanel.FetchRecentDiagrams()"') +
 		H.div(H.div('', 'accordionPnl', 'recentDiagrams')) +
-		H.button('Catalog', 'sidenavAccordion', '', 'Catalog of available diagrams', 'onclick="Panel.AccordionToggle(this, \'catalogDiagrams\');Cat.display.diagram.fetchCatalogDiagramTable()"') +
+		H.button('Catalog', 'sidenavAccordion', '', 'Catalog of available diagrams', 'onclick="Panel.AccordionToggle(this, \'catalogDiagrams\');Display.FetchCatalogDiagramTable()"') +
 		H.div(H.div('', 'accordionPnl', 'catalogDiagrams'));
 	this.baseameElt = document.getElementById('diagram-baseame');
 	this.properNameElt = document.getElementById('diagram-properName');
@@ -3069,6 +2867,8 @@ function DiagramPanel()
 	this.timestampElt = document.getElementById('diagram-timestamp');
 	this.errorElt = document.getElementById('diagram-error');
 	this.navbar = document.getElementById('diagram-navbar');
+	this.diagramPanelToolbarElt = document.getElementById('diagramPanelToolbar');
+	this.referenceDiagramsElt = document.getElementById('referenceDiagrams');
 }
 DiagramPanel.prototype.update()
 {
@@ -3082,12 +2882,12 @@ DiagramPanel.prototype.update()
 		this.descriptionElt.innerHTML = dgrm.description;
 		this.userElt.innerHTML = dgrm.user;
 		this.properNameEditElt.innerHTML = dgrm.readonly ? '' :
-			Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmHtmlElt', 'html')`, 'Retitle', Cat.default.button.tiny);
+			display.getButton('edit', `Cat.getDiagram().editElementText('dgrmHtmlElt', 'html')`, 'Retitle', Cat.default.button.tiny);
 		this.descriptionEditElt.innerHTML = dgrm.readonly ? '' :
-			Cat.display.getButton('edit', `Cat.getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
-		Cat.display.diagram.setUserDiagramTable();
-		Cat.display.diagram.setReferencesDiagramTable();
-		Cat.display.diagram.setToolbar(dgrm);
+			display.getButton('edit', `Cat.getDiagram().editElementText('dgrmDescElt', 'description')`, 'Edit description', Cat.default.button.tiny);
+		diagramPanel.setUserDiagramTable();
+		display.diagram.setReferencesDiagramTable();
+		diagramPanel.setToolbar(dgrm);
 	}
 }
 DiagramPanel.prototype.create()
@@ -3099,7 +2899,7 @@ DiagramPanel.prototype.create()
 		let codomain = getCat().name;
 		const fullname = diagram.nameCheck(codomain, Cat.user.name, basename);
 		// TODO make it <> safe
-		const dgrm = new Diagram({basename:basename, codomain, properName:this.properNameElt.value, description:this.descriptionElt.value, user:Cat.user.name});
+		const dgrm = new Diagram({basename, codomain, properName:this.properNameElt.value, description:this.descriptionElt.value, user:Cat.user.name});
 		dgrm.saveLocal();
 		//
 		// select the new diagram
@@ -3107,7 +2907,7 @@ DiagramPanel.prototype.create()
 		Cat.selected.selectDiagram(dgrm.name);
 		Panel.AccordionClose('newDiagramPnl');
 		this.close();
-		this.setUserDiagramTable();
+		diagramPanel.setUserDiagramTable();
 		this.setReferencesDiagramTable();
 		this.update();
 	}
@@ -3116,10 +2916,60 @@ DiagramPanel.prototype.create()
 		this.errorElt.innerHTML = 'Error: ' + Cat.getError(e);
 	}
 }
+DiagramPanel.prototype.setReferencesDiagramTable()
+{
+	const dgrm = Cat.getDiagram();
+	if (dgrm === null)
+		return;
+	const refcnts = dgrm.getReferenceCounts();
+	let html = H.small('References for this diagram') + dgrm.references.map(d =>
+	{
+		const del = refcnts[d.name] === 1 ? H.td(display.getButton('delete', `Cat.getDiagram().removeReferenceDiagram(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
+		return DiagramPanel.DiagramRow(DiagramPanel.GetDiagramInfo(d), del);
+	}).join('');
+	this.referenceDiagramsElt.innerHTML = H.table(html);
+}
+DiagramPanel.prototype.setToolbar(dgrm)
+{
+	const nonAnon = Cat.user.name !== 'Anon';
+	const isUsers = dgrm && (Cat.user.name === dgrm.user);
+	const html = H.table(H.tr(
+				(isUsers ? H.td(DiagramPanel.getEraseBtn(dgrm), 'buttonBar', 'eraseBtn') : '') +
+				(isUsers ? H.td(diagramPanel.getLockBtn(dgrm), 'buttonBar', 'lockBtn') : '') +
+				(nonAnon && isUsers ? H.td(display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
+				(nonAnon ? H.td(display.downloadButton('JSON', 'Cat.getDiagram().downloadJSON(evt)', 'Download JSON'), 'buttonBar') : '' ) +
+				(nonAnon ? H.td(display.downloadButton('JS', 'Cat.getDiagram().downloadJS(evt)', 'Download Ecmascript'), 'buttonBar') : '' ) +
+				(nonAnon ? H.td(display.downloadButton('PNG', 'Cat.getDiagram().downloadPNG(evt)', 'Download PNG'), 'buttonBar') : '' ) +
+				display.expandPanelBtn('diagram', false) +
+				display.closeBtnCell('diagram', true)), 'buttonBarRight');
+	this.diagramPanelToolbarElt.innerHTML = html;
+}
+DiagramPanel.prototype.setUserDiagramTable()
+{
+	const dgrm = Cat.getDiagram();
+	if (dgrm === null)
+		return;
+	const dgrms = {};
+	for (const d in Cat.localDiagrams)
+	{
+		const dgrm = Cat.localDiagrams[d];
+		if (dgrm.user === Cat.user.name)
+			dgrms[d] = true;
+	}
+	Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = dgrm.user === Cat.user.name);
+	let html = Object.keys(dgrms).map(d =>
+	{
+		const refBtn = !(dgrm.name == d || dgrm.hasReference(d)) ? H.td(this.getButton('reference', `Cat.getDiagram().addReferenceDiagram(evt, '${d}')`, 'Add reference diagram'), 'buttonBar') : '';
+		return DiagramPanel.DiagramRow(DiagramPanel.GetDiagramInfo(d), refBtn);
+	}).join('');
+	document.getElementById('userDiagrams').innerHTML = H.table(html);
+}
+//
+// DiagramPanel static methods
 //
 // TODO move to Cat
 //
-DiagramPanel.prototype.getDiagramInfo(dgrm)
+DiagramPanel.prototype.GetDiagramInfo(dgrm)
 {
 	if (Diagram.isPrototypeOf(dgrm))
 	{
@@ -3145,80 +2995,26 @@ DiagramPanel.prototype.getDiagramInfo(dgrm)
 		return info;
 	}
 }
-DiagramPanel.prototype.diagramRow(dgrm, tb = null)
+DiagramPanel.prototype.DiagramRow(dgrm, tb = null)
 {
 	const dt = new Date(dgrm.timestamp);
 	const url = Cat.Amazon.URL(dgrm.codomain.basename, dgrm.user, dgrm.basename + '.png');
-	const tbTbl = H.table(H.tr( (tb ? tb : '') +
-				(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JSON', `Cat.getDiagram('${dgrm.name}').downloadJSON(evt)`, 'Download JSON'), 'buttonBar', '', 'Download diagram JSON') : '' ) +
-				(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('JS', `Cat.getDiagram('${dgrm.name}').downloadJS(evt)`, 'Download Ecmascript'), 'buttonBar', '', 'Download diagram ecmascript') : '' ) +
-				(Cat.user.name !== 'Anon' ? H.td(Cat.display.downloadButton('PNG', `Cat.getDiagram('${dgrm.name}').downloadPNG(evt)`, 'Download PNG'), 'buttonBar', '', 'Download diagram PNG') : '' )),
-		'buttonBarLeft');
-	const tbl = H.table(
-						H.tr(H.td(H.h5(dgrm.properName), '', '', '', 'colspan="2"')) +
-						H.tr(H.td(`<img src="${url}" id="img_${dgrm.name}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
-						H.tr(H.td(dgrm.description, 'description', '', '', 'colspan="2"')) +
-						H.tr(H.td(dgrm.user, 'author') + H.td(dt.toLocaleString(), 'date')));
+	const tbTbl =
+		H.table(
+			H.tr( (tb ? tb : '') +
+				(Cat.user.name !== 'Anon' ? H.td(display.downloadButton('JSON', `Cat.getDiagram('${dgrm.name}').downloadJSON(evt)`, 'Download JSON'), 'buttonBar', '', 'Download diagram JSON') : '' ) +
+				(Cat.user.name !== 'Anon' ? H.td(display.downloadButton('JS', `Cat.getDiagram('${dgrm.name}').downloadJS(evt)`, 'Download Ecmascript'), 'buttonBar', '', 'Download diagram ecmascript') : '' ) +
+				(Cat.user.name !== 'Anon' ? H.td(display.downloadButton('PNG', `Cat.getDiagram('${dgrm.name}').downloadPNG(evt)`, 'Download PNG'), 'buttonBar', '', 'Download diagram PNG') : '' )),
+			'buttonBarLeft');
+	const tbl =
+		H.table(
+			H.tr(H.td(H.h5(dgrm.properName), '', '', '', 'colspan="2"')) +
+			H.tr(H.td(`<img src="${url}" id="img_${dgrm.name}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
+			H.tr(H.td(dgrm.description, 'description', '', '', 'colspan="2"')) +
+			H.tr(H.td(dgrm.user, 'author') + H.td(dt.toLocaleString(), 'date')));
 	return H.tr(H.td(tbTbl)) + H.tr(H.td(`<a onclick="Cat.selected.selectDiagram('${dgrm.name}')">` + tbl + '</a>'), 'sidenavRow');
 }
-DiagramPanel.prototype.setUserDiagramTable()
-{
-	const dgrm = Cat.getDiagram();
-	if (dgrm === null)
-		return;
-	const dgrms = {};
-	for (const d in Cat.localDiagrams)
-	{
-		const dgrm = Cat.localDiagrams[d];
-		if (dgrm.user === Cat.user.name)
-			dgrms[d] = true;
-	}
-	Object.keys(Cat.serverDiagrams).map(d => dgrms[d] = dgrm.user === Cat.user.name);
-	let html = Object.keys(dgrms).map(d =>
-	{
-		const refBtn = !(dgrm.name == d || dgrm.hasReference(d)) ? H.td(Cat.display.getButton('reference', `Cat.getDiagram().addReferenceDiagram(evt, '${d}')`, 'Add reference diagram'), 'buttonBar') : '';
-		return this.diagramRow(this.getDiagramInfo(d), refBtn);
-	}).join('');
-	document.getElementById('userDiagrams').innerHTML = H.table(html);
-}
-DiagramPanel.prototype.setReferencesDiagramTable()
-{
-	const dgrm = Cat.getDiagram();
-	if (dgrm === null)
-		return;
-	const refcnts = dgrm.getReferenceCounts();
-	let html = H.small('References for this diagram') + dgrm.references.map(d =>
-	{
-		const del = refcnts[d.name] === 1 ? H.td(Cat.display.getButton('delete', `Cat.getDiagram().removeReferenceDiagram(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
-		return this.diagramRow(this.getDiagramInfo(d), del);
-	}).join('');
-	document.getElementById('referenceDiagrams').innerHTML = H.table(html);
-}
-DiagramPanel.prototype.fetchRecentDiagrams()
-{
-	if (!('recentDiagrams' in Cat))
-		fetch(Cat.Amazon.URL() + '/recent.json').then(function(response)
-		{
-			if (response.ok)
-				response.json().then(function(data)
-				{
-					Cat.recentDiagrams = data.diagrams;
-					let html = data.diagrams.map(d => Cat.display.diagram.diagramRow(d)).join('');
-					const dt = new Date(data.timestamp);
-					const recentDiagrams = document.getElementById('recentDiagrams');
-					if (recentDiagrams)
-						recentDiagrams.innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
-					const introPngs = document.getElementById('introPngs');
-					if (introPngs)
-						introPngs.innerHTML = data.diagrams.map(d =>
-						{
-							const tokens = d.name.split('@');
-							return `<img class="intro" src="${Cat.Amazon.URL(tokens[1], d.user, d.name)}.png" width="300" height="225" title="${d.properName} by ${d.user}: ${d.description}"/>`;
-						}).join('');
-				});
-		});
-}
-DiagramPanel.prototype.fetchCatalogDiagramTable()
+DiagramPanel.prototype.FetchCatalogDiagramTable()
 {
 	if (!('catalogDiagrams' in Cat))
 		fetch(Cat.Amazon.URL() + '/catalog.json').then(function(response)
@@ -3227,57 +3023,76 @@ DiagramPanel.prototype.fetchCatalogDiagramTable()
 				response.json().then(function(data)
 				{
 					Cat.catalogDiagrams = data.diagrams;
-					let html = data.diagrams.map(d => Cat.display.diagram.diagramRow(d)).join('');
+					let html = data.diagrams.map(d => DiagramPanel.DiagramRow(d)).join('');
 					const dt = new Date(data.timestamp);
 					document.getElementById('catalogDiagrams').innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
 				});
 		});
 }
-DiagramPanel.prototype.getLockBtn(dgrm)
+DiagramPanel.prototype.GetLockBtn(dgrm)
 {
 	const lockable = dgrm.readonly ? 'unlock' : 'lock';
-	return Cat.display.getButton(lockable, `Cat.getDiagram().${lockable}(evt)`, Cat.cap(lockable));
+	return this.getButton(lockable, `Cat.getDiagram().${lockable}(evt)`, Cat.cap(lockable));
 }
 DiagramPanel.prototype.getEraseBtn(dgrm)
 {
-	return dgrm.readonly ? '' : Cat.display.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!', Cat.default.button.small, false, 'eraseBtn');
+	return dgrm.readonly ? '' : this.getButton('delete', "Cat.getDiagram().clear(evt)", 'Erase diagram!', Cat.default.button.small, false, 'eraseBtn');
 }
 DiagramPanel.prototype.updateLockBtn(dgrm)
 {
 	if (dgrm && Cat.user.name === dgrm.user)
 	{
-		document.getElementById('lockBtn').innerHTML = DiagramPanel.getLockBtn(dgrm);
+		document.getElementById('lockBtn').innerHTML = diagramPanel.getLockBtn(dgrm);
 		const eb = document.getElementById('eraseBtn');
 		if (eb)
 			eb.innerHTML = DiagramPanel.getEraseBtn(dgrm);
 	}
 }
-DiagramPanel.prototype.setToolbar(dgrm)
-{
-	const nonAnon = Cat.user.name !== 'Anon';
-	const isUsers = dgrm && (Cat.user.name === dgrm.user);
-	const html = H.table(H.tr(
-				(isUsers ? H.td(DiagramPanel.getEraseBtn(dgrm), 'buttonBar', 'eraseBtn') : '') +
-				(isUsers ? H.td(DiagramPanel.getLockBtn(dgrm), 'buttonBar', 'lockBtn') : '') +
-				(nonAnon && isUsers ? H.td(Cat.display.getButton('upload', 'Cat.getDiagram().upload(evt)', 'Upload', Cat.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
-				(nonAnon ? H.td(Cat.display.downloadButton('JSON', 'Cat.getDiagram().downloadJSON(evt)', 'Download JSON'), 'buttonBar') : '' ) +
-				(nonAnon ? H.td(Cat.display.downloadButton('JS', 'Cat.getDiagram().downloadJS(evt)', 'Download Ecmascript'), 'buttonBar') : '' ) +
-				(nonAnon ? H.td(Cat.display.downloadButton('PNG', 'Cat.getDiagram().downloadPNG(evt)', 'Download PNG'), 'buttonBar') : '' ) +
-				Cat.display.expandPanelBtn('diagram', false) +
-				Cat.display.closeBtnCell('diagram', true)), 'buttonBarRight');
-	document.getElementById('diagramPanelToolbar').innerHTML = html;
-}
 DiagramPanel.prototype.setupDiagramElementPnl(dgrm, pnl, updateFnName)
 {
 	const pnlName = dgrm.name + pnl;
-	return Panel.AccordionPanelDyn(dgrm.properName, `Cat.getDiagram('${this.properName}').${updateFnName}('${pnlName}')`, pnlName);
+//	return Panel.AccordionPanelDyn(dgrm.properName, `Cat.getDiagram('${this.properName}').${updateFnName}('${pnlName}')`, pnlName);
+	return Panel.AccordionPanelDyn(dgrm.properName, `${updateFnName}(Cat.getDiagram('${dgrm.name}'))`, pnlName);
+}
+//
+// DiagramPanel static methods
+//
+DiagramPanel.prototype.FetchRecentDiagrams()
+{
+	if ('recentDiagrams' in Cat)
+		return;
+	fetch(Cat.Amazon.URL() + '/recent.json').then(function(response)
+	{
+		if (response.ok)
+			response.json().then(function(data)
+			{
+				Cat.recentDiagrams = data.diagrams;
+				let html = data.diagrams.map(d => DiagramPanel.DiagramRow(d)).join('');
+				const dt = new Date(data.timestamp);
+				const recentDiagrams = document.getElementById('recentDiagrams');
+				if (recentDiagrams)
+					recentDiagrams.innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
+				const introPngs = document.getElementById('introPngs');
+				if (introPngs)
+					introPngs.innerHTML = data.diagrams.map(d =>
+					{
+						const tokens = d.name.split('@');
+						return `<img class="intro" src="${Cat.Amazon.URL(tokens[1], d.user, d.name)}.png" width="300" height="225" title="${d.properName} by ${d.user}: ${d.description}"/>`;
+					}).join('');
+			});
+	});
 }
 
-function helpPanel()
+const diagramPanel = new DiagramPanel();
+
+//
+// HelpPanel
+//
+function HelpPanel()
 {
 	Panel.call(this, 'help')
 	this.elt.innerHTML =
-		H.table(H.tr(Cat.display.closeBtnCell('help', false) + Cat.display.expandPanelBtn('help', true)), 'buttonBarLeft') +
+		H.table(H.tr(display.closeBtnCell('help', false) + display.expandPanelBtn('help', true)), 'buttonBarLeft') +
 		H.h3('Catecon') +
 		H.h4('The Categorical Console')	+
 		H.h5('Extreme Alpha Version') +
@@ -3355,19 +3170,29 @@ const helpPanel = new HelpPanel();
 function LoginPanel()
 {
 	Panel.call(this. 'login');
-	let html =
-		H.table(H.tr(Cat.display.closeBtnCell('login', false)), 'buttonBarLeft') +
-		H.h3('Login') +
-		H.div('User: ' + H.span(Cat.user.name, 'smallBold')) +
-		H.div('Email: ' + H.span(Cat.user.email, 'smallBold')) +
-		(!Cat.Amazon.loggedIn ? '' : H.button('Logout', '', '', 'Logout of the current session', `onclick="Cat.Amazon.logout()"`)) +
-//					(Cat.user.name !== 'Anon' ? H.button('Reset password', '', '', 'Reset your password', `onclick="Cat.Display.login.showResetForm()"`) : '') +
-		H.div('', 'passwordResetForm');
+	this.elt.innerHTML =
+		H.table(H.tr(display.closeBtnCell('login', false)), 'buttonBarLeft') +
+		H.h3('User Information') +
+		H.table(
+			H.tr(H.td('User:') + H.td(H.span('', 'smallBold', 'login-user-name'))) +
+			H.tr(H.td('Email:') + H.td(H.span('', 'smallBold', 'login-user-email')))) +
+		H.div('', '', 'login-info');
+	this.loginInfoElt = document.getElementById('login-info');
+	this.passwordResetFormElt = document.getElementById('login-password-reset');
+	this.userNameElt = document.getElementById('login-user-name');
+	this.userEmailElt = document.getElementById('login-user-email');
+}
+LoginPanel.update()
+{
+	this.userNameElt.innerHTML = Cat.user.name;
+	this.userEmailElt.innerHTML = Cat.user.email;
+	this.loginInfoElt.innerHTML = '';
+	let html = '';
 	if (Cat.user.status !== 'logged-in' && Cat.user.status !== 'registered')
 		html += H.table(	H.tr(H.td('User name')) +
 							H.tr(H.td(H.input('', '', 'loginUserName', 'text', {ph:'Name'}))) +
 							H.tr(H.td('Password')) +
-							H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********', x:'onkeydown="Cat.display.onEnter(event, Cat.Amazon.login)"'}))) +
+							H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********', x:'onkeydown="Display.OnEnter(event, Cat.Amazon.login)"'}))) +
 							H.tr(H.td(H.button('Login', '', '', '', 'onclick=Cat.Amazon.login()'))));
 	if (Cat.user.status === 'unauthorized')
 		html += H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Panel.AccordionToggle(this, \'signupPnl\')"`) +
@@ -3375,18 +3200,28 @@ function LoginPanel()
 							H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
 							H.tr(H.td('Email')) +
 							H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
-							Cat.display.login.passwordForm() +
+							LoginPanel.PasswordForm() +
 							H.tr(H.td(H.button('Sign up', '', '', '', 'onclick=Cat.Amazon.signup()')))), 'accordionPnl', 'signupPnl');
 	if (Cat.user.status === 'registered')
 		html += H.h3('Confirmation Code') +
 				H.span('The confirmation code is sent by email to the specified address above.') +
 				H.table(	H.tr(H.td('Confirmation code')) +
-							H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.display.onEnter(event, Cat.Amazon.confirm)"'}))) +
+							H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Display.OnEnter(event, Cat.Amazon.confirm)"'}))) +
 							H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=Cat.Amazon.confirm()'))));
-	this.elt.innerHTML = html;
-	this.passwordResetFormElt = document.getElementById('login-password-reset');
+	this.loginInfoElt.innerHTML = html;
 }
-LoginPanel.prototype.passwordForm(sfx = '')
+// TODO not used
+LoginPanel.prototype.showResetForm()
+{
+	this.passwordResetFormElt.innerHTML =
+		H.table(
+			LoginPanel.PasswordForm('reset') +
+			H.tr(H.td(H.button('Reset password', '', '', '', 'onclick=Cat.Amazon.resetPassword()'))));
+}
+//
+// LoginPanel static methods
+//
+LoginPanel.prototype.PasswordForm(sfx = '')
 {
 	return H.tr(H.td('Secret Key for Access')) +
 			H.tr(H.td(H.input('', '', `${sfx}SignupSecret`, 'text', {ph:'????????'}))) +
@@ -3395,13 +3230,6 @@ LoginPanel.prototype.passwordForm(sfx = '')
 			H.tr(H.td('Confirm password')) +
 			H.tr(H.td(H.input('', '', `${sfx}SignupUserPasswordConfirm`, 'password', {ph:'Confirm'})));
 }
-LoginPanel.prototype.showResetForm()
-{
-	this.passwordResetFormElt.innerHTML =
-		H.table(
-			Cat.display.login.passwordForm('reset') +
-			H.tr(H.td(H.button('Reset password', '', '', '', 'onclick=Cat.Amazon.resetPassword()'))));
-}
 
 const loginPanal = new LoginPanel();
 
@@ -3409,37 +3237,46 @@ function MorphismPanel()
 {
 	Panel.call(this, 'morphism');
 	this.elt.innerHTML =
-		H.table(H.tr(Cat.display.expandPanelBtn('morphism', false) + Cat.display.closeBtnCell('morphism', true)), 'buttonBarRight') +
+		H.table(H.tr(display.expandPanelBtn('morphism', false) + display.closeBtnCell('morphism', true)), 'buttonBarRight') +
 		H.h3('Morphisms') +
-		H.div('', 'morphisms-pnl');
+		H.div('', '', 'morphisms-pnl');
 		H.h4('References') +
-		H.div('', 'references-pnl');
+		H.div('', '', 'references-morphisms-pnl');
 	this.morphismPnlElt = document.getElementById('morphisms-pnl');
-	this.referencesPnlElt = document.getElementById('morphisms-pnl');
-}
-MorphismPanel.prototype.drag(e, morphismName)
-{
-	Cat.display.deactivateToolbar();
-	e.dataTransfer.setData('text/plain', 'morphism ' + morphismName);
+	this.referencesPnlElt = document.getElementById('references-morphisms-pnl');
 }
 MorphismPanel.prototype.update()
 {
 	const dgrm = Cat.getDiagram();
-	this.morphismPnlElt.innerHTML = DiagramPanel.setupDiagramElementPnl(dgrm, '_MorPnl', 'updateMorphismTableRows') +
-	this.referencesPnlElt.innerHTML = DiagramPanel.references.map(r => DiagramPanel.setupDiagramElementPnl(r, '_MorPnl', 'updateMorphismTableRows')).join('');
+	this.morphismPnlElt.innerHTML = '';
+	this.referencesPnlElt.innerHTML = '';
+	if (dgrm)
+	{
+		this.morphismPnlElt.innerHTML = DiagramPanel.setupDiagramElementPnl(dgrm, '_MorPnl', 'MorphismPanel.updateRows') +
+		this.referencesPnlElt.innerHTML = DiagramPanel.references.map(r => DiagramPanel.setupDiagramElementPnl(r, '_MorPnl', 'MorphismPanel.updateRows')).join('');
+	}
 }
-MorphismPanel.prototype.updateMorphismTableRows(dgrm)
+//
+// MorphismPanel static methods
+//
+MorphismPanel.prototype.drag(e, morphismName)
+{
+	display.deactivateToolbar();
+	e.dataTransfer.setData('text/plain', 'morphism ' + morphismName);
+}
+MorphismPanel.prototype.updateRows(dgrm)
 {
 	let html = '';
-	let found = {};
-	let morphisms = [];
+	const found = {};
+	const morphisms = [];
 	for (const [k, m] of dgrm.morphisms)
 	{
 		if (m.name in found)
 			continue;
 		found[m.name] = true;
-		html += H.tr(	(Cat.display.showRefcnts ? H.td(m.refcnt) : '') +
-						H.td(m.refcnt <= 0 && !dgrm.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${dgrm.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
+		html += H.tr(	(display.showRefcnts ? H.td(m.refcnt) : '') +
+						H.td(m.refcnt <= 0 && !dgrm.readonly ?
+							display.getButton('delete', `Cat.getDiagram('${dgrm.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
 						H.td(m.properName) +
 						H.td(m.domain.properName) +
 						H.td('&rarr;') +
@@ -3450,18 +3287,209 @@ MorphismPanel.prototype.updateMorphismTableRows(dgrm)
 		if (m.name in found)
 			continue;
 		found[m.name] = true;
-		html += H.tr(	(Cat.display.showRefcnts ? H.td(m.refcnt) : '') +
-						H.td(m.refcnt <= 0 && !dgrm.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${dgrm.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
-							'', 'buttonBar') +
+		html += H.tr(	(display.showRefcnts ? H.td(m.refcnt) : '') +
+						H.td(m.refcnt <= 0 && !dgrm.readonly ?
+							display.getButton('delete', `Cat.getDiagram('${dgrm.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
+								'', 'buttonBar') +
 						H.td(m.properName) +
 						H.td(m.domain.properName) +
 						H.td('&rarr;') +
-						H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="Cat.display.morphism.drag(event, '${m.name}')"`);
+						H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="morphismPanel.drag(event, '${m.name}')"`);
 	}
 	document.getElementById(`${dgrm.name}_MorPnl`).innerHTML = H.table(html);
 }
 
 morphismPanel = new MorphismPanel();
+
+function ObjectPanel()
+{
+	Panel.call(this, 'objects');
+	this.elt.innerHTML =
+		H.table(H.tr(display.expandPanelBtn('object', false) + display.closeBtnCell('object', true)), 'buttonBarRight') +
+		H.h3('Objects') +
+		H.div('', '', 'object-new-pnl') +
+		H.div('', '', 'objects-pnl') +
+		H.h4('References') +
+		H.div('', '', 'references-objects-pnl');
+	this.objectNewPnlElt = document.getElementById('ojbect-new-pnl');
+	this.objectsPnlElt = document.getElementById('objects-pnl');
+	this.referencesPnlElt = document.getElementById('references-objects-pnl');
+}
+ObjectPanel.prototype.update()
+{
+	const dgrm = Cat.getDiagram();
+	this.objectNewPnl.innerHTML = '';
+	this.objectsPnl.innerHTML = '';
+	this.referencesPnlElt.innerHTML = '';
+	if (dgrm)
+	{
+		if (!dgrm.readonly)
+		{
+			this.objectNewPnlElt.innerHTML =
+				H.h4('New Object') +
+				H.div(
+					H.table(
+						H.tr(H.td(H.small('The following tokens may be used to form an object depending on your category: One, Omega, N, Z, F, ...'), 'left'), 'sidenavRow') +
+						H.tr(H.td(H.small('Usual operators are *, +, []'), 'left'), 'sidenavRow') +
+						H.tr(H.td(H.small('Example: <span class="code">[N,N*N]</span> as the hom set from N to the product N*N'), 'left'), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'objectCode', 'Code')), 'sidenavRow') +
+						H.tr(H.td(Display.Input('', 'objectDescription', 'Description')), 'sidenavRow')
+					) +
+					H.span(display.getButton('edit', 'objectPanel.create(evt)', 'Create new object for this diagram')) +
+					H.span('', 'error', 'objectError'));
+		}
+		this.objectsPnlElt.innerHTML = DiagramPanel.setupDiagramElementPnl(dgrm, '_ObjPnl', 'ObjectPanel.updateRows') +
+		this.referencesPnlElt.innerHTML = dgrm.references.map(r => DiagramPanel.setupDiagramElementPnl(r, '_ObjPnl', 'ObjectPanel.updateRows')).join('');
+		dgrm.updateObjectTableRows();
+	}
+}
+ObjectPanel.prototype.drag(e, name)
+{
+	display.deactivateToolbar();
+	e.dataTransfer.setData('text/plain', 'object ' + name);
+}
+ObjectPanel.updateRows(dgrm)
+{
+	let found = {};
+	let objects = [];
+	for (const [k, obj] of dgrm.codomain.objects)
+		if (!(obj.name in found))
+		{
+			objects.push(obj);
+			found[obj.name] = true;
+		}
+	document.getElementById(`${dgrm.name}_ObjPnl`).innerHTML = H.table(objects.map(o => H.tr(
+		(display.showRefcnts ? H.td(o.refcnt) : '') +
+			H.td(o.refcnt === 0 && !dgrm.readonly ?
+				display.getButton('delete', `Cat.getDiagram('${dgrm.name}').removeCodomainObject(evt, '${o.name}')`, 'Delete object') : '', 'buttonBar') +
+			H.td(o.properName),
+			'grabbable sidenavRow', '', Cat.cap(o.description), `draggable="true" ondragstart="objectPanel.drag(event, '${o.name}')"`)).join(''));
+}
+
+const objectPanel = new ObjectPanel();
+
+function SettingsPanel()
+{
+	Panel.call(this, 'settings');
+	this.elt.innerHTML =
+		H.table(H.tr(display.closeBtnCell('settings', false)), 'buttonBarLeft') +
+		H.h3('Settings') +
+		H.table(
+			H.tr(H.td(`<input type="checkbox" ${display.gridding ? 'checked' : ''} onchange="display.gridding = !display.gridding">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
+			H.tr(	H.td(`<input type="checkbox" ${display.showRefcnts ? 'checked' : ''} onchange="SettingsPanel.ToggleShowRefcnts()">`) +
+					H.td('Show reference counts for objects and morphisms in their respective panels.', 'left'), 'sidenavRow') +
+			H.tr(	H.td(`<input type="checkbox" ${display.showUploadArea ? 'checked' : ''} onchange="SettingsPanel.ToggleShowUploadArea()">`) +
+					H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow') +
+			H.tr(	H.td(`<input type="checkbox" ${Cat.debug ? 'checked' : ''} onchange="Cat.debug = !Cat.debug">`) +
+					H.td('Debug', 'left'), 'sidenavRow')
+		);
+}
+//
+// SettingsPanel static methods
+//
+SettingsPanel.prototype.ToggleShowRefcnts()
+{
+	display.showRefcnts = !display.showRefcnts;
+	const dgrm = Cat.getDiagram();
+	dgrm.updateObjectTableRows();
+	dgrm.references.map(r => r.updateObjectTableRows());
+	MorphismPanel.updateRows(dgrm);
+	dgrm.references.map(r => MorphismPanel.updateRows(r));
+}
+// TODO move
+SettingsPanel.prototype.ToggleShowUploadArea()
+{
+	display.showUploadArea = !display.showUploadArea;
+	display.upSVG.style.display = display.showUploadArea ? 'block' : 'none';
+}
+
+function ElementPanel()
+{
+	Panel.call(this, 'element');
+	this.elt.innerHTML =
+		H.table(
+			H.tr(display.closeBtnCell('element', false) + H.td(display.expandPanelBtn('element', false))), 'buttonBarRight') +
+			H.h3('Text') +
+			H.div('', '', 'element-new-pnl') +
+				H.h4('New Text') +
+				H.div(
+					H.span('Create new text.', 'small') +
+					H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'element-properName')), 'sidenavRow')) +
+					H.span(display.getButton('edit', 'elementPanel.create(evt)', 'Create new text for this diagram')) +
+				H.span('', 'error', 'element-error'), '', 'element-new-pnl') +
+//???			H.button('Text', 'sidenavAccordion', '', 'New Text', `onclick="Panel.AccordionToggle(this, \'elementPnl\')"`) +
+			H.div('', 'accordionPnl', 'element-pnl');
+	this.AccordionOpen('element-pnl');
+	this.pnlElt = document.getElementById('element-pnl');
+	this.newPnlElt = document.getElementById('element-new-pnl');
+	this.newPnlElt.style.display = 'none';
+	this.errorElt = document.getElementById('element-error');
+	this.properNameElt = document.getElementById('element-properName');
+}
+/*
+newElementPnl()
+{
+	const dgrm = Cat.getDiagram();
+	let html = '';
+	if (dgrm && !dgrm.readonly)
+	{
+		html = H.h4('New Text') +
+					H.div(	H.span('Create a new text element.', 'small') +
+							H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'elementHtml')), 'sidenavRow')) +
+							H.span(Cat.display.getButton('edit', 'Cat.display.element.new(evt)', 'Create new text for this diagram')) +
+							H.span('', 'error', 'elementError'));
+	}
+	return html;
+},
+*/
+ElementPanel.create(e)
+{
+	try
+	{
+		this.elementErrorElt.innerHTML = '';
+		const dgrm = Cat.getDiagram();
+		const mdl = {x:Display.Width()/2, y:Display.Height()/2};
+		const xy = D2.subtract(dgrm.userToDiagramCoords(mdl), dgrm.viewport);
+		const txt = new DiagramElement(dgrm, {name:`Text${dgrm.textId++}`, diagram:dgrm, properName:this.properNameElt.value, xy});
+		this.properNameElt.value = '';
+		dgrm.elements.push(txt);
+		dgrm.placeElement(e, txt);
+		this.update();
+		Panel.AccordionOpen('element-pnl');
+	}
+	catch(e)
+	{
+		document.getElementById('objectError').innerHTML = 'Error: ' + Cat.getError(e);
+	}
+},
+ElementPanel.prototype.update()
+{
+	const dgrm = Cat.getDiagram();
+	this.elmentNewPnlElt.style.display = dgrm && !dgrm.readonly ? 'block' : 'none';
+	this.elementPnlElt.innerHTML =
+		H.table(
+			dgrm.elements.map((t, i) =>
+				H.tr(	H.td(H.table(H.tr(H.td(display.getButton('delete', `elementPanel.delete(${i})`, 'Delete text'))), 'buttonBarLeft')) +
+						H.td(H.span(Cat.htmlSafe(t.properName), 'tty', `text_${i}`) +
+							(dgrm.readonly ? '' :
+								display.getButton('edit', `Cat.getDiagram().getElement('${t.name}').editText('text_${i}', 'properName')`, 'Edit', Cat.default.button.tiny)),
+									'left'), 'sidenavRow')
+			).join('')
+		);
+	}
+}
+ElementPanel.prototype.Delete(i)
+{
+	const dgrm = Cat.getDiagram();
+	if (dgrm && i in dgrm.elements)
+	{
+		dgrm.elements[i].decrRefcnt();
+		this.update();
+		dgrm.update();
+	}
+}
+
+const elementPanel = new ElementPanel();
 
 //
 // Element is the root class for Catecon objects and morphisms
@@ -3625,10 +3653,11 @@ Element.prototype.moreHelp()
 {
 	return '';
 }
+// TODO move to Diagram?
 Element.prototype.help()
 {
 	const readonly = this.diagram.readonly;
-	const create = (!readonly && this.isComplex()) ? Cat.display.getButton('edit', `Cat.getDiagram().activateNamedElementForm(evt)`, 'Create named identity', Cat.default.button.tiny) : '';
+	const create = (!readonly && this.isComplex()) ? display.getButton('edit', `Cat.getDiagram().activateNamedElementForm(evt)`, 'Create named identity', Cat.default.button.tiny) : '';
 	const html =	H.h4(H.span(this.properName, '', 'properNameElt') + create) +
 					H.p(H.span(Cat.cap(this.description), '', 'descriptionElt')) +
 					H.p(H.span(Cat.limit(this.basename), '', 'basenameElt', this.name)) +
@@ -3640,7 +3669,7 @@ Element.prototype.help()
 //	else
 //		html = H.p(H.span(from.properName, 'tty', 'properNameElt') +
 //					(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('properNameElt', 'properName')`, 'Edit proper name', Cat.default.button.tiny)));
-	document.getElementById('toolbarTip').innerHTML = html;
+	this.toolbarTipElt.innerHTML = html;
 }
 //
 // Element static methods
@@ -4052,7 +4081,7 @@ CatObject.prototype.getGraph(data = {position:0}, first = true)
 //
 CatObject.prototype.factorButton(properName, data)
 {
-	return H.table(H.tr(H.td(H.button(properName + data.txt, '', Cat.display.elementId(), data.title,
+	return H.table(H.tr(H.td(H.button(properName + data.txt, '', display.elementId(), data.title,
 		`data-indices="${data.index.toString()}" onclick="Cat.getDiagram().${action}('${data.id}', '${data.fname}', '${data.root}', '${data.action}', ${data.index.toString()});${'x' in data ? data.x : ''}"`))));
 }
 //
@@ -4210,7 +4239,7 @@ function ProductObject(diagram, args)
 }
 ProductObject.prototype.fromHTML(first = true, {uid:0, id:'data'})
 {
-	return this.objects.map(o => o.fromInput(false, uid));
+	return this.objects.map(o => o.FromInput(false, uid));
 }
 ProductObject.prototype.toHTML(first=true, uid={uid:0, idp:'data'})
 {
@@ -4338,7 +4367,7 @@ HomObject.prototype.toHTML(first=true, uid={uid:0, idp:'data'})
 	++uid.uid;
 	const id = `${uid.idp}_${uid.uid}`;
 	const th = H.tr(H.td(HomObject.ProperName(this.objects), '', '', '', `colspan='4'`));
-	return H.table(th + Cat.display.morphismTableRows(homset, `data-name="%1" onclick="Cat.getDiagram().toggleTableMorphism(event, '${id}', '%1')"`, false), 'toolbarTbl', id);
+	return H.table(th + Display.MorphismTableRows(homset, `data-name="%1" onclick="Cat.getDiagram().toggleTableMorphism(event, '${id}', '%1')"`, false), 'toolbarTbl', id);
 }
 homDomain()
 {
@@ -4413,7 +4442,7 @@ function DiagramElement(diagram, args)
 	nuArgs.name = Cat.getArg(args, 'name', diagram.domain.getAnon());
 	nuArgs.origin = 'domain';
 	Element.call(this, diagram, nuArgs);
-	const xy = Cat.getArg(args, 'xy', {x:0, y:0});
+	const xy = Cat.getArg(args, 'xy', new D2);
 	this.x = xy.x;
 	this.y = xy.y;
 	this.w = Cat.getArg(args, 'w', 0);
@@ -4449,7 +4478,7 @@ DiagramElement.prototype.editText(id, attr)
 	{
 		if (h.contentEditable === 'true')
 		{
-			this.diagram.updateElementAttribute(this, null, attr, h.innerText);
+			this.diagram.updateElementAttribute(this, attr, h.innerText);
 			h.contentEditable = false;
 			this.update();
 		}
@@ -4558,7 +4587,7 @@ DiagramObject.prototype.showSelected(state = true)
 }
 DiagramObject.prototype.addSVG()
 {
-	Cat.display.diagramSVG.innerHTML += typeof this === 'string' ? this : this.makeSVG();
+	display.diagramSVG.innerHTML += typeof this === 'string' ? this : this.makeSVG();
 }
 //
 // Basically we just don't graph objects in the diagram's source category.
@@ -4815,7 +4844,7 @@ Category.prototype.toolbarMorphism(form)
 {
 	let td = '';
 	if (form.composite)
-		td += H.td(Cat.display.getButton('compose', `Cat.getDiagram().gui(evt, this, 'compose')`, 'Compose'), 'buttonBar');
+		td += H.td(display.getButton('compose', `Cat.getDiagram().gui(evt, this, 'compose')`, 'Compose'), 'buttonBar');
 	return td;
 }
 Category.prototype.validateName(name)
@@ -5043,7 +5072,7 @@ function DiagramMorphism(diagram, args)
 	//
 	// graphical attributes
 	//
-	this.start = Cat.getArg(args, 'start', {x:0, y:0});
+	this.start = Cat.getArg(args, 'start', new D2);
 	this.end = Cat.getArg(args, 'end', {x:150, y:0});	// TODO make default
 	this.angle = Cat.getArg(args, 'angle', 0.0);
 	this.flipName = Cat.getArg(args, 'flipName', false);
@@ -5184,38 +5213,38 @@ DiagramMorphism.prototype.predraw()
 	const codBBox = this.codomain.getBBox();
 	const deltaX = this.codomain.x - this.domain.x;
 	const deltaY = this.codomain.y - this.domain.y;
-	let start = {x:0, y:0};
-	let end = {x:0, y:0};
+	let start = new D2;
+	let end = new D2;
 	if (deltaX === 0)
 	{
 		if (deltaY > 0)
 		{
-			start = D2.round(diagram.intersect(this, domBBox, 'bottom'));
-			end = D2.round(diagram.intersect(this, codBBox, 'top'));
+			start = D2.round(this.intersect(domBBox, 'bottom'));
+			end = D2.round(this.intersect(codBBox, 'top'));
 		}
 		else
 		{
-			start = D2.round(diagram.intersect(this, domBBox, 'top'));
-			end = D2.round(diagram.intersect(this, codBBox, 'bottom'));
+			start = D2.round(this.intersect(domBBox, 'top'));
+			end = D2.round(this.intersect(codBBox, 'bottom'));
 		}
 	}
 	else if (deltaY === 0)
 	{
 		if (deltaX > 0)
 		{
-			start = D2.round(diagram.intersect(this, domBBox, 'right'));
-			end = D2.round(diagram.intersect(this, codBBox, 'left'));
+			start = D2.round(this.intersect(domBBox, 'right'));
+			end = D2.round(this.intersect(codBBox, 'left'));
 		}
 		else
 		{
-			start = D2.round(diagram.intersect(this, domBBox, 'left'));
-			end = D2.round(diagram.intersect(this, codBBox, 'right'));
+			start = D2.round(this.intersect(domBBox, 'left'));
+			end = D2.round(this.intersect(codBBox, 'right'));
 		}
 	}
 	else
 	{
-		start = D2.round(diagram.closest(this, domBBox, this.codomain));
-		end = D2.round(diagram.closest(this, codBBox, this.domain));
+		start = D2.round(this.closest(domBBox, this.codomain));
+		end = D2.round(this.closest(codBBox, this.domain));
 	}
 	this.angle = Cat.getAngle(deltaX, deltaY);
 	this.start = start;
@@ -5258,7 +5287,49 @@ DiagramMorphism.prototype.update()
 	if (document.getElementById(StringMorphism.GraphId(this)))
 		StringMorphism.update(this);
 }
-Identity.prototype.getGraph(data = {position:0}, first = true)
+DiagramMorphism.prototype.intersect(bbox, side, m = Cat.default.arrow.margin)
+{
+	let pnt = new D2;
+	const x = bbox.x - m;
+	const y = bbox.y - m;
+	const w = bbox.w + 2 * m;
+	const h = bbox.h + 2 * m;
+	switch(side)
+	{
+	case 'top':
+		pnt = D2.segmentIntersect(	x, y, x + w, y, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		break;
+	case 'bottom':
+		pnt = D2.segmentIntersect(	x, y + h, x + w, y + h, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		break;
+	case 'left':
+		pnt = D2.segmentIntersect(	x, y, x, y + h, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		break;
+	case 'right':
+		pnt = D2.segmentIntersect(	x + w, y, x + w, y + h, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		break;
+	}
+	return pnt;
+}
+DiagramMorphism.prototype.closest(bbox, pnt)
+{
+	const pntTop = this.intersect(bbox, 'top');
+	const pntBtm = this.intersect(bbox, 'bottom');
+	const pntLft = this.intersect(bbox, 'left');
+	const pntRgt = this.intersect(bbox, 'right');
+	let r = {x:Number.MAX_VALUE, y:Number.MAX_VALUE};
+	if (pntTop != false)
+		r = D2.updatePoint(pntTop, r, pnt);
+	if (pntBtm != false)
+		r = D2.updatePoint(pntBtm, r, pnt);
+	if (pntLft != false)
+		r = D2.updatePoint(pntLft, r, pnt);
+	if (pntRgt != false)
+		r = D2.updatePoint(pntRgt, r, pnt);
+	if (r.x === Number.MAX_VALUE)
+		r = {x:pnt.x, y:pnt.y};
+	return r;
+}
 
 //
 // DiagramCategory is a Category
@@ -6280,12 +6351,13 @@ function Diagram(args)
 	//
 	nuArgs.codomain = new Category({basename:args.codomain, subobject:args.codomain});
 	Morphism.call(this, $Cat, nuArgs);	// TODO $Cat should be a diagram
-	this.basename = args.name;
 	//
 	// diagrams can have references to other diagrams
 	//
 	if ('references' in args)
 		this.references = args.references.length > 0 ? args.references.map(ref => Cat.getDiagram(ref)) : [];
+	else
+		this.references = [];
 	this.makeHomSets();
 	this.updateElements();
 	//
@@ -6295,7 +6367,7 @@ function Diagram(args)
 	//
 	// where are we viewing the diagram
 	//
-	this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:Cat.display.width(), height:Cat.display.height()});
+	this.viewport = Cat.getArg(args, 'viewport', {x:0, y:0, scale:1, width:Display.Width(), height:Display.Height()});
 	if (isGUI && this.viewport.width === 0)
 	{
 		this.viewport.width = window.innerWidth;
@@ -6319,6 +6391,8 @@ function Diagram(args)
 	this.colorIndex2color = {};
 	this.link2colorIndex = {};
 	this.colorIndex = 0;
+	this.toolbarElt = document.getElementById('toolbar');
+	this.toolbarTipElt = document.getElementById('toolbarTip');
 }
 Diagram.prototype.info()
 {
@@ -6387,7 +6461,7 @@ Diagram.prototype.saveLocal()
 }
 Diagram.prototype.setView()
 {
-	Cat.display.diagramSVG.setAttribute('transform', `translate(${this.viewport.x}, ${this.viewport.y})scale(${this.viewport.scale})`);
+	display.diagramSVG.setAttribute('transform', `translate(${this.viewport.x}, ${this.viewport.y})scale(${this.viewport.scale})`);
 }
 Diagram.prototype.update(e, pnl = '', sel = null, hom = false, save = true)
 {
@@ -6448,7 +6522,7 @@ Diagram.prototype.addSelected(e, eltOrig, clear = false, cls = 'object')
 	elt.showSelected();
 	if (this.selected.indexOf(elt) >= 0)
 	{
-		Cat.display.activateToolbar(e);
+		this.activateToolbar(e);
 		return;
 	}
 	this.selected.push(elt);
@@ -6458,10 +6532,10 @@ Diagram.prototype.addSelected(e, eltOrig, clear = false, cls = 'object')
 	{
 		elt.domain.orig = {x:elt.domain.x, y:elt.domain.y};
 		elt.codomain.orig = {x:elt.codomain.x, y:elt.codomain.y};
-		if (elt.prototype.name === 'DataMorphism' && elt.name !== document.getElementById('dataPanelTitle').innerHTML)
-			Cat.display.panel.close('data');
+		if (DataMorphism.isPrototypeOf(elt) && elt.name !== document.getElementById('dataPanelTitle').innerHTML)
+			dataPanel.close();
 	}
-	Cat.display.activateToolbar(e);
+	this.activateToolbar(e);
 }
 Diagram.prototype.removeSelected(e)
 {
@@ -6519,7 +6593,7 @@ Diagram.prototype.pickElement(e, name, cls)
 		if (!this.isSelected(elt))
 			this.addSelected(e, elt, !Cat.display.shiftKey);
 		else
-			Cat.display.activateToolbar(e);
+			this.activateToolbar(e);
 		if (CatObject.isPrototypeOf(elt)
 			elt.orig = {x:elt.x, y:elt.y};
 	}
@@ -6542,13 +6616,13 @@ Diagram.prototype.editSelected(e)
 		throw `Morphism ${from.to.properName} is not editable.`;
 	if (DataMorphism.isPrototypeOf(from.to))
 	{
-		const newTo = this.newDataMorphism(from.to.domain, from.to.codomain);
-		this.setMorphism(from, newTo);
-		this.updateElementAttribute(from, newTo, 'html', newTo.properName);
+		const to = this.newDataMorphism(from.to.domain, from.to.codomain);
+		this.setMorphism(from, to);
+		this.updateElementAttribute(from, 'html', to.properName);
 		this.update(e, '', from, true);
 	}
 	Cat.display.data.setPanelContent();
-	Cat.display.panel.open('data');
+	dataPanel.open();
 }
 Diagram.prototype.deleteAll()
 {
@@ -6597,7 +6671,6 @@ Diagram.prototype.toolbar(from)
 	btns += Morphism.isPrototypeOf(from.to) ? H.td(Cat.display.getButton('symmetry', `Cat.getDiagram().gui(evt, this, 'flipName')`, 'Flip text'), 'buttonBar') : '';
 	btns += H.td(Cat.display.getButton('help', `Cat.getDiagram().gui(evt, this, 'elementHelp')`, 'Description'), 'buttonBar');
 	let html = H.table(H.tr(btns), 'buttonBarLeft') + H.br();
-	html += H.div('', '', 'toolbarTip');
 	return html;
 }
 Diagram.prototype.toolbarHandler(dir, id)
@@ -6622,10 +6695,10 @@ Diagram.prototype.toolbarHandler(dir, id)
 			}
 		});
 		let html = H.small('Basic:');
-		html += H.table(Cat.display.morphismTableRows(morphs, `onclick="Cat.getDiagram().objectPlaceMorphism(event, '${dir}', '${from.name}', '%1')"`), 'toolbarTbl');
+		html += H.table(Display.MorphismTableRows(morphs, `onclick="Cat.getDiagram().objectPlaceMorphism(event, '${dir}', '${from.name}', '%1')"`), 'toolbarTbl');
 		morphs = this.getTransforms(dir, from.to);
 		html += H.small('Transforms:');
-		html += H.table(Cat.display.morphismTableRows(morphs, `onclick="Cat.getDiagram().placeTransformMorphism(event, '%1', '${dir}', '${from.name}')"`), 'toolbarTbl');
+		html += H.table(Display.MorphismTableRows(morphs, `onclick="Cat.getDiagram().placeTransformMorphism(event, '%1', '${dir}', '${from.name}')"`), 'toolbarTbl');
 		document.getElementById(id).innerHTML = html;
 	}
 }
@@ -6642,7 +6715,7 @@ Diagram.protype.distribute(e)
 				H.h5('Codomain Factors') + H.br() +
 				H.small('Click to remove from codomain') +
 				H.div('', '', 'codomainDiv');
-	document.getElementById('toolbarTip').innerHTML = html;
+	this.toolbarTipElt.innerHTML = html;
 }
 // Diagram.prototype.getFactorButton(obj, txt, data, action, title)
 // {
@@ -6662,7 +6735,7 @@ Diagram.prototype.factorBtnCode()
 				H.h5('Codomain Factors') + H.br() +
 				H.small('Click to remove from codomain') +
 				H.div('', '', 'codomainDiv');
-	document.getElementById('toolbarTip').innerHTML = html;
+	this.toolbarTipElt.innerHTML = html;
 }
 Diagram.prototype.lambdaMorphism(e)	// TODO moved
 {
@@ -6714,15 +6787,15 @@ Diagram.prototype.lambdaBtnForm(domain, codomain, root)
 	let html = H.h4('Curry A &otimes; B -> [C, D]') +
 		H.h5('Domain Factors: A &otimes; B') +
 		H.small('Click to move to C') +
-		H.div(domain.getSubFactorBtnCode({dir:	0, fromId:'domainDiv', toId:'codomainDiv'}),
-			'', 'domainDiv') +
+		H.div(domain.getSubFactorBtnCode({dir:	0, fromId:'domainDiv', toId:'codomainDiv'}), '', 'domainDiv') +
 		H.h5('Codomain Factors: C') +
-		(HomObject.isPrototypeOf(codomain) ? H.small('Merge to codomain hom') + Cat.display.getButton('codhom', `Cat.getDiagram().toggleCodHom()`, 'Merge codomain hom', Cat.default.button.tiny) + H.br() : '') +
+		(HomObject.isPrototypeOf(codomain) ?
+			H.small('Merge to codomain hom') + Cat.display.getButton('codhom', `Cat.getDiagram().toggleCodHom()`, 'Merge codomain hom', Cat.default.button.tiny) + H.br() : '') +
 		H.small('Click to move to A &otimes; B') +
 		// TODO this factorButton arguments are not correct
 		H.div(HomObject.isPrototypeOf(codomain) ? codomain.homDomain().factorButton({dir:1, fromId:'codomainDiv', toId:'domainDiv'}) : '', '', 'codomainDiv') +
 		H.span(Cat.display.getButton('edit', `Cat.getDiagram().gui(evt, this, 'lambdaMorphism')`, 'Curry morphism'));
-	document.getElementById('toolbarTip').innerHTML = html;
+	this.toolbarTipElt.innerHTML = html;
 }
 Diagram.prototype.activateNamedElementForm(e)
 {
@@ -6743,7 +6816,7 @@ Diagram.prototype.createNamedIdentity(e)
 	try
 	{
 		if (this.readonly)
-			throw 'Diagram is read only';
+			throw 'diagram is read only';
 		const from = this.getSelected();
 		if (CatObject.isPrototypeOf(from))
 		{
@@ -6800,7 +6873,6 @@ Diagram.prototype.flipName()
 		this.saveLocal();
 	}
 }
-/*
 //
 // Show the help page for the selected element.
 //
@@ -6820,13 +6892,13 @@ Diagram.prototype.elementHelp()
 	else
 		html = H.p(H.span(from.properName, 'tty', 'properNameElt') +
 					(readonly ? '' : Cat.display.getButton('edit', `Cat.getDiagram().editElementText('properNameElt', 'properName')`, 'Edit proper name', Cat.default.button.tiny)));
-	document.getElementById('toolbarTip').innerHTML = html;
+	this.toolbarTipElt.innerHTML = html;
 }
-*/
 Diagram.prototype.elementHelpMorphTbl(morphisms)
 {
 	return H.table(H.tr(H.th('Morphisms')) + morphisms.map(m => H.tr(H.td(m.properName, 'left'))).join(''));
 }
+// TODO
 Diagram.prototype.getTransforms(dir, obj = null)
 {
 	let transforms = [];
@@ -7059,13 +7131,13 @@ Diagram.prototype.trackMorphism(xy, to, src = null)
 		const domLen = Cat.textWidth(to.codomain.properName)/2;
 		const namLen = Cat.textWidth(to.properName);
 		codomain = new DiagramObject(this,
+		{
+			xy:
 			{
-				xy:
-				{
-					x:xy.x + Math.max(Cat.default.arrow.length, domLen + namLen + codLen + Cat.default.arrow.length/4),
-					y:xy.y
-				}
-			});
+				x:xy.x + Math.max(Cat.default.arrow.length, domLen + namLen + codLen + Cat.default.arrow.length/4),
+				y:xy.y
+			}
+		});
 	}
 	const from = new DiagramMorphism(this, {domain, codomain, to});
 	from.incrRefcnt();
@@ -7085,36 +7157,36 @@ Diagram.prototype.coproductAssembly(e)
 	const m = CoproductAssembly.Get(this, this.getSeletectedMorphisms());
 	this.objectPlaceMorphism(e, 'codomain', m.codomain.name, m.name);
 }
-deselectAll(toolbarOff = true)
+Diagram.prototype.deselectAll(toolbarOff = true)
 {
-	Cat.display.panel.close('data');
+	dataPanel.close();
 	if (toolbarOff)
 		Cat.display.deactivateToolbar();
 	this.selected.map(elt => elt.showSelected(false));
 	this.selected = [];
 }
-getObjectMorphisms(obj)
+Diagram.prototype.getObjectMorphisms(obj)
 {
-	let doms = [];
-	let cods = [];
-	for(const [fromMorph, toMorph] of this.morphisms)
+	const doms = [];
+	const cods = [];
+	for(const [from, to] of this.morphisms)
 	{
-		if (fromMorph.domain.isEquivalent(obj))
-			doms.push(fromMorph);
-		if (fromMorph.codomain.isEquivalent(obj))
-			cods.push(fromMorph);
+		if (from.domain.isEquivalent(obj))
+			doms.push(from);
+		if (from.codomain.isEquivalent(obj))
+			cods.push(from);
 	}
 	return {doms:doms, cods:cods};
 }
-checkFusible(pnt)
+Diagram.prototype.checkFusible(pnt)
 {
-	if (this.selected.length == 1)
+	if (this.selected.length === 1)
 	{
 		let elt = this.getSelected();
 		let melt = elt.isEquivalent(Cat.display.mouseover) ? null : Cat.display.mouseover;
-		if (elt.class === 'object')
+		if (CatObject.isPrototypeOf(elt))
 		{
-			if (melt != null && melt.class === 'object')
+			if (CatObject.isPrototypeOf(melt))
 			{
 				if (this.canFuseObjects(elt, melt))
 				{
@@ -7128,13 +7200,8 @@ checkFusible(pnt)
 				elt.svg().classList.add('selected');
 			}
 		}
-		else if (elt.class === 'morphism')
-		{
-			if (melt != null && melt.class === 'morphism' && this.canProductMorphisms(elt, melt))
-				elt.showFusible(true);
-			else
-				elt.showFusible(false);
-		}
+		else if (Morphism.isPrototypeOf(elt))
+			elt.showFusible(Morphism.isPrototypeOf(melt) && this.canProductMorphisms(elt, melt));
 	}
 }
 //
@@ -7152,7 +7219,7 @@ Diagram.prototype.findElement(pnt, except = '')
 			return;
 		const bbox = o.getBBox();
 		const upperRight = {x:bbox.x + bbox.width, y:bbox.y + bbox.height};
-		if (inside(bbox, pnt, upperRight))
+		if (D2.inside(bbox, pnt, upperRight))
 			elt = this.domain.getObject(o.dataset.name);
 	}, this);
 	//
@@ -7165,7 +7232,7 @@ Diagram.prototype.findElement(pnt, except = '')
 				return;
 			const bbox = o.getBBox();
 			const upperRight = {x:bbox.x + bbox.width, y:bbox.y + bbox.height};
-			if (inside(bbox, pnt, upperRight))
+			if (D2.inside(bbox, pnt, upperRight))
 				elt = this.domain.getMorphism(o.dataset.name);
 		}, this);
 	//
@@ -7179,7 +7246,7 @@ Diagram.prototype.findElement(pnt, except = '')
 				return;
 			const bbox = m.getBBox();
 			const upperRight = {x:bbox.x + bbox.width, y:bbox.y + bbox.height};
-			if (segmentDistance(pnt, bbox, upperRight) < 5)
+			if (D2.segmentDistance(pnt, bbox, upperRight) < 5)
 				elt = this.domain.getMorphism(m.dataset.name);
 		}, this);
 	}
@@ -7203,15 +7270,15 @@ Diagram.prototype.findElement(pnt, except = '')
 				}
 			}
 			const upperRight = {x:bbox.x + bbox.width, y:bbox.y + bbox.height};
-			if (inside(bbox, pnt, upperRight))
+			if (D2.inside(bbox, pnt, upperRight))
 				elt = this.domain.getElement(t.dataset.name);
 		}, this);
 	}
 	return elt;
 }
-canFuseObjects(dragFrom, targetFrom)
+Diagram.prototype.canFuseObjects(dragFrom, targetFrom)
 {
-	if (dragFrom.class === 'object')
+	if (CatObject.isPrototypeOf(dragFrom))
 	{
 		const dragTo = dragFrom.to;
 		const targetTo = targetFrom.to;
@@ -7231,87 +7298,43 @@ canFuseObjects(dragFrom, targetFrom)
 	}
 	return false;
 }
-canProductMorphisms(v, w)
+Diagram.protype.canProductMorphisms(v, w)
 {
-	return this.codomain.hasProducts && v.class === 'morphism' && w.class === 'morphism' && this.isIsolated(v) && this.isIsolated(w);
+	// TODO
+//	return this.codomain.hasProducts && v.class === 'morphism' && w.class === 'morphism' && this.isIsolated(v) && this.isIsolated(w);
+	return true;
 }
-static intersect(mor, bbox, side, m = Cat.default.arrow.margin)
-{
-	let pnt = {x:0, y:0};
-	const x = bbox.x - m;
-	const y = bbox.y - m;
-	const w = bbox.w + 2 * m;
-	const h = bbox.h + 2 * m;
-	switch(side)
-	{
-	case 'top':
-		pnt = segmentIntersect(	x, y, x + w, y, mor.domain.x, mor.domain.y, mor.codomain.x, mor.codomain.y);
-		break;
-	case 'bottom':
-		pnt = segmentIntersect(	x, y + h, x + w, y + h, mor.domain.x, mor.domain.y, mor.codomain.x, mor.codomain.y);
-		break;
-	case 'left':
-		pnt = segmentIntersect(	x, y, x, y + h, mor.domain.x, mor.domain.y, mor.codomain.x, mor.codomain.y);
-		break;
-	case 'right':
-		pnt = segmentIntersect(	x + w, y, x + w, y + h, mor.domain.x, mor.domain.y, mor.codomain.x, mor.codomain.y);
-		break;
-	}
-	return pnt;
-}
-static updatePoint(p, c, basePoint)
-{
-	return dist2(c, basePoint) < dist2(p, basePoint) ? c : p;
-}
-static closest(mor, bbox, pnt)
-{
-	const pntTop = diagram.intersect(mor, bbox, 'top');
-	const pntBtm = diagram.intersect(mor, bbox, 'bottom');
-	const pntLft = diagram.intersect(mor, bbox, 'left');
-	const pntRgt = diagram.intersect(mor, bbox, 'right');
-	let r = {x:Number.MAX_VALUE, y:Number.MAX_VALUE};
-	if (pntTop != false)
-		r = diagram.updatePoint(pntTop, r, pnt);
-	if (pntBtm != false)
-		r = diagram.updatePoint(pntBtm, r, pnt);
-	if (pntLft != false)
-		r = diagram.updatePoint(pntLft, r, pnt);
-	if (pntRgt != false)
-		r = diagram.updatePoint(pntRgt, r, pnt);
-	if (r.x === Number.MAX_VALUE)
-		r = {x:pnt.x, y:pnt.y};
-	return r;
-}
-getSelected()
+Diagram.protoype.getSelected()
 {
 	return this.selected.length > 0 ? this.selected[0] : null;
 }
-getSelectedObjects()
+Diagram.protoype.getSelectedObjects()
 {
-	return this.selected.filter(s => s.class === 'object').map(o => o.to);
+	return this.selected.filter(s => CatObject.isPrototypeOf(s)).map(o => o.to);
 }
-getSelectedMorphisms()
+Diagram.prototype.getSelectedMorphisms()
 {
-	return this.selected.filter(s => s.class === 'morphism').map(m => m.to);
+	return this.selected.filter(s => Morphism.isPrototypeOf(s)).map(m => m.to);
 }
-compose(e)
+Diagram.prototype.compose(e)
 {
 	const to = Composite.Get(this, this.getSelectedMorphisms());
-	const from = new DiagramMorphism(this, {to, domain:this.selected[0].domain, codomain:this.selected[this.selected.length -1].codomain});
+//	const from = new DiagramMorphism(this, {to, domain:this.selected[0].domain, codomain:this.selected[this.selected.length -1].codomain});
+	const from = new DiagramMorphism(this, {to, domain:Composite.Domain(this.selected), codomain:Composite.Codomain(this.selected)});
 	from.addSVG();
 	this.update(e, 'morphism', from, true);
 }
-run(e)
+Diagram.prototype.run(e)
 {
 	const from = this.getSelected();
 	const isThreeD = from.to.codomain.name === 'threeD';
 	const isTty = from.to.codomain.name === 'tty';
-	if (from.class === 'morphism' && from.to.isIterable())
+	if (Morphism.isProtypeOf(from) && from.to.isIterable())
 	{
 		const start = Date.now();
 		if (isThreeD)
 		{
-			Cat.display.panel.open('threeD');
+			threeDpanel.open();
 			Cat.display.threeD.resizeCanvas();
 		}
 		const toResult = this.codomain.run(from.to, this);
@@ -7326,7 +7349,7 @@ run(e)
 		}
 		if (isTty)
 		{
-			Cat.display.panel.open('tty');
+			ttyPanel.open();
 			Cat.display.accordion.open('ttyOutPnl');
 		}
 		const delta = Date.now() - start;
@@ -7334,7 +7357,7 @@ run(e)
 	}
 	Cat.display.drag = false;
 }
-makeHomSets()
+Diagram.prototype.makeHomSets()
 {
 	this.domain.makeHomSets();
 	this.codomain.makeHomSets();
@@ -7362,7 +7385,7 @@ addFactor(id, fname, root, action, ...indices)
 	div.innerHTML += H.button(this.getObject(expr).properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this);${action}"`);
 }
 */
-addFactor(id, fname, root, action, ...indices)
+Diagram.prototype.addFactor(id, fname, root, action, ...indices)
 {
 	let div = document.getElementById(id);
 	if (div.innerHTML === '')
@@ -7375,108 +7398,17 @@ addFactor(id, fname, root, action, ...indices)
 	let sub = indices.join();
 	div.innerHTML += H.button(obj.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this);${action}"`);
 }
-static getFactorsById(id)
-{
-	const btns = document.getElementById(id).querySelectorAll('button');
-	let factors = [];
-	btns.forEach(function(b)
-	{
-		const idx = JSON.parse(`[${b.dataset.indices}]`);
-		factors.push(idx);
-	});
-	if (factors.length === 0)
-		throw 'No factors for factor morphism.';
-	return factors;
-}
-static getFactorsByDomCodId(id)
-{
-	const btns = document.getElementById(id).querySelectorAll("button");
-	let factors = [];
-	btns.forEach(function(b)
-	{
-		factors.push(b.dataset.factor.split(' ').map(f => Number.parseInt(f)));
-	});
-	return factors;
-}
-/*
-addFactorMorphism(domain, factors)
-{
-	let d = factorMorphism.form(this, domain, factors);
-	let m = this.getMorphism(d.name);
-	if (m === null)
-		m = new FactorMorphism(this, {domain:domain.name, factors});
-	else
-		m.incrRefcnt();
-	return m;
-}
-*/
-selectedFactorMorphism(e)		// TODO moved
+Diagram.prototype.selectedFactorMorphism(e)		// TODO moved
 {
 	const m = this.codomain.addFactorMorphism(this.getSelected().to, diagram.getFactorsById('codomainDiv'));
 	this.objectPlaceMorphism(e, 'domain', this.getSelected().name, m.name)
 }
-newDataMorphism(dom, cod)
+Diagram.prototype.newDataMorphism(dom, cod)
 {
 	const name = this.codomain.getAnon('Data');
 	return new DataMorphism(this.codomain, {name, properName:name.slice(0, 9) + '&hellip;', diagram:this.name, domain:dom.name, codomain:cod.name});
 }
-updateObjectTableRows()
-{
-	let found = {};
-	let objects = [];
-	for (const [k, obj] of this.codomain.objects)
-		if (!(obj.name in found))
-		{
-			objects.push(obj);
-			found[obj.name] = true;
-		}
-	/*
-	for (const [k, obj] of this.objects)
-		if (!(obj.name in found))
-		{
-			objects.push(obj);
-			found[obj.name] = true;
-		}
-		*/
-	document.getElementById(`${this.name}_ObjPnl`).innerHTML = H.table(objects.map(o => H.tr(
-		(Cat.display.showRefcnts ? H.td(o.refcnt) : '') +
-						H.td(o.refcnt === 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeCodomainObject(evt, '${o.name}')`, 'Delete object') : '', 'buttonBar') +
-						H.td(o.properName),
-						'grabbable sidenavRow', '', Cat.cap(o.description), `draggable="true" ondragstart="Cat.display.object.drag(event, '${o.name}')"`)).join(''));
-}
-updateMorphismTableRows()
-{
-	let html = '';
-	let found = {}
-	let morphisms = [];
-	for (const [k, m] of this.morphisms)
-	{
-		if (m.name in found)
-			continue;
-		found[m.name] = true;
-		html += H.tr(	(Cat.display.showRefcnts ? H.td(m.refcnt) : '') +
-						H.td(m.refcnt <= 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeMorphism(evt, '${k.name}')`, 'Delete morphism') : '', 'buttonBar') +
-						H.td(m.properName) +
-						H.td(m.domain.properName) +
-						H.td('&rarr;') +
-						H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="Cat.display.morphism.drag(event, '${m.name}')"`);
-	}
-	for (const [k, m] of this.codomain.morphisms)
-	{
-		if (m.name in found)
-			continue;
-		found[m.name] = true;
-		html += H.tr(	(Cat.display.showRefcnts ? H.td(m.refcnt) : '') +
-						H.td(m.refcnt <= 0 && !this.readonly ? Cat.display.getButton('delete', `Cat.getDiagram('${this.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
-							'', 'buttonBar') +
-						H.td(m.properName) +
-						H.td(m.domain.properName) +
-						H.td('&rarr;') +
-						H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="Cat.display.morphism.drag(event, '${m.name}')"`);
-	}
-	document.getElementById(`${this.name}_MorPnl`).innerHTML = H.table(html);
-}
-makeAllSVG()
+Diagram.prototype.makeAllSVG()
 {
 	let svg = '';
 	for (const [name, o] of this.domain.objects)
@@ -7500,7 +7432,7 @@ makeAllSVG()
 	svg += this.elements.map(t => t.makeSVG());
 	return svg;
 }
-upload(e, fn = null)
+Diagram.prototype.upload(e, fn = null)
 {
 	if (Cat.user.status === 'logged-in')
 	{
@@ -7517,7 +7449,7 @@ upload(e, fn = null)
 	else
 		Cat.recordError('You need to be logged in to upload your work.');
 }
-guiDetach(e, dir)
+Diagram.prototype.guiDetach(e, dir)
 {
 	try
 	{
@@ -7539,30 +7471,30 @@ guiDetach(e, dir)
 		from.update();
 		this.update(e, '', null, true)
 		Cat.display.deactivateToolbar();
-		Cat.display.activateToolbar(e);
+		this.activateToolbar(e);
 	}
 	catch(x)
 	{
 		Cat.recordError(x);
 	}
 }
-userToDiagramCoords(xy, orig = false)
+Diagram.prototype.userToDiagramCoords(xy, orig = false)
 {
 	const pos = Cat.display.topSVG.getBoundingClientRect();
 	const s = 1.0 / this.viewport.scale;
 	return {x:s * (xy.x - pos.left - (orig ? this.viewport.orig.x : this.viewport.x)), y:s * (xy.y - pos.top - (orig ? this.viewport.orig.y : this.viewport.y))};
 }
-diagramToUserCoords(xy)
+Diagram.prototype.diagramToUserCoords(xy)
 {
 	const pos = Cat.display.topSVG.getBoundingClientRect();
 	const s = this.viewport.scale;
 	return {x:s * xy.x + pos.left + this.viewport.x, y:s * xy.y + pos.top + this.viewport.y};
 }
-mousePosition(e)
+Diagram.prototype.mousePosition(e)
 {
 	return this.userToDiagramCoords({x:e.clientX, y:e.clientY});
 }
-home()
+Diagram.prototype.home()
 {
 	Cat.display.deactivateToolbar();
 	this.viewport.x = 0;
@@ -7571,40 +7503,38 @@ home()
 	this.setView();
 	this.saveLocal();
 }
-updateElementAttribute(from, to, attr, val)
+Diagram.prototype.updateElementAttribute(from, attr, val)
 {
-	switch(from.class)
+	if (CatObject.isPrototypeOf(from) || Morphism.isPrototypeOf(from))
 	{
-	case 'element':
+		if (from.to)
+		{
+			from.to[attr] = val;
+			if (attr === 'html')
+			{
+				let svg = from.class === 'morphism' ? from.svg('_name') : from.svg();
+				if (svg)
+					svg.innerHTML = from.to[attr];
+			}
+		}
+	}
+	else
+	{
 		from[attr] = val;
 		const svg = from.svg();
 		if (attr === 'html')
 			svg.outerHTML = from.makeSVG();
 		Cat.display.element.update();	// TODO where else could this go?
-		break;
-	case 'object':
-	case 'morphism':
-		if (to)
-		{
-			to[attr] = val;
-			if (attr === 'html')
-			{
-				let svg = from.class === 'morphism' ? from.svg('_name') : from.svg();
-				if (svg)
-					svg.innerHTML = to[attr];
-			}
-		}
-		break;
 	}
 }
-editElementText(id, attr)
+Diagram.prototype.editElementText(id, attr)
 {
 	const h = document.getElementById(id);
-	if (h.contentEditable === 'true' && h.textContent !== '' && !this.readonly)
+	if (!this.readonly && h.contentEditable === 'true' && h.textContent !== '')
 	{
 		const from = this.getSelected();
 		h.contentEditable = false;
-		this.updateElementAttribute(from, from.to, attr, Cat.htmlEntitySafe(h.innerText));
+		this.updateElementAttribute(from, attr, Cat.htmlEntitySafe(h.innerText));
 		this.elementHelp();
 		from.showSelected();
 		this.saveLocal();
@@ -7626,8 +7556,6 @@ Diagram.prototype.clearDataMorphism()
 }
 updateMorphisms()
 {
-//	for(const [from, to] of this.morphisms)
-//		from.update(this);
 	for(const [name, from] of this.domain.morphisms)
 		from.update();
 }
@@ -7667,10 +7595,6 @@ Diagram.prototype.selectedCanRecurse()
 			{
 				if (sel0.domain.isEquivalent(N))
 					return true;
-//				r = 'op' in domain.expr &&
-//					domain.expr.op === 'product' &&
-//					domain.expr.data.length === 3 &&
-//					N.isEquivalent(this.getObject(domain.expr.data[0]));
 				r = ProductObject.isPrototypeOf(domain) &&
 					domain.objects.length === 3 &&
 					N.isEquivalent(domain.objects[0]);
@@ -7678,9 +7602,6 @@ Diagram.prototype.selectedCanRecurse()
 				{
 					const factor1 = domain.objects[1];
 					const factor2 = domain.objects[2];
-//					r = factor1.expr.op === 'hom' &&
-//						factor2.isEquivalent(this.getObject(factor1.expr.lhs)) &&
-//						factor2.isEquivalent(this.getObject(factor1.expr.rhs));
 					r = HomObject.isPrototypeOf(factor1) &&
 						factor2.isEquivalent(factor1.objects[0]) &&
 						factor2.isEquivalent(factor1.objects[1]);
@@ -7722,7 +7643,7 @@ Diagram.prototype.removeMorphism(e, name)
 	if (m !== null)
 	{
 		m.decrRefcnt();
-		this.updateMorphismTableRows();
+		MorphismTable.updateRows(this);
 		this.update(e);
 		this.saveLocal();
 	}
@@ -7736,7 +7657,7 @@ Diagram.prototype.removeCodomainMorphism(e, name)
 	if (m !== null)
 	{
 		m.decrRefcnt();
-		this.updateMorphismTableRows();
+		MorphismTable.updateRows(this);
 		this.update(e);
 		this.saveLocal();
 	}
@@ -7763,7 +7684,7 @@ Diagram.prototype.getElement(name)
 	//
 	return this.domain.getMorphism(name);
 }
-toggleTableMorphism(e, id, name)
+Diagram.prototype.toggleTableMorphism(e, id, name)
 {
 	const elt = document.getElementById(id);
 	const trs = elt.querySelectorAll('tr');
@@ -7793,7 +7714,7 @@ Diagram.prototype.showStrings(e)
 }
 Diagram.prototype.getHomSet(dom, cod)
 {
-	let morphs = [];
+	const morphs = [];
 	for(const [name, from] of this.domain.morphisms)
 	{
 		if ((from.domain.name === dom.name || from.domain.name === dom.name) && (from.codomain.name === cod.name || from.codomain.name === cod.name))
@@ -7815,17 +7736,17 @@ Diagram.prototype.addWindowSelect(e)
 	const q = this.userToDiagramCoords(Cat.mouse.xy);
 	this.elements.map(t =>
 	{
-		if (inside(p, t, q))
+		if (D2.inside(p, t, q))
 			this.addSelected(e, t);
 	});
 	this.domain.objects.forEach(function(o)
 	{
-		if (inside(p, o, q))
+		if (D2.inside(p, o, q))
 			this.addSelected(e, o);
 	}, this);
 	this.domain.morphisms.forEach(function(m)
 	{
-		if (inside(p, m.domain, q) && inside(p, m.codomain, q))
+		if (D2.inside(p, m.domain, q) && D2.inside(p, m.codomain, q))
 			this.addSelected(e, m);
 	}, this);
 }
@@ -7955,6 +7876,68 @@ Diagram.prototype.getMorphismGraph(m)
 	const sm = StringMorphism.graph(this, m);
 	return sm;
 }
+Diagram.prototype.activateToolbar(e)
+{
+	if (this.selected.length === 0)
+		return;
+	this.toolbar.style.opacity = 1;
+	this.toolbar.style.display = 'block';
+	const xy = 'clientX' in e ? {x:e.clientX, y:e.clientY} : Cat.mouse.xy;
+	let xyOffset = true;
+	const elt = this.getSelected();
+	if (this.selected.length === 1)
+		this.toolbar.innerHTML = this.toolbar(elt);
+	else
+	{
+		let html = H.td(Cat.display.getButton('close', 'Cat.display.deactivateToolbar()', 'Close'), 'buttonBar');
+		if (Morphism.isPrototypeOf(elt))
+		{
+			const form = this.domain.hasForm(this.selected);
+			const htmlLength = html.length;
+			if (form.composite)		// moved
+				html += H.td(this.getButton('compose', `Cat.getDiagram().gui(evt, this, 'compose')`, 'Compose'), 'buttonBar');
+			if (form.sink)
+			{
+//				if (this.codomain.isCartesian)		// TODO moved
+					html += H.td(this.getButton('pullback', `Cat.getDiagram().gui(evt, this, 'pullback')`, 'Pullback'), 'buttonBar');
+//				if (this.codomain.hasCoproducts)
+					html += H.td(this.getButton('coproductAssembly', `Cat.getDiagram().gui(evt, this, 'coproductAssembly')`, 'Coproduct assembly'), 'buttonBar');
+			}
+			if (form.source)
+			{
+//				if (this.codomain.hasCoproducts)
+					html += H.td(this.getButton('pushout', `Cat.getDiagram().gui(evt, this, 'pushout')`, 'Pushout'), 'buttonBar');
+//				if (this.codomain.isCartesian)		// TODO moved
+					html += H.td(this.getButton('productAssembly', `Cat.getDiagram().gui(evt, this, 'productAssembly')`, 'Product assembly'), 'buttonBar');
+			}
+			if (form.distinct && this.codomain.isCartesian)		// TODO moved
+				html += H.td(this.getButton('product', `Cat.getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
+			if (form.distinct && this.codomain.hasCoproducts)
+				html += H.td(this.getButton('coproduct', `Cat.getDiagram().gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
+			if (html.length !== htmlLength)
+				xyOffset = false;
+			if (this.selectedCanRecurse())
+				html += H.td(this.getButton('recursion', `Cat.getDiagram().gui(evt, this, 'recursion')`, 'Recursion'), 'buttonBar');
+		}
+		else if (CatObject.isPrototypeOf(elt))
+		{
+//			if (this.codomain.isCartesian)		// TODO moved
+				html += H.td(this.getButton('product', `Cat.getDiagram().gui(evt, this, 'product')`, 'Product'), 'buttonBar');
+//			if (this.codomain.hasCoproducts)
+				html += H.td(this.getButton('coproduct', `Cat.getDiagram().gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
+		}
+		this.toolbar.innerHTML = H.table(H.tr(html), 'buttonBarLeft');
+	}
+	const rect = Cat.display.topSVG.getBoundingClientRect();
+	let left = rect.left + xy.x + (xyOffset ? Cat.default.toolbar.x : 0);
+	left = left >= 0 ? left : 0;
+	left = (left + this.toolbar.clientWidth) >= window.innerWidth ? window.innerWidth - this.toolbar.clientWidth : left;
+	this.toolbar.style.left = `${left}px`;
+	let top = rect.top + xy.y - (xyOffset ? Cat.default.toolbar.y : 0);
+	top = top >= 0 ? top : 0;
+	top = (top + this.toolbar.clientHeight) >= window.innerHeight ? window.innerHeight - this.toolbar.clientHeight : top;
+	this.toolbar.style.top = `${top}px`;
+}
 //
 // Diagrama static methods
 //
@@ -7989,6 +7972,29 @@ Diagram.prototype.StorageName(dgrmName)
 {
 	return `Cat.diagram ${dgrmName}`;
 }
+Diagram.prototype.getFactorsById(id)
+{
+	const btns = document.getElementById(id).querySelectorAll('button');
+	let factors = [];
+	btns.forEach(function(b)
+	{
+		const idx = JSON.parse(`[${b.dataset.indices}]`);
+		factors.push(idx);
+	});
+	if (factors.length === 0)
+		throw 'No factors for factor morphism.';
+	return factors;
+}
+Diagram.prototype.getFactorsByDomCodId(id)
+{
+	const btns = document.getElementById(id).querySelectorAll("button");
+	let factors = [];
+	btns.forEach(function(b)
+	{
+		factors.push(b.dataset.factor.split(' ').map(f => Number.parseInt(f)));
+	});
+	return factors;
+}
 
 let PFS = null;
 let Graph = null;
@@ -7998,7 +8004,7 @@ if (isGUI)
 	if (!Cat.hasAcceptedCookies())
 	{
 		document.getElementById('intro').innerHTML = Cat.intro();
-		Cat.display.diagram.fetchRecentDiagrams();
+		DiagramPanel.FetchRecentDiagrams();
 		window.Cat			= Cat;
 		return;
 	}
