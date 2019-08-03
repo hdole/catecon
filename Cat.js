@@ -26,8 +26,10 @@ else
 	var zlib = window.zlib;
 }
 
-let $Cat = null;	// Cat of cats
-let $Cat2 = null;	// nat trans
+let $Cat = null;		// working Cat of cats
+let $CatDgrm = null;	// working diagram of categories and functors
+let $Cat2 = null;		// working nat trans
+let $Cat2Dgrm = null;	// working diagram of functors and natural transformations
 
 //
 // 2-D vector support
@@ -4837,12 +4839,6 @@ Category.prototype.addObject(obj)
 		throw `Object with basename ${obj.basename} already exists in category ${this.basename}`;
 	this.objects.set(obj.basename, obj);
 }
-Category.prototype.getMorphism(basename)
-{
-	if (Morphism.isPrototypeOf(basename))
-		return basename;
-	return this.morphisms.has(basename) ? this.morphisms.get(basename) : null;
-}
 Category.prototype.getMorphism(name)
 {
 	//
@@ -5098,8 +5094,8 @@ function Identity(diagram, args)
 	const nuArgs = Cat.clone(args);
 	if (!('codomain' in args))
 		nuArgs.codomain = args.domain;
-	const domain = this.category.getObject(nuArgs.domain);
-	const codomain = this.category.getObject(nuArgs.codomain);
+	const domain = this.diagram.getObject(nuArgs.domain);
+	const codomain = this.diagram.getObject(nuArgs.codomain);
 	nuArgs.name = Identity.Codename(diagram, domain, codomain);
 	if (!('properName' in this) && !)
 		nuArgs.properName = Identity.ProperName(domain, codomain);
@@ -5122,14 +5118,16 @@ Identity.prototype.$(args)
 //
 Identity.prototype.Codename(diagram, domain, codomain = null)
 {
-	return (codomain && domain.name !== codomain.name) ? `Id{${domain.name},${codomain.name}}dI` : `Id{${domain.name}}dI`;
+//	return (codomain && domain.name !== codomain.name) ? `Id{${domain.name},${codomain.name}}dI` : `Id{${domain.name}}dI`;
+	const basename = (codomain && domain.name !== codomain.name) ? `Id{${domain.name},${codomain.name}}dI` : `Id{${domain.name}}dI`;
+	return `${diagram.codomain.basename}:${basename}`;
 }
 Identity.prototype.Get(diagram, dom, cod)
 {
-	const domain = diagram.codomain.getObject(dom);
-	const codomain = diagram.codomain.getObject(cod);
+	const domain = diagram.getObject(dom);
+	const codomain = diagram.getObject(cod);
 	const name = Identity.Codename(diagram, domain, codomain);
-	const m = diagram.codomain.getMorphism(name);
+	const m = diagram.getMorphism(name);
 	return m === null ? new Identity(diagram, {domain, codomain}) : m;
 }
 Identity.prototype.ProperName(domain, codomain = null)
@@ -6440,6 +6438,60 @@ function CartesianMonoidalCategory(cat, fun, assoc, lu, ru, prodFun)
 	this.productFunctor = prodFun;
 }
 
+//
+// Functor is a Morphism
+//
+function Functor(diagram, args)
+{
+	const domain = this.diagram.getObject(args.domain);
+	if (!Category.isPrototypeOf(domain))
+		throw `functor domain ${args.domain} is not a category`;
+	const codomain this.diagram.getObject(args.codomain);
+	if (!Category.isPrototypeOf(codomain))
+		throw `functor codomain ${args.codomain} is not a category`;
+	Morphism.call(this, $CatDgrm, args);
+}
+Functor.prototype.$(args)
+{
+	if (CatObject.isPrototypeOf(args))
+		this.object(args);
+	else if (Morphism.isPrototypeOf(args))
+		this.morphism(args);
+	else
+		throw `Unknown argument given to functor ${this.name}`;
+}
+Functor.prototype.object(obj)
+{
+	throw `functor ${this.name} is not defined`;
+}
+Functor.prototype.morphism(mor)
+{
+	throw `functor ${this.name} is not defined`;
+}
+
+//
+// IdentityFunctor is an Identity
+//
+function IdentityFunctor(category, args)
+{
+	Identity.call(this, $CatDgrm, args);
+}
+IdentityFunctor.prototype.$(args)
+{
+	return args;
+}
+IdentityFunctor.prototype.object(obj)
+{
+	return obj;
+}
+IdentityFunctor.prototype.morphism(mor)
+{
+	return mor;
+}
+
+//
+// Diagram is a Functor
+//
 function Diagram(args)
 {
 	let nuArgs = Cat.clone(args);
@@ -6458,7 +6510,7 @@ function Diagram(args)
 	// new diagrams always target new sub-categories
 	//
 	nuArgs.codomain = new Category({basename:args.codomain, subobject:args.codomain});
-	Morphism.call(this, $Cat, nuArgs);	// TODO $Cat should be a diagram
+	Functor.call(this, $Cat, nuArgs);	// TODO $Cat should be a diagram
 	//
 	// diagrams can have references to other diagrams
 	//
@@ -6519,6 +6571,18 @@ Diagram.prototype.json()
 	d.elements =	this.elements.map(t => t.json());
 	return d;
 }
+Diagram.prototype.object(object)
+{
+	if (!DiagramObject.isPrototypeOf(object))
+		throw `object ${object.name} is not a DiagramObject`;
+	return object.to;
+}
+Diagram.prototype.morphism(morphism)
+{
+	if (!DiagramMorphism.isPrototypeOf(morphism))
+		throw `morphism ${morphism.name} is not a DiagramObject`;
+	return morphism.to;
+}
 //
 // Retrieve an object from the diagram's target category.
 //
@@ -6535,7 +6599,21 @@ Diagram.prototype.getObject(name)
 	if (Cat.opEx(name))
 		return this.codomain.getObject(name);
 	//
-	// it is a complex name, so break it down
+	// search the reference diagrams
+	//
+	for (let i=0; i<this.references.length; ++i)
+	{
+		const obj = this.references[i].getObject(name);
+		if (obj)
+			return obj;
+	}
+	//
+	// last chance try the diagram's domain graph category
+	//
+	return this.domain.getObject(name);
+	/*
+	//
+	// if it is a complex name, so break it down
 	//
 	const attrs = Element.NameTokens(name);
 	//
@@ -6548,6 +6626,49 @@ Diagram.prototype.getObject(name)
 	//
 	const dgrm = Cat.getDiagram(`${attrs.category}:${attrs.user}:${attrs.diagram}`);
 	return dgrm ? dgrm.getObject(name) ; null;
+	*/
+}
+Diagram.prototype.getMorphism(name)
+{
+	//
+	// if it is already an object, return it
+	//
+	if (Morphism.isPrototypeOf(name))
+		return name;
+	//
+	// if it is an operator name, then it must be for this diagram's category
+	//
+	if (Cat.opEx(name))
+		return this.codomain.getMorphism(name);
+	//
+	// search the reference diagrams
+	//
+	for (let i=0; i<this.references.length; ++i)
+	{
+		const obj = this.references[i].getMorphism(name);
+		if (obj)
+			return obj;
+	}
+	//
+	// last chance try the diagram's domain graph category
+	//
+	return this.domain.getObject(name);
+	/*
+	//
+	// if it is a complex name, so break it down
+	//
+	const attrs = Element.NameTokens(name);
+	//
+	// if the names do not match who we are, then we cannot find it
+	//
+	if (attrs.category === this.codomain.basename || attrs.diagram === this.basename || attrs.user === this.user)
+		return this.codomain.getMorphism(attrs.basename);
+	//
+	// see if we can find the diagram
+	//
+	const dgrm = Cat.getDiagram(`${attrs.category}:${attrs.user}:${attrs.diagram}`);
+	return dgrm ? dgrm.getMorphism(name) ; null;
+	*/
 }
 Diagram.prototype.gui(e, elt, fn)
 {
@@ -7011,7 +7132,7 @@ Diagram.prototype.getTransforms(dir, obj = null)
 {
 	let transforms = [];
 	const catName = this.codomain.name;
-	for(const [tName, t] of $Cat.transforms)
+	for(const [tName, t] of $Cat2.morphisms)
 		t[dir].name === catName && ((obj && 'testFunction' in t) ? t.testFunction(this, obj) : true) && transforms.push(t);
 	return transforms;
 }
@@ -8107,11 +8228,52 @@ Diagram.prototype.getFactorsByDomCodId(id)
 	return factors;
 }
 
+//
+// Transform is a Morphism
+//
+function Transform(diagram, args)
+{
+	const domain = this.diagram.getObject(args.domain);
+	if (!Functor.isPrototypeOf(domain))
+		throw `transform domain ${args.domain} is not a functor`;
+	const codomain this.diagram.getObject(args.codomain);
+	if (!Functor.isPrototypeOf(codomain))
+		throw `transform codomain ${args.codomain} is not a functor`;
+	Morphism.call(this, diagram, args);
+}
+Transform.prototype.$(args)
+{
+	throw `Unknown action in functor ${this.name}`;
+}
+
+//
+// IdentityTransform is an Identity
+//
+function IdentityTransform(category, args)
+{
+	Identity.call(this, $CatDgrm, args);
+}
+//
+// args[0] === diagram
+// args[1] === domain
+// return identity of domain
+//
+IdentityTransform.prototype.$(args)
+{
+	const diagram = args[0];
+	if (!Diagram.isPrototypeOf(diagram))
+		throw 'not a diagram';
+	return Identity.prototype.Get(diagram, {domain:args[1]});
+}
+
 let PFS = null;
 let Graph = null;
 
 if (isGUI)
 {
+	//
+	// show the intro if user has not accepted cookies
+	//
 	if (!Cat.hasAcceptedCookies())
 	{
 		document.getElementById('intro').innerHTML = display.intro();
