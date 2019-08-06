@@ -259,33 +259,6 @@ const Cat =
 	{
 		return typeof err === 'string' ? err : err.message;
 	},
-	barycenter(ary)
-	{
-		let elts = {};
-		for(let i=0; i<ary.length; ++i)
-		{
-			const elt = ary[i];
-			if (DiagramObject.isPrototypeOf(elt) || DiagramElement.isPrototypeOf(elt))
-				if (!(elt.name in elts))
-					elts[elt.name] = elt;
-			else if (DiagramMorphism.isPrototypeOf(elt))
-			{
-				if (!(elt.domain.name in elts))
-					elts[elt.domain.name] = elt.domain;
-				if (!(elt.codomain.name in elts))
-					elts[elt.codomain.name] = elt.codomain;
-			}
-		}
-		let xy = new D2;
-		let cnt = 0;
-		for(let i in elts)
-		{
-			++cnt;
-			xy = D2.add(xy, elts[i]);
-		}
-		xy = D2.scale(1.0/cnt, xy);
-		return xy;
-	},
 	addDiagram(dgrm)
 	{
 		if (!(dgrm.name in Cat.diagrams))
@@ -1556,16 +1529,16 @@ Display.prototype.resize()
 {
 	const dgrm = $Cat !== null ? Cat.getDiagram() : null;
 	const scale = dgrm !== null ? dgrm.viewport.scale : 1.0;
-	const w = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
-	const h = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
+	const width = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
+	const height = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
 	if ('topSVG' in this && this.topSVG)
 	{
-		this.topSVG.setAttribute('width', w);
-		this.topSVG.setAttribute('height', h);
-		this.uiSVG.setAttribute('width', w);
-		this.uiSVG.setAttribute('height', h);
-		this.upSVG.setAttribute('width', w);
-		this.upSVG.setAttribute('height', h);
+		this.topSVG.setAttribute('width', width);
+		this.topSVG.setAttribute('height', height);
+		this.uiSVG.setAttribute('width', width);
+		this.uiSVG.setAttribute('height', height);
+		this.upSVG.setAttribute('width', width);
+		this.upSVG.setAttribute('height', height);
 	}
 }
 Display.prototype.initialize()
@@ -1701,19 +1674,19 @@ Display.prototype.mousemove(e)
 			this.mouseover = dgrm.findElement(xy);
 			const x = Math.min(this.mouse.xy.x, this.mouse.down.x);
 			const y = Math.min(this.mouse.xy.y, this.mouse.down.y);
-			const w = Math.abs(this.mouse.xy.x - this.mouse.down.x);
-			const h = Math.abs(this.mouse.xy.y - this.mouse.down.y);
+			const width = Math.abs(this.mouse.xy.x - this.mouse.down.x);
+			const height = Math.abs(this.mouse.xy.y - this.mouse.down.y);
 			const svg = document.getElementById('selectRect');
 			if (svg)
 			{
 				svg.setAttribute('x', x);
 				svg.setAttribute('y', y);
-				svg.setAttribute('width', w);
-				svg.setAttribute('height', h);
+				svg.setAttribute('width', width);
+				svg.setAttribute('height', height);
 			}
 			else
 			{
-				const s = `<rect id="selectRect" x="${x}" y="${y}" width="${w}" height="${h}">`;
+				const s = `<rect id="selectRect" x="${x}" y="${y}" width="${width}" height="${height}">`;
 				this.uiSVG.innerHTML += s;
 			}
 		}
@@ -1768,7 +1741,6 @@ Display.prototype.mouseup(e)
 								to = homObject.get(dgrm.codomain, [dragObject.to, targetObject.to]);
 							else if (cat.cartesian)
 								to = productObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
-//									dgrm.setObject(targetObject, to);
 							targetObject.setObject(to);
 							dgrm.deselectAll(false);
 							targetObject.removeSVG();
@@ -2238,9 +2210,9 @@ Display.prototype.textWidth(txt)
 		let svg = `<text text-anchor="middle" class="object" x="0" y="0" id="testTextWidthElt">${txt}</text>`;
 		this.uiSVG.innerHTML = svg;
 		const txtElt = document.getElementById('testTextWidthElt');
-		const w = txtElt.parentNode.getBBox().width;
+		const width = txtElt.parentNode.getBBox().width;
 		this.uiSVG.innerHTML = '';
-		return w;
+		return width;
 	}
 	return 10;
 }
@@ -2495,6 +2467,33 @@ Display.prototype.MorphismTableRows(morphisms, action = null, drag = true)
 	}
 	return html;
 }
+Display.prototype.Barycenter(ary)
+{
+	let elts = {};
+	for(let i=0; i < ary.length; ++i)
+	{
+		const elt = ary[i];
+		if (DiagramObject.isPrototypeOf(elt) || DiagramElement.isPrototypeOf(elt))
+			if (!(elt.name in elts))
+				elts[elt.name] = elt;
+		else if (DiagramMorphism.isPrototypeOf(elt))
+		{
+			if (!(elt.domain.name in elts))
+				elts[elt.domain.name] = elt.domain;
+			if (!(elt.codomain.name in elts))
+				elts[elt.codomain.name] = elt.codomain;
+		}
+	}
+	let xy = new D2;
+	let cnt = 0;
+	for(let i in elts)
+	{
+		++cnt;
+		xy = D2.add(xy, elts[i]);
+	}
+	xy = D2.scale(1.0/cnt, xy);
+	return xy;
+},
 
 //
 // Panels
@@ -2555,8 +2554,8 @@ Panel.prototype.close()
 }
 Panel.prototype.toggle()
 {
-	const w = this.elt.style.width;
-	if (w === 'auto' || Number.parseInt(w, 10) > 0)
+	const width = this.elt.style.width;
+	if (width === 'auto' || Number.parseInt(width, 10) > 0)
 		this.close();
 	else
 		this.open();
@@ -3583,7 +3582,6 @@ const elementPanel = new ElementPanel();
 //
 // Element is the root class for Catecon objects and morphisms
 //
-// The name of an element has the form:  category::user::diagram::basename
 // The category is the target category of the diagram, say Set.
 // The basename is unique within the diagram's domain or codomain working categories.
 // Referencing is done by name, not by basename.
@@ -3767,29 +3765,6 @@ Element.prototype.Codename(diagram, basename)
 {
 	return `:${diagram.codomain.name}:Ob{${diagram.user}:${diagram.basename + (basename !== '' ? ':' + basename : ''}bO`;
 }
-/*
-Element.prototype.NameTokens(name)
-{
-	const tokens = name.split(':');
-	const a =
-	{
-		basename:	'',
-		user:		'',
-		diagram:	'',
-		category:	'',
-	};
-	if (tokens.length > 1)
-	{
-		a.basename = tokens[3];
-		a.user = tokens[1];
-		a.diagram = tokens[2];
-		a.category = tokens[0];
-	}
-	else
-		a.basename = name;
-	return a;
-}
-*/
 
 //
 // Graph is for graphing string morphisms.
@@ -3798,7 +3773,7 @@ function Graph(tag, position, width, graphs = [])
 {
 	this.tags = [tag];
 	this.position = position;
-	this.w = width;
+	this.width = width;
 	this.graphs = graphs;
 	this.links = [];
 	this.visited = [];
@@ -4160,10 +4135,10 @@ CatObject.prototype.isGraphable()
 }
 CatObject.prototype.getGraph(data = {position:0})
 {
-	const w = display.textWidth(this.properName);
+	const width = display.textWidth(this.properName);
 	const position = data.position;
-	data.position += w;
-	return new Graph(this.prototype.name, position, w);
+	data.position += width;
+	return new Graph(this.prototype.name, position, width);
 }
 //
 // data: {fname, root, index, id, action, op}
@@ -4180,6 +4155,58 @@ CatObject.prototype.factorButton(properName, data)
 CatObject.Process(diagram, args)
 {
 	return new Cat[args.prototype](args);
+}
+
+/*
+//
+// InitialObject is a CatObject
+//
+function InitialObject(diagram, args)
+{
+	const nuArgs = Cat.clone(args);
+	nuArgs.name = '0';
+	nuArgs.properName = '0';
+	CatObject.call(this, diagram, args);
+	this.prototype.size = 0;
+}
+//
+// InitialObject static methods
+//
+InitialObject.prototype.Get(diagram, objects)
+{
+	const object = diagram.getObject('0');
+	return object === null ? new InitialObject(diagram) : object;
+}
+*/
+
+//
+// DiscreteObject is a CatObject
+//
+// args: size
+//
+function DiscreteObject(diagram, args)
+{
+	const nuArgs = Cat.clone(args);
+	nuArgs.properName = DiscreteObject.ProperName(nuArgs.size);
+	nuArgs.name = DiscreteObject.Codename(diagram, nuArgs.size);
+	CatObject.call(this, diagram, nuArgs);
+	this.prototype.size = nuArgs.size;
+}
+//
+// DiscreteObject static methods
+//
+DiscreteObject.prototype.Codename(diagram, size)
+{
+	return `${diagram.codomain.name}:${size}`;
+}
+DiscreteObject.prototype.ProperName(diagram, size)
+{
+	return size.toString();
+}
+DiscreteObject.prototype.Get(diagram, size)
+{
+	const object = diagram.getObject(DiscreteObject.Codename(size));
+	return object ? object : new InitialObject(diagram, {size});
 }
 
 //
@@ -4258,7 +4285,7 @@ MultiObject.getGraph(tag, data, parenWidth, sepWidth, first = true)	// data: {po
 			if (this.resetPosition())
 				data.position = 0;
 			else
-				data.position += sepWidth + g.w;
+				data.position += sepWidth + g.width;
 			return g;
 		});
 	width = data.position - position;
@@ -4535,8 +4562,8 @@ function DiagramElement(diagram, args)
 	const xy = Cat.getArg(args, 'xy', new D2);
 	this.x = xy.x;
 	this.y = xy.y;
-	this.w = Cat.getArg(args, 'w', 0);
-	this.h = Cat.getArg(args, 'h', Cat.default.font.height);
+	this.width = Cat.getArg(args, 'width', 0);
+	this.height = Cat.getArg(args, 'height', Cat.default.font.height);
 }
 DiagramElement.prototype.setXY(xy)
 {
@@ -4550,9 +4577,9 @@ DiagramElement.prototype.getXY()
 DiagramElement.prototype.json()
 {
 	let a = super.json();
-	a.h = this.h;
+	a.height = this.height;
 	a.xy = this.getXY();
-	a.w = this.w;
+	a.width = this.width;
 	return a;
 }
 DiagramElement.prototype.update()	// FITB
@@ -4588,8 +4615,10 @@ DiagramElement.prototype.editText(id, attr)
 //
 function DiagramObject(diagram, args)
 {
+	const nuArgs = Cat.clone(args);
+	nuArgs.name = 'name' in nuArgs ? diagram.domain.getAnon('dgrmO');
 	CatObject.call(this, diagram, args);
-	DiagramElement.call(this, diagram, args);
+	DiagramElement.call(this, diagram, this);
 	//
 	// the object in the target category that this object maps to, if any
 	//
@@ -4607,9 +4636,15 @@ DiagramObject.prototype.json()
 //
 DiagramObject.prototype.setObject(to)
 {
+	if (this.to)
+	{
+		if (this.to.isEquivalent(to))
+			return;
+		this.to.decrRefcnt();
+	}
 	to.incrRefcnt();
 	this.to = to;
-	this.w = display.textWidth(to.properName);
+	this.width = display.textWidth(to.properName);
 }
 DiagramObject.prototype.decrRefcnt()
 {
@@ -4628,13 +4663,13 @@ DiagramObject.prototype.decrRefcnt()
 DiagramObject.prototype.makeSVG()
 {
 	if (isNaN(this.x) || isNaN(this.y))
-		throw `Nan in ${this.name}`;
+		throw `nan in ${this.name}`;
 	return `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + Cat.default.font.height/2}"
 		onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'object')">${this.to.properName}</text>`;
 }
 DiagramObject.prototype.getBBox()
 {
-	return {x:this.x - this.w/2, y:this.y + this.h/2 - Cat.default.font.height, w:this.w, h:this.h};
+	return {x:this.x - this.width/2, y:this.y + this.height/2 - Cat.default.font.height, width:this.width, height:this.height};
 }
 DiagramObject.prototype.svg(sfx = '')
 {
@@ -4667,7 +4702,7 @@ DiagramObject.prototype.updatePosition(xy)
 		if (svg.hasAttribute('x'))
 		{
 			svg.setAttribute('x', this.x);
-			svg.setAttribute('y', this.y + ('h' in this ? this.h/2 : 0));
+			svg.setAttribute('y', this.y + ('height' in this ? this.height/2 : 0));
 		}
 	}
 }
@@ -5079,7 +5114,7 @@ Morphism.prototype.hasMorphism(mor, start = true)
 }
 Morphism.prototype.$(args)
 {
-	throw `Unknown action in morphism ${this.name}`;
+	throw 'unknown action in morphism';
 }
 //
 // A generic morphism has an empty graph constructe from its domain and codomain.
@@ -5103,11 +5138,10 @@ function Identity(diagram, args)
 {
 	const nuArgs = Cat.clone(args);
 	nuArgs.domain = diagram.getObject(args.domain);
-	nuArgs.codomain = diagram.getObject('codomain' in args ? args.codomain : args.domain);
-	nuArgs.name = Identity.Codename(diagram, domain, codomain);
-	nuArgs.properName = 'properName' in args ? args.properName : Identity.ProperName(domain, codomain));
+	nuArgs.codomain = diagram.getObject('codomain' in nuArgs ? nuArgs.codomain : nuArgs.domain);
+	nuArgs.name = Identity.Codename(diagram, nuArgs.domain, nuArgs.codomain);
+	nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : Identity.ProperName(nuArgs.domain, nuArgs.codomain));
 	Morphism.call(this, diagram, nuArgs);
-	this.setSignature();
 }
 Identity.prototype.getGraph(data = {position:0})
 {
@@ -5128,32 +5162,32 @@ Identity.prototype.Codename(diagram, domain, codomain = null)
 	const basename = (codomain && domain.name !== codomain.name) ? `Id{${domain.name},${codomain.name}}dI` : `Id{${domain.name}}dI`;
 	return `:${diagram.codomain.name}:${basename}`;
 }
-Identity.prototype.Get(diagram, dom, cod)
+Identity.prototype.Get(diagram, dom, cod = null)
 {
 	const domain = diagram.getObject(dom);
-	const codomain = diagram.getObject(cod);
+	let codomain = null;
+	if (cod)
+		codomain = diagram.getObject(cod);
 	const name = Identity.Codename(diagram, domain, codomain);
 	const m = diagram.getMorphism(name);
-	return m === null ? new Identity(diagram, {domain, codomain}) : m;
+	return m === null ? new Identity(diagram, codomain ? {domain, codomain}) : m;
 }
 Identity.prototype.ProperName(domain, codomain = null)
 {
-	return (codomain && domain.name !== codomain.name) ? `Id<${domain.properName}, ${codomain.properName}>` : `Id<${domain.properName}>`;
+//	return (codomain && domain.name !== codomain.name) ? `Id<${domain.properName}, ${codomain.properName}>` : `Id<${domain.properName}>`;
+	return 'id';
 }
 
 //
 // DiagramMorphism is a Morphism
 //
 // Supports the placement and drawing of a morphism in a diagram.
+// This is *not* a DiagramElement as this is suspended between two such.
 //
 function DiagramMorphism(diagram, args)
 {
 	const nuArgs = Cat.clone(args);
-	//
-	// usually the names for diagram morphisms are auto-generated
-	//
-	if (!('name' in nuArgs))
-		nuArgs.name = diagram.domain.getAnon('dgrm');
+	nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrmM');
 	Morphism.call(this, diagram, nuArgs);
 	//
 	// graphical attributes
@@ -5162,10 +5196,12 @@ function DiagramMorphism(diagram, args)
 	this.end = Cat.getArg(args, 'end', {x:150, y:0});	// TODO make default
 	this.angle = Cat.getArg(args, 'angle', 0.0);
 	this.flipName = Cat.getArg(args, 'flipName', false);
+	if ('morphisms' in nuArgs)
+		this.morphisms = nuArgs.morphisms.map(m => diagram.domain.getMorphism(m));
 	//
 	// the morphism in the target category that this morphism maps to, if any
 	//
-	this.setMorphism(this.codomain.getMorphism(args.to));
+	this.setMorphism(this.diagram.getMorphism(nuArgs.to));
 }
 DiagramMorphism.prototype.decrRefcnt()
 {
@@ -5189,13 +5225,19 @@ DiagramMorphism.prototype.json()
 	mor.end = this.end;
 	mor.angle = this.angle;
 	mor.flipName = this.flipName;
-	mor.to = this.to.namel;
+	mor.to = this.to.name;
+	if ('morphisms' in this)
+		mor.morphisms = this.morphisms.map(m => m.name);
 	return mor;
 }
 DiagramMorphism.prototype.setMorphism(to)
 {
 	if (this.to)
+	{
+		if (this.to.isEquivalent(to))
+			return;
 		this.to.decrRefcnt();
+	}
 	to.incrRefcnt();
 	this.domain.setObject(to.domain);
 	this.codomain.setObject(to.codomain);
@@ -5212,15 +5254,15 @@ DiagramMorphism.prototype.getNameOffset()
 DiagramMorphism.prototype.makeSVG()
 {
 	const off = this.getNameOffset();
-	let svg = `
-<g id="${this.elementId()}">
+	let svg =
+`<g id="${this.elementId()}">
 <path data-type="morphism" data-name="${this.name}" class="${this.to.prototype.name !== 'unknown' ? 'morphism' : 'unknownMorph'} grabbable" id="${this.elementId()}_path" d="M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}"
 onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'morphism')" marker-end="url(#arrowhead)"/>
 <text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}"
 onmousedown="Cat.getDiagram().pickElement(evt, '${this.name}', 'morphism')">${this.to.properName}</text>`;
 	if (Composite.isPrototypeOf(this.to))
 	{
-		const xy = Cat.barycenter(this.morphisms);
+		const xy = Display.Barycenter(this.morphisms);
 		if (isNaN(xy.x) || isNaN(xy.y))
 			throw 'Nan!';
 		svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}"
@@ -5265,7 +5307,7 @@ DiagramMorphism.prototype.updateDecorations()
 	if (Composite.isPrototypeOf(this.to))
 	{
 		const compSvg = this.svg('_comp');
-		const xy = Cat.barycenter(this.morphisms);
+		const xy = Display.Barycenter(this.morphisms);
 		if (isNaN(xy.x) || isNaN(xy.y))
 			throw 'NaN!';
 		compSvg.setAttribute('x', xy.x);
@@ -5278,18 +5320,18 @@ DiagramMorphism.prototype.getBBox()
 	{
 		x:	Math.min(this.start.x + ('bezier' in this ? this.bezier.offset.x : 0), this.end.x),
 		y:	Math.min(this.start.y + ('bezier' in this ? this.bezier.offset.y : 0), this.end.y),
-		w:	Math.abs(this.start.x - this.end.x),
-		h:	Math.abs(this.start.y - this.end.y),
+		width:	Math.abs(this.start.x - this.end.x),
+		height:	Math.abs(this.start.y - this.end.y),
 	};
-	if (r.w === 0.0)
+	if (r.width === 0.0)
 	{
-		r.w = fontHeight = Cat.default.font.height;
-		r.x += r.w/2;
+		r.width = fontHeight = Cat.default.font.height;
+		r.x += r.width/2;
 	}
-	else if (r.h === 0.0)
+	else if (r.height === 0.0)
 	{
-		r.h = r.w;
-		r.y -= r.w/2;
+		r.height = r.width;
+		r.y -= r.width/2;
 	}
 	return r;
 }
@@ -5378,21 +5420,21 @@ DiagramMorphism.prototype.intersect(bbox, side, m = Cat.default.arrow.margin)
 	let pnt = new D2;
 	const x = bbox.x - m;
 	const y = bbox.y - m;
-	const w = bbox.w + 2 * m;
-	const h = bbox.h + 2 * m;
+	const width = bbox.width + 2 * m;
+	const height = bbox.height + 2 * m;
 	switch(side)
 	{
 	case 'top':
-		pnt = D2.segmentIntersect(	x, y, x + w, y, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		pnt = D2.segmentIntersect(	x, y, x + width, y, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 		break;
 	case 'bottom':
-		pnt = D2.segmentIntersect(	x, y + h, x + w, y + h, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		pnt = D2.segmentIntersect(	x, y + height, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 		break;
 	case 'left':
-		pnt = D2.segmentIntersect(	x, y, x, y + h, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		pnt = D2.segmentIntersect(	x, y, x, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 		break;
 	case 'right':
-		pnt = D2.segmentIntersect(	x + w, y, x + w, y + h, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+		pnt = D2.segmentIntersect(	x + width, y, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 		break;
 	}
 	return pnt;
@@ -6301,8 +6343,8 @@ StringMorphism.prototype.Update(dgrm, from)
 	const id = StringMorphism.graphId(from);
 	const graphFunctor = $Cat.getMorphism('Graph');
 	const sm = graphFunctor.$(dgrm, from.to);
-	const dom = {x:from.domain.x - from.domain.w/2, y:from.domain.y, name:from.domain.name};
-	const cod = {x:from.codomain.x - from.codomain.w/2, y:from.codomain.y, name:from.codomain.name};
+	const dom = {x:from.domain.x - from.domain.width/2, y:from.domain.y, name:from.domain.name};
+	const cod = {x:from.codomain.x - from.codomain.width/2, y:from.codomain.y, name:from.codomain.name};
 	StringMorphism.updateSVG(dgrm, sm.graph, true, {index:[], graph:sm.graph, dom, cod, visited:[], elementId:from.elementId()});
 }
 StringMorphism.prototype.RemoveStringSvg(from)
@@ -6332,7 +6374,7 @@ StringMorphism.prototype.GraphId(m)
 }
 
 //
-// Evaluation is a morphism
+// Evaluation is a Morphism
 //
 function Evaluation(diagram, args)
 {
@@ -6340,7 +6382,7 @@ function Evaluation(diagram, args)
 	nuArgs.domain = diagram.getObject(args.domain);
 	if (!Evaluation.CanEvaluate(nuArgs.domain))
 		throw 'object for evaluation domain cannot be evaluated';
-	nuArgs.name = Evaluation.Codename(nuArgs.domain);
+	nuArgs.name = Evaluation.Codename(diagram, nuArgs.domain);
 	nuArgs.codoamin = nuArgs.domain.objects[0].objects[1];
 	nuArgs.properName = Evaluation.ProperName(nuArgs.domain);
 	Morphism.call(this, diagram, nuArgs);
@@ -6386,6 +6428,44 @@ Evaluation.prototype.Codename(diagram, object)
 Evaluation.prototype.ProperName(diagram, object)
 {
 	return `Ev&lt;${object.properName}&gt;`;
+}
+Evaluation.prototype.Get(diagram, domain)
+{
+	const name = Evaluation.Codename(diagram, domain);
+	const m = diagram.getMorphism(name);
+	return m === null ? new Evaluation(diagram, {domain}) : m;
+}
+
+//
+// InitialMorphism is a Morphism
+//
+function InitialMorphism(diagram, args)
+{
+	const nuArgs = Cat.clone(args);
+	nuArgs.codomain = diagram.getObject(args.codomain);
+	nuArgs.domain = diagram.getObject('0');
+	if (!nuArgs.domain)
+		throw 'no initial object';
+	nuArgs.name = InitialMorphism.Codename(diagram, nuArgs.codomain);
+	nuArgs.properName = 'properName' in args ? args.properName : InitialMorphism.ProperName());
+	Morphism.call(this, diagram, nuArgs);
+}
+//
+// InitialMorphism static methods
+//
+InitialMorphism.prototype.Codename(diagram, domain, codomain = null)
+{
+	return `:${diagram.codomain.name}:In{${basename}}nI`;
+}
+InitialMorphism.prototype.Get(diagram, codomain)
+{
+	const name = InitialMorphism.Codename(diagram, codomain);
+	const m = diagram.getMorphism(name);
+	return m === null ? new InitialMorphism(diagram, {codomain}) : m;
+}
+InitialMorphism.prototype.ProperName()
+{
+	return '0';
 }
 
 //
@@ -7296,7 +7376,7 @@ Diagram.prototype.product(e)
 		const toObjects = objects.map(o => o.to);
 		const to = ProductObject.Get(this, toObjects);
 		if (to === null)
-			from = new DiagramObject(this, {xy:Cat.barycenter(this.selected), to});
+			from = new DiagramObject(this, {xy:Display.Barycenter(this.selected), to});
 		from.addSVG();
 		if (!e.shiftKey)
 			objects.map(o => this.isIsolated(o) ? o.decrRefcnt() : null);
@@ -7327,7 +7407,7 @@ Diagram.prototype.coproduct(e)
 		const toObjects = objects.map(o => o.to);
 		const to = CoproductObject.Get(this, toObjects);
 		if (to === null)
-			from = new DiagramObject(this, {xy:Cat.barycenter(this.selected), to});
+			from = new DiagramObject(this, {xy:Display.Barycenter(this.selected), to});
 		from.addSVG();
 		if (!e.shiftKey)
 			objects.map(o => this.isIsolated(o) ? o.decrRefcnt() : null);
@@ -7538,9 +7618,11 @@ Diagram.prototype.getSelectedMorphisms()
 }
 Diagram.prototype.compose(e)
 {
-	const to = Composite.Get(this, this.getSelectedMorphisms().map(m => m.to));
+	const morphisms = this.getSelectedMorphisms();
+	const to = Composite.Get(this, morphisms.map(m => m.to));
 //	const from = new DiagramMorphism(this, {to, domain:this.selected[0].domain, codomain:this.selected[this.selected.length -1].codomain});
 	const from = new DiagramMorphism(this, {to, domain:Composite.Domain(this.selected), codomain:Composite.Codomain(this.selected)});
+	from.morphisms = morphisms;
 	from.addSVG();
 	this.update(e, from, true);
 }
@@ -8346,6 +8428,39 @@ FoldTransform.prototype.Codename(domain, count)
 FoldTransform.prototype.ProperName(domain, count)
 {
 	return `&nabla;&lt;${domain.properName}:${count}&gt;`;
+}
+
+//
+// EvaluationTransform is a Transform
+//
+function EvaluationTransform(diagram, args)
+{
+	const nuArgs = Cat.clone(args);
+	nuArgs.domain = diagram.getObject(args.domain);
+	if (!Evaluation.CanEvaluate(nuArgs.domain))
+		throw 'domain cannot be evaluated';
+	nuArgs.name = EvaluationTransform.Codename(nuArgs.domain, nuArgs.count);
+	nuArgs.properName = EvaluationTransform.ProperName(nuArgs.domain);
+	Transform.call(this, diagram, nuArgs);
+}
+//
+// args[0] === diagram
+// args[1] === domain
+//
+EvaluationTransform.prototype.$(args)
+{
+	return Evaluation.Get(args[0], {domain:args[1]});
+}
+//
+// EvaluationTransform static methods
+//
+EvaluationTransform.prototype.Codename(domain)
+{
+	return `:$Cat2:Et{${domain.name}}tE`;
+}
+EvaluationTransform.prototype.ProperName(domain)
+{
+	return `Eval;&lt;${domain.properName}&gt;`;
 }
 
 if (isGUI)
