@@ -1612,6 +1612,9 @@ Display.prototype.mousemove(e)
 				let from = dgrm.getSelected();
 				this.mouseover = dgrm.findElement(xy, from.name);
 				const isolated = from.refcnt === 1;
+				//
+				// create identity by dragging object
+				//
 				if (DiagramObject.isPrototypeOf(from))
 				{
 					const to = from.to;
@@ -1629,6 +1632,9 @@ Display.prototype.mousemove(e)
 					dgrm.saveLocal();
 					dgrm.checkFusible(xy);
 				}
+				//
+				// create a copy of a morphism
+				//
 				else if (DiagramMorphism.isPrototypeOf(from))
 				{
 					dgrm.deselectAll();
@@ -1714,44 +1720,59 @@ Display.prototype.mouseup(e)
 	}
 	try
 	{
-		const dgrm = Cat.getDiagram();
-		const cat = dgrm.codomain;
-		let pnt = dgrm.mousePosition(e);
+		const diagram = Cat.getDiagram();
+		const cat = diagram.codomain;
+		let pnt = diagram.mousePosition(e);
 		if (this.drag)
 		{
-			if (dgrm.selected.length === 1)
+			if (diagram.selected.length === 1)
 			{
-				let dragObject = dgrm.getSelected();
+				let dragObject = diagram.getSelected();
 				let targetObject = dragObject.isEquivalent(this.mouseover) ? null : this.mouseover;
 				if (targetObject !== null)
 				{
 					if (DiagramObject.isPrototypeOf(dragObject) && DiagramObject.isPrototypeOf(targetObject))
 					{
-						if (dgrm.isIsolated(dragObject) && dgrm.isIsolated(targetObject))
+						if (diagram.isIsolated(dragObject) && diagram.isIsolated(targetObject))
 						{
+							let to = null;
+//							if (e.shiftKey && cat.coproducts)
+							//
+							// coproduct with shift key
+							//
+							if (e.shiftKey && 'coproductFunctor' in cat)
+//								to = coproductObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
+								to = cat.coproductFunctor.$(diagram, [targetObject.to, dragObject.to]);
+							//
+							// hom object with alt key
+							//
+							else if (e.altKey && ClosedMonoidalCategory.isPrototypeOf(cat))
+//								to = homObject.get(dgrm.codomain, [dragObject.to, targetObject.to]);
+								to = cat.homFunctor.$(diagram, [dragObject.to, targetObject.to]);
 							//
 							// product
 							//
-							// TODO add coproduct, hom
+							else if ('productFunctor' in cat)
+//								to = productObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
+								to = cat.productFunctor.$(diagram, [targetObject.to, dragObject.to]);
 							//
-							let to = null;
-							if (e.shiftKey && cat.coproducts)
-								to = coproductObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
-							else if (e.altKey && cat.closed)
-								to = homObject.get(dgrm.codomain, [dragObject.to, targetObject.to]);
-							else if (cat.cartesian)
-								to = productObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
+							// monoidal action
+							//
+							else if (MonoidalCategory.isPrototypeOf(cat))
+								to = cat.monoidal.operator.$(diagram, [targetObject.to, dragObject.to]);
+							else
+								return;
 							targetObject.setObject(to);
-							dgrm.deselectAll(false);
+							diagram.deselectAll(false);
 							targetObject.removeSVG();
 							targetObject.addSVG();
-							dgrm.addSelected(e, targetObject);
+							diagram.addSelected(e, targetObject);
 							dragObject.decrRefcnt();
 						}
-						else if(dgrm.canFuseObjects(dragObject, targetObject))
+						else if(diagram.canFuseObjects(dragObject, targetObject))
 						{
-							dgrm.deselectAll();
-							let morphs = dgrm.getObjectMorphisms(dragObject);
+							diagram.deselectAll();
+							let morphs = diagram.getObjectMorphisms(dragObject);
 							if (morphs.cods.length > 0)
 							{
 								let from = morphs.cods[0];
@@ -1766,9 +1787,9 @@ Display.prototype.mouseup(e)
 										//
 										if (toTargetObject.isTerminal)
 										{
-											const to = $Cat.getTransform(`terminal-${dgrm.codomain.name}`).$(dgrm, from.to.domain);
+											const to = $Cat.getTransform(`terminal-${diagram.codomain.name}`).$(diagram, from.to.domain);
 											from.removeSVG();
-											dgrm.setMorphism(from, to);
+											diagram.setMorphism(from, to);
 											from.addSVG();
 										}
 										//
@@ -1778,7 +1799,7 @@ Display.prototype.mouseup(e)
 										{
 											const to = Cat.getDiagram().newDataMorphism(cod, toTargetObject);
 											from.removeSVG();
-											dgrm.setMorphism(from, to);
+											diagram.setMorphism(from, to);
 											from.addSVG();
 										}
 									}
@@ -1790,55 +1811,92 @@ Display.prototype.mouseup(e)
 							//
 							// graph merge
 							//
-							for(const [from, to] of dgrm.morphisms)
+							for(const [from, to] of diagram.morphisms)
 							{
 								if (from.domain.isEquivalent(dragObject))
 								{
 									from.domain.decrRefcnt();
 									from.domain = targetObject;
-									Display.MergeObjectsRefCnt(dgrm, dragObject, targetObject);
+									Display.MergeObjectsRefCnt(diagram, dragObject, targetObject);
 								}
 								else if (from.codomain.isEquivalent(dragObject))
 								{
 									from.codomain.decrRefcnt();
 									from.codomain = targetObject;
-									Display.MergeObjectsRefCnt(dgrm, dragObject, targetObject);
+									Display.MergeObjectsRefCnt(diagram, dragObject, targetObject);
 								}
 							}
 							dragObject.decrRefcnt();
-							dgrm.update(e, null, true);
+							diagram.update(e, null, true);
 						}
 					}
+					else if (DiagramMorphism.isPrototypeOf(dragObject) && DiagramMorphism.isPrototypeOf(targetObject))
+					{
+						if (diagram.isIsolated(dragObject) && diagram.isIsolated(targetObject))
+						{
+							let to = null;
+							//
+							// coproduct with shift key
+							//
+							if (e.shiftKey && 'coproductFunctor' in cat)
+								to = cat.coproductFunctor.$$(diagram, [targetObject.to, dragObject.to]);
+							//
+							// hom it with alt key
+							//
+							else if (e.altKey && ClosedMonoidalCategory.isPrototypeOf(cat))
+								to = cat.homFunctor.$$(diagram, [dragObject.to, targetObject.to]);
+							//
+							// product
+							//
+							else if ('productFunctor' in cat)
+								to = cat.productFunctor.$$(diagram, [targetObject.to, dragObject.to]);
+							//
+							// monoidal action
+							//
+							else if (MonoidalCategory.isPrototypeOf(cat))
+								to = cat.monoidal.operator.$$(diagram, [targetObject.to, dragObject.to]);
+							else
+								return;
+							targetObject.setObject(to);
+							diagram.deselectAll(false);
+							targetObject.removeSVG();
+							targetObject.addSVG();
+							diagram.addSelected(e, targetObject);
+							dragObject.decrRefcnt();
+						}
+					}
+					/*
 					//
 					// TODO * is monoidal
 					//
-					else if (dgrm.codomain.hasProducts &&
+					else if (diagram.codomain.hasProducts &&
 						DiagramMorphism.isPrototypeOf(dragObject) &&
 						DiagramMorphism.isPrototypeOf(targetObject) &&
-						dgrm.isIsolated(dragObject) &&
-						dgrm.isIsolated(targetObject))
+						diagram.isIsolated(dragObject) &&
+						diagram.isIsolated(targetObject))
 					{
-						dgrm.deselectAll();
+						diagram.deselectAll();
 						const dragMorphTo = dragObject.to;
 						const targetMorphTo = targetObject.to;
 						const morphisms = [targetMorphTo, dragMorphTo];
-						const newTo = ProductMorphism.Get(dgrm, morphisms);
+						const newTo = ProductMorphism.Get(diagram, morphisms);
 						newTo.incrRefcnt();
-						dgrm.placeMorphism(e, newTo, targetObject.domain, targetObject.codomain);
+						diagram.placeMorphism(e, newTo, targetObject.domain, targetObject.codomain);
 						dragObject.decrRefcnt();
 						targetObject.decrRefcnt();
 						targetObject.update();
 					}
+					*/
 				}
 			}
-			if (!dgrm.readonly)
-				dgrm.saveLocal();
+			if (!diagram.readonly)
+				diagram.saveLocal();
 		}
 		else if (e.ctrlKey)
 		{
 		}
 		else
-			dgrm.addWindowSelect(e);
+			diagram.addWindowSelect(e);
 		this.fuseObject = null;
 	}
 	catch(x)
@@ -4157,28 +4215,6 @@ CatObject.Process(diagram, args)
 	return new Cat[args.prototype](args);
 }
 
-/*
-//
-// InitialObject is a CatObject
-//
-function InitialObject(diagram, args)
-{
-	const nuArgs = Cat.clone(args);
-	nuArgs.name = '0';
-	nuArgs.properName = '0';
-	CatObject.call(this, diagram, args);
-	this.prototype.size = 0;
-}
-//
-// InitialObject static methods
-//
-InitialObject.prototype.Get(diagram, objects)
-{
-	const object = diagram.getObject('0');
-	return object === null ? new InitialObject(diagram) : object;
-}
-*/
-
 //
 // DiscreteObject is a CatObject
 //
@@ -4206,11 +4242,67 @@ DiscreteObject.prototype.ProperName(diagram, size)
 DiscreteObject.prototype.Get(diagram, size)
 {
 	const object = diagram.getObject(DiscreteObject.Codename(size));
-	return object ? object : new InitialObject(diagram, {size});
+	return object ? object : new DiscreteObject(diagram, {size});
 }
 
 //
-// MultiObject is an CatObject
+// InitialObject is a DiscreteObject
+//
+function InitialObject(diagram, args)
+{
+	const nuArgs = Cat.clone(args);
+	DiscreteObject.call(this, diagram, {size:0});
+}
+//
+// InitialObject static methods
+//
+InitialObject.prototype.Get(diagram)
+{
+	const object = diagram.getObject('0');
+	return object ? object : new InitialObject(diagram);
+}
+
+//
+// TerminalObject is a DiscreteObject
+//
+function TerminalObject(diagram, args)
+{
+	DiscreteObject.call(this, diagram, {size:1});
+}
+//
+// TerminalObject static methods
+//
+TerminalObject.prototype.Get(diagram)
+{
+	const object = diagram.getObject('1');
+	return object ? object : new TerminalObject(diagram);
+}
+
+//
+// SubobjectClassifier is a CatObject
+//
+function SubobjectClassifier(diagram, args)
+{
+	const nuArgs = Cat.clone(args);
+	nuArgs.name = SubobjectClassifer.Codename(diagram);
+	nuArgs.properName = '&Omega;';
+	DiscreteObject.call(this, diagram, nuArgs);
+}
+//
+// SubobjectClassifier static methods
+//
+SubobjectClassifier.prototype.Codename(diagram)
+{
+	return `${diagram.codomain.name}:Omega`;
+}
+SubobjectClassifier.prototype.Get(diagram)
+{
+	const object = diagram.getObject('Omega');
+	return object ? object : new SubobjectClassifier(diagram);
+}
+
+//
+// MultiObject is a CatObject
 //
 // An object comprised of a list of other objects.  Really expects to be used by derived classes only.
 //
@@ -4526,24 +4618,6 @@ HomObject.prototype.FromInput(first = true, uid={uid:9, idp:'data'})
 	++uid.uid;
 	const morphism = document.getElementById(`${uid.idp}_${uid.uid}`).querySelectorAll('.selRow');
 	// TODO
-}
-
-//
-// IntialObject
-//
-function InitialObject(diagram)
-{
-	CatObject.call(this, diagram, {basename:'Initial', properName:'0'});
-	this.prototype.size = 0;
-}
-
-//
-// Terminal Object
-//
-function TerminalObject(diagram)
-{
-	CatObject.call(this, diagram, {basename:'Initial', properName:'0'});
-	this.prototype.size = 0;
 }
 
 //
@@ -5051,6 +5125,12 @@ Category.prototype.HomKey(domain, codomain)
 {
 	return `${domain.name} ${codomain.name}`;
 }
+Category.prototype.Get(args)
+{
+	//
+	// TODO
+	//
+}
 
 // TODO currently unused
 function StringObject(diagram, args)
@@ -5174,7 +5254,6 @@ Identity.prototype.Get(diagram, dom, cod = null)
 }
 Identity.prototype.ProperName(domain, codomain = null)
 {
-//	return (codomain && domain.name !== codomain.name) ? `Id<${domain.properName}, ${codomain.properName}>` : `Id<${domain.properName}>`;
 	return 'id';
 }
 
@@ -6469,58 +6548,63 @@ InitialMorphism.prototype.ProperName()
 }
 
 //
-// MonoidalCategory is a Category
+// MonoidalCategory has a Category
 //
 function MonoidalCategory(args)
 {
-	Category.call(this, args);
-	this.monoidal =
-	{
-		functor:	args.monoidalFunction;
-		associator:	args.associator;
-		leftUnitor:	args.leftUnitor;
-		rightUnitor:args.rightUnitor;
-	};
+	this.category = Category.Get(args);
+	this.operator = args.operator;	// TODO or multiplication?
+	this.associator = args.associator;
+	this.leftUnitor = args.leftUnitor;
+	this.rightUnitor = args.rightUnitor;
 }
 
+//
+// BraidedMonoidalCategory is a MonoidalCategory
+//
 function BraidedMonoidalCategory(args)
 {
-	this.braid = brd;
+	this.monoidalCategory = MonoidalCategory.Get(args);
+	MonoidalCategory.call(this, args);
+	this.braid = args.braid;
 }
 
+//
+// ClosedMonoidalCategory is a MonoidalCategory
+//
 function ClosedMonoidalCategory(args)
 {
 	MonoidalCategory.call(this, args);
 	this.homFunctor = args.homFunctor;
 }
 
-function ClosedBraidedCategory(cat, clsdMon, args)
+function ClosedBraidedCategory(args)
 {
-	//
-	// 'this' will be 'closed'
-	//
 	ClosedMonoidalCategory.call(this, args);
-	//
-	// this.braided diamond inheritance, such as it is
-	//
-	this.braided = Object.create();
-	this.braided.prototype = this.prototype;
-	BraidedMonoidalCategory.call(this.braided, args);
+	BraidedMonoidalCategory.call(this, args);
 }
 
-function SymmetricMonoidalCategory(cat, fun, assoc, lu, ru, brd)
+function SymmetricMonoidalCategory(args)
 {
+	BraidedMonoidal.call(this, args);
+	// TODO provide inverse?
 }
 
-function SymetricClosedMonoidalCategory(cat, fun, assoc, lu, ru, brd, hom)
+function SymetricClosedMonoidalCategory(args)
 {
-	this.hom = hom;
+	SymmetricMonoidalCategory.call(this, args);
+	ClosedBraidedCategory.call(this, args);
 }
 
-function CartesianMonoidalCategory(cat, fun, assoc, lu, ru, prodFun)
+function CartesianMonoidalCategory(args)
 {
-	this.monoidalCategory = monCat;
-	this.productFunctor = prodFun;
+	SymmetricMonoidalCategory.call(this, args);
+}
+
+function CartesianClosedCategory(args)
+{
+	CartesionMonoidalCategory.call(this, args);
+	SymmetricClosedMonoidalCategory(this, args);
 }
 
 //
@@ -6541,12 +6625,13 @@ function Functor(diagram, args)
 //
 // FITB
 //
-// Note that only morphisms need to be mapped to properly define the functor.
-// If you want to map an object, map its identity and take its domain.
-//
 Functor.prototype.$(args)
 {
-	throw `functor ${this.name} is not defined`;
+	throw 'functor has no object action';
+}
+Functor.prototype.$$(args)
+{
+	throw 'functor has no morphism action';
 }
 
 //
@@ -6571,17 +6656,19 @@ function NProductFunctor(diagram, args)
 	nuArgs.domain = diagram.getObject(args.domain);
 	const objects = [];
 	nuArgs.codomain = ProductObject.Get(diagram, objects.fill(nuArgs.domain, 0, args.count));
-	nuArgs.count = Cat.getArg(args, 'count', 2);
-	if (count < 2)
-		throw 'invalid count';
 	nuArgs.name = NProductFunctor.Codename(diagram, nuArgs.domain, nuArgs.count)
 	nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : NProductFunctor.ProperName(diagram, nuArgs.domain, nuArgs.count)
 	Functor.call(this, $CatDgrm, nuArgs);
-	this.count = args.count;
 }
 NProductFunctor.prototype.$(args)
 {
-	return ProductMorphism.Get(this.diagram, morphisms.fill(args[0], 0, this.count));
+	const objects = [];
+	return ProductObject.Get(this.diagram, objects.fill(args[0], 0, args[1]));
+}
+NProductFunctor.prototype.$$(args)
+{
+	const morphisms = [];
+	return ProductMorphism.Get(this.diagram, morphisms.fill(args[0], 0, args[1]));
 }
 //
 // DiagonalMorphism static methods
@@ -8317,9 +8404,12 @@ function Transform(diagram, args)
 		throw `transform codomain is not a functor`;
 	Morphism.call(this, $Cat2Dgrm, nuArgs);
 }
+//
+// given an object return a morphism naturally
+//
 Transform.prototype.$(args)
 {
-	throw `Unknown action in transform ${this.name}`;
+	throw 'Unknown action in transform';	// forgot to override?
 }
 
 //
@@ -8361,7 +8451,7 @@ IdentityTransform.prototype.ProperName(domain)
 // DiagonalTransform is a Transform
 //
 // domain: id:cat-->cat
-// codomain: delta:cat-->cat object->object x object, mor->mor x mor
+// codomain: delta:cat-->cat := object->object x object, mor->mor x mor
 //
 function DiagonalTransform(diagram, args)
 {
