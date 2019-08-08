@@ -39,40 +39,75 @@ let $Graph = null;
 //
 // 2-D vector support
 //
-function D2()
+function D2(x = 0, y = 0)
 {
-	this.x = 0;
-	this.y = 0;
+	if (typeof x === 'object')
+	{
+		this.x = x.x;
+		this.y = x.y;
+	}
+	else
+	{
+		this.x = x;
+		this.y = y;
+	}
 }
 D2.prototype.eps = 0.0000001;
-D2.prototype.add(v, w)
+D2.prototype.Add(v, w)
 {
-	return {x:v.x + w.x, y:v.y + w.y};
+	return new D2(v.x + w.x, v.y + w.y);
 }
-D2.prototype.inner(v)
+D2.prototype.add(w)
+{
+	this.x += w.x;
+	this.y += w.y;
+	return this;
+}
+D2.prototype.Inner(v)
 {
 	return v.x * v.x + v.y * v.y;
 }
-D2.prototype.length(v)
+D2.prototype.inner()
 {
-	return Math.sqrt(D2.inner(v));
+	return D2.prototype.Inner(this);
 }
-D2.prototype.norm(v)
+D2.prototype.Length(v)
 {
-	const length = D2.length(v);
-	return {x:v.x / length, y:v.y / length};
+	return Math.sqrt(D2.Inner(v));
 }
-D2.prototype.scale(a, v)
+D2.prototype.length()
 {
-	return {x:v.x*a, y:v.y*a};
+	return Math.sqrt(this.inner());
 }
-D2.prototype.subtract(v, w)
+//D2.prototype.norm(v)
+D2.prototype.normalize(v)
 {
-	return {x:v.x - w.x, y:v.y - w.y};
+	const length = D2.Length(v);
+	return new D2(v.x / length, v.y / length);
 }
-D2.prototype.normal(v)
+D2.prototype.Scale(a, v)
 {
-	return {x:-v.y, y:v.x};
+	return new D2(v.x*a, v.y*a);
+}
+D2.prototype.scale(a)
+{
+	return D2.prototype.Scale(a, this);
+}
+D2.prototype.Subtract(v, w)
+{
+	return new D2(v.x - w.x, v.y - w.y);
+}
+D2.prototype.subtract(w)
+{
+	return D2.prototype.Subtract(this, w);
+}
+D2.prototype.Normal(v)
+{
+	return new D2({-v.y, v.x);
+}
+D2.prototype.normal()
+{
+	return D2.prototype.Normal(this);
 }
 D2.prototype.round(v)
 {
@@ -89,7 +124,7 @@ D2.prototype.multiply(mtrx, vctr)
 }
 D2.prototype.dist2(v, w)
 {
-	return D2.inner(D2.subtract(v, w));
+	return D2.Inner(D2.subtract(v, w));
 }
 D2.prototype.dist(v, w)
 {
@@ -110,7 +145,7 @@ D2.prototype.updatePoint(p, c, basePoint)
 }
 D2.prototype.inbetween(a, b, c)
 {
-	return (a - D2.eps <= b && b <= c + D2.eps) || (c - D2.eps <= b && b <= a + D2.eps);
+	return (a - D2.prototype.eps <= b && b <= c + D2.prototype.eps) || (c - D2.prototype.eps <= b && b <= a + D2.prototype.eps);
 }
 D2.prototype.inside(a, b, c)
 {
@@ -136,6 +171,26 @@ D2.prototype.segmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
 	if (!(D2.inbetween(x2, x, x1) && D2.inbetween(y2, y, y1) && D2.inbetween(x3, x, x4) && D2.inbetween(y3, y, y4)))
 		return false;
 	return {x, y};
+}
+D2.prototype.Angle(delta)
+{
+	let angle = 0;
+	if (delta.x != 0)
+	{
+		angle = Math.atan(delta.y/delta.x);
+		if (delta.x < 0.0)
+			angle += Math.PI;
+	}
+	else
+		angle = delta.y > 0 ? Math.PI/2 : - Math.PI/2;
+	if (angle < 0)
+		angle += 2 * Math.PI;
+	return angle % (2 * Math.PI);
+},
+D2.prototype.GetAngle(from, to)
+{
+	const delta = D2.subtract(to, from);
+	return D2.Angle(delta);
 }
 
 //
@@ -249,7 +304,7 @@ const Cat =
 		const intro = document.getElementById('intro');
 		intro.parentNode.removeChild(intro);
 		Cat.initialize();	// boot-up
-		Cat.Amazon.onCT();
+		amazon.onCT();
 	},
 	hasAcceptedCookies()
 	{
@@ -503,12 +558,12 @@ const Cat =
 					Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
 				});
 			});
-			Cat.Amazon.initialize();
-			isGUI && display.setNavbarBackground();
+			amazon.initialize();
+			isGUI && display.updateNavbar();
 			isGUI && Panels.update();
 			if (!isGUI)
 			{
-				exports.Amazon =				Cat.Amazon;
+				exports.Amazon =				amazon;
 				exports.default =				Cat.default;
 				exports.deleteLocalDiagram =	Cat.deleteLocalDiagram;
 				exports.diagrams =				Cat.diagrams;
@@ -539,7 +594,7 @@ const Cat =
 	},
 	fetchCategories(fn = null)
 	{
-		fetch(Cat.Amazon.URL() + '/categories.json').then(function(response)
+		fetch(amazon.getURL() + '/categories.json').then(function(response)
 		{
 			if (response.ok)
 				response.json().then(function(data)
@@ -561,7 +616,7 @@ const Cat =
 	},
 	getCategoryUsers(cat, fn = null)
 	{
-		fetch(Cat.Amazon.URL(cat) + `/users.json`).then(function(response)
+		fetch(amazon.getURL(cat) + `/users.json`).then(function(response)
 		{
 			if (response.ok)
 				response.json().then(function(data)
@@ -710,6 +765,7 @@ const Cat =
 			data[key] = val.json();
 		return data;
 	},
+	/*
 	getAngle(deltaX, deltaY)
 	{
 		let angle = 0;
@@ -729,10 +785,6 @@ const Cat =
 	{
 		return doit ? `(${h})` : h;
 	},
-	cap(str)
-	{
-		return str.replace(/(^|\s)\S/, l => l.toUpperCase());
-	},
 	capWords(str)
 	{
 		return str.replace(/(^|\s)\S/g, l => l.toUpperCase());
@@ -741,9 +793,14 @@ const Cat =
 	{
 		return str.replace(/(^|\s)\S/, l => l.toLowerCase());
 	},
-	isExtendedName(name)
+	dual(cat)
 	{
-		return name.indexOf('-') > -1;
+		// TODO
+	},
+	*/
+	cap(str)
+	{
+		return str.replace(/(^|\s)\S/, l => l.toUpperCase());
 	},
 	arraySet(a, f, v)
 	{
@@ -766,450 +823,9 @@ const Cat =
 	{
 		b.map(v => a.indexOf(v) === -1 ? a.push(v) : null);
 	},
-	Amazon:
-	{
-		accessToken:		null,
-		clientId:			'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',
-		cognitoRegion:		'us-west-2',
-		user:				null,
-		region:				'us-west-1',
-		diagramBucketName:	'catecon-diagrams',
-		diagramBucket:		null,
-		userPoolId:			'us-west-2_HKN5CKGDz',
-		userPool:			null,
-		loginInfo:			{IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf'},
-		URL(cat, user, basename)
-		{
-			let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
-			if (typeof cat === 'undefined')
-				return url;
-			url += `/${cat}`;
-			if (typeof user === 'undefined')
-				return url;
-			url += `/${user}`;
-			if (typeof basename === 'undefined')
-				return url;
-			return `${url}/${basename}`;
-		},
-		loggedIn:			false,
-		initialize()
-		{
-			AWS.config.update(
-			{
-				region:			this.region,
-				credentials:	new AWS.CognitoIdentityCredentials(this.loginInfo),
-			});
-			isGUI && this.registerCognito();
-		},
-		updateServiceObjects()
-		{
-			this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
-			this.lambda = new AWS.Lambda({region: Cat.Amazon.region, apiVersion: '2015-03-31'});
-		},
-		saveCategory(cat)
-		{
-			const key = `${cat.name}/${cat.name}.json`;
-			this.diagramBucket.putObject(
-			{
-				Bucket:			this.diagramBucketName,
-				ContentType:	'json',
-				Key:			key,
-				Body:			JSON.stringify(cat.json()),
-				ACL:			'public-read',
-			}, function(err, data)
-			{
-				if (err)
-				{
-					display.recordError(`Cannot save category: ${err.message}`);
-					return;
-				}
-				if (Cat.debug)
-					console.log('saved category', cat.name);
-			});
-		},
-		saveDiagram(dgrm)	// for bootstrapping
-		{
-			const key = `${dgrm.codomain.name}/${dgrm.user}/${dgrm.name}.json`;
-			this.diagramBucket.putObject(
-			{
-				Bucket:			this.diagramBucketName,
-				ContentType:	'json',
-				Key:			key,
-				Body:			JSON.stringify(dgrm.json()),
-				ACL:			'public-read',
-			}, function(err, data)
-			{
-				if (err)
-				{
-					display.recordError(`Cannot save diagram: ${err.message}`);
-					return;
-				}
-				if (Cat.debug)
-					console.log('saved diagram',dgrm.name);
-			});
-		},
-		addLoginsCreds(providerName, token)
-		{
-			creds.params.Logins = creds.params.Logins || {};
-			creds.params.Logins[providerName] = token;
-			creds.expired = true;
-		},
-		registerCognito()
-		{
-			const poolInfo =
-			{
-				UserPoolId:	this.userPoolId,
-				ClientId:	'fjclc9b9lpc83tmkm8b152pin',
-			};
-			AWS.config.region = this.cognitoRegion;
-			if (ACI)
-				this.userPool = new ACI.CognitoUserPool(poolInfo);
-			else
-				this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
-			Cat.Amazon.user = this.userPool.getCurrentUser();
-			if (Cat.Amazon.user)
-			{
-				Cat.Amazon.user.getSession(function(err, session)
-				{
-					if (err)
-					{
-						alert(err.message);
-						return;
-					}
-					AWS.config.credentials = new AWS.CognitoIdentityCredentials(Cat.Amazon.loginInfo);
-					Cat.Amazon.accessToken = session.getAccessToken().getJwtToken();
-					if (Cat.debug)
-						console.log('registerCognito session validity', session, session.isValid());
-					const idPro = new AWS.CognitoIdentityServiceProvider();
-					idPro.getUser({AccessToken:Cat.Amazon.accessToken}, function(err, data)
-					{
-						if (err)
-						{
-							console.log('getUser error',err);
-							return;
-						}
-						Cat.Amazon.loggedIn = true;
-						Cat.user.name = data.Username;
-						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
-						Cat.user.status = 'logged-in';
-						display.setNavbarBackground();
-						loginPanel.update();
-						Cat.Amazon.getUserDiagramsFromServer(function(dgrms)
-						{
-							if (Cat.debug)
-								console.log('user diagrams on server',dgrms);
-						});
-						Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
-						{
-							Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
-						});
-					});
-				});
-				this.updateServiceObjects();
-			}
-			else
-			{
-				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
-				AWS.config.credentials.get();
-				this.updateServiceObjects();
-			}
-		},
-		signup()
-		{
-			const userName = document.getElementById('signupUserName').value;
-			const email = document.getElementById('signupUserEmail').value;
-			if (Cat.secret !== Cat.getUserSecret(document.getElementById('SignupSecret').value))
-			{
-				alert('Your secret is not good enough');
-				return;
-			}
-			const password = document.getElementById('SignupUserPassword').value;
-			const confirmPassword = document.getElementById('SignupUserPasswordConfirm').value;
-			if (password !== confirmPassword)
-			{
-				alert('Please confirm your password properly by making sure the password and confirmation are the same.');
-				return;
-			}
-			const attributes =
-			[
-				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
-			];
-			this.userPool.signUp(userName, password, attributes, null, function(err, result)
-			{
-				if (err)
-				{
-					alert(err.message);
-					return;
-				}
-				Cat.Amazon.user = result.user;
-				Cat.user.name = userName;
-				Cat.user.email = email;
-				Cat.user.status = 'registered';
-				display.setNavbarBackground();
-				loginPanel.update();
-				if (Cat.debug)
-					console.log('user name is ' + Cat.Amazon.user.getUsername());
-			});
-		},
-		resetPassword()
-		{
-			const userName = document.getElementById('signupUserName').value;
-			const email = document.getElementById('signupUserEmail').value;
-			if (Cat.secret !== Cat.getUserSecret(document.getElementById('SignupSecret').value))
-			{
-				alert('Your secret is not good enough');
-				return;
-			}
-			const password = document.getElementById('resetSignupUserPassword').value;
-			const confirmPassword = document.getElementById('resetSignupUserPasswordConfirm').value;
-			if (password !== confirmPassword)
-			{
-				alert('Please confirm your password properly by making sure the password and confirmation are the same.');
-				return;
-			}
-			const attributes =
-			[
-				new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
-			];
-			// TODO how to reset cognito?
-			this.userPool.signUp(userName, password, attributes, null, function(err, result)
-			{
-				if (err)
-				{
-					alert(err.message);
-					return;
-				}
-				Cat.Amazon.user = result.user;
-				Cat.user.name = userName;
-				Cat.user.email = email;
-				Cat.user.status = 'registered';
-				display.setNavbarBackground();
-				loginPanel.update();
-				if (Cat.debug)
-					console.log('user name is ' + Cat.Amazon.user.getUsername());
-			});
-		},
-		confirm()
-		{
-			const code = document.getElementById('confirmationCode').value;
-			Cat.Amazon.user.confirmRegistration(code, true, function(err, result)
-			{
-				if (err)
-				{
-					alert(err.message);
-					return;
-				}
-				Cat.user.status = 'confirmed';
-				display.setNavbarBackground();
-				loginPanel.update();
-			});
-		},
-		login()
-		{
-			const userName = document.getElementById('loginUserName').value;
-			const password = document.getElementById('loginPassword').value;
-			const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username:userName, Password:password});
-			const userData = {Username:userName, Pool:Cat.Amazon.userPool};
-			Cat.Amazon.user = new AmazonCognitoIdentity.CognitoUser(userData);
-			Cat.Amazon.user.authenticateUser(authenticationDetails,
-			{
-				onSuccess:function(result)
-				{
-					Cat.Amazon.accessToken = result.getAccessToken().getJwtToken();
-					Cat.Amazon.loggedIn = true;
-					Cat.user.status = 'logged-in';
-					const idPro = new AWS.CognitoIdentityServiceProvider();
-					idPro.getUser({AccessToken:Cat.Amazon.accessToken}, function(err, data)
-					{
-						if (err)
-						{
-							console.log('getUser error',err);
-							return;
-						}
-						Cat.user.name = data.Username;
-						Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
-						display.setNavbarBackground();
-						loginPanel.update();
-						morphismPanel.update();
-						loginPanel.toggle();
-						Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
-						{
-							Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
-						});
-						Cat.setLocalStorageDefaultCategory();
-						Cat.setLocalStorageDiagramName();
-						Cat.Amazon.getUserDiagramsFromServer(function(dgrms)
-						{
-							console.log('user diagrams on server',dgrms);
-						});
-					});
-				},
-				onFailure:function(err)
-				{
-					alert(err.message);
-				},
-				mfaRequired:function(codeDeliveryDetails)
-				{
-					let verificationCode = '';
-					Cat.Amazon.user.sendMFACode(verificationCode, this);
-				},
-			});
-		},
-		logout()
-		{
-			Cat.Amazon.user.signOut();
-			Cat.Amazon.loggedIn = false;
-			Cat.user.status = 'unauthorized';
-			Cat.user.name = 'Anon';
-			Cat.user.email = '';
-			Cat.user.status = 'unauthorized';
-			Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
-			{
-				Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
-			});
-			display.setNavbarBackground();
-			Panels.update();
-		},
-		async fetchDiagram(name)
-		{
-			const tokens = name.split('-');
-			const catName = tokens[1];
-			const user = tokens[2];
-			const url = this.URL(catName, user, name + '.json');
-			const json = await (await fetch(url)).json();
-			return json;
-		},
-		onCT()
-		{
-			fetch('https://api.ipify.org').then(function(response)
-			{
-				if (response.ok)
-					response.text().then(function(ip)
-					{
-						const params =
-						{
-							FunctionName:	'CateconCT',
-							InvocationType:	'RequestResponse',
-							LogType:		'None',
-							Payload:		JSON.stringify({IP:ip})
-						};
-						const handler = function(error, data)
-						{
-							if (error)
-							{
-								display.recordError(error);
-								return;
-							}
-						};
-						Cat.Amazon.lambda.invoke(params, handler);
-					});
-			});
-		},
-		ingestCategoryLambda(e, cat, fn)
-		{
-			const params =
-			{
-				FunctionName:	'CateconIngestCategory',
-				InvocationType:	'RequestResponse',
-				LogType:		'None',
-				Payload:		JSON.stringify(
-								{
-									category:cat.json(),
-									user:Cat.user.name,
-								}),
-			};
-			const handler = function(error, data)
-			{
-				if (error)
-				{
-					display.recordError(error);
-					return;
-				}
-				const result = JSON.parse(data.Payload);
-				if (fn)
-					fn(e, result);
-			};
-			Cat.Amazon.lambda.invoke(params, handler);
-		},
-		ingestDiagramLambda(e, dgrm, fn)
-		{
-			const dgrmJson = dgrm.json();
-			const dgrmPayload = JSON.stringify(dgrmJson);
-			if (dgrmPayload.length > Cat.uploadLimit)
-			{
-				display.status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
-				return;
-			}
-			Cat.svg2canvas(display.topSVG, dgrm.name, function(url, filename)
-			{
-				const params =
-				{
-					FunctionName:	'CateconIngestDiagram',
-					InvocationType:	'RequestResponse',
-					LogType:		'None',
-					Payload:		JSON.stringify({diagram:dgrmJson, user:Cat.user.name, png:url}),
-				};
-				const handler = function(error, data)
-				{
-					if (error)
-					{
-						display.recordError(error);
-						return;
-					}
-					const result = JSON.parse(data.Payload);
-					if (fn)
-						fn(error, result);
-				};
-				Cat.Amazon.lambda.invoke(params, handler);
-			});
-		},
-		fetchDiagramJsons(diagrams, fn, jsons = [], refs = {})
-		{
-			let someDiagrams = diagrams.filter(d => typeof d === 'string' && Cat.getDiagram(d) === null);
-			if (someDiagrams.length > 0)
-				Promise.all(someDiagrams.map(d => Cat.Amazon.fetchDiagram(d))).then(fetchedJsons =>
-				{
-					jsons.push(...fetchedJsons);
-					fetchedJsons.map(j => {refs[j.name] = true; return true;});
-					const nextRound = [];
-					for (let i=0; i<fetchedJsons.length; ++i)
-						nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && nextRound.indexOf(r) < 0));
-					const filteredRound = nextRound.filter(d => typeof d === 'string' && Cat.getDiagram(d) === null);
-					if (filteredRound.length > 0)
-						Cat.Amazon.fetchDiagramJsons(filteredRound, null, jsons, refs);
-					else if (fn)
-						fn(jsons);
-				});
-			else if (fn)
-				fn([]);
-		},
-		getUserDiagramsFromServer(fn)
-		{
-			const params =
-			{
-				FunctionName:	'CateconGetUserDiagrams',
-				InvocationType:	'RequestResponse',
-				LogType:		'None',
-				Payload:		JSON.stringify({user:Cat.user.name}),
-			};
-			Cat.Amazon.lambda.invoke(params, function(error, data)
-			{
-				if (error)
-				{
-					display.recordError(error);
-					return;
-				}
-				const payload = JSON.parse(data.Payload);
-				payload.Items.map(i => Cat.serverDiagrams[i.subkey.S] = {timestamp:Number.parseInt(i.timestamp.N), description:i.description.S, properName:i.properName.S});
-				diagramPanel.setUserDiagramTable();
-				if (fn)
-					fn(payload.Items);
-			});
-		},
-	},
 	fetchDiagrams(dgrms, refs, fn)
 	{
-		Cat.Amazon.fetchDiagramJsons(dgrms, function(jsons)
+		amazon.fetchDiagramJsons(dgrms, function(jsons)
 		{
 			jsons.map(j =>
 			{
@@ -1220,10 +836,6 @@ const Cat =
 				fn(jsons);
 			return jsons;
 		}, [], refs);
-	},
-	dual(cat)
-	{
-		// TODO
 	},
 	//
 	// Extracts a graph by indices from a graph.
@@ -1243,46 +855,499 @@ const Cat =
 	},
 };	// Cat
 
+function Amazon()
+{
+	Object.defineProperties(this,
+	{
+		'clientId':			{value: 'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77', writable: false},
+		'cognitoRegion':	{value:	'us-west-2', writable: false},
+		'loginInfo':		{value:	{IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf'}, writable: false},
+		'diagramBucketName':{value:	'catecon-diagrams', writable: false},
+		'region':			{value:	'us-west-1', writable: false},
+		'userPoolId':		{value:	'us-west-2_HKN5CKGDz', writable: false},
+		'accessToken':		{value: null, writable: true},
+		'user':				{value:	null, writable: true},
+		'diagramBucket':	{value:	null, writable: true},
+		'userPool':			{value:	null, writable: true},
+		'loggedIn':			{value:	false, writable: true},
+	};
+}
+Amazon.prototype.getURL(cat, user, basename)
+{
+	let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
+	if (typeof cat === 'undefined')
+		return url;
+	url += `/${cat}`;
+	if (typeof user === 'undefined')
+		return url;
+	url += `/${user}`;
+	if (typeof basename === 'undefined')
+		return url;
+	return `${url}/${basename}`;
+}
+Amazon.prototype.initialize()
+{
+	AWS.config.update(
+	{
+		region:			this.region,
+		credentials:	new AWS.CognitoIdentityCredentials(this.loginInfo),
+	});
+	isGUI && this.registerCognito();
+}
+Amazon.prototype.updateServiceObjects()
+{
+	this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
+	this.lambda = new AWS.Lambda({region: amazon.region, apiVersion: '2015-03-31'});
+}
+Amazon.prototype.saveCategory(category)
+{
+	const key = `${category.name}/${category.name}.json`;
+	this.diagramBucket.putObject(
+	{
+		Bucket:			this.diagramBucketName,
+		ContentType:	'json',
+		Key:			key,
+		Body:			JSON.stringify(category.json()),
+		ACL:			'public-read',
+	}, function(err, data)
+	{
+		if (err)
+		{
+			display.recordError(`Cannot save category: ${err.message}`);
+			return;
+		}
+		if (Cat.debug)
+			console.log('saved category', category.name);
+	});
+}
+Amazon.prototype.saveDiagram(diagram)	// for bootstrapping
+{
+	const key = `${diagram.codomain.name}/${diagram.user}/${diagram.basename}.json`;
+	this.diagramBucket.putObject(
+	{
+		Bucket:			this.diagramBucketName,
+		ContentType:	'json',
+		Key:			key,
+		Body:			JSON.stringify(diagram.json()),
+		ACL:			'public-read',
+	}, function(err, data)
+	{
+		if (err)
+		{
+			display.recordError(`Cannot save diagram: ${err.message}`);
+			return;
+		}
+		if (Cat.debug)
+			console.log('saved diagram',diagram.name);
+	});
+}
+Amazon.prototype.registerCognito()
+{
+	const poolInfo =
+	{
+		UserPoolId:	this.userPoolId,
+		ClientId:	'fjclc9b9lpc83tmkm8b152pin',
+	};
+	AWS.config.region = this.cognitoRegion;
+	if (ACI)
+		this.userPool = new ACI.CognitoUserPool(poolInfo);
+	else
+		this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
+	this.user = this.userPool.getCurrentUser();
+	if (this.user)
+	{
+		this.user.getSession(function(err, session)
+		{
+			if (err)
+			{
+				alert(err.message);
+				return;
+			}
+			AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
+			this.accessToken = session.getAccessToken().getJwtToken();
+			if (Cat.debug)
+				console.log('registerCognito session validity', session, session.isValid());
+			const idPro = new AWS.CognitoIdentityServiceProvider();
+			idPro.getUser({AccessToken:this.accessToken}, function(err, data)
+			{
+				if (err)
+				{
+					console.log('getUser error',err);
+					return;
+				}
+				this.loggedIn = true;
+				Cat.user.name = data.Username;
+				Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
+				Cat.user.status = 'logged-in';
+				display.updateNavbar();
+				loginPanel.update();
+				this.getUserDiagramsFromServer(function(dgrms)
+				{
+					if (Cat.debug)
+						console.log('user diagrams on server',dgrms);
+				});
+				Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
+				{
+					Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+				});
+			});
+		});
+		this.updateServiceObjects();
+	}
+	else
+	{
+		AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
+		AWS.config.credentials.get();
+		this.updateServiceObjects();
+	}
+}
+Amazon.prototype.signup()
+{
+	const userName = document.getElementById('signupUserName').value;
+	const email = document.getElementById('signupUserEmail').value;
+	if (Cat.secret !== Cat.getUserSecret(document.getElementById('SignupSecret').value))
+	{
+		alert('Your secret is not good enough');
+		return;
+	}
+	const password = document.getElementById('SignupUserPassword').value;
+	const confirmPassword = document.getElementById('SignupUserPasswordConfirm').value;
+	if (password !== confirmPassword)
+	{
+		alert('Please confirm your password properly by making sure the password and confirmation are the same.');
+		return;
+	}
+	const attributes =
+	[
+		new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
+	];
+	this.userPool.signUp(userName, password, attributes, null, function(err, result)
+	{
+		if (err)
+		{
+			alert(err.message);
+			return;
+		}
+		this.user = result.user;
+		Cat.user.name = userName;
+		Cat.user.email = email;
+		Cat.user.status = 'registered';
+		display.updateNavbar();
+		loginPanel.update();
+		if (Cat.debug)
+			console.log('user name is ' + this.user.getUsername());
+	});
+}
+Amazon.prototype.resetPassword()
+{
+	const userName = document.getElementById('signupUserName').value;
+	const email = document.getElementById('signupUserEmail').value;
+	const password = document.getElementById('resetSignupUserPassword').value;
+	const confirmPassword = document.getElementById('resetSignupUserPasswordConfirm').value;
+	if (password !== confirmPassword)
+	{
+		alert('Please confirm your password properly by making sure the password and confirmation are the same.');
+		return;
+	}
+	const attributes =
+	[
+		new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
+	];
+	// TODO how to reset cognito?
+	this.userPool.signUp(userName, password, attributes, null, function(err, result)
+	{
+		if (err)
+		{
+			alert(err.message);
+			return;
+		}
+		this.user = result.user;
+		Cat.user.name = userName;
+		Cat.user.email = email;
+		Cat.user.status = 'registered';
+		display.updateNavbar();
+		loginPanel.update();
+		if (Cat.debug)
+			console.log('user name is ' + this.user.getUsername());
+	});
+}
+Amazon.prototype.confirm()
+{
+	const code = document.getElementById('confirmationCode').value;
+	this.user.confirmRegistration(code, true, function(err, result)
+	{
+		if (err)
+		{
+			alert(err.message);
+			return;
+		}
+		Cat.user.status = 'confirmed';
+		display.updateNavbar();
+		loginPanel.update();
+	});
+}
+Amazon.prototype.login()
+{
+	const userName = document.getElementById('loginUserName').value;
+	const password = document.getElementById('loginPassword').value;
+	const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username:userName, Password:password});
+	const userData = {Username:userName, Pool:this.userPool};
+	this.user = new AmazonCognitoIdentity.CognitoUser(userData);
+	this.user.authenticateUser(authenticationDetails,
+	{
+		onSuccess:function(result)
+		{
+			this.accessToken = result.getAccessToken().getJwtToken();
+			this.loggedIn = true;
+			Cat.user.status = 'logged-in';
+			const idPro = new AWS.CognitoIdentityServiceProvider();
+			idPro.getUser({AccessToken:this.accessToken}, function(err, data)
+			{
+				if (err)
+				{
+					console.log('getUser error',err);
+					return;
+				}
+				Cat.user.name = data.Username;
+				Cat.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
+				display.updateNavbar();
+				loginPanel.update();
+				morphismPanel.update();
+				loginPanel.toggle();
+				Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
+				{
+					Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+				});
+				Cat.setLocalStorageDefaultCategory();
+				Cat.setLocalStorageDiagramName();
+				this.getUserDiagramsFromServer(function(dgrms)
+				{
+					console.log('user diagrams on server',dgrms);
+				});
+			});
+		},
+		onFailure:function(err)
+		{
+			alert(err.message);
+		},
+		mfaRequired:function(codeDeliveryDetails)
+		{
+			let verificationCode = '';
+			this.user.sendMFACode(verificationCode, this);
+		},
+	});
+}
+Amazon.prototype.logout()
+{
+	this.user.signOut();
+	this.loggedIn = false;
+	Cat.user.status = 'unauthorized';
+	Cat.user.name = 'Anon';
+	Cat.user.email = '';
+	Cat.user.status = 'unauthorized';
+	Cat.selected.selectCategoryDiagram(Cat.getLocalStorageCategoryName(), function()
+	{
+		Cat.selected.updateDiagramDisplay(Cat.selected.diagram);
+	});
+	display.updateNavbar();
+	Panels.update();
+}
+async Amazon.prototype.fetchDiagram(name)
+{
+	const tokens = name.split('-');
+	const catName = tokens[1];
+	const user = tokens[2];
+	const url = this.getURL(catName, user, name + '.json');
+	const json = await (await fetch(url)).json();
+	return json;
+}
+Amazon.prototype.onCT()
+{
+	fetch('https://api.ipify.org').then(function(response)
+	{
+		if (response.ok)
+			response.text().then(function(ip)
+			{
+				const params =
+				{
+					FunctionName:	'CateconCT',
+					InvocationType:	'RequestResponse',
+					LogType:		'None',
+					Payload:		JSON.stringify({IP:ip})
+				};
+				const handler = function(error, data)
+				{
+					if (error)
+					{
+						display.recordError(error);
+						return;
+					}
+				};
+				this.lambda.invoke(params, handler);
+			});
+	});
+}
+Amazon.prototype.ingestCategoryLambda(e, cat, fn)
+{
+	const params =
+	{
+		FunctionName:	'CateconIngestCategory',
+		InvocationType:	'RequestResponse',
+		LogType:		'None',
+		Payload:		JSON.stringify(
+						{
+							category:cat.json(),
+							user:Cat.user.name,
+						}),
+	};
+	const handler = function(error, data)
+	{
+		if (error)
+		{
+			display.recordError(error);
+			return;
+		}
+		const result = JSON.parse(data.Payload);
+		if (fn)
+			fn(e, result);
+	};
+	this.lambda.invoke(params, handler);
+}
+Amazon.prototype.ingestDiagramLambda(e, dgrm, fn)
+{
+	const dgrmJson = dgrm.json();
+	const dgrmPayload = JSON.stringify(dgrmJson);
+	if (dgrmPayload.length > Cat.uploadLimit)
+	{
+		display.status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
+		return;
+	}
+	Cat.svg2canvas(display.topSVG, dgrm.name, function(url, filename)
+	{
+		const params =
+		{
+			FunctionName:	'CateconIngestDiagram',
+			InvocationType:	'RequestResponse',
+			LogType:		'None',
+			Payload:		JSON.stringify({diagram:dgrmJson, user:Cat.user.name, png:url}),
+		};
+		const handler = function(error, data)
+		{
+			if (error)
+			{
+				display.recordError(error);
+				return;
+			}
+			const result = JSON.parse(data.Payload);
+			if (fn)
+				fn(error, result);
+		};
+		this.lambda.invoke(params, handler);
+	});
+}
+Amazon.prototype.fetchDiagramJsons(diagrams, fn, jsons = [], refs = {})
+{
+	let someDiagrams = diagrams.filter(d => typeof d === 'string' && Cat.getDiagram(d) === null);
+	if (someDiagrams.length > 0)
+		Promise.all(someDiagrams.map(d => this.fetchDiagram(d))).then(fetchedJsons =>
+		{
+			jsons.push(...fetchedJsons);
+			fetchedJsons.map(j => {refs[j.name] = true; return true;});
+			const nextRound = [];
+			for (let i=0; i<fetchedJsons.length; ++i)
+				nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && nextRound.indexOf(r) < 0));
+			const filteredRound = nextRound.filter(d => typeof d === 'string' && Cat.getDiagram(d) === null);
+			if (filteredRound.length > 0)
+				this.fetchDiagramJsons(filteredRound, null, jsons, refs);
+			else if (fn)
+				fn(jsons);
+		});
+	else if (fn)
+		fn([]);
+}
+Amazon.prototype.getUserDiagramsFromServer(fn)
+{
+	const params =
+	{
+		FunctionName:	'CateconGetUserDiagrams',
+		InvocationType:	'RequestResponse',
+		LogType:		'None',
+		Payload:		JSON.stringify({user:Cat.user.name}),
+	};
+	this.lambda.invoke(params, function(error, data)
+	{
+		if (error)
+		{
+			display.recordError(error);
+			return;
+		}
+		const payload = JSON.parse(data.Payload);
+		payload.Items.map(i => Cat.serverDiagrams[i.subkey.S] = {timestamp:Number.parseInt(i.timestamp.N), description:i.description.S, properName:i.properName.S});
+		diagramPanel.setUserDiagramTable();
+		if (fn)
+			fn(payload.Items);
+	});
+}
+const amazon = new Amazon();
+
 //
 // Display
 //
 function Display()
 {
-	this.bracketWidth =	0;
-	this.callbacks =	[];
-	this.category =		null;
-	this.commaWidth =	0;
-	this.diagram =		null;
-	this.diagramSVG =	null;
-	this.drag =			false;
-	this.dragStart =	new D2;
-	this.fuseObject =	null;
-	this.gridding =		true;
-	this.id =			0;
-	this.mouse =		{down:new D2, xy:new D2};
-	this.mouseDown =	false;
-	this.mouseover =	null;
-	this.navbarElt =	null;
-	this.shiftKey =		false;
-	this.showRefcnts =	true;
-	this.showUploadArea =	false;
-	this.snapWidth =	1024;
-	this.snapHeight =	768;
-	this.statusbarElt = null;
-	this.statusXY =		new D2;
-	this.tool =			'select';	// select|pan
-	this.textDisplayLimit =	60,
-	this.topSVG =		null;
-	this.uiSVG =		null;
-	this.upSVG =		null;
-	this.svgContainers =	['svg', 'g'];
-	this.svgStyles =
+	Object.defineProperties(this,
 	{
-		path:	['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
-		text:	['fill', 'font', 'margin', 'stroke'],
-	};
-	this.svg =
-	{
+		'bracketWidth':		{value: 0,			writable: true},
+		'callbacks':		{value: [],			writable: true},
+		'category':			{value: null,		writable: true},
+		'commaWidth':		{value: 0,			writable: true},
+		'diagram':			{value: null,		writable: true},
+		'diagramSVG':		{value: null,		writable: true},
+		'drag':				{value: false,		writable: true},
+		'dragStart':		{value: new D2,		writable: true},
+		'fuseObject':		{value: null,		writable: true},
+		'gridding':			{value: true,		writable: true},
+		'id':				{value: 0,			writable: true},
+		'mouse':			{
+								value:
+								{
+									down:new D2,
+									xy:new D2
+								},
+								writable: true,
+							},
+		'mouseDown':		{value: false,		writable: true},
+		'mouseover':		{value: null,		writable: true},
+		'navbarElt':		{value: null,		writable: true},
+		'shiftKey':			{value: false,		writable: true},
+		'showRefcnts':		{value: true,		writable: true},
+		'showUploadArea':	{value: false,		writable: true},
+		'snapWidth':		{value: 1024,		writable: true},
+		'snapHeight':		{value: 768,		writable: true},
+		'statusbarElt':	 	{value: null,		writable: true},
+		'statusXY':			{value: new D2,		writable: true},
+		'tool':				{value: 'select',	writable: true},
+		'textDisplayLimit':	{value: 60,			writable: true},
+		'topSVG':			{value: null,		writable: true},
+		'uiSVG':			{value: null,		writable: true},
+		'upSVG':			{value: null,		writable: true},
+		//
+		// readonly properties
+		//
+		'svgContainers':	{value: ['svg', 'g'],	writable: false},
+		'svgStyles':	
+		{
+			value:
+			{
+				path:	['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
+				text:	['fill', 'font', 'margin', 'stroke'],
+			},
+			writable:	false,
+		},
+		'svg':
+		{
+			value:
+			{
 		alignObjectHorizontal:
 `<circle cx="80" cy="160" r="80" fill="url(#radgrad1)"/>
 <circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
@@ -1523,6 +1588,9 @@ function Display()
 		upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+			},
+			writable:	false,
+		},
 	};
 }
 Display.prototype.resize()
@@ -1543,7 +1611,7 @@ Display.prototype.resize()
 }
 Display.prototype.initialize()
 {
-	this.setNavbarHtml();
+	this.udpateNavbar();
 	this.topSVG.addEventListener('mousemove', this.mousemove, true);
 	this.topSVG.addEventListener('mousedown', this.mousedown, true);
 	this.topSVG.addEventListener('mouseup', this.mouseup, true);
@@ -1731,7 +1799,7 @@ Display.prototype.mouseup(e)
 				let targetObject = dragObject.isEquivalent(this.mouseover) ? null : this.mouseover;
 				if (targetObject !== null)
 				{
-					if (DiagramObject.isPrototypeOf(dragObject) && DiagramObject.isPrototypeOf(targetObject))
+					if (DiagramObject.prototype.isPrototypeOf(dragObject) && DiagramObject.prototype.isPrototypeOf(targetObject))
 					{
 						if (diagram.isIsolated(dragObject) && diagram.isIsolated(targetObject))
 						{
@@ -1746,7 +1814,7 @@ Display.prototype.mouseup(e)
 							//
 							// hom object with alt key
 							//
-							else if (e.altKey && ClosedMonoidalCategory.isPrototypeOf(cat))
+							else if (e.altKey && ClosedMonoidalCategory.prototype.isPrototypeOf(cat))
 //								to = homObject.get(dgrm.codomain, [dragObject.to, targetObject.to]);
 								to = cat.homFunctor.$(diagram, [dragObject.to, targetObject.to]);
 							//
@@ -1758,7 +1826,7 @@ Display.prototype.mouseup(e)
 							//
 							// monoidal action
 							//
-							else if (MonoidalCategory.isPrototypeOf(cat))
+							else if (MonoidalCategory.prototype.isPrototypeOf(cat))
 								to = cat.monoidal.operator.$(diagram, [targetObject.to, dragObject.to]);
 							else
 								return;
@@ -1776,7 +1844,7 @@ Display.prototype.mouseup(e)
 							if (morphs.cods.length > 0)
 							{
 								let from = morphs.cods[0];
-								if (morphs.cods.length === 1 && morphs.doms.length === 0 && Identity.isPrototypeOf(from.to) && !from.to.domain.isInitial)
+								if (morphs.cods.length === 1 && morphs.doms.length === 0 && Identity.prototype.isPrototypeOf(from.to) && !from.to.domain.isInitial)
 								{
 									const cod = dragObject.to;
 									const toTargetObject = targetObject.to;
@@ -1830,7 +1898,7 @@ Display.prototype.mouseup(e)
 							diagram.update(e, null, true);
 						}
 					}
-					else if (DiagramMorphism.isPrototypeOf(dragObject) && DiagramMorphism.isPrototypeOf(targetObject))
+					else if (DiagramMorphism.prototype.isPrototypeOf(dragObject) && DiagramMorphism.prototype.isPrototypeOf(targetObject))
 					{
 						if (diagram.isIsolated(dragObject) && diagram.isIsolated(targetObject))
 						{
@@ -1843,7 +1911,7 @@ Display.prototype.mouseup(e)
 							//
 							// hom it with alt key
 							//
-							else if (e.altKey && ClosedMonoidalCategory.isPrototypeOf(cat))
+							else if (e.altKey && ClosedMonoidalCategory.prototype.isPrototypeOf(cat))
 								to = cat.homFunctor.$$(diagram, [dragObject.to, targetObject.to]);
 							//
 							// product
@@ -1853,7 +1921,7 @@ Display.prototype.mouseup(e)
 							//
 							// monoidal action
 							//
-							else if (MonoidalCategory.isPrototypeOf(cat))
+							else if (MonoidalCategory.prototype.isPrototypeOf(cat))
 								to = cat.monoidal.operator.$$(diagram, [targetObject.to, dragObject.to]);
 							else
 								return;
@@ -1870,8 +1938,8 @@ Display.prototype.mouseup(e)
 					// TODO * is monoidal
 					//
 					else if (diagram.codomain.hasProducts &&
-						DiagramMorphism.isPrototypeOf(dragObject) &&
-						DiagramMorphism.isPrototypeOf(targetObject) &&
+						DiagramMorphism.prototype.isPrototypeOf(dragObject) &&
+						DiagramMorphism.prototype.isPrototypeOf(targetObject) &&
 						diagram.isIsolated(dragObject) &&
 						diagram.isIsolated(targetObject))
 					{
@@ -2035,7 +2103,8 @@ Display.prototype.getButton(buttonName, onclick, title, scale = Cat.default.butt
 		btn = `<g id="${id}">${btn}</g>`;
 	return H.span(Display.SvgHeader(scale, bgColor) + btn + (addNew ? this.svg.new : '') + Display.Button(onclick) + '</svg>', '', id, title);
 }
-Display.prototype.setNavbarHtml()
+//Display.prototype.setNavbarHtml()
+Display.prototype.udpateNavbar()
 {
 	const left = H.td(H.div(this.getButton('category', "categoryPanel.toggle()", 'Categories', Cat.default.button.large))) +
 		H.td(H.div(this.getButton('diagram', "diagramPanel.toggle()", 'Diagrams', Cat.default.button.large))) +
@@ -2059,6 +2128,23 @@ Display.prototype.setNavbarHtml()
 								H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
 								H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
 	this.navbarElt.innerHTML = navbar;
+	let c = '#CCC';
+	switch(Cat.user.status)
+	{
+		case 'registered':
+			c = '#A33';
+			break;
+		case 'confirmed':
+			c = '#0A0';
+			break;
+		case 'unauthorized':
+			c = '#CCC';
+			break;
+		case 'logged-in':
+			c = '#333';
+			break;
+	}
+	this.navbarElt.style.background = c;
 }
 Display.prototype.setCursor()
 {
@@ -2240,26 +2326,6 @@ Display.prototype.addEventListeners()
 			dgrm.setView();
 		}
 	}, false);
-}
-Display.prototype.setNavbarBackground()
-{
-	let c = '#CCC';
-	switch(Cat.user.status)
-	{
-		case 'registered':
-			c = '#A33';
-			break;
-		case 'confirmed':
-			c = '#0A0';
-			break;
-		case 'unauthorized':
-			c = '#CCC';
-			break;
-		case 'logged-in':
-			c = '#333';
-			break;
-	}
-	this.navbarElt.style.background = c;
 }
 Display.prototype.textWidth(txt)
 {
@@ -2531,10 +2597,10 @@ Display.prototype.Barycenter(ary)
 	for(let i=0; i < ary.length; ++i)
 	{
 		const elt = ary[i];
-		if (DiagramObject.isPrototypeOf(elt) || DiagramElement.isPrototypeOf(elt))
+		if (DiagramObject.prototype.isPrototypeOf(elt) || DiagramElement.prototype.isPrototypeOf(elt))
 			if (!(elt.name in elts))
 				elts[elt.name] = elt;
-		else if (DiagramMorphism.isPrototypeOf(elt))
+		else if (DiagramMorphism.prototype.isPrototypeOf(elt))
 		{
 			if (!(elt.domain.name in elts))
 				elts[elt.domain.name] = elt.domain;
@@ -2547,7 +2613,7 @@ Display.prototype.Barycenter(ary)
 	for(let i in elts)
 	{
 		++cnt;
-		xy = D2.add(xy, elts[i]);
+		xy.add(elts[i]);
 	}
 	xy = D2.scale(1.0/cnt, xy);
 	return xy;
@@ -2913,12 +2979,12 @@ DataPanel.prototype.update()
 	let dgrm = Cat.getDiagram();
 	if (dgrm !== null)
 	{
-		if (dgrm.selected.length === 1 && DiagramMorphism.isPrototypeOf(dgrm.getSelected()))
+		if (dgrm.selected.length === 1 && DiagramMorphism.prototype.isPrototypeOf(dgrm.getSelected()))
 		{
 			let from = dgrm.getSelected();
 			const to = from.to;
 			let tbl = '';
-			if (DataMorphism.isPrototypeOf(to))
+			if (DataMorphism.prototype.isPrototypeOf(to))
 			{
 				to.updateRecursor();
 				html += H.h3(to.properName, '', 'dataPanelTitle');
@@ -3015,7 +3081,7 @@ function DiagramPanel()
 	this.userElt = document.getElementById('diagram-user');
 	this.timestampElt = document.getElementById('diagram-timestamp');
 	this.errorElt = document.getElementById('diagram-error');
-	this.navbar = document.getElementById('diagram-navbar');
+	this.navbarElt = document.getElementById('diagram-navbar');
 	this.diagramPanelToolbarElt = document.getElementById('diagramPanelToolbar');
 	this.referenceDiagramsElt = document.getElementById('referenceDiagrams');
 }
@@ -3025,8 +3091,8 @@ DiagramPanel.prototype.update()
 	if (dgrm !== null)
 	{
 		const dt = new Date(dgrm.timestamp);
-		this.navbar.innerHTML = `${dgrm.properName} ${H.span('by '+dgrm.user, 'italic')}`;
-		this.navbar.title = Cat.cap(dgrm.description);
+		this.navbarElt.innerHTML = `${dgrm.properName} ${H.span('by '+dgrm.user, 'italic')}`;
+		this.navbarElt.title = Cat.cap(dgrm.description);
 		this.properNameElt.innerHTML = dgrm.properName;
 		this.descriptionElt.innerHTML = dgrm.description;
 		this.userElt.innerHTML = dgrm.user;
@@ -3120,7 +3186,7 @@ DiagramPanel.prototype.setUserDiagramTable()
 //
 DiagramPanel.prototype.GetDiagramInfo(dgrm)
 {
-	if (Diagram.isPrototypeOf(dgrm))
+	if (Diagram.prototype.isPrototypeOf(dgrm))
 	{
 		const info =
 		{
@@ -3147,7 +3213,7 @@ DiagramPanel.prototype.GetDiagramInfo(dgrm)
 DiagramPanel.prototype.DiagramRow(dgrm, tb = null)
 {
 	const dt = new Date(dgrm.timestamp);
-	const url = Cat.Amazon.URL(dgrm.codomain.basename, dgrm.user, dgrm.basename + '.png');
+	const url = amazon.getURL(dgrm.codomain.basename, dgrm.user, dgrm.basename + '.png');
 	const tbTbl =
 		H.table(
 			H.tr( (tb ? tb : '') +
@@ -3166,7 +3232,7 @@ DiagramPanel.prototype.DiagramRow(dgrm, tb = null)
 DiagramPanel.prototype.FetchCatalogDiagramTable()
 {
 	if (!('catalogDiagrams' in Cat))
-		fetch(Cat.Amazon.URL() + '/catalog.json').then(function(response)
+		fetch(amazon.getURL() + '/catalog.json').then(function(response)
 		{
 			if (response.ok)
 				response.json().then(function(data)
@@ -3210,7 +3276,7 @@ DiagramPanel.prototype.FetchRecentDiagrams()
 {
 	if ('recentDiagrams' in Cat)
 		return;
-	fetch(Cat.Amazon.URL() + '/recent.json').then(function(response)
+	fetch(amazon.getURL() + '/recent.json').then(function(response)
 	{
 		if (response.ok)
 			response.json().then(function(data)
@@ -3226,7 +3292,7 @@ DiagramPanel.prototype.FetchRecentDiagrams()
 					introPngs.innerHTML = data.diagrams.map(d =>
 					{
 						const tokens = d.name.split('@');
-						return `<img class="intro" src="${Cat.Amazon.URL(tokens[1], d.user, d.name)}.png" width="300" height="225" title="${d.properName} by ${d.user}: ${d.description}"/>`;
+						return `<img class="intro" src="${amazon.getURL(tokens[1], d.user, d.name)}.png" width="300" height="225" title="${d.properName} by ${d.user}: ${d.description}"/>`;
 					}).join('');
 			});
 	});
@@ -3342,8 +3408,8 @@ LoginPanel.update()
 		html += H.table(	H.tr(H.td('User name')) +
 							H.tr(H.td(H.input('', '', 'loginUserName', 'text', {ph:'Name'}))) +
 							H.tr(H.td('Password')) +
-							H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********', x:'onkeydown="Display.OnEnter(event, Cat.Amazon.login)"'}))) +
-							H.tr(H.td(H.button('Login', '', '', '', 'onclick=Cat.Amazon.login()'))));
+							H.tr(H.td(H.input('', '', 'loginPassword', 'password', {ph:'********', x:'onkeydown="Display.OnEnter(event, amazon.login)"'}))) +
+							H.tr(H.td(H.button('Login', '', '', '', 'onclick=amazon.login()'))));
 	if (Cat.user.status === 'unauthorized')
 		html += H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Panel.AccordionToggle(this, \'signupPnl\')"`) +
 				H.div( H.table(H.tr(H.td('User name')) +
@@ -3351,13 +3417,13 @@ LoginPanel.update()
 							H.tr(H.td('Email')) +
 							H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 							LoginPanel.PasswordForm() +
-							H.tr(H.td(H.button('Sign up', '', '', '', 'onclick=Cat.Amazon.signup()')))), 'accordionPnl', 'signupPnl');
+							H.tr(H.td(H.button('Sign up', '', '', '', 'onclick=amazon.signup()')))), 'accordionPnl', 'signupPnl');
 	if (Cat.user.status === 'registered')
 		html += H.h3('Confirmation Code') +
 				H.span('The confirmation code is sent by email to the specified address above.') +
 				H.table(	H.tr(H.td('Confirmation code')) +
-							H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Display.OnEnter(event, Cat.Amazon.confirm)"'}))) +
-							H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=Cat.Amazon.confirm()'))));
+							H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Display.OnEnter(event, amazon.confirm)"'}))) +
+							H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=amazon.confirm()'))));
 	this.loginInfoElt.innerHTML = html;
 }
 // TODO not used
@@ -3366,7 +3432,7 @@ LoginPanel.prototype.showResetForm()
 	this.passwordResetFormElt.innerHTML =
 		H.table(
 			LoginPanel.PasswordForm('reset') +
-			H.tr(H.td(H.button('Reset password', '', '', '', 'onclick=Cat.Amazon.resetPassword()'))));
+			H.tr(H.td(H.button('Reset password', '', '', '', 'onclick=amazon.resetPassword()'))));
 }
 //
 // LoginPanel static methods
@@ -3662,15 +3728,9 @@ function Element(dgrm, args)
 	//
 	if (!('diagram' in this))
 		Object.defineProperty(this, 'diagram', {value: diagram, enumerable: true});
-	if (!('origin' in this))
-		Object.defineProperty(this, 'origin', {value: (args.origin === '' || args.origin === 'codomain') ? 'codomain' : 'domain', enumerable: true});
-	Object.defineProperty(this, 'category',
-		{
-			get()
-			{
-				this.diagram[this.origin];
-			}
-		});
+//	if (!('origin' in this))
+//		Object.defineProperty(this, 'origin', {value: (args.origin === '' || args.origin === 'codomain') ? 'codomain' : 'domain', enumerable: true});
+	Object.defineProperty(this, 'category', {value: this.category, writable:false});
 	//
 	// Nothing refers to an element with a reference count of zero.
 	//
@@ -3686,7 +3746,8 @@ function Element(dgrm, args)
 	//
 	// set the name of this element
 	//
-	this.name = this.origin === 'codomain' ? Element.Codename(diagram, this.basename) : ('name' in args ? args.name : this.diagram.domain.getAnon('grph'));
+//	this.name = this.origin === 'codomain' ? Element.Codename(diagram, this.basename) : ('name' in args ? args.name : this.diagram.domain.getAnon('grph'));
+	this.name = args.name;
 	//
 	// Subcats have duplicate names, that of the master cat.
 	//
@@ -3798,30 +3859,13 @@ Element.prototype.moreHelp()
 {
 	return '';
 }
-// TODO move to Diagram?
-Element.prototype.help()
-{
-	const readonly = this.diagram.readonly;
-	const create = (!readonly && this.isComplex()) ? display.getButton('edit', `Cat.getDiagram().activateNamedElementForm(evt)`, 'Create named identity', Cat.default.button.tiny) : '';
-	const html =	H.h4(H.span(this.properName, '', 'properNameElt') + create) +
-					H.p(H.span(Cat.cap(this.description), '', 'descriptionElt')) +
-					H.p(H.span(Cat.limit(this.basename), '', 'basenameElt', this.name)) +
-					H.p(`Prototype ${this.prototype.name}`) +
-					this.moreHelp() +
-					H.p(`Category ${this.category.properName}`) +
-					H.p(`Diagram ${this.diagram.properName}`) +
-					H.div('', 'error', 'namedElementError');
-//	else
-//		html = H.p(H.span(from.properName, 'tty', 'properNameElt') +
-//					(readonly ? '' : display.getButton('edit', `Cat.getDiagram().editElementText('properNameElt', 'properName')`, 'Edit proper name', Cat.default.button.tiny)));
-	this.toolbarTipElt.innerHTML = html;
-}
 //
 // Element static methods
 //
 Element.prototype.Codename(diagram, basename)
 {
-	return `:${diagram.codomain.name}:Ob{${diagram.user}:${diagram.basename + (basename !== '' ? ':' + basename : ''}bO`;
+//	return `:${diagram.codomain.name}:Ob{${diagram.user}:${diagram.basename + (basename !== '' ? ':' + basename : ''}bO`;
+	return `:${diagram.codomain.name}:${diagram.user}:${diagram.basename + (basename !== '' ? ':' + basename : ''}`;
 }
 
 //
@@ -4627,11 +4671,11 @@ HomObject.prototype.FromInput(first = true, uid={uid:9, idp:'data'})
 //
 function DiagramElement(diagram, args)
 {
-	if (!Diagram.isPrototypeOf(diagram))
+	if (!Diagram.prototype.isPrototypeOf(diagram))
 		throw 'Not a diagram';
 	const nuArgs = Cat.clone(args);
 	nuArgs.name = Cat.getArg(args, 'name', diagram.domain.getAnon());
-	nuArgs.origin = 'domain';
+//	nuArgs.origin = 'domain';
 	Element.call(this, diagram, nuArgs);
 	const xy = Cat.getArg(args, 'xy', new D2);
 	this.x = xy.x;
@@ -4874,7 +4918,7 @@ Category.prototype.process(args)
 	// for our recursive morphisms, setup the their recursors now that all morphisms are loaded and the searches can be satisfied
 	//
 	for(const [key, m] of this.morphisms)
-		if (Recursive.isPrototypeOf(m) && String.isPrototypeOf(m.recursor))
+		if (Recursive.isPrototypeOf(m) && String.prototype.isPrototypeOf(m.recursor))
 			m.setRecursor(m.recursor);
 }
 Category.prototype.json(a = {})
@@ -4927,7 +4971,7 @@ Category.prototype.getObject(name)
 	//
 	// if it is already an object, return it
 	//
-	if (Element.isPrototypeOf(name))
+	if (Element.prototype.isPrototypeOf(name))
 		// TODO check for correct category?
 		return name;
 	/*
@@ -4962,7 +5006,7 @@ Category.prototype.getMorphism(name)
 	//
 	// if it is already an object, return it
 	//
-	if (Morphism.isPrototypeOf(name))
+	if (Morphism.prototype.isPrototypeOf(name))
 		return name;
 	/*
 	//
@@ -4987,8 +5031,8 @@ Category.prototype.getMorphism(name)
 }
 Category.prototype.addMorphism(m)
 {
-	if (this.morphisms.has(m.name))
-		throw `Morphism with name ${m.name} already exists in category ${this.name}`;
+	if (this.getMorphism(m.name))
+		throw 'morphism with given name already exists in category';
 	this.morphisms.set(m.name, m);
 }
 Category.prototype.basenameIsUsed(name)
@@ -5080,7 +5124,7 @@ Category.prototype.HasForm(ary)
 	if (ary.length < 2)
 		return bad;
 	const elt = ary[0];
-	if (!DiagramMorphism.isPrototypeOf(elt))
+	if (!DiagramMorphism.prototype.isPrototypeOf(elt))
 		return bad;
 	const dom = elt.domain;
 	const cod = elt.codomain;
@@ -5090,7 +5134,7 @@ Category.prototype.HasForm(ary)
 	for(let i=1; i<ary.length; ++i)
 	{
 		const elt = ary[i];
-		if (!DiagramMorphism.isPrototypeOf(elt))
+		if (!DiagramMorphism.prototype.isPrototypeOf(elt))
 			return bad;
 		good.source =	!elt.domain.isEquivalent(dom) ? false : good.source;
 		good.sink =		!elt.codomain.isEquivalent(cod) ? false : good.sink;
@@ -5104,7 +5148,7 @@ Category.prototype.HasForm(ary)
 Category.prototype.Run(m, diagram)
 {
 	let dm = m.morphisms[0];
-	if (!DataMorphism.isPrototypeOf(dm))
+	if (!DataMorphism.prototype.isPrototypeOf(dm))
 		throw 'Needs a data morphism first in the composite to run';
 	//
 	// there is no output morphism for the codomains tty and threeD
@@ -5144,6 +5188,14 @@ function StringObject(diagram, args)
 //
 function Morphism(diagram, args)
 {
+	const nuArgs = Cat.clone(args);
+	//
+	// By default use the diagram's codomain for the morphism's category.
+	// Other choices are the domain index category and the graph category.
+	// Overrides take care of those.
+	//
+	if (!('category' in nuArgs))
+		nuArgs.category = diagram.codomain;
 	Element.call(this, diagram, args);
 	const domain = this.diagram.getObject(args.domain);
 	if (domain === null)
@@ -5156,7 +5208,8 @@ function Morphism(diagram, args)
 	//
 	// this can fail so do the increments afterwards
 	//
-	this.category.addMorphism(this);
+	if (this.category)
+		this.category.addMorphism(this);
 	this.codomain.incrRefcnt();
 	this.domain.incrRefcnt();
 }
@@ -5266,6 +5319,7 @@ Identity.prototype.ProperName(domain, codomain = null)
 function DiagramMorphism(diagram, args)
 {
 	const nuArgs = Cat.clone(args);
+	nuArgs.category = diagram.domain;
 	nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrmM');
 	Morphism.call(this, diagram, nuArgs);
 	//
@@ -5324,11 +5378,14 @@ DiagramMorphism.prototype.setMorphism(to)
 }
 DiagramMorphism.prototype.getNameOffset()
 {
-	let mid = 'bezier' in this ? this.bezier.cp2 : D2.scale(0.5, D2.add(this.start, this.end));
-	let normal = D2.norm(D2.scale(this.flipName ? -1 : 1, D2.normal(D2.subtract(this.codomain, this.domain))));
+	let mid = 'bezier' in this ? this.bezier.cp2 : D2.scale(0.5, D2.Add(this.start, this.end));
+//	let normal = D2.normalize(D2.scale(this.flipName ? -1 : 1, D2.normal(D2.subtract(this.codomain, this.domain))));
+	const normal = D2.normalize(D2.scale(this.flipName ? -1 : 1, D2.normal(D2.subtract(this.codomain, this.domain))));
+	const normal = (new D2(this.codomain)).subtract(ne
 	if (normal.y > 0.0)
 		normal.y *= 0.5;
-	return D2.add(mid, D2.scale(-Cat.default.font.height, normal));
+//	return D2.add(mid, D2.scale(-Cat.default.font.height, normal));
+	return mid.add(D2.scale(-Cat.default.font.height, normal));
 }
 DiagramMorphism.prototype.makeSVG()
 {
@@ -5453,7 +5510,8 @@ DiagramMorphism.prototype.predraw()
 		start = D2.round(this.closest(domBBox, this.codomain));
 		end = D2.round(this.closest(codBBox, this.domain));
 	}
-	this.angle = Cat.getAngle(deltaX, deltaY);
+//	this.angle = Cat.getAngle(deltaX, deltaY);
+	this.angle = D2.Angle({x:deltaX, y:deltaY});
 	this.start = start;
 	this.end = end;
 	this.adjustByHomSet();
@@ -5465,7 +5523,7 @@ DiagramMorphism.prototype.adjustByHomSet()
 	if (i > 0)
 	{
 		const midpoint = {x:(this.start.x + this.end.x)/2, y:(this.start.y + this.end.y)/2};
-		const normal = D2.norm(D2.normal(D2.subtract(this.end, this.start)));
+		const normal = D2.normalize(D2.normal(D2.subtract(this.end, this.start)));
 		const band = Math.trunc(i/2);
 		let v = D2.scale(2 * Cat.default.font.height * (band+1), normal);
 		v = i % 2 > 0 ? D2.scale(-1, v) : v;
@@ -6172,13 +6230,13 @@ Recursive.prototype.decrRefcnt()
 Recursive.prototype.json()
 {
 	let mor = super.json();
-	mor.recursor = Morphism.isPrototypeOf(this.recursor) ? this.recursor.name : this.recursor;
+	mor.recursor = Morphism.prototype.isPrototypeOf(this.recursor) ? this.recursor.name : this.recursor;
 	return mor;
 }
 Recursive.prototype.setRecursor(r)
 {
 	const rcrs = typeof r === 'string' ? this.category.getMorphism(r) : r;
-	if (Morphism.isPrototypeOf(this.recursor))
+	if (Morphism.prototype.isPrototypeOf(this.recursor))
 		this.recursor.decrRefcnt();
 	if (rcrs !== null)
 	{
@@ -6205,7 +6263,7 @@ Recursive.prototype.updateRecursor()
 //
 function LambdaMorphism(diagram, args)
 {
-	const preCurry = Morphism.isPrototypeOf(args.preCurry) ? args.preCurry : diagram.codomain.getMorphism(args.preCurry);
+	const preCurry = Morphism.prototype.isPrototypeOf(args.preCurry) ? args.preCurry : diagram.codomain.getMorphism(args.preCurry);
 	let nuArgs = Cat.clone(args);
 	nuArgs.domain = LambdaMorphism.Domain(diagram, preCurry, arg.domFactors);
 	nuArgs.codomain = LambdaMorphism.Codomain(diagram, preCurry, arg.homFactors);
@@ -6314,7 +6372,8 @@ LambdaMorphism.prototype.ProperName(preCurry, domFactors, homFactors)
 //
 function StringMorphism(diagram, src)
 {
-	Morphism.call(this, diagram, {origin:graph, domain:src.domain, codomain:src.codomain, name:src.name, diagram});
+//	Morphism.call(this, diagram, {origin:graph, domain:src.domain, codomain:src.codomain, name:src.name, diagram});
+	Morphism.call(this, diagram, {category:diagram.graphCat, domain:src.domain, codomain:src.codomain, name:src.name, diagram});
 	this.source = src;
 //	this.sequence = Sequence.Get(diagram, {[src.domain, src.codomain]});
 	this.graph = src.getGraph();	// a graph is like a net list between the ports
@@ -6328,7 +6387,7 @@ StringMorphism.prototype.SvgLinkUpdate(dom, lnk, data)	// data {graph, dom:{x,y}
 	const dy = cod.y - dom.y;
 	const adx = Math.abs(dx);
 	const ady = Math.abs(dy);
-	const normal = dy === 0 ? ((data.cod.y - data.dom.y) > 0 ? {x:0, y:-1} : {x:0, y:1}) : D2.norm(D2.normal(D2.subtract(cod, dom)));
+	const normal = dy === 0 ? ((data.cod.y - data.dom.y) > 0 ? {x:0, y:-1} : {x:0, y:1}) : D2.normalize(D2.normal(D2.subtract(cod, dom)));
 	const h = (adx - ady) / (1.0 * adx);
 	const v = D2.scale(D2.dist(dom, cod) * h / 4.0, normal);
 	let cp1 = D2.round(D2.add(v, dom));
@@ -6350,81 +6409,69 @@ StringMorphism.prototype.ColorWheel(data)
 	data.color = (data.color + 5) % cnt;
 	return `${tran[(data.color + 2) % cnt]}${tran[(data.color + 10) % cnt]}${tran[(data.color + 6) % cnt]}`;
 }
-StringMorphism.prototype.UpdateSVG(dgrm, expr, first, data)	// data {index, graph, dom:{x,y}, cod:{x,y}, visited, elementId}
+StringMorphism.prototype.updateSVG(data)	// data {index, graph, dom:{x,y}, cod:{x,y}, visited, elementId}
 {
-	return element.expandExpression(dgrm, expr,
-		function(dgrm, expr, first, data)
+	const diagram = this.diagram;
+	if (this.graphs.length === 0)
+	{
+		const dom = {x:Math.round(expr.position + (expr.width/2.0) + (data.index[0] === 0 ? data.dom.x : data.cod.x)), y:data.index[0] === 0 ? data.dom.y : data.cod.y};
+		const color = Math.round(Math.random() * 0xffffff).toString(16);
+		const srcKey = StringMorphism.linkColorKey(data.index, data.dom.name, data.cod.name);
+		let colorIndex = diagram.link2colorIndex[srcKey];
+		while(colorIndex in diagram.colorIndex2colorIndex)
+			colorIndex = diagram.colorIndex2colorIndex[colorIndex];
+		for (let i=0; i<expr.links.length; ++i)
 		{
-			if (!StringMorphism.isGraphable(expr))
-				return;
-			const dom = {x:Math.round(expr.position + (expr.width/2.0) + (data.index[0] === 0 ? data.dom.x : data.cod.x)), y:data.index[0] === 0 ? data.dom.y : data.cod.y};
-			const color = Math.round(Math.random() * 0xffffff).toString(16);
-			const srcKey = StringMorphism.linkColorKey(data.index, data.dom.name, data.cod.name);
-			let colorIndex = dgrm.link2colorIndex[srcKey];
-			while(colorIndex in dgrm.colorIndex2colorIndex)
-				colorIndex = dgrm.colorIndex2colorIndex[colorIndex];
-			for (let i=0; i<expr.links.length; ++i)
+			const lnk = expr.links[i];
+			const lnkStr = lnk.toString();
+			const lnkKey = StringMorphism.linkColorKey(lnk, data.dom.name, data.cod.name);
+			let linkColorIndex = diagram.link2colorIndex[lnkKey];
+			while(linkColorIndex in diagram.colorIndex2colorIndex)
+				linkColorIndex = diagram.colorIndex2colorIndex[linkColorIndex];
+			if (linkColorIndex < colorIndex)
 			{
-				const lnk = expr.links[i];
-				const lnkStr = lnk.toString();
-				const lnkKey = StringMorphism.linkColorKey(lnk, data.dom.name, data.cod.name);
-				let linkColorIndex = dgrm.link2colorIndex[lnkKey];
-				while(linkColorIndex in dgrm.colorIndex2colorIndex)
-					linkColorIndex = dgrm.colorIndex2colorIndex[linkColorIndex];
-				if (linkColorIndex < colorIndex)
-				{
-					dgrm.colorIndex2colorIndex[colorIndex] = linkColorIndex;
-					colorIndex = linkColorIndex;
-					while(colorIndex in dgrm.colorIndex2colorIndex)
-						colorIndex = dgrm.colorIndex2colorIndex[colorIndex];
-					dgrm.link2colorIndex[srcKey] = colorIndex;
-				}
-				else if (linkColorIndex > colorIndex)
-				{
-					dgrm.link2colorIndex[lnkKey] = colorIndex;
-					dgrm.colorIndex2colorIndex[linkColorIndex] = colorIndex;
-				}
-				const color = dgrm.colorIndex2color[colorIndex];
-				const idxStr = data.index.toString();
-				if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
-					continue;
-				const d = StringMorphism.svgLinkUpdate(dom, lnk, data);
-				const linkId = StringMorphism.linkId(data, lnk);
-				const lnkElt = document.getElementById(linkId);
-				lnkElt.setAttribute('d', d);
-				lnkElt.setAttribute('style', `stroke:#${color}AA`);
-				data.visited.push(idxStr + ' ' + lnkStr);
+				diagram.colorIndex2colorIndex[colorIndex] = linkColorIndex;
+				colorIndex = linkColorIndex;
+				while(colorIndex in diagram.colorIndex2colorIndex)
+					colorIndex = diagram.colorIndex2colorIndex[colorIndex];
+				diagram.link2colorIndex[srcKey] = colorIndex;
 			}
-		},
-		function(dgrm, expr, first, data)
-		{
-			return expr.data.map((e, i) =>
+			else if (linkColorIndex > colorIndex)
 			{
-				data.index.push(i);
-				StringMorphism.updateSVG(dgrm, e, false, data);
-				data.index.pop();
-			}, '');
-		},
-		function(dgrm, expr, first, data)
+				diagram.link2colorIndex[lnkKey] = colorIndex;
+				diagram.colorIndex2colorIndex[linkColorIndex] = colorIndex;
+			}
+			const color = diagram.colorIndex2color[colorIndex];
+			const idxStr = data.index.toString();
+			if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
+				continue;
+			const d = StringMorphism.svgLinkUpdate(dom, lnk, data);
+			const linkId = StringMorphism.linkId(data, lnk);
+			const lnkElt = document.getElementById(linkId);
+			lnkElt.setAttribute('d', d);
+			lnkElt.setAttribute('style', `stroke:#${color}AA`);
+			data.visited.push(idxStr + ' ' + lnkStr);
+		}
+	}
+	else
+	{
+		this.graphs.map((g, i) =>
 		{
-			data.index.push(0);
-			StringMorphism.updateSVG(dgrm, expr.lhs, false, data);
+			data.index.push(i);
+			g.updateSVG(data);
 			data.index.pop();
-			data.index.push(1);
-			StringMorphism.updateSVG(dgrm, expr.rhs, false, data);
-			data.index.pop();
-		},
-		function(){},
-		first, data);
+		});
+	}
 }
-StringMorphism.prototype.Update(dgrm, from)
+// StringMorphism.prototype.update(diagram, from)
+StringMorphism.prototype.update()
 {
-	const id = StringMorphism.graphId(from);
-	const graphFunctor = $Cat.getMorphism('Graph');
-	const sm = graphFunctor.$(dgrm, from.to);
+//	const id = StringMorphism.GraphId(from);
+//	const graphFunctor = $Cat.getMorphism('Graph');
+//	const sm = graphFunctor.$$(diagram, from.to);
 	const dom = {x:from.domain.x - from.domain.width/2, y:from.domain.y, name:from.domain.name};
 	const cod = {x:from.codomain.x - from.codomain.width/2, y:from.codomain.y, name:from.codomain.name};
-	StringMorphism.updateSVG(dgrm, sm.graph, true, {index:[], graph:sm.graph, dom, cod, visited:[], elementId:from.elementId()});
+	this.updateSVG({index:[], dom, cod, visited:[], elementId:from.elementId()});
 }
 StringMorphism.prototype.RemoveStringSvg(from)
 {
@@ -7128,7 +7175,7 @@ Diagram.prototype.lambdaMorphism(e)	// TODO moved
 	let homFactors = diagram.getFactorsByDomCodId('codomainDiv');
 	const m = LambdaMorphism.Get(this, {preCurry:from.to, domFactors, homFactors});
 	const v = D2.subtract(from.codomain, from.domain);
-	const normV = D2.norm(D2.normal(v));
+	const normV = D2.normalize(D2.normal(v));
 	const xyDom = D2.add(from.domain, D2.scale(Cat.default.arrow.length, normV));
 	const xyCod = D2.add(from.codomain, D2.scale(Cat.default.arrow.length, normV));
 	this.placeMorphism(e, m, xyDom, xyCod);
@@ -7366,9 +7413,11 @@ Diagram.prototype.objectPlaceMorphism(e, dir, objName, morphName)
 		let angles = [];
 		for(const [from, tox] of this.morphisms)
 			if (fromObj.isEquivalent(from.domain))
-				angles.push(Cat.getAngle(from.codomain.x - fromObj.x, from.codomain.y - fromObj.y));
+//				angles.push(Cat.getAngle(from.codomain.x - fromObj.x, from.codomain.y - fromObj.y));
+				angles.push(D2.getAngle(fromObj, from.codomain);
 			else if (fromObj.isEquivalent(from.codomain))
-				angles.push(Cat.getAngle(from.domain.x - fromObj.x, from.domain.y - fromObj.y));
+//				angles.push(Cat.getAngle(from.domain.x - fromObj.x, from.domain.y - fromObj.y));
+				angles.push(D2.getAngle(fromObj.x, from.domain);
 		angles.sort();
 		let gap = 0;
 		const al = Cat.default.arrow.length;
@@ -7827,7 +7876,7 @@ Diagram.prototype.upload(e, fn = null)
 	{
 		document.getElementById('diagramUploadBtn').classList.add('vanish');
 		const start = Date.now();
-		Cat.Amazon.ingestDiagramLambda(e, this, function(err, data)
+		amazon.ingestDiagramLambda(e, this, function(err, data)
 		{
 			if (err)
 				alert(err.message);
@@ -8157,7 +8206,7 @@ Diagram.prototype.downloadJS(e)
 		Payload:		JSON.stringify({diagrams})
 	};
 	const name = this.name;
-	Cat.Amazon.lambda.invoke(params, function(error, data)
+	amazon.lambda.invoke(params, function(error, data)
 	{
 		if (error)
 		{
@@ -8341,7 +8390,7 @@ Diagram.prototype.Codename(args);
 }
 Diagram.prototype.FetchDiagram(dgrmName, fn)
 {
-	Cat.Amazon.fetchDiagramJsons([dgrmName], function(jsons)
+	amazon.fetchDiagramJsons([dgrmName], function(jsons)
 	{
 		jsons.reverse().map(j =>
 		{
