@@ -532,18 +532,20 @@ const Cat =
 	*/
 	initializeCT(fn)
 	{
-		$Cat = new Category(
+		$Cat = new Category($CatDgrm,
 		{
 			basename:		'Cat',
 			properName:		'&#x2102;&#x1D552;&#x1D565;',
 			description:	'Category of small categories',
+			user:			'maclane',
 		});
-		$Cat2 = new Category(
+		$Cat2 = new Category($Cat2Drm,
 		{
 			basename:		'Cat2',
 			properName:		'&#x2102;&#x1D552;&#x1D565;&#120794',
 			description:	'Two category',
 			objects:		$Cat.morphisms,
+			user:			'maclane',
 		});
 // TODO restore		isGUI && this.fetchCategories(fn);	// TODO check for local TODO refresh flag
 		fn();
@@ -639,9 +641,9 @@ const Cat =
 				{
 					data.map(cat =>
 					{
-						if (!$Cat.getObject(cat.basename))
+						if (!$Cat.getObject(cat.name))
 						{
-							const nuCat = new Category({basename:cat.basename, properName:cat.properName, description:cat.description, signature:cat.signature});
+							const nuCat = new Category($CatDgrm, {name:cat.name, properName:cat.properName, description:cat.description, signature:cat.signature});
 							Cat.catalog[nuCat] = {};
 						}
 					});
@@ -867,7 +869,7 @@ const Cat =
 		{
 			jsons.map(j =>
 			{
-				const dgrm = new Diagram(j);
+				const dgrm = new Diagram($CatDgrm, j);
 				dgrm.saveLocal();
 			});
 			if (fn)
@@ -2476,31 +2478,31 @@ ${Display.Button(onclick)}
 		else
 			process.exit(1);
 	}
-	Display.protoytpe.getCat()
-	{
-		return $Cat ? $Cat.getObject(this.category) : null;
-	}
+//	Display.protoytpe.getCat()
+//	{
+//		return $Cat ? $Cat.getObject(this.category) : null;
+//	}
 	selectCategory(catName, fn)
 	{
 		this.category = catName;
 		this.setLocalStorageDefaultCategory();
 		this.diagram = null;
 		const nbCat = document.getElementById('navbar_category');
-		const cat = $Cat.getObject(catName);
-		nbCat.innerHTML = cat.properName;
-		nbCat.title = Cat.cap(cat.description);
-//		Category.FetchReferenceDiagrams(cat, fn);
+		const category = $Cat.getObject(catName);
+		nbCat.innerHTML = category.properName;
+		nbCat.title = Cat.cap(category.description);
+//		Category.FetchReferenceDiagrams(category, fn);
 	}
-	selectCategoryDiagram(cat, fn)
+	selectCategoryDiagram(category, fn)
 	{
-		this.selectCategory(cat, function()
+		this.selectCategory(category, function()
 		{
-			let name = Cat.getLocalStorageDiagramName(cat);
-	//				name = name === null ? diagram.Codename({category:cat.name, user:Cat.user.name, basename:'Draft'}) : name;
+			let name = Cat.getLocalStorageDiagramName(category);
+	//				name = name === null ? diagram.Codename({category:category.name, user:Cat.user.name, basename:'Draft'}) : name;
 			let dgrm = Cat.getDiagram(name);
 			if (dgrm && Diagram.ReadLocal(name) === null)
 			{
-				dgrm = new Diagram({basename:'Draft', codomain:cat, properName:'Draft', description:'Scratch diagram', user:Cat.user.name});
+				dgrm = new Diagram($CatDgrm, {basename:'Draft', codomain:category, properName:'Draft', description:'Scratch diagram', user:Cat.user.name});
 				dgrm.saveLocal();
 			}
 			this.selectDiagram(name);
@@ -2513,7 +2515,6 @@ ${Display.Button(onclick)}
 	selectDiagram(name, update = true)
 	{
 		display.deactivateToolbar();
-		const cat = this.getCat();
 		function setup(name)
 		{
 			Cat.selected.diagram = name;
@@ -2829,7 +2830,7 @@ class CategoryPanel extends Panel
 				throw 'Category name must be specified.';
 			if (!RegExp(Cat.nameEx).test(basename))
 				throw 'Invalid category name.';
-			new Category($Cat, {basename, properName:this.properNameElt.value, description:this.descriptionElt.value});
+			new Category($CatDgrm, {basename, properName:this.properNameElt.value, description:this.descriptionElt.value});
 		}
 		catch(err)
 		{
@@ -3199,10 +3200,10 @@ class DiagramPanel extends Panel
 		{
 			this.errorElt.innerHTML = '';
 			const basename = this.basenameElt.value;
-			let codomain = display.getCat().name;
+			let codomain = display.codomain.name;
 			const fullname = diagram.nameCheck(codomain, Cat.user.name, basename);
 			// TODO make it <> safe
-			const dgrm = new Diagram({basename, codomain, properName:this.properNameElt.value, description:this.descriptionElt.value, user:Cat.user.name});
+			const dgrm = new Diagram($CatDgrm, {basename, codomain, properName:this.properNameElt.value, description:this.descriptionElt.value, user:Cat.user.name});
 			dgrm.saveLocal();
 			//
 			// select the new diagram
@@ -3819,31 +3820,12 @@ const elementPanel = new ElementPanel();
 //
 // Element is the root class for Catecon objects and morphisms
 //
-// The category is the target category of the diagram, say Set.
-// The basename is unique within the diagram's domain or codomain working categories.
-// Referencing is done by name, not by basename.
-// Basenames for the domain 'graph' category of the diagram start with a special character '@'.
-//
-// $Cat is the magic global variable for the working Cat
-//
 class Element
 {
 	constructor(dgrm, args)
 	{
-		//
-		// Every element belongs to a diagram, except CAT ...
-		//
-		const diagram = Cat.getDiagram(dgrm);
-		if (!diagram)
-			throw 'Not a diagram';
-		else if ($Cat === null && args.name === 'Cat')	// bootstrap
-			diagram = this;
-		//
-		// If we're chaining/polymorphing, then don't redefine our category
-		//
-		if (!('diagram' in this))
-			Object.defineProperty(this, 'diagram', {value: diagram, enumerable: true});
-		Object.defineProperty(this, 'category', {value: this.category, writable:false});
+		const diagram = $Cat ? $Cat.getMorphism(dgrm) : this;	// bootstrap
+		Object.defineProperty(this, 'diagram', {value: diagram, enumerable: true});
 		//
 		// Nothing refers to an element with a reference count of zero.
 		//
@@ -3852,18 +3834,18 @@ class Element
 		// a user owns this element?
 		//
 		Object.defineProperty(this, 'user', {value: diagram.user, enumerable: true});
-		if (Cat.nameEx.test(args.basename))
-			Object.defineProperty(this, 'basename', {value: args.basename, enumerable: true});
-		else
-			throw "Invalid base name";
-		this.name = args.name;
+//		if (Cat.nameEx.test(args.basename))
+//			Object.defineProperty(this, 'basename', {value: args.basename, enumerable: true});
+//		else
+//			throw "Invalid base name";
+		this.name = 'name' in args ? args.name : Element.Codename(diagram, args.basename);
 		//
 		// Subcats have duplicate names, that of the master cat.
 		//
 		// TODO subobject
 		//
-		if (!('subobject' in args) && !this.category.validateName(this.name))
-			throw `Name ${this.name} is already taken.`;
+//		if (!('subobject' in args) && !this.category.validateName(this.name))
+//			throw `Name ${this.name} is already taken.`;
 		if (!('properName' in this))
 			this.properName = Cat.getArg(args, 'properName', this.basename);
 		if (!('description' in this))
@@ -3915,16 +3897,22 @@ class Element
 			return;
 		a.k = v;
 	}
-	json(a = {})
+	json()
 	{
+		const a = {};
 		a.description =	Element.setArg(a, 'description', this.description);
 		a.signature =	Element.setArg(a, 'signature', this.signature);
-		a.basename =	Element.setArg(a, 'basename', this.name);
+		if ('basename' in this)
+			a.basename =	Element.setArg(a, 'basename', this.name);
 		a.prototype =	Element.setArg(a, 'prototype', this.prototype.name);
 		a.properName =	Element.setArg(a, 'properName', this.properName);
 		a.readonly =	Element.setArg(a, 'readonly', this.readonly);
+		if ('user' in this)
+			a.user = this.user;
 		if ('diagram' in this && this.diagram !== null)
 			a.diagram =	Element.setArg(a, 'diagram', this.diagram);
+		if ('index' in this)
+			a.index = true;
 		return a;
 	}
 	//
@@ -4308,20 +4296,31 @@ class CatObject extends Element
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-		this.category.addObject(this);
 		//
 		// the default size for an object is one
 		//
 		this.prototype.size = 1;
+		const category = 'index' in nuArgs ? this.domain : this.codomain;
+		if ('index' in args)
+			this.index = true;
+		category && category.addObject(this);
+	}
+	json()
+	{
+		const a = super.json();
+		if ('index' in this)
+			a.index = true;
+		return a;
 	}
 	decrRefcnt()
 	{
 		super.decrRefcnt();
 		if (this.refcnt <= 0)
 		{
+			const category = 'index' in this ? this.diagram.domain : this.diagram.codomain;
 			if (Cat.debug)
-				console.log('CatObject.decrRefcnt delete',this.category.name,this.name);
-			this.category.objects.delete(this.name);
+				console.log('CatObject.decrRefcnt delete',category.name, this.name);
+			category.objects.delete(this.name);
 		}
 	}
 	//
@@ -4482,7 +4481,7 @@ class MultiObject extends CatObject
 	}
 	signature(sig = '')
 	{
-		return Cat.sha256(`${sig}${this.category.name}:${this.prototype.name} ${objects.map(o => o.signature()).join()}`);
+		return Cat.sha256(`${sig}${this.codomain.name}:${this.prototype.name} ${objects.map(o => o.signature()).join()}`);
 	}
 	decrRefcnt()
 	{
@@ -4984,6 +4983,8 @@ class Category extends CatObject
 {
 	constructor(args)
 	{
+		const nuArgs = Cat.clone(args);
+		nuArgs.name = 'name' in args ? args.name : Category.Codename(args.user, args.basename);
 		super($Cat, args);	// TODO $Cat should be a diagram object
 //		if ('subobject' in args)
 //			this.subobject = $Cat.getObject(args.subobject);
@@ -5085,16 +5086,6 @@ class Category extends CatObject
 	}
 	js()
 	{
-		const js =
-	`
-		const cat = new Cat.Category(
-			{
-				basename:	'${this.basename}.,
-				properName:	'${this.properName}',	// TODO make safe
-				description:	'${this.description}',	// TODO make safe
-				subobject:	'${this.subobject}',
-			});
-	`;
 		for (const [name, o] in this.objects)
 			js += `		const ${name} = ${o.js()}`;
 		for (const [name, m] in this.morphisms)
@@ -5294,11 +5285,16 @@ class Category extends CatObject
 	{
 		return `${domain.name} ${codomain.name}`;
 	}
-	static Get(args)
+	static Codename(user, basename)
 	{
-		//
-		// TODO
-		//
+		return user !== '' ? `${user}:${basename}` : basename;
+	}
+	static Get(diagram, user, basename)
+	{
+		const m = diagram.getMorphism(Category.Codename(user, basename);
+		if (m)
+			return m.codomain;
+		return new Category(diagram, {user, basename});
 	}
 }
 
@@ -5315,8 +5311,6 @@ class Morphism extends Element
 		// Other choices are the domain index category and the graph category.
 		// Overrides take care of those.
 		//
-		if (!('category' in nuArgs))
-			nuArgs.category = diagram.codomain;
 		super(diagram, args);
 		const domain = this.diagram.getObject(args.domain);
 		if (!domain)
@@ -5329,13 +5323,12 @@ class Morphism extends Element
 			domain:		{value: domain, enumerable: true},
 			codomain,	{value: codomain, enumerable: true},
 		});
-		//
-		// this can fail so do the increments afterwards
-		//
-		if (this.category)
-			this.category.addMorphism(this);
 		this.codomain.incrRefcnt();
 		this.domain.incrRefcnt();
+		const category = 'index' in nuArgs ? this.domain : this.codomain;
+		if ('index' in args)
+			this.index = true;
+		category && category.addMorphism(this);
 	}
 	decrRefcnt()
 	{
@@ -5343,7 +5336,8 @@ class Morphism extends Element
 		{
 			this.domain.decrRefcnt();
 			this.codomain.decrRefcnt();
-			this.category.morphisms.delete(this.name);
+			const category = 'index' in this ? this.diagram.domain : this.diagram.codomain;
+			category.morphisms.delete(this.name);
 		}
 		super.decrRefcnt();
 	}
@@ -5456,7 +5450,7 @@ class DiagramMorphism extends Morphism
 	constructor(diagram, args)
 	{
 		const nuArgs = Cat.clone(args);
-		nuArgs.category = diagram.domain;
+		nuArgs.index = true;
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrmM');
 		super(diagram, nuArgs);
 		//
@@ -5773,7 +5767,7 @@ class MultiMorphism extends Morphism
 	}
 	signature(sig = null)
 	{
-		return Cat.sha256(`${sig}${this.category.name} ${this.prototype.name} ${morphisms.map(m => m.signature()).join()}`);
+		return Cat.sha256(`${sig}${this.diagram.codomain.name} ${this.prototype.name} ${morphisms.map(m => m.signature()).join()}`);
 	}
 	decrRefcnt()
 	{
@@ -6144,7 +6138,7 @@ class FactorMorphism extends Morphism
 	}
 	signature()
 	{
-		return Cat.sha256(`${this.category.name} ${this.prototype.name} ${factors.map(f => f.join('-')).join(':')}`);
+		return Cat.sha256(`${this.diagram.codomain.name} ${this.prototype.name} ${factors.map(f => f.join('-')).join(':')}`);
 	}
 	json()
 	{
@@ -6344,7 +6338,7 @@ class DataMorphism extends Morphism
 	}
 	signature(sig)
 	{
-		return Cat.sha256(`${sig}${this.category.name} ${this.prototype.name} ${data.join(':')}`);
+		return Cat.sha256(`${sig}${this.diagram.codomain.name} ${this.prototype.name} ${data.join(':')}`);
 	}
 	json()
 	{
@@ -6414,7 +6408,7 @@ class Recursive extends DataMorphism
 	}
 	setRecursor(r)
 	{
-		const rcrs = typeof r === 'string' ? this.category.getMorphism(r) : r;
+		const rcrs = typeof r === 'string' ? this.diagram.codomain.getMorphism(r) : r;
 		if (Morphism.prototype.isPrototypeOf(this.recursor))
 			this.recursor.decrRefcnt();
 		if (rcrs !== null)
@@ -6476,7 +6470,7 @@ class LambdaMorphism extends Morphism
 	}
 	signature()
 	{
-		return Cat.sha256(`${this.category.name} ${this.preCurry.sig} ${this.domFactors.map(f => f.join('-')).join(':')} ${this.homFactors.map(f => f.join('-')).join(':')}`);
+		return Cat.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${this.domFactors.map(f => f.join('-')).join(':')} ${this.homFactors.map(f => f.join('-')).join(':')}`);
 	}
 	json()
 	{
@@ -6558,7 +6552,7 @@ class StringMorphism extends Morphism
 	constructor(diagram, args)
 	{
 		const nuArgs = Cat.clone(args);
-		nuArgs.category = diagram.graphCat;
+//		nuArgs.category = diagram.graphCat;
 		const source = diagram.getMorphism(args.source);
 		nuArgs.domain = source.domain;
 		nuArgs.codomain = source.codomain;
@@ -6979,24 +6973,17 @@ class NProductFunctor extends Functor
 //
 class Diagram extends Functor
 {
-	constructor(args)
+	constructor(dgrm, args)
 	{
 		const nuArgs = Cat.clone(args);
-		let domain = null;
 		//
-		// the diagram's name is the target category's name, the user name, and the name provided by the user
+		// the parent diagram of this diagram
 		//
-//		const basename = Element.Codename(args)'
-//		trackingName = `${args.codomain}:${args.user}:${args.basename}`;
-//		if ($Cat.getMorphism(trackingName))
-//			throw `Diagram domain category ${name} already exists.`;
-//		const domain = new IndexCategory('domainData' in args ? args.domainData : {name});
+		nuArgs.diagram =  typeof dgrm === 'string' ? $Cat.getMorphism(dgrm) : (dgrm ? dgrm : $CatDgrm);
 		nuArgs.name = Diagram.Codename(args);
-		nuArgs.domain = new IndexCategory('domainData' in args ? args.domainData : {name:`${nuArgs.name}:Index`});
-		//
-		// new diagrams always target new sub-categories
-		//
-		nuArgs.codomain = new Category({basename:args.codomain, subobject:args.codomain});
+		nuArgs.domain = new IndexCategory(nuArgs.diagram, 'domainData' in args ? args.domainData : {name:`${nuArgs.name}:Index`});
+		codomainName = typeof nuArgs.codomain === 'string' ? nuArgs.codomain : nuArgs.codomain.name;
+		nuArgs.codomain = new Category(nuArgs.diagram, {name:codomainName});
 		super($Cat, nuArgs);	// TODO $Cat should be a diagram
 		//
 		// diagrams can have references to other diagrams
@@ -7030,7 +7017,7 @@ class Diagram extends Functor
 		//
 		// the graph category for the string morphisms
 		//
-		this.graphCat = new Category({basename:'Graph', objects:this.codomain.objects});
+		this.graphCat = new Category(nuArgs.diagram, {basename:'Graph', user:this.user, objects:this.codomain.objects});
 		this.colorIndex2colorIndex = {};
 		this.colorIndex2color = {};
 		this.link2colorIndex = {};
@@ -7557,7 +7544,7 @@ class Diagram extends Functor
 							H.p(H.span(Cat.cap(from.to.description), '', 'descriptionElt')) +
 							H.p(H.span(Cat.limit(from.to.basename), '', 'basenameElt', from.to.name)) +
 							H.p(`Prototype ${from.to.prototype.name}`) +
-							H.p(`Category ${from.to.category.properName}`) +
+							H.p(`Category ${from.to.codomain.properName}`) +
 							H.div('', 'error', 'namedElementError');
 		else
 			html = H.p(H.span(from.properName, 'tty', 'properNameElt') +
@@ -8622,7 +8609,7 @@ class Diagram extends Functor
 		{
 			jsons.reverse().map(j =>
 			{
-				const dgrm = new Diagram(j);
+				const dgrm = new Diagram($CatDgrm, j);
 				dgrm.saveLocal();
 			});
 			if (fn)
@@ -8634,7 +8621,7 @@ class Diagram extends Functor
 		const data = localStorage.getItem(Diagram.StorageName(dgrmName));
 		let dgrm = null;
 		if (data !== null)
-			dgrm = new Diagram(JSON.parse(data));
+			dgrm = new Diagram($CatDgrm, JSON.parse(data));
 		if (Cat.debug)
 			console.log('readLocal',dgrmName,dgrm);
 		return dgrm;
