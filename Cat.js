@@ -382,7 +382,7 @@ class U
 Object.defineProperties(U,
 {
 	basenameEx:		{value:RegExp('^[a-zA-Z_]+[@a-zA-Z0-9_-]*[a-zA-Z]$'),	writable:false},
-	opEx:			{value:RegExp('^..{'),	writable:false},
+//	opEx:			{value:RegExp('^..{'),	writable:false},
 	secret:			{value:'0afd575e4ad6d1b5076a20bf53fcc9d2b110d3f0aa7f64a66f4eee36ec8d201f',	writable:false},
 	userNameEx:		{value:RegExp('^[a-zA-Z_-]+[a-zA-Z0-9_]*$'),	writable:false},
 	uploadLimit:	{value:1000000,	writable:false},
@@ -561,19 +561,23 @@ class R
 				D.initialize();
 			}
 			//
-			// faux top level diagram for bootstrapping
+			// faux top CAT
 			//
-			const tld =
+			const CAT =
 			{
-				// faux category
-				codomain:
-				{
-					name:		'Cat3',
-					objects:	new Map(),
-					morphisms:	new Map(),
-					user:		'',
-				},
-				name:		'runtime',
+				name:		'CAT',
+				objects:	new Map(),
+				morphisms:	new Map(),
+				user:		'',
+				properName:	'CAT',
+				description:	'top category',
+			};
+			const TLD =
+			{
+				codomain:	CAT,
+				name:		'TLD',
+				properName:		'TLD',
+				description:		'top level diagram',
 			};
 			R.Transforms = new Diagram(tld,
 			{
@@ -6674,7 +6678,7 @@ class Diagram extends Functor
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(diagram, args);
 		nuArgs.domain = new IndexCategory(diagram, 'domainData' in args ? args.domainData : {name:`${diagram.user}:${nuArgs.name}:Index`});
 		codomainName = typeof nuArgs.codomain === 'string' ? nuArgs.codomain : nuArgs.codomain.name;
-		nuArgs.codomain = new Category(diagram, {name:codomainName});
+		nuArgs.codomain = diagram.getObject(nuArgs.codomain);
 		super(diagram, nuArgs);
 		this.references = 'references' in nuArgs ? (args.references.length > 0 ? args.references.map(ref => R.Diagrams.getMorphism(ref))) : [];	// TODO fix this
 		this.makeHomSets();
@@ -6748,14 +6752,15 @@ class Diagram extends Functor
 		//
 		// if it is an operator name, then it must be for this diagram's category
 		//
-		if (U.opEx(name))
-			return this.codomain.getObject(name);
+		let object = this.codomain.getObject(name);
+		if (object)
+			return object;
 		//
 		// search the reference diagrams
 		//
 		for (let i=0; i<this.references.length; ++i)
 		{
-			const object = this.references[i].getObject(name);
+			object = this.references[i].getObject(name);
 			if (object)
 				return object;
 		}
@@ -6774,16 +6779,15 @@ class Diagram extends Functor
 		//
 		// if it is an operator name, then it must be for this diagram's category
 		//
-		if (U.opEx(name))
-			return this.codomain.getMorphism(name);
+		let morphism = this.codomain.getMorphism(name);
 		//
 		// search the reference diagrams
 		//
 		for (let i=0; i<this.references.length; ++i)
 		{
-			const object = this.references[i].getMorphism(name);
-			if (object)
-				return object;
+			morphism = this.references[i].getMorphism(name);
+			if (morphism)
+				return morphism;
 		}
 		//
 		// last chance try the diagram's domain graph category
@@ -6794,7 +6798,13 @@ class Diagram extends Functor
 	{
 		try
 		{
-			if (fn in this)
+			//
+			// see if the category has a special handler
+			// and if not take the diagram's handler for stock actions
+			//
+			if (fn in this.codomain)
+				this.codomain[fn](e, elt);
+			else if (fn in this)
 				this[fn](e, elt);
 		}
 		catch(x)
@@ -8201,21 +8211,21 @@ class Diagram extends Functor
 					html += H.td(D.getButton('compose', `R.diagram.gui(evt, this, 'compose')`, 'Compose'), 'buttonBar');
 				if (form.sink)
 				{
-	//				if (this.codomain.isCartesian)		// TODO moved
+					if ('pullback' in R.category)
 						html += H.td(D.getButton('pullback', `R.diagram.gui(evt, this, 'pullback')`, 'Pullback'), 'buttonBar');
-	//				if (this.codomain.hasCoproducts)
+					if ('coproductAssembly' in R.category)
 						html += H.td(D.getButton('coproductAssembly', `R.diagram.gui(evt, this, 'coproductAssembly')`, 'Coproduct assembly'), 'buttonBar');
 				}
 				if (form.source)
 				{
-	//				if (this.codomain.hasCoproducts)
+					if ('pushout' in R.category)
 						html += H.td(D.getButton('pushout', `R.diagram.gui(evt, this, 'pushout')`, 'Pushout'), 'buttonBar');
-	//				if (this.codomain.isCartesian)		// TODO moved
+					if ('productAssembly' in R.category)
 						html += H.td(D.getButton('productAssembly', `R.diagram.gui(evt, this, 'productAssembly')`, 'Product assembly'), 'buttonBar');
 				}
-				if (form.distinct && this.codomain.isCartesian)		// TODO moved
+				if (form.distinct && 'product' in R.category)
 					html += H.td(D.getButton('product', `R.diagram.gui(evt, this, 'product')`, 'Product'), 'buttonBar');
-				if (form.distinct && this.codomain.hasCoproducts)
+				if (form.distinct && 'coproduct' in R.category)
 					html += H.td(D.getButton('coproduct', `R.diagram.gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
 				if (html.length !== htmlLength)
 					xyOffset = false;
@@ -8224,9 +8234,9 @@ class Diagram extends Functor
 			}
 			else if (DiagramObject.prototype.isPrototypeOf(elt))
 			{
-	//			if (this.codomain.isCartesian)		// TODO moved
+				if ('product' in R.category)
 					html += H.td(D.getButton('product', `R.diagram.gui(evt, this, 'product')`, 'Product'), 'buttonBar');
-	//			if (this.codomain.hasCoproducts)
+				if ('coproduct' in R.category)
 					html += H.td(D.getButton('coproduct', `R.diagram.gui(evt, this, 'coproduct')`, 'Coproduct'), 'buttonBar');
 			}
 			this.toolbar.innerHTML = H.table(H.tr(html), 'buttonBarLeft');
