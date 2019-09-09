@@ -407,6 +407,7 @@ Object.defineProperties(U,
 	},
 });
 
+const compositeAction = null;
 //
 // runtime utilities and references
 //
@@ -584,6 +585,35 @@ class R
 				properName:		'TLD',
 				description:	'top level diagram',
 			};
+			compositeAction = new Action(null,
+			{
+				name:			'composite',
+				type:			'Composite',
+				icon:
+`<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
+				//
+				// assumes the diagram's selected set already has the proper form
+				//
+				action(e, diagram)
+				{
+					const morphisms = diagram.getSelectedMorphisms();
+					const to = Composite.Get(diagram, morphisms.map(m => m.to));
+					const from = new DiagramMorphism(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms)});
+					from.morphisms = morphisms;
+					from.addSVG();
+					this.update(e, from, true);
+				},
+				ProperName(ary)
+				{
+					return Composite.ProperName(ary);
+				},
+				hasForm(ary)
+				{
+					return Diagram.IsComposite(ary);
+				},
+			});
 			//
 			// natural transformations
 			//
@@ -630,35 +660,6 @@ class R
 				codomain:		'Actions',
 				properName:		'Actions',
 				description:	'diagram of currently loaded actions',
-			});
-			const compositeAction = new Action(R.$Actions,
-			{
-				name:			'composite',
-				type:			'Composite',
-				icon:
-			`<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-			<line class="arrow9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
-			<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
-				action(e, diagram)
-				{
-					const morphisms = diagram.getSelectedMorphisms();
-					const to = Composite.Get(diagram, morphisms.map(m => m.to));
-					const from = new DiagramMorphism(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms)});
-					from.morphisms = morphisms;
-					from.addSVG();
-					this.update(e, from, true);
-				},
-				ProperName(ary)
-				{
-					return Composite.ProperName(ary);
-				},
-				hasForm(ary)
-				{
-					return Diagram.IsComposite(ary);
-				},
 			});
 			const productAction = new Action(R.$Actions,
 			{
@@ -2070,7 +2071,7 @@ ${D.Button(onclick)}
 			H.td(H.div(D.getButton('morphism', "morphismPanel.toggle()", 'Morphisms', sz))) +
 			H.td(H.div(D.getButton('functor', "functorPanel.toggle()", 'Functors', sz))) +
 			H.td(H.div(D.getButton('transform', "transformPanel.toggle()", 'Transforms', sz))) +
-			H.td(H.div(D.getButton('text', "elementPanel.toggle()", 'Text', sz)));
+			H.td(H.div(D.getButton('text', "textPanel.toggle()", 'Text', sz)));
 		const right =
 			H.td(H.div(D.getButton('cateapsis', "R.diagram.home()", 'Cateapsis', sz))) +
 			H.td(H.div(D.getButton('string', "R.diagram.showStrings(evt)", 'Graph', sz))) +
@@ -2253,7 +2254,7 @@ ${D.Button(onclick)}
 						dgrm.placeElement(e, txt);
 					}
 					else if (plain)
-						elementPanel.toggle();
+						textPanel.toggle();
 					break;
 				case 89:	// y
 					if (plainShift)
@@ -2428,7 +2429,7 @@ ${D.Button(onclick)}
 		diagramPanel.update();
 		objectPanel.update();
 		morphismPanel.update();
-		elementPanel.update();
+		textPanel.update();
 		const dgrm = R.diagram;
 		D.diagramSVG.innerHTML = dgrm.makeAllSVG();
 		diagramPanel.setToolbar(dgrm);
@@ -3974,38 +3975,38 @@ class SettingsPanel extends Panel
 const settingsPanel = new SettingsPanel();
 
 //
-// ElementPanel is a Panel on the left
+// TextPanel is a Panel on the left
 //
-class ElementPanel extends Panel
+class TextPanel extends Panel
 {
 	constructor()
 	{
-		super('element');
+		super('text');
 		this.elt.innerHTML =
 			H.table(
-				H.tr(D.closeBtnCell('element', false) + H.td(D.expandPanelBtn('element', false))), 'buttonBarRight') +
+				H.tr(D.closeBtnCell('text', false) + H.td(D.expandPanelBtn('text', false))), 'buttonBarRight') +
 				H.h3('Text') +
-				H.div('', '', 'element-new-pnl') +
+				H.div('', '', 'text-new-pnl') +
 					H.h4('New Text') +
 					H.div(
 						H.span('Create new text.', 'small') +
-						H.table(H.tr(H.td(H.textarea('', 'elementHtml', 'element-properName')), 'sidenavRow')) +
-						H.span(D.getButton('edit', 'elementPanel.create(evt)', 'Create new text for this diagram')) +
-					H.span('', 'error', 'element-error'), '', 'element-new-pnl') +
-	//???			H.button('Text', 'sidenavAccordion', '', 'New Text', `onclick="Panel.AccordionToggle(this, \'elementPnl\')"`) +
-				H.div('', 'accordionPnl', 'element-pnl');
-		Panel.AccordionOpen('element-pnl');
-		this.pnlElt = document.getElementById('element-pnl');
-		this.newPnl = document.getElementById('element-new-pnl');
+						H.table(H.tr(H.td(H.textarea('', 'textHtml', 'text-properName')), 'sidenavRow')) +
+						H.span(D.getButton('edit', 'textPanel.create(evt)', 'Create new text for this diagram')) +
+					H.span('', 'error', 'text-error'), '', 'text-new-pnl') +
+	//???			H.button('Text', 'sidenavAccordion', '', 'New Text', `onclick="Panel.AccordionToggle(this, \'textPnl\')"`) +
+				H.div('', 'accordionPnl', 'text-pnl');
+		Panel.AccordionOpen('text-pnl');
+		this.panel = document.getElementById('text-pnl');
+		this.newPnl = document.getElementById('text-new-pnl');
 		this.newPnl.style.display = 'none';
-		this.errorElt = document.getElementById('element-error');
-		this.properNameElt = document.getElementById('element-properName');
+		this.errorElt = document.getElementById('text-error');
+		this.properNameElt = document.getElementById('text-properName');
 	}
 	create(e)
 	{
 		try
 		{
-			this.elementErrorElt.innerHTML = '';
+			this.errorElt.innerHTML = '';
 			const dgrm = R.diagram;
 			const mdl = {x:D.Width()/2, y:D.Height()/2};
 	//		const xy = D2.subtract(dgrm.userToDiagramCoords(mdl), dgrm.viewport);
@@ -4015,27 +4016,27 @@ class ElementPanel extends Panel
 			dgrm.texts.push(txt);
 			dgrm.placeElement(e, txt);
 			this.update();
-			Panel.AccordionOpen('element-pnl');
+			Panel.AccordionOpen('text-pnl');
 		}
 		catch(e)
 		{
-			document.getElementById('objectError').innerHTML = 'Error: ' + U.getError(e);
+			this.errorElt.innerHTML = 'Error: ' + U.getError(e);
 		}
 	}
 	update()
 	{
-		const dgrm = R.diagram;
-		this.elmentNewPnl.style.display = dgrm && !dgrm.readonly ? 'block' : 'none';
-		this.elementPnl.innerHTML =
+		const diagram = R.diagram;
+		this.newPnl.style.display = diagram && !diagram.readonly ? 'block' : 'none';
+		this.panel.innerHTML = diagram ?
 			H.table(
-				dgrm.texts.map((t, i) =>
-					H.tr(	H.td(H.table(H.tr(H.td(D.getButton('delete', `elementPanel.delete(${i})`, 'Delete text'))), 'buttonBarLeft')) +
+				diagram.texts.map((t, i) =>
+					H.tr(	H.td(H.table(H.tr(H.td(D.getButton('delete', `textPanel.delete(${i})`, 'Delete text'))), 'buttonBarLeft')) +
 							H.td(H.span(U.htmlSafe(t.properName), 'tty', `text_${i}`) +
-								(dgrm.readonly ? '' :
+								(diagram.readonly ? '' :
 									D.getButton('edit', `R.diagram.getElement('${t.name}').editText('text_${i}', 'properName')`, 'Edit', D.default.button.tiny)),
 										'left'), 'sidenavRow')
 				).join('')
-			);
+			) : '';
 	}
 	//
 	// static methods
@@ -4051,7 +4052,7 @@ class ElementPanel extends Panel
 		}
 	}
 }
-const elementPanel = new ElementPanel();
+const textPanel = new TextPanel();
 
 //
 // Element is the root class for Catecon objects and morphisms
@@ -4081,7 +4082,7 @@ class Element
 	//
 	// override as needed
 	//
-	computeSignature = function(sig = '')
+	signature(sig = '')
 	{
 		return U.sha256(`${sig}-${this.prototype.name}-${this.name}`);
 	}
@@ -5185,10 +5186,7 @@ class DiagramObject extends CatObject
 	//
 	updatePosition(xy)
 	{
-		//
-		// round to pixel location
-		//
-		this.setXY(xy.round());
+		this.setXY(xy.round());		// round to pixel location
 		const svg = this.svg();
 		if (svg.hasAttribute('transform'))
 			svg.setAttribute('transform', `translate(${D.grid(this.x)} ${D.grid(this.y)})`);
@@ -5213,10 +5211,10 @@ class DiagramObject extends CatObject
 
 class Action extends CatObject
 {
-	constructor(args)
+	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		super(R.$Actions, nuArgs);
+		super(diagram, nuArgs);
 		Object.defineProperties(this,
 		{
 			action:			{value:	nuArgs.action,	writable:	false},		// gui action
@@ -7317,7 +7315,7 @@ class Diagram extends Functor
 		else if (DiagramMorphism.prototype.isPrototypeOf(sel))
 			morphismPanel.update();
 		else if (DiagramText.prototype.isPrototypeOf(sel))
-			elementPanel.update();
+			textPanel.update();
 	}
 	/*
 	clear(e)
@@ -7391,7 +7389,7 @@ class Diagram extends Functor
 		if (updateMorphisms)
 			morphismPanel.update();
 		if (updateTexts)
-			elementPanel.update();
+			textPanel.update();
 	}
 	pickElement(e, name, cls)
 	{
@@ -8337,7 +8335,7 @@ class Diagram extends Functor
 			const svg = from.svg();
 			if (attr === 'properName')
 				svg.outerHTML = from.makeSVG();
-			elementPanel.update();
+			textPanel.update();
 		}
 	}
 	editElementText(id, attr)
