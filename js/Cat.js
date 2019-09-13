@@ -291,7 +291,8 @@ class U
 //		if (null === o || 'object' !== typeof o || o instanceof Element || o instanceof Blob)
 		if (null === o || 'object' !== typeof o || o instanceof Blob)
 			return o;
-		let c = o.constructor();
+//		let c = o.constructor();
+		let c = {};
 		for(const a in o)
 			if (o.hasOwnProperty(a))
 				c[a] = U.clone(o[a]);
@@ -568,11 +569,12 @@ class R
 			//
 			const CAT =
 			{
-				name:		'CAT',
-				objects:	new Map(),
-				morphisms:	new Map(),
-				user:		'',
-				properName:	'CAT',
+				basename:		'CAT',
+				name:			'CAT',
+				objects:		new Map(),
+				morphisms:		new Map(),
+				user:			'',
+				properName:		'CAT',
 				description:	'top category',
 			};
 			//
@@ -581,13 +583,45 @@ class R
 			const TLD =
 			{
 				codomain:		CAT,
-				name:			'TLD',
+				basename:		'TLD',
 				properName:		'TLD',
 				description:	'top level diagram',
+				getObject()
+				{
+					return R.Cat2;
+				},
+				user:			'',
 			};
-			compositeAction = new Action(null,
+			const compositeAction = new Object();
+			compositeAction.basename =			'composite';
+			compositeAction.type =				'Composite';
+			compositeAction.icon =
+`<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`;
+				//
+				// assumes the diagram's selected set already has the proper form
+				//
+			compositeAction.action = function(e, diagram)
 			{
-				name:			'composite',
+				const morphisms = diagram.getSelectedMorphisms();
+				const to = Composite.Get(diagram, morphisms.map(m => m.to));
+				const from = new DiagramMorphism(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms)});
+				from.morphisms = morphisms;
+				from.addSVG();
+				this.update(e, from, true);
+			}
+			compositeAction.ProperName = function(ary)
+			{
+				return Composite.ProperName(ary);
+			}
+			compositeAction.hasForm = function(ary)
+			{
+				return Diagram.IsComposite(ary);
+			}
+			/*
+			{
+				basename:			'composite',
 				type:			'Composite',
 				icon:
 `<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
@@ -614,56 +648,57 @@ class R
 					return Diagram.IsComposite(ary);
 				},
 			});
+			*/
 			//
 			// natural transformations
 			//
-			new Category(TLD,
+			R.Cat2 = new Category(TLD,
 			{
-				name:			'Cat2',
+				basename:		'Cat2',
 				properName:		'ℂ𝕒𝕥𝟚',
 			});
-			R.$Cat2 = new Diagram(tld,
+			R.$Cat2 = new Diagram(TLD,
 			{
-				name:			'$Cat2',
+				basename:		'$Cat2',
 				codomain:		'Cat2',
 //				properName:		'&#x2102;&#x1D552;&#x1D565;',
 				properName:		'ℂ𝕒𝕥𝟚',
-				description:	'natural transfroms of functors on the category of small categories',
+				description:	'natural transfroms of functors on the category of smaller categories',
 			});
 			//
-			// category of small cats
+			// category of smaller cats
 			//
 			R.Cat = new Category(R.$Cat2,
 			{
-				name:			'Cat',
+				basename:		'Cat',
 				properName:		'ℂ𝕒𝕥',
 			});
 			R.$Cat = new Diagram(R.$Cat2,
 			{
-				name:			'$Cat',
+				basename:		'$Cat',
 				codomain:		'Cat',
 				properName:		'&#x2102;&#x1D552;&#x1D565;',
-				description:	'diagram of currently loaded small categories',
+				description:	'diagram of currently loaded smaller categories',
 			});
 			//
 			// discrete category of actions
 			//
 			R.Actions = new Category(R.$Cat2,
 			{
-				name:			'Actions',
+				basename:		'Actions',
 				properName:		'Actions',
 				description:	'discrete category of currently loaded actions',
 			});
 			R.$Actions = new Diagram(R.Cat2,
 			{
-				name:			'$Actions',
+				basename:		'$Actions',
 				codomain:		'Actions',
 				properName:		'Actions',
 				description:	'diagram of currently loaded actions',
 			});
 			const productAction = new Action(R.$Actions,
 			{
-				name:			'product',
+				basename:		'product',
 				type:			'Product',
 				icon:
 `<circle class="svgstr4" cx="160" cy="160" r="80"/>
@@ -716,7 +751,7 @@ class R
 			});
 			const coproductAction = new Action(R.$Actions,
 			{
-				name:			'coproduct',
+				basename:			'coproduct',
 				type:			'Coproduct',
 				icon:
 `<circle class="svgstr4" cx="160" cy="160" r="80"/>
@@ -769,7 +804,7 @@ class R
 			});
 			const pullbackAction = new Action(R.$Actions,
 			{
-				name:			'pullback',
+				basename:			'pullback',
 				type:			'Pullback',
 				icon:
 `<path class="svgstr4" d="M60,120 120,120 120,60"/>
@@ -804,7 +839,7 @@ class R
 			});
 			const pushoutAction = new Action(R.$Actions,
 			{
-				name:			'pushout',
+				basename:			'pushout',
 				type:			'Pushout',
 				icon:
 `<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
@@ -839,7 +874,7 @@ class R
 			});
 			const productAssemblyAction = new Action(R.$Actions,
 			{
-				name:			'productAssembly',
+				basename:			'productAssembly',
 				type:			'ProductAssembly',
 				icon:
 `<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
@@ -866,7 +901,7 @@ class R
 			});
 			const coproductAssemblyAction = new Action(R.$Actions,
 			{
-				name:			'coproductAssembly',
+				basename:			'coproductAssembly',
 				type:			'CoproductAssembly',
 				icon:
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
@@ -893,7 +928,7 @@ class R
 			});
 			const homObjectAction = new Action(R.$Actions,
 			{
-				name:			'hom',
+				basename:			'hom',
 				type:			'HomObject',
 				icon:	// TODO
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
@@ -4186,7 +4221,7 @@ class Element
 	static Codename(diagram, basename = '')
 	{
 	//	return `:${diagram.codomain.name}:Ob{${diagram.user}:${diagram.basename + (basename !== '' ? ':' + basename : ''}bO`;
-		return `:${diagram.codomain.name}:${diagram.user}:${diagram.basename + (basename !== '' ? ':' + basename : '')}`;
+		return diagram ? `:${diagram.codomain.name}:${diagram.user}:${diagram.basename + (basename !== '' ? ':' + basename : '')}` : basename;
 	}
 }
 
@@ -4512,16 +4547,15 @@ class Graph
 //
 // CatObject is an Element
 //
-// args:
-//		category is required
-//
 class CatObject extends Element
 {
 	constructor(diagram, args)
 	{
 		super(diagram, args);
 		Object.defineProperty(this, 'category', {value: args.category,	writable: false});
-		this.category && this.category.addObject(this);	// no need to remember this in a local json()
+		if (!this.category)
+			debugger;
+		this.category && 'addObject' in this.category && this.category.addObject(this);	// no need to remember this in a local json()
 	}
 	json()
 	{
@@ -5236,7 +5270,7 @@ class Category extends CatObject
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Category.Codename(diagram, nuArgs);
 		nuArgs.category = diagram.codomain;
-		super(diagram, args);
+		super(diagram, nuArgs);
 		Object.defineProperties(this,
 		{
 			// for graph and nCats categories that share the same objects as the source category
@@ -5253,6 +5287,21 @@ class Category extends CatObject
 			R.$Cat.addObject(R.$Cat);
 		}
 		this.process(this.diagram, nuArgs);
+	}
+	//
+	// override these as needed, e.g., dual
+	//
+	id(o)
+	{
+		return Identity.Get(this.diagram, o);
+	}
+	domain(m)
+	{
+		return m.domain;
+	}
+	codomain(m)
+	{
+		return m.codomain;
 	}
 	/*
 	signature()
@@ -5305,7 +5354,7 @@ class Category extends CatObject
 				else
 					throw 'morphism already exists';
 			}, this);
-		this.actions = 'actions' in args ? args.actions.map(u => R.$Actions.getObject(u)) : [];
+		this.actions.push(...('actions' in args ? args.actions.map(u => R.$Actions.getObject(u)) : []));
 		if (errMsg != '')
 			D.recordError(errMsg);
 		//
@@ -5563,8 +5612,8 @@ class Category extends CatObject
 	static Codename(diagram, args)
 	{
 		if ('user' in args && 'basename' in args)
-			return `${user}:${basename}`;
-		return args.name;
+			return `${args.user}:${args.basename}`;
+		return 'name' in args ? args.name : args.basename;
 	}
 	static Get(diagram, user, basename)
 	{
@@ -6004,9 +6053,9 @@ class DiagramMorphism extends Morphism
 //
 class IndexCategory extends Category
 {
-	constructor(args)
+	constructor(diagram, args)
 	{
-		super(args);
+		super(diagram, args);
 	}
 }
 
@@ -7154,12 +7203,11 @@ class Diagram extends Functor
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(diagram, args);
 		nuArgs.domain = new IndexCategory(diagram, 'domainData' in args ? args.domainData : {name:`${diagram.user}:${nuArgs.name}:Index`});
-		codomainName = typeof nuArgs.codomain === 'string' ? nuArgs.codomain : nuArgs.codomain.name;
-		nuArgs.codomain = diagram.getObject(nuArgs.codomain);
+		nuArgs.codomain = diagram ? diagram.getObject(nuArgs.codomain) : R.$Cat2;
 		super(diagram, nuArgs);
 		this.references = 'references' in nuArgs ? args.references.map(ref => R.Diagrams.getMorphism(ref)) : [];
 		this.makeHomSets();
-		this.updateElements();
+//		this.updateElements();
 		//
 		// the currently selected objects and morphisms in the GUI
 		//
@@ -7185,7 +7233,7 @@ class Diagram extends Functor
 		//
 		// the graph category for the string morphisms
 		//
-		this.graphCat = new Category(nuArgs.diagram, {basename:'Graph', user:this.user, objects:this.codomain.objects});
+		this.graphCat = new Category(diagram, {basename:'Graph', user:this.user, objects:this.codomain.objects});
 		this.colorIndex2colorIndex = {};
 		this.colorIndex2color = {};
 		this.link2colorIndex = {};
@@ -8761,7 +8809,7 @@ class Diagram extends Functor
 	//
 	static Codename(diagram, args)
 	{
-		return Element.Codename(diagram, this);
+		return Element.Codename(diagram, args.basename);
 	}
 	static FetchDiagram(dgrmName, fn)
 	{
