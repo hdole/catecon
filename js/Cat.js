@@ -1,4 +1,4 @@
-// (C) 2018-2019 Har
+// (C) 2018-2019 Harry Dole
 // Catecon:  The Categorical Console
 //
 'use strict';
@@ -289,8 +289,10 @@ class U
 	}
 	static clone(o)
 	{
-		if (null === o || 'object' !== typeof o || o instanceof Element || o instanceof Blob)
+		if (null === o || 'Object' !== typeof o || o instanceof Element || o instanceof Blob)
 			return o;
+		if (typeof o === 'Array')
+			return o.map(U.clone(o));
 //		let c = o.constructor();
 		let c = {};
 		for(const a in o)
@@ -504,7 +506,7 @@ class R
 	/*
 	clearLocalStorage()
 	{
-		//
+		.//
 		// Danger!
 		//
 		isGUI && localStorage.clear();
@@ -548,7 +550,9 @@ class R
 	}
 	static setLocalStorageDiagramName()
 	{
-		localStorage.setItem(`Diagram default ${R.user.name} ${R.categoryName}`, R.diagram);
+		if (!R.diagram)
+			throw 'no diagram';
+		localStorage.setItem(`Diagram default ${R.user.name} ${R.categoryName}`, R.diagram.name);
 	}
 	static Initialize()
 	{
@@ -610,30 +614,28 @@ class R
 			{
 				basename:		'CAT',
 				name:			'CAT',
-				objects:		new Map(),
-				morphisms:		new Map(),
 				user:			'system',
 				properName:		'CAT',
 				description:	'top category',
 			};
-			const CAT = new Category(null, CATargs);
+			R.CAT = new Category(null, CATargs);
 			//
 			// top level diagram
 			//
-			const TLDargs =
+			const $CATargs =
 			{
 //				category:		null,		// bootstrap
-				codomain:		CAT,
-				basename:		'TLD',
-				properName:		'TLD',
+				codomain:		R.CAT,
+				basename:		'$CAT',
+				properName:		'$CAT',
 				description:	'top level diagram',
-				getObject()
-				{
-					return R.Cat2;
-				},
+//				getObject()
+//				{
+//					return R.Cat;
+//				},
 				user:			'system',
 			};
-			const TLD = new Diagram(null, TLDargs);
+			R.$CAT = new Diagram(null, $CATargs);
 
 			/*
 			const compositeAction = new Object();
@@ -691,16 +693,15 @@ class R
 					return Diagram.IsComposite(ary);
 				},
 			});
-			*/
 			//
 			// natural transformations
 			//
-			R.Cat2 = new Category(TLD,
+			R.Cat2 = new Category($CAT,
 			{
 				basename:		'Cat2',
 				properName:		'ℂ𝕒𝕥𝟚',
 			});
-			R.$Cat2 = new Diagram(TLD,
+			R.$Cat2 = new Diagram($CAT,
 			{
 				basename:		'$Cat2',
 				codomain:		'Cat2',
@@ -709,15 +710,16 @@ class R
 				description:	'natural transfroms of functors on the category of smaller categories',
 				user:			'system',
 			});
+			*/
 			//
 			// category of smaller cats
 			//
-			R.Cat = new Category(R.$Cat2,
+			R.Cat = new Category(R.$CAT,
 			{
 				basename:		'Cat',
 				properName:		'ℂ𝕒𝕥',
 			});
-			R.$Cat = new Diagram(R.$Cat2,
+			R.$Cat = new Diagram(R.$CAT,
 			{
 				basename:		'$Cat',
 				codomain:		'Cat',
@@ -728,13 +730,13 @@ class R
 			//
 			// discrete category of actions
 			//
-			R.Actions = new Category(R.$Cat2,
+			R.Actions = new Category(R.$CAT,
 			{
 				basename:		'Actions',
 				properName:		'Actions',
 				description:	'discrete category of currently loaded actions',
 			});
-			R.$Actions = new Diagram(R.$Cat2,
+			R.$Actions = new Diagram(R.$CAT,
 			{
 				basename:		'$Actions',
 				codomain:		'Actions',
@@ -772,6 +774,7 @@ class R
 						const diagramObjects = diagram.getSelectedObjects();
 						const objects = diagramObjects.map(o => o.to);
 						const to = ProductObject.Get(diagram, objects);
+						// GUI
 						from = new DiagramObject(diagram, {xy:D.Barycenter(diagram.selected), to});
 						from.addSVG();
 						if (!e.shiftKey)
@@ -815,7 +818,8 @@ class R
 						const diagramMorphisms = diagram.getSelectedMorphisms();
 						const morphisms = diagramMorphisms.map(m => m.to);
 						const to = CoproductMorphism.Get(diagram, morphisms);
-						to.incrRefcnt();
+						// GUI
+//						to.incrRefcnt();
 						from = diagram.trackMorphism(diagram.mousePosition(e), m);
 						if (!e.shiftKey)
 							diagramMorphisms.map(m => diagram.isIsolated(m) ? m.decrRefcnt() : null);
@@ -825,6 +829,7 @@ class R
 						const diagramObjects = diagram.getSelectedObjects();
 						const objects = diagramObjects.map(o => o.to);
 						const to = CoproductObject.Get(diagram, objects);
+						// GUI
 						from = new DiagramObject(diagram, {xy:D.Barycenter(diagram.selected), to});
 						from.addSVG();
 						if (!e.shiftKey)
@@ -850,7 +855,7 @@ class R
 			});
 			const pullbackAction = new Action(R.$Actions,
 			{
-				basename:			'pullback',
+				basename:		'pullback',
 				type:			'Pullback',
 				icon:
 `<path class="svgstr4" d="M60,120 120,120 120,60"/>
@@ -1009,11 +1014,11 @@ class R
 					coproductAssemblyAction,
 					homObjectAction,
 				]);
-			isGUI && D.UpdateNavbar();
+			isGUI && D.navbar.update();
 			R.SelectCategoryDiagram(R.LocalStorageCategoryName(),
 				function()
 				{
-					U.initialized = true;
+					R.initialized = true;
 					D.UpdateDiagramDisplay(R.diagram);
 				});
 			R.GraphCat = new Category(R.$Cat, {basename:'Graph', user:'system', properName:'𝔾𝕣𝕒'});
@@ -1044,8 +1049,8 @@ class R
 //				Cat.Morphism		= Morphism;
 //				Cat.StringMorphism	= StringMorphism;
 //				Cat.H				= H;
-				window.R			= R;
-				window.D			= D;
+//				window.R			= R;
+//				window.D			= D;
 			}
 		}
 		catch(e)
@@ -1104,7 +1109,7 @@ class R
 		{
 			jsons.map(j =>
 			{
-				const dgrm = new Diagram(R.$Cat, j);
+				const dgrm = new Diagram(R.$CAT, j);
 				dgrm.saveLocal();
 			});
 			if (fn)
@@ -1142,26 +1147,26 @@ class R
 			fn([]);
 	}
 	*/
-	static SelectCategoryDiagram(category, fn)
+	static SelectCategoryDiagram(categoryName, fn)
 	{
-		R.SelectCategory(category, function()
+		const codomain = categoryName === 'Cat' ? R.Cat : R.Cat.getObject(categoryName);
+		R.SelectCategory(codomain, function()
 		{
-			let diagramName = R.GetLocalStorageDiagramName(category);
-			const defaultArgs = {codomain:R.Cat, basename:'Home', user:R.user.name, description:'User home diagram', properName:'Home'};
+			let diagramName = R.GetLocalStorageDiagramName(codomain.name);
+			const defaultArgs = {codomain, basename:'Home', user:R.user.name, description:'User home diagram', properName:'Home'};
 			if (diagramName === null)
 				diagramName = Diagram.Codename(defaultArgs);
-			let diagram = R.$Cat.getMorphism(diagramName);
+			let diagram = codomain.name === 'Cat' ? R.$CAT.getMorphism(diagramName) : R.$Cat.getMorphism(diagramName);
 			if (!diagram && Diagram.ReadLocal(diagramName) === null)
 			{
-				const topDiagram = category === 'Cat' ? R.$Cat2 : R.$Cat;
-				defaultArgs.codomain = category === 'Cat' ? R.Cat2 : R.Cat;
-//				diagram = new Diagram(topDiagram, {basename:'Home', codomain:category, properName:'Home', description:'User home diagram', user:R.user.name});
-				diagram = new Diagram(topDiagram, defaultArgs);
-				diagram.saveLocal();
+//				const topDiagram = codomain.name === 'Cat' ? R.$CAT : R.$Cat;
+				R.diagram = new Diagram(R.$CAT, defaultArgs);
+				R.diagram.saveLocal();
 			}
 			R.SelectDiagram(diagramName);
 			fn && fn();
 			D.panels.update();
+			D.navbar.update();
 			R.setLocalStorageDiagramName();
 		});
 	}
@@ -1171,24 +1176,25 @@ class R
 		function setup(name)
 		{
 			R.diagramName = name;
-			R.diagram = null;
 			R.setLocalStorageDiagramName();
 			if (update)
 				D.UpdateDiagramDisplay(name);
 		}
-		if (R.$Cat.getMorphism(name))
+		R.diagram = R.$CAT.getMorphism(name);
+		R.diagram = R.diagram ? R.diagram : R.$CAT.getMorphism(name);
+		if (R.diagram)
 			setup(name);
 		else
 			// TODO turn on/off busy cursor
 			Diagram.FetchDiagram(name, setup);
 	}
-	static SelectCategory(catName, fn)
+	static SelectCategory(category, fn)
 	{
-		R.categoryName = catName;
+		R.category = category;
+		R.categoryName = category.name;
 		R.setLocalStorageDefaultCategory();
-		D.diagram = null;
 //		const nbCat = document.getElementById('category-navbar');
-		const category = catName === 'Cat' ? R.$Cat : R.$Cat.getObject(catName);
+		D.diagram = null;
 //		nbCat.innerHTML = category.properName;
 //		nbCat.title = U.cap(category.description);
 		if (typeof fn === 'function')
@@ -1202,7 +1208,7 @@ Object.defineProperties(R,
 	// Built-in categories and diagrams
 	//
 	Cat:				{value:null,	writable:true},
-	Cat2:				{value:null,	writable:true},		// working nat trans
+	CAT:				{value:null,	writable:true},		// working nat trans
 	Diagrams:			{value:null,	writable:true},		// loaded diagrams
 	Actions:			{value:null,	writable:true},		// loaded actions
 	Graph:				{value:null,	writable:true},		// loaded string graphs
@@ -1376,7 +1382,7 @@ class Amazon extends Cloud
 					R.user.name = data.Username;
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 					R.user.status = 'logged-in';
-					D.UpdateNavbar();
+					D.navbar.update();
 					D.loginPanel.update();
 					this.getUserDiagramsFromServer(function(dgrms)
 					{
@@ -1429,7 +1435,7 @@ class Amazon extends Cloud
 			R.user.name = userName;
 			R.user.email = email;
 			R.user.status = 'registered';
-			D.UpdateNavbar();
+			D.navbar.update();
 			D.loginPanel.update();
 			if (R.debug)
 				console.log('user name is ' + this.user.getUsername());
@@ -1462,7 +1468,7 @@ class Amazon extends Cloud
 			R.user.name = userName;
 			R.user.email = email;
 			R.user.status = 'registered';
-			D.UpdateNavbar();
+			D.navbar.update();
 			D.loginPanel.update();
 			if (R.debug)
 				console.log('user name is ' + this.user.getUsername());
@@ -1479,7 +1485,7 @@ class Amazon extends Cloud
 				return;
 			}
 			R.user.status = 'confirmed';
-			D.UpdateNavbar();
+			D.navbar.update();
 			D.loginPanel.update();
 		});
 	}
@@ -1507,7 +1513,7 @@ class Amazon extends Cloud
 					}
 					R.user.name = data.Username;
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
-					D.UpdateNavbar();
+					D.navbar.update();
 					D.loginPanel.update();
 					D.morphismPanel.update();
 					D.loginPanel.toggle();
@@ -1546,7 +1552,7 @@ class Amazon extends Cloud
 		{
 			D.UpdateDiagramDisplay(R.diagram);
 		});
-		D.UpdateNavbar();
+		D.navbar.update();
 		Panels.update();
 	}
 	async fetchDiagram(name)
@@ -1693,6 +1699,11 @@ class Navbar
 	constructor()
 	{
 		this.element = document.getElementById('navbar');
+		this.category = null;
+		this.diagram = null;
+	}
+	update()
+	{
 		const sz = D.default.button.large;
 		const left = H.td(H.div(D.getButton('category', "D.categoryPanel.toggle()", 'Categories', sz))) +
 			H.td(H.div(D.getButton('diagram', "D.diagramPanel.toggle()", 'Diagrams', sz))) +
@@ -1716,9 +1727,6 @@ class Navbar
 		this.element.innerHTML = html;
 		this.category = document.getElementById('category-navbar');
 		this.diagram = document.getElementById('diagram-navbar');
-	}
-	update()
-	{
 		let c = '#CCC';
 		switch(R.user.status)
 		{
@@ -1735,9 +1743,10 @@ class Navbar
 				c = '#333';
 				break;
 		}
-		element.style.background = c;
-		this.category.innerHTML = R.category.name;
-		this.diagram.innerHTML = R.diagram.name;
+		this.element.style.background = c;
+		this.category.innerHTML = R.category ? R.category.name : '';
+		this.diagram.innerHTML = R.diagram ? `${dgrm.properName} ${H.span('by '+dgrm.user, 'italic')}` : '';
+		this.diagram.title = R.diagram ? U.cap(R.diagram.description) : '';
 	}
 }
 
@@ -1764,7 +1773,7 @@ class D
 	}
 	static Initialize()
 	{
-		D.UpdateNavbar();
+		D.navbar.update();
 		D.topSVG.addEventListener('mousemove', D.mousemove, true);
 		D.topSVG.addEventListener('mousedown', D.mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.mouseup, true);
@@ -2271,6 +2280,7 @@ ${D.Button(onclick)}
 			button = `<g id="${id}">${button}</g>`;
 		return H.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>', '', id, title);
 	}
+	/*
 	static UpdateNavbar()
 	{
 		const sz = D.default.button.large;
@@ -2290,12 +2300,11 @@ ${D.Button(onclick)}
 			H.td(H.div(D.getButton('login', "D.loginPanel.toggle()", 'Login', sz))) +
 			H.td(H.div(D.getButton('settings', "D.settingsPanel.toggle()", 'Settings', sz))) +
 			H.td('&nbsp;&nbsp;&nbsp;');
-		let navbar = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
-									H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
-									H.td(H.span('Catecon', 'title'), 'w20') +
-									H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
-									H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
-		D.navbar.innerHTML = navbar;
+		D.navbar.element.innerHTML =	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
+										H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
+										H.td(H.span('Catecon', 'title'), 'w20') +
+										H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
+										H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
 		let c = '#CCC';
 		switch(R.user.status)
 		{
@@ -2314,6 +2323,7 @@ ${D.Button(onclick)}
 		}
 		D.navbar.style.background = c;
 	}
+	*/
 	static setCursor()
 	{
 		switch(D.tool)
@@ -2529,8 +2539,7 @@ ${D.Button(onclick)}
 			D.recordError(msg);
 		document.getElementById('tty-out').innerHTML += msg + "\n";
 	}
-	static grid(x)
-	{
+	static grid(x) {
 		const d = D.default.layoutGrid;
 		switch (typeof x)
 		{
@@ -2554,14 +2563,13 @@ ${D.Button(onclick)}
 						H.small('The Categorical Console', 'italic underline bold') + H.br() +
 						H.small('Shareable Executable Diagrams') +
 						H.table(H.tr(H.td(H.a('Blog', 'intro', '', '', 'href="https://harrydole.com/wp/tag/catecon/"'))), 'center') +
-						H.h4('Extreme Alpha Edition') +
-						H.small('Breaks and you lose all your stuff', 'italic txtCenter') + H.br() +
+						H.h4('Alpha') +
 						H.h4('Catecon Uses Cookies') +
 						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
 						H.p('Accept cookies by entering the categorical access code below:', 'txtCenter') +
 						H.table((!!window.chrome ?
-									H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6"'}))) +
-									H.tr(H.td(H.button('OK', '', '', '', 'onclick=R.CookieAccept()'))) :
+										(H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6" onkeydown="D.OnEnter(event,R.CookieAccept)"'}))) +
+										H.tr(H.td(H.button('OK', '', '', '', 'onclick=R.CookieAccept()')))) :
 									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
 	//						H.table(btns.map(row => H.tr(row.map(b => H.td(D.getButton(b))).join(''))).join(''), 'buttonBar center') +
 						H.table(H.tr(H.td(btns)), 'buttonBar center') +
@@ -2801,7 +2809,7 @@ Object.defineProperties(D,
 						},
 	'mouseDown':		{value: false,		writable: true},
 	'mouseover':		{value: null,		writable: true},
-	'navbar':			{value: document.getElementById('navbar'),		writable: false},
+	'navbar':			{value: new Navbar(),		writable: false},
 	'objectPanel':		{value: null,		writable: true},
 	'Panel':			{value: null,		writable: true},
 	'panels':			{value: null,		writable: true},
@@ -3202,14 +3210,15 @@ class CategoryPanel extends Panel
 			H.button('New Category', 'sidenavAccordion', '', 'New Category', `onclick="D.Panel.AccordionToggle(this, \'newCategoryPnl\')"`) +
 			H.div(H.table(
 				H.tr(H.td(D.Input('', 'categoryName', 'Name')), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'categoryProperName', 'HTML Entities')), 'sidenavRow') +
+				H.tr(H.td(D.Input('', 'categoryProperName', 'Proper name')), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'categoryDescription', 'Description')), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'hasProducts', '', '', 'in100', 'checkbox') + '<label for="hasProducts">Products</label>', 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'hasCoproducts', '', '', 'in100', 'checkbox') + '<label for="hasCoproducts">Coproducts</label>', 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'isClosed', '', '', 'in100', 'checkbox') + '<label for="isClosed">Closed</label>', 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'hasPullbacks', '', '', 'in100', 'checkbox') + '<label for="hasPullbacks">Pullbacks</label>', 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'hasPushouts', '', '', 'in100', 'checkbox') + '<label for="hasPushouts">Pushouts</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'allObjectsFinite', '', '', 'in100', 'checkbox') + '<label for="allObjectsFinite">Finite objects</label>', 'left'), 'sidenavRow'),
+				H.tr(H.td(D.Input('', 'finiteObjects', '', '', 'in100', 'checkbox') + '<label for="finiteObjects">Finite objects</label>', 'left'), 'sidenavRow'),
+				H.tr(H.td(D.Input('', 'naturalNumbers', '', '', 'in100', 'checkbox') + '<label for="naturalNumbers">Natural numbers</label>', 'left'), 'sidenavRow'),
 					'sidenav') +
 			H.span(D.getButton('edit', 'CategoryPanel.Create()', 'Create new category')) + H.br() +
 			H.span('', 'error', 'categoryError'), 'accordionPnl', 'newCategoryPnl');
@@ -3237,6 +3246,7 @@ class CategoryPanel extends Panel
 				throw 'Category name must be specified.';
 			if (!RegExp(U.nameEx).test(basename))
 				throw 'Invalid category name.';
+			// TODO finite objects attribute
 			const cat = new Category(R.$Cat, {basename, properName:this.properNameElt.value, description:this.descriptionElt.value});
 			if (document.getElementById('hasProducts').checked)
 				cat.actions.push(productAction, productAssemblyAction);
@@ -3248,6 +3258,7 @@ class CategoryPanel extends Panel
 				cat.actions.push(pushoutAction);
 			if (document.getElementById('isClosed').checked)
 				cat.actions.push(homObjectAction);
+			// TODO natural numbers object added to category and action
 		}
 		catch(err)
 		{
@@ -3553,9 +3564,10 @@ class DiagramPanel extends Panel
 			H.div('', '', 'diagramInfoDiv') +
 			H.div('', '', 'diagramPanelToolbar') +
 			H.h3(H.span('Diagram')) +
+			H.h4(H.span('', '', 'diagram-basename') + H.span('', '', 'diagram-basename-edit')) +
 			H.h4(H.span('', '', 'diagram-properName') + H.span('', '', 'diagram-properName-edit')) +
 			H.p(H.span('', 'description', 'diagram-description', 'Description') + H.span('', '', 'diagram-description-edit')) +
-			H.table(H.tr(H.td(H.p(''), 'diagram-user') + H.td(H.p(), 'diagram-timestamp'))) +
+			H.table(H.tr(H.td(H.span('', '', 'diagram-user')) + H.td(H.span('', '', 'diagram-timestamp')))) +
 			H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="D.Panel.AccordionToggle(this, \'referenceDiagrams\')"') +
 			H.div(H.div('', 'accordionPnl', 'referenceDiagrams')) +
 			H.button('New', 'sidenavAccordion', '', 'New Diagram', `onclick="D.Panel.AccordionToggle(this, \'newDiagramPnl\')"`) +
@@ -3574,7 +3586,7 @@ class DiagramPanel extends Panel
 			H.div(H.div('', 'accordionPnl', 'recentDiagrams')) +
 			H.button('Catalog', 'sidenavAccordion', '', 'Catalog of available diagrams', 'onclick="D.Panel.AccordionToggle(this, \'catalogDiagrams\');D.FetchCatalogDiagramTable()"') +
 			H.div(H.div('', 'accordionPnl', 'catalogDiagrams'));
-		this.baseameElt = document.getElementById('diagram-baseame');
+		this.basenamelt = document.getElementById('diagram-basename');
 		this.properNameElt = document.getElementById('diagram-properName');
 		this.properNameEditElt = document.getElementById('diagram-properName-edit');
 		this.descriptionElt = document.getElementById('diagram-description');
@@ -3590,9 +3602,7 @@ class DiagramPanel extends Panel
 		const dgrm = R.diagram;
 		if (dgrm !== null)
 		{
-			const dt = new Date(dgrm.timestamp);
-			this.navbar.innerHTML = `${dgrm.properName} ${H.span('by '+dgrm.user, 'italic')}`;
-			this.navbar.title = U.cap(dgrm.description);
+			D.navbar.update();
 			this.properNameElt.innerHTML = dgrm.properName;
 			this.descriptionElt.innerHTML = dgrm.description;
 			this.userElt.innerHTML = dgrm.user;
@@ -4688,7 +4698,7 @@ class CatObject extends Element
 	json()
 	{
 		const o = super.json();
-		o.category = this.category.name;
+//		o.category = this.category.name;
 		return o;
 	}
 	decrRefcnt()
@@ -5396,6 +5406,7 @@ class Category extends CatObject
 {
 	constructor(diagram, args)
 	{
+		if ('objects' in args && typeof args.objects === 'Array') debugger;
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Category.Codename(diagram, nuArgs);
 		nuArgs.category = diagram && 'codomain' in diagram ? diagram.codomain : null;
@@ -5408,15 +5419,7 @@ class Category extends CatObject
 			morphisms:	{value:	new Map(),	writable:	false},
 			actions:	{value:	[R.compositeAction],	writable:	false},	// all categories have a composite action
 		});
-		//
-		// part of the boot sequence
-		//
-		if (R.$Cat === null)
-		{
-			R.$Cat = this;
-			R.$Cat.addObject(R.$Cat);
-		}
-		this.process(this.diagram, nuArgs);
+		this.process(nuArgs);
 	}
 	//
 	// override these as needed, e.g., dual
@@ -7327,14 +7330,18 @@ class Diagram extends Functor
 {
 	constructor(diagram, args)
 	{
+		if (diagram && !Diagram.prototype.isPrototypeOf(diagram)) debugger;
 		const nuArgs = U.clone(args);
 		if (!('user' in args))
 			throw 'Specify user for a diagram';
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		const indexName = `${nuArgs.name}:Index`;
 		nuArgs.domain = new IndexCategory(diagram, 'domainData' in args ? args.domainData : {name:indexName});
-		nuArgs.codomain = U.getArg(nuArgs, 'codomain', diagram ? diagram.getObject(nuArgs.codomain) : null);R.Cat2;
-		nuArgs.category = U.getArg(args, 'category', diagram && 'codomain' in diagram ? diagram.codomain : null);
+//		nuArgs.codomain = diagram ? diagram.getObject(U.getArg(nuArgs, 'codomain', R.Cat)) : R.Cat;
+		if (!Category.prototype.isPrototypeOf(nuArgs.codomain))
+			nuArgs.codomain = diagram ? diagram.getObject(nuArgs.codomain) : R.Cat;
+		if (typeof nuArgs.codomain === 'undefined') debugger;
+		nuArgs.category = U.getArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
 		super(diagram, nuArgs);
 		this.references = 'references' in nuArgs ? args.references.map(ref => R.Diagrams.getMorphism(ref)) : [];
 		this.makeHomSets();
@@ -7359,7 +7366,7 @@ class Diagram extends Functor
 		// load the codomain data so we get its objects and morphisms
 		//
 		if ('codomainData' in args)
-			this.codomain.Process(this, args.codomainData);
+			this.codomain.process(args.codomainData);
 		this.textId = U.getArg(args, 'textId', 0);
 		//
 		// the graph category for the string morphisms
@@ -7681,6 +7688,14 @@ class Diagram extends Functor
 		let html = H.table(H.tr(btns), 'buttonBarLeft') + H.br();
 		return html;
 	}
+	getActions(dir, selected)
+	{
+		let actions = [];
+		const catName = this.codomain.name;
+		for(const [tName, t] of R.$Cat2.morphisms)
+			t[dir].name === catName && ((object && 'testFunction' in t) ? t.testFunction(this, object) : true) && transforms.push(t);
+		return transforms;
+	}
 	toolbarHandler(dir, id)
 	{
 		if (this.selected.length !== 1)
@@ -7694,22 +7709,42 @@ class Diagram extends Functor
 				if (from.to.name === m[dir].name || from.to.name === m[dir].name)
 					morphs.push(m);
 			}
+			/*
 			this.references.map(r =>
 			{
-				for(const [key, m] of r.morphisms)
+				for(const [key, m] of r.codomain.morphisms)
 				{
 					if (from.to.name === m[dir].name)
 						morphs.push(m);
 				}
 			});
+			*/
 			let html = H.small('Basic:');
 			html += H.table(D.MorphismTableRows(morphs, `onclick="R.diagram.objectPlaceMorphism(event, '${dir}', '${from.name}', '%1')"`), 'toolbarTbl');
-			morphs = this.getTransforms(dir, from.to);
-			html += H.small('Transforms:');
-			html += H.table(D.MorphismTableRows(morphs, `onclick="R.diagram.placeTransformMorphism(event, '%1', '${dir}', '${from.name}')"`), 'toolbarTbl');
 			document.getElementById(id).innerHTML = html;
 		}
 	}
+	/*
+	showActions()
+	{
+		const actions = this.codomain.actions.map(a => a.hasForm(this.selected) ?
+			H.tr(H.td(a.properName) + H.td(a.ProperName(this.selected)) + H.td('&rarr;') + H.td(m.codomain.properName)) : '').join('');
+
+			H.td(D.formButton(a.icon, `R.diagram.gui(evt, this, ${a.action})`, a.properName), 'buttonBar')	: '').join('');
+		let html = '';
+
+		for(let i=0; i<morphisms.length; ++i)
+		{
+			let m = morphisms[i];
+			const act = action !== null ? action.replace(/%1/g, m.name) : '';
+			html += H.tr(H.td(m.properName) + H.td(m.domain.properName) + H.td('&rarr;') + H.td(m.codomain.properName),
+					`${drag ? 'grabbable ' : ''}sidenavRow`, '', U.cap(m.description), drag ? `draggable="true" ondragstart="morphismPanel.drag(event, '${m.name}')" ${act}` : act);
+		}
+
+			html += H.table(D.MorphismTableRows(, `onclick="R.diagram.placeTransformMorphism(event, '%1', '${dir}', '${from.name}')"`), 'toolbarTbl');
+		document.getElementById(id).innerHTML = H.small('Actions') + H.table(html);
+	}
+	*/
 	distribute(e)
 	{
 		const from = this.getSelected();
@@ -7900,15 +7935,6 @@ class Diagram extends Functor
 			html = H.p(H.span(from.properName, 'tty', 'properNameElt') +
 						(readonly ? '' : D.getButton('edit', `R.diagram.editElementText('properNameElt', 'properName')`, 'Edit proper name', D.default.button.tiny)));
 		D.toolbarTip.innerHTML = html;
-	}
-	// TODO
-	getTransforms(dir, object = null)
-	{
-		let transforms = [];
-		const catName = this.codomain.name;
-		for(const [tName, t] of R.$Cat2.morphisms)
-			t[dir].name === catName && ((object && 'testFunction' in t) ? t.testFunction(this, object) : true) && transforms.push(t);
-		return transforms;
 	}
 	updateDragObjects(p)
 	{
@@ -8964,7 +8990,7 @@ class Diagram extends Functor
 		const data = localStorage.getItem(Diagram.StorageName(dgrmName));
 		let dgrm = null;
 		if (data !== null)
-			dgrm = new Diagram(R.$Cat, JSON.parse(data));
+			dgrm = new Diagram(R.$CAT, JSON.parse(data));
 		if (R.debug)
 			console.log('readLocal',dgrmName,dgrm);
 		return dgrm;
@@ -9208,6 +9234,8 @@ class EvaluationTransform extends Morphism
 
 if (isGUI)
 {
+	window.R			= R;
+	window.D			= D;
 	//
 	// show the intro if user has not accepted cookies
 	//
