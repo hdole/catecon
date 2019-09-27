@@ -154,7 +154,7 @@ class D2
 	}
 	static SegmentDistance(p, v, w)
 	{
-		const l2 = D2.dist2(v, w);
+		const l2 = D2.Dist2(v, w);
 		if (l2 === 0)
 			return D2.Dist(p, v);
 		let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
@@ -163,7 +163,7 @@ class D2
 	}
 	static UpdatePoint(p, c, basePoint)
 	{
-		return D2.dist2(c, basePoint) < D2.dist2(p, basePoint) ? c : p;
+		return D2.Dist2(c, basePoint) < D2.Dist2(p, basePoint) ? c : p;
 	}
 	static Inbetween(a, b, c)
 	{
@@ -5121,7 +5121,7 @@ class CatObject extends Element
 		super(diagram, args);
 		Object.defineProperty(this, 'category', {value: args.category,	writable: false});
 		if (this.category)
-			this.category.addObject(this);	// no need to remember this in a local json()
+			this.category.addObject(this);
 		else if (diagram)
 			diagram.codomain.addObject(this);
 	}
@@ -5884,7 +5884,7 @@ class Category extends CatObject
 	//
 	// Reconstitute this category from its saved contents.
 	//
-	process(diagram, args)
+	process(diagram, args, objects = null, morphisms = null)
 	{
 		let errMsg = '';
 		if (args && 'objects' in args)
@@ -5895,7 +5895,8 @@ class Category extends CatObject
 				{
 					try
 					{
-						CatObject.Process(diagram, o);
+						const object = CatObject.Process(diagram, o);
+						objects && objects.set(object);
 					}
 					catch(x)
 					{
@@ -5913,7 +5914,8 @@ class Category extends CatObject
 				{
 					try
 					{
-						Morphism.Process(diagram, m);
+						const morphism = Morphism.Process(diagram, m);
+						morphisms && morphisms.set(morphism);
 					}
 					catch(x)
 					{
@@ -5960,35 +5962,24 @@ class Category extends CatObject
 		a.actions = new Array(this.actions.keys());
 		return a;
 	}
-	/*
-	js()
-	{
-		for (const [name, o] in this.objects)
-			js += `		const ${name} = ${o.js()}`;
-		for (const [name, m] in this.morphisms)
-			js += `		const ${name} = ${m.js()}`;
-		return js;
-	}
-	*/
 	getObject(name)
 	{
-		//
-		// if it is already an object, return it
-		//
 		if (Element.prototype.isPrototypeOf(name))
-			// TODO check for correct category?
 			return name;
 		return this.objects.get(name);
 	}
-	addObject(object)
+	addObject(o)
 	{
-		if (this.objects.has(object.name))
-			throw `Object with name ${object.name} already exists in category ${this.name}`;
-		this.objects.set(object.name, object);
+		if (this.objects.has(o.name))
+			throw `Object with given name already exists in category`;
+		this.objects.set(o.name, o);
+		this.diagram && this.diagram.objects.add(o);
 	}
 	deleteObject(o)
 	{
 		this.objects.delete(o.name);
+		if (this.diagram)
+			this.diagram.objects.delete(o);
 	}
 	getMorphism(name)
 	{
@@ -6004,10 +5995,13 @@ class Category extends CatObject
 		if (this.getMorphism(m.name))
 			throw 'morphism with given name already exists in category';
 		this.morphisms.set(m.name, m);
+		this.diagram && this.diagram.morphisms.add(m);
 	}
 	deleteMorphism(m)
 	{
 		this.morphisms.delete(m.name);
+		if (this.diagram)
+			this.diagram.morphisms.delete(m);
 	}
 	basenameIsUsed(name)
 	{
@@ -6283,7 +6277,7 @@ class Morphism extends Element
 	//
 	static Process(diagram, args)
 	{
-		return new window[args.prototype](args);
+		return new R.protos[args.prototype](diagram, args);
 	}
 }
 
@@ -6645,8 +6639,6 @@ class IndexCategory extends Category
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		if (!('user' in nuArgs))
-			nuArgs.user = R.user.name;
 		super(diagram, args);
 	}
 }
@@ -7792,7 +7784,6 @@ class Diagram extends Functor
 {
 	constructor(diagram, args)
 	{
-//		if (diagram && !Diagram.prototype.isPrototypeOf(diagram)) debugger;
 		const nuArgs = U.clone(args);
 		if (!('user' in args))
 			throw 'Specify user for a diagram';
@@ -7803,21 +7794,16 @@ class Diagram extends Functor
 		if (!Category.prototype.isPrototypeOf(nuArgs.codomain))
 			nuArgs.codomain = diagram ? diagram.getObject(nuArgs.codomain) : R.Cat;		// bootstrap issue
 		super(diagram, nuArgs);
-//		if (typeof nuArgs.codomain === 'undefined') debugger;
+		this.objects = new Set();
+		this.morphisms = new Set();
 		if ('codomainData' in nuArgs)
-			this.codomain.process(this, nuArgs.codomainData);
+			this.codomain.process(this, nuArgs.codomainData, this.objects, this.morphisms);
 		if ('domainData' in nuArgs)
 			this.domain.process(this, nuArgs.domainData);
 		this.references = 'references' in nuArgs ? args.references.map(ref => R.Diagrams.getMorphism(ref)) : [];
 		this.makeHomSets();
 //		this.updateElements();
-		//
-		// the currently selected objects and morphisms in the GUI
-		//
 		this.selected = [];
-		//
-		// where are we viewing the diagram
-		//
 		this.viewport = U.getArg(args, 'viewport', {x:0, y:0, scale:1, width:D.Width(), height:D.Height()});
 		if (isGUI && this.viewport.width === 0)
 		{
@@ -7828,10 +7814,6 @@ class Diagram extends Functor
 		this.timestamp = U.getArg(args, 'timestamp', Date.now());
 		this.texts = 'texts' in args ? args.texts.map(d => new DiagramText(this, d)) : [];
 		this.textId = U.getArg(args, 'textId', 0);
-		//
-		// the graph category for the string morphisms
-		//
-//		this.graphCat = new Category(diagram, {basename:'Graph', user:this.user, objects:this.codomain.objects});
 		this.colorIndex2colorIndex = {};
 		this.colorIndex2color = {};
 		this.link2colorIndex = {};
@@ -7857,6 +7839,12 @@ class Diagram extends Functor
 		a.timestamp =	this.timestamp;
 		a.domainData =	this.domain.json();
 		const objects = [];
+		for (const o of this.objects)
+			objects.push(o.json());
+		const morphisms = [];
+		for (const m of this.morphisms)
+			morphisms.push(m.json());
+		/*
 		const found = new Set();
 		for(const [k, from] of this.domain.objects)
 			if (!found.has(from.to))
@@ -7865,7 +7853,6 @@ class Diagram extends Functor
 				found.add(from.to);
 			}
 		found.clear();
-		const morphisms = [];
 
 		for(const [k, from] of this.domain.morphisms)
 			if (!found.has(from.to))
@@ -7873,6 +7860,7 @@ class Diagram extends Functor
 				morphisms.push(from.to.json());
 				found.add(from.to);
 			}
+			*/
 		a.codomainData = {objects, morphisms};
 		a.texts =	this.texts.map(t => t.json());
 		return a;
