@@ -241,7 +241,7 @@ a:hover, .offcanvas a:focus
 .error
 {
 	background-color:	#f77;
-	color:				#dff;
+	color:				#fff;
 }
 
 #navbar
@@ -398,12 +398,15 @@ a:hover, .offcanvas a:focus
 	position:			absolute;
 	z-index:			-1;
 }
+
+/*
 .svgunk
 {
 	stroke:				red;
 	stroke-width:		20px;
 	stroke-miterlimit:	2.61313;
 }
+*/
 
 .sidenavAccordion
 {
@@ -452,10 +455,12 @@ a:hover, .offcanvas a:focus
 	box-sizing:	border-box;
 }
 
+/*
 .nodisplay
 {
 	display:	none;
 }
+*/
 
 .title
 {
@@ -677,6 +682,7 @@ canvas
 	height:	100%;
 }
 
+/*
 .unknownMorph
 {
 	cursor:			grab;
@@ -696,6 +702,7 @@ canvas
 	user-select:	none;
 	stroke:			red;
 }
+*/
 
 .string
 {
@@ -719,3 +726,30 @@ canvas
 	position:			absolute;
 	z-index:			-1;
 }
+
+/*
+a.tip {
+    border-bottom: 1px dashed;
+    text-decoration: none
+}
+a.tip:hover {
+    cursor: help;
+    position: relative
+}
+a.tip span {
+    display: none
+}
+a.tip:hover span {
+    border: #c0c0c0 1px dotted;
+    padding: 5px 20px 5px 5px;
+    display: block;
+    z-index: 10000;
+    background: url(../images/status-info.png) #f0f0f0 no-repeat 100% 5%;
+    left: 0px;
+    margin: 10px;
+    width: 250px;
+    position: absolute;
+    top: 10px;
+    text-decoration: none
+}
+*/
