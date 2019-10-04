@@ -692,9 +692,6 @@ class R
 				user:			'system',
 			};
 			R.$CAT = new Diagram(null, $CATargs);
-			//
-			// category of smaller cats
-			//
 			R.Cat = new Category(R.$CAT,
 			{
 				basename:		'Cat',
@@ -713,9 +710,6 @@ class R
 				description:	'diagram of currently loaded smaller categories',
 				user:			'system',
 			});
-			//
-			// discrete category of actions
-			//
 			R.Actions = new Category(R.$CAT,
 			{
 				basename:		'Actions',
@@ -746,17 +740,8 @@ class R
 				action(e, diagram, set)
 				{
 					const domain = set[0];
-//					const xy = diagram.mousePosition(e);
-//					const codomain = new DiagramObject(diagram, {to:domain.to, xy});
 					const id = Identity.Get(diagram, domain.to);
 					diagram.objectPlaceMorphism(e, 'domain', domain, id);
-//					const from = new DiagramMorphism(diagram, {to, domain, codomain});
-//					diagram.addSVG(codomain);
-//					diagram.addSVG(from);
-//					diagram.makeSelected(e, codomain);
-//					diagram.domain.makeHomSets();
-//					diagram.update();
-//					D.fuseObject = codomain;	// TODO?
 				},
 				hasForm(e, diagram, ary)
 				{
@@ -776,17 +761,18 @@ class R
 					const from = ary[0];
 					if (DiagramMorphism.prototype.isPrototypeOf(from))
 					{
-						let xy = D.stdOffsetVector.add(from.domain);
-						const domain = new DiagramObject(diagram, {xy});
-						xy = D.stdOffsetVector.add(from.codomain);
-						const codomain = new DiagramObject(diagram, {xy});
-						const fromCopy = new DiagramMorphism(diagram, {to:from.to, domain, codomain});
-						diagram.addSVG(domain);
-						diagram.addSVG(codomain);
-						diagram.addSVG(fromCopy);
-						diagram.makeSelected(e, fromCopy);
-						diagram.domain.makeHomSets();
-						D.fuseObject = fromCopy;
+//						let xy = D.stdOffsetVector.add(from.domain);
+//						const domain = new DiagramObject(diagram, {xy});
+//						xy = D.stdOffsetVector.add(from.codomain);
+//						const codomain = new DiagramObject(diagram, {xy});
+//						const fromCopy = new DiagramMorphism(diagram, {to:from.to, domain, codomain});
+//						diagram.addSVG(domain);
+//						diagram.addSVG(codomain);
+//						diagram.addSVG(fromCopy);
+//						diagram.makeSelected(e, fromCopy);
+//						diagram.domain.makeHomSets();
+//						D.fuseObject = fromCopy;
+						diagram.placeMorphism(e, from.to, D.stdOffsetVector.add(from.domain), D.stdOffsetVector.add(from.codomain))
 					}
 					else if (DiagramObject.prototype.isPrototypeOf(from))
 					{
@@ -813,30 +799,21 @@ class R
 `<circle class="svgstr4" cx="160" cy="160" r="80"/>
 <line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
 <line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
-				action(e, diagram, set)
+				action(e, diagram, ary)
 				{
-					let from = null;
-					const elt = set[0];
+					const elt = ary[0];
 					if (DiagramMorphism.prototype.isPrototypeOf(elt))
 					{
-						const morphisms = set.map(m => m.to);
+						const morphisms = ary.map(m => m.to);
 						const to = ProductMorphism.Get(diagram, morphisms);
-						from = diagram.trackMorphism(diagram.mousePosition(e), to);
-						from.setMorphism(to);
-						diagram.domain.makeHomSets();
+						diagram.placeMorphism(e, from.to, elt.domain, elt.codomain)
 					}
 					else if (DiagramObject.prototype.isPrototypeOf(elt))
 					{
-						const objects = set.map(o => o.to);
+						const objects = ary.map(o => o.to);
 						const to = ProductObject.Get(diagram, objects);
-						from = new DiagramObject(diagram, {xy:D.Barycenter(diagram.selected), to});
+						diagram.placeObject(e, to, elt);
 					}
-					diagram.addSVG(from);
-					diagram.makeSelected(e, from);
-					diagram.update();
 				},
 				hasForm(e, diagram, ary)
 				{
@@ -852,36 +829,27 @@ class R
 			const coproductAction = new Action(R.$Actions,
 			{
 				description:	'Create a coproduct of two or more objects or morphisms',
-				name:		'coproduct',
+				name:			'coproduct',
 				icon:
 `<circle class="svgstr4" cx="160" cy="160" r="80"/>
 <line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
 <line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
-				action(e, diagram, set)
+				action(e, diagram, ary)
 				{
 					let from = null;
-					const elt = set[0];
+					const elt = ary[0];
 					if (DiagramMorphism.prototype.isPrototypeOf(elt))
 					{
-						const morphisms = set.map(m => m.to);
+						const morphisms = ary.map(m => m.to);
 						const to = CoproductMorphism.Get(diagram, morphisms);
-						from = diagram.trackMorphism(diagram.mousePosition(e), to);
-						from.setMorphism(to);
-						diagram.domain.makeHomSets();
+						diagram.placeMorphism(e, from.to, elt.domain, elt.codomain)
 					}
 					else if (DiagramObject.prototype.isPrototypeOf(elt))
 					{
-						const objects = set.map(o => o.to);
+						const objects = ary.map(o => o.to);
 						const to = CoproductObject.Get(diagram, objects);
-						from = new DiagramObject(diagram, {xy:D.Barycenter(diagram.selected), to});
+						diagram.placeObject(e, to, elt);
 					}
-					diagram.domain.makeHomSets();
-					diagram.addSVG(from);
-					diagram.makeSelected(e, from);
-					diagram.update();
 				},
 				hasForm(e, diagram, ary)
 				{
@@ -1013,9 +981,9 @@ class R
 				//
 				action(e, diagram, ary)
 				{
-					if (DiagramMorphism.prototype.isPrototypeOf(ary[0]))
+					if (DiagramObject.prototype.isPrototypeOf(ary[0]))
 						diagram.placeObject(e, HomObject.Get(diagram, ary.map(o => o.to)), D.Barycenter(ary));
-					else if (DiagramObject.prototype.isPrototypeOf(ary[0]))
+					else if (DiagramMorphism.prototype.isPrototypeOf(ary[0]))
 						diagram.placeMorphism(e, HomMorphism.Get(diagram, ary.map(m => m.to)), D.Barycenter(ary));
 				},
 				hasForm(e, diagram, ary)	// two objects or morphisms
@@ -1343,8 +1311,6 @@ class R
 					const xyDom = normV.scale(D.default.arrow.length).add(from.domain);
 					const xyCod = normV.scale(D.default.arrow.length, normV).add(from.codomain);
 					diagram.placeMorphism(e, m, xyDom, xyCod);
-					diagram.domain.makeHomSets();
-					diagram.saveLocal();
 				},
 				hasForm(e, diagram, ary)	// 
 				{
@@ -1391,12 +1357,13 @@ class R
 				},
 				html(e, diagram, ary)
 				{
+					const to = ary[0].to;
 					const html = H.h4('Create Factor Morphism') +
 								H.h5('Domain Factors') +
 								H.small('Click to place in codomain') +
 						// TODO fix D.elementId()
 								H.button('1', '', D.elementId(), 'Add terminal object', `onclick="R.diagram.addFactor('codomainDiv', 'selectedFactorMorphism', 'One', '', -1)"`) +
-								to.factorButton({fname:'selectedFactorMorphism', root:ary[0].to.name, index:[], id:'codomainDiv', action:'', op:'product'}) +
+								to.factorButton({fname:'selectedFactorMorphism', root:to.name, index:[], id:'codomainDiv', action:'', op:'product'}) +
 								H.h5('Codomain Factors') + H.br() +
 								H.small('Click to remove from codomain') +
 								H.div('', '', 'codomainDiv');
@@ -2407,50 +2374,12 @@ console.log('switch to select tool');
 							{
 								a.action(e, diagram, ary);
 								dragObject.decrRefcnt();
+								targetObject.decrRefcnt();
 								didSomething = true;
 							}
 						}
 						else if (DiagramObject.prototype.isPrototypeOf(dragObject) && DiagramObject.prototype.isPrototypeOf(targetObject))
 						{
-							/*
-							if (diagram.isIsolated(dragObject) && diagram.isIsolated(targetObject))
-							{
-								let to = null;
-	//							if (e.shiftKey && cat.coproducts)
-								//
-								// coproduct with shift key
-								//
-								if (e.shiftKey && 'coproductFunctor' in cat)		// TODO
-	//								to = coproductObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
-									to = cat.coproductFunctor.$(diagram, [targetObject.to, dragObject.to]);		// TODO
-								//
-								// hom object with alt key
-								//
-								else if (e.altKey && ClosedMonoidalCategory.prototype.isPrototypeOf(cat))		// TODO
-	//								to = homObject.get(dgrm.codomain, [dragObject.to, targetObject.to]);
-									to = cat.homFunctor.$(diagram, [dragObject.to, targetObject.to]);		// TODO
-								//
-								// product
-								//
-								else if ('productFunctor' in cat)		// TODO
-	//								to = productObject.get(dgrm.codomain, [targetObject.to, dragObject.to]);
-									to = cat.productFunctor.$(diagram, [targetObject.to, dragObject.to]);		// TODO
-								//
-								// monoidal action
-								//
-								else if (MonoidalCategory.prototype.isPrototypeOf(cat))		// TODO
-									to = cat.monoidal.operator.$(diagram, [targetObject.to, dragObject.to]);		// TODO
-								else
-									return;
-								targetObject.setObject(to);
-								diagram.deselectAll(false);
-								targetObject.removeSVG();
-								this.addSVG(targetObject);
-								diagram.makeSelected(e, targetObject);
-								dragObject.decrRefcnt();
-								didSomething = true;
-							}else 
-							*/
 							if(diagram.canFuseObjects(dragObject, targetObject))
 							{
 								diagram.deselectAll();
@@ -2515,40 +2444,6 @@ console.log('switch to select tool');
 								didSomething = true;
 							}
 						}
-						/*
-						else if (DiagramMorphism.prototype.isPrototypeOf(dragObject) && DiagramMorphism.prototype.isPrototypeOf(targetObject))
-						{
-							if (diagram.isIsolated(dragObject) && diagram.isIsolated(targetObject))
-							{
-								let to = null;
-								const ary = [targetObject.to, dragObject.to];
-								const actions = diagram.codomain.actions;
-								let a = actions.has('product') ? actions.get('product') : null;
-								if (e.shiftKey && actions.has('coproduct'))
-									a = actions.get('coproduct');
-								if (e.altKey && actions.has('hom'))
-									a = actions.get('hom');
-								if (a && a.hasForm(e, diagram, ary))
-								{
-									a.action(e, diagram, ary);
-//								//
-//								// monoidal action
-//								//
-//								else if (MonoidalCategory.prototype.isPrototypeOf(cat))		// TODO
-//									to = cat.monoidal.operator.$$(diagram, [targetObject.to, dragObject.to]);		// TODO
-//								else
-//									return;
-//								targetObject.setObject(to);
-//								diagram.deselectAll(false);
-//								targetObject.removeSVG();
-//								this.addSVG(targetObject);
-//								diagram.makeSelected(e, targetObject);
-									dragObject.decrRefcnt();
-									didSomething = true;
-								}
-							}
-						}
-						*/
 					}
 				}
 				if (!diagram.readonly && didSomething)
@@ -4361,8 +4256,8 @@ class MorphismPanel extends Panel
 		this.referencesPnl.innerHTML = '';
 		if (R.diagram)
 		{
-			this.morphismPnl.innerHTML = DiagramPanel.SetupDiagramElementPnl(R.diagram, '_MorPnl', 'D.MorphismPanel.UpdateRows');
-			this.referencesPnl.innerHTML = R.diagram.references.map(r => DiagramPanel.SetupDiagramElementPnl(r, '_MorPnl', 'D.MorphismPanel.UpdateRows')).join('');
+			this.morphismPnl.innerHTML = DiagramPanel.SetupDiagramElementPnl(R.diagram, '_MorPnl', 'D.MorphismPanel.update()');
+			this.referencesPnl.innerHTML = R.diagram.references.map(r => DiagramPanel.SetupDiagramElementPnl(r, '_MorPnl', 'D.MorphismPanel.update()')).join('');
 			MorphismPanel.UpdateRows(R.diagram);
 		}
 	}
@@ -4451,8 +4346,8 @@ class ObjectPanel extends Panel
 			if (!diagram.readonly)
 			{
 			}
-			this.objectsPnl.innerHTML = DiagramPanel.SetupDiagramElementPnl(diagram, '_ObjPnl', 'D.ObjectPanel.UpdateRows');
-			this.referencesPnl.innerHTML = diagram.references.map(r => DiagramPanel.SetupDiagramElementPnl(r, '_ObjPnl', 'D.ObjectPanel.UpdateRows')).join('');
+			this.objectsPnl.innerHTML = DiagramPanel.SetupDiagramElementPnl(diagram, '_ObjPnl', 'D.ObjectPanel.update()');
+			this.referencesPnl.innerHTML = diagram.references.map(r => DiagramPanel.SetupDiagramElementPnl(r, '_ObjPnl', 'D.ObjectPanel.update()')).join('');
 			ObjectPanel.UpdateRows(diagram);
 		}
 	}
@@ -4544,10 +4439,8 @@ class SettingsPanel extends Panel
 		const diagram = R.diagram;
 		if (diagram)
 		{
-			diagram.updateObjectTableRows();
-			diagram.references.map(r => r.updateObjectTableRows());
-			MorphismPanel.UpdateRows(diagram);
-			diagram.references.map(r => MorphismPanel.UpdateRows(r));
+			D.objectPanel.update();
+			D.morphismPanel.update();
 		}
 	}
 	// TODO move
@@ -5129,35 +5022,21 @@ class CatObject extends Element
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-//		Object.defineProperty(this, 'category', {value: args.category,	writable: false});
 		if (this.category)
 			this.category.addObject(this);
 		else if (diagram)
 			diagram.codomain.addObject(this);
 	}
-	/*
-	json()
-	{
-		const o = super.json();
-		return o;
-	}
-	*/
 	decrRefcnt()
 	{
 		super.decrRefcnt();
 		this.refcnt <= 0 && this.category && this.category.deleteObject(this);
 	}
-	//
-	// With no further structure the ony factor we could possibly return is the object itself.
-	//
-	getFactor(factor)
+	getFactor(factor)	// With no further structure the ony factor we could possibly return is the object itself.
 	{
 		return this;
 	}
-	//
-	// Return true if the object has an editor for a web page
-	//
-	isEditable()
+	isEditable()		// Return true if the object has an editor for a web page
 	{
 		return false;	// override as needed
 	}
@@ -5186,12 +5065,6 @@ class CatObject extends Element
 	{
 		return new R.protos[args.prototype](diagram, args);
 	}
-	/*
-	static Codename(diagram, basename)
-	{
-		return `:${diagram.codomain.name}:${diagram.user}:${diagram.basename}:${basename}`;
-	}
-	*/
 	static Get(diagram, basename)
 	{
 		const object = diagram.getObject(Element.Codename(diagra, basename));
@@ -5211,7 +5084,6 @@ class DiscreteObject extends CatObject
 		const nuArgs = U.clone(args);
 		nuArgs.properName = DiscreteObject.ProperName(diagram, nuArgs);
 		nuArgs.name = DiscreteObject.Codename(diagram, nuArgs);
-//		nuArgs.category = diagram.codomain;		// TODO doesn't work for index category objects which are presumably discrete
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'size', {value:	nuArgs.size, writable:	false});
 	}
@@ -5366,7 +5238,7 @@ class MultiObject extends CatObject
 	//
 	isEditable()
 	{
-		return this.objects.reduce((o, r) => r &= o.isEditable(), true);
+		return this.objects.reduce((r, o) => r &= o.isEditable(), true);
 	}
 	getGraph(tag, data, parenWidth, sepWidth, first = true)	// data: {position: 0}
 	{
@@ -6029,12 +5901,6 @@ class Category extends CatObject
 				return name;
 		}
 	}
-	/*
-	validateBasename(name)
-	{
-		return name !== '' && !this.basenameIsUsed(name) && U.basenameEx.test(name);
-	}
-	*/
 	//
 	// static methods
 	//
@@ -6074,55 +5940,6 @@ class Category extends CatObject
 		}
 		return true;
 	}
-	/*
-	static IsComposite(ary)
-	{
-		if (ary.length > 1 && ary.reduce((m, r) => r &= DiagramMorphism.prototype.isPrototypeOf(m), true))
-		{
-			const first = ary[0];
-			let compositeCod = first.codomain;
-			for(let i=0; i<ary.length; ++i)
-			{
-				const elt = ary[i];
-				if (!elt.domain.isEquivalent(compositeCod))
-					return false;
-			}
-			return true;
-		}
-		return false;
-	}
-	*/
-	/*
-	//
-	// Determine the form of the selected morphisms:  source, sink, composite, distinct
-	//
-	static HasForm(ary)
-	{
-		let bad = {composite: false, source: false, sink: false, distinct: false};
-		if (ary.length < 2)
-			return bad;
-		const elt = ary[0];
-		if (!DiagramMorphism.prototype.isPrototypeOf(elt))
-			return bad;
-		const dom = elt.domain;
-		const cod = elt.codomain;
-		let compositeCod = elt.codomain;
-		let good = {composite:true, source:true, sink:true, distinct: true};
-		let foundObjects = {};
-		for(let i=1; i<ary.length; ++i)
-		{
-			const elt = ary[i];
-			if (!DiagramMorphism.prototype.isPrototypeOf(elt))
-				return bad;
-			good.source =	!elt.domain.isEquivalent(dom) ? false : good.source;
-			good.sink =		!elt.codomain.isEquivalent(cod) ? false : good.sink;
-			good.composite= !elt.domain.isEquivalent(compositeCod) ? false : good.composite;
-			good.distinct = good.distinct && !(elt.domain in foundObjects) && !(elt.codomain in foundObjects);
-			compositeCod = elt.codomain;
-		}
-		return good;
-	}
-	*/
 	// TODO which category owns this?
 	static Run(m, diagram)
 	{
@@ -6148,14 +5965,6 @@ class Category extends CatObject
 	{
 		return `${domain.name} ${codomain.name}`;
 	}
-	/*
-	static Codename(diagram, args)
-	{
-		if ('user' in args && 'basename' in args)
-			return `${args.user}:${args.basename}`;
-		return 'name' in args ? args.name : args.basename;
-	}
-	*/
 	static Get(diagram, user, basename)
 	{
 		const m = diagram.getMorphism(Element.Codename(diagram, basename));
@@ -6200,7 +6009,11 @@ class Morphism extends Element
 		if (this.refcnt <= 1)
 		{
 			this.domain.decrRefcnt();
+			if (this.diagram && this.diagram.isIsolated(this.domain))
+				this.domain.decrRefcnt();
 			this.codomain.decrRefcnt();
+			if (this.diagram && this.diagram.isIsolated(this.codomain))
+				this.codomain.decrRefcnt();
 			this.category && this.category.deleteMorphism(this);
 		}
 		super.decrRefcnt();
@@ -6270,13 +6083,6 @@ class Identity extends Morphism
 		return g;
 	}
 	$(args)
-	{
-		return args;
-	}
-	//
-	// good for identity functors
-	//
-	$$(args)
 	{
 		return args;
 	}
@@ -7462,8 +7268,8 @@ class HomMorphism extends MultiMorphism
 			throw 'not exactly two morphisms';
 		const nuArgs = U.clone(args);
 		nuArgs.name = HomMorphism.Codename(diagram, morphisms);
-		nuArgs.domain = HomMorphsim.Domain(diagram, morphisms);
-		nuArgs.codomain = HomMorphsim.Codomain(diagram, morphisms);
+		nuArgs.domain = HomMorphism.Domain(diagram, morphisms);
+		nuArgs.codomain = HomMorphism.Codomain(diagram, morphisms);
 		nuArgs.morphisms = morphisms;
 		nuArgs.properName = 'properName' in args ? args.properName : HomMorphism.ProperName(morphisms);
 		super(diagram, nuArgs);
@@ -7477,16 +7283,15 @@ class HomMorphism extends MultiMorphism
 	//
 	static Codename(diagram, morphisms)
 	{
-		return Element.Codename(diagram, `:${this.codomain.name}:Pm{${morphisms(m => m.name).join(',')}}mP`);
-		return Element.Codename(diagram, `Ho{${objects.map(o => o.name).join(',')}}oH`);
+		return Element.Codename(diagram, `Ho{${morphisms.map(m => m.name).join(',')}}oH`);
 	}
-	static Domain(diagram, morphs)
+	static Domain(diagram, morphisms)
 	{
-		return HomObject.Get(diagram, morphs.map(m => m.domain));
+		return HomObject.Get(diagram, morphisms.map(m => m.domain));
 	}
-	static Codomain(diagram, morphs)
+	static Codomain(diagram, morphisms)
 	{
-		return HomObject.Get(diagram, morphs.map(m => m.codomain));
+		return HomObject.Get(diagram, morphisms.map(m => m.codomain));
 	}
 	static Get(diagram, morphisms)
 	{
@@ -7802,17 +7607,6 @@ class Functor extends Morphism
 		if (typeof nuArgs.codomain === 'string')
 			nuArgs.codomain = diagram.getObject(args.codomain);
 		super(diagram, nuArgs);
-	}
-	//
-	// FITB
-	//
-	$(args)
-	{
-		throw 'functor has no object action';
-	}
-	$$(args)
-	{
-		throw 'functor has no morphism action';
 	}
 }
 
@@ -8418,7 +8212,7 @@ console.log('pickElement', elt);
 		else
 			from = new DiagramObject(this, {xy:D.grid(xy), to});
 		this.addSVG(from);
-		this.makeSelected(from);
+		this.makeSelected(e, from);
 		this.update(e);
 		return from;
 	}
@@ -8427,11 +8221,13 @@ console.log('pickElement', elt);
 		const domain = new DiagramObject(this, {xy:D.grid(xyDom)});
 		const codomain = new DiagramObject(this, {xy:D.grid(xyCod)});
 		const from = new DiagramMorphism(this, {to, domain, codomain});
+		this.domain.makeHomSets();
 		if (isGUI)
 		{
 			this.addSVG(domain);
 			this.addSVG(codomain);
 			this.addSVG(from);
+			this.makeSelected(from);
 			this.update(e);
 		}
 	}
@@ -9019,11 +8815,12 @@ console.log('pickElement', elt);
 	removeCodomainObject(e, name)
 	{
 		const o = this.codomain.getObject(name);
-		if (o !== null)
+		if (o)
 		{
 	//		while(o.refcnt>=0)
 			o.decrRefcnt();
-			this.updateObjectTableRows();
+//			this.updateObjectTableRows();
+			D.objectPanel.update();
 			this.update(e);
 			this.saveLocal();
 		}
@@ -9031,10 +8828,10 @@ console.log('pickElement', elt);
 	removeMorphism(e, name)
 	{
 		const m = this.codomain.getMorphism(name);
-		if (m !== null)
+		if (m)
 		{
 			m.decrRefcnt();
-			D.MorphismPanel.UpdateRows(this);
+			D.MorphismPanel.update();
 			this.update(e);
 			this.saveLocal();
 		}
@@ -9045,10 +8842,10 @@ console.log('pickElement', elt);
 	removeCodomainMorphism(e, name)
 	{
 		const m = this.codomain.getMorphism(name);
-		if (m !== null)
+		if (m)
 		{
 			m.decrRefcnt();
-			D.MorphismPanel.UpdateRows(this);
+			D.MorphismPanel.update();
 			this.update(e);
 			this.saveLocal();
 		}
@@ -9262,10 +9059,6 @@ console.log('pickElement', elt);
 		return StringMorphism.graph(this, m);
 	}
 	$(args)
-	{
-		return args[0].to;
-	}
-	$$(args)
 	{
 		return args[0].to;
 	}
