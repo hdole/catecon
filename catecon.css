@@ -436,7 +436,7 @@ a:hover, .offcanvas a:focus
 	margin-left:	5px;
 }
 
-.accordionPnl
+.section
 {
 	display:	none;
 	overflow:	hidden;
@@ -473,6 +473,11 @@ table.center
 {
 	margin-left:auto;
 	margin-right:auto;
+}
+
+.diagramText
+{
+	font-size:	14px;
 }
 
 .txtCenter
