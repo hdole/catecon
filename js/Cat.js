@@ -3036,6 +3036,11 @@ ${D.Button(onclick)}
 	{
 		return D.Grid(R.diagram.userToDiagramCoords({x:D.Grid(D.Width()/2), y:D.Grid(D.Height()/2)}));
 	}
+	static DragElement(e, name)
+	{
+		D.HideToolbar();
+		e.dataTransfer.setData('text/plain', name);
+	}
 }
 Object.defineProperties(D,
 {
@@ -3466,8 +3471,7 @@ class Section
 	{
 		this.elt.classList.toggle('active');
 		this.section.style.display = this.section.style.display === 'block' ? 'none' : 'block';
-		if (this.elt.classList.contains('active'))
-			this.update();
+		this.update();
 	}
 	open()
 	{
@@ -3481,7 +3485,9 @@ class Section
 		this.section.style.display = 'none';
 	}
 	update()		// fitb
-	{}
+	{
+		return this.elt.classList.contains('active');
+	}
 	static Html(header, action, panelId, title = '', buttonId = '')
 	{
 		return H.button(header, 'sidenavSection', buttonId, title, `onclick="${action};D.Panel.SectionToggle(this, \'${panelId}\')"`) +
@@ -4346,6 +4352,270 @@ class LoginPanel extends Panel
 	}
 }
 
+class NewObjectSection extends Section
+{
+	constructor(parent)
+	{
+		super('New', parent, 'object-new-section', 'Create new object');
+		this.section.innerHTML =
+			H.table(H.tr(H.td(D.Input('', 'object-new-basename', 'Base name')), 'sidenavRow') +
+					H.tr(H.td(D.Input('', 'object-new-properName', 'Proper name')), 'sidenavRow') +
+					H.tr(H.td(H.input('', 'in100', 'object-new-description', 'text',
+										{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.objectPanel.newObjectSection.create, D.objectPanel.newObjectSection)"'})), 'sidenavRow')
+			) +
+			H.span(D.GetButton('edit', 'D.objectPanel.newObjectSection.create(evt)', 'Create new object in this diagram')) +
+			H.span('', 'error', 'object-new-error');
+		this.error = document.getElementById('object-new-error');
+		this.basenameElt = document.getElementById('object-new-basename');
+		this.properNameElt = document.getElementById('object-new-properName');
+		this.descriptionElt = document.getElementById('object-new-description');
+		this.update();
+	}
+	update()
+	{
+		if (super.update())
+		{
+			this.error.innerHTML = '';
+			this.basenameElt.value = '';
+			this.properNameElt.value = '';
+			this.descriptionElt.value = '';
+			this.error.style.padding = '0px';
+		}
+	}
+	create(e)
+	{
+		try
+		{
+			const diagram = R.diagram;
+			if (diagram.readonly)
+				throw 'Diagram is read only';
+			const basename = U.htmlSafe(D.objectPanel.newObjectSection.basenameElt.value);
+			const name = Element.Codename(diagram, basename);
+			if (diagram.getObject(name))
+				throw 'Object already exists';
+			const to = new CatObject(diagram,
+			{
+				basename,
+				category:		diagram.codomain,
+				properName:		U.htmlSafe(this.properNameElt.value),
+				description:	U.htmlSafe(this.descriptionElt.value),
+			});
+			diagram.placeObject(e, to);
+			D.objectPanel.newObjectSection.update();
+		}
+		catch(e)
+		{
+			D.objectPanel.newObjectSection.error.style.padding = '4px';
+			D.objectPanel.newObjectSection.error.innerHTML = 'Error: ' + U.GetError(e);
+		}
+	}
+}
+
+class ObjectSection extends Section
+{
+	constructor(title, parent, id, tip, category)
+	{
+		super(title, parent, id, tip);
+		this.objects = null;
+	}
+	setObjects(objs)
+	{
+		this.objects = objs;
+		this.update();
+	}
+	update()
+	{
+		if (super.update())
+		{
+			let rows = H.tr((D.showInternals ? H.th('Ref. Count') : '') + H.th('Object'));
+			if (this.objects)
+			{
+				const objects = this.objects instanceof Map ? this.objects.values() : this.objects;
+				for (const o of objects)
+				{
+					const deletable = D.showInternals && o.refcnt === 0 && !(o.diagram && o.diagram.readonly);
+					rows += H.tr(
+						(D.showInternals ?
+							H.td(o.refcnt.toString()
+//								+ (deletable ?  D.GetButton('delete', `R.$CAT.getMorphism('${o.diagram.name}').deleteElement('${o.name}')`, 'Delete object') : '')
+							) : '') +
+						H.td(o.properName),
+						'grabbable sidenavRow', '', U.cap(o.description), `draggable="true" ondragstart="D.DragElement(event, 'object ${o.name}')"`);
+				}
+				this.section.innerHTML = H.table(rows);
+			}
+		}
+	}
+}
+
+//
+// ObjectPanel is a panel on the left
+//
+class ObjectPanel extends Panel
+{
+	constructor()
+	{
+		super('object');
+		this.elt.innerHTML =
+			H.table(H.tr(this.expandPanelBtn() + this.closeBtnCell()), 'buttonBarRight') +
+			H.h3('Objects');
+		this.newObjectSection = new NewObjectSection(this.elt);
+		this.diagramObjectSection = new ObjectSection('Diagram', this.elt, `object-diagram-section`, 'Objects in the current diagram');
+		this.categoryObjectSection = new ObjectSection('Category', this.elt, `object-category-section`, 'Objects in the current category');
+		this.initialize();
+		// TODO references
+	}
+	update()
+	{
+		this.newObjectSection.update();
+		if (R.diagram)
+		{
+			this.diagramObjectSection.setObjects(R.diagram.objects);
+			this.categoryObjectSection.setObjects(R.diagram.codomain.objects);
+		}
+	}
+	/*
+	static Drag(e, name)
+	{
+		D.HideToolbar();
+		e.dataTransfer.setData('text/plain', 'object ' + name);
+	}
+	static UpdateRows(diagram)
+	{
+		if (!diagram)
+			return '';
+		let html = H.tr(	(D.showInternals ? H.th('Ref. Count') : '') + H.th('Object'));
+		for (const o of diagram.objects)
+		{
+			const deletable = D.showInternals && o.refcnt === 0 && !diagram.readonly;
+			html += H.tr(
+				(D.showInternals ?
+					H.td(o.refcnt.toString() +
+						(deletable ?  D.GetButton('delete', `R.$CAT.getMorphism('${diagram.name}').deleteElement('${o.name}')`, 'Delete object') : '')
+						) : ''
+				) +
+//								deletable ? 'buttonBar' : '') +
+				H.td(o.properName),
+				'grabbable sidenavRow', '', U.cap(o.description), `draggable="true" ondragstart="D.ObjectPanel.Drag(event, '${o.name}')"`);
+		}
+//		document.getElementById(`${diagram.name}_ObjPnl`).innerHTML = H.table(html);
+		return H.table(html);
+	}
+	*/
+}
+
+class NewMorphismSection extends Section
+{
+	constructor(parent)
+	{
+		super('New', parent, 'object-new-section', 'Create new object');
+		this.section.innerHTML =
+			H.table(
+						H.tr(H.td(D.Input('', 'morphism-new-basename', 'Base name')), 'sidenavRow') +
+						H.tr(H.td(D.Input('', 'morphism-new-properName', 'Proper name')), 'sidenavRow') +
+						H.tr(H.td(H.input('', 'in100', 'morphism-new-description', 'text', {ph: 'Description',
+											x:'onkeydown="D.OnEnter(event, D.morphismPanel.newMorphismSection.create, D.morphismPanel.newMorphismSection)"'})), 'sidenavRow') +
+						H.tr(H.td(H.select('Domain', 'in100', 'morphism-new-domain')), 'sidenavRow') +
+						H.tr(H.td(H.select('Codomain', 'in100', 'morphism-new-codomain')), 'sidenavRow')
+			) +
+			H.span(D.GetButton('edit', 'D.morphismPanel.newMorphismSection.create(evt)', 'Create new morphism in this diagram')) +
+			H.span('', 'error', 'morphism-new-error');
+		this.error = document.getElementById('morphism-new-error');
+		this.basenameElt = document.getElementById('morphism-new-basename');
+		this.properNameElt = document.getElementById('morphism-new-properName');
+		this.descriptionElt = document.getElementById('morphism-new-description');
+		this.domainElt = document.getElementById('morphism-new-domain');
+		this.codomainElt = document.getElementById('morphism-new-codomain');
+		this.update();
+	}
+	update()
+	{
+		if (super.update())
+		{
+			this.error.innerHTML = '';
+			this.basenameElt.value = '';
+			this.properNameElt.value = '';
+			this.descriptionElt.value = '';
+			this.domainElt.value = '';
+			this.codomainElt.value = '';
+			this.error.style.padding = '0px';
+			let objects = '';
+			for (const [name, o] of R.category.objects)
+				objects += H.option(o.properName, o.name);
+			this.domainElt.innerHTML = objects;
+			this.codomainElt.innerHTML = objects;
+		}
+	}
+	create(e)
+	{
+		try
+		{
+			const diagram = R.diagram;
+			if (diagram.readonly)
+				throw 'Diagram is read only';
+			const basename = U.htmlSafe(D.morphismPanel.newMorphismSection.basenameElt.value);
+			const name = Element.Codename(diagram, basename);
+			if (diagram.getMorphism(name))
+				throw 'Morphism already exists';
+			const to = new Morphism(diagram,
+			{
+				basename,
+				category:		diagram.codomain,
+				properName:		U.htmlSafe(this.properNameElt.value),			// TODO safety check
+				description:	U.htmlSafe(this.descriptionElt.value),			// TODO safety check
+				domain:			diagram.codomain.getObject(this.domainElt.value),
+				codomain:		diagram.codomain.getObject(this.codomainElt.value),
+			});
+			diagram.placeMorphism(e, to);
+			D.morphismPanel.basenameElt.value = '';
+			D.morphismPanel.properNameElt.value = '';
+			D.morphismPanel.descriptionElt.value = '';
+		}
+		catch(e)
+		{
+			D.morphismPanel.newMorphismSection.error.style.padding = '4px';
+			D.morphismPanel.newMorphismSection.error.innerHTML = 'Error: ' + U.GetError(e);
+		}
+	}
+}
+
+class MorphismSection extends Section
+{
+	constructor(title, parent, id, tip, category)
+	{
+		super(title, parent, id, tip);
+		this.morphisms = null;
+	}
+	setMorphisms(morphisms)
+	{
+		this.morphisms = morphisms;
+		this.update();
+	}
+	update()
+	{
+		if (super.update())
+		{
+			let rows = H.tr((D.showInternals ? H.th('Ref. Count') : '') + H.th('Morphism'));
+			if (this.morphisms)
+			{
+				const morphisms = this.morphisms instanceof Map ? this.morphisms.values() : this.morphisms;
+				for (const m of morphisms)
+				{
+					rows += H.tr(	(D.showInternals ? H.td(m.refcnt) : '') +
+//									H.td(m.refcnt <= 0 && !diagram.readonly ?
+//										D.GetButton('delete', `R.$CAT.getMorphism('${diagram.name}').removeMorphism(evt, '${m.name}')`, 'Delete morphism') : '', 'buttonBar') +
+									H.td(m.properName) +
+									H.td(m.domain.properName) +
+									H.td('&rarr;') +
+									H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="D.DragElement(event, 'morphism ${m.name}')"`);
+				}
+				this.section.innerHTML = H.table(rows);
+			}
+		}
+	}
+}
+
+
 //
 // MorphismPanel is a panel on the left
 //
@@ -4356,7 +4626,8 @@ class MorphismPanel extends Panel
 		super('morphism');
 		this.elt.innerHTML =
 			H.table(H.tr(this.expandPanelBtn() + this.closeBtnCell()), 'buttonBarRight') +
-			H.h3('Morphisms') +
+			H.h3('Morphisms');
+		/*
 			H.button('New Morphism', 'sidenavAccordion', '', 'Create a new morphism in this category', `onclick="D.Panel.AccordionToggle(this, \'morphism-new-pnl\')"`) +
 			H.div(
 				H.h4('New Morphism') +
@@ -4375,7 +4646,12 @@ class MorphismPanel extends Panel
 			H.div('', '', 'morphisms-pnl') +
 			H.h4('References') +
 			H.div('', '', 'references-morphisms-pnl');
+			*/
+		this.newMorphismSection = new NewMorphismSection(this.elt);
+		this.diagramMorphismSection = new MorphismSection('Diagram', this.elt, `morphism-diagram-section`, 'Morphisms in the current diagram');
+		this.categoryMorphismSection = new MorphismSection('Category', this.elt, `morphism-category-section`, 'Morphisms in the current category');
 		this.initialize();
+		/*
 		this.morphismPnl = document.getElementById('morphisms-pnl');
 		this.referencesPnl = document.getElementById('references-morphisms-pnl');
 		this.newMorphismBasenameElt = document.getElementById('morphism-new-basename');
@@ -4383,7 +4659,9 @@ class MorphismPanel extends Panel
 		this.newMorphismDescriptionElt = document.getElementById('morphism-new-description');
 		this.newMorphismDomain = document.getElementById('morphism-new-domain');
 		this.newMorphismCodomain = document.getElementById('morphism-new-codomain');
+		*/
 	}
+		/*
 	update()
 	{
 		this.morphismPnl.innerHTML = '';
@@ -4400,6 +4678,17 @@ class MorphismPanel extends Panel
 			this.newMorphismCodomain.innerHTML = options;
 		}
 	}
+		*/
+	update()
+	{
+		this.newMorphismSection.update();
+		if (R.diagram)
+		{
+			this.diagramMorphismSection.setMorphisms(R.diagram.morphisms);
+			this.categoryMorphismSection.setMorphisms(R.diagram.codomain.morphisms);
+		}
+	}
+	/*
 	//
 	// MorphismPanel static methods
 	//
@@ -4419,22 +4708,6 @@ class MorphismPanel extends Panel
 							H.td(m.domain.properName) +
 							H.td('&rarr;') +
 							H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="D.MorphismPanel.Drag(event, '${m.name}')"`);
-		/*
-		for (const [k, m] of diagram.codomain.morphisms)
-		{
-			if (m.name in found)
-				continue;
-			found[m.name] = true;
-			html += H.tr(	(D.showInternals ? H.td(m.refcnt) : '') +
-							H.td(m.refcnt <= 0 && !diagram.readonly ?
-								D.GetButton('delete', `R.$CAT.getMorphism('${diagram.name}').removeCodomainMorphism(evt, '${m.name}');`, 'Delete dangling codomain morphism') :
-									'', 'buttonBar') +
-							H.td(m.properName) +
-							H.td(m.domain.properName) +
-							H.td('&rarr;') +
-							H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="MorphismPanel.Drag(event, '${m.name}')"`);
-		}
-		*/
 		document.getElementById(`${diagram.name}_MorPnl`).innerHTML = H.table(html);
 	}
 	static Create(e)
@@ -4469,130 +4742,7 @@ class MorphismPanel extends Panel
 			D.morphismPanel.morphismError.innerHTML = 'Error: ' + U.GetError(e);
 		}
 	}
-}
-
-class NewObjectSection extends Section
-{
-	constructor(parent)
-	{
-		super('New', parent, 'object-new-section', 'Create new object');
-		this.section.innerHTML =
-			H.table(H.tr(H.td(D.Input('', 'object-new-basename', 'Base name')), 'sidenavRow') +
-					H.tr(H.td(D.Input('', 'object-new-properName', 'Proper name')), 'sidenavRow') +
-					H.tr(H.td(H.input('', 'in100', 'object-new-description', 'text',
-										{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.objectPanel.newObjectSection.create, D.objectPanel.newObjectSection)"'})), 'sidenavRow')
-			) +
-			H.span(D.GetButton('edit', 'D.objectPanel.newObjectSection.create(evt)', 'Create new object in this diagram')) +
-			H.span('', 'error', 'object-new-error');
-		this.error = document.getElementById('object-new-error');
-		this.basenameElt = document.getElementById('object-new-basename');
-		this.properNameElt = document.getElementById('object-new-properName');
-		this.descriptionElt = document.getElementById('object-new-description');
-		this.update();
-	}
-	update()
-	{
-		this.error.innerHTML = '';
-		this.basenameElt.value = '';
-		this.properNameElt.value = '';
-		this.descriptionElt.value = '';
-		this.error.style.padding = '0px';
-	}
-	create(e)
-	{
-		try
-		{
-			const diagram = R.diagram;
-			if (diagram.readonly)
-				throw 'Diagram is read only';
-			const basename = U.htmlSafe(D.objectPanel.newObjectSection.basenameElt.value);
-			const name = Element.Codename(diagram, basename);
-			if (diagram.getObject(name))
-				throw 'Object already exists';
-			const to = new CatObject(diagram,
-			{
-				basename,
-				category:		diagram.codomain,
-				properName:		U.htmlSafe(this.properNameElt.value),
-				description:	U.htmlSafe(this.descriptionElt.value),
-			});
-			diagram.placeObject(e, to);
-			D.objectPanel.newObjectSection.update();
-		}
-		catch(e)
-		{
-			D.objectPanel.newObjectSection.error.style.padding = '4px';
-			D.objectPanel.newObjectSection.error.innerHTML = 'Error: ' + U.GetError(e);
-		}
-	}
-}
-
-class ObjectSection extends Section
-{
-	constructor(title, parent, id, tip, diagram)
-	{
-		super(title, parent, id, tip);
-		this.diagram = diagram;
-	}
-	update()
-	{
-		let rows = '';
-		this.diagram && this.diagram.texts.forEach(function(t)
-		{
-			rows += H.tr(	H.td(H.table(H.tr(H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text'))), 'buttonBarLeft')) +
-							H.td(H.span(t.description, 'tty', `edit_${t.name}`), 'left'), 'sidenavRow');
-		});
-		this.section.innerHTML = H.table(rows);
-	}
-}
-
-//
-// ObjectPanel is a panel on the left
-//
-class ObjectPanel extends Panel
-{
-	constructor()
-	{
-		super('object');
-		this.elt.innerHTML =
-			H.table(H.tr(this.expandPanelBtn() + this.closeBtnCell()), 'buttonBarRight') +
-			H.h3('Objects');
-		this.newObjectSection = new NewObjectSection(this.elt);
-		this.objectSection = new ObjectSection('Diagram', this.elt, `object-section`, 'Objects in the current diagram');
-		this.initialize();
-		// TODO references
-	}
-	update()
-	{
-		this.newObjectSection.update();
-		this.objectSection.update();
-	}
-	static Drag(e, name)
-	{
-		D.HideToolbar();
-		e.dataTransfer.setData('text/plain', 'object ' + name);
-	}
-	static UpdateRows(diagram)
-	{
-		if (!diagram)
-			return '';
-		let html = H.tr(	(D.showInternals ? H.th('Ref. Count') : '') + H.th('Object'));
-		for (const o of diagram.objects)
-		{
-			const deletable = D.showInternals && o.refcnt === 0 && !diagram.readonly;
-			html += H.tr(
-				(D.showInternals ?
-					H.td(o.refcnt.toString() +
-						(deletable ?  D.GetButton('delete', `R.$CAT.getMorphism('${diagram.name}').deleteElement('${o.name}')`, 'Delete object') : '')
-						) : ''
-				) +
-//								deletable ? 'buttonBar' : '') +
-				H.td(o.properName),
-				'grabbable sidenavRow', '', U.cap(o.description), `draggable="true" ondragstart="D.ObjectPanel.Drag(event, '${o.name}')"`);
-		}
-//		document.getElementById(`${diagram.name}_ObjPnl`).innerHTML = H.table(html);
-		return H.table(html);
-	}
+	*/
 }
 
 //
@@ -4770,10 +4920,10 @@ class Element
 		const html = H.h4(H.span(this.properName, '', 'properNameElt')) +
 						(D.showInternals ? H.p(`Internal name: ${this.name}`) : '') +
 						(D.showInternals ? ('basename' in this ? H.p(H.span(D.limit(this.basename), '', 'basenameElt', this.name)) : '') : '') +
-						(D.showInternals ?  H.p(`Reference count: ${this.refcnt}`) : '');
+						(D.showInternals ?  H.p(`Reference count: ${this.refcnt}`) : '') +
 						H.p(H.span(U.cap(this.description), '', 'descriptionElt')) +
 						H.p(`Prototype: ${this.constructor.name}`) +
-						H.p(`User: ${this.user}`) +
+						H.p(`User: ${this.user}`);
 		return html;
 	}
 	signature(sig = '')
@@ -5254,7 +5404,7 @@ class DiscreteObject extends CatObject
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.properName = DiscreteObject.ProperName(diagram, nuArgs);
+		nuArgs.properName = args.size === '0' ? '&null;' : DiscreteObject.ProperName(diagram, nuArgs);
 		nuArgs.name = DiscreteObject.Codename(diagram, nuArgs);
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'size', {value:	nuArgs.size, writable:	false});
@@ -5266,6 +5416,7 @@ class DiscreteObject extends CatObject
 	json()
 	{
 		const d = super.json();
+		delete d.properName;	// always overridden so do not save
 		d.size = this.size;
 		return d;
 	}
@@ -8381,6 +8532,7 @@ console.log('selected',elt);
 		this.addSVG(from);
 		this.makeSelected(e, from);
 		this.update(e);
+		D.objectPanel.update();
 		return from;
 	}
 	placeMorphism(e, to, xyDom, xyCod)
