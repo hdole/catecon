@@ -36,24 +36,24 @@ div.intro
 
 .smallPrint
 {
-	font-size:		10px;
 	font-style:		italic;
 	font-weight:	lighter;
+	font-size:		10px;
 	margin:			5px;
 }
 
 .smallBold
 {
-	font-size:		10px;
 	font-weight:	bold;
+	font-size:		10px;
 	margin:			5px;
 }
 
 .author
 {
 	color:			inherit;
-	font-size:		8px;
 	font-weight:	600;
+	font-size:		8px;
 	margin:			10px;
 	text-align:		left;
 }
@@ -61,18 +61,18 @@ div.intro
 .description
 {
 	color:			inherit;
-	font-size:		10px;
 	margin:			5px 10px 5px 10px;
 	overflow:		hidden;
 	text-align:		left;
 	text-overflow:	ellipsis;
+	font-size:		10px;
 }
 
 .date
 {
 	color:			#888;
-	font-size:		8px;
 	font-weight:	400;
+	font-size:		8px;
 	margin:			10px;
 	text-align:		right;
 }
@@ -99,41 +99,41 @@ div.intro
 
 h1
 {
-	font-size:		26px;
 	font-weight:	bold;
 	margin:			5px 4px 2px 4px;
+	font-size:		26px;
 	text-align:		center;
 }
 
 h2
 {
-	font-size:		22px;
 	font-weight:	bold;
 	margin:			5px 4px 2px 4px;
+	font-size:		22px;
 	text-align:		center;
 }
 
 h3
 {
-	font-size:	18px;
 	font-weight:bold;
 	text-align:	center;
+	font-size:	18px;
 	margin:		5px 4px 2px 4px;
 }
 
 h4
 {
-	font-size:	14px;
 	font-weight:bold;
 	text-align:	center;
+	font-size:	14px;
 	margin:		5px 4px 2px 4px;
 }
 
 h5
 {
-	font-size:		12px;
 	font-weight:	bold;
 	text-align:		left;
+	font-size:		12px;
 	margin:			4px 4px 2px 4px;
 }
 
@@ -335,7 +335,6 @@ a:hover, .offcanvas a:focus
 	box-shadow:			8px 8px 4px 2px #bbbb;
 	display:			inline-block;
 	margin:				0px;
-	opacity:			0;
 	overflow:			hidden;
 	padding:			0px;
 	position:			absolute;
@@ -414,8 +413,8 @@ a:hover, .offcanvas a:focus
 	border:				none;
 	color:				#444;
 	cursor:				pointer;
-	font-size:			14px;
 	font-weight:		bold;
+	font-size:			14px;
 	margin:				4px 0px 4px 0px;
 	outline:			none;
 	text-align:			center;
@@ -464,8 +463,8 @@ a:hover, .offcanvas a:focus
 
 .title
 {
-	font-size:		22px;
 	font-weight:	bold;
+	font-size:		22px;
 	text-align:		center;
 }
 

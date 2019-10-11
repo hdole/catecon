@@ -107,9 +107,6 @@ class D2
 	{
 		return this.x !== 0 || this.y !== 0;
 	}
-	//
-	// static methods
-	//
 	static Add(v, w)
 	{
 		return new D2(v.x + w.x, v.y + w.y);
@@ -245,12 +242,9 @@ class H
 	static toggle(elt, here, there) {elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
 }
 
-//
-// Global to determine if we are running in a browser window or not
-//
-const isGUI = typeof window === 'object';
 const isCloud = false;		// TODO turn on when cloud ready
-// const isCloudy = typeof AmazonCognitoIdentity !== 'undefined';
+
+const isGUI = typeof window === 'object';
 if (isGUI)
 	(function(d)
 	{
@@ -262,7 +256,7 @@ if (isGUI)
 		d.getElementById('navbar').appendChild(a);
 	})(document);
 
-class U
+class U		// utility functions
 {
 	static random()
 	{
@@ -384,15 +378,6 @@ class U
 		}
 		return fctr;
 	}
-	//
-	// Set an argument in an associative array but not overwriting a previously set value.
-	//
-	static setArg(a, k, v)
-	{
-		if (k in a)
-			return;
-		a.k = v;
-	}
 	static GetDiagramInfo(diagram)
 	{
 		if (Diagram.prototype.isPrototypeOf(diagram))
@@ -455,21 +440,6 @@ class U
 		});
 		return factors;
 	}
-	/* TODO unused
-	static ToggleTableMorphism(e, id, name)
-	{
-		const elt = document.getElementById(id);
-		const trs = elt.querySelectorAll('tr');
-		for (let i=0; i< trs.length; ++i)
-		{
-			const tr = trs[i];
-			if (tr !== e.currentTarget)
-				tr.classList.remove('selRow');
-		}
-		e.currentTarget.classList.toggle('selRow');
-		e.currentTarget.classList.toggle('sidenavRow');
-	}
-	*/
 }
 Object.defineProperties(U,
 {
@@ -515,10 +485,7 @@ Object.defineProperties(U,
 	uploadLimit:	{value:1000000,	writable:false},
 });
 
-//
-// runtime utilities and references
-//
-class R
+class R		// runtime
 {
 	static CookieAccept()
 	{
@@ -696,7 +663,6 @@ class R
 				},
 				hasForm(e, diagram, ary)
 				{
-//					if (ary.length > 1 && ary.reduce((hasIt, r) => r &= hasIt && DiagramMorphism.prototype.isPrototypeOf(r), true))
 					if (ary.length > 1 && ary.reduce((hasIt, r) => hasIt && DiagramMorphism.prototype.isPrototypeOf(r), true))
 					{
 						let cod = ary[0].codomain;
@@ -712,9 +678,6 @@ class R
 					return false;
 				},
 			});
-			//
-			// top CAT
-			//
 			const CATargs =
 			{
 				basename:		'CAT',
@@ -724,9 +687,6 @@ class R
 				description:	'top category',
 			};
 			R.CAT = new Category(null, CATargs);
-			//
-			// top level diagram
-			//
 			const $CATargs =
 			{
 				codomain:		R.CAT,
@@ -779,9 +739,6 @@ class R
 `<line class="arrow0" x1="160" y1="60" x2="120" y2="100"/>
 <line class="arrow0" x1="130" y1="260" x2="190" y2="260"/>
 <line class="arrow0" x1="160" y1="60" x2="160" y2="260"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
 				action(e, diagram, set)
 				{
 					const domain = set[0];
@@ -848,9 +805,6 @@ class R
 				{
 					if (ary.length < 2)
 						return false;
-					//
-					// currently we take all objects or all morphisms though one could turn objects into identities
-					//
 					return ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
 						ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true);
 				},
@@ -883,9 +837,6 @@ class R
 				{
 					if (ary.length < 2)		// just don't bother
 						return false;
-					//
-					// currently we take all objects or all morphisms though one could turn objects into identities
-					//
 					return ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
 						ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true);
 				},
@@ -898,9 +849,6 @@ class R
 `<path class="svgstr4" d="M60,120 120,120 120,60"/>
 <line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
 				action(e, diagram, ary)
 				{
 					const cone = ary.map(m => m.to);
@@ -929,9 +877,6 @@ class R
 `<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
 <path class="svgstr4" d="M200,260 200,200 260,200"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
 				action(e, diagram, diagramMorphisms)
 				{
 					const cone = ary.map(m => m.to);
@@ -960,9 +905,6 @@ class R
 `<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="60" y1="80" x2="120" y2="260" marker-end="url(#arrowhead)"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
 				action(e, diagram, diagramMorphisms)
 				{
 					const morphisms = diagramMorphisms.map(m => m.to);
@@ -982,9 +924,6 @@ class R
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
 				action(e, diagram, diagramMorphisms)
 				{
 					const morphisms = diagramMorphisms.map(m => m.to);
@@ -1004,15 +943,13 @@ class R
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
 				action(e, diagram, ary)
 				{
+					const xyDom = D.Barycenter(ary);
 					if (DiagramObject.prototype.isPrototypeOf(ary[0]))
-						diagram.placeObject(e, HomObject.Get(diagram, ary.map(o => o.to)), D.Barycenter(ary));
+						diagram.placeObject(e, HomObject.Get(diagram, ary.map(o => o.to)), xyDom);
 					else if (DiagramMorphism.prototype.isPrototypeOf(ary[0]))
-						diagram.placeMorphism(e, HomMorphism.Get(diagram, ary.map(m => m.to)), D.Barycenter(ary));
+						diagram.placeMorphism(e, HomMorphism.Get(diagram, ary.map(m => m.to)), xyDom, xyDom.add(D.default.stdArrow));
 				},
 				hasForm(e, diagram, ary)	// two objects or morphisms
 				{
@@ -1028,9 +965,6 @@ class R
 				icon:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
-				//
-				// assumes the diagram's selected set already has the proper form
-				//
 				action(e, diagram, ary)
 				{},
 				html(e, diagram, ary)
@@ -1478,7 +1412,7 @@ class R
 					R.initialized = true;
 					D.UpdateDiagramDisplay(R.diagram);
 				});
-			R.GraphCat = new Category(R.$Cat, {basename:'Graph', user:'system', properName:'𝔾𝕣𝕒'});
+			R.GraphCat = new Category(R.$CAT, {basename:'Graph', user:'system', properName:'𝔾𝕣𝕒'});
 			R.cloud && R.cloud.initialize();
 			isGUI && D.panels.update();
 			if (!isGUI)
@@ -2269,10 +2203,16 @@ class D		// Display
 		D.callbacks.map(f => f());
 		D.callbacks = [];
 		const pnt = diagram.mousePosition(e);
+console.log('mousedown',pnt);
 		if (D.mouseover)
 		{
+console.log('mouseover elt',D.mouseover);
 			if (!diagram.isSelected(D.mouseover) && !D.shiftKey)
 				diagram.deselectAll();
+			else if (D.toolbar.style.display === 'none')
+				D.ShowToolbar(e, D.mouseover);
+			else
+				D.toolbar.style.display = 'none';
 		}
 		else
 			diagram.deselectAll();
@@ -2306,6 +2246,7 @@ class D		// Display
 				{
 					const from = diagram.getSelected();
 					D.mouseover = diagram.findElement(xy, from.name);
+console.log('mouseover', D.mouseover);
 					const isolated = from.refcnt === 1;
 					if (DiagramObject.prototype.isPrototypeOf(from))		// ctrl-drag identity
 					{
@@ -2553,8 +2494,8 @@ class D		// Display
 					{
 						xy:
 						{
-							x:pnt.x + Math.max(D.default.arrow.length, domLen + namLen + codLen + D.default.arrow.length/4),
-							y:pnt.y
+							x:xy.x + Math.max(D.default.arrow.length, domLen + namLen + codLen + D.default.arrow.length/4),
+							y:xy.y
 						}
 					});
 				from = new DiagramMorphism(diagram, {to, domain, codomain});
@@ -2671,9 +2612,6 @@ ${D.Button(onclick)}
 </svg>`, '', '', title);
 		return html;
 	}
-	//
-	// get button by name
-	//
 	static GetButton(buttonName, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
 	{
 		let btn = D.svg[buttonName];
@@ -2685,8 +2623,6 @@ ${D.Button(onclick)}
 		if (id !== null)
 			button = `<g id="${id}">${button}</g>`;
 		return H.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>', '', id, title);
-//		return H.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>' + H.span(title), 'tip', id);
-//		return H.a(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>' + H.span(title), 'tip', id);
 	}
 	static setCursor()
 	{
@@ -2844,7 +2780,6 @@ ${D.Button(onclick)}
 										(H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6" onkeydown="D.OnEnter(event, R.CookieAccept)"'}))) +
 										H.tr(H.td(H.button('OK', '', '', '', 'onclick=R.CookieAccept()')))) :
 									H.tr(H.td(H.h4('Use Chrome to access', 'error')))), 'center') +
-	//						H.table(btns.map(row => H.tr(row.map(b => H.td(D.GetButton(b))).join(''))).join(''), 'buttonBar center') +
 						H.table(H.tr(H.td(btns)), 'buttonBar center') +
 						H.span('', '', 'introPngs') + '<br/>' +
 						H.table(H.tr(H.td(H.small('&copy;2018-2019 Harry Dole'), 'left') + H.td(H.small('harry@harrydole.com', 'italic'), 'right')), '', 'footbar')
@@ -2933,9 +2868,6 @@ ${D.Button(onclick)}
 		};
 		img.src = url;
 	}
-	//
-	// static methods
-	//
 	static OnEnter(e, fn, that = null)
 	{
 		if (e.key === 'Enter')
@@ -4566,7 +4498,7 @@ class NewMorphismSection extends Section
 				domain:			diagram.codomain.getObject(this.domainElt.value),
 				codomain:		diagram.codomain.getObject(this.codomainElt.value),
 			});
-			diagram.placeMorphism(e, to);
+			diagram.placeMorphism(e, to, D.Center(), D.Center().add(D.default.stdArrow));
 			D.morphismPanel.basenameElt.value = '';
 			D.morphismPanel.properNameElt.value = '';
 			D.morphismPanel.descriptionElt.value = '';
@@ -4987,10 +4919,7 @@ class Element
 	{
 		return this.refcnt <= 1;
 	}
-	//
-	// Most elements do not need parenthesis, but products and coproducts do.
-	//
-	needsParens()
+	needsParens()		// Most elements do not need parenthesis, but products and coproducts do.
 	{
 		return false;
 	}
@@ -5647,7 +5576,7 @@ class ProductObject extends MultiObject
 	}
 	static ProperName(objects)
 	{
-		return super.ProperName('&times;', objects);
+		return MultiObject.ProperName('&times;', objects);
 	}
 }
 
@@ -5713,7 +5642,7 @@ class CoproductObject extends MultiObject
 	}
 	static ProperName(objects)
 	{
-		return super.ProperName('&plus;', objects);
+		return MultiObject.ProperName('&plus;', objects);
 	}
 }
 
@@ -5789,11 +5718,6 @@ class HomObject extends MultiObject
 	}
 }
 
-//
-// DiagramText
-//
-// a text element placed on the diagram.
-//
 class DiagramText
 {
 	constructor(diagram, args)
@@ -5877,7 +5801,7 @@ class DiagramText
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `nan in makeSVG`;
 		let html = '';
-		if (this.description.indexOf('\n') > -1)
+		if (this.description.indexOf('\n') > -1)		// multi-line svg
 		{
 			let lines = this.description.split('\n').map(t => `<tspan x="0" dy="1.2em">${t}</tspan>`).join('');
 			html =
@@ -5920,12 +5844,6 @@ onmousedown="R.diagram.pickElement(evt, '${this.name}')">${this.description}</te
 	}
 }
 
-//
-// DiagramObject is a CatObject
-//
-// This is the object for the source category in a diagram.
-// It points to the object in the target category of the diagram.
-//
 class DiagramObject extends CatObject
 {
 	constructor(diagram, args)
@@ -5943,10 +5861,8 @@ class DiagramObject extends CatObject
 			y:			{value:	xy.y,												writable:	true},
 			width:		{value:	U.getArg(nuArgs, 'width', 0),						writable:	true},
 			height:		{value:	U.getArg(nuArgs, 'height', D.default.font.height),	writable:	true},
+			to:			{value:	null,												writable:	true},
 		});
-		//
-		// the object in the target category that this object maps to, if any
-		//
 		if ('to' in nuArgs)
 			this.setObject(diagram.getObject(nuArgs.to));
 	}
@@ -5983,11 +5899,6 @@ class DiagramObject extends CatObject
 		if (this.refcnt <= 1)
 		{
 			this.to.decrRefcnt();
-//			//
-//			// if the target is no longer referred to, then decrement again to remove it
-//			//
-//			if (this.to.refcnt === 0)
-//				this.to.decrRefcnt();
 			this.removeSVG();
 		}
 		super.decrRefcnt();
@@ -6144,9 +6055,6 @@ class Category extends CatObject
 			args.actions.map(a => this.actions.set(a, R.$Actions.getObject(a)));
 		if (errMsg != '')
 			D.recordError(errMsg);
-		//
-		// for our recursive morphisms, setup the their recursors now that all morphisms are loaded and the searches can be satisfied
-		//
 		for(const [key, m] of this.morphisms)
 			if (Recursive.prototype.isPrototypeOf(m) && String.prototype.isPrototypeOf(m.recursor))
 				m.setRecursor(m.recursor);
@@ -6179,9 +6087,6 @@ class Category extends CatObject
 	}
 	getMorphism(name)
 	{
-		//
-		// if it is already a morphism, return it
-		//
 		if (Morphism.prototype.isPrototypeOf(name))
 			return name;
 		return this.morphisms.has(name) ? this.morphisms.get(name) : null;
@@ -6211,9 +6116,6 @@ class Category extends CatObject
 				return name;
 		}
 	}
-	//
-	// static methods
-	//
 	static IsSink(ary)
 	{
 		if (ary.length < 2)		// just don't bother
@@ -6361,9 +6263,6 @@ class Morphism extends Element
 	{
 		return Sequence.Get(this.diagram, [this.domain, this.codomain]).getGraph(data);
 	}
-	//
-	// static methods
-	//
 	static Process(diagram, args)
 	{
 		return new R.protos[args.prototype](diagram, args);
@@ -6400,9 +6299,6 @@ class Identity extends Morphism
 	{
 		return args;
 	}
-	//
-	// static methods
-	//
 	static Codename(diagram, domain)
 	{
 		return Element.Codename(diagram, `Id{${domain.name}}dI`);
@@ -6880,10 +6776,7 @@ class Composite extends MultiMorphism
 	{
 		return this.morphisms.reduce((d, m) => d ? m.$(d) : null, args);
 	}
-	//
-	// A composite is considered iterable if the first morphism is iterable.
-	//
-	isIterable()
+	isIterable()		// A composite is considered iterable if the first morphism is iterable.
 	{
 		return this.morphisms[0].isIterable();
 	}
@@ -6923,9 +6816,6 @@ class Composite extends MultiMorphism
 		graph.copyDomCodLinks(seqGraph, {cnt:this.morphisms.length, link:[]});
 		return graph;
 	}
-	//
-	// Composite static methods
-	//
 	static Codename(diagram, morphisms)
 	{
 		return Element.Codename(diagram, `Cm{${morphisms.map(m => m.name).join(',')}}mC`);
@@ -6946,7 +6836,7 @@ class Composite extends MultiMorphism
 	}
 	static ProperName(morphisms)
 	{
-		return morphisms.map(m => m.properName).join('&#8728;');
+		return MultiObject.ProperName('&#8728;', morphisms);
 	}
 }
 
@@ -6974,9 +6864,6 @@ class ProductMorphism extends MultiMorphism
 	{
 		return this.morphisms.map((m, i) => m.$(args[i]));
 	}
-	//
-	// ProductMorphism static methods
-	//
 	static Codename(diagram, morphisms)
 	{
 		return Element.Codename(diagram, `Pm{${morphisms.map(m => m.name).join(',')}}mP`);
@@ -6997,7 +6884,7 @@ class ProductMorphism extends MultiMorphism
 	}
 	static ProperName(morphisms)
 	{
-		return ProductObject.ProperName(morphisms);
+		return MultiObject.ProperName('&times;', morphisms);
 	}
 }
 
@@ -7025,9 +6912,6 @@ class CoproductMorphism extends MultiMorphism
 	{
 		return [args[0], this.morphisms[args[0]].$(args[1])];
 	}
-	//
-	// CoproductMorphism static methods
-	//
 	static Codename(diagram, morphisms)
 	{
 		return Element.Codename(diagram, `Cm{${morphisms.map(m => m.name).join(',')}}mC`);
@@ -7048,7 +6932,7 @@ class CoproductMorphism extends MultiMorphism
 	}
 	static ProperName(morphisms)
 	{
-		return CoproductObject.ProperName(morphisms);
+		return MultiObject.ProperName('&plus;', morphisms);
 	}
 }
 
@@ -7079,9 +6963,6 @@ class ProductAssembly extends MultiMorphism
 	{
 		return this.mergeMorphismGraphs(graph);
 	}
-	//
-	// ProductAssembly static methods
-	//
 	static Codename(diagram, morphisms)
 	{
 		return Element.Codename(diagram, `Pa{${morphisms.map(m => m.name).join(',')}}aP`);
@@ -7102,7 +6983,7 @@ class ProductAssembly extends MultiMorphism
 	}
 	static ProperName(morphisms)
 	{
-		return `Pa{${morphisms.map(m => m.codomain.properName).join(',')}}`;
+		return `&Pi;<${morphisms.map(m => m.codomain.properName).join(',')}>`;
 	}
 }
 
@@ -7152,7 +7033,7 @@ class CoproductAssembly extends MultiMorphism
 	}
 	static ProperName(morphisms)
 	{
-		return `(${morphisms.map(m => m.properName).join(',')})`;
+		return `&#x2210;<${morphisms.map(m => m.codomain.properName).join(',')}>`;
 	}
 }
 
@@ -8537,25 +8418,28 @@ console.log('selected',elt);
 	}
 	placeMorphism(e, to, xyDom, xyCod)
 	{
-		let xyD = xyDom;
-		let xyC = xyCod;
-		if (typeof xyDom === 'undefined')
-		{
-			xyD = D.Center();
-			xyC = xyD.add(D.default.stdArrow);
-		}
+		let xyD = new D2(xyDom);
+		let xyC = new D2(xyCod);
+//		if (typeof xyDom === 'undefined')
+//		{
+//			xyD = D.Center();
+//			xyC = xyD.add(D.default.stdArrow);
+//		}
+		const angle = D2.Angle(xyDom, xyCod);
 		const domain = new DiagramObject(this, {to:to.domain, xy:xyD});
 		const codomain = new DiagramObject(this, {to:to.codomain, xy:xyC});
 		const from = new DiagramMorphism(this, {to, domain, codomain});
 		this.domain.makeHomSets();
-		if (isGUI)
-		{
-			this.addSVG(domain);
-			this.addSVG(codomain);
-			this.addSVG(from);
-			this.makeSelected(e, from);
-			this.update(e);
-		}
+		const tw = D.textWidth(to.domain.properName)/2 + D.textWidth(to.codomain.properName)/2;
+		const al = D.default.arrow.length;
+		const xyCmin = D.Grid({x:xyD.x + Math.cos(angle) * (al + tw), y:xyD.y + Math.sin(angle) * (al + tw)});
+		if (xyD.dist(xyC) < xyD.dist(xyCmin))
+			xyC = xyCmin;
+		this.addSVG(domain);
+		this.addSVG(codomain);
+		this.addSVG(from);
+		this.makeSelected(e, from);
+		this.update(e);
 	}
 	objectPlaceMorphism(e, dir, objName, morphName)
 	{
@@ -8569,10 +8453,8 @@ console.log('selected',elt);
 			const angles = [];
 			// TODO use hom sets?
 			for(const [name, m] of this.domain.morphisms)
-//				if (fromObj.isEquivalent(m.domain))
 				if (fromObj.name === m.domain.name)
 					angles.push(D2.Angle(fromObj, m.codomain));
-//				else if (fromObj.isEquivalent(m.codomain))
 				else if (fromObj.name === m.codomain.name)
 					angles.push(D2.Angle(fromObj, m.domain));
 			angles.sort();
@@ -8829,18 +8711,6 @@ console.log('selected',elt);
 	{
 		return this.selected.filter(s => DiagramMorphism.prototype.isPrototypeOf(s));
 	}
-	/*
-	compose(e)
-	{
-		const morphisms = this.getSelectedMorphisms();
-		const to = Composite.Get(this, morphisms.map(m => m.to));
-	//	const from = new DiagramMorphism(this, {to, domain:this.selected[0].domain, codomain:this.selected[this.selected.length -1].codomain});
-		const from = new DiagramMorphism(this, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms)});
-		from.morphisms = morphisms;
-		this.addSVG(from);
-		this.update(e, from, true);
-	}
-	*/
 	run(e)
 	{
 		const from = this.getSelected();
@@ -8873,26 +8743,11 @@ console.log('selected',elt);
 		}
 		D.drag = false;
 	}
-	/*
-	makeHomSets()
-	{
-		this.domain.makeHomSets();
-// TODO		this.codomain.makeHomSets();
-		this.references.map(r =>
-		{
-			r.domain.addHomSets(this.domain.homSets, this.domain.obj2morphs);
-// TODO			r.codomain.addHomSets(this.codomain.homSets, this.codomain.obj2morphs);
-		});
-	}
-	*/
 	addFactor(id, fname, root, action, ...indices)
 	{
 		const div = document.getElementById(id);
 		if (div.innerHTML === '')
 			div.innerHTML = H.span(D.GetButton('edit', `R.diagram.${fname}(evt)`, 'Create morphism'));
-		//
-		// start with the first element and go down from there
-		//
 		const object = this.getObject(root);
 		const factor = object.getFactor(indices);
 		const sub = indices.join();
@@ -8919,31 +8774,6 @@ console.log('selected',elt);
 		this.domain.objects.forEach(fn);
 		this.domain.morphisms.forEach(fn);
 		this.texts.forEach(fn);
-		/*
-		for (const [name, o] of this.domain.objects)
-			try
-			{
-				svg += o.makeSVG();
-			}
-			catch(e)
-			{
-				D.recordError(e);
-			}
-		for (const [name, m] of this.domain.morphisms)
-			try
-			{
-				svg += m.makeSVG();
-			}
-			catch(e)
-			{
-				D.recordError(e);
-			}
-//		svg += this.texts.map(t => t.makeSVG());
-		this.domain.texts.forEach(function(t)
-		{
-			svg += t.makeSVG();
-		});
-		*/
 		return svg;
 	}
 	upload(e, fn = null)
@@ -9078,9 +8908,6 @@ console.log('selected',elt);
 					DataMorphism.prototype.isPrototypeOf(sel0) &&
 					Composite.prototype.isPrototypeOf(sel1) &&
 					sel1.getMorphism(sel0);
-				//
-				// find the natural numbers object
-				//
 				const N = this.getObject('N');
 				if (r && N)
 				{
