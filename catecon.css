@@ -92,9 +92,23 @@ div.intro
 	font-weight:	bold;
 }
 
+.tty
+{
+	display:		block;
+	font:			12px "monospace", sans-serif;
+	margin:			5px;
+	unicode-bidi:	embed;
+	white-space:	pre;
+}
+
 .code
 {
 	font-family:	courier;
+	display:		block;
+	/* font:			12px "monospace", sans-serif; */
+	margin:			5px;
+	unicode-bidi:	embed;
+	white-space:	pre;
 }
 
 h1
@@ -335,6 +349,7 @@ a:hover, .offcanvas a:focus
 	box-shadow:			8px 8px 4px 2px #bbbb;
 	display:			inline-block;
 	margin:				0px;
+	max-width:			300px;
 	overflow:			hidden;
 	padding:			0px;
 	position:			absolute;
@@ -362,6 +377,13 @@ a:hover, .offcanvas a:focus
 .svgstr3 {fill:none; stroke:black; stroke-width:10px}
 .svgstr4 {fill:none; stroke:black; stroke-width:20px}
 .arrow0 {fill:none;	stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
+.arrow0-30px
+{
+	fill:			none;
+	stroke:			black;
+	stroke-linecap:	round;
+	stroke-width:	30px;
+}
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
 .arrow6 {fill:none; stroke:#666; stroke-width:20px;}
 .arrow9 {fill:none; stroke:#999; stroke-width:20px;}
@@ -495,15 +517,6 @@ table.center
 	fill-opacity:	0.5;
 }
 
-.tty
-{
-	display:		block;
-	font:			12px "monospace", sans-serif;
-	margin:			5px;
-	unicode-bidi:	embed;
-	white-space:	pre;
-}
-
 .toolbarTbl
 {
 	width:	100%;
@@ -582,7 +595,8 @@ svg:hover
 .object:hover
 {
 	cursor:	grab;
-	fill:	#3f3;
+	fill:	#9fc;
+	stroke:	#0f0;
 	font:	30px "Century";
 	margin:	2px;
 }
@@ -598,7 +612,8 @@ svg:hover
 .morphTxt:hover
 {
 	cursor:		pointer;
-	fill:		#3f3;
+	fill:		#9fc;
+	stroke:	#0f0;
 	font:		24px "Century";
 	margin:		2px;
 }
@@ -618,7 +633,8 @@ svg:hover
 {
 	margin:		2px;
 	padding:	2px;
-	stroke:		#3f3;
+	fill:	#9fc;
+	stroke:	#0f0;
 }
 
 .element
@@ -641,7 +657,7 @@ svg:hover
 .selected
 {
 	margin:		2px;
-	stroke:		#3f3;
+	stroke:		#9f9;
 }
 
 .selRow
