@@ -732,6 +732,8 @@ class R		// runtime
 				description:	'diagram of currently loaded actions',
 				user:			'system',
 			});
+
+			/*
 			const identityAction = new Action(R.$Actions,
 			{
 				description:	'Create identity morphism',
@@ -1109,9 +1111,6 @@ class R		// runtime
 					return false;
 				},
 			});
-			//
-			// special action for PFS
-			//
 			const runAction = new Action(R.$Actions,
 			{
 				description:	'Run a morphism',
@@ -1410,41 +1409,109 @@ class R		// runtime
 				}
 			});
 
-			R.standardActions.set('identity', identityAction);
-			R.standardActions.set('composite', compositeAction);
-			R.standardActions.set('detachDomain', detachDomainAction);
-			R.standardActions.set('detachCodomain', detachCodomainAction);
-			R.standardActions.set('editMorphism', editMorphismAction);
-			R.standardActions.set('run', runAction);
-			R.standardActions.set('delete', deleteAction);
-			R.standardActions.set('copy', copyAction);
-			R.standardActions.set('help', helpAction);
-			R.standardActions.set('javascript', javascriptAction);
+			R.standardActions.set('identity', new IdentityAction(R.$Actions));
+			R.standardActions.set('composite', new CompositeAction(R.$Actions));
+			R.standardActions.set('detachDomain', new DetachDomainAction(R.$Actions));
+			R.standardActions.set('detachCodomain', new DetachCodomainAction(R.$Actions));
+			R.standardActions.set('editMorphism', new EditMorphismAction(R.$Actions));
+			R.standardActions.set('run', new RunAction(R.$Actions));
+			R.standardActions.set('delete', new DeleteAction(R.$Actions));
+			R.standardActions.set('copy', new CopyAction(R.$Actions));
+			R.standardActions.set('help', new HelpAction(R.$Actions));
+			R.standardActions.set('javascript', new JavascriptAction(R.$Actions));
 
-			R.Cat.actions.set('identity', identityAction);
-			R.Cat.actions.set('composite', compositeAction);
-			R.Cat.actions.set('detachDomain', detachDomainAction);
-			R.Cat.actions.set('detachCodomain', detachCodomainAction);
-			R.Cat.actions.set('editMorphism', editMorphismAction);
-			R.Cat.actions.set('run', runAction);
-			R.Cat.actions.set('delete', deleteAction);
-			R.Cat.actions.set('copy', copyAction);
-			R.Cat.actions.set('help', helpAction);
+			R.Cat.actions.set('identity', new IdentityAction(R.$Actions));
+			R.Cat.actions.set('composite', new CompositeAction(R.$Actions));
+			R.Cat.actions.set('detachDomain', new DetachDomainAction(R.$Actions));
+			R.Cat.actions.set('detachCodomain', new DetachCodomainAction(R.$Actions));
+			R.Cat.actions.set('editMorphism', new EditMorphismAction(R.$Actions));
+			R.Cat.actions.set('run', new RunAction(R.$Actions));
+			R.Cat.actions.set('delete', new DeleteAction(R.$Actions));
+			R.Cat.actions.set('copy', new CopyAction(R.$Actions));
+			R.Cat.actions.set('help', new HelpAction(R.$Actions));
 
-			R.Cat.actions.set('product', productAction);
-			R.Cat.actions.set('project', projectAction);
-			R.Cat.actions.set('coproduct', coproductAction);
-			R.Cat.actions.set('pullback', pullbackAction);
-			R.Cat.actions.set('pushout', pushoutAction);
-			R.Cat.actions.set('productAssembly', productAssemblyAction);
-			R.Cat.actions.set('coproductAssembly', coproductAssemblyAction);
-			R.Cat.actions.set('hom', homAction);
-			R.Cat.actions.set('homLeft', homLeftAction);
-			R.Cat.actions.set('homRight', homRightAction);
-			R.Cat.actions.set('terminalMorphism', terminalMorphismAction);
-			R.Cat.actions.set('initialMorphism', initialMorphismAction);
-			R.Cat.actions.set('lambdaMorphism', lambdaMorphismAction);
-			R.Cat.actions.set('javascript', javascriptAction);
+			R.Cat.actions.set('product', new ProductAction(R.$Actions));
+			R.Cat.actions.set('project', new ProjectAction(R.$Actions));
+			R.Cat.actions.set('coproduct', new CoproductAction(R.$Actions));
+			R.Cat.actions.set('pullback', new PullbackAction(R.$Actions));
+			R.Cat.actions.set('pushout', new PushoutAction(R.$Actions));
+			R.Cat.actions.set('productAssembly', new ProductAssemblyAction(R.$Actions));
+			R.Cat.actions.set('coproductAssembly', new CoproductAssemblyAction(R.$Actions));
+			R.Cat.actions.set('hom', new HomAction(R.$Actions));
+			R.Cat.actions.set('homLeft', new HomLeftAction(R.$Actions));
+			R.Cat.actions.set('homRight', new HomRightAction(R.$Actions));
+			R.Cat.actions.set('terminalMorphism', new TerminalMorphismAction(R.$Actions));
+			R.Cat.actions.set('initialMorphism', new InitialMorphismAction(R.$Actions));
+			R.Cat.actions.set('lambdaMorphism', new LambdaMorphismAction(R.$Actions));
+			R.Cat.actions.set('javascript', new JavascriptAction(R.$Actions));
+			R.Cat.initializeActions();
+			*/
+
+			new IdentityAction(R.$Actions);
+			new CompositeAction(R.$Actions);
+			new DetachDomainAction(R.$Actions);
+			new DetachCodomainAction(R.$Actions);
+			new EditMorphismAction(R.$Actions);
+			new RunAction(R.$Actions);
+			new DeleteAction(R.$Actions);
+			new CopyAction(R.$Actions);
+			new HelpAction(R.$Actions);
+
+			new ProductAction(R.$Actions);
+			new ProjectAction(R.$Actions);
+			new CoproductAction(R.$Actions);
+			new PullbackAction(R.$Actions);
+			new PushoutAction(R.$Actions);
+			new ProductAssemblyAction(R.$Actions);
+			new CoproductAssemblyAction(R.$Actions);
+			new HomAction(R.$Actions);
+			new HomLeftAction(R.$Actions);
+			new HomRightAction(R.$Actions);
+			new TerminalMorphismAction(R.$Actions);
+			new InitialMorphismAction(R.$Actions);
+			new LambdaMorphismAction(R.$Actions);
+			new JavascriptAction(R.$Actions);
+
+			function setAction(s, name)
+			{
+				s.set(name, R.$Actions.getObject(name));
+			}
+			setAction(R.standardActions, 'identity');
+			setAction(R.standardActions, 'composite');
+			setAction(R.standardActions, 'detachDomain');
+			setAction(R.standardActions, 'detachCodomain');
+			setAction(R.standardActions, 'editMorphism');
+			setAction(R.standardActions, 'run');
+			setAction(R.standardActions, 'delete');
+			setAction(R.standardActions, 'copy');
+			setAction(R.standardActions, 'help');
+			setAction(R.standardActions, 'javascript');
+
+			setAction(R.Cat.actions, 'identity');
+			setAction(R.Cat.actions, 'composite');
+			setAction(R.Cat.actions, 'detachDomain');
+			setAction(R.Cat.actions, 'detachCodomain');
+			setAction(R.Cat.actions, 'editMorphism');
+			setAction(R.Cat.actions, 'run');
+			setAction(R.Cat.actions, 'delete');
+			setAction(R.Cat.actions, 'copy');
+			setAction(R.Cat.actions, 'help');
+
+			setAction(R.Cat.actions, 'product');
+			setAction(R.Cat.actions, 'project');
+			setAction(R.Cat.actions, 'coproduct');
+			setAction(R.Cat.actions, 'pullback');
+			setAction(R.Cat.actions, 'pushout');
+			setAction(R.Cat.actions, 'productAssembly');
+			setAction(R.Cat.actions, 'coproductAssembly');
+			setAction(R.Cat.actions, 'hom');
+			setAction(R.Cat.actions, 'homLeft');
+			setAction(R.Cat.actions, 'homRight');
+			setAction(R.Cat.actions, 'terminalMorphism');
+			setAction(R.Cat.actions, 'initialMorphism');
+			setAction(R.Cat.actions, 'lambdaMorphism');
+			setAction(R.Cat.actions, 'javascript');
+
 			R.Cat.initializeActions();
 
 			isGUI && D.navbar.update();
@@ -5991,33 +6058,22 @@ class Action extends CatObject
 		const nuArgs = U.clone(args);
 		nuArgs.category = diagram ? diagram.codomain : null;
 		super(diagram, nuArgs);
-//		Object.defineProperties(this,
-//		{
-//			action:			{value:	nuArgs.action,		writable:	false},		// gui action
-//			icon:			{value:	nuArgs.icon,		writable:	false},		// svg
-//			hasForm:		{value:	nuArgs.hasForm,		writable:	false},		// function to pattern match the selected set
-//		});
-//		if ('html' in nuArgs)
-//			Object.defineProperty(this, 'html', {value: nuArgs.html, writable:	false});
-//		if ('initialize' in nuArgs)												// initialize objects and morphisms in its cat
-//			Object.defineProperty(this, 'initialize', {value: nuArgs.initialize, writable:	false});
 		Object.defineProperty(this, 'icon', {value:nuArgs.icon,	writable:	false});
-
 	}
 	help()
 	{
 		return super.help() + H.p('Action');
 	}
-	action(e, diagram, ary) {};
-	hasForm(e, diagram, ary) {};
-	html(e, diagram, ary) {};
+	action(e, diagram, ary) {};	// fitb
+	hasForm(e, diagram, ary) {return false;};	// fitb
+//	html(e, diagram, ary) {};	// fitb
 }
 
 class CompositeAction extends Action
 {
 	constructor(diagram)
 	{
-		args const =
+		const args =
 		{
 			description:	'Create composite of morphisms',
 			name:			'composite',
@@ -6060,7 +6116,7 @@ class IdentityAction extends Action
 {
 	constructor(diagram)
 	{
-		args const =
+		const args =
 		{
 			description:	'Create identity morphism',
 			name:			'identity',
@@ -6162,7 +6218,7 @@ class CoproductAction extends Action
 {
 	constructor(diagram)
 	{
-		args =
+		const args =
 		{
 			description:	'Create a coproduct of two or more objects or morphisms',
 			name:			'coproduct',
@@ -6346,15 +6402,19 @@ class HomAction extends Action
 	}
 }
 
-class homRightAction extends Action
+class HomRightAction extends Action
 {
-	description:	'Select a morphism listed from a common domain',
-	name:		'homRight',
-	icon:
+	constructor(diagram)
+	{
+		const args = {	description:	'Select a morphism listed from a common domain',
+						name:		'homRight',
+						icon:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
+<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
 	action(e, diagram, ary)
-	{},
+	{}
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
@@ -6364,12 +6424,582 @@ class homRightAction extends Action
 			if (from.to.name === m.domain.name)
 				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'domain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms from ${from.to.properName}`, 'italic') + H.table(rows);
-	},
+	}
 	hasForm(e, diagram, ary)	// one object
 	{
 		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
-	},
-});
+	}
+}
+
+class HomLeftAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Select a morphism listed from a common codomain',
+						name:		'homLeft',
+						icon:
+`<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="30" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{}
+	html(e, diagram, ary)
+	{
+		const from = ary[0];
+		const morphisms = [];
+		let rows = '';
+		for(const [key, m] of diagram.codomain.morphisms)
+			if (from.to.name === m.codomain.name)
+				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'codomain', '${from.name}', '${m.name}')"`);
+		D.help.innerHTML = H.small(`Morphisms to ${from.to.properName}`, 'italic') + H.table(rows);
+	}
+	hasForm(e, diagram, ary)	// one object
+	{
+		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+	}
+}
+
+class DetachDomainAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Detach a morphism\'s domain',
+						name:		'detachDomain',
+						icon:
+`<circle cx="40" cy="160" r="60" fill="url(#radgrad1)"/>
+<circle cx="100" cy="200" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)		// diagram unused
+	{
+		const from = ary[0];
+		const domain = from.domain;
+		const detachedObj = new DiagramObject(diagram, {xy: {x:domain.x + D.default.toolbar.x, y:domain.y + D.default.toolbar.y } });
+		domain.decrRefcnt();
+		from.domain = detachedObj;
+		diagram.domain.makeHomSets();
+		detachedObj.setObject(from.to.domain);
+		detachedObj.incrRefcnt();
+		from.update();
+		diagram.addSVG(detachedObj);
+		diagram.makeSelected(e, from);
+		diagram.update();
+	}
+	hasForm(e, diagram, ary)	// one morphism with connected domain but not a def of something
+	{
+		if (ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+		{
+			const from = ary[0];
+			const domMorphs = diagram.domain.obj2morphs.get(from.domain);
+			return from.isDeletable() && (domMorphs ? domMorphs.dom.length + domMorphs.cod.length > 1 : false);
+		}
+		return false;
+	}
+}
+
+class DetachCodomainAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Detach a morphism\'s codomain',
+						name:		'detachCodomain',
+						icon:
+`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
+<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)		// diagram unused
+	{
+		const from = ary[0];
+		const codomain = from.codomain;
+		const detachedObj = new DiagramObject(diagram, {xy: {x:codomain.x + D.default.toolbar.x, y:codomain.y + D.default.toolbar.y } });
+		codomain.decrRefcnt();
+		from.codomain = detachedObj;
+		diagram.domain.makeHomSets();
+		detachedObj.setObject(from.to.codomain);
+		detachedObj.incrRefcnt();
+		from.update();
+		diagram.addSVG(detachedObj);
+		diagram.makeSelected(e, from);
+		diagram.update();
+	}
+	hasForm(e, diagram, ary)	// one morphism with connected codomain
+	{
+		if (ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+		{
+			const from = ary[0];
+			const codMorphs = diagram.domain.obj2morphs.get(from.codomain);
+			return from.isDeletable() && (codMorphs ? codMorphs.dom.length + codMorphs.cod.length > 1 : false);
+		}
+		return false;
+	}
+}
+
+class EditMorphismAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Edit a morphism',
+						name:		'editMorphism',
+						icon:
+`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
+<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const to = diagram.newDataMorphism(from.to.domain, from.to.codomain);	// TODO new is edit?
+		diagram.setMorphism(from, to);
+		diagram.updateElementAttribute(from, 'properName', to.properName);
+		diagram.update(e);
+		D.dataPanel.update();
+		D.dataPanel.open();
+	}
+	hasForm(e, diagram, ary)	// one editable morphism
+	{
+		if (ary.length === 1 && !this.readonly)
+		{
+			const from = ary[0];
+			// TODO isTerminal
+			return DataMorphism.prototype.isPrototypeOf(from.to) ||
+						(Identity.prototype.isPrototypeOf(from.to) &&
+							from.refcnt === 1 &&
+							!from.to.domain.isInitial &&
+							!from.to.codomain.isTerminal &&
+							from.to.domain.isEditable());
+		}
+		return false;
+	}
+}
+
+class RunAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Run a morphism',
+						name:		'run',
+						icon:
+`<line class="arrow0" x1="20" y1="160" x2="100" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="120" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="220" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)		// diagram unused
+	{
+		const from = ary[0];
+		const isThreeD = from.to.codomain.name === 'threeD';
+		const isTty = from.to.codomain.name === 'tty';
+		if (Morphism.isProtypeOf(from) && from.to.isIterable())
+		{
+			if (isThreeD)
+			{
+				D.threeDPanel.open();
+				D.threeDPanel.resizeCanvas();
+			}
+			const start = Date.now();
+			const toResult = this.codomain.run(from.to, this);
+			D.status(e, `<br/>Elapsed ${Date.new() - start}ms`);
+			if (isThreeD)
+				D.threeDPanel.view('front');
+			if (toResult !== null)
+			{
+				const fromResult = new DiagramMorphism(this, {to, domain:from.domain, codomain:from.codomain});
+				diagram.domain.makeHomSets();
+				diagram.addSVG(fromResult);
+				diagram.makeSelected(e, fromResult);
+				diagram.update();
+			}
+			if (isTty)
+			{
+				D.ttyPanel.open();
+				Panel.AccordionOpen('ttyOutPnl');
+			}
+		}
+		D.drag = false;
+	}
+	hasForm(e, diagram, ary)	// one iterable composite morphism
+	{
+		if (ary.length === 1)
+		{
+			const from = ary[0];
+			return Composite.prototype.isPrototypeOf(from.to) && from.to.isIterable();
+		}
+		return false;
+	}
+}
+
+class DeleteAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Delete objects, morphisms or text',
+						name:			'delete',
+						icon:
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
+<path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		let updateObjects = false;
+		let updateMorphisms = false;
+		let updateTexts = false;
+		for(let i=0; i<ary.length; ++i)
+		{
+			let s = ary[i];
+			s.decrRefcnt();
+			if (DiagramObject.prototype.isPrototypeOf(s))	// TODO what about morphisms as objects in 2Cat?
+				updateObjects = true;
+			else if (DiagramMorphism.prototype.isPrototypeOf(s))
+				updateMorphisms = true;
+			else if (DiagramText.prototype.isPrototypeOf(s))
+				updateTexts = true;
+		}
+		if (updateObjects)
+			D.objectPanel.update();
+		if (updateMorphisms)
+		{
+			D.morphismPanel.update();
+			diagram.domain.makeHomSets();
+		}
+		if (updateTexts)
+			D.textPanel.update();
+		diagram.selected = [];	// do not use diagram.deselectAll()
+		diagram.update();
+		D.HideToolbar();
+	}
+	hasForm(e, diagram, ary)	// all are deletable
+	{
+		return ary.reduce((hasIt, a) => hasIt && a.isDeletable(), true);
+	}
+}
+
+class TerminalMorphismAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Create a terminal morphism from an object',
+						name:		'terminalMorphism',
+						icon:	// TODO
+`<line class="arrow0" x1="20" y1="160" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+<line class="svgstr3" x1="180" y1="160" x2="300" y2="160"/>
+<line class="svgstr3" x1="200" y1="120" x2="280" y2="200"/>
+<line class="svgstr3" x1="200" y1="200" x2="280" y2="120"/>
+<line class="svgstr3" x1="240" y1="100" x2="240" y2="220"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const object = ary[0];
+		const m = TerminalMorphism.Get(diagram, object.to);
+		diagram.objectPlaceMorphism(e, 'domain', object, m.name)
+	}
+	initialize(category)
+	{
+		new TerminalObject(null, {category});
+	}
+	hasForm(e, diagram, ary)	// one object
+	{
+		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+	}
+}
+
+class InitialMorphismAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Create an initial morphism to an object',
+						name:			'initialMorphism',
+						icon:
+`<circle cx="80" cy="160" r="60" class="svgstr3"/>
+<line class="svgstr3" x1="140" y1="100" x2="20" y2="220"/>
+<line class="arrow0" x1="160" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)		// diagram unused
+	{
+		const object = ary[0];
+		const m = InitialMorphism.Get(diagram, object.to);
+		diagram.objectPlaceMorphism(e, 'codomain', object, m.name)
+	}
+	initialize(category)
+	{
+		new InitialObject(null, {category});
+	}
+	hasForm(e, diagram, ary)	// one object
+	{
+		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+	}
+}
+
+class LambdaMorphismAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Form a lambda of a morphism',
+						name:			'lambdaMorphism',
+						icon:
+`<circle cx="120" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="200" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="120" cy="240" r="60" fill="url(#radgrad1)"/>
+<circle cx="200" cy="240" r="60" fill="url(#radgrad1)"/>
+<polyline class="svgstr3" points="80,200 60,200 60,280 100,280"/>
+<polyline class="svgstr3" points="240,200 260,200 260,280 240,280"/>
+<line class="arrow0" x1="160" y1="100" x2="160" y2="200" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const domFactors = U.GetFactorsByDomCodId('domainDiv');
+		const homFactors = U.GetFactorsByDomCodId('codomainDiv');
+		const m = LambdaMorphism.Get(this, {preCurry:from.to, domFactors, homFactors});
+		const v = D2.Subtract(from.codomain, from.domain);
+		const normV = v.normal().normalize();
+		const xyDom = normV.scale(D.default.arrow.length).add(from.domain);
+		const xyCod = normV.scale(D.default.arrow.length, normV).add(from.codomain);
+		diagram.placeMorphism(e, m, xyDom, xyCod);
+	}
+	hasForm(e, diagram, ary)	// 
+	{
+		return ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) &&
+			(ProductObject.prototype.isPrototypeOf(ary[0].to.domain) || HomObject.prototype.isPrototypeOf(ary[0].to.codomain));
+	}
+	html(e, diagram, ary)
+	{
+		const domain = ary[0].domain;
+		const codomain = ary[0].codomain;
+		const html =
+			H.h4('Curry A &otimes; B -> [C, D]') +
+			H.h5('Domain Factors: A &otimes; B') +
+			H.small('Click to move to C') +
+			H.div(domain.getSubFactorBtnCode({dir:	0, fromId:'domainDiv', toId:'codomainDiv'}), '', 'domainDiv') +
+			H.h5('Codomain Factors: C') +
+			(HomObject.prototype.isPrototypeOf(codomain) ?
+				H.small('Merge to codomain hom') + D.GetButton('codhom', `R.diagram.toggleCodHom()`, 'Merge codomain hom', D.default.button.tiny) + H.br() : '') +
+			H.small('Click to move to A &otimes; B') +
+			// TODO this factorButton arguments are not correct
+			H.div(HomObject.prototype.isPrototypeOf(codomain) ? codomain.homDomain().factorButton({dir:1, fromId:'codomainDiv', toId:'domainDiv'})
+																: '', '', 'codomainDiv') +
+			H.span(D.GetButton('edit', `R.diagram.activate(evt, 'lambdaMorphism')`, 'Curry morphism'));
+		D.help.innerHTML = html;
+	}
+}
+
+class ProjectAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	name:		'project',
+						icon:
+					`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const m = this.addFactorMorphism(from.to, U.GetFactorsById('codomainDiv'));
+		this.objectPlaceMorphism(e, 'domain', from, m)
+	}
+	hasForm(e, diagram, ary)	// one product object
+	{
+		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to);
+	}
+	html(e, diagram, ary)
+	{
+		const to = ary[0].to;
+		const html = H.h4('Create Factor Morphism') +
+					H.h5('Domain Factors') +
+					H.small('Click to place in codomain') +
+			// TODO fix D.elementId()
+					H.button('1', '', D.elementId(), 'Add terminal object', `onclick="R.diagram.addFactor('codomainDiv', 'selectedFactorMorphism', 'One', '', -1)"`) +
+					to.factorButton({fname:'selectedFactorMorphism', root:to.name, index:[], id:'codomainDiv', action:'', op:'product'}) +
+					H.h5('Codomain Factors') + H.br() +
+					H.small('Click to remove from codomain') +
+					H.div('', '', 'codomainDiv');
+		D.help.innerHTML = html;
+	}
+}
+
+class HelpAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Give help for an item',
+						name:			'help',
+						icon:
+`<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
+<path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary) {}
+	hasForm(e, diagram, ary)	// one element
+	{
+		return ary.length === 1;
+	}
+	html(e, diagram, ary)
+	{
+		const from = ary[0];
+		const readonly = from.diagram.readonly;
+		let html = '';
+		if (from.to)
+			html = from.to.help();
+		else if (DiagramText.prototype.isPrototypeOf(from))
+			html = H.p(H.span(from.description, 'tty', 'descriptionElt') +
+						(readonly ? '' : D.GetButton('edit', `R.diagram.editElementText(event, 'descriptionElt', 'description')`, 'Edit text', D.default.button.tiny)));
+		D.help.innerHTML = html;
+	}
+}
+
+class JavascriptAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Give javascript code for a bare morphism',
+						name:			'javascript',
+						icon:
+'<text text-anchor="middle" x="160" y="280" style="font-size:240px;stroke:#000;">JS</text>',};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const m = ary[0].to;
+		if (!('code' in m))
+			m.code = {};
+		m.code.javascript = document.getElementById('morphism-javascript').innerText;
+		diagram.update();
+	}
+	hasForm(e, diagram, ary)	// one Morphism, and not a derived one
+	{
+//		return ary.length === 1 && ary[0].to.constructor.name === 'Morphism';
+		return ary.length === 1 && Morphism.prototype.isPrototypeOf(ary[0]);
+	}
+	html(e, diagram, ary)
+	{
+		const to = ary[0].to;
+		const readonly = diagram.readonly;
+		let html = '';
+		const code = this.generate(to);
+console.log('javascript',code);
+		html = H.p(H.span(code, 'tty', 'morphism-javascript') +
+					(readonly ? '' : D.GetButton('edit', `R.diagram.setMorphismCode(event, 'morphism-javascript', 'javascript')`, 'Edit code', D.default.button.tiny)));
+		D.help.innerHTML = html;
+	}
+	run(m, diagram)
+	{
+		let dm = m.morphisms[0];
+		if (!DataMorphism.prototype.isPrototypeOf(dm))
+			throw 'Needs a data morphism first in the composite to run';
+		//
+		// there is no output morphism for the codomains tty and threeD
+		//
+		let dataOut = (m.codomain.basename !== 'tty' && m.codomain.basename !== 'threeD') ? diagram.newDataMorphism(m.domain, m.codomain) : null;
+		//
+		// we can run from a data mophism
+		//
+		for (let i in dm.data)
+		{
+			let d = m.$(i);
+			if (dataOut !== null)
+				dataOut.data[i] = d;
+		}
+		return dataOut;
+	}
+	jsName(e, cls = false)
+	{
+		const s = e.name;
+		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/, '_c_');
+		return r;
+	}
+	generate(m, generated = new Set)
+	{
+		let code = '';
+		const proto = m.constructor.name;
+		if (!generated.has(m.name))
+		{
+			if (MultiMorphism.prototype.isPrototypeOf(m))
+				code += m.morphisms.map(n => this.generate(n, generated)).join('\n');
+			const jsName = this.jsName(m);
+			switch(proto)
+			{
+				case 'Morphism':
+					code += 'code' in m ? ('javascript' in m.code ? m.code.javascript : '') : '';
+					break;
+				case 'Composite':
+//					code += `${this.jsName(m)}(args) {return ${m.morphisms.map(n => this.jsName(n) + '(').reverse().join('')}args${")".repeat(m.morphisms.length)};}\n`;
+					const p = ")".repeat(m.morphisms.length);
+					const morphs = `${m.morphisms.map(n => '$' + this.jsName(n) + '(').reverse().join('')}args${p}`;
+					code +=
+`class ${jsName}
+{
+	constructor()
+	{
+		this.morphisms = [${m.morphisms.map(n => this.jsName(n)).join()}];
+	}
+	$(args)
+	{
+		return ${morphs};
+	}
+}
+`;
+					break;
+
+				case 'Identity':
+					code +=
+`class ${jsName}
+{
+	constructor(){};
+	$(args){return args;}
+}
+`;
+					break;
+
+				case 'ProductMorphism':
+					code +=
+`class ${jsName}
+{
+	constructor()
+	{
+		this.morphisms = [${m.morphisms.map(n => this.jsName(n)).join()}];
+	}
+	$(args)
+	{
+		return [${m.morphisms.map((n, i) => '$' + this.jsName(n) + '(args[' + i + '])')}];
+	}
+}
+`;
+					break;
+				case 'CoproductMorphism':
+					break;
+				case 'ProductAssembly':
+				case 'CoproductAssembly':
+				case 'FactorMorphism':
+				case 'DiagonalMorphism':
+				case 'FoldMorphism':
+				case 'DataMorphism':
+				case 'Recursive':
+				case 'LambdaMorphism':
+				case 'HomMorphism':
+				case 'Evaluation':
+				case 'InitialMorphism':
+				case 'TerminalMorphism':
+				case 'StringMorphism':
+					break;
+			}
+			code += `const $${jsName} = new ${jsName};\n`;
+			generated.add(m.name);
+		}
+		return code;
+	}
+}
 
 //
 // Category is a CatObject
