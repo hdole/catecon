@@ -1619,6 +1619,7 @@ console.log('mouseover elt',D.mouseover);
 						}
 				}
 				D.mouse.save = true;
+				D.HideToolbar();
 			}
 			else if (D.mouseIsDown)
 			{
@@ -1853,10 +1854,12 @@ console.log('mouseover elt',D.mouseover);
 	}
 	static HideToolbar()
 	{
-		D.toolbar.style.display = 'none';
+//		D.toolbar.style.display = 'none';
+		D.toolbar.classList.add('hidden');
 	}
 	static ShowToolbar(e, elt)
 	{
+		D.toolbar.classList.remove('hidden');
 		const diagram = R.diagram;
 		if (diagram.selected.length === 0)
 		{
@@ -1864,12 +1867,7 @@ console.log('mouseover elt',D.mouseover);
 			return;
 		}
 		D.help.innerHTML = '';
-//		let header = H.td(D.GetButton('close', 'D.HideToolbar()', 'Close'), 'buttonBar') + H.td(D.GetButton('move', 'D.MoveToolbar()', 'Move'), 'buttonBar');
-		let header =
-			// H.td(D.GetButton('move', 'D.MoveToolbar()', 'Move'), 'buttonBar');
-			H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] +
-//				`<rect class="btn" x="0" y="0" width="320" height="320" onmousedown="D.moveToolbar=true" onmousemove="D.MoveToolbar(evt)" onmouseup="D.moveToolbar=false;console.log('btn onmouseup')"/></svg>`);
-				`<rect id="toolbar-drag-handle" class="btn" x="0" y="0" width="320" height="320"/></svg>`);
+		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect id="toolbar-drag-handle" class="btn" x="0" y="0" width="320" height="320"/></svg>`);
 		if (!R.diagram.readonly)
 			diagram.codomain.actions.forEach(function(a, n)
 			{
@@ -1877,9 +1875,9 @@ console.log('mouseover elt',D.mouseover);
 					header += D.formButton(a.icon, `R.diagram.${'html' in a ? 'actionHtml' : 'activate'}(evt, '${a.name}')`, a.description);
 			});
 		header += D.GetButton('close', 'D.HideToolbar()', 'Close');
-		D.header.innerHTML = H.table(H.tr(header), 'buttonBarLeft');
-		if (D.toolbar.style.display !== 'block')
-		{
+		D.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
+//		if (D.toolbar.style.display !== 'block')
+//		{
 			D.toolbar.style.display = 'block';
 			let xy = {x:0, y:0};
 			if (DiagramMorphism.prototype.isPrototypeOf(elt))
@@ -1899,9 +1897,9 @@ console.log('mouseover elt',D.mouseover);
 			top = top >= 0 ? top : 0;
 			top = (top + D.toolbar.clientHeight) >= window.innerHeight ? window.innerHeight - D.toolbar.clientHeight : top;
 			D.toolbar.style.top = `${top}px`;
-		}
-		else
-			D.toolbar.style.opacity = "1";
+//		}
+//		else
+//			D.toolbar.style.opacity = "1";
 	}
 	/*
 	static clickDeleteBtn(id, fn)
@@ -2628,16 +2626,6 @@ lambda2:
 <line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="200" y1="200" x2="280" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="120" y1="200" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
-			/*
-lambda:
-`<circle cx="120" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="200" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="120" cy="240" r="60" fill="url(#radgrad1)"/>
-<circle cx="200" cy="240" r="60" fill="url(#radgrad1)"/>
-<polyline class="svgstr3" points="80,200 60,200 60,280 100,280"/>
-<polyline class="svgstr3" points="240,200 260,200 260,280 240,280"/>
-<line class="arrow0" x1="160" y1="100" x2="160" y2="200" marker-end="url(#arrowhead)"/>`,
-*/
 login:
 `<polyline class="svgstr4" points="160,60 160,200 70,280 70,40 250,40 250,280"/>`,
 morphism:
@@ -3342,12 +3330,8 @@ class DiagramPanel extends Panel
 			const basename = U.htmlSafe(this.basenameElt.value);
 			let codomain = D.codomain.name;	// TODO what is this?
 			const fullname = diagram.nameCheck(codomain, R.user.name, basename);
-			// TODO make it <> safe
 			const dgrm = new Diagram(R.$CAT, {basename, codomain, properName:U.htmlSafe(this.properNameElt.value), description:U.htmlSafe(this.descriptionElt.value), user:R.user.name});
 			dgrm.saveLocal();
-			//
-			// select the new diagram
-			//
 			R.SelectDiagram(dgrm.name);
 			Panel.SectionClose('newDiagramPnl');
 			this.close();
@@ -3640,9 +3624,6 @@ class LoginPanel extends Panel
 				LoginPanel.PasswordForm('reset') +
 				H.tr(H.td(H.button('Reset password', '', '', '', 'onclick=R.cloud.resetPassword()'))));
 	}
-	//
-	// LoginPanel static methods
-	//
 	static PasswordForm(sfx = '')
 	{
 		return H.tr(H.td('Secret Key for Access')) +
@@ -5097,9 +5078,6 @@ class DiagramObject extends CatObject
 		a.width = this.width;
 		return a;
 	}
-	//
-	// Set the object in the diagram's category that this diagram object points to.
-	//
 	setObject(to)
 	{
 		if (this.to)
@@ -5966,12 +5944,9 @@ class HelpAction extends Action
 		else if (DiagramText.prototype.isPrototypeOf(from) && !readonly)
 		{
 			const btn = from.constructor.name === 'DiagramText' ?
-//				D.GetButton('edit', `R.diagram.editText(event, 'descriptionElt', 'description')`, 'Edit text', D.default.button.tiny) :
 				D.GetButton('edit', `R.diagram.getElement('${from.name}').editText(evt, 'descriptionElt')`, 'Edit', D.default.button.tiny) :
 				D.GetButton('edit', `R.diagram.editElementText(event, 'descriptionElt', 'description')`, 'Edit text', D.default.button.tiny);
-
 			html = H.p(H.span(from.description, 'tty', 'descriptionElt') + btn);
-//						(readonly ? '' : D.GetButton('edit', `R.diagram.editElementText(event, 'descriptionElt', 'description')`, 'Edit text', D.default.button.tiny)));
 		}
 		D.help.innerHTML = html;
 	}
@@ -6010,13 +5985,23 @@ class JavascriptAction extends Action
 		if (to.constructor.name === 'Morphism')
 		{
 			const code = 'code' in to ? ('javascript' in to.code ? to.code.javascript : '') : '';
-			html = H.p(H.p(`${this.jsName(to)}(args)\n{`, 'code') + H.p(code, 'code', 'morphism-javascript') + H.p('}', 'code') +
+			html = H.p(H.p(`${this.jsName(to)}(args)\n{`, 'code') + H.p(code, 'code', 'morphism-javascript') + H.p(`}`, 'code') +
 					(diagram.readonly ? '' : D.GetButton('edit', `R.diagram.setMorphismCode(event, 'morphism-javascript', 'javascript')`, 'Edit code', D.default.button.tiny)));
 		}
 		else
 			html = H.p(this.generate(to), 'code', 'morphism-javascript');
 		D.help.innerHTML = html;
 	}
+	/*
+	initialize(category)
+	{
+		if (!(IndexCategory.prototype.isPrototypeOf(category)))
+		{
+			new TtyObject(null, {category});
+			new ThreeDObject(null, {category});
+		}
+	}
+	*/
 	run(m, diagram)
 	{
 		let dm = m.morphisms[0];
@@ -6059,12 +6044,8 @@ class JavascriptAction extends Action
 }
 `;
 					}
-//					code += 'code' in m ? ('javascript' in m.code ? '		' + m.code.javascript : '') : '';
 					break;
 				case 'Composite':
-//					code += `${this.jsName(m)}(args) {return ${m.morphisms.map(n => this.jsName(n) + '(').reverse().join('')}args${")".repeat(m.morphisms.length)};}\n`;
-//					const p = ")".repeat(m.morphisms.length);
-//					const morphs = `${m.morphisms.map(n => this.jsName(n) + '(').reverse().join('')}args${p}`;
 					const morphs = `${m.morphisms.map(n => this.jsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) }`;
 					code +=
 `${jsName}(args)
@@ -6330,6 +6311,7 @@ class Category extends CatObject
 		}
 		return true;
 	}
+	/*
 	// TODO which category owns this?
 	static Run(m, diagram)
 	{
@@ -6339,7 +6321,8 @@ class Category extends CatObject
 		//
 		// there is no output morphism for the codomains tty and threeD
 		//
-		let dataOut = (m.codomain.basename !== 'tty' && m.codomain.basename !== 'threeD') ? diagram.newDataMorphism(m.domain, m.codomain) : null;
+//		let dataOut = (m.codomain.basename !== 'tty' && m.codomain.basename !== 'threeD') ? diagram.newDataMorphism(m.domain, m.codomain) : null;
+		let dataOut = (TtyObject.prototype.isPrototypeOf(m.codomain) && m.codomain.basename !== 'threeD') ? diagram.newDataMorphism(m.domain, m.codomain) : null;
 		//
 		// we can run from a data mophism
 		//
@@ -6351,6 +6334,7 @@ class Category extends CatObject
 		}
 		return dataOut;
 	}
+	*/
 	static HomKey(domain, codomain)
 	{
 		return `${domain.name} ${codomain.name}`;
@@ -6378,6 +6362,23 @@ class TtyObject extends CatObject
 	{
 		const o = diagram.getObject('TTY');
 		return o ? o : new TtyObject(diagram, {});
+	}
+}
+
+class ThreeDObject extends CatObject
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.name = 'ThreeD';
+		nuArgs.description = 'For viewing 3D info';
+		nuArgs.properName = '3D';
+		super(diagram, nuArgs);
+	}
+	static Get(diagram)
+	{
+		const o = diagram.getObject('ThreeD');
+		return o ? o : new ThreeDObject(diagram, {});
 	}
 }
 

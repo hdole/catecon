@@ -341,7 +341,7 @@ a:hover, .offcanvas a:focus
 	user-select:	none;
 }
 
-#toolbar
+.toolbar
 {
 	background-color:	#eee;
 	border-width: 		0px;
@@ -351,10 +351,20 @@ a:hover, .offcanvas a:focus
 	margin:				0px;
 	max-width:			300px;
 	overflow:			hidden;
+	opacity:			1;
 	padding:			0px;
 	position:			absolute;
 	text-align:			left;
+	transition:			opacity 1s, height 0s;
 	z-index:			2;
+}
+
+.hidden
+{
+	opacity:	0;
+	transition:	opacity 1s, height 0s 1s;
+	height:		0px;
+	box-shadow:	none;
 }
 
 #statusbar
@@ -517,10 +527,12 @@ table.center
 	fill-opacity:	0.5;
 }
 
+/*
 .toolbarTbl
 {
 	width:	100%;
 }
+*/
 
 table.buttonBar
 {
