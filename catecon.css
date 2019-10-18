@@ -106,7 +106,7 @@ div.intro
 	font-family:	courier;
 	display:		block;
 	/* font:			12px "monospace", sans-serif; */
-	margin:			5px;
+	/* margin:			5px; */
 	unicode-bidi:	embed;
 	white-space:	pre;
 }
@@ -735,4 +735,9 @@ canvas
 	stroke-width:		1px;
 	position:			absolute;
 	z-index:			-1;
+}
+
+.indent
+{
+	margin-left:	4em;
 }
