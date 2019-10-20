@@ -689,21 +689,28 @@ class R		// runtime
 			new EditMorphismAction(R.$Actions);
 			new DeleteAction(R.$Actions);
 			new CopyAction(R.$Actions);
+
 			new ProductAction(R.$Actions);
 			new ProjectAction(R.$Actions);
-			new CoproductAction(R.$Actions);
 			new PullbackAction(R.$Actions);
-			new PushoutAction(R.$Actions);
 			new ProductAssemblyAction(R.$Actions);
+			new TerminalMorphismAction(R.$Actions);
+
+			new CoproductAction(R.$Actions);
+			new PushoutAction(R.$Actions);
 			new CoproductAssemblyAction(R.$Actions);
+			new InitialMorphismAction(R.$Actions);
+			new FiniteObjectAction(R.$Actions);
+			new DataAction(R.$Actions);
+
 			new HomAction(R.$Actions);
 			new HomLeftAction(R.$Actions);
 			new HomRightAction(R.$Actions);
-			new TerminalMorphismAction(R.$Actions);
-			new InitialMorphismAction(R.$Actions);
 			new LambdaMorphismAction(R.$Actions);
+
 			new JavascriptAction(R.$Actions);
 			new RunAction(R.$Actions);
+
 			new HelpAction(R.$Actions);
 			function setAction(s, name)
 			{
@@ -731,17 +738,22 @@ class R		// runtime
 
 			setAction(R.Cat.actions, 'product');
 			setAction(R.Cat.actions, 'project');
-			setAction(R.Cat.actions, 'coproduct');
 			setAction(R.Cat.actions, 'pullback');
-			setAction(R.Cat.actions, 'pushout');
 			setAction(R.Cat.actions, 'productAssembly');
+			setAction(R.Cat.actions, 'terminalMorphism');
+
+			setAction(R.Cat.actions, 'coproduct');
+			setAction(R.Cat.actions, 'pushout');
 			setAction(R.Cat.actions, 'coproductAssembly');
+			setAction(R.Cat.actions, 'initialMorphism');
+			setAction(R.Cat.actions, 'data');
+			setAction(R.Cat.actions, 'finiteObject');
+
 			setAction(R.Cat.actions, 'hom');
 			setAction(R.Cat.actions, 'homLeft');
 			setAction(R.Cat.actions, 'homRight');
-			setAction(R.Cat.actions, 'terminalMorphism');
-			setAction(R.Cat.actions, 'initialMorphism');
 			setAction(R.Cat.actions, 'lambdaMorphism');
+
 			setAction(R.Cat.actions, 'javascript');
 			setAction(R.Cat.actions, 'help');
 
@@ -3497,7 +3509,7 @@ class HelpPanel extends Panel
 			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarLeft') +
 			H.h3('Catecon') +
 			H.h4('The Categorical Console')	+
-			H.h5('Extreme Alpha Version') +
+			H.p(H.small('Level 1', 'smallCaps italic'), 'txtCenter') + H.br() +
 			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Interactive actions', `onclick="D.Panel.SectionToggle(this, \'catActionHelpPnl\')"`) +
 			H.div(	H.h4('Mouse Actions') +
 					H.h5('Select With Mouse') +
@@ -4522,26 +4534,31 @@ class CatObject extends Element
 	}
 }
 
-class DiscreteObject extends CatObject
+class FiniteObject extends CatObject	// finite, explicit size or not
 {
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.properName = args.size === '0' ? '&null;' : DiscreteObject.ProperName(diagram, nuArgs);
-		nuArgs.name = DiscreteObject.Codename(diagram, nuArgs);
+		nuArgs.properName = args.size === '0' ? '&null;' : FiniteObject.ProperName(diagram, nuArgs);
+		nuArgs.name = FiniteObject.Codename(diagram, nuArgs);
 		super(diagram, nuArgs);
-		Object.defineProperty(this, 'size', {value:	nuArgs.size, writable:	false});
+		if ('size' in nuArgs)
+			Object.defineProperty(this, 'size', {value:	nuArgs.size, writable:	false});
 	}
 	help(suppress = false)
 	{
-		return super.help() + (suppress ? '' : H.p(`Discrete object of size: ${this.size}`));
+		return super.help() + (suppress ? '' : H.p(`Finite object${'size' in this ? ' of size: ' + this.size.toString() : ''}`));
 	}
 	json()
 	{
 		const d = super.json();
-		delete d.properName;	// always overridden so do not save
-		d.size = this.size;
+		if ('size' in this)
+			d.size = this.size;
 		return d;
+	}
+	isIterable()
+	{
+		return true;
 	}
 	static Codename(diagram, args)
 	{
@@ -4549,17 +4566,17 @@ class DiscreteObject extends CatObject
 	}
 	static ProperName(diagram, args)
 	{
-		return args.size.toString();
+		return 'size' in args ? args.size.toString() : args.properName;
 	}
 	static Get(diagram, size)
 	{
-		const args = {category:diagram.codomain, size};
-		const object = diagram.getObject(DiscreteObject.Codename(diagram, args));
-		return object ? object : new DiscreteObject(diagram, args);
+		const args = typeof size === 'undefined' ? {category:diagram.codomain} : {category:diagram.codomain, size};
+		const object = diagram.getObject(FiniteObject.Codename(diagram, args));
+		return object ? object : new FiniteObject(diagram, args);
 	}
 }
 
-class InitialObject extends DiscreteObject
+class InitialObject extends FiniteObject
 {
 	constructor(diagram, args)
 	{
@@ -4574,12 +4591,12 @@ class InitialObject extends DiscreteObject
 	static Get(diagram)
 	{
 		const args = {category:diagram.codomain, size:0};
-		const object = diagram.getObject(DiscreteObject.Codename(diagram, args));
+		const object = diagram.getObject(FiniteObject.Codename(diagram, args));
 		return object ? object : new InitialObject(diagram, args);
 	}
 }
 
-class TerminalObject extends DiscreteObject
+class TerminalObject extends FiniteObject
 {
 	constructor(diagram, args)
 	{
@@ -4598,7 +4615,7 @@ class TerminalObject extends DiscreteObject
 	static Get(diagram)
 	{
 		const args = {category:diagram.codomain, size:1};
-		const object = diagram.getObject(DiscreteObject.Codename(diagram, args));
+		const object = diagram.getObject(FiniteObject.Codename(diagram, args));
 		return object ? object : new TerminalObject(diagram, args);
 	}
 }
@@ -5161,7 +5178,6 @@ class Action extends CatObject
 	}
 	action(e, diagram, ary) {};	// fitb
 	hasForm(e, diagram, ary) {return false;};	// fitb
-//	html(e, diagram, ary) {};	// fitb
 }
 
 class CompositeAction extends Action
@@ -5191,7 +5207,7 @@ class CompositeAction extends Action
 	}
 	hasForm(e, diagram, ary)
 	{
-		if (ary.length > 1 && ary.reduce((hasIt, r) => hasIt && DiagramMorphism.prototype.isPrototypeOf(r), true))
+		if (!diagram.readonly && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && DiagramMorphism.prototype.isPrototypeOf(r), true))
 		{
 			let cod = ary[0].codomain;
 			for(let i=1; i<ary.length; ++i)
@@ -5230,7 +5246,7 @@ class IdentityAction extends Action
 	}
 	hasForm(e, diagram, ary)
 	{
-		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5265,7 +5281,7 @@ class CopyAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one element
 	{
-		return ary.length === 1;
+		return !diagram.readonly && ary.length === 1;
 	}
 }
 
@@ -5304,8 +5320,8 @@ class ProductAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
-			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true);
+		return !diagram.readonly && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
 	}
 }
 
@@ -5344,8 +5360,8 @@ class CoproductAction extends Action
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		return ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
-			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true);
+		return !diagram.readonly && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
 	}
 }
 
@@ -5381,7 +5397,7 @@ class PullbackAction extends Action
 	}
 	hasForm(e, diagram, ary)
 	{
-		return Category.IsSink(ary);
+		return !diagram.readonly && Category.IsSink(ary);
 	}
 }
 
@@ -5417,7 +5433,7 @@ class PushoutAction extends Action
 	}
 	hasForm(e, diagram, ary)
 	{
-		return Category.IsSource(ary);
+		return !diagram.readonly && Category.IsSource(ary);
 	}
 }
 
@@ -5441,7 +5457,7 @@ class ProductAssemblyAction extends Action
 	}
 	hasForm(e, diagram, ary)
 	{
-		return Category.IsSource(ary);
+		return !diagram.readonly && Category.IsSource(ary);
 	}
 }
 
@@ -5466,7 +5482,7 @@ class CoproductAssemblyAction extends Action
 	}
 	hasForm(e, diagram, ary)
 	{
-		return Category.IsSink(ary);
+		return !diagram.readonly && Category.IsSink(ary);
 	}
 }
 
@@ -5492,7 +5508,7 @@ class HomAction extends Action
 	}
 	hasForm(e, diagram, ary)	// two objects or morphisms
 	{
-		return ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+		return !diagram.readonly && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
 	}
 }
@@ -5522,7 +5538,7 @@ class HomRightAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one object
 	{
-		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5551,7 +5567,7 @@ class HomLeftAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one object
 	{
-		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5584,7 +5600,7 @@ class DetachDomainAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one morphism with connected domain but not a def of something
 	{
-		if (ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+		if (!diagram.readonly && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
 		{
 			const from = ary[0];
 			const domMorphs = diagram.domain.obj2morphs.get(from.domain);
@@ -5623,7 +5639,7 @@ class DetachCodomainAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one morphism with connected codomain
 	{
-		if (ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+		if (!diagram.readonly && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
 		{
 			const from = ary[0];
 			const codMorphs = diagram.domain.obj2morphs.get(from.codomain);
@@ -5657,7 +5673,7 @@ class EditMorphismAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one editable morphism
 	{
-		if (ary.length === 1 && !this.readonly)
+		if (!diagram.readonly && ary.length === 1)
 		{
 			const from = ary[0];
 			// TODO isTerminal
@@ -5714,7 +5730,7 @@ class DeleteAction extends Action
 	}
 	hasForm(e, diagram, ary)	// all are deletable
 	{
-		return ary.reduce((hasIt, a) => hasIt && a.isDeletable(), true);
+		return !diagram.readonly && ary.reduce((hasIt, a) => hasIt && a.isDeletable(), true);
 	}
 }
 
@@ -5744,7 +5760,7 @@ class TerminalMorphismAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one object
 	{
-		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5772,7 +5788,7 @@ class InitialMorphismAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one object
 	{
-		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5806,7 +5822,7 @@ class LambdaMorphismAction extends Action
 	}
 	hasForm(e, diagram, ary)	// 
 	{
-		return ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) &&
+		return !diagram.readonly && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) &&
 			(ProductObject.prototype.isPrototypeOf(ary[0].to.domain) || HomObject.prototype.isPrototypeOf(ary[0].to.codomain));
 	}
 	html(e, diagram, ary)
@@ -5850,7 +5866,7 @@ class ProjectAction extends Action
 	}
 	hasForm(e, diagram, ary)	// one product object
 	{
-		return ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to);
+		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to);
 	}
 	html(e, diagram, ary)
 	{
@@ -5952,7 +5968,7 @@ class JavascriptAction extends Action
 			html += H.p(`${this.jsName(m)}(args)\n{`, 'code') + H.p(code, 'code indent', 'morphism-javascript') + H.p(`}`, 'code') +
 					(this.isEditable(m) ? D.GetButton('edit', `R.diagram.setMorphismCode(event, 'morphism-javascript', 'javascript')`, 'Edit code', D.default.button.tiny): '');
 			*/
-			const code = 'code' in m ? ('javascript' in m.code ? m.code.javascript : '') : '';
+			let code = 'code' in m ? ('javascript' in m.code ? m.code.javascript : '') : '';
 			if (code === '')
 				code = this.generate(m);
 			const header = this.header(m);
@@ -6018,146 +6034,88 @@ console.log('body',body);
 				generated.add(m.name);
 				return code;
 			}
-			if (MultiMorphism.prototype.isPrototypeOf(m))
+	 		if (MultiMorphism.prototype.isPrototypeOf(m))
 				code += m.morphisms.map(n => this.generate(n, generated)).join('\n');
 			const jsName = this.jsName(m);
-			code += `// ${m.properName}: ${m.domain.properName} --> ${m.codomain.properName}\n`;
+			const header = `function ${jsName}(args)\n{\n`;
+			const tail = `\n}\n`;
 			if (InitialObject.prototype.isPrototypeOf(m.domain))
-			{
-				code +=
-`function ${jsName}()
-{
-	return;	// abandon computation
-}
-`;
-			}
+				code += `${header}	return;	// abandon computation\n'${tail}`;
 			else if (TerminalObject.prototype.isPrototypeOf(m.codomain))
-			{
-				code +=
-`function ${jsName}(args)
-{
-	return 0;
-}
-`;
-			}
+				code += `${header}	return 0;${tail}`;
 			else if (InitialObject.prototype.isPrototypeOf(m.codomain))
-			{
-				code +=
-`function ${jsName}()
-{
-	throw 'do not do this';
-}
-`;
-			}
-/*
+				code += `${header}	throw 'do not do this';${tail}`;
 			else if (TerminalObject.prototype.isPrototypeOf(m.domain))
-			{
-				code +=
-`
-function ${jsName}()
-{
-	// TODO replace this code with that whichs returns the desired object';
-	return ${this.objectStructure(m.codomain)}
-}
-`;
-			}
-			*/
+				code += `${header}	// TODO replace this code with that which returns the desired object\n	return ${this.objectStructure(m.codomain)}${tail}`;
 			else
 				switch(proto)
 				{
 					case 'Morphism':
 						if ('code' in m)
-						{
-							code +=
-`function ${jsName}(args)
-{
-	${m.code.javascript}
-}
-`;
-					}
+							code += `${m.code.javascript}\n`;
 						break;
 					case 'Composite':
-						const morphs = `${m.morphisms.map(n => this.jsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) }`;
-					code +=
-`function ${jsName}(args)
-{
-	return ${morphs};
-}
-`;
+						code += `${header}	${m.morphisms.map(n => this.jsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
 						break;
 					case 'Identity':
-						code +=
-`function ${jsName}(args)
-{
-	return args;
-}
-`;
+						code += `${header}	return args;${tail}`;
 						break;
 					case 'ProductMorphism':
-						code +=
-`function ${jsName}(args)
-{
-	return [${m.morphisms.map((n, i) => this.jsName(n) + '(args[' + i + '])')}];
-}
-`;
+						code += `${header}	return [${m.morphisms.map((n, i) => this.jsName(n) + '(args[' + i + '])').join()}];${tail}`;
 						break;
 					case 'CoproductMorphism':
 						code +=
 `const ${jsName}_morphisms = [${m.morphisms.map((n, i) => this.jsName(n)).join()}];
-${jsName}(args)
-{
-	return [args(0), ${jsName}_morphisms[args[0]](args[1])];
-}
-`;
+${header}	return [args(0), ${jsName}_morphisms[args[0]](args[1])];${tail}`;
 						break;
 					case 'ProductAssembly':
-						code +=
-`function ${jsName}(args)
-{
-	return [${m.morphisms.map((n, i) => this.jsName(n) + '(args')}];
-}
-`;
+						code += `${header}	return [${m.morphisms.map((n, i) => this.jsName(n) + '(args)').join()}];${tail}`;
+						break;
 					case 'CoproductAssembly':
-					code +=
+						code +=
 `const ${jsName}_morphisms = [${m.morphisms.map((n, i) => this.jsName(n)).join()}];
-${jsName}(args)
-{
-	return ${jsName}_morphisms[args[0]](args[1]);
-}
-`;
+${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`;
+						break;
 					case 'FactorMorphism':
+						// TODO
+						break;
 					case 'DiagonalMorphism':
-						code +=
-`function ${jsName}(args)
-{
-	const a = [];
-	return a.fill(args, 0, ${m.count});
-}
-`;
+						code += `${header}	const a = [];\n	return a.fill(args, 0, ${m.count});${tail}`;
+						break;
 					case 'FoldMorphism':
-						code +=
-`function ${jsName}(args)
-{
-	return args[1];
-}
-`;
+						code += `${header}	return args[args[0]];${tail}`;
+						break;
 					case 'DataMorphism':
-`
-const ${jsName}_Data =
+						code +=	// TODO safety check?
+`const ${jsName}_Data =
 {
 	${m.data.forEach(function(i){return `	'${i}':'${m.data[i]}',\n`;})}
 }
-function ${jsName}(args)
+function ${jsName}_Iterator(fn)
 {
-	return ${jsName}_Data[args];
+	const result = {};
+	Object.keys(${jsName}_Data).forEach(function(i)
+	{
+		result[i] = fn(i);
+	});
+	return result;
 }
-`;
+${header}	return ${jsName}_Data[args];${tail}`;
+						break;
 					case 'Recursive':
+						break;
 					case 'LambdaMorphism':
+						break;
 					case 'HomMorphism':
+						break;
 					case 'Evaluation':
+						break;
 					case 'InitialMorphism':
+						code += `${header}	return;${tail}`;
+						break;
 					case 'TerminalMorphism':
+						code += `${header}	return 0;${tail}`;
+						break;
 					case 'StringMorphism':
 						break;
 				}
@@ -6169,6 +6127,7 @@ function ${jsName}(args)
 	{
 		let code = '';
 		const generated = new Set;
+		generated.add('');	// no exec
 		for (const m of diagram.morphisms)
 			code += this.generate(m, generated);
 		return code;
@@ -6195,14 +6154,24 @@ class RunAction extends Action
 		if (Morphism.prototype.isPrototypeOf(m) && m.isIterable())
 		{
 			const start = Date.now();
+			const jsName = this.jsAction.jsName(m);
+			const dmName = this.jsAction.jsName(m.morphisms[0]);
 			const code =
-`
+`// Catecon javascript code generator ${Date()}
 onmessage = function(e)
 {
 	console.log('worker onmessage',e);
-	const r = ${this.jsAction.jsName(m)}();
-	console.log('worker work',r);
-	postMessage(r);
+	postMessage([0, 'Starting']);
+	try
+	{
+		const result = ${dmName}_Iterator(${jsName});
+		console.log('worker work',result);
+		postMessage([1, result]);
+	}
+	catch(e)
+	{
+		postMessage([2, e]);
+	}
 }
 ${this.jsAction.generate(m)}
 `;
@@ -6222,6 +6191,123 @@ console.log('run code', code);
 	hasForm(e, diagram, ary)	// one iterable composite morphism
 	{
 		return ary.length === 1 && Composite.prototype.isPrototypeOf(ary[0].to) && ary[0].to.isIterable();
+	}
+}
+
+class FiniteObjectAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Convert to or edit a finite discrete object',
+						name:		'finiteObject',
+						icon:	// TODO 3x3 dots
+`<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="80" cy="160" r="60" fill="url(#radgrad1)"/>
+<circle cx="80" cy="240" r="60" fill="url(#radgrad1)"/>
+<circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
+<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
+<circle cx="240" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="240" cy="160" r="60" fill="url(#radgrad1)"/>
+<circle cx="240" cy="240" r="60" fill="url(#radgrad1)"/>`,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const to = from.to;
+		if (to.constructor.name === 'CatObject' && to.refcnt === 1)
+			from.setObject(new FiniteObject(diagram, {category:diagram.codomain, properName:to.properName}));
+		else
+		{
+			const sizeElt = document.getElementById('finiteObject-size');
+			const txt = sizeElt.innerText.trim();
+			const size = Number.parseInt(txt);
+			if (size < 0 || size.toString() !== txt)
+			{
+				sizseElt.classList.add('error');
+				return;
+			}
+			sizeElt.classList.remove('error');
+			m.size.javascript = size;
+			sizeElt.innerHTML = size.toString();
+		}
+		this.html(e, diagram, ary);
+	}
+	html(e, diagram, ary)
+	{
+		const from = ary[0];
+		const to = from.to;
+		const isEditable = diagram.objects.has(to) && !diagram.readonly;
+		let html = ''
+		if (isEditable && to.constructor.name === 'CatObject' && to.refcnt === 1)
+		{
+			html += H.div('Convert generic object to a finite object') +
+				D.GetButton('edit', `R.$Actions.getObject('finiteObject').action(event, R.diagram, R.diagram.selected)`, 'Convert to finite object', D.default.button.tiny);
+		}
+		else
+		{
+			html += H.div('Finite object');
+			html += 'size' in to ? H.div('Size ' + H.span(to.size, '', 'finiteObject-size')) : '';
+			if (isEditable)
+			{
+				html += D.GetButton('edit', `R.$Actions.getObject('finiteObject').action(event, R.diagram, R.diagram.selected)`,
+						'Change finite object size', D.default.button.tiny);
+			}
+		}
+		D.help.innerHTML = html;
+	}
+	hasForm(e, diagram, ary)
+	{
+		if (!diagram.readonly && ary.length === 1)
+		{
+			const from = ary[0];
+			if (diagram.objects.has(from.to) && from.to.constructor.name === 'CatObject' && from.to.refcnt === 1)
+				return  true;
+			return FiniteObject.prototype.isPrototypeOf(from.to);
+		}
+		return false;
+	}
+}
+
+class DataAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Create or edit a data morphism',
+						name:		'data',
+						icon:	// TODO table
+`<line class="arrow0" x1="20" y1="80" x2="180" y2="80" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="140" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const m = from.to;
+		if (m.constructor.name === 'Morphism')
+		{
+			const args =
+			{
+				description:	`data morphism from ${m.domain.properName} to ${m.codomain.properName}`,
+				properName:		m.properName,
+			}
+			from.setMorphism(new DataMorphism(diagram, args));
+			diagram.makeSelected(from);	// probably already was
+		}
+		D.dataPanel.open();
+	}
+	hasForm(e, diagram, ary)
+	{
+		if (!diagram.readonly && ary.length === 1)
+		{
+			const m = ary[0].to;
+			if (diagram.morphisms.has(m) && m.domain.isIterable())
+				return  m.constructor.name === 'Morphism' || DataMorphism.prototype.isPrototypeOf(ary[0].to);
+		}
+		return false;
 	}
 }
 
@@ -9206,7 +9292,7 @@ R.protos =
 	InitialMorphism,
 	TerminalObject,
 	TerminalMorphism,
-	DiscreteObject,
+	FiniteObject,
 	SubobjectClassifier,
 	Sequence,
 	HomObject,

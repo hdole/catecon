@@ -741,3 +741,8 @@ canvas
 {
 	margin-left:	4em;
 }
+
+.smallCaps
+{
+	font-variant-caps:	small-caps;
+}
