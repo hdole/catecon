@@ -1609,13 +1609,13 @@ console.log('mouseover elt',D.mouseover);
 						id.codomain.setXY(xy);
 						diagram.makeSelected(e, id.codomain);	// restore from identity action
 						D.dragClone = true;
-						diagram.checkFusible(xy);
+						diagram.updateFusible(xy);
 					}
 					else if (DiagramMorphism.prototype.isPrototypeOf(from))	// ctrl-drag morphism copy
 					{
 						diagram.activate(e, 'copy', {offset: new D2});
 						D.dragClone = true;
-						diagram.checkFusible(xy);
+						diagram.updateFusible(xy);
 					}
 				}
 				else if (diagram.selected.length > 0 && D.mouse.delta().nonZero())
@@ -1626,7 +1626,7 @@ console.log('mouseover elt',D.mouseover);
 						if (!diagram.readonly)
 						{
 							diagram.updateDragObjects();
-							diagram.checkFusible(xy);
+							diagram.updateFusible(xy);
 						}
 				}
 				D.mouse.save = true;
@@ -1722,13 +1722,15 @@ console.log('mouseover elt',D.mouseover);
 						}
 						else if (DiagramObject.prototype.isPrototypeOf(dragObject) && DiagramObject.prototype.isPrototypeOf(targetObject))
 						{
-							if(diagram.canFuseObjects(dragObject, targetObject))
+//							if(diagram.canFuseObjects(dragObject, targetObject))
+							if(dragObject.isFusible(targetObject))
 							{
 								diagram.deselectAll();
 								const morphisms = diagram.getObjectMorphisms(dragObject);
 								if (morphisms.codomains.length > 0)
 								{
 									const from = morphisms.codomains[0];
+									// convert identity to terminal
 									if (morphisms.codomains.length === 1 && morphisms.domains.length === 0 && Identity.prototype.isPrototypeOf(from.to) && !from.to.domain.isInitial)
 									{
 										const cod = dragObject.to;
@@ -1764,9 +1766,6 @@ console.log('mouseover elt',D.mouseover);
 										didSomething = true;
 									}
 								}
-								//
-								// graph merge
-								//
 								for(const [name, m] of diagram.domain.morphisms)
 								{
 									if (m.domain.isEquivalent(dragObject))
@@ -1781,8 +1780,10 @@ console.log('mouseover elt',D.mouseover);
 										m.codomain = targetObject;
 										D.MergeObjectsRefCnt(diagram, dragObject, targetObject);
 									}
+									m.update();
 								}
 								dragObject.decrRefcnt();
+								diagram.domain.makeHomSets();
 								diagram.update();
 								didSomething = true;
 							}
@@ -2357,7 +2358,6 @@ ${D.Button(onclick)}
 			dragElt.onmousedown = dragMouseDown; // if present, the header is where you move the DIV from
 		else
 			elt.onmousedown = dragMouseDown; // otherwise, move the DIV from anywhere inside the DIV
-
 		function dragMouseDown(e)
 		{
 			e = e || window.event;
@@ -2369,7 +2369,6 @@ ${D.Button(onclick)}
 			// call a function whenever the cursor moves:
 			document.onmousemove = elementDrag;
 		}
-
 		function elementDrag(e)
 		{
 			e = e || window.event;
@@ -2383,7 +2382,6 @@ ${D.Button(onclick)}
 			elt.style.top = (elt.offsetTop - pos2) + "px";
 			elt.style.left = (elt.offsetLeft - pos1) + "px";
 		}
-
 		function closeDragElement()
 		{
 			/* stop moving when mouse button is released:*/
@@ -3832,7 +3830,6 @@ class NewMorphismSection extends Section
 				domain:			diagram.codomain.getObject(this.domainElt.value),
 				codomain:		diagram.codomain.getObject(this.codomainElt.value),
 			});
-//			diagram.placeMorphism(e, to, D.Center(), D.Center().add(D.default.stdArrow));
 			diagram.placeMorphism(e, to);
 			this.update();
 		}
@@ -5161,6 +5158,24 @@ class DiagramObject extends CatObject
 	{
 		this.svg().classList[state ? 'add' : 'remove']('selected');
 	}
+	isFusible(m)
+	{
+		return m && m.to && this.to.name === m.to.name;
+	}
+	updateFusible(on)
+	{
+		const e = this.svg();
+		if (on)
+		{
+			e.classList.add(...['fusible']);
+			e.classList.remove(...['selected', 'grabbable', 'object']);
+		}
+		else
+		{
+			e.classList.add(...['selected', 'grabbable', 'object']);
+			e.classList.remove(...['fusible']);
+		}
+	}
 }
 
 class Action extends CatObject
@@ -5680,8 +5695,8 @@ class EditMorphismAction extends Action
 			return DataMorphism.prototype.isPrototypeOf(from.to) ||
 						(Identity.prototype.isPrototypeOf(from.to) &&
 							from.refcnt === 1 &&
-							!from.to.domain.isInitial &&
-							!from.to.codomain.isTerminal &&
+//							!from.to.domain.isInitial &&
+//							!from.to.codomain.isTerminal &&
 							from.to.domain.isEditable());
 		}
 		return false;
@@ -5975,7 +5990,6 @@ class JavascriptAction extends Action
 			const tail = this.tail(m);
 			let body = '';
 			body = code.substring(header.length, code.length - tail.length);
-console.log('body',body);
 			html += H.div(header, 'code') + H.div(body, 'code indent', 'morphism-javascript') + H.div(tail, 'code') +
 					(this.isEditable(m) ? D.GetButton('edit', `R.$Actions.getObject('javascript').setMorphismCode(event, 'morphism-javascript', 'javascript')`,
 						'Edit code', D.default.button.tiny): '');
@@ -6777,12 +6791,31 @@ onmousedown="R.diagram.pickElement(evt, '${this.name}')">${this.to.properName}</
 		if (svg)
 			svg.classList[state ? 'add' : 'remove']('selected');
 	}
-	showFusible(state = true)
+	updateFusible(on)
 	{
-		this.showSelected(!state);
-		this.svg('_path').classList[!state ? 'add' : 'remove']('grabbable','morphism');
-		this.svg('_path').classList[state ? 'add' : 'remove']('fusible');
-		this.svg('_name').classList[state ? 'add' : 'remove']('fusible');
+//		this.showSelected(!state);
+//		this.svg('_path').classList[!state ? 'add' : 'remove']('grabbable','morphism');
+//		this.svg('_path').classList[state ? 'add' : 'remove']('fusible');
+//		this.svg('_name').classList[state ? 'add' : 'remove']('fusible');
+		const path = this.svg('_path');
+		const name = this.svg('_name');
+		if (on)
+		{
+			path.classList.add(...['selected', 'grabbable', 'morphism', 'fusible']);
+			path.classList.remove(...['selected', 'grabbable', 'morphism', 'fusible']);
+
+			path.classList.add(...['fusible']);
+			path.classList.remove(...['selected', 'grabbable', 'object']);
+			name.classList.add(...['fusible']);
+			name.classList.remove(...['selected', 'grabbable', 'object']);
+		}
+		else
+		{
+			path.classList.add(...['selected', 'grabbable', 'object']);
+			path.classList.remove(...['fusible']);
+			name.classList.add(...['selected', 'grabbable', 'object']);
+			name.classList.remove(...['fusible']);
+		}
 	}
 	updateDecorations()
 	{
@@ -6953,6 +6986,10 @@ onmousedown="R.diagram.pickElement(evt, '${this.name}')">${this.to.properName}</
 		if (r.x === Number.MAX_VALUE)
 			r = new D2({x:pnt.x, y:pnt.y});
 		return r;
+	}
+	isFusible(m)
+	{
+		return m && m.to && this.to.name === m.to.name;
 	}
 }
 
@@ -8630,13 +8667,12 @@ console.log('selected',elt);
 		const domain = new DiagramObject(this, {to:to.domain, xy:xyD});
 		const codomain = new DiagramObject(this, {to:to.codomain});
 		const from = new DiagramMorphism(this, {to, domain, codomain});
-		const al = D.default.arrow.length;
-		const tw = D.textWidth(to.domain.properName)/2 + D.textWidth(to.properName) + D.textWidth(to.codomain.properName)/2 + al/4;
-		if (typeof xyC !== 'undefined')
+		const tw = D.textWidth(to.domain.properName)/2 + D.textWidth(to.properName) + D.textWidth(to.codomain.properName)/2 + 2 * D.textWidth('&emsp;');
+		if (typeof xyCod !== 'undefined')
 		{
 			let xyC = new D2(xyCod);
 			const angle = D2.Angle(xyDom, xyCod);
-			const xyCmin = D.Grid({x:xyD.x + Math.cos(angle) * (al + tw), y:xyD.y + Math.sin(angle) * (al + tw)});
+			const xyCmin = D.Grid({x:xyD.x + Math.cos(angle) * tw, y:xyD.y + Math.sin(angle) * tw});
 			if (xyD.dist(xyC) < xyD.dist(xyCmin))
 				xyC = xyCmin;
 			codomain.setXY(xyC);
@@ -8726,30 +8762,46 @@ console.log('selected',elt);
 		}
 		return {domains, codomains};
 	}
-	checkFusible(pnt)
+	updateFusible(pnt)
 	{
 		if (this.selected.length === 1)
 		{
 			const elt = this.getSelected();
+			elt.updateFusible(elt.isFusible(D.mouseover));
+				/*
+			{
+				elt.svg().classList.remove(...['object', 'selected']);
+				elt.svg().classList.add('fusible');
+			}
+			else
+			{
+				elt.svg().classList.remove('fusible');
+				elt.svg().classList.add(...['object', 'selected']);
+			}
+			*/
+console.log('updateFusible',D.mouseover,elt.svg().classList);
+			/*
 			const melt = elt.isEquivalent(D.mouseover) ? null : D.mouseover;
 			if (DiagramObject.prototype.isPrototypeOf(elt))
 			{
 				if (DiagramObject.prototype.isPrototypeOf(melt))
 				{
-					if (this.canFuseObjects(elt, melt))
+//					if (this.canFuseObjects(elt, melt))
+					if (elt.to.name === melt.to.name)
 					{
-						elt.svg().classList.remove('selected');
+						elt.svg().classList.remove(...['object', 'selected']);
 						elt.svg().classList.add('fusible');
 					}
 				}
 				else
 				{
 					elt.svg().classList.remove('fusible');
-					elt.svg().classList.add('selected');
+					elt.svg().classList.add(...['object', 'selected']);
 				}
 			}
-			else if (DiagramMorphism.prototype.isPrototypeOf(elt))
+			else if (DiagramMorphism.prototype.isPrototypeOf(elt))	// TODO shift, alt keys
 				elt.showFusible(DiagramMorphism.prototype.isPrototypeOf(melt) && this.codomain.actions.has('product'));
+				*/
 		}
 	}
 	findElement(pnt, except = '')
@@ -8764,7 +8816,7 @@ console.log('selected',elt);
 			if (D2.Inside(bbox, pnt, upperRight))
 				elt = this.domain.getObject(o.dataset.name);
 		}, this);
-		if (elt === null)
+		if (!elt)
 			D.topSVG.querySelectorAll('.morphTxt').forEach(function(o)
 			{
 				if (o.dataset.name === except)
@@ -8774,7 +8826,7 @@ console.log('selected',elt);
 				if (D2.Inside(bbox, pnt, upperRight))
 					elt = this.domain.getMorphism(o.dataset.name);
 			}, this);
-		if (elt === null)
+		if (!elt)
 		{
 			D.topSVG.querySelectorAll('.morphism').forEach(function(m)
 			{
@@ -8786,7 +8838,7 @@ console.log('selected',elt);
 					elt = this.domain.getMorphism(m.dataset.name);
 			}, this);
 		}
-		if (elt === null)
+		if (!elt)
 		{
 			D.topSVG.querySelectorAll('.diagramText').forEach(function(t)
 			{
@@ -8807,19 +8859,26 @@ console.log('selected',elt);
 					elt = this.getElement(t.dataset.name);
 			}, this);
 		}
-		return elt;
+		return typeof elt === 'undefined' ? null : elt;
 	}
+			/*
 	canFuseObjects(dragFrom, targetFrom)
 	{
-		if (DiagramObject.prototype.isPrototypeOf(dragFrom))
+		if (DiagramObject.prototype.isPrototypeOf(dragFrom) && DiagramObject.prototype.isPrototypeOf(targetFrom))
 		{
 			const dragTo = dragFrom.to;
 			const targetTo = targetFrom.to;
-			if ((dragTo.isInitial && !targetTo.isInitial) || (!dragTo.isInitial && targetTo.isInitial))
-				return false;
+			if (dragTo.name === targetTo.name)
+				return true;
+//			if ((dragTo.isInitial && !targetTo.isInitial) || (!dragTo.isInitial && targetTo.isInitial))
+//				return false;
+
 			const morphisms = this.getObjectMorphisms(dragFrom);
 			if (morphisms.domains.length === 0 && morphisms.codomains.length === 0)
+{
+console.log('canFuseObjects 1 true ');
 				return true;
+}
 			const a = dragTo.name === targetTo.name && !dragFrom.isEquivalent(targetFrom);
 			let b = false;
 			if (morphisms.codomains.length > 0)
@@ -8827,10 +8886,12 @@ console.log('selected',elt);
 				const to = morphisms.codomains[0].to;
 				b = morphisms.codomains.length === 1 && morphisms.domains.length === 0 && Identity.prototype.isPrototypeOf(to);  // TODO multiple forms of identities
 			}
+console.log('canFuseObjects 2', a||b);
 			return a||b;
 		}
 		return false;
 	}
+			*/
 	getSelected()
 	{
 		return this.selected.length > 0 ? this.selected[0] : null;

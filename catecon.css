@@ -349,7 +349,7 @@ a:hover, .offcanvas a:focus
 	box-shadow:			8px 8px 4px 2px #bbbb;
 	display:			inline-block;
 	margin:				0px;
-	max-width:			300px;
+	/* max-width:			300px; */
 	overflow:			hidden;
 	opacity:			1;
 	padding:			0px;
@@ -608,6 +608,7 @@ svg:hover
 {
 	cursor:	grab;
 	fill:	#9fc;
+	opacity:.5;
 	stroke:	#0f0;
 	font:	30px "Century";
 	margin:	2px;
@@ -625,7 +626,8 @@ svg:hover
 {
 	cursor:		pointer;
 	fill:		#9fc;
-	stroke:	#0f0;
+	opacity:	.5;
+	stroke:		#0f0;
 	font:		24px "Century";
 	margin:		2px;
 }
@@ -645,8 +647,9 @@ svg:hover
 {
 	margin:		2px;
 	padding:	2px;
-	fill:	#9fc;
-	stroke:	#0f0;
+	opacity:	.5;
+	fill:		#9fc;
+	stroke:		#0f0;
 }
 
 .element
