@@ -1365,7 +1365,7 @@ class Amazon extends Cloud
 		const dgrmPayload = JSON.stringify(dgrmJson);
 		if (dgrmPayload.length > U.uploadLimit)
 		{
-			D.status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
+			D.Status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
 			return;
 		}
 		D.svg2canvas(D.topSVG, dgrm.name, false, function(url, filename)
@@ -1597,25 +1597,59 @@ console.log('mouseover elt',D.mouseover);
 			const xy = diagram.mousePosition(e);
 			if (D.drag)
 			{
-				if (!diagram.readonly && e.ctrlKey && diagram.selected.length == 1 && D.fuseObject === null && !D.dragClone)	// copy
+console.log('dragging...');
+				if (diagram.selected.length > 0)
 				{
-					const from = diagram.getSelected();
-					D.mouseover = diagram.findElement(xy, from.name);
-					const isolated = from.refcnt === 1;
-					if (DiagramObject.prototype.isPrototypeOf(from))		// ctrl-drag identity
+					if (!diagram.readonly && diagram.selected.length === 1 && e.ctrlKey && !D.dragClone)
 					{
-						diagram.activate(e, 'identity');
-						const id = diagram.getSelected();
-						id.codomain.setXY(xy);
-						diagram.makeSelected(e, id.codomain);	// restore from identity action
-						D.dragClone = true;
-						diagram.updateFusible(xy);
+						const from = diagram.getSelected();
+						D.mouseover = diagram.findElement(xy, from.name);
+						const isolated = from.refcnt === 1;
+						if (DiagramObject.prototype.isPrototypeOf(from))		// ctrl-drag identity
+						{
+							diagram.activate(e, 'identity');
+							const id = diagram.getSelected();
+							id.codomain.setXY(xy);
+							diagram.makeSelected(e, id.codomain);	// restore from identity action
+							D.dragClone = true;
+							diagram.updateFusible(xy);
+						}
+						else if (DiagramMorphism.prototype.isPrototypeOf(from))	// ctrl-drag morphism copy
+						{
+							diagram.activate(e, 'copy', {offset: new D2});
+							D.dragClone = true;
+							diagram.updateFusible(xy);
+						}
 					}
-					else if (DiagramMorphism.prototype.isPrototypeOf(from))	// ctrl-drag morphism copy
+					else if (D.mouse.delta().nonZero())
 					{
-						diagram.activate(e, 'copy', {offset: new D2});
-						D.dragClone = true;
-						diagram.updateFusible(xy);
+						const skip = diagram.getSelected();
+						D.mouseover = diagram.findElement(xy, skip ? skip.name : '');
+						if (D.tool === 'select')
+						{
+							if (!diagram.readonly)
+							{
+								diagram.updateDragObjects();
+								diagram.updateFusible(xy);
+								let msg = '';
+								if (D.mouseover && diagram.selected.length === 1)
+								{
+									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover))
+									{
+										if (e.shiftKey && R.$Actions.getObject('coproduct'))
+											msg = 'Coproduct';
+										else if (e.altKey && R.$Actions.getObject('hom'))
+											msg = 'Hom';
+										else if (R.$Actions.getObject('product'))
+											msg = 'Product';
+									}
+									D.Status(e, msg);
+								}
+								if (msg !== '')
+									D.Status(e, msg);
+							}
+						}
+					{
 					}
 				}
 				else if (diagram.selected.length > 0 && D.mouse.delta().nonZero())
@@ -1699,13 +1733,13 @@ console.log('mouseover elt',D.mouseover);
 				let didSomething = false;
 				if (diagram.selected.length === 1)
 				{
-					const dragObject = diagram.getSelected();
-					let targetObject = dragObject.isEquivalent(D.mouseover) ? null : D.mouseover;
-					if (targetObject !== null)
+					const dragged = diagram.getSelected();
+					const target = dragged.isEquivalent(D.mouseover) ? null : D.mouseover;
+					if (target)
 					{
-						if (diagram.isIsolated(dragObject) && diagram.isIsolated(targetObject))
+						if (diagram.isIsolated(dragged) && diagram.isIsolated(target))
 						{
-							const ary = [targetObject, dragObject];
+							const ary = [target, dragged];
 							const actions = diagram.codomain.actions;
 							let a = actions.has('product') ? actions.get('product') : null;
 							if (e.shiftKey && actions.has('coproduct'))
@@ -1715,18 +1749,18 @@ console.log('mouseover elt',D.mouseover);
 							if (a && a.hasForm(e, diagram, ary))
 							{
 								a.action(e, diagram, ary);
-								dragObject.decrRefcnt();
-								targetObject.decrRefcnt();
+								dragged.decrRefcnt();
+								target.decrRefcnt();
 								didSomething = true;
 							}
 						}
-						else if (DiagramObject.prototype.isPrototypeOf(dragObject) && DiagramObject.prototype.isPrototypeOf(targetObject))
+						else if (DiagramObject.prototype.isPrototypeOf(dragged) && DiagramObject.prototype.isPrototypeOf(target))
 						{
-//							if(diagram.canFuseObjects(dragObject, targetObject))
-							if(dragObject.isFusible(targetObject))
+							if(dragged.isFusible(target))
 							{
 								diagram.deselectAll();
-								const morphisms = diagram.getObjectMorphisms(dragObject);
+								const morphisms = diagram.getObjectMorphisms(dragged);
+									/*
 								if (morphisms.codomains.length > 0)
 								{
 									const from = morphisms.codomains[0];
@@ -1734,7 +1768,7 @@ console.log('mouseover elt',D.mouseover);
 									if (morphisms.codomains.length === 1 && morphisms.domains.length === 0 && Identity.prototype.isPrototypeOf(from.to) && !from.to.domain.isInitial)
 									{
 										const cod = dragObject.to;
-										const toTargetObject = targetObject.to;
+										const toTargetObject = target.to;
 //										if (cod.signature !== toTargetObject.signature)
 										if (cod.name !== toTargetObject.name)	// TODO signature
 										{
@@ -1759,30 +1793,31 @@ console.log('mouseover elt',D.mouseover);
 												this.addSVG(from);
 											}
 										}
-										from.codomain = targetObject;
+										from.codomain = target;
 										from.update();
-										targetObject.incrRefcnt();
+										target.incrRefcnt();
 										dragObject.decrRefcnt();
 										didSomething = true;
 									}
 								}
+									*/
 								for(const [name, m] of diagram.domain.morphisms)
 								{
-									if (m.domain.isEquivalent(dragObject))
+									if (m.domain.isEquivalent(dragged))
 									{
 										m.domain.decrRefcnt();
-										m.domain = targetObject;
-										D.MergeObjectsRefCnt(diagram, dragObject, targetObject);
+										m.domain = target;
+										D.MergeObjectsRefCnt(diagram, dragged, target);
 									}
-									else if (m.codomain.isEquivalent(dragObject))
+									else if (m.codomain.isEquivalent(dragged))
 									{
 										m.codomain.decrRefcnt();
-										m.codomain = targetObject;
-										D.MergeObjectsRefCnt(diagram, dragObject, targetObject);
+										m.codomain = target;
+										D.MergeObjectsRefCnt(diagram, dragged, target);
 									}
 									m.update();
 								}
-								dragObject.decrRefcnt();
+								dragged.decrRefcnt();
 								diagram.domain.makeHomSets();
 								diagram.update();
 								didSomething = true;
@@ -1795,7 +1830,6 @@ console.log('mouseover elt',D.mouseover);
 			}
 			else
 				diagram.addWindowSelect(e);
-			D.fuseObject = null;
 		}
 		catch(x)
 		{
@@ -1808,7 +1842,7 @@ console.log('mouseover elt',D.mouseover);
 		const diagram = R.diagram;
 		if (diagram.readonly)
 		{
-			D.status(e, 'Diagram is not editable');
+			D.Status(e, 'Diagram is not editable');
 			return;
 		}
 		try
@@ -1827,38 +1861,10 @@ console.log('mouseover elt',D.mouseover);
 			switch(type)
 			{
 			case 'object':
-					/*
-				to = diagram.getObject(name);
-				if (to === null)
-					throw 'object does not exist in category';
-				from = new DiagramObject(diagram, {xy, to});
-				diagram.addSVG(from);
-				diagram.makeSelected(e, from);
-				*/
 				diagram.placeObject(e, diagram.getObject(name), xy);
 				break;
 			case 'morphism':
 				to = diagram.getMorphism(name);
-				/*
-				if (to === null)
-					throw 'morphism does not exist in category';
-				const domain = new DiagramObject(diagram, {xy});
-				const codLen = D.textWidth(to.domain.properName)/2;
-				const domLen = D.textWidth(to.codomain.properName)/2;
-				const namLen = D.textWidth(to.properName);
-				const codomain = new DiagramObject(diagram,
-					{
-						xy:
-						{
-							x:xy.x + Math.max(D.default.arrow.length, domLen + namLen + codLen + D.default.arrow.length/4),
-							y:xy.y
-						}
-					});
-				from = new DiagramMorphism(diagram, {to, domain, codomain});
-				from.update();
-				diagram.addSVG(domain);
-				diagram.addSVG(codomain);
-				*/
 				diagram.placeMorphism(e, to, xy);
 				break;
 			}
@@ -1871,7 +1877,6 @@ console.log('mouseover elt',D.mouseover);
 	}
 	static HideToolbar()
 	{
-//		D.toolbar.style.display = 'none';
 		D.toolbar.classList.add('hidden');
 	}
 	static ShowToolbar(e, elt)
@@ -1884,7 +1889,8 @@ console.log('mouseover elt',D.mouseover);
 			return;
 		}
 		D.help.innerHTML = '';
-		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect id="toolbar-drag-handle" class="btn" x="0" y="0" width="320" height="320"/></svg>`);
+		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] +
+			`<rect id="toolbar-drag-handle" class="btn" x="0" y="0" width="320" height="320"/></svg>`);
 		if (!R.diagram.readonly)
 			diagram.codomain.actions.forEach(function(a, n)
 			{
@@ -1893,28 +1899,19 @@ console.log('mouseover elt',D.mouseover);
 			});
 		header += D.GetButton('close', 'D.HideToolbar()', 'Close');
 		D.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
-//		if (D.toolbar.style.display !== 'block')
-//		{
-			D.toolbar.style.display = 'block';
-			let xy = {x:e.clientX, y:e.clientY};
-//			if (DiagramMorphism.prototype.isPrototypeOf(elt))
-//				xy = {x:e.clientX, y:e.clientY};
-//			else
-//			if (DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt) || D2.prototype.isPrototypeOf(elt))
-			if (D2.prototype.isPrototypeOf(elt))
-				xy = diagram.diagramToUserCoords(elt);
-			const rect = D.topSVG.getBoundingClientRect();
-			let left = rect.left + xy.x + D.default.toolbar.x;
-			left = left >= 0 ? left : 0;
-			left = (left + D.toolbar.clientWidth) >= window.innerWidth ? window.innerWidth - D.toolbar.clientWidth : left;
-			D.toolbar.style.left = `${left}px`;
-			let top = rect.top + xy.y - D.default.toolbar.y;
-			top = top >= 0 ? top : 0;
-			top = (top + D.toolbar.clientHeight) >= window.innerHeight ? window.innerHeight - D.toolbar.clientHeight : top;
-			D.toolbar.style.top = `${top}px`;
-//		}
-//		else
-//			D.toolbar.style.opacity = "1";
+		D.toolbar.style.display = 'block';
+		let xy = {x:e.clientX, y:e.clientY};
+		if (D2.prototype.isPrototypeOf(elt))
+			xy = diagram.diagramToUserCoords(elt);
+		const rect = D.topSVG.getBoundingClientRect();
+		let left = rect.left + xy.x + D.default.toolbar.x;
+		left = left >= 0 ? left : 0;
+		left = (left + D.toolbar.clientWidth) >= window.innerWidth ? window.innerWidth - D.toolbar.clientWidth : left;
+		D.toolbar.style.left = `${left}px`;
+		let top = rect.top + xy.y - D.default.toolbar.y;
+		top = top >= 0 ? top : 0;
+		top = (top + D.toolbar.clientHeight) >= window.innerHeight ? window.innerHeight - D.toolbar.clientHeight : top;
+		D.toolbar.style.top = `${top}px`;
 	}
 	/*
 	static clickDeleteBtn(id, fn)
@@ -2006,7 +2003,6 @@ ${D.Button(onclick)}
 		nuScale = nuScale < D.default.scale.limit.min ? D.default.scale.limit.min : nuScale;
 		nuScale = nuScale > D.default.scale.limit.max ? D.default.scale.limit.max : nuScale;
 		diagram.viewport.scale = nuScale;
-//		let pnt = {x:e.clientX, y:e.clientY};
 		const pnt = D.mouse.position();
 		const dx = scalar * (1.0 - 1.0 / D.default.scale.base) * (pnt.x - diagram.viewport.x);
 		const dy = scalar * (1.0 - 1.0 / D.default.scale.base) * (pnt.y - diagram.viewport.y);
@@ -2101,7 +2097,7 @@ ${D.Button(onclick)}
 		}
 		return 10;
 	}
-	static status(e, msg)
+	static Status(e, msg, record = false)
 	{
 		const s = D.statusbar;
 		if (msg === null || msg === '')
@@ -2120,7 +2116,8 @@ ${D.Button(onclick)}
 		}
 		else
 			D.recordError(msg);
-		document.getElementById('tty-out').innerHTML += msg + "\n";
+		if (record)
+			document.getElementById('tty-out').innerHTML += msg + "\n";
 	}
 	static Grid(x)
 	{
@@ -2439,7 +2436,6 @@ Object.defineProperties(D,
 	'drag':				{value: false,		writable: true},
 	'dragClone':		{value: false,		writable: true},
 	'dragStart':		{value: new D2,		writable: true},
-	'fuseObject':		{value: null,		writable: true},
 	'gridding':			{value: true,		writable: true},
 	'header':			{value: document.getElementById('toolbar-header'),	writable: false},
 	'help':				{value: document.getElementById('toolbar-help'),		writable: false},
@@ -2945,21 +2941,21 @@ class CategoryPanel extends Panel
 			const cat = new Category(R.$Cat, {basename, properName:U.htmlSafe(this.properNameElt.value), description:U.htmlSafe(this.descriptionElt.value)});
 			if (document.getElementById('hasProducts').checked)
 			{
-				cat.actions.set('product', R.$Actions.get('product'));
-				cat.actions.set('productAssembly', R.$Actions.get('productAssembly'));
-				cat.actions.set('project', R.$Actions.get('project'));
+				cat.actions.set('product', R.$Actions.getObject('product'));
+				cat.actions.set('productAssembly', R.$Actions.getObject('productAssembly'));
+				cat.actions.set('project', R.$Actions.getObject('project'));
 			}
 			if (document.getElementById('hasCoproducts').checked)
 			{
-				cat.actions.set('coproduct', R.$Actions.get('coproduct'));
-				cat.actions.set('coproductAssembly', R.$Actions.get('coproductAssembly'));
+				cat.actions.set('coproduct', R.$Actions.getObject('coproduct'));
+				cat.actions.set('coproductAssembly', R.$Actions.getObject('coproductAssembly'));
 			}
 			if (document.getElementById('hasPullbacks').checked)
-				cat.actions.set('pullback', R.$Actions.get('pullback'));
+				cat.actions.set('pullback', R.$Actions.getObject('pullback'));
 			if (document.getElementById('hasPushouts').checked)
-				cat.actions.set('pushout', R.$Actions.get('pushout'));
+				cat.actions.set('pushout', R.$Actions.getObject('pushout'));
 			if (document.getElementById('isClosed').checked)
-				cat.actions.set('hom', R.$Actions.get('hom'));
+				cat.actions.set('hom', R.$Actions.getObject('hom'));
 			// TODO natural numbers object added to category and action
 		}
 		catch(err)
@@ -4461,7 +4457,7 @@ class Graph
 				}
 				data.visited.push(idxStr + ' ' + lnkStr);
 				data.visited.push(lnkStr + ' ' + idxStr);
-				return `<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${d}" filter="url(#softGlow)" onmouseover="D.status(evt, '${fs}')"/>\n`;
+				return `<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${d}" filter="url(#softGlow)" onmouseover="D.Status(evt, '${fs}')"/>\n`;
 			}
 			return svg;
 		}
@@ -5167,13 +5163,13 @@ class DiagramObject extends CatObject
 		const e = this.svg();
 		if (on)
 		{
-			e.classList.add(...['fusible']);
+			e.classList.add(...['fuseObject']);
 			e.classList.remove(...['selected', 'grabbable', 'object']);
 		}
 		else
 		{
 			e.classList.add(...['selected', 'grabbable', 'object']);
-			e.classList.remove(...['fusible']);
+			e.classList.remove(...['fuseObject']);
 		}
 	}
 }
@@ -6801,20 +6797,20 @@ onmousedown="R.diagram.pickElement(evt, '${this.name}')">${this.to.properName}</
 		const name = this.svg('_name');
 		if (on)
 		{
-			path.classList.add(...['selected', 'grabbable', 'morphism', 'fusible']);
-			path.classList.remove(...['selected', 'grabbable', 'morphism', 'fusible']);
+			path.classList.add(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
+			path.classList.remove(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
 
-			path.classList.add(...['fusible']);
-			path.classList.remove(...['selected', 'grabbable', 'object']);
-			name.classList.add(...['fusible']);
-			name.classList.remove(...['selected', 'grabbable', 'object']);
+			path.classList.add(...['fuseMorphism']);
+			path.classList.remove(...['selected', 'grabbable', 'morphism']);
+			name.classList.add(...['fuseMorphism']);
+			name.classList.remove(...['morphTxt', 'selected', 'grabbable']);
 		}
 		else
 		{
-			path.classList.add(...['selected', 'grabbable', 'object']);
-			path.classList.remove(...['fusible']);
-			name.classList.add(...['selected', 'grabbable', 'object']);
-			name.classList.remove(...['fusible']);
+			path.classList.add(...['selected', 'grabbable', 'morphism']);
+			path.classList.remove(...['fuseMorphism']);
+			name.classList.add(...['morphTxt', 'selected', 'grabbable']);
+			name.classList.remove(...['fuseMorphism']);
 		}
 	}
 	updateDecorations()
@@ -8925,7 +8921,7 @@ console.log('canFuseObjects 2', a||b);
 //				Panel.SectionOpen('tty-out-section');
 //			}
 			const delta = Date.now() - start;
-			D.status(e, `<br/>Elapsed ${delta}ms`);
+			D.Status(e, `<br/>Elapsed ${delta}ms`);
 		}
 		D.drag = false;
 	}
@@ -8975,7 +8971,7 @@ console.log('canFuseObjects 2', a||b);
 				if (err)
 					alert(err.message);
 				const delta = Date.now() - start;
-				D.status(e, `Uploaded diagram.<br/>Elapsed ${delta}ms`);
+				D.Status(e, `Uploaded diagram.<br/>Elapsed ${delta}ms`, true);
 			});
 		}
 		else
@@ -9118,7 +9114,7 @@ console.log('canFuseObjects 2', a||b);
 			const sel1 = this.selected[1].to;
 			sel0.setRecursor(sel1);
 			this.saveLocal();
-			D.status(e, `Recursor for ${sel0.properName} has been set`);
+			D.Status(e, `Recursor for ${sel0.properName} has been set`);
 		}
 	}
 	removeMorphism(e, name)
@@ -9236,7 +9232,7 @@ console.log('canFuseObjects 2', a||b);
 				const url = D.url.createObjectURL(blob);
 				R.Download(url, `${name}.js`);
 				const delta = Date.now() - start;
-				D.status(e, `Diagram ${name} Javascript generated<br/>Elapsed ${delta}ms`);
+				D.Status(e, `Diagram ${name} Javascript generated<br/>Elapsed ${delta}ms`);
 			});
 			*/
 //			const blob = new Blob([JSON.parse(data.Payload)], {type:'application/json'});
@@ -9244,7 +9240,7 @@ console.log('canFuseObjects 2', a||b);
 			const url = D.url.createObjectURL(blob);
 			R.Download(url, `${this.basename}.js`);
 			const delta = Date.now() - start;
-			D.status(e, `Diagram ${name} Javascript generated<br/>Elapsed ${delta}ms`);
+			D.Status(e, `Diagram ${name} Javascript generated<br/>Elapsed ${delta}ms`, true);
 		}
 	}
 	downloadPNG()
@@ -9284,12 +9280,12 @@ console.log('canFuseObjects 2', a||b);
 				{
 					this.references.splice(idx, 1);		// TODO idx
 					this.showReferencesDiagramTable()
-					D.status(`Reference diagram ${name} removed`);
+					D.Status(`Reference diagram ${name} removed`);
 					break;
 				}
 		}
 		else
-			D.status(`Reference diagram ${name} cannot be removed since references to it still exist`);
+			D.Status(`Reference diagram ${name} cannot be removed since references to it still exist`);
 	}
 	addReferenceDiagram(e, name, silent = true)
 	{
@@ -9304,12 +9300,12 @@ console.log('canFuseObjects 2', a||b);
 			if (!silent)
 			{
 				this.showReferencesDiagramTable()
-				D.status(`Reference diagram ${name} is now referenced.`);
+				D.Status(`Diagram ${name} is now referenced.`);
 			}
 		}
 		else
 			if (!silent)
-				D.status(`Reference diagram ${name} is already referenced.`);
+				D.Status(`Diagram ${name} is already referenced.`);
 	}
 	hasReference(name)
 	{
@@ -9357,6 +9353,7 @@ R.protos =
 	SubobjectClassifier,
 	Sequence,
 	HomObject,
+	HomMorphism,
 	Morphism,
 	Identity,
 	Composite,

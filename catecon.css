@@ -614,6 +614,16 @@ svg:hover
 	margin:	2px;
 }
 
+.fuseObject
+{
+	fill:		blue;
+	stroke:		blue;
+	stroke-width:	2px;
+	font:			30px "Century";
+	margin:			2px;
+	user-select:	none;
+}
+
 .morphTxt
 {
 	fill:			black;
@@ -652,6 +662,17 @@ svg:hover
 	stroke:		#0f0;
 }
 
+.fuseMorphism
+{
+	fill:			blue;
+	stroke:			blue;
+	font:			24px "Century";
+	margin:			2px;
+	padding:		2px;
+	stroke-width:	2.5px;
+	user-select:	none;
+}
+
 .element
 {
 	fill:			black;
@@ -679,15 +700,6 @@ svg:hover
 {
 	background-color:	#000;
 	color: 				#fff;
-}
-
-.fusible
-{
-	fill:		blue;
-	font:		30px "Century";
-	margin:		2px;
-	stroke:		blue;
-	stroke-width:	2px;
 }
 
 #diagramSVG
