@@ -397,7 +397,7 @@ class U		// utility functions
 		else
 		{
 			const serverInfo = diagram in R.serverDiagrams ? R.serverDiagrams[diagram] : false;
-			const localInfo = R.LocalDiagrams.has(diagram) ? R.LocalDiagrams.get(diagram) : false;
+			const localInfo = R.LocalDiagramList.has(diagram.name) ? R.LocalDiagramList.get(diagram.name) : false;
 			const serverTime = serverInfo ? serverInfo.timestamp : 0;
 			const localTime = localInfo ? localInfo.timestamp : 0;
 			info.timestamp = localInfo ? localInfo.timestamp : (serverInfo ? serverInfo.timestamp : '');
@@ -515,44 +515,56 @@ class R		// runtime
 	{
 		delete R.UserDiagrams[name];
 	}
-	static HasLocalDiagram(dgrmName)
+	static HasLoadedDiagram(name)
 	{
-		return R.LocalDiagrams.has(dgrmName);
+		return R.LoadedDiagrams.has(name);
 	}
 	static GetLocalDiagramList()
 	{
-		R.LocalDiagramList = JSON.parse(localStorage.getItem('/Cat/Anon/diagrams'));
-//		if (!R.LocalDiagrams)
-//			R.LocalDiagrams = {};
+		const diagrams = JSON.parse(localStorage.getItem('/Cat/Anon/diagrams'));
+		if (diagrams)
+			diagrams.map(d => R.LocalDiagramList.set(d.name, d));
 		// TODO debug, clean-up, remove, eventually
-		for (let d in R.LocalDiagrams)
-			if (!localStorage.getItem(U.StorageName(d)))
+		if (R.debug)
+			Object.forEach(function(info, name)
 			{
-				if (R.debug)
-					console.log('getLocalDiagramList deleting', d);
-				delete R.LocalDiagrams[d];
-				R.SaveLocalDiagramList();
-			}
+				if (!localStorage.getItem(U.StorageName(name)))
+				{
+					console.log('GetLocalDiagramList deleting', name);
+					R.LoadedDiagrams.delete(name);
+					R.SaveLocalDiagramList();
+				}
+			});
 	}
 	static SaveLocalDiagramList()
 	{
-		localStorage.setItem('/Cat/Anon/diagrams', JSON.stringify(R.LocalDiagrams));
+		localStorage.setItem('/Cat/Anon/diagrams', JSON.stringify(R.LocalDiagramList));
 	}
 	static AddLocalDiagram(diagram)
 	{
-		if (diagram.name in R.LocalDiagrams)
+		if (R.LocalDiagramList.has(diagram.name))
 			throw 'already have local diagram';
-//		R.LocalDiagrams[diagram.name] = {name:diagram.name, properName:diagram.properName, timestamp:diagram.timestamp, description:diagram.description, user:diagram.user};
-		R.LocalDiagrams.add(diagram);
+//		R.LoadedDiagrams[diagram.name] = {name:diagram.name, properName:diagram.properName, timestamp:diagram.timestamp, description:diagram.description, user:diagram.user};
+		R.LoadedDiagrams.set(diagram.name, diagram);
+		R.LocalDiagramList.set(diagram.name,
+		{
+			name:			diagram.name,
+			basename:		diagram.basename,
+			description	:	diagram.description,
+			properName:		diagram.properName,
+			timestamp:		diagram.timestamp,
+			user:			diagram.user,
+		});
 		R.SaveLocalDiagramList();
 	}
 	// TODO unused?
 	static removeFromLocalDiagramList(dgrmName)
 	{
-		if (R.HasLocalDiagram(dgrmName))
+		if (R.LocalDiagramList.has(dgrmName))
 		{
-//			delete R.LocalDiagrams[dgrmName];
-			R.LocalDiagrams.delete(dgrmName);
+//			delete R.LoadedDiagrams[dgrmName];
+			R.LocalDiagramsList.delete(dgrmName);
+			R.LoadedDiagrams.delete(dgrmName);
 			R.SaveLocalDiagramList();
 		}
 	}
@@ -637,7 +649,7 @@ class R		// runtime
 			if (isGUI)
 			{
 				U.autosave = true;
-				R.getLocalDiagramList();
+				R.GetLocalDiagramList();
 				D.Initialize();
 			}
 			const CATargs =
@@ -959,11 +971,12 @@ class R		// runtime
 			console.log('save to local storage', U.StorageName(diagram.name));
 		diagram.timestamp = Date.now();
 		localStorage.setItem(U.StorageName(diagram.name), diagram.stringify());
-		if (!R.LocalDiagrams.has(diagram))
-		{
-			R.AddLocalDiagram(diagram);
+//		if (!R.LoadedDiagrams.has(diagram))	// unlikely
+//		{
+//			R.LoadedDiagram.set(diagram.name, diagram);
+//			R.AddLocalDiagram(diagram);
 			R.SaveLocalDiagramList();
-		}
+//		}
 		return true;
 	}
 }
@@ -986,7 +999,8 @@ Object.defineProperties(R,
 	clear:				{value:false,	writable:true},
 	debug:				{value:true,	writable:true},		// Are we in debug mode to print messages on the console?
 	initialized:		{value:false,	writable:true},		// Have we finished the boot sequence and initialized properly?
-	LocalDiagrams:		{value:new Set,	writable:false},
+	LoadedDiagrams:		{value:new Map,	writable:false},
+	LocalDiagramList:	{value:new Map,	writable:false},
 	serverDiagrams:		{value:{},		writable:true},
 	url:				{value:'',		writable:true},
 	user:				{value:{name:'Anon', diagrams:{}, email:'anon@example.com', status:'unauthorized'},	writable:true},	// TODO fix after bootstrap removed	writable:true,
@@ -1737,7 +1751,7 @@ console.log('dragging...');
 		D.dragClone = false;
 		if (D.mouse.save)
 		{
-			R.SaveLocal(diagram);
+			R.SaveLocal(R.diagram);
 			D.mouse.save = false;
 		}
 		if (e.which === 2)
@@ -3336,7 +3350,7 @@ class NewDiagramSection extends Section
 				properName:		U.htmlSafe(this.properNameElt.value),
 				description:	U.htmlSafe(this.descriptionElt.value),
 			});
-//			R.AddLocalDiagram(diagram);
+			R.AddLocalDiagram(diagram);
 			R.AddUserDiagram(diagram);
 			R.SaveLocal(diagram);
 			R.SelectDiagram(diagram.name);
@@ -3396,13 +3410,14 @@ class DiagramPanel extends Panel
 			H.h4(H.span('', '', 'diagram-basename') + H.span('', '', 'diagram-basename-edit')) +
 			H.h4(H.span('', '', 'diagram-properName') + H.span('', '', 'diagram-properName-edit')) +
 			H.p(H.span('', 'description', 'diagram-description', 'Description') + H.span('', '', 'diagram-description-edit')) +
-			H.table(H.tr(H.td(H.span('', '', 'diagram-user')) + H.td(H.span('', '', 'diagram-timestamp')))) +
-			this.referenceDiagramSections = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram');
+			H.table(H.tr(H.td(H.span('', '', 'diagram-user')) + H.td(H.span('', '', 'diagram-timestamp'))));
+		this.referenceDiagramSection = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram');
+		this.newDiagramSection = new NewDiagramSection(this.elt);
+		this.userDiagramsSection = new DiagramSection('User Diagrams', this.elt, `diagram-user-section`, 'Diagrams created by the user');
 		/*
 			H.button('References', 'sidenavAccordion', '', 'Diagrams referenced by this diagram', 'onclick="D.Panel.SectionToggle(this, \'referenceDiagrams\')"') +
 			H.div(H.div('', 'section', 'referenceDiagrams')) +
 		*/
-			this.newDiagramSection = new NewDiagramSection(this.elt);
 		/*
 			H.button('New', 'sidenavAccordion', '', 'New Diagram', `onclick="D.Panel.SectionToggle(this, \'newDiagramPnl\')"`) +
 			H.div(
@@ -3414,7 +3429,6 @@ class DiagramPanel extends Panel
 				H.span(D.GetButton('edit', 'diagramPanel.create()', 'Create new diagram')) +
 				H.span('', 'error', 'diagram-error'), 'section', 'newDiagramPnl') +
 			*/
-		this.userDiagramsSection = new DiagramSection('User Diagrams', this.elt, `diagram-user-section`, 'Diagrams created by the user');
 		/*
 			H.button(`${R.user.name}`, 'sidenavAccordion', '', 'User diagrams', 'onclick="D.Panel.SectionToggle(this, \'userDiagramDisplay\')"') +
 			H.div(	H.small('User diagrams') +
@@ -3533,9 +3547,9 @@ class DiagramPanel extends Panel
 		if (dgrm === null)
 			return;
 		const dgrms = {};
-		for (const d in R.LocalDiagrams)
+		for (const d in R.LoadedDiagrams)
 		{
-			const dgrm = R.LocalDiagrams[d];
+			const dgrm = R.LoadedDiagrams[d];
 			if (dgrm.user === R.user.name)
 				dgrms[d] = true;
 		}
