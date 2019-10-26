@@ -379,6 +379,7 @@ class U		// utility functions
 		}
 		return fctr;
 	}
+	/*
 	static GetDiagramInfo(diagram)
 	{
 		if (Diagram.prototype.isPrototypeOf(diagram))
@@ -404,6 +405,7 @@ class U		// utility functions
 			return info;
 		}
 	}
+	*/
 	static StorageName(dgrmName)
 	{
 		return `Cat.diagram ${dgrmName}`;
@@ -850,6 +852,40 @@ class R		// runtime
 			if (fn)
 				fn(dgrmName);
 		});
+	}
+	static GetReferences(name, refs = new Set)
+	{
+		if (refs.has(name))
+			return refs;
+		const info = R.LocalDiagrams.get(name);
+		if (!info)
+			throw 'no info';
+		if ('refs' in info)	// TODO remove if clause
+			info.refs.map(r => R.GetReferences(r.name, refs));
+		return refs;
+	}
+	static LoadDiagrams(s)
+	{
+		s.forEach(function(r)
+		{
+			let diagram = R.$CAT.getMorphism(name);
+			if (diagram)
+				return;
+			if (isGUI)
+				diagram = D.ReadLocal(name);
+			// else TODO cloud fetch
+		});
+	}
+	static LoadDiagram(name)	// TODO cloud loading is in background fn
+	{
+		let diagram = R.$CAT.getMorphism(name);
+		if (diagram)
+			return diagram;
+		R.LoadDiagrams(R.GetReferences(name));
+		if (isGUI && !diagram)
+			diagram = D.ReadLocal(name);
+		// else TODO cloud fetch
+		return diagram;
 	}
 }
 Object.defineProperties(R,
@@ -1521,13 +1557,13 @@ console.log('mouseover elt',D.mouseover);
 							id.codomain.setXY(xy);
 							diagram.makeSelected(e, id.codomain);	// restore from identity action
 							D.dragClone = true;
-							diagram.updateFusible();
+//							diagram.updateFusible();
 						}
 						else if (DiagramMorphism.prototype.isPrototypeOf(from))	// ctrl-drag morphism copy
 						{
 							diagram.activate(e, 'copy', {offset: new D2});
 							D.dragClone = true;
-							diagram.updateFusible();
+//							diagram.updateFusible();
 						}
 					}
 					else if (D.mouse.delta().nonZero())
@@ -1544,7 +1580,7 @@ console.log('mouseover elt',D.mouseover);
 								{
 									if (diagram.isIsolated(diagram.getSelected()) && diagram.isIsolated(D.mouseover))
 									{
-										diagram.updateFusible();
+//										diagram.updateFusible();
 										if (e.shiftKey && R.$Actions.getObject('coproduct'))
 											msg = 'Coproduct';
 										else if (e.altKey && R.$Actions.getObject('hom'))
@@ -1568,9 +1604,10 @@ console.log('mouseover elt',D.mouseover);
 						if (!diagram.readonly)
 						{
 							diagram.updateDragObjects();
-							diagram.updateFusible();
+//							diagram.updateFusible();
 						}
 				}
+				diagram.updateFusible();
 				D.mouse.save = true;
 				D.HideToolbar();
 			}
@@ -1776,7 +1813,7 @@ console.log('mouseover elt',D.mouseover);
 					diagram.placeMorphism(e, to, xy);
 					break;
 				case 'diagram':
-					R.diagram.addReference(e, name);
+					D.AddReference(e, name);
 					break;
 			}
 			diagram.update();
@@ -2363,6 +2400,11 @@ ${D.Button(onclick)}
 	{
 //		if (R.LocalDiagrams.has(diagram.name))
 //			throw 'already have local diagram';
+		let refs = [];
+		diagram.references.forEach(function(r)
+		{
+			refs.push(r.name);
+		});
 		R.LocalDiagrams.set(diagram.name,
 		{
 			name:			diagram.name,
@@ -2371,6 +2413,7 @@ ${D.Button(onclick)}
 			properName:		diagram.properName,
 			timestamp:		diagram.timestamp,
 			user:			diagram.user,
+			references:		refs,
 		});
 //		if (diagram.user === R.user.name)
 //			R.AddUserDiagram(diagram);
@@ -2381,7 +2424,7 @@ ${D.Button(onclick)}
 	{
 		if (R.LocalDiagrams.has(dgrmName))
 		{
-			R.LocalDiagramsList.delete(dgrmName);
+			R.LocalDiagrams.delete(dgrmName);
 			D.SaveLocalDiagramList();
 		}
 	}
@@ -2445,6 +2488,17 @@ ${D.Button(onclick)}
 		if (!R.diagram)
 			throw 'no diagram';
 		localStorage.setItem(`Diagram default ${R.user.name} ${R.categoryName}`, R.diagram.name);
+	}
+	static AddReference(e, name)
+	{
+		const diagram = R.LoadDiagram(name);
+		if (diagram)
+			R.diagram.addReference(name);
+		else
+			throw 'no reference diagram';
+		D.diagramPanel.referenceSection.update();
+		D.SaveLocal(R.diagram);
+		D.Status(e, `Diagram ${diagram.properName} now referenced`);
 	}
 }
 Object.defineProperties(D,
@@ -3437,9 +3491,12 @@ class DiagramSection extends Section
 		if (src === '' && R.cloud)
 			src = R.cloud.getURL(diagram.codomain.basename, diagram.user, diagram.basename + '.png')
 		let tools = tb;
-		tools +=	D.DownloadButton('JSON', `R.$CAT.getMorphism('${diagram.name}').downloadJSON(evt)`, 'Download JSON') +
-				D.DownloadButton('JS', `R.$CAT.getMorphism('${diagram.name}').downloadJS(evt)`, 'Download Javascript') +
-				D.DownloadButton('PNG', `R.$CAT.getMorphism('${diagram.name}').downloadPNG(evt)`, 'Download PNG');
+//		tools +=	D.DownloadButton('JSON', `R.$CAT.getMorphism('${diagram.name}').downloadJSON(evt)`, 'Download JSON') +
+//				D.DownloadButton('JS', `R.$CAT.getMorphism('${diagram.name}').downloadJS(evt)`, 'Download Javascript') +
+//				D.DownloadButton('PNG', `R.$CAT.getMorphism('${diagram.name}').downloadPNG(evt)`, 'Download PNG');
+		tools +=	D.DownloadButton('JSON', `R.LoadDiagram('${diagram.name}').downloadJSON(evt)`, 'Download JSON') +
+				D.DownloadButton('JS', `R.LoadDiagram('${diagram.name}').downloadJS(evt)`, 'Download Javascript') +
+				D.DownloadButton('PNG', `R.LoadDiagram('${diagram.name}').downloadPNG(evt)`, 'Download PNG');
 		const tbl = H.table(
 				H.tr(H.td(H.h4(diagram.properName)) + H.td(tools, 'right')) +
 				H.tr(H.td(`<img src="${src}" id="img_${diagram.name}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
@@ -3465,9 +3522,9 @@ class DiagramPanel extends Panel
 			H.table(H.tr(H.td(H.span('', '', 'diagram-user')) + H.td(H.span('', '', 'diagram-timestamp'))));
 		const deleteReferenceButton = function(diagram)
 		{
-			return diagram.refcnt === 0 ? D.GetButton('delete', `R.diagram.removeReference(evt,'${diagram.name}')`, 'Remove reference') : '';
+			return diagram.refcnt === 0 ? D.GetButton('delete', `R.diagram.removeReference(evt,'${diagram.name}')`, 'Remove reference diagram') : '';
 		};
-		this.referenceDiagramSection = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram', deleteReferenceButton);
+		this.referenceSection = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram', deleteReferenceButton);
 		this.newDiagramSection = new NewDiagramSection(this.elt);
 		const deleteUserDiagramButton = function(diagram)
 		{
@@ -3520,7 +3577,7 @@ class DiagramPanel extends Panel
 		const diagram = R.diagram;
 		if (diagram)
 		{
-			this.referenceDiagramSection.setDiagrams(diagram.references);
+			this.referenceSection.setDiagrams(diagram.references);
 			this.userDiagramsSection.setDiagrams(R.LocalDiagrams);
 			D.navbar.update();
 			this.properNameElt.innerHTML = diagram.properName;
@@ -4346,6 +4403,10 @@ class Element
 	elementId()
 	{
 		return `do_${this.name}`;
+	}
+	usesDiagram(diagram)
+	{
+		return this.diagram && this.diagram.name === diagram.name;
 	}
 	static Codename(diagram, basename)
 	{
@@ -7250,9 +7311,18 @@ class MultiMorphism extends Morphism
 		Object.defineProperty(this, 'morphisms', {value:morphisms, writable:false});
 		this.morphisms.map(m => m.incrRefcnt());
 	}
-	help(hdr)
+	help(hdr, processed)
 	{
-		return super.help() + hdr + this.morphisms.map(m => m.help()).join('');
+		let html = super.help();
+		html += this.morphisms.map(m =>
+		{
+			if (processed.has(m.name))
+				return '';
+			processed.add(m.name);
+			return m.help(processed);
+		}).join('');
+		return html;
+//		return super.help() + hdr + this.morphisms.map(m => m.name in processed ? '' : m.help()).join('');
 	}
 	signature(sig = null)
 	{
@@ -7311,6 +7381,13 @@ class MultiMorphism extends Morphism
 		});
 		return graph;
 	}
+	usesDiagram(diagram)
+	{
+		for (let i=0; i<this.morphisms.length; ++i)
+			if (this.morphisms[i].usesDiagram(diagram))
+				return true;
+		return false;
+	}
 	//
 	// MultiMorphism static methods
 	//
@@ -7337,9 +7414,9 @@ class Composite extends MultiMorphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
-	help()
+	help(processed = new Set)
 	{
-		return super.help(H.p('Composite'));
+		return super.help(H.p('Composite'), processed);
 	}
 	isIterable()		// A composite is considered iterable if the first morphism is iterable.
 	{
@@ -7421,9 +7498,9 @@ class ProductMorphism extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : ProductMorphism.ProperName(morphisms);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(processed = new Set)
 	{
-		return super.help(H.p('Product'));
+		return super.help(H.p('Product'), processed);
 	}
 	static Codename(diagram, morphisms)
 	{
@@ -7465,9 +7542,9 @@ class CoproductMorphism extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductMorphism.ProperName(morphisms);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(processed = new Set)
 	{
-		return super.help(H.p('Coproduct'));
+		return super.help(H.p('Coproduct'), processed);
 	}
 	/*
 	$(args)
@@ -7511,9 +7588,9 @@ class ProductAssembly extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : ProductAssembly.ProperName(nuArgs.morphisms);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(processed = new Set)
 	{
-		return super.help(H.p('Product assembly'));
+		return super.help(H.p('Product assembly'), processed);
 	}
 	/*
 	$(args)
@@ -7561,9 +7638,9 @@ class CoproductAssembly extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductAssembly.ProperName(nuArgs.morphisms);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(processed = new Set)
 	{
-		return super.help(H.p('Coproduct assembly'));
+		return super.help(H.p('Coproduct assembly'), processed);
 	}
 	getGraph(data = {position:0})
 	{
@@ -8404,7 +8481,10 @@ class Diagram extends Functor
 			this.codomain.process(this, nuArgs.codomainData, this.objects, this.morphisms);
 		if ('domainData' in nuArgs)
 			this.domain.process(this, nuArgs.domainData);
-		this.references = new Map('references' in nuArgs ? args.references.map(ref => [ref.name, R.Diagrams.getMorphism(ref)]) : []);
+//		this.references = new Map('references' in nuArgs ? args.references.map(ref => [ref.name, R.$CAT.getMorphism(ref)]) : []);
+		this.references = new Map;
+		if ('references' in args)
+			args.references.map(r => this.addReference(r));
 		this.domain.makeHomSets();
 		this.selected = [];
 		this.viewport = U.getArg(args, 'viewport', {x:0, y:0, scale:1, width:D.Width(), height:D.Height()});
@@ -9357,34 +9437,7 @@ console.log('canFuseObjects 2', a||b);
 		{
 			const action = this.codomain.actions.get('javascript');
 			const code = action.generateDiagram(this);
-			// TODO make local, not remote
 			const start = Date.now();
-			/*
-			const diagrams = Object.keys(this.getReferenceCounts()).map(r => R.$CAT.getMorphism(r).json());
-			diagrams.push(this.json());
-			const params =
-			{
-				FunctionName:	'CateconDownloadJS',
-				InvocationType:	'RequestResponse',
-				LogType:		'None',
-				Payload:		JSON.stringify({diagrams})
-			};
-			const name = this.name;
-			R.cloud.lambda.invoke(params, function(error, data)
-			{
-				if (error)
-				{
-					D.RecordError(error);
-					return;
-				}
-				const blob = new Blob([JSON.parse(data.Payload)], {type:'application/json'});
-				const url = D.url.createObjectURL(blob);
-				D.Download(url, `${name}.js`);
-				const delta = Date.now() - start;
-				D.Status(e, `Diagram ${name} Javascript generated<br/>Elapsed ${delta}ms`);
-			});
-			*/
-//			const blob = new Blob([JSON.parse(data.Payload)], {type:'application/json'});
 			const blob = new Blob([code], {type:'application/javascript'});
 			const url = D.url.createObjectURL(blob);
 			D.Download(url, `${this.basename}.js`);
@@ -9410,7 +9463,8 @@ console.log('canFuseObjects 2', a||b);
 	}
 	canRemoveReferenceDiagram(name)
 	{
-		const ref = Cat.getDiagram(name);		// TODO fix this
+		const ref = R.$CAT.getMorphism(name);		// TODO fix this
+		/*
 		// TODO wrong algorithm
 		for(const [name, elt] of ref.domain.objects)
 			if (element.hasDiagramElement(dgrm, elt, true, null))
@@ -9419,6 +9473,25 @@ console.log('canFuseObjects 2', a||b);
 			if (element.hasDiagramElement(dgrm, elt, true, null))
 				return false;
 		return true;
+				*/
+		const breakme = {};
+		const usesIt = function(e)
+		{
+			if (e.usesDiagram(ref))
+				throw breakme;
+		}
+		try
+		{
+			this.objects.forEach(usesIt);
+			this.morphisms.forEach(usesIt);
+		}
+		catch(x)
+		{
+			if (x !== breakme)
+				throw x;
+			return true;
+		}
+		return false;
 	}
 	removeReference(e, name)	// TODO
 	{
@@ -9435,41 +9508,17 @@ console.log('canFuseObjects 2', a||b);
 		else
 			D.Status(e, `Reference diagram ${name} cannot be removed since references to it still exist`);
 	}
-	addReference(e, name)
+	addReference(name)	// immediate, no background fn
 	{
-		/*
-		const dgrm = Cat.getDiagram(name);		// TODO fix this
-		const idx = this.references.indexOf(dgrm);
-		if (idx >= 0)
-		{
-			const refs = {};
-			const dgrms = dgrm.getReferenceCounts(refs);
-			Objects.keys(dgrms).map(r => this.addReference(e, r.name, true));
-			this.references.unshift(dgrm);
-			if (!silent)
-			{
-				this.showReferencesDiagramTable()
-				D.Status(e, `Diagram ${name} is now referenced.`);
-			}
-		}
-		else
-			if (!silent)
-				D.Status(e, `Diagram ${name} is already referenced.`);
-				*/
 		if (name === this.name)
-		{
-			D.Status(e, 'Do not reference yourself');
-			return;
-		}
+			throw 'Do not reference yourself';
 		const dependencies = this.getReferenceCounts();
 		if (name in dependencies)
-		{
-			D.Status(e, `Diagram ${name} is already referenced ${dependencies[name]} times`);
-			return;
-		}
-		const diagram = R.$CAT.getMorphism(name);
+			throw `Diagram ${name} is already referenced ${dependencies[name]} times`;
+		const diagram = R.LoadDiagram(name);
+		if (!diagram)
+			throw 'cannot load diagram';
 		this.references.set(name, diagram);
-		D.Status(e, `Diagram ${name} now referenced`);
 	}
 	unlock(e)
 	{
