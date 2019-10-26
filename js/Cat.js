@@ -1539,12 +1539,12 @@ console.log('mouseover elt',D.mouseover);
 							if (!diagram.readonly)
 							{
 								diagram.updateDragObjects();
-								diagram.updateFusible();
 								let msg = '';
 								if (D.mouseover && diagram.selected.length === 1)
 								{
-									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover))
+									if (diagram.isIsolated(diagram.getSelected()) && diagram.isIsolated(D.mouseover))
 									{
+										diagram.updateFusible();
 										if (e.shiftKey && R.$Actions.getObject('coproduct'))
 											msg = 'Coproduct';
 										else if (e.altKey && R.$Actions.getObject('hom'))
@@ -1560,7 +1560,7 @@ console.log('mouseover elt',D.mouseover);
 						}
 					}
 				}
-				else if (diagram.selected.length > 0 && D.mouse.delta().nonZero())
+				else if (diagram.selected.length > 0 && D.mouse.delta().nonZero())		// TODO ???
 				{
 					const skip = diagram.getSelected();
 					D.mouseover = diagram.findElement(xy, skip ? skip.name : '');
@@ -1768,13 +1768,16 @@ console.log('mouseover elt',D.mouseover);
 			let to = null;
 			switch(type)
 			{
-			case 'object':
-				diagram.placeObject(e, diagram.getObject(name), xy);
-				break;
-			case 'morphism':
-				to = diagram.getMorphism(name);
-				diagram.placeMorphism(e, to, xy);
-				break;
+				case 'object':
+					diagram.placeObject(e, diagram.getObject(name), xy);
+					break;
+				case 'morphism':
+					to = diagram.getMorphism(name);
+					diagram.placeMorphism(e, to, xy);
+					break;
+				case 'diagram':
+					R.diagram.addReference(e, name);
+					break;
 			}
 			diagram.update();
 		}
@@ -2253,7 +2256,7 @@ ${D.Button(onclick)}
 		D.HideToolbar();
 		e.dataTransfer.setData('text/plain', name);
 	}
-	static Drag(elt, dragId)
+	static Drag(elt, dragId)	// drag toolbar
 	{
 		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 		const onmouseup = document.onmouseup;
@@ -3434,21 +3437,16 @@ class DiagramSection extends Section
 		if (src === '' && R.cloud)
 			src = R.cloud.getURL(diagram.codomain.basename, diagram.user, diagram.basename + '.png')
 		let tools = tb;
-//		row +=	H.td(D.DownloadButton('JSON', `R.$CAT.getMorphism('${diagram.name}').downloadJSON(evt)`, 'Download JSON'), 'buttonBar', '', 'Download diagram JSON') +
-//				H.td(D.DownloadButton('JS', `R.$CAT.getMorphism('${diagram.name}').downloadJS(evt)`, 'Download Javascript'), 'buttonBar', '', 'Download diagram ecmascript') +
-//				H.td(D.DownloadButton('PNG', `R.$CAT.getMorphism('${diagram.name}').downloadPNG(evt)`, 'Download PNG'), 'buttonBar', '', 'Download diagram PNG');
 		tools +=	D.DownloadButton('JSON', `R.$CAT.getMorphism('${diagram.name}').downloadJSON(evt)`, 'Download JSON') +
 				D.DownloadButton('JS', `R.$CAT.getMorphism('${diagram.name}').downloadJS(evt)`, 'Download Javascript') +
 				D.DownloadButton('PNG', `R.$CAT.getMorphism('${diagram.name}').downloadPNG(evt)`, 'Download PNG');
-//		const tbTbl = H.table(row, 'buttonBarLeft');
 		const tbl = H.table(
-//				H.tr(H.td(H.h4(diagram.properName), '', '', '', 'colspan="2"')) +
 				H.tr(H.td(H.h4(diagram.properName)) + H.td(tools, 'right')) +
 				H.tr(H.td(`<img src="${src}" id="img_${diagram.name}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.description, 'description', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.user, 'author') + H.td(dt.toLocaleString(), 'date')));
-//		return H.tr(H.td(tools, 'left')) + H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')">` + tbl + '</a>'), 'sidenavRow');
-		return H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')">` + tbl + '</a>'), 'sidenavRow');
+		return H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')">` + tbl + '</a>'), 'grabbable sidenavRow', '', '',
+			`draggable="true" ondragstart="D.DragElement(event, 'diagram ${diagram.name}')"`);
 	}
 }
 
@@ -3467,7 +3465,7 @@ class DiagramPanel extends Panel
 			H.table(H.tr(H.td(H.span('', '', 'diagram-user')) + H.td(H.span('', '', 'diagram-timestamp'))));
 		const deleteReferenceButton = function(diagram)
 		{
-			return diagram.refcnt === 0 ? D.GetButton('delete', `R.diagram.removeReferenceDiagram(evt,'${diagram.name}')`, 'Remove reference') : '';
+			return diagram.refcnt === 0 ? D.GetButton('delete', `R.diagram.removeReference(evt,'${diagram.name}')`, 'Remove reference') : '';
 		};
 		this.referenceDiagramSection = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram', deleteReferenceButton);
 		this.newDiagramSection = new NewDiagramSection(this.elt);
@@ -3570,7 +3568,7 @@ class DiagramPanel extends Panel
 		const refcnts = R.diagram.getReferenceCounts();
 		let html = H.small('References for this diagram') + R.diagram.references.map(d =>
 		{
-			const del = refcnts[d.name] === 1 ? H.td(D.GetButton('delete', `R.diagram.removeReferenceDiagram(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
+			const del = refcnts[d.name] === 1 ? H.td(D.GetButton('delete', `R.diagram.removeReference(evt,'${d.name}')`, 'Remove reference'), 'buttonBar') : '';
 			return DiagramPanel.DiagramRow(U.GetDiagramInfo(d), del);
 		}).join('');
 		this.referenceDiagramsElt.innerHTML = H.table(html);
@@ -3621,7 +3619,7 @@ class DiagramPanel extends Panel
 		Object.keys(R.serverDiagrams).map(d => dgrms[d] = dgrm.user === R.user.name);
 		let html = Object.keys(dgrms).map(d =>
 		{
-			const refBtn = !(dgrm.name == d || dgrm.hasReference(d)) ? H.td(this.GetButton('reference', `R.diagram.addReferenceDiagram(evt, '${d}')`, 'Add reference diagram'), 'buttonBar') : '';
+			const refBtn = !(dgrm.name == d || dgrm.hasReference(d)) ? H.td(this.GetButton('reference', `R.diagram.addReference(evt, '${d}')`, 'Add reference diagram'), 'buttonBar') : '';
 			return DiagramPanel.DiagramRow(U.GetDiagramInfo(d), refBtn);
 		}).join('');
 		this.userDiagramsElt.innerHTML = H.table(html);
@@ -3783,7 +3781,7 @@ class LoginPanel extends Panel
 		super('login', true);
 		this.elt.innerHTML =
 			H.table(H.tr(this.closeBtnCell()), 'buttonBarLeft') +
-			H.h3('User Information') +
+			H.h3('User') +
 			H.table(
 				H.tr(H.td('User:') + H.td(H.span('', 'smallBold', 'login-user-name'))) +
 				H.tr(H.td('Email:') + H.td(H.span('', 'smallBold', 'login-user-email')))) +
@@ -3890,7 +3888,7 @@ class NewObjectSection extends Section
 				description:	U.htmlSafe(this.descriptionElt.value),
 			});
 			diagram.placeObject(e, to);
-			this.ShowToolbar(e, D.Center());
+			D.ShowToolbar(e, D.Center());
 			this.update();
 		}
 		catch(e)
@@ -4261,7 +4259,7 @@ class Element
 	}
 	isIterable()
 	{
-		return 'false';		// fitb
+		return false;		// fitb
 	}
 	signature(sig = '')
 	{
@@ -8430,17 +8428,6 @@ class Diagram extends Functor
 	{
 		return super.help(H.p('Diagram'));
 	}
-	/*
-	Diagram.prototype.info()
-	{
-		let d = super.json();
-		d.viewport =	this.viewport;
-		d.references =	this.references.map(r => r.name);
-		d.textId =		this.textId;
-		d.timestamp =	this.timestamp;
-		return d;
-	}
-	*/
 	json()
 	{
 		const a = super.json();
@@ -9433,7 +9420,7 @@ console.log('canFuseObjects 2', a||b);
 				return false;
 		return true;
 	}
-	removeReferenceDiagram(e, name)	// TODO
+	removeReference(e, name)	// TODO
 	{
 		if (this.canRemoveReferenceDiagram(name))
 		{
@@ -9442,13 +9429,13 @@ console.log('canFuseObjects 2', a||b);
 			{
 				this.references.delete(r.name);
 				this.showReferencesDiagramTable()
-				D.Status(`Reference diagram ${name} removed`);
+				D.Status(e, `Reference diagram ${name} removed`);
 			}
 		}
 		else
-			D.Status(`Reference diagram ${name} cannot be removed since references to it still exist`);
+			D.Status(e, `Reference diagram ${name} cannot be removed since references to it still exist`);
 	}
-	addReferenceDiagram(e, name)
+	addReference(e, name)
 	{
 		/*
 		const dgrm = Cat.getDiagram(name);		// TODO fix this
@@ -9457,31 +9444,32 @@ console.log('canFuseObjects 2', a||b);
 		{
 			const refs = {};
 			const dgrms = dgrm.getReferenceCounts(refs);
-			Objects.keys(dgrms).map(r => this.addReferenceDiagram(e, r.name, true));
+			Objects.keys(dgrms).map(r => this.addReference(e, r.name, true));
 			this.references.unshift(dgrm);
 			if (!silent)
 			{
 				this.showReferencesDiagramTable()
-				D.Status(`Diagram ${name} is now referenced.`);
+				D.Status(e, `Diagram ${name} is now referenced.`);
 			}
 		}
 		else
 			if (!silent)
-				D.Status(`Diagram ${name} is already referenced.`);
+				D.Status(e, `Diagram ${name} is already referenced.`);
 				*/
-		if (this.references.has(name))
+		if (name === this.name)
 		{
-			D.Status(`Diagram ${name} is already referenced.`);
+			D.Status(e, 'Do not reference yourself');
+			return;
+		}
+		const dependencies = this.getReferenceCounts();
+		if (name in dependencies)
+		{
+			D.Status(e, `Diagram ${name} is already referenced ${dependencies[name]} times`);
 			return;
 		}
 		const diagram = R.$CAT.getMorphism(name);
-		if (!diagram)
-		{
-			D.Status(`Diagram ${name} not found`);
-			return;
-		}
 		this.references.set(name, diagram);
-		D.Status(`Diagram ${name} now referenced`);
+		D.Status(e, `Diagram ${name} now referenced`);
 	}
 	unlock(e)
 	{
