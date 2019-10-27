@@ -627,7 +627,7 @@ svg:hover
 .morphTxt
 {
 	fill:			black;
-	font:			24px "Century";
+	font:			20px "Century";
 	margin:			2px;
 	user-select:	none;
 }
@@ -638,7 +638,7 @@ svg:hover
 	fill:		#9fc;
 	opacity:	.5;
 	stroke:		#0f0;
-	font:		24px "Century";
+	font:		20px "Century";
 	margin:		2px;
 }
 
@@ -666,7 +666,7 @@ svg:hover
 {
 	fill:			blue;
 	stroke:			blue;
-	font:			24px "Century";
+	font:			20px "Century";
 	margin:			2px;
 	padding:		2px;
 	stroke-width:	2.5px;
