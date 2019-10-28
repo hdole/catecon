@@ -566,6 +566,7 @@ console.log('stylesheets',document.styleSheets);
 			});
 
 			new IdentityAction(R.$Actions);
+			new NamedIdentityAction(R.$Actions);
 			new CompositeAction(R.$Actions);
 			new DetachDomainAction(R.$Actions);
 			new DetachCodomainAction(R.$Actions);
@@ -600,6 +601,7 @@ console.log('stylesheets',document.styleSheets);
 				s.set(name, R.$Actions.getObject(name));
 			}
 			setAction(R.standardActions, 'identity');
+			setAction(R.standardActions, 'namedIdentity');
 			setAction(R.standardActions, 'composite');
 			setAction(R.standardActions, 'detachDomain');
 			setAction(R.standardActions, 'detachCodomain');
@@ -611,6 +613,7 @@ console.log('stylesheets',document.styleSheets);
 			setAction(R.standardActions, 'help');
 
 			setAction(R.Cat.actions, 'identity');
+			setAction(R.Cat.actions, 'namedIdentity');
 			setAction(R.Cat.actions, 'composite');
 			setAction(R.Cat.actions, 'detachDomain');
 			setAction(R.Cat.actions, 'detachCodomain');
@@ -1492,7 +1495,6 @@ class D
 		D.threeDPanel =		new ThreeDPanel();
 		D.ttyPanel =		new TtyPanel();
 		D.panels.update();
-		D.Drag(D.toolbar, 'toolbar-drag-handle');
 	}
 	static Mousedown(e)
 	{
@@ -1839,7 +1841,8 @@ console.log('mouseover elt',D.mouseover);
 			return;
 		}
 		D.help.innerHTML = '';
-		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect id="toolbar-drag-handle" class="btn" x="0" y="0" width="320" height="320"/></svg>`);
+		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, '',
+			'toolbar-drag-handle');
 		if (!R.diagram.readonly)
 			diagram.codomain.actions.forEach(function(a, n)
 			{
@@ -1848,6 +1851,7 @@ console.log('mouseover elt',D.mouseover);
 			});
 		header += D.GetButton('close', 'D.HideToolbar()', 'Close');
 		D.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
+		D.Drag(D.toolbar, 'toolbar-drag-handle');
 		D.toolbar.style.display = 'block';
 		const rect = D.topSVG.getBoundingClientRect();
 		let bbox =
@@ -5549,6 +5553,121 @@ class IdentityAction extends Action
 	}
 }
 
+/*
+	activateNamedElementForm(e)
+	{
+		const basenameElt = document.getElementById('basenameElt');
+		if (basenameElt.contentEditable === 'true' && basenameElt.textContent !== '' && !this.readonly)
+			this.createNamedIdentity(e);
+		else
+		{
+			basenameElt.contentEditable = true;
+			document.getElementById('descriptionElt').contentEditable = true;
+			const properNameElt = document.getElementById('properNameElt');
+			properNameElt.contentEditable = true;
+			properNameElt.focus();
+		}
+	}
+	// TODO move to action
+	createNamedIdentity(e)
+	{
+		try
+		{
+			if (this.readonly)
+				throw 'diagram is read only';
+			const from = this.getSelected();
+			if (DiagramObject.prototype.isPrototypeOf(from))
+			{
+				document.getElementById('namedElementError').innerHTML = '';
+				const basenameElt = document.getElementById('basenameElt');
+				const basename = basenameElt.innerText;
+				if (!U.basenameEx.test(basename))
+					throw 'Invalid basename';
+				const object = this.codomain.getObject(Element.Codename(this, basename));
+				if (object)
+					throw `object with basename ${basename} already exists in diagram ${this.properName}`;
+				const properNameElt = document.getElementById('properNameElt');
+				const properName = U.htmlEntitySafe(properNameElt.innerText);
+				const descriptionElt = document.getElementById('descriptionElt');
+				const description = U.htmlEntitySafe(descriptionElt.innerText);
+				let toNI = new CatObject(this, {basename, description, properName});
+				const iso = new Identity(this, {domain:toNI, codomain:from.to, description:`Named identity from ${toNI.properName} to ${from.to.properName}`});
+				const iso2 = new Identity(this, {domain:from.to, codomain:toNI, description:`Named identity from ${from.to.properName} to ${toNI.properName}`});
+				this.deselectAll();
+				const isoFrom = this.objectPlaceMorphism(e, 'codomain', from.name, iso.name)
+				const iso2From = new DiagramMorphism(this, {to:iso2, domain:isoFrom.codomain, codomain:isoFrom.domain});
+				this.addSVG(iso2From);
+				this.makeSelected(e, isoFrom);
+				this.addSelected(iso2From);
+				this.domain.makeHomSets();
+				save && D.SaveLocal(this);
+			}
+			else
+				throw 'Not implemented';
+		}
+		catch(e)
+		{
+			document.getElementById('namedElementError').innerHTML = 'Error: ' + U.GetError(e);
+		}
+	}
+	*/
+class NamedIdentityAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Create named identity',
+			name:			'namedIdentity',
+			icon:	// TODO
+`<path class="svgstr4" d="M100,120 C140,60 180,60 220,120" marker-end="url(#arrowhead)"/>
+<path class="svgstr4" d="M220,200 C180,260 140,260 100,200" marker-end="url(#arrowhead)"/>
+<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>`,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, set)
+	{
+		const domain = set[0];
+		const id = Identity.Get(diagram, domain.to);
+		diagram.objectPlaceMorphism(e, 'domain', domain, id);
+	}
+	html(e, diagram, ary)
+	{
+		const from = ary[0];
+		let html =
+			H.h5('Create Named Identity') +
+			H.table(H.tr(H.td(D.Input('', 'named-identity-basename', 'Base name')), 'sidenavRow') +
+					H.tr(H.td(D.Input('', 'named-identity-properName', 'Proper name')
+//						+ H.button('&Dopf;', '', D.elementId(), 'Convert to double-struck font', `onclick="U.DoubleStruck(this.parentElement.children[0])"`
+						), 'sidenavRow') +
+					H.tr(H.td(H.input('', 'in100', 'named-identity-description', 'text',
+										{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.objectPanel.newObjectSection.create, D.objectPanel.newObjectSection)"'})), 'sidenavRow')
+			) +
+			H.span(D.GetButton('edit', `R.$Actions.getObject('namedIdentity').create(evt)`, 'Create named identity')) +
+			H.span('', 'error', 'object-new-error');
+		D.help.innerHTML = html;
+	}
+	create(e)
+	{
+		const error = document.getElementById('object-new-error');
+		const basenameElt = document.getElementById('object-new-basename');
+		const properNameElt = document.getElementById('object-new-properName');
+		const descriptionElt = document.getElementById('object-new-description');
+		try
+		{
+		}
+		catch(x)
+		{
+		}
+	}
+	hasForm(e, diagram, ary)
+	{
+		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+	}
+}
+
 class CopyAction extends Action
 {
 	constructor(diagram)
@@ -6884,7 +7003,7 @@ class Morphism extends Element
 		if (this.category)
 			this.category.addMorphism(this);
 		else if (diagram)
-			this.diagram.codomain.addMorphisms(this);
+			this.diagram.codomain.addMorphism(this);
 		this.codomain.incrRefcnt();
 		this.domain.incrRefcnt();
 	}
@@ -6943,10 +7062,13 @@ class Identity extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.domain = diagram ? diagram.getObject(args.domain) : args.domain;
-		nuArgs.codomain = nuArgs.domain;
+		if ('codomain' in args)
+			nuArgs.codomain = diagram ? diagram.getObject(args.codomain) : args.codomain;
+		else
+			nuArgs.codomain = nuArgs.domain;
 		nuArgs.name = Identity.Codename(diagram, nuArgs.domain);
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
-		nuArgs.category = diagram.codomain;
+//		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
 	help()
@@ -6978,6 +7100,47 @@ class Identity extends Morphism
 	static ProperName(domain)
 	{
 		return 'id';
+	}
+}
+
+class NamedIdentityObject extends CatObject
+{
+	constructor (diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		super(diagram, nuArgs);
+		this.object = diagram ? diagram.getObject(args.object) : args.object;
+		this.idFrom= Identity.Get(diagram, {domain:this, codomain:this.object, description:`Named identity from ${this.properName} to ${this.object.properName}`});
+		this.idTo = Identity.Get(diagram, {domain:this.object, codomain:this, description:`Named identity from ${this.object.properName} to ${this.properName}`});
+	}
+	json()
+	{
+		const a = super.json();
+		a.object = this.object.name;
+		return a;
+	}
+	help()
+	{
+		return super.help() + H.p('Named Identity');
+	}
+	// TODO
+	getGraph(data = {position:0})
+	{
+		const g = super.getGraph(data);
+		g.bindGraph({cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
+		g.tagGraph(this.constructor.name);
+		return g;
+	}
+	static Codename(diagram, domain)
+	{
+		return Element.Codename(diagram, `Nd{${name} ${object.name}}dN`);
+	}
+	static Get(diagram, dom)
+	{
+		const domain = diagram.getObject(dom);
+		const name = NamedIdentity.Codename(diagram, domain);
+		const m = diagram.getMorphism(name);
+		return m ? m : new NamedIdentity(diagram, {name, domain});
 	}
 }
 
@@ -9447,16 +9610,6 @@ console.log('canFuseObjects 2', a||b);
 	canRemoveReferenceDiagram(name)
 	{
 		const ref = R.$CAT.getMorphism(name);		// TODO fix this
-		/*
-		// TODO wrong algorithm
-		for(const [name, elt] of ref.domain.objects)
-			if (element.hasDiagramElement(dgrm, elt, true, null))
-				return false;
-		for(const [name, elt] of ref.domain.morphisms)
-			if (element.hasDiagramElement(dgrm, elt, true, null))
-				return false;
-		return true;
-				*/
 		if (!this.references.has(name))
 			return false;
 		const breakme = {};
