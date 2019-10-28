@@ -3003,27 +3003,18 @@ class NewCategorySection extends Section
 	constructor(parent)
 	{
 		super('New', parent, 'category-new-section', 'Create new category');
-//		this.section.innerHTML =
-//			H.h5('Create a New Category') +
-//			H.table(H.tr(H.td(D.Input('', 'diagram-new-basename', 'Base name')), 'sidenavRow') +
-//					H.tr(H.td(D.Input('', 'diagram-new-properName', 'Proper name')), 'sidenavRow') +
-//					H.tr(H.td(H.input('', 'in100', 'diagram-new-description', 'text',
-//						{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.diagramPanel.newCategorySection.create, D.diagramPanel.newCategorySection)"'})), 'sidenavRow')) +
-//			H.span(D.GetButton('edit', 'D.diagramPanel.newCategorySection.create(evt)', 'Create new diagram')) +
-//			H.span('', 'error', 'diagram-new-error');
-
 		this.section.innerHTML = H.table(
 				H.tr(H.td(D.Input('', 'category-new-basename', 'Name')), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-properName', 'Proper name')), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-description', 'Description')), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-hasProducts', '', '', 'in100', 'checkbox') + '<label for="hasProducts">Products</label>' +
+				H.tr(H.td(D.Input('', 'category-new-hasProducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasProducts">Products</label>' +
 					H.p('Products, projections, pullbacks. product assemblies, terminal object and morphisms'), 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-hasCoproducts', '', '', 'in100', 'checkbox') + '<label for="hasCoproducts">Coproducts</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-isClosed', '', '', 'in100', 'checkbox') + '<label for="isClosed">Closed</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-hasPullbacks', '', '', 'in100', 'checkbox') + '<label for="hasPullbacks">Pullbacks</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-hasPushouts', '', '', 'in100', 'checkbox') + '<label for="hasPushouts">Pushouts</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-finiteObjects', '', '', 'in100', 'checkbox') + '<label for="finiteObjects">Finite objects</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-naturalNumbers', '', '', 'in100', 'checkbox') + '<label for="naturalNumbers">Natural numbers</label>', 'left'), 'sidenavRow'), 'sidenav') +
+				H.tr(H.td(D.Input('', 'category-new-hasCoproducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasCoproducts">Coproducts</label>' +
+					H.p('Coproducts, insertions, pushouts. coproduct assemblies, initial object and morphisms'), 'left'), 'sidenavRow') +
+				H.tr(H.td(D.Input('', 'category-new-isClosed', '', '', 'in100', 'checkbox') + '<label for="category-new-isClosed">Closed</label>', 'left'), 'sidenavRow') +
+				H.tr(H.td(D.Input('', 'category-new-monoid', '', '', 'in100', 'checkbox') + '<label for="category-new-monoid">Monoid</label>', 'left'), 'sidenavRow') +
+				H.tr(H.td(D.Input('', 'category-new-finiteObjects', '', '', 'in100', 'checkbox') + '<label for="category-new-finiteObjects">Finite objects</label>', 'left'), 'sidenavRow') +
+				H.tr(H.td(D.Input('', 'category-new-naturalNumbers', '', '', 'in100', 'checkbox') + '<label for="category-new-naturalNumbers">Natural numbers</label>', 'left'), 'sidenavRow'), 'sidenav') +
 			H.span(D.GetButton('edit', 'CategoryPanel.Create()', 'Create new category')) + H.br() +
 			H.span('', 'error', 'category-new-error');
 		this.error = document.getElementById('category-new-error');
@@ -5638,28 +5629,33 @@ class NamedIdentityAction extends Action
 		const from = ary[0];
 		let html =
 			H.h5('Create Named Identity') +
-			H.table(H.tr(H.td(D.Input('', 'named-identity-basename', 'Base name')), 'sidenavRow') +
-					H.tr(H.td(D.Input('', 'named-identity-properName', 'Proper name')
+			H.table(H.tr(H.td(D.Input('', 'named-identity-new-basename', 'Base name')), 'sidenavRow') +
+					H.tr(H.td(D.Input('', 'named-identity-new-properName', 'Proper name')
 //						+ H.button('&Dopf;', '', D.elementId(), 'Convert to double-struck font', `onclick="U.DoubleStruck(this.parentElement.children[0])"`
 						), 'sidenavRow') +
-					H.tr(H.td(H.input('', 'in100', 'named-identity-description', 'text',
-										{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.objectPanel.newObjectSection.create, D.objectPanel.newObjectSection)"'})), 'sidenavRow')
+					H.tr(H.td(H.input('', 'in100', 'named-identity-new-description', 'text',
+										{ph: 'Description', x:`onkeydown="D.OnEnter(event, R.$Actions.getObject('namedIdentity').create, D.objectPanel.newObjectSection)"`})), 'sidenavRow')
 			) +
 			H.span(D.GetButton('edit', `R.$Actions.getObject('namedIdentity').create(evt)`, 'Create named identity')) +
-			H.span('', 'error', 'object-new-error');
+			H.span('', 'error', 'named-identity-new-error');
 		D.help.innerHTML = html;
 	}
 	create(e)
 	{
-		const error = document.getElementById('object-new-error');
-		const basenameElt = document.getElementById('object-new-basename');
-		const properNameElt = document.getElementById('object-new-properName');
-		const descriptionElt = document.getElementById('object-new-description');
+		const error = document.getElementById('named-identity-new-error');
+		const basenameElt = document.getElementById('named-identity-new-basename');
+		const properNameElt = document.getElementById('named-identity-new-properName');
+		const descriptionElt = document.getElementById('named-identity-new-description');
+//			const basename = U.htmlSafe(this.basenameElt.value);
 		try
 		{
+			new NamedIdentityObject(R.diagram, {object:R.diagram.getSelected(), basename:U.htmlSafe(basenameElt.value.trim()), properName:U.htmlSafe(properNameElt.value.trim()), description:U.htmlSafe(descriptionElt.value)});
+			diagram.update();
 		}
 		catch(x)
 		{
+			error.style.padding = '4px';
+			error.innerHTML = 'Error: ' + U.GetError(x);
 		}
 	}
 	hasForm(e, diagram, ary)
