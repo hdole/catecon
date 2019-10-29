@@ -4111,10 +4111,11 @@ class NewMorphismSection extends Section
 
 class MorphismSection extends Section
 {
-	constructor(title, parent, id, tip, category)
+	constructor(title, parent, id, tip, isCurrentDiagram = false)
 	{
 		super(title, parent, id, tip);
 		this.morphisms = null;
+		this.isCurrentDiagram = isCurrentDiagram;
 	}
 	setMorphisms(morphisms)
 	{
@@ -4132,9 +4133,9 @@ class MorphismSection extends Section
 				for (const m of morphisms)
 				{
 					rows += H.tr(	(D.showInternals ? H.td(m.refcnt) : '') +
-//									H.td(m.refcnt <= 0 && !diagram.readonly ?
-//										D.GetButton('delete', `R.$CAT.getMorphism('${diagram.name}').removeMorphism(evt, '${m.name}')`, 'Delete morphism') : '', 'buttonBar') +
-									H.td(m.properName) +
+									H.td(m.properName +
+										(this.isCurrentDiagram && m.refcnt <= 0 ?
+											D.GetButton('delete', `R.$CAT.getMorphism('${R.diagram.name}').removeMorphism(evt, '${m.name}')`, 'Delete morphism') : '')) +
 									H.td(m.domain.properName) +
 									H.td('&rarr;') +
 									H.td(m.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="D.DragElement(event, 'morphism ${m.name}')"`);
@@ -4154,7 +4155,7 @@ class MorphismPanel extends Panel
 			H.table(H.tr(this.expandPanelBtn() + this.closeBtnCell()), 'buttonBarRight') +
 			H.h3('Morphisms');
 		this.newMorphismSection = new NewMorphismSection(this.elt);
-		this.diagramMorphismSection = new MorphismSection('Diagram', this.elt, `morphism-diagram-section`, 'Morphisms in the current diagram');
+		this.diagramMorphismSection = new MorphismSection('Diagram', this.elt, `morphism-diagram-section`, 'Morphisms in the current diagram', true);
 		this.categoryMorphismSection = new MorphismSection('Category', this.elt, `morphism-category-section`, 'Morphisms in the current category');
 		this.initialize();
 	}
@@ -4309,6 +4310,8 @@ class Element
 		}
 		if ('category' in args)
 			Object.defineProperty(this, 'category', {value: R.GetCategory(args.category),	writable: false});
+		else
+			Object.defineProperty(this, 'category', {value:diagram.codomain,	writable: false});
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,										writable: true},	// is true for bootstrapping
@@ -5649,7 +5652,18 @@ class NamedIdentityAction extends Action
 //			const basename = U.htmlSafe(this.basenameElt.value);
 		try
 		{
-			new NamedIdentityObject(R.diagram, {object:R.diagram.getSelected(), basename:U.htmlSafe(basenameElt.value.trim()), properName:U.htmlSafe(properNameElt.value.trim()), description:U.htmlSafe(descriptionElt.value)});
+			const diagram = R.diagram;
+			const sourceIndex = R.diagram.getSelected();
+			const source = sourceIndex.to;
+			const nid = new NamedIdentityObject(R.diagram, {source, basename:U.htmlSafe(basenameElt.value.trim()),
+				properName:U.htmlEntitySafe(properNameElt.value.trim()), description:U.htmlSafe(descriptionElt.value)});
+			const nidIndex = diagram.placeObject(e, nid, D.default.stdOffset.add(sourceIndex));
+			const idx1 = new DiagramMorphism(diagram, {to:nid.idFrom, domain:nidIndex, codomain:sourceIndex});
+			const idx2 = new DiagramMorphism(diagram, {to:nid.idTo, codomain:nidIndex, domain:sourceIndex});
+			diagram.domain.makeHomSets();
+			nidIndex.makeSVG();
+			idx1.makeSVG();
+			idx2.makeSVG();
 			diagram.update();
 		}
 		catch(x)
@@ -6777,10 +6791,11 @@ class Category extends CatObject
 					{
 						const object = CatObject.Process(diagram, o);
 						objects && objects.add(object);
+if (!object.category)debugger;
 					}
 					catch(x)
 					{
-						errMsg += x;
+						errMsg += x + '\n';
 					}
 				}
 				else
@@ -6795,14 +6810,15 @@ class Category extends CatObject
 					{
 						const morphism = Morphism.Process(diagram, m);
 						morphisms && morphisms.add(morphism);
+if (!morphism.category)debugger;
 					}
 					catch(x)
 					{
-						errMsg += x;
+						errMsg += x + '\n';
 					}
-				}
-				else
-					throw 'morphism already exists';
+				}	// skip duplicates from auto-gens like named ids
+//				else
+//					errMsg += `morphism ${m.name} already exists\n`;
 			}, this);
 		if ('Actions' in R && 'actions' in args)	// bootstrap issue
 			args.actions.map(a => this.actions.set(a, R.$Actions.getObject(a)));
@@ -6822,9 +6838,10 @@ class Category extends CatObject
 	}
 	getObject(name)
 	{
-		if (Element.prototype.isPrototypeOf(name))
-			return name;
-		return this.objects.get(name);
+//		if (Element.prototype.isPrototypeOf(name))
+		if (typeof name === 'string')
+			return this.objects.get(name);
+		return name;
 	}
 	addObject(o)
 	{
@@ -7062,7 +7079,7 @@ class Identity extends Morphism
 			nuArgs.codomain = diagram ? diagram.getObject(args.codomain) : args.codomain;
 		else
 			nuArgs.codomain = nuArgs.domain;
-		nuArgs.name = Identity.Codename(diagram, nuArgs.domain);
+		nuArgs.name = Identity.Codename(diagram, nuArgs.domain, nuArgs.codomain);
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 //		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -7082,18 +7099,24 @@ class Identity extends Morphism
 	{
 		return args;
 	}
-	static Codename(diagram, domain)
+	static Codename(diagram, domain, codomain = null)
 	{
-		return Element.Codename(diagram, `Id{${domain.name}}dI`);
+		let basename = '';
+		if (codomain && domain.name !== codomain.name)
+			basename = `Id{${domain.name} ${codomain.name}}dI`;
+		else
+			basename = `Id{${domain.name}}dI`;
+		return Element.Codename(diagram, basename);
 	}
-	static Get(diagram, dom)
+	static Get(diagram, dom, cod = null)
 	{
 		const domain = diagram.getObject(dom);
-		const name = Identity.Codename(diagram, domain);
+		const codomain = cod ? diagram.getObject(cod) : null;
+		const name = Identity.Codename(diagram, domain, codomain);
 		const m = diagram.getMorphism(name);
-		return m ? m : new Identity(diagram, {name, domain});
+		return m ? m : new Identity(diagram, {name, domain, codomain});
 	}
-	static ProperName(domain)
+	static ProperName(domain, codomain = null)
 	{
 		return 'id';
 	}
@@ -7105,14 +7128,14 @@ class NamedIdentityObject extends CatObject
 	{
 		const nuArgs = U.clone(args);
 		super(diagram, nuArgs);
-		this.object = diagram ? diagram.getObject(args.object) : args.object;
-		this.idFrom= Identity.Get(diagram, {domain:this, codomain:this.object, description:`Named identity from ${this.properName} to ${this.object.properName}`});
-		this.idTo = Identity.Get(diagram, {domain:this.object, codomain:this, description:`Named identity from ${this.object.properName} to ${this.properName}`});
+		this.source = diagram ? diagram.getObject(args.source) : args.source;
+		this.idFrom= Identity.Get(diagram, this, this.source);
+		this.idTo = Identity.Get(diagram, this.source, this);
 	}
 	json()
 	{
 		const a = super.json();
-		a.object = this.object.name;
+		a.source = this.source.name;
 		return a;
 	}
 	help()
@@ -7129,7 +7152,7 @@ class NamedIdentityObject extends CatObject
 	}
 	static Codename(diagram, domain)
 	{
-		return Element.Codename(diagram, `Nd{${name} ${object.name}}dN`);
+		return Element.Codename(diagram, `Nd{${name},${source.name}}dN`);
 	}
 	static Get(diagram, dom)
 	{
@@ -9495,8 +9518,8 @@ console.log('canFuseObjects 2', a||b);
 		{
 			m.decrRefcnt();
 			D.morphismPanel.update();
+			D.morphismPanel.diagramMorphismSection.update();
 			this.update(e);
-			D.SaveLocal(this);
 		}
 	}
 	getElement(name)
@@ -9677,27 +9700,28 @@ console.log('canFuseObjects 2', a||b);
 
 R.protos =
 {
+	Category,
+	CatObject,
+	Composite,
+	CoproductObject,
 	DiagramObject,
 	DiagramMorphism,
 	DiagramText,
-	Category,
 	DataMorphism,
+	FiniteObject,
+	Identity,
 	IndexCategory,
-	CatObject,
-	ProductObject,
-	CoproductObject,
 	InitialObject,
 	InitialMorphism,
+	NamedIdentityObject,
+	ProductObject,
 	TerminalObject,
 	TerminalMorphism,
-	FiniteObject,
 	SubobjectClassifier,
 	Sequence,
 	HomObject,
 	HomMorphism,
 	Morphism,
-	Identity,
-	Composite,
 	ProductObject,
 	ProductMorphism,
 	ProductAssembly,
