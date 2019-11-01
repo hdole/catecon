@@ -481,7 +481,7 @@ class R
 		const intro = document.getElementById('intro');
 		intro.parentNode.removeChild(intro);
 		R.Initialize();	// boot-up
-		R.cloud.onCT();
+		R.cloud && R.cloud.onCT();
 	}
 	// TODO move to D
 	static HasAcceptedCookies()
@@ -9809,7 +9809,7 @@ if (isGUI)
 	if (!R.HasAcceptedCookies())
 	{
 		document.getElementById('intro').innerHTML = D.intro();
-		D.diagramPanel.fetchRecentDiagrams();
+//		D.diagramPanel.fetchRecentDiagrams();	TODO D not initialized here
 		window.R = R;
 		return;
 	}
