@@ -345,6 +345,10 @@ class U		// utility functions
 	{
 		return str.replace(/(^|\s)\S/, l => l.toUpperCase());
 	}
+	static DeCamel(s)
+	{
+		return s.replace(/([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g, '$1$4 $2$3$5').replace(/(^|\s)\S/g, l => l.toLowerCase());
+	}
 	static arraySet(a, f, v)
 	{
 		if (f in a)
@@ -379,10 +383,10 @@ class U		// utility functions
 		}
 		return fctr;
 	}
-	static StorageName(dgrmName)
-	{
-		return `Cat.diagram ${dgrmName}`;
-	}
+//	static StorageName(dgrmName)
+//	{
+//		return `Cat.diagram ${dgrmName}`;
+//	}
 	static GetFactorsById(id)
 	{
 		const btns = document.getElementById(id).querySelectorAll('button');
@@ -427,9 +431,6 @@ class U		// utility functions
 Object.defineProperties(U,
 {
 	basenameEx:		{value:RegExp('^[a-zA-Z_$]+[a-zA-Z0-9_$]*$'),	writable:false},
-	//
-	// overridable keys
-	//
 	keys:			{value:new Set(
 	[
 		'Unidentified', 'Digit0', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Minus', 'Equal', 'Backspace',
@@ -467,7 +468,7 @@ Object.defineProperties(U,
 	uploadLimit:	{value:1000000,	writable:false},
 });
 
-class R		// runtime
+class R
 {
 	static CookieAccept()
 	{
@@ -509,13 +510,13 @@ console.log('stylesheets',document.styleSheets);
 			{
 				U.autosave = true;
 				D.ReadLocalDiagramList();
-//				D.Initialize();
+				D.ReadLocalCategoryList();
 			}
 			const CATargs =
 			{
 				basename:		'CAT',
 				name:			'CAT',
-				user:			'system',
+				user:			'MacLane',
 				properName:		'CAT',
 				description:	'top category',
 			};
@@ -527,7 +528,7 @@ console.log('stylesheets',document.styleSheets);
 				name:			'$CAT',
 				properName:		'$CAT',
 				description:	'top level diagram',
-				user:			'system',
+				user:			'MacLane',
 			};
 			R.$CAT = new Diagram(null, $CATargs);
 			R.Cat = new Category(R.$CAT,
@@ -537,7 +538,7 @@ console.log('stylesheets',document.styleSheets);
 				name:			'Cat',
 				description:	'category of smaller categories',
 				properName:		'ℂ𝕒𝕥',
-				user:			'system',
+				user:			'MacLane',
 			});
 			R.$Cat = new Diagram(R.$CAT,
 			{
@@ -546,7 +547,7 @@ console.log('stylesheets',document.styleSheets);
 				codomain:		'Cat',
 				properName:		'&#x2102;&#x1D552;&#x1D565;',
 				description:	'diagram of currently loaded smaller categories',
-				user:			'system',
+				user:			'MacLane',
 			});
 			R.Actions = new Category(R.$CAT,
 			{
@@ -554,7 +555,7 @@ console.log('stylesheets',document.styleSheets);
 				name:			'Actions',
 				properName:		'Actions',
 				description:	'discrete category of currently loaded actions',
-				user:			'system',
+				user:			'MacLane',
 			});
 			R.$Actions = new Diagram(R.$CAT,
 			{
@@ -563,7 +564,7 @@ console.log('stylesheets',document.styleSheets);
 				codomain:		'Actions',
 				properName:		'Actions',
 				description:	'diagram of currently loaded actions',
-				user:			'system',
+				user:			'MacLane',
 			});
 
 			const categoryActions = new Set([
@@ -574,12 +575,18 @@ console.log('stylesheets',document.styleSheets);
 				new DetachCodomainAction(R.$Actions),
 				new EditMorphismAction(R.$Actions),
 				new DeleteAction(R.$Actions),
-				new CopyAction(R.$Actions)]);
+				new CopyAction(R.$Actions),
+				new HelpAction(R.$Actions),
+				new JavascriptAction(R.$Actions),
+				new RunAction(R.$Actions),
+			]);
 			const categoryDiagram = new Diagram(R.$CAT, {basename:'category', name:'category', codomain:'Actions', description:'diagram for a category', user:'system'});
 			let xy = new D2(300, 300);
+			let diagram = categoryDiagram;
 			function placeAction(a)
 			{
-				const from = new DiagramObject(categoryDiagram, {xy, to:a});
+				diagram.objects.add(a);
+				const from = new DiagramObject(diagram, {xy, to:a});
 				xy.add(D.default.stdArrow);
 			};
 			categoryActions.forEach(placeAction);
@@ -592,6 +599,7 @@ console.log('stylesheets',document.styleSheets);
 				new TerminalMorphismAction(R.$Actions)]);
 			const productDiagram = new Diagram(R.$CAT, {basename:'product', name:'product', codomain:'Actions', description:'diagram for products', user:'system'});
 			xy = new D2(300, 300);
+			diagram = productDiagram;
 			productActions.forEach(placeAction);
 
 			const coproductActions = new Set([
@@ -603,66 +611,23 @@ console.log('stylesheets',document.styleSheets);
 				new DataAction(R.$Actions)]);
 			const coproductDiagram = new Diagram(R.$CAT, {basename:'coproduct', name:'coproduct', codomain:'Actions', description:'diagram for coproducts', user:'system'});
 			xy = new D2(300, 300);
+			diagram = coproductDiagram;
 			coproductActions.forEach(placeAction);
 
-			new HomAction(R.$Actions);
-			new HomLeftAction(R.$Actions);
-			new HomRightAction(R.$Actions);
-			new LambdaMorphismAction(R.$Actions);
-
-			new JavascriptAction(R.$Actions);
-			new RunAction(R.$Actions);
-
-			new HelpAction(R.$Actions);
-			function setAction(s, name)
-			{
-				s.set(name, R.$Actions.getObject(name));
-			}
-			setAction(R.standardActions, 'identity');
-			setAction(R.standardActions, 'namedIdentity');
-			setAction(R.standardActions, 'composite');
-			setAction(R.standardActions, 'detachDomain');
-			setAction(R.standardActions, 'detachCodomain');
-			setAction(R.standardActions, 'editMorphism');
-			setAction(R.standardActions, 'delete');
-			setAction(R.standardActions, 'copy');
-			setAction(R.standardActions, 'javascript');
-			setAction(R.standardActions, 'run');		// depends on javascript
-			setAction(R.standardActions, 'help');
-
-			setAction(R.Cat.actions, 'identity');
-			setAction(R.Cat.actions, 'namedIdentity');
-			setAction(R.Cat.actions, 'composite');
-			setAction(R.Cat.actions, 'detachDomain');
-			setAction(R.Cat.actions, 'detachCodomain');
-			setAction(R.Cat.actions, 'editMorphism');
-			setAction(R.Cat.actions, 'run');
-			setAction(R.Cat.actions, 'delete');
-			setAction(R.Cat.actions, 'copy');
-
-			setAction(R.Cat.actions, 'product');
-			setAction(R.Cat.actions, 'project');
-			setAction(R.Cat.actions, 'pullback');
-			setAction(R.Cat.actions, 'productAssembly');
-			setAction(R.Cat.actions, 'terminalMorphism');
-
-			setAction(R.Cat.actions, 'coproduct');
-			setAction(R.Cat.actions, 'pushout');
-			setAction(R.Cat.actions, 'coproductAssembly');
-			setAction(R.Cat.actions, 'initialMorphism');
-			setAction(R.Cat.actions, 'data');
-			setAction(R.Cat.actions, 'finiteObject');
-
-			setAction(R.Cat.actions, 'hom');
-			setAction(R.Cat.actions, 'homLeft');
-			setAction(R.Cat.actions, 'homRight');
-			setAction(R.Cat.actions, 'lambdaMorphism');
-
-			setAction(R.Cat.actions, 'javascript');
-			setAction(R.Cat.actions, 'help');
-
-			R.Cat.initializeActions();
-
+			const homActions = new Set([
+				new HomAction(R.$Actions),
+				new HomLeftAction(R.$Actions),
+				new HomRightAction(R.$Actions),
+				new LambdaMorphismAction(R.$Actions)]);
+			const homDiagram = new Diagram(R.$CAT, {basename:'hom', name:'hom', codomain:'Actions', description:'diagram for hom actions', user:'system'});
+			xy = new D2(300, 300);
+			diagram = homDiagram;
+			homActions.forEach(placeAction);
+			// boot
+			R.Cat.addActions('category');
+			R.Cat.addActions('product');
+			R.Cat.addActions('coproduct');
+			R.Cat.addActions('hom');
 			isGUI && D.Initialize();
 
 			isGUI && D.navbar.update();
@@ -786,14 +751,12 @@ console.log('stylesheets',document.styleSheets);
 			const defaultArgs = {codomain, basename:'Home', user:R.user.name, description:'User home diagram', properName:'Home'};
 			if (diagramName === null)
 				diagramName = Diagram.Codename(defaultArgs);
-/*
-			const diagram = R.$CAT.getMorphism(diagramName);
-			if (!diagram && D.ReadLocal(diagramName) === null)
+			R.diagram = R.$CAT.getMorphism(diagramName);
+			if (!R.diagram && D.ReadLocal(diagramName) === null)
 			{
 				R.diagram = new Diagram(R.$CAT, defaultArgs);
-				D.SaveLocal(diagram);
+				D.SaveLocal(R.diagram);
 			}
-*/
 			R.SelectDiagram(diagramName);
 			fn && fn();
 			D.panels.update();
@@ -906,19 +869,31 @@ console.log('stylesheets',document.styleSheets);
 	{
 		R.SetDiagramInfo(diagram);
 		D.SaveLocalDiagramList();
+		D.SaveLocalCategoryList();
+	}
+	static GetCategoriesInfo()
+	{
+		const info = new Map;
+		R.$CAT.codomain.objects.forEach(function(o)
+		{
+			if (Category.prototype.isPrototypeOf(o) && !IndexCategory.prototype.isPrototypeOf(o))
+				info.set(o.name, o.info());
+		});
+		return info;
 	}
 }
 Object.defineProperties(R,
 {
 	Cat:				{value:null,	writable:true},
 	CAT:				{value:null,	writable:true},		// working nat trans
-	Diagrams:			{value:null,	writable:true},		// loaded diagrams
-	DiagramObject:		{value:null,	writable:true},		// class DiagramObject
+	Categories:			{value:new Map,	writable:false},	// available categories
+	Diagrams:			{value:new Map,	writable:false},		// available diagrams
+//	DiagramObject:		{value:null,	writable:true},		// class DiagramObject
 	Actions:			{value:null,	writable:true},		// loaded actions
 	Graph:				{value:null,	writable:true},		// loaded string graphs
 	categoryName:		{value:'',		writable:true},		// current category's name
 	category:			{value:null,	writable:true},		// current category
-	standardActions:	{value:new Map,	writable:false},	// the actions all categories have
+//	standardActions:	{value:new Map,	writable:false},	// the actions all categories have
 	diagramName:		{value:'',		writable:true},
 	diagram:			{value:null,	writable:true},
 	cloud:				{value:null,	writable:true},		// cloud we're using
@@ -2383,46 +2358,47 @@ ${D.Button(onclick)}
 	}
 	static ReadLocalDiagramList()
 	{
-		const diagrams = JSON.parse(localStorage.getItem('/Cat/Anon/diagrams'));
+		const diagrams = JSON.parse(localStorage.getItem('diagrams'));
 		if (diagrams)
 			diagrams.map(d => R.Diagrams.set(d.name, d));
-		// TODO debug, clean-up, remove, eventually
-		/*
-		if (R.debug && diagrams)
-			diagrams.map(d =>
-			{
-				if (!localStorage.getItem(U.StorageName(d.name)))
-				{
-					console.log('ReadLocalDiagramList deleting', d.name);
-					D.SaveLocalDiagramList();
-				}
-			});
-			*/
 	}
 	static SaveLocalDiagramList()
 	{
-		localStorage.setItem('/Cat/Anon/diagrams', JSON.stringify(U.JsonMap(R.Diagrams)));
+		localStorage.setItem('diagrams', JSON.stringify(U.JsonMap(R.Diagrams)));
+	}
+	static ReadLocalCategoryList()
+	{
+		const categories = JSON.parse(localStorage.getItem('categories'));
+		if (categories)
+			categories.map(d => R.Categories.set(d.name, d));
+	}
+	static SaveLocalCategoryList()
+	{
+		localStorage.setItem('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo())));
 	}
 	static SaveLocal(diagram, savePng = true)
 	{
 		if (R.debug)
-			console.log('save to local storage', U.StorageName(diagram.name));
+//			console.log('save to local storage', U.StorageName(diagram.name));
+			console.log('save to local storage', diagram.name);
 		diagram.timestamp = Date.now();
-		localStorage.setItem(U.StorageName(diagram.name), diagram.stringify());
+//		localStorage.setItem(U.StorageName(diagram.name), diagram.stringify());
+		localStorage.setItem(diagram.name, diagram.stringify());
 		D.Svg2canvas(D.topSVG, this.name, true, function(png, pngName)
 		{
 			D.diagramPNG.set(diagram.name, png);
-			localStorage.setItem(U.StorageName(`${diagram.name}.png`), png);
+//			localStorage.setItem(U.StorageName(`${diagram.name}.png`), png);
+			localStorage.setItem(`${diagram.name}.png`, png);
 		});
 		return true;
 	}
 	static ReadLocal(name)
 	{
-		const data = localStorage.getItem(U.StorageName(name));
+		const data = localStorage.getItem(name);
 		if (data)
 		{
 			const diagram = new Diagram(R.$CAT, JSON.parse(data));
-			const png = localStorage.getItem(U.StorageName(`${diagram.name}.png`));
+			const png = localStorage.getItem(`${diagram.name}.png`);
 			if (png)
 				D.diagramPNG.set(diagram.name, png);
 			// TODO eventually remove, should already be in the list
@@ -2440,6 +2416,7 @@ ${D.Button(onclick)}
 		{
 			R.Diagrams.delete(dgrmName);
 			D.SaveLocalDiagramList();
+			D.SaveLocalCategoryList();
 		}
 	}
 	// TODO unused?
@@ -2447,7 +2424,7 @@ ${D.Button(onclick)}
 	{
 		try
 		{
-			localStorage.removeItem(U.StorageName(dgrmName));
+			localStorage.removeItem(dgrmName);
 			const diagram = R.Diagrams.getMorphism(dgrmName);
 			if (diagram)
 			{
@@ -2774,9 +2751,9 @@ morphism:
 </marker>
 <line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
 move:
-`<line class="svgfilNone arrow0-30px" x1="60" y1="80" x2="240" y2= "80" />
-<line class="svgfilNone arrow0-30px" x1="60" y1="160" x2="240" y2= "160" />
-<line class="svgfilNone arrow0-30px" x1="60" y1="240" x2="240" y2= "240" />`,
+`<line class="svgfilNone arrow0-30px" x1="60" y1="80" x2="240" y2="80" />
+<line class="svgfilNone arrow0-30px" x1="60" y1="160" x2="240" y2="160" />
+<line class="svgfilNone arrow0-30px" x1="60" y1="240" x2="240" y2="240" />`,
 new:
 `<circle class="svgfil4" cx="80" cy="70" r="70"/>
 <line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
@@ -2858,11 +2835,9 @@ lock:
 <line class="arrow0" x1="60" y1="260" x2="260" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
 <circle class="svgfil4" cx="160" cy="160" r="40"/>`,
 unlock:
-`
-<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
+`<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="40" y1="280" x2="280" y2="40" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<rect class="svgfil5" x="120" y="120" width="80" height="80"/>
-`,
+<rect class="svgfil5" x="120" y="120" width="80" height="80"/>`,
 upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
@@ -3024,23 +2999,29 @@ class NewCategorySection extends Section
 	{
 		super('New', parent, 'category-new-section', 'Create new category');
 		const categoryActions = [];
-		R.$CAT.getMorphism('category').objects.forEach(function(a) { categoryActions.push(a.properName); });
+		R.$CAT.getMorphism('category').objects.forEach(function(a) { categoryActions.push(U.DeCamel(a.properName)); });
 		const productActions = [];
-		R.$CAT.getMorphism('product').objects.forEach(function(a) { productActions.push(a.properName); });
+		R.$CAT.getMorphism('product').objects.forEach(function(a) { productActions.push(U.DeCamel(a.properName)); });
 		const coproductActions = [];
-		R.$CAT.getMorphism('coproduct').objects.forEach(function(a) { coproductActions.push(a.properName); });
+		R.$CAT.getMorphism('coproduct').objects.forEach(function(a) { coproductActions.push(U.DeCamel(a.properName)); });
+		const homActions = [];
+		R.$CAT.getMorphism('hom').objects.forEach(function(a) { homActions.push(U.DeCamel(a.properName)); });
 		this.section.innerHTML = H.table(
 				H.tr(H.td(D.Input('', 'category-new-basename', 'Name')), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-properName', 'Proper name')), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-description', 'Description')), 'sidenavRow') +
-				H.tr(H.td('All categories have these actions: ' + categoryActions.join(), 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-hasProducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasProducts">Products</label>' +
-					H.p(productActions.join()), 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-hasCoproducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasCoproducts">Coproducts</label>' +
-					H.p(coproductActions.join()), 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-isClosed', '', '', 'in100', 'checkbox') + '<label for="category-new-isClosed">Closed</label>', 'left'), 'sidenavRow') +
+				H.tr(H.td(H.span('All categories have these actions: ', 'smallBold') + H.span(categoryActions.join(', ')), 'left')) +
+				H.tr(H.td('Select additional actions:', 'left smallBold')) +
+				H.tr(H.td(
+					D.Input('', 'category-new-hasProducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasProducts">Products</label>' + H.br() +
+					H.span('Actions: ', 'smallBold') + H.span(productActions.join(', ')), 'left'),
+					'sidenavRow') +
+				H.tr(H.td(D.Input('', 'category-new-hasCoproducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasCoproducts">Coproducts</label>' + H.br() +
+					H.span('Actions: ', 'smallBold') + H.span(coproductActions.join(', ')), 'left'), 'sidenavRow') +
+				H.tr(H.td(H.span('Selecting both products and coproducts adds actions for finite objects and data', 'smallPrint'), 'left')) +
+				H.tr(H.td(D.Input('', 'category-new-isClosed', '', '', 'in100', 'checkbox') + '<label for="category-new-isClosed">Closed</label>' + H.br() +
+					H.span('Actions: ', 'smallBold') + H.span(homActions.join(', ')), 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-monoid', '', '', 'in100', 'checkbox') + '<label for="category-new-monoid">Monoid</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-finiteObjects', '', '', 'in100', 'checkbox') + '<label for="category-new-finiteObjects">Finite objects</label>', 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-naturalNumbers', '', '', 'in100', 'checkbox') + '<label for="category-new-naturalNumbers">Natural numbers</label>', 'left'), 'sidenavRow'), 'sidenav') +
 			H.span(D.GetButton('edit', 'CategoryPanel.Create()', 'Create new category')) + H.br() +
 			H.span('', 'error', 'category-new-error');
@@ -3048,6 +3029,9 @@ class NewCategorySection extends Section
 		this.basenameElt = document.getElementById('category-new-basename');
 		this.properNameElt = document.getElementById('category-new-properName');
 		this.descriptionElt = document.getElementById('category-new-description');
+		this.hasProductsElt = document.getElementById('category-new-hasProducts');
+		this.hasCoproductsElt = document.getElementById('category-new-hasCoproducts');
+		this.hasHomElt = document.getElementById('category-new-isClosed');
 	}
 	update()
 	{
@@ -3058,6 +3042,9 @@ class NewCategorySection extends Section
 			this.properNameElt.value = '';
 			this.descriptionElt.value = '';
 			this.error.style.padding = '0px';
+			this.hasProductsElt.checked = false;
+			this.hasCoproductsElt.checked = false;
+			this.hasHomElt.checked = false;
 		}
 	}
 	create(e)
@@ -3068,6 +3055,20 @@ class NewCategorySection extends Section
 			const name = Element.Codename(R.$CAT, basename);
 			if (R.$CAT.getMorphism(name))
 				throw 'Category already exists';
+			const category = new Category(R.$CAT,
+			{
+				basename:		U.htmlSafe(this.basenameElt.value),
+				category:		R.CAT,
+				description:	U.htmlSafe(this.descriptionElt.value),
+				properName:		U.htmlSafe(this.properNameElt.value),
+				user:			R.user.name,
+			});
+			if (this.hasProductsElt.checked)
+				category.addActions('product');
+			if (this.hasCoproductsElt.checked)
+				category.addActions('coproduct');
+			if (this.hasHomElt.checked)
+				category.addActions('hom');
 		}
 		catch(e)
 		{
@@ -3086,9 +3087,9 @@ class CategorySection extends Section
 		this.updateFn = updateFn;
 		this.filterFn = filterFn;
 	}
-	setDiagrams(diagrams)
+	setCategories(categories)
 	{
-		this.diagrams = diagrams;
+		this.categories = categories;
 		this.update();
 	}
 	update()
@@ -3097,10 +3098,10 @@ class CategorySection extends Section
 		{
 			let rows = '';
 			const that = this;	// can't use this below
-			this.diagrams.forEach(function(diagram)
+			this.categories.forEach(function(category)
 			{
-				if (that.filterFn(diagram))
-					rows += that.diagramRow(diagram, that.updateFn(diagram));
+				if (that.filterFn(category))
+					rows += that.categoryRow(category, that.updateFn(category));
 			});
 			this.section.innerHTML = H.table(rows);
 		}
@@ -3141,45 +3142,24 @@ class CategoryPanel extends Panel
 			H.h4(H.span('', '', 'category-basename') + H.span('', '', 'category-basename-edit')) +
 			H.h4(H.span('', '', 'category-properName') + H.span('', '', 'category-properName-edit')) +
 			H.p(H.span('', 'description', 'category-description', 'Description') + H.span('', '', 'category-description-edit')) +
+			H.p(H.span('Actions: ', 'smallBold') + H.span('', 'left', 'category-actions')) +
 			H.p('User: ' + H.span('', '', 'category-user', 'User'), 'description');
-//			H.h3('Category') + H.div('', '', 'categoryTbl');
-			/*
-			H.button('New Category', 'sidenavSection', '', 'New Category', `onclick="D.Panel.SectionToggle(this, \'newCategoryPnl\')"`) +
-			H.div(H.table(
-				H.tr(H.td(D.Input('', 'categoryName', 'Name')), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'categoryProperName', 'Proper name')), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'categoryDescription', 'Description')), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'hasProducts', '', '', 'in100', 'checkbox') + '<label for="hasProducts">Products</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'hasCoproducts', '', '', 'in100', 'checkbox') + '<label for="hasCoproducts">Coproducts</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'isClosed', '', '', 'in100', 'checkbox') + '<label for="isClosed">Closed</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'hasPullbacks', '', '', 'in100', 'checkbox') + '<label for="hasPullbacks">Pullbacks</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'hasPushouts', '', '', 'in100', 'checkbox') + '<label for="hasPushouts">Pushouts</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'finiteObjects', '', '', 'in100', 'checkbox') + '<label for="finiteObjects">Finite objects</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'naturalNumbers', '', '', 'in100', 'checkbox') + '<label for="naturalNumbers">Natural numbers</label>', 'left'), 'sidenavRow'),
-					'sidenav') +
-			H.span(D.GetButton('edit', 'CategoryPanel.Create()', 'Create new category')) + H.br() +
-			H.span('', 'error', 'categoryError'), 'section', 'newCategoryPnl');
-			*/
-		this.newCategorySection = new NewCategorySection(this.elt);
+		this.categorySection = new NewCategorySection(this.elt);
+		this.newCategorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories');
 		this.basenamelt = document.getElementById('category-basename');
 		this.properNameElt = document.getElementById('category-properName');
 		this.properNameEditElt = document.getElementById('category-properName-edit');
 		this.descriptionElt = document.getElementById('category-description');
 		this.descriptionEditElt = document.getElementById('category-description-edit');
+		this.actionsElt = document.getElementById('category-actions');
 		this.userElt = document.getElementById('category-user');
 		this.timestampElt = document.getElementById('category-timestamp');
 		this.initialize();
-		/*
-		this.categoryTbl = document.getElementById('categoryTbl');
-		this.error = document.getElementById('categoryError');
-		this.basenameElt = document.getElementById('categoryBasename');
-		this.properNameElt = document.getElementById('categoryProperName');
-		this.descriptionElt = document.getElementById('categoryDescription');
-		*/
 	}
 	update()
 	{
 		this.newCategorySection.update();
+		this.categorySection.update();
 		const category = R.category;
 		if (category)
 		{
@@ -3192,15 +3172,12 @@ class CategoryPanel extends Panel
 				D.GetButton('edit', `R.category.editElementText(event, 'category-properName', 'properName')`, 'Retitle', D.default.button.tiny) : '';
 			this.descriptionEditElt.innerHTML = isEditable ?
 				D.GetButton('edit', `D.diagramPanel.setDiagramDescription()`, 'Edit description', D.default.button.tiny) : '';
+			const actions = [];
+			category.actions.forEach(function(a) { actions.push(U.DeCamel(a.properName)); });
+			this.actionsElt.innerHTML = actions.join(', ');
 		}
-		/*
-		const cats = [];
-		if (R.Cat)
-			for(const [catName, cat] of R.Cat.objects)
-				cats.push(cat);
-		this.categoryTbl.innerHTML = H.table(cats.map(c => H.tr(H.td(`<a onclick="R.SelectCategoryDiagram('${c.name}')">${c.properName}</a>`), 'sidenavRow')).join(''));
-		*/
 	}
+	/*
 	create()
 	{
 		try
@@ -3237,6 +3214,7 @@ class CategoryPanel extends Panel
 			this.error.innerHTML = 'Error: ' + U.GetError(err);
 		}
 	}
+	*/
 }
 
 class ThreeDPanel extends Panel
@@ -3655,7 +3633,7 @@ class DiagramSection extends Section
 				D.DownloadButton('PNG', `R.LoadDiagram('${diagram.name}').downloadPNG(evt)`, 'Download PNG');
 		const tbl = H.table(
 				H.tr(H.td(H.h4(diagram.properName)) + H.td(tools, 'right')) +
-				H.tr(H.td(`<img src="${src}" id="img_${diagram.name}" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
+				H.tr(H.td(`<img src="${src}" id="img_${diagram.name}" alt="Not loaded" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.description, 'description', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.user, 'author') + H.td(dt.toLocaleString(), 'date')));
 		return H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')">` + tbl + '</a>'), 'grabbable sidenavRow', '', '',
@@ -3840,7 +3818,7 @@ class HelpPanel extends Panel
 					H.h5('Delete') +
 						H.p('Selected objects or morphisms are deleted.  Some elements cannot be deleted if they are referred to by another element.') +
 					H.h5('Spacebar') +
-						H.p('Press the spacebar and then with the mouse click-drag-release on the diagram to pan the view.') +
+						H.p('Press the spacebar and move the mouse to pan the view.') +
 					H.h5('Home') +
 						H.p('Return to the home view.') +
 					H.h5('D') +
@@ -4352,14 +4330,20 @@ class Element
 		let name = '';
 		if ('name' in args)
 			name = args.name;
+		let basename = '';
 		if ('basename' in args)
 		{
-			if (!U.basenameEx.test(args.basename))
+			basename = args.basename;
+			if (!U.basenameEx.test(basename))
 				throw 'invalid base name';
-			Object.defineProperty(this, 'basename', {value: args.basename, writable: false});
+//			Object.defineProperty(this, 'basename', {value: args.basename, writable: false});
 			if (name === '')
-				name = Element.Codename(diagram, args.basename);
+				name = Element.Codename(diagram, basename);
 		}
+		else if (U.basenameEx.test(name))
+			basename = name;
+		else
+			basename = this.constructor.name;
 		if ('category' in args)
 			Object.defineProperty(this, 'category', {value: R.GetCategory(args.category),	writable: false});
 		else
@@ -4367,6 +4351,7 @@ class Element
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,										writable: true},	// is true for bootstrapping
+			basename:		{value: basename,										writable: false},
 			name:			{value: name,											writable: false},
 			properName:		{value: 'properName' in args ? args.properName : 'basename' in args ? args.basename : name,	writable: true},
 			description:	{value: 'description' in args ? args.description : '',	writable: true},
@@ -4374,6 +4359,7 @@ class Element
 			refcnt:			{value: 0,												writable: true},
 			user:			{value: 'user' in args ? args.user : R.user.name,		writable: false},
 		});
+if (this.basename === '')debugger;
 	}
 	help()
 	{
@@ -4392,8 +4378,9 @@ class Element
 	}
 	signature(sig = '')
 	{
-		return U.sha256(`${sig}-${this.constructor.name}-${this.name}`);
+		return U.sha256(`${sig}${this.diagram.nameSignature()}/${this.basename}`);
 	}
+	/*
 	setSignature(sig = null)
 	{
 		return;	// TODO
@@ -4403,6 +4390,7 @@ class Element
 		else
 			Object.defineProperty(this, 'signature', {value: s, enumerable: true});
 	}
+	*/
 	incrRefcnt()
 	{
 		++this.refcnt;
@@ -4425,9 +4413,9 @@ class Element
 		a.prototype =	this.constructor.name;
 		a.properName =	this.properName;
 		a.readonly =	this.readonly;
-		if ('category' in this)
+		if ('category' in this && this.category)
 			a.category = this.category.name;
-		if ('user' in this)
+//		if ('user' in this)
 			a.user = this.user;
 		if ('diagram' in this && this.diagram !== null)
 			a.diagram =	this.diagram.name;
@@ -4436,6 +4424,24 @@ class Element
 	js(dgrmVarName = 'dgrm')
 	{
 		return `		new ${this.constructor.name}(${dgrmVarName}), ${this.stringify()};\n`;
+	}
+	info()
+	{
+		const a =
+		{
+			basename:	this.basename,
+			name:		this.name,
+			prototype:	this.prototype,
+			readonly:	this.readonly,
+			user:		this.user,
+			description:	this.descripiton,
+			properName:	this.properName,
+		};
+		if (this.category)
+			a.category = this.category.name;
+		if (this.diagram)
+			a.diagram = this.diagram.name;
+		return a;
 	}
 	stringify()
 	{
@@ -4906,6 +4912,7 @@ class InitialObject extends FiniteObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.size = 0;
+		nuArgs.basename = 'zero';
 		super(diagram, nuArgs);
 	}
 	help()
@@ -4926,6 +4933,7 @@ class TerminalObject extends FiniteObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.size = 1;
+		nuArgs.basename = 'one';
 		super(diagram, nuArgs);
 		this[Symbol.iterator] = function*()
 		{
@@ -4950,6 +4958,7 @@ class SubobjectClassifier extends CatObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.name = SubobjectClassifer.Codename(diagram);
+		nuArgs.basename = 'Omega';
 		nuArgs.properName = '&Omega;';
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -5089,7 +5098,7 @@ class ProductObject extends MultiObject
 		nuArgs.properName = 'properName' in args ? args.properName : ProductObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
 		this.seperatorWidth = D.textWidth('&times');	// in pixels
-		this.setSignature();
+//		this.setSignature();
 	}
 	help()
 	{
@@ -5155,7 +5164,7 @@ class CoproductObject extends MultiObject
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
 		this.seperatorWidth = D.textWidth('&times');	// runtime, don't save TODO remove
-		this.setSignature();
+//		this.setSignature();
 	}
 	help()
 	{
@@ -5194,7 +5203,7 @@ class HomObject extends MultiObject
 		nuArgs.name = HomObject.Codename(diagram, nuArgs.objects);
 		nuArgs.properName = 'properName' in args ? args.properName : HomObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
-		this.setSignature();
+//		this.setSignature();
 	}
 	help()
 	{
@@ -5403,6 +5412,7 @@ class DiagramObject extends CatObject
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrm_');
 		nuArgs.category = diagram.domain;
+		nuArgs.basename = 'index';
 		super(diagram, nuArgs);
 		this.incrRefcnt();
 		const xy = U.getArg(nuArgs, 'xy', new D2);
@@ -5774,8 +5784,8 @@ class ProductAction extends Action
 			description:	'Create a product of two or more objects or morphisms',
 			name:			'product',
 			icon:
-`<circle class="svgstr4" cx="160" cy="160" r="80"/>
-<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
+//<circle class="svgstr4" cx="160" cy="160" r="80"/>
+`<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
 <line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
 		};
 		super(diagram, args);
@@ -5814,8 +5824,8 @@ class CoproductAction extends Action
 			description:	'Create a coproduct of two or more objects or morphisms',
 			name:			'coproduct',
 			icon:
-`<circle class="svgstr4" cx="160" cy="160" r="80"/>
-<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
+//<circle class="svgstr4" cx="160" cy="160" r="80"/>
+`<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
 <line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>`,
 		};
 		super(diagram, args);
@@ -5926,7 +5936,7 @@ class ProductAssemblyAction extends Action
 						icon:
 `<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="60" y1="80" x2="120" y2="260" marker-end="url(#arrowhead)"/>`, };
+<line class="arrow9" x1="60" y1="80" x2="120" y2="260" marker-end="url(#arrowhead)"/>`,};
 		super(diagram, args);
 	}
 	action(e, diagram, diagramMorphisms)
@@ -5950,8 +5960,7 @@ class CoproductAssemblyAction extends Action
 						icon:
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,
-		};
+<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,};
 		super(diagram, args);
 	}
 	action(e, diagram, diagramMorphisms)
@@ -5972,10 +5981,10 @@ class HomAction extends Action
 	{
 		const args = {	description:	'Create a hom object or morphism from two such items',
 						name:			'hom',
-						icon:	// TODO
-`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,};
+						icon:
+`<path class="arrow0" d="M100 80 L80 80 L80 240 L 100 240"/>
+<path class="arrow0" d="M220 80 L240 80 L240 240 L 220 240"/>
+<line class="arrow0rnd" x1="170" y1="240" x2="150" y2="260"/>`};
 		super(diagram, args);
 	}
 	action(e, diagram, ary)
@@ -6800,37 +6809,34 @@ class Category extends CatObject
 		super(diagram, nuArgs);
 		Object.defineProperties(this,
 		{
-			objects:	{value:	new Map(),	writable:	false},
-			morphisms:	{value:	new Map(),	writable:	false},
-			actions:	{value:	new Map(R.standardActions),	writable:	false},
+			objects:	{value:	new Map,	writable:	false},
+			morphisms:	{value:	new Map,	writable:	false},
+			actions:	{value:	new Map,	writable:	false},
+			actionDiagrams:	{value:	new Set('actionDiagrams' in nuArgs ? nuArgs.actionDiagrams : []),	writable:	false},
 		});
-		this.initializeActions();
+		if (R.$CAT)
+			this.addActions('category');
 		this.process(diagram, nuArgs);
 	}
 	help()
 	{
 		return super.help() + H.p(`Category with ${this.objects.size} objects, ${this.morphisms.size} morphisms, and ${this.actions.size} actions.`);
 	}
-	initializeActions()
+	info()
 	{
-		for (const [n, a] of this.actions)
-			if ('initialize' in a)
-				a.initialize(this);
+		const a = super.info();
+		a.actionDiagrams = new Array(this.actionDiagrams.values());
+		return a;
 	}
-	/*
 	signature()
 	{
 		let s = '';
 		for ([key, o] of this.objects)
-			s += o.signature;
+			s += o.signature();
 		for ([key, m] of this.morphisms)
-			s += m.signature;
-		return U.sha256(`Cat ${this.name} ${this.constructor.name} ${s});
+			s += m.signature();
+		return U.sha256(`${this.name} ${this.constructor.name} ${s}`);
 	}
-	*/
-	//
-	// Reconstitute this category from its saved contents.
-	//
 	process(diagram, args, objects = null, morphisms = null)
 	{
 		let errMsg = '';
@@ -6843,7 +6849,6 @@ class Category extends CatObject
 					{
 						const object = CatObject.Process(diagram, o);
 						objects && objects.add(object);
-if (!object.category)debugger;
 					}
 					catch(x)
 					{
@@ -6862,7 +6867,6 @@ if (!object.category)debugger;
 					{
 						const morphism = Morphism.Process(diagram, m);
 						morphisms && morphisms.add(morphism);
-if (!morphism.category)debugger;
 					}
 					catch(x)
 					{
@@ -6885,7 +6889,7 @@ if (!morphism.category)debugger;
 		const a = super.json();
 		a.objects = U.jsonArray(this.objects);
 		a.morphisms = U.jsonArray(this.morphisms);
-		a.actions = new Array(this.actions.keys());
+		a.actionDiagrams = new Array(this.actionDiagrams.values());
 		return a;
 	}
 	getObject(name)
@@ -6936,6 +6940,21 @@ if (!morphism.category)debugger;
 			const name = `${s}_${U.random()}`;
 			if (!this.basenameIsUsed(name))
 				return name;
+		}
+	}
+	addActions(name)
+	{
+		const ad = R.$CAT.getMorphism(name);
+		if (ad)
+		{
+			const that = this;
+			ad.objects.forEach(function(a)
+			{
+				that.actions.set(a.name, a);
+				if ('initialize' in a)
+					a.initialize(that);
+			});
+			this.actionDiagrams.add(name);
 		}
 	}
 	static IsSink(ary)
@@ -7107,10 +7126,6 @@ class Morphism extends Element
 	{
 		return false;
 	}
-	$(args)
-	{
-		throw 'unknown action in morphism';
-	}
 	getGraph(data = {position:0})
 	{
 		return Sequence.Get(this.diagram, [this.domain, this.codomain]).getGraph(data);
@@ -7132,6 +7147,7 @@ class Identity extends Morphism
 		else
 			nuArgs.codomain = nuArgs.domain;
 		nuArgs.name = Identity.Codename(diagram, nuArgs.domain, nuArgs.codomain);
+		nuArgs.basename = 'Identity';
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		super(diagram, nuArgs);
 	}
@@ -7145,10 +7161,6 @@ class Identity extends Morphism
 		g.bindGraph({cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
 		g.tagGraph(this.constructor.name);
 		return g;
-	}
-	$(args)
-	{
-		return args;
 	}
 	static Codename(diagram, domain, codomain = null)
 	{
@@ -7220,6 +7232,7 @@ class DiagramMorphism extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.index = true;
+		nuArgs.basename = 'index';
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrmM');
 		nuArgs.category = diagram.domain;
 		super(diagram, nuArgs);
@@ -7516,7 +7529,9 @@ class IndexCategory extends Category
 {
 	constructor(diagram, args)
 	{
-		super(diagram, args);
+		const nuArgs = U.clone(args);
+		nuArgs.basename = 'Index';
+		super(diagram, nuArgs);
 		Object.defineProperties(this,
 		{
 			'homSets': 		{value:new Map(), writable: false},
@@ -8156,7 +8171,7 @@ class Recursive extends DataMorphism
 	{
 		super(diagram, args);
 		this.setRecursor(args.recursor);
-		this.setSignature();
+//		this.setSignature();
 	}
 	help()
 	{
@@ -8241,7 +8256,7 @@ class LambdaMorphism extends Morphism
 		const homPermutation = args.homFactors.map(f => f[1]);
 		const centralDomain = ProductObject.Get(this.diagram, [this.codomain.objects[0], this.domain]);
 		this.factors = this.diagram.addFactorMorphism(centralDomain, [homPermutation, domPermutation]);
-		this.setSignature();
+//		this.setSignature();
 	}
 	help()
 	{
@@ -8680,9 +8695,9 @@ class Diagram extends Functor
 	constructor(diagram, args)
 	{
 		if (!('user' in args))
-			throw 'Specify user for a diagram';
-		if (!('basename' in args))
-			throw 'no basename for diagram';
+			throw 'no user for diagram';
+//		if (!('basename' in args))
+//			throw 'no basename for diagram';
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		nuArgs.category = U.getArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
