@@ -257,7 +257,7 @@ if (isGUI)
 		d.getElementById('navbar').appendChild(a);
 	})(document);
 
-class U		// utility functions
+class U
 {
 	static random()
 	{
@@ -300,7 +300,7 @@ class U		// utility functions
 		}
 		return o;
 	}
-	static getArg(args, key, dflt)
+	static GetArg(args, key, dflt)
 	{
 		return key in args ? args[key] : dflt;
 	}
@@ -2859,7 +2859,7 @@ class Panels
 	{
 		this.panels = {};
 	}
-	closeAll(side)
+	closeAll(side = '')
 	{
 		for (const [name, panel] of Object.entries(this.panels))
 		{
@@ -4086,8 +4086,8 @@ class NewMorphismSection extends Section
 						H.tr(H.td(D.Input('', 'morphism-new-properName', 'Proper name')), 'sidenavRow') +
 						H.tr(H.td(H.input('', 'in100', 'morphism-new-description', 'text', {ph: 'Description',
 											x:'onkeydown="D.OnEnter(event, D.morphismPanel.newMorphismSection.create, D.morphismPanel.newMorphismSection)"'})), 'sidenavRow') +
-						H.tr(H.td(H.select('', 'in100', 'morphism-new-domain')), 'sidenavRow') +
-						H.tr(H.td(H.select('', 'in100', 'morphism-new-codomain')), 'sidenavRow')
+						H.tr(H.td(H.select('', 'in100 w100', 'morphism-new-domain')), 'sidenavRow') +
+						H.tr(H.td(H.select('', 'w100', 'morphism-new-codomain')), 'sidenavRow')
 			) +
 			H.span(D.GetButton('edit', 'D.morphismPanel.newMorphismSection.create(evt)', 'Create new morphism in this diagram')) +
 			H.span('', 'error', 'morphism-new-error');
@@ -4224,8 +4224,8 @@ class SettingsPanel extends Panel
 				H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="D.gridding = !D.gridding">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
 				H.tr(	H.td(`<input type="checkbox" ${D.showInternals ? 'checked' : ''} onchange="D.SettingsPanel.ToggleShowInternals()">`) +
 						H.td('Show internal info', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${D.showUploadArea ? 'checked' : ''} onchange="SettingsPanel.ToggleShowUploadArea()">`) +
-						H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow') +
+//				H.tr(	H.td(`<input type="checkbox" ${D.showUploadArea ? 'checked' : ''} onchange="SettingsPanel.ToggleShowUploadArea()">`) +
+//						H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow') +
 				H.tr(	H.td(`<input type="checkbox" ${R.debug ? 'checked' : ''} onchange="R.debug = !R.debug">`) +
 						H.td('Debug', 'left'), 'sidenavRow')
 			);
@@ -4354,8 +4354,6 @@ class Element
 		}
 		else if (U.basenameEx.test(name))
 			basename = name;
-		else
-			basename = this.constructor.name;
 		if ('category' in args)
 			Object.defineProperty(this, 'category', {value: R.GetCategory(args.category),	writable: false});
 		else
@@ -5107,7 +5105,7 @@ class ProductObject extends MultiObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
-		nuArgs.name = ProductObject.Codename(diagram, nuArgs.objects);
+		nuArgs.basename = ProductObject.Basename(diagram, nuArgs.objects);
 		nuArgs.properName = 'properName' in args ? args.properName : ProductObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
 		this.seperatorWidth = D.textWidth('&times');	// in pixels
@@ -5125,9 +5123,13 @@ class ProductObject extends MultiObject
 	{
 		return super.getGraph(this.constructor.name, data, D.textWidth('('), D.textWidth('&times;'), first);
 	}
+	static Basename(diagram, objects)
+	{
+		return `Po{${objects.map(o => o.name).join(',')}}oP`;
+	}
 	static Codename(diagram, objects)
 	{
-		return Element.Codename(diagram, `Po{${objects.map(o => o.name).join(',')}}oP`);
+		return Element.Codename(diagram, ProductObject.Basename(diagram, objects));
 	}
 	static Get(diagram, objects)
 	{
@@ -5155,9 +5157,13 @@ class Sequence extends ProductObject
 	{
 		return true;
 	}
+	static Basename(diagram, objects)
+	{
+		return `So{${objects.map(o => o.name).join(',')}}oS`;
+	}
 	static Codename(diagram, objects)
 	{
-		return Element.Codename(diagram, `So{${objects.map(o => o.name).join(',')}}oS`);
+		return Element.Codename(diagram, Sequence.Basename(diagram, objects));
 	}
 	static Get(diagram, objects)
 	{
@@ -5173,7 +5179,7 @@ class CoproductObject extends MultiObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
-		nuArgs.name = CoproductObject.Codename(diagram, nuArgs.objects);
+		nuArgs.basename = CoproductObject.Basename(diagram, nuArgs.objects);
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
 		this.seperatorWidth = D.textWidth('&times');	// runtime, don't save TODO remove
@@ -5191,9 +5197,13 @@ class CoproductObject extends MultiObject
 	{
 		return {};	// TODO
 	}
+	static Basename(diagram, objects)
+	{
+		return `Co{${objects.map(o => o.name).join(',')}}oC`;
+	}
 	static Codename(diagram, objects)
 	{
-		return Element.Codename(diagram, `Co{${objects.map(o => o.name).join(',')}}oC`);
+		return Element.Codename(diagram, CoproductObject.Basename(diagram, objects));
 	}
 	static Get(diagram, objects)
 	{
@@ -5213,7 +5223,7 @@ class HomObject extends MultiObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
-		nuArgs.name = HomObject.Codename(diagram, nuArgs.objects);
+		nuArgs.basename = HomObject.Basename(diagram, nuArgs.objects);
 		nuArgs.properName = 'properName' in args ? args.properName : HomObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
 //		this.setSignature();
@@ -5257,9 +5267,13 @@ class HomObject extends MultiObject
 	{
 		return false;
 	}
+	static Basename(diagram, objects)
+	{
+		return `Ho{${objects.map(o => o.name).join(',')}}oH`;
+	}
 	static Codename(diagram, objects)
 	{
-		return Element.Codename(diagram, `Ho{${objects.map(o => o.name).join(',')}}oH`);
+		return Element.Codename(diagram, HomObject.Basename(diagram, objects));
 	}
 	static Get(diagram, objects)
 	{
@@ -5284,16 +5298,16 @@ class DiagramText
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		const xy = U.getArg(args, 'xy', new D2);
+		const xy = U.GetArg(args, 'xy', new D2);
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,													writable:	false},
-			name:			{value: U.getArg(nuArgs, 'name', diagram.domain.getAnon('text_')),	writable:	false},
+			name:			{value: U.GetArg(nuArgs, 'name', diagram.domain.getAnon('text')),	writable:	false},
 			x:				{value:	xy.x,														writable:	true},
 			y:				{value:	xy.y,														writable:	true},
-			width:			{value:	U.getArg(nuArgs, 'width', 0),								writable:	true},
-			height:			{value:	U.getArg(nuArgs, 'height', D.default.font.height),			writable:	true},
-			description:	{value:	U.getArg(nuArgs, 'description', 'Lorem ipsum categoricum'), writable:	true},
+			width:			{value:	U.GetArg(nuArgs, 'width', 0),								writable:	true},
+			height:			{value:	U.GetArg(nuArgs, 'height', D.default.font.height),			writable:	true},
+			description:	{value:	U.GetArg(nuArgs, 'description', 'Lorem ipsum categoricum'), writable:	true},
 		});
 		diagram.texts.set(this.name, this);
 	}
@@ -5423,19 +5437,19 @@ class DiagramObject extends CatObject
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrm_');
+//		nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrm_');
+		nuArgs.basename = U.GetArg(args, 'basename', diagram.domain.getAnon('o'));
 		nuArgs.category = diagram.domain;
-		nuArgs.basename = diagram.domain.getAnon('o_');
 		super(diagram, nuArgs);
 		this.incrRefcnt();
-		const xy = U.getArg(nuArgs, 'xy', new D2);
+		const xy = U.GetArg(nuArgs, 'xy', new D2);
 		Object.defineProperties(this,
 		{
 			category:	{value:	diagram.domain,										writable:	false},
 			x:			{value:	xy.x,												writable:	true},
 			y:			{value:	xy.y,												writable:	true},
-			width:		{value:	U.getArg(nuArgs, 'width', 0),						writable:	true},
-			height:		{value:	U.getArg(nuArgs, 'height', D.default.font.height),	writable:	true},
+			width:		{value:	U.GetArg(nuArgs, 'width', 0),						writable:	true},
+			height:		{value:	U.GetArg(nuArgs, 'height', D.default.font.height),	writable:	true},
 			to:			{value:	null,												writable:	true},
 		});
 		if ('to' in nuArgs)
@@ -7176,8 +7190,7 @@ class Identity extends Morphism
 			nuArgs.codomain = diagram ? diagram.getElement(args.codomain) : args.codomain;
 		else
 			nuArgs.codomain = nuArgs.domain;
-		nuArgs.name = Identity.Codename(diagram, nuArgs.domain, nuArgs.codomain);
-//		nuArgs.basename = `Identity_${nuArgs.domain.basename}`;		// TODO what if the object doesn't come from this diagram?
+//		nuArgs.name = Identity.Codename(diagram, nuArgs.domain, nuArgs.codomain);
 		nuArgs.basename = Identity.Basename(diagram, nuArgs.domain, nuArgs.codomain);
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		super(diagram, nuArgs);
@@ -7202,14 +7215,18 @@ class Identity extends Morphism
 			basename = `Id{${domain.name}}dI`;
 		return basename;
 	}
-	static Codename(diagram, domain, codomain = null)
+	static Basename(diagram, domain, codomain = null)
 	{
 		let basename = '';
 		if (codomain && domain.name !== codomain.name)
 			basename = `Id{${domain.name} ${codomain.name}}dI`;
 		else
 			basename = `Id{${domain.name}}dI`;
-		return Element.Codename(diagram, basename);
+		return basename;
+	}
+	static Codename(diagram, domain, codomain = null)
+	{
+		return Element.Codename(diagram, Identity.Basename(diagram, domain, codomain));
 	}
 	static Get(diagram, dom, cod = null)
 	{
@@ -7230,8 +7247,10 @@ class NamedIdentityObject extends CatObject
 	constructor (diagram, args)
 	{
 		const nuArgs = U.clone(args);
+		const source = diagram.getElement(args.source);
+		nuArgs.basename = NamedIdentityObject.Basename(diagram, source);
 		super(diagram, nuArgs);
-		this.source = diagram ? diagram.getElement(args.source) : args.source;
+		this.source = source;
 		this.idFrom= Identity.Get(diagram, this, this.source);
 		this.idTo = Identity.Get(diagram, this.source, this);
 	}
@@ -7253,9 +7272,13 @@ class NamedIdentityObject extends CatObject
 		g.tagGraph(this.constructor.name);
 		return g;
 	}
+	static Basename(diagram, source)
+	{
+		return `Nd{${name},${source.name}}dN`;
+	}
 	static Codename(diagram, domain)
 	{
-		return Element.Codename(diagram, `Nd{${name},${source.name}}dN`);
+		return Element.Codename(diagram, NamedIdentityObject.Basename(diagram, domain));
 	}
 	static Get(diagram, dom)
 	{
@@ -7272,12 +7295,11 @@ class DiagramMorphism extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.index = true;
-		nuArgs.basename = diagram.domain.getAnon('m_');
-		nuArgs.name = 'name' in nuArgs ? nuArgs.name : diagram.domain.getAnon('dgrmM');
+		nuArgs.basename = U.GetArg(args, 'basename', diagram.domain.getAnon('m'));
 		nuArgs.category = diagram.domain;
 		super(diagram, nuArgs);
 		this.incrRefcnt();
-		this.flipName = U.getArg(args, 'flipName', false);
+		this.flipName = U.GetArg(args, 'flipName', false);
 		if ('morphisms' in nuArgs)
 			this.morphisms = nuArgs.morphisms.map(m => diagram.domain.getElement(m));
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
@@ -7375,7 +7397,6 @@ onmousedown="R.diagram.pickElement(evt, '${this.name}')">${this.to.properName}</
 		{
 			path.classList.add(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
 			path.classList.remove(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
-
 			path.classList.add(...['fuseMorphism']);
 			path.classList.remove(...['selected', 'grabbable', 'morphism']);
 			name.classList.add(...['fuseMorphism']);
@@ -7718,7 +7739,7 @@ class Composite extends MultiMorphism
 	{
 		const morphisms = MultiMorphism.SetupMorphisms(diagram, args.morphisms);
 		const nuArgs = U.clone(args);
-		nuArgs.name = Composite.Codename(diagram, morphisms);
+		nuArgs.basename = Composite.Basename(diagram, morphisms);
 		nuArgs.domain = Composite.Domain(morphisms);
 		nuArgs.codomain = Composite.Codomain(morphisms);
 		nuArgs.morphisms = morphisms;
@@ -7770,9 +7791,13 @@ class Composite extends MultiMorphism
 		graph.copyDomCodLinks(seqGraph, {cnt:this.morphisms.length, link:[]});
 		return graph;
 	}
+	static Basename(diagram, morphisms)
+	{
+		return `Cm{${morphisms.map(m => m.name).join(',')}}mC`;
+	}
 	static Codename(diagram, morphisms)
 	{
-		return Element.Codename(diagram, `Cm{${morphisms.map(m => m.name).join(',')}}mC`);
+		return Element.Codename(diagram, Composite.Basename(diagram, morphisms));
 	}
 	static Domain(morphisms)
 	{
@@ -7800,7 +7825,7 @@ class ProductMorphism extends MultiMorphism
 	{
 		const morphisms = MultiMorphism.SetupMorphisms(diagram, args.morphisms);
 		const nuArgs = U.clone(args);
-		nuArgs.name = ProductMorphism.Codename(diagram, morphisms);
+		nuArgs.basename = ProductMorphism.Basename(diagram, morphisms);
 		nuArgs.domain = ProductMorphism.Domain(diagram, morphisms);
 		nuArgs.codomain = ProductMorphism.Codomain(diagram, morphisms);
 		nuArgs.morphisms = morphisms;
@@ -7811,9 +7836,13 @@ class ProductMorphism extends MultiMorphism
 	{
 		return super.help(H.p('Product'), processed);
 	}
+	static Basename(diagram, morphisms)
+	{
+		return `Pm{${morphisms.map(m => m.name).join(',')}}mP`;
+	}
 	static Codename(diagram, morphisms)
 	{
-		return Element.Codename(diagram, `Pm{${morphisms.map(m => m.name).join(',')}}mP`);
+		return Element.Codename(diagram, ProductMorphism.Basename(diagram, morphisms));
 	}
 	static Domain(diagram, morphs)
 	{
@@ -7841,7 +7870,7 @@ class CoproductMorphism extends MultiMorphism
 	{
 		const morphisms = MultiMorphism.SetupMorphisms(diagram, args.morphisms);
 		const nuArgs = U.clone(args);
-		nuArgs.name = 'name' in args ? args.name : CoproductMorphism.Codename(diagram, morphisms);
+		nuArgs.basename = CoproductMorphism.Basename(diagram, morphisms);
 		nuArgs.domain = CoproductMorphism.Domain(diagram, morphisms);
 		nuArgs.codomain = CoproductMorphism.Codomain(diagram, morphisms);
 		nuArgs.morphisms = morphisms;
@@ -7852,9 +7881,13 @@ class CoproductMorphism extends MultiMorphism
 	{
 		return super.help(H.p('Coproduct'), processed);
 	}
+	static Basename(diagram, morphisms)
+	{
+		return `Cm{${morphisms.map(m => m.name).join(',')}}mC`;
+	}
 	static Codename(diagram, morphisms)
 	{
-		return Element.Codename(diagram, `Cm{${morphisms.map(m => m.name).join(',')}}mC`);
+		return Element.Codename(diagram, CoproductMorphism.Basename(diagram, morphisms));
 	}
 	static Domain(diagram, morphs)
 	{
@@ -7884,7 +7917,7 @@ class ProductAssembly extends MultiMorphism
 		nuArgs.morphisms = MultiMorphism.SetupMorphisms(diagram, args.morphisms);
 		nuArgs.domain = ProductAssembly.Domain(diagram, nuArgs.morphisms);
 		nuArgs.codomain = ProductAssembly.Codomain(diagram, nuArgs.morphisms);
-		nuArgs.name = ProductAssembly.Codename(diagram, nuArgs.morphisms);
+		nuArgs.basename = ProductAssembly.Basename(diagram, nuArgs.morphisms);
 		nuArgs.properName = 'properName' in args ? args.properName : ProductAssembly.ProperName(nuArgs.morphisms);
 		super(diagram, nuArgs);
 	}
@@ -7896,9 +7929,13 @@ class ProductAssembly extends MultiMorphism
 	{
 		return this.mergeMorphismGraphs(graph);
 	}
+	static Basename(diagram, morphisms)
+	{
+		return `Pa{${morphisms.map(m => m.name).join(',')}}aP`;
+	}
 	static Codename(diagram, morphisms)
 	{
-		return Element.Codename(diagram, `Pa{${morphisms.map(m => m.name).join(',')}}aP`);
+		return Element.Codename(diagram, ProductAssembly.Basename(diagram, morphisms));
 	}
 	static Domain(diagram, morphisms)
 	{
@@ -7926,7 +7963,7 @@ class CoproductAssembly extends MultiMorphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.morphisms = MultiMorphism.SetupMorphisms(diagram, args.morphisms);
-		nuArgs.name = CoproductAssembly.Codename(diagram, nuArgs.morphisms);
+		nuArgs.basename = CoproductAssembly.Basename(diagram, nuArgs.morphisms);
 		nuArgs.domain = CoproductAssemblyMorphism.Domain(diagram, nuArgs.morphisms);
 		nuArgs.codomain = CoproductAssemblyMorphism.Codomain(diagram, nuArgs.morphisms);
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductAssembly.ProperName(nuArgs.morphisms);
@@ -7940,9 +7977,13 @@ class CoproductAssembly extends MultiMorphism
 	{
 		return this.mergeMorphismGraphs(graph)
 	}
+	static Basename(diagram, morphisms)
+	{
+		return `Ca{${morphisms.map(m => m.name).join(',')}}aC`;
+	}
 	static Codename(diagram, morphisms)
 	{
-		return Element.Codename(diagram, `Ca{${morphisms.map(m => m.name).join(',')}}aC`);
+		return Element.Codename(diagram, CoproductAssembly.Basename(diagram, morphisms));
 	}
 	static Domain(diagram, morphisms)
 	{
@@ -7969,7 +8010,7 @@ class FactorMorphism extends Morphism
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.name = 'name' in args ? args.name : FactorMorphism.Codename(domain, factors);
+		nuArgs.basename = FactorMorphism.Basename(domain, factors);
 		nuArgs.domain = diagram.getElement(args.domain);
 		nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors);
 		nuArgs.properName = FactorMorphism.ProperName(nuArgs.domain, nuArgs.factors);
@@ -8020,22 +8061,26 @@ class FactorMorphism extends Morphism
 		graph.tagGraph(this.constructor.name);
 		return graph;
 	}
-	static Codename(domain, factors)
+	static Basename(domain, factors)
 	{
-		let name = Element.Codename(diagram, `Fa{${domain.name},`);
+		let basename = `Fa{${domain.name},`;
 		for (let i=0; i<factors.length; ++i)
 		{
 			const indices = factors[i];
 			const f = domain.getFactor(indices);
 			if (f.name !== 'One')
-				name += f.name + ',' + indices.join(',');
+				basename += f.name + ',' + indices.join(',');
 			else
-				name += f.name;
+				basename += f.name;
 			if (i !== factors.length -1)
-				name += ',';
+				basename += ',';
 		}
-		name += '}aF';
-		return name;
+		basename += '}aF';
+		return basename;
+	}
+	static Codename(domain, factors)
+	{
+		return Element.Codename(diagram, FactorMorphism.Basename(domain, factors));
 	}
 	static Codomain(diagram, domain, factors)
 	{
@@ -8059,12 +8104,12 @@ class DiagonalMorphism extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
-		nuArgs.count = U.getArg(args, 'count', 2);
+		nuArgs.count = U.GetArg(args, 'count', 2);
 		if (nuArgs.count < 2)
 			throw 'count is not two or greater';
 		const objects = [];
 		nuArgs.codomain = DiagonalMorphism.Codomain(diagram, objects.fill(nuArgs.domain, 0, nuArgs.count));
-		nuArgs.name = DiagonalMorphism.Codename(nuArgs.domain, nuArgs.count);
+		nuArgs.basename = DiagonalMorphism.Basename(nuArgs.domain, nuArgs.count);
 		nuArgs.properName = DiagonalMorphism.ProperName(nuArgs.domain, nuArgs.count)
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -8089,9 +8134,13 @@ class DiagonalMorphism extends Morphism
 		graph.tagGraph(this.constructor.name);
 		return graph;
 	}
+	static Basename(domain, count)
+	{
+		return `Dm{${domain.name}/${count}}mD`;
+	}
 	static Codename(domain, count)
 	{
-		return Element.Codename(diagram, `Dm{${domain.name}/${count}}mD`);
+		return Element.Codename(diagram, DiagonalMorphism.Basename(domain, count));
 	}
 	static Codomain(diagram, object, count)
 	{
@@ -8118,12 +8167,12 @@ class FoldMorphism extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.codomain = diagram.getElement(args.codomain);
-		nuArgs.count = U.getArg(args, 'count', 2);
+		nuArgs.count = U.GetArg(args, 'count', 2);
 		if (nuArgs.count < 2)
 			throw 'count is not two or greater';
 		const objects = [];
 		nuArgs.domain = FoldMorphism.Domain(diagram, objects.fill(nuArgs.codomain, 0, nuArgs.count));
-		nuArgs.name = FoldMorphism.Codename(nuArgs.codomain, nuArgs.count);
+		nuArgs.basename = FoldMorphism.Basename(nuArgs.codomain, nuArgs.count);
 		nuArgs.properName = FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count)
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -8139,9 +8188,13 @@ class FoldMorphism extends Morphism
 		a.count = this.count;
 		return a;
 	}
+	static Basename(codomain, count)
+	{
+		return `Fm{${codomain.name}/${count}}mF`;
+	}
 	static Codename(codomain, count)
 	{
-		return Element.Codename(diagram, `Fm{${codomain.name}/${count}}mF`);
+		return Element.Codename(diagram, FoldMorphism.Basename(codomain, count));
 	}
 	static Domain(diagram, object, count)
 	{
@@ -8175,8 +8228,8 @@ class DataMorphism extends Morphism
 			throw `codomain is not editable`;
 		nuArgs.category = diagram.codomain;
 		super(diagram, args);
-		this.data = U.getArg(args, 'data', {});
-		this.limit = U.getArg(args, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
+		this.data = U.GetArg(args, 'data', {});
+		this.limit = U.GetArg(args, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 	}
 	help()
 	{
@@ -8289,7 +8342,7 @@ class LambdaMorphism extends Morphism
 		nuArgs.description = 'description' in args ? args.description : `The currying of the morphism ${this.preCurry.properName} by the factors ${this.homFactors.toString()}`;
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.name = 'name' in args ? args.name : LambdaMorphism.Codename(diagram, preCurry, args.domFactors, args.homFactors);
+		this.basename = LambdaMorphism.Basename(diagram, preCurry, args.domFactors, args.homFactors);
 		this.properName = this.properName === '' ? LambdaMorphism.ProperName(preCurry, args.domFactors, args.homFactors) : this.properName;
 		this.preCurry = preCurry;
 		this.preCurry.incrRefcnt();
@@ -8364,11 +8417,15 @@ class LambdaMorphism extends Morphism
 		graph.tagGraph(this.constructor.name);
 		return graph;
 	}
-	static Codename(diagram, preCurry, domFactors, homFactors)
+	static Basename(diagram, preCurry, domFactors, homFactors)
 	{
 		const preCur = diagram.codomain.getElement(preCurry);
 		const hom = HomObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
-		return Element.Codename(diagram, `${preCurry.domain.name}:Lm{${preCur.name},${ProductObject.Codename(domFactors.map(f => hom.getFactorName(f)))},${ProductObject.Codename(codFactors.map(f => hom.getFactorName(f)))}}mL`);
+		return `${preCurry.domain.name}:Lm{${preCur.name},${ProductObject.Codename(domFactors.map(f => hom.getFactorName(f)))},${ProductObject.Codename(codFactors.map(f => hom.getFactorName(f)))}}mL`;
+	}
+	static Codename(diagram, preCurry, domFactors, homFactors)
+	{
+		return Element.Codename(diagram, LambdaMorphism.Basename(diagra, preCurry, domFactors, homFactors));
 	}
 	static Domain(diagram, preCurry, factors)
 	{
@@ -8399,7 +8456,7 @@ class HomMorphism extends MultiMorphism
 		if (morphisms.length !== 2)
 			throw 'not exactly two morphisms';
 		const nuArgs = U.clone(args);
-		nuArgs.name = HomMorphism.Codename(diagram, morphisms);
+		nuArgs.basename = HomMorphism.Basename(diagram, morphisms);
 		nuArgs.domain = HomMorphism.Domain(diagram, morphisms);
 		nuArgs.codomain = HomMorphism.Codomain(diagram, morphisms);
 		nuArgs.morphisms = morphisms;
@@ -8416,9 +8473,13 @@ class HomMorphism extends MultiMorphism
 		return this.morphisms.map((m, i) => m.$(args[i]));
 	}
 	*/
+	static Basename(diagram, morphisms)
+	{
+		return `Ho{${morphisms.map(m => m.name).join(',')}}oH`;
+	}
 	static Codename(diagram, morphisms)
 	{
-		return Element.Codename(diagram, `Ho{${morphisms.map(m => m.name).join(',')}}oH`);
+		return Element.Codename(diagram, HomMorphism.Basename(diagram, morphisms));
 	}
 	static Domain(diagram, morphisms)
 	{
@@ -8597,7 +8658,7 @@ class Evaluation extends Morphism
 		nuArgs.domain = diagram.getElement(args.domain);
 		if (!Evaluation.CanEvaluate(nuArgs.domain))
 			throw 'object for evaluation domain cannot be evaluated';
-		nuArgs.name = Evaluation.Codename(diagram, nuArgs.domain);
+		nuArgs.basename = Evaluation.Basename(diagram, nuArgs.domain);
 		nuArgs.codomain = nuArgs.domain.objects[0].objects[1];
 		nuArgs.properName = Evaluation.ProperName(nuArgs.domain);
 		nuArgs.category = diagram.codomain;
@@ -8632,9 +8693,13 @@ class Evaluation extends Morphism
 			HomObject.prototype.isPrototypeOf(object.objects[0]) &&
 			object.objects[0].objects[0].isEquivalent(object.objects[1]);
 	}
+	static Basename(diagram, object)
+	{
+		return `Ev{${object.name}}vE`;
+	}
 	static Codename(diagram, object)
 	{
-		return Element.Codename(diagram, `Ev{${object.name}}vE`);
+		return Element.Codename(diagram, Evaluation.Basename(diagram, object));
 	}
 	static ProperName(diagram, object)
 	{
@@ -8668,9 +8733,13 @@ class InitialMorphism extends Morphism
 	{
 		return true;	// null iterator
 	}
+	static Basename(diagram, codomain)
+	{
+		return `In{${codomain.name}}nI`;
+	}
 	static Codename(diagram, codomain)
 	{
-		return Element.Codename(diagram, `In{${codomain.name}}nI`);
+		return Element.Codename(diagram, InitialMorphism.Basename(diagram, codomain));
 	}
 	static Get(diagram, codomain)
 	{
@@ -8700,9 +8769,13 @@ class TerminalMorphism extends Morphism
 	{
 		return super.help(H.p('Terminal morphism'));
 	}
+	static Basename(diagram, domain)
+	{
+		return `Te{${domain.name}}eT`;
+	}
 	static Codename(diagram, domain)
 	{
-		return Element.Codename(diagram, `Te{${domain.name}}eT`);
+		return Element.Codename(diagram, TerminalMorphism.Basename(diagram, domain));
 	}
 	static Get(diagram, domain)
 	{
@@ -8743,7 +8816,7 @@ class Diagram extends Functor
 //			throw 'no basename for diagram';
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
-		nuArgs.category = U.getArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
+		nuArgs.category = U.GetArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
 		const indexName = `${nuArgs.basename}_Index`;
 		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`});
 		if (!Category.prototype.isPrototypeOf(nuArgs.codomain))
@@ -8757,18 +8830,18 @@ class Diagram extends Functor
 			args.references.map(r => this.addReference(r));
 		this.domain.makeHomSets();
 		this.selected = [];
-		this.viewport = U.getArg(args, 'viewport', {x:0, y:0, scale:1, width:D.Width(), height:D.Height()});
+		this.viewport = U.GetArg(args, 'viewport', {x:0, y:0, scale:1, width:D.Width(), height:D.Height()});
 		if (isGUI && this.viewport.width === 0)
 		{
 			this.viewport.width = window.innerWidth;
 			this.viewport.height = window.innerHeight;
 			this.viewport.scale = 1;
 		}
-		this.timestamp = U.getArg(args, 'timestamp', Date.now());
+		this.timestamp = U.GetArg(args, 'timestamp', Date.now());
 		this.texts = new Map();
 		if ('texts' in args)
 			args.texts.map(d => new DiagramText(this, d));
-		this.textId = U.getArg(args, 'textId', 0);
+		this.textId = U.GetArg(args, 'textId', 0);
 		this.colorIndex2colorIndex = {};
 		this.colorIndex2color = {};
 		this.link2colorIndex = {};
