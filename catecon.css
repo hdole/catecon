@@ -387,6 +387,7 @@ a:hover, .offcanvas a:focus
 .svgstr3 {fill:none; stroke:black; stroke-width:10px}
 .svgstr4 {fill:none; stroke:black; stroke-width:20px}
 .arrow0 {fill:none;	stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
+.arrow0rnd {fill:none;	stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;	stroke-linecap:round;}
 .arrow0-30px
 {
 	fill:			none;
