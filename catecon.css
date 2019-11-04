@@ -291,6 +291,11 @@ a:hover, .offcanvas a:focus
 	height:	32px;
 }
 
+.w100
+{
+	width:	100%;
+}
+
 .navbarTbl
 {
 	width:				100%;
