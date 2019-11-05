@@ -1790,13 +1790,15 @@ console.log('D.mouseover', D.mouseover);
 								{
 									if (!Morphism.prototype.isPrototypeOf(m))
 										continue;
-									if (m.domain.isEquivalent(from))
+									if (m.domain.name === target.name || m.codomain.name === target.name)
+										continue;
+									if (m.domain.to.isEquivalent(from.to))
 									{
 										m.domain.decrRefcnt();
 										m.domain = target;
 										D.MergeObjectsRefCnt(diagram, from, target);
 									}
-									else if (m.codomain.isEquivalent(from))
+									else if (m.codomain.to.isEquivalent(from.to))
 									{
 										m.codomain.decrRefcnt();
 										m.codomain = target;
@@ -5069,7 +5071,14 @@ class MultiObject extends CatObject
 	}
 	getFactor(factor)
 	{
-		return factor.length > 0 ? this.objects[factor[0]].getFactor(factor.slice(1)) : this;
+//		return factor.length > 0 ? this.objects[factor[0]].getFactor(factor.slice(1)) : this;
+		if (factor.length > 0)
+		{
+			if (factor[0] === -1)
+				return this.diagram.getElement('#1');
+			return this.objects[factor[0]].getFactor(factor.slice(1));
+		}
+		return this;
 	}
 	getFactorName(factor)
 	{
@@ -6343,7 +6352,7 @@ class LambdaMorphismAction extends Action
 			H.h4('Curry A &otimes; B -> [C, D]') +
 			H.h5('Domain Factors: A &otimes; B') +
 			H.small('Click to move to C') +
-			H.div(domain.getSubFactorBtnCode({dir:	0, fromId:'domainDiv', toId:'codomainDiv'}), '', 'domainDiv') +
+			H.div(this.getSubFactorBtnCode(domain, {dir:	0, fromId:'domainDiv', toId:'codomainDiv'}), '', 'domainDiv') +
 			H.h5('Codomain Factors: C') +
 			(HomObject.prototype.isPrototypeOf(codomain) ?
 				H.small('Merge to codomain hom') + D.GetButton('codhom', `R.diagram.toggleCodHom()`, 'Merge codomain hom', D.default.button.tiny) + H.br() : '') +
@@ -6353,6 +6362,24 @@ class LambdaMorphismAction extends Action
 																: '', '', 'codomainDiv') +
 			H.span(D.GetButton('edit', `R.diagram.activate(evt, 'lambdaMorphism')`, 'Curry morphism'));
 		D.help.innerHTML = html;
+	}
+//	lambdaForm(event, elt)
+//	{
+//		const from = this.getSelected();
+//		this.lambdaBtnForm(from.to.domain, from.to.codomain, from.to.domain.name);
+//	}
+	getSubFactorBtnCode(object, data)
+	{
+		let html = '';
+		// TODO
+		/*
+		if ('data' in expr)
+			for(let i=0; i<expr.data.length; ++i)
+				html += H.button(this.getObject(expr.data[i]).properName + H.sub(i), '', D.elementId(), '', `data-factor="${data.dir} ${i}" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
+		else
+			html += H.button(this.getObject(expr).properName, '', D.elementId(), '', `data-factor="${data.dir} -1" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
+			*/
+		return html;
 	}
 }
 
@@ -6587,7 +6614,13 @@ ${header}	return [args(0), ${jsName}_morphisms[args[0]](args[1])];${tail}`;
 ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`;
 						break;
 					case 'FactorMorphism':
-						// TODO
+//		const r = this.factors.map(f => f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
+//		return r.length === 1 ? r[0] : r;
+						code +=
+`const ${jsName}_factors = ${JSON.stringify(m.factors)};
+${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
+	return ${this.factors.length === 1 ? 'r[0]' : 'r'};
+${tail}`;
 						break;
 					case 'DiagonalMorphism':
 						code += `${header}	const a = [];\n	return a.fill(args, 0, ${m.count});${tail}`;
@@ -9092,9 +9125,9 @@ class Diagram extends Functor
 		const svg = `<g id="${id}">${sm.graph.svg(this, {index:[], dom, cod, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
 		D.diagramSVG.innerHTML += svg;
 	}
-	getSubFactorBtnCode(object, data)
-	{
-		let html = '';
+//	getSubFactorBtnCode(object, data)
+//	{
+//		let html = '';
 		// TODO
 		/*
 		if ('data' in expr)
@@ -9103,8 +9136,9 @@ class Diagram extends Functor
 		else
 			html += H.button(this.getObject(expr).properName, '', D.elementId(), '', `data-factor="${data.dir} -1" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 			*/
-		return html;
-	}
+//		return html;
+//	}
+	/*
 	lambdaForm(event, elt)
 	{
 		const from = this.getSelected();
@@ -9140,6 +9174,7 @@ class Diagram extends Functor
 			properNameElt.focus();
 		}
 	}
+	*/
 	// TODO move to action
 	createNamedIdentity(e)
 	{
@@ -9512,7 +9547,7 @@ console.log('canFuseObjects 2', a||b);
 		const object = this.getElement(root);
 		const factor = object.getFactor(indices);
 		const sub = indices.join();
-		div.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this);${action}"`);
+		div.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this)"`);
 	}
 	selectedFactorMorphism(e)		// TODO moved
 	{
