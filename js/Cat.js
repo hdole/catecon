@@ -34,6 +34,10 @@ class D2
 		{
 			this.x = x.x;
 			this.y = x.y;
+			if ('width' in x)
+				this.width = x.width;
+			if ('height' in x)
+				this.height = x.height;
 		}
 		else
 		{
@@ -43,7 +47,11 @@ class D2
 	}
 	add(w)
 	{
-		return new D2(this.x + w.x, this.y + w.y);
+//		return new D2(this.x + w.x, this.y + w.y);
+		const a = new D2(this);
+		a.x += w.x;
+		a.y += w.y;
+		return a;
 	}
 	angle()
 	{
@@ -199,6 +207,25 @@ class D2
 	static Eps()
 	{
 		return(0.0000001);
+	}
+	static Overlap(abox, bbox)
+	{
+		const aTopLeft = new D2(abox.x, abox.y);
+		const aBtmRight = new D2(abox.x + abox.width, abox.y + abox.height);
+		const aTopRight = new D2(abox.x + abox.width, abox.y);
+		const aBtmLeft = new D2(abox.x, abox.y + abox.height);
+		const bTopLeft = new D2(bbox.x, bbox.y);
+		const bBtmRight = new D2(bbox.x + bbox.width, bbox.y + bbox.height);
+		const bTopRight = new D2(bbox.x + bbox.width, bbox.y);
+		const bBtmLeft = new D2(bbox.x, bbox.y + bbox.height);
+		return D2.Inside(aTopLeft, bTopLeft, aBtmRight) ||
+			D2.Inside(aTopLeft, bBtmRight, aBtmRight) ||
+			D2.Inside(aTopLeft, bTopRight, aBtmRight) ||
+			D2.Inside(aTopLeft, bBtmLeft, aBtmRight) ||
+			D2.Inside(bTopLeft, aTopLeft, bBtmRight) ||
+			D2.Inside(bTopLeft, aBtmRight, bBtmRight) ||
+			D2.Inside(bTopLeft, aTopRight, bBtmRight) ||
+			D2.Inside(bTopLeft, aBtmLeft, bBtmRight);
 	}
 }
 
@@ -490,7 +517,6 @@ class R
 	}
 	static Initialize()
 	{
-console.log('stylesheets',document.styleSheets);
 		try
 		{
 			D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
@@ -893,7 +919,6 @@ Object.defineProperties(R,
 	CAT:				{value:null,	writable:true},		// working nat trans
 	Categories:			{value:new Map,	writable:false},	// available categories
 	Diagrams:			{value:new Map,	writable:false},		// available diagrams
-//	DiagramObject:		{value:null,	writable:true},		// class DiagramObject
 	Actions:			{value:null,	writable:true},		// loaded actions
 	Graph:				{value:null,	writable:true},		// loaded string graphs
 	categoryName:		{value:'',		writable:true},		// current category's name
@@ -1505,10 +1530,8 @@ class D
 		D.callbacks.map(f => f());
 		D.callbacks = [];
 		const pnt = diagram.mousePosition(e);
-console.log('mousedown',pnt);
 		if (D.mouseover)
 		{
-console.log('mouseover elt',D.mouseover);
 			if (!diagram.isSelected(D.mouseover) && !D.shiftKey)
 				diagram.deselectAll();
 			else if (D.toolbar.style.display === 'none')
@@ -1542,36 +1565,35 @@ console.log('mouseover elt',D.mouseover);
 			if (!diagram)
 				return;
 			const xy = diagram.mousePosition(e);
-			if (D.drag)
+			if (D.drag && !diagram.readonly)
 			{
 				if (diagram.selected.length > 0)
 				{
-					if (!diagram.readonly && diagram.selected.length === 1 && e.ctrlKey && !D.dragClone)
+					if (diagram.selected.length === 1)
 					{
 						const from = diagram.getSelected();
-						D.mouseover = diagram.findElement(xy, from.name);
-						const isolated = from.refcnt === 1;
-						if (DiagramObject.prototype.isPrototypeOf(from))		// ctrl-drag identity
+						if (e.ctrlKey && !D.dragClone)
 						{
-							diagram.activate(e, 'identity');
-							const id = diagram.getSelected();
-							id.codomain.setXY(xy);
-							diagram.makeSelected(e, id.codomain);	// restore from identity action
-							D.dragClone = true;
+							D.mouseover = diagram.findElement(xy, from.name);
+							const isolated = from.refcnt === 1;
+							if (DiagramObject.prototype.isPrototypeOf(from))		// ctrl-drag identity
+							{
+								diagram.activate(e, 'identity');
+								const id = diagram.getSelected();
+								id.codomain.setXY(xy);
+								diagram.makeSelected(e, id.codomain);	// restore from identity action
+								D.dragClone = true;
+							}
+							else if (DiagramMorphism.prototype.isPrototypeOf(from))	// ctrl-drag morphism copy
+							{
+								diagram.activate(e, 'copy', {offset: new D2});
+								D.dragClone = true;
+							}
 						}
-						else if (DiagramMorphism.prototype.isPrototypeOf(from))	// ctrl-drag morphism copy
+						else if (D.mouse.delta().nonZero())
 						{
-							diagram.activate(e, 'copy', {offset: new D2});
-							D.dragClone = true;
-						}
-					}
-					else if (D.mouse.delta().nonZero())
-					{
-						const skip = diagram.getSelected();
-						D.mouseover = diagram.findElement(xy, skip ? skip.name : '');
-						if (D.tool === 'select')
-						{
-							if (!diagram.readonly)
+							D.mouseover = diagram.findElement(xy, from.name);
+							if (D.tool === 'select')
 							{
 								diagram.updateDragObjects();
 								let msg = '';
@@ -1592,25 +1614,29 @@ console.log('mouseover elt',D.mouseover);
 									D.Status(e, msg);
 								}
 								if (msg !== '')
-									D.Status(e, msg);
+									from.updateGlow(true, 'glow');
+								else if (D.mouseover && !from.isFusible(D.mouseover))
+									from.updateGlow(true, 'badGlow');
+								else if (diagram.hasOverlap(from.svg().getBBox(), from.name))
+									from.updateGlow(true, 'badGlow');
+								else
+									from.updateGlow(false);
 							}
 						}
 					}
-				}
-				/*
-				else if (diagram.selected.length > 0 && D.mouse.delta().nonZero())		// TODO ???
-				{
-					const skip = diagram.getSelected();
-					D.mouseover = diagram.findElement(xy, skip ? skip.name : '');
-					if (D.tool === 'select')
-						if (!diagram.readonly)
-						{
+					else if (D.mouse.delta().nonZero())
+					{
+						const from = diagram.getSelected();
+						D.mouseover = diagram.findElement(xy, from.name);
+						if (D.tool === 'select')
 							diagram.updateDragObjects();
-//							diagram.updateFusible();
-						}
+					}
+					diagram.updateFusible();
 				}
-				*/
-				diagram.updateFusible();
+				else
+				{
+					diagram.updateFusible();
+				}
 				D.mouse.save = true;
 				D.HideToolbar();
 			}
@@ -1681,13 +1707,13 @@ console.log('mouseover elt',D.mouseover);
 				let didSomething = false;
 				if (diagram.selected.length === 1)
 				{
-					const dragged = diagram.getSelected();
-					const target = dragged.isEquivalent(D.mouseover) ? null : D.mouseover;
+					const from = diagram.getSelected();
+					const target = from.isEquivalent(D.mouseover) ? null : D.mouseover;
 					if (target)
 					{
-						if (diagram.isIsolated(dragged) && diagram.isIsolated(target))
+						if (diagram.isIsolated(from) && diagram.isIsolated(target))
 						{
-							const ary = [target, dragged];
+							const ary = [target, from];
 							const actions = diagram.codomain.actions;
 							let a = actions.has('product') ? actions.get('product') : null;
 							if (e.shiftKey && actions.has('coproduct'))
@@ -1697,17 +1723,17 @@ console.log('mouseover elt',D.mouseover);
 							if (a && a.hasForm(diagram, ary))
 							{
 								a.action(e, diagram, ary);
-								dragged.decrRefcnt();
+								from.decrRefcnt();
 								target.decrRefcnt();
 								didSomething = true;
 							}
 						}
-						else if (DiagramObject.prototype.isPrototypeOf(dragged) && DiagramObject.prototype.isPrototypeOf(target))
+						else if (DiagramObject.prototype.isPrototypeOf(from) && DiagramObject.prototype.isPrototypeOf(target))
 						{
-							if(dragged.isFusible(target))
+							if(from.isFusible(target))
 							{
 								diagram.deselectAll();
-								const morphisms = diagram.getElement(dragged);
+								const morphisms = diagram.getElement(from);
 									/*
 								if (morphisms.codomains.length > 0)
 								{
@@ -1774,6 +1800,7 @@ console.log('mouseover elt',D.mouseover);
 							}
 						}
 					}
+					from.updateGlow(false);
 				}
 				if (!diagram.readonly && didSomething)
 					D.SaveLocal(diagram);
@@ -2537,7 +2564,7 @@ Object.defineProperties(D,
 			layoutGrid:	15,
 			scale:		{base:1.05, limit:{min:0.05, max:20}},
 			scale3D:	1,
-			stdOffset:	new D2(150, 25),
+			stdOffset:	new D2(75, 25),
 			stdArrow:	new D2(150, 0),
 			toolbar:	{x:15, y:70},
 		},
@@ -4496,6 +4523,20 @@ if (this.basename === '')debugger;
 	{
 		return this.diagram && this.diagram.name === diagram.name;
 	}
+	updateGlow(on, glow)
+	{
+		const e = this.svg();
+		if (on)
+		{
+			e.classList.add(...[glow]);
+//			e.classList.remove(...['selected', 'grabbable', 'object']);
+		}
+		else
+		{
+//			e.classList.add(...['selected', 'grabbable', 'object']);
+			e.classList.remove(...['glow', 'badGlow']);
+		}
+	}
 	static Codename(diagram, basename)
 	{
 		return diagram ? `${diagram.name}/${basename}` : basename;
@@ -5378,10 +5419,10 @@ class DiagramText
 	{
 		return `dt_${this.name}`;
 	}
-	makeSVG()
+	getSVG()
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `nan in makeSVG`;
+			throw `nan in getSVG`;
 		let html = '';
 		if (this.description.indexOf('\n') > -1)		// multi-line svg
 		{
@@ -5498,10 +5539,10 @@ class DiagramObject extends CatObject
 		this.x = D.Grid(xy.x);
 		this.y = D.Grid(xy.y);
 	}
-	makeSVG()
+	getSVG()
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `nan in ${this.name}`;
+			throw `nan in getSVG`;
 		return `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
 			onmousedown="R.diagram.pickElement(evt, '${this.name}')">${this.to.properName}</text>`;
 	}
@@ -5692,9 +5733,9 @@ class NamedIdentityAction extends Action
 			const idx1 = new DiagramMorphism(diagram, {to:nid.idFrom, domain:nidIndex, codomain:sourceIndex});
 			const idx2 = new DiagramMorphism(diagram, {to:nid.idTo, codomain:nidIndex, domain:sourceIndex});
 			diagram.domain.makeHomSets();
-			nidIndex.makeSVG();
-			idx1.makeSVG();
-			idx2.makeSVG();
+//			nidIndex.makeSVG();
+//			idx1.makeSVG();
+//			idx2.makeSVG();
 			diagram.update();
 		}
 		catch(x)
@@ -6813,26 +6854,25 @@ class Category extends CatObject
 	process(diagram, args, elements = null)
 	{
 		let errMsg = '';
-//		if (args && 'elements' in args)
-			args.map(e =>
+		args.map(e =>
+		{
+			try
 			{
-				try
+				if (!this.getElement(e.name))
 				{
-					if (!this.getElement(e.name))
-					{
-						if (elements && elements.has(e.basename))
-							throw 'elements already has basename';
-						const element = Element.Process(diagram, e);
-						elements && elements.set(e.basename, element);
-					}
-					else
-						throw 'element already exists';
+					if (elements && elements.has(e.basename))
+						throw 'elements already has basename';
+					const element = Element.Process(diagram, e);
+					elements && elements.set(e.basename, element);
 				}
-				catch(x)
-				{
-					errMsg += x + '\n';
-				}
-			}, this);
+				else
+					throw 'element already exists';
+			}
+			catch(x)
+			{
+				errMsg += x + '\n';
+			}
+		}, this);
 		if ('Actions' in R && 'actions' in args)	// bootstrap issue
 			args.actions.map(a => this.actions.set(a, R.$Actions.getElement(a)));
 		if (errMsg != '')
@@ -6841,67 +6881,15 @@ class Category extends CatObject
 			if (Recursive.prototype.isPrototypeOf(m) && String.prototype.isPrototypeOf(m.recursor))
 				m.setRecursor(m.recursor);
 	}
-	/*
-	process(diagram, args, objects = null, morphisms = null)
-	{
-		let errMsg = '';
-		if (args && 'objects' in args)
-			args.objects.map(o =>
-			{
-				if (!this.getObject(o.name))
-				{
-					try
-					{
-						const object = CatObject.Process(diagram, o);
-						objects && objects.add(object);
-					}
-					catch(x)
-					{
-						errMsg += x + '\n';
-					}
-				}
-				else
-					throw 'object already exists';
-			}, this);
-		if (args && 'morphisms' in args)
-			args.morphisms.map(m =>
-			{
-				if (!this.getMorphism(m.name))
-				{
-					try
-					{
-						const morphism = Morphism.Process(diagram, m);
-						morphisms && morphisms.add(morphism);
-					}
-					catch(x)
-					{
-						errMsg += x + '\n';
-					}
-				}	// skip duplicates from auto-gens like named ids
-//				else
-//					errMsg += `morphism ${m.name} already exists\n`;
-			}, this);
-		if ('Actions' in R && 'actions' in args)	// bootstrap issue
-			args.actions.map(a => this.actions.set(a, R.$Actions.getObject(a)));
-		if (errMsg != '')
-			D.RecordError(errMsg);
-		for(const [key, m] of this.morphisms)
-			if (Recursive.prototype.isPrototypeOf(m) && String.prototype.isPrototypeOf(m.recursor))
-				m.setRecursor(m.recursor);
-	}
-	*/
 	json()
 	{
 		const a = super.json();
-//		a.objects = U.jsonArray(this.objects);
-//		a.morphisms = U.jsonArray(this.morphisms);
 		a.elements = U.jsonArray(this.elements);
 		a.actionDiagrams = new Array(this.actionDiagrams.values());
 		return a;
 	}
 	getElement(name)
 	{
-//		if (Element.prototype.isPrototypeOf(name))
 		if (typeof name === 'string')
 			return this.elements.get(name);
 		return name;
@@ -6918,51 +6906,8 @@ class Category extends CatObject
 	deleteElement(e)
 	{
 		this.elements.delete(e.name);
-		e.diagram && e.diagram.elements.delete(e);
+		e.diagram && e.diagram.elements.delete(e.basename);
 	}
-/*
-	getObject(name)
-	{
-//		if (Element.prototype.isPrototypeOf(name))
-		if (typeof name === 'string')
-			return this.objects.get(name);
-		return name;
-	}
-	addObject(o)
-	{
-		if (this.objects.has(o.name))
-			throw `Object with given name already exists in category`;
-		this.objects.set(o.name, o);
-		o.diagram && !DiagramObject.prototype.isPrototypeOf(o) && o.diagram.objects.add(o);
-	}
-	deleteObject(o)
-	{
-		this.objects.delete(o.name);
-		o.diagram && o.diagram.objects.delete(o);
-	}
-	getMorphism(name)
-	{
-		if (Morphism.prototype.isPrototypeOf(name))
-			return name;
-		return this.morphisms.has(name) ? this.morphisms.get(name) : null;
-	}
-	addMorphism(m)
-	{
-		if (this.getMorphism(m.name))
-			throw 'morphism with given name already exists in category';
-		this.morphisms.set(m.name, m);
-		m.diagram && !DiagramMorphism.prototype.isPrototypeOf(m) && m.diagram.morphisms.add(m);
-	}
-	deleteMorphism(m)
-	{
-		this.morphisms.delete(m.name);
-		m.diagram && m.diagram.morphisms.delete(m);
-	}
-	basenameIsUsed(name)
-	{
-		return this.getObject(name) || this.getMorphism(name);
-	}
-	*/
 	getAnon(s = 'Anon')
 	{
 		while(true)
@@ -7350,7 +7295,7 @@ class DiagramMorphism extends Morphism
 			normal.y *= 0.5;
 		return normal.scale(-D.default.font.height).add(mid);
 	}
-	makeSVG()
+	getSVG()
 	{
 		this.predraw();
 		const off = this.getNameOffset();
@@ -8838,7 +8783,7 @@ class Diagram extends Functor
 			this.viewport.scale = 1;
 		}
 		this.timestamp = U.GetArg(args, 'timestamp', Date.now());
-		this.texts = new Map();
+		this.texts = new Map;
 		if ('texts' in args)
 			args.texts.map(d => new DiagramText(this, d));
 		this.textId = U.GetArg(args, 'textId', 0);
@@ -8936,7 +8881,7 @@ class Diagram extends Functor
 	}
 	addSVG(element)
 	{
-		D.diagramSVG.innerHTML += typeof element === 'string' ? element : element.makeSVG();
+		D.diagramSVG.innerHTML += typeof element === 'string' ? element : element.getSVG();
 	}
 	gui(e, elt, fn)
 	{
@@ -9254,14 +9199,21 @@ class Diagram extends Functor
 	}
 	placeText(e, txt)
 	{
-		D.diagramSVG.innerHTML += txt.makeSVG();
+		D.diagramSVG.innerHTML += txt.getSVG();
 		this.makeSelected(e, txt);
 		this.update(e);
 	}
-	placeObject(e, to, xy)
+	placeObject(e, to, ixy)
 	{
-		const from = xy ? new DiagramObject(this, {xy:D.Grid(xy), to}) : new DiagramObject(this, {xy:D.Center(), to});
+		const xy = D.Grid(ixy ? ixy : D.Center());
+		const from = new DiagramObject(this, {xy, to});
 		this.addSVG(from);
+		const bbox = new D2(from.svg().getBBox());
+		let offbox = new D2(bbox);
+		while (this.hasOverlap(offbox, from.name))
+			offbox = offbox.add(D.default.stdOffset);
+		from.updatePosition(xy.add(offbox.subtract(bbox)));
+
 		this.makeSelected(e, from);
 		this.update();
 		D.objectPanel.update();
@@ -9445,6 +9397,27 @@ class Diagram extends Functor
 		}
 		return typeof elt === 'undefined' ? null : elt;
 	}
+	hasOverlap(bbox, except = '')
+	{
+		const foundit = {};
+		try
+		{
+			D.topSVG.querySelectorAll('.object, .morphTxt, .morphism, .diagramText').forEach(function(o)
+			{
+				if (o.dataset.name === except)
+					return;
+				if (D2.Overlap(bbox, new D2(o.getBBox())))
+					throw foundit;
+			}, this);
+		}
+		catch(x)
+		{
+			if (x === foundit)
+				return true;
+			throw x;
+		}
+		return false;
+	}
 			/*
 	canFuseObjects(dragFrom, targetFrom)
 	{
@@ -9540,7 +9513,7 @@ console.log('canFuseObjects 2', a||b);
 		let svg = '';
 		const fn = function(t)
 		{
-			svg += t.makeSVG();
+			svg += t.getSVG();
 		};
 		this.domain.elements.forEach(fn);
 		this.texts.forEach(fn);
@@ -9602,7 +9575,7 @@ console.log('canFuseObjects 2', a||b);
 				from[attr] = val;
 				const svg = from.svg();
 				if (attr === 'properName')
-					svg.outerHTML = from.makeSVG();
+					svg.outerHTML = from.getSVG();
 				D.textPanel.update();
 			}
 		}
