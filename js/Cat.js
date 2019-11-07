@@ -264,7 +264,7 @@ class H
 	static label(h, i)			{return `<label for="${i}">${h}</label>`; }
 //	static select(h, c, i, t, x) {return H.label(h, i) + H.x('select', '', c, i, t, x); }
 	static select(h, c, i, t, x) {return H.x('select', '', c, i, t, x); }
-	static option(h, v)			{return H.x('option', h, '', '', '', `value="${v}"`); }
+	static option(h, v, sel = false)			{return H.x('option', h, '', '', '', `${sel ? 'selected ' : ''}value="${v}"`); }
 	static del(elt) {elt.parentElement.removeChild(elt);}
 	static move(elt, toId) {document.getElementById(toId).appendChild(elt); }
 	static toggle(elt, here, there) {elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
@@ -587,6 +587,7 @@ class R
 				properName:		'ℂ𝕒𝕥',
 				user:			'MacLane',
 			});
+			/*
 			R.$Cat = new Diagram(R.$CAT,
 			{
 				basename:		'$Cat',
@@ -596,13 +597,14 @@ class R
 				description:	'diagram of currently loaded smaller categories',
 				user:			'MacLane',
 			});
+			*/
 			R.Actions = new Category(R.$CAT,
 			{
 				basename:		'Actions',
 				name:			'Actions',
 				properName:		'Actions',
 				description:	'discrete category of currently loaded actions',
-				user:			'MacLane',
+				user:			'sys',
 			});
 			R.$Actions = new Diagram(R.$CAT,
 			{
@@ -687,18 +689,18 @@ class R
 					R.initialized = true;
 					D.UpdateDiagramDisplay(R.diagram);
 				});
-			R.GraphCat = new Category(R.$CAT, {basename:'Graph', user:'system', properName:'𝔾𝕣𝕒'});
+			R.GraphCat = new Category(R.$CAT, {basename:'Graph', user:'sys', properName:'𝔾𝕣𝕒'});
 			R.cloud && R.cloud.initialize();
 			isGUI && D.panels.update();
+			R.Boot();
 			if (!isGUI)
 			{
 				exports.cloud =					R.cloud;
 				exports.default =				D.default;
 				exports.DeleteLocalDiagram =	R.DeleteLocalDiagram;
-				exports.$Cat =					R.$Cat;
+//				exports.$Cat =					R.$Cat;
 				exports.sep =					'-',
 				exports.user =					R.user;
-				exports.$Cat =					R.$Cat;
 //				exports.$PFS =					$PFS;
 //				exports.$Graph =				$Graph;
 				exports.Diagram =				Diagram;
@@ -724,6 +726,16 @@ class R
 			D.RecordError(e);
 		}
 	}
+	static Boot()
+	{
+		const pfs = new Category(R.$CAT,
+			{
+				basename:'PFS',
+				user:'hdole',
+				properName:'&Popf;&Fopf;&Sopf;',
+				actions:	['product', 'coproduct', 'hom'],
+			});
+	}
 // TODO unused
 	static fetchCategories(fn = null)
 	{
@@ -735,9 +747,9 @@ class R
 					data.map(cat =>
 					{
 //						if (!R.$Cat.getObject(cat.name))
-						if (!R.$Cat.getElement(cat.name))
+						if (!R.$CAT.getElement(cat.name))
 						{
-							const nuCat = new Category(R.$Cat, {name:cat.name, properName:cat.properName, description:cat.description, signature:cat.signature});
+							const nuCat = new Category(R.$CAT, {name:cat.name, properName:cat.properName, description:cat.description, signature:cat.signature});
 							R.catalog[nuCat] = {};
 						}
 					});
@@ -795,7 +807,6 @@ class R
 	*/
 	static SelectCategoryDiagram(categoryName, fn)
 	{
-//		const codomain = categoryName === 'Cat' ? R.Cat : R.Cat.getObject(categoryName);
 		const codomain = categoryName === 'Cat' ? R.Cat : R.Cat.getElement(categoryName);
 		R.SelectCategory(codomain, function()
 		{
@@ -850,7 +861,6 @@ class R
 			return R.CAT;
 		else if (name === 'Cat')
 			return R.Cat;
-//		return R.Cat ? R.Cat.getObject(name) : null;
 		return R.Cat ? R.Cat.getElement(name) : null;
 	}
 	static FetchDiagram(dgrmName, fn)
@@ -927,7 +937,6 @@ class R
 	static GetCategoriesInfo()
 	{
 		const info = new Map;
-//		R.$CAT.codomain.objects.forEach(function(o)
 		R.$CAT.codomain.elements.forEach(function(o)
 		{
 			if (Category.prototype.isPrototypeOf(o) && !IndexCategory.prototype.isPrototypeOf(o))
@@ -1493,7 +1502,8 @@ class D
 {
 	static Resize()
 	{
-		const diagram = R.$Cat !== null ? R.diagram : null;
+//		const diagram = R.$Cat !== null ? R.diagram : null;
+		const diagram = R.diagram;
 		const scale = diagram !== null ? diagram.viewport.scale : 1.0;
 		const width = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 		const height = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
@@ -3172,6 +3182,9 @@ class CategorySection extends Section
 			this.section.innerHTML = H.table(rows);
 		}
 	}
+	categoryRow(category, tb = '')
+	{
+	}
 }
 
 class CategoryPanel extends Panel
@@ -3187,8 +3200,9 @@ class CategoryPanel extends Panel
 			H.p(H.span('', 'description', 'category-description', 'Description') + H.span('', '', 'category-description-edit')) +
 			H.p(H.span('Actions: ', 'smallBold') + H.span('', 'left', 'category-actions')) +
 			H.p('User: ' + H.span('', '', 'category-user', 'User'), 'description');
-		this.categorySection = new NewCategorySection(this.elt);
-		this.newCategorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories');
+//		this.categorySection = new NewCategorySection(this.elt);
+		this.categorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories', deleteReferenceButton);
+		this.newCategorySection = new NewCategorySection(this.elt);
 		this.basenamelt = document.getElementById('category-basename');
 		this.properNameElt = document.getElementById('category-properName');
 		this.properNameEditElt = document.getElementById('category-properName-edit');
@@ -3460,12 +3474,12 @@ class DataPanel extends Panel
 	update()
 	{
 		this.dataView.innerHTML = '';
-		let dgrm = R.diagram;
-		if (dgrm !== null)
+		const diagram = R.diagram;
+		if (diagram)
 		{
-			if (dgrm.selected.length === 1 && DiagramMorphism.prototype.isPrototypeOf(dgrm.getSelected()))
+			if (diagram.selected.length === 1 && DiagramMorphism.prototype.isPrototypeOf(diagram.getSelected()))
 			{
-				let from = dgrm.getSelected();
+				let from = diagram.getSelected();
 				const to = from.to;
 				let tbl = '';
 				if (DataMorphism.prototype.isPrototypeOf(to))
@@ -3533,12 +3547,14 @@ class NewDiagramSection extends Section
 					H.tr(H.td(D.Input('', 'diagram-new-properName', 'Proper name')), 'sidenavRow') +
 					H.tr(H.td(H.input('', 'in100', 'diagram-new-description', 'text',
 						{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.diagramPanel.newDiagramSection.create, D.diagramPanel.newDiagramSection)"'})), 'sidenavRow')) +
+					H.tr(H.td(H.span('Target category', 'smallPrint') + H.select('', 'w100', 'diagram-new-codomain')), 'sidenavRow') +
 			H.span(D.GetButton('edit', 'D.diagramPanel.newDiagramSection.create(evt)', 'Create new diagram')) +
 			H.span('', 'error', 'diagram-new-error');
 		this.error = document.getElementById('diagram-new-error');
 		this.basenameElt = document.getElementById('diagram-new-basename');
 		this.properNameElt = document.getElementById('diagram-new-properName');
 		this.descriptionElt = document.getElementById('diagram-new-description');
+		this.codomainElt = document.getElementById('diagram-new-codomain');
 		this.update();
 	}
 	update()
@@ -3550,6 +3566,12 @@ class NewDiagramSection extends Section
 			this.properNameElt.value = '';
 			this.descriptionElt.value = '';
 			this.error.style.padding = '0px';
+			this.codomainElt.value = '';
+			let categories = '';
+			for (const [name, e] of R.$CAT.elements)
+				if (Category.prototype.isPrototypeOf(e) && !IndexCategory.prototype.isPrototypeOf(e) && e.user !== 'sys')
+					categories += H.option(e.properName, e.name, e.basename === 'Cat');
+			this.codomainElt.innerHTML = categories;
 		}
 	}
 	create(e)
@@ -4085,7 +4107,7 @@ class NewMorphismSection extends Section
 						H.tr(H.td(D.Input('', 'morphism-new-properName', 'Proper name')), 'sidenavRow') +
 						H.tr(H.td(H.input('', 'in100', 'morphism-new-description', 'text', {ph: 'Description',
 											x:'onkeydown="D.OnEnter(event, D.morphismPanel.newMorphismSection.create, D.morphismPanel.newMorphismSection)"'})), 'sidenavRow') +
-						H.tr(H.td(H.select('', 'in100 w100', 'morphism-new-domain')), 'sidenavRow') +
+						H.tr(H.td(H.select('', 'w100', 'morphism-new-domain')), 'sidenavRow') +
 						H.tr(H.td(H.select('', 'w100', 'morphism-new-codomain')), 'sidenavRow')
 			) +
 			H.span(D.GetButton('edit', 'D.morphismPanel.newMorphismSection.create(evt)', 'Create new morphism in this diagram')) +
@@ -4853,10 +4875,12 @@ class CatObject extends Element
 	{
 		return this;
 	}
+	/*
 	isEditable()		// Return true if the object has an editor for a web page
 	{
 		return false;	// fitb
 	}
+	*/
 	getGraph(data = {position:0})
 	{
 		const width = D.textWidth(this.properName);
@@ -5045,10 +5069,12 @@ class MultiObject extends CatObject
 		const f = this.getFactor(indices);
 		return `<tspan>${f.properName}</tspan>${U.subscript(indices)}`;
 	}
+	/*
 	isEditable()
 	{
 		return this.objects.reduce((r, o) => r = r && o.isEditable(), true);
 	}
+	*/
 	needsParens()
 	{
 		return true;
@@ -6232,14 +6258,13 @@ class EditDataMorphismAction extends Action
 		if (!diagram.readonly && ary.length === 1)
 		{
 			const from = ary[0];
-			// TODO isTerminal
 			return DataMorphism.prototype.isPrototypeOf(from.to) ||
 						(	from.to.constructor.name === 'Morphism' &&
-							from.to.refcnt === 1 &&
-							from.refcnt === 1 &&
+							from.to.domain.isIterable() &&
+							diagram.isIsolated(from));
 //							!from.to.domain.isInitial &&
 //							!from.to.codomain.isTerminal &&
-							from.to.domain.isEditable());
+//							from.to.domain.isEditable());
 		}
 		return false;
 	}
@@ -6894,15 +6919,21 @@ class DataAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const m = from.to;
-		if (m.constructor.name === 'Morphism')
+		const to = from.to;
+		if (to.constructor.name === 'Morphism')
 		{
+			/*
 			const args =
 			{
-				description:	`data morphism from ${m.domain.properName} to ${m.codomain.properName}`,
+				basename:		m.basename,
+				description:	m.description !== '' ? m.description : `data morphism from ${m.domain.properName} to ${m.codomain.properName}`,
 				properName:		m.properName,
 			}
-			from.setMorphism(new DataMorphism(diagram, args));
+			*/
+			diagram.codomain.deleteElement(to);
+//			const newTo = new FiniteObject(diagram, {basename:to.basename, category:diagram.codomain, properName:to.properName, size:this.sizeElt.value.trim()});
+			from.to = null;
+			from.setMorphism(new DataMorphism(diagram, to));
 			diagram.makeSelected(from);	// probably already was
 		}
 		D.dataPanel.open();
@@ -6911,9 +6942,13 @@ class DataAction extends Action
 	{
 		if (!diagram.readonly && ary.length === 1)
 		{
-			const m = ary[0].to;
-			if (diagram.elements.has(m.basename) && Morphism.prototype.isPrototypeOf(m) && m.domain.isIterable())
-				return  m.constructor.name === 'Morphism' || DataMorphism.prototype.isPrototypeOf(ary[0].to);
+			const from = ary[0];
+			if (diagram.isIsolated(from))
+			{
+				const to = ary[0].to;
+				if (diagram.elements.has(to.basename) && Morphism.prototype.isPrototypeOf(to) && to.domain.isIterable())
+					return  to.constructor.name === 'Morphism' || DataMorphism.prototype.isPrototypeOf(to);
+			}
 		}
 		return false;
 	}
@@ -6934,7 +6969,11 @@ class Category extends CatObject
 			actionDiagrams:	{value:	new Set('actionDiagrams' in nuArgs ? nuArgs.actionDiagrams : []),	writable:	false},
 		});
 		if (R.$CAT)
+		{
 			this.addActions('category');
+			if ('actionDiagrams' in nuArgs)
+				nuArgs.actionDiagrams.map(a => this.addActions(a));
+		}
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
 	}
 	help()
@@ -8200,13 +8239,14 @@ class DataMorphism extends Morphism
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.domain = this.getElement(args.domain);
-		if (nuArgs.domain.name !== 'N' || nuArgs.domain.name !== '#1')
-			throw 'Domain is not N or 1';
-		nuArgs.codomain = this.getElement(args.codomain);
-		if (!nuArgs.codomain.isEditable())
-			throw `codomain is not editable`;
-		nuArgs.category = diagram.codomain;
+		nuArgs.domain = diagram.getElement(args.domain);
+		if (!nuArgs.domain.isIterable())
+			throw 'domain not iterable';
+		nuArgs.codomain = diagram.getElement(args.codomain);
+//		if (!nuArgs.codomain.isEditable())
+//			throw `codomain is not editable`;
+		if (!('category' in nuArgs && Category.prototype.isPrototypeOf(nuArgs.category)))
+			nuArgs.category = nuArgs.diagram.codomain;
 		super(diagram, args);
 		this.data = U.GetArg(args, 'data', {});
 		this.limit = U.GetArg(args, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
