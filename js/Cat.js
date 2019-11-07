@@ -1758,10 +1758,10 @@ class D
 							if (a && a.hasForm(diagram, ary))
 							{
 								from.showSelected(false);
-								from.decrRefcnt();
-								target.decrRefcnt();
 								diagram.selected = [];
 								a.action(e, diagram, ary);
+								target.decrRefcnt();	// do not decrement earlier than this
+								from.decrRefcnt();
 								didSomething = true;
 							}
 						}
@@ -3201,7 +3201,7 @@ class CategoryPanel extends Panel
 			H.p(H.span('Actions: ', 'smallBold') + H.span('', 'left', 'category-actions')) +
 			H.p('User: ' + H.span('', '', 'category-user', 'User'), 'description');
 //		this.categorySection = new NewCategorySection(this.elt);
-		this.categorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories', deleteReferenceButton);
+		this.categorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories');
 		this.newCategorySection = new NewCategorySection(this.elt);
 		this.basenamelt = document.getElementById('category-basename');
 		this.properNameElt = document.getElementById('category-properName');
@@ -4428,8 +4428,8 @@ if (this.basename === '')debugger;
 	}
 	decrRefcnt()
 	{
-		if (R.debug)
-			console.log('Element.decrRefcnt', this.name, this.refcnt);
+//		if (R.debug)
+//			console.log('Element.decrRefcnt', this.name, this.refcnt);
 		--this.refcnt;
 	}
 	json()
@@ -4446,16 +4446,17 @@ if (this.basename === '')debugger;
 		a.readonly =	this.readonly;
 		if ('category' in this && this.category)
 			a.category = this.category.name;
-//		if ('user' in this)
-			a.user = this.user;
+		a.user = this.user;
 		if ('diagram' in this && this.diagram !== null)
 			a.diagram =	this.diagram.name;
 		return a;
 	}
+	/*
 	js(dgrmVarName = 'dgrm')
 	{
 		return `		new ${this.constructor.name}(${dgrmVarName}), ${this.stringify()};\n`;
 	}
+	*/
 	info()
 	{
 		const a =
@@ -4503,11 +4504,11 @@ if (this.basename === '')debugger;
 	removeSVG()
 	{
 		const svg = this.svg();
-		if (svg !== null)
-		{
-			svg.innerHTML = '';
+		if (svg)
+//		{
+//			svg.innerHTML = '';
 			svg.parentNode.removeChild(svg);
-		}
+//		}
 	}
 	elementId()
 	{
@@ -5625,10 +5626,11 @@ class CompositeAction extends Action
 	action(e, diagram, morphisms)
 	{
 		const to = Composite.Get(diagram, morphisms.map(m => m.to));
-		const from = new DiagramMorphism(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms)});
+		const from = new DiagramMorphism(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms), morphisms});
 		diagram.domain.makeHomSets();
-		from.morphisms = morphisms;
-		morphisms.map(m => m.incrRefcnt());
+//		from.morphisms = morphisms;
+//		morphisms.map(m => m.incrRefcnt());
+		diagram.domain.makeHomSets();
 		diagram.addSVG(from);
 		diagram.makeSelected(e, from);
 		diagram.update();
@@ -7325,7 +7327,10 @@ class DiagramMorphism extends Morphism
 		this.incrRefcnt();
 		this.flipName = U.GetArg(args, 'flipName', false);
 		if ('morphisms' in nuArgs)
+		{
 			this.morphisms = nuArgs.morphisms.map(m => diagram.domain.getElement(m));
+			this.morphisms.map(m => m.incrRefcnt());
+		}
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
 	}
 	help()
