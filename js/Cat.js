@@ -735,8 +735,14 @@ class R
 				properName:'&Popf;&Fopf;&Sopf;',
 				actions:	['product', 'coproduct', 'hom'],
 			});
+		const Narith = new Diagram(R.$CAT, {codomain: pfs, basename: 'Narithmetics', user: 'hdole', properName: '&Popf;&Fopf;&Sopf;'});
+		const N = new CatObject(Narith, {basename: 'N'});
+		const N2 = new ProductObject(Narith, {objects:[N, N]});
+		const Nadd = new Morphism(Narith, { basename: 'Nadd', domain:N2, codomain:N});
+		Nadd.code = {js:`${JavascriptAction.Header(Nadd)}	return args[0] + args[1];${JavascriptAction.Tail()}`};
+		Narith.placeMorphism(null, Nadd, D.Center());
 	}
-// TODO unused
+// TODO unused; move to cloud class?
 	static fetchCategories(fn = null)
 	{
 		fetch(R.cloud.getURL() + '/categories.json').then(function(response)
@@ -6584,7 +6590,7 @@ class JavascriptAction extends Action
 	}
 	header(m)
 	{
-		return `function ${this.jsName(m)}(args)\n{\n`;
+		return `function ${JavascriptAction.JsName(m)}(args)\n{\n`;
 	}
 	tail(m)
 	{
@@ -6597,7 +6603,7 @@ class JavascriptAction extends Action
 		if (m.constructor.name === 'Morphism')
 		{
 			/*
-			html += H.p(`${this.jsName(m)}(args)\n{`, 'code') + H.p(code, 'code indent', 'morphism-javascript') + H.p(`}`, 'code') +
+			html += H.p(`${JavascriptAction.JsName(m)}(args)\n{`, 'code') + H.p(code, 'code indent', 'morphism-javascript') + H.p(`}`, 'code') +
 					(this.isEditable(m) ? D.GetButton('edit', `R.diagram.setMorphismCode(event, 'morphism-javascript', 'javascript')`, 'Edit code', D.default.button.tiny): '');
 			*/
 			let code = 'code' in m ? ('javascript' in m.code ? m.code.javascript : '') : '';
@@ -6615,7 +6621,7 @@ class JavascriptAction extends Action
 			html = H.p(this.generate(m), 'code', 'morphism-javascript');
 		D.help.innerHTML = html;
 	}
-	jsName(e, cls = false)
+	static JsName(e, cls = false)
 	{
 		const s = e.name;
 		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_');
@@ -6641,7 +6647,7 @@ class JavascriptAction extends Action
 		switch(o.constructor.name)
 		{
 			case 'CatObject':
-				const jsn = this.jsName(o);
+				const jsn = JavascriptAction.JsName(o);
 				code += `'${jsn}'`;
 				break;
 			case 'ProductObject':
@@ -6652,6 +6658,14 @@ class JavascriptAction extends Action
 				break;
 		}
 		return code;
+	}
+	static Header(m)
+	{
+		return `function ${JavascriptAction.JsName(m)}(args)\n{\n`;
+	}
+	static Tail()
+	{
+		return `\n}\n`;
 	}
 	generate(m, generated = new Set)
 	{
@@ -6667,9 +6681,11 @@ class JavascriptAction extends Action
 			}
 	 		if (MultiMorphism.prototype.isPrototypeOf(m))
 				code += m.morphisms.map(n => this.generate(n, generated)).join('\n');
-			const jsName = this.jsName(m);
-			const header = `function ${jsName}(args)\n{\n`;
-			const tail = `\n}\n`;
+			const jsName = JavascriptAction.JsName(m);
+//			const header = `function ${jsName}(args)\n{\n`;
+			const header = JavascriptAction.Header(m);
+//			const tail = `\n}\n`;
+			const tail = JavascriptAction.Tail();
 			if (InitialObject.prototype.isPrototypeOf(m.domain))
 				code += `${header}	return;	// abandon computation\n'${tail}`;
 			else if (TerminalObject.prototype.isPrototypeOf(m.codomain))
@@ -6686,25 +6702,25 @@ class JavascriptAction extends Action
 							code += `${m.code.javascript}\n`;
 						break;
 					case 'Composite':
-						code += `${header}	${m.morphisms.map(n => this.jsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
+						code += `${header}	${m.morphisms.map(n => JavascriptAction.JsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
 						break;
 					case 'Identity':
 						code += `${header}	return args;${tail}`;
 						break;
 					case 'ProductMorphism':
-						code += `${header}	return [${m.morphisms.map((n, i) => this.jsName(n) + '(args[' + i + '])').join()}];${tail}`;
+						code += `${header}	return [${m.morphisms.map((n, i) => JavascriptAction.JsName(n) + '(args[' + i + '])').join()}];${tail}`;
 						break;
 					case 'CoproductMorphism':
 						code +=
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => this.jsName(n)).join()}];
+`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => JavascriptAction.JsName(n)).join()}];
 ${header}	return [args(0), ${jsName}_morphisms[args[0]](args[1])];${tail}`;
 						break;
 					case 'ProductAssembly':
-						code += `${header}	return [${m.morphisms.map((n, i) => this.jsName(n) + '(args)').join()}];${tail}`;
+						code += `${header}	return [${m.morphisms.map((n, i) => JavascriptAction.JsName(n) + '(args)').join()}];${tail}`;
 						break;
 					case 'CoproductAssembly':
 						code +=
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => this.jsName(n)).join()}];
+`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => JavascriptAction.JsName(n)).join()}];
 ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`;
 						break;
 					case 'FactorMorphism':
@@ -6789,8 +6805,8 @@ class RunAction extends Action
 		if (Morphism.prototype.isPrototypeOf(m) && m.isIterable())
 		{
 			const start = Date.now();
-			const jsName = this.jsAction.jsName(m);
-			const dmName = this.jsAction.jsName(m.morphisms[0]);
+			const jsName = this.jsAction.JsName(m);
+			const dmName = this.jsAction.JsName(m.morphisms[0]);
 			const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -8253,7 +8269,7 @@ class DataMorphism extends Morphism
 		if (!('category' in nuArgs && Category.prototype.isPrototypeOf(nuArgs.category)))
 			nuArgs.category = nuArgs.diagram.codomain;
 		super(diagram, args);
-		this.data = U.GetArg(args, 'data', {});
+		this.data = new Map(U.GetArg(args, 'data', []));
 		this.limit = U.GetArg(args, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 	}
 	help()
