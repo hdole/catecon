@@ -687,7 +687,7 @@ class R
 				function()
 				{
 					R.initialized = true;
-					D.UpdateDiagramDisplay(R.diagram);
+					D.UpdateDiagramDisplay();
 				});
 			R.GraphCat = new Category(R.$CAT, {basename:'Graph', user:'sys', properName:'𝔾𝕣𝕒'});
 			R.cloud && R.cloud.initialize();
@@ -736,11 +736,14 @@ class R
 				actions:	['product', 'coproduct', 'hom'],
 			});
 		const Narith = new Diagram(R.$CAT, {codomain: pfs, basename: 'Narithmetics', user: 'hdole', properName: '&Popf;&Fopf;&Sopf;'});
+		Narith.update();
 		const N = new CatObject(Narith, {basename: 'N'});
 		const N2 = new ProductObject(Narith, {objects:[N, N]});
 		const Nadd = new Morphism(Narith, { basename: 'Nadd', domain:N2, codomain:N});
 		Nadd.code = {js:`${JavascriptAction.Header(Nadd)}	return args[0] + args[1];${JavascriptAction.Tail()}`};
 		Narith.placeMorphism(null, Nadd, D.Center());
+
+		nArith.update();
 	}
 // TODO unused; move to cloud class?
 	static fetchCategories(fn = null)
@@ -841,7 +844,7 @@ class R
 			R.diagramName = name;
 			D.SetDefaultDiagram();
 			if (update)
-				D.UpdateDiagramDisplay(name);
+				D.UpdateDiagramDisplay();
 		}
 		R.diagram = R.$CAT.getElement(name);
 		if (!R.diagram)
@@ -1142,7 +1145,7 @@ class Amazon extends Cloud
 					});
 					R.SelectCategoryDiagram(D.LocalStorageCategoryName(), function()
 					{
-						D.UpdateDiagramDisplay(R.diagram);
+						D.UpdateDiagramDisplay();
 					});
 				});
 			});
@@ -1271,7 +1274,7 @@ class Amazon extends Cloud
 					D.loginPanel.toggle();
 					R.SelectCategoryDiagram(D.LocalStorageCategoryName(), function()
 					{
-						D.UpdateDiagramDisplay(R.diagram);
+						D.UpdateDiagramDisplay();
 					});
 					D.setLocalStorageDefaultCategory();
 					D.SetDefaultDiagram();
@@ -1302,7 +1305,7 @@ class Amazon extends Cloud
 		R.user.status = 'unauthorized';
 		R.SelectCategoryDiagram(D.LocalStorageCategoryName(), function()
 		{
-			D.UpdateDiagramDisplay(R.diagram);
+			D.UpdateDiagramDisplay();
 		});
 		D.navbar.update();
 		Panels.update();
@@ -2217,7 +2220,7 @@ ${D.Button(onclick)}
 		else
 			process.exit(1);
 	}
-	static UpdateDiagramDisplay(name)
+	static UpdateDiagramDisplay()
 	{
 		if (!R.initialized)
 			return;
@@ -2225,7 +2228,9 @@ ${D.Button(onclick)}
 		D.objectPanel.update();
 		D.morphismPanel.update();
 		D.textPanel.update();
-		D.diagramSVG.innerHTML = R.diagram.makeAllSVG();
+//		D.diagramSVG.innerHTML = R.diagram.makeSvg();
+		R.diagram.makeSvg();
+//		R.diagramSVG.innerHTML = R.Diagram.svg;
 		D.diagramPanel.setToolbar(R.diagram);
 		R.diagram.update(false);	// do not save
 		R.diagram.updateMorphisms();
@@ -8888,6 +8893,7 @@ class Diagram extends Functor
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
 			this.domain.process(this, nuArgs.domainElements);
+		this.svgRoot = '';
 	}
 	help()
 	{
@@ -8974,7 +8980,8 @@ class Diagram extends Functor
 	}
 	addSVG(element)
 	{
-		D.diagramSVG.innerHTML += typeof element === 'string' ? element : element.getSVG();
+//		D.diagramSVG.innerHTML += typeof element === 'string' ? element : element.getSVG();
+		this.svgRoot += typeof element === 'string' ? element : element.getSVG();
 	}
 	gui(e, elt, fn)
 	{
@@ -8992,6 +8999,7 @@ class Diagram extends Functor
 	}
 	update(save = true)
 	{
+		D.diagramSVG.innerHTML = this.svgRoot;
 		this.setView();
 		save && D.SaveLocal(this);
 	}
@@ -9122,7 +9130,7 @@ class Diagram extends Functor
 		const dom = {x:from.domain.x - from.domain.width/2, y:from.domain.y, name:from.domain.name};
 		const cod = {x:from.codomain.x - from.codomain.width/2, y:from.codomain.y, name:from.codomain.name};
 		const svg = `<g id="${id}">${sm.graph.svg(this, {index:[], dom, cod, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
-		D.diagramSVG.innerHTML += svg;
+		this.svgRoot += svg;
 	}
 //	getSubFactorBtnCode(object, data)
 //	{
@@ -9244,7 +9252,7 @@ class Diagram extends Functor
 	}
 	placeText(e, txt)
 	{
-		D.diagramSVG.innerHTML += txt.getSVG();
+		this.svgRoot += txt.getSVG();
 		this.makeSelected(e, txt);
 		this.update(e);
 	}
@@ -9517,7 +9525,7 @@ class Diagram extends Functor
 		return new DataMorphism(this.codomain, {name, properName:name.slice(0, 9) + '&hellip;', diagram:this.name, domain:dom.name, codomain:cod.name});
 	}
 	*/
-	makeAllSVG()
+	makeSvg()
 	{
 		let svg = '';
 		const fn = function(t)
@@ -9526,7 +9534,8 @@ class Diagram extends Functor
 		};
 		this.domain.elements.forEach(fn);
 		this.texts.forEach(fn);
-		return svg;
+		this.svgRoot = svg;
+//		return svg;
 	}
 	upload(e, fn = null)
 	{
