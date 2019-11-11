@@ -694,13 +694,6 @@ class R
 			D.RecordError(e);
 		}
 	}
-	static BootMorphism(diagram, basename, domain, codomain, properName, description, jsCode, xy)
-	{
-		const m = new Morphism(diagram, {basename, domain, codomain, properName, description});
-		m.code = {js:`${JavascriptAction.Header(m)}	return args[0] + args[1];${JavascriptAction.Tail()}`};
-		diagram.placeMorphism(null, m, xy);
-		xy.y += 100;
-	}
 	static GetUserDiagram(user)
 	{
 		let d = R.UserDiagram.get(user);
@@ -717,6 +710,20 @@ class R
 		R.UserDiagram.set(user, d);
 		return d;
 	}
+	static ProcessBootDiagram(diagram, elements)
+	{
+		let xy = new D2(300, 300);
+		elements.map(e =>
+		{
+			const element = Element.Process(diagram, e);
+			if (Morphism.prototype.isPrototypeOf(element))
+			{
+				diagram.placeMorphism(null, element, xy);
+				xy.y += 6 * D.default.layoutGrid;
+			}
+		});
+		diagram.update();
+	}
 	static Boot()
 	{
 		const user = 'hdole';
@@ -728,16 +735,118 @@ class R
 				actions:	['product', 'coproduct', 'hom'],
 			});
 		const userDiagram = R.GetUserDiagram(user);
-		const Narith = new Diagram(userDiagram, {codomain: pfs, basename: 'Narithmetics', user: 'hdole', properName: '&Popf;&Fopf;&Sopf;'});
+
+		const logic = new Diagram(userDiagram, {codomain: pfs, basename: 'logic', user: 'hdole', properName: 'Logic',
+			description:'Basic logic functions'});
+		logic.makeSvg();
+		R.AddDiagram(logic);
+		const logicElements = [
+		{"description":"The sub-object classifier, or better known as the two point set",
+			"basename":"two",
+			"size":2,
+			"prototype":"FiniteObject",
+			"category":"hdole/PFS",
+			"user":"hdole",
+		},
+		{"description":"A pair of 2's",
+			"prototype":"ProductObject",
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"objects":["two", "two"]},
+		{"description":"And of two logic values",
+			"basename":"and",
+			"prototype":"Morphism",
+			"properName":"and",
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"domain":"hdole/PFS/logic/Po{hdole/PFS/logic/two,hdole/PFS/logic/two}oP",
+			"codomain":"two",
+			"code":{"javascript":"function hdole_PFS_logic_add(args)\n{\n\treturn args[0] + args[1];\n}\n"}},
+
+			/*
+		{"description":"multipley two natural numbers",
+			"basename":"mult",
+			"name":"hdole/PFS/Narithmetics/mult",
+			"prototype":"Morphism",
+			"properName":"mult",
+			"readonly":false,
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"domain":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
+			"codomain":"hdole/PFS/Narithmetics/N",
+			"code":{"javascript":"function hdole_PFS_Narithmetics_mult(args)\n{\n\treturn args[0] * args[1];\n}\n"}},
+		{"description":"add one",
+			"basename":"succ",
+			"name":"hdole/PFS/Narithmetics/succ",
+			"prototype":"Morphism",
+			"properName":"succ",
+			"readonly":false,
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"domain":"hdole/PFS/Narithmetics/N",
+			"codomain":"hdole/PFS/Narithmetics/N",
+			"code":{"javascript":"function hdole_PFS_Narithmetics_succ(args)\n{\n\treturn args[0] +1;\n}\n"}}
+			*/
+			];
+		R.ProcessBootDiagram(logic, logicElements);
+
+		const Narith = new Diagram(userDiagram, {codomain: pfs, basename: 'Narithmetics', user: 'hdole', properName: '&Nopf; Arithmetics',
+			description:'Arithmetic functions for natural numbers'});
 		Narith.makeSvg();
 		R.AddDiagram(Narith);
-		const N = new CatObject(Narith, {basename: 'N'});
-		const N2 = new ProductObject(Narith, {objects:[N, N]});
-		let xy = new D2(300, 300);
-		R.BootMorphism(Narith, 'add',	N2,	N, 'add',	'	return args[0] + args[1];', 'add two natural numbers', xy);
-		R.BootMorphism(Narith, 'mult',	N2,	N, 'mult',	'	return args[0] * args[1];', 'multipley two natural numbers', xy);
-		R.BootMorphism(Narith, 'succ',	N,	N, 'succ',	'	return args[0] +1;', 'add one', xy);
-		Narith.update();
+		const NarithElements = [
+		{"description":"the natural numbers",
+			"basename":"N",
+//			"name":"hdole/PFS/Narithmetics/N",
+			"prototype":"CatObject",
+			"properName":"N",
+//			"readonly":false,
+//			"category":"hdole/PFS",
+			"user":"hdole",},
+		{"description":"A pair of natural numbers",
+			"basename":"Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
+//			"name":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
+			"prototype":"ProductObject",
+			"properName":"N&times;N",
+//			"readonly":false,
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"objects":["hdole/PFS/Narithmetics/N", "hdole/PFS/Narithmetics/N"]},
+		{"description":"add two natural numbers",
+			"basename":"add",
+//			"name":"hdole/PFS/Narithmetics/add",
+			"prototype":"Morphism",
+			"properName":"add",
+//			"readonly":false,
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"domain":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
+			"codomain":"hdole/PFS/Narithmetics/N",
+			"code":{"javascript":"function hdole_PFS_Narithmetics_add(args)\n{\n\treturn args[0] + args[1];\n}\n"}},
+		{"description":"multipley two natural numbers",
+			"basename":"mult",
+//			"name":"hdole/PFS/Narithmetics/mult",
+			"prototype":"Morphism",
+			"properName":"mult",
+//			"readonly":false,
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"domain":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
+			"codomain":"hdole/PFS/Narithmetics/N",
+			"code":{"javascript":"function hdole_PFS_Narithmetics_mult(args)\n{\n\treturn args[0] * args[1];\n}\n"}},
+		{"description":"add one",
+			"basename":"succ",
+//			"name":"hdole/PFS/Narithmetics/succ",
+			"prototype":"Morphism",
+			"properName":"succ",
+//			"readonly":false,
+			"category":"hdole/PFS",
+			"user":"hdole",
+			"domain":"hdole/PFS/Narithmetics/N",
+			"codomain":"hdole/PFS/Narithmetics/N",
+			"code":{"javascript":"function hdole_PFS_Narithmetics_succ(args)\n{\n\treturn args[0] +1;\n}\n"}}];
+		R.ProcessBootDiagram(Narith, NarithElements);
+
 	}
 // TODO unused; move to cloud class?
 	static fetchCategories(fn = null)
@@ -1467,11 +1576,8 @@ class Navbar
 	constructor()
 	{
 		this.element = document.getElementById('navbar');
-		this.category = null;
+//		this.category = null;
 		this.diagram = null;
-	}
-	update()
-	{
 		const sz = D.default.button.large;
 		const left = H.td(H.div(D.GetButton('category', "D.categoryPanel.toggle()", 'Categories', sz))) +
 			H.td(H.div(D.GetButton('diagram', "D.diagramPanel.toggle()", 'Diagrams', sz))) +
@@ -1488,13 +1594,27 @@ class Navbar
 			H.td(H.div(D.GetButton('settings', "D.settingsPanel.toggle()", 'Settings', sz))) +
 			H.td('&nbsp;&nbsp;&nbsp;');
 		const html = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
-									H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
+//									H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
+									H.td(H.span('', 'navbar-inset', 'user-navbar'), 'w20') +
 									H.td(H.span('Catecon', 'title'), 'w20') +
 									H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
 									H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
 		this.element.innerHTML = html;
-		this.category = document.getElementById('category-navbar');
-		this.diagram = document.getElementById('diagram-navbar');
+		this.userElt = document.getElementById('user-navbar');
+		this.diagramElt = document.getElementById('diagram-navbar');
+		this.diagramElt.addEventListener('mouseenter', function(e)
+		{
+			const title = R.diagram ? `${R.diagram.properName} ${H.span('by '+R.diagram.user, 'italic')}: ${U.cap(R.diagram.description)}` : '';
+			D.Status(e, title);
+		}, true);
+	}
+	update()
+	{
+		if (R.diagram && R.diagram !== this.diagram)
+		{
+			this.diagram = R.diagram;
+			this.diagramElt.innerHTML = R.diagram ? R.diagram.properName : '';
+		}
 		let c = '#CCC';
 		switch(R.user.status)
 		{
@@ -1512,9 +1632,8 @@ class Navbar
 				break;
 		}
 		this.element.style.background = c;
-		this.category.innerHTML = R.category ? R.category.name : '';
-		this.diagram.innerHTML = R.diagram ? `${R.diagram.properName} ${H.span('by '+R.diagram.user, 'italic')}` : '';
-		this.diagram.title = R.diagram ? U.cap(R.diagram.description) : '';
+		this.userElt.innerHTML = R.user.name;
+//		this.diagramElt.innerHTML = R.diagram ? `${R.diagram.properName} ${H.span('by '+R.diagram.user, 'italic')}` : '';
 	}
 }
 
@@ -1523,6 +1642,7 @@ class D
 	static Initialize()
 	{
 		D.ReadDefaults();
+		D.navbar =			new Navbar;
 		D.navbar.update();
 		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
@@ -1539,23 +1659,23 @@ class D
 		D.bracketWidth = D.textWidth('[');
 		D.diagramSVG =		document.getElementById('diagramSVG');
 		D.Panel = 			Panel;
-		D.panels =			new Panels();
-		D.categoryPanel =	new CategoryPanel();
-		D.dataPanel =		new DataPanel();
-		D.diagramPanel =	new DiagramPanel();
+		D.panels =			new Panels;
+		D.categoryPanel =	new CategoryPanel;
+		D.dataPanel =		new DataPanel;
+		D.diagramPanel =	new DiagramPanel;
 		D.DiagramPanel =	DiagramPanel;
-		D.helpPanel =		new HelpPanel();
-		D.loginPanel =		new LoginPanel();
-		D.morphismPanel =	new MorphismPanel();
+		D.helpPanel =		new HelpPanel;
+		D.loginPanel =		new LoginPanel;
+		D.morphismPanel =	new MorphismPanel;
 		D.MorphismPanel =	MorphismPanel;
-		D.objectPanel =		new ObjectPanel();
+		D.objectPanel =		new ObjectPanel;
 		D.ObjectPanel =		ObjectPanel;
-		D.settingsPanel =	new SettingsPanel();
+		D.settingsPanel =	new SettingsPanel;
 		D.SettingsPanel =	SettingsPanel;
-		D.textPanel =		new TextPanel();
+		D.textPanel =		new TextPanel;
 		D.TextPanel =		TextPanel;
-		D.threeDPanel =		new ThreeDPanel();
-		D.ttyPanel =		new TtyPanel();
+		D.threeDPanel =		new ThreeDPanel;
+		D.ttyPanel =		new TtyPanel;
 		D.panels.update();
 	}
 	static SaveDefaults()
@@ -1943,7 +2063,7 @@ class D
 		D.help.innerHTML = '';
 		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, '',
 			'toolbar-drag-handle');
-		if (!R.diagram.readonly)
+		if (R.diagram.isEditable())
 			diagram.codomain.actions.forEach(function(a, n)
 			{
 				if (a.hasForm(R.diagram, diagram.selected))
@@ -2740,7 +2860,7 @@ Object.defineProperties(D,
 						},
 	'mouseIsDown':		{value: false,		writable: true},	// is the mouse key down? the onmousedown attr is not connected to mousedown or mouseup
 	'mouseover':		{value: null,		writable: true},
-	'navbar':			{value: new Navbar(),		writable: false},
+	'navbar':			{value: null,		writable: true},
 	'objectPanel':		{value: null,		writable: true},
 	'Panel':			{value: null,		writable: true},
 	'panels':			{value: null,		writable: true},
@@ -3254,27 +3374,28 @@ class CategoryPanel extends Panel
 		this.actionsElt = document.getElementById('category-actions');
 		this.userElt = document.getElementById('category-user');
 		this.timestampElt = document.getElementById('category-timestamp');
+		this.category = R.category;
 		this.initialize();
 	}
 	update()
 	{
 		this.newCategorySection.update();
 		this.categorySection.update();
-		const category = R.category;
-		if (category)
+//		const category = R.category;
+		if (R.category && this.category !== R.category)
 		{
+			this.category = R.category;
 			D.navbar.update();
-			this.properNameElt.innerHTML = category.properName;
-			this.descriptionElt.innerHTML = category.description;
-			this.userElt.innerHTML = category.user;
-//			const isEditable = !category.readonly && category.user === R.user.name;
-			const isEditable = category.isEditable();
+			this.properNameElt.innerHTML = this.category.properName;
+			this.descriptionElt.innerHTML = this.category.description;
+			this.userElt.innerHTML = this.category.user;
+			const isEditable = this.category.isEditable();
 			this.properNameEditElt.innerHTML = isEditable ?
 				D.GetButton('edit', `R.category.editElementText(event, 'category-properName', 'properName')`, 'Retitle', D.default.button.tiny) : '';
 			this.descriptionEditElt.innerHTML = isEditable ?
 				D.GetButton('edit', `D.diagramPanel.setDiagramDescription()`, 'Edit description', D.default.button.tiny) : '';
 			const actions = [];
-			category.actions.forEach(function(a) { actions.push(U.DeCamel(a.properName)); });
+			this.category.actions.forEach(function(a) { actions.push(U.DeCamel(a.properName)); });
 			this.actionsElt.innerHTML = actions.join(', ');
 		}
 	}
@@ -3750,30 +3871,32 @@ class DiagramPanel extends Panel
 		this.userElt = document.getElementById('diagram-user');
 		this.timestampElt = document.getElementById('diagram-timestamp');
 		this.diagramPanelToolbarElt = document.getElementById('diagramPanelToolbar');
+		this.diagram = R.diagram;
 	}
 	update()
 	{
-		const diagram = R.diagram;
-		if (diagram)
+//		const diagram = R.diagram;
+		if (R.diagram && R.diagram !== this.diagram)
 		{
-			this.referenceSection.setDiagrams(diagram.references);
+			this.diagram = R.diagram;
+			this.referenceSection.setDiagrams(this.diagram.references);
 			this.userDiagramsSection.setDiagrams(R.Diagrams);
 			this.allDiagramsSection.setDiagrams(R.Diagrams);
 			D.navbar.update();
-			this.properNameElt.innerHTML = diagram.properName;
-			this.descriptionElt.innerHTML = diagram.description;
-			this.userElt.innerHTML = diagram.user;
-			this.properNameEditElt.innerHTML = diagram.readonly ? '' :
+			this.properNameElt.innerHTML = this.diagram.properName;
+			this.descriptionElt.innerHTML = this.diagram.description;
+			this.userElt.innerHTML = this.diagram.user;
+			this.properNameEditElt.innerHTML = !this.diagram.isEditable() ? '' :
 				D.GetButton('edit', `R.diagram.editElementText(event, 'diagram-properName', 'properName')`, 'Retitle', D.default.button.tiny);
-			this.descriptionEditElt.innerHTML = diagram.readonly ? '' :
+			this.descriptionEditElt.innerHTML = !this.diagram.isEditable() ? '' :
 				D.GetButton('edit', `D.diagramPanel.setDiagramDescription()`, 'Edit description', D.default.button.tiny);
-			this.setToolbar(diagram);
+			this.setToolbar(this.diagram);
 		}
 	}
 	setDiagramDescription()
 	{
 		const diagram = R.diagram;
-		if (!diagram.readonly && this.descriptionElt.contentEditable === 'true' && this.descriptionElt.textContent !== '')
+		if (diagram.isEditable() && this.descriptionElt.contentEditable === 'true' && this.descriptionElt.textContent !== '')
 		{
 			R.diagram.description = this.descriptionElt.textContent;	// TODO safety check
 			this.descriptionElt.contentEditable = false;
@@ -4051,7 +4174,7 @@ class NewObjectSection extends Section
 		try
 		{
 			const diagram = R.diagram;
-			if (diagram.readonly)
+			if (!diagram.isEditable())
 				throw 'diagram is read only';
 			const basename = U.htmlSafe(this.basenameElt.value);
 			const name = Element.Codename(diagram, basename);
@@ -4101,7 +4224,7 @@ class ObjectSection extends Section
 				{
 					if (!CatObject.prototype.isPrototypeOf(o))
 						continue;
-					const deletable = D.showInternals && o.refcnt === 0 && !(o.diagram && o.diagram.readonly);
+					const deletable = D.showInternals && o.refcnt === 0 && o.diagram && o.diagram.isEditable();
 					rows += H.tr(
 						(D.showInternals ?
 							H.td(o.refcnt.toString()
@@ -4126,17 +4249,30 @@ class ObjectPanel extends Panel
 			H.h3('Objects');
 		this.newObjectSection = new NewObjectSection(this.elt);
 		this.diagramObjectSection = new ObjectSection('Diagram', this.elt, `object-diagram-section`, 'Objects in the current diagram');
+		this.refDiv = document.createElement('div');
+		this.elt.appendChild(this.refDiv);
 		this.categoryObjectSection = new ObjectSection('Category', this.elt, `object-category-section`, 'Objects in the current category');
 		this.initialize();
+		this.diagram = null;
+		this.references = [];
 		// TODO references
 	}
 	update()
 	{
 		this.newObjectSection.update();
-		if (R.diagram)
+		if (R.diagram && this.diagram !== R.diagram)
 		{
-			this.diagramObjectSection.setObjects(R.diagram.elements);
-			this.categoryObjectSection.setObjects(R.diagram.codomain.elements);
+			this.references.map(r => this.refDiv.removeChild(r.elt));
+			this.references = [];
+			this.diagram = R.diagram;
+			this.diagramObjectSection.setObjects(this.diagram.elements);
+			this.diagram.references.forEach(function(r)
+			{
+				const os = new ObjectSection(r.properName, this.refDiv, `object-reference-${r.name}`, 'Objects in the reference category');
+				os.setObjects(r.elements);
+				this.references.push(os);
+			}, this);
+			this.categoryObjectSection.setObjects(this.diagram.codomain.elements);
 		}
 	}
 }
@@ -4188,7 +4324,7 @@ class NewMorphismSection extends Section
 		try
 		{
 			const diagram = R.diagram;
-			if (diagram.readonly)
+			if (!diagram.isEditable())
 				throw 'Diagram is read only';
 			const basename = U.htmlSafe(this.basenameElt.value);
 			const name = Element.Codename(diagram, basename);
@@ -4366,7 +4502,7 @@ class TextSection extends Section
 		{
 			rows += H.tr(	H.td(H.table(H.tr(H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text'))), 'buttonBarLeft')) +
 							H.td(H.span(t.description, 'tty', `edit_${t.name}`) +
-								(diagram.readonly ? '' :
+								(!diagram.isEditable() ? '' :
 									D.GetButton('edit', `R.diagram.getElement('${t.name}').editText(evt, 'edit_${t.name}')`, 'Edit', D.default.button.tiny)),
 										'left'), 'sidenavRow');
 		});
@@ -4954,7 +5090,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	}
 	static Basename(basename, size)
 	{
-		return size === '' ? basename : `${basename}#${Number.parseInt(size)}`;
+		return basename === '' ? (size === '' ? basename : `${basename}#${Number.parseInt(size)}`) : basename;
 	}
 	static Codename(diagram, basename, size)
 	{
@@ -5655,7 +5791,7 @@ class CompositeAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (!diagram.readonly && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && DiagramMorphism.prototype.isPrototypeOf(r), true))
+		if (diagram.isEditable() && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && DiagramMorphism.prototype.isPrototypeOf(r), true))
 		{
 			let cod = ary[0].codomain;
 			for(let i=1; i<ary.length; ++i)
@@ -5694,7 +5830,7 @@ class IdentityAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5763,7 +5899,7 @@ class NamedIdentityAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5801,7 +5937,7 @@ class CopyAction extends Action
 	}
 	hasForm(diagram, ary)	// one element
 	{
-		return !diagram.readonly && ary.length === 1;
+		return diagram.isEditable() && ary.length === 1;
 	}
 }
 
@@ -5840,7 +5976,7 @@ class ProductAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return !diagram.readonly && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
 	}
 }
@@ -5881,7 +6017,7 @@ class DiagonalAction extends Action
 	{
 		if (ary.length !== 1 )
 			return false;
-		return !diagram.readonly && CatObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && CatObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5920,7 +6056,7 @@ class CoproductAction extends Action
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		return !diagram.readonly && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
 	}
 }
@@ -5960,7 +6096,7 @@ class FoldAction extends Action
 	{
 		if (ary.length !== 1 )
 			return false;
-		return !diagram.readonly && CatObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && CatObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -5996,7 +6132,7 @@ class PullbackAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return !diagram.readonly && Category.IsSink(ary);
+		return diagram.isEditable() && Category.IsSink(ary);
 	}
 }
 
@@ -6032,7 +6168,7 @@ class PushoutAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return !diagram.readonly && Category.IsSource(ary);
+		return diagram.isEditable() && Category.IsSource(ary);
 	}
 }
 
@@ -6056,7 +6192,7 @@ class ProductAssemblyAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return !diagram.readonly && Category.IsSource(ary);
+		return diagram.isEditable() && Category.IsSource(ary);
 	}
 }
 
@@ -6080,7 +6216,7 @@ class CoproductAssemblyAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return !diagram.readonly && Category.IsSink(ary);
+		return diagram.isEditable() && Category.IsSink(ary);
 	}
 }
 
@@ -6106,7 +6242,7 @@ class HomAction extends Action
 	}
 	hasForm(diagram, ary)	// two objects or morphisms
 	{
-		return !diagram.readonly && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+		return diagram.isEditable() && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
 	}
 }
@@ -6136,7 +6272,7 @@ class HomRightAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -6165,7 +6301,7 @@ class HomLeftAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -6200,7 +6336,7 @@ class DetachDomainAction extends Action
 	}
 	hasForm(diagram, ary)	// one morphism with connected domain but not a def of something
 	{
-		if (!diagram.readonly && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
 		{
 			const from = ary[0];
 			const domMorphs = diagram.domain.obj2morphs.get(from.domain);
@@ -6241,7 +6377,7 @@ class DetachCodomainAction extends Action
 	}
 	hasForm(diagram, ary)	// one morphism with connected codomain
 	{
-		if (!diagram.readonly && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
 		{
 			const from = ary[0];
 			const codMorphs = diagram.domain.obj2morphs.get(from.codomain);
@@ -6275,7 +6411,7 @@ class EditDataMorphismAction extends Action
 	}
 	hasForm(diagram, ary)	// one editable morphism
 	{
-		if (!diagram.readonly && ary.length === 1)
+		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
 			return DataMorphism.prototype.isPrototypeOf(from.to) ||
@@ -6332,7 +6468,7 @@ class DeleteAction extends Action
 	}
 	hasForm(diagram, ary)	// all are deletable
 	{
-		return !diagram.readonly && ary.reduce((hasIt, a) => hasIt && a.isDeletable(), true);
+		return diagram.isEditable() && ary.reduce((hasIt, a) => hasIt && a.isDeletable(), true);
 	}
 }
 
@@ -6362,7 +6498,7 @@ class TerminalMorphismAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -6390,7 +6526,7 @@ class InitialMorphismAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -6414,7 +6550,7 @@ class ProjectAction extends Action
 	}
 	hasForm(diagram, ary)	// one product object
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to);
 	}
 	html(e, diagram, ary)
 	{
@@ -6492,7 +6628,7 @@ class LambdaMorphismAction extends Action
 	}
 	hasForm(diagram, ary)	// 
 	{
-		return !diagram.readonly && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) &&
+		return diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) &&
 			(ProductObject.prototype.isPrototypeOf(ary[0].to.domain) || HomObject.prototype.isPrototypeOf(ary[0].to.codomain));
 	}
 	html(e, diagram, ary)
@@ -6553,11 +6689,10 @@ class HelpAction extends Action
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
-		const readonly = from.diagram.readonly;
 		let html = '';
 		if (from.to)
 			html = from.to.help();
-		else if (DiagramText.prototype.isPrototypeOf(from) && !readonly)
+		else if (DiagramText.prototype.isPrototypeOf(from) && from.diagram.isEditable())
 		{
 			const btn = from.constructor.name === 'DiagramText' ?
 				D.GetButton('edit', `R.diagram.getElement('${from.name}').editText(evt, 'descriptionElt')`, 'Edit', D.default.button.tiny) :
@@ -6620,6 +6755,7 @@ class JavascriptAction extends Action
 			const header = this.header(m);
 			const tail = this.tail(m);
 			let body = '';
+console.log('code',code);
 			body = code.substring(header.length, code.length - tail.length);
 			html += H.div(header, 'code') + H.div(body, 'code indent', 'morphism-javascript') + H.div(tail, 'code') +
 					(this.isEditable(m) ? D.GetButton('edit', `R.$Actions.getElement('javascript').setMorphismCode(event, 'morphism-javascript', 'javascript')`,
