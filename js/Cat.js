@@ -543,8 +543,8 @@ class R
 			if (isGUI)
 			{
 				U.autosave = true;
-				D.ReadLocalDiagramList();
-				D.ReadLocalCategoryList();
+				R.ReadLocalDiagramList();
+				R.ReadLocalCategoryList();
 			}
 			const CATargs =
 			{
@@ -704,149 +704,385 @@ class R
 			codomain:		R.CAT,
 			basename:		user,
 			description:	'User diagrams',
-			user:			'sys',
+			user,
 		};
 		d = new Diagram(null, $CATargs);
 		R.UserDiagram.set(user, d);
 		return d;
 	}
-	static ProcessBootDiagram(diagram, elements)
+	static Autoplace(diagram, args, xy)
 	{
-		let xy = new D2(300, 300);
-		elements.map(e =>
+		let element = null;
+		if (args.prototype === 'DiagramText')
 		{
-			const element = Element.Process(diagram, e);
+			const nuArgs = U.clone(args);
+			nuArgs.xy = xy;
+			element = new DiagramText(diagram, nuArgs);
+		}
+		else if (CatObject.prototype.isPrototypeOf(args))
+		{
+			element = args;
+			diagram.placeObject(null, element, xy);
+		}
+		else
+		{
+			element = Element.Process(diagram, args);
 			if (Morphism.prototype.isPrototypeOf(element))
 			{
 				diagram.placeMorphism(null, element, xy);
-				xy.y += 6 * D.default.layoutGrid;
+				if ('js' in args)
+					element.code = {javascript:JavascriptAction.Header(element) + '\t' + args.js + JavascriptAction.Tail(element)};
 			}
-		});
-		diagram.update();
+			else if (CatObject.prototype.isPrototypeOf(element))
+				diagram.placeObject(null, element, xy);
+		}
+		xy.y += 6 * D.default.layoutGrid;
+		return element;
 	}
 	static Boot()
 	{
-		const user = 'hdole';
+		let user = 'hdole';
 		const pfs = new Category(R.$CAT,
 			{
-				basename:'PFS',
+				name:'PFS',
 				user,
 				properName:'&Popf;&Fopf;&Sopf;',
-				actions:	['product', 'coproduct', 'hom'],
+				actionDiagrams:	['product', 'coproduct', 'hom'],
 			});
-		const userDiagram = R.GetUserDiagram(user);
-
-		const logic = new Diagram(userDiagram, {codomain: pfs, basename: 'logic', user: 'hdole', properName: 'Logic',
-			description:'Basic logic functions'});
+		let userDiagram = R.GetUserDiagram(user);
+		//
+		// basics
+		//
+		const basics = new Diagram(userDiagram,
+		{
+			codomain:		pfs,
+			basename:		'Basics',
+			properName:		'Basics',
+			description:	'Basic objects for interacting with the real world',
+			user,
+		});
+		basics.makeSvg();
+		R.AddDiagram(basics);
+		let xy = new D2(300, 300);
+		R.Autoplace(basics,
+		{
+			description:	'This diagram contains initial and terminaal objects\nas well as objects for interacting with the real world.',
+			prototype:		'DiagramText',
+			user,
+//			properName:		'&Omega;',
+		}, xy);
+		const zero = pfs.getElement('#0');
+if (!zero)debugger;
+		R.Autoplace(basics, zero, xy);
+		const one = R.Autoplace(basics, pfs.getElement('#1'), xy);
+		const tty = R.Autoplace(basics,
+		{
+			description:	'The TTY object interacts with serial devices.',
+			basename:		'tty',
+			prototype:		'FiniteObject',
+			user,
+			properName:		'TTY',
+		}, xy);
+		const HTML = R.Autoplace(basics,
+		{
+			description:	'The HTML object interacts with web devices.',
+			basename:		'html',
+			prototype:		'FiniteObject',
+			user,
+			properName:		'HTML',
+		}, xy); const threeD = R.Autoplace(basics,
+		{
+			description:	'The 3D object interacts with graphic devices.',
+			basename:		'd3',
+			prototype:		'FiniteObject',
+			user,
+			properName:		'3D',
+		}, xy);
+		//
+		// logic
+		//
+		const logic = new Diagram(userDiagram,
+		{
+			codomain:		pfs,
+			basename:		'Logic',
+			properName:		'Logic',
+			description:	'Basic logic functions',
+			references:		['PFS/Basics'],
+			user,
+		});
 		logic.makeSvg();
 		R.AddDiagram(logic);
-		const logicElements = [
-		{"description":"The sub-object classifier, or better known as the two point set",
-			"basename":"two",
-			"size":2,
-			"prototype":"FiniteObject",
-			"category":"hdole/PFS",
-			"user":"hdole",
-		},
-		{"description":"A pair of 2's",
-			"prototype":"ProductObject",
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"objects":["two", "two"]},
-		{"description":"And of two logic values",
-			"basename":"and",
-			"prototype":"Morphism",
-			"properName":"and",
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"domain":"hdole/PFS/logic/Po{hdole/PFS/logic/two,hdole/PFS/logic/two}oP",
-			"codomain":"two",
-			"code":{"javascript":"function hdole_PFS_logic_add(args)\n{\n\treturn args[0] + args[1];\n}\n"}},
-
-			/*
-		{"description":"multipley two natural numbers",
-			"basename":"mult",
-			"name":"hdole/PFS/Narithmetics/mult",
-			"prototype":"Morphism",
-			"properName":"mult",
-			"readonly":false,
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"domain":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
-			"codomain":"hdole/PFS/Narithmetics/N",
-			"code":{"javascript":"function hdole_PFS_Narithmetics_mult(args)\n{\n\treturn args[0] * args[1];\n}\n"}},
-		{"description":"add one",
-			"basename":"succ",
-			"name":"hdole/PFS/Narithmetics/succ",
-			"prototype":"Morphism",
-			"properName":"succ",
-			"readonly":false,
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"domain":"hdole/PFS/Narithmetics/N",
-			"codomain":"hdole/PFS/Narithmetics/N",
-			"code":{"javascript":"function hdole_PFS_Narithmetics_succ(args)\n{\n\treturn args[0] +1;\n}\n"}}
-			*/
-			];
-		R.ProcessBootDiagram(logic, logicElements);
-
-		const Narith = new Diagram(userDiagram, {codomain: pfs, basename: 'Narithmetics', user: 'hdole', properName: '&Nopf; Arithmetics',
-			description:'Arithmetic functions for natural numbers'});
+		xy = new D2(300, 300);
+		R.Autoplace(logic,
+		{
+			description:	'This diagram contains typical logic morphisms.',
+			prototype:		'DiagramText',
+			user,
+			properName:		'&Omega;',
+		}, xy);
+		const two = R.Autoplace(logic,
+		{
+			description:	'The sub-object classifier, or better known as the two point set',
+			basename:		'two',
+			size:			2,
+			prototype:		'FiniteObject',
+			user,
+			properName:		'&Omega;',
+		}, xy);
+		const twoPair = R.Autoplace(logic,
+		{
+			description:	'A pair of 2\'s',
+			prototype:		'ProductObject',
+			user,
+			objects:		[two, two]
+		}, xy);
+		const mTrue = R.Autoplace(logic,
+		{
+			description:	'true',
+			basename:		'true',
+			prototype:		'Morphism',
+			properName:		'true',
+			user,
+			domain:			'#1',
+			codomain:		two,
+			js:				'return true;',
+		}, xy);
+		const mFalse = R.Autoplace(logic,
+		{
+			description:	'false',
+			basename:		'false',
+			prototype:		'Morphism',
+			properName:		'false',
+			user,
+			domain:			'#1',
+			codomain:		two,
+			js:				'return false;',
+		}, xy);
+		const logicNot = R.Autoplace(logic,
+		{
+			description:	'logical not of a logic values',
+			basename:		'not',
+			prototype:		'Morphism',
+			properName:		'&not;',
+			user,
+			domain:			two,
+			codomain:		two,
+			js:				'return args[0] || args[1];',
+		}, xy);
+		const logicAnd = R.Autoplace(logic,
+		{
+			description:	'logical and of two logic values',
+			basename:		'and',
+			prototype:		'Morphism',
+			properName:		'&and;',
+			user,
+			domain:			twoPair,
+			codomain:		two,
+			js:				'return args[0] && args[1];',
+		}, xy);
+		const logicOr = R.Autoplace(logic,
+		{
+			description:	'logical or of two logic values',
+			basename:		'or',
+			prototype:		'Morphism',
+			properName:		'&or;',
+			user,
+			domain:			twoPair,
+			codomain:		two,
+			js:				'return args[0] || args[1];',
+		}, xy);
+		D.ShowDiagram(logic);
+		logic.update();
+		//
+		// N arithemtic
+		//
+		const Narith = new Diagram(userDiagram,
+		{
+			description:	'Arithmetic functions for natural numbers',
+			codomain:		pfs,
+			basename:		'Narithmetics',
+			properName:		'&Nopf; Arithmetics',
+			references:		['PFS/Logic'],
+			user,
+		});
 		Narith.makeSvg();
 		R.AddDiagram(Narith);
-		const NarithElements = [
-		{"description":"the natural numbers",
-			"basename":"N",
-//			"name":"hdole/PFS/Narithmetics/N",
-			"prototype":"CatObject",
-			"properName":"N",
-//			"readonly":false,
-//			"category":"hdole/PFS",
-			"user":"hdole",},
-		{"description":"A pair of natural numbers",
-			"basename":"Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
-//			"name":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
-			"prototype":"ProductObject",
-			"properName":"N&times;N",
-//			"readonly":false,
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"objects":["hdole/PFS/Narithmetics/N", "hdole/PFS/Narithmetics/N"]},
-		{"description":"add two natural numbers",
-			"basename":"add",
-//			"name":"hdole/PFS/Narithmetics/add",
-			"prototype":"Morphism",
-			"properName":"add",
-//			"readonly":false,
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"domain":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
-			"codomain":"hdole/PFS/Narithmetics/N",
-			"code":{"javascript":"function hdole_PFS_Narithmetics_add(args)\n{\n\treturn args[0] + args[1];\n}\n"}},
-		{"description":"multipley two natural numbers",
-			"basename":"mult",
-//			"name":"hdole/PFS/Narithmetics/mult",
-			"prototype":"Morphism",
-			"properName":"mult",
-//			"readonly":false,
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"domain":"hdole/PFS/Narithmetics/Po{hdole/PFS/Narithmetics/N,hdole/PFS/Narithmetics/N}oP",
-			"codomain":"hdole/PFS/Narithmetics/N",
-			"code":{"javascript":"function hdole_PFS_Narithmetics_mult(args)\n{\n\treturn args[0] * args[1];\n}\n"}},
-		{"description":"add one",
-			"basename":"succ",
-//			"name":"hdole/PFS/Narithmetics/succ",
-			"prototype":"Morphism",
-			"properName":"succ",
-//			"readonly":false,
-			"category":"hdole/PFS",
-			"user":"hdole",
-			"domain":"hdole/PFS/Narithmetics/N",
-			"codomain":"hdole/PFS/Narithmetics/N",
-			"code":{"javascript":"function hdole_PFS_Narithmetics_succ(args)\n{\n\treturn args[0] +1;\n}\n"}}];
-		R.ProcessBootDiagram(Narith, NarithElements);
+		xy = new D2(300, 300);
+		const N = R.Autoplace(Narith,
+		{
+			description:	'the natural numbers',
+			basename:		'N',
+			prototype:		'CatObject',
+			properName:		'N',
+			user,
+		}, xy);
+		const Npair = R.Autoplace(Narith,
+		{
+			description:	'a pair of natural numbers',
+			basename:		'Po{PFS/Narithmetics/N,PFS/Narithmetics/N}oP',
+			prototype:		'ProductObject',
+			properName:		'N&times;N',
+			objects:		[N, N],
+			user,
+		}, xy);
+		const Nadd = R.Autoplace(Narith,
+		{
+			description:	'add two natural numbers',
+			basename:		'add',
+			prototype:		'Morphism',
+			properName:		'add',
+			domain:			Npair,
+			codomain:		N,
+			js:				'return args[0] + args[1];',
+			user,
+		}, xy);
+		const Nmult = R.Autoplace(Narith,
+		{
+			description:	'multiply two natural numbers',
+			basename:		'mult',
+			prototype:		'Morphism',
+			properName:		'mult',
+			domain:			Npair,
+			codomain:		N,
+			js:				'return args[0] * args[1];',
+			user,
+		}, xy);
+		const Nsucc = R.Autoplace(Narith,
+		{
+			description:	'add one',
+			basename:		'succ',
+			prototype:		'Morphism',
+			properName:		'+1',
+			domain:			N,
+			codomain:		N,
+			js:				'return args[0] +1;',
+			user,
+		}, xy);
+		const Nless = R.Autoplace(Narith,
+		{
+			description:	'is the first natural number less than the second',
+			basename:		'lessThan',
+			prototype:		'Morphism',
+			properName:		'&lt;',
+			domain:			Npair,
+			codomain:		two,
+			js:				'return args[0] < args[1];',
+			user,
+		}, xy);
+		const Nequals = R.Autoplace(Narith,
+		{
+			description:	'compare two natural numbers for equality',
+			basename:		'equals',
+			prototype:		'Morphism',
+			properName:		'=',
+			domain:			Npair,
+			codomain:		two,
+			js:				'return args[0] < args[1];',
+			user,
+		}, xy);
+		D.ShowDiagram(Narith);
+		Narith.update();
+//		R.ProcessBootDiagram(Narith, NarithElements);
 
+		/*
+		const defaultArgs =
+		{
+			codomain:	'PFS',
+			basename:	'Home',
+			description:'User home diagram',
+			properName:	'Home',
+			references:	['hdole/PFS/Narith'],
+			user,
+		};
+		const userDiagram = R.GetUserDiagram(R.user.name);
+		let diagram = R.ReadLocal(R.UserHomeDiagramName(user));
+		if (!diagram)
+			diagram = new Diagram(userDiagram, defaultArgs);
+		D.ShowDiagram(diagram);
+		R.SaveLocal(diagram);
+*/
+
+		user = R.user.name;
+		let home = R.ReadLocal(R.UserHomeDiagramName(user));
+		if (!home)
+		{
+			userDiagram = R.GetUserDiagram(user);
+			home = new Diagram(userDiagram,
+			{
+				description:	'user home diagram',
+				codomain:		pfs,
+				basename:		'home',
+				properName:		'Home',
+				references:		[Narith.name],
+				user,
+			});
+			home.makeSvg();
+			R.AddDiagram(home);
+			xy = new D2(300, 300);
+			R.Autoplace(home,
+			{
+				description:	'Welcome to Catecon.',
+				prototype:		'DiagramText',
+				user,
+				properName:		'&Omega;',
+			}, xy);
+			D.ShowDiagram(home);
+			home.update();
+		}
+	}
+	static SaveLocal(diagram, savePng = true)
+	{
+		if (R.default.debug)
+			console.log('save to local storage', diagram.name);
+		diagram.timestamp = Date.now();
+		localStorage.setItem(`${diagram.name}.json`, diagram.stringify());
+		D.Svg2canvas(D.topSVG, this.name, true, function(png, pngName)
+		{
+			D.diagramPNG.set(diagram.name, png);
+//			localStorage.setItem(U.StorageName(`${diagram.name}.png`), png);
+			localStorage.setItem(`${diagram.name}.png`, png);
+		});
+		return true;
+	}
+	static ReadLocal(name)
+	{
+		const data = localStorage.getItem(`${name}.json`);
+		if (data)
+		{
+			const args = JSON.parse(data);
+			const userDiagram = R.GetUserDiagram(args.user);
+			const diagram = new Diagram(userDiagram, args);
+			const png = localStorage.getItem(`${diagram.name}.png`);
+			if (png)
+				D.diagramPNG.set(diagram.name, png);
+			// TODO eventually remove, should already be in the list
+			R.AddDiagram(diagram);
+			if (R.default.debug)
+				console.log('ReadLocal',name,diagram);
+			diagram.domain.makeHomSets();
+			return diagram;
+		}
+		return null;
+	}
+	static ReadLocalDiagramList()
+	{
+		const diagrams = JSON.parse(localStorage.getItem('diagrams'));
+		if (diagrams)
+			diagrams.map(d => R.Diagrams.set(d.name, d));
+	}
+	static SaveLocalDiagramList()
+	{
+		localStorage.setItem('diagrams', JSON.stringify(U.JsonMap(R.Diagrams)));
+	}
+	static ReadLocalCategoryList()
+	{
+		const categories = JSON.parse(localStorage.getItem('categories'));
+		if (categories)
+			categories.map(d => R.Categories.set(d.name, d));
+	}
+	static SaveLocalCategoryList()
+	{
+		localStorage.setItem('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo())));
 	}
 // TODO unused; move to cloud class?
 	static fetchCategories(fn = null)
@@ -881,7 +1117,7 @@ class R
 			{
 				const userDiagram = R.GetUserDiagram(j.user);
 				const diagram = new Diagram(userDiagram, j);
-				D.SaveLocal(diagram);
+				R.SaveLocal(diagram);
 			});
 			if (fn)
 				fn(jsons);
@@ -918,29 +1154,56 @@ class R
 			fn([]);
 	}
 	*/
+	static UserHomeDiagramName(user)
+	{
+		return `${user}/PFS/Home`;
+	}
+	/*
+	static SetupUserHome(user)
+	{
+		const defaultArgs =
+		{
+			codomain:	'PFS',
+			basename:	'Home',
+			description:'User home diagram',
+			properName:	'Home',
+			references:	['hdole/PFS/Narith'],
+			user,
+		};
+		const userDiagram = R.GetUserDiagram(R.user.name);
+		let diagram = R.ReadLocal(R.UserHomeDiagramName(user));
+		if (!diagram)
+			diagram = new Diagram(userDiagram, defaultArgs);
+		D.ShowDiagram(diagram);
+		R.SaveLocal(diagram);
+	}
+	*/
 	static Setup(fn)
 	{
-		const categoryName = R.defaults.category;
+//		R.SetupUserHome(R.user.name);
+		const categoryName = R.default.category;
 		const codomain = categoryName === 'CAT' ? R.CAT : R.CAT.getElement(categoryName);
-		R.SelectCategory(codomain, function()
+		R.category = codomain;
+		R.diagram = null;
+		let diagramName = categoryName in R.default.cat2diagram ? R.default.cat2diagram[categoryName] : R.UserHomeDiagramName(R.user.name);
+//		const defaultArgs = {codomain, basename:'Home', user:R.user.name, description:'User home diagram', properName:'Home'};
+//		if (!diagramName)
+//			diagramName = Diagram.Codename(defaultArgs);
+		R.diagram = R.$CAT.getElement(diagramName);
+//		if (!R.diagram)
+//			R.diagram = 
+		/*
+		if (!R.diagram && R.ReadLocal(diagramName) === null)
 		{
-			let diagramName = categoryName in R.defaults.cat2diagram ? R.defaults.cat2diagram[categoryName] : null;
-			const defaultArgs = {codomain, basename:'Home', user:R.user.name, description:'User home diagram', properName:'Home'};
-			if (!diagramName)
-				diagramName = Diagram.Codename(defaultArgs);
-			R.diagram = R.$CAT.getElement(diagramName);
-			if (!R.diagram && D.ReadLocal(diagramName) === null)
-			{
-				const userDiagram = R.GetUserDiagram(R.user.name);
-				R.diagram = new Diagram(userDiagram, defaultArgs);
-				D.SaveLocal(R.diagram);
-			}
-			R.SelectDiagram(diagramName);
-			fn && fn();
-			D.panels.update();
-			D.navbar.update();
-//			D.SetDefaultDiagram();
-		});
+			const userDiagram = R.GetUserDiagram(R.user.name);
+			R.diagram = new Diagram(userDiagram, defaultArgs);
+			R.SaveLocal(R.diagram);
+		}
+		*/
+		R.SelectDiagram(diagramName);
+		fn && fn();
+		D.panels.update();
+		D.navbar.update();
 	}
 	static SelectDiagram(name)
 	{
@@ -952,24 +1215,26 @@ class R
 		}
 		R.diagram = R.$CAT.getElement(name);
 		if (!R.diagram)
-			R.diagram = D.ReadLocal(name);
+			R.diagram = R.ReadLocal(name);
 		if (!R.diagram)
 			// TODO turn on/off busy cursor
 			R.FetchDiagram(name, setup);
 		else
 			setup(name);
 	}
+	/*
 	static SelectCategory(category, fn)
 	{
 		R.category = category;
 //		R.categoryName = category.name;
-		R.defaults.category = category.name;
+		R.default.category = category.name;
 //		D.setLocalStorageDefaultCategory();
 		D.SaveDefaults();
 		R.diagram = null;
 		if (typeof fn === 'function')
 			fn();
 	}
+	*/
 	static GetCategory(name)
 	{
 		if (name === 'CAT')
@@ -986,7 +1251,7 @@ class R
 			{
 				const userDiagram = R.GetUserDiagram(j.user);
 				const diagram = new Diagram(userDiagram, j);
-				D.SaveLocal(diagram);
+				R.SaveLocal(diagram);
 			});
 			if (fn)
 				fn(dgrmName);
@@ -1011,7 +1276,7 @@ class R
 			if (diagram)
 				return;
 			if (isGUI)
-				diagram = D.ReadLocal(name);
+				diagram = R.ReadLocal(name);
 			// else TODO cloud fetch
 		});
 	}
@@ -1022,7 +1287,7 @@ class R
 			return diagram;
 		R.LoadDiagrams(R.GetReferences(name));
 		if (isGUI && !diagram)
-			diagram = D.ReadLocal(name);
+			diagram = R.ReadLocal(name);
 		// else TODO cloud fetch
 		return diagram;
 	}
@@ -1047,8 +1312,8 @@ class R
 	static AddDiagram(diagram)
 	{
 		R.SetDiagramInfo(diagram);
-		D.SaveLocalDiagramList();
-		D.SaveLocalCategoryList();
+		R.SaveLocalDiagramList();
+		R.SaveLocalCategoryList();
 	}
 	static GetCategoriesInfo()
 	{
@@ -1066,12 +1331,12 @@ Object.defineProperties(R,
 	Cat:				{value:null,	writable:true},
 	CAT:				{value:null,	writable:true},		// working nat trans
 	Categories:			{value:new Map,	writable:false},	// available categories
-	defaults:
+	default:
 	{
 		value:
 		{
-			category:		'hdole/PFS',
-			cat2diagram:	{'hdole/PFS':'Anon/hdole/PFS/Home'},
+			category:		'PFS',
+			cat2diagram:	{'PFS':'Anon/PFS/Home'},
 			debug:			false,
 			internals:		false,
 		},
@@ -1176,7 +1441,7 @@ class Amazon extends Cloud
 				D.RecordError(`Cannot save category: ${err.message}`);
 				return;
 			}
-			if (R.defaults.debug)
+			if (R.default.debug)
 				console.log('saved category', category.name);
 		});
 	}
@@ -1198,7 +1463,7 @@ class Amazon extends Cloud
 				D.RecordError(`Cannot save diagram: ${err.message}`);
 				return;
 			}
-			if (R.defaults.debug)
+			if (R.default.debug)
 				console.log('saved diagram',diagram.name);
 		});
 	}
@@ -1243,7 +1508,7 @@ class Amazon extends Cloud
 				}
 				AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
 				this.accessToken = session.getAccessToken().getJwtToken();
-				if (R.defaults.debug)
+				if (R.default.debug)
 					console.log('registerCognito session validity', session, session.isValid());
 				const idPro = new AWS.CognitoIdentityServiceProvider();
 				idPro.getUser({AccessToken:this.accessToken}, function(err, data)
@@ -1261,7 +1526,7 @@ class Amazon extends Cloud
 					D.loginPanel.update();
 					this.getUserDiagramsFromServer(function(dgrms)
 					{
-						if (R.defaults.debug)
+						if (R.default.debug)
 							console.log('user diagrams on server',dgrms);
 					});
 					R.SelectCategoryDiagram(function()
@@ -1312,7 +1577,7 @@ class Amazon extends Cloud
 			R.user.status = 'registered';
 			D.navbar.update();
 			D.loginPanel.update();
-			if (R.defaults.debug)
+			if (R.default.debug)
 				console.log('user name is ' + this.user.getUsername());
 		});
 	}
@@ -1346,7 +1611,7 @@ class Amazon extends Cloud
 			R.user.status = 'registered';
 			D.navbar.update();
 			D.loginPanel.update();
-			if (R.defaults.debug)
+			if (R.default.debug)
 				console.log('user name is ' + this.user.getUsername());
 		});
 	}
@@ -1576,7 +1841,6 @@ class Navbar
 	constructor()
 	{
 		this.element = document.getElementById('navbar');
-//		this.category = null;
 		this.diagram = null;
 		const sz = D.default.button.large;
 		const left = H.td(H.div(D.GetButton('category', "D.categoryPanel.toggle()", 'Categories', sz))) +
@@ -1594,7 +1858,6 @@ class Navbar
 			H.td(H.div(D.GetButton('settings', "D.settingsPanel.toggle()", 'Settings', sz))) +
 			H.td('&nbsp;&nbsp;&nbsp;');
 		const html = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
-//									H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
 									H.td(H.span('', 'navbar-inset', 'user-navbar'), 'w20') +
 									H.td(H.span('Catecon', 'title'), 'w20') +
 									H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
@@ -1613,7 +1876,7 @@ class Navbar
 		if (R.diagram && R.diagram !== this.diagram)
 		{
 			this.diagram = R.diagram;
-			this.diagramElt.innerHTML = R.diagram ? R.diagram.properName : '';
+			this.diagramElt.innerHTML = R.diagram ? R.diagram.properName + H.span(` by ${R.diagram.user}`, 'italic'): '';
 		}
 		let c = '#CCC';
 		switch(R.user.status)
@@ -1680,13 +1943,13 @@ class D
 	}
 	static SaveDefaults()
 	{
-		localStorage.setItem('defaults', JSON.stringify(R.defaults));
+		localStorage.setItem('defaults', JSON.stringify(R.default));
 	}
 	static ReadDefaults()
 	{
 		const defaults = JSON.parse(localStorage.getItem('defaults'));
 		if (defaults)
-			R.defaults = defaults;
+			R.default = defaults;
 	}
 	static Resize()
 	{
@@ -1872,7 +2135,7 @@ class D
 		D.dragClone = false;
 		if (D.mouse.save)
 		{
-			D.SaveLocal(R.diagram);
+			R.SaveLocal(R.diagram);
 			D.mouse.save = false;
 		}
 		if (e.which === 2)
@@ -1992,10 +2255,11 @@ class D
 							}
 						}
 					}
-					from.updateGlow(false);
+					if (!DiagramText.prototype.isPrototypeOf(from))
+						from.updateGlow(false);
 				}
 				if (diagram.isEditable() && didSomething)
-					D.SaveLocal(diagram);
+					R.SaveLocal(diagram);
 			}
 			else
 				diagram.addWindowSelect(e);
@@ -2063,7 +2327,7 @@ class D
 		D.help.innerHTML = '';
 		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, '',
 			'toolbar-drag-handle');
-		if (R.diagram.isEditable())
+//		if (R.diagram.isEditable())
 			diagram.codomain.actions.forEach(function(a, n)
 			{
 				if (a.hasForm(R.diagram, diagram.selected))
@@ -2332,10 +2596,8 @@ ${D.Button(onclick)}
 						H.small('The Categorical Console', 'italic underline bold') + H.br() +
 						H.small('Shareable Executable Diagrams') +
 						H.table(H.tr(H.td(H.a('Blog', 'intro', '', '', 'href="https://harrydole.com/wp/tag/catecon/"'))), 'center') +
-						H.h4('Alpha') +
-						H.h4('Catecon Uses Cookies') +
-						H.small('Your diagrams and those of others downloaded are stored as cookies as well as authentication tokens and user preferences.', 'italic') +
-						H.p('Accept cookies by entering the categorical access code below:', 'txtCenter') +
+						H.h4('Level One', 'smallCaps') +
+						H.p('Enter the categorical access code:', 'txtCenter') +
 						H.table((!!window.chrome ?
 										(H.tr(H.td(H.input('', '', 'cookieSecret', 'text', {ph:'????????', x:'size="6" onkeydown="D.OnEnter(event, R.CookieAccept)"'}))) +
 										H.tr(H.td(H.button('OK', '', '', '', 'onclick=R.CookieAccept()')))) :
@@ -2361,6 +2623,14 @@ ${D.Button(onclick)}
 		else
 			process.exit(1);
 	}
+	static ShowDiagram(diagram)
+	{
+		for (let i=0; i<D.diagramSVG.children.length; ++i)
+		{
+			const c = D.diagramSVG.children[i];
+			c.style.display = c.id === diagram.name ? 'block' : 'none';
+		}
+	}
 	static UpdateDiagramDisplay()
 	{
 		if (!R.initialized)
@@ -2376,11 +2646,14 @@ console.log('UpdateDiagramDisplay', R.diagram);
 		D.diagramPanel.setToolbar(R.diagram);
 		R.diagram.update(false);	// do not save
 		R.diagram.updateMorphisms();
+		D.ShowDiagram(R.diagram);
+		/*
 		for (let i=0; i<D.diagramSVG.children.length; ++i)
 		{
 			const c = D.diagramSVG.children[i];
 			c.style.display = c.id === R.diagram.name ? 'block' : 'none';
 		}
+		*/
 	}
 	static copyStyles(dest, src)
 	{
@@ -2531,9 +2804,9 @@ console.log('UpdateDiagramDisplay', R.diagram);
 			handler
 		);
 	}
-	static Center()
+	static Center(diagram)
 	{
-		return D.Grid(R.diagram.userToDiagramCoords({x:D.Grid(D.Width()/2), y:D.Grid(D.Height()/2)}));
+		return D.Grid(diagram.userToDiagramCoords({x:D.Grid(D.Width()/2), y:D.Grid(D.Height()/2)}));
 	}
 	static DragElement(e, name)
 	{
@@ -2588,61 +2861,7 @@ console.log('UpdateDiagramDisplay', R.diagram);
 		R.diagram.viewport.scale = 1;
 		R.diagram.update();
 //		R.diagram.setView();
-//		D.SaveLocal(R.diagram);
-	}
-	static ReadLocalDiagramList()
-	{
-		const diagrams = JSON.parse(localStorage.getItem('diagrams'));
-		if (diagrams)
-			diagrams.map(d => R.Diagrams.set(d.name, d));
-	}
-	static SaveLocalDiagramList()
-	{
-		localStorage.setItem('diagrams', JSON.stringify(U.JsonMap(R.Diagrams)));
-	}
-	static ReadLocalCategoryList()
-	{
-		const categories = JSON.parse(localStorage.getItem('categories'));
-		if (categories)
-			categories.map(d => R.Categories.set(d.name, d));
-	}
-	static SaveLocalCategoryList()
-	{
-		localStorage.setItem('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo())));
-	}
-	static SaveLocal(diagram, savePng = true)
-	{
-		if (R.defaults.debug)
-			console.log('save to local storage', diagram.name);
-		diagram.timestamp = Date.now();
-		localStorage.setItem(`${diagram.name}.json`, diagram.stringify());
-		D.Svg2canvas(D.topSVG, this.name, true, function(png, pngName)
-		{
-			D.diagramPNG.set(diagram.name, png);
-//			localStorage.setItem(U.StorageName(`${diagram.name}.png`), png);
-			localStorage.setItem(`${diagram.name}.png`, png);
-		});
-		return true;
-	}
-	static ReadLocal(name)
-	{
-		const data = localStorage.getItem(`${name}.json`);
-		if (data)
-		{
-			const args = JSON.parse(data);
-			const userDiagram = R.GetUserDiagram(args.user);
-			const diagram = new Diagram(userDiagram, args);
-			const png = localStorage.getItem(`${diagram.name}.png`);
-			if (png)
-				D.diagramPNG.set(diagram.name, png);
-			// TODO eventually remove, should already be in the list
-			R.AddDiagram(diagram);
-			if (R.defaults.debug)
-				console.log('ReadLocal',name,diagram);
-			diagram.domain.makeHomSets();
-			return diagram;
-		}
-		return null;
+//		R.SaveLocal(R.diagram);
 	}
 	// TODO unused?
 	static removeFromLocalDiagramList(dgrmName)
@@ -2650,8 +2869,8 @@ console.log('UpdateDiagramDisplay', R.diagram);
 		if (R.Diagrams.has(dgrmName))
 		{
 			R.Diagrams.delete(dgrmName);
-			D.SaveLocalDiagramList();
-			D.SaveLocalCategoryList();
+			R.SaveLocalDiagramList();
+			R.SaveLocalCategoryList();
 		}
 	}
 	// TODO unused?
@@ -2666,7 +2885,7 @@ console.log('UpdateDiagramDisplay', R.diagram);
 				diagram.refcnt = 0;// FORCE DELETE
 				diagram.decrRefcnt();
 				R.Diagrams.removeMorphism(diagram);
-				if (R.defaults.debug)
+				if (R.default.debug)
 					console.log('delete local diagram', dgrmName);
 			}
 			R.removeFromLocalDiagramList(dgrmName);
@@ -2716,7 +2935,7 @@ console.log('UpdateDiagramDisplay', R.diagram);
 		if (!R.diagram)
 			throw 'no diagram';
 //		localStorage.setItem(`Diagram default ${R.user.name} ${R.categoryName}`, R.diagram.name);
-		R.defaults.cat2diagram[R.category.name] = R.diagram.name;
+		R.default.cat2diagram[R.category.name] = R.diagram.name;
 		D.SaveDefaults();
 	}
 	static AddReference(e, name)
@@ -2727,7 +2946,7 @@ console.log('UpdateDiagramDisplay', R.diagram);
 		else
 			throw 'no reference diagram';
 		D.diagramPanel.referenceSection.update();
-		D.SaveLocal(R.diagram);
+		R.SaveLocal(R.diagram);
 		D.Status(e, `Diagram ${diagram.properName} now referenced`);
 		D.diagramPanel.referenceSection.update();
 	}
@@ -2783,7 +3002,7 @@ Object.defineProperties(D,
 	'dragStart':		{value: new D2,		writable: true},
 	'gridding':			{value: true,		writable: true},
 	'header':			{value: document.getElementById('toolbar-header'),	writable: false},
-	'help':				{value: document.getElementById('toolbar-help'),		writable: false},
+	'help':				{value: document.getElementById('toolbar-help'),	writable: false},
 	'helpPanel':		{value: null,		writable: true},
 	'id':				{value: 0,			writable: true},
 	'keyboard':			// keyup actions
@@ -2866,7 +3085,7 @@ Object.defineProperties(D,
 	'panels':			{value: null,		writable: true},
 	'settingsPanel':	{value: null,		writable: true},
 	'shiftKey':			{value: false,		writable: true},
-	'showInternals':	{value: true,		writable: true},
+//	'showInternals':	{value: true,		writable: true},
 	'showUploadArea':	{value: false,		writable: true},
 	'snapWidth':		{value: 1024,		writable: true},
 	'snapHeight':		{value: 768,		writable: true},
@@ -3373,7 +3592,6 @@ class CategoryPanel extends Panel
 		this.descriptionEditElt = document.getElementById('category-description-edit');
 		this.actionsElt = document.getElementById('category-actions');
 		this.userElt = document.getElementById('category-user');
-		this.timestampElt = document.getElementById('category-timestamp');
 		this.category = R.category;
 		this.initialize();
 	}
@@ -3692,7 +3910,7 @@ class DataPanel extends Panel
 			const m = R.diagram.domain.getElement(nm).to;
 			m.addData(e);
 			this.update();
-			D.SaveLocal(diagram);
+			R.SaveLocal(diagram);
 		}
 		catch(err)
 		{
@@ -3747,7 +3965,7 @@ class NewDiagramSection extends Section
 			const name = Element.Codename(R.$CAT, basename);
 			if (R.$CAT.getElement(name))
 				throw 'Diagram already exists';
-			let diagram = D.ReadLocal(name);
+			let diagram = R.ReadLocal(name);
 			if (diagram)
 			{
 				// TODO recovery, remove later
@@ -3803,11 +4021,15 @@ class DiagramSection extends Section
 		{
 			let rows = '';
 			const that = this;	// can't use this below
-			this.diagrams.forEach(function(diagram)
+			const diagramFn = function(diagram)
 			{
-				if (that.filterFn(diagram))
+				if (Diagram.prototype.isPrototypeOf(diagram) && that.filterFn(diagram))
 					rows += that.diagramRow(diagram, that.updateFn(diagram));
-			});
+			};
+			if ('elements' in this.diagrams)
+				this.diagrams.elements.forEach(diagramFn);
+			else
+				this.diagrams.forEach(diagramFn);
 			this.section.innerHTML = H.table(rows);
 		}
 	}
@@ -3845,13 +4067,13 @@ class DiagramPanel extends Panel
 			H.h4(H.span('', '', 'diagram-basename') + H.span('', '', 'diagram-basename-edit')) +
 			H.h4(H.span('', '', 'diagram-properName') + H.span('', '', 'diagram-properName-edit')) +
 			H.p(H.span('', 'description', 'diagram-description', 'Description') + H.span('', '', 'diagram-description-edit')) +
-			H.table(H.tr(H.td(H.span('', '', 'diagram-user')) + H.td(H.span('', '', 'diagram-timestamp'))));
+			H.table(H.tr(H.td('By '+ H.span('', '', 'diagram-user'), 'smallPrint') + H.td(H.span('', '', 'diagram-timestamp'), 'smallPrint')));
+		this.newDiagramSection = new NewDiagramSection(this.elt);
 		const deleteReferenceButton = function(diagram)
 		{
 			return diagram.refcnt === 0 ? D.GetButton('delete', `R.RemoveReference(evt,'${diagram.name}')`, 'Remove reference diagram') : '';
 		};
 		this.referenceSection = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram', deleteReferenceButton);
-		this.newDiagramSection = new NewDiagramSection(this.elt);
 		const deleteUserDiagramButton = function(diagram)
 		{
 			return diagram.refcnt === 0 ? D.GetButton('delete', `R.DeleteUserDiagram('${diagram.name}')`, 'Delete user diagram permanently (no undo)') : '';
@@ -3875,13 +4097,12 @@ class DiagramPanel extends Panel
 	}
 	update()
 	{
-//		const diagram = R.diagram;
 		if (R.diagram && R.diagram !== this.diagram)
 		{
 			this.diagram = R.diagram;
 			this.referenceSection.setDiagrams(this.diagram.references);
-			this.userDiagramsSection.setDiagrams(R.Diagrams);
-			this.allDiagramsSection.setDiagrams(R.Diagrams);
+			this.userDiagramsSection.setDiagrams(R.GetUserDiagram(R.user.name));
+			this.allDiagramsSection.setDiagrams(R.CAT);
 			D.navbar.update();
 			this.properNameElt.innerHTML = this.diagram.properName;
 			this.descriptionElt.innerHTML = this.diagram.description;
@@ -3891,6 +4112,8 @@ class DiagramPanel extends Panel
 			this.descriptionEditElt.innerHTML = !this.diagram.isEditable() ? '' :
 				D.GetButton('edit', `D.diagramPanel.setDiagramDescription()`, 'Edit description', D.default.button.tiny);
 			this.setToolbar(this.diagram);
+			const dt = new Date(this.diagram.timestamp);
+			this.timestampElt.innerHTML = dt.toLocaleString();
 		}
 	}
 	setDiagramDescription()
@@ -3900,7 +4123,7 @@ class DiagramPanel extends Panel
 		{
 			R.diagram.description = this.descriptionElt.textContent;	// TODO safety check
 			this.descriptionElt.contentEditable = false;
-			D.SaveLocal(diagram);
+			R.SaveLocal(diagram);
 		}
 		else
 		{
@@ -4188,7 +4411,7 @@ class NewObjectSection extends Section
 				description:	U.htmlSafe(this.descriptionElt.value),
 			});
 			diagram.placeObject(e, to);
-			D.ShowToolbar(e, D.Center());
+			D.ShowToolbar(e, D.Center(R.diagram));
 			D.morphismPanel.newMorphismSection.update();
 			this.update();
 		}
@@ -4216,7 +4439,7 @@ class ObjectSection extends Section
 	{
 		if (super.update())
 		{
-			let rows = H.tr((D.showInternals ? H.th('Ref. Count') : '') + H.th('Object'));
+			let rows = H.tr((R.default.internals ? H.th('Ref. Count') : '') + H.th('Object'));
 			if (this.objects)
 			{
 				const objects = this.objects instanceof Map ? this.objects.values() : this.objects;
@@ -4224,9 +4447,9 @@ class ObjectSection extends Section
 				{
 					if (!CatObject.prototype.isPrototypeOf(o))
 						continue;
-					const deletable = D.showInternals && o.refcnt === 0 && o.diagram && o.diagram.isEditable();
+					const deletable = R.default.internals && o.refcnt === 0 && o.diagram && o.diagram.isEditable();
 					rows += H.tr(
-						(D.showInternals ?
+						(R.default.internals ?
 							H.td(o.refcnt.toString()
 //								+ (deletable ?  D.GetButton('delete', `R.$CAT.getMorphism('${o.diagram.name}').deleteElement('${o.name}')`, 'Delete object') : '')
 							) : '') +
@@ -4340,7 +4563,7 @@ class NewMorphismSection extends Section
 				codomain:		diagram.codomain.getElement(this.codomainElt.value),
 			});
 			diagram.placeMorphism(e, to);
-			D.ShowToolbar(e, D.Center());
+			D.ShowToolbar(e, D.Center(R.diagram));
 			this.update();
 		}
 		catch(e)
@@ -4368,7 +4591,7 @@ class MorphismSection extends Section
 	{
 		if (super.update())
 		{
-			let rows = H.tr((D.showInternals ? H.th('Ref. Count') : '') + H.th('Morphism'));
+			let rows = H.tr((R.default.internals ? H.th('Ref. Count') : '') + H.th('Morphism'));
 			if (this.morphisms)
 			{
 				const morphisms = this.morphisms instanceof Map ? this.morphisms.values() : this.morphisms;
@@ -4376,7 +4599,7 @@ class MorphismSection extends Section
 				{
 					if (!Morphism.prototype.isPrototypeOf(m))
 						continue;
-					rows += H.tr(	(D.showInternals ? H.td(m.refcnt) : '') +
+					rows += H.tr(	(R.default.internals ? H.td(m.refcnt) : '') +
 									H.td(m.properName +
 										(this.isCurrentDiagram && m.refcnt <= 0 ?
 											D.GetButton('delete', `R.$CAT.getElement('${R.diagram.name}').removeMorphism(evt, '${m.name}')`, 'Delete morphism') : '')) +
@@ -4424,18 +4647,18 @@ class SettingsPanel extends Panel
 			H.h3('Settings') +
 			H.table(
 				H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="D.gridding = !D.gridding">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.defaults.internals ? 'checked' : ''} onchange="D.SettingsPanel.ToggleShowInternals()">`) +
+				H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="D.SettingsPanel.ToggleShowInternals()">`) +
 						H.td('Show internal info', 'left'), 'sidenavRow') +
 //				H.tr(	H.td(`<input type="checkbox" ${D.showUploadArea ? 'checked' : ''} onchange="SettingsPanel.ToggleShowUploadArea()">`) +
 //						H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.defaults.debug ? 'checked' : ''} onchange="R.defaults.debug = !R.defaults.debug">`) +
+				H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="R.default.debug = !R.default.debug">`) +
 						H.td('Debug', 'left'), 'sidenavRow')
 			);
 		this.initialize();
 	}
 	static ToggleShowInternals()
 	{
-		D.showInternals = !D.showInternals;
+		R.default.internals = !R.default.internals;
 		const diagram = R.diagram;
 		if (diagram)
 		{
@@ -4474,7 +4697,9 @@ class NewTextSection extends Section
 		try
 		{
 			const diagram = R.diagram;
-			const txt = new DiagramText(diagram, {diagram, description:U.htmlSafe(this.descriptionElt.value), xy:D.Center()});
+			if (!diagram.isEditable())
+				throw 'Diagram is not editable';	// TODO should disable instead
+			const txt = new DiagramText(diagram, {diagram, description:U.htmlSafe(this.descriptionElt.value), xy:D.Center(R.diagram)});
 			diagram.placeText(e, txt);
 			this.update();
 			D.textPanel.textSection.open();
@@ -4524,6 +4749,10 @@ class TextPanel extends Panel
 		this.textSection = new TextSection(this.elt);
 		this.textSection.open();
 	}
+	update()
+	{
+		this.newTextSection.update();
+	}
 	delete(name)
 	{
 		const diagram = R.diagram;
@@ -4568,14 +4797,13 @@ class Element
 			refcnt:			{value: 0,												writable: true},
 			user:			{value: 'user' in args ? args.user : R.user.name,		writable: false},
 		});
-if (this.basename === '')debugger;
 	}
 	help()
 	{
 		const html = H.h4(H.span(this.properName, '', 'properNameElt')) +
-						(D.showInternals ? H.p(`Internal name: ${this.name}`) : '') +
-						(D.showInternals ? ('basename' in this ? H.p(H.span(D.limit(this.basename), '', 'basenameElt', this.name)) : '') : '') +
-						(D.showInternals ?  H.p(`Reference count: ${this.refcnt}`) : '') +
+						(R.default.internals ? H.p(`Internal name: ${this.name}`) : '') +
+						(R.default.internals ? ('basename' in this ? H.p(H.span(D.limit(this.basename), '', 'basenameElt', this.name)) : '') : '') +
+						(R.default.internals ?  H.p(`Reference count: ${this.refcnt}`) : '') +
 						H.p(H.span(U.cap(this.description), '', 'descriptionElt')) +
 						H.p(`Prototype: ${this.constructor.name}`) +
 						H.p(`User: ${this.user}`);
@@ -5067,7 +5295,16 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.basename = U.GetArg(nuArgs, 'basename', '');
-		nuArgs.properName = U.GetArg(nuArgs, 'properName', ('size' in args && args.size === '0') ? '&null;' : FiniteObject.ProperName(diagram, nuArgs.basename, args.size));
+		if (!('properName' in nuArgs))
+		{
+			if ('size' in nuArgs)
+			{
+				if (nuArgs.size === 0)
+					nuArgs.properName = '&empty;'
+				else
+					nuArgs.properName = FiniteObject.ProperName(diagram, nuArgs.basename, nuArgs.size);
+			}
+		}
 		nuArgs.name = FiniteObject.Codename(diagram, nuArgs.basename, 'size' in nuArgs ? nuArgs.size : '');
 		super(diagram, nuArgs);
 		if ('size' in nuArgs && nuArgs.size !== '')
@@ -5100,7 +5337,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	{
 		let n = basename;
 		if (size !== '')
-			n += `#${size}`;
+			n += size.toString();
 		return n;
 	}
 	static Get(diagram, basename, size)
@@ -5117,7 +5354,7 @@ class InitialObject extends FiniteObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.size = 0;
-		nuArgs.basename = 'zero';
+//		nuArgs.basename = 'zero';
 		super(diagram, nuArgs);
 	}
 	help()
@@ -5138,7 +5375,7 @@ class TerminalObject extends FiniteObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.size = 1;
-		nuArgs.basename = 'one';
+//		nuArgs.basename = 'one';
 		super(diagram, nuArgs);
 		this[Symbol.iterator] = function*()
 		{
@@ -5593,7 +5830,7 @@ class DiagramText
 		}
 		else
 			html =
-`<text data-type="text" data-name="${this.name}" text-anchor="middle" class="diagramText grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
+`<text data-type="text" data-name="${this.name}" text-anchor="left" class="diagramText grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
 onmousedown="R.diagram.pickElement(evt, '${this.name}')">${this.description}</text>`;
 		return html;
 	}
@@ -6720,7 +6957,7 @@ class JavascriptAction extends Action
 		{
 			if (!('code' in m))
 				m.code = {};
-			m.code.javascript = this.header(m) + document.getElementById('morphism-javascript').innerText.trim() + this.tail(m);
+			m.code.javascript = JavascriptAction.Header(m) + document.getElementById('morphism-javascript').innerText.trim() + JavascriptAction.Tail(m);
 			diagram.update();
 		}
 	}
@@ -6730,11 +6967,12 @@ class JavascriptAction extends Action
 	}
 	isEditable(m)
 	{
-		return super.isEditable() && m.constructor.name === 'Morphism' &&
+		return m.isEditable() && m.constructor.name === 'Morphism' &&
 			!InitialObject.prototype.isPrototypeOf(m.domain) &&
 			!TerminalObject.prototype.isPrototypeOf(m.codomain) &&
 			!InitialObject.prototype.isPrototypeOf(m.codomain);
 	}
+	/*
 	header(m)
 	{
 		return `function ${JavascriptAction.JsName(m)}(args)\n{\n`;
@@ -6743,6 +6981,7 @@ class JavascriptAction extends Action
 	{
 		return `}\n`;
 	}
+	*/
 	html(e, diagram, ary)
 	{
 		const m = ary[0].to;
@@ -6752,8 +6991,8 @@ class JavascriptAction extends Action
 			let code = 'code' in m ? ('javascript' in m.code ? m.code.javascript : '') : '';
 			if (code === '')
 				code = this.generate(m);
-			const header = this.header(m);
-			const tail = this.tail(m);
+			const header = JavascriptAction.Header(m);
+			const tail = JavascriptAction.Tail(m);
 			let body = '';
 console.log('code',code);
 			body = code.substring(header.length, code.length - tail.length);
@@ -6970,7 +7209,7 @@ onmessage = function(e)
 }
 ${this.jsAction.generate(m)}
 `;
-			if (R.defaults.debug)
+			if (R.default.debug)
 				console.log('run code', code);
 			const blob = new Blob([code], {type:'application/javascript'});
 			const url = D.url.createObjectURL(blob);
@@ -6978,7 +7217,7 @@ ${this.jsAction.generate(m)}
 			this.workers.push(w);
 			w.onmessage = function(e)
 			{
-				if (R.defaults.debug)
+				if (R.default.debug)
 					console.log('result from worker', e.data);
 				w.terminate();
 			};
@@ -8996,10 +9235,12 @@ class Diagram extends Functor
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		nuArgs.category = U.GetArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
-		const indexName = `${nuArgs.basename}_Index`;
-		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
 		if (!Category.prototype.isPrototypeOf(nuArgs.codomain))
 			nuArgs.codomain = diagram ? diagram.getElement(nuArgs.codomain) : R.Cat;
+//		const indexName = diagram ? `${nuArgs.codomain.basename}/${nuArgs.basename}_Index` : `${nuArgs.basename}_Index`;
+		const indexName = `${nuArgs.codomain.basename}/${nuArgs.basename}_Index`;
+if (indexName.includes('home'))debugger;
+		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
 		super(diagram, nuArgs);
 		this.elements = new Map();
 		this.references = new Map;
@@ -9133,7 +9374,7 @@ class Diagram extends Functor
 	update(save = true)
 	{
 		this.setView();
-		save && D.SaveLocal(this);
+		save && R.SaveLocal(this);
 	}
 	actionHtml(e, name)
 	{
@@ -9177,7 +9418,7 @@ class Diagram extends Functor
 		this.deselectAll(!elt);
 		if (elt)
 			this.addSelected(elt);
-		if (R.defaults.debug)
+		if (R.default.debug)
 			console.log('selected', elt);
 		D.ShowToolbar(e);
 	}
@@ -9332,7 +9573,7 @@ class Diagram extends Functor
 				this.makeSelected(e, isoFrom);
 				this.addSelected(iso2From);
 				this.domain.makeHomSets();
-				save && D.SaveLocal(this);
+				save && R.SaveLocal(this);
 			}
 			else
 				throw 'Not implemented';
@@ -9391,7 +9632,7 @@ class Diagram extends Functor
 	}
 	placeObject(e, to, ixy)
 	{
-		const xy = D.Grid(ixy ? ixy : D.Center());
+		const xy = D.Grid(ixy ? ixy : D.Center(this));
 		const from = new DiagramObject(this, {xy, to});
 		this.addSVG(from);
 		const bbox = new D2(from.svg().getBBox());
@@ -9406,7 +9647,7 @@ class Diagram extends Functor
 	}
 	placeMorphism(e, to, xyDom, xyCod)
 	{
-		const xyD = typeof xyDom !== 'undefined' ? new D2(D.Grid(xyDom)) : D.Center();;
+		const xyD = typeof xyDom !== 'undefined' ? new D2(D.Grid(xyDom)) : D.Center(this);;
 		const domain = new DiagramObject(this, {to:to.domain, xy:xyD});
 		const codomain = new DiagramObject(this, {to:to.codomain});
 		const from = new DiagramMorphism(this, {to, domain, codomain});
@@ -9748,7 +9989,7 @@ console.log('diagram.makeSvg',this.name);
 			from && from.showSelected();
 			if (fn)
 				fn();
-			D.SaveLocal(this);
+			R.SaveLocal(this);
 		}
 		else
 		{
@@ -9762,7 +10003,7 @@ console.log('diagram.makeSvg',this.name);
 		if (DataMorphism.prototype.isPrototypeOf(from.to))
 		{
 			from.to.clear();
-			D.SaveLocal(this);
+			R.SaveLocal(this);
 		}
 	}
 	updateMorphisms()
@@ -9829,7 +10070,7 @@ console.log('diagram.makeSvg',this.name);
 			const sel0 = this.selected[0].to;
 			const sel1 = this.selected[1].to;
 			sel0.setRecursor(sel1);
-			D.SaveLocal(this);
+			R.SaveLocal(this);
 			D.Status(e, `Recursor for ${sel0.properName} has been set`);
 		}
 	}
