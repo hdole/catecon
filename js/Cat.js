@@ -521,7 +521,8 @@ class R
 	// TODO move to D
 	static HasAcceptedCookies()
 	{
-		return isGUI && localStorage.getItem('Cookies Accepted') !== null;
+		return true;
+//		return isGUI && localStorage.getItem('Cookies Accepted') !== null;
 	}
 	static Initialize()
 	{
@@ -783,14 +784,15 @@ if (!zero)debugger;
 			user,
 			properName:		'TTY',
 		}, xy);
-		const HTML = R.Autoplace(basics,
+		const html = R.Autoplace(basics,
 		{
 			description:	'The HTML object interacts with web devices.',
 			basename:		'html',
 			prototype:		'FiniteObject',
 			user,
 			properName:		'HTML',
-		}, xy); const threeD = R.Autoplace(basics,
+		}, xy);
+		const threeD = R.Autoplace(basics,
 		{
 			description:	'The 3D object interacts with graphic devices.',
 			basename:		'd3',
@@ -891,6 +893,28 @@ if (!zero)debugger;
 			codomain:		two,
 			js:				'return args[0] || args[1];',
 		}, xy);
+		const html2omega = R.Autoplace(logic,
+		{
+			description:	'HTML input for truth values',
+			basename:		'html2omega',
+			prototype:		'Morphism',
+			properName:		'convert',
+			user,
+			domain:			html,
+			codomain:		two,
+			js:				'return args[0] || args[1];',
+		}, xy);
+		const omega2html = R.Autoplace(logic,
+		{
+			description:	'HTML output for truth values',
+			basename:		'omega2html',
+			prototype:		'Morphism',
+			properName:		'omega2html',
+			user,
+			domain:			two,
+			codomain:		html,
+			js:				'return args[0] || args[1];',
+		}, xy);
 		D.ShowDiagram(logic);
 		logic.update();
 		//
@@ -913,7 +937,7 @@ if (!zero)debugger;
 			description:	'the natural numbers',
 			basename:		'N',
 			prototype:		'CatObject',
-			properName:		'N',
+			properName:		'&Nopf;',
 			user,
 		}, xy);
 		const Npair = R.Autoplace(Narith,
@@ -921,7 +945,6 @@ if (!zero)debugger;
 			description:	'a pair of natural numbers',
 			basename:		'Po{PFS/Narithmetics/N,PFS/Narithmetics/N}oP',
 			prototype:		'ProductObject',
-			properName:		'N&times;N',
 			objects:		[N, N],
 			user,
 		}, xy);
@@ -980,28 +1003,28 @@ if (!zero)debugger;
 			js:				'return args[0] < args[1];',
 			user,
 		}, xy);
+		const html2N = R.Autoplace(Narith,
+		{
+			description:	'Read a natural number from an HTML form.',
+			basename:		'html2N',
+			prototype:		'Morphism',
+			properName:		'form',
+			domain:			html,
+			codomain:		N,
+			code:			{javascript:
+`function %1_html()
+{
+	return '<input type="number" min="0" id="in_%1" value="0"/>';
+}
+function %1()
+{
+	return Number.parseInt(document.getElementById('in_%1').value);
+}
+`			},
+			user,
+		}, xy);
 		D.ShowDiagram(Narith);
 		Narith.update();
-//		R.ProcessBootDiagram(Narith, NarithElements);
-
-		/*
-		const defaultArgs =
-		{
-			codomain:	'PFS',
-			basename:	'Home',
-			description:'User home diagram',
-			properName:	'Home',
-			references:	['hdole/PFS/Narith'],
-			user,
-		};
-		const userDiagram = R.GetUserDiagram(R.user.name);
-		let diagram = R.ReadLocal(R.UserHomeDiagramName(user));
-		if (!diagram)
-			diagram = new Diagram(userDiagram, defaultArgs);
-		D.ShowDiagram(diagram);
-		R.SaveLocal(diagram);
-*/
-
 		user = R.user.name;
 		let home = R.ReadLocal(R.UserHomeDiagramName(user));
 		if (!home)
@@ -1011,7 +1034,7 @@ if (!zero)debugger;
 			{
 				description:	'user home diagram',
 				codomain:		pfs,
-				basename:		'home',
+				basename:		'Home',
 				properName:		'Home',
 				references:		[Narith.name],
 				user,
@@ -1021,10 +1044,9 @@ if (!zero)debugger;
 			xy = new D2(300, 300);
 			R.Autoplace(home,
 			{
-				description:	'Welcome to Catecon.',
+				description:	'Welcome to Catecon',
 				prototype:		'DiagramText',
 				user,
-				properName:		'&Omega;',
 			}, xy);
 			D.ShowDiagram(home);
 			home.update();
@@ -1039,7 +1061,6 @@ if (!zero)debugger;
 		D.Svg2canvas(D.topSVG, this.name, true, function(png, pngName)
 		{
 			D.diagramPNG.set(diagram.name, png);
-//			localStorage.setItem(U.StorageName(`${diagram.name}.png`), png);
 			localStorage.setItem(`${diagram.name}.png`, png);
 		});
 		return true;
@@ -2706,6 +2727,7 @@ console.log('UpdateDiagramDisplay', R.diagram);
 			if (fn)
 				fn(cargo, `${name}.png`);
 		};
+		img.crossOrigin = "";
 		img.src = url;
 	}
 	static OnEnter(e, fn, that = null)
@@ -2856,6 +2878,8 @@ console.log('UpdateDiagramDisplay', R.diagram);
 	static Home()
 	{
 		D.HideToolbar();
+R.diagram.home();
+return;
 		R.diagram.viewport.x = 0;
 		R.diagram.viewport.y = 0;
 		R.diagram.viewport.scale = 1;
@@ -6651,10 +6675,10 @@ class EditDataMorphismAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
-			return DataMorphism.prototype.isPrototypeOf(from.to) ||
+			return from.to && (DataMorphism.prototype.isPrototypeOf(from.to) ||
 						(	from.to.constructor.name === 'Morphism' &&
 							from.to.domain.isIterable() &&
-							diagram.isIsolated(from));
+							diagram.isIsolated(from)));
 //							!from.to.domain.isInitial &&
 //							!from.to.codomain.isTerminal &&
 //							from.to.domain.isEditable());
@@ -6957,7 +6981,8 @@ class JavascriptAction extends Action
 		{
 			if (!('code' in m))
 				m.code = {};
-			m.code.javascript = JavascriptAction.Header(m) + document.getElementById('morphism-javascript').innerText.trim() + JavascriptAction.Tail(m);
+//			m.code.javascript = JavascriptAction.Header(m) + document.getElementById('morphism-javascript').innerText.trim() + JavascriptAction.Tail(m);
+			m.code.javascript = document.getElementById('morphism-javascript').innerText;
 			diagram.update();
 		}
 	}
@@ -6972,16 +6997,6 @@ class JavascriptAction extends Action
 			!TerminalObject.prototype.isPrototypeOf(m.codomain) &&
 			!InitialObject.prototype.isPrototypeOf(m.codomain);
 	}
-	/*
-	header(m)
-	{
-		return `function ${JavascriptAction.JsName(m)}(args)\n{\n`;
-	}
-	tail(m)
-	{
-		return `}\n`;
-	}
-	*/
 	html(e, diagram, ary)
 	{
 		const m = ary[0].to;
@@ -6991,12 +7006,13 @@ class JavascriptAction extends Action
 			let code = 'code' in m ? ('javascript' in m.code ? m.code.javascript : '') : '';
 			if (code === '')
 				code = this.generate(m);
-			const header = JavascriptAction.Header(m);
-			const tail = JavascriptAction.Tail(m);
-			let body = '';
+//			const header = JavascriptAction.Header(m);
+//			const tail = JavascriptAction.Tail(m);
+//			let body = '';
 console.log('code',code);
-			body = code.substring(header.length, code.length - tail.length);
-			html += H.div(header, 'code') + H.div(body, 'code indent', 'morphism-javascript') + H.div(tail, 'code') +
+//			body = code.substring(header.length, code.length - tail.length);
+//			html += H.div(header, 'code') + H.div(body, 'code indent', 'morphism-javascript') + H.div(tail, 'code') +
+			html += H.div(code, 'code', 'morphism-javascript') +
 					(this.isEditable(m) ? D.GetButton('edit', `R.$Actions.getElement('javascript').setMorphismCode(event, 'morphism-javascript', 'javascript')`,
 						'Edit code', D.default.button.tiny): '');
 		}
@@ -7299,7 +7315,7 @@ class FiniteObjectAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
-			if (diagram.elements.has(from.to.basename) && from.to.constructor.name === 'CatObject' && from.to.refcnt === 1)		// isolated in this diagram
+			if (from.to && diagram.elements.has(from.to.basename) && from.to.constructor.name === 'CatObject' && from.to.refcnt === 1)		// isolated in this diagram
 				return  true;
 			return FiniteObject.prototype.isPrototypeOf(from.to);
 		}
@@ -7325,14 +7341,6 @@ class DataAction extends Action
 		const to = from.to;
 		if (to.constructor.name === 'Morphism')
 		{
-			/*
-			const args =
-			{
-				basename:		m.basename,
-				description:	m.description !== '' ? m.description : `data morphism from ${m.domain.properName} to ${m.codomain.properName}`,
-				properName:		m.properName,
-			}
-			*/
 			diagram.codomain.deleteElement(to);
 //			const newTo = new FiniteObject(diagram, {basename:to.basename, category:diagram.codomain, properName:to.properName, size:this.sizeElt.value.trim()});
 			from.to = null;
@@ -7362,7 +7370,6 @@ class Category extends CatObject
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-//		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Element.Codename(diagram, nuArgs.basename);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : `${nuArgs.user}/${nuArgs.basename}`;
 		nuArgs.category = diagram && 'codomain' in diagram ? diagram.codomain : null;
 		super(diagram, nuArgs);
@@ -9293,6 +9300,31 @@ if (indexName.includes('home'))debugger;
 		this.texts.forEach(function(t){texts.push(t.json())});
 		a.texts =		texts;
 		return a;
+	}
+	home()
+	{
+console.log('svg bbox', this.svgRoot.getBBox());
+//		const bbox = this.svgRoot.getBoundingClientRect();
+		const bbox = this.svgRoot.getBBox();
+//		const xy = this.userToDiagramCoords({x:bbox.left, y:bbox.top});
+//		const xy = {x:bbox.left, y:bbox.top};
+		this.viewport.width = bbox.width;
+		this.viewport.height = bbox.height;
+		const dw = D.Width();
+		const dh = D.Height();
+		const xRatio = bbox.width / dw;
+		const yRatio = bbox.height / dh;
+		const s = 1.0/Math.max(xRatio, yRatio);
+		this.viewport.scale = 0.9 * s;
+		this.viewport.x = - bbox.x * this.viewport.scale;// + dw/2;
+		this.viewport.y = - bbox.y * this.viewport.scale;// + dh/2;
+		if (xRatio > yRatio)
+			this.viewport.y += dh/2;
+		else
+			this.viewport.x += dw/2;
+		this.update();
+console.log('svg bbox 2', this.svgRoot.getBBox());
+console.log('home viewport', bbox, xRatio, yRatio, this.viewport,this.svgRoot.getBoundingClientRect());
 	}
 	deleteElement(name)
 	{
