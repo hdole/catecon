@@ -517,6 +517,15 @@ table.center
 	font-size:	14px;
 }
 
+.diagramText:hover
+{
+	margin:		2px;
+	padding:	2px;
+	opacity:	.5;
+	fill:		#9fc;
+	stroke:		#0f0;
+}
+
 .txtCenter
 {
 	text-align:	center;
