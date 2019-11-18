@@ -354,7 +354,6 @@ a:hover, .offcanvas a:focus
 	box-shadow:			8px 8px 4px 2px #bbbb;
 	display:			inline-block;
 	margin:				0px;
-	/* max-width:			300px; */
 	overflow:			hidden;
 	opacity:			1;
 	padding:			0px;
@@ -385,6 +384,7 @@ a:hover, .offcanvas a:focus
 	overflow:			hidden;
 	padding:			0px;
 	position:			absolute;
+	transition:			opacity 1s, height 0s;
 	z-index:			4;
 }
 
@@ -515,6 +515,18 @@ table.center
 .diagramText
 {
 	font-size:	14px;
+	width:	auto;
+	height:	auto;
+}
+
+.diagramText:hover
+{
+	cursor:	grab;
+	fill:	#9fc;
+	opacity:.5;
+	stroke:	#0f0;
+	font:	14px;
+}
 }
 
 .txtCenter
@@ -532,13 +544,6 @@ table.center
 	fill:	#888;
 	fill-opacity:	0.5;
 }
-
-/*
-.toolbarTbl
-{
-	width:	100%;
-}
-*/
 
 table.buttonBar
 {
