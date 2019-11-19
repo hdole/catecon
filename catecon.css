@@ -107,6 +107,7 @@ div.intro
 	display:		block;
 	/* font:			12px "monospace", sans-serif; */
 	/* margin:			5px; */
+	tab-size:		4;
 	unicode-bidi:	embed;
 	white-space:	pre;
 }
@@ -492,13 +493,6 @@ a:hover, .offcanvas a:focus
 	box-sizing:	border-box;
 }
 
-/*
-.nodisplay
-{
-	display:	none;
-}
-*/
-
 .title
 {
 	font-weight:	bold;
@@ -526,7 +520,6 @@ table.center
 	opacity:.5;
 	stroke:	#0f0;
 	font:	14px;
-}
 }
 
 .diagramText:hover
