@@ -2064,6 +2064,7 @@ class D
 		D.commaWidth = D.textWidth(', ');
 		D.bracketWidth = D.textWidth('[');
 		D.diagramSVG =		document.getElementById('diagramSVG');
+		D.H =				H;
 		D.Panel = 			Panel;
 		D.panels =			new Panels;
 		D.categoryPanel =	new CategoryPanel;
@@ -4957,7 +4958,7 @@ class Element
 	}
 	elementId()
 	{
-		return `do_${this.name}`;
+		return `el_${this.name}`;
 	}
 	usesDiagram(diagram)
 	{
@@ -6883,8 +6884,11 @@ class ProjectAction extends Action
 	}
 	static ObjectFactorButton(action, dir, object, index)
 	{
-		return H.table(H.tr(H.td(H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
-			`data-indices="${index.toString()}" onclick="D.ProjectAction.AddFactor('${action}', dir, '${object.name}', ${index.toString()})"`))));
+		return H.table(H.tr(H.td(
+			H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
+			`data-indices="${index.toString()}" onclick="D.ProjectAction.AddFactor('${action}', dir, '${object.name}', ${index.toString()})"`)
+		)));
+//				onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 	}
 	static ProductObjectFactorButton(action, dir, object, index)
 	{
@@ -6923,9 +6927,9 @@ class LambdaMorphismAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const domFactors = LambdaMorphismAction.GetFactorsByDomCodId('lambda-domain');
-		const homFactors = LambdaMorphismAction.GetFactorsByDomCodId('lambda-codomain');
-		const m = LambdaMorphism.Get(this, {preCurry:from.to, domFactors, homFactors});
+		const domFactors = U.GetFactorsById('lambda-domain');
+		const homFactors = U.GetFactorsById('lambda-codomain');
+		const m = LambdaMorphism.Get(diagram, from.to, domFactors, homFactors);
 		const v = D2.Subtract(from.codomain, from.domain);
 		const normV = v.normal().normalize();
 		const xyDom = normV.scale(D.default.arrow.length).add(from.domain);
@@ -6942,22 +6946,23 @@ class LambdaMorphismAction extends Action
 		const domain = ary[0].domain.to;
 		const codomain = ary[0].codomain.to;
 		const html =
-			H.h4('Curry A &otimes; B -> [C, D]') +
-			H.h5('Domain Factors: A &otimes; B') +
+			H.h4('Curry A &times; B -> [C, D]') +
+			H.h5('Domain Factors: A &times; B') +
 			H.small('Click to move to C') +
 //			H.div(this.getSubFactorBtnCode(domain, {dir:	0, fromId:'domainDiv', toId:'codomainDiv'}), '', 'domainDiv') +
-			H.div(
+			H.div(this.getSubFactorBtnCode(domain, {dir:	0, fromId:'lambda-domain', toId:'lambda-codomain'}), '', 'lambda-domain') +
+//			H.div(
 //				this.getSubFactorBtnCode(domain, {dir:	0, fromId:'domainDiv', toId:'codomainDiv'}),
-				ProjectAction.FactorButton('lambdaMorphism', 'codomain', domain, []),
-				'', 'lambda-domain') +
+//				ProjectAction.FactorButton('lambdaMorphism', 'codomain', domain, []),
+//				'', 'lambda-domain') +
 			H.h5('Codomain Factors: C') +
 			(HomObject.prototype.isPrototypeOf(codomain) ?
 				H.small('Merge to codomain hom') + D.GetButton('codhom', `R.diagram.toggleCodHom()`, 'Merge codomain hom', D.default.button.tiny) + H.br() : '') +
-			H.small('Click to move to A &otimes; B') +
+			H.small('Click to move to A &times; B') +
 			// TODO this factorButton arguments are not correct
 			H.div(HomObject.prototype.isPrototypeOf(codomain) ?
-//				codomain.homDomain().factorButton({dir:1, fromId:'codomainDiv', toId:'domainDiv'})
-				ProjectAction.FactorButton('lambdaMorphism', 'domain', codomain.homDomain(), [])
+				codomain.homDomain().factorButton({dir:1, fromId:'lambda-codomain', toId:'lambda-domain'})
+//				ProjectAction.FactorButton('lambdaMorphism', 'domain', codomain.homDomain(), [])
 																: '', '', 'lambda-codomain');
 //			H.span(D.GetButton('edit', `R.diagram.activate(evt, 'lambdaMorphism')`, 'Curry morphism'));
 		D.help.innerHTML = html;
@@ -6967,14 +6972,14 @@ class LambdaMorphismAction extends Action
 	getSubFactorBtnCode(object, data)
 	{
 		let html = '';
-		// TODO
-		/*
-		if ('data' in expr)
-			for(let i=0; i<expr.data.length; ++i)
-				html += H.button(this.getObject(expr.data[i]).properName + H.sub(i), '', D.elementId(), '', `data-factor="${data.dir} ${i}" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
+//		if ('data' in expr)
+//			for(let i=0; i<expr.data.length; ++i)
+		if ('objects' in object)
+			object.objects.map((o, i) =>
+				html += H.button(o.properName + H.sub(i), '', D.elementId(), '', `data-factor="${data.dir} ${i}" onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`)).join('');
+//				html += H.button(this.getObject(expr.data[i]).properName + H.sub(i), '', D.elementId(), '', `data-factor="${data.dir} ${i}" onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 		else
-			html += H.button(this.getObject(expr).properName, '', D.elementId(), '', `data-factor="${data.dir} -1" onclick="Cat.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
-			*/
+			html += H.button(object.properName, '', D.elementId(), '', `data-factor="${data.dir} -1" onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 		return html;
 	}
 	static GetFactorsByDomCodId(id)
@@ -6983,7 +6988,7 @@ class LambdaMorphismAction extends Action
 		let factors = [];
 		btns.forEach(function(b)
 		{
-			factors.push(b.dataset.factor.split(' ').map(f => Number.parseInt(f)));
+			factors.push(b.dataset.indices.split(' ').map(f => Number.parseInt(f)));
 		});
 		return factors;
 	}
@@ -8914,7 +8919,7 @@ class LambdaMorphism extends Morphism
 	}
 	static Codename(diagram, preCurry, domFactors, homFactors)
 	{
-		return Element.Codename(diagram, LambdaMorphism.Basename(diagra, preCurry, domFactors, homFactors));
+		return Element.Codename(diagram, LambdaMorphism.Basename(diagram, preCurry, domFactors, homFactors));
 	}
 	static Domain(diagram, preCurry, factors)
 	{
