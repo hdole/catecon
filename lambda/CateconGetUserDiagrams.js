@@ -14,7 +14,7 @@ AWS.config.update(
 
 exports.handler = (event, context, callback) =>
 {
-    const username = event.username;
+    const username = event.user;
     const db = new AWS.DynamoDB({region:C.REGION});
     const params =
     {
@@ -26,7 +26,7 @@ exports.handler = (event, context, callback) =>
             ':u':   {S: username},
             ':sk':  {S: 'D@'}
         },
-        ProjectionExpression:   'subkey, #ts, fancyName, description'
+        ProjectionExpression:   'subkey, #ts, properName, description'
     };
     db.query(params, function(err, data)
     {
@@ -35,7 +35,7 @@ exports.handler = (event, context, callback) =>
         else
             console.log("Success", err, JSON.stringify(data));
         const serverDiagrams = {};
-        data.Items.map(d => serverDiagrams[d[0]] = {timestamp:d[1], fancyName:d[2], description:d[3]})
+        data.Items.map(d => serverDiagrams[d[0]] = {timestamp:d[1], properName:d[2], description:d[3]});
         callback(err, data);
     });
 };

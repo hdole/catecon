@@ -521,31 +521,36 @@ class R
 	}
 	static SetupUserHome(user)
 	{
-		let home = R.ReadLocal(R.UserHomeDiagramName(user));
+		const userDiagram = R.GetUserDiagram(user);
+		let home = userDiagram.getElement(`${user === 'hdole' ? '' : user + '/'}hdole/PFS/Home`);
+		if (!home)
+			home = R.ReadLocal(R.UserHomeDiagramName(user));
 		if (!home)
 		{
-			userDiagram = R.GetUserDiagram(user);
 			home = new Diagram(userDiagram,
 			{
-				description:	'user home diagram',
-				codomain:		pfs,
+				description:	'User home diagram',
+				codomain:		'hdole/PFS',
 				basename:		'Home',
 				properName:		'Home',
-				references:		[strings],
+				references:		['hdole/PFS/Strings'],
 				user,
 			});
-			args.user = user;
-			args.diagram = home;
-			args.xy = new D2(300, 300);
+			const args =
+			{
+				user,
+				diagram:	home,
+				xy:			new D2(300, 300),
+			};
 			R.AddDiagram(home);
 			home.makeSvg();
 			R.Autoplace(home,
 			{
 				description:
 `Welcome to Catecon: The Categorical Console
-Create your own diagrams and execute the morphisms.
-An account allows sharing your diagrams with others.
-To begin, delete this text.
+Create diagrams and execute morphisms.
+An account allows sharing diagrams.
+Delete this text.
 `,
 				prototype:		'DiagramText',
 				user,
@@ -821,7 +826,7 @@ To begin, delete this text.
 		const side = D.default.stdArrow.scale(1.5).subtract(new D2(0, 7));		// TODO from the css 30px for object class font height: 30px/2 = 15, +14/2
 		const pfs = new Category(R.$CAT,
 			{
-				name:'PFS',
+				basename:'PFS',
 				user,
 				properName:'&Popf;&Fopf;&Sopf;',
 				actionDiagrams:	['product', 'coproduct', 'hom'],
@@ -874,7 +879,7 @@ To begin, delete this text.
 			basename:		'Logic',
 			properName:		'&Omega; Logic',
 			description:	'Basic logic functions',
-			references:		['PFS/Basics'],
+			references:		[basics],
 			user,
 		});
 		args.diagram = logic;
@@ -888,11 +893,11 @@ To begin, delete this text.
 			user,
 			properName:		'&Omega;',
 		}, args.xy);
-		const two = R.PlaceObject(args, 'two', 'FiniteObject', '&Omega;', 'The sub-object classifier, or better known as the two point set', {size:2});
+		const two = R.PlaceObject(args, 'two', 'FiniteObject', '&Omega;', 'The sub-object classifier, or better known in these circumstances as the two point set', {size:2});
 		const twoPair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[two, two]});
 		const mTrue = R.PlaceMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true.', one, two, {js:'return true;'});
 		const mFalse = R.PlaceMorphism(args, 'false', 'Morphism', '&perp;', 'The truth value known as false.', one, two, {js:'return false;'});
-		const logicNot = R.PlaceMorphism(args, 'not', 'Morphism', '&not;', 'The logical negation of a logic value.', two, two, {js:'return !args;'});
+		const logicNot = R.PlaceMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value.', two, two, {js:'return !args;'});
 		const logicAnd = R.PlaceMorphism(args, 'and', 'Morphism', '&and;', 'The logical and of two logic values.', twoPair, two, {js:'return args[0] && args[1];'});
 		const logicOr = R.PlaceMorphism(args, 'or', 'Morphism', '&or;', 'The logical or of two logic values.', twoPair, two, {js:'return args[0] || args[1];'});
 		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', '&#9745;', 'HTML input for truth values.', html, two);
@@ -911,7 +916,7 @@ To begin, delete this text.
 			codomain:		pfs,
 			basename:		'Narithmetics',
 			properName:		'&Nopf; Arithmetic',
-			references:		['PFS/Logic'],
+			references:		[logic],
 			user,
 		});
 		args.diagram = Narith;
@@ -1237,7 +1242,7 @@ To begin, delete this text.
 	static SaveLocal(diagram, savePng = true)
 	{
 		if (R.default.debug)
-			console.log('save to local storage', diagram.name);
+			console.log('SaveLocal', diagram.name);
 		diagram.timestamp = Date.now();
 		localStorage.setItem(`${diagram.name}.json`, diagram.stringify());
 		D.Svg2canvas(D.topSVG, this.name, true, function(png, pngName)
@@ -1359,14 +1364,15 @@ To begin, delete this text.
 	*/
 	static UserHomeDiagramName(user)
 	{
-		return `${user}/PFS/Home`;
+		return `${user === 'hdole' ? '' : user + '/'}hdole/PFS/Home`;
 	}
 	static Setup(fn)
 	{
 		R.diagram = null;
 		const params = (new URL(document.location)).searchParams;
 		let diagramName = params.get('diagram');
-		R.diagram = R.$CAT.getElement(diagramName);
+		if (diagramName)
+			R.diagram = R.$CAT.getElement(diagramName);
 		let codomain = null;
 		if (!R.diagram)
 		{
@@ -1500,8 +1506,8 @@ Object.defineProperties(R,
 	{
 		value:
 		{
-			category:		'PFS',
-			cat2diagram:	{'PFS':'Anon/PFS/Home'},
+			category:		'hdole/PFS',
+			cat2diagram:	{'hdole/PFS':'Anon/hdole/PFS/Home'},
 			debug:			false,
 			internals:		false,
 		},
@@ -1676,14 +1682,12 @@ class Amazon extends Cloud
 				}
 				window.AWS.config.credentials = new window.AWS.CognitoIdentityCredentials(that.loginInfo);
 				that.accessToken = session.getAccessToken().getJwtToken();
-				if (R.default.debug)
-					console.log('registerCognito session validity', session, session.isValid());
 				const idPro = new window.AWS.CognitoIdentityServiceProvider();
 				idPro.getUser({AccessToken:that.accessToken}, function(err, data)
 				{
 					if (err)
 					{
-						console.log('getUser error',err);
+						console.log('getUser error', err);
 						return;
 					}
 					that.loggedIn = true;
@@ -1695,7 +1699,7 @@ class Amazon extends Cloud
 					that.getUserDiagramsFromServer(function(dgrms)
 					{
 						if (R.default.debug)
-							console.log('user diagrams on server',dgrms);
+							console.log('user diagrams on server', dgrms);
 					});
 				});
 			});
@@ -1741,8 +1745,6 @@ class Amazon extends Cloud
 			R.user.status = 'registered';
 			D.navbar.update();
 			D.loginPanel.update();
-			if (R.default.debug)
-				console.log('user name is ' + this.user.getUsername());
 		});
 	}
 	resetPassword()
@@ -1775,8 +1777,6 @@ class Amazon extends Cloud
 			R.user.status = 'registered';
 			D.navbar.update();
 			D.loginPanel.update();
-			if (R.default.debug)
-				console.log('user name is ' + this.user.getUsername());
 		});
 	}
 	confirm()
@@ -1803,6 +1803,7 @@ class Amazon extends Cloud
 			const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username:userName, Password:password});
 			const userData = {Username:userName, Pool:this.userPool};
 			this.user = new AmazonCognitoIdentity.CognitoUser(userData);
+			const that = this;
 			this.user.authenticateUser(authenticationDetails,
 			{
 				onSuccess:function(result)
@@ -1811,7 +1812,6 @@ class Amazon extends Cloud
 					this.loggedIn = true;
 					R.user.status = 'logged-in';
 					const idPro = new window.AWS.CognitoIdentityServiceProvider();
-					const that = this;
 					idPro.getUser({AccessToken:this.accessToken}, function(err, data)
 					{
 						if (err)
@@ -1821,11 +1821,11 @@ class Amazon extends Cloud
 						}
 						R.user.name = data.Username;
 						R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
+						R.default.cat2diagram = {};
 						R.SetupUserHome(R.user.name);
-						D.navbar.update();
 						D.loginPanel.update();
-						D.morphismPanel.update();
 						D.loginPanel.toggle();
+//						D.morphismPanel.update();
 						R.Setup(function()
 						{
 							D.UpdateDiagramDisplay();
@@ -1836,6 +1836,7 @@ class Amazon extends Cloud
 						{
 							console.log('user diagrams on server',dgrms);
 						});
+						D.navbar.update();
 					});
 				},
 				onFailure:function(err)
@@ -1862,12 +1863,13 @@ class Amazon extends Cloud
 		R.user.name = 'Anon';
 		R.user.email = '';
 		R.user.status = 'unauthorized';
+		R.default.cat2diagram = {};
 		R.Setup(function()
 		{
 			D.UpdateDiagramDisplay();
 		});
 		D.navbar.update();
-		Panels.update();
+//		D.panels.update();
 	}
 	async fetchDiagram(name)
 	{
@@ -1934,6 +1936,8 @@ class Amazon extends Cloud
 	{
 		const dgrmJson = dgrm.json();
 		const dgrmPayload = JSON.stringify(dgrmJson);
+		if (R.default.debug)
+			console.log('uploaded diagram size', dgrmPayload.length);
 		if (dgrmPayload.length > U.uploadLimit)
 		{
 			D.Status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
@@ -2020,8 +2024,9 @@ class Navbar
 		this.element = document.getElementById('navbar');
 		this.diagram = null;
 		const sz = D.default.button.large;
-		const left = H.td(H.div(D.GetButton('category', "D.categoryPanel.toggle()", 'Categories', sz))) +
+		const left =
 			H.td(H.div(D.GetButton('diagram', "D.diagramPanel.toggle()", 'Diagrams', sz))) +
+			H.td(H.div(D.GetButton('category', "D.categoryPanel.toggle()", 'Categories', sz))) +
 			H.td(H.div(D.GetButton('object', "D.objectPanel.toggle()", 'Objects', sz))) +
 			H.td(H.div(D.GetButton('morphism', "D.morphismPanel.toggle()", 'Morphisms', sz))) +
 			H.td(H.div(D.GetButton('text', "D.textPanel.toggle()", 'Text', sz))) +
@@ -4363,7 +4368,7 @@ class HelpPanel extends Panel
 			H.button('License', 'sidenavAccordion', 'licensePnlBtn', '', `onclick="D.Panel.SectionToggle(this, \'licensePnl\')"`) +
 			H.div(	H.p('Vernacular code generated by the Categorical Console is freely usable by those with a cortex. Machines are good to go, too.') +
 					H.p('Upload a diagram to Catecon and others there are expected to make full use of it.') +
-					H.p('Inelegant or unreferenced diagrams are removed.'), 'section', 'licensePnl') +
+					H.p('Inelegant or unreferenced diagrams are removed.  See T&amp;C\'s'), 'section', 'licensePnl') +
 			H.button('Credits', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="D.Panel.SectionToggle(this, \'creditsPnl\')"`) +
 			H.div(	H.a('Saunders Mac Lane', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"') +
 					H.a('Harry Dole', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"'), 'section', 'creditsPnl') +
@@ -4411,7 +4416,7 @@ class LoginPanel extends Panel
 								H.tr(H.td(H.input('', '', 'login-user-name', 'text', {ph:'Name'}))) +
 								H.tr(H.td('Password')) +
 								H.tr(H.td(H.input('', '', 'login-password', 'password', {ph:'********', x:'onkeydown="D.OnEnter(event, R.cloud.login, R.cloud)"'}))) +
-								H.tr(H.td(H.button('Login', '', '', '', 'onclick=R.cloud.login()'))));
+								H.tr(H.td(H.button('Login', '', '', '', 'onclick="R.cloud.login()"'))));
 		if (R.user.status === 'unauthorized')
 			html += H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="D.Panel.SectionToggle(this, \'signupPnl\')"`) +
 					H.div( H.table(H.tr(H.td('User name')) +
@@ -4419,13 +4424,15 @@ class LoginPanel extends Panel
 								H.tr(H.td('Email')) +
 								H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 								LoginPanel.PasswordForm() +
-								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick=R.cloud.signup()')))), 'section', 'signupPnl');
+								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="R.cloud.signup()"')))), 'section', 'signupPnl');
 		if (R.user.status === 'registered')
 			html += H.h3('Confirmation Code') +
 					H.span('The confirmation code is sent by email to the specified address above.') +
 					H.table(	H.tr(H.td('Confirmation code')) +
 								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="D.OnEnter(event, R.cloud.confirm, R.cloud)"'}))) +
 								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=R.cloud.confirm()'))));
+		if (R.user.status === 'logged-in')
+			html += H.button('Log Out', '', '', '', 'onclick="R.cloud.logout()"');
 		this.loginInfoElt.innerHTML = html;
 		this.loginUserNameElt = document.getElementById('login-user-name');
 		this.passwordElt = document.getElementById('login-password');
@@ -4897,7 +4904,7 @@ class Element
 						(R.default.internals ? ('basename' in this ? H.p(H.span(D.limit(this.basename), '', 'basenameElt', this.name)) : '') : '') +
 						(R.default.internals ?  H.p(`Reference count: ${this.refcnt}`) : '') +
 						H.p(H.span(U.Formal(this.description), '', 'descriptionElt')) +
-						H.p(`Prototype: ${this.constructor.name}`) +
+						(R.default.internals ? H.p(`Prototype: ${this.constructor.name}`) : '') +
 						H.p(`User: ${this.user}`);
 		return html;
 	}
@@ -7670,7 +7677,10 @@ class Morphism extends Element
 	}
 	help()
 	{
-		return super.help() + H.p('Morphism') + H.p(`Domain: ${this.domain.properName}`) + H.p(`Codomain: ${this.codomain.properName}`);
+		return super.help() +
+			H.p(this.diagram ? this.diagram.properName : '') +
+			H.p(`Domain: ${this.domain.properName}`) +
+			H.p(`Codomain: ${this.codomain.properName}`);
 	}
 	decrRefcnt()
 	{
@@ -8041,7 +8051,6 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 		{
 			const midpoint = {x:(this.start.x + this.end.x)/2, y:(this.start.y + this.end.y)/2};
 			const normal = this.end.subtract(this.start).normal().normalize();
-console.log('adjustByHomSet', normal);
 			const band = Math.trunc(i/2);
 			const v = normal.scale(2 * D.default.font.height * (band+1) * (i % 2 > 0 ? -1 : 1));
 			const w = normal.scale(10 * ((i % 2) + 1) * (i % 2 ? -1 : 1));
@@ -9344,7 +9353,6 @@ class Diagram extends Functor
 		if (!Category.prototype.isPrototypeOf(nuArgs.codomain))
 			nuArgs.codomain = diagram ? diagram.getElement(nuArgs.codomain) : R.Cat;
 		const indexName = `${nuArgs.codomain.basename}/${nuArgs.basename}_Index`;
-if (indexName.includes('home'))debugger;
 		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
 		super(diagram, nuArgs);
 		this.elements = new Map;
@@ -10006,7 +10014,6 @@ if (indexName.includes('home'))debugger;
 	*/
 	makeSvg()
 	{
-console.log('diagram.makeSvg',this.name);
 		this.svgRoot = document.getElementById(this.name);
 		if (!this.svgRoot)
 		{

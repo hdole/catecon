@@ -16,11 +16,11 @@ const S3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 exports.handler = (event, context, callback) =>
 {
-	const dgrm = event.diagram;
-	const username = 'username' in event ? event.username : 'stdFOO';
-	if (dgrm.username !== username)
+	const diagram = event.diagram;
+	const user = 'user' in event ? event.user : 'stdFOO';
+	if (diagram.user !== user)
 	{
-		const message = `Error:  User ${username} is not the owner of ${dgrm.name}.  ${dgrm.username} is.`;
+		const message = `Error:  User ${user} is not the owner of ${diagram.name}.  ${diagram.user} is.`;
 		console.log(message);
 		callback(message, null);
 		return;
@@ -29,7 +29,7 @@ exports.handler = (event, context, callback) =>
 	// TODO: category check
 	// TODO: diagram name check
 	//
-	const Body = JSON.stringify(dgrm);
+	const Body = JSON.stringify(diagram);
 	if (Body.length > 1000000)
 	{
 		const message = 'Error:  Diagram is too large to load';
@@ -39,7 +39,8 @@ exports.handler = (event, context, callback) =>
 	}
 	const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
 	const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
-	const Key = `${dgrm.codomain}/${dgrm.username}/${dgrm.name}.json`;
+	const Key = `${diagram.user}/${diagram.codomain}/${diagram.basename}`;
+	const jsKey = Key + '.json';
 	const s3params =
 	{
 		Bucket:  C.DIAGRAM_BUCKET_NAME,
@@ -60,7 +61,7 @@ exports.handler = (event, context, callback) =>
 			Bucket:				C.DIAGRAM_BUCKET_NAME,
 			ContentType:		'image/png',
 			ContentEncoding:	'base64',
-			Key:				`${dgrm.codomain}/${dgrm.username}/${dgrm.name}.png`,
+			Key:				Key + '.png',
 			Body:				new Buffer(event.png.replace(/^data:image\/octet-stream;base64,/,""), 'base64'),
 			ACL:				'public-read',
 		};
@@ -72,18 +73,17 @@ exports.handler = (event, context, callback) =>
 				return;
 			}
 			const db = new AWS.DynamoDB({region:C.REGION});
-			const description = dgrm.description !== '' ? dgrm.description : 'no description';
 			const dt = Date();
 			const params =
 			{
 				TableName:  C.DIAGRAM_TABLE,
 				Item:
 				{
-					username:	{S:username},
-					subkey:		{S:dgrm.name},
+					user:		{S:user},
+					subkey:		{S:diagram.name},
 					timestamp:  {N:Date.now().toString()},
-					description:{S:description},
-					fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
+					description:{S:diagram.description},
+					properName:	{S:diagram.properName},
 				},
 			};
 			db.putItem(params, function(err, data)
@@ -96,7 +96,7 @@ exports.handler = (event, context, callback) =>
 				AWS.config.update({region:C.REGION, credentials});
 				const msg =
 				{
-					Message:	JSON.stringify({username, name:dgrm.name, timestamp:dgrm.timestamp, cat:dgrm.codomain}),
+					Message:	JSON.stringify({user, name:diagram.name, timestamp:diagram.timestamp, cat:diagram.codomain}),
 					TopicArn:	C.CATECON_TOPIC
 				};
 				var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(msg).promise();
@@ -109,11 +109,13 @@ exports.handler = (event, context, callback) =>
 						TableName:  C.RECENT_DIAGRAM_TABLE,
 						Item:
 						{
-							name:		{S:dgrm.name},
-							timestamp:  {N:dgrm.timestamp.toString()},
-							username:	{S:username},
-							description:	{S:description},
-							fancyName:  {S:dgrm.html !== '' ? dgrm.html : dgrm.basename},
+							basename:		diagram.basename,
+							name:			{S:diagram.name},
+							timestamp:		{N:diagram.timestamp.toString()},
+							user:			{S:user},
+							description:	{S:diagram.description},
+							properName:		{S:diagram.properName},
+							references:		{L:diagram.references.map(r => `{"S": "${r}"}`),
 						},
 					};
 					db.putItem(params, function(err, data)
