@@ -522,7 +522,8 @@ class R
 	static SetupUserHome(user)
 	{
 		const userDiagram = R.GetUserDiagram(user);
-		let home = userDiagram.getElement(`${user === 'hdole' ? '' : user + '/'}hdole/PFS/Home`);
+//		let home = userDiagram.getElement(`${user === 'hdole' ? '' : user + '/'}hdole/PFS/Home`);
+		let home = userDiagram.getElement(`${user}/Home`);
 		if (!home)
 			home = R.ReadLocal(R.UserHomeDiagramName(user));
 		if (!home)
@@ -533,7 +534,7 @@ class R
 				codomain:		'hdole/PFS',
 				basename:		'Home',
 				properName:		'Home',
-				references:		['hdole/PFS/Strings'],
+				references:		['hdole/HTML'],
 				user,
 			});
 			const args =
@@ -555,7 +556,7 @@ Delete this text.
 				prototype:		'DiagramText',
 				user,
 			}, args.xy);
-//			D.ShowDiagram(home);
+			D.ShowDiagram(home);
 			home.home();
 			home.update();
 		}
@@ -641,6 +642,7 @@ Delete this text.
 				new EditDataMorphismAction(R.$Actions),
 				new DeleteAction(R.$Actions),
 				new CopyAction(R.$Actions),
+				new FlipNameAction(R.$Actions),
 				new HelpAction(R.$Actions),
 				new JavascriptAction(R.$Actions),
 				new RunAction(R.$Actions),
@@ -864,7 +866,6 @@ Delete this text.
 		R.PlaceSideText(args, 'The one point set or terminal object.');
 		const one = R.Autoplace(basics, pfs.getElement('#1'), args.xy);
 		const tty = R.PlaceObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices.');
-		const html = R.PlaceObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices.');
 		const threeD = R.PlaceObject(args, 'D3', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices.');
 		D.ShowDiagram(basics);
 		basics.home();
@@ -900,8 +901,6 @@ Delete this text.
 		const logicNot = R.PlaceMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value.', two, two, {js:'return !args;'});
 		const logicAnd = R.PlaceMorphism(args, 'and', 'Morphism', '&and;', 'The logical and of two logic values.', twoPair, two, {js:'return args[0] && args[1];'});
 		const logicOr = R.PlaceMorphism(args, 'or', 'Morphism', '&or;', 'The logical or of two logic values.', twoPair, two, {js:'return args[0] || args[1];'});
-		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', '&#9745;', 'HTML input for truth values.', html, two);
-		const omega2html = R.PlaceMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
 		R.DiagramReferences(user, logic, args.xy);
 		D.ShowDiagram(logic);
 		logic.home();
@@ -940,19 +939,6 @@ Delete this text.
 		const Nless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first natural number less than the second', Npair, N, {js:'return args[0] < args[1];'});
 		const NlessEq = R.PlaceMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first natural number less than or equal to the second', Npair, two, {js:'return args[0] <= args[1];'});
 		const Nequals = R.PlaceMorphism(args, 'equals', 'Morphism', '=', 'compare two natural numbers for equality', Npair, two, {js:'return args[0] === args[1];'});
-		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
-		{
-			code:			{javascript:
-`function %1_html()
-{
-	return '<input type="number" min="0" id="in_%1" value="0"/>';
-}
-function %1()
-{
-	return Number.parseInt(document.getElementById('in_%1').value);
-}
-`			},
-		});
 		R.DiagramReferences(user, Narith, args.xy);
 		D.ShowDiagram(Narith);
 		Narith.home();
@@ -1016,19 +1002,6 @@ function %1()
 		const Zless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given integer number less than the second', Zpair, two, {js:'return args[0] < args[1];'});
 		const ZlessEq = R.PlaceMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first integer less than or equal to the second', Zpair, two, {js:'return args[0] <= args[1];'});
 		const Zequals = R.PlaceMorphism(args, 'equals', 'Morphism', '=', 'compare two integers for equality', Zpair, two, {js:'return args[0] === args[1];'});
-		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
-		{
-			code:			{javascript:
-`function %1_html()
-{
-	return '<input type="number" id="in_%1" value="0" placeholder="Integer"/>';
-}
-function %1()
-{
-	return Number.parseInt(document.getElementById('in_%1').value);
-}
-`			},
-		});
 		R.DiagramReferences(user, integers, args.xy);
 		D.ShowDiagram(integers);
 		integers.home();
@@ -1130,19 +1103,6 @@ function %1()
 		const Fmax = R.PlaceMorphism(args, 'max', 'Morphism', 'max', 'The maximum floating point number of the given list', Flist, F, {js:'return Math.max(...args);'});
 		const Fmin = R.PlaceMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F, {js:'return Math.min(...args);'});
 
-		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
-		{
-			code:			{javascript:
-`function %1_html()
-{
-	return '<input type="number" id="in_%1" value="0.0" placeholder="Integer"/>';
-}
-function %1()
-{
-	return Number.parseInt(document.getElementById('in_%1').value);
-}
-`			},
-		});
 		R.DiagramReferences(user, floats, args.xy);
 		D.ShowDiagram(floats);
 		floats.home();
@@ -1184,7 +1144,6 @@ function %1()
 		const N2str = R.PlaceMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str, {js:'return args.toString();'});
 		const Z2str = R.PlaceMorphism(args, 'Z2str', 'Morphism', '&lsquo;&rsquo;', 'convert an integer to a string', Z, str, {js:'return args.toString();'});
 		const F2str = R.PlaceMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str, {js:'return args.toString();'});
-		const html2str = R.PlaceMorphism(args, 'html2str', 'Morphism', 'input', 'convert from HTML input to a string', html, str);
 		const str2tty = R.PlaceMorphism(args, 'str2tty', 'Morphism', '&#120451;&#120451;&#120456;', 'emit the string to the TTY', str, tty,
 		{
 			code:			{javascript:
@@ -1202,6 +1161,91 @@ function %1(args)
 		strings.update();
 
 		//
+		// htmlDiagram
+		//
+		const htmlDiagram = new Diagram(userDiagram,
+		{
+			codomain:		pfs,
+			basename:		'HTML',
+			properName:		'HTML',
+			description:	'Basic HTML input and output',
+			references:		[strings],
+			user,
+		});
+		args.diagram = htmlDiagram;
+		args.xy = new D2(300, 300);
+		htmlDiagram.makeSvg();
+		R.AddDiagram(htmlDiagram);
+		R.Autoplace(htmlDiagram,
+		{
+			description:	'Various HTML input and output morphisms are found here.',
+			prototype:		'DiagramText',
+			user,
+			properName:		'&Omega;',
+		}, args.xy);
+		const html = R.PlaceObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices.');
+		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
+		{
+			code:			{javascript:
+`function %1_html()
+{
+	return '<input type="number" id="in_%1" value="0.0" placeholder="Integer"/>';
+}
+function %1()
+{
+	return Number.parseInt(document.getElementById('in_%1').value);
+}
+`			},
+		});
+		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
+		{
+			code:			{javascript:
+`function %1_html()
+{
+	return '<input type="number" id="in_%1" value="0" placeholder="Integer"/>';
+}
+function %1()
+{
+	return Number.parseInt(document.getElementById('in_%1').value);
+}
+`			},
+		});
+		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
+		{
+			code:			{javascript:
+`function %1_html()
+{
+	return '<input type="number" min="0" id="in_%1" value="0"/>';
+}
+function %1()
+{
+	return Number.parseInt(document.getElementById('in_%1').value);
+}
+`			},
+		});
+		const html2Str = R.PlaceMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, Str,
+		{
+			code:			{javascript:
+`function %1_html()
+{
+	return '<input type="text" id="in_%1" value="" placeholder="Text"/>';
+}
+function %1()
+{
+	return Number.parseInt(document.getElementById('in_%1').value);
+}
+`			},
+		});
+		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', '&#9745;', 'HTML input for truth values.', html, two);
+		const omega2html = R.PlaceMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
+		R.DiagramReferences(user, htmlDiagram, args.xy);
+		D.ShowDiagram(htmlDiagram);
+		htmlDiagram.home();
+		htmlDiagram.update();
+
+		R.SetupUserHome(R.user.name);
+/*
+		//
 		// user home diagram setup
 		//
 		user = R.user.name;
@@ -1215,7 +1259,7 @@ function %1(args)
 				codomain:		pfs,
 				basename:		'Home',
 				properName:		'Home',
-				references:		[strings],
+				references:		[htmlDiagram],
 				user,
 			});
 			args.user = user;
@@ -1238,6 +1282,7 @@ To begin, delete this text.
 			home.home();
 			home.update();
 		}
+*/
 	}
 	static SaveLocal(diagram, savePng = true)
 	{
@@ -1364,7 +1409,8 @@ To begin, delete this text.
 	*/
 	static UserHomeDiagramName(user)
 	{
-		return `${user === 'hdole' ? '' : user + '/'}hdole/PFS/Home`;
+//		return `${user === 'hdole' ? '' : user + '/'}hdole/PFS/Home`;
+		return `${user}/Home`;
 	}
 	static Setup(fn)
 	{
@@ -1507,7 +1553,7 @@ Object.defineProperties(R,
 		value:
 		{
 			category:		'hdole/PFS',
-			cat2diagram:	{'hdole/PFS':'Anon/hdole/PFS/Home'},
+			cat2diagram:	{'hdole/PFS':'Anon/Home'},
 			debug:			false,
 			internals:		false,
 		},
@@ -1630,6 +1676,7 @@ class Amazon extends Cloud
 				console.log('saved category', category.name);
 		});
 	}
+	/*
 	// TODO unused
 	saveDiagram(diagram)	// for bootstrapping
 	{
@@ -1652,6 +1699,7 @@ class Amazon extends Cloud
 				console.log('saved diagram',diagram.name);
 		});
 	}
+	*/
 	registerCognito()
 	{
 		const poolInfo =
@@ -3327,12 +3375,14 @@ string:
 <path class="svgstr4" d="M60,120 C120,120 120,200 60,200"/>
 <path class="svgstr4" d="M260,40 C200,40 200,120 260,120"/>
 <line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>`,
+			/*
 symmetry:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="280"/>
 <line class="arrow0" x1="80" y1="120" x2="80" y2="220"/>
 <line class="arrow0" x1="240" y1="120" x2="240" y2="220"/>
 <line class="arrow0" x1="40" y1="120" x2="120" y2="120"/>
 <line class="arrow0" x1="200" y1="120" x2="280" y2="120"/>`,
+*/
 text:
 `<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="160" y1="280" x2="160" y2="60"/>`,
@@ -5525,13 +5575,13 @@ class MultiObject extends CatObject
 		Object.defineProperty(this, 'objects', {value:	nuArgs.objects.map(o => this.diagram.getElement(o)), writable:	false});
 		this.objects.map(o => o.incrRefcnt());
 		this.seperatorWidth = D.textWidth(', ');	// runtime; don't save; TODO remove
-		this.signature = this.getSignature();
+		this.signature = this.getMultiObjectSignature();
 	}
 	help(hdr)
 	{
 		return super.help() + hdr + this.objects.map(o => o.help()).join('');
 	}
-	getSignature()
+	getMultiObjectSignature()
 	{
 		return U.sha256(`${this.constructor.name} ${this.objects.map(o => o.signature).join()}`);
 	}
@@ -6069,7 +6119,7 @@ class DiagramObject extends CatObject
 	}
 	isFusible(m)
 	{
-		return m && m.to && this.to.name === m.to.name;
+		return m && m.to && this.to.signature === m.to.signature;
 	}
 	updateFusible(e, on)
 	{
@@ -6279,6 +6329,36 @@ class CopyAction extends Action
 	hasForm(diagram, ary)	// one element
 	{
 		return diagram.isEditable() && ary.length === 1;
+	}
+}
+
+class FlipNameAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Flip the name on a morphism to the other side',
+			name:		'flipName',
+			icon:
+`<line class="arrow0" x1="160" y1="40" x2="160" y2="280"/>
+<line class="arrow0" x1="80" y1="120" x2="80" y2="220"/>
+<line class="arrow0" x1="240" y1="120" x2="240" y2="220"/>
+<line class="arrow0" x1="40" y1="120" x2="120" y2="120"/>
+<line class="arrow0" x1="200" y1="120" x2="280" y2="120"/>`,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		from.flipName = !from.flipName;
+		from.update();
+		diagram.update();
+	}
+	hasForm(diagram, ary)	// one element
+	{
+		return diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -7669,9 +7749,9 @@ class Morphism extends Element
 			this.diagram.codomain.addElement(this);
 		this.codomain.incrRefcnt();
 		this.domain.incrRefcnt();
-		this.signature = this.getSignature();
+		this.signature = this.getMorphismSignature();
 	}
-	getSignature()
+	getMorphismSignature()
 	{
 		return U.sha256(`${this.domain.signature}${this.constructor.name}${this.name}${this.codomain.signature}`);
 	}
@@ -8123,7 +8203,7 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 	}
 	isFusible(m)
 	{
-		return m && m.to && this.to.name === m.to.name;
+		return m && m.to && this.to.signature === m.to.name;
 	}
 	updatePosition(ixy)
 	{
@@ -8201,7 +8281,7 @@ class MultiMorphism extends Morphism
 		const morphisms = MultiMorphism.SetupMorphisms(diagram, nuArgs.morphisms);
 		Object.defineProperty(this, 'morphisms', {value:morphisms, writable:false});
 		this.morphisms.map(m => m.incrRefcnt());
-		this.signature = this.getSignature();
+		this.signature = this.getMultiMorphismSignature();
 	}
 	help(hdr, processed)
 	{
@@ -8215,9 +8295,9 @@ class MultiMorphism extends Morphism
 		}).join('');
 		return html;
 	}
-	getSignature()
+	getMultiMorphismSignature()
 	{
-		return U.sha256(`${this.constructor.name} ${this.morphisms.map(m => m.signature()).join()}`);
+		return U.sha256(`${this.constructor.name} ${this.morphisms.map(m => m.signature).join()}`);
 	}
 	decrRefcnt()
 	{
@@ -9685,7 +9765,6 @@ class Diagram extends Functor
 			document.getElementById('namedElementError').innerHTML = 'Error: ' + U.GetError(e);
 		}
 	}
-	*/
 	//
 	// Draw the morphism's proper name on the other side of the morphism.
 	//
@@ -9699,6 +9778,7 @@ class Diagram extends Functor
 			this.update();
 		}
 	}
+	*/
 	updateDragObjects()
 	{
 		const delta = this.userToDiagramCoords(D.mouse.position()).subtract(D.dragStart);
@@ -10384,9 +10464,10 @@ class Diagram extends Functor
 	}
 	static Codename(args)
 	{
-		const codomainName = typeof args.codomain === 'string' ? args.codomain : args.codomain.name;
-		const codomain = R.$CAT.getElement(args.codomain);
-		return args.user === codomain.user ?  `${codomainName}/${args.basename}` : `${args.user}/${codomainName}/${args.basename}`;
+//		const codomainName = typeof args.codomain === 'string' ? args.codomain : args.codomain.name;
+//		const codomain = R.$CAT.getElement(args.codomain);
+//		return args.user === codomain.user ?  `${codomainName}/${args.basename}` : `${args.user}/${codomainName}/${args.basename}`;
+		return `${args.user}/${args.basename}`;
 	}
 }
 
