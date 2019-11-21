@@ -7,7 +7,7 @@
 {
 if (typeof require !== 'undefined')
 {
-	var AWS = null;
+//	var AWS = null;
 	var ACI = null;
 	var sjcl = null;
 	var zlib = null;
@@ -21,7 +21,7 @@ if (typeof require !== 'undefined')
 }
 else
 {
-	var AWS = window.AWS;
+//	var AWS = window.AWS;
 	var sjcl = window.sjcl;
 	var zlib = window.zlib;
 }
@@ -415,8 +415,8 @@ class U
 			const idx = JSON.parse(`[${b.dataset.indices}]`);
 			factors.push(idx);
 		});
-		if (factors.length === 0)
-			throw 'No factors for factor morphism.';
+//		if (factors.length === 0)
+//			throw 'No factors for factor morphism.';
 		return factors;
 	}
 	/*
@@ -692,7 +692,7 @@ To begin, delete this text.
 				D.UpdateDiagramDisplay();
 			});
 			R.GraphCat = new Category(R.$CAT, {basename:'Graph', user:'sys', properName:'𝔾𝕣𝕒'});
-			R.cloud && R.cloud.initialize();
+//			R.cloud && R.cloud.initialize();
 			isGUI && D.panels.update();
 			if (!isGUI)
 			{
@@ -1543,23 +1543,46 @@ class Amazon extends Cloud
 {
 	constructor()
 	{
-		document.body.appendChild(document.createElement('script')).src = "https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js";
-		document.body.appendChild(document.createElement('script')).src = "/js/amazon-cognito-identity.min.js";
 		super();
-		Object.defineProperties(this,
+		const that = this;
+		const script = document.createElement('script');
+		script.src = "https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js";
+		script.type = "text/javascript";
+		script.onload = function()
 		{
-			'clientId':			{value: 'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77', writable: false},
-			'cognitoRegion':	{value:	'us-west-2', writable: false},
-			'loginInfo':		{value:	{IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf'}, writable: false},
-			'diagramBucketName':{value:	'catecon-diagrams', writable: false},
-			'region':			{value:	'us-west-1', writable: false},
-			'userPoolId':		{value:	'us-west-2_HKN5CKGDz', writable: false},
-			'accessToken':		{value: null, writable: true},
-			'user':				{value:	null, writable: true},
-			'diagramBucket':	{value:	null, writable: true},
-			'userPool':			{value:	null, writable: true},
-			'loggedIn':			{value:	false, writable: true},
-		});
+			const url = document.location;
+			const host = `${url.protocol}//${url.host}/${url.pathname}`;
+			
+			const script = document.createElement('script');
+			script.src = host + "/js/amazon-cognito-identity.min.js";
+			script.type = "text/javascript";
+			script.onload = function()
+			{
+				Object.defineProperties(that,
+				{
+					'clientId':			{value: 'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77', writable: false},
+					'cognitoRegion':	{value:	'us-west-2', writable: false},
+					'loginInfo':		{value:	{IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf'}, writable: false},
+					'diagramBucketName':{value:	'catecon-diagrams', writable: false},
+					'region':			{value:	'us-west-1', writable: false},
+					'userPoolId':		{value:	'us-west-2_HKN5CKGDz', writable: false},
+					'accessToken':		{value: null, writable: true},
+					'user':				{value:	null, writable: true},
+					'diagramBucket':	{value:	null, writable: true},
+					'userPool':			{value:	null, writable: true},
+					'loggedIn':			{value:	false, writable: true},
+				});
+				R.cloud = that;
+				window.AWS.config.update(
+				{
+					region:			that.region,
+					credentials:	new window.AWS.CognitoIdentityCredentials(that.loginInfo),
+				});
+				isGUI && that.registerCognito();
+			};
+			document.body.appendChild(script);
+		};
+		document.body.appendChild(script);
 	}
 	getURL(cat, user, basename)
 	{
@@ -1574,19 +1597,10 @@ class Amazon extends Cloud
 			return url;
 		return `${url}/${basename}`;
 	}
-	initialize()
-	{
-		AWS.config.update(
-		{
-			region:			this.region,
-			credentials:	new AWS.CognitoIdentityCredentials(this.loginInfo),
-		});
-		isGUI && this.registerCognito();
-	}
 	updateServiceObjects()
 	{
-		this.diagramBucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
-		this.lambda = new AWS.Lambda({region: R.cloud.region, apiVersion: '2015-03-31'});
+		this.diagramBucket = new window.AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
+		this.lambda = new window.AWS.Lambda({region: R.cloud.region, apiVersion: '2015-03-31'});
 	}
 	// TODO unused
 	saveCategory(category)
@@ -1639,7 +1653,7 @@ class Amazon extends Cloud
 			UserPoolId:	this.userPoolId,
 			ClientId:	'fjclc9b9lpc83tmkm8b152pin',
 		};
-		AWS.config.region = this.cognitoRegion;
+		window.AWS.config.region = this.cognitoRegion;
 		if (ACI)
 		{
 			this.userPool = new ACI.CognitoUserPool(poolInfo);
@@ -1660,11 +1674,11 @@ class Amazon extends Cloud
 					alert(err.message);
 					return;
 				}
-				AWS.config.credentials = new AWS.CognitoIdentityCredentials(that.loginInfo);
+				window.AWS.config.credentials = new window.AWS.CognitoIdentityCredentials(that.loginInfo);
 				that.accessToken = session.getAccessToken().getJwtToken();
 				if (R.default.debug)
 					console.log('registerCognito session validity', session, session.isValid());
-				const idPro = new AWS.CognitoIdentityServiceProvider();
+				const idPro = new window.AWS.CognitoIdentityServiceProvider();
 				idPro.getUser({AccessToken:that.accessToken}, function(err, data)
 				{
 					if (err)
@@ -1689,8 +1703,8 @@ class Amazon extends Cloud
 		}
 		else
 		{
-			AWS.config.credentials = new AWS.CognitoIdentityCredentials(this.loginInfo);
-			AWS.config.credentials.get();
+			window.AWS.config.credentials = new window.AWS.CognitoIdentityCredentials(this.loginInfo);
+			window.AWS.config.credentials.get();
 			this.updateServiceObjects();
 		}
 	}
@@ -1796,7 +1810,7 @@ class Amazon extends Cloud
 					this.accessToken = result.getAccessToken().getJwtToken();
 					this.loggedIn = true;
 					R.user.status = 'logged-in';
-					const idPro = new AWS.CognitoIdentityServiceProvider();
+					const idPro = new window.AWS.CognitoIdentityServiceProvider();
 					const that = this;
 					idPro.getUser({AccessToken:this.accessToken}, function(err, data)
 					{
@@ -1997,7 +2011,7 @@ class Amazon extends Cloud
 		});
 	}
 }
-R.cloud = isCloud ? new Amazon() : null;
+//isCloud ? new Amazon() : null;
 
 class Navbar
 {
@@ -2083,7 +2097,6 @@ class D
 		D.commaWidth = D.textWidth(', ');
 		D.bracketWidth = D.textWidth('[');
 		D.diagramSVG =		document.getElementById('diagramSVG');
-		D.H =				H;
 		D.Panel = 			Panel;
 		D.panels =			new Panels;
 		D.categoryPanel =	new CategoryPanel;
@@ -2102,7 +2115,6 @@ class D
 		D.TextPanel =		TextPanel;
 		D.threeDPanel =		new ThreeDPanel;
 		D.ttyPanel =		new TtyPanel;
-		D.ProjectAction =	ProjectAction;
 		D.panels.update();
 	}
 	static SaveDefaults()
@@ -6874,7 +6886,8 @@ class ProjectAction extends Action
 		const html = H.h4('Create Factor Morphism') +
 					H.h5('Domain Factors') +
 					H.small('Click to place in codomain') +
-					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="D.ProjectAction.AddFactor('project', 'codomain', '#1', -1)"`) +
+//					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="D.ProjectAction.AddFactor('project', 'codomain', '#1', -1)"`) +
+					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="R.$Actions.getElemenet('project').addFactor('#1', -1)"`) +
 					ProjectAction.FactorButton('project', 'codomain', to, []) +
 					H.h5('Codomain Factors') + H.br() +
 					H.span('Click objects to remove from codomain', 'smallPrint') +
@@ -6882,35 +6895,22 @@ class ProjectAction extends Action
 		D.help.innerHTML = html;
 		this.codomainDiv = document.getElementById('project-codomain');
 	}
-	/*
 	addFactor(root, ...indices)
 	{
 		if (this.codomainDiv.innerHTML === '')
-			this.codomainDiv.innerHTML = H.span(D.GetButton('edit', `R.$Actions.getElement('project').action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
+			this.codomainDiv.innerHTML = H.span(D.GetButton('edit', `R.$Actions.getElement('${actionName}').action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
 		const object = R.diagram.getElement(root);
 		const factor = object.getFactor(indices);
 		const sub = indices.join();
+//		const div = dir === 'domain' ? action.domainDiv : action.codomainDiv;
 		this.codomainDiv.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this)"`);
-	}
-	*/
-	static AddFactor(actionName, dir, root, ...indices)
-	{
-		const action = R.$Actions.getElement(actionName);
-		if (action.codomainDiv.innerHTML === '')
-			action.codomainDiv.innerHTML = H.span(D.GetButton('edit', `R.$Actions.getElement('${actionName}').action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
-		const object = R.diagram.getElement(root);
-		const factor = object.getFactor(indices);
-		const sub = indices.join();
-		const div = dir === 'domain' ? action.domainDiv : action.codomainDiv;
-		div.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this)"`);
 	}
 	static ObjectFactorButton(action, dir, object, index)
 	{
 		return H.table(H.tr(H.td(
 			H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
-			`data-indices="${index.toString()}" onclick="D.ProjectAction.AddFactor('${action}', dir, '${object.name}', ${index.toString()})"`)
+			`data-indices="${index.toString()}" onclick="R.$Actions.getElement('project').addFactor('${object.name}', ${index.toString()})"`)
 		)));
-//				onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
 	}
 	static ProductObjectFactorButton(action, dir, object, index)
 	{
@@ -6974,35 +6974,34 @@ class LambdaMorphismAction extends Action
 				H.small('Create named element') + H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '',
 					`onclick="R.$Actions.getElement('lambdaMorphism').createNamedElement(event, R.diagram.selected)"`)) +
 			H.small('Click to move to C') +
-//			H.div(this.getSubFactorBtnCode(domain, {dir:	0, fromId:'domainDiv', toId:'codomainDiv'}), '', 'domainDiv') +
-			H.div(this.getSubFactorBtnCode(domain, {dir:	0, fromId:'lambda-domain', toId:'lambda-codomain'}), '', 'lambda-domain') +
-//			H.div(
-//				this.getSubFactorBtnCode(domain, {dir:	0, fromId:'domainDiv', toId:'codomainDiv'}),
-//				ProjectAction.FactorButton('lambdaMorphism', 'codomain', domain, []),
-//				'', 'lambda-domain') +
+			H.div(this.addFactor(domain, {dir:	0, fromId:'lambda-domain', toId:'lambda-codomain'}), '', 'lambda-domain') +
 			H.h5('Codomain Factors: C') +
-			(HomObject.prototype.isPrototypeOf(codomain) ?
-				H.small('Merge to codomain hom') + D.GetButton('codhom', `R.diagram.toggleCodHom()`, 'Merge codomain hom', D.default.button.tiny) + H.br() : '') +
 			H.small('Click to move to A &times; B') +
-			// TODO this factorButton arguments are not correct
 			H.div(HomObject.prototype.isPrototypeOf(codomain) ?
-				codomain.homDomain().factorButton({dir:1, fromId:'lambda-codomain', toId:'lambda-domain'})
-//				ProjectAction.FactorButton('lambdaMorphism', 'domain', codomain.homDomain(), [])
-																: '', '', 'lambda-codomain');
-//			H.span(D.GetButton('edit', `R.diagram.activate(event, 'lambdaMorphism')`, 'Curry morphism'));
+				this.addFactor(codomain.homDomain(), {dir:1, fromId:'lambda-codomain', toId:'lambda-domain'}) : '', '', 'lambda-codomain') +
+			H.span(D.GetButton('edit', `R.$Actions.getElement('lambdaMorphism').action(event, R.diagram, R.diagram.selected)`,
+				'Create lambda morphism'));
 		D.help.innerHTML = html;
 		this.domainDiv = document.getElementById('lambda-domain');
 		this.codomainDiv = document.getElementById('lambda-codomain');
 	}
-	getSubFactorBtnCode(object, data)
+	addFactor(object, data)
 	{
 		let html = '';
+		const onclick = `R.$Actions.getElement('lambdaMorphism').moveFactor(this, '${data.fromId}', '${data.toId}')`;
 		if ('objects' in object)
 			object.objects.map((o, i) =>
-				html += H.button(o.properName + H.sub(i), '', D.elementId(), '', `data-factor="${data.dir} ${i}" onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`)).join('');
+				html += H.button(o.properName + H.sub(i), '', D.elementId(), '',
+//					`data-factor="${data.dir} ${i}" onclick="R.$Actions.getElement('lambdaMorphism').moveFactor(event, '${data.fromId}', '${data.toId}')"`)).join('');
+					`data-indices="${data.dir}, ${i}" onclick="${onclick}"`)).join('');
 		else
-			html += H.button(object.properName, '', D.elementId(), '', `data-factor="${data.dir} -1" onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
+//			html += H.button(object.properName, '', D.elementId(), '', `data-factor="${data.dir} -1" onclick="D.H.toggle(this, '${data.fromId}', '${data.toId}')"`);
+			html += H.button(object.properName, '', D.elementId(), '', `data-indices="${data.dir}, 0" onclick="${onclick}"`);
 		return html;
+	}
+	moveFactor(elt, fromId, toId)
+	{
+		H.toggle(elt, fromId, toId);
 	}
 	createNamedElement(e, ary)
 	{
@@ -8965,7 +8964,13 @@ class LambdaMorphism extends Morphism
 	}
 	static Codomain(diagram, preCurry, factors)
 	{
-		const codDom = factors.length > 1 ? ProductObject.Get(diagram, factors.map(f => preCurry.domain.getFactor(f))) : preCurry.domain;
+		let codDom = null;
+		if (factors.length > 1)
+			codDom = ProductObject.Get(diagram, factors.map(f => preCurry.domain.getFactor(f)))
+		else if (factors.length === 1)
+			codDom = preCurry.domain.getFactor(factors[0]);
+		else
+			codDom = preCurry.domain;
 		return HomObject.Get(diagram, [codDom, preCurry.codomain]);
 	}
 	static Get(diagram, preCurry, domFactors, homFactors)
@@ -8976,7 +8981,8 @@ class LambdaMorphism extends Morphism
 	}
 	static ProperName(preCurry, domFactors, homFactors)
 	{
-		return (domFactors.length === 0 && homFactors.length === 1 && homFactors[0] === 0) ? `&lsquo;${preCurry.properName}&rsquo;` : `&lambda;${preCurry.properName}${domFactors}:${homFactors}`;
+//		return (domFactors.length === 0 && homFactors.length === 1 && homFactors[0] === 0) ? `&lsquo;${preCurry.properName}&rsquo;` : `&lambda;${preCurry.properName}${domFactors}:${homFactors}`;
+		return (domFactors.length === 0 && homFactors.length === 1 && homFactors[0] === 0) ? `&lsquo;${preCurry.properName}&rsquo;` : `&lambda;${preCurry.properName}`;
 	}
 }
 
@@ -10383,6 +10389,7 @@ R.protos =
 	CatObject,
 	Composite,
 	CoproductObject,
+	DataMorphism,
 	Diagonal,
 	DiagramObject,
 	DiagramMorphism,
@@ -10394,10 +10401,9 @@ R.protos =
 	IndexCategory,
 	InitialObject,
 	InitialMorphism,
+	LambdaMorphism,
 	NamedIdentityObject,
 	ProductObject,
-	TerminalObject,
-	TerminalMorphism,
 	SubobjectClassifier,
 	Sequence,
 	HomObject,
@@ -10410,7 +10416,8 @@ R.protos =
 	CoproductMorphism,
 	CoproductAssembly,
 	FoldMorphism,
-	DataMorphism,
+	TerminalObject,
+	TerminalMorphism,
 };
 
 if (isGUI)
