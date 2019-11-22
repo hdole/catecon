@@ -25,10 +25,6 @@ exports.handler = (event, context, callback) =>
 		callback(message, null);
 		return;
 	}
-	// TODO: name check
-	// TODO: category check
-	// TODO: diagram name check
-	//
 	const Body = JSON.stringify(diagram);
 	if (Body.length > 1000000)
 	{
@@ -39,8 +35,7 @@ exports.handler = (event, context, callback) =>
 	}
 	const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
 	const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
-	const Key = `${diagram.user}/${diagram.codomain}/${diagram.basename}`;
-	const jsKey = Key + '.json';
+	const Key = `${user}/${diagram.basename}.json`;
 	const s3params =
 	{
 		Bucket:  C.DIAGRAM_BUCKET_NAME,
@@ -65,6 +60,17 @@ exports.handler = (event, context, callback) =>
 			Body:				new Buffer(event.png.replace(/^data:image\/octet-stream;base64,/,""), 'base64'),
 			ACL:				'public-read',
 		};
+		const Item =
+		{
+			basename:		diagram.basename,
+			name:			diagram.name,
+			subkey:			diagram.name,
+			timestamp:		diagram.timestamp,
+			username:		user,
+			description:	diagram.description,
+			properName:		diagram.properName,
+			references:		diagram.references,
+		};
 		bucket.putObject(s3params, function(err, data)
 		{
 			if (err)
@@ -72,21 +78,14 @@ exports.handler = (event, context, callback) =>
 				console.log('Error',err);
 				return;
 			}
-			const db = new AWS.DynamoDB({region:C.REGION});
-			const dt = Date();
+			AWS.config.update({region:C.REGION});
+			const db = new AWS.DynamoDB.DocumentClient();
 			const params =
 			{
 				TableName:  C.DIAGRAM_TABLE,
-				Item:
-				{
-					user:		{S:user},
-					subkey:		{S:diagram.name},
-					timestamp:  {N:Date.now().toString()},
-					description:{S:diagram.description},
-					properName:	{S:diagram.properName},
-				},
+				Item,
 			};
-			db.putItem(params, function(err, data)
+			db.put(params, function(err, data)
 			{
 				if (err)
 				{
@@ -104,21 +103,13 @@ exports.handler = (event, context, callback) =>
 				{
 					console.log(`Message ${msg.Message} sent to the topic ${msg.TopicArn}`);
 					console.log("MessageID is " + data.MessageId);
+					delete Item.subkey;
 					const params =
 					{
 						TableName:  C.RECENT_DIAGRAM_TABLE,
-						Item:
-						{
-							basename:		diagram.basename,
-							name:			{S:diagram.name},
-							timestamp:		{N:diagram.timestamp.toString()},
-							user:			{S:user},
-							description:	{S:diagram.description},
-							properName:		{S:diagram.properName},
-							references:		{L:diagram.references.map(r => `{"S": "${r}"}`),
-						},
+						Item,
 					};
-					db.putItem(params, function(err, data)
+					db.put(params, function(err, data)
 					{
 						if (err)
 						{
@@ -128,6 +119,7 @@ exports.handler = (event, context, callback) =>
 						console.log(C.RECENT_DIAGRAM_TABLE, 'putItem succeeded', err, data);
 						callback(err, data);
 					});
+
 				}).catch(function(err)
 				{
 					console.error(err, err.stack);
