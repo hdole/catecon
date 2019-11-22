@@ -73,7 +73,8 @@ function deploy(actions, timestamps, deployed)
 					break;
 				case 'copyCat':
 					process.stdout.write(`copyCat ${f}\n`);
-					const cmd = `scp -i ~/hdole-norcal.pem ${f} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/catecon/${info.target}`;
+//					const cmd = `scp -i ~/hdole-norcal.pem ${f} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/catecon/${info.target}`;
+					const cmd = `scp -i ~/hdole-norcal.pem ${f} ec2-user@ec2-52-8-231-154.us-west-1.compute.amazonaws.com:/var/www/html/${info.target}`;
 					if (debug)
 						process.stdout.write(`${cmd}\n`);
 					proc.execSync(cmd);
