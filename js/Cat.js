@@ -457,6 +457,16 @@ class U
 			});
 		});
 	}
+	static JsName(e, cls = false)
+	{
+		const s = e.name;
+		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_');
+		return r;
+	}
+	static Lines2tspan(elt)
+	{
+		return elt.description.indexOf('\n') > -1 ?  elt.description.split('\n').map(t => `<tspan text-anchor="left" x="${elt.x}" dy="1.2em">${t}</tspan>`).join('') : elt.description;
+	}
 }
 Object.defineProperties(U,
 {
@@ -551,7 +561,6 @@ class R
 `Welcome to Catecon: The Categorical Console
 Create diagrams and execute morphisms.
 An account allows sharing diagrams.
-Delete this text.
 `,
 				prototype:		'DiagramText',
 				user,
@@ -560,6 +569,7 @@ Delete this text.
 			home.home();
 			home.update();
 		}
+		return home;
 	}
 	static Initialize()
 	{
@@ -696,7 +706,7 @@ Delete this text.
 			R.Setup(function()
 			{
 				R.initialized = true;
-				D.UpdateDiagramDisplay();
+//				D.UpdateDiagramDisplay();
 			});
 			R.GraphCat = new Category(R.$CAT, {basename:'Graph', user:'sys', properName:'𝔾𝕣𝕒'});
 //			R.cloud && R.cloud.initialize();
@@ -760,12 +770,12 @@ Delete this text.
 				if ('js' in args)
 					element.code = {javascript:JavascriptAction.Header(element) + '\t' + args.js + JavascriptAction.Tail(element)};
 				else if ('code' in args)
-					element.code.javascript = args.code.javascript.replace(/%1/g, JavascriptAction.JsName(element));
+					element.code.javascript = args.code.javascript.replace(/%1/g, U.JsName(element));
 			}
 			else if (CatObject.prototype.isPrototypeOf(element))
 				diagram.placeObject(null, element, xy, false);
 		}
-		xy.y += 6 * D.default.layoutGrid;
+		xy.y += 16 * D.default.layoutGrid;
 		return element;
 	}
 	static DiagramReferences(user, diagram, xy)
@@ -825,7 +835,8 @@ Delete this text.
 	static Boot()
 	{
 		let user = 'hdole';
-		const side = D.default.stdArrow.scale(1.5).subtract(new D2(0, 7));		// TODO from the css 30px for object class font height: 30px/2 = 15, +14/2
+//		const side = D.Grid(D.default.stdArrow.scale(1.5).subtract(new D2(0, D.default.layoutGrid)));		// TODO from the css 30px for object class font height: 30px/2 = 15, +14/2
+		const side = D.Grid(new D2(0, 4 * D.default.layoutGrid));
 		const pfs = new Category(R.$CAT,
 			{
 				basename:'PFS',
@@ -928,12 +939,14 @@ Delete this text.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
-		const N = R.PlaceObject(args, 'N', 'CatObject', '&Nopf;', 'The natural numbers');
+		const N = R.PlaceObject(args, 'N', 'CatObject', '<tspan class="bold">&Nopf;</tspan>', 'The natural numbers');
 		const Nzero = R.PlaceMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number: zero.', one, N, {js:'return 0;'});
 		const None = R.PlaceMorphism(args, 'one', 'Morphism', '1', 'The natural number one.', one, N, {js:'return 1;'});
 		const Ninfinity = R.PlaceMorphism(args, 'infinity', 'Morphism', '&infin;', 'The maximum safe natural number.', one, N, {js:'return Number.MAX_SAFE_INTEGER;'});
 		const Npair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of natural numbers', {objects:[N, N]});
 		const Nadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two natural numbers.', Npair, N, {js:'return args[0] + args[1];'});
+		let bbox = Narith.svgRoot.getBBox();
+		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		const Nmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two natural numbers.', Npair, N, {js:'return args[0] * args[1];'});
 		const Nsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the natural numbers.', N, N, {js:'return args + 1;'});
 		const Nless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first natural number less than the second', Npair, N, {js:'return args[0] < args[1];'});
@@ -966,14 +979,16 @@ Delete this text.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
-		const Z = R.PlaceObject(args, 'Z', 'CatObject', '&Zopf;', 'The integers');
+		const Z = R.PlaceObject(args, 'Z', 'CatObject', '<tspan class="bold">&Zopf;</tspan>', 'The integers');
 		const N2Z = R.PlaceMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z, {js:'return args;'});
 		const Zabs = R.PlaceMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of an integer is a natural number', Z, N, {js:'return Math.abs(args);'});
-		const Zzero = R.PlaceMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero.', one, N, {js:'return 0;'});
+		const Zzero = R.PlaceMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, N, {js:'return 0;'});
 		const ZminusOne = R.PlaceMorphism(args, 'minusOne', 'Morphism', '&lsquo;-1&rsquo;', 'The first interesting integer: minus one.', one, N, {js:'return -1;'});
 		const Zpair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of integers', {objects:[Z, Z]});
-		const Zadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two natural numbers.', Npair, N, {js:'return args[0] + args[1];'});
+		const Zadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two integers', Zpair, Z, {js:'return args[0] + args[1];'});
 		const Zsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two integers.', Zpair, Z, {js:'return args[0] - args[1];'});
+		bbox = integers.svgRoot.getBBox();
+		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		const Zmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two integers.', Zpair, Z, {js:'return args[0] * args[1];'});
 		const ZplusOne = R.PlaceObject(args, '', 'CoproductObject', '', 'An integer or an exception', {objects:[Z, one]});
 		const Zdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '/', 'division of two integers or an exception', Zpair, ZplusOne,
@@ -1037,6 +1052,8 @@ Delete this text.
 		const Z2F = R.PlaceMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'});
 		const Fsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the floating point numbers.', F, F, {js:'return args + 1.0;'});
 		const Fabs = R.PlaceMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a floating point number', F, F, {js:'return Math.abs(args);'});
+		bbox = floats.svgRoot.getBBox();
+		args.xy = D.Grid(new D2(bbox.x + bbox.width + 150, 300 + 8 * 16));
 		const Fpair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of floating point numbers', {objects:[F, F]});
 		const Fadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two floating point numbers.', Fpair, F, {js:'return args[0] + args[1];'});
 		const Fsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two floating point numbers.', Fpair, F, {js:'return args[0] - args[1];'});
@@ -1064,11 +1081,9 @@ Delete this text.
 }
 `			},
 		});
-
-		const bbox = floats.svgRoot.getBBox();
-		args.xy = new D2(bbox.x + bbox.width + 150, 390);
-
 		const Fless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given floating point number less than the second', Fpair, two, {js:'return args[0] < args[1];'});
+		bbox = floats.svgRoot.getBBox();
+		args.xy = D.Grid(new D2(bbox.x + bbox.width + 150, 300 + 8 * 16));
 		const FlessEq = R.PlaceMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first floating point number less than or equal to the second', Fpair, two, {js:'return args[0] <= args[1];'});
 		const Fequals = R.PlaceMorphism(args, 'equals', 'Morphism', '=', 'compare two floating point numbers for equality', Fpair, two, {js:'return args[0] === args[1];'});
 		const ceil = R.PlaceMorphism(args, 'ceil', 'Morphism', 'ceil', 'The smallest integer greater than or equal to a given floating point number', F, Z, {js:'return Math.ceil(args);'});
@@ -1099,10 +1114,11 @@ Delete this text.
 `
 			},
 		});
+		bbox = floats.svgRoot.getBBox();
+		args.xy = D.Grid(new D2(bbox.x + bbox.width + 150, 300 + 8 * 16));
 		const Flist = R.PlaceObject(args, '', 'HomObject', '', 'A list of floating point numbers', {objects:[N, F]});
 		const Fmax = R.PlaceMorphism(args, 'max', 'Morphism', 'max', 'The maximum floating point number of the given list', Flist, F, {js:'return Math.max(...args);'});
 		const Fmin = R.PlaceMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F, {js:'return Math.min(...args);'});
-
 		R.DiagramReferences(user, floats, args.xy);
 		D.ShowDiagram(floats);
 		floats.home();
@@ -1139,6 +1155,8 @@ Delete this text.
 		const strList = R.PlaceObject(args, '', 'HomObject', '', 'A list of strings', {objects:[N, str]});
 		const strListStr = new ProductObject(strings, {objects:[strList, str]});
 		const strJoin = R.PlaceMorphism(args, 'join', 'Morphism', 'join', 'join a list of strings into a single string with another string as the conjunction', strListStr, str, {js:'// TODO'});
+		bbox = strings.svgRoot.getBBox();
+		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		const strN = new ProductObject(strings, {objects:[str, N]});
 		const strCharAt = R.PlaceMorphism(args, 'charAt', 'Morphism', 'charAt', 'the n\'th character in the string', strN, str, {js:'return args[0].charAt(args[1]);'});
 		const N2str = R.PlaceMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str, {js:'return args.toString();'});
@@ -1159,7 +1177,6 @@ function %1(args)
 		D.ShowDiagram(strings);
 		strings.home();
 		strings.update();
-
 		//
 		// htmlDiagram
 		//
@@ -1174,6 +1191,7 @@ function %1(args)
 		});
 		args.diagram = htmlDiagram;
 		args.xy = new D2(300, 300);
+//		args.side = D.Grid(D.default.stdArrow.scale(2).subtract(new D2(0, D.default.layoutGrid)));		// TODO from the css 30px for object class font height: 30px/2 = 15, +14/2
 		htmlDiagram.makeSvg();
 		R.AddDiagram(htmlDiagram);
 		R.Autoplace(htmlDiagram,
@@ -1184,105 +1202,35 @@ function %1(args)
 			properName:		'&Omega;',
 		}, args.xy);
 		const html = R.PlaceObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices.');
-		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
-		{
-			code:			{javascript:
-`function %1_html()
-{
-	return '<input type="number" id="in_%1" value="0.0" placeholder="Integer"/>';
-}
-function %1()
-{
-	return Number.parseInt(document.getElementById('in_%1').value);
-}
-`			},
-		});
-		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
-		{
-			code:			{javascript:
-`function %1_html()
-{
-	return '<input type="number" id="in_%1" value="0" placeholder="Integer"/>';
-}
-function %1()
-{
-	return Number.parseInt(document.getElementById('in_%1').value);
-}
-`			},
-		});
-		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
-		{
-			code:			{javascript:
-`function %1_html()
-{
-	return '<input type="number" min="0" id="in_%1" value="0"/>';
-}
-function %1()
-{
-	return Number.parseInt(document.getElementById('in_%1').value);
-}
-`			},
-		});
-		const html2Str = R.PlaceMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, Str,
-		{
-			code:			{javascript:
-`function %1_html()
-{
-	return '<input type="text" id="in_%1" value="" placeholder="Text"/>';
-}
-function %1()
-{
-	return Number.parseInt(document.getElementById('in_%1').value);
-}
-`			},
-		});
-		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', '&#9745;', 'HTML input for truth values.', html, two);
-		const omega2html = R.PlaceMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
+		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2Str = R.PlaceMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values.', html, two);
+//		const omega2html = R.PlaceMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
+		const N_html2str = LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
+		const strXN_html2str = ProductObject.Get(args.diagram, [str, N_html2str.codomain]);
+		const html2line = R.PlaceMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
+			{js:`return ['<input type="text" id="in_%1" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`});
+		const N_html2N = LambdaMorphism.Get(args.diagram, html2N, [], [0]);
+		const strXN_html2N = ProductObject.Get(args.diagram, [str, N_html2N.codomain]);
+		const html2Nat = R.PlaceMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
+			{js:`return ['<input type="number" min="0" id="in_%1" value="0"/>', ${U.JsName(N_html2N)}]`});
+		bbox = htmlDiagram.svgRoot.getBBox();
+		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
+		const N_html2Z = LambdaMorphism.Get(args.diagram, html2Z, [], [0]);
+		const strXN_html2Z = ProductObject.Get(args.diagram, [str, N_html2Z.codomain]);
+		const html2Int = R.PlaceMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
+			{js:`return '<input type="number" id="in_%1" value="0" placeholder="Integer"/>'`});
+		const N_html2F = LambdaMorphism.Get(args.diagram, html2F, [], [0]);
+		const strXN_html2F = ProductObject.Get(args.diagram, [str, N_html2F.codomain]);
+		const html2Float = R.PlaceMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
+			{js:`return '<input type="number" id="in_%1" value="0.0" placeholder="Integer"/>'`});
 		R.DiagramReferences(user, htmlDiagram, args.xy);
 		D.ShowDiagram(htmlDiagram);
 		htmlDiagram.home();
 		htmlDiagram.update();
-
 		R.SetupUserHome(R.user.name);
-/*
-		//
-		// user home diagram setup
-		//
-		user = R.user.name;
-		let home = R.ReadLocal(R.UserHomeDiagramName(user));
-		if (!home)
-		{
-			userDiagram = R.GetUserDiagram(user);
-			home = new Diagram(userDiagram,
-			{
-				description:	'user home diagram',
-				codomain:		pfs,
-				basename:		'Home',
-				properName:		'Home',
-				references:		[htmlDiagram],
-				user,
-			});
-			args.user = user;
-			args.diagram = home;
-			args.xy = new D2(300, 300);
-			R.AddDiagram(home);
-			home.makeSvg();
-			R.Autoplace(home,
-			{
-				description:
-`Welcome to Catecon: The Categorical Console
-Create your own diagrams and execute the morphisms.
-An account allows sharing your diagrams with others.
-To begin, delete this text.
-`,
-				prototype:		'DiagramText',
-				user,
-			}, args.xy);
-			D.ShowDiagram(home);
-			home.home();
-			home.update();
-		}
-*/
 	}
 	static SaveLocal(diagram, savePng = true)
 	{
@@ -1290,7 +1238,7 @@ To begin, delete this text.
 			console.log('SaveLocal', diagram.name);
 		diagram.timestamp = Date.now();
 		localStorage.setItem(`${diagram.name}.json`, diagram.stringify());
-		D.Svg2canvas(D.topSVG, this.name, true, function(png, pngName)
+		D.Svg2canvas(D.topSVG, diagram.name, function(png, pngName)
 		{
 			D.diagramPNG.set(diagram.name, png);
 			localStorage.setItem(`${diagram.name}.png`, png);
@@ -1409,7 +1357,6 @@ To begin, delete this text.
 	*/
 	static UserHomeDiagramName(user)
 	{
-//		return `${user === 'hdole' ? '' : user + '/'}hdole/PFS/Home`;
 		return `${user}/Home`;
 	}
 	static Setup(fn)
@@ -1419,17 +1366,14 @@ To begin, delete this text.
 		let diagramName = params.get('diagram');
 		if (diagramName)
 			R.diagram = R.$CAT.getElement(diagramName);
-		let codomain = null;
 		if (!R.diagram)
 		{
-			const categoryName = R.default.category;
-			codomain = categoryName === 'CAT' ? R.CAT : R.CAT.getElement(categoryName);
-			diagramName = categoryName in R.default.cat2diagram ? R.default.cat2diagram[categoryName] : R.UserHomeDiagramName(R.user.name);
+			diagramName = R.UserHomeDiagramName(R.user.name);
 			R.diagram = R.$CAT.getElement(diagramName);
+			if (!R.diagram)
+				R.diagram = R.SetupUserHome(R.user.name);
 		}
-		else
-			codomain = R.diagram.codomain;
-		R.category = codomain;
+		R.category = R.diagram.codomain;
 		R.SelectDiagram(diagramName);
 		fn && fn();
 		D.panels.update();
@@ -1448,8 +1392,8 @@ To begin, delete this text.
 			R.diagram = R.ReadLocal(name);
 		if (!R.diagram)
 			// TODO turn on/off busy cursor
-			R.FetchDiagram(name, setup);
-		else
+			R.diagram = R.FetchDiagram(name, setup);
+		if (R.diagram)
 			setup(name);
 	}
 	static GetCategory(name)
@@ -1462,17 +1406,19 @@ To begin, delete this text.
 	}
 	static FetchDiagram(dgrmName, fn)
 	{
+		let diagram = null;
 		R.cloud && R.cloud.fetchDiagramJsons([dgrmName], function(jsons)
 		{
 			jsons.reverse().map(j =>
 			{
 				const userDiagram = R.GetUserDiagram(j.user);
-				const diagram = new Diagram(userDiagram, j);
+				diagram = new Diagram(userDiagram, j);
 				R.SaveLocal(diagram);
 			});
-			if (fn)
+			if (jsons.length > 0 && fn)
 				fn(dgrmName);
 		});
+		return diagram;
 	}
 	static GetReferences(name, refs = new Set)
 	{
@@ -1596,6 +1542,20 @@ class Amazon extends Cloud
 	constructor()
 	{
 		super();
+		Object.defineProperties(this,
+		{
+			'clientId':			{value: 'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77',		writable: false},
+			'cognitoRegion':	{value:	'us-west-2',															writable: false},
+			'loginInfo':		{value:	{IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf'},	writable: false},
+			'diagramBucketName':{value:	'catecon-diagrams',														writable: false},
+			'region':			{value:	'us-west-1',															writable: false},
+			'userPoolId':		{value:	'us-west-2_HKN5CKGDz',													writable: false},
+			'accessToken':		{value: null,																	writable: true},
+			'user':				{value:	null,																	writable: true},
+			'diagramBucket':	{value:	null,																	writable: true},
+			'userPool':			{value:	null,																	writable: true},
+			'loggedIn':			{value:	false,																	writable: true},
+		});
 		const that = this;
 		const script = document.createElement('script');
 		script.src = "https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js";
@@ -1603,27 +1563,13 @@ class Amazon extends Cloud
 		script.onload = function()
 		{
 			const url = document.location;
-			const host = `${url.protocol}//${url.host}/${url.pathname}`;
+			const host = `${url.protocol}//${url.host}/${url.pathname === '/' ? '' : url.pathname}`;
 			
 			const script = document.createElement('script');
-			script.src = host + "/js/amazon-cognito-identity.min.js";
+			script.src = host + "js/amazon-cognito-identity.min.js";
 			script.type = "text/javascript";
 			script.onload = function()
 			{
-				Object.defineProperties(that,
-				{
-					'clientId':			{value: 'amzn1.application-oa2-client.2edcbc327dfe4a2081e53a155ab21e77', writable: false},
-					'cognitoRegion':	{value:	'us-west-2', writable: false},
-					'loginInfo':		{value:	{IdentityPoolId:	'us-west-2:d7948fb7-c661-4d0f-8702-bd3d0a3e40bf'}, writable: false},
-					'diagramBucketName':{value:	'catecon-diagrams', writable: false},
-					'region':			{value:	'us-west-1', writable: false},
-					'userPoolId':		{value:	'us-west-2_HKN5CKGDz', writable: false},
-					'accessToken':		{value: null, writable: true},
-					'user':				{value:	null, writable: true},
-					'diagramBucket':	{value:	null, writable: true},
-					'userPool':			{value:	null, writable: true},
-					'loggedIn':			{value:	false, writable: true},
-				});
 				R.cloud = that;
 				window.AWS.config.update(
 				{
@@ -1636,12 +1582,12 @@ class Amazon extends Cloud
 		};
 		document.body.appendChild(script);
 	}
-	getURL(cat, user, basename)
+	getURL(user, basename)
 	{
 		let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
-		if (typeof cat === 'undefined')
-			return url;
-		url += `/${cat}`;
+//		if (typeof cat === 'undefined')
+//			return url;
+//		url += `/${cat}`;
 		if (typeof user === 'undefined')
 			return url;
 		url += `/${user}`;
@@ -1744,6 +1690,10 @@ class Amazon extends Cloud
 					R.user.status = 'logged-in';
 					D.navbar.update();
 					D.loginPanel.update();
+					R.Setup(function()
+					{
+						D.UpdateDiagramDisplay();
+					});
 					that.getUserDiagramsFromServer(function(dgrms)
 					{
 						if (R.default.debug)
@@ -1921,12 +1871,17 @@ class Amazon extends Cloud
 	}
 	async fetchDiagram(name)
 	{
-		const tokens = name.split('-');
-		const catName = tokens[1];
-		const user = tokens[2];
-		const url = this.getURL(catName, user, name + '.json');
-		const json = await (await fetch(url)).json();
-		return json;
+		try
+		{
+			const url = this.getURL(name) + '.json';
+			const response = await fetch(url);
+			const json = await response.json();
+			return json;
+		}
+		catch(x)
+		{
+			return null;
+		}
 	}
 	onCT()
 	{
@@ -1991,7 +1946,8 @@ class Amazon extends Cloud
 			D.Status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
 			return;
 		}
-		D.Svg2canvas(D.topSVG, dgrm.name, false, function(url, filename)
+		const that = this;
+		D.Svg2canvas(D.topSVG, dgrm.name, function(url, filename)
 		{
 			const params =
 			{
@@ -2011,15 +1967,16 @@ class Amazon extends Cloud
 				if (fn)
 					fn(error, result);
 			};
-			this.lambda.invoke(params, handler);
+			that.lambda.invoke(params, handler);
 		});
 	}
 	fetchDiagramJsons(diagrams, fn, jsons = [], refs = {})
 	{
-		const someDiagrams = diagrams.filter(d => typeof d === 'string' && R.$CAT.getElement(d) === null);
+		const someDiagrams = diagrams.filter(d => typeof d === 'string' && !R.$CAT.getElement(d));
 		if (isCloud && someDiagrams.length > 0)
 			Promise.all(someDiagrams.map(d => this.fetchDiagram(d))).then(fetchedJsons =>
 			{
+				fetchedJsons = fetchedJsons.filter(j => j);
 				jsons.push(...fetchedJsons);
 				fetchedJsons.map(j => {refs[j.name] = true; return true;});
 				const nextRound = [];
@@ -2626,7 +2583,7 @@ ${D.Button(onclick)}
 	static GetButton(buttonName, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
 	{
 		let btn = D.svg[buttonName];
-		return D.formButton(btn, onclick, title, scale, addNew = false, id = null, bgColor = '#ffffff')
+		return D.formButton(btn, onclick, title, scale, addNew, id, bgColor)
 	}
 	static formButton(btn, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
 	{
@@ -2797,7 +2754,7 @@ ${D.Button(onclick)}
 	}
 	static UpdateDiagramDisplay()
 	{
-		if (!R.initialized)
+		if (!R.diagram)
 			return;
 		D.diagramPanel.update();
 		D.objectPanel.update();
@@ -2835,14 +2792,16 @@ ${D.Button(onclick)}
 			dstChild.setAttribute('style', style);
 		}
 	}
-	static Svg2canvas(svg, name, fullscreen, fn)
+	static Svg2canvas(svg, name, fn)
 	{
 		const copy = svg.cloneNode(true);
 		D.copyStyles(copy, svg);
 		const canvas = document.createElement('canvas');
-		const bbox = svg.getBBox();
-		canvas.width = fullscreen ? window.innerWidth : D.snapWidth;
-		canvas.height = fullscreen ? window.innerHeight : D.snapHeight;
+//		const bbox = svg.getBBox();
+//		canvas.width = fullscreen ? window.innerWidth : D.snapWidth;
+//		canvas.height = fullscreen ? window.innerHeight : D.snapHeight;
+		canvas.width = D.snapWidth;
+		canvas.height = D.snapHeight;
 		var ctx = canvas.getContext('2d');
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		const data = (new XMLSerializer()).serializeToString(copy);
@@ -2851,7 +2810,8 @@ ${D.Button(onclick)}
 		const img = new Image();
 		img.onload = function()
 		{
-			ctx.drawImage(img, 0, 0);
+//			ctx.drawImage(img, 0, 0, D.snapWidth, D.snapHeight);
+			ctx.drawImage(img, D.default.panel.width, 0, window.innerWidth - 2 * D.default.panel.width, window.innerHeight, 0, 0, D.snapWidth, D.snapHeight);
 			D.url.revokeObjectURL(url);
 			const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 			const dgrmImg = document.getElementById(`img_${name}`);
@@ -3119,10 +3079,10 @@ Object.defineProperties(D,
 				lineWidth:	2,
 				margin:		2,
 			},
-			layoutGrid:	15,
+			layoutGrid:	8,
 			scale:		{base:1.05, limit:{min:0.05, max:20}},
 			scale3D:	1,
-			stdOffset:	new D2(30, 30),
+			stdOffset:	new D2(32, 32),
 			stdArrow:	new D2(200, 0),
 			toolbar:	{x:15, y:70},
 		},
@@ -4174,12 +4134,12 @@ class DiagramSection extends Section
 	diagramRow(diagram, tb = '')
 	{
 		const dt = new Date(diagram.timestamp);
-//		const url = R.cloud ? R.cloud.getURL(diagram.codomain.basename, diagram.user, diagram.basename + '.png') : R.Diagrams.get(diagram.name).png;
+//		const url = R.cloud ? R.cloud.getURL(diagram.user, diagram.basename + '.png') : R.Diagrams.get(diagram.name).png;
 		let src = '';
 		if (D.diagramPNG.has(diagram.name))
 			src = D.diagramPNG.get(diagram.name);
 		if (src === '' && R.cloud)
-			src = R.cloud.getURL(diagram.codomain.basename, diagram.user, diagram.basename + '.png')
+			src = R.cloud.getURL(diagram.user, diagram.basename + '.png')
 		let tools = tb;
 		tools +=	D.DownloadButton('JSON', `R.LoadDiagram('${diagram.name}').downloadJSON(event)`, 'Download JSON') +
 				D.DownloadButton('JS', `R.LoadDiagram('${diagram.name}').downloadJS(event)`, 'Download Javascript') +
@@ -4272,10 +4232,12 @@ class DiagramPanel extends Panel
 	setToolbar(diagram)
 	{
 		const isUsers = diagram && (R.user.name === diagram.user);
+		const uploadBtn = (R.cloud && isUsers) ? H.td(D.GetButton('upload', 'R.diagram.upload(event)', 'Upload', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '';
 		const html = H.table(H.tr(
 //					(isUsers ? H.td(DiagramPanel.GetEraseBtn(diagram), 'buttonBar', 'eraseBtn') : '') +
 					(isUsers ? H.td(DiagramPanel.GetLockBtn(diagram), 'buttonBar', 'lockBtn') : '') +
-					((R.cloud && isUsers) ? H.td(D.GetButton('upload', 'R.diagram.upload(event)', 'Upload', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
+//					((R.cloud && isUsers) ? H.td(D.GetButton('upload', 'R.diagram.upload(event)', 'Upload', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '') +
+					uploadBtn +
 					H.td(D.DownloadButton('JSON', 'R.diagram.downloadJSON(event)', 'Download JSON'), 'buttonBar') +
 					H.td(D.DownloadButton('JS', 'R.diagram.downloadJS(event)', 'Download Javascript'), 'buttonBar') +
 					H.td(D.DownloadButton('PNG', 'R.diagram.downloadPNG(event)', 'Download PNG'), 'buttonBar') +
@@ -4291,6 +4253,7 @@ class DiagramPanel extends Panel
 				response.json().then(function(data)
 				{
 return;	// TODO
+/*
 					U.recentDiagrams = data.diagrams;
 					let html = data.diagrams.map(d => DiagramPanel.DiagramRow(d)).join('');
 					const dt = new Date(data.timestamp);
@@ -4302,8 +4265,9 @@ return;	// TODO
 						introPngs.innerHTML = data.diagrams.map(d =>
 						{
 							const tokens = d.name.split('@');
-							return `<img class="intro" src="${R.cloud.getURL(tokens[1], d.user, d.name)}.png" width="300" height="225" title="${d.properName} by ${d.user}: ${d.description}"/>`;
+							return `<img class="intro" src="${R.cloud.getURL(d.user, d.name)}.png" width="300" height="225" title="${d.properName} by ${d.user}: ${d.description}"/>`;
 						}).join('');
+*/
 				});
 		});
 	}
@@ -5929,7 +5893,8 @@ class DiagramText
 		R.diagram.editElementText(e, id, 'description', function()
 		{
 			R.diagram.updateElementAttribute(from, 'description', document.getElementById(id).innerText);
-			svg.innerHTML = from.description;
+//			svg.innerHTML = from.description.split('\n').map(t => `<tspan text-anchor="left" x="${from.x}" dy="1.2em">${t}</tspan>`).join('');
+			svg.innerHTML = U.Lines2tspan(from);
 		});
 		/*
 		const h = document.getElementById(id);
@@ -5964,9 +5929,9 @@ class DiagramText
 		let html = '';
 		if (this.description.indexOf('\n') > -1)		// multi-line svg
 		{
-			let lines = this.description.split('\n').map(t => `<tspan text-anchor="left" x="${this.x}" dy="1.2em">${t}</tspan>`).join('');
+//			let lines = this.description.split('\n').map(t => `<tspan text-anchor="left" x="${this.x}" dy="1.2em">${t}</tspan>`).join('');
+			let lines = U.Lines2tspan(this);
 			html =
-//<g id="${this.elementId()}" transform="translate(${this.x} ${this.y + D.default.font.height/2})">
 `<text id="${this.elementId()}" data-type="text" data-name="${this.name}" x="${this.x}" y="${this.y}" text-anchor="left" class="diagramText grabbable"
 	onmousedown="R.diagram.pickElement(event, '${this.name}')"> ${lines}</text>`;
 		}
@@ -7197,12 +7162,6 @@ class JavascriptAction extends Action
 			html = H.p(this.generate(m), 'code', 'morphism-javascript');
 		D.help.innerHTML = html;
 	}
-	static JsName(e, cls = false)
-	{
-		const s = e.name;
-		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_');
-		return r;
-	}
 	setMorphismCode(e, id, type)
 	{
 		const elt = document.getElementById(id);
@@ -7223,7 +7182,7 @@ class JavascriptAction extends Action
 		switch(o.constructor.name)
 		{
 			case 'CatObject':
-				const jsn = JavascriptAction.JsName(o);
+				const jsn = U.JsName(o);
 				code += `'${jsn}'`;
 				break;
 			case 'ProductObject':
@@ -7237,7 +7196,7 @@ class JavascriptAction extends Action
 	}
 	static Header(m)
 	{
-		return `function ${JavascriptAction.JsName(m)}(args)\n{\n`;
+		return `function ${U.JsName(m)}(args)\n{\n`;
 	}
 	static Tail()
 	{
@@ -7257,7 +7216,7 @@ class JavascriptAction extends Action
 			}
 	 		if (MultiMorphism.prototype.isPrototypeOf(m))
 				code += m.morphisms.map(n => this.generate(n, generated)).join('\n');
-			const jsName = JavascriptAction.JsName(m);
+			const jsName = U.JsName(m);
 			const header = JavascriptAction.Header(m);
 			const tail = JavascriptAction.Tail();
 			if (InitialObject.prototype.isPrototypeOf(m.domain))
@@ -7276,25 +7235,25 @@ class JavascriptAction extends Action
 							code += `${m.code.javascript}\n`;
 						break;
 					case 'Composite':
-						code += `${header}	${m.morphisms.map(n => JavascriptAction.JsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
+						code += `${header}	${m.morphisms.map(n => U.JsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
 						break;
 					case 'Identity':
 						code += `${header}	return args;${tail}`;
 						break;
 					case 'ProductMorphism':
-						code += `${header}	return [${m.morphisms.map((n, i) => JavascriptAction.JsName(n) + '(args[' + i + '])').join()}];${tail}`;
+						code += `${header}	return [${m.morphisms.map((n, i) => U.JsName(n) + '(args[' + i + '])').join()}];${tail}`;
 						break;
 					case 'CoproductMorphism':
 						code +=
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => JavascriptAction.JsName(n)).join()}];
+`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.JsName(n)).join()}];
 ${header}	return [args(0), ${jsName}_morphisms[args[0]](args[1])];${tail}`;
 						break;
 					case 'ProductAssembly':
-						code += `${header}	return [${m.morphisms.map((n, i) => JavascriptAction.JsName(n) + '(args)').join()}];${tail}`;
+						code += `${header}	return [${m.morphisms.map((n, i) => U.JsName(n) + '(args)').join()}];${tail}`;
 						break;
 					case 'CoproductAssembly':
 						code +=
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => JavascriptAction.JsName(n)).join()}];
+`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.JsName(n)).join()}];
 ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`;
 						break;
 					case 'FactorMorphism':
@@ -7475,7 +7434,7 @@ class FiniteObjectAction extends Action
 		const to = from.to;
 		let html = H.h4('Finite Object');
 		html += (to.constructor.name === 'CatObject' ? H.span('Convert generic object to a finite object.', 'smallPrint') : H.span('Finite object', 'smallPrint')) +
-					H.table(H.tr(H.td(D.Input('', 'finite-new-size', 'Size')), 'sidenavRow')) +
+					H.table(H.tr(H.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')), 'sidenavRow')) +
 					H.span('Leave size blank to indicate finite of unknown size', 'smallPrint') +
 					D.GetButton('edit', `R.$Actions.getElement('finiteObject').action(event, R.diagram, R.diagram.selected)`, 'Finite object', D.default.button.tiny);
 		D.help.innerHTML = html;
@@ -9302,8 +9261,7 @@ class Evaluation extends Morphism
 	}
 	static CanEvaluate(object)
 	{
-		return
-			ProductObject.prototype.isPrototypeOf(object) &&
+		return ProductObject.prototype.isPrototypeOf(object) &&
 			object.objects.length === 2 &&
 			HomObject.prototype.isPrototypeOf(object.objects[0]) &&
 			object.objects[0].objects[0].isEquivalent(object.objects[1]);
@@ -9432,7 +9390,7 @@ class Diagram extends Functor
 		nuArgs.category = U.GetArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
 		if (!Category.prototype.isPrototypeOf(nuArgs.codomain))
 			nuArgs.codomain = diagram ? diagram.getElement(nuArgs.codomain) : R.Cat;
-		const indexName = `${nuArgs.codomain.basename}/${nuArgs.basename}_Index`;
+		const indexName = `${nuArgs.basename}_Index`;
 		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
 		super(diagram, nuArgs);
 		this.elements = new Map;
@@ -10383,7 +10341,7 @@ class Diagram extends Functor
 	}
 	downloadPNG()
 	{
-		D.Svg2canvas(D.topSVG, this.name, true, D.Download);
+		D.Svg2canvas(D.topSVG, this.name, D.Download);
 	}
 	getAllReferenceDiagrams(refs = new Map)
 	{
