@@ -20,13 +20,18 @@ exports.handler = (event, context, callback) =>
     {
         TableName:				C.DIAGRAM_TABLE,
         KeyConditionExpression: 'username = :u AND begins_with(subkey, :sk)',
-        ExpressionAttributeNames: {'#ts':'timestamp'},
+        ExpressionAttributeNames:
+		{
+			'#ts':'timestamp',
+			'#nm':'name',
+			'#refs':'references'
+		},
         ExpressionAttributeValues:
         {
             ':u':   {S: username},
-            ':sk':  {S: 'D@'}
+            ':sk':  {S: 'D-'},
         },
-        ProjectionExpression:   'subkey, #ts, properName, description'
+        ProjectionExpression:   '#nm, #ts, properName, description, basename, #refs'
     };
     db.query(params, function(err, data)
     {
@@ -35,7 +40,6 @@ exports.handler = (event, context, callback) =>
         else
             console.log("Success", err, JSON.stringify(data));
         const serverDiagrams = {};
-        data.Items.map(d => serverDiagrams[d[0]] = {timestamp:d[1], properName:d[2], description:d[3]});
         callback(err, data);
     });
 };

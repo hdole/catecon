@@ -35,7 +35,8 @@ exports.handler = (event, context, callback) =>
 	}
 	const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
 	const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
-	const Key = `${user}/${diagram.basename}.json`;
+	const name = `${user}/${diagram.basename}`;
+	const Key = `${name}.json`;
 	const s3params =
 	{
 		Bucket:  C.DIAGRAM_BUCKET_NAME,
@@ -56,15 +57,15 @@ exports.handler = (event, context, callback) =>
 			Bucket:				C.DIAGRAM_BUCKET_NAME,
 			ContentType:		'image/png',
 			ContentEncoding:	'base64',
-			Key:				Key + '.png',
+			Key:				name + '.png',
 			Body:				new Buffer(event.png.replace(/^data:image\/octet-stream;base64,/,""), 'base64'),
 			ACL:				'public-read',
 		};
 		const Item =
 		{
 			basename:		diagram.basename,
-			name:			diagram.name,
-			subkey:			diagram.name,
+			name,
+			subkey:			'D-' + name,
 			timestamp:		diagram.timestamp,
 			username:		user,
 			description:	diagram.description,
@@ -95,7 +96,7 @@ exports.handler = (event, context, callback) =>
 				AWS.config.update({region:C.REGION, credentials});
 				const msg =
 				{
-					Message:	JSON.stringify({user, name:diagram.name, timestamp:diagram.timestamp, cat:diagram.codomain}),
+					Message:	JSON.stringify({user, name, timestamp:diagram.timestamp, cat:diagram.codomain}),
 					TopicArn:	C.CATECON_TOPIC
 				};
 				var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(msg).promise();
