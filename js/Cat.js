@@ -746,6 +746,15 @@ An account allows sharing diagrams.
 		R.UserDiagram.set(user, d);
 		return d;
 	}
+	static CheckColumn(args)
+	{
+		if ('rowCount' in args && args.rowCount >= args.rows)
+		{
+			const bbox = args.diagram.svgRoot.getBBox();
+			args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
+			args.rowCount = 0;
+		}
+	}
 	static Autoplace(diagram, args, xy)
 	{
 		let element = null;
@@ -775,7 +784,11 @@ An account allows sharing diagrams.
 			else if (CatObject.prototype.isPrototypeOf(element))
 				diagram.placeObject(null, element, xy, false);
 		}
-		xy.y += 16 * D.default.layoutGrid;
+		if ('rowCount' in args)
+		{
+			args.rowCount++;
+			xy.y += 16 * D.default.layoutGrid;
+		}
 		return element;
 	}
 	static DiagramReferences(user, diagram, xy)
@@ -800,6 +813,7 @@ An account allows sharing diagrams.
 	}
 	static PlaceObject(args, basename, prototype, properName, description, moreArgs = {})
 	{
+		R.CheckColumn(args);
 		R.PlaceSideText(args, description);
 		const nuArgs = U.clone(args);
 		nuArgs.xy = new D2(args.xy);
@@ -812,10 +826,12 @@ An account allows sharing diagrams.
 			nuArgs.properName = properName;
 		const e = R.Autoplace(args.diagram, nuArgs, nuArgs.xy);
 		args.xy = new D2(nuArgs.xy);
+		args.rowCount = nuArgs.rowCount;
 		return e;
 	}
 	static PlaceMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs = {})
 	{
+		R.CheckColumn(args);
 		R.PlaceSideText(args, description);
 		const nuArgs = U.clone(args);
 		nuArgs.xy = new D2(args.xy);
@@ -830,6 +846,7 @@ An account allows sharing diagrams.
 		nuArgs.codomain = codomain;
 		const e = R.Autoplace(args.diagram, nuArgs, nuArgs.xy);
 		args.xy = new D2(nuArgs.xy);
+		args.rowCount = nuArgs.rowCount;
 		return e;
 	}
 	static Boot()
@@ -848,8 +865,10 @@ An account allows sharing diagrams.
 		const args =
 		{
 			user,
-			xy:		new D2(300,300),
+			xy:			new D2(300,300),
 			side,
+			rows:		8,
+			rowCount:	0,
 		};
 		//
 		// basics
@@ -863,6 +882,8 @@ An account allows sharing diagrams.
 			user,
 		});
 		args.diagram = basics;
+		args.rowCount = 0;
+		args.xy = new D2(300, 300);
 		basics.makeSvg();
 		R.AddDiagram(basics);
 		R.Autoplace(basics,
@@ -871,11 +892,16 @@ An account allows sharing diagrams.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
 		const zero = pfs.getElement('#0');
 		R.PlaceSideText(args, 'The empty set or initial object.');
 		R.Autoplace(basics, zero, args.xy);
+args.rowCount++;
+args.xy.y += 16 * D.default.layoutGrid;
 		R.PlaceSideText(args, 'The one point set or terminal object.');
 		const one = R.Autoplace(basics, pfs.getElement('#1'), args.xy);
+args.rowCount++;		// TODO put 0 and 1 in a diagram
+args.xy.y += 16 * D.default.layoutGrid;
 		const tty = R.PlaceObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices.');
 		const threeD = R.PlaceObject(args, 'D3', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices.');
 		D.ShowDiagram(basics);
@@ -895,6 +921,7 @@ An account allows sharing diagrams.
 			user,
 		});
 		args.diagram = logic;
+		args.rowCount = 0;
 		args.xy = new D2(300, 300);
 		logic.makeSvg();
 		R.AddDiagram(logic);
@@ -905,6 +932,7 @@ An account allows sharing diagrams.
 			user,
 			properName:		'&Omega;',
 		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
 		const two = R.PlaceObject(args, 'two', 'FiniteObject', '&Omega;', 'The sub-object classifier, or better known in these circumstances as the two point set', {size:2});
 		const twoPair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[two, two]});
 		const mTrue = R.PlaceMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true.', one, two, {js:'return true;'});
@@ -930,6 +958,7 @@ An account allows sharing diagrams.
 			user,
 		});
 		args.diagram = Narith;
+		args.rowCount = 0;
 		args.xy = new D2(300, 300);
 		Narith.makeSvg();
 		R.AddDiagram(Narith);
@@ -939,14 +968,13 @@ An account allows sharing diagrams.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
 		const N = R.PlaceObject(args, 'N', 'CatObject', '<tspan class="bold">&Nopf;</tspan>', 'The natural numbers');
 		const Nzero = R.PlaceMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number: zero.', one, N, {js:'return 0;'});
 		const None = R.PlaceMorphism(args, 'one', 'Morphism', '1', 'The natural number one.', one, N, {js:'return 1;'});
 		const Ninfinity = R.PlaceMorphism(args, 'infinity', 'Morphism', '&infin;', 'The maximum safe natural number.', one, N, {js:'return Number.MAX_SAFE_INTEGER;'});
 		const Npair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of natural numbers', {objects:[N, N]});
 		const Nadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two natural numbers.', Npair, N, {js:'return args[0] + args[1];'});
-		let bbox = Narith.svgRoot.getBBox();
-		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		const Nmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two natural numbers.', Npair, N, {js:'return args[0] * args[1];'});
 		const Nsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the natural numbers.', N, N, {js:'return args + 1;'});
 		const Nless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first natural number less than the second', Npair, N, {js:'return args[0] < args[1];'});
@@ -970,6 +998,7 @@ An account allows sharing diagrams.
 			user,
 		});
 		args.diagram = integers;
+		args.rowCount = 0;
 		args.xy = new D2(300, 300);
 		integers.makeSvg();
 		R.AddDiagram(integers);
@@ -979,16 +1008,15 @@ An account allows sharing diagrams.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
 		const Z = R.PlaceObject(args, 'Z', 'CatObject', '<tspan class="bold">&Zopf;</tspan>', 'The integers');
 		const N2Z = R.PlaceMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z, {js:'return args;'});
 		const Zabs = R.PlaceMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of an integer is a natural number', Z, N, {js:'return Math.abs(args);'});
-		const Zzero = R.PlaceMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, N, {js:'return 0;'});
-		const ZminusOne = R.PlaceMorphism(args, 'minusOne', 'Morphism', '&lsquo;-1&rsquo;', 'The first interesting integer: minus one.', one, N, {js:'return -1;'});
+		const Zzero = R.PlaceMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, Z, {js:'return 0;'});
+		const ZminusOne = R.PlaceMorphism(args, 'minusOne', 'Morphism', '&lsquo;-1&rsquo;', 'The first interesting integer: minus one.', one, Z, {js:'return -1;'});
 		const Zpair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of integers', {objects:[Z, Z]});
 		const Zadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two integers', Zpair, Z, {js:'return args[0] + args[1];'});
 		const Zsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two integers.', Zpair, Z, {js:'return args[0] - args[1];'});
-		bbox = integers.svgRoot.getBBox();
-		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		const Zmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two integers.', Zpair, Z, {js:'return args[0] * args[1];'});
 		const ZplusOne = R.PlaceObject(args, '', 'CoproductObject', '', 'An integer or an exception', {objects:[Z, one]});
 		const Zdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '/', 'division of two integers or an exception', Zpair, ZplusOne,
@@ -1035,6 +1063,7 @@ An account allows sharing diagrams.
 			user,
 		});
 		args.diagram = floats;
+		args.rowCount = 0;
 		args.xy = new D2(300, 300);
 		floats.makeSvg();
 		R.AddDiagram(floats);
@@ -1044,6 +1073,7 @@ An account allows sharing diagrams.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
 		const F = R.PlaceObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers');
 		const Fzero = R.PlaceMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero.', one, F, {js:'return 0.0;'});
 		const Fe = R.PlaceMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F, {js:'return 0.0;'});
@@ -1052,8 +1082,6 @@ An account allows sharing diagrams.
 		const Z2F = R.PlaceMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'});
 		const Fsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the floating point numbers.', F, F, {js:'return args + 1.0;'});
 		const Fabs = R.PlaceMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a floating point number', F, F, {js:'return Math.abs(args);'});
-		bbox = floats.svgRoot.getBBox();
-		args.xy = D.Grid(new D2(bbox.x + bbox.width + 150, 300 + 8 * 16));
 		const Fpair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of floating point numbers', {objects:[F, F]});
 		const Fadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two floating point numbers.', Fpair, F, {js:'return args[0] + args[1];'});
 		const Fsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two floating point numbers.', Fpair, F, {js:'return args[0] - args[1];'});
@@ -1082,8 +1110,6 @@ An account allows sharing diagrams.
 `			},
 		});
 		const Fless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given floating point number less than the second', Fpair, two, {js:'return args[0] < args[1];'});
-		bbox = floats.svgRoot.getBBox();
-		args.xy = D.Grid(new D2(bbox.x + bbox.width + 150, 300 + 8 * 16));
 		const FlessEq = R.PlaceMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first floating point number less than or equal to the second', Fpair, two, {js:'return args[0] <= args[1];'});
 		const Fequals = R.PlaceMorphism(args, 'equals', 'Morphism', '=', 'compare two floating point numbers for equality', Fpair, two, {js:'return args[0] === args[1];'});
 		const ceil = R.PlaceMorphism(args, 'ceil', 'Morphism', 'ceil', 'The smallest integer greater than or equal to a given floating point number', F, Z, {js:'return Math.ceil(args);'});
@@ -1114,8 +1140,6 @@ An account allows sharing diagrams.
 `
 			},
 		});
-		bbox = floats.svgRoot.getBBox();
-		args.xy = D.Grid(new D2(bbox.x + bbox.width + 150, 300 + 8 * 16));
 		const Flist = R.PlaceObject(args, '', 'HomObject', '', 'A list of floating point numbers', {objects:[N, F]});
 		const Fmax = R.PlaceMorphism(args, 'max', 'Morphism', 'max', 'The maximum floating point number of the given list', Flist, F, {js:'return Math.max(...args);'});
 		const Fmin = R.PlaceMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F, {js:'return Math.min(...args);'});
@@ -1137,6 +1161,7 @@ An account allows sharing diagrams.
 			user,
 		});
 		args.diagram = strings;
+		args.rowCount = 0;
 		args.xy = new D2(300, 300);
 		strings.makeSvg();
 		R.AddDiagram(strings);
@@ -1146,6 +1171,7 @@ An account allows sharing diagrams.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
 		const str = R.PlaceObject(args, 'str', 'CatObject', 'Str', 'the space of all strings');
 		const strPair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]});
 		const strLength = R.PlaceMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N, {js:'return args.length;'});
@@ -1155,8 +1181,6 @@ An account allows sharing diagrams.
 		const strList = R.PlaceObject(args, '', 'HomObject', '', 'A list of strings', {objects:[N, str]});
 		const strListStr = new ProductObject(strings, {objects:[strList, str]});
 		const strJoin = R.PlaceMorphism(args, 'join', 'Morphism', 'join', 'join a list of strings into a single string with another string as the conjunction', strListStr, str, {js:'// TODO'});
-		bbox = strings.svgRoot.getBBox();
-		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		const strN = new ProductObject(strings, {objects:[str, N]});
 		const strCharAt = R.PlaceMorphism(args, 'charAt', 'Morphism', 'charAt', 'the n\'th character in the string', strN, str, {js:'return args[0].charAt(args[1]);'});
 		const N2str = R.PlaceMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str, {js:'return args.toString();'});
@@ -1190,6 +1214,7 @@ function %1(args)
 			user,
 		});
 		args.diagram = htmlDiagram;
+		args.rowCount = 0;
 		args.xy = new D2(300, 300);
 //		args.side = D.Grid(D.default.stdArrow.scale(2).subtract(new D2(0, D.default.layoutGrid)));		// TODO from the css 30px for object class font height: 30px/2 = 15, +14/2
 		htmlDiagram.makeSvg();
@@ -1201,11 +1226,16 @@ function %1(args)
 			user,
 			properName:		'&Omega;',
 		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
 		const html = R.PlaceObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices.');
-		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
-		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
-		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
-		const html2Str = R.PlaceMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str, {js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
+			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
+			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
+			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+		const html2Str = R.PlaceMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
+			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
 		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values.', html, two);
 //		const omega2html = R.PlaceMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
 		const N_html2str = LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
@@ -1216,16 +1246,14 @@ function %1(args)
 		const strXN_html2N = ProductObject.Get(args.diagram, [str, N_html2N.codomain]);
 		const html2Nat = R.PlaceMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
 			{js:`return ['<input type="number" min="0" id="in_%1" value="0"/>', ${U.JsName(N_html2N)}]`});
-		bbox = htmlDiagram.svgRoot.getBBox();
-		args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		const N_html2Z = LambdaMorphism.Get(args.diagram, html2Z, [], [0]);
 		const strXN_html2Z = ProductObject.Get(args.diagram, [str, N_html2Z.codomain]);
 		const html2Int = R.PlaceMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
-			{js:`return '<input type="number" id="in_%1" value="0" placeholder="Integer"/>'`});
+			{js:`return ['<input type="number" id="in_%1" value="0" placeholder="Integer"/>', ${U.JsName(N_html2Z)}]`});
 		const N_html2F = LambdaMorphism.Get(args.diagram, html2F, [], [0]);
 		const strXN_html2F = ProductObject.Get(args.diagram, [str, N_html2F.codomain]);
 		const html2Float = R.PlaceMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
-			{js:`return '<input type="number" id="in_%1" value="0.0" placeholder="Integer"/>'`});
+			{js:`return ['<input type="number" id="in_%1" value="0.0" placeholder="Float"/>', ${U.JsName(N_html2F)}]`});
 		R.DiagramReferences(user, htmlDiagram, args.xy);
 		D.ShowDiagram(htmlDiagram);
 		htmlDiagram.home();
@@ -1364,17 +1392,22 @@ function %1(args)
 		R.diagram = null;
 		const params = (new URL(document.location)).searchParams;
 		let diagramName = params.get('diagram');
-		if (diagramName)
-			R.diagram = R.$CAT.getElement(diagramName);
-		if (!R.diagram)
-		{
-			diagramName = R.UserHomeDiagramName(R.user.name);
-			R.diagram = R.$CAT.getElement(diagramName);
-			if (!R.diagram)
-				R.diagram = R.SetupUserHome(R.user.name);
-		}
-		R.category = R.diagram.codomain;
+		//
+		// can we load the url specified diagram?
+		//
 		R.SelectDiagram(diagramName);
+//		if (diagramName)
+//			R.diagram = R.$CAT.getElement(diagramName);
+		//
+		// try finding the default diagram
+		//
+		if (!R.diagram)
+			R.SelectDiagram(R.default.diagram);
+		R.SetupUserHome(R.user.name);
+		if (!R.diagram)
+//			R.diagram = R.$CAT.getElement(R.UserHomeDiagramName(R.user.name));
+			R.SelectDiagram(R.UserHomeDiagramName(R.user.name));
+		R.category = R.diagram.codomain;
 		fn && fn();
 		D.panels.update();
 		D.navbar.update();
@@ -1390,7 +1423,7 @@ function %1(args)
 		R.diagram = R.$CAT.getElement(name);
 		if (!R.diagram)
 			R.diagram = R.ReadLocal(name);
-		if (!R.diagram)
+		if (!R.diagram && R.cloud)
 			// TODO turn on/off busy cursor
 			R.diagram = R.FetchDiagram(name, setup);
 		if (R.diagram)
@@ -1499,7 +1532,7 @@ Object.defineProperties(R,
 		value:
 		{
 			category:		'hdole/PFS',
-			cat2diagram:	{'hdole/PFS':'Anon/Home'},
+			diagram:		'Anon/Home',
 			debug:			false,
 			internals:		false,
 		},
@@ -1679,6 +1712,7 @@ class Amazon extends Cloud
 				const idPro = new window.AWS.CognitoIdentityServiceProvider();
 				idPro.getUser({AccessToken:that.accessToken}, function(err, data)
 				{
+					// TODO merge with login()
 					if (err)
 					{
 						console.log('getUser error', err);
@@ -1689,7 +1723,8 @@ class Amazon extends Cloud
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 					R.user.status = 'logged-in';
 					D.navbar.update();
-					D.loginPanel.update();
+//					D.loginPanel.update();
+					D.panels.update();
 					R.Setup(function()
 					{
 						D.UpdateDiagramDisplay();
@@ -1819,9 +1854,10 @@ class Amazon extends Cloud
 						}
 						R.user.name = data.Username;
 						R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
-						R.default.cat2diagram = {};
+//						R.default.cat2diagram = {};
 						R.SetupUserHome(R.user.name);
-						D.loginPanel.update();
+//						D.loginPanel.update();
+						D.panels.update();
 						D.loginPanel.toggle();
 //						D.morphismPanel.update();
 						R.Setup(function()
@@ -1861,13 +1897,12 @@ class Amazon extends Cloud
 		R.user.name = 'Anon';
 		R.user.email = '';
 		R.user.status = 'unauthorized';
-		R.default.cat2diagram = {};
 		R.Setup(function()
 		{
 			D.UpdateDiagramDisplay();
 		});
 		D.navbar.update();
-//		D.panels.update();
+		D.panels.update();
 	}
 	async fetchDiagram(name)
 	{
@@ -3029,7 +3064,8 @@ ${D.Button(onclick)}
 	{
 		if (!R.diagram)
 			throw 'no diagram';
-		R.default.cat2diagram[R.category.name] = R.diagram.name;
+//		R.default.cat2diagram[R.category.name] = R.diagram.name;
+		R.default.diagram = R.diagram.name;
 		D.SaveDefaults();
 	}
 	static AddReference(e, name)
@@ -3461,7 +3497,8 @@ class Section
 	}
 	update()		// fitb
 	{
-		return this.elt.classList.contains('active');
+//		return this.elt.classList.contains('active');
+		return true;
 	}
 	static Html(header, action, panelId, title = '', buttonId = '')
 	{
@@ -3645,7 +3682,7 @@ class CategorySection extends Section
 	}
 	update()
 	{
-		if (super.update())
+		if (this.categories && super.update())
 		{
 			let rows = '';
 			const that = this;	// can't use this below
@@ -4192,10 +4229,11 @@ class DiagramPanel extends Panel
 		this.timestampElt = document.getElementById('diagram-timestamp');
 		this.diagramPanelToolbarElt = document.getElementById('diagramPanelToolbar');
 		this.diagram = R.diagram;
+		this.user = R.user.name;
 	}
 	update()
 	{
-		if (R.diagram && R.diagram !== this.diagram)
+		if (R.diagram && (R.diagram !== this.diagram || R.user.name !== this.user))
 		{
 			this.diagram = R.diagram;
 			this.referenceSection.setDiagrams(this.diagram.references);
@@ -4662,7 +4700,7 @@ class NewMorphismSection extends Section
 	}
 	update()
 	{
-		if (super.update())
+		if (R.category && super.update())
 		{
 			this.error.innerHTML = '';
 			this.basenameElt.value = '';
@@ -6649,7 +6687,7 @@ class HomRightAction extends Action
 		const morphisms = [];
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
-			if (Morphism.prototype.isPrototypeOf(m) && from.to.name === m.domain.name)
+			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.domain.signature)
 				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'domain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms from ${from.to.properName}`, 'italic') + H.table(rows);
 	}
@@ -6678,7 +6716,7 @@ class HomLeftAction extends Action
 		const morphisms = [];
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
-			if (Morphism.prototype.isPrototypeOf(m) && from.to.name === m.codomain.name)
+			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.codomain.signature)
 				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'codomain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms to ${from.to.properName}`, 'italic') + H.table(rows);
 	}
@@ -7468,6 +7506,7 @@ class DataAction extends Action
 <line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="140" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>`,};
 		super(diagram, args);
+		this.htmlFns = new Map;
 	}
 	action(e, diagram, ary)
 	{
@@ -7488,10 +7527,24 @@ class DataAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
+			const to = ary[0].to;
+			if (this.htmlFns.count === 0)
+			{
+
+				const htmlDgrm = R.$CAT.getElement('hdole/PFS/HTML');
+if (!htmlDrm)debugger;
+
+				const html = htmlDgrm.getElement('HTML');
+				for(const [key, m] of htmlDgrm.elements)
+					if (Morphism.prototype.isPrototypeOf(m) && html.signature === m.to.domain.signature)
+					{
+						this.htmlFns.set();
+					}
+
+			}
 			if (diagram.isIsolated(from))
 			{
-				const to = ary[0].to;
-				if (diagram.elements.has(to.basename) && Morphism.prototype.isPrototypeOf(to) && to.domain.isIterable())
+				if (diagram.elements.has(to.basename) && Morphism.prototype.isPrototypeOf(to) && to.domain.isIterable() && !('code' in to))
 					return  to.constructor.name === 'Morphism' || DataMorphism.prototype.isPrototypeOf(to);
 			}
 		}
