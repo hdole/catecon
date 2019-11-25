@@ -1179,7 +1179,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const strListStr = new ProductObject(strings, {objects:[strList, str]});
 		const strJoin = R.PlaceMorphism(args, 'join', 'Morphism', 'join', 'join a list of strings into a single string with another string as the conjunction', strListStr, str, {js:'// TODO'});
 		const strN = new ProductObject(strings, {objects:[str, N]});
-		const strCharAt = R.PlaceMorphism(args, 'charAt', 'Morphism', 'charAt', 'the n\'th character in the string', strN, str, {js:'return args[0].charAt(args[1]);'});
+		const strCharAt = R.PlaceMorphism(args, 'charAt', 'Morphism', '@', 'the n\'th character in the string', strN, str, {js:'return args[0].charAt(args[1]);'});
 		const N2str = R.PlaceMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str, {js:'return args.toString();'});
 		const Z2str = R.PlaceMorphism(args, 'Z2str', 'Morphism', '&lsquo;&rsquo;', 'convert an integer to a string', Z, str, {js:'return args.toString();'});
 		const F2str = R.PlaceMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str, {js:'return args.toString();'});
@@ -1396,13 +1396,26 @@ args.xy.y += 16 * D.default.layoutGrid;
 	{
 		R.diagram = null;
 		const params = (new URL(document.location)).searchParams;
-		let diagramName = params.get('diagram');
-		//
-		// can we load the url specified diagram?
-		//
-		R.SelectDiagram(diagramName);
-//		if (diagramName)
-//			R.diagram = R.$CAT.getElement(diagramName);
+		let diagramName = params.get('d');
+		if (diagramName)
+		{
+			R.SelectDiagram(diagramName);
+			if (R.diagram)
+			{
+				const morphismName = params.get('m');
+				if (morphismName)
+				{
+					const m = R.diagram.getElement(morphismName);
+					if (m)
+					{
+						const ja = R.$Actions.getElement('javascript');
+						D.ioPanel.open();
+					}
+				}
+			}
+			else
+				D.RecordError('Diagram specified in URL could not be loaded.');
+		}
 		//
 		// try finding the default diagram
 		//
@@ -1410,7 +1423,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 			R.SelectDiagram(R.default.diagram);
 		R.SetupUserHome(R.user.name);
 		if (!R.diagram)
-//			R.diagram = R.$CAT.getElement(R.UserHomeDiagramName(R.user.name));
 			R.SelectDiagram(R.UserHomeDiagramName(R.user.name));
 		R.category = R.diagram.codomain;
 		fn && fn();
@@ -2088,7 +2100,8 @@ class Navbar
 			H.td(H.div(D.GetButton('help', "D.helpPanel.toggle()", 'Help', sz))) +
 			H.td(H.div(D.GetButton('login', "D.loginPanel.toggle()", 'Login', sz))) +
 			H.td(H.div(D.GetButton('settings', "D.settingsPanel.toggle()", 'Settings', sz))) +
-			H.td('&nbsp;&nbsp;&nbsp;');
+			H.td(H.div(D.GetButton('settings', "D.ioPanel.toggle()", 'Settings', sz))) +
+			H.td('&nbsp;&nbsp;&nbsp;');		// TODO for weird spacing problem with navbar
 		const html = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
 									H.td(H.span('', 'navbar-inset', 'user-navbar'), 'w20') +
 									H.td(H.span('Catecon', 'title'), 'w20') +
@@ -2168,6 +2181,8 @@ class D
 		D.SettingsPanel =	SettingsPanel;
 		D.textPanel =		new TextPanel;
 		D.TextPanel =		TextPanel;
+		D.ioPanel =			new IoPanel;
+		D.IoPanel =			IoPanel;
 		D.threeDPanel =		new ThreeDPanel;
 		D.ttyPanel =		new TtyPanel;
 		D.panels.update();
@@ -2516,8 +2531,7 @@ class D
 			return;
 		}
 		D.help.innerHTML = '';
-		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, '',
-			'toolbar-drag-handle');
+		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, '', 'toolbar-drag-handle', 'Move toolbar');
 		diagram.codomain.actions.forEach(function(a, n)
 		{
 			if (a.hasForm(R.diagram, diagram.selected))
@@ -2750,6 +2764,14 @@ ${D.Button(onclick)}
 			const c = D.diagramSVG.children[i];
 			c.style.display = c.id === diagram.name ? 'block' : 'none';
 		}
+	}
+	static ShowDiagramRoot()
+	{
+		D.diagramSVG.style.display = 'block';
+	}
+	static HideDiagramRoot()
+	{
+		D.diagramSVG.style.display = 'none';
 	}
 	static UpdateDiagramDisplay()
 	{
@@ -4463,10 +4485,7 @@ class ElementSection extends Section
 						if (!Morphism.prototype.isPrototypeOf(e))
 							continue;
 						rows += H.tr(	(R.default.internals ? H.td(e.refcnt) : '') +
-										H.td(e.properName
-//											(this.isCurrentDiagram && e.refcnt <= 0 ?
-//												D.GetButton('delete', `R.$CAT.getElement('${R.diagram.name}').removeMorphism(event, '${e.name}')`, 'Delete morphism') : '')
-											) +
+										H.td(e.properName) +
 										H.td(e.domain.properName) +
 										H.td('&rarr;') +
 										H.td(e.codomain.properName), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="D.DragElement(event, 'morphism ${e.name}')"`);
@@ -4485,10 +4504,7 @@ class NewObjectSection extends Section
 		super('New', parent, 'object-new-section', 'Create new object');
 		this.section.innerHTML =
 			H.table(H.tr(H.td(D.Input('', 'object-new-basename', 'Base name')), 'sidenavRow') +
-					H.tr(H.td(D.Input('', 'object-new-properName', 'Proper name')
-//						+ H.button('&Dopf;', '', D.elementId(), 'Convert to double-struck font', `onclick="U.DoubleStruck(this.parentElement.children[0])"`
-						), 'sidenavRow') +
-		
+					H.tr(H.td(D.Input('', 'object-new-properName', 'Proper name')), 'sidenavRow') +
 					H.tr(H.td(H.input('', 'in100', 'object-new-description', 'text',
 										{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.objectPanel.newObjectSection.create, D.objectPanel.newObjectSection)"'})), 'sidenavRow')
 			) +
@@ -4833,6 +4849,19 @@ class TextPanel extends Panel
 			this.textSection.update();
 			diagram.update();
 		}
+	}
+}
+
+class IoPanel extends Panel
+{
+	constructor()
+	{
+		super('io');
+		this.elt.innerHTML = H.div('', '', 'io');
+		this.initialize();
+	}
+	update()
+	{
 	}
 }
 
@@ -5372,7 +5401,8 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		if ('size' in nuArgs && nuArgs.size !== '')
 			Object.defineProperty(this, 'size', {value:	nuArgs.size, writable:	false});
 		if ('size' in this)
-			this.signature = U.sha256(`${this.diagram ? this.diagram.codomain.name : 'null'} ${this.size}`);
+			// signature is the sig of the coproduct of 1's/Show
+			this.signature = tihs.size > 0 ? MultiObject.GetSignature('CoproductObject', Array(this.size).fill(1)) : 0;
 	}
 	help(suppress = false)
 	{
@@ -5460,6 +5490,7 @@ class TerminalObject extends FiniteObject
 }
 
 // TODO remove and place in diagram?
+// TODO turn into named identity
 class SubobjectClassifier extends CatObject
 {
 	constructor(diagram, args)
@@ -5470,7 +5501,7 @@ class SubobjectClassifier extends CatObject
 		nuArgs.properName = '&Omega;';
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.signature = U.sha256(2);	// TODO make a named identity object Omega to 2
+//		this.signature = U.sha256(2);	// TODO make a named identity object Omega to 2
 	}
 	help()
 	{
@@ -5497,15 +5528,15 @@ class MultiObject extends CatObject
 		Object.defineProperty(this, 'objects', {value:	nuArgs.objects.map(o => this.diagram.getElement(o)), writable:	false});
 		this.objects.map(o => o.incrRefcnt());
 		this.seperatorWidth = D.textWidth(', ');	// runtime; don't save; TODO remove
-		this.signature = this.getMultiObjectSignature();
+		this.signature = MultiObject.GetSignature(this.constructor.name, this.objects);
 	}
 	help(hdr)
 	{
 		return super.help() + hdr + this.objects.map(o => o.help()).join('');
 	}
-	getMultiObjectSignature()
+	static GetSignature(constructor, objects)
 	{
-		return U.sha256(`${this.constructor.name} ${this.objects.map(o => o.signature).join()}`);
+		return U.sha256(`${constructor} ${objects.map(o => o.signature).join()}`);
 	}
 	decrRefcnt()
 	{
@@ -7372,6 +7403,23 @@ console.log('formatters', this.formatters);
 		}
 		return function(){};
 	}
+	canInputObject(o)
+	{
+		switch(o.constructor.name)
+		{
+			case 'TerminalObject':
+			case 'FiniteObject':
+				return true;
+			case 'CatObject':
+				return this.formatters.has(o.signature);
+			case 'ProductObject':
+			case 'CoproductObject':
+				return o.objects.reduce((r, so) => r && this.formatters.has(so.signature), true);
+//			case 'HomObject':
+//				break;
+		}
+		return false;
+	}
 }
 
 class RunAction extends Action
@@ -7535,7 +7583,7 @@ class DataAction extends Action
 			diagram.codomain.deleteElement(to);
 //			const newTo = new FiniteObject(diagram, {basename:to.basename, category:diagram.codomain, properName:to.properName, size:this.sizeElt.value.trim()});
 			from.to = null;
-			from.setMorphism(new DataMorphism(diagram, to));
+			from.setMorphism(new DataMorphism(diagram, to.json()));
 			diagram.makeSelected(from);	// probably already was
 		}
 		D.dataPanel.open();
@@ -8874,9 +8922,10 @@ class DataMorphism extends Morphism
 		nuArgs.codomain = diagram.getElement(args.codomain);
 		if (!('category' in nuArgs && Category.prototype.isPrototypeOf(nuArgs.category)))
 			nuArgs.category = nuArgs.diagram.codomain;
-		super(diagram, args);
-		this.data = new Map(U.GetArg(args, 'data', []));
-		this.limit = U.GetArg(args, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
+		super(diagram, nuArgs);
+//if(typeof nuArgs.data === 'object')nuArgs.data = [];
+		this.data = new Map(U.GetArg(nuArgs, 'data', []));
+		this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 	}
 	help()
 	{
@@ -8893,18 +8942,18 @@ class DataMorphism extends Morphism
 	json()
 	{
 		let mor = super.json();
-		mor.data = this.data;
+		mor.data = U.JsonMap(this.data);
 		mor.limit = this.limit;
 		return mor;
 	}
 	addData(e)
 	{
 		const i = Math.min(this.limit, U.HtmlSafe(document.getElementById('inputTerm').value));
-		this.data[i] = this.codomain.fromHTML();
+		this.data.set(i, this.codomain.fromHTML());
 	}
 	clear()
 	{
-		this.data = {};
+		this.data = new Map;
 	}
 }
 
