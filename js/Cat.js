@@ -460,7 +460,7 @@ class U
 	static JsName(e, cls = false)
 	{
 		const s = e.name;
-		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_');
+		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_o_').replace(/#/g, '_n_');
 		return r;
 	}
 	static Lines2tspan(elt)
@@ -1225,36 +1225,44 @@ function %1(args)
 		}, args.xy);
 args.xy.y += 16 * D.default.layoutGrid;
 		const html = R.PlaceObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices');
-		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
-			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
-		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
-			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+
 		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
-			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+			{js:`return Number.parseInt(document.getElementById('in_' + args).value);`});
+		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
+			{js:`return Number.parseInt(document.getElementById('in_' + args).value);`});
+		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
+			{js:`return Number.parseFloat(document.getElementById('in_' + args).value);`});
 		const html2Str = R.PlaceMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
-			{js:`return Number.parseInt(document.getElementById('in_%1').value);`});
+			{js:`return document.getElementById('in_' + args).value;`});
+
 		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two);
 //		const omega2html = R.PlaceMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
+
 		const N_html2str = LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
+
 		const strXN_html2str = ProductObject.Get(args.diagram, [str, N_html2str.codomain]);
+
+
 		const html2line = R.PlaceMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
-			{js:`return ['<input type="text" id="in_%1" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`});
+			{js:`return ['<input type="text" id="in_' + args + '" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`});
 		const N_html2N = LambdaMorphism.Get(args.diagram, html2N, [], [0]);
 		const strXN_html2N = ProductObject.Get(args.diagram, [str, N_html2N.codomain]);
 		const html2Nat = R.PlaceMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
-			{js:`return ['<input type="number" min="0" id="in_%1" value="0"/>', ${U.JsName(N_html2N)}]`});
+			{js:`return ['<input type="number" min="0" id="in_' + args + '" value="0"/>', ${U.JsName(N_html2N)}];`});
 		const N_html2Z = LambdaMorphism.Get(args.diagram, html2Z, [], [0]);
 		const strXN_html2Z = ProductObject.Get(args.diagram, [str, N_html2Z.codomain]);
 		const html2Int = R.PlaceMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
-			{js:`return ['<input type="number" id="in_%1" value="0" placeholder="Integer"/>', ${U.JsName(N_html2Z)}]`});
+			{js:`return ['<input type="number" id="in_' + args + '" value="0" placeholder="Integer"/>', ${U.JsName(N_html2Z)}];`});
 		const N_html2F = LambdaMorphism.Get(args.diagram, html2F, [], [0]);
 		const strXN_html2F = ProductObject.Get(args.diagram, [str, N_html2F.codomain]);
 		const html2Float = R.PlaceMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
-			{js:`return ['<input type="number" id="in_%1" value="0.0" placeholder="Float"/>', ${U.JsName(N_html2F)}]`});
+			{js:`return ['<input type="number" id="in_' + args + '" value="0.0" placeholder="Float"/>', ${U.JsName(N_html2F)}];`});
 		R.DiagramReferences(user, htmlDiagram, args.xy);
 		D.ShowDiagram(htmlDiagram);
 		htmlDiagram.home();
 		htmlDiagram.update();
+		const ja = R.$Actions.getElement('javascript');
+		ja.loadHTML();
 		R.SetupUserHome(R.user.name);
 	}
 	static SaveLocal(diagram, savePng = true)
@@ -7072,6 +7080,7 @@ class JavascriptAction extends Action
 						icon:
 '<text text-anchor="middle" x="160" y="280" style="font-size:240px;stroke:#000;">JS</text>',};
 		super(diagram, args);
+		this.htmlReady = false;
 	}
 	action(e, diagram, ary)
 	{
@@ -7175,7 +7184,7 @@ class JavascriptAction extends Action
 				code += `${header}	return 0;${tail}`;
 			else if (InitialObject.prototype.isPrototypeOf(m.codomain))
 				code += `${header}	throw 'do not do this';${tail}`;
-			else if (TerminalObject.prototype.isPrototypeOf(m.domain))
+			else if (TerminalObject.prototype.isPrototypeOf(m.domain) && m.constructor.name === 'Morphism')
 				code += `${header}	// TODO replace this code with that which returns the desired object\n	return ${this.objectStructure(m.codomain)}${tail}`;
 			else
 				switch(proto)
@@ -7238,6 +7247,35 @@ ${header}	return ${jsName}_Data[args];${tail}`;
 					case 'Recursive':
 						break;
 					case 'LambdaMorphism':
+						code += this.generate(m.preCurry, generated);
+						const inputs = new Array(this.objectLength(m.preCurry.domain));
+						const domLength = this.objectLength(m.domain);
+						const lambdaDomLength = this.objectLength(m.domain);
+						const lambdaHomCodLength = this.objectLength(m.codomain.objects[0]);
+						for(let i=0; i<m.domFactors.length; ++i)
+						{
+							const f = m.domFactors[i];
+							if (f[0] === 0)
+								inputs[f[1]] = lambdaDomLength > 1 ? 'cargs[i]' : 'cargs';
+						}
+						for(let i=0; i<m.homFactors.length; ++i)
+						{
+							const f = m.homFactors[i];
+							if (f[0] === 0)
+								inputs[f[1]] = lambdaHomCodLength > 1 ? 'bargs[i]' : 'bargs';
+						}
+						let input = inputs.join();
+						if (inputs.length > 1)
+							input = `[${inputs}]`;
+						code +=
+`${header}	return function(${domLength > 0 ? 'bargs' : ''})
+	{
+`;
+		if (this.objectLength(m.domain) > 0)
+			code += '		const cargs = args;\n';
+		code +=
+`		return ${U.JsName(m.preCurry)}${lambdaDomLength > 0 ? '(' : ''}${input}${lambdaDomLength > 0 ? ')' : ''};
+	};${tail}`;
 						break;
 					case 'HomMorphism':
 						break;
@@ -7261,10 +7299,78 @@ ${header}	return ${jsName}_Data[args];${tail}`;
 		let code = '';
 		const generated = new Set;
 		generated.add('');	// no exec
-		for (const m of diagram.elements)
-			if (Morphism.prototype.isPrototypeOf(m))
-				code += this.generate(m, generated);
+		const that = this;
+		diagram.forEachMorphism(function(m)
+		{
+			code += that.generate(m, generated);
+		});
 		return code;
+	}
+	objectLength(o)
+	{
+		if (TerminalObject.prototype.isPrototypeOf(o) || InitialObject.prototype.isPrototypeOf(o))
+			return 0;
+		if (ProductObject.prototype.isPrototypeOf(o))
+			return o.objects.reduce((r, o) => r + TerminalObject.prototype.isPrototypeOf(o) ? 0 : 1, 0);
+		else
+			return 1;
+	}
+	loadHTML()
+	{
+		const htmlDiagram = R.$CAT.getElement('hdole/HTML');
+		const html = htmlDiagram.getElement('HTML');
+		const str = htmlDiagram.codomain.getElement('hdole/Strings/str');
+		this.formatters = new Map;
+		const that = this;
+		htmlDiagram.forEachMorphism(function(m)
+		{
+			if (m.domain.name === html.name &&
+				ProductObject.prototype.isPrototypeOf(m.codomain) &&
+				m.codomain.objects[0].name === str.name &&
+				HomObject.prototype.isPrototypeOf(m.codomain.objects[1]) &&
+				m.codomain.objects[1].objects[0].name === html.name)
+				that.formatters.set(m.codomain.objects[1].objects[1].signature, m);
+		});
+		const id = 'hdole/PFS/HTML';
+		let scriptElt = document.getElementById(id);
+		if (scriptElt)
+			H.del(scriptElt);
+		const script = this.generateDiagram(htmlDiagram);
+		scriptElt = document.createElement('script');
+		scriptElt.id = id;
+		scriptElt.onload = function()
+		{
+			this.htmlReady = true;
+		};
+		scriptElt.src = D.url.createObjectURL(new Blob([script], {type:'application/javascript'}));
+		document.head.appendChild(scriptElt);
+console.log('formatters', this.formatters);
+	}
+	findFormat(o)
+	{
+		if (this.formatters.has(o.signature))
+			return this.formatters.get(o.signature);
+		return null;
+	}
+	getInputString(o)
+	{
+		const f = this.findFormat(o);
+		if (f)
+		{
+			const p = window[U.JsName(f)]();
+			return p[0];
+		}
+		return '';
+	}
+	getInputFunction(o)
+	{
+		const f = this.findFormat(o);
+		if (f)
+		{
+			const p = window[U.JsName(f)]()();
+			return p[1];
+		}
+		return function(){};
 	}
 }
 
@@ -7288,8 +7394,8 @@ class RunAction extends Action
 		if (Morphism.prototype.isPrototypeOf(m) && m.isIterable())
 		{
 			const start = Date.now();
-			const jsName = this.jsAction.JsName(m);
-			const dmName = this.jsAction.JsName(m.morphisms[0]);
+			const jsName = U.JsName(m);
+			const dmName = U.JsName(m.morphisms[0]);
 			const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
