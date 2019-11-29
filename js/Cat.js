@@ -1412,7 +1412,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 						const ja = R.$Actions.getElement('javascript');
 						D.ioPanel.open();
 						const html = ja.getInput(m.domain);
-						D.ioPanel.elt.innerHTML +=
+						D.ioPanel.ioElt.innerHTML +=
 							H.h3(m.properName) +
 							H.p(m.description, 'smallPrint') +
 							H.p(m.domain.description, 'smallPrint') +
@@ -2110,10 +2110,10 @@ class Navbar
 			H.td(H.div(D.GetButton('cateapsis', "D.Home()", 'Home', sz))) +
 			H.td(H.div(D.GetButton('threeD', "D.threeDPanel.toggle()", '3D view', sz))) +
 			H.td(H.div(D.GetButton('tty', "D.ttyPanel.toggle()", 'Console', sz))) +
+			H.td(H.div(D.GetButton('io', "D.ioPanel.toggle()", 'IO', sz))) +
 			H.td(H.div(D.GetButton('help', "D.helpPanel.toggle()", 'Help', sz))) +
 			H.td(H.div(D.GetButton('login', "D.loginPanel.toggle()", 'Login', sz))) +
 			H.td(H.div(D.GetButton('settings', "D.settingsPanel.toggle()", 'Settings', sz))) +
-			H.td(H.div(D.GetButton('settings', "D.ioPanel.toggle()", 'Settings', sz))) +
 			H.td('&nbsp;&nbsp;&nbsp;');		// TODO for weird spacing problem with navbar
 		const html = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
 									H.td(H.span('', 'navbar-inset', 'user-navbar'), 'w20') +
@@ -2230,7 +2230,7 @@ class D
 	{
 		D.mouseIsDown = true;
 		D.mouse.save = false;
-		D.mouse.down = new D2(e.clientX, e.clientY);
+		D.mouse.down = new D2(e.clientX, e.clientY);	// screen coords
 		const diagram = R.diagram;
 		D.callbacks.map(f => f());
 		D.callbacks = [];
@@ -2307,7 +2307,7 @@ class D
 						{
 							if (D.tool === 'select')
 							{
-								diagram.updateDragObjects();
+								diagram.updateDragObjects(e);
 								diagram.updateFusible(e);
 								let msg = '';
 								if (D.mouseover && diagram.selected.length === 1)
@@ -2341,7 +2341,7 @@ class D
 					{
 						const from = diagram.getSelected();
 						if (D.tool === 'select')
-							diagram.updateDragObjects();
+							diagram.updateDragObjects(e);
 					}
 					D.DeleteSelectRectangle();
 				}
@@ -2373,9 +2373,8 @@ class D
 			}
 			else if (D.tool === 'pan')
 			{
-				const delta = D.mouse.delta().scale(1.0 / diagram.viewport.scale);
-				diagram.viewport.x = diagram.viewport.x + delta.x;
-				diagram.viewport.y = diagram.viewport.y + delta.y;
+				diagram.viewport.x += e.movementX;
+				diagram.viewport.y += e.movementY;
 				diagram.setView();
 				D.DeleteSelectRectangle();
 			}
@@ -3273,6 +3272,9 @@ functor:
 help:
 `<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
 <path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,
+io:
+`<line class="arrow0" x1="60" y1="260" x2="60" y2="80" marker-end="url(#arrowhead)"/>
+<path class="arrow0" d="M180 80 A90 90 0 1 0 250 80" marker-end="url(#arrowheadWide)"/>`,
 lambda2:
 `<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
@@ -3286,6 +3288,9 @@ morphism:
 </marker>
 <marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 <path class="svgstr3" d="M60 20 L10 50 L60 80"/>
+</marker>
+<marker id="arrowheadWide" viewBox="0 -20 60 140" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
+<path class="svgstr4" d="M0 0 L80 50 L10 100"/>
 </marker>
 <line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
 move:
@@ -4865,10 +4870,7 @@ class TextPanel extends Panel
 	constructor()
 	{
 		super('text');
-		this.elt.innerHTML =
-			H.table(
-				H.tr(this.closeBtnCell() + H.td(this.expandPanelBtn())), 'buttonBarRight') +
-				H.h3('Text');
+		this.elt.innerHTML = H.table(H.tr(this.closeBtnCell() + H.td(this.expandPanelBtn())), 'buttonBarRight') + H.h3('Text');
 		this.initialize();
 		this.newTextSection = new NewTextSection(this.elt);
 		this.textSection = new TextSection(this.elt);
@@ -4895,8 +4897,9 @@ class IoPanel extends Panel
 {
 	constructor()
 	{
-		super('io');
-		this.elt.innerHTML = H.div('', '', 'io');
+		super('io', true);
+		this.elt.innerHTML = H.table(H.tr(this.closeBtnCell() + H.td(this.expandPanelBtn())), 'buttonBarLeft') + H.h3('IO') + H.div('', '', 'io');
+		this.ioElt = document.getElementById('io');
 		this.initialize();
 	}
 	update()
@@ -4937,7 +4940,7 @@ class Element
 		});
 		this.signature = this.getElementSignature();
 	}
-	help()
+	help(helped)
 	{
 		const html = H.h4(H.span(this.properName, '', 'properNameElt')) +
 						(R.default.internals ? H.p(`Internal name: ${this.name}`) : '') +
@@ -5390,9 +5393,12 @@ class CatObject extends Element
 		else if (diagram)
 			diagram.codomain.addElement(this);
 	}
-	help()
+	help(helped = new Set)
 	{
-		return super.help() + (this.category ? H.p(`Object in category: ${this.category.properName}`) : 'Object');
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help() + (this.category ? H.p(`Category: ${this.category.properName}`) : 'Object');
 	}
 	decrRefcnt()
 	{
@@ -5445,6 +5451,9 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	}
 	help(suppress = false)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + (suppress ? '' : H.p(`Finite object of ${'size' in this ? 'size: ' + this.size.toString() : 'indeterminate size'}`));
 	}
 	json()
@@ -5490,8 +5499,11 @@ class InitialObject extends FiniteObject
 			nuArgs.description = 'the initial object in this category';
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help(true) + H.p('Initial object');
 	}
 	static Get(diagram)
@@ -5516,8 +5528,11 @@ class TerminalObject extends FiniteObject
 			yield 0;
 		}
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help(true) + H.p('Terminal object');
 	}
 	static Get(diagram)
@@ -5542,8 +5557,11 @@ class SubobjectClassifier extends CatObject
 		super(diagram, nuArgs);
 //		this.signature = U.sha256(2);	// TODO make a named identity object Omega to 2
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Subobject classifier');
 	}
 	static Codename(diagram)
@@ -5569,9 +5587,9 @@ class MultiObject extends CatObject
 		this.seperatorWidth = D.textWidth(', ');	// runtime; don't save; TODO remove
 		this.signature = MultiObject.GetSignature(this.constructor.name, this.objects);
 	}
-	help(hdr)
+	help(hdr, helped)
 	{
-		return super.help() + hdr + this.objects.map(o => o.help()).join('');
+		return super.help() + hdr + this.objects.map(o => o.help(helped)).join('');
 	}
 	static GetSignature(constructor, objects)
 	{
@@ -5684,9 +5702,12 @@ class ProductObject extends MultiObject
 		super(diagram, nuArgs);
 		this.seperatorWidth = D.textWidth('&times');	// in pixels
 	}
-	help()
+	help(helped = new Set)
 	{
-		return super.help(H.p('Product of the following objects'));
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Product'), helped);
 	}
 	fromHTML(first = true, uid = {uid:0, id:'data'})
 	{
@@ -5722,9 +5743,12 @@ class Sequence extends ProductObject
 	{
 		super(diagram, args);
 	}
-	help()
+	help(helped = new Set)
 	{
-		return super.help(H.p('Sequence of the following objects'));
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Sequence'));
 	}
 	resetPosition()
 	{
@@ -5757,9 +5781,12 @@ class CoproductObject extends MultiObject
 		super(diagram, nuArgs);
 		this.seperatorWidth = D.textWidth('&times');	// runtime, don't save TODO remove
 	}
-	help()
+	help(helped = new Set)
 	{
-		return super.help(H.p('Coproduct of the following objects'));
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Coproduct'), helped);
 	}
 	getGraph(data = {position:0}, first = true)
 	{
@@ -5799,9 +5826,12 @@ class HomObject extends MultiObject
 		nuArgs.properName = 'properName' in args ? args.properName : HomObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
-		return super.help(H.p('Hom of the following objects'));
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Hom'), helped);
 	}
 	/*
 	toHTML(first=true, uid={uid:0, idp:'data'})
@@ -6041,8 +6071,11 @@ class DiagramObject extends CatObject
 		if ('to' in nuArgs)
 			this.setObject(diagram.getElement(nuArgs.to));
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Object in index category');
 	}
 	json()
@@ -6141,8 +6174,11 @@ class Action extends CatObject
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'icon', {value:nuArgs.icon,	writable:	false});
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Action');
 	}
 	action(e, diagram, ary) {};	// fitb
@@ -6493,9 +6529,16 @@ class FoldAction extends Action
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
-		D.help.innerHTML = H.h5(`Create Fold Morphism for ${from.to.properName}`) +
-			H.table(H.tr(H.td(D.Input('', 'fold-new-count', 'Copies &ge; 2')), 'sidenavRow')) +
+		const n = from.to.properName;
+		D.help.innerHTML = H.h5('Create Fold') +
+			H.span(`Create morphism &Sigma;${n} &rarr; ${n}`) + H.br() + H.span('with specified number of summands') +
+//			H.table(H.tr(H.td(D.Input('', 'fold-new-count', 'Copies &ge; 2')), 'sidenavRow')) +
+			D.Input('', 'fold-new-count', 'Copies &ge; 2') +
 			H.span(D.GetButton('edit', `R.$Actions.getElement('fold').action(event, R.diagram, R.diagram.selected)`, 'Create fold morphism')) +
+			(this.isDefoldable(from.to) ?
+				H.br() +
+				H.span('Or create morphism ') +
+				H.button(`&nabla;: ${n} &rarr; ${from.to.objects[0].properName}`, '', R.diagram.elementId(), 'Add fold morphism', `onclick="R.$Actions.getElement('fold').defold(event, '${from.name}')"`) : '') +
 			H.span('', 'error', 'fold-new-error');
 		this.countElt = document.getElementById('fold-new-count');
 		U.SetInputFilter(this.countElt, function(v)
@@ -6503,11 +6546,28 @@ class FoldAction extends Action
 			return /^\d*$/.test(v) && (v === "" || parseInt(v) > 1)	// integer greater than 1
 		});
 	}
+	isDefoldable(o)
+	{
+		if (CoproductObject.prototype.isPrototypeOf(o))
+		{
+			const s = o.objects[0].signature;
+			return o.objects.reduce((allSame , so) => allSame && so.signature === s, true);
+		}
+		return false;
+	}
 	hasForm(diagram, ary)
 	{
 		if (ary.length !== 1 )
 			return false;
 		return diagram.isEditable() && CatObject.prototype.isPrototypeOf(ary[0]);
+	}
+	defold(e, name)
+	{
+		const from = R.diagram.getElement(name);
+		if (!this.isDefoldable(from.to))
+			throw 'element not defoldable';
+		const f = FoldMorphism.Get(R.diagram, from.to.objects[0], from.to.objects.length);
+		R.diagram.objectPlaceMorphism(e, 'domain', name, f.name);
 	}
 }
 
@@ -6967,7 +7027,7 @@ class ProjectAction extends Action
 					H.h5('Domain Factors') +
 					H.small('Click to place in codomain') +
 //					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="D.ProjectAction.AddFactor('project', 'codomain', '#1', -1)"`) +
-					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="R.$Actions.getElemenet('project').addFactor('#1', -1)"`) +
+					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="R.$Actions.getElement('project').addFactor('#1', -1)"`) +
 					ProjectAction.FactorButton('project', 'codomain', to, []) +
 					H.h5('Codomain Factors') + H.br() +
 					H.span('Click objects to remove from codomain', 'smallPrint') +
@@ -7374,7 +7434,6 @@ ${header}	return ${jsName}_Data[args];${tail}`;
 		{
 			code += that.generate(m, generated);
 		});
-console.log('code',code);
 		return code;
 	}
 	objectLength(o)
@@ -7416,7 +7475,6 @@ console.log('code',code);
 		};
 		scriptElt.src = D.url.createObjectURL(new Blob([script], {type:'application/javascript'}));
 		document.head.appendChild(scriptElt);
-console.log('formatters', this.formatters);
 	}
 	getInput(o, factor = [])
 	{
@@ -7740,8 +7798,11 @@ class Category extends CatObject
 		}
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p(`Category with ${this.elements.size} elements and ${this.actions.size} actions.`);
 	}
 	info()
@@ -7933,8 +7994,11 @@ class Morphism extends Element
 	{
 		return U.sha256(`${this.domain.signature}${this.constructor.name}${this.name}${this.codomain.signature}`);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() +
 			H.p(this.diagram ? this.diagram.properName : '') +
 			H.p(`Domain: ${this.domain.properName}`) +
@@ -7991,8 +8055,11 @@ class Identity extends Morphism
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Identity');
 	}
 	getGraph(data = {position:0})
@@ -8058,8 +8125,11 @@ class NamedIdentityObject extends CatObject
 		a.source = this.source.name;
 		return a;
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Named Identity');
 	}
 	// TODO
@@ -8105,8 +8175,11 @@ class DiagramMorphism extends Morphism
 		}
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Morphism in index category');
 	}
 	decrRefcnt()
@@ -8405,8 +8478,11 @@ class IndexCategory extends Category
 			'obj2morphs':	{value:new Map(), writable: false},
 		});
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Index category');
 	}
 	makeHomSets()
@@ -8461,17 +8537,9 @@ class MultiMorphism extends Morphism
 		this.morphisms.map(m => m.incrRefcnt());
 		this.signature = this.getMultiMorphismSignature();
 	}
-	help(hdr, processed)
+	help(hdr, helped)
 	{
-		let html = super.help();
-		html += this.morphisms.map(m =>
-		{
-			if (processed.has(m.name))
-				return '';
-			processed.add(m.name);
-			return m.help(processed);
-		}).join('');
-		return html;
+		return super.help() + this.morphisms.map(m => m.help(helped)).join('');
 	}
 	getMultiMorphismSignature()
 	{
@@ -8554,9 +8622,13 @@ class Composite extends MultiMorphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
-	help(processed = new Set)
+	help(helped = new Set)
 	{
-		return super.help(H.p('Composite'), processed);
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		helped.add(this.name);
+		return super.help(H.p('Composite'), helped);
 	}
 	isIterable()		// A composite is considered iterable if the first morphism is iterable.
 	{
@@ -8639,9 +8711,12 @@ class ProductMorphism extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : ProductMorphism.ProperName(morphisms);
 		super(diagram, nuArgs);
 	}
-	help(processed = new Set)
+	help(helped = new Set)
 	{
-		return super.help(H.p('Product'), processed);
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Product'), helped);
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -8684,9 +8759,12 @@ class CoproductMorphism extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductMorphism.ProperName(morphisms);
 		super(diagram, nuArgs);
 	}
-	help(processed = new Set)
+	help(helped = new Set)
 	{
-		return super.help(H.p('Coproduct'), processed);
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Coproduct'), helped);
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -8728,9 +8806,12 @@ class ProductAssembly extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : ProductAssembly.ProperName(nuArgs.morphisms);
 		super(diagram, nuArgs);
 	}
-	help(processed = new Set)
+	help(helped = new Set)
 	{
-		return super.help(H.p('Product assembly'), processed);
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Product assembly'), helped);
 	}
 	getGraph(data = {position:0})
 	{
@@ -8776,9 +8857,12 @@ class CoproductAssembly extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductAssembly.ProperName(nuArgs.morphisms);
 		super(diagram, nuArgs);
 	}
-	help(processed = new Set)
+	help(helped = new Set)
 	{
-		return super.help(H.p('Coproduct assembly'), processed);
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Coproduct assembly'), helped);
 	}
 	getGraph(data = {position:0})
 	{
@@ -8825,8 +8909,11 @@ class FactorMorphism extends Morphism
 		super(diagram, nuArgs);
 		this.factors = nuArgs.factors;
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p(`Factor morphism: ${this.factors}`);
 	}
 	signature()
@@ -8914,8 +9001,11 @@ class Diagonal extends Morphism
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'count', {value:nuArgs.count,	writable:false});
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p(`Diagonal morphism of count ${this.count}`);
 	}
 	json()
@@ -8975,8 +9065,11 @@ class FoldMorphism extends Morphism
 		super(diagram, nuArgs);
 		this.count = nuArgs.count;
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p(`Fold morphism of count ${this.count}`);
 	}
 	json()
@@ -9027,8 +9120,11 @@ class DataMorphism extends Morphism
 		this.data = new Map(U.GetArg(nuArgs, 'data', []));
 		this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p(`Data morphism entries: ${Object.keys(this.data).length}`);
 	}
 	isIterable()
@@ -9065,8 +9161,11 @@ class Recursive extends DataMorphism
 		this.setRecursor(args.recursor);
 //		this.setSignature();
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p(`Recursion with ${this.recursor.properName}`);
 	}
 	/*
@@ -9152,8 +9251,11 @@ class LambdaMorphism extends Morphism
 		if (!('description' in nuArgs))
 			this.description = `The currying of the morphism ${this.preCurry.properName} by the factors ${this.homFactors.toString()}`;
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p(`Lambda morphism of pre-curry ${this.preCurry.properName} and domain factors ${this.domFactors} and codomain factors ${this.codFactors}`);
 	}
 	/*
@@ -9268,9 +9370,12 @@ class HomMorphism extends MultiMorphism
 		nuArgs.properName = 'properName' in args ? args.properName : HomMorphism.ProperName(morphisms);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
-		return super.help(H.p('Hom'));
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Hom'), helped);
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -9313,8 +9418,11 @@ class StringMorphism extends Morphism
 		this.source = source;
 		this.graph = src.getGraph();	// a graph is like a net list between the ports
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help(H.p('String morphism'));
 	}
 	isIterable()
@@ -9457,8 +9565,11 @@ class Evaluation extends Morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help() + H.p('Evaluation');
 	}
 	$(args)
@@ -9517,8 +9628,11 @@ class InitialMorphism extends Morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help(H.p('Initial morphism'));
 	}
 	isIterable()
@@ -9557,8 +9671,11 @@ class TerminalMorphism extends Morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help(H.p('Terminal morphism'));
 	}
 	static Basename(diagram, domain)
@@ -9592,8 +9709,11 @@ class Functor extends Morphism
 			nuArgs.codomain = diagram.getElement(args.codomain);
 		super(diagram, nuArgs);
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help(H.p('Functor'));
 	}
 }
@@ -9636,8 +9756,11 @@ class Diagram extends Functor
 			this.domain.process(this, nuArgs.domainElements);
 		this.svgRoot = null;
 	}
-	help()
+	help(helped = new Set)
 	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
 		return super.help(H.p('Diagram'));
 	}
 	json()
@@ -9843,7 +9966,7 @@ class Diagram extends Functor
 				if (D.mouseIsDown)
 					D.drag = true;
 			}, D.default.dragDelay);
-			D.dragStart = this.mousePosition(e);
+			D.dragStart = D.mouse.position();
 			if (!this.isSelected(elt))
 			{
 				if (D.shiftKey)
@@ -9958,9 +10081,11 @@ class Diagram extends Functor
 		}
 	}
 	*/
-	updateDragObjects()
+	updateDragObjects(e)
 	{
-		const delta = this.userToDiagramCoords(D.mouse.position()).subtract(D.dragStart);
+		const delta = D.mouse.position().subtract(D.dragStart);
+		delta.x = delta.x / this.viewport.scale;
+		delta.y = delta.y / this.viewport.scale;
 		let dragObjects = {};
 		for(let i=0; i < this.selected.length; ++i)
 		{
