@@ -692,15 +692,24 @@ An account allows sharing diagrams.
 			coproductActions.forEach(placeAction);
 			const homActions = new Set([
 				new HomAction(R.$Actions),
+				new EvaluateAction(R.$Actions),
 				new LambdaMorphismAction(R.$Actions)]);
 			const homDiagram = new Diagram(R.$CAT, {basename:'hom', name:'hom', codomain:'Actions', description:'diagram for hom actions', user:'sys'});
 			xy = new D2(300, 300);
 			diagram = homDiagram;
 			homActions.forEach(placeAction);
+			const distributeActions = new Set([
+				new DistributeAction(R.$Actions),
+				]);
+			const distributeDiagram = new Diagram(R.$CAT, {basename:'distribute', name:'distribute', codomain:'Actions', description:'diagram for distribution actions', user:'sys'});
+			xy = new D2(300, 300);
+			diagram = distributeDiagram;
+			distributeActions.forEach(placeAction);
 			R.Cat.addActions('category');
 			R.Cat.addActions('product');
 			R.Cat.addActions('coproduct');
 			R.Cat.addActions('hom');
+			R.Cat.addActions('distribute');
 			isGUI && D.Initialize();
 			R.Boot(function()
 			{
@@ -857,8 +866,8 @@ An account allows sharing diagrams.
 			{
 				basename:'PFS',
 				user,
-				properName:'&Popf;&Fopf;&Sopf;',
-				actionDiagrams:	['product', 'coproduct', 'hom'],
+				properName:'<tspan class="bold">&Popf;</tspan>&Fopf;&Sopf;',
+				actionDiagrams:	['product', 'coproduct', 'hom', 'distribute'],
 			});
 		let userDiagram = R.GetUserDiagram(user);
 		const args =
@@ -3241,6 +3250,7 @@ diagram:
 <line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
+			/*
 distribute:
 `<circle class="svgstr4" cx="80" cy="80" r="60"/>
 <line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
@@ -3254,10 +3264,12 @@ distribute:
 <circle class="svgstr4" cx="240" cy="240" r="60"/>
 <line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
 <line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
+			*/
 download:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
+			/*
 eval:
 `<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
 <circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
@@ -3266,6 +3278,7 @@ eval:
 <circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
 <circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
+*/
 functor:
 `<line class="arrow0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
@@ -5873,7 +5886,7 @@ class DiagramText
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,													writable:	false},
-			name:			{value: U.GetArg(nuArgs, 'name', diagram.domain.getAnon('text')),	writable:	false},
+			name:			{value: U.GetArg(nuArgs, 'name', diagram.domain.getAnon('t')),		writable:	false},
 			x:				{value:	xy.x,														writable:	true},
 			y:				{value:	xy.y,														writable:	true},
 			width:			{value:	U.GetArg(nuArgs, 'width', 0),								writable:	true},
@@ -6230,10 +6243,17 @@ class NamedIdentityAction extends Action
 			description:	'Create named identity',
 			name:			'namedIdentity',
 			icon:
+			/*
 `<path class="svgstr4" d="M100,120 C140,60 180,60 220,120" marker-end="url(#arrowhead)"/>
 <path class="svgstr4" d="M220,200 C180,260 140,260 100,200" marker-end="url(#arrowhead)"/>
 <circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
 <text text-anchor="middle" x="260" y="200" style="font-size:120px;stroke:#000;">A</text>`,
+*/
+`
+<circle cx="60" cy="160" r="80" fill="url(#radgrad1)"/>
+<path class="svgstr4" d="M130,140 L190,140"/>
+<path class="svgstr4" d="M130,180 L190,180"/>
+<text text-anchor="middle" x="260" y="220" style="font-size:160px;stroke:#000;">A</text>`,
 		};
 		super(diagram, args);
 	}
@@ -7681,7 +7701,6 @@ class DataAction extends Action
 		if (to.constructor.name === 'Morphism')
 		{
 			diagram.codomain.deleteElement(to);
-//			const newTo = new FiniteObject(diagram, {basename:to.basename, category:diagram.codomain, properName:to.properName, size:this.sizeElt.value.trim()});
 			from.to = null;
 			from.setMorphism(new DataMorphism(diagram, to.json()));
 			diagram.makeSelected(from);	// probably already was
@@ -7718,6 +7737,91 @@ if (!htmlDrm)debugger;
 	}
 }
 
+class EvaluateAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Create an evaluation morphism',
+			name:			'evaluate',
+			icon:	// TODO needs new icon
+`<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
+<polyline class="svgstr3" points="50,40 30,40 30,120 50,120"/>
+<polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
+<circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
+<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/> `,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const m = Evaluation.Get(diagram, from.to);
+		diagram.objectPlaceMorphism(e, 'domain', from, m.name)
+	}
+	hasForm(diagram, ary)	// one object
+	{
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && Evaluation.CanEvaluate(ary[0].to);
+	}
+}
+
+class DistributeAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Distribute a product over a coproduct',
+			name:			'distribute',
+			icon:	// TODO needs new icon
+`<circle class="svgstr4" cx="80" cy="80" r="60"/>
+<line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
+<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
+<circle class="svgstr4" cx="240" cy="80" r="60"/>
+<line class="arrow0" x1="240" y1="40" x2="240" y2="140"/>
+<line class="arrow0" x1="180" y1="80" x2="300" y2="80"/>
+<circle class="svgstr4" cx="80" cy="240" r="60"/>
+<line class="arrow0" x1="80" y1="180" x2="80" y2="300"/>
+<line class="arrow0" x1="20" y1="240" x2="140" y2="240"/>
+<circle class="svgstr4" cx="240" cy="240" r="60"/>
+<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
+<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		let m = null;
+		if (Distribute.HasForm(diagram, ary))
+			m = Distribute.Get(diagram, from.to);
+		if (Dedistribute.HasForm(diagram, ary))
+			m = Dedistribute.Get(diagram, from.to);
+		diagram.objectPlaceMorphism(e, 'domain', from, m.name)
+	}
+	hasForm(diagram, ary)	// one object
+	{
+		/*
+		if (diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]))
+		{
+			const from = ary[0];
+			const to = from.to;
+			if (ProductObject.prototype.isPrototypeOf(to) && CoproductObject.prototype.isPrototypeOf(to.objects[1]))
+				return true;
+			if (CoproductObject.prototype.isPrototypeOf(to) && ProductObject.prototype.isPrototypeOf(to.objects[0]))
+			{
+				sonst s = to.objects[0].signature;
+				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && o.objects[0].signature === s, true);
+			}
+		}
+		return false;
+		*/
+		return Distribute.HasForm(diagram, ary) || Dedistribute.HasForm(diagram, ary);
+	}
+}
+
 class Category extends CatObject
 {
 	constructor(diagram, args)
@@ -7750,11 +7854,11 @@ class Category extends CatObject
 		a.actionDiagrams = new Array(this.actionDiagrams.values());
 		return a;
 	}
-	signature()
+	getCategorySignature()
 	{
 		let s = '';
 		for ([key, e] of this.elements)
-			s += e.signature();
+			s += e.signature;
 		return U.sha256(`${this.name} ${this.constructor.name} ${s}`);
 	}
 	process(diagram, args, elements = null)
@@ -7813,15 +7917,6 @@ class Category extends CatObject
 	{
 		this.elements.delete(e.name);
 		e.diagram && e.diagram.elements.delete(e.basename);
-	}
-	getAnon(s = 'Anon')
-	{
-		while(true)
-		{
-			const name = `${s}_${U.random()}`;
-			if (!this.elements.has(name))
-				return name;
-		}
 	}
 	addActions(name)
 	{
@@ -8403,11 +8498,28 @@ class IndexCategory extends Category
 		{
 			'homSets': 		{value:new Map(), writable: false},
 			'obj2morphs':	{value:new Map(), writable: false},
+			'id':			{value:Number.parseInt(U.GetArg(args, 'id', 0)), writable: true},
 		});
 	}
 	help()
 	{
 		return super.help() + H.p('Index category');
+	}
+	json(a = {})
+	{
+		a = super.json(a);
+		a.id = this.id;
+		return a;
+	}
+	getAnon(s = 'Anon')
+	{
+		while(true)
+		{
+//			const name = `${s}_${U.random()}`;
+			const name = `${this.diagram.name}/${s}_${this.id++}`;
+			if (!this.elements.has(name))
+				return name;
+		}
 	}
 	makeHomSets()
 	{
@@ -8824,12 +8936,13 @@ class FactorMorphism extends Morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.factors = nuArgs.factors;
+		this.signature = this.getFactorSignature();
 	}
 	help()
 	{
 		return super.help() + H.p(`Factor morphism: ${this.factors}`);
 	}
-	signature()
+	getFactorSignature()
 	{
 		return U.sha256(`${this.diagram.codomain.name} ${this.constructor.name} ${factors.map(f => f.join('-')).join(':')}`);
 	}
@@ -9063,7 +9176,7 @@ class Recursive extends DataMorphism
 	{
 		super(diagram, args);
 		this.setRecursor(args.recursor);
-//		this.setSignature();
+		this.signature = this.getRecursiveSignature();
 	}
 	help()
 	{
@@ -9092,9 +9205,9 @@ class Recursive extends DataMorphism
 		// TODO
 		return StringMorphism.graph(this.diagram, this.recursor);
 	}
-	signature()
+	getRecursiveSignature()
 	{
-		return U.sha256(super.signature() + (typeof this.recursor === 'string' ? this.recursor : this.recursor.name));
+		return U.sha256(super.signature + (typeof this.recursor === 'string' ? this.recursor : this.recursor.name));
 	}
 	decrRefcnt()
 	{
@@ -9151,6 +9264,7 @@ class LambdaMorphism extends Morphism
 //		this.factors = FactorMorphism.Get(diagram, centralDomain, [homPermutation, domPermutation]);
 		if (!('description' in nuArgs))
 			this.description = `The currying of the morphism ${this.preCurry.properName} by the factors ${this.homFactors.toString()}`;
+		this.signature = this.getLambdaSignature();
 	}
 	help()
 	{
@@ -9169,9 +9283,10 @@ class LambdaMorphism extends Morphism
 				};
 	}
 	*/
-	signature()
+	getLambdaSignature()
 	{
-		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${this.domFactors.map(f => f.join('-')).join(':')} ${this.homFactors.map(f => f.join('-')).join(':')}`);
+//		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${this.domFactors.map(f => f.join('-')).join(':')} ${this.homFactors.map(f => f.join('-')).join(':')}`);
+		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${this.domFactors.toString()} ${this.homFactors.toString()}`);
 	}
 	json()
 	{
@@ -9493,7 +9608,7 @@ class Evaluation extends Morphism
 	{
 		return Element.Codename(diagram, Evaluation.Basename(diagram, object));
 	}
-	static ProperName(diagram, object)
+	static ProperName(object)
 	{
 		return `Ev&lt;${object.properName}&gt;`;
 	}
@@ -9578,6 +9693,128 @@ class TerminalMorphism extends Morphism
 	static ProperName()
 	{
 		return '&#10033;';
+	}
+}
+
+class Distribute extends Morphism
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.domain = diagram.getElement(args.domain);
+		if (!Distribute.HasForm(nuArgs.domain))
+			throw 'cannot distribute';
+		nuArgs.codomain = diagram.getElement(args.codomain);
+		nuArgs.basename = Distribute.Basename(diagram, nuArgs.domain);
+		nuArgs.properName = 'properName' in args ? args.properName : Distribute.ProperName();
+		nuArgs.category = diagram.codomain;
+		super(diagram, nuArgs);
+		this.signature = this.getDistributeSignature();
+	}
+	getDistributeSignature()
+	{
+		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
+	}
+	help()
+	{
+		return super.help(H.p('Distribute a product over a coproduct'));
+	}
+	static Basename(diagram, domain)
+	{
+		return `Di{${domain.name}}iD`;
+	}
+	static Codename(diagram, domain)
+	{
+		return Element.Codename(diagram, Distribute.Basename(diagram, domain));
+	}
+	static Get(diagram, domain)
+	{
+		const name = Distribute.Codename(diagram, domain);
+		const m = diagram.getElement(name);
+		return m ? m : new Distribute(diagram, {domain, name, description:`Distribution morphism`});
+	}
+	static HasForm(diagram, ary)
+	{
+		if (ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]))
+		{
+			const from = ary[0];
+			const to = from.to;
+			if (ProductObject.prototype.isPrototypeOf(to) && CoproductObject.prototype.isPrototypeOf(to.objects[1]))
+				return true;
+		}
+	}
+	static ProperName()
+	{
+		return 'dist';
+	}
+	static Codomain(diagram, object)
+	{
+		const a = object.objects[0];
+		const objects = object.objects[1].map(o => ProductObject.Get(diagram, {objects:[a, o]}));
+		return CoproductObject(diagram, {objects});
+	}
+}
+
+class Dedistribute extends Morphism
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.domain = diagram.getElement(args.domain);
+		if (!Dedistribute.HasForm(nuArgs.domain))
+			throw 'cannot distribute';
+		nuArgs.codomain = diagram.getElement(args.codomain);
+		nuArgs.basename = Distribute.Basename(diagram, nuArgs.domain);
+		nuArgs.properName = 'properName' in args ? args.properName : Distribute.ProperName();
+		nuArgs.category = diagram.codomain;
+		super(diagram, nuArgs);
+		this.signature = this.getDistributeSignature();
+	}
+	getDistributeSignature()
+	{
+		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
+	}
+	help()
+	{
+		return super.help(H.p('Distribute a product over a coproduct'));
+	}
+	static Basename(diagram, domain)
+	{
+		return `Di{${domain.name}}iD`;
+	}
+	static Codename(diagram, domain)
+	{
+		return Element.Codename(diagram, Distribute.Basename(diagram, domain));
+	}
+	static Get(diagram, domain)
+	{
+		const name = Distribute.Codename(diagram, domain);
+		const m = diagram.getElement(name);
+		return m ? m : new Distribute(diagram, {domain, name, description:`Distribution morphism`});
+	}
+	static HasForm(diagram, ary)
+	{
+		if (diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]))
+		{
+			const from = ary[0];
+			const to = from.to;
+			if (CoproductObject.prototype.isPrototypeOf(to) && ProductObject.prototype.isPrototypeOf(to.objects[0]))
+			{
+				const s = to.objects[0].signature;
+				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && o.objects[0].signature === s, true);
+			}
+		}
+	}
+	static ProperName()
+	{
+		return 'dist';
+	}
+	static Codomain(diagram, object)
+	{
+		const a = object.objects[0].objects[0];
+		const objects = object.objects.map(o => o.objects[1]));
+		const sum = Coproduct.Get(diagram, {objects});
+		return ProductObject(diagram, {objects:[a, sum]});
 	}
 }
 
@@ -10625,14 +10862,11 @@ class Diagram extends Functor
 		if (!diagram)
 			throw 'cannot load diagram';
 		if (diagram.codomain.name !== this.codomain.name)
-		{
-			D.RecordError('diagram category does not match');	// TODO change back to throw
-			return;
-		}
+			throw 'diagram category does not match';
 		if (this.allReferences.has(diagram.name))
 			throw `Diagram ${diagram.name} is already referenced `;
 		if (diagram.allReferences.has(this.name))
-			throw `Diagram ${diagram.name} already reference this one`;
+			throw `Diagram ${diagram.name} already references this one`;
 		this.references.set(name, diagram);
 		diagram.incrRefcnt();
 		R.SetDiagramInfo(this);
@@ -10656,9 +10890,6 @@ class Diagram extends Functor
 	}
 	static Codename(args)
 	{
-//		const codomainName = typeof args.codomain === 'string' ? args.codomain : args.codomain.name;
-//		const codomain = R.$CAT.getElement(args.codomain);
-//		return args.user === codomain.user ?  `${codomainName}/${args.basename}` : `${args.user}/${codomainName}/${args.basename}`;
 		return `${args.user}/${args.basename}`;
 	}
 }
@@ -10669,33 +10900,33 @@ R.protos =
 	CatObject,
 	Composite,
 	CoproductObject,
+	CoproductMorphism,
+	CoproductAssembly,
 	DataMorphism,
+	Dedistribute,
 	Diagonal,
 	DiagramObject,
 	DiagramMorphism,
 	DiagramText,
-	DataMorphism,
+	Distribute,
+	Evaluation,
 	FactorMorphism,
 	FiniteObject,
+	FoldMorphism,
+	HomObject,
+	HomMorphism,
 	Identity,
 	IndexCategory,
 	InitialObject,
 	InitialMorphism,
 	LambdaMorphism,
-	NamedIdentityObject,
-	ProductObject,
-	SubobjectClassifier,
-	Sequence,
-	HomObject,
-	HomMorphism,
 	Morphism,
+	NamedIdentityObject,
 	ProductObject,
 	ProductMorphism,
 	ProductAssembly,
-	CoproductObject,
-	CoproductMorphism,
-	CoproductAssembly,
-	FoldMorphism,
+	SubobjectClassifier,
+	Sequence,
 	TerminalObject,
 	TerminalMorphism,
 };
