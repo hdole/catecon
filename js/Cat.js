@@ -9929,7 +9929,7 @@ class Dedistribute extends Morphism
 	static Codomain(diagram, object)
 	{
 		const a = object.objects[0].objects[0];
-		const objects = object.objects.map(o => o.objects[1]));
+		const objects = object.objects.map(o => o.objects[1]);
 		const sum = Coproduct.Get(diagram, {objects});
 		return ProductObject(diagram, {objects:[a, sum]});
 	}
@@ -10320,6 +10320,7 @@ class Diagram extends Functor
 	*/
 	updateDragObjects(e)
 	{
+if (D.dragStart.x === 0)debugger;
 		const delta = D.mouse.position().subtract(D.dragStart);
 		delta.x = delta.x / this.viewport.scale;
 		delta.y = delta.y / this.viewport.scale;
