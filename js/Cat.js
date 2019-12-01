@@ -1085,7 +1085,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const F = R.PlaceObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers');
 		const Fzero = R.PlaceMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero', one, F, {js:'return 0.0;'});
 		const Fe = R.PlaceMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F, {js:'return 0.0;'});
-		const Frandom = R.PlaceMorphism(args, 'random', 'Morphism', '?', 'a pseudo-random number between 0.0 and 1.0', one, F, {js:'return Math.random();'});
+		const Frandom = R.PlaceMorphism(args, 'random', 'Morphism', '?', 'a random number between 0.0 and 1.0', one, F, {js:'return Math.random();'});
 		const Fnl10 = R.PlaceMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, F, {js:'return Math.PI;'});
 		const Z2F = R.PlaceMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'});
 		const Fsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the floating point numbers', F, F, {js:'return args + 1.0;'});
@@ -5462,7 +5462,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 			// signature is the sig of the coproduct of 1's/Show
 			this.signature = this.size > 0 ? MultiObject.GetSignature('CoproductObject', Array(this.size).fill(1)) : 0;
 	}
-	help(suppress = false)
+	help(helped = new Set, suppress = false)
 	{
 		if (helped.has(this.name))
 			return '';
@@ -5517,7 +5517,7 @@ class InitialObject extends FiniteObject
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help(true) + H.p('Initial object');
+		return super.help() + H.p('Initial object');
 	}
 	static Get(diagram)
 	{
@@ -5546,7 +5546,7 @@ class TerminalObject extends FiniteObject
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help(true) + H.p('Terminal object');
+		return super.help() + H.p('Terminal object');
 	}
 	static Get(diagram)
 	{
@@ -7128,7 +7128,7 @@ class LambdaMorphismAction extends Action
 		const domain = ary[0].domain.to;
 		const codomain = ary[0].codomain.to;
 		const html =
-			H.h4('Curry A &times; B -> [C, D]') +
+			H.h4('Curry A &times; B &rarr; [C, D]') +
 			H.h5('Domain Factors: A &times; B') +
 			H.div(
 				H.small('Create named element') + H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '',
@@ -9164,7 +9164,8 @@ class Diagonal extends Morphism
 	}
 	static ProperName(domain, count)
 	{
-		return `&Delta;${U.subscript(count)}${domain.properName}`;
+//		return `&Delta;${U.subscript(count)}${domain.properName}`;
+		return '&Delta;';
 	}
 }
 
@@ -9179,7 +9180,7 @@ class FoldMorphism extends Morphism
 			throw 'count is not two or greater';
 		nuArgs.domain = FoldMorphism.Domain(diagram, nuArgs.codomain, nuArgs.count);
 		nuArgs.basename = FoldMorphism.Basename(nuArgs.codomain, nuArgs.count);
-		nuArgs.properName = FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count)
+		nuArgs.properName = U.GetArg(nuArgs, 'properName', FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count));
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.count = nuArgs.count;
@@ -9219,7 +9220,8 @@ class FoldMorphism extends Morphism
 	}
 	static ProperName(codomain, count)
 	{
-		return `&nabla;&lt;${codomain.properName}:${count}&gt;`;
+//		return `&nabla;&lt;${codomain.properName}:${count}&gt;`;
+		return '&nabla;';
 	}
 }
 
@@ -9682,7 +9684,7 @@ class Evaluation extends Morphism
 			throw 'object for evaluation domain cannot be evaluated';
 		nuArgs.basename = Evaluation.Basename(diagram, nuArgs.domain);
 		nuArgs.codomain = nuArgs.domain.objects[0].objects[1];
-		nuArgs.properName = Evaluation.ProperName(nuArgs.domain);
+		nuArgs.properName = U.GetArg(args, 'properName', Evaluation.ProperName(nuArgs.domain));
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
@@ -9727,7 +9729,7 @@ class Evaluation extends Morphism
 	}
 	static ProperName(object)
 	{
-		return `Ev&lt;${object.properName}&gt;`;
+		return 'e';
 	}
 	static Get(diagram, domain)
 	{
@@ -10033,9 +10035,9 @@ class Diagram extends Functor
 	{
 		while(true)
 		{
-			const name = `${s}_${this.domain.id++}`;
-			if (!this.domain.elements.has(name))
-				return name;
+			const basename = `${s}_${this.domain.id++}`;
+			if (!this.domain.elements.has(`${this.name}/${basename}`))
+				return basename;
 		}
 	}
 	home()
