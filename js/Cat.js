@@ -5916,7 +5916,7 @@ class DiagramText
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,													writable:	false},
-			name:			{value: U.GetArg(nuArgs, 'name', diagram.domain.getAnon('t')),		writable:	false},
+			name:			{value: U.GetArg(nuArgs, 'name', `${diagram.name}/${diagram.getAnon('t')}`),				writable:	false},
 			x:				{value:	xy.x,														writable:	true},
 			y:				{value:	xy.y,														writable:	true},
 			width:			{value:	U.GetArg(nuArgs, 'width', 0),								writable:	true},
@@ -6067,7 +6067,7 @@ class DiagramObject extends CatObject
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.basename = U.GetArg(args, 'basename', diagram.domain.getAnon('o'));
+		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('o'));
 		nuArgs.category = diagram.domain;
 		super(diagram, nuArgs);
 		this.incrRefcnt();
@@ -7427,9 +7427,14 @@ ${header}	return ${jsName}_Data[args];${tail}`;
 `		return ${U.JsName(m.preCurry)}${lambdaDomLength > 0 ? '(' : ''}${input}${lambdaDomLength > 0 ? ')' : ''};
 	};${tail}`;
 						break;
+					case 'Distribute':
+					case 'Dedistribute':
+						code += `${header}	return [args[1][0], [args[0], args[1][1]]];${tail}`;
+						break;
 					case 'HomMorphism':
 						break;
 					case 'Evaluation':
+						code += `${header}	return args[0](args[1]);${tail}`;
 						break;
 					case 'InitialMorphism':
 						code += `${header}	return;${tail}`;
@@ -7834,6 +7839,7 @@ class DistributeAction extends Action
 			description:	'Distribute a product over a coproduct',
 			name:			'distribute',
 			icon:	// TODO needs new icon
+			/*
 `<circle class="svgstr4" cx="80" cy="80" r="60"/>
 <line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
 <line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
@@ -7843,6 +7849,16 @@ class DistributeAction extends Action
 <circle class="svgstr4" cx="80" cy="240" r="60"/>
 <line class="arrow0" x1="80" y1="180" x2="80" y2="300"/>
 <line class="arrow0" x1="20" y1="240" x2="140" y2="240"/>
+<circle class="svgstr4" cx="240" cy="240" r="60"/>
+<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
+<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
+*/
+`<circle class="svgstr4" cx="80" cy="80" r="60"/>
+<line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
+<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
+
+<line class="arrow0" x1="240" y1="80" x2="80" y2="240"/>
+
 <circle class="svgstr4" cx="240" cy="240" r="60"/>
 <line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
 <line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
@@ -8258,7 +8274,7 @@ class DiagramMorphism extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.index = true;
-		nuArgs.basename = U.GetArg(args, 'basename', diagram.domain.getAnon('m'));
+		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('m'));
 		nuArgs.category = diagram.domain;
 		super(diagram, nuArgs);
 		this.incrRefcnt();
@@ -8586,16 +8602,6 @@ class IndexCategory extends Category
 		a = super.json(a);
 		a.id = this.id;
 		return a;
-	}
-	getAnon(s = 'Anon')
-	{
-		while(true)
-		{
-//			const name = `${s}_${U.random()}`;
-			const name = `${this.diagram.name}/${s}_${this.id++}`;
-			if (!this.elements.has(name))
-				return name;
-		}
 	}
 	makeHomSets()
 	{
@@ -9819,9 +9825,9 @@ class Distribute extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
-		if (!Distribute.HasForm(nuArgs.domain))
-			throw 'cannot distribute';
-		nuArgs.codomain = diagram.getElement(args.codomain);
+//		if (!Distribute.HasForm(diagram, [nuArgs.domain]))
+//			throw 'cannot distribute';
+		nuArgs.codomain = Distribute.Codomain(diagram, nuArgs.domain);
 		nuArgs.basename = Distribute.Basename(diagram, nuArgs.domain);
 		nuArgs.properName = 'properName' in args ? args.properName : Distribute.ProperName();
 		nuArgs.category = diagram.codomain;
@@ -9859,6 +9865,7 @@ class Distribute extends Morphism
 			if (ProductObject.prototype.isPrototypeOf(to) && CoproductObject.prototype.isPrototypeOf(to.objects[1]))
 				return true;
 		}
+		return false;
 	}
 	static ProperName()
 	{
@@ -9867,8 +9874,8 @@ class Distribute extends Morphism
 	static Codomain(diagram, object)
 	{
 		const a = object.objects[0];
-		const objects = object.objects[1].map(o => ProductObject.Get(diagram, {objects:[a, o]}));
-		return CoproductObject(diagram, {objects});
+		const objects = object.objects[1].objects.map(o => ProductObject.Get(diagram, [a, o]));
+		return CoproductObject.Get(diagram, objects);
 	}
 }
 
@@ -9878,9 +9885,9 @@ class Dedistribute extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
-		if (!Dedistribute.HasForm(nuArgs.domain))
-			throw 'cannot distribute';
-		nuArgs.codomain = diagram.getElement(args.codomain);
+//		if (!Dedistribute.HasForm(diagram, [nuArgs.domain]))
+//			throw 'cannot distribute';
+		nuArgs.codomain = Dedistribute.Codomain(diagram, nuArgs.domain);
 		nuArgs.basename = Distribute.Basename(diagram, nuArgs.domain);
 		nuArgs.properName = 'properName' in args ? args.properName : Distribute.ProperName();
 		nuArgs.category = diagram.codomain;
@@ -9907,7 +9914,7 @@ class Dedistribute extends Morphism
 	{
 		const name = Distribute.Codename(diagram, domain);
 		const m = diagram.getElement(name);
-		return m ? m : new Distribute(diagram, {domain, name, description:`Distribution morphism`});
+		return m ? m : new Dedistribute(diagram, {domain, name, description:`Distribution morphism`});
 	}
 	static HasForm(diagram, ary)
 	{
@@ -9917,10 +9924,11 @@ class Dedistribute extends Morphism
 			const to = from.to;
 			if (CoproductObject.prototype.isPrototypeOf(to) && ProductObject.prototype.isPrototypeOf(to.objects[0]))
 			{
-				const s = to.objects[0].signature;
+				const s = to.objects[0].objects[0].signature;
 				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && o.objects[0].signature === s, true);
 			}
 		}
+		return false;
 	}
 	static ProperName()
 	{
@@ -9928,10 +9936,10 @@ class Dedistribute extends Morphism
 	}
 	static Codomain(diagram, object)
 	{
-		const a = object.objects[0].objects[0];
-		const objects = object.objects.map(o => o.objects[1]));
-		const sum = Coproduct.Get(diagram, {objects});
-		return ProductObject(diagram, {objects:[a, sum]});
+		const a = object.objects[0].objects[0];	// take the first summand's product's left hand side
+		const objects = object.objects.map(o => o.objects[1]);
+		const sum = CoproductObject.Get(diagram, objects);
+		return ProductObject.Get(diagram, [a, sum]);
 	}
 }
 
@@ -10020,6 +10028,15 @@ class Diagram extends Functor
 		this.texts.forEach(function(t){texts.push(t.json())});
 		a.texts =		texts;
 		return a;
+	}
+	getAnon(s)
+	{
+		while(true)
+		{
+			const name = `${s}_${this.domain.id++}`;
+			if (!this.domain.elements.has(name))
+				return name;
+		}
 	}
 	home()
 	{
