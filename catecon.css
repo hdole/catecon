@@ -187,6 +187,11 @@ td
 	text-align:	right;
 }
 
+.center
+{
+	text-align:	center;
+}
+
 br
 {
 	display:	block;
@@ -278,6 +283,11 @@ a:hover, .offcanvas a:focus
 	overflow:			hidden;
 	width:				100%;
 	z-index:			1;
+}
+
+.w10
+{
+	width:	10%;
 }
 
 .w20
@@ -671,7 +681,8 @@ svg:hover
 	margin:		2px;
 	padding:	2px;
 	opacity:	.5;
-	fill:		#9fc;
+	/* fill:		#9fc; */
+	file:		none;
 	stroke:		#0f0;
 }
 
@@ -813,4 +824,21 @@ canvas
 	{
 		text-shadow: 0 0 20px #fff, 0 0 30px #f77, 0 0 40px #f77, 0 0 50px #f77, 0 0 60px #f77;
 	}
+}
+
+.panelElt
+{
+	border:				solid;
+	border-collapse:	separate;
+	border-width: 		1px 0px 0px 1px;
+	border-color:		#ccc;
+	border-radius:		4px;
+	padding:			2px;
+	background-color:	inherit;
+}
+
+.panelElt:hover
+{
+	background-color:	#ddd;
+	color: 				#000;
 }
