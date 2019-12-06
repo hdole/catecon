@@ -681,6 +681,7 @@ An account allows sharing diagrams.
 			const coproductActions = new Set([
 				new CoproductAction(R.$Actions),
 				new FoldAction(R.$Actions),
+				new InjectAction(R.$Actions),
 				new PushoutAction(R.$Actions),
 				new CoproductAssemblyAction(R.$Actions),
 				new InitialMorphismAction(R.$Actions),
@@ -1275,6 +1276,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const ja = R.$Actions.getElement('javascript');
 		R.SetupUserHome(R.user.name);
 		ja.loadHTML(fn);
+		D.ShowDiagram(null);
 	}
 	static SaveLocal(diagram, savePng = true)
 	{
@@ -2829,7 +2831,7 @@ ${D.Button(onclick)}
 		for (let i=0; i<D.diagramSVG.children.length; ++i)
 		{
 			const c = D.diagramSVG.children[i];
-			c.style.display = c.id === diagram.name ? 'block' : 'none';
+			c.style.display = (diagram && c.id === diagram.name) ? 'block' : 'none';
 		}
 	}
 	static ShowDiagramRoot()
@@ -6340,10 +6342,10 @@ class NameAction extends Action
 			description:	'Create named element',
 			name:			'name',
 			icon:
-`<circle cx="60" cy="160" r="80" fill="url(#radgrad1)"/>
-<path class="svgstr4" d="M130,140 L190,140"/>
-<path class="svgstr4" d="M130,180 L190,180"/>
-<text text-anchor="middle" x="260" y="220" style="font-size:160px;stroke:#000;">A</text>`,
+`<circle cx="80" cy="240" r="90" fill="url(#radgrad1)"/>
+<path class="svgstr4" d="M110,180 L170,120"/>
+<path class="svgstr4" d="M140,210 L200,150"/>
+<text text-anchor="middle" x="260" y="140" style="font-size:160px;stroke:#000;">A</text>`,
 		};
 		super(diagram, args);
 	}
@@ -7123,12 +7125,16 @@ class ProjectAction extends Action
 	html(e, diagram, ary)
 	{
 		const to = ary[0].to;
+		const canFlatten = to.objects.reduce((r, o) => r || ProductObject.prototype.isPrototypeOf(o), false);
 		const html = H.h4('Create Factor Morphism') +
+					(canFlatten ?
+						H.div(H.span('Remove parenthesis', 'little') +
+							H.button('Flatten Product', '', '', '', `onclick="R.$Actions.getElement('project').flatten(event, R.diagram, R.diagram.getSelected())"`)) : '') +
 					H.h5('Domain Factors') +
 					H.small('Click to place in codomain') +
 //					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="D.ProjectAction.AddFactor('project', 'codomain', '#1', -1)"`) +
-					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="R.$Actions.getElement('project').addFactor('#1', -1)"`) +
-					ProjectAction.FactorButton('project', 'codomain', to, []) +
+					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="R.$Actions.getElement('project').addFactor('${to.name}', -1)"`) +
+					ProjectAction.FactorButton('codomain', to, to, []) +
 					H.h5('Codomain Factors') + H.br() +
 					H.span('Click objects to remove from codomain', 'smallPrint') +
 					H.div('', '', 'project-codomain');
@@ -7138,35 +7144,148 @@ class ProjectAction extends Action
 	addFactor(root, ...indices)
 	{
 		if (this.codomainDiv.innerHTML === '')
-			this.codomainDiv.innerHTML = H.span(D.GetButton('edit', `R.$Actions.getElement('${actionName}').action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
+			this.codomainDiv.innerHTML = H.span(D.GetButton('edit', `R.$Actions.getElement('${this.name}').action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
 		const object = R.diagram.getElement(root);
 		const factor = object.getFactor(indices);
 		const sub = indices.join();
 //		const div = dir === 'domain' ? action.domainDiv : action.codomainDiv;
 		this.codomainDiv.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this)"`);
 	}
-	static ObjectFactorButton(action, dir, object, index)
+	flatten(e, diagram, from)
+	{
+		const to = from.to;
+		const factors = [];
+		const searchObjects = to.objects.map((ob, i) => [ob, [i]]);
+		while (searchObjects.length > 0)
+		{
+			const d = searchObjects.shift();
+			const ob = d[0];
+			const f = d[1];
+			if (ProductObject.prototype.isPrototypeOf(ob))
+				ob.objects.map((obo, i) => searchObjects.push([obo, [...f, i]]));
+			else
+				factors.push(f);
+		}
+		const m = FactorMorphism.Get(diagram, to, factors);
+		diagram.objectPlaceMorphism(e, 'domain', from, m)
+	}
+	static ObjectFactorButton(dir, root, object, index)
 	{
 		return H.table(H.tr(H.td(
 			H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
-			`data-indices="${index.toString()}" onclick="R.$Actions.getElement('project').addFactor('${object.name}', ${index.toString()})"`)
+			`data-indices="${index.toString()}" onclick="R.$Actions.getElement('project').addFactor('${root.name}', ${index.toString()})"`)
 		)));
 	}
-	static ProductObjectFactorButton(action, dir, object, index)
+	static ProductObjectFactorButton(dir, root, object, index)
 	{
-		let header = H.tr(H.td(ProjectAction.ObjectFactorButton(action, dir, object, index)), 'sidename');
+		let header = H.tr(H.td(ProjectAction.ObjectFactorButton(dir, root, object, index)), 'sidename');
 		let tbl = '';
 		object.objects.map((o, i) =>
 		{
 			const subIndex = index.slice();
 			subIndex.push(i);
-			tbl += H.td(ProjectAction.FactorButton(action, dir, o, subIndex));
+			tbl += H.td(ProjectAction.FactorButton(dir, root, o, subIndex));
 		});
 		return H.table(header + H.tr(H.td(H.table(H.tr(tbl))), 'sidename'));
 	}
-	static FactorButton(action, dir, object, index)
+	static FactorButton(dir, root, object, index)
 	{
-		return ProductObject.prototype.isPrototypeOf(object) ? ProjectAction.ProductObjectFactorButton(action, dir, object, index) : ProjectAction.ObjectFactorButton(action, dir, object, index);
+		return ProductObject.prototype.isPrototypeOf(object) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index) :
+			ProjectAction.ObjectFactorButton(dir, root, object, index);
+	}
+}
+
+class InjectAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	name:		'inject',
+						icon:	// TODO
+`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const m = CofactorMorphism.Get(diagram, from.to, U.GetFactorsById('inject-domain'));
+		diagram.objectPlaceMorphism(e, 'codomain', from, m)
+	}
+	hasForm(diagram, ary)	// one coproduct object
+	{
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && CoproductObject.prototype.isPrototypeOf(ary[0].to);
+	}
+	html(e, diagram, ary)
+	{
+		const to = ary[0].to;
+		const canFlatten = to.objects.reduce((r, o) => r || CoproductObject.prototype.isPrototypeOf(o), false);
+		const html = H.h4('Create Injection Morphism') +
+					(canFlatten ?
+						H.div(H.span('Remove parenthesis', 'little') +
+							H.button('Flatten Coproduct', '', '', '', `onclick="R.$Actions.getElement('inject').flatten(event, R.diagram, R.diagram.getSelected())"`)) : '') +
+					H.h5('Codomain Factors') +
+					H.small('Click to place in domain') +
+//					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="R.$Actions.getElement('inject').addFactor('#1', -1)"`) +
+					InjectAction.FactorButton('domain', to, to, []) +
+					H.h5('Domain Factors') + H.br() +
+					H.span('Click objects to remove from domain', 'smallPrint') +
+					H.div('', '', 'inject-domain');
+		D.help.innerHTML = html;
+		this.domainDiv = document.getElementById('inject-domain');
+	}
+	addFactor(root, ...indices)
+	{
+		if (this.domainDiv.innerHTML === '')
+			this.domainDiv.innerHTML = H.span(D.GetButton('edit', `R.$Actions.getElement('${this.name}').action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
+		const object = R.diagram.getElement(root);
+		const factor = object.getFactor(indices);
+		const sub = indices.join();
+//		const div = dir === 'domain' ? action.domainDiv : action.domainDiv;
+		this.domainDiv.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this)"`);
+	}
+	flatten(e, diagram, from)
+	{
+		const to = from.to;
+		const factors = [];
+		const searchObjects = to.objects.map((ob, i) => [ob, [i]]);
+		while (searchObjects.length > 0)
+		{
+			const d = searchObjects.shift();
+			const ob = d[0];
+			const f = d[1];
+			if (CoproductObject.prototype.isPrototypeOf(ob))
+				ob.objects.map((obo, i) => searchObjects.push([obo, [...f, i]]));
+			else
+				factors.push(f);
+		}
+		const m = CofactorMorphism.Get(diagram, to, factors);
+		diagram.objectPlaceMorphism(e, 'codomain', from, m)
+	}
+	static ObjectFactorButton(dir, root, object, index)
+	{
+		return H.table(H.tr(H.td(
+			H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
+			`data-indices="${index.toString()}" onclick="R.$Actions.getElement('inject').addFactor('${root.name}', ${index.toString()})"`)
+		)));
+	}
+	static CoproductObjectFactorButton(dir, root, object, index)
+	{
+		let header = H.tr(H.td(InjectAction.ObjectFactorButton(dir, root, object, index)), 'sidename');
+		let tbl = '';
+		object.objects.map((o, i) =>
+		{
+			const subIndex = index.slice();
+			subIndex.push(i);
+			tbl += H.td(InjectAction.FactorButton(dir, root, o, subIndex));
+		});
+		return H.table(header + H.tr(H.td(H.table(H.tr(tbl))), 'sidename'));
+	}
+	static FactorButton(dir, root, object, index)
+	{
+		return CoproductObject.prototype.isPrototypeOf(object) ? InjectAction.CoproductObjectFactorButton(dir, root, object, index) :
+			InjectAction.ObjectFactorButton(dir, root, object, index);
 	}
 }
 
@@ -7215,8 +7334,7 @@ class LambdaMorphismAction extends Action
 		const html =
 			H.h4('Curry A &times; B &rarr; [C, D]') +
 			H.h5('Domain Factors: A &times; B') +
-			H.div(
-				H.small('Create named element') + H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '',
+			H.div( H.small('Create named element') + H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '',
 					`onclick="R.$Actions.getElement('lambdaMorphism').createNamedElement(event, R.diagram.selected)"`)) +
 			H.small('Click to move to C') +
 			H.div(this.addFactor(domain, {dir:	0, fromId:'lambda-domain', toId:'lambda-codomain'}), '', 'lambda-domain') +
@@ -8303,6 +8421,14 @@ class Morphism extends Element
 	{
 		return Sequence.Get(this.diagram, [this.domain, this.codomain]).getGraph(data);
 	}
+	hasIso()
+	{
+		return false;	// fitb
+	}
+	getIso()
+	{
+		return null;	// fitb
+	}
 }
 
 class Identity extends Morphism
@@ -9263,7 +9389,7 @@ class FactorMorphism extends Morphism
 	}
 	getFactorSignature()
 	{
-		return U.sha256(`${this.diagram.codomain.name} ${this.constructor.name} ${factors.map(f => f.join('-')).join(':')}`);
+		return U.sha256(`${this.diagram.codomain.name} ${this.constructor.name} ${this.factors.map(f => f.join('-')).join(':')}`);
 	}
 	json()
 	{
@@ -9327,6 +9453,97 @@ class FactorMorphism extends Morphism
 	static ProperName(domain, factors)
 	{
 		return `&lt;${factors.map(f => domain.getFactorProperName(f)).join(',')}&gt;`;
+	}
+}
+
+class CofactorMorphism extends Morphism
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.codomain = diagram.getElement(args.codomain);
+		nuArgs.basename = CofactorMorphism.Basename(nuArgs.codomain, nuArgs.factors);
+		nuArgs.domain = CofactorMorphism.Domain(diagram, nuArgs.codomain, nuArgs.factors);
+		nuArgs.properName = CofactorMorphism.ProperName(nuArgs.codomain, nuArgs.factors);
+		nuArgs.category = diagram.codomain;
+		super(diagram, nuArgs);
+		this.factors = nuArgs.factors;
+		this.signature = this.getFactorSignature();
+console.log('CofactorMorphism: ',this.domain.properName, this.codomain.properName);
+	}
+	help(helped = new Set)
+	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help() + H.p(`Cofactor morphism: ${this.factors}`);
+	}
+	getFactorSignature()
+	{
+		return U.sha256(`${this.diagram.codomain.name} ${this.constructor.name} ${this.factors.map(f => f.join('-')).join(':')}`);
+	}
+	json()
+	{
+		const a = super.json();
+		a.factors = this.factors;
+		return a;
+	}
+	getGraph(data)
+	{
+		const graph = super.getGraph(data, first);
+		const domain = graph.graphs[0];
+		const codomain = graph.graphs[1];
+		let offset = 0;
+		this.factors.map((r, i) =>
+		{
+			const d = domain.getFactor(r);
+			if (d === null)
+			{
+				++offset;
+				return;
+			}
+			const codomain = this.factors.length === 1 ? codomain : codomain.getFactor([i]);
+			const domRoot = r.slice();
+			domRoot.unshift(0);
+			domain.bindGraph(true, {cod:codomain, link:[], tag:'cofactor', domRoot, codRoot:m.factors.length > 1 ? [1, i] : [1], offset});
+		});
+		graph.tagGraph(this.constructor.name);
+		return graph;
+	}
+	static Basename(domain, factors)
+	{
+		let basename = `Ca{${domain.name},`;
+		for (let i=0; i<factors.length; ++i)
+		{
+			const indices = factors[i];
+			const f = domain.getFactor(indices);
+			if (f.name !== '#1')
+				basename += f.name + ',' + indices.join(',');
+			else
+				basename += f.name;
+			if (i !== factors.length -1)
+				basename += ',';
+		}
+		basename += '}aC';
+		return basename;
+	}
+	static Codename(diagram, domain, factors)
+	{
+		return Element.Codename(diagram, CofactorMorphism.Basename(domain, factors));
+	}
+	static Domain(diagram, domain, factors)
+	{
+		return factors.length > 1 ? CoproductObject.Get(diagram, factors.map(f => domain.getFactor(f))) : domain.getFactor(factors);
+	}
+	static Get(diagram, codomain, factors)
+	{
+		const name = CofactorMorphism.Codename(diagram, codomain, factors);
+		const m = diagram.getElement(name);
+		return m ? m : new CofactorMorphism(diagram, {codomain, factors});
+	}
+	static ProperName(codomain, factors)
+	{
+		return `&lt;${factors.map(f => codomain.getFactorProperName(f)).join(',')}&gt;`;
 	}
 }
 
@@ -10486,7 +10703,6 @@ class Diagram extends Functor
 	}
 	updateDragObjects(e)
 	{
-if (D.dragStart.x === 0)debugger;
 		const delta = D.mouse.position().subtract(D.dragStart);
 		delta.x = delta.x / this.viewport.scale;
 		delta.y = delta.y / this.viewport.scale;
@@ -10580,7 +10796,7 @@ if (D.dragStart.x === 0)debugger;
 			const fromObj = this.domain.getElement(objName);
 			const toObj = fromObj.to;
 			if (to[dir].name !== toObj.name)
-				throw `Source and target do not have same code: ${to[dir].name} vs ${toObj.name}`;
+				throw `Source and target do not have same code: ${to[dir].properName} vs ${toObj.properName}`;
 			const angles = [];
 			this.domain.forEachMorphism(function(m)
 			{
@@ -11185,6 +11401,7 @@ R.protos =
 {
 	Category,
 	CatObject,
+	CofactorMorphism,
 	Composite,
 	CoproductObject,
 	CoproductMorphism,
