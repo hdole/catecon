@@ -7,21 +7,16 @@
 {
 if (typeof require !== 'undefined')
 {
-//	var AWS = null;
 	var ACI = null;
 	var sjcl = null;
 	var zlib = null;
 	AWS = require('aws-sdk');
-	// TODO how to do this for AWS Lambda?
-//	if (typeof AmazonCognitoIdentity === 'undefined')
-//		ACI = require('amazon-cognito-identity-js');
 	sjcl = require('./sjcl.js');
 	zlib = require('./zlib_and_gzip.min.js');
 	var crypto = require('crypto');
 }
 else
 {
-//	var AWS = window.AWS;
 	var sjcl = window.sjcl;
 	var zlib = window.zlib;
 }
@@ -319,7 +314,7 @@ class U
 	{
 		return key in args ? args[key] : dflt;
 	}
-	static htmlEntitySafe(str)
+	static HtmlEntitySafe(str)
 	{
 		return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\'/g, '&#39;');
 	}
@@ -415,27 +410,8 @@ class U
 			const idx = JSON.parse(`[${b.dataset.indices}]`);
 			factors.push(idx);
 		});
-//		if (factors.length === 0)
-//			throw 'No factors for factor morphism.';
 		return factors;
 	}
-	/*
-	static DoubleStruck(elt)
-	{
-		let r = '';
-		const s = elt.value.trim();
-		if (s.charAt(0) === '&')
-			return;
-		for (let i=0; i<s.length; ++i)
-			r += `&${s.charAt(i)}opf;`;
-//		elt.value = r.replace(/&#(\d+);/g, function(m, d)
-		elt.value = r.replace(/&[a-zA-Z]+;/g, function(m, d)
-		{
-			console.log('double struck', String.fromCharCode(m));
-			return String.fromCharCode(d);
-		});
-	}
-	*/
 	static SetInputFilter(textbox, inputFilter)
 	{
 		["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(e)
@@ -714,11 +690,7 @@ An account allows sharing diagrams.
 			isGUI && D.Initialize();
 			R.Boot(function()
 			{
-				R.Setup(function()
-				{
-					R.initialized = true;
-	//				D.UpdateDiagramDisplay();
-				});
+				R.Setup(function() { R.initialized = true; });
 				R.GraphCat = new Category(R.$CAT, {basename:'Graph', user:'sys', properName:'𝔾𝕣𝕒'});
 				isGUI && D.panels.update();
 				if (!isGUI)
@@ -1444,27 +1416,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 					{
 						const morphismName = params.get('m');
 						R.DisplayMorphismInput(morphismName);
-/*
-						if (morphismName)
-						{
-							const m = R.diagram.getElement(morphismName);
-							if (m)
-							{
-								const ja = R.$Actions.getElement('javascript');
-								D.ioPanel.open();
-								const html = ja.getInput(m.domain);
-								D.ioPanel.ioElt.innerHTML +=
-									H.h3(m.properName) +
-									H.p(m.description, 'smallPrint') +
-									H.p(m.domain.description, 'smallPrint') +
-									html +
-									D.GetButton('edit', `R.$Actions.getElement('javascript').getInputValue()`, 'Evaluate the inputs', D.default.button.tiny) +
-									H.br();
-							}
-							else
-								D.RecordError('Morphism specified in URL could not be loaded.');
-						}
-*/
 					}
 					else
 						D.RecordError('Diagram specified in URL could not be loaded.');
@@ -1694,9 +1645,6 @@ class Amazon extends Cloud
 	getURL(user, basename)
 	{
 		let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
-//		if (typeof cat === 'undefined')
-//			return url;
-//		url += `/${cat}`;
 		if (typeof user === 'undefined')
 			return url;
 		url += `/${user}`;
@@ -1731,30 +1679,6 @@ class Amazon extends Cloud
 				console.log('saved category', category.name);
 		});
 	}
-	/*
-	// TODO unused
-	saveDiagram(diagram)	// for bootstrapping
-	{
-		const key = `${diagram.codomain.name}/${diagram.user}/${diagram.basename}.json`;
-		this.diagramBucket.putObject(
-		{
-			Bucket:			this.diagramBucketName,
-			ContentType:	'json',
-			Key:			key,
-			Body:			JSON.stringify(diagram.json()),
-			ACL:			'public-read',
-		}, function(err, data)
-		{
-			if (err)
-			{
-				D.RecordError(`Cannot save diagram: ${err.message}`);
-				return;
-			}
-			if (R.default.debug)
-				console.log('saved diagram',diagram.name);
-		});
-	}
-	*/
 	registerCognito()
 	{
 		const poolInfo =
@@ -1800,12 +1724,6 @@ class Amazon extends Cloud
 					R.user.status = 'logged-in';
 					D.navbar.update();
 					D.panels.update();
-					/*
-					R.Setup(function()
-					{
-						D.UpdateDiagramDisplay();
-					});
-					*/
 					that.getUserDiagramsFromServer(function(dgrms)
 					{
 						if (R.default.debug)
@@ -1931,12 +1849,9 @@ class Amazon extends Cloud
 						}
 						R.user.name = data.Username;
 						R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
-//						R.default.cat2diagram = {};
 						R.SetupUserHome(R.user.name);
-//						D.loginPanel.update();
 						D.panels.update();
 						D.loginPanel.toggle();
-//						D.morphismPanel.update();
 						R.Setup(function()
 						{
 							D.UpdateDiagramDisplay();
@@ -2552,9 +2467,6 @@ class D
 			const name = e.dataTransfer.getData('text');
 			if (name.length === 0)
 				return;
-//			const tokens = dropText.split(' ');
-//			const type = tokens[0];
-//			const name = tokens[1];
 			const elt = diagram.getElement(name);
 			let from = null;
 			let to = null;
@@ -2564,21 +2476,6 @@ class D
 				D.AddReference(e, name);
 			else if (Morphism.prototype.isPrototypeOf(elt))
 				diagram.placeMorphism(e, elt, xy);
-/*
-			switch(type)
-			{
-				case 'object':
-					diagram.placeObject(e, diagram.getElement(name), xy);
-					break;
-				case 'morphism':
-					to = diagram.getElement(name);
-					diagram.placeMorphism(e, to, xy);
-					break;
-				case 'diagram':
-					D.AddReference(e, name);
-					break;
-			}
-*/
 			diagram.update();
 		}
 		catch(err)
@@ -3201,6 +3098,7 @@ Object.defineProperties(D,
 				const diagram = R.diagram;
 				diagram.deselectAll();
 				diagram.placeText(e, D.Grid(diagram.userToDiagramCoords(D.mouse.position())), 'Lorem ipsum cateconium');
+				D.textPanel.textSection.update();
 			},
 			Delete(e)
 			{
@@ -3309,35 +3207,10 @@ diagram:
 <line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
-			/*
-distribute:
-`<circle class="svgstr4" cx="80" cy="80" r="60"/>
-<line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
-<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
-<circle class="svgstr4" cx="240" cy="80" r="60"/>
-<line class="arrow0" x1="240" y1="40" x2="240" y2="140"/>
-<line class="arrow0" x1="180" y1="80" x2="300" y2="80"/>
-<circle class="svgstr4" cx="80" cy="240" r="60"/>
-<line class="arrow0" x1="80" y1="180" x2="80" y2="300"/>
-<line class="arrow0" x1="20" y1="240" x2="140" y2="240"/>
-<circle class="svgstr4" cx="240" cy="240" r="60"/>
-<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
-<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
-			*/
 download:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
-			/*
-eval:
-`<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
-<polyline class="svgstr3" points="50,40 30,40 30,120 50,120"/>
-<polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
-<circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="160" y1="140" x2="160" y2="220" marker-end="url(#arrowhead)"/>`,
-*/
 functor:
 `<line class="arrow0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
@@ -3449,6 +3322,10 @@ unlock:
 upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="280" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+view:
+`<circle cx="160" cy="160" r="120" fill="url(#radgrad1)"/>
+<path class="svgfilNone svgstrThinGray" d="M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160" marker-end="url(#arrowheadWide)"/>
+`,
 		},
 		writable:	false,
 	},
@@ -4117,23 +3994,6 @@ class NewDiagramSection extends Section
 			const name = `${R.user.name}/${basename}`;
 			if (R.Diagrams.has(name))
 				throw 'diagram already exists';
-
-			/*
-			let diagram = R.ReadLocal(name);
-			if (diagram)
-			{
-				// TODO recovery, remove later
-				if (!R.Diagrams.has(name))
-				{
-					R.AddDiagram(diagram);
-					R.SelectDiagram(diagram.name);
-					if (diagram.user === R.user.name)
-						R.diagramPanel.userDiagramsSection.update();
-					throw 'diagram found locally';
-				}
-			}
-			*/
-
 			const diagram = new Diagram(userDiagram,
 			{
 				basename,
@@ -4279,7 +4139,6 @@ class DiagramPanel extends Panel
 				if (d.user === R.user.name)
 					userDiagrams.add(d);
 			});
-//			this.userDiagramsSection.setDiagrams(R.GetUserDiagram(R.user.name));
 			this.userDiagramsSection.setDiagrams(userDiagrams);
 			this.allDiagramsSection.setDiagrams(R.$CAT);
 			D.navbar.update();
@@ -4660,7 +4519,7 @@ class NewObjectSection extends Section
 			{
 				basename,
 				category:		diagram.codomain,
-				properName:		U.htmlEntitySafe(this.properNameElt.value),
+				properName:		U.HtmlEntitySafe(this.properNameElt.value),
 				description:	U.HtmlSafe(this.descriptionElt.value),
 			});
 			diagram.placeObject(e, to);
@@ -4779,7 +4638,7 @@ class NewMorphismSection extends Section
 			{
 				basename,
 				category:		diagram.codomain,
-				properName:		U.htmlEntitySafe(this.properNameElt.value),
+				properName:		U.HtmlEntitySafe(this.properNameElt.value),
 				description:	U.HtmlSafe(this.descriptionElt.value),
 				domain:			diagram.codomain.getElement(this.domainElt.value),
 				codomain:		diagram.codomain.getElement(this.codomainElt.value),
@@ -4852,12 +4711,10 @@ class SettingsPanel extends Panel
 			H.table(H.tr(this.closeBtnCell()), 'buttonBarLeft') +
 			H.h3('Settings') +
 			H.table(
-				H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="D.gridding = !D.gridding">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="D.SettingsPanel.ToggleShowInternals()">`) +
+				H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="D.gridding = !D.gridding;D.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
+				H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="D.SettingsPanel.ToggleShowInternals();D.SaveDefaults()">`) +
 						H.td('Show internal info', 'left'), 'sidenavRow') +
-//				H.tr(	H.td(`<input type="checkbox" ${D.showUploadArea ? 'checked' : ''} onchange="SettingsPanel.ToggleShowUploadArea()">`) +
-//						H.td('Show upload area for diagram snapshots.', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="R.default.debug = !R.default.debug">`) +
+				H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="R.default.debug = !R.default.debug;D.SaveDefaults()">`) +
 						H.td('Debug', 'left'), 'sidenavRow')
 			);
 		this.initialize();
@@ -4886,6 +4743,7 @@ class NewTextSection extends Section
 	{
 		super('New', parent, 'text-new-section', 'Create new text');
 		this.section.innerHTML =
+				H.h5('Create text') +
 				H.table(H.tr(H.td(H.textarea('', 'textHtml', 'text-description')), 'sidenavRow')) +
 				H.span(D.GetButton('edit', 'D.textPanel.newTextSection.create(event)', 'Create new text for this diagram')) +
 			H.span('', 'error', 'text-new-error');
@@ -4905,10 +4763,9 @@ class NewTextSection extends Section
 			const diagram = R.diagram;
 			if (!diagram.isEditable())
 				throw 'Diagram is not editable';	// TODO should disable instead
-//			const txt = new DiagramText(diagram, {diagram, description:U.HtmlSafe(this.descriptionElt.value), xy:D.Center(R.diagram)});
 			diagram.placeText(e, D.Center(R.diagram), U.HtmlSafe(this.descriptionElt.value));
 			this.update();
-			D.textPanel.textSection.open();
+			D.textPanel.textSection.update();
 		}
 		catch(e)
 		{
@@ -4931,11 +4788,13 @@ class TextSection extends Section
 		let rows = '';
 		diagram.texts.forEach(function(t)
 		{
-			rows += H.tr(	H.td(H.table(H.tr(H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text'))), 'buttonBarLeft')) +
-							H.td(H.span(t.description, 'tty', `edit_${t.name}`) +
-								(!diagram.isEditable() ? '' :
-									D.GetButton('edit', `R.diagram.getElement('${t.name}').editText(event, 'edit_${t.name}')`, 'Edit', D.default.button.tiny)),
-										'left'), 'sidenavRow');
+			rows += H.tr(
+//										H.td(H.table(H.tr((diagram.isEditable() ? H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text')) : '') +
+						H.td(H.table(H.tr(
+							H.td(D.GetButton('view', `R.diagram.viewElement('${t.name}')`, 'View')) +
+							(diagram.isEditable() ? H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text')) +
+													H.td(D.GetButton('edit', `R.diagram.getElement('${t.name}').editText(event, 'edit_${t.name}')`, 'Edit')) : '')), 'buttonBarLeft'))) +
+					H.tr(H.td(H.span(t.description, 'tty', `edit_${t.name}`), 'left'), 'sidenavRow');
 		});
 		this.section.innerHTML = rows === '' ?  '' : H.table(rows);
 	}
@@ -4950,11 +4809,11 @@ class TextPanel extends Panel
 		this.initialize();
 		this.newTextSection = new NewTextSection(this.elt);
 		this.textSection = new TextSection(this.elt);
-		this.textSection.open();
 	}
 	update()
 	{
 		this.newTextSection.update();
+		this.textSection.update();
 	}
 	delete(name)
 	{
@@ -4962,10 +4821,12 @@ class TextPanel extends Panel
 		if (diagram && diagram.texts.has(name))
 		{
 			const t = diagram.texts.get(name);
+			diagram.removeSelected(t);
 			t.decrRefcnt();
 			this.textSection.update();
 			diagram.update();
 		}
+		event.stopPropagation();
 	}
 }
 
@@ -5092,7 +4953,7 @@ class Element
 	{
 		// TODO
 //		return elt ? this.signature === elt.signature : false;
-		return elt ? this.name === elt.name : false;
+		return elt ? this.signature === elt.signature : false;
 	}
 	isDeletable()
 	{
@@ -5685,7 +5546,6 @@ class MultiObject extends CatObject
 	}
 	getFactor(factor)
 	{
-//		return factor.length > 0 ? this.objects[factor[0]].getFactor(factor.slice(1)) : this;
 		if (factor.length > 0)
 		{
 			if (factor[0] === -1)
@@ -5741,22 +5601,6 @@ class MultiObject extends CatObject
 	{
 		return H.table(H.tr(H.th('Objects', '', '', '', 'colspan=2')) + this.objects.map(o => H.tr(H.td(o.diagram.properName) + H.td(o.properName, 'left'))).join(''));
 	}
-	/*
-	factorButton(data)
-	{
-		let html = H.tr(super.factorButton(data), 'sidename');
-		let tbl = '';
-		this.objects.map((o, i) =>
-		{
-			const subIndex = data.index.slice();
-			subIndex.push(i);
-			const d = U.clone(data);
-			d.index = subIndex;
-			tbl += H.td(o.factorButton(d));
-		});
-		return html + H.tr(H.td(H.table(H.tr(tbl))), 'sidename');
-	}
-	*/
 	static ProperName(sep, objects)
 	{
 		return objects.map(o => o.needsParens() ? `(${o.properName})` : o.properName).join(sep);
@@ -6027,26 +5871,9 @@ class DiagramText
 		R.diagram.editElementText(e, id, 'description', function()
 		{
 			R.diagram.updateElementAttribute(from, 'description', document.getElementById(id).innerText);
-//			svg.innerHTML = from.description.split('\n').map(t => `<tspan text-anchor="left" x="${from.x}" dy="1.2em">${t}</tspan>`).join('');
 			svg.innerHTML = U.Lines2tspan(from);
 		});
-		/*
-		const h = document.getElementById(id);
-		if (!this.diagram.readonly && !this.readonly)
-		{
-			if (h.contentEditable === 'true')
-			{
-				this.diagram.updateElementAttribute(this, attr, h.innerText);
-				h.contentEditable = false;
-				document.getElementById(this.elementId()).innerHTML = this.description;
-			}
-			else
-			{
-				h.contentEditable = true;
-				h.focus();
-			}
-		}
-		*/
+		e.stopPropagation();
 	}
 	showSelected(state = true)
 	{
@@ -6063,7 +5890,6 @@ class DiagramText
 		let html = '';
 		if (this.description.indexOf('\n') > -1)		// multi-line svg
 		{
-//			let lines = this.description.split('\n').map(t => `<tspan text-anchor="left" x="${this.x}" dy="1.2em">${t}</tspan>`).join('');
 			let lines = U.Lines2tspan(this);
 			html =
 `<text id="${this.elementId()}" data-type="text" data-name="${this.name}" x="${this.x}" y="${this.y}" text-anchor="left" class="diagramText grabbable"
@@ -6281,8 +6107,6 @@ class CompositeAction extends Action
 		const to = Composite.Get(diagram, morphisms.map(m => m.to));
 		const from = new DiagramMorphism(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms), morphisms});
 		diagram.domain.makeHomSets();
-//		from.morphisms = morphisms;
-//		morphisms.map(m => m.incrRefcnt());
 		diagram.domain.makeHomSets();
 		diagram.addSVG(from);
 		diagram.makeSelected(e, from);
@@ -6345,7 +6169,9 @@ class NameAction extends Action
 `<circle cx="80" cy="240" r="90" fill="url(#radgrad1)"/>
 <path class="svgstr4" d="M110,180 L170,120"/>
 <path class="svgstr4" d="M140,210 L200,150"/>
-<text text-anchor="middle" x="260" y="140" style="font-size:160px;stroke:#000;">A</text>`,
+<path class="svgstr3" d="M220,130 L260,40 L300,130"/>
+<line class="svgstr3" x1="235" y1="95" x2="285" y2="95"/>`,
+//<text text-anchor="middle" x="260" y="140" style="font-size:160px;stroke:#000;">A</text>
 		};
 		super(diagram, args);
 	}
@@ -6358,7 +6184,7 @@ class NameAction extends Action
 		{
 			source,
 			basename:		U.HtmlSafe(			document.getElementById('named-element-new-basename').value.trim()),
-			properName:		U.htmlEntitySafe(	document.getElementById('named-element-new-properName').value.trim()),
+			properName:		U.HtmlEntitySafe(	document.getElementById('named-element-new-properName').value.trim()),
 			description:	U.HtmlSafe(			document.getElementById('named-element-new-description').value),
 		};
 		try
@@ -6402,7 +6228,6 @@ class NameAction extends Action
 			H.h5('Create Named Element') +
 			H.table(H.tr(H.td(D.Input('', 'named-element-new-basename', 'Base name')), 'sidenavRow') +
 					H.tr(H.td(D.Input('', 'named-element-new-properName', 'Proper name')
-//						+ H.button('&Dopf;', '', D.elementId(), 'Convert to double-struck font', `onclick="U.DoubleStruck(this.parentElement.children[0])"`
 						), 'sidenavRow') +
 					H.tr(H.td(H.input('', 'in100', 'named-element-new-description', 'text',
 //										{ph: 'Description', x:`onkeydown="D.OnEnter(event, R.$Actions.getElement('name').create, D.objectPanel.newObjectSection)"`})), 'sidenavRow')
@@ -6447,7 +6272,6 @@ class CopyAction extends Action
 			diagram.placeObject(e, from.to, from);
 		else if (DiagramText.prototype.isPrototypeOf(from))
 		{
-//			const txt = new DiagramText(diagram, {description:from.description, xy:from});
 			diagram.placeText(e, new D2(from), from.description);
 		}
 		diagram.update();
@@ -6629,7 +6453,6 @@ class FoldAction extends Action
 		const n = from.to.properName;
 		D.help.innerHTML = H.h5('Create Fold') +
 			H.span(`Create morphism &Sigma;${n} &rarr; ${n}`) + H.br() + H.span('with specified number of summands') +
-//			H.table(H.tr(H.td(D.Input('', 'fold-new-count', 'Copies &ge; 2')), 'sidenavRow')) +
 			D.Input('', 'fold-new-count', 'Copies &ge; 2') +
 			H.span(D.GetButton('edit', `R.$Actions.getElement('fold').action(event, R.diagram, R.diagram.selected)`, 'Create fold morphism')) +
 			(this.isDefoldable(from.to) ?
@@ -6962,11 +6785,6 @@ class EditDataMorphismAction extends Action
 		const args = {	description:	'Edit a data morphism',
 						name:			'editDataMorphism',
 						icon:			D.svg.edit,};
-			/*
-`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
-<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,};
-*/
 		super(diagram, args);
 	}
 	action(e, diagram, ary)
@@ -7104,8 +6922,11 @@ class ProjectAction extends Action
 {
 	constructor(diagram)
 	{
-		const args = {	name:		'project',
-						icon:
+		const args =
+		{
+			name:		'project',
+			description:	'Create projection morphism',
+			icon:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
@@ -7199,12 +7020,15 @@ class InjectAction extends Action
 {
 	constructor(diagram)
 	{
-		const args = {	name:		'inject',
-						icon:	// TODO
+		const args =
+		{
+			name:		'inject',
+			description:	'Create injection morphism',
+			icon:	// TODO
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,};
+<line class="arrow0" x2="110" y2="120" x1="240" y1="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x2="110" y2="160" x1="280" y1="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x2="110" y2="200" x1="240" y1="280" marker-end="url(#arrowhead)"/>`,};
 		super(diagram, args);
 	}
 	action(e, diagram, ary)
@@ -7242,7 +7066,6 @@ class InjectAction extends Action
 		const object = R.diagram.getElement(root);
 		const factor = object.getFactor(indices);
 		const sub = indices.join();
-//		const div = dir === 'domain' ? action.domainDiv : action.domainDiv;
 		this.domainDiv.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this)"`);
 	}
 	flatten(e, diagram, from)
@@ -7297,17 +7120,7 @@ class LambdaMorphismAction extends Action
 						name:			'lambdaMorphism',
 						icon:
 `<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="280" x2="140" y2="180" marker-end="url(#arrowhead)"/>
-`,};
-			/*
-`<circle cx="120" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="200" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="120" cy="240" r="60" fill="url(#radgrad1)"/>
-<circle cx="200" cy="240" r="60" fill="url(#radgrad1)"/>
-<polyline class="svgstr3" points="80,200 60,200 60,280 100,280"/>
-<polyline class="svgstr3" points="240,200 260,200 260,280 240,280"/>
-<line class="arrow0" x1="160" y1="100" x2="160" y2="200" marker-end="url(#arrowhead)"/>`,};
-*/
+<line class="arrow0" x1="40" y1="280" x2="140" y2="180" marker-end="url(#arrowhead)"/>`,};
 		super(diagram, args);
 	}
 	action(e, diagram, ary)
@@ -7324,8 +7137,7 @@ class LambdaMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]); // &&
-//			(ProductObject.prototype.isPrototypeOf(ary[0].to.domain) || HomObject.prototype.isPrototypeOf(ary[0].to.codomain));
+		return diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]);
 	}
 	html(e, diagram, ary)
 	{
@@ -7836,15 +7648,6 @@ ${this.generate(m)}
 			const blob = new Blob([code], {type:'application/javascript'});
 			const url = D.url.createObjectURL(blob);
 			const w = new Worker(url);
-//			this.workers.push(w);
-			/*
-			w.onmessage = function(e)
-			{
-				if (R.default.debug)
-					console.log('result from worker', e.data);
-				w.terminate();
-			};
-			*/
 			w.addEventListener('message', function(msg)
 			{
 console.log('from worker', msg);
@@ -8107,12 +7910,17 @@ class EvaluateAction extends Action
 			description:	'Create an evaluation morphism',
 			name:			'evaluate',
 			icon:	// TODO needs new icon
-`<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
+`
+<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
 <circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
 <polyline class="svgstr3" points="50,40 30,40 30,120 50,120"/>
 <polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
 <circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/> `,
+<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
+<path class="svgfilNone svgstrThinGray" d="M80 100 A40 40 1 0 0 260 100"/>
+<line class="svgstrThinGray" x1="160" y1="100" x2="160" y2="170"/>
+<line class="svgstrThinGray" x1="160" y1="210" x2="160" y2="250"/>
+`,
 		};
 		super(diagram, args);
 	}
@@ -8140,9 +7948,7 @@ class DistributeAction extends Action
 `<circle class="svgstr4" cx="80" cy="80" r="60"/>
 <line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
 <line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
-
 <line class="arrow0" x1="240" y1="80" x2="80" y2="240"/>
-
 <circle class="svgstr4" cx="240" cy="240" r="60"/>
 <line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
 <line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
@@ -8421,11 +8227,11 @@ class Morphism extends Element
 	{
 		return Sequence.Get(this.diagram, [this.domain, this.codomain]).getGraph(data);
 	}
-	hasIso()
+	hasInverse()
 	{
 		return false;	// fitb
 	}
-	getIso()
+	getInverse()
 	{
 		return null;	// fitb
 	}
@@ -9895,13 +9701,13 @@ class LambdaMorphism extends Morphism
 	}
 	static Domain(diagram, preCurry, factors)
 	{
-		return ProductObject.Get(diagram, factors.map(f => preCurry.domain.getFactor(f)));
+		return ProductObject.Get(diagram, factors.map(f => f[0] === 0 ? preCurry.domain.getFactor(f.slice().unshift()) : preCurry.codomain.getFactor(f.slice().unshift())));
 	}
 	static Codomain(diagram, preCurry, factors)
 	{
 		let codDom = null;
 		if (factors.length > 1)
-			codDom = ProductObject.Get(diagram, factors.map(f => preCurry.domain.getFactor(f)))
+			codDom = ProductObject.Get(diagram, factors.map(f => f[0] === 0 ? preCurry.domain.getFactor(f.slice().unshift()) : preCurry.codomain.getFactor(f.slice().unshift())));
 		else if (factors.length === 1)
 			codDom = preCurry.domain.getFactor(factors[0]);
 		else
@@ -10287,6 +10093,14 @@ class Distribute extends Morphism
 	{
 		return super.help(H.p('Distribute a product over a coproduct'));
 	}
+	hasInverse()
+	{
+		return true;
+	}
+	getInverse()
+	{
+		return Dedistribute.Get(this.diagram, this.codomain);
+	}
 	static Basename(diagram, domain)
 	{
 		return `Di{${domain.name}}iD`;
@@ -10345,19 +10159,27 @@ class Dedistribute extends Morphism
 	}
 	help()
 	{
-		return super.help(H.p('Distribute a product over a coproduct'));
+		return super.help(H.p('Gather a product from a coproduct'));
+	}
+	hasInverse()
+	{
+		return true;
+	}
+	getInverse()
+	{
+		return Distribute.Get(this.diagram, this.codomain);
 	}
 	static Basename(diagram, domain)
 	{
-		return `Di{${domain.name}}iD`;
+		return `De{${domain.name}}eD`;
 	}
 	static Codename(diagram, domain)
 	{
-		return Element.Codename(diagram, Distribute.Basename(diagram, domain));
+		return Element.Codename(diagram, Dedistribute.Basename(diagram, domain));
 	}
 	static Get(diagram, domain)
 	{
-		const name = Distribute.Codename(diagram, domain);
+		const name = Dedistribute.Codename(diagram, domain);
 		const m = diagram.getElement(name);
 		return m ? m : new Dedistribute(diagram, {domain, name, description:`Distribution morphism`});
 	}
@@ -10483,8 +10305,35 @@ class Diagram extends Functor
 				return basename;
 		}
 	}
+	setViewport(bbox)
+	{
+console.log('setViewport bbox',bbox);
+//		const bbox = this.svgRoot.getBBox();
+		if (bbox.width === 0)
+			bbox.width = D.Width();
+		const margin = D.navbar.element.getBoundingClientRect().height;
+		const dw = D.Width() - 2 * D.default.panel.width - 2 * margin;
+		const dh = D.Height() - 3 * margin;
+		const xRatio = bbox.width / dw;
+		const yRatio = bbox.height / dh;
+		const s = 1.0/Math.max(xRatio, yRatio);
+		if (!('viewport' in this))
+			this.viewport = {};
+		this.viewport.scale = s;
+		this.viewport.x = - bbox.x * this.viewport.scale + D.default.panel.width + margin;
+		this.viewport.y = - bbox.y * this.viewport.scale + 2 * margin;
+		this.viewport.width = bbox.width * s;
+		this.viewport.height = bbox.height * s;
+		if (xRatio > yRatio)
+			this.viewport.y += dh/2 - s * bbox.height/2;
+		else
+			this.viewport.x += dw/2 - s * bbox.width/2;
+		this.setView();
+	}
 	home()
 	{
+		this.setViewport(this.svgRoot.getBBox());
+		/*
 		const bbox = this.svgRoot.getBBox();
 		if (bbox.width === 0)
 		{
@@ -10508,6 +10357,7 @@ class Diagram extends Functor
 		else
 			this.viewport.x += dw/2 - s * bbox.width/2;
 		this.setView();
+		*/
 	}
 	deleteElement(name)
 	{
@@ -10654,6 +10504,12 @@ class Diagram extends Functor
 			if (DataMorphism.prototype.isPrototypeOf(elt) && elt.name !== document.getElementById('dataPanelTitle').innerHTML)
 				D.dataPanel.close();
 		}
+	}
+	removeSelected(elt)
+	{
+		const idx = this.selected.indexOf(elt);
+		if (idx >= 0)
+			this.selected.splice(idx, 1);
 	}
 	pickElement(e, name)
 	{
@@ -10843,6 +10699,7 @@ class Diagram extends Functor
 			this.domain.makeHomSets();
 			this.addSVG(newElt);
 			this.addSVG(from);
+			from.update();
 			this.makeSelected(e, from);
 			this.update(e);
 			return from;
@@ -11063,6 +10920,7 @@ class Diagram extends Functor
 	}
 	updateElementAttribute(from, attr, val)
 	{
+		const safe = U.HtmlEntitySafe(val);
 		if (from)
 		{
 			const isMorphism = DiagramMorphism.prototype.isPrototypeOf(from);
@@ -11070,7 +10928,7 @@ class Diagram extends Functor
 			{
 				if (from.to)
 				{
-					from.to[attr] = val;
+					from.to[attr] = safe;
 					if (attr === 'properName')
 					{
 						let svg = isMorphism ? from.svg('_name') : from.svg();
@@ -11081,7 +10939,7 @@ class Diagram extends Functor
 			}
 			else
 			{
-				from[attr] = val;
+				from[attr] = safe;
 				const svg = from.svg();
 				if (attr === 'properName')
 					svg.outerHTML = from.getSVG();
@@ -11096,7 +10954,8 @@ class Diagram extends Functor
 		{
 			const from = this.getSelected();
 			elt.contentEditable = false;
-			this.updateElementAttribute(from, attr, U.htmlEntitySafe(elt.innerText));
+//			this.updateElementAttribute(from, attr, U.HtmlEntitySafe(elt.innerText));
+			this.updateElementAttribute(from, attr, elt.innerText);
 			R.diagram.actionHtml(e, 'help');
 			from && from.showSelected();
 			if (fn)
@@ -11390,6 +11249,12 @@ class Diagram extends Functor
 			this.readonly = true;
 			D.DiagramPanel.UpdateLockBtn(this);
 		}
+	}
+	viewElement(name)
+	{
+		const e = this.getElement(name);
+//		this.setViewport(new D2(e.svg().getBBox()).scale(1.1));
+		this.setViewport(new D2(e.svg().getBBox()));
 	}
 	static Codename(args)
 	{
