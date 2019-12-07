@@ -1000,14 +1000,14 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const Zsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two integers', Zpair, Z, {js:'return args[0] - args[1];'});
 		const Zmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two integers', Zpair, Z, {js:'return args[0] * args[1];'});
 		const ZplusOne = R.PlaceObject(args, '', 'CoproductObject', '', 'An integer or an exception', {objects:[Z, one]});
-		const Zdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '/', 'division of two integers or an exception', Zpair, ZplusOne,
+		const Zdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '&div;', 'division of two integers or an exception', Zpair, ZplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
 {
 	if (args[1] === 0)
 		return [1, 0];
-	return [0, args[1] / args[0]];
+	return [0, args[0] / args[1]];
 }
 `			},
 		});
@@ -1019,7 +1019,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 {
 	if (args[1] === 0)
 		return [1, 0];
-	return [0, args[1] % args[0]];
+	return [0, args[0] % args[1]];
 }
 `			},
 		});
@@ -1061,21 +1061,20 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const Frandom = R.PlaceMorphism(args, 'random', 'Morphism', '?', 'a random number between 0.0 and 1.0', one, F, {js:'return Math.random();'});
 		const Fnl10 = R.PlaceMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, F, {js:'return Math.PI;'});
 		const Z2F = R.PlaceMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'});
-		const Fsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the floating point numbers', F, F, {js:'return args + 1.0;'});
 		const Fabs = R.PlaceMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a floating point number', F, F, {js:'return Math.abs(args);'});
 		const Fpair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of floating point numbers', {objects:[F, F]});
 		const Fadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two floating point numbers', Fpair, F, {js:'return args[0] + args[1];'});
 		const Fsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two floating point numbers', Fpair, F, {js:'return args[0] - args[1];'});
 		const Fmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two floating point numbers', Fpair, F, {js:'return args[0] * args[1];'});
 		const FplusOne = R.PlaceObject(args, '', 'CoproductObject', '', 'A floating point number or an exception', {objects:[F, one]});
-		const Fdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '/', 'division of two floating point numbers or an exception', Fpair, FplusOne,
+		const Fdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '&div;', 'division of two floating point numbers or an exception', Fpair, FplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
 {
 	if (args[1] === 0)
 		return [1, 0];
-	return [0, args[1] / args[0]];
+	return [0, args[0] / args[1]];
 }
 `			},
 		});
@@ -1086,7 +1085,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 {
 	if (args[1] === 0)
 		return [1, 0];
-	return [0, args[1] % args[0]];
+	return [0, args[0] % args[1]];
 }
 `			},
 		});
@@ -2439,6 +2438,17 @@ class D
 					if (!DiagramText.prototype.isPrototypeOf(from))
 						from.updateGlow(false);
 				}
+				for (let i=0; i<diagram.selected.length; ++i)
+				{
+					const e = diagram.selected[i];
+					if (DiagramObject.prototype.isPrototypeOf(e))
+						e.orig = {x:e.x, y:e.y};
+					if (DiagramMorphism.prototype.isPrototypeOf(e))
+					{
+						e.domain.orig = {x:e.domain.x, y:e.domain.y};
+						e.codomain.orig = {x:e.codomain.x, y:e.codomain.y};
+					}
+				}
 				if (diagram.isEditable() && didSomething)
 					R.SaveLocal(diagram);
 			}
@@ -2885,7 +2895,7 @@ ${D.Button(onclick)}
 	static testAndFireAction(e, name, ary)
 	{
 		const diagram = R.diagram;
-		const a = diagram.codomain.get(name);
+		const a = diagram.codomain.getElement(name);
 		a && a.hasForm(diagram, ary) && a.action(e, diagram);
 	}
 	static HtmlRow(m, handler)
@@ -3012,8 +3022,8 @@ ${D.Button(onclick)}
 		const divId = `dv_${o.objects[ndx].name} ${f.toString()}`;
 		const elt = document.getElementById(divId);
 		for (let i=0; i<elt.parentNode.children.length; ++i)
-			elt.parentNode.children[i].classList.add('hidden');
-		elt.classList.remove('hidden');
+			elt.parentNode.children[i].classList.add('nodisplay');
+		elt.classList.remove('nodisplay');
 	}
 }
 Object.defineProperties(D,
@@ -3602,7 +3612,7 @@ class CategoryPanel extends Panel
 	{
 		super('category');
 		this.elt.innerHTML =
-			H.table(H.tr(this.closeBtnCell()), 'buttonBarRight') +
+			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarRight') +
 			H.h3(H.span('Category')) +
 			H.h4(H.span('', '', 'category-basename') + H.span('', '', 'category-basename-edit')) +
 			H.h4(H.span('', '', 'category-properName') + H.span('', '', 'category-properName-edit')) +
@@ -4140,7 +4150,7 @@ class DiagramPanel extends Panel
 					userDiagrams.add(d);
 			});
 			this.userDiagramsSection.setDiagrams(userDiagrams);
-			this.allDiagramsSection.setDiagrams(R.$CAT);
+			this.allDiagramsSection.setDiagrams(R.$CAT.codomain);
 			D.navbar.update();
 			this.categoryElt.innerHTML = this.diagram.codomain.properName;
 			this.properNameElt.innerHTML = this.diagram.properName;
@@ -4183,6 +4193,7 @@ class DiagramPanel extends Panel
 					this.expandPanelBtn() +
 					this.closeBtnCell()), 'buttonBarRight');
 		this.diagramPanelToolbarElt.innerHTML = html;
+		this.initialize();
 	}
 	fetchRecentDiagrams()
 	{
@@ -5647,6 +5658,10 @@ class ProductObject extends MultiObject
 	}
 	static Get(diagram, objects)
 	{
+		if (!objects || objects.length === 0)
+			return diagram.getElement('#1');	// TODO
+		if (objects.length === 1)
+			return objects[0];
 		const name = ProductObject.Codename(diagram, objects);
 		const object = diagram.getElement(name);		// no products in the diagram domain cats
 		return object ? object : new ProductObject(diagram, {objects});
@@ -7500,10 +7515,18 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		{
 			if (m.domain.name === html.name &&
 				ProductObject.prototype.isPrototypeOf(m.codomain) &&
-				m.codomain.objects[0].name === str.name &&
-				HomObject.prototype.isPrototypeOf(m.codomain.objects[1]) &&
-				m.codomain.objects[1].objects[0].name === html.name)
-				that.formatters.set(m.codomain.objects[1].objects[1].signature, m);
+				m.codomain.objects[0].name === str.name)
+			{
+				const hom = m.codomain.objects[1];
+				if (HomObject.prototype.isPrototypeOf(hom))
+				{
+					const homDom = hom.objects[0];
+					if (ProductObject.prototype.isPrototypeOf(homDom) && homDom.objects[0].name === html.name)
+//					m.codomain.objects[1].objects[0].name === html.name)
+//						that.formatters.set(m.codomain.objects[1].objects[1].signature, m);
+						that.formatters.set(homDom.objects[1].signature, m);
+				}
+			}
 		});
 		const id = 'hdole/PFS/HTML';
 		let scriptElt = document.getElementById(id);
@@ -7532,10 +7555,9 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 					const fName = U.JsName(f);
 					const out = window[U.JsName(f)](`${o.name} ${factor.toString()}`);
 					html = out[0];
-console.log('getInput', html);
 				}
 				else
-					U.RecordError('object has no formatter');
+					D.RecordError('object has no formatter');
 				break;
 			case 'ProductObject':
 				html += o.objects.map((ob, i) => this.getInput(ob, [...factor, i]));
@@ -7548,9 +7570,8 @@ console.log('getInput', html);
 					const ob = o.objects[i];
 					const f = [...factor, i];
 					const id = `dv_${ob.name} ${f.toString()}`;
-//					options += `<option value="${id}">${ob.properName}:${i}</option>`;
-					options += `<option value="${i}">${ob.properName}:${i}</option>`;
-					divs += H.div(this.getInput(ob, [...factor, i]), 'hidden', id);
+					options += `<option value="${i}">${i}: ${ob.properName}</option>`;
+					divs += H.div(this.getInput(ob, [...factor, i]), 'nodisplay', id);
 				}
 				const id = `in_${o.name} ${factor.toString()}`;
 				html +=
@@ -7566,6 +7587,7 @@ ${divs}
 		}
 		return html;
 	}
+/*
 	getInputObject(o, factor = [])
 	{
 		let v = null;
@@ -7577,10 +7599,10 @@ ${divs}
 		}
 		return v;
 	}
+	*/
 	getInputValue(domain, factor = [])
 	{
 		let value = null;
-//		const domain = R.diagram.getElement(domainName);
 		switch(domain.constructor.name)
 		{
 			case 'CatObject':
@@ -7591,10 +7613,9 @@ ${divs}
 					const out = window[U.JsName(f)](domain.name + factor.toString());
 					const formatter = out[1]()();
 					value = formatter(`${domain.name} ${factor.toString()}`);;
-console.log('getInputValue', out, value);
 				}
 				else
-					U.RecordError('object has no formatter');
+					D.RecordError('object has no formatter');
 				break;
 			case 'ProductObject':
 				value = domain.objects.map((o, i) => this.getInputValue(o, [...factor, i]));
@@ -7625,15 +7646,11 @@ console.log('getInputValue', out, value);
 onmessage = function(e)
 {
 	const args = e.data;
-console.log('worker onmessage',args);
 	postMessage([0, 'Starting']);
 	try
 	{
-//		const args = ${Array.isArray(args) ? '[' + args + ']' : args};
-console.log('postMessage args', args);
 		const result = ${jsName}(args);
-		console.log('worker work',result);
-postMessage([0, 'here it is']);
+console.log('worker work',result);
 		postMessage([1, result]);
 	}
 	catch(e)
@@ -7650,7 +7667,6 @@ ${this.generate(m)}
 			const w = new Worker(url);
 			w.addEventListener('message', function(msg)
 			{
-console.log('from worker', msg);
 				if (msg.data[0] === 1)	// success
 				{
 					fn(msg.data[1]);
@@ -9275,7 +9291,6 @@ class CofactorMorphism extends Morphism
 		super(diagram, nuArgs);
 		this.factors = nuArgs.factors;
 		this.signature = this.getFactorSignature();
-console.log('CofactorMorphism: ',this.domain.properName, this.codomain.properName);
 	}
 	help(helped = new Set)
 	{
@@ -9613,6 +9628,7 @@ class LambdaMorphism extends Morphism
 		this.preCurry.incrRefcnt();
 		this.domFactors = args.domFactors;
 		this.homFactors = args.homFactors;
+console.log('LambdaMorphism', this.domFactors, this.homFactors);
 //		const domPermutation = args.domFactors.map(f => f[1]);
 //		const homPermutation = args.homFactors.map(f => f[1]);
 		// TODO first object not correct in product
@@ -9701,17 +9717,38 @@ class LambdaMorphism extends Morphism
 	}
 	static Domain(diagram, preCurry, factors)
 	{
-		return ProductObject.Get(diagram, factors.map(f => f[0] === 0 ? preCurry.domain.getFactor(f.slice().unshift()) : preCurry.codomain.getFactor(f.slice().unshift())));
+		const seq = ProductObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
+		const dom = ProductObject.Get(diagram, factors.map(f => seq.getFactor(f)));
+		seq.decrRefcnt();
+		return dom;
+//		if (factors.length > 1)
+//			return ProductObject.Get(diagram, factors.map(f =>
+//			{
+//				const factor = f.slice();
+//				factor.shift();
+//				return seq.getFactor(factor);
+//				return f[0] === 0 ? preCurry.domain.getFactor(factor) : preCurry.codomain.getFactor(factor);
+//			}));
+//		else if (factors.length === 1)
+//			return 
 	}
 	static Codomain(diagram, preCurry, factors)
 	{
-		let codDom = null;
-		if (factors.length > 1)
-			codDom = ProductObject.Get(diagram, factors.map(f => f[0] === 0 ? preCurry.domain.getFactor(f.slice().unshift()) : preCurry.codomain.getFactor(f.slice().unshift())));
-		else if (factors.length === 1)
-			codDom = preCurry.domain.getFactor(factors[0]);
-		else
-			codDom = preCurry.domain;
+		const seq = ProductObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
+//		let codDom = null;
+		const codDom = ProductObject.Get(diagram, factors.map(f => seq.getFactor(f)));
+//		if (factors.length > 1)
+//			{
+//				const factor = f.slice();
+//				factor.shift();
+//				return f[0] === 0 ? preCurry.domain.getFactor(factor) : preCurry.codomain.getFactor(factor);
+//				return seq.getFactor(f);
+//			}));
+//		else if (factors.length === 1)
+//			codDom = seq.getFactor(factors[0]);
+//		else
+//			codDom = preCurry.domain;
+		seq.decrRefcnt();
 		return HomObject.Get(diagram, [codDom, preCurry.codomain]);
 	}
 	static Get(diagram, preCurry, domFactors, homFactors)
@@ -10307,8 +10344,6 @@ class Diagram extends Functor
 	}
 	setViewport(bbox)
 	{
-console.log('setViewport bbox',bbox);
-//		const bbox = this.svgRoot.getBBox();
 		if (bbox.width === 0)
 			bbox.width = D.Width();
 		const margin = D.navbar.element.getBoundingClientRect().height;
@@ -10333,31 +10368,6 @@ console.log('setViewport bbox',bbox);
 	home()
 	{
 		this.setViewport(this.svgRoot.getBBox());
-		/*
-		const bbox = this.svgRoot.getBBox();
-		if (bbox.width === 0)
-		{
-			bbox.width = D.Width();
-		}
-		const margin = D.navbar.element.getBoundingClientRect().height;
-		const dw = D.Width() - 2 * D.default.panel.width - 2 * margin;
-		const dh = D.Height() - 3 * margin;
-		const xRatio = bbox.width / dw;
-		const yRatio = bbox.height / dh;
-		const s = 1.0/Math.max(xRatio, yRatio);
-		if (!('viewport' in this))
-			this.viewport = {};
-		this.viewport.scale = s;
-		this.viewport.x = - bbox.x * this.viewport.scale + D.default.panel.width + margin;
-		this.viewport.y = - bbox.y * this.viewport.scale + 2 * margin;
-		this.viewport.width = bbox.width * s;
-		this.viewport.height = bbox.height * s;
-		if (xRatio > yRatio)
-			this.viewport.y += dh/2 - s * bbox.height/2;
-		else
-			this.viewport.x += dw/2 - s * bbox.width/2;
-		this.setView();
-		*/
 	}
 	deleteElement(name)
 	{
