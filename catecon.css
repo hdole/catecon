@@ -382,6 +382,11 @@ a:hover, .offcanvas a:focus
 	box-shadow:	none;
 }
 
+.nodisplay
+{
+	display:			none;
+}
+
 #statusbar
 {
 	background-color:	#ffe;
