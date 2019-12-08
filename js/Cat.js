@@ -1379,22 +1379,27 @@ args.xy.y += 16 * D.default.layoutGrid;
 	{
 		if (morphismName)
 		{
+			const ja = R.$Actions.getElement('javascript');
 			const m = R.diagram.getElement(morphismName);
 			if (m)
 			{
-				const ja = R.$Actions.getElement('javascript');
-				D.ioPanel.open();
-				const html = ja.getInput(m.domain);
-				D.ioPanel.ioElt.innerHTML +=
-					H.h3(m.properName) +
-					H.p(m.description, 'smallPrint') +
-					H.p(m.domain.description, 'smallPrint') +
-					html +
-					D.GetButton('edit', `R.$Actions.getElement('javascript').evaluate(event, R.diagram, '${m.name}', R.$Actions.getElement('javascript').postResult)`, 'Evaluate the inputs', D.default.button.tiny) +
-					H.br();
+				if (ja.canFormat(m.domain))
+				{
+					D.ioPanel.open();
+					const html = ja.getInput(m.domain);
+					D.ioPanel.ioElt.innerHTML +=
+						H.h3(m.properName) +
+						H.p(m.description, 'smallPrint') +
+						H.p(m.domain.description, 'smallPrint') +
+						html +
+						D.GetButton('edit', `R.$Actions.getElement('javascript').evaluate(event, R.diagram, '${m.name}', R.$Actions.getElement('javascript').postResult)`, 'Evaluate the inputs', D.default.button.tiny) +
+						H.br();
+				}
+				else
+					D.RecordError('Morphism in URL could not be formatted.');
 			}
 			else
-				D.RecordError('Morphism specified in URL could not be loaded.');
+				D.RecordError('Morphism in URL could not be loaded.');
 		}
 	}
 	static Setup(fn)
@@ -4186,6 +4191,7 @@ class DiagramPanel extends Panel
 		const uploadBtn = (R.cloud && isUsers) ? H.td(D.GetButton('upload', 'R.diagram.upload(event)', 'Upload', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '';
 		const html = H.table(H.tr(
 					(isUsers ? H.td(DiagramPanel.GetLockBtn(diagram), 'buttonBar', 'lockBtn') : '') +
+					(isUsers ? H.td(DiagramPanel.GetEraseBtn(diagram), 'buttonBar', 'eraseBtn') : '') +
 					uploadBtn +
 					H.td(D.DownloadButton('JSON', 'R.diagram.downloadJSON(event)', 'Download JSON'), 'buttonBar') +
 					H.td(D.DownloadButton('JS', 'R.diagram.downloadJS(event)', 'Download Javascript'), 'buttonBar') +
@@ -4252,9 +4258,9 @@ return;	// TODO
 		if (diagram && R.user.name === diagram.user)
 		{
 			document.getElementById('lockBtn').innerHTML = DiagramPanel.GetLockBtn(diagram);
-			const eb = document.getElementById('eraseBtn');
-			if (eb)
-				eb.innerHTML = DiagramPanel.GetEraseBtn(diagram);
+//			const eb = document.getElementById('eraseBtn');
+//			if (eb)
+//				eb.innerHTML = DiagramPanel.GetEraseBtn(diagram);
 		}
 	}
 	static SetupDiagramElementPnl(diagram, pnl, updateFnName)
@@ -5557,13 +5563,17 @@ class MultiObject extends CatObject
 	}
 	getFactor(factor)
 	{
-		if (factor.length > 0)
+		if (Array.isArray(factor))
 		{
-			if (factor[0] === -1)
-				return this.diagram.getElement('#1');
-			return this.objects[factor[0]].getFactor(factor.slice(1));
+			if (factor.length > 0)
+			{
+				if (factor[0] === -1)
+					return this.diagram.getElement('#1');
+				return this.objects[factor[0]].getFactor(factor.slice(1));
+			}
+			return this;
 		}
-		return this;
+		return this.objects[factor];
 	}
 	getFactorName(factor)
 	{
@@ -5618,7 +5628,13 @@ class MultiObject extends CatObject
 	}
 	static GetObjects(diagram, objects)
 	{
-		return objects.map(o => diagram.getElement(o));
+		return objects.map(o =>
+		{
+			const ob = diagram.getElement(o);
+			if (!ob)
+				throw `cannot get object ${o}`;
+			return ob;
+		});
 	}
 }
 
@@ -5973,6 +5989,13 @@ class DiagramObject extends CatObject
 		const nuArgs = U.clone(args);
 		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('o'));
 		nuArgs.category = diagram.domain;
+		if ('to' in args)
+		{
+			const to = diagram.getElement(args.to);
+			if (!to)
+				throw 'no to!';
+			nuArgs.to = to;
+		}
 		super(diagram, nuArgs);
 		this.incrRefcnt();
 		const xy = U.GetArg(nuArgs, 'xy', new D2);
@@ -6842,6 +6865,7 @@ class DeleteAction extends Action
 		let updateObjects = false;
 		let updateMorphisms = false;
 		let updateTexts = false;
+		const updateHomSets = new Set;
 		for(let i=0; i<ary.length; ++i)
 		{
 			let s = ary[i];
@@ -6852,6 +6876,7 @@ class DeleteAction extends Action
 			{
 				updateMorphisms = true;
 				updateObjects = true;
+				updateHomSets.add([s.domain.name, s.codomain.name]);
 			}
 			else if (DiagramText.prototype.isPrototypeOf(s))
 				updateTexts = true;
@@ -6862,6 +6887,10 @@ class DeleteAction extends Action
 		{
 			D.morphismPanel.update();
 			diagram.domain.makeHomSets();
+			updateHomSets.forEach(function(pair)
+			{
+				diagram.domain.getHomSet(pair[0], pair[1]).map(m => m.update());
+			});
 		}
 		if (updateTexts)
 			D.textPanel.update();
@@ -7521,10 +7550,12 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 				if (HomObject.prototype.isPrototypeOf(hom))
 				{
 					const homDom = hom.objects[0];
-					if (ProductObject.prototype.isPrototypeOf(homDom) && homDom.objects[0].name === html.name)
+					if (homDom.signature === html.signature)
+//					if (ProductObject.prototype.isPrototypeOf(homDom) && homDom.objects[0].name === html.name)
 //					m.codomain.objects[1].objects[0].name === html.name)
 //						that.formatters.set(m.codomain.objects[1].objects[1].signature, m);
-						that.formatters.set(homDom.objects[1].signature, m);
+//						that.formatters.set(homDom.objects[1].signature, m);
+						that.formatters.set(hom.objects[1].signature, m);
 				}
 			}
 		});
@@ -7542,6 +7573,18 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		};
 		scriptElt.src = D.url.createObjectURL(new Blob([script], {type:'application/javascript'}));
 		document.head.appendChild(scriptElt);
+	}
+	canFormat(o)
+	{
+		switch(o.constructor.name)
+		{
+			case 'CatObject':
+				return this.formatters.has(o.signature);
+			case 'ProductObject':
+			case 'CoproductObject':
+				return o.objects.reduce((r, ob) => r && this.canFormat(ob));
+		}
+		return false;
 	}
 	getInput(o, factor = [])
 	{
@@ -8032,7 +8075,7 @@ class Category extends CatObject
 	process(diagram, args, elements = null)
 	{
 		let errMsg = '';
-		args.map(e =>
+		args.map((e, i) =>
 		{
 			try
 			{
@@ -8117,6 +8160,11 @@ class Category extends CatObject
 				fn(e);
 		});
 	}
+	clear()
+	{
+		this.elements.forEach(function(e){e.decrRefcnt();});
+		this.elements.clear();
+	}
 	static IsSink(ary)
 	{
 		if (ary.length < 2)		// just don't bother
@@ -8151,7 +8199,7 @@ class Category extends CatObject
 	}
 	static HomKey(domain, codomain)
 	{
-		return `${domain.name} ${codomain.name}`;
+		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
 	}
 	static Get(diagram, user, basename)
 	{
@@ -8167,15 +8215,11 @@ class Morphism extends Element
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-		let domain = null;
-		let codomain = null;
-		if ('domain' in args)
-			domain = this.diagram ? this.diagram.getElement(args.domain) : args.domain;
-		else
+		const domain = this.diagram ? this.diagram.getElement(args.domain) : args.domain;
+		if (!domain)
 			throw 'no domain for morphism';
-		if ('codomain' in args)
-			codomain = this.diagram ? this.diagram.getElement(args.codomain) : args.codomain;
-		else
+		const codomain = this.diagram ? this.diagram.getElement(args.codomain) : args.codomain;
+		if (!codomain)
 			throw 'no codomain for morphism';
 		Object.defineProperties(this,
 		{
@@ -8210,8 +8254,8 @@ class Morphism extends Element
 	{
 		if (this.refcnt <= 1)
 		{
-			this.domain.decrRefcnt();
-			this.codomain.decrRefcnt();
+			this.domain && this.domain.decrRefcnt();
+			this.codomain && this.codomain.decrRefcnt();
 			/*
 			if (this.diagram && this.diagram.isIsolated(this.domain))
 				this.domain.decrRefcnt();
@@ -8814,6 +8858,11 @@ class IndexCategory extends Category
 			this.obj2morphs.set(key, {dom:[], cod:[]});
 		const ms = this.obj2morphs.get(key);
 		ms[dir].push(m);
+	}
+	getHomSet(domain, codomain)
+	{
+		const key = Category.HomKey(domain, codomain);
+		return this.homSets.has(key) ? this.homSets.get(key) : [];
 	}
 }
 
@@ -10888,7 +10937,17 @@ class Diagram extends Functor
 			this.svgRoot.id = this.name;
 		}
 		let svg = '';
-		const fn = function(t) { svg += t.getSVG(); };
+		const fn = function(t)
+		{
+			try
+			{
+				svg += t.getSVG();
+			}
+			catch(x)
+			{
+				console.log('makeSvg exception',t,x);
+			}
+		};
 		this.domain.elements.forEach(fn);
 		this.texts.forEach(fn);
 		this.svgRoot.innerHTML = svg;
@@ -11259,6 +11318,13 @@ class Diagram extends Functor
 			this.readonly = true;
 			D.DiagramPanel.UpdateLockBtn(this);
 		}
+	}
+	clear()
+	{
+		this.domain.clear();
+		this.elements.forEach(function(e){e.decrRefcnt();});
+		this.elements.clear();
+		this.update();
 	}
 	viewElement(name)
 	{
