@@ -1448,6 +1448,8 @@ args.xy.y += 16 * D.default.layoutGrid;
 		D.HideToolbar();
 		function setup(name)
 		{
+			if (!R.diagram.svgRoot)
+				R.diagram.makeSvg();
 			D.SetDefaultDiagram();
 			D.UpdateDiagramDisplay();
 		}
@@ -1571,7 +1573,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 			R.diagram.clear();
 			localStorage.setItem(`${name}.json`, JSON.stringify(data));
 			svg && svg.parentNode.removeChild(svg);
-console.log('ReloadDiagramFromServer ref cnt',R.diagram.refcnt);
 			R.diagram.decrRefcnt();
 			R.SelectDiagram(name);
 		});
@@ -2020,12 +2021,9 @@ class Amazon extends Cloud
 					D.RecordError(error);
 					return;
 				}
-console.log('ingested', error, data);
-//				const result = JSON.parse(data.Payload);
 				if (fn)
 					fn();
 			};
-console.log('ingesting...');
 			that.lambda.invoke(params, handler);
 		});
 	}
@@ -2378,9 +2376,9 @@ class D
 			}
 			else if (D.tool === 'pan')
 			{
-				diagram.viewport.x += e.movementX;
-				diagram.viewport.y += e.movementY;
-				diagram.setView();
+//				diagram.viewport.x += e.movementX;
+//				diagram.viewport.y += e.movementY;
+				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale);
 				D.DeleteSelectRectangle();
 			}
 			else
@@ -2654,14 +2652,15 @@ ${button}
 		let nuScale = D.default.scale.base ** inc;
 		nuScale = nuScale < D.default.scale.limit.min ? D.default.scale.limit.min : nuScale;
 		nuScale = nuScale > D.default.scale.limit.max ? D.default.scale.limit.max : nuScale;
-		diagram.viewport.scale = nuScale;
+//		diagram.viewport.scale = nuScale;
 		const pnt = D.mouse.position();
 		const dx = scalar * (1.0 - 1.0 / D.default.scale.base) * (pnt.x - diagram.viewport.x);
 		const dy = scalar * (1.0 - 1.0 / D.default.scale.base) * (pnt.y - diagram.viewport.y);
 		const s = D.default.scale.base;
-		diagram.viewport.x = diagram.viewport.x - dx;
-		diagram.viewport.y = diagram.viewport.y - dy;
-		diagram.setView();
+//		diagram.viewport.x = diagram.viewport.x - dx;
+//		diagram.viewport.y = diagram.viewport.y - dy;
+//		diagram.setView(diagram.viewport.x - dx, diagram.viewport.y - dy, diagram.viewport.scale);
+		diagram.setView(diagram.viewport.x, diagram.viewport.y, nuScale);
 	}
 	static AddEventListeners()
 	{
@@ -2803,6 +2802,10 @@ ${button}
 	{
 		if (!R.diagram)
 			return;
+		if ('viewport' in R.diagram)
+			R.diagram.setView(R.diagram.viewport.x, R.diagram.viewport.y, R.diagram.viewport.scale);
+		else
+			R.diagram.home();
 		D.diagramPanel.update();
 		D.objectPanel.update();
 		D.morphismPanel.update();
@@ -5611,9 +5614,9 @@ class MultiObject extends CatObject
 	}
 	decrRefcnt()
 	{
+		super.decrRefcnt();
 		if (this.refcnt <= 0)
 			this.objects.map(o => o.decrRefcnt());
-		super.decrRefcnt();
 	}
 	json()
 	{
@@ -8449,9 +8452,9 @@ class NamedMorphism extends Morphism	// name of a morphism
 	}
 	decrRefcnt()
 	{
-		if (this.refcnt <= 1)
-			this.source.decrRefcnt();
 		super.decrRefcnt();
+		if (this.refcnt <= 0)
+			this.source.decrRefcnt();
 	}
 	help(helped = new Set)
 	{
@@ -8508,9 +8511,9 @@ class NamedObject extends CatObject	// name of an object
 	}
 	decrRefcnt()
 	{
-		if (this.refcnt <= 1)
-			this.source.decrRefcnt();
 		super.decrRefcnt();
+		if (this.refcnt <= 0)
+			this.source.decrRefcnt();
 	}
 	help(helped = new Set)
 	{
@@ -8958,9 +8961,9 @@ class MultiMorphism extends Morphism
 	}
 	decrRefcnt()
 	{
-		if (this.refcnt === 0)
-			this.morphisms.map(m => m.decrRefcnt());
 		super.decrRefcnt();
+		if (this.refcnt <= 0)
+			this.morphisms.map(m => m.decrRefcnt());
 	}
 	json(a = {})
 	{
@@ -9624,10 +9627,6 @@ class DataMorphism extends Morphism
 		this.data = new Map(U.GetArg(nuArgs, 'data', []));
 		this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 	}
-	decrRefcnt()
-	{
-		super.decrRefcnt();
-	}
 	help(helped = new Set)
 	{
 		if (helped.has(this.name))
@@ -9705,7 +9704,7 @@ class Recursive extends DataMorphism
 	}
 	decrRefcnt()
 	{
-		if (this.refcnt <= 0 && this.recursor)
+		if (this.refcnt <= 1 && this.recursor)
 			this.recursor.decrRefcnt();
 		super.decrRefcnt();
 	}
@@ -10413,6 +10412,7 @@ class Diagram extends Functor
 		if ('domainElements' in nuArgs)
 			this.domain.process(this, nuArgs.domainElements);
 		this.svgRoot = null;
+		this.svgBase = null;
 	}
 	help(helped = new Set)
 	{
@@ -10463,20 +10463,24 @@ class Diagram extends Functor
 		const s = 1.0/Math.max(xRatio, yRatio);
 		if (!('viewport' in this))
 			this.viewport = {};
-		this.viewport.scale = s;
-		this.viewport.x = - bbox.x * this.viewport.scale + D.default.panel.width + margin;
-		this.viewport.y = - bbox.y * this.viewport.scale + 2 * margin;
-		this.viewport.width = bbox.width * s;
-		this.viewport.height = bbox.height * s;
+//		this.viewport.scale = s;
+//		this.viewport.x = - bbox.x * this.viewport.scale + D.default.panel.width + margin;
+//		this.viewport.y = - bbox.y * this.viewport.scale + 2 * margin;
+		let x = - bbox.x * s + D.default.panel.width + margin;
+		let y = - bbox.y * s + 2 * margin;
+//		this.viewport.width = bbox.width * s;
+//		this.viewport.height = bbox.height * s;
 		if (xRatio > yRatio)
-			this.viewport.y += dh/2 - s * bbox.height/2;
+//			this.viewport.y += dh/2 - s * bbox.height/2;
+			y += dh/2 - s * bbox.height/2;
 		else
-			this.viewport.x += dw/2 - s * bbox.width/2;
-		this.setView();
+//			this.viewport.x += dw/2 - s * bbox.width/2;
+			x += dw/2 - s * bbox.width/2;
+		this.setView(x, y, s);
 	}
 	home()
 	{
-		this.setViewport(this.svgRoot.getBBox());
+		this.setViewport(this.svgBase.getBBox());
 	}
 	deleteElement(name)
 	{
@@ -10539,7 +10543,7 @@ class Diagram extends Functor
 	}
 	addSVG(element)
 	{
-		this.svgRoot.innerHTML += element.getSVG();
+		this.svgBase.innerHTML += element.getSVG();
 	}
 	/*
 	gui(e, fn)
@@ -10559,7 +10563,6 @@ class Diagram extends Functor
 	*/
 	update(save = true)
 	{
-		this.setView();
 		save && R.SaveLocal(this);
 		R.diagram && D.diagramPanel.setToolbar(R.diagram);
 	}
@@ -10582,11 +10585,22 @@ class Diagram extends Functor
 			D.RecordError(x);
 		}
 	}
-	setView()
+	setView(x, y, s)
 	{
 		if ('viewport' in this)
-//			D.diagramSVG.setAttribute('transform', `translate(${this.viewport.x}, ${this.viewport.y})scale(${this.viewport.scale})`);
-			this.svgRoot.setAttribute('transform', `translate(${this.viewport.x}, ${this.viewport.y})scale(${this.viewport.scale})`);
+		{
+			const to = `${x} ${y}`;
+			this.svgTranslate.setAttribute('to', to);
+			this.viewport.x = x;
+			this.viewport.y = y;
+			const fs = this.viewport.scale ? this.viewport.scale : 1.0;
+			if (!('x' in this.viewport))
+				this.svgScale.setAttribute('from', '0 0');
+			this.svgScale.setAttribute('to', `${s} ${s}`);
+			this.viewport.scale = s;
+			this.svgTranslate.beginElement();
+			this.svgScale.beginElement();
+		}
 	}
 	mousePosition(e)
 	{
@@ -10675,7 +10689,7 @@ class Diagram extends Functor
 		const dom = {x:from.domain.x - from.domain.width/2, y:from.domain.y, name:from.domain.name};
 		const cod = {x:from.codomain.x - from.codomain.width/2, y:from.codomain.y, name:from.codomain.name};
 		const svg = `<g id="${id}">${sm.graph.svg(this, {index:[], dom, cod, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
-		this.svgRoot.innerHTML += svg;
+		this.svgBase.innerHTML += svg;
 	}
 	updateDragObjects(e)
 	{
@@ -10911,7 +10925,7 @@ class Diagram extends Functor
 	}
 	hasOverlap(bbox, except = '')
 	{
-		const elts = this.svgRoot.querySelectorAll('.object, .morphTxt, .morphism, .diagramText');
+		const elts = this.svgBase.querySelectorAll('.object, .morphTxt, .morphism, .diagramText');
 		let r = null;
 		for (let i=0; i<elts.length; ++i)
 		{
@@ -10974,6 +10988,27 @@ class Diagram extends Functor
 			this.svgRoot = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 			D.diagramSVG.appendChild(this.svgRoot);
 			this.svgRoot.id = this.name;
+			const base = this.name + ' base';
+			this.svgRoot.innerHTML +=
+`
+<g>
+<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="0.1s" repeatCount="0" begin="indefinite" fill="freeze"/>
+<g>
+<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="0.1s" repeatCount="0" begin="indefinite" fill="freeze"/>
+<g id="${base}">
+</g>
+</g>
+</g>
+`;
+			this.svgBase = document.getElementById(base);
+			this.svgTranslate = document.getElementById(this.name + ' T');
+			this.svgScale = document.getElementById(this.name + ' S');
+			const that = this;
+			this.svgTranslate.addEventListener('endEvent', function()
+			{
+				that.svgTranslate.setAttribute('from', `${that.viewport.x} ${that.viewport.y}`);
+				that.svgScale.setAttribute('from', `${that.viewport.scale} ${that.viewport.scale}`);
+			});
 		}
 		let svg = '';
 		const fn = function(t)
@@ -10989,7 +11024,7 @@ class Diagram extends Functor
 		};
 		this.domain.elements.forEach(fn);
 		this.texts.forEach(fn);
-		this.svgRoot.innerHTML = svg;
+		this.svgBase.innerHTML = svg;
 		if (!('viewport' in this))
 			this.home();
 	}
@@ -10997,12 +11032,9 @@ class Diagram extends Functor
 	{
 		if (R.cloud && this.user === R.user.name && R.user.status === 'logged-in')
 		{
-//			document.getElementById('diagramUploadBtn').classList.add('vanish');
 			const btn = document.getElementById('diagramUploadBtn');
 			btn.setAttribute('repeatCount', 'indefinite');
-//			btn.setAttribute('begin', '0s');
 			btn.beginElement();
-console.log('uploading...');
 			const start = Date.now();
 			R.cloud.ingestDiagramLambda(e, this, function()
 			{
