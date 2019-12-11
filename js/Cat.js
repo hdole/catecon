@@ -443,6 +443,12 @@ class U
 	{
 		return elt.description.indexOf('\n') > -1 ?  elt.description.split('\n').map(t => `<tspan text-anchor="left" x="${elt.x}" dy="1.2em">${t}</tspan>`).join('') : elt.description;
 	}
+	static a2s(a)
+	{
+		if (Array.isArray(a))
+			return '[' + a.map(e => U.a2s(e)).join() + ']';
+		return a.toString();
+	}
 }
 Object.defineProperties(U,
 {
@@ -631,6 +637,7 @@ Create diagrams and execute morphisms.
 				new HelpAction(R.$Actions),
 				new JavascriptAction(R.$Actions),
 				new RunAction(R.$Actions),
+				new IoAction(R.$Actions),
 			]);
 			const categoryDiagram = new Diagram(R.$CAT, {basename:'category', name:'category', codomain:'Actions', description:'diagram for a category', user:'sys'});
 			let xy = new D2(300, 300);
@@ -738,39 +745,37 @@ Create diagrams and execute morphisms.
 	}
 	static Autoplace(diagram, args, xy)
 	{
-		let element = null;
+		let index = null;
 		if (args.prototype === 'DiagramText')
 		{
 			const nuArgs = U.clone(args);
 			nuArgs.xy = xy;
-			element = new DiagramText(diagram, nuArgs);
-			diagram.addSVG(element);
+			index = new DiagramText(diagram, nuArgs);
+			diagram.addSVG(index);
 		}
 		else if (CatObject.prototype.isPrototypeOf(args))
-		{
-			element = args;
-			diagram.placeObject(null, element, xy, false);
-		}
+			index = diagram.placeObject(null, args, xy, false);
 		else
 		{
-			element = Element.Process(diagram, args);
-			if (Morphism.prototype.isPrototypeOf(element))
+			const to = Element.Process(diagram, args);
+
+			if (Morphism.prototype.isPrototypeOf(to))
 			{
-				diagram.placeMorphism(null, element, xy, xy.add(D.default.stdArrow), false);
+				index = diagram.placeMorphism(null, to, xy, xy.add(D.default.stdArrow), false);
 				if ('js' in args)
-					element.code = {javascript:JavascriptAction.Header(element) + '\t' + args.js + JavascriptAction.Tail(element)};
+					to.code = {javascript:JavascriptAction.Header(to) + '\t' + args.js + JavascriptAction.Tail(to)};
 				else if ('code' in args)
-					element.code.javascript = args.code.javascript.replace(/%1/g, U.JsName(element));
+					to.code.javascript = args.code.javascript.replace(/%1/g, U.JsName(to));
 			}
-			else if (CatObject.prototype.isPrototypeOf(element))
-				diagram.placeObject(null, element, xy, false);
+			else if (CatObject.prototype.isPrototypeOf(to))
+				index = diagram.placeObject(null, to, xy, false);
 		}
 		if ('rowCount' in args)
 		{
 			args.rowCount++;
 			xy.y += 16 * D.default.layoutGrid;
 		}
-		return element;
+		return index;
 	}
 	static DiagramReferences(user, diagram, xy)
 	{
@@ -792,7 +797,16 @@ Create diagrams and execute morphisms.
 			user:			args.user,
 		}, args.xy.add(args.side));
 	}
-	static PlaceObject(args, basename, prototype, properName, description, moreArgs = {})
+	static PlaceObject(args, o)
+	{
+		R.CheckColumn(args);
+		R.PlaceSideText(args, o.description);
+		const i = args.diagram.placeObject(null, o, args.xy, false);
+		args.rowCount++;
+		args.xy.y += 16 * D.default.layoutGrid;
+		return i;
+	}
+	static MakeObject(args, basename, prototype, properName, description, moreArgs = {})
 	{
 		R.CheckColumn(args);
 		R.PlaceSideText(args, description);
@@ -810,10 +824,20 @@ Create diagrams and execute morphisms.
 		args.rowCount = nuArgs.rowCount;
 		return e;
 	}
-	static PlaceMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs = {})
+	static PlaceMorphism(args, m)
 	{
 		R.CheckColumn(args);
-		R.PlaceSideText(args, description);
+		R.PlaceSideText(args, m.description);
+		const i = args.diagram.placeMorphism(null, m, args.xy, args.xy.add(D.default.stdArrow), false);
+		args.xy = new D2(args.xy);
+		args.rowCount++;
+		args.xy.y += 16 * D.default.layoutGrid;
+		return i;
+	}
+	static MakeMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs = {})
+	{
+//		R.CheckColumn(args);
+//		R.PlaceSideText(args, description);
 		const nuArgs = U.clone(args);
 		nuArgs.xy = new D2(args.xy);
 		for (const n in moreArgs)
@@ -825,7 +849,13 @@ Create diagrams and execute morphisms.
 			nuArgs.properName = properName;
 		nuArgs.domain = domain;
 		nuArgs.codomain = codomain;
-		const e = R.Autoplace(args.diagram, nuArgs, nuArgs.xy);
+		const to = Element.Process(args.diagram, nuArgs);
+		if ('js' in nuArgs)
+			to.code = {javascript:JavascriptAction.Header(to) + '\t' + nuArgs.js + JavascriptAction.Tail(to)};
+		else if ('code' in nuArgs)
+			to.code.javascript = nuArgs.code.javascript.replace(/%1/g, U.JsName(to));
+		const e = R.PlaceMorphism(nuArgs, to);
+//		const e = R.Autoplace(args.diagram, nuArgs, nuArgs.xy);
 		args.xy = new D2(nuArgs.xy);
 		args.rowCount = nuArgs.rowCount;
 		return e;
@@ -872,18 +902,13 @@ Create diagrams and execute morphisms.
 			prototype:		'DiagramText',
 			user,
 		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const zero = pfs.getElement('#0');
-		R.PlaceSideText(args, 'The empty set or initial object');
-		R.Autoplace(basics, zero, args.xy);
-args.rowCount++;
-args.xy.y += 16 * D.default.layoutGrid;
-		R.PlaceSideText(args, 'The one point set or terminal object');
-		const one = R.Autoplace(basics, pfs.getElement('#1'), args.xy);
-args.rowCount++;		// TODO put 0 and 1 in a diagram
-args.xy.y += 16 * D.default.layoutGrid;
-		const tty = R.PlaceObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices');
-		const threeD = R.PlaceObject(args, 'D3', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices');
+		args.xy.y += 16 * D.default.layoutGrid;
+		const zero = InitialObject.Get(basics);	// creates if need be
+		const one = TerminalObject.Get(basics);	// creates if need be
+		R.PlaceObject(args, zero);
+		R.PlaceObject(args, one);
+		const tty = R.MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
+		const threeD = R.MakeObject(args, 'D3', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices').to;
 		D.ShowDiagram(basics);
 		basics.home();
 		basics.update();
@@ -912,14 +937,19 @@ args.xy.y += 16 * D.default.layoutGrid;
 			user,
 			properName:		'&Omega;',
 		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const two = R.PlaceObject(args, 'two', 'FiniteObject', '&Omega;', 'The sub-object classifier, or better known in these circumstances as the two point set', {size:2});
-		const twoPair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[two, two]});
-		const mTrue = R.PlaceMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true', one, two, {js:'return true;'});
-		const mFalse = R.PlaceMorphism(args, 'false', 'Morphism', '&perp;', 'The truth value known as false', one, two, {js:'return false;'});
-		const logicNot = R.PlaceMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value', two, two, {js:'return !args;'});
-		const logicAnd = R.PlaceMorphism(args, 'and', 'Morphism', '&and;', 'The logical and of two logic values', twoPair, two, {js:'return args[0] && args[1];'});
-		const logicOr = R.PlaceMorphism(args, 'or', 'Morphism', '&or;', 'The logical or of two logic values', twoPair, two, {js:'return args[0] || args[1];'});
+		args.xy.y += 16 * D.default.layoutGrid;
+		const two = CoproductObject.Get(logic, [one, one]);
+		const omega = new NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
+		const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
+		args.rowCount++;
+		args.xy.y += 16 * D.default.layoutGrid;
+		const id2 = new DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
+		const omegaPair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
+		const mTrue = R.MakeMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true', one, omega, {js:'return true;'}).to;
+		const mFalse = R.MakeMorphism(args, 'false', 'Morphism', '&perp;', 'The truth value known as false', one, omega, {js:'return false;'}).to;
+		const logicNot = R.MakeMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value', omega, omega, {js:'return !args;'}).to;
+		const logicAnd = R.MakeMorphism(args, 'and', 'Morphism', '&and;', 'The logical and of two logic values', omegaPair, omega, {js:'return args[0] && args[1];'}).to;
+		const logicOr = R.MakeMorphism(args, 'or', 'Morphism', '&or;', 'The logical or of two logic values', omegaPair, omega, {js:'return args[0] || args[1];'}).to;
 		R.DiagramReferences(user, logic, args.xy);
 		D.ShowDiagram(logic);
 		logic.home();
@@ -949,17 +979,17 @@ args.xy.y += 16 * D.default.layoutGrid;
 			user,
 		}, args.xy);
 args.xy.y += 16 * D.default.layoutGrid;
-		const N = R.PlaceObject(args, 'N', 'CatObject', '<tspan class="bold">&Nopf;</tspan>', 'The natural numbers');
-		const Nzero = R.PlaceMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N, {js:'return 0;'});
-		const None = R.PlaceMorphism(args, 'one', 'Morphism', '1', 'The natural number one', one, N, {js:'return 1;'});
-		const Ninfinity = R.PlaceMorphism(args, 'infinity', 'Morphism', '&infin;', 'The maximum safe natural number', one, N, {js:'return Number.MAX_SAFE_INTEGER;'});
-		const Npair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of natural numbers', {objects:[N, N]});
-		const Nadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two natural numbers', Npair, N, {js:'return args[0] + args[1];'});
-		const Nmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two natural numbers', Npair, N, {js:'return args[0] * args[1];'});
-		const Nsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the natural numbers', N, N, {js:'return args + 1;'});
-		const Nless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first natural number less than the second', Npair, two, {js:'return args[0] < args[1];'});
-		const NlessEq = R.PlaceMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first natural number less than or equal to the second', Npair, two, {js:'return args[0] <= args[1];'});
-		const Nequals = R.PlaceMorphism(args, 'equals', 'Morphism', '=', 'compare two natural numbers for equality', Npair, two, {js:'return args[0] === args[1];'});
+		const N = R.MakeObject(args, 'N', 'CatObject', '<tspan class="bold">&Nopf;</tspan>', 'The natural numbers').to;
+		const Nzero = R.MakeMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N, {js:'return 0;'}).to;
+		const None = R.MakeMorphism(args, 'one', 'Morphism', '1', 'The natural number one', one, N, {js:'return 1;'}).to;
+		const Ninfinity = R.MakeMorphism(args, 'infinity', 'Morphism', '&infin;', 'The maximum safe natural number', one, N, {js:'return Number.MAX_SAFE_INTEGER;'}).to;
+		const Npair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of natural numbers', {objects:[N, N]}).to;
+		const Nadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two natural numbers', Npair, N, {js:'return args[0] + args[1];'}).to;
+		const Nmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two natural numbers', Npair, N, {js:'return args[0] * args[1];'}).to;
+		const Nsucc = R.MakeMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the natural numbers', N, N, {js:'return args + 1;'}).to;
+		const Nless = R.MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first natural number less than the second', Npair, omega, {js:'return args[0] < args[1];'}).to;
+		const NlessEq = R.MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first natural number less than or equal to the second', Npair, omega, {js:'return args[0] <= args[1];'}).to;
+		const Nequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two natural numbers for equality', Npair, omega, {js:'return args[0] === args[1];'}).to;
 		R.DiagramReferences(user, Narith, args.xy);
 		D.ShowDiagram(Narith);
 		Narith.home();
@@ -989,17 +1019,17 @@ args.xy.y += 16 * D.default.layoutGrid;
 			user,
 		}, args.xy);
 args.xy.y += 16 * D.default.layoutGrid;
-		const Z = R.PlaceObject(args, 'Z', 'CatObject', '<tspan class="bold">&Zopf;</tspan>', 'The integers');
-		const N2Z = R.PlaceMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z, {js:'return args;'});
-		const Zabs = R.PlaceMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of an integer is a natural number', Z, N, {js:'return Math.abs(args);'});
-		const Zzero = R.PlaceMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, Z, {js:'return 0;'});
-		const ZminusOne = R.PlaceMorphism(args, 'minusOne', 'Morphism', '&lsquo;-1&rsquo;', 'The first interesting integer: minus one', one, Z, {js:'return -1;'});
-		const Zpair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of integers', {objects:[Z, Z]});
-		const Zadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two integers', Zpair, Z, {js:'return args[0] + args[1];'});
-		const Zsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two integers', Zpair, Z, {js:'return args[0] - args[1];'});
-		const Zmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two integers', Zpair, Z, {js:'return args[0] * args[1];'});
-		const ZplusOne = R.PlaceObject(args, '', 'CoproductObject', '', 'An integer or an exception', {objects:[Z, one]});
-		const Zdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '&div;', 'division of two integers or an exception', Zpair, ZplusOne,
+		const Z = R.MakeObject(args, 'Z', 'CatObject', '<tspan class="bold">&Zopf;</tspan>', 'The integers').to;
+		const N2Z = R.MakeMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z, {js:'return args;'}).to;
+		const Zabs = R.MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of an integer is a natural number', Z, N, {js:'return Math.abs(args);'}).to;
+		const Zzero = R.MakeMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, Z, {js:'return 0;'}).to;
+		const ZminusOne = R.MakeMorphism(args, 'minusOne', 'Morphism', '&lsquo;-1&rsquo;', 'The first interesting integer: minus one', one, Z, {js:'return -1;'}).to;
+		const Zpair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of integers', {objects:[Z, Z]}).to;
+		const Zadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two integers', Zpair, Z, {js:'return args[0] + args[1];'}).to;
+		const Zsubtract = R.MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two integers', Zpair, Z, {js:'return args[0] - args[1];'}).to;
+		const Zmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two integers', Zpair, Z, {js:'return args[0] * args[1];'}).to;
+		const ZplusOne = R.MakeObject(args, '', 'CoproductObject', '', 'An integer or an exception', {objects:[Z, one]}).to;
+		const Zdiv = R.MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two integers or an exception', Zpair, ZplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
@@ -1009,9 +1039,9 @@ args.xy.y += 16 * D.default.layoutGrid;
 	return [0, args[0] / args[1]];
 }
 `			},
-		});
-		const Zsucc = R.PlaceMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the integers', Z, Z, {js:'return args + 1;'});
-		const Zmodulus = R.PlaceMorphism(args, 'modulus', 'Morphism', '%', 'The modulus of two integers or an exception', Zpair, ZplusOne,
+		}).to;
+		const Zsucc = R.MakeMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the integers', Z, Z, {js:'return args + 1;'});
+		const Zmodulus = R.MakeMorphism(args, 'modulus', 'Morphism', '%', 'The modulus of two integers or an exception', Zpair, ZplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
@@ -1022,9 +1052,9 @@ args.xy.y += 16 * D.default.layoutGrid;
 }
 `			},
 		});
-		const Zless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given integer number less than the second', Zpair, two, {js:'return args[0] < args[1];'});
-		const ZlessEq = R.PlaceMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first integer less than or equal to the second', Zpair, two, {js:'return args[0] <= args[1];'});
-		const Zequals = R.PlaceMorphism(args, 'equals', 'Morphism', '=', 'compare two integers for equality', Zpair, two, {js:'return args[0] === args[1];'});
+		const Zless = R.MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given integer number less than the second', Zpair, omega, {js:'return args[0] < args[1];'});
+		const ZlessEq = R.MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first integer less than or equal to the second', Zpair, omega, {js:'return args[0] <= args[1];'});
+		const Zequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two integers for equality', Zpair, omega, {js:'return args[0] === args[1];'});
 		R.DiagramReferences(user, integers, args.xy);
 		D.ShowDiagram(integers);
 		integers.home();
@@ -1054,19 +1084,19 @@ args.xy.y += 16 * D.default.layoutGrid;
 			user,
 		}, args.xy);
 args.xy.y += 16 * D.default.layoutGrid;
-		const F = R.PlaceObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers');
-		const Fzero = R.PlaceMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero', one, F, {js:'return 0.0;'});
-		const Fe = R.PlaceMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F, {js:'return 0.0;'});
-		const Frandom = R.PlaceMorphism(args, 'random', 'Morphism', '?', 'a random number between 0.0 and 1.0', one, F, {js:'return Math.random();'});
-		const Fnl10 = R.PlaceMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, F, {js:'return Math.PI;'});
-		const Z2F = R.PlaceMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'});
-		const Fabs = R.PlaceMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a floating point number', F, F, {js:'return Math.abs(args);'});
-		const Fpair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of floating point numbers', {objects:[F, F]});
-		const Fadd = R.PlaceMorphism(args, 'add', 'Morphism', '+', 'Addition of two floating point numbers', Fpair, F, {js:'return args[0] + args[1];'});
-		const Fsubtract = R.PlaceMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two floating point numbers', Fpair, F, {js:'return args[0] - args[1];'});
-		const Fmult = R.PlaceMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two floating point numbers', Fpair, F, {js:'return args[0] * args[1];'});
-		const FplusOne = R.PlaceObject(args, '', 'CoproductObject', '', 'A floating point number or an exception', {objects:[F, one]});
-		const Fdiv = R.PlaceMorphism(args, 'divide', 'Morphism', '&div;', 'division of two floating point numbers or an exception', Fpair, FplusOne,
+		const F = R.MakeObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers').to;
+		const Fzero = R.MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero', one, F, {js:'return 0.0;'}).to;
+		const Fe = R.MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F, {js:'return 0.0;'}).to;
+		const Frandom = R.MakeMorphism(args, 'random', 'Morphism', '?', 'a random number between 0.0 and 1.0', one, F, {js:'return Math.random();'}).to;
+		const Fnl10 = R.MakeMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, F, {js:'return Math.PI;'}).to;
+		const Z2F = R.MakeMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'}).to;
+		const Fabs = R.MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a floating point number', F, F, {js:'return Math.abs(args);'}).to;
+		const Fpair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of floating point numbers', {objects:[F, F]}).to;
+		const Fadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two floating point numbers', Fpair, F, {js:'return args[0] + args[1];'}).to;
+		const Fsubtract = R.MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two floating point numbers', Fpair, F, {js:'return args[0] - args[1];'}).to;
+		const Fmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two floating point numbers', Fpair, F, {js:'return args[0] * args[1];'}).to;
+		const FplusOne = R.MakeObject(args, '', 'CoproductObject', '', 'A floating point number or an exception', {objects:[F, one]}).to;
+		const Fdiv = R.MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two floating point numbers or an exception', Fpair, FplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
@@ -1076,8 +1106,8 @@ args.xy.y += 16 * D.default.layoutGrid;
 	return [0, args[0] / args[1]];
 }
 `			},
-		});
-		const Fmodulus = R.PlaceMorphism(args, 'modulus', 'Morphism', '%', 'The modulus of two floating point numbers or an exception', Fpair, FplusOne,
+		}).to;
+		const Fmodulus = R.MakeMorphism(args, 'modulus', 'Morphism', '%', 'The modulus of two floating point numbers or an exception', Fpair, FplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
@@ -1087,15 +1117,15 @@ args.xy.y += 16 * D.default.layoutGrid;
 	return [0, args[0] % args[1]];
 }
 `			},
-		});
-		const Fless = R.PlaceMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given floating point number less than the second', Fpair, two, {js:'return args[0] < args[1];'});
-		const FlessEq = R.PlaceMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first floating point number less than or equal to the second', Fpair, two, {js:'return args[0] <= args[1];'});
-		const Fequals = R.PlaceMorphism(args, 'equals', 'Morphism', '=', 'compare two floating point numbers for equality', Fpair, two, {js:'return args[0] === args[1];'});
-		const ceil = R.PlaceMorphism(args, 'ceil', 'Morphism', 'ceil', 'The smallest integer greater than or equal to a given floating point number', F, Z, {js:'return Math.ceil(args);'});
-		const round = R.PlaceMorphism(args, 'round', 'Morphism', 'round', 'The nearest integer to a given floating point number', F, Z, {js:'return Math.round(args);'});
-		const floor = R.PlaceMorphism(args, 'floor', 'Morphism', 'floor', 'The greatest integer smaller than or equal to a given floating point number', F, Z, {js:'return Math.floor(args);'});
-		const truncate = R.PlaceMorphism(args, 'truncate', 'Morphism', 'trunc', 'The integer portion of a floating point number', F, Z, {js:'return Math.trunc(args);'});
-		const log = R.PlaceMorphism(args, 'log', 'Morphism', 'log', 'the natural logarithm of a given floating point number or an exception', F, FplusOne,
+		}).to;
+		const Fless = R.MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given floating point number less than the second', Fpair, omega, {js:'return args[0] < args[1];'}).to;
+		const FlessEq = R.MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first floating point number less than or equal to the second', Fpair, omega, {js:'return args[0] <= args[1];'}).to;
+		const Fequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two floating point numbers for equality', Fpair, omega, {js:'return args[0] === args[1];'}).to;
+		const ceil = R.MakeMorphism(args, 'ceil', 'Morphism', 'ceil', 'The smallest integer greater than or equal to a given floating point number', F, Z, {js:'return Math.ceil(args);'}).to;
+		const round = R.MakeMorphism(args, 'round', 'Morphism', 'round', 'The nearest integer to a given floating point number', F, Z, {js:'return Math.round(args);'}).to;
+		const floor = R.MakeMorphism(args, 'floor', 'Morphism', 'floor', 'The greatest integer smaller than or equal to a given floating point number', F, Z, {js:'return Math.floor(args);'}).to;
+		const truncate = R.MakeMorphism(args, 'truncate', 'Morphism', 'trunc', 'The integer portion of a floating point number', F, Z, {js:'return Math.trunc(args);'}).to;
+		const log = R.MakeMorphism(args, 'log', 'Morphism', 'log', 'the natural logarithm of a given floating point number or an exception', F, FplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
@@ -1106,8 +1136,8 @@ args.xy.y += 16 * D.default.layoutGrid;
 }
 `
 			},
-		});
-		const Fpow = R.PlaceMorphism(args, 'pow', 'Morphism', 'x&#x02b8;', 'raise the first number to the second number as exponent or an exception', Fpair, FplusOne,
+		}).to;
+		const Fpow = R.MakeMorphism(args, 'pow', 'Morphism', 'x&#x02b8;', 'raise the first number to the second number as exponent or an exception', Fpair, FplusOne,
 		{
 			code:			{javascript:
 `function %1(args)
@@ -1118,10 +1148,10 @@ args.xy.y += 16 * D.default.layoutGrid;
 }
 `
 			},
-		});
-		const Flist = R.PlaceObject(args, '', 'HomObject', '', 'A list of floating point numbers', {objects:[N, F]});
-		const Fmax = R.PlaceMorphism(args, 'max', 'Morphism', 'max', 'The maximum floating point number of the given list', Flist, F, {js:'return Math.max(...args);'});
-		const Fmin = R.PlaceMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F, {js:'return Math.min(...args);'});
+		}).to;
+		const Flist = R.MakeObject(args, '', 'HomObject', '', 'A list of floating point numbers', {objects:[N, F]}).to;
+		const Fmax = R.MakeMorphism(args, 'max', 'Morphism', 'max', 'The maximum floating point number of the given list', Flist, F, {js:'return Math.max(...args);'}).to;
+		const Fmin = R.MakeMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F, {js:'return Math.min(...args);'}).to;
 		R.DiagramReferences(user, floats, args.xy);
 		D.ShowDiagram(floats);
 		floats.home();
@@ -1151,21 +1181,23 @@ args.xy.y += 16 * D.default.layoutGrid;
 			user,
 		}, args.xy);
 args.xy.y += 16 * D.default.layoutGrid;
-		const str = R.PlaceObject(args, 'str', 'CatObject', 'Str', 'the space of all strings');
-		const strPair = R.PlaceObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]});
-		const strLength = R.PlaceMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N, {js:'return args.length;'});
-		const strAppend = R.PlaceMorphism(args, 'append', 'Morphism', '&bull;', 'append two strings', strPair, str, {js:'return args[0].concat(args[1]);'});
-		const strIncludes = R.PlaceMorphism(args, 'includes', 'Morphism', 'includes', 'is the first string included in the second', strPair, two, {js:'return args[1].includes(args[0]);'});
-		const strIndexOf = R.PlaceMorphism(args, 'indexOf', 'Morphism', '@', 'where in the first string is the second', strPair, Z, {js:'return args[0].indexOf(args[1]);'});
-		const strList = R.PlaceObject(args, '', 'HomObject', '', 'A list of strings', {objects:[N, str]});
+		const str = R.MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings').to;
+		const strPair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]}).to;
+		const emptyString = new DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
+
+		const strLength = R.MakeMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N, {js:'return args.length;'}).to;
+		const strAppend = R.MakeMorphism(args, 'append', 'Morphism', '&bull;', 'append two strings', strPair, str, {js:'return args[0].concat(args[1]);'}).to;
+		const strIncludes = R.MakeMorphism(args, 'includes', 'Morphism', 'includes', 'is the first string included in the second', strPair, omega, {js:'return args[1].includes(args[0]);'}).to;
+		const strIndexOf = R.MakeMorphism(args, 'indexOf', 'Morphism', '@', 'where in the first string is the second', strPair, Z, {js:'return args[0].indexOf(args[1]);'}).to;
+		const strList = R.MakeObject(args, '', 'HomObject', '', 'A list of strings', {objects:[N, str]}).to;
 		const strListStr = new ProductObject(strings, {objects:[strList, str]});
-		const strJoin = R.PlaceMorphism(args, 'join', 'Morphism', 'join', 'join a list of strings into a single string with another string as the conjunction', strListStr, str, {js:'// TODO'});
+		const strJoin = R.MakeMorphism(args, 'join', 'Morphism', 'join', 'join a list of strings into a single string with another string as the conjunction', strListStr, str, {js:'// TODO'}).to;
 		const strN = new ProductObject(strings, {objects:[str, N]});
-		const strCharAt = R.PlaceMorphism(args, 'charAt', 'Morphism', '@', 'the n\'th character in the string', strN, str, {js:'return args[0].charAt(args[1]);'});
-		const N2str = R.PlaceMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str, {js:'return args.toString();'});
-		const Z2str = R.PlaceMorphism(args, 'Z2str', 'Morphism', '&lsquo;&rsquo;', 'convert an integer to a string', Z, str, {js:'return args.toString();'});
-		const F2str = R.PlaceMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str, {js:'return args.toString();'});
-		const str2tty = R.PlaceMorphism(args, 'str2tty', 'Morphism', '&#120451;&#120451;&#120456;', 'emit the string to the TTY', str, tty,
+		const strCharAt = R.MakeMorphism(args, 'charAt', 'Morphism', '@', 'the n\'th character in the string', strN, str, {js:'return args[0].charAt(args[1]);'}).to;
+		const N2str = R.MakeMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str, {js:'return args.toString();'}).to;
+		const Z2str = R.MakeMorphism(args, 'Z2str', 'Morphism', '&lsquo;&rsquo;', 'convert an integer to a string', Z, str, {js:'return args.toString();'}).to;
+		const F2str = R.MakeMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str, {js:'return args.toString();'}).to;
+		const str2tty = R.MakeMorphism(args, 'str2tty', 'Morphism', '&#120451;&#120451;&#120456;', 'emit the string to the TTY', str, tty,
 		{
 			code:			{javascript:
 `
@@ -1175,7 +1207,7 @@ function %1(args)
 	ttyOut += args + '\\n';
 }
 `			},
-		});
+		}).to;
 		R.DiagramReferences(user, strings, args.xy);
 		D.ShowDiagram(strings);
 		strings.home();
@@ -1206,39 +1238,38 @@ function %1(args)
 			properName:		'&Omega;',
 		}, args.xy);
 args.xy.y += 16 * D.default.layoutGrid;
-		const html = R.PlaceObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices');
+		const html = R.MakeObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices').to;
 
-		const html2N = R.PlaceMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
-			{js:`return Number.parseInt(document.getElementById('in_' + args).value);`});
-		const html2Z = R.PlaceMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
-			{js:`return Number.parseInt(document.getElementById('in_' + args).value);`});
-		const html2F = R.PlaceMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
-			{js:`return Number.parseFloat(document.getElementById('in_' + args).value);`});
-		const html2Str = R.PlaceMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
+		const html2N = R.MakeMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
+			{js:`return Number.parseInt(document.getElementById('in_' + args).value);`}).to;
+		const html2Z = R.MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
+			{js:`return Number.parseInt(document.getElementById('in_' + args).value);`}).to;
+		const html2F = R.MakeMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
+			{js:`return Number.parseFloat(document.getElementById('in_' + args).value);`}).to;
+		const html2Str = R.MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
 			{js:`return document.getElementById('in_' + args).value;`});
 
-		const html2omega = R.PlaceMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two);
-//		const omega2html = R.PlaceMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
+		const html2omega = R.MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
+//		const omega2html = R.MakeMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
 
 		const N_html2str = LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
 
 		const strXN_html2str = ProductObject.Get(args.diagram, [str, N_html2str.codomain]);
 
-
-		const html2line = R.PlaceMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
-			{js:`return ['<input type="text" id="in_' + args + '" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`});
+		const html2line = R.MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
+			{js:`return ['<input type="text" id="in_' + args + '" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`}).to;
 		const N_html2N = LambdaMorphism.Get(args.diagram, html2N, [], [0]);
 		const strXN_html2N = ProductObject.Get(args.diagram, [str, N_html2N.codomain]);
-		const html2Nat = R.PlaceMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
-			{js:`return ['<input type="number" min="0" id="in_' + args + '" value="0"/>', ${U.JsName(N_html2N)}];`});
+		const html2Nat = R.MakeMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
+			{js:`return ['<input type="number" min="0" id="in_' + args + '" value="0"/>', ${U.JsName(N_html2N)}];`}).to;
 		const N_html2Z = LambdaMorphism.Get(args.diagram, html2Z, [], [0]);
 		const strXN_html2Z = ProductObject.Get(args.diagram, [str, N_html2Z.codomain]);
-		const html2Int = R.PlaceMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
-			{js:`return ['<input type="number" id="in_' + args + '" value="0" placeholder="Integer"/>', ${U.JsName(N_html2Z)}];`});
+		const html2Int = R.MakeMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
+			{js:`return ['<input type="number" id="in_' + args + '" value="0" placeholder="Integer"/>', ${U.JsName(N_html2Z)}];`}).to;
 		const N_html2F = LambdaMorphism.Get(args.diagram, html2F, [], [0]);
 		const strXN_html2F = ProductObject.Get(args.diagram, [str, N_html2F.codomain]);
-		const html2Float = R.PlaceMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
-			{js:`return ['<input type="number" id="in_' + args + '" placeholder="Float"/>', ${U.JsName(N_html2F)}];`});
+		const html2Float = R.MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
+			{js:`return ['<input type="number" id="in_' + args + '" placeholder="Float"/>', ${U.JsName(N_html2F)}];`}).to;
 		R.DiagramReferences(user, htmlDiagram, args.xy);
 		D.ShowDiagram(htmlDiagram);
 		htmlDiagram.home();
@@ -1382,7 +1413,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 			const m = R.diagram.getElement(morphismName);
 			if (m)
 			{
-				if (ja.canFormat(m.domain))
+				if (ja.canFormat(m))
 				{
 					D.ioPanel.open();
 					const html = ja.getInput(m.domain);
@@ -1391,7 +1422,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 						H.p(m.description, 'smallPrint') +
 						H.p(m.domain.description, 'smallPrint') +
 						html +
-						D.GetButton('edit', `R.$Actions.getElement('javascript').evaluate(event, R.diagram, '${m.name}', R.$Actions.getElement('javascript').postResult)`, 'Evaluate the inputs', D.default.button.tiny) +
+						D.GetButton('edit', `R.$Actions.getElement('javascript').evaluate(event, R.diagram, '${m.name}', R.$Actions.getElement('javascript').postResult)`, 'Evaluate inputs') +
 						H.br();
 				}
 				else
@@ -2119,12 +2150,12 @@ class Navbar
 			H.td(H.div(D.GetButton('settings', "D.settingsPanel.toggle()", 'Settings', sz))) +
 			H.td('&nbsp;&nbsp;&nbsp;');		// TODO for weird spacing problem with navbar
 		const html = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
-									H.td(H.span('', 'navbar-inset', 'user-navbar'), 'w20') +
+									H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
 									H.td(H.span('Catecon', 'title'), 'w20') +
 									H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
 									H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
 		this.element.innerHTML = html;
-		this.userElt = document.getElementById('user-navbar');
+		this.categoryElt = document.getElementById('category-navbar');
 		this.diagramElt = document.getElementById('diagram-navbar');
 		this.diagramElt.addEventListener('mouseenter', function(e)
 		{
@@ -2134,10 +2165,11 @@ class Navbar
 	}
 	update()
 	{
-		if (R.diagram && R.diagram !== this.diagram)
+		if (R.diagram)
 		{
 			this.diagram = R.diagram;
 			this.diagramElt.innerHTML = R.diagram ? R.diagram.properName + H.span(` by ${R.diagram.user}`, 'italic'): '';
+			this.categoryElt.innerHTML = R.diagram.codomain.properName;
 		}
 		let c = '#CCC';
 		switch(R.user.status)
@@ -2156,7 +2188,6 @@ class Navbar
 				break;
 		}
 		this.element.style.background = c;
-		this.userElt.innerHTML = R.user.name;
 	}
 }
 
@@ -2310,8 +2341,9 @@ class D
 						{
 							if (D.tool === 'select')
 							{
+								let fusible = false;
 								diagram.updateDragObjects(e);
-								diagram.updateFusible(e);
+								fusible = diagram.updateFusible(e);
 								let msg = '';
 								if (D.mouseover && diagram.selected.length === 1)
 								{
@@ -2335,7 +2367,7 @@ class D
 								}
 								else if (D.mouseover && !from.isFusible(D.mouseover))
 									from.updateGlow(true, 'badGlow');
-								else
+								else if (!fusible)
 									from.updateGlow(false);
 							}
 						}
@@ -2422,7 +2454,8 @@ class D
 				if (diagram.selected.length === 1)
 				{
 					const from = diagram.getSelected();
-					const target = from.isEquivalent(D.mouseover) ? null : D.mouseover;
+//					const target = from.isEquivalent(D.mouseover) ? null : D.mouseover;
+					const target = from.name === D.mouseover.name ? null : D.mouseover;
 					if (target)
 					{
 						if (diagram.isIsolated(from) && diagram.isIsolated(target))
@@ -2483,7 +2516,7 @@ class D
 				for (let i=0; i<diagram.selected.length; ++i)
 				{
 					const e = diagram.selected[i];
-					if (DiagramObject.prototype.isPrototypeOf(e))
+					if (DiagramObject.prototype.isPrototypeOf(e) || DiagramText.prototype.isPrototypeOf(e))
 						e.orig = {x:e.x, y:e.y};
 					if (DiagramMorphism.prototype.isPrototypeOf(e))
 					{
@@ -2503,7 +2536,7 @@ class D
 		}
 		D.drag = false;
 	}
-	static Drop(e)
+	static Drop(e)	// from panel dragging
 	{
 		const diagram = R.diagram;
 		if (!diagram.isEditable())
@@ -2519,15 +2552,22 @@ class D
 			const name = e.dataTransfer.getData('text');
 			if (name.length === 0)
 				return;
-			const elt = diagram.getElement(name);
-			let from = null;
-			let to = null;
-			if (CatObject.prototype.isPrototypeOf(elt))
-				diagram.placeObject(e, elt, xy);
-			else if (Diagram.prototype.isPrototypeOf(elt))
-				D.AddReference(e, name);
-			else if (Morphism.prototype.isPrototypeOf(elt))
-				diagram.placeMorphism(e, elt, xy);
+			let elt = diagram.getElement(name);
+			if (!elt)
+			{
+				elt = R.$CAT.getElement(name);		// dropping a diagram?
+				if (Diagram.prototype.isPrototypeOf(elt))
+					D.AddReference(e, name);
+			}
+			else
+			{
+				let from = null;
+				let to = null;
+				if (CatObject.prototype.isPrototypeOf(elt))
+					diagram.placeObject(e, elt, xy);
+				else if (Morphism.prototype.isPrototypeOf(elt))
+					diagram.placeMorphism(e, elt, xy);
+			}
 			diagram.update();
 		}
 		catch(err)
@@ -2660,7 +2700,7 @@ ${button}
 //		diagram.viewport.x = diagram.viewport.x - dx;
 //		diagram.viewport.y = diagram.viewport.y - dy;
 //		diagram.setView(diagram.viewport.x - dx, diagram.viewport.y - dy, diagram.viewport.scale);
-		diagram.setView(diagram.viewport.x, diagram.viewport.y, nuScale);
+		diagram.setView(diagram.viewport.x - dx, diagram.viewport.y - dy, nuScale);
 	}
 	static AddEventListeners()
 	{
@@ -2742,7 +2782,7 @@ ${button}
 		if (typeof e === 'object')
 		{
 			s.style.left = `${e.clientX + 10}px`;
-			s.style.top = `${e.clientY}px`;
+			s.style.top = `${e.clientY - 30}px`;
 			s.style.opacity = "1";
 			s.style.display = 'block';
 			D.statusXY = {x:e.clientX, y:e.clientY};
@@ -3052,9 +3092,9 @@ ${button}
 		else
 			throw 'no reference diagram';
 		D.diagramPanel.referenceSection.update();
-		D.objectPanel.referenceObjectSection.update();
-		D.morphismPanel.referenceMorphismSection.update();
-		R.SaveLocal(R.diagram);
+		D.objectPanel.update();
+		D.morphismPanel.update();
+		R.diagram.update();
 		D.Status(e, `Diagram ${diagram.properName} now referenced`);
 		D.diagramPanel.referenceSection.update();
 	}
@@ -3065,13 +3105,17 @@ ${button}
 			throw 'no reference diagram';
 		R.diagram.removeReference(name);
 		D.diagramPanel.referenceSection.update();
+		D.objectPanel.update();
+		D.morphismPanel.update();
+		R.diagram.update();
+		D.Status(e, `${diagram.properName} reference removed`);
 	}
 	static ShowInput(name, id, factor)
 	{
 		const o = R.diagram.getElement(name);
 		const sel = document.getElementById(id);
 		const ndx = Number.parseInt(sel.value);
-		const f = [...factor, ndx];
+		const f = Array.isArray(factor) ? [...factor, ndx] : [factor, ndx];
 		const divId = `dv_${o.objects[ndx].name} ${f.toString()}`;
 		const elt = document.getElementById(divId);
 		for (let i=0; i<elt.parentNode.children.length; ++i)
@@ -3610,8 +3654,8 @@ class NewCategorySection extends Section
 			{
 				basename:		U.HtmlSafe(this.basenameElt.value),
 				category:		R.CAT,
-				description:	U.HtmlSafe(this.descriptionElt.value),
-				properName:		U.HtmlSafe(this.properNameElt.value),
+				description:	U.HtmlEntitySafe(this.descriptionElt.value),
+				properName:		U.HtmlEntitySafe(this.properNameElt.value),
 				user:			R.user.name,
 			});
 			if (this.hasProductsElt.checked)
@@ -3700,9 +3744,10 @@ class CategoryPanel extends Panel
 			this.userElt.innerHTML = this.category.user;
 			const isEditable = this.category.isEditable();
 			this.properNameEditElt.innerHTML = isEditable ?
-				D.GetButton('edit', `R.category.editElementText(event, 'category-properName', 'properName')`, 'Retitle', D.default.button.tiny) : '';
+				// TODO editElementText cannot work
+				D.GetButton('edit', `D.categoryPanel.setProperName('category-properName')`, 'Retitle', D.default.button.tiny) : '';
 			this.descriptionEditElt.innerHTML = isEditable ?
-				D.GetButton('edit', `D.diagramPanel.setDiagramDescription()`, 'Edit description', D.default.button.tiny) : '';
+				D.GetButton('edit', `D.categoryPanel.setDescription()`, 'Edit description', D.default.button.tiny) : '';
 			const actions = [];
 			this.category.actions.forEach(function(a) { actions.push(U.DeCamel(a.properName)); });
 			this.actionsElt.innerHTML = actions.join(', ');
@@ -4064,8 +4109,8 @@ class NewDiagramSection extends Section
 			{
 				basename,
 				codomain:		this.codomainElt.value,
-				properName:		U.HtmlSafe(this.properNameElt.value),
-				description:	U.HtmlSafe(this.descriptionElt.value),
+				properName:		U.HtmlEntitySafe(this.properNameElt.value),
+				description:	U.HtmlEntitySafe(this.descriptionElt.value),
 				user:			R.user.name,
 			});
 			diagram.makeSvg();
@@ -4137,16 +4182,17 @@ class DiagramSection extends Section
 		tools +=	D.DownloadButton('JSON', `R.LoadDiagram('${diagram.name}').downloadJSON(event)`, 'Download JSON') +
 				D.DownloadButton('JS', `R.LoadDiagram('${diagram.name}').downloadJS(event)`, 'Download Javascript') +
 				D.DownloadButton('PNG', `R.LoadDiagram('${diagram.name}').downloadPNG(event)`, 'Download PNG');
-		if (R.diagram.references.has(diagram.name) &&
-			R.diagram.user === R.user.name && 'refcnt' in diagram && diagram.refcnt === 1 && R.diagram.canRemoveReferenceDiagram(diagram.name))
-			tools += D.GetButton('delete', `R.diagram.removeReference(event,'${diagram.name}')`, 'Remove reference diagram');
+//		if (R.diagram.references.has(diagram.name) &&
+//			R.diagram.user === R.user.name && 'refcnt' in diagram && R.diagram.refcnt === 1 && R.diagram.canRemoveReferenceDiagram(diagram.name))
+//			R.diagram.user === R.user.name && 'refcnt' in diagram && R.diagram.canRemoveReferenceDiagram(diagram.name))
+//			tools += D.GetButton('delete', `R.RemoveReference(event,'${diagram.name}')`, 'Remove reference diagram');
 		const tbl = H.table(
 				H.tr(H.td(H.h4(diagram.properName)) + H.td(tools, 'right')) +
-				H.tr(H.td(`<img src="${src}" id="img_${diagram.name}" alt="Not loaded" width="200" height="150"/>`, 'white', '', '', 'colspan="2"')) +
+				H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')"><img src="${src}" id="img_${diagram.name}" alt="Not loaded" width="200" height="150"/></a>`, 'white', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.description, 'description', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.user, 'author') + H.td(dt.toLocaleString(), 'date')));
-		return H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')">` + tbl + '</a>'), 'grabbable sidenavRow', '', '',
-			`draggable="true" ondragstart="D.DragElement(event, '${diagram.name}')"`);
+//		return H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')">` + tbl + '</a>'), 'grabbable sidenavRow', '', '',
+		return H.tr(H.td(tbl), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="D.DragElement(event, '${diagram.name}')"`);
 	}
 }
 
@@ -4166,7 +4212,11 @@ class DiagramPanel extends Panel
 		this.newDiagramSection = new NewDiagramSection(this.elt);
 		const deleteReferenceButton = function(diagram)
 		{
-			return diagram.refcnt === 0 ? D.GetButton('delete', `D.RemoveReference(event,'${diagram.name}')`, 'Remove reference diagram') : '';
+//			return diagram.refcnt === 0 ? D.GetButton('delete', `D.RemoveReference(event,'${diagram.name}')`, 'Remove reference diagram') : '';
+			if (R.diagram.references.has(diagram.name) && R.diagram.user === R.user.name && 'refcnt' in diagram && R.diagram.canRemoveReferenceDiagram(diagram.name))
+//			R.diagram.user === R.user.name && 'refcnt' in diagram && R.diagram.refcnt === 1 && R.diagram.canRemoveReferenceDiagram(diagram.name))
+				return D.GetButton('delete', `D.RemoveReference(event,'${diagram.name}')`, 'Remove reference diagram');
+			return '';
 		};
 		this.referenceSection = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram', deleteReferenceButton);
 		const deleteUserDiagramButton = function(diagram)
@@ -4213,20 +4263,38 @@ class DiagramPanel extends Panel
 			this.descriptionElt.innerHTML = this.diagram.description;
 			this.userElt.innerHTML = this.diagram.user;
 			this.properNameEditElt.innerHTML = !this.diagram.isEditable() ? '' :
-				D.GetButton('edit', `R.diagram.editElementText(event, 'diagram-properName', 'properName')`, 'Retitle', D.default.button.tiny);
+				D.GetButton('edit', `D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
 			this.descriptionEditElt.innerHTML = !this.diagram.isEditable() ? '' :
-				D.GetButton('edit', `D.diagramPanel.setDiagramDescription()`, 'Edit description', D.default.button.tiny);
+				D.GetButton('edit', `D.diagramPanel.setDescription()`, 'Edit description', D.default.button.tiny);
 			this.setToolbar(this.diagram);
 			const dt = new Date(this.diagram.timestamp);
 			this.timestampElt.innerHTML = dt.toLocaleString();
 		}
 	}
-	setDiagramDescription()
+	setProperName()
+	{
+		const diagram = R.diagram;
+		if (diagram.isEditable() && this.properNameElt.contentEditable === 'true' && this.properNameElt.textContent !== '')
+		{
+			diagram.properName = U.HtmlEntitySafe(this.properNameElt.innerText);
+			D.navbar.update();
+//			D.diagramPanel.update();
+			this.properNameElt.contentEditable = false;
+			R.SaveLocal(diagram);
+		}
+		else
+		{
+			this.properNameElt.contentEditable = true;
+			this.properNameElt.focus();
+		}
+	}
+	setDescription()
 	{
 		const diagram = R.diagram;
 		if (diagram.isEditable() && this.descriptionElt.contentEditable === 'true' && this.descriptionElt.textContent !== '')
 		{
-			R.diagram.description = U.HtmlSafe(this.descriptionElt.textContent);
+			R.diagram.description = U.HtmlEntitySafe(this.descriptionElt.textContent);
+			D.navbar.update();
 			this.descriptionElt.contentEditable = false;
 			R.SaveLocal(diagram);
 		}
@@ -4600,7 +4668,7 @@ class NewObjectSection extends Section
 				basename,
 				category:		diagram.codomain,
 				properName:		U.HtmlEntitySafe(this.properNameElt.value),
-				description:	U.HtmlSafe(this.descriptionElt.value),
+				description:	U.HtmlEntitySafe(this.descriptionElt.value),
 			});
 			diagram.placeObject(e, to);
 			D.ShowToolbar(e, D.Center(R.diagram));
@@ -4719,7 +4787,7 @@ class NewMorphismSection extends Section
 				basename,
 				category:		diagram.codomain,
 				properName:		U.HtmlEntitySafe(this.properNameElt.value),
-				description:	U.HtmlSafe(this.descriptionElt.value),
+				description:	U.HtmlEntitySafe(this.descriptionElt.value),
 				domain:			diagram.codomain.getElement(this.domainElt.value),
 				codomain:		diagram.codomain.getElement(this.codomainElt.value),
 			});
@@ -4991,14 +5059,17 @@ class Element
 	json()
 	{
 		const a = {};
-		a.description =	this.description;
-		a.signature =	this.signature;
+		if (this.description !== '')
+			a.description =	this.description;
+		if ('signature' in this)	// not for index cats
+			a.signature =	this.signature;
 		if ('basename' in this)
 			a.basename =	this.basename;
 		if ('name' in this)
 			a.name =	this.name;
 		a.prototype =	this.constructor.name;
-		a.properName =	this.properName;
+		if (this.basename !== this.properName)
+			a.properName =	this.properName;
 		a.readonly =	this.readonly;
 		if ('category' in this && this.category)
 			a.category = this.category.name;
@@ -5742,7 +5813,7 @@ class ProductObject extends MultiObject
 	static Get(diagram, objects)
 	{
 		if (!objects || objects.length === 0)
-			return diagram.getElement('#1');	// TODO
+			return TerminalObject.Get(diagram);
 		if (objects.length === 1)
 			return objects[0];
 		const name = ProductObject.Codename(diagram, objects);
@@ -6077,6 +6148,7 @@ class DiagramObject extends CatObject
 		});
 		if ('to' in nuArgs)
 			this.setObject(diagram.getElement(nuArgs.to));
+		delete this.signature;
 	}
 	help(helped = new Set)
 	{
@@ -6162,12 +6234,15 @@ class DiagramObject extends CatObject
 			s.classList.add(...['fuseObject']);
 			s.classList.remove(...['selected', 'grabbable', 'object']);
 			D.Status(e, 'Fuse');
+			this.updateGlow(true, 'glow');
 		}
 		else
 		{
 			s.classList.add(...['selected', 'grabbable', 'object']);
 			s.classList.remove(...['fuseObject']);
+debugger;
 			D.Status(e, '');
+			this.updateGlow(false, '');
 		}
 	}
 }
@@ -6290,7 +6365,7 @@ class NameAction extends Action
 			source,
 			basename:		U.HtmlSafe(			document.getElementById('named-element-new-basename').value.trim()),
 			properName:		U.HtmlEntitySafe(	document.getElementById('named-element-new-properName').value.trim()),
-			description:	U.HtmlSafe(			document.getElementById('named-element-new-description').value),
+			description:	U.HtmlEntitySafe(			document.getElementById('named-element-new-description').value),
 		};
 		try
 		{
@@ -6991,10 +7066,12 @@ class TerminalMorphismAction extends Action
 		const m = TerminalMorphism.Get(diagram, object.to);
 		diagram.objectPlaceMorphism(e, 'domain', object, m.name)
 	}
+	/*
 	initialize(category)
 	{
 		new TerminalObject(null, {category});
 	}
+	*/
 	hasForm(diagram, ary)	// one object
 	{
 		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
@@ -7019,10 +7096,12 @@ class InitialMorphismAction extends Action
 		const m = InitialMorphism.Get(diagram, object.to);
 		diagram.objectPlaceMorphism(e, 'codomain', object, m.name)
 	}
+	/*
 	initialize(category)
 	{
 		new InitialObject(null, {category});
 	}
+	*/
 	hasForm(diagram, ary)	// one object
 	{
 		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
@@ -7248,7 +7327,14 @@ class LambdaMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]);
+		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]))
+		{
+			const m = ary[0].to;
+			if (TerminalObject.prototype.isPrototypeOf(m.domain) && !HomObject.prototype.isPrototypeOf(m.codomain))
+				return false;
+			return true;
+		}
+		return false;
 	}
 	html(e, diagram, ary)
 	{
@@ -7535,9 +7621,8 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 					case 'LambdaMorphism':
 						code += this.generate(m.preCurry, generated);
 						const inputs = new Array(this.objectLength(m.preCurry.domain));
-						const domLength = this.objectLength(m.domain);
 						const lambdaDomLength = this.objectLength(m.domain);
-						const lambdaHomCodLength = this.objectLength(m.codomain.objects[0]);
+						const lambdaHomCodLength = m.homFactors.length > 0 ? this.objectLength(m.codomain.objects[0]) : 0;
 						for(let i=0; i<m.domFactors.length; ++i)
 						{
 							const f = m.domFactors[i];
@@ -7553,12 +7638,13 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						let input = inputs.join();
 						if (inputs.length > 1)
 							input = `[${inputs}]`;
+//						if (this.objectLength(m.domain) > 0)
+//							code += '	const cargs = args;\n';
+						
 						code +=
-`${header}	return function(${domLength > 0 ? 'bargs' : ''})
+`${header}${this.objectLength(m.domain) > 0 ? '	const cargs = args;\n' : ''}	return function(${lambdaDomLength > 0 ? 'bargs' : ''})
 	{
 `;
-		if (this.objectLength(m.domain) > 0)
-			code += '		const cargs = args;\n';
 		code +=
 `		return ${U.JsName(m.preCurry)}${lambdaDomLength > 0 ? '(' : ''}${input}${lambdaDomLength > 0 ? ')' : ''};
 	};${tail}`;
@@ -7581,7 +7667,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	}
 	generateDiagram(diagram)
 	{
-		let code = 'const HelloThere = 38;\n';
+		let code = '';
 		const generated = new Set;
 		generated.add('');	// no exec
 		const that = this;
@@ -7596,7 +7682,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		if (TerminalObject.prototype.isPrototypeOf(o) || InitialObject.prototype.isPrototypeOf(o))
 			return 0;
 		if (ProductObject.prototype.isPrototypeOf(o))
-			return o.objects.reduce((r, o) => r + TerminalObject.prototype.isPrototypeOf(o) ? 0 : 1, 0);
+			return o.objects.reduce((r, o) => r + (TerminalObject.prototype.isPrototypeOf(o) ? 0 : 1), 0);
 		else
 			return 1;
 	}
@@ -7643,14 +7729,14 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	}
 	canFormat(o)
 	{
-		switch(o.constructor.name)
-		{
-			case 'CatObject':
-				return this.formatters.has(o.signature);
-			case 'ProductObject':
-			case 'CoproductObject':
-				return o.objects.reduce((r, ob) => r && this.canFormat(ob));
-		}
+		if (ProductObject.prototype.isPrototypeOf(o) || CoproductObject.prototype.isPrototypeOf(o))
+			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
+		else if (Morphism.prototype.isPrototypeOf(o))
+			return this.canFormat(o.domain) && this.canFormat(o.codomain);
+		else if (TerminalObject.prototype.isPrototypeOf(o))
+			return true;
+		else if (CatObject.prototype.isPrototypeOf(o))
+			return this.formatters.has(o.signature);
 		return false;
 	}
 	getInput(o, factor = [])
@@ -7740,7 +7826,7 @@ ${divs}
 	postResult(r)
 	{
 		var d = document.createElement('div');
-		d.innerHTML = U.HtmlSafe(r.toString());
+		d.innerHTML = U.HtmlSafe(U.a2s(r));
 		D.ioPanel.ioElt.appendChild(d);
 	}
 	evaluate(e, diagram, name, fn)
@@ -7892,6 +7978,26 @@ ${this.jsAction.generate(m)}
 	hasForm(diagram, ary)	// one iterable composite morphism
 	{
 		return ary.length === 1 && Composite.prototype.isPrototypeOf(ary[0].to) && ary[0].to.isIterable();
+	}
+}
+
+class IoAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Run a morphism',
+						name:		'io',
+						icon:		D.svg.io,};
+		super(diagram, args);
+		this.jsAction = R.$Actions.getElement('javascript');
+	}
+	action(e, diagram, ary)
+	{
+		R.DisplayMorphismInput(ary[0].to);
+	}
+	hasForm(diagram, ary)	// one iterable composite morphism
+	{
+		return ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && this.jsAction.canFormat(ary[0].to);
 	}
 }
 
@@ -8540,10 +8646,10 @@ class NamedObject extends CatObject	// name of an object
 //	}
 	static Get(diagram, dom, basename)
 	{
-		const domain = diagram.getElement(dom);
+		const source = diagram.getElement(dom);
 //		const name = NamedObject.Codename(diagram, domain, basename);
 		const m = diagram.getElement(basename);
-		return m ? m : new NamedObject(diagram, {basename, domain});
+		return m ? m : new NamedObject(diagram, {basename, source});
 	}
 }
 
@@ -8564,6 +8670,7 @@ class DiagramMorphism extends Morphism
 			this.morphisms.map(m => m.incrRefcnt());
 		}
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
+		delete this.signature;
 	}
 	help(helped = new Set)
 	{
@@ -8669,6 +8776,7 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 			path.classList.remove(...['selected', 'grabbable', 'morphism']);
 			name.classList.add(...['fuseMorphism']);
 			name.classList.remove(...['morphTxt', 'selected', 'grabbable']);
+			this.updateGlow(true, 'glow');
 		}
 		else
 		{
@@ -8677,6 +8785,7 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 			path.classList.remove(...['fuseMorphism']);
 			name.classList.add(...['morphTxt', 'selected', 'grabbable']);
 			name.classList.remove(...['fuseMorphism']);
+			this.updateGlow(false, '');
 		}
 	}
 	updateDecorations()
@@ -9370,7 +9479,7 @@ class FactorMorphism extends Morphism
 		{
 			const indices = factors[i];
 			const f = domain.getFactor(indices);
-			if (f.name !== '#1')
+			if (f.name !== '#1')	// TODO
 				basename += f.name + ',' + indices.join(',');
 			else
 				basename += f.name;
@@ -9460,7 +9569,7 @@ class CofactorMorphism extends Morphism
 		{
 			const indices = factors[i];
 			const f = domain.getFactor(indices);
-			if (f.name !== '#1')
+			if (f.name !== '#1')	// TODO
 				basename += f.name + ',' + indices.join(',');
 			else
 				basename += f.name;
@@ -9751,7 +9860,7 @@ class LambdaMorphism extends Morphism
 		this.domFactors = args.domFactors;
 		this.homFactors = args.homFactors;
 		if (!('description' in nuArgs))
-			this.description = `The currying of the morphism ${this.preCurry.properName} by the factors ${this.homFactors.toString()}`;
+			this.description = `The currying of the morphism ${this.preCurry.properName} by the factors ${U.a2s(this.homFactors)}`;
 		this.signature = this.getLambdaSignature();
 	}
 	help(helped = new Set)
@@ -9777,7 +9886,7 @@ class LambdaMorphism extends Morphism
 	getLambdaSignature()
 	{
 //		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${this.domFactors.map(f => f.join('-')).join(':')} ${this.homFactors.map(f => f.join('-')).join(':')}`);
-		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${this.domFactors.toString()} ${this.homFactors.toString()}`);
+		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${U.a2s(this.domFactors)} ${U.a2s(this.homFactors)}`);
 	}
 	json()
 	{
@@ -9827,7 +9936,7 @@ class LambdaMorphism extends Morphism
 		const hom = HomObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
 		const dom = ProductObject.Codename(diagram, domFactors.map(f => hom.getFactorName(f)));
 		const cod = ProductObject.Codename(diagram, homFactors.map(f => hom.getFactorName(f)));
-		return `${preCurry.domain.name}:Lm{${preCur.name},${dom}:${domFactors.toString()},${cod}:${homFactors.toString()}}mL`;
+		return `${preCurry.domain.name}:Lm{${preCur.name},${dom}:${U.a2s(domFactors)},${cod}:${U.a2s(homFactors)}}mL`;
 	}
 	static Codename(diagram, preCurry, domFactors, homFactors)
 	{
@@ -9967,7 +10076,7 @@ class StringMorphism extends Morphism
 			for (let i=0; i<expr.links.length; ++i)
 			{
 				const lnk = expr.links[i];
-				const lnkStr = lnk.toString();
+				const lnkStr = lnk.toString();	// TODO use U.a2s?
 				const lnkKey = StringMorphism.LinkColorKey(lnk, data.dom.name, data.cod.name);
 				let linkColorIndex = diagram.link2colorIndex[lnkKey];
 				while(linkColorIndex in diagram.colorIndex2colorIndex)
@@ -9986,7 +10095,7 @@ class StringMorphism extends Morphism
 					diagram.colorIndex2colorIndex[linkColorIndex] = colorIndex;
 				}
 				const color = diagram.colorIndex2color[colorIndex];
-				const idxStr = data.index.toString();
+				const idxStr = data.index.toString();	// TODO use U.a2s?
 				if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
 					continue;
 				const d = StringMorphism.SvgLinkUpdate(dom, lnk, data);
@@ -10041,7 +10150,7 @@ class StringMorphism extends Morphism
 	}
 	static LinkColorKey(lnk, dom, cod)
 	{
-		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;
+		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;	// TODO use U.a2s?
 	}
 	static ColorWheel(data)
 	{
@@ -10777,6 +10886,7 @@ class Diagram extends Functor
 		R.diagram && this.makeSelected(e, from);
 		this.update(save);
 		R.diagram && D.morphismPanel.update();
+		return from;
 	}
 	objectPlaceMorphism(e, dir, objName, morphName)
 	{
@@ -10786,7 +10896,8 @@ class Diagram extends Functor
 			const fromObj = this.domain.getElement(objName);
 			const toObj = fromObj.to;
 			if (to[dir].name !== toObj.name)
-				throw `Source and target do not have same code: ${to[dir].properName} vs ${toObj.properName}`;
+			if (!to[dir].isEquivalent(toObj))
+				throw `Source and target do not have same signature: ${to[dir].properName} vs ${toObj.properName}`;
 			const angles = [];
 			this.domain.forEachMorphism(function(m)
 			{
@@ -10860,11 +10971,14 @@ class Diagram extends Functor
 	}
 	updateFusible(e)
 	{
+		let fusible = false;
 		if (this.selected.length === 1)
 		{
 			const elt = this.getSelected();
-			elt.updateFusible(e, elt.isFusible(D.mouseover));
+			fusible = elt.isFusible(D.mouseover);
+			elt.updateFusible(e, fusible);
 		}
+		return fusible;
 	}
 	findElement(pnt, except = '')
 	{
@@ -10992,9 +11106,9 @@ class Diagram extends Functor
 			this.svgRoot.innerHTML +=
 `
 <g>
-<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="0.1s" repeatCount="0" begin="indefinite" fill="freeze"/>
+<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="0.5s" repeatCount="0" begin="indefinite" fill="freeze"/>
 <g>
-<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="0.1s" repeatCount="0" begin="indefinite" fill="freeze"/>
+<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="0.5s" repeatCount="0" begin="indefinite" fill="freeze"/>
 <g id="${base}">
 </g>
 </g>
@@ -11099,8 +11213,8 @@ class Diagram extends Functor
 		{
 			const from = this.getSelected();
 			elt.contentEditable = false;
-//			this.updateElementAttribute(from, attr, U.HtmlEntitySafe(elt.innerText));
-			this.updateElementAttribute(from, attr, elt.innerText);
+			this.updateElementAttribute(from, attr, U.HtmlEntitySafe(elt.innerText));
+//			this.updateElementAttribute(from, attr, elt.innerText);
 			R.diagram.actionHtml(e, 'help');
 			from && from.showSelected();
 			if (fn)
@@ -11343,7 +11457,7 @@ class Diagram extends Functor
 		}
 		return true;
 	}
-	removeReference(e, name)
+	removeReference(name)
 	{
 		if (R.diagram.canRemoveReferenceDiagram(name))
 		{
@@ -11351,6 +11465,7 @@ class Diagram extends Functor
 			if (r)
 			{
 				this.references.delete(r.name);
+				this.allReferences = this.getAllReferenceDiagrams();
 				R.SetDiagramInfo(this);
 			}
 		}
