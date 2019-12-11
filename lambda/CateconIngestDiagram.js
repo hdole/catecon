@@ -68,8 +68,8 @@ exports.handler = (event, context, callback) =>
 			subkey:			'D-' + name,
 			timestamp:		diagram.timestamp,
 			username:		user,
-			description:	diagram.description,
-			properName:		diagram.properName,
+			description:	'description' in diagram ? diagram.description : '',
+			properName:		'properName' in diagram ? diagram.properName : diagram.basename,
 			references:		diagram.references,
 		};
 		bucket.putObject(s3params, function(err, data)
