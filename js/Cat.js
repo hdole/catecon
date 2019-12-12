@@ -436,7 +436,9 @@ class U
 	static JsName(e, cls = false)
 	{
 		const s = e.name;
-		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_o_').replace(/#/g, '_n_');
+		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_o_').replace(/#/g, '_n_')
+			.replace(/\[/g, '_br_')
+			.replace(/\]/g, '_rb_');
 		return r;
 	}
 	static Lines2tspan(elt)
@@ -1247,7 +1249,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const html2F = R.MakeMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
 			{js:`return Number.parseFloat(document.getElementById('in_' + args).value);`}).to;
 		const html2Str = R.MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
-			{js:`return document.getElementById('in_' + args).value;`});
+			{js:`return document.getElementById('in_' + args).value;`}).to;
 
 		const html2omega = R.MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
 //		const omega2html = R.MakeMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
@@ -6240,7 +6242,6 @@ class DiagramObject extends CatObject
 		{
 			s.classList.add(...['selected', 'grabbable', 'object']);
 			s.classList.remove(...['fuseObject']);
-debugger;
 			D.Status(e, '');
 			this.updateGlow(false, '');
 		}
@@ -7621,32 +7622,46 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 					case 'LambdaMorphism':
 						code += this.generate(m.preCurry, generated);
 						const inputs = new Array(this.objectLength(m.preCurry.domain));
-						const lambdaDomLength = this.objectLength(m.domain);
-						const lambdaHomCodLength = m.homFactors.length > 0 ? this.objectLength(m.codomain.objects[0]) : 0;
+						const domLength = this.objectLength(m.domain);
+//						const lambdaHomCodLength = m.homFactors.length > 0 ? this.objectLength(m.codomain.objects[0]) : 0;
+						const homLength = m.homFactors.length;
 						for(let i=0; i<m.domFactors.length; ++i)
 						{
 							const f = m.domFactors[i];
 							if (f[0] === 0)
-								inputs[f[1]] = lambdaDomLength > 1 ? 'cargs[i]' : 'cargs';
+								inputs[f[1]] = domLength > 1 ? 'cargs[i]' : 'cargs';
 						}
-						for(let i=0; i<m.homFactors.length; ++i)
+						for(let i=0; i<homLength; ++i)
 						{
 							const f = m.homFactors[i];
 							if (f[0] === 0)
-								inputs[f[1]] = lambdaHomCodLength > 1 ? 'bargs[i]' : 'bargs';
+//								inputs[f[1]] = lambdaHomCodLength > 1 ? 'bargs[i]' : 'bargs';
+								inputs[f[1]] = homLength > 1 ? 'bargs[i]' : 'bargs';
 						}
 						let input = inputs.join();
-						if (inputs.length > 1)
+						if (inputs.length >= 0)
 							input = `[${inputs}]`;
 //						if (this.objectLength(m.domain) > 0)
 //							code += '	const cargs = args;\n';
-						
-						code +=
-`${header}${this.objectLength(m.domain) > 0 ? '	const cargs = args;\n' : ''}	return function(${lambdaDomLength > 0 ? 'bargs' : ''})
+//							code +=
+//`${header}${this.objectLength(m.domain) > 0 ? '	const cargs = args;\n' : ''}	return function(${domLength > 0 ? 'bargs' : ''})
+//	{
+//		return ${U.JsName(m.preCurry)}${domLength > 0 ? '(' : ''}${input}${domLength > 0 ? ')' : ''};
+//	};${tail}`;
+						if (domLength >= 1 && homLength > 0)
+							code +=
+`${header}	const cargs = args;
+	return function(bargs)
 	{
-`;
-		code +=
-`		return ${U.JsName(m.preCurry)}${lambdaDomLength > 0 ? '(' : ''}${input}${lambdaDomLength > 0 ? ')' : ''};
+		return ${U.JsName(m.preCurry)}(${input});
+	};${tail}`;
+						else if (domLength === 0 && homLength >= 1)
+							code +=
+`${header}	return ${U.JsName(m.preCurry)};${tail}`;
+						else
+							code +=
+`${header}	const cargs = args;
+		return ${U.JsName(m.preCurry)}(${input});
 	};${tail}`;
 						break;
 					case 'NamedMorphism':
@@ -9856,6 +9871,7 @@ class LambdaMorphism extends Morphism
 		if (!('properName' in nuArgs))
 			this.properName = LambdaMorphism.ProperName(preCurry, args.domFactors, args.homFactors);
 		this.preCurry = preCurry;
+if (DiagramMorphism.prototype.isPrototypeOf(preCurry))debugger;
 		this.preCurry.incrRefcnt();
 		this.domFactors = args.domFactors;
 		this.homFactors = args.homFactors;
@@ -9976,8 +9992,9 @@ class LambdaMorphism extends Morphism
 	}
 	static ProperName(preCurry, domFactors, homFactors)
 	{
-//		return (domFactors.length === 0 && homFactors.length === 1 && homFactors[0] === 0) ? `&lsquo;${preCurry.properName}&rsquo;` : `&lambda;${preCurry.properName}${domFactors}:${homFactors}`;
-		return (domFactors.length === 0 && homFactors.length === 1 && homFactors[0] === 0) ? `&lsquo;${preCurry.properName}&rsquo;` : `&lambda;${preCurry.properName}`;
+		return (domFactors.length === 0 && homFactors.length === 1 && homFactors[0] === 0) ? `&lsquo;${preCurry.properName}&rsquo;` :
+			`&lambda;${preCurry.properName}${U.subscript(domFactors.slice().unshift())}:${U.subscript(homFactors.slice().unshift())}`;
+//		return (domFactors.length === 0 && homFactors.length === 1 && homFactors[0] === 0) ? `&lsquo;${preCurry.properName}&rsquo;` : `&lambda;${preCurry.properName}`;
 	}
 }
 
@@ -10572,18 +10589,11 @@ class Diagram extends Functor
 		const s = 1.0/Math.max(xRatio, yRatio);
 		if (!('viewport' in this))
 			this.viewport = {};
-//		this.viewport.scale = s;
-//		this.viewport.x = - bbox.x * this.viewport.scale + D.default.panel.width + margin;
-//		this.viewport.y = - bbox.y * this.viewport.scale + 2 * margin;
 		let x = - bbox.x * s + D.default.panel.width + margin;
 		let y = - bbox.y * s + 2 * margin;
-//		this.viewport.width = bbox.width * s;
-//		this.viewport.height = bbox.height * s;
 		if (xRatio > yRatio)
-//			this.viewport.y += dh/2 - s * bbox.height/2;
 			y += dh/2 - s * bbox.height/2;
 		else
-//			this.viewport.x += dw/2 - s * bbox.width/2;
 			x += dw/2 - s * bbox.width/2;
 		this.setView(x, y, s);
 	}
@@ -10654,22 +10664,6 @@ class Diagram extends Functor
 	{
 		this.svgBase.innerHTML += element.getSVG();
 	}
-	/*
-	gui(e, fn)
-	{
-		try
-		{
-			if (fn in this.codomain && typeof this.codomain[fn] === 'function')
-				this.codomain[fn](e, event.target);
-			else if (fn in this && typeof this[fn] === 'function')
-				this[fn](e, event.target);
-		}
-		catch(x)
-		{
-			D.RecordError(x);
-		}
-	}
-	*/
 	update(save = true)
 	{
 		save && R.SaveLocal(this);
@@ -11475,11 +11469,6 @@ class Diagram extends Functor
 		const name = Diagram.prototype.isPrototypeOf(theName) ? theName.name : theName;
 		if (name === this.name)
 			throw 'Do not reference yourself';
-		/*
-		const dependencies = this.getAllReferenceDiagrams();
-		if (dependencies.has(name))
-			throw `Diagram ${name} is already referenced `;
-			*/
 		const diagram = R.LoadDiagram(name);
 		if (!diagram)
 			throw 'cannot load diagram';
@@ -11514,7 +11503,7 @@ class Diagram extends Functor
 	{
 		this.domain.clear();
 		Array.from(this.elements).reverse().map(a => a[1].decrRefcnt());
-//		this.elements.forEach(function(e){e.decrRefcnt();});
+		this.texts.forEach(function(t) { t.decrRefcnt(); });
 		this.elements.clear();
 		this.update();
 	}
