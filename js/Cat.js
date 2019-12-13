@@ -408,7 +408,7 @@ class U
 		btns.forEach(function(b)
 		{
 			const idx = JSON.parse(`[${b.dataset.indices}]`);
-			factors.push(idx);
+			factors.push(idx.length === 1 ? idx[0] : idx);
 		});
 		return factors;
 	}
@@ -5714,7 +5714,8 @@ class MultiObject extends CatObject
 			if (factor.length > 0)
 			{
 				if (factor[0] === -1)
-					return this.diagram.getElement('#1');
+//					return this.diagram.getElement('#1');
+					return ProductObect.Get(this.diagram, {objects:[]});	// TODO move this?
 				return this.objects[factor[0]].getFactor(factor.slice(1));
 			}
 			return this;
@@ -5968,6 +5969,13 @@ class HomObject extends MultiObject
 	needsParens()
 	{
 		return false;
+	}
+	minimalHomDom()
+	{
+		let obj = this.objects[1];
+		while (HomObject.prototype.isPrototypeOf(obj))
+			obj = obj.homDomain();
+		return obj;
 	}
 	static Basename(diagram, objects)
 	{
@@ -7364,7 +7372,6 @@ class LambdaMorphismAction extends Action
 		}
 
 		const html =
-//			H.h4('Curry') +
 			H.h4('Create Named Morphism') +
 			H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '', `onclick="R.$Actions.getElement('lambdaMorphism').createNamedElement(event, R.diagram.selected)"`) +
 			H.hr() +
@@ -7376,7 +7383,7 @@ class LambdaMorphismAction extends Action
 			H.small('Click to move to codomain: [') +
 
 			H.span(homCod, '', 'lambda-codomain') +
-			H.span(`, ${codomain.properName}]`) +
+			H.span(`, ${HomObject.prototype.isPrototypeOf(codomain) ? codomain.minimalHomDom().properName : codomain.properName}]`) +
 //				HomObject.prototype.isPrototypeOf(codomain) ?
 //				this.getButtons(codomain.homDomain(), {dir:1, fromId:'lambda-codomain', toId:'lambda-domain'}) : '', '', 'lambda-codomain') +
 
@@ -7389,27 +7396,25 @@ class LambdaMorphismAction extends Action
 	getButtons(object, data)
 	{
 		let html = '';
-//		const onclick = `R.$Actions.getElement('lambdaMorphism').moveFactor(this, '${data.fromId}', '${data.toId}')`;
 		const onclick = `R.$Actions.getElement('lambdaMorphism').moveFactor(this)`;
+		const homBtn = H.button('&times;', '', '', 'Convert to hom', `data-indices="-1"`, `onclick="R.$Actions.getElement('lambdaMorphism').toggleOp(this)"`) + html;
+		const codSide = data.dir === 1 && 'objects' in object;
 		if ('objects' in object)
 			object.objects.map((o, i) =>
-				html += H.button(o.properName + H.sub(i), '', D.elementId(), '',
-					`data-indices="${data.dir}, ${i}" onclick="${onclick}"`)).join('');
+				html += H.button(o.properName + H.sub(i), '', D.elementId(), '', `data-indices="${data.dir}, ${i}" onclick="${onclick}"`) +
+					((codSide && i < object.objects.length - 1) ? homBtn : '')
+			).join('');
 		else
 			html += H.button(object.properName, '', D.elementId(), '', `data-indices="${data.dir}, 0" onclick="${onclick}"`);
-		if (data.dir === 1)
-			html = H.button('[', '', '', 'Convert to product', `data-indices="-1"`, `onclick="R.$Actions.getElement('lambdaMorphism').toggleOp(this)"`) + html;
+		if (codSide)
+			html = H.button('[', '', '', 'Convert to product', `data-indices="-2"`, `onclick="R.$Actions.getElement('lambdaMorphism').toggleOp(this)"`) + html;
 
 		return html;
 	}
 	moveFactor(elt)
 	{
-//		H.toggle(elt, fromId, toId);
-
-//		elt.parentNode.id === fromId ? H.move(elt, toId) : H.move(elt, fromId);
 		if (elt.parentNode.id === 'lambda-domain')
 		{
-//			html = H.button('[', '', '', 'Convert to product', `data-indices="-1"`, `onclick="R.$Actions.getElement('lambdaMorphism').toggleOp(this)"`) + html;
 			if (this.codomainElt.children.length > 0)
 			{
 				var b = document.createElement('button');
@@ -7700,14 +7705,20 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						{
 							const f = m.domFactors[i];
 							if (f[0] === 0)
-								inputs[f[1]] = domLength > 1 ? 'cargs[i]' : 'cargs';
+							{
+								const k = f[1];
+								inputs[k] = domLength > 1 ? `cargs[${k}]` : 'cargs';
+							}
 						}
 						for(let i=0; i<homLength; ++i)
 						{
 							const f = m.homFactors[i];
 							if (f[0] === 0)
+							{
+								const k = f[1];
 //								inputs[f[1]] = lambdaHomCodLength > 1 ? 'bargs[i]' : 'bargs';
-								inputs[f[1]] = homLength > 1 ? 'bargs[i]' : 'bargs';
+								inputs[k] = homLength > 1 ? `bargs[${k}]` : 'bargs';
+							}
 						}
 						let input = inputs.join();
 						if (inputs.length >= 0)
@@ -7725,15 +7736,36 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	return function(bargs)
 	{
 		return ${U.JsName(m.preCurry)}(${input});
-	};${tail}`;
+	}${tail}`;
 						else if (domLength === 0 && homLength >= 1)
 							code +=
 `${header}	return ${U.JsName(m.preCurry)};${tail}`;
-						else
+						else	// must evaluate lambda!
+						{
+							const preMap = new Map;
+							const postMap = new Map;
+							for (let i=0; i<m.domFactors.length; ++i)
+							{
+								const f = m.domFactors[i];
+								if (f[0] === 1 && f.length == 2)
+									preMap.set(f[1], i);
+								else if (f[0] === 0 && f.length == 2)
+									postMap.set(f[1], i);
+							}
+							let preInput = '';
+							for (let i=0; i<preMap.size; ++i)
+								preInput += `${i > 0 ? ', ' : ''}args[${preMap.get(i)}]`;
+							if (preMap.size > 1)
+								preInput = `[${preInput}]`;
+							let postInput = '';
+							for (let i=0; i<postMap.size; ++i)
+								postInput += `${i > 0 ? ', ' : ''}args[${postMap.get(i)}]`;
+							if (postMap.size > 1)
+								postInput = `[${postInput}]`;
 							code +=
-`${header}	const cargs = args;
-		return ${U.JsName(m.preCurry)}(${input});
-	};${tail}`;
+`${header}return ${U.JsName(m.preCurry)}(${preInput})(${postInput});${tail}`;
+						}
+console.log('lambda code',code);
 						break;
 					case 'NamedMorphism':
 						code += this.generate(m.source, generated);
@@ -9942,7 +9974,6 @@ class LambdaMorphism extends Morphism
 		if (!('properName' in nuArgs))
 			this.properName = LambdaMorphism.ProperName(preCurry, args.domFactors, args.homFactors);
 		this.preCurry = preCurry;
-if (DiagramMorphism.prototype.isPrototypeOf(preCurry))debugger;
 		this.preCurry.incrRefcnt();
 		this.domFactors = args.domFactors;
 		this.homFactors = args.homFactors;
@@ -10020,10 +10051,11 @@ if (DiagramMorphism.prototype.isPrototypeOf(preCurry))debugger;
 	static Basename(diagram, preCurry, domFactors, homFactors)
 	{
 		const preCur = diagram.codomain.getElement(preCurry);
-		const hom = HomObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
-		const dom = ProductObject.Codename(diagram, domFactors.map(f => hom.getFactorName(f)));
-		const cod = ProductObject.Codename(diagram, homFactors.map(f => hom.getFactorName(f)));
-		return `${preCurry.domain.name}:Lm{${preCur.name},${dom}:${U.a2s(domFactors)},${cod}:${U.a2s(homFactors)}}mL`;
+//		const hom = HomObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
+//		const dom = ProductObject.Codename(diagram, domFactors.map(f => hom.getFactorName(f)));
+//		const cod = ProductObject.Codename(diagram, homFactors.map(f => hom.getFactorName(f)));
+//		return `${preCurry.domain.name}:Lm{${preCur.name},${dom}:${U.a2s(domFactors)},${cod}:${U.a2s(homFactors)}}mL`;
+		return `Lm{${preCur.name}:${U.a2s(domFactors)}:${U.a2s(homFactors)}}mL`;
 	}
 	static Codename(diagram, preCurry, domFactors, homFactors)
 	{
@@ -10048,12 +10080,46 @@ if (DiagramMorphism.prototype.isPrototypeOf(preCurry))debugger;
 	}
 	static Codomain(diagram, preCurry, factors)
 	{
+		/*
 		const seq = ProductObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
 		const codDom = ProductObject.Get(diagram, factors.map(f => seq.getFactor(f)));
 		seq.decrRefcnt();
 		if (factors.length === 0 && HomObject.prototype.isPrototypeOf(preCurry.codomain))
 			return preCurry.codomain.objects[1];
 		return HomObject.Get(diagram, [codDom, preCurry.codomain]);
+		*/
+		const seq = ProductObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
+
+//		const codDom = ProductObject.Get(diagram, factors.map(f => seq.getFactor(f)));
+		const isCodHom = HomObject.prototype.isPrototypeOf(preCurry.codomain);
+		let codomain = isCodHom ? preCurry.codomain.minimalHomDom() : preCurry.codomain;
+		const fctrs = factors.slice();
+		let objects = [];
+		let isProd = true;
+		while(fctrs.length > 0)
+		{
+			const f = fctrs.pop();
+			if (Array.isArray(f))
+				objects.push(seq.getFactor(f));
+			else if (f === -1)	// add to products at this level
+				isProd = true;
+			else if (f === -2)	// form hom level
+			{
+				codomain = HomObject.Get(diagram, [ProductObject.Get(diagram, objects), codomain]);
+				objects = [];
+				isProd = false;
+			}
+			else
+				objects.push(seq.getFactor(f));
+		}
+		if (objects.length > 0)
+			codomain = HomObject.Get(diagram, [ProductObject.Get(diagram, objects), codomain]);
+
+//		if (factors.length === 0 && isCodHom)
+//			return preCurry.codomain.objects[1];
+		seq.decrRefcnt();
+//		return HomObject.Get(diagram, [codDom, codCod]);
+		return codomain;
 	}
 	static Get(diagram, preCurry, domFactors, homFactors)
 	{
@@ -10074,9 +10140,13 @@ if (DiagramMorphism.prototype.isPrototypeOf(preCurry))debugger;
 		}).join();
 		const hf = homFactors.map(f =>
 		{
-			const g = f.slice();
-			g.shift();
-			return g.toString();
+			if (Array.isArray(f))
+			{
+				const g = f.slice();
+				g.shift();
+				return g.toString();
+			}
+			return f.toString();	// for -1 & -2
 		}).join();
 //			`&lambda;${preCurry.properName}${U.subscript(domFactors.slice().unshift())}:${U.subscript(homFactors.slice().unshift())}`;
 		return `&lambda;${preCurry.properName}${U.subscript(df)},${U.subscript(hf)}`;
