@@ -1088,7 +1088,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 args.xy.y += 16 * D.default.layoutGrid;
 		const F = R.MakeObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers').to;
 		const Fzero = R.MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero', one, F, {js:'return 0.0;'}).to;
-		const Fe = R.MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F, {js:'return 0.0;'}).to;
+		const Fe = R.MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F, {js:'return Math.E;'}).to;
 		const Frandom = R.MakeMorphism(args, 'random', 'Morphism', '?', 'a random number between 0.0 and 1.0', one, F, {js:'return Math.random();'}).to;
 		const Fnl10 = R.MakeMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, F, {js:'return Math.PI;'}).to;
 		const Z2F = R.MakeMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'}).to;
@@ -2421,6 +2421,8 @@ class D
 				D.DeleteSelectRectangle();
 				if (D.mouseover && 'to' in D.mouseover)
 					D.Status(e, D.mouseover.to.description);
+				else if (!D.mouseover)
+					D.statusbar.style.display = 'none';
 			}
 		}
 		catch(e)
@@ -6141,7 +6143,7 @@ class DiagramObject extends CatObject
 		{
 			const to = diagram.getElement(args.to);
 			if (!to)
-				throw 'no to!';
+				throw `no to! ${args.to}`;
 			nuArgs.to = to;
 		}
 		super(diagram, nuArgs);
@@ -6991,9 +6993,11 @@ class EditDataMorphismAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
-			return from.to && (DataMorphism.prototype.isPrototypeOf(from.to) ||
-						(	from.to.constructor.name === 'Morphism' &&
-							from.to.domain.isIterable() &&
+			const to = from.to;
+			return from.to && (DataMorphism.prototype.isPrototypeOf(to) ||
+						(	to.constructor.name === 'Morphism' &&
+							to.domain.isIterable() &&
+							!('code' in to) &&
 							diagram.isIsolated(from)));
 		}
 		return false;
@@ -8342,7 +8346,7 @@ class Category extends CatObject
 					elements && elements.set(e.basename, element);
 				}
 				else if (e.prototype !== 'Identity')	// skip duplicate id's
-					throw 'element already exists';
+					throw `element already exists: ${e.name}`;
 			}
 			catch(x)
 			{
@@ -8476,7 +8480,7 @@ class Morphism extends Element
 			throw 'no domain for morphism';
 		const codomain = this.diagram ? this.diagram.getElement(args.codomain) : args.codomain;
 		if (!codomain)
-			throw 'no codomain for morphism';
+			throw `no codomain for morphism ${args.codomain}`;
 		Object.defineProperties(this,
 		{
 			domain:		{value: domain,		writable: true,	enumerable: true},
