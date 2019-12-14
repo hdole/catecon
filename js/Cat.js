@@ -760,7 +760,6 @@ Create diagrams and execute morphisms.
 		else
 		{
 			const to = Element.Process(diagram, args);
-
 			if (Morphism.prototype.isPrototypeOf(to))
 			{
 				index = diagram.placeMorphism(null, to, xy, xy.add(D.default.stdArrow), false);
@@ -1186,7 +1185,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const str = R.MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings').to;
 		const strPair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]}).to;
 		const emptyString = new DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
-
 		const strLength = R.MakeMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N, {js:'return args.length;'}).to;
 		const strAppend = R.MakeMorphism(args, 'append', 'Morphism', '&bull;', 'append two strings', strPair, str, {js:'return args[0].concat(args[1]);'}).to;
 		const strIncludes = R.MakeMorphism(args, 'includes', 'Morphism', 'includes', 'is the first string included in the second', strPair, omega, {js:'return args[1].includes(args[0]);'}).to;
@@ -1241,7 +1239,6 @@ function %1(args)
 		}, args.xy);
 args.xy.y += 16 * D.default.layoutGrid;
 		const html = R.MakeObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices').to;
-
 		const html2N = R.MakeMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
 			{js:`return Number.parseInt(document.getElementById('in_' + args).value);`}).to;
 		const html2Z = R.MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
@@ -1250,14 +1247,9 @@ args.xy.y += 16 * D.default.layoutGrid;
 			{js:`return Number.parseFloat(document.getElementById('in_' + args).value);`}).to;
 		const html2Str = R.MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
 			{js:`return document.getElementById('in_' + args).value;`}).to;
-
 		const html2omega = R.MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
-//		const omega2html = R.MakeMorphism(args, 'omega2html', 'Morphism', 'output', 'HTML output for truth values.', two, html);
-
 		const N_html2str = LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
-
 		const strXN_html2str = ProductObject.Get(args.diagram, [str, N_html2str.codomain]);
-
 		const html2line = R.MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
 			{js:`return ['<input type="text" id="in_' + args + '" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`}).to;
 		const N_html2N = LambdaMorphism.Get(args.diagram, html2N, [], [0]);
@@ -2230,8 +2222,8 @@ class D
 		D.SettingsPanel =	SettingsPanel;
 		D.textPanel =		new TextPanel;
 		D.TextPanel =		TextPanel;
-		D.ioPanel =			new IoPanel;
-		D.IoPanel =			IoPanel;
+//		D.ioPanel =			new IoPanel;
+//		D.IoPanel =			IoPanel;
 		D.threeDPanel =		new ThreeDPanel;
 		D.ttyPanel =		new TtyPanel;
 		D.panels.update();
@@ -2458,8 +2450,7 @@ class D
 				if (diagram.selected.length === 1)
 				{
 					const from = diagram.getSelected();
-//					const target = from.isEquivalent(D.mouseover) ? null : D.mouseover;
-					const target = from.name === D.mouseover.name ? null : D.mouseover;
+					const target = from.name === D.mouseover.name ? null : D.mouseover;	// do not target yourself
 					if (target)
 					{
 						if (diagram.isIsolated(from) && diagram.isIsolated(target))
@@ -2485,28 +2476,58 @@ class D
 						{
 							if(from.isFusible(target))
 							{
+								diagram.selected.map(s => s.updateFusible(e, false));
 								diagram.deselectAll();
 								const morphisms = [];
+								let dragIsFirst = true;
+								for (const [name, e] of diagram.domain.elements)
+								{
+									if (name === from.name)
+										break;
+									if (name === target.name)
+									{
+										dragIsFirst = false;
+										break;
+									}
+								}
 								for(const [name, m] of diagram.domain.elements)
 								{
 									if (!Morphism.prototype.isPrototypeOf(m))	// morphisms only
 										continue;
-									if (m.domain.name === from.name)
+									if (m.domain.name === (dragIsFirst ? target.name : from.name))
 									{
-										m.domain.decrRefcnt();
-										m.domain = target;
-										D.MergeObjectsRefCnt(diagram, from, target);
 										morphisms.push(m);
+										if (dragIsFirst)
+										{
+											from.incrRefcnt();
+											target.decrRefcnt();
+											m.domain = from;
+										}
+										else
+										{
+											from.decrRefcnt();
+											target.incrRefcnt();
+											m.domain = target;
+										}
 									}
-									if (m.codomain.name === from.name)
+									if (m.codomain.name === (dragIsFirst ? target.name : from.name))
 									{
-										m.codomain.decrRefcnt();
-										m.codomain = target;
-										D.MergeObjectsRefCnt(diagram, from, target);
 										morphisms.push(m);
+										if (dragIsFirst)
+										{
+											from.incrRefcnt();
+											target.decrRefcnt();
+											m.codomain = from;
+										}
+										else
+										{
+											from.decrRefcnt();
+											target.incrRefcnt();
+											m.codomain = target;
+										}
 									}
 								}
-								from.decrRefcnt();
+								dragIsFirst ? target.decrRefcnt() : from.decrRefcnt();
 								diagram.domain.makeHomSets();
 								morphisms.map(m => m.update());
 								diagram.update();
@@ -2946,11 +2967,39 @@ ${button}
 	{
 		return `<rect class="btn" x="0" y="0" width="320" height="320" onclick="${onclick}"/>`;
 	}
+	/*
 	static MergeObjectsRefCnt(dgrm, dragObject, targetObject)
 	{
 		dragObject.decrRefcnt();
 		targetObject.incrRefcnt();
 	}
+	static MergeObjectsRefCnt(diagram, dragObject, targetObject)
+	{
+		let dragIsFirst = true;
+		for (const [name, e] of diagram.domain.elements)
+		{
+			if (name === dragObject.name)
+				break;
+			if (name === targetObject.name)
+			{
+				dragIsFirst = false;
+				break;
+			}
+		}
+		if (dragIsFirst)
+		{
+			dragObject.incrRefcnt();
+			targetObject.decrRefcnt();
+			return dragObject;
+		}
+		else
+		{
+			dragObject.decrRefcnt();
+			targetObject.incrRefcnt();
+			return targetObject;
+		}
+	}
+	*/
 	static Input(val, id, ph, x='', cls='in100', type='text')
 	{
 		return H.input(val, cls, id, type, {ph});
@@ -2967,7 +3016,7 @@ ${button}
 			found[m.name] = true;
 			const act = action !== null ? action.replace(/%1/g, m.name) : '';
 			html += H.tr(H.td(m.properName) + H.td(m.domain.properName) + H.td('&rarr;') + H.td(m.codomain.properName),
-					`${drag ? 'grabbable ' : ''}sidenavRow`, '', U.Formal(m.description), drag ? `draggable="true" ondragstart="D.morphismPanel.drag(event, '${m.name}')" ${act}` : act);
+				`${drag ? 'grabbable ' : ''}sidenavRow`, '', U.Formal(m.description), drag ? `draggable="true" ondragstart="D.morphismPanel.drag(event, '${m.name}')" ${act}` : act);
 		}
 		return html;
 	}
@@ -4990,6 +5039,7 @@ class TextPanel extends Panel
 	}
 }
 
+/*
 class IoPanel extends Panel
 {
 	constructor()
@@ -5003,6 +5053,7 @@ class IoPanel extends Panel
 	{
 	}
 }
+*/
 
 class Element
 {
@@ -5828,7 +5879,7 @@ class ProductObject extends MultiObject
 		if (!objects || objects.length === 0)
 			return TerminalObject.Get(diagram);
 		if (objects.length === 1)
-			return objects[0];
+			return objects[0];	// do not make a product wrapper of length 1
 		const name = ProductObject.Codename(diagram, objects);
 		const object = diagram.getElement(name);		// no products in the diagram domain cats
 		return object ? object : new ProductObject(diagram, {objects});
@@ -7367,10 +7418,8 @@ class LambdaMorphismAction extends Action
 		while (HomObject.prototype.isPrototypeOf(obj))
 		{
 			obj = obj.homDomain();
-//			homCod += H.button('[', '', `homCod-${id++}`, 'Convert to product', `data-indices="-1"`, `onclick="R.$Actions.getElement('lambdaMorphism').toggleOp(this)"`) +
 			homCod += this.getButtons(obj, {dir:1, fromId:'lambda-codomain', toId:'lambda-domain'});
 		}
-
 		const html =
 			H.h4('Create Named Morphism') +
 			H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '', `onclick="R.$Actions.getElement('lambdaMorphism').createNamedElement(event, R.diagram.selected)"`) +
@@ -7384,9 +7433,6 @@ class LambdaMorphismAction extends Action
 
 			H.span(homCod, '', 'lambda-codomain') +
 			H.span(`, ${HomObject.prototype.isPrototypeOf(codomain) ? codomain.minimalHomDom().properName : codomain.properName}]`) +
-//				HomObject.prototype.isPrototypeOf(codomain) ?
-//				this.getButtons(codomain.homDomain(), {dir:1, fromId:'lambda-codomain', toId:'lambda-domain'}) : '', '', 'lambda-codomain') +
-
 			H.span(D.GetButton('edit', `R.$Actions.getElement('lambdaMorphism').action(event, R.diagram, R.diagram.selected)`,
 				'Create lambda morphism'));
 		D.help.innerHTML = html;
@@ -7408,7 +7454,6 @@ class LambdaMorphismAction extends Action
 			html += H.button(object.properName, '', D.elementId(), '', `data-indices="${data.dir}, 0" onclick="${onclick}"`);
 		if (codSide)
 			html = H.button('[', '', '', 'Convert to product', `data-indices="-2"`, `onclick="R.$Actions.getElement('lambdaMorphism').toggleOp(this)"`) + html;
-
 		return html;
 	}
 	moveFactor(elt)
@@ -7629,11 +7674,11 @@ class JavascriptAction extends Action
 				switch(proto)
 				{
 					case 'Morphism':
-						if ('code' in m)
+						if ('code' in m)		// TODO still needed
 							code += `${m.code.javascript}\n`;
 						break;
 					case 'Composite':
-						code += `${header}	${m.morphisms.map(n => U.JsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
+						code += `${header}	return ${m.morphisms.map(n => U.JsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
 						break;
 					case 'Identity':
 						code += `${header}	return args;${tail}`;
@@ -7765,7 +7810,6 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 							code +=
 `${header}return ${U.JsName(m.preCurry)}(${preInput})(${postInput});${tail}`;
 						}
-console.log('lambda code',code);
 						break;
 					case 'NamedMorphism':
 						code += this.generate(m.source, generated);
@@ -7988,6 +8032,7 @@ if (R.default.debug) console.log('result from worker', msg.data);
 					w.terminate();
 				}
 			});
+debugger;
 			w.postMessage(args);
 		}
 	}
@@ -8067,7 +8112,8 @@ onmessage = function(e)
 	try
 	{
 		const result = ${dmName}_Iterator(${jsName});
-		console.log('worker work',result);
+		console.log('worker worked',result);
+debugger;
 		postMessage([1, result]);
 	}
 	catch(e)
@@ -8112,6 +8158,22 @@ class IoAction extends Action
 	action(e, diagram, ary)
 	{
 		R.DisplayMorphismInput(ary[0].to);
+	}
+	html(e, diagram, ary)
+	{
+		const from = ary[0];
+		let html = '<div id="io-display"></div>';
+		/*
+		if (DiagramText.prototype.isPrototypeOf(from) && from.diagram.isEditable())
+		{
+			const btn = from.constructor.name === 'DiagramText' ?
+				D.GetButton('edit', `R.diagram.getElement('${from.name}').editText(event, 'descriptionElt')`, 'Edit', D.default.button.tiny) :
+				D.GetButton('edit', `R.diagram.editElementText(event, 'descriptionElt', 'description')`, 'Edit text', D.default.button.tiny);
+			html = H.p(H.span(from.description, 'tty', 'descriptionElt') + btn);
+		}
+		*/
+		D.help.innerHTML = html;
+		this.display = document.getElementById('io-display');
 	}
 	hasForm(diagram, ary)	// one iterable composite morphism
 	{
@@ -10051,10 +10113,6 @@ class LambdaMorphism extends Morphism
 	static Basename(diagram, preCurry, domFactors, homFactors)
 	{
 		const preCur = diagram.codomain.getElement(preCurry);
-//		const hom = HomObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
-//		const dom = ProductObject.Codename(diagram, domFactors.map(f => hom.getFactorName(f)));
-//		const cod = ProductObject.Codename(diagram, homFactors.map(f => hom.getFactorName(f)));
-//		return `${preCurry.domain.name}:Lm{${preCur.name},${dom}:${U.a2s(domFactors)},${cod}:${U.a2s(homFactors)}}mL`;
 		return `Lm{${preCur.name}:${U.a2s(domFactors)}:${U.a2s(homFactors)}}mL`;
 	}
 	static Codename(diagram, preCurry, domFactors, homFactors)
@@ -10067,30 +10125,10 @@ class LambdaMorphism extends Morphism
 		const dom = ProductObject.Get(diagram, factors.map(f => seq.getFactor(f)));
 		seq.decrRefcnt();
 		return dom;
-//		if (factors.length > 1)
-//			return ProductObject.Get(diagram, factors.map(f =>
-//			{
-//				const factor = f.slice();
-//				factor.shift();
-//				return seq.getFactor(factor);
-//				return f[0] === 0 ? preCurry.domain.getFactor(factor) : preCurry.codomain.getFactor(factor);
-//			}));
-//		else if (factors.length === 1)
-//			return 
 	}
 	static Codomain(diagram, preCurry, factors)
 	{
-		/*
 		const seq = ProductObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
-		const codDom = ProductObject.Get(diagram, factors.map(f => seq.getFactor(f)));
-		seq.decrRefcnt();
-		if (factors.length === 0 && HomObject.prototype.isPrototypeOf(preCurry.codomain))
-			return preCurry.codomain.objects[1];
-		return HomObject.Get(diagram, [codDom, preCurry.codomain]);
-		*/
-		const seq = ProductObject.Get(diagram, [preCurry.domain, preCurry.codomain]);
-
-//		const codDom = ProductObject.Get(diagram, factors.map(f => seq.getFactor(f)));
 		const isCodHom = HomObject.prototype.isPrototypeOf(preCurry.codomain);
 		let codomain = isCodHom ? preCurry.codomain.minimalHomDom() : preCurry.codomain;
 		const fctrs = factors.slice();
@@ -11275,6 +11313,7 @@ class Diagram extends Functor
 				that.svgTranslate.setAttribute('from', `${that.viewport.x} ${that.viewport.y}`);
 				that.svgScale.setAttribute('from', `${that.viewport.scale} ${that.viewport.scale}`);
 			});
+			this.svgRoot.style.display = 'block';
 		}
 		let svg = '';
 		const fn = function(t)
