@@ -741,6 +741,11 @@ Create diagrams and execute morphisms.
 		if ('rowCount' in args && args.rowCount >= args.rows)
 		{
 			const bbox = args.diagram.svgRoot.getBBox();
+			if (bbox.width === 0)	// TODO issue with firefox
+			{
+				bbox.width = 600;
+				bbox.x = args.xy.x;
+			}
 			args.xy = D.Grid(new D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 			args.rowCount = 0;
 		}
@@ -1399,6 +1404,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 	{
 		return `${user}/Home`;
 	}
+	/*
 	static DisplayMorphismInput(morphismName)
 	{
 		if (morphismName)
@@ -1416,7 +1422,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 						H.p(m.description, 'smallPrint') +
 						H.p(m.domain.description, 'smallPrint') +
 						html +
-						D.GetButton('edit', `R.$Actions.getElement('javascript').evaluate(event, R.diagram, '${m.name}', R.$Actions.getElement('javascript').postResult)`, 'Evaluate inputs') +
+						D.GetButton('edit', `R.$Actions.getElement('javascript').evaluate(event, R.diagram, '${m.name}', R.$Actions.getElement('io').postResult)`, 'Evaluate inputs') +
 						H.br();
 				}
 				else
@@ -1426,6 +1432,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 				D.RecordError('Morphism in URL could not be loaded.');
 		}
 	}
+	*/
 	static Setup(fn)
 	{
 		R.diagram = null;
@@ -1433,7 +1440,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		let diagramName = params.get('d') || params.get('diagram');
 		if (diagramName)
 		{
-			if (!params.get('f'))
+			if (!params.get('f'))	// force local
 				R.diagram = R.ReadLocal(diagramName);
 			if (!R.diagram)
 			{
@@ -1443,7 +1450,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 					if (R.diagram)
 					{
 						const morphismName = params.get('m');
-						R.DisplayMorphismInput(morphismName);
+						R.DisplayMorphismInput(morphismName);		// TODO
 					}
 					else
 						D.RecordError('Diagram specified in URL could not be loaded.');
@@ -1453,7 +1460,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 			else
 				R.SelectDiagram(diagramName);
 			const morphismName = params.get('m');
-			R.DisplayMorphismInput(morphismName);
+			R.DisplayMorphismInput(morphismName);		// TODO
 		}
 		//
 		// try finding the default diagram
@@ -2195,12 +2202,13 @@ class D
 		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
+		D.topSVG.addEventListener('drop', D.Drop, true);
 		D.uiSVG.style.left = '0px';
 		D.uiSVG.style.top = '0px';
-		D.upSVG.style.left = '0px';
-		D.upSVG.style.top = '0px';
+//		D.upSVG.style.left = '0px';
+//		D.upSVG.style.top = '0px';
 		D.Resize();
-		D.upSVG.style.display = D.showUploadArea ? 'block' : 'none';
+//		D.upSVG.style.display = D.showUploadArea ? 'block' : 'none';
 		D.AddEventListeners();
 		D.parenWidth = D.textWidth('(');
 		D.commaWidth = D.textWidth(', ');
@@ -2250,8 +2258,8 @@ class D
 			D.topSVG.setAttribute('height', height);
 			D.uiSVG.setAttribute('width', width);
 			D.uiSVG.setAttribute('height', height);
-			D.upSVG.setAttribute('width', width);
-			D.upSVG.setAttribute('height', height);
+//			D.upSVG.setAttribute('width', width);
+//			D.upSVG.setAttribute('height', height);
 		}
 	}
 	static Mousedown(e)
@@ -2404,8 +2412,9 @@ class D
 			{
 //				diagram.viewport.x += e.movementX;
 //				diagram.viewport.y += e.movementY;
-				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale);
+				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale, false);
 				D.DeleteSelectRectangle();
+console.log('pan', e.movementX, e.movementY);
 			}
 			else
 			{
@@ -2867,10 +2876,12 @@ ${button}
 	{
 		D.diagramSVG.style.display = 'block';
 	}
+	/*
 	static HideDiagramRoot()
 	{
 		D.diagramSVG.style.display = 'none';
 	}
+	*/
 	static UpdateDiagramDisplay()
 	{
 		if (!R.diagram)
@@ -3331,7 +3342,7 @@ Object.defineProperties(D,
 	'topSVG':			{value: document.getElementById('topSVG'),		writable: false},
 	'ttyPanel':			{value: null,	writable: true},
 	'uiSVG':			{value: document.getElementById('uiSVG'),		writable: false},
-	'upSVG':			{value: document.getElementById('upSVG'),		writable: false},
+//	'upSVG':			{value: document.getElementById('upSVG'),		writable: false},
 	'svg':
 	{
 		value:
@@ -3390,8 +3401,14 @@ help:
 `<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
 <path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,
 io:
-`<line class="arrow0" x1="60" y1="260" x2="60" y2="80" marker-end="url(#arrowhead)"/>
-<path class="arrow0" d="M180 80 A90 90 0 1 0 250 80" marker-end="url(#arrowheadWide)"/>`,
+`
+	<line class="arrow0" x1="100" y1="160" x2="220" y2="160" marker-end="url(#arrowhead)"/>
+	<polygon points="0 0, 120 160, 0 320" fill="url(#radgrad1)"/>
+	<polygon points="320 0, 200 160, 320 320" fill="url(#radgrad1)"/>
+`,
+//`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">&gt;&rarr;&lt;</text>`,
+//`<line class="arrow0" x1="60" y1="260" x2="60" y2="80" marker-end="url(#arrowhead)"/>
+//<path class="arrow0" d="M180 80 A90 90 0 1 0 250 80" marker-end="url(#arrowheadWide)"/>`,
 lambda2:
 `<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
@@ -4938,12 +4955,14 @@ class SettingsPanel extends Panel
 			D.morphismPanel.update();
 		}
 	}
+	/*
 	// TODO move
 	static ToggleShowUploadArea()
 	{
 		D.showUploadArea = !D.showUploadArea;
 		D.upSVG.style.display = D.showUploadArea ? 'block' : 'none';
 	}
+	*/
 }
 
 class NewTextSection extends Section
@@ -7985,12 +8004,6 @@ ${divs}
 		}
 		return value;
 	}
-	postResult(r)
-	{
-		var d = document.createElement('div');
-		d.innerHTML = U.HtmlSafe(U.a2s(r));
-		D.ioPanel.ioElt.appendChild(d);
-	}
 	evaluate(e, diagram, name, fn)
 	{
 		const m = diagram.getElement(name);
@@ -8032,7 +8045,6 @@ if (R.default.debug) console.log('result from worker', msg.data);
 					w.terminate();
 				}
 			});
-debugger;
 			w.postMessage(args);
 		}
 	}
@@ -8153,7 +8165,7 @@ class IoAction extends Action
 						name:		'io',
 						icon:		D.svg.io,};
 		super(diagram, args);
-		this.jsAction = R.$Actions.getElement('javascript');
+		this.js = R.$Actions.getElement('javascript');
 	}
 	action(e, diagram, ary)
 	{
@@ -8162,22 +8174,27 @@ class IoAction extends Action
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
-		let html = '<div id="io-display"></div>';
-		/*
-		if (DiagramText.prototype.isPrototypeOf(from) && from.diagram.isEditable())
-		{
-			const btn = from.constructor.name === 'DiagramText' ?
-				D.GetButton('edit', `R.diagram.getElement('${from.name}').editText(event, 'descriptionElt')`, 'Edit', D.default.button.tiny) :
-				D.GetButton('edit', `R.diagram.editElementText(event, 'descriptionElt', 'description')`, 'Edit text', D.default.button.tiny);
-			html = H.p(H.span(from.description, 'tty', 'descriptionElt') + btn);
-		}
-		*/
+		const to = from.to;
+		let html = H.div(
+						H.h3(to.properName) +
+						H.p(to.description, 'smallPrint') +
+						H.p(to.domain.description, 'smallPrint') +
+						this.js.getInput(to.domain) +
+						D.GetButton('edit', `R.$Actions.getElement('javascript').evaluate(event, R.diagram, '${to.name}', R.$Actions.getElement('io').postResult)`, 'Evaluate inputs') +
+						H.br(), '', 'io-display');
 		D.help.innerHTML = html;
 		this.display = document.getElementById('io-display');
 	}
+	postResult(r)
+	{
+		var d = document.createElement('div');
+		d.innerHTML = U.HtmlSafe(U.a2s(r));
+		const io = R.$Actions.getElement('io');
+		io.display.appendChild(d);
+	}
 	hasForm(diagram, ary)	// one iterable composite morphism
 	{
-		return ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && this.jsAction.canFormat(ary[0].to);
+		return ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && this.js.canFormat(ary[0].to);
 	}
 }
 
@@ -9274,6 +9291,10 @@ class MultiMorphism extends Morphism
 	{
 		return this.morphisms.reduce((r, m) => r && m.isIterable(), true);
 	}
+	needsParens()
+	{
+		return true;
+	}
 	moreHelp()
 	{
 		return H.table(H.tr(H.th('Morphisms', '', '', '', 'colspan=2')) + this.morphisms.map(m => H.tr(H.td(m.diagram.properName) + H.td(m.properName, 'left'))).join(''));
@@ -10214,6 +10235,10 @@ class HomMorphism extends MultiMorphism
 		helped.add(this.name);
 		return super.help(H.p('Hom'), helped);
 	}
+	needsParens()
+	{
+		return false;
+	}
 	static Basename(diagram, morphisms)
 	{
 		return `Ho{${morphisms.map(m => m.name).join(',')}}oH`;
@@ -10884,21 +10909,29 @@ class Diagram extends Functor
 			D.RecordError(x);
 		}
 	}
-	setView(x, y, s)
+	setView(x, y, s, anim = true)
 	{
 		if ('viewport' in this)
 		{
+			if (this.viewport.anim)	// animation in progress
+			{
+				this.svgTranslate.endElement();
+				this.svgScale.endElement();
+			}
 			const to = `${x} ${y}`;
 			this.svgTranslate.setAttribute('to', to);
+			this.svgTranslate.setAttribute('dur', anim ? '0.5s' : '0.001s');
 			this.viewport.x = x;
 			this.viewport.y = y;
 			const fs = this.viewport.scale ? this.viewport.scale : 1.0;
 			if (!('x' in this.viewport))
 				this.svgScale.setAttribute('from', '0 0');
 			this.svgScale.setAttribute('to', `${s} ${s}`);
+			this.svgScale.setAttribute('dur', anim ? '0.5s' : '0.001s');
 			this.viewport.scale = s;
 			this.svgTranslate.beginElement();
 			this.svgScale.beginElement();
+			this.viewport.anim = true;
 		}
 	}
 	mousePosition(e)
@@ -11312,6 +11345,8 @@ class Diagram extends Functor
 			{
 				that.svgTranslate.setAttribute('from', `${that.viewport.x} ${that.viewport.y}`);
 				that.svgScale.setAttribute('from', `${that.viewport.scale} ${that.viewport.scale}`);
+				that.viewport.anim = false;
+console.log('anim off');
 			});
 			this.svgRoot.style.display = 'block';
 		}
