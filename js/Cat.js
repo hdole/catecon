@@ -922,7 +922,6 @@ Create diagrams and execute morphisms.
 		R.PlaceObject(args, zero);
 		R.PlaceObject(args, one);
 		const tty = R.MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
-		const threeD = R.MakeObject(args, 'D3', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices').to;
 		D.ShowDiagram(basics);
 		basics.home();
 		basics.update();
@@ -1281,6 +1280,75 @@ args.xy.y += 16 * D.default.layoutGrid;
 		D.ShowDiagram(htmlDiagram);
 		htmlDiagram.home();
 		htmlDiagram.update();
+		//
+		// 3D diagram
+		//
+		const threeD = new Diagram(userDiagram,
+		{
+			codomain:		pfs,
+			basename:		'threeD',
+			properName:		'3D',
+			description:	'Three dimensional object and morphisms',
+			references:		[strings],
+			user,
+		});
+		args.diagram = threeD;
+		args.rowCount = 0;
+		args.xy = new D2(300, 300);
+		threeD.makeSvg();
+		R.AddDiagram(threeD);
+		R.Autoplace(threeD,
+		{
+			description:	'Various 3-D morphisms are found here',
+			prototype:		'DiagramText',
+			user,
+		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
+		const d3 = R.MakeObject(args, 'threeD', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices').to;
+		const f2d3 = R.MakeMorphism(args, 'f2d3', 'Morphism', '1D', 'visualize a number in 3D', F, d3,
+		{
+			code:	{javascript:
+`
+const ShapeGeometry = new THREE.BoxBufferGeometry(${R.default.scale3D}, ${R.default.scale3D}, ${R.default.scale3D});
+updateBBox(x, y = 0, z = 0)
+{
+	const min = R.display.threeD.bbox.min;
+	const max = R.display.threeD.bbox.max;
+	min.x = Math.min(min.x, x);
+	max.x = Math.max(max.x, x);
+	min.y = Math.min(min.y, y);
+	max.y = Math.max(max.y, y);
+	min.z = Math.min(min.z, z);
+	max.z = Math.max(max.z, z);
+}
+function %1(args)
+{
+	const cube = new THREE.Mesh(ShapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
+	cube.position.z = R.default.scale3D * args;
+	updateBBox(cube.position.z);
+	R.display.threeD.scene.add(cube);
+}
+`
+			},
+		});
+		const ff2d3 = R.MakeMorphism(args, 'ff2d3', 'Morphism', '1D', 'visualize a number in 3D', Fpair, d3,
+		{
+			code:	{javascript:
+`
+function %1(args)
+{
+	const cube = new THREE.Mesh(ShapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
+	cube.position.z = R.default.scale3D * args[0];
+	cube.position.x = R.default.scale3D * args[1];
+	updateBBox(cube.position.z, cube.position.x);
+	R.display.threeD.scene.add(cube);
+}
+`
+			},
+		});
+		//
+		// wrapup
+		//
 		const ja = R.$Actions.getElement('javascript');
 		R.SetupUserHome(R.user.name);
 		ja.loadHTML(fn);
@@ -1902,15 +1970,16 @@ class Amazon extends Cloud
 						R.SetupUserHome(R.user.name);
 						D.panels.update();
 						D.loginPanel.toggle();
-						R.Setup(function()
-						{
-							D.UpdateDiagramDisplay();
-						});
+//						R.Setup(function()
+//						{
+//							D.UpdateDiagramDisplay();
+//						});
 						D.SaveDefaults();
 						D.SetDefaultDiagram();
 						that.getUserDiagramsFromServer(function(dgrms)
 						{
-							console.log('login: user diagrams on server',dgrms);
+							if (R.default.Debug)
+								console.log('login: user diagrams on server', dgrms);
 						});
 						D.navbar.update();
 					});
@@ -5845,6 +5914,10 @@ class ProductObject extends MultiObject
 	{
 		return MultiObject.ProperName('&times;', objects);
 	}
+	static CanFlatten(obj)
+	{
+		return ProductObject.prototype.isPrototypeOf(obj) && obj.objects.reduce((r, o) => r || ProductObject.prototype.isPrototypeOf(o), false);
+	}
 }
 
 class Sequence extends ProductObject
@@ -5928,10 +6001,23 @@ class CoproductObject extends MultiObject
 	{
 		return CoproductObject.prototype.isPrototypeOf(obj) && obj.objects.reduce((r, o) => r || CoproductObject.prototype.isPrototypeOf(o), false);
 	}
+	getFoldInfo()
+	{
+		const objects = new Map;
+		this.objects.map(o =>
+		{
+			if (objects.has(o))
+				objects.set(o, objects.get(o) + 1);
+			else
+				objects.set(o, 1);
+		});
+		return objects;
+	}
 	static CanFold(obj)
 	{
 		if (CoproductObject.prototype.isPrototypeOf(obj))
 		{
+			/*
 			const objects = new Map;
 			obj.objects.map(o =>
 			{
@@ -5940,10 +6026,12 @@ class CoproductObject extends MultiObject
 				else
 					objects.set(o.name, 1);
 			});
+			*/
+			const objects = obj.getFoldInfo();
 			const throwMe = {};
 			try
 			{
-				objects.forEach(function(cnt, nm)
+				objects.forEach(function(cnt, o)
 				{
 					if (cnt > 1)
 						throw throwMe;
@@ -6671,17 +6759,28 @@ class FoldAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const f = FoldMorphism.Get(diagram, from.to, this.countElt.value);
-		diagram.objectPlaceMorphism(e, 'codomain', from.name, f.name);
+		if (this.countElt.value > 1)
+		{
+			const domain = CoproductObject.Get(diagram, Array(this.countElt.value).fill(from.to));
+			const f = FoldMorphism.Get(diagram, domain, from.to);
+			diagram.objectPlaceMorphism(e, 'codomain', from.name, f.name);
+		}
 	}
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
 		const to = from.to;
 		const n = to.properName;
+		const canFold = CoproductObject.CanFold(to);
+		let foldBtn = '';
+		if (canFold)
+		{
+			const objects = new Array(...to.getFoldInfo().keys());
+			const name = objects.map(o => o.needsParens() ? `(${o.properName})` : o.properName).join('+');
+			foldBtn = H.button(`&nabla;: ${n} &rarr; ${name}`, '', R.diagram.elementId(), 'Create fold morphism', `onclick="R.$Actions.getElement('fold').defold(event, '${from.name}')"`) + H.hr();
+		}
 		D.help.innerHTML = H.h5('Create Fold') +
-			(this.isDefoldable(to) ?
-				H.button(`&nabla;: ${n} &rarr; ${to.objects[0].properName}`, '', R.diagram.elementId(), 'Create fold morphism', `onclick="R.$Actions.getElement('fold').defold(event, '${from.name}')"`) + H.hr(): '') +
+			foldBtn +
 			H.span(`Create morphism &Sigma;${n} &rarr; ${n}`) + H.br() + H.span('with specified number of summands') +
 			D.Input('', 'fold-new-count', 'Copies &ge; 2') +
 			H.span(D.GetButton('edit', `R.$Actions.getElement('fold').action(event, R.diagram, R.diagram.selected)`, 'Create fold morphism')) +
@@ -6692,6 +6791,7 @@ class FoldAction extends Action
 			return /^\d*$/.test(v) && (v === "" || parseInt(v) > 1)	// integer greater than 1
 		});
 	}
+	/*
 	isDefoldable(o)
 	{
 		if (CoproductObject.prototype.isPrototypeOf(o))
@@ -6701,6 +6801,7 @@ class FoldAction extends Action
 		}
 		return false;
 	}
+	*/
 	hasForm(diagram, ary)
 	{
 		if (ary.length !== 1 )
@@ -6710,9 +6811,12 @@ class FoldAction extends Action
 	defold(e, name)
 	{
 		const from = R.diagram.getElement(name);
-		if (!this.isDefoldable(from.to))
+		const to = from.to;
+//		if (!this.isDefoldable(from.to))
+		if (!CoproductObject.CanFold(to))
 			throw 'element not defoldable';
-		const f = FoldMorphism.Get(R.diagram, from.to.objects[0], from.to.objects.length);
+		const codomain = CoproductObject.Get(diagram, to.getFoldInfo().keys());
+		const f = FoldMorphism.Get(R.diagram, to, codomain);
 		R.diagram.objectPlaceMorphism(e, 'domain', name, f.name);
 	}
 }
@@ -6817,7 +6921,7 @@ class CoproductAssemblyAction extends Action
 {
 	constructor(diagram)
 	{
-		const args = {	description:	'Create a product assembly of two or more morphisms with a common codomain',
+		const args = {	description:	'Create a coproduct assembly of two or more morphisms with a common codomain',
 						name:			'coproductAssembly',
 						icon:
 `<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
@@ -7184,7 +7288,8 @@ class ProjectAction extends Action
 	html(e, diagram, ary)
 	{
 		const to = ary[0].to;
-		const canFlatten = to.objects.reduce((r, o) => r || ProductObject.prototype.isPrototypeOf(o), false);
+//		const canFlatten = to.objects.reduce((r, o) => r || ProductObject.prototype.isPrototypeOf(o), false);
+		const canFlatten = ProductObject.CanFlatten(to);
 		const html = H.h4('Create Factor Morphism') +
 					(canFlatten ?
 						H.div(H.span('Remove parenthesis', 'little') +
@@ -8916,7 +9021,6 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 		}
 		return r;
 		*/
-
 	}
 	predraw()
 	{
@@ -9053,6 +9157,26 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 		let codXY = new D2(this.codomain.getXY()).add(xy.subtract(domXY));
 		this.codomain.updatePosition(codXY);
 		this.update();
+	}
+}
+
+class Associative extends Morphism
+{
+	constructor(diagram, args)
+	{
+		super(diagram, args);
+		this.factors = args.factors;
+	}
+}
+
+class ProductAssociative extends Associative
+{
+	constructor(diagram, args)
+	{
+		super(diagram, args);
+	}
+	static Codomain(diagram, domain, factors)
+	{
 	}
 }
 
@@ -9463,8 +9587,8 @@ class CoproductAssembly extends MultiMorphism
 		const nuArgs = U.clone(args);
 		nuArgs.morphisms = MultiMorphism.SetupMorphisms(diagram, args.morphisms);
 		nuArgs.basename = CoproductAssembly.Basename(diagram, nuArgs.morphisms);
-		nuArgs.domain = CoproductAssemblyMorphism.Domain(diagram, nuArgs.morphisms);
-		nuArgs.codomain = CoproductAssemblyMorphism.Codomain(diagram, nuArgs.morphisms);
+		nuArgs.domain = CoproductAssembly.Domain(diagram, nuArgs.morphisms);
+		nuArgs.codomain = CoproductAssembly.Codomain(diagram, nuArgs.morphisms);
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductAssembly.ProperName(nuArgs.morphisms);
 		super(diagram, nuArgs);
 	}
@@ -9497,9 +9621,9 @@ class CoproductAssembly extends MultiMorphism
 	}
 	static Get(diagram, morphisms)
 	{
-		const name = CoproductAssemblyMorphism.Codename(diagram, morphisms);
+		const name = CoproductAssembly.Codename(diagram, morphisms);
 		const m = diagram.getElement(name);
-		return m ? m : new CoproductAssemblyMorphism(diagram, {morphisms});
+		return m ? m : new CoproductAssembly(diagram, {morphisms});
 	}
 	static ProperName(morphisms)
 	{
@@ -9759,54 +9883,60 @@ class FoldMorphism extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.codomain = diagram.getElement(args.codomain);
-		nuArgs.count = Number.parseInt(U.GetArg(args, 'count', 2));
-		if (nuArgs.count < 2)
-			throw 'count is not two or greater';
-		nuArgs.domain = FoldMorphism.Domain(diagram, nuArgs.codomain, nuArgs.count);
-		nuArgs.basename = FoldMorphism.Basename(nuArgs.codomain, nuArgs.count);
-		nuArgs.properName = U.GetArg(nuArgs, 'properName', FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count));
+//		nuArgs.count = Number.parseInt(U.GetArg(args, 'count', 2));
+//		if (nuArgs.count < 2)
+//			throw 'count is not two or greater';
+//		nuArgs.domain = FoldMorphism.Domain(diagram, nuArgs.codomain, nuArgs.count);
+//		nuArgs.basename = FoldMorphism.Basename(nuArgs.codomain, nuArgs.count);
+		nuArgs.basename = FoldMorphism.Basename(nuArgs.domain, nuArgs.codomain);
+//		nuArgs.properName = U.GetArg(nuArgs, 'properName', FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count));
+		nuArgs.properName = U.GetArg(nuArgs, 'properName', '&nabla;');
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.count = nuArgs.count;
+//		this.count = nuArgs.count;
 	}
 	help(helped = new Set)
 	{
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help() + H.p(`Fold morphism of count ${this.count}`);
+//		return super.help() + H.p(`Fold morphism of count ${this.count}`);
+		return super.help() + H.p('Fold morphism');
 	}
+	/*
 	json()
 	{
 		const a = super.json();
 		a.count = this.count;
 		return a;
 	}
-	static Basename(codomain, count)
+	*/
+	static Basename(domain, codomain)
 	{
-		return `Fm{${codomain.name}/${count}}mF`;
+		return `Fm{${domain.name}/${codomain.name}}mF`;
 	}
-	static Codename(diagram, codomain, count)
+	static Codename(diagram, domain, codomain)
 	{
-		return Element.Codename(diagram, FoldMorphism.Basename(codomain, count));
+		return Element.Codename(diagram, FoldMorphism.Basename(domain, codomain));
 	}
+	/*
 	static Domain(diagram, object, count)
 	{
 		return CoproductObject.Get(diagram, Array(count).fill(object));
 	}
-	static Get(diagram, codomain, count)
+	*/
+	static Get(diagram, domain, codomain)
 	{
-		if (count < 2)
-			throw 'count is not two or greater';
-		const name = FoldMorphism.Codename(diagram, codomain, count);
+//		if (count < 2)
+//			throw 'count is not two or greater';
+		const name = FoldMorphism.Codename(diagram, domain, codomain);
 		const m = diagram.getElement(name);
-		return m ? m : new FoldMorphism(diagram, {codomain, count});
+		return m ? m : new FoldMorphism(diagram, {domain, codomain});
 	}
-	static ProperName(codomain, count)
-	{
-//		return `&nabla;&lt;${codomain.properName}:${count}&gt;`;
-		return '&nabla;';
-	}
+//	static ProperName(codomain, count)
+//	{
+//		return '&nabla;';
+//	}
 }
 
 class DataMorphism extends Morphism
@@ -9818,10 +9948,7 @@ class DataMorphism extends Morphism
 		if (!nuArgs.domain.isIterable())
 			throw 'domain not iterable';
 		nuArgs.codomain = diagram.getElement(args.codomain);
-//		if (!('category' in nuArgs && Category.prototype.isPrototypeOf(nuArgs.category)))
-//			nuArgs.category = nuArgs.diagram.codomain;
 		super(diagram, nuArgs);
-//if(typeof nuArgs.data === 'object')nuArgs.data = [];
 		this.data = new Map(U.GetArg(nuArgs, 'data', []));
 		this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 	}
