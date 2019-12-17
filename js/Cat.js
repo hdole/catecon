@@ -5924,6 +5924,39 @@ class CoproductObject extends MultiObject
 	{
 		return MultiObject.ProperName('&plus;', objects);
 	}
+	static CanFlatten(obj)
+	{
+		return CoproductObject.prototype.isPrototypeOf(obj) && obj.objects.reduce((r, o) => r || CoproductObject.prototype.isPrototypeOf(o), false);
+	}
+	static CanFold(obj)
+	{
+		if (CoproductObject.prototype.isPrototypeOf(obj))
+		{
+			const objects = new Map;
+			obj.objects.map(o =>
+			{
+				if (objects.has(o.name))
+					objects.set(o.name, objects.get(o.name) + 1);
+				else
+					objects.set(o.name, 1);
+			});
+			const throwMe = {};
+			try
+			{
+				objects.forEach(function(cnt, nm)
+				{
+					if (cnt > 1)
+						throw throwMe;
+				});
+			}
+			catch(x)
+			{
+				if (x === throwMe)
+					return true;
+			}
+		}
+		return false;
+	}
 }
 
 class HomObject extends MultiObject
@@ -6644,10 +6677,11 @@ class FoldAction extends Action
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
-		const n = from.to.properName;
+		const to = from.to;
+		const n = to.properName;
 		D.help.innerHTML = H.h5('Create Fold') +
-			(this.isDefoldable(from.to) ?
-				H.button(`&nabla;: ${n} &rarr; ${from.to.objects[0].properName}`, '', R.diagram.elementId(), 'Create fold morphism', `onclick="R.$Actions.getElement('fold').defold(event, '${from.name}')"`) + H.hr(): '') +
+			(this.isDefoldable(to) ?
+				H.button(`&nabla;: ${n} &rarr; ${to.objects[0].properName}`, '', R.diagram.elementId(), 'Create fold morphism', `onclick="R.$Actions.getElement('fold').defold(event, '${from.name}')"`) + H.hr(): '') +
 			H.span(`Create morphism &Sigma;${n} &rarr; ${n}`) + H.br() + H.span('with specified number of summands') +
 			D.Input('', 'fold-new-count', 'Copies &ge; 2') +
 			H.span(D.GetButton('edit', `R.$Actions.getElement('fold').action(event, R.diagram, R.diagram.selected)`, 'Create fold morphism')) +
