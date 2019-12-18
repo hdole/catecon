@@ -3890,7 +3890,6 @@ class ThreeDPanel extends Panel
 		this.display = document.getElementById('threeDiv');
 		this.initialized = false;
 		this.shapeGeometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
-		this.initialize();
 	}
 	initialize()
 	{
@@ -3955,12 +3954,7 @@ class ThreeDPanel extends Panel
 			this.renderer.shadowMap.enabled = true;
 			this.view('front');
 			this.animate();
-//var geometry = new THREE.CubeGeometry( 200, 200, 200 );
-//var material = new THREE.MeshBasicMaterial( { color: 0x000000 } );
-//var mesh = new THREE.Mesh( geometry, material );
-//this.scene.add(mesh);
-			this.Ato3D(0.0)
-//			this.Ato3D(400);
+			this.initialized = true;
 		}
 		catch(e)
 		{
@@ -3969,7 +3963,6 @@ class ThreeDPanel extends Panel
 	}
 	reset()
 	{
-console.log('threeD reset');
 			const properties = window.getComputedStyle(this.display, null);
 			this.camera = new THREE.PerspectiveCamera(70, properties.width / properties.height, 1, 2 * this.horizon);
 			this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -4039,6 +4032,12 @@ console.log('threeD reset');
 		this.expandBtnElt.innerHTML = D.GetButton('chevronRight', `D.threeDPanel.collapse(true)`, 'Expand');
 		this.resizeCanvas();
 	}
+	open()
+	{
+		if (!this.initialized)
+			this.initialize();
+		super.open();
+	}
 	toggle()
 	{
 		if (!this.initialized)
@@ -4072,22 +4071,16 @@ console.log('threeD reset');
 	}
 	Ato3D(f)
 	{
-console.log('Ato3D');
-//var geometry = new THREE.CubeGeometry( 200, 200, 200 );
-//var material = new THREE.MeshBasicMaterial( { color: 0x000000 } );
-//var mesh = new THREE.Mesh( geometry, material );
-//this.scene.add(mesh);
-
+		D.threeDPanel.open();
 		const geometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
-//		const geometry = new THREE.CubeGeometry(1000, 1000, 1000);
 		const cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
-//		const cube = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
 		cube.position.z = D.default.scale3D * f;
 		this.updateBBox(cube.position.z);
 		this.scene.add(cube);
 	}
 	AxAto3D(ff)
 	{
+		D.threeDPanel.open();
 		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.z = D.default.scale3D * ff[0];
 		cube.position.x = D.default.scale3D * ff[1];
@@ -4096,6 +4089,7 @@ console.log('Ato3D');
 	}
 	AxAxAto3D(fff)
 	{
+		D.threeDPanel.open();
 		CatFns.util.checkGeometry(this);
 		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.x = D.default.scale3D * fff[0];
@@ -4103,10 +4097,10 @@ console.log('Ato3D');
 		cube.position.z = D.default.scale3D * fff[2];
 		CatFns.util.updateBBox(cube.position.z, cube.position.x, cube.position.y);
 		D.threeDPanel.scene.add(cube);
-		return null;
 	}
 	AxAxAx2toLine(fff2)
 	{
+		D.threeDPanel.open();
 		const geo = new THREE.Geometry();
 		const from = fff[0];
 		const to = fff[1];
@@ -4117,10 +4111,10 @@ console.log('Ato3D');
 		D.threeDPanel.scene.add(line);
 		CatFns.util.updateBBox(from[0], from[1], from[2]);
 		CatFns.util.updateBBox(to[0], to[1], to[2]);
-		return null;
 	}
 	AxAxAToQuadraticBezierCurve3(fff)
 	{
+		D.threeDPanel.open();
 		const from = fff[0];
 		const mid = fff[1];
 		const to = fff[2];
@@ -4132,7 +4126,7 @@ console.log('Ato3D');
 		this.updateBBox(from[0], from[1], from[2]);
 		this.updateBBox(mid[0], mid[1], mid[2]);
 		this.updateBBox(to[0], to[1], to[2]);
-		return null;
+		D.threeDPanel.open();
 	}
 }
 
@@ -4593,7 +4587,7 @@ class HelpPanel extends Panel
 	constructor()
 	{
 		super('help', true)
-		const date = '12/16/2019 1:38:10 PM';
+		const date = '12/17/2019 11:29:07 PM';
 		this.elt.innerHTML =
 			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarLeft') +
 			H.h3('Catecon') +
@@ -5727,8 +5721,8 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 					nuArgs.properName = '&empty;'
 				else if (nuArgs.size === 1)
 					nuArgs.properName = '&#10034;'
-				else
-					nuArgs.properName = FiniteObject.ProperName(diagram, nuArgs.basename, nuArgs.size);
+//				else
+//					nuArgs.properName = FiniteObject.ProperName(diagram, nuArgs.basename, nuArgs.size);
 			}
 		}
 		nuArgs.name = FiniteObject.Codename(diagram, nuArgs.basename, 'size' in nuArgs ? nuArgs.size : '');
@@ -5765,6 +5759,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	{
 		return Element.Codename(diagram, FiniteObject.Basename(basename, size));
 	}
+	/*
 	static ProperName(diagram, basename, size)
 	{
 		let n = basename;
@@ -5772,6 +5767,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 			n += size.toString();
 		return n;
 	}
+	*/
 	static Get(diagram, basename, size)
 	{
 		const object = diagram.getElement(FiniteObject.Codename(diagram, basename, size));
@@ -7839,8 +7835,23 @@ class JavascriptAction extends Action
 			const jsName = U.JsName(m);
 			const header = JavascriptAction.Header(m);
 			const tail = JavascriptAction.Tail();
+			if (m.domain.isIterable)
+			{
+				if (FiniteObject.prototype.isPrototypeOf(m.domain) && 'size' in m.domain)
+					code +=
+`
+function ${U.JsName(m.domain)}_Iterator(fn)
+{
+	const result = Array[${m.domain.size}];
+	for (let i=0; i<${m.domain.size}; ++i)
+		result[i] = fn(i);
+	return result;
+	// TODO discard undefined
+}
+`;
+			}
 			if (InitialObject.prototype.isPrototypeOf(m.domain))
-				code += `${header}	return;	// abandon computation\n'${tail}`;
+				code += `${header}	return;	// abandon computation\n'${tail}`;	// domain is null, yuk
 			else if (TerminalObject.prototype.isPrototypeOf(m.codomain))
 				code += `${header}	return 0;${tail}`;
 			else if (InitialObject.prototype.isPrototypeOf(m.codomain))
@@ -8141,8 +8152,8 @@ ${divs}
 	{
 		const m = diagram.getElement(name);
 		const args = this.getInputValue(m.domain);
-		if (args)
-		{
+//		if (args)
+//		{
 			const jsName = U.JsName(m);
 			const code =
 `// Catecon javascript code generator ${Date()}
@@ -8167,41 +8178,9 @@ ${this.generate(m)}
 			const blob = new Blob([code], {type:'application/javascript'});
 			const url = D.url.createObjectURL(blob);
 			const w = new Worker(url);
-/*
-			w.addEventListener('message', function(msg)
-			{
-				const stat = msg.data[0];
-				const args = msg.data[1];
-				switch(stat)
-				{
-					case 1:		// success, show's over
-						fn(args);
-						w.terminate();
-						break;
-					case 2:		// exception thrown inside worker, what happened?
-						w.terminate();
-						break;
-					case 3:
-						D.threeDPanel.Ato3D(args);
-						break;
-					case 4:
-						D.threeDPanel.AxAto3D(args);
-						break;
-					case 5:
-						D.threeDPanel.AxAxAto3D(args);
-						break;
-					case 6:
-						D.threeDPanel.AxAxAx2toLine(args);
-						break;
-					case 7:
-						D.threeDPanel.AxAxAToQuadraticBezierCurve3(args);
-						break;
-				}
-			});
-			*/
 			JavascriptAction.AddMessageListener(w, fn);
 			w.postMessage(args);	// start worker
-		}
+//		}
 	}
 	findFormat(o)
 	{
@@ -8241,8 +8220,6 @@ ${this.generate(m)}
 			case 'ProductObject':
 			case 'CoproductObject':
 				return o.objects.reduce((r, so) => r && this.formatters.has(so.signature), true);
-//			case 'HomObject':
-//				break;
 		}
 		return false;
 	}
@@ -8299,7 +8276,6 @@ class RunAction extends Action
 	action(e, diagram, ary)
 	{
 		let m = ary[0].to;
-//		if (Morphism.prototype.isPrototypeOf(m) && m.isIterable())
 		if (m.isIterable())
 		{
 			const jsName = U.JsName(m);
@@ -8311,7 +8287,7 @@ class RunAction extends Action
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
 {
-	postMessage([0, 'Starting']);
+	postMessage([0, 'worker starting']);
 	try
 	{
 		const result = ${dmName}_Iterator(${jsName});
@@ -8471,7 +8447,7 @@ class FiniteObjectAction extends Action
 		this.sizeElt = document.getElementById('finite-new-size');
 		U.SetInputFilter(this.sizeElt, function(v)
 		{
-			return /^\d*$/.test(v) && (v === "" || parseInt(v) > 1)		// no duplicate initial or terminal objects
+			return /^\d*$/.test(v);	//digits
 		});
 	}
 	hasForm(diagram, ary)
@@ -8523,8 +8499,6 @@ class DataAction extends Action
 			{
 
 				const htmlDgrm = R.$CAT.getElement('hdole/PFS/HTML');
-if (!htmlDrm)debugger;
-
 				const html = htmlDgrm.getElement('HTML');
 				for(const [key, m] of htmlDgrm.elements)
 					if (Morphism.prototype.isPrototypeOf(m) && html.signature === m.to.domain.signature)
@@ -9553,7 +9527,7 @@ class Composite extends MultiMorphism
 		nuArgs.morphisms = morphisms;
 		nuArgs.properName = 'properName' in args ? args.properName : Composite.ProperName(morphisms);
 		nuArgs.category = diagram.codomain;
-		nuArgs.description = 'description' in args ? args.description : `The composite of ${morphisms.map(m => m.properName).join()}.`;
+		nuArgs.description = 'description' in args ? args.description : `The composite of ${morphisms.map(m => m.properName).join(', ')}.`;
 		super(diagram, nuArgs);
 	}
 	help(helped = new Set)
@@ -10771,7 +10745,7 @@ class Distribute extends Morphism
 	{
 		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
 	}
-	help()
+	help(helped = new Set)
 	{
 		return super.help(H.p('Distribute a product over a coproduct'));
 	}
@@ -10837,9 +10811,9 @@ class Dedistribute extends Morphism
 	{
 		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
 	}
-	help()
+	help(helped = new Set)
 	{
-		return super.help(H.p('Gather a product from a coproduct'));
+		return super.help() + H.p('Gather a product from a coproduct');
 	}
 	hasInverse()
 	{
