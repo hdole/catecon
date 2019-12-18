@@ -1309,39 +1309,67 @@ args.xy.y += 16 * D.default.layoutGrid;
 		{
 			code:	{javascript:
 `
-const ShapeGeometry = new THREE.BoxBufferGeometry(${R.default.scale3D}, ${R.default.scale3D}, ${R.default.scale3D});
-updateBBox(x, y = 0, z = 0)
-{
-	const min = R.display.threeD.bbox.min;
-	const max = R.display.threeD.bbox.max;
-	min.x = Math.min(min.x, x);
-	max.x = Math.max(max.x, x);
-	min.y = Math.min(min.y, y);
-	max.y = Math.max(max.y, y);
-	min.z = Math.min(min.z, z);
-	max.z = Math.max(max.z, z);
-}
 function %1(args)
 {
-	const cube = new THREE.Mesh(ShapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
-	cube.position.z = R.default.scale3D * args;
-	updateBBox(cube.position.z);
-	R.display.threeD.scene.add(cube);
+console.log('posting message...', args);
+	postMessage([3, args]);
+	return 0;
 }
 `
 			},
 		});
-		const ff2d3 = R.MakeMorphism(args, 'ff2d3', 'Morphism', '1D', 'visualize a number in 3D', Fpair, d3,
+		const ff2d3 = R.MakeMorphism(args, 'ff2d3', 'Morphism', '1D', 'visualize a pair of numbers in 3D', Fpair, d3,
 		{
 			code:	{javascript:
 `
 function %1(args)
 {
-	const cube = new THREE.Mesh(ShapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
-	cube.position.z = R.default.scale3D * args[0];
-	cube.position.x = R.default.scale3D * args[1];
-	updateBBox(cube.position.z, cube.position.x);
-	R.display.threeD.scene.add(cube);
+	postMessage([4, args]);
+	return 0;
+}
+`
+			},
+		});
+		const Ftrip = ProductObject.Get(threeD, [F, F, F]);
+		const f3 = new NamedObject(threeD, {basename:'F3', properName:'&Fopf;&sup3', source:Ftrip});
+		const f3toFtrip = threeD.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
+		args.rowCount++;
+		args.xy.y += 16 * D.default.layoutGrid;
+		const ftripTof3 = new DiagramMorphism(threeD, {to:f3.idTo, domain:f3toFtrip.codomain, codomain:f3toFtrip.domain});
+		const fff2d3 = R.MakeMorphism(args, 'fff2d3', 'Morphism', '1D', 'visualize a triplet of numbers in 3D', f3, d3,
+		{
+			code:	{javascript:
+`
+function %1(args)
+{
+	postMessage([5, args]);
+	return 0;
+}
+`
+			},
+		});
+		const Ftrip2 = ProductObject.Get(threeD, [f3, f3]);
+		const fff2toline = R.MakeMorphism(args, 'fff2toLine', 'Morphism', 'Line', 'visualize two points as a line in 3D', Ftrip2, d3,
+		{
+			code:	{javascript:
+`
+function %1(args)
+{
+	postMessage([6, args]);
+	return 0;
+}
+`
+			},
+		});
+		const Ftrip3 = ProductObject.Get(threeD, [f3, f3, f3]);
+		const AxAxAToQuadraticBezierCurve3= R.MakeMorphism(args, 'fff2toQB3', 'Morphism', '1D', 'visualize three points as a Bezier curbe in 3D', Ftrip3, d3,
+		{
+			code:	{javascript:
+`
+function %1(args)
+{
+	postMessage([7, args]);
+	return 0;
 }
 `
 			},
@@ -3220,7 +3248,7 @@ Object.defineProperties(D,
 			},
 			layoutGrid:	8,
 			scale:		{base:1.05, limit:{min:0.05, max:20}},
-			scale3D:	1,
+			scale3D:	10,
 			stdOffset:	new D2(32, 32),
 			stdArrow:	new D2(200, 0),
 			toolbar:	{x:15, y:70},
@@ -3861,6 +3889,8 @@ class ThreeDPanel extends Panel
 						H.div('', '', 'threeDiv');
 		this.display = document.getElementById('threeDiv');
 		this.initialized = false;
+		this.shapeGeometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
+		this.initialize();
 	}
 	initialize()
 	{
@@ -3906,7 +3936,7 @@ class ThreeDPanel extends Panel
 			const skyGeo = new THREE.SphereBufferGeometry( this.horizon, 32, 15 );
 			const skyMat = new THREE.ShaderMaterial({vertexShader: vertexShader, fragmentShader: fragmentShader, uniforms: uniforms, side: THREE.BackSide } );
 			const sky = new THREE.Mesh(skyGeo, skyMat);
-			this.scene.add(sky );
+			this.scene.add(sky);
 			let light = new THREE.DirectionalLight(0xffffff, 1);
 			light.position.set(-1, 1, -1).normalize();
 			light.position.multiplyScalar(30);
@@ -3925,6 +3955,12 @@ class ThreeDPanel extends Panel
 			this.renderer.shadowMap.enabled = true;
 			this.view('front');
 			this.animate();
+//var geometry = new THREE.CubeGeometry( 200, 200, 200 );
+//var material = new THREE.MeshBasicMaterial( { color: 0x000000 } );
+//var mesh = new THREE.Mesh( geometry, material );
+//this.scene.add(mesh);
+			this.Ato3D(0.0)
+//			this.Ato3D(400);
 		}
 		catch(e)
 		{
@@ -3933,6 +3969,7 @@ class ThreeDPanel extends Panel
 	}
 	reset()
 	{
+console.log('threeD reset');
 			const properties = window.getComputedStyle(this.display, null);
 			this.camera = new THREE.PerspectiveCamera(70, properties.width / properties.height, 1, 2 * this.horizon);
 			this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -4021,6 +4058,81 @@ class ThreeDPanel extends Panel
 			this.camera.aspect = width / height;
 			this.camera.updateProjectionMatrix();
 		}
+	}
+	updateBBox(x, y = 0, z = 0)
+	{
+		const min = this.bbox.min;
+		const max = this.bbox.max;
+		min.x = Math.min(min.x, x);
+		max.x = Math.max(max.x, x);
+		min.y = Math.min(min.y, y);
+		max.y = Math.max(max.y, y);
+		min.z = Math.min(min.z, z);
+		max.z = Math.max(max.z, z);
+	}
+	Ato3D(f)
+	{
+console.log('Ato3D');
+//var geometry = new THREE.CubeGeometry( 200, 200, 200 );
+//var material = new THREE.MeshBasicMaterial( { color: 0x000000 } );
+//var mesh = new THREE.Mesh( geometry, material );
+//this.scene.add(mesh);
+
+		const geometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
+//		const geometry = new THREE.CubeGeometry(1000, 1000, 1000);
+		const cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
+//		const cube = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
+		cube.position.z = D.default.scale3D * f;
+		this.updateBBox(cube.position.z);
+		this.scene.add(cube);
+	}
+	AxAto3D(ff)
+	{
+		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
+		cube.position.z = D.default.scale3D * ff[0];
+		cube.position.x = D.default.scale3D * ff[1];
+		this.updateBBox(cube.position.z, cube.position.x);
+		D.threeDPanel.scene.add(cube);
+	}
+	AxAxAto3D(fff)
+	{
+		CatFns.util.checkGeometry(this);
+		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
+		cube.position.x = D.default.scale3D * fff[0];
+		cube.position.y = D.default.scale3D * fff[1];
+		cube.position.z = D.default.scale3D * fff[2];
+		CatFns.util.updateBBox(cube.position.z, cube.position.x, cube.position.y);
+		D.threeDPanel.scene.add(cube);
+		return null;
+	}
+	AxAxAx2toLine(fff2)
+	{
+		const geo = new THREE.Geometry();
+		const from = fff[0];
+		const to = fff[1];
+		geo.vertices.push(new THREE.Vector3(from[0], from[1], from[2]));
+		geo.vertices.push(new THREE.Vector3(to[0], to[1], to[2]));
+		const material = new THREE.LineBasicMaterial({color:Math.random() * 0xffffff});
+		const line = new THREE.Line(geo, material);
+		D.threeDPanel.scene.add(line);
+		CatFns.util.updateBBox(from[0], from[1], from[2]);
+		CatFns.util.updateBBox(to[0], to[1], to[2]);
+		return null;
+	}
+	AxAxAToQuadraticBezierCurve3(fff)
+	{
+		const from = fff[0];
+		const mid = fff[1];
+		const to = fff[2];
+		const curve = new THREE.QuadraticBezierCurve3( new THREE.Vector3(from[0], from[1], from[2]), new THREE.Vector3(mid[0], mid[1], mid[2]), new THREE.Vector3(to[0], to[1], to[2]));
+		const points = curve.getPoints(10);
+		const geo = new THREE.BufferGeometry().setFromPoints(points);
+		const material = new THREE.LineBasicMaterial({color:Math.random() * 0xffffff});
+		D.threeDPanel.scene.add(new THREE.Line(geo, material));
+		this.updateBBox(from[0], from[1], from[2]);
+		this.updateBBox(mid[0], mid[1], mid[2]);
+		this.updateBBox(to[0], to[1], to[2]);
+		return null;
 	}
 }
 
@@ -8055,15 +8167,40 @@ ${this.generate(m)}
 			const blob = new Blob([code], {type:'application/javascript'});
 			const url = D.url.createObjectURL(blob);
 			const w = new Worker(url);
+/*
 			w.addEventListener('message', function(msg)
 			{
-				if (msg.data[0] === 1)	// success
+				const stat = msg.data[0];
+				const args = msg.data[1];
+				switch(stat)
 				{
-					fn(msg.data[1]);
-					w.terminate();
+					case 1:		// success, show's over
+						fn(args);
+						w.terminate();
+						break;
+					case 2:		// exception thrown inside worker, what happened?
+						w.terminate();
+						break;
+					case 3:
+						D.threeDPanel.Ato3D(args);
+						break;
+					case 4:
+						D.threeDPanel.AxAto3D(args);
+						break;
+					case 5:
+						D.threeDPanel.AxAxAto3D(args);
+						break;
+					case 6:
+						D.threeDPanel.AxAxAx2toLine(args);
+						break;
+					case 7:
+						D.threeDPanel.AxAxAToQuadraticBezierCurve3(args);
+						break;
 				}
 			});
-			w.postMessage(args);
+			*/
+			JavascriptAction.AddMessageListener(w, fn);
+			w.postMessage(args);	// start worker
 		}
 	}
 	findFormat(o)
@@ -8109,6 +8246,40 @@ ${this.generate(m)}
 		}
 		return false;
 	}
+	static AddMessageListener(w, fn = null)
+	{
+		w.addEventListener('message', function(msg)
+		{
+			const stat = msg.data[0];
+			const args = msg.data[1];
+			switch(stat)
+			{
+				case 1:		// success, show's over
+					if (fn)
+						fn(args);
+					w.terminate();
+					break;
+				case 2:		// exception thrown inside worker, what happened?
+					w.terminate();
+					break;
+				case 3:
+					D.threeDPanel.Ato3D(args);
+					break;
+				case 4:
+					D.threeDPanel.AxAto3D(args);
+					break;
+				case 5:
+					D.threeDPanel.AxAxAto3D(args);
+					break;
+				case 6:
+					D.threeDPanel.AxAxAx2toLine(args);
+					break;
+				case 7:
+					D.threeDPanel.AxAxAToQuadraticBezierCurve3(args);
+					break;
+			}
+		});
+	}
 }
 
 class RunAction extends Action
@@ -8128,11 +8299,15 @@ class RunAction extends Action
 	action(e, diagram, ary)
 	{
 		let m = ary[0].to;
-		if (Morphism.prototype.isPrototypeOf(m) && m.isIterable())
+//		if (Morphism.prototype.isPrototypeOf(m) && m.isIterable())
+		if (m.isIterable())
 		{
 			const jsName = U.JsName(m);
 			const dmName = U.JsName(m.morphisms[0]);
-			const code =
+			let code = '';
+			if (DataMorphism.prototype.isPrototypeOf(m))
+			{
+				code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
 {
@@ -8149,18 +8324,42 @@ onmessage = function(e)
 }
 ${this.jsAction.generate(m)}
 `;
+			}
+			else
+			{
+				code =
+`// Catecon javascript code generator ${Date()}
+onmessage = function(e)
+{
+	postMessage([0, 'Starting']);
+	try
+	{
+		const result = ${jsName}();
+		postMessage([1, result]);
+	}
+	catch(e)
+	{
+		postMessage([2, e]);
+	}
+}
+${this.jsAction.generate(m)}
+`;
+			}
 			if (R.default.debug)
 				console.log('run code', code);
 			const blob = new Blob([code], {type:'application/javascript'});
 			const url = D.url.createObjectURL(blob);
 			const w = new Worker(url);
 			this.workers.push(w);
+/*
 			w.onmessage = function(e)
 			{
 				if (R.default.debug)
 					console.log('result from worker', e.data);
 				w.terminate();
 			};
+			*/
+			JavascriptAction.AddMessageListener(w);
 			w.postMessage('crank it up');
 			diagram.update();
 		}
