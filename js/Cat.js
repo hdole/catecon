@@ -1316,7 +1316,7 @@ function %1(args)
 `
 			},
 		});
-		const ff2d3 = R.MakeMorphism(args, 'ff2d3', 'Morphism', '1D', 'visualize a pair of numbers in 3D', Fpair, d3,
+		const ff2d3 = R.MakeMorphism(args, 'ff2d3', 'Morphism', '2D', 'visualize a pair of numbers in 3D', Fpair, d3,
 		{
 			code:	{javascript:
 `
@@ -1334,7 +1334,7 @@ function %1(args)
 		args.rowCount++;
 		args.xy.y += 16 * D.default.layoutGrid;
 		const ftripTof3 = new DiagramMorphism(threeD, {to:f3.idTo, domain:f3toFtrip.codomain, codomain:f3toFtrip.domain});
-		const fff2d3 = R.MakeMorphism(args, 'fff2d3', 'Morphism', '1D', 'visualize a triplet of numbers in 3D', f3, d3,
+		const fff2d3 = R.MakeMorphism(args, 'fff2d3', 'Morphism', '3D', 'visualize a triplet of numbers in 3D', f3, d3,
 		{
 			code:	{javascript:
 `
@@ -4069,7 +4069,7 @@ class ThreeDPanel extends Panel
 	}
 	Ato3D(f)
 	{
-		D.threeDPanel.open();
+		this.open();
 		const geometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
 		const cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.z = D.default.scale3D * f;
@@ -4078,27 +4078,27 @@ class ThreeDPanel extends Panel
 	}
 	AxAto3D(ff)
 	{
-		D.threeDPanel.open();
+		this.open();
 		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.z = D.default.scale3D * ff[0];
 		cube.position.x = D.default.scale3D * ff[1];
 		this.updateBBox(cube.position.z, cube.position.x);
-		D.threeDPanel.scene.add(cube);
+		this.scene.add(cube);
 	}
 	AxAxAto3D(fff)
 	{
-		D.threeDPanel.open();
+		this.open();
 		const geometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
 		const cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.x = D.default.scale3D * fff[0];
 		cube.position.y = D.default.scale3D * fff[1];
 		cube.position.z = D.default.scale3D * fff[2];
 		this.updateBBox(cube.position.z, cube.position.x, cube.position.y);
-		D.threeDPanel.scene.add(cube);
+		this.scene.add(cube);
 	}
 	AxAxAx2toLine(fff2)
 	{
-		D.threeDPanel.open();
+		this.open();
 		const geo = new THREE.Geometry();
 		const from = fff[0];
 		const to = fff[1];
@@ -4106,13 +4106,13 @@ class ThreeDPanel extends Panel
 		geo.vertices.push(new THREE.Vector3(to[0], to[1], to[2]));
 		const material = new THREE.LineBasicMaterial({color:Math.random() * 0xffffff});
 		const line = new THREE.Line(geo, material);
-		D.threeDPanel.scene.add(line);
+		this.scene.add(line);
 		this.updateBBox(from[0], from[1], from[2]);
 		this.updateBBox(to[0], to[1], to[2]);
 	}
 	AxAxAToQuadraticBezierCurve3(fff)
 	{
-		D.threeDPanel.open();
+		this.open();
 		const from = fff[0];
 		const mid = fff[1];
 		const to = fff[2];
@@ -4120,11 +4120,10 @@ class ThreeDPanel extends Panel
 		const points = curve.getPoints(10);
 		const geo = new THREE.BufferGeometry().setFromPoints(points);
 		const material = new THREE.LineBasicMaterial({color:Math.random() * 0xffffff});
-		D.threeDPanel.scene.add(new THREE.Line(geo, material));
+		this.scene.add(new THREE.Line(geo, material));
 		this.updateBBox(from[0], from[1], from[2]);
 		this.updateBBox(mid[0], mid[1], mid[2]);
 		this.updateBBox(to[0], to[1], to[2]);
-		D.threeDPanel.open();
 	}
 }
 
@@ -4153,10 +4152,11 @@ class TtyPanel extends Panel
 	}
 	toOutput(s)
 	{
-		const span = document.createElement('span');
-		span.innerHTML = U.HtmlSafe(s) + H.br();
+//		const span = document.createElement('span');
+//		span.innerHTML = U.HtmlSafe(s) + H.br();
 //		this.out.innerHTML += U.HtmlSafe(s) + H.br();
-		this.out.appendChild(span);
+		this.out.innerHTML += U.HtmlSafe(s) + '\n';
+//		this.out.appendChild(span);
 	}
 }
 
@@ -4170,8 +4170,10 @@ class DataPanel extends Panel
 				H.tr(	this.closeBtnCell() +
 						this.expandPanelBtn() +
 						H.td(D.GetButton('delete', 'R.diagram.clearDataMorphism()', 'Clear all data'))), 'buttonBarLeft') +
+			H.div('', '', 'input-view') +
 			H.div('', '', 'data-view');
 		this.initialize();
+		this.inputView = document.getElementById('input-view');
 		this.dataView = document.getElementById('data-view');
 	}
 	update()
@@ -7233,9 +7235,16 @@ class EditDataMorphismAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const to = diagram.newDataMorphism(from.to.domain, from.to.codomain);	// TODO new is edit?
-		diagram.setMorphism(from, to);
-		diagram.updateElementAttribute(from, 'properName', to.properName);
+		const to = from.to;
+		if (DataMorphism.prototype.isPrototypeOf(to))
+		{
+		}
+		else
+		{
+			to = diagram.newDataMorphism(from.to.domain, from.to.codomain);	// TODO new is edit?
+			diagram.setMorphism(from, to);
+			diagram.updateElementAttribute(from, 'properName', to.properName);	// TODO huh?
+		}
 		diagram.update(e);
 		D.dataPanel.update();
 		D.dataPanel.open();
@@ -8152,6 +8161,9 @@ ${divs}
 			case 'ProductObject':
 				value = domain.objects.map((o, i) => this.getInputValue(o, [...factor, i]));
 				break;
+			case 'TerminalObject':
+				value = 0;
+				break;
 			case 'CoproductObject':
 				const i = Number.parseInt(document.getElementById(`in_${domain.name} ${factor.toString()}`).value);
 				value = [i, this.getInputValue(domain.objects[i], [...factor, i])];
@@ -8474,9 +8486,12 @@ class FiniteObjectAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
-			if (from.to && diagram.elements.has(from.to.basename) && from.to.constructor.name === 'CatObject' && from.to.refcnt === 1)		// isolated in this diagram
-				return  true;
-			return FiniteObject.prototype.isPrototypeOf(from.to);
+			if (from.to && diagram.elements.has(from.to.basename) && from.to.refcnt === 1)		// isolated in this diagram
+			{
+				if (from.to.constructor.name === 'CatObject')
+					return  true;
+				return FiniteObject.prototype.isPrototypeOf(from.to);
+			}
 		}
 		return false;
 	}
@@ -8493,6 +8508,7 @@ class DataAction extends Action
 <line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="140" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>`,};
 		super(diagram, args);
+		this.ja = R.$Actions.getElement('javascript');
 //		this.htmlFns = new Map;
 	}
 	action(e, diagram, ary)
@@ -8507,6 +8523,8 @@ class DataAction extends Action
 			diagram.makeSelected(from);	// probably already was
 		}
 		D.dataPanel.open();
+		if (CatObject.prototype.isPrototypeOf(to) && this.ja.canFormat(to))
+			D.dataPanel.dataView.innerHTML = this.ja.getInput(to);
 	}
 	hasForm(diagram, ary)
 	{
@@ -8528,14 +8546,11 @@ class DataAction extends Action
 
 			}
 			*/
-			const ja = R.$Actions.getElement('javascript');
-			if (diagram.isIsolated(from))
-			{
-				if (diagram.elements.has(to.basename) && Morphism.prototype.isPrototypeOf(to) && to.domain.isIterable() && !('code' in to))
-					return  to.constructor.name === 'Morphism' || DataMorphism.prototype.isPrototypeOf(to);
-				if (DiagramObject.prototype.isPrototypeOf(from))
-					return ja.canFormat(from.to);
-			}
+//			const ja = R.$Actions.getElement('javascript');
+			if (diagram.isIsolated(from) && diagram.elements.has(to.basename) && Morphism.prototype.isPrototypeOf(to) && to.domain.isIterable() && !('code' in to))
+				return  to.constructor.name === 'Morphism' || DataMorphism.prototype.isPrototypeOf(to);
+			if (DiagramObject.prototype.isPrototypeOf(from))
+				return this.ja.canFormat(from.to);
 		}
 		return false;
 	}
@@ -8959,7 +8974,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 	{
 		super.decrRefcnt();
 		if (this.refcnt <= 0)
-			this.source.decrRefcnt();
+			this.source && this.source.decrRefcnt();
 	}
 	help(helped = new Set)
 	{
@@ -10967,7 +10982,12 @@ class Diagram extends Functor
 		a.textId =		this.textId;
 		a.timestamp =	this.timestamp;
 		a.domainElements =	[];
-		this.domain.elements.forEach(function(e){a.domainElements.push(e.json())});
+		this.domain.elements.forEach(function(e)
+		{
+			if (DiagramMorphism.prototype.isPrototypeOf(e) && !e.to)	// bypass corruption
+				return;
+			a.domainElements.push(e.json())
+		});
 		a.elements = [];
 		this.elements.forEach(function(e){a.elements.push(e.json())});
 		const texts = [];
@@ -11797,20 +11817,28 @@ class Diagram extends Functor
 	{
 		const p = this.userToDiagramCoords(D.mouse.down);
 		const q = this.userToDiagramCoords(D.mouse.position());
+		let selected = [];
 		this.texts.forEach(function(t)
 		{
 			if (D2.Inside(p, t, q))
 			{
-				this.addSelected(t);
+//				this.addSelected(t);
+				selected.push(t);
 			}
 		}, this);
 		this.domain.elements.forEach(function(e)
 		{
 			if (DiagramMorphism.prototype.isPrototypeOf(e) && D2.Inside(p, e.domain, q) && D2.Inside(p, e.codomain, q))
-				this.addSelected(e);
+				selected.push(e);
 			else if (D2.Inside(p, e, q))
-				this.addSelected(e);
+				selected.push(e);
 		}, this);
+		if (selected.length > 0)
+		{
+			if (selected.reduce((r, e) => r || DiagramMorphism.prototype.isPrototypeOf(e), false))
+				selected = selected.filter(e => DiagramMorphism.prototype.isPrototypeOf(e));
+			selected.map(e => this.addSelected(e));
+		}
 		D.ShowToolbar(e);
 	}
 	downloadJSON(e)
@@ -11850,8 +11878,9 @@ class Diagram extends Functor
 	canRemoveReferenceDiagram(name)
 	{
 		const ref = R.CAT.getElement(name);		// TODO fix this
-		if (!this.references.has(name))
-			return true;
+//		if (!this.references.has(name))
+//			return true;
+		/*
 		const breakme = {};
 		const usesIt = function(e)
 		{
@@ -11867,6 +11896,12 @@ class Diagram extends Functor
 			if (x !== breakme)
 				throw x;	// some other exception
 			return false;
+		}
+		*/
+		for(const [name, e] of this.elements)
+		{
+			if (e.usesDiagram(ref))
+				return false;
 		}
 		return true;
 	}
