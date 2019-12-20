@@ -5194,6 +5194,7 @@ class Element
 		if ('name' in args)
 			name = args.name;
 		let basename = '';
+if ('basename' in args && args.basename === 'thousand')debugger;
 		if ('basename' in args)
 		{
 			basename = args.basename;
@@ -8701,6 +8702,7 @@ class Category extends CatObject
 		let errMsg = '';
 		args.map((e, i) =>
 		{
+console.log('process',i);
 			try
 			{
 				if (!this.getElement(e.name))
@@ -8762,8 +8764,7 @@ class Category extends CatObject
 			ad.elements.forEach(function(a)
 			{
 				that.actions.set(a.basename, a);
-				if ('initialize' in a)
-					a.initialize(that);
+				'initialize' in a && a.initialize(that);
 			});
 			this.actionDiagrams.add(name);
 		}
@@ -8772,8 +8773,7 @@ class Category extends CatObject
 	{
 		this.elements.forEach(function(e)
 		{
-			if (CatObject.prototype.isPrototypeOf(e))
-				fn(e);
+			CatObject.prototype.isPrototypeOf(e) && fn(e);
 		});
 	}
 	forEachMorphism(fn)
