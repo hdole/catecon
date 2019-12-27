@@ -4070,16 +4070,13 @@ class ThreeDPanel extends Panel
 	}
 	Ato3D(f)
 	{
-		this.open();
-		const geometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
-		const cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
+		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.z = D.default.scale3D * f;
 		this.updateBBox(cube.position.z);
 		this.scene.add(cube);
 	}
 	AxAto3D(ff)
 	{
-		this.open();
 		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.z = D.default.scale3D * ff[0];
 		cube.position.x = D.default.scale3D * ff[1];
@@ -4088,9 +4085,7 @@ class ThreeDPanel extends Panel
 	}
 	AxAxAto3D(fff)
 	{
-		this.open();
-		const geometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
-		const cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
+		const cube = new THREE.Mesh(this.shapeGeometry, new THREE.MeshLambertMaterial({color:Math.random() * 0xffffff}));
 		cube.position.x = D.default.scale3D * fff[0];
 		cube.position.y = D.default.scale3D * fff[1];
 		cube.position.z = D.default.scale3D * fff[2];
@@ -4099,7 +4094,6 @@ class ThreeDPanel extends Panel
 	}
 	AxAxAx2toLine(fff2)
 	{
-		this.open();
 		const geo = new THREE.Geometry();
 		const from = fff[0];
 		const to = fff[1];
@@ -4113,7 +4107,6 @@ class ThreeDPanel extends Panel
 	}
 	AxAxAToQuadraticBezierCurve3(fff)
 	{
-		this.open();
 		const from = fff[0];
 		const mid = fff[1];
 		const to = fff[2];
@@ -4153,11 +4146,7 @@ class TtyPanel extends Panel
 	}
 	toOutput(s)
 	{
-//		const span = document.createElement('span');
-//		span.innerHTML = U.HtmlSafe(s) + H.br();
-//		this.out.innerHTML += U.HtmlSafe(s) + H.br();
 		this.out.innerHTML += U.HtmlSafe(s) + '\n';
-//		this.out.appendChild(span);
 	}
 }
 
@@ -4463,7 +4452,6 @@ class DiagramPanel extends Panel
 		{
 			diagram.properName = U.HtmlEntitySafe(this.properNameElt.innerText);
 			D.navbar.update();
-//			D.diagramPanel.update();
 			this.properNameElt.contentEditable = false;
 			R.SaveLocal(diagram);
 		}
@@ -5156,22 +5144,6 @@ class TextPanel extends Panel
 	}
 }
 
-/*
-class IoPanel extends Panel
-{
-	constructor()
-	{
-		super('io', true);
-		this.elt.innerHTML = H.table(H.tr(this.closeBtnCell() + H.td(this.expandPanelBtn())), 'buttonBarLeft') + H.h3('IO') + H.div('', '', 'io');
-		this.ioElt = document.getElementById('io');
-		this.initialize();
-	}
-	update()
-	{
-	}
-}
-*/
-
 class Element
 {
 	constructor(diagram, args)
@@ -5718,7 +5690,6 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		const nuArgs = U.clone(args);
 		if (('basename' in nuArgs && nuArgs.basename === '') || !('basename' in nuArgs))
 			nuArgs.basename = 'size' in nuArgs ? '#' + Number.parseInt(nuArgs.size).toString() : diagram.getAnon('#');
-//		nuArgs.basename = U.GetArg(nuArgs, 'basename', FiniteObject.Basename('', 'size' in args ? args.size : ''));
 		if (!('properName' in nuArgs))
 		{
 			if ('size' in nuArgs)
@@ -5767,10 +5738,6 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	}
 	static ProperName(diagram, basename, size)
 	{
-//		let n = basename;
-//		if (size !== '')
-//			n += size.toString();
-//		return n;
 		if (size && size !== '')
 		{
 			if (size === 0)
@@ -7849,7 +7816,6 @@ class JavascriptAction extends Action
 		const proto = m.constructor.name;
 		if (!generated.has(m.name))
 		{
-//			if ('code' in m && 'javascript' in m.code)
 			if (this.hasCode(m))
 			{
 				code += m.code.javascript;
@@ -7861,20 +7827,24 @@ class JavascriptAction extends Action
 			const jsName = U.JsName(m);
 			const header = JavascriptAction.Header(m);
 			const tail = JavascriptAction.Tail();
-			if (m.domain.isIterable)
+			if (m.domain.isIterable() && !generated.has(m.domain.name))
 			{
-				if (FiniteObject.prototype.isPrototypeOf(m.domain) && 'size' in m.domain && DataMorphism.prototype.isPrototypeOf(m))
+				if (FiniteObject.prototype.isPrototypeOf(m.domain) && 'size' in m.domain)
 				{
-					if (m.data.size === 1)
+					generated.add(m.domain.name);
+					if (DataMorphism.prototype.isPrototypeOf(m))
 					{
-						const data = [...m.data.values()];
-						code +=
+						if (m.data.size === 1)
+						{
+							const data = [...m.data.values()];
+							code +=
 `
 function ${U.JsName(m.domain)}_Iterator(fn)
 {
 	return fn(${data[0]});
 }
 `;
+						}
 					}
 					else
 					{
@@ -8168,6 +8138,12 @@ ${divs}
 </div>
 `;
 				break;
+			case 'FiniteObject':
+			case 'TerminalObject':
+				html = `<input type="number" min="0" id="in_${o.name}"`;
+				if ('size' in o)
+					html += ` max="${o.size}"`;
+				html += '/>';
 		}
 		return html;
 	}
@@ -8206,6 +8182,8 @@ ${divs}
 		const m = diagram.getElement(name);
 		const args = this.getInputValue(m.domain);
 		const jsName = U.JsName(m);
+		const iterInvoke = `${U.JsName(m.domain)}_Iterator(${jsName})`;
+		const singleInvoke = `${jsName}(args)`;
 		const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -8214,7 +8192,8 @@ onmessage = function(e)
 	postMessage([0, 'Starting']);
 	try
 	{
-		const result = ${jsName}(args);
+//		const result = ${jsName}(args);
+		const result = ${m.isIterable() ? iterInvoke : singleInvoke};
 		postMessage([1, result]);
 	}
 	catch(e)
@@ -8286,24 +8265,28 @@ ${this.generate(m)}
 						fn(args);
 					w.terminate();
 					break;
-				case 2:		// exception thrown inside worker, what happened?
+				case 2:		// exception thrown inside worker, TODO what happened?
 					w.terminate();
 					break;
 				case 3:
 					D.threeDPanel.Ato3D(args);
+					D.threeDPanel.open();
 					break;
 				case 4:
 					D.threeDPanel.AxAto3D(args);
+					D.threeDPanel.open();
 					break;
 				case 5:
 					D.threeDPanel.AxAxAto3D(args);
-					D.threeDPanel.Ato3D(args[0]);
+					D.threeDPanel.open();
 					break;
 				case 6:
 					D.threeDPanel.AxAxAx2toLine(args);
+					D.threeDPanel.open();
 					break;
 				case 7:
 					D.threeDPanel.AxAxAToQuadraticBezierCurve3(args);
+					D.threeDPanel.open();
 					break;
 				case 8:
 					D.ttyPanel.toOutput(args);
@@ -8337,68 +8320,6 @@ class RunAction extends Action
 		btn.setAttribute('repeatCount', 'indefinite');
 		btn.beginElement();
 		R.Actions.javascript.evaluate(e, diagram, ary[0].to.name, R.Actions.run.postResult);
-		/*
-		let m = ary[0].to;
-		if (m.isIterable())
-		{
-			const jsName = U.JsName(m);
-			const dmName = U.JsName(m.morphisms[0]);
-			let code = '';
-			if (DataMorphism.prototype.isPrototypeOf(m))
-			{
-				code =
-`// Catecon javascript code generator ${Date()}
-onmessage = function(e)
-{
-	postMessage([0, 'worker starting']);
-	try
-	{
-		const result = ${dmName}_Iterator(${jsName});
-		postMessage([1, result]);
-	}
-	catch(e)
-	{
-		postMessage([2, e]);
-	}
-}
-${R.Actions.javascript.generate(m)}
-`;
-			}
-			else
-			{
-				code =
-`// Catecon javascript code generator ${Date()}
-onmessage = function(e)
-{
-	postMessage([0, 'Starting']);
-	try
-	{
-		const result = ${U.JsName(m.domain)}_Iterator(${jsName});
-		postMessage([1, result]);
-	}
-	catch(e)
-	{
-		postMessage([2, e]);
-	}
-}
-${R.Actions.javascript.generate(m)}
-`;
-			}
-			if (R.default.debug)
-				console.log('run code', code);
-			const blob = new Blob([code], {type:'application/javascript'});
-			const url = D.url.createObjectURL(blob);
-			const w = new Worker(url);
-			this.workers.push(w);
-			JavascriptAction.AddMessageListener(w, function()
-			{
-				const btn = document.getElementById('RunAction btn');
-				btn.endElement();
-			});
-			w.postMessage('crank it up');
-			diagram.update();
-		}
-		*/
 	}
 	html(e, diagram, ary)
 	{
@@ -8408,7 +8329,7 @@ ${R.Actions.javascript.generate(m)}
 		const evalBtn = D.GetButton('edit', `R.Actions.javascript.evaluate(event, R.diagram, '${to.name}', R.Actions.run.postResult)`, 'Evaluate inputs');
 		const tableBtn = D.GetButton('table', `R.Actions.run.createData(event, R.diagram, '${from.name}')`, 'Create data');
 		const {properName, description} = to;
-		let html = H.h3(properName) + H.p(description, 'smallPrint');
+		let html = H.h3(properName) + (description !== '' ? H.p(description, 'smallPrint') : '');
 		if (DiagramObject.prototype.isPrototypeOf(from))
 		{
 			if (js.canFormat(to))
@@ -8438,16 +8359,14 @@ ${R.Actions.javascript.generate(m)}
 				canMakeData = false;
 				if (FiniteObject.prototype.isPrototypeOf(domain) && 'size' in domain && to.data.size !== domain.size)
 				{
-					html += js.getInput(codomain) + evalBtn;
+					html += js.getInput(domain) + evalBtn;
 					canMakeData = true;
-	//					D.GetButton('edit', `R.Actions.javascript.evaluate(event, R.diagram, '${to.name}', R.Actions.run.postResult)`, 'Evaluate inputs');
 				}
 			}
+			else if (to.isIterable())
+				html += evalBtn;
 			else
-			{
 				html += js.getInput(domain) + evalBtn;
-	//					D.GetButton('edit', `R.Actions.javascript.evaluate(event, R.diagram, '${to.name}', R.Actions.run.postResult)`, 'Evaluate inputs');
-			}
 			html += canMakeData ? tableBtn : '';
 			html += H.hr();
 			if (DataMorphism.prototype.isPrototypeOf(to))
@@ -8484,8 +8403,6 @@ ${R.Actions.javascript.generate(m)}
 		{
 			const selected = diagram.getElement(eltName);
 			const domain = FiniteObject.Get(diagram, '', this.data.length);
-//			const codomain = DiagramObject.prototype.isPrototypeOf(selected) ? selected.to : selected.codomain.to;
-//			const objName = DiagramObject.prototype.isPrototypeOf(selected) ? selected.name : selected.codomain.name;
 			const {to, name} = DiagramObject.prototype.isPrototypeOf(selected) ? selected : selected.codomain;
 			const dm = new DataMorphism(diagram, {domain, codomain:to, data:this.data});
 			diagram.objectPlaceMorphism(e, 'codomain', name, dm.name);
@@ -8493,7 +8410,6 @@ ${R.Actions.javascript.generate(m)}
 	}
 	hasForm(diagram, ary)
 	{
-//		return ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && ary[0].to.isIterable();
 		if (ary.length === 1 && 'to' in ary[0])
 		{
 			const {to} = ary[0];
@@ -10202,34 +10118,18 @@ class FoldMorphism extends Morphism
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.codomain = diagram.getElement(args.codomain);
-//		nuArgs.count = Number.parseInt(U.GetArg(args, 'count', 2));
-//		if (nuArgs.count < 2)
-//			throw 'count is not two or greater';
-//		nuArgs.domain = FoldMorphism.Domain(diagram, nuArgs.codomain, nuArgs.count);
-//		nuArgs.basename = FoldMorphism.Basename(nuArgs.codomain, nuArgs.count);
 		nuArgs.basename = FoldMorphism.Basename(nuArgs.domain, nuArgs.codomain);
-//		nuArgs.properName = U.GetArg(nuArgs, 'properName', FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count));
 		nuArgs.properName = U.GetArg(nuArgs, 'properName', '&nabla;');
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-//		this.count = nuArgs.count;
 	}
 	help(helped = new Set)
 	{
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-//		return super.help() + H.p(`Fold morphism of count ${this.count}`);
 		return super.help() + H.p('Fold morphism');
 	}
-	/*
-	json()
-	{
-		const a = super.json();
-		a.count = this.count;
-		return a;
-	}
-	*/
 	static Basename(domain, codomain)
 	{
 		return `Fm{${domain.name}/${codomain.name}}mF`;
@@ -10238,24 +10138,12 @@ class FoldMorphism extends Morphism
 	{
 		return Element.Codename(diagram, FoldMorphism.Basename(domain, codomain));
 	}
-	/*
-	static Domain(diagram, object, count)
-	{
-		return CoproductObject.Get(diagram, Array(count).fill(object));
-	}
-	*/
 	static Get(diagram, domain, codomain)
 	{
-//		if (count < 2)
-//			throw 'count is not two or greater';
 		const name = FoldMorphism.Codename(diagram, domain, codomain);
 		const m = diagram.getElement(name);
 		return m ? m : new FoldMorphism(diagram, {domain, codomain});
 	}
-//	static ProperName(codomain, count)
-//	{
-//		return '&nabla;';
-//	}
 }
 
 class DataMorphism extends Morphism
@@ -10273,34 +10161,27 @@ class DataMorphism extends Morphism
 		this.data = []
 		if ('data' in nuArgs)
 			this.data = nuArgs.data;
-//		{
-//			if (Array.isArray(nuArgs.data))
-//				nuArgs.data.map((d, i) => this.data.set(i, d));
-//			else
-//				this.data = new Map(nuArgs.data);
-//		}
 		this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
+		this.signature = this.getDataSignature();
 	}
 	help(helped = new Set)
 	{
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-//		return super.help() + H.p(`Data morphism entries: ${Object.keys(this.data).length}`);
 		return super.help() + H.p(`Data morphism entries: ${this.data.length}`);
 	}
 	isIterable()
 	{
 		return true;
 	}
-	signature(sig)
+	getDataSignature()
 	{
-		return U.sha256(`${sig}${this.diagram.codomain.name} ${this.constructor.name} ${this.data.join(':')}`);
+		return U.sha256(`${this.getElementSignature()} data ${this.data.map(d => U.sha256(d)).join(':')}`);
 	}
 	json()
 	{
 		let mor = super.json();
-//		mor.data = U.JsonMap(this.data);
 		mor.data = this.data;
 		mor.limit = this.limit;
 		return mor;
@@ -10308,7 +10189,6 @@ class DataMorphism extends Morphism
 	addData(e)
 	{
 		const i = Math.min(this.limit, U.HtmlSafe(document.getElementById('inputTerm').value));
-//		this.data.set(i, this.codomain.fromHTML());
 		this.data[i] = this.codomain.fromHTML();
 	}
 	clear()
