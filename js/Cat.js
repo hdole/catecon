@@ -1215,7 +1215,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 `
 function %1(args)
 {
-	postMessage([8, args]);
+	postMessage(['str2tty', args]);
 }
 `			},
 		}).to;
@@ -1310,8 +1310,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 `
 function %1(args)
 {
-	postMessage([3, args]);
-	return 0;
+	postMessage(['f2d3', args]);
 }
 `
 			},
@@ -1322,8 +1321,7 @@ function %1(args)
 `
 function %1(args)
 {
-	postMessage([4, args]);
-	return 0;
+	postMessage(['ff2d3', args]);
 }
 `
 			},
@@ -1340,8 +1338,7 @@ function %1(args)
 `
 function %1(args)
 {
-	postMessage([5, args]);
-	return 0;
+	postMessage(['fff2d3', args]);
 }
 `
 			},
@@ -1353,8 +1350,7 @@ function %1(args)
 `
 function %1(args)
 {
-	postMessage([6, args]);
-	return 0;
+	postMessage(['fff2toLine', args]);
 }
 `
 			},
@@ -1366,8 +1362,7 @@ function %1(args)
 `
 function %1(args)
 {
-	postMessage([7, args]);
-	return 0;
+	postMessage(['fff2toQB3', args]);
 }
 `
 			},
@@ -8189,16 +8184,16 @@ ${divs}
 onmessage = function(e)
 {
 	const args = e.data;
-	postMessage([0, 'Starting']);
+	postMessage(['start', 'Starting']);
 	try
 	{
 //		const result = ${jsName}(args);
 		const result = ${m.isIterable() ? iterInvoke : singleInvoke};
-		postMessage([1, result]);
+		postMessage(['result', result]);
 	}
 	catch(e)
 	{
-		postMessage([2, e]);
+		postMessage(['exception', e]);
 	}
 }
 ${this.generate(m)}
@@ -8260,35 +8255,35 @@ ${this.generate(m)}
 			const args = msg.data[1];
 			switch(stat)
 			{
-				case 1:		// success, show's over
+				case 'result':		// success, show's over
 					if (fn)
 						fn(args);
 					w.terminate();
 					break;
-				case 2:		// exception thrown inside worker, TODO what happened?
+				case 'exception':		// exception thrown inside worker, TODO what happened?
 					w.terminate();
 					break;
-				case 3:
+				case 'f2d3':
 					D.threeDPanel.Ato3D(args);
 					D.threeDPanel.open();
 					break;
-				case 4:
+				case 'ff2d3':
 					D.threeDPanel.AxAto3D(args);
 					D.threeDPanel.open();
 					break;
-				case 5:
+				case 'fff2d3':
 					D.threeDPanel.AxAxAto3D(args);
 					D.threeDPanel.open();
 					break;
-				case 6:
+				case 'fff2toLine':
 					D.threeDPanel.AxAxAx2toLine(args);
 					D.threeDPanel.open();
 					break;
-				case 7:
+				case 'fff2toQB3':
 					D.threeDPanel.AxAxAToQuadraticBezierCurve3(args);
 					D.threeDPanel.open();
 					break;
-				case 8:
+				case 'str2tty':
 					D.ttyPanel.toOutput(args);
 					D.ttyPanel.open();
 					D.Panel.SectionOpen('tty-out-section');
