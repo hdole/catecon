@@ -910,7 +910,7 @@ Create diagrams and execute morphisms.
 		args.diagram = basics;
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
-		basics.makeSvg();
+		basics.makeSvg(false);
 		R.AddDiagram(basics);
 		R.Autoplace(basics,
 		{
@@ -925,7 +925,7 @@ Create diagrams and execute morphisms.
 		R.PlaceObject(args, one);
 		const tty = R.MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
 		D.ShowDiagram(basics);
-		basics.home();
+		basics.home(false);
 		basics.update();
 
 		//
@@ -943,7 +943,7 @@ Create diagrams and execute morphisms.
 		args.diagram = logic;
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
-		logic.makeSvg();
+		logic.makeSvg(false);
 		R.AddDiagram(logic);
 		R.Autoplace(logic,
 		{
@@ -967,7 +967,7 @@ Create diagrams and execute morphisms.
 		const logicOr = R.MakeMorphism(args, 'or', 'Morphism', '&or;', 'The logical or of two logic values', omegaPair, omega, {js:'return args[0] || args[1];'}).to;
 		R.DiagramReferences(user, logic, args.xy);
 		D.ShowDiagram(logic);
-		logic.home();
+		logic.home(false);
 		logic.update();
 
 		//
@@ -985,7 +985,7 @@ Create diagrams and execute morphisms.
 		args.diagram = Narith;
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
-		Narith.makeSvg();
+		Narith.makeSvg(false);
 		R.AddDiagram(Narith);
 		R.Autoplace(Narith,
 		{
@@ -1007,7 +1007,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const Nequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two natural numbers for equality', Npair, omega, {js:'return args[0] === args[1];'}).to;
 		R.DiagramReferences(user, Narith, args.xy);
 		D.ShowDiagram(Narith);
-		Narith.home();
+		Narith.home(false);
 		Narith.update();
 
 		//
@@ -1025,7 +1025,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		args.diagram = integers;
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
-		integers.makeSvg();
+		integers.makeSvg(false);
 		R.AddDiagram(integers);
 		R.Autoplace(integers,
 		{
@@ -1072,7 +1072,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const Zequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two integers for equality', Zpair, omega, {js:'return args[0] === args[1];'});
 		R.DiagramReferences(user, integers, args.xy);
 		D.ShowDiagram(integers);
-		integers.home();
+		integers.home(false);
 		integers.update();
 
 		//
@@ -1090,7 +1090,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		args.diagram = floats;
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
-		floats.makeSvg();
+		floats.makeSvg(false);
 		R.AddDiagram(floats);
 		R.Autoplace(floats,
 		{
@@ -1169,7 +1169,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const Fmin = R.MakeMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F, {js:'return Math.min(...args);'}).to;
 		R.DiagramReferences(user, floats, args.xy);
 		D.ShowDiagram(floats);
-		floats.home();
+		floats.home(false);
 		floats.update();
 
 		//
@@ -1187,7 +1187,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		args.diagram = strings;
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
-		strings.makeSvg();
+		strings.makeSvg(false);
 		R.AddDiagram(strings);
 		R.Autoplace(strings,
 		{
@@ -1223,7 +1223,7 @@ function %1(args)
 		}).to;
 		R.DiagramReferences(user, strings, args.xy);
 		D.ShowDiagram(strings);
-		strings.home();
+		strings.home(false);
 		strings.update();
 		//
 		// htmlDiagram
@@ -1241,7 +1241,7 @@ function %1(args)
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
 //		args.side = D.Grid(D.default.stdArrow.scale(2).subtract(new D2(0, D.default.layoutGrid)));		// TODO from the css 30px for object class font height: 30px/2 = 15, +14/2
-		htmlDiagram.makeSvg();
+		htmlDiagram.makeSvg(false);
 		R.AddDiagram(htmlDiagram);
 		R.Autoplace(htmlDiagram,
 		{
@@ -1279,7 +1279,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 			{js:`return ['<input type="number" id="in_' + args + '" placeholder="Float"/>', ${U.JsName(N_html2F)}];`}).to;
 		R.DiagramReferences(user, htmlDiagram, args.xy);
 		D.ShowDiagram(htmlDiagram);
-		htmlDiagram.home();
+		htmlDiagram.home(false);
 		htmlDiagram.update();
 		//
 		// 3D diagram
@@ -1296,7 +1296,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		args.diagram = threeD;
 		args.rowCount = 0;
 		args.xy = new D2(300, 300);
-		threeD.makeSvg();
+		threeD.makeSvg(false);
 		R.AddDiagram(threeD);
 		R.Autoplace(threeD,
 		{
@@ -1369,6 +1369,10 @@ function %1(args)
 `
 			},
 		});
+		R.DiagramReferences(user, threeD, args.xy);
+		D.ShowDiagram(threeD);
+		threeD.home(false);
+		threeD.update();
 		//
 		// wrapup
 		//
@@ -1591,7 +1595,8 @@ function %1(args)
 		if (R.diagram)
 		{
 			setup(name);
-			R.diagram.viewport.anim = false;
+//if(R.diagram.viewport.anim)debugger;
+//			R.diagram.viewport.anim = false;
 		}
 	}
 	static GetCategory(name)
@@ -2706,7 +2711,7 @@ class D
 			bbox.width = Math.max(bbox.width, sBbox.width);
 			bbox.height = Math.max(bbox.height, sBbox.height);
 		});
-		let xy = {x:e.clientX, y:e.clientY};
+		let xy = {x:e.clientX + D.toolbar.clientHeight, y:e.clientY - 2 * D.toolbar.clientHeight};
 		if (D2.prototype.isPrototypeOf(loc))
 			xy = diagram.diagramToUserCoords(loc);
 		else
@@ -2717,13 +2722,16 @@ class D
 			let nuLeft = xy.x;
 			if (xy.x >= bbox.left && xy.x <= bbox.left + bbox.width)
 				nuLeft = bbox.left + bbox.width;
-			if (e.clientY - nuTop > nuLeft - e.clientX)
+			/*
+//			if (e.clientY - nuTop > nuLeft - e.clientX)
+			if (xy.y - nuTop > nuLeft - xy.x)
 			{
 				xy.x = nuLeft;
 				xy.y -= D.toolbar.clientHeight;
 			}
 			else
 				xy.y = nuTop;
+				*/
 		}
 		let left = rect.left + xy.x;
 		left = left >= 0 ? left : 0;
@@ -3219,12 +3227,12 @@ Object.defineProperties(D,
 	{
 		value:
 		{
+			arrow:		{length:150, margin:16},
 			button:		{tiny:0.4, small:0.66, large:1.0},
+			composite:	'&#8797;',	// is defined as
 			panel:		{width:	230},
 			dragDelay:	100,	// ms
 			font:		{height:24},
-			arrow:		{length:150, margin:16},
-			composite:	'&#8797;',	// is defined as
 			fuse:
 			{
 				fillStyle:	'#3f3a',
@@ -5088,10 +5096,10 @@ class TextSection extends Section
 			rows += H.tr(
 //										H.td(H.table(H.tr((diagram.isEditable() ? H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text')) : '') +
 						H.td(H.table(H.tr(
-							H.td(D.GetButton('view', `R.diagram.viewElement('${t.name}')`, 'View')) +
+//							H.td(D.GetButton('view', `R.diagram.viewElement('${t.name}')`, 'View')) +
 							(diagram.isEditable() ? H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text')) +
 													H.td(D.GetButton('edit', `R.diagram.getElement('${t.name}').editText(event, 'edit_${t.name}')`, 'Edit')) : '')), 'buttonBarLeft'))) +
-					H.tr(H.td(H.span(t.description, 'tty', `edit_${t.name}`), 'left'), 'sidenavRow');
+					H.tr(H.td(H.span(t.description, 'tty', `edit_${t.name}`, '', `onclick="R.diagram.viewElement('${t.name}')"`), 'left'), 'sidenavRow');
 		});
 		this.section.innerHTML = rows === '' ?  '' : H.table(rows);
 	}
@@ -6324,7 +6332,7 @@ class DiagramText
 		}
 		else
 			html =
-`<text data-type="text" data-name="${this.name}" text-anchor="left" class="diagramText grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
+`<text data-type="text" data-name="${this.name}" text-anchor="left" class="diagramText grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y}"
 onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</text>`;
 		return html;
 	}
@@ -6342,7 +6350,7 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</
 	}
 	updatePosition(xy)
 	{
-		this.setXY(xy.round());		// round to pixel location
+		this.setXY(xy);
 		const svg = this.svg();
 		if (svg.hasAttribute('transform'))
 			svg.setAttribute('transform', `translate(${D.Grid(this.x)} ${D.Grid(this.y)})`);
@@ -6463,7 +6471,7 @@ class DiagramObject extends CatObject
 	}
 	updatePosition(xy)
 	{
-		this.setXY(xy.round());		// round to pixel location
+		this.setXY(xy);
 		this.update();
 	}
 	update()
@@ -8770,11 +8778,12 @@ class AlignHorizontalAction extends Action
 	hasForm(diagram, ary)	// one object
 	{
 		const items = this.getItems(ary);
-		const midX = items.map(i => i.x).reduce((r, x) => r + x, 0)/ary.length;
-		const varX = items.map(i => Math.abs(i.x - midX)).reduce((r, x) => r + x, 0)/ary.length;
-		const midY = items.map(i => i.y).reduce((r, y) => r + y, 0)/ary.length;
-		const varY = items.map(i => Math.abs(i.y - midY)).reduce((r, y) => r + y, 0)/ary.length;
-		return this.getItems(ary).length > 1 && varX > varY && varY > 0;
+		const length = items.length;
+		const midX = items.map(i => i.x).reduce((r, x) => r + x, 0)/length;
+		const varX = items.map(i => Math.abs(i.x - midX)).reduce((r, x) => r + x, 0)/length;
+		const midY = items.map(i => i.y).reduce((r, y) => r + y, 0)/length;
+		const varY = items.map(i => Math.abs(i.y - midY)).reduce((r, y) => r + y, 0)/length;
+		return length > 1 && varX > varY && varY > 0;
 	}
 }
 
@@ -8811,11 +8820,12 @@ class AlignVerticalAction extends Action
 	hasForm(diagram, ary)	// one object
 	{
 		const items = this.getItems(ary);
-		const midX = items.map(i => i.x).reduce((r, x) => r + x, 0)/ary.length;
-		const varX = items.map(i => Math.abs(i.x - midX)).reduce((r, x) => r + x, 0)/ary.length;
-		const midY = items.map(i => i.y).reduce((r, y) => r + y, 0)/ary.length;
-		const varY = items.map(i => Math.abs(i.y - midY)).reduce((r, y) => r + y, 0)/ary.length;
-		return this.getItems(ary).length > 1 && varX < varY && varX > 0;
+		const length = items.length;
+		const midX = items.map(i => i.x).reduce((r, x) => r + x, 0)/length;
+		const varX = items.map(i => Math.abs(i.x - midX)).reduce((r, x) => r + x, 0)/length;
+		const midY = items.map(i => i.y).reduce((r, y) => r + y, 0)/length;
+		const varY = items.map(i => Math.abs(i.y - midY)).reduce((r, y) => r + y, 0)/length;
+		return length > 1 && varX < varY && varX > 0;
 	}
 }
 
@@ -8906,7 +8916,6 @@ class Category extends CatObject
 	}
 	addElement(e)
 	{
-if (e.name === '')debugger;
 		if (this.elements.has(e.name))
 			throw `Element with given name already exists in category`;
 		if (e.diagram && e.diagram.elements.has(e.basename))
@@ -11234,7 +11243,7 @@ class Diagram extends Functor
 				return basename;
 		}
 	}
-	setViewport(bbox)
+	setViewport(bbox, anim = true)
 	{
 		if (bbox.width === 0)
 			bbox.width = D.Width();
@@ -11252,11 +11261,11 @@ class Diagram extends Functor
 			y += dh/2 - s * bbox.height/2;
 		else
 			x += dw/2 - s * bbox.width/2;
-		this.setView(x, y, s);
+		this.setView(x, y, s, anim);
 	}
-	home()
+	home(anim = true)
 	{
-		this.setViewport(this.svgBase.getBBox());
+		this.setViewport(this.svgBase.getBBox(), anim);
 	}
 	deleteElement(name)
 	{
@@ -11347,6 +11356,9 @@ class Diagram extends Functor
 	}
 	setView(x, y, s, anim = true)
 	{
+//if (false && anim)debugger;
+console.log('setView', this.name, {x, y, s, anim});
+//if (this.name === 'hdole/Logic')debugger;
 		if ('viewport' in this && this.viewport.anim)
 		{
 			return;
@@ -11720,7 +11732,7 @@ class Diagram extends Functor
 	{
 		return this.selected.length > 0 ? this.selected[0] : null;
 	}
-	makeSvg()
+	makeSvg(anim = true)
 	{
 		this.svgRoot = document.getElementById(this.name);
 		if (!this.svgRoot)
@@ -11749,6 +11761,7 @@ class Diagram extends Functor
 				that.svgTranslate.setAttribute('from', `${that.viewport.x} ${that.viewport.y}`);
 				that.svgScale.setAttribute('from', `${that.viewport.scale} ${that.viewport.scale}`);
 				that.viewport.anim = false;
+console.log('endEvent', that.name);
 			});
 			this.svgRoot.style.display = 'block';
 		}
@@ -11767,8 +11780,8 @@ class Diagram extends Functor
 		this.domain.elements.forEach(fn);
 		this.texts.forEach(fn);
 		this.svgBase.innerHTML = svg;
-		if (!('viewport' in this))
-			this.home();
+//		if (!('viewport' in this))
+//			this.home(anim);
 	}
 	upload(e)
 	{
