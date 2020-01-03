@@ -627,7 +627,7 @@ svg:hover
 .object
 {
 	fill:			black;
-	font:			30px "Century";
+	font:			30px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
 }
@@ -638,7 +638,7 @@ svg:hover
 	fill:	#9fc;
 	opacity:.5;
 	stroke:	#0f0;
-	font:	30px "Century";
+	font:	30px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:	2px;
 }
 
@@ -647,7 +647,7 @@ svg:hover
 	fill:		blue;
 	stroke:		blue;
 	stroke-width:	2px;
-	font:			30px "Century";
+	font:			30px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
 }
@@ -655,7 +655,7 @@ svg:hover
 .morphTxt
 {
 	fill:			black;
-	font:			20px "Century";
+	font:			20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
 }
@@ -666,7 +666,7 @@ svg:hover
 	fill:		#9fc;
 	opacity:	.5;
 	stroke:		#0f0;
-	font:		20px "Century";
+	font:		20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:		2px;
 }
 
@@ -695,7 +695,7 @@ svg:hover
 {
 	fill:			blue;
 	stroke:			blue;
-	font:			20px "Century";
+	font:			20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	padding:		2px;
 	stroke-width:	2.5px;
@@ -705,7 +705,7 @@ svg:hover
 .element
 {
 	fill:			black;
-	font:			20px "Century";
+	font:			20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
 	text-align:		left;
@@ -715,7 +715,7 @@ svg:hover
 {
 	cursor:	grab;
 	fill:	#3f3;
-	font:	20px "Century";
+	font:	20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:	2px;
 }
 
