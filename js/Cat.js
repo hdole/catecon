@@ -691,6 +691,7 @@ Create diagrams and execute morphisms.
 			xy = new D2(300, 300);
 			diagram = homDiagram;
 			homActions.forEach(placeAction);
+			//
 			const distributeActions = new Set([
 				new DistributeAction(R.$Actions),
 				]);
@@ -698,6 +699,15 @@ Create diagrams and execute morphisms.
 			xy = new D2(300, 300);
 			diagram = distributeDiagram;
 			distributeActions.forEach(placeAction);
+			//
+			const tensorActions = new Set([
+				new TensorAction(R.$Actions),
+				]);
+			const tensorDiagram = new Diagram(R.$CAT, {basename:'tensor', name:'tensor', codomain:'Actions', description:'diagram for tensor actions', user:'sys'});
+			xy = new D2(300, 300);
+			diagram = tensorDiagram;
+			tensorActions.forEach(placeAction);
+			//
 			R.Cat.addActions('category');
 			R.Cat.addActions('product');
 			R.Cat.addActions('coproduct');
@@ -1173,6 +1183,82 @@ args.xy.y += 16 * D.default.layoutGrid;
 		floats.update();
 
 		//
+		// complex numbers
+		//
+		const complex = new Diagram(userDiagram,
+		{
+			description:	'complex artihmetic functions',
+			codomain:		pfs,
+			basename:		'complex',
+			properName:		'&Copf; Arithmetic',
+			references:		[floats],
+			user,
+		});
+		args.diagram = complex;
+		args.rowCount = 0;
+		args.xy = new D2(300, 300);
+		complex.makeSvg(false);
+		R.AddDiagram(complex);
+		R.Autoplace(complex,
+		{
+			description:	'A complex number is a pair of floating point numbers.',
+			prototype:		'DiagramText',
+			user,
+		}, args.xy);
+args.xy.y += 16 * D.default.layoutGrid;
+		const C = new NamedObject(complex, {basename:'C', properName:'&Copf;', source:Fpair});
+		const C2Fpair = complex.placeMorphism(null, C.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
+		args.rowCount++;
+		args.xy.y += 16 * D.default.layoutGrid;
+		const Cid2 = new DiagramMorphism(complex, {to:C.idTo, domain:C2Fpair.codomain, codomain:C2Fpair.domain});
+//		const C = R.MakeObject(args, 'C', 'CatObject', '&Copf;', 'complex numbers').to;
+		const Czero = R.MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The complex number zero', one, C, {js:'return 0.0;'}).to;
+		const Ce = R.MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, C, {js:'return [Math.E, 0];'}).to;
+		const Creal = R.MakeMorphism(args, 'real', 'Morphism', 'real', 'the real part of a complex numbers', C, F, {js:'return args[0];'}).to;
+		const Cimag = R.MakeMorphism(args, 'imag', 'Morphism', 'imag', 'the imaginary part of a complex numbers', C, F, {js:'return args[1];'}).to;
+//		const Cnl10 = R.MakeMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, C, {js:'return Math.PI;'}).to;
+		const F2C = R.MakeMorphism(args, 'F2C', 'Morphism', '&sub;', 'every floating point number is a complex number', F, C, {js:'return [args, 0];'}).to;
+		const conjugate = R.MakeMorphism(args, 'conjugate', 'Morphism', '&dagger;', 'conjugate of a complex number', C, C, {js:'return [args[0], -args[1]];'}).to;
+		const Cabs = R.MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a complex number', C, F, {js:'return Math.sqrt(args[0] * args[0] + args[1] * args[1]);'}).to;
+		const Cpair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of complex numbers', {objects:[C, C]}).to;
+		const Cadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two complex numbers', Cpair, C, {js:'return [args[0][0] + args[1][0], args[0][1] + args[1][1]];'}).to;
+		const Csubtract = R.MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two complex numbers', Cpair, C, {js:'return [args[0][0] - args[1][0], args[0][1] - args[1][1]];'}).to;
+		const Cmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two complex numbers', Cpair, C,
+			{js:'return [args[0][0] * args[1][0] - args[0][1] * args[1][1], args[0][0] * args[1][1] + args[0][1] * args[1][0]];'}).to;
+		const CplusOne = R.MakeObject(args, '', 'CoproductObject', '', 'A complex number or an exception', {objects:[C, one]}).to;
+		const Cdiv = R.MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two complex numbers or an exception', Cpair, CplusOne,
+		{
+			code:			{javascript:
+`function %1(args)
+{
+	const x = args[1][0];
+	const y = args[1][1];
+	const n = x * x + y * y;
+	if (n === 0.0)
+		return [1, [0, 0]];		// exception
+	return [0, [(args[0][0] * x + args[0][1] * y) / n, (args[0][0] * y - args[0][1] * x) / n]];
+}
+`			},
+		}).to;
+		const Cpow = R.MakeMorphism(args, 'pow', 'Morphism', 'x&#x02b8;', 'raise the first number to the second number as exponent or an exception', Cpair, CplusOne,
+		{
+			code:			{javascript:
+`function %1(args)
+{
+	if (args[0] === 0 && args[1] === 0)
+		return [1, 0];
+	return [0, Math.pow(args[0], args[1])];
+}
+`
+			},
+		}).to;
+		const Clist = R.MakeObject(args, '', 'HomObject', '', 'A list of complex numbers', {objects:[N, C]}).to;
+		R.DiagramReferences(user, complex, args.xy);
+		D.ShowDiagram(complex);
+		complex.home(false);
+		complex.update();
+
+		//
 		// Strings
 		//
 		const strings = new Diagram(userDiagram,
@@ -1373,6 +1459,88 @@ function %1(args)
 		D.ShowDiagram(threeD);
 		threeD.home(false);
 		threeD.update();
+		//
+		// quantum cat
+		//
+		const qCat = new Category(R.$CAT,
+			{
+				basename:'Qu',
+				user,
+				properName:'&Qopf;&uopf;',
+				actionDiagrams:	['tensor'],
+			});
+		//
+		// quantum gates
+		//
+		const qGates = new Diagram(userDiagram,
+		{
+			codomain:		qCat,
+			basename:		'gates',
+			properName:		'Gates',
+			description:	'Quantum gates',
+			user,
+		});
+		args.diagram = qGates;
+		args.rowCount = 0;
+		args.xy = new D2(300, 300);
+		qGates.makeSvg(false);
+		R.AddDiagram(qGates);
+		R.Autoplace(qGates,
+		{
+			description:	'Basic quantum gates are given here.',
+			prototype:		'DiagramText',
+			user,
+		}, args.xy);
+		args.xy.y += 16 * D.default.layoutGrid;
+		const qubit = R.MakeObject(args, 'q', 'CatObject', '&Qopf;', 'The quantum qubit').to;
+		const qPair = R.MakeObject(args, '', 'TensorObject', '', 'A pair of qubits', {objects:[qubit, qubit]}).to;
+		const qId = R.MakeMorphism(args, 'id', 'Identity', 'id', 'identity', qubit, qubit,
+		{
+			code:	{javascript:
+`
+const oSqrt2 = 1/Math.SQRT2;
+function matrix_multiply(m1, m2)
+{
+    let result = [];
+    for (let i=0; i<m1.length; i++)
+	{
+        result[i] = [];
+        for (let j=0; j<m2[0].length; j++)
+		{
+            let sum = 0;
+            for (let k=0; k<m1[0].length; k++)
+                sum += m1[i][k] * m2[k][j];
+            result[i][j] = sum;
+        }
+    }
+    return result;
+}
+%1_matrix = [	[1, 0],
+				[0, 1]];
+function %1(args)
+{
+	return matrix_multiply(%1_matrix, args);
+}
+`
+			},
+		});
+		const hademard = R.MakeMorphism(args, 'H', 'Morphism', 'H', 'hademard gate', qubit, qubit,
+		{
+			code:	{javascript:
+`
+%1_matrix = [	[oSqrt2,	oSqrt2],
+				[oSqrt2,	-oSqrt2]];
+function %1(args)
+{
+	return matrix_multiply(%1_matrix, args);
+}
+`
+			},
+		});
+		D.ShowDiagram(qGates);
+		qGates.home(false);
+		qGates.update();
+
 		//
 		// wrapup
 		//
@@ -2517,7 +2685,7 @@ class D
 			{
 				D.drag = false;
 				let didSomething = false;
-				if (diagram.selected.length === 1)
+				if (diagram.selected.length === 1 && D.mouseover)
 				{
 					const from = diagram.getSelected();
 					const target = from.name === D.mouseover.name ? null : D.mouseover;	// do not target yourself
@@ -6386,6 +6554,64 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</
 	}
 }
 
+class TensorObject extends MultiObject
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
+		nuArgs.basename = TensorObject.Basename(diagram, nuArgs.objects);
+		nuArgs.properName = 'properName' in args ? args.properName : TensorObject.ProperName(nuArgs.objects);
+		super(diagram, nuArgs);
+		this.seperatorWidth = D.textWidth('&otimes');	// in pixels
+	}
+	help(helped = new Set)
+	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help(H.p('Tensor'), helped);
+	}
+	fromHTML(first = true, uid = {uid:0, id:'data'})
+	{
+		return this.objects.map(o => o.FromInput(false, uid));
+	}
+	getGraph(data = {position:0}, first = true)
+	{
+		return super.getGraph(this.constructor.name, data, D.textWidth('('), D.textWidth('&times;'), first);
+	}
+	static Basename(diagram, objects)
+	{
+		return `Po{${objects.map(o => o.name).join(',')}}oP`;
+	}
+	static Codename(diagram, objects)
+	{
+		if (!objects || objects.length === 0)
+			return 'I';
+		if (objects.length === 1)
+			return typeof objects[0] === 'object' ? objects[0].name : objects[0];
+		return Element.Codename(diagram, TensorObject.Basename(diagram, objects));
+	}
+	static Get(diagram, objects)
+	{
+		if (!objects || objects.length === 0)
+			return TerminalObject.Get(diagram);
+		if (objects.length === 1)
+			return objects[0];	// do not make a product wrapper of length 1
+		const name = TensorObject.Codename(diagram, objects);
+		const object = diagram.getElement(name);		// no products in the diagram domain cats
+		return object ? object : new TensorObject(diagram, {objects});
+	}
+	static ProperName(objects)
+	{
+		return MultiObject.ProperName('&otimes;', objects);
+	}
+	static CanFlatten(obj)
+	{
+		return TensorObject.prototype.isPrototypeOf(obj) && obj.objects.reduce((r, o) => r || TensorObject.prototype.isPrototypeOf(o), false);
+	}
+}
+
 class DiagramObject extends CatObject
 {
 	constructor(diagram, args)
@@ -7859,7 +8085,7 @@ class JavascriptAction extends Action
 						'Edit code', D.default.button.tiny): '');
 		}
 		else
-			html = H.p(this.generate(m), 'code', 'morphism-javascript');
+			html = H.p(U.HtmlSafe(this.generate(m)), 'code', 'morphism-javascript');
 		D.help.innerHTML = html;
 	}
 	hasCode(m)
@@ -8826,6 +9052,46 @@ class AlignVerticalAction extends Action
 		const midY = items.map(i => i.y).reduce((r, y) => r + y, 0)/length;
 		const varY = items.map(i => Math.abs(i.y - midY)).reduce((r, y) => r + y, 0)/length;
 		return length > 1 && varX < varY && varX > 0;
+	}
+}
+
+class TensorAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Create a tensor product of two or more objects or morphisms',
+			name:			'tensor',
+			icon:
+`<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
+<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>
+<circle cx="160" cy="160" r="80" class="svgfilNone svgstr1"/>`,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const elt = ary[0];
+		if (DiagramMorphism.prototype.isPrototypeOf(elt))
+		{
+			const morphisms = ary.map(m => m.to);
+			const to = TensorMorphism.Get(diagram, morphisms);
+			diagram.placeMorphism(e, to, D.Barycenter(ary));
+		}
+		else if (DiagramObject.prototype.isPrototypeOf(elt))
+		{
+			const objects = ary.map(o => o.to);
+			const to = TensorObject.Get(diagram, objects);
+			diagram.placeObject(e, to, elt);
+		}
+	}
+	hasForm(diagram, ary)
+	{
+		if (ary.length < 2)
+			return false;
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
 	}
 }
 
@@ -12228,6 +12494,7 @@ R.protos =
 	PullbackMorphism,
 	SubobjectClassifier,
 	Sequence,
+	TensorObject,
 	TerminalObject,
 	TerminalMorphism,
 };
