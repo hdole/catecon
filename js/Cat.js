@@ -647,6 +647,7 @@ Create diagrams and execute morphisms.
 				new RunAction(R.$Actions),
 				new AlignHorizontalAction(R.$Actions),
 				new AlignVerticalAction(R.$Actions),
+				new AssertionAction(R.$Actions),
 //				new IoAction(R.$Actions),
 			]);
 			const categoryDiagram = new Diagram(R.$CAT, {basename:'category', name:'category', codomain:'Actions', description:'diagram for a category', user:'sys'});
@@ -3221,27 +3222,29 @@ ${button}
 	}
 	static Barycenter(ary)
 	{
-		let elts = {};
+		const elts = new Set;
 		for(let i=0; i < ary.length; ++i)
 		{
 			const elt = ary[i];
 			if ((DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt)) && !(elt.name in elts))
-				elts[elt.name] = elt;
+				elts.add(elt);
 			else if (DiagramMorphism.prototype.isPrototypeOf(elt))
 			{
-				if (!(elt.domain.name in elts))
-					elts[elt.domain.name] = elt.domain;
-				if (!(elt.codomain.name in elts))
-					elts[elt.codomain.name] = elt.codomain;
+				if (!elts.has(elt.domain))
+					elts.add(elt.domain);
+				if (!elts.has(elt.codomain))
+					elts.add(elt.codomain);
 			}
+			else if (D2.prototype.isPrototypeOf(elt))
+				elts.add(elt);
 		}
 		let xy = new D2;
 		let cnt = 0;
-		for(let i in elts)
+		elts.forEach(function(e)
 		{
 			++cnt;
-			xy.increment(elts[i]);
-		}
+			xy.increment(e);
+		});
 		xy = xy.scale(1.0/cnt);
 		return xy;
 	}
@@ -6417,7 +6420,7 @@ class HomObject extends MultiObject
 	}
 }
 
-class DiagramText
+class DiagramCore
 {
 	constructor(diagram, args)
 	{
@@ -6426,7 +6429,8 @@ class DiagramText
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,													writable:	false},
-			name:			{value: U.GetArg(nuArgs, 'name', `${diagram.name}/${diagram.getAnon('t')}`),				writable:	false},
+			name:			{value: U.GetArg(nuArgs, 'name', `${diagram.name}/${diagram.getAnon('t')}`),	writable:	false},
+			refcnt:			{value: 0,															writable:	true},
 			x:				{value:	xy.x,														writable:	true},
 			y:				{value:	xy.y,														writable:	true},
 			width:			{value:	U.GetArg(nuArgs, 'width', 0),								writable:	true},
@@ -6437,12 +6441,16 @@ class DiagramText
 	}
 	decrRefcnt()
 	{
-		this.diagram.texts.delete(this.name);
-		const svg = this.svg();
-		if (svg !== null)
+		this.refcnt--;
+		if (this.refcnt <= 0)
 		{
-			svg.innerHTML = '';
-			svg.parentNode.removeChild(svg);
+			const svg = this.svg();
+			if (svg !== null)
+			{
+				if ('innerHTML' in svg)
+					svg.innerHTML = '';
+				svg.parentNode.removeChild(svg);
+			}
 		}
 	}
 	setXY(xy)
@@ -6463,20 +6471,9 @@ class DiagramText
 			height:		this.height,
 			xy:			this.getXY(),
 			width:		this.width,
-			prototype:	'DiagramText',
+			prototype:	this.constructor.name,
 		};
 		return a;
-	}
-	editText(e, id)
-	{
-		const svg = document.getElementById(this.elementId());
-		const from = this;
-		R.diagram.editElementText(e, id, 'description', function()
-		{
-			R.diagram.updateElementAttribute(from, 'description', document.getElementById(id).innerText);
-			svg.innerHTML = U.Lines2tspan(from);
-		});
-		e.stopPropagation();
 	}
 	showSelected(state = true)
 	{
@@ -6484,25 +6481,7 @@ class DiagramText
 	}
 	elementId()
 	{
-		return `dt_${this.name}`;
-	}
-	getSVG()
-	{
-		if (isNaN(this.x) || isNaN(this.y))
-			throw `nan in getSVG`;
-		let html = '';
-		if (this.description.indexOf('\n') > -1)		// multi-line svg
-		{
-			let lines = U.Lines2tspan(this);
-			html =
-`<text id="${this.elementId()}" data-type="text" data-name="${this.name}" x="${this.x}" y="${this.y}" text-anchor="left" class="diagramText grabbable"
-	onmousedown="R.diagram.pickElement(event, '${this.name}')"> ${lines}</text>`;
-		}
-		else
-			html =
-`<text data-type="text" data-name="${this.name}" text-anchor="left" class="diagramText grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y}"
-onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</text>`;
-		return html;
+		return `${this.constructor.name}_${this.name}`;
 	}
 	svg(sfx = '')
 	{
@@ -6530,12 +6509,14 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</
 				svg.setAttribute('y', this.y);
 			}
 		}
+		/*
 		const x = this.x;
 		const tspans = svg.querySelectorAll('tspan')
 		tspans.forEach(function(t)
 		{
 			t.setAttribute('x', x);
 		});
+		*/
 	}
 	isFusible()
 	{
@@ -6551,6 +6532,64 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</
 			e.classList.add(...[glow]);
 		else
 			e && e.classList.remove(...['glow', 'badGlow']);
+	}
+}
+
+class DiagramText extends DiagramCore
+{
+	constructor(diagram, args)
+	{
+		super(diagram, args);
+		diagram.texts.set(this.name, this);
+	}
+	decrRefcnt()
+	{
+		super.decrRefcnt();
+		if (this.refcnt <= 0)
+			this.diagram.texts.delete(this.name);
+	}
+	editText(e, id)
+	{
+		const svg = document.getElementById(this.elementId());
+		const from = this;
+		R.diagram.editElementText(e, id, 'description', function()
+		{
+			R.diagram.updateElementAttribute(from, 'description', document.getElementById(id).innerText);
+			svg.innerHTML = U.Lines2tspan(from);
+		});
+		e.stopPropagation();
+	}
+	elementId()
+	{
+		return `dt_${this.name}`;
+	}
+	getSVG()
+	{
+		if (isNaN(this.x) || isNaN(this.y))
+			throw `nan in getSVG`;
+		let html = '';
+		if (this.description.indexOf('\n') > -1)		// multi-line svg
+		{
+			let lines = U.Lines2tspan(this);
+			html =
+`<text id="${this.elementId()}" data-type="text" data-name="${this.name}" x="${this.x}" y="${this.y}" text-anchor="left" class="diagramText grabbable"
+	onmousedown="R.diagram.pickElement(event, '${this.name}')"> ${lines}</text>`;
+		}
+		else
+			html =
+`<text data-type="text" data-name="${this.name}" text-anchor="left" class="diagramText grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y}"
+onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</text>`;
+		return html;
+	}
+	updatePosition(xy)
+	{
+		super.updatePosition(xy);
+		const x = this.x;
+		const tspans = svg.querySelectorAll('tspan')
+		tspans.forEach(function(t)
+		{
+			t.setAttribute('x', x);
+		});
 	}
 }
 
@@ -6788,6 +6827,107 @@ class DiagramPullback extends DiagramObject
 		const svg = this.svg('_pb');
 		svg.setAttribute('x', xy.x);
 		svg.setAttribute('y', xy.y);
+	}
+}
+
+class DiagramAssertion extends DiagramCore
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		const leg0 = nuArgs.leg0.map(m => diagram.getElement(m));
+		const leg1 = nuArgs.leg1.map(m => diagram.getElement(m));
+		const toLeg0 = leg0.length === 1 ? leg0[0].to : Composite.Get(diagram, leg0.map(m => m.to));
+		const toLeg1 = leg1.length === 1 ? leg1[0].to : Composite.Get(diagram, leg1.map(m => m.to));
+		const assert = [toLeg0, toLeg1];
+		const key = DiagramAssertion.GetKey(assert);
+		if (diagram.assertions.has(key))
+			throw 'assertion already exists';
+		super(diagram, nuArgs);
+		leg0.map(m => m.incrRefcnt());
+		leg1.map(m => m.incrRefcnt());
+		toLeg0.incrRefcnt();
+		toLeg1.incrRefcnt();
+		if (!('description' in nuArgs))
+			this.description = `The assertion that the morphism ${toLeg0.properName} is equal to ${toLeg1.properName}.`;
+		Object.defineProperties(this,
+		{
+			leg0:			{value: leg0, writable: false},
+			leg1:			{value: leg1, writable: false},
+			assert:			{value: assert, writable: false},
+		});
+		diagram.assertions.set(key, this);
+	}
+	static GetKey(assert)
+	{
+		const name0 = assert[0].name;
+		const name1 = assert[1].name;
+		if (name0.localeCompare(name1) > 0)
+			return [name1, name0];
+		else
+			return [name0, name1];
+	}
+	decrRefcnt()
+	{
+		super.decrRefcnt();
+		this.leg0.map(m => m.decrRefcnt());
+		this.leg1.map(m => m.decrRefcnt());
+		this.diagram.assertions.delete(DiagramAssertion.GetKey(this.assert));
+		this.assert[0].decrRefcnt();
+		this.assert[1].decrRefcnt();
+	}
+	json()
+	{
+		const a = super.json();
+		a.leg0 = this.leg0.map(m => m.name);
+		a.leg1 = this.leg1.map(m => m.name);
+		a.assert = [this.assert[0].name, this.assert[1].name];
+		return a;
+	}
+	getSVG()
+	{
+		const xy = D.Barycenter([D.Barycenter(this.leg0), D.Barycenter(this.leg1)]);
+		const svg =
+`<text data-type="object" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_as'}" x="${xy.x}" y="${xy.y}" onmousedown="R.diagram.pickElement(event, '${this.name}')">&#10226;</text>`;
+		return svg;
+	}
+	svg()
+	{
+		return super.svg('_as');
+	}
+	static GetLegs(ary)
+	{
+		const legs = [[], []];
+		if (!ary.reduce((r, m) => r && DiagramMorphism.prototype.isPrototypeOf(m), true))
+			return legs;		// not all morphisms
+		let domain = ary[0].domain;
+		let leg = 0;
+		for (let i=0; i<ary.length; ++i)
+		{
+			const m = ary[i];
+			if (m.domain !== domain)
+			{
+				if (leg > 0) // oops not a diagram cell: too many legs
+					break;
+				leg = 1;
+			}
+			domain = m.codomain;
+			legs[leg].push(m);
+		}
+		return legs;
+	}
+	static HasForm(ary)
+	{
+		if (ary.length < 2)
+			return false;	// not enough stuff
+		const legs = DiagramAssertion.GetLegs(ary);
+		const leg0 = legs[0];
+		const leg1 = legs[1];
+		const length0 = leg0.length;
+		const length1 = leg1.length;
+		if ((length0 + length1 !== ary.length)  || length0 === 0 || length1 === 0)
+			return false;	// bad legs
+		return leg0[0].domain === leg1[0].domain && leg0[length0 -1].codomain === leg1[length1 -1].codomain;	// legs have same domain and codomain
 	}
 }
 
@@ -9092,6 +9232,33 @@ class TensorAction extends Action
 			return false;
 		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
+	}
+}
+
+class AssertionAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Assert that two legs of a diagram commute.',
+			name:			'assert',
+			icon:
+`<line class="arrow0" x1="120" y1="80" x2="120" y2="240"/>
+<line class="arrow0" x1="120" y1="160" x2="240" y2="160"/>`,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const legs = DiagramAssertion.GetLegs(ary);
+		const a = diagram.addAssertion(legs[0], legs[1]);
+		diagram.makeSelected(e, a);
+		diagram.update();
+	}
+	hasForm(diagram, ary)
+	{
+		return DiagramAssertion.HasForm(ary);
 	}
 }
 
@@ -11466,6 +11633,17 @@ class Diagram extends Functor
 			this.domain.process(this, nuArgs.domainElements);
 		this.svgRoot = null;
 		this.svgBase = null;
+		this.assertions = new Map;
+		if ('assertions' in nuArgs)
+		{
+if (nuArgs.assertions[0] === null)return;
+			nuArgs.assertions.map(a =>
+			{
+				const leg0 = diagram.getElement(a[0]);
+				const leg1 = diagram.getElement(a[1]);
+				this.addAssertion(leg0, leg1);
+			});
+		}
 	}
 	help(helped = new Set)
 	{
@@ -11497,7 +11675,9 @@ class Diagram extends Functor
 		this.elements.forEach(function(e){a.elements.push(e.json())});
 		const texts = [];
 		this.texts.forEach(function(t){texts.push(t.json())});
-		a.texts =		texts;
+		a.texts = texts;
+		a.assertions = [];
+		this.assertions.forEach(function(s, legs) { a.assertions.push(a.json());	});
 		return a;
 	}
 	getAnon(s)
@@ -11676,7 +11856,7 @@ console.log('setView', this.name, {x, y, s, anim});
 		if (this.selected.indexOf(elt) >= 0)	// already selected
 			return;
 		this.selected.push(elt);
-		if (DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt))
+		if (DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt) || DiagramAssertion.prototype.isPrototypeOf(elt))
 			elt.orig = {x:elt.x, y:elt.y};
 		else if (DiagramMorphism.prototype.isPrototypeOf(elt))
 		{
@@ -12433,6 +12613,12 @@ console.log('endEvent', that.name);
 		});
 		return objects;
 	}
+	addAssertion(leg0, leg1)
+	{
+		const elt = new DiagramAssertion(this, {leg0, leg1});
+		this.addSVG(elt);
+		return elt;
+	}
 	static Codename(args)
 	{
 		return `${args.user}/${args.basename}`;
@@ -12468,6 +12654,7 @@ R.protos =
 	DataMorphism,
 	Dedistribute,
 	Diagonal,
+	DiagramAssertion,
 	DiagramObject,
 	DiagramMorphism,
 	DiagramPullback,
