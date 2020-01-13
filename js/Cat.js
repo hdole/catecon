@@ -1460,6 +1460,7 @@ function %1(args)
 		D.ShowDiagram(threeD);
 		threeD.home(false);
 		threeD.update();
+		/*
 		//
 		// quantum cat
 		//
@@ -1470,12 +1471,13 @@ function %1(args)
 				properName:'&Qopf;&uopf;',
 				actionDiagrams:	['tensor'],
 			});
+			*/
 		//
 		// quantum gates
 		//
 		const qGates = new Diagram(userDiagram,
 		{
-			codomain:		qCat,
+			codomain:		pfs,
 			basename:		'gates',
 			properName:		'Gates',
 			description:	'Quantum gates',
@@ -1516,8 +1518,58 @@ function matrix_multiply(m1, m2)
     }
     return result;
 }
-%1_matrix = [	[1, 0],
-				[0, 1]];
+%1_matrix = [	[[1, 0], [0, 0]],
+				[[0, 0], [1, 0]]];
+function %1(args)
+{
+	return matrix_multiply(%1_matrix, args);
+}
+`
+			},
+		});
+		const basis0 = R.MakeMorphism(args, 'basis0', 'Morphism', '&VerticalBar;0&RightAngleBracket;', 'the 0 basis vector', one, qubit,
+		{
+			code:	{javascript:
+`
+function %1(args)
+{
+	return [1, [0, 0]];
+}
+`
+			},
+		});
+		const pauliX = R.MakeMorphism(args, 'X', 'Morphism', 'X', 'Pauli-X gate', qubit, qubit,
+		{
+			code:	{javascript:
+`
+%1_matrix = [	[[0, 0],	[1, 0]],
+				[[1, 0],	[0, 0]]];
+function %1(args)
+{
+	return matrix_multiply(%1_matrix, args);
+}
+`
+			},
+		});
+		const pauliY = R.MakeMorphism(args, 'Y', 'Morphism', 'Y', 'Pauli-Y gate', qubit, qubit,
+		{
+			code:	{javascript:
+`
+%1_matrix = [	[[0, 0],	[0, -1]],
+				[[0, 1],	[0, 0]]];
+function %1(args)
+{
+	return matrix_multiply(%1_matrix, args);
+}
+`
+			},
+		});
+		const pauliZ = R.MakeMorphism(args, 'Z', 'Morphism', 'Z', 'Pauli-Z gate', qubit, qubit,
+		{
+			code:	{javascript:
+`
+%1_matrix = [	[[1, 0],	[0, 0]],
+				[[0, 0],	[-1, 0]]];
 function %1(args)
 {
 	return matrix_multiply(%1_matrix, args);
@@ -1529,8 +1581,8 @@ function %1(args)
 		{
 			code:	{javascript:
 `
-%1_matrix = [	[oSqrt2,	oSqrt2],
-				[oSqrt2,	-oSqrt2]];
+%1_matrix = [	[[oSqrt2, 0],	[oSqrt2, 0]],
+				[[oSqrt2, 0],	[-oSqrt2, 0]]];
 function %1(args)
 {
 	return matrix_multiply(%1_matrix, args);
