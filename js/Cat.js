@@ -1814,11 +1814,7 @@ function %1(args)
 		if (!R.diagram && R.cloud)		// TODO possible inf loop?
 			R.FetchDiagram(name, setup);
 		if (R.diagram)
-		{
 			setup(name);
-//if(R.diagram.viewport.anim)debugger;
-//			R.diagram.viewport.anim = false;
-		}
 	}
 	static GetCategory(name)
 	{
@@ -1933,7 +1929,7 @@ Object.defineProperties(R,
 		},
 		writable:	true,
 	},
-	Diagrams:			{value:new Map,	writable:false},		// available diagrams
+	Diagrams:			{value:new Map,	writable:false},	// available diagrams
 	Actions:			{value:null,	writable:true},		// loaded actions
 	Graph:				{value:null,	writable:true},		// loaded string graphs
 	category:			{value:null,	writable:true},		// current category
@@ -5317,9 +5313,7 @@ class TextSection extends Section
 		diagram.texts.forEach(function(t)
 		{
 			rows += H.tr(
-//										H.td(H.table(H.tr((diagram.isEditable() ? H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text')) : '') +
 						H.td(H.table(H.tr(
-//							H.td(D.GetButton('view', `R.diagram.viewElement('${t.name}')`, 'View')) +
 							(diagram.isEditable() ? H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text')) +
 													H.td(D.GetButton('edit', `R.diagram.getElement('${t.name}').editText(event, 'edit_${t.name}')`, 'Edit')) : '')), 'buttonBarLeft'))) +
 					H.tr(H.td(H.span(t.description, 'tty', `edit_${t.name}`, '', `onclick="R.diagram.viewElement('${t.name}')"`), 'left'), 'sidenavRow');
@@ -5399,15 +5393,6 @@ class Element
 	}
 	help()
 	{
-		/*
-		const html = H.h4(H.span(this.properName, '', 'properNameElt')) +
-						(R.default.internals ? H.p(`Internal name: ${this.name}`) : '') +
-						(R.default.internals ? ('basename' in this ? H.p(H.span(D.limit(this.basename), '', 'basenameElt', this.name)) : '') : '') +
-						(R.default.internals ?  H.p(`Reference count: ${this.refcnt}`) : '') +
-						H.p(H.span(U.Formal(this.description), '', 'descriptionElt')) +
-						(R.default.internals ? H.p(`Prototype: ${this.constructor.name}`) : '') +
-						H.p(`User: ${this.user}`);
-						*/
 		let descBtn = '';
 		let pNameBtn = '';
 		if (this.isEditable() && this.diagram.isEditable())
@@ -7192,7 +7177,7 @@ class CopyAction extends Action
 	}
 	hasForm(diagram, ary)	// one element
 	{
-		return diagram.isEditable() && ary.length === 1;
+		return diagram.isEditable() && ary.length === 1 && !DiagramAssertion.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -11687,15 +11672,7 @@ class Diagram extends Functor
 		this.svgBase = null;
 		this.assertions = new Map;
 		if ('assertions' in nuArgs)
-		{
-if (nuArgs.assertions[0] === null)return;
-			nuArgs.assertions.map(a =>
-			{
-				const leg0 = diagram.getElement(a[0]);
-				const leg1 = diagram.getElement(a[1]);
-				this.addAssertion(leg0, leg1);
-			});
-		}
+			nuArgs.assertions.map(i => new DiagramAssertion(this, i));
 	}
 	help(helped = new Set)
 	{
@@ -11729,7 +11706,7 @@ if (nuArgs.assertions[0] === null)return;
 		this.texts.forEach(function(t){texts.push(t.json())});
 		a.texts = texts;
 		a.assertions = [];
-		this.assertions.forEach(function(s, legs) { a.assertions.push(a.json());	});
+		this.assertions.forEach(function(assert, legs) { a.assertions.push(assert.json());	});
 		return a;
 	}
 	getAnon(s)
@@ -11979,6 +11956,8 @@ console.log('setView', this.name, {x, y, s, anim});
 		for(let i=0; i < this.selected.length; ++i)
 		{
 			const elt = this.selected[i];
+			if (DiagramAssertion.prototype.isPrototypeOf(elt))
+				continue;
 			if (DiagramMorphism.prototype.isPrototypeOf(elt))
 			{
 				dragObjects[elt.domain.name] = elt.domain;
