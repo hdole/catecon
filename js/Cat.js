@@ -6476,6 +6476,10 @@ class DiagramCore
 		});
 		diagram.texts.set(this.name, this);
 	}
+	incrRefcnt()
+	{
+		this.refcnt++;
+	}
 	decrRefcnt()
 	{
 		this.refcnt--;
@@ -6546,14 +6550,6 @@ class DiagramCore
 				svg.setAttribute('y', this.y);
 			}
 		}
-		/*
-		const x = this.x;
-		const tspans = svg.querySelectorAll('tspan')
-		tspans.forEach(function(t)
-		{
-			t.setAttribute('x', x);
-		});
-		*/
 	}
 	isFusible()
 	{
@@ -6713,6 +6709,7 @@ class DiagramObject extends CatObject
 			width:		{value:	U.GetArg(nuArgs, 'width', 0),						writable:	true},
 			height:		{value:	U.GetArg(nuArgs, 'height', D.default.font.height),	writable:	true},
 			to:			{value:	null,												writable:	true},
+			decorations:{value:	new Set,											writable:	false},
 		});
 		if ('to' in nuArgs)
 			this.setObject(diagram.getElement(nuArgs.to));
@@ -6789,6 +6786,7 @@ class DiagramObject extends CatObject
 				svg.setAttribute('y', this.y + ('height' in this ? this.height/2 : 0));
 			}
 		}
+		this.decorations.forEach(function(d){d.update();});
 	}
 	showSelected(state = true)
 	{
@@ -6823,20 +6821,39 @@ class DiagramPullback extends DiagramObject
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-		this.sink = diagram.getElement(args.sink);
-		this.sink && this.sink.incrRefcnt();
+		this.cone = args.cone.map(m =>
+		{
+			const mo = diagram.getElement(m);
+			mo.incrRefcnt();
+			return mo;
+		});
+		this.getObjects().map(o => o !== this && o.decorations.add(this));
 	}
 	json()
 	{
 		let a = super.json();
-		if (this.sink)
-			a.sink = this.sink.name;
+		a.cone = this.cone.map(m => m.name);
 		return a;
+	}
+	getObjects()
+	{
+		const objs = new Set;
+		objs.add(this);
+		this.cone.map(m =>
+		{
+			objs.add(m.domain);
+			objs.add(m.codomain);
+		});
+		return [...objs];
+	}
+	getPullbackPosition()	// for the pullback symbol
+	{
+		return D.Barycenter(this.getObjects());
 	}
 	getSVG()
 	{
 		let svg = super.getSVG();
-		const xy = D.Barycenter([this, this.sink]);
+		const xy = this.getPullbackPosition();
 		svg +=
 `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_pb'}" x="${xy.x}" y="${xy.y}" onmousedown="R.diagram.pickElement(event, '${this.name}')">&#8991;</text>`;
 		return svg;
@@ -6852,15 +6869,15 @@ class DiagramPullback extends DiagramObject
 	{
 		if (this.refcnt <= 1)
 		{
-			this.sink && this.sink.decrRefcnt();
 			this.removeSVG();
+			this.getObjects().map(o => o.decorations.delete(this));
 		}
 		super.decrRefcnt();
 	}
 	update()
 	{
 		super.update();
-		const xy = D.Barycenter([this, this.sink]);
+		const xy = this.getPullbackPosition();
 		const svg = this.svg('_pb');
 		svg.setAttribute('x', xy.x);
 		svg.setAttribute('y', xy.y);
@@ -6894,24 +6911,23 @@ class DiagramAssertion extends DiagramCore
 			assert:			{value: assert, writable: false},
 		});
 		diagram.assertions.set(key, this);
-	}
-	static GetKey(assert)
-	{
-		const name0 = assert[0].name;
-		const name1 = assert[1].name;
-		if (name0.localeCompare(name1) > 0)
-			return [name1, name0];
-		else
-			return [name0, name1];
+		const objs = this.getObjects();
+		objs.map(o => o.decorations.add(this));
 	}
 	decrRefcnt()
 	{
 		super.decrRefcnt();
-		this.leg0.map(m => m.decrRefcnt());
-		this.leg1.map(m => m.decrRefcnt());
-		this.diagram.assertions.delete(DiagramAssertion.GetKey(this.assert));
-		this.assert[0].decrRefcnt();
-		this.assert[1].decrRefcnt();
+		if (this.refcnt <= 0)
+		{
+			const objs = this.getObjects();
+			const that = this;
+			objs.map(o => o.decorations.delete(that));
+			this.leg0.map(m => m.decrRefcnt());
+			this.leg1.map(m => m.decrRefcnt());
+			this.diagram.assertions.delete(DiagramAssertion.GetKey(this.assert));
+			this.assert[0].decrRefcnt();
+			this.assert[1].decrRefcnt();
+		}
 	}
 	json()
 	{
@@ -6921,9 +6937,30 @@ class DiagramAssertion extends DiagramCore
 		a.assert = [this.assert[0].name, this.assert[1].name];
 		return a;
 	}
+	getObjects()
+	{
+		const objs = new Set;
+		const findObjs = function(m)
+		{
+			objs.add(m.domain);
+			objs.add(m.codomain);
+		};
+		this.leg0.map(m => findObjs(m));
+		this.leg1.map(m => findObjs(m));
+		return [...objs];
+	}
+	getPosition()
+	{
+		return D.Barycenter(this.getObjects());
+	}
+	update()
+	{
+		this.updatePosition(this.getPosition());
+	}
 	getSVG()
 	{
-		const xy = D.Barycenter([D.Barycenter(this.leg0), D.Barycenter(this.leg1)]);
+		const xy = this.getPosition();
+		this.setXY(xy);
 		const svg =
 `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_as'}" x="${xy.x}" y="${xy.y}" onmousedown="R.diagram.pickElement(event, '${this.name}')">&#10226;</text>`;
 		return svg;
@@ -6931,6 +6968,15 @@ class DiagramAssertion extends DiagramCore
 	svg()
 	{
 		return super.svg('_as');
+	}
+	static GetKey(assert)
+	{
+		const name0 = assert[0].name;
+		const name1 = assert[1].name;
+		if (name0.localeCompare(name1) > 0)
+			return [name1, name0];
+		else
+			return [name0, name1];
 	}
 	static GetLegs(ary)
 	{
@@ -7418,20 +7464,22 @@ class PullbackAction extends Action
 		};
 		super(diagram, args);
 	}
-	action(e, diagram, ary)
+	action(e, diagram, cone)
 	{
-		const cone = ary.map(m => m.to);
-		const to = PullbackObject.Get(diagram, cone);
-		const bary = D.Barycenter(ary.map(m => m.domain));
-		const sink = ary[0].codomain;
+//		const cone = cone.map(m => m.to);
+		const toCone = cone.map(m => m.to);
+		const to = PullbackObject.Get(diagram, toCone);
+		const bary = D.Barycenter(cone.map(m => m.domain));
+		const sink = cone[0].codomain;
 		const xy = bary.add(bary.subtract(sink));
-		const source = new DiagramPullback(diagram, {xy, to, sink});
+//		const source = new DiagramPullback(diagram, {xy, to, sink});
+		const source = new DiagramPullback(diagram, {xy, to, cone});
 		diagram.addSVG(source);
 		diagram.deselectAll();
-		cone.map((m, index) =>
+		toCone.map((m, index) =>
 		{
 			const pb = PullbackMorphism.Get(diagram, to, index);
-			const from = new DiagramMorphism(diagram, {to:pb, domain:source, codomain:ary[index].domain});
+			const from = new DiagramMorphism(diagram, {to:pb, domain:source, codomain:cone[index].domain});
 			diagram.addSVG(from);
 			diagram.addSelected(from);
 		});
@@ -11671,8 +11719,13 @@ class Diagram extends Functor
 		this.svgRoot = null;
 		this.svgBase = null;
 		this.assertions = new Map;
+if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		if ('assertions' in nuArgs)
-			nuArgs.assertions.map(i => new DiagramAssertion(this, i));
+			nuArgs.assertions.map(i =>
+			{
+				const a = new DiagramAssertion(this, i);
+				a.incrRefcnt();
+			});
 	}
 	help(helped = new Set)
 	{
