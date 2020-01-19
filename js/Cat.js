@@ -7052,7 +7052,7 @@ class CompositeAction extends Action
 	action(e, diagram, morphisms)
 	{
 		const to = Composite.Get(diagram, morphisms.map(m => m.to));
-		const from = new DiagramMorphism(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms), morphisms});
+		const from = new DiagramComposite(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms), morphisms});
 		diagram.domain.makeHomSets();
 		diagram.domain.makeHomSets();
 		diagram.addSVG(from);
@@ -9779,11 +9779,11 @@ class DiagramMorphism extends Morphism
 		super(diagram, nuArgs);
 		this.incrRefcnt();
 		this.flipName = U.GetArg(args, 'flipName', false);
-		if ('morphisms' in nuArgs)
-		{
-			this.morphisms = nuArgs.morphisms.map(m => diagram.domain.getElement(m));
-			this.morphisms.map(m => m.incrRefcnt());
-		}
+//		if ('morphisms' in nuArgs)
+//		{
+//			this.morphisms = nuArgs.morphisms.map(m => diagram.domain.getElement(m));
+//			this.morphisms.map(m => m.incrRefcnt());
+//		}
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
 		delete this.signature;
 	}
@@ -9798,8 +9798,8 @@ class DiagramMorphism extends Morphism
 	{
 		if (this.refcnt <= 1 && this.to)
 		{
-			if ('morphisms' in this)
-				this.morphisms.map(m => m.decrRefcnt());
+//			if ('morphisms' in this)
+//				this.morphisms.map(m => m.decrRefcnt());
 			this.to.decrRefcnt();
 			this.removeSVG();
 		}
@@ -9817,8 +9817,8 @@ class DiagramMorphism extends Morphism
 		let mor = super.json();
 		mor.flipName = this.flipName;
 		mor.to = this.to.name;
-		if ('morphisms' in this)
-			mor.morphisms = this.morphisms.map(m => m.name);
+//		if ('morphisms' in this)
+//			mor.morphisms = this.morphisms.map(m => m.name);
 		return mor;
 	}
 	setMorphism(to)
@@ -9843,7 +9843,7 @@ class DiagramMorphism extends Morphism
 			normal.y *= 0.5;
 		return normal.scale(-D.default.font.height).add(mid);
 	}
-	getSVG()
+	getSVG(group = true)
 	{
 		this.predraw();
 		const off = this.getNameOffset();
@@ -9855,15 +9855,15 @@ class DiagramMorphism extends Morphism
 onmousedown="R.diagram.pickElement(event, '${this.name}')" marker-end="url(#arrowhead)"/>
 <text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}"
 onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}</text>`;
-		if (Composite.prototype.isPrototypeOf(this.to) && 'morphisms' in this)
-		{
-			const xy = D.Barycenter(this.morphisms);
-			if (isNaN(xy.x) || isNaN(xy.y))
-				throw 'Nan!';
-			svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}"
-	onmousedown="R.diagram.pickElement(event, '${this.name}')">${D.default.composite}</text></g>`;
-		}
-		svg += '</g>';
+//		if (Composite.prototype.isPrototypeOf(this.to) && 'morphisms' in this)
+//		{
+//			const xy = D.Barycenter(this.morphisms);
+//			if (isNaN(xy.x) || isNaN(xy.y))
+//				throw 'Nan!';
+//			svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}"
+//	onmousedown="R.diagram.pickElement(event, '${this.name}')">${D.default.composite}</text></g>`;
+//		}
+		svg += group ? '</g>' : '';
 		return svg;
 	}
 	elementId()
@@ -9919,6 +9919,7 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 		else if (angle > bnd && angle < Math.PI - bnd)
 			anchor = this.flipName ? 'end' : 'start';
 		svg.setAttribute('text-anchor', anchor);
+		/*
 		if (Composite.prototype.isPrototypeOf(this.to) && 'morphisms' in this)
 		{
 			const compSvg = this.svg('_comp');
@@ -9928,30 +9929,11 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 			compSvg.setAttribute('x', xy.x);
 			compSvg.setAttribute('y', xy.y);
 		}
+		*/
 	}
 	getBBox()
 	{
 		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox());
-		/*
-		let r =
-		{
-			x:	Math.min(this.start.x + ('bezier' in this ? this.bezier.offset.x : 0), this.end.x),
-			y:	Math.min(this.start.y + ('bezier' in this ? this.bezier.offset.y : 0), this.end.y),
-			width:	Math.abs(this.start.x - this.end.x),
-			height:	Math.abs(this.start.y - this.end.y),
-		};
-		if (r.width === 0.0)
-		{
-			r.width = fontHeight = D.default.font.height;
-			r.x += r.width/2;
-		}
-		else if (r.height === 0.0)
-		{
-			r.height = r.width;
-			r.y -= r.width/2;
-		}
-		return r;
-		*/
 	}
 	predraw()
 	{
@@ -10088,6 +10070,59 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 		let codXY = new D2(this.codomain.getXY()).add(xy.subtract(domXY));
 		this.codomain.updatePosition(codXY);
 		this.update();
+	}
+}
+
+class DiagramComposite extends DiagramMorphism
+{
+	constructor(diagram, args)
+	{
+		super(diagram, args);
+		this.morphisms = args.morphisms.map(m => diagram.domain.getElement(m));
+		this.morphisms.map((m, i) =>
+		{
+			m.incrRefcnt();
+			if (i !== this.morphisms.length)
+				m.codomain.decorations.add(this);
+		});
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt <= 1)
+			this.morphisms.map(m =>
+			{
+				if (i !== this.morphisms.length)
+					m.codomain.decorations.delete(this);
+				m.decrRefcnt();
+			});
+		super.decrRefcnt();
+	}
+	json()
+	{
+		let mor = super.json();
+		mor.morphisms = this.morphisms.map(m => m.name);
+		return mor;
+	}
+	getSVG()
+	{
+		let svg = `<g id="${this.elementId()}">${super.getSVG(false)}`;
+		const xy = D.Barycenter(this.morphisms);
+		if (isNaN(xy.x) || isNaN(xy.y))
+			throw 'Nan!';
+		svg += `<text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_comp'}" x="${xy.x}" y="${xy.y}"
+	onmousedown="R.diagram.pickElement(event, '${this.name}')">${D.default.composite}</text></g>`;
+		svg += '</g>';
+		return svg;
+	}
+	update()
+	{
+		super.update();
+		const svg = this.svg('_comp');
+		const xy = D.Barycenter(this.morphisms);
+		if (isNaN(xy.x) || isNaN(xy.y))
+			throw 'NaN!';
+		svg.setAttribute('x', xy.x);
+		svg.setAttribute('y', xy.y);
 	}
 }
 
@@ -12739,8 +12774,9 @@ R.protos =
 	Dedistribute,
 	Diagonal,
 	DiagramAssertion,
-	DiagramObject,
+	DiagramComposite,
 	DiagramMorphism,
+	DiagramObject,
 	DiagramPullback,
 	DiagramText,
 	Distribute,
