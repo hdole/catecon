@@ -292,7 +292,7 @@ class U
 	}
 	static GetError(err)
 	{
-		return typeof err === 'string' ? err : err.message;
+		return typeof err === 'string' ? err : `${err.name}: ${err.message}`;
 	}
 	static sha256(msg)
 	{
@@ -307,6 +307,8 @@ class U
 		{
 			if (Array.isArray(o))
 				return o.map(a => U.clone(a));
+			else if (Map.prototype.isPrototypeOf(o))
+				return new Map(o);
 			else
 			{
 				let c = {};
@@ -343,10 +345,10 @@ class U
 		}
 		return sub;
 	}
-	static JsonMap(m)
+	static JsonMap(m, doKeys = true)
 	{
 		let data = [];
-		m.forEach(function(m) { data.push(m); });
+		m.forEach(function(d, i) { data.push(doKeys ? [i, d] : d); });
 		return data;
 	}
 	static jsonArray(map)
@@ -450,11 +452,15 @@ class U
 	{
 		return elt.description.indexOf('\n') > -1 ?  elt.description.split('\n').map(t => `<tspan text-anchor="left" x="${elt.x}" dy="1.2em">${t}</tspan>`).join('') : elt.description;
 	}
-	static a2s(a)
+	static a2s(a)	// array to string
 	{
 		if (Array.isArray(a))
 			return '[' + a.map(e => U.a2s(e)).join() + ']';
 		return a.toString();
+	}
+	static safe(a)
+	{
+		return U.HtmlSafe(U.a2s(a));
 	}
 }
 Object.defineProperties(U,
@@ -1009,6 +1015,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const Nadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two natural numbers', Npair, N, {js:'return args[0] + args[1];'}).to;
 		const Nmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two natural numbers', Npair, N, {js:'return args[0] * args[1];'}).to;
 		const Nsucc = R.MakeMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the natural numbers', N, N, {js:'return args + 1;'}).to;
+		const Ndecr = R.MakeMorphism(args, 'decrement', 'Morphism', 'decr', 'The decrement function for the natural numbers', N, N, {js:'return args > 0 ? args - 1 : 0;'}).to;
 		const Nless = R.MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first natural number less than the second', Npair, omega, {js:'return args[0] < args[1];'}).to;
 		const NlessEq = R.MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first natural number less than or equal to the second', Npair, omega, {js:'return args[0] <= args[1];'}).to;
 		const Nequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two natural numbers for equality', Npair, omega, {js:'return args[0] === args[1];'}).to;
@@ -1638,7 +1645,7 @@ function %1(args)
 	}
 	static SaveLocalDiagramList()
 	{
-		localStorage.setItem('diagrams', JSON.stringify(U.JsonMap(R.Diagrams)));
+		localStorage.setItem('diagrams', JSON.stringify(U.JsonMap(R.Diagrams, false)));
 	}
 	static ReadLocalCategoryList()
 	{
@@ -1648,7 +1655,7 @@ function %1(args)
 	}
 	static SaveLocalCategoryList()
 	{
-		localStorage.setItem('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo())));
+		localStorage.setItem('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo(), false)));
 	}
 // TODO unused; move to cloud class?
 	static fetchCategories(fn = null)
@@ -2497,7 +2504,7 @@ class D
 		D.Panel = 			Panel;
 		D.panels =			new Panels;
 		D.categoryPanel =	new CategoryPanel;
-		D.dataPanel =		new DataPanel;
+//		D.dataPanel =		new DataPanel;
 		D.diagramPanel =	new DiagramPanel;
 		D.DiagramPanel =	DiagramPanel;
 		D.helpPanel =		new HelpPanel;
@@ -2963,7 +2970,7 @@ ${D.Button(onclick)}
 		if (id !== null)
 			button =
 `<g>
-<animateTransform id="${id}" attributeName="transform" type="rotate" from="0 160 160" to="360 160 160" dur="0.5s" repeatCount="0" begin="indefinite"/>
+<animateTransform id="${id}" attributeName="transform" type="rotate" from="0 160 160" to="360 160 160" dur="0.5s" repeatCount="1" begin="indefinite"/>
 ${button}
 </g>`;
 		return H.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>', '', '', title);
@@ -3426,7 +3433,7 @@ Object.defineProperties(D,
 	'category':			{value: null,		writable: true},
 	'categoryPanel':	{value: null,		writable: true},
 	'commaWidth':		{value: 0,			writable: true},
-	'dataPanel':		{value: null,		writable: true},
+//	'dataPanel':		{value: null,		writable: true},
 	default:
 	{
 		value:
@@ -4352,6 +4359,7 @@ class TtyPanel extends Panel
 	}
 }
 
+/*
 class DataPanel extends Panel
 {
 	constructor()
@@ -4381,8 +4389,8 @@ class DataPanel extends Panel
 				let tbl = '';
 				if (DataMorphism.prototype.isPrototypeOf(to))
 				{
-					html += H.h3(to.properName, '', 'dataPanelTitle');
-					if (to.recursor !== null)
+					let html = H.h3(to.properName, '', 'dataPanelTitle');
+					if (to.recursor)
 						html += H.small(`Recursor morphism is ${to.recursor.properName}`);
 					if (to.domain.isEditable())	// TODO remove?
 					{
@@ -4397,10 +4405,9 @@ class DataPanel extends Panel
 						html += H.div(H.table(tbl) + D.GetButton('edit', `dataPanel.handler(event, '${from.name}')`, 'Edit data'), 'section', 'dataInputPnl');
 						html += H.div('', 'error', 'editError');
 					}
-					html += H.button('Current Data', 'sidenavAccordion', 'dataPnlBtn', 'Current data in this morphism', `onclick="D.Panel.SectionToggle(this, \'dataPnl\')"`) +
-							H.small('To determine the value of an index, first the data values are consulted then the data ranges.');
+//					html += H.button('Current Data', 'sidenavAccordion', 'dataPnlBtn', 'Current data in this morphism', `onclick="D.Panel.SectionToggle(this, \'dataPnl\')"`) +
+//							H.small('To determine the value of an index, first the data values are consulted then the data ranges.');
 					tbl = H.tr(H.th(to.domain.properName) + H.th(to.codomain.properName));
-					/*
 					for(let i in to.data)
 					{
 						let d = to.data[i];
@@ -4408,7 +4415,6 @@ class DataPanel extends Panel
 							continue;
 						tbl += H.tr(H.td(i) + H.td(d));
 					}
-					*/
 					to.data.forEach(function(d,i)
 					{
 						if (d === null)
@@ -4419,9 +4425,9 @@ class DataPanel extends Panel
 					this.dataView.innerHTML = html;
 				}
 			}
-			const dpb = document.getElementById('dataPnlBtn');
-			if (dpb !== null)
-				Panel.SectionToggle(dpb, 'dataPnl');
+//			const dpb = document.getElementById('dataPnlBtn');
+//			if (dpb !== null)
+//				Panel.SectionToggle(dpb, 'dataPnl');
 		}
 	}
 	handler(e, nm)
@@ -4438,7 +4444,14 @@ class DataPanel extends Panel
 			document.getElementById('editError').innerHTML = 'Error: ' + U.GetError(err);
 		}
 	}
+	open()
+	{
+		super.open();
+		this.update();
+	}
 }
+*/
+
 
 class NewDiagramSection extends Section
 {
@@ -6555,12 +6568,12 @@ class DiagramCore
 	{}
 	updateGlow(on, glow)	// same as Element
 	{
-		const e = this.svg();
-		e && e.classList.remove(...['glow', 'badGlow']);
+		const svg = this.svg();
+		svg && svg.classList.remove(...['glow', 'badGlow']);
 		if (on)
-			e.classList.add(...[glow]);
+			svg.classList.add(...[glow]);
 		else
-			e && e.classList.remove(...['glow', 'badGlow']);
+			svg && svg.classList.remove(...['glow', 'badGlow']);
 	}
 }
 
@@ -6613,6 +6626,7 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</
 	updatePosition(xy)
 	{
 		super.updatePosition(xy);
+		const svg = this.svg();
 		const x = this.x;
 		const tspans = svg.querySelectorAll('tspan')
 		tspans.forEach(function(t)
@@ -8864,13 +8878,15 @@ class RunAction extends Action
 						name:			'run',
 						icon:
 `<g>
-<animateTransform id="RunAction btn" attributeName="transform" type="rotate" from="0 160 160" to="360 160 160" dur="0.5s" repeatCount="0" begin="indefinite"/>
+<animateTransform id="RunAction btn" attributeName="transform" type="rotate" from="0 160 160" to="360 160 160" dur="0.5s" repeatCount="1" begin="indefinite"/>
 <line class="arrow0" x1="20" y1="80" x2="180" y2="80" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="140" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>
 </g>`,};
 		super(diagram, args);
 		this.workers = [];
+		this.data = new Map;
+		this.js = null;		// fill in later
 	}
 	action(e, diagram, ary)
 	{
@@ -8886,13 +8902,15 @@ class RunAction extends Action
 		const js = R.Actions.javascript;
 		const evalBtn = D.GetButton('edit', `R.Actions.javascript.evaluate(event, R.diagram, '${to.name}', R.Actions.run.postResult)`, 'Evaluate inputs');
 		const tableBtn = D.GetButton('table', `R.Actions.run.createData(event, R.diagram, '${from.name}')`, 'Create data');
+		const addDataBtn = D.GetButton('edit', `R.Actions.run.addInput()`, 'Add data');
 		const {properName, description} = to;
 		let html = H.h3(properName) + (description !== '' ? H.p(description, 'smallPrint') : '');
 		if (DiagramObject.prototype.isPrototypeOf(from))
 		{
 			if (js.canFormat(to))
 			{
-				html += js.getInput(to) + D.GetButton('edit', `R.Actions.run.copyInput()`, 'Copy input') + tableBtn;
+//				html += js.getInput(to) + D.GetButton('edit', `R.Actions.run.addInput()`, 'Copy input') + tableBtn;
+				html += js.getInput(to) + addDataBtn + tableBtn;
 			}
 		}
 		else	// morphism
@@ -8908,36 +8926,44 @@ class RunAction extends Action
 				}
 				else	// indeterminate size
 				{
-					html += js.getInput(codomain, "0");
+					html += js.getInput(codomain);
 					html += D.GetButton('add', `R.Actions.run.addDataInput(event, R.diagram, '${to.name}')`, 'Add data input');
 				}
 			}
 			else if (DataMorphism.prototype.isPrototypeOf(to))
 			{
+//				if (FiniteObject.prototype.isPrototypeOf(domain) && 'size' in domain && to.data.size !== domain.size)
+				let rows = H.tr(H.td(H.small('domain')) + H.td(H.small('codomain')) + H.td(''));
+				rows += H.tr(H.td(js.getInput(domain, 'dom')) + H.td(js.getInput(codomain, 'cod')) + H.td(addDataBtn));
+				html += H.table(rows);
 				canMakeData = false;
-				if (FiniteObject.prototype.isPrototypeOf(domain) && 'size' in domain && to.data.size !== domain.size)
-				{
-					html += js.getInput(domain) + evalBtn;
-					canMakeData = true;
-				}
 			}
 			else if (to.isIterable())
 				html += evalBtn;
-			else
+			else		// try to evaluate an input
 				html += js.getInput(domain) + evalBtn;
 			html += canMakeData ? tableBtn : '';
 			html += H.hr();
 			if (DataMorphism.prototype.isPrototypeOf(to))
 			{
-				to.data.forEach(function(v, i)
+				if (to.data.size > 0)
 				{
-					html += U.HtmlSafe(i) + ': ' + U.HtmlSafe(U.a2s(v)) + H.br();
-				});
+					let rows = '';
+					to.data.forEach(function(d,i)
+					{
+						if (d !== null)
+							rows += H.tr(H.td(i) + H.td(d));
+					});
+					html += H.table(rows);
+				}
+				else
+					html += H.small('no data');
+				html += '<br/>';
 			}
 		}
 		D.help.innerHTML = H.div(html, '', 'run-display');
 		this.display = document.getElementById('run-display');
-		this.data = [];
+		this.data = new Map;
 	}
 	postResult(r)
 	{
@@ -8946,21 +8972,56 @@ class RunAction extends Action
 		R.Actions.run.display.appendChild(d);
 		R.Actions.run.data.push(r);
 	}
-	copyInput()
+	addInput()
 	{
-		var d = document.createElement('div');
-		const s = R.diagram.getSelected();
+//		const js = R.Actions.javascript;
+		const to = R.diagram.getSelected().to;
+		/*
 		const args = R.Actions.javascript.getInputValue(DiagramObject.prototype.isPrototypeOf(s) ? s.to : s.domain.to);
 		d.innerHTML = U.HtmlSafe(U.a2s(args));
 		R.Actions.run.display.appendChild(d);
-		R.Actions.run.data.push(args);
+		R.Actions.run.data.set(R.Actions.run.data.size, args);
+		*/
+		let dom = null;
+		let cod = null;
+		const d = document.createElement('div');
+		if (CatObject.prototype.isPrototypeOf(to))
+		{
+//			dom = R.Actions.run.data.size;
+			dom = this.data.size;
+			cod = this.js.getInputValue(to);
+			d.innerHTML = U.HtmlSafe(U.a2s(cod));
+			this.data.set(dom, cod);
+		}
+		else if (DataMorphism.prototype.isPrototypeOf(to))
+		{
+//			dom = js.getInputValue(to.domain, 'dom');
+//			cod = js.getInputValue(to.codomain, 'cod');
+			const {domain, codomain} = this.setInputValue(to);
+//			d.innerHTML = U.safe(dom) + '&rarr;' + U.safe(cod);
+			d.innerHTML = this.htmlInputValue(domain, codomain);
+//			to.data.set(dom, cod);
+		}
+		this.display.appendChild(d);
+		R.diagram.update();
+	}
+	htmlInputValue(domain, codomain)
+	{
+		return U.safe(domain) + '&rarr;' + U.safe(codomain);
+	}
+	setInputValue(m)
+	{
+		const domain = this.js.getInputValue(m.domain, 'dom');
+		const codomain = this.js.getInputValue(m.codomain, 'cod');
+		m.data.set(domain, codomain);
+		return {domain, codomain};
 	}
 	createData(e, diagram, eltName)
 	{
-		if (this.data.length > 0)
+		if (this.data.size > 0)
 		{
 			const selected = diagram.getElement(eltName);
-			const domain = FiniteObject.Get(diagram, '', this.data.length);
+			const domain = FiniteObject.Get(diagram, '', this.data.size);
 			const {to, name} = DiagramObject.prototype.isPrototypeOf(selected) ? selected : selected.codomain;
 			const dm = new DataMorphism(diagram, {domain, codomain:to, data:this.data});
 			diagram.objectPlaceMorphism(e, 'codomain', name, dm.name);
@@ -8968,13 +9029,15 @@ class RunAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
+		if (!this.js)
+			this.js = R.Actions.javascript;
 		if (ary.length === 1 && 'to' in ary[0])
 		{
 			const {to} = ary[0];
-			if (Morphism.prototype.isPrototypeOf(to) && (R.Actions.javascript.canFormat(to) || to.isIterable()))
+			if (Morphism.prototype.isPrototypeOf(to) && (this.js.canFormat(to) || to.isIterable()))
 				return true;
 			if (CatObject.prototype.isPrototypeOf(to))
-				return R.Actions.javascript.canFormat(to);
+				return this.js.canFormat(to);
 		}
 		return false;
 	}
@@ -9302,7 +9365,7 @@ class DataAction extends Action
 {
 	constructor(diagram)
 	{
-		const args = {	description:	'Create or edit a data morphism',
+		const args = {	description:	'Convert to data morphism',
 						name:			'data',
 						icon:			D.svg.table,
 		};
@@ -9311,24 +9374,45 @@ class DataAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const to = from.to;
+		let to = from.to;
 		if (to.constructor.name === 'Morphism')
 		{
 			diagram.deselectAll();
 			diagram.codomain.deleteElement(to);
-			from.to = null;
+			from.to = null;	// TODO decrRefcnt()?
 			from.setMorphism(new DataMorphism(diagram, to.json()));
+			to = from.to;
 			diagram.makeSelected(e, from);
-			D.Status(e, `morphism ${from.to.properName} is now a data morphism`);
+			D.Status(e, `Morphism ${from.to.properName} is now a data morphism`);
+			diagram.update();
 		}
-		D.dataPanel.open();
+		/*
+//		D.dataPanel.open();
 		const js = R.Actions.javascript;
+		let html = '';
 		if (CatObject.prototype.isPrototypeOf(to) && js.canFormat(to))
-			D.dataPanel.dataView.innerHTML = R.Actions.javascript.getInput(to);
-		else if (Morphism.prototype.isPrototypeOf(to) && js.canFormat(to.domain) && js.canFormat(to.codomain))
 		{
-			D.dataPanel.dataView.innerHTML = R.Actions.javascript.getInput(to);
+			html += js.getInput(to) + D.GetButton('edit', `R.Actions.run.addInput()`, 'Copy input') + tableBtn;
 		}
+		else if (DataMorphism.prototype.isPrototypeOf(to) && js.canFormat(to.domain) && js.canFormat(to.codomain))
+		{
+			if (to.data.size > 0)
+			{
+				let rows = '';
+				to.data.forEach(function(d,i)
+				{
+					if (d === null)
+						continue;
+					rows += H.tr(H.td(i) + H.td(d));
+				});
+				html = H.div(H.table(rows), '', 'data-display');
+			}
+			else
+				html = H.small('no data');
+			html += H.div(H.h5('Add Data'));
+		}
+		D.help.innerHTML = html;
+		*/
 	}
 	hasForm(diagram, ary)
 	{
@@ -9338,9 +9422,9 @@ class DataAction extends Action
 			const to = ary[0].to;
 //			if (diagram.isIsolated(from) && diagram.elements.has(to.basename) && Morphism.prototype.isPrototypeOf(to) && to.domain.isIterable() && !('code' in to))
 			if (diagram.isIsolated(from) && diagram.elements.has(to.basename) && Morphism.prototype.isPrototypeOf(to) && !('code' in to))
-				return  to.constructor.name === 'Morphism' || DataMorphism.prototype.isPrototypeOf(to);
-			if (DiagramObject.prototype.isPrototypeOf(from))
-				return R.Actions.javascript.canFormat(from.to);
+				return  to.constructor.name === 'Morphism';
+//			if (DiagramObject.prototype.isPrototypeOf(from))
+//				return R.Actions.javascript.canFormat(from.to);
 		}
 		return false;
 	}
@@ -10912,10 +10996,21 @@ class DataMorphism extends Morphism
 		super(diagram, nuArgs);
 		if ('data' in nuArgs)
 		{
-			if (Array.isArray(nuArgs.data[0]))
-				this.data = new Map(nuArgs.data);
+			const data = nuArgs.data;
+			if (Array.isArray(data))
+			{
+				if (data.length > 0)
+				{
+					if (Array.isArray(data[0]) || Map.prototype.isPrototypeOf(data))
+						this.data = new Map(data);
+					else
+						this.data = new Map(data.map((d, i) => [i, d]));
+				}
+				else
+					this.data = new Map;
+			}
 			else	// TODO old style; remove
-				this.data = nuArgs.data.map((d, i) => [i, d]);
+				this.data = data.map((d, i) => [i, d]);
 		}
 		else
 			this.data = new Map;
@@ -11950,7 +12045,7 @@ console.log('setView', this.name, {x, y, s, anim});
 	}
 	deselectAll(toolbarOff = true)
 	{
-		D.dataPanel.close();
+//		D.dataPanel.close();
 		if (toolbarOff)
 			D.HideToolbar();
 		this.selected.map(elt => elt.showSelected(false));
@@ -11978,8 +12073,8 @@ if (typeof elt === 'undefined')debugger;
 		{
 			elt.domain.orig = {x:elt.domain.x, y:elt.domain.y};
 			elt.codomain.orig = {x:elt.codomain.x, y:elt.codomain.y};
-			if (DataMorphism.prototype.isPrototypeOf(elt) && elt.name !== document.getElementById('dataPanelTitle').innerHTML)
-				D.dataPanel.close();
+//			if (DataMorphism.prototype.isPrototypeOf(elt) && elt.name !== document.getElementById('dataPanelTitle').innerHTML)
+//				D.dataPanel.close();
 		}
 	}
 	removeSelected(elt)
@@ -12307,9 +12402,9 @@ if (typeof elt === 'undefined')debugger;
 			this.svgRoot.innerHTML +=
 `
 <g>
-<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="0.5s" repeatCount="0" begin="indefinite" fill="freeze" easing="ease-in-out"/>
+<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="0.5s" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
 <g>
-<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="0.5s" repeatCount="0" begin="indefinite" fill="freeze" easing="ease-in-out"/>
+<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="0.5s" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
 <g id="${base}">
 </g>
 </g>
@@ -12358,7 +12453,7 @@ if (typeof elt === 'undefined')debugger;
 				D.Status(e, `Uploaded diagram${R.default.internals ? '<br/>&#9201;' + delta + 'ms': ''}`, true);
 				R.ServerDiagrams.set(that.name, that);
 				D.diagramPanel.setToolbar(that);
-				btn.setAttribute('repeatCount', 0);
+				btn.setAttribute('repeatCount', 1);
 			});
 		}
 		else
