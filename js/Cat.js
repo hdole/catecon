@@ -2763,7 +2763,8 @@ class D
 							if (a && a.hasForm(diagram, ary))
 							{
 								from.showSelected(false);
-								diagram.selected = [];
+//								diagram.selected = [];
+								diagram.deselectAll();
 								a.action(e, diagram, ary);
 								target.decrRefcnt();	// do not decrement earlier than this
 								from.decrRefcnt();
@@ -3493,6 +3494,14 @@ Object.defineProperties(D,
 				D.drag = false;
 				R.diagram.update();
 			},
+			ControlKeyC(e)
+			{
+//				D.pasteBuffer = R.diagram.selected.map(e => e.name);
+				D.pasteBuffer = R.diagram.selected.slice();
+				D.pasteDiagram = R.diagram;
+				D.Status(e, 'Copied to paste buffer');
+			},
+			ControlKeyV(e)	{	R.diagram.paste(e);	},
 			Digit0(e) { D.testAndFireAction(e, 'initialMorphism', R.diagram.selected); },
 			Digit1(e) { D.testAndFireAction(e, 'terminalMorphism', R.diagram.selected); },
 			Digit3(e) { D.threeDPanel.toggle(); },
@@ -3516,7 +3525,8 @@ Object.defineProperties(D,
 			{
 				const diagram = R.diagram;
 				diagram.deselectAll();
-				diagram.placeText(e, D.Grid(diagram.userToDiagramCoords(D.mouse.position())), 'Lorem ipsum cateconium');
+//				diagram.placeText(e, D.Grid(diagram.userToDiagramCoords(D.mouse.position())), 'Lorem ipsum cateconium');
+				diagram.placeText(e, D.Grid(R.mouse.diagramPosition(diagram)), 'Lorem ipsum cateconium');
 				D.textPanel.textSection.update();
 			},
 			Delete(e)
@@ -3538,6 +3548,11 @@ Object.defineProperties(D,
 								{
 									return this.xy[this.xy.length -1];
 								},
+								diagramPosition(diagram)
+								{
+//									return D.Grid(diagram.userToDiagramCoords(D.mouse.position()));
+									return diagram.userToDiagramCoords(D.mouse.position());
+								},
 								savePosition(e)
 								{
 									this.xy.push(new D2(e.clientX, e.clientY));
@@ -3557,6 +3572,8 @@ Object.defineProperties(D,
 	'objectPanel':		{value: null,		writable: true},
 	'Panel':			{value: null,		writable: true},
 	'panels':			{value: null,		writable: true},
+	'pasteBuffer':		{value: [],			writable: true},
+	'pasteDiagram':		{value:	null,		writable: true},
 	'settingsPanel':	{value: null,		writable: true},
 	'shiftKey':			{value: false,		writable: true},
 	'showUploadArea':	{value: false,		writable: true},
@@ -6159,6 +6176,10 @@ class PullbackObject extends CatObject
 		a.morphisms = this.morphisms.map(m => m.name);
 		return a;
 	}
+	needsParens()
+	{
+		return true;
+	}
 	static Basename(diagram, morphisms)
 	{
 		return `Pb{${morphisms.map(m => m.name).join(',')}}bP`;
@@ -6175,7 +6196,7 @@ class PullbackObject extends CatObject
 	}
 	static ProperName(morphisms)
 	{
-		return morphisms.map(m => m.domain.properName).join('&times') + '/' + morphisms[0].codomain.properName;
+		return morphisms.map(m => m.domain.needsParens() ? `(${m.domain.properName})` : m.domain.properName).join('&times') + '/' + morphisms[0].codomain.properName;
 	}
 }
 
@@ -6633,8 +6654,7 @@ class DiagramObject extends CatObject
 			to:			{value:	null,												writable:	true},
 			decorations:{value:	new Set,											writable:	false},
 		});
-		if ('to' in nuArgs)
-			this.setObject(diagram.getElement(nuArgs.to));
+		this.setObject(nuArgs.to);
 		delete this.signature;
 	}
 	help(helped = new Set)
@@ -7388,13 +7408,11 @@ class PullbackAction extends Action
 	}
 	action(e, diagram, cone)
 	{
-//		const cone = cone.map(m => m.to);
 		const toCone = cone.map(m => m.to);
 		const to = PullbackObject.Get(diagram, toCone);
 		const bary = D.Barycenter(cone.map(m => m.domain));
 		const sink = cone[0].codomain;
 		const xy = bary.add(bary.subtract(sink));
-//		const source = new DiagramPullback(diagram, {xy, to, sink});
 		const source = new DiagramPullback(diagram, {xy, to, cone});
 		diagram.addSVG(source);
 		diagram.deselectAll();
@@ -9511,14 +9529,12 @@ class Category extends CatObject
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		const elt = ary[0];
-		if (!DiagramMorphism.prototype.isPrototypeOf(elt))
+		if (!ary.reduce((r, m) => r && DiagramMorphism.prototype.isPrototypeOf(m), true))	// all morphisms
 			return false;
-		const codomain = elt.codomain;
+		const codomain = ary[0].codomain.name;
 		for(let i=1; i<ary.length; ++i)
 		{
-			const a = ary[i];
-			if (!DiagramMorphism.prototype.isPrototypeOf(a) || !a.codomain.isEquivalent(codomain))
+			if (ary[i].codomain.name !== codomain)
 				return false;
 		}
 		return true;
@@ -9527,14 +9543,12 @@ class Category extends CatObject
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		const elt = ary[0];
-		if (!DiagramMorphism.prototype.isPrototypeOf(elt))
+		if (!ary.reduce((r, m) => r && DiagramMorphism.prototype.isPrototypeOf(m), true))	// all morphisms
 			return false;
-		const domain = elt.domain;
+		const domain = ary[0].domain.name;
 		for(let i=1; i<ary.length; ++i)
 		{
-			const a = ary[i];
-			if (!DiagramMorphism.prototype.isPrototypeOf(a) || !a.domain.isEquivalent(domain))
+			if (ary[i].domain.name !== domain)
 				return false;
 		}
 		return true;
@@ -12010,7 +12024,6 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 	}
 	deselectAll(toolbarOff = true)
 	{
-//		D.dataPanel.close();
 		if (toolbarOff)
 			D.HideToolbar();
 		this.selected.map(elt => elt.showSelected(false));
@@ -12037,8 +12050,6 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		{
 			elt.domain.orig = {x:elt.domain.x, y:elt.domain.y};
 			elt.codomain.orig = {x:elt.codomain.x, y:elt.codomain.y};
-//			if (DataMorphism.prototype.isPrototypeOf(elt) && elt.name !== document.getElementById('dataPanelTitle').innerHTML)
-//				D.dataPanel.close();
 		}
 	}
 	removeSelected(elt)
@@ -12146,9 +12157,12 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		while (this.hasOverlap(offbox, from.name))
 			offbox = offbox.add(D.default.stdOffset);
 		from.updatePosition(xy.add(offbox.subtract(bbox)));
-		R.diagram && this.makeSelected(e, from);
-		this.update(save);
-		R.diagram && D.objectPanel.update();
+		if (save)
+		{
+			this.makeSelected(e, from);
+			this.update(save);
+			D.objectPanel.update();
+		}
 		return from;
 	}
 	placeMorphism(e, to, xyDom, xyCod, save = true)
@@ -12648,7 +12662,8 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 	addWindowSelect(e)
 	{
 		const p = this.userToDiagramCoords(D.mouse.down);
-		const q = this.userToDiagramCoords(D.mouse.position());
+//		const q = this.userToDiagramCoords(D.mouse.position());
+		const q = D.mouse.diagramPosition(this);
 		let selected = [];
 		this.texts.forEach(function(t)
 		{
@@ -12795,6 +12810,76 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		const elt = new DiagramAssertion(this, {leg0, leg1});
 		this.addSVG(elt);
 		return elt;
+	}
+	paste(e)
+	{
+		const refs = this.getAllReferenceDiagrams();
+		if (!refs.has(D.pasteDiagram.name) && this !== D.pasteDiagram)
+		{
+			D.Statua(e, `Diagram ${D.pasteDiagram.properName} is not referenced by this diagram`);
+			return;
+		}
+		const base = D.Barycenter(D.pasteBuffer);
+		const pasteMap = new Map;
+		const diagram = this;
+		const mouse = D.mouse.diagramPosition(this);
+		const pasteObject = function(o)
+		{
+			if (!pasteMap.has(o))
+			{
+				const xy = D.Grid(D2.Add(mouse, D2.Subtract(o.getXY(), base)));
+				const copy = diagram.placeObject(e, o.to, xy, false);
+				pasteMap.set(o, copy);
+				return copy;
+			}
+			return pasteMap.get(o);
+		}
+		let objectUpdate = false;
+		let morphismUpdate = false;
+		let textUpdate = false;
+		const pasteElement = function(elt)
+		{
+			let copy = null;
+			switch(elt.constructor.name)
+			{
+				case 'DiagramAssertion':
+					break;
+				case 'DiagramComposite':
+				case 'DiagramMorphism':
+					const domain = pasteObject(elt.domain);
+					const codomain = pasteObject(elt.codomain);
+					const {to, flipName} = elt;
+					copy = new DiagramMorphism(diagram, {domain, codomain, to, flipName});
+					morphismUpdate = true;
+					break;
+				case 'DiagramObject':
+				case 'DiagramPullback':
+					copy = pasteObject(elt);
+					objectUpdate = true;
+					break;
+				case 'DiagramText':
+					const xy = D2.Add(mouse, D2.Subtract(edlt.getXY(), base));
+					copy = new DiagramText(diagram, {xy, description:elt.description});
+					textUpdate = true;
+					break;
+			}
+			return copy;
+		}
+		const copies = D.pasteBuffer.map(e => pasteElement(e));
+		if (textUpdate)
+			D.textPanel.update();
+		if (objectUpdate)
+			D.objectPanel.update();
+		if (morphismUpdate)
+		{
+			this.domain.makeHomSets();
+			copies.map(e => DiagramMorphism.prototype.isPrototypeOf(e) ? this.addSVG(e) : null);
+			D.morphismPanel.update();
+		}
+		this.deselectAll();
+		copies.map(e => this.addSelected(e));
+		D.ShowToolbar(e, mouse);
+		this.update();
 	}
 	static Codename(args)
 	{
