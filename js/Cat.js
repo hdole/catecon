@@ -2621,7 +2621,7 @@ class D
 							{
 								diagram.activate(e, 'identity');
 								const id = diagram.getSelected();
-								id.codomain.setXY(xy);
+								id.codomain.update(xy);
 								diagram.makeSelected(e, id.codomain);	// restore from identity action
 								D.dragClone = true;
 							}
@@ -6099,7 +6099,7 @@ class ProductObject extends MultiObject
 		nuArgs.basename = ProductObject.Basename(diagram, nuArgs.objects);
 		nuArgs.properName = 'properName' in args ? args.properName : ProductObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
-		this.seperatorWidth = D.textWidth('&times');	// in pixels
+		this.seperatorWidth = D.textWidth('&times;');	// in pixels
 	}
 	help(helped = new Set)
 	{
@@ -6153,10 +6153,10 @@ class PullbackObject extends CatObject
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-//		nuArgs.morphisms = MultiMorphism.GetMorphisms(diagram, args.morphisms);
 		nuArgs.morphisms = diagram.getElements(args.morphisms);
 		nuArgs.basename = PullbackObject.Basename(diagram, nuArgs.morphisms);
-		nuArgs.properName = 'properName' in args ? args.properName : PullbackObject.ProperName(nuArgs.morphisms);
+// TODO		nuArgs.properName = 'properName' in args ? args.properName : PullbackObject.ProperName(nuArgs.morphisms);
+		nuArgs.properName = PullbackObject.ProperName(nuArgs.morphisms);
 		super(diagram, nuArgs);
 		this.morphisms = nuArgs.morphisms;
 		this.morphisms.map(m => m.incrRefcnt());
@@ -6196,7 +6196,7 @@ class PullbackObject extends CatObject
 	}
 	static ProperName(morphisms)
 	{
-		return morphisms.map(m => m.domain.needsParens() ? `(${m.domain.properName})` : m.domain.properName).join('&times') + '/' + morphisms[0].codomain.properName;
+		return morphisms.map(m => m.domain.needsParens() ? `(${m.domain.properName})` : m.domain.properName).join('&times;') + '/' + morphisms[0].codomain.properName;
 	}
 }
 
@@ -6242,7 +6242,7 @@ class CoproductObject extends MultiObject
 		nuArgs.basename = CoproductObject.Basename(diagram, nuArgs.objects);
 		nuArgs.properName = 'properName' in args ? args.properName : CoproductObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
-		this.seperatorWidth = D.textWidth('&times');	// runtime, don't save TODO remove
+		this.seperatorWidth = D.textWidth('&times;');	// runtime, don't save TODO remove
 	}
 	help(helped = new Set)
 	{
@@ -6440,6 +6440,7 @@ class DiagramCore
 	{
 		this.x = D.Grid(xy.x);
 		this.y = D.Grid(xy.y);
+//		this.update();
 	}
 	getXY()
 	{
@@ -6478,26 +6479,33 @@ class DiagramCore
 	{
 		return t && this.name === t.name;
 	}
-	updatePosition(xy)
+	/*
+	updateXY(xy)
 	{
 		this.setXY(xy);
 		const svg = this.svg();
-		if (svg.hasAttribute('transform'))
-			svg.setAttribute('transform', `translate(${D.Grid(this.x)} ${D.Grid(this.y)})`);
-		else
+		if (svg && svg.hasAttribute('x'))
 		{
-			if (svg.hasAttribute('x'))
-			{
-				svg.setAttribute('x', this.x);
-				svg.setAttribute('y', this.y);
-			}
+			svg.setAttribute('x', this.x);
+			svg.setAttribute('y', this.y);
 		}
 	}
-	isFusible()
+	*/
+	update(xy = null)
+	{
+		this.setXY(xy ? xy : this.getXY());
+		const svg = this.svg();
+		if (svg && svg.hasAttribute('x'))
+		{
+			svg.setAttribute('x', this.x);
+			svg.setAttribute('y', this.y);
+		}
+	}
+	isFusible()	// fitb
 	{
 		return false;
 	}
-	updateFusible(e)
+	updateFusible(e)	// fitb
 	{}
 	updateGlow(on, glow)	// same as Element
 	{
@@ -6556,9 +6564,9 @@ class DiagramText extends DiagramCore
 onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</text>`;
 		return html;
 	}
-	updatePosition(xy)
+	update(xy = null)
 	{
-		super.updatePosition(xy);
+		super.update(xy);
 		const svg = this.svg();
 		const x = this.x;
 		const tspans = svg.querySelectorAll('tspan')
@@ -6698,6 +6706,7 @@ class DiagramObject extends CatObject
 	{
 		this.x = D.Grid(xy.x);
 		this.y = D.Grid(xy.y);
+//		this.update();
 	}
 	getSVG()
 	{
@@ -6710,23 +6719,19 @@ class DiagramObject extends CatObject
 	{
 		return {x:this.x - this.width/2, y:this.y + this.height/2 - D.default.font.height, width:this.width, height:this.height};
 	}
-	updatePosition(xy)
+//	updatePosition(xy)
+//	{
+//		this.setXY(xy);
+//		this.update();
+//	}
+	update(xy = null)
 	{
-		this.setXY(xy);
-		this.update();
-	}
-	update()
-	{
+		xy && this.setXY(xy);
 		const svg = this.svg();
-		if (svg.hasAttribute('transform'))
-			svg.setAttribute('transform', `translate(${D.Grid(this.x)} ${D.Grid(this.y)})`);
-		else
+		if (svg && svg.hasAttribute('x'))
 		{
-			if (svg.hasAttribute('x'))
-			{
-				svg.setAttribute('x', this.x);
-				svg.setAttribute('y', this.y + ('height' in this ? this.height/2 : 0));
-			}
+			svg.setAttribute('x', this.x);
+			svg.setAttribute('y', this.y + ('height' in this ? this.height/2 : 0));
 		}
 		this.decorations.forEach(function(d){d.update();});
 	}
@@ -6763,7 +6768,7 @@ class DiagramPullback extends DiagramObject
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-		this.cone = args.cone.map(m =>
+		this.cone = args.cone && args.cone.map(m =>
 		{
 			const mo = diagram.getElement(m);
 			mo.incrRefcnt();
@@ -6781,7 +6786,7 @@ class DiagramPullback extends DiagramObject
 	{
 		const objs = new Set;
 		objs.add(this);
-		this.cone.map(m =>
+		this.cone && this.cone.map(m =>
 		{
 			objs.add(m.domain);
 			objs.add(m.codomain);
@@ -6891,17 +6896,18 @@ class DiagramAssertion extends DiagramCore
 		this.leg1.map(m => findObjs(m));
 		return [...objs];
 	}
-	getPosition()
+	getXY()
 	{
 		return D.Barycenter(this.getObjects());
 	}
 	update()
 	{
-		this.updatePosition(this.getPosition());
+		this.setXY(this.getXY());
+		super.update();
 	}
 	getSVG()
 	{
-		const xy = this.getPosition();
+		const xy = this.getXY();
 		this.setXY(xy);
 		const svg =
 `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_as'}" x="${xy.x}" y="${xy.y}" onmousedown="R.diagram.pickElement(event, '${this.name}')">&#10226;</text>`;
@@ -9196,7 +9202,7 @@ class AlignHorizontalAction extends Action
 		const items = this.getItems(ary);
 		const xy = items[0].getXY();
 		items.shift();
-		items.map(i => i.updatePosition(new D2(i.x, xy.y)));
+		items.map(i => i.update({x:i.x, y:xy.y}));
 		diagram.updateMorphisms();
 		diagram.update();
 		D.ShowToolbar(e);
@@ -9238,7 +9244,7 @@ class AlignVerticalAction extends Action
 		const items = this.getItems(ary);
 		const xy = items[0].getXY();
 		items.shift();
-		items.map(i => i.updatePosition(new D2(xy.x, i.y)));
+		items.map(i => i.update({x:xy.x, x:i.y}));
 		diagram.updateMorphisms();
 		diagram.update();
 		D.ShowToolbar(e);
@@ -10075,13 +10081,14 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 	{
 		return m && m.to && this.to.signature === m.to.name;
 	}
-	updatePosition(ixy)
+	setXY(ixy)
 	{
+debugger;
 		const xy = D.Grid(ixy);
 		const domXY = new D2(this.domain.getXY());
-		this.domain.updatePosition(xy);
+		this.domain.setXY(xy);
 		let codXY = new D2(this.codomain.getXY()).add(xy.subtract(domXY));
-		this.codomain.updatePosition(codXY);
+		this.codomain.setXY(codXY);
 		this.update();
 	}
 }
@@ -10327,7 +10334,8 @@ class Composite extends MultiMorphism
 		nuArgs.domain = Composite.Domain(morphisms);
 		nuArgs.codomain = Composite.Codomain(morphisms);
 		nuArgs.morphisms = morphisms;
-		nuArgs.properName = 'properName' in args ? args.properName : Composite.ProperName(morphisms);
+// TODO		nuArgs.properName = 'properName' in args ? args.properName : Composite.ProperName(morphisms);
+		nuArgs.properName = Composite.ProperName(morphisms);
 		nuArgs.category = diagram.codomain;
 		nuArgs.description = 'description' in args ? args.description : `The composite of ${morphisms.map(m => m.properName).join(', ')}.`;
 		super(diagram, nuArgs);
@@ -10474,7 +10482,8 @@ class PullbackMorphism extends Morphism
 		nuArgs.basename = PullbackMorphism.Basename(diagram, pb, index);
 		nuArgs.domain = pb;
 		nuArgs.codomain = PullbackMorphism.Codomain(diagram, pb, index);
-		nuArgs.properName = typeof properName !== 'undefined' ? properName : PullbackMorphism.ProperName(pb, index);
+// TODO		nuArgs.properName = typeof properName !== 'undefined' ? properName : PullbackMorphism.ProperName(pb, index);
+		nuArgs.properName = PullbackMorphism.ProperName(pb, index);
 		super(diagram, nuArgs);
 		this.pb = pb;
 		this.index = index;
@@ -10513,7 +10522,8 @@ class PullbackMorphism extends Morphism
 	}
 	static ProperName(pb, index)
 	{
-		return `${pb.morphisms[index].properName}/${index}`;
+//		return `${pb.morphisms[index].properName}/${index}`;
+		return `&rho;${U.subscript(index)}`;
 	}
 }
 
@@ -12004,14 +12014,14 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 			this.svgScale.endElement();
 			const to = `${x} ${y}`;
 			this.svgTranslate.setAttribute('to', to);
-			this.svgTranslate.setAttribute('dur', anim ? '0.5s' : '0.001s');
+//			this.svgTranslate.setAttribute('dur', anim ? '0.5s' : '1ms');
 			this.viewport.x = x;
 			this.viewport.y = y;
 			const fs = this.viewport.scale ? this.viewport.scale : 1.0;
 			if (!('x' in this.viewport))
 				this.svgScale.setAttribute('from', '0 0');
 			this.svgScale.setAttribute('to', `${s} ${s}`);
-			this.svgScale.setAttribute('dur', anim ? '0.5s' : '0.001s');
+//			this.svgScale.setAttribute('dur', anim ? '0.5s' : '1ms');
 			this.viewport.scale = s;
 			this.svgTranslate.beginElement();
 			this.svgScale.beginElement();
@@ -12126,7 +12136,7 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		Object.keys(dragObjects).forEach(function(i)
 		{
 			const elt = dragObjects[i];
-			elt.updatePosition(delta.add(elt.orig));
+			elt.update(delta.add(elt.orig));
 			const homset = this.domain.obj2morphs.get(elt);
 			if (typeof homset !== 'undefined')
 			{
@@ -12143,7 +12153,7 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		let offbox = new D2(bbox);
 		while (this.hasOverlap(offbox, txt.name))
 			offbox = offbox.add(D.default.stdOffset);
-		txt.updatePosition(xy.add(offbox.subtract(bbox)));
+		txt.update(xy.add(offbox.subtract(bbox)));
 		R.diagram && this.makeSelected(e, txt);
 		this.update(save);
 	}
@@ -12156,7 +12166,7 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		let offbox = new D2(bbox);
 		while (this.hasOverlap(offbox, from.name))
 			offbox = offbox.add(D.default.stdOffset);
-		from.updatePosition(xy.add(offbox.subtract(bbox)));
+		from.update(xy.add(offbox.subtract(bbox)));
 		if (save)
 		{
 			this.makeSelected(e, from);
@@ -12179,10 +12189,10 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 			const xyCmin = D.Grid({x:xyD.x + Math.cos(angle) * tw, y:xyD.y + Math.sin(angle) * tw});
 			if (xyD.dist(xyC) < xyD.dist(xyCmin))
 				xyC = xyCmin;
-			codomain.setXY(xyC);
+			codomain.update(xyC);
 		}
 		else
-			codomain.setXY({x:xyD.x + Math.max(D.default.arrow.length, tw), y:xyD.y});
+			codomain.update({x:xyD.x + Math.max(D.default.arrow.length, tw), y:xyD.y});
 		this.domain.makeHomSets();
 		this.addSVG(domain);
 		this.addSVG(codomain);
@@ -12191,7 +12201,7 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		let offbox = new D2(bbox);
 		while (this.hasOverlap(offbox, from.name))
 			offbox = offbox.add(D.default.stdOffset);
-		from.updatePosition(xyD.add(offbox.subtract(bbox)));
+		from.update(xyD.add(offbox.subtract(bbox)));
 		R.diagram && this.makeSelected(e, from);
 		this.update(save);
 		R.diagram && D.morphismPanel.update();
@@ -12237,7 +12247,8 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 			const xy = D.Grid({x:fromObj.x + cosAngle * (al + tw), y:fromObj.y + Math.sin(angle) * (al + tw)});
 			let domainElt = null;
 			let codomainElt = null;
-			const newElt = new DiagramObject(this, {xy});
+//			const newElt = new DiagramObject(this, {xy});
+			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
 			if (dir === 'domain')
 			{
 				domainElt = fromObj;
@@ -12380,9 +12391,9 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 			this.svgRoot.innerHTML +=
 `
 <g>
-<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="0.5s" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
+<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="1ms" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
 <g>
-<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="0.5s" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
+<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="1ms" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
 <g id="${base}">
 </g>
 </g>
