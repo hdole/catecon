@@ -11027,11 +11027,80 @@ class Diagonal extends Morphism
 	}
 	static ProperName(domain, count)
 	{
-//		return `&Delta;${U.subscript(count)}${domain.properName}`;
 		return '&Delta;';
 	}
 }
 
+class FoldMorphism extends Morphism
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.codomain = diagram.getElement(args.codomain);
+		nuArgs.count = Number.parseInt(U.GetArg(args, 'count', 2));
+		if (nuArgs.count < 2)
+			throw 'count is not two or greater';
+		nuArgs.domain = FoldMorphism.Domain(diagram, nuArgs.codomain, nuArgs.count);
+		nuArgs.basename = FoldMorphism.Basename(nuArgs.codomain, nuArgs.count);
+		nuArgs.properName = FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count)
+		nuArgs.category = diagram.codomain;
+		super(diagram, nuArgs);
+		Object.defineProperty(this, 'count', {value:nuArgs.count,	writable:false});
+	}
+	help(helped = new Set)
+	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help() + H.p(`FoldMorphism morphism of count ${this.count}`);
+	}
+	json()
+	{
+		const a = super.json();
+		delete a.properName;
+		a.count = this.count;
+		return a;
+	}
+	canChangeProperName()
+	{
+		return false;
+	}
+	getGraph(data = {position:0})
+	{
+		const graph = super.getGraph(data, first);
+		const domain = graph.graphs[0];
+		const codomain = graph.graphs[1];
+		domain.map((g, i) => codomain.bindGraph({cod:g, link:[], domRoot:[0], codRoot:[1, i], offset:0}));
+		graph.tagGraph(this.constructor.name);
+		return graph;
+	}
+	static Basename(codomain, count)
+	{
+		return `Fm{${codomain.name}/${count}}mF`;
+	}
+	static Codename(diagram, codomain, count)
+	{
+		return Element.Codename(diagram, FoldMorphism.Basename(codomain, count));
+	}
+	static Domain(diagram, object, count)
+	{
+		return CoproductObject.Get(diagram, Array(count).fill(object));
+	}
+	static Get(diagram, codomain, count)
+	{
+		if (count < 2)
+			throw 'Count is less than 2';
+		const name = FoldMorphism.Codename(diagram, codomain, count);
+		const m = diagram.getElement(name);
+		return m ? m : new FoldMorphism(diagram, {codomain, count});
+	}
+	static ProperName(domain, count)
+	{
+		return '&nabla;';
+	}
+}
+
+/*
 class FoldMorphism extends Morphism
 {
 	constructor(diagram, args)
@@ -11066,6 +11135,7 @@ class FoldMorphism extends Morphism
 		return m ? m : new FoldMorphism(diagram, {domain, codomain});
 	}
 }
+*/
 
 class DataMorphism extends Morphism
 {
@@ -12804,7 +12874,6 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 	addWindowSelect(e)
 	{
 		const p = this.userToDiagramCoords(D.mouse.down);
-//		const q = this.userToDiagramCoords(D.mouse.position());
 		const q = D.mouse.diagramPosition(this);
 		let selected = [];
 		this.texts.forEach(function(t)
@@ -12821,8 +12890,8 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		}, this);
 		if (selected.length > 0)
 		{
-			if (selected.reduce((r, e) => r || DiagramMorphism.prototype.isPrototypeOf(e), false))
-				selected = selected.filter(e => DiagramMorphism.prototype.isPrototypeOf(e));
+//			if (selected.reduce((r, e) => r || DiagramMorphism.prototype.isPrototypeOf(e), false))
+//				selected = selected.filter(e => DiagramMorphism.prototype.isPrototypeOf(e));
 			selected.map(e => this.addSelected(e));
 		}
 		D.ShowToolbar(e);
@@ -13042,28 +13111,76 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 				}
 				else if (FactorMorphism.prototype.isPrototypeOf(e) && e.factors.length > 1)
 				{
-//					const name = FactorMorphism.Codename(this, e.domain, e.factors)
-//					const sig = FactorMorphism.Signature(name, e.factors);
-//					const sig = FactorMorphism.Signature(e.domain, name, e.codomain, e.factors);
 					e.factors.map((f, i) =>
 					{
-//						const coname = FactorMorphism.Codename(this, e.codomain, [i])
-//						const cosig = FactorMorphism.Signature(e.codomain, name, e.codomain.getFactor([i]), [i]);
-						const fm = FactorMorphism.Get(diagram, e.codomain, [i]);
-						const base = FactorMorphism.Get(diagram, e.domain, e.factors[i]);
+						const fm = FactorMorphism.Get(this, e.codomain, [i]);
+						const base = FactorMorphism.Get(this, e.domain, e.factors[i]);
 						R.loadEquivalence([base], [fm, e]);
 					});
 				}
+				else if (ProductMorphism.prototype.isPrototypeOf(e))
+				{
+					e.morphisms.map((m, i) =>
+					{
+						const pDom = FactorMorphism.Get(this, e.domain, [i]);
+						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
+						R.loadEquivalence([pCod, e], [m, pDom]);
+					});
+				}
+				else if (CoproductMorphism.prototype.isPrototypeOf(e))
+				{
+					e.morphisms.map((m, i) =>
+					{
+						const iDom = CofactorMorphism.Get(this, e.domain, [i]);
+						const iCod = CofactorMorphism.Get(this, e.codomain, [i]);
+						R.loadEquivalence([e, iDom], [iCod, m]);
+					});
+				}
+				else if (ProductAssembly.prototype.isPrototypeOf(e))
+				{
+					e.morphisms.map((m, i) =>
+					{
+						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
+						R.loadEquivalence([m], [pCod, e]);
+					});
+				}
+				else if (CoproductAssembly.prototype.isPrototypeOf(e))
+				{
+					e.morphisms.map((m, i) =>
+					{
+						const iCod = CofactorMorphism.Get(this, e.domain, [i]);
+						R.loadEquivalence([m], [e, iCod]);
+					});
+				}
+				else if (Diagonal.prototype.isPrototypeOf(e))
+				{
+					const id = Identity.Get(this, e.domain);
+					for (let i=0; i<e.count; ++i)
+					{
+						const p = FactorMorphism.Get(this, e.codomain, [i]);
+						R.loadEquivalence([id], [p, e]);
+					}
+				}
 			}
-			else if (PullbackObject.prototype.isPrototypeOf(e))
+			else if (CatObject.prototype.isPrototypeOf(e))
 			{
-				const legs = e.cone.map((m, i) => [e.source[i], e.cone[i]]);
-				for (const i=1; i<legs.length; ++i)
-					R.loadEquivalence(legs[0], legs[i]);
+				else if (PullbackObject.prototype.isPrototypeOf(e))
+				{
+					const legs = e.cone.map((m, i) => [e.source[i], e.cone[i]]);
+					for (const i=1; i<legs.length; ++i)
+						R.loadEquivalence(legs[0], legs[i]);
+				}
+				else if (NamedObject.prototype.isPrototypeOf(e))
+				{
+					const srcId = Identity.Get(this, e.source);
+					const namId = Identity.Get(this, e);
+					R.loadEquivalence([srcId], [namId, srcId])
+					R.loadEquivalence([objId], [srcId, namId])
+				}
 			}
-			else if (NamedObject.prototype.isPrototypeOf(e))
-			{
-			}
+			// skip:
+			// namedMorphism:  handled by namedObject
+			// pullbackMorphism:  handled by pullbackObject
 		});
 		this.assertions.forEach(function(a)
 		{
