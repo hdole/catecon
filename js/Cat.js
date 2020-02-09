@@ -945,7 +945,6 @@ Create diagrams and execute morphisms.
 		D.ShowDiagram(basics);
 		basics.home(false);
 		basics.update();
-
 		//
 		// logic
 		//
@@ -987,7 +986,6 @@ Create diagrams and execute morphisms.
 		D.ShowDiagram(logic);
 		logic.home(false);
 		logic.update();
-
 		//
 		// N arithemtic
 		//
@@ -1028,7 +1026,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 		D.ShowDiagram(Narith);
 		Narith.home(false);
 		Narith.update();
-
 		//
 		// integers
 		//
@@ -1093,7 +1090,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 		D.ShowDiagram(integers);
 		integers.home(false);
 		integers.update();
-
 		//
 		// floating point
 		//
@@ -1190,7 +1186,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 		D.ShowDiagram(floats);
 		floats.home(false);
 		floats.update();
-
 		//
 		// complex numbers
 		//
@@ -1266,7 +1261,6 @@ args.xy.y += 16 * D.default.layoutGrid;
 		D.ShowDiagram(complex);
 		complex.home(false);
 		complex.update();
-
 		//
 		// Strings
 		//
@@ -1615,7 +1609,6 @@ function %1(args)
 		D.ShowDiagram(qGates);
 		qGates.home(false);
 		qGates.update();
-
 		//
 		// wrapup
 		//
@@ -1934,6 +1927,16 @@ function %1(args)
 			R.SelectDiagram(name);
 		});
 	}
+	loadSignature(m)
+	{
+		const sig = m.signature;
+if (this.sig2Item.has(sig))debugger;
+if (this.sig2Leg.has(sig))debugger;
+if (this.equals.has(sig))debugger;
+		this.sig2Item.set(sig, m);
+		this.sig2Leg(sig, [m]);
+		this.equals.set(sig, new Set([sig]));
+	}
 	loadEquivalence(leftLeg, rightLeg)
 	{
 		const leftSig = U.GetSignature('Composite', leftLeg);
@@ -2014,7 +2017,7 @@ Object.defineProperties(R,
 	initialized:		{value:false,	writable:true},		// Have we finished the boot sequence and initialized properly?
 	ServerDiagrams:		{value:new Map,	writable:false},
 	sig2Leg:			{value:new Map,	writable:false},
-	sig2object:			{value:new Map,	writable:false},
+	sig2Item:			{value:new Map,	writable:false},
 	equals:				{value:new Map,	writable:false},
 	url:				{value:'',		writable:true},
 	user:
@@ -7106,6 +7109,12 @@ class CompositeAction extends Action
 		}
 		return false;
 	}
+	static Reduce(leg)
+	{
+		if (leg.length === 1 && Composite.prototype.isPrototypeOf(leg[0]))
+			return leg[0].morphisms;
+		return null;
+	}
 }
 
 class IdentityAction extends Action
@@ -7132,6 +7141,11 @@ class IdentityAction extends Action
 	hasForm(diagram, ary)
 	{
 		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+	}
+	static Reduce(leg)		// remove identities
+	{
+		const nuLeg = leg.filter(m => !Identity.prototype.isPrototypeOf(m) && m.domain.name === m.codomain.name);
+		return nuLeg.length < leg.legnth ? nuLeg : null;
 	}
 }
 
@@ -7221,6 +7235,10 @@ class NameAction extends Action
 	hasForm(diagram, ary)
 	{
 		return diagram.isEditable() && ary.length === 1 && (DiagramMorphism.prototype.isPrototypeOf(ary[0]) || DiagramObject.prototype.isPrototypeOf(ary[0]));
+	}
+	static Reduce(leg)
+	{
+		return null;
 	}
 }
 
@@ -7762,50 +7780,6 @@ class DetachCodomainAction extends Action
 		return false;
 	}
 }
-
-/*
-class EditDataMorphismAction extends Action
-{
-	constructor(diagram)
-	{
-		const args = {	description:	'Edit a data morphism',
-						name:			'editDataMorphism',
-						icon:			D.svg.edit,};
-		super(diagram, args);
-	}
-	action(e, diagram, ary)
-	{
-		const from = ary[0];
-		const to = from.to;
-		if (DataMorphism.prototype.isPrototypeOf(to))
-		{
-		}
-		else
-		{
-			to = diagram.newDataMorphism(from.to.domain, from.to.codomain);	// TODO new is edit?
-			diagram.setMorphism(from, to);
-			diagram.updateElementAttribute(from, 'properName', to.properName);	// TODO huh?
-		}
-		diagram.update(e);
-		D.dataPanel.update();
-		D.dataPanel.open();
-	}
-	hasForm(diagram, ary)	// one editable morphism
-	{
-		if (diagram.isEditable() && ary.length === 1)
-		{
-			const from = ary[0];
-			const to = from.to;
-			return from.to && (DataMorphism.prototype.isPrototypeOf(to) ||
-						(	to.constructor.name === 'Morphism' &&
-							to.domain.isIterable() &&
-							!('code' in to) &&
-							diagram.isIsolated(from)));
-		}
-		return false;
-	}
-}
-*/
 
 class DeleteAction extends Action
 {
@@ -9795,54 +9769,6 @@ class Identity extends Morphism
 	}
 }
 
-class NamedMorphism extends Morphism	// name of a morphism
-{
-	constructor (diagram, args)
-	{
-		const nuArgs = U.clone(args);
-		const source = diagram.getElement(nuArgs.source);
-		nuArgs.category = diagram.codomain;
-		super(diagram, nuArgs);
-		this.source = source;
-		this.source.incrRefcnt();
-		if (this.constructor.name === 'NamedMorphism')
-			this.signature = this.source.signature;
-	}
-	json()
-	{
-		const a = super.json();
-		a.source = this.source.name;
-		return a;
-	}
-	decrRefcnt()
-	{
-		super.decrRefcnt();
-		if (this.refcnt <= 0)
-			this.source && this.source.decrRefcnt();
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help() + H.p('Named Morphism');
-	}
-	// TODO
-	getGraph(data = {position:0})
-	{
-		const g = super.getGraph(data);
-		g.bindGraph({cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
-		g.tagGraph(this.constructor.name);
-		return g;
-	}
-	static Get(diagram, source, basename)
-	{
-		const m = diagram.getElement(source);
-		const nm = diagram.getElement(basename);
-		return nm ? nm : new NamedMorphism(diagram, {basename, source});
-	}
-}
-
 class NamedObject extends CatObject	// name of an object
 {
 	constructor (diagram, args)
@@ -9890,6 +9816,54 @@ class NamedObject extends CatObject	// name of an object
 		const source = diagram.getElement(dom);
 		const m = diagram.getElement(basename);
 		return m ? m : new NamedObject(diagram, {basename, source});
+	}
+}
+
+class NamedMorphism extends Morphism	// name of a morphism
+{
+	constructor (diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		const source = diagram.getElement(nuArgs.source);
+		nuArgs.category = diagram.codomain;
+		super(diagram, nuArgs);
+		this.source = source;
+		this.source.incrRefcnt();
+		if (this.constructor.name === 'NamedMorphism')
+			this.signature = this.source.signature;
+	}
+	json()
+	{
+		const a = super.json();
+		a.source = this.source.name;
+		return a;
+	}
+	decrRefcnt()
+	{
+		super.decrRefcnt();
+		if (this.refcnt <= 0)
+			this.source && this.source.decrRefcnt();
+	}
+	help(helped = new Set)
+	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help() + H.p('Named Morphism');
+	}
+	// TODO
+	getGraph(data = {position:0})
+	{
+		const g = super.getGraph(data);
+		g.bindGraph({cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
+		g.tagGraph(this.constructor.name);
+		return g;
+	}
+	static Get(diagram, source, basename)
+	{
+		const m = diagram.getElement(source);
+		const nm = diagram.getElement(basename);
+		return nm ? nm : new NamedMorphism(diagram, {basename, source});
 	}
 }
 
@@ -10476,6 +10450,10 @@ class Composite extends MultiMorphism
 			return m.getFirstMorphism();
 		return m;
 	}
+	loadEquivalence()
+	{
+		R.loadEquivalence([this], this.morphisms);
+	}
 	static Basename(diagram, morphisms)
 	{
 		return `Cm{${morphisms.map(m => m.name).join(',')}}mC`;
@@ -10525,6 +10503,15 @@ class ProductMorphism extends MultiMorphism
 			return '';
 		helped.add(this.name);
 		return super.help(H.p('Product'), helped);
+	}
+	loadEquivalence()
+	{
+		this.morphisms.map((m, i) =>
+		{
+			const pDom = FactorMorphism.Get(this, this.domain, [i]);
+			const pCod = FactorMorphism.Get(this, this.codomain, [i]);
+			R.loadEquivalence([pCod, this], [m, pDom]);
+		});
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -10830,6 +10817,15 @@ class FactorMorphism extends Morphism
 		});
 		graph.tagGraph(this.constructor.name);
 		return graph;
+	}
+	loadEquivalence()
+	{
+		this.factors.map((f, i) =>
+		{
+			const fm = FactorMorphism.Get(this, this.codomain, [i]);
+			const base = FactorMorphism.Get(this, this.domain, this.factors[i]);
+			R.loadEquivalence([base], [fm, this]);
+		});
 	}
 	static Basename(domain, factors)
 	{
@@ -11366,7 +11362,6 @@ class HomMorphism extends MultiMorphism
 {
 	constructor(diagram, args)
 	{
-//		const morphisms = MultiMorphism.GetMorphisms(diagram, args.morphisms);
 		const morphisms = diagram.getElements(args.morphisms);
 		if (morphisms.length !== 2)
 			throw 'not exactly two morphisms';
@@ -11375,7 +11370,6 @@ class HomMorphism extends MultiMorphism
 		nuArgs.domain = HomMorphism.Domain(diagram, morphisms);
 		nuArgs.codomain = HomMorphism.Codomain(diagram, morphisms);
 		nuArgs.morphisms = morphisms;
-//		nuArgs.properName = 'properName' in args ? args.properName : HomMorphism.ProperName(morphisms);
 		nuArgs.properName = HomMorphism.ProperName(morphisms);
 		super(diagram, nuArgs);
 	}
@@ -11579,7 +11573,6 @@ class Evaluation extends Morphism
 			throw 'object for evaluation domain cannot be evaluated';
 		nuArgs.basename = Evaluation.Basename(diagram, nuArgs.domain);
 		nuArgs.codomain = nuArgs.domain.objects[0].objects[1];
-//		nuArgs.properName = U.GetArg(args, 'properName', Evaluation.ProperName(nuArgs.domain));
 		nuArgs.properName = Evaluation.ProperName(nuArgs.domain);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -11643,7 +11636,6 @@ class InitialMorphism extends Morphism
 		nuArgs.codomain = diagram.getElement(args.codomain);
 		nuArgs.domain = InitialObject.Get(diagram);
 		nuArgs.basename = InitialMorphism.Basename(diagram, nuArgs.codomain);
-//		nuArgs.properName = 'properName' in args ? args.properName : InitialMorphism.ProperName();
 		nuArgs.properName = InitialMorphism.ProperName();
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -11687,7 +11679,6 @@ class TerminalMorphism extends Morphism
 		nuArgs.domain = diagram.getElement(args.domain);
 		nuArgs.codomain = TerminalObject.Get(diagram);
 		nuArgs.basename = TerminalMorphism.Basename(diagram, nuArgs.domain);
-//		nuArgs.properName = 'properName' in args ? args.properName : TerminalMorphism.ProperName();
 		nuArgs.properName = TerminalMorphism.ProperName();
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -12970,35 +12961,35 @@ if (e.refcnt === 0)debugger;
 		this.elements.forEach(function(e)
 		{
 			const sig = e.signature;
-			if (!R.sig2object.has(sig))		// what object has this signature
-				R.sig2object.set(sig, e);
+//			if (!R.sig2Item.has(sig))		// what object has this signature
+//				R.sig2Item.set(sig, e);
 			if (Morphism.prototype.isPrototypeOf(e))
 			{
-				if (!R.sig2Leg.has(sig))	// remember all morphisms as a leg with one segment
-					R.sig2Leg(sig, [e]);
-				if (!R.equals.has(sig))		// set the sig equal to itself
-					R.equals.set(sig, new Set([sig]));
+//				if (!R.sig2Leg.has(sig))	// remember all morphisms as a leg with one segment
+//					R.sig2Leg(sig, [e]);
+//				if (!R.equals.has(sig))		// set the sig equal to itself
+//					R.equals.set(sig, new Set([sig]));
 				if (Composite.prototype.isPrototypeOf(e))	// a composite has two equal legs
 				{
-					R.loadEquivalence([e], e.morphisms);
+//					R.loadEquivalence([e], e.morphisms);
 				}
 				else if (FactorMorphism.prototype.isPrototypeOf(e) && e.factors.length > 1)
 				{
-					e.factors.map((f, i) =>
-					{
-						const fm = FactorMorphism.Get(this, e.codomain, [i]);
-						const base = FactorMorphism.Get(this, e.domain, e.factors[i]);
-						R.loadEquivalence([base], [fm, e]);
-					});
+//					e.factors.map((f, i) =>
+//					{
+//						const fm = FactorMorphism.Get(this, e.codomain, [i]);
+//						const base = FactorMorphism.Get(this, e.domain, e.factors[i]);
+//						R.loadEquivalence([base], [fm, e]);
+//					});
 				}
 				else if (ProductMorphism.prototype.isPrototypeOf(e))
 				{
-					e.morphisms.map((m, i) =>
-					{
-						const pDom = FactorMorphism.Get(this, e.domain, [i]);
-						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
-						R.loadEquivalence([pCod, e], [m, pDom]);
-					});
+//					e.morphisms.map((m, i) =>
+//					{
+//						const pDom = FactorMorphism.Get(this, e.domain, [i]);
+//						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
+//						R.loadEquivalence([pCod, e], [m, pDom]);
+//					});
 				}
 				else if (CoproductMorphism.prototype.isPrototypeOf(e))
 				{
@@ -13091,8 +13082,8 @@ if (e.refcnt === 0)debugger;
 		this.assertions.forEach(function(a)
 		{
 			const {leftSig, rightSig} = R.loadEquivalence(a.toLeg0, a.toLeg1);
-			R.sig2object(leftSig, a);
-			R.sig2object(rightSig, a);
+			R.sig2Item(leftSig, a);
+			R.sig2Item(rightSig, a);
 		});
 	}
 	static Codename(args)
