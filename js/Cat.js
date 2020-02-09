@@ -1294,6 +1294,7 @@ args.xy.y += 16 * D.default.layoutGrid;
 		const str = R.MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings').to;
 		const strPair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]}).to;
 		const emptyString = new DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
+		R.PlaceMorphism(args, emptyString);
 		const strLength = R.MakeMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N, {js:'return args.length;'}).to;
 		const strAppend = R.MakeMorphism(args, 'append', 'Morphism', '&bull;', 'append two strings', strPair, str, {js:'return args[0].concat(args[1]);'}).to;
 		const strIncludes = R.MakeMorphism(args, 'includes', 'Morphism', 'includes', 'is the first string included in the second', strPair, omega, {js:'return args[1].includes(args[0]);'}).to;
@@ -1364,18 +1365,22 @@ args.xy.y += 16 * D.default.layoutGrid;
 			{js:`return document.getElementById(args).value;`}).to;
 		const html2omega = R.MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
 		const N_html2str = LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
+		R.PlaceMorphism(args, N_html2str);
 		const strXN_html2str = ProductObject.Get(args.diagram, [str, N_html2str.codomain]);
 		const html2line = R.MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
 			{js:`return ['<input type="text" id="' + args + '" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`}).to;
 		const N_html2N = LambdaMorphism.Get(args.diagram, html2N, [], [0]);
+		R.PlaceMorphism(args, N_html2N);
 		const strXN_html2N = ProductObject.Get(args.diagram, [str, N_html2N.codomain]);
 		const html2Nat = R.MakeMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
 			{js:`return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${U.JsName(N_html2N)}];`}).to;
 		const N_html2Z = LambdaMorphism.Get(args.diagram, html2Z, [], [0]);
+		R.PlaceMorphism(args, N_html2Z);
 		const strXN_html2Z = ProductObject.Get(args.diagram, [str, N_html2Z.codomain]);
 		const html2Int = R.MakeMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
 			{js:`return ['<input type="number" id="' + args + '" value="0" placeholder="Integer"/>', ${U.JsName(N_html2Z)}];`}).to;
 		const N_html2F = LambdaMorphism.Get(args.diagram, html2F, [], [0]);
+		R.PlaceMorphism(args, N_html2F);
 		const strXN_html2F = ProductObject.Get(args.diagram, [str, N_html2F.codomain]);
 		const html2Float = R.MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
 			{js:`return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${U.JsName(N_html2F)}];`}).to;
@@ -1432,10 +1437,12 @@ function %1(args)
 		});
 		const Ftrip = ProductObject.Get(threeD, [F, F, F]);
 		const f3 = new NamedObject(threeD, {basename:'F3', properName:'&Fopf;&sup3', source:Ftrip});
-		const f3toFtrip = threeD.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
+		const f3toFtrip = threeD.placeMorphism(threeD, f3.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
 		args.rowCount++;
 		args.xy.y += 16 * D.default.layoutGrid;
 		const ftripTof3 = new DiagramMorphism(threeD, {to:f3.idTo, domain:f3toFtrip.codomain, codomain:f3toFtrip.domain});
+		threeD.domain.makeHomSets();
+		threeD.addSVG(ftripTof3);
 		const fff2d3 = R.MakeMorphism(args, 'fff2d3', 'Morphism', '3D', 'visualize a triplet of numbers in 3D', f3, d3,
 		{
 			code:	{javascript:
@@ -11100,51 +11107,12 @@ class FoldMorphism extends Morphism
 	}
 }
 
-/*
-class FoldMorphism extends Morphism
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.clone(args);
-		nuArgs.codomain = diagram.getElement(args.codomain);
-		nuArgs.basename = FoldMorphism.Basename(nuArgs.domain, nuArgs.codomain);
-//		nuArgs.properName = U.GetArg(nuArgs, 'properName', '&nabla;');
-		nuArgs.properName = '&nabla;';
-		nuArgs.category = diagram.codomain;
-		super(diagram, nuArgs);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help() + H.p('Fold morphism');
-	}
-	static Basename(domain, codomain)
-	{
-		return `Fm{${domain.name}/${codomain.name}}mF`;
-	}
-	static Codename(diagram, domain, codomain)
-	{
-		return Element.Codename(diagram, FoldMorphism.Basename(domain, codomain));
-	}
-	static Get(diagram, domain, codomain)
-	{
-		const name = FoldMorphism.Codename(diagram, domain, codomain);
-		const m = diagram.getElement(name);
-		return m ? m : new FoldMorphism(diagram, {domain, codomain});
-	}
-}
-*/
-
 class DataMorphism extends Morphism
 {
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
-//		if (!nuArgs.domain.isIterable())
-//			throw 'domain not iterable';
 		nuArgs.codomain = diagram.getElement(args.codomain);
 		nuArgs.properName = U.GetArg(nuArgs, 'properName', 'Data');
 		nuArgs.basename = U.GetArg(nuArgs, 'basename', diagram.getAnon('data'));
@@ -11166,12 +11134,9 @@ class DataMorphism extends Morphism
 			}
 			else if (Map.prototype.isPrototypeOf(nuArgs.data))
 				this.data = new Map(nuArgs.data);
-//			else	// TODO old style; remove
-//				this.data = data.map((d, i) => [i, d]);
 		}
 		else
 			this.data = new Map;
-this.data.delete(null);	// TODO remove
 		if ('limit' in nuArgs)
 			this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 		if ('recursor' in nuArgs)
@@ -11186,10 +11151,6 @@ this.data.delete(null);	// TODO remove
 		const recursion = 'recursor' in this ? ` with recursor ${this.recursor.properName}` : '';
 		return super.help() + H.p(`Data morphism entries: ${this.data.size}${recursion}`);
 	}
-//	isIterable()
-//	{
-//		return true;
-//	}
 	setRecursor(r)
 	{
 		const rcrs = typeof r === 'string' ? this.diagram.codomain.getElement(r) : r;
@@ -11226,14 +11187,6 @@ this.data.delete(null);	// TODO remove
 			mor.recursor = this.recursor.name;
 		return mor;
 	}
-	/*
-	addData(e)
-	{
-		const i = Math.min(this.limit, U.HtmlSafe(document.getElementById('inputTerm').value));
-		this.data.set(i, this.codomain.fromHTML());
-		this.sig = this.getDataSignature();
-	}
-	*/
 	clear()
 	{
 		this.data = new Map;
@@ -11250,87 +11203,6 @@ this.data.delete(null);	// TODO remove
 		return false;
 	}
 }
-
-	/*
-class Recursive extends DataMorphism
-{
-	constructor(diagram, args)
-	{
-		super(diagram, args);
-		this.setRecursor(args.recursor);
-		this.signature = this.getRecursiveSignature();
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help() + H.p(`Recursion with ${this.recursor.properName}`);
-	}
-	$()
-	{
-		this.updateRecursor();	// TODO still needed?
-		if (args in this.data)
-			return this.data[args];
-		if (Object.keys(this.data).length === 0)
-		{
-			if (args[0] === 0)
-				return args[2];
-			if (args[1] === 1)
-				return eval(args[1], args[2])
-		}
-		if (this.recursor)
-			return this.recursor.$(args);
-		return null;
-	}
-	getGraph(data = {position:0})
-	{
-		// TODO
-		return StringMorphism.graph(this.diagram, this.recursor);
-	}
-	getRecursiveSignature()
-	{
-		return U.sha256(super.signature + (typeof this.recursor === 'string' ? this.recursor : this.recursor.name));
-	}
-	decrRefcnt()
-	{
-		if (this.refcnt <= 1 && this.recursor)
-			this.recursor.decrRefcnt();
-		super.decrRefcnt();
-	}
-	json()
-	{
-		let mor = super.json();
-		mor.recursor = Morphism.prototype.isPrototypeOf(this.recursor) ? this.recursor.name : this.recursor;
-		return mor;
-	}
-	setRecursor(r)
-	{
-		const rcrs = typeof r === 'string' ? this.diagram.codomain.getElement(r) : r;
-		if (!rcrs.hasMorphism(this))
-			throw `The recursive morphism does not refer to itself so no recursion.`;
-		Object.defineProperty(this, 'recursor', {value:rcrs,	writable:false});
-		this.recursor.incrRefcnt();
-	}
-	updateRecursor()
-	{
-		if (typeof this.recursor === 'string')
-		{
-			const r = this.diagram.getElement(this.recursor);
-			if (typeof r === 'object')
-				this.recursor = r;
-		}
-	}
-	static HasForm(ary)
-	{
-		if (ary.length === 2)
-		{
-			const r = ary[0];
-			const f = ary[1];
-		}
-	}
-}
-	*/
 
 class LambdaMorphism extends Morphism
 {
@@ -12082,7 +11954,8 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		a.elements = [];
 		this.elements.forEach(function(e)
 		{
-			if (e.canSave())
+if (e.refcnt === 0)debugger;
+			if (e.canSave() && e.refcnt > 0)
 				a.elements.push(e.json());
 		});
 		const texts = [];
@@ -13161,10 +13034,43 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 						R.loadEquivalence([id], [p, e]);
 					}
 				}
+				else if (FoldMorphism.prototype.isPrototypeOf(e))
+				{
+					const id = Identity.Get(this, e.codomain);
+					for (let i=0; i<e.count; ++i)
+					{
+						const p = CofactorMorphism.Get(this, e.domain, [i]);
+						R.loadEquivalence([id], [e, p]);
+					}
+				}
+				else if (DataMorphism.prototype.isPrototypeOf(e) && 'recursor' in e)	// recursive, no legs?
+				{
+				}
+				else if (LambdaMorphism.prototype.isPrototypeOf(e))
+				{
+				}
+				else if (HomMorphism.prototype.isPrototypeOf(e))
+				{
+				}
+				else if (Evaluation.prototype.isPrototypeOf(e))
+				{
+				}
+				else if (InitialMorphism.prototype.isPrototypeOf(e))
+				{
+				}
+				else if (TerminalMorphism.prototype.isPrototypeOf(e))
+				{
+				}
+				else if (Distribute.prototype.isPrototypeOf(e))
+				{
+				}
+				else if (Dedistribute.prototype.isPrototypeOf(e))
+				{
+				}
 			}
 			else if (CatObject.prototype.isPrototypeOf(e))
 			{
-				else if (PullbackObject.prototype.isPrototypeOf(e))
+				if (PullbackObject.prototype.isPrototypeOf(e))
 				{
 					const legs = e.cone.map((m, i) => [e.source[i], e.cone[i]]);
 					for (const i=1; i<legs.length; ++i)
