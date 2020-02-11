@@ -2007,7 +2007,7 @@ Object.defineProperties(R,
 	initialized:		{value:false,	writable:true},		// Have we finished the boot sequence and initialized properly?
 	ServerDiagrams:		{value:new Map,	writable:false},
 	sig2Leg:			{value:new Map,	writable:false},
-	sig2Item:			{value:new Map,	writable:false},
+//	sig2Item:			{value:new Map,	writable:false},
 	equals:				{value:new Map,	writable:false},
 	url:				{value:'',		writable:true},
 	user:
@@ -7008,6 +7008,12 @@ class DiagramAssertion extends DiagramCore
 	{
 		return super.svg('_as');
 	}
+	loadEquivalence()
+	{
+		const {leftSig, rightSig} = R.LoadEquivalence(this.leg0.map(m => m.to), this.leg1.map(m => m.to));
+//		R.sig2Item.set(leftSig, this);
+//		R.sig2Item.set(rightSig, this);
+	}
 	static GetKey(assert)
 	{
 		const name0 = assert[0].name;
@@ -9703,6 +9709,7 @@ class Morphism extends Element
 	loadEquivalence(diagram)
 	{
 		const sig = this.signature;
+		/*
 if (R.sig2Item.has(sig))
 {
 	const alt = R.sig2Item.get(sig);
@@ -9710,9 +9717,10 @@ if (R.sig2Item.has(sig))
 	console.log('sig2item', this, alt);
 	debugger;
 }
+*/
 //if (R.sig2Leg.has(sig))debugger;
 //if (R.equals.has(sig))debugger;
-		R.sig2Item.set(sig, this);
+//		R.sig2Item.set(sig, this);
 		R.sig2Leg.set(sig, [this]);
 		R.equals.set(sig, new Set([sig]));
 	}
@@ -9783,7 +9791,7 @@ class Identity extends Morphism
 	}
 	static ProperName(domain, codomain = null)
 	{
-		return 'id';
+		return '1';
 	}
 }
 
@@ -10282,7 +10290,6 @@ class IndexCategory extends Category
 	}
 	addHomSets()
 	{
-		const morphisms = new Set;
 		for(const [key, e] of this.elements)
 		{
 			if (Morphism.prototype.isPrototypeOf(e))
@@ -10291,44 +10298,43 @@ class IndexCategory extends Category
 				this.addHom(e);
 				this.addHomDir(e, 'dom');
 				this.addHomDir(e, 'cod');
-				morphisms.add(e);
-			}
-			else if (DiagramObject.prototype.isPrototypeOf(e))
-			{
 			}
 		}
 		const initials = new Set;
-		const terminals = new Set;
 		this.obj2morphs.forEach(function(morphs, o)
 		{
 			if (morphs.dom.length > 1)
 				initials.add(o);
-			if (morphs.cod.length > 1)
-				terminals.add(o);
 		});
-//		const obj2legs = new Map;
 		const legs = [];
-		const full = [];
+//		const full = [];
 		initials.forEach(function(o)
 		{
 			const morphs = this.obj2morphs.get(o);
 			legs.push(...morphs.dom.map(m => [m]));
-//			obj2legs.set(o, legs);
 		}, this);
+		const domLegs = new Map;
+		const codLegs = new Map;
 		while(legs.length > 0)
 		{
 			const leg = legs.pop();
+			const dom = leg[0].domain;
 			const cod = leg[leg.length -1].codomain;
 			const morphs = this.obj2morphs.get(cod);
 			if (morphs.cod.length > 1)			// potential full leg
-				full.push(leg);
+			{
+				if (!domLegs.has(dom))
+					domLegs.set(dom, []);
+				domLegs.get(dom).push(leg);
+			}
 			if (morphs.dom.length === 0)	// cannot continue
 			{
 			}
 			else if (morphs.dom.length === 1)	// continue
 			{
-				leg.push(morphs.dom[0]);
-				legs.push(leg);	// TODO circularity test
+				const nuLeg = leg.slice();
+				nuLeg.push(morphs.dom[0]);
+				legs.push(nuLeg);	// TODO circularity test
 			}
 			else
 			{
@@ -10340,19 +10346,37 @@ class IndexCategory extends Category
 				});	// TODO circularity test
 			}
 		}
-		/*
 		const cells = new Set;
-		obj2legs.forEach(function(legs, o)
+		domLegs.forEach(function(legs, dom)		// for all domain legs...
 		{
-			legs.map(leg =>
+			legs.map((leg, i) =>			// for all legs ...
 			{
-				const cod = leg[leg.length -1];
-				if (!initials.has(cod))
+				const cod = leg[leg.length -1].codomain;
+				for (let j=i+1; j<legs.length; ++j)		// for all other legs ...
 				{
+					const altLeg = legs[j];
+					const altDom = altLeg[0].domain;
+					const altCod = altLeg[altLeg.length -1].codomain;
+					if (dom.name === altDom.name && altCod.name === cod.name)
+						leg.length < altLeg.length ? cells.add([leg, altLeg]) : cells.add([altLeg, leg]);
 				}
 			});
 		});
-		*/
+		cells.forEach(function(c)
+		{
+			const left = c[0];
+			const right = c[1];
+			const firstLeft = left[0];
+			if (left.length === 1 && DiagramComposite.prototype.isPrototypeOf(firstLeft) && firstLeft.morphisms.length === right.length && firstLeft.morphisms.reduce((r, m, i) => r && m.name === right[i].name, true))
+			{
+				// check for decoration
+			}
+			const leftSig = U.GetSignature('Composite', left.map(m => m.to));
+			const rightSig = U.GetSignature('Composite', right.map(m => m.to));
+			const equ = R.equals.get(leftSig);
+			if (equ && equ.has(rightSig))
+				console.log('equal legs', c, c[0].map(m => m.basename), '==', c[1].map(m => m.basename) );
+		});
 	}
 	addHom(m)
 	{
@@ -10386,8 +10410,8 @@ class IndexCategory extends Category
 	}
 	static HomKey(domain, codomain)
 	{
-//		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
-		return [domain, codomain];
+		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
+//		return [domain, codomain];
 	}
 }
 
@@ -10674,6 +10698,17 @@ class PullbackMorphism extends Morphism
 	canChangeProperName()
 	{
 		return false;
+	}
+	loadEquivalence(diagram)
+	{
+		super.loadEquivalence();
+		const ndx = this.index;
+		if (ndx > 0)
+		{
+			const base = [diagram.getElement(this.domain.cone[0]), this.domain.source[0]];
+			const leg = [diagram.getElement(this.domain.cone[ndx]), this.domain.source[ndx]];
+			R.LoadEquivalence(base, leg);
+		}
 	}
 	static Basename(diagram, domain, index)
 	{
@@ -12056,16 +12091,17 @@ class Diagram extends Functor
 		this.svgRoot = null;
 		this.svgBase = null;
 		this.assertions = new Map;
+		this.elements.forEach(function(e)
+		{
+			Morphism.prototype.isPrototypeOf(e) && e.loadEquivalence(this);
+		}, this);
 		if ('assertions' in nuArgs)
 			nuArgs.assertions.map(i =>
 			{
 				const a = new DiagramAssertion(this, i);
 				a.incrRefcnt();
+				a.loadEquivalence();
 			});
-		this.elements.forEach(function(e)
-		{
-			Morphism.prototype.isPrototypeOf(e) && e.loadEquivalence(this);
-		}, this);
 	}
 	help(helped = new Set)
 	{
@@ -12262,7 +12298,7 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 		if (elt)
 			this.addSelected(elt);
 		if (R.default.debug)
-			console.log('selected', elt);
+			console.log('selected', elt.basename, elt);
 		D.ShowToolbar(e);
 	}
 	addSelected(elt)
@@ -12414,7 +12450,7 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 			xyC = new D2({x:xyD.x + Math.max(D.default.arrow.length, tw), y:xyD.y});
 			codomain.update(xyCod);
 		}
-		this.domain.makeHomSets();
+		save && this.domain.makeHomSets();
 		this.addSVG(domain);
 		this.addSVG(codomain);
 		this.addSVG(from);
@@ -12913,11 +12949,7 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 				selected.push(e);
 		}, this);
 		if (selected.length > 0)
-		{
-//			if (selected.reduce((r, e) => r || DiagramMorphism.prototype.isPrototypeOf(e), false))
-//				selected = selected.filter(e => DiagramMorphism.prototype.isPrototypeOf(e));
 			selected.map(e => this.addSelected(e));
-		}
 		D.ShowToolbar(e);
 	}
 	downloadJSON(e)
@@ -13116,6 +13148,7 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 		D.ShowToolbar(e, mouse);
 		this.update();
 	}
+	/*
 	loadSignatures()
 	{
 		this.elements.forEach(function(e)
@@ -13131,68 +13164,27 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 //					R.equals.set(sig, new Set([sig]));
 				if (Composite.prototype.isPrototypeOf(e))	// a composite has two equal legs
 				{
-//					R.loadEquivalence([e], e.morphisms);
 				}
 				else if (FactorMorphism.prototype.isPrototypeOf(e) && e.factors.length > 1)
 				{
-//					e.factors.map((f, i) =>
-//					{
-//						const fm = FactorMorphism.Get(this, e.codomain, [i]);
-//						const base = FactorMorphism.Get(this, e.domain, e.factors[i]);
-//						R.loadEquivalence([base], [fm, e]);
-//					});
 				}
 				else if (ProductMorphism.prototype.isPrototypeOf(e))
 				{
-//					e.morphisms.map((m, i) =>
-//					{
-//						const pDom = FactorMorphism.Get(this, e.domain, [i]);
-//						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
-//						R.loadEquivalence([pCod, e], [m, pDom]);
-//					});
 				}
 				else if (CoproductMorphism.prototype.isPrototypeOf(e))
 				{
-//					e.morphisms.map((m, i) =>
-//					{
-//						const iDom = CofactorMorphism.Get(this, e.domain, [i]);
-//						const iCod = CofactorMorphism.Get(this, e.codomain, [i]);
-//						R.loadEquivalence([e, iDom], [iCod, m]);
-//					});
 				}
 				else if (ProductAssembly.prototype.isPrototypeOf(e))
 				{
-//					e.morphisms.map((m, i) =>
-//					{
-//						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
-//						R.loadEquivalence([m], [pCod, e]);
-//					});
 				}
 				else if (CoproductAssembly.prototype.isPrototypeOf(e))
 				{
-//					e.morphisms.map((m, i) =>
-//					{
-//						const iCod = CofactorMorphism.Get(this, e.domain, [i]);
-//						R.loadEquivalence([m], [e, iCod]);
-//					});
 				}
 				else if (Diagonal.prototype.isPrototypeOf(e))
 				{
-//					const id = Identity.Get(this, e.domain);
-//					for (let i=0; i<e.count; ++i)
-//					{
-//						const p = FactorMorphism.Get(this, e.codomain, [i]);
-//						R.loadEquivalence([id], [p, e]);
-//					}
 				}
 				else if (FoldMorphism.prototype.isPrototypeOf(e))
 				{
-//					const id = Identity.Get(this, e.codomain);
-//					for (let i=0; i<e.count; ++i)
-//					{
-//						const p = CofactorMorphism.Get(this, e.domain, [i]);
-//						R.loadEquivalence([id], [e, p]);
-//					}
 				}
 				else if (DataMorphism.prototype.isPrototypeOf(e) && 'recursor' in e)	// recursive, no legs?
 				{
@@ -13225,14 +13217,14 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 				{
 					const legs = e.cone.map((m, i) => [e.source[i], e.cone[i]]);
 					for (const i=1; i<legs.length; ++i)
-						R.loadEquivalence(legs[0], legs[i]);
+						R.LoadEquivalence(legs[0], legs[i]);
 				}
 				else if (NamedObject.prototype.isPrototypeOf(e))
 				{
 					const srcId = Identity.Get(this, e.source);
 					const namId = Identity.Get(this, e);
-					R.loadEquivalence([srcId], [namId, srcId])
-					R.loadEquivalence([objId], [srcId, namId])
+					R.LoadEquivalence([srcId], [namId, srcId])
+					R.LoadEquivalence([objId], [srcId, namId])
 				}
 			}
 			// skip:
@@ -13241,11 +13233,12 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 		});
 		this.assertions.forEach(function(a)
 		{
-			const {leftSig, rightSig} = R.loadEquivalence(a.toLeg0, a.toLeg1);
+			const {leftSig, rightSig} = R.LoadEquivalence(a.toLeg0, a.toLeg1);
 			R.sig2Item(leftSig, a);
 			R.sig2Item(rightSig, a);
 		});
 	}
+	*/
 	static Codename(args)
 	{
 		return `${args.user}/${args.basename}`;
