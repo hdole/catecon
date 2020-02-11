@@ -1927,49 +1927,39 @@ function %1(args)
 			R.SelectDiagram(name);
 		});
 	}
-	loadSignature(m)
-	{
-		const sig = m.signature;
-if (this.sig2Item.has(sig))debugger;
-if (this.sig2Leg.has(sig))debugger;
-if (this.equals.has(sig))debugger;
-		this.sig2Item.set(sig, m);
-		this.sig2Leg(sig, [m]);
-		this.equals.set(sig, new Set([sig]));
-	}
-	loadEquivalence(leftLeg, rightLeg)
+	static LoadEquivalence(leftLeg, rightLeg)
 	{
 		const leftSig = U.GetSignature('Composite', leftLeg);
 		const rightSig = U.GetSignature('Composite', rightLeg);
-		if (!this.sig2Leg.has(leftSig))
-			this.sig2Leg.set(leftSig, leftLeg);
-		if (!this.sig2Leg.has(rightSig))
-			this.sig2Leg.set(rightSig, rightLeg);
-		if (this.equals.has(leftSig))
+		if (!R.sig2Leg.has(leftSig))
+			R.sig2Leg.set(leftSig, leftLeg);
+		if (!R.sig2Leg.has(rightSig))
+			R.sig2Leg.set(rightSig, rightLeg);
+		if (R.equals.has(leftSig))
 		{
-			const leftSigs = this.equals.get(leftSig);
+			const leftSigs = R.equals.get(leftSig);
 			if (leftSigs.has(rightSig))
 			{
 				// do nothing, slready processed
 			}
-			else if (this.equals.has(rightSig))	// merge right sigs to the left
+			else if (R.equals.has(rightSig))	// merge right sigs to the left
 			{
-				const rightSigs = this.equals.get(rightSig);
+				const rightSigs = R.equals.get(rightSig);
 				rightSigs.forEach(function(sig)
 				{
 					leftSigs.add(sig);
-					this.equals.set(sig, leftSigs);
+					R.equals.set(sig, leftSigs);
 				});
 			}
 			else
 			{
 				leftSigs.add(rightSig);
-				this.equals.set(rightSig, leftSigs);
+				R.equals.set(rightSig, leftSigs);
 			}
 		}
-		else if (this.equals.has(rightSig))
+		else if (R.equals.has(rightSig))
 		{
-			const rightSigs = this.equals.get(rightSig);
+			const rightSigs = R.equals.get(rightSig);
 			if (rightSigs.has(leftSig))
 			{
 				// do nothing, slready processed
@@ -1977,14 +1967,14 @@ if (this.equals.has(sig))debugger;
 			else
 			{
 				rightSigs.add(leftSig);
-				this.equals.set(leftSig, rightSigs);
+				R.equals.set(leftSig, rightSigs);
 			}
 		}
 		else
 		{
 			const sigs = new Set([leftSig, rightSig]);
-			U.equals.set(leftSig, sigs);
-			U.equals.set(rightSig, sigs);
+			R.equals.set(leftSig, sigs);
+			R.equals.set(rightSig, sigs);
 		}
 		return {leftSig, rightSig};
 	}
@@ -4098,12 +4088,11 @@ class CategorySection extends Section
 		if (this.categories && super.update())
 		{
 			let rows = '';
-			const that = this;	// can't use this below
 			this.categories.forEach(function(category)
 			{
-				if (that.filterFn(category))
-					rows += that.categoryRow(category, that.updateFn(category));
-			});
+				if (this.filterFn(category))
+					rows += this.categoryRow(category, this.updateFn(category));
+			}, this);
 			this.section.innerHTML = H.table(rows);
 		}
 	}
@@ -5865,6 +5854,7 @@ class CatObject extends Element
 			this.category.addElement(this);
 		else if (diagram)
 			diagram.codomain.addElement(this);
+		this.signature = this.getObjectSignature();
 	}
 	help(helped = new Set)
 	{
@@ -5888,6 +5878,10 @@ class CatObject extends Element
 		const position = data.position;
 		data.position += width;
 		return new Graph(this.constructor.name, position, width);
+	}
+	getObjectSignature()
+	{
+		return U.sha256(`${this.constructor.name} ${this.name}`);
 	}
 	static Get(diagram, basename)
 	{
@@ -6244,14 +6238,19 @@ class PullbackObject extends CatObject
 		super(diagram, nuArgs);
 		this.source = nuArgs.source;
 		this.source.map(m => m.incrRefcnt());
-		const cone = [];
-		this.source.map((m, i) =>
+		if ('cone' in nuArgs)
+			this.cone = nuArgs.cone;
+		else
 		{
-			const pbm = PullbackMorphism.Get(diagram, this, i);
-			pbm.incrRefcnt();
-			cone.push(pbm);
-		});
-		this.cone = cone;
+			const cone = [];
+			this.source.map((m, i) =>
+			{
+				const pbm = PullbackMorphism.Get(diagram, this, i);
+//				pbm.incrRefcnt();
+				cone.push(pbm.name);
+			});
+			this.cone = cone;
+		}
 	}
 	help(helped = new Set)
 	{
@@ -6262,7 +6261,7 @@ class PullbackObject extends CatObject
 		if (this.refcnt <= 0)
 		{
 			this.source.map(m => m.decrRefcnt());
-			this.cone.map(m => m.decrRefcnt());
+//			this.cone.map(m => m.decrRefcnt());
 		}
 	}
 	json()
@@ -6270,6 +6269,7 @@ class PullbackObject extends CatObject
 		const a = super.json();
 		delete a.properName;
 		a.source = this.source.map(m => m.name);
+		a.cone = this.cone;
 		return a;
 	}
 	needsParens()
@@ -6792,6 +6792,7 @@ class DiagramObject extends CatObject
 	}
 	getSVG()
 	{
+if (!this.y)this.y = 0;
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `nan in getSVG`;
 		return `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
@@ -6845,25 +6846,30 @@ class DiagramPullback extends DiagramObject
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-if (!('source' in args))args.source = args.cone;
-		this.source = args.source && args.source.map(m =>
+		this.source = args.source.map(m =>
 		{
 			const mo = diagram.getElement(m);
 			mo.incrRefcnt();
 			return mo;
 		});
+		const object = this.source[0].codomain;		// all have the same codomain
 		this.getObjects().map(o => o !== this && o.decorations.add(this));
-		this.cone = this.source.map((m, index) =>
-		{
-//			const from = new DiagramMorphism(diagram, {to:m.to, anon:'pb_', domain:this, codomain:this.source[index].domain});
-//			from.incrRefcnt();
-//			return from;
-		});
+		if ('cone' in args)
+			this.cone = args.cone;
+		else
+			this.cone = this.source.map((m, index) =>
+			{
+				const to = PullbackMorphism.Get(diagram, this.to, index);
+				const from = new DiagramMorphism(diagram, {to, anon:'pb_', domain:this, codomain:this.source[index].domain});
+//				from.incrRefcnt();
+				return from.name;
+			});
 	}
 	json()
 	{
 		let a = super.json();
 		a.source = this.source.map(m => m.name);
+		a.cone = this.cone;
 		return a;
 	}
 	getObjects()
@@ -6903,17 +6909,17 @@ if (!('source' in args))args.source = args.cone;
 			this.removeSVG();
 			this.getObjects().map(o => o.decorations.delete(this));
 			this.source.map(m => m.decrRefcnt());
-			this.cone.map(m => m && m.decrRefcnt());
+//			this.cone.map(m => m && m.decrRefcnt());
 		}
 		super.decrRefcnt();
 	}
-	update()
+	update(xy)
 	{
-		super.update();
-		const xy = this.getPullbackPosition();
+		super.update(xy);
+		const pbxy = this.getPullbackPosition();
 		const svg = this.svg('_pb');
-		svg.setAttribute('x', xy.x);
-		svg.setAttribute('y', xy.y);
+		svg.setAttribute('x', pbxy.x);
+		svg.setAttribute('y', pbxy.y);
 	}
 }
 
@@ -6953,8 +6959,7 @@ class DiagramAssertion extends DiagramCore
 		if (this.refcnt <= 0)
 		{
 			const objs = this.getObjects();
-			const that = this;
-			objs.map(o => o.decorations.delete(that));
+			objs.map(o => o.decorations.delete(this));
 			this.leg0.map(m => m.decrRefcnt());
 			this.leg1.map(m => m.decrRefcnt());
 			this.diagram.assertions.delete(DiagramAssertion.GetKey(this.assert));
@@ -7087,7 +7092,6 @@ class CompositeAction extends Action
 	{
 		const to = Composite.Get(diagram, morphisms.map(m => m.to));
 		const from = new DiagramComposite(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms), morphisms});
-		diagram.domain.makeHomSets();
 		diagram.domain.makeHomSets();
 		diagram.addSVG(from);
 		diagram.makeSelected(e, from);
@@ -7501,18 +7505,18 @@ class PullbackAction extends Action
 		};
 		super(diagram, args);
 	}
-	action(e, diagram, cone)
+	action(e, diagram, source)
 	{
-		const toCone = cone.map(m => m.to);
+		const toCone = source.map(m => m.to);
 		const to = PullbackObject.Get(diagram, toCone);
-		const bary = D.Barycenter(cone.map(m => m.domain));
-		const sink = cone[0].codomain;
+		const bary = D.Barycenter(source.map(m => m.domain));
+		const sink = source[0].codomain;
 		const xy = bary.add(bary.subtract(sink));
-		const source = new DiagramPullback(diagram, {xy, to, cone});
-		diagram.addSVG(source);
-		source.cone.map(m => diagram.addSVG(m));
+		const pb = new DiagramPullback(diagram, {xy, to, source});
+		diagram.addSVG(pb);
+		pb.cone.map(m => diagram.addSVG(diagram.getElement(m)));
 		diagram.deselectAll();
-		diagram.addSelected(source);
+		diagram.addSelected(pb);
 //		toCone.map((m, index) =>
 //		{
 //			const pb = source.cone[index];
@@ -7552,7 +7556,7 @@ class PushoutAction extends Action
 		diagram.addSVG(sink);
 		cone.map((m, i) =>
 		{
-			const to = PullbackMorphism.Get(diagram, {object, leg:m});
+			const to = PushoutMorphism.Get(diagram, {object, leg:m});
 			const from = new DiagramMorphism(diagram, {to, codomain:sink, domain:ary[i].codomain});
 			diagram.addSVG(from);
 			diagram.addSelected(from);
@@ -9290,7 +9294,7 @@ class AlignVerticalAction extends Action
 		const items = this.getItems(ary);
 		const xy = items[0].getXY();
 		items.shift();
-		items.map(i => i.update({x:xy.x, x:i.y}));
+		items.map(i => i.update({x:xy.x, y:i.y}));
 		diagram.updateMorphisms();
 		diagram.update();
 		D.ShowToolbar(e);
@@ -9484,7 +9488,7 @@ class Category extends CatObject
 		let s = '';
 		for ([key, e] of this.elements)
 			s += e.signature;
-		return U.sha256(`${this.name} ${this.constructor.name} ${s}`);
+		return U.sha256(`${this.constructor.name} ${this.name} ${s}`);
 	}
 	process(diagram, args, elements = null)
 	{
@@ -9512,9 +9516,12 @@ class Category extends CatObject
 			args.actions.map(a => this.actions.set(a, R.$Actions.getElement(a)));
 		if (errMsg != '')
 			D.RecordError(errMsg);
-		for(const [key, m] of this.elements)	// set recursive function as it is defined after m is
-			if (DataMorphism.prototype.isPrototypeOf(m) && 'recursor' in m && typeof m.recursor === 'string')
-				m.setRecursor(m.recursor);
+		if (!IndexCategory.prototype.isPrototypeOf(this))
+			for(const [key, m] of this.elements)
+			{
+				if (DataMorphism.prototype.isPrototypeOf(m) && 'recursor' in m && typeof m.recursor === 'string')	// set recursive function as it is defined after m is
+					m.setRecursor(m.recursor);
+			}
 	}
 	json()
 	{
@@ -9548,12 +9555,11 @@ class Category extends CatObject
 		const ad = R.$CAT.getElement(name);
 		if (ad)
 		{
-			const that = this;
 			ad.elements.forEach(function(a)
 			{
-				that.actions.set(a.basename, a);
-				'initialize' in a && a.initialize(that);
-			});
+				this.actions.set(a.basename, a);
+				'initialize' in a && a.initialize(this);
+			}, this);
 			this.actionDiagrams.add(name);
 		}
 	}
@@ -9604,10 +9610,6 @@ class Category extends CatObject
 				return false;
 		}
 		return true;
-	}
-	static HomKey(domain, codomain)
-	{
-		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
 	}
 	static Get(diagram, user, basename)
 	{
@@ -9698,6 +9700,22 @@ class Morphism extends Element
 	{
 		return null;	// fitb
 	}
+	loadEquivalence(diagram)
+	{
+		const sig = this.signature;
+if (R.sig2Item.has(sig))
+{
+	const alt = R.sig2Item.get(sig);
+	console.log('sig2item', diagram.properName, this.properName, this === alt ? 'equals' : 'not equal',alt.properName);
+	console.log('sig2item', this, alt);
+	debugger;
+}
+//if (R.sig2Leg.has(sig))debugger;
+//if (R.equals.has(sig))debugger;
+		R.sig2Item.set(sig, this);
+		R.sig2Leg.set(sig, [this]);
+		R.equals.set(sig, new Set([sig]));
+	}
 	static Signature(domain, name, codomain)
 	{
 		return U.sha256(`${domain.signature} ${name} ${codomain.signature}`);
@@ -9781,8 +9799,8 @@ class NamedObject extends CatObject	// name of an object
 		this.source.incrRefcnt();
 		this.idFrom= Identity.Get(diagram, this, this.source);
 		this.idTo = Identity.Get(diagram, this.source, this);
-		if (this.constructor.name === 'NamedObject')
-			this.signature = this.source.signature;
+//		if (this.constructor.name === 'NamedObject')
+//			this.signature = this.source.signature;
 	}
 	json()
 	{
@@ -9954,11 +9972,17 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 	}
 	showSelected(state = true)
 	{
-		this.svg('_path').classList[state ? 'add' : 'remove']('selected');
-		this.svg('_name').classList[state ? 'add' : 'remove']('selected');
-		const svg = this.svg('_comp');
-		if (svg)
-			svg.classList[state ? 'add' : 'remove']('selected');
+		try
+		{
+			this.svg('_path').classList[state ? 'add' : 'remove']('selected');
+			this.svg('_name').classList[state ? 'add' : 'remove']('selected');
+			const svg = this.svg('_comp');
+			if (svg)
+				svg.classList[state ? 'add' : 'remove']('selected');
+		}
+		catch(x)
+		{
+		}
 	}
 	updateFusible(e, on)
 	{
@@ -10258,25 +10282,86 @@ class IndexCategory extends Category
 	}
 	addHomSets()
 	{
-		for(const [key, m] of this.elements)
+		const morphisms = new Set;
+		for(const [key, e] of this.elements)
 		{
-			if (Morphism.prototype.isPrototypeOf(m))
+			if (Morphism.prototype.isPrototypeOf(e))
 			{
-				delete m.bezier;
-				this.addHom(m);
-				this.addHomDir(m, 'dom');
-				this.addHomDir(m, 'cod');
+				delete e.bezier;
+				this.addHom(e);
+				this.addHomDir(e, 'dom');
+				this.addHomDir(e, 'cod');
+				morphisms.add(e);
+			}
+			else if (DiagramObject.prototype.isPrototypeOf(e))
+			{
 			}
 		}
+		const initials = new Set;
+		const terminals = new Set;
+		this.obj2morphs.forEach(function(morphs, o)
+		{
+			if (morphs.dom.length > 1)
+				initials.add(o);
+			if (morphs.cod.length > 1)
+				terminals.add(o);
+		});
+//		const obj2legs = new Map;
+		const legs = [];
+		const full = [];
+		initials.forEach(function(o)
+		{
+			const morphs = this.obj2morphs.get(o);
+			legs.push(...morphs.dom.map(m => [m]));
+//			obj2legs.set(o, legs);
+		}, this);
+		while(legs.length > 0)
+		{
+			const leg = legs.pop();
+			const cod = leg[leg.length -1].codomain;
+			const morphs = this.obj2morphs.get(cod);
+			if (morphs.cod.length > 1)			// potential full leg
+				full.push(leg);
+			if (morphs.dom.length === 0)	// cannot continue
+			{
+			}
+			else if (morphs.dom.length === 1)	// continue
+			{
+				leg.push(morphs.dom[0]);
+				legs.push(leg);	// TODO circularity test
+			}
+			else
+			{
+				morphs.dom.map(m =>
+				{
+					const nuLeg = leg.slice();
+					nuLeg.push(m);
+					legs.push(nuLeg);
+				});	// TODO circularity test
+			}
+		}
+		/*
+		const cells = new Set;
+		obj2legs.forEach(function(legs, o)
+		{
+			legs.map(leg =>
+			{
+				const cod = leg[leg.length -1];
+				if (!initials.has(cod))
+				{
+				}
+			});
+		});
+		*/
 	}
 	addHom(m)
 	{
-		const key = Category.HomKey(m.domain, m.codomain);
+		const key = IndexCategory.HomKey(m.domain, m.codomain);
 		if (!this.homSets.has(key))
 			this.homSets.set(key, []);
 		const a = this.homSets.get(key);
 		a.push(m);
-		const dualKey = Category.HomKey(m.codomain, m.domain);
+		const dualKey = IndexCategory.HomKey(m.codomain, m.domain);
 		const dualLength = this.homSets.has(dualKey) ? this.homSets.get(dualKey).length : 0;
 		m.homSetIndex = a.length -1 + dualLength;
 	}
@@ -10290,8 +10375,19 @@ class IndexCategory extends Category
 	}
 	getHomSet(domain, codomain)
 	{
-		const key = Category.HomKey(domain, codomain);
+		const key = IndexCategory.HomKey(domain, codomain);
 		return this.homSets.has(key) ? this.homSets.get(key) : [];
+	}
+	makeCells()
+	{
+		this.homSets.forEach(function(s, k)
+		{
+		});
+	}
+	static HomKey(domain, codomain)
+	{
+//		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
+		return [domain, codomain];
 	}
 }
 
@@ -10452,7 +10548,8 @@ class Composite extends MultiMorphism
 	}
 	loadEquivalence()
 	{
-		R.loadEquivalence([this], this.morphisms);
+		super.loadEquivalence();
+		R.LoadEquivalence([this], this.morphisms);
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -10504,13 +10601,14 @@ class ProductMorphism extends MultiMorphism
 		helped.add(this.name);
 		return super.help(H.p('Product'), helped);
 	}
-	loadEquivalence()
+	loadEquivalence(diagram)
 	{
+		super.loadEquivalence();
 		this.morphisms.map((m, i) =>
 		{
-			const pDom = FactorMorphism.Get(this, this.domain, [i]);
-			const pCod = FactorMorphism.Get(this, this.codomain, [i]);
-			R.loadEquivalence([pCod, this], [m, pDom]);
+			const pDom = FactorMorphism.Get(diagram, this.domain, [i]);
+			const pCod = FactorMorphism.Get(diagram, this.codomain, [i]);
+			R.LoadEquivalence([pCod, this], [m, pDom]);
 		});
 	}
 	static Basename(diagram, morphisms)
@@ -10554,7 +10652,7 @@ class PullbackMorphism extends Morphism
 		nuArgs.properName = PullbackMorphism.ProperName(domain, index);
 		super(diagram, nuArgs);
 		this.index = index;
-		this.signature = PullbackMorphism.Signature(this.domain, this.codomain. this.index);
+		this.signature = PullbackMorphism.Signature(this.domain, this.codomain, index);
 	}
 	help(helped = new Set)
 	{
@@ -10562,11 +10660,10 @@ class PullbackMorphism extends Morphism
 			return '';
 		return super.help(helped) + H.p(`Pullback morphism to ${this.domain.properName}`);
 	}
-	canSave()		// do not save, they are automatically reconstituted when the pullback object is created
-	{
-		return false;
-	}
-/*
+//	canSave()		// do not save, they are automatically reconstituted when the pullback object is created
+//	{
+//		return false;
+//	}
 	json()
 	{
 		const a = super.json();
@@ -10574,7 +10671,6 @@ class PullbackMorphism extends Morphism
 		a.index = this.index;
 		return a;
 	}
-*/
 	canChangeProperName()
 	{
 		return false;
@@ -10626,6 +10722,16 @@ class CoproductMorphism extends MultiMorphism
 			return '';
 		helped.add(this.name);
 		return super.help(H.p('Coproduct'), helped);
+	}
+	loadEquivalence(diagram)
+	{
+		super.loadEquivalence();
+		this.morphisms.map((m, i) =>
+		{
+			const iDom = CofactorMorphism.Get(diagram, this.domain, [i]);
+			const iCod = CofactorMorphism.Get(diagram, this.codomain, [i]);
+			R.LoadEquivalence([this, iDom], [iCod, m]);
+		});
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -10679,6 +10785,15 @@ class ProductAssembly extends MultiMorphism
 	{
 		return this.mergeMorphismGraphs(graph);
 	}
+	loadEquivalence(diagram)
+	{
+		super.loadEquivalence();
+		this.morphisms.map((m, i) =>
+		{
+			const pCod = FactorMorphism.Get(diagram, this.codomain, [i]);
+			R.LoadEquivalence([m], [pCod, this]);
+		});
+	}
 	static Basename(diagram, morphisms)
 	{
 		return `Pa{${morphisms.map(m => m.name).join(',')}}aP`;
@@ -10730,6 +10845,15 @@ class CoproductAssembly extends MultiMorphism
 	getGraph(data = {position:0})
 	{
 		return this.mergeMorphismGraphs(graph)
+	}
+	loadEquivalence(diagram)
+	{
+		super.loadEquivalence();
+		this.morphisms.map((m, i) =>
+		{
+			const iCod = CofactorMorphism.Get(diagram, this.domain, [i]);
+			R.LoadEquivalence([m], [this, iCod]);
+		});
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -10783,7 +10907,7 @@ class FactorMorphism extends Morphism
 	getFactorSignature()
 	{
 //		return U.sha256(`${Morphism.Signature(name)} ${this.factors.map(f => f.join('-')).join(':')}`);
-		return FactorMorphism.Signature(this.domain, this.name, this.codoamin, this.factors);
+		return FactorMorphism.Signature(this.domain, this.name, this.codomain, this.factors);
 	}
 	json()
 	{
@@ -10818,14 +10942,18 @@ class FactorMorphism extends Morphism
 		graph.tagGraph(this.constructor.name);
 		return graph;
 	}
-	loadEquivalence()
+	loadEquivalence(diagram)
 	{
-		this.factors.map((f, i) =>
+		super.loadEquivalence();
+		if (this.factors.length > 1)
 		{
-			const fm = FactorMorphism.Get(this, this.codomain, [i]);
-			const base = FactorMorphism.Get(this, this.domain, this.factors[i]);
-			R.loadEquivalence([base], [fm, this]);
-		});
+			this.factors.map((f, i) =>
+			{
+				const fm = FactorMorphism.Get(diagram, this.codomain, [i]);
+				const base = FactorMorphism.Get(diagram, this.domain, this.factors[i]);
+				R.LoadEquivalence([base], [fm, this]);
+			});
+		}
 	}
 	static Basename(domain, factors)
 	{
@@ -11008,6 +11136,16 @@ class Diagonal extends Morphism
 		graph.tagGraph(this.constructor.name);
 		return graph;
 	}
+	loadEquivalence(diagram)
+	{
+		super.loadEquivalence();
+		const id = Identity.Get(diagram, this.domain);
+		for (let i=0; i<this.count; ++i)
+		{
+			const p = FactorMorphism.Get(diagram, this.codomain, [i]);
+			R.LoadEquivalence([id], [p, this]);
+		}
+	}
 	static Basename(domain, count)
 	{
 		return `Dm{${domain.name}/${count}}mD`;
@@ -11076,6 +11214,16 @@ class FoldMorphism extends Morphism
 		domain.map((g, i) => codomain.bindGraph({cod:g, link:[], domRoot:[0], codRoot:[1, i], offset:0}));
 		graph.tagGraph(this.constructor.name);
 		return graph;
+	}
+	loadEquivalence(diagram)
+	{
+		super.loadEquivalence();
+		const id = Identity.Get(diagram, this.codomain);
+		for (let i=0; i<this.count; ++i)
+		{
+			const p = CofactorMorphism.Get(diagram, this.domain, [i]);
+			R.LoadEquivalence([id], [this, p]);
+		}
 	}
 	static Basename(codomain, count)
 	{
@@ -11230,7 +11378,8 @@ class LambdaMorphism extends Morphism
 	}
 	getLambdaSignature()
 	{
-		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${U.a2s(this.domFactors)} ${U.a2s(this.homFactors)}`);
+//		return U.sha256(`${this.diagram.codomain.name} ${this.preCurry.sig} ${U.a2s(this.domFactors)} ${U.a2s(this.homFactors)}`);
+		return U.sha256(`${this.getMorphismSignature()} ${this.preCurry.sig} ${U.a2s(this.domFactors)} ${U.a2s(this.homFactors)}`);
 	}
 	json()
 	{
@@ -11907,13 +12056,16 @@ class Diagram extends Functor
 		this.svgRoot = null;
 		this.svgBase = null;
 		this.assertions = new Map;
-if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		if ('assertions' in nuArgs)
 			nuArgs.assertions.map(i =>
 			{
 				const a = new DiagramAssertion(this, i);
 				a.incrRefcnt();
 			});
+		this.elements.forEach(function(e)
+		{
+			Morphism.prototype.isPrototypeOf(e) && e.loadEquivalence(this);
+		}, this);
 	}
 	help(helped = new Set)
 	{
@@ -11937,15 +12089,15 @@ if ('assertions' in nuArgs && nuArgs.assertions[0] === null) return;
 		a.domainElements =	[];
 		this.domain.elements.forEach(function(e)
 		{
-			if (DiagramMorphism.prototype.isPrototypeOf(e) && !e.to)	// bypass corruption
-				return;
+if (DiagramMorphism.prototype.isPrototypeOf(e) && !e.to)	// bypass corruption
+	return;
 			if (e.to.canSave())
 				a.domainElements.push(e.json())
 		});
 		a.elements = [];
 		this.elements.forEach(function(e)
 		{
-if (e.refcnt === 0)debugger;
+if (e.refcnt === 0)console.log('not saving',e.properName);
 			if (e.canSave() && e.refcnt > 0)
 				a.elements.push(e.json());
 		});
@@ -12247,9 +12399,10 @@ if (e.refcnt === 0)debugger;
 		const codomain = new DiagramObject(this, {to:to.codomain});
 		const from = new DiagramMorphism(this, {to, domain, codomain});
 		const tw = D.textWidth(to.domain.properName)/2 + D.textWidth(to.properName) + D.textWidth(to.codomain.properName)/2 + 2 * D.textWidth('&emsp;');
+		let xyC = null;
 		if (xyCod)
 		{
-			let xyC = D.Grid(new D2(xyCod));
+			xyC = D.Grid(new D2(xyCod));
 			const angle = D2.Angle(xyDom, xyCod);
 			const xyCmin = D.Grid({x:xyD.x + Math.cos(angle) * tw, y:xyD.y + Math.sin(angle) * tw});
 			if (xyD.dist(xyC) < xyD.dist(xyCmin))
@@ -12257,7 +12410,10 @@ if (e.refcnt === 0)debugger;
 			codomain.update(xyC);
 		}
 		else
-			codomain.update({x:xyD.x + Math.max(D.default.arrow.length, tw), y:xyD.y});
+		{
+			xyC = new D2({x:xyD.x + Math.max(D.default.arrow.length, tw), y:xyD.y});
+			codomain.update(xyCod);
+		}
 		this.domain.makeHomSets();
 		this.addSVG(domain);
 		this.addSVG(codomain);
@@ -12266,7 +12422,9 @@ if (e.refcnt === 0)debugger;
 		let offbox = new D2(bbox);
 		while (this.hasOverlap(offbox, from.name))
 			offbox = offbox.add(D.default.stdOffset);
-		from.update(xyD.add(offbox.subtract(bbox)));
+		from.domain.update(xyD.add(offbox.subtract(bbox)));
+		from.codomain.update(xyC.add(offbox.subtract(bbox)));
+		from.update();
 		R.diagram && this.makeSelected(e, from);
 		this.update(save);
 		R.diagram && D.morphismPanel.update();
@@ -12715,6 +12873,7 @@ if (e.refcnt === 0)debugger;
 				this.showString(from);
 		this.update(e, null, false, false);
 	}
+	/*
 	getHomSet(dom, cod)		// TODO change to getIndexHomSet
 	{
 		const morphisms = [];
@@ -12735,6 +12894,7 @@ if (e.refcnt === 0)debugger;
 		});
 		return morphisms;
 	}
+	*/
 	addWindowSelect(e)
 	{
 		const p = this.userToDiagramCoords(D.mouse.down);
@@ -12993,46 +13153,46 @@ if (e.refcnt === 0)debugger;
 				}
 				else if (CoproductMorphism.prototype.isPrototypeOf(e))
 				{
-					e.morphisms.map((m, i) =>
-					{
-						const iDom = CofactorMorphism.Get(this, e.domain, [i]);
-						const iCod = CofactorMorphism.Get(this, e.codomain, [i]);
-						R.loadEquivalence([e, iDom], [iCod, m]);
-					});
+//					e.morphisms.map((m, i) =>
+//					{
+//						const iDom = CofactorMorphism.Get(this, e.domain, [i]);
+//						const iCod = CofactorMorphism.Get(this, e.codomain, [i]);
+//						R.loadEquivalence([e, iDom], [iCod, m]);
+//					});
 				}
 				else if (ProductAssembly.prototype.isPrototypeOf(e))
 				{
-					e.morphisms.map((m, i) =>
-					{
-						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
-						R.loadEquivalence([m], [pCod, e]);
-					});
+//					e.morphisms.map((m, i) =>
+//					{
+//						const pCod = FactorMorphism.Get(this, e.codomain, [i]);
+//						R.loadEquivalence([m], [pCod, e]);
+//					});
 				}
 				else if (CoproductAssembly.prototype.isPrototypeOf(e))
 				{
-					e.morphisms.map((m, i) =>
-					{
-						const iCod = CofactorMorphism.Get(this, e.domain, [i]);
-						R.loadEquivalence([m], [e, iCod]);
-					});
+//					e.morphisms.map((m, i) =>
+//					{
+//						const iCod = CofactorMorphism.Get(this, e.domain, [i]);
+//						R.loadEquivalence([m], [e, iCod]);
+//					});
 				}
 				else if (Diagonal.prototype.isPrototypeOf(e))
 				{
-					const id = Identity.Get(this, e.domain);
-					for (let i=0; i<e.count; ++i)
-					{
-						const p = FactorMorphism.Get(this, e.codomain, [i]);
-						R.loadEquivalence([id], [p, e]);
-					}
+//					const id = Identity.Get(this, e.domain);
+//					for (let i=0; i<e.count; ++i)
+//					{
+//						const p = FactorMorphism.Get(this, e.codomain, [i]);
+//						R.loadEquivalence([id], [p, e]);
+//					}
 				}
 				else if (FoldMorphism.prototype.isPrototypeOf(e))
 				{
-					const id = Identity.Get(this, e.codomain);
-					for (let i=0; i<e.count; ++i)
-					{
-						const p = CofactorMorphism.Get(this, e.domain, [i]);
-						R.loadEquivalence([id], [e, p]);
-					}
+//					const id = Identity.Get(this, e.codomain);
+//					for (let i=0; i<e.count; ++i)
+//					{
+//						const p = CofactorMorphism.Get(this, e.domain, [i]);
+//						R.loadEquivalence([id], [e, p]);
+//					}
 				}
 				else if (DataMorphism.prototype.isPrototypeOf(e) && 'recursor' in e)	// recursive, no legs?
 				{
