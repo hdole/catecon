@@ -2968,6 +2968,7 @@ class D
 	static ShowToolbar(e, loc)
 	{
 		D.statusbar.style.display = 'none';
+		const wasHidden = D.toolbar.classList.contains('hidden');
 		D.toolbar.classList.remove('hidden');
 		const diagram = R.diagram;
 		if (diagram.selected.length === 0)
@@ -3002,26 +3003,29 @@ class D
 			bbox.width = Math.max(bbox.width, sBbox.width);
 			bbox.height = Math.max(bbox.height, sBbox.height);
 		});
-		let xy = {x:e.clientX + D.toolbar.clientHeight, y:e.clientY - 2 * D.toolbar.clientHeight};
-		if (D2.prototype.isPrototypeOf(loc))
-			xy = diagram.diagramToUserCoords(loc);
-		else
+		if (wasHidden)
 		{
-			let nuTop = xy.y;
-			if (xy.y >= bbox.top && xy.y <= bbox.top + bbox.height)
-				nuTop = bbox.top - D.toolbar.clientHeight;
-			let nuLeft = xy.x;
-			if (xy.x >= bbox.left && xy.x <= bbox.left + bbox.width)
-				nuLeft = bbox.left + bbox.width;
+			let xy = {x:e.clientX + D.toolbar.clientHeight, y:e.clientY - 2 * D.toolbar.clientHeight};
+			if (D2.prototype.isPrototypeOf(loc))
+				xy = diagram.diagramToUserCoords(loc);
+			else
+			{
+				let nuTop = xy.y;
+				if (xy.y >= bbox.top && xy.y <= bbox.top + bbox.height)
+					nuTop = bbox.top - D.toolbar.clientHeight;
+				let nuLeft = xy.x;
+				if (xy.x >= bbox.left && xy.x <= bbox.left + bbox.width)
+					nuLeft = bbox.left + bbox.width;
+			}
+			let left = rect.left + xy.x;
+			left = left >= 0 ? left : 0;
+			left = (left + D.toolbar.clientWidth) >= window.innerWidth ? window.innerWidth - D.toolbar.clientWidth : left;
+			D.toolbar.style.left = `${left}px`;
+			let top = rect.top + xy.y;
+			top = top >= 0 ? top : 0;
+			top = (top + D.toolbar.clientHeight) >= window.innerHeight ? window.innerHeight - D.toolbar.clientHeight : top;
+			D.toolbar.style.top = `${top}px`;
 		}
-		let left = rect.left + xy.x;
-		left = left >= 0 ? left : 0;
-		left = (left + D.toolbar.clientWidth) >= window.innerWidth ? window.innerWidth - D.toolbar.clientWidth : left;
-		D.toolbar.style.left = `${left}px`;
-		let top = rect.top + xy.y;
-		top = top >= 0 ? top : 0;
-		top = (top + D.toolbar.clientHeight) >= window.innerHeight ? window.innerHeight - D.toolbar.clientHeight : top;
-		D.toolbar.style.top = `${top}px`;
 	}
 	static DownloadButton(txt, onclick, title, scale = D.default.button.small)
 	{
@@ -3585,7 +3589,7 @@ Object.defineProperties(D,
 			{
 				const diagram = R.diagram;
 				diagram.deselectAll();
-				diagram.placeText(e, D.Grid(R.mouse.diagramPosition(diagram)), 'Lorem ipsum cateconium');
+				diagram.placeText(e, D.Grid(D.mouse.diagramPosition(diagram)), 'Lorem ipsum cateconium');
 				D.textPanel.textSection.update();
 			},
 			Delete(e)
@@ -6226,12 +6230,13 @@ class ProductObject extends MultiObject
 	}
 }
 
-class PullbackObject extends CatObject
+class PullbackObject extends ProductObject
 {
 	constructor(diagram, args)
 	{
 		const nuArgs = U.Clone(args);
 		nuArgs.source = 'morphisms' in args ? diagram.getElements(args.morphisms) : diagram.getElements(args.source);
+		nuArgs.objects = nuArgs.source.map(m => m.domain);
 		nuArgs.basename = PullbackObject.Basename(diagram, nuArgs.source);
 		nuArgs.properName = PullbackObject.ProperName(nuArgs.source);
 		super(diagram, nuArgs);
