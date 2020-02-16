@@ -1636,6 +1636,7 @@ function %1(args)
 		{
 			const args = JSON.parse(data);
 			const userDiagram = R.GetUserDiagram(args.user);
+//if (name === 'hdole/m/category'){args.elements = []; args.domainElements = [];args.assertions = [];}
 			const diagram = new Diagram(userDiagram, args);
 			const png = localStorage.getItem(`${diagram.name}.png`);
 			if (png)
@@ -1846,6 +1847,8 @@ function %1(args)
 			{
 				const userDiagram = R.GetUserDiagram(j.user);
 				diagram = new Diagram(userDiagram, j);
+				diagram.makeSvg();
+				diagram.makeHomSets();
 				R.SaveLocal(diagram, true, false);
 			});
 			if (jsons.length > 0 && fn)
@@ -1929,10 +1932,10 @@ function %1(args)
 	{
 		const leftSig = U.Signature(leftLeg);
 		const rightSig = U.Signature(rightLeg);
-		if (!R.sig2Leg.has(leftSig))
-			R.sig2Leg.set(leftSig, leftLeg);
-		if (!R.sig2Leg.has(rightSig))
-			R.sig2Leg.set(rightSig, rightLeg);
+//		if (!R.sig2Leg.has(leftSig))
+//			R.sig2Leg.set(leftSig, leftLeg);
+//		if (!R.sig2Leg.has(rightSig))
+//			R.sig2Leg.set(rightSig, rightLeg);
 		if (R.equals.has(leftSig))
 		{
 			const leftSigs = R.equals.get(leftSig);
@@ -1982,6 +1985,44 @@ function %1(args)
 		fn(rightSig, leftLeg, item);
 		return {leftSig, rightSig};
 	}
+	static RemoveEquivalence(item, leftLeg, rightLeg)
+	{
+		const leftSig = U.Signature(leftLeg);
+		const rightSig = U.Signature(rightLeg);
+//		if (R.sig2Leg.has(leftSig))
+//			R.sig2Leg.delete(leftSig)
+//		if (R.sig2Leg.has(rightSig))
+//			R.sig2Leg.delete(rightSig);
+		if (R.equals.has(leftSig))
+		{
+			const leftSigs = R.equals.get(leftSig);
+			leftSigs.delete(rightSig);
+		}
+		if (R.equals.has(rightSig))
+		{
+			const rightSigs = R.equals.get(rightSig);
+			rightSigs.delete(leftSig);
+		}
+		const fn = function(sig, leg, item)
+		{
+			const equs = R.equivalences.get(sig);
+			let ndx = -1;
+			if (equs)
+				for (let i=0; i<equs.length; ++i)
+				{
+					const e = equs[i];
+					if (e[0] === leg && e[1] === item)
+					{
+						ndx = i;
+						break;
+					}
+				}
+			if (ndx >= 0)
+				equs.splice(ndx, 1);
+		}
+		fn(leftSig, rightLeg, item);
+		fn(rightSig, leftLeg, item);
+	}
 }
 Object.defineProperties(R,
 {
@@ -2010,7 +2051,7 @@ Object.defineProperties(R,
 	clear:				{value:false,	writable:true},
 	initialized:		{value:false,	writable:true},		// Have we finished the boot sequence and initialized properly?
 	ServerDiagrams:		{value:new Map,	writable:false},
-	sig2Leg:			{value:new Map,	writable:false},
+//	sig2Leg:			{value:new Map,	writable:false},
 //	sig2Item:			{value:new Map,	writable:false},
 	equals:				{value:new Map,	writable:false},
 	equivalences:		{value:new Map,	writable:false},
@@ -3223,6 +3264,7 @@ ${button}
 	{
 		if (!R.diagram)
 			return;
+		R.diagram.makeSvg();
 		if ('viewport' in R.diagram)
 			R.diagram.setView(R.diagram.viewport.x, R.diagram.viewport.y, R.diagram.viewport.scale);
 		else
@@ -3231,7 +3273,6 @@ ${button}
 		D.objectPanel.update();
 		D.morphismPanel.update();
 		D.textPanel.update();
-//		R.diagram.makeSvg();
 		D.diagramPanel.setToolbar(R.diagram);
 //		R.diagram.update(false);	// do not save
 //		R.diagram.updateMorphisms();
@@ -5528,7 +5569,9 @@ class Element
 	}
 	static Process(diagram, args)
 	{
-		return new R.protos[args.prototype](diagram, args);
+if (args.prototype === 'DiagramAssertion')
+return null;
+		return 'prototype' in args ? new R.protos[args.prototype](diagram, args) : null;
 	}
 }
 
@@ -5854,9 +5897,9 @@ class CatObject extends Element
 	{
 		super(diagram, args);
 		if (this.category)
-			this.category.addElement(this);
+			this.category.addElement(this, diagram);
 		else if (diagram)
-			diagram.codomain.addElement(this);
+			diagram.codomain.addElement(this, diagram);
 		this.signature = this.getObjectSignature();
 	}
 	help(helped = new Set)
@@ -6170,8 +6213,10 @@ class ProductObject extends MultiObject
 	{
 		const nuArgs = U.Clone(args);
 		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
-		nuArgs.basename = ProductObject.Basename(diagram, nuArgs.objects);
-		nuArgs.properName = ProductObject.ProperName(nuArgs.objects);
+		if (!('basename' in nuArgs))
+			nuArgs.basename = ProductObject.Basename(diagram, nuArgs.objects);
+		if (!('properName' in nuArgs))
+			nuArgs.properName = ProductObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
 		this.seperatorWidth = D.textWidth('&times;');	// in pixels
 	}
@@ -6249,12 +6294,15 @@ class PullbackObject extends ProductObject
 			const cone = [];
 			this.source.map((m, i) =>
 			{
-				const pbm = PullbackMorphism.Get(diagram, this, i);
+//				const pbm = PullbackMorphism.Get(diagram, this, i);
+				const pbm = FactorMorphism.Get(diagram, this, [i]);
 //				pbm.incrRefcnt();
 				cone.push(pbm.name);
 			});
 			this.cone = cone;
 		}
+//		this.loadEquivalence(diagram);
+		diagram.addDeferredEquivalence(this);
 	}
 	help(helped = new Set)
 	{
@@ -6283,6 +6331,20 @@ class PullbackObject extends ProductObject
 	canChangeProperName()
 	{
 		return false;
+	}
+	loadEquivalence(diagram)
+	{
+		for (let i=1; i<this.cone.length; ++i)
+		{
+			const base = [diagram.getElement(this.cone[0]), this.source[0]];
+			const leg = [diagram.getElement(this.cone[i]), this.source[i]];
+			const {leftSig, rightSig} = R.LoadEquivalence(this, base, leg);
+console.log('pb loadEquivalence', {leftSig, rightSig});
+		}
+	}
+	getDecoration()
+	{
+		return '&#8991;';
 	}
 	static Basename(diagram, morphisms)
 	{
@@ -6865,7 +6927,7 @@ class DiagramPullback extends DiagramObject
 		else
 			this.cone = this.source.map((m, index) =>
 			{
-				const to = PullbackMorphism.Get(diagram, this.to, index);
+				const to = FactorMorphism.Get(diagram, this.to, [index]);
 				const from = new DiagramMorphism(diagram, {to, anon:'pb', domain:this, codomain:this.source[index].domain});
 //				from.incrRefcnt();
 				return from.name;
@@ -6889,13 +6951,13 @@ class DiagramPullback extends DiagramObject
 		});
 		return [...objs];
 	}
+	/*
 	getDecoration()
 	{
 		return '&#8991;';
 	}
 	loadEquivalence(diagram)
 	{
-//		super.loadEquivalence();
 		const pb = this.to;
 		for (let i=1; i<this.cone.length; ++i)
 		{
@@ -6905,35 +6967,44 @@ class DiagramPullback extends DiagramObject
 console.log('pb loadEquivalence', {leftSig, rightSig});
 		}
 	}
+	*/
 }
 
-class DiagramAssertion extends DiagramCore
+class Assertion extends Element
 {
 	constructor(diagram, args)
 	{
 		const nuArgs = U.Clone(args);
 		const leg0 = nuArgs.leg0.map(m => diagram.getElement(m));
 		const leg1 = nuArgs.leg1.map(m => diagram.getElement(m));
-		const toLeg0 = leg0.length === 1 ? leg0[0].to : Composite.Get(diagram, leg0.map(m => m.to));
-		const toLeg1 = leg1.length === 1 ? leg1[0].to : Composite.Get(diagram, leg1.map(m => m.to));
-		const assert = [toLeg0, toLeg1];
-		const key = DiagramAssertion.GetKey(assert);
-		if (diagram.assertions.has(key))
-			throw 'assertion already exists';
+//		const toLeg0 = leg0.length === 1 ? leg0[0].to : Composite.Get(diagram, leg0.map(m => m.to));
+//		const toLeg1 = leg1.length === 1 ? leg1[0].to : Composite.Get(diagram, leg1.map(m => m.to));
+//		const assert = [toLeg0, toLeg1];
+//		const assert = [leg0, leg1];
+//		const key = Assertion.GetKey(assert);
+//		if (diagram.assertions.has(key))
+//			throw 'assertion already exists';
+		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('a'));
+//		nuArgs.name = U.GetArg(args, 'name', `${diagram.name}/${nuArgs.basename}`);
 		super(diagram, nuArgs);
+//		this.basename = nuArgs.basename;
 		leg0.map(m => m.incrRefcnt());
 		leg1.map(m => m.incrRefcnt());
-		toLeg0.incrRefcnt();
-		toLeg1.incrRefcnt();
+//		toLeg0.incrRefcnt();
+//		toLeg1.incrRefcnt();
 		if (!('description' in nuArgs))
-			this.description = `The assertion that the morphism ${toLeg0.properName} is equal to ${toLeg1.properName}.`;
+//			this.description = `The assertion that the morphism ${toLeg0.properName} is equal to ${toLeg1.properName}.`;
+			this.description = `The assertion that the morphisme ${leg0.map(m => m.properName).join()} equal ${leg1.map(m => m.properName).join()}.`;
 		Object.defineProperties(this,
 		{
 			leg0:			{value: leg0, writable: false},
 			leg1:			{value: leg1, writable: false},
-			assert:			{value: assert, writable: false},
+//			assert:			{value: assert, writable: false},
 		});
-		diagram.assertions.set(key, this);
+//		diagram.assertions.set(key, this);
+		this.loadEquivalence(diagram);
+		diagram.codomain.addElement(this, diagram);
+		this.incrRefcnt();		// nothing refers to them, to increment
 	}
 	decrRefcnt()
 	{
@@ -6942,9 +7013,10 @@ class DiagramAssertion extends DiagramCore
 		{
 			this.leg0.map(m => m.decrRefcnt());
 			this.leg1.map(m => m.decrRefcnt());
-			this.diagram.assertions.delete(DiagramAssertion.GetKey(this.assert));
-			this.assert[0].decrRefcnt();
-			this.assert[1].decrRefcnt();
+			this.category && this.category.deleteElement(this);
+			this.removeEquivalence();
+//			this.assert[0].decrRefcnt();
+//			this.assert[1].decrRefcnt();
 		}
 	}
 	json()
@@ -6952,13 +7024,35 @@ class DiagramAssertion extends DiagramCore
 		const a = super.json();
 		a.leg0 = this.leg0.map(m => m.name);
 		a.leg1 = this.leg1.map(m => m.name);
-		a.assert = [this.assert[0].name, this.assert[1].name];
+//		a.assert = [this.assert[0].name, this.assert[1].name];
 		return a;
 	}
-	loadEquivalence()
+	getSVG()
 	{
-		const {leftSig, rightSig} = R.LoadEquivalence(this, this.leg0.map(m => m.to), this.leg1.map(m => m.to));
+		return 'decoration' in this ? this.decoration.getSVG() : '';
 	}
+	svg(sfx = '')
+	{
+		return this.decoration.svg();
+	}
+	showSelected(state = true)
+	{
+		this.svg().classList[state ? 'add' : 'remove']('selected');
+	}
+	canSave()
+	{
+		return true;
+	}
+	loadEquivalence(diagram)
+	{
+//		const {leftSig, rightSig} = R.LoadEquivalence(this, this.leg0.map(m => m.to), this.leg1.map(m => m.to));
+		const {leftSig, rightSig} = R.LoadEquivalence(this, this.leg0, this.leg1);
+	}
+	removeEquivalence()
+	{
+		R.RemoveEquivalence(this, this.leg0, this.leg1);
+	}
+	/*
 	static GetKey(assert)
 	{
 		const name0 = assert[0].name;
@@ -6968,6 +7062,7 @@ class DiagramAssertion extends DiagramCore
 		else
 			return [name0, name1];
 	}
+	*/
 	static GetLegs(ary)
 	{
 		const legs = [[], []];
@@ -6993,7 +7088,7 @@ class DiagramAssertion extends DiagramCore
 	{
 		if (ary.length < 2)
 			return false;	// not enough stuff
-		const legs = DiagramAssertion.GetLegs(ary);
+		const legs = Assertion.GetLegs(ary);
 		const leg0 = legs[0];
 		const leg1 = legs[1];
 		const length0 = leg0.length;
@@ -7224,7 +7319,7 @@ class CopyAction extends Action
 	}
 	hasForm(diagram, ary)	// one element
 	{
-		return diagram.isEditable() && ary.length === 1 && !DiagramAssertion.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && !Assertion.prototype.isPrototypeOf(ary[0]);
 	}
 }
 
@@ -8977,7 +9072,6 @@ debugger;
 			{
 				for(const m of mutationsList)
 				{
-//console.log('watcher', m);
 					btn.style = m.target.children.length > 0 ? 'block' : 'none';
 				}
 			};
@@ -9345,14 +9439,15 @@ class AssertionAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		const legs = DiagramAssertion.GetLegs(ary);
-		const a = diagram.addAssertion(legs[0], legs[1]);
-		diagram.makeSelected(e, a);
+		const legs = Assertion.GetLegs(ary);
+		const a = diagram.addAssertion(legs[0].map(m => m.to), legs[1].map(m => m.to));
 		diagram.update();
+		diagram.makeSelected(e, a);
+		D.ShowToolbar(e);
 	}
 	hasForm(diagram, ary)
 	{
-		return DiagramAssertion.HasForm(ary);
+		return Assertion.HasForm(ary);
 	}
 }
 
@@ -9471,12 +9566,15 @@ class Category extends CatObject
 		{
 			try
 			{
+if (e.name === "hdole/m/category/a_39")debugger;
+				if (!('name' in e))
+					return;
 				if (!this.getElement(e.name))
 				{
 					if (elements && elements.has(e.basename))
 						throw 'elements already has basename';
 					const element = Element.Process(diagram, e);
-					elements && elements.set(e.basename, element);
+					element && elements && elements.set(e.basename, element);
 				}
 				else if (e.prototype !== 'Identity')	// skip duplicate id's
 					throw `element already exists: ${e.name}`;
@@ -9510,7 +9608,7 @@ class Category extends CatObject
 			return this.elements.get(name);
 		return name;
 	}
-	addElement(e)
+	addElement(e, diagram)
 	{
 		if (this.elements.has(e.name))
 			throw `Element with given name already exists in category`;
@@ -9619,6 +9717,7 @@ class Morphism extends Element
 		this.codomain.incrRefcnt();
 		this.domain.incrRefcnt();
 		this.signature = this.getMorphismSignature();
+		Morphism.prototype.loadEquivalence.call(this, diagram);
 	}
 	getMorphismSignature()
 	{
@@ -9677,7 +9776,7 @@ class Morphism extends Element
 	loadEquivalence(diagram)
 	{
 		const sig = this.signature;
-		R.sig2Leg.set(sig, [this]);
+//		R.sig2Leg.set(sig, [this]);
 		if (!R.equals.has(sig))
 			R.equals.set(sig, new Set([sig]));
 	}
@@ -10385,6 +10484,7 @@ console.log('equality due to', item.constructor.name, item.getDecoration());
 					else
 					{
 						const d = new Decoration(diagram, {item, properName:item.getDecoration(), left, right});
+						item.decoration = d;
 						const objs = d.getObjects();
 						objs.map(o => o.decorations.add(d));
 						diagram.decorations.set(d.signature, d);
@@ -10445,7 +10545,7 @@ class MultiMorphism extends Morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		const morphisms = diagram.getElements(nuArgs.morphisms);
-		Object.defineProperty(this, 'morphisms', {value:morphisms, writable:false});
+		Object.defineProperty(this, 'morphisms', {value:morphisms, writable:true}); 	// TODO back to false
 		this.morphisms.map(m => m.incrRefcnt());
 		this.signature = U.Signature(this.morphisms, this.constructor.name);
 	}
@@ -10686,6 +10786,7 @@ class ProductMorphism extends MultiMorphism
 	}
 }
 
+/*
 class PullbackMorphism extends Morphism
 {
 	constructor(diagram, args)
@@ -10709,9 +10810,29 @@ class PullbackMorphism extends Morphism
 	}
 	json()
 	{
-		const a = super.json();
-		delete a.properName;
+//		const a = super.json();
+const name = FactorMorphism.Codename(this.diagram, this.domain, [this.index]);
+//if (name ==="hdole/m/category/Fa{hdole/m/category/Pb{hdole/m/category/dom,hdole/m/category/cod}bP,hdole/m/category/C1_0}aF" )debugger;
+if (this.diagram.elements.has(name))debugger;
+		const fm = FactorMorphism.Get(this.diagram, this.domain, [this.index]);
+console.log(name);
+//f (fm.name === "hdole/m/category/Fa{hdole/m/category/Pb{hdole/m/category/dom,hdole/m/category/cod}bP,hdole/m/category/C1_0}aF")debugger;
+		const a = fm.json();
+//a.prototype = 'FactorMorphism';
+//a.factors = [this.index];
+//a.basename = FactorMorphism.Basename(this.domain, a.factors);
+this.diagram.elements.forEach(function(e)
+{
+	if (Composite.prototype.isPrototypeOf(e))
+		e.morphisms = e.morphisms.map(m => m === this ? fm : m);
+}, this);
+this.diagram.domain.elements.forEach(function(e)
+{
+	if (DiagramMorphism.prototype.isPrototypeOf(e) && e.to === this)
+		e.setMorphism(fm);
+}, this);
 		a.index = this.index;
+return {};
 		return a;
 	}
 	canChangeProperName()
@@ -10745,6 +10866,7 @@ class PullbackMorphism extends Morphism
 		return U.sha256(`${domain.signature} ${codomain.signature} ${index}`);
 	}
 }
+*/
 
 class CoproductMorphism extends MultiMorphism
 {
@@ -10984,7 +11106,7 @@ class FactorMorphism extends Morphism
 	}
 	loadEquivalence(diagram)
 	{
-		super.loadEquivalence();
+//		super.loadEquivalence();
 		if (this.factors.length > 1)
 		{
 			this.factors.map((f, i) =>
@@ -11006,6 +11128,7 @@ class FactorMorphism extends Morphism
 				basename += '#1';
 			else
 				basename += f.name;
+			basename += `_${indices.toString()}`;
 			if (i !== factors.length -1)
 				basename += ',';
 		}
@@ -12068,6 +12191,7 @@ class Diagram extends Functor
 		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
 		super(diagram, nuArgs);
 		this.elements = new Map;
+//		this.assertions = new Map;
 		this.references = new Map;
 		this.allReferences = new Map;
 		if ('references' in args)
@@ -12090,25 +12214,25 @@ class Diagram extends Functor
 			this.domain.process(this, nuArgs.domainElements);
 		this.svgRoot = null;
 		this.svgBase = null;
-		this.assertions = new Map;
-		this.elements.forEach(function(e)
-		{
-			if (Morphism.prototype.isPrototypeOf(e))
-				e.loadEquivalence(this);
-		}, this);
-		this.domain.elements.forEach(function(e)
-		{
-			if (DiagramPullback.prototype.isPrototypeOf(e))
-				e.loadEquivalence(this);
-		}, this);
-		if ('assertions' in nuArgs)
-			nuArgs.assertions.map(i =>
-			{
-				const a = new DiagramAssertion(this, i);
-				a.incrRefcnt();
-				a.loadEquivalence(this);
-			});
+//		this.elements.forEach(function(e)
+//		{
+//			if (Morphism.prototype.isPrototypeOf(e))
+//				e.loadEquivalence(this);
+//			else if (PullbackObject.prototype.isPrototypeOf(e))
+//				e.loadEquivalence(this);
+//		}, this);
+//		this.domain.elements.forEach(function(e)
+//		{
+//		}, this);
+//		if ('assertions' in nuArgs)
+//			nuArgs.assertions.map(i =>
+//			{
+//				const a = new Assertion(this, i);
+//				a.incrRefcnt();
+//				a.loadEquivalence(this);
+//			});
 		this.decorations = new Map;
+		this.loadDeferredEquivalences();
 	}
 	help(helped = new Set)
 	{
@@ -12132,23 +12256,25 @@ class Diagram extends Functor
 		a.domainElements =	[];
 		this.domain.elements.forEach(function(e)
 		{
-if (DiagramMorphism.prototype.isPrototypeOf(e) && !e.to)	// bypass corruption
-	return;
-			if (e.to.canSave())
+//if (DiagramMorphism.prototype.isPrototypeOf(e) && !e.to)	// bypass corruption
+//	return;
+			if ((e.to && e.to.canSave()) || (!('to' in e)))
 				a.domainElements.push(e.json())
 		});
 		a.elements = [];
+let i = 0;
 		this.elements.forEach(function(e)
 		{
-if (e.refcnt === 0)console.log('not saving',e.properName);
+if (e.refcnt === 0)console.log('not saving',e.name);
 			if (e.canSave() && e.refcnt > 0)
 				a.elements.push(e.json());
-		});
+i++;
+		}, this);
 		const texts = [];
 		this.texts.forEach(function(t){texts.push(t.json())});
 		a.texts = texts;
-		a.assertions = [];
-		this.assertions.forEach(function(assert, legs) { a.assertions.push(assert.json());	});
+//		a.assertions = [];
+//		this.assertions.forEach(function(assert, legs) { a.assertions.push(assert.json());	});
 		return a;
 	}
 	getAnon(s)
@@ -12307,7 +12433,7 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 		if (this.selected.indexOf(elt) >= 0)	// already selected
 			return;
 		this.selected.push(elt);
-		if (DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt) || DiagramAssertion.prototype.isPrototypeOf(elt))
+		if (DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt) || Assertion.prototype.isPrototypeOf(elt))
 			elt.orig = {x:elt.x, y:elt.y};
 		else if (DiagramMorphism.prototype.isPrototypeOf(elt))
 		{
@@ -12376,8 +12502,8 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 		for(let i=0; i < this.selected.length; ++i)
 		{
 			const elt = this.selected[i];
-			if (DiagramAssertion.prototype.isPrototypeOf(elt))
-				continue;
+//			if (Assertion.prototype.isPrototypeOf(elt))
+//				continue;
 			if (DiagramMorphism.prototype.isPrototypeOf(elt))
 			{
 				dragObjects[elt.domain.name] = elt.domain;
@@ -13054,8 +13180,8 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 	}
 	addAssertion(leg0, leg1)
 	{
-		const elt = new DiagramAssertion(this, {leg0, leg1});
-		this.addSVG(elt);
+		const elt = new Assertion(this, {leg0, leg1});
+//		this.addSVG(elt);
 		return elt;
 	}
 	paste(e)
@@ -13089,7 +13215,7 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 			let copy = null;
 			switch(elt.constructor.name)
 			{
-				case 'DiagramAssertion':
+				case 'Assertion':
 					break;
 				case 'DiagramComposite':
 				case 'DiagramMorphism':
@@ -13131,97 +13257,20 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 	{
 		this.domain.makeHomSets(this);
 	}
-	/*
-	loadSignatures()
+	addDeferredEquivalence(element)
 	{
-		this.elements.forEach(function(e)
-		{
-			const sig = e.signature;
-//			if (!R.sig2Item.has(sig))		// what object has this signature
-//				R.sig2Item.set(sig, e);
-			if (Morphism.prototype.isPrototypeOf(e))
-			{
-//				if (!R.sig2Leg.has(sig))	// remember all morphisms as a leg with one segment
-//					R.sig2Leg(sig, [e]);
-//				if (!R.equals.has(sig))		// set the sig equal to itself
-//					R.equals.set(sig, new Set([sig]));
-				if (Composite.prototype.isPrototypeOf(e))	// a composite has two equal legs
-				{
-				}
-				else if (FactorMorphism.prototype.isPrototypeOf(e) && e.factors.length > 1)
-				{
-				}
-				else if (ProductMorphism.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (CoproductMorphism.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (ProductAssembly.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (CoproductAssembly.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (Diagonal.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (FoldMorphism.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (DataMorphism.prototype.isPrototypeOf(e) && 'recursor' in e)	// recursive, no legs?
-				{
-				}
-				else if (LambdaMorphism.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (HomMorphism.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (Evaluation.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (InitialMorphism.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (TerminalMorphism.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (Distribute.prototype.isPrototypeOf(e))
-				{
-				}
-				else if (Dedistribute.prototype.isPrototypeOf(e))
-				{
-				}
-			}
-			else if (CatObject.prototype.isPrototypeOf(e))
-			{
-				if (PullbackObject.prototype.isPrototypeOf(e))
-				{
-					const legs = e.cone.map((m, i) => [e.source[i], e.cone[i]]);
-					for (const i=1; i<legs.length; ++i)
-						R.LoadEquivalence(legs[0], legs[i]);
-				}
-				else if (NamedObject.prototype.isPrototypeOf(e))
-				{
-					const srcId = Identity.Get(this, e.source);
-					const namId = Identity.Get(this, e);
-					R.LoadEquivalence([srcId], [namId, srcId])
-					R.LoadEquivalence([objId], [srcId, namId])
-				}
-			}
-			// skip:
-			// namedMorphism:  handled by namedObject
-			// pullbackMorphism:  handled by pullbackObject
-		});
-		this.assertions.forEach(function(a)
-		{
-			const {leftSig, rightSig} = R.LoadEquivalence(a.toLeg0, a.toLeg1);
-			R.sig2Item(leftSig, a);
-			R.sig2Item(rightSig, a);
-		});
+		if (!('deferredEquivalences' in this))
+			this.deferredEquivalences = [];
+		this.deferredEquivalences.push(element);
 	}
-	*/
+	loadDeferredEquivalences()
+	{
+		if ('deferredEquivalences' in this)
+		{
+			this.deferredEquivalences.map(d => d.loadEquivalence(this));
+			delete this.deferredEquivalences;
+		}
+	}
 	static Codename(args)
 	{
 		return `${args.user}/${args.basename}`;
@@ -13247,6 +13296,7 @@ if (e.refcnt === 0)console.log('not saving',e.properName);
 
 R.protos =
 {
+	Assertion,
 	Category,
 	CatObject,
 	CofactorMorphism,
@@ -13257,7 +13307,6 @@ R.protos =
 	DataMorphism,
 	Dedistribute,
 	Diagonal,
-	DiagramAssertion,
 	DiagramComposite,
 	DiagramMorphism,
 	DiagramObject,
@@ -13282,7 +13331,7 @@ R.protos =
 	ProductMorphism,
 	ProductAssembly,
 	PullbackObject,
-	PullbackMorphism,
+//	PullbackMorphism,
 	SubobjectClassifier,
 	Sequence,
 	TensorObject,
