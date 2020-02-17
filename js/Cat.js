@@ -6951,23 +6951,6 @@ class DiagramPullback extends DiagramObject
 		});
 		return [...objs];
 	}
-	/*
-	getDecoration()
-	{
-		return '&#8991;';
-	}
-	loadEquivalence(diagram)
-	{
-		const pb = this.to;
-		for (let i=1; i<this.cone.length; ++i)
-		{
-			const base = [diagram.getElement(pb.cone[0]), pb.source[0]];
-			const leg = [diagram.getElement(pb.cone[i]), pb.source[i]];
-			const {leftSig, rightSig} = R.LoadEquivalence(this, base, leg);
-console.log('pb loadEquivalence', {leftSig, rightSig});
-		}
-	}
-	*/
 }
 
 class Assertion extends Element
@@ -6977,31 +6960,17 @@ class Assertion extends Element
 		const nuArgs = U.Clone(args);
 		const leg0 = nuArgs.leg0.map(m => diagram.getElement(m));
 		const leg1 = nuArgs.leg1.map(m => diagram.getElement(m));
-//		const toLeg0 = leg0.length === 1 ? leg0[0].to : Composite.Get(diagram, leg0.map(m => m.to));
-//		const toLeg1 = leg1.length === 1 ? leg1[0].to : Composite.Get(diagram, leg1.map(m => m.to));
-//		const assert = [toLeg0, toLeg1];
-//		const assert = [leg0, leg1];
-//		const key = Assertion.GetKey(assert);
-//		if (diagram.assertions.has(key))
-//			throw 'assertion already exists';
 		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('a'));
-//		nuArgs.name = U.GetArg(args, 'name', `${diagram.name}/${nuArgs.basename}`);
 		super(diagram, nuArgs);
-//		this.basename = nuArgs.basename;
 		leg0.map(m => m.incrRefcnt());
 		leg1.map(m => m.incrRefcnt());
-//		toLeg0.incrRefcnt();
-//		toLeg1.incrRefcnt();
 		if (!('description' in nuArgs))
-//			this.description = `The assertion that the morphism ${toLeg0.properName} is equal to ${toLeg1.properName}.`;
 			this.description = `The assertion that the morphisme ${leg0.map(m => m.properName).join()} equal ${leg1.map(m => m.properName).join()}.`;
 		Object.defineProperties(this,
 		{
 			leg0:			{value: leg0, writable: false},
 			leg1:			{value: leg1, writable: false},
-//			assert:			{value: assert, writable: false},
 		});
-//		diagram.assertions.set(key, this);
 		this.loadEquivalence(diagram);
 		diagram.codomain.addElement(this, diagram);
 		this.incrRefcnt();		// nothing refers to them, to increment
@@ -7015,8 +6984,6 @@ class Assertion extends Element
 			this.leg1.map(m => m.decrRefcnt());
 			this.category && this.category.deleteElement(this);
 			this.removeEquivalence();
-//			this.assert[0].decrRefcnt();
-//			this.assert[1].decrRefcnt();
 		}
 	}
 	json()
@@ -7024,7 +6991,6 @@ class Assertion extends Element
 		const a = super.json();
 		a.leg0 = this.leg0.map(m => m.name);
 		a.leg1 = this.leg1.map(m => m.name);
-//		a.assert = [this.assert[0].name, this.assert[1].name];
 		return a;
 	}
 	getSVG()
@@ -7045,24 +7011,12 @@ class Assertion extends Element
 	}
 	loadEquivalence(diagram)
 	{
-//		const {leftSig, rightSig} = R.LoadEquivalence(this, this.leg0.map(m => m.to), this.leg1.map(m => m.to));
 		const {leftSig, rightSig} = R.LoadEquivalence(this, this.leg0, this.leg1);
 	}
 	removeEquivalence()
 	{
 		R.RemoveEquivalence(this, this.leg0, this.leg1);
 	}
-	/*
-	static GetKey(assert)
-	{
-		const name0 = assert[0].name;
-		const name1 = assert[1].name;
-		if (name0.localeCompare(name1) > 0)
-			return [name1, name0];
-		else
-			return [name0, name1];
-	}
-	*/
 	static GetLegs(ary)
 	{
 		const legs = [[], []];
@@ -11166,7 +11120,7 @@ class CofactorMorphism extends Morphism
 		const nuArgs = U.Clone(args);
 		nuArgs.codomain = diagram.getElement(args.codomain);
 		nuArgs.basename = CofactorMorphism.Basename(nuArgs.codomain, nuArgs.factors);
-		nuArgs.domain = CofactorMorphism.Domain(diagram, nuArgs.codomain, nuArgs.factors);
+		nuArgs.codomain = CofactorMorphism.Domain(diagram, nuArgs.codomain, nuArgs.factors);
 		nuArgs.properName = CofactorMorphism.ProperName(nuArgs.codomain, nuArgs.factors);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -11217,30 +11171,31 @@ class CofactorMorphism extends Morphism
 		graph.tagGraph(this.constructor.name);
 		return graph;
 	}
-	static Basename(domain, factors)
+	static Basename(codomain, factors)
 	{
-		let basename = `Ca{${domain.name},`;
+		let basename = `Ca{${codomain.name},`;
 		for (let i=0; i<factors.length; ++i)
 		{
 			const indices = factors[i];
-			const f = domain.getFactor(indices);
-			if (f.name !== '#1')	// TODO
-				basename += f.name + ',' + indices.toString();
+			const f = codomain.getFactor(indices);
+			if (InitialObject.prototype.isPrototypeOf(f))	// TODO
+				basename += '#0';
 			else
 				basename += f.name;
+			basename += `_${indices.toString()}`;
 			if (i !== factors.length -1)
 				basename += ',';
 		}
 		basename += '}aC';
 		return basename;
 	}
-	static Codename(diagram, domain, factors)
+	static Codename(diagram, codomain, factors)
 	{
-		return Element.Codename(diagram, CofactorMorphism.Basename(domain, factors));
+		return Element.Codename(diagram, CofactorMorphism.Basename(codomain, factors));
 	}
-	static Domain(diagram, domain, factors)
+	static Domain(diagram, codomain, factors)
 	{
-		return factors.length > 1 ? CoproductObject.Get(diagram, factors.map(f => domain.getFactor(f))) : domain.getFactor(factors);
+		return factors.length > 1 ? CoproductObject.Get(diagram, factors.map(f => codomain.getFactor(f))) : codomain.getFactor(factors);
 	}
 	static Get(diagram, codomain, factors)
 	{
