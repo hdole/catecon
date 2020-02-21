@@ -677,12 +677,15 @@ Create diagrams and execute morphisms.
 			diagram = productDiagram;
 			productActions.forEach(placeAction);
 			const coproductActions = new Set([
-				new CoproductAction(R.$Actions),
-				new FoldAction(R.$Actions),
-				new InjectAction(R.$Actions),
-				new PushoutAction(R.$Actions),
-				new CoproductAssemblyAction(R.$Actions),
-				new InitialMorphismAction(R.$Actions),
+				new ProductAction(R.$Actions, true),
+				new DiagonalAction(R.$Actions, true),
+//				new InjectAction(R.$Actions),
+				new ProjectAction(R.$Actions, true),
+//				new PushoutAction(R.$Actions),
+				new PullbackAction(R.$Actions, true),
+//				new CoproductAssemblyAction(R.$Actions),
+				new ProductAssemblyAction(R.$Actions, true),
+				new TerminalMorphismAction(R.$Actions, true),
 				new FiniteObjectAction(R.$Actions),
 				new DataAction(R.$Actions),
 				new RecursionAction(R.$Actions),
@@ -5418,7 +5421,7 @@ class Element
 			Object.defineProperty(this, 'category', {value: R.GetCategory(args.category),	writable: false});
 		else
 			Object.defineProperty(this, 'category', {value:diagram.codomain,	writable: false});
-		const dual = 'dual' in args ? args.dual : false;
+		const dual = U.GetArg(args, 'dual', false);
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,										writable: true},	// is true for bootstrapping
@@ -5581,6 +5584,16 @@ class Element
 	}
 	static Process(diagram, args)
 	{
+if (args.prototype === 'CoproductObject')
+{
+	args.prototype = 'ProductObject';
+	args.dual = true;
+}
+else if (args.prototype === 'CoproductMorphism')
+{
+	args.prototype = 'ProductMorphism';
+	args.dual = true;
+}
 		return 'prototype' in args ? new R.protos[args.prototype](diagram, args) : null;
 	}
 }
@@ -6220,13 +6233,11 @@ class ProductObject extends MultiObject
 {
 	constructor(diagram, args)
 	{
+		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
 		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
-		const dual = 'dual' in args;
-//		if (!('basename' in nuArgs))
-			nuArgs.basename = ProductObject.Basename(diagram, nuArgs.objects, dual);
-//		if (!('properName' in nuArgs))
-			nuArgs.properName = ProductObject.ProperName(nuArgs.objects, dual);
+		nuArgs.basename = ProductObject.Basename(diagram, nuArgs.objects, dual);
+		nuArgs.properName = ProductObject.ProperName(nuArgs.objects, dual);
 		super(diagram, nuArgs);
 	}
 	help(helped = new Set)
@@ -6281,7 +6292,7 @@ class ProductObject extends MultiObject
 	}
 	static ProperName(objects, dual = false)
 	{
-		return MultiObject.ProperName(dual ? '&plus' : '&times;', objects);
+		return MultiObject.ProperName(dual ? '&plus;' : '&times;', objects);
 	}
 	static CanFlatten(obj)
 	{
@@ -6413,93 +6424,6 @@ class Sequence extends ProductObject
 		return object ? object : new Sequence(diagram, {objects});
 	}
 }
-
-/*
-class CoproductObject extends MultiObject
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
-		nuArgs.basename = CoproductObject.Basename(diagram, nuArgs.objects);
-		nuArgs.properName = CoproductObject.ProperName(nuArgs.objects);
-		super(diagram, nuArgs);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help(H.p('Coproduct'), helped);
-	}
-	getFactor(factor)
-	{
-		if (factor.length === 1 && factor[0] === -1)
-			return InitialObject.Get(diagram);
-		return super.getFactor(factor);
-	}
-	getGraph(data = {position:0}, first = true)
-	{
-		return super.getGraph(this.constructor.name, data, D.parenWidth, D.textWidth('&plus;'), first);
-	}
-	static Basename(diagram, objects)
-	{
-		return `Co{${objects.map(o => o.name).join(',')}}oC`;
-	}
-	static Codename(diagram, objects)
-	{
-		return objects.length > 0 ? Element.Codename(diagram, CoproductObject.Basename(diagram, objects)) : '#0';
-	}
-	static Get(diagram, objects)
-	{
-		const name = CoproductObject.Codename(diagram, objects);
-		const object = diagram.getElement(name);
-		return object ? object : new CoproductObject(diagram, {objects});
-	}
-	static ProperName(objects)
-	{
-		return MultiObject.ProperName('&plus;', objects);
-	}
-	static CanFlatten(obj)
-	{
-		return CoproductObject.prototype.isPrototypeOf(obj) && obj.objects.reduce((r, o) => r || CoproductObject.prototype.isPrototypeOf(o), false);
-	}
-	getFoldInfo()
-	{
-		const objects = new Map;
-		this.objects.map(o =>
-		{
-			if (objects.has(o))
-				objects.set(o, objects.get(o) + 1);
-			else
-				objects.set(o, 1);
-		});
-		return objects;
-	}
-	static CanFold(obj)
-	{
-		if (CoproductObject.prototype.isPrototypeOf(obj))
-		{
-			const objects = obj.getFoldInfo();
-			const throwMe = {};
-			try
-			{
-				objects.forEach(function(cnt, o)
-				{
-					if (cnt > 1)
-						throw throwMe;
-				});
-			}
-			catch(x)
-			{
-				if (x === throwMe)
-					return true;
-			}
-		}
-		return false;
-	}
-}
-*/
 
 class HomObject extends MultiObject
 {
@@ -7273,10 +7197,7 @@ class CopyAction extends Action
 		else if (DiagramObject.prototype.isPrototypeOf(from))
 			diagram.placeObject(e, from.to, from);
 		else if (DiagramText.prototype.isPrototypeOf(from))
-		{
 			diagram.placeText(e, new D2(from), from.description);
-		}
-//		diagram.update();
 	}
 	hasForm(diagram, ary)	// one element
 	{
@@ -7316,15 +7237,16 @@ class FlipNameAction extends Action
 
 class ProductAction extends Action
 {
-	constructor(diagram)
+	constructor(diagram, dual = false)
 	{
 		const args =
 		{
-			description:	'Create a product of two or more objects or morphisms',
-			name:			'product',
-			icon:
+			description:	`Create a ${dual ? 'co' : ''}product of two or more objects or morphisms`,
+			name:			dual ? 'coproduct' : 'product',
+			icon:			dual ?  D.svg.add :
 `<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
 <line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
+			dual,
 		};
 		super(diagram, args);
 	}
@@ -7334,13 +7256,13 @@ class ProductAction extends Action
 		if (DiagramMorphism.prototype.isPrototypeOf(elt))
 		{
 			const morphisms = ary.map(m => m.to);
-			const to = ProductMorphism.Get(diagram, morphisms);
+			const to = ProductMorphism.Get(diagram, morphisms, this.dual);
 			diagram.placeMorphism(e, to, D.Barycenter(ary));
 		}
 		else if (DiagramObject.prototype.isPrototypeOf(elt))
 		{
 			const objects = ary.map(o => o.to);
-			const to = ProductObject.Get(diagram, objects);
+			const to = ProductObject.Get(diagram, objects, this.dual);
 			diagram.placeObject(e, to, elt);
 		}
 	}
@@ -7355,28 +7277,29 @@ class ProductAction extends Action
 
 class DiagonalAction extends Action
 {
-	constructor(diagram)
+	constructor(diagram, dual = false)
 	{
 		const args =
 		{
-			description:	'Create a diagonal morphism from an object',
-			name:			'diagonal',
-			icon:			`<path class="arrow0rnd" d="M60,260 260,260 160,60 60,260"/>`,
+			description:	`Create a ${dual ? 'fold' : 'diagonal'} morphism ${dual ? 'to' : 'from'} an object`,
+			name:			dual ? 'fold' : 'diagonal',
+			icon:			dual ?  `<path class="arrow0rnd" d="M60,60 260,60 160,260 60,60"/>` : `<path class="arrow0rnd" d="M60,260 260,260 160,60 60,260"/>`,
+			dual,
 		};
 		super(diagram, args);
 	}
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const d = Diagonal.Get(diagram, from.to, this.countElt.value);
+		const d = Diagonal.Get(diagram, from.to, this.countElt.value, true);
 		diagram.objectPlaceMorphism(e, 'domain', from.name, d.name);
 	}
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
-		D.help.innerHTML = H.h5(`Create Diagonal Morphism for ${from.to.properName}`) +
+		D.help.innerHTML = H.h5(`Create ${this.dual ? 'Fold' : 'Diagonal'} Morphism for ${from.to.properName}`) +
 			H.table(H.tr(H.td(D.Input('', 'diagonal-new-count', 'Copies &ge; 2')), 'sidenavRow')) +
-			H.span(D.GetButton('edit', `R.Actions.diagonal.action(event, R.diagram, R.diagram.selected)`, 'Create diagonal morphism')) +
+			H.span(D.GetButton('edit', `R.Actions.diagonal.action(event, R.diagram, R.diagram.selected)`, `Create ${this.dual ? 'fold' : 'diagonal'}  morphism`)) +
 			H.span('', 'error', 'diagonal-new-error');
 		this.countElt = document.getElementById('diagonal-new-count');
 		U.SetInputFilter(this.countElt, function(v)
@@ -7392,233 +7315,76 @@ class DiagonalAction extends Action
 	}
 }
 
-class CoproductAction extends Action
-{
-	constructor(diagram)
-	{
-		const args =
-		{
-			description:	'Create a coproduct of two or more objects or morphisms',
-			name:			'coproduct',
-			icon:			D.svg.add,
-		};
-		super(diagram, args);
-	}
-	action(e, diagram, ary)
-	{
-		const elt = ary[0];
-		if (DiagramMorphism.prototype.isPrototypeOf(elt))
-		{
-			const morphisms = ary.map(m => m.to);
-//			const to = CoproductMorphism.Get(diagram, morphisms);
-			diagram.placeMorphism(e, to, D.Barycenter(ary));
-		}
-		else if (DiagramObject.prototype.isPrototypeOf(elt))
-		{
-			const objects = ary.map(o => o.to);
-//			const to = CoproductObject.Get(diagram, objects);
-			diagram.placeObject(e, to, elt);
-		}
-	}
-	hasForm(diagram, ary)
-	{
-		if (ary.length < 2)		// just don't bother
-			return false;
-		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
-			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.prototype.isPrototypeOf(v), true));
-	}
-}
-
-class FoldAction extends Action
-{
-	constructor(diagram)
-	{
-		const args =
-		{
-			description:	'Create a fold morphism to an object',
-			name:			'fold',
-			icon:			`<path class="arrow0rnd" d="M60,60 260,60 160,260 60,60"/>`,
-		};
-		super(diagram, args);
-	}
-	action(e, diagram, ary)
-	{
-		const from = ary[0];
-		if (this.countElt.value > 1)
-		{
-//			const domain = CoproductObject.Get(diagram, Array(this.countElt.value).fill(from.to));
-			const f = FoldMorphism.Get(diagram, domain, from.to);
-			diagram.objectPlaceMorphism(e, 'codomain', from.name, f.name);
-		}
-	}
-	html(e, diagram, ary)
-	{
-		const from = ary[0];
-		const to = from.to;
-		const n = to.properName;
-//		const canFold = CoproductObject.CanFold(to);
-		const canFold = ProductObject.prototype.isPrototypeOf(to) && to.dual && to.allSame();
-		let foldBtn = '';
-		if (canFold)
-		{
-			const objects = new Array(...to.getFoldInfo().keys());
-			const name = objects.map(o => o.needsParens() ? `(${o.properName})` : o.properName).join('+');
-			foldBtn = H.button(`&nabla;: ${n} &rarr; ${name}`, '', R.diagram.elementId(), 'Create fold morphism', `onclick="R.Actions.fold.defold(event, '${from.name}')"`) + H.hr();
-		}
-		D.help.innerHTML = H.h5('Create Fold') +
-			foldBtn +
-			H.span(`Create morphism &Sigma;${n} &rarr; ${n}`) + H.br() + H.span('with specified number of summands') +
-			D.Input('', 'fold-new-count', 'Copies &ge; 2') +
-			H.span(D.GetButton('edit', `R.Actions.fold.action(event, R.diagram, R.diagram.selected)`, 'Create fold morphism')) +
-			H.span('', 'error', 'fold-new-error');
-		this.countElt = document.getElementById('fold-new-count');
-		U.SetInputFilter(this.countElt, function(v)
-		{
-			return /^\d*$/.test(v) && (v === "" || parseInt(v) > 1)	// integer greater than 1
-		});
-	}
-	hasForm(diagram, ary)
-	{
-		if (ary.length !== 1 )
-			return false;
-		return diagram.isEditable() && CatObject.prototype.isPrototypeOf(ary[0]);
-	}
-	defold(e, name)
-	{
-		const from = R.diagram.getElement(name);
-		const to = from.to;
-//		if (!CoproductObject.CanFold(to))
-//			throw 'element not defoldable';
-//		const codomain = CoproductObject.Get(diagram, to.getFoldInfo().keys());
-		const codomain = ProductObject.Get(diagram, to.getFoldInfo().keys(), true);
-		const f = FoldMorphism.Get(R.diagram, to, codomain);
-		R.diagram.objectPlaceMorphism(e, 'domain', name, f.name);
-	}
-}
-
 class PullbackAction extends Action
 {
-	constructor(diagram)
+	constructor(diagram, dual)
 	{
+		const name = dual ? 'pushout' : 'pullback';
 		const args =
 		{
-			description:	'Create a pullback of two or more morphisms with a common codomain',
-			name:			'pullback',
-			icon:
+			description:	`Create a ${dual ? 'pushout' : 'pullback'} of two or more morphisms with a common ${dual ? 'domain' : 'codomain'}`,
+			name,
+			icon:			dual ?
+`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
+<path class="svgstr4" d="M160,260 160,160 260,160"/>`
+			:
 `<path class="svgstr4" d="M60,160 160,160 160,60"/>
 <line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
+			dual,
 		};
 		super(diagram, args);
 	}
 	action(e, diagram, source)
 	{
 		const toCone = source.map(m => m.to);
-		const to = PullbackObject.Get(diagram, toCone);
+		const to = PullbackObject.Get(diagram, toCone, this.dual);
 		const bary = D.Barycenter(source.map(m => m.domain));
-		const sink = source[0].codomain;
+		const sink = this.dual ? source[0].domain : source[0].codomain;
 		const xy = bary.add(bary.subtract(sink));
-		const pb = new DiagramPullback(diagram, {xy, to, source});
+		const pb = new DiagramPullback(diagram, {xy, to, source, dual:this.dual});
 		diagram.addSVG(pb);
 		pb.cone.map(m => diagram.addSVG(diagram.getElement(m)));
 		diagram.deselectAll();
 		diagram.addSelected(pb);
-//		toCone.map((m, index) =>
-//		{
-//			const pb = source.cone[index];
-//			const from = new DiagramMorphism(diagram, {to:pb, domain:source, codomain:cone[index].domain});
-//			diagram.addSVG(from);
-//			diagram.addSelected(from);
-//			diagram.addSelected(from);
-//		});
 		diagram.update();
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && Category.IsSink(ary);
-	}
-}
-
-class PushoutAction extends Action
-{
-	constructor(diagram)
-	{
-		const args =
-		{
-			description:	'Create a pushout of two or more morphisms with a common domain',
-			name:			'pushout',
-			icon:
-`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
-<path class="svgstr4" d="M160,260 160,160 260,160"/>`,
-		};
-		super(diagram, args);
-	}
-	action(e, diagram, ary)
-	{
-		const cone = ary.map(m => m.to);
-		const sink = new DiagramObject(diagram, {xy:D.Barycenter(ary), to:PushoutObject.Get(diagram, {cone})});
-		diagram.addSVG(sink);
-		cone.map((m, i) =>
-		{
-			const to = PushoutMorphism.Get(diagram, {object, leg:m});
-			const from = new DiagramMorphism(diagram, {to, codomain:sink, domain:ary[i].codomain});
-			diagram.addSVG(from);
-			diagram.addSelected(from);
-		});
-		diagram.update();
-	}
-	hasForm(diagram, ary)
-	{
-		return diagram.isEditable() && Category.IsSource(ary);
+		return diagram.isEditable() && this.dual ? Category.IsSource(ary) : Category.IsSink(ary);
 	}
 }
 
 class ProductAssemblyAction extends Action
 {
-	constructor(diagram)
+	constructor(diagram, dual = false)
 	{
-		const args = {	description:	'Create a product assembly of two or more morphisms with a common domain',
-						name:			'productAssembly',
-						icon:
+		const args =
+		{
+			description:	`Create a ${dual ? 'co' : ''}product assembly of two or more morphisms with a common ${dual ? 'co' : ''}domain`,
+			name:			`${dual ? 'co' : ''}productAssembly`,
+			icon:	dual ?
+`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`
+		:
 `<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
 <line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="60" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,};
+<line class="arrow9" x1="60" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
+			dual,
+		};
 		super(diagram, args);
 	}
 	action(e, diagram, diagramMorphisms)
 	{
 		const morphisms = diagramMorphisms.map(m => m.to);
-		const m = ProductAssembly.Get(diagram, morphisms);
+		const m = ProductAssembly.Get(diagram, morphisms, this.dual);
 		diagram.objectPlaceMorphism(e, 'domain', diagramMorphisms[0].domain, m);
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && Category.IsSource(ary);
-	}
-}
-
-class CoproductAssemblyAction extends Action
-{
-	constructor(diagram)
-	{
-		const args = {	description:	'Create a coproduct assembly of two or more morphisms with a common codomain',
-						name:			'coproductAssembly',
-						icon:
-`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`,};
-		super(diagram, args);
-	}
-	action(e, diagram, diagramMorphisms)
-	{
-		const morphisms = diagramMorphisms.map(m => m.to);
-		const m = CoproductAssembly.Get(diagram, morphisms);
-		diagram.objectPlaceMorphism(e, 'codomain', diagramMorphisms[0].codomain, m);
-	}
-	hasForm(diagram, ary)
-	{
-		return diagram.isEditable() && Category.IsSink(ary);
+		return diagram.isEditable() && this.dual ? Category.IsSink(ary) : Category.IsSource(ary);
 	}
 }
 
@@ -7728,7 +7494,6 @@ class DetachDomainAction extends Action
 		from.domain = detachedObj;
 		diagram.domain.elements.delete(from.name);
 		diagram.domain.elements.set(from.name, from);	// reset the order in the map
-//		detachedObj.setObject(from.to.domain);
 		detachedObj.incrRefcnt();
 		from.update();
 		diagram.addSVG(detachedObj);
@@ -7768,7 +7533,6 @@ class DetachCodomainAction extends Action
 		from.codomain = detachedObj;
 		diagram.domain.elements.delete(from.name);
 		diagram.domain.elements.set(from.name, from);	// reset the order in the map
-//		detachedObj.setObject(from.to.codomain);
 		detachedObj.incrRefcnt();
 		from.update();
 		diagram.addSVG(detachedObj);
@@ -7837,7 +7601,6 @@ class DeleteAction extends Action
 	}
 	hasForm(diagram, ary)	// all are deletable
 	{
-//		return diagram.isEditable() && ary.reduce((hasIt, a) => hasIt && a.isDeletable(), true);
 		const morphs = ary.filter(m => Morphism.prototype.isPrototypeOf(m));
 		const objs = new Set;
 		let delMorphs = true;
@@ -7863,22 +7626,30 @@ class DeleteAction extends Action
 
 class TerminalMorphismAction extends Action
 {
-	constructor(diagram)
+	constructor(diagram, dual)
 	{
-		const args = {	description:	'Create a terminal morphism from an object',
-						name:		'terminalMorphism',
-						icon:	// TODO
+		const args =
+		{
+			description:	`Create a ${dual ? 'initial' : 'terminal'} morphism ${dual ? 'to' : 'from'} an object`,
+			name:			dual ? 'initialMorphism' : 'terminalMorphism',
+			icon:			dual ?
+`<circle cx="80" cy="160" r="60" class="svgstr3"/>
+<line class="svgstr3" x1="140" y1="100" x2="20" y2="220"/>
+<line class="arrow0" x1="160" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`
+			:
 `<line class="arrow0" x1="20" y1="160" x2="160" y2="160" marker-end="url(#arrowhead)"/>
 <line class="svgstr3" x1="180" y1="160" x2="300" y2="160"/>
 <line class="svgstr3" x1="200" y1="120" x2="280" y2="200"/>
 <line class="svgstr3" x1="200" y1="200" x2="280" y2="120"/>
-<line class="svgstr3" x1="240" y1="100" x2="240" y2="220"/>`,};
+<line class="svgstr3" x1="240" y1="100" x2="240" y2="220"/>`,
+			dual,
+		};
 		super(diagram, args);
 	}
 	action(e, diagram, ary)
 	{
 		const object = ary[0];
-		const m = TerminalMorphism.Get(diagram, object.to);
+		const m = TerminalMorphism.Get(diagram, object.to, this.dual);
 		diagram.objectPlaceMorphism(e, 'domain', object, m.name)
 	}
 	hasForm(diagram, ary)	// one object
@@ -7887,89 +7658,70 @@ class TerminalMorphismAction extends Action
 	}
 }
 
-class InitialMorphismAction extends Action
-{
-	constructor(diagram)
-	{
-		const args = {	description:	'Create an initial morphism to an object',
-						name:			'initialMorphism',
-						icon:
-`<circle cx="80" cy="160" r="60" class="svgstr3"/>
-<line class="svgstr3" x1="140" y1="100" x2="20" y2="220"/>
-<line class="arrow0" x1="160" y1="160" x2="300" y2="160" marker-end="url(#arrowhead)"/>`,};
-		super(diagram, args);
-	}
-	action(e, diagram, ary)		// diagram unused
-	{
-		const object = ary[0];
-		const m = InitialMorphism.Get(diagram, object.to);
-		diagram.objectPlaceMorphism(e, 'codomain', object, m.name)
-	}
-	/*
-	initialize(category)
-	{
-		new InitialObject(null, {category});
-	}
-	*/
-	hasForm(diagram, ary)	// one object
-	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
-	}
-}
-
 class ProjectAction extends Action
 {
-	constructor(diagram)
+	constructor(diagram, dual)
 	{
 		const args =
 		{
-			name:		'project',
-			description:	'Create projection morphism',
-			icon:
+			name:			dual ? 'inject' : 'project',
+			description:	`Create ${dual ? 'injection' : 'projection'} morphism`,
+			icon:			dual ?
+`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x2="110" y2="120" x1="240" y1="40" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x2="110" y2="160" x1="280" y1="160" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x2="110" y2="200" x1="240" y1="280" marker-end="url(#arrowhead)"/>`
+			:
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,};
+<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,
+			dual,
+		};
 		super(diagram, args);
 	}
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const factors = U.GetFactorsById('project-codomain');
+		const factors = U.GetFactorsById(`${this.dual ? 'inject' : 'project'}-codomain`);
 		let m = null;
 		if (factors.length === 1 && factors[0] === -1)
-			m = TerminalMorphism.Get(diagram, from.to);
+			m = TerminalMorphism.Get(diagram, from.to, this.dual);
 		else
-			m = FactorMorphism.Get(diagram, from.to, factors);
+			m = FactorMorphism.Get(diagram, from.to, factors, this.dual);
 		diagram.objectPlaceMorphism(e, 'domain', from, m)
 	}
 	hasForm(diagram, ary)	// one product object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to) &&
+			ary[0].to.dual === this.dual;
 	}
 	html(e, diagram, ary)
 	{
 		const to = ary[0].to;
-//		const canFlatten = to.objects.reduce((r, o) => r || ProductObject.prototype.isPrototypeOf(o), false);
 		const canFlatten = ProductObject.CanFlatten(to);
-		const html = H.h4('Create Factor Morphism') +
+		const id = this.dual ? 'inject-domain' : 'project-codomain';
+		const obj = this.dual ? 'domain' : 'codomain';
+		const html = H.h4(`Create ${this.dual ? 'Cof' : 'F'}actor Morphism`) +
 					(canFlatten ?
 						H.div(H.span('Remove parenthesis', 'little') +
-							H.button('Flatten Product', '', '', '', `onclick="R.Actions.project.flatten(event, R.diagram, R.diagram.getSelected())"`)) : '') +
-					H.h5('Domain Factors') +
-					H.small('Click to place in codomain') +
-					H.button('1', '', R.diagram.elementId(), 'Add terminal object', `onclick="R.Actions.project.addFactor('${to.name}', -1)"`) +
-					ProjectAction.FactorButton('codomain', to, to, []) +
-					H.h5('Codomain Factors') + H.br() +
-					H.span('Click objects to remove from codomain', 'smallPrint') +
-					H.div('', '', 'project-codomain');
+							H.button(`Flatten ${this.dual ? 'Cop' : 'P'}roduct`, '', '', '',
+								`onclick="R.Actions.${this.dual ? 'inject' : 'project'}.flatten(event, R.diagram, R.diagram.getSelected())"`)) : '') +
+					H.h5(`${this.dual ? 'Codomain' : 'Domain'} Factors`) +
+					H.small(`Click to place in ${obj}`) +
+					H.button('1', '', R.diagram.elementId(), `Add ${this.dual ? 'initial' : 'terminal'} object`,
+						`onclick="R.Actions.${this.dual ? 'inject' : 'project'}.addFactor('${to.name}', -1)"`) +
+					ProjectAction.FactorButton(obj, to, to, [], this.dual) +
+					H.h5(`${this.dual ? 'Domain' : 'Codomain'} Factors`) + H.br() +
+					H.span(`Click objects to remove from ${obj}`, 'smallPrint') +
+					H.div('', '', id);
 		D.help.innerHTML = html;
-		this.codomainDiv = document.getElementById('project-codomain');
+		this.codomainDiv = document.getElementById(id);
 	}
 	addFactor(root, ...indices)
 	{
 		if (this.codomainDiv.innerHTML === '')
-			this.codomainDiv.innerHTML = H.span(D.GetButton('edit', `R.Actions.project.action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
+			this.codomainDiv.innerHTML = H.span(D.GetButton('edit', `R.Actions.${this.dual ? 'inject' : 'project'}.action(event, R.diagram, R.diagram.selected)`, 'Create morphism'));
 		const object = R.diagram.getElement(root);
 		const factor = object.getFactor(indices);
 		const sub = indices.join();
@@ -7985,136 +7737,37 @@ class ProjectAction extends Action
 			const d = searchObjects.shift();
 			const ob = d[0];
 			const f = d[1];
-			if (ProductObject.prototype.isPrototypeOf(ob))
+			if (ProductObject.prototype.isPrototypeOf(ob) && ob.dual === this.dual)
 				ob.objects.map((obo, i) => searchObjects.push([obo, [...f, i]]));
 			else
 				factors.push(f);
 		}
-		const m = FactorMorphism.Get(diagram, to, factors);
-		diagram.objectPlaceMorphism(e, 'domain', from, m)
+		const m = FactorMorphism.Get(diagram, to, factors, this.dual);
+		diagram.objectPlaceMorphism(e, this.dual ? 'codomain' : 'domain', from, m)
 	}
-	static ObjectFactorButton(dir, root, object, index)
+	static ObjectFactorButton(dir, root, object, index, dual)
 	{
 		return H.table(H.tr(H.td(
 			H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
-			`data-indices="${index.toString()}" onclick="R.Actions.project.addFactor('${root.name}', ${index.toString()})"`)
+			`data-indices="${index.toString()}" onclick="R.Actions.${dual ? 'inject' : 'project'}.addFactor('${root.name}', ${index.toString()})"`)
 		)));
 	}
-	static ProductObjectFactorButton(dir, root, object, index)
+	static ProductObjectFactorButton(dir, root, object, index, dual)
 	{
-		let header = H.tr(H.td(ProjectAction.ObjectFactorButton(dir, root, object, index)), 'sidename');
+		let header = H.tr(H.td(ProjectAction.ObjectFactorButton(dir, root, object, index, dual)), 'sidename');
 		let tbl = '';
 		object.objects.map((o, i) =>
 		{
 			const subIndex = index.slice();
 			subIndex.push(i);
-			tbl += H.td(ProjectAction.FactorButton(dir, root, o, subIndex));
+			tbl += H.td(ProjectAction.FactorButton(dir, root, o, subIndex, dual));
 		});
 		return H.table(header + H.tr(H.td(H.table(H.tr(tbl))), 'sidename'));
 	}
-	static FactorButton(dir, root, object, index)
+	static FactorButton(dir, root, object, index, dual)
 	{
-		return ProductObject.prototype.isPrototypeOf(object) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index) :
-			ProjectAction.ObjectFactorButton(dir, root, object, index);
-	}
-}
-
-class InjectAction extends Action
-{
-	constructor(diagram)
-	{
-		const args =
-		{
-			name:		'inject',
-			description:	'Create injection morphism',
-			icon:	// TODO
-`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x2="110" y2="120" x1="240" y1="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x2="110" y2="160" x1="280" y1="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x2="110" y2="200" x1="240" y1="280" marker-end="url(#arrowhead)"/>`,};
-		super(diagram, args);
-	}
-	action(e, diagram, ary)
-	{
-		const from = ary[0];
-		const m = CofactorMorphism.Get(diagram, from.to, U.GetFactorsById('inject-domain'));
-		diagram.objectPlaceMorphism(e, 'codomain', from, m)
-	}
-	hasForm(diagram, ary)	// one coproduct object
-	{
-//		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && CoproductObject.prototype.isPrototypeOf(ary[0].to);
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to) && ary[0].to.dual;
-	}
-	html(e, diagram, ary)
-	{
-		const to = ary[0].to;
-//		const canFlatten = to.objects.reduce((r, o) => r || CoproductObject.prototype.isPrototypeOf(o), false);
-		const canFlatten = to.objects.reduce((r, o) => r || (ProductObject.prototype.isPrototypeOf(o) && o.dual), false);
-		const html = H.h4('Create Injection Morphism') +
-					(canFlatten ?
-						H.div(H.span('Remove parenthesis', 'little') +
-							H.button('Flatten Coproduct', '', '', '', `onclick="R.Actions.inject.flatten(event, R.diagram, R.diagram.getSelected())"`)) : '') +
-					H.h5('Codomain Factors') +
-					H.small('Click to place in domain') +
-					InjectAction.FactorButton('domain', to, to, []) +
-					H.h5('Domain Factors') + H.br() +
-					H.span('Click objects to remove from domain', 'smallPrint') +
-					H.div('', '', 'inject-domain');
-		D.help.innerHTML = html;
-		this.domainDiv = document.getElementById('inject-domain');
-	}
-	addFactor(root, ...indices)
-	{
-		if (this.domainDiv.innerHTML === '')
-			this.domainDiv.innerHTML = H.span(D.GetButton('edit', 'R.Actions.inject.action(event, R.diagram, R.diagram.selected)', 'Create morphism'));
-		const object = R.diagram.getElement(root);
-		const factor = object.getFactor(indices);
-		const sub = indices.join();
-		this.domainDiv.innerHTML += H.button(factor.properName + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="H.del(this)"`);
-	}
-	flatten(e, diagram, from)
-	{
-		const to = from.to;
-		const factors = [];
-		const searchObjects = to.objects.map((ob, i) => [ob, [i]]);
-		while (searchObjects.length > 0)
-		{
-			const d = searchObjects.shift();
-			const ob = d[0];
-			const f = d[1];
-//			if (CoproductObject.prototype.isPrototypeOf(ob))
-			if (ProductObject.prototype.isPrototypeOf(ob) && ob.dual)
-				ob.objects.map((obo, i) => searchObjects.push([obo, [...f, i]]));
-			else
-				factors.push(f);
-		}
-		const m = CofactorMorphism.Get(diagram, to, factors);
-		diagram.objectPlaceMorphism(e, 'codomain', from, m)
-	}
-	static ObjectFactorButton(dir, root, object, index)
-	{
-		return H.table(H.tr(H.td(
-			H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
-			`data-indices="${index.toString()}" onclick="R.Actions.inject.addFactor('${root.name}', ${index.toString()})"`)
-		)));
-	}
-	static CoproductObjectFactorButton(dir, root, object, index)
-	{
-		let header = H.tr(H.td(InjectAction.ObjectFactorButton(dir, root, object, index)), 'sidename');
-		let tbl = '';
-		object.objects.map((o, i) =>
-		{
-			const subIndex = index.slice();
-			subIndex.push(i);
-			tbl += H.td(InjectAction.FactorButton(dir, root, o, subIndex));
-		});
-		return H.table(header + H.tr(H.td(H.table(H.tr(tbl))), 'sidename'));
-	}
-	static FactorButton(dir, root, object, index)
-	{
-//		return CoproductObject.prototype.isPrototypeOf(object) ? InjectAction.CoproductObjectFactorButton(dir, root, object, index) :
-		return (ProductObject.prototype.isPrototypeOf(object) && object.dual) ? InjectAction.CoproductObjectFactorButton(dir, root, object, index) :
-			InjectAction.ObjectFactorButton(dir, root, object, index);
+		return (ProductObject.prototype.isPrototypeOf(object) && object.dual === this.dual) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index, dual) :
+			ProjectAction.ObjectFactorButton(dir, root, object, index, dual);
 	}
 }
 
@@ -8364,9 +8017,6 @@ class JavascriptAction extends Action
 			case 'ProductObject':
 				code += o.dual ? `[${o.objects.map(so => this.objectStructure(so)).join()}]` : `[${o.objects.map(so => this.objectStructure(so)).join()}]`;
 				break;
-//			case 'CoproductObject':
-//				code += `[${o.objects.map(so => this.objectStructure(so)).join()}]`;
-//				break;
 		}
 		return code;
 	}
@@ -8428,12 +8078,11 @@ ${header}	return [args[0], ${jsName}_morphisms[args[0]](args[1])];${tail}`;
 							code += `${header}	return [${m.morphisms.map((n, i) => U.JsName(n) + '(args[' + i + '])').join()}];${tail}`;
 						break;
 					case 'ProductAssembly':
-						code += `${header}	return [${m.morphisms.map((n, i) => U.JsName(n) + '(args)').join()}];${tail}`;
-						break;
-					case 'CoproductAssembly':
-						code +=
+						code += this.dual ?
 `const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.JsName(n)).join()}];
-${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`;
+${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`
+							:
+								`${header}	return [${m.morphisms.map((n, i) => U.JsName(n) + '(args)').join()}];${tail}`;
 						break;
 					case 'DataMorphism':
 						if ('recursor' in m)
@@ -8441,9 +8090,6 @@ ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`;
 							generated.add(m.name);	// add early to avoid infinite loop
 							code += this.generate(m.recursor, generated);
 						}
-// {
-// 	${m.data.forEach(function(v, i){return `	'${i}':'${v}',\n`;})}
-// }
 						let data = JSON.stringify(U.JsonMap(m.data));
 						code +=	// TODO safety check?
 `
@@ -8470,7 +8116,7 @@ ${tail}`;
 ${header}	return ${jsName}_Data.get(args);${tail}`;
 						break;
 					case 'Diagonal':
-						code += `${header}	return Array(${m.count}).fill(args);${tail}`;
+						code += this.dual ? `${header}	return args[1];${tail}` : `${header}	return Array(${m.count}).fill(args);${tail}`;
 						break;
 					case 'Distribute':
 					case 'Dedistribute':
@@ -8480,18 +8126,17 @@ ${header}	return ${jsName}_Data.get(args);${tail}`;
 						code += `${header}	return args[0](args[1]);${tail}`;
 						break;
 					case 'FactorMorphism':
-						code +=
+						code += m.dual ?
+							''	// TODO
+							:
 `const ${jsName}_factors = ${JSON.stringify(m.factors)};
 ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
 	return ${m.factors.length === 1 ? 'r[0]' : 'r'};${tail}`;
 						break;
-					case 'FoldMorphism':
-						code += `${header}	return args[1];${tail}`;
-						break;
+//					case 'FoldMorphism':
+//						code += `${header}	return args[1];${tail}`;
+//						break;
 					case 'HomMorphism':
-						break;
-					case 'InitialMorphism':
-						code += `${header}	return;${tail}`;
 						break;
 					case 'LambdaMorphism':
 						code += this.generate(m.preCurry, generated);
@@ -8513,7 +8158,6 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 							if (f[0] === 0)
 							{
 								const k = f[1];
-//								inputs[f[1]] = lambdaHomCodLength > 1 ? 'bargs[i]' : 'bargs';
 								inputs[k] = homLength > 1 ? `bargs[${k}]` : 'bargs';
 							}
 						}
@@ -8560,12 +8204,10 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						code += this.generate(m.source, generated);
 						code += `${header}	return ${U.JsName(m.source)}(args);${tail}`;
 						break;
-//					case 'Recursive':
-//						break;
 					case 'StringMorphism':
 						break;
 					case 'TerminalMorphism':
-						code += `${header}	return 0;${tail}`;
+						code += m.dual ? `${header}	return;${tail}` : `${header}	return 0;${tail}`;
 						break;
 				}
 			generated.add(m.name);
@@ -8588,7 +8230,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	{
 		if (TerminalObject.prototype.isPrototypeOf(o) || InitialObject.prototype.isPrototypeOf(o))
 			return 0;
-		if (ProductObject.prototype.isPrototypeOf(o))
+		if (ProductObject.prototype.isPrototypeOf(o) && !o.dual)
 			return o.objects.reduce((r, o) => r + (TerminalObject.prototype.isPrototypeOf(o) ? 0 : 1), 0);
 		else
 			return 1;
@@ -8632,12 +8274,11 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	}
 	canFormat(o)
 	{
-//		if (ProductObject.prototype.isPrototypeOf(o) || CoproductObject.prototype.isPrototypeOf(o))
 		if (ProductObject.prototype.isPrototypeOf(o))
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
 		else if (Morphism.prototype.isPrototypeOf(o))
 			return this.canFormat(o.domain) && this.canFormat(o.codomain);
-		else if (TerminalObject.prototype.isPrototypeOf(o))
+		else if (TerminalObject.prototype.isPrototypeOf(o) && !o.dual)
 			return true;
 		else if (CatObject.prototype.isPrototypeOf(o))
 			return this.formatters.has(o.signature);
@@ -8653,7 +8294,6 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 				if (this.formatters.has(o.signature))
 				{
 					const f = this.formatters.get(o.signature);
-//					const fName = U.JsName(f);
 					const out = window[U.JsName(f)](`${prefix} ${o.name} ${factor.toString()}`);
 					html = out[0];
 				}
@@ -8673,7 +8313,6 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						options += `<option value="${i}">${i}: ${ob.properName}</option>`;
 						divs += H.div(this.getInput(ob, prefix, [...factor, i]), 'nodisplay', oid);
 					}
-	//				const id = `${prefix} ${o.name} ${factor.toString()}`;
 					html +=
 `<select id="${id}" onchange="D.ShowInput('${o.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
 <option>Choose one</option>
@@ -8689,7 +8328,6 @@ ${divs}
 				break;
 			case 'FiniteObject':
 			case 'TerminalObject':
-//				html = `<input type="number" min="0" id="${o.name}"`;
 				html = `<input type="number" min="0" id="${id}"`;
 				if ('size' in o)
 					html += ` max="${o.size}"`;
@@ -8709,7 +8347,6 @@ ${divs}
 				if (this.formatters.has(domain.signature))
 				{
 					const f = this.formatters.get(domain.signature);
-//					const fName = U.JsName(f);
 					const out = window[U.JsName(f)](domain.name + factor.toString());
 					const formatter = out[1]();
 					value = formatter(`${prefix} ${domain.name} ${factor.toString()}`);;
@@ -8830,7 +8467,6 @@ ${this.generate(m)}
 			case 'CatObject':
 				return this.formatters.has(o.signature);
 			case 'ProductObject':
-//			case 'CoproductObject':
 				return o.objects.reduce((r, so) => r && this.formatters.has(so.signature), true);
 		}
 		return false;
@@ -9658,7 +9294,6 @@ class Morphism extends Element
 	}
 	getMorphismSignature()
 	{
-//		return U.sha256(`${this.domain.signature}${this.constructor.name}${this.name}${this.codomain.signature}`);
 		return Morphism.Signature(this.domain, this.name, this.codomain);
 	}
 	help(helped = new Set)
@@ -9801,8 +9436,6 @@ class NamedObject extends CatObject	// name of an object
 		this.source.incrRefcnt();
 		this.idFrom= Identity.Get(diagram, this, this.source);
 		this.idTo = Identity.Get(diagram, this.source, this);
-//		if (this.constructor.name === 'NamedObject')
-//			this.signature = this.source.signature;
 	}
 	json()
 	{
@@ -10501,6 +10134,8 @@ class MultiMorphism extends Morphism
 	json(a = {})
 	{
 		a = super.json(a);
+		delete a.name;
+		delete a.basename;
 		delete a.properName;
 		if (!('morphisms' in a))
 			a.morphisms = this.morphisms.map(r => r.name);
@@ -10673,13 +10308,19 @@ class ProductMorphism extends MultiMorphism
 	{
 		const morphisms = diagram.getElements(args.morphisms);
 		const nuArgs = U.Clone(args);
-		const dual = 'dual' in args;
+		const dual = U.GetArg(args, 'dual', false);
 		nuArgs.basename = ProductMorphism.Basename(diagram, morphisms, dual);
 		nuArgs.domain = ProductMorphism.Domain(diagram, morphisms, dual);
 		nuArgs.codomain = ProductMorphism.Codomain(diagram, morphisms, dual);
 		nuArgs.morphisms = morphisms;
 		nuArgs.properName = ProductMorphism.ProperName(morphisms, dual);
 		super(diagram, nuArgs);
+	}
+	json()
+	{
+		const a = super.json();
+		if (this.dual)
+			a.dual = true;
 	}
 	help(helped = new Set)
 	{
@@ -10722,86 +10363,25 @@ class ProductMorphism extends MultiMorphism
 	{
 		const name = ProductMorphism.Codename(diagram, morphisms, dual);
 		const m = diagram.getElement(name);
-		return m ? m : new ProductMorphism(diagram, {morphisms}, dual);
+		return m ? m : new ProductMorphism(diagram, {morphisms, dual});
 	}
 	static ProperName(morphisms, dual = false)
 	{
-		return MultiObject.ProperName('&times;', morphisms);
+		return MultiObject.ProperName(dual ? '&plus;' : '&times;', morphisms);
 	}
 }
-
-/*
-class CoproductMorphism extends MultiMorphism
-{
-	constructor(diagram, args)
-	{
-		const morphisms = diagram.getElements(args.morphisms);
-		const nuArgs = U.Clone(args);
-		nuArgs.basename = CoproductMorphism.Basename(diagram, morphisms);
-		nuArgs.domain = CoproductMorphism.Domain(diagram, morphisms);
-		nuArgs.codomain = CoproductMorphism.Codomain(diagram, morphisms);
-		nuArgs.morphisms = morphisms;
-		nuArgs.properName = CoproductMorphism.ProperName(morphisms);
-		super(diagram, nuArgs);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help(H.p('Coproduct'), helped);
-	}
-	loadEquivalence(diagram)
-	{
-		super.loadEquivalence();
-		this.morphisms.map((m, i) =>
-		{
-			const iDom = CofactorMorphism.Get(diagram, this.domain, [i]);
-			const iCod = CofactorMorphism.Get(diagram, this.codomain, [i]);
-			R.LoadEquivalence(this, [this, iDom], [iCod, m]);
-		});
-	}
-	static Basename(diagram, morphisms)
-	{
-		return `Cm{${morphisms.map(m => m.name).join(',')}}mC`;
-	}
-	static Codename(diagram, morphisms)
-	{
-		return Element.Codename(diagram, CoproductMorphism.Basename(diagram, morphisms));
-	}
-	static Domain(diagram, morphs)
-	{
-//		return CoproductObject.Get(diagram, morphs.map(m => m.domain));
-		return ProductObject.Get(diagram, morphs.map(m => m.domain), true);
-	}
-	static Codomain(diagram, morphs)
-	{
-//		return CoproductObject.Get(diagram, morphs.map(m => m.codomain));
-		return ProductObject.Get(diagram, morphs.map(m => m.codomain), true);
-	}
-	static Get(diagram, morphisms)
-	{
-		const name = CoproductMorphism.Codename(diagram, morphisms);
-		const m = diagram.getElement(name);
-		return m ? m: new CoproductMorphism(diagram, {morphisms});
-	}
-	static ProperName(morphisms)
-	{
-		return MultiObject.ProperName('&plus;', morphisms);
-	}
-}
-*/
 
 class ProductAssembly extends MultiMorphism
 {
 	constructor(diagram, args)
 	{
+		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
 		nuArgs.morphisms = diagram.getElements(args.morphisms);
-		nuArgs.domain = ProductAssembly.Domain(diagram, nuArgs.morphisms);
-		nuArgs.codomain = ProductAssembly.Codomain(diagram, nuArgs.morphisms);
-		nuArgs.basename = ProductAssembly.Basename(diagram, nuArgs.morphisms);
-		nuArgs.properName = ProductAssembly.ProperName(nuArgs.morphisms);
+		nuArgs.domain = ProductAssembly.Domain(diagram, nuArgs.morphisms, dual);
+		nuArgs.codomain = ProductAssembly.Codomain(diagram, nuArgs.morphisms, dual);
+		nuArgs.basename = ProductAssembly.Basename(diagram, nuArgs.morphisms, dual);
+		nuArgs.properName = ProductAssembly.ProperName(nuArgs.morphisms, dual);
 		super(diagram, nuArgs);
 	}
 	help(helped = new Set)
@@ -10809,7 +10389,7 @@ class ProductAssembly extends MultiMorphism
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help(H.p('Product assembly'), helped);
+		return super.help(H.p(`${this.dual ? 'Co' : 'P'}roduct assembly`), helped);
 	}
 	getGraph(data = {position:0})
 	{
@@ -10820,96 +10400,36 @@ class ProductAssembly extends MultiMorphism
 		super.loadEquivalence();
 		this.morphisms.map((m, i) =>
 		{
-			const pCod = FactorMorphism.Get(diagram, this.codomain, [i]);
-			R.LoadEquivalence(this, [m], [pCod, this]);
+			const pCod = FactorMorphism.Get(diagram, this.codomain, [i], this.dual);
+			R.LoadEquivalence(this, [m], this.dual ? [this, pCod] : [pCod, this]);
 		});
 	}
-	static Basename(diagram, morphisms)
+	static Basename(diagram, morphisms, dual)
 	{
-		return `Pa{${morphisms.map(m => m.name).join(',')}}aP`;
+		const c = dual ? 'C' : '';
+		return `${c}Pa{${morphisms.map(m => m.name).join(',')}}aP${c}`;
 	}
-	static Codename(diagram, morphisms)
+	static Codename(diagram, morphisms, dual)
 	{
-		return Element.Codename(diagram, ProductAssembly.Basename(diagram, morphisms));
+		return Element.Codename(diagram, ProductAssembly.Basename(diagram, morphisms, dual));
 	}
-	static Domain(diagram, morphisms)
+	static Domain(diagram, morphisms, dual)
 	{
 		return morphisms[0].domain;
 	}
-	static Codomain(diagram, morphisms)
+	static Codomain(diagram, morphisms, dual)
 	{
 		return ProductObject.Get(diagram, morphisms.map(m => m.codomain));
 	}
-	static Get(diagram, morphisms)
+	static Get(diagram, morphisms, dual)
 	{
-		const name = ProductAssembly.Codename(diagram, morphisms);
+		const name = ProductAssembly.Codename(diagram, morphisms, dual);
 		const m = diagram.getElement(name);
-		return m ? m: new ProductAssembly(diagram, {morphisms});
+		return m ? m: new ProductAssembly(diagram, {morphisms, dual});
 	}
-	static ProperName(morphisms)
+	static ProperName(morphisms, dual)
 	{
-		return `&Pi;<${morphisms.map(m => m.properName).join(',')}>`;
-	}
-}
-
-class CoproductAssembly extends MultiMorphism
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		nuArgs.morphisms = diagram.getElements(args.morphisms);
-		nuArgs.basename = CoproductAssembly.Basename(diagram, nuArgs.morphisms);
-		nuArgs.domain = CoproductAssembly.Domain(diagram, nuArgs.morphisms);
-		nuArgs.codomain = CoproductAssembly.Codomain(diagram, nuArgs.morphisms);
-		nuArgs.properName = CoproductAssembly.ProperName(nuArgs.morphisms);
-		super(diagram, nuArgs);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help(H.p('Coproduct assembly'), helped);
-	}
-	getGraph(data = {position:0})
-	{
-		return this.mergeMorphismGraphs(graph)
-	}
-	loadEquivalence(diagram)
-	{
-		super.loadEquivalence();
-		this.morphisms.map((m, i) =>
-		{
-			const iCod = CofactorMorphism.Get(diagram, this.domain, [i]);
-			R.LoadEquivalence(this, [m], [this, iCod]);
-		});
-	}
-	static Basename(diagram, morphisms)
-	{
-		return `Ca{${morphisms.map(m => m.name).join(',')}}aC`;
-	}
-	static Codename(diagram, morphisms)
-	{
-		return Element.Codename(diagram, CoproductAssembly.Basename(diagram, morphisms));
-	}
-	static Domain(diagram, morphisms)
-	{
-//		return CoproductObject.Get(diagram, morphisms.map(m => m.domain));
-		return ProductObject.Get(diagram, morphisms.map(m => m.domain), true);
-	}
-	static Codomain(diagram, morphisms)
-	{
-		return morphisms[0].codomain;
-	}
-	static Get(diagram, morphisms)
-	{
-		const name = CoproductAssembly.Codename(diagram, morphisms);
-		const m = diagram.getElement(name);
-		return m ? m : new CoproductAssembly(diagram, {morphisms});
-	}
-	static ProperName(morphisms)
-	{
-		return `&#x2210;<${morphisms.map(m => m.codomain.properName).join(',')}>`;
+		return `${dual} ? '&Sigma;' : '&Pi;'}<${morphisms.map(m => m.properName).join(',')}>`;
 	}
 }
 
@@ -10917,11 +10437,14 @@ class FactorMorphism extends Morphism
 {
 	constructor(diagram, args)
 	{
+		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
-		nuArgs.basename = FactorMorphism.Basename(nuArgs.domain, nuArgs.factors);
-		nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors);
-		nuArgs.properName = FactorMorphism.ProperName(nuArgs.domain, nuArgs.factors);
+		nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors, dual);
+		if (dual)
+			[nuArgs.domain, nuArgs.codomain] = [nuArgs.codomain, nuArgs.domain];
+		nuArgs.basename = FactorMorphism.Basename(nuArgs.domain, nuArgs.factors, dual);
+		nuArgs.properName = FactorMorphism.ProperName(nuArgs.domain, nuArgs.factors, dual);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.factors = nuArgs.factors;
@@ -10932,15 +10455,17 @@ class FactorMorphism extends Morphism
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help() + H.p(`Factor morphism: ${this.factors}`);
+		return super.help() + H.p(`${this.dual ? 'Cofactor' : 'Factor'} morphism: ${this.factors}`);
 	}
 	getFactorSignature()
 	{
-		return FactorMorphism.Signature(this.domain, this.name, this.codomain, this.factors);
+		return FactorMorphism.Signature(this.domain, this.name, this.codomain, this.factors, this.dual);
 	}
 	json()
 	{
 		const a = super.json();
+		delete a.name;
+		delete a.basename;
 		delete a.properName;
 		a.factors = this.factors;
 		return a;
@@ -10973,153 +10498,56 @@ class FactorMorphism extends Morphism
 	}
 	loadEquivalence(diagram)
 	{
-//		super.loadEquivalence();
 		if (this.factors.length > 1)
 		{
 			this.factors.map((f, i) =>
 			{
-				const fm = FactorMorphism.Get(diagram, this.codomain, [i]);
-				const base = FactorMorphism.Get(diagram, this.domain, this.factors[i]);
+				const fm = FactorMorphism.Get(diagram, this.codomain, [i], this.dual);
+				const base = FactorMorphism.Get(diagram, this.domain, this.factors[i], this.dual);
 				R.LoadEquivalence(this, [base], [fm, this]);
 			});
 		}
 	}
-	static Basename(domain, factors)
+	static Basename(domain, factors, dual)
 	{
-		let basename = `Fa{${domain.name},`;
+		const c = this.dual ? 'C' : '';
+		let basename = `${c}Fa{${domain.name},`;
 		for (let i=0; i<factors.length; ++i)
 		{
 			const indices = factors[i];
 			const f = domain.getFactor(indices);
 			if (TerminalObject.prototype.isPrototypeOf(f))	// TODO
-				basename += '#1';
+				basename += this.dual ? '#0' : '#1';
 			else
 				basename += f.name;
 			basename += `_${indices.toString()}`;
 			if (i !== factors.length -1)
 				basename += ',';
 		}
-		basename += '}aF';
+		basename += `}aF${c}`;
 		return basename;
 	}
-	static Codename(diagram, domain, factors)
+	static Codename(diagram, domain, factors, dual)
 	{
-		return Element.Codename(diagram, FactorMorphism.Basename(domain, factors));
+		return Element.Codename(diagram, FactorMorphism.Basename(domain, factors, dual));
 	}
-	static Codomain(diagram, domain, factors)
+	static Codomain(diagram, domain, factors, dual)
 	{
-		return factors.length > 1 ? ProductObject.Get(diagram, factors.map(f => domain.getFactor(f))) : domain.getFactor(factors[0]);
+		return factors.length > 1 ? ProductObject.Get(diagram, factors.map(f => domain.getFactor(f)), dual) : domain.getFactor(factors[0]);
 	}
-	static Get(diagram, domain, factors)
+	static Get(diagram, domain, factors, dual)
 	{
-		const name = FactorMorphism.Codename(diagram, domain, factors);
+		const name = FactorMorphism.Codename(diagram, domain, factors, dual);
 		const m = diagram.getElement(name);
-		return m ? m : new FactorMorphism(diagram, {domain, factors});
+		return m ? m : new FactorMorphism(diagram, {domain, factors, dual});
 	}
-	static ProperName(domain, factors)
+	static ProperName(domain, factors, dual)
 	{
 		return `&lt;${factors.map(f => domain.getFactorProperName(f)).join(',')}&gt;`;
 	}
-	static Signature(domain, name, codomain, factors)
+	static Signature(domain, name, codomain, factors, dual)
 	{
-		return U.sha256(`${Morphism.Signature(domain, name, codomain)} ${factors.map(f => Array.isArray(f) ? f.join('-') : f).join(':')}`);
-	}
-}
-
-class CofactorMorphism extends Morphism
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		nuArgs.codomain = diagram.getElement(args.codomain);
-		nuArgs.basename = CofactorMorphism.Basename(nuArgs.codomain, nuArgs.factors);
-		nuArgs.codomain = CofactorMorphism.Domain(diagram, nuArgs.codomain, nuArgs.factors);
-		nuArgs.properName = CofactorMorphism.ProperName(nuArgs.codomain, nuArgs.factors);
-		nuArgs.category = diagram.codomain;
-		super(diagram, nuArgs);
-		this.factors = nuArgs.factors;
-		this.signature = this.getFactorSignature();
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help() + H.p(`Cofactor morphism: ${this.factors}`);
-	}
-	getFactorSignature()
-	{
-		return U.sha256(`${this.diagram.codomain.name} ${this.constructor.name} ${this.factors.map(f => Array.isArray(f) ? f.join('-') : f).join(':')}`);
-	}
-	json()
-	{
-		const a = super.json();
-		delete a.properName;
-		a.factors = this.factors;
-		return a;
-	}
-	canChangeProperName()
-	{
-		return false;
-	}
-	getGraph(data)
-	{
-		const graph = super.getGraph(data, first);
-		const domain = graph.graphs[0];
-		const codomain = graph.graphs[1];
-		let offset = 0;
-		this.factors.map((r, i) =>
-		{
-			const d = domain.getFactor(r);
-			if (d === null)
-			{
-				++offset;
-				return;
-			}
-			const codomain = this.factors.length === 1 ? codomain : codomain.getFactor([i]);
-			const domRoot = r.slice();
-			domRoot.unshift(0);
-			domain.bindGraph(true, {cod:codomain, link:[], tag:'cofactor', domRoot, codRoot:m.factors.length > 1 ? [1, i] : [1], offset});
-		});
-		graph.tagGraph(this.constructor.name);
-		return graph;
-	}
-	static Basename(codomain, factors)
-	{
-		let basename = `Ca{${codomain.name},`;
-		for (let i=0; i<factors.length; ++i)
-		{
-			const indices = factors[i];
-			const f = codomain.getFactor(indices);
-			if (InitialObject.prototype.isPrototypeOf(f))	// TODO
-				basename += '#0';
-			else
-				basename += f.name;
-			basename += `_${indices.toString()}`;
-			if (i !== factors.length -1)
-				basename += ',';
-		}
-		basename += '}aC';
-		return basename;
-	}
-	static Codename(diagram, codomain, factors)
-	{
-		return Element.Codename(diagram, CofactorMorphism.Basename(codomain, factors));
-	}
-	static Domain(diagram, codomain, factors)
-	{
-//		return factors.length > 1 ? CoproductObject.Get(diagram, factors.map(f => codomain.getFactor(f))) : codomain.getFactor(factors);
-		return factors.length > 1 ? ProductObject.Get(diagram, factors.map(f => codomain.getFactor(f)), true) : codomain.getFactor(factors);
-	}
-	static Get(diagram, codomain, factors)
-	{
-		const name = CofactorMorphism.Codename(diagram, codomain, factors);
-		const m = diagram.getElement(name);
-		return m ? m : new CofactorMorphism(diagram, {codomain, factors});
-	}
-	static ProperName(codomain, factors)
-	{
-		return `&lt;${factors.map(f => codomain.getFactorProperName(f)).join(',')}&gt;`;
+		return U.sha256(`${Morphism.Signature(domain, name, codomain)} ${dual} ${factors.map(f => Array.isArray(f) ? f.join('-') : f).join(':')}`);
 	}
 }
 
@@ -11127,14 +10555,17 @@ class Diagonal extends Morphism
 {
 	constructor(diagram, args)
 	{
+		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
-		nuArgs.domain = diagram.getElement(args.domain);
 		nuArgs.count = Number.parseInt(U.GetArg(args, 'count', 2));
 		if (nuArgs.count < 2)
 			throw 'count is not two or greater';
+		nuArgs.domain = diagram.getElement(args.domain);
 		nuArgs.codomain = Diagonal.Codomain(diagram, nuArgs.domain, nuArgs.count);
-		nuArgs.basename = Diagonal.Basename(nuArgs.domain, nuArgs.count);
-		nuArgs.properName = Diagonal.ProperName(nuArgs.domain, nuArgs.count)
+		if (dual)
+			[this.domain, this.codomain] = [this.codomain, this.domain];
+		nuArgs.basename = Diagonal.Basename(nuArgs.domain, nuArgs.count, dual);
+		nuArgs.properName = Diagonal.ProperName(nuArgs.domain, nuArgs.count, dual)
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'count', {value:nuArgs.count,	writable:false});
@@ -11144,12 +10575,16 @@ class Diagonal extends Morphism
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help() + H.p(`Diagonal morphism of count ${this.count}`);
+		return super.help() + H.p(`${this.dual ? 'Fold' : 'Diagonal'} morphism of count ${this.count}`);
 	}
 	json()
 	{
 		const a = super.json();
+		a.dual = this.dual;
+		delete a.name;
+		delete a.basename;
 		delete a.properName;
+		delete this.dual ? a.domain : a .codomain;
 		a.count = this.count;
 		return a;
 	}
@@ -11172,112 +10607,34 @@ class Diagonal extends Morphism
 		const id = Identity.Get(diagram, this.domain);
 		for (let i=0; i<this.count; ++i)
 		{
-			const p = FactorMorphism.Get(diagram, this.codomain, [i]);
-			R.LoadEquivalence(this, [id], [p, this]);
+			const p = FactorMorphism.Get(diagram, this.codomain, [i], this.dual);
+			R.LoadEquivalence(this, [id], this.dual ? [this, p] : [p, this]);
 		}
 	}
-	static Basename(domain, count)
+	static Basename(domain, count, dual = false)
 	{
-		return `Dm{${domain.name}/${count}}mD`;
+		const c = dual ? 'C' : '';
+		return `${c}Dm{${domain.name}/${count}}mD${c}`;
 	}
-	static Codename(diagram, domain, count)
+	static Codename(diagram, domain, count, dual = false)
 	{
-		return Element.Codename(diagram, Diagonal.Basename(domain, count));
+		return Element.Codename(diagram, Diagonal.Basename(domain, count, dual));
 	}
-	static Codomain(diagram, object, count)
+	static Codomain(diagram, object, count, dual = false)
 	{
-		return ProductObject.Get(diagram, Array(count).fill(object));
+		return ProductObject.Get(diagram, Array(count).fill(object), dual);
 	}
-	static Get(diagram, domain, count)
+	static Get(diagram, domain, count, dual)
 	{
 		if (count < 2)
 			throw 'Count is less than 2';
-		const name = Diagonal.Codename(diagram, domain, count);
+		const name = Diagonal.Codename(diagram, domain, count, dual);
 		const m = diagram.getElement(name);
-		return m ? m : new Diagonal(diagram, {domain, count});
+		return m ? m : new Diagonal(diagram, {domain, count, dual});
 	}
-	static ProperName(domain, count)
+	static ProperName(domain, count, dual)
 	{
-		return '&Delta;';
-	}
-}
-
-class FoldMorphism extends Morphism
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		nuArgs.codomain = diagram.getElement(args.codomain);
-		nuArgs.count = Number.parseInt(U.GetArg(args, 'count', 2));
-		if (nuArgs.count < 2)
-			throw 'count is not two or greater';
-		nuArgs.domain = FoldMorphism.Domain(diagram, nuArgs.codomain, nuArgs.count);
-		nuArgs.basename = FoldMorphism.Basename(nuArgs.codomain, nuArgs.count);
-		nuArgs.properName = FoldMorphism.ProperName(nuArgs.codomain, nuArgs.count)
-		nuArgs.category = diagram.codomain;
-		super(diagram, nuArgs);
-		Object.defineProperty(this, 'count', {value:nuArgs.count,	writable:false});
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help() + H.p(`FoldMorphism morphism of count ${this.count}`);
-	}
-	json()
-	{
-		const a = super.json();
-		delete a.properName;
-		a.count = this.count;
-		return a;
-	}
-	canChangeProperName()
-	{
-		return false;
-	}
-	getGraph(data = {position:0})
-	{
-		const graph = super.getGraph(data, first);
-		const domain = graph.graphs[0];
-		const codomain = graph.graphs[1];
-		domain.map((g, i) => codomain.bindGraph({cod:g, link:[], domRoot:[0], codRoot:[1, i], offset:0}));
-		graph.tagGraph(this.constructor.name);
-		return graph;
-	}
-	loadEquivalence(diagram)
-	{
-		super.loadEquivalence();
-		const id = Identity.Get(diagram, this.codomain);
-		for (let i=0; i<this.count; ++i)
-		{
-			const p = CofactorMorphism.Get(diagram, this.domain, [i]);
-			R.LoadEquivalence(this, [id], [this, p]);
-		}
-	}
-	static Basename(codomain, count)
-	{
-		return `Fm{${codomain.name}/${count}}mF`;
-	}
-	static Codename(diagram, codomain, count)
-	{
-		return Element.Codename(diagram, FoldMorphism.Basename(codomain, count));
-	}
-	static Domain(diagram, object, count)
-	{
-		return ProductObject.Get(diagram, Array(count).fill(object), true);
-	}
-	static Get(diagram, codomain, count)
-	{
-		if (count < 2)
-			throw 'Count is less than 2';
-		const name = FoldMorphism.Codename(diagram, codomain, count);
-		const m = diagram.getElement(name);
-		return m ? m : new FoldMorphism(diagram, {codomain, count});
-	}
-	static ProperName(domain, count)
-	{
-		return '&nabla;';
+		return dual ? '&nabla;' : '&Delta;';
 	}
 }
 
@@ -11806,58 +11163,16 @@ class Evaluation extends Morphism
 	}
 }
 
-class InitialMorphism extends Morphism
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		nuArgs.codomain = diagram.getElement(args.codomain);
-		nuArgs.domain = InitialObject.Get(diagram);
-		nuArgs.basename = InitialMorphism.Basename(diagram, nuArgs.codomain);
-		nuArgs.properName = InitialMorphism.ProperName();
-		nuArgs.category = diagram.codomain;
-		super(diagram, nuArgs);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help(H.p('Initial morphism'));
-	}
-	isIterable()
-	{
-		return true;	// null iterator
-	}
-	static Basename(diagram, codomain)
-	{
-		return `In{${codomain.name}}nI`;
-	}
-	static Codename(diagram, codomain)
-	{
-		return Element.Codename(diagram, InitialMorphism.Basename(diagram, codomain));
-	}
-	static Get(diagram, codomain)
-	{
-		const name = InitialMorphism.Codename(diagram, codomain);
-		const m = diagram.getElement(name);
-		return m ? m : new InitialMorphism(diagram, {codomain, description:`initial morphism to ${codomain.properName}`});
-	}
-	static ProperName()
-	{
-		return '&empty;';
-	}
-}
-
 class TerminalMorphism extends Morphism
 {
 	constructor(diagram, args)
 	{
+		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
-		nuArgs.codomain = TerminalObject.Get(diagram);
-		nuArgs.basename = TerminalMorphism.Basename(diagram, nuArgs.domain);
-		nuArgs.properName = TerminalMorphism.ProperName();
+		nuArgs.codomain = TerminalObject.Get(diagram, dual);
+		nuArgs.basename = TerminalMorphism.Basename(diagram, nuArgs.domain, dual);
+		nuArgs.properName = TerminalMorphism.ProperName(dual);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 	}
@@ -11866,25 +11181,26 @@ class TerminalMorphism extends Morphism
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help(H.p('Terminal morphism'));
+		return super.help(H.p(`${this.dual ? 'Initial' : 'Terminal'} morphism`));
 	}
-	static Basename(diagram, domain)
+	static Basename(diagram, domain, dual)
 	{
-		return `Te{${domain.name}}eT`;
+		const c = dual ? 'C' : 'c';
+		return `${c}Te{${domain.name}}eT${c}`;
 	}
-	static Codename(diagram, domain)
+	static Codename(diagram, domain, dual)
 	{
-		return Element.Codename(diagram, TerminalMorphism.Basename(diagram, domain));
+		return Element.Codename(diagram, TerminalMorphism.Basename(diagram, domain, dual));
 	}
-	static Get(diagram, domain)
+	static Get(diagram, domain, dual)
 	{
-		const name = TerminalMorphism.Codename(diagram, domain);
+		const name = TerminalMorphism.Codename(diagram, domain, dual);
 		const m = diagram.getElement(name);
-		return m ? m : new TerminalMorphism(diagram, {domain, name, description:`terminal morphism from ${domain.properName}`});
+		return m ? m : new TerminalMorphism(diagram, {domain, name, dual, description:`${dual ? 'initial' : 'terminal'} morphism ${dual ? 'to' : 'from'} ${domain.properName}`});
 	}
-	static ProperName()
+	static ProperName(dual)
 	{
-		return '&#10034;';
+		return dual ? '&empty;' : '&#10034;';
 	}
 }
 
@@ -11939,7 +11255,7 @@ class Distribute extends Morphism
 			const from = ary[0];
 			const to = from.to;
 //			if (ProductObject.prototype.isPrototypeOf(to) && CoproductObject.prototype.isPrototypeOf(to.objects[1]))
-			if (ProductObject.prototype.isPrototypeOf(to) && ProductObject.prototype.isPrototypeOf(to.objects[1]) && to.objects[1].dual)
+			if (ProductObject.prototype.isPrototypeOf(to) && !to.dual && ProductObject.prototype.isPrototypeOf(to.objects[1]) && to.objects[1].dual)
 				return true;
 		}
 		return false;
@@ -11953,7 +11269,7 @@ class Distribute extends Morphism
 		const a = object.objects[0];
 		const objects = object.objects[1].objects.map(o => ProductObject.Get(diagram, [a, o]));
 //		return CoproductObject.Get(diagram, objects);
-		return CoproductObject.Get(diagram, objects, true);
+		return ProductObject.Get(diagram, objects, true);
 	}
 }
 
@@ -12007,10 +11323,10 @@ class Dedistribute extends Morphism
 			const from = ary[0];
 			const to = from.to;
 //			if (CoproductObject.prototype.isPrototypeOf(to) && ProductObject.prototype.isPrototypeOf(to.objects[0]))
-			if (ProductObject.prototype.isPrototypeOf(to) && to.dual && ProductObject.prototype.isPrototypeOf(to.objects[0]))
+			if (ProductObject.prototype.isPrototypeOf(to) && to.dual && ProductObject.prototype.isPrototypeOf(to.objects[0]) && !to.objects[0].dual)
 			{
 				const s = to.objects[0].objects[0].signature;
-				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && o.objects[0].signature === s, true);
+				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && !o.dual && o.objects[0].signature === s, true);
 			}
 		}
 		return false;
@@ -13154,11 +12470,11 @@ R.protos =
 	Assertion,
 	Category,
 	CatObject,
-	CofactorMorphism,
+//	CofactorMorphism,
 	Composite,
 //	CoproductObject,
 //	CoproductMorphism,
-	CoproductAssembly,
+//	CoproductAssembly,
 	DataMorphism,
 	Dedistribute,
 	Diagonal,
@@ -13171,13 +12487,13 @@ R.protos =
 	Evaluation,
 	FactorMorphism,
 	FiniteObject,
-	FoldMorphism,
+//	FoldMorphism,
 	HomObject,
 	HomMorphism,
 	Identity,
 	IndexCategory,
-	InitialObject,
-	InitialMorphism,
+//	InitialObject,
+//	InitialMorphism,
 	LambdaMorphism,
 	Morphism,
 	NamedObject,
