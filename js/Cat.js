@@ -645,7 +645,7 @@ Create diagrams and execute morphisms.
 				new NameAction(R.$Actions),
 				new CompositeAction(R.$Actions),
 				new DetachDomainAction(R.$Actions),
-				new DetachCodomainAction(R.$Actions),
+				new DetachDomainAction(R.$Actions, true),
 				new HomRightAction(R.$Actions),
 				new HomLeftAction(R.$Actions),
 				new DeleteAction(R.$Actions),
@@ -682,11 +682,8 @@ Create diagrams and execute morphisms.
 			const coproductActions = new Set([
 				new ProductAction(R.$Actions, true),
 				new DiagonalAction(R.$Actions, true),
-//				new InjectAction(R.$Actions),
 				new ProjectAction(R.$Actions, true),
-//				new PushoutAction(R.$Actions),
 				new PullbackAction(R.$Actions, true),
-//				new CoproductAssemblyAction(R.$Actions),
 				new ProductAssemblyAction(R.$Actions, true),
 				new TerminalMorphismAction(R.$Actions, true),
 				new FiniteObjectAction(R.$Actions),
@@ -1901,9 +1898,10 @@ function %1(args)
 				j.timestamp = Date.now();
 			}
 				diagram = new Diagram(userDiagram, j);
+//				diagram.makeHomSets();
+//				R.SaveLocal(diagram, true, false);
+				diagraam.update();
 				diagram.makeSvg();
-				diagram.makeHomSets();
-				R.SaveLocal(diagram, true, false);
 			});
 			if (jsons.length > 0 && fn)
 				fn(dgrmName);
@@ -2921,7 +2919,6 @@ class D
 							if (a && a.hasForm(diagram, ary))
 							{
 								from.showSelected(false);
-//								diagram.selected = [];
 								diagram.deselectAll();
 								a.action(e, diagram, ary);
 								target.decrRefcnt();	// do not decrement earlier than this
@@ -2964,7 +2961,8 @@ class D
 										{
 											from.decrRefcnt();
 											target.incrRefcnt();
-											m.domain = target;
+//											m.domain = target;
+											m.setDomain(target);
 										}
 									}
 									if (m.codomain.name === (dragIsFirst ? target.name : from.name))
@@ -2980,7 +2978,8 @@ class D
 										{
 											from.decrRefcnt();
 											target.incrRefcnt();
-											m.codomain = target;
+//											m.codomain = target;
+											m.setCodomain(target);
 										}
 									}
 								}
@@ -4599,11 +4598,11 @@ class NewDiagramSection extends Section
 				description:	U.HtmlEntitySafe(this.descriptionElt.value),
 				user:			R.user.name,
 			});
-			diagram.makeSvg();
 			diagram.home();
 			R.AddDiagram(diagram);
 			R.SelectDiagram(diagram.name);
 			diagram.update();
+			diagram.makeSvg();
 			this.close();
 			this.update();
 		}
@@ -4999,25 +4998,33 @@ class LoginPanel extends Panel
 		this.errorElt.innerHTML = '';
 		let html = '';
 		if (R.user.status !== 'logged-in' && R.user.status !== 'registered')
-			html += H.table(	H.tr(H.td('User name')) +
-								H.tr(H.td(H.input('', '', 'login-user-name', 'text', {ph:'Name'}))) +
+			html += H.form(H.table(	H.tr(H.td('User name')) +
+								H.tr(H.td(H.input('', '', 'login-user-name', 'text',
+								{
+									ph:'Name',
+									x:	'autocomplete="username"',
+								}))) +
 								H.tr(H.td('Password')) +
-								H.tr(H.td(H.input('', '', 'login-password', 'password', {ph:'********', x:'onkeydown="D.OnEnter(event, R.cloud.login, R.cloud)"'}))) +
-								H.tr(H.td(H.button('Login', '', '', '', 'onclick="R.cloud.login()"'))));
+								H.tr(H.td(H.input('', '', 'login-password', 'password',
+									{
+										ph:'********',
+										x:'autocomplete="current-password" onkeydown="D.OnEnter(event, R.cloud.login, R.cloud)"',
+									}))) +
+								H.tr(H.td(H.button('Login', '', '', '', 'onclick="R.cloud.login()"')))));
 		if (R.user.status === 'unauthorized')
-			html += H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="D.Panel.SectionToggle(this, \'signupPnl\')"`) +
+			html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="D.Panel.SectionToggle(this, \'signupPnl\')"`) +
 					H.div( H.table(H.tr(H.td('User name')) +
 								H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
 								H.tr(H.td('Email')) +
 								H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 								LoginPanel.PasswordForm() +
-								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="R.cloud.signup()"')))), 'section', 'signupPnl');
+								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="R.cloud.signup()"')))), 'section', 'signupPnl'));
 		if (R.user.status === 'registered')
-			html += H.h3('Confirmation Code') +
+			html += H.form(H.h3('Confirmation Code') +
 					H.span('The confirmation code is sent by email to the specified address above.') +
 					H.table(	H.tr(H.td('Confirmation code')) +
 								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="D.OnEnter(event, R.cloud.confirm, R.cloud)"'}))) +
-								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=R.cloud.confirm()'))));
+								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=R.cloud.confirm()')))));
 		if (R.user.status === 'logged-in')
 			html += H.button('Log Out', '', '', '', 'onclick="R.cloud.logout()"');
 		this.loginInfoElt.innerHTML = html;
@@ -5035,11 +5042,23 @@ class LoginPanel extends Panel
 	static PasswordForm(sfx = '')
 	{
 		return H.tr(H.td('Categorical Access Key')) +
-				H.tr(H.td(H.input('', '', `${sfx}SignupSecret`, 'text', {ph:'????????'}))) +
+				H.tr(H.td(H.input('', '', `${sfx}SignupSecret`, 'text',
+				{
+					ph:'????????',
+					x:	'autocomplete="none"',
+				}))) +
 				H.tr(H.td('Password')) +
-				H.tr(H.td(H.input('', '', `${sfx}SignupUserPassword`, 'password', {ph:'Password'}))) +
+				H.tr(H.td(H.input('', '', `${sfx}SignupUserPassword`, 'password',
+				{
+					ph:'Password',
+					x:	'autocomplete="new-password"',
+				}))) +
 				H.tr(H.td('Confirm password')) +
-				H.tr(H.td(H.input('', '', `${sfx}SignupUserPasswordConfirm`, 'password', {ph:'Confirm'})));
+				H.tr(H.td(H.input('', '', `${sfx}SignupUserPasswordConfirm`, 'password',
+				{
+					ph:'Confirm',
+					x:	'autocomplete="confirm-password"',
+				})));
 	}
 }
 
@@ -6781,7 +6800,7 @@ class DiagramObject extends CatObject
 		const xy = U.GetArg(nuArgs, 'xy', new D2);
 		Object.defineProperties(this,
 		{
-			category:	{value:	diagram.domain,										writable:	false},
+//			category:	{value:	diagram.domain,										writable:	false},
 			x:			{value:	xy.x,												writable:	true},
 			y:			{value:	xy.y,												writable:	true},
 			width:		{value:	U.GetArg(nuArgs, 'width', 0),						writable:	true},
@@ -6791,6 +6810,7 @@ class DiagramObject extends CatObject
 		});
 		this.setObject(nuArgs.to);
 		delete this.signature;
+		this.diagram.domain.addObject(this);
 	}
 	help(helped = new Set)
 	{
@@ -6822,6 +6842,7 @@ class DiagramObject extends CatObject
 		{
 			this.to.decrRefcnt();
 			this.removeSVG();
+			this.diagram.domain.removeObject(this);
 		}
 		super.decrRefcnt();
 	}
@@ -7519,44 +7540,59 @@ class HomLeftAction extends Action
 
 class DetachDomainAction extends Action
 {
-	constructor(diagram)
+	constructor(diagram, dual = false)
 	{
-		const args = {	description:	'Detach a morphism\'s domain',
-						name:		'detachDomain',
-						icon:
+		const args =
+		{
+			name:			dual ? 'detachCodomain' : 'detachDomain',
+			description:	`Detach a morphism\'s ${dual ? 'co' : ''}domain`,
+			dual,
+			icon:			dual ?
+`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
+<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`
+				:
 `<circle cx="40" cy="160" r="60" fill="url(#radgrad1)"/>
 <circle cx="100" cy="200" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,};
+<line class="arrow0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
+		};
 		super(diagram, args);
 	}
 	action(e, diagram, ary)		// diagram unused
 	{
 		const from = ary[0];
-		const hom = diagram.domain.getHomSet(from.domain, from.codomain)
-		const domain = from.domain;
-		const detachedObj = new DiagramObject(diagram, {to:domain.to, xy: {x:domain.x + D.default.toolbar.x, y:domain.y + D.default.toolbar.y } });
-		domain.decrRefcnt();
-		from.domain = detachedObj;
-		diagram.domain.elements.delete(from.name);
-		diagram.domain.elements.set(from.name, from);	// reset the order in the map
+//		const hom = diagram.domain.getHomSet(from.domain, from.codomain)
+		const orig = this.dual ? from.codomain : from.domain;
+		const detachedObj = new DiagramObject(diagram, {to:orig.to, xy: {x:orig.x + D.default.toolbar.x, y:orig.y + D.default.toolbar.y } });
+//		domain.decrRefcnt();
+//		from.domain = detachedObj;
+		if (this.dual)
+			from.setCodomain(detachedObj);
+		else
+			from.setDomain(detachedObj);
+		const cat = diagram.domain;
+		cat.elements.delete(from.name);
+		cat.elements.set(from.name, from);	// reset the order in the map
 		detachedObj.incrRefcnt();
 		diagram.addSVG(detachedObj);
-		diagram.makeSelected(e, from);
 		diagram.update();
-		hom.map(m => m.update());
+		from.update();
+		diagram.makeSelected(e, from);
+//		hom.map(m => m.update());
 	}
 	hasForm(diagram, ary)	// one morphism with connected domain but not a def of something
 	{
 		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
 		{
 			const from = ary[0];
-			const domMorphs = diagram.domain.obj2morphs.get(from.domain);
-			return from.isDeletable() && (domMorphs ? domMorphs.dom.length + domMorphs.cod.length > 1 : false);
+			const morphs = diagram.domain.obj2morphs.get(this.dual ? from.codomain : from.domain);
+			return from.isDeletable() && (morphs ? morphs.dom.length + morphs.cod.length > 1 : false);
 		}
 		return false;
 	}
 }
 
+/*
 class DetachCodomainAction extends Action
 {
 	constructor(diagram)
@@ -7575,8 +7611,9 @@ class DetachCodomainAction extends Action
 		const hom = diagram.domain.getHomSet(from.domain, from.codomain)
 		const codomain = from.codomain;
 		const detachedObj = new DiagramObject(diagram, {to:codomain.to, xy: {x:codomain.x + D.default.toolbar.x, y:codomain.y + D.default.toolbar.y } });
-		codomain.decrRefcnt();
-		from.codomain = detachedObj;
+//		codomain.decrRefcnt();
+//		from.codomain = detachedObj;
+		from.setCodomain(detachedObj);
 		diagram.domain.elements.delete(from.name);
 		diagram.domain.elements.set(from.name, from);	// reset the order in the map
 		detachedObj.incrRefcnt();
@@ -7596,6 +7633,7 @@ class DetachCodomainAction extends Action
 		return false;
 	}
 }
+*/
 
 class DeleteAction extends Action
 {
@@ -9299,33 +9337,15 @@ class Morphism extends Element
 		{
 			get()
 			{
-//				return this.dual ? this.cod : this.dom;
 				return this.dom;
 			},
-			set(dom)
-			{
-//				if (this.dual)
-//					this.cod = dom;
-//				else
-//					this.dom = dom;
-				this.dom = dom;
-			}
 		});
 		Object.defineProperty(this, 'codomain',		
 		{
 			get()
 			{
-//				return this.dual ? this.dom : this.cod;
 				return this.cod;
 			},
-			set(cod)
-			{
-//				if (this.dual)
-//					this.dom = cod;
-//				else
-//					this.cod = cod;
-				this.cod = cod;
-			}
 		});
 		if ('code' in args)
 			Object.defineProperty(this, 'code', {value:args.code,	writable:false});
@@ -9337,6 +9357,20 @@ class Morphism extends Element
 		this.domain.incrRefcnt();
 		this.signature = this.getMorphismSignature();
 		Morphism.prototype.loadEquivalence.call(this, diagram);
+	}
+	setDomain(dom)
+	{
+		if (this.dom)
+			this.dom.decrRefcnt();
+		dom.incrRefcnt();
+		this.dom = dom;
+	}
+	setCodomain(cod)
+	{
+		if (this.cod)
+			this.cod.decrRefcnt();
+		cod.incrRefcnt();
+		this.cod = cod;
 	}
 	getMorphismSignature()
 	{
@@ -9579,6 +9613,29 @@ class DiagramMorphism extends Morphism
 		this.flipName = U.GetArg(args, 'flipName', false);
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
 		delete this.signature;
+		this.diagram.domain.addMorphism(this);
+	}
+	setDomain(dom)
+	{
+		const cat = this.diagram.domain;
+		const morphs = cat.obj2morphs.get(this.domain).dom;
+		const ndx = morphs.indexOf(this);
+		if (ndx > -1)
+			morphs.splice(ndx, 1);
+		cat.removeMorphism(this);
+		super.setDomain(dom);
+		cat.addMorphism(this);
+	}
+	setCodomain(cod)
+	{
+		const cat = this.diagram.domain;
+		const morphs = cat.obj2morphs.get(this.codomain).cod;
+		const ndx = morphs.indexOf(this);
+		if (ndx > -1)
+			morphs.splice(ndx, 1);
+		cat.removeMorphism(this);
+		super.setCodomain(cod);
+		cat.addMorphism(this);
 	}
 	help(helped = new Set)
 	{
@@ -9601,6 +9658,7 @@ class DiagramMorphism extends Morphism
 				this.domain.decrRefcnt();
 			if (this.diagram && this.diagram.isIsolated(this.codomain))
 				this.codomain.decrRefcnt();
+			this.diagram.domain.removeMorphism(this);
 		}
 	}
 	json()
@@ -9992,27 +10050,83 @@ class IndexCategory extends Category
 	{
 		super.clear();
 		this.id = 0;
+		this.obj2morphs.clear();
+		this.homSets.clear();
+	}
+	addObject(o)
+	{
+		this.obj2morphs.set(o, {dom: [], cod: []});
+	}
+	removeObject(o)
+	{
+		this.obj2morphs.delete(o);
+	}
+	getHomSet(domain, codomain)
+	{
+		const key = IndexCategory.HomKey(domain, codomain);
+		return this.homSets.has(key) ? this.homSets.get(key) : [];
+	}
+	addMorphism(m)
+	{
+		const domMorphs = this.obj2morphs.get(m.domain).dom;
+		let ndx = domMorphs.indexOf(m);
+		if (ndx === -1)
+			domMorphs.push(m);
+		const codMorphs = this.obj2morphs.get(m.codomain).cod;
+		ndx = codMorphs.indexOf(m);
+		if (ndx === -1)
+			codMorphs.push(m);
+		const key = IndexCategory.HomKey(m.domain, m.codomain);
+		if (!this.homSets.has(key))
+			this.homSets.set(key, []);
+		const homset = this.homSets.get(key);
+		homset.push(m);
+		const dualHomset = this.getHomSet(m.codomain, m.domain);
+		const dualLength = dualHomset.length;
+		m.homSetIndex = homset.length -1 + dualLength;
+	}
+	removeMorphism(m)
+	{
+		const domain = m.domain;
+		const codomain = m.codomain;
+		const key = IndexCategory.HomKey(domain, codomain);
+		const homset = this.homSets.get(key);
+		const ndx = homset.indexOf(m);
+		if (ndx > -1)
+			homset.splice(ndx, 1);
+		const dualKey = IndexCategory.HomKey(codomain, domain);
+		const dualHomset = this.homSets.has(dualKey) ? this.homSets.get(dualKey): [];
+		const dualLength = dualHomset.length;
+		homset.map((m, i) =>
+		{
+			m.homSetIndex = i -1 + dualLength;
+			m.update();
+		});
+		dualHomset.map((m, i) =>
+		{
+			m.homSetIndex = i -1 + homset.length;
+			m.update();
+		});
 	}
 	makeHomSets(diagram)
 	{
-		this.homSets.clear();
-		this.obj2morphs.clear();
+//		this.homSets.clear();
+//		this.obj2morphs.clear();
 		this.addHomSets(diagram);
 	}
 	addHomSets(diagram)
 	{
-//if (this.diagram.name === 'hdole/Home')debugger;
 		const exists = new Set(diagram.decorations.keys());
-		for(const [key, e] of this.elements)
-		{
-			if (Morphism.prototype.isPrototypeOf(e))
-			{
-				delete e.bezier;
-				this.addHom(e);
-				this.addHomDir(e, 'dom');
-				this.addHomDir(e, 'cod');
-			}
-		}
+//		for(const [key, e] of this.elements)
+//		{
+//			if (Morphism.prototype.isPrototypeOf(e))
+//			{
+//				delete e.bezier;
+//				this.addHom(e);
+//				this.addHomDir(e, 'dom');
+//				this.addHomDir(e, 'cod');
+//			}
+//		}
 		const initials = new Set;
 		this.obj2morphs.forEach(function(morphs, o)
 		{
@@ -10128,6 +10242,7 @@ console.log('equality due to', item.constructor.name, item.getDecoration());
 			diagram.decorations.delete(sig);
 		});
 	}
+	/*
 	addHom(m)
 	{
 		const key = IndexCategory.HomKey(m.domain, m.codomain);
@@ -10139,19 +10254,7 @@ console.log('equality due to', item.constructor.name, item.getDecoration());
 		const dualLength = this.homSets.has(dualKey) ? this.homSets.get(dualKey).length : 0;
 		m.homSetIndex = a.length -1 + dualLength;
 	}
-	addHomDir(m, dir)
-	{
-		const key = dir === 'dom' ? m.domain : m.codomain;
-		if (!this.obj2morphs.has(key))
-			this.obj2morphs.set(key, {dom:[], cod:[]});
-		const ms = this.obj2morphs.get(key);
-		ms[dir].push(m);
-	}
-	getHomSet(domain, codomain)
-	{
-		const key = IndexCategory.HomKey(domain, codomain);
-		return this.homSets.has(key) ? this.homSets.get(key) : [];
-	}
+	*/
 	makeCells()
 	{
 		this.homSets.forEach(function(s, k)
@@ -10161,7 +10264,6 @@ console.log('equality due to', item.constructor.name, item.getDecoration());
 	static HomKey(domain, codomain)
 	{
 		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
-//		return [domain, codomain];
 	}
 }
 
