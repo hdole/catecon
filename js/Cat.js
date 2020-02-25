@@ -3,8 +3,26 @@
 //
 'use strict';
 
+window.onmessage = function(e)
+{
+	const args = e.data;
+	postMessage(['start', 'Starting']);
+	try
+	{
+//		const result = ${jsName}(args);
+//		postMessage(['result', [args, 'foo']]);
+		console.log('worker', {args});
+		debugger;
+	}
+	catch(e)
+	{
+		postMessage(['exception', e]);
+	}
+};
+
 (function(exports)
 {
+
 if (typeof require !== 'undefined')
 {
 	var ACI = null;
@@ -284,20 +302,15 @@ class U
 		let cid = '';
 		for (let i=0; i<16; ++i)
 			cid += ary[i].toString(16);
-		return U.sha256(cid);
+		return U.Sig(cid);
 	}
 	static getUserSecret(s)
 	{
-		return U.sha256(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
+		return sjcl.codec.hex.fromBits(U.Sig(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`));
 	}
 	static GetError(err)
 	{
 		return typeof err === 'string' ? err : `${err.name}: ${err.message}`;
-	}
-	static sha256(msg)
-	{
-		const bitArray = sjcl.hash.sha256.hash(msg);
-		return sjcl.codec.hex.fromBits(bitArray);
 	}
 	static Clone(o)
 	{
@@ -462,10 +475,67 @@ class U
 	{
 		return U.HtmlSafe(U.a2s(a));
 	}
+	/*
 	static Signature(elts, type = 'Composite')
 	{
 		return elts.length > 1 ? U.sha256(`${type} ${elts.map(e => 'signature' in e ? e.signature : e.name).join()}`) : elts[0].signature;
 	}
+	*/
+	static Sig(...elts)
+	{
+		if (elts.length === 0)
+			throw 'no info';
+		let ba = null;
+		for (let i=0; i<elts.length; ++i)
+		{
+			const elt = elts[i];
+			const type = typeof elt;
+			let nuba = null;
+			if (Array.isArray(elt))
+				nuba = elt;
+			else if (type === 'object' && 'sig' in elt)
+				nuba = elt.sig;
+			else
+			{
+				switch(type)
+				{
+					case 'string':
+						nuba = sjcl.hash.sha256.hash(elt);
+						break;
+					case 'object':
+						Object.keys(elt).forEach(function(i)
+						{
+							const sig = U.Sig(i, elt[i]);
+							nuba = nuba ? sjcl.bitArray.concat(nuba, sig) : sig;
+						});
+						break;
+					default:
+						console.log('no signature handler');
+						break;
+				}
+			}
+			if (ba)
+				ba = sjcl.bitArray.concat(ba, nuba);
+			else
+				ba = nuba;
+		}
+		return elts.length > 1 ? sjcl.hash.sha256.hash(ba) : ba;
+	}
+	static SigEqu(a, b)
+	{
+		return sjcl.bitArray.equal(a, b);
+	}
+	static SigStr(a)
+	{
+		return sjcl.codec.hex.fromBits(a);
+	}
+	/*
+	static sha256(msg)
+	{
+		const bitArray = sjcl.hash.sha256.hash(msg);
+		return sjcl.codec.hex.fromBits(bitArray);
+	}
+	*/
 }
 Object.defineProperties(U,
 {
@@ -574,6 +644,15 @@ Create diagrams and execute morphisms.
 	{
 		try
 		{
+			const worker = new SharedWorker('js/Cat.js?shared');
+			worker.addEventListener('message', function(msg)
+			{
+				console.log({msg});
+			});
+			worker.port.start();
+			worker.port.postMessage('foo');
+
+
 			D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
 			if (U.clear || (isGUI && window.location.search.substr(1) === 'clear'))
 			{
@@ -1724,7 +1803,8 @@ function %1(args)
 					{
 						if (!R.$CAT.getElement(cat.name))
 						{
-							const nuCat = new Category(R.$CAT, {name:cat.name, properName:cat.properName, description:cat.description, signature:cat.signature});
+//							const nuCat = new Category(R.$CAT, {name:cat.name, properName:cat.properName, description:cat.description, signature:cat.signature});
+							const nuCat = new Category(R.$CAT, {name:cat.name, properName:cat.properName, description:cat.description});
 							R.catalog[nuCat] = {};
 						}
 					});
@@ -1859,7 +1939,6 @@ function %1(args)
 		{
 			if (!R.diagram)
 				R.diagram = R.$CAT.getElement(name);
-//			R.diagram.update(false);
 			D.SetDefaultDiagram();
 			D.UpdateDiagramDisplay();
 		}
@@ -1890,16 +1969,14 @@ function %1(args)
 			// TODO for clearing corrupted diagrams
 			const params = (new URL(document.location)).searchParams;
 			const diagramName = params.get('d') || params.get('diagram');
-			if (diagramName && diagramName === j.name && params.has('clear'))
+			if (diagramName && diagramName === j.name && params.has('clear'))	// clear contents of diagram
 			{
 				j.elements = [];
 				j.domainElements = [];
-//				j.texts = [];
+				j.texts = [];
 				j.timestamp = Date.now();
 			}
 				diagram = new Diagram(userDiagram, j);
-//				diagram.makeHomSets();
-//				R.SaveLocal(diagram, true, false);
 				diagraam.update();
 				diagram.makeSvg();
 			});
@@ -1982,8 +2059,8 @@ function %1(args)
 	}
 	static LoadEquivalence(item, leftLeg, rightLeg)
 	{
-		const leftSig = U.Signature(leftLeg);
-		const rightSig = U.Signature(rightLeg);
+		const leftSig = U.SigStr(U.Sig(...leftLeg));
+		const rightSig = U.SigStr(U.Sig(...rightLeg));
 //		if (!R.sig2Leg.has(leftSig))
 //			R.sig2Leg.set(leftSig, leftLeg);
 //		if (!R.sig2Leg.has(rightSig))
@@ -2039,8 +2116,8 @@ function %1(args)
 	}
 	static RemoveEquivalence(item, leftLeg, rightLeg)
 	{
-		const leftSig = U.Signature(leftLeg);
-		const rightSig = U.Signature(rightLeg);
+		const leftSig = U.SigStr(U.Sig(...leftLeg));
+		const rightSig = U.SigStr(U.Sig(...rightLeg));
 //		if (R.sig2Leg.has(leftSig))
 //			R.sig2Leg.delete(leftSig)
 //		if (R.sig2Leg.has(rightSig))
@@ -5494,6 +5571,18 @@ class Element
 			refcnt:			{value: 0,												writable: true},
 			user:			{value: 'user' in args ? args.user : R.user.name,		writable: false},
 		});
+		Object.defineProperty(this, 'signature',
+		{
+			set(sig)
+			{
+				this.sig = sig;
+				this._sig = U.SigStr(this.sig);
+			},
+			get()
+			{
+				return this._sig;
+			}
+		});
 		this.signature = this.getElementSignature();
 	}
 	editText(e, id, attr)
@@ -5530,7 +5619,7 @@ class Element
 	}
 	getElementSignature()
 	{
-		return U.sha256(this.name);
+		return U.Sig(this.name);
 	}
 	incrRefcnt()
 	{
@@ -5545,7 +5634,7 @@ class Element
 		const a = {};
 		if (this.description !== '')
 			a.description =	this.description;
-		if ('signature' in this)	// not for index cats
+		if (this.signature)
 			a.signature =	this.signature;
 		if ('basename' in this)
 			a.basename =	this.basename;
@@ -5585,7 +5674,7 @@ class Element
 	}
 	isEquivalent(elt)
 	{
-		return elt ? this.signature === elt.signature : false;
+		return elt ? U.SigEqu(this.sig, elt.sig) : false;
 	}
 	isDeletable()
 	{
@@ -5983,7 +6072,6 @@ class CatObject extends Element
 			this.category.addElement(this, diagram);
 		else if (diagram)
 			diagram.codomain.addElement(this, diagram);
-		this.signature = this.getObjectSignature();
 	}
 	help(helped = new Set)
 	{
@@ -6007,10 +6095,6 @@ class CatObject extends Element
 		const position = data.position;
 		data.position += width;
 		return new Graph(this.constructor.name, position, width);
-	}
-	getObjectSignature()
-	{
-		return U.sha256(`${this.constructor.name} ${this.name}`);
 	}
 	static Get(diagram, basename)
 	{
@@ -6040,8 +6124,10 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		if ('size' in nuArgs && nuArgs.size !== '')
 			Object.defineProperty(this, 'size', {value:	Number.parseInt(nuArgs.size), writable:	false});
 		if ('size' in this)		// signature is the sig of the coproduct of 1's/Show
-//			this.signature = this.size > 0 ? U.Signature(Array(this.size).fill(1), 'CoproductObject') : 0;
-			this.signature = this.size;
+		{
+//			this.signature = this.size > 0 ? U.Sig(Array(this.size).fill(1), 'CoproductObject') : 0;
+			this.signature = U.Sig(this.size.toString());;
+		}
 	}
 	help(helped = new Set, suppress = false)
 	{
@@ -6187,7 +6273,8 @@ class MultiObject extends CatObject
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'objects', {value:	nuArgs.objects.map(o => this.diagram.getElement(o)), writable:	false});
 		this.objects.map(o => o.incrRefcnt());
-		this.signature = U.Signature(this.objects, (this.dual ? 'Co' : '') + this.constructor.name);
+//		this.signature = U.Sig(this.objects, (this.dual ? 'Co' : '') + this.constructor.name);
+		this.signature = U.Sig((this.dual ? 'Co' : '') + this.constructor.name, ...this.objects);
 	}
 	help(hdr, helped)
 	{
@@ -6324,7 +6411,8 @@ class ProductObject extends MultiObject
 	{
 		const obj = this.objects[0];
 		for (let i=1; i<this.objects.length; ++i)
-			if (obj.signature !== this.objects[i].signature)
+//			if (obj.signature !== this.objects[i].signature)
+			if (!obj.isEquivalent(this.objects[i]))
 				return false;
 		return true;
 	}
@@ -6809,7 +6897,8 @@ class DiagramObject extends CatObject
 			decorations:{value:	new Set,											writable:	false},
 		});
 		this.setObject(nuArgs.to);
-		delete this.signature;
+		delete this._sig;
+		delete this.sig;
 		this.diagram.domain.addObject(this);
 	}
 	help(helped = new Set)
@@ -6883,7 +6972,7 @@ class DiagramObject extends CatObject
 	}
 	isFusible(m)
 	{
-		return m && m.to && this.to.signature === m.to.signature;
+		return m && m.to && this.to.isEquivalent(m.to);
 	}
 	updateFusible(e, on)
 	{
@@ -7499,7 +7588,8 @@ class HomRightAction extends Action
 		const morphisms = [];
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
-			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.domain.signature && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
+//			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.domain.signature && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
+			if (Morphism.prototype.isPrototypeOf(m) && from.to.isEquivalent(m.domain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'domain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms from ${from.to.properName}`, 'italic') + H.table(rows);
 	}
@@ -7528,7 +7618,8 @@ class HomLeftAction extends Action
 		const morphisms = [];
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
-			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.codomain.signature && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
+//			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.codomain.signature && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
+			if (Morphism.prototype.isPrototypeOf(m) && from.to.isEquivalent(m.codomain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'codomain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms to ${from.to.properName}`, 'italic') + H.table(rows);
 	}
@@ -7561,11 +7652,8 @@ class DetachDomainAction extends Action
 	action(e, diagram, ary)		// diagram unused
 	{
 		const from = ary[0];
-//		const hom = diagram.domain.getHomSet(from.domain, from.codomain)
 		const orig = this.dual ? from.codomain : from.domain;
 		const detachedObj = new DiagramObject(diagram, {to:orig.to, xy: {x:orig.x + D.default.toolbar.x, y:orig.y + D.default.toolbar.y } });
-//		domain.decrRefcnt();
-//		from.domain = detachedObj;
 		if (this.dual)
 			from.setCodomain(detachedObj);
 		else
@@ -7578,7 +7666,6 @@ class DetachDomainAction extends Action
 		diagram.update();
 		from.update();
 		diagram.makeSelected(e, from);
-//		hom.map(m => m.update());
 	}
 	hasForm(diagram, ary)	// one morphism with connected domain but not a def of something
 	{
@@ -7591,49 +7678,6 @@ class DetachDomainAction extends Action
 		return false;
 	}
 }
-
-/*
-class DetachCodomainAction extends Action
-{
-	constructor(diagram)
-	{
-		const args = {	description:	'Detach a morphism\'s codomain',
-						name:		'detachCodomain',
-						icon:
-`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
-<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`,};
-		super(diagram, args);
-	}
-	action(e, diagram, ary)		// diagram unused
-	{
-		const from = ary[0];
-		const hom = diagram.domain.getHomSet(from.domain, from.codomain)
-		const codomain = from.codomain;
-		const detachedObj = new DiagramObject(diagram, {to:codomain.to, xy: {x:codomain.x + D.default.toolbar.x, y:codomain.y + D.default.toolbar.y } });
-//		codomain.decrRefcnt();
-//		from.codomain = detachedObj;
-		from.setCodomain(detachedObj);
-		diagram.domain.elements.delete(from.name);
-		diagram.domain.elements.set(from.name, from);	// reset the order in the map
-		detachedObj.incrRefcnt();
-		diagram.addSVG(detachedObj);
-		diagram.makeSelected(e, from);
-		diagram.update();
-		hom.map(m => m.update());
-	}
-	hasForm(diagram, ary)	// one morphism with connected codomain
-	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
-		{
-			const from = ary[0];
-			const codMorphs = diagram.domain.obj2morphs.get(from.codomain);
-			return from.isDeletable() && (codMorphs ? codMorphs.dom.length + codMorphs.cod.length > 1 : false);
-		}
-		return false;
-	}
-}
-*/
 
 class DeleteAction extends Action
 {
@@ -8336,7 +8380,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 				if (HomObject.prototype.isPrototypeOf(hom))
 				{
 					const homDom = hom.objects[0];
-					if (homDom.signature === html.signature)
+					if (homDom.isEquivalent(html))
 						that.formatters.set(hom.objects[1].signature, m);
 				}
 			}
@@ -8517,8 +8561,9 @@ ${this.generate(m)}
 	}
 	findFormat(o)
 	{
-		if (this.formatters.has(o.signature))
-			return this.formatters.get(o.signature);
+		const sig = o.signature;
+		if (this.formatters.has(sig))
+			return this.formatters.get(sig);
 		return null;
 	}
 	getInputString(o)
@@ -9183,7 +9228,7 @@ class Category extends CatObject
 		let s = '';
 		for ([key, e] of this.elements)
 			s += e.signature;
-		return U.sha256(`${this.constructor.name} ${this.name} ${s}`);
+		return U.Sig(`${this.constructor.name} ${this.name} ${s}`);
 	}
 	process(diagram, args, elements = null)
 	{
@@ -9348,14 +9393,17 @@ class Morphism extends Element
 			},
 		});
 		if ('code' in args)
+		{
 			Object.defineProperty(this, 'code', {value:args.code,	writable:false});
+			this.signature = U.Sig(this.sig, this.code);
+		}
 		if (this.category)
 			this.category.addElement(this);
 		else if (diagram)
 			this.diagram.codomain.addElement(this);
 		this.codomain.incrRefcnt();
 		this.domain.incrRefcnt();
-		this.signature = this.getMorphismSignature();
+//		this.signature = this.getMorphismSignature();
 		Morphism.prototype.loadEquivalence.call(this, diagram);
 	}
 	setDomain(dom)
@@ -9372,10 +9420,10 @@ class Morphism extends Element
 		cod.incrRefcnt();
 		this.cod = cod;
 	}
-	getMorphismSignature()
-	{
-		return Morphism.Signature(this.domain, this.name, this.codomain);
-	}
+//	getMorphismSignature()
+//	{
+//		return Morphism.Signature(this.domain, this.name, this.codomain);
+//	}
 	help(helped = new Set)
 	{
 		if (helped.has(this.name))
@@ -9413,7 +9461,8 @@ class Morphism extends Element
 	}
 	hasMorphism(mor, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
 	{
-		return this.signature === mor.signature;
+//		return this.signature === mor.signature;
+		return this.isEquivalent(mor);
 	}
 	getGraph(data = {position:0})
 	{
@@ -9434,10 +9483,10 @@ class Morphism extends Element
 			R.equals.set(sig, new Set([sig]));
 		R.LoadEquivalence(this, [this], [this]);
 	}
-	static Signature(domain, name, codomain)
-	{
-		return U.sha256(`${domain.signature} ${name} ${codomain.signature}`);
-	}
+//	static Signature(domain, name, codomain)
+//	{
+//		return U.sha256(`${domain.signature} ${name} ${codomain.signature}`);
+//	}
 }
 
 class Identity extends Morphism
@@ -9563,7 +9612,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 		this.source = source;
 		this.source.incrRefcnt();
 		if (this.constructor.name === 'NamedMorphism')
-			this.signature = this.source.signature;
+			this.signature = this.source.sig;
 	}
 	json()
 	{
@@ -9612,7 +9661,8 @@ class DiagramMorphism extends Morphism
 		this.incrRefcnt();
 		this.flipName = U.GetArg(args, 'flipName', false);
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
-		delete this.signature;
+		delete this._sig;
+		delete this.sig;
 		this.diagram.domain.addMorphism(this);
 	}
 	setDomain(dom)
@@ -9900,7 +9950,8 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 	}
 	isFusible(m)
 	{
-		return m && m.to && this.to.signature === m.to.name;
+//		return m && m.to && this.to.signature === m.to.name;
+		return false;
 	}
 }
 
@@ -9963,7 +10014,8 @@ class Decoration extends DiagramCore
 	}
 	static Signature(left, right)
 	{
-		return U.sha256(U.Signature(left) + U.Signature(right));
+//		return U.sha256(U.Sig(left) + U.Sig(right));
+		return U.Sig(left, 'Decoration', right);
 	}
 }
 
@@ -10112,11 +10164,6 @@ class IndexCategory extends Category
 	{
 //		this.homSets.clear();
 //		this.obj2morphs.clear();
-		this.addHomSets(diagram);
-	}
-	addHomSets(diagram)
-	{
-		const exists = new Set(diagram.decorations.keys());
 //		for(const [key, e] of this.elements)
 //		{
 //			if (Morphism.prototype.isPrototypeOf(e))
@@ -10127,10 +10174,11 @@ class IndexCategory extends Category
 //				this.addHomDir(e, 'cod');
 //			}
 //		}
+		const exists = new Set(diagram.decorations.keys());
 		const initials = new Set;
 		this.obj2morphs.forEach(function(morphs, o)
 		{
-			if (morphs.dom.length > 1)
+			if (morphs.dom.length > 1)	// start of more than one leg
 				initials.add(o);
 		});
 		const legs = [];
@@ -10198,8 +10246,8 @@ class IndexCategory extends Category
 			{
 				// check for decoration
 			}
-			const leftSig = U.Signature(left.map(m => m.to));
-			const rightSig = U.Signature(right.map(m => m.to));
+			const leftSig = U.SigStr(U.Sig(...left.map(m => m.to)));
+			const rightSig = U.SigStr(U.Sig(...right.map(m => m.to)));
 			const equ = R.equals.get(leftSig);
 			if (equ && equ.has(rightSig))
 			{
@@ -10210,7 +10258,7 @@ console.log('equal legs', c, c[0].map(m => m.basename), '==', c[1].map(m => m.ba
 					for (let i=0; i< equs.length; ++i)
 					{
 						const equ = equs[i];
-						const sig = U.Signature(equ[0]);
+						const sig = U.SigStr(U.Sig(...equ[0]));
 						if (sig === leftSig)
 						{
 							item = equ[1];
@@ -10220,7 +10268,7 @@ console.log('equal legs', c, c[0].map(m => m.basename), '==', c[1].map(m => m.ba
 				if (item)
 				{
 console.log('equality due to', item.constructor.name, item.getDecoration());
-					const signature = Decoration.Signature(left, right);
+					const signature = U.SigStr(Decoration.Signature(left, right));
 					if (exists.has(signature))
 						exists.delete(signature);
 					else
@@ -10242,25 +10290,6 @@ console.log('equality due to', item.constructor.name, item.getDecoration());
 			diagram.decorations.delete(sig);
 		});
 	}
-	/*
-	addHom(m)
-	{
-		const key = IndexCategory.HomKey(m.domain, m.codomain);
-		if (!this.homSets.has(key))
-			this.homSets.set(key, []);
-		const a = this.homSets.get(key);
-		a.push(m);
-		const dualKey = IndexCategory.HomKey(m.codomain, m.domain);
-		const dualLength = this.homSets.has(dualKey) ? this.homSets.get(dualKey).length : 0;
-		m.homSetIndex = a.length -1 + dualLength;
-	}
-	*/
-	makeCells()
-	{
-		this.homSets.forEach(function(s, k)
-		{
-		});
-	}
 	static HomKey(domain, codomain)
 	{
 		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
@@ -10277,7 +10306,10 @@ class MultiMorphism extends Morphism
 		const morphisms = diagram.getElements(nuArgs.morphisms);
 		Object.defineProperty(this, 'morphisms', {value:morphisms, writable:true}); 	// TODO back to false
 		this.morphisms.map(m => m.incrRefcnt());
-		this.signature = U.Signature(this.morphisms, this.constructor.name);
+		if (this.constructor.name !== 'Composite')
+			this.signature = U.Sig(this.constructdore.name, this.morphisms);
+		else
+			this.signature = U.Sig(this.morphisms);
 	}
 	help(hdr, helped)
 	{
@@ -10703,9 +10735,15 @@ class FactorMorphism extends Morphism
 	{
 		return `&lt;${factors.map(f => domain.getFactorProperName(f)).join(',')}&gt;`;
 	}
+	/*
 	static Signature(domain, name, codomain, factors, dual)
 	{
 		return U.sha256(`${Morphism.Signature(domain, name, codomain)} ${dual} ${factors.map(f => Array.isArray(f) ? f.join('-') : f).join(':')}`);
+	}
+	*/
+	static Signature(domain, name, codomain, factors, dual)
+	{
+		return U.Sig(domain.sig, name, codomain.sig, ...factors.map(f => Array.isArray(f) ? f.join('-') : f.toString()));
 	}
 }
 
@@ -10853,17 +10891,19 @@ class DataMorphism extends Morphism
 		else	// have to set it later
 			this.recursor = r;
 		if (typeof r !== 'string')
-			this.sig = this.getDataSignature();
+			this.signature = this.getDataSignature();
 	}
 	getDataSignature()
 	{
 		let sig = this.getElementSignature();
 		this.data.forEach(function(d, i)
 		{
-			sig = U.sha256(sig + U.sha256(i) + U.sha256(d));
+//			sig = U.sha256(sig + U.sha256(i) + U.sha256(d));
+			sig = U.Sig(sig, U.Sig(i.toString()), U.Sig(d.toString()));
 		});
 		if ('recursor' in this && typeof this.recursor !== 'string')
-			sig = U.sha256(sig + this.recursor.signature);
+//			sig = U.sha256(sig + this.recursor.signature);
+			sig = U.Sig(sig, this.recursor.sig);
 		return sig;
 	}
 	json()
@@ -10923,7 +10963,9 @@ class LambdaMorphism extends Morphism
 	}
 	getLambdaSignature()
 	{
-		return U.sha256(`${this.getMorphismSignature()} ${this.preCurry.sig} ${U.a2s(this.domFactors)} ${U.a2s(this.homFactors)}`);
+//		return U.sha256(`${this.getMorphismSignature()} ${this.preCurry.sig} ${U.a2s(this.domFactors)} ${U.a2s(this.homFactors)}`);
+//		return U.sha256(`${this.signature} ${this.preCurry.sig} ${U.a2s(this.domFactors)} ${U.a2s(this.homFactors)}`);
+		return U.Sig(this.signature, this.preCurry.signature, U.a2s(this.domFactors), U.a2s(this.homFactors));
 	}
 	json()
 	{
@@ -11374,12 +11416,12 @@ class Distribute extends Morphism
 		nuArgs.properName = Distribute.ProperName();
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.signature = this.getDistributeSignature();
+//		this.signature = this.getDistributeSignature();
 	}
-	getDistributeSignature()
-	{
-		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
-	}
+//	getDistributeSignature()
+//	{
+//		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
+//	}
 	help(helped = new Set)
 	{
 		return super.help(H.p('Distribute a product over a coproduct'));
@@ -11442,12 +11484,12 @@ class Dedistribute extends Morphism
 		nuArgs.properName = Distribute.ProperName();
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.signature = this.getDistributeSignature();
+//		this.signature = this.getDistributeSignature();
 	}
-	getDistributeSignature()
-	{
-		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
-	}
+//	getDistributeSignature()
+//	{
+//		return U.sha256(`distribute ${this.domain.signature} ${this.codomain.signature}`);
+//	}
 	help(helped = new Set)
 	{
 		return super.help() + H.p('Gather a product from a coproduct');
@@ -11483,8 +11525,10 @@ class Dedistribute extends Morphism
 //			if (CoproductObject.prototype.isPrototypeOf(to) && ProductObject.prototype.isPrototypeOf(to.objects[0]))
 			if (ProductObject.prototype.isPrototypeOf(to) && to.dual && ProductObject.prototype.isPrototypeOf(to.objects[0]) && !to.objects[0].dual)
 			{
-				const s = to.objects[0].objects[0].signature;
-				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && !o.dual && o.objects[0].signature === s, true);
+//				const s = to.objects[0].objects[0].signature;
+				const obj0 = to.objects[0].objects[0];
+//				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && !o.dual && o.objects[0].signature === s, true);
+				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && !o.dual && obj0.isEquivalent(o.objects[0]), true);
 			}
 		}
 		return false;
