@@ -162,7 +162,7 @@ h5
 	top:				32px;
 	transition:			0.5s;
 	width:				0;
-	z-index:			3;
+	z-index:			2;
 }
 
 table
@@ -371,7 +371,7 @@ a:hover, .offcanvas a:focus
 	position:			absolute;
 	text-align:			left;
 	transition:			opacity 1s, height 0s;
-	z-index:			2;
+	z-index:			3;
 }
 
 .hidden
