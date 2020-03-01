@@ -5,7 +5,6 @@ onmessage = function(e)
 	const args = e.data;
 	try
 	{
-console.log('equality worker input', {args});
 		switch(args[0])
 		{
 			case 'start':
@@ -21,9 +20,10 @@ console.log('equality worker input', {args});
 			case 'CheckEquivalence':
 				CheckEquivalence(args[1], args[2], args[3], args[4]);
 				break;
+			case 'RemoveEquivalence':
+				RemoveEquivalence(args[1], args[2], args[3]);
+				break;
 		}
-//		postMessage(['result', [args, result]]);
-//		console.log('posted message');
 	}
 	catch(e)
 	{
@@ -31,7 +31,7 @@ console.log('equality worker input', {args});
 	}
 }
 
-const equivalences = new Map;
+const equivalences = new Map;		// sig to the list of pairs [leg, item]
 const equals = new Map;
 
 const Sig = function(...elts)
@@ -47,12 +47,9 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 {
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
-//		if (!R.sig2Leg.has(leftSig))
-//			R.sig2Leg.set(leftSig, leftLeg);
-//		if (!R.sig2Leg.has(rightSig))
-//			R.sig2Leg.set(rightSig, rightLeg);
 	if (equals.has(leftSig))
 	{
+		debugger;
 		const leftSigs = equals.get(leftSig);
 		if (leftSigs.has(rightSig))
 		{
@@ -73,6 +70,7 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	}
 	else if (equals.has(rightSig))
 	{
+		debugger;
 		const rightSigs = equals.get(rightSig);
 		if (rightSigs.has(leftSig))
 		{
@@ -122,4 +120,18 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 			}
 	}
 	postMessage(['CheckEquivalence', diagram, tag, item]);
+}
+
+const RemoveEquivalence = function(item, leftLeg, rightLeg)
+{
+	const leftSig = Sig(...leftLeg);
+	const rightSig = Sig(...rightLeg);
+	const equ = equals.get(leftSig);
+	let ndx = equ.indexOf(rightSig);
+	const nuLeft = equ.splice(ndx, 1);
+	ndx = equ.indexOf(leftSig);
+	const nuRight = equ.splice(ndx, 1);
+	nuLeft.map(s => equals.set(s, nuLeft));
+	nuRight.map(s => equals.set(s, nuRight));
+	// TODO find all legs having leftSig or rightSig and revalidate
 }
