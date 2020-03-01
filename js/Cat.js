@@ -728,7 +728,7 @@ Create diagrams and execute morphisms.
 						break;
 				}
 			};
-			worker.postMessage(['start', window.location.href]);
+			worker.postMessage(['start', window.location.origin]);
 
 
 			D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
@@ -2521,7 +2521,7 @@ class Amazon extends Cloud
 			D.loginPanel.update();
 		});
 	}
-	login()
+	login(e)
 	{
 		try
 		{
@@ -2531,6 +2531,7 @@ class Amazon extends Cloud
 			const userData = {Username:userName, Pool:this.userPool};
 			this.user = new AmazonCognitoIdentity.CognitoUser(userData);
 			const that = this;
+			e.preventDefault();		// prevent network error
 			this.user.authenticateUser(authenticationDetails,
 			{
 				onSuccess:function(result)
@@ -5179,7 +5180,7 @@ class LoginPanel extends Panel
 										ph:'********',
 										x:'autocomplete="current-password" onkeydown="D.OnEnter(event, R.cloud.login, R.cloud)"',
 									}))) +
-								H.tr(H.td(H.button('Login', '', '', '', 'onclick="R.cloud.login()"')))));
+								H.tr(H.td(H.button('Login', '', '', '', 'onclick="R.cloud.login(event)"')))));
 		if (R.user.status === 'unauthorized')
 			html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="D.Panel.SectionToggle(this, \'signupPnl\')"`) +
 					H.div( H.table(H.tr(H.td('User name')) +
@@ -5768,7 +5769,7 @@ class Element
 	}
 	isEquivalent(elt)
 	{
-		return elt ? U.SigEqu(this.sig, elt.sig) : false;
+		return elt ? U.SigEqu(this.signature, elt.signature) : false;
 	}
 	isDeletable()
 	{
@@ -7715,7 +7716,6 @@ class HomRightAction extends Action
 		const morphisms = [];
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
-//			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.domain.signature && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 			if (Morphism.prototype.isPrototypeOf(m) && from.to.isEquivalent(m.domain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'domain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms from ${from.to.properName}`, 'italic') + H.table(rows);
@@ -7745,7 +7745,6 @@ class HomLeftAction extends Action
 		const morphisms = [];
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
-//			if (Morphism.prototype.isPrototypeOf(m) && from.to.signature === m.codomain.signature && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 			if (Morphism.prototype.isPrototypeOf(m) && from.to.isEquivalent(m.codomain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'codomain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms to ${from.to.properName}`, 'italic') + H.table(rows);
