@@ -21,7 +21,8 @@ onmessage = function(e)
 				CheckEquivalence(args[1], args[2], args[3], args[4]);
 				break;
 			case 'RemoveEquivalence':
-				RemoveEquivalence(args[1], args[2], args[3]);
+console.log('remove equivalence');
+				RemoveEquivalence(args[1], args[2]);
 				break;
 		}
 	}
@@ -31,7 +32,8 @@ onmessage = function(e)
 	}
 }
 
-const equivalences = new Map;		// sig to the list of pairs [leg, item]
+const equivalences = new Set;
+const sig2equivalences = new Map;		// sig to the list of pairs [leg, item]
 const equals = new Map;
 
 const Sig = function(...elts)
@@ -40,17 +42,22 @@ const Sig = function(...elts)
 		throw 'no info';
 	else if (elts.length === 1)
 		return elts[0];
-	return sjcl.hash.sha256.hash(elts.join());
+//	return sjcl.hash.sha256.hash(elts.join());
+	return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(elts.join()));
 }
 
 const LoadEquivalence = function(item, leftLeg, rightLeg)
 {
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
-	if (equals.has(leftSig))
-	{
-		debugger;
-		const leftSigs = equals.get(leftSig);
+	const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set;
+	const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set;
+	leftSigs.add(rightSig);
+	leftSigs.add(...rightSigs);		// copy right sigs to left
+	equals.set(leftSig, leftSigs);
+	equals.set(rightSig, leftSigs);	// since equal set is same
+
+		/*
 		if (leftSigs.has(rightSig))
 		{
 			// do nothing, slready processed
@@ -58,10 +65,11 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 		else if (equals.has(rightSig))	// merge right sigs to the left
 		{
 			const rightSigs = equals.get(rightSig);
-			rightSigs.forEach(function(sig)
-			{
-				leftSigs.add(sig);
-			});
+			rightSigs.add(leftSig);
+//			rightSigs.forEach(function(sig)
+//			{
+//				leftSigs.add(sig);
+//			});
 		}
 		else
 		{
@@ -76,6 +84,15 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 		{
 			// do nothing, slready processed
 		}
+		else if (equals.has(leftSig))	// merge left sigs to the right
+		{
+			const leftSigs = equals.get(leftSig);
+			leftSigs.add(leftSig);
+//			leftSigs.forEach(function(sig)
+//			{
+//				rightSigs.add(sig);
+//			});
+		}
 		else
 		{
 			rightSigs.add(leftSig);
@@ -85,17 +102,21 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	{
 		const sigs = new Set([leftSig, rightSig]);
 		equals.set(leftSig, sigs);
-		equals.set(rightSig, sigs);
+		if (leftSig !== rightSig)
+			equals.set(rightSig, sigs);
 	}
+	*/
 	const fn = function(sig, leg, item)
 	{
-		if (!equivalences.has(sig))
-			equivalences.set(sig, []);
-		const equs = equivalences.get(sig);
+		if (!sig2equivalences.has(sig))
+			sig2equivalences.set(sig, []);
+		const equs = sig2equivalences.get(sig);
 		equs.push([leg, item]);
 	}
 	fn(leftSig, rightLeg, item);
-	fn(rightSig, leftLeg, item);
+	if (leftSig !== rightSig)
+		fn(rightSig, leftLeg, item);
+	equivalences.add([item, leftLeg, rightLeg]);
 }
 
 const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
@@ -106,7 +127,7 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 	let item = null;
 	if (equ && equ.has(rightSig))
 	{
-		const equs = equivalences.get(rightSig);
+		const equs = sig2equivalences.get(rightSig);
 		if (equs)
 			for (let i=0; i< equs.length; ++i)
 			{
@@ -122,16 +143,44 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 	postMessage(['CheckEquivalence', diagram, tag, item]);
 }
 
-const RemoveEquivalence = function(item, leftLeg, rightLeg)
+const RemoveEquivalence = function(leftLeg, rightLeg)
 {
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
-	const equ = equals.get(leftSig);
-	let ndx = equ.indexOf(rightSig);
-	const nuLeft = equ.splice(ndx, 1);
-	ndx = equ.indexOf(leftSig);
-	const nuRight = equ.splice(ndx, 1);
-	nuLeft.map(s => equals.set(s, nuLeft));
-	nuRight.map(s => equals.set(s, nuRight));
-	// TODO find all legs having leftSig or rightSig and revalidate
+	const leftEqus = sig2equivalences.get(leftSig);
+	let ndx = -1;
+	for (let i=0; i<leftEqus.length; ++i)
+	{
+		const a = leftEqus[i];
+		const leg = a[0];
+		const legSig = Sig(...leg);
+		if (legSig === rightSig)
+		{
+			ndx = i;
+			break;
+		}
+	};
+	leftEqus.splice(ndx, 1);
+	const rightEqus = sig2equivalences.get(rightSig);
+	ndx = -1;
+	for (let i=0; i<rightEqus.length; ++i)
+	{
+		const a = rightEqus[i];
+		const leg = a[0];
+		const legSig = Sig(...leg);
+		if (legSig === leftSig)
+		{
+			ndx = i;
+			break;
+		}
+	};
+	rightEqus.splice(ndx, 1);
+	const oldEquivalences = new Set(equivalences);
+	equivalences.clear();
+	sig2equivalences.clear();
+	equals.clear();
+	oldEquivalences.forEach(function(e)
+	{
+		LoadEquivalence(e[0], e[1], e[2]);
+	});
 }
