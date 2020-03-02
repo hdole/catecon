@@ -728,7 +728,7 @@ Create diagrams and execute morphisms.
 						break;
 				}
 			};
-			worker.postMessage(['start', window.location.origin]);
+			worker.postMessage(['start', window.location.origin + window.location.pathname]);
 
 
 			D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
@@ -2199,9 +2199,11 @@ function %1(args)
 		fn(rightSig, leftLeg, item);
 		return {leftSig, rightSig};
 	}
-	static RemoveEquivalence(item, leftLeg, rightLeg)
+	static RemoveEquivalence(leftLeg, rightLeg)
 	{
-		R.workers.equality.postMessage(['RemoveEquivalence', item.name, leftSigs, rightSigs]);
+		const leftSigs = leftLeg.map(m => m.signature);
+		const rightSigs = rightLeg.map(m => m.signature);
+		R.workers.equality.postMessage(['RemoveEquivalence', leftSigs, rightSigs]);
 		/*
 //		const leftSig = U.SigStr(U.Sig(...leftLeg));
 		const leftSig = U.SigArray(leftLeg.map(m => m.to.signature));
@@ -6983,7 +6985,6 @@ class DiagramObject extends CatObject
 		const xy = U.GetArg(nuArgs, 'xy', new D2);
 		Object.defineProperties(this,
 		{
-//			category:	{value:	diagram.domain,										writable:	false},
 			x:			{value:	xy.x,												writable:	true},
 			y:			{value:	xy.y,												writable:	true},
 			width:		{value:	U.GetArg(nuArgs, 'width', 0),						writable:	true},
@@ -6992,8 +6993,6 @@ class DiagramObject extends CatObject
 			cells:		{value:	new Set,											writable:	false},
 		});
 		this.setObject(nuArgs.to);
-//		delete this._sig;
-//		delete this.sig;
 		this.diagram.domain.addObject(this);
 	}
 	help(helped = new Set)
@@ -7138,20 +7137,20 @@ class Assertion extends Element
 	constructor(diagram, args)
 	{
 		const nuArgs = U.Clone(args);
-		const leg0 = nuArgs.leg0.map(m => diagram.getElement(m));
-		const leg1 = nuArgs.leg1.map(m => diagram.getElement(m));
+		const left = nuArgs.left.map(m => diagram.getElement(m));
+		const right = nuArgs.right.map(m => diagram.getElement(m));
 		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('a'));
 		super(diagram, nuArgs);
-		leg0.map(m => m.incrRefcnt());
-		leg1.map(m => m.incrRefcnt());
+		left.map(m => m.incrRefcnt());
+		right.map(m => m.incrRefcnt());
 		if (!('description' in nuArgs))
-			this.description = `The assertion that the morphisme ${leg0.map(m => m.properName).join()} equal ${leg1.map(m => m.properName).join()}.`;
+			this.description = `The assertion that the morphisme ${left.map(m => m.properName).join()} equal ${right.map(m => m.properName).join()}.`;
 		Object.defineProperties(this,
 		{
-			leg0:			{value: leg0, writable: false},
-			leg1:			{value: leg1, writable: false},
+			left:			{value: left, writable: false},
+			right:			{value: right, writable: false},
 		});
-		this.signature = Assertion.Signature(leg0, leg1);
+		this.signature = Assertion.Signature(left, right);
 		this.loadEquivalence(diagram);
 		diagram.codomain.addElement(this, diagram);
 		this.incrRefcnt();		// nothing refers to them, to increment
@@ -7162,8 +7161,8 @@ class Assertion extends Element
 		super.decrRefcnt();
 		if (this.refcnt <= 0)
 		{
-			this.leg0.map(m => m.decrRefcnt());
-			this.leg1.map(m => m.decrRefcnt());
+			this.left.map(m => m.decrRefcnt());
+			this.right.map(m => m.decrRefcnt());
 			this.category && this.category.deleteElement(this);
 			this.removeEquivalence();
 			this.diagram.assertions.delete(this.signature);
@@ -7172,24 +7171,10 @@ class Assertion extends Element
 	json()
 	{
 		const a = super.json();
-		a.leg0 = this.leg0.map(m => m.name);
-		a.leg1 = this.leg1.map(m => m.name);
+		a.left = this.left.map(m => m.name);
+		a.right = this.right.map(m => m.name);
 		return a;
 	}
-	/*
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		let html = super.help() + H.p('Assertion');
-//		const left = this.leg0.map(m => m.properName).join();
-//		const right = this.leg1.map(m => m.properName).join();
-//		html += H.p(`First: ${left}`);
-//		html += H.p(`Second: ${right}`);
-		return html;
-	}
-	*/
 	getSVG()
 	{
 		return 'cell' in this ? this.cell.getSVG() : '';
@@ -7208,11 +7193,11 @@ class Assertion extends Element
 	}
 	loadEquivalence(diagram)
 	{
-		R.LoadEquivalence(this, this.leg0, this.leg1);
+		R.LoadEquivalence(this, this.left, this.right);
 	}
 	removeEquivalence()
 	{
-		R.RemoveEquivalence(this, this.leg0, this.leg1);
+		R.RemoveEquivalence(this.left, this.right);
 	}
 	static Signature(left, right)
 	{
@@ -7222,13 +7207,10 @@ class Assertion extends Element
 	}
 	static Get(diagram, left, right)
 	{
-		const legs = Assertion.GetLegs(ary);
-		const sig = Assertion.Signature(ary);
+		const sig = Assertion.Signature(left, right);
 		if (diagram.assertions.has(sig))
 			return diagram.assertions.get(sig);
-		const a = new Assertion(diagram, {leg0:legs[0], leg1:legs[1]});
-		diagram.set(sig, a);
-		return a;
+		return new Assertion(diagram, {left, right});
 	}
 	static GetLegs(ary)
 	{
@@ -7256,13 +7238,13 @@ class Assertion extends Element
 		if (ary.length < 2)
 			return false;	// not enough stuff
 		const legs = Assertion.GetLegs(ary);
-		const leg0 = legs[0];
-		const leg1 = legs[1];
-		const length0 = leg0.length;
-		const length1 = leg1.length;
+		const left = legs[0];
+		const right = legs[1];
+		const length0 = left.length;
+		const length1 = right.length;
 		if ((length0 + length1 !== ary.length)  || length0 === 0 || length1 === 0)
 			return false;	// bad legs
-		return leg0[0].domain === leg1[0].domain && leg0[length0 -1].codomain === leg1[length1 -1].codomain;	// legs have same domain and codomain
+		return left[0].domain === right[0].domain && left[length0 -1].codomain === right[length1 -1].codomain;	// legs have same domain and codomain
 	}
 }
 
@@ -7825,17 +7807,28 @@ class DeleteAction extends Action
 		for(let i=0; i<ary.length; ++i)
 		{
 			let s = ary[i];
-			s.decrRefcnt();
 			if (DiagramObject.prototype.isPrototypeOf(s))	// TODO what about morphisms as objects in 2Cat?
+			{
+				s.decrRefcnt();
 				updateObjects = true;
+			}
 			else if (DiagramMorphism.prototype.isPrototypeOf(s))
 			{
+				s.decrRefcnt();
 				updateMorphisms = true;
 				updateObjects = true;
 				updateHomSets.add([s.domain.name, s.codomain.name]);
 			}
 			else if (DiagramText.prototype.isPrototypeOf(s))
+			{
+				s.decrRefcnt();
 				updateTexts = true;
+			}
+			else if (Cell.prototype.isPrototypeOf(s) && s.to && Assertion.prototype.isPrototypeOf(s.to))
+			{
+//				R.workers.equality.postMessage(['RemoveEquivalence', s.left.map(m => m.signature), s.right.map(m => m.signature)]);
+				s.to.decrRefcnt();
+			}
 		}
 		if (updateObjects)
 			D.objectPanel.update();
@@ -9237,9 +9230,26 @@ class AssertionAction extends Action
 	action(e, diagram, ary)
 	{
 		const legs = Assertion.GetLegs(ary);
-		const a = diagram.addAssertion(legs[0].map(m => m.to), legs[1].map(m => m.to));
+		const left = legs[0];
+		const right = legs[1];
+		const a = diagram.addAssertion(left.map(m => m.to), right.map(m => m.to));
 		diagram.update();
-//		diagram.makeSelected(e, a);
+		const dom = left[0].domain;
+		let cells = new Set(dom.cells);
+		left.map(m =>
+		{
+			const codCells = m.codomain.cells;
+			cells = new Set([...cells].filter(c => codCells.has(c)));
+		});
+		right.map(m =>
+		{
+			const codCells = m.codomain.cells;
+			cells = new Set([...cells].filter(c => codCells.has(c)));
+		});
+		cells.forEach(function(c)
+		{
+			diagram.makeSelected(e, c);
+		});
 		D.ShowToolbar(e);
 	}
 	hasForm(diagram, ary)
@@ -10114,6 +10124,7 @@ class Cell extends DiagramCore
 		this.right = nuArgs.right;
 		this.signature = Cell.Signature(this.left, this.right);
 		this.to = null;
+		this.description = '';
 	}
 	svg()
 	{
@@ -10128,10 +10139,10 @@ class Cell extends DiagramCore
 		const xy = this.getXY();
 		this.x = xy.x;
 		this.y = xy.y;
-//		if ((DiagramObject.prototype.isPrototypeOf(this.item) || DiagramMorphism.prototype.isPrototypeOf(this.item)) && this.item.diagram.name === this.diagram.name)
 		const onmousedown = ` onmousedown="R.diagram.pickElement(event, '${this.signature}')"`;
-//		return `<text text-anchor="middle" class="morphTxt" x="${this.x}" y="${this.y}" id="${this.name}" onmousedown="R.diagram.pickElement(event, '${this.item.name}')">${this.properName}</text>`;
-		return `<text text-anchor="middle" class="morphTxt" x="${this.x}" y="${this.y}" id="${this.name}"${onmousedown}>${this.properName}</text>`;
+		const onmouseenter = ` onmouseenter="R.diagram.emphasis('${this.signature}')"`;
+		const onmouseleave = ` onmouseleave="R.diagram.emphasis('${this.signature}')"`;
+		return `<text text-anchor="middle" class="morphTxt" x="${this.x}" y="${this.y}" id="${this.name}"${onmousedown}${onmouseenter}${onmouseleave}>${this.properName}</text>`;
 	}
 	removeSVG()
 	{
@@ -10415,6 +10426,9 @@ class IndexCategory extends Category
 						const cell = Cell.Get(diagram, left, right);
 						found.add(cell.signature);
 						cell.properName = '';
+						const objs = cell.getObjects();
+if (objs.count === 3)debugger;
+						objs.map(o => o.cells.add(cell));
 					}
 				}
 			});
@@ -12779,10 +12793,10 @@ i++;
 		});
 		return objects;
 	}
-	addAssertion(leg0, leg1)
+	addAssertion(left, right)
 	{
-//		const elt = new Assertion(this, {leg0, leg1});
-		const elt = Assertion.Get(this, leg0, leg1);
+//		const elt = new Assertion(this, {left, right});
+		const elt = Assertion.Get(this, left, right);
 		return elt;
 	}
 	paste(e)
@@ -12871,6 +12885,32 @@ i++;
 			this.deferredEquivalences.map(d => d.loadEquivalence(this));
 			delete this.deferredEquivalences;
 		}
+	}
+	emphasis(c)
+	{
+		const cell = this.domain.cells.get(c);
+		const fn = function(m)
+		{
+			const svg = m.svg();
+			const elts = [...svg.querySelectorAll('*')];
+			elts.map(e =>
+			{
+				const remove = e.classList.contains('emphasis');
+				e.classList.toggle('emphasis');
+				if (e.hasAttribute('filter'))
+{
+					e.removeAttribute('filter');
+	console.log('filter removed');
+}
+				else
+{
+					e.setAttribute('filter', "url(#softGlow)");
+	console.log('filter added');
+}
+			});
+		}
+		cell.left.map(m => fn(m));
+		cell.right.map(m => fn(m));
 	}
 	static Codename(args)
 	{
