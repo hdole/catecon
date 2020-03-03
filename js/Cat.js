@@ -811,7 +811,7 @@ Create diagrams and execute morphisms.
 					exports.Element =				Element;
 					exports.CatObject =				CatObject;
 					exports.Morphism =				Morphism;
-					exports.StringMorphism =		StringMorphism;
+//					exports.StringMorphism =		StringMorphism;
 				}
 			};
 			const params = (new URL(document.location)).searchParams;
@@ -5656,8 +5656,9 @@ else if (args.prototype === 'CoproductMorphism')
 
 class Graph
 {
-	constructor(tag, position, width, graphs = [])
+	constructor(diagram, tag, position, width, graphs = [])
 	{
+		this.diagram = diagram;
 		this.tags = [tag];
 		this.position = position;
 		this.width = width;
@@ -5779,7 +5780,8 @@ class Graph
 	}
 	bindGraph(data)	// data: {cod, link, tag, domRoot, codRoot, offset}
 	{
-		if (this.isLeaf())
+		const domFactor = this.getFactor(data.domRoot);
+		if (domFactor.isLeaf())
 		{
 			const domRoot = data.domRoot.slice();
 			const codRoot = data.codRoot.slice();
@@ -5897,23 +5899,24 @@ class Graph
 			e.copyGraph({src:data.src.graphs[i], map:data.map});
 		});
 	}
-	svg(dgrm, data, first = true)	// data {index, dom:{x,y, name}, cod:{x,y, name}, visited, elementId}
+	svg(data, first = true)	// data {index, dom:{x,y, name}, cod:{x,y, name}, visited, elementId}
 	{
+		const diagram = this.diagram;
 		if (this.isLeaf())
 		{
 			const dom = new D2({x:Math.round(this.position + (this.width/2.0) + (data.index[0] === 0 ? data.dom.x : data.cod.x)), y:data.index[0] === 0 ? data.dom.y : data.cod.y});
 			let colorIndex = Number.MAX_VALUE;
-			const srcKey = StringMorphism.LinkColorKey(data.index, data.dom.name, data.cod.name);
+			const srcKey = DiagramMorphism.LinkColorKey(data.index, data.dom.name, data.cod.name);
 			if (!('colorIndex' in this))
 			{
-				if (!(srcKey in dgrm.link2colorIndex))
-					dgrm.link2colorIndex[srcKey] = dgrm.colorIndex++;
-				colorIndex = dgrm.link2colorIndex[srcKey];
+				if (!(srcKey in diagram.link2colorIndex))
+					diagram.link2colorIndex[srcKey] = diagram.colorIndex++;
+				colorIndex = diagram.link2colorIndex[srcKey];
 			}
 			else
 				colorIndex = this.colorIndex;
-			while(colorIndex in dgrm.colorIndex2colorIndex)
-				colorIndex = dgrm.colorIndex2colorIndex[colorIndex];
+			while(colorIndex in diagram.colorIndex2colorIndex)
+				colorIndex = diagram.colorIndex2colorIndex[colorIndex];
 			for (let i=0; i<this.links.length; ++i)
 			{
 				const lnk = this.links[i];
@@ -5921,52 +5924,124 @@ class Graph
 				const idxStr = data.index.toString();
 				if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
 					continue;
-				const d = StringMorphism.SvgLinkUpdate(dom, lnk, data);
+//				const d = DiagramMorphism.SvgLinkUpdate(dom, lnk, data);
+				const d = this.svgLinkUpdate(dom, lnk, data);
 				const fs = this.tags.sort().join();
-				const linkId = StringMorphism.LinkId(data, lnk);
-				const lnkKey = StringMorphism.LinkColorKey(lnk, data.dom.name, data.cod.name);
-				if (lnkKey in dgrm.link2colorIndex)
+				const linkId = DiagramMorphism.LinkId(data, lnk);
+				const lnkKey = DiagramMorphism.LinkColorKey(lnk, data.dom.name, data.cod.name);
+				if (lnkKey in diagram.link2colorIndex)
 				{
-					let linkColorIndex = dgrm.link2colorIndex[lnkKey];
-					while (linkColorIndex in dgrm.colorIndex2colorIndex)
-						linkColorIndex = dgrm.colorIndex2colorIndex[linkColorIndex];
+					let linkColorIndex = diagram.link2colorIndex[lnkKey];
+					while (linkColorIndex in diagram.colorIndex2colorIndex)
+						linkColorIndex = diagram.colorIndex2colorIndex[linkColorIndex];
 					if (linkColorIndex < colorIndex)
 					{
-						dgrm.colorIndex2colorIndex[colorIndex] = linkColorIndex;
+						diagram.colorIndex2colorIndex[colorIndex] = linkColorIndex;
 						colorIndex = linkColorIndex;
-						while(colorIndex in dgrm.colorIndex2colorIndex)
-							colorIndex = dgrm.colorIndex2colorIndex[colorIndex];
-						dgrm.link2colorIndex[srcKey] = colorIndex;
+						while(colorIndex in diagram.colorIndex2colorIndex)
+							colorIndex = diagram.colorIndex2colorIndex[colorIndex];
+						diagram.link2colorIndex[srcKey] = colorIndex;
 					}
 					else if (linkColorIndex > colorIndex)
 					{
-						dgrm.link2colorIndex[lnkKey] = colorIndex;
-						dgrm.colorIndex2colorIndex[linkColorIndex] = colorIndex;
+						diagram.link2colorIndex[lnkKey] = colorIndex;
+						diagram.colorIndex2colorIndex[linkColorIndex] = colorIndex;
 					}
 				}
 				else
-					dgrm.link2colorIndex[lnkKey] = colorIndex;
+					diagram.link2colorIndex[lnkKey] = colorIndex;
 				let color = '';
-				if (colorIndex in dgrm.colorIndex2color)
-					color = dgrm.colorIndex2color[colorIndex];
+				if (colorIndex in diagram.colorIndex2color)
+					color = diagram.colorIndex2color[colorIndex];
 				else
 				{
-					color = StringMorphism.ColorWheel(data);
-					dgrm.colorIndex2color[colorIndex] = color;
+					color = DiagramMorphism.ColorWheel(data);
+					diagram.colorIndex2color[colorIndex] = color;
 				}
 				data.visited.push(idxStr + ' ' + lnkStr);
 				data.visited.push(lnkStr + ' ' + idxStr);
 				return `<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${d}" filter="url(#softGlow)" onmouseover="D.Status(event, '${fs}')"/>\n`;
 			}
-			return svg;
+			return '';
 		}
 		return this.graphs.reduce((svg, g, i) =>
 		{
 			data.index.push(i);
-			svg += g.svg(dgrm, data, false);
+			svg += g.svg(data, false);
 			data.index.pop();
 			return svg;
 		}, '');
+	}
+	svgLinkUpdate(dom, lnk, data)	// data {dom:{x,y}, cod:{x,y}}
+	{
+		const isDomLink = lnk[0] === 0;
+		const f = R.getFactor(this, lnk);
+		const cod = new D2(Math.round(f.position + (f.width/2.0) + (isDomLink ? data.dom.x : data.cod.x)), isDomLink ? data.dom.y : data.cod.y);
+		const dx = cod.x - dom.x;
+		const dy = cod.y - dom.y;
+		const adx = Math.abs(dx);
+		const ady = Math.abs(dy);
+		const normal = dy === 0 ? ((data.cod.y - data.dom.y) > 0 ? new D2({x:0, y:-1}) : new D2({x:0, y:1})) : cod.subtract(dom).normal().normalize();
+		const h = (adx - ady) / (1.0 * adx);
+		const v = normal.scale(cod.dist(dom) * h / 4.0);
+		const cp1 = v.add(dom).round();
+		const cp2 = v.add(cod).round();
+		return adx < ady ? `M${dom.x},${dom.y} L${cod.x},${cod.y}` : `M${dom.x},${dom.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${cod.x},${cod.y}`;
+	}
+	updateGraph(data)	// data {index, graph, dom:{x,y}, cod:{x,y}, visited, elementId}
+	{
+		const diagram = this.diagram;
+		if (this.graphs.length === 0)
+		{
+			const dom = new D2({x:Math.round(this.position + (this.width/2.0) + (data.index[0] === 0 ? data.dom.x : data.cod.x)), y:data.index[0] === 0 ? data.dom.y : data.cod.y});
+			const color = Math.round(Math.random() * 0xffffff).toString(16);
+			const srcKey = DiagramMorphism.LinkColorKey(data.index, data.dom.name, data.cod.name);
+			let colorIndex = diagram.link2colorIndex[srcKey];
+			while(colorIndex in diagram.colorIndex2colorIndex)
+				colorIndex = diagram.colorIndex2colorIndex[colorIndex];
+			for (let i=0; i<this.links.length; ++i)
+			{
+				const lnk = this.links[i];
+				const lnkStr = lnk.toString();	// TODO use U.a2s?
+				const lnkKey = DiagramMorphism.LinkColorKey(lnk, data.dom.name, data.cod.name);
+				let linkColorIndex = diagram.link2colorIndex[lnkKey];
+				while(linkColorIndex in diagram.colorIndex2colorIndex)
+					linkColorIndex = diagram.colorIndex2colorIndex[linkColorIndex];
+				if (linkColorIndex < colorIndex)
+				{
+					diagram.colorIndex2colorIndex[colorIndex] = linkColorIndex;
+					colorIndex = linkColorIndex;
+					while(colorIndex in diagram.colorIndex2colorIndex)
+						colorIndex = diagram.colorIndex2colorIndex[colorIndex];
+					diagram.link2colorIndex[srcKey] = colorIndex;
+				}
+				else if (linkColorIndex > colorIndex)
+				{
+					diagram.link2colorIndex[lnkKey] = colorIndex;
+					diagram.colorIndex2colorIndex[linkColorIndex] = colorIndex;
+				}
+				const color = diagram.colorIndex2color[colorIndex];
+				const idxStr = data.index.toString();	// TODO use U.a2s?
+				if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
+					continue;
+//				const d = DiagramMorphism.SvgLinkUpdate(dom, lnk, data);
+				const d = this.svgLinkUpdate(dom, lnk, data);
+				const linkId = DiagramMorphism.LinkId(data, lnk);
+				const lnkElt = document.getElementById(linkId);
+				lnkElt.setAttribute('d', d);
+				lnkElt.setAttribute('style', `stroke:#${color}AA`);
+				data.visited.push(idxStr + ' ' + lnkStr);
+			}
+		}
+		else
+		{
+			this.graphs.map((g, i) =>
+			{
+				data.index.push(i);
+				g.updateGraph(data);
+				data.index.pop();
+			});
+		}
 	}
 }
 
@@ -6001,7 +6076,7 @@ class CatObject extends Element
 		const width = D.textWidth(this.properName);
 		const position = data.position;
 		data.position += width;
-		return new Graph(this.constructor.name, position, width);
+		return new Graph(this.diagram, this.constructor.name, position, width);
 	}
 	static Get(diagram, basename)
 	{
@@ -6216,7 +6291,7 @@ class MultiObject extends CatObject
 		width = data.position - position;
 		if (doit)
 			width += parenWidth;
-		const graph = new Graph(tag, position, width, graphs);
+		const graph = new Graph(this.diagram, tag, position, width, graphs);
 		return graph;
 	}
 	resetPosition()
@@ -6405,39 +6480,6 @@ class PullbackObject extends ProductObject
 	static ProperName(morphisms)
 	{
 		return morphisms.map(m => m.domain.needsParens() ? `(${m.domain.properName})` : m.domain.properName).join('&times;') + '/' + morphisms[0].codomain.properName;
-	}
-}
-
-class Sequence extends ProductObject
-{
-	constructor(diagram, args)
-	{
-		super(diagram, args);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help(H.p('Sequence'));
-	}
-	resetPosition()
-	{
-		return true;
-	}
-	static Basename(diagram, objects)
-	{
-		return `So{${objects.map(o => o.name).join(',')}}oS`;
-	}
-	static Codename(diagram, objects)
-	{
-		return Element.Codename(diagram, Sequence.Basename(diagram, objects));
-	}
-	static Get(diagram, objects)
-	{
-		const name = Sequence.Codename(diagram, objects);
-		const object = diagram.getElement(name);
-		return object ? object : new Sequence(diagram, {objects});
 	}
 }
 
@@ -8215,8 +8257,8 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						code += this.generate(m.source, generated);
 						code += `${header}	return ${U.JsName(m.source)}(args);${tail}`;
 						break;
-					case 'StringMorphism':
-						break;
+//					case 'StringMorphism':
+//						break;
 					case 'TerminalMorphism':
 						code += m.dual ? `${header}	return;${tail}` : `${header}	return 0;${tail}`;
 						break;
@@ -9375,7 +9417,7 @@ class Morphism extends Element
 	}
 	getGraph(data = {position:0})
 	{
-		return Sequence.Get(this.diagram, [this.domain, this.codomain]).getGraph(data);
+		return ProductObject.Get(this.diagram, [this.domain, this.codomain]).getGraph(data);
 	}
 	hasInverse()
 	{
@@ -9418,8 +9460,9 @@ class Identity extends Morphism
 	getGraph(data = {position:0})
 	{
 		const g = super.getGraph(data);
-		g.bindGraph({cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
-		g.tagGraph(this.constructor.name);
+//		g.bindGraph({cod:s.cod, link:[], domRoot:[0], codRoot:[1], offset:0});
+		g.bindGraph({cod:g.graphs[1], link:[], domRoot:[0], codRoot:[1], offset:0, tag:this.constructor.name});
+//		g.tagGraph(this.constructor.name);
 		return g;
 	}
 	static Basename(diagram, domain, codomain = null)
@@ -9807,8 +9850,14 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 				svg.setAttribute('d', `M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`);
 			this.updateDecorations();
 		}
-		if (document.getElementById(StringMorphism.GraphId(this)))
-			StringMorphism.update(this);
+//		if (document.getElementById(StringMorphism.GraphId(this)))
+//			StringMorphism.update(this);
+		if ('graph' in this)
+		{
+			const dom = {x:this.domain.x - this.domain.width/2, y:this.domain.y, name:this.domain.name};
+			const cod = {x:this.codomain.x - this.codomain.width/2, y:this.codomain.y, name:this.codomain.name};
+			this.graph.updateGraph({index:[], dom, cod, visited:[], elementId:this.elementId()});
+		}
 	}
 	intersect(bbox, side, m = D.default.arrow.margin)
 	{
@@ -9856,6 +9905,46 @@ onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}
 	isFusible(m)
 	{
 		return false;
+	}
+
+	getGraph()
+	{
+		this.graph = src.getGraph();	// a graph is like a net list between the ports
+	}
+
+	removeStringSvg()
+	{
+		const id = this.graphId();
+		const svgElt = document.getElementById(id);
+		if (svgElt !== null)
+		{
+			svgElt.remove();
+			return true;
+		}
+		return false;
+	}
+	makeGraph()
+	{
+		this.graph = this.to.getGraph();
+	}
+	graphId()
+	{
+		return `graph_${this.elementId()}`;
+	}
+	static LinkId(data, lnk)
+	{
+		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
+	}
+	static LinkColorKey(lnk, dom, cod)
+	{
+		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;	// TODO use U.a2s?
+	}
+	static ColorWheel(data)
+	{
+		const tran = ['ff', 'ff', 'ff', 'ff', 'ff', '90', '00', '00', '00', '00', '00', '90'];
+		const cnt = tran.length;
+		data.color = (data.color + 5) % cnt;
+		return `${tran[(data.color + 2) % cnt]}${tran[(data.color + 10) % cnt]}${tran[(data.color + 6) % cnt]}`;
 	}
 }
 
@@ -10308,7 +10397,7 @@ class Composite extends MultiMorphism
 		//
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
-		const sequence = Sequence.get(diagram, objects);
+		const sequence = ProductObject.get(diagram, objects);
 		//
 		// get the sequence's graph
 		//
@@ -11015,6 +11104,7 @@ class HomMorphism extends MultiMorphism
 	}
 }
 
+/*
 class StringMorphism extends Morphism
 {
 	constructor(diagram, args)
@@ -11113,7 +11203,7 @@ class StringMorphism extends Morphism
 	}
 	static RemoveStringSvg(from)
 	{
-		const id = StringMorphism.GraphId(from);
+		const id = from.graphId();
 		const svgElt = document.getElementById(id);
 		if (svgElt !== null)
 		{
@@ -11122,16 +11212,16 @@ class StringMorphism extends Morphism
 		}
 		return false;
 	}
-	static Get(graphCat, m)
+	static Get(graphCat, source)
 	{
-		const s = graphCat.getElement(m.name);
-		if (s)
-			return s;
-		return StringMorphism.makeGraph(graphCat, m);
+		const str = graphCat.getElement(source.name);
+		if (str)
+			return str;
+		return new StringMorphism(graphCat, {source});
 	}
-	static GraphId(m)
+	graphId(m)
 	{
-		return `graph_${m.elementId()}`;
+		return `graph_${this.elementId()}`;
 	}
 	static LinkId(data, lnk)
 	{
@@ -11165,6 +11255,7 @@ class StringMorphism extends Morphism
 		return adx < ady ? `M${dom.x},${dom.y} L${cod.x},${cod.y}` : `M${dom.x},${dom.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${cod.x},${cod.y}`;
 	}
 }
+*/
 
 class Evaluation extends Morphism
 {
@@ -11716,14 +11807,16 @@ i++;
 	}
 	showString(from)
 	{
-		const id = StringMorphism.GraphId(from);
-		if (StringMorphism.RemoveStringSvg(from))
+		const id = from.graphId();
+		if (from.removeStringSvg())
 			return;
-		const graphFunctor = R.$CAT.getElement('Graph');
-		const sm = graphFunctor.$$(this, from.to);
+//		const graphFunctor = R.$CAT.getElement('Graph');
+//		const sm = graphFunctor.$$(this, from.to);
+//		const str = StringMorphism.Get(R.GraphCat, from)
+		from.makeGraph();
 		const dom = {x:from.domain.x - from.domain.width/2, y:from.domain.y, name:from.domain.name};
 		const cod = {x:from.codomain.x - from.codomain.width/2, y:from.codomain.y, name:from.codomain.name};
-		const svg = `<g id="${id}">${sm.graph.svg(this, {index:[], dom, cod, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
+		const svg = `<g id="${id}">${from.graph.svg({index:[], dom, cod, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
 		this.svgBase.innerHTML += svg;
 	}
 	updateDragObjects(e)
@@ -12260,7 +12353,7 @@ i++;
 		let exist = false;
 		for(const [name, from] of this.domain.elements)
 			if (Morphism.prototype.isPrototypeOf(from))
-				exist = StringMorphism.RemoveStringSvg(from) || exist;
+				exist = from.removeStringSvg() || exist;
 		if (exist)
 			return;
 		for(const [name, from] of this.domain.elements)
@@ -12581,7 +12674,6 @@ R.protos =
 	ProductMorphism,
 	ProductAssembly,
 	PullbackObject,
-	Sequence,
 	TensorObject,
 	TerminalObject,
 	TerminalMorphism,
