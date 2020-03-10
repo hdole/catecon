@@ -105,8 +105,6 @@ div.intro
 {
 	font-family:	courier;
 	display:		block;
-	/* font:			12px "monospace", sans-serif; */
-	/* margin:			5px; */
 	tab-size:		4;
 	unicode-bidi:	embed;
 	white-space:	pre;
@@ -451,15 +449,6 @@ a:hover, .offcanvas a:focus
 	position:			absolute;
 	z-index:			-1;
 }
-
-/*
-.svgunk
-{
-	stroke:				red;
-	stroke-width:		20px;
-	stroke-miterlimit:	2.61313;
-}
-*/
 
 .sidenavAccordion
 {
@@ -846,42 +835,13 @@ canvas
 
 text.emphasis
 {
-	/*
-  -webkit-animation: emphasis 1s ease-in-out infinite alternate;
-  -moz-animation: emphasis 1s ease-in-out infinite alternate;
-  animation: emphasis 1s ease-in-out infinite alternate;
-		text-shadow: 0 0 10px #f00, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00, 0 0 60px #f00;
-	text-shadow: 1px 1px 10px black, 0 0 30px yellow, 0 0 40px yellow, 0 0 50px yellow, 0 0 60px yellow;
-	stroke-width:	3.5px;
-  */
-	text-shadow:	1px 1px 1px black, 0px 0px 10px blue, 0 0 20px blue, 0 0 30px blue, 0 0 40px blue;
 	stroke:			blue;
 }
 
 path.emphasis
 {
-	/*
-  -webkit-animation: emphasis 1s ease-in-out infinite alternate;
-  -moz-animation: emphasis 1s ease-in-out infinite alternate;
-  animation: emphasis 1s ease-in-out infinite alternate;
-		text-shadow: 0 0 10px #f00, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00, 0 0 60px #f00;
-	text-shadow: 1px 1px 10px black, 0 0 30px yellow, 0 0 40px yellow, 0 0 50px yellow, 0 0 60px yellow;
-  */
-	text-shadow:	1px 1px 1px black, 0px 0px 10px blue, 0 0 20px blue, 0 0 30px blue, 0 0 40px blue;
 	stroke:			blue;
 	stroke-width:	3.5px;
-}
-
-@-webkit-keyframes emphasis
-{
-	from
-	{
-		text-shadow: 0 0 10px #000, 0 0 30px #000, 0 0 40px #000, 0 0 50px #000, 0 0 60px #000;
-	}
-	to
-	{
-		text-shadow: 0 0 10px #f00, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00, 0 0 60px #f00;
-	}
 }
 
 .panelElt
