@@ -2,9 +2,11 @@ console.log('starting worker...');
 
 onmessage = function(e)
 {
+	const start = Date.now();
 	const args = e.data;
 	try
 	{
+		let val = null;
 		switch(args[0])
 		{
 			case 'start':
@@ -18,12 +20,18 @@ onmessage = function(e)
 				LoadEquivalence(args[1], args[2], args[3]);
 				break;
 			case 'CheckEquivalence':
-				CheckEquivalence(args[1], args[2], args[3], args[4]);
+				val = CheckEquivalence(args[1], args[2], args[3], args[4]);
 				break;
 			case 'RemoveEquivalence':
 console.log('remove equivalence');
 				RemoveEquivalence(args[1], args[2]);
 				break;
+		}
+		if (val)
+		{
+			const delta = Date.now() - start;
+			val.push(delta);
+			postMessage(val);
 		}
 	}
 	catch(e)
@@ -42,7 +50,6 @@ const Sig = function(...elts)
 		throw 'no info';
 	else if (elts.length === 1)
 		return elts[0];
-//	return sjcl.hash.sha256.hash(elts.join());
 	return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(elts.join()));
 }
 
@@ -56,56 +63,6 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	leftSigs.add(...rightSigs);		// copy right sigs to left
 	equals.set(leftSig, leftSigs);
 	equals.set(rightSig, leftSigs);	// since equal set is same
-
-		/*
-		if (leftSigs.has(rightSig))
-		{
-			// do nothing, slready processed
-		}
-		else if (equals.has(rightSig))	// merge right sigs to the left
-		{
-			const rightSigs = equals.get(rightSig);
-			rightSigs.add(leftSig);
-//			rightSigs.forEach(function(sig)
-//			{
-//				leftSigs.add(sig);
-//			});
-		}
-		else
-		{
-			leftSigs.add(rightSig);
-		}
-	}
-	else if (equals.has(rightSig))
-	{
-		debugger;
-		const rightSigs = equals.get(rightSig);
-		if (rightSigs.has(leftSig))
-		{
-			// do nothing, slready processed
-		}
-		else if (equals.has(leftSig))	// merge left sigs to the right
-		{
-			const leftSigs = equals.get(leftSig);
-			leftSigs.add(leftSig);
-//			leftSigs.forEach(function(sig)
-//			{
-//				rightSigs.add(sig);
-//			});
-		}
-		else
-		{
-			rightSigs.add(leftSig);
-		}
-	}
-	else
-	{
-		const sigs = new Set([leftSig, rightSig]);
-		equals.set(leftSig, sigs);
-		if (leftSig !== rightSig)
-			equals.set(rightSig, sigs);
-	}
-	*/
 	const fn = function(sig, leg, item)
 	{
 		if (!sig2equivalences.has(sig))
@@ -117,6 +74,7 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	if (leftSig !== rightSig)
 		fn(rightSig, leftLeg, item);
 	equivalences.add([item, leftLeg, rightLeg]);
+	return null;
 }
 
 const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
@@ -140,7 +98,51 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 				}
 			}
 	}
-	postMessage(['CheckEquivalence', diagram, tag, item]);
+	if (!item && leftLeg.length === 3)
+		item = ScanLeg(leftLeg, 0, 2, rightSig);
+	if (!item && rightLeg.length === 3)
+		item = ScanLeg(rightLeg, 0, 2, leftSig);
+//	postMessage(['CheckEquivalence', diagram, tag, item]);
+	return ['CheckEquivalence', diagram, tag, item];
+}
+
+const ScanLeg = function(leg, ndx, cnt, sig)
+{
+	let item = null;
+	const subLeg = leg.slice(ndx, cnt);
+	const subSig = Sig(...subLeg);
+	if (sig2equivalences.has(subSig))
+	{
+		const subSet = sig2equivalences.get(subSig);
+		subSet.forEach(function(s)
+		{
+			const altLeg = s[0];
+			if (altLeg.length < subLeg.length)
+			{
+				const nuLeg = leg.slice(0, ndx);
+				nuLeg.push(...altLeg);
+				if (ndx + cnt < leg.length)
+					nuLeg.push(...leg.slice(ndx + cnt, leg.length - ndx - cnt));
+				const nuSig = Sig(...nuLeg);
+				if (sig === nuSig)
+				{
+					item = s[1];
+				}
+				else
+				{
+					const sigEqus = equals.get(sig);
+					const nuSigEqus = equals.get(nuSig);
+					if (sigEqus.has(nuSig) || nuSigEqus.has(sig))
+					{
+						item = s[1];
+					}
+				}
+				if (item)
+					LoadEquivalence(item, leg, nuLeg);
+			}
+		});
+	}
+	return item;
 }
 
 const RemoveEquivalence = function(leftLeg, rightLeg)
@@ -183,4 +185,5 @@ const RemoveEquivalence = function(leftLeg, rightLeg)
 	{
 		LoadEquivalence(e[0], e[1], e[2]);
 	});
+	return null;
 }
