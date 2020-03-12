@@ -1,5 +1,5 @@
-console.log('starting worker...');
-
+// (C) 2020 Harry Dole
+//
 onmessage = function(e)
 {
 	const start = Date.now();
@@ -23,7 +23,6 @@ onmessage = function(e)
 				val = CheckEquivalence(args[1], args[2], args[3], args[4]);
 				break;
 			case 'RemoveEquivalence':
-console.log('remove equivalence');
 				RemoveEquivalence(args[1], args[2]);
 				break;
 		}
@@ -60,7 +59,7 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set;
 	const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set;
 	leftSigs.add(rightSig);
-	leftSigs.add(...rightSigs);		// copy right sigs to left
+	leftSigs.add(rightSigs);		// copy right sigs to left
 	equals.set(leftSig, leftSigs);
 	equals.set(rightSig, leftSigs);	// since equal set is same
 	const fn = function(sig, leg, item)
@@ -81,32 +80,51 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 {
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
-	const equ = equals.get(leftSig);
 	let item = null;
-	if (equ && equ.has(rightSig))
+	const fn = function(leg, leftSig, rightSig)
 	{
-		const equs = sig2equivalences.get(rightSig);
-		if (equs)
-			for (let i=0; i< equs.length; ++i)
-			{
-				const equ = equs[i];
-				const sig = Sig(...equ[0]);
-				if (sig === leftSig)
+		const equ = equals.get(leftSig);
+		if (equ && equ.has(rightSig))
+		{
+			const equs = sig2equivalences.get(rightSig);
+			if (equs)
+				for (let i=0; i< equs.length; ++i)
 				{
-					item = equ[1];
-					break;
+					const equ = equs[i];
+					const sig = Sig(...equ[0]);
+					if (sig === leftSig)
+					{
+						item = equ[1];
+						break;
+					}
 				}
-			}
+		}
+		return item;
+	};
+	item = fn(leftLeg, leftSig, rightSig);
+	if (!item)
+	{
+		const fn = function(leg, sig)
+		{
+			const len = leg.length;
+			if (len > 2)
+				for (let ndx=0; ndx < len-1; ++ndx)
+					for (let cnt=2; cnt < len - ndx; ++cnt)
+					{
+						item = CheckLeg(leg, ndx, cnt, sig);
+						if (item)
+							return item;
+					}
+			return null;
+		};
+		item = fn(leftLeg, rightSig);
+		if (!item)
+			item = fn(rightLeg, leftSig);
 	}
-	if (!item && leftLeg.length === 3)
-		item = ScanLeg(leftLeg, 0, 2, rightSig);
-	if (!item && rightLeg.length === 3)
-		item = ScanLeg(rightLeg, 0, 2, leftSig);
-//	postMessage(['CheckEquivalence', diagram, tag, item]);
 	return ['CheckEquivalence', diagram, tag, item];
 }
 
-const ScanLeg = function(leg, ndx, cnt, sig)
+const CheckLeg = function(leg, ndx, cnt, sig)
 {
 	let item = null;
 	const subLeg = leg.slice(ndx, cnt);
@@ -125,17 +143,13 @@ const ScanLeg = function(leg, ndx, cnt, sig)
 					nuLeg.push(...leg.slice(ndx + cnt, leg.length - ndx - cnt));
 				const nuSig = Sig(...nuLeg);
 				if (sig === nuSig)
-				{
 					item = s[1];
-				}
 				else
 				{
 					const sigEqus = equals.get(sig);
 					const nuSigEqus = equals.get(nuSig);
 					if (sigEqus.has(nuSig) || nuSigEqus.has(sig))
-					{
 						item = s[1];
-					}
 				}
 				if (item)
 					LoadEquivalence(item, leg, nuLeg);
