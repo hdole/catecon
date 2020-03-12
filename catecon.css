@@ -526,6 +526,7 @@ table.center
 	font:	14px;
 }
 
+/*
 .diagramText:hover
 {
 	margin:		2px;
@@ -534,6 +535,7 @@ table.center
 	fill:		#9fc;
 	stroke:		#0f0;
 }
+*/
 
 .txtCenter
 {
@@ -608,10 +610,12 @@ td.white
 	z-index:	0;
 }
 
+/*
 svg:hover
 {
 	fill:	#333;
 }
+*/
 
 .object
 {
@@ -649,19 +653,18 @@ svg:hover
 	user-select:	none;
 }
 
+/*
 .morphTxt:hover
 {
 	cursor:		pointer;
 	fill:		#9fc;
-	opacity:	.5;
 	stroke:		#0f0;
-	font:		20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:		2px;
 }
+*/
 
 .morphism
 {
-	cursor:			grab;
 	fill:			none;
 	margin:			2px;
 	padding:		2px;
@@ -670,15 +673,12 @@ svg:hover
 	user-select:	none;
 }
 
+/*
 .morphism:hover
 {
-	margin:		2px;
-	padding:	2px;
-	opacity:	.5;
-	/* fill:		#9fc; */
-	file:		none;
 	stroke:		#0f0;
 }
+*/
 
 .fuseMorphism
 {
@@ -689,6 +689,20 @@ svg:hover
 	padding:		2px;
 	stroke-width:	2.5px;
 	user-select:	none;
+}
+
+text.emphasis
+{
+	cursor:		pointer;
+	fill:		#9fc;
+	stroke:		#0f0;
+}
+
+path.emphasis
+{
+	cursor:		pointer;
+	fill:		#9fc;
+	stroke:		#0f0;
 }
 
 .element
@@ -831,17 +845,6 @@ canvas
 	{
 		text-shadow: 0 0 20px #fff, 0 0 30px #f77, 0 0 40px #f77, 0 0 50px #f77, 0 0 60px #f77;
 	}
-}
-
-text.emphasis
-{
-	stroke:			blue;
-}
-
-path.emphasis
-{
-	stroke:			blue;
-	stroke-width:	3.5px;
 }
 
 .panelElt
