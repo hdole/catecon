@@ -1,4 +1,4 @@
-// (C) 2018-2019 Harry Dole
+// (C) 2018-2020 Harry Dole
 // Catecon:  The Categorical Console
 //
 'use strict';
@@ -600,6 +600,20 @@ Create diagrams and execute morphisms.
 			fn && fn();
 		return home;
 	}
+	static LoadScript(url, fn)
+	{
+		const s = document.createElement('script');
+		s.type = 'text/javascript';
+//		s.onload = function(){fn();};
+		s.onload = fn;
+		s.async = true;
+		s.onerror = function()
+		{
+			debugger;
+		}
+		s.src = url;
+		document.getElementsByTagName('head')[0].appendChild(s);
+	}
 	static Initialize()
 	{
 		try
@@ -608,7 +622,6 @@ Create diagrams and execute morphisms.
 			R.workers['equality'] = worker;
 			worker.onmessage = function(msg)
 			{
-				console.log('equality worker', {msg});
 				const args = msg.data;
 				switch(args[0])
 				{
@@ -620,7 +633,8 @@ Create diagrams and execute morphisms.
 						{
 							to.cell = cell;
 							cell.to = to;
-							cell.properName = to.getDecoration();
+//							cell.properName = to.getDecoration();
+							cell.properName = '&#10226;';
 						}
 						else
 //						{
@@ -630,7 +644,7 @@ Create diagrams and execute morphisms.
 //							cell.getObjects().map(o => o.cells.delete(cell));
 //						}
 						const objs = cell.getObjects();
-						objs.map(o => o.cells.add(cell));
+						objs.map(o => o.nodes.add(cell));
 						if (!cell.svg())
 							diagram.addSVG(cell);
 						cell.update();
@@ -816,15 +830,17 @@ Create diagrams and execute morphisms.
 					exports.CatObject =				CatObject;
 					exports.Morphism =				Morphism;
 				}
+				R.Actions.javascript.loadHTML();
 			};
 			const params = (new URL(document.location)).searchParams;
 			if (params.has('boot'))
-				R.Boot(startup);
+				R.LoadScript(window.location.origin + window.location.pathname + 'js/boot.js', function()
+				{
+					Boot(startup);
+				});
+//			R.Boot(startup);
 			else
-			{
 				startup();
-				R.Actions.javascript.loadHTML();
-			}
 		}
 		catch(e)
 		{
@@ -973,714 +989,6 @@ Create diagrams and execute morphisms.
 		args.xy = new D2(nuArgs.xy);
 		args.rowCount = nuArgs.rowCount;
 		return e;
-	}
-	static Boot(fn)
-	{
-		const user = 'hdole';
-		const side = D.Grid(new D2(0, 4 * D.default.layoutGrid));
-		const pfs = R.$CAT.getElement('PFS');
-		let userDiagram = R.GetUserDiagram(user);
-		const args =
-		{
-			user,
-			xy:			new D2(300,300),
-			side,
-			rows:		8,
-			rowCount:	0,
-		};
-		//
-		// basics
-		//
-		const basics = new Diagram(userDiagram,
-		{
-			codomain:		pfs,
-			basename:		'Basics',
-			properName:		'Basics',
-			description:	'Basic objects for interacting with the real world',
-			user,
-		});
-		args.diagram = basics;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		basics.makeSvg(false);
-		R.AddDiagram(basics);
-		R.Autoplace(basics,
-		{
-			description:	'This diagram contains initial and terminal objects\nas well as objects for interacting with the real world.\nIn other words, device drivers',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-		args.xy.y += 16 * D.default.layoutGrid;
-		const zero = InitialObject.Get(basics);	// creates if need be
-		const one = TerminalObject.Get(basics);	// creates if need be
-		R.PlaceObject(args, zero);
-		R.PlaceObject(args, one);
-		const tty = R.MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
-		D.ShowDiagram(basics);
-		basics.home(false);
-		basics.update();
-		//
-		// logic
-		//
-		const logic = new Diagram(userDiagram,
-		{
-			codomain:		pfs,
-			basename:		'Logic',
-			properName:		'&Omega; Logic',
-			description:	'Basic logic functions',
-			references:		[basics],
-			user,
-		});
-		args.diagram = logic;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		logic.makeSvg(false);
-		R.AddDiagram(logic);
-		R.Autoplace(logic,
-		{
-			description:	'This diagram contains typical logic objects and morphisms',
-			prototype:		'DiagramText',
-			user,
-			properName:		'&Omega;',
-		}, args.xy);
-		args.xy.y += 16 * D.default.layoutGrid;
-		const two = ProductObject.Get(logic, [one, one], true);
-		const omega = new NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
-		const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
-		args.rowCount++;
-		args.xy.y += 16 * D.default.layoutGrid;
-		const id2 = new DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
-		const omegaPair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
-		const mTrue = R.MakeMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true', one, omega, {js:'return true;'}).to;
-		const mFalse = R.MakeMorphism(args, 'false', 'Morphism', '&perp;', 'The truth value known as false', one, omega, {js:'return false;'}).to;
-		const logicNot = R.MakeMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value', omega, omega, {js:'return !args;'}).to;
-		const logicAnd = R.MakeMorphism(args, 'and', 'Morphism', '&and;', 'The logical and of two logic values', omegaPair, omega, {js:'return args[0] && args[1];'}).to;
-		const logicOr = R.MakeMorphism(args, 'or', 'Morphism', '&or;', 'The logical or of two logic values', omegaPair, omega, {js:'return args[0] || args[1];'}).to;
-		R.DiagramReferences(user, logic, args.xy);
-		D.ShowDiagram(logic);
-		logic.home(false);
-		logic.update();
-		//
-		// N arithemtic
-		//
-		const Narith = new Diagram(userDiagram,
-		{
-			description:	'Arithmetic functions for natural numbers',
-			codomain:		pfs,
-			basename:		'Narithmetics',
-			properName:		'&Nopf; Arithmetic',
-			references:		[logic],
-			user,
-		});
-		args.diagram = Narith;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		Narith.makeSvg(false);
-		R.AddDiagram(Narith);
-		R.Autoplace(Narith,
-		{
-			description:	'Basic morphisms for natural numbers are given here',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const N = R.MakeObject(args, 'N', 'CatObject', '<tspan class="bold">&Nopf;</tspan>', 'The natural numbers').to;
-		const Nzero = R.MakeMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N, {js:'return 0;'}).to;
-		const None = R.MakeMorphism(args, 'one', 'Morphism', '1', 'The natural number one', one, N, {js:'return 1;'}).to;
-		const Ninfinity = R.MakeMorphism(args, 'infinity', 'Morphism', '&infin;', 'The maximum safe natural number', one, N, {js:'return Number.MAX_SAFE_INTEGER;'}).to;
-		const Npair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of natural numbers', {objects:[N, N]}).to;
-		const Nadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two natural numbers', Npair, N, {js:'return args[0] + args[1];'}).to;
-		const Nmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two natural numbers', Npair, N, {js:'return args[0] * args[1];'}).to;
-		const Nsucc = R.MakeMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the natural numbers', N, N, {js:'return args + 1;'}).to;
-		const Ndecr = R.MakeMorphism(args, 'decrement', 'Morphism', 'decr', 'The decrement function for the natural numbers', N, N, {js:'return args > 0 ? args - 1 : 0;'}).to;
-		const Nless = R.MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first natural number less than the second', Npair, omega, {js:'return args[0] < args[1];'}).to;
-		const NlessEq = R.MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first natural number less than or equal to the second', Npair, omega, {js:'return args[0] <= args[1];'}).to;
-		const Nequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two natural numbers for equality', Npair, omega, {js:'return args[0] === args[1];'}).to;
-		R.DiagramReferences(user, Narith, args.xy);
-		D.ShowDiagram(Narith);
-		Narith.home(false);
-		Narith.update();
-		//
-		// integers
-		//
-		const integers = new Diagram(userDiagram,
-		{
-			description:	'Arithmetic functions for integers',
-			codomain:		pfs,
-			basename:		'Integers',
-			properName:		'&Zopf; Arithmetic',
-			references:		[Narith],
-			user,
-		});
-		args.diagram = integers;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		integers.makeSvg(false);
-		R.AddDiagram(integers);
-		R.Autoplace(integers,
-		{
-			description:	'Basic morphisms for the integers are given here',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const Z = R.MakeObject(args, 'Z', 'CatObject', '<tspan class="bold">&Zopf;</tspan>', 'The integers').to;
-		const N2Z = R.MakeMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z, {js:'return args;'}).to;
-		const Zabs = R.MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of an integer is a natural number', Z, N, {js:'return Math.abs(args);'}).to;
-		const Zzero = R.MakeMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, Z, {js:'return 0;'}).to;
-		const ZminusOne = R.MakeMorphism(args, 'minusOne', 'Morphism', '&lsquo;-1&rsquo;', 'The first interesting integer: minus one', one, Z, {js:'return -1;'}).to;
-		const Zpair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of integers', {objects:[Z, Z]}).to;
-		const Zadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two integers', Zpair, Z, {js:'return args[0] + args[1];'}).to;
-		const Zsubtract = R.MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two integers', Zpair, Z, {js:'return args[0] - args[1];'}).to;
-		const Zmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two integers', Zpair, Z, {js:'return args[0] * args[1];'}).to;
-		const ZplusOne = R.MakeObject(args, '', 'ProductObject', '', 'An integer or an exception', {objects:[Z, one]}, {dual:true}).to;
-		const Zdiv = R.MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two integers or an exception', Zpair, ZplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	if (args[1] === 0)
-		return [1, 0];
-	return [0, args[0] / args[1]];
-}
-`			},
-		}).to;
-		const Zsucc = R.MakeMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the integers', Z, Z, {js:'return args + 1;'});
-		const Zmodulus = R.MakeMorphism(args, 'modulus', 'Morphism', '%', 'The modulus of two integers or an exception', Zpair, ZplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	if (args[1] === 0)
-		return [1, 0];
-	return [0, args[0] % args[1]];
-}
-`			},
-		});
-		const Zless = R.MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given integer number less than the second', Zpair, omega, {js:'return args[0] < args[1];'});
-		const ZlessEq = R.MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first integer less than or equal to the second', Zpair, omega, {js:'return args[0] <= args[1];'});
-		const Zequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two integers for equality', Zpair, omega, {js:'return args[0] === args[1];'});
-		R.DiagramReferences(user, integers, args.xy);
-		D.ShowDiagram(integers);
-		integers.home(false);
-		integers.update();
-		//
-		// floating point
-		//
-		const floats = new Diagram(userDiagram,
-		{
-			description:	'Floating point artihmetic functions',
-			codomain:		pfs,
-			basename:		'floats',
-			properName:		'&Fopf; Arithmetic',
-			references:		[integers],
-			user,
-		});
-		args.diagram = floats;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		floats.makeSvg(false);
-		R.AddDiagram(floats);
-		R.Autoplace(floats,
-		{
-			description:	'Basic floating point morphisms are given here',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const F = R.MakeObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers').to;
-		const Fzero = R.MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero', one, F, {js:'return 0.0;'}).to;
-		const Fe = R.MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F, {js:'return Math.E;'}).to;
-		const Frandom = R.MakeMorphism(args, 'random', 'Morphism', '?', 'a random number between 0.0 and 1.0', one, F, {js:'return Math.random();'}).to;
-		const Fnl10 = R.MakeMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, F, {js:'return Math.PI;'}).to;
-		const Z2F = R.MakeMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F, {js:'return args;'}).to;
-		const Fabs = R.MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a floating point number', F, F, {js:'return Math.abs(args);'}).to;
-		const Fpair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of floating point numbers', {objects:[F, F]}).to;
-		const Fadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two floating point numbers', Fpair, F, {js:'return args[0] + args[1];'}).to;
-		const Fsubtract = R.MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two floating point numbers', Fpair, F, {js:'return args[0] - args[1];'}).to;
-		const Fmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two floating point numbers', Fpair, F, {js:'return args[0] * args[1];'}).to;
-		const FplusOne = R.MakeObject(args, '', 'ProductObject', '', 'A floating point number or an exception', {objects:[F, one]}, {dual:true}).to;
-		const Fdiv = R.MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two floating point numbers or an exception', Fpair, FplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	if (args[1] === 0)
-		return [1, 0];
-	return [0, args[0] / args[1]];
-}
-`			},
-		}).to;
-		const Fmodulus = R.MakeMorphism(args, 'modulus', 'Morphism', '%', 'The modulus of two floating point numbers or an exception', Fpair, FplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	if (args[1] === 0)
-		return [1, 0];
-	return [0, args[0] % args[1]];
-}
-`			},
-		}).to;
-		const Fless = R.MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given floating point number less than the second', Fpair, omega, {js:'return args[0] < args[1];'}).to;
-		const FlessEq = R.MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first floating point number less than or equal to the second', Fpair, omega, {js:'return args[0] <= args[1];'}).to;
-		const Fequals = R.MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two floating point numbers for equality', Fpair, omega, {js:'return args[0] === args[1];'}).to;
-		const ceil = R.MakeMorphism(args, 'ceil', 'Morphism', 'ceil', 'The smallest integer greater than or equal to a given floating point number', F, Z, {js:'return Math.ceil(args);'}).to;
-		const round = R.MakeMorphism(args, 'round', 'Morphism', 'round', 'The nearest integer to a given floating point number', F, Z, {js:'return Math.round(args);'}).to;
-		const floor = R.MakeMorphism(args, 'floor', 'Morphism', 'floor', 'The greatest integer smaller than or equal to a given floating point number', F, Z, {js:'return Math.floor(args);'}).to;
-		const truncate = R.MakeMorphism(args, 'truncate', 'Morphism', 'trunc', 'The integer portion of a floating point number', F, Z, {js:'return Math.trunc(args);'}).to;
-		const log = R.MakeMorphism(args, 'log', 'Morphism', 'log', 'the natural logarithm of a given floating point number or an exception', F, FplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	if (args <= 0.0)
-		return [1, 0];
-	return [0, Math.log(args)];
-}
-`
-			},
-		}).to;
-		const Fpow = R.MakeMorphism(args, 'pow', 'Morphism', 'x&#x02b8;', 'raise the first number to the second number as exponent or an exception', Fpair, FplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	if (args[0] === 0 && args[1] === 0)
-		return [1, 0];
-	return [0, Math.pow(args[0], args[1])];
-}
-`
-			},
-		}).to;
-		const Flist = R.MakeObject(args, '', 'HomObject', '', 'A list of floating point numbers', {objects:[N, F]}).to;
-		const Fmax = R.MakeMorphism(args, 'max', 'Morphism', 'max', 'The maximum floating point number of the given list', Flist, F, {js:'return Math.max(...args);'}).to;
-		const Fmin = R.MakeMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F, {js:'return Math.min(...args);'}).to;
-		R.DiagramReferences(user, floats, args.xy);
-		D.ShowDiagram(floats);
-		floats.home(false);
-		floats.update();
-		//
-		// complex numbers
-		//
-		const complex = new Diagram(userDiagram,
-		{
-			description:	'complex artihmetic functions',
-			codomain:		pfs,
-			basename:		'complex',
-			properName:		'&Copf; Arithmetic',
-			references:		[floats],
-			user,
-		});
-		args.diagram = complex;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		complex.makeSvg(false);
-		R.AddDiagram(complex);
-		R.Autoplace(complex,
-		{
-			description:	'A complex number is a pair of floating point numbers.',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const C = new NamedObject(complex, {basename:'C', properName:'&Copf;', source:Fpair});
-		const C2Fpair = complex.placeMorphism(null, C.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
-		args.rowCount++;
-		args.xy.y += 16 * D.default.layoutGrid;
-		const Cid2 = new DiagramMorphism(complex, {to:C.idTo, domain:C2Fpair.codomain, codomain:C2Fpair.domain});
-		const Czero = R.MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The complex number zero', one, C, {js:'return 0.0;'}).to;
-		const Ce = R.MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, C, {js:'return [Math.E, 0];'}).to;
-		const Creal = R.MakeMorphism(args, 'real', 'Morphism', 'real', 'the real part of a complex numbers', C, F, {js:'return args[0];'}).to;
-		const Cimag = R.MakeMorphism(args, 'imag', 'Morphism', 'imag', 'the imaginary part of a complex numbers', C, F, {js:'return args[1];'}).to;
-		const F2C = R.MakeMorphism(args, 'F2C', 'Morphism', '&sub;', 'every floating point number is a complex number', F, C, {js:'return [args, 0];'}).to;
-		const conjugate = R.MakeMorphism(args, 'conjugate', 'Morphism', '&dagger;', 'conjugate of a complex number', C, C, {js:'return [args[0], -args[1]];'}).to;
-		const Cabs = R.MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a complex number', C, F, {js:'return Math.sqrt(args[0] * args[0] + args[1] * args[1]);'}).to;
-		const Cpair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of complex numbers', {objects:[C, C]}).to;
-		const Cadd = R.MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two complex numbers', Cpair, C, {js:'return [args[0][0] + args[1][0], args[0][1] + args[1][1]];'}).to;
-		const Csubtract = R.MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two complex numbers', Cpair, C, {js:'return [args[0][0] - args[1][0], args[0][1] - args[1][1]];'}).to;
-		const Cmult = R.MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two complex numbers', Cpair, C,
-			{js:'return [args[0][0] * args[1][0] - args[0][1] * args[1][1], args[0][0] * args[1][1] + args[0][1] * args[1][0]];'}).to;
-		const CplusOne = R.MakeObject(args, '', 'ProductObject', '', 'A complex number or an exception', {objects:[C, one]}, {dual:true}).to;
-		const Cdiv = R.MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two complex numbers or an exception', Cpair, CplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	const x = args[1][0];
-	const y = args[1][1];
-	const n = x * x + y * y;
-	if (n === 0.0)
-		return [1, [0, 0]];		// exception
-	return [0, [(args[0][0] * x + args[0][1] * y) / n, (args[0][0] * y - args[0][1] * x) / n]];
-}
-`			},
-		}).to;
-		const Cpow = R.MakeMorphism(args, 'pow', 'Morphism', 'x&#x02b8;', 'raise the first number to the second number as exponent or an exception', Cpair, CplusOne,
-		{
-			code:			{javascript:
-`function %1(args)
-{
-	if (args[0] === 0 && args[1] === 0)
-		return [1, 0];
-	return [0, Math.pow(args[0], args[1])];
-}
-`
-			},
-		}).to;
-		const Clist = R.MakeObject(args, '', 'HomObject', '', 'A list of complex numbers', {objects:[N, C]}).to;
-		R.DiagramReferences(user, complex, args.xy);
-		D.ShowDiagram(complex);
-		complex.home(false);
-		complex.update();
-		//
-		// Strings
-		//
-		const strings = new Diagram(userDiagram,
-		{
-			description:	'functions for strings',
-			codomain:		pfs,
-			basename:		'Strings',
-			properName:		'Strings',
-			references:		[floats],
-			user,
-		});
-		args.diagram = strings;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		strings.makeSvg(false);
-		R.AddDiagram(strings);
-		R.Autoplace(strings,
-		{
-			description:	'Basic morphisms for strings are given here as well as\nvarious conversion functions from and to basic types',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const str = R.MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings').to;
-		const strPair = R.MakeObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]}).to;
-		const emptyString = new DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
-		R.PlaceMorphism(args, emptyString);
-		const strLength = R.MakeMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N, {js:'return args.length;'}).to;
-		const strAppend = R.MakeMorphism(args, 'append', 'Morphism', '&bull;', 'append two strings', strPair, str, {js:'return args[0].concat(args[1]);'}).to;
-		const strIncludes = R.MakeMorphism(args, 'includes', 'Morphism', 'includes', 'is the first string included in the second', strPair, omega, {js:'return args[1].includes(args[0]);'}).to;
-		const strIndexOf = R.MakeMorphism(args, 'indexOf', 'Morphism', '@', 'where in the first string is the second', strPair, Z, {js:'return args[0].indexOf(args[1]);'}).to;
-		const strList = R.MakeObject(args, '', 'HomObject', '', 'A list of strings', {objects:[N, str]}).to;
-		const strListStr = new ProductObject(strings, {objects:[strList, str]});
-		const strJoin = R.MakeMorphism(args, 'join', 'Morphism', 'join', 'join a list of strings into a single string with another string as the conjunction', strListStr, str, {js:'// TODO'}).to;
-		const strN = new ProductObject(strings, {objects:[str, N]});
-		const strCharAt = R.MakeMorphism(args, 'charAt', 'Morphism', '@', 'the n\'th character in the string', strN, str, {js:'return args[0].charAt(args[1]);'}).to;
-		const N2str = R.MakeMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str, {js:'return args.toString();'}).to;
-		const Z2str = R.MakeMorphism(args, 'Z2str', 'Morphism', '&lsquo;&rsquo;', 'convert an integer to a string', Z, str, {js:'return args.toString();'}).to;
-		const F2str = R.MakeMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str, {js:'return args.toString();'}).to;
-		const str2tty = R.MakeMorphism(args, 'str2tty', 'Morphism', '&#120451;&#120451;&#120456;', 'emit the string to the TTY', str, tty,
-		{
-			code:			{javascript:
-`
-function %1(args)
-{
-	postMessage(['str2tty', args]);
-}
-`			},
-		}).to;
-		R.DiagramReferences(user, strings, args.xy);
-		D.ShowDiagram(strings);
-		strings.home(false);
-		strings.update();
-		//
-		// htmlDiagram
-		//
-		const htmlDiagram = new Diagram(userDiagram,
-		{
-			codomain:		pfs,
-			basename:		'HTML',
-			properName:		'HTML',
-			description:	'Basic HTML input and output',
-			references:		[strings],
-			user,
-		});
-		args.diagram = htmlDiagram;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		htmlDiagram.makeSvg(false);
-		R.AddDiagram(htmlDiagram);
-		R.Autoplace(htmlDiagram,
-		{
-			description:	'Various HTML input and output morphisms are found here',
-			prototype:		'DiagramText',
-			user,
-			properName:		'&Omega;',
-		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const html = R.MakeObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices').to;
-		const html2N = R.MakeMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
-			{js:
-`const v = document.getElementById(args).value;
-	if (v === '')
-		throw 'no input';
-	const r = Number.parseInt(v);
-	return r;
-`,
-			}).to;
-		const html2Z = R.MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
-			{js:`return Number.parseInt(document.getElementById(args).value);`}).to;
-		const html2F = R.MakeMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
-			{js:`return Number.parseFloat(document.getElementById(args).value);`}).to;
-		const html2Str = R.MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
-			{js:`return document.getElementById(args).value;`}).to;
-		const html2omega = R.MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
-		const N_html2str = LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
-		R.PlaceMorphism(args, N_html2str);
-		const strXN_html2str = ProductObject.Get(args.diagram, [str, N_html2str.codomain]);
-		const html2line = R.MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
-			{js:`return ['<input type="text" id="' + args + '" value="" placeholder="Text"/>', ${U.JsName(N_html2str)}]`}).to;
-		const N_html2N = LambdaMorphism.Get(args.diagram, html2N, [], [0]);
-		R.PlaceMorphism(args, N_html2N);
-		const strXN_html2N = ProductObject.Get(args.diagram, [str, N_html2N.codomain]);
-		const html2Nat = R.MakeMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
-			{js:`return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${U.JsName(N_html2N)}];`}).to;
-		const N_html2Z = LambdaMorphism.Get(args.diagram, html2Z, [], [0]);
-		R.PlaceMorphism(args, N_html2Z);
-		const strXN_html2Z = ProductObject.Get(args.diagram, [str, N_html2Z.codomain]);
-		const html2Int = R.MakeMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
-			{js:`return ['<input type="number" id="' + args + '" value="0" placeholder="Integer"/>', ${U.JsName(N_html2Z)}];`}).to;
-		const N_html2F = LambdaMorphism.Get(args.diagram, html2F, [], [0]);
-		R.PlaceMorphism(args, N_html2F);
-		const strXN_html2F = ProductObject.Get(args.diagram, [str, N_html2F.codomain]);
-		const html2Float = R.MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
-			{js:`return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${U.JsName(N_html2F)}];`}).to;
-		R.DiagramReferences(user, htmlDiagram, args.xy);
-		D.ShowDiagram(htmlDiagram);
-		htmlDiagram.home(false);
-		htmlDiagram.update();
-		//
-		// 3D diagram
-		//
-		const threeD = new Diagram(userDiagram,
-		{
-			codomain:		pfs,
-			basename:		'threeD',
-			properName:		'3D',
-			description:	'Three dimensional object and morphisms',
-			references:		[strings],
-			user,
-		});
-		args.diagram = threeD;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		threeD.makeSvg(false);
-		R.AddDiagram(threeD);
-		R.Autoplace(threeD,
-		{
-			description:	'Various 3-D morphisms are found here',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-args.xy.y += 16 * D.default.layoutGrid;
-		const d3 = R.MakeObject(args, 'threeD', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices').to;
-		const f2d3 = R.MakeMorphism(args, 'f2d3', 'Morphism', '1D', 'visualize a number in 3D', F, d3,
-		{
-			code:	{javascript:
-`
-function %1(args)
-{
-	postMessage(['f2d3', args]);
-}
-`
-			},
-		});
-		const ff2d3 = R.MakeMorphism(args, 'ff2d3', 'Morphism', '2D', 'visualize a pair of numbers in 3D', Fpair, d3,
-		{
-			code:	{javascript:
-`
-function %1(args)
-{
-	postMessage(['ff2d3', args]);
-}
-`
-			},
-		});
-		const Ftrip = ProductObject.Get(threeD, [F, F, F]);
-		const f3 = new NamedObject(threeD, {basename:'F3', properName:'&Fopf;&sup3', source:Ftrip});
-		const f3toFtrip = threeD.placeMorphism(threeD, f3.idFrom, args.xy, args.xy.add(D.default.stdArrow), false);
-		args.rowCount++;
-		args.xy.y += 16 * D.default.layoutGrid;
-		const ftripTof3 = new DiagramMorphism(threeD, {to:f3.idTo, domain:f3toFtrip.codomain, codomain:f3toFtrip.domain});
-		threeD.addSVG(ftripTof3);
-		const fff2d3 = R.MakeMorphism(args, 'fff2d3', 'Morphism', '3D', 'visualize a triplet of numbers in 3D', f3, d3,
-		{
-			code:	{javascript:
-`
-function %1(args)
-{
-	postMessage(['fff2d3', args]);
-}
-`
-			},
-		});
-		const Ftrip2 = ProductObject.Get(threeD, [f3, f3]);
-		const fff2toline = R.MakeMorphism(args, 'fff2toLine', 'Morphism', 'Line', 'visualize two points as a line in 3D', Ftrip2, d3,
-		{
-			code:	{javascript:
-`
-function %1(args)
-{
-	postMessage(['fff2toLine', args]);
-}
-`
-			},
-		});
-		const Ftrip3 = ProductObject.Get(threeD, [f3, f3, f3]);
-		const AxAxAToQuadraticBezierCurve3= R.MakeMorphism(args, 'fff2toQB3', 'Morphism', '1D', 'visualize three points as a Bezier curbe in 3D', Ftrip3, d3,
-		{
-			code:	{javascript:
-`
-function %1(args)
-{
-	postMessage(['fff2toQB3', args]);
-}
-`
-			},
-		});
-		R.DiagramReferences(user, threeD, args.xy);
-		D.ShowDiagram(threeD);
-		threeD.home(false);
-		threeD.update();
-		/*
-		//
-		// quantum cat
-		//
-		const qCat = new Category(R.$CAT,
-			{
-				basename:'Qu',
-				user,
-				properName:'&Qopf;&uopf;',
-				actionDiagrams:	['tensor'],
-			});
-			*/
-		//
-		// quantum gates
-		//
-		const qGates = new Diagram(userDiagram,
-		{
-			codomain:		pfs,
-			basename:		'gates',
-			properName:		'Gates',
-			description:	'Quantum gates',
-			user,
-		});
-		args.diagram = qGates;
-		args.rowCount = 0;
-		args.xy = new D2(300, 300);
-		qGates.makeSvg(false);
-		R.AddDiagram(qGates);
-		R.Autoplace(qGates,
-		{
-			description:	'Basic quantum gates are given here.',
-			prototype:		'DiagramText',
-			user,
-		}, args.xy);
-		args.xy.y += 16 * D.default.layoutGrid;
-		const qubit = R.MakeObject(args, 'q', 'CatObject', '&Qopf;', 'The quantum qubit').to;
-		const qPair = R.MakeObject(args, '', 'TensorObject', '', 'A pair of qubits', {objects:[qubit, qubit]}).to;
-		const qId = R.MakeMorphism(args, 'id', 'Identity', 'id', 'identity', qubit, qubit,
-		{
-			code:	{javascript:
-`
-const oSqrt2 = 1/Math.SQRT2;
-function matrix_multiply(m1, m2)
-{
-    let result = [];
-    for (let i=0; i<m1.length; i++)
-	{
-        result[i] = [];
-        for (let j=0; j<m2[0].length; j++)
-		{
-            let sum = 0;
-            for (let k=0; k<m1[0].length; k++)
-                sum += m1[i][k] * m2[k][j];
-            result[i][j] = sum;
-        }
-    }
-    return result;
-}
-%1_matrix = [	[[1, 0], [0, 0]],
-				[[0, 0], [1, 0]]];
-function %1(args)
-{
-	return matrix_multiply(%1_matrix, args);
-}
-`
-			},
-		});
-		const basis0 = R.MakeMorphism(args, 'basis0', 'Morphism', '&VerticalBar;0&RightAngleBracket;', 'the 0 basis vector', one, qubit,
-		{
-			code:	{javascript:
-`
-function %1(args)
-{
-	return [1, [0, 0]];
-}
-`
-			},
-		});
-		const pauliX = R.MakeMorphism(args, 'X', 'Morphism', 'X', 'Pauli-X gate', qubit, qubit,
-		{
-			code:	{javascript:
-`
-%1_matrix = [	[[0, 0],	[1, 0]],
-				[[1, 0],	[0, 0]]];
-function %1(args)
-{
-	return matrix_multiply(%1_matrix, args);
-}
-`
-			},
-		});
-		const pauliY = R.MakeMorphism(args, 'Y', 'Morphism', 'Y', 'Pauli-Y gate', qubit, qubit,
-		{
-			code:	{javascript:
-`
-%1_matrix = [	[[0, 0],	[0, -1]],
-				[[0, 1],	[0, 0]]];
-function %1(args)
-{
-	return matrix_multiply(%1_matrix, args);
-}
-`
-			},
-		});
-		const pauliZ = R.MakeMorphism(args, 'Z', 'Morphism', 'Z', 'Pauli-Z gate', qubit, qubit,
-		{
-			code:	{javascript:
-`
-%1_matrix = [	[[1, 0],	[0, 0]],
-				[[0, 0],	[-1, 0]]];
-function %1(args)
-{
-	return matrix_multiply(%1_matrix, args);
-}
-`
-			},
-		});
-		const hademard = R.MakeMorphism(args, 'H', 'Morphism', 'H', 'hademard gate', qubit, qubit,
-		{
-			code:	{javascript:
-`
-%1_matrix = [	[[oSqrt2, 0],	[oSqrt2, 0]],
-				[[oSqrt2, 0],	[-oSqrt2, 0]]];
-function %1(args)
-{
-	return matrix_multiply(%1_matrix, args);
-}
-`
-			},
-		});
-		D.ShowDiagram(qGates);
-		qGates.home(false);
-		qGates.update();
-		D.ShowDiagram(null);
-		fn && R.Actions.javascript.loadHTML(fn);
 	}
 	static SaveLocal(diagram, savePng = true, updateTime = true)
 	{
@@ -1999,12 +1307,9 @@ function %1(args)
 		const leftSigs = leftLeg.map(m => m.signature);
 		const rightSigs = rightLeg.map(m => m.signature);
 		R.LoadEquivalentSigs(item, leftSigs, rightSigs)
-
 	}
 	static LoadEquivalentSigs(item, leftSigs, rightSigs)
 	{
-//if (leftSigs[0] === 'a7d2db81075ea8add67665ba45fbb59dd94be96b552a40203cd1a73946728405')debugger;
-//if (rightSigs[0] === 'a7d2db81075ea8add67665ba45fbb59dd94be96b552a40203cd1a73946728405')debugger;
 		R.workers.equality.postMessage(['LoadEquivalence', item.name, leftSigs, rightSigs]);
 	}
 	static RemoveEquivalence(leftLeg, rightLeg)
@@ -2527,19 +1832,19 @@ class Navbar
 		this.diagram = null;
 		const sz = D.default.button.large;
 		const left =
-			H.td(H.div(D.GetButton('diagram', "D.diagramPanel.toggle()", 'Diagrams', sz))) +
-			H.td(H.div(D.GetButton('category', "D.categoryPanel.toggle()", 'Categories', sz))) +
-			H.td(H.div(D.GetButton('object', "D.objectPanel.toggle()", 'Objects', sz))) +
-			H.td(H.div(D.GetButton('morphism', "D.morphismPanel.toggle()", 'Morphisms', sz))) +
-			H.td(H.div(D.GetButton('text', "D.textPanel.toggle()", 'Text', sz))) +
-			H.td(H.div(D.GetButton('string', "R.diagram.showGraph(event)", 'Graph', sz)));
+			H.td(H.div(D.GetButton('diagram', "Cat.D.diagramPanel.toggle()", 'Diagrams', sz))) +
+			H.td(H.div(D.GetButton('category', "Cat.D.categoryPanel.toggle()", 'Categories', sz))) +
+			H.td(H.div(D.GetButton('object', "Cat.D.objectPanel.toggle()", 'Objects', sz))) +
+			H.td(H.div(D.GetButton('morphism', "Cat.D.morphismPanel.toggle()", 'Morphisms', sz))) +
+			H.td(H.div(D.GetButton('text', "Cat.D.textPanel.toggle()", 'Text', sz))) +
+			H.td(H.div(D.GetButton('string', "Cat.R.diagram.showGraph(event)", 'Graph', sz)));
 		const right =
-			H.td(H.div(D.GetButton('cateapsis', "D.Home()", 'Home', sz))) +
-			H.td(H.div(D.GetButton('threeD', "D.threeDPanel.toggle()", '3D view', sz))) +
-			H.td(H.div(D.GetButton('tty', "D.ttyPanel.toggle()", 'Console', sz))) +
-			H.td(H.div(D.GetButton('help', "D.helpPanel.toggle()", 'Help', sz))) +
-			H.td(H.div(D.GetButton('login', "D.loginPanel.toggle()", 'Login', sz))) +
-			H.td(H.div(D.GetButton('settings', "D.settingsPanel.toggle()", 'Settings', sz))) +
+			H.td(H.div(D.GetButton('cateapsis', "Cat.D.Home()", 'Home', sz))) +
+			H.td(H.div(D.GetButton('threeD', "Cat.D.threeDPanel.toggle()", '3D view', sz))) +
+			H.td(H.div(D.GetButton('tty', "Cat.D.ttyPanel.toggle()", 'Console', sz))) +
+			H.td(H.div(D.GetButton('help', "Cat.D.helpPanel.toggle()", 'Help', sz))) +
+			H.td(H.div(D.GetButton('login', "Cat.D.loginPanel.toggle()", 'Login', sz))) +
+			H.td(H.div(D.GetButton('settings', "Cat.D.settingsPanel.toggle()", 'Settings', sz))) +
 			H.td('&nbsp;&nbsp;&nbsp;');		// TODO for weird spacing problem with navbar
 		const html = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
 									H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
@@ -3013,7 +2318,7 @@ class D
 			if (a.hasForm(R.diagram, diagram.selected))
 				header += D.formButton(a.icon, `R.diagram.${'html' in a ? 'actionHtml' : 'activate'}(event, '${a.name}')`, a.description);
 		});
-		header += D.GetButton('close', 'D.HideToolbar()', 'Close');
+		header += D.GetButton('close', 'Cat.D.HideToolbar()', 'Close');
 		D.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
 		D.Drag(D.toolbar, 'toolbar-drag-handle');
 		D.toolbar.style.display = 'block';
@@ -3369,7 +2674,7 @@ ${button}
 			found[m.name] = true;
 			const act = action !== null ? action.replace(/%1/g, m.name) : '';
 			html += H.tr(H.td(m.properName) + H.td(m.domain.properName) + H.td('&rarr;') + H.td(m.codomain.properName),
-				`${drag ? 'grabbable ' : ''}sidenavRow`, '', U.Formal(m.description), drag ? `draggable="true" ondragstart="D.morphismPanel.drag(event, '${m.name}')" ${act}` : act);
+				`${drag ? 'grabbable ' : ''}sidenavRow`, '', U.Formal(m.description), drag ? `draggable="true" ondragstart="Cat.D.morphismPanel.drag(event, '${m.name}')" ${act}` : act);
 		}
 		return html;
 	}
@@ -4054,7 +3359,7 @@ class NewCategorySection extends Section
 					H.span('Actions: ', 'smallBold') + H.span(homActions.join(', ')), 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-monoid', '', '', 'in100', 'checkbox') + '<label for="category-new-monoid">Monoid</label>', 'left'), 'sidenavRow') +
 				H.tr(H.td(D.Input('', 'category-new-naturalNumbers', '', '', 'in100', 'checkbox') + '<label for="category-new-naturalNumbers">Natural numbers</label>', 'left'), 'sidenavRow'), 'sidenav') +
-			H.span(D.GetButton('edit', 'D.categoryPanel.Create()', 'Create new category')) + H.br() +
+			H.span(D.GetButton('edit', 'Cat.D.categoryPanel.Create()', 'Create new category')) + H.br() +
 			H.span('', 'error', 'category-new-error');
 		this.error = document.getElementById('category-new-error');
 		this.basenameElt = document.getElementById('category-new-basename');
@@ -4209,13 +3514,13 @@ class ThreeDPanel extends Panel
 								H.tr(
 									this.closeBtnCell() +
 									this.expandPanelBtn() +
-									H.td(D.GetButton('delete', "D.threeDPanel.initialize()", 'Clear display'), 'buttonBar') +
-									H.td(D.GetButton('threeD_left', "D.threeDPanel.view('left')", 'Left'), 'buttonBar') +
-									H.td(D.GetButton('threeD_top', "D.threeDPanel.view('top')", 'Top'), 'buttonBar') +
-									H.td(D.GetButton('threeD_back', "D.threeDPanel.view('back')", 'Back'), 'buttonBar') +
-									H.td(D.GetButton('threeD_right', "D.threeDPanel.view('right')", 'Right'), 'buttonBar') +
-									H.td(D.GetButton('threeD_bottom', "D.threeDPanel.view('bottom')", 'Bottom'), 'buttonBar') +
-									H.td(D.GetButton('threeD_front', "D.threeDPanel.view('front')", 'Front'), 'buttonBar')
+									H.td(D.GetButton('delete', "Cat.D.threeDPanel.initialize()", 'Clear display'), 'buttonBar') +
+									H.td(D.GetButton('threeD_left', "Cat.D.threeDPanel.view('left')", 'Left'), 'buttonBar') +
+									H.td(D.GetButton('threeD_top', "Cat.D.threeDPanel.view('top')", 'Top'), 'buttonBar') +
+									H.td(D.GetButton('threeD_back', "Cat.D.threeDPanel.view('back')", 'Back'), 'buttonBar') +
+									H.td(D.GetButton('threeD_right', "Cat.D.threeDPanel.view('right')", 'Right'), 'buttonBar') +
+									H.td(D.GetButton('threeD_bottom', "Cat.D.threeDPanel.view('bottom')", 'Bottom'), 'buttonBar') +
+									H.td(D.GetButton('threeD_front', "Cat.D.threeDPanel.view('front')", 'Front'), 'buttonBar')
 								), 'buttonBarLeft') +
 						H.div('', '', 'threeDiv');
 		this.display = document.getElementById('threeDiv');
@@ -4461,13 +3766,13 @@ class TtyPanel extends Panel
 		this.elt.innerHTML =
 			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarLeft') +
 			H.h3('TTY') +
-			H.button('Output', 'sidenavAccordion', '', 'TTY output from some composite', `onclick="D.Panel.SectionToggle(this, \'tty-out-section\')"`) +
+			H.button('Output', 'sidenavAccordion', '', 'TTY output from some composite', `onclick="Cat.D.Panel.SectionToggle(this, \'tty-out-section\')"`) +
 			H.div(
 				H.table(H.tr(
 					H.td(D.GetButton('delete', `D.ttyPanel.out.innerHTML = ''`, 'Clear output'), 'buttonBar') +
 					H.td(D.DownloadButton('LOG', `D.DownloadString(D.ttyPanel.out.innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBar')), 'buttonBarLeft') +
 				H.pre('', 'tty', 'tty-out'), 'section', 'tty-out-section') +
-			H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="D.Panel.SectionToggle(this, \'tty-error-section\')"`) +
+			H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.D.Panel.SectionToggle(this, \'tty-error-section\')"`) +
 			H.div(H.table(H.tr(
 					H.td(D.GetButton('delete', `D.ttyPanel.error.innerHTML = ''`, 'Clear errors')) +
 					H.td(D.DownloadButton('ERR', `D.DownloadString(D.ttyPanel.error.innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBar')), 'buttonBarLeft') +
@@ -4492,9 +3797,9 @@ class NewDiagramSection extends Section
 			H.table(H.tr(H.td(D.Input('', 'diagram-new-basename', 'Base name')), 'sidenavRow') +
 					H.tr(H.td(D.Input('', 'diagram-new-properName', 'Proper name')), 'sidenavRow') +
 					H.tr(H.td(H.input('', 'in100', 'diagram-new-description', 'text',
-						{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.diagramPanel.newDiagramSection.create, D.diagramPanel.newDiagramSection)"'})), 'sidenavRow')) +
+						{ph: 'Description', x:'onkeydown="Cat.D.OnEnter(event, D.diagramPanel.newDiagramSection.create, D.diagramPanel.newDiagramSection)"'})), 'sidenavRow')) +
 					H.tr(H.td(H.span('Target category', 'smallPrint') + H.select('', 'w100', 'diagram-new-codomain')), 'sidenavRow') +
-			H.span(D.GetButton('edit', 'D.diagramPanel.newDiagramSection.create(event)', 'Create new diagram')) +
+			H.span(D.GetButton('edit', 'Cat.D.diagramPanel.newDiagramSection.create(event)', 'Create new diagram')) +
 			H.span('', 'error', 'diagram-new-error');
 		this.error = document.getElementById('diagram-new-error');
 		this.basenameElt = document.getElementById('diagram-new-basename');
@@ -4610,10 +3915,10 @@ class DiagramSection extends Section
 				D.DownloadButton('PNG', `R.LoadDiagram('${diagram.name}').downloadPNG(event)`, 'Download PNG');
 		const tbl = H.table(
 				H.tr(H.td(H.h4(diagram.properName)) + H.td(tools, 'right')) +
-				H.tr(H.td(`<a onclick="R.SelectDiagram('${diagram.name}')"><img src="${src}" id="img_${diagram.name}" alt="Not loaded" width="200" height="150"/></a>`, 'white', '', '', 'colspan="2"')) +
+				H.tr(H.td(`<a onclick="Cat.R.SelectDiagram('${diagram.name}')"><img src="${src}" id="img_${diagram.name}" alt="Not loaded" width="200" height="150"/></a>`, 'white', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.description, 'description', '', '', 'colspan="2"')) +
 				H.tr(H.td(diagram.user, 'author') + H.td(dt.toLocaleString(), 'date')));
-		return H.tr(H.td(tbl), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="D.DragElement(event, '${diagram.name}')"`);
+		return H.tr(H.td(tbl), 'grabbable sidenavRow', '', '', `draggable="true" ondragstart="Cat.D.DragElement(event, '${diagram.name}')"`);
 	}
 }
 
@@ -4729,7 +4034,7 @@ class DiagramPanel extends Panel
 		if (!diagram)
 			return;
 		const isUsers = diagram && (R.user.name === diagram.user);
-		const uploadBtn = (R.cloud && isUsers) ? H.td(D.GetButton('upload', 'R.diagram.upload(event)', 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '';
+		const uploadBtn = (R.cloud && isUsers) ? H.td(D.GetButton('upload', 'Cat.R.diagram.upload(event)', 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '';
 		let downcloudBtn = '';
 		if (R.diagram.refcnt <= 0 && R.cloud && R.ServerDiagrams.has(diagram.name))
 		{
@@ -4738,7 +4043,7 @@ class DiagramPanel extends Panel
 			{
 				const date = new Date(data.timestamp);
 				const tip = R.ServerDiagrams.get(diagram.name).timestamp > diagram.timestamp ? `Download newer version from cloud: ${date.toLocaleString()}` : 'Download older version from cloud';
-				downcloudBtn = H.td(D.GetButton('downcloud', 'R.ReloadDiagramFromServer()', tip, D.default.button.small, false, 'diagramDowncloudBtn'), 'buttonBar');
+				downcloudBtn = H.td(D.GetButton('downcloud', 'Cat.R.ReloadDiagramFromServer()', tip, D.default.button.small, false, 'diagramDowncloudBtn'), 'buttonBar');
 			}
 		}
 		const html = H.table(H.tr(
@@ -4746,9 +4051,9 @@ class DiagramPanel extends Panel
 					(isUsers ? H.td(DiagramPanel.GetEraseBtn(diagram), 'buttonBar', 'eraseBtn') : '') +
 					downcloudBtn +
 					uploadBtn +
-					H.td(D.DownloadButton('JSON', 'R.diagram.downloadJSON(event)', 'Download JSON'), 'buttonBar') +
-					H.td(D.DownloadButton('JS', 'R.diagram.downloadJS(event)', 'Download Javascript'), 'buttonBar') +
-					H.td(D.DownloadButton('PNG', 'R.diagram.downloadPNG(event)', 'Download PNG'), 'buttonBar') +
+					H.td(D.DownloadButton('JSON', 'Cat.R.diagram.downloadJSON(event)', 'Download JSON'), 'buttonBar') +
+					H.td(D.DownloadButton('JS', 'Cat.R.diagram.downloadJS(event)', 'Download Javascript'), 'buttonBar') +
+					H.td(D.DownloadButton('PNG', 'Cat.R.diagram.downloadPNG(event)', 'Download PNG'), 'buttonBar') +
 					this.expandPanelBtn() +
 					this.closeBtnCell()), 'buttonBarRight');
 		this.diagramPanelToolbarElt.innerHTML = html;
@@ -4804,7 +4109,7 @@ return;	// TODO
 	}
 	static GetEraseBtn(diagram)
 	{
-		return diagram.readonly ? '' : D.GetButton('delete', "R.diagram.clear(event)", 'Erase diagram!', D.default.button.small, false, 'eraseBtn');
+		return diagram.readonly ? '' : D.GetButton('delete', "Cat.R.diagram.clear(event)", 'Erase diagram!', D.default.button.small, false, 'eraseBtn');
 	}
 	static UpdateLockBtn(diagram)
 	{
@@ -4835,7 +4140,7 @@ class HelpPanel extends Panel
 			H.h4('The Categorical Console')	+
 			H.p(H.small('Level 1', 'smallCaps italic'), 'txtCenter') +
 			H.p(H.small(`Deployed ${date}`, 'smallCaps'), 'txtCenter') + H.br() +
-			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Interactive actions', `onclick="D.Panel.SectionToggle(this, \'catActionHelpPnl\')"`) +
+			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Interactive actions', `onclick="Cat.D.Panel.SectionToggle(this, \'catActionHelpPnl\')"`) +
 			H.div(	H.h4('Mouse Actions') +
 					H.h5('Select') +
 						H.p('Select an object or a morphism with the mouse by left-clicking on the element.  Previously selected objects are unselected.') +
@@ -4886,24 +4191,24 @@ class HelpPanel extends Panel
 					H.h5('Control-V') +
 						H.p('Paste elements from the paste buffer.')
 					, 'section', 'catActionHelpPnl') +
-			H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References', `onclick="D.Panel.SectionToggle(this, \'catHelpPnl\')"`) +
+			H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References', `onclick="Cat.D.Panel.SectionToggle(this, \'catHelpPnl\')"`) +
 			H.div(
 				H.small('All of mathematics is divided into one part: Category Theory', '') +
 				H.h4('References') +
 				H.p(H.a('"Categories For The Working Mathematician"', 'italic', '', '', 'href="https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician" target="_blank"')), 'section', 'catHelpPnl') +
-			H.button('Articles', 'sidenavAccordion', 'referencesPnlBtn', '', `onclick="D.Panel.SectionToggle(this, \'referencesPnl\')"`) +
+			H.button('Articles', 'sidenavAccordion', 'referencesPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'referencesPnl\')"`) +
 			H.div(	H.p(H.a('Intro To Categorical Programming', '', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"')) +
 					H.p(H.a('V Is For Vortex - More Categorical Programming', '', '', '', 'href="https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"')), 'section', 'referencesPnl') +
-			H.button('Terms and Conditions', 'sidenavAccordion', 'TermsPnlBtn', '', `onclick="D.Panel.SectionToggle(this, \'TermsPnl\')"`) +
+			H.button('Terms and Conditions', 'sidenavAccordion', 'TermsPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'TermsPnl\')"`) +
 			H.div(	H.p('No hate.'), 'section', 'TermsPnl') +
-			H.button('License', 'sidenavAccordion', 'licensePnlBtn', '', `onclick="D.Panel.SectionToggle(this, \'licensePnl\')"`) +
+			H.button('License', 'sidenavAccordion', 'licensePnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'licensePnl\')"`) +
 			H.div(	H.p('Vernacular code generated by the Categorical Console is freely usable by those with a cortex. Machines are good to go, too.') +
 					H.p('Upload a diagram to Catecon and others there are expected to make full use of it.') +
 					H.p('Inelegant or unreferenced diagrams are removed.  See T&amp;C\'s'), 'section', 'licensePnl') +
-			H.button('Credits', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="D.Panel.SectionToggle(this, \'creditsPnl\')"`) +
+			H.button('Credits', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'creditsPnl\')"`) +
 			H.div(	H.a('Saunders Mac Lane', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"') +
 					H.a('Harry Dole', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"'), 'section', 'creditsPnl') +
-			H.button('Third Party Software', 'sidenavAccordion', 'third-party', '', `onclick="D.Panel.SectionToggle(this, \'thirdPartySoftwarePnl\')"`) +
+			H.button('Third Party Software', 'sidenavAccordion', 'third-party', '', `onclick="Cat.D.Panel.SectionToggle(this, \'thirdPartySoftwarePnl\')"`) +
 			H.div(
 						H.a('3D', '', '', '', 'href="https://threejs.org/"') +
 						H.a('Compressors', '', '', '', 'href="https://github.com/imaya/zlib.js"') +
@@ -4953,25 +4258,25 @@ class LoginPanel extends Panel
 								H.tr(H.td(H.input('', '', 'login-password', 'password',
 									{
 										ph:'********',
-										x:'autocomplete="current-password" onkeydown="D.OnEnter(event, R.cloud.login, R.cloud)"',
+										x:'autocomplete="current-password" onkeydown="Cat.D.OnEnter(event, R.cloud.login, R.cloud)"',
 									}))) +
-								H.tr(H.td(H.button('Login', '', '', '', 'onclick="R.cloud.login(event)"')))));
+								H.tr(H.td(H.button('Login', '', '', '', 'onclick="Cat.R.cloud.login(event)"')))));
 		if (R.user.status === 'unauthorized')
-			html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="D.Panel.SectionToggle(this, \'signupPnl\')"`) +
+			html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.D.Panel.SectionToggle(this, \'signupPnl\')"`) +
 					H.div( H.table(H.tr(H.td('User name')) +
 								H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
 								H.tr(H.td('Email')) +
 								H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 								LoginPanel.PasswordForm() +
-								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="R.cloud.signup()"')))), 'section', 'signupPnl'));
+								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="Cat.R.cloud.signup()"')))), 'section', 'signupPnl'));
 		if (R.user.status === 'registered')
 			html += H.form(H.h3('Confirmation Code') +
 					H.span('The confirmation code is sent by email to the specified address above.') +
 					H.table(	H.tr(H.td('Confirmation code')) +
-								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="D.OnEnter(event, R.cloud.confirm, R.cloud)"'}))) +
+								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.D.OnEnter(event, R.cloud.confirm, R.cloud)"'}))) +
 								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick=R.cloud.confirm()')))));
 		if (R.user.status === 'logged-in')
-			html += H.button('Log Out', '', '', '', 'onclick="R.cloud.logout()"');
+			html += H.button('Log Out', '', '', '', 'onclick="Cat.R.cloud.logout()"');
 		this.loginInfoElt.innerHTML = html;
 		this.loginUserNameElt = document.getElementById('login-user-name');
 		this.passwordElt = document.getElementById('login-password');
@@ -5050,7 +4355,7 @@ class ElementSection extends Section
 							continue;
 						const deletable = R.default.internals && e.refcnt === 0 && e.diagram && e.diagram.isEditable();
 						rows += H.tr( (R.default.internals ?  H.td(e.refcnt.toString()) : '') + H.td(e.properName),
-							'grabbable sidenavRow', '', U.Formal(e.description), `draggable="true" ondragstart="D.DragElement(event, '${e.name}')"`);
+							'grabbable sidenavRow', '', U.Formal(e.description), `draggable="true" ondragstart="Cat.D.DragElement(event, '${e.name}')"`);
 					}
 					else
 					{
@@ -5061,7 +4366,7 @@ class ElementSection extends Section
 							H.tr(	(R.default.internals ? H.td(e.refcnt) : '') +
 										H.td(e.domain.properName, 'left') +
 										H.td('&rarr;', 'w10 center') +
-										H.td(e.codomain.properName, 'right')), 'panelElt')), 'grabbable', '', U.Formal(e.description), `draggable="true" ondragstart="D.DragElement(event, '${e.name}')"`);
+										H.td(e.codomain.properName, 'right')), 'panelElt')), 'grabbable', '', U.Formal(e.description), `draggable="true" ondragstart="Cat.D.DragElement(event, '${e.name}')"`);
 					}
 				}
 				this.section.innerHTML += H.table(rows);
@@ -5079,9 +4384,9 @@ class NewObjectSection extends Section
 			H.table(H.tr(H.td(D.Input('', 'object-new-basename', 'Base name')), 'sidenavRow') +
 					H.tr(H.td(D.Input('', 'object-new-properName', 'Proper name')), 'sidenavRow') +
 					H.tr(H.td(H.input('', 'in100', 'object-new-description', 'text',
-										{ph: 'Description', x:'onkeydown="D.OnEnter(event, D.objectPanel.newObjectSection.create, D.objectPanel.newObjectSection)"'})), 'sidenavRow')
+										{ph: 'Description', x:'onkeydown="Cat.D.OnEnter(event, D.objectPanel.newObjectSection.create, D.objectPanel.newObjectSection)"'})), 'sidenavRow')
 			) +
-			H.span(D.GetButton('edit', 'D.objectPanel.newObjectSection.create(event)', 'Create new object in this diagram')) +
+			H.span(D.GetButton('edit', 'Cat.D.objectPanel.newObjectSection.create(event)', 'Create new object in this diagram')) +
 			H.span('', 'error', 'object-new-error');
 		this.error = document.getElementById('object-new-error');
 		this.basenameElt = document.getElementById('object-new-basename');
@@ -5175,11 +4480,11 @@ class NewMorphismSection extends Section
 						H.tr(H.td(D.Input('', 'morphism-new-basename', 'Base name')), 'sidenavRow') +
 						H.tr(H.td(D.Input('', 'morphism-new-properName', 'Proper name')), 'sidenavRow') +
 						H.tr(H.td(H.input('', 'in100', 'morphism-new-description', 'text', {ph: 'Description',
-											x:'onkeydown="D.OnEnter(event, D.morphismPanel.newMorphismSection.create, D.morphismPanel.newMorphismSection)"'})), 'sidenavRow') +
+											x:'onkeydown="Cat.D.OnEnter(event, D.morphismPanel.newMorphismSection.create, D.morphismPanel.newMorphismSection)"'})), 'sidenavRow') +
 						H.tr(H.td(H.select('', 'w100', 'morphism-new-domain')), 'sidenavRow') +
 						H.tr(H.td(H.select('', 'w100', 'morphism-new-codomain')), 'sidenavRow')
 			) +
-			H.span(D.GetButton('edit', 'D.morphismPanel.newMorphismSection.create(event)', 'Create new morphism in this diagram')) +
+			H.span(D.GetButton('edit', 'Cat.D.morphismPanel.newMorphismSection.create(event)', 'Create new morphism in this diagram')) +
 			H.span('', 'error', 'morphism-new-error');
 		this.error = document.getElementById('morphism-new-error');
 		this.basenameElt = document.getElementById('morphism-new-basename');
@@ -5292,10 +4597,10 @@ class SettingsPanel extends Panel
 			H.table(H.tr(this.closeBtnCell()), 'buttonBarLeft') +
 			H.h3('Settings') +
 			H.table(
-				H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="D.gridding = !D.gridding;D.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="D.SettingsPanel.ToggleShowInternals();D.SaveDefaults()">`) +
+				H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="Cat.D.gridding = !D.gridding;D.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
+				H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="Cat.D.SettingsPanel.ToggleShowInternals();D.SaveDefaults()">`) +
 						H.td('Show internal info', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="R.default.debug = !R.default.debug;D.SaveDefaults()">`) +
+				H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="Cat.R.default.debug = !R.default.debug;D.SaveDefaults()">`) +
 						H.td('Debug', 'left'), 'sidenavRow')
 			);
 		this.initialize();
@@ -5320,7 +4625,7 @@ class NewTextSection extends Section
 		this.section.innerHTML =
 				H.h5('Create text') +
 				H.table(H.tr(H.td(H.textarea('', 'textHtml', 'text-description')), 'sidenavRow')) +
-				H.span(D.GetButton('edit', 'D.textPanel.newTextSection.create(event)', 'Create new text for this diagram')) +
+				H.span(D.GetButton('edit', 'Cat.D.textPanel.newTextSection.create(event)', 'Create new text for this diagram')) +
 			H.span('', 'error', 'text-new-error');
 		this.error = document.getElementById('text-new-error');
 		this.descriptionElt = document.getElementById('text-description');
@@ -5367,7 +4672,7 @@ class TextSection extends Section
 						H.td(H.table(H.tr(
 							(diagram.isEditable() ? H.td(D.GetButton('delete', `D.textPanel.delete('${t.name}')`, 'Delete text')) +
 													H.td(D.GetButton('edit', `R.diagram.getElement('${t.name}').editText(event, 'edit_${t.name}')`, 'Edit')) : '')), 'buttonBarLeft'))) +
-					H.tr(H.td(H.span(t.description, 'tty', `edit_${t.name}`, '', `onclick="R.diagram.viewElement('${t.name}')"`), 'left'), 'sidenavRow');
+					H.tr(H.td(H.span(t.description, 'tty', `edit_${t.name}`, '', `onclick="Cat.R.diagram.viewElement('${t.name}')"`), 'left'), 'sidenavRow');
 		});
 		this.section.innerHTML = rows === '' ?  '' : H.table(rows);
 	}
@@ -5599,7 +4904,8 @@ class Element
 	}
 	static Process(diagram, args)
 	{
-		return 'prototype' in args ? new R.protos[args.prototype](diagram, args) : null;
+//		return 'prototype' in args ? new R.protos[args.prototype](diagram, args) : null;
+		return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null;
 	}
 }
 
@@ -5848,7 +5154,7 @@ if (typeof tag === 'undefined')debugger;
 				data.visited.push(lnkStr + ' ' + idxStr);
 				const filter = vertical ? '' : 'url(#softGlow)';
 				path +=
-`<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${coords}" filter="${filter}" onmouseover="D.Status(event, '${fs}')"/>\n`;
+`<path data-link="${lnkStr} ${idxStr}" class="string" style="stroke:#${color}AA" id="${linkId}" d="${coords}" filter="${filter}" onmouseover="Cat.D.Status(event, '${fs}')"/>\n`;
 			}
 			return path;
 		}
@@ -6581,12 +5887,12 @@ class DiagramText extends DiagramCore
 			let lines = U.Lines2tspan(this);
 			html =
 `<text id="${this.elementId()}" data-type="text" data-name="${this.name}" x="${this.x}" y="${this.y}" text-anchor="left" class="diagramText grabbable"
-	onmousedown="R.diagram.pickElement(event, '${this.name}')"> ${lines}</text>`;
+	onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')"> ${lines}</text>`;
 		}
 		else
 			html =
 `<text data-type="text" data-name="${this.name}" text-anchor="left" class="diagramText grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y}"
-onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.description}</text>`;
+onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')">${this.description}</text>`;
 		return html;
 	}
 	update(xy = null)
@@ -6679,7 +5985,7 @@ class DiagramObject extends CatObject
 			width:		{value:	U.GetArg(nuArgs, 'width', 0),						writable:	true},
 			height:		{value:	U.GetArg(nuArgs, 'height', D.default.font.height),	writable:	true},
 			to:			{value:	null,												writable:	true},
-			cells:		{value:	new Set,											writable:	false},
+			nodes:		{value:	new Set,											writable:	false},
 			domains:	{value:	[],													writable:	false},
 			codomains:	{value:	[],													writable:	false},
 		});
@@ -6732,7 +6038,7 @@ class DiagramObject extends CatObject
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `nan in getSVG`;
 		return `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
-			onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}</text>`;
+			onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')">${this.to.properName}</text>`;
 	}
 	getBBox()
 	{
@@ -6747,7 +6053,7 @@ class DiagramObject extends CatObject
 			svg.setAttribute('x', this.x);
 			svg.setAttribute('y', this.y + ('height' in this ? this.height/2 : 0));
 		}
-		this.cells.forEach(function(d){d.update();});
+		this.nodes.forEach(function(d){d.update();});
 	}
 	showSelected(state = true)
 	{
@@ -6789,7 +6095,7 @@ class DiagramPullback extends DiagramObject
 			return mo;
 		});
 		const object = this.source[0].codomain;		// all have the same codomain
-		this.getObjects().map(o => o !== this && o.cells.add(this));
+		this.getObjects().map(o => o !== this && o.nodes.add(this));
 		if ('cone' in args)
 			this.cone = args.cone;
 		else
@@ -7387,7 +6693,7 @@ class HomRightAction extends Action
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
 			if (Morphism.prototype.isPrototypeOf(m) && from.to.isEquivalent(m.domain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
-				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'domain', '${from.name}', '${m.name}')"`);
+				rows += D.HtmlRow(m, `onclick="Cat.R.diagram.objectPlaceMorphism(event, 'domain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms from ${from.to.properName}`, 'italic') + H.table(rows);
 	}
 	hasForm(diagram, ary)	// one object
@@ -7416,7 +6722,7 @@ class HomLeftAction extends Action
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
 			if (Morphism.prototype.isPrototypeOf(m) && from.to.isEquivalent(m.codomain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
-				rows += D.HtmlRow(m, `onclick="R.diagram.objectPlaceMorphism(event, 'codomain', '${from.name}', '${m.name}')"`);
+				rows += D.HtmlRow(m, `onclick="Cat.R.diagram.objectPlaceMorphism(event, 'codomain', '${from.name}', '${m.name}')"`);
 		D.help.innerHTML = H.small(`Morphisms to ${from.to.properName}`, 'italic') + H.table(rows);
 	}
 	hasForm(diagram, ary)	// one object
@@ -7641,11 +6947,11 @@ class ProjectAction extends Action
 					(canFlatten ?
 						H.div(H.span('Remove parenthesis', 'little') +
 							H.button(`Flatten ${this.dual ? 'Cop' : 'P'}roduct`, '', '', '',
-								`onclick="R.Actions.${this.dual ? 'inject' : 'project'}.flatten(event, R.diagram, R.diagram.getSelected())"`)) : '') +
+								`onclick="Cat.R.Actions.${this.dual ? 'inject' : 'project'}.flatten(event, R.diagram, R.diagram.getSelected())"`)) : '') +
 					H.h5(`${this.dual ? 'Codomain' : 'Domain'} Factors`) +
 					H.small(`Click to place in ${obj}`) +
 					H.button('1', '', R.diagram.elementId(), `Add ${this.dual ? 'initial' : 'terminal'} object`,
-						`onclick="R.Actions.${this.dual ? 'inject' : 'project'}.addFactor('${to.name}', -1)"`) +
+						`onclick="Cat.R.Actions.${this.dual ? 'inject' : 'project'}.addFactor('${to.name}', -1)"`) +
 					ProjectAction.FactorButton(obj, to, to, [], this.dual) +
 					H.h5(`${this.dual ? 'Domain' : 'Codomain'} Factors`) + H.br() +
 					H.span(`Click objects to remove from ${obj}`, 'smallPrint') +
@@ -7684,7 +6990,7 @@ class ProjectAction extends Action
 	{
 		return H.table(H.tr(H.td(
 			H.button(object.properName + H.sub(index.join()), '', R.diagram.elementId(), 'Place object',
-			`data-indices="${index.toString()}" onclick="R.Actions.${dual ? 'inject' : 'project'}.addFactor('${root.name}', ${index.toString()})"`)
+			`data-indices="${index.toString()}" onclick="Cat.R.Actions.${dual ? 'inject' : 'project'}.addFactor('${root.name}', ${index.toString()})"`)
 		)));
 	}
 	static ProductObjectFactorButton(dir, root, object, index, dual)
@@ -7754,7 +7060,7 @@ class LambdaMorphismAction extends Action
 		}
 		const html =
 			H.h4('Create Named Morphism') +
-			H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '', `onclick="R.Actions.lambdaMorphism.createNamedElement(event, R.diagram.selected)"`) +
+			H.button(`&#10034;&rarr;[${domain.properName}, ${codomain.properName}]`, '', '', '', `onclick="Cat.R.Actions.lambdaMorphism.createNamedElement(event, R.diagram.selected)"`) +
 			H.hr() +
 			H.h4('Curry Morphism') +
 			H.h5('Domain') +
@@ -7774,7 +7080,7 @@ class LambdaMorphismAction extends Action
 	{
 		let html = '';
 		const onclick = `R.Actions.lambdaMorphism.moveFactor(this)`;
-		const homBtn = H.button('&times;', '', '', 'Convert to hom', `data-indices="-1"`, `onclick="R.Actions.lambdaMorphism.toggleOp(this)"`) + html;
+		const homBtn = H.button('&times;', '', '', 'Convert to hom', `data-indices="-1"`, `onclick="Cat.R.Actions.lambdaMorphism.toggleOp(this)"`) + html;
 		const codSide = data.dir === 1 && 'objects' in object;
 		if ('objects' in object)
 			object.objects.map((o, i) =>
@@ -7784,7 +7090,7 @@ class LambdaMorphismAction extends Action
 		else
 			html += H.button(object.properName, '', D.elementId(), '', `data-indices="${data.dir}, 0" onclick="${onclick}"`);
 		if (codSide)
-			html = H.button('[', '', '', 'Convert to product', `data-indices="-2"`, `onclick="R.Actions.lambdaMorphism.toggleOp(this)"`) + html;
+			html = H.button('[', '', '', 'Convert to product', `data-indices="-2"`, `onclick="Cat.R.Actions.lambdaMorphism.toggleOp(this)"`) + html;
 		return html;
 	}
 	moveFactor(elt)
@@ -7795,7 +7101,7 @@ class LambdaMorphismAction extends Action
 			{
 				var b = document.createElement('button');
 				b.setAttribute('data-indices', -1);
-				b.setAttribute('onclick', "R.Actions.lambdaMorphism.toggleOp(this)");
+				b.setAttribute('onclick', "Cat.R.Actions.lambdaMorphism.toggleOp(this)");
 				b.setAttribute('title', 'Convert to hom');
 				b.innerHTML = '&times;';
 				this.codomainElt.appendChild(b);
@@ -8244,7 +7550,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						divs += H.div(this.getInput(ob, prefix, [...factor, i]), 'nodisplay', oid);
 					}
 					html +=
-`<select id="${id}" onchange="D.ShowInput('${o.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
+`<select id="${id}" onchange="Cat.D.ShowInput('${o.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
 <option>Choose one</option>
 ${options}
 </select>
@@ -8678,7 +7984,7 @@ class FiniteObjectAction extends Action
 		html += (to.constructor.name === 'CatObject' ? H.span('Convert generic object to a finite object.', 'smallPrint') : H.span('Finite object', 'smallPrint')) +
 					H.table(H.tr(H.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')), 'sidenavRow')) +
 					H.span('Leave size blank to indicate finite of unknown size', 'smallPrint') +
-					D.GetButton('edit', 'R.Actions.finiteObject.action(event, R.diagram, R.diagram.selected)', 'Finite object', D.default.button.tiny);
+					D.GetButton('edit', 'Cat.R.Actions.finiteObject.action(event, R.diagram, R.diagram.selected)', 'Finite object', D.default.button.tiny);
 		D.help.innerHTML = html;
 		this.sizeElt = document.getElementById('finite-new-size');
 		U.SetInputFilter(this.sizeElt, function(v)
@@ -8918,18 +8224,21 @@ class AssertionAction extends Action
 		const a = diagram.addAssertion(left.map(m => m.to), right.map(m => m.to));
 		diagram.update();
 		const dom = left[0].domain;
-		let cells = new Set(dom.cells);
+		//
+		// TODO
+		//
+		let nodes = new Set(dom.nodes);
 		left.map(m =>
 		{
-			const codCells = m.codomain.cells;
-			cells = new Set([...cells].filter(c => codCells.has(c)));
+			const codCells = m.codomain.nodes;
+			nodes = new Set([...nodes].filter(c => codCells.has(c)));
 		});
 		right.map(m =>
 		{
-			const codCells = m.codomain.cells;
-			cells = new Set([...cells].filter(c => codCells.has(c)));
+			const codCells = m.codomain.nodes;
+			nodes = new Set([...nodes].filter(c => codCells.has(c)));
 		});
-		cells.forEach(function(c)
+		nodes.forEach(function(c)
 		{
 			diagram.makeSelected(e, c);
 		});
@@ -9620,12 +8929,14 @@ if (!this.to)return {};
 				`M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`
 			:
 				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
+		const onmouseenter = ` onmouseenter="Cat.R.diagram.emphasis('${this.name}', true)"`;
+		const onmouseleave = ` onmouseleave="Cat.R.diagram.emphasis('${this.name}', false)"`;
 		let svg =
 `<g id="${this.elementId()}">
 <path data-type="morphism" data-name="${this.name}" class="morphism grabbable" id="${this.elementId()}_path" d="${coords}"
-onmousedown="R.diagram.pickElement(event, '${this.name}')" marker-end="url(#arrowhead)"/>
+${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')" marker-end="url(#arrowhead)"/>
 <text data-type="morphism" data-name="${this.name}" text-anchor="middle" class="morphTxt" id="${this.elementId()+'_name'}" x="${off.x}" y="${off.y}"
-onmousedown="R.diagram.pickElement(event, '${this.name}')">${this.to.properName}</text>`;
+${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')">${this.to.properName}</text>`;
 		svg += group ? '</g>' : '';
 		return svg;
 	}
@@ -9891,12 +9202,14 @@ class Cell extends DiagramCore
 	}
 	getSVG()
 	{
+		if (this.properName === '')
+			return '';
 		const xy = this.getXY();
 		this.x = xy.x;
 		this.y = xy.y;
-		const onmousedown = ` onmousedown="R.diagram.pickElement(event, '${this.signature}')"`;
-		const onmouseenter = ` onmouseenter="R.diagram.emphasis('${this.signature}', true)"`;
-		const onmouseleave = ` onmouseleave="R.diagram.emphasis('${this.signature}', false)"`;
+		const onmousedown = ` onmousedown="Cat.R.diagram.pickElement(event, '${this.signature}')"`;
+		const onmouseenter = ` onmouseenter="Cat.R.diagram.emphasis('${this.signature}', true)"`;
+		const onmouseleave = ` onmouseleave="Cat.R.diagram.emphasis('${this.signature}', false)"`;
 		return `<text text-anchor="middle" class="morphTxt" x="${this.x}" y="${this.y}" id="${this.name}"${onmousedown}${onmouseenter}${onmouseleave}>${this.properName}</text>`;
 	}
 	removeSVG()
@@ -9932,14 +9245,54 @@ class Cell extends DiagramCore
 	isSimple()
 	{
 		const left = new Set(this.left);
-		for (let i=0; i< this.right.length; ++i)
-			if (left.has(this.right[i]))
-				return false;
+		if (left.size !== this.left.length)	// no repeat morphisms
+			return false;
+		const right = new Set(this.right);
+		if (right.size !== this.right.length)	// no repeat morphisms
+			return false;
+		const checkObjects = function(leg)		// no shared objects on leg
+		{
+			const objs = new Set([leg[0].doamin, ...leg.map(m => m.codomain)]);
+			return objs.size === leg.length + 1;
+		}
+		if (!checkObjects(this.left))
+			return false;
+		if (!checkObjects(this.right))
+			return false;
+//		for (let i=0; i < this.right.length; ++i)	// no sharing morphism between legs
+//			if (left.has(this.right[i]))
+//				return false;
+		const objects = new Set([this.left[0], ...this.left.map(m => m.codomain), ...this.right.map(m => m.codomain)]);
+		if (objects.size !== this.left.length + this.right.length)	// no sharing objects between legs
+			return false;
+		/*
+		const depth = new Map;
+		const nodes = [this.left.domain];
+		const visited = new Set;
+		const isShortLeg = function(leg)
+		{
+			for (let i=1; i < leg.length; ++i)
+			{
+			}
+		};
+		while (nodes.length > 0)
+		{
+			
+		}
+		*/
 		return true;
 	}
 	static Signature(left, right)
 	{
-		return U.SigArray([...left.map(m => m.signature), U.Sig('Cell'), ...right.map(m => m.signature)]);
+//		return U.SigArray([...left.map(m => m.signature), U.Sig('Cell'), ...right.map(m => m.signature)]);
+		const leftSigs = left.map(m => m.signature);
+		const rightSigs = right.map(m => m.signature);
+		const leftSig = U.SigArray(leftSigs);
+		const rightSig = U.SigArray(rightSigs);
+		if (leftSig < rightSig)
+			return U.SigArray([leftSig, U.Sig('Cell'), rightSigs]);
+		else
+			return U.SigArray([rightSig, U.Sig('Cell'), leftSigs]);
 	}
 	static Get(diagram, left, right)
 	{
@@ -9960,22 +9313,24 @@ class DiagramComposite extends DiagramMorphism
 	{
 		super(diagram, args);
 		this.morphisms = args.morphisms.map(m => diagram.domain.getElement(m));
+		this.domain.nodes.add(this);
 		this.morphisms.map((m, i) =>
 		{
 			m.incrRefcnt();
-			if (i !== this.morphisms.length)
-				m.codomain.cells.add(this);
+			m.codomain.nodes.add(this);
 		});
 	}
 	decrRefcnt()
 	{
 		if (this.refcnt <= 1)
+		{
+			this.domain.nodes.delete(this);
 			this.morphisms.map((m, i) =>
 			{
-				if (i !== this.morphisms.length)
-					m.codomain.cells.delete(this);
+				m.codomain.nodes.delete(this);
 				m.decrRefcnt();
 			});
+		}
 		super.decrRefcnt();
 	}
 	json()
@@ -10015,9 +9370,10 @@ class IndexCategory extends Category
 		super(diagram, args);
 		Object.defineProperties(this,
 		{
-			'homSets': 		{value:new Map(), writable: false},
+			'homSets': 		{value:new Map, writable: false},
 			'id':			{value:Number.parseInt(U.GetArg(args, 'id', 0)), writable: true},
-			'cells':		{value:new Map(), writable: false},
+			'cells':		{value:new Map, writable: false},
+			'nodes':		{value:new Set, writable: false},
 		});
 	}
 	help(helped = new Set)
@@ -10154,7 +9510,7 @@ class IndexCategory extends Category
 						found.add(cell.signature);
 						cell.properName = '';
 						const objs = cell.getObjects();
-						objs.map(o => o.cells.add(cell));
+						objs.map(o => o.nodes.add(cell));
 					}
 				}
 			});
@@ -11907,7 +11263,7 @@ class Diagram extends Functor
 		this.domain.elements.forEach(fn);
 		this.texts.forEach(fn);
 		this.svgBase.innerHTML = svg;
-		this.domain.cells.forEach(function(d) { this.addSVG(d); }, this);
+		this.domain.nodes.forEach(function(d) { this.addSVG(d); }, this);
 	}
 	upload(e)
 	{
@@ -12367,27 +11723,30 @@ class Diagram extends Functor
 	}
 	emphasis(c, on)
 	{
-		const cell = this.domain.cells.get(c);
-		const fn = function(m)
+		const toggle = function(...elts)
 		{
-			const svg = m.svg();
-			const elts = [...svg.querySelectorAll('*')];
-			elts.map(e =>
-			{
-				const remove = e.classList.contains('emphasis');
-				if (on)
-					e.classList.add('emphasis');
-				else
-					e.classList.remove('emphasis');
-//				e.classList.toggle('emphasis');
-//				if (e.hasAttribute('filter'))
-//					e.removeAttribute('filter');
-//				else
-//					e.setAttribute('filter', "url(#softGlow)");
-			});
+			if (on)
+//				elts.map(e => ('svg' in e ? e.svg() : e).classList.add('emphasis'));
+				elts.map((e, i) => e.classList.add('emphasis'));
+			else
+				elts.map((e, i) => e.classList.remove('emphasis'));
 		}
-		cell.left.map(m => fn(m));
-		cell.right.map(m => fn(m));
+		let elt = this.getElement(c);
+		if (DiagramMorphism.prototype.isPrototypeOf(elt))
+			toggle(elt.svg('_path'), elt.svg('_name'), elt.domain.svg(), elt.codomain.svg());
+		else if (this.domain.cells.has(c))
+		{
+			const cell = this.domain.cells.get(c);
+			const fn = function(m)
+			{
+				const svg = m.svg();
+				const elts = [...svg.querySelectorAll('*')];
+				elts.map(e => toggle(e));
+			}
+			cell.left.map(m => fn(m));
+			cell.right.map(m => fn(m));
+			toggle(...cell.getObjects().map(o => o.svg()));
+		}
 	}
 	static Codename(args)
 	{
@@ -12412,8 +11771,14 @@ class Diagram extends Functor
 	}
 }
 
-R.protos =
+//R.protos =
+const Cat =
 {
+	D2,
+	R,
+	D,
+	U,
+	H,
 	Assertion,
 	Category,
 	CatObject,
@@ -12421,6 +11786,7 @@ R.protos =
 	DataMorphism,
 	Dedistribute,
 	Diagonal,
+	Diagram,
 	DiagramComposite,
 	DiagramMorphism,
 	DiagramObject,
@@ -12448,15 +11814,17 @@ R.protos =
 	TerminalMorphism,
 };
 
-if (isGUI)
-{
-	window.R			= R;
-	window.D			= D;
-	window.U			= U;
-	window.H			= H;
-}
+//if (isGUI)
+//{
+//	window.R			= R;
+//	window.D			= D;
+//	window.U			= U;
+//	window.H			= H;
+//	window.D2			= D2;
+	window.Cat			= Cat;
+//}
 
 R.Initialize();	// boot-up
 
-//})(typeof exports === 'undefined' ? this['Foobar'] = this.Cat : exports);
 })()
+//})(typeof exports === 'undefined' ? this['Foobar'] = this.Cat : exports);
