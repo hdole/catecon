@@ -526,17 +526,6 @@ table.center
 	font:	14px;
 }
 
-/*
-.diagramText:hover
-{
-	margin:		2px;
-	padding:	2px;
-	opacity:	.5;
-	fill:		#9fc;
-	stroke:		#0f0;
-}
-*/
-
 .txtCenter
 {
 	text-align:	center;
@@ -610,13 +599,6 @@ td.white
 	z-index:	0;
 }
 
-/*
-svg:hover
-{
-	fill:	#333;
-}
-*/
-
 .object
 {
 	fill:			black;
@@ -653,16 +635,6 @@ svg:hover
 	user-select:	none;
 }
 
-/*
-.morphTxt:hover
-{
-	cursor:		pointer;
-	fill:		#9fc;
-	stroke:		#0f0;
-	margin:		2px;
-}
-*/
-
 .morphism
 {
 	fill:			none;
@@ -672,13 +644,6 @@ svg:hover
 	stroke-width:	2.5px;
 	user-select:	none;
 }
-
-/*
-.morphism:hover
-{
-	stroke:		#0f0;
-}
-*/
 
 .fuseMorphism
 {
@@ -691,6 +656,21 @@ svg:hover
 	user-select:	none;
 }
 
+.cellTxt
+{
+	fill:			black;
+	font:			24px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
+	margin:			2px;
+	user-select:	none;
+}
+
+.cellTxt:hover
+{
+	cursor:		pointer;
+	fill:		#9fc;
+	stroke:		#0f0;
+}
+
 text.emphasis
 {
 	cursor:		pointer;
@@ -701,7 +681,6 @@ text.emphasis
 path.emphasis
 {
 	cursor:		pointer;
-	fill:		#9fc;
 	stroke:		#0f0;
 }
 
