@@ -386,7 +386,6 @@ class U
 	}
 	static ArrayMerge(a, b)
 	{
-if (b[0] === 'CatObject')debugger;
 		b.map(v => a.indexOf(v) === -1 ? a.push(v) : null);
 	}
 	static GetFactorsById(id)
@@ -567,7 +566,6 @@ Create diagrams and execute morphisms.
 	{
 		const s = document.createElement('script');
 		s.type = 'text/javascript';
-//		s.onload = function(){fn();};
 		s.onload = fn;
 		s.async = true;
 		s.onerror = function()
@@ -596,7 +594,7 @@ Create diagrams and execute morphisms.
 						{
 							to.cell = cell;
 							cell.to = to;
-//							cell.properName = to.getDecoration();
+//	TODO					cell.properName = to.getDecoration();
 							cell.properName = '&#10226;';
 						}
 						else
@@ -1964,7 +1962,9 @@ class D
 				if (diagram.selected.length > 0)
 				{
 					const from = diagram.getSelected();
-					D.mouseover = diagram.hasOverlap(xy, from.name);
+					D.mouseover = Cat.R.diagram.selected.indexOf(D.mouseover) >= 0 ? false : D.mouseover;
+//console.log('mousemove', D.mouseover);
+					const isMorphism = Morphism.prototype.isPrototypeOf(from);
 					if (diagram.selected.length === 1)
 					{
 						if (e.ctrlKey && !D.dragClone)
@@ -1978,7 +1978,7 @@ class D
 								diagram.makeSelected(e, id.codomain);	// restore from identity action
 								D.dragClone = true;
 							}
-							else if (DiagramMorphism.prototype.isPrototypeOf(from))	// ctrl-drag morphism copy
+							else if (isMorphism)	// ctrl-drag morphism copy
 							{
 								diagram.activate(e, 'copy', {offset: new D2});
 								D.dragClone = true;
@@ -1991,13 +1991,14 @@ class D
 								let fusible = false;
 								diagram.updateDragObjects(e);
 								fusible = diagram.updateFusible(e);
+//console.log('fusible', fusible);
 								let msg = '';
 								if (D.mouseover && diagram.selected.length === 1)
 								{
-									const elt = diagram.getSelected();
-									if (diagram.isIsolated(elt) && diagram.isIsolated(D.mouseover) &&
-											((Morphism.prototype.isPrototypeOf(D.mouseover) && Morphism.prototype.isPrototypeOf(elt)) ||
-											(CatObject.prototype.isPrototypeOf(D.mouseover) && CatObject.prototype.isPrototypeOf(elt))))
+//									const elt = diagram.getSelected();
+									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover) &&
+											((Morphism.prototype.isPrototypeOf(D.mouseover) && Morphism.prototype.isPrototypeOf(from)) ||
+											(CatObject.prototype.isPrototypeOf(D.mouseover) && CatObject.prototype.isPrototypeOf(from))))
 									{
 										if (e.shiftKey && R.Actions.coproduct)
 											msg = 'Coproduct';
@@ -2058,15 +2059,10 @@ class D
 				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale, false);
 				D.DeleteSelectRectangle();
 			}
+//			else if (!DiagramMorphism.prototype.isPrototypeOf(D.mouseover))
 			else
-			{
-				D.mouseover = diagram.hasOverlap(xy);
 				D.DeleteSelectRectangle();
-				if (D.mouseover && 'to' in D.mouseover)
-					D.Status(e, D.mouseover.to.description);
-//				else if (!D.mouseover)
-//					D.statusbar.style.display = 'none';
-			}
+//console.log('mousemove', D.mouseover);
 		}
 		catch(e)
 		{
@@ -2797,6 +2793,16 @@ ${button}
 		for (let i=0; i<elt.parentNode.children.length; ++i)
 			elt.parentNode.children[i].classList.add('nodisplay');
 		elt.classList.remove('nodisplay');
+	}
+	static Mouseover(e, name, on)
+	{
+		const diagram = R.diagram;
+		const from = diagram.getElement(name);
+		diagram.emphasis(from.name, on);
+		if (on && diagram.selected.indexOf(from) >= 0)
+			D.Status(e, from.to.description);
+		D.mouseover = from;
+//console.log('*** Mouseover', D.mouseover ? D.mouseover.name : false);
 	}
 }
 Object.defineProperties(D,
@@ -5173,9 +5179,12 @@ if (typeof tag === 'undefined')debugger;
 				const {coords, vertical} = this.svgLinkUpdate(lnk, data);
 				const linkId = DiagramMorphism.LinkId(data, lnk);
 				const lnkElt = document.getElementById(linkId);
-				lnkElt.setAttribute('d', coords);
-				lnkElt.setAttribute('style', `stroke:#${color}AA`);
-				lnkElt.setAttribute('filter', vertical ? '' : 'url(#softGlow)');
+				if (lnkElt)
+				{
+					lnkElt.setAttribute('d', coords);
+					lnkElt.setAttribute('style', `stroke:#${color}AA`);
+					lnkElt.setAttribute('filter', vertical ? '' : 'url(#softGlow)');
+				}
 				data.visited.push(idxStr + ' ' + lnkStr);
 			}
 		}
@@ -5755,7 +5764,9 @@ class DiagramCore
 	}
 	showSelected(state = true)
 	{
-		this.svg().classList[state ? 'add' : 'remove']('selected');
+		const svg = this.svg();
+		svg.classList[state ? 'add' : 'remove']('selected');
+		this.diagram.svgBase.prepend(svg);
 	}
 	elementId()
 	{
@@ -5992,8 +6003,12 @@ class DiagramObject extends CatObject
 	{
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `nan in getSVG`;
-		return `<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
-			onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')">${this.to.properName}</text>`;
+		const onmouseenter = ` onmouseenter="Cat.D.Mouseover(event, '${this.name}', true)"`;
+		const onmouseleave = ` onmouseleave="Cat.D.Mouseover(event, '${this.name}', false)"`;
+		const svg =
+`<text data-type="object" data-name="${this.name}" text-anchor="middle" class="object grabbable" id="${this.elementId()}" x="${this.x}" y="${this.y + D.default.font.height/2}"
+${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')">${this.to.properName}</text>`;
+		return svg;
 	}
 	getBBox()
 	{
@@ -6012,7 +6027,10 @@ class DiagramObject extends CatObject
 	}
 	showSelected(state = true)
 	{
-		this.svg().classList[state ? 'add' : 'remove']('selected');
+//		this.svg().classList[state ? 'add' : 'remove']('selected');
+		const svg = this.svg();
+		svg.classList[state ? 'add' : 'remove']('selected');
+		this.diagram.svgBase.prepend(svg);
 	}
 	isFusible(m)
 	{
@@ -6706,6 +6724,7 @@ class DetachDomainAction extends Action
 		};
 		super(diagram, args);
 	}
+	/*
 	action(e, diagram, ary)		// diagram unused
 	{
 		const from = ary[0];
@@ -6724,13 +6743,35 @@ class DetachDomainAction extends Action
 		from.update();
 		diagram.makeSelected(e, from);
 	}
+	*/
+	action(e, diagram, ary)		// diagram unused
+	{
+		const from = ary[0];
+
+		const orig = this.dual ? from.codomain : from.domain;
+		const detachedObj = new DiagramObject(diagram, {to:orig.to, xy: {x:orig.x + D.default.toolbar.x, y:orig.y + D.default.toolbar.y } });
+		if (this.dual)
+			from.setCodomain(detachedObj);
+		else
+			from.setDomain(detachedObj);
+		const cat = diagram.domain;
+		cat.elements.delete(from.name);
+		cat.elements.set(from.name, from);	// reset the order in the map
+		detachedObj.incrRefcnt();
+
+		diagram.addSVG(detachedObj);
+		diagram.update();
+		from.update();
+		diagram.makeSelected(e, from);
+	}
 	hasForm(diagram, ary)	// one morphism with connected domain but not a def of something
 	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+//		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]) && !('morphisms' in ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]))
 		{
 			const from = ary[0];
-			return from.isDeletable() && this.isDual ?	from.domain.domains.length + from.domain.codomains.length > 0 :
-														from.codomain.domains.length + from.codomain.codomains.length > 0
+			return from.isDeletable() && this.dual ?	from.domain.domains.length + from.domain.codomains.length > 1 :
+														from.codomain.domains.length + from.codomain.codomains.length > 1
 		}
 		return false;
 	}
@@ -8616,6 +8657,7 @@ class Identity extends Morphism
 			nuArgs.codomain = nuArgs.domain;
 		nuArgs.basename = Identity.Basename(diagram, nuArgs.domain, nuArgs.codomain);
 		nuArgs.properName = Identity.ProperName(nuArgs.domain, nuArgs.codomain);
+		nuArgs.description = `Identity for the object ${nuArgs.domain.properName}`;
 		super(diagram, nuArgs);
 		this.loadEquivalence(diagram);
 	}
@@ -8847,7 +8889,6 @@ class DiagramMorphism extends Morphism
 	}
 	json()
 	{
-if (!this.to)return {};
 		let mor = super.json();
 		mor.flipName = this.flipName;
 		mor.to = this.to.name;
@@ -8886,8 +8927,9 @@ if (!this.to)return {};
 				`M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`
 			:
 				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
-		const onmouseenter = ` onmouseenter="Cat.R.diagram.emphasis('${this.name}', true)"`;
-		const onmouseleave = ` onmouseleave="Cat.R.diagram.emphasis('${this.name}', false)"`;
+//		const onmouseenter = ` onmouseenter="Cat.D.Status(event, '${this.to.description}');Cat.R.diagram.emphasis('${this.name}', true)"`;
+		const onmouseenter = ` onmouseenter="Cat.D.Mouseover(event, '${this.name}', true)"`;
+		const onmouseleave = ` onmouseleave="Cat.D.Mouseover(event, '${this.name}', false)"`;
 		let svg =
 `<g id="${this.elementId()}">
 <path data-type="morphism" data-name="${this.name}" class="morphism grabbable" id="${this.elementId()}_path" d="${coords}"
@@ -9139,12 +9181,20 @@ class Cell extends DiagramCore
 	{
 		const nuArgs = U.Clone(args);
 		super(diagram, nuArgs);
-		this.properName = nuArgs.properName;
+		this.properName = U.GetArg(nuArgs, 'properName', '');
 		this.left = nuArgs.left;
 		this.right = nuArgs.right;
 		this.signature = Cell.Signature(this.left, this.right);
 		this.to = null;
 		this.description = '';
+	}
+	register()
+	{
+		this.getObjects().map(o => o.nodes.add(this));
+	}
+	deregister()
+	{
+		this.getObjects().map(o => o.nodes.delete(this));
 	}
 	svg()
 	{
@@ -9242,6 +9292,40 @@ class Cell extends DiagramCore
 			cell = new Cell(diagram, {left, right, item:sig, properName:''});
 		diagram.domain.cells.set(sig, cell);
 		return cell;
+	}
+	static CommonLink(leg, altLeg)
+	{
+		const sub = [];
+		for (let i=0; i<leg.length; ++i)
+			if (leg[i] === altLeg[i])
+				sub.push(leg[i]);
+			else
+				break;
+		return sub;
+	}
+	static HasSubCell(cells, left, right)
+	{
+		const legHasObject = function(leg, obj)
+		{
+			return leg.reduce((r, m) => r || m.codomain === obj, false);
+		}
+		const cellCheck = function(cell, left, right)
+		{
+			let sub = Cell.CommonLink(cell.left, left);
+			if (sub.length > 0)
+			{
+				if (legHasObject(right, cell.left[cell.left.length -1].codomain))
+					return true;
+				if (legHasObject(left, cell.right[cell.right.length -1].codomain))
+					return true;
+			}
+			return false;
+		}
+		const subEq = function(cell, left, right)
+		{
+			return cellCheck(cell, left, right) || cellCheck(cell, right, left);
+		};
+		return cells.reduce((r, cell) => r || subEq(cell, left, right), false);
 	}
 }
 
@@ -9377,188 +9461,73 @@ class IndexCategory extends Category
 			homset.splice(ndx, 1);
 		this.updateHomSetIndices(m);
 	}
-	/*
-	makeCells(diagram)
+	detachDoamin(from, xy, dual)
 	{
-		const found = new Set();
-		const initials = new Set;
-		this.elements.forEach(function(m)
-		{
-			if (DiagramMorphism.prototype.isPrototypeOf(m))
-			{
-				if (m.domain.domains.length > 1)
-					initials.add(m);		// possible cell origin
-			}
-		});
-		const legs = [];
-		initials.forEach(function(o)
-		{
-			const morphs = o.domain.domains;
-			legs.push(...morphs.map(m => [m]));
-		}, this);
-		const domLegs = new Map;
-		const codLegs = new Map;
-		while(legs.length > 0)
-		{
-			const leg = legs.pop();
-			const dom = leg[0].domain;
-			const cod = leg[leg.length -1].codomain;
-			if (cod.codomains.length > 1)			// potential full leg
-			{
-				if (!domLegs.has(dom))
-					domLegs.set(dom, []);
-				domLegs.get(dom).push(leg);
-			}
-			if (cod.domains.length === 0)	// cannot continue
-			{
-			}
-			else if (cod.domains.length === 1)	// continue
-			{
-				const nuLeg = leg.slice();
-				nuLeg.push(cod.domains[0]);
-				legs.push(nuLeg);	// TODO circularity test
-			}
-			else
-			{
-				cod.domains.map(m =>
-				{
-					const nuLeg = leg.slice();
-					nuLeg.push(m);
-					legs.push(nuLeg);
-				});	// TODO circularity test
-			}
-		}
-		domLegs.forEach(function(legs, dom)		// for all domain legs...
-		{
-			legs.map((leg, i) =>			// for all legs ...
-			{
-				const cod = leg[leg.length -1].codomain;
-				for (let j=i+1; j<legs.length; ++j)		// for all other legs ...
-				{
-					let left = leg;
-					let right = legs[j];
-					const altDom = right[0].domain;
-					const altCod = right[right.length -1].codomain;
-					if (dom.name === altDom.name && altCod.name === cod.name)
-					{
-						if (left.length > right.length)
-							[right, left] = [left, right];
-						else if (left.length === right.length && left.reduce((r, m, i) => r && (m.signature === right[i].signature), true))
-							continue;
-						const cell = Cell.Get(diagram, left, right);
-						found.add(cell.signature);
-						cell.properName = '';
-						const objs = cell.getObjects();
-						objs.map(o => o.nodes.add(cell));
-					}
-				}
-			});
-		}, this);
-		const badCells = new Set([...this.cells.keys()].filter(c => !found.has(c)));
-		badCells.forEach(function(c)
-		{
-			const cell = this.cells.get(c);
-			cell.decrRefcnt();
-			this.cells.delete(c);
-		}, this);
-		this.cells.forEach(function(cell, sig)
-		{
-			if (!cell.isSimple())
-				return;
-			const left = cell.left;
-			const right = cell.right;
-			const firstLeft = left[0];
-			if (left.length === 1 && DiagramComposite.prototype.isPrototypeOf(firstLeft) && firstLeft.morphisms.length === right.length &&
-				firstLeft.morphisms.reduce((r, m, i) => r && m.name === right[i].name, true))
-			{
-				// check for decoration
-			}
-			const flatLeft = diagram.flatten(left);
-			const flatRight = diagram.flatten(right);
-//			R.workers.equality.postMessage(['CheckEquivalence', diagram.name, cell.signature, left.map(m => m.to.signature), right.map(m => m.to.signature)]);
-			R.workers.equality.postMessage(['CheckEquivalence', diagram.name, cell.signature, flatLeft.map(m => m.to.signature), flatRight.map(m => m.to.signature)]);
-		});
+		const obj = dual ? from.codomain : from.domain;
+		const to = obj.to;
+		const detachedObj = new DiagramObject(diagram, {to, xy});
+		if (this.dual)
+			from.setCodomain(detachedObj);
+		else
+			from.setDomain(detachedObj);
+		if (dual)
+			obj.codomain.codomains.splice(obj.codomain.codomains.indexOf(from), 1);
+		else
+			obj.domain.domains.splice(obj.domain.domains.indexOf(from), 1);
+		this.elements.delete(from.name);
+		this.elements.set(from.name, from);	// reset the order in the map
+		detachedObj.incrRefcnt();
 	}
-	*/
 	makeCells(diagram)
 	{
-		const found = new Set();
-		const initials = new Set;
-		this.forEachMorphism(function(m)
+		this.forEachObject(function(o)
 		{
-			if (m.domain.domains.length > 1)
-				initials.add(m);		// possible cell origin
-		});
-		const legs = [];
-		initials.forEach(function(o)
-		{
-			const morphs = o.domain.domains;
-			legs.push(...morphs.map(m => [m]));
-		}, this);
-		const domLegs = new Map;
-		while(legs.length > 0)
-		{
-			const leg = legs.pop();
-			const dom = leg[0].domain;
-			const cod = leg[leg.length -1].codomain;
-			if (cod.codomains.length > 1)			// potential full leg
+			if (o.domains.length > 1)
 			{
-				if (!domLegs.has(dom))
-					domLegs.set(dom, []);
-				domLegs.get(dom).push(leg);
-			}
-			if (cod.domains.length === 0)	// cannot continue
-			{
-			}
-			else if (cod.domains.length === 1)	// continue
-			{
-				const nuLeg = leg.slice();
-				nuLeg.push(cod.domains[0]);
-				legs.push(nuLeg);	// TODO circularity test
-			}
-			else
-			{
-				cod.domains.map(m =>
+				const paths = [];
+				paths.push(...o.domains.map(m => [m]));		// start the paths
+				const legs = [];
+				const visited = new Map;	// object to leg that gets there
+				let cells = [];
+				while(paths.length > 0)	// find maximal length legs from each starting arrow
 				{
-					const nuLeg = leg.slice();
-					nuLeg.push(m);
-					legs.push(nuLeg);
-				});	// TODO circularity test
-			}
-		}
-		domLegs.forEach(function(legs, dom)		// for all domain legs...
-		{
-			legs.map((leg, i) =>			// for all legs ...
-			{
-				const cod = leg[leg.length -1].codomain;
-				for (let j=i+1; j<legs.length; ++j)		// for all other legs ...
-				{
-					let left = leg;
-					let right = legs[j];
-					const altDom = right[0].domain;
-					const altCod = right[right.length -1].codomain;
-					if (dom.name === altDom.name && altCod.name === cod.name)
+					const leg = paths.shift();
+					const dom = leg[0].domain;
+					const cod = leg[leg.length -1].codomain;
+					if (visited.has(cod))
 					{
-						if (left.length > right.length)
-							[right, left] = [left, right];
-						else if (left.length === right.length && left.reduce((r, m, i) => r && (m.signature === right[i].signature), true))
-							continue;
-						const cell = Cell.Get(diagram, left, right);
-						found.add(cell.signature);
-						cell.properName = '';
-						const objs = cell.getObjects();
-						objs.map(o => o.nodes.add(cell));
+						const alt = visited.get(cod);
+						if (Cell.HasSubCell(cells, leg, alt))
+						{
+							const badCells = new Set;
+							cells.map(cell =>
+							{
+								if (Cell.CommonLink(cell.left, alt).length > 0 || Cell.CommonLink(cell.right, alt).length > 0)
+									badCells.add(cell);
+							});
+							if (badCells.length > 0)
+							{
+								const nuCells = new Set(cells);
+								nuCells.delete(...badCells);
+								cells = [...nuCells];
+							}
+						}
+						else
+							cells.push(Cell.Get(diagram, leg, alt));
 					}
+					visited.set(cod, leg.slice());
+					if (cod.codomains.length > 1)			// potential full leg
+						legs.push(leg);
+					cod.domains.map(m =>
+					{
+						const nuLeg = leg.slice();
+						nuLeg.push(m);
+						paths.push(nuLeg);
+					});	// TODO circularity test
 				}
-			});
-		}, this);
-		const badCells = new Set([...this.cells.keys()].filter(c => !found.has(c)));
-		badCells.forEach(function(c)
-		{
-			const cell = this.cells.get(c);
-			cell.decrRefcnt();
-			this.cells.delete(c);
-		}, this);
+				cells.map(cell => cell.register());
+			}
+		});
 		this.cells.forEach(function(cell, sig)
 		{
 			if (!cell.isSimple())
@@ -9566,16 +9535,8 @@ class IndexCategory extends Category
 			const left = cell.left;
 			const right = cell.right;
 			const firstLeft = left[0];
-			/*
-			if (left.length === 1 && DiagramComposite.prototype.isPrototypeOf(firstLeft) && firstLeft.morphisms.length === right.length &&
-				firstLeft.morphisms.reduce((r, m, i) => r && m.name === right[i].name, true))
-			{
-				// check for decoration
-			}
-			*/
 			const flatLeft = diagram.flatten(left);
 			const flatRight = diagram.flatten(right);
-//			R.workers.equality.postMessage(['CheckEquivalence', diagram.name, cell.signature, left.map(m => m.to.signature), right.map(m => m.to.signature)]);
 			R.workers.equality.postMessage(['CheckEquivalence', diagram.name, cell.signature, flatLeft.map(m => m.to.signature), flatRight.map(m => m.to.signature)]);
 		});
 	}
@@ -9687,33 +9648,17 @@ class Composite extends MultiMorphism
 	getGraph(data = {position:0})
 	{
 		const graph = super.getGraph(data);
-		//
-		// get the graphs of the comprising morphisms.
-		//
 		const graphs = this.morphisms.map(m => m.getGraph());
-		//
-		// Next build a sequence of all the domains and last codomain.
-		// Note that the number of items in the sequence is one greater than the number of morphisms.
-		//
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = ProductObject.Get(this.diagram, objects);
-		//
-		// get the sequence's graph
-		//
 		const seqGraph = sequence.getGraph();
-		//
-		// Copy the links from the comprising morphisms to the sequence.
-		//
 		graphs.map((g, i) =>
 		{
 			seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
 			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
 		seqGraph.traceLinks();
-		//
-		// Copy the links of the initial domain and final codomain to the returned graph.
-		//
 		const ndx = this.morphisms.length;
 		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[1], [1]]]});
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[ndx], map:[[[0], [0]]]});
@@ -10518,8 +10463,6 @@ class TerminalMorphism extends Morphism
 	{
 		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
-//		nuArgs.domain = diagram.getElement(args.domain);
-//		nuArgs.codomain = TerminalObject.Get(diagram, dual);
 		const domain = diagram.getElement(dual ? args.codomain : args.domain);
 		const codomain = Diagonal.Codomain(diagram, domain, 0, dual);
 		[nuArgs.domain, nuArgs.codomain] = dual ? [codomain, domain] : [domain, codomain];
@@ -10548,7 +10491,6 @@ class TerminalMorphism extends Morphism
 	static Get(diagram, obj, dual)
 	{
 		const name = TerminalMorphism.Codename(diagram, obj, dual);
-//		return m ? m : new TerminalMorphism(diagram, {domain, name, dual, description:`${dual ? 'initial' : 'terminal'} morphism ${dual ? 'to' : 'from'} ${obj.properName}`});
 		const m = diagram.getElement(name);
 		if (!m)
 		{
@@ -11180,21 +11122,6 @@ class Diagram extends Functor
 			D.RecordError(x);
 		}
 	}
-	getObjectMorphisms(object)
-	{
-		const domains = [];
-		const codomains = [];
-		for(const [name, from] of this.domain.elements)
-		{
-			if (!Morphism.prototype.isPrototypeOf(from))
-				continue;
-			if (from.domain.isEquivalent(object))
-				domains.push(from);
-			if (from.codomain.isEquivalent(object))
-				codomains.push(from);
-		}
-		return {domains, codomains};
-	}
 	updateFusible(e)
 	{
 		let fusible = false;
@@ -11202,6 +11129,7 @@ class Diagram extends Functor
 		{
 			const elt = this.getSelected();
 			fusible = elt.isFusible(D.mouseover);
+//console.log('updateFusible mouseover', D.mouseover);
 			elt.updateFusible(e, fusible);
 		}
 		return fusible;
@@ -11265,7 +11193,7 @@ class Diagram extends Functor
 	}
 	hasOverlap(bbox, except = '')
 	{
-		const elts = this.svgBase.querySelectorAll('.object, .morphTxt, .morphism, .diagramText');
+		const elts = this.svgBase.querySelectorAll('.object, .diagramText');
 		let r = null;
 		for (let i=0; i<elts.length; ++i)
 		{
@@ -11438,14 +11366,6 @@ class Diagram extends Functor
 	{
 		this.domain.elements.forEach(function(m){m.update();});
 	}
-	/*
-	updateMorphisms()
-	{
-		for(const [name, from] of this.domain.elements)
-			if (Morphism.prototype.isPrototypeOf(from))
-				from.update();
-	}
-	*/
 	isIsolated(elt)
 	{
 		let r = false;
@@ -11800,7 +11720,6 @@ class Diagram extends Functor
 		const toggle = function(...elts)
 		{
 			if (on)
-//				elts.map(e => ('svg' in e ? e.svg() : e).classList.add('emphasis'));
 				elts.map((e, i) => e.classList.add('emphasis'));
 			else
 				elts.map((e, i) => e.classList.remove('emphasis'));
@@ -11808,6 +11727,8 @@ class Diagram extends Functor
 		let elt = this.getElement(c);
 		if (DiagramMorphism.prototype.isPrototypeOf(elt))
 			toggle(elt.svg('_path'), elt.svg('_name'), elt.domain.svg(), elt.codomain.svg());
+		if (DiagramObject.prototype.isPrototypeOf(elt))
+			toggle(elt.svg());
 		else if (this.domain.cells.has(c))
 		{
 			const cell = this.domain.cells.get(c);
