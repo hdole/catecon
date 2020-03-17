@@ -59,7 +59,7 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set;
 	const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set;
 	leftSigs.add(rightSig);
-	leftSigs.add(rightSigs);		// copy right sigs to left
+	rightSigs.forEach(function(s) { leftSigs.add(s); });
 	equals.set(leftSig, leftSigs);
 	equals.set(rightSig, leftSigs);	// since equal set is same
 	const fn = function(sig, leg, item)
@@ -148,7 +148,7 @@ const CheckLeg = function(leg, ndx, cnt, sig)
 				{
 					const sigEqus = equals.get(sig);
 					const nuSigEqus = equals.get(nuSig);
-					if (sigEqus.has(nuSig) || nuSigEqus.has(sig))
+					if ((sigEqus && sigEqus.has(nuSig)) || (nuSigEqus && nuSigEqus.has(sig)))
 						item = s[1];
 				}
 				if (item)
