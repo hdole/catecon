@@ -1792,7 +1792,7 @@ class Navbar
 			H.td(H.div(D.GetButton('object', "Cat.D.objectPanel.toggle()", 'Objects', sz))) +
 			H.td(H.div(D.GetButton('morphism', "Cat.D.morphismPanel.toggle()", 'Morphisms', sz))) +
 			H.td(H.div(D.GetButton('text', "Cat.D.textPanel.toggle()", 'Text', sz))) +
-			H.td(H.div(D.GetButton('string', "Cat.R.diagram.showGraph(event)", 'Graph', sz)));
+			H.td(H.div(D.GetButton('string', "Cat.R.diagram.showGraphs()", 'Graph', sz)));
 		const right =
 			H.td(H.div(D.GetButton('cateapsis', "Cat.D.Home()", 'Home', sz))) +
 			H.td(H.div(D.GetButton('threeD', "Cat.D.threeDPanel.toggle()", '3D view', sz))) +
@@ -1880,6 +1880,7 @@ class D
 		D.threeDPanel =		new ThreeDPanel;
 		D.ttyPanel =		new TtyPanel;
 		D.panels.update();
+		window.onresize = D.Resize;
 	}
 	static SaveDefaults()
 	{
@@ -1963,7 +1964,6 @@ class D
 				{
 					const from = diagram.getSelected();
 					D.mouseover = Cat.R.diagram.selected.indexOf(D.mouseover) >= 0 ? false : D.mouseover;
-//console.log('mousemove', D.mouseover);
 					const isMorphism = Morphism.prototype.isPrototypeOf(from);
 					if (diagram.selected.length === 1)
 					{
@@ -1991,11 +1991,9 @@ class D
 								let fusible = false;
 								diagram.updateDragObjects(e);
 								fusible = diagram.updateFusible(e);
-//console.log('fusible', fusible);
 								let msg = '';
 								if (D.mouseover && diagram.selected.length === 1)
 								{
-//									const elt = diagram.getSelected();
 									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover) &&
 											((Morphism.prototype.isPrototypeOf(D.mouseover) && Morphism.prototype.isPrototypeOf(from)) ||
 											(CatObject.prototype.isPrototypeOf(D.mouseover) && CatObject.prototype.isPrototypeOf(from))))
@@ -2059,10 +2057,8 @@ class D
 				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale, false);
 				D.DeleteSelectRectangle();
 			}
-//			else if (!DiagramMorphism.prototype.isPrototypeOf(D.mouseover))
 			else
 				D.DeleteSelectRectangle();
-//console.log('mousemove', D.mouseover);
 		}
 		catch(e)
 		{
@@ -2137,45 +2133,28 @@ class D
 										break;
 									}
 								}
-								for(const [name, m] of diagram.domain.elements)
+//								for(const [name, m] of diagram.domain.elements)
+								diagram.domain.forEachMorphism(function(m, name)
 								{
-									if (!Morphism.prototype.isPrototypeOf(m))	// morphisms only
-										continue;
+//									if (!Morphism.prototype.isPrototypeOf(m))	// morphisms only
+//										continue;
 									if (m.domain.name === (dragIsFirst ? target.name : from.name))
 									{
 										morphisms.push(m);
 										if (dragIsFirst)
-										{
-											from.incrRefcnt();
-											target.decrRefcnt();
-											m.domain = from;
-										}
+											m.setDomain(from);
 										else
-										{
-											from.decrRefcnt();
-											target.incrRefcnt();
-											m.domain = target;
 											m.setDomain(target);
-										}
 									}
 									if (m.codomain.name === (dragIsFirst ? target.name : from.name))
 									{
 										morphisms.push(m);
 										if (dragIsFirst)
-										{
-											from.incrRefcnt();
-											target.decrRefcnt();
-											m.codomain = from;
-										}
+											m.setCodomain(from);
 										else
-										{
-											from.decrRefcnt();
-											target.incrRefcnt();
-											m.codomain = target;
 											m.setCodomain(target);
-										}
 									}
-								}
+								}, this);
 								dragIsFirst ? target.decrRefcnt() : from.decrRefcnt();
 								diagram.update();
 								morphisms.map(m => m.update());
@@ -2802,7 +2781,6 @@ ${button}
 		if (on && diagram.selected.indexOf(from) >= 0)
 			D.Status(e, from.to.description);
 		D.mouseover = from;
-//console.log('*** Mouseover', D.mouseover ? D.mouseover.name : false);
 	}
 }
 Object.defineProperties(D,
@@ -2881,7 +2859,7 @@ Object.defineProperties(D,
 			},
 			ShiftKeyC(e) { D.categoryPanel.toggle(); },
 			ShiftKeyD(e) { D.diagramPanel.toggle(); },
-			ShiftKeyG(e) { R.diagram.showGraph(e); },
+			ShiftKeyG(e) { R.diagram.showGraphs(); },
 			ShiftKeyH(e) { D.helpPanel.toggle(); },
 			ShiftKeyL(e) { D.loginPanel.toggle(); },
 			ShiftKeyM(e) { D.morphismPanel.toggle(); },
@@ -4903,7 +4881,6 @@ class Graph
 	}
 	tagGraph(tag)
 	{
-if (typeof tag === 'undefined')debugger;
 		if (this.tags.indexOf(tag) === -1)
 			this.tags.push(tag);
 		this.graphs.map(g => g.tagGraph(tag));
@@ -4912,40 +4889,18 @@ if (typeof tag === 'undefined')debugger;
 	{
 		if (this.isLeaf())
 		{
-			//
-			// copy our links
-			//
 			const links = this.links.slice();
-			//
-			// clear which links have been visited
-			//
 			this.visited = [];
-			//
-			// for each link...
-			//
 			while(links.length > 0)
 			{
 				const lnk = links.pop();
-				//
-				// have we seen this link before?
-				//
 				if (this.visited.indexOf(lnk) > -1)
 					continue;
-				//
-				// get the graph that the link specifies
-				//
 				const g = this.getFactor(lnk);
-				//
-				// if a link in g has not been seen in our links,
-				// and the link's root is not the graph's what?  TODO
-				//
 				g.links.map(k => (links.indexOf(k) === -1 && k[0] !== link[0]) ? links.push(k) : null);
 				U.ArrayMerge(this.tags, g.tags);
 				if (link.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
 					continue;
-				//
-				// remember that we've been here
-				//
 				if (this.visited.indexOf(lnk) === -1)
 					this.visited.push(lnk);
 			}
@@ -4955,37 +4910,22 @@ if (typeof tag === 'undefined')debugger;
 			this.graphs.map((g, i) =>
 			{
 				const lnk = link.slice();
-				//
-				// add a level to the link
-				//
 				lnk.push(i);
 				g.traceLinks(lnk);
 			});
 		}
 	}
-	//
-	// builds string graphs from other graphs
-	//
 	mergeGraphs(data) // data: {from, base, inbound, outbound}
 	{
 		if (data.from.isLeaf())
 		{
-			//
-			// adjust the lnks to merge
-			//
 			const links = data.from.links.map(lnk =>
 			{
 				let nuLnk = data.base.reduce((isSelfLink, f, i) => isSelfLink && f === lnk[i], true) ? data.inbound.slice() : data.outbound.slice();
 				nuLnk.push(...lnk.slice(data.base.length));
 				return nuLnk;
 			});
-			//
-			// merge the links to our links
-			//
 			U.ArrayMerge(this.links, links);
-			//
-			// merge the tags to our tags
-			//
 			U.ArrayMerge(this.tags, data.from.tags);
 		}
 		else
@@ -5052,7 +4992,7 @@ if (typeof tag === 'undefined')debugger;
 		else
 			this.graphs.map(g => g.updateXY(xy));
 	}
-	svg(data, first = true)	// data {index, root, dom:name, cod:name, visited, elementId}
+	getSVG(data, first = true)	// data {index, root, dom:name, cod:name, visited, elementId}
 	{
 		const diagram = this.diagram;
 		if (this.isLeaf() && this.links.length > 0)
@@ -5121,7 +5061,7 @@ if (typeof tag === 'undefined')debugger;
 		return this.graphs.reduce((svg, g, i) =>
 		{
 			data.index.push(i);
-			svg += g.svg(data, false);
+			svg += g.getSVG(data, false);
 			data.index.pop();
 			return svg;
 		}, '');
@@ -5511,6 +5451,10 @@ class ProductObject extends MultiObject
 				return false;
 		return true;
 	}
+	static IsA(obj)
+	{
+		return ProductObject.prototype.isPrototypeOf(obj);
+	}
 	static Basename(diagram, objects, dual = false)
 	{
 		const c = dual ? 'C' : '';
@@ -5540,7 +5484,7 @@ class ProductObject extends MultiObject
 	}
 	static CanFlatten(obj)
 	{
-		return ProductObject.prototype.isPrototypeOf(obj) && obj.objects.reduce((r, o) => r || (ProductObject.prototype.isPrototypeOf(o) && o.dual === obj.dual), false);
+		return ProductObject.IsA(obj) && obj.objects.reduce((r, o) => r || (ProductObject.IsA(o) && o.dual === obj.dual), false);
 	}
 }
 
@@ -6724,10 +6668,11 @@ class DetachDomainAction extends Action
 		};
 		super(diagram, args);
 	}
-	/*
 	action(e, diagram, ary)		// diagram unused
 	{
 		const from = ary[0];
+		const obj = this.dual ? from.codomain : from.domain;
+			/*
 		const orig = this.dual ? from.codomain : from.domain;
 		const detachedObj = new DiagramObject(diagram, {to:orig.to, xy: {x:orig.x + D.default.toolbar.x, y:orig.y + D.default.toolbar.y } });
 		if (this.dual)
@@ -6738,28 +6683,9 @@ class DetachDomainAction extends Action
 		cat.elements.delete(from.name);
 		cat.elements.set(from.name, from);	// reset the order in the map
 		detachedObj.incrRefcnt();
-		diagram.addSVG(detachedObj);
-		diagram.update();
-		from.update();
-		diagram.makeSelected(e, from);
-	}
-	*/
-	action(e, diagram, ary)		// diagram unused
-	{
-		const from = ary[0];
+*/
 
-		const orig = this.dual ? from.codomain : from.domain;
-		const detachedObj = new DiagramObject(diagram, {to:orig.to, xy: {x:orig.x + D.default.toolbar.x, y:orig.y + D.default.toolbar.y } });
-		if (this.dual)
-			from.setCodomain(detachedObj);
-		else
-			from.setDomain(detachedObj);
-		const cat = diagram.domain;
-		cat.elements.delete(from.name);
-		cat.elements.set(from.name, from);	// reset the order in the map
-		detachedObj.incrRefcnt();
-
-		diagram.addSVG(detachedObj);
+		diagram.addSVG(diagram.domain.detachDomain(from, {x:obj.x + D.default.toolbar.x, y:obj.y + D.default.toolbar.y }, this.dual));
 		diagram.update();
 		from.update();
 		diagram.makeSelected(e, from);
@@ -6770,8 +6696,8 @@ class DetachDomainAction extends Action
 		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.prototype.isPrototypeOf(ary[0]))
 		{
 			const from = ary[0];
-			return from.isDeletable() && this.dual ?	from.domain.domains.length + from.domain.codomains.length > 1 :
-														from.codomain.domains.length + from.codomain.codomains.length > 1
+			return from.isDeletable() && this.dual ? from.codomain.domains.length + from.codomain.codomains.length > 1 :
+													from.domain.domains.length + from.domain.codomains.length > 1;
 		}
 		return false;
 	}
@@ -6931,7 +6857,7 @@ class ProjectAction extends Action
 	}
 	hasForm(diagram, ary)	// one product object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.prototype.isPrototypeOf(ary[0].to) &&
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.IsA(ary[0].to) &&
 			ary[0].to.dual === this.dual;
 	}
 	html(e, diagram, ary)
@@ -6975,7 +6901,7 @@ class ProjectAction extends Action
 			const d = searchObjects.shift();
 			const ob = d[0];
 			const f = d[1];
-			if (ProductObject.prototype.isPrototypeOf(ob) && ob.dual === this.dual)
+			if (ProductObject.IsA(ob) && ob.dual === this.dual)
 				ob.objects.map((obo, i) => searchObjects.push([obo, [...f, i]]));
 			else
 				factors.push(f);
@@ -7004,7 +6930,7 @@ class ProjectAction extends Action
 	}
 	static FactorButton(dir, root, object, index, dual)
 	{
-		return (ProductObject.prototype.isPrototypeOf(object) && object.dual === dual) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index, dual) :
+		return (ProductObject.IsA(object) && object.dual === dual) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index, dual) :
 			ProjectAction.ObjectFactorButton(dir, root, object, index, dual);
 	}
 }
@@ -7463,7 +7389,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	{
 		if (TerminalObject.prototype.isPrototypeOf(o) || InitialObject.prototype.isPrototypeOf(o))
 			return 0;
-		if (ProductObject.prototype.isPrototypeOf(o) && !o.dual)
+		if (ProductObject.IsA(o) && !o.dual)
 			return o.objects.reduce((r, o) => r + (TerminalObject.prototype.isPrototypeOf(o) ? 0 : 1), 0);
 		else
 			return 1;
@@ -7478,7 +7404,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		htmlDiagram.forEachMorphism(function(m)
 		{
 			if (m.domain.name === html.name &&
-				ProductObject.prototype.isPrototypeOf(m.codomain) &&
+				ProductObject.IsA(m.codomain) &&
 				m.codomain.objects[0].name === str.name)
 			{
 				const hom = m.codomain.objects[1];
@@ -7507,7 +7433,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	}
 	canFormat(o)
 	{
-		if (ProductObject.prototype.isPrototypeOf(o))
+		if (ProductObject.IsA(o))
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
 		else if (Morphism.prototype.isPrototypeOf(o))
 			return this.canFormat(o.domain) && this.canFormat(o.codomain);
@@ -8325,7 +8251,7 @@ class GraphAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		ary.map(m => diagram.showString(m));
+		ary.map(m => diagram.showGraph(m));
 		diagram.update(false);
 	}
 	hasForm(diagram, ary)
@@ -8868,7 +8794,7 @@ class DiagramMorphism extends Morphism
 		if (svg)
 			svg.parentNode.removeChild(svg);
 		if (this.graph)
-			this.removeStringSvg();
+			this.removeGraph();
 	}
 	decrRefcnt()
 	{
@@ -9139,7 +9065,7 @@ ${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${
 	{
 		return false;
 	}
-	removeStringSvg()
+	removeGraph()
 	{
 		const id = this.graphId();
 		const svgElt = document.getElementById(id);
@@ -9150,13 +9076,46 @@ ${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${
 		}
 		return false;
 	}
+	hideGraph()
+	{
+		if ('graph' in this)
+			this.graphSvg().classList.add('hidden');
+	}
 	makeGraph()
 	{
 		this.graph = this.to.getGraph();
 	}
+	showGraph()
+	{
+		if (!('graph' in this))
+		{
+			this.makeGraph();
+			const dom = this.domain;
+			const cod = this.codomain;
+			let xy = new D2({x:dom.x - dom.width/2, y:dom.y}).round();
+			this.graph.graphs[0].updateXY(xy);	// set locations inside domain
+			xy = new D2({x:cod.x - cod.width/2, y:cod.y}).round();
+			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
+			const id = this.graphId();
+			const svg =
+`<g id="${id}">${this.graph.getSVG({index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
+			this.diagram.svgBase.innerHTML += svg;
+		}
+		else
+			this.graphSvg().classList.remove('hidden');
+	}
 	graphId()
 	{
 		return `graph_${this.elementId()}`;
+	}
+	graphSvg()
+	{
+		return 'graph' in this ? document.getElementById(this.graphId()) : null;
+	}
+	isGraphHidden()
+	{
+		const svg = this.graphSvg();
+		return svg ? svg.classList.contains('hidden') : true;
 	}
 	static LinkId(data, lnk)
 	{
@@ -9195,6 +9154,8 @@ class Cell extends DiagramCore
 	deregister()
 	{
 		this.getObjects().map(o => o.nodes.delete(this));
+		this.diagram.domain.cells.delete(this.signature);
+		this.removeSVG();
 	}
 	svg()
 	{
@@ -9259,7 +9220,7 @@ class Cell extends DiagramCore
 			return false;
 		const checkObjects = function(leg)		// no shared objects on leg
 		{
-			const objs = new Set([leg[0].doamin, ...leg.map(m => m.codomain)]);
+			const objs = new Set([leg[0].domain, ...leg.map(m => m.codomain)]);
 			return objs.size === leg.length + 1;
 		}
 		if (!checkObjects(this.left))
@@ -9357,33 +9318,103 @@ class DiagramComposite extends DiagramMorphism
 	}
 	json()
 	{
-		let mor = super.json();
+		const mor = super.json();
 		mor.morphisms = this.morphisms.map(m => m.name);
 		return mor;
 	}
 }
 
-/*
-class Associative extends Morphism
+class ProductAssociative extends Morphism
 {
 	constructor(diagram, args)
 	{
-		super(diagram, args);
-		this.factors = args.factors;
+		const dual = U.GetArg(args, 'dual', false);
+		const domain = diagram.getElement(args.domain);
+		const nuArgs = U.Clone(args);
+		nuArgs.properName = 'a';
+		const str = ProductAssociative.GetStructure(diagram, domain);
+		const codomain = ProductAssociative.Codomain(diagram, str.objects, nuArgs.assoc, dual);
+		nuArgs.domain = domain;
+		nuArgs.codomain = codomain;
+		super(diagram, nuArgs);
+		const assoc = ProductAssociative.GetStructure(diagram, codomain);
+		Object.defineProperties(this,
+		{
+			'objects': 		{value:str.objects, writable: false},
+			'form': 		{value:str.form, writable: false},
+			'assoc': 		{value:assoc.form, writable: false},
+		});
+	}
+	help(helped = new Set)
+	{
+		if (helped.has(this.name))
+			return '';
+		helped.add(this.name);
+		return super.help() + H.p(`The associative morphism from ${this.domain.properName} to ${this.codomain.properName}`);
+	}
+	json()
+	{
+		const a = super.json();
+		delete a.properName;
+		return a;
+	}
+	static HasForm(diagram, ary)
+	{
+		if (ary.length === 1)
+		{
+			const from = ary[0];
+			if (DiagramObject.prototype.isPrototypeOf(from))
+			{
+				const to = from.to;
+				if (ProductObject.IsA(to))
+				{
+					if (to.objects.length > 2)
+						return true;
+					const subProducts = to.objects.filter(o => o.dual === to.dual && ProductObject.IsA(o));
+					return subProducts > 0;
+				}
+			}
+		}
+		return false;
+	}
+	static GetStructure(diagram, domain)
+	{
+		if (!ProductObject.IsA(domain))
+			return [];
+		const dual = domain.dual;
+		const objects = [];
+		let ndx = 0;
+		const form = domain.objects.map(o =>
+		{
+			if (ProductObjects.IsA(o) && dual === o.dual)
+			{
+				const str = ProductAssociative.GetStructure(o);
+				objects.push(str.objects);
+				const subForm = str.form.map(f => f + ndx);
+				ndx += str.ndx;
+				return subForm;
+			}
+			else
+			{
+				objects.push(o);
+				return ndx;
+				++ndx;
+			}
+		});
+		return {objects, form, ndx};
+	}
+	static Codomain(diagram, objects, assoc, dual)
+	{
+		const codObjects = assoc.map(i =>
+		{
+			if (Array.isArray(i))
+				return ProductAssociative.Codomain(diagram, objects, i, dual);
+			else
+				return objects[i];
+		});
+		return ProductObject.Get(diagram, codObjects, dual);
 	}
 }
-
-class ProductAssociative extends Associative
-{
-	constructor(diagram, args)
-	{
-		super(diagram, args);
-	}
-	static Codomain(diagram, domain, factors)
-	{
-	}
-}
-*/
 
 class IndexCategory extends Category
 {
@@ -9461,22 +9492,34 @@ class IndexCategory extends Category
 			homset.splice(ndx, 1);
 		this.updateHomSetIndices(m);
 	}
-	detachDoamin(from, xy, dual)
+	detachDomain(from, xy, dual)
 	{
 		const obj = dual ? from.codomain : from.domain;
 		const to = obj.to;
-		const detachedObj = new DiagramObject(diagram, {to, xy});
-		if (this.dual)
-			from.setCodomain(detachedObj);
-		else
-			from.setDomain(detachedObj);
+		const detachedObj = new DiagramObject(from.diagram, {to, xy});
 		if (dual)
-			obj.codomain.codomains.splice(obj.codomain.codomains.indexOf(from), 1);
+		{
+			from.setCodomain(detachedObj);
+//			obj.codomains.splice(obj.codomains.indexOf(from), 1);
+		}
 		else
-			obj.domain.domains.splice(obj.domain.domains.indexOf(from), 1);
+		{
+			from.setDomain(detachedObj);
+//			obj.domains.splice(obj.domains.indexOf(from), 1);
+		}
 		this.elements.delete(from.name);
 		this.elements.set(from.name, from);	// reset the order in the map
-		detachedObj.incrRefcnt();
+		const badCells = new Set;
+		obj.nodes.forEach(function(cell)
+		{
+			if ((cell.left.indexOf(from) !== -1) || (cell.right.indexOf(from) !== -1))
+				badCells.add(cell);
+		});
+		badCells.forEach(function(cell)
+		{
+			cell.deregister();
+		});
+		return detachedObj;
 	}
 	makeCells(diagram)
 	{
@@ -10432,7 +10475,7 @@ class Evaluation extends Morphism
 	}
 	static CanEvaluate(object)
 	{
-		return ProductObject.prototype.isPrototypeOf(object) &&
+		return ProductObject.IsA(object) &&
 			object.objects.length === 2 &&
 			HomObject.prototype.isPrototypeOf(object.objects[0]) &&
 			object.objects[0].objects[0].isEquivalent(object.objects[1]);
@@ -10555,7 +10598,7 @@ class Distribute extends Morphism
 		{
 			const from = ary[0];
 			const to = from.to;
-			if (ProductObject.prototype.isPrototypeOf(to) && !to.dual && ProductObject.prototype.isPrototypeOf(to.objects[1]) && to.objects[1].dual)
+			if (ProductObject.IsA(to) && !to.dual && ProductObject.IsA(to.objects[1]) && to.objects[1].dual)
 				return true;
 		}
 		return false;
@@ -10617,10 +10660,10 @@ class Dedistribute extends Morphism
 		{
 			const from = ary[0];
 			const to = from.to;
-			if (ProductObject.prototype.isPrototypeOf(to) && to.dual && ProductObject.prototype.isPrototypeOf(to.objects[0]) && !to.objects[0].dual)
+			if (ProductObject.IsA(to) && to.dual && ProductObject.IsA(to.objects[0]) && !to.objects[0].dual)
 			{
 				const obj0 = to.objects[0].objects[0];
-				return to.objects.reduce((doit, o) => doit && ProductObject.prototype.isPrototypeOf(o) && !o.dual && obj0.isEquivalent(o.objects[0]), true);
+				return to.objects.reduce((doit, o) => doit && ProductObject.IsA(o) && !o.dual && obj0.isEquivalent(o.objects[0]), true);
 			}
 		}
 		return false;
@@ -10685,18 +10728,27 @@ class Diagram extends Functor
 		if ('texts' in args)
 			args.texts.map(d => new DiagramText(this, d));
 		this.textId = U.GetArg(args, 'textId', 0);
-		this.colorIndex2colorIndex = {};
-		this.colorIndex2color = {};
-		this.link2colorIndex = {};
-		this.colorIndex = 0;
+//		this.colorIndex2colorIndex = {};
+//		this.colorIndex2color = {};
+//		this.link2colorIndex = {};
+//		this.colorIndex = 0;
 		this.assertions = new Map;	// sig to assertion
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
 			this.domain.process(this, nuArgs.domainElements);
-		this.svgRoot = null;
-		this.svgBase = null;
+//		this.svgRoot = null;
+//		this.svgBase = null;
 		this.loadDeferredEquivalences();
+		Object.defineProperties(this,
+		{
+			colorIndex2colorIndex:		{value:{},	writable:true},
+			colorIndex2color:			{value:{},	writable:true},
+			colorIndex:					{value:0,	writable:true},
+			link2colorIndex:			{value:{},	writable:true},
+			svgRoot:					{value:null,	writable:true},
+			svgBase:					{value:null,	writable:true},
+		});
 	}
 	help(helped = new Set)
 	{
@@ -10882,7 +10934,7 @@ class Diagram extends Functor
 		if (elt)
 			this.addSelected(elt);
 		if (R.default.debug)
-			console.log('selected', elt.basename, elt);
+			console.log('selected', elt.basename, elt.refcnt, elt);
 		D.ShowToolbar(e);
 	}
 	addSelected(elt)
@@ -10951,11 +11003,19 @@ class Diagram extends Functor
 				return true;
 		return false;
 	}
-	showString(from)
+	showGraph(from)
 	{
-		const id = from.graphId();
-		if (from.removeStringSvg())
-			return;
+//		if (from.removeGraph())
+//			return;
+		if ('graph' in from)
+		{
+			const gsvg = from.graphSvg();
+			if (gsvg)
+			{
+				gsvg.classList.contains('hidden') ? from.showGraph() : from.hideGraph();
+				return;
+			}
+		}
 		from.makeGraph();
 		const dom = from.domain;
 		const cod = from.codomain;
@@ -10963,7 +11023,9 @@ class Diagram extends Functor
 		from.graph.graphs[0].updateXY(xy);	// set locations inside domain
 		xy = new D2({x:cod.x - cod.width/2, y:cod.y}).round();
 		from.graph.graphs[1].updateXY(xy);	// set locations inside codomain
-		const svg = `<g id="${id}">${from.graph.svg({index:[], root:from.graph, dom:dom.name, cod:cod.name, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
+		const id = from.graphId();
+		const svg =
+`<g id="${id}">${from.graph.getSVG({index:[], root:from.graph, dom:dom.name, cod:cod.name, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
 		this.svgBase.innerHTML += svg;
 	}
 	updateDragObjects(e)
@@ -11129,7 +11191,6 @@ class Diagram extends Functor
 		{
 			const elt = this.getSelected();
 			fusible = elt.isFusible(D.mouseover);
-//console.log('updateFusible mouseover', D.mouseover);
 			elt.updateFusible(e, fusible);
 		}
 		return fusible;
@@ -11395,7 +11456,7 @@ class Diagram extends Functor
 				{
 					if (sel0.domain.isEquivalent(N))
 						return true;
-					r = ProductObject.prototype.isPrototypeOf(domain) &&
+					r = ProductObject.IsA(domain) &&
 						domain.objects.length === 3 &&
 						N.isEquivalent(domain.objects[0]);
 					if (r)
@@ -11465,25 +11526,27 @@ class Diagram extends Functor
 				fn(e);
 		});
 	}
-	showGraph(e)
+	showGraph(m)
+	{
+		m.isGraphHidden() ? m.showGraph() : m.hideGraph();
+	}
+	showGraphs()
 	{
 		this.colorIndex2colorIndex = {};
 		this.colorIndex2color = {};
 		this.link2colorIndex = {};
 		this.colorIndex = 0;
 		let exist = false;
-		for(const [name, from] of this.domain.elements)
-			if (Morphism.prototype.isPrototypeOf(from))
-				exist = from.removeStringSvg() || exist;
-		if (exist)
-			return;
-		for(const [name, from] of this.domain.elements)
-			if (Morphism.prototype.isPrototypeOf(from))
-				this.showString(from);
+		this.domain.forEachMorphism(function(m)
+		{
+			exist = exist || ('graph' in m && !m.graphSvg().classList.contains('hidden'))
+		});
+		this.domain.forEachMorphism(function(m) { exist ? m.hideGraph() : m.showGraph(); });
 		this.update(false);
 	}
 	addWindowSelect(e)
 	{
+		this.deselectAll();
 		const p = this.userToDiagramCoords(D.mouse.down);
 		const q = D.mouse.diagramPosition(this);
 		let selected = [];
