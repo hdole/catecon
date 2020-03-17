@@ -659,7 +659,7 @@ td.white
 .cellTxt
 {
 	fill:			black;
-	font:			24px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
+	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
 }
