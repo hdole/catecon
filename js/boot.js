@@ -79,7 +79,12 @@ const Boot = function(fn)
 	args.rowCount++;
 	args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const id2 = new Cat.DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
+	logic.addSVG(id2);
 	const omegaPair = Cat.R.MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
+const foo = Cat.R.MakeObject(args, '', 'ProductObject', '', 'A pair of too-toos\'s', {objects:[omegaPair, omegaPair]}).to;
+const goo = Cat.FactorMorphism.Codomain(logic, foo, [[0, 0], [0, 1], [1, 0], [1, 1]], false, [[0, 0], [0, 1], [0, 2], [1]]);
+//debugger;
+
 	const mTrue = Cat.R.MakeMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true', one, omega, {js:'return true;'}).to;
 	const mFalse = Cat.R.MakeMorphism(args, 'false', 'Morphism', '&perp;', 'The truth value known as false', one, omega, {js:'return false;'}).to;
 	const logicNot = Cat.R.MakeMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value', omega, omega, {js:'return !args;'}).to;
@@ -535,7 +540,7 @@ postMessage(['ff2d3', args]);
 	args.rowCount++;
 	args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const ftripTof3 = new Cat.DiagramMorphism(threeD, {to:f3.idTo, domain:f3toFtrip.codomain, codomain:f3toFtrip.domain});
-	threeD.addSVG(ftripTof3);
+//	threeD.addSVG(ftripTof3);
 	const fff2d3 = Cat.R.MakeMorphism(args, 'fff2d3', 'Morphism', '3D', 'visualize a triplet of numbers in 3D', f3, d3,
 	{
 		code:	{javascript:
