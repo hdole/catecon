@@ -375,7 +375,7 @@ a:hover, .offcanvas a:focus
 .hidden
 {
 	opacity:	0;
-	transition:	opacity 1s, height 0s 1s;
+	transition:	opacity 0.5s, height 0s 0.5s;
 	height:		0px;
 	box-shadow:	none;
 }
