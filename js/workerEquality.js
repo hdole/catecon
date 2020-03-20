@@ -81,12 +81,14 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	let item = null;
+	let isEqual = false;
 	const fn = function(leg, leftSig, rightSig)
 	{
 		const equ = equals.get(leftSig);
 		if (equ && equ.has(rightSig))
 		{
-			const equs = sig2equivalences.get(rightSig);
+			isEqual = true;
+			const equs = sig2equivalences.get(rightSig);	// item search
 			if (equs)
 				for (let i=0; i< equs.length; ++i)
 				{
@@ -113,7 +115,10 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 					{
 						item = CheckLeg(leg, ndx, cnt, sig);
 						if (item)
+						{
+							isEqual = true;
 							return item;
+						}
 					}
 			return null;
 		};
@@ -121,7 +126,7 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 		if (!item)
 			item = fn(rightLeg, leftSig);
 	}
-	return ['CheckEquivalence', diagram, tag, item];
+	return ['CheckEquivalence', diagram, tag, isEqual, item];
 }
 
 const CheckLeg = function(leg, ndx, cnt, sig)
