@@ -220,6 +220,10 @@ class D2
 		const height = Math.max(abox.y + abox.height - y, bbox.y + bbox.height - y);
 		return {x, y, width, height};
 	}
+	static IsA(obj)
+	{
+		return D2.prototype.isPrototypeOf(obj);
+	}
 }
 
 class H
@@ -842,7 +846,7 @@ Create diagrams and execute morphisms.
 			index = new DiagramText(diagram, nuArgs);
 			diagram.addSVG(index);
 		}
-		else if (CatObject.prototype.isPrototypeOf(args))
+		else if (CatObject.IsA(args))
 			index = diagram.placeObject(null, args, xy, false);
 		else
 		{
@@ -855,7 +859,7 @@ Create diagrams and execute morphisms.
 				else if ('code' in args)
 					to.code.javascript = args.code.javascript.replace(/%1/g, U.JsName(to));
 			}
-			else if (CatObject.prototype.isPrototypeOf(to))
+			else if (CatObject.IsA(to))
 				index = diagram.placeObject(null, to, xy, false);
 		}
 		if ('rowCount' in args)
@@ -1239,7 +1243,7 @@ Create diagrams and execute morphisms.
 		const info = new Map;
 		R.$CAT.codomain.elements.forEach(function(o)
 		{
-			if (Category.prototype.isPrototypeOf(o) && !IndexCategory.prototype.isPrototypeOf(o))
+			if (Category.IsA(o) && !IndexCategory.IsA(o))
 				info.set(o.name, o.info());
 		});
 		return info;
@@ -1972,7 +1976,7 @@ class D
 						if (e.ctrlKey && !D.dragClone)
 						{
 							const isolated = from.refcnt === 1;
-							if (DiagramObject.prototype.isPrototypeOf(from))		// ctrl-drag identity
+							if (DiagramObject.IsA(from))		// ctrl-drag identity
 							{
 								diagram.activate(e, 'identity');
 								const id = diagram.getSelected();
@@ -1998,7 +2002,7 @@ class D
 								{
 									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover) &&
 											((Morphism.IsA(D.mouseover) && Morphism.IsA(from)) ||
-											(CatObject.prototype.isPrototypeOf(D.mouseover) && CatObject.prototype.isPrototypeOf(from))))
+											(CatObject.IsA(D.mouseover) && CatObject.IsA(from))))
 									{
 										if (e.shiftKey && R.Actions.coproduct)
 											msg = 'Coproduct';
@@ -2117,7 +2121,7 @@ class D
 								didSomething = true;
 							}
 						}
-						else if (DiagramObject.prototype.isPrototypeOf(from) && DiagramObject.prototype.isPrototypeOf(target))
+						else if (DiagramObject.IsA(from) && DiagramObject.IsA(target))
 						{
 							if(from.isFusible(target))
 							{
@@ -2161,13 +2165,13 @@ class D
 							}
 						}
 					}
-					if (!DiagramText.prototype.isPrototypeOf(from))
+					if (!DiagramText.IsA(from))
 						from.updateGlow(false, '');
 				}
 				for (let i=0; i<diagram.selected.length; ++i)
 				{
 					const e = diagram.selected[i];
-					if (DiagramObject.prototype.isPrototypeOf(e) || DiagramText.prototype.isPrototypeOf(e))
+					if (DiagramObject.IsA(e) || DiagramText.IsA(e))
 						e.orig = {x:e.x, y:e.y};
 					if (DiagramMorphism.IsA(e))
 					{
@@ -2207,14 +2211,14 @@ class D
 			if (!elt)
 			{
 				elt = R.$CAT.getElement(name);		// dropping a diagram?
-				if (Diagram.prototype.isPrototypeOf(elt))
+				if (Diagram.IsA(elt))
 					D.AddReference(e, name);
 			}
 			else
 			{
 				let from = null;
 				let to = null;
-				if (CatObject.prototype.isPrototypeOf(elt))
+				if (CatObject.IsA(elt))
 					diagram.placeObject(e, elt, xy);
 				else if (Morphism.IsA(elt))
 					diagram.placeMorphism(e, elt, xy);
@@ -2270,7 +2274,7 @@ class D
 		if (wasHidden)
 		{
 			let xy = {x:e.clientX + D.toolbar.clientHeight, y:e.clientY - 2 * D.toolbar.clientHeight};
-			if (D2.prototype.isPrototypeOf(loc))
+			if (D2.IsA(loc))
 				xy = diagram.diagramToUserCoords(loc);
 			else
 			{
@@ -2415,6 +2419,7 @@ ${button}
 	}
 	static Status(e, msg, record = false)
 	{
+console.log('Status', msg);
 		const s = D.statusbar;
 		if (msg === null || msg === '')
 		{
@@ -2609,7 +2614,7 @@ ${button}
 		for(let i=0; i < ary.length; ++i)
 		{
 			const elt = ary[i];
-			if ((DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt)) && !(elt.name in elts))
+			if ((DiagramObject.IsA(elt) || DiagramText.IsA(elt)) && !(elt.name in elts))
 				elts.add(elt);
 			else if (DiagramMorphism.IsA(elt))
 			{
@@ -2618,7 +2623,7 @@ ${button}
 				else
 					elts.add(D.Barycenter([elt.domain, elt.codomain]));
 			}
-			else if (D2.prototype.isPrototypeOf(elt))
+			else if (D2.IsA(elt))
 				elts.add(elt);
 		}
 		let xy = new D2;
@@ -3753,7 +3758,7 @@ class NewDiagramSection extends Section
 			this.codomainElt.value = '';
 			let categories = '';
 			for (const [name, e] of R.$CAT.elements)
-				if (Category.prototype.isPrototypeOf(e) && !IndexCategory.prototype.isPrototypeOf(e) && e.user !== 'sys')
+				if (Category.IsA(e) && !IndexCategory.IsA(e) && e.user !== 'sys')
 					categories += H.option(e.properName, e.name, e.basename === 'Cat');
 			this.codomainElt.innerHTML = categories;
 		}
@@ -3815,7 +3820,7 @@ class DiagramSection extends Section
 			const that = this;	// can't use this below
 			const diagramFn = function(diagram)
 			{
-				if ((Diagram.prototype.isPrototypeOf(diagram) || typeof diagram === 'object') && (D.default.internals ? true : diagram.user !== 'sys') && that.filterFn(diagram))
+				if ((Diagram.IsA(diagram) || typeof diagram === 'object') && (D.default.internals ? true : diagram.user !== 'sys') && that.filterFn(diagram))
 					rows += that.diagramRow(diagram, that.updateFn(diagram));
 			};
 			if ('elements' in this.diagrams)
@@ -4284,7 +4289,7 @@ class ElementSection extends Section
 					}
 					if (this.doObjects)
 					{
-						if (!CatObject.prototype.isPrototypeOf(e))
+						if (!CatObject.IsA(e))
 							continue;
 						const deletable = R.default.internals && e.refcnt === 0 && e.diagram && e.diagram.isEditable();
 						rows += H.tr( (R.default.internals ?  H.td(e.refcnt.toString()) : '') + H.td(e.properName),
@@ -4832,6 +4837,10 @@ class Element
 	{
 		return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null;
 	}
+	static IsA(obj)
+	{
+		return Element.prototype.isPrototypeOf(obj);
+	}
 }
 
 class Graph
@@ -5005,7 +5014,6 @@ class Graph
 				if (data.visited.indexOf(lnkStr + ' ' + idxStr) >= 0)
 					continue;
 				const {coords, vertical} = this.svgLinkUpdate(lnk, data);
-				const fs = this.tags.sort().join();
 				const linkId = DiagramMorphism.LinkId(data, lnk);
 				const lnkKey = DiagramMorphism.LinkColorKey(lnk, data.dom, data.cod);
 				if (lnkKey in diagram.link2colorIndex)
@@ -5050,6 +5058,7 @@ class Graph
 				path.setAttributeNS(null, 'id', linkId);
 				path.setAttributeNS(null, 'd', coords);
 				path.setAttributeNS(null, 'filter', filter);
+				const fs = this.tags.sort().join();
 				path.addEventListener('mouseover', function(e){ Cat.D.Status(event, fs); });
 			}
 		}
@@ -5197,6 +5206,10 @@ class CatObject extends Element
 		const object = diagram.getElement(Element.Codename(diagram, basename));
 		return object ? object : new CatObject(diagram, {basename});
 	}
+	static IsA(obj)
+	{
+		return CatObject.prototype.isPrototypeOf(obj);
+	}
 }
 
 class FiniteObject extends CatObject	// finite, explicit size or not
@@ -5268,6 +5281,10 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		const object = diagram.getElement(FiniteObject.Codename(diagram, basename, size));
 		return object ? object : new FiniteObject(diagram, {basename, size});
 	}
+	static IsA(obj)
+	{
+		return FiniteObject.prototype.isPrototypeOf(obj);
+	}
 }
 
 class InitialObject extends FiniteObject
@@ -5292,6 +5309,10 @@ class InitialObject extends FiniteObject
 		const args = {category:diagram.codomain, size:0};
 		const object = diagram.getElement(FiniteObject.Codename(diagram, '', 0));
 		return object ? object : new InitialObject(diagram, args);
+	}
+	static IsA(obj)
+	{
+		return InitialObject.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -5321,6 +5342,10 @@ class TerminalObject extends FiniteObject
 		const args = {category:diagram.codomain, size:1};
 		const object = diagram.getElement(FiniteObject.Codename(diagram, '', 1));
 		return object ? object : new TerminalObject(diagram, args);
+	}
+	static IsA(m)
+	{
+		return TerminalObject.prototype.isPrototypeOf(m);
 	}
 }
 
@@ -5486,10 +5511,6 @@ class ProductObject extends MultiObject
 		const id2 = this.getIdentity();
 		R.LoadEquivalence(this, [id1], [id2]);
 	}
-	static IsA(obj)
-	{
-		return ProductObject.prototype.isPrototypeOf(obj);
-	}
 	static Basename(diagram, objects, dual = false)
 	{
 		const c = dual ? 'C' : '';
@@ -5525,6 +5546,10 @@ class ProductObject extends MultiObject
 	static Signature(diagram, objects, dual = false)
 	{
 		return U.Sig(ProductObject.Codename(diagram, objects, dual));
+	}
+	static IsA(obj)
+	{
+		return ProductObject.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -5877,6 +5902,10 @@ onmousedown="Cat.R.diagram.pickElement(event, '${this.name}')">${this.descriptio
 			t.setAttribute('x', x);
 		});
 	}
+	static IsA(obj)
+	{
+		return DiagramText.prototype.isPrototypeOf(obj);
+	}
 }
 
 class TensorObject extends MultiObject
@@ -5928,7 +5957,11 @@ class TensorObject extends MultiObject
 	}
 	static CanFlatten(obj)
 	{
-		return TensorObject.prototype.isPrototypeOf(obj) && obj.objects.reduce((r, o) => r || TensorObject.prototype.isPrototypeOf(o), false);
+		return TensorObject.IsA(obj) && obj.objects.reduce((r, o) => r || TensorObject.IsA(o), false);
+	}
+	static IsA(obj)
+	{
+		return TensorObject.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -6095,6 +6128,10 @@ ${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${
 			this.updateGlow(false, '');
 		}
 	}
+	static IsA(obj)
+	{
+		return DiagramObject.prototype.isPrototypeOf(obj);
+	}
 }
 
 class DiagramPullback extends DiagramObject
@@ -6251,6 +6288,10 @@ class Assertion extends Element
 			return false;	// bad legs
 		return left[0].domain === right[0].domain && left[length0 -1].codomain === right[length1 -1].codomain;	// legs have same domain and codomain
 	}
+	static IsA(obj)
+	{
+		return Assertion.prototype.isPrototypeOf(obj);
+	}
 }
 
 class Action extends CatObject
@@ -6343,11 +6384,11 @@ class IdentityAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
 	}
 	static Reduce(leg)		// remove identities
 	{
-		const nuLeg = leg.filter(m => !Identity.prototype.isPrototypeOf(m) && m.domain.name === m.codomain.name);
+		const nuLeg = leg.filter(m => !Identity.IsA(m) && m.domain.name === m.codomain.name);
 		return nuLeg.length < leg.legnth ? nuLeg : null;
 	}
 }
@@ -6383,7 +6424,7 @@ class NameAction extends Action
 		};
 		try
 		{
-			if (CatObject.prototype.isPrototypeOf(source))
+			if (CatObject.IsA(source))
 			{
 				const nid = new NamedObject(diagram, args);
 				const nidIndex = diagram.placeObject(e, nid, D.default.stdOffset.add(from));
@@ -6434,7 +6475,7 @@ class NameAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && (DiagramMorphism.IsA(ary[0]) || DiagramObject.prototype.isPrototypeOf(ary[0]));
+		return diagram.isEditable() && ary.length === 1 && (DiagramMorphism.IsA(ary[0]) || DiagramObject.IsA(ary[0]));
 	}
 	static Reduce(leg)
 	{
@@ -6462,14 +6503,14 @@ class CopyAction extends Action
 		const from = ary[0];
 		if (DiagramMorphism.IsA(from))
 			diagram.placeMorphism(e, from.to, from.domain, from.codomain)
-		else if (DiagramObject.prototype.isPrototypeOf(from))
+		else if (DiagramObject.IsA(from))
 			diagram.placeObject(e, from.to, from);
-		else if (DiagramText.prototype.isPrototypeOf(from))
+		else if (DiagramText.IsA(from))
 			diagram.placeText(e, new D2(from), from.description);
 	}
 	hasForm(diagram, ary)	// one element
 	{
-		return diagram.isEditable() && ary.length === 1 && 'to' in ary[0] && !Assertion.prototype.isPrototypeOf(ary[0].to);
+		return diagram.isEditable() && ary.length === 1 && 'to' in ary[0] && !Assertion.IsA(ary[0].to);
 	}
 }
 
@@ -6527,7 +6568,7 @@ class ProductAction extends Action
 			const to = ProductMorphism.Get(diagram, morphisms, this.dual);
 			diagram.placeMorphism(e, to, D.Barycenter(ary));
 		}
-		else if (DiagramObject.prototype.isPrototypeOf(elt))
+		else if (DiagramObject.IsA(elt))
 		{
 			const objects = ary.map(o => o.to);
 			const to = ProductObject.Get(diagram, objects, this.dual);
@@ -6538,7 +6579,7 @@ class ProductAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.IsA(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.IsA(v), true));
 	}
 }
@@ -6631,14 +6672,14 @@ class HomAction extends Action
 	action(e, diagram, ary)
 	{
 		const xy = D.Barycenter(ary);
-		if (DiagramObject.prototype.isPrototypeOf(ary[0]))
+		if (DiagramObject.IsA(ary[0]))
 			diagram.placeObject(e, HomObject.Get(diagram, ary.map(o => o.to)), xy);
 		else if (DiagramMorphism.IsA(ary[0]))
 			diagram.placeMorphism(e, HomMorphism.Get(diagram, ary.map(m => m.to)), xy);
 	}
 	hasForm(diagram, ary)	// two objects or morphisms
 	{
-		return diagram.isEditable() && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+		return diagram.isEditable() && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && DiagramObject.IsA(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.IsA(v), true));
 	}
 }
@@ -6668,7 +6709,7 @@ class HomRightAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
 	}
 }
 
@@ -6697,7 +6738,7 @@ class HomLeftAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
 	}
 }
 
@@ -6762,7 +6803,7 @@ class DeleteAction extends Action
 		for(let i=0; i<ary.length; ++i)
 		{
 			let s = ary[i];
-			if (DiagramObject.prototype.isPrototypeOf(s))	// TODO what about morphisms as objects in 2Cat?
+			if (DiagramObject.IsA(s))	// TODO what about morphisms as objects in 2Cat?
 			{
 				s.decrRefcnt();
 				updateObjects = true;
@@ -6774,12 +6815,12 @@ class DeleteAction extends Action
 				updateObjects = true;
 				updateHomSets.add([s.domain.name, s.codomain.name]);
 			}
-			else if (DiagramText.prototype.isPrototypeOf(s))
+			else if (DiagramText.IsA(s))
 			{
 				s.decrRefcnt();
 				updateTexts = true;
 			}
-			else if (Cell.IsA(s) && s.to && Assertion.prototype.isPrototypeOf(s.to))
+			else if (Cell.IsA(s) && s.to && Assertion.IsA(s.to))
 			{
 //TODO				R.workers.equality.postMessage(['RemoveEquivalence', s.left.map(m => m.signature), s.right.map(m => m.signature)]);
 				s.to.decrRefcnt();
@@ -6817,7 +6858,7 @@ class DeleteAction extends Action
 		{
 			ary.map(e =>
 			{
-				if (CatObject.prototype.isPrototypeOf(e) && !objs.has(e))
+				if (CatObject.IsA(e) && !objs.has(e))
 					delObjs = delObjs && e.isDeletable()
 			});
 			return delObjs;
@@ -6857,7 +6898,7 @@ class TerminalMorphismAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
 	}
 }
 
@@ -6896,7 +6937,7 @@ class ProjectAction extends Action
 	}
 	hasForm(diagram, ary)	// one product object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && ProductObject.IsA(ary[0].to) &&
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]) && ProductObject.IsA(ary[0].to) &&
 			ary[0].to.dual === this.dual;
 	}
 	html(e, diagram, ary)
@@ -7002,7 +7043,7 @@ class LambdaMorphismAction extends Action
 		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]))
 		{
 			const m = ary[0].to;
-			if (TerminalObject.prototype.isPrototypeOf(m.domain) && !HomObject.IsA(m.codomain))
+			if (TerminalObject.IsA(m.domain) && !HomObject.IsA(m.codomain))
 				return false;
 			return true;
 		}
@@ -7129,7 +7170,7 @@ class HelpAction extends Action
 		let html = '';
 		if (from.to)
 			html = from.to.help();
-		else if (DiagramText.prototype.isPrototypeOf(from) && from.diagram.isEditable())
+		else if (DiagramText.IsA(from) && from.diagram.isEditable())
 		{
 			const btn = from.constructor.name === 'DiagramText' ?
 				D.GetButton('edit', `Cat.R.diagram.getElement('${from.name}').editText(event, 'descriptionElt')`, 'Edit', D.default.button.tiny) :
@@ -7169,9 +7210,9 @@ class JavascriptAction extends Action
 	isEditable(m)
 	{
 		return m.isEditable() && m.constructor.name === 'Morphism' &&
-			!InitialObject.prototype.isPrototypeOf(m.domain) &&
-			!TerminalObject.prototype.isPrototypeOf(m.codomain) &&
-			!InitialObject.prototype.isPrototypeOf(m.codomain);
+			!InitialObject.IsA(m.domain) &&
+			!TerminalObject.IsA(m.codomain) &&
+			!InitialObject.IsA(m.codomain);
 	}
 	html(e, diagram, ary)
 	{
@@ -7242,7 +7283,7 @@ class JavascriptAction extends Action
 			const jsName = U.JsName(m);
 			const header = JavascriptAction.Header(m);
 			const tail = JavascriptAction.Tail();
-			if (FiniteObject.prototype.isPrototypeOf(m.domain) && m.domain.size > 0 && !DataMorphism.IsA(m))
+			if (FiniteObject.IsA(m.domain) && m.domain.size > 0 && !DataMorphism.IsA(m))
 				code +=	// TODO safety check?
 `
 function ${jsName}_Iterator(fn)
@@ -7253,11 +7294,11 @@ function ${jsName}_Iterator(fn)
 	return result;
 }
 `;
-			if (InitialObject.prototype.isPrototypeOf(m.domain))
+			if (InitialObject.IsA(m.domain))
 				code += `${header}	return;	// abandon computation\n'${tail}`;	// domain is null, yuk
-			else if (TerminalObject.prototype.isPrototypeOf(m.codomain))
+			else if (TerminalObject.IsA(m.codomain))
 				code += `${header}	return 0;${tail}`;
-			else if (InitialObject.prototype.isPrototypeOf(m.codomain))
+			else if (InitialObject.IsA(m.codomain))
 				code += `${header}	throw 'do not do this';${tail}`;
 			else
 				switch(proto)
@@ -7426,10 +7467,10 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	}
 	objectLength(o)
 	{
-		if (TerminalObject.prototype.isPrototypeOf(o) || InitialObject.prototype.isPrototypeOf(o))
+		if (TerminalObject.IsA(o) || InitialObject.IsA(o))
 			return 0;
 		if (ProductObject.IsA(o) && !o.dual)
-			return o.objects.reduce((r, o) => r + (TerminalObject.prototype.isPrototypeOf(o) ? 0 : 1), 0);
+			return o.objects.reduce((r, o) => r + (TerminalObject.IsA(o) ? 0 : 1), 0);
 		else
 			return 1;
 	}
@@ -7476,9 +7517,9 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
 		else if (Morphism.IsA(o))
 			return this.canFormat(o.domain) && this.canFormat(o.codomain);
-		else if (TerminalObject.prototype.isPrototypeOf(o) && !o.dual)
+		else if (TerminalObject.IsA(o) && !o.dual)
 			return true;
-		else if (CatObject.prototype.isPrototypeOf(o))
+		else if (CatObject.IsA(o))
 			return this.formatters.has(o.signature);
 		return false;
 	}
@@ -7751,7 +7792,7 @@ debugger;
 		const {properName, description} = to;
 		let html = H.h3(properName) + (description !== '' ? H.p(description, 'smallPrint') : '');
 		let canMakeData = true;
-		if (DiagramObject.prototype.isPrototypeOf(from))
+		if (DiagramObject.IsA(from))
 		{
 			if (js.canFormat(to))
 				html += js.getInput(to) + addDataBtn;
@@ -7762,7 +7803,7 @@ debugger;
 			const evalCode = H.h5('Evaluate the Morphism') +
 								js.getInput(domain) +
 								D.GetButton('edit', `Cat.R.Actions.javascript.evaluate(event, Cat.R.diagram, '${to.name}', Cat.R.Actions.run.postResult)`, 'Evaluate inputs');
-			if (to.constructor.name === 'Morphism' && FiniteObject.prototype.isPrototypeOf(domain) && !js.hasCode(to))
+			if (to.constructor.name === 'Morphism' && FiniteObject.IsA(domain) && !js.hasCode(to))
 			{
 				if ('size' in domain && domain.size > 0)
 				{
@@ -7847,7 +7888,7 @@ debugger;
 		let dom = null;
 		let cod = null;
 		const d = document.createElement('div');
-		if (CatObject.prototype.isPrototypeOf(to))
+		if (CatObject.IsA(to))
 		{
 			dom = this.data.size;
 			cod = this.js.getInputValue(to);
@@ -7879,7 +7920,7 @@ debugger;
 		{
 			const selected = diagram.getElement(eltName);
 			const domain = FiniteObject.Get(diagram, '', this.data.size);
-			const {to, name} = DiagramObject.prototype.isPrototypeOf(selected) ? selected : selected.codomain;
+			const {to, name} = DiagramObject.IsA(selected) ? selected : selected.codomain;
 			const dm = new DataMorphism(diagram, {domain, codomain:to, data:this.data});
 			diagram.objectPlaceMorphism(e, 'codomain', name, dm.name);
 		}
@@ -7893,7 +7934,7 @@ debugger;
 			const {to} = ary[0];
 			if (Morphism.IsA(to) && (this.js.canFormat(to) || to.isIterable()))
 				return true;
-			if (CatObject.prototype.isPrototypeOf(to))
+			if (CatObject.IsA(to))
 				return this.js.canFormat(to);
 		}
 		return false;
@@ -7963,7 +8004,7 @@ class FiniteObjectAction extends Action
 			{
 				if (from.to.constructor.name === 'CatObject')
 					return  true;
-				return FiniteObject.prototype.isPrototypeOf(from.to);
+				return FiniteObject.IsA(from.to);
 			}
 		}
 		return false;
@@ -8001,7 +8042,7 @@ class EvaluateAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]) && Evaluation.CanEvaluate(ary[0].to);
+		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]) && Evaluation.CanEvaluate(ary[0].to);
 	}
 }
 
@@ -8068,7 +8109,7 @@ class AlignHorizontalAction extends Action
 	}
 	getItems(ary)
 	{
-		return ary.filter(s => DiagramObject.prototype.isPrototypeOf(s) || DiagramText.prototype.isPrototypeOf(s));
+		return ary.filter(s => DiagramObject.IsA(s) || DiagramText.IsA(s));
 	}
 	hasForm(diagram, ary)	// one object
 	{
@@ -8110,7 +8151,7 @@ class AlignVerticalAction extends Action
 	}
 	getItems(ary)
 	{
-		return ary.filter(s => DiagramObject.prototype.isPrototypeOf(s) || DiagramText.prototype.isPrototypeOf(s));
+		return ary.filter(s => DiagramObject.IsA(s) || DiagramText.IsA(s));
 	}
 	hasForm(diagram, ary)	// one object
 	{
@@ -8148,7 +8189,7 @@ class TensorAction extends Action
 			const to = TensorMorphism.Get(diagram, morphisms);
 			diagram.placeMorphism(e, to, D.Barycenter(ary));
 		}
-		else if (DiagramObject.prototype.isPrototypeOf(elt))
+		else if (DiagramObject.IsA(elt))
 		{
 			const objects = ary.map(o => o.to);
 			const to = TensorObject.Get(diagram, objects);
@@ -8159,7 +8200,7 @@ class TensorAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.prototype.isPrototypeOf(v), true) ||
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.IsA(v), true) ||
 			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.IsA(v), true));
 	}
 }
@@ -8369,7 +8410,7 @@ class Category extends CatObject
 			args.actions.map(a => this.actions.set(a, R.$Actions.getElement(a)));
 		if (errMsg != '')
 			D.RecordError(errMsg);
-		if (!IndexCategory.prototype.isPrototypeOf(this))
+		if (!IndexCategory.IsA(this))
 			for(const [key, m] of this.elements)
 			{
 				if (DataMorphism.IsA(m) && 'recursor' in m && typeof m.recursor === 'string')	// set recursive function as it is defined after m is
@@ -8396,7 +8437,7 @@ class Category extends CatObject
 		if (e.diagram && e.diagram.elements.has(e.basename))
 			throw `Element with given basename already exists in diagram`;
 		this.elements.set(e.name, e);
-		e.diagram && !(DiagramObject.prototype.isPrototypeOf(e) || DiagramMorphism.IsA(e)) && e.diagram.elements.set(e.basename, e);
+		e.diagram && !(DiagramObject.IsA(e) || DiagramMorphism.IsA(e)) && e.diagram.elements.set(e.basename, e);
 	}
 	deleteElement(e)
 	{
@@ -8420,7 +8461,7 @@ class Category extends CatObject
 	{
 		this.elements.forEach(function(e)
 		{
-			CatObject.prototype.isPrototypeOf(e) && fn(e);
+			CatObject.IsA(e) && fn(e);
 		}, this);
 	}
 	forEachMorphism(fn)
@@ -8470,6 +8511,10 @@ class Category extends CatObject
 		if (m)
 			return m.codomain;
 		return new Category(diagram, {user, basename});
+	}
+	static IsA(obj)
+	{
+		return Category.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -8641,6 +8686,7 @@ class Identity extends Morphism
 	{
 		const g = super.getGraph(data);
 		g.graphs[0].bindGraph({cod:g.graphs[1], index:[], domRoot:[0], codRoot:[1], offset:0, tag:this.constructor.name});
+		g.tagGraph(this.constructor.name);
 		return g;
 	}
 	loadEquivalence()	// don't call in Morphism constructor since signature may change
@@ -8687,6 +8733,10 @@ class Identity extends Morphism
 	static Signature(diagram, obj)
 	{
 		return U.Sig(Identity.Codename(diagram, obj));
+	}
+	static IsA(obj)
+	{
+		return Identity.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -9598,7 +9648,11 @@ class IndexCategory extends Category
 	}
 	static HomKey(domain, codomain)
 	{
-		return `${CatObject.prototype.isPrototypeOf(domain) ? domain.name : domain} ${CatObject.prototype.isPrototypeOf(codomain) ? codomain.name : codomain}`;
+		return `${CatObject.IsA(domain) ? domain.name : domain} ${CatObject.IsA(codomain) ? codomain.name : codomain}`;
+	}
+	static IsA(obj)
+	{
+		return IndexCategory.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -10143,7 +10197,7 @@ class FactorMorphism extends Morphism
 		{
 			const indices = factors[i];
 			const f = domain.getFactor(indices);
-			if (TerminalObject.prototype.isPrototypeOf(f))	// TODO dual object
+			if (TerminalObject.IsA(f))	// TODO dual object
 				basename += this.dual ? '#0' : '#1';
 			else
 				basename += f.name;
@@ -10704,7 +10758,7 @@ class Distribute extends Morphism
 	}
 	static HasForm(diagram, ary)
 	{
-		if (ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]))
+		if (ary.length === 1 && DiagramObject.IsA(ary[0]))
 		{
 			const from = ary[0];
 			const to = from.to;
@@ -10766,7 +10820,7 @@ class Dedistribute extends Morphism
 	}
 	static HasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramObject.prototype.isPrototypeOf(ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]))
 		{
 			const from = ary[0];
 			const to = from.to;
@@ -10820,7 +10874,7 @@ class Diagram extends Functor
 		const nuArgs = U.Clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		nuArgs.category = U.GetArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
-		if (!Category.prototype.isPrototypeOf(nuArgs.codomain))
+		if (!Category.IsA(nuArgs.codomain))
 			nuArgs.codomain = diagram ? diagram.getElement(nuArgs.codomain) : R.Cat;
 		const indexName = `${nuArgs.basename}_Index`;
 		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
@@ -10954,7 +11008,7 @@ class Diagram extends Functor
 	}
 	getObject(name)
 	{
-		if (Element.prototype.isPrototypeOf(name))
+		if (Element.IsA(name))
 			return name;
 		let object = this.codomain.getElement(name);
 		if (object)
@@ -11048,7 +11102,7 @@ class Diagram extends Functor
 		if (this.selected.indexOf(elt) >= 0)	// already selected
 			return;
 		this.selected.push(elt);
-		if (DiagramObject.prototype.isPrototypeOf(elt) || DiagramText.prototype.isPrototypeOf(elt) || Assertion.prototype.isPrototypeOf(elt))
+		if (DiagramObject.IsA(elt) || DiagramText.IsA(elt) || Assertion.IsA(elt))
 			elt.orig = {x:elt.x, y:elt.y};
 		else if (DiagramMorphism.IsA(elt))
 		{
@@ -11083,13 +11137,13 @@ class Diagram extends Functor
 				else
 					this.makeSelected(e, elt);
 			}
-			if (DiagramObject.prototype.isPrototypeOf(elt))
+			if (DiagramObject.IsA(elt))
 				elt.orig = {x:elt.x, y:elt.y};
 		}
 		else if (this.domain.cells.has(name))
 		{
 			const cell = this.domain.cells.get(name);
-			if (Assertion.prototype.isPrototypeOf(cell.to))
+			if (Assertion.IsA(cell.to))
 				this.addSelected(cell);
 			else
 			{
@@ -11480,7 +11534,7 @@ class Diagram extends Functor
 		if (from)
 		{
 			const isMorphism = DiagramMorphism.IsA(from);
-			if (DiagramObject.prototype.isPrototypeOf(from) || isMorphism)
+			if (DiagramObject.IsA(from) || isMorphism)
 			{
 				if (from.to)
 				{
@@ -11539,7 +11593,7 @@ class Diagram extends Functor
 	isIsolated(elt)
 	{
 		let r = false;
-		if (DiagramObject.prototype.isPrototypeOf(elt))
+		if (DiagramObject.IsA(elt))
 			r = elt.refcnt === 1;
 		else if (DiagramMorphism.IsA(elt))
 			r = elt.domain.domains.length === 1 && elt.domain.codomains.length === 0 && elt.codomain.domains.length === 0 && elt.codomain.codomains.length === 1;
@@ -11623,7 +11677,7 @@ class Diagram extends Functor
 	{
 		this.elements.forEach(function(e)
 		{
-			if (CatObject.prototype.isPrototypeOf(e))
+			if (CatObject.IsA(e))
 				fn(e);
 		});
 	}
@@ -11734,7 +11788,7 @@ class Diagram extends Functor
 	}
 	addReference(theName)	// immediate, no background fn
 	{
-		const name = Diagram.prototype.isPrototypeOf(theName) ? theName.name : theName;
+		const name = Diagram.IsA(theName) ? theName.name : theName;
 		if (name === this.name)
 			throw 'Do not reference yourself';
 		const diagram = R.LoadDiagram(name);
@@ -11900,7 +11954,7 @@ class Diagram extends Functor
 		D.mouseover = on ? elt : null;
 		if (DiagramMorphism.IsA(elt))
 			toggle(elt.svg_path, elt.svg_name, elt.domain.svg, elt.codomain.svg);
-		if (DiagramObject.prototype.isPrototypeOf(elt))
+		if (DiagramObject.IsA(elt))
 			toggle(elt.svg);
 		else if (this.domain.cells.has(c))
 		{
@@ -11954,6 +12008,10 @@ class Diagram extends Functor
 			user:			diagram.user,
 			references:		refs,
 		};
+	}
+	static IsA(obj)
+	{
+		return Diagram.prototype.isPrototypeOf(obj);
 	}
 }
 
