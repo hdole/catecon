@@ -589,14 +589,16 @@ Create diagrams and execute morphisms.
 					case 'CheckEquivalence':
 						const diagram = R.$CAT.getElement(args[1]);
 						const cell = diagram.domain.cells.get(args[2]);
-						const to = diagram.getElement(args[3]);
+						const isEqual = args[3];
+						const to = diagram.getElement(args[4]);
 						if (to)
 						{
 							to.cell = cell;
 							cell.to = to;
+						}
+						if (isEqual)
 //	TODO					cell.properName = to.getDecoration();
 							cell.properName = '&#10226;';
-						}
 						else
 							cell.properName = '?';
 						const objs = cell.getObjects();
@@ -2799,7 +2801,7 @@ Object.defineProperties(D,
 				lineWidth:	2,
 				margin:		2,
 			},
-			layoutGrid:	8,
+			layoutGrid:	10,
 			scale:		{base:1.05, limit:{min:0.05, max:20}},
 			scale3D:	1,
 			stdOffset:	new D2(32, 32),
@@ -5520,6 +5522,10 @@ class ProductObject extends MultiObject
 	{
 		return ProductObject.IsA(obj) && obj.objects.reduce((r, o) => r || (ProductObject.IsA(o) && o.dual === obj.dual), false);
 	}
+	static Signature(diagram, objects, dual = false)
+	{
+		return U.Sig(ProductObject.Codename(diagram, objects, dual));
+	}
 }
 
 class PullbackObject extends ProductObject
@@ -6308,7 +6314,7 @@ class CompositeAction extends Action
 	}
 	static Reduce(leg)
 	{
-		if (leg.length === 1 && Composite.prototype.isPrototypeOf(leg[0]))
+		if (leg.length === 1 && Composite.IsA(leg[0]))
 			return leg[0].morphisms;
 		return null;
 	}
@@ -6773,7 +6779,7 @@ class DeleteAction extends Action
 				s.decrRefcnt();
 				updateTexts = true;
 			}
-			else if (Cell.prototype.isPrototypeOf(s) && s.to && Assertion.prototype.isPrototypeOf(s.to))
+			else if (Cell.IsA(s) && s.to && Assertion.prototype.isPrototypeOf(s.to))
 			{
 //TODO				R.workers.equality.postMessage(['RemoveEquivalence', s.left.map(m => m.signature), s.right.map(m => m.signature)]);
 				s.to.decrRefcnt();
@@ -7597,7 +7603,7 @@ ${this.generate(m)}
 		const args = this.getInputValue(m.domain);
 		const jsName = U.JsName(m);
 		const isIterable = m.isIterable();
-		const iterInvoke = Composite.prototype.isPrototypeOf(m) ? `${U.JsName(m.getFirstMorphism())}_Iterator(${jsName})` : `${U.JsName(m.domain)}_Iterator(${jsName})`;
+		const iterInvoke = Composite.IsA(m) ? `${U.JsName(m.getFirstMorphism())}_Iterator(${jsName})` : `${U.JsName(m.domain)}_Iterator(${jsName})`;
 		const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -8597,8 +8603,8 @@ class Morphism extends Element
 		const sig = this.signature;
 		R.LoadEquivalence(this, [this], [this]);
 		const domIdSig = Identity.Signature(this.diagram, this.domain);
-		const codIdSig = Identity.Signature(this.diagram, this.codomain)
 		R.LoadEquivalentSigs(this, [sig], [domIdSig, sig]);
+		const codIdSig = Identity.Signature(this.diagram, this.codomain)
 		R.LoadEquivalentSigs(this, [sig], [sig, codIdSig]);
 	}
 	static IsA(m)
@@ -8621,6 +8627,7 @@ class Identity extends Morphism
 		nuArgs.properName = Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		nuArgs.description = `Identity for the object ${nuArgs.domain.properName}`;
 		super(diagram, nuArgs);
+		this.signature = Identity.Signature(diagram, this.domain);
 		this.loadEquivalence();
 	}
 	help(helped = new Set)
@@ -8636,14 +8643,21 @@ class Identity extends Morphism
 		g.graphs[0].bindGraph({cod:g.graphs[1], index:[], domRoot:[0], codRoot:[1], offset:0, tag:this.constructor.name});
 		return g;
 	}
-	static Basename(diagram, domain, codomain = null)
+	loadEquivalence()	// don't call in Morphism constructor since signature may change
 	{
-		let basename = '';
-		if (codomain && domain.name !== codomain.name)
-			basename = `Id{${domain.name} ${codomain.name}}dI`;
-		else
-			basename = `Id{${domain.name}}dI`;
-		return basename;
+		super.loadEquivalence();
+		if (ProductObject.IsA(this.domain))
+		{
+			const subs = this.domain.objects.map(o => Identity.Signature(this.diagram, o));
+			const op = ProductMorphism.Signature(subs, this.dual);
+			R.LoadEquivalentSigs(this, [this.signature], [op])
+		}
+		else if (HomObject.IsA(this.domain))
+		{
+			const subs = this.domain.objects.map(o => Identity.Signature(this.diagram, o));
+			const op = HomMorphism.Signature(subs);
+			R.LoadEquivalentSigs(this, [this], [op])
+		}
 	}
 	static Basename(diagram, domain, codomain = null)
 	{
@@ -8765,14 +8779,13 @@ if (!this.source)return {};
 		super.loadEquivalence();
 		R.LoadEquivalence(this, [this], [this.source]);
 	}
-	/*
 	getGraph(data = {position:0})
 	{
+		const oldData = U.Clone(data);
 		const g = super.getGraph(data);
-		g.copyGraph({src:this.source.getGraph(data), map:[[0, 0], [1, 1]]});
+		g.copyGraph({src:this.source.getGraph(oldData), map:[[0, 0], [1, 1]]});
 		return g;
 	}
-	*/
 	static Get(diagram, source, basename)
 	{
 		const m = diagram.getElement(source);
@@ -8791,9 +8804,15 @@ class DiagramMorphism extends Morphism
 		nuArgs.category = diagram.domain;
 		super(diagram, nuArgs);
 		this.incrRefcnt();
-		this.flipName = U.GetArg(args, 'flipName', false);
 		this.setMorphism(this.diagram.getElement(nuArgs.to));
 		this.diagram.domain.addMorphism(this);
+		Object.defineProperties(this,
+		{
+			flipName:	{value: U.GetArg(args, 'flipName', false),	writable: true,	enumerable: true},
+			svg:		{value: null,	writable: true,	enumerable: true},
+			svg_path:	{value: null,	writable: true,	enumerable: true},
+			svg_name:	{value: null,	writable: true,	enumerable: true},
+		});
 	}
 	setDomain(dom)
 	{
@@ -8823,14 +8842,6 @@ class DiagramMorphism extends Morphism
 			return '';
 		helped.add(this.name);
 		return super.help() + H.p('Morphism in index category');
-	}
-	removeSVG()
-	{
-		super.removeSVG();
-		if (this.svg)
-			this.svg.parentNode.removeChild(svg);
-		if (this.graph)
-			this.removeGraph();
 	}
 	decrRefcnt()
 	{
@@ -9096,12 +9107,14 @@ ${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${
 		}
 		this.predraw();
 		const svg = this.svg_path;
-		if (svg !== null && typeof this.start.x !== 'undefined')
+		const start = this.start;
+		const end = this.end;
+		if (svg !== null && typeof start.x !== 'undefined')
 		{
 			if ('bezier' in this)
-				svg.setAttribute('d', `M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`);
+				svg.setAttribute('d', `M${start.x},${start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${end.x},${end.y}`);
 			else
-				svg.setAttribute('d', `M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`);
+				svg.setAttribute('d', `M${start.x},${start.y} L${end.x},${end.y}`);
 			this.updateDecorations();
 		}
 		if ('graph' in this)
@@ -9168,7 +9181,7 @@ ${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${
 	hideGraph()
 	{
 		if ('graph' in this)
-			this.graphSvg().classList.add('hidden');
+			this.graph.svg.classList.add('hidden');
 	}
 	makeGraph()
 	{
@@ -9186,23 +9199,19 @@ ${onmouseenter}${onmouseleave} onmousedown="Cat.R.diagram.pickElement(event, '${
 			xy = new D2({x:cod.x - cod.width/2, y:cod.y}).round();
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 			const id = this.graphId();
-			this.graph.getSVG(this.diagram.svgBase, id,
+			this.graph.getSVG(this.svg, id,
 							{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.floor(Math.random()*12)});
 		}
 		else
-			this.graphSvg().classList.remove('hidden');
+			this.graph.svg.classList.remove('hidden');
 	}
 	graphId()
 	{
 		return `graph_${this.elementId()}`;
 	}
-	graphSvg()
-	{
-		return 'graph' in this ? document.getElementById(this.graphId()) : null;
-	}
 	isGraphHidden()
 	{
-		const svg = this.graphSvg();
+		const svg = this.graph ? this.graph.svg : null;
 		return svg ? svg.classList.contains('hidden') : true;
 	}
 	static LinkId(data, lnk)
@@ -9282,7 +9291,7 @@ class Cell extends DiagramCore
 	}
 	removeSVG()
 	{
-		this.svg && this.svg.parentNode.removeChild(svg);
+		this.svg && this.svg.parentNode.removeChild(this.svg);
 	}
 	update()
 	{
@@ -9385,6 +9394,10 @@ class Cell extends DiagramCore
 		};
 		return cells.reduce((r, cell) => r || subEq(cell, left, right), false);
 	}
+	static IsA(c)
+	{
+		return Cell.prototype.isPrototypeOf(c);
+	}
 }
 
 class DiagramComposite extends DiagramMorphism
@@ -9415,6 +9428,7 @@ class DiagramComposite extends DiagramMorphism
 	}
 	json()
 	{
+if(this.morphisms.reduce((r, m) => r || r === undefined))return {};
 		const mor = super.json();
 		mor.morphisms = this.morphisms.map(m => m.name);
 		return mor;
@@ -9511,7 +9525,7 @@ class IndexCategory extends Category
 		const badCells = new Set;
 		obj.nodes.forEach(function(cell)
 		{
-			if ((cell.left.indexOf(from) !== -1) || (cell.right.indexOf(from) !== -1))
+			if (Cell.IsA(cell) && ((cell.left.indexOf(from) !== -1) || (cell.right.indexOf(from) !== -1)))
 				badCells.add(cell);
 		});
 		badCells.forEach(function(cell)
@@ -9713,7 +9727,7 @@ class Composite extends MultiMorphism
 	getFirstMorphism()
 	{
 		const m = this.morphisms[0];
-		if (Composite.prototype.isPrototypeOf(m))
+		if (Composite.IsA(m))
 			return m.getFirstMorphism();
 		return m;
 	}
@@ -9748,6 +9762,10 @@ class Composite extends MultiMorphism
 	{
 		return MultiObject.ProperName('&#8728;', morphisms, true);	// TODO wrong redro, reverse it
 	}
+	static IsA(m)
+	{
+		return Composite.prototype.isPrototypeOf(m);
+	}
 }
 
 class ProductMorphism extends MultiMorphism
@@ -9763,6 +9781,7 @@ class ProductMorphism extends MultiMorphism
 		nuArgs.morphisms = morphisms;
 		nuArgs.properName = ProductMorphism.ProperName(morphisms, dual);
 		super(diagram, nuArgs);
+		this.signature = ProductMorphism.Signature(this.morphisms.map(m => m.signature), dual);
 		this.loadEquivalence();
 	}
 	json()
@@ -9830,6 +9849,10 @@ class ProductMorphism extends MultiMorphism
 	static ProperName(morphisms, dual = false)
 	{
 		return MultiObject.ProperName(dual ? '&plus;' : '&times;', morphisms);
+	}
+	static Signature(sigs, dual = false)
+	{
+		return U.SigArray([this.constructor.name, ...sigs, dual]);
 	}
 }
 
@@ -11089,7 +11112,8 @@ class Diagram extends Functor
 	{
 		if ('graph' in from)
 		{
-			const gsvg = from.graphSvg();
+//			const gsvg = from.graphSvg();
+			const gsvg = from.graph.svg;
 			if (gsvg)
 			{
 				gsvg.classList.contains('hidden') ? from.showGraph() : from.hideGraph();
@@ -11107,7 +11131,6 @@ class Diagram extends Functor
 //`<g id="${id}">${from.graph.getSVG({index:[], root:from.graph, dom:dom.name, cod:cod.name, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)})}</g>`;
 		from.graph.getSVG(this.svgBase.innerHTML,
 			{index:[], root:from.graph, dom:dom.name, cod:cod.name, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)});
-//		this.svgBase.innerHTML += svg;
 	}
 	updateDragObjects(e)
 	{
@@ -11153,9 +11176,13 @@ class Diagram extends Functor
 		this.addSVG(from);
 		const bbox = new D2(from.svg.getBBox());
 		let offbox = new D2(bbox);
+		let rounds = 0;
 		while (this.hasOverlap(offbox, from.name))
+		{
 			offbox = offbox.add(D.default.stdOffset);
-		from.update(xy.add(offbox.subtract(bbox)));
+			rounds++;
+		}
+		rounds > 0 && from.update(xy.add(offbox.scale(rounds)));
 		if (save)
 		{
 			this.makeSelected(e, from);
@@ -11192,11 +11219,12 @@ class Diagram extends Functor
 		this.addSVG(codomain);
 		this.addSVG(from);
 		const bbox = new D2(from.svg.getBBox());
-		let offbox = new D2(bbox);
-		while (this.hasOverlap(offbox, from.name))
-			offbox = offbox.add(D.default.stdOffset);
-		from.domain.update(xyD.add(offbox.subtract(bbox)));
-		from.codomain.update(xyC.add(offbox.subtract(bbox)));
+		let offboxes = [new D2(domain.getBBox()), new D2(bbox), new D2(codomain.getBBox())];
+		const names = [domain.name, from.name, codomain.name];
+		while (offboxes.reduce((r, bx, i) => r || this.hasOverlap(bx, names[i]), false))
+			offboxes = offboxes.map(bx => bx.add(D.default.stdOffset));
+		from.domain.update(offboxes[0]);
+		from.codomain.update(offboxes[2]);
 		from.update();
 		R.diagram && this.makeSelected(e, from);
 		this.update(save);
@@ -11342,7 +11370,6 @@ class Diagram extends Functor
 		for (let i=0; i<elts.length; ++i)
 		{
 			const e = elts[i];
-if (e.dataset.name === 'hdole/Home/o_104')debugger;
 			if (e.dataset.name === except)
 				continue;
 			if (D2.Overlap(bbox, new D2(e.getBBox())))
@@ -11531,7 +11558,7 @@ if (e.dataset.name === 'hdole/Home/o_104')debugger;
 				r = sel0.domain.isEquivalent(sel1.domain) &&
 					sel0.codomain.isEquivalent(sel1.codomain) &&
 					DataMorphism.IsA(sel0) &&
-					Composite.prototype.isPrototypeOf(sel1) &&
+					Composite.IsA(sel1) &&
 					sel1.getElement(sel0);
 				const N = this.getElement('N');
 				if (r && N)
@@ -11621,7 +11648,8 @@ if (e.dataset.name === 'hdole/Home/o_104')debugger;
 		let exist = false;
 		this.domain.forEachMorphism(function(m)
 		{
-			exist = exist || ('graph' in m && !m.graphSvg().classList.contains('hidden'))
+//			exist = exist || ('graph' in m && !m.graphSvg().classList.contains('hidden'))
+			exist = exist || ('graph' in m && !m.graph.svg.classList.contains('hidden'))
 		});
 		this.domain.forEachMorphism(function(m) { exist ? m.hideGraph() : m.showGraph(); });
 		this.update(false);
