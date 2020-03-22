@@ -807,22 +807,32 @@ canvas
 	}
 }
 
+.badCell
+{
+	fill:			black;
+	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
+	margin:			2px;
+	user-select:	none;
+	/* text-shadow:	0 0 10px #fff, 0 0 20px #fff, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00; */
+	animation: 			badGlow 1s ease-in-out infinite alternate;
+}
+
 .badGlow
 {
-  -webkit-animation: badGlow 1s ease-in-out infinite alternate;
-  -moz-animation: badGlow 1s ease-in-out infinite alternate;
-  animation: badGlow 1s ease-in-out infinite alternate;
+	-webkit-animation:	badGlow 1s ease-in-out infinite alternate;
+	-moz-animation:		badGlow 1s ease-in-out infinite alternate;
+	animation: 			badGlow 1s ease-in-out infinite alternate;
 }
 
 @-webkit-keyframes badGlow
 {
 	from
 	{
-		text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00;
+		text-shadow: 0 0 10px #f00, 0 0 20px #fff, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00;
 	}
 	to
 	{
-		text-shadow: 0 0 20px #fff, 0 0 30px #f77, 0 0 40px #f77, 0 0 50px #f77, 0 0 60px #f77;
+		text-shadow: 0 0 20px #f00, 0 0 30px #f77, 0 0 40px #f77, 0 0 50px #f77, 0 0 60px #f77;
 	}
 }
 
