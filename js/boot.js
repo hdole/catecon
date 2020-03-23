@@ -40,8 +40,8 @@ const Boot = function(fn)
 		user,
 	}, args.xy);
 	args.xy.y += 16 * Cat.D.default.layoutGrid;
-	const zero = Cat.InitialObject.Get(basics);	// creates if need be
-	const one = Cat.TerminalObject.Get(basics);	// creates if need be
+	const zero = basics.get('InitialObject', {});
+	const one = basics.get('TerminalObject', {});
 	Cat.R.PlaceObject(args, zero);
 	Cat.R.PlaceObject(args, one);
 	const tty = Cat.R.MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
@@ -73,7 +73,7 @@ const Boot = function(fn)
 		properName:		'&Omega;',
 	}, args.xy);
 	args.xy.y += 16 * Cat.D.default.layoutGrid;
-	const two = Cat.ProductObject.Get(logic, [one, one], true);
+	const two = logic.get('ProductObject', {objects:[one, one], dual:true});
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
 	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false);
 	args.rowCount++;
@@ -81,8 +81,8 @@ const Boot = function(fn)
 	const id2 = new Cat.DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
 	logic.addSVG(id2);
 	const omegaPair = Cat.R.MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
-const foo = Cat.R.MakeObject(args, '', 'ProductObject', '', 'A pair of too-toos\'s', {objects:[omegaPair, omegaPair]}).to;
-const goo = Cat.FactorMorphism.Codomain(logic, foo, [[0, 0], [0, 1], [1, 0], [1, 1]], false, [[0, 0], [0, 1], [0, 2], [1]]);
+//const foo = Cat.R.MakeObject(args, '', 'ProductObject', '', 'A pair of too-toos\'s', {objects:[omegaPair, omegaPair]}).to;
+//const goo = Cat.FactorMorphism.Codomain(logic, foo, [[0, 0], [0, 1], [1, 0], [1, 1]], false, [[0, 0], [0, 1], [0, 2], [1]]);
 //debugger;
 
 	const mTrue = Cat.R.MakeMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true', one, omega, {js:'return true;'}).to;
@@ -463,24 +463,24 @@ return r;
 	const html2Str = Cat.R.MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
 		{js:`return document.getElementById(args).value;`}).to;
 	const html2omega = Cat.R.MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
-	const N_html2str = Cat.LambdaMorphism.Get(args.diagram, html2Str, [], [0]);
+	const N_html2str = htmlDiagram.get('LambdaMorphism', {preCurry:html2Str, domFactors:[], homFactors:[0]});
 	Cat.R.PlaceMorphism(args, N_html2str);
-	const strXN_html2str = Cat.ProductObject.Get(args.diagram, [str, N_html2str.codomain]);
+	const strXN_html2str = htmlDiagram.get('ProductObject', {objects:[str, N_html2str.codomain]});
 	const html2line = Cat.R.MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
 		{js:`return ['<input type="text" id="' + args + '" value="" placeholder="Text"/>', ${Cat.U.JsName(N_html2str)}]`}).to;
-	const N_html2N = Cat.LambdaMorphism.Get(args.diagram, html2N, [], [0]);
+	const N_html2N = htmlDiagram.get('LambdaMorphism', {preCurry:html2N, domFactors:[], homFactors:[0]});
 	Cat.R.PlaceMorphism(args, N_html2N);
-	const strXN_html2N = Cat.ProductObject.Get(args.diagram, [str, N_html2N.codomain]);
+	const strXN_html2N = htmlDiagram.get('ProductObject', {objects:[str, N_html2N.codomain]});
 	const html2Nat = Cat.R.MakeMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
 		{js:`return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${Cat.U.JsName(N_html2N)}];`}).to;
-	const N_html2Z = Cat.LambdaMorphism.Get(args.diagram, html2Z, [], [0]);
+	const N_html2Z = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z, domFactors:[], homFactors:[0]});
 	Cat.R.PlaceMorphism(args, N_html2Z);
-	const strXN_html2Z = Cat.ProductObject.Get(args.diagram, [str, N_html2Z.codomain]);
+	const strXN_html2Z = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z.codomain]});
 	const html2Int = Cat.R.MakeMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
 		{js:`return ['<input type="number" id="' + args + '" value="0" placeholder="Integer"/>', ${Cat.U.JsName(N_html2Z)}];`}).to;
-	const N_html2F = Cat.LambdaMorphism.Get(args.diagram, html2F, [], [0]);
+	const N_html2F = htmlDiagram.get('LambdaMorphism', {preCurry:html2F, domFactors:[], homFactors:[0]});
 	Cat.R.PlaceMorphism(args, N_html2F);
-	const strXN_html2F = Cat.ProductObject.Get(args.diagram, [str, N_html2F.codomain]);
+	const strXN_html2F = htmlDiagram.get('ProductObject', {objects:[str, N_html2F.codomain]});
 	const html2Float = Cat.R.MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
 		{js:`return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${Cat.U.JsName(N_html2F)}];`}).to;
 	Cat.R.DiagramReferences(user, htmlDiagram, args.xy);
@@ -534,13 +534,12 @@ postMessage(['ff2d3', args]);
 `
 		},
 	});
-	const Ftrip = Cat.ProductObject.Get(threeD, [F, F, F]);
+	const Ftrip = threeD.get('ProductObject', {objects:[F, F, F]});
 	const f3 = new Cat.NamedObject(threeD, {basename:'F3', properName:'&Fopf;&sup3', source:Ftrip});
-	const f3toFtrip = threeD.placeMorphism(threeD, f3.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false);
+	const f3toFtrip = threeD.placeMorphism(null, f3.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false);
 	args.rowCount++;
 	args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const ftripTof3 = new Cat.DiagramMorphism(threeD, {to:f3.idTo, domain:f3toFtrip.codomain, codomain:f3toFtrip.domain});
-//	threeD.addSVG(ftripTof3);
 	const fff2d3 = Cat.R.MakeMorphism(args, 'fff2d3', 'Morphism', '3D', 'visualize a triplet of numbers in 3D', f3, d3,
 	{
 		code:	{javascript:
@@ -552,7 +551,7 @@ postMessage(['fff2d3', args]);
 `
 		},
 	});
-	const Ftrip2 = Cat.ProductObject.Get(threeD, [f3, f3]);
+	const Ftrip2 = threeD.get('ProductObject', {objects:[f3, f3]});
 	const fff2toline = Cat.R.MakeMorphism(args, 'fff2toLine', 'Morphism', 'Line', 'visualize two points as a line in 3D', Ftrip2, d3,
 	{
 		code:	{javascript:
@@ -564,7 +563,7 @@ postMessage(['fff2toLine', args]);
 `
 		},
 	});
-	const Ftrip3 = Cat.ProductObject.Get(threeD, [f3, f3, f3]);
+	const Ftrip3 = threeD.get('ProductObject', {objects:[f3, f3, f3]});
 	const AxAxAToQuadraticBezierCurve3= Cat.R.MakeMorphism(args, 'fff2toQB3', 'Morphism', '1D', 'visualize three points as a Bezier curbe in 3D', Ftrip3, d3,
 	{
 		code:	{javascript:
