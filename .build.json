@@ -60,7 +60,7 @@
 			"file":		"lambda/CateconBootstrap.js",
 			"name":		"CateconBootstrap",
 			"method":	"uploadLambda",
-			"dependencies"	: ["Cat.js", "CatFns.js", "sha256.js", "sjcl.js", "peg-0.10.0.min.js", "js/amazon-cognito-identity.min.js", "lambda/AWSconstants.js"],
+			"dependencies"	: ["Cat.js", "sha256.js", "sjcl.js", "peg-0.10.0.min.js", "js/amazon-cognito-identity.min.js", "lambda/AWSconstants.js"],
 			"region":	"us-west-1"
 		},
 		{
@@ -81,7 +81,7 @@
 			"file":		"lambda/CateconDownloadJS.js",
 			"name":		"CateconDownloadJS",
 			"method":	"uploadLambda",
-			"dependencies"	: ["Cat.js", "CatFns.js", "sha256.js", "sjcl.js", "peg-0.10.0.min.js", "js/amazon-cognito-identity.min.js", "lambda/AWSconstants.js"],
+			"dependencies"	: ["Cat.js", "sha256.js", "sjcl.js", "peg-0.10.0.min.js", "js/amazon-cognito-identity.min.js", "lambda/AWSconstants.js"],
 			"region":	"us-west-1"
 		},
 		{
@@ -118,6 +118,12 @@
 			"method":	"uploadLambda",
 			"dependencies"	: ["lambda/AWSconstants.js"],
 			"region":	"us-west-1"
+		},
+		{
+			"file":		"js/boot.js",
+			"method":	"copyCat",
+			"dependencies"	: ["Cat.js"],
+			"target":	"js"
 		}
 	]
 }
