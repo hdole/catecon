@@ -170,9 +170,23 @@ table
 	width:				100%;
 }
 
+table.diagramSlot
+{
+	border-collapse:	collapse;
+	vertical-align:		middle;
+	width:				auto;
+}
+
 td
 {
 	text-align:	center;
+}
+
+.catalog
+{
+	display:			grid;
+	grid-column-gap:	15px;
+	grid-template-columns:	repeat(auto-fit, minmax(210px, 1fr));
 }
 
 .left
