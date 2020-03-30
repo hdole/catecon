@@ -351,7 +351,7 @@ a:hover, .offcanvas a:focus
 
 .grabbable
 {
-	cursor:			pointer;
+	cursor:			grab;
 	user-select:	none;
 }
 
@@ -488,6 +488,11 @@ a:hover, .offcanvas a:focus
 {
 	background-color:	#aaa;
 	content:	'\02796';
+}
+
+.clickable
+{
+	cursor:	pointer;
 }
 
 .in100
@@ -673,14 +678,14 @@ td.white
 
 text.emphasis
 {
-	cursor:		pointer;
+	cursor:		grab;
 	fill:		#9fc;
 	stroke:		#0f0;
 }
 
 path.emphasis
 {
-	cursor:		pointer;
+	cursor:		grab;
 	stroke:		#0f0;
 }
 
