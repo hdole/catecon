@@ -241,7 +241,7 @@ const Boot = function(fn)
 		user,
 	}, args.xy);
 args.xy.y += 16 * Cat.D.default.layoutGrid;
-	const N = MakeObject(args, 'N', 'CatObject', '<tspan class="bold">&Nopf;</tspan>', 'The natural numbers').to;
+	const N = MakeObject(args, 'N', 'CatObject', '&Nopf;', 'The natural numbers').to;
 	const Nzero = MakeMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N, {js:'return 0;'}).to;
 	const None = MakeMorphism(args, 'one', 'Morphism', '1', 'The natural number one', one, N, {js:'return 1;'}).to;
 	const Ninfinity = MakeMorphism(args, 'infinity', 'Morphism', '&infin;', 'The maximum safe natural number', one, N, {js:'return Number.MAX_SAFE_INTEGER;'}).to;
@@ -281,7 +281,7 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 		user,
 	}, args.xy);
 args.xy.y += 16 * Cat.D.default.layoutGrid;
-	const Z = MakeObject(args, 'Z', 'CatObject', '<tspan class="bold">&Zopf;</tspan>', 'The integers').to;
+	const Z = MakeObject(args, 'Z', 'CatObject', '&Zopf;', 'The integers').to;
 	const N2Z = MakeMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z, {js:'return args;'}).to;
 	const Zabs = MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of an integer is a natural number', Z, N, {js:'return Math.abs(args);'}).to;
 	const Zzero = MakeMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, Z, {js:'return 0;'}).to;
