@@ -1,47 +1,64 @@
 // (C) 2020 Harry Dole
-//
+// Catecon equality worker
+
+const equivalences = new Set;
+const sig2equivalences = new Map;		// sig to the list of pairs [leg, item]
+const equals = new Map;
+const items = new Map;
+let maxLegLength = 0;
+let spoiled = false;
+
 onmessage = function(e)
 {
 	const start = Date.now();
 	const args = e.data;
 	try
 	{
-		let val = null;
-		switch(args[0])
+		const command = args.command;
+		let val = {};
+		switch(command)
 		{
 			case 'start':
-				let url = args[1];
+//				let url = args[1];
+				let url = args.url;
 				const index = url.indexOf('index.html');
 				if (index !== -1)
 					url = url.substring(0, index);
 				importScripts(url + '/js/sjcl.js');
 				break;
 			case 'LoadEquivalence':
-				LoadEquivalence(args[1], args[2], args[3]);
+//				LoadEquivalence(args[1], args[2], args[3]);
+				LoadEquivalence(args.item, args.leftLeg, args.rightLeg);
 				break;
 			case 'CheckEquivalence':
-				val = CheckEquivalence(args[1], args[2], args[3], args[4]);
+				val = CheckEquivalence(args.cell, args.leftLeg, args.rightLeg);
 				break;
-			case 'RemoveEquivalence':
-				RemoveEquivalence(args[1], args[2]);
+			case 'RemoveEquivalences':
+				RemoveEquivalences(args.items);
+				break;
+			case 'Reload':
+				Reload();
+				break;
+			case 'Info':
+				val =
+				{
+					items:			items.size,
+					maxLegLength,
+					equals:			equals.size,
+					equivalences:	equivalences.size,
+					sigs:			sig2equivalences.size,
+				};
 				break;
 		}
-		if (val)
-		{
-			const delta = Date.now() - start;
-			val.push(delta);
-			postMessage(val);
-		}
+		val.command = command;
+		val.delta = Date.now() - start;
+		postMessage(val);
 	}
 	catch(e)
 	{
-		postMessage(['exception', e]);
+		postMessage({command:'exception', value:e});
 	}
 }
-
-const equivalences = new Set;
-const sig2equivalences = new Map;		// sig to the list of pairs [leg, item]
-const equals = new Map;
 
 const Sig = function(...elts)
 {
@@ -54,8 +71,13 @@ const Sig = function(...elts)
 
 const LoadEquivalence = function(item, leftLeg, rightLeg)
 {
+	maxLegLength = Math.max(maxLegLength, leftLeg.length, rightLeg.length)
+	if (!items.has(item))
+		items.set(item, new Map);
+	const itemEqus = items.get(item);
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
+	itemEqus.set(Sig(leftSig, rightSig), [leftLeg, rightLeg]);
 	const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set;
 	const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set;
 	leftSigs.add(rightSig);
@@ -76,8 +98,10 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	return null;
 }
 
-const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
+function CheckEquivalence(cell, leftLeg, rightLeg)
 {
+	if (spoiled)
+		Reload();
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	let item = null;
@@ -111,7 +135,8 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 			const len = leg.length;
 			if (len > 2)
 				for (let ndx=0; ndx < len-1; ++ndx)
-					for (let cnt=2; cnt < len - ndx; ++cnt)
+//					for (let cnt=2; cnt < len - ndx; ++cnt)
+					for (let cnt=2; cnt < Math.min(maxLegLength, len - ndx); ++cnt)
 					{
 						item = CheckLeg(leg, ndx, cnt, sig);
 						if (item)
@@ -126,10 +151,10 @@ const CheckEquivalence = function(diagram, tag, leftLeg, rightLeg)
 		if (!item)
 			item = fn(rightLeg, leftSig);
 	}
-	return ['CheckEquivalence', diagram, tag, isEqual, item];
+	return {cell, isEqual, item};
 }
 
-const CheckLeg = function(leg, ndx, cnt, sig)
+function CheckLeg(leg, ndx, cnt, sig)
 {
 	let item = null;
 	const subLeg = leg.slice(ndx, cnt);
@@ -164,6 +189,7 @@ const CheckLeg = function(leg, ndx, cnt, sig)
 	return item;
 }
 
+/*
 const RemoveEquivalence = function(leftLeg, rightLeg)
 {
 	const leftSig = Sig(...leftLeg);
@@ -205,4 +231,28 @@ const RemoveEquivalence = function(leftLeg, rightLeg)
 		LoadEquivalence(e[0], e[1], e[2]);
 	});
 	return null;
+}
+*/
+
+function RemoveEquivalences(delItems)
+{
+	delItems.map(item => items.delete(item));
+	spoiled = true;
+}
+
+function Reload()
+{
+	maxLegLength = 0;
+	equivalences.clear();
+	sig2equivalences.clear();
+	equals.clear();
+	items.forEach(function(equs, item)
+	{
+		equs.forEach(function(equ)
+		{
+			LoadEquivalence(item, equ[0], equ[1]);
+		});
+	});
+	spoiled = false;
+console.log('Reloaded!');
 }
