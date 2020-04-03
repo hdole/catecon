@@ -266,6 +266,40 @@ class H
 	static toggle(elt, here, there) {elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
 }
 
+class H3
+{
+	static _s(type, child, args)
+	{
+		const elt = document.createElement(type);
+		if (args)
+		{
+			if (typeof args === 'object')
+			{
+				Object.keys(args).map(k =>
+				{
+					if (k === 'innerHTML')
+						elt.innerHTML = args[k];
+					else
+						elt.setAttribute(k, args[k]);
+				});
+			}
+		}
+		if (child)
+		{
+			if (Array.isArray(child))
+				child.map(c => elt.appendChild(c));
+			else
+				elt.appendChild(child);
+		}
+		return elt;
+	}
+	static div(child, args)		{ return H3._s('div', child, args); }
+	static span(child, args)	{ return H3._s('span', child, args); }
+	static table(child, args)	{ return H3._s('table', child, args); }
+	static tr(child, args)		{ return H3._s('tr', child, args); }
+	static td(child, args)		{ return H3._s('td', child, args); }
+}
+
 const isCloud = true;		// TODO turn on when cloud ready
 
 const isGUI = typeof window === 'object';
@@ -1220,15 +1254,11 @@ if (DiagramMorphism.IsA(item))debugger;
 	}
 	static LoadEquivalentSigs(item, leftSigs, rightSigs)
 	{
-//if (R.diagram && R.diagram.name === 'hdole/Home')
-console.log('LoadEquivalence', item.name, leftSigs, rightSigs);
-//		R.workers.equality.postMessage(['LoadEquivalence', item.name, leftSigs, rightSigs]);
+//console.log('LoadEquivalence', item.name, leftSigs, rightSigs);
 		R.workers.equality.postMessage({command:'LoadEquivalence', item:item.name, leftLeg:leftSigs, rightLeg:rightSigs});
 	}
 	static RemoveEquivalences(...items)
 	{
-//		const leftSigs = leftLeg.map(m => m.signature);
-//		const rightSigs = rightLeg.map(m => m.signature);
 		R.workers.equality.postMessage({command:'RemoveEquivalences', items});
 	}
 	static ReloadEquivalences()
@@ -3938,6 +3968,64 @@ class DiagramSection extends Section
 	}
 }
 
+class AssertionSection extends Section
+{
+	constructor(parent)
+	{
+		super('Assertions', parent, 'assertions-section', 'Assertions in this diagram');
+		window.addEventListener('Assertion', function(e)
+		{
+			const args = e.detail;
+			if (args.command === 'add')
+				D.diagramPanel.assertionSection.addAssertion(args.diagram, args.assertion);
+			else if (args.command === 'delete')
+			{
+				const elt = document.getElementById(`assertion ${args.name}`);
+				elt.parentNode.removeChild(elt);
+			}
+		});
+		this.assertions = H3.div(null, {class:'catalog'});
+		this.section.appendChild(this.assertions);
+	}
+	update()
+	{
+		if (super.update())
+		{
+			R.diagram.assertions.forEach(function(a)
+			{
+				this.addAssertion(R.diagram, a);
+			}, this);
+		}
+	}
+	addAssertion(diagram, assertion)
+	{
+//							(diagram.isEditable() ? H.td(D.GetButton('delete', `Cat.D.textPanel.delete('${t.name}')`, 'Delete text')) +
+		const delBtn = H3.span(null,
+			{
+				innerHTML:diagram.isEditable() ? D.GetButton('delete', `Cat.D.diagramPanel.assertionSection.deleteAssertion('${assertion.name}')`, 'Delete assertion') : '',
+			});
+		this.assertions.appendChild(H3.div(
+				[
+					delBtn,
+					H3.table(H3.tr(
+						[H3.td(H3.table(assertion.left.map(m => H3.tr(H3.td(null, {innerHTML:m.to.properName}))))),
+						H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(null, {innerHTML:m.to.properName})))))], {class:'panelElt'}))
+				], {class:'right', id:`assertion ${assertion.name}`}));
+	}
+	deleteAssertion(name)
+	{
+		const a = R.diagram.assertions.get(name);
+		if (a)
+		{
+			window.dispatchEvent(new CustomEvent('Assertion', { detail:	{diagram:this, command:'delete', name:a.name}}));
+			a.decrRefcnt();
+//			const elt = document.getElementById(`assertion ${name}`);
+//			elt && elt.parentNode.removeChild(elt);
+			R.diagram.update();
+		}
+	}
+}
+
 class DiagramPanel extends Panel
 {
 	constructor()
@@ -3952,6 +4040,7 @@ class DiagramPanel extends Panel
 			H.p(H.span('', 'description', 'diagram-description', 'Description') + H.span('', '', 'diagram-description-edit')) +
 			H.table(H.tr(H.td('By '+ H.span('', '', 'diagram-user'), 'smallPrint') + H.td(H.span('', '', 'diagram-timestamp'), 'smallPrint')));
 		this.newDiagramSection = new NewDiagramSection(this.elt);
+		this.assertionSection = new AssertionSection(this.elt);
 		const deleteReferenceButton = function(diagram)
 		{
 			if (R.diagram.references.has(diagram.name) && R.diagram.user === R.user.name && 'refcnt' in diagram && R.diagram.canRemoveReferenceDiagram(diagram.name))
@@ -6287,9 +6376,10 @@ class Assertion extends Element
 			right:			{value: right, writable: false},
 		});
 		this.signature = Assertion.Signature(left, right);
-		diagram.codomain.addElement(this, diagram);
+//		diagram.codomain.addElement(this, diagram);
 		this.incrRefcnt();		// nothing refers to them, to increment
-		diagram.assertions.set(this.signature, this);
+		diagram.assertions.set(this.name, this);
+		this.loadEquivalence();
 	}
 	decrRefcnt()
 	{
@@ -6326,7 +6416,7 @@ class Assertion extends Element
 	}
 	loadEquivalence()
 	{
-		R.LoadEquivalence(this, this.left, this.right);
+		R.LoadEquivalence(this, this.left.map(m => m.to), this.right.map(m => m.to));
 	}
 	removeEquivalence()
 	{
@@ -6360,13 +6450,22 @@ class Assertion extends Element
 		}
 		return legs;
 	}
-	static HasForm(ary)
+	static HasForm(diagram, ary)
 	{
 		if (ary.length < 2)
 			return false;	// not enough stuff
 		const legs = Assertion.GetLegs(ary);
 		const left = legs[0];
 		const right = legs[1];
+		const sig = Assertion.Signature(left, right);
+		let foundIt = false;
+		diagram.assertions.forEach(function(a)
+		{
+			if (sig === a.signature)
+				foundIt = true;
+		});
+		if (foundIt)
+			return false;	// no duplicates
 		const length0 = left.length;
 		const length1 = right.length;
 		if ((length0 + length1 !== ary.length)  || length0 === 0 || length1 === 0)
@@ -7022,6 +7121,8 @@ class DeleteAction extends Action
 		for(let i=0; i<elements.length; ++i)
 		{
 			let s = elements[i];
+			if (e.id < diagram.id)
+				diagram.id = e.id;
 			if (DiagramObject.IsA(s))	// TODO what about morphisms as objects in 2Cat?
 			{
 				s.refcnt > 0 && s.decrRefcnt();
@@ -8510,14 +8611,20 @@ class AssertionAction extends Action
 <line class="arrow0" x1="120" y1="160" x2="240" y2="160"/>`,
 		};
 		super(diagram, args);
+		R.ReplayCommands.set(this.name, this);
 	}
 	action(e, diagram, ary)
 	{
 		const legs = Assertion.GetLegs(ary);
 		const left = legs[0];
 		const right = legs[1];
-		const a = diagram.addAssertion(left.map(m => m.to), right.map(m => m.to));
-		diagram.update();
+		this.doit(e, diagram, left, right);
+		D.ShowToolbar(e);
+		diagram.log({command:this.name, left:left.map(m => m.name), right:right.map(m => m.name)});
+	}
+	doit(e, diagram, left, right, save = true)
+	{
+		const a = diagram.addAssertion(left, right);
 		const dom = left[0].domain;
 		//
 		// TODO
@@ -8537,11 +8644,17 @@ class AssertionAction extends Action
 		{
 			diagram.pickElement(e, cell.signature);
 		});
-		D.ShowToolbar(e);
+		diagram.update(save);
+	}
+	replay(e, diagram, args)
+	{
+		const left = diagram.getElements(args.left);
+		const right = diagram.getElements(args.right);
+		this.doit(e, diagram, left, right, false);
 	}
 	hasForm(diagram, ary)
 	{
-		return Assertion.HasForm(ary);
+		return Assertion.HasForm(diagram, ary);
 	}
 }
 
@@ -11018,7 +11131,7 @@ class Diagram extends Functor
 				t.incrRefcnt();
 			});
 		this.textId = U.GetArg(args, 'textId', 0);
-		this.assertions = new Map;	// sig to assertion
+//		this.assertions = new Map;	// sig to assertion
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
@@ -11027,6 +11140,7 @@ class Diagram extends Functor
 		const _log = 'log' in nuArgs ? nuArgs.log : [];
 		Object.defineProperties(this,
 		{
+			assertions:					{value:new Map,	writable:false},
 			colorIndex2colorIndex:		{value:{},		writable:true},
 			colorIndex2color:			{value:{},		writable:true},
 			colorIndex:					{value:0,		writable:true},
@@ -11038,6 +11152,8 @@ class Diagram extends Functor
 			svgBase:					{value:null,	writable:true},
 			user:						{value:args.user,	writable:false},
 		});
+//		if ('assertions' in args)
+//			args.assertions.map(a => new Assertion(this, a));
 		R.SetDiagramInfo(this);
 	}
 	help(helped = new Set)
@@ -11076,6 +11192,8 @@ class Diagram extends Functor
 		a.texts = texts;
 		a.readonly = this.readonly;
 		a.user = this.user;
+		a.assertions = [];
+		this.assertions.forEach(function(x){a.assertions.push(x.json())});
 		return a;
 	}
 	getAnon(s)
@@ -11926,6 +12044,7 @@ class Diagram extends Functor
 	clear(save = true)
 	{
 		this.deselectAll();
+		Array.from(this.assertions).reverse().map(a => a[1].decrRefcnt());
 		this.domain.clear();
 		Array.from(this.elements).reverse().map(a => a[1].decrRefcnt());
 		this.texts.forEach(function(t) { t.decrRefcnt(); });
@@ -11955,8 +12074,9 @@ class Diagram extends Functor
 	}
 	addAssertion(left, right)
 	{
-		const elt = this.get('Assertion', {left, right});
-		return elt;
+		const assertion = this.get('Assertion', {left, right});
+		assertion && window.dispatchEvent(new CustomEvent('Assertion', { detail:	{diagram:this, command:'add', assertion}, bubbles:true, cancelable:true}));
+		return assertion;
 	}
 	/*
 	paste(e, log = true)
