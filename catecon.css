@@ -871,3 +871,13 @@ canvas
 	background-color:	#ddd;
 	color: 				#000;
 }
+
+.playedCmd
+{
+	background-color:	#ddd;
+}
+
+.playedBadCmd
+{
+	background-color:	#fdd;
+}
