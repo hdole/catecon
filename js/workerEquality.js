@@ -19,7 +19,6 @@ onmessage = function(e)
 		switch(command)
 		{
 			case 'start':
-//				let url = args[1];
 				let url = args.url;
 				const index = url.indexOf('index.html');
 				if (index !== -1)
@@ -27,11 +26,10 @@ onmessage = function(e)
 				importScripts(url + '/js/sjcl.js');
 				break;
 			case 'LoadEquivalence':
-//				LoadEquivalence(args[1], args[2], args[3]);
 				LoadEquivalence(args.item, args.leftLeg, args.rightLeg);
 				break;
 			case 'CheckEquivalence':
-				val = CheckEquivalence(args.cell, args.leftLeg, args.rightLeg);
+				val = CheckEquivalence(args.diagram, args.cell, args.leftLeg, args.rightLeg);
 				break;
 			case 'RemoveEquivalences':
 				RemoveEquivalences(args.items);
@@ -98,7 +96,7 @@ const LoadEquivalence = function(item, leftLeg, rightLeg)
 	return null;
 }
 
-function CheckEquivalence(cell, leftLeg, rightLeg)
+function CheckEquivalence(diagram, cell, leftLeg, rightLeg)
 {
 	if (spoiled)
 		Reload();
@@ -135,8 +133,7 @@ function CheckEquivalence(cell, leftLeg, rightLeg)
 			const len = leg.length;
 			if (len > 2)
 				for (let ndx=0; ndx < len-1; ++ndx)
-//					for (let cnt=2; cnt < len - ndx; ++cnt)
-					for (let cnt=2; cnt < Math.min(maxLegLength, len - ndx); ++cnt)
+					for (let cnt=2; cnt <= Math.min(maxLegLength, len - ndx); ++cnt)
 					{
 						item = CheckLeg(leg, ndx, cnt, sig);
 						if (item)
@@ -151,13 +148,13 @@ function CheckEquivalence(cell, leftLeg, rightLeg)
 		if (!item)
 			item = fn(rightLeg, leftSig);
 	}
-	return {cell, isEqual, item};
+	return {diagram, cell, isEqual, item};
 }
 
 function CheckLeg(leg, ndx, cnt, sig)
 {
 	let item = null;
-	const subLeg = leg.slice(ndx, cnt);
+	const subLeg = leg.slice(ndx, ndx + cnt);
 	const subSig = Sig(...subLeg);
 	if (sig2equivalences.has(subSig))
 	{
@@ -170,7 +167,7 @@ function CheckLeg(leg, ndx, cnt, sig)
 				const nuLeg = leg.slice(0, ndx);
 				nuLeg.push(...altLeg);
 				if (ndx + cnt < leg.length)
-					nuLeg.push(...leg.slice(ndx + cnt, leg.length - ndx - cnt));
+					nuLeg.push(...leg.slice(ndx + cnt, leg.length));
 				const nuSig = Sig(...nuLeg);
 				if (sig === nuSig)
 					item = s[1];
@@ -188,51 +185,6 @@ function CheckLeg(leg, ndx, cnt, sig)
 	}
 	return item;
 }
-
-/*
-const RemoveEquivalence = function(leftLeg, rightLeg)
-{
-	const leftSig = Sig(...leftLeg);
-	const rightSig = Sig(...rightLeg);
-	const leftEqus = sig2equivalences.get(leftSig);
-	let ndx = -1;
-	for (let i=0; i<leftEqus.length; ++i)
-	{
-		const a = leftEqus[i];
-		const leg = a[0];
-		const legSig = Sig(...leg);
-		if (legSig === rightSig)
-		{
-			ndx = i;
-			break;
-		}
-	};
-	leftEqus.splice(ndx, 1);
-	const rightEqus = sig2equivalences.get(rightSig);
-	ndx = -1;
-	for (let i=0; i<rightEqus.length; ++i)
-	{
-		const a = rightEqus[i];
-		const leg = a[0];
-		const legSig = Sig(...leg);
-		if (legSig === leftSig)
-		{
-			ndx = i;
-			break;
-		}
-	};
-	rightEqus.splice(ndx, 1);
-	const oldEquivalences = new Set(equivalences);
-	equivalences.clear();
-	sig2equivalences.clear();
-	equals.clear();
-	oldEquivalences.forEach(function(e)
-	{
-		LoadEquivalence(e[0], e[1], e[2]);
-	});
-	return null;
-}
-*/
 
 function RemoveEquivalences(delItems)
 {
