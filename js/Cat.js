@@ -640,21 +640,14 @@ Create diagrams and execute morphisms.
 			R.workers['equality'] = worker;
 			worker.addEventListener('message', function(msg)
 			{
-				const diagram = R.diagram;
 				const args = msg.data;
+				const diagram = R.$CAT.getElement(args.diagram);
 				switch(args.command)
 				{
 					case 'CheckEquivalence':
-//						const diagram = R.$CAT.getElement(args[1]);
 						const cell = diagram.domain.cells.get(args.cell);
-//						const commutes = args[3];
 						const isEqual = args.isEqual;
 						const to = diagram.getElement(args.item);
-// TODO for assertions?
-//						{
-//							to.cell = cell;
-//							cell.to = to;
-//						}
 						cell.setCommutativity(isEqual);
 						const objs = cell.getObjects();
 						if (!cell.svg)
@@ -9290,9 +9283,17 @@ class Morphism extends Element
 		const codIdSig = Identity.Signature(diagram, this.codomain)
 		R.LoadEquivalentSigs(this, [sig], [sig, codIdSig]);
 		if (this.diagram.codomain.actions.has('product'))
-				R.LoadEquivalentSigs(this, [TerminalMorphism.Signature(diagram, false, this.domain)], [TerminalMorphism.Signature(diagram, false, this.codomain), sig]);
+		{
+				const domTermSig = TerminalMorphism.Signature(diagram, false, this.domain);
+				const codTermSig = TerminalMorphism.Signature(diagram, false, this.codomain);
+if (sig === "d333e8a934d647309ea8529b08f976a211cb48ea4aa248395cec3c3de2370541")debugger;
+//				R.LoadEquivalentSigs(this, [TerminalMorphism.Signature(diagram, false, this.domain)], [TerminalMorphism.Signature(diagram, false, this.codomain), sig]);
+				R.LoadEquivalentSigs(this, [domTermSig], [sig, codTermSig]);
+		}
 		if (this.diagram.codomain.actions.has('coproduct'))
 				R.LoadEquivalentSigs(this, [TerminalMorphism.Signature(diagram, true, this.domain)], [sig, TerminalMorphism.Signature(diagram, true, this.codomain)]);
+
+if (TerminalMorphism.Signature(diagram, false, this.domain) === TerminalMorphism.Signature(diagram, true, this.domain))debugger;
 	}
 	static IsA(m)
 	{
@@ -9519,7 +9520,7 @@ class DiagramMorphism extends Morphism
 	{
 		const nuArgs = U.Clone(args);
 		nuArgs.index = true;
-		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('anon' in args ? args.anon : 'm'));
+		nuArgs.basename = U.GetArg(args, 'basename', diagram.getAnon('m'));
 		nuArgs.category = diagram.domain;
 		super(diagram, nuArgs);
 		this.incrRefcnt();
@@ -9950,6 +9951,7 @@ class Cell extends DiagramCore
 	constructor(diagram, args)
 	{
 		const nuArgs = U.Clone(args);
+		nuArgs.basename = diagram.getAnon('c');
 		super(diagram, nuArgs);
 		this.properName = U.GetArg(nuArgs, 'properName', '');
 		this.left = nuArgs.left;
@@ -10312,7 +10314,15 @@ class IndexCategory extends Category
 			const firstLeft = left[0];
 			const flatLeft = diagram.flatten(left.map(m => m.to));
 			const flatRight = diagram.flatten(right.map(m => m.to));
-			R.workers.equality.postMessage({command:'CheckEquivalence', cell:cell.signature, leftLeg:flatLeft.map(m => m.to.signature), rightLeg:flatRight.map(m => m.to.signature)});
+//			R.workers.equality.postMessage({command:'CheckEquivalence', cell:cell.signature, leftLeg:flatLeft.map(m => m.to.signature), rightLeg:flatRight.map(m => m.to.signature)});
+			R.workers.equality.postMessage(
+				{
+					command:'CheckEquivalence',
+					diagram:diagram.name,
+					cell:cell.signature,
+					leftLeg:flatLeft.map(m => m.signature),
+					rightLeg:flatRight.map(m => m.signature)
+				});
 		});
 	}
 	static HomKey(domain, codomain)
@@ -12493,8 +12503,10 @@ class Diagram extends Functor
 				case 'NamedMorphism':
 					morphs.push(...that.flatten(m.source));
 					break;
+				default:
+					morphs.push(m);
+					break;
 			}
-			morphs.push(m);
 		}
 		const morphs = [];
 		if (Array.isArray(leg))
