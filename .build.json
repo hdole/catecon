@@ -7,6 +7,11 @@
 			"target":	"build"
 		},
 		{
+			"file":		"js/workerEquality.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
 			"file":		"js/Cat.js",
 			"method":	"copyCat",
 			"target":	"js"
