@@ -626,6 +626,7 @@ td.white
 	user-select:	none;
 }
 
+/*
 .object:hover
 {
 	cursor:	grab;
@@ -635,6 +636,7 @@ td.white
 	font:	30px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:	2px;
 }
+*/
 
 .fuseObject
 {
@@ -693,14 +695,15 @@ td.white
 text.emphasis
 {
 	cursor:		grab;
-	fill:		#9fc;
-	stroke:		#0f0;
+	fill:		#00f;
+	/* stroke:		#00fa; */
 }
 
 path.emphasis
 {
+	stroke-dasharray:	5,5;
 	cursor:		grab;
-	stroke:		#0f0;
+	stroke:		#00fa;
 }
 
 .element
