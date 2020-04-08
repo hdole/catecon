@@ -394,6 +394,11 @@ a:hover, .offcanvas a:focus
 	box-shadow:	none;
 }
 
+.autohide
+{
+	transition: all 0.5s ease-in-out;
+}
+
 .nodisplay
 {
 	display:			none;
@@ -831,6 +836,7 @@ canvas
 
 .badCell
 {
+	cursor:			pointer;
 	fill:			black;
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
