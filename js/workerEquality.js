@@ -6,6 +6,8 @@ const equals = new Map;
 const items = new Map;
 let maxLegLength = 0;
 let spoiled = false;
+let diagramItems = new Map;
+let contextDiagrams = [];
 
 onmessage = function(e)
 {
@@ -25,24 +27,26 @@ onmessage = function(e)
 				importScripts(url + '/js/sjcl.js');
 				break;
 			case 'LoadEquivalence':
-				LoadEquivalence(args.item, args.leftLeg, args.rightLeg);
+				LoadEquivalence(args.diagram, args.item, args.leftLeg, args.rightLeg);
 				break;
 			case 'CheckEquivalence':
 				val = CheckEquivalence(args.diagram, args.cell, args.leftLeg, args.rightLeg);
 				break;
 			case 'RemoveEquivalences':
-				RemoveEquivalences(args.items);
+				RemoveEquivalences(args.diagram, args.items);
 				break;
-			case 'Reload':
-				Reload();
+			case 'Load':
+				Load(args.diagrams);
 				break;
 			case 'Info':
 				val =
 				{
-					items:			items.size,
+					totalItems:			items.size,
 					maxLegLength,
-					equals:			equals.size,
-					sigs:			sig2equivalences.size,
+					equals:				equals.size,
+					sigs:				sig2equivalences.size,
+					contextDiagrams:	contextDiagrams.length,
+					totalDiagrams:		diagramItems.size,
 				};
 				break;
 		}
@@ -67,23 +71,22 @@ function Sig(...elts)
 
 function LoadSigLeg(sig, leg)
 {
-	if (!sig2equivalences.has(sig))
-		sig2equivalences.set(sig, []);
+	!sig2equivalences.has(sig) && sig2equivalences.set(sig, []);
 	const equs = sig2equivalences.get(sig);
 	equs.push(leg);
 }
 
-function LoadEquivalence(item, leftLeg, rightLeg)
+function LoadEquivalence(diagram, item, leftLeg, rightLeg)
 {
 	maxLegLength = Math.max(maxLegLength, leftLeg.length, rightLeg.length)
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	if (item)
 	{
-		if (!items.has(item))
-			items.set(item, new Map);
-		const itemEqus = items.get(item);
-		itemEqus.set(Sig(leftSig, rightSig), [leftLeg, rightLeg]);
+		!items.has(item) && items.set(item, new Map);
+		items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg]);
+		!diagramItems.has(diagram) && diagramItems.set(diagram, new Set);
+		diagramItems.get(diagram).add(item);
 	}
 	const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set;
 	const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set;
@@ -92,8 +95,7 @@ function LoadEquivalence(item, leftLeg, rightLeg)
 	equals.set(leftSig, leftSigs);
 	equals.set(rightSig, leftSigs);	// since equal set is same
 	LoadSigLeg(leftSig, rightLeg);
-	if (leftSig !== rightSig)
-		LoadSigLeg(rightSig, leftLeg);
+	leftSig !== rightSig && LoadSigLeg(rightSig, leftLeg);
 	return true;
 }
 
@@ -125,7 +127,7 @@ function TryAlternateLeg(leg, ndx, cnt, sig, subLeg, altLeg)
 		if (!isEqual)
 			isEqual = ScanLeg(nuLeg, sig);
 		if (isEqual)
-			LoadEquivalence(null, leg, nuLeg);
+			LoadEquivalence(null, null, leg, nuLeg);
 	}
 	return isEqual;
 }
@@ -159,7 +161,7 @@ function ScanLeg(leg, sig)
 function CheckEquivalence(diagram, cell, leftLeg, rightLeg)
 {
 	if (spoiled)
-		Reload();
+		Load(contextDiagrams);
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	let isEqual = false;
@@ -170,27 +172,37 @@ function CheckEquivalence(diagram, cell, leftLeg, rightLeg)
 		if (!isEqual)
 			isEqual = ScanLeg(rightLeg, leftSig);
 	}
+	isEqual && !CompareSigs(leftSig, rightSig) && LoadEquivalence(diagram, null, leftLeg, rightLeg);
 	return {diagram, cell, isEqual};
 }
 
-function RemoveEquivalences(delItems)
+function RemoveEquivalences(diagram, delItems)
 {
-	delItems.map(item => items.delete(item));
+	const myItems = diagramItems.get(diagram);
+	delItems.map(item =>
+	{
+		items.delete(item);
+		myItems.delete(item);
+	});
 	spoiled = true;
 }
 
-function Reload()
+function Load(diagrams)
 {
+	contextDiagrams = diagrams;
 	maxLegLength = 0;
 	sig2equivalences.clear();
 	equals.clear();
-	items.forEach(function(equs, item)
+	diagrams.map(diagram =>
 	{
-		equs.forEach(function(equ)
+		diagramItems.has(diagram) && diagramItems.get(diagram).forEach(function(item)
 		{
-			LoadEquivalence(item, equ[0], equ[1]);
+			items.get(item).forEach(function(equ)
+			{
+				LoadEquivalence(diagram, item, equ[0], equ[1]);
+			});
 		});
 	});
 	spoiled = false;
-console.log('Reloaded!');
+console.log('Loaded!');
 }
