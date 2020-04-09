@@ -268,7 +268,7 @@ class H
 
 class H3
 {
-	static _p(elt, child, args)
+	static _p(elt, args, child)
 	{
 		if (args)
 		{
@@ -292,14 +292,15 @@ class H3
 		}
 		return elt;
 	}
-	static _h(type, child, args)
+	static _h(type, args, child)
 	{
-		return H3._p(document.createElement(type), child, args);
+		return H3._p(document.createElement(type), args, child);
 	}
-	static _v(type, child, args)
+	static _v(type, args, child)
 	{
-		return H3._p(document.createElementNS(D.xmlns, type), child, args);
+		return H3._p(document.createElementNS(D.xmlns, type), args, child);
 	}
+	/*
 	static animateTransform(child, args)		{ return H3._v('animateTransform', child, args); }
 	static div(child, args)		{ return H3._h('div', child, args); }
 	static g(child, args)		{ return H3._v('g', child, args); }
@@ -308,6 +309,15 @@ class H3
 	static table(child, args)	{ return H3._h('table', child, args); }
 	static tr(child, args)		{ return H3._h('tr', child, args); }
 	static td(child, args)		{ return H3._h('td', child, args); }
+	*/
+	static animateTransform(args, child)		{ return H3._v('animateTransform', args, child); }
+	static div(args, child)		{ return H3._h('div', args, child); }
+	static g(args, child)		{ return H3._v('g', args, child); }
+	static p(args, child)		{ return H3._h('p', args, child); }
+	static span(args, child)	{ return H3._h('span', args, child); }
+	static table(args, child)	{ return H3._h('table', args, child); }
+	static tr(args, child)		{ return H3._h('tr', args, child); }
+	static td(args, child)		{ return H3._h('td', args, child); }
 }
 
 const isCloud = true;		// TODO turn on when cloud ready
@@ -1895,6 +1905,7 @@ class D
 {
 	static Initialize()
 	{
+		window.addEventListener('Diagram', D.Autohide);
 		window.addEventListener('mousemove', D.Autohide);
 		window.addEventListener('mousedown', D.Autohide);
 		window.addEventListener('keydown', D.Autohide);
@@ -4222,7 +4233,7 @@ class AssertionSection extends Section
 				elt.parentNode.removeChild(elt);
 			}
 		});
-		this.assertions = H3.div(null, {class:'catalog'});
+		this.assertions = H3.div({class:'catalog'});
 		this.section.appendChild(this.assertions);
 		const that = this;
 		function updateAssertions(e)
@@ -4235,41 +4246,23 @@ class AssertionSection extends Section
 		window.addEventListener('Diagram', updateAssertions);
 		window.addEventListener('Login', updateAssertions);
 	}
-	/*
-	update()
-	{
-		if (super.update())
-		{
-			R.diagram.assertions.forEach(function(a)
-			{
-//				this.addAssertion(R.diagram, a);
-			}, this);
-		}
-	}
-	*/
 	addAssertion(diagram, assertion)
 	{
 		const canEdit = diagram.isEditable();
-		const delBtn = H3.span(null,
-			{
-				innerHTML:canEdit ? D.GetButton('delete', `Cat.D.diagramPanel.assertionSection.deleteAssertion('${assertion.name}')`, 'Delete assertion') : '',
-			});
-		const viewBtn = H3.span(null,
-			{
-				innerHTML:D.GetButton('view', `Cat.R.diagram.viewElements('${assertion.name}')`, 'View assertion'),
-			});
+		const delBtn = H3.span({innerHTML:canEdit ? D.GetButton('delete', `Cat.D.diagramPanel.assertionSection.deleteAssertion('${assertion.name}')`, 'Delete assertion') : ''});
+		const viewBtn = H3.span({innerHTML:D.GetButton('view', `Cat.R.diagram.viewElements('${assertion.name}')`, 'View assertion')});
 		const desc = H.span(assertion.description, '', `a_${assertion.name}`) +
 							(canEdit ? D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${assertion.name}', 'a_${assertion.name}', 'description')`, 'Edit') : '');
-		const div = H3.div(
+		const div = H3.div({class:'right', id:`assertion ${assertion.name}`},
 				[
 					viewBtn, delBtn,
-					H3.table(
-						[H3.tr(
-							[H3.td(H3.table(assertion.left.map(m => H3.tr(H3.td(null, {innerHTML:m.to.properName}))))),
-							H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(null, {innerHTML:m.to.properName})))))]),
-						H3.tr(H3.td(null, {innerHTML:desc, colspan:2}))]
+					H3.table({},
+						[H3.tr({},
+							[H3.td({}, H3.table({}, assertion.left.map(m => H3.tr({}, H3.td({innerHTML:m.to.properName}))))),
+							H3.td({}, H3.table({}, assertion.right.map(m => H3.tr({}, H3.td({innerHTML:m.to.properName})))))]),
+						H3.tr({}, H3.td({innerHTML:desc, colspan:2}))]
 					, {class:'panelElt'})
-				], {class:'right', id:`assertion ${assertion.name}`});
+				]);
 		const sig = assertion.signature;
 		div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(sig, true);});
 		div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(sig, false);});
@@ -5058,7 +5051,7 @@ class SettingsPanel extends Panel
 				Object.keys(msg.data).forEach(function(i)
 				{
 					if (i !== 'command' && i !== 'delta')
-						elt.appendChild(H3.p(null, {innerHTML:`${U.DeCamel(i)}: ${msg.data[i]}`}));
+						elt.appendChild(H3.p({innerHTML:`${U.DeCamel(i)}: ${msg.data[i]}`}));
 				});
 			}
 			else if (msg.data.command === 'Load')
@@ -5442,7 +5435,6 @@ class Graph
 				const lnk = links.pop();
 				if (this.visited.has(lnk.toString()))
 					continue;
-
 				const g = top.getFactor(lnk);
 				for (let j=0; j<g.links.length; ++j)
 				{
@@ -5453,9 +5445,7 @@ class Graph
 					nuLinks.push(glnk);
 					links.push(glnk);
 				}
-
 				U.ArrayMerge(this.tags, g.tags);
-
 				if (ndx.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
 					continue;
 				this.visited.add(lnk.toString());
@@ -6931,16 +6921,17 @@ class NameAction extends Action
 	{
 		try
 		{
+			const source = ary[0];
 			const args =
 			{
 				command:		this.name,
-				from,
+				source,
 				basename:		U.HtmlSafe(			document.getElementById('named-element-new-basename').value.trim()),
 				properName:		U.HtmlEntitySafe(	document.getElementById('named-element-new-properName').value.trim()),
 				description:	U.HtmlEntitySafe(	document.getElementById('named-element-new-description').value),
 			};
 			this.doit(e, diagram, args);
-			args.from = from.name;
+			args.source = source.name;
 			diagram.log(args);
 		}
 		catch(x)
@@ -6952,28 +6943,32 @@ class NameAction extends Action
 	}
 	doit(e, diagram, args)
 	{
-		const from = args.from;
-		const source = from.to;
+		const source = args.source;
+		args.source = source.to;
 		if (CatObject.IsA(source))
 		{
 			const nid = new NamedObject(diagram, args);
-			const nidIndex = diagram.placeObject(e, nid, D.default.stdArrow.add(from));
-			const idx1 = new DiagramMorphism(diagram, {to:nid.idFrom, domain:nidIndex, codomain:from});
-			const idx2 = new DiagramMorphism(diagram, {to:nid.idTo, codomain:nidIndex, domain:from});
+			const nidIndex = diagram.placeObject(e, nid, D.default.stdArrow.add(source));
+			const idx1 = new DiagramMorphism(diagram, {to:nid.idFrom, domain:nidIndex, codomain:source});
+			const idx2 = new DiagramMorphism(diagram, {to:nid.idTo, codomain:nidIndex, domain:source});
 			diagram.addSVG(idx1);
 			diagram.addSVG(idx2);
+			idx1.update();
+			idx2.update();
 			R.EmitObjectEvent();
-			R.EmitMorphismevent();
+			R.EmitMorphismEvent();
 		}
 		else if (Morphism.IsA(source))
 		{
-			nuArgs.domain = source.domain;
-			nuArgs.codomain = source.codomain;
+			const nuArgs = U.Clone(args);
+			nuArgs.domain = source.domain.to;
+			nuArgs.codomain = source.codomain.to;
 			const to = new NamedMorphism(diagram, nuArgs);
-			const nuFrom = new DiagramMorphism(diagram, {to, domain:from.domain, codomain:from.codomain});
+			const nuFrom = new DiagramMorphism(diagram, {to, domain:source.domain, codomain:source.codomain});
 			diagram.addSVG(nuFrom);
-			from.update();
-			R.EmitMorphismevent();
+			source.update();
+			nuFrom.update();
+			R.EmitMorphismEvent();
 		}
 		diagram.update();
 		D.HideToolbar();
@@ -9121,13 +9116,14 @@ class Category extends CatObject
 			return this.elements.get(name);
 		return name;
 	}
-	deleteElement(e)
+	deleteElement(elt)
 	{
-		this.elements.delete(e.name);
-		if (e.diagram)
+		this.elements.delete(elt.name);
+		if (elt.diagram)
 		{
-			e.diagram.elements.delete(e.basename);
-			R.RemoveEquivalences(e.diagram, e.name);
+			elt.diagram.elements.delete(elt.basename);
+			if (!DiagramMorphism.IsA(elt) && !DiagramObject.IsA(elt))
+				R.RemoveEquivalences(elt.diagram, elt.name);
 		}
 	}
 	addActions(name)
@@ -9482,6 +9478,7 @@ class NamedObject extends CatObject	// name of an object
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.source = source;
+		this.signature = this.source.signature;
 		this.source.incrRefcnt();
 		this.idFrom = diagram.get('Identity', {domain:this, codomain:this.source});
 		this.idTo = diagram.get('Identity', {domain:this.source, codomain:this});
@@ -9517,6 +9514,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.source = source;
+		this.signature = this.source.signature;
 		this.source.incrRefcnt();
 		if (this.constructor.name === 'NamedMorphism')
 			this.signature = this.source.sig;
@@ -10053,10 +10051,10 @@ class Cell extends DiagramCore
 		const svg = document.createElementNS(D.xmlns, 'text');
 		node.appendChild(svg);
 		this.svg = svg;
-		svg.setAttributeNS(null, 'data-type', 'object');
+		svg.setAttributeNS(null, 'data-type', 'assertion');
 		svg.setAttributeNS(null, 'data-name', this.name);
 		svg.setAttributeNS(null, 'text-anchor', 'middle');
-		svg.setAttributeNS(null, 'id', this.name);
+//		svg.setAttributeNS(null, 'id', this.name);
 		svg.setAttributeNS(null, 'x', this.x);
 		svg.setAttributeNS(null, 'y', this.y + D.default.font.height/2);	// TODO should be this.height?
 		svg.innerHTML = this.description;
@@ -12142,9 +12140,10 @@ class Diagram extends Functor
 			this.svgRoot.appendChild(root);
 			*/
 
-			this.svgBase = H3.g(null, {id:`${this.name} base`});
+			this.svgBase = H3.g({id:`${this.name} base`});
 //			this.svgTranslate = H3.g(this.svgBase, {id:`${this.name} T`, 'translate':`${this.viewport.x} ${this.viewport.y}`, scale:`${this.viewport.scale} ${this.viewport.scale}`});
-			this.svgTranslate = H3.g(this.svgBase, {id:`${this.name} T`});
+//			this.svgTranslate = H3.g(this.svgBase, {id:`${this.name} T`});
+			this.svgTranslate = H3.g({id:`${this.name} T`}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
 
 
