@@ -541,15 +541,6 @@ table.center
 	height:	auto;
 }
 
-.diagramText:hover
-{
-	cursor:	grab;
-	fill:	#9fc;
-	opacity:.5;
-	stroke:	#0f0;
-	font:	14px;
-}
-
 .txtCenter
 {
 	text-align:	center;
@@ -631,18 +622,6 @@ td.white
 	user-select:	none;
 }
 
-/*
-.object:hover
-{
-	cursor:	grab;
-	fill:	#9fc;
-	opacity:.5;
-	stroke:	#0f0;
-	font:	30px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
-	margin:	2px;
-}
-*/
-
 .fuseObject
 {
 	fill:		blue;
@@ -690,18 +669,10 @@ td.white
 	user-select:	none;
 }
 
-.cellTxt:hover
-{
-	cursor:		pointer;
-	fill:		#9fc;
-	stroke:		#0f0;
-}
-
 text.emphasis
 {
 	cursor:		grab;
 	fill:		#00f;
-	/* stroke:		#00fa; */
 }
 
 path.emphasis
@@ -824,12 +795,10 @@ canvas
 {
 	from
 	{
-/*		text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073; */
 		text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00f, 0 0 40px #00f, 0 0 50px #00f;
 	}
 	to
 	{
-		/* text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6; */
 		text-shadow: 0 0 20px #fff, 0 0 30px #77f, 0 0 40px #77f, 0 0 50px #77f, 0 0 60px #77f;
 	}
 }
@@ -841,7 +810,6 @@ canvas
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
-	/* text-shadow:	0 0 10px #fff, 0 0 20px #fff, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00; */
 	animation: 			badGlow 1s ease-in-out infinite alternate;
 }
 
