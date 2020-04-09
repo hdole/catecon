@@ -682,23 +682,6 @@ path.emphasis
 	stroke:		#00fa;
 }
 
-.element
-{
-	fill:			black;
-	font:			20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
-	margin:			2px;
-	user-select:	none;
-	text-align:		left;
-}
-
-.element:hover
-{
-	cursor:	grab;
-	fill:	#3f3;
-	font:	20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
-	margin:	2px;
-}
-
 .selected
 {
 	margin:		2px;
