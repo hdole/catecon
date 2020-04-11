@@ -268,6 +268,7 @@ class H
 
 class H3
 {
+	/*
 	static _p(elt, args, child)
 	{
 		if (args)
@@ -292,13 +293,38 @@ class H3
 		}
 		return elt;
 	}
-	static _h(type, args, child)
+	*/
+	static _p(elt, args)
 	{
-		return H3._p(document.createElement(type), args, child);
+		for (let i=0; i<args.length; ++i)
+		{
+			const arg = args[i];
+			const type = arg.constructor.name;
+			switch(arg.constructor.name)
+			{
+				case 'String':
+					elt.innerHTML = arg;
+					break;
+				case 'Object':
+					Object.keys(arg).map(k => elt.setAttribute(k, arg[k]));
+					break;
+				case 'Array':
+					arg.map(c => elt.appendChild(c));
+					break;
+				default:
+					elt.appendChild(arg);
+					break;
+			}
+		}
+		return elt;
 	}
-	static _v(type, args, child)
+	static _h(type, args)
 	{
-		return H3._p(document.createElementNS(D.xmlns, type), args, child);
+		return H3._p(document.createElement(type), args);
+	}
+	static _v(type, args)
+	{
+		return H3._p(document.createElementNS(D.xmlns, type), args);
 	}
 	/*
 	static animateTransform(child, args)		{ return H3._v('animateTransform', child, args); }
@@ -310,14 +336,14 @@ class H3
 	static tr(child, args)		{ return H3._h('tr', child, args); }
 	static td(child, args)		{ return H3._h('td', child, args); }
 	*/
-	static animateTransform(args, child)		{ return H3._v('animateTransform', args, child); }
-	static div(args, child)		{ return H3._h('div', args, child); }
-	static g(args, child)		{ return H3._v('g', args, child); }
-	static p(args, child)		{ return H3._h('p', args, child); }
-	static span(args, child)	{ return H3._h('span', args, child); }
-	static table(args, child)	{ return H3._h('table', args, child); }
-	static tr(args, child)		{ return H3._h('tr', args, child); }
-	static td(args, child)		{ return H3._h('td', args, child); }
+	static animateTransform(...args)		{ return H3._v('animateTransform', args); }
+	static div(...args)		{ return H3._h('div', args); }
+	static g(...args)		{ return H3._v('g', args); }
+	static p(...args)		{ return H3._h('p', args); }
+	static span(...args)	{ return H3._h('span', args); }
+	static table(...args)	{ return H3._h('table', args); }
+	static tr(...args)		{ return H3._h('tr', args); }
+	static td(...args)		{ return H3._h('td', args); }
 }
 
 const isCloud = true;		// TODO turn on when cloud ready
@@ -484,7 +510,7 @@ class U
 			});
 		});
 	}
-	static JsName(e, cls = false)
+	static Token(e, cls = false)
 	{
 		const s = e.name;
 		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_o_').replace(/#/g, '_n_')
@@ -771,6 +797,7 @@ Create diagrams and execute morphisms.
 				new FlipNameAction(R.$Actions),
 				new HelpAction(R.$Actions),
 				new JavascriptAction(R.$Actions),
+				new CppAction(R.$Actions),
 				new RunAction(R.$Actions),
 				new AlignHorizontalAction(R.$Actions),
 				new AlignVerticalAction(R.$Actions),
@@ -4249,24 +4276,23 @@ class AssertionSection extends Section
 	addAssertion(diagram, assertion)
 	{
 		const canEdit = diagram.isEditable();
-		const delBtn = H3.span({innerHTML:canEdit ? D.GetButton('delete', `Cat.D.diagramPanel.assertionSection.deleteAssertion('${assertion.name}')`, 'Delete assertion') : ''});
-		const viewBtn = H3.span({innerHTML:D.GetButton('view', `Cat.R.diagram.viewElements('${assertion.name}')`, 'View assertion')});
+		const delBtn = H3.span(canEdit ? D.GetButton('delete', `Cat.D.diagramPanel.assertionSection.deleteAssertion('${assertion.name}')`, 'Delete assertion') : '');
+		const viewBtn = H3.span(D.GetButton('view', `Cat.R.diagram.viewElements('${assertion.name}')`, 'View assertion'));
 		const desc = H.span(assertion.description, '', `a_${assertion.name}`) +
 							(canEdit ? D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${assertion.name}', 'a_${assertion.name}', 'description')`, 'Edit') : '');
 		const div = H3.div({class:'right', id:`assertion ${assertion.name}`},
 				[
 					viewBtn, delBtn,
-					H3.table({},
-						[H3.tr({},
-							[H3.td({}, H3.table({}, assertion.left.map(m => H3.tr({}, H3.td({innerHTML:m.to.properName}))))),
-							H3.td({}, H3.table({}, assertion.right.map(m => H3.tr({}, H3.td({innerHTML:m.to.properName})))))]),
-						H3.tr({}, H3.td({innerHTML:desc, colspan:2}))]
+					H3.table(	[H3.tr({},
+									[H3.td({}, H3.table(assertion.left.map(m => H3.tr(H3.td(m.to.properName))))),
+									H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.to.properName)))))]),
+								H3.tr(H3.td(desc, {colspan:2}))]
 					, {class:'panelElt'})
 				]);
 		const sig = assertion.signature;
 		div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(sig, true);});
 		div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(sig, false);});
-		div.addEventListener('mousedown', function(e) { Cat.R.diagram.pickElement(event, sig);});
+//		div.addEventListener('mousedown', function(e) { Cat.R.diagram.pickElement(event, sig);});
 		this.assertions.appendChild(div);
 	}
 	deleteAssertion(name)
@@ -4988,8 +5014,11 @@ class MorphismPanel extends Panel
 		const that = this;
 		function process(e)
 		{
-			that.diagramMorphismSection.setElements(R.diagram.elements);
-			that.diagramMorphismSection.update();
+			if (R.diagram)
+			{
+				that.diagramMorphismSection.setElements(R.diagram.elements);
+				that.diagramMorphismSection.update();
+			}
 		}
 		window.addEventListener('Morphism', process);
 		window.addEventListener('Diagram', function(e) { that.update(); });
@@ -5051,7 +5080,7 @@ class SettingsPanel extends Panel
 				Object.keys(msg.data).forEach(function(i)
 				{
 					if (i !== 'command' && i !== 'delta')
-						elt.appendChild(H3.p({innerHTML:`${U.DeCamel(i)}: ${msg.data[i]}`}));
+						elt.appendChild(H3.p(`${U.DeCamel(i)}: ${msg.data[i]}`));
 				});
 			}
 			else if (msg.data.command === 'Load')
@@ -6344,7 +6373,8 @@ class DiagramText extends DiagramCore
 	}
 	tspan()
 	{
-		return this.description.indexOf('\n') > -1 ?  this.description.split('\n').map(t => `<tspan text-anchor="left" x="${this.x}" dy="1.2em">${t}</tspan>`).join('') : description;
+		return this.description.indexOf('\n') > -1 ?  this.description.split('\n').map(t => `<tspan text-anchor="left" x="${this.x}" dy="1.2em">${t}</tspan>`).join('') :
+			this.description;
 	}
 	elementId()
 	{
@@ -6598,6 +6628,10 @@ class DiagramObject extends CatObject
 		}
 		return false;
 	}
+	isIsolated()
+	{
+		return this.domains.length === 0 && this.codomains.length === 0;
+	}
 	static IsA(obj)
 	{
 		return DiagramObject.prototype.isPrototypeOf(obj);
@@ -6770,7 +6804,7 @@ class Assertion extends Element
 			return false;	// bad legs
 		const sig = Cell.Signature(left, right);
 		const cell = diagram.domain.cells.get(sig);
-		return !cell.comuutes && left[0].domain === right[0].domain && left[length0 -1].codomain === right[length1 -1].codomain;	// legs have same domain and codomain
+		return cell && !cell.comuutes && left[0].domain === right[0].domain && left[length0 -1].codomain === right[length1 -1].codomain;	// legs have same domain and codomain
 	}
 	static IsA(obj)
 	{
@@ -6825,6 +6859,7 @@ class CompositeAction extends Action
 		const to = diagram.get('Composite', {morphisms:morphisms.map(m => m.to)});
 		const from = new DiagramComposite(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms), morphisms});
 		diagram.addSVG(from);
+		from.update();
 		diagram.makeSelected(e, from);
 		diagram.update();
 	}
@@ -7467,9 +7502,28 @@ class DeleteAction extends Action
 	}
 	hasForm(diagram, ary)	// all are deletable
 	{
+		const elements = ary.filter(elt => DiagramObject.IsA(elt) ? [...elt.domains, elt.codomains].reduce((r, m) => r && ary.indexOf(m) > -1, true) : true);
 		if (!diagram.isEditable())
 			return false;
-		return ary.reduce((r, elt) => r && elt.isDeletable(), true);
+		const morphisms = [];
+		const texts = [];
+		const objects = [];
+		const assertions = [];
+		for (let i=0; i<ary.length; ++i)
+		{
+			const elt = ary[i];
+			if (DiagramComposite.IsA(elt) && elt.to.refcnt > 1)
+				return false;
+			if (DiagramMorphism.IsA(elt))
+				elt.refcnt === 1 && morphisms.push(elt);
+			else if (DiagramText.IsA(elt))
+				texts.push(elt);
+			else if (Assertion.IsA(elt))
+				assertions.push(elt);
+			else if (elt.isIsolated())
+				objects.push(elt);
+		}
+		return morphisms.length + objects.length + texts.length + assertions.length === elements.length;
 	}
 }
 
@@ -7858,11 +7912,11 @@ class LanguageAction extends Action
 		let html = '';
 		if (m.constructor.name === 'Morphism')
 		{
-			let code = 'code' in m ? (this.hasCode(m) ? m.code[this.ext] : '') : '';
+			let code = 'code' in m ? (this.hasCode(m) ? m.code[this.name] : '') : '';
 			if (code === '')
 				code = this.generate(m);
 			html += H.div(U.HtmlSafe(code), 'code', `morphism-${this.ext}`) +
-					(this.isEditable(m) ? D.GetButton('edit', `Cat.R.Actions.${this.ext}.setMorphismCode(event, 'morphism-${this.ext}', '${this.ext}')`,
+					(this.isEditable(m) ? D.GetButton('edit', `Cat.R.Actions.${this.name}.setMorphismCode(event, 'morphism-${this.ext}', '${this.ext}')`,
 						'Edit code', D.default.button.tiny): '');
 		}
 		else
@@ -7871,7 +7925,7 @@ class LanguageAction extends Action
 	}
 	hasCode(m)
 	{
-		return Morphism.IsA(m) && 'code' in m && this.ext in m.code;
+		return Morphism.IsA(m) && 'code' in m && this.name in m.code;
 	}
 	setMorphismCode(e, id, type)
 	{
@@ -7908,6 +7962,19 @@ class LanguageAction extends Action
 	evaluateMorphism(e, diagram, name, fn)
 	{
 	}
+	download(e, diagram)
+	{
+		if (diagram.codomain.actions.has(this.name))
+		{
+			const code = this.generateDiagram(diagram);
+			const start = Date.now();
+			const blob = new Blob([code], {type:`application/${this.ext}`});
+			const url = D.url.createObjectURL(blob);
+			D.Download(url, `${diagram.basename}.${this.ext}`);
+			const delta = Date.now() - start;
+			D.Status(e, `Diagram ${name} ${this.name} generated<br/>&#9201;${delta}ms`, true);
+		}
+	}
 }
 
 class JavascriptAction extends LanguageAction
@@ -7924,7 +7991,7 @@ class JavascriptAction extends LanguageAction
 		{
 	 		if (MultiMorphism.IsA(m))
 				code += m.morphisms.map(n => this.generate(n, generated)).join('\n');
-			const jsName = U.JsName(m);
+			const jsName = U.Token(m);
 			const header = JavascriptAction.Header(m);
 			const tail = JavascriptAction.Tail();
 			if (FiniteObject.IsA(m.domain) && m.domain.size > 0 && !DataMorphism.IsA(m))
@@ -7948,11 +8015,11 @@ function ${jsName}_Iterator(fn)
 				switch(proto)
 				{
 					case 'Morphism':
-						if ('code' in m)		// TODO still needed
-							code += `${m.code.javascript}\n`;
+						if ('code' in m)
+							code += m.code.javascript + '\n';
 						break;
 					case 'Composite':
-						code += `${header}	return ${m.morphisms.map(n => U.JsName(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
+						code += `${header}	return ${m.morphisms.map(n => U.Token(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
 						break;
 					case 'Identity':
 						code += `${header}	return args;${tail}`;
@@ -7960,17 +8027,17 @@ function ${jsName}_Iterator(fn)
 					case 'ProductMorphism':
 						if (m.dual)
 							code +=
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.JsName(n)).join()}];
+`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.Token(n)).join()}];
 ${header}	return [args[0], ${jsName}_morphisms[args[0]](args[1])];${tail}`;
 						else
-							code += `${header}	return [${m.morphisms.map((n, i) => U.JsName(n) + '(args[' + i + '])').join()}];${tail}`;
+							code += `${header}	return [${m.morphisms.map((n, i) => U.Token(n) + '(args[' + i + '])').join()}];${tail}`;
 						break;
 					case 'ProductAssembly':
 						code += this.dual ?
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.JsName(n)).join()}];
+`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.Token(n)).join()}];
 ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`
 							:
-								`${header}	return [${m.morphisms.map((n, i) => U.JsName(n) + '(args)').join()}];${tail}`;
+								`${header}	return [${m.morphisms.map((n, i) => U.Token(n) + '(args)').join()}];${tail}`;
 						break;
 					case 'DataMorphism':
 						if ('recursor' in m)
@@ -7996,7 +8063,7 @@ function ${jsName}_Iterator(fn)
 							code +=
 `${header}	if (${jsName}_Data.has(args))
 		return ${jsName}_Data.get(args);
-	return ${U.JsName(m.recursor)}(args);
+	return ${U.Token(m.recursor)}(args);
 ${tail}`;
 						else
 							code +=
@@ -8051,11 +8118,11 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 `${header}	const cargs = args;
 	return function(bargs)
 	{
-		return ${U.JsName(m.preCurry)}(${input});
+		return ${U.Token(m.preCurry)}(${input});
 	}${tail}`;
 						else if (domLength === 0 && homLength >= 1)
 							code +=
-`${header}	return ${U.JsName(m.preCurry)};${tail}`;
+`${header}	return ${U.Token(m.preCurry)};${tail}`;
 						else	// must evaluate lambda!
 						{
 							const preMap = new Map;
@@ -8079,12 +8146,12 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 							if (postMap.size > 1)
 								postInput = `[${postInput}]`;
 							code +=
-`${header}return ${U.JsName(m.preCurry)}(${preInput})(${postInput});${tail}`;
+`${header}return ${U.Token(m.preCurry)}(${preInput})(${postInput});${tail}`;
 						}
 						break;
 					case 'NamedMorphism':
 						code += this.generate(m.source, generated);
-						code += `${header}	return ${U.JsName(m.source)}(args);${tail}`;
+						code += `${header}	return ${U.Token(m.source)}(args);${tail}`;
 						break;
 					case 'TerminalMorphism':
 						code += m.dual ? `${header}	return;${tail}` : `${header}	return 0;${tail}`;
@@ -8153,7 +8220,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 				if (this.formatters.has(o.signature))
 				{
 					const f = this.formatters.get(o.signature);
-					const out = window[U.JsName(f)](`${prefix} ${o.name} ${factor.toString()}`);
+					const out = window[U.Token(f)](`${prefix} ${o.name} ${factor.toString()}`);
 					html = out[0];
 				}
 				else
@@ -8206,7 +8273,7 @@ ${divs}
 				if (this.formatters.has(domain.signature))
 				{
 					const f = this.formatters.get(domain.signature);
-					const out = window[U.JsName(f)](domain.name + factor.toString());
+					const out = window[U.Token(f)](domain.name + factor.toString());
 					const formatter = out[1]();
 					value = formatter(`${prefix} ${domain.name} ${factor.toString()}`);;
 				}
@@ -8231,7 +8298,7 @@ ${divs}
 	{
 		const m = diagram.getElement(name);
 		const args = this.getInputValue(m.domain);
-		const jsName = U.JsName(m);
+		const jsName = U.Token(m);
 		const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -8262,9 +8329,9 @@ ${this.generate(m)}
 	{
 		const m = diagram.getElement(name);
 		const args = this.getInputValue(m.domain);
-		const jsName = U.JsName(m);
+		const jsName = U.Token(m);
 		const isIterable = m.isIterable();
-		const iterInvoke = Composite.IsA(m) ? `${U.JsName(m.getFirstMorphism())}_Iterator(${jsName})` : `${U.JsName(m.domain)}_Iterator(${jsName})`;
+		const iterInvoke = Composite.IsA(m) ? `${U.Token(m.getFirstMorphism())}_Iterator(${jsName})` : `${U.Token(m.domain)}_Iterator(${jsName})`;
 		const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -8302,7 +8369,7 @@ ${this.generate(m)}
 		const f = this.findFormat(o);
 		if (f)
 		{
-			const p = window[U.JsName(f)]();
+			const p = window[U.Token(f)]();
 			return p[0];
 		}
 		return '';
@@ -8312,7 +8379,7 @@ ${this.generate(m)}
 		const f = this.findFormat(o);
 		if (f)
 		{
-			const p = window[U.JsName(f)]()();
+			const p = window[U.Token(f)]()();
 			return p[1];
 		}
 		return function(){};
@@ -8331,9 +8398,13 @@ ${this.generate(m)}
 		}
 		return false;
 	}
+//	hasForm(diagram, ary)
+//	{
+//		return super.hasForm(diagram, ary) && diagram.allReferences.has('hdole/HTML');
+//	}
 	static Header(m)
 	{
-		return `function ${U.JsName(m)}(args)\n{\n`;
+		return `function ${U.Token(m)}(args)\n{\n`;
 	}
 	static Tail()
 	{
@@ -8392,6 +8463,227 @@ ${this.generate(m)}
 		else
 			return 1;
 	}
+}
+
+class CppAction extends LanguageAction
+{
+	constructor(diagram)
+	{
+		super(diagram, 'cpp', 'cpp',
+`
+<text text-anchor="middle" x="160" y="140" style="font-size:140px;font-weight:bold;stroke:#000;">C</text>
+<text text-anchor="middle" x="160" y="280" style="font-size:120px;font-weight:bold;stroke:#000;">++</text>
+`
+		);
+		this.sizes = new Map([['/hdole/cpp/B', 1], ['/hdole/cpp/F', 8], ['/hdole/cpp/U', 8], ['/hdole/cpp/USh', 2], ['/hdole/cpp/Z', 8]]);
+	}
+	sizeof(object)
+	{
+		if (ProductObject.IsA(object))
+			return object.dual ? 8 + Math.max(...object.objects.map(o => this.sizeof(o))) : object.objects.reduce((r, o) => r + this.sizeof(o), 0);
+		else if (HomObject.IsA(object))
+			return 8;	// function pointers are all the same
+		else if (NamedObject.IsA(object))
+			return this.sizeof(object.source);
+		else if (TerminalObject.IsA(object))
+			return 0;
+		else if (this.sizes.has(object.name))
+			return this.sizes.get(object.name);
+	}
+	generate(morphism, generated = new Set)
+	{
+		let code = '';
+		const proto = morphism.constructor.name;
+		if (!generated.has(morphism.name))
+		{
+	 		if (MultiMorphism.IsA(morphism))
+				code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
+			const name = U.Token(morphism);
+			const header = this.header(morphism);
+			const tail = this.tail();
+			const domainStruct = U.Token(morphism.domain);
+			const codomainStruct = U.Token(morphism.codomain);
+			/*
+			if (FiniteObject.IsA(morphism.domain) && morphism.domain.size > 0 && !DataMorphism.IsA(morphism))
+				code +=
+`
+void ${name}_Iterator(fn, ${codomainStruct} (& out)[${morphism.domain.size}])
+{
+	for (unsigned long i=0; i<${morphism.domain.size}; ++i)
+		fn(i, out[i]);
+}
+`;
+*/
+			if (InitialObject.IsA(morphism.domain))
+				code += `${header}	return;	// abandon computation\n'${tail}\n${tail}`;	// domain is null, yuk
+			else if (TerminalObject.IsA(morphism.codomain))
+				code += `${header}	out = 0;${tail}`;
+			else if (InitialObject.IsA(morphism.codomain))
+				code += `${header}	throw 'do not do this';${tail}`;
+			else
+				switch(proto)
+				{
+					case 'Morphism':
+//						if ('code' in morphism && this.ext in morphism.code)		// TODO still needed
+						code += `${header}${tail}\n`;
+						break;
+					case 'Composite':
+						code +=
+`${header}	return ${morphism.morphisms.map(n => U.Token(n) + '(').reverse().join('')}args${ ")".repeat(morphism.morphisms.length) };${tail}`;
+						break;
+					case 'Identity':
+						code += `${header}	out = args;${tail}`;
+						break;
+					case 'ProductMorphism':
+						if (morphism.dual)
+							code +=
+`catFunctions ${name}_morphisms[${morphism.morphisms.length}] = { ${morphism.morphisms.map(m => U.Token(m.name)).join(',\n')} };
+const ${name}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
+${header}	return [args[0], ${name}_morphisms[args[0]](args[1])];${tail}`;
+						else
+							code += `${header}	return [${morphism.morphisms.map((n, i) => U.Token(n) + '(args[' + i + '])').join()}];${tail}`;
+						break;
+					case 'ProductAssembly':
+						code += this.dual ?
+`const ${name}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
+${header}	return ${name}_morphisms[args[0]](args[1]);${tail}`
+							:
+								`${header}	return [${morphism.morphisms.map((n, i) => U.Token(n) + '(args)').join()}];${tail}`;
+						break;
+					case 'DataMorphism':
+						if ('recursor' in morphism)
+						{
+							generated.add(morphism.name);	// add early to avoid infinite loop
+							code += this.generate(morphism.recursor, generated);
+						}
+						let data = JSON.stringify(U.JsonMap(morphism.data));
+						code +=	// TODO safety check?
+`
+const ${name}_Data = new Map(${data});
+function ${name}_Iterator(fn)
+{
+	const result = new Map;
+	${name}_Data.forEach(function(d, i)
+	{
+		result.set(i, fn(i));
+	});
+	return result;
+}
+`;
+						if ('recursor' in morphism)
+							code +=
+`${header}	if (${name}_Data.has(args))
+		return ${name}_Data.get(args);
+	return ${U.Token(morphism.recursor)}(args);
+${tail}`;
+						else
+							code +=
+`
+${header}	return ${name}_Data.get(args);${tail}`;
+						break;
+					case 'Distribute':
+					case 'Dedistribute':
+						code += `${header}	return [args[1][0], [args[0], args[1][1]]];${tail}`;
+						break;
+					case 'Evaluation':
+						code += `${header}	return args[0](args[1]);${tail}`;
+						break;
+					case 'FactorMorphism':
+						code += morphism.dual ?
+							''	// TODO
+							:
+`const ${name}_factors = ${JSON.stringify(morphism.factors)};
+${header}	const r = ${name}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
+	return ${morphism.factors.length === 1 ? 'r[0]' : 'r'};${tail}`;
+						break;
+					case 'HomMorphism':
+						break;
+					case 'LambdaMorphism':
+						code += this.generate(morphism.preCurry, generated);
+						const inputs = new Array(this.ObjectLength(morphism.preCurry.domain));
+						const domLength = this.ObjectLength(morphism.domain);
+						const homLength = morphism.homFactors.length;
+						for(let i=0; i<morphism.domFactors.length; ++i)
+						{
+							const f = morphism.domFactors[i];
+							if (f[0] === 0)
+							{
+								const k = f[1];
+								inputs[k] = domLength > 1 ? `cargs[${k}]` : 'cargs';
+							}
+						}
+						for(let i=0; i<homLength; ++i)
+						{
+							const f = morphism.homFactors[i];
+							if (f[0] === 0)
+							{
+								const k = f[1];
+								inputs[k] = homLength > 1 ? `bargs[${k}]` : 'bargs';
+							}
+						}
+						let input = inputs.join();
+						if (inputs.length >= 0)
+							input = `[${inputs}]`;
+						if (domLength >= 1 && homLength > 0)
+							code +=
+`${header}	const cargs = args;
+	return function(bargs)
+	{
+		return ${U.Token(morphism.preCurry)}(${input});
+	}${tail}`;
+						else if (domLength === 0 && homLength >= 1)
+							code +=
+`${header}	return ${U.Token(morphism.preCurry)};${tail}`;
+						else	// must evaluate lambda!
+						{
+							const preMap = new Map;
+							const postMap = new Map;
+							for (let i=0; i<morphism.domFactors.length; ++i)
+							{
+								const f = morphism.domFactors[i];
+								if (f[0] === 1 && f.length == 2)
+									preMap.set(f[1], i);
+								else if (f[0] === 0 && f.length == 2)
+									postMap.set(f[1], i);
+							}
+							let preInput = '';
+							for (let i=0; i<preMap.size; ++i)
+								preInput += `${i > 0 ? ', ' : ''}args[${preMap.get(i)}]`;
+							if (preMap.size > 1)
+								preInput = `[${preInput}]`;
+							let postInput = '';
+							for (let i=0; i<postMap.size; ++i)
+								postInput += `${i > 0 ? ', ' : ''}args[${postMap.get(i)}]`;
+							if (postMap.size > 1)
+								postInput = `[${postInput}]`;
+							code +=
+`${header}return ${U.Token(morphism.preCurry)}(${preInput})(${postInput});${tail}`;
+						}
+						break;
+					case 'NamedMorphism':
+						code += this.generate(morphism.source, generated);
+						code += `${header}	return ${U.Token(morphism.source)}(args);${tail}`;
+						break;
+					case 'TerminalMorphism':
+						code += morphism.dual ? `${header}	return;${tail}` : `${header}	return 0;${tail}`;
+						break;
+				}
+			generated.add(morphism.name);
+		}
+		return code;
+	}
+	header(m)
+	{
+		return `void ${U.Token(m)}(${U.Token(m.domain)} & args, ${U.Token(m.codomain)} & out)\n{\n`;
+	}
+	tail()
+	{
+		return `\n}\n`;
+	}
+//	hasForm(diagram, ary)
+//	{
+//		return super.hasForm(diagram, ary) && diagram.allReferences.has('hdole/cpp');
+//	}
 }
 
 class RunAction extends Action
@@ -9661,7 +9953,10 @@ class DiagramMorphism extends Morphism
 		const {pt1, pt2} = 'bezier' in this ? {pt1:this.bezier.cp1, pt2:this.bezier.cp2} : {pt1:this.start, pt2:this.end};
 		const mid = pt1.add(pt2).scale(0.5);
 		const normal = D2.Subtract(pt2, pt1).normal().scale(this.flipName ? 1 : -1).normalize();
-		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : 1) * D.default.font.height).add(mid);
+//		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : 1) * D.default.font.height).add(mid);
+//		const adj = this.homSetIndex >= 0 ? (this.homSetIndex % 2 === 0 ? 0.5 : 0.0) : 0.0;
+		const adj = (normal.y < 0 && 'bezier' in this) ? 0.5 : 0.0;
+		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : adj + 0.5) * D.default.font.height).add(mid);
 		if (isNaN(r.x) || isNaN(r.y))
 			return new D2;
 		return r;
@@ -12094,85 +12389,12 @@ class Diagram extends Functor
 			this.svgRoot.classList.add('hidden');
 			D.diagramSVG.appendChild(this.svgRoot);
 			this.svgRoot.id = this.name;
-
-			/*
-			const base = this.name + ' base';
-			this.svgRoot.innerHTML +=
-`
-<g>
-<animateTransform id="${this.name} T" attributeName="transform" type="translate" dur="1ms" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
-<g>
-<animateTransform id="${this.name} S" attributeName="transform" type="scale" dur="1ms" repeatCount="1" begin="indefinite" fill="freeze" easing="ease-in-out"/>
-<g id="${base}">
-</g>
-</g>
-</g>
-`;
-			this.svgBase = document.getElementById(base);
-			this.svgTranslate = document.getElementById(this.name + ' T');
-			this.svgScale = document.getElementById(this.name + ' S');
-			*/
-
-			/*
-			const tArgs =
-			{
-				id:`${this.name} T`,
-				attributeName:'transform',
-				type:'translate',
-				dur:'1ms',
-				repeatCount:"1",
-				begin:'indefinite',
-				fill:'freeze',
-				easing:'ease-in-out',
-				from: `${this.viewport.x} ${this.viewport.y}`,
-				to: `${this.viewport.x} ${this.viewport.y}`,
-			};
-			const sArgs = U.Clone(tArgs);
-			sArgs.id = `${this.name} S`;
-			sArgs.type = 'scale';
-			sArgs.from = `${this.viewport.scale} ${this.viewport.scale}`;
-			sArgs.to = `${this.viewport.scale} ${this.viewport.scale}`;
-
-			const root = H3.g(	[this.svgTranslate = H3.animateTransform(null, tArgs),
-								H3.g([this.svgScale = H3.animateTransform(null, sArgs), this.svgBase = H3.g(null, {id:`${this.name} base`})])]);
-//			if ('viewport' in R.diagram)
-//				this.setView(this.viewport.x, this.viewport.y, this.viewport.scale, true, false);
-			this.svgRoot.appendChild(root);
-			*/
-
 			this.svgBase = H3.g({id:`${this.name} base`});
-//			this.svgTranslate = H3.g(this.svgBase, {id:`${this.name} T`, 'translate':`${this.viewport.x} ${this.viewport.y}`, scale:`${this.viewport.scale} ${this.viewport.scale}`});
-//			this.svgTranslate = H3.g(this.svgBase, {id:`${this.name} T`});
 			this.svgTranslate = H3.g({id:`${this.name} T`}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
-
-
-			/*
-			const that = this;
-			this.svgTranslate.addEventListener('beginEvent', function(e)
-			{
-				that.viewport.anim = true;
-			});
-			this.svgTranslate.addEventListener('endEvent', function(e)
-			{
-				that.svgTranslate.setAttribute('from', `${that.viewport.x} ${that.viewport.y}`);
-				that.svgScale.setAttribute('from', `${that.viewport.scale} ${that.viewport.scale}`);
-				that.viewport.anim = false;
-			});
-			*/
 			this.svgRoot.style.display = 'block';
 		}
-		const fn = function(t)
-		{
-			try
-			{
-				t.getSVG(this.svgBase);
-			}
-			catch(x)
-			{
-				console.log('makeSvg exception',t,x);
-			}
-		};
+		const fn = function(t) { t.getSVG(this.svgBase); };
 		this.domain.elements.forEach(fn, this);
 		this.texts.forEach(fn, this);
 		this.domain.cells.forEach(function(d) { this.addSVG(d); }, this);
@@ -12380,6 +12602,15 @@ class Diagram extends Functor
 	}
 	downloadJS(e)
 	{
+		return this.codomain.actions.get('javascript').download(e, this);
+	}
+	downloadCPP(e)
+	{
+		return this.codomain.actions.get('cpp').download(e, this);
+	}
+	/*
+	downloadJS(e)
+	{
 		if (this.codomain.actions.has('javascript'))
 		{
 			const action = this.codomain.actions.get('javascript');
@@ -12392,6 +12623,7 @@ class Diagram extends Functor
 			D.Status(e, `Diagram ${name} Javascript generated<br/>&#9201;${delta}ms`, true);
 		}
 	}
+	*/
 	downloadPNG()
 	{
 		D.Svg2canvas(D.topSVG, this.name, D.Download);
@@ -12785,6 +13017,7 @@ const Cat =
 	Assertion,
 	Category,
 	CatObject,
+	CppAction,
 	Composite,
 	DataMorphism,
 	Dedistribute,
