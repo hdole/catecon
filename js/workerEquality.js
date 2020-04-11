@@ -179,7 +179,7 @@ function CheckEquivalence(diagram, cell, leftLeg, rightLeg)
 function RemoveEquivalences(diagram, delItems)
 {
 	const myItems = diagramItems.get(diagram);
-	delItems.map(item =>
+	myItems && delItems.map(item =>
 	{
 		items.delete(item);
 		myItems.delete(item);
