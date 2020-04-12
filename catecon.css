@@ -819,8 +819,8 @@ canvas
 {
 	border:				solid;
 	border-collapse:	separate;
-	border-width: 		1px 0px 0px 1px;
-	border-color:		#ccc;
+	border-width: 		1px 1px 1px 1px;
+	border-color:		#ccc #eee #eee #ccc;
 	border-radius:		4px;
 	padding:			2px;
 	background-color:	inherit;
