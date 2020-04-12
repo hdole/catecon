@@ -69,7 +69,6 @@ const Boot = function(fn)
 		{
 			description:	Cat.U.Formal(text),
 			prototype:		'DiagramText',
-//			user:			args.user,
 		}, args.xy.add(args.side));
 	}
 	function PlaceObject(args, o)
@@ -349,38 +348,38 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const N2Z = MakeMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z,
 	{
 		js:'function %1(args)\n{\n	return args;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = (long)args;\n}\n',
 	}).to;
 	const Zabs = MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of an integer is a natural number', Z, N,
 	{
 		js:'function %1(args)\n{\n	return Math.abs(args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args >= 0 ? args ; -args;\n}\n',
 	}).to;
 	const Zzero = MakeMorphism(args, 'zero', 'Morphism', '&lsquo;0&rsquo;', 'The integer zero', one, Z,
 	{
 		js:'function %1(args)\n{\n	return 0;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = 0;\n}\n',
 	}).to;
 	const ZminusOne = MakeMorphism(args, 'minusOne', 'Morphism', '&lsquo;-1&rsquo;', 'The first interesting integer: minus one', one, Z,
 	{
 		js:'function %1(args)\n{\n	return -1;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = -1;\n}\n',
 	}).to;
 	const Zpair = MakeObject(args, '', 'ProductObject', '', 'A pair of integers', {objects:[Z, Z]}).to;
 	const Zadd = MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two integers', Zpair, Z,
 	{
 		js:'function %1(args)\n{\n	return args[0] + args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] + args[1];\n}\n',
 	}).to;
 	const Zsubtract = MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two integers', Zpair, Z,
 	{
 		js:'function %1(args)\n{\n	return args[0] - args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] - args[1];\n}\n',
 	}).to;
 	const Zmult = MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two integers', Zpair, Z,
 	{
 		js:'function %1(args)\n{\n	return args[0] * args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] * args[1];\n}\n',
 	}).to;
 	const ZplusOne = MakeObject(args, '', 'ProductObject', '', 'An integer or an exception', {objects:[Z, one]}, {dual:true}).to;
 	const Zdiv = MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two integers or an exception', Zpair, ZplusOne,
@@ -397,7 +396,7 @@ return [0, args[0] / args[1]];
 	const Zsucc = MakeMorphism(args, 'successor', 'Morphism', 'succ', 'The successor function for the integers', Z, Z,
 	{
 		js:'function %1(args)\n{\n	return args + 1;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args + 1;\n}\n',
 	});
 	const Zmodulus = MakeMorphism(args, 'modulus', 'Morphism', '%', 'The modulus of two integers or an exception', Zpair, ZplusOne,
 	{
@@ -413,17 +412,17 @@ return [0, args[0] % args[1]];
 	const Zless = MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given integer number less than the second', Zpair, omega,
 	{
 		js:'function %1(args)\n{\n	return args[0] < args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] < args[1];\n}\n',
 	});
 	const ZlessEq = MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first integer less than or equal to the second', Zpair, omega,
 	{
 		js:'function %1(args)\n{\n	return args[0] <= args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] <= args[1];\n}\n',
 	});
 	const Zequals = MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two integers for equality', Zpair, omega,
 	{
 		js:'function %1(args)\n{\n	return args[0] === args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] == args[1];\n}\n',
 	});
 	DiagramReferences(user, integers, args.xy);
 	Cat.D.ShowDiagram(integers);
@@ -450,55 +449,65 @@ return [0, args[0] % args[1]];
 	{
 		description:	'Basic floating point morphisms are given here',
 		prototype:		'DiagramText',
-		user,
 	}, args.xy);
 args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const F = MakeObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers').to;
 	const Fzero = MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero', one, F,
 	{
 		js:'function %1(args)\n{\n	return 0.0;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = 0.0d;\n}\n',
 	}).to;
 	const Fe = MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, F,
 	{
 		js:'function %1(args)\n{\n	return Math.E;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: '#include <numbers>\n\nvoid %1(const %2 & args, %3 & out)\n{\n	out = std::numbers:e_v;\n}\n',
 	}).to;
 	const Frandom = MakeMorphism(args, 'random', 'Morphism', '?', 'a random number between 0.0 and 1.0', one, F,
 	{
 		js:'function %1(args)\n{\n	return Math.random();\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`
+#include <random>
+
+std::random_device %1_dev;
+std::mt19937 %1_rng(%1_dev);
+std::uniform_int_distribution<std::mt19937::result_type> %1_dist;
+void %1(const %2 & args, %3 & out)
+{
+	out = %1_dist(%1_rng);
+}
+`,
 	}).to;
 	const Fnl10 = MakeMorphism(args, 'pi', 'Morphism', '&pi;', 'ratio of a circle\'s circumference to its diameter', one, F,
 	{
 		js:'function %1(args)\n{\n	return Math.PI;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = std::numbers::pi_v;\n}\n',
 	}).to;
 	const Z2F = MakeMorphism(args, 'Z2F', 'Morphism', '&sub;', 'every integer is (sort of) a floating point number', Z, F,
 	{
 		js:'function %1(args)\n{\n	return args;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = (double)args;\n}\n',
 	}).to;
 	const Fabs = MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a floating point number', F, F,
 	{
 		js:'function %1(args)\n{\n	return Math.abs(args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: '#include <math.h>\n\nvoid %1(const %2 & args, %3 & out)\n{\n	out = fabs(args);\n}\n',
 	}).to;
 	const Fpair = MakeObject(args, '', 'ProductObject', '', 'A pair of floating point numbers', {objects:[F, F]}).to;
 	const Fadd = MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two floating point numbers', Fpair, F,
 	{
 		js:'function %1(args)\n{\n	return args[0] + args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] + args[1];\n}\n',
 	}).to;
 	const Fsubtract = MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two floating point numbers', Fpair, F,
 	{
 		js:'function %1(args)\n{\n	return args[0] - args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] - args[1];\n}\n',
 	}).to;
 	const Fmult = MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two floating point numbers', Fpair, F,
 	{
 		js:'function %1(args)\n{\n	return args[0] * args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] * args[1];\n}\n',
 	}).to;
 	const FplusOne = MakeObject(args, '', 'ProductObject', '', 'A floating point number or an exception', {objects:[F, one]}, {dual:true}).to;
 	const Fdiv = MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two floating point numbers or an exception', Fpair, FplusOne,
@@ -526,37 +535,37 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const Fless = MakeMorphism(args, 'lessThan', 'Morphism', '&lt;', 'Is the first given floating point number less than the second', Fpair, omega,
 	{
 		js:'function %1(args)\n{\n	return args[0] < args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] < args[1];\n}\n',
 	}).to;
 	const FlessEq = MakeMorphism(args, 'lessThanEq', 'Morphism', '&le;', 'Is the first floating point number less than or equal to the second', Fpair, omega,
 	{
 		js:'function %1(args)\n{\n	return args[0] <= args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] <= args[1];\n}\n',
 	}).to;
 	const Fequals = MakeMorphism(args, 'equals', 'Morphism', '=', 'compare two floating point numbers for equality', Fpair, omega,
 	{
 		js:'function %1(args)\n{\n	return args[0] === args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = args[0] == args[1];\n}\n',
 	}).to;
 	const ceil = MakeMorphism(args, 'ceil', 'Morphism', 'ceil', 'The smallest integer greater than or equal to a given floating point number', F, Z,
 	{
 		js:'function %1(args)\n{\n	return Math.ceil(args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = ceil(args);\n}\n',
 	}).to;
 	const round = MakeMorphism(args, 'round', 'Morphism', 'round', 'The nearest integer to a given floating point number', F, Z,
 	{
 		js:'function %1(args)\n{\n	return Math.round(args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = round(args);\n}\n',
 	}).to;
 	const floor = MakeMorphism(args, 'floor', 'Morphism', 'floor', 'The greatest integer smaller than or equal to a given floating point number', F, Z,
 	{
 		js:'function %1(args)\n{\n	return Math.floor(args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = floor(args);\n}\n',
 	}).to;
 	const truncate = MakeMorphism(args, 'truncate', 'Morphism', 'trunc', 'The integer portion of a floating point number', F, Z,
 	{
 		js:'function %1(args)\n{\n	return Math.trunc(args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = trunc(args);\n}\n',
 	}).to;
 	const log = MakeMorphism(args, 'log', 'Morphism', 'log', 'the natural logarithm of a given floating point number or an exception', F, FplusOne,
 	{
@@ -584,12 +593,26 @@ return [0, Math.pow(args[0], args[1])];
 	const Fmax = MakeMorphism(args, 'max', 'Morphism', 'max', 'The maximum floating point number of the given list', Flist, F,
 	{
 		js:'function %1(args)\n{\n	return Math.max(...args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`
+void %1(const %2 & args, %3 & out)
+{
+	auto i = out;
+	out = *std::max_element(args);
+}
+`,
 	}).to;
 	const Fmin = MakeMorphism(args, 'min', 'Morphism', 'min', 'The minimum floating point number of the given list', Flist, F,
 	{
 		js:'function %1(args)\n{\n	return Math.min(...args);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`
+void %1(const %2 & args, %3 & out)
+{
+	auto i = out;
+	out = *std::min_element(args);
+}
+`,
 	}).to;
 	DiagramReferences(user, floats, args.xy);
 	Cat.D.ShowDiagram(floats);
@@ -627,12 +650,23 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const Czero = MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The complex number zero', one, C,
 	{
 		js:'function %1(args)\n{\n	return 0.0;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`
+#include <complex>
+#include <cmath>
+
+typedef std::complex<double> complexDbl;
+
+void %1(const %2 & args, %3 & out)
+{
+	out = std::complex(0.0);
+}
+`,
 	}).to;
 	const Ce = MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, C,
 	{
 		js:'function %1(args)\n{\n	return [Math.E, 0];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = std::complex(std::numbers::e_v);\n}\n',
 	}).to;
 	const Creal = MakeMorphism(args, 'real', 'Morphism', 'real', 'the real part of a complex numbers', C, F,
 	{
