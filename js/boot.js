@@ -108,7 +108,7 @@ const Boot = function(fn)
 		args.xy.y += 16 * Cat.D.default.layoutGrid;
 		return i;
 	}
-	function MakeMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs = {})
+	function NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs)
 	{
 		const nuArgs = Cat.U.Clone(args);
 		nuArgs.xy = new Cat.D2(args.xy);
@@ -122,6 +122,37 @@ const Boot = function(fn)
 		nuArgs.domain = domain;
 		nuArgs.codomain = codomain;
 		const to = Cat.Element.Process(args.diagram, nuArgs);
+		if (Object.keys(args).length > 0)
+			to.code = {};
+		if ('js' in args)
+			to.code.javascript = args.js.replace(/%1/g, Cat.U.Token(to));
+		if ('cpp' in args)
+			to.code.cpp = args.cpp.replace(/%1/g, Cat.U.Token(to)).replace(/%2/g, Cat.U.Token(to.domain)).replace(/%3/g, Cat.U.Token(to.codomain));
+		return to;
+	}
+	function placeMorphismByObject(args, basename, prototype, properName, description, domain, codomain, moreArgs, dir, object)
+	{
+		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
+		return args.diagram.placeMorphismByObject(null, dir, object, to, false);
+	}
+	function MakeMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs = {})
+	{
+		/*
+		const nuArgs = Cat.U.Clone(args);
+		nuArgs.xy = new Cat.D2(args.xy);
+		for (const n in moreArgs)
+			nuArgs[n] = moreArgs[n];
+		nuArgs.description = description;
+		nuArgs.basename = basename;
+		nuArgs.prototype = prototype;
+		if (properName !== '')
+			nuArgs.properName = properName;
+		nuArgs.domain = domain;
+		nuArgs.codomain = codomain;
+		*/
+		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
+		/*
+		const to = Cat.Element.Process(args.diagram, nuArgs);
 //		if ('js' in nuArgs)
 //			to.code = {javascript:Cat.JavascriptAction.Header(to) + '\t' + nuArgs.js + Cat.JavascriptAction.Tail(to)};
 		if (Object.keys(nuArgs).length > 0)
@@ -130,9 +161,10 @@ const Boot = function(fn)
 			to.code.javascript = nuArgs.js.replace(/%1/g, Cat.U.Token(to));
 		if ('cpp' in nuArgs)
 			to.code.cpp = nuArgs.cpp.replace(/%1/g, Cat.U.Token(to)).replace(/%2/g, Cat.U.Token(to.domain)).replace(/%3/g, Cat.U.Token(to.codomain));
-		const e = PlaceMorphism(nuArgs, to);
-		args.xy = new Cat.D2(nuArgs.xy);
-		args.rowCount = nuArgs.rowCount;
+			*/
+		const e = PlaceMorphism(args, to);
+		args.xy = new Cat.D2(args.xy);
+		args.rowCount = args.rowCount;
 		return e;
 	}
 	const user = 'hdole';
@@ -265,6 +297,7 @@ const Boot = function(fn)
 	}, args.xy);
 args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const N = MakeObject(args, 'N', 'CatObject', '&Nopf;', 'The natural numbers').to;
+	const NplusOne = MakeObject(args, '', 'ProductObject', '', 'A natural number or an exception', {objects:[N, one], dual:true}).to;
 	const Nzero = MakeMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N,
 	{
 		js:'function %1(args)\n{\n	return 0;\n}\n',
@@ -666,48 +699,95 @@ void %1(const %2 & args, %3 & out)
 	const Ce = MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, C,
 	{
 		js:'function %1(args)\n{\n	return [Math.E, 0];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	out = std::complex(std::numbers::e_v);\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = std::complex(std::numbers::e_v);
+}
+`,
 	}).to;
 	const Creal = MakeMorphism(args, 'real', 'Morphism', 'real', 'the real part of a complex numbers', C, F,
 	{
 		js:'function %1(args)\n{\n	return args[0];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args.real();
+}
+`,
 	}).to;
 	const Cimag = MakeMorphism(args, 'imag', 'Morphism', 'imag', 'the imaginary part of a complex numbers', C, F,
 	{
 		js:'function %1(args)\n{\n	return args[1];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args.imag();
+}
+`,
 	}).to;
 	const F2C = MakeMorphism(args, 'F2C', 'Morphism', '&sub;', 'every floating point number is a complex number', F, C,
 	{
 		js:'function %1(args)\n{\n	return [args, 0];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = std::complex(args);
+}
+`,
 	}).to;
 	const conjugate = MakeMorphism(args, 'conjugate', 'Morphism', '&dagger;', 'conjugate of a complex number', C, C,
 	{
 		js:'function %1(args)\n{\n	return [args[0], -args[1]];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args.conj();
+}
+`,
 	}).to;
 	const Cabs = MakeMorphism(args, 'abs', 'Morphism', '||', 'the absolute value of a complex number', C, F,
 	{
 		js:'function %1(args)\n{\n	return Math.sqrt(args[0] * args[0] + args[1] * args[1]);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args.abs();
+}
+`,
 	}).to;
 	const Cpair = MakeObject(args, '', 'ProductObject', '', 'A pair of complex numbers', {objects:[C, C]}).to;
 	const Cadd = MakeMorphism(args, 'add', 'Morphism', '+', 'Addition of two complex numbers', Cpair, C,
 	{
 		js:'function %1(args)\n{\n	return [args[0][0] + args[1][0], args[0][1] + args[1][1]];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args[0] + args[1];
+}
+`,
 	}).to;
 	const Csubtract = MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two complex numbers', Cpair, C,
 	{
 		js:'function %1(args)\n{\n	return [args[0][0] - args[1][0], args[0][1] - args[1][1]];\n}\n',
 		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args[0] - args[1];
+}
+`,
 	}).to;
 	const Cmult = MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two complex numbers', Cpair, C,
 	{
 		js:'function %1(args)\n{\n	return [args[0][0] * args[1][0] - args[0][1] * args[1][1], args[0][0] * args[1][1] + args[0][1] * args[1][0]];\n}\n',
 		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args[0] * args[1];
+}
+`,
 	}).to;
 	const CplusOne = MakeObject(args, '', 'ProductObject', '', 'A complex number or an exception', {objects:[C, one]}, {dual:true}).to;
 	const Cdiv = MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two complex numbers or an exception', Cpair, CplusOne,
@@ -721,6 +801,21 @@ const n = x * x + y * y;
 if (n === 0.0)
 	return [1, [0, 0]];		// exception
 return [0, [(args[0][0] * x + args[0][1] * y) / n, (args[0][0] * y - args[0][1] * x) / n]];
+}
+`,
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	if (args[1] != 0)
+	{
+		out[0] = 0;
+		out[1] = args[0] / args[1];
+	}
+	e;se
+	{
+		out[0] = 1;
+		out[1] = 1;
+	}
 }
 `,
 	}).to;
@@ -740,6 +835,7 @@ return [0, Math.pow(args[0], args[1])];
 	Cat.D.ShowDiagram(complex);
 	complex.home(false);
 	complex.update();
+
 	//
 	// Strings
 	//
@@ -766,27 +862,65 @@ return [0, Math.pow(args[0], args[1])];
 args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const str = MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings').to;
 	const strPair = MakeObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]}).to;
+	const strPlusOne = MakeObject(args, '', 'ProductObject', '', 'A string or an exception', {objects:[str, one], dual:true}).to;
 	const emptyString = new Cat.DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
 	PlaceMorphism(args, emptyString);
 	const strLength = MakeMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N,
 	{
 		js:'function %1(args)\n{\n	return args.length;\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`
+#include <string>
+
+void %1(const %2 & args, %3 & out)
+{
+	out = args.length;
+}`,
 	}).to;
 	const strAppend = MakeMorphism(args, 'append', 'Morphism', '&bull;', 'append two strings', strPair, str,
 	{
 		js:'function %1(args)\n{\n	return args[0].concat(args[1]);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args[0] + args[1];
+}`,
 	}).to;
 	const strIncludes = MakeMorphism(args, 'includes', 'Morphism', 'includes', 'is the first string included in the second', strPair, omega,
 	{
 		js:'function %1(args)\n{\n	return args[1].includes(args[0]);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = args[0].find(args[1]) != std::string::npos;
+}`,
 	}).to;
-	const strIndexOf = MakeMorphism(args, 'indexOf', 'Morphism', '@', 'where in the first string is the second', strPair, Z,
+	const strIndexOf = MakeMorphism(args, 'indexOf', 'Morphism', '@', 'where in the first string is the second', strPair, NplusOne,
 	{
-		js:'function %1(args)\n{\n	return args[0].indexOf(args[1]);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		js:
+`
+function %1(args)
+{
+	const i = args[0].indexOf(args[1]);
+	return i > -1 ? [0, i] : [1, 1]
+}
+`,
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	auto i = args[0].find(args[1]);
+	if (i != std::string::npos)
+	{
+		out.idx = 0;
+		out.value = i;
+	}
+	else
+	{
+		out.idx = 1;
+		out.value = true;
+	}
+}
+`,
 	}).to;
 	const strList = MakeObject(args, '', 'HomObject', '', 'A list of strings', {objects:[N, str]}).to;
 	const strListStr = new Cat.ProductObject(strings, {objects:[strList, str]});
@@ -794,27 +928,109 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 	{
 		js:'// function %1(args)\n{\n	TODO\n}\n',
 		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	// TODO
+}
+`,
 	}).to;
 	const strN = new Cat.ProductObject(strings, {objects:[str, N]});
 	const strCharAt = MakeMorphism(args, 'charAt', 'Morphism', '@', 'the n\'th character in the string', strN, str,
 	{
 		js:'function %1(args)\n{\n	return args[0].charAt(args[1]);\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = std::string(args[0][args[1]]);
+}
+`,
 	}).to;
-	const N2str = MakeMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str,
+	const FromN2str = MakeMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str,
 	{
 		js:'function %1(args)\n{\n	return args.toString();\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
-	}).to;
-	const Z2str = MakeMorphism(args, 'Z2str', 'Morphism', '&lsquo;&rsquo;', 'convert an integer to a string', Z, str,
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = std::to_string(args);
+}
+`,
+	});
+	const N2str = FromN2str.to;
+//	const str2N = MakeMorphism(args, 'str2N', 'Morphism', '&lsquo;&rsquo;', 'convert a string to a natural number', str, NplusOne,
+	const str2N = placeMorphismByObject(args, 'str2N', 'Morphism', '&lsquo;&rsquo;', 'convert a string to a natural number', str, NplusOne,
+	{
+		js:
+`
+function %1(args)
+{
+	return args.toString();
+}
+`,
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	try
+	{
+		out.value = std::stoul(args);
+		out.idx = 0;
+	}
+	catch(x)
+	{
+		out.idx = 1;
+		out.value = true;
+	}
+}
+`,
+	}, 'domain', FromN2str.codomain);
+
+	const FromZ2str = MakeMorphism(args, 'Z2str', 'Morphism', '&lsquo;&rsquo;', 'convert an integer to a string', Z, str,
 	{
 		js:'function %1(args)\n{\n	return args.toString();\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
-	}).to;
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = std::to_string(args);
+}
+`,
+	});
+	const Z2str = FromZ2str.to;
+
+	const str2Z = placeMorphismByObject(args, 'str2Z', 'Morphism', '&lsquo;&rsquo;', 'convert a string to an integer', str, ZplusOne,
+	{
+		js:
+`
+function %1(args)
+{
+	return args.toString();
+}
+`,
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	try
+	{
+		out.value = std::stol(args);
+		out.idx = 0;
+	}
+	catch(x)
+	{
+		out.idx = 1;
+		out.value = true;
+	}
+}
+`,
+	}, 'domain', FromZ2str.codomain);
+
 	const F2str = MakeMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str,
 	{
 		js:'function %1(args)\n{\n	return args.toString();\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	out = std::to_string(args);
+}
+`,
 	}).to;
 	const str2tty = MakeMorphism(args, 'str2tty', 'Morphism', '&#120451;&#120451;&#120456;', 'emit the string to the TTY', str, tty,
 	{
@@ -822,7 +1038,7 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 `
 function %1(args)
 {
-postMessage(['str2tty', args]);
+	postMessage(['str2tty', args]);
 }
 `,
 	}).to;
