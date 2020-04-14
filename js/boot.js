@@ -108,26 +108,28 @@ const Boot = function(fn)
 		args.xy.y += 16 * Cat.D.default.layoutGrid;
 		return i;
 	}
-	function NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs)
+	function NewMorphism(args, basename, prototype, properName, description, domain, codomain, code)
 	{
 		const nuArgs = Cat.U.Clone(args);
-		nuArgs.xy = new Cat.D2(args.xy);
-		for (const n in moreArgs)
-			nuArgs[n] = moreArgs[n];
-		nuArgs.description = description;
+		nuArgs.code = Cat.U.Clone(code);
 		nuArgs.basename = basename;
 		nuArgs.prototype = prototype;
-		if (properName !== '')
-			nuArgs.properName = properName;
 		nuArgs.domain = domain;
 		nuArgs.codomain = codomain;
-		const to = Cat.Element.Process(args.diagram, nuArgs);
-		if (Object.keys(args).length > 0)
-			to.code = {};
-		if ('js' in args)
-			to.code.javascript = args.js.replace(/%1/g, Cat.U.Token(to));
-		if ('cpp' in args)
-			to.code.cpp = args.cpp.replace(/%1/g, Cat.U.Token(to)).replace(/%2/g, Cat.U.Token(to.domain)).replace(/%3/g, Cat.U.Token(to.codomain));
+		nuArgs.description = description;
+		if (properName !== '')
+			nuArgs.properName = properName;
+		const proto = nuArgs.prototype;
+		const name = Cat.U.Token(Cat[proto].Codename(args.diagram, nuArgs));
+		if ('js' in nuArgs.code)Cat[proto].Codename(args.diagram, nuArgs)
+			nuArgs.code.javascript = code.js.replace(/%1/g, name);
+		if ('cpp' in nuArgs.code)
+			nuArgs.code.cpp = nuArgs.code.cpp.replace(/%1/g, name).replace(/%2/g, Cat.U.Token(domain)).replace(/%3/g, Cat.U.Token(codomain));
+
+		nuArgs.xy = new Cat.D2(nuArgs.xy);
+//		for (const n in moreArgs)
+//			nuArgs[n] = moreArgs[n];
+		const to = Cat.Element.Process(nuArgs.diagram, nuArgs);
 		return to;
 	}
 	function placeMorphismByObject(args, basename, prototype, properName, description, domain, codomain, moreArgs, dir, object)
@@ -770,7 +772,6 @@ void %1(const %2 & args, %3 & out)
 	const Csubtract = MakeMorphism(args, 'subtract', 'Morphism', '&ndash;', 'subtraction of two complex numbers', Cpair, C,
 	{
 		js:'function %1(args)\n{\n	return [args[0][0] - args[1][0], args[0][1] - args[1][1]];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 		cpp:
 `void %1(const %2 & args, %3 & out)
 {
@@ -781,7 +782,6 @@ void %1(const %2 & args, %3 & out)
 	const Cmult = MakeMorphism(args, 'multiply', 'Morphism', '&sdot;', 'Multiplication of two complex numbers', Cpair, C,
 	{
 		js:'function %1(args)\n{\n	return [args[0][0] * args[1][0] - args[0][1] * args[1][1], args[0][0] * args[1][1] + args[0][1] * args[1][0]];\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 		cpp:
 `void %1(const %2 & args, %3 & out)
 {
@@ -917,7 +917,7 @@ function %1(args)
 	else
 	{
 		out.idx = 1;
-		out.value = true;
+		out.value = 0;
 	}
 }
 `,
@@ -927,7 +927,6 @@ function %1(args)
 	const strJoin = MakeMorphism(args, 'join', 'Morphism', 'join', 'join a list of strings into a single string with another string as the conjunction', strListStr, str,
 	{
 		js:'// function %1(args)\n{\n	TODO\n}\n',
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 		cpp:
 `void %1(const %2 & args, %3 & out)
 {
@@ -946,9 +945,15 @@ function %1(args)
 }
 `,
 	}).to;
+
 	const FromN2str = MakeMorphism(args, 'N2str', 'Morphism', '&lsquo;&rsquo;', 'convert a natural number to a string', N, str,
 	{
-		js:'function %1(args)\n{\n	return args.toString();\n}\n',
+		js:
+`function %1(args)
+{
+	return args.toString();
+}
+`,
 		cpp:
 `void %1(const %2 & args, %3 & out)
 {
@@ -957,14 +962,16 @@ function %1(args)
 `,
 	});
 	const N2str = FromN2str.to;
-//	const str2N = MakeMorphism(args, 'str2N', 'Morphism', '&lsquo;&rsquo;', 'convert a string to a natural number', str, NplusOne,
 	const str2N = placeMorphismByObject(args, 'str2N', 'Morphism', '&lsquo;&rsquo;', 'convert a string to a natural number', str, NplusOne,
 	{
 		js:
-`
-function %1(args)
+`function %1(args)
 {
-	return args.toString();
+	const v = parseInt(args);
+	if (!isNan(v) && v >= 0)
+		return [0, v];
+	else
+		return [1, 0];
 }
 `,
 		cpp:
@@ -978,7 +985,7 @@ function %1(args)
 	catch(x)
 	{
 		out.idx = 1;
-		out.value = true;
+		out.value = 0;
 	}
 }
 `,
@@ -1016,13 +1023,13 @@ function %1(args)
 	catch(x)
 	{
 		out.idx = 1;
-		out.value = true;
+		out.value = 0;
 	}
 }
 `,
 	}, 'domain', FromZ2str.codomain);
 
-	const F2str = MakeMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str,
+	const fromF2str = MakeMorphism(args, 'F2str', 'Morphism', '&lsquo;&rsquo;', 'convert a floating point number to a string', F, str,
 	{
 		js:'function %1(args)\n{\n	return args.toString();\n}\n',
 		cpp:
@@ -1031,7 +1038,50 @@ function %1(args)
 	out = std::to_string(args);
 }
 `,
-	}).to;
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	try
+	{
+		out.value = std::stod(args);
+		out.idx = 0;
+	}
+	catch(x)
+	{
+		out.idx = 1;
+		out.value = 0;
+	}
+}
+`,
+	});
+	const F2str = fromF2str.to;
+
+	const str2F = placeMorphismByObject(args, 'str2F', 'Morphism', '&lsquo;&rsquo;', 'convert a string to a floating point number', str, FplusOne,
+	{
+		js:
+`
+function %1(args)
+{
+	return args.toString();
+}
+`,
+		cpp:
+`void %1(const %2 & args, %3 & out)
+{
+	try
+	{
+		out.value = std::stod(args);
+		out.idx = 0;
+	}
+	catch(x)
+	{
+		out.idx = 1;
+		out.value = 0;
+	}
+}
+`,
+	}, 'domain', fromF2str.codomain);
+
 	const str2tty = MakeMorphism(args, 'str2tty', 'Morphism', '&#120451;&#120451;&#120456;', 'emit the string to the TTY', str, tty,
 	{
 		js:
@@ -1046,6 +1096,7 @@ function %1(args)
 	Cat.D.ShowDiagram(strings);
 	strings.home(false);
 	strings.update();
+
 	//
 	// htmlDiagram
 	//
@@ -1092,19 +1143,16 @@ function %1(args)
 	
 	{
 		js:`function %1(args)\n{\n	return Number.parseInt(document.getElementById(args).value);\n}\n`,
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 	}).to;
 	const html2F = MakeMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
 	
 	{
 		js:`function %1(args)\n{\n	return Number.parseFloat(document.getElementById(args).value);\n}\n`,
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 	}).to;
 	const html2Str = MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
 	
 	{
 		js:`function %1(args)\n{\n	return document.getElementById(args).value;\n}\n`,
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 	}).to;
 //TODO	const html2omega = MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
 	const N_html2str = htmlDiagram.get('LambdaMorphism', {preCurry:html2Str, domFactors:[], homFactors:[0]});
@@ -1114,7 +1162,6 @@ function %1(args)
 	
 	{
 		js:`function %1(args)\n{\n	return ['<input type="text" id="' + args + '" value="" placeholder="Text"/>', ${Cat.U.Token(N_html2str)}]\n}\n`,
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 	}).to;
 	const N_html2N = htmlDiagram.get('LambdaMorphism', {preCurry:html2N, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2N);
@@ -1123,7 +1170,6 @@ function %1(args)
 	
 	{
 		js:`function %1(args)\n{\n	return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${Cat.U.Token(N_html2N)}];\n}\n`,
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 	}).to;
 	const N_html2Z = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2Z);
@@ -1132,7 +1178,6 @@ function %1(args)
 	
 	{
 		js:`function %1(args)\n{\n	return ['<input type="number" id="' + args + '" value="0" placeholder="Integer"/>', ${Cat.U.Token(N_html2Z)}];\n}\n`,
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 	}).to;
 	const N_html2F = htmlDiagram.get('LambdaMorphism', {preCurry:html2F, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2F);
@@ -1141,7 +1186,6 @@ function %1(args)
 	
 	{
 		js:`function %1(args)\n{\n	return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${Cat.U.Token(N_html2F)}];\n}\n`,
-		cpp: 'void %1(const %2 & args, %3 & out)\n{\n	\n}\n',
 	}).to;
 	DiagramReferences(user, htmlDiagram, args.xy);
 	Cat.D.ShowDiagram(htmlDiagram);
