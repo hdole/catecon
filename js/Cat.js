@@ -300,7 +300,6 @@ class H3
 	{
 		return H3._p(document.createElementNS(D.xmlns, type), args);
 	}
-//	static animateTransform(...args)		{ return H3._v('animateTransform', args); }
 	static a(...args)		{ return H3._h('a', args); }
 	static animateTransform(...args)		{ return H3._v('animateTransform', args); }
 	static br(...args)		{ return H3._h('br', args); }
@@ -514,7 +513,6 @@ class U
 	static SigArray(elts)
 	{
 		if (elts.length === 0)
-//			throw 'no info';
 			return 0;
 		else if (elts.length === 1)
 			return elts[0];	// no sig change for array of length 1
@@ -1025,7 +1023,6 @@ Create diagrams and execute morphisms.
 			R.AddDiagram(diagram); // TODO eventually remove, should already be in the list
 			if (R.default.debug)
 				console.log('ReadLocal',name,diagram);
-//			diagram.update(false);
 			R.EmitDiagramEvent(diagram, 'load');
 			return diagram;
 		}
@@ -1170,7 +1167,6 @@ Create diagrams and execute morphisms.
 				R.SelectDiagram(R.UserHomeDiagramName(R.user.name));
 			R.category = R.diagram.codomain;
 			fn && fn();
-//			D.navbar.update();
 		}
 		R.SetupUserHome(R.user.name, subFn);
 	}
@@ -1519,7 +1515,6 @@ class Amazon extends Cloud
 					R.user.name = data.Username;
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 					R.user.status = 'logged-in';
-//					D.panels.update();
 					that.getUserDiagramsFromServer(function(dgrms)
 					{
 						if (R.default.debug)
@@ -1570,7 +1565,6 @@ class Amazon extends Cloud
 			R.user.email = email;
 			R.user.status = 'registered';
 			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
-//			D.navbar.update();
 		});
 	}
 	resetPassword()
@@ -1616,7 +1610,6 @@ class Amazon extends Cloud
 			}
 			R.user.status = 'confirmed';
 			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
-//			D.navbar.update();
 		});
 	}
 	login(e)
@@ -2037,7 +2030,6 @@ class D
 		window.addEventListener('keydown', D.Autohide);
 		D.ReadDefaults();
 		D.navbar =			new Navbar;
-//		D.navbar.update();
 		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
@@ -2121,9 +2113,6 @@ class D
 		if (D.CheckPanels())
 			return;
 		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
-//		if (!D.toolbar.wasHidden)
-//			D.toolbar.element.classList.remove('hidden');
-//			D.toolbar.reveal();
 		// TODO move to their own listeners
 		D.openPanels.map(pnl => pnl.open());
 		D.openPanels = [];
@@ -2147,9 +2136,6 @@ class D
 			D.navbar.element.style.opacity = "0";
 			D.navbar.element.style.height = "0px";
 			window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'hide'}}));
-//			D.toolbar.wasHidden = D.toolbar.element.classList.contains('hidden');
-//			D.toolbar.element.classList.add('hidden');
-//			D.toolbar.hide();
 		}, D.default.autohideTimer);
 	}
 	static Mousedown(e)
@@ -2438,7 +2424,6 @@ ${D.Button(onclick)}
 		const v = 0.32 * (typeof scale !== 'undefined' ? scale : 1.0);
 		return H3.svg({title, width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"},
 			[
-//				H3.rect({x:0, y:0, width:320, height:320, style:`fill:${bgColor}`}),
 				H3.rect({x:0, y:0, width:320, height:320, style:'fill:white'}),
 				D.svg.download3(),
 				H3.text({'text-anchor':'middle', x:160, y:280, style:'font-size:120px;stroke:#000;'}, txt),
@@ -2467,10 +2452,8 @@ ${button}
 		if (id)
 			children.addChild(
 				h3.animateTransform({id, attributeName:"transform", type:"rotate", from:"0 160 160", to:"360 160 160", dur:"0.5s", repeatCount:"1", begin:"indefinite"}));
-//		const elts = D.svg[`${buttonName}3`]();
 		children.push(...D.svg[`${buttonName}3`]());
 		children.push(H3.rect({class:"btn", x:"0", y:"0", width:"320", height:"320", onclick:"${onclick}"}));
-//		btn.addChild(H3.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>', '', '', title));
 		const v = 0.32 * (typeof scale !== 'undefined' ? scale : 1.0);
 		return H3.svg({title, width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"}, children);
 	}
@@ -2492,6 +2475,7 @@ ${button}
 	}
 	static Zoom(e, scalar)
 	{
+		scalar = 2 * scalar;
 		const diagram = R.diagram;
 		let inc = Math.log(diagram.viewport.scale)/Math.log(D.default.scale.base) + scalar;
 		let nuScale = D.default.scale.base ** inc;
@@ -2661,10 +2645,8 @@ ${button}
 			R.diagram.setView(R.diagram.viewport.x, R.diagram.viewport.y, R.diagram.viewport.scale, true, false);
 		else
 			R.diagram.home();
-//		D.diagramPanel.update();
 		D.textPanel.update();
 		D.ttyPanel.update();
-//		D.diagramPanel.setToolbar(R.diagram);
 		D.ShowDiagram(R.diagram);
 	}
 	static copyStyles(dest, src)
@@ -2749,24 +2731,6 @@ ${button}
 	{
 		return H.input(val, cls, id, type, {ph});
 	}
-	/*
-	static MorphismTableRows(morphisms, action = null, drag = true)
-	{
-		let html = '';
-		let found = {};
-		for(let i=0; i<morphisms.length; ++i)
-		{
-			let m = morphisms[i];
-			if (m.name in found)
-				continue;
-			found[m.name] = true;
-			const act = action !== null ? action.replace(/%1/g, m.name) : '';
-			html += H.tr(H.td(m.htmlName()) + H.td(m.domain.htmlName()) + H.td('&rarr;') + H.td(m.codomain.htmlName()),
-				`${drag ? 'grabbable ' : ''}sidenavRow`, '', U.Formal(m.description), drag ? `draggable="true" ondragstart="Cat.D.morphismPanel.drag(event, '${m.name}')" ${act}` : act);
-		}
-		return html;
-	}
-	*/
 	static Barycenter(ary)
 	{
 		const elts = new Set;
@@ -2859,14 +2823,6 @@ ${button}
 			document.onmousemove = onmousemove;
 		}
 	}
-	/*
-	static Home()
-	{
-		D.toolbar.hide();
-		R.diagram.home();
-		return;
-	}
-	*/
 	static Download(href, filename)
 	{
 		var evt = new MouseEvent("click",
@@ -2965,9 +2921,6 @@ ${button}
 			}
 			return pasteMap.get(o);
 		}
-//		let objectUpdate = false;
-//		let morphismUpdate = false;
-//		let textUpdate = false;
 		const pasteElement = function(elt)
 		{
 			let copy = null;
@@ -2982,36 +2935,24 @@ ${button}
 					const {to, flipName} = elt;
 					copy = new DiagramMorphism(diagram, {domain, codomain, to, flipName});
 					diagram.addSVG(copy);
-//					morphismUpdate = true;
 					R.EmitMorphismEvent('add', copy.name);
 					break;
 				case 'DiagramObject':
 				case 'DiagramPullback':
 					copy = pasteObject(elt);
 					diagram.addSVG(copy);
-//					objectUpdate = true;
 					R.EmitObjectEvent('add', copy.name);
 					break;
 				case 'DiagramText':
 					const xy = D2.Add(xy, D2.Subtract(elt.getXY(), base));
 					copy = new DiagramText(diagram, {xy, description:elt.description});
 					diagram.addSVG(copy);
-//					textUpdate = true;
 					R.EmitTextEvent('add', copy.name);
 					break;
 			}
 			return copy;
 		}
 		const copies = elements.map(e => pasteElement(e));
-//		if (textUpdate)
-//			D.textPanel.update();
-//		if (objectUpdate)
-//			D.objectPanel.update();
-//		if (morphismUpdate)
-//		{
-//			copies.map(e => DiagramMorphism.IsA(e) ? diagram.addSVG(e) : null);
-//			D.morphismPanel.update();
-//		}
 		diagram.update(save);
 		return copies;
 	}
@@ -3042,8 +2983,8 @@ Object.defineProperties(D,
 			button:		{tiny:0.4, small:0.66, large:1.0},
 			cell:		{
 							unknown:		'&#8799;',
-							assertion:		'&#8797;',
-							composite:		'&#10609;',
+							composite:		'&#8797;',
+							assertion:		'&#10609;',
 							computed:		'&#10226;',
 							named:			'&#8797;',
 						},
@@ -3074,8 +3015,6 @@ Object.defineProperties(D,
 	'dragClone':		{value: false,		writable: true},
 	'dragStart':		{value: new D2,		writable: true},
 	'gridding':			{value: true,		writable: true},
-//	'header':			{value: document.getElementById('toolbar-header'),	writable: false},
-//	'help':				{value: document.getElementById('toolbar-help'),	writable: false},
 	'helpPanel':		{value: null,		writable: true},
 	'id':				{value: 0,			writable: true},
 	'keyboardDown':			// keyup actions
@@ -3262,9 +3201,7 @@ Object.defineProperties(D,
 	'textSize':			{value:	new Map,	writable: false},
 	'threeDPanel':		{value: null,		writable: true},
 	'tool':				{value: 'select',	writable: true},
-//	'toolbar':			{value: document.getElementById('toolbar'),		writable: false},
 	'toolbar':			{value: new Toolbar,							writable: false},
-//	'toolbarWasHidden':	{value: false,									writable: true},
 	'topSVG':			{value: document.getElementById('topSVG'),		writable: false},
 	'ttyPanel':			{value: null,									writable: true},
 	'uiSVG':			{value: document.getElementById('uiSVG'),		writable: false},
@@ -3782,7 +3719,6 @@ class CategoryPanel extends Panel
 		if (R.category && this.category !== R.category)
 		{
 			this.category = R.category;
-//			D.navbar.update();
 			this.properNameElt.innerHTML = this.category.htmlName();
 			this.descriptionElt.innerHTML = this.category.description;
 			this.userElt.innerHTML = this.category.user;
@@ -5338,8 +5274,6 @@ class SettingsPanel extends Panel
 			if (msg.data.command === 'Info')
 			{
 				const elt = that.equalityElt;
-//				while(elt.firstChild)
-//					elt.removeChild(elt.firstChild);
 				D.RemoveChildren(elt);
 				Object.keys(msg.data).forEach(function(i)
 				{
@@ -5479,21 +5413,6 @@ class TextPanel extends Panel
 		this.newTextSection.update();
 		this.textSection.update();
 	}
-	/*
-	delete(name)
-	{
-		const diagram = R.diagram;
-		if (diagram && diagram.domain.elements.has(name))
-		{
-			const t = diagram.getElement(name);
-			t.decrRefcnt();
-//			this.textSection.update();
-			R.EmitTextEvent('delete', t.name);
-			diagram.update();
-		}
-		event.stopPropagation();
-	}
-	*/
 }
 
 class Element
@@ -6655,7 +6574,6 @@ class DiagramCore
 	}
 }
 
-//class DiagramText extends DiagramCore
 class DiagramText extends Element
 {
 	constructor(diagram, args)
@@ -6663,7 +6581,6 @@ class DiagramText extends Element
 		const nuArgs = U.Clone(args);
 		nuArgs.basename = U.GetArg(nuArgs, 'name', diagram.getAnon('t'));
 		super(diagram, nuArgs);
-//		diagram.texts.set(this.name, this);
 		const xy = U.GetArg(nuArgs, 'xy', new D2);
 		Object.defineProperties(this,
 		{
@@ -8758,10 +8675,6 @@ ${this.generate(m)}
 		}
 		return false;
 	}
-//	hasForm(diagram, ary)
-//	{
-//		return super.hasForm(diagram, ary) && diagram.allReferences.has('hdole/HTML');
-//	}
 	static Header(m)
 	{
 		return `function ${U.Token(m)}(args)\n{\n`;
@@ -9040,10 +8953,6 @@ ${header}	const r = ${name}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 : d
 	{
 		return `\n}\n`;
 	}
-//	hasForm(diagram, ary)
-//	{
-//		return super.hasForm(diagram, ary) && diagram.allReferences.has('hdole/cpp');
-//	}
 }
 
 class RunAction extends Action
@@ -9408,7 +9317,6 @@ class AlignHorizontalAction extends Action
 	{
 		const elements = this.getItems(items);
 		const xy = D.Grid(elements[0].getXY());		// basepoint
-//		elements.shift();
 		elements.map(i =>
 		{
 			i.update({x:i.x, y:xy.y});
@@ -10230,7 +10138,6 @@ class DiagramMorphism extends Morphism
 		Object.defineProperties(this,
 		{
 			flipName:	{value: U.GetArg(args, 'flipName', false),	writable: true,	enumerable: true},
-//			svg:		{value: null,	writable: true,	enumerable: true},
 			svg_path:	{value: null,	writable: true,	enumerable: true},
 			svg_name:	{value: null,	writable: true,	enumerable: true},
 		});
@@ -10313,8 +10220,6 @@ class DiagramMorphism extends Morphism
 		const {pt1, pt2} = 'bezier' in this ? {pt1:this.bezier.cp1, pt2:this.bezier.cp2} : {pt1:this.start, pt2:this.end};
 		const mid = pt1.add(pt2).scale(0.5);
 		const normal = D2.Subtract(pt2, pt1).normal().scale(this.flipName ? 1 : -1).normalize();
-//		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : 1) * D.default.font.height).add(mid);
-//		const adj = this.homSetIndex >= 0 ? (this.homSetIndex % 2 === 0 ? 0.5 : 0.0) : 0.0;
 		const adj = (normal.y < 0 && 'bezier' in this) ? 0.5 : 0.0;
 		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : adj + 0.5) * D.default.font.height).add(mid);
 		if (isNaN(r.x) || isNaN(r.y))
@@ -10578,11 +10483,10 @@ class DiagramMorphism extends Morphism
 		}
 		return false;
 	}
-	hideGraph()
+	removeGraph()
 	{
 		if ('graph' in this)
 		{
-//			this.graph.svg.classList.add('hidden');
 			this.graph.svg.parentNode.removeChild(this.graph.svg);
 			delete this.graph;
 		}
@@ -10728,7 +10632,6 @@ class Cell extends DiagramCore
 		svg.setAttributeNS(null, 'data-type', 'assertion');
 		svg.setAttributeNS(null, 'data-name', this.name);
 		svg.setAttributeNS(null, 'text-anchor', 'middle');
-//		svg.setAttributeNS(null, 'id', this.name);
 		svg.setAttributeNS(null, 'x', this.x);
 		svg.setAttributeNS(null, 'y', this.y + D.default.font.height/2);	// TODO should be this.height?
 		svg.innerHTML = this.description;
@@ -12183,12 +12086,6 @@ class Diagram extends Functor
 			args.references.map(r => this.addReference(r));
 		if ('viewport' in nuArgs)
 			this.viewport = nuArgs.viewport;
-//		if ('texts' in args)
-//			args.texts.map(d =>
-//			{
-//				const t = new DiagramText(this, d);
-//				t.incrRefcnt();
-//			});
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
@@ -12237,9 +12134,6 @@ class Diagram extends Functor
 			if (e.canSave() && e.refcnt > 0)	// only referenceed elements are saved
 				a.elements.push(e.json());
 		}, this);
-//		const texts = [];
-//		this.texts.forEach(function(t){texts.push(t.json())});
-//		a.texts = texts;
 		a.readonly = this.readonly;
 		a.user = this.user;
 		return a;
@@ -12251,7 +12145,6 @@ class Diagram extends Functor
 		{
 			const basename = `${s}_${id++}`;
 			if (!this.domain.elements.has(`${this.name}/${basename}`))
-//			if (!this.elements.has(basename))
 				return basename;
 		}
 	}
@@ -12297,12 +12190,6 @@ class Diagram extends Functor
 			this.update();
 			return;
 		}
-//		if (this.texts.has(name))
-//		{
-//			this.texts.delete(name);
-//			D.textPanel.update();
-//			this.update();
-//		}
 	}
 	initializeView()
 	{
@@ -12477,7 +12364,7 @@ class Diagram extends Functor
 			const gsvg = from.graph.svg;
 			if (gsvg)
 			{
-				gsvg.classList.contains('hidden') ? from.showGraph() : from.hideGraph();
+				gsvg.classList.contains('hidden') ? from.showGraph() : from.removeGraph();
 				return;
 			}
 		}
@@ -12939,7 +12826,7 @@ class Diagram extends Functor
 	}
 	showGraph(m)
 	{
-		m.isGraphHidden() ? m.showGraph() : m.hideGraph();
+		m.isGraphHidden() ? m.showGraph() : m.removeGraph();
 	}
 	showGraphs()
 	{
@@ -12952,7 +12839,7 @@ class Diagram extends Functor
 		{
 			exist = exist || ('graph' in m && !m.graph.svg.classList.contains('hidden'))
 		});
-		this.domain.forEachMorphism(function(m) { exist ? m.hideGraph() : m.showGraph(); });
+		this.domain.forEachMorphism(function(m) { exist ? m.removeGraph() : m.showGraph(); });
 		this.update(false);
 	}
 	addWindowSelect(e)
@@ -12982,22 +12869,6 @@ class Diagram extends Functor
 	{
 		return this.codomain.actions.get('cpp').download(e, this);
 	}
-	/*
-	downloadJS(e)
-	{
-		if (this.codomain.actions.has('javascript'))
-		{
-			const action = this.codomain.actions.get('javascript');
-			const code = action.generateDiagram(this);
-			const start = Date.now();
-			const blob = new Blob([code], {type:'application/javascript'});
-			const url = D.url.createObjectURL(blob);
-			D.Download(url, `${this.basename}.js`);
-			const delta = Date.now() - start;
-			D.Status(e, `Diagram ${name} Javascript generated<br/>&#9201;${delta}ms`, true);
-		}
-	}
-	*/
 	downloadPNG()
 	{
 		D.Svg2canvas(D.topSVG, this.name, D.Download);
@@ -13090,9 +12961,6 @@ class Diagram extends Functor
 		});
 		this.domain.clear();
 		Array.from(this.elements).reverse().map(a => a[1].decrRefcnt());
-//		R.EmitDiagramEvent('clear', this.name);
-//		D.objectPanel.update();
-//		D.morphismPanel.update();
 		this.update(save);
 	}
 	viewElement(name)
