@@ -396,7 +396,7 @@ a:hover, .offcanvas a:focus
 
 .autohide
 {
-	transition: all 0.5s ease-in-out;
+	transition: all 0.25s ease-in-out;
 }
 
 .nodisplay
@@ -789,18 +789,18 @@ canvas
 .badCell
 {
 	cursor:			pointer;
-	fill:			black;
+	fill:			#f00;
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
-	animation: 			badGlow 1s ease-in-out infinite alternate;
+	animation: 		badGlow 1s ease-in-out infinite alternate;
 }
 
 .badGlow
 {
-	-webkit-animation:	badGlow 1s ease-in-out infinite alternate;
-	-moz-animation:		badGlow 1s ease-in-out infinite alternate;
-	animation: 			badGlow 1s ease-in-out infinite alternate;
+	-webkit-animation:	badGlow 5s ease-in-out infinite alternate;
+	-moz-animation:		badGlow 5s ease-in-out infinite alternate;
+	animation: 			badGlow 5s ease-in-out infinite alternate;
 }
 
 @-webkit-keyframes badGlow
@@ -811,7 +811,8 @@ canvas
 	}
 	to
 	{
-		text-shadow: 0 0 20px #f00, 0 0 30px #f77, 0 0 40px #f77, 0 0 50px #f77, 0 0 60px #f77;
+		/*text-shadow: 0 0 20px #f00, 0 0 30px #f77, 0 0 40px #f77, 0 0 50px #f77, 0 0 60px #f77;*/
+		text-shadow: 0 0 40px #f00, 0 0 50px #f77, 0 0 60px #f77, 0 0 70px #f77, 0 0 80px #f77;
 	}
 }
 
