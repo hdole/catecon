@@ -301,15 +301,28 @@ class H3
 		return H3._p(document.createElementNS(D.xmlns, type), args);
 	}
 //	static animateTransform(...args)		{ return H3._v('animateTransform', args); }
+	static a(...args)		{ return H3._h('a', args); }
+	static animateTransform(...args)		{ return H3._v('animateTransform', args); }
 	static br(...args)		{ return H3._h('br', args); }
 	static div(...args)		{ return H3._h('div', args); }
 	static g(...args)		{ return H3._v('g', args); }
+	static h1(...args)		{ return H3._h('h1', args); }
+	static h2(...args)		{ return H3._h('h2', args); }
+	static h3(...args)		{ return H3._h('h3', args); }
+	static h4(...args)		{ return H3._h('h4', args); }
 	static hr(...args)		{ return H3._h('hr', args); }
+	static img(...args)		{ return H3._h('img', args); }
+	static line(...args)	{ return H3._v('line', args); }
 	static p(...args)		{ return H3._h('p', args); }
+	static path(...args)	{ return H3._v('path', args); }
+	static rect(...args)	{ return H3._v('rect', args); }
 	static span(...args)	{ return H3._h('span', args); }
+	static svg(...args)		{ return H3._v('svg', args); }
 	static table(...args)	{ return H3._h('table', args); }
-	static tr(...args)		{ return H3._h('tr', args); }
+	static text(...args)	{ return H3._v('text', args); }
 	static td(...args)		{ return H3._h('td', args); }
+	static th(...args)		{ return H3._h('th', args); }
+	static tr(...args)		{ return H3._h('tr', args); }
 }
 
 const isCloud = true;		// TODO turn on when cloud ready
@@ -478,7 +491,7 @@ class U
 	}
 	static Token(e, cls = false)
 	{
-		const s = e.name;
+		const s = typeof e === 'string' ? e : e.name;
 		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_o_').replace(/#/g, '_n_')
 			.replace(/\[/g, '_br_')
 			.replace(/\]/g, '_rb_');
@@ -591,6 +604,7 @@ class R
 					references:		['hdole/HTML'],
 					user,
 				});
+				R.EmitDiagramEvent(diagram, 'load');
 				const args =
 				{
 					description:
@@ -606,7 +620,7 @@ Create diagrams and execute morphisms.
 				home.home();
 				home.update();
 				R.diagram = home;
-				R.EmitDiagramEvent();
+				R.EmitDiagramEvent(home, 'new');
 				R.Actions.javascript.loadHTML(fn);
 			}
 			else
@@ -652,25 +666,22 @@ Create diagrams and execute morphisms.
 						const cell = diagram.domain.cells.get(args.cell);
 						const isEqual = args.isEqual;
 						const assertion = diagram.getAssertion(cell.signature);
-						cell.setCommutes(isEqual);
 						if (isEqual)
 						{
 							if (assertion)
 							{
-								cell.properName = '&#8797;';
+								cell.setCommutes('assertion');
 								assertion.setCell(cell);
 							}
 							else if (DiagramComposite.CellIsComposite(cell))
-							{
-								cell.properName = assertion ? '&#8797;' : (DiagramComposite.CellIsComposite(cell) ? '&#10609;' : '&#10226;');
-							}
+								cell.setCommutes('composite');
+							else if (cell.isNamedMorphism())
+								cell.setCommutes('named');
 							else
-							{
-								cell.properName = '&#10226;';
-							}
+								cell.setCommutes('computed');
 						}
 						else
-							cell.properName = '?';
+							cell.setCommutes('unknown');
 						const objs = cell.getObjects();
 						if (!cell.svg)
 							diagram.addSVG(cell);
@@ -1015,6 +1026,7 @@ Create diagrams and execute morphisms.
 			if (R.default.debug)
 				console.log('ReadLocal',name,diagram);
 //			diagram.update(false);
+			R.EmitDiagramEvent(diagram, 'load');
 			return diagram;
 		}
 		return null;
@@ -1108,7 +1120,7 @@ Create diagrams and execute morphisms.
 						center.y = center.y / 4;
 						R.diagram.addSelected(foundIt);
 						const e = {clientX:center.x, clientY:center.y};
-						D.ShowToolbar(e, m);
+						D.toolbar.show(e, m);
 						R.Actions.run.html(e, R.diagram, [foundIt]);
 					}
 				}
@@ -1158,18 +1170,18 @@ Create diagrams and execute morphisms.
 				R.SelectDiagram(R.UserHomeDiagramName(R.user.name));
 			R.category = R.diagram.codomain;
 			fn && fn();
-			D.navbar.update();
+//			D.navbar.update();
 		}
 		R.SetupUserHome(R.user.name, subFn);
 	}
 	static SelectDiagram(name)
 	{
-		D.HideToolbar();
+		D.toolbar.hide();
 		function setup(name)
 		{
 			if (!R.diagram)
 				R.diagram = R.$CAT.getElement(name);
-			R.EmitDiagramEvent();
+			R.EmitDiagramEvent(R.diagram, 'select');
 			R.diagram.updateMorphisms();
 			R.diagram.update(false);
 			R.diagram.svgTranslate.classList.add('autohide');
@@ -1178,7 +1190,10 @@ Create diagrams and execute morphisms.
 		if (!R.diagram)
 			R.diagram = R.ReadLocal(name);
 		if (!R.diagram && R.cloud)
+		{
 			R.FetchDiagram(name, setup);
+			return;
+		}
 		setup(name);
 	}
 	static GetCategory(name)
@@ -1208,6 +1223,7 @@ Create diagrams and execute morphisms.
 					j.timestamp = Date.now();
 				}
 				diagram = new Diagram(userDiagram, j);
+				R.EmitDiagramEvent(diagram, 'load');
 			});
 			if (jsons.length > 0 && fn)
 				fn(diagram);
@@ -1298,9 +1314,9 @@ Create diagrams and execute morphisms.
 	{
 		R.workers.equality.postMessage({command:'Load', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
 	}
-	static EmitDiagramEvent()	// like diagram was loaded
+	static EmitDiagramEvent(diagram, command, name = '')	// like diagram was loaded
 	{
-		window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram:R.diagram}, bubbles:true, cancelable:true}));
+		window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitObjectEvent(command, name)	// like an object changed
 	{
@@ -1503,7 +1519,7 @@ class Amazon extends Cloud
 					R.user.name = data.Username;
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 					R.user.status = 'logged-in';
-					D.panels.update();
+//					D.panels.update();
 					that.getUserDiagramsFromServer(function(dgrms)
 					{
 						if (R.default.debug)
@@ -1553,7 +1569,8 @@ class Amazon extends Cloud
 			R.user.name = userName;
 			R.user.email = email;
 			R.user.status = 'registered';
-			D.navbar.update();
+			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+//			D.navbar.update();
 		});
 	}
 	resetPassword()
@@ -1584,7 +1601,7 @@ class Amazon extends Cloud
 			R.user.name = userName;
 			R.user.email = email;
 			R.user.status = 'registered';
-			D.navbar.update();
+			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
 		});
 	}
 	confirm()
@@ -1598,7 +1615,8 @@ class Amazon extends Cloud
 				return;
 			}
 			R.user.status = 'confirmed';
-			D.navbar.update();
+			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+//			D.navbar.update();
 		});
 	}
 	login(e)
@@ -1638,7 +1656,6 @@ class Amazon extends Cloud
 								if (R.default.Debug)
 									console.log('login: user diagrams on server', dgrms);
 							});
-							D.navbar.update();
 						}
 						R.SetupUserHome(R.user.name, fn);
 					});
@@ -1667,8 +1684,7 @@ class Amazon extends Cloud
 		R.user.name = 'Anon';
 		R.user.email = '';
 		R.user.status = 'unauthorized';
-		D.navbar.update();
-		D.panels.update();
+		window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
 	}
 	async fetchDiagram(name, cache = true)
 	{
@@ -1826,8 +1842,6 @@ class Amazon extends Cloud
 				references:		i.references.L.map(r => r.S),
 				user,
 			}));
-			D.diagramPanel.update();
-			D.diagramPanel.setToolbar(R.diagram);	// for downcloud button
 			if (fn)
 				fn(payload.Items);
 		});
@@ -1839,7 +1853,6 @@ class Navbar
 	constructor()
 	{
 		this.element = document.getElementById('navbar');
-		this.diagram = null;
 		const sz = D.default.button.large;
 		const left =
 			H.td(H.div(D.GetButton('diagram', "Cat.D.diagramPanel.toggle()", 'Diagrams', sz))) +
@@ -1849,7 +1862,6 @@ class Navbar
 			H.td(H.div(D.GetButton('text', "Cat.D.textPanel.toggle()", 'Text', sz))) +
 			H.td(H.div(D.GetButton('string', "Cat.R.diagram.showGraphs()", 'Graph', sz)));
 		const right =
-//			H.td(H.div(D.GetButton('cateapsis', "Cat.D.Home()", 'Home', sz))) +
 			H.td(H.div(D.GetButton('cateapsis', "Cat.R.diagram.home()", 'Home', sz))) +
 			H.td(H.div(D.GetButton('threeD', "Cat.D.threeDPanel.toggle()", '3D view', sz))) +
 			H.td(H.div(D.GetButton('tty', "Cat.D.ttyPanel.toggle()", 'Console', sz))) +
@@ -1870,15 +1882,23 @@ class Navbar
 			const title = R.diagram ? `${R.diagram.htmlName()} ${H.span('by '+R.diagram.user, 'italic')}: ${U.Formal(R.diagram.description)}` : '';
 			D.Status(e, title);
 		}, true);
-	}
-	update()
-	{
-		if (R.diagram)
+		const that = this;
+		this.element.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
+		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
+		window.addEventListener('Login', this.updateByUserStatus);
+		window.addEventListener('Diagram', function(e)
 		{
-			this.diagram = R.diagram;
-			this.diagramElt.innerHTML = R.diagram ? U.HtmlEntitySafe(R.diagram.htmlName()) + H.span(` by ${R.diagram.user}`, 'italic'): '';
-			this.categoryElt.innerHTML = U.HtmlEntitySafe(R.diagram.codomain.htmlName());
-		}
+			const args = e.detail;
+			if (args.command === 'select')
+			{
+				const diagram = args.diagram;
+				that.diagramElt.innerHTML = U.HtmlEntitySafe(diagram.htmlName()) + H.span(` by ${diagram.user}`, 'italic');
+				that.categoryElt.innerHTML = U.HtmlEntitySafe(diagram.codomain.htmlName());
+			}
+		});
+	}
+	updateByUserStatus()
+	{
 		let c = '#CCC';
 		switch(R.user.status)
 		{
@@ -1895,7 +1915,115 @@ class Navbar
 				c = '#333';
 				break;
 		}
-		this.element.style.background = c;
+		D.navbar.element.style.background = c;
+	}
+}
+
+class Toolbar
+{
+	constructor()
+	{
+		Object.defineProperties(this,
+		{
+			'diagram':		{value: null,										writable: true},
+			'element':		{value: document.getElementById('toolbar'),			writable: false},
+			'header':		{value: document.getElementById('toolbar-header'),	writable: false},
+			'help':			{value: document.getElementById('toolbar-help'),	writable: false},
+			'wasHidden':	{value:	false,										writable: true},
+		});
+		const that = this;
+		this.element.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
+		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
+		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
+		window.addEventListener('Diagram', function(e){ that.diagram = e.detail.diagram;});
+		window.addEventListener('Autohide', function(e)
+		{
+			if (e.detail.command === 'hide')
+			{
+				that.wasHidden = that.element.classList.contains('hidden');
+				that.hide();
+			}
+			else
+			{
+				if (!that.wasHidden)
+				{
+					that.reveal();
+				}
+			}
+		});
+	}
+	hide()
+	{
+		this.element.classList.add('hidden');
+	}
+	reveal()
+	{
+		this.element.classList.remove('hidden');
+	}
+	show(e, loc)
+	{
+		if (!e || !R.diagram)		// no event so show nothing
+			return;
+		const element = this.element;
+		this.wasHidden = element.classList.contains('hidden');
+		this.reveal();
+		const diagram = this.diagram;
+		if (diagram.selected.length === 0)
+		{
+			this.hide();
+			return;
+		}
+		this.help.innerHTML = '';
+		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] +
+			`<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, '', 'toolbar-drag-handle', 'Move toolbar');
+		diagram.codomain.actions.forEach(function(a, n)
+		{
+			if (a.hasForm(diagram, diagram.selected))
+				header += D.formButton(a.icon, `Cat.R.diagram.${'html' in a ? 'actionHtml' : 'activate'}(event, '${a.name}')`, a.description);
+		});
+		header += D.GetButton('close', 'Cat.D.toolbar.hide()', 'Close');
+		this.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
+		D.Drag(element, 'toolbar-drag-handle');
+		this.element.style.display = 'block';
+		const rect = D.topSVG.getBoundingClientRect();	// TODO use getBBox()?
+		let bbox =
+		{
+			left:	rect.width,
+			top:	rect.height,
+			width:	0,
+			height:	0,
+		};
+		diagram.selected.map(s =>
+		{
+			const sBbox = s.svg.getBoundingClientRect();	// TODO use getBBox()?
+			bbox.left = Math.min(bbox.left, sBbox.left);
+			bbox.top = Math.min(bbox.top, sBbox.top);
+			bbox.width = Math.max(bbox.width, sBbox.width);
+			bbox.height = Math.max(bbox.height, sBbox.height);
+		});
+		if (element)
+		{
+			let xy = D.mouse.onPanel ? diagram.diagramToUserCoords(diagram.selected[0].getXY()) : {x:e.clientX + element.clientHeight, y:e.clientY - 2 * element.clientHeight};
+			if (D2.IsA(loc))
+				xy = diagram.diagramToUserCoords(loc);
+			else
+			{
+				let nuTop = xy.y;
+				if (xy.y >= bbox.top && xy.y <= bbox.top + bbox.height)
+					nuTop = bbox.top - element.clientHeight;
+				let nuLeft = xy.x;
+				if (xy.x >= bbox.left && xy.x <= bbox.left + bbox.width)
+					nuLeft = bbox.left + bbox.width;
+			}
+			let left = rect.left + xy.x;
+			left = left >= 0 ? left : 0;
+			left = (left + element.clientWidth) >= window.innerWidth ? window.innerWidth - element.clientWidth : left;
+			element.style.left = `${left}px`;
+			let top = rect.top + xy.y;
+			top = top >= 0 ? top : 0;
+			top = (top + element.clientHeight) >= window.innerHeight ? window.innerHeight - element.clientHeight : top;
+			element.style.top = `${top}px`;
+		}
 	}
 }
 
@@ -1909,7 +2037,7 @@ class D
 		window.addEventListener('keydown', D.Autohide);
 		D.ReadDefaults();
 		D.navbar =			new Navbar;
-		D.navbar.update();
+//		D.navbar.update();
 		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
@@ -1992,8 +2120,11 @@ class D
 	{
 		if (D.CheckPanels())
 			return;
-		if (!D.toolbarWasHidden)
-			D.toolbar.classList.remove('hidden');
+		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
+//		if (!D.toolbar.wasHidden)
+//			D.toolbar.element.classList.remove('hidden');
+//			D.toolbar.reveal();
+		// TODO move to their own listeners
 		D.openPanels.map(pnl => pnl.open());
 		D.openPanels = [];
 		D.navbar.element.style.opacity = "100";
@@ -2015,8 +2146,10 @@ class D
 			}
 			D.navbar.element.style.opacity = "0";
 			D.navbar.element.style.height = "0px";
-			D.toolbarWasHidden = D.toolbar.classList.contains('hidden');
-			D.toolbar.classList.add('hidden');
+			window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'hide'}}));
+//			D.toolbar.wasHidden = D.toolbar.element.classList.contains('hidden');
+//			D.toolbar.element.classList.add('hidden');
+//			D.toolbar.hide();
 		}, D.default.autohideTimer);
 	}
 	static Mousedown(e)
@@ -2030,9 +2163,9 @@ class D
 			if (!diagram.isSelected(D.mouseover) && !D.shiftKey)
 				diagram.deselectAll();
 			else if (D.toolbar.style.display === 'none')
-				D.ShowToolbar(e, D.mouseover);
+				D.toolbar.show(e, D.mouseover);
 			else
-				D.HideToolbar();
+				D.toolbar.hide();
 		}
 		else
 			diagram.deselectAll();
@@ -2135,7 +2268,7 @@ class D
 				}
 				else
 					diagram.updateFusible(e);
-				D.HideToolbar();
+				D.toolbar.hide();
 			}
 			else if (D.mouseIsDown && !D.drag)
 			{
@@ -2292,74 +2425,6 @@ class D
 			D.RecordError(err);
 		}
 	}
-	static HideToolbar()
-	{
-		D.toolbar.classList.add('hidden');
-		D.toolbarWasHidden = true;
-	}
-	static ShowToolbar(e, loc)
-	{
-		if (!e || !R.diagram)		// no event so show nothing
-			return;
-		D.toolbarWasHidden = D.toolbar.classList.contains('hidden');
-		D.toolbar.classList.remove('hidden');
-		const diagram = R.diagram;
-		if (diagram.selected.length === 0)
-		{
-			D.HideToolbar();
-			return;
-		}
-		D.help.innerHTML = '';
-		let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg['move'] + `<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, '', 'toolbar-drag-handle', 'Move toolbar');
-		diagram.codomain.actions.forEach(function(a, n)
-		{
-			if (a.hasForm(R.diagram, diagram.selected))
-				header += D.formButton(a.icon, `Cat.R.diagram.${'html' in a ? 'actionHtml' : 'activate'}(event, '${a.name}')`, a.description);
-		});
-		header += D.GetButton('close', 'Cat.D.HideToolbar()', 'Close');
-		D.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
-		D.Drag(D.toolbar, 'toolbar-drag-handle');
-		D.toolbar.style.display = 'block';
-		const rect = D.topSVG.getBoundingClientRect();	// TODO use getBBox()?
-		let bbox =
-		{
-			left:	rect.width,
-			top:	rect.height,
-			width:	0,
-			height:	0,
-		};
-		diagram.selected.map(s =>
-		{
-			const sBbox = s.svg.getBoundingClientRect();	// TODO use getBBox()?
-			bbox.left = Math.min(bbox.left, sBbox.left);
-			bbox.top = Math.min(bbox.top, sBbox.top);
-			bbox.width = Math.max(bbox.width, sBbox.width);
-			bbox.height = Math.max(bbox.height, sBbox.height);
-		});
-		if (D.toolbarWasHidden)
-		{
-			let xy = D.mouse.onPanel ? diagram.diagramToUserCoords(diagram.selected[0].getXY()) : {x:e.clientX + D.toolbar.clientHeight, y:e.clientY - 2 * D.toolbar.clientHeight};
-			if (D2.IsA(loc))
-				xy = diagram.diagramToUserCoords(loc);
-			else
-			{
-				let nuTop = xy.y;
-				if (xy.y >= bbox.top && xy.y <= bbox.top + bbox.height)
-					nuTop = bbox.top - D.toolbar.clientHeight;
-				let nuLeft = xy.x;
-				if (xy.x >= bbox.left && xy.x <= bbox.left + bbox.width)
-					nuLeft = bbox.left + bbox.width;
-			}
-			let left = rect.left + xy.x;
-			left = left >= 0 ? left : 0;
-			left = (left + D.toolbar.clientWidth) >= window.innerWidth ? window.innerWidth - D.toolbar.clientWidth : left;
-			D.toolbar.style.left = `${left}px`;
-			let top = rect.top + xy.y;
-			top = top >= 0 ? top : 0;
-			top = (top + D.toolbar.clientHeight) >= window.innerHeight ? window.innerHeight - D.toolbar.clientHeight : top;
-			D.toolbar.style.top = `${top}px`;
-		}
-	}
 	static DownloadButton(txt, onclick, title, scale = D.default.button.small)
 	{
 		const html = H.span(D.SvgHeader(scale) + D.svg.download +
@@ -2367,6 +2432,18 @@ class D
 ${D.Button(onclick)}
 </svg>`, '', '', title);
 		return html;
+	}
+	static DownloadButton3(txt, onclick, title, scale = D.default.button.small)
+	{
+		const v = 0.32 * (typeof scale !== 'undefined' ? scale : 1.0);
+		return H3.svg({title, width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"},
+			[
+//				H3.rect({x:0, y:0, width:320, height:320, style:`fill:${bgColor}`}),
+				H3.rect({x:0, y:0, width:320, height:320, style:'fill:white'}),
+				D.svg.download3(),
+				H3.text({'text-anchor':'middle', x:160, y:280, style:'font-size:120px;stroke:#000;'}, txt),
+				H3.rect({class:'btn', x:0, y:0, width:320, height:320, onclick})
+			]);
 	}
 	static GetButton(buttonName, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
 	{
@@ -2383,6 +2460,19 @@ ${D.Button(onclick)}
 ${button}
 </g>`;
 		return H.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>', '', '', title);
+	}
+	static GetButton3(buttonName, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
+	{
+		const children = [H3.rect({x:0, y:0, width:320, height:320, style:`fill:${bgColor}`})];
+		if (id)
+			children.addChild(
+				h3.animateTransform({id, attributeName:"transform", type:"rotate", from:"0 160 160", to:"360 160 160", dur:"0.5s", repeatCount:"1", begin:"indefinite"}));
+//		const elts = D.svg[`${buttonName}3`]();
+		children.push(...D.svg[`${buttonName}3`]());
+		children.push(H3.rect({class:"btn", x:"0", y:"0", width:"320", height:"320", onclick:"${onclick}"}));
+//		btn.addChild(H3.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>', '', '', title));
+		const v = 0.32 * (typeof scale !== 'undefined' ? scale : 1.0);
+		return H3.svg({title, width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"}, children);
 	}
 	static setCursor()
 	{
@@ -2456,7 +2546,7 @@ ${button}
 		{
 			if (e.target.id === 'topSVG')
 			{
-				D.HideToolbar();
+				D.toolbar.hide();
 				R.diagram.svgTranslate.classList.remove('autohide');
 				D.Zoom(e, Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY))));
 				R.diagram.svgTranslate.classList.add('autohide');
@@ -2503,9 +2593,9 @@ ${button}
 		}
 		else
 			D.RecordError(msg);
-		if (!D.toolbar.classList.contains('hidden'))
+		if (!D.toolbar.element.classList.contains('hidden'))
 		{
-			const toolbox = D.toolbar.getBoundingClientRect();
+			const toolbox = D.toolbar.element.getBoundingClientRect();
 			const statusbox = s.getBoundingClientRect();
 			if (D2.Overlap(toolbox, statusbox))
 				s.style.top = toolbox.top - statusbox.height + 'px';
@@ -2571,10 +2661,10 @@ ${button}
 			R.diagram.setView(R.diagram.viewport.x, R.diagram.viewport.y, R.diagram.viewport.scale, true, false);
 		else
 			R.diagram.home();
-		D.diagramPanel.update();
+//		D.diagramPanel.update();
 		D.textPanel.update();
 		D.ttyPanel.update();
-		D.diagramPanel.setToolbar(R.diagram);
+//		D.diagramPanel.setToolbar(R.diagram);
 		D.ShowDiagram(R.diagram);
 	}
 	static copyStyles(dest, src)
@@ -2659,6 +2749,7 @@ ${button}
 	{
 		return H.input(val, cls, id, type, {ph});
 	}
+	/*
 	static MorphismTableRows(morphisms, action = null, drag = true)
 	{
 		let html = '';
@@ -2675,6 +2766,7 @@ ${button}
 		}
 		return html;
 	}
+	*/
 	static Barycenter(ary)
 	{
 		const elts = new Set;
@@ -2728,7 +2820,7 @@ ${button}
 	}
 	static DragElement(e, name)
 	{
-		D.HideToolbar();
+		D.toolbar.hide();
 		e.dataTransfer.setData('text/plain', name);
 	}
 	static Drag(elt, dragId)	// drag toolbar
@@ -2770,7 +2862,7 @@ ${button}
 	/*
 	static Home()
 	{
-		D.HideToolbar();
+		D.toolbar.hide();
 		R.diagram.home();
 		return;
 	}
@@ -2802,7 +2894,7 @@ ${button}
 		else
 			throw 'no reference diagram';
 		D.diagramPanel.referenceSection.update();
-		R.EmitDiagramEvent();
+		R.EmitDiagramEvent(diagram, 'addReference', name);
 		R.diagram.update(save);
 		D.Status(e, `Diagram ${diagram.htmlName()} now referenced`);
 		D.diagramPanel.referenceSection.update();
@@ -2815,7 +2907,7 @@ ${button}
 			throw 'no reference diagram';
 		R.diagram.removeReference(name);
 		D.diagramPanel.referenceSection.update();
-		R.EmitDiagramEvent();
+		R.EmitDiagramEvent(diagram, 'removeReference', name);
 		R.diagram.update(save);
 		D.Status(e, `${diagram.htmlName()} reference removed`);
 		save && diagram.log({command:'removeReference', diagram:diagram.name});
@@ -2853,7 +2945,7 @@ ${button}
 		const copies = D.DoPaste(e, mouse, D.pasteBuffer);
 		diagram.deselectAll();
 		copies.map(e => diagram.addSelected(e));
-		D.ShowToolbar(e, mouse);
+		D.toolbar.show(e, mouse);
 		diagram.log({command:'paste', elements:D.pasteBuffer.map(e => e.name), xy:{x:mouse.x, y:mouse.y}});
 	}
 	static DoPaste(e, xy, elements, save = true)
@@ -2873,9 +2965,9 @@ ${button}
 			}
 			return pasteMap.get(o);
 		}
-		let objectUpdate = false;
-		let morphismUpdate = false;
-		let textUpdate = false;
+//		let objectUpdate = false;
+//		let morphismUpdate = false;
+//		let textUpdate = false;
 		const pasteElement = function(elt)
 		{
 			let copy = null;
@@ -2889,32 +2981,37 @@ ${button}
 					const codomain = pasteObject(elt.codomain);
 					const {to, flipName} = elt;
 					copy = new DiagramMorphism(diagram, {domain, codomain, to, flipName});
-					morphismUpdate = true;
+					diagram.addSVG(copy);
+//					morphismUpdate = true;
+					R.EmitMorphismEvent('add', copy.name);
 					break;
 				case 'DiagramObject':
 				case 'DiagramPullback':
 					copy = pasteObject(elt);
-					objectUpdate = true;
+					diagram.addSVG(copy);
+//					objectUpdate = true;
+					R.EmitObjectEvent('add', copy.name);
 					break;
 				case 'DiagramText':
 					const xy = D2.Add(xy, D2.Subtract(elt.getXY(), base));
 					copy = new DiagramText(diagram, {xy, description:elt.description});
 					diagram.addSVG(copy);
-					textUpdate = true;
+//					textUpdate = true;
+					R.EmitTextEvent('add', copy.name);
 					break;
 			}
 			return copy;
 		}
 		const copies = elements.map(e => pasteElement(e));
-		if (textUpdate)
-			D.textPanel.update();
-		if (objectUpdate)
-			D.objectPanel.update();
-		if (morphismUpdate)
-		{
-			copies.map(e => DiagramMorphism.IsA(e) ? diagram.addSVG(e) : null);
-			D.morphismPanel.update();
-		}
+//		if (textUpdate)
+//			D.textPanel.update();
+//		if (objectUpdate)
+//			D.objectPanel.update();
+//		if (morphismUpdate)
+//		{
+//			copies.map(e => DiagramMorphism.IsA(e) ? diagram.addSVG(e) : null);
+//			D.morphismPanel.update();
+//		}
 		diagram.update(save);
 		return copies;
 	}
@@ -2925,7 +3022,7 @@ ${button}
 		else
 			elts.map((e, i) => e.classList.remove(cls));
 	}
-	static DeleteChildren(elt)
+	static RemoveChildren(elt)
 	{
 		while(elt.firstChild)
 			elt.removeChild(elt.firstChild);
@@ -2943,9 +3040,14 @@ Object.defineProperties(D,
 		{
 			arrow:		{length:150, margin:16},
 			button:		{tiny:0.4, small:0.66, large:1.0},
-			composite:	'&#8797;',	// is defined as
+			cell:		{
+							unknown:		'&#8799;',
+							assertion:		'&#8797;',
+							composite:		'&#10609;',
+							computed:		'&#10226;',
+							named:			'&#8797;',
+						},
 			panel:		{width:	230},
-//			dragDelay:	100,	// ms
 			font:		{height:24},
 			fuse:
 			{
@@ -2972,8 +3074,8 @@ Object.defineProperties(D,
 	'dragClone':		{value: false,		writable: true},
 	'dragStart':		{value: new D2,		writable: true},
 	'gridding':			{value: true,		writable: true},
-	'header':			{value: document.getElementById('toolbar-header'),	writable: false},
-	'help':				{value: document.getElementById('toolbar-help'),	writable: false},
+//	'header':			{value: document.getElementById('toolbar-header'),	writable: false},
+//	'help':				{value: document.getElementById('toolbar-help'),	writable: false},
 	'helpPanel':		{value: null,		writable: true},
 	'id':				{value: 0,			writable: true},
 	'keyboardDown':			// keyup actions
@@ -2982,7 +3084,6 @@ Object.defineProperties(D,
 		{
 			Minus(e) { D.Zoom(e, -1);},
 			Equal(e) { D.Zoom(e, 1);},
-//			Home(e) { D.Home();},
 			Home(e) { R.diagram.home();},
 			Space(e)
 			{
@@ -3051,10 +3152,10 @@ Object.defineProperties(D,
 			ControlDigit3(e) { D.threeDPanel.toggle(); },
 			Escape(e)
 			{
-				if (D.toolbar.classList.contains('hidden'))
+				if (D.toolbar.element.classList.contains('hidden'))
 					D.panels.closeAll();
 				else
-					D.HideToolbar();
+					D.toolbar.hide();
 			},
 			/*
 			ShiftKeyC(e) { D.categoryPanel.toggle(); },
@@ -3161,10 +3262,11 @@ Object.defineProperties(D,
 	'textSize':			{value:	new Map,	writable: false},
 	'threeDPanel':		{value: null,		writable: true},
 	'tool':				{value: 'select',	writable: true},
-	'toolbar':			{value: document.getElementById('toolbar'),		writable: false},
-	'toolbarWasHidden':	{value: false,		writable: true},
+//	'toolbar':			{value: document.getElementById('toolbar'),		writable: false},
+	'toolbar':			{value: new Toolbar,							writable: false},
+//	'toolbarWasHidden':	{value: false,									writable: true},
 	'topSVG':			{value: document.getElementById('topSVG'),		writable: false},
-	'ttyPanel':			{value: null,	writable: true},
+	'ttyPanel':			{value: null,									writable: true},
 	'uiSVG':			{value: document.getElementById('uiSVG'),		writable: false},
 	'xmlns':			{value: 'http://www.w3.org/2000/svg',			writable: false},
 	'svg':
@@ -3198,6 +3300,11 @@ copy:
 delete:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
 <path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
+delete3()
+{
+	return [H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"230", 'marker-end':"url(#arrowhead)"}),
+			H3.path({class:"svgfilNone svgstr1", d:"M90,190 A120,50 0 1,0 230,190"})];
+},
 diagram:
 `<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
@@ -3208,6 +3315,10 @@ downcloud:
 <line class="arrow0" x1="160" y1="160" x2="160" y2="300" marker-end="url(#arrowhead)"/>`,
 download:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+download3()
+{
+	return H3.line({class:'arrow0', x1:160, y1:40, x2:160, y2:160, 'marker-end':'url(#arrowhead)'});
+},
 edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
 functor:
@@ -3395,6 +3506,10 @@ class Section
 		parent.appendChild(this.section);
 		this.close();
 	}
+	getId(name)
+	{
+		return `${this.section.id} ${name}`;
+	}
 	toggle()
 	{
 		this.elt.classList.toggle('active');
@@ -3438,6 +3553,9 @@ class Panel
 		this.elt = document.getElementById(`${this.name}-sidenav`);
 		this.elt.addEventListener('mouseenter', function(e){ D.mouse.onPanel = true; });
 		this.elt.addEventListener('mouseleave', function(e){ D.mouse.onPanel = false; console.log('panel lost mouse!');});
+		const that = this;
+		this.elt.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
+		this.elt.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
 		D.panels.panels[this.name] = this;
 		this.state = 'closed';
 	}
@@ -3460,7 +3578,7 @@ class Panel
 		this.elt.style.width = exp;
 		D.panels.closeAll(this);
 		this.expandBtnElt.innerHTML = D.GetButton(this.right ? 'chevronRight' : 'chevronLeft', `Cat.D.${this.name}Panel.collapse()`, 'Expand');
-		D.HideToolbar();
+		D.toolbar.hide();
 		this.state = 'expand';
 	}
 	open()
@@ -3664,7 +3782,7 @@ class CategoryPanel extends Panel
 		if (R.category && this.category !== R.category)
 		{
 			this.category = R.category;
-			D.navbar.update();
+//			D.navbar.update();
 			this.properNameElt.innerHTML = this.category.htmlName();
 			this.descriptionElt.innerHTML = this.category.description;
 			this.userElt.innerHTML = this.category.user;
@@ -4152,6 +4270,7 @@ class NewDiagramSection extends Section
 				description:	U.HtmlEntitySafe(this.descriptionElt.value),
 				user:			R.user.name,
 			});
+			R.EmitDiagramEvent(diagram, 'load');
 			R.AddDiagram(diagram);
 			R.SelectDiagram(diagram.name);
 			diagram.update();
@@ -4171,38 +4290,43 @@ class NewDiagramSection extends Section
 
 class DiagramSection extends Section
 {
-	constructor(title, parent, id, tip, updateFn = function(diagram){return '';}, filterFn = function(diagram){return true;})
+	constructor(title, parent, id, tip)
 	{
 		super(title, parent, id, tip);
-		this.diagrams = null;
-		this.updateFn = updateFn;
-		this.filterFn = filterFn;
-		this.catalog = document.createElement('div');
+		Object.defineProperties(this,
+		{
+			catalog:					{value:H3.div(),									writable: false},
+		});
 		this.catalog.classList.add('catalog');
 		this.section.appendChild(this.catalog);
 	}
-	setDiagrams(diagrams)
+	add(diagram, btns = [])
 	{
-		this.diagrams = diagrams;
-		this.update();
-	}
-	update()
-	{
-		if (super.update())
-		{
-			let rows = '';
-			const that = this;
-			const diagramFn = function(diagram)
-			{
-				if ((Diagram.IsA(diagram) || typeof diagram === 'object') && (R.default.internals ? true : diagram.user !== 'sys') && that.filterFn(diagram))
-					rows += that.diagramRow(diagram, that.updateFn(diagram));
-			};
-			if ('elements' in this.diagrams)
-				this.diagrams.forEachMorphism(diagramFn);
-			else
-				this.diagrams.forEach(diagramFn);
-			this.catalog.innerHTML = rows;
-		}
+		const dt = new Date(diagram.timestamp);
+		let src = this.getPng(diagram.name);
+		if (!src && R.cloud)
+			src = R.cloud.getURL(diagram.user, diagram.basename + '.png');
+		const elt = H3.div({class:'grabbable', id:this.getId(diagram.name)},
+			H3.table(
+			[
+				H3.tr(
+				[
+					H3.td(H3.h4(U.HtmlEntitySafe(diagram.properName))),
+					H3.td(
+						[
+							...btns,
+							D.DownloadButton3('JSON', `Cat.R.LoadDiagram('${diagram.name}').downloadJSON(event)`, 'Download JSON'),
+							D.DownloadButton3('JS', `Cat.R.LoadDiagram('${diagram.name}').downloadJS(event)`, 'Download Javascript'),
+							D.DownloadButton3('PNG', `Cat.R.LoadDiagram('${diagram.name}').downloadPNG(event)`, 'Download PNG'),
+						], {class:'right'}),
+				]),
+				H3.tr(H3.td({class:'white', colspan:2}, H3.a({onclick:`Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')`},
+															H3.img({src, id:"img_${diagram.name}", alt:"Not loaded", width:"200", height:"150"})))),
+				H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
+				H3.tr([H3.td(diagram.user, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
+			],
+			{class:'grabbable', draggable:true, ondragstart:`"Cat.D.DragElement(event, '${diagram.name}')"`}));
+		this.catalog.appendChild(elt);
 	}
 	getPng(name)
 	{
@@ -4215,22 +4339,105 @@ class DiagramSection extends Section
 		}
 		return png;
 	}
-	diagramRow(diagram, tb = '')
+	remove(name)
 	{
-		const dt = new Date(diagram.timestamp);
-		let src = this.getPng(diagram.name);
-		if (!src && R.cloud)
-			src = R.cloud.getURL(diagram.user, diagram.basename + '.png')
-		let tools = tb;
-		tools +=	D.DownloadButton('JSON', `Cat.R.LoadDiagram('${diagram.name}').downloadJSON(event)`, 'Download JSON') +
-				D.DownloadButton('JS', `Cat.R.LoadDiagram('${diagram.name}').downloadJS(event)`, 'Download Javascript') +
-				D.DownloadButton('PNG', `Cat.R.LoadDiagram('${diagram.name}').downloadPNG(event)`, 'Download PNG');
-		const tbl = H.table(
-				H.tr(H.td(H.h4(U.HtmlEntitySafe(diagram.properName)) + H.td(tools, 'right')) +
-				H.tr(H.td(`<a onclick="Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')"><img src="${src}" id="img_${diagram.name}" alt="Not loaded" width="200" height="150"/></a>`, 'white', '', '', 'colspan="2"')) +
-				H.tr(H.td(U.HtmlEntitySafe(diagram.description), 'description', '', '', 'colspan="2"')) +
-				H.tr(H.td(diagram.user, 'author') + H.td(dt.toLocaleString(), 'date')), 'diagramSlot'));
-		return H.div(tbl, 'grabbable', '', '', `draggable="true" ondragstart="Cat.D.DragElement(event, '${diagram.name}')"`);
+		const elt = document.getElementById(this.getId(name));
+		elt && elt.parent.removeChild(elt);
+	}
+}
+
+class ReferenceDiagramSection extends DiagramSection
+{
+	constructor(parent)
+	{
+		super('Reference Section', parent, 'diagram-reference-section', 'Diagrams referenced by this diagram');
+		const that = this;
+		window.addEventListener('Diagram', function(e)
+		{
+			const args = e.detail;
+			switch(args.command)
+			{
+				case 'addReference':
+					const ref = R.$CAT.getElement(args.name);
+					that.add(ref);
+					break;
+				case 'removeReference':
+					that.remove(args.name);
+					break;
+				case 'select':
+					D.RemoveChildren(that.catalog);
+					R.diagram.references.forEach(function(ref) {that.add(ref);});
+					break;
+			}
+		});
+	}
+	add(diagram)
+	{
+		super.add(diagram, [D.GetButton3('delete', `Cat.D.RemoveReference(event,'${diagram.name}')`, 'Remove reference diagram')]);
+	}
+}
+
+class UserDiagramSection extends DiagramSection
+{
+	constructor(parent)
+	{
+		super('User Diagrams', parent, 'diagram-user-section', 'Diagrams referenced by this diagram');
+		const that = this;
+		window.addEventListener('Login', function(e)
+		{
+			D.RemoveChildren(that.catalog);
+			const userDiagrams = new Map;
+			function addem(d)
+			{
+				if (userDiagrams.has(d.name) || d.user !== R.user.name || d.basename === R.user.name)
+					return;
+				userDiagrams.set(d.name, d);
+				that.add(d);
+			};
+			R.Diagrams.forEach(addem);
+			R.ServerDiagrams.forEach(addem);
+		});
+		window.addEventListener('Diagram', function(e)
+		{
+			const args = e.detail;
+			const diagram = args.diagram;
+			switch(args.command)
+			{
+				case 'new':
+					const ref = R.$CAT.getElement(args.name);
+					if (args.diagram.user === R.user.name)
+						that.add(ref);
+					break;
+				case 'load':
+					if (args.diagram.user === R.user.name)
+						that.add(diagram);
+					break;
+			}
+		});
+	}
+}
+
+class CatalogDiagramSection extends DiagramSection
+{
+	constructor(parent)
+	{
+		super('Catalog', parent, 'diagram-all-section', 'Catalog of available diagram');
+		const that = this;
+		window.addEventListener('Diagram', function(e)
+		{
+			const args = e.detail;
+			const diagram = args.diagram;
+			switch(args.command)
+			{
+				case 'new':
+					const ref = R.$CAT.getElement(args.name);
+					that.add(ref);
+					break;
+				case 'load':
+					that.add(diagram);
+					break;
+			}
+		});
 	}
 }
 
@@ -4255,14 +4462,17 @@ class AssertionSection extends Section
 		const that = this;
 		function updateAssertions(e)
 		{
-//			const assertions = that.assertions;
-//			while(assertions.firstChild)
-//				assertions.removeChild(assertions.firstChild);
-			D.DeleteChildren(that.assertions);
-			R.diagram.assertions.forEach(function(a) { that.addAssertion(R.diagram, a); });
+			const diagram = e.detail.diagram;
+			const cmd = e.detail.command;
+			switch(cmd)
+			{
+				case 'new':
+					break;
+			}
+			D.RemoveChildren(that.assertions);
+			diagram.assertions.forEach(function(a) { that.addAssertion(R.diagram, a); });
 		}
 		window.addEventListener('Diagram', updateAssertions);
-		window.addEventListener('Login', updateAssertions);
 	}
 	addAssertion(diagram, assertion)
 	{
@@ -4312,67 +4522,56 @@ class DiagramPanel extends Panel
 			H.table(H.tr(H.td('By '+ H.span('', '', 'diagram-user'), 'smallPrint') + H.td(H.span('', '', 'diagram-timestamp'), 'smallPrint')));
 		this.newDiagramSection = new NewDiagramSection(this.elt);
 		this.assertionSection = new AssertionSection(this.elt);
-		const deleteReferenceButton = function(diagram)
-		{
-			if (R.diagram.references.has(diagram.name) && R.diagram.user === R.user.name && 'refcnt' in diagram && R.diagram.canRemoveReferenceDiagram(diagram.name))
-				return D.GetButton('delete', `Cat.D.RemoveReference(event,'${diagram.name}')`, 'Remove reference diagram');
-			return '';
-		};
-		this.referenceSection = new DiagramSection('Reference Diagrams', this.elt, 'diagram-references-section', 'Diagrams referenced by this diagram', deleteReferenceButton);
-		const deleteUserDiagramButton = function(diagram)
-		{
-			return (diagram.refcnt === 1 && diagram.user === R.user.name) ?
-				D.GetButton('delete', `Cat.R.DeleteUserDiagram('${diagram.name}')`, 'Delete user diagram permanently (no undo)') : '';
-		};
-		const userDiagramFilter = function(diagram)
-		{
-			return diagram.user === R.user.name && diagram.basename !== R.user.name;
-		};
-		this.userDiagramsSection = new DiagramSection('User Diagrams', this.elt, `diagram-user-section`, 'Diagrams created by the user', deleteUserDiagramButton, userDiagramFilter);
-		this.allDiagramsSection = new DiagramSection('Catalog', this.elt, `diagram-all-section`, 'Catalog of available diagrams', function(diagram){return '';},
-			function(diagram){ return diagram.user !== 'sys'; });
+		this.referenceSection = new ReferenceDiagramSection(this.elt);
+		this.userDiagramSection = new UserDiagramSection(this.elt);
+		this.catalogSection = new CatalogDiagramSection(this.elt);
 		this.initialize();
-		this.categoryElt = document.getElementById('diagram-category');
-		this.basenamelt = document.getElementById('diagram-basename');
-		this.properNameElt = document.getElementById('diagram-properName');
-		this.properNameEditElt = document.getElementById('diagram-properName-edit');
-		this.descriptionElt = document.getElementById('diagram-description');
-		this.descriptionEditElt = document.getElementById('diagram-description-edit');
-		this.userElt = document.getElementById('diagram-user');
-		this.timestampElt = document.getElementById('diagram-timestamp');
-		this.diagramPanelToolbarElt = document.getElementById('diagramPanelToolbar');
-		this.diagram = R.diagram;
-		this.user = R.user.name;
+		Object.defineProperties(this,
+		{
+			diagram:					{value: R.diagram,											writable: true},
+			categoryElt:				{value:document.getElementById('diagram-category'),			writable: false},
+			basenameElt:				{value:document.getElementById('diagram-basename'),			writable: false},
+			properNameElt:				{value:document.getElementById('diagram-properName'),		writable: false},
+			properNameEditElt:			{value:document.getElementById('diagram-properName-edit'),	writable: false},
+			descriptionElt:				{value:document.getElementById('diagram-description'),		writable: false},
+			descriptionEditElt:			{value:document.getElementById('diagram-description-edit'),	writable: false},
+			diagramPanelToolbarElt:		{value:document.getElementById('diagramPanelToolbar'),		writable: false},
+			timestampElt:				{value:document.getElementById('diagram-timestamp'),		writable: false},
+			userElt:					{value:document.getElementById('diagram-user'),				writable: false},
+			user:						{value: R.user.name,										writable: true},
+		});
+		const that = this;
+		window.addEventListener('Diagram', function(e)
+		{
+			const args = e.detail;
+			const diagram = args.diagram;
+			switch(args.command)
+			{
+				case 'new':
+					break;
+				case 'select':
+					that.categoryElt.innerHTML = diagram.codomain.htmlName();
+					that.properNameElt.innerHTML = diagram.htmlName();
+					that.descriptionElt.innerHTML = diagram.description;
+					that.userElt.innerHTML = diagram.user;
+					that.properNameEditElt.innerHTML = !diagram.isEditable() ? '' :
+						D.GetButton('edit', `Cat.D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
+					that.descriptionEditElt.innerHTML = !diagram.isEditable() ? '' :
+						D.GetButton('edit', `Cat.D.diagramPanel.setDescription()`, 'Edit description', D.default.button.tiny);
+					that.setToolbar(diagram);
+					const dt = new Date(diagram.timestamp);
+					that.timestampElt.innerHTML = dt.toLocaleString();
+					break;
+				case 'addReference':
+					break;
+				case 'removeReference':
+					break;
+			}
+		});
 	}
 	update()
 	{
-		if (R.diagram && (R.diagram !== this.diagram || R.user.name !== this.user))
-		{
-			this.diagram = R.diagram;
-			this.referenceSection.setDiagrams(this.diagram.references);
-			const userDiagrams = new Map;
-			const addem = function(d)
-			{
-				if (!userDiagrams.has(d.name) && d.user === R.user.name)
-					userDiagrams.set(d.name, d);
-			};
-			R.Diagrams.forEach(addem);
-			R.ServerDiagrams.forEach(addem);
-			this.userDiagramsSection.setDiagrams(userDiagrams);
-			this.allDiagramsSection.setDiagrams(R.$CAT.codomain);
-			D.navbar.update();
-			this.categoryElt.innerHTML = this.diagram.codomain.htmlName();
-			this.properNameElt.innerHTML = this.diagram.htmlName();
-			this.descriptionElt.innerHTML = this.diagram.description;
-			this.userElt.innerHTML = this.diagram.user;
-			this.properNameEditElt.innerHTML = !this.diagram.isEditable() ? '' :
-				D.GetButton('edit', `Cat.D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
-			this.descriptionEditElt.innerHTML = !this.diagram.isEditable() ? '' :
-				D.GetButton('edit', `Cat.D.diagramPanel.setDescription()`, 'Edit description', D.default.button.tiny);
-			this.setToolbar(this.diagram);
-			const dt = new Date(this.diagram.timestamp);
-			this.timestampElt.innerHTML = dt.toLocaleString();
-		}
+		debugger;
 	}
 	setProperName()
 	{
@@ -4380,7 +4579,6 @@ class DiagramPanel extends Panel
 		if (diagram.isEditable() && this.properNameElt.contentEditable === 'true' && this.properNameElt.textContent !== '')
 		{
 			diagram.properName = this.properNameElt.innerText;
-			D.navbar.update();
 			this.properNameElt.contentEditable = false;
 			R.SaveLocal(diagram);
 		}
@@ -4396,7 +4594,6 @@ class DiagramPanel extends Panel
 		if (diagram.isEditable() && this.descriptionElt.contentEditable === 'true' && this.descriptionElt.textContent !== '')
 		{
 			R.diagram.description = this.descriptionElt.textContent;
-			D.navbar.update();
 			this.descriptionElt.contentEditable = false;
 			R.SaveLocal(diagram);
 		}
@@ -4756,6 +4953,82 @@ class ElementSection extends Section
 	}
 }
 
+class ElementSection3 extends Section
+{
+	constructor(title, parent, id, tip, type)
+	{
+		super(type, title, parent, id, tip);
+		Object.defineProperties(this,
+		{
+			catalog:					{value:H3.div(),	writable: false},
+			type:						{value:type,		writable: false},	// 'Object', 'Morphism'
+		});
+		this.catalog.classList.add('catalog');
+		this.section.appendChild(this.catalog);
+		const that = this;
+		window.addEventListener('Diagram', function(e)
+		{
+			const args = e.detail;
+			const diagram = args.diagram;
+			if (args.command === 'select')
+			{
+				D.RemoveChildren(that.catalog);
+				diagram[that.type === 'Object' ? 'forEachObject' : 'forEachMorphism'](function(o) { that.add(o); });
+			}
+		});
+		window.addEventListener(type, function(e)
+		{
+			const args = e.detail;
+			const diagram = args.diagram;
+			switch(args.command)
+			{
+				case 'add':
+					that.add(diagram.getElement(args.name));
+					break;
+				case 'remove':
+					that.remove(args.name);
+					break;
+			}
+		});
+	}
+	add(elt)
+	{
+		let id = `${this.section.id} ${elt.diagram.name}`;	// diagram id
+		let diagramElt = document.getElementById(id);
+		if (!diagramElt)
+		{
+			diagramElt = H3.div({id}, H3.h3(elt.diagram.name));
+			this.catalog.appendChild(diagramElt);
+		}
+		const tds = [];
+		if (R.default.internals)
+			tds.push(H3.td(elt.refcnt.toString()));
+		let div = null;
+		id = this.getId(elt.name);		// element id
+		if (this.type === 'Object')
+		{
+			tds.push(H3.td(elt.htmlName()));
+			div = H3.div({id},
+				H3.table(H3.tr(tds), {class:'grabbable sidenavRow', title:Formal(elt.description), draggable:true, ondragstart:"Cat.D.DragElement(event, '${elt.name}')"}));
+		}
+		else
+		{
+			const colspan = R.default.internals ? 3 : 2;
+			tds.push(H3.td(U.HtmlEntitySafe(elt.domain.htmlName()), {class:'left'}));
+			tds.push(H3.td('&rarr;', {class:'w10 center'}));
+			tds.push(H3.td(elt.codomain.htmlName(), {class:'right'}));
+			div = H3.div({id}, H3.table(	[H3.tr(H3.th(elt.htmlName(), {class:'center', colspan})), H3.tr(tds)],
+											{class:'panelElt grabbable', tip:U.Formal(elt.description), draggable:true, ondragstart:"Cat.D.DragElement(event, '${elt.name}')"}));
+		}
+		diagramElt.appendChild(div);
+	}
+	remove(name)
+	{
+		const elt = document.getElementById(this.getId(name));
+		elt && elt.parent.removeChild(elt);
+	}
+}
+
 class NewObjectSection extends Section
 {
 	constructor(parent)
@@ -4795,6 +5068,7 @@ class NewObjectSection extends Section
 			const properName = this.properNameElt.value;
 			const description = this.descriptionElt.value;
 			const from = this.doit(e, R.diagram, basename, properName, description, D.Center(R.diagram));
+			D.toolbar.show(e, D.Center(R.diagram));
 			R.diagram.log({command:'newObject', basename, properName, description, xy:from.getXY()});
 		}
 		catch(e)
@@ -4820,7 +5094,6 @@ class NewObjectSection extends Section
 				description,
 			});
 			const from = diagram.placeObject(e, to, xy, save);
-			D.ShowToolbar(e, D.Center(R.diagram));
 			this.update();
 			return from;
 		}
@@ -4971,7 +5244,7 @@ class NewMorphismSection extends Section
 		});
 		to.loadEquivalence();
 		const from = diagram.placeMorphism(e, to, xyDom, xyCod, false);
-		D.ShowToolbar(e, D.Center(R.diagram));
+		D.toolbar.show(e, D.Center(R.diagram));
 		this.update();
 		return from;
 	}
@@ -5067,7 +5340,7 @@ class SettingsPanel extends Panel
 				const elt = that.equalityElt;
 //				while(elt.firstChild)
 //					elt.removeChild(elt.firstChild);
-				D.DeleteChildren(elt);
+				D.RemoveChildren(elt);
 				Object.keys(msg.data).forEach(function(i)
 				{
 					if (i !== 'command' && i !== 'delta')
@@ -5082,7 +5355,7 @@ class SettingsPanel extends Panel
 	{
 		R.default.internals = !R.default.internals;
 		if (R.diagram)
-			R.EmitDiagramEvent();
+			R.EmitDiagramEvent(R.diagram, 'showInternals');
 	}
 }
 
@@ -5148,7 +5421,7 @@ class TextSection extends Section
 		const diagram = R.diagram;
 		if (!diagram)
 			return;
-		D.DeleteChildren(this.catalog);
+		D.RemoveChildren(this.catalog);
 		let rows = [];
 		const that = this;
 		/*
@@ -6420,7 +6693,7 @@ class DiagramText extends Element
 	getSVG(node, replace = false)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `nan in getSVG`;
+			throw `NaN in getSVG`;
 		const name = this.name;
 		const svg = document.createElementNS(D.xmlns, 'text');
 		node.appendChild(svg);
@@ -6658,7 +6931,7 @@ class DiagramObject extends CatObject
 	getSVG(node, replace = false)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `nan in getSVG`;
+			throw `NaN in getSVG`;
 		const name = this.name;
 		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
@@ -7107,7 +7380,7 @@ class NameAction extends Action
 			R.EmitMorphismEvent('add', nuFrom.name);
 		}
 		diagram.update();
-		D.HideToolbar();
+		D.toolbar.hide();
 	}
 	replay(e, diagram, args)
 	{
@@ -7128,7 +7401,7 @@ class NameAction extends Action
 			) +
 			H.span(D.GetButton('edit', `Cat.R.Actions.name.create(event)`, 'Create named element')) +
 			H.span('', 'error', 'named-element-new-error');
-		D.help.innerHTML = html;
+		D.toolbar.help.innerHTML = html;
 	}
 	create(e)
 	{
@@ -7447,7 +7720,7 @@ class HomObjectAction extends Action
 		for(const [key, m] of diagram.codomain.elements)
 			if (Morphism.IsA(m) && from.to.isEquivalent(m.domain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 				rows += D.HtmlRow(m, `onclick="Cat.R.$Actions.getElement('${this.name}').action(event, Cat.R.diagram, ['${from.name}', '${m.name}'])"`);
-		D.help.innerHTML = H.small(`Morphisms from ${U.HtmlEntitySafe(from.to.htmlName())}`, 'italic') + H.table(rows);
+		D.toolbar.help.innerHTML = H.small(`Morphisms from ${U.HtmlEntitySafe(from.to.htmlName())}`, 'italic') + H.table(rows);
 	}
 	doit(e, diagram, domain, morphism, save = true)
 	{
@@ -7580,7 +7853,7 @@ class DeleteAction extends Action
 		});
 		diagram.selected.length = 0;	// do not use diagram.deselectAll()
 		diagram.update();
-		D.HideToolbar();
+		D.toolbar.hide();
 	}
 	replay(e, diagram, args)
 	{
@@ -7589,7 +7862,7 @@ class DeleteAction extends Action
 	}
 	hasForm(diagram, ary)	// all are deletable
 	{
-		const elements = ary.filter(elt => DiagramObject.IsA(elt) ? [...elt.domains, elt.codomains].reduce((r, m) => r && ary.indexOf(m) > -1, true) : true);
+		const elements = ary.filter(elt => DiagramObject.IsA(elt) ? [...elt.domains, elt.codomains].reduce((r, m) => r && !ary.indexOf(m) > -1, true) : true);
 		if (!diagram.isEditable())
 			return false;
 		const morphisms = [];
@@ -7729,7 +8002,7 @@ class ProjectAction extends Action
 					H.h5(`${this.dual ? 'Domain' : 'Codomain'} Factors`) + H.br() +
 					H.span(`Click objects to remove from ${obj}`, 'smallPrint') +
 					H.div('', '', id);
-		D.help.innerHTML = html;
+		D.toolbar.help.innerHTML = html;
 		this.codomainDiv = document.getElementById(id);
 	}
 	addFactor(root, ...indices)
@@ -7857,7 +8130,7 @@ class LambdaMorphismAction extends Action
 			H.span(`, ${HomObject.IsA(codomain) ? codomain.minimalHomDom().htmlName() : codomain.htmlName()}]`) +
 			H.span(D.GetButton('edit', `Cat.R.Actions.lambda.action(event, Cat.R.diagram, Cat.R.diagram.selected)`,
 				'Create lambda morphism'));
-		D.help.innerHTML = html;
+		D.toolbar.help.innerHTML = html;
 		this.domainElt = document.getElementById('lambda-domain');
 		this.codomainElt = document.getElementById('lambda-codomain');
 	}
@@ -7949,7 +8222,7 @@ class HelpAction extends Action
 		}
 		else if (Assertion.IsA(from))
 			html = from.help();
-		D.help.innerHTML = html;
+		D.toolbar.help.innerHTML = html;
 	}
 }
 
@@ -8008,7 +8281,7 @@ class LanguageAction extends Action
 		}
 		else
 			html = H.p(U.HtmlSafe(this.generate(m)), 'code', `morphism-${this.ext}`);
-		D.help.innerHTML = html;
+		D.toolbar.help.innerHTML = html;
 	}
 	hasCode(m)
 	{
@@ -8862,7 +9135,7 @@ debugger;
 		if (canMakeData)
 		{
 			const createDataBtn = H.div(D.GetButton('table', `Cat.R.Actions.run.createData(event, R.diagram, '${from.name}')`, 'Create data morphism'), '', 'run-createDataBtn');
-			D.help.innerHTML = html + H.div(H.h5('Data'), '', 'run-display') + createDataBtn;
+			D.toolbar.help.innerHTML = html + H.div(H.h5('Data'), '', 'run-display') + createDataBtn;
 			const btn = document.getElementById('run-createDataBtn');
 			btn.style.display = 'none'
 			this.createDataBtn = btn;
@@ -8878,7 +9151,7 @@ debugger;
 			observer.observe(document.getElementById('run-display'), {childList});
 		}
 		else
-			D.help.innerHTML = html + H.div('', '', 'run-display');
+			D.toolbar.help.innerHTML = html + H.div('', '', 'run-display');
 		this.display = document.getElementById('run-display');
 		this.data = new Map;
 	}
@@ -9009,7 +9282,7 @@ class FiniteObjectAction extends Action
 					H.table(H.tr(H.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')), 'sidenavRow')) +
 					H.span('Leave size blank to indicate finite of unknown size', 'smallPrint') +
 					D.GetButton('edit', 'Cat.R.Actions.finiteObject.action(event, R.diagram, R.diagram.selected)', 'Finite object', D.default.button.tiny);
-		D.help.innerHTML = html;
+		D.toolbar.help.innerHTML = html;
 		this.sizeElt = document.getElementById('finite-new-size');
 		U.SetInputFilter(this.sizeElt, function(v)
 		{
@@ -9134,8 +9407,8 @@ class AlignHorizontalAction extends Action
 	doit(e, diagram, items)
 	{
 		const elements = this.getItems(items);
-		const xy = elements[0].getXY();
-		elements.shift();
+		const xy = D.Grid(elements[0].getXY());		// basepoint
+//		elements.shift();
 		elements.map(i =>
 		{
 			i.update({x:i.x, y:xy.y});
@@ -9143,7 +9416,7 @@ class AlignHorizontalAction extends Action
 		});
 		diagram.updateMorphisms();
 		diagram.update();
-		D.ShowToolbar(e);
+		D.toolbar.show(e);
 	}
 	replay(e, diagram, args)
 	{
@@ -9201,7 +9474,7 @@ class AlignVerticalAction extends Action
 		});
 		diagram.updateMorphisms();
 		diagram.update(save);
-		D.ShowToolbar(e);
+		D.toolbar.show(e);
 	}
 	replay(e, diagram, args)
 	{
@@ -9285,7 +9558,7 @@ class AssertionAction extends Action
 		const left = legs[0];
 		const right = legs[1];
 		this.doit(e, diagram, left, right);
-		D.ShowToolbar(e);
+		D.toolbar.show(e);
 		diagram.log({command:this.name, left:left.map(m => m.name), right:right.map(m => m.name)});
 	}
 	doit(e, diagram, left, right, save = true)
@@ -9324,7 +9597,7 @@ class AssertionAction extends Action
 			let foundIt = false;
 			const sig = Cell.Signature(legs[0], legs[1]);
 			const cell = diagram.domain.cells.get(sig);
-			if (cell.commutes || DiagramComposite.CellIsComposite(cell))
+			if (cell.commutes !== 'unknown' || DiagramComposite.CellIsComposite(cell))
 				return false;
 			return diagram.getAssertion(sig) === null;
 		}
@@ -10394,15 +10667,34 @@ class Cell extends DiagramCore
 		this.signature = Cell.Signature(this.left, this.right);
 		this.to = null;
 		this.description = '';
-		this.commutes = false;
+		this.commutes = 'unknown'
 	}
 	setCommutes(com)
 	{
 		this.commutes = com;
+		switch(com)
+		{
+			case 'assertion':
+				this.properName = D.default.cell.assertion;
+				break;
+			case 'composite':
+				this.properName = D.default.cell.composite;
+				break;
+			case 'computed':
+				this.properName = D.default.cell.computed;
+				break;
+			case 'named':
+				this.properName = D.default.cell.named;
+				break;
+			case 'unknown':
+			default:
+				this.properName = D.default.cell.unknown;
+				break;
+		}
 	}
 	setGlow()
 	{
-		this.svg && this.svg.setAttributeNS(null, 'class', this.properName === '?' ? 'badCell' : 'cellTxt');
+		this.svg && this.svg.setAttributeNS(null, 'class', this.commutes === 'unknown' ? 'badCell' : 'cellTxt');
 	}
 	register()
 	{
@@ -10424,7 +10716,7 @@ class Cell extends DiagramCore
 	getSVG(node, replace = false)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `nan in getSVG`;
+			throw `NaN in getSVG`;
 		const name = this.name;
 		const sig = this.signature;
 		const mouseenter = function(e) { Cat.R.diagram.emphasis(sig, true);};
@@ -10493,6 +10785,20 @@ class Cell extends DiagramCore
 		if (objects.size !== this.left.length + this.right.length)	// no sharing objects between legs
 			return false;
 		return true;
+	}
+	isNamedMorphism()
+	{
+		if (this.left.length === 1 && this.right.length === 1)
+		{
+			const m = this.left[0];
+			const n = this.right[0];
+			function cmp(a, b)
+			{
+				return NamedMorphism.IsA(a.to) && a.to.source === b.to;
+			}
+			return cmp(m, n) || cmp(n, m);
+		}
+		return false;
 	}
 	finishMove()
 	{
@@ -12068,7 +12374,7 @@ class Diagram extends Functor
 	deselectAll(toolbarOff = true)
 	{
 		if (toolbarOff)
-			D.HideToolbar();
+			D.toolbar.hide();
 		this.selected.map(elt => elt.showSelected(false));
 		this.selected.length = 0;
 	}
@@ -12085,7 +12391,7 @@ class Diagram extends Functor
 			this.addSelected(elt);
 		if (R.default.debug)
 			console.log('selected', elt.basename, elt.refcnt, elt);
-		D.ShowToolbar(e);
+		D.toolbar.show(e);
 	}
 	addSelected(elt)
 	{
@@ -12127,16 +12433,13 @@ class Diagram extends Functor
 				return;
 			if (!D.shiftKey)
 				this.deselectAll();
-//			window.setTimeout(function()
-//			{
-//			}, D.default.dragDelay);
 			D.dragStart = D.mouse.position();
 			if (!this.isSelected(elt))
 			{
 				if (D.shiftKey)
 				{
 					this.addSelected(elt);
-					D.ShowToolbar(e);
+					D.toolbar.show(e);
 				}
 				else
 					this.makeSelected(e, elt);
@@ -12155,7 +12458,7 @@ class Diagram extends Functor
 				cell.left.map(m => this.addSelected(m));
 				cell.right.map(m => this.addSelected(m));
 			}
-			D.ShowToolbar(e);
+			D.toolbar.show(e);
 		}
 		else
 			this.deselectAll();
@@ -12665,7 +12968,7 @@ class Diagram extends Functor
 				selected.push(e);
 		}, this);
 		selected.map(e => this.addSelected(e));
-		D.ShowToolbar(e);
+		D.toolbar.show(e);
 	}
 	downloadJSON(e)
 	{
@@ -12787,7 +13090,7 @@ class Diagram extends Functor
 		});
 		this.domain.clear();
 		Array.from(this.elements).reverse().map(a => a[1].decrRefcnt());
-		R.EmitDiagramEvent();
+//		R.EmitDiagramEvent('clear', this.name);
 //		D.objectPanel.update();
 //		D.morphismPanel.update();
 		this.update(save);
