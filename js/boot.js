@@ -865,7 +865,7 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 	const strPlusOne = MakeObject(args, '', 'ProductObject', '', 'A string or an exception', {objects:[str, one], dual:true}).to;
 	const emptyString = new Cat.DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
 	PlaceMorphism(args, emptyString);
-	const strLength = MakeMorphism(args, 'length', 'Morphism', '#', 'length of a string', str, N,
+	const strLength = MakeMorphism(args, 'length', 'Morphism', 'length', 'length of a string', str, N,
 	{
 		js:'function %1(args)\n{\n	return args.length;\n}\n',
 		cpp:
@@ -962,7 +962,8 @@ function %1(args)
 `,
 	});
 	const N2str = FromN2str.to;
-	const str2N = placeMorphismByObject(args, 'str2N', 'Morphism', '&lsquo;&rsquo;', 'convert a string to a natural number', str, NplusOne,
+
+	const str2N = placeMorphismByObject(args, 'str2N', 'Morphism', '#', 'convert a string to a natural number', str, NplusOne,
 	{
 		js:
 `function %1(args)
@@ -1003,7 +1004,7 @@ function %1(args)
 	});
 	const Z2str = FromZ2str.to;
 
-	const str2Z = placeMorphismByObject(args, 'str2Z', 'Morphism', '&lsquo;&rsquo;', 'convert a string to an integer', str, ZplusOne,
+	const str2Z = placeMorphismByObject(args, 'str2Z', 'Morphism', '#', 'convert a string to an integer', str, ZplusOne,
 	{
 		js:
 `
@@ -1056,7 +1057,7 @@ function %1(args)
 	});
 	const F2str = fromF2str.to;
 
-	const str2F = placeMorphismByObject(args, 'str2F', 'Morphism', '&lsquo;&rsquo;', 'convert a string to a floating point number', str, FplusOne,
+	const str2F = placeMorphismByObject(args, 'str2F', 'Morphism', '#', 'convert a string to a floating point number', str, FplusOne,
 	{
 		js:
 `
