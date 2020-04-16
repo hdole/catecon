@@ -843,3 +843,22 @@ canvas
 {
 	background-color:	#fdd;
 }
+
+proper-name
+{
+	display:		inline-block;
+	margin:			2px;
+	border:			none;
+	color:			black;
+	font:			12px "Fira Sans", sans-serif;
+	text-align:		left;
+}
+
+description
+{
+	display:		block;
+	margin:			2px;
+	border:			none;
+	color:			black;
+	text-align:		left;
+}
