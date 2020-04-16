@@ -673,10 +673,23 @@ Create diagrams and execute morphisms.
 	{
 		try
 		{
+			window.addEventListener('Assertion', function(e)
+			{
+				const args = e.detail;
+				switch(args.command)
+				{
+					case 'load':
+						break;
+					case 'new':
+					case 'remove':
+						args.diagram.makeCells();
+						break;
+				}
+			});
 			window.addEventListener('Morphism', function(e)
 			{
 				const args = e.detail;
-				switch(args.cmd)
+				switch(args.command)
 				{
 					case 'new':
 					case 'remove':
@@ -691,11 +704,13 @@ Create diagrams and execute morphisms.
 				const args = e.detail;
 				if (args.command === 'select')
 				{
-					R.LoadDiagramEquivalences(args.diagram);
-					args.diagram.makeCells();
+					const diagram = args.diagram;
+					R.LoadDiagramEquivalences(diagram);
+					diagram.makeCells();
+					R.LoadAllAssertions();
 				}
 			});
-			window.addEventListener('Login', function(e) { R.SetupUserHome(e.detail.user); } );
+			window.addEventListener('Login', function(e) { R.SetupUserHome(e.detail.name); } );
 			const worker = new Worker('js/workerEquality.js');
 			R.workers['equality'] = worker;
 			worker.addEventListener('message', function(msg)
@@ -1355,24 +1370,45 @@ Create diagrams and execute morphisms.
 	{
 		R.workers.equality.postMessage({command:'Load', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
 	}
+	static EmitLoginEvent(command, name = '')	// like diagram was loaded
+	{
+		if (R.default.debug)
+			console.log('emit LOGIN event', {command, name});
+		window.dispatchEvent(new CustomEvent('Login', {detail:	{command, name}, bubbles:true, cancelable:true}));
+	}
 	static EmitDiagramEvent(diagram, command, name = '')	// like diagram was loaded
 	{
+		if (R.default.debug)
+			console.log('emit DIAGRAM event', diagram.name, {command, name});
 		window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitObjectEvent(command, name)	// like an object changed
 	{
+		if (R.default.debug)
+			console.log('emit OBJECT event', {command, name});
 		window.dispatchEvent(new CustomEvent('Object', {detail:	{diagram:R.diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitMorphismEvent(command, name)
 	{
+		if (R.default.debug)
+			console.log('emit MORPHISM event', {command, name});
 		window.dispatchEvent(new CustomEvent('Morphism', {detail:	{diagram:R.diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitAssertionEvent(command, name)
 	{
+		if (R.default.debug)
+			console.log('emit ASSERTION event', {command, name});
 		window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram:R.diagram, command, name}, bubbles:true, cancelable:true}));
+	}
+	static LoadAllAssertions()
+	{
+		D.RemoveChildren(D.panels.panels.diagram.assertionSection.assertions);
+		R.diagram.assertions.forEach(function(a) { R.EmitAssertionEvent('load', a.name); });
 	}
 	static EmitTextEvent(command, name)
 	{
+		if (R.default.debug)
+			console.log('emit TEXT event', {command, name});
 		window.dispatchEvent(new CustomEvent('Text', {detail:	{diagram:R.diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitElementEvent(elt, command)
@@ -1574,8 +1610,9 @@ class Amazon extends Cloud
 						if (R.default.debug)
 							console.log('registerCognito: user diagrams on server', dgrms);
 					});
-					const loginEvent = new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true});
-					window.dispatchEvent(loginEvent);
+//					const loginEvent = new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true});
+//					window.dispatchEvent(loginEvent);
+					R.EmitLoginEvent('login', R.user.name);
 				});
 			});
 			this.updateServiceObjects();
@@ -1618,7 +1655,8 @@ class Amazon extends Cloud
 			R.user.name = userName;
 			R.user.email = email;
 			R.user.status = 'registered';
-			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+//			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+			R.EmitLoginEvent('registered', R.user.name);
 		});
 	}
 	resetPassword()
@@ -1649,7 +1687,8 @@ class Amazon extends Cloud
 			R.user.name = userName;
 			R.user.email = email;
 			R.user.status = 'registered';
-			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+//			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+			R.EmitLoginEvent('registered', R.user.name);
 		});
 	}
 	confirm()
@@ -1663,7 +1702,8 @@ class Amazon extends Cloud
 				return;
 			}
 			R.user.status = 'confirmed';
-			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+//			window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+			R.EmitLoginEvent('confirmed', R.user.name);
 		});
 	}
 	login(e)
@@ -1731,7 +1771,8 @@ class Amazon extends Cloud
 		R.user.name = 'Anon';
 		R.user.email = '';
 		R.user.status = 'unauthorized';
-		window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+//		window.dispatchEvent(new CustomEvent('Login', {detail:	{user:R.user.name}, bubbles:true, cancelable:true}));
+		R.EmitLoginEvent('logout', R.user.name);
 	}
 	async fetchDiagram(name, cache = true)
 	{
@@ -1982,7 +2023,7 @@ class Toolbar
 		this.element.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
 		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
 		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
-		window.addEventListener('Diagram', function(e){ that.diagram = e.detail.diagram;});
+//		window.addEventListener('Diagram', function(e){ that.diagram = e.detail.diagram;});
 		window.addEventListener('Autohide', function(e)
 		{
 			if (e.detail.command === 'hide')
@@ -2015,7 +2056,7 @@ class Toolbar
 		const element = this.element;
 		this.wasHidden = element.classList.contains('hidden');
 		this.reveal();
-		const diagram = this.diagram;
+		const diagram = R.diagram;
 		if (diagram.selected.length === 0)
 		{
 			this.hide();
@@ -4416,9 +4457,8 @@ class UserDiagramSection extends DiagramSection
 			switch(args.command)
 			{
 				case 'new':
-					const ref = R.$CAT.getElement(args.name);
 					if (args.diagram.user === R.user.name)
-						that.add(ref);
+						that.add(args.diagram);
 					break;
 				case 'load':
 					if (args.diagram.user === R.user.name)
@@ -4442,8 +4482,7 @@ class CatalogDiagramSection extends DiagramSection
 			switch(args.command)
 			{
 				case 'new':
-					const ref = R.$CAT.getElement(args.name);
-					that.add(ref);
+					that.add(diagram);
 					break;
 				case 'load':
 					that.add(diagram);
@@ -4461,30 +4500,46 @@ class AssertionSection extends Section
 		window.addEventListener('Assertion', function(e)
 		{
 			const args = e.detail;
-			if (args.command === 'new')
-				D.diagramPanel.assertionSection.addAssertion(args.diagram, args.assertion);
-			else if (args.command === 'remove')
+			const diagram = args.diagram;
+			switch(args.command)
 			{
-				const elt = document.getElementById(`assertion ${args.name}`);
-				elt.parentNode.removeChild(elt);
+				case 'new':
+				case 'load':
+					D.diagramPanel.assertionSection.addAssertion(diagram, diagram.getElement(args.name));
+					break;
+				case 'remove':
+					const elt = document.getElementById(`assertion ${args.name}`);
+					elt.parentNode.removeChild(elt);
 			}
 		});
 		this.assertions = H3.div({class:'catalog'});
 		this.section.appendChild(this.assertions);
 		const that = this;
+		/*
 		function updateAssertions(e)
 		{
-			const diagram = e.detail.diagram;
-			const cmd = e.detail.command;
+			const args = e.detail;
+			const diagram = args.diagram;
+			const cmd = args.command;
 			switch(cmd)
 			{
 				case 'new':
+					that.addAssertion(diagram, diagram.getElement(args.name));
+					break;
+				case 'remove':
+					that.deleteAssertion(args.name);
 					break;
 			}
-			D.RemoveChildren(that.assertions);
-			diagram.assertions.forEach(function(a) { that.addAssertion(R.diagram, a); });
+//			D.RemoveChildren(that.assertions);
+//			diagram.assertions.forEach(function(a) { that.addAssertion(diagram, a); });
 		}
-		window.addEventListener('Diagram', updateAssertions);
+		window.addEventListener('Assertion', updateAssertions);
+		*/
+		window.addEventListener('Login', function(e)
+		{
+//			const args = e.detail;
+			R.LoadAllAssertions();
+		});
 	}
 	addAssertion(diagram, assertion)
 	{
@@ -4504,7 +4559,7 @@ class AssertionSection extends Section
 		const sig = assertion.signature;
 		div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(sig, true);});
 		div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(sig, false);});
-		div.addEventListener('mousedown', function(e) { Cat.R.diagram.pickElement(event, sig);});
+		div.addEventListener('mousedown', function(e) { Cat.R.diagram.pickElement(event, assertion.name);});
 		this.assertions.appendChild(div);
 	}
 	deleteAssertion(name)
@@ -7255,6 +7310,7 @@ class CompositeAction extends Action
 	{
 		const to = diagram.get('Composite', {morphisms:morphisms.map(m => m.to)});
 		const from = new DiagramComposite(diagram, {to, domain:Composite.Domain(morphisms), codomain:Composite.Codomain(morphisms), morphisms});
+		R.EmitMorphismEvent('new', from.name);
 		diagram.addSVG(from);
 		from.update();
 		diagram.makeSelected(e, from);
@@ -7387,9 +7443,9 @@ class NameAction extends Action
 			diagram.addSVG(idx2);
 			idx1.update();
 			idx2.update();
-			R.EmitObjectEvent('add', nid.name);
-			R.EmitMorphismEvent('add', idx1.name);
-			R.EmitMorphismEvent('add', idx2.name);
+			R.EmitObjectEvent('new', nid.name);
+			R.EmitMorphismEvent('new', idx1.name);
+			R.EmitMorphismEvent('new', idx2.name);
 		}
 		else if (Morphism.IsA(source))
 		{
@@ -7401,7 +7457,7 @@ class NameAction extends Action
 			diagram.addSVG(nuFrom);
 			source.update();
 			nuFrom.update();
-			R.EmitMorphismEvent('add', nuFrom.name);
+			R.EmitMorphismEvent('new', nuFrom.name);
 		}
 		diagram.update();
 		D.toolbar.hide();
@@ -7852,26 +7908,26 @@ class DeleteAction extends Action
 			let s = elements[i];
 			if (DiagramObject.IsA(s))	// TODO what about morphisms as objects in 2Cat?
 			{
+				s.refcnt > 0 && s.decrRefcnt();
 				if (s.refcnt <= 1)
 					R.EmitObjectEvent('remove', s.name);
-				s.refcnt > 0 && s.decrRefcnt();
 			}
 			else if (DiagramMorphism.IsA(s))
 			{
+				s.decrRefcnt();
 				if (s.refcnt <= 1)
 					R.EmitMorphismEvent('remove', s.name);
-				s.decrRefcnt();
 				updateHomSets.add([s.domain.name, s.codomain.name]);	// TODO
 			}
 			else if (DiagramText.IsA(s))
 			{
-				R.EmitTextEvent('remove', s.name);
 				s.decrRefcnt();
+				R.EmitTextEvent('remove', s.name);
 			}
 			else if (Assertion.IsA(s))
 			{
-				R.EmitAssertionEvent('remove', s.name);
 				s.decrRefcnt();
+				R.EmitAssertionEvent('remove', s.name);
 			}
 		}
 		updateHomSets.forEach(function(pair)
@@ -9598,6 +9654,7 @@ class AssertionAction extends Action
 			const codCells = m.codomain.nodes;
 			nodes = new Set([...nodes].filter(c => codCells.has(c)));
 		});
+		R.EmitAssertionEvent('new', a);
 		diagram.pickElement(e, a);
 		diagram.update(save);
 	}
@@ -12448,6 +12505,7 @@ class Diagram extends Functor
 			}
 			if (DiagramObject.IsA(elt))
 				elt.orig = {x:elt.x, y:elt.y};
+			D.toolbar.show(e, elt);
 		}
 		else if (this.domain.cells.has(name))
 		{
@@ -12460,7 +12518,7 @@ class Diagram extends Functor
 				cell.left.map(m => this.addSelected(m));
 				cell.right.map(m => this.addSelected(m));
 			}
-			D.toolbar.show(e);
+			D.toolbar.show(e, a);
 		}
 		else
 			this.deselectAll();
@@ -13085,7 +13143,8 @@ class Diagram extends Functor
 		Array.from(this.assertions).reverse().map(a =>
 		{
 			const assertion = a[1];
-			window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram:this, command:'remove', name:assertion.name}}));
+//			window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram:this, command:'remove', name:assertion.name}}));
+			R.EmitAssertionEvent('remove', assertion.name);
 			assertion.decrRefcnt();
 		});
 		this.domain.clear();
@@ -13115,7 +13174,8 @@ class Diagram extends Functor
 	addAssertion(left, right)
 	{
 		const assertion = this.get('Assertion', {left, right});
-		isGUI && assertion && window.dispatchEvent(new CustomEvent('Assertion', { detail:	{diagram:this, command:'new', assertion}, bubbles:true, cancelable:true}));
+//		isGUI && assertion && window.dispatchEvent(new CustomEvent('Assertion', { detail:	{diagram:this, command:'new', name:assertion.name}, bubbles:true, cancelable:true}));
+//		isGUI && assertion && R.EmitAssertionEvent('new', assertion.name);
 		return assertion;
 	}
 	makeCells()
@@ -13278,7 +13338,7 @@ class Diagram extends Functor
 		this.deselectAll();
 		from.domains.forEach(function(m) { m.setDomain(target); m.update();});
 		from.codomains.forEach(function(m) { m.setCodomain(target); m.update();});
-		const cnt = from.domains.length + from.codomains.length;
+		const cnt = target.domains.size + target.codomains.size;
 		from.decrRefcnt();
 		this.update(save);
 		R.EmitObjectEvent('remove', from.name);
