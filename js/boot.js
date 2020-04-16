@@ -1137,10 +1137,8 @@ function %1(args)
 	return r;
 }
 `,
-		
 	}).to;
 	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
-	
 	{
 		js:`function %1(args)\n{\n	return Number.parseInt(document.getElementById(args).value);\n}\n`,
 	}).to;
@@ -1150,7 +1148,6 @@ function %1(args)
 		js:`function %1(args)\n{\n	return Number.parseFloat(document.getElementById(args).value);\n}\n`,
 	}).to;
 	const html2Str = MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
-	
 	{
 		js:`function %1(args)\n{\n	return document.getElementById(args).value;\n}\n`,
 	}).to;
@@ -1159,7 +1156,6 @@ function %1(args)
 	PlaceMorphism(args, N_html2str);
 	const strXN_html2str = htmlDiagram.get('ProductObject', {objects:[str, N_html2str.codomain]});
 	const html2line = MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
-	
 	{
 		js:`function %1(args)\n{\n	return ['<input type="text" id="' + args + '" value="" placeholder="Text"/>', ${Cat.U.Token(N_html2str)}]\n}\n`,
 	}).to;
@@ -1167,7 +1163,6 @@ function %1(args)
 	PlaceMorphism(args, N_html2N);
 	const strXN_html2N = htmlDiagram.get('ProductObject', {objects:[str, N_html2N.codomain]});
 	const html2Nat = MakeMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
-	
 	{
 		js:`function %1(args)\n{\n	return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${Cat.U.Token(N_html2N)}];\n}\n`,
 	}).to;
@@ -1175,7 +1170,6 @@ function %1(args)
 	PlaceMorphism(args, N_html2Z);
 	const strXN_html2Z = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z.codomain]});
 	const html2Int = MakeMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
-	
 	{
 		js:`function %1(args)\n{\n	return ['<input type="number" id="' + args + '" value="0" placeholder="Integer"/>', ${Cat.U.Token(N_html2Z)}];\n}\n`,
 	}).to;
