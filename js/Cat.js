@@ -3,19 +3,22 @@
 //
 'use strict';
 
+/*
 class ProperName extends HTMLElement
 {
 	constructor()
 	{
 		super();
+		debugger;
 	}
 	connectedCallback()
 	{
 		this.innerHTML = 'did it';
+		debugger;
 	}
 }
-
 customElements.define('proper-name', ProperName, {extends: 'span'});
+*/
 
 (function(exports)
 {
@@ -625,7 +628,7 @@ class R
 					references:		['hdole/HTML'],
 					user,
 				});
-				R.EmitDiagramEvent(diagram, 'load');
+				R.EmitDiagramEvent(home, 'load');
 				const args =
 				{
 					description:
@@ -670,11 +673,27 @@ Create diagrams and execute morphisms.
 	{
 		try
 		{
+			window.addEventListener('Morphism', function(e)
+			{
+				const args = e.detail;
+				switch(args.cmd)
+				{
+					case 'new':
+					case 'remove':
+					case 'fuse':
+					case 'detach':
+						args.diagram.makeCells();
+						break;
+				}
+			});
 			window.addEventListener('Diagram', function(e)
 			{
 				const args = e.detail;
 				if (args.command === 'select')
+				{
 					R.LoadDiagramEquivalences(args.diagram);
+					args.diagram.makeCells();
+				}
 			});
 			window.addEventListener('Login', function(e) { R.SetupUserHome(e.detail.user); } );
 			const worker = new Worker('js/workerEquality.js');
@@ -4697,7 +4716,7 @@ class HelpPanel extends Panel
 			H.h4('The Categorical Console')	+
 			H.p(H.small('Level 1', 'smallCaps italic'), 'txtCenter') +
 			H.p(H.small(`Deployed ${date}`, 'smallCaps'), 'txtCenter') + H.br() +
-			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Interactive actions', `onclick="Cat.D.Panel.SectionToggle(this, \'catActionHelpPnl\')"`) +
+			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'catActionHelpPnl\')"`) +
 			H.div(	H.h4('Mouse Actions') +
 					H.h5('Select') +
 						H.p('Select an object or a morphism with the mouse by left-clicking on the element.  Previously selected objects are unselected.') +
@@ -5040,10 +5059,10 @@ class DiagramElementSection extends ElementSection3
 		{
 			const args = e.detail;
 			const diagram = args.diagram;
-			const elt = diagram.getElement(args.name);
+			const name = args.name;
+			const elt = diagram.getElement(name);
 			if (DiagramMorphism.IsA(elt) || DiagramObject.IsA(elt))
 				return;
-			const name = elt.name;
 			switch(args.command)
 			{
 				case 'new':
@@ -5326,18 +5345,26 @@ class SettingsPanel extends Panel
 		super('settings', true);
 		this.elt.innerHTML =
 			H.table(H.tr(this.closeBtnCell()), 'buttonBarLeft') +
-			H.h3('Settings') +
-			H.table(
-				H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="Cat.D.gridding = !D.gridding;D.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="Cat.D.SettingsPanel.ToggleShowInternals();Cat.D.SaveDefaults()">`) +
-						H.td('Show internal info', 'left'), 'sidenavRow') +
-				H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="Cat.R.default.debug = !Cat.R.default.debug;Cat.D.SaveDefaults()">`) +
-						H.td('Debug', 'left'), 'sidenavRow')
-			) +
-			H.h3('Defaults') +
-			H.div('', '', 'settings-defaults') +
-			H.h3('Equality Info') +
-			H.div('', '', 'settings-equality');
+			H.button('Settings', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'settings-actions\')"`) +
+//			H.h3('Settings') +
+			H.div(
+				H.table(
+					H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="Cat.D.gridding = !D.gridding;D.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
+					H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="Cat.D.SettingsPanel.ToggleShowInternals();Cat.D.SaveDefaults()">`) +
+							H.td('Show internal info', 'left'), 'sidenavRow') +
+					H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="Cat.R.default.debug = !Cat.R.default.debug;Cat.D.SaveDefaults()">`) +
+							H.td('Debug', 'left'), 'sidenavRow')
+			), 'section', 'settings-actions') +
+			H.button('Defaults', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'settings-defaults\')"`) +
+			H.div('', 'section', 'settings-defaults') +
+			H.button('Equality Info', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'settings-equality\')"`) +
+			H.div('', 'section', 'settings-equality');
+//			H.div(tbl, '', 'settings-actions') +
+//			H.h3('Defaults') +
+//			H.div('', '', 'settings-defaults') +
+//			H.h3('Equality Info') +
+//			H.div('', '', 'settings-equality');
+
 		this.initialize();
 		this.equalityElt = document.getElementById('settings-equality');
 		const that = this;
@@ -7764,6 +7791,7 @@ class DetachDomainAction extends Action
 	{
 		const obj = this.dual ? from.codomain : from.domain;
 		diagram.addSVG(diagram.domain.detachDomain(from, {x:obj.x + D.default.toolbar.x, y:obj.y + D.default.toolbar.y }, this.dual));
+		R.EmitMorphismEvent('detach', obj.name);
 		diagram.update();
 		from.update();
 		diagram.makeSelected(e, from);
@@ -10510,10 +10538,10 @@ class DiagramMorphism extends Morphism
 	intersect(bbox, side, m = D.default.arrow.margin)
 	{
 		let pnt = new D2;
-		const x = bbox.x - m;
-		const y = bbox.y - m;
-		const width = bbox.width + 2 * m;
-		const height = bbox.height + 2 * m;
+		const x = bbox.x - m/2;
+		const y = bbox.y;
+		const width = bbox.width + m;
+		const height = bbox.height;
 		switch(side)
 		{
 		case 'top':
@@ -10677,6 +10705,7 @@ class Cell extends DiagramCore
 				this.properName = D.default.cell.unknown;
 				break;
 		}
+		this.setGlow();
 	}
 	setGlow()
 	{
@@ -12309,7 +12338,7 @@ class Diagram extends Functor
 	}
 	update(save = true)
 	{
-		this.makeCells();
+//		this.makeCells();
 		save && R.SaveLocal(this);
 	}
 	actionHtml(e, name)
@@ -13249,8 +13278,12 @@ class Diagram extends Functor
 		this.deselectAll();
 		from.domains.forEach(function(m) { m.setDomain(target); m.update();});
 		from.codomains.forEach(function(m) { m.setCodomain(target); m.update();});
+		const cnt = from.domains.length + from.codomains.length;
 		from.decrRefcnt();
 		this.update(save);
+		R.EmitObjectEvent('remove', from.name);
+		cnt > 0 && R.EmitMorphismEvent('fuse', target.name);
+		return target;
 	}
 	replayCommand(e, ndx)
 	{
