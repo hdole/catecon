@@ -118,6 +118,10 @@ class D2
 	{
 		return v.x * v.x + v.y * v.y;
 	}
+	static Cross(o, a, b)
+	{
+		return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+	}
 	static Length(v)
 	{
 		return Math.sqrt(D2.Inner(v));
@@ -223,6 +227,29 @@ class D2
 	static IsA(obj)
 	{
 		return D2.prototype.isPrototypeOf(obj);
+	}
+	static Hull(ary)
+	{
+		const cnt = ary.length;
+		if (cnt <= 3)
+			return ary;
+		const pnts = ary.sort(function(a, b) { return a.x < b.x ? true : a.y < b.y; });
+		let k = 0;
+		const r = [];
+		for (let i=0; i<cnt; ++i)
+		{
+			while(k >= 2 && D2.Cross(r[k -2], r[k -1], pnts[i]) <= 0)
+				k--;
+			r[k++] = pnts[i];
+		}
+		let t = k + 1;
+		for (let i=cnt -1; i>0; --i)
+		{
+			while(k >= t && D2.Cross(r[k -2], r[k -1], pnts[i -1]) <= 0)
+				k--;
+			r[k++] = pnts[i -1];
+		}
+		return r;
 	}
 }
 
@@ -2808,8 +2835,33 @@ ${button}
 	{
 		return H.input(val, cls, id, type, {ph});
 	}
+	static GetObjects(ary)
+	{
+		const elts = new Set;
+		for(let i=0; i < ary.length; ++i)
+		{
+			const elt = ary[i];
+			if ((DiagramObject.IsA(elt) || DiagramText.IsA(elt)) && !(elt.name in elts))
+				elts.add(elt);
+			else if (DiagramMorphism.IsA(elt))
+			{
+				if ('bezier' in elt)
+					elts.add(D.Barycenter([elt.bezier.cp1, elt.bezier.cp2]));
+				else
+				{
+//					elts.add(D.Barycenter([elt.domain, elt.codomain]));
+					elts.add(elt.domain);
+					elts.add(elt.codomain);
+				}
+			}
+			else if (D2.IsA(elt))
+				elts.add(elt);
+		}
+		return elts;
+	}
 	static Barycenter(ary)
 	{
+		/*
 		const elts = new Set;
 		for(let i=0; i < ary.length; ++i)
 		{
@@ -2826,15 +2878,15 @@ ${button}
 			else if (D2.IsA(elt))
 				elts.add(elt);
 		}
-		let xy = new D2;
-		let cnt = 0;
-		elts.forEach(function(e)
-		{
-			++cnt;
-			xy.increment(e);
-		});
-		xy = xy.scale(1.0/cnt);
-		return xy;
+		*/
+		const elts = D.GetObjects(ary);
+		const xy = new D2;
+		elts.forEach(function(pnt) { xy.increment(pnt); });
+		return xy.scale(1.0/elts.size);
+	}
+	static BaryHull(ary)
+	{
+		return D.Barycenter(D2.Hull([...D.GetObjects(ary)]));
 	}
 	static testAndFireAction(e, name, ary)
 	{
@@ -3570,7 +3622,7 @@ class Panel
 		this.right = right;
 		this.elt = document.getElementById(`${this.name}-sidenav`);
 		this.elt.addEventListener('mouseenter', function(e){ D.mouse.onPanel = true; });
-		this.elt.addEventListener('mouseleave', function(e){ D.mouse.onPanel = false; console.log('panel lost mouse!');});
+		this.elt.addEventListener('mouseleave', function(e){ D.mouse.onPanel = false;});
 		const that = this;
 		this.elt.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
 		this.elt.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
@@ -7119,7 +7171,7 @@ class CompositeAction extends Action
 	action(e, diagram, morphisms)
 	{
 		const names = morphisms.map(m => m.name);
-		this.doit(e, diagram, morphisms);
+		const from = this.doit(e, diagram, morphisms);
 		diagram.log({command:'composite', morphisms:names});
 		R.SaveLocal(diagram);
 		diagram.makeSelected(e, from);
@@ -7131,6 +7183,7 @@ class CompositeAction extends Action
 		R.EmitMorphismEvent('new', from.name);
 		diagram.addSVG(from);
 		from.update();
+		return from;
 	}
 	replay(e, diagram, args)
 	{
@@ -7614,7 +7667,7 @@ class HomObjectAction extends Action
 		const morphisms = [];
 		let rows = '';
 		for(const [key, m] of diagram.codomain.elements)
-			if (Morphism.IsA(m) && from.to.isEquivalent(m.domain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
+			if (Morphism.IsA(m) && from.to.isEquivalent(this.dual ? m.codomain : m.domain) && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
 				rows += D.HtmlRow(m, `onclick="Cat.R.$Actions.getElement('${this.name}').action(event, Cat.R.diagram, ['${from.name}', '${m.name}'])"`);
 		D.toolbar.help.innerHTML = H.small(`Morphisms from ${U.HtmlEntitySafe(from.to.htmlName())}`, 'italic') + H.table(rows);
 	}
@@ -10586,7 +10639,7 @@ class Cell extends DiagramCore
 	}
 	getXY()
 	{
-		const r = D.Barycenter([...this.left, ...this.right]);
+		const r = D.BaryHull([...this.left, ...this.right]);
 		if (isNaN(r.x) || isNaN(r.y))
 			return new D2;
 		return r;
@@ -10654,9 +10707,7 @@ class Cell extends DiagramCore
 			const objs = new Set([leg[0].domain, ...leg.map(m => m.codomain)]);
 			return objs.size === leg.length + 1;
 		}
-		if (!checkObjects(this.left))
-			return false;
-		if (!checkObjects(this.right))
+		if (!checkObjects(this.left) || !checkObjects(this.right))
 			return false;
 		const objects = new Set([this.left[0], ...this.left.map(m => m.codomain), ...this.right.map(m => m.codomain)]);
 		if (objects.size !== this.left.length + this.right.length)	// no sharing objects between legs
