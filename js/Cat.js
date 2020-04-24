@@ -525,7 +525,7 @@ class U
 	static Token(e, cls = false)
 	{
 		const s = typeof e === 'string' ? e : e.name;
-		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_o_').replace(/#/g, '_n_')
+		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_').replace(/#/g, '_n_')
 			.replace(/\[/g, '_br_')
 			.replace(/\]/g, '_rb_');
 		return r;
@@ -1986,6 +1986,20 @@ class Navbar
 				that.categoryElt.innerHTML = U.HtmlEntitySafe(diagram.codomain.htmlName());
 			}
 		});
+		window.addEventListener('Autohide', function(e)
+		{
+			const args = e.detail;
+			if (args.command === 'hide')
+			{
+				D.navbar.element.style.opacity = "0";
+				D.navbar.element.style.height = "0px";
+			}
+			else
+			{
+				D.navbar.element.style.opacity = "100";
+				D.navbar.element.style.height = "32px";
+			}
+		});
 	}
 	updateByUserStatus()
 	{
@@ -2044,10 +2058,10 @@ class Toolbar
 			}
 			else
 			{
-				if (!that.wasHidden)
-				{
+//				if (!that.wasHidden)
+//				{
 					that.reveal();
-				}
+//				}
 			}
 		});
 	}
@@ -2227,32 +2241,32 @@ class D
 	}
 	static Autohide()
 	{
-		if (D.CheckPanels())
-			return;
+//		if (D.CheckPanels())
+//			return;
 		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		// TODO move to their own listeners
-		D.openPanels.map(pnl => pnl.open());
-		D.openPanels = [];
-		D.navbar.element.style.opacity = "100";
-		D.navbar.element.style.height = "32px";
+//		D.openPanels.map(pnl => pnl.open());
+//		D.openPanels = [];
+//		D.navbar.element.style.opacity = "100";
+//		D.navbar.element.style.height = "32px";
 		D.CancelAutohide();
 		D.autohideTimer = setTimeout(function()
 		{
-			if (D.CheckPanels())
-				return;
+//			if (D.CheckPanels())
+//				return;
 			if (D.mouse.onGUI)
 				return;
-			for (const name in D.panels.panels)
-			{
-				const pnl = D.panels.panels[name];
-				if (pnl.state === 'open')
-				{
-					D.openPanels.push(pnl);
-					pnl.close();
-				}
-			}
-			D.navbar.element.style.opacity = "0";
-			D.navbar.element.style.height = "0px";
+//			for (const name in D.panels.panels)
+//			{
+//				const pnl = D.panels.panels[name];
+//				if (pnl.state === 'open')
+//				{
+//					D.openPanels.push(pnl);
+//					pnl.close();
+//				}
+//			}
+//			D.navbar.element.style.opacity = "0";
+//			D.navbar.element.style.height = "0px";
 			window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'hide'}}));
 		}, D.default.autohideTimer);
 	}
@@ -3143,6 +3157,7 @@ Object.defineProperties(D,
 			scale3D:	1,
 			stdOffset:	new D2(32, 32),
 			stdArrow:	new D2(200, 0),
+			stdArrowDown:	new D2(0, 200),
 			autohideTimer:	4000,	// ms
 			saveInterval:	5000,	// ms
 			toolbar:	{x:15, y:70},
@@ -4611,7 +4626,7 @@ class DiagramPanel extends Panel
 						D.GetButton('edit', `Cat.D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
 					that.descriptionEditElt.innerHTML = !diagram.isEditable() ? '' :
 //						D.GetButton('edit', `Cat.D.diagramPanel.setDescription()`, 'Edit description', D.default.button.tiny);
-						D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', 'edit_${elt.name}', 'description')`, 'Edit');
+						D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', 'edit_${diagram.name}', 'description')`, 'Edit');
 					that.setToolbar(diagram);
 					const dt = new Date(diagram.timestamp);
 					that.timestampElt.innerHTML = dt.toLocaleString();
@@ -7313,7 +7328,7 @@ class NameAction extends Action
 			error.innerHTML = 'Error: ' + U.GetError(x);
 		}
 	}
-	doit(e, diagram, args)
+	doit(e, diagram, args, emitEvents = true)
 	{
 		const source = args.source;
 		args.source = source.to;
@@ -7327,13 +7342,17 @@ class NameAction extends Action
 			diagram.addSVG(idx2);
 			idx1.update();
 			idx2.update();
-			R.EmitObjectEvent('new', nid.name);
-			R.EmitMorphismEvent('new', idx1.name);
-			R.EmitMorphismEvent('new', idx2.name);
+			if (emitEvents)
+			{
+				R.EmitObjectEvent('new', nid.name);
+				R.EmitMorphismEvent('new', idx1.name);
+				R.EmitMorphismEvent('new', idx2.name);
+			}
 		}
 		else if (Morphism.IsA(source))
 		{
 			const nuArgs = U.Clone(args);
+			nuArgs.source.to = source;
 			nuArgs.domain = source.domain.to;
 			nuArgs.codomain = source.codomain.to;
 			const to = new NamedMorphism(diagram, nuArgs);
@@ -7341,7 +7360,7 @@ class NameAction extends Action
 			diagram.addSVG(nuFrom);
 			source.update();
 			nuFrom.update();
-			R.EmitMorphismEvent('new', nuFrom.name);
+			emitEvents && R.EmitMorphismEvent('new', nuFrom.name);
 		}
 	}
 	replay(e, diagram, args)
@@ -8839,6 +8858,8 @@ class CppAction extends LanguageAction
 	getType(elt, first = true)
 	{
 		const isLocal = elt.diagram === this.currentDiagram;
+const priorDiagram = this.currentDiagram;
+this.currentDiagram = elt.diagram;
 		let basetype = '';
 		switch(elt.constructor.name)
 		{
@@ -8881,7 +8902,63 @@ class CppAction extends LanguageAction
 		}
 		if (!first && elt.needsParens())
 			basetype = `Pa_${basetype}_aP`;
-		return isLocal ? basetype : `${this.getNamespace(elt.diagram)}::${basetype}`;
+		basetype = isLocal ? basetype : `${this.getNamespace(elt.diagram)}::${basetype}`;
+this.currentDiagram = priorDiagram;
+		return !first ? U.Token(basetype) : basetype;
+	}
+	generateProductObject(object, generated)
+	{
+		const name = this.getType(object);
+		let code = '';
+		code += object.objects.map(o => this.generate(o, generated)).join('');
+		code += this.getComments(object);
+		const members = object.objects.map((o, i) => `${object.dual ? '\t\t\t' : '\t\t'}${this.getType(o)} m_${i};`).join('\n');
+		if (object.dual)
+			code +=
+`	struct ${name}
+	{
+		unsigned long choice;
+		union
+		{
+${members}
+		};
+		friend std::istream & operator>>(std::istream  & in, ${name} & obj )
+		{ 
+			in >> obj.choice;
+			switch(obj.choice)
+			{
+${obj.objects.map((o, i) => `\t\t\t\t\tcase 0:
+					in >> obj.m_${i};
+					break;
+`).join('')}
+			}
+			return in;            
+		}
+		friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
+		{ 
+			out ${object.objects.map((o, i) => !HomObject.IsA(o) ? ` << obj.m_${i} << " "` : '').join('')};
+			return out;            
+		}
+	};
+`;
+		else
+			code +=
+`\tstruct ${name}
+\t{
+${members}
+		friend std::istream & operator>>(std::istream  & in, ${name} & obj )
+		{ 
+			in ${object.objects.map((o, i) => !HomObject.IsA(o) ? ` >> obj.m_${i}` : '').join('')};
+			return in;            
+		}
+		friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
+		{ 
+			out ${object.objects.map((o, i) => !HomObject.IsA(o) ? ` << obj.m_${i} << " "` : '').join('')};
+			return out;            
+		}
+\t};
+`;
+		return code;
 	}
 	generateObject(object, generated)
 	{
@@ -8896,32 +8973,7 @@ class CppAction extends LanguageAction
 					code += this.getComments(object) + this.instantiate(object);
 					break;
 				case 'ProductObject':
-					code += object.objects.map(o => this.generate(o, generated)).join('');
-					code += this.getComments(object);
-					const members = object.objects.map((o, i) => `${object.dual ? '\t\t\t' : '\t\t'}${this.getType(o)} m_${i};`).join('\n');
-					if (object.dual)
-					code +=
-`\tstruct ${name}
-\t{
-\tunsigned long choice;
-\tunion
-\t{
-${members}
-\t};
-\t};
-`;
-					else
-						code +=
-`\tstruct ${name}
-\t{
-${members}
-	friend std::istream &operator>>(std::istream  & in, ${name} & obj )
-	{ 
-		in ${object.objects.map((o, i) => !HomObject.IsA(o) ? `>> obj.m_${i}` : '').join('')};
-		return in;            
-	}
-\t};
-`;
+					code += this.generateProductObject(object, generated);
 					break;
 				case 'HomObject':
 					code += `\t\t${this.getComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);\n`;
@@ -8962,8 +9014,16 @@ ${members}
 				case 'Composite':
 					code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
 					code += this.getComments(morphism);
-					code +=
-`${header}\t\tout = ${morphism.morphisms.map(n => this.getType(n) + '(').reverse().join('')}args${ ")".repeat(morphism.morphisms.length) };${tail}`;
+					code += header;
+					const lngth = morphism.morphisms.length;
+					for (let i=0; i<lngth; ++i)
+					{
+						const m = morphism.morphisms[i];
+						if (i !== lngth -1)
+							code += `\t\t${this.getType(m.codomain)} out_${i};\n`;
+						code += `\t\t${this.getType(m)}(${i === 0 ? 'args' : `out_${i -1}`}, ${i !== lngth -1 ? `out_${i}` : 'out'});${i !== lngth -1 ? '\n' : ''}`;
+					}
+					code += tail;
 					break;
 				case 'Identity':
 					code += this.getComments(morphism);
@@ -8975,29 +9035,12 @@ ${members}
 					if (morphism.dual)
 					{
 						const subcode = morphism.morphisms.map((m, i) => this.getType(m).join(',\n\t\t\t'));
-						code +=
-`${header}		const void (*)(void*)[] fns = {${subcode}};\n\t\tfns[args.choice]();${tail}`;
-							/*
-`catFunctions ${name}_morphisms[${morphism.morphisms.length}] = { ${morphism.morphisms.map(m => this.getType(m.name)).join(',\n')} };
-const ${name}_morphisms = [${morphism.morphisms.map((n, i) => this.getType(n)).join()}];
-${header}	out = [args[0], ${name}_morphisms[args[0]](args[1])];${tail}`;
-*/
+						code += `${header}		const void (*)(void*)[] fns = {${subcode}};\n\t\tfns[args.choice]();${tail}`;
 					}
 					else
-//						code += `${header}\t\tout = [${morphism.morphisms.map((n, i) => this.getType(n) + '(args[' + i + '])').join()}];${tail}`;
 						code += `${header}\t\t${morphism.morphisms.map((m, i) => `\t\t${this.getType(m)}(args.m_${i}, out.m_${i});\n`).join('')}${tail}`;
 					break;
 				case 'ProductAssembly':
-					/*
-					code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
-					code += this.getComments(morphism);
-					code += this.dual ?
-`const ${name}_morphisms = [${morphism.morphisms.map((n, i) => this.getType(n)).join()}];
-${header}	out = ${name}_morphisms[args[0]](args[1]);${tail}`
-						:
-							`${header}	out = [${morphism.morphisms.map((n, i) => this.getType(n) + '(args)').join()}];${tail}`;
-						code += `${header}\t\t${morphism.morphisms.map((m, i) => `\t\t${this.getType(m)}(args.m_${i}, out.m_${i});\n`).join('')}${tail}`;
-						*/
 					code += `${header}\t\t${morphism.morphisms.map((m, i) => `\t\t${this.getType(m)}(args, out.m_${i});\n`).join('')}${tail}`;
 					break;
 				case 'DataMorphism':
@@ -9034,7 +9077,6 @@ ${header}	return ${name}_Data.get(args);${tail}`;
 					break;
 				case 'Distribute':
 				case 'Dedistribute':
-//							code += `${header}	out = [args[1][0], [args[0], args[1][1]]];${tail}`;
 					code += this.getComments(morphism);
 					code +=
 `${header}	out.m_0 = args.m_1.m_0;
@@ -9132,7 +9174,7 @@ ${tail}`;
 				case 'NamedMorphism':
 					code += this.generate(morphism.source, generated);
 					code += this.getComments(morphism);
-					code += `${header}	out = ${this.getType(morphism.source)}(args);${tail}`;
+					code += `${header}\t\t${this.getType(morphism.source)}(args, out);${tail}`;
 					break;
 				case 'TerminalMorphism':
 					code += this.getComments(morphism);
@@ -9166,20 +9208,13 @@ ${tail}`;
 	{
 		this.currentDiagram = null;
 		const namedMorphisms = new Set;
-		const namedMorphismDomains = new Set;
 		diagram.forEachMorphism(function(m)
 		{
 			if (NamedMorphism.IsA(m))
-			{
 				namedMorphisms.add(m);
-				namedMorphismDomains.add(m.domain);
-			}
 		});
-		const domainCode = '';
-//		namedMorphismDomains.forEach(function(o)
-//		{
-//			code += this.getStdin2Object(o);
-//		});
+		const named = [...namedMorphisms];
+		const nameCode = named.map(nm => `\t\t{"${nm.basename}", (CatFn)${this.getType(nm)}}`).join(',\n');
 		let code =
 `}
 
@@ -9187,18 +9222,74 @@ ${tail}`;
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
-
-${domainCode}
-
-const std::map<std::string, void (*)(void*)> str2fn = {};
+#include <cstring>
 
 int main(int argc, char ** argv)
 {
 	unsigned long choice = 0;
+	typedef void (*CatFn)(void*);
+	std::map<std::string, CatFn> str2fn =
+	{
+${nameCode}
+	};
+	const std::string help("${diagram.description}");
 	try
 	{
+		if (argc > 1 && (strcmp("-s", argv[1]) || strcmp("--signatures", argv[1])))
+		{
+${named.map(nm => `std::cout << "${nm.basename}:\t${nm.signature}" << std::endl\n`).join('')}
+		}
+		if (argc > 1 && (strcmp("-h", argv[1]) || strcmp("--help", argv[1])))
+`;
+		if (named.size > 1)
+			code +=
+`		{
+			std::cout << help << std::endl << "Select one of the following to execute from the command line:" << std::endl;
+			${named.map((nm, i) => `\tstd::cout << "\t${i}:\t${nm.basename}" << std::endl;`).join(',\n')}
+			return 1;
+		}
+		std::cout << "Enter a choice for which morphism to run:" << std::endl;
+${named.map((nm, i) => `\t\tstd::cout << '\t' << ${i} << ":\t${nm.basename}" << std::endl;`)}
+		std::cin >> choice;
+		switch (choice)
+		{
+			${named.map((nm, i) =>
+`
+			case ${i}:
+			{
+				${this.getType(nm.domain)} args;
+				std::cin >> args;
+				${this.getType(nm.codomain)} out;
+				${this.getType(nm)}(args, out);
+				std::cout << out;
+				break;
+			}
+`).join('')}
+			default:
+				std::cerr << "Bad choice" << std::endl;
+				return 1;
+		}
 		return 0;
-	}
+`;
+		else
+		{
+			let nm = null
+			named.forEach(function(m) { nm = m; });
+			code +=
+`		{
+			std::cout << help << std::endl << "${nm.description}" << std::endl;
+			return 1;
+		}
+		${this.getType(nm.domain)} args;
+		std::cin >> args;
+		${this.getType(nm.codomain)} out;
+		${this.getType(nm)}(args, out);
+		std::cout << out << std::endl;
+		return 0;
+`;
+		}
+		code +=
+`	}
 	catch(std::exception x)
 	{
 		std::cerr << "An error occurred" << std::endl;
@@ -9208,59 +9299,13 @@ int main(int argc, char ** argv)
 `;
 		return code;
 	}
-/*
-	getStdin2Object(obj, factor = [])
-	{
-		let code = '';
-		if (factor.length === 0)
-			code +=
-`
-`;
-		switch(obj.constructor.name)
-		{
-			case 'CatObject':
-				code +=
-`				cin >> args.${this.getFactorAccessor(factor)};
-`;
-				break;
-			case 'ProductObject':
-				if (obj.dual)
-				{
-					const cases = obj.objects.map(o =>
-					{
-						code +=
-`
-			case ${i}:
-			{
-${this.getStdin2Object(o, [...factor, i])}
-			}
-`;
-					});
-					code +=
-`
-	cin >> choice;
-	switch(choice)
-	{
-${cases}
-	}
-`;
-				}
-				else
-					code += obj.objects.map((o, i) => this.getStdin2Object(o, [...factor, i])).join('');
-				break;
-			default:
-				break;
-		}
-	}
-	*/
 	getFactorAccessor(factor)
 	{
 		return Array.isArray(factor) ? factor.map(i => `m_${i}`).join('.') : `m_${factor}`;
 	}
 	getComments(m)
 	{
-		return `
-\t//
+		return `\t//
 \t// ${m.constructor.name}
 \t// ${m.name}
 \t// ${m.description}
@@ -10406,6 +10451,10 @@ class NamedObject extends CatObject	// name of an object
 		helped.add(this.name);
 		return super.help() + H.p('Named Object');
 	}
+	static IsA(m)
+	{
+		return NamedObject.prototype.isPrototypeOf(m);
+	}
 }
 
 class NamedMorphism extends Morphism	// name of a morphism
@@ -10415,12 +10464,15 @@ class NamedMorphism extends Morphism	// name of a morphism
 		const nuArgs = U.Clone(args);
 		const source = diagram.getElement(nuArgs.source);
 		nuArgs.category = diagram.codomain;
+		nuArgs.domain = source.domain;
+		nuArgs.codomain = source.codomain;
 		super(diagram, nuArgs);
 		this.source = source;
 		this.signature = this.source.signature;
 		this.source.incrRefcnt();
 		if (this.constructor.name === 'NamedMorphism')
 			this.signature = this.source.sig;
+		this.loadEquivalence();
 	}
 	json()
 	{
@@ -10458,6 +10510,10 @@ class NamedMorphism extends Morphism	// name of a morphism
 		graph.graphs[0].copyGraph({src:srcGraph.graphs[0], map:[[[1], [1]]]});
 		graph.graphs[1].copyGraph({src:srcGraph.graphs[1], map:[[[0], [0]]]});
 		return graph;
+	}
+	static IsA(m)
+	{
+		return NamedMorphism.prototype.isPrototypeOf(m);
 	}
 }
 
@@ -12771,7 +12827,7 @@ class Diagram extends Functor
 		}
 		return from;
 	}
-	placeMorphism(e, to, xyDom = null, xyCod = null, save = true)
+	placeMorphism(e, to, xyDom = null, xyCod = null, save = true, doOffset = true)
 	{
 		if (typeof to === 'string')
 			to = this.getElement(to);
@@ -12803,15 +12859,18 @@ class Diagram extends Functor
 		const bbox = new D2(from.svg.getBBox());
 		let offboxes = [new D2(domain.getBBox()), new D2(bbox), new D2(codomain.getBBox())];
 		const names = [domain.name, from.name, codomain.name];
-		let offset = new D2;
-		while (offboxes.reduce((r, bx, i) => r || this.hasOverlap(bx, names[i]), false))
+		if (doOffset)
 		{
-			offboxes = offboxes.map(bx => bx.add(D.default.stdOffset));
-			offset = offset.add(D.default.stdOffset);
+			let offset = new D2;
+			while (offboxes.reduce((r, bx, i) => r || this.hasOverlap(bx, names[i]), false))
+			{
+				offboxes = offboxes.map(bx => bx.add(D.default.stdOffset));
+				offset = offset.add(D.default.stdOffset);
+			}
+			from.domain.update(xyD.add(offset));
+			from.codomain.update(xyC.add(offset));
+			from.update();
 		}
-		from.domain.update(xyD.add(offset));
-		from.codomain.update(xyC.add(offset));
-		from.update();
 		if (save)
 		{
 			this.makeSelected(e, from);
@@ -12820,7 +12879,7 @@ class Diagram extends Functor
 		}
 		return from;
 	}
-	placeMorphismByObject(e, dir, objectName, morphismName, save = true)
+	placeMorphismByObject(e, dir, objectName, morphismName, save = true, oxy = null)
 	{
 		try
 		{
@@ -12857,7 +12916,7 @@ class Diagram extends Functor
 			const cosAngle = Math.cos(angle);
 			const tw = Math.abs(cosAngle) * D.textWidth(to.codomain.htmlName());
 			const al = D.default.arrow.length;
-			const xy = D.Grid({x:fromObj.x + cosAngle * (al + tw), y:fromObj.y + Math.sin(angle) * (al + tw)});
+			const xy = D.Grid(oxy ? oxy : {x:fromObj.x + cosAngle * (al + tw), y:fromObj.y + Math.sin(angle) * (al + tw)});
 			let domainElt = null;
 			let codomainElt = null;
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});

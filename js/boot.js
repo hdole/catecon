@@ -35,22 +35,14 @@ const Boot = function(fn)
 		{
 			const to = Cat.Element.Process(diagram, args);
 			if (Cat.Morphism.IsA(to))
-			{
-				index = diagram.placeMorphism(null, to, xy, xy.add(D.default.stdArrow), false);
-				/*
-				if ('js' in args)
-					to.code = {javascript:Cat.JavascriptAction.Header(to) + '\t' + args.js + Cat.JavascriptAction.Tail(to)};
-				else if ('code' in args)
-					to.code.javascript = args.code.javascript.replace(/%Type/g, Cat.U.Token(to));
-					*/
-			}
+				index = diagram.placeMorphism(null, to, xy, xy.add(D.default.stdArrow), false, false);
 			else if (Cat.CatObject.IsA(to))
 				index = diagram.placeObject(null, to, xy, false);
 		}
 		if ('rowCount' in args)
 		{
 			args.rowCount++;
-			xy.y += 16 * Cat.D.default.layoutGrid;
+			xy.y += args.majorGrid;
 		}
 		return index;
 	}
@@ -79,7 +71,7 @@ const Boot = function(fn)
 		PlaceSideText(args, o.description);
 		const i = args.diagram.placeObject(null, o, args.xy, false);
 		args.rowCount++;
-		args.xy.y += 16 * Cat.D.default.layoutGrid;
+		args.xy.y += args.majorGrid;
 		return i;
 	}
 	function MakeObject(args, basename, prototype, properName, description, moreArgs = {})
@@ -100,14 +92,14 @@ const Boot = function(fn)
 		args.rowCount = nuArgs.rowCount;
 		return e;
 	}
-	function PlaceMorphism(args, m)
+	function PlaceMorphism(args, m, doSideText = true)
 	{
 		CheckColumn(args);
-		PlaceSideText(args, m.description);
-		const i = args.diagram.placeMorphism(null, m, args.xy, args.xy.add(Cat.D.default.stdArrow), false);
+		doSideText && PlaceSideText(args, m.description);
+		const i = args.diagram.placeMorphism(null, m, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
 		args.xy = new Cat.D2(args.xy);
 		args.rowCount++;
-		args.xy.y += 16 * Cat.D.default.layoutGrid;
+		args.xy.y += args.majorGrid;
 		return i;
 	}
 	function NewMorphism(args, basename, prototype, properName, description, domain, codomain, code)
@@ -123,54 +115,40 @@ const Boot = function(fn)
 			nuArgs.properName = properName;
 		const proto = nuArgs.prototype;
 		const name = Cat.U.Token(Cat[proto].Codename(args.diagram, nuArgs));
-//		if ('js' in nuArgs.code)Cat[proto].Codename(args.diagram, nuArgs)
-//			nuArgs.code.javascript = code.js.replace(/%Type/g, name);
-//		if ('cpp' in nuArgs.code)
-//			nuArgs.code.cpp = nuArgs.code.cpp.replace(/%Type/g, name).replace(/%Dom/g, Cat.U.Token(domain)).replace(/%Cod/g, Cat.U.Token(codomain));
-
 		nuArgs.xy = new Cat.D2(nuArgs.xy);
-//		for (const n in moreArgs)
-//			nuArgs[n] = moreArgs[n];
 		const to = Cat.Element.Process(nuArgs.diagram, nuArgs);
 		return to;
 	}
-	function placeMorphismByObject(args, basename, prototype, properName, description, domain, codomain, moreArgs, dir, object)
+	function PlaceMorphismByObject(args, basename, prototype, properName, description, domain, codomain, moreArgs, dir, object)
 	{
 		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
 		return args.diagram.placeMorphismByObject(null, dir, object, to, false);
 	}
 	function MakeMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs = {})
 	{
-		/*
-		const nuArgs = Cat.U.Clone(args);
-		nuArgs.xy = new Cat.D2(args.xy);
-		for (const n in moreArgs)
-			nuArgs[n] = moreArgs[n];
-		nuArgs.description = description;
-		nuArgs.basename = basename;
-		nuArgs.prototype = prototype;
-		if (properName !== '')
-			nuArgs.properName = properName;
-		nuArgs.domain = domain;
-		nuArgs.codomain = codomain;
-		*/
 		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
-		/*
-		const to = Cat.Element.Process(args.diagram, nuArgs);
-//		if ('js' in nuArgs)
-//			to.code = {javascript:Cat.JavascriptAction.Header(to) + '\t' + nuArgs.js + Cat.JavascriptAction.Tail(to)};
-		if (Object.keys(nuArgs).length > 0)
-			to.code = {};
-		if ('js' in nuArgs)
-			to.code.javascript = nuArgs.js.replace(/%Type/g, Cat.U.Token(to));
-		if ('cpp' in nuArgs)
-			to.code.cpp = nuArgs.cpp.replace(/%Type/g, Cat.U.Token(to)).replace(/%Dom/g, Cat.U.Token(to.domain)).replace(/%Cod/g, Cat.U.Token(to.codomain));
-			*/
 		const e = PlaceMorphism(args, to);
 		args.xy = new Cat.D2(args.xy);
 		args.rowCount = args.rowCount;
 		return e;
 	}
+	function MakeNamedObject(base, args)
+	{
+		const nuArgs = Cat.U.Clone(base);
+		Object.keys(args).map(k => nuArgs[k] = args[k]);		// merge
+		const diagram = nuArgs.diagram;
+		const nm = new Cat.NamedObject(diagram, nuArgs);
+		nuArgs.xy = new Cat.D2(args.xy);
+		const nm2src = diagram.placeMorphism(null, nm.idFrom, nuArgs.xy, nuArgs.xy.add(Cat.D.default.stdArrow), false, false);
+		base.rowCount++;
+		base.xy.y += args.majorGrid;
+		const id2 = new Cat.DiagramMorphism(diagram, {to:nm.idTo, domain:nm2src.codomain, codomain:nm2src.domain});
+		diagram.addSVG(id2);
+		return nm2src.domain;
+	}
+	//
+	//
+	//
 	const user = 'hdole';
 	const side = Cat.D.Grid(new Cat.D2(0, 4 * Cat.D.default.layoutGrid));
 	const pfs = Cat.R.CAT.getElement('hdole/PFS');
@@ -182,6 +160,7 @@ const Boot = function(fn)
 		side,
 		rows:		8,
 		rowCount:	0,
+		majorGrid:	16 * Cat.D.default.layoutGrid,
 	};
 	//
 	// basics
@@ -205,7 +184,7 @@ const Boot = function(fn)
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
-	args.xy.y += 16 * Cat.D.default.layoutGrid;
+	args.xy.y += args.majorGrid;
 	const zero = basics.get('InitialObject', {});
 	const one = basics.get('TerminalObject', {});
 	PlaceObject(args, zero);
@@ -238,12 +217,12 @@ const Boot = function(fn)
 		user,
 		properName:		'&Omega;',
 	}, args.xy);
-	args.xy.y += 16 * Cat.D.default.layoutGrid;
+	args.xy.y += args.majorGrid;
 	const two = logic.get('ProductObject', {objects:[one, one], dual:true});
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
-	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false);
+	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
 	args.rowCount++;
-	args.xy.y += 16 * Cat.D.default.layoutGrid;
+	args.xy.y += args.majorGrid;
 	const id2 = new Cat.DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
 	logic.addSVG(id2);
 	const omegaPair = MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
@@ -299,7 +278,7 @@ const Boot = function(fn)
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
-args.xy.y += 16 * Cat.D.default.layoutGrid;
+args.xy.y += args.majorGrid;
 	const N = MakeObject(args, 'N', 'CatObject', '&Nopf;', 'The natural numbers', {code:{cpp:'typedef unsigned long N;\n'}}).to;
 	const NplusOne = MakeObject(args, '', 'ProductObject', '', 'A natural number or an exception', {objects:[N, one], dual:true}).to;
 	const Nzero = MakeMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N,
@@ -385,7 +364,7 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
-args.xy.y += 16 * Cat.D.default.layoutGrid;
+args.xy.y += args.majorGrid;
 	const Z = MakeObject(args, 'Z', 'CatObject', '&Zopf;', 'The integers', {code:{cpp:'typedef long Z;\n'}}).to;
 	const N2Z = MakeMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z,
 	{
@@ -492,17 +471,16 @@ return [0, args[0] % args[1]];
 		description:	'Basic floating point morphisms are given here',
 		prototype:		'DiagramText',
 	}, args.xy);
-args.xy.y += 16 * Cat.D.default.layoutGrid;
+args.xy.y += args.majorGrid;
 	const F = MakeObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers', {code:{cpp:
 `}
 
 #include <math.h>
 #include <climits>
 
-typedef double F;
-
 namespace %Namespace
 {
+	typedef double F;
 `}}).to;
 	const Fzero = MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The floating point zero', one, F,
 	{
@@ -707,7 +685,7 @@ void %Type(const %Dom & args, %Cod & out)
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
-args.xy.y += 16 * Cat.D.default.layoutGrid;
+args.xy.y += args.majorGrid;
 	const C = new Cat.NamedObject(complex, {basename:'C', properName:'&Copf;', source:Fpair, code:
 `}
 
@@ -717,9 +695,9 @@ args.xy.y += 16 * Cat.D.default.layoutGrid;
 namespace %Namespace
 {
 `});
-	const C2Fpair = complex.placeMorphism(null, C.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false);
+	const C2Fpair = complex.placeMorphism(null, C.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
 	args.rowCount++;
-	args.xy.y += 16 * Cat.D.default.layoutGrid;
+	args.xy.y += args.majorGrid;
 	const Cid2 = new Cat.DiagramMorphism(complex, {to:C.idTo, domain:C2Fpair.codomain, codomain:C2Fpair.domain});
 	const Czero = MakeMorphism(args, 'zero', 'Morphism', '0.0', 'The complex number zero', one, C,
 	{
@@ -900,7 +878,7 @@ return [0, Math.pow(args[0], args[1])];
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
-args.xy.y += 16 * Cat.D.default.layoutGrid;
+args.xy.y += args.majorGrid;
 	const str = MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings', {code:{cpp:
 `}
 
@@ -1010,7 +988,7 @@ function %Type(args)
 	});
 	const N2str = FromN2str.to;
 
-	const str2N = placeMorphismByObject(args, 'str2N', 'Morphism', '#', 'convert a string to a natural number', str, NplusOne,
+	const str2N = PlaceMorphismByObject(args, 'str2N', 'Morphism', '#', 'convert a string to a natural number', str, NplusOne,
 	{
 		js:
 `function %Type(args)
@@ -1051,7 +1029,7 @@ function %Type(args)
 	});
 	const Z2str = FromZ2str.to;
 
-	const str2Z = placeMorphismByObject(args, 'str2Z', 'Morphism', '#', 'convert a string to an integer', str, ZplusOne,
+	const str2Z = PlaceMorphismByObject(args, 'str2Z', 'Morphism', '#', 'convert a string to an integer', str, ZplusOne,
 	{
 		js:
 `
@@ -1104,7 +1082,7 @@ function %Type(args)
 	});
 	const F2str = fromF2str.to;
 
-	const str2F = placeMorphismByObject(args, 'str2F', 'Morphism', '#', 'convert a string to a floating point number', str, FplusOne,
+	const str2F = PlaceMorphismByObject(args, 'str2F', 'Morphism', '#', 'convert a string to a floating point number', str, FplusOne,
 	{
 		js:
 `
@@ -1143,7 +1121,6 @@ function %Type(args)
 	DiagramReferences(user, strings, args.xy);
 	Cat.D.ShowDiagram(strings);
 	strings.home(false);
-//	strings.update();
 
 	//
 	// htmlDiagram
@@ -1169,10 +1146,9 @@ function %Type(args)
 		user,
 		properName:		'&Omega;',
 	}, args.xy);
-args.xy.y += 16 * Cat.D.default.layoutGrid;
+args.xy.y += args.majorGrid;
 	const html = MakeObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices').to;
 	const html2N = MakeMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
-	
 	{
 		js:
 `
@@ -1256,7 +1232,7 @@ function %Type(args)
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
-args.xy.y += 16 * Cat.D.default.layoutGrid;
+args.xy.y += args.majorGrid;
 	const d3 = MakeObject(args, 'threeD', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices').to;
 	const f2d3 = MakeMorphism(args, 'f2d3', 'Morphism', '1D', 'visualize a number in 3D', F, d3,
 	{
@@ -1280,9 +1256,9 @@ function %Type(args)
 	});
 	const Ftrip = threeD.get('ProductObject', {objects:[F, F, F]});
 	const f3 = new Cat.NamedObject(threeD, {basename:'F3', properName:'&Fopf;&sup3', source:Ftrip});
-	const f3toFtrip = threeD.placeMorphism(null, f3.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false);
+	const f3toFtrip = threeD.placeMorphism(null, f3.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
 	args.rowCount++;
-	args.xy.y += 16 * Cat.D.default.layoutGrid;
+	args.xy.y += args.majorGrid;
 	const ftripTof3 = new Cat.DiagramMorphism(threeD, {to:f3.idTo, domain:f3toFtrip.codomain, codomain:f3toFtrip.domain});
 	const fff2d3 = MakeMorphism(args, 'fff2d3', 'Morphism', '3D', 'visualize a triplet of numbers in 3D', f3, d3,
 	{
@@ -1290,7 +1266,7 @@ function %Type(args)
 `
 function %Type(args)
 {
-postMessage(['fff2d3', args]);
+	postMessage(['fff2d3', args]);
 }
 `
 	});
@@ -1301,7 +1277,7 @@ postMessage(['fff2d3', args]);
 `
 function %Type(args)
 {
-postMessage(['fff2toLine', args]);
+	postMessage(['fff2toLine', args]);
 }
 `
 	});
@@ -1354,7 +1330,7 @@ postMessage(['fff2toQB3', args]);
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
-	args.xy.y += 16 * Cat.D.default.layoutGrid;
+	args.xy.y += args.majorGrid;
 	const qubit = MakeObject(args, 'q', 'CatObject', '&Qopf;', 'The quantum qubit').to;
 	const qPair = MakeObject(args, '', 'TensorObject', '', 'A pair of qubits', {objects:[qubit, qubit]}).to;
 	const qId = MakeMorphism(args, 'id', 'Identity', 'id', 'identity', qubit, qubit,
@@ -1456,4 +1432,280 @@ return matrix_multiply(%Type_matrix, args);
 		diagrams.map(d => Cat.R.SaveLocal(d));
 //		diagrams.map(d => d.upload(null));
 	});
+
+	//
+	// cpp
+	//
+	const cpp = new Cat.Diagram(userDiagram,
+	{
+		codomain:		pfs,
+		basename:		'cpp',
+		properName:		'C++',
+		description:	'Basic C++ functions',
+		references:		[strings],
+		user,
+	});
+	args.diagram = cpp;
+	args.rowCount = 0;
+	args.xy = new Cat.D2(300, 300);
+	cpp.makeSvg(false);
+	Cat.R.AddDiagram(cpp);
+	Autoplace(cpp,
+	{
+		description:	'Various C++ functions',
+		prototype:		'DiagramText',
+		user,
+		properName:		'C++Omega;',
+	}, args.xy);
+args.xy.y += args.majorGrid;
+
+	const stdin = MakeObject(args, 'stdin', 'CatObject', '', 'The standard input object reads from a tty device.', {code:
+	{
+		cpp:
+`
+}
+
+#include <stdio.h>
+
+namespace %Namespace
+{
+`
+	}}).to;
+	const stdin2N = MakeMorphism(args, 'stdin2N', 'Morphism', 'in', 'read a natural number from standard input', stdin, N,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cin >> out;
+}
+`}).to;
+	const stdin2Z = MakeMorphism(args, 'stdin2Z', 'Morphism', 'in', 'read an integer from standard input', stdin, Z,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cin >> out;
+}
+`}).to;
+	const stdin2F = MakeMorphism(args, 'stdin2F', 'Morphism', 'in', 'read a floating point number from standard input', stdin, F,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cin >> out;
+}
+`}).to;
+	const stdin2Str = MakeMorphism(args, 'stdin2Str', 'Morphism', 'in', 'read a string from standard input', stdin, str,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cin >> out;
+}
+`}).to;
+
+	const stdout = MakeObject(args, 'stdout', 'CatObject', '', 'The standard output object writes to a tty device.').to;
+	const N2stdout = MakeMorphism(args, 'N2stdout', 'Morphism', 'out', 'Write a natural number to standard out.', N, stdout,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cout << args;
+}
+`}).to;
+	const Z2stdout = MakeMorphism(args, 'Z2stdout', 'Morphism', 'out', 'Write an integer to standard out.', Z, stdout,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cout << args;
+}
+`}).to;
+	const F2stdout = MakeMorphism(args, 'F2stdout', 'Morphism', 'out', 'Write a floating point number to standard out.', F, stdout,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cout << args;
+}
+`}).to;
+	const Str2stdout = MakeMorphism(args, 'Str2stdout', 'Morphism', 'out', 'Write a string to standard out.', str, stdout,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cout << args;
+}
+`}).to;
+
+	const stderr = MakeObject(args, 'stderr', 'CatObject', '', 'The standard error object writes to the error stream.').to;
+	const N2stderr = MakeMorphism(args, 'N2stderr', 'Morphism', 'err', 'Write a natural number to standard error.', N, stderr,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cerr << args;
+}
+`}).to;
+	const Z2stderr = MakeMorphism(args, 'Z2stderr', 'Morphism', 'err', 'Write an integer to standard error.', Z, stderr,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cerr << args;
+}
+`}).to;
+	const F2stderr = MakeMorphism(args, 'F2stderr', 'Morphism', 'err', 'Write a floating point number to standard error.', F, stderr,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cerr << args;
+}
+`}).to;
+	const Str2stderr = MakeMorphism(args, 'Str2stderr', 'Morphism', 'err', 'Write a string to standard error.', str, stderr,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	std::cerr << args;
+}
+`}).to;
+
+	const file = MakeObject(args, 'file', 'CatObject', '', 'file descriptor', {code:
+	{
+		cpp:
+`
+}
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+namespace %Namespace
+{
+	typedef int %Name;
+`,
+	}}).to;
+	const size_t = MakeNamedObject(args, {name:'size_t', source:N, description:'Used for sizes of objects'}).to;
+	const off_t = MakeNamedObject(args, {name:'off_t', source:Z, description:'Used for file sizes'}).to;
+	const voidPtr = MakeNamedObject(args, {name:'voidPtr', properName:'void*', source:N, description:'Pointer to void'}).to;
+
+	let morph1 = PlaceMorphism(args, Nzero, false);
+	let xy = new Cat.D2(morph1.codomain);
+	let morph2 = cpp.placeMorphismByObject(null, 'domain', morph1.codomain, voidPtr.idTo, false, xy.add(Cat.D.default.stdArrowDown));
+	let bx = morph2.svg.getBBox();
+	let to = cpp.get('Composite', {morphisms:[morph1.to, morph2.to]});
+	let dgrmcomp = cpp.get('DiagramComposite', {domain:morph1.domain, to, codomain:morph2.codomain, morphisms:[morph1, morph2]});
+	cpp.addSVG(dgrmcomp);
+	const delta = morph2.codomain.y + args.majorGrid - args.xy.y;
+args.rowCount += Math.round(delta/args.majorGrid);
+
+	args.xy.y = morph2.codomain.y + args.majorGrid;
+
+	morph1 = PlaceMorphism(args, to, false);
+	Cat.R.Actions.name.doit(null, cpp, {source:morph1, name:'NULL'}, false);
+
+	const filePlusZ = cpp.get('ProductObject', {objects:[file, Z], dual:true});
+	const strByZ = cpp.get('ProductObject', {objects:[str, Z], dual:false});
+	const open = MakeMorphism(args, 'open', 'Morphism', 'open', 'Open a file.', strByZ, filePlusZ,
+	{
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	const int fd = ::open(args.m_0.c_str(), args.m_1);
+	if (fd >= 0)
+	{
+		out.choice = 0;
+		out.m_0 = fd;
+	}
+	else
+	{
+		out.choice = 1;
+		out.m_0 = fd;
+	}
+}
+`}).to;
+	//
+	// close
+	//
+	const close = MakeMorphism(args, 'close', 'Morphism', '', 'Close a file.', file, Z, {cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = ::close(args);
+}
+`}).to;
+	//
+	// stat
+	//
+	const stat = MakeObject(args, 'stat', 'CatObject', '', 'Buffer for file status', {code: { cpp:
+`}
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+namespace %Namespace
+{
+	typedef stat %Name;
+`,
+	}}).to;
+
+	//
+	// fstat
+	//
+	const fstat = MakeMorphism(args, 'fstat', 'Morphism', 'fstat', 'Get file status', file, cpp.get('ProductObject', {objects:[stat, one], dual:false}), {cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out.m_0 = ::fstat(fd, &out.m_0);
+	if (out.m_0 != -1)
+		out.choice = 0;
+	else
+	{
+		out.choice = 1;
+		out.m_1 = 0;
+	}
+`}).to;
+	//
+	// filesize
+	//
+	const filesize = MakeMorphism(args, 'filesize', 'Morphism', 'filesize', 'Get file size', stat, size_t, {cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = (size_t)args.st_size;	// for some reason it's off_t in stat struct as st_size
+`}).to;
+	//
+	// mmap
+	//
+	const protRead = MakeMorphism(args, 'PROT_READ', 'Morphism', '', 'Pages may be read', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::PROT_READ; }`}).to;
+	const protWrite = MakeMorphism(args, 'PROT_WRITE', 'Morphism', '', 'Pages may be written', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::PROT_WRITE; }`}).to;
+	const mapShared = MakeMorphism(args, 'MAP_SHARED', 'Morphism', '', 'Share this mapping', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_SHARED; }`}).to;
+	const mapPrivate = MakeMorphism(args, 'MAP_PRIVATE', 'Morphism', '', 'Do not share this mapping', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_PRIVATE; }`}).to;
+	const mapAnonymous = MakeMorphism(args, 'MAP_ANONYMOUS', 'Morphism', '', 'Map anonymous memory', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_ANONYMOUS; }`}).to;
+	const mmapInput = cpp.get('ProductObject', {objects:[voidPtr, size_t, Z, Z, file, off_t], dual:false});
+	const mmap = MakeMorphism(args, 'mmap', 'Morphism', 'mmap', 'Memory map a file.', mmapInput, cpp.get('ProductObject', {objects:[voidPtr, one]}), {cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	void * ptr = ::mmap(args.m_0, args.m_1, args.m_2, args.m_3, args.m_4, args.m_5);
+	if (ptr != MAP_FAILED)
+	{
+		out.choice = 0;
+		out.m_0 = ptr;
+	}
+	else
+	{
+		out.choice = 1;
+		out.m_1 = 0;
+	}
+}
+`}).to;
+	//
+	// munmap
+	//
+	const munmap = MakeMorphism(args, 'munmap', 'Morphism', '', 'Unmap a memory mapped file', cpp.get('ProductObject', {objects:[voidPtr, size_t]}), Z, {cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = ::munmap(args.m_0, args.m_1);
+}
+`}).to;
 }
