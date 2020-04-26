@@ -79,8 +79,7 @@ const Boot = function(fn)
 		CheckColumn(args);
 		const nuArgs = Cat.U.Clone(args);
 		nuArgs.xy = new Cat.D2(args.xy);
-		for (const n in moreArgs)
-			nuArgs[n] = moreArgs[n];
+		Object.keys(moreArgs).map(k => nuArgs[k] = moreArgs[k]);		// merge
 		nuArgs.description = description;
 		nuArgs.prototype = prototype;
 		nuArgs.basename = basename;
@@ -126,23 +125,24 @@ const Boot = function(fn)
 	}
 	function MakeMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs = {})
 	{
+		CheckColumn(args);
 		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
 		const e = PlaceMorphism(args, to);
 		args.xy = new Cat.D2(args.xy);
-		args.rowCount = args.rowCount;
 		return e;
 	}
-	function MakeNamedObject(base, args)
+	function MakeNamedObject(args, extra)
 	{
-		const nuArgs = Cat.U.Clone(base);
-		Object.keys(args).map(k => nuArgs[k] = args[k]);		// merge
+		CheckColumn(args);
+		const xy = args.xy;
+		const nuArgs = Cat.U.Clone(args);
+		Object.keys(extra).map(k => nuArgs[k] = extra[k]);		// merge
 		const diagram = nuArgs.diagram;
 		const nm = new Cat.NamedObject(diagram, nuArgs);
-		nuArgs.xy = new Cat.D2(args.xy);
-		const nm2src = diagram.placeMorphism(null, nm.idFrom, nuArgs.xy, nuArgs.xy.add(Cat.D.default.stdArrow), false, false);
-		base.rowCount++;
-		base.xy.y += args.majorGrid;
+		const nm2src = diagram.placeMorphism(null, nm.idFrom, xy, xy.add(Cat.D.default.stdArrow), false, false);
 		const id2 = new Cat.DiagramMorphism(diagram, {to:nm.idTo, domain:nm2src.codomain, codomain:nm2src.domain});
+		args.rowCount++;
+		args.xy.y += args.majorGrid;
 		diagram.addSVG(id2);
 		return nm2src.domain;
 	}
@@ -192,7 +192,6 @@ const Boot = function(fn)
 	const tty = MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
 	Cat.D.ShowDiagram(basics);
 	basics.home(false);
-//	basics.update();
 	//
 	// logic
 	//
@@ -254,7 +253,6 @@ const Boot = function(fn)
 	DiagramReferences(user, logic, args.xy);
 	Cat.D.ShowDiagram(logic);
 	logic.home(false);
-//	logic.update();
 	//
 	// N arithemtic
 	//
@@ -340,7 +338,6 @@ args.xy.y += args.majorGrid;
 	DiagramReferences(user, Narith, args.xy);
 	Cat.D.ShowDiagram(Narith);
 	Narith.home(false);
-//	Narith.update();
 	//
 	// integers
 	//
@@ -448,7 +445,6 @@ return [0, args[0] % args[1]];
 	DiagramReferences(user, integers, args.xy);
 	Cat.D.ShowDiagram(integers);
 	integers.home(false);
-//	integers.update();
 	//
 	// floating point
 	//
@@ -853,7 +849,6 @@ return [0, Math.pow(args[0], args[1])];
 	DiagramReferences(user, complex, args.xy);
 	Cat.D.ShowDiagram(complex);
 	complex.home(false);
-//	complex.update();
 
 	//
 	// Strings
@@ -1208,7 +1203,6 @@ function %Type(args)
 	DiagramReferences(user, htmlDiagram, args.xy);
 	Cat.D.ShowDiagram(htmlDiagram);
 	htmlDiagram.home(false);
-//	htmlDiagram.update();
 	//
 	// 3D diagram
 	//
@@ -1295,7 +1289,6 @@ postMessage(['fff2toQB3', args]);
 	DiagramReferences(user, threeD, args.xy);
 	Cat.D.ShowDiagram(threeD);
 	threeD.home(false);
-//	threeD.update();
 	/*
 	//
 	// quantum cat
@@ -1422,7 +1415,6 @@ return matrix_multiply(%Type_matrix, args);
 	});
 	Cat.D.ShowDiagram(qGates);
 	qGates.home(false);
-//	qGates.update();
 	Cat.D.ShowDiagram(qGates);
 	fn && Cat.R.Actions.javascript.loadHTML(fn);
 
@@ -1430,7 +1422,7 @@ return matrix_multiply(%Type_matrix, args);
 	{
 		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates];
 		diagrams.map(d => Cat.R.SaveLocal(d));
-//		diagrams.map(d => d.upload(null));
+		false && diagrams.map(d => d.upload(null));
 	});
 
 	//
@@ -1616,12 +1608,12 @@ args.rowCount += Math.round(delta/args.majorGrid);
 	const int fd = ::open(args.m_0.c_str(), args.m_1);
 	if (fd >= 0)
 	{
-		out.choice = 0;
+		out.index = 0;
 		out.m_0 = fd;
 	}
 	else
 	{
-		out.choice = 1;
+		out.index = 1;
 		out.m_0 = fd;
 	}
 }
@@ -1659,10 +1651,10 @@ namespace %Namespace
 {
 	out.m_0 = ::fstat(fd, &out.m_0);
 	if (out.m_0 != -1)
-		out.choice = 0;
+		out.index = 0;
 	else
 	{
-		out.choice = 1;
+		out.index = 1;
 		out.m_1 = 0;
 	}
 `}).to;
@@ -1673,6 +1665,7 @@ namespace %Namespace
 `void %Type(const %Dom & args, %Cod & out)
 {
 	out = (size_t)args.st_size;	// for some reason it's off_t in stat struct as st_size
+}
 `}).to;
 	//
 	// mmap
@@ -1689,12 +1682,12 @@ namespace %Namespace
 	void * ptr = ::mmap(args.m_0, args.m_1, args.m_2, args.m_3, args.m_4, args.m_5);
 	if (ptr != MAP_FAILED)
 	{
-		out.choice = 0;
+		out.index = 0;
 		out.m_0 = ptr;
 	}
 	else
 	{
-		out.choice = 1;
+		out.index = 1;
 		out.m_1 = 0;
 	}
 }
