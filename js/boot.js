@@ -5,10 +5,16 @@
 
 const Boot = function(fn)
 {
+	function gridLocation()
+	{
+		const bbox = args.diagram.svgRoot.getBBox();
+		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
+	}
 	function CheckColumn(args)
 	{
 		if ('rowCount' in args && args.rowCount >= args.rows)
 		{
+			/*
 			const bbox = args.diagram.svgRoot.getBBox();
 			if (bbox.width === 0)	// TODO issue with firefox
 			{
@@ -16,6 +22,8 @@ const Boot = function(fn)
 				bbox.x = args.xy.x;
 			}
 			args.xy = Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
+			*/
+			args.xy = gridLocation();
 			args.rowCount = 0;
 		}
 	}
@@ -86,6 +94,7 @@ const Boot = function(fn)
 		if (properName !== '')
 			nuArgs.properName = properName;
 		const e = Autoplace(args.diagram, nuArgs, nuArgs.xy);
+		Adjust(args, e);
 		PlaceSideText(args, description);
 		args.xy = new Cat.D2(nuArgs.xy);
 		args.rowCount = nuArgs.rowCount;
@@ -96,6 +105,7 @@ const Boot = function(fn)
 		CheckColumn(args);
 		doSideText && PlaceSideText(args, m.description);
 		const i = args.diagram.placeMorphism(null, m, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
+		Adjust(args, i);
 		args.xy = new Cat.D2(args.xy);
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
@@ -128,22 +138,49 @@ const Boot = function(fn)
 		CheckColumn(args);
 		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
 		const e = PlaceMorphism(args, to);
+		Adjust(args, e);
 		args.xy = new Cat.D2(args.xy);
 		return e;
+	}
+	function Adjust(args, elt)
+	{
+		if (Cat.DiagramObject.IsA(elt))
+		{
+			const bx = elt.svg.getBBox();
+			const delta = args.xy.x - bx.x;
+			let xy = elt.getXY();
+			elt.setXY({x:xy.x + delta, y:xy.y});
+			elt.update();
+		}
+		else if (Cat.DiagramMorphism.IsA(elt))
+		{
+			const bx = elt.domain.svg.getBBox();
+			const delta = args.xy.x - bx.x;
+			let xy = elt.domain.getXY();
+			elt.domain.setXY({x:xy.x + delta, y:xy.y});
+			xy = elt.codomain.getXY();
+			elt.codomain.setXY({x:xy.x + delta, y:xy.y});
+			elt.domain.update();
+			elt.codomain.update();
+			elt.update();
+		}
 	}
 	function MakeNamedObject(args, extra)
 	{
 		CheckColumn(args);
-		const xy = args.xy;
 		const nuArgs = Cat.U.Clone(args);
+		const xy = new Cat.D2(args.xy);
+		nuArgs.xy = xy;
 		Object.keys(extra).map(k => nuArgs[k] = extra[k]);		// merge
+		'description' in nuArgs && PlaceSideText(nuArgs, nuArgs.description);
 		const diagram = nuArgs.diagram;
 		const nm = new Cat.NamedObject(diagram, nuArgs);
 		const nm2src = diagram.placeMorphism(null, nm.idFrom, xy, xy.add(Cat.D.default.stdArrow), false, false);
-		const id2 = new Cat.DiagramMorphism(diagram, {to:nm.idTo, domain:nm2src.codomain, codomain:nm2src.domain});
+		Adjust(args, nm2src);
+//		const id2 = new Cat.DiagramMorphism(diagram, {to:nm.idTo, domain:nm2src.codomain, codomain:nm2src.domain});
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
-		diagram.addSVG(id2);
+//		diagram.addSVG(id2);
 		return nm2src.domain;
 	}
 	//
@@ -162,6 +199,7 @@ const Boot = function(fn)
 		rowCount:	0,
 		majorGrid:	16 * Cat.D.default.layoutGrid,
 	};
+
 	//
 	// basics
 	//
@@ -175,8 +213,9 @@ const Boot = function(fn)
 	});
 	args.diagram = basics;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
+//	args.xy = new Cat.D2(300, 300);
 	basics.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(basics);
 	Autoplace(basics,
 	{
@@ -206,8 +245,8 @@ const Boot = function(fn)
 	});
 	args.diagram = logic;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	logic.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(logic);
 	Autoplace(logic,
 	{
@@ -267,8 +306,8 @@ const Boot = function(fn)
 	});
 	args.diagram = Narith;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	Narith.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(Narith);
 	Autoplace(Narith,
 	{
@@ -352,8 +391,8 @@ args.xy.y += args.majorGrid;
 	});
 	args.diagram = integers;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	integers.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(integers);
 	Autoplace(integers,
 	{
@@ -459,8 +498,8 @@ return [0, args[0] % args[1]];
 	});
 	args.diagram = floats;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	floats.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(floats);
 	Autoplace(floats,
 	{
@@ -672,8 +711,8 @@ void %Type(const %Dom & args, %Cod & out)
 	});
 	args.diagram = complex;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	complex.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(complex);
 	Autoplace(complex,
 	{
@@ -864,8 +903,8 @@ return [0, Math.pow(args[0], args[1])];
 	});
 	args.diagram = strings;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	strings.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(strings);
 	Autoplace(strings,
 	{
@@ -1131,8 +1170,8 @@ function %Type(args)
 	});
 	args.diagram = htmlDiagram;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	htmlDiagram.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(htmlDiagram);
 	Autoplace(htmlDiagram,
 	{
@@ -1217,8 +1256,8 @@ function %Type(args)
 	});
 	args.diagram = threeD;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	threeD.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(threeD);
 	Autoplace(threeD,
 	{
@@ -1314,8 +1353,8 @@ postMessage(['fff2toQB3', args]);
 	});
 	args.diagram = qGates;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	qGates.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(qGates);
 	Autoplace(qGates,
 	{
@@ -1439,8 +1478,8 @@ return matrix_multiply(%Type_matrix, args);
 	});
 	args.diagram = cpp;
 	args.rowCount = 0;
-	args.xy = new Cat.D2(300, 300);
 	cpp.makeSvg(false);
+	args.xy = gridLocation();
 	Cat.R.AddDiagram(cpp);
 	Autoplace(cpp,
 	{
@@ -1676,7 +1715,7 @@ namespace %Namespace
 	const mapPrivate = MakeMorphism(args, 'MAP_PRIVATE', 'Morphism', '', 'Do not share this mapping', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_PRIVATE; }`}).to;
 	const mapAnonymous = MakeMorphism(args, 'MAP_ANONYMOUS', 'Morphism', '', 'Map anonymous memory', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_ANONYMOUS; }`}).to;
 	const mmapInput = cpp.get('ProductObject', {objects:[voidPtr, size_t, Z, Z, file, off_t], dual:false});
-	const mmap = MakeMorphism(args, 'mmap', 'Morphism', 'mmap', 'Memory map a file.', mmapInput, cpp.get('ProductObject', {objects:[voidPtr, one]}), {cpp:
+	const mmap = MakeMorphism(args, 'mmap', 'Morphism', 'mmap', 'Memory map a file.', mmapInput, cpp.get('ProductObject', {objects:[voidPtr, one], dual:true}), {cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
 	void * ptr = ::mmap(args.m_0, args.m_1, args.m_2, args.m_3, args.m_4, args.m_5);
@@ -1701,4 +1740,161 @@ namespace %Namespace
 	out = ::munmap(args.m_0, args.m_1);
 }
 `}).to;
+
+	//
+	// GDS
+	//
+	const gds = new Cat.Diagram(userDiagram,
+	{
+		description:	'Graphics Design Standard',
+		codomain:		pfs,
+		basename:		'gds',
+		properName:		'GDSII',
+		references:		[cpp],
+		user,
+	});
+	args.diagram = gds;
+	args.rowCount = 0;
+	gds.makeSvg(false);
+	args.xy = gridLocation();
+	Cat.R.AddDiagram(gds);
+	const B = MakeObject(args, 'B', 'CatObject', '&Bopf;', 'An unsigned byte', {code:{cpp:'typedef unsigned char %1;\n'}}).to;
+	const N16 = MakeObject(args, 'N16', 'CatObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural numbers', {code:{cpp:'typedef unsigned short %1;\n'}}).to;
+	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
+
+	const mem2ubyte = MakeMorphism(args, 'ubyte', 'Morphism', '', 'Get an unsigned byte from memory', voidPtr, B, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = *(unsigned char*)args;
+}
+`}});
+
+	const mem2ushort = MakeMorphism(args, 'ushort', 'Morphism', '', 'Get an unsigned short from memory', voidPtr, N16, {code:{cpp:
+`}
+
+#include <byteswap.h>
+
+namespace %Namespace
+{
+	void %Type(const %Dom & args, %Cod & out)
+	{
+		out = ::bswap_16(args);
+	}
+`}});
+
+	const mem2int = MakeMorphism(args, 'int', 'Morphism', '', 'Get an integer from memory', voidPtr, Z32, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = ::bswap_32(args);
+}
+`}});
+
+	const mem2float = MakeMorphism(args, 'float', 'Morphism', '', 'Get a floating point number from memory', voidPtr, F, {code:{cpp:
+`}
+
+#include <math.h>
+#include <stdint.h>
+
+namespace %Namespace
+{
+	void %Type(const %Dom & args, %Cod & out)
+	{
+		out.m_0 = args.m_0 + sizeof(out.m_1);
+		struct dbl
+		{
+			unsigned char mantissa:56;
+			unsigned char exponent:7;
+			unsigned char sign:1;
+		};
+		const dbl data = ::bswap_64(args);
+		auto val = ldexp((double)(data.mantissa), 4 * dbl.exponent - 312);
+		out = dbl.sign ? -val : val;
+	}
+`}});
+
+	const voidPtrPlus2 = MakeMorphism(args, 'voidPtrPlus2', 'Morphism', '+2', 'Increment void pointer by 2', voidPtr, voidPtr, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = args + 2;
+}
+`}});
+
+	const voidPtrPlus4 = MakeMorphism(args, 'voidPtrPlus4', 'Morphism', '+4', 'Increment void pointer by 4', voidPtr, voidPtr, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = args + 4;
+}
+`}});
+
+	const voidPtrPlus8 = MakeMorphism(args, 'voidPtrPlus8', 'Morphism', '+8', 'Increment void pointer by 8', voidPtr, voidPtr, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = args + 8;
+}
+`}});
+
+	const voidPtrByN16 = gds.get('ProductObject', {objects:[voidPtr, N16]});
+	const voidPtrPlusN = MakeMorphism(args, 'voidPtrPlusN', 'Morphism', '+n', 'Increment void pointer by an unsigned short', voidPtrByN16, voidPtr, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = args.m_0 + args.m_1;
+}
+`}});
+
+	const etBndry = MakeNamedObject(args, {name:'etBoundary', source:one, description:'The element type'}).to;
+	const etPath = MakeNamedObject(args, {name:'etPath', source:one, description:'The element type'}).to;
+	const etSref = MakeNamedObject(args, {name:'etSref', source:one, description:'The element type'}).to;
+	const etAref = MakeNamedObject(args, {name:'etAref', source:one, description:'The element type'}).to;
+	const etText = MakeNamedObject(args, {name:'etText', source:one, description:'The element type'}).to;
+	const gdsEltTypeStr = gds.get('ProductObject', {objects:[etBndry, etPath, etSref, etAref, etText], dual:true});
+	const gdsEltType = MakeNamedObject(args, {name:'EltType', source:gdsEltTypeStr, description:'The element type'}).to;
+
+	const dbu = MakeNamedObject(args, {name:'DBU', source:F, description:'The size of a database unit in meters'}).to;
+
+	const strname = MakeNamedObject(args, {name:'Strname', source:str, description:'The name of the structure'}).to;
+	const layer = MakeNamedObject(args, {name:'Layer', source:N16, description:'The chip layer on which a gds boundary or path lies'}).to;
+	const datatype = MakeNamedObject(args, {name:'Datatype', source:N16, description:'The chip datatype for a gds boundary or path'}).to;
+	const point = MakeNamedObject(args, {name:'Point', source:gds.get('ProductObject', {objects:[Z32, Z32]}), description:'A 32b point'}).to;
+	const points = MakeNamedObject(args, {name:'Points', source:gds.get('HomObject', {objects:[N, point]}), description:'A list of points'}).to;
+	const property = MakeNamedObject(args, {name:'Property', source:gds.get('ProductObject', {objects:[N16, str]}), description:'A property on a gds element'}).to;
+	const properties = MakeNamedObject(args, {name:'Properties', source:gds.get('HomObject', {objects:[N, property]})}).to;
+	const boundary = MakeNamedObject(args, {name:'Boundary', source:gds.get('ProductObject', {objects:[layer, datatype, points, properties]}), description:'A polygon on a chip'}).to;
+
+	const ptFlush = MakeNamedObject(args, {name:'ptFlush', source:one, description:'A path type with square ends flush with their end point'}).to;
+	const ptRound = MakeNamedObject(args, {name:'ptRound', source:one, description:'A path type with round ends'}).to;
+	const ptSquare = MakeNamedObject(args, {name:'ptSquare', source:one, description:'A path type with squares ends extending a half-width beyond their endpoint'}).to;
+	const Z32xZ32 = gds.get('ProductObject', {objects:[Z32, Z32]});
+	const ptVariable = MakeNamedObject(args, {name:'ptVariable', source:Z32xZ32, description:'A path type with squares ends extending a specified lengths beyond their endpoints'}).to;
+	const pt = gds.get('ProductObject', {objects:[ptFlush, ptRound, ptSquare, ptVariable], dual:true});
+	const endType = MakeNamedObject(args, {name:'EndType', source:pt, description:'The type of a path explains what do with their endpoints'}).to;
+	const width = MakeNamedObject(args, {name:'Width', source:Z32, description:'The width of a path'}).to;
+
+	const pathStr = gds.get('ProductObject', {objects:[layer, datatype, points, width, endType, properties]});
+	const path = MakeNamedObject(args, {name:'Path', source:pathStr, description:'A path on a layer of a chip'}).to;
+
+	const sname = MakeNamedObject(args, {name:'Sname', source:str, description:'The name of the cell to be placed'}).to;
+	const reflection = MakeNamedObject(args, {name:'Reflection', source:omega, description:'The reference is to be reflected about the s-axis upon placement'}).to;
+	const angle = MakeNamedObject(args, {name:'Angle', source:F, description:'The reference is to be rotated upon placement'}).to;
+	const mag = MakeNamedObject(args, {name:'Mag', source:F, description:'The reference is to be magnified upon placement'}).to;
+
+	const srefStr = gds.get('ProductObject', {objects:[sname, point, reflection, angle, mag, properties]});
+	const sref = MakeNamedObject(args, {name:'Sref', source:srefStr, description:'The structure with the given name is placed accordingly'}).to;
+
+	const rows = MakeNamedObject(args, {name:'Rows', source:N16, description:'The number of rows in an arrayed reference'}).to;
+	const cols = MakeNamedObject(args, {name:'Cols', source:N16, description:'The number of columns in an arrayed reference'}).to;
+	const rowPitch = MakeNamedObject(args, {name:'RowPitch', source:N16, description:'The distance between rows (origin-to-origin, not the gap) in an arrayed reference'}).to;
+	const colPitch = MakeNamedObject(args, {name:'ColPitch', source:N16, description:'The distance between columns (origin-to-origin, not the gap) in an arrayed reference'}).to;
+	const arefStr = gds.get('ProductObject', {objects:[sname, point, reflection, angle, mag, rows, cols, rowPitch, colPitch, properties]});
+	const aref = MakeNamedObject(args, {name:'Aref', source:arefStr, description:'The arrayed structure with the given name is placed accordingly'}).to;
+
+	const textStr = gds.get('ProductObject', {objects:[layer, datatype, str, point, properties]});
+	const txt = MakeNamedObject(args, {name:'Text', source:textStr, description:'The text string is placed accordingly'}).to;
+
+	const recordDataAry = [strname, layer, datatype, width, points, sname, rows, cols, str, reflection, mag, angle, endType, properties];
+	const recordDataStr = gds.get('ProductObject', {objects:recordDataAry});
+	const recordData = MakeNamedObject(args, {name:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
+
+//	const srefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, properties]}).to;
+//	const arefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, Z, Z, Z, Z, properties]}).to;
+
 }
