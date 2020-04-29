@@ -2090,11 +2090,13 @@ class Toolbar
 		xy.x += 8;
 		this.mouseCoords = diagram.userToDiagramCoords(xy);
 		const element = this.element;
+console.log('toolbar.show is hidden: ', element.classList.contains('hidden'));
 		if (element.classList.contains('hidden'))
 			this.reveal();
 		else
 		{
 			this.hide();
+console.log('toolbar.show is hiding!');
 			return;
 		}
 //		let xy = U.Clone(D.mouse.xy[D.mouse.xy.length -1]);
@@ -2585,8 +2587,12 @@ class D
 				if (diagram.selected.length > 0)
 				{
 					const from = diagram.getSelected();
+					const oldMouseover = D.mouseover;
 					if (from === D.mouseover)
+{
+console.log('Mousemove nulling mouseover!');
 						D.mouseover = null;
+};
 					const isMorphism = Morphism.IsA(from);
 					if (diagram.selected.length === 1)
 					{
@@ -2648,6 +2654,7 @@ class D
 							diagram.updateDragObjects(e);
 					}
 					D.DeleteSelectRectangle();
+					D.mouseover = oldMouseover;
 				}
 				else
 					diagram.updateFusible(e);
@@ -3297,7 +3304,8 @@ ${button}
 		const diagram = R.diagram;
 		const from = diagram.getElement(name);
 		diagram.emphasis(from.name, on);
-		if (on && diagram.selected.includes(from) && !DiagramText.IsA(from))
+//		if (on && diagram.selected.includes(from) && !DiagramText.IsA(from))
+		if (on && !DiagramText.IsA(from))
 			D.Status(e, from.to.description);
 	}
 	static Paste(e)
@@ -3415,6 +3423,7 @@ Object.defineProperties(D,
 							named:			'&#8797;',
 						},
 			panel:		{width:	230},
+			pan:		100,
 			font:		{height:24},
 			fuse:
 			{
@@ -3451,6 +3460,30 @@ Object.defineProperties(D,
 			Minus(e) { D.Zoom(e, -1);},
 			Equal(e) { D.Zoom(e, 1);},
 			Home(e) { R.diagram.home();},
+			ArrowUp(e)
+			{
+				const diagram = R.diagram;
+				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				diagram.setView(diagram.viewport.x, diagram.viewport.y + delta, diagram.viewport.scale);
+			},
+			ArrowDown()
+			{
+				const diagram = R.diagram;
+				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				diagram.setView(diagram.viewport.x, diagram.viewport.y - delta, diagram.viewport.scale);
+			},
+			ArrowLeft()
+			{
+				const diagram = R.diagram;
+				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				diagram.setView(diagram.viewport.x + delta, diagram.viewport.y, diagram.viewport.scale);
+			},
+			ArrowRight()
+			{
+				const diagram = R.diagram;
+				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				diagram.setView(diagram.viewport.x - delta, diagram.viewport.y, diagram.viewport.scale);
+			},
 			Space(e)
 			{
 				R.diagram.svgTranslate.classList.remove('trans025s');
@@ -3515,6 +3548,12 @@ Object.defineProperties(D,
 			{
 				D.diagramPanel.open();
 				D.diagramPanel.userDiagramsSection.open();
+				e.preventDefault();
+			},
+			Tab(e)
+			{
+				if (D.mouseover)
+					R.diagram.setViewport(D.mouseover.getBBox());
 				e.preventDefault();
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
@@ -5120,6 +5159,8 @@ class HelpPanel extends Panel
 					H.h5('Mouse Wheel') +
 						H.p('Use the mouse wheel to zoom in and out.') +
 					H.h4('Key Actions') +
+					H.h5('Arrow Keys') +
+						H.p('Pan the diagram view in the indicated direction.') +
 					H.h5('Delete') +
 						H.p('Selected objects or morphisms are deleted.  Some elements cannot be deleted if they are referred to by another element.') +
 					H.h5('Escape') +
@@ -5463,82 +5504,6 @@ class ReferenceElementSection extends ElementSection
 	}
 }
 
-/*
-class NewObjectSection extends Section
-{
-	constructor(parent)
-	{
-		super('New', parent, 'object-new-section', 'Create new object');
-		this.section.innerHTML =
-			H.table(H.tr(H.td(D.Input('', 'object-new-basename', 'Base name')), 'sidenavRow') +
-					H.tr(H.td(D.Input('', 'object-new-properName', 'Proper name')), 'sidenavRow') +
-					H.tr(H.td(H.input('', 'in100', 'object-new-description', 'text',
-						{ph: 'Description', x:'onkeydown="Cat.D.OnEnter(event, Cat.D.objectPanel.newObjectSection.create, Cat.D.objectPanel.newObjectSection)"'})), 'sidenavRow')
-			) +
-			H.span(D.GetButton('edit', 'Cat.D.objectPanel.newObjectSection.create(event)', 'Create new object in this diagram')) +
-			H.span('', 'error', 'object-new-error');
-		this.error = document.getElementById('object-new-error');
-		this.basenameElt = document.getElementById('object-new-basename');
-		this.properNameElt = document.getElementById('object-new-properName');
-		this.descriptionElt = document.getElementById('object-new-description');
-		this.update();
-		R.ReplayCommands.set('newObject', this);
-	}
-	update()
-	{
-		if (super.update())
-		{
-			this.error.innerHTML = '';
-			this.basenameElt.value = '';
-			this.properNameElt.value = '';
-			this.descriptionElt.value = '';
-			this.error.style.padding = '0px';
-		}
-	}
-	create(e)
-	{
-		try
-		{
-			const basename = this.basenameElt.value;
-			const properName = this.properNameElt.value;
-			const description = this.descriptionElt.value;
-			const from = this.doit(e, R.diagram, basename, properName, description, D.Center(R.diagram));
-			this.update();
-			R.diagram.log({command:'newObject', basename, properName, description, xy:from.getXY()});
-		}
-		catch(e)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(e);
-		}
-	}
-	doit(e, diagram, basename, properName, description, xy, save = true)
-	{
-		try
-		{
-			if (!diagram.isEditable())
-				throw 'diagram is read only';
-			const name = Element.Codename(diagram, {basename});
-			if (diagram.getElement(name))
-				throw 'name already exists';
-			const to = new CatObject(diagram, { basename, category:diagram.codomain, properName, description, });
-			const from = diagram.placeObject(e, to, xy, save);
-			R.EmitObjectEvent('new', from.to.name);
-			return from;
-		}
-		catch(e)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(e);
-		}
-	}
-	replay(e, diagram, args)
-	{
-		this.doit(e, diagram, args.basename, args.properName, args.description, args.xy, false);
-	}
-}
-*/
-
 class ObjectPanel extends Panel
 {
 	constructor()
@@ -5557,114 +5522,6 @@ class ObjectPanel extends Panel
 	}
 }
 
-/*
-class NewMorphismSection extends Section
-{
-	constructor(parent)
-	{
-		super('New', parent, 'object-new-section', 'Create new object');
-		this.section.innerHTML =
-			H.table(
-						H.tr(H.td(D.Input('', 'morphism-new-basename', 'Base name')), 'sidenavRow') +
-						H.tr(H.td(D.Input('', 'morphism-new-properName', 'Proper name')), 'sidenavRow') +
-						H.tr(H.td(H.input('', 'in100', 'morphism-new-description', 'text', {ph: 'Description',
-									x:'onkeydown="Cat.D.OnEnter(event, Cat.D.morphismPanel.newMorphismSection.create, Cat.D.morphismPanel.newMorphismSection)"'})), 'sidenavRow') +
-						H.tr(H.td(H.select('', 'w100', 'morphism-new-domain')), 'sidenavRow') +
-						H.tr(H.td(H.select('', 'w100', 'morphism-new-codomain')), 'sidenavRow')
-			) +
-			H.span(D.GetButton('edit', 'Cat.D.morphismPanel.newMorphismSection.create(event)', 'Create new morphism in this diagram')) +
-			H.span('', 'error', 'morphism-new-error');
-		this.error = document.getElementById('morphism-new-error');
-		this.basenameElt = document.getElementById('morphism-new-basename');
-		this.properNameElt = document.getElementById('morphism-new-properName');
-		this.descriptionElt = document.getElementById('morphism-new-description');
-		this.domainElt = document.getElementById('morphism-new-domain');
-		this.codomainElt = document.getElementById('morphism-new-codomain');
-		this.update();
-		R.ReplayCommands.set('newMorphism', this);
-	}
-	update()
-	{
-		if (R.diagram && super.update())
-		{
-			this.error.innerHTML = '';
-			this.basenameElt.value = '';
-			this.properNameElt.value = '';
-			this.descriptionElt.value = '';
-			this.domainElt.value = '';
-			this.codomainElt.value = '';
-			this.error.style.padding = '0px';
-			const objects = R.diagram.getObjects();
-			const options = objects.map(o => H.option(o.htmlName(), o.name)).join('');
-			this.domainElt.innerHTML = H.option('Domain', '') + options;
-			this.codomainElt.innerHTML = H.option('Codomain', '') + options;
-		}
-	}
-	create(e)
-	{
-		try
-		{
-			const diagram = R.diagram;
-			if (!diagram.isEditable())
-				throw 'Diagram is read only';
-			const basename = U.HtmlSafe(this.basenameElt.value);
-			const name = Element.Codename(diagram, {basename});
-			if (diagram.getElement(name))
-				throw 'Morphism already exists';
-			const properName = this.properNameElt.value;
-			const description = this.descriptionElt.value;
-			const domain = diagram.codomain.getElement(this.domainElt.value);
-			const codomain = diagram.codomain.getElement(this.codomainElt.value);
-			const from = this.doit(e, diagram, domain, codomain, basename, properName, description);
-			this.update();
-			R.EmitMorphismEvent('new', from.name);
-			diagram.log(
-			{
-				command:'newMorphism',
-				domain:domain.name,
-				codomain:codomain.name,
-				basename,
-				properName,
-				description,
-				xyDom:from.domain.getXY(),
-				xyCod:from.codomain.getXY(),
-			});
-		}
-		catch(e)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(e);
-		}
-	}
-	doit(e, diagram, domain, codomain, basename, properName, description, xyDom = null, xyCod = null)
-	{
-		if (!diagram.isEditable())
-			throw 'Diagram is read only';
-		if (diagram.getElement(name))
-			throw 'Morphism already exists';
-		const to = new Morphism(diagram,
-		{
-			basename,
-			properName,
-			description,
-			domain,
-			codomain,
-		});
-		to.loadEquivalence();
-		return diagram.placeMorphism(e, to, xyDom, xyCod, false);
-	}
-	replay(e, diagram, args)
-	{
-		const domain = diagram.codomain.getElement(args.domain);
-		const codomain = diagram.codomain.getElement(args.codomain);
-		const basename = args.basename;
-		const properName = args.properName;
-		const description = args.description;
-		this.doit(e, diagram, domain, codomain, basename, properName, description, args.xyDom, args.xyCod);
-	}
-}
-*/
-
 class MorphismPanel extends Panel
 {
 	constructor()
@@ -5673,7 +5530,6 @@ class MorphismPanel extends Panel
 		this.elt.innerHTML =
 			H.table(H.tr(this.expandPanelBtn() + this.closeBtnCell()), 'buttonBarRight') +
 			H.h3('Morphisms');
-//		this.newMorphismSection = new NewMorphismSection(this.elt);
 		this.morphismSection = new DiagramElementSection('Morphisms', this.elt, 'diagram-morphism', 'Morphisms in this diagram', 'Morphism');
 		this.referenceObjectSection = new ReferenceElementSection('References', this.elt, 'diagram-reference-morphism', 'Morphisms referenced from this diagram', 'Morphism');
 		this.initialize();
@@ -5732,48 +5588,6 @@ class SettingsPanel extends Panel
 			R.EmitDiagramEvent(R.diagram, 'showInternals');
 	}
 }
-
-/*
-class NewTextSection extends Section
-{
-	constructor(parent)
-	{
-		super('New', parent, 'text-new-section', 'Create new text');
-		this.section.innerHTML =
-				H.h5('Create text') +
-				H.table(H.tr(H.td(H.textarea('', 'textHtml', 'text-description')), 'sidenavRow')) +
-				H.span(D.GetButton('edit', 'Cat.D.textPanel.newTextSection.create(event)', 'Create new text for this diagram')) +
-			H.span('', 'error', 'text-new-error');
-		this.error = document.getElementById('text-new-error');
-		this.descriptionElt = document.getElementById('text-description');
-		this.update();
-	}
-	update()
-	{
-		this.error.innerHTML = '';
-		this.descriptionElt.innerHTML = '';
-	}
-	create(e)
-	{
-		try
-		{
-			const diagram = R.diagram;
-			if (!diagram.isEditable())
-				throw 'Diagram is not editable';	// TODO should disable instead
-			const xy = D.Center(R.diagram);
-			const text = this.descriptionElt.value;
-			diagram.placeText(e, xy, text);
-			diagram.log({command:'text', xy, text});
-			this.update();
-			D.textPanel.textSection.update();
-		}
-		catch(e)
-		{
-			this.error.innerHTML = 'Error: ' + U.GetError(e);
-		}
-	}
-}
-*/
 
 class TextPanel extends Panel
 {
@@ -6058,7 +5872,6 @@ class Graph
 	}
 	tagGraph(tag)
 	{
-//		if (this.tags.indexOf(tag) === -1)
 		if (!this.tags.includes(tag))
 			this.tags.push(tag);
 		this.graphs.map(g => g.tagGraph(tag));
@@ -6980,6 +6793,7 @@ class DiagramText extends Element
 			y:				{value:	xy.y,												writable:	true},
 			width:			{value:	U.GetArg(nuArgs, 'width', 0),						writable:	true},
 			height:			{value:	U.GetArg(nuArgs, 'height', D.default.font.height),	writable:	true},
+			weight:			{value:	U.GetArg(nuArgs, 'weight', 'normal'),				writable:	true},
 		});
 		diagram && diagram.addElement(this);
 	}
@@ -7015,6 +6829,8 @@ class DiagramText extends Element
 		svg.setAttributeNS(null, 'x', this.x);
 		svg.setAttributeNS(null, 'y', this.y);	// TODO should be this.height?
 		svg.innerHTML = this.tspan();
+		svg.style.fontSize = `${this.height}px`;
+		svg.style.fontWeight = this.weight;
 		const mousedown = function(e) { Cat.R.diagram.pickElement(event, name);};
 		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
@@ -7066,6 +6882,8 @@ class DiagramText extends Element
 		a.xy = this.getXY();
 		a.width = this.width;
 		a.height = this.height;
+		if (this.weight !== 'normal')
+			a.weight = this.weight;
 		return a;
 	}
 	showSelected(state = true)
@@ -11081,13 +10899,38 @@ class DiagramMorphism extends Morphism
 		const svg = this.svg_name;
 		svg.setAttribute('x', off.x);
 		svg.setAttribute('y', off.y);
+		svg.setAttribute('text-anchor', 'middle');
+		const bbox = svg.getBBox();
+		const pntTop = this.intersect(bbox, 'top');
+		const pntBtm = this.intersect(bbox, 'bottom');
+		const pntLft = this.intersect(bbox, 'left');
+		const pntRgt = this.intersect(bbox, 'right');
 		let anchor = 'middle';
-		const angle = this.angle;
-		const bnd = Math.PI/12;
-		if (angle > Math.PI + bnd && angle < 2 * Math.PI - bnd)
-			anchor = this.flipName ? 'start' : 'end';
-		else if (angle > bnd && angle < Math.PI - bnd)
-			anchor = this.flipName ? 'end' : 'start';
+		if (pntTop || pntBtm || pntLft || pntRgt)	// intersection
+		{
+//			anchor = (this.start.x < this.end.x && Math.abs(this.start.y - this.end.y) < D.default.font.height) ? 'left' : 'end';
+			if (this.start.x < this.end.x)
+			{
+				if (this.start.y < this.end.y)
+					anchor = 'start';
+				else
+					anchor = 'end';
+			}
+			else
+				if (this.start.y < this.end.y)
+					anchor = 'start';
+				else
+					anchor = 'end';
+		}
+		else
+		{
+			const angle = this.angle;
+			const bnd = Math.PI/12;
+			if (angle > Math.PI + bnd && angle < 2 * Math.PI - bnd)
+				anchor = this.flipName ? 'start' : 'end';
+			else if (angle > bnd && angle < Math.PI - bnd)
+				anchor = this.flipName ? 'end' : 'start';
+		}
 		svg.setAttribute('text-anchor', anchor);
 	}
 	getBBox()
@@ -12140,7 +11983,7 @@ class FactorMorphism extends Morphism
 				const cod = this.factors.length === 1 ? codomain : codomain.getFactor([i]);
 				const domRoot = ndx.slice();
 				domRoot.unshift(0);
-				const codRoot = this.factors.length > 1 ? [1, ...i] : [1];
+				const codRoot = this.factors.length > 1 ? [1, i] : [1];
 				d.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot:this.factors.length > 1 ? [1, i] : [1], offset});	// TODO dual name
 			});
 			graph.tagGraph(this.dual ? 'Cofactor' : ' Factor');
@@ -12989,7 +12832,7 @@ class Diagram extends Functor
 		this.viewport.y = y;
 		this.viewport.scale = s;
 		this.svgTranslate.setAttribute('transform', `translate(${this.viewport.x} ${this.viewport.y}) scale(${this.viewport.scale} ${this.viewport.scale})`);
-		this.updateViewSaveTimer(oldport);
+		log && this.updateViewSaveTimer(oldport);
 	}
 	mousePosition(e)
 	{
@@ -13012,8 +12855,10 @@ class Diagram extends Functor
 		if (elt)
 		{
 			D.dragStart = D.mouse.position();
-			if (!this.isSelected(elt))
-				D.shiftKey ? this.addSelected(elt) : this.makeSelected(e, elt);
+			if (!this.isSelected(elt) && D.shiftKey)
+				this.addSelected(elt);
+			else
+				this.makeSelected(e, elt);
 			if (DiagramObject.IsA(elt))
 				elt.orig = {x:elt.x, y:elt.y};
 		}
