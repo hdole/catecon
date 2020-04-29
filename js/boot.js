@@ -8,7 +8,8 @@ const Boot = function(fn)
 	function gridLocation()
 	{
 		const bbox = args.diagram.svgRoot.getBBox();
-		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
+//		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
+		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300));
 	}
 	function CheckColumn(args)
 	{
@@ -27,8 +28,10 @@ const Boot = function(fn)
 			args.rowCount = 0;
 		}
 	}
-	function Autoplace(diagram, args, xy)
+	function Autoplace(args, increment = true)
 	{
+		const diagram = args.diagram;
+		const xy = args.xy;
 		let index = null;
 		if (args.prototype === 'DiagramText')
 		{
@@ -47,7 +50,7 @@ const Boot = function(fn)
 			else if (Cat.CatObject.IsA(to))
 				index = diagram.placeObject(null, to, xy, false);
 		}
-		if ('rowCount' in args)
+		if (increment && 'rowCount' in args)
 		{
 			args.rowCount++;
 			xy.y += args.majorGrid;
@@ -58,20 +61,22 @@ const Boot = function(fn)
 	{
 		const names = [];
 		diagram.references.forEach(function(d){names.push(d.properName);});
-		Autoplace(diagram,
+		Autoplace(
 		{
+			diagram,
 			description:	'References: ' + names.join(),
 			prototype:		'DiagramText',
 			user,
-		}, xy);
+			xy,
+		});
 	}
-	function PlaceSideText(args, text)
+	function PlaceSideText(args, description)
 	{
-		Autoplace(args.diagram,
-		{
-			description:	Cat.U.Formal(text),
-			prototype:		'DiagramText',
-		}, args.xy.add(args.side));
+		const nuArgs = Cat.U.Clone(args);
+		nuArgs.prototype = 'DiagramText';
+		nuArgs.description = description;
+		nuArgs.xy = args.xy.add(args.side),
+		Autoplace(nuArgs);
 	}
 	function PlaceObject(args, o)
 	{
@@ -81,6 +86,18 @@ const Boot = function(fn)
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
 		return i;
+	}
+	function PlaceText(args, description, height = Cat.D.default.font.height, weight = 'normal', increment = true)
+	{
+		CheckColumn(args);
+		args.prototype = 'DiagramText';
+		args.description = description;
+		args.height = height;
+		args.weight = weight;
+		Autoplace(args, increment);
+		delete args.prototype;
+		delete args.description;
+		delete args.height;
 	}
 	function MakeObject(args, basename, prototype, properName, description, moreArgs = {})
 	{
@@ -93,7 +110,7 @@ const Boot = function(fn)
 		nuArgs.basename = basename;
 		if (properName !== '')
 			nuArgs.properName = properName;
-		const e = Autoplace(args.diagram, nuArgs, nuArgs.xy);
+		const e = Autoplace(nuArgs);
 		Adjust(args, e);
 		PlaceSideText(args, description);
 		args.xy = new Cat.D2(nuArgs.xy);
@@ -187,7 +204,7 @@ const Boot = function(fn)
 	//
 	//
 	const user = 'hdole';
-	const side = Cat.D.Grid(new Cat.D2(0, 4 * Cat.D.default.layoutGrid));
+	const side = Cat.D.Grid(new Cat.D2(0, 2 * Cat.D.default.font.height));
 	const pfs = Cat.R.CAT.getElement('hdole/PFS');
 	let userDiagram = Cat.R.GetUserDiagram(user);
 	const args =
@@ -217,13 +234,17 @@ const Boot = function(fn)
 	basics.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(basics);
-	Autoplace(basics,
+	/*
+	Autoplace(
 	{
+		diagram:		'basics',
 		description:	'This diagram contains initial and terminal objects\nas well as objects for interacting with the real world.\nIn other words, device drivers',
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
 	args.xy.y += args.majorGrid;
+	*/
+	PlaceText(args, 'This diagram contains initial and terminal objects\nas well as objects for interacting with the real world.\nIn other words, device drivers', 32);
 	const zero = basics.get('InitialObject', {});
 	const one = basics.get('TerminalObject', {});
 	PlaceObject(args, zero);
@@ -1740,29 +1761,11 @@ namespace %Namespace
 	out = ::munmap(args.m_0, args.m_1);
 }
 `}).to;
-
-	//
-	// GDS
-	//
-	const gds = new Cat.Diagram(userDiagram,
-	{
-		description:	'Graphics Design Standard',
-		codomain:		pfs,
-		basename:		'gds',
-		properName:		'GDSII',
-		references:		[cpp],
-		user,
-	});
-	args.diagram = gds;
-	args.rowCount = 0;
-	gds.makeSvg(false);
-	args.xy = gridLocation();
-	Cat.R.AddDiagram(gds);
-	const B = MakeObject(args, 'B', 'CatObject', '&Bopf;', 'An unsigned byte', {code:{cpp:'typedef unsigned char %1;\n'}}).to;
+	const N8 = MakeObject(args, 'N8', 'CatObject', '&Nopf;&#8328', 'An unsigned byte', {code:{cpp:'typedef unsigned char %1;\n'}}).to;
 	const N16 = MakeObject(args, 'N16', 'CatObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural numbers', {code:{cpp:'typedef unsigned short %1;\n'}}).to;
 	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
 
-	const mem2ubyte = MakeMorphism(args, 'ubyte', 'Morphism', '', 'Get an unsigned byte from memory', voidPtr, B, {code:{cpp:
+	const mem2ubyte = MakeMorphism(args, 'ubyte', 'Morphism', '', 'Get an unsigned byte from memory', voidPtr, N8, {code:{cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
 	out = *(unsigned char*)args;
@@ -1833,13 +1836,33 @@ namespace %Namespace
 }
 `}});
 
-	const voidPtrByN16 = gds.get('ProductObject', {objects:[voidPtr, N16]});
+	const voidPtrByN16 = cpp.get('ProductObject', {objects:[voidPtr, N16]});
 	const voidPtrPlusN = MakeMorphism(args, 'voidPtrPlusN', 'Morphism', '+n', 'Increment void pointer by an unsigned short', voidPtrByN16, voidPtr, {code:{cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
 	out = args.m_0 + args.m_1;
 }
 `}});
+
+
+	//
+	// GDS
+	//
+	const gds = new Cat.Diagram(userDiagram,
+	{
+		description:	'Graphics Design Standard',
+		codomain:		pfs,
+		basename:		'gds',
+		properName:		'GDSII',
+		references:		[cpp],
+		user,
+	});
+	args.diagram = gds;
+	args.rowCount = 0;
+	gds.makeSvg(false);
+	Cat.R.AddDiagram(gds);
+
+	args.xy = gridLocation();
 
 	const etBndry = MakeNamedObject(args, {name:'etBoundary', source:one, description:'The element type'}).to;
 	const etPath = MakeNamedObject(args, {name:'etPath', source:one, description:'The element type'}).to;
@@ -1890,9 +1913,12 @@ namespace %Namespace
 	const textStr = gds.get('ProductObject', {objects:[layer, datatype, str, point, properties]});
 	const txt = MakeNamedObject(args, {name:'Text', source:textStr, description:'The text string is placed accordingly'}).to;
 
-	const recordDataAry = [strname, layer, datatype, width, points, sname, rows, cols, str, reflection, mag, angle, endType, properties];
+	const recordDataAry = [gdsEltType, str, layer, datatype, points, width, rows, cols, reflection, mag, angle, endType, properties];
 	const recordDataStr = gds.get('ProductObject', {objects:recordDataAry});
 	const recordData = MakeNamedObject(args, {name:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
+
+	args.xy = new Cat.D2;
+	PlaceText(args, 'The GDSII Graphics Design Standard II Specification', 96, 'bold', false);
 
 //	const srefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, properties]}).to;
 //	const arefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, Z, Z, Z, Z, properties]}).to;
