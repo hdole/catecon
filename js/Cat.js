@@ -10474,7 +10474,7 @@ class Identity extends Morphism
 		nuArgs.basename = Identity.Basename({domain:nuArgs.domain, codomain:nuArgs.codomain});
 		nuArgs.properName = 'properName' in nuArgs ? U.HtmlEntitySafe(nuArgs.properName) : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		nuArgs.description = domain.name === nuArgs.codomain.name ? `Identity for the object ${nuArgs.domain.properName}` :
-			`Identity between objects ${domain.name} and ${nuArgs.codomain.name}`;
+			`Identity between objects ${domain.properName} and ${nuArgs.codomain.properName}`;
 		super(diagram, nuArgs);
 		this.signature = Identity.Signature(diagram, this.domain);
 	}
