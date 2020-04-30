@@ -2145,7 +2145,7 @@ console.log('toolbar.show is hiding!');
 			element.style.left = `${left}px`;
 			let top = rect.top + xy.y;
 			top = top >= 0 ? top : 0;
-			top = (top + toolbox.width) >= window.innerHeight ? window.innerHeight - toolbox.height : top;
+			top = (top + toolbox.height) >= window.innerHeight ? window.innerHeight - toolbox.height : top;
 			element.style.top = `${top}px`;
 		}
 		else
@@ -2391,29 +2391,19 @@ class NewElement
 			switch (this.type)
 			{
 				case 'Object':
-//					const to = new CatObject(diagram, { basename, category:diagram.codomain, properName, description, });
+				{
 					const to = new CatObject(diagram, args);
 					const from = diagram.placeObject(e, to, args.xy, save);
-//					R.EmitObjectEvent('new', from.to.name);
 					return from;
+				}
 				case 'Morphism':
 				{
 					const to = new Morphism(diagram, args);
-//					{
-//						basename,
-//						properName,
-//						description,
-//						domain:args.domain,
-//						codomain:args.codomain,
-//					});
 					to.loadEquivalence();
 					return diagram.placeMorphism(e, to, args.xyDom, args.xyCod, save);
 				}
 				case 'Text':
 				{
-//					const xy = D.Center(R.diagram);
-//					const text = this.descriptionElt.value;
-//					const text = args.text;
 					const text = diagram.placeText(e, args.xy, args.text);
 					this.update();
 					return text;
@@ -3310,12 +3300,14 @@ ${button}
 	}
 	static Paste(e)
 	{
+		if (!D.copyDiagram)
+			return;
 		const diagram = R.diagram;
 		const mouse = D.mouse.diagramPosition(diagram);
 		const refs = diagram.getAllReferenceDiagrams();
-		if (!refs.has(D.pasteDiagram.name) && diagram !== D.pasteDiagram)
+		if (!refs.has(D.copyDiagram.name) && diagram !== D.copyDiagram)
 		{
-			D.Statua(e, `Diagram ${D.pasteDiagram.htmlName()} is not referenced by this diagram`);
+			D.Status(e, `Diagram ${D.copyDiagram.htmlName()} is not referenced by this diagram`);
 			return;
 		}
 		const copies = D.DoPaste(e, mouse, D.pasteBuffer);
@@ -3363,8 +3355,8 @@ ${button}
 					R.EmitObjectEvent('new', copy.name);
 					break;
 				case 'DiagramText':
-					const xy = D2.Add(xy, D2.Subtract(elt.getXY(), base));
-					copy = new DiagramText(diagram, {xy, description:elt.description});
+					const txy = D2.Add(xy, D2.Subtract(elt.getXY(), base));
+					copy = new DiagramText(diagram, {xy:txy, description:elt.description});
 					diagram.addSVG(copy);
 					R.EmitTextEvent('new', copy.name);
 					break;
@@ -3505,7 +3497,7 @@ Object.defineProperties(D,
 			ControlKeyC(e)
 			{
 				D.pasteBuffer = R.diagram.selected.slice();
-				D.pasteDiagram = R.diagram;
+				D.copyDiagram = R.diagram;
 				const xy = D.mouse.position();
 				D.Status({clientX:xy.x, clientY:xy.y}, 'Copied to paste buffer');
 			},
@@ -3554,6 +3546,8 @@ Object.defineProperties(D,
 			{
 				if (D.mouseover)
 					R.diagram.setViewport(D.mouseover.getBBox());
+				else if (R.diagram.selected.length > 0)
+					R.diagram.setViewport(D2.Merge(...R.diagram.selected.map(elt => elt.getBBox())));
 				e.preventDefault();
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
@@ -3635,7 +3629,7 @@ Object.defineProperties(D,
 	'Panel':			{value: null,		writable: true},
 	'panels':			{value: null,		writable: true},
 	'pasteBuffer':		{value: [],			writable: true},
-	'pasteDiagram':		{value:	null,		writable: true},
+	'copyDiagram':		{value:	null,		writable: true},
 	'settingsPanel':	{value: null,		writable: true},
 	'shiftKey':			{value: false,		writable: true},
 	'showUploadArea':	{value: false,		writable: true},
@@ -3969,14 +3963,14 @@ class Section
 		else
 		{
 			this.section.style.display = 'block';
-			this.update();
+//			this.update();
 		}
 	}
 	open()
 	{
 		this.elt.classList.add('active');
 		this.section.style.display = 'block';
-		this.update();
+//		this.update();
 	}
 	close()
 	{
@@ -5345,7 +5339,7 @@ class ElementSection extends Section
 	}
 	add(elt)
 	{
-		const diagram = R.diagram;
+		const diagram = elt.diagram;
 		let id = this.getId(diagram.name);		// diagram id
 		let diagramElt = document.getElementById(id);
 		if (!diagramElt)
@@ -5356,7 +5350,7 @@ class ElementSection extends Section
 		const canEdit = diagram.isEditable();
 		const tds = [];
 		if (R.default.internals)
-			tds.push(H3.td(elt.refcnt.toString()));
+			tds.push(H3.td(H3.tag('refcnt', elt.refcnt.toString())));
 		id = this.getId(elt.name);		// element id
 		const onclick = !DiagramText.IsA(elt) ? `Cat.R.diagram.place${this.type}(event, '${elt.name}');Cat.D.${U.Decap(this.type)}Panel.collapse()` : null;
 		const ondragstart = `Cat.D.DragElement(event, '${elt.name}')`;
@@ -5397,6 +5391,15 @@ class ElementSection extends Section
 		}
 		this.catalog.appendChild(div);
 	}
+	update(diagram, name)
+	{
+		const id = this.getId(name);
+		const elt = diagram.getElement(name);	// not the .to
+		document.querySelector(`#${id} proper-name`).innerHTML = U.HtmlEntitySafe(elt.properName);
+		document.querySelector(`#${id} description`).innerHTML = U.HtmlEntitySafe(elt.description);
+		if (R.default.internals)
+			document.querySelector(`#${id} refcnt`).innerHTML = elt.refcnt;
+	}
 	remove(name)
 	{
 		const elt = document.getElementById(this.getId(name));
@@ -5434,16 +5437,16 @@ class DiagramElementSection extends ElementSection
 			const args = e.detail;
 			const diagram = args.diagram;
 			const name = args.name;
-			const elt = diagram.getElement(name);
+			let elt = diagram.getElement(name);
 			if (DiagramMorphism.IsA(elt) || DiagramObject.IsA(elt))
-				return;
+				elt = elt.to;
 			switch(args.command)
 			{
 				case 'new':
 					that.add(elt);
 					break;
 				case 'remove':
-					that.remove(name);
+					that.remove(elt.name);
 					break;
 				case 'update':
 					that.update(diagram, name);
@@ -6207,7 +6210,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		const nuArgs = U.Clone(args);
 		if (('basename' in nuArgs && nuArgs.basename === '') || !('basename' in nuArgs))
 			nuArgs.basename = 'size' in nuArgs ? '#' + Number.parseInt(nuArgs.size).toString() : diagram.getAnon('#');
-		if ('size' in nuArgs)
+		if ('size' in nuArgs && !('properName' in nuArgs))
 		{
 			if (nuArgs.size === 0)
 				nuArgs.properName = '&empty;'
@@ -7496,7 +7499,7 @@ class NameAction extends Action
 			idx2.update();
 			if (emitEvents)
 			{
-				R.EmitObjectEvent('new', nid.name);
+				R.EmitObjectEvent('new', nidIndex.name);
 				R.EmitMorphismEvent('new', idx1.name);
 				R.EmitMorphismEvent('new', idx2.name);
 			}
@@ -7967,26 +7970,26 @@ class DeleteAction extends Action
 			let s = elements[i];
 			if (DiagramObject.IsA(s))	// TODO what about morphisms as objects in 2Cat?
 			{
-				s.refcnt > 0 && s.decrRefcnt();
 				if (s.refcnt <= 1)
 					R.EmitObjectEvent('remove', s.name);
+				s.decrRefcnt();
 			}
 			else if (DiagramMorphism.IsA(s))
 			{
-				s.decrRefcnt();
-				if (s.refcnt <= 1)
+				if (s.refcnt <= 1)		// events before removal
 					R.EmitMorphismEvent('remove', s.name);
+				s.decrRefcnt();
 				updateHomSets.add([s.domain.name, s.codomain.name]);	// TODO
 			}
 			else if (DiagramText.IsA(s))
 			{
+				R.EmitTextEvent('remove', s.name);		//events before removal
 				s.decrRefcnt();
-				R.EmitTextEvent('remove', s.name);
 			}
 			else if (Assertion.IsA(s))
 			{
+				R.EmitAssertionEvent('remove', s.name);		//events before removal
 				s.decrRefcnt();
-				R.EmitAssertionEvent('remove', s.name);
 			}
 		}
 		updateHomSets.forEach(function(pair)
@@ -9711,7 +9714,8 @@ class FiniteObjectAction extends Action
 	{
 		const from = ary[0];
 		const to = from.to;
-		const size = Number.parseInt(this.sizeElt.value.trim());
+		const txt = this.sizeElt.value.trim();
+		const size = Number.parseInt(txt);
 		this.sizeElt.classList.remove('error');
 		if (size < 0 || size.toString() !== txt)
 		{
@@ -9733,12 +9737,6 @@ class FiniteObjectAction extends Action
 			from.to = null;
 			from.setObject(newTo);
 		}
-		else
-		{
-			if (size < 0 || size.toString() !== txt)
-				return;
-//			m.size.javascript = size;
-		}
 	}
 	html(e, diagram, ary)
 	{
@@ -9748,7 +9746,7 @@ class FiniteObjectAction extends Action
 		html += (to.constructor.name === 'CatObject' ? H.span('Convert generic object to a finite object.', 'smallPrint') : H.span('Finite object', 'smallPrint')) +
 					H.table(H.tr(H.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')), 'sidenavRow')) +
 					H.span('Leave size blank to indicate finite of unknown size', 'smallPrint') +
-					D.GetButton('edit', 'Cat.R.Actions.finiteObject.action(event, R.diagram, R.diagram.selected)', 'Finite object', D.default.button.tiny);
+					D.GetButton('edit', 'Cat.R.Actions.finiteObject.action(event, Cat.R.diagram, Cat.R.diagram.selected)', 'Finite object', D.default.button.tiny);
 		D.toolbar.help.innerHTML = html;
 		this.sizeElt = document.getElementById('finite-new-size');
 		U.SetInputFilter(this.sizeElt, function(v)
@@ -13077,7 +13075,7 @@ class Diagram extends Functor
 		}
 		return from;
 	}
-	placeMorphismByObject(e, dir, objectName, morphismName, save = true, oxy = null)
+	placeMorphismByObject(e, dir, objectName, morphismName, save = true)
 	{
 		try
 		{
@@ -13087,16 +13085,8 @@ class Diagram extends Functor
 			if (!to[dir].isEquivalent(toObj))
 				throw `Source and target do not have same signature: ${to[dir].htmlName()} vs ${toObj.htmlName()}`;
 			const angles = [];
-			/*
-			this.domain.forEachMorphism(function(m)
-			{
-				if (Morphism.IsA(m) && fromObj.name === m.domain.name)
-					angles.push(D2.Angle(fromObj, m.codomain));
-				else if (fromObj.name === m.codomain.name)
-					angles.push(D2.Angle(fromObj, m.domain));
-			});
-			*/
 			fromObj.domains.forEach(function(m) { angles.push(D2.Angle(fromObj, m.codomain)); });
+//			fromObj.codomains.forEach(function(m) { angles.push(D2.Angle(m.domain, fromObj)); });
 			fromObj.codomains.forEach(function(m) { angles.push(D2.Angle(fromObj, m.domain)); });
 			angles.sort();
 			let gap = 0;
@@ -13112,28 +13102,17 @@ class Diagram extends Functor
 				}
 				lastAngle = angles[i];
 			}
-			const delta = 2 * Math.PI - (angles[angles.length-1] - angles[0]);
-			if (delta > gap)
-				angle = lastAngle + (delta === 0 ? 2 * Math.PI : delta)/2;
-			const cosAngle = Math.cos(angle);
-//			const tw = Math.abs(cosAngle) * D.textWidth(to.codomain.htmlName());
-			const tw = to.textwidth();
+			if (angles.length > 1)
+			{
+				const delta = 2 * Math.PI - (angles[angles.length-1] - angles[0]);
+				if (delta > gap)
+					angle = lastAngle + (delta === 0 ? 2 * Math.PI : delta)/2;
+			}
 			const al = D.default.arrow.length;
-//			const xy = D.Grid(oxy ? oxy : {x:fromObj.x + cosAngle * (al + tw), y:fromObj.y + Math.sin(angle) * (al + tw)});
-			const xy = D.Grid(oxy ? oxy : {x:fromObj.x + cosAngle * (al + tw), y:fromObj.y + Math.sin(angle) * (al + tw)});
-			let domainElt = null;
-			let codomainElt = null;
+			const cosAngle = Math.cos(angle);
+			const xy = D.Grid(D2.Scale(al + cosAngle * to.textwidth(), {x:cosAngle, y:Math.sin(angle)}).add(fromObj));
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
-			if (dir === 'domain')
-			{
-				domainElt = fromObj;
-				codomainElt = newElt;
-			}
-			else
-			{
-				domainElt = newElt;
-				codomainElt = fromObj;
-			}
+			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
 			const from = new DiagramMorphism(this, {to, domain:domainElt, codomain:codomainElt});
 			this.addSVG(newElt);
 			this.addSVG(from);
@@ -13638,6 +13617,18 @@ class Diagram extends Functor
 		if (!DiagramMorphism.IsA(elt) && 'loadEquivalence' in elt)
 			elt.loadEquivalence();
 		return elt;
+	}
+	comp(morphisms)
+	{
+		return this.get('Composite', {morphisms});
+	}
+	prod(elemeents)
+	{
+		return CatObject.IsA(elements[0]) ? this.get('ProductObject', {objects:elements}) : this.get('ProductMorphism', {morphisms:elements});;
+	}
+	coprod(elemeents)
+	{
+		return CatObject.IsA(elements[0]) ? this.get('ProductObject', {objects:elements, dual:true}) : this.get('ProductMorphism', {morphisms:elements, dual:true});;
 	}
 	prettifyCommand(cmd)
 	{
