@@ -204,7 +204,7 @@ const Boot = function(fn)
 	//
 	//
 	const user = 'hdole';
-	const side = Cat.D.Grid(new Cat.D2(0, 2 * Cat.D.default.font.height));
+	const side = Cat.D.Grid(new Cat.D2(0, 3 * Cat.D.default.font.height));
 	const pfs = Cat.R.CAT.getElement('hdole/PFS');
 	let userDiagram = Cat.R.GetUserDiagram(user);
 	const args =
@@ -1480,7 +1480,7 @@ return matrix_multiply(%Type_matrix, args);
 
 	window.addEventListener('Login', function(e)
 	{
-		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates];
+		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gdsdef];
 		diagrams.map(d => Cat.R.SaveLocal(d));
 		false && diagrams.map(d => d.upload(null));
 	});
@@ -1639,9 +1639,9 @@ namespace %Namespace
 	typedef int %Name;
 `,
 	}}).to;
-	const size_t = MakeNamedObject(args, {name:'size_t', source:N, description:'Used for sizes of objects'}).to;
-	const off_t = MakeNamedObject(args, {name:'off_t', source:Z, description:'Used for file sizes'}).to;
-	const voidPtr = MakeNamedObject(args, {name:'voidPtr', properName:'void*', source:N, description:'Pointer to void'}).to;
+	const size_t = MakeNamedObject(args, {basename:'size_t', source:N, description:'Used for sizes of objects'}).to;
+	const off_t = MakeNamedObject(args, {basename:'off_t', source:Z, description:'Used for file sizes'}).to;
+	const voidPtr = MakeNamedObject(args, {basename:'voidPtr', properName:'void*', source:N, description:'Pointer to void'}).to;
 
 	let morph1 = PlaceMorphism(args, Nzero, false);
 	let xy = new Cat.D2(morph1.codomain);
@@ -1844,81 +1844,83 @@ namespace %Namespace
 }
 `}});
 
-
 	//
-	// GDS
+	// GDS definitions
 	//
-	const gds = new Cat.Diagram(userDiagram,
+	const gdsdef = new Cat.Diagram(userDiagram,
 	{
-		description:	'Graphics Design Standard',
+		description:	'Graphics Design Standard Definitions',
 		codomain:		pfs,
-		basename:		'gds',
+		basename:		'gdsdef',
 		properName:		'GDSII',
 		references:		[cpp],
 		user,
 	});
-	args.diagram = gds;
+	args.diagram = gdsdef;
 	args.rowCount = 0;
-	gds.makeSvg(false);
-	Cat.R.AddDiagram(gds);
+	args.diagram.makeSvg(false);
+	Cat.R.AddDiagram(args.diagram);
 
 	args.xy = gridLocation();
 
-	const etBndry = MakeNamedObject(args, {name:'etBoundary', source:one, description:'The element type'}).to;
-	const etPath = MakeNamedObject(args, {name:'etPath', source:one, description:'The element type'}).to;
-	const etSref = MakeNamedObject(args, {name:'etSref', source:one, description:'The element type'}).to;
-	const etAref = MakeNamedObject(args, {name:'etAref', source:one, description:'The element type'}).to;
-	const etText = MakeNamedObject(args, {name:'etText', source:one, description:'The element type'}).to;
-	const gdsEltTypeStr = gds.get('ProductObject', {objects:[etBndry, etPath, etSref, etAref, etText], dual:true});
-	const gdsEltType = MakeNamedObject(args, {name:'EltType', source:gdsEltTypeStr, description:'The element type'}).to;
+	const etBndry = MakeNamedObject(args, {basename:'etBoundary', source:one, description:'A polygon on a chip layer'}).to;
+	const etPath = MakeNamedObject(args, {basename:'etPath', source:one, description:'A path on a chip layer'}).to;
+	const etSref = MakeNamedObject(args, {basename:'etSref', source:one, description:'A reference to another structure that is placed accordingly'}).to;
+	const etAref = MakeNamedObject(args, {basename:'etAref', source:one, description:'An arrayed reference to another structure that is placed accordingly'}).to;
+	const etText = MakeNamedObject(args, {basename:'etText', source:one, description:'A text tag placed on the chip'}).to;
+	const gdsEltTypeStr = args.diagram.get('ProductObject', {objects:[etBndry, etPath, etSref, etAref, etText], dual:true});
+	const gdsEltType = MakeNamedObject(args, {basename:'EltType', source:gdsEltTypeStr, description:'All gds element types'}).to;
 
-	const dbu = MakeNamedObject(args, {name:'DBU', source:F, description:'The size of a database unit in meters'}).to;
+	const dbu = MakeNamedObject(args, {basename:'DBU', source:F, description:'The size of a database unit in meters'}).to;
 
-	const strname = MakeNamedObject(args, {name:'Strname', source:str, description:'The name of the structure'}).to;
-	const layer = MakeNamedObject(args, {name:'Layer', source:N16, description:'The chip layer on which a gds boundary or path lies'}).to;
-	const datatype = MakeNamedObject(args, {name:'Datatype', source:N16, description:'The chip datatype for a gds boundary or path'}).to;
-	const point = MakeNamedObject(args, {name:'Point', source:gds.get('ProductObject', {objects:[Z32, Z32]}), description:'A 32b point'}).to;
-	const points = MakeNamedObject(args, {name:'Points', source:gds.get('HomObject', {objects:[N, point]}), description:'A list of points'}).to;
-	const property = MakeNamedObject(args, {name:'Property', source:gds.get('ProductObject', {objects:[N16, str]}), description:'A property on a gds element'}).to;
-	const properties = MakeNamedObject(args, {name:'Properties', source:gds.get('HomObject', {objects:[N, property]})}).to;
-	const boundary = MakeNamedObject(args, {name:'Boundary', source:gds.get('ProductObject', {objects:[layer, datatype, points, properties]}), description:'A polygon on a chip'}).to;
+	const strname = MakeNamedObject(args, {basename:'Strname', source:str, description:'The name of the structure'}).to;
+	const layer = MakeNamedObject(args, {basename:'Layer', source:N16, description:'The chip layer on which a gds boundary or path lies'}).to;
+	const datatype = MakeNamedObject(args, {basename:'Datatype', source:N16, description:'The chip datatype for a gds boundary or path'}).to;
+	const point = MakeNamedObject(args, {basename:'Point', source:args.diagram.get('ProductObject', {objects:[Z32, Z32]}), description:'A 32-bit point'}).to;
+	const points = MakeNamedObject(args, {basename:'Points', source:args.diagram.get('HomObject', {objects:[N, point]}), description:'A list of points'}).to;
+	const property = MakeNamedObject(args, {basename:'Property', source:args.diagram.get('ProductObject', {objects:[N16, str]}), description:'A property on a gds element'}).to;
+	const properties = MakeNamedObject(args, {basename:'Properties', source:args.diagram.get('HomObject', {objects:[N, property]})}).to;
+	const boundary = MakeNamedObject(args, {basename:'Boundary', source:args.diagram.get('ProductObject', {objects:[layer, datatype, points, properties]}), description:'A polygon on a chip'}).to;
 
-	const ptFlush = MakeNamedObject(args, {name:'ptFlush', source:one, description:'A path type with square ends flush with their end point'}).to;
-	const ptRound = MakeNamedObject(args, {name:'ptRound', source:one, description:'A path type with round ends'}).to;
-	const ptSquare = MakeNamedObject(args, {name:'ptSquare', source:one, description:'A path type with squares ends extending a half-width beyond their endpoint'}).to;
-	const Z32xZ32 = gds.get('ProductObject', {objects:[Z32, Z32]});
-	const ptVariable = MakeNamedObject(args, {name:'ptVariable', source:Z32xZ32, description:'A path type with squares ends extending a specified lengths beyond their endpoints'}).to;
-	const pt = gds.get('ProductObject', {objects:[ptFlush, ptRound, ptSquare, ptVariable], dual:true});
-	const endType = MakeNamedObject(args, {name:'EndType', source:pt, description:'The type of a path explains what do with their endpoints'}).to;
-	const width = MakeNamedObject(args, {name:'Width', source:Z32, description:'The width of a path'}).to;
+	const ptFlush = MakeNamedObject(args, {basename:'ptFlush', source:one, description:'A path type with square ends flush with the end point'}).to;
+	const ptRound = MakeNamedObject(args, {basename:'ptRound', source:one, description:'A path type with round ends'}).to;
+	const ptSquare = MakeNamedObject(args, {basename:'ptSquare', source:one, description:'A path type with squares ends extending a half-width beyond the endpoint'}).to;
+	const Z32xZ32 = args.diagram.get('ProductObject', {objects:[Z32, Z32]});
+	const ptVariable = MakeNamedObject(args, {basename:'ptVariable', source:Z32xZ32, description:'A path type with squares ends extending a specified lengths beyond the endpoints'}).to;
+	const pt = args.diagram.get('ProductObject', {objects:[ptFlush, ptRound, ptSquare, ptVariable], dual:true});
+	const endType = MakeNamedObject(args, {basename:'EndType', source:pt, description:'The type of a path explains what do with the endpoints'}).to;
+	const width = MakeNamedObject(args, {basename:'Width', source:Z32, description:'The width of a path'}).to;
 
-	const pathStr = gds.get('ProductObject', {objects:[layer, datatype, points, width, endType, properties]});
-	const path = MakeNamedObject(args, {name:'Path', source:pathStr, description:'A path on a layer of a chip'}).to;
+	const pathStr = args.diagram.get('ProductObject', {objects:[layer, datatype, points, width, endType, properties]});
+	const path = MakeNamedObject(args, {basename:'Path', source:pathStr, description:'A path on a layer of a chip'}).to;
 
-	const sname = MakeNamedObject(args, {name:'Sname', source:str, description:'The name of the cell to be placed'}).to;
-	const reflection = MakeNamedObject(args, {name:'Reflection', source:omega, description:'The reference is to be reflected about the s-axis upon placement'}).to;
-	const angle = MakeNamedObject(args, {name:'Angle', source:F, description:'The reference is to be rotated upon placement'}).to;
-	const mag = MakeNamedObject(args, {name:'Mag', source:F, description:'The reference is to be magnified upon placement'}).to;
+	const sname = MakeNamedObject(args, {basename:'Sname', source:str, description:'The name of the cell to be placed'}).to;
+	const reflection = MakeNamedObject(args, {basename:'Reflection', source:omega, description:'The reference is to be reflected about the s-axis upon placement'}).to;
+	const angle = MakeNamedObject(args, {basename:'Angle', source:F, description:'The reference is to be rotated by degrees upon placement'}).to;
+	const mag = MakeNamedObject(args, {basename:'Mag', source:F, description:'The reference is to be magnified upon placement'}).to;
 
-	const srefStr = gds.get('ProductObject', {objects:[sname, point, reflection, angle, mag, properties]});
-	const sref = MakeNamedObject(args, {name:'Sref', source:srefStr, description:'The structure with the given name is placed accordingly'}).to;
+	const srefStr = args.diagram.get('ProductObject', {objects:[sname, point, reflection, angle, mag, properties]});
+	const sref = MakeNamedObject(args, {basename:'Sref', source:srefStr, description:'The structure with the given name is placed accordingly'}).to;
 
-	const rows = MakeNamedObject(args, {name:'Rows', source:N16, description:'The number of rows in an arrayed reference'}).to;
-	const cols = MakeNamedObject(args, {name:'Cols', source:N16, description:'The number of columns in an arrayed reference'}).to;
-	const rowPitch = MakeNamedObject(args, {name:'RowPitch', source:N16, description:'The distance between rows (origin-to-origin, not the gap) in an arrayed reference'}).to;
-	const colPitch = MakeNamedObject(args, {name:'ColPitch', source:N16, description:'The distance between columns (origin-to-origin, not the gap) in an arrayed reference'}).to;
-	const arefStr = gds.get('ProductObject', {objects:[sname, point, reflection, angle, mag, rows, cols, rowPitch, colPitch, properties]});
-	const aref = MakeNamedObject(args, {name:'Aref', source:arefStr, description:'The arrayed structure with the given name is placed accordingly'}).to;
+	const rows = MakeNamedObject(args, {basename:'Rows', source:N16, description:'The number of rows in an arrayed reference'}).to;
+	const cols = MakeNamedObject(args, {basename:'Cols', source:N16, description:'The number of columns in an arrayed reference'}).to;
+	const rowPitch = MakeNamedObject(args, {basename:'RowPitch', source:N16, description:'The distance between rows (origin-to-origin, not the gap) in an arrayed reference'}).to;
+	const colPitch = MakeNamedObject(args, {basename:'ColPitch', source:N16, description:'The distance between columns (origin-to-origin, not the gap) in an arrayed reference'}).to;
+	const arefStr = args.diagram.get('ProductObject', {objects:[sname, point, reflection, angle, mag, rows, cols, rowPitch, colPitch, properties]});
+	const aref = MakeNamedObject(args, {basename:'Aref', source:arefStr, description:'The arrayed structure with the given name is placed accordingly'}).to;
 
-	const textStr = gds.get('ProductObject', {objects:[layer, datatype, str, point, properties]});
-	const txt = MakeNamedObject(args, {name:'Text', source:textStr, description:'The text string is placed accordingly'}).to;
+	const textStr = args.diagram.get('ProductObject', {objects:[layer, datatype, str, point, properties]});
+	const txt = MakeNamedObject(args, {basename:'Text', source:textStr, description:'The text string is placed accordingly'}).to;
 
 	const recordDataAry = [gdsEltType, str, layer, datatype, points, width, rows, cols, reflection, mag, angle, endType, properties];
-	const recordDataStr = gds.get('ProductObject', {objects:recordDataAry});
-	const recordData = MakeNamedObject(args, {name:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
+	const recordDataStr = args.diagram.get('ProductObject', {objects:recordDataAry});
+	const recordData = MakeNamedObject(args, {basename:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
+
+	const elementsStr = args.diagram.get('ProductObject', {objects:[boundary, path, sref, aref, txt], dual:true});
+	const elements = MakeNamedObject(args, {basename:'Elements', source:elementsStr, description:'The possible elements read from a GDSII Stream file'}).to;
 
 	args.xy = new Cat.D2;
-	PlaceText(args, 'The GDSII Graphics Design Standard II Specification', 96, 'bold', false);
+	PlaceText(args, 'Definitions For The GDSII Graphics Design Standard Specification', 96, 'bold', false);
 
 //	const srefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, properties]}).to;
 //	const arefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, Z, Z, Z, Z, properties]}).to;
