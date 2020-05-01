@@ -1857,7 +1857,7 @@ class Amazon extends Cloud
 			console.log('uploaded diagram size', dgrmPayload.length);
 		if (dgrmPayload.length > U.uploadLimit)
 		{
-			D.Status(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
+			D.statusbar.show(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
 			return;
 		}
 		const that = this;
@@ -1977,7 +1977,7 @@ class Navbar
 		this.diagramElt.addEventListener('mouseenter', function(e)
 		{
 			const title = R.diagram ? `${R.diagram.htmlName()} ${H.span('by '+R.diagram.user, 'italic')}: ${U.Formal(R.diagram.description)}` : '';
-			D.Status(e, title);
+			D.statusbar.show(e, title);
 		}, true);
 		const that = this;
 		this.element.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
@@ -2093,7 +2093,7 @@ class Toolbar
 console.log('toolbar.show is hidden: ', element.classList.contains('hidden'));
 		if (element.classList.contains('hidden'))
 			this.reveal();
-		else
+		else if (diagram.selected.length === 0)
 		{
 			this.hide();
 console.log('toolbar.show is hiding!');
@@ -2165,6 +2165,70 @@ console.log('toolbar.show is hiding!');
 	}
 }
 
+class StatusBar
+{
+	constructor()
+	{
+		Object.defineProperties(this,
+		{
+			'element':		{value: document.getElementById('statusbar'),	writable: false},
+			'message':		{value: '',										writable: true},
+			'timer':		{value: null,									writable: true},
+			'xy':			{value: null,									writable: true},
+		});
+	}
+	show(e, msg, record = false)
+	{
+		if (this.timer)
+			clearInterval(this.timer);
+		const that = this;
+		this.timer = setTimeout(function()
+		{
+//			elt.style.opacity = "0";
+			that.hide();
+		}, D.default.statusBarTimer);
+
+		if (msg === null || msg === '')
+		{
+//			elt.style.opacity = "0";
+			this.message = '';
+			this.hide();
+			return;
+		}
+		const elt = this.element;
+		elt.innerHTML = H.div(msg);
+		if (typeof e === 'object')
+		{
+			const x = e ? e.clientX : 100;
+			const y = e ? e.clientY : 100;
+			elt.style.left = `${x + 10}px`;
+			elt.style.top = `${y - 30}px`;
+			elt.style.display = 'block';
+//			D.statusXY = {x, y};
+			this.xy = {x, y};
+			this.hide();
+//			elt.style.opacity = "1";
+		}
+		else
+			D.RecordError(msg);
+		if (!D.toolbar.element.classList.contains('hidden'))
+		{
+			const toolbox = D.toolbar.element.getBoundingClientRect();
+			const statusbox = elt.getBoundingClientRect();
+			if (D2.Overlap(toolbox, statusbox))
+				elt.style.top = toolbox.top - statusbox.height + 'px';
+		}
+		this.message = U.HtmlEntitySafe(msg);
+		this.element.classList.remove('hidden');
+		if (record)
+			document.getElementById('tty-out').innerHTML += this.message + "\n";
+	}
+	hide()
+	{
+console.trace('hide status bar!');
+		this.element.classList.add('hidden');
+	}
+}
 
 class NewElement
 {
@@ -2515,10 +2579,6 @@ class D
 	}
 	static Autohide()
 	{
-//		if (D.CheckPanels())
-//			return;
-//		D.openPanels.map(pnl => pnl.open());
-//		D.openPanels = [];
 		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		D.CancelAutohide();
 		D.autohideTimer = setTimeout(function()
@@ -2579,10 +2639,7 @@ class D
 					const from = diagram.getSelected();
 					const oldMouseover = D.mouseover;
 					if (from === D.mouseover)
-{
-console.log('Mousemove nulling mouseover!');
 						D.mouseover = null;
-};
 					const isMorphism = Morphism.IsA(from);
 					if (diagram.selected.length === 1)
 					{
@@ -2627,12 +2684,17 @@ console.log('Mousemove nulling mouseover!');
 								}
 								if (msg !== '')
 								{
-									D.Status(e, msg);
+									D.statusbar.show(e, msg);
 									from.updateGlow(true, 'glow');
 								}
-								else if (D.mouseover && !from.isFusible(D.mouseover))
-									from.updateGlow(true, 'badGlow');
-								else if (!fusible)
+								else if (D.mouseover && from.isFusible(D.mouseover))
+								{
+									if (from.domains.size === 0 && from.codomains.size === 1 && Identity.IsA([...from.codomains][0].to))
+										from.updateGlow(true, 'glow');		// for creating morphism between two objects
+									else
+										from.updateGlow(true, 'badGlow');
+								}
+								else if (!fusible)	// no glow
 									from.updateGlow(false, '');
 							}
 						}
@@ -2771,7 +2833,7 @@ console.log('Mousemove nulling mouseover!');
 		const diagram = R.diagram;
 		if (!diagram.isEditable())
 		{
-			D.Status(e, 'Diagram is not editable');
+			D.statusbar.show(e, 'Diagram is not editable');
 			return;
 		}
 		try
@@ -2891,8 +2953,9 @@ ${button}
 	{
 		document.addEventListener('mousemove', function(e)
 		{
-			if (D.statusbar.style.display === 'block' && D2.Dist(D.statusXY, {x:e.clientX, y:e.clientY}) > 50)
-				D.statusbar.style.display = 'none';
+			if (D.statusbar.element.style.display === 'block' && D2.Dist(D.statusbar.xy, {x:e.clientX, y:e.clientY}) > 50)
+//				D.statusbar.element.style.display = 'none';
+				D.statusbar.hide();
 		});
 		document.addEventListener('dragover', function(e)
 		{
@@ -2955,6 +3018,7 @@ ${button}
 		}
 		return 10;
 	}
+/*
 	static Status(e, msg, record = false)
 	{
 		const s = D.statusbar;
@@ -2989,6 +3053,7 @@ ${button}
 		if (record)
 			document.getElementById('tty-out').innerHTML += msg + "\n";
 	}
+	*/
 	static Grid(x)
 	{
 		const d = D.default.layoutGrid;
@@ -3258,8 +3323,8 @@ ${button}
 		if (save)
 		{
 			R.EmitDiagramEvent(diagram, 'addReference', name);
-			R.SaveLocal(this);
-			D.Status(e, `Diagram ${diagram.htmlName()} now referenced`);
+			R.SaveLocal(R.diagram);
+			D.statusbar.show(e, `Diagram ${diagram.htmlName()} now referenced`);
 			diagram.log({command:'addReference', diagram:diagram.name});
 		}
 	}
@@ -3273,7 +3338,7 @@ ${button}
 		{
 			R.EmitDiagramEvent(diagram, 'removeReference', name);
 			R.SaveLocal(diagram);
-			D.Status(e, `${diagram.htmlName()} reference removed`);
+			D.statusbar.show(e, `${diagram.htmlName()} reference removed`);
 			diagram.log({command:'removeReference', diagram:diagram.name});
 		}
 	}
@@ -3296,7 +3361,7 @@ ${button}
 		diagram.emphasis(from.name, on);
 //		if (on && diagram.selected.includes(from) && !DiagramText.IsA(from))
 		if (on && !DiagramText.IsA(from))
-			D.Status(e, from.to.description);
+			D.statusbar.show(e, from.to.description);
 	}
 	static Paste(e)
 	{
@@ -3307,7 +3372,7 @@ ${button}
 		const refs = diagram.getAllReferenceDiagrams();
 		if (!refs.has(D.copyDiagram.name) && diagram !== D.copyDiagram)
 		{
-			D.Status(e, `Diagram ${D.copyDiagram.htmlName()} is not referenced by this diagram`);
+			D.statusbar.show(e, `Diagram ${D.copyDiagram.htmlName()} is not referenced by this diagram`);
 			return;
 		}
 		const copies = D.DoPaste(e, mouse, D.pasteBuffer);
@@ -3346,18 +3411,21 @@ ${button}
 					const {to, flipName} = elt;
 					copy = new DiagramMorphism(diagram, {domain, codomain, to, flipName});
 					diagram.addSVG(copy);
+					copy.update();
 					R.EmitMorphismEvent('new', copy.name);
 					break;
 				case 'DiagramObject':
 				case 'DiagramPullback':
 					copy = pasteObject(elt);
-					diagram.addSVG(copy);
+//					diagram.addSVG(copy);
+					copy.update();
 					R.EmitObjectEvent('new', copy.name);
 					break;
 				case 'DiagramText':
 					const txy = D2.Add(xy, D2.Subtract(elt.getXY(), base));
 					copy = new DiagramText(diagram, {xy:txy, description:elt.description});
 					diagram.addSVG(copy);
+					copy.update();
 					R.EmitTextEvent('new', copy.name);
 					break;
 			}
@@ -3431,6 +3499,7 @@ Object.defineProperties(D,
 			stdArrow:	new D2(200, 0),
 			stdArrowDown:	new D2(0, 200),
 			autohideTimer:	8000,	// ms
+			statusBarTimer:	3000,	// ms
 			saveInterval:	5000,	// ms
 			toolbar:	{x:15, y:70},
 		},
@@ -3499,7 +3568,7 @@ Object.defineProperties(D,
 				D.pasteBuffer = R.diagram.selected.slice();
 				D.copyDiagram = R.diagram;
 				const xy = D.mouse.position();
-				D.Status({clientX:xy.x, clientY:xy.y}, 'Copied to paste buffer');
+				D.statusbar.show({clientX:xy.x, clientY:xy.y}, 'Copied to paste buffer');
 			},
 			ControlKeyD(e)
 			{
@@ -3552,7 +3621,13 @@ Object.defineProperties(D,
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
 			Digit0(e) { D.testAndFireAction(e, 'initialMorphism', R.diagram.selected); },
-			Digit1(e) { D.testAndFireAction(e, 'terminalMorphism', R.diagram.selected); },
+//			Digit1(e) { D.testAndFireAction(e, 'terminalMorphism', R.diagram.selected); },
+			Digit1(e)
+			{
+				const diagram = R.diagram;
+				const terminal = diagram.get('TerminalObject');
+				nidIndex = diagram.placeObject(e, terminal, D.mouse.diagramPosition(diagram));
+			},
 			ControlDigit3(e) { D.threeDPanel.toggle(); },
 			Escape(e)
 			{
@@ -3635,9 +3710,9 @@ Object.defineProperties(D,
 	'showUploadArea':	{value: false,		writable: true},
 	'snapWidth':		{value: 1024,		writable: true},
 	'snapHeight':		{value: 768,		writable: true},
-	'statusbar':		{value: document.getElementById('statusbar'),	writable: false},
+	'statusbar':		{value: new StatusBar,	writable: false},
 	'statusMessage':	{value:	'',			writable: true},
-	'statusXY':			{value: new D2,		writable: true},
+//	'statusXY':			{value: new D2,		writable: true},
 	'svgContainers':	{value: ['svg', 'g'],	writable: false},
 	'svgStyles':	
 	{
@@ -4530,7 +4605,7 @@ class LogSection extends Section
 						H.td(D.GetButton('delete', 'Cat.R.diagram.clearLog(event)', 'Clear log'), 'buttonBar') +
 						H.td(D.DownloadButton('LOG', 'Cat.R.diagram.downloadLog(event)', 'Download log'), 'buttonBar') +
 						H.td(D.GetButton('play', 'Cat.D.ttyPanel.logSection.replayLog(event)', 'Play log file'), 'buttonBar') +
-						H.td(D.GetButton('save', `Cat.R.SaveLocal(Cat.R.diagram);Cat.D.Status(event, 'Diagram saved')`, 'Save diagram'), 'buttonBar')
+						H.td(D.GetButton('save', `Cat.R.SaveLocal(Cat.R.diagram);Cat.D.statusbar.show(event, 'Diagram saved')`, 'Save diagram'), 'buttonBar')
 					), 'buttonBarLeft') +
 					(R.default.internals ? H.button('&#9656;&nbsp; Clear Diagram', 'clickable', '', '', 'onclick="Cat.R.diagram.clear(event)"') : '') +
 					H.hr();
@@ -4589,7 +4664,7 @@ class LogSection extends Section
 		catch(x)
 		{
 			elt.classList.add('playedBadCmd');
-			D.Status(e, x);
+			D.statusbar.show(e, x);
 			return false;
 		}
 	}
@@ -4611,7 +4686,7 @@ class LogSection extends Section
 		{
 			msg = 'Replay aborted';
 		}
-		D.Status(e, msg);
+		D.statusbar.show(e, msg);
 	}
 	removeLogCommand(e, ndx)
 	{
@@ -6065,7 +6140,7 @@ class Graph
 				path.setAttributeNS(null, 'd', coords);
 				path.setAttributeNS(null, 'filter', filter);
 				const fs = this.tags.sort().join();
-				path.addEventListener('mouseover', function(e){ Cat.D.Status(event, fs); });
+				path.addEventListener('mouseover', function(e){ Cat.D.statusbar.show(event, fs); });
 			}
 		}
 		let svg = this.graphs.map((g, i) =>
@@ -6238,10 +6313,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	{
 		const d = super.json();
 		if ('size' in this)
-		{
 			d.size = Number.parseInt(this.size);
-			delete d.properName;
-		}
 		return d;
 	}
 	isIterable()
@@ -7102,7 +7174,10 @@ class DiagramObject extends CatObject
 	}
 	isFusible(o)
 	{
-		return o && this !== o && o.to && this.to.isEquivalent(o.to);
+		if (!o || this === 0)
+			return false;
+		const nuMorphFuse = this.domains.size === 0 && this.codomains.size === 1 && Identity.IsA([...this.codomains][0].to);
+		return o.to && (this.to.isEquivalent(o.to) || nuMorphFuse);
 	}
 	updateFusible(e, on)
 	{
@@ -7111,14 +7186,14 @@ class DiagramObject extends CatObject
 		{
 			s.classList.add(...['fuseObject']);
 			s.classList.remove(...['selected', 'grabbable', 'object']);
-			D.Status(e, 'Fuse');
+			D.statusbar.show(e, 'Fuse');
 			this.updateGlow(true, 'glow');
 		}
 		else
 		{
 			s.classList.add(...['selected', 'grabbable', 'object']);
 			s.classList.remove(...['fuseObject']);
-			D.Status(e, '');
+			D.statusbar.show(e, '');
 			this.updateGlow(false, '');
 		}
 	}
@@ -8506,7 +8581,7 @@ class LanguageAction extends Action
 			const url = D.url.createObjectURL(blob);
 			D.Download(url, `${diagram.basename}.${this.ext}`);
 			const delta = Date.now() - start;
-			D.Status(e, `Diagram ${name} ${this.name} generated<br/>&#9201;${delta}ms`, true);
+			D.statusbar.show(e, `Diagram ${name} ${this.name} generated<br/>&#9201;${delta}ms`, true);
 		}
 	}
 	instantiate(element)
@@ -10089,7 +10164,7 @@ class RecursionAction extends Action
 		const recursor = ary[0].to;
 		const form = ary[1].to;
 		recursor.setRecursor(form);
-		D.Status(e, `Data morphism ${recursor.htmlName()} is now recursive with morphism ${form.htmlName()}`);
+		D.statusbar.show(e, `Data morphism ${recursor.htmlName()} is now recursive with morphism ${form.htmlName()}`);
 		R.SaveLocal(diagram);
 	}
 	hasForm(diagram, ary)
@@ -10120,7 +10195,7 @@ class DataAction extends Action
 			from.setMorphism(new DataMorphism(diagram, to.json()));
 			to = from.to;
 			diagram.makeSelected(e, from);
-			D.Status(e, `Morphism ${from.to.htmlName()} is now a data morphism`);
+			D.statusbar.show(e, `Morphism ${from.to.htmlName()} is now a data morphism`);
 			// TODO emit event?
 			R.SaveLocal(diagram);
 		}
@@ -10391,8 +10466,10 @@ class Morphism extends Element
 	{
 		if (this.refcnt <= 1)
 		{
-			this.domain && this.domain.decrRefcnt();
-			this.codomain && this.codomain.decrRefcnt();
+//			this.domain && this.domain.decrRefcnt();
+			this.domain.decrRefcnt();
+//			this.codomain && this.codomain.decrRefcnt();
+			this.codomain.decrRefcnt();
 			this.category && this.category.deleteElement(this);
 		}
 		super.decrRefcnt();
@@ -10870,7 +10947,7 @@ class DiagramMorphism extends Morphism
 		const name = this.svg_name;
 		if (on)
 		{
-			D.Status(e, 'Fuse');
+			D.statusbar.show(e, 'Fuse');
 			path.classList.add(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
 			path.classList.remove(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
 			path.classList.add(...['fuseMorphism']);
@@ -10881,7 +10958,7 @@ class DiagramMorphism extends Morphism
 		}
 		else
 		{
-			D.Status(e, '');
+			D.statusbar.show(e, '');
 			path.classList.add(...['selected', 'grabbable', 'morphism']);
 			path.classList.remove(...['fuseMorphism']);
 			name.classList.add(...['morphTxt', 'selected', 'grabbable']);
@@ -13108,9 +13185,11 @@ class Diagram extends Functor
 				if (delta > gap)
 					angle = lastAngle + (delta === 0 ? 2 * Math.PI : delta)/2;
 			}
+			else
+				angle = (angle + Math.PI) % (2 * Math.PI);
 			const al = D.default.arrow.length;
 			const cosAngle = Math.cos(angle);
-			const xy = D.Grid(D2.Scale(al + cosAngle * to.textwidth(), {x:cosAngle, y:Math.sin(angle)}).add(fromObj));
+			const xy = D.Grid(D2.Scale(al + Math.abs(cosAngle) * to.textwidth(), {x:cosAngle, y:Math.sin(angle)}).add(fromObj));
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
 			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
 			const from = new DiagramMorphism(this, {to, domain:domainElt, codomain:codomainElt});
@@ -13136,8 +13215,8 @@ class Diagram extends Functor
 		if (this.selected.length === 1)
 		{
 			const elt = this.getSelected();
-			fusible = D.mouseover && elt !== D.mouseover && elt.isFusible(D.mouseover);
-			elt.updateFusible(e, fusible);
+//			fusible = D.mouseover && elt !== D.mouseover && elt.isFusible(D.mouseover);
+			elt.updateFusible(e, elt.isFusible(D.mouseover));
 		}
 		return fusible;
 	}
@@ -13257,7 +13336,7 @@ class Diagram extends Functor
 				const delta = Date.now() - start;
 				if (e)
 				{
-					D.Status(e, `Uploaded diagram${R.default.internals ? '<br/>&#9201;' + delta + 'ms': ''}`, true);
+					D.statusbar.show(e, `Uploaded diagram${R.default.internals ? '<br/>&#9201;' + delta + 'ms': ''}`, true);
 					D.diagramPanel.setToolbar(that);
 					btn.setAttribute('repeatCount', 1);
 				}
@@ -13370,7 +13449,7 @@ class Diagram extends Functor
 			const sel1 = this.selected[1].to;
 			sel0.setRecursor(sel1);
 			R.SaveLocal(this);
-			D.Status(e, `Recursor for ${sel0.htmlName()} has been set`);
+			D.statusbar.show(e, `Recursor for ${sel0.htmlName()} has been set`);
 		}
 	}
 	getElement(name)
