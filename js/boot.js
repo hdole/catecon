@@ -212,7 +212,7 @@ const Boot = function(fn)
 		user,
 		xy:			new Cat.D2(300,300),
 		side,
-		rows:		8,
+		rows:		100,
 		rowCount:	0,
 		majorGrid:	16 * Cat.D.default.layoutGrid,
 	};
@@ -395,6 +395,8 @@ args.xy.y += args.majorGrid;
 		js:'function %Type(args)\n{\n	return args[0] === args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	}).to;
+	const N8 = MakeObject(args, 'N8', 'FiniteObject', '&Nopf;&#8328', 'An unsigned byte', {size:256, code:{cpp:'typedef unsigned char %1;\n'}}).to;
+	const N16 = MakeObject(args, 'N16', 'FiniteObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural numbers', {size:65536, code:{cpp:'typedef unsigned short %1;\n'}}).to;
 	DiagramReferences(user, Narith, args.xy);
 	Cat.D.ShowDiagram(Narith);
 	Narith.home(false);
@@ -502,6 +504,7 @@ return [0, args[0] % args[1]];
 		js:'function %Type(args)\n{\n	return args[0] === args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	});
+	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
 	DiagramReferences(user, integers, args.xy);
 	Cat.D.ShowDiagram(integers);
 	integers.home(false);
@@ -1217,6 +1220,22 @@ function %Type(args)
 }
 `,
 	}).to;
+	const html2N8 = MakeMorphism(args, 'html2N8', 'Morphism', 'input', 'read a natural number between 0 and 255 from an HTML input tag', html, N8,
+	{
+		js:
+`
+function %Type(args)
+{
+	const v = document.getElementById(args).value;
+	if (v === '')
+		throw 'no input';
+	const r = Number.parseInt(v);
+	if (r < 0 || r > 255)
+		throw 'out of range';
+	return r;
+}
+`,
+	}).to;
 	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
 	{
 		js:`function %Type(args)\n{\n	return Number.parseInt(document.getElementById(args).value);\n}\n`,
@@ -1245,6 +1264,13 @@ function %Type(args)
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${Cat.U.Token(N_html2N)}];\n}\n`,
 	}).to;
+	const N_html2N8 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N8, domFactors:[], homFactors:[0]});
+	PlaceMorphism(args, N_html2N8);
+	const strXN_html2N8 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N8.codomain]});
+	const html2N8F = MakeMorphism(args, 'html2N8F', 'Morphism', '&Nopf&#8328;;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N8,
+	{
+		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N8)}];\n}\n`,
+	}).to;
 	const N_html2Z = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2Z);
 	const strXN_html2Z = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z.codomain]});
@@ -1256,7 +1282,6 @@ function %Type(args)
 	PlaceMorphism(args, N_html2F);
 	const strXN_html2F = htmlDiagram.get('ProductObject', {objects:[str, N_html2F.codomain]});
 	const html2Float = MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
-	
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${Cat.U.Token(N_html2F)}];\n}\n`,
 	}).to;
@@ -1480,7 +1505,7 @@ return matrix_multiply(%Type_matrix, args);
 
 	window.addEventListener('Login', function(e)
 	{
-		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gdsdef];
+		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds];
 		diagrams.map(d => Cat.R.SaveLocal(d));
 		false && diagrams.map(d => d.upload(null));
 	});
@@ -1761,9 +1786,6 @@ namespace %Namespace
 	out = ::munmap(args.m_0, args.m_1);
 }
 `}).to;
-	const N8 = MakeObject(args, 'N8', 'CatObject', '&Nopf;&#8328', 'An unsigned byte', {code:{cpp:'typedef unsigned char %1;\n'}}).to;
-	const N16 = MakeObject(args, 'N16', 'CatObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural numbers', {code:{cpp:'typedef unsigned short %1;\n'}}).to;
-	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
 
 	const mem2ubyte = MakeMorphism(args, 'ubyte', 'Morphism', '', 'Get an unsigned byte from memory', voidPtr, N8, {code:{cpp:
 `void %Type(const %Dom & args, %Cod & out)
@@ -1847,29 +1869,29 @@ namespace %Namespace
 	//
 	// GDS definitions
 	//
-	const gdsdef = new Cat.Diagram(userDiagram,
+	const gds = new Cat.Diagram(userDiagram,
 	{
 		description:	'Graphics Design Standard Definitions',
 		codomain:		pfs,
-		basename:		'gdsdef',
+		basename:		'gds',
 		properName:		'GDSII',
 		references:		[cpp],
 		user,
 	});
-	args.diagram = gdsdef;
+	args.diagram = gds;
 	args.rowCount = 0;
 	args.diagram.makeSvg(false);
 	Cat.R.AddDiagram(args.diagram);
 
 	args.xy = gridLocation();
 
-	const etBndry = MakeNamedObject(args, {basename:'etBoundary', source:one, description:'A polygon on a chip layer'}).to;
-	const etPath = MakeNamedObject(args, {basename:'etPath', source:one, description:'A path on a chip layer'}).to;
-	const etSref = MakeNamedObject(args, {basename:'etSref', source:one, description:'A reference to another structure that is placed accordingly'}).to;
-	const etAref = MakeNamedObject(args, {basename:'etAref', source:one, description:'An arrayed reference to another structure that is placed accordingly'}).to;
-	const etText = MakeNamedObject(args, {basename:'etText', source:one, description:'A text tag placed on the chip'}).to;
-	const gdsEltTypeStr = args.diagram.get('ProductObject', {objects:[etBndry, etPath, etSref, etAref, etText], dual:true});
-	const gdsEltType = MakeNamedObject(args, {basename:'EltType', source:gdsEltTypeStr, description:'All gds element types'}).to;
+	const etBndry = MakeNamedObject(args, {basename:'etBoundary', source:one, description:'The boundary element type'}).to;
+	const etPath = MakeNamedObject(args, {basename:'etPath', source:one, description:'The path element type'}).to;
+	const etSref = MakeNamedObject(args, {basename:'etSref', source:one, description:'The sref element type'}).to;
+	const etAref = MakeNamedObject(args, {basename:'etAref', source:one, description:'The aref element type'}).to;
+	const etText = MakeNamedObject(args, {basename:'etText', source:one, description:'The text element type'}).to;
+	const gdsEltTypeStr = gds.get('ProductObject', {objects:[etBndry, etPath, etSref, etAref, etText], dual:true});
+	const gdsEltType = MakeNamedObject(args, {basename:'EltType', source:gdsEltTypeStr, description:'The element type'}).to;
 
 	const dbu = MakeNamedObject(args, {basename:'DBU', source:F, description:'The size of a database unit in meters'}).to;
 
@@ -1899,30 +1921,33 @@ namespace %Namespace
 	const angle = MakeNamedObject(args, {basename:'Angle', source:F, description:'The reference is to be rotated by degrees upon placement'}).to;
 	const mag = MakeNamedObject(args, {basename:'Mag', source:F, description:'The reference is to be magnified upon placement'}).to;
 
-	const srefStr = args.diagram.get('ProductObject', {objects:[sname, point, reflection, angle, mag, properties]});
+	const srefStr = gds.get('ProductObject', {objects:[sname, point, reflection, angle, mag, properties]});
 	const sref = MakeNamedObject(args, {basename:'Sref', source:srefStr, description:'The structure with the given name is placed accordingly'}).to;
 
 	const rows = MakeNamedObject(args, {basename:'Rows', source:N16, description:'The number of rows in an arrayed reference'}).to;
 	const cols = MakeNamedObject(args, {basename:'Cols', source:N16, description:'The number of columns in an arrayed reference'}).to;
 	const rowPitch = MakeNamedObject(args, {basename:'RowPitch', source:N16, description:'The distance between rows (origin-to-origin, not the gap) in an arrayed reference'}).to;
 	const colPitch = MakeNamedObject(args, {basename:'ColPitch', source:N16, description:'The distance between columns (origin-to-origin, not the gap) in an arrayed reference'}).to;
-	const arefStr = args.diagram.get('ProductObject', {objects:[sname, point, reflection, angle, mag, rows, cols, rowPitch, colPitch, properties]});
+	const arefStr = gds.get('ProductObject', {objects:[sname, point, reflection, angle, mag, rows, cols, rowPitch, colPitch, properties]});
 	const aref = MakeNamedObject(args, {basename:'Aref', source:arefStr, description:'The arrayed structure with the given name is placed accordingly'}).to;
 
-	const textStr = args.diagram.get('ProductObject', {objects:[layer, datatype, str, point, properties]});
+	const textStr = gds.get('ProductObject', {objects:[layer, datatype, str, point, properties]});
 	const txt = MakeNamedObject(args, {basename:'Text', source:textStr, description:'The text string is placed accordingly'}).to;
 
 	const recordDataAry = [gdsEltType, str, layer, datatype, points, width, rows, cols, reflection, mag, angle, endType, properties];
-	const recordDataStr = args.diagram.get('ProductObject', {objects:recordDataAry});
+	const recordDataStr = gds.get('ProductObject', {objects:recordDataAry});
 	const recordData = MakeNamedObject(args, {basename:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
 
-	const elementsStr = args.diagram.get('ProductObject', {objects:[boundary, path, sref, aref, txt], dual:true});
-	const elements = MakeNamedObject(args, {basename:'Elements', source:elementsStr, description:'The possible elements read from a GDSII Stream file'}).to;
-
 	args.xy = new Cat.D2;
-	PlaceText(args, 'Definitions For The GDSII Graphics Design Standard Specification', 96, 'bold', false);
+	PlaceText(args, 'The GDSII Graphics Design Standard Specification', 96, 'bold', false);
 
 //	const srefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, properties]}).to;
 //	const arefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, Z, Z, Z, Z, properties]}).to;
 
+	window.addEventListener('Login', function(e)
+	{
+		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds];
+		diagrams.map(d => Cat.R.SaveLocal(d));
+		false && diagrams.map(d => d.upload(null));
+	});
 }
