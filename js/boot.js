@@ -212,7 +212,7 @@ const Boot = function(fn)
 		user,
 		xy:			new Cat.D2(300,300),
 		side,
-		rows:		8,
+		rows:		100,
 		rowCount:	0,
 		majorGrid:	16 * Cat.D.default.layoutGrid,
 	};
@@ -395,6 +395,8 @@ args.xy.y += args.majorGrid;
 		js:'function %Type(args)\n{\n	return args[0] === args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	}).to;
+	const N8 = MakeObject(args, 'N8', 'FiniteObject', '&Nopf;&#8328', 'An unsigned byte', {size:256, code:{cpp:'typedef unsigned char %1;\n'}}).to;
+	const N16 = MakeObject(args, 'N16', 'FiniteObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural numbers', {size:65536, code:{cpp:'typedef unsigned short %1;\n'}}).to;
 	DiagramReferences(user, Narith, args.xy);
 	Cat.D.ShowDiagram(Narith);
 	Narith.home(false);
@@ -502,6 +504,7 @@ return [0, args[0] % args[1]];
 		js:'function %Type(args)\n{\n	return args[0] === args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	});
+	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
 	DiagramReferences(user, integers, args.xy);
 	Cat.D.ShowDiagram(integers);
 	integers.home(false);
@@ -1217,6 +1220,22 @@ function %Type(args)
 }
 `,
 	}).to;
+	const html2N8 = MakeMorphism(args, 'html2N8', 'Morphism', 'input', 'read a natural number between 0 and 255 from an HTML input tag', html, N8,
+	{
+		js:
+`
+function %Type(args)
+{
+	const v = document.getElementById(args).value;
+	if (v === '')
+		throw 'no input';
+	const r = Number.parseInt(v);
+	if (r < 0 || r > 255)
+		throw 'out of range';
+	return r;
+}
+`,
+	}).to;
 	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
 	{
 		js:`function %Type(args)\n{\n	return Number.parseInt(document.getElementById(args).value);\n}\n`,
@@ -1245,6 +1264,13 @@ function %Type(args)
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${Cat.U.Token(N_html2N)}];\n}\n`,
 	}).to;
+	const N_html2N8 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N8, domFactors:[], homFactors:[0]});
+	PlaceMorphism(args, N_html2N8);
+	const strXN_html2N8 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N8.codomain]});
+	const html2N8F = MakeMorphism(args, 'html2N8F', 'Morphism', '&Nopf&#8328;;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N8,
+	{
+		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N8)}];\n}\n`,
+	}).to;
 	const N_html2Z = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2Z);
 	const strXN_html2Z = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z.codomain]});
@@ -1256,7 +1282,6 @@ function %Type(args)
 	PlaceMorphism(args, N_html2F);
 	const strXN_html2F = htmlDiagram.get('ProductObject', {objects:[str, N_html2F.codomain]});
 	const html2Float = MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
-	
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${Cat.U.Token(N_html2F)}];\n}\n`,
 	}).to;
@@ -1754,9 +1779,6 @@ namespace %Namespace
 	out = ::munmap(args.m_0, args.m_1);
 }
 `}).to;
-	const N8 = MakeObject(args, 'N8', 'FiniteObject', '&Nopf;&#8328', 'An unsigned byte', {size:256, code:{cpp:'typedef unsigned char %1;\n'}}).to;
-	const N16 = MakeObject(args, 'N16', 'FiniteObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural numbers', {size:65536, code:{cpp:'typedef unsigned short %1;\n'}}).to;
-	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
 
 	const mem2ubyte = MakeMorphism(args, 'ubyte', 'Morphism', '', 'Get an unsigned byte from memory', voidPtr, N8, {code:{cpp:
 `void %Type(const %Dom & args, %Cod & out)
