@@ -414,7 +414,6 @@ a:hover, .offcanvas a:focus
 	cursor:				none;
 	display:			inline-block;
 	margin:				0px;
-	opacity:			0;
 	overflow:			hidden;
 	padding:			0px;
 	position:			absolute;
@@ -756,11 +755,13 @@ canvas
 	font-variant-caps:	small-caps;
 }
 
+/*
 .appear
 {
 	animation:	1s ease appearFromBeyond;
 	animation-fill-mode:	forwards;
 }
+*/
 
 @keyframes appearFromBeyond
 {
