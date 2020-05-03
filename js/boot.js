@@ -505,7 +505,23 @@ return [0, args[0] % args[1]];
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	});
 	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
+	const Z32pair = args.diagram.prod([Z32, Z32]);
+	const Z32add = MakeMorphism(args, 'Z32add', 'Morphism', '+', 'Addition of two 32-bit integers', Z32pair, Z32,
+	{
+//		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 + args.m_1;\n}\n',
+	}).to;
+	const Z32or = MakeMorphism(args, 'Z32or', 'Morphism', '|', 'Bitwise OR of two 32-bit integers', Z32pair, Z32,
+	{
+//		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 | args.m_1;\n}\n',
+	}).to;
 	DiagramReferences(user, integers, args.xy);
+	const Z32equals = MakeMorphism(args, 'Z32equals', 'Morphism', '|', 'Test two 32-bit integers for equality', Z32pair, omega,
+	{
+//		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
+	}).to;
 	Cat.D.ShowDiagram(integers);
 	integers.home(false);
 	//
@@ -1731,7 +1747,7 @@ namespace %Namespace
 	//
 	// fstat
 	//
-	const fstat = MakeMorphism(args, 'fstat', 'Morphism', 'fstat', 'Get file status', file, cpp.get('ProductObject', {objects:[stat, one], dual:false}), {cpp:
+	const fstat = MakeMorphism(args, 'fstat', 'Morphism', 'fstat', 'Get file status', file, cpp.get('ProductObject', {objects:[stat, one], dual:true}), {cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
 	out.m_0 = ::fstat(fd, &out.m_0);
@@ -1755,12 +1771,12 @@ namespace %Namespace
 	//
 	// mmap
 	//
-	const protRead = MakeMorphism(args, 'PROT_READ', 'Morphism', '', 'Pages may be read', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::PROT_READ; }`}).to;
-	const protWrite = MakeMorphism(args, 'PROT_WRITE', 'Morphism', '', 'Pages may be written', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::PROT_WRITE; }`}).to;
-	const mapShared = MakeMorphism(args, 'MAP_SHARED', 'Morphism', '', 'Share this mapping', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_SHARED; }`}).to;
-	const mapPrivate = MakeMorphism(args, 'MAP_PRIVATE', 'Morphism', '', 'Do not share this mapping', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_PRIVATE; }`}).to;
-	const mapAnonymous = MakeMorphism(args, 'MAP_ANONYMOUS', 'Morphism', '', 'Map anonymous memory', one, Z, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_ANONYMOUS; }`}).to;
-	const mmapInput = cpp.get('ProductObject', {objects:[voidPtr, size_t, Z, Z, file, off_t], dual:false});
+	const protRead = MakeMorphism(args, 'PROT_READ', 'Morphism', '', 'Pages may be read', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::PROT_READ; }`}).to;
+	const protWrite = MakeMorphism(args, 'PROT_WRITE', 'Morphism', '', 'Pages may be written', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::PROT_WRITE; }`}).to;
+	const mapShared = MakeMorphism(args, 'MAP_SHARED', 'Morphism', '', 'Share this mapping', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_SHARED; }`}).to;
+	const mapPrivate = MakeMorphism(args, 'MAP_PRIVATE', 'Morphism', '', 'Do not share this mapping', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_PRIVATE; }`}).to;
+	const mapAnonymous = MakeMorphism(args, 'MAP_ANONYMOUS', 'Morphism', '', 'Map anonymous memory', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_ANONYMOUS; }`}).to;
+	const mmapInput = cpp.get('ProductObject', {objects:[voidPtr, size_t, Z32, Z32, file, off_t], dual:false});
 	const mmap = MakeMorphism(args, 'mmap', 'Morphism', 'mmap', 'Memory map a file.', mmapInput, cpp.get('ProductObject', {objects:[voidPtr, one], dual:true}), {cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
