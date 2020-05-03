@@ -26,8 +26,8 @@ onmessage = function(e)
 					url = url.substring(0, index);
 				importScripts(url + '/js/sjcl.js');
 				break;
-			case 'LoadEquivalence':
-				LoadEquivalence(args.diagram, args.item, args.leftLeg, args.rightLeg);
+			case 'LoadEquivalences':
+				LoadEquivalences(args.diagram, args.item, args.leftLeg, args.rightLeg);
 				break;
 			case 'CheckEquivalence':
 				val = CheckEquivalence(args.diagram, args.cell, args.leftLeg, args.rightLeg);
@@ -76,7 +76,7 @@ function LoadSigLeg(sig, leg)
 	equs.push(leg);
 }
 
-function LoadEquivalence(diagram, item, leftLeg, rightLeg)
+function LoadEquivalences(diagram, item, leftLeg, rightLeg)
 {
 	maxLegLength = Math.max(maxLegLength, leftLeg.length, rightLeg.length)
 	const leftSig = Sig(...leftLeg);
@@ -127,7 +127,7 @@ function TryAlternateLeg(leg, ndx, cnt, sig, subLeg, altLeg)
 		if (!isEqual)
 			isEqual = ScanLeg(nuLeg, sig);
 		if (isEqual)
-			LoadEquivalence(null, null, leg, nuLeg);
+			LoadEquivalences(null, null, leg, nuLeg);
 	}
 	return isEqual;
 }
@@ -172,7 +172,7 @@ function CheckEquivalence(diagram, cell, leftLeg, rightLeg)
 		if (!isEqual)
 			isEqual = ScanLeg(rightLeg, leftSig);
 	}
-	isEqual && !CompareSigs(leftSig, rightSig) && LoadEquivalence(diagram, null, leftLeg, rightLeg);
+	isEqual && !CompareSigs(leftSig, rightSig) && LoadEquivalences(diagram, null, leftLeg, rightLeg);
 	return {diagram, cell, isEqual};
 }
 
@@ -199,7 +199,7 @@ function Load(diagrams)
 		{
 			items.get(item).forEach(function(equ)
 			{
-				LoadEquivalence(diagram, item, equ[0], equ[1]);
+				LoadEquivalences(diagram, item, equ[0], equ[1]);
 			});
 		});
 	});
