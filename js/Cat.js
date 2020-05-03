@@ -769,7 +769,7 @@ Create diagrams and execute morphisms.
 						break;
 					case 'start':
 					case 'Info':
-					case 'LoadEquivalence':
+					case 'LoadEquivalences':
 					case 'Load':
 					case 'RemoveEquivalences':
 						break;
@@ -1371,7 +1371,7 @@ Create diagrams and execute morphisms.
 			R.SelectDiagram(name);
 		});
 	}
-	static LoadEquivalence(diagram, item, leftLeg, rightLeg)
+	static LoadEquivalences(diagram, item, leftLeg, rightLeg)
 	{
 		const leftSigs = leftLeg.map(m => m.signature);
 		const rightSigs = rightLeg.map(m => m.signature);
@@ -1379,7 +1379,7 @@ Create diagrams and execute morphisms.
 	}
 	static LoadEquivalentSigs(diagram, item, leftSigs, rightSigs)
 	{
-		R.workers.equality.postMessage({command:'LoadEquivalence', diagram:diagram.name, item:item.name, leftLeg:leftSigs, rightLeg:rightSigs});
+		R.workers.equality.postMessage({command:'LoadEquivalences', diagram:diagram.name, item:item.name, leftLeg:leftSigs, rightLeg:rightSigs});
 	}
 	static RemoveEquivalences(diagram, ...items)
 	{
@@ -2441,7 +2441,7 @@ class NewElement
 				case 'Morphism':
 				{
 					const to = new Morphism(diagram, args);
-					to.loadEquivalence();
+					to.loadEquivalences();
 					return diagram.placeMorphism(e, to, args.xyDom, args.xyCod, save);
 				}
 				case 'Text':
@@ -3560,7 +3560,7 @@ Object.defineProperties(D,
 			{
 				const diagram = R.diagram;
 				const terminal = diagram.get('TerminalObject');
-				nidIndex = diagram.placeObject(e, terminal, D.mouse.diagramPosition(diagram));
+				diagram.placeObject(e, terminal, D.mouse.diagramPosition(diagram));
 			},
 			ControlDigit3(e) { D.threeDPanel.toggle(); },
 			Escape(e)
@@ -5561,7 +5561,7 @@ class Element
 			description:	{value: 'description' in args ? U.HtmlEntitySafe(args.description) : '',	writable: true},
 			diagram:		{value: diagram,										writable: true},	// is true for bootstrapping
 			dual:			{value:	dual,											writable: false},
-			name:			{value: name,											writable: false},
+			name:			{value: name,											writable: true},
 			properName:		{value: U.HtmlEntitySafe(properName),					writable: true},
 			refcnt:			{value: 0,												writable: true},
 			svg:			{value: null,											writable: true},
@@ -5583,11 +5583,11 @@ class Element
 	}
 	editText(e, attribute, value)
 	{
-		if (attribute === 'basename')
+		if (attribute === 'basename')	// also changes name and properName
 		{
 			if (!U.basenameEx.test(value))
 				throw 'invalid name';
-			if (this.diagram.elements.has(value))
+			if (this.diagram.elements.has(value) && this != this.diagram.elements.get(value))
 				throw 'base name already taken';
 			this.category.deleteElement(this);
 		}
@@ -5595,14 +5595,15 @@ class Element
 		if (attribute === 'basename')
 		{
 			this.diagram.addElement(this);
+			this.name = Element.Codename(this.diagram, {basename:this.basename});
 			this.properName = this.basename;
 			this.signature = this.getElementSignature();
 			this.diagram.updateProperName(this);
+			this.category.elements.set(this.name, this);
+//			this.diagram.addElement(this);
 		}
 		else if (attribute === 'properName')
 			this.diagram.updateProperName(this);
-//		log && this.diagram.log({command:'editText', name:this.name, attribute, value});
-//		e && e.stopPropagation();
 	}
 	help()
 	{
@@ -5622,6 +5623,7 @@ class Element
 			baseEdit = H.p('Base name: ' + H.tag('basename', this.basename) + baseBtn);
 		const html =	H.div(	H.h4(H.tag('proper-name', this.htmlName()) + pNameBtn) +
 								baseEdit +
+								H.span('', 'error', 'help-error') +
 								H.p('Description: ' + H.tag('description', this.description) + descBtn) +
 								(R.default.internals ? H.p(`Internal name: ${this.name}`) : '') +
 								(R.default.internals ?  H.p('Reference count: ') + H.tag('refcnt', this.refcnt) : '') +
@@ -6508,13 +6510,13 @@ class PullbackObject extends ProductObject
 	{
 		return false;
 	}
-	loadEquivalence()
+	loadEquivalences()
 	{
 		for (let i=1; i<this.cone.length; ++i)
 		{
 			const base = [this.diagram.getElement(this.cone[0]), this.source[0]];
 			const leg = [this.diagram.getElement(this.cone[i]), this.source[i]];
-			const {leftSig, rightSig} = R.LoadEquivalence(this.diagram, this, base, leg);
+			const {leftSig, rightSig} = R.LoadEquivalences(this.diagram, this, base, leg);
 		}
 	}
 	getDecoration()
@@ -7038,7 +7040,15 @@ class DiagramObject extends CatObject
 	}
 	isIdentityFusible()
 	{
-		return this.domains.size === 0 && this.codomains.size === 1 && Identity.IsA([...this.codomains][0].to);
+		let isId = false;
+		if (this.domains.size === 0 && this.codomains.size === 1)
+		{
+			isId = true;
+			const m = [...this.codomains][0].to;
+			m.forEachHier(function(m) { isId = isId && Identity.IsA(m); });
+		}
+//		return this.domains.size === 0 && this.codomains.size === 1 && Identity.IsA([...this.codomains][0].to);
+		return isId;
 	}
 	isFusible(o)
 	{
@@ -7153,7 +7163,7 @@ class Assertion extends Element
 		this.signature = Cell.Signature(left, right);
 		this.incrRefcnt();		// nothing refers to them, to increment
 		diagram.assertions.set(this.name, this);
-		this.loadEquivalence();
+		this.loadEquivalences();
 		diagram.addElement(this);
 	}
 	decrRefcnt()
@@ -7189,9 +7199,9 @@ class Assertion extends Element
 	{
 		return true;
 	}
-	loadEquivalence()
+	loadEquivalences()
 	{
-		R.LoadEquivalence(this.diagram, this, this.left.map(m => m.to), this.right.map(m => m.to));
+		R.LoadEquivalences(this.diagram, this, this.left.map(m => m.to), this.right.map(m => m.to));
 	}
 	removeEquivalence()
 	{
@@ -7898,6 +7908,7 @@ class DeleteAction extends Action
 	doit(e, diagram, items)
 	{
 		const stuff = new Set(items);
+		diagram.selected.length = 0;
 		const elements = [];
 		const findEm = function(m)	// find dependency order
 		{
@@ -7938,7 +7949,6 @@ class DeleteAction extends Action
 		{
 			diagram.domain.getHomSet(pair[0], pair[1]).map(m => m.update());
 		});
-		diagram.selected.length = 0;	// do not use diagram.deselectAll()
 	}
 	replay(e, diagram, args)
 	{
@@ -8056,7 +8066,11 @@ class ProjectAction extends Action
 		if (factors.length === 1 && factors[0] === -1)
 			m = diagram.get('TerminalMorphism', {domain:from.to, dual:this.dual});
 		else
-			m = diagram.get('FactorMorphism', {domain:from.to, factors, dual:this.dual});
+		{
+			const args = {factors, dual:this.dual};
+			args[this.dual ? 'codomain' : 'domain'] = from.to;
+			m = diagram.get('FactorMorphism', args);
+		}
 		diagram.placeMorphismByObject(e, this.dual ? 'codomain' : 'domain', from, m);
 	}
 	replay(e, diagram, args)
@@ -8377,7 +8391,7 @@ class LanguageAction extends Action
 			div.appendChild(H3.table(rows, {width:'auto'}));
 			div.appendChild(H3.div(U.HtmlSafe(code), {class:'code', id:`element-${this.ext}`}));
 			if (this.isEditable(elt))
-				div.appendChild(D.GetEdit3('edit3', `Cat.R.Actions.${this.name}.setCode(event, 'element-${this.ext}', '${this.ext}')`, 'Edit code', D.default.button.tiny));
+				div.appendChild(D.GetButton3('edit3', `Cat.R.Actions.${this.name}.setCode(event, 'element-${this.ext}', '${this.ext}')`, 'Edit code', D.default.button.tiny));
 		}
 		else
 		{
@@ -10372,11 +10386,11 @@ class Morphism extends Element
 	{
 		return null;	// fitb
 	}
-	loadEquivalence()	// don't call in Morphism constructor since signature may change
+	loadEquivalences()	// don't call in Morphism constructor since signature may change
 	{
 		const diagram = this.diagram;
 		const sig = this.signature;
-		R.LoadEquivalence(diagram, this, [this], [this]);
+		R.LoadEquivalences(diagram, this, [this], [this]);
 		const domIdSig = Identity.Signature(diagram, this.domain);
 		R.LoadEquivalentSigs(diagram, this, [sig], [domIdSig, sig]);
 		const codIdSig = Identity.Signature(diagram, this.codomain)
@@ -10393,6 +10407,11 @@ class Morphism extends Element
 	textwidth()
 	{
 		return D.textWidth(this.domain.htmlName())/2 + D.textWidth(this.htmlName()) + D.textWidth(this.codomain.htmlName())/2 + 2 * D.textWidth('&emsp;');
+	}
+	forEachHier(fn)
+	{
+		if (MultiMorphism.IsA(this))
+			this.morphisms.map(m => fn(m));
 	}
 	static IsA(m)
 	{
@@ -10495,7 +10514,7 @@ class Identity extends Morphism
 	{
 		return Identity.prototype.isPrototypeOf(obj);
 	}
-	static LoadEquivalence(diagram, obj, dual)
+	static LoadEquivalences(diagram, obj, dual)
 	{
 		if (ProductObject.IsA(obj))
 		{
@@ -10591,7 +10610,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 		this.source.incrRefcnt();
 		if (this.constructor.name === 'NamedMorphism')
 			this.signature = this.source.sig;
-		this.loadEquivalence();
+		this.loadEquivalences();
 	}
 	json()
 	{
@@ -10616,10 +10635,10 @@ class NamedMorphism extends Morphism	// name of a morphism
 		helped.add(this.name);
 		return super.help() + H.p('Named Morphism');
 	}
-	loadEquivalence()	// don't call in Morphism constructor since signature may change
+	loadEquivalences()	// don't call in Morphism constructor since signature may change
 	{
-		super.loadEquivalence();
-		R.LoadEquivalence(this.diagram, this, [this], [this.source]);
+		super.loadEquivalences();
+		R.LoadEquivalences(this.diagram, this, [this], [this.source]);
 	}
 	getGraph(data = {position:0})
 	{
@@ -11680,10 +11699,10 @@ class Composite extends MultiMorphism
 			return m.getFirstMorphism();
 		return m;
 	}
-	loadEquivalence()
+	loadEquivalences()
 	{
-		super.loadEquivalence();
-		R.LoadEquivalence(this.diagram, this, [this], this.morphisms);
+		super.loadEquivalences();
+		R.LoadEquivalences(this.diagram, this, [this], this.morphisms);
 	}
 	static Basename(diagram, args)
 	{
@@ -11752,17 +11771,17 @@ class ProductMorphism extends MultiMorphism
 		graph.tagGraph(this.dual ? 'Coproduct' : ' Product');
 		return graph;
 	}
-	loadEquivalence()
+	loadEquivalences()
 	{
-		super.loadEquivalence();
+		super.loadEquivalences();
 		this.morphisms.map((m, i) =>
 		{
 			const pDom = FactorMorphism.Signature(this.diagram, this.domain, [i], this.dual);
 			const pCod = FactorMorphism.Signature(this.diagram, this.codomain, [i], this.dual);
 			if (this.dual)
-				R.LoadEquivalence(this.diagram, this, [this, pCod], [pDom, m]);
+				R.LoadEquivalences(this.diagram, this, [this, pCod], [pDom, m]);
 			else
-				R.LoadEquivalence(this.diagram, this, [pCod, this], [m, pDom]);
+				R.LoadEquivalences(this.diagram, this, [pCod, this], [m, pDom]);
 		});
 	}
 	static Basename(diagram, args)
@@ -11829,13 +11848,13 @@ class ProductAssembly extends MultiMorphism
 		});
 		return graph;
 	}
-	loadEquivalence()
+	loadEquivalences()
 	{
-		super.loadEquivalence();
+		super.loadEquivalences();
 		this.morphisms.map((m, i) =>
 		{
 			const pCod = this.diagram.get('FactorMorphism', {domain:this.codomain, factors:[i], dual:this.dual});
-			R.LoadEquivalence(this.diagram, this, [m], this.dual ? [this, pCod] : [pCod, this]);
+			R.LoadEquivalences(this.diagram, this, [m], this.dual ? [this, pCod] : [pCod, this]);
 		});
 	}
 	static Basename(diagram, args)
@@ -11868,12 +11887,25 @@ class FactorMorphism extends Morphism
 	{
 		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
-		nuArgs.domain = diagram.getElement(args.domain);
 		nuArgs.cofactors = U.GetArg(args, 'cofactors', null);
-		nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors, dual, nuArgs.coFactors);
 		if (dual)
-			[nuArgs.domain, nuArgs.codomain] = [nuArgs.codomain, nuArgs.domain];
-		nuArgs.basename = FactorMorphism.Basename(diagram, {domain:dual ? nuArgs.codomain : nuArgs.domain, factors:nuArgs.factors, dual, cofactors:nuArgs.cofactors});
+		{
+			nuArgs.codomain = diagram.getElement(args.codomain);
+			nuArgs.domain = FactorMorphism.Codomain(diagram, nuArgs.codomain, nuArgs.factors, dual, nuArgs.coFactors);
+		}
+		else
+		{
+			nuArgs.domain = diagram.getElement(args.domain);
+			nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors, dual, nuArgs.coFactors);
+		}
+//		if (dual)
+//			[nuArgs.domain, nuArgs.codomain] = [nuArgs.codomain, nuArgs.domain];
+		const bargs = {factors:nuArgs.factors, dual, cofactors:nuArgs.cofactors}
+		if (dual)
+			bargs.codomain = nuArgs.codomain;
+		else
+			bargs.domain = nuArgs.domain;
+		nuArgs.basename = FactorMorphism.Basename(diagram, bargs);
 		nuArgs.properName = FactorMorphism.ProperName(diagram, dual ? nuArgs.codomain : nuArgs.domain, nuArgs.factors, dual, nuArgs.cofactors);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -11931,9 +11963,9 @@ class FactorMorphism extends Morphism
 		}
 		return graph;
 	}
-	loadEquivalence()
+	loadEquivalences()
 	{
-		super.loadEquivalence();
+		super.loadEquivalences();
 		if (this.cofactors)
 		{
 			// TODO
@@ -11944,7 +11976,7 @@ class FactorMorphism extends Morphism
 			{
 				const fm = this.diagram.get('FactorMorphism', {domain:this.codomain, factors:[i], dual:this.dual});
 				const base = this.diagram.get('FactorMorphism', {domain:this.domain, factors:[this.factors[i]], dual:this.dual});
-				R.LoadEquivalence(this.diagram, this, [base], [fm, this]);
+				R.LoadEquivalences(this.diagram, this, [base], [fm, this]);
 			});
 		}
 	}
@@ -11954,12 +11986,12 @@ class FactorMorphism extends Morphism
 		const dual = 'dual' in args ? args.dual : false;
 		const cofactors = 'cofactors' in args ? args.cofactors : null;
 		const c = this.dual ? 'C' : '';
-		const domain = diagram.getElement(args.domain);
-		let basename = `${c}Fa{${domain.name},`;
+		const obj = diagram.getElement(dual ? args.codomain : args.domain);
+		let basename = `${c}Fa{${obj.name},`;
 		for (let i=0; i<factors.length; ++i)
 		{
 			const indices = factors[i];
-			const f = domain.getFactor(indices);
+			const f = obj.getFactor(indices);
 			if (TerminalObject.IsA(f))	// TODO dual object
 				basename += this.dual ? '#0' : '#1';
 			else
@@ -12165,9 +12197,9 @@ class LambdaMorphism extends Morphism
 		a.homFactors = this.homFactors;
 		return a;
 	}
-	loadEquivalence(diagram)
+	loadEquivalences(diagram)
 	{
-		super.loadEquivalence(diagram);
+		super.loadEquivalences(diagram);
 		// TODO
 	}
 	canChangeProperName()
@@ -13229,39 +13261,48 @@ class Diagram extends Functor
 	}
 	editElementText(e, name, id, attribute)
 	{
-		const qry = `#${id} ${attribute}`;
-		const txtbox = document.querySelector(qry);
-		let value = null;
-		if (this.isEditable() && txtbox.contentEditable === 'true' && txtbox.textContent !== '')
+		const errorElt = document.getElementById('help-error');
+		errorElt.innerHTML = '';
+		try
 		{
-			txtbox.contentEditable = false;
-			const elt = this.getElement(name);
-			value = txtbox.innerText;
-			if (attribute === 'basename')
-				R.EmitElementEvent(elt, 'remove');		// changing basename means reentering the element
-			elt.editText(e, attribute, value);
-			this.diagram.log({command:'editText', name:this.name, attribute, value});
-			e && e.stopPropagation();
-			let p = e.toElement;
-			while(p.parentElement)
-				if (p.parentElement.id === 'toolbar')
-				{
-					R.diagram.actionHtml(e, 'help');	// if the toolbar is up
-					break;
-				}
-				else
-					p = p.parentElement;
-			if (!DiagramText.IsA(elt))
-				this.updateProperName(elt);
-			R.EmitElementEvent(elt, attribute === 'basename' ? 'add' : 'update');
-			R.SaveLocal(this);
+			const qry = `#${id} ${attribute}`;
+			const txtbox = document.querySelector(qry);
+			let value = null;
+			if (this.isEditable() && txtbox.contentEditable === 'true' && txtbox.textContent !== '')
+			{
+				txtbox.contentEditable = false;
+				const elt = this.getElement(name);
+				value = txtbox.innerText;
+				if (attribute === 'basename')
+					R.EmitElementEvent(elt, 'remove');		// changing basename means reentering the element
+				elt.editText(e, attribute, value);
+				this.diagram.log({command:'editText', name:this.name, attribute, value});
+				e && e.stopPropagation();
+				let p = e.toElement;
+				while(p.parentElement)
+					if (p.parentElement.id === 'toolbar')
+					{
+						R.diagram.actionHtml(e, 'help');	// if the toolbar is up
+						break;
+					}
+					else
+						p = p.parentElement;
+				if (!DiagramText.IsA(elt))
+					this.updateProperName(elt);
+				R.EmitElementEvent(elt, attribute === 'basename' ? 'add' : 'update');
+				R.SaveLocal(this);
+			}
+			else
+			{
+				txtbox.contentEditable = true;
+				txtbox.focus();
+			}
+			return value;
 		}
-		else
+		catch(x)
 		{
-			txtbox.contentEditable = true;
-			txtbox.focus();
+			errorElt.innerHTML = U.HtmlEntitySafe(`Error: ${x}`);
 		}
-		return value;
 	}
 	updateMorphisms()
 	{
@@ -13566,19 +13607,19 @@ class Diagram extends Functor
 			else if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 				args.actions.map(a => this.actions.set(a, R.$Actions.getElement(a)));
 		}
-		if (!DiagramMorphism.IsA(elt) && 'loadEquivalence' in elt)
-			elt.loadEquivalence();
+		if (!DiagramMorphism.IsA(elt) && 'loadEquivalences' in elt)
+			elt.loadEquivalences();
 		return elt;
 	}
 	comp(morphisms)
 	{
 		return this.get('Composite', {morphisms});
 	}
-	prod(elemeents)
+	prod(elements)
 	{
 		return CatObject.IsA(elements[0]) ? this.get('ProductObject', {objects:elements}) : this.get('ProductMorphism', {morphisms:elements});;
 	}
-	coprod(elemeents)
+	coprod(elements)
 	{
 		return CatObject.IsA(elements[0]) ? this.get('ProductObject', {objects:elements, dual:true}) : this.get('ProductMorphism', {morphisms:elements, dual:true});;
 	}
@@ -13686,7 +13727,10 @@ class Diagram extends Functor
 			const m = [...from.codomains][0];
 			m.setCodomain(target);
 			const oldTo = m.to;
-			m.setMorphism(new Morphism(this, {basename:this.getAnon('morph', true), domain:m.to.domain, codomain:target.to}));
+			const basename = this.getAnon('morph', true);
+			const name = Element.Codename(this, {basename});
+			m.setMorphism(new Morphism(this, {basename, domain:m.to.domain, codomain:target.to}));
+			m.to.loadEquivalences();
 			oldTo.decrRefcnt();
 			m.svg_name.innerHTML = m.to.htmlName();
 			m.update();
