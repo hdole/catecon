@@ -269,13 +269,16 @@ const Boot = function(fn)
 	logic.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(logic);
-	Autoplace(logic,
+	/*
+	Autoplace(
 	{
+		diagram:		logic,
 		description:	'This diagram contains typical logic objects and morphisms',
 		prototype:		'DiagramText',
 		user,
 		properName:		'&Omega;',
 	}, args.xy);
+	*/
 	args.xy.y += args.majorGrid;
 	const two = logic.get('ProductObject', {objects:[one, one], dual:true});
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
@@ -330,13 +333,16 @@ const Boot = function(fn)
 	Narith.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(Narith);
-	Autoplace(Narith,
+	/*
+	Autoplace(
 	{
+		diagram:		Narith,
 		description:	'Basic morphisms for natural numbers are given here',
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
 args.xy.y += args.majorGrid;
+	*/
 	const N = MakeObject(args, 'N', 'CatObject', '&Nopf;', 'The natural numbers', {code:{cpp:'typedef unsigned long N;\n'}}).to;
 	const NplusOne = MakeObject(args, '', 'ProductObject', '', 'A natural number or an exception', {objects:[N, one], dual:true}).to;
 	const Nzero = MakeMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N,
@@ -417,13 +423,16 @@ args.xy.y += args.majorGrid;
 	integers.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(integers);
-	Autoplace(integers,
+/*
+	Autoplace(args,
 	{
+		diagram:		integers,
 		description:	'Basic morphisms for the integers are given here',
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
 args.xy.y += args.majorGrid;
+*/
 	const Z = MakeObject(args, 'Z', 'CatObject', '&Zopf;', 'The integers', {code:{cpp:'typedef long Z;\n'}}).to;
 	const N2Z = MakeMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z,
 	{
@@ -505,7 +514,12 @@ return [0, args[0] % args[1]];
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	});
 	const Z32 = MakeObject(args, 'Z32', 'CatObject', '&Zopf;&#8323;&#8322;', 'The 32-bit integers', {code:{cpp:'typedef int %1;\n'}}).to;
-	const Z32pair = args.diagram.prod([Z32, Z32]);
+	const zero32 = MakeMorphism(args, 'zero32', 'Morphism', '0&#8323;&#8322;', 'The 32-bit integer zero', one, Z,
+	{
+		js:'function %Type(args)\n{\n	return 0;\n}\n',
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = 0;\n}\n',
+	}).to;
+	const Z32pair = args.diagram.prod(Z32, Z32);
 	const Z32add = MakeMorphism(args, 'Z32add', 'Morphism', '+', 'Addition of two 32-bit integers', Z32pair, Z32,
 	{
 //		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
@@ -541,12 +555,15 @@ return [0, args[0] % args[1]];
 	floats.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(floats);
-	Autoplace(floats,
+/*
+	Autoplace(args,
 	{
+		diagram:		floats,
 		description:	'Basic floating point morphisms are given here',
 		prototype:		'DiagramText',
 	}, args.xy);
 args.xy.y += args.majorGrid;
+*/
 	const F = MakeObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers', {code:{cpp:
 `}
 
@@ -754,13 +771,16 @@ void %Type(const %Dom & args, %Cod & out)
 	complex.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(complex);
-	Autoplace(complex,
+/*
+	Autoplace(args,
 	{
+		diagram:		complex,
 		description:	'A complex number is a pair of floating point numbers.',
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
 args.xy.y += args.majorGrid;
+*/
 	const C = new Cat.NamedObject(complex, {basename:'C', properName:'&Copf;', source:Fpair, code:
 `}
 
@@ -946,13 +966,16 @@ return [0, Math.pow(args[0], args[1])];
 	strings.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(strings);
-	Autoplace(strings,
+/*
+	Autoplace(args,
 	{
+		diagram:		strings,
 		description:	'Basic morphisms for strings are given here as well as\nvarious conversion functions from and to basic types',
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
 args.xy.y += args.majorGrid;
+*/
 	const str = MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings', {code:{cpp:
 `}
 
@@ -1213,14 +1236,17 @@ function %Type(args)
 	htmlDiagram.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(htmlDiagram);
-	Autoplace(htmlDiagram,
+/*
+	Autoplace(args,
 	{
+		diagram:		htmlDiagram,
 		description:	'Various HTML input and output morphisms are found here',
 		prototype:		'DiagramText',
 		user,
 		properName:		'&Omega;',
 	}, args.xy);
 args.xy.y += args.majorGrid;
+*/
 	const html = MakeObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices').to;
 	const html2N = MakeMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
 	{
@@ -1321,13 +1347,16 @@ function %Type(args)
 	threeD.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(threeD);
-	Autoplace(threeD,
+/*
+	Autoplace(args,
 	{
+		diagram:		threeD,
 		description:	'Various 3-D morphisms are found here',
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
 args.xy.y += args.majorGrid;
+*/
 	const d3 = MakeObject(args, 'threeD', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices').to;
 	const f2d3 = MakeMorphism(args, 'f2d3', 'Morphism', '1D', 'visualize a number in 3D', F, d3,
 	{
@@ -1418,12 +1447,15 @@ postMessage(['fff2toQB3', args]);
 	qGates.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(qGates);
-	Autoplace(qGates,
+/*
+	Autoplace(args,
 	{
+		diagram:		qGates,
 		description:	'Basic quantum gates are given here.',
 		prototype:		'DiagramText',
 		user,
 	}, args.xy);
+	*/
 	args.xy.y += args.majorGrid;
 	const qubit = MakeObject(args, 'q', 'CatObject', '&Qopf;', 'The quantum qubit').to;
 	const qPair = MakeObject(args, '', 'TensorObject', '', 'A pair of qubits', {objects:[qubit, qubit]}).to;
@@ -1543,15 +1575,18 @@ return matrix_multiply(%Type_matrix, args);
 	cpp.makeSvg(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(cpp);
-	Autoplace(cpp,
+/*
+	Autoplace(args,
 	{
+		diagram:		cpp,
 		description:	'Various C++ functions',
 		prototype:		'DiagramText',
 		user,
 		properName:		'C++Omega;',
 	}, args.xy);
 args.xy.y += args.majorGrid;
-
+*/
+	const errno = MakeNamedObject(args, {basename:'Errno', source:Z32, description:'Set by system calls and some library functions when something goes wrong'}).to;
 	const stdin = MakeObject(args, 'stdin', 'CatObject', '', 'The standard input object reads from a tty device.', {code:
 	{
 		cpp:
@@ -1699,9 +1734,9 @@ args.rowCount += Math.round(delta/args.majorGrid);
 	morph1 = PlaceMorphism(args, to, false);
 	Cat.R.Actions.name.doit(null, cpp, {source:morph1, name:'NULL'}, false);
 
-	const filePlusZ = cpp.get('ProductObject', {objects:[file, Z], dual:true});
-	const strByZ = cpp.get('ProductObject', {objects:[str, Z], dual:false});
-	const open = MakeMorphism(args, 'open', 'Morphism', 'open', 'Open a file.', strByZ, filePlusZ,
+	const strByZ32 = cpp.get('ProductObject', {objects:[str, Z32], dual:false});
+	const filePlusErrno = cpp.get('ProductObject', {objects:[file, errno], dual:true});
+	const open = MakeMorphism(args, 'open', 'Morphism', 'open', 'Open a file.', strByZ32, filePlusErrno,
 	{
 		cpp:
 `void %Type(const %Dom & args, %Cod & out)
@@ -1777,7 +1812,7 @@ namespace %Namespace
 	const mapPrivate = MakeMorphism(args, 'MAP_PRIVATE', 'Morphism', '', 'Do not share this mapping', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_PRIVATE; }`}).to;
 	const mapAnonymous = MakeMorphism(args, 'MAP_ANONYMOUS', 'Morphism', '', 'Map anonymous memory', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::MAP_ANONYMOUS; }`}).to;
 	const mmapInput = cpp.get('ProductObject', {objects:[voidPtr, size_t, Z32, Z32, file, off_t], dual:false});
-	const mmap = MakeMorphism(args, 'mmap', 'Morphism', 'mmap', 'Memory map a file.', mmapInput, cpp.get('ProductObject', {objects:[voidPtr, one], dual:true}), {cpp:
+	const mmap = MakeMorphism(args, 'mmap', 'Morphism', 'mmap', 'Memory map a file.', mmapInput, cpp.get('ProductObject', {objects:[voidPtr, errno], dual:true}), {cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
 	void * ptr = ::mmap(args.m_0, args.m_1, args.m_2, args.m_3, args.m_4, args.m_5);
@@ -1796,7 +1831,7 @@ namespace %Namespace
 	//
 	// munmap
 	//
-	const munmap = MakeMorphism(args, 'munmap', 'Morphism', '', 'Unmap a memory mapped file', cpp.get('ProductObject', {objects:[voidPtr, size_t]}), Z, {cpp:
+	const munmap = MakeMorphism(args, 'munmap', 'Morphism', '', 'Unmap a memory mapped file', cpp.get('ProductObject', {objects:[voidPtr, size_t]}), Z32, {cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
 	out = ::munmap(args.m_0, args.m_1);
@@ -1945,14 +1980,17 @@ namespace %Namespace
 	const rowPitch = MakeNamedObject(args, {basename:'RowPitch', source:N16, description:'The distance between rows (origin-to-origin, not the gap) in an arrayed reference'}).to;
 	const colPitch = MakeNamedObject(args, {basename:'ColPitch', source:N16, description:'The distance between columns (origin-to-origin, not the gap) in an arrayed reference'}).to;
 	const arefStr = gds.get('ProductObject', {objects:[sname, point, reflection, angle, mag, rows, cols, rowPitch, colPitch, properties]});
-	const aref = MakeNamedObject(args, {basename:'Aref', source:arefStr, description:'The arrayed structure with the given name is placed accordingly'}).to;
+	const aref = MakeNamedObject(args, {basename:'Aref', source:arefStr, description:'The arrayed structure with the given name is placed accordingly.'}).to;
 
 	const textStr = gds.get('ProductObject', {objects:[layer, datatype, str, point, properties]});
 	const txt = MakeNamedObject(args, {basename:'Text', source:textStr, description:'The text string is placed accordingly'}).to;
 
-	const recordDataAry = [gdsEltType, str, layer, datatype, points, width, rows, cols, reflection, mag, angle, endType, properties];
-	const recordDataStr = gds.get('ProductObject', {objects:recordDataAry});
-	const recordData = MakeNamedObject(args, {basename:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
+	const elementStr = args.diagram.coprod(boundary, path, sref, aref, txt);
+	const element = MakeNamedObject(args, {basename:'Element', source:elementStr, description:'A GDSII element is a boundary, path, aref, sref, or text.'}).to;
+
+//	const recordDataAry = [gdsEltType, str, layer, datatype, points, width, rows, cols, reflection, mag, angle, endType, properties];
+//	const recordDataStr = gds.get('ProductObject', {objects:recordDataAry});
+//	const recordData = MakeNamedObject(args, {basename:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
 
 	args.xy = new Cat.D2;
 	PlaceText(args, 'The GDSII Graphics Design Standard Specification', 96, 'bold', false);
