@@ -245,8 +245,8 @@ const Boot = function(fn)
 	args.xy.y += args.majorGrid;
 	*/
 	PlaceText(args, 'This diagram contains initial and terminal objects\nas well as objects for interacting with the real world.\nIn other words, device drivers', 32);
-	const zero = basics.get('InitialObject', {});
-	const one = basics.get('TerminalObject', {});
+	const zero = basics.get('FiniteObject', {size:0});
+	const one = basics.get('FiniteObject', {size:1});
 	PlaceObject(args, zero);
 	PlaceObject(args, one);
 	const tty = MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
@@ -1262,6 +1262,7 @@ function %Type(args)
 }
 `,
 	}).to;
+
 	const html2N8 = MakeMorphism(args, 'html2N8', 'Morphism', 'input', 'read a natural number between 0 and 255 from an HTML input tag', html, N8,
 	{
 		js:
@@ -1278,6 +1279,24 @@ function %Type(args)
 }
 `,
 	}).to;
+
+	const html2N16 = MakeMorphism(args, 'html2N16', 'Morphism', 'input', 'read a natural number between 0 and 255 from an HTML input tag', html, N16,
+	{
+		js:
+`
+function %Type(args)
+{
+	const v = document.getElementById(args).value;
+	if (v === '')
+		throw 'no input';
+	const r = Number.parseInt(v);
+	if (r < 0 || r > 65536)
+		throw 'out of range';
+	return r;
+}
+`,
+	}).to;
+
 	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
 	{
 		js:`function %Type(args)\n{\n	return Number.parseInt(document.getElementById(args).value);\n}\n`,
@@ -1306,6 +1325,7 @@ function %Type(args)
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${Cat.U.Token(N_html2N)}];\n}\n`,
 	}).to;
+
 	const N_html2N8 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N8, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2N8);
 	const strXN_html2N8 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N8.codomain]});
@@ -1313,6 +1333,15 @@ function %Type(args)
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N8)}];\n}\n`,
 	}).to;
+
+	const N_html2N16 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N16, domFactors:[], homFactors:[0]});
+	PlaceMorphism(args, N_html2N16);
+	const strXN_html2N16 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N16.codomain]});
+	const html2N16F = MakeMorphism(args, 'html2N16F', 'Morphism', '&Nopf&#8328;;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N16,
+	{
+		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N16)}];\n}\n`,
+	}).to;
+
 	const N_html2Z = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2Z);
 	const strXN_html2Z = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z.codomain]});
