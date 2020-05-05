@@ -270,7 +270,7 @@ a:hover, .offcanvas a:focus
 	padding: 20px;
 }
 
-.error
+#toolbar-error, .error
 {
 	background-color:	#f77;
 	color:				#fff;
