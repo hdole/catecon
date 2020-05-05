@@ -2039,6 +2039,7 @@ class Toolbar
 			'element':		{value: document.getElementById('toolbar'),			writable: false},
 			'header':		{value: document.getElementById('toolbar-header'),	writable: false},
 			'help':			{value: document.getElementById('toolbar-help'),	writable: false},
+			'error':		{value: document.getElementById('toolbar-error'),	writable: false},
 			'closed':		{value:	false,										writable: true},
 		});
 		const that = this;
@@ -2085,6 +2086,7 @@ class Toolbar
 	}
 	show(e)
 	{
+		this.error.innerHTML = '';
 		const diagram = R.diagram;
 		let xy = U.Clone(D.mouse.down);
 		xy.x += 8;
@@ -2171,16 +2173,22 @@ class StatusBar
 		{
 			'element':		{value: document.getElementById('statusbar'),	writable: false},
 			'message':		{value: '',										writable: true},
-			'timer':		{value: null,									writable: true},
+			'timerIn':		{value: null,									writable: true},
+			'timerOut':		{value: null,									writable: true},
 			'xy':			{value: null,									writable: true},
 		});
 	}
 	show(e, msg, record = false)
 	{
-		if (this.timer)
-			clearInterval(this.timer);
+		if (this.timerOut)
+			clearInterval(this.timerOut);
+		if (this.timerIn)
+			clearInterval(this.timerIn);
 		const that = this;
-		this.timer = setTimeout(function() { that.hide(); }, D.default.statusBarTimer); 
+		this.timerIn = setTimeout(function() {
+that.element.classList.remove('hidden');
+}, D.default.statusbar.timein); 
+		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
 		if (msg === null || msg === '')
 		{
 			this.message = '';
@@ -2209,14 +2217,11 @@ class StatusBar
 				elt.style.top = toolbox.top - statusbox.height + 'px';
 		}
 		this.message = U.HtmlEntitySafe(msg);
-		this.element.classList.remove('hidden');
+//		this.element.classList.remove('hidden');
 		if (record)
 			document.getElementById('tty-out').innerHTML += this.message + "\n";
 	}
-	hide()
-	{
-		this.element.classList.add('hidden');
-	}
+	hide() { this.element.classList.add('hidden'); }
 }
 
 class NewElement
@@ -3389,6 +3394,11 @@ ${button}
 			elt.appendChild(H3.p(`${prefix}${U.DeCamel(i)}: ${d}`));
 		});
 	}
+	static ArrowDirection()
+	{
+		const a = D.default.arrow;
+		return new D2(a.length * a.dir.x, a.length * a.dir.y);
+	}
 }
 Object.defineProperties(D,
 {
@@ -3400,7 +3410,12 @@ Object.defineProperties(D,
 	{
 		value:
 		{
-			arrow:		{length:150, margin:16},
+			arrow:
+			{
+				length:	150,
+				margin:	16,
+				dir:	{x:0, y:1},
+			},
 			button:		{tiny:0.4, small:0.66, large:1.0},
 			cell:		{
 							unknown:		'&#8799;',
@@ -3410,7 +3425,6 @@ Object.defineProperties(D,
 							named:			'&#8797;',
 						},
 			panel:		{width:	230},
-			pan:		100,
 			font:		{height:24},
 			fuse:
 			{
@@ -3420,13 +3434,14 @@ Object.defineProperties(D,
 				margin:		2,
 			},
 			layoutGrid:	10,
+			pan:		{scale:	0.05},
 			scale:		{base:1.05, limit:{min:0.05, max:20}},
 			scale3D:	1,
 			stdOffset:	new D2(32, 32),
 			stdArrow:	new D2(200, 0),
 			stdArrowDown:	new D2(0, 200),
 			autohideTimer:	8000,	// ms
-			statusBarTimer:	3000,	// ms
+			statusbar:	{timein: 1000, timeout: 3000},	// ms
 			saveInterval:	5000,	// ms
 			toolbar:	{x:15, y:70},
 		},
@@ -3451,25 +3466,25 @@ Object.defineProperties(D,
 			ArrowUp(e)
 			{
 				const diagram = R.diagram;
-				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x, diagram.viewport.y + delta, diagram.viewport.scale);
 			},
 			ArrowDown()
 			{
 				const diagram = R.diagram;
-				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x, diagram.viewport.y - delta, diagram.viewport.scale);
 			},
 			ArrowLeft()
 			{
 				const diagram = R.diagram;
-				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x + delta, diagram.viewport.y, diagram.viewport.scale);
 			},
 			ArrowRight()
 			{
 				const diagram = R.diagram;
-				const delta = Math.max(D.Width(), D.Height()) * 0.1;
+				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x - delta, diagram.viewport.y, diagram.viewport.scale);
 			},
 			Space(e)
@@ -3547,7 +3562,7 @@ Object.defineProperties(D,
 			Digit1(e)
 			{
 				const diagram = R.diagram;
-				const terminal = diagram.get('TerminalObject');
+				const terminal = diagram.get('FiniteObject', {size:1});
 				diagram.placeObject(e, terminal, D.mouse.diagramPosition(diagram));
 			},
 			ControlDigit3(e) { D.threeDPanel.toggle(); },
@@ -5610,7 +5625,6 @@ class Element
 			baseEdit = H.p('Base name: ' + H.tag('basename', this.basename) + baseBtn);
 		const html =	H.div(	H.h4(H.tag('proper-name', this.htmlName()) + pNameBtn) +
 								baseEdit +
-								H.span('', 'error', 'help-error') +
 								H.p('Description: ' + H.tag('description', this.description) + descBtn) +
 								(R.default.internals ? H.p(`Internal name: ${this.name}`) : '') +
 								(R.default.internals ?  H.p('Reference count: ') + H.tag('refcnt', this.refcnt) : '') +
@@ -6125,6 +6139,8 @@ class CatObject extends Element
 	{
 		return this.properName;
 	}
+	isTerminal() { return false; }		// fitb
+	isInitial() { return false; }
 	static IsA(obj)
 	{
 		return CatObject.prototype.isPrototypeOf(obj);
@@ -6179,14 +6195,26 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	{
 		return true;
 	}
+	isTerminal() { return this.size === 1; }
+	isInitial() { return this.size === 0; }
 	static Basename(diagram, args)
 	{
-		const basename = args.basename;
+//		const basename = args.basename;
+//		const size = 'size' in args ? args.size : '';
+//		return basename === '' ? (size === '' ? basename : `${basename}#${Number.parseInt(size)}`) : basename;
+		const basename = 'basename' in args ? args.basename : '';
 		const size = 'size' in args ? args.size : '';
 		return basename === '' ? (size === '' ? basename : `${basename}#${Number.parseInt(size)}`) : basename;
 	}
 	static Codename(diagram, args)
 	{
+		if ('size' in args)
+		{
+			if (args.size === 1)
+				return '#1';
+			if (args.size === 0)
+				return '#0';
+		}
 		return Element.Codename(diagram, {basename:FiniteObject.Basename(diagram, args)});
 	}
 	static ProperName(diagram, basename, size)
@@ -6207,6 +6235,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	}
 }
 
+/*
 class InitialObject extends FiniteObject
 {
 	constructor(diagram, args)
@@ -6258,6 +6287,7 @@ class TerminalObject extends FiniteObject
 		return TerminalObject.prototype.isPrototypeOf(m);
 	}
 }
+*/
 
 class MultiObject extends CatObject
 {
@@ -6294,7 +6324,8 @@ class MultiObject extends CatObject
 			if (factor.length > 0)
 			{
 				if (factor[0] === -1)
-					return this.diagram.get(this.dual ? 'InitialObject' : 'TerminalObject', {});
+//					return this.diagram.get(this.dual ? 'InitialObject' : 'TerminalObject', {});
+					return this.diagram.get('FiniteObject', {size:this.dual ? 0 : 1});
 				return this.objects[factor[0]].getFactor(factor.slice(1));
 			}
 			return this;
@@ -6389,7 +6420,8 @@ class ProductObject extends MultiObject
 	getFactor(factor)
 	{
 		if (factor === -1)
-			return this.dual ? this.diagram.get('InitialObject') : diagram.get('TerminalObject');
+//			return this.dual ? this.diagram.get('InitialObject') : diagram.get('TerminalObject');
+			return this.diagram.get('FiniteObject', {size:this.dual ? 0 : 1});
 		return super.getFactor(factor);
 	}
 	getGraph(data = {position:0}, first = true)
@@ -6422,13 +6454,13 @@ class ProductObject extends MultiObject
 	}
 	static Codename(diagram, args)
 	{
-		const objects = args.objects;
+		const objects = diagram.getElements(args.objects);
 		const dual = 'dual' in args ? args.dual : false;
 		if (!objects || objects.length === 0)
 			return dual ? '#0' : '#1';
 		if (objects.length === 1)
 			return typeof objects[0] === 'object' ? objects[0].name : objects[0];
-		return Element.Codename(diagram, {basename:ProductObject.Basename(diagram, args)});
+		return Element.Codename(diagram, {basename:ProductObject.Basename(diagram, {objects})});
 	}
 	static ProperName(objects, dual = false)
 	{
@@ -6445,6 +6477,15 @@ class ProductObject extends MultiObject
 	static IsA(obj)
 	{
 		return ProductObject.prototype.isPrototypeOf(obj);
+	}
+	static Get(diagram, args)
+	{
+		if (args.objects.length === 0)
+		{
+			const size = ('dual' in args && args.dual) ? 0 : 1;
+			return diagram.get('FiniteObject', {size});
+		}
+		return null;
 	}
 }
 
@@ -6916,7 +6957,8 @@ class DiagramObject extends CatObject
 		nuArgs.category = diagram.domain;
 		if ('to' in args)
 		{
-			const to = diagram.getElement(args.to);
+if (args.to === 'hdole/gdsReader/#1')args.to = '#1';
+			let to = diagram.getElement(args.to);
 			if (!to)
 				throw `no to! ${args.to}`;
 			nuArgs.to = to;
@@ -8004,7 +8046,8 @@ class TerminalMorphismAction extends Action
 		if (diagram.isEditable() && elements.length === 1 && DiagramObject.IsA(elements[0]))
 		{
 			const obj = elements[0].to;
-			if (TerminalObject.IsA(obj) && this.dual === obj.dual)
+//			if (TerminalObject.IsA(obj) && this.dual === obj.dual)
+			if (obj.isTerminal() && this.dual === obj.dual)
 				return false;	// use id's instead
 			return true;
 		}
@@ -8179,7 +8222,8 @@ class LambdaMorphismAction extends Action
 		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]))
 		{
 			const m = ary[0].to;
-			if (TerminalObject.IsA(m.domain) && !HomObject.IsA(m.codomain))
+//			if (TerminalObject.IsA(m.domain) && !HomObject.IsA(m.codomain))
+			if (m.domain.isTerminal() && !HomObject.IsA(m.codomain))
 				return false;
 			return true;
 		}
@@ -8345,10 +8389,13 @@ class LanguageAction extends Action
 	isEditable(m)
 	{
 		return m.isEditable() &&
-			(m.constructor.name === 'Morphism' &&
-				!InitialObject.IsA(m.domain) &&
-				!TerminalObject.IsA(m.codomain) &&
-				!InitialObject.IsA(m.codomain)
+			((m.constructor.name === 'Morphism' &&
+//				!InitialObject.IsA(m.domain) &&
+				!m.domain.isInitial() &&
+//				!TerminalObject.IsA(m.codomain) &&
+				!m.codomain.isTerminal &&
+//				!InitialObject.IsA(m.codomain)
+				!m.codomain.isInitial())
 			|| m.constructor.name === 'CatObject');
 	}
 	html(e, diagram, ary)
@@ -8487,11 +8534,14 @@ function ${jsName}_Iterator(fn)
 	return result;
 }
 `;
-			if (InitialObject.IsA(m.domain))
+//			if (InitialObject.IsA(m.domain))
+			if ('domain' in m && m.domain.isInitial())
 				code += `${header}	return;	// abandon computation\n'${tail}`;	// domain is null, yuk
-			else if (TerminalObject.IsA(m.codomain))
+//			else if (TerminalObject.IsA(m.codomain))
+			else if ('codomain' in m && m.codomain.isTerminal())
 				code += `${header}	return 0;${tail}`;
-			else if (InitialObject.IsA(m.codomain))
+//			else if (InitialObject.IsA(m.codomain))
+			else if ('codomain' in m && m.codomain.isInitial())
 				code += `${header}	throw 'do not do this';${tail}`;
 			else
 				switch(proto)
@@ -8688,7 +8738,8 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
 		else if (Morphism.IsA(o))
 			return this.canFormat(o.domain) && this.canFormat(o.codomain);
-		else if (TerminalObject.IsA(o) && !o.dual)
+//		else if (TerminalObject.IsA(o) && !o.dual)
+		else if (o.isTerminal() && !o.dual)
 			return true;
 		else if (CatObject.IsA(o))
 			return this.formatters.has(o.signature);
@@ -8737,7 +8788,7 @@ ${divs}
 					html += o.objects.map((ob, i) => this.getInput(ob, prefix, [...factor, i]));
 				break;
 			case 'FiniteObject':
-			case 'TerminalObject':
+//			case 'TerminalObject':
 				html = `<input type="number" min="0" id="${id}"`;
 				if ('size' in o)
 					html += ` max="${o.size}"`;
@@ -8751,30 +8802,32 @@ ${divs}
 	getInputValue(domain, prefix = '', factor = [])
 	{
 		let value = null;
+		const dom = domain.constructor.name === 'NamedObject' ? domain.source : domain;
 		switch(domain.constructor.name)
 		{
 			case 'CatObject':
-				if (this.formatters.has(domain.signature))
+			case 'FiniteObject':
+				if (this.formatters.has(dom.signature))
 				{
-					const f = this.formatters.get(domain.signature);
-					const out = window[U.Token(f)](domain.name + factor.toString());
+					const f = this.formatters.get(dom.signature);
+					const out = window[U.Token(f)](dom.name + factor.toString());
 					const formatter = out[1]();
-					value = formatter(`${prefix} ${domain.name} ${factor.toString()}`);;
+					value = formatter(`${prefix} ${dom.name} ${factor.toString()}`);;
 				}
 				else
 					D.RecordError('object has no formatter');
 				break;
-			case 'TerminalObject':
-				value = 0;
-				break;
+//			case 'TerminalObject':
+//				value = 0;
+//				break;
 			case 'ProductObject':
-				if (domain.dual)
+				if (dom.dual)
 				{
-					const i = Number.parseInt(document.getElementById(`${prefix} ${domain.name} ${factor.toString()}`).value);
-					value = [i, this.getInputValue(domain.objects[i], prefix, [...factor, i])];
+					const i = Number.parseInt(document.getElementById(`${prefix} ${dom.name} ${factor.toString()}`).value);
+					value = [i, this.getInputValue(dom.objects[i], prefix, [...factor, i])];
 				}
 				else
-					value = domain.objects.map((o, i) => this.getInputValue(o, prefix, [...factor, i]));
+					value = dom.objects.map((o, i) => this.getInputValue(o, prefix, [...factor, i]));
 		}
 		return value;
 	}
@@ -8872,7 +8925,7 @@ ${this.generate(m)}
 	{
 		switch(o.constructor.name)
 		{
-			case 'TerminalObject':
+//			case 'TerminalObject':
 			case 'FiniteObject':
 				return true;
 			case 'CatObject':
@@ -8940,10 +8993,12 @@ ${this.generate(m)}
 	}
 	static ObjectLength(o)
 	{
-		if (TerminalObject.IsA(o) || InitialObject.IsA(o))
+//		if (TerminalObject.IsA(o) || InitialObject.IsA(o))
+		if (FiniteObject.IsA(o) && o.size <= 1)
 			return 0;
 		if (ProductObject.IsA(o) && !o.dual)
-			return o.objects.reduce((r, o) => r + (TerminalObject.IsA(o) ? 0 : 1), 0);
+//			return o.objects.reduce((r, o) => r + (TerminalObject.IsA(o) ? 0 : 1), 0);
+			return o.objects.reduce((r, o) => r + (o.isTerminal() ? 0 : 1), 0);
 		else
 			return 1;
 	}
@@ -9084,8 +9139,8 @@ ${members}
 				case 'HomObject':
 					code += `\t\t${this.getComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);\n`;
 					break;
-				case 'TermnalObject':
-				case 'InitialObject':
+//				case 'TermnalObject':
+//				case 'InitialObject':
 				default:
 					break;
 			}
@@ -9103,11 +9158,14 @@ ${members}
 		const tail = this.tail();
 		const domainStruct = this.getType(morphism.domain);
 		const codomainStruct = this.getType(morphism.codomain);
-		if (InitialObject.IsA(morphism.domain))
+//		if (InitialObject.IsA(morphism.domain))
+		if (morphism.domain.isInitial())
 			code += `${header}	return;	// abandon computation\n'${tail}\n${tail}`;	// domain is null, yuk
-		else if (TerminalObject.IsA(morphism.codomain))
+//		else if (TerminalObject.IsA(morphism.codomain))
+		else if (morphism.codomain.isTerminal())
 			code += `${header}	out = 0;${tail}`;
-		else if (InitialObject.IsA(morphism.codomain))
+//		else if (InitialObject.IsA(morphism.codomain))
+		else if (morphism.codomain.isInitial())
 			code += `${header}	throw 'do not do this';${tail}`;
 		else
 			switch(proto)
@@ -9486,10 +9544,11 @@ debugger;
 		const {properName, description} = to;
 		let html = H.h3(properName) + (description !== '' ? H.p(description, 'smallPrint') : '');
 		let canMakeData = true;
+		const source = NamedObject.IsA(to) ? to.source : to;
 		if (DiagramObject.IsA(from))
 		{
-			if (js.canFormat(to))
-				html += js.getInput(to) + addDataBtn;
+			if (js.canFormat(source))
+				html += js.getInput(source) + addDataBtn;
 		}
 		else	// morphism
 		{
@@ -9585,7 +9644,7 @@ debugger;
 		if (CatObject.IsA(to))
 		{
 			dom = this.data.size;
-			cod = this.js.getInputValue(to);
+			cod = this.js.getInputValue(NamedObject.IsA(to) ? to.source : to);
 			d.innerHTML = U.HtmlSafe(U.a2s(cod));
 			this.data.set(dom, cod);
 		}
@@ -9595,8 +9654,6 @@ debugger;
 			d.innerHTML = this.htmlInputValue(domain, codomain);
 		}
 		this.display.appendChild(d);
-		// TODO add event?
-		R.SaveLocal(diagram);
 	}
 	htmlInputValue(domain, codomain)
 	{
@@ -9611,13 +9668,21 @@ debugger;
 	}
 	createData(e, diagram, eltName)
 	{
-		if (this.data.size > 0)
+		try
 		{
-			const selected = diagram.getElement(eltName);
-			const domain = diagram.get('FiniteObject', {size:this.data.size});
-			const {to, name} = DiagramObject.IsA(selected) ? selected : selected.codomain;
-			const dm = new DataMorphism(diagram, {domain, codomain:to, data:this.data});
-			diagram.placeMorphismByObject(e, 'codomain', name, dm.name);
+			D.toolbar.error.innerHTML = '';
+			if (this.data.size > 0)
+			{
+				const selected = diagram.getElement(eltName);
+				const domain = diagram.get('FiniteObject', {size:this.data.size});
+				const {to, name} = DiagramObject.IsA(selected) ? selected : selected.codomain;
+				const dm = new DataMorphism(diagram, {domain, codomain:to, data:this.data});
+				diagram.placeMorphismByObject(e, 'codomain', name, dm.name);
+			}
+		}
+		catch(x)
+		{
+			D.toolbar.error.innerHTML = 'Error: ' + U.GetError(x);
 		}
 	}
 	hasForm(diagram, ary)
@@ -10692,9 +10757,11 @@ class DiagramMorphism extends Morphism
 		{
 			this.domain.domains.delete(this);
 			this.codomain.codomains.delete(this);
-			if (this.diagram && this.diagram.isIsolated(this.domain))
+//			if (this.diagram && this.diagram.isIsolated(this.domain) && TerminalObject.IsA(this.domain.to))
+			if (this.diagram && this.diagram.isIsolated(this.domain) && this.domain.to.isTerminal())
 				this.domain.decrRefcnt();
-			if (this.diagram && this.diagram.isIsolated(this.codomain))
+//			if (this.diagram && this.diagram.isIsolated(this.codomain) && TerminalObject.IsA(this.domain.to))
+			if (this.diagram && this.diagram.isIsolated(this.codomain) && this.domain.to.isTerminal())
 				this.codomain.decrRefcnt();
 		}
 	}
@@ -11947,7 +12014,8 @@ class FactorMorphism extends Morphism
 		{
 			const indices = factors[i];
 			const f = obj.getFactor(indices);
-			if (TerminalObject.IsA(f))	// TODO dual object
+//			if (TerminalObject.IsA(f))	// TODO dual object
+			if (f.isTerminal())	// TODO dual object
 				basename += this.dual ? '#0' : '#1';
 			else
 				basename += f.name;
@@ -12016,9 +12084,19 @@ class DataMorphism extends Morphism
 	{
 		const nuArgs = U.Clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
+if (args.domain === 'hdole/gdsReader/#1')nuArgs.domain = '#1';
 		nuArgs.codomain = diagram.getElement(args.codomain);
-		nuArgs.properName = U.GetArg(nuArgs, 'properName', 'Data');
-		nuArgs.basename = U.GetArg(nuArgs, 'basename', diagram.getAnon('data'));
+//		nuArgs.properName = U.GetArg(nuArgs, 'properName', 'Data');
+		if ('properName' in args)
+			nuArgs.properName = args.properName;
+		else if ('data' in args && args.data.size === 1)
+		{
+			const v = [...args.data][0][1];
+			nuArgs.properName = `'${v.toString()}'`;
+		}
+		else
+			nuArgs.properName = 'Data';
+		nuArgs.basename = U.GetArg(nuArgs, 'basename', diagram.getAnon('data', true));
 		super(diagram, nuArgs);
 		if ('data' in nuArgs)
 		{
@@ -12431,7 +12509,8 @@ class TerminalMorphism extends Morphism
 	}
 	static Signature(diagram, dual, domain)
 	{
-		return TerminalObject.IsA(domain) && dual === domain.dual ? Identity.Signature(diagram, domain) : U.Sig(TerminalMorphism.Codename(diagram, {dual, domain}));
+//		return TerminalObject.IsA(domain) && dual === domain.dual ? Identity.Signature(diagram, domain) : U.Sig(TerminalMorphism.Codename(diagram, {dual, domain}));
+		return domain.isTerminal() && dual === domain.dual ? Identity.Signature(diagram, domain) : U.Sig(TerminalMorphism.Codename(diagram, {dual, domain}));
 	}
 }
 
@@ -12990,7 +13069,10 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		}
 		else
 		{
-			xyC = new D2({x:xyD.x + Math.max(D.default.arrow.length, tw), y:xyD.y});
+//			xyC = new D2({x:xyD.x + Math.max(D.default.arrow.length, tw), y:xyD.y});
+			const ad = D.ArrowDirection();
+//			xyC = new D2({x:xyD.x + Math.min(D.default.arrow.length, tw), y:xyD.y});
+			xyC = new D2({x:xyD.x + Math.min(ad.x, tw), y:xyD.y + ad.y});
 			codomain.x = xyC.x;
 			codomain.y = xyC.y;
 		}
@@ -13034,7 +13116,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 			fromObj.codomains.forEach(function(m) { angles.push(D2.Angle(fromObj, m.domain)); });
 			angles.sort();
 			let gap = 0;
-			let angle = angles.length > 0 ? angles[0] : 0;
+			let angle = angles.length > 0 ? angles[0] : D.ArrowDirection().angle();
 			let lastAngle = angles[0];
 			for(let i=1; i<angles.length; ++i)
 			{
@@ -13172,8 +13254,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	editElementText(e, name, id, attribute)
 	{
-		const errorElt = document.getElementById('help-error');
-		errorElt.innerHTML = '';
+		D.toolbar.error.innerHTML = '';
 		try
 		{
 			const qry = `#${id} ${attribute}`;
@@ -13212,7 +13293,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		}
 		catch(x)
 		{
-			errorElt.innerHTML = U.HtmlEntitySafe(`Error: ${x}`);
+			D.toolbar.error.innerHTML = U.HtmlEntitySafe(`Error: ${x}`);
 		}
 	}
 	updateMorphisms()
@@ -13727,7 +13808,8 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	getTerminal(dual = false)
 	{
-		return this.get(dual ? 'InitialObject' : 'TerminalObject', {});
+//		return this.get(dual ? 'InitialObject' : 'TerminalObject', {});
+		return this.get('FiniteObject', {size:dual ? 0 : 1});
 	}
 	viewElements(...elts)
 	{
@@ -13791,7 +13873,7 @@ const Cat =
 	HomMorphism,
 	Identity,
 	IndexCategory,
-	InitialObject,
+//	InitialObject,
 	JavascriptAction,
 	LambdaMorphism,
 	Morphism,
@@ -13802,7 +13884,7 @@ const Cat =
 	ProductAssembly,
 	PullbackObject,
 	TensorObject,
-	TerminalObject,
+//	TerminalObject,
 	TerminalMorphism,
 };
 
