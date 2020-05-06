@@ -280,7 +280,8 @@ const Boot = function(fn)
 	}, args.xy);
 	*/
 	args.xy.y += args.majorGrid;
-	const two = logic.get('ProductObject', {objects:[one, one], dual:true});
+//	const two = logic.get('ProductObject', {objects:[one, one], dual:true});
+	const two = logic.get('FiniteObject', {size:2});
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
 	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
 	args.rowCount++;
@@ -1297,6 +1298,30 @@ function %Type(args)
 `,
 	}).to;
 
+	const html2Z32 = MakeMorphism(args, 'html2Z32', 'Morphism', 'input', 'read a 32-bitinteger from an HTML input tag', html, Z32,
+	{
+		js:
+`
+function %Type(args)
+{
+	const v = document.getElementById(args).value;
+	if (v === '')
+		throw 'no input';
+	const r = Number.parseInt(v);
+	if (r < -2417483648 || r > 2417483647)
+		throw 'out of range';
+	return r;
+}
+`,
+	}).to;
+	const N_html2Z32 = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z32, domFactors:[], homFactors:[0]});
+	PlaceMorphism(args, N_html2Z32);
+	const strXN_html2Z32 = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z32.codomain]});
+	const html2Z32F = MakeMorphism(args, 'html2Z32F', 'Morphism', '&Zopf&#8323;&#8322;;', 'Input a 32-bit integer from HTML', html, strXN_html2Z32,
+	{
+		js:`function %Type(args)\n{\n	return ['<input type="number" min="-2417483648" max="2417483647" id="' + args + '" placeholder="32-bit integer"/>', ${Cat.U.Token(N_html2Z32)}];\n}\n`,
+	}).to;
+
 	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
 	{
 		js:`function %Type(args)\n{\n	return Number.parseInt(document.getElementById(args).value);\n}\n`,
@@ -1337,7 +1362,7 @@ function %Type(args)
 	const N_html2N16 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N16, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2N16);
 	const strXN_html2N16 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N16.codomain]});
-	const html2N16F = MakeMorphism(args, 'html2N16F', 'Morphism', '&Nopf&#8328;;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N16,
+	const html2N16F = MakeMorphism(args, 'html2N16F', 'Morphism', '&Nopf&#8321;&#8326;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N16,
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N16)}];\n}\n`,
 	}).to;
