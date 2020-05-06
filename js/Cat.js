@@ -2180,21 +2180,20 @@ class StatusBar
 	}
 	show(e, msg, record = false)
 	{
+		this.message = U.HtmlEntitySafe(msg);
 		if (this.timerOut)
 			clearInterval(this.timerOut);
 		if (this.timerIn)
 			clearInterval(this.timerIn);
 		const that = this;
-		this.timerIn = setTimeout(function() {
-that.element.classList.remove('hidden');
-}, D.default.statusbar.timein); 
-		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
-		if (msg === null || msg === '')
+//		if (msg === null || msg === '')
+		if (msg === '')
 		{
-			this.message = '';
 			this.hide();
 			return;
 		}
+		this.timerIn = setTimeout(function() { that.element.classList.remove('hidden'); }, D.default.statusbar.timein); 
+		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
 		const elt = this.element;
 		elt.innerHTML = H.div(msg);
 		if (typeof e === 'object')
@@ -2216,7 +2215,6 @@ that.element.classList.remove('hidden');
 			if (D2.Overlap(toolbox, statusbox))
 				elt.style.top = toolbox.top - statusbox.height + 'px';
 		}
-		this.message = U.HtmlEntitySafe(msg);
 //		this.element.classList.remove('hidden');
 		if (record)
 			document.getElementById('tty-out').innerHTML += this.message + "\n";
@@ -3284,9 +3282,12 @@ ${button}
 		const f = Array.isArray(factor) ? [...factor, ndx] : [factor, ndx];
 		const divId = `dv_${o.objects[ndx].name} ${f.toString()}`;
 		const elt = document.getElementById(divId);
-		for (let i=0; i<elt.parentNode.children.length; ++i)
-			elt.parentNode.children[i].classList.add('nodisplay');
-		elt.classList.remove('nodisplay');
+		if (elt)
+		{
+			for (let i=0; i<elt.parentNode.children.length; ++i)
+				elt.parentNode.children[i].classList.add('nodisplay');
+			elt.classList.remove('nodisplay');
+		}
 	}
 	static Mouseover(e, name, on)
 	{
@@ -5321,10 +5322,13 @@ class ElementSection extends Section
 	{
 		const elt = diagram.getElement(name);	// not the .to
 		const id = elt.elementId();
-		document.querySelector(`#${id} proper-name`).innerHTML = U.HtmlEntitySafe(elt.properName);
+		if (!DiagramText.IsA(elt))
+		{
+			document.querySelector(`#${id} proper-name`).innerHTML = U.HtmlEntitySafe(elt.properName);
+			if (R.default.internals)
+				document.querySelector(`#${id} refcnt`).innerHTML = elt.refcnt;
+		}
 		document.querySelector(`#${id} description`).innerHTML = U.HtmlEntitySafe(elt.description);
-		if (R.default.internals)
-			document.querySelector(`#${id} refcnt`).innerHTML = elt.refcnt;
 	}
 	remove(name)
 	{
@@ -6708,7 +6712,7 @@ class DiagramCore
 	}
 	elementId()
 	{
-		return `${this.constructor.name}_${this.name}`;
+		return U.SafeId(`${this.constructor.name}_${this.name}`);
 	}
 	getDecoration()		// for commutative cells
 	{
@@ -6780,10 +6784,6 @@ class DiagramText extends Element
 	{
 		return this.description.includes('\n') ? this.description.split('\n').map(t => `<tspan text-anchor="left" x="${this.x}" dy="1.2em">${t}</tspan>`).join('') :
 			this.description;
-	}
-	elementId()
-	{
-		return `dt_${this.name}`;
 	}
 	getSVG(node)
 	{
@@ -6862,10 +6862,6 @@ class DiagramText extends Element
 	{
 		this.svg.classList[state ? 'add' : 'remove']('selected');
 		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
-	}
-	elementId()
-	{
-		return `${this.constructor.name}_${this.name}`;
 	}
 	isDeletable()
 	{
@@ -8341,9 +8337,10 @@ class HelpAction extends Action
 			html = from.to.help();
 		else if (DiagramText.IsA(from) && from.diagram.isEditable())
 		{
-			const btn = D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${from.name}', 'descriptionElt', 'properName')`,
+			const id = from.elementId();
+			const btn = D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${from.name}', '${id}', 'description')`,
 				'Edit text', D.default.button.tiny);
-			html = H.p(H.span(from.description, 'tty', 'descriptionElt') + btn);
+			html = H.p(H.tag('description', from.description, 'tty', 'descriptionElt') + btn, '', id);
 		}
 		else if (Assertion.IsA(from))
 			html = from.help();
@@ -8698,6 +8695,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	loadHTML(fn)
 	{
 		const htmlDiagram = R.$CAT.getElement('hdole/HTML');
+		D.htmlDiagram = htmlDiagram;
 		const html = htmlDiagram.getElement('HTML');
 		const str = htmlDiagram.codomain.getElement('hdole/Strings/str');
 		this.formatters = new Map;
@@ -8734,6 +8732,8 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	}
 	canFormat(o)
 	{
+		if (NamedObject.IsA(o))
+			return this.canFormat(o.source);
 		if (ProductObject.IsA(o))
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
 		else if (Morphism.IsA(o))
@@ -8741,16 +8741,22 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 //		else if (TerminalObject.IsA(o) && !o.dual)
 		else if (o.isTerminal() && !o.dual)
 			return true;
+		else if (FiniteObject.IsA(o))
+			return true;
 		else if (CatObject.IsA(o))
 			return this.formatters.has(o.signature);
 		return false;
 	}
+//	getInput(o, prefix = '', factor = [], namedProperName = '')
 	getInput(o, prefix = '', factor = [])
 	{
 		let html = '';
 		const id = `${prefix} ${o.name} ${factor.toString()}`;
 		switch(o.constructor.name)
 		{
+			case 'NamedObject':
+				html = this.getInput(o.getSource(), prefix, factor);
+				break;
 			case 'CatObject':
 				if (this.formatters.has(o.signature))
 				{
@@ -8772,7 +8778,8 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						const f = [...factor, i];
 						const oid = `dv_${ob.name} ${f.toString()}`;
 						options += `<option value="${i}">${i}: ${ob.htmlName()}</option>`;
-						divs += H.div(this.getInput(ob, prefix, [...factor, i]), 'nodisplay', oid);
+						if (ProductObject.IsA(o))
+							divs += H.div(this.getInput(ob, prefix, [...factor, i]), 'nodisplay', oid);
 					}
 					html +=
 `<select id="${id}" onchange="Cat.D.ShowInput('${o.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
@@ -8789,10 +8796,20 @@ ${divs}
 				break;
 			case 'FiniteObject':
 //			case 'TerminalObject':
-				html = `<input type="number" min="0" id="${id}"`;
 				if ('size' in o)
-					html += ` max="${o.size}"`;
-				html += '/>';
+				{
+					if (o.size < 2)
+						return '';
+/*
+					if (o.size === 0)
+						return namedProperName === '' ? TerminalMorphism.ProperName(true) : namedProperName;
+					if (o.size === 1)
+						return namedProperName === '' ? TerminalMorphism.ProperName(false) : namedProperName;
+*/
+					html = `<input type="number" min="0" id="${id}" max="${o.size}"/>`;
+				}
+				else
+					html = `<input type="number" min="0" id="${id}"/>`;
 				break;
 			case 'DataMorphism':
 				break;
@@ -8802,11 +8819,19 @@ ${divs}
 	getInputValue(domain, prefix = '', factor = [])
 	{
 		let value = null;
-		const dom = domain.constructor.name === 'NamedObject' ? domain.source : domain;
-		switch(domain.constructor.name)
+//		const dom = domain.constructor.name === 'NamedObject' ? domain.source : domain;
+		const dom = NamedObject.IsA(domain) ? domain.getSource() : domain;
+		switch(dom.constructor.name)
 		{
-			case 'CatObject':
 			case 'FiniteObject':
+				if (dom.size === 1)
+					return 0;
+				const f = D.htmlDiagram.getElement('html2Nat');
+				const out = window[U.Token(f)](dom.name + factor.toString());
+				const formatter = out[1]();
+				value = formatter(`${prefix} ${dom.name} ${factor.toString()}`);;
+				break;
+			case 'CatObject':
 				if (this.formatters.has(dom.signature))
 				{
 					const f = this.formatters.get(dom.signature);
@@ -9527,6 +9552,7 @@ class RunAction extends Action
 		this.data = new Map;
 		this.js = null;		// fill in later
 	}
+/*
 	action(e, diagram, ary)
 	{
 debugger;
@@ -9535,6 +9561,7 @@ debugger;
 		btn.beginElement();
 		R.Actions.javascript.evaluate(e, diagram, ary[0].to.name, R.Actions.run.postResult);
 	}
+*/
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
@@ -9644,7 +9671,7 @@ debugger;
 		if (CatObject.IsA(to))
 		{
 			dom = this.data.size;
-			cod = this.js.getInputValue(NamedObject.IsA(to) ? to.source : to);
+			cod = this.js.getInputValue(NamedObject.IsA(to) ? to.getSource() : to);
 			d.innerHTML = U.HtmlSafe(U.a2s(cod));
 			this.data.set(dom, cod);
 		}
@@ -10635,7 +10662,14 @@ class NamedObject extends CatObject	// name of an object
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help() + H.p('Named Object');
+		return super.help() + H.p(`Named object of ${this.source.htmlName()}`);
+	}
+	getSource()
+	{
+		let source = this.source;
+		while(NamedObject.IsA(source))
+			source = source.source;
+		return source;
 	}
 	static IsA(m)
 	{
@@ -10681,7 +10715,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 		if (helped.has(this.name))
 			return '';
 		helped.add(this.name);
-		return super.help() + H.p('Named Morphism');
+		return super.help() + H.p(`Named morphism of ${this.source.htmlName()}`);
 	}
 	loadEquivalences()	// don't call in Morphism constructor since signature may change
 	{
@@ -10696,6 +10730,13 @@ class NamedMorphism extends Morphism	// name of a morphism
 		graph.graphs[0].copyGraph({src:srcGraph.graphs[0], map:[[[1], [1]]]});
 		graph.graphs[1].copyGraph({src:srcGraph.graphs[1], map:[[[0], [0]]]});
 		return graph;
+	}
+	getSource()
+	{
+		let source = this.source;
+		while(NamedObject.IsA(source))
+			source = source.source;
+		return source;
 	}
 	static IsA(m)
 	{
@@ -13257,7 +13298,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		D.toolbar.error.innerHTML = '';
 		try
 		{
-			const qry = `#${id} ${attribute}`;
+			const qry = `#${id} ${attribute === 'properName' ? 'proper-name' : attribute}`;
 			const txtbox = document.querySelector(qry);
 			let value = null;
 			if (this.isEditable() && txtbox.contentEditable === 'true' && txtbox.textContent !== '')
