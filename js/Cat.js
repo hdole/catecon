@@ -847,6 +847,7 @@ Create diagrams and execute morphisms.
 				new DetachDomainAction(R.$Actions, true),
 				new HomObjectAction(R.$Actions),
 				new HomObjectAction(R.$Actions, true),
+				new HomsetAction(R.$Actions, true),
 				new DeleteAction(R.$Actions),
 				new CopyAction(R.$Actions),
 				new FlipNameAction(R.$Actions),
@@ -2647,8 +2648,6 @@ class D
 								let msg = '';
 								if (D.mouseover && diagram.selected.length === 1)
 								{
-//if ('dragAlternates' in diagram.selected[0])debugger;
-//console.log('drag selected', diagram.selected[0]);
 									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover) &&
 											((Morphism.IsA(D.mouseover) && Morphism.IsA(from)) ||
 											(CatObject.IsA(D.mouseover) && CatObject.IsA(from))))
@@ -3491,7 +3490,11 @@ Object.defineProperties(D,
 		{
 			Minus(e) { D.Zoom(e, -1);},
 			Equal(e) { D.Zoom(e, 1);},
-			Home(e) { R.diagram.home();},
+			Home(e)
+			{
+				const diagram = R.diagram;
+				diagram.selected.length > 0 ? diagram.viewElements(...diagram.selected) : diagram.home();
+			},
 			ArrowUp(e)
 			{
 				const diagram = R.diagram;
@@ -3580,11 +3583,25 @@ Object.defineProperties(D,
 			},
 			Tab(e)
 			{
+						/*
 				const diagram = R.diagram;
+				const m = diagram.getSelected();
+				if (DiagramMorphism.IsA(m) && m.refcnt === 1)
+				{
+					diagram.addFactorMorphisms(m.domain.to, m.codomain.to);
+					diagram.homsetStep(m);
+				}
+				if (D.mouseover)
+				{
 				if (D.drag)
 				{
 					if (D.drag && diagram.selected.length === 1)
 					{
+						const drag = diagram.selected[0];
+						if (DiagramObject.IsA(drag) && drag.domains.size + drag.codomains.size === 1)		// drag one arrow
+						{
+							diagram.homsetStep(
+						}
 						const drag = diagram.selected[0];
 						if (DiagramObject.IsA(drag) && drag.domains.size + drag.codomains.size === 1)		// drag one arrow
 						{
@@ -3678,6 +3695,7 @@ console.log('drag index', drag.dragAlternates.index);
 				}
 				else if (diagram.selected.length > 0)
 					diagram.setViewport(D2.Merge(...diagram.selected.map(elt => elt.getBBox())));
+					*/
 				e.preventDefault();
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
@@ -4977,7 +4995,7 @@ class AssertionSection extends Section
 		const sig = assertion.signature;
 		div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(sig, true);});
 		div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(sig, false);});
-		div.addEventListener('mousedown', function(e) { Cat.R.diagram.pickElement(event, assertion.name);});
+		div.addEventListener('mousedown', function(e) { Cat.R.diagram.selectElement(event, assertion.name);});
 		this.assertions.appendChild(div);
 	}
 	deleteAssertion(name)
@@ -5437,7 +5455,7 @@ class ElementSection extends Section
 			div.appendChild(inDiv);
 			div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(elt.name, true);});
 			div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(elt.name, false);});
-			inDiv.addEventListener('mousedown', function(e) { Cat.R.diagram.pickElement(event, elt.name);});
+			inDiv.addEventListener('mousedown', function(e) { Cat.R.diagram.selectElement(event, elt.name);});
 		}
 		this.catalog.appendChild(div);
 	}
@@ -6174,7 +6192,7 @@ class Graph
 		const sig = this.signature;
 		const mouseenter = function(e) { Cat.R.diagram.emphasis(sig, true);};
 		const mouseleave = function(e) { Cat.R.diagram.emphasis(sig, false);};
-		const mousedown = function(e) { Cat.R.diagram.pickElement(event, sig);};
+		const mousedown = function(e) { Cat.R.diagram.selectElement(event, sig);};
 		const g = document.createElementNS(D.xmlns, 'g');
 		node.appendChild(g);
 		g.setAttributeNS(null, 'id', id);
@@ -6972,7 +6990,7 @@ class DiagramText extends Element
 		svg.innerHTML = this.tspan();
 		svg.style.fontSize = `${this.height}px`;
 		svg.style.fontWeight = this.weight;
-		const mousedown = function(e) { Cat.R.diagram.pickElement(event, name);};
+		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
 		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
 		svg.addEventListener('mousedown', mousedown);
@@ -7199,7 +7217,7 @@ class DiagramObject extends CatObject
 		const name = this.name;
 		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
-		const mousedown = function(e) { Cat.R.diagram.pickElement(event, name);};
+		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
 		const svg = document.createElementNS(D.xmlns, 'text');
 		node.appendChild(svg);
 		this.svg = svg;
@@ -8003,17 +8021,20 @@ class HomObjectAction extends Action
 	}
 	html(e, diagram, ary)
 	{
-		const from = ary[0];
-		const morphisms = [];
-		let rows = '';
-		const to = from.to;
-		for(const [key, m] of diagram.codomain.elements)
+		if (ary.length === 1)
 		{
-			const obj = this.dual ? m.codomain : m.domain;
-			if (Morphism.IsA(m) && to.isEquivalent(obj) && to.properName === obj.properName && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
-				rows += D.HtmlRow(m, `onclick="Cat.R.$Actions.getElement('${this.name}').action(event, Cat.R.diagram, ['${from.name}', '${m.name}'])"`);
+			const from = ary[0];
+			let rows = '';
+			const to = from.to;
+//			for(const [key, m] of diagram.codomain.elements)
+			diagram.codomain.forEachMorphism(function(m)
+			{
+				const obj = this.dual ? m.codomain : m.domain;
+				if (Morphism.IsA(m) && to.isEquivalent(obj) && to.properName === obj.properName && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
+					rows += D.HtmlRow(m, `onclick="Cat.R.$Actions.getElement('${this.name}').action(event, Cat.R.diagram, ['${from.name}', '${m.name}'])"`);
+			});
+			D.toolbar.help.innerHTML = H.small(`Morphisms from ${U.HtmlEntitySafe(to.htmlName())}`, 'italic') + H.table(rows);
 		}
-		D.toolbar.help.innerHTML = H.small(`Morphisms from ${U.HtmlEntitySafe(to.htmlName())}`, 'italic') + H.table(rows);
 	}
 	doit(e, diagram, domain, morphism, save = true)
 	{
@@ -8026,6 +8047,69 @@ class HomObjectAction extends Action
 	hasForm(diagram, ary)	// one object
 	{
 		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
+	}
+	place(e, diagram, name, domName, codName)
+	{
+		const to = diagram.getElement(name);
+		const domain = diagram.getElement(domName);
+		const codomain = diagram.getElement(codName);
+		const nuFrom = new DiagramMorphism(diagram, {to, domain, codomain});
+		diagram.addSVG(nuFrom);
+		nuFrom.update();
+	}
+}
+
+class HomsetAction extends Action
+{
+	constructor(diagram, dual = false)
+	{
+		const args =
+		{
+			description:	'Select a morphism listed from a common domain and codomain',
+			name:			'homset',
+			icon:
+`
+<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
+<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+<line class="arrow0" x1="100" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
+`,
+		};
+		super(diagram, args);
+		R.ReplayCommands.set(this.name, this);
+	}
+	action(e, diagram, morphism, domain, codomain)
+	{
+		const from = this.doit(e, diagram, morphism, domain, codomain);
+		R.EmitMorphismEvent('new', from.name);
+		diagram.log({command:this.name, domain, morphism, codomain});
+		R.SaveLocal(diagram);
+	}
+	html(e, diagram, ary)
+	{
+		const domain = ary[0].to;
+		const codomain = ary[1].to;
+		diagram.addFactorMorphisms(domain, codomain);
+		const homset = diagram.codomain.getHomset(domain, codomain);
+		const rows = homset.map(m => D.HtmlRow(m, `onclick="Cat.R.$Actions.getElement('${this.name}').action(event, Cat.R.diagram, '${m.name}', '${ary[0].name}', '${ary[1].name}')"`)).join('');
+		D.toolbar.help.innerHTML = H.h4('Place Morphism') + H.table(rows);
+	}
+	doit(e, diagram, morphism, domName, codName, save = true)
+	{
+		const to = diagram.getElement(morphism);
+		const domain = diagram.getElement(domName);
+		const codomain = diagram.getElement(codName);
+		const nuFrom = new DiagramMorphism(diagram, {to, domain, codomain});
+		diagram.addSVG(nuFrom);
+		nuFrom.update();
+		return nuFrom;
+	}
+	replay(e, diagram, args)
+	{
+		this.doit(e, diagram, args.morphism, args.domain, args.codomain, false);
+	}
+	hasForm(diagram, ary)	// one object
+	{
+		return diagram.isEditable() && ary.length === 2 && DiagramObject.IsA(ary[0]) && DiagramObject.IsA(ary[1]);
 	}
 }
 
@@ -10216,7 +10300,7 @@ class AssertionAction extends Action
 		const right = legs[1];
 		const a = this.doit(e, diagram, left, right);
 		diagram.log({command:this.name, left:left.map(m => m.name), right:right.map(m => m.name)});
-		diagram.pickElement(e, a);
+		diagram.selectElement(e, a);
 		R.SaveLocal(diagram);
 	}
 	doit(e, diagram, left, right, save = true)
@@ -11087,7 +11171,7 @@ class DiagramMorphism extends Morphism
 		const name = this.name;
 		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
-		const mousedown = function(e) { Cat.R.diagram.pickElement(event, name);};
+		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
 		path.addEventListener('mouseenter', mouseenter);
 		path.addEventListener('mouseleave', mouseleave);
 		path.addEventListener('mousedown', mousedown);
@@ -11482,7 +11566,7 @@ class Cell extends DiagramCore
 		const sig = this.signature;
 		const mouseenter = function(e) { Cat.R.diagram.emphasis(sig, true);};
 		const mouseleave = function(e) { Cat.R.diagram.emphasis(sig, false);};
-		const mousedown = function(e) { Cat.R.diagram.pickElement(event, sig);};
+		const mousedown = function(e) { Cat.R.diagram.selectElement(event, sig);};
 		const svg = document.createElementNS(D.xmlns, 'text');
 		node.appendChild(svg);
 		this.svg = svg;
@@ -13116,7 +13200,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		this.domain.elements.forEach(function(e) {this.addSelected(e);}, this);
 		this.assertions.forEach(function(e) {this.addSelected(e);}, this);
 	}
-	pickElement(e, name)
+	selectElement(e, name)
 	{
 		const elt = this.getElement(name);
 		if (elt)
@@ -13808,7 +13892,6 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	{
 		const elt = this.getElement(c);
 		D.mouseover = on ? elt : null;
-console.log('emphasis', {on, elt});
 		if (elt && (DiagramMorphism.IsA(elt) || DiagramObject.IsA(elt) || DiagramText.IsA(elt)))
 			elt.emphasis(on);
 		else if (this.domain.cells.has(c))
@@ -14091,6 +14174,62 @@ console.log('emphasis', {on, elt});
 		const elements = this.getElements(elts);
 		const bbox = D2.Merge(...elements.map(a => a.getBBox()));
 		this.setViewport(bbox);
+	}
+	/*
+	homsetStep(setupMorph)
+	{
+		const fromDomain = setupMorph.domain;
+		const fromCodomain = setupMorph.codomain;
+		const domain = fromDomain.to;
+		const codomain = fromCodomain.to;
+		if (!this.homset || setupMorph !== this.homsetRef)
+		{
+			if (this.homset)
+				this.homset.map(m => m.decrRefcnt());
+			const homset = this.codomain.getHomset(domain, codomain);
+			const ndx = setupMorph.homSetIndex;
+			this.homset = [setupMorph];
+			homset.map(m =>
+			{
+				if (m !== setupMorph.to)
+				{
+					const args =
+					{
+						to:m,
+						domain: fromDomain,
+						codomain: fromCodomain,
+					};
+					const nuMorph = new DiagramMorphism(this, args);
+					this.addSVG(nuMorph);
+					nuMorph.update();
+					nuMorph.show(false);
+					this.homset.push(nuMorph);
+					nuMorph.incrRefcnt();
+				}
+			});
+			this.homset.map(m => m.homSetIndex = ndx);
+			this.homsetChoice = this.homset.indexOf(setupMorph);
+			this.homsetRef = setupMorph;
+		}
+		if (this.homset.length > 0)
+		{
+			if (++this.homsetChoice >= this.homset.length)
+				this.homsetChoice = 0;
+			const nxtMorph = this.homset[this.homsetChoice];
+			if (this.homset.length > 1)
+				this.homset.map(m => m.show(false));
+			nxtMorph.show();
+		}
+	}
+	*/
+	addFactorMorphisms(domain, codomain)
+	{
+		const dom = NamedObject.IsA(domain) ? domain.base : domain;
+		const cod = NamedObject.IsA(codomain) ? codomain.base : codomain;
+		if (ProductObject.IsA(dom) && !dom.dual)
+			domain.find(codomain).map((f, i) => this.fctr(domain, f, false));
+		if (ProductObject.IsA(codomain) && codomain.dual)
+			codomain.find(domain).map((f, i) => this.fctr(domain, f, true));
 	}
 	static Codename(args)
 	{
