@@ -875,6 +875,7 @@ Create diagrams and execute morphisms.
 				new ProjectAction(R.$Actions),
 				new PullbackAction(R.$Actions),
 				new ProductAssemblyAction(R.$Actions),
+				new MorphismAssemblyAction(R.$Actions),
 				new TerminalMorphismAction(R.$Actions)]);
 			const productDiagram = new Diagram(R.$CAT, {basename:'product', name:'product', codomain:'Actions', description:'diagram for products', user:'sys'});
 			xy = new D2(300, 300);
@@ -6290,60 +6291,6 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	}
 }
 
-/*
-class InitialObject extends FiniteObject
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		nuArgs.size = 0;
-		if (!('description' in nuArgs))
-			nuArgs.description = 'the initial object in this category';
-		nuArgs.name = '#0';
-		super(diagram, nuArgs);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help() + H.p('Initial object');
-	}
-	static IsA(obj)
-	{
-		return InitialObject.prototype.isPrototypeOf(obj);
-	}
-}
-
-class TerminalObject extends FiniteObject
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		nuArgs.size = 1;
-		if (!('description' in nuArgs))
-			nuArgs.description = 'the terminal object in this category';
-		nuArgs.name = '#1';
-		super(diagram, nuArgs);
-	}
-	help(helped = new Set)
-	{
-		if (helped.has(this.name))
-			return '';
-		helped.add(this.name);
-		return super.help() + H.p('Terminal object');
-	}
-	static Codename(diagram, args)
-	{
-		return this.dual ? '#0' : '#1';
-	}
-	static IsA(m)
-	{
-		return TerminalObject.prototype.isPrototypeOf(m);
-	}
-}
-*/
-
 class MultiObject extends CatObject
 {
 	constructor(diagram, args)
@@ -8056,6 +8003,41 @@ class ProductAssemblyAction extends Action
 	hasForm(diagram, ary)
 	{
 		return diagram.isEditable() && this.dual ? Category.IsSink(ary) : Category.IsSource(ary);
+	}
+}
+
+class MorphismAssemblyAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Attempt to assemble a morphism from a node in your diagram',
+			name:			'morphismAssembly',
+			icon:
+`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
+<line class="arrow9" x1="60" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
+		};
+		super(diagram, args);
+		R.ReplayCommands.set(this.name, this);
+	}
+	action(e, diagram, ary)
+	{
+		const source = ary[0];
+		this.doit(e, diagram, source);
+		diagram.log({command:this.name, source:source.name});
+	}
+	doit(e, diagram, source)
+	{
+		diagram.assemble(source);
+	}
+	hasForm(diagram, ary)
+	{
+		return ary.length === 1 && ary[0].isEditable() && DiagramObject.IsA(ary[0]);
 	}
 }
 
@@ -13475,8 +13457,11 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		dragObjects.forEach(function(o)
 		{
 			o.update(delta.add(o.orig));
-			o.domains.forEach(updateMorphism);
-			o.codomains.forEach(updateMorphism);
+			if (DiagramObject.IsA(o))
+			{
+				o.domains.forEach(updateMorphism);
+				o.codomains.forEach(updateMorphism);
+			}
 		});
 	}
 	placeText(e, xy, description, save = true)
@@ -14100,6 +14085,10 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		args[dual ? 'codomain' : 'domain'] = obj;
 		return this.get('FactorMorphism', args);
 	}
+	assy(morphisms, dual)
+	{
+		return this.get('ProductAssembly', {morphisms, dual});
+	}
 	prettifyCommand(cmd)
 	{
 		const fn = function(v)
@@ -14375,6 +14364,153 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		sel.addEventListener('change', change);
 		return sel;
 	}
+	assemble(source)
+	{
+		const obj2domains = new Map;
+		let objects = [source];
+		/*
+		function doComposite(obj)
+		{
+			if (!obj2morphs.has(obj))
+				obj2morphs.set(obj, new Set);
+			const morphs = obj2morphs.get(obj);
+			if (compose.length > 1)
+			{
+				const conn =
+				{
+					codomain:	obj,
+					to:			this.comp(compose.map(m => m.to)),
+				};
+				morphs.push(conn);
+			}
+			else if (compose.length === 1)
+				morphs.push({codomain:obj, to:compose[0]});
+			compose = [];
+		}
+		*/
+		let foundIssue = false;
+		const processed = new Set;
+		const diagram = this;
+		while(objects.length > 0)	// find loops or homsets > 1
+		{
+			const obj = objects.pop();
+			processed.add(obj);
+			obj.domains.forEach(function(m)
+			{
+				if (processed.has(m.codomain))
+				{
+					m.svg.classList.add('badGlow');
+					foundIssue = true;
+					return;		// do not propagate on issue
+				}
+				const homset = diagram.domain.getHomset(obj, m.codomain);
+				if (homset.length > 1)
+				{
+					foundIssue = true;
+					homset.map(m => m.svg.classList.add('badGlow'));
+					return;		// do not propagate on issue
+				}
+				objects.push(m.codomain);
+			});
+
+		}
+		if (foundIssue)
+			debugger;
+		objects = [source];
+		while(objects.length > 0)	// first pass take out simple compositions
+		{
+			const domain = objects.pop();
+			processed.add(domain);
+			if (!obj2domains.has(domain))
+				obj2domains.set(domain, []);
+			const morphisms = obj2domains.get(domain);
+			domain.domains.forEach(function(m)
+			{
+				const compose = [m];
+				let nxtMorph = m;
+				let codomain = m.codomain;
+				while(codomain.domains.size === 1)
+				{
+					nxtMorph = [...codomain.domains][0];
+					compose.push(nxtMorph);
+					codomain = nxtMorph.codomain;
+				}
+				if (compose.length > 1)
+					morphisms.push({codomain, to:this.comp(compose.map(m => m.to)), });
+				else
+					morphisms.push({codomain, to:compose[0].to});
+				objects.push(nxtMorph.codomain);
+			});
+		}
+
+		/*
+		let obj = dom;
+
+		const morphisms = obj2get(obj);
+		if (do.morphisms.length > 1)
+		{
+			const assy = diagram.assy(do.morphisms);
+		}
+*/
+
+				/*
+			if (obj.domains.size === 1)
+			{
+				const dm = [...obj.domains][0];
+				compose.push(dm);
+				objects.push(dm.codomain);
+				continue;
+			}
+			if (obj.domains.size > 1)
+			{
+				doComposite();	// finish off what we had
+				const that = this;
+				obj.domains.forEach(function(dm)
+				{
+					if (that.getHomset(obj, dm.codomain).length > 1)
+					{
+						dm.svg.addClass('badGlow');
+					}
+					else
+					{
+						objects.push(dm.codomain);
+						morphisms.push(dm);
+					}
+				});
+			}
+			else	// nowhere to go
+				doComposite();
+			{
+				if (compose.length > 1)
+				{
+					const conn =
+					{
+						codomain:	obj,
+						morphisms:	[this.comp(compose)],
+					};
+					obj2morphs.set(obj, conn);
+				}
+				else
+					obj2morphs.set(obj, {codomain:obj, morphisms:compose});
+			}
+			compose = [];
+		}
+
+			const assembly = [];
+			const outbound = [];
+			obj.domains.forEach(function(m)
+			{
+				outbound.push(m.to);
+				objects.add(m.codomain);
+			});	// first do a product assembly of the outgoing morphisms
+			if (outbound.length > 0)
+				assembly.push(outbound.length === 1 ? outbound[0] : this.assy(outbound, false));
+			if (ProductObject.IsA(domain) && domain.dual)	// assemble morphism from coproduct
+			{
+			}
+		while(codomains.size > 0);
+			*/
+	}
 	static Codename(args)
 	{
 		return `${args.user}/${args.basename}`;
@@ -14431,7 +14567,6 @@ const Cat =
 	HomMorphism,
 	Identity,
 	IndexCategory,
-//	InitialObject,
 	JavascriptAction,
 	LambdaMorphism,
 	Morphism,
@@ -14442,7 +14577,6 @@ const Cat =
 	ProductAssembly,
 	PullbackObject,
 	TensorObject,
-//	TerminalObject,
 	TerminalMorphism,
 };
 
