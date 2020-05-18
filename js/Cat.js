@@ -626,11 +626,6 @@ class R
 		R.Initialize();	// boot-up
 		R.cloud && R.cloud.onCT();
 	}
-	// TODO move to D
-	static HasAcceptedCookies()
-	{
-		return true;
-	}
 	static SetupUserHome(user, fn = null)
 	{
 		const subFun = function()
@@ -650,7 +645,7 @@ class R
 					references:		['hdole/HTML'],
 					user,
 				});
-				R.EmitDiagramEvent(home, 'load');
+//				R.EmitDiagramEvent(home, 'load');
 				const args =
 				{
 					description:
@@ -660,7 +655,7 @@ Create diagrams and execute morphisms.
 					xy:			new D2(300, 300),
 				};
 				R.AddDiagram(home);
-				home.makeSvg();
+				home.makeSVG();
 				const intro = new Cat.DiagramText(home, args);
 				home.addSVG(intro);
 				home.home();
@@ -730,6 +725,18 @@ Create diagrams and execute morphisms.
 					R.LoadDiagramEquivalences(diagram);
 					diagram.makeCells();
 				}
+				if (args.command === 'preload')
+				{
+					if (R.LoadingDiagrams.size === 0 && R.JsonDiagrams.size > 0)	// last preload event
+					{
+						[...R.JsonDiagrams.values()].reverse().map(json => new Diagram(R.GetUserDiagram(json.user), json));
+						R.JsonDiagrams.clear();
+						R.diagram = R.$CAT.getElement(R.loadingDiagram);
+						R.EmitDiagramEvent(R.diagram, 'load');
+						R.SelectDiagram(R.loadingDiagram);
+						delete R.loadingDiagram;
+					}
+				}
 			});
 			window.addEventListener('Login', function(e) { R.SetupUserHome(e.detail.name); } );
 			const worker = new Worker('js/workerEquality.js');
@@ -778,12 +785,9 @@ Create diagrams and execute morphisms.
 			});
 			worker.postMessage({command:'start', url:window.location.origin + window.location.pathname});
 			D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
-			if (R.HasAcceptedCookies())
-			{
-				const intro = document.getElementById('intro')
-				if (intro)
-					intro.parentNode.removeChild(intro);
-			}
+			const intro = document.getElementById('intro')	// TODO
+			if (intro)
+				intro.parentNode.removeChild(intro);
 			R.cloud = isCloud ? new Amazon() : null;
 			if (isGUI)
 			{
@@ -1078,6 +1082,7 @@ Create diagrams and execute morphisms.
 			D.diagramPNG.set(diagram.name, png);
 			localStorage.setItem(`${diagram.name}.png`, png);
 		});
+		R.SetDiagramInfo(diagram);
 		return true;
 	}
 	static HasLocal(name)
@@ -1107,7 +1112,6 @@ Create diagrams and execute morphisms.
 			R.AddDiagram(diagram); // TODO eventually remove, should already be in the list
 			if (R.default.debug)
 				console.log('ReadLocal',name,diagram);
-			R.EmitDiagramEvent(diagram, 'load');
 			return diagram;
 		}
 		return null;
@@ -1155,16 +1159,22 @@ Create diagrams and execute morphisms.
 				D.RecordError(response);
 		});
 	}
-// TODO unused?
 	static fetchDiagrams(dgrms, refs, fn)
 	{
 		R.cloud.fetchDiagramJsons(dgrms, function(jsons)
 		{
 			jsons.map(j =>
 			{
-				const userDiagram = R.GetUserDiagram(j.user);
-				const diagram = new Diagram(userDiagram, j);
-				R.SaveLocal(diagram, true, false);
+				try
+				{
+					const userDiagram = R.GetUserDiagram(j.user);
+					const diagram = new Diagram(userDiagram, j);
+					R.SaveLocal(diagram, true, false);
+				}
+				catch(x)
+				{
+					debugger;
+				}
 			});
 			if (fn)
 				fn(jsons);
@@ -1218,6 +1228,15 @@ Create diagrams and execute morphisms.
 		{
 			const params = (new URL(document.location)).searchParams;
 			let diagramName = params.get('d') || params.get('diagram');
+			const doDisplayMorphism = diagramName !== null;
+			function fn()
+			{
+				const morphismName = params.get('m');
+				R.DisplayMorphismInput(morphismName);		// TODO
+			}
+			if (!diagramName)
+				diagramName = R.default.diagram;
+				/*
 			if (diagramName)
 			{
 				if (!params.get('f'))	// force local
@@ -1237,6 +1256,7 @@ Create diagrams and execute morphisms.
 						else
 							D.RecordError('Diagram specified in URL could not be loaded.');
 					});
+					fn && fn();
 					return;
 				}
 				else
@@ -1244,35 +1264,48 @@ Create diagrams and execute morphisms.
 				const morphismName = params.get('m');
 				R.DisplayMorphismInput(morphismName);		// TODO
 			}
-			if (!R.diagram)
-				R.SelectDiagram(R.default.diagram);
-			if (!R.diagram)
-				R.SelectDiagram(R.UserHomeDiagramName(R.user.name));
-			R.category = R.diagram.codomain;
-			fn && fn();
+				*/
+//			if (!R.diagram)
+//				R.SelectDiagram(R.default.diagram);
+			/*
+			R.SelectDiagram(diagramName, function(diagram)
+			{
+				if (!R.diagram)
+					R.SelectDiagram(R.UserHomeDiagramName(R.user.name));
+				R.category = R.diagram.codomain;
+				fn && fn();
+			});
+			*/
+			R.SelectDiagram(diagramName);
 		}
 		R.SetupUserHome(R.user.name, subFn);
 	}
 	static SelectDiagram(name)
 	{
 		D.toolbar.hide();
+		/*
 		function setup(name)
 		{
 			if (!R.diagram)
 				R.diagram = R.$CAT.getElement(name);
-			R.EmitDiagramEvent(R.diagram, 'view');
-			R.diagram.updateMorphisms();
+			R.EmitDiagramEvent(R.diagram, 'load');
+//			R.diagram.updateMorphisms();
 			R.diagram.svgTranslate.classList.add('trans025s');
 		}
-		R.diagram = R.$CAT.getElement(name);
-		if (!R.diagram)
+		*/
+		let diagram = R.$CAT.getElement(name);
+		if (!diagram)
 			R.diagram = R.ReadLocal(name);
-		if (!R.diagram && R.cloud)
+		if (!diagram && R.cloud)
 		{
-			R.FetchDiagram(name, setup);
+			R.loadingDiagram = name;
+			R.FetchDiagram(name);
 			return;
 		}
-		setup(name);
+		diagram.makeSVG();
+		diagram.svgTranslate.classList.add('trans025s');
+		diagram.svgRoot.classList.remove('hidden');
+		R.diagram = diagram;
 	}
 	static GetCategory(name)
 	{
@@ -1282,10 +1315,13 @@ Create diagrams and execute morphisms.
 			return R.Cat;
 		return R.CAT ? R.CAT.getElement(name) : null;
 	}
-	static FetchDiagram(dgrmName, fn)
+	static FetchDiagram(dgrmName)
 	{
 		let diagram = null;
-		R.cloud && R.cloud.fetchDiagramJsons([dgrmName], function(jsons)
+//		R.cloud && R.cloud.fetchDiagramJsons([dgrmName], function(jsons)
+//		R.cloud && R.cloud.downloadDiagram(dgrmName, function(json)
+		R.cloud && R.cloud.downloadDiagram(dgrmName);
+		/*
 		{
 			jsons.reverse().map(j =>
 			{
@@ -1293,18 +1329,21 @@ Create diagrams and execute morphisms.
 				// TODO for clearing corrupted diagrams
 				const params = (new URL(document.location)).searchParams;
 				const diagramName = params.get('d') || params.get('diagram');
-				if (diagramName && diagramName === j.name && params.has('clear'))	// clear contents of diagram
-				{
-					j.elements = [];
-					j.domainElements = [];
-					j.timestamp = Date.now();
-				}
+//				if (diagramName && diagramName === j.name && params.has('clear'))	// clear contents of diagram
+//				{
+//					j.elements = [];
+//					j.domainElements = [];
+//					j.timestamp = Date.now();
+//				}
 				diagram = new Diagram(userDiagram, j);
 				R.EmitDiagramEvent(diagram, 'load');
 			});
 			if (jsons.length > 0 && fn)
 				fn(diagram);
+//			diagram = new Diagram(R.GetUserDiagram(json.user), json);
+			fn(diagram);
 		});
+		*/
 	}
 	static GetReferences(name, refs = new Set)
 	{
@@ -1312,8 +1351,11 @@ Create diagrams and execute morphisms.
 			return refs;
 		const info = R.Diagrams.get(name);
 		if (!info)
-			throw 'no info';
-		if ('refs' in info)	// TODO remove if clause
+		{
+			refs.add(name);
+//			throw 'no info';
+		}
+		if (info && 'refs' in info)	// TODO remove if clause
 			info.refs.map(r => R.GetReferences(r.name, refs));
 		return refs;
 	}
@@ -1469,6 +1511,8 @@ Object.defineProperties(R,
 		writable:	true,
 	},
 	Diagrams:			{value:new Map,	writable:false},	// available diagrams
+	JsonDiagrams:		{value:new Map,	writable:false},	// diagrams presented as json
+	LoadingDiagrams:	{value:new Set,	writable:false},	// diagrams waiting to be loaded
 	diagram:			{value:null,	writable:true},		// current diagram
 	initialized:		{value:false,	writable:true},		// Have we finished the boot sequence and initialized properly?
 	ReplayCommands:		{value:new Map,	writable:false},
@@ -1785,21 +1829,6 @@ class Amazon extends Cloud
 		R.user.status = 'unauthorized';
 		R.EmitLoginEvent();
 	}
-	async fetchDiagram(name, cache = true)
-	{
-		try
-		{
-			const url = this.getURL(name) + '.json';
-			const response = await fetch(url, {cache: cache ? 'default' : 'reload'});
-			const json = await response.json();
-			R.ServerDiagrams.set(name, Diagram.GetInfo(json));
-			return json;
-		}
-		catch(x)
-		{
-			return null;
-		}
-	}
 	onCT()
 	{
 		fetch('https://api.ipify.org').then(function(response)
@@ -1886,12 +1915,48 @@ class Amazon extends Cloud
 			that.lambda.invoke(params, handler);
 		});
 	}
+	async fetchDiagram(name, cache = true)
+	{
+		try
+		{
+			const url = this.getURL(name) + '.json';
+			const response = await fetch(url, {cache: cache ? 'default' : 'reload'});
+console.log('fetchDiagram fetched', name);
+			const json = await response.json();
+			R.ServerDiagrams.set(name, Diagram.GetInfo(json));
+			return json;
+		}
+		catch(x)
+		{
+			return null;
+		}
+	}
+	fetchDiagram2(name, cache = true)
+	{
+		try
+		{
+//			const url = this.getURL(name) + '.json';
+//			const response = fetch(url, {cache: cache ? 'default' : 'reload'});
+console.log('fetchDiagram2', name);
+			const url = this.getURL(name) + '.json';
+			return fetch(url, {cache: cache ? 'default' : 'reload'});
+//			const p = response.json();
+//			R.ServerDiagrams.set(name, Diagram.GetInfo(json));
+//			return json;
+//			return p;
+		}
+		catch(x)
+		{
+			return null;
+		}
+	}
 	// entire dependency tree is fetched if need be
 	fetchDiagramJsons(diagrams, fn, jsons = [], refs = {})
 	{
 		const someDiagrams = diagrams.filter(d => typeof d === 'string' && !R.$CAT.getElement(d));
 		if (isCloud && someDiagrams.length > 0)
 			Promise.all(someDiagrams.map(d => this.fetchDiagram(d))).then(fetchedJsons =>
+//			someDiagrams.map(d => this.fetchDiagram(d)).map(fetchedJsons =>
 			{
 				fetchedJsons = fetchedJsons.filter(j => j);
 				jsons.push(...fetchedJsons);
@@ -1900,7 +1965,7 @@ class Amazon extends Cloud
 				for (let i=0; i<fetchedJsons.length; ++i)
 //					nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && nextRound.indexOf(r) < 0));
 					nextRound.push(...fetchedJsons[i].references.filter(r => !(r in refs) && !nextRound.includes(r)));
-				const filteredRound = nextRound.filter(d => typeof d === 'string' && R.$CAT.getElement(d) === null);
+				const filteredRound = nextRound.filter(d => typeof d === 'string' && !R.$CAT.getElement(d));
 				if (filteredRound.length > 0)
 					this.fetchDiagramJsons(filteredRound, null, jsons, refs);
 				else if (fn)
@@ -1908,6 +1973,58 @@ class Amazon extends Cloud
 			});
 		else if (fn)
 			fn([]);
+	}
+	downloadDiagram(dgrmName)
+	{
+		if (R.$CAT.getElement(dgrmName))
+			return;
+		const url = this.getURL(dgrmName) + '.json';
+		R.LoadingDiagrams.add(dgrmName);
+		fetch(url, {cache: true ? 'default' : 'reload'}).then(response => response.json()).then(json =>
+		{
+			R.LoadingDiagrams.delete(dgrmName);
+//			const json = response.json();
+			R.JsonDiagrams.set(dgrmName, json);
+			const refs = json.references.filter(r => !R.$CAT.getElement(r));
+			refs.map(ref => R.cloud.downloadDiagram(ref));
+			R.EmitDiagramEvent(json, 'preload');
+			/*
+			async function finalFn(response)
+			{
+console.log('new Diagram2', djson.basename);
+					json = await response.json();
+					diagram = new Diagram(R.GetUserDiagram(json.user), json);
+					fn(json);
+			}
+			async function newDiagramFn(json)
+			{
+console.log('new Diagram', djson.basename);
+					json = await response.json();
+					diagram = new Diagram(R.GetUserDiagram(json.user), json);
+			}
+			debugger;
+			if (refs.length > 0)
+			{
+				if (refs.length === 1)
+				{
+					const r = refs[0];
+					const p = R.cloud.downloadDiagram(r, fn);
+					debugger;
+					p.then(finalFn);
+				}
+//				Promise.all([p]).then(function(){alert('Argh')});
+//				const promises = refs.map(name => R.cloud.downloadDiagram(name, function(json) { new Diagram(R.GetUserDiagram(json.user), json); }));
+//				const promises = refs.map(name => R.cloud.downloadDiagram(name, newDiagramFn));
+//				debugger;
+//				Promise.all(promises).then(function()
+//				{
+//console.log('new Diagram', dgrmJson.basename);
+//					const diagram = new Diagram(R.GetUserDiagram(dgrmJson.user), dgrmJson);
+//					fn(json);
+//				});
+			}
+			*/
+		});
 	}
 	getUserDiagramsFromServer(fn)
 	{
@@ -1989,7 +2106,7 @@ class Navbar
 		window.addEventListener('Diagram', function(e)
 		{
 			const args = e.detail;
-			if (args.command === 'view')
+			if (args.command === 'view' || args.command === 'load')
 			{
 				const diagram = args.diagram;
 				that.diagramElt.innerHTML = U.HtmlEntitySafe(diagram.htmlName()) + H.span(` by ${diagram.user}`, 'italic');
@@ -2329,7 +2446,7 @@ class NewElement
 			R.AddDiagram(diagram);
 			R.SaveLocal(diagram);
 			R.SelectDiagram(diagram.name);
-			diagram.makeSvg();
+			diagram.makeSVG();
 			diagram.home();
 			diagram.svgRoot.classList.remove('hidden');
 			D.toolbar.hide();
@@ -2348,13 +2465,13 @@ class NewElement
 		{
 			const args =
 			{
-				basename:		U.HtmlSafe(this.basenameElt.value),
-				properName:		U.HtmlSafe(this.properNameElt.value),
-				description:	U.HtmlSafe(this.descriptionElt.value),
+				basename:		U.HtmlSafe(D.newElement.Object.basenameElt.value),
+				properName:		U.HtmlSafe(D.newElement.Object.properNameElt.value),
+				description:	U.HtmlSafe(D.newElement.Object.descriptionElt.value),
 			};
 			args.xy = D.toolbar.mouseCoords;	// use original location
-			const from = this.doit(e, R.diagram, args);
-			this.update();
+			const from = D.newElement.Object.doit(e, R.diagram, args);
+			D.newElement.Object.update();
 			args.command = 'newObject';
 			R.diagram.log(args);
 		}
@@ -2475,7 +2592,7 @@ class D
 		window.addEventListener('mousemove', D.Autohide);
 		window.addEventListener('mousedown', D.Autohide);
 		window.addEventListener('keydown', D.Autohide);
-		window.addEventListener('load', function() {D.GlowBadObjects(Cat.R.diagram);});
+//		window.addEventListener('Diagram', function() {D.GlowBadObjects(Cat.R.diagram);});
 		D.ReadDefaults();
 		D.navbar =			new Navbar;
 		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
@@ -3048,13 +3165,12 @@ ${button}
 		R.default.diagram = R.diagram.name;
 		D.SaveDefaults();
 		if (!R.diagram.svgRoot)
-		{
-			R.diagram.makeSvg();
-		}
+			R.diagram.makeSVG();
 		if ('viewport' in R.diagram)
 			R.diagram.setView(R.diagram.viewport.x, R.diagram.viewport.y, R.diagram.viewport.scale, false);
 		else
 			R.diagram.home();
+		R.diagram.updateMorphisms();
 		D.ShowDiagram(R.diagram);
 	}
 	static copyStyles(dest, src)
@@ -4580,6 +4696,10 @@ class LogSection extends Section
 		this.section.innerHTML = html;
 		const that = this;
 		window.addEventListener('Login', function(e) { that.update(); });
+		window.addEventListener('Diagram', function(e)
+		{
+			(e.detail.command === 'load' || e.detail.command === 'new') && that.update();
+		});
 	}
 	setElements(elements)
 	{
@@ -4964,6 +5084,7 @@ class DiagramPanel extends Panel
 					break;
 			}
 		});
+		window.addEventListener('Login', function(e) { D.diagramPanel.setToolbar(Cat.R.diagram); });
 	}
 	setProperName()
 	{
@@ -6686,7 +6807,7 @@ class DiagramCore
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,													writable:	false},
-			name:			{value: U.GetArg(nuArgs, 'name', `${diagram.name}/${diagram.getAnon('t')}`),	writable:	false},
+			name:			{value: U.GetArg(nuArgs, 'name', `${diagram.name}/${diagram.getAnon('r')}`),	writable:	false},
 			refcnt:			{value: 0,															writable:	true},
 			x:				{value:	xy.x,														writable:	true},
 			y:				{value:	xy.y,														writable:	true},
@@ -7271,7 +7392,6 @@ class Assertion extends Element
 	setCell(cell)
 	{
 		cell.removeSVG();
-//		if (!cell.svg)
 		this.diagram.addSVG(cell);
 		this.cell = cell;
 		this.svg = cell.svg;
@@ -8033,7 +8153,7 @@ class MorphismAssemblyAction extends Action
 	}
 	doit(e, diagram, source)
 	{
-		diagram.assemble(source);
+		diagram.assemble(e, source);
 	}
 	hasForm(diagram, ary)
 	{
@@ -8054,10 +8174,10 @@ class HomAction extends Action
 		super(diagram, args);
 		R.ReplayCommands.set(this.name, this);
 	}
-	action(e, diagram, morphisms)
+	action(e, diagram, elements)
 	{
-		const names = morphisms.map(m => m.name);
-		this.doit(e, diagram, morphisms);
+		const names = elements.map(m => m.name);
+		this.doit(e, diagram, elements);
 		diagram.log({command:this.name, elements:names});
 	}
 	doit(e, diagram, elements)
@@ -9088,7 +9208,6 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
 		else if (Morphism.IsA(o))
 			return this.canFormat(o.domain) && this.canFormat(o.codomain);
-//		else if (TerminalObject.IsA(o) && !o.dual)
 		else if (o.isTerminal() && !o.dual)
 			return true;
 		else if (FiniteObject.IsA(o))
@@ -9097,7 +9216,6 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 			return this.formatters.has(o.signature);
 		return false;
 	}
-//	getInput(o, prefix = '', factor = [], namedProperName = '')
 	getInput(o, prefix = '', factor = [])
 	{
 		let html = '';
@@ -11573,6 +11691,10 @@ class DiagramMorphism extends Morphism
 		super.emphasis(on);
 		D.SetClass('emphasis', on, this.svg_path, this.svg_name);
 	}
+	isEndo()
+	{
+		return this.domain === this.codomain;
+	}
 	static LinkId(data, lnk)
 	{
 		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
@@ -13116,7 +13238,9 @@ class Diagram extends Functor
 	constructor(diagram, args)
 	{
 		if (!('user' in args))
+		{debugger;
 			throw 'no user for diagram';
+		}
 		const nuArgs = U.Clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		nuArgs.category = U.GetArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
@@ -13647,7 +13771,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	{
 		return this.selected.length > 0 ? this.selected[0] : null;
 	}
-	makeSvg(anim = true)
+	makeSVG(anim = true)
 	{
 		this.svgRoot = document.getElementById(this.name);
 		if (!this.svgRoot)
@@ -13660,9 +13784,8 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 			this.svgTranslate = H3.g({id:`${this.name} T`}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.svgRoot.style.display = 'block';
+			this.domain.elements.forEach(function(elt) { this.addSVG(elt); }, this);
 		}
-		const fn = function(t) { t.getSVG(this.svgBase); };
-		this.domain.elements.forEach(fn, this);
 		this.domain.cells.forEach(function(d) { this.addSVG(d); }, this);
 	}
 	upload(e)
@@ -14068,7 +14191,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	comp(...morphisms)
 	{
-		return this.get('Composite', {morphisms});
+		return morphisms.length > 1 ? this.get('Composite', {morphisms}) : morphisms[0];
 	}
 	prod(...elements)
 	{
@@ -14085,9 +14208,9 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		args[dual ? 'codomain' : 'domain'] = obj;
 		return this.get('FactorMorphism', args);
 	}
-	assy(morphisms, dual)
+	assy(morphisms, dual = false)
 	{
-		return this.get('ProductAssembly', {morphisms, dual});
+		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual}) : morphisms[0];
 	}
 	prettifyCommand(cmd)
 	{
@@ -14283,7 +14406,6 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	getTerminal(dual = false)
 	{
-//		return this.get(dual ? 'InitialObject' : 'TerminalObject', {});
 		return this.get('FiniteObject', {size:dual ? 0 : 1});
 	}
 	viewElements(...elts)
@@ -14292,53 +14414,6 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		const bbox = D2.Merge(...elements.map(a => a.getBBox()));
 		this.setViewport(bbox);
 	}
-	/*
-	homsetStep(setupMorph)
-	{
-		const fromDomain = setupMorph.domain;
-		const fromCodomain = setupMorph.codomain;
-		const domain = fromDomain.to;
-		const codomain = fromCodomain.to;
-		if (!this.homset || setupMorph !== this.homsetRef)
-		{
-			if (this.homset)
-				this.homset.map(m => m.decrRefcnt());
-			const homset = this.codomain.getHomset(domain, codomain);
-			const ndx = setupMorph.homSetIndex;
-			this.homset = [setupMorph];
-			homset.map(m =>
-			{
-				if (m !== setupMorph.to)
-				{
-					const args =
-					{
-						to:m,
-						domain: fromDomain,
-						codomain: fromCodomain,
-					};
-					const nuMorph = new DiagramMorphism(this, args);
-					this.addSVG(nuMorph);
-					nuMorph.update();
-					nuMorph.show(false);
-					this.homset.push(nuMorph);
-					nuMorph.incrRefcnt();
-				}
-			});
-			this.homset.map(m => m.homSetIndex = ndx);
-			this.homsetChoice = this.homset.indexOf(setupMorph);
-			this.homsetRef = setupMorph;
-		}
-		if (this.homset.length > 0)
-		{
-			if (++this.homsetChoice >= this.homset.length)
-				this.homsetChoice = 0;
-			const nxtMorph = this.homset[this.homsetChoice];
-			if (this.homset.length > 1)
-				this.homset.map(m => m.show(false));
-			nxtMorph.show();
-		}
-	}
-	*/
 	addFactorMorphisms(domain, codomain)
 	{
 		const dom = NamedObject.IsA(domain) ? domain.base : domain;
@@ -14364,65 +14439,47 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		sel.addEventListener('change', change);
 		return sel;
 	}
-	assemble(source)
+	assemble(e, source)
 	{
-		const obj2domains = new Map;
-		let objects = [source];
-		/*
-		function doComposite(obj)
-		{
-			if (!obj2morphs.has(obj))
-				obj2morphs.set(obj, new Set);
-			const morphs = obj2morphs.get(obj);
-			if (compose.length > 1)
-			{
-				const conn =
-				{
-					codomain:	obj,
-					to:			this.comp(compose.map(m => m.to)),
-				};
-				morphs.push(conn);
-			}
-			else if (compose.length === 1)
-				morphs.push({codomain:obj, to:compose[0]});
-			compose = [];
-		}
-		*/
+//		let objects = new Set(source);
+		let objects = [];
 		let foundIssue = false;
 		const processed = new Set;
 		const diagram = this;
+debugger;
 		while(objects.length > 0)	// find loops or homsets > 1
 		{
-			const obj = objects.pop();
-			processed.add(obj);
-			obj.domains.forEach(function(m)
+//			const domain = [...objects][0];
+			const domain = objects.pop();
+//			objects.delete(domain);
+			processed.add(domain);
+			domain.domains.forEach(function(m)
 			{
-				if (processed.has(m.codomain))
+				if (m.isEndo() || (processed.has(m.codomain) && !FactorMorphism.IsA(m) && m.dual))
 				{
 					m.svg.classList.add('badGlow');
 					foundIssue = true;
 					return;		// do not propagate on issue
 				}
-				const homset = diagram.domain.getHomset(obj, m.codomain);
-				if (homset.length > 1)
-				{
-					foundIssue = true;
-					homset.map(m => m.svg.classList.add('badGlow'));
-					return;		// do not propagate on issue
-				}
+//				objects.add(m.codomain);
 				objects.push(m.codomain);
 			});
-
+			domain.codomains.forEach(function(m)
+			{
+				!objects.includes(m.domain) && objects.add(m.domain);
+			});
 		}
 		if (foundIssue)
-			debugger;
+		{
+			D.statusbar.show(e, 'Issues detected trying to assemble a morphism');
+			return null;
+		}
 		objects = [source];
+		const obj2domains = new Map;
 		while(objects.length > 0)	// first pass take out simple compositions
 		{
 			const domain = objects.pop();
-			processed.add(domain);
-			if (!obj2domains.has(domain))
-				obj2domains.set(domain, []);
+			!obj2domains.has(domain) && obj2domains.set(domain, []);
 			const morphisms = obj2domains.get(domain);
 			domain.domains.forEach(function(m)
 			{
@@ -14435,81 +14492,27 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 					compose.push(nxtMorph);
 					codomain = nxtMorph.codomain;
 				}
+				const composite = this.comp(compose.map(m => m.to));
 				if (compose.length > 1)
 					morphisms.push({codomain, to:this.comp(compose.map(m => m.to)), });
 				else
 					morphisms.push({codomain, to:compose[0].to});
 				objects.push(nxtMorph.codomain);
 			});
+			domain.codomains.forEach(function(m) { objects.push(m.domain); });
 		}
-
-		/*
-		let obj = dom;
-
-		const morphisms = obj2get(obj);
-		if (do.morphisms.length > 1)
+		processed.clear();
+		objects = [source];
+		const obj2assys = new Map;
+		const morphisms = [];
+		objects = [...obj2domains].reverse();
+		while(objects.length > 0)	// create product assemblies
 		{
-			const assy = diagram.assy(do.morphisms);
+			const domain = objects.pop();
+			processed.add(domain);
+			const assy = this.assy(obj2domains.get(domain).filter(m => !(FactorMorphism.IsA(m) && processed.has(m.codomain))));
+			obj2assys.set(domain, assy);
 		}
-*/
-
-				/*
-			if (obj.domains.size === 1)
-			{
-				const dm = [...obj.domains][0];
-				compose.push(dm);
-				objects.push(dm.codomain);
-				continue;
-			}
-			if (obj.domains.size > 1)
-			{
-				doComposite();	// finish off what we had
-				const that = this;
-				obj.domains.forEach(function(dm)
-				{
-					if (that.getHomset(obj, dm.codomain).length > 1)
-					{
-						dm.svg.addClass('badGlow');
-					}
-					else
-					{
-						objects.push(dm.codomain);
-						morphisms.push(dm);
-					}
-				});
-			}
-			else	// nowhere to go
-				doComposite();
-			{
-				if (compose.length > 1)
-				{
-					const conn =
-					{
-						codomain:	obj,
-						morphisms:	[this.comp(compose)],
-					};
-					obj2morphs.set(obj, conn);
-				}
-				else
-					obj2morphs.set(obj, {codomain:obj, morphisms:compose});
-			}
-			compose = [];
-		}
-
-			const assembly = [];
-			const outbound = [];
-			obj.domains.forEach(function(m)
-			{
-				outbound.push(m.to);
-				objects.add(m.codomain);
-			});	// first do a product assembly of the outgoing morphisms
-			if (outbound.length > 0)
-				assembly.push(outbound.length === 1 ? outbound[0] : this.assy(outbound, false));
-			if (ProductObject.IsA(domain) && domain.dual)	// assemble morphism from coproduct
-			{
-			}
-		while(codomains.size > 0);
-			*/
 	}
 	static Codename(args)
 	{
