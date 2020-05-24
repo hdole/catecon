@@ -251,6 +251,10 @@ class D2
 		}
 		return r;
 	}
+	static Expand(box, dist)
+	{
+		return new D2({x:box.x - dist, y:box.y - dist, width:box.width + 2 * dist, height:box.height + 2 * dist});
+	}
 }
 
 class H
@@ -331,6 +335,7 @@ class H3
 	static a(...args)		{ return H3._h('a', args); }
 	static animateTransform(...args)		{ return H3._v('animateTransform', args); }
 	static br(...args)		{ return H3._h('br', args); }
+	static button(...args)	{ return H3._h('button', args); }
 	static circle(...args)	{ return H3._v('circle', args); }
 	static div(...args)		{ return H3._h('div', args); }
 	static g(...args)		{ return H3._v('g', args); }
@@ -1283,16 +1288,6 @@ Create diagrams and execute morphisms.
 	static SelectDiagram(name)
 	{
 		D.toolbar.hide();
-		/*
-		function setup(name)
-		{
-			if (!R.diagram)
-				R.diagram = R.$CAT.getElement(name);
-			R.EmitDiagramEvent(R.diagram, 'load');
-//			R.diagram.updateMorphisms();
-			R.diagram.svgTranslate.classList.add('trans025s');
-		}
-		*/
 		let diagram = R.$CAT.getElement(name);
 		if (!diagram)
 			diagram = R.ReadLocal(name);
@@ -1303,7 +1298,6 @@ Create diagrams and execute morphisms.
 			return;
 		}
 		diagram.makeSVG();
-		diagram.svgTranslate.classList.add('trans025s');
 		diagram.svgRoot.classList.remove('hidden');
 		R.diagram = diagram;
 		R.EmitDiagramEvent(R.diagram, 'load');
@@ -3097,20 +3091,31 @@ ${button}
 	{
 		D.diagramSVG.style.display = 'block';
 	}
-	static UpdateDiagramDisplay()
+	static UpdateDiagramDisplay(e)
 	{
-		if (!R.diagram)
+		const args = e.detail;
+		const diagram = args.diagram;
+		if (!diagram)
 			return;
-		R.default.diagram = R.diagram.name;
-		D.SaveDefaults();
-		if (!R.diagram.svgRoot)
-			R.diagram.makeSVG();
-		if ('viewport' in R.diagram)
-			R.diagram.setView(R.diagram.viewport.x, R.diagram.viewport.y, R.diagram.viewport.scale, false);
-		else
-			R.diagram.home();
-		R.diagram.updateMorphisms();
-		D.ShowDiagram(R.diagram);
+		switch(args.command)
+		{
+			case 'new':
+			case 'load':
+				R.default.diagram = diagram.name;
+				D.SaveDefaults();
+				if (!diagram.svgRoot)
+					diagram.makeSVG();
+				if ('viewport' in R.diagram)
+					diagram.setView(diagram.viewport.x, diagram.viewport.y, diagram.viewport.scale, false);
+				else
+					diagram.home();
+				diagram.updateMorphisms();
+				D.ShowDiagram(R.diagram);
+				diagram.svgTranslate.classList.add('trans025s');
+				break;
+			default:
+				break;
+		}
 	}
 	static copyStyles(dest, src)
 	{
@@ -3532,6 +3537,7 @@ Object.defineProperties(D,
 			statusbar:	{timein: 1000, timeout: 3000},	// ms
 			saveInterval:	5000,	// ms
 			toolbar:	{x:15, y:70},
+			margin:		5,
 		},
 		writable:		false,
 	},
@@ -3660,6 +3666,7 @@ Object.defineProperties(D,
 					D.panels.closeAll();
 				else
 					D.toolbar.hide();
+				D.DeleteSelectRectangle();
 			},
 			KeyT(e)
 			{
@@ -5916,6 +5923,30 @@ class Graph
 	{
 		return this.graphs.length === 0;
 	}
+	getIndices(indices)		// indices may be truncated by name objects; return it
+	{
+		let fctr = this;
+		let nuIndices = [];
+		if (this.graphs.length === 0)
+			return this;
+		if (indices.length === 1 && indices[0].length === 0)
+			return this;
+		for (let i=0; i<indices.length; ++i)
+		{
+			const k = indices[i];
+			if (k === -1)
+				return nuIndices.push(null);	// object is terminal object One
+//			fctr = fctr.graphs.length > 0 ? fctr.graphs[k] : fctr;
+			if (fctr.graphs.length > 0)
+			{
+				nuIndices.push(k);
+				fctr = fctr.graphs[k]
+			}
+			else
+				return nuIndices;
+		}
+		return nuIndices;
+	}
 	getFactor(indices)
 	{
 		let fctr = this;
@@ -5928,14 +5959,13 @@ class Graph
 			const k = indices[i];
 			if (k === -1)
 				return null;	// object is terminal object One
-			fctr = fctr.graphs[k];
+			fctr = fctr.graphs.length > 0 ? fctr.graphs[k] : fctr;
 		}
 		return fctr;
 	}
 	tagGraph(tag)
 	{
-		if (!this.tags.includes(tag))
-			this.tags.push(tag);
+		this.addTag(tag);
 		this.graphs.map(g => g.tagGraph(tag));
 	}
 	traceLinks(top, ndx = [])
@@ -6076,11 +6106,14 @@ class Graph
 			for (let i=0; i<this.links.length; ++i)
 			{
 				const lnk = this.links[i];
-				const lnkStr = lnk.toString();
+//				const lnkStr = lnk.toString();
+				const nuLnk = data.root.getIndices(lnk);
+				const visitedStr = nuLnk.toString();
 				const idxStr = data.index.toString();
-				if (data.visited.includes(lnkStr + ' ' + idxStr))
+				if (data.visited.includes(visitedStr + ' ' + idxStr))
 					continue;
-				const {coords, vertical} = this.svgLinkUpdate(lnk, data);
+//				const {coords, vertical} = this.svgLinkUpdate(lnk, data);
+				const {coords, vertical} = this.svgLinkUpdate(nuLnk, data);
 				const linkId = DiagramMorphism.LinkId(data, lnk);
 				const lnkKey = DiagramMorphism.LinkColorKey(lnk, data.dom, data.cod);
 				if (lnkKey in diagram.link2colorIndex)
@@ -6112,12 +6145,12 @@ class Graph
 					color = DiagramMorphism.ColorWheel(data);
 					diagram.colorIndex2color[colorIndex] = color;
 				}
-				data.visited.push(idxStr + ' ' + lnkStr);
-				data.visited.push(lnkStr + ' ' + idxStr);
+				data.visited.push(idxStr + ' ' + visitedStr);
+				data.visited.push(visitedStr + ' ' + idxStr);
 				const filter = vertical ? '' : 'url(#softGlow)';
 				const path = document.createElementNS(D.xmlns, 'path');
 				node.appendChild(path);
-				path.setAttributeNS(null, 'data-link', `${lnkStr} ${idxStr}`);
+				path.setAttributeNS(null, 'data-link', `${visitedStr} ${idxStr}`);
 				path.setAttributeNS(null, 'class', 'string');
 				path.setAttributeNS(null, 'style', `stroke:#${color}AA`);
 				path.setAttributeNS(null, 'id', linkId);
@@ -6154,7 +6187,9 @@ class Graph
 		const dx = cod.x - this.xy.x;
 		const dy = cod.y - this.xy.y;
 		const adx = Math.abs(dx);
+//if (adx === 0)debugger;
 		const ady = Math.abs(dy);
+//if (ady === 0)debugger;
 		const normal = dy === 0 ? ((this.xy.y - this.xy.y) > 0 ? new D2({x:0, y:-1}) : new D2({x:0, y:1})) : cod.subtract(this.xy).normal().normalize();
 		const h = (adx - ady) / (1.0 * adx);
 		const v = normal.scale(cod.dist(this.xy) * h / 4.0);
@@ -6218,6 +6253,31 @@ class Graph
 				data.index.pop();
 			});
 		}
+	}
+	scan(fn, fctr = [])
+	{
+		if (this.graphs.length === 0)
+			return fn(this, fctr);
+		else
+			return this.graphs.map((g, i) =>
+			{
+				const nuFctr = fctr.slice();
+				nuFctr.push(i);
+				g.scan(fn, nuFctr);
+			});
+	}
+	hasTag(tag)
+	{
+		return this.tags.includes(tag);
+	}
+	addTag(tag)
+	{
+		if (!this.hasTag(tag))
+		{
+			this.tags.push(tag);
+			return true;
+		}
+		return false;
 	}
 }
 
@@ -8075,26 +8135,24 @@ class MorphismAssemblyAction extends Action
 			description:	'Attempt to assemble a morphism from a node in your diagram',
 			name:			'morphismAssembly',
 			icon:
-`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="60" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
+`<line class="arrow0" x1="40" y1="60" x2="300" y2="60" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="40" y1="260" x2="140" y2="100" marker-end="url(#arrowhead)"/>
+<line class="arrow0" x1="180" y1="100" x2="280" y2="260" marker-end="url(#arrowhead)"/>`,
 		};
 		super(diagram, args);
 		R.ReplayCommands.set(this.name, this);
 	}
 	html(e, diagram, ary)
 	{
+		D.RemoveChildren(D.toolbar.help);
 		const issues = diagram.assemble(e, ary[0]);
-		const rows = issues.map(isu => H3.tr([H3.td(isu.message), H3.td(h3.span(m.htmlName(),
+		const rows = issues.map(isu => H3.tr([H3.td(isu.message), H3.td(H3.button(isu.element.to.htmlName(),
 			{
-				onmouseenter:	`Cat.R.diagram.emphasis('${m.name}', true)`,
-				onmouseleave:	`Cat.R.diagram.emphasis('${m.name}', false)`,
-				onclick: 		`Cat.R.diagram.viewElements('${m.name}', false)`,
+				onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
+				onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
+				onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
 			}))]));
-		D.toolbar.help.appendChild(H3.table(rows));
+		D.toolbar.help.appendChild(issues.length > 0 ? H3.table(rows) : H3.span('No issues were detected'));
 	}
 	action(e, diagram, ary)
 	{
@@ -8455,7 +8513,6 @@ class TerminalMorphismAction extends Action
 		if (diagram.isEditable() && elements.length === 1 && DiagramObject.IsA(elements[0]))
 		{
 			const obj = elements[0].to;
-//			if (TerminalObject.IsA(obj) && this.dual === obj.dual)
 			if (obj.isTerminal() && this.dual === obj.dual)
 				return false;	// use id's instead
 			return true;
@@ -8471,7 +8528,7 @@ class ProjectAction extends Action
 		const args =
 		{
 			name:			dual ? 'inject' : 'project',
-			description:	`Create ${dual ? 'injection' : 'projection'} morphism`,
+			description:	'Create factor morphism',
 			icon:			dual ?
 `<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
 <line class="arrow0" x2="110" y2="120" x1="240" y1="40" marker-end="url(#arrowhead)"/>
@@ -11445,8 +11502,8 @@ class DiagramMorphism extends Morphism
 	}
 	predraw()
 	{
-		const domBBox = this.domain.svg.getBBox();
-		const codBBox = this.codomain.svg.getBBox();
+		const domBBox = D2.Expand(this.domain.svg.getBBox(), D.default.margin);
+		const codBBox = D2.Expand(this.codomain.svg.getBBox(), D.default.margin);
 		const delta = D2.Subtract(this.codomain, this.domain);
 		let start = null
 		let end = null
@@ -11606,7 +11663,7 @@ class DiagramMorphism extends Morphism
 	}
 	showGraph()
 	{
-		if (!('graph' in this))
+		if (!('graph' in this && 'svg' in this.graph))
 		{
 			this.makeGraph();
 			const dom = this.domain;
@@ -12477,8 +12534,7 @@ class FactorMorphism extends Morphism
 	getGraph(data = {position:0}, first = true)
 	{
 		const graph = super.getGraph(data, first);
-		const domain = graph.graphs[0];
-		const obj = graph.graphs[this.dual ? 0 : 1];
+		const factorGraph = graph.graphs[this.dual ? 0 : 1];
 		if (this.cofactors)
 		{
 			// TODO
@@ -12489,20 +12545,48 @@ class FactorMorphism extends Morphism
 			this.factors.map((index, i) =>
 			{
 				const ndx = Array.isArray(index) ? index.slice() : [index];
-				const d = domain.getFactor(ndx);
-				if (d === null)
+				let cod = null;
+				let domRoot = null;
+				let coNdx = null;
+				let codRoot = null;
+				if (this.dual)
 				{
-					++offset;
-					return;
+					const cod = graph.graphs[1];
+					const factor = cod.getFactor(ndx);
+					if (factor === null)
+					{
+						++offset;
+						return;
+					}
+					codRoot = ndx.slice();
+					codRoot.unshift(1);
+					domRoot = this.factors.length > 1 ? [0, i] : [0];
+					graph.graphs[0].bindGraph({cod:factor, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
 				}
-				const cod = this.factors.length === 1 ? obj : obj.getFactor([i]);
+				else
+				{
+					const domain = graph.graphs[0];
+					const factor = domain.getFactor(ndx);
+					if (factor === null)
+					{
+						++offset;
+						return;
+					}
+					cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
+					domRoot = ndx.slice();
+					domRoot.unshift(0);
+					codRoot = this.factors.length > 1 ? [1, i] : [1];
+					factor.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
+				}
+/*
+				const cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
 				const domRoot = ndx.slice();
 				domRoot.unshift(this.dual ? 1 : 0);
 				const coNdx = this.dual ? 0 : 1;
 				const codRoot = this.factors.length > 1 ? [coNdx, i] : [coNdx];
-				d.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot:this.factors.length > 1 ? [coNdx, i] : [coNdx], offset});	// TODO dual name
+*/
 			});
-			graph.tagGraph(this.dual ? 'Cofactor' : ' Factor');
+			graph.tagGraph(this.dual ? 'Cofactor' : 'Factor');
 		}
 		return graph;
 	}
@@ -13379,6 +13463,8 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	deselectAll(e, toolbarOff = true)
 	{
+		if (this.selected.length === 0)
+			return;
 		this.selected.map(elt => elt.showSelected(false));
 		this.selected.length = 0;
 		R.EmitDiagramEvent(this, 'select', '');
@@ -13388,7 +13474,6 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		this.deselectAll();
 		this.domain.elements.forEach(function(e) {this.addSelected(e);}, this);
 		this.assertions.forEach(function(e) {this.addSelected(e);}, this);
-//		R.EmitDiagramEvent(this, 'select', '*');
 	}
 	selectElement(e, name)
 	{
@@ -13422,7 +13507,6 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		}
 		else
 			this.deselectAll(e);	// error?
-//		R.EmitDiagramEvent(this, 'select', name);
 	}
 	makeSelected(e, elt)
 	{
@@ -14415,7 +14499,8 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	isConveyance(m)
 	{
-		return Identity.IsA(m) || FactorMorphism.IsA(m) || LambdaMorphism.IsA(m);
+		const morph = DiagramMorphism.IsA(m) ? m.to : m;
+		return Identity.IsA(morph) || FactorMorphism.IsA(morph) || LambdaMorphism.IsA(morph);
 	}
 	isCoreference(elt, processed = new Set)
 	{
@@ -14433,7 +14518,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	propagate(m, fn)
 	{
 		fn(m);
-		m.codomain.domains.forEach(function(nxt) { this.propagate(nxt, fn); }, this);
+		m.codomain.domains.forEach(function(nxt) { this.isConveyance(nxt) && this.propagate(nxt, fn); }, this);
 	}
 	assemble(e, base)
 	{
@@ -14442,20 +14527,21 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		const diagram = this;
 		let morphisms = new Set;
 		const issues = [];
+		const conveyances = [];
 		while(scanner.length > 0)	// find loops or homsets > 1
 		{
 			const domain = scanner.pop();
 			scanned.add(domain);
-//domain.svg.classList.add('badGlow');
 			domain.domains.forEach(function(m)
 			{
 				morphisms.add(m);
+				diagram.isConveyance(m) && conveyances.push(m);
 				if (m.isEndo() || (scanned.has(m.codomain) && !FactorMorphism.IsA(m.to) && m.to.dual))
 				{
 					m.svg.classList.add('badGlow');
 					m.isEndo() && issues.push({message:'Circularity cannot be scanned', morphism:m});
-					scanned.has(m.codomain) && !this.isReference(m) && m.dual && issues.push({message:`Codomain ${m.codomain} has already been scanned`, morphism:m});
-					return;		// do not propagate on issue
+					scanned.has(m.codomain) && !this.isReference(m) && m.dual && issues.push({message:`Codomain ${m.codomain} has already been scanned`, element:m});
+					return;		// do not continue on issue
 				}
 				scanner.push(m.codomain);
 			});
@@ -14468,41 +14554,13 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		if (issues.length > 0)
 			return issues;
 
-		/*
-		scanned.clear();
-		scanner = [base];
-		while(scanner.length > 0)	// find loops or homsets > 1
-		{
-			const domain = scanner.pop();
-			scanned.add(domain);
-			!diagram.isCoreference(domain) && domain.codomains.size === 0 && sources.push(domain);	// first pass at sourcing
-			domain.domains.forEach(function(m)
-			{
-				morphisms.add(m);
-				if (m.isEndo() || (scanned.has(m.codomain) && !FactorMorphism.IsA(m.to) && m.to.dual))
-				{
-					m.svg.classList.add('badGlow');
-					foundIssue = true;
-					m.isEndo() && issues.push({message:'Circularity cannot be scanned', morphism:m});
-					scanned.has(m.codomain) && !this.isReference(m) && issues.push({message:`Codomain ${m.codomain} has already been scanned`, morphism:m});
-					return;		// do not propagate on issue
-				}
-				scanner.push(m.codomain);
-			});
-			domain.codomains.forEach(function(m)
-			{
-				!scanned.has(m.domain) && scanner.push(m.domain);
-			});
-		}
-		*/
 		const inputs = new Set;
 		const outputs = new Set;
 		let objects = new Set;
 		morphisms.forEach(function(m)
 		{
-			if (!FactorMorphism.IsA(m.to))
+			if (!diagram.isConveyance(m.to))
 			{
-//if (m.domain.basename === 'o_22')debugger;
 				inputs.add(m.domain);
 				outputs.add(m.codomain);
 			}
@@ -14511,6 +14569,147 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		});
 		objects = [...objects];
 		morphisms = [...morphisms];
+		morphisms.map(m => !diagram.isConveyance(m) && inputs.delete(m.codomain));	// remove inputs that are outputs
+		morphisms.map(m => m.makeGraph());
+
+		const obj2graph = new Map;
+		objects.map(o => obj2graph.set(o, o.to.getGraph()));	// setup graphs
+objects.map(o => o.assyGraph = obj2graph.get(o));
+		scanner = [...inputs];
+		function addTag(dm, graph, tag, ndx)
+		{
+			const fctr = graph.getFactor(ndx);
+			if (fctr.hasTag(tag))
+			{
+				debugger;
+				issues.push({message:`object has too much ${tag}`, element:dm.codomain});
+				return;
+			}
+			fctr.addTag(tag);
+		}
+		function propTag(dm, m, mGraph, barGraph, tag)
+		{
+			if (MultiMorphism.IsA(m))
+			{
+				m.morphisms.map((subm, i) => propTag(dm, subm, mGraph.graphs[i], barGraph, tag));
+			}
+			else if (diagram.isConveyance(m))
+			{
+				mGraph.graphs[0].scan(function(g, ndx) { g.links.map(lnk => addTag(m, barGraph, tag, lnk)); }, [0]);
+			}
+			else
+			{
+				mGraph.graphs[1].scan(function(g, ndx)
+				{
+					addTag(m, barGraph, tag, ndx);
+				}, [1]);
+			}
+		}
+		function tagInfo(dm)
+		{
+			const tag = 'info';
+			const domGraph = obj2graph.get(dm.domain);
+			const codGraph = obj2graph.get(dm.codomain);
+			const barGraph = new Graph;
+			barGraph.graphs.push(domGraph);
+			barGraph.graphs.push(codGraph);
+			propTag(dm, dm.to, dm.graph, barGraph, tag);
+			scanner.push(dm.codomain);
+		}
+		while(scanner.length > 0)
+		{
+			const input = scanner.pop();
+			input.domains.forEach(function(m) { !diagram.isConveyance(m) && diagram.propagate(m, tagInfo); });
+		}
+
+		objects.map(o =>		// merge tags from morphism graphs to object graphs
+		{
+			const og = obj2graph.get(o);
+			o.domains.forEach(function(m)
+			{
+				const domGraph = m.graph.graphs[0];
+				og.scan(function(g, fctr)
+				{
+					domGraph.getFactor(fctr).tags.map(t => g.addTag(t));		// copy tags from morphism to object's graph
+				});
+			});
+		});
+
+		let didAdd = false;
+		scanner = conveyances.slice();
+		while(scanner.length > 0)
+		{
+			const m = scanner.pop();
+if (m.basename === 'm_31')debugger;
+			const morGraph = m.graph;
+			const domGraph = obj2graph.get(m.domain);
+			const codGraph = obj2graph.get(m.codomain);
+			const barGraph = new Graph;
+			barGraph.graphs.push(domGraph);
+			barGraph.graphs.push(codGraph);
+			diagram.propagate(m, function(nxt)
+			{
+				codGraph.scan(function(g, ndx)
+				{
+					morGraph.getFactor(ndx).links.map(lnk => barGraph.getFactor(lnk).tags.map(t => didAdd |= g.addTag(t)));
+				}, [1]);
+			});
+
+			/*
+			if (Identity.IsA(m.to))
+			{
+				codGraph.scan(function(g, ndx)
+				{
+					morGraph.getFactor(ndx).links.map(lnk => barGraph.getFactor(lnk).tags.map(t => didAdd |= g.addTag(t)));
+				}, [1]);
+			}
+			else if (FactorMorphism.IsA(m.to))
+			{
+//				if (ProductObject.IsA(m.domain.to) && !m.to.dual)
+				if (!m.to.dual)
+				{
+					domGraph.scan(function(g, ndx)
+					{
+						const i = ndx.slice();
+						i.unshift(0);
+						const f = morGraph.getFactor(i);
+						f.links.map(lnk => { barGraph.getFactor(lnk).tags.map(t => didAdd |= g.addTag(t)); });
+					});
+				}
+				else
+				{
+					domGraph.scan(function(g, ndx)
+					{
+						const i = ndx.slice();
+						i.unshift(0);
+						const f = morGraph.getFactor(i);
+						f.links.map(lnk => { barGraph.getFactor(lnk).tags.map(t => didAdd |= g.addTag(t)); });
+					});
+					this.propagate(m, function(dm)
+					{
+						if (diagram.isConveyance(dm))
+							dm.graph.graphs[0].scan(function(g, ndx)
+							{
+								g.links.map(lnk =>
+								{
+									const fctr = dm.graph.getFactor(lnk);
+									g.tags.map(t => didAdd |= fctr.addTag(t));
+								});
+							});
+					});
+				}
+			}
+			didAdd && m.codomain.codomains.forEach(function(morph)
+			{
+				diagram.isConveyance(morph) && !scanner.includes(morph) && scanner.push(morph);
+			});
+			*/
+		}
+
+
+
+		return issues;
+
 		let sources = new Set(objects.filter(o => [...o.codomains].filter(m => !this.isConveyance(m.to)).length === 0));
 debugger;
 		outputs.forEach(function(o) { o.codomains.forEach(function(m) { diagram.isConveyance(m.to) && sources.delete(m.domain); }); });
@@ -14518,22 +14717,6 @@ debugger;
 //		sources = sources.filter(o => [...o.domains].reduce((r, m) => r && !(this.isReference(m) && outputs.has(m.codomain)), true));
 [...sources].map(snk => snk.svg.classList.add('greenGlow'));
 
-		/*
-let o_36 = null;
-[...objects].map(o => {if (o.basename === 'o_36')o_36 = o;});
-		debugger;
-console.log([...o_36.domains].filter(m => !this.isConveyance(m.to)).length );
-*/
-		/*
-		inputs.forEach(function(o)
-		{
-//o.svg.classList.add('warningGlow');
-			if (ProductObject.IsA(o) && !o.dual)	// products only
-			{
-				o.domains.forEach(function(m) { diagram.isConveyance(m) && sinks.delete(m.codomain); });
-			}
-		});
-		*/
 		let sinks = new Set(objects.filter(o => [...o.domains].filter(m => !this.isConveyance(m.to)).length === 0));
 		inputs.forEach(function(o) { o.domains.forEach(function(m) { this.propagate(m, function(n) { sources.delete(n.codomain); }, this); }, this); }, this);
 		sinks = [...sinks];
@@ -14567,15 +14750,6 @@ sinks.map(snk => snk.svg.classList.add('glow'));
 		objects = [base];
 		const obj2assys = new Map;
 		objects = [...obj2domains.keys()].reverse();
-			/*
-		while(objects.length > 0)	// create product assemblies
-		{
-			const domain = objects.pop();
-			scanned.add(domain);
-			const assy = this.assy(obj2domains.get(domain).filter(m => !(FactorMorphism.IsA(m) && scanned.has(m.codomain))));
-			obj2assys.set(domain, assy);
-		}
-			*/
 		return issues;
 	}
 	static Codename(args)
