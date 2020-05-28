@@ -8,22 +8,12 @@ const Boot = function(fn)
 	function gridLocation()
 	{
 		const bbox = args.diagram.svgRoot.getBBox();
-//		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
 		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300));
 	}
 	function CheckColumn(args)
 	{
 		if ('rowCount' in args && args.rowCount >= args.rows)
 		{
-			/*
-			const bbox = args.diagram.svgRoot.getBBox();
-			if (bbox.width === 0)	// TODO issue with firefox
-			{
-				bbox.width = 600;
-				bbox.x = args.xy.x;
-			}
-			args.xy = Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300 + 8 * 16));
-			*/
 			args.xy = gridLocation();
 			args.rowCount = 0;
 		}
@@ -194,10 +184,8 @@ const Boot = function(fn)
 		const nm = new Cat.NamedObject(diagram, nuArgs);
 		const nm2src = diagram.placeMorphism(null, nm.idFrom, xy, xy.add(Cat.D.default.stdArrow), false, false);
 		Adjust(args, nm2src);
-//		const id2 = new Cat.DiagramMorphism(diagram, {to:nm.idTo, domain:nm2src.codomain, codomain:nm2src.domain});
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
-//		diagram.addSVG(id2);
 		return nm2src.domain;
 	}
 	//
@@ -231,7 +219,7 @@ const Boot = function(fn)
 	args.diagram = basics;
 	args.rowCount = 0;
 //	args.xy = new Cat.D2(300, 300);
-	basics.makeSvg(false);
+	basics.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(basics);
 	/*
@@ -266,7 +254,7 @@ const Boot = function(fn)
 	});
 	args.diagram = logic;
 	args.rowCount = 0;
-	logic.makeSvg(false);
+	logic.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(logic);
 	/*
@@ -280,7 +268,6 @@ const Boot = function(fn)
 	}, args.xy);
 	*/
 	args.xy.y += args.majorGrid;
-//	const two = logic.get('ProductObject', {objects:[one, one], dual:true});
 	const two = logic.get('FiniteObject', {size:2});
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
 	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
@@ -331,7 +318,7 @@ const Boot = function(fn)
 	});
 	args.diagram = Narith;
 	args.rowCount = 0;
-	Narith.makeSvg(false);
+	Narith.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(Narith);
 	/*
@@ -421,7 +408,7 @@ args.xy.y += args.majorGrid;
 	});
 	args.diagram = integers;
 	args.rowCount = 0;
-	integers.makeSvg(false);
+	integers.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(integers);
 /*
@@ -553,7 +540,7 @@ return [0, args[0] % args[1]];
 	});
 	args.diagram = floats;
 	args.rowCount = 0;
-	floats.makeSvg(false);
+	floats.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(floats);
 /*
@@ -769,7 +756,7 @@ void %Type(const %Dom & args, %Cod & out)
 	});
 	args.diagram = complex;
 	args.rowCount = 0;
-	complex.makeSvg(false);
+	complex.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(complex);
 /*
@@ -964,7 +951,7 @@ return [0, Math.pow(args[0], args[1])];
 	});
 	args.diagram = strings;
 	args.rowCount = 0;
-	strings.makeSvg(false);
+	strings.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(strings);
 /*
@@ -1234,7 +1221,7 @@ function %Type(args)
 	});
 	args.diagram = htmlDiagram;
 	args.rowCount = 0;
-	htmlDiagram.makeSvg(false);
+	htmlDiagram.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(htmlDiagram);
 /*
@@ -1398,7 +1385,7 @@ function %Type(args)
 	});
 	args.diagram = threeD;
 	args.rowCount = 0;
-	threeD.makeSvg(false);
+	threeD.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(threeD);
 /*
@@ -1498,7 +1485,7 @@ postMessage(['fff2toQB3', args]);
 	});
 	args.diagram = qGates;
 	args.rowCount = 0;
-	qGates.makeSvg(false);
+	qGates.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(qGates);
 /*
@@ -1626,7 +1613,7 @@ return matrix_multiply(%Type_matrix, args);
 	});
 	args.diagram = cpp;
 	args.rowCount = 0;
-	cpp.makeSvg(false);
+	cpp.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.AddDiagram(cpp);
 /*
@@ -1641,6 +1628,22 @@ return matrix_multiply(%Type_matrix, args);
 args.xy.y += args.majorGrid;
 */
 	const errno = MakeNamedObject(args, {basename:'Errno', source:Z32, description:'Set by system calls and some library functions when something goes wrong'}).to;
+	const strerror = MakeMorphism(args, 'strerror', 'Morphism', '', 'return string describing error', errno, str,
+	{
+		cpp:
+`}
+
+#include "errno.h"
+#include "string.h"
+
+namespace %Namespace
+{
+	void %Type(const %Dom & args, %Cod & out)
+	{
+		out = std::string(::strerror(args));
+	}
+`,
+}).to;
 	const stdin = MakeObject(args, 'stdin', 'CatObject', '', 'The standard input object reads from a tty device.', {code:
 	{
 		cpp:
@@ -1790,6 +1793,15 @@ args.rowCount += Math.round(delta/args.majorGrid);
 
 	const strByZ32 = cpp.get('ProductObject', {objects:[str, Z32], dual:false});
 	const filePlusErrno = cpp.get('ProductObject', {objects:[file, errno], dual:true});
+	//
+	// open
+	//
+	const o_rdonly = MakeMorphism(args, 'O_RDONLY', 'Morphism', '', 'The file is opened in read only mode', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::O_RDONLY; }`}).to;
+	const o_wronly = MakeMorphism(args, 'O_WRONLY', 'Morphism', '', 'The file is opened in write only mode', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::O_WRONLY; }`}).to;
+	const o_rdwr = MakeMorphism(args, 'O_RDWR', 'Morphism', '', 'The file is opened in read/write mode', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::O_RDWR; }`}).to;
+	const o_append = MakeMorphism(args, 'O_APPEND', 'Morphism', '', 'The file is opened in append mode', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::O_APPEND; }`}).to;
+	const o_async = MakeMorphism(args, 'O_ASYNC', 'Morphism', '', 'The file is opened in async mode', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::O_ASYNC; }`}).to;
+	const o_creat = MakeMorphism(args, 'O_CREAT', 'Morphism', '', 'The file is newly created', one, Z32, {cpp: `void %Type(const %Dom & args, %Cod & out) { out = ::O_CREAT; }`}).to;
 	const open = MakeMorphism(args, 'open', 'Morphism', 'open', 'Open a file.', strByZ32, filePlusErrno,
 	{
 		cpp:
@@ -1985,7 +1997,7 @@ namespace %Namespace
 	});
 	args.diagram = gds;
 	args.rowCount = 0;
-	args.diagram.makeSvg(false);
+	args.diagram.makeSVG(false);
 	Cat.R.AddDiagram(args.diagram);
 
 	args.xy = gridLocation();
