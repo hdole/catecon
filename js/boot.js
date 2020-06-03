@@ -390,7 +390,100 @@ args.xy.y += args.majorGrid;
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	}).to;
 	const N8 = MakeObject(args, 'N8', 'FiniteObject', '&Nopf;&#8328', 'An unsigned byte', {size:256, code:{cpp:'typedef unsigned char %1;\n'}}).to;
-	const N16 = MakeObject(args, 'N16', 'FiniteObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural numbers', {size:65536, code:{cpp:'typedef unsigned short %1;\n'}}).to;
+
+	const N16 = MakeObject(args, 'N16', 'FiniteObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural (unsigned) numbers', {size:65536, code:{cpp:'typedef unsigned short %1;\n'}}).to;
+
+	const N162Z = MakeMorphism(args, 'N162Z', 'Morphism', '&sub;', 'every sixteen bit natural number is a natural number', N16, N,
+	{
+		js:'function %Type(args)\n{\n	return args;\n}\n',
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = (unsigned short)args;\n}\n',
+	}).to;
+	const N16zero = MakeMorphism(args, 'N16zero', 'Morphism', "'0'", 'Sixteen bit zero', one, N16,
+	{
+		js:'function %Type(args)\n{\n	return 0;\n}\n',
+		cpp: `void %Type(const %Dom & args, %Cod & out) { out = 0; }\n`,
+	}).to;
+	const N16one = MakeMorphism(args, 'N16one', 'Morphism', "'1'", 'Sixteen bit one', one, N16,
+	{
+		js:'function %Type(args)\n{\n	return 1;\n}\n',
+		cpp: `void %Type(const %Dom & args, %Cod & out) { out = 1; }\n`,
+	}).to;
+	const N16maxN6 = MakeMorphism(args, 'N16maxN6', 'Morphism', "'MAX_N16'", 'Max sixteen bit number 65535', one, N16,
+	{
+		js:'function %Type(args)\n{\n	return 65535;\n}\n',
+		cpp: `void %Type(const %Dom & args, %Cod & out) { out = 65535; }\n`,
+	}).to;
+	const N16pair = args.diagram.prod(N16, N16);
+	const N16plusOne = args.diagram.coprod(N16, one);
+	const N16add = MakeMorphism(args, 'N16add', 'Morphism', '+', 'Addition of two 16-bit natural (unsigned) numbers', N16pair, N16,
+	{
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 + args.m_1;\n}\n',
+	}).to;
+	const N16sub = MakeMorphism(args, 'N16sub', 'Morphism', '-', 'Subtraction of two 16-bit natural (unsigned) numbers', N16pair, N16,
+	{
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 - args.m_1;\n}\n',
+	}).to;
+	const N16prod = MakeMorphism(args, 'N16prod', 'Morphism', '&sdot;', 'Mulitiplication of two 16-bit natural (unsigned) numbers', N16pair, N16,
+	{
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 * args.m_1;\n}\n',
+	}).to;
+	const N16and = MakeMorphism(args, 'N16and', 'Morphism', '&', 'Bit-wise and of two 16-bit natural (unsigned) numbers', N16pair, N16,
+	{
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 & args.m_1;\n}\n',
+	}).to;
+	const N16or = MakeMorphism(args, 'N16or', 'Morphism', '|', 'Bit-wise or of two 16-bit natural (unsigned) numbers', N16pair, N16,
+	{
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 | args.m_1;\n}\n',
+	}).to;
+	const N16xor = MakeMorphism(args, 'N16xor', 'Morphism', '^', 'Bit-wise exclusive or of two 16-bit natural (unsigned) numbers', N16pair, N16,
+	{
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 ^ args.m_1;\n}\n',
+	}).to;
+	const N16div = MakeMorphism(args, 'N16div', 'Morphism', '&div;', 'Division of one 16-bit natural (unsigned) number of the other, or an exception', N16pair, N16plusOne,
+	{
+		cpp: `void %Type(const %Dom & args, %Cod & out)\n{
+		if (args.m_1 > 0)
+		{
+			out.m_0 = 0;
+			out.m_1 = args.m_0 / args.m_1;
+		}
+		else
+		{
+			out.m_0 = 1;
+			out.m_1 = 0;
+		}
+	}\n`,
+	}).to;
+	const N16mod = MakeMorphism(args, 'N16mod', 'Morphism', '%', 'Modulus of one 16-bit natural (unsigned) number of the other, or an exception', N16pair, N16plusOne,
+	{
+		cpp: `void %Type(const %Dom & args, %Cod & out)\n{
+		if (args.m_1 > 0)
+		{
+			out.m_0 = 0;
+			out.m_1 = args.m_0 % args.m_1;
+		}
+		else
+		{
+			out.m_0 = 1;
+			out.m_1 = 0;
+		}
+	}\n`,
+	}).to;
+	const N16equals = MakeMorphism(args, 'N16equals', 'Morphism', '=', 'compare two 16-bit natural numbers for equality', Npair, omega,
+	{
+//		js:'function %Type(args)\n{\n	return args[0] === args[1];\n}\n',
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
+	}).to;
+	const N16less = MakeMorphism(args, 'N16lessThan', 'Morphism', '&lt;', 'Is the 16-bit natural number less than to the second', N16pair, omega,
+	{
+//		js:'function %Type(args)\n{\n	return args[0] <= args[1];\n}\n',
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 <= args.m_1;\n}\n',
+	}).to;
+	const N16lessEq = MakeMorphism(args, 'N16lessThanEq', 'Morphism', '&le;', 'Is the 16-bit natural number less than or equal to the second', N16pair, omega,
+	{
+		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 <= args.m_1;\n}\n',
+	}).to;
+
 	DiagramReferences(user, Narith, args.xy);
 	Cat.D.ShowDiagram(Narith);
 	Narith.home(false);
@@ -1592,13 +1685,6 @@ return matrix_multiply(%Type_matrix, args);
 	Cat.D.ShowDiagram(qGates);
 	fn && Cat.R.Actions.javascript.loadHTML(fn);
 
-	window.addEventListener('Login', function(e)
-	{
-		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds];
-		diagrams.map(d => Cat.R.SaveLocal(d));
-		false && diagrams.map(d => d.upload(null));
-	});
-
 	//
 	// cpp
 	//
@@ -1931,7 +2017,10 @@ namespace %Namespace
 }
 `}});
 
-	const mem2float = MakeMorphism(args, 'float', 'Morphism', '', 'Get a floating point number from memory', voidPtr, F, {code:{cpp:
+	const mem2float = MakeMorphism(args, 'float', 'Morphism', '', 'Get a double precision float from memory', voidPtr, F, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out) { out = (double)args; }\n`}});
+
+	const ibm2float = MakeMorphism(args, 'IBM S/360 float', 'Morphism', '', 'Get an IBM S/360 floating point number from memory', voidPtr, F, {code:{cpp:
 `}
 
 #include <math.h>
@@ -1953,6 +2042,13 @@ namespace %Namespace
 		out = dbl.sign ? -val : val;
 	}
 `}});
+
+	const mem2str = MakeMorphism(args, 'mem2str', 'Morphism', '', 'Get a string from memory having the form of a null terminated string', voidPtr, str, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out) { out = std::string((const char *)args); }\n`}});
+
+	const voidPtrxN = args.diagram.prod(voidPtr, N);
+	const memRec2str = MakeMorphism(args, 'memRec2str', 'Morphism', '', 'Get a string from memory with a specified size', voidPtrxN, str, {code:{cpp:
+`void %Type(const %Dom & args, %Cod & out) { out = std::string(args.m_0, args.m_1); }\n`}});
 
 	const voidPtrPlus2 = MakeMorphism(args, 'voidPtrPlus2', 'Morphism', '+2', 'Increment void pointer by 2', voidPtr, voidPtr, {code:{cpp:
 `void %Type(const %Dom & args, %Cod & out)
