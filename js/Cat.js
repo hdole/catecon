@@ -317,7 +317,13 @@ class H3
 					elt.innerHTML = arg;
 					break;
 				case 'Object':
-					Object.keys(arg).map(k => typeof arg[k] === 'function' ? elt.k = arg[k] : elt.setAttribute(k, arg[k]));
+					Object.keys(arg).map(k =>
+					{
+						if (typeof arg[k] === 'function')
+							elt[k] = arg[k];
+						else
+							elt.setAttribute(k, arg[k])
+					});
 					break;
 				case 'Array':
 					arg.map(c => c && elt.appendChild(c));
@@ -732,7 +738,7 @@ Create diagrams and execute morphisms.
 			window.addEventListener('Diagram', function(e)
 			{
 				const args = e.detail;
-				switch(args.commnd)
+				switch(args.command)
 				{
 					case 'load':
 						const diagram = args.diagram;
@@ -750,11 +756,13 @@ Create diagrams and execute morphisms.
 							delete R.loadingDiagram;
 						}
 						break;
-					case 'new':
-					case 'move':
 					case 'addReference':
 					case 'removeReference':
+						diagram.makeCells();
+					case 'new':
+					case 'move':
 						R.SaveLocal(args.diagram);
+					case 'default':
 						break;
 				}
 			});
@@ -911,7 +919,7 @@ Create diagrams and execute morphisms.
 				new ProjectAction(R.$Actions, true),
 				new PullbackAction(R.$Actions, true),
 				new ProductAssemblyAction(R.$Actions, true),
-				new TerminalMorphismAction(R.$Actions, true),
+//				new TerminalMorphismAction(R.$Actions, true),	// TODO needed?
 				new FiniteObjectAction(R.$Actions),
 				new DataAction(R.$Actions),
 				new RecursionAction(R.$Actions),
@@ -1316,7 +1324,7 @@ Create diagrams and execute morphisms.
 		diagram.makeSVG();
 		diagram.svgRoot.classList.remove('hidden');
 		R.diagram = diagram;
-		R.EmitDiagramEvent(R.diagram, 'load');
+		R.EmitDiagramEvent(R.diagram, 'default');
 	}
 	static GetCategory(name)
 	{
@@ -1363,7 +1371,10 @@ Create diagrams and execute morphisms.
 			return diagram;
 		R.LoadDiagrams(R.GetReferences(name));
 		if (isGUI && !diagram)
+		{
 			diagram = R.ReadLocal(name);
+			diagram && R.EmitDiagramEvent(diagram, 'load');
+		}
 		// else TODO cloud fetch
 		return diagram;
 	}
@@ -2054,7 +2065,8 @@ class Navbar
 		window.addEventListener('Diagram', function(e)
 		{
 			const args = e.detail;
-			if (args.command === 'view' || args.command === 'load')
+//			if (args.command === 'view' || args.command === 'default')
+			if (args.command === 'default')
 			{
 				const diagram = args.diagram;
 				that.diagramElt.innerHTML = U.HtmlEntitySafe(diagram.htmlName()) + H.span(` by ${diagram.user}`, 'italic');
@@ -2107,7 +2119,7 @@ class Toolbar
 			'diagram':		{value: null,										writable: true},
 			'element':		{value: document.getElementById('toolbar'),			writable: false},
 			'header':		{value: document.getElementById('toolbar-header'),	writable: false},
-			'header2':		{value: document.getElementById('toolbar-header2'),	writable: false},
+//			'header2':		{value: document.getElementById('toolbar-header2'),	writable: false},
 			'help':			{value: document.getElementById('toolbar-help'),	writable: false},
 			'error':		{value: document.getElementById('toolbar-error'),	writable: false},
 			'closed':		{value:	false,										writable: true},
@@ -2173,7 +2185,7 @@ class Toolbar
 //		xy = MouseEvent.prototype.isPrototypeOf(e) ? {x:e.clientX + 32, y:e.clientY - 32} : {x:xy.x + 8, y:xy.y - 32};
 		D.RemoveChildren(this.help);
 		D.RemoveChildren(this.header);
-		D.RemoveChildren(this.header2);
+//		D.RemoveChildren(this.header2);
 		element.style.display = 'block';
 		if (diagram.selected.length > 0)
 		{
@@ -2186,6 +2198,7 @@ class Toolbar
 			});
 			header += D.GetButton('close', 'Cat.D.toolbar.hide()', 'Close');
 			this.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
+			/*
 			const rect = D.topSVG.getBoundingClientRect();	// TODO use getBBox()?
 			let bbox =
 			{
@@ -2202,27 +2215,38 @@ class Toolbar
 				bbox.width = Math.max(bbox.width, sBbox.width);
 				bbox.height = Math.max(bbox.height, sBbox.height);
 			});
-			const toolbox = element.getBoundingClientRect();
-			xy = {x:xy.x, y:bbox.top - 1.5 * toolbox.height};
-			let nuTop = xy.y;
-			if (xy.y >= bbox.top && xy.y <= bbox.top + bbox.height)
-				nuTop = bbox.top - toolbox.height;
-			let nuLeft = xy.x;
-			if (xy.x >= bbox.left && xy.x <= bbox.left + bbox.width)
-				nuLeft = bbox.left + bbox.width;
-			let left = rect.left + xy.x;
-			left = left >= 0 ? left : 0;
-			left = (left + toolbox.width) >= window.innerWidth ? window.innerWidth - toolbox.width : left;
-			element.style.left = `${left}px`;
-			let top = rect.top + xy.y;
-			top = top >= 0 ? top : 0;
-			top = (top + toolbox.height) >= window.innerHeight ? window.innerHeight - toolbox.height : top;
-			element.style.top = `${top}px`;
+			*/
+//				element.style.top = `${bbox.y - toolbox.height}px`;
+//				element.style.left = `${xy.x - toolbox.width/2}px`;
+				/*
+				const rect = D.topSVG.getBoundingClientRect();	// TODO use getBBox()?
+				const bbox = diagram.selected[0].svg.getBBox();
+				const toolbox = element.getBoundingClientRect();
+				xy = {x:xy.x, y:bbox.top - 1.5 * toolbox.height};
+				let nuTop = xy.y;
+				if (xy.y >= bbox.top && xy.y <= bbox.top + bbox.height)
+					nuTop = bbox.top - toolbox.height;
+				let nuLeft = xy.x;
+				if (xy.x >= bbox.left && xy.x <= bbox.left + bbox.width)
+					nuLeft = bbox.left + bbox.width;
+				let left = rect.left + xy.x;
+				left = left >= 0 ? left : 0;
+				left = (left + toolbox.width) >= window.innerWidth ? window.innerWidth - toolbox.width : left;
+				element.style.left = `${left}px`;
+				let top = rect.top + xy.y;
+				top = top >= 0 ? top : 0;
+				top = (top + toolbox.height) >= window.innerHeight ? window.innerHeight - toolbox.height : top;
+				element.style.top = `${top}px`;
+			}
+//			else
+//			{
+//				element.style.left = `${xy.x - toolbox.width/2}px`;
+//				element.style.top = `${xy.y}px`;
+//			}
+				*/
 		}
 		else
 		{
-			element.style.left = `${xy.x}px`;
-			element.style.top = `${xy.y}px`;
 			const btns = [	D.GetButton3('move3', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle'),
 							D.GetButton3('diagram3', 'Cat.D.newElement.Diagram.html()', 'New diagram'),
 							D.GetButton3('object3', 'Cat.D.newElement.Object.html()', 'New object'),
@@ -2231,6 +2255,17 @@ class Toolbar
 							D.GetButton3('close3', 'Cat.D.toolbar.hide()', 'Close')];
 			this.header.appendChild(H3.span(btns, {class:'buttonBarLeft'}));
 		}
+		const toolbox = element.getBoundingClientRect();
+		if (diagram.selected.length === 1 && DiagramObject.IsA(diagram.selected[0]))
+		{
+			const obj = diagram.getSelected();
+			const bbox = diagram.diagramToUserCoords(obj.svg.getBBox());
+			xy.y = bbox.y - D.default.margin - toolbox.height;
+		}
+		else
+			xy.y = xy.y - D.default.margin - toolbox.height;
+		element.style.left = `${xy.x - toolbox.width/2}px`;
+		element.style.top = `${xy.y}px`;
 		D.Drag(element, 'toolbar-drag-handle');
 		D.drag = false;
 	}
@@ -2257,13 +2292,22 @@ class StatusBar
 		if (this.timerIn)
 			clearInterval(this.timerIn);
 		const that = this;
-//		if (msg === null || msg === '')
 		if (msg === '')
 		{
 			this.hide();
-			return;
+			return;	// nothing to show later
 		}
-		this.timerIn = setTimeout(function() { that.element.classList.remove('hidden'); }, D.default.statusbar.timein); 
+		this.timerIn = setTimeout(function()
+		{
+			that.element.classList.remove('hidden');
+			if (!D.toolbar.element.classList.contains('hidden'))
+			{
+				const toolbox = D.toolbar.element.getBoundingClientRect();
+				const statusbox = elt.getBoundingClientRect();
+				if (D2.Overlap(toolbox, statusbox))
+					elt.style.top = `${toolbox.top + toolbox.height + D.default.font.height}px`;
+			}
+		}, D.default.statusbar.timein); 
 		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
 		const elt = this.element;
 		elt.innerHTML = H.div(msg);
@@ -2279,14 +2323,6 @@ class StatusBar
 		}
 		else
 			D.RecordError(msg);
-		if (!D.toolbar.element.classList.contains('hidden'))
-		{
-			const toolbox = D.toolbar.element.getBoundingClientRect();
-			const statusbox = elt.getBoundingClientRect();
-			if (D2.Overlap(toolbox, statusbox))
-				elt.style.top = toolbox.top - statusbox.height + 'px';
-		}
-//		this.element.classList.remove('hidden');
 		if (record)
 			document.getElementById('tty-out').innerHTML += this.message + "\n";
 	}
@@ -2425,13 +2461,13 @@ class NewElement
 			});
 			R.AddDiagram(diagram);
 //			R.SaveLocal(diagram);
-			R.SelectDiagram(diagram.name);
 			diagram.makeSVG();
 			diagram.home();
 			diagram.svgRoot.classList.remove('hidden');
-			D.toolbar.hide();
+//			D.toolbar.hide();
 			this.update();
 			R.EmitDiagramEvent(diagram, 'new');
+			R.SelectDiagram(diagram.name);
 		}
 		catch(e)
 		{
@@ -2504,11 +2540,9 @@ class NewElement
 			const diagram = R.diagram;
 			if (!diagram.isEditable())
 				throw 'Diagram is not editable';	// TODO should disable instead
-			const args =
-			{
-				xy:		D.toolbar.mouseCoords,	// use original location
-				text:	this.descriptionElt.value,
-			};
+			const xy = D.toolbar.mouseCoords;	// use original location
+			const text = U.HtmlEntitySafe(this.descriptionElt.value);
+			const args = { xy, text };
 			const from = this.doit(e, diagram, args);
 			diagram.log({command:'text', xy, text});
 			this.update();
@@ -2580,7 +2614,6 @@ class D
 		window.addEventListener('mousemove', D.Autohide);
 		window.addEventListener('mousedown', D.Autohide);
 		window.addEventListener('keydown', D.Autohide);
-//		window.addEventListener('Diagram', function() {D.GlowBadObjects(Cat.R.diagram);});
 		D.ReadDefaults();
 		D.navbar =			new Navbar;
 		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
@@ -2830,6 +2863,8 @@ R.default.debug = true;
 	}
 	static Mouseup(e)
 	{
+console.log('Mouseup');
+		D.DeleteSelectRectangle();
 		if (!R.diagram)
 			return;		// not initialized yet
 		D.mouseIsDown = false;
@@ -3167,7 +3202,7 @@ ${button}
 		switch(args.command)
 		{
 			case 'new':
-			case 'load':
+			case 'default':
 				R.default.diagram = diagram.name;
 				D.SaveDefaults();
 				if (!diagram.svgRoot)
@@ -4760,7 +4795,8 @@ class LogSection extends Section
 		window.addEventListener('Login', function(e) { that.update(); });
 		window.addEventListener('Diagram', function(e)
 		{
-			(e.detail.command === 'load' || e.detail.command === 'new') && that.update();
+//			(e.detail.command === 'default' || e.detail.command === 'new') && that.update();
+			e.detail.command === 'default' && that.update();
 		});
 	}
 	setElements(elements)
@@ -4953,7 +4989,7 @@ class ReferenceDiagramSection extends DiagramSection
 				case 'removeReference':
 					that.remove(args.name);
 					break;
-				case 'select':
+				case 'default':
 					D.RemoveChildren(that.catalog);
 					R.diagram.references.forEach(function(ref) {that.add(ref);});
 					break;
@@ -4996,7 +5032,7 @@ class UserDiagramSection extends DiagramSection
 					if (args.diagram.user === R.user.name)
 						that.add(args.diagram);
 					break;
-				case 'load':
+				case 'default':
 					if (args.diagram.user === R.user.name)
 						that.add(diagram);
 					break;
@@ -5017,10 +5053,10 @@ class CatalogDiagramSection extends DiagramSection
 			const diagram = args.diagram;
 			switch(args.command)
 			{
-				case 'new':
-					that.add(diagram);
-					break;
-				case 'load':
+//				case 'new':
+//					that.add(diagram);
+//					break;
+				case 'default':
 					that.add(diagram);
 					break;
 			}
@@ -5125,9 +5161,7 @@ class DiagramPanel extends Panel
 			const diagram = args.diagram;
 			switch(args.command)
 			{
-				case 'new':
-					break;
-				case 'view':
+				case 'default':
 					that.categoryElt.innerHTML = diagram.codomain.htmlName();
 					that.properNameElt.innerHTML = diagram.htmlName();
 					that.descriptionElt.innerHTML = diagram.description;
@@ -5141,7 +5175,8 @@ class DiagramPanel extends Panel
 					that.timestampElt.innerHTML = dt.toLocaleString();
 					break;
 				case 'addReference':
-					break;
+				case 'new':
+				case 'load':
 				case 'removeReference':
 					break;
 			}
@@ -5573,7 +5608,7 @@ class DiagramElementSection extends ElementSection
 		{
 			const args = e.detail;
 			const diagram = args.diagram;
-			if (args.command === 'view')
+			if (args.command === 'default')
 			{
 				D.RemoveChildren(that.catalog);
 				that.refresh();
@@ -5632,7 +5667,7 @@ class ReferenceElementSection extends ElementSection
 			const diagram = args.diagram;
 			switch (args.command)
 			{
-				case 'view':
+				case 'default':
 					D.RemoveChildren(that.catalog);
 					diagram.allReferences.forEach(function(cnt, name)
 					{
@@ -6397,14 +6432,35 @@ class Graph
 	{
 		return this.graphs.length === 0 ? this.tags.includes(tag) : this.graphs.reduce((r, g) => r && g.hasTag(tag), true);
 	}
+	noTag(tag)
+	{
+//		return this.graphs.length === 0 ? !this.tags.includes(tag) : !this.graphs.reduce((r, g) => r || g.hasTag(tag), false);
+		let hasTag = false;
+		this.scan(function(g, ndx) { hasTag = hasTag || g.hasTag(tag); });
+		return !hasTag;
+	}
 	addTag(tag)
 	{
+		if (this.graphs.length === 0)
+		{
+			if (!this.hasTag(tag))
+			{
+				this.tags.push(tag);
+				return true;
+			}
+			return false;
+		}
+		else
+			return this.graphs.reduce((r, g) => r && g.addTag(tag), true);
+
+		/*
 		if (!this.hasTag(tag))
 		{
 			this.tags.push(tag);
 			return true;
 		}
 		return false;
+		*/
 	}
 }
 
@@ -7078,6 +7134,7 @@ class DiagramText extends Element
 		svg.addEventListener('mouseenter', mouseenter);
 		svg.addEventListener('mouseleave', mouseleave);
 	}
+	/*
 	update(xy = null)
 	{
 		super.update(xy);
@@ -7088,6 +7145,7 @@ class DiagramText extends Element
 			t.setAttribute('x', x);
 		});
 	}
+	*/
 	finishMove()
 	{
 		if (!this.orig || (this.x !== this.orig.x || this.y !== this.orig.y))
@@ -7146,6 +7204,8 @@ class DiagramText extends Element
 		{
 			this.svg.setAttribute('x', this.x);
 			this.svg.setAttribute('y', this.y);
+			const tspans = this.svg.querySelectorAll('tspan');
+			tspans.forEach(function(t) { t.setAttribute('x', this.x); }, this);
 		}
 	}
 	isFusible()
@@ -8437,7 +8497,8 @@ class HomsetAction extends Action
 		this.newMorphism.domainElt.value = domain.name;
 		this.newMorphism.codomainElt.value = codomain.name;
 		const homset = diagram.codomain.getHomset(domain, codomain);
-		const rows = homset.map(m => D.HtmlRow3(m, {onclick:`"Cat.R.$Actions.getElement('${this.name}').action(event, Cat.R.diagram, '${m.name}', '${ary[0].name}', '${ary[1].name}')"`}));
+//		const rows = homset.map(m => D.HtmlRow3(m, {onclick:`"Cat.R.$Actions.getElement('${this.name}').action(event, Cat.R.diagram, '${m.name}', '${ary[0].name}', '${ary[1].name}')"`}));
+		const rows = homset.map(m => D.HtmlRow3(m, {onclick:function(){Cat.R.Actions.homset.action(event, Cat.R.diagram, m.name, ary[0].name, ary[1].name); }}));
 		D.toolbar.help.appendChild(H3.h4('Place Morphism'));
 		D.toolbar.help.appendChild(H3.table(rows));
 	}
@@ -8939,26 +9000,27 @@ class HelpAction extends Action
 	{
 		const from = ary[0];
 		let html = '';
+		let toolbar2 = '';
+		const js = R.Actions.javascript;
+		const cpp = R.Actions.cpp;
+		if (cpp.hasForm(diagram, ary))
+			toolbar2 += D.formButton(cpp.icon, 'Cat.R.Actions.cpp.html(event, Cat.R.diagram, Cat.R.diagram.selected)', cpp.description);
+		if (js.hasForm(diagram, ary))
+			toolbar2 += D.formButton(js.icon, 'Cat.R.Actions.javascript.html(event, Cat.R.diagram, Cat.R.diagram.selected)', js.description);
+		if (toolbar2 !== '')
+			html += H.table(H.tr(H.td(toolbar2)), 'buttonBarLeft');
 		if (from.to)
-			html = from.to.help();
+			html += from.to.help();
 		else if (DiagramText.IsA(from) && from.diagram.isEditable())
 		{
 			const id = from.elementId();
 			const btn = D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${from.name}', '${id}', 'description')`,
 				'Edit text', D.default.button.tiny);
-			html = H.p(H.tag('description', from.description, 'tty', 'descriptionElt') + btn, '', id);
+			html += H.p(H.tag('description', from.description, 'tty', 'descriptionElt') + btn, '', id);
 		}
 		else if (Assertion.IsA(from))
-			html = from.help();
+			html += from.help();
 		D.toolbar.help.innerHTML = html;
-		html = '';
-		const js = R.Actions.javascript;
-		const cpp = R.Actions.cpp;
-		if (cpp.hasForm(diagram, ary))
-			html += D.formButton(cpp.icon, 'Cat.R.Actions.cpp.html(event, Cat.R.diagram, Cat.R.diagram.selected)', cpp.description);
-		if (js.hasForm(diagram, ary))
-			html += D.formButton(js.icon, 'Cat.R.Actions.javascript.html(event, Cat.R.diagram, Cat.R.diagram.selected)', js.description);
-		D.toolbar.header2.innerHTML = H.table(H.tr(H.td(html)), 'buttonBarLeft');
 	}
 }
 
@@ -11552,9 +11614,11 @@ class DiagramMorphism extends Morphism
 		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
 		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
+//		const mouseup = function(e) { Cat.D.Mouseup(event);};
 		path.addEventListener('mouseenter', mouseenter);
 		path.addEventListener('mouseleave', mouseleave);
 		path.addEventListener('mousedown', mousedown);
+//		path.addEventListener('mouseup', mouseup);
 		const text = document.createElementNS(D.xmlns, 'text');
 		g.appendChild(text);
 		text.setAttributeNS(null, 'data-type', 'morphism');
@@ -11567,6 +11631,7 @@ class DiagramMorphism extends Morphism
 		text.addEventListener('mouseenter', mouseenter);
 		text.addEventListener('mouseleave', mouseleave);
 		text.addEventListener('mousedown', mousedown);
+//		text.addEventListener('mouseup', mouseup);
 		this.svg_path = document.getElementById(id + '_path');
 		this.svg_name = document.getElementById(id + '_name');
 		this.update();
@@ -13616,10 +13681,11 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	deselectAll(e, toolbarOff = true)
 	{
-		if (this.selected.length === 0)
-			return;
-		this.selected.map(elt => elt.showSelected(false));
-		this.selected.length = 0;
+		if (this.selected.length > 0)
+		{
+			this.selected.map(elt => elt.showSelected(false));
+			this.selected.length = 0;
+		}
 		R.EmitDiagramEvent(this, 'select', '');
 	}
 	selectAll()
@@ -14644,122 +14710,90 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		sel.addEventListener('change', change);
 		return sel;
 	}
-	isReference(obj, processed = new Set)
-	{
-		let isRef = true;
-		if (DiagramObject.IsA(obj))
-		{
-			processed.add(obj);
-//			obj.domains.forEach(function(m) { isRef = isRef && !processed.has(m.codomain) && (FactorMorphism.IsA(m.to) || Identity.IsA(m.to)) &&
-			obj.domains.forEach(function(m) { isRef = isRef && !processed.has(m.codomain) && FactorMorphism.IsA(m.to) &&
-				this.isReference(m.codomain, processed); }, this);
-			return isRef;
-		}
-		else if (FactorMorphism.IsA(obj.to) || Identity.IsA(obj.to))
-			isRef = this.isReference(obj.codomain, processed);
-		return isRef;
-	}
-	isConveyance(m)
-	{
-		const morph = DiagramMorphism.IsA(m) ? m.to : m;
-		return Identity.IsA(morph) || FactorMorphism.IsA(morph) || LambdaMorphism.IsA(morph);
-	}
 	/*
-	isCoreference(elt, processed = new Set)
-	{
-		let isRef = true;
-		if (DiagramObject.IsA(elt))
-		{
-			processed.add(elt);
-			elt.domains.forEach(function(m) { isRef = isRef && !processed.has(m.codomain) && this.isConveyance(m.to) && this.isCoreference(m.codomain, processed); }, this);
-			return isRef;
-		}
-		else if (this.isConveyance(elt.to))
-			isRef = this.isCoreference(elt.domain, processed);
-		return isRef;
-	}
-	*/
 	propagate(m, fn, scanned)
 	{
 		fn(m);
-		m.codomain.domains.forEach(function(nxt) { this.propagate(nxt, fn, scanned); }, this);
 		scanned.add(m.codomain);
 	}
+	*/
 	assemble(e, base)
 	{
-		let scanner = [base];
+		let scanning = [base];
 		const scanned = new Set;
 		const diagram = this;
 		let morphisms = new Set;
 		const issues = [];
 		const factorMorphisms = [];
-		const fm2type = new Map;	// factor morphism is reference
-		while(scanner.length > 0)	// find loops or homsets > 1
+		const sources = new Set;
+		let objects = new Set;
+		function isConveyance(m)
 		{
-			const domain = scanner.pop();
+			const morph = DiagramMorphism.IsA(m) ? m.to : m;
+			return Identity.IsA(morph) || FactorMorphism.IsA(morph);
+		}
+		while(scanning.length > 0)	// find loops or homsets > 1
+		{
+			const domain = scanning.pop();
 			scanned.add(domain);
 			domain.domains.forEach(function(m)
 			{
 				morphisms.add(m);
-//				FactorMorphism.IsA(m.to) && factorMorphisms.push(m);
-				if (FactorMorphism.IsA(m.to))
-				{
-					factorMorphisms.push(m);
-					if (m.domain.domains.size === 1 && m.domain.codomains.size === 0 && !m.dual)
-						fm2type.set(m, false);
-					else
-					{
-	//					fm2type.set(m, m.domain.codomains.size > 0 && m.codomain.codomains.size > 0);		// is it a reference
-						// your codomain has non-factor inbound arrows
-//						let isRef = [...m.codomain.codomains].reduce((r, codin) => r || !FactorMorphism.IsA(codin.to), false);		// is it a reference
-						let isRef = m.codomain.codomains.size > 0;
-						// your codomain has non-factor outbound arrows
-	//					isRef = isRef || [...m.codomain.domains].reduce((r, codin) => r || !FactorMorphism.IsA(codin.to), false);		// is it a reference
-						// your domain has non-factor inbound arrows
-	//					isRef = isRef && [...m.domain.codomains].reduce((r, codin) => r || !FactorMorphism.IsA(codin.to), false);		// is it a reference
-	//					fm2type.set(m, [...m.codomain.codomains].reduce((r, codin) => r || !FactorMorphism.IsA(codin.to), false));		// is it a reference
-						fm2type.set(m, isRef);
-					}
-				}
-				if (m.isEndo() || (scanned.has(m.codomain) && !FactorMorphism.IsA(m.to) && m.to.dual))
+				[...m.domain.codomains].filter(domin => !isConveyance(domin.to)).length === 0 && !isConveyance(m.to) && sources.add(m.domain);
+				m.makeGraph();
+				objects.add(m.domain);
+				objects.add(m.codomain);
+				FactorMorphism.IsA(m.to) && factorMorphisms.push(m);
+				if (m.isEndo())
 				{
 					m.svg.classList.add('badGlow');
-					m.isEndo() && issues.push({message:'Circularity cannot be scanned', morphism:m});
-					scanned.has(m.codomain) && !this.isReference(m) && m.dual && issues.push({message:`Codomain ${m.codomain} has already been scanned`, element:m});
+					issues.push({message:'Circularity cannot be scanned', morphism:m});
+					return;
+				}
+				if (scanned.has(m.codomain) && !isConveyance(m.to) && m.to.dual)
+				{
+					m.svg.classList.add('badGlow');
+					issues.push({message:`Codomain ${m.codomain} has already been scanned`, element:m});
 					return;		// do not continue on issue
 				}
-				scanner.push(m.codomain);
+				scanning.push(m.codomain);
 			});
 			domain.codomains.forEach(function(m)
 			{
 				morphisms.add(m);
-				!scanned.has(m.domain) && scanner.push(m.domain);
+				!scanned.has(m.domain) && scanning.push(m.domain);
 			});
 		}
 		if (issues.length > 0)
 			return issues;
 
-		const sources = new Set;
-		let objects = new Set;
-		morphisms.forEach(function(m)
-		{
-			if (m.domain.codomains.size === 0)
-				!(FactorMorphism.IsA(m.to) && fm2type.get(m)) && sources.add(m.domain);
-			objects.add(m.domain);
-			objects.add(m.codomain);
-		});
+		const references = new Set;
 		objects = [...objects];
 		morphisms = [...morphisms];
-		morphisms.map(m => !FactorMorphism.IsA(m) && sources.delete(m.codomain));	// remove sources that are outputs
-		morphisms.map(m => m.makeGraph());
+		morphisms.map(m => !isConveyance(m.to) && sources.delete(m.codomain)); // remove sources that are outputs
 
 		const obj2graph = new Map;
-		objects.map(o => obj2graph.set(o, o.to.getGraph()));	// setup graphs
-objects.map(o => o.assyGraph = obj2graph.get(o));
+		function getBarGraph(dm)
+		{
+			const domGraph = obj2graph.get(dm.domain);
+			const codGraph = obj2graph.get(dm.codomain);
+			const barGraph = new Graph;
+			barGraph.graphs.push(domGraph);
+			barGraph.graphs.push(codGraph);
+			return barGraph;
+		}
+		objects.map(o =>
+		{
+			obj2graph.set(o, o.to.getGraph());
+			o.svg.classList.remove('glow', 'badGlow', 'warningGlow', 'greenGlow');
+		});	// setup graphs
+		if (R.default.debug)
+			objects.map(o => o.assyGraph = obj2graph.get(o));
+
 		function addTag(dm, graph, tag, ndx)
 		{
 			const fctr = graph.getFactor(ndx);
-			if (fctr.hasTag(tag))
+			if (fctr.hasTag(tag) && ndx[0] !== 0)
 			{
 				debugger;
 				issues.push({message:`object has too much ${tag}`, element:dm.codomain});
@@ -14767,56 +14801,32 @@ objects.map(o => o.assyGraph = obj2graph.get(o));
 			}
 			fctr.addTag(tag);
 		}
-		function propTag(dm, m, mGraph, barGraph, tag)
+		function propTag(dm, m, mGraph, barGraph, tag, fn)
 		{
-			if (MultiMorphism.IsA(m))
-			{
-				m.morphisms.map((subm, i) => propTag(dm, subm, mGraph.graphs[i], barGraph, tag));
-			}
-			else if (diagram.isConveyance(m))
-			{
-				mGraph.graphs[0].scan(function(g, ndx) { g.links.map(lnk => addTag(dm, barGraph, tag, lnk)); }, [0]);
-			}
-			else
-			{
-				mGraph.graphs[1].scan(function(g, ndx)
-				{
-					addTag(dm, barGraph, tag, ndx);
-				}, [1]);
-			}
+			if (MultiMorphism.IsA(m))	// break it down
+				m.morphisms.map((subm, i) => propTag(dm, subm, mGraph.graphs[i], barGraph, tag, fn));
+			else if (isConveyance(m))		// copy tag on input links
+				mGraph.graphs[0].scan(function(g, ndx) { g.links.map(lnk => fn(dm, barGraph, tag, lnk)); }, [0]);
+			else		// tag all pins
+				mGraph.graphs[1].scan(function(g, ndx) { fn(dm, barGraph, tag, ndx); }, [1]);
 		}
+		const tag = 'info';
 		function tagInfo(dm)
 		{
-			if (FactorMorphism.IsA(dm.to) && fm2type.get(dm))
-				return;
-			const tag = 'info';
-			const domGraph = obj2graph.get(dm.domain);
-			const codGraph = obj2graph.get(dm.codomain);
-			const barGraph = new Graph;
-			barGraph.graphs.push(domGraph);
-			barGraph.graphs.push(codGraph);
-			propTag(dm, dm.to, dm.graph, barGraph, tag);
+			propTag(dm, dm.to, dm.graph, getBarGraph(dm), tag, addTag);
 		}
-		scanner = [...sources];
+		scanning = [...sources];
 		scanned.clear();
-		while(scanner.length > 0)
+		while(scanning.length > 0)
 		{
-			const input = scanner.pop();
-			scanned.add(input);
-			input.domains.forEach(function(m)
+			const src = scanning.pop();
+			src.domains.forEach(function(m)
 			{
-				if (FactorMorphism.IsA(m.to) && fm2type.get(m))
-				{
-//					let hasInfo = true;
-//					if (obj2graph.get(m.codomain).hasTag('info'))
-						return;
-//					grph.scan(function(g, ndx) { hasInfo = hasInfo && g.hasTag('info'); });
-//					if (grph.hasTag('info'))
-//						return;
-				}
-//				diagram.propagate(m, tagInfo, scanned);
+				if (FactorMorphism.IsA(m.to) || scanned.has(m))
+					return;
 				tagInfo(m);
-				!scanned.has(m.codomain) && scanner.push(m.codomain);
+				scanned.add(m);
+				!scanned.has(m.codomain) && scanning.push(m.codomain);
 			});
 		}
 
@@ -14833,6 +14843,150 @@ objects.map(o => o.assyGraph = obj2graph.get(o));
 			});
 		});
 
+		scanning = factorMorphisms.filter(fm => [...fm.codomain.domains].filter(codout => !isConveyance(codout)).length === 0);
+		function backLinkTag(morGraph, barGraph, tag)
+		{
+			let didAdd = false;
+			morGraph.graphs[1].scan(function(g, ndx)
+			{
+				g.links.map(lnk => didAdd = barGraph.getFactor(lnk).addTag(tag)) || didAdd;
+			}, [1]);
+			return didAdd;
+		}
+		while(scanning.length > 0)
+		{
+			const fm = scanning.pop();
+			const morGraph = fm.graph;
+			const barGraph = getBarGraph(fm);
+			const didAdd = backLinkTag(morGraph, barGraph, tag);
+			didAdd && fm.domain.codomains.forEach(function(morph)
+			{
+				isConveyance(morph.to) && scanning.push(morph);
+			});
+		}
+		//
+		// look for inputs; they have no info
+		//
+		const inputs = new Set;
+		let isIt = true;
+		objects.map(o =>
+		{
+			const grph = obj2graph.get(o);
+			if (grph.noTag(tag))
+			{
+//				issues.push({message:'Input', element:o});
+				inputs.add(o);
+//				o.svg.classList.add('greenGlow');
+			}
+		});
+		//
+		// some inputs are factors of others; winnow
+		//
+		scanning = [...inputs];
+		while(scanning.length > 0)
+		{
+			const obj = scanning.pop();
+			obj.domains.forEach(function(m)
+			{
+				if (FactorMorphism.IsA(m.to))
+				{
+					inputs.delete(m.codomain);
+					scanning.push(m.codomain);
+				}
+			});
+		}
+		//
+		// do last info propagation for outputs
+		//
+		function setTag(dm, graph, tag, ndx)
+		{
+			const fctr = graph.getFactor(ndx);
+			return fctr.addTag(tag);
+		}
+		scanning = [...inputs];
+		scanned.clear();
+const o66 = scanning[0];
+		while(scanning.length > 0)
+		{
+			const input = scanning.pop();
+			scanned.add(input);
+			input.domains.forEach(function(dm)
+			{
+//				if (propTag(dm, dm.to, dm.graph, getBarGraph(dm), tag, setTag) && !scanned.has(dm.codomain))
+				if (!scanned.has(dm.codomain))
+				{
+					propTag(dm, dm.to, dm.graph, getBarGraph(dm), tag, setTag);
+					scanning.push(dm.codomain);
+				}
+			});
+			input.codomains.forEach(function(dm)
+			{
+				isConveyance(dm) && !scanned.has(dm.domain) && backLinkTag(dm.graph, getBarGraph(dm), tag) && scanning.push(dm.domain);
+			});
+		}
+		//
+		// color the nodes
+		//
+		objects.map(o =>
+		{
+			const grph = obj2graph.get(o);
+			if (grph.noTag(tag))
+			{
+				issues.push({message:'Input', element:o});
+				o.svg.classList.add('greenGlow');
+			}
+			else if (grph.hasTag(tag))
+			{
+				o.svg.classList.add('glow');
+				inputs.delete(o);
+			}
+			else
+				o.svg.classList.add('warningGlow');
+		});
+		//
+		// look for outputs; they have info and no non-info factor morphisms
+		//
+		const outputs = [];
+		scanning = objects.slice();
+		function scannerNo(g, ndx) { isIt = isIt && !g.hasTag('info'); }
+		function scannerYes(g, ndx) { isIt = isIt && g.hasTag('info'); }
+		while(scanning.length > 0)
+		{
+			const obj = scanning.pop();
+			isIt = true;
+			obj.domains.forEach(function(m)
+			{
+				if (FactorMorphism.IsA(m.to) && !m.dual)
+				{
+					const g = obj2graph.get(m.codomain);
+					g.scan(scannerYes);
+					return;
+				}
+				isIt = false;
+			});
+			obj.codomains.forEach(function(m)
+			{
+				if (FactorMorphism.IsA(m.to))
+				{
+					if (m.to.dual)		// coproduct
+						isIt = isIt && !sources.has(m.domain);
+					else
+					{
+						const g = obj2graph.get(m.domain);
+						g.scan(scannerNo);
+					}
+					return;
+				}
+			});
+			if (isIt)
+			{
+				outputs.push(obj);
+				issues.push({message:'Output', element:obj});
+			}
+		}
+		return issues;
+
+		/*
 		scanner = factorMorphisms.slice();
 		scanned.clear();
 		while(scanner.length > 0)
@@ -14917,6 +15071,7 @@ objects.map(o => o.assyGraph = obj2graph.get(o));
 			}
 		}
 		return issues;
+		*/
 	}
 	static Codename(args)
 	{
