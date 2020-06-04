@@ -268,14 +268,24 @@ const Boot = function(fn)
 	}, args.xy);
 	*/
 	args.xy.y += args.majorGrid;
-	const two = logic.get('FiniteObject', {size:2});
+//	const two = logic.get('FiniteObject', {size:2});
+	const two = logic.coprod(one, one);
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
 	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
 	args.rowCount++;
 	args.xy.y += args.majorGrid;
 	const id2 = new Cat.DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
 	logic.addSVG(id2);
-	const omegaPair = MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
+//	const omegaPair = MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
+	const omegaPair = args.diagram.prod(omega, omega);
+	const mfalse = args.diagram.fctr(omega, [0]);
+	const mtrue = args.diagram.fctr(omega, [1]);
+	const mFalse = new Cat.NamedMorphism(args.diagram, {name:'false', properName:'&perp;', source:mfalse});
+	const mTrue = new Cat.NamedMorphism(args.diagram, {name:'true', properName:'&#8868;', source:mfalse});
+
+	PlaceMorphism(args, mFalse);
+	PlaceMorphism(args, mTrue);
+/*
 	const mTrue = MakeMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true', one, omega,
 	{
 		js:'function %Type(args)\n{\n	return true;\n}\n',
@@ -286,6 +296,7 @@ const Boot = function(fn)
 		js:'function %Type(args)\n{\n	return false;\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = false;\n}\n',
 	}).to;
+*/
 	const logicNot = MakeMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value', omega, omega,
 	{
 		js:'function %Type(args)\n{\n	return !args;\n}\n',
@@ -2164,6 +2175,6 @@ namespace %Namespace
 	{
 		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds];
 		diagrams.map(d => Cat.R.SaveLocal(d));
-		false && diagrams.map(d => d.upload(null));
+		true && diagrams.map(d => d.upload(null));
 	});
 }
