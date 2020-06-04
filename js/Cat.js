@@ -2368,6 +2368,9 @@ class NewElement
 				case 'Text':
 					that.createText(e);
 					break;
+				case 'Diagram':
+					that.createDiagram(e);
+					break;
 			}
 		}
 		const elts = [H3.h5(this.headline)];
