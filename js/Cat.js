@@ -2863,7 +2863,6 @@ R.default.debug = true;
 	}
 	static Mouseup(e)
 	{
-console.log('Mouseup');
 		D.DeleteSelectRectangle();
 		if (!R.diagram)
 			return;		// not initialized yet
@@ -4240,7 +4239,7 @@ class Section
 	}
 	static Html(header, action, panelId, title = '', buttonId = '')
 	{
-		return H.button(header, 'sidenavSection', buttonId, title, `onclick="${action};Cat.D.Panel.SectionToggle(this, \'${panelId}\')"`) +
+		return H.button(header, 'sidenavSection', buttonId, title, `onclick="${action};Cat.D.Panel.SectionToggle(event, this, \'${panelId}\')"`) +
 				H.div('', 'section', panelId);
 	}
 }
@@ -4312,8 +4311,9 @@ class Panel
 	}
 	update()	// fitb
 	{}
-	static SectionToggle(btn, pnlId)
+	static SectionToggle(e, btn, pnlId)
 	{
+		e.preventDefault();
 		btn.classList.toggle('active');
 		const elt = document.getElementById(pnlId);
 		elt.style.display = elt.style.display === 'block' ? 'none' : 'block';
@@ -4330,12 +4330,12 @@ class Panel
 	}
 	static SectionPanelDyn(header, action, panelId, title = '', buttonId = '')
 	{
-		return H.button(U.HtmlEntitySafe(header), 'sidenavSection', buttonId, U.HtmlEntitySafe(title), `onclick="${action};Cat.D.Panel.SectionToggle(this, \'${panelId}\')"`) +
+		return H.button(U.HtmlEntitySafe(header), 'sidenavSection', buttonId, U.HtmlEntitySafe(title), `onclick="${action};Cat.D.Panel.SectionToggle(event, this, \'${panelId}\')"`) +
 				H.div('', 'section', panelId);
 	}
 }
 
-/*
+/* 	TODO nneds work
 class NewCategorySection extends Section
 {
 	constructor(parent)
@@ -4891,13 +4891,13 @@ class TtyPanel extends Panel
 		this.elt.innerHTML =
 			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarLeft') +
 			H.h3('TTY') +
-			H.button('Output', 'sidenavAccordion', '', 'TTY output from some composite', `onclick="Cat.D.Panel.SectionToggle(this, \'tty-out-section\')"`) +
+			H.button('Output', 'sidenavAccordion', '', 'TTY output from some composite', `onclick="Cat.D.Panel.SectionToggle(event, this, \'tty-out-section\')"`) +
 			H.div(
 				H.table(H.tr(
 					H.td(D.GetButton('delete', `Cat.D.ttyPanel.out.innerHTML = ''`, 'Clear output'), 'buttonBar') +
 					H.td(D.DownloadButton('LOG', `Cat.D.DownloadString(Cat.D.ttyPanel.out.innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBar')), 'buttonBarLeft') +
 				H.pre('', 'tty', 'tty-out'), 'section', 'tty-out-section') +
-			H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.D.Panel.SectionToggle(this, \'tty-error-section\')"`) +
+			H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.D.Panel.SectionToggle(event, this, \'tty-error-section\')"`) +
 			H.div(H.table(H.tr(
 					H.td(D.GetButton('delete', `Cat.D.ttyPanel.error.innerHTML = ''`, 'Clear errors')) +
 					H.td(D.DownloadButton('ERR', `Cat.D.DownloadString(Cat.D.ttyPanel.error.innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBar')), 'buttonBarLeft') +
@@ -5319,7 +5319,7 @@ class HelpPanel extends Panel
 			H.h4('The Categorical Console')	+
 			H.p(H.small('Level 1', 'smallCaps italic'), 'txtCenter') +
 			H.p(H.small(`Deployed ${date}`, 'smallCaps'), 'txtCenter') + H.br() +
-			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'catActionHelpPnl\')"`) +
+			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'catActionHelpPnl\')"`) +
 			H.div(	H.h4('Mouse Actions') +
 					H.h5('Select') +
 						H.p('Select an object or a morphism with the mouse by left-clicking on the element.  Previously selected objects are unselected.') +
@@ -5374,24 +5374,24 @@ class HelpPanel extends Panel
 					H.h5('Control-V') +
 						H.p('Paste elements from the paste buffer.')
 					, 'section', 'catActionHelpPnl') +
-			H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References', `onclick="Cat.D.Panel.SectionToggle(this, \'catHelpPnl\')"`) +
+			H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References', `onclick="Cat.D.Panel.SectionToggle(event, this, \'catHelpPnl\')"`) +
 			H.div(
 				H.small('All of mathematics is divided into one part: Category Theory', '') +
 				H.h4('References') +
 				H.p(H.a('"Categories For The Working Mathematician"', 'italic', '', '', 'href="https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician" target="_blank"')), 'section', 'catHelpPnl') +
-			H.button('Articles', 'sidenavAccordion', 'referencesPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'referencesPnl\')"`) +
+			H.button('Articles', 'sidenavAccordion', 'referencesPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(event, this, \'referencesPnl\')"`) +
 			H.div(	H.p(H.a('Intro To Categorical Programming', '', '', '', 'href="https://harrydole.com/wp/2017/09/16/cat-prog/"')) +
 					H.p(H.a('V Is For Vortex - More Categorical Programming', '', '', '', 'href="https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"')), 'section', 'referencesPnl') +
-			H.button('Terms and Conditions', 'sidenavAccordion', 'TermsPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'TermsPnl\')"`) +
+			H.button('Terms and Conditions', 'sidenavAccordion', 'TermsPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(event, this, \'TermsPnl\')"`) +
 			H.div(	H.p('No hate.'), 'section', 'TermsPnl') +
-			H.button('License', 'sidenavAccordion', 'licensePnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'licensePnl\')"`) +
+			H.button('License', 'sidenavAccordion', 'licensePnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(event, this, \'licensePnl\')"`) +
 			H.div(	H.p('Vernacular code generated by the Categorical Console is freely usable by those with a cortex. Machines are good to go, too.') +
 					H.p('Upload a diagram to Catecon and others there are expected to make full use of it.') +
 					H.p('Inelegant or unreferenced diagrams are removed.  See T&amp;C\'s'), 'section', 'licensePnl') +
-			H.button('Credits', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(this, \'creditsPnl\')"`) +
+			H.button('Credits', 'sidenavAccordion', 'creditsPnlBtn', '', `onclick="Cat.D.Panel.SectionToggle(event, this, \'creditsPnl\')"`) +
 			H.div(	H.a('Saunders Mac Lane', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"') +
 					H.a('Harry Dole', '', '', '', 'href="https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"'), 'section', 'creditsPnl') +
-			H.button('Third Party Software', 'sidenavAccordion', 'third-party', '', `onclick="Cat.D.Panel.SectionToggle(this, \'thirdPartySoftwarePnl\')"`) +
+			H.button('Third Party Software', 'sidenavAccordion', 'third-party', '', `onclick="Cat.D.Panel.SectionToggle(event, this, \'thirdPartySoftwarePnl\')"`) +
 			H.div(
 						H.a('3D', '', '', '', 'href="https://threejs.org/"') +
 						H.a('Compressors', '', '', '', 'href="https://github.com/imaya/zlib.js"') +
@@ -5448,7 +5448,7 @@ class LoginPanel extends Panel
 									}))) +
 								H.tr(H.td(H.button('Login', '', '', '', 'onclick="Cat.R.cloud.login(event)"')))));
 		if (R.user.status === 'unauthorized')
-			html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.D.Panel.SectionToggle(this, \'signupPnl\')"`) +
+			html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.D.Panel.SectionToggle(event, this, \'signupPnl\')"`) +
 					H.div( H.table(H.tr(H.td('User name')) +
 								H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
 								H.tr(H.td('Email')) +
@@ -5640,6 +5640,8 @@ class DiagramElementSection extends ElementSection
 	refresh()
 	{
 		const that = this;
+		if (!R.diagram)
+			return;
 		switch(this.type)
 		{
 			case 'Object':
@@ -5733,7 +5735,7 @@ class SettingsPanel extends Panel
 		super('settings', true);
 		this.elt.innerHTML =
 			H.table(H.tr(this.closeBtnCell()), 'buttonBarLeft') +
-			H.button('Settings', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'settings-actions\')"`) +
+			H.button('Settings', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-actions\')"`) +
 			H.div(
 				H.table(
 					H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="Cat.D.gridding = !D.gridding;D.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
@@ -5742,9 +5744,9 @@ class SettingsPanel extends Panel
 					H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="Cat.R.default.debug = !Cat.R.default.debug;Cat.D.SaveDefaults()">`) +
 							H.td('Debug', 'left'), 'sidenavRow')
 			), 'section', 'settings-actions') +
-			H.button('Defaults', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'settings-defaults\')"`) +
+			H.button('Defaults', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-defaults\')"`) +
 			H.div('', 'section', 'settings-defaults') +
-			H.button('Equality Info', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(this, \'settings-equality\')"`) +
+			H.button('Equality Info', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-equality\')"`) +
 			H.div('', 'section', 'settings-equality');
 
 		this.initialize();
@@ -6175,14 +6177,22 @@ class Graph
 		else
 			this.graphs.map((g, i) => g.mergeGraphs({from:data.from.graphs[i], base:data.base, inbound:data.inbound, outbound:data.outbound}));
 	}
-	bindGraph(data)	// data: {cod, index, tag, domRoot, codRoot, offset}
+	bindGraph(data)	// data: {cod, index, tag, domRoot, codRoot, offset, dual}
 	{
 		if (this.isLeaf())
 		{
 			const domRoot = data.domRoot.slice();
 			const codRoot = data.codRoot.slice();
-			U.arraySet(this, 'links', codRoot);
-			U.arraySet(data.cod, 'links', domRoot);
+			if ('dual' in data && data.dual)
+			{
+				U.arraySet(this, 'links', domRoot);
+				U.arraySet(data.domRoot, 'links', codRoot);
+			}
+			else
+			{
+				U.arraySet(this, 'links', codRoot);
+				U.arraySet(data.cod, 'links', domRoot);
+			}
 			if ('tags' in data)
 			{
 				U.arrayInclude(this, 'tags', data.tag);
@@ -11331,6 +11341,7 @@ class NamedObject extends CatObject	// name of an object
 	{
 		const nuArgs = U.Clone(args);
 		const source = diagram.getElement(args.source);
+		nuArgs.dual = source.dual;
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.source = source;
@@ -12779,7 +12790,8 @@ class FactorMorphism extends Morphism
 					codRoot = ndx.slice();
 					codRoot.unshift(1);
 					domRoot = this.factors.length > 1 ? [0, i] : [0];
-					graph.graphs[0].bindGraph({cod:factor, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
+//					graph.graphs[0].bindGraph({cod:factor, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
+					factor.bindGraph({cod:factor, index:[], tag:this.constructor.name, domRoot, codRoot, offset, dual:this.dual});
 				}
 				else
 				{
@@ -12819,8 +12831,22 @@ class FactorMorphism extends Morphism
 		{
 			this.factors.map((f, i) =>
 			{
-				const fm = this.diagram.get('FactorMorphism', {domain:this.codomain, factors:[i], dual:this.dual});
-				const base = this.diagram.get('FactorMorphism', {domain:this.domain, factors:[this.factors[i]], dual:this.dual});
+//				const fm = this.diagram.get('FactorMorphism', {domain:this.codomain, factors:[i], dual:this.dual});
+				const args = {factors:[i], dual:this.dual};
+				const baseArgs = {factors:[this.factors[i]], dual:this.dual};
+				if (this.dual)
+				{
+					args.codomain = this.domain;
+					baseArgs.codomain = this.codomain;
+				}
+				else
+				{
+					args.domain = this.codomain;
+					baseArgs.domain = this.domain;
+				}
+				const fm = this.diagram.get('FactorMorphism', args);
+//				const base = this.diagram.get('FactorMorphism', {domain:this.domain, factors:[this.factors[i]], dual:this.dual});
+				const base = this.diagram.get('FactorMorphism', baseArgs);
 				R.LoadEquivalences(this.diagram, this, [base], [fm, this]);
 			});
 		}
@@ -13679,14 +13705,15 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	{
 		return this.userToDiagramCoords({x:e.clientX, y:e.clientY});
 	}
-	deselectAll(e, toolbarOff = true)
+	deselectAll(e)
 	{
-		if (this.selected.length > 0)
-		{
-			this.selected.map(elt => elt.showSelected(false));
-			this.selected.length = 0;
-		}
-		R.EmitDiagramEvent(this, 'select', '');
+//		if (this.selected.length > 0)
+//		{
+//			this.selected.map(elt => elt.showSelected(false));
+//			this.selected.length = 0;
+//		}
+//		R.EmitDiagramEvent(this, 'select', '');
+		this.makeSelected(e, null);
 	}
 	selectAll()
 	{
@@ -13729,11 +13756,16 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	makeSelected(e, elt)
 	{
-		this.deselectAll(e, !elt);
+		if (this.selected.length > 0)
+		{
+			this.selected.map(elt => elt.showSelected(false));
+			this.selected.length = 0;
+		}
+		R.EmitDiagramEvent(this, 'select', '');
 		if (elt)
 			this.addSelected(elt);
 		if (R.default.debug)
-			console.log('selected', elt.basename, elt.refcnt, elt);
+			console.log('selected', elt && elt.basename, elt && elt.refcnt, elt);
 	}
 	addSelected(elt)
 	{
