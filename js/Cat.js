@@ -1105,10 +1105,11 @@ Create diagrams and execute morphisms.
 			diagram.timestamp = Date.now();
 		localStorage.setItem(`${diagram.name}.json`, diagram.stringify());
 		// TODO put in web worker since it takes a while
-		D.Svg2canvas(D.topSVG, diagram.name, function(png, pngName)
+		D.Svg2canvas(diagram, function(png, pngName)
 		{
 			D.diagramPNG.set(diagram.name, png);
 			localStorage.setItem(`${diagram.name}.png`, png);
+			R.EmitDiagramEvent(diagram, 'png');
 		});
 		R.SetDiagramInfo(diagram);
 		return true;
@@ -1889,7 +1890,7 @@ class Amazon extends Cloud
 			return;
 		}
 		const that = this;
-		D.Svg2canvas(D.topSVG, dgrm.name, function(url, filename)
+		D.Svg2canvas(dgrm, function(url, filename)
 		{
 			const params =
 			{
@@ -3247,36 +3248,63 @@ ${button}
 			dstChild.setAttribute('style', style);
 		}
 	}
-	static Svg2canvas(svg, name, fn)
+	static Svg2canvas(diagram, fn)
 	{
+		const notUs = diagram !== R.diagram;
+		if (notUs)
+		{
+			R.diagram.svgRoot.style.display = 'none';
+			diagram.svgRoot.style.display = 'block';
+		}
+		const svg = diagram.svgRoot;
 		const copy = svg.cloneNode(true);
+		const top = document.createElementNS(D.xmlns, 'svg');
+		top.appendChild(copy);
 		D.copyStyles(copy, svg);
-		const canvas = document.createElement('canvas');
-		canvas.width = D.snapWidth;
-		canvas.height = D.snapHeight;
-		var ctx = canvas.getContext('2d');
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		const data = (new XMLSerializer()).serializeToString(copy);
-		const svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
+		const topData = (new XMLSerializer()).serializeToString(top);
+		const svgBlob = new Blob([topData], {type: "image/svg+xml;charset=utf-8"});
 		const url = D.url.createObjectURL(svgBlob);
-		const img = new Image();
+		const pw = D.default.panel.width;
+		const vp = new D2({x:pw, y:0, width:window.innerWidth - 2 * pw, height:window.innerHeight});
+		const sRat = D.snapHeight / D.snapWidth;
+		const vRat = vp.height / vp.width;
+		let rat = 1.0;
+		if (vRat > sRat)
+		{
+			rat = vRat / sRat;
+			const w = rat * vp.width;
+			vp.width = w;
+		}
+		else
+		{
+			rat = sRat / vRat;
+			const h = rat * vp.height;
+			vp.height = h;
+		}
+		const img = new Image(vp.width, vp.height);
 		img.onload = function()
 		{
-			ctx.drawImage(img, D.default.panel.width, 0, window.innerWidth - 2 * D.default.panel.width, window.innerHeight, 0, 0, D.snapWidth, D.snapHeight);
+			const canvas = document.createElement('canvas');
+			canvas.width = D.snapWidth;
+			canvas.height = D.snapHeight;
+			const ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.drawImage(img, vp.x, vp.y, vp.width, vp.height, 0, 0, D.snapWidth, D.snapHeight);
 			D.url.revokeObjectURL(url);
 			const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-			const dgrmImg = document.getElementById(`img_${name}`);
-			if (dgrmImg)
-				dgrmImg.src = cargo;
 			if (fn)
-				fn(cargo, `${name}.png`);
+				fn(cargo, `${diagram.name}.png`);
 		};
 		img.crossOrigin = "";
 		img.src = url;
+		if (notUs)
+		{
+			R.diagram.svgRoot.style.display = 'block';
+			diagram.svgRoot.style.display = 'none';
+		}
 	}
 	static OnEnter(e, fn, that = null)
 	{
-//		(e.key === 'Enter' && that) ? fn.call(that, e) : fn(e);
 		e.key === 'Enter' && that && fn.call(that, e);
 	}
 	static Width()
@@ -4934,6 +4962,7 @@ class DiagramSection extends Section
 		let src = this.getPng(diagram.name);
 		if (!src && R.cloud)
 			src = R.cloud.getURL(diagram.user, diagram.basename + '.png');
+		const id = U.SafeId(`img-el_${diagram.name}`);
 		const elt = H3.div({class:'grabbable', id:this.getId(diagram.name)},
 			H3.table(
 			[
@@ -4950,7 +4979,8 @@ class DiagramSection extends Section
 						], {class:'right'}),
 				]),
 				H3.tr(H3.td({class:'white', colspan:2}, H3.a({onclick:`Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')`},
-															H3.img({src, id:"img_${diagram.name}", alt:"Not loaded", width:"200", height:"150"})))),
+//															H3.img({src, id:`img-${diagram.elementId()}`, alt:"Not loaded", width:"200", height:"150"})))),
+															H3.img({src, id, alt:"Not loaded", width:"200", height:"150"})))),
 				H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
 				H3.tr([H3.td(diagram.user, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
 			]), {class:'grabbable', draggable:true, ondragstart:`Cat.D.DragElement(event, '${diagram.name}')`});
@@ -5178,9 +5208,13 @@ class DiagramPanel extends Panel
 					that.timestampElt.innerHTML = dt.toLocaleString();
 					break;
 				case 'addReference':
-				case 'new':
-				case 'load':
 				case 'removeReference':
+				case 'move':
+					break;
+				case 'png':
+					const png = D.diagramPNG.get(diagram.name);
+					const images = [...document.querySelectorAll(`#img-${diagram.elementId()}`)];
+					images.map(img => img.src = png);
 					break;
 			}
 		});
@@ -14078,7 +14112,7 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 		{
 			const start = Date.now();
 			const btn = document.getElementById('diagramUploadBtn');
-			if (e && btn)
+			if (e && btn)	// start button animation
 			{
 				btn.setAttribute('repeatCount', 'indefinite');
 				btn.beginElement();
@@ -14287,7 +14321,8 @@ if ('viewport' in this && this.viewport.y === null)this.viewport.y = 0;
 	}
 	downloadPNG()
 	{
-		D.Svg2canvas(D.topSVG, this.name, D.Download);
+//		D.Svg2canvas(D.topSVG, this, D.Download);
+		D.Svg2canvas(this, D.Download);
 	}
 	downloadLog(e)
 	{
