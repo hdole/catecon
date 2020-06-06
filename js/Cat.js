@@ -1068,6 +1068,7 @@ Create diagrams and execute morphisms.
 				{
 					R.initialized = true;
 					R.Actions.javascript.loadHTML();
+					R.FetchCatalog();
 				});
 			};
 			const params = (new URL(document.location)).searchParams;
@@ -1166,6 +1167,7 @@ Create diagrams and execute morphisms.
 		localStorage.setItem('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo(), false)));
 	}
 // TODO unused; move to cloud class?
+	/*
 	static fetchCategories(fn = null)
 	{
 		fetch(R.cloud.getURL() + '/categories.json').then(function(response)
@@ -1188,6 +1190,7 @@ Create diagrams and execute morphisms.
 				D.RecordError(response);
 		});
 	}
+	*/
 	static fetchDiagrams(dgrms, refs, fn)
 	{
 		R.cloud.fetchDiagramJsons(dgrms, function(jsons)
@@ -1483,6 +1486,25 @@ Create diagrams and execute morphisms.
 		script.src = url;
 		script.addEventListener('load', fn);
 		document.body.appendChild(script);
+	}
+	static FetchCatalog()
+	{
+console.log('catalog url', R.cloud.getURL() + '/catalog.json');
+		R.cloud && fetch(R.cloud.getURL() + '/catalog.json').then(function(response)
+		{
+			if (response.ok)
+				response.json().then(function(data)
+				{
+					R.catalog = data.diagrams;
+debugger;
+					data.diagrams.map(d => R.EmitDiagramEvent(d, 'catalog', 'add'));
+//					let html = data.diagrams.map(d => DiagramPanel.DiagramRow(d)).join('');
+//					const dt = new Date(data.timestamp);
+//						document.getElementById('catalogDiagrams').innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
+				});
+			else
+				debugger;
+		});
 	}
 }
 Object.defineProperties(R,
@@ -4962,12 +4984,16 @@ class DiagramSection extends Section
 	}
 	add(diagram, btns = [])
 	{
+		const id = this.getId(diagram.name);
+		if (document.getElementById(id))
+			return;
+		const user = 'user' in diagram ? diagram.user : diagram.username;
 		const dt = new Date(diagram.timestamp);
 		let src = this.getPng(diagram.name);
 		if (!src && R.cloud)
 			src = R.cloud.getURL(diagram.user, diagram.basename + '.png');
-		const id = U.SafeId(`img-el_${diagram.name}`);
-		const elt = H3.div({class:'grabbable', id:this.getId(diagram.name)},
+		const imgId = U.SafeId(`img-el_${diagram.name}`);
+		const elt = H3.div({class:'grabbable', imgId},
 			H3.table(
 			[
 				H3.tr(
@@ -4984,9 +5010,9 @@ class DiagramSection extends Section
 				]),
 				H3.tr(H3.td({class:'white', colspan:2}, H3.a({onclick:`Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')`},
 //															H3.img({src, id:`img-${diagram.elementId()}`, alt:"Not loaded", width:"200", height:"150"})))),
-															H3.img({src, id, alt:"Not loaded", width:"200", height:"150"})))),
+															H3.img({src, imgId, alt:"Not loaded", width:"200", height:"150"})))),
 				H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
-				H3.tr([H3.td(diagram.user, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
+				H3.tr([H3.td(user, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
 			]), {class:'grabbable', draggable:true, ondragstart:`Cat.D.DragElement(event, '${diagram.name}')`});
 		this.catalog.appendChild(elt);
 	}
@@ -5093,8 +5119,12 @@ class CatalogDiagramSection extends DiagramSection
 //				case 'new':
 //					that.add(diagram);
 //					break;
+				case 'new':
 				case 'default':
-					that.add(diagram);
+					break;
+				case 'catalog':
+					if (args.name === 'add')
+						that.add(diagram);
 					break;
 			}
 		});
@@ -5314,23 +5344,6 @@ return;	// TODO
 				});
 		});
 	}
-	/* TODO unused but use it?
-	fetchCatalogDiagramTable()
-	{
-		if (R.cloud && !('catalogDiagrams' in Cat))
-			fetch(R.cloud.getURL() + '/catalog.json').then(function(response)
-			{
-				if (response.ok)
-					response.json().then(function(data)
-					{
-						U.catalogDiagrams = data.diagrams;
-						let html = data.diagrams.map(d => DiagramPanel.DiagramRow(d)).join('');
-						const dt = new Date(data.timestamp);
-						document.getElementById('catalogDiagrams').innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
-					});
-			});
-	}
-	*/
 	static GetLockBtn(diagram)
 	{
 		const lockable = diagram.readonly ? 'unlock' : 'lock';
@@ -6389,9 +6402,7 @@ class Graph
 		const dx = cod.x - this.xy.x;
 		const dy = cod.y - this.xy.y;
 		const adx = Math.abs(dx);
-//if (adx === 0)debugger;
 		const ady = Math.abs(dy);
-//if (ady === 0)debugger;
 		const normal = dy === 0 ? ((this.xy.y - this.xy.y) > 0 ? new D2({x:0, y:-1}) : new D2({x:0, y:1})) : cod.subtract(this.xy).normal().normalize();
 		const h = (adx - ady) / (1.0 * adx);
 		const v = normal.scale(cod.dist(this.xy) * h / 4.0);
@@ -8178,7 +8189,6 @@ class ProductEditAction extends Action
 		const elt = diagram.getElement(objName);
 		const objects = [];
 		let ndx = 0;
-debugger;
 		for (let i=0; i<sz; ++i)
 		{
 			const row = rows[i];
@@ -10269,16 +10279,6 @@ class RunAction extends Action
 		this.data = new Map;
 		this.js = null;		// fill in later
 	}
-/*
-	action(e, diagram, ary)
-	{
-debugger;
-		const btn = document.getElementById('RunAction btn');
-		btn.setAttribute('repeatCount', 'indefinite');
-		btn.beginElement();
-		R.Actions.javascript.evaluate(e, diagram, ary[0].to.name, R.Actions.run.postResult);
-	}
-*/
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
@@ -11451,16 +11451,10 @@ class NamedObject extends CatObject	// name of an object
 	getGraph(data = {position:0})
 	{
 		const grph = this.diagram.flattenObject(this.base).getGraph();
-//		let pos = null;
-//		return grph;
 		const w = D.textWidth(this.htmlName());
 		grph.deepScan(function(g, ndx)
 		{
-//			g.position = data.position + w/2;
 			g.position = data.position;
-//			if (g.position !== 0)debugger;
-//			if (!pos)
-//				pos = g.position;
 		});
 		data.position += w;
 		grph.width = w;

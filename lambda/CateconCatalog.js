@@ -19,10 +19,10 @@ function convert(data)
 {
     const d =
     {
-        name:       data.subkey.S,
+        name:       data.subkey.S.substr(2),	// remove 'D-' prefix
         description:data.description.S,
         timestamp:  Number.parseInt(data.timestamp.N, 10),
-        fancyName:  data.fancyName.S,
+        properName:  data.properName.S,
         username:   data.username.S
     };
     return d;
@@ -35,7 +35,7 @@ exports.handler = (event, context, callback) =>
     {
         TableName:  C.DIAGRAM_TABLE,
         ExpressionAttributeNames: {'#ts':'timestamp'},
-        ProjectionExpression:   'username, subkey, #ts, fancyName, description'
+        ProjectionExpression:   'username, subkey, #ts, properName, description'
     };
     db.scan(params, function(err, data)
     {
@@ -50,7 +50,7 @@ exports.handler = (event, context, callback) =>
             const itm = data.Items[i];
             if (!('description' in itm))
                 continue;
-            const d = convert(data.Items[i]);
+            const d = convert(itm);
             if (d.name in dgrms)
             {
                 if (d.timestamp > dgrms[d.name].timestamp)
