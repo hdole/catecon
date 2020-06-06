@@ -405,7 +405,7 @@ class U
 	}
 	static getUserSecret(s)
 	{
-		return sjcl.codec.hex.fromBits(U.Sig(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`));
+		return U.Sig(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
 	}
 	static GetError(err)
 	{
@@ -1692,7 +1692,12 @@ class Amazon extends Cloud
 		const confirmPassword = document.getElementById('SignupUserPasswordConfirm').value;
 		if (password !== confirmPassword)
 		{
-			alert('Please confirm your password properly by making sure the password and confirmation are the same.');
+			alert('The passwords do not match.');
+			return;
+		}
+		if (password === '')
+		{
+			alert('Improve your password');
 			return;
 		}
 		const attributes =
@@ -2390,10 +2395,8 @@ class NewElement
 			default:
 				break;
 		}
-		function onkeydown() { Cat.D.OnEnter(event, action, that); }
-		this.descriptionElt = H3.input({class:'in100', id:'new-description', title:'Description', placeholder:'Description',
-//					onkeydown:`Cat.D.OnEnter(event, ${action}, Cat.D.newElement.${this.type})`});
-					onkeydown });
+		function onkeydown() { Cat.D.OnEnter(event, action); }
+		this.descriptionElt = H3.input({class:'in100', id:'new-description', title:'Description', placeholder:'Description', onkeydown });
 		this.descriptionElt.onkeydown = onkeydown;
 		rows.push(H3.tr(H3.td(this.descriptionElt), {class:'sidenavRow'}));
 		switch(this.type)
@@ -3251,7 +3254,7 @@ ${button}
 	static Svg2canvas(diagram, fn)
 	{
 		const notUs = diagram !== R.diagram;
-		if (notUs)
+		if (notUs)	// for booting
 		{
 			R.diagram.svgRoot.style.display = 'none';
 			diagram.svgRoot.style.display = 'block';
@@ -3305,7 +3308,8 @@ ${button}
 	}
 	static OnEnter(e, fn, that = null)
 	{
-		e.key === 'Enter' && that && fn.call(that, e);
+		if (e.key === 'Enter')
+			that ? fn.call(that, e) : fn(e);
 	}
 	static Width()
 	{
@@ -5490,13 +5494,13 @@ class LoginPanel extends Panel
 								H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
 								H.tr(H.td('Email')) +
 								H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
-								LoginPanel.PasswordForm() +
+								LoginPanel.PasswordForm('', "Cat.R.cloud.signup") +
 								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="Cat.R.cloud.signup()"')))), 'section', 'signupPnl'));
 		if (R.user.status === 'registered')
 			html += H.form(H.h3('Confirmation Code') +
 					H.span('The confirmation code is sent by email to the specified address above.') +
 					H.table(	H.tr(H.td('Confirmation code')) +
-								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.confirm, R.cloud)"'}))) +
+								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.confirm, Cat.R.cloud)"'}))) +
 								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick="Cat.R.cloud.confirm()"')))));
 		if (R.user.status === 'logged-in')
 			html += H.button('Log Out', '', '', '', 'onclick="Cat.R.cloud.logout()"');
@@ -5509,7 +5513,7 @@ class LoginPanel extends Panel
 	{
 		this.passwordResetFormElt.innerHTML =
 			H.table(
-				LoginPanel.PasswordForm('reset') +
+				LoginPanel.PasswordForm('reset', Cat.R.cloud.resetPassword, Cat.R.cloud) +
 				H.tr(H.td(H.button('Reset password', '', '', '', 'onclick="Cat.R.cloud.resetPassword()"'))));
 	}
 	toggle()
@@ -5517,7 +5521,7 @@ class LoginPanel extends Panel
 		super.toggle();
 		this.update();
 	}
-	static PasswordForm(sfx = '')
+	static PasswordForm(sfx = '', onkeydown)
 	{
 		return H.tr(H.td('Categorical Access Key')) +
 				H.tr(H.td(H.input('', '', `${sfx}SignupSecret`, 'text',
@@ -5535,7 +5539,7 @@ class LoginPanel extends Panel
 				H.tr(H.td(H.input('', '', `${sfx}SignupUserPasswordConfirm`, 'password',
 				{
 					ph:'Confirm',
-					x:	'autocomplete="confirm-password"',
+					x:	`autocomplete="confirm-password" onkeydown="Cat.D.OnEnter(event, ${onkeydown}, Cat.R.cloud)"`,
 				})));
 	}
 }
