@@ -1489,18 +1489,13 @@ Create diagrams and execute morphisms.
 	}
 	static FetchCatalog()
 	{
-console.log('catalog url', R.cloud.getURL() + '/catalog.json');
 		R.cloud && fetch(R.cloud.getURL() + '/catalog.json').then(function(response)
 		{
 			if (response.ok)
 				response.json().then(function(data)
 				{
 					R.catalog = data.diagrams;
-debugger;
 					data.diagrams.map(d => R.EmitDiagramEvent(d, 'catalog', 'add'));
-//					let html = data.diagrams.map(d => DiagramPanel.DiagramRow(d)).join('');
-//					const dt = new Date(data.timestamp);
-//						document.getElementById('catalogDiagrams').innerHTML = H.span(`Last updated ${dt.toLocaleString()}`, 'smallPrint') + H.table(html);
 				});
 			else
 				debugger;
@@ -1604,15 +1599,13 @@ class Amazon extends Cloud
 		};
 		document.body.appendChild(script);
 	}
-	getURL(user, basename)
+	getURL(suffix)
 	{
 		let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
-		if (typeof user === 'undefined')
+		if (typeof suffix === 'undefined')
 			return url;
-		url += `/${user}`;
-		if (typeof basename === 'undefined')
-			return url;
-		return `${url}/${basename}`;
+		url += `/${suffix}`;
+		return url;
 	}
 	updateServiceObjects()
 	{
@@ -4991,9 +4984,10 @@ class DiagramSection extends Section
 		const dt = new Date(diagram.timestamp);
 		let src = this.getPng(diagram.name);
 		if (!src && R.cloud)
-			src = R.cloud.getURL(diagram.user, diagram.basename + '.png');
+//			src = R.cloud.getURL(diagram.user, diagram.basename + '.png');
+			src = R.cloud.getURL(diagram.name + '.png');
 		const imgId = U.SafeId(`img-el_${diagram.name}`);
-		const elt = H3.div({class:'grabbable', imgId},
+		const elt = H3.div({class:'grabbable', id:imgId},
 			H3.table(
 			[
 				H3.tr(
@@ -5010,9 +5004,10 @@ class DiagramSection extends Section
 				]),
 				H3.tr(H3.td({class:'white', colspan:2}, H3.a({onclick:`Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')`},
 //															H3.img({src, id:`img-${diagram.elementId()}`, alt:"Not loaded", width:"200", height:"150"})))),
-															H3.img({src, imgId, alt:"Not loaded", width:"200", height:"150"})))),
+															H3.img({src, id:imgId, alt:"Not loaded", width:"200", height:"150"})))),
 				H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
-				H3.tr([H3.td(user, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
+//				H3.tr([H3.td(user, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
+				H3.tr([H3.td(diagram.name, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
 			]), {class:'grabbable', draggable:true, ondragstart:`Cat.D.DragElement(event, '${diagram.name}')`});
 		this.catalog.appendChild(elt);
 	}
@@ -5116,9 +5111,6 @@ class CatalogDiagramSection extends DiagramSection
 			const diagram = args.diagram;
 			switch(args.command)
 			{
-//				case 'new':
-//					that.add(diagram);
-//					break;
 				case 'new':
 				case 'default':
 					break;
