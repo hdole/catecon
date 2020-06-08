@@ -742,6 +742,7 @@ Create diagrams and execute morphisms.
 				switch(args.command)
 				{
 					case 'load':
+					case 'default':
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
 						break;
@@ -758,6 +759,7 @@ Create diagrams and execute morphisms.
 						break;
 					case 'addReference':
 					case 'removeReference':
+						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
 					case 'new':
 					case 'move':
@@ -2879,8 +2881,6 @@ R.default.debug = true;
 			}
 			else
 			{
-				let from = null;
-				let to = null;
 				if (CatObject.IsA(elt))
 					diagram.placeObject(e, elt, xy);
 				else if (Morphism.IsA(elt))
@@ -3363,7 +3363,7 @@ ${button}
 			throw 'no reference diagram';
 		if (save)
 		{
-			R.EmitDiagramEvent(diagram, 'addReference', name);
+			R.EmitDiagramEvent(R.diagram, 'addReference', diagram.name);
 			R.SaveLocal(R.diagram);
 			D.statusbar.show(e, `Diagram ${diagram.htmlName()} now referenced`);
 			diagram.log({command:'addReference', diagram:diagram.name});
@@ -3377,8 +3377,8 @@ ${button}
 		R.diagram.removeReference(name);
 		if (save)
 		{
-			R.EmitDiagramEvent(diagram, 'removeReference', name);
-			R.SaveLocal(diagram);
+			R.EmitDiagramEvent(R.diagram, 'removeReference', name);
+//			R.SaveLocal(R.diagram);
 			D.statusbar.show(e, `${diagram.htmlName()} reference removed`);
 			diagram.log({command:'removeReference', diagram:diagram.name});
 		}
@@ -4856,7 +4856,7 @@ class DiagramSection extends Section
 		if (!src && R.cloud)
 			src = R.cloud.getURL(diagram.name + '.png');
 		const imgId = U.SafeId(`img-el_${diagram.name}`);
-		const elt = H3.div({class:'grabbable', id:imgId},
+		const elt = H3.div({class:'grabbable', id},
 			H3.table(
 			[
 				H3.tr(
@@ -5889,7 +5889,7 @@ class Element
 	}
 	removeSVG()
 	{
-		if (this.svg)
+		if (this.svg && this.svg.parentNode)
 			this.svg.parentNode.removeChild(this.svg);
 	}
 	elementId()
@@ -6991,6 +6991,7 @@ class DiagramText extends Element
 			weight:			{value:	U.GetArg(nuArgs, 'weight', 'normal'),				writable:	true},
 		});
 		diagram && diagram.addElement(this);
+		this.refcnt = 1;
 	}
 	editText(e, attribute, value)	// only valid for attr == 'description'
 	{
@@ -8470,49 +8471,29 @@ class DeleteAction extends Action
 	{
 		const names = ary.map(m => m.name);
 		const elements = ary.map(elt => Cell.IsA(elt) ? diagram.getAssertion(elt.signature) : elt);		// convert cells to assertions
-		this.doit(e,diagram, elements);
+		const notDeleted = this.doit(e,diagram, elements);
+		diagram.selected.length = 0;
+		notDeleted.map(elt => diagram.addSelected(elt));
 		diagram.log({command:'delete', elements:names});
 		R.SaveLocal(diagram);
 	}
 	doit(e, diagram, items)
 	{
-		const stuff = new Set(items);
-		diagram.selected.length = 0;
-		const elements = [];
-		const findEm = function(m)	// find dependency order
+		const sorted = diagram.sortByCreationOrder(items).reverse();
+		const notDeleted = [];
+		sorted.map(elt =>
 		{
-			if (stuff.has(m))
-				elements.push(m);
-		};
-		diagram.domain.elements.forEach(findEm);
-		elements.reverse();	// delete in reverse order
-		for(let i=0; i<elements.length; ++i)
-		{
-			let s = elements[i];
-			if (DiagramObject.IsA(s))	// TODO what about morphisms as objects in 2Cat?
+			if (elt.refcnt == 1)
 			{
-				if (s.refcnt <= 1)
-					R.EmitObjectEvent('remove', s.name);
-				s.decrRefcnt();
+				diagram === R.diagram && R.EmitElementEvent(elt, 'remove');		// pre-warn
+				elt.decrRefcnt();
 			}
-			else if (DiagramMorphism.IsA(s))
-			{
-				if (s.refcnt <= 1)		// events before removal
-					R.EmitMorphismEvent('remove', s.name);
-				s.decrRefcnt();
-			}
-			else if (DiagramText.IsA(s))
-			{
-				R.EmitTextEvent('remove', s.name);		//events before removal
-				s.decrRefcnt();
-			}
-			else if (Assertion.IsA(s))
-			{
-				R.EmitAssertionEvent('remove', s.name);		//events before removal
-				s.decrRefcnt();
-			}
-			R.EmitAssertionEvent('remove', '');		// now one last nameless event to state its all over
-		}
+			else if (elt.refcnt > 1)
+				notDeleted.push(elt);
+		});
+		if (notDeleted.length > 0)
+			D.statusbar.show(e, 'Cannot delete an element due to it being used elsewhere');
+		return notDeleted;
 	}
 	replay(e, diagram, args)
 	{
@@ -8521,28 +8502,12 @@ class DeleteAction extends Action
 	}
 	hasForm(diagram, ary)	// all are deletable
 	{
-		const elements = ary.filter(elt => DiagramObject.IsA(elt) ? [...elt.domains, elt.codomains].reduce((r, m) => r && !ary.includes(m), true) : true);
+//		const elements = ary.filter(elt => DiagramObject.IsA(elt) ? [...elt.domains, elt.codomains].reduce((r, m) => r && !ary.includes(m), true) : true);
 		if (!diagram.isEditable())
 			return false;
-		const morphisms = [];
-		const texts = [];
-		const objects = [];
-		const assertions = [];
-		for (let i=0; i<ary.length; ++i)
-		{
-			const elt = ary[i];
-			if (DiagramComposite.IsA(elt) && elt.refcnt > 1)
-				return false;
-			if (DiagramMorphism.IsA(elt))
-				elt.refcnt === 1 && morphisms.push(elt);
-			else if (DiagramText.IsA(elt))
-				texts.push(elt);
-			else if (Assertion.IsA(elt))
-				assertions.push(elt);
-			else if (elt.isIsolated())
-				objects.push(elt);
-		}
-		return morphisms.length + objects.length + texts.length + assertions.length === elements.length;
+		if (ary.length === 1 && ary[0].refcnt > 1)
+			return false;
+		return true;
 	}
 }
 
@@ -10611,12 +10576,12 @@ class DataAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1)
+		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]))
 		{
 			const from = ary[0];
 			const to = ary[0].to;
 //			if (diagram.isIsolated(from) && diagram.elements.has(to.basename) && Morphism.IsA(to) && !('code' in to))
-			if (diagram.elements.has(to.basename) && Morphism.IsA(to) && !('code' in to))
+			if (diagram.elements.has(to.basename) && !('code' in to))
 				return  to.constructor.name === 'Morphism' || to.constructor.name === 'Identity';
 		}
 		return false;
@@ -11923,8 +11888,8 @@ class DiagramComposite extends DiagramMorphism
 			this.domain.nodes.delete(this);
 			this.morphisms.map((m, i) =>
 			{
-				m.codomain.nodes.delete(this);
-				m.decrRefcnt();
+				m && m.codomain.nodes.delete(this);
+				m && m.decrRefcnt();
 			});
 		}
 		super.decrRefcnt();
@@ -14866,6 +14831,13 @@ const o66 = scanning[0];
 		}
 		return issues;
 		*/
+	}
+	sortByCreationOrder(ary)
+	{
+		const indexing = new Map;
+		let ndx = 0;
+		this.domain.elements.forEach(function(elt) { indexing.set(elt, ndx++); });
+		return ary.sort(function(a, b) { return indexing.get(a) < indexing.get(b); });
 	}
 	static Codename(args)
 	{
