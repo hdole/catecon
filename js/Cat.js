@@ -728,8 +728,18 @@ Create diagrams and execute morphisms.
 						if (args.name !== '')	// wait till the end
 							break;
 					case 'new':
-					case 'fuse':
 					case 'detach':
+						args.diagram.makeCells();
+						R.SaveLocal(args.diagram);
+						break;
+				}
+			});
+			window.addEventListener('Object', function(e)
+			{
+				const args = e.detail;
+				switch(args.command)
+				{
+					case 'fuse':
 						args.diagram.makeCells();
 						R.SaveLocal(args.diagram);
 						break;
@@ -1410,11 +1420,19 @@ Create diagrams and execute morphisms.
 			console.log('emit OBJECT event', {command, name});
 		window.dispatchEvent(new CustomEvent('Object', {detail:	{diagram:R.diagram, command, name}, bubbles:true, cancelable:true}));
 	}
-	static EmitMorphismEvent(command, name)
+	static EmitMorphismEvent(command, name, extra = {})
 	{
 		if (R.default.debug)
 			console.log('emit MORPHISM event', {command, name});
-		window.dispatchEvent(new CustomEvent('Morphism', {detail:	{diagram:R.diagram, command, name}, bubbles:true, cancelable:true}));
+		const detail =
+		{
+			diagram:R.diagram,
+			command,
+			name,
+		};
+		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
+		const args = {detail, bubbles:true, cancelable:true};
+		window.dispatchEvent(new CustomEvent('Morphism', args));
 	}
 	static EmitAssertionEvent(command, name)
 	{
@@ -2561,6 +2579,8 @@ class D
 		D.Resize();
 		window.addEventListener('resize', D.Resize);
 		window.addEventListener('Diagram', D.UpdateDiagramDisplay);
+		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
+		window.addEventListener('Object', D.UpdateObjectDisplay);
 		D.Autohide();
 		function updateSelected(e)
 		{
@@ -3120,6 +3140,44 @@ ${button}
 				diagram.updateMorphisms();
 				D.ShowDiagram(R.diagram);
 				diagram.svgTranslate.classList.add('trans025s');
+				break;
+			default:
+				break;
+		}
+	}
+	static UpdateMorphismDisplay(e)
+	{
+		const args = e.detail;
+		const diagram = args.diagram;
+		if (!diagram)
+			return;
+		const elt = diagram.getElement(args.name);
+		switch(args.command)
+		{
+			case 'new':
+				diagram.domain.updateHomset(elt.domain, elt.codomain);
+				break;
+			case 'detach':
+				diagram.domain.updateHomset(args.old, args.dual ? elt.domain : elt.codomain);
+				break;
+			default:
+				break;
+		}
+	}
+	static UpdateObjectDisplay(e)
+	{
+		const args = e.detail;
+		const diagram = args.diagram;
+		if (!diagram)
+			return;
+		const obj = diagram.getElement(args.name);
+		switch(args.command)
+		{
+			case 'fuse':	// scan all 1-connected objects to refresh
+				const homObjs = new Set;
+				obj.domains.forEach(function(m) { homObjs.add(m.codomain); });
+				obj.codomains.forEach(function(m) { homObjs.add(m.domain); });
+				homObjs.forEach(function(o) { diagram.domain.updateHomset(obj, o); });
 				break;
 			default:
 				break;
@@ -8440,14 +8498,13 @@ class DetachDomainAction extends Action
 		const from = ary[0];
 		this.doit(e, diagram, from);
 		diagram.log({command:this.name, from:from.name});
-		R.SaveLocal(diagram);
 		diagram.makeSelected(e, from);
 	}
 	doit(e, diagram, from)
 	{
-		const obj = this.dual ? from.codomain : from.domain;
-		diagram.addSVG(diagram.domain.detachDomain(from, {x:obj.x + D.default.toolbar.x, y:obj.y + D.default.toolbar.y }, this.dual));
-		R.EmitMorphismEvent('detach', obj.name);
+		const old = this.dual ? from.codomain : from.domain;
+		diagram.addSVG(diagram.domain.detachDomain(from, {x:old.x + D.default.toolbar.x, y:old.y + D.default.toolbar.y }, this.dual));
+		R.EmitMorphismEvent('detach', from.name, {dual:this.dual, old});
 		from.update();
 	}
 	replay(e, diagram, args)
@@ -8503,6 +8560,7 @@ class DeleteAction extends Action
 			{
 				diagram === R.diagram && R.EmitElementEvent(elt, 'remove');		// pre-warn
 				elt.decrRefcnt();
+				Morphism.IsA(elt) && diagram.domain.removeMorphism(elt);
 			}
 			else if (elt.refcnt > 1)
 				notDeleted.push(elt);
@@ -10746,10 +10804,7 @@ class Category extends CatObject
 	getHomset(domain, codomain)
 	{
 		const homset = [];
-		this.forEachMorphism(function(m)
-		{
-			m.domain === domain && m.codomain === codomain && homset.push(m);
-		});
+		this.forEachMorphism(function(m) { m.domain === domain && m.codomain === codomain && homset.push(m); });
 		return homset;
 	}
 	static IsSink(ary)
@@ -11974,26 +12029,31 @@ class IndexCategory extends Category
 		codomain.codomains.forEach(function(m) { m.domain === domain ? homset.add(m) : null; });
 		return homset;
 	}
-	updateHomSetIndices(m)
+	updateHomset(domain, codomain)	// actually this a symmetric update
 	{
-		const homset = [...this.getHomset(m.domain, m.codomain)];
-		const dual = [...this.getHomset(m.codomain, m.domain)];
+		this.updateHomsetIndices(domain, codomain).map(m => m.update());;
+	}
+	updateHomsetIndices(domain, codomain)
+	{
+		const homset = [...this.getHomset(domain, codomain)];
+		const dual = [...this.getHomset(codomain, domain)];
 		const homLength = homset.length;
 		const dualLength = dual.length;
 		homset.map((m, i) => m.homSetIndex = (homLength === 1 ? -1 : i) + dualLength);
 		dual.map((m, i) => m.homSetIndex = (dualLength === 1 ? -1 : i) + homLength);
+		return [...homset, ...dual];
 	}
 	addMorphism(m)
 	{
 		m.domain.domains.add(m);
 		m.codomain.codomains.add(m);
-		this.updateHomSetIndices(m);
+		this.updateHomsetIndices(m.domain, m.codomain);
 	}
 	removeMorphism(m)
 	{
 		m.domain.domains.delete(m);
 		m.codomain.codomains.delete(m);
-		this.updateHomSetIndices(m);
+		this.updateHomsetIndices(m.domain, m.codomain);
 	}
 	detachDomain(from, xy, dual)
 	{
@@ -14292,9 +14352,9 @@ if (prototype === 'TerminalMorphism')
 			from.codomains.forEach(function(m) { m.setCodomain(target); m.update();});
 		}
 		R.EmitObjectEvent('remove', from.name);
-		save && R.SaveLocal(this);
+//		save && R.SaveLocal(this);
 		from.decrRefcnt();
-		R.EmitMorphismEvent('fuse', target.name);
+		R.EmitObjectEvent('fuse', target.name);
 		return target;
 	}
 	replayCommand(e, ndx)
