@@ -1481,6 +1481,26 @@ Create diagrams and execute morphisms.
 				debugger;
 		});
 	}
+	static CanDeleteDiagram(d)
+	{
+		const diagram = Diagram.IsA(d) ? d : R.$CAT.getElement(d.name);
+//		return ('refcnt' in diagram ? diagram.refcnt === 0 : true) &&
+		return diagram ? diagram.refcnt === 0 && R.UserHomeDiagramName(R.user.name) !== diagram.name && diagram.name !== R.diagram.name : true;
+	}
+	static DeleteDiagram(e, name)
+	{
+		const diagram = R.$CAT.getElement(name);
+		if (R.CanDeleteDiagram(diagram) && confirm('Are you sure you want to delete this diagram?'))
+		{
+			diagram.decrRefcnt();
+			R.catalog.delete(name);			// online list of diagrams
+			R.ServerDiagrams.delete(name);	// diagrams downloaded from server
+			R.Diagrams.delete(name);		// all local diagrams
+			R.SaveLocalDiagramList();
+			D.diagramPNG.delete(name);
+			['.json', '.png', '.log'].map(ext => localStorage.removeItem(`${diagram.name}${ext}`));		// remove local files
+		}
+	}
 }
 Object.defineProperties(R,
 {
@@ -2867,7 +2887,6 @@ R.default.debug = true;
 					if (elements.length > 0)
 					{
 						diagram.log({command: 'move', elements});
-	//					R.SaveLocal(diagram);
 						R.EmitDiagramEvent(diagram, 'move', elements.map(elt => elt.name).join(' '));
 					}
 				}
@@ -3252,9 +3271,11 @@ ${button}
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			ctx.drawImage(img, vp.x, vp.y, vp.width, vp.height, 0, 0, D.snapWidth, D.snapHeight);
 			D.url.revokeObjectURL(url);
-			const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 			if (fn)
+			{
+				const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 				fn(cargo, `${diagram.name}.png`);
+			}
 		};
 		img.crossOrigin = "";
 		img.src = url;
@@ -3433,7 +3454,6 @@ ${button}
 		if (save)
 		{
 			R.EmitDiagramEvent(R.diagram, 'addReference', diagram.name);
-			R.SaveLocal(R.diagram);
 			D.statusbar.show(e, `Diagram ${diagram.htmlName()} now referenced`);
 			diagram.log({command:'addReference', diagram:diagram.name});
 		}
@@ -3447,7 +3467,6 @@ ${button}
 		if (save)
 		{
 			R.EmitDiagramEvent(R.diagram, 'removeReference', name);
-//			R.SaveLocal(R.diagram);
 			D.statusbar.show(e, `${diagram.htmlName()} reference removed`);
 			diagram.log({command:'removeReference', diagram:diagram.name});
 		}
@@ -3552,7 +3571,7 @@ ${button}
 			return copy;
 		}
 		const copies = elements.map(e => pasteElement(e));
-		save && R.SaveLocal(diagram);
+//		save && R.SaveLocal(diagram);
 		return copies;
 	}
 	static SetClass(cls, on, ...elts)
@@ -4907,7 +4926,8 @@ class DiagramSection extends Section
 		super(title, parent, id, tip);
 		Object.defineProperties(this,
 		{
-			catalog:					{value:H3.div(),									writable: false},
+			catalog:					{value:H3.div(),		writable: false},
+			diagrams:					{value:[],				writable: false},
 		});
 		this.catalog.classList.add('catalog');
 		this.section.appendChild(this.catalog);
@@ -4917,18 +4937,26 @@ class DiagramSection extends Section
 		const id = this.getId(diagram.name);
 		if (document.getElementById(id))
 			return;
+		this.diagrams.push(diagram);
 		const user = 'user' in diagram ? diagram.user : diagram.username;
 		const dt = new Date(diagram.timestamp);
 		let src = this.getPng(diagram.name);
 		if (!src && R.cloud)
 			src = R.cloud.getURL(diagram.name + '.png');
 		const imgId = U.SafeId(`img-el_${diagram.name}`);
+		const toolbar = [...btns];
+		R.CanDeleteDiagram(diagram) && toolbar.push(D.GetButton3('delete3', `Cat.R.DeleteDiagram(event,'${diagram.name}')`, 'Delete diagram!'));
+		toolbar.push(D.DownloadButton3('JSON', `Cat.R.LoadDiagram('${diagram.name}').downloadJSON(event)`, 'Download JSON'));
+		toolbar.push(D.DownloadButton3('JS', `Cat.R.LoadDiagram('${diagram.name}').downloadJS(event)`, 'Download Javascript'));
+		toolbar.push(D.DownloadButton3('C++', `Cat.R.LoadDiagram('${diagram.name}').downloadCPP(event)`, 'Download C++'));
+		toolbar.push(D.DownloadButton3('PNG', `Cat.R.LoadDiagram('${diagram.name}').downloadPNG(event)`, 'Download PNG'));
 		const elt = H3.div({class:'grabbable', id},
 			H3.table(
 			[
 				H3.tr(
 				[
 					H3.td(H3.h4(U.HtmlEntitySafe(diagram.properName))),
+					/*
 					H3.td(
 						[
 							...btns,
@@ -4937,6 +4965,8 @@ class DiagramSection extends Section
 							D.DownloadButton3('C++', `Cat.R.LoadDiagram('${diagram.name}').downloadCPP(event)`, 'Download C++'),
 							D.DownloadButton3('PNG', `Cat.R.LoadDiagram('${diagram.name}').downloadPNG(event)`, 'Download PNG'),
 						], {class:'right'}),
+						*/
+					H3.td(toolbar, {class:'right'}),
 				]),
 				H3.tr(H3.td({class:'white', colspan:2}, H3.a({onclick:`Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')`},
 															H3.img({src, id:imgId, alt:"Not loaded", width:"200", height:"150"})))),
@@ -4960,6 +4990,24 @@ class DiagramSection extends Section
 	{
 		const elt = document.getElementById(this.getId(name));
 		elt && elt.parentNode.removeChild(elt);
+		let ndx = -1;
+		for (let i=0; i<this.diagrams.length; ++i)
+			if (this.diagrams.name === name)
+			{
+				ndx = i;
+				break;
+			}
+		if (ndx > -1)
+			this.diagrams.splice(ndx, 1);
+	}
+	refresh()
+	{
+		const diagrams = this.diagrams.slice();
+		diagrams.map(d =>
+		{
+			this.remove(d.name);
+			this.add(d);
+		});
 	}
 }
 
@@ -5182,9 +5230,16 @@ class DiagramPanel extends Panel
 					const images = [...document.querySelectorAll(`#img-${diagram.elementId()}`)];
 					images.map(img => img.src = png);
 					break;
+				default:
+					break;
 			}
 		});
-		window.addEventListener('Login', function(e) { D.diagramPanel.setToolbar(Cat.R.diagram); });
+		window.addEventListener('Login', function(e)
+		{
+			const args = e.detail;
+//			D.diagramPanel.setToolbar(Cat.R.diagram);
+			D.diagramPanel.refresh(e);
+		});
 	}
 	setProperName()
 	{
@@ -5221,7 +5276,10 @@ class DiagramPanel extends Panel
 		if (!diagram)
 			return;
 		const isUsers = diagram && (R.user.name === diagram.user);
-		const uploadBtn = (R.cloud && isUsers) ? H.td(D.GetButton('upload', 'Cat.R.diagram.upload(event)', 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '';
+		const uploadBtn = (R.cloud && isUsers) ? H.td(D.GetButton('upload', 'Cat.R.diagram.upload(event)',
+			'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '';
+		const deleteBtn = R.CanDeleteDiagram(diagram) ?
+			H.td(D.GetButton('delete', `Cat.R.DeleteDiagram(event, '${diagram.name}')`, 'Delete diagram', D.default.button.small, false, 'diagram-delete-btn'), 'buttonBar') : '';
 		let downcloudBtn = '';
 		if (R.diagram.refcnt <= 0 && R.cloud && R.ServerDiagrams.has(diagram.name))
 		{
@@ -5236,6 +5294,7 @@ class DiagramPanel extends Panel
 		}
 		const html = H.table(H.tr(
 					(isUsers ? H.td(DiagramPanel.GetLockBtn(diagram), 'buttonBar', 'lockBtn') : '') +
+					deleteBtn +
 					downcloudBtn +
 					uploadBtn +
 					H.td(D.DownloadButton('JSON', 'Cat.R.diagram.downloadJSON(event)', 'Download JSON'), 'buttonBar') +
@@ -5250,6 +5309,12 @@ class DiagramPanel extends Panel
 	expand()
 	{
 		super.expand("100%");
+	}
+	refresh(e)
+	{
+		this.setToolbar(Cat.R.diagram);
+		this.userDiagramSection.refresh();
+		this.catalogSection.refresh();
 	}
 	fetchRecentDiagrams()
 	{
@@ -5308,58 +5373,68 @@ class HelpPanel extends Panel
 			H.p(H.small(`Deployed ${date}`, 'smallCaps'), 'txtCenter') + H.br() +
 			H.button('Help', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'catActionHelpPnl\')"`) +
 			H.div(	H.h4('Mouse Actions') +
-					H.h5('Select') +
-						H.p('Select an object or a morphism with the mouse by left-clicking on the element.  Previously selected objects are unselected.') +
-					H.h5('Region Select') +
-						H.p('Click the mouse button, then drag without releasing to cover some elements, and then release to select those elements.') +
-					H.h5('Multi-Select With Shift Click') +
-						H.p('Shift left mouse click to add another element to the select list') +
-					H.h5('Control Drag') +
-						H.p('Left click with the mouse on an object with the Ctrl key down and then drag to create an identity morphism for that object.') +
-						H.p('Doing the same with a morphism makes a copy of the morphism.') +
-					H.h5('Mouse Wheel') +
-						H.p('Use the mouse wheel to zoom in and out.') +
+						H.h5('Select') +
+							H.p('Select an object or a morphism with the mouse by left-clicking on the element.  Previously selected objects are unselected.') +
+						H.h5('Region Select') +
+							H.p('Click the mouse button, then drag without releasing to cover some elements, and then release to select those elements.') +
+						H.h5('Multi-Select With Shift Click') +
+							H.p('Shift left mouse click to add another element to the select list') +
+						H.h5('Control Drag') +
+							H.p('Left click with the mouse on an object with the Ctrl key down and then drag to create an identity morphism for that object.') +
+							H.p('Doing the same with a morphism makes a copy of the morphism.') +
+						H.h5('Mouse Wheel') +
+							H.p('Use the mouse wheel to zoom in and out.') +
+						H.h5('Middle Mouse Button') +
+							H.p('Click and drag to pan the diagram view.') +
 					H.h4('Key Actions') +
-					H.h5('Arrow Keys') +
-						H.p('Pan the diagram view in the indicated direction.') +
-					H.h5('Delete') +
-						H.p('Selected objects or morphisms are deleted.  Some elements cannot be deleted if they are referred to by another element.') +
-					H.h5('Escape') +
-						H.p('Dismiss toolbar and side panels.') +
-					H.h5('Spacebar') +
-						H.p('Press the spacebar and move the mouse to pan the view.') +
-					H.h5('Home') +
-						H.p('Return to the home view.') +
-					H.h5('D') +
-						H.p('Toggle the diagram panel.') +
-					H.h5('F') +
-						H.p('Place the floating point number object if it exists.') +
-					H.h5('H') +
-						H.p('Toggle the help panel.') +
-					H.h5('L') +
-						H.p('Toggle the login panel.') +
-					H.h5('M') +
-						H.p('Toggle the morphism panel.') +
-					H.h5('N') +
-						H.p('Place the natural number object if it exists.') +
-					H.h5('O') +
-						H.p('Toggle the object panel.') +
-					H.h5('s') +
-						H.p('Toggle the settings panel.') +
-					H.h5('S') +
-						H.p('Place the string object if it exists.') +
-					H.h5('Y') +
-						H.p('Toggle the tty panel.') +
-					H.h5('Z') +
-						H.p('Place the integers object if it exists.') +
-					H.h5('3') +
-						H.p('Toggle the 3D panel.') +
-					H.h5('Control-A') +
-						H.p('Select all elements.') +
-					H.h5('Control-C') +
-						H.p('Copy elements into the paste buffer.') +
-					H.h5('Control-V') +
-						H.p('Paste elements from the paste buffer.')
+						H.h5('Arrow Keys') +
+							H.p('Pan the diagram view in the indicated direction.') +
+						H.h5('Delete') +
+							H.p('Selected objects or morphisms are deleted.  Some elements cannot be deleted if they are referred to by another element.') +
+						H.h5('Escape') +
+							H.p('Dismiss toolbar and side panels.') +
+						H.h5('Spacebar') +
+							H.p('Press the spacebar and move the mouse to pan the view.') +
+						H.h5('Home') +
+							H.p('Return to the home view.') +
+						H.h5('D') +
+							H.p('Toggle the diagram panel.') +
+						H.h5('F') +
+							H.p('Place the floating point number object if it exists.') +
+//					H.h5('H') +
+//						H.p('Toggle the help panel.') +
+//					H.h5('L') +
+//						H.p('Toggle the login panel.') +
+//					H.h5('M') +
+//						H.p('Toggle the morphism panel.') +
+//					H.h5('N') +
+//						H.p('Place the natural number object if it exists.') +
+//					H.h5('O') +
+//						H.p('Toggle the object panel.') +
+//					H.h5('s') +
+//						H.p('Toggle the settings panel.') +
+//					H.h5('S') +
+//						H.p('Place the string object if it exists.') +
+//					H.h5('Y') +
+//						H.p('Toggle the tty panel.') +
+//					H.h5('Z') +
+//						H.p('Place the integers object if it exists.') +
+//					H.h5('3') +
+//						H.p('Toggle the 3D panel.') +
+						H.h5('Control-A') +
+							H.p('Select all elements.') +
+						H.h5('Control-C') +
+							H.p('Copy elements into the paste buffer.') +
+						H.h5('Control-D') +
+							H.p('Open diagram panel.') +
+						H.h5('Control-L') +
+							H.p('Open output panel.') +
+						H.h5('Control-M') +
+							H.p('Open morphism panel.') +
+						H.h5('Control-O') +
+							H.p('Open object panel.') +
+						H.h5('Control-V') +
+							H.p('Paste elements from the paste buffer.')
 					, 'section', 'catActionHelpPnl') +
 			H.button('Category Theory', 'sidenavAccordion', 'catHelpPnlBtn', 'References', `onclick="Cat.D.Panel.SectionToggle(event, this, \'catHelpPnl\')"`) +
 			H.div(
@@ -5604,6 +5679,8 @@ class DiagramElementSection extends ElementSection
 			const diagram = args.diagram;
 			const name = args.name;
 			let elt = diagram.getElement(name);
+			if (!elt)
+				return;
 			if (DiagramMorphism.IsA(elt) || DiagramObject.IsA(elt))
 				elt = elt.to;
 			switch(args.command)
@@ -8554,17 +8631,21 @@ class DeleteAction extends Action
 	{
 		const sorted = diagram.sortByCreationOrder(items).reverse();
 		const notDeleted = [];
+		let hasMorphism = false;
 		sorted.map(elt =>
 		{
 			if (elt.refcnt == 1)
 			{
 				diagram === R.diagram && R.EmitElementEvent(elt, 'remove');		// pre-warn
+				hasMorphism = hasMorphism || Morphism.IsA(elt);
 				elt.decrRefcnt();
 				Morphism.IsA(elt) && diagram.domain.removeMorphism(elt);
 			}
 			else if (elt.refcnt > 1)
 				notDeleted.push(elt);
 		});
+		if (hasMorphism)
+			R.EmitMorphismEvent('remove', '');		// signal that all morphism deletions are done
 		if (notDeleted.length > 0)
 			D.statusbar.show(e, 'Cannot delete an element due to it being used elsewhere');
 		return notDeleted;
@@ -13995,7 +14076,8 @@ class Diagram extends Functor
 	}
 	downloadPNG()
 	{
-		D.Svg2canvas(this, D.Download);
+//		D.Svg2canvas(this, D.Download);
+		D.Download(D.diagramPNG.get(this.name), `${this.name}.png`);
 	}
 	downloadLog(e)
 	{
