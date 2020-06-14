@@ -1551,7 +1551,7 @@ function %Type(args)
 `
 	});
 	const Ftrip3 = threeD.get('ProductObject', {objects:[f3, f3, f3]});
-	const AxAxAToQuadraticBezierCurve3= MakeMorphism(args, 'fff2toQB3', 'Morphism', '1D', 'visualize three points as a Bezier curbe in 3D', Ftrip3, d3,
+	const AxAxAToQuadraticBezierCurve3= MakeMorphism(args, 'fff2toQB3', 'Morphism', '1D', 'visualize three points as a Bezier curve in 3D', Ftrip3, d3,
 	{
 		js:
 `
