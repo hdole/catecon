@@ -651,6 +651,13 @@ td.white
 	user-select:	none;
 }
 
+.grabme
+{
+	fill:			none;
+	stroke:			#fff0;
+	stroke-width:	30px;
+}
+
 .fuseMorphism
 {
 	fill:			blue;
