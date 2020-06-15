@@ -719,7 +719,7 @@ Create diagrams and execute morphisms.
 				home.home();
 				R.SaveLocal(home);
 				R.diagram = home;
-				R.EmitCATEvent('new', diagram.name);
+				R.EmitCATEvent('new', home.name);
 				R.Actions.javascript.loadHTML(fn);
 			}
 			else
@@ -806,9 +806,9 @@ Create diagrams and execute morphisms.
 					case 'addReference':
 					case 'removeReference':
 					case 'delete':
+						R.SaveLocal(diagram);
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
-						R.SaveLocal(args.diagram);
 						break;
 				}
 			});
@@ -1144,7 +1144,7 @@ Create diagrams and execute morphisms.
 			{
 				replay(e, diagram, args)
 				{
-					D.AddReference(args.diagram, false);
+					D.AddReference(e, args.name, false);
 				}
 			};
 			R.ReplayCommands.set('addReference', replayAddReference);
@@ -1152,7 +1152,7 @@ Create diagrams and execute morphisms.
 			{
 				replay(e, diagram, args)
 				{
-					D.RemoveReference(e, args.diagram, false);
+					D.RemoveReference(e, args.name);
 				}
 			};
 			R.ReplayCommands.set('removeReference', replayRemoveReference);
@@ -2298,10 +2298,10 @@ class Toolbar
 		{
 			const obj = diagram.getSelected();
 			const bbox = diagram.diagramToUserCoords(obj.svg.getBBox());
-			xy.y = bbox.y - D.default.margin - toolbox.height;
+			xy.y = bbox.y + D.default.margin + toolbox.height;
 		}
 		else
-			xy.y = xy.y - D.default.margin - toolbox.height;
+			xy.y = xy.y + D.default.margin + toolbox.height;
 		element.style.left = `${xy.x - toolbox.width/2}px`;
 		element.style.top = `${xy.y}px`;
 		D.Drag(element, 'toolbar-drag-handle');
@@ -3367,6 +3367,8 @@ ${button}
 	}
 	static Svg2canvas(diagram, fn)
 	{
+		if (!R.diagram || !diagram.svgRoot || !R.diagram.svgRoot)
+			return;
 		const notUs = diagram !== R.diagram;
 		if (notUs)	// for booting
 		{
@@ -3581,34 +3583,29 @@ ${button}
 		const blob = new Blob([string], {type:`application/${type}`});
 		D.Download(D.url.createObjectURL(blob), filename);
 	}
-	static AddReference(e, name, save = true)
+	static AddReference(e, name)
 	{
-		const diagram = R.LoadDiagram(name);
-		if (diagram)
-			diagram.addReference(name);
-		else
-			throw 'no reference diagram';
-		if (save)
-		{
-			R.EmitDiagramEvent(diagram, 'addReference', name);
-			D.statusbar.show(e, `Diagram ${diagram.htmlName()} now referenced`);
-			diagram.log({command:'addReference', diagram:name});
-			diagram.antilog({command:'removeReference', diagram:name});
-		}
+		const diagram = R.diagram;
+		const ref = R.LoadDiagram(name);
+		if (!ref)
+			throw 'no diagram';
+		diagram.addReference(name);
+		R.EmitDiagramEvent(diagram, 'addReference', name);
+		D.statusbar.show(e, `Diagram ${ref.htmlName()} now referenced`);
+		diagram.log({command:'addReference', name});
+		diagram.antilog({command:'removeReference', name});
 	}
-	static RemoveReference(e, name, save = true)
+	static RemoveReference(e, name)
 	{
-		const diagram = R.LoadDiagram(name);
-		if (!diagram)
+		const diagram = R.diagram;
+		const ref = R.LoadDiagram(name);
+		if (!ref)
 			throw 'no reference diagram';
 		diagram.removeReference(name);
-		if (save)
-		{
-			R.EmitDiagramEvent(diagram, 'removeReference', name);
-			D.statusbar.show(e, `${diagram.htmlName()} reference removed`);
-			diagram.log({command:'removeReference', diagram:name});
-			diagram.antilog({command:'addReference', diagram:name});
-		}
+		R.EmitDiagramEvent(diagram, 'removeReference', name);
+		D.statusbar.show(e, `${diagram.htmlName()} reference removed`);
+		diagram.log({command:'removeReference', name});
+		diagram.antilog({command:'addReference', name});
 	}
 	static ShowInput(name, id, factor)
 	{
@@ -5367,15 +5364,6 @@ class DiagramPanel extends Panel
 				case 'default':
 					that.categoryElt.innerHTML = diagram.codomain.htmlName();
 					that.refresh();
-					/*
-					that.properNameElt.innerHTML = diagram.htmlName();
-					that.descriptionElt.innerHTML = diagram.description;
-					that.userElt.innerHTML = diagram.user;
-					that.properNameEditElt.innerHTML = !diagram.isEditable() ? '' :
-						D.GetButton('edit', `Cat.D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
-					that.descriptionEditElt.innerHTML = !diagram.isEditable() ? '' :
-						D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', 'edit_${diagram.name}', 'description')`, 'Edit');
-						*/
 					that.setToolbar(diagram);
 					const dt = new Date(diagram.timestamp);
 					that.timestampElt.innerHTML = dt.toLocaleString();
@@ -6655,7 +6643,7 @@ class Graph
 		else
 		{
 			let result = false;
-			this.graphs.map(g => result = result || g.addTag(tag));
+			this.graphs.map(g => result = g.addTag(tag) || result);
 			return result;
 		}
 	}
@@ -14899,7 +14887,6 @@ if (prototype === 'TerminalMorphism')
 			const src = scanning.pop();
 			src.domains.forEach(function(m)
 			{
-//				if (FactorMorphism.IsA(m.to) || scanned.has(m))
 				if (isConveyance(m.to) || scanned.has(m))
 					return;
 				tagInfo(m);
@@ -14909,21 +14896,11 @@ if (prototype === 'TerminalMorphism')
 		}
 
 		//
-		// look for inputs; they have no info
+		// look for inputs; they have no info; there will be too many at first
 		//
 		let inputs = new Set;
 		let isIt = true;
-		objects.map(o =>
-		{
-			const grph = obj2graph.get(o);
-			if (grph.noTag(tag))
-			{
-//				issues.push({message:'Input', element:o});
-				inputs.add(o);
-//				o.svg.classList.add('greenGlow');
-			}
-		});
-
+		objects.map(o => obj2graph.get(o).noTag(tag) && inputs.add(o));
 		//
 		// find all reference objects in the connected diagram
 		//
@@ -14940,7 +14917,6 @@ if (prototype === 'TerminalMorphism')
 				return;		// cannot be a reference if it received info
 			if (ProductObject.IsA(domain) && !domain.dual)
 			{
-if (obj.basename === 'o_88')debugger;
 				const projections = [];
 				obj.domains.forEach(function(m)
 				{
@@ -14976,25 +14952,22 @@ if (obj.basename === 'o_88')debugger;
 			{
 			});
 		});
-
-
-
-
-
-		objects.map(o =>		// merge tags from morphism graphs to object graphs
+		//
+		// merge tags from morphism graphs to object graphs
+		//
+		objects.map(o =>
 		{
-			const og = obj2graph.get(o);
+			const graph = obj2graph.get(o);
 			o.domains.forEach(function(m)
 			{
 				const domGraph = m.graph.graphs[0];
-				og.scan(function(g, fctr)
+				graph.scan(function(g, fctr)
 				{
 					domGraph.getFactor(fctr).tags.map(t => g.addTag(t));		// copy tags from morphism to object's graph
 				});
 			});
 		});
 
-//		scanning = factorMorphisms.filter(fm => [...fm.codomain.domains].filter(codout => !isConveyance(codout)).length === 0);
 		scanning = [...references];
 		function backLinkTag(morGraph, barGraph, tag)
 		{
@@ -15024,6 +14997,9 @@ if (obj.basename === 'o_88')debugger;
 		while(scanning.length > 0)
 		{
 			const obj = scanning.pop();
+			const graph = obj2graph.get(obj);
+			if (graph.hasTag(tag))
+				inputs.delete(obj);
 			obj.domains.forEach(function(m)
 			{
 				if (FactorMorphism.IsA(m.to))
@@ -15043,18 +15019,24 @@ if (obj.basename === 'o_88')debugger;
 			const fctr = graph.getFactor(ndx);
 			return fctr.addTag(tag);
 		}
-//		scanning = [...inputs];
 		scanning = inputs.slice();
 		scanned.clear();
-const o66 = scanning[0];
 		while(scanning.length > 0)
 		{
 			const input = scanning.pop();
 			scanned.add(input);
+			const hasTag = obj2graph.get(input).hasTag(tag);
 			input.domains.forEach(function(dm)
 			{
-//				if (propTag(dm, dm.to, dm.graph, getBarGraph(dm), tag, setTag) && !scanned.has(dm.codomain))
-				if (!isConveyance(dm) && !scanned.has(dm.codomain))
+				if (isConveyance(dm))
+				{
+					if (!hasTag)
+					{
+						references.delete(dm);
+						scanning.push(dm.codomain);
+					}
+				}
+				else if (!scanned.has(dm.codomain))
 				{
 					propTag(dm, dm.to, dm.graph, getBarGraph(dm), tag, setTag);
 					scanning.push(dm.codomain);
@@ -15062,7 +15044,6 @@ const o66 = scanning[0];
 			});
 			input.codomains.forEach(function(dm)
 			{
-//				isConveyance(dm) && !scanned.has(dm.domain) && backLinkTag(dm.graph, getBarGraph(dm), tag) && scanning.push(dm.domain);
 				if (isConveyance(dm))
 				{
 					if (!scanned.has(dm.domain))
@@ -15148,8 +15129,47 @@ const o66 = scanning[0];
 //		references = [...references];
 //		references.map(r => r.svg_name.classList.add('glow'));
 //		sources.forEach(glowMe);
+//		glow = 'glow';
+//		references.forEach(glowMe);
+		glow = 'greenGlow';
+		inputs.forEach(glowMe);
+		glow = 'warningGlow';
+		sources.forEach(glowMe);
+
+		const composites = new Map;		// object to array of morphism arrays for composing; object is the domain of each outbound composite
+		function traceComp(o, comp)
+		{
+			const outbound = [...o.domains].filter(m => !references.has(m));
+			if (outbound.length === 1)
+			{
+				comp.push(outbound[0]);		// add to current composite
+				traceComp(outbound[0].codomain, comp);
+			}
+			else if (outbound.length > 1)
+			{
+				if (!composites.has(o))
+					composites.set(o, []);
+				const objComps = composites.get(o);
+				outbound.map(ob =>
+				{
+					const outComp = [ob];
+					objComps.push(outComp);
+					traceComp(ob.codomain, outComp);		// start new composite
+				});
+			}
+		}
+		[...inputs, ...sources].map(o =>
+		{
+			const objComps = [];
+			composites.set(o, objComps);
+			const comp = [];
+			objComps.push(comp);
+			traceComp(o, comp);
+		});
+
 		glow = 'glow';
-		refObjects.forEach(glowMe);
+//		[...composites.values()].map(obj => obj.map(obj => obj.map(comp => comp.map(m => glowMe(m)))));
+		[...composites.values()].map(obj => obj.map(obj => obj.map(m => glowMe(m))));
 		return issues;
 
 		/*
