@@ -6368,16 +6368,16 @@ class Graph
 		{
 			const domRoot = data.domRoot.slice();
 			const codRoot = data.codRoot.slice();
-			if ('dual' in data && data.dual)
-			{
-				U.arraySet(this, 'links', domRoot);
-				U.arraySet(data.domRoot, 'links', codRoot);
-			}
-			else
-			{
+//			if ('dual' in data && data.dual)
+//			{
+//				U.arraySet(this, 'links', domRoot);
+//				U.arraySet(data.domRoot, 'links', codRoot);
+//			}
+//			else
+//			{
 				U.arraySet(this, 'links', codRoot);
 				U.arraySet(data.cod, 'links', domRoot);
-			}
+//			}
 			if ('tags' in data)
 			{
 				U.arrayInclude(this, 'tags', data.tag);
@@ -11502,6 +11502,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 		nuArgs.codomain = source.codomain;
 		super(diagram, nuArgs);
 		this.source = source;
+		this.base = this.getBase();
 		this.signature = this.source.signature;
 		this.source.incrRefcnt();
 		if (this.constructor.name === 'NamedMorphism')
@@ -11530,6 +11531,16 @@ class NamedMorphism extends Morphism	// name of a morphism
 			return '';
 		helped.add(this.name);
 		return super.help() + H.p(`Named morphism of ${this.source.htmlName()}`);
+	}
+	getBase()
+	{
+		if ('base' in this)
+			return this.base;
+		let source = this.source;
+		while(NamedMorphism.IsA(source))
+			source = source.source;
+		this.base = source;
+		return source;
 	}
 	loadEquivalences()	// don't call in Morphism constructor since signature may change
 	{
@@ -12860,10 +12871,13 @@ class FactorMorphism extends Morphism
 						++offset;
 						return;
 					}
-					codRoot = ndx.slice();
-					codRoot.unshift(1);
-					domRoot = this.factors.length > 1 ? [0, i] : [0];
-					factor.bindGraph({cod:factor, index:[], tag:this.constructor.name, domRoot, codRoot, offset, dual:this.dual});
+//					codRoot = ndx.slice();
+//					codRoot.unshift(1);
+//					domRoot = this.factors.length > 1 ? [0, i] : [0];
+					domRoot = ndx.slice();
+					domRoot.unshift(1);
+					codRoot = this.factors.length > 1 ? [0, i] : [0];
+					factor.bindGraph({cod:graph.graphs[0], index:[], tag:this.constructor.name, domRoot, codRoot, offset, dual:this.dual});
 				}
 				else
 				{
@@ -12987,7 +13001,7 @@ class FactorMorphism extends Morphism
 			throw 'TODO';
 		return U.SigArray(sigs);
 	}
-	static IsA(m) { return FactorMorphism.prototype.isPrototypeOf(m); }
+	static IsA(m) { return FactorMorphism.prototype.isPrototypeOf(m) || (NamedMorphism.prototype.isPrototypeOf(m) && FactorMorphism.prototype.isPrototypeOf(m.base)); }
 }
 
 class DataMorphism extends Morphism
@@ -14777,7 +14791,7 @@ if (prototype === 'TerminalMorphism')
 	assemble(e, base)
 	{
 		let scanning = [base];
-		const scanned = new Set;
+		let scanned = new Set;
 		const diagram = this;
 		let morphisms = new Set;
 		const issues = [];
@@ -14792,19 +14806,18 @@ if (prototype === 'TerminalMorphism')
 		function isConveyance(m)
 		{
 			const morph = DiagramMorphism.IsA(m) ? m.to : m;
-			return Identity.IsA(morph) || FactorMorphism.IsA(morph);
+			return Identity.IsA(morph) || FactorMorphism.IsA(morph) || (NamedMorphism.IsA(morph) && FactorMorphism.IsA(morph.base));
 		}
 		while(scanning.length > 0)	// find loops or homsets > 1
 		{
 			const domain = scanning.pop();
-			scanned.add(domain);
 			objects.add(domain);
+			[...domain.codomains].filter(domin => !isConveyance(domin.to)).length === 0 && sources.add(domain);
 			const projections = [];
 			domain.domains.forEach(function(m)
 			{
 				morphisms.add(m);
 				isConveyance(m) && references.add(m);		// candidate reference
-				[...m.domain.codomains].filter(domin => !isConveyance(domin.to)).length === 0 && !isConveyance(m.to) && sources.add(m.domain);
 				m.makeGraph();
 				if (m.isEndo())
 				{
@@ -14818,12 +14831,12 @@ if (prototype === 'TerminalMorphism')
 					issues.push({message:`Codomain ${m.codomain} has already been scanned`, element:m});
 					return;		// do not continue on issue
 				}
-				scanning.push(m.codomain);
+				!scanned.has(m.codomain) && scanning.push(m.codomain) && scanned.add(m.codomain);
 			});
 			domain.codomains.forEach(function(m)
 			{
 				morphisms.add(m);
-				!scanned.has(m.domain) && scanning.push(m.domain);
+				!scanned.has(m.domain) && scanning.push(m.domain) && scanned.add(m.domain);
 			});
 		}
 		if (issues.length > 0)
@@ -14835,11 +14848,10 @@ if (prototype === 'TerminalMorphism')
 		//
 		// create graph for each object in the connected diagram
 		//
-		const obj2graph = new Map;
 		function getBarGraph(dm)
 		{
-			const domGraph = obj2graph.get(dm.domain);
-			const codGraph = obj2graph.get(dm.codomain);
+			const domGraph = dm.domain.assyGraph;
+			const codGraph = dm.codomain.assyGraph;
 			const barGraph = new Graph;
 			barGraph.graphs.push(domGraph);
 			barGraph.graphs.push(codGraph);
@@ -14847,11 +14859,9 @@ if (prototype === 'TerminalMorphism')
 		}
 		objects.map(o =>
 		{
-			obj2graph.set(o, o.to.getGraph());
+			o.assyGraph = o.to.getGraph();
 			o.svg.classList.remove('glow', 'badGlow', 'warningGlow', 'greenGlow');
 		});	// setup graphs
-		if (R.default.debug)
-			objects.map(o => o.assyGraph = obj2graph.get(o));
 		//
 		// propagate info for all non-factor morphisms in the connected diagram
 		//
@@ -14887,11 +14897,13 @@ if (prototype === 'TerminalMorphism')
 			const src = scanning.pop();
 			src.domains.forEach(function(m)
 			{
-				if (isConveyance(m.to) || scanned.has(m))
+				const to = m.to;
+				if (FactorMorphism.IsA(to) && !to.dual)
+					return;
+				if (Identity.IsA(to) || (NamedMorphism.IsA(to) && FactorMorphism.IsA(to.base) && !to.base.dual))
 					return;
 				tagInfo(m);
-				scanned.add(m);
-				!scanned.has(m.codomain) && scanning.push(m.codomain);
+				!scanned.has(m.codomain) && scanning.push(m.codomain) && scanned.add(m.codomain);
 			});
 		}
 
@@ -14900,7 +14912,7 @@ if (prototype === 'TerminalMorphism')
 		//
 		let inputs = new Set;
 		let isIt = true;
-		objects.map(o => obj2graph.get(o).noTag(tag) && inputs.add(o));
+		objects.map(o => o.assyGraph.noTag(tag) && inputs.add(o));
 		//
 		// find all reference objects in the connected diagram
 		//
@@ -14913,7 +14925,7 @@ if (prototype === 'TerminalMorphism')
 		objects.forEach(function(obj)
 		{
 			const domain = NamedObject.IsA(obj.to) ? obj.to.base : obj.to;
-			if (existsTag(obj2graph.get(obj), tag))
+			if (existsTag(obj.assyGraph, tag))
 				return;		// cannot be a reference if it received info
 			if (ProductObject.IsA(domain) && !domain.dual)
 			{
@@ -14921,7 +14933,7 @@ if (prototype === 'TerminalMorphism')
 				obj.domains.forEach(function(m)
 				{
 					if ((FactorMorphism.IsA(m.to) && !m.to.dual) || Identity.IsA(m.to))
-						(inputs.has(m.codomain) || obj2graph.get(m.codomain).hasTag(tag)) && projections.push(m);
+						(inputs.has(m.codomain) || m.codomain.assyGraph.hasTag(tag)) && projections.push(m);
 				});
 				const factors = new Set;
 				const graph = domain.getGraph();
@@ -14957,7 +14969,7 @@ if (prototype === 'TerminalMorphism')
 		//
 		objects.map(o =>
 		{
-			const graph = obj2graph.get(o);
+			const graph = o.assyGraph;
 			o.domains.forEach(function(m)
 			{
 				const domGraph = m.graph.graphs[0];
@@ -14974,7 +14986,12 @@ if (prototype === 'TerminalMorphism')
 			let didAdd = false;
 			morGraph.graphs[1].scan(function(g, ndx)
 			{
-				g.links.map(lnk => didAdd = barGraph.getFactor(lnk).addTag(tag)) || didAdd;
+				g.links.map(lnk =>
+				{
+					const fctr = barGraph.getFactor(lnk);
+					if (fctr && fctr.hasTag(tag))
+						didAdd = barGraph.getFactor(lnk).addTag(tag) || didAdd
+				});
 			}, [1]);
 			return didAdd;
 		}
@@ -14997,7 +15014,7 @@ if (prototype === 'TerminalMorphism')
 		while(scanning.length > 0)
 		{
 			const obj = scanning.pop();
-			const graph = obj2graph.get(obj);
+			const graph = obj.assyGraph;
 			if (graph.hasTag(tag))
 				inputs.delete(obj);
 			obj.domains.forEach(function(m)
@@ -15010,7 +15027,6 @@ if (prototype === 'TerminalMorphism')
 			});
 		}
 		inputs = [...inputs];
-		inputs.map(i => issues.push({message:'Input', element:i}));
 		//
 		// do last info propagation for outputs
 		//
@@ -15024,66 +15040,77 @@ if (prototype === 'TerminalMorphism')
 		while(scanning.length > 0)
 		{
 			const input = scanning.pop();
-			scanned.add(input);
-			const hasTag = obj2graph.get(input).hasTag(tag);
+			const hasTag = input.assyGraph.hasTag(tag);
 			input.domains.forEach(function(dm)
 			{
-				if (isConveyance(dm))
+//				if (isConveyance(dm))
+				if ((FactorMorphism.IsA(dm.to) && !dm.to.dual) || Identity.IsA(dm.to) || (NamedMorphism.IsA(dm.to) && FactorMorphism.IsA(dm.to.base) && !dm.to.base.dual))
 				{
-					if (!hasTag)
+//					if (false && hasTag)
+//					{
+//						references.delete(dm);
+//						scanning.push(dm.codomain);
+//					}
+					if (dm.codomain.assyGraph.hasTag(tag))
 					{
-						references.delete(dm);
-						scanning.push(dm.codomain);
+						const ndx = inputs.indexOf(input);
+						ndx > -1 && inputs.splice(ndx, 1);
 					}
 				}
 				else if (!scanned.has(dm.codomain))
 				{
 					propTag(dm, dm.to, dm.graph, getBarGraph(dm), tag, setTag);
-					scanning.push(dm.codomain);
+					!scanning.includes(dm.codomain) && scanning.push(dm.codomain);
 				}
 			});
 			input.codomains.forEach(function(dm)
 			{
-				if (isConveyance(dm))
+				if (isConveyance(dm.to))
 				{
-					if (!scanned.has(dm.domain))
-						backLinkTag(dm.graph, getBarGraph(dm), tag) && scanning.push(dm.domain);
+					if (!scanned.has(dm.to.dual ? dm.codomain : dm.domain))
+						backLinkTag(dm.graph, getBarGraph(dm), tag) && !scanning.includes(dm.domain) && scanning.push(dm.domain);
 					else
 						references.delete(dm);
 				}
 			});
+			scanned.add(input);
 		}
+		inputs.map(i => issues.push({message:'Input', element:i}));
+		inputs.map(i =>
+		{
+			i.domains.forEach(function(m)
+			{
+				isConveyance(m) && references.delete(m);
+				propTag(m, m.to, m.graph, getBarGraph(m), tag, setTag);
+			});
+		});
 		//
 		// look for outputs; they have info and no non-info factor morphisms
 		//
 		const outputs = [];
-		scanning = objects.slice();
 		function scannerNo(g, ndx) { isIt = isIt && !g.hasTag('info'); }
 		function scannerYes(g, ndx) { isIt = isIt && g.hasTag('info'); }
-		while(scanning.length > 0)
+		objects.map(obj =>
 		{
-			const obj = scanning.pop();
 			isIt = true;
 			obj.domains.forEach(function(m)
 			{
 				if (FactorMorphism.IsA(m.to) && references.has(m) && !m.dual)
 				{
-					const g = obj2graph.get(m.codomain);
-					g.scan(scannerYes);
+					m.codomain.assyGraph.scan(scannerYes);
 					return;
 				}
 				isIt = false;
 			});
 			obj.codomains.forEach(function(m)
 			{
-				if (FactorMorphism.IsA(m.to))
+				if (isConveyance(m.to))
 				{
 					if (m.to.dual)		// coproduct
 						isIt = isIt && !sources.has(m.domain);
 					else
 					{
-						const g = obj2graph.get(m.domain);
-						g.scan(scannerNo);
+						isIt = isIt && !references.has(m);
 					}
 					return;
 				}
@@ -15093,32 +15120,7 @@ if (prototype === 'TerminalMorphism')
 				outputs.push(obj);
 				issues.push({message:'Output', element:obj});
 			}
-		}
-		//
-		// color the nodes
-		//
-		/*
-		objects.map(o =>
-		{
-			const grph = obj2graph.get(o);
-			if (grph.noTag(tag))
-			{
-				issues.push({message:'Input', element:o});
-				o.svg.classList.add('greenGlow');
-			}
-			else if (grph.hasTag(tag))
-			{
-				o.svg.classList.add('glow');
-				inputs.delete(o);
-			}
-			else
-				o.svg.classList.add('warningGlow');
 		});
-		*/
-//		inputs.map(i => i.svg.classList.add('greenGlow'));
-//		outputs.map(i => i.svg.classList.add('glow'));
-		let glow = 'warningGlow';
-		function glowMe(o) { o.svg.classList.add(glow);}
 		sources.forEach(function(s)
 		{
 			s.codomains.forEach(function(m)
@@ -15126,15 +15128,16 @@ if (prototype === 'TerminalMorphism')
 				isConveyance(m) && !references.has(m) && sources.delete(s);
 			});
 		});
-//		references = [...references];
-//		references.map(r => r.svg_name.classList.add('glow'));
-//		sources.forEach(glowMe);
-//		glow = 'glow';
-//		references.forEach(glowMe);
+		let glow = '';
+		function glowMe(o) { o.svg.classList.add(glow);}
 		glow = 'greenGlow';
 		inputs.forEach(glowMe);
 		glow = 'warningGlow';
 		sources.forEach(glowMe);
+		glow = 'glow';
+		outputs.forEach(glowMe);
+		glow = 'badGlow';
+		references.forEach(glowMe);
 
 		const composites = new Map;		// object to array of morphism arrays for composing; object is the domain of each outbound composite
 		function traceComp(o, comp)
@@ -15167,9 +15170,8 @@ if (prototype === 'TerminalMorphism')
 			traceComp(o, comp);
 		});
 
-		glow = 'glow';
-//		[...composites.values()].map(obj => obj.map(obj => obj.map(comp => comp.map(m => glowMe(m)))));
-		[...composites.values()].map(obj => obj.map(obj => obj.map(m => glowMe(m))));
+		// remove all morphism graphs
+		morphisms.map(m => delete m.graph);
 		return issues;
 
 		/*
