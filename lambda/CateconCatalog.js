@@ -8,8 +8,8 @@ const C = require('./AWSconstants.js');
 
 AWS.config.update(
 {
-    region:         C.COGNITO_REGION,
-    credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID}),
+	region:		 C.COGNITO_REGION,
+	credentials:	new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID}),
 });
 
 //
@@ -17,61 +17,63 @@ AWS.config.update(
 //
 function convert(data)
 {
-    const d =
-    {
-        name:       data.subkey.S.substr(2),	// remove 'D-' prefix
-        description:data.description.S,
-        timestamp:  Number.parseInt(data.timestamp.N, 10),
-        properName:  data.properName.S,
-        username:   data.username.S
-    };
-    return d;
+	const d =
+	{
+		name:			data.subkey.S.substr(2),	// remove 'D-' prefix
+		description:	data.description.S,
+		timestamp:		Number.parseInt(data.timestamp.N, 10),
+		properName:		data.properName.S,
+		user:			data.username.S,
+		basename:		data.basename.S,
+		references:		data.references.L.map(s => s.S),
+	};
+	return d;
 }
 
 exports.handler = (event, context, callback) =>
 {
-    const db = new AWS.DynamoDB({region:C.REGION});
-    const params =
-    {
-        TableName:  C.DIAGRAM_TABLE,
-        ExpressionAttributeNames: {'#ts':'timestamp'},
-        ProjectionExpression:   'username, subkey, #ts, properName, description'
-    };
-    db.scan(params, function(err, data)
-    {
-        if (err)
-        {
-            console.log("Error", err, data);
-            return;
-        }
-        const dgrms = {};
-        for (let i=0; i<data.Items.length; ++i)
-        {
-            const itm = data.Items[i];
-            if (!('description' in itm))
-                continue;
-            const d = convert(itm);
-            if (d.name in dgrms)
-            {
-                if (d.timestamp > dgrms[d.name].timestamp)
-                    dgrms[d.name] = d;
-            }
-            else
-                dgrms[d.name] = d;
-        }
-        const S3 = new AWS.S3({apiVersion: '2006-03-01'});
-        const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
-        const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
-        const Key = 'catalog.json';
+	const db = new AWS.DynamoDB({region:C.REGION});
+	const params =
+	{
+		TableName:					C.DIAGRAM_TABLE,
+		ExpressionAttributeNames:	{'#ts':'timestamp', '#r':'references'},
+		ProjectionExpression:		'username, subkey, #ts, basename, properName, description, #r'
+	};
+	db.scan(params, function(err, data)
+	{
+		if (err)
+		{
+			console.log("Error", err, data);
+			return;
+		}
+		const dgrms = {};
+		for (let i=0; i<data.Items.length; ++i)
+		{
+			const itm = data.Items[i];
+			if (!('description' in itm))
+				continue;
+			const d = convert(itm);
+			if (d.name in dgrms)
+			{
+				if (d.timestamp > dgrms[d.name].timestamp)
+					dgrms[d.name] = d;
+			}
+			else
+				dgrms[d.name] = d;
+		}
+		const S3 = new AWS.S3({apiVersion: '2006-03-01'});
+		const URL = `https://s3-${C.REGION}.amazonaws.com/${C.DIAGRAM_BUCKET_NAME}`;
+		const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
+		const Key = 'catalog.json';
 		const timestamp = Date.now();
 		const Body = JSON.stringify({timestamp, diagrams:Object.values(dgrms)});
 		bucket.putObject(
 		{
-		   Bucket:  C.DIAGRAM_BUCKET_NAME,
-		   ContentType: 'json',
-		   Key,
-		   Body,
-		   ACL:     'public-read',
+			Bucket:	C.DIAGRAM_BUCKET_NAME,
+			ContentType: 'json',
+			Key,
+			Body,
+			ACL:	 	'public-read',
 		}, function(err, data)
 		{
 			if (err)
