@@ -2090,6 +2090,9 @@ namespace %Namespace
 }
 `}});
 
+	Cat.D.ShowDiagram(cpp);
+	cpp.home(false);
+
 	//
 	// GDS definitions
 	//
@@ -2161,19 +2164,38 @@ namespace %Namespace
 	const elementStr = args.diagram.coprod(boundary, path, sref, aref, txt);
 	const element = MakeNamedObject(args, {basename:'Element', source:elementStr, description:'A GDSII element is a boundary, path, aref, sref, or text.'}).to;
 
-//	const recordDataAry = [gdsEltType, str, layer, datatype, points, width, rows, cols, reflection, mag, angle, endType, properties];
-//	const recordDataStr = gds.get('ProductObject', {objects:recordDataAry});
-//	const recordData = MakeNamedObject(args, {basename:'Data', source:recordDataStr, description:'The data gathered while reading an element from a GDSII Stream file'}).to;
-
 	args.xy = new Cat.D2;
 	PlaceText(args, 'The GDSII Graphics Design Standard Specification', 96, 'bold', false);
+	Cat.D.ShowDiagram(gds);
+	gds.home(false);
 
-//	const srefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, properties]}).to;
-//	const arefStr = MakeObject(args, '', 'ProductObject', '', '', {objects:[str, point, F, F, omega, Z, Z, Z, Z, properties]}).to;
+	//
+	// Anon home
+	//
+	let anonDiagram = Cat.R.GetUserDiagram('Anon');
+	const anon = new Cat.Diagram(anonDiagram,
+	{
+		description:	'Anonymous user home',
+		codomain:		pfs,
+		basename:		'Home',
+		properName:		'Home',
+		references:		['hdole/HTML'],
+		user:			'Anon',
+	});
+	args.user = 'Anon';
+	args.diagram = anon;
+	args.rowCount = 0;
+	args.diagram.makeSVG(false);
+	Cat.R.AddDiagram(args.diagram);
+
+	args.xy = gridLocation();
+	PlaceText(args, 'Welcome to Catecon: The Categorical Console\nCreate diagrams and execute morphisms.', 32);
+	Cat.D.ShowDiagram(anon);
+	anon.home(false);
 
 	window.addEventListener('Login', function(e)
 	{
-		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds];
+		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds, anon];
 		diagrams.map(d => Cat.R.SaveLocal(d));
 		true && diagrams.map(d => d.upload(null));
 	});
