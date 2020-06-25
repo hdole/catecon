@@ -30,7 +30,7 @@ exports.handler = (event, context, callback) =>
 		Item:
 		{
 			username:	{S:user},
-			subkey:	 	{S:'H-REGISTRATION'},
+			subkey:	 	{S:'REGISTRATION'},
 			email:		{S:email},
 			timestamp:	{N:now.toString()},
 		},
@@ -86,11 +86,11 @@ exports.handler = (event, context, callback) =>
 				const Body = JSON.stringify(diagram);
 				bucket.putObject(
 				{
-				   Bucket:  	C.DIAGRAM_BUCKET_NAME,
-				   ContentType: 'json',
-				   Key:			userKey,
-				   Body,
-				   ACL:     	'public-read',
+					Bucket:			C.DIAGRAM_BUCKET_NAME,
+					ContentType:	'json',
+					Key:			userKey,
+					Body,
+					ACL:			'public-read',
 				}, function(err, data)
 				{
 					if (err)
@@ -103,9 +103,21 @@ exports.handler = (event, context, callback) =>
 				});
 				callback(err, 'ok');
 			});
+			const CopySource = `${C.DIAGRAM_BUCKET_NAME}/Anon/Home.png`;
+			console.log({CopySource});
+//			bucket.copyObject({CopySource, Key: `${C.DIAGRAM_BUCKET_NAME}/${user}/Home.png`}, function(err, data)
+			bucket.copyObject(
+			{
+				CopySource,
+				Key:		`${user}/Home.png`,
+				ACL:		'public-read',
+			}, function(err, data)
+			{
+				console.log(err ? err : data);
+			});
 		}
 		else
-			console.log('file already exists!');
+			console.log('file already exists!', userKey);
 		callback(err, 'ok');	// not nn error since there is a home diagram
 	});
 	AWS.config.update({region:C.REGION, credentials});
@@ -115,7 +127,7 @@ exports.handler = (event, context, callback) =>
 		TopicArn:	C.CATECON_TOPIC
 	};
 	var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(msg).promise();
-	publishTextPromise.then(  function(data)
+	publishTextPromise.then(function(data)
 	{
 	});
 };
