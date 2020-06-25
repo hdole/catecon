@@ -221,7 +221,7 @@ const Boot = function(fn)
 //	args.xy = new Cat.D2(300, 300);
 	basics.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(basics);
+	Cat.R.SetDiagramInfo(basics);
 	/*
 	Autoplace(
 	{
@@ -238,6 +238,8 @@ const Boot = function(fn)
 	PlaceObject(args, zero);
 	PlaceObject(args, one);
 	const tty = MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
+	args.xy = new Cat.D2;
+	PlaceText(args, 'Basic Objects', 96, 'bold', false);
 	Cat.D.ShowDiagram(basics);
 	basics.home(false);
 	//
@@ -256,7 +258,7 @@ const Boot = function(fn)
 	args.rowCount = 0;
 	logic.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(logic);
+	Cat.R.SetDiagramInfo(logic);
 	/*
 	Autoplace(
 	{
@@ -313,6 +315,8 @@ const Boot = function(fn)
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 || args.m_1;\n}\n',
 	}).to;
 	DiagramReferences(user, logic, args.xy);
+	args.xy = new Cat.D2;
+	PlaceText(args, 'Logic Operations', 96, 'bold', false);
 	Cat.D.ShowDiagram(logic);
 	logic.home(false);
 	//
@@ -331,7 +335,7 @@ const Boot = function(fn)
 	args.rowCount = 0;
 	Narith.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(Narith);
+	Cat.R.SetDiagramInfo(Narith);
 	/*
 	Autoplace(
 	{
@@ -496,6 +500,8 @@ args.xy.y += args.majorGrid;
 	}).to;
 
 	DiagramReferences(user, Narith, args.xy);
+	args.xy = new Cat.D2;
+	PlaceText(args, 'Natural Number Operations', 96, 'bold', false);
 	Cat.D.ShowDiagram(Narith);
 	Narith.home(false);
 	//
@@ -514,7 +520,7 @@ args.xy.y += args.majorGrid;
 	args.rowCount = 0;
 	integers.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(integers);
+	Cat.R.SetDiagramInfo(integers);
 /*
 	Autoplace(args,
 	{
@@ -628,6 +634,8 @@ return [0, args[0] % args[1]];
 //		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	}).to;
+	args.xy = new Cat.D2;
+	PlaceText(args, 'Integer Operations', 96, 'bold', false);
 	Cat.D.ShowDiagram(integers);
 	integers.home(false);
 	//
@@ -646,7 +654,7 @@ return [0, args[0] % args[1]];
 	args.rowCount = 0;
 	floats.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(floats);
+	Cat.R.SetDiagramInfo(floats);
 /*
 	Autoplace(args,
 	{
@@ -844,6 +852,8 @@ void %Type(const %Dom & args, %Cod & out)
 `,
 	}).to;
 	DiagramReferences(user, floats, args.xy);
+	args.xy = new Cat.D2;
+	PlaceText(args, 'Floating Point Operations', 96, 'bold', false);
 	Cat.D.ShowDiagram(floats);
 	floats.home(false);
 	//
@@ -862,7 +872,7 @@ void %Type(const %Dom & args, %Cod & out)
 	args.rowCount = 0;
 	complex.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(complex);
+	Cat.R.SetDiagramInfo(complex);
 /*
 	Autoplace(args,
 	{
@@ -1038,6 +1048,8 @@ return [0, Math.pow(args[0], args[1])];
 	}).to;
 	const Clist = MakeObject(args, '', 'HomObject', '', 'A list of complex numbers', {objects:[N, C]}).to;
 	DiagramReferences(user, complex, args.xy);
+	args.xy = new Cat.D2;
+	PlaceText(args, 'Complex Number Operations', 96, 'bold', false);
 	Cat.D.ShowDiagram(complex);
 	complex.home(false);
 
@@ -1057,7 +1069,7 @@ return [0, Math.pow(args[0], args[1])];
 	args.rowCount = 0;
 	strings.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(strings);
+	Cat.R.SetDiagramInfo(strings);
 /*
 	Autoplace(args,
 	{
@@ -1308,6 +1320,8 @@ function %Type(args)
 `,
 	}).to;
 	DiagramReferences(user, strings, args.xy);
+	args.xy = new Cat.D2;
+	PlaceText(args, 'String Operations', 96, 'bold', false);
 	Cat.D.ShowDiagram(strings);
 	strings.home(false);
 
@@ -1327,7 +1341,7 @@ function %Type(args)
 	args.rowCount = 0;
 	htmlDiagram.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(htmlDiagram);
+	Cat.R.SetDiagramInfo(htmlDiagram);
 /*
 	Autoplace(args,
 	{
@@ -1473,6 +1487,8 @@ function %Type(args)
 		js:`function %Type(args)\n{\n	return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${Cat.U.Token(N_html2F)}];\n}\n`,
 	}).to;
 	DiagramReferences(user, htmlDiagram, args.xy);
+	PlaceText(args, 'HTML Input and Formatters', 96, 'bold', false);
+	Cat.D.ShowDiagram(strings);
 	Cat.D.ShowDiagram(htmlDiagram);
 	htmlDiagram.home(false);
 	//
@@ -1491,7 +1507,7 @@ function %Type(args)
 	args.rowCount = 0;
 	threeD.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(threeD);
+	Cat.R.SetDiagramInfo(threeD);
 /*
 	Autoplace(args,
 	{
@@ -1562,6 +1578,8 @@ postMessage(['fff2toQB3', args]);
 `
 	});
 	DiagramReferences(user, threeD, args.xy);
+	args.xy = new Cat.D2;
+	PlaceText(args, 'Three-D Integration', 96, 'bold', false);
 	Cat.D.ShowDiagram(threeD);
 	threeD.home(false);
 	/*
@@ -1591,7 +1609,7 @@ postMessage(['fff2toQB3', args]);
 	args.rowCount = 0;
 	qGates.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(qGates);
+	Cat.R.SetDiagramInfo(qGates);
 /*
 	Autoplace(args,
 	{
@@ -1694,7 +1712,6 @@ return matrix_multiply(%Type_matrix, args);
 	Cat.D.ShowDiagram(qGates);
 	qGates.home(false);
 	Cat.D.ShowDiagram(qGates);
-	fn && Cat.R.Actions.javascript.loadHTML(fn);
 
 	//
 	// cpp
@@ -1712,7 +1729,7 @@ return matrix_multiply(%Type_matrix, args);
 	args.rowCount = 0;
 	cpp.makeSVG(false);
 	args.xy = gridLocation();
-	Cat.R.AddDiagram(cpp);
+	Cat.R.SetDiagramInfo(cpp);
 /*
 	Autoplace(args,
 	{
@@ -2090,6 +2107,8 @@ namespace %Namespace
 }
 `}});
 
+	args.xy = new Cat.D2;
+	PlaceText(args, 'C++ Integration', 96, 'bold', false);
 	Cat.D.ShowDiagram(cpp);
 	cpp.home(false);
 
@@ -2108,7 +2127,7 @@ namespace %Namespace
 	args.diagram = gds;
 	args.rowCount = 0;
 	args.diagram.makeSVG(false);
-	Cat.R.AddDiagram(args.diagram);
+	Cat.R.SetDiagramInfo(args.diagram);
 
 	args.xy = gridLocation();
 
@@ -2186,7 +2205,7 @@ namespace %Namespace
 	args.diagram = anon;
 	args.rowCount = 0;
 	args.diagram.makeSVG(false);
-	Cat.R.AddDiagram(args.diagram);
+	Cat.R.SetDiagramInfo(args.diagram);
 
 	args.xy = gridLocation();
 	PlaceText(args, 'Welcome to Catecon: The Categorical Console\nCreate diagrams and execute morphisms.', 32);
@@ -2199,4 +2218,6 @@ namespace %Namespace
 		diagrams.map(d => Cat.R.SaveLocal(d));
 		true && diagrams.map(d => d.upload(null));
 	});
+
+	fn && Cat.R.Actions.javascript.loadHTML(fn);
 }
