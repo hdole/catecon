@@ -18,20 +18,21 @@ exports.handler = (event, context, callback) =>
 	const params =
 	{
 		TableName:					C.DIAGRAM_TABLE,
-//		ExpressionAttributeNames:	{'#ts':'timestamp', '#r':'references'},
-		ProjectionExpression:		'subkey',
-		ExpressionAttributeValues:	{':str':{'S':'H-'}},
-		KeyConditionExpression:		'begins_with(subkey, :str)',
-//		Select:						'COUNT',
+		Select:						'COUNT',
 	};
-	db.query(params, function(err, data)
+	const e = event;
+	db.scan(params, function(err, data)
 	{
 		if (err)
 		{
 			console.log("Error", err, data);
 			return;
 		}
+		console.log('count', data, e);
 
-		console.log('count', data);
+		e.response.autoConfirmUser = data.Count <= C.USERCOUNT;
+
+		console.log('autoConfirmUser', e.response.autoConfirmUser);
+		callback(null, e);
 	});
 };
