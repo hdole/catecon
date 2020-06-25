@@ -698,6 +698,7 @@ class R
 	{
 		try
 		{
+			R.ReadDefaults();
 			window.addEventListener('Assertion', function(e)
 			{
 				const args = e.detail;
@@ -796,7 +797,15 @@ class R
 						break;
 				}
 			});
-			window.addEventListener('Login', function(e) { R.SelectDiagram(`${R.user.name}/Home`); } );
+			window.addEventListener('Login', function(e)
+			{
+				if (!R.default.loggedIn)
+				{
+					R.default.loggedIn = true;
+					R.SaveDefaults();
+					R.SelectDiagram(`${R.user.name}/Home`);
+				}
+			});
 			const worker = new Worker('js/workerEquality.js');
 			R.workers['equality'] = worker;
 			worker.addEventListener('message', function(msg)
@@ -1462,6 +1471,11 @@ if (dgrmName === '')debugger;
 	{
 		R.workers.equality.postMessage({command:'Load', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
 	}
+//	static EmitRegisteredEvent()
+//	{
+//		R.default.debug && console.log('emit Registered event', R.user.name, R.user.status);
+//		window.dispatchEvent(new CustomEvent('Registered', {detail:	{command:R.user.status, name:R.user.name}, bubbles:true, cancelable:true}));
+//	}
 	static EmitLoginEvent()
 	{
 		R.default.debug && console.log('emit LOGIN event', R.user.name, R.user.status);
@@ -1566,6 +1580,17 @@ if (dgrmName === '')debugger;
 		const diagram = R.$CAT.getElement(name);
 		return diagram ? diagram : R.catalog.get(name);
 	}
+	static SaveDefaults()
+	{
+		localStorage.setItem('defaults.json', JSON.stringify(R.default));
+	}
+	static ReadDefaults()
+	{
+		const defaults = JSON.parse(localStorage.getItem('defaults.json'));
+		if (defaults)
+			Object.keys(defaults).map(k => R.default[k] = defaults[k]);		// merge the defaults
+R.default.debug = true;
+	}
 }
 Object.defineProperties(R,
 {
@@ -1586,6 +1611,7 @@ Object.defineProperties(R,
 			diagram:		'Anon/Home',
 			debug:			true,
 			internals:		false,
+			loggedIn:		false,
 		},
 		writable:	true,
 	},
@@ -1785,6 +1811,7 @@ class Amazon extends Cloud
 		[
 			new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
 		];
+		const that = this;
 		this.userPool.signUp(userName, password, attributes, null, function(err, result)
 		{
 			if (err)
@@ -1792,14 +1819,15 @@ class Amazon extends Cloud
 				alert(err.message);
 				return;
 			}
-			this.user = result.user;
+			that.user = result.user;
 			R.user.name = userName;
 			R.user.email = email;
 			R.user.status = 'registered';
-//			R.cloud.createUserHome(R.EmitLoginEvent);
-//			R.EmitLoginEvent();
+			R.EmitLoginEvent();
 		});
+		event.preventDefault();		// prevent network error
 	}
+	/*
 	/// TODO should be triggered by user pool
 	createUserHome(fn)
 	{
@@ -1820,10 +1848,21 @@ class Amazon extends Cloud
 		};
 		R.cloud.lambda.invoke(params, handler);
 	}
-	resetPassword()
+	*/
+	resetPassword(e)	// start the process; a code is sent to the user
 	{
-		const userName = U.HtmlSafe(document.getElementById('signupUserName').value);
-		const email = U.HtmlSafe(document.getElementById('signupUserEmail').value);
+		const idPro = new window.AWS.CognitoIdentityServiceProvider();
+		idPro.forgotPassword({ClientId:'fjclc9b9lpc83tmkm8b152pin', Username:R.user.name}, function(err, data)
+		{
+			if (err)
+				console.log(err);
+			else
+				console.log(data);
+		});
+		/*
+//		const userName = U.HtmlSafe(document.getElementById('signupUserName').value);
+		const userName = R.user.name;
+//		const email = U.HtmlSafe(document.getElementById('signupUserEmail').value);
 		const password = document.getElementById('resetSignupUserPassword').value;
 		const confirmPassword = document.getElementById('resetSignupUserPasswordConfirm').value;
 		if (password !== confirmPassword)
@@ -1831,27 +1870,32 @@ class Amazon extends Cloud
 			alert('Please confirm your password properly by making sure the password and confirmation are the same.');
 			return;
 		}
-		const attributes =
-		[
+//		const attributes =
+//		[
 			// TODO cloud
-			new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
-		];
+//			new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
+//		];
+		const that = this;
 		// TODO how to reset cognito?
-		this.userPool.signUp(userName, password, attributes, null, function(err, result)
+		this.userPool.signUp(userName, password, [], null, function(err, result)
 		{
 			if (err)
 			{
 				alert(err.message);
 				return;
 			}
-			this.user = result.user;
+debugger;
+			that.user = result.user;
 			R.user.name = userName;
 			R.user.email = email;
-			R.user.status = 'registered';
+			R.user.status = 'confirmed';
+//			R.EmitRegisteredEvent();
 			R.EmitLoginEvent();
 		});
+		*/
+		e.preventDefault();		// prevent network error
 	}
-	confirm()
+	confirm(e)
 	{
 		const code = document.getElementById('confirmationCode').value;
 		this.user.confirmRegistration(code, true, function(err, result)
@@ -1864,6 +1908,28 @@ class Amazon extends Cloud
 			R.user.status = 'confirmed';
 			R.EmitLoginEvent();
 		});
+		e.preventDefault();		// prevent network error
+	}
+	updatePassword(e)
+	{
+		const code = document.getElementById('confirmationCode').value;
+		const password = document.getElementById('login-new-password').value;
+		this.user.confirmPassword(code, password,
+		{
+			onFailure:function(err)
+			{
+				debugger;
+console.log('error',err);
+//				alert(err);
+			},
+			onSuccess:function()
+			{
+				// TODO are we logged in now?
+				debugger;
+				R.user.status === 'logged-in';
+			},
+		});
+		e.preventDefault();		// prevent network error
 	}
 	login(e)
 	{
@@ -1874,6 +1940,8 @@ class Amazon extends Cloud
 			const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username:userName, Password:password});
 			const userData = {Username:userName, Pool:this.userPool};
 			this.user = new AmazonCognitoIdentity.CognitoUser(userData);
+			R.user.name = userName;
+			R.user.email = '';
 			const that = this;
 			e.preventDefault();		// prevent network error
 			this.user.authenticateUser(authenticationDetails,
@@ -1893,20 +1961,33 @@ class Amazon extends Cloud
 						}
 						R.user.name = data.Username;
 						R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
-						const fn = function()
-						{
-							D.loginPanel.toggle();
-							that.getUserDiagramsFromServer(function(dgrms)
-							{
-								if (R.default.Debug)
-									console.log('login: user diagrams on server', dgrms);
-							});
-						}
+//						function fn()
+//						{
+//							D.loginPanel.toggle();
+//							that.getUserDiagramsFromServer(function(dgrms)
+//							{
+//								if (R.default.Debug)
+//									console.log('login: user diagrams on server', dgrms);
+//							});
+//						}
 						R.EmitLoginEvent();
 					});
 				},
 				onFailure:function(err)
 				{
+					switch(err.code)
+					{
+						case 'UserNotConfirmedException':
+							R.user.status = 'registered';
+							break;
+						case 'PasswordResetRequiredException':
+							R.user.status = 'reset';
+							break;
+						default:
+							R.user.status = 'unauthorized';
+							break;
+					}
+//					R.EmitRegisteredEvent();
 					R.EmitLoginEvent();
 					alert(err.message);
 				},
@@ -1929,7 +2010,6 @@ class Amazon extends Cloud
 		R.user.status = 'unauthorized';
 		R.user.name = 'Anon';
 		R.user.email = '';
-		R.user.status = 'unauthorized';
 		R.EmitLoginEvent();
 	}
 	onCT()
@@ -2123,6 +2203,7 @@ class Navbar
 		this.element.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
 		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
 		window.addEventListener('Login', this.updateByUserStatus);
+		window.addEventListener('Registration', this.updateByUserStatus);
 		window.addEventListener('CAT', function(e)
 		{
 			const args = e.detail;
@@ -2157,6 +2238,7 @@ class Navbar
 			case 'registered':
 				c = '#A33';
 				break;
+			case 'reset':
 			case 'confirmed':
 				c = '#0A0';
 				break;
@@ -2633,7 +2715,6 @@ class D
 		window.addEventListener('mousemove', D.Autohide);
 		window.addEventListener('mousedown', D.Autohide);
 		window.addEventListener('keydown', D.Autohide);
-		D.ReadDefaults();
 		D.navbar =			new Navbar;
 		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
@@ -2697,17 +2778,6 @@ class D
 		window.addEventListener('Morphism', updateSelected);
 		window.addEventListener('Object', updateSelected);
 		window.addEventListener('Text', updateSelected);
-	}
-	static SaveDefaults()
-	{
-		localStorage.setItem('defaults', JSON.stringify(R.default));
-	}
-	static ReadDefaults()
-	{
-		const defaults = JSON.parse(localStorage.getItem('defaults'));
-		if (defaults)
-			Object.keys(defaults).map(k => R.default[k] = defaults[k]);		// merge the defaults
-R.default.debug = true;
 	}
 	static Resize()
 	{
@@ -3252,7 +3322,7 @@ ${button}
 				break;
 			case 'default':
 				R.default.diagram = diagram.name;
-				D.SaveDefaults();
+				R.SaveDefaults();
 				if (!diagram.svgRoot)
 					diagram.makeSVG();
 				if ('viewport' in R.diagram)
@@ -5578,12 +5648,17 @@ class LoginPanel extends Panel
 			H.div('', '', 'login-info');
 		this.initialize();
 		this.loginInfoElt = document.getElementById('login-info');
-		this.passwordResetFormElt = document.getElementById('login-password-reset');
 		this.userNameElt = document.getElementById('user-name');
 		this.userEmailElt = document.getElementById('user-email');
 		this.errorElt = document.getElementById('login-error');
 		const that = this;
-		window.addEventListener('Login', function() {that.update();});
+		window.addEventListener('Login', function(e)
+		{
+			that.update();
+			if (e.detail.command === 'logged-in')
+				that.close();
+		});
+		window.addEventListener('Registered', function() {that.update();});
 		window.addEventListener('load', function() {that.update();});
 	}
 	update()
@@ -5593,6 +5668,70 @@ class LoginPanel extends Panel
 		this.loginInfoElt.innerHTML = '';
 		this.errorElt.innerHTML = '';
 		let html = '';
+		function getLoginForm()
+		{
+			return H.form(H.table(	H.tr(H.td('User name')) +
+									H.tr(H.td(H.input('', '', 'login-user-name', 'text', { ph:'Name', x:	'autocomplete="username"', }))) +
+									H.tr(H.td('Password')) +
+									H.tr(H.td(H.input('', '', 'login-password', 'password',
+									{ ph:'********',
+// TODO? causes weirdness										x:'autocomplete="current-password" onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.login, Cat.R.cloud)"',
+									}))) +
+								H.tr(H.td(H.button('Login', '', '', '', 'onclick="Cat.R.cloud.login(event)"')))));
+		}
+		function getLogoutButton() { return H.button('Log Out', '', '', '', 'onclick="Cat.R.cloud.logout()"'); }
+		function getResetButton() { return H.button('Reset password', '', '', '', 'onclick="Cat.R.cloud.resetPassword(event)"'); }
+		function getConfirmationInput(endRows)
+		{
+			return H.form(H.h3('Confirmation Code') +
+				H.span('The confirmation code is sent by email to the specified address above.') +
+				H.table(	H.tr(H.td('Confirmation code')) +
+							H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.confirm, Cat.R.cloud)"'}))) +
+					endRows));
+		}
+		switch(R.user.status)
+		{
+			case 'logged-in':
+				html += H.table(H.tr(H.td(getLogoutButton()) + H.td(getResetButton())));
+				break;
+			case 'unauthorized':
+				html += getLoginForm();
+				html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.D.Panel.SectionToggle(event, this, \'signupPnl\')"`) +
+					H.div( H.table(H.tr(H.td('User name')) +
+								H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
+								H.tr(H.td('Email')) +
+								H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
+								LoginPanel.PasswordForm('', "Cat.R.cloud.signup") +
+								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="Cat.R.cloud.signup()"')))), 'section', 'signupPnl'));
+				break;
+			case 'registered':
+				/*
+				html += H.form(H.h3('Confirmation Code') +
+					H.span('The confirmation code is sent by email to the specified address above.') +
+					H.table(	H.tr(H.td('Confirmation code')) +
+								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.confirm, Cat.R.cloud)"'}))) +
+								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick="Cat.R.cloud.confirm(event)"')))));
+								*/
+				html += getConfirmationInput(H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick="Cat.R.cloud.confirm(event)"')))) + getLogoutButton();
+				break;
+			case 'reset':
+				/*
+				html += H.form(H.h3('Confirmation Code') +
+					H.span('The confirmation code is sent by email to the specified address above.') +
+					H.table(	H.tr(H.td('Confirmation code')) +
+								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.confirm, Cat.R.cloud)"'}))) +
+								H.tr(H.td(H.input('', '', 'login-new-password', 'password', { ph:'Password', x:	'autocomplete="new-password"', }))) +
+								H.tr(H.td(H.button('Submit new password', '', '', '', 'onclick="Cat.R.cloud.updatePassword(event)"')))));
+								*/
+				html += getConfirmationInput(	H.tr(H.td(H.input('', '', 'login-new-password', 'password', { ph:'Password', x:	'autocomplete="new-password"', }))) +
+												H.tr(H.td(H.button('Submit new password', '', '', '', 'onclick="Cat.R.cloud.updatePassword(event)"'))));
+				html += getLogoutButton();
+				break;
+			default:
+				html += getLoginForm();
+				break;
+		}
+				/*
 		if (R.user.status !== 'logged-in' && R.user.status !== 'registered')
 			html += H.form(H.table(	H.tr(H.td('User name')) +
 								H.tr(H.td(H.input('', '', 'login-user-name', 'text',
@@ -5607,7 +5746,7 @@ class LoginPanel extends Panel
 // TODO? causes weirdness										x:'autocomplete="current-password" onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.login, Cat.R.cloud)"',
 									}))) +
 								H.tr(H.td(H.button('Login', '', '', '', 'onclick="Cat.R.cloud.login(event)"')))));
-		if (R.user.status === 'unauthorized')
+		else if (R.user.status === 'unauthorized')
 			html += H.form(H.button('Signup', 'sidenavAccordion', '', 'Signup for the Categorical Console', `onclick="Cat.D.Panel.SectionToggle(event, this, \'signupPnl\')"`) +
 					H.div( H.table(H.tr(H.td('User name')) +
 								H.tr(H.td(H.input('', '', 'signupUserName', 'text', {ph:'No spaces'}))) +
@@ -5615,18 +5754,22 @@ class LoginPanel extends Panel
 								H.tr(H.td(H.input('', '', 'signupUserEmail', 'text', {ph:'Email'}))) +
 								LoginPanel.PasswordForm('', "Cat.R.cloud.signup") +
 								H.tr(H.td(H.button('Sign up', '', '', '', 'onclick="Cat.R.cloud.signup()"')))), 'section', 'signupPnl'));
-		if (R.user.status === 'registered')
+		else if (R.user.status === 'registered')
 			html += H.form(H.h3('Confirmation Code') +
 					H.span('The confirmation code is sent by email to the specified address above.') +
 					H.table(	H.tr(H.td('Confirmation code')) +
 								H.tr(H.td(H.input('', '', 'confirmationCode', 'text', {ph:'six digit code', x:'onkeydown="Cat.D.OnEnter(event, Cat.R.cloud.confirm, Cat.R.cloud)"'}))) +
-								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick="Cat.R.cloud.confirm()"')))));
-		if (R.user.status === 'logged-in')
+								H.tr(H.td(H.button('Submit Confirmation Code', '', '', '', 'onclick="Cat.R.cloud.confirm(event)"')))));
+		else if (R.user.status === 'logged-in')
 			html += H.button('Log Out', '', '', '', 'onclick="Cat.R.cloud.logout()"');
+			*/
+
 		this.loginInfoElt.innerHTML = html;
 		this.loginUserNameElt = document.getElementById('login-user-name');
 		this.passwordElt = document.getElementById('login-password');
+//		this.passwordResetFormElt = document.getElementById('login-password-reset');
 	}
+	/*
 	// TODO not used
 	showResetForm()
 	{
@@ -5635,6 +5778,7 @@ class LoginPanel extends Panel
 				LoginPanel.PasswordForm('reset', Cat.R.cloud.resetPassword, Cat.R.cloud) +
 				H.tr(H.td(H.button('Reset password', '', '', '', 'onclick="Cat.R.cloud.resetPassword()"'))));
 	}
+	*/
 	toggle()
 	{
 		super.toggle();
@@ -5649,11 +5793,7 @@ class LoginPanel extends Panel
 					x:	'autocomplete="none"',
 				}))) +
 				H.tr(H.td('Password')) +
-				H.tr(H.td(H.input('', '', `${sfx}SignupUserPassword`, 'password',
-				{
-					ph:'Password',
-					x:	'autocomplete="new-password"',
-				}))) +
+				H.tr(H.td(H.input('', '', `${sfx}SignupUserPassword`, 'password', { ph:'Password', x:	'autocomplete="new-password"', }))) +
 				H.tr(H.td('Confirm password')) +
 				H.tr(H.td(H.input('', '', `${sfx}SignupUserPasswordConfirm`, 'password',
 				{
@@ -5904,10 +6044,10 @@ class SettingsPanel extends Panel
 			H.button('Settings', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-actions\')"`) +
 			H.div(
 				H.table(
-					H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="Cat.D.gridding = !D.gridding;D.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
-					H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="Cat.D.SettingsPanel.ToggleShowInternals();Cat.D.SaveDefaults()">`) +
+					H.tr(H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="Cat.D.gridding = !D.gridding;R.SaveDefaults()">`) + H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
+					H.tr(	H.td(`<input type="checkbox" ${R.default.internals ? 'checked' : ''} onchange="Cat.D.SettingsPanel.ToggleShowInternals();Cat.R.SaveDefaults()">`) +
 							H.td('Show internal info', 'left'), 'sidenavRow') +
-					H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="Cat.R.default.debug = !Cat.R.default.debug;Cat.D.SaveDefaults()">`) +
+					H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="Cat.R.default.debug = !Cat.R.default.debug;Cat.R.SaveDefaults()">`) +
 							H.td('Debug', 'left'), 'sidenavRow')
 			), 'section', 'settings-actions') +
 			H.button('Defaults', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-defaults\')"`) +
@@ -14058,6 +14198,8 @@ class Diagram extends Functor
 			const that = this;
 			R.cloud.ingestDiagramLambda(e, this, function()
 			{
+				R.default.debug && console.log('uploaded', that.name);
+				R.catalog.set(that.name, R.GetDiagramInfo(that));
 				R.ServerDiagrams.set(that.name, that);
 				const delta = Date.now() - start;
 				if (e)
@@ -15084,6 +15226,7 @@ objects.map(o => o.assyGraph.hasTag(tag) && addBall(o));
 
 return issues;
 
+		/*
 		const composites = new Map;		// object to array of morphism arrays for composing; object is the domain of each outbound composite
 		function traceComp(o, comp)
 		{
@@ -15119,6 +15262,7 @@ return issues;
 		morphisms.map(m => delete m.graph);
 
 		return issues;
+		*/
 	}
 	sortByCreationOrder(ary)
 	{
