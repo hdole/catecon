@@ -25,7 +25,7 @@ ${copyDeps}
 cp ${f} $wd/index.js
 cd $wd
 zip ${n}.zip *.js
-aws lambda update-function-code --function-name ${n} --zip-file fileb://./${n}.zip
+aws --region ${info.region} lambda update-function-code --function-name ${n} --zip-file fileb://./${n}.zip
 cd -
 rm -rf $wd;
 `;
