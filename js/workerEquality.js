@@ -204,5 +204,4 @@ function Load(diagrams)
 		});
 	});
 	spoiled = false;
-console.log('Loaded!');
 }
