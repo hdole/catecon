@@ -129,14 +129,14 @@
 			"name":		"CateconNewUser",
 			"method":	"uploadLambda",
 			"dependencies"	: ["lambda/AWSconstants.js"],
-			"region":	"us-west-1"
+			"region":	"us-west-2"
 		},
 		{
 			"file":		"lambda/CateconCheckSignup.js",
 			"name":		"CateconCheckSignup",
 			"method":	"uploadLambda",
 			"dependencies"	: ["lambda/AWSconstants.js"],
-			"region":	"us-west-1"
+			"region":	"us-west-2"
 		},
 		{
 			"file":		"js/boot.js",
