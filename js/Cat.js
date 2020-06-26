@@ -622,7 +622,7 @@ class U
 	}
 	static SafeId(id)
 	{
-		return id.replace(/\//g, '--');
+		return id.replace(/\//g, '--').replace(/{/g, '---').replace(/}/g, '---');
 	}
 	static Tab(s)
 	{
@@ -708,6 +708,7 @@ class R
 						break;
 					case 'new':
 					case 'delete':
+					case 'update':
 						args.diagram.makeCells();
 						R.SaveLocal(args.diagram);
 						break;
@@ -718,8 +719,10 @@ class R
 				const args = e.detail;
 				switch(args.command)
 				{
+					case 'delete':
 					case 'new':
 					case 'detach':
+					case 'update':
 						args.diagram.makeCells();
 						R.SaveLocal(args.diagram);
 						break;
@@ -730,7 +733,11 @@ class R
 				const args = e.detail;
 				switch(args.command)
 				{
+					case 'delete':
+					case 'new':
 					case 'fuse':
+					case 'move':
+					case 'update':
 						args.diagram.makeCells();
 						R.SaveLocal(args.diagram);
 						break;
@@ -741,7 +748,11 @@ class R
 				const args = e.detail;
 				switch(args.command)
 				{
+					case 'delete':
+					case 'new':
 					case 'move':
+					case 'update':
+						R.SaveLocal(args.diagram);
 						break;
 				}
 			});
@@ -751,12 +762,12 @@ class R
 				const diagram = args.diagram;
 				switch(args.command)
 				{
-					case 'move':
-						R.SaveLocal(args.diagram);
-						break;
+//					case 'move':
+//						R.SaveLocal(args.diagram);
+//						break;
 					case 'addReference':
 					case 'removeReference':
-					case 'delete':
+//					case 'delete':
 						R.SaveLocal(diagram);
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
@@ -1365,7 +1376,6 @@ if (name === undefined)debugger;
 	static FetchDiagram(dgrmName)
 	{
 		R.cloud && R.cloud.downloadDiagram(dgrmName);
-if (dgrmName === '')debugger;
 		R.default.debug && console.log('fetching diagram from cloud', dgrmName);
 	}
 	static GetReferences(name, refs = new Set)
@@ -1401,6 +1411,8 @@ if (dgrmName === '')debugger;
 			}
 			window.addEventListener('CAT', finalizer);
 		}
+		else
+			fn && fn(dgrm);
 	}
 	static CanLoad(name)
 	{
@@ -2778,6 +2790,7 @@ class D
 		window.addEventListener('Morphism', updateSelected);
 		window.addEventListener('Object', updateSelected);
 		window.addEventListener('Text', updateSelected);
+		R.GetDiagram('hdole/HTML', function(html) { });
 	}
 	static Resize()
 	{
@@ -5523,7 +5536,8 @@ class DiagramPanel extends Panel
 		this.properNameEditElt.innerHTML = !diagram.isEditable() ? '' :
 			D.GetButton('edit', `Cat.D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
 		this.descriptionEditElt.innerHTML = !diagram.isEditable() ? '' :
-			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', 'edit_${diagram.name}', 'description')`, 'Edit', D.default.button.tiny);
+//			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', 'edit_${diagram.name}', 'description')`, 'Edit', D.default.button.tiny);
+			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'description')`, 'Edit', D.default.button.tiny);
 		this.setToolbar(diagram);
 		this.userDiagramSection.refresh();
 		this.catalogSection.refresh();
@@ -5860,7 +5874,8 @@ class ElementSection extends Section
 		{
 			const viewBtn = H3.span(D.GetButton('view', `Cat.R.diagram.viewElements('${elt.name}')`, 'View text'));
 			const delBtn = canEdit ? H3.span(D.GetButton('delete', `Cat.R.Actions.delete.action('${elt.name}', Cat.R.diagram, [Cat.R.diagram.getElement('${elt.name}')])`, 'Delete text')) : null;
-			const editBtn = canEdit ? H3.span(D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${elt.name}', 'edit_${elt.name}', 'description')`, 'Edit')) : null;
+//			const editBtn = canEdit ? H3.span(D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${elt.name}', 'edit_${elt.name}', 'description')`, 'Edit')) : null;
+			const editBtn = canEdit ? H3.span(D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${elt.name}', '${elt.elementId()}', 'description')`, 'Edit')) : null;
 			const inDiv = H3.div(H3.span(elt.description, {id:`edit_${elt.name}`}), {class:'panelElt'})
 			editBtn && inDiv.appendChild(editBtn);
 			div.appendChild(H3.div([viewBtn, delBtn], {class:'right'}));
@@ -6190,7 +6205,7 @@ class Element
 			}
 		}
 		return H.table(
-				H.tr(H.th(this.htmlName() + pNameBtn, 'center', '', '', 'colspan=2')) +
+				H.tr(H.th(H.tag('proper-name', this.htmlName()) + pNameBtn, 'center', '', '', 'colspan=2')) +
 				H.tr(H.td('Base name:', 'left') + H.td(H.tag('basename', this.basename) + baseBtn, 'left')) +
 				H.tr(H.td('Description:', 'left') + H.td(H.tag('description', this.description, 'left') + descBtn)) +
 				H.tr(H.td('Type:', 'left') + H.td(U.Cap(U.DeCamel(this.constructor.name)), 'left')) +
@@ -7942,7 +7957,6 @@ class CompositeAction extends Action
 		const from = this.doit(e, diagram, morphisms);
 		diagram.log({command:'composite', morphisms:names});
 		diagram.antilog({command:'delete', elements:[from.name]});
-//		R.SaveLocal(diagram);
 		diagram.makeSelected(e, from);
 	}
 	doit(e, diagram, morphisms)
@@ -8062,7 +8076,6 @@ class NameAction extends Action
 			diagram.log(args);
 			const elements = CatObject.IsA(source) ? [named.idFrom.name, named.idTo.name, named.name] : [named.name];
 			diagram.antilog({command:'delete', elements});
-//			R.SaveLocal(diagram);
 			D.toolbar.hide();
 		}
 		catch(x)
@@ -9234,7 +9247,7 @@ class HelpAction extends Action
 			html += from.to.help();
 		else if (DiagramText.IsA(from) && from.diagram.isEditable())
 		{
-			const id = from.elementId();
+			const id = from.to.elementId();
 			const btn = D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${from.name}', '${id}', 'description')`,
 				'Edit text', D.default.button.tiny);
 			html += H.p(H.tag('description', from.description, 'tty', 'descriptionElt') + btn, '', id);
@@ -10913,7 +10926,6 @@ class AssertionAction extends Action
 		diagram.log({command:this.name, left:left.map(m => m.name), right:right.map(m => m.name)});
 		diagram.antilog({command:'delete', elements:[a.name]});
 		diagram.selectElement(e, a);
-//		R.SaveLocal(diagram);
 	}
 	doit(e, diagram, left, right, save = true)
 	{
@@ -11003,19 +11015,20 @@ class DataAction extends Action
 		if (to.constructor.name === 'Morphism' || to.constructor.name === 'Identity')
 		{
 			diagram.deselectAll(e);
-			diagram.codomain.deleteElement(to);
-			from.to = null;	// TODO decrRefcnt()?
-			from.setMorphism(new DataMorphism(diagram, to.json()));
-			to = from.to;
+			const args = to.json();
+			delete args.name;
+			delete args.properName;
+			args.description = '';
+			args.basename = diagram.getAnon('data');
+			from.setMorphism(new DataMorphism(diagram, args));
 			diagram.makeSelected(e, from);
 			D.statusbar.show(e, `Morphism ${from.to.htmlName()} is now a data morphism`);
-			// TODO emit event?
-			R.SaveLocal(diagram);
+			R.EmitMorphismEvent(diagram, 'new', from);
 		}
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]) && ary[0].refcnt === 1)
 		{
 			const from = ary[0];
 			const to = ary[0].to;
@@ -13999,7 +14012,6 @@ class Diagram extends Functor
 		if (save)
 		{
 			R.diagram && this.makeSelected(e, txt);
-//			R.SaveLocal(this);
 			R.EmitTextEvent(this, 'new', txt);
 		}
 		return txt;
@@ -14021,7 +14033,6 @@ class Diagram extends Functor
 		if (save)
 		{
 			this.makeSelected(e, from);
-//			R.SaveLocal(this);
 			R.EmitObjectEvent(this, 'new', from);
 		}
 		return from;
@@ -14124,7 +14135,6 @@ class Diagram extends Functor
 			if (save)
 			{
 				this.makeSelected(e, from);
-//				R.SaveLocal(this);
 				R.EmitMorphismEvent(this, 'new', from);
 			}
 			return from;
@@ -14269,7 +14279,6 @@ class Diagram extends Functor
 				if (!DiagramText.IsA(elt))
 					this.updateProperName(elt);
 				R.EmitElementEvent(this, 'update', elt);
-//				R.SaveLocal(this);
 			}
 			else
 			{
@@ -14872,12 +14881,14 @@ if (prototype === 'Diagonal')return null;
 		if (ProductObject.IsA(codomain) && codomain.dual)
 			codomain.find(domain).map((f, i) => this.fctr(domain, f));
 	}
+/*
 	getObjects()
 	{
 		const objects = [];
 		this.forEachObject(function(o) { objects.push(o); });
 		return objects;
 	}
+	*/
 	getObjectSelector(id, text, change)
 	{
 		const options = [H3.option(text)];
