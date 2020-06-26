@@ -704,10 +704,9 @@ class R
 				const args = e.detail;
 				switch(args.command)
 				{
-					case 'load':
-						break;
+//					case 'load':
+//						break;
 					case 'new':
-					case 'delete':
 					case 'update':
 						args.diagram.makeCells();
 						R.SaveLocal(args.diagram);
@@ -719,10 +718,9 @@ class R
 				const args = e.detail;
 				switch(args.command)
 				{
-					case 'delete':
 					case 'new':
-					case 'detach':
 					case 'update':
+					case 'detach':
 						args.diagram.makeCells();
 						R.SaveLocal(args.diagram);
 						break;
@@ -733,11 +731,10 @@ class R
 				const args = e.detail;
 				switch(args.command)
 				{
-					case 'delete':
 					case 'new':
+					case 'update':
 					case 'fuse':
 					case 'move':
-					case 'update':
 						args.diagram.makeCells();
 						R.SaveLocal(args.diagram);
 						break;
@@ -748,10 +745,9 @@ class R
 				const args = e.detail;
 				switch(args.command)
 				{
-					case 'delete':
 					case 'new':
-					case 'move':
 					case 'update':
+					case 'move':
 						R.SaveLocal(args.diagram);
 						break;
 				}
@@ -762,15 +758,13 @@ class R
 				const diagram = args.diagram;
 				switch(args.command)
 				{
-//					case 'move':
-//						R.SaveLocal(args.diagram);
-//						break;
 					case 'addReference':
 					case 'removeReference':
-//					case 'delete':
-						R.SaveLocal(diagram);
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
+					case 'update':
+					case 'delete':
+						R.SaveLocal(diagram);
 						break;
 				}
 			});
@@ -1315,26 +1309,10 @@ class R
 	{
 		if (R.diagram && R.diagram.name === name)
 			return;
-if (name === undefined)debugger;
 		R.default.debug && console.log('SelectDiagram', name);
 		R.diagram = null;
 		D.toolbar.hide();
 		let diagram = R.$CAT.getElement(name);		// already loaded?
-//		function setup(e)
-//		{
-//			const args = e.detail;
-//			const data = args.data;
-//			if (args.command === 'preload' && data.name === name && R.LoadingDiagrams.size === 0 && R.JsonDiagrams.size > 0)	// last preload event
-//			{
-//				R.default.debug && console.log('SelectDiagram setup', name);
-//				const diagram = R.$CAT.getElement(name);
-//				diagram.makeSVG();
-//				diagram.svgRoot.classList.remove('hidden');
-//				R.diagram = diagram;
-//				R.EmitCATEvent('default', diagram);
-//				window.removeEventListener('CAT', setup);
-//			}
-//		}
 		if (!diagram)
 		{
 			const info = R.catalog.get(name);	// check server catalog TODO one day not all remove diagrams listed
@@ -1343,7 +1321,6 @@ if (name === undefined)debugger;
 				R.loadingDiagram = name;
 				R.default.debug && console.log('SelectDiagram fetching', name);
 				R.FetchDiagram(name);	// will come back to SelectDiagram
-//				window.addEventListener('CAT', setup);
 				return;
 			}
 			if (R.CanLoad(name))
@@ -1433,14 +1410,6 @@ if (name === undefined)debugger;
 	}
 	static SetDiagramInfo(diagram) { R.Diagrams.set(diagram.name, Diagram.GetInfo(diagram)); }
 	static SetLocalDiagramInfo(diagram) { R.LocalDiagrams.set(diagram.name, Diagram.GetInfo(diagram)); }
-	/*
-	static AddDiagram(diagram)
-	{
-		R.SetDiagramInfo(diagram);
-		R.SaveLocalDiagramList();
-		R.SaveLocalCategoryList();
-	}
-	*/
 	static GetCategoriesInfo()
 	{
 		const info = new Map;
@@ -1483,11 +1452,6 @@ if (name === undefined)debugger;
 	{
 		R.workers.equality.postMessage({command:'Load', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
 	}
-//	static EmitRegisteredEvent()
-//	{
-//		R.default.debug && console.log('emit Registered event', R.user.name, R.user.status);
-//		window.dispatchEvent(new CustomEvent('Registered', {detail:	{command:R.user.status, name:R.user.name}, bubbles:true, cancelable:true}));
-//	}
 	static EmitLoginEvent()
 	{
 		R.default.debug && console.log('emit LOGIN event', R.user.name, R.user.status);
@@ -4683,9 +4647,9 @@ class CategoryPanel extends Panel
 		this.elt.innerHTML =
 			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarRight') +
 			H.h3(H.span('Category')) +
-			H.h4(H.span('', '', 'category-basename') + H.span('', '', 'category-basename-edit')) +
-			H.h4(H.span('', '', 'category-properName') + H.span('', '', 'category-properName-edit')) +
-			H.p(H.span('', 'description', 'category-description', 'Description') + H.span('', '', 'category-description-edit')) +
+			H.h4(H.tag('basename', '') + H.span('', '', 'category-basename-edit')) +
+			H.h4(H.tag('proper-name', '') + H.span('', '', 'category-properName-edit')) +
+			H.p(H.tag('description', '', 'description') + H.span('', '', 'category-description-edit')) +
 			H.p(H.span('Actions: ', 'smallBold') + H.span('', 'left', 'category-actions')) +
 			H.p('User: ' + H.span('', '', 'category-user', 'User'), 'description');
 		this.categorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories');
@@ -4712,9 +4676,11 @@ class CategoryPanel extends Panel
 			const isEditable = this.category.isEditable();
 			this.properNameEditElt.innerHTML = isEditable ?
 				// TODO editElementText cannot work
-				D.GetButton('edit', `Cat.D.categoryPanel.setProperName('category-properName')`, 'Retitle', D.default.button.tiny) : '';
+//				D.GetButton('edit', `Cat.D.categoryPanel.setProperName('category-properName')`, 'Retitle', D.default.button.tiny) : '';
+				D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.category.name}', '${category.elementId()}', 'proper-name')`, 'Edit', D.default.button.tiny) : '';
 			this.descriptionEditElt.innerHTML = isEditable ?
-				D.GetButton('edit', `Cat.D.categoryPanel.setDescription()`, 'Edit description', D.default.button.tiny) : '';
+//				D.GetButton('edit', `Cat.D.categoryPanel.setDescription()`, 'Edit description', D.default.button.tiny) : '';
+				D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.category.name}', '${category.elementId()}', 'description')`, 'Edit', D.default.button.tiny) : '';
 			const actions = [];
 			this.category.actions.forEach(function(a) { actions.push(U.DeCamel(a.htmlName())); });
 			this.actionsElt.innerHTML = actions.join(', ');
@@ -5384,7 +5350,6 @@ class AssertionSection extends Section
 		{
 			R.EmitAssertionEvent(diagram, 'delete', a);
 			a.decrRefcnt();
-			R.SaveLocal(diagram);
 		}
 	}
 }
@@ -5456,36 +5421,6 @@ class DiagramPanel extends Panel
 			D.diagramPanel.refresh(e);
 		});
 	}
-	setProperName()
-	{
-		const diagram = R.diagram;
-		if (diagram.isEditable() && this.properNameElt.contentEditable === 'true' && this.properNameElt.textContent !== '')
-		{
-			diagram.properName = this.properNameElt.innerText;
-			this.properNameElt.contentEditable = false;
-			R.SaveLocal(diagram);
-		}
-		else
-		{
-			this.properNameElt.contentEditable = true;
-			this.properNameElt.focus();
-		}
-	}
-	setDescription()
-	{
-		const diagram = R.diagram;
-		if (diagram.isEditable() && this.descriptionElt.contentEditable === 'true' && this.descriptionElt.textContent !== '')
-		{
-			R.diagram.description = this.descriptionElt.textContent;
-			this.descriptionElt.contentEditable = false;
-			R.SaveLocal(diagram);
-		}
-		else
-		{
-			this.descriptionElt.contentEditable = true;
-			this.descriptionElt.focus();
-		}
-	}
 	setToolbar(diagram)
 	{
 		if (!diagram)
@@ -5534,7 +5469,8 @@ class DiagramPanel extends Panel
 		this.properNameElt.innerHTML = diagram.htmlName();
 		this.userElt.innerHTML = diagram.user;
 		this.properNameEditElt.innerHTML = !diagram.isEditable() ? '' :
-			D.GetButton('edit', `Cat.D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
+//			D.GetButton('edit', `Cat.D.diagramPanel.setProperName('diagram-properName')`, 'Retitle', D.default.button.tiny);
+			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'proper-name')`, 'Edit', D.default.button.tiny);
 		this.descriptionEditElt.innerHTML = !diagram.isEditable() ? '' :
 //			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', 'edit_${diagram.name}', 'description')`, 'Edit', D.default.button.tiny);
 			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'description')`, 'Edit', D.default.button.tiny);
@@ -8239,7 +8175,7 @@ class FlipNameAction extends Action
 		this.doit(e, diagram, from);
 		diagram.log({command:'flipName', from:from.name});
 		diagram.antilog({command:'flipName', from:from.name});
-		R.SaveLocal(diagram);	// TODO replace with event?
+		R.EmitElementEvent(diagram, 'update', from);
 	}
 	doit(e, diagram, from)
 	{
@@ -8549,12 +8485,12 @@ class PullbackAction extends Action
 	action(e, diagram, source)
 	{
 		const names = source.map(m => m.name);
-		this.doit(e, diagram, source);
+		const pg = this.doit(e, diagram, source);
 		diagram.log({command:this.name, source:names});
 		// 	TODO antilog
 		diagram.deselectAll(e);
 		diagram.addSelected(pb);
-		R.SaveLocal(diagram);	// TODO replace with event?
+		R.EmitElementEvent(diagram, 'new', pb);
 	}
 	doit(e, diagram, source)
 	{
@@ -8566,6 +8502,7 @@ class PullbackAction extends Action
 		const pb = new DiagramPullback(diagram, {xy, to, source, dual:this.dual});
 		diagram.addSVG(pb);
 		pb.cone.map(m => diagram.addSVG(diagram.getElement(m)));
+		return pb;
 	}
 	replay(e, diagram, args)
 	{
@@ -8792,7 +8729,6 @@ class HomsetAction extends Action
 		R.EmitMorphismEvent(diagram, 'new', from);
 		diagram.log({command:this.name, domain, morphism, codomain});
 		diagram.antilog({command:'delete', elements:[from.name]});
-		R.SaveLocal(diagram);	// TODO replace with event?
 	}
 	html(e, diagram, ary)
 	{
@@ -8924,11 +8860,16 @@ class DeleteAction extends Action
 	{
 		const sorted = diagram.sortByCreationOrder(items).reverse();
 		const notDeleted = [];
+		const elements = [];
 		sorted.map(elt =>
 		{
 			if (elt.refcnt == 1)
 			{
-				diagram === R.diagram && R.EmitElementEvent(diagram, 'delete', elt);		// pre-warn
+				if (diagram === R.diagram)
+				{
+					R.EmitElementEvent(diagram, 'delete', elt);		// pre-warn
+					elements.push(elt);
+				}
 				elt.decrRefcnt();
 				Morphism.IsA(elt) && diagram.domain.removeMorphism(elt);
 			}
@@ -8937,7 +8878,7 @@ class DeleteAction extends Action
 		});
 		if (notDeleted.length > 0)
 			D.statusbar.show(e, 'Cannot delete an element due to it being used elsewhere');
-		R.EmitDiagramEvent(diagram, 'delete', '');
+		elements.length > 0 && R.EmitDiagramEvent(diagram, 'delete', elements);
 		return notDeleted;
 	}
 	replay(e, diagram, args)
@@ -9016,7 +8957,7 @@ class ProjectAction extends Action
 								`onclick="Cat.R.Actions.${this.dual ? 'inject' : 'project'}.flatten(event, Cat.R.diagram, Cat.R.diagram.getSelected())"`)) : '') +
 					H.h5(`${this.dual ? 'Codomain' : 'Domain'} Factors`) +
 					H.small(`Click to place in ${obj}`) +
-					H.button(this.dual ? '0' : '1', '', Cat.R.diagram.elementId(), `Add ${this.dual ? 'initial' : 'terminal'} object`,
+					H.button(this.dual ? '0' : '*', '', Cat.R.diagram.elementId(), `Add ${this.dual ? 'initial' : 'terminal'} object`,
 						`onclick="Cat.R.Actions.${this.dual ? 'inject' : 'project'}.addFactor('${to.name}', -1)"`) +
 					ProjectAction.FactorButton(obj, to, to, [], this.dual) +
 					H.h5(`${this.dual ? 'Domain' : 'Codomain'} Factors`) + H.br() +
@@ -9280,13 +9221,14 @@ class LanguageAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		const m = ary[0].to;
+		const from = ary[0];
+		const m = from.to;
 		if (m.constructor.name === 'CatObject' || m.constructor.name === 'Morphism')	// only edit basic elements and not derived ones
 		{
 			if (!('code' in m))
 				m.code = {};
 			m.code[this.ext] = document.getElementById(`element-${this.ext}`).innerText;
-			R.SaveLocal(diagram);	// TODO replace with event?
+			R.EmitElementEvent(diagram, 'update', from);
 		}
 	}
 	hasForm(diagram, ary)
@@ -10615,11 +10557,11 @@ class FiniteObjectAction extends Action
 			this.sizseElt.classList.add('error');
 			return;
 		}
-		this.doit(e, diagram, from, size);
+		const finObj = this.doit(e, diagram, from, size);
 		diagram.log({command:'finiteObject', from:from.name, size});
 		// TODO undo; may need new action
 		this.html(e, diagram, ary);
-		R.SaveLocal(diagram);	// TODO replace with event?
+		R.EmitElementEvent(diagram, 'update', finObj);
 	}
 	doit(e, diagram, from, size)
 	{
@@ -10631,6 +10573,7 @@ class FiniteObjectAction extends Action
 			from.to = null;
 			from.setObject(newTo);
 		}
+		return from;
 	}
 	html(e, diagram, ary)
 	{
@@ -10990,7 +10933,7 @@ class RecursionAction extends Action
 		const form = ary[1].to;
 		recursor.setRecursor(form);
 		D.statusbar.show(e, `Data morphism ${recursor.htmlName()} is now recursive with morphism ${form.htmlName()}`);
-		R.SaveLocal(diagram);	// TODO replace with event?
+		R.EmitElementEvent(diagram, 'update', ary[0]);
 	}
 	hasForm(diagram, ary)
 	{
@@ -13094,7 +13037,10 @@ class FactorMorphism extends Morphism
 			return diagram.get('ProductObject', {objects, dual});
 		}
 		else
-			return factors.length > 1 ? diagram.get('ProductObject', {objects:factors.map(f => f === -1 ? diagram.getTerminal(dual) : domain.getFactor(f)), dual}) : domain.getFactor(factors[0]);
+			return factors.length > 1 ? diagram.get('ProductObject', {objects:factors.map(f =>
+			{
+				f === -1 ? diagram.getTerminal(dual) : domain.getFactor(f);
+			}), dual}) : (factors[0] === -1 ? diagram.getTerminal(dual) : domain.getFactor(factors[0]));
 	}
 	static ProperName(diagram, domain, factors, dual, cofactors = null)
 	{
@@ -14341,19 +14287,6 @@ class Diagram extends Functor
 		}
 		return r;
 	}
-	/*
-	recursion(e)	// TODO used?
-	{
-		if (this.selectedCanRecurse())
-		{
-			const sel0 = this.selected[0].to;
-			const sel1 = this.selected[1].to;
-			sel0.setRecursor(sel1);
-			R.SaveLocal(this);
-			D.statusbar.show(e, `Recursor for ${sel0.htmlName()} has been set`);
-		}
-	}
-	*/
 	getElement(name)
 	{
 		let elt = this.domain.getElement(name);
@@ -14488,8 +14421,8 @@ class Diagram extends Functor
 			this.readonly = false;
 			D.DiagramPanel.UpdateLockBtn(this);
 		}
-		R.SaveLocal(this);		// TODO replace with event?
 		this.log({command:'unlock'});
+		R.EmitCATEvent('update', this);
 	}
 	lock(e)
 	{
@@ -14498,8 +14431,8 @@ class Diagram extends Functor
 			this.readonly = true;
 			D.DiagramPanel.UpdateLockBtn(this);
 		}
-		R.SaveLocal(this);		// TODO replace with event?
 		this.log({command:'lock'});
+		R.EmitCATEvent('update', this);
 	}
 	clear(save = true)
 	{
@@ -14608,7 +14541,6 @@ if (prototype === 'TerminalMorphism')
 	prototype = 'FactorMorphism';
 	args.factors = [-1];
 }
-if (prototype === 'Diagonal')return null;
 		const proto = Cat[prototype];
 		const name = proto.Codename(this, args);
 		let elt = this.getElement(name);
@@ -14746,7 +14678,6 @@ if (prototype === 'Diagonal')return null;
 		action.action(e, this, [target, from], false);
 		target.decrRefcnt();	// do not decrement earlier than this
 		from.decrRefcnt();
-		R.SaveLocal(this);		// TODO replace with event?
 		log && this.log({command:'drop', action:action.name, from:fromName, target:targetName});
 	}
 	fuse(e, from, target, save = true)
@@ -15234,6 +15165,9 @@ sources.forEach(addBall);
 fill = '#0F03';
 radius = 60;
 objects.map(o => o.assyGraph.hasTag(tag) && addBall(o));
+
+		const composites = new Map;	// source to array of morphisms to compose
+		const assemblies = new Map;	// terminus to array of morphisms to product assemble
 
 return issues;
 
