@@ -1133,7 +1133,7 @@ class R
 				if (!diagramName)
 					diagramName = R.default.diagram;
 				R.initialized = true;
-				R.SelectDiagram(diagramName);
+				R.GetDiagram('hdole/HTML', function(html) { R.SelectDiagram(diagramName); });
 			};
 			function bootLoader()
 			{
@@ -2754,7 +2754,6 @@ class D
 		window.addEventListener('Morphism', updateSelected);
 		window.addEventListener('Object', updateSelected);
 		window.addEventListener('Text', updateSelected);
-		R.GetDiagram('hdole/HTML', function(html) { });
 	}
 	static Resize()
 	{
@@ -5413,11 +5412,13 @@ class DiagramPanel extends Panel
 					const images = [...document.querySelectorAll(`#img-${diagram.elementId()}`)];
 					images.map(img => img.src = png);
 					break;
+				case 'upload':
+					that.refresh(e, false);
+					break;
 			}
 		});
 		window.addEventListener('Login', function(e)
 		{
-			const args = e.detail;
 			D.diagramPanel.refresh(e);
 		});
 	}
@@ -5460,7 +5461,7 @@ class DiagramPanel extends Panel
 	{
 		super.expand("100%");
 	}
-	refresh(e)
+	refresh(e, all = true)
 	{
 		const diagram = R.diagram;
 		if (!diagram)
@@ -5475,8 +5476,8 @@ class DiagramPanel extends Panel
 //			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', 'edit_${diagram.name}', 'description')`, 'Edit', D.default.button.tiny);
 			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'description')`, 'Edit', D.default.button.tiny);
 		this.setToolbar(diagram);
-		this.userDiagramSection.refresh();
-		this.catalogSection.refresh();
+		all && this.userDiagramSection.refresh();
+		all && this.catalogSection.refresh();
 	}
 	static GetLockBtn(diagram)
 	{
@@ -5802,15 +5803,15 @@ class ElementSection extends Section
 			tds.push(H3.td(U.HtmlEntitySafe(elt.domain.properName), {class:'left'}));
 			tds.push(H3.td('&rarr;', {class:'w10 center'}));
 			tds.push(H3.td(elt.codomain.properName, {class:'right'}));
-			div.appendChild(H3.table(	[H3.tr(H3.th(elt.properName, {class:'center', colspan})),
+			div.appendChild(H3.table(	[H3.tr(H3.th(H3.tag('proper-name', elt.properName), {class:'center', colspan})),
 											H3.tr(tds),
 											H3.tr(H3.td(H3.tag('description', elt.description), {colspan}))]));
 		}
 		else if (this.type === 'Text')
 		{
 			const viewBtn = H3.span(D.GetButton('view', `Cat.R.diagram.viewElements('${elt.name}')`, 'View text'));
-			const delBtn = canEdit ? H3.span(D.GetButton('delete', `Cat.R.Actions.delete.action('${elt.name}', Cat.R.diagram, [Cat.R.diagram.getElement('${elt.name}')])`, 'Delete text')) : null;
-//			const editBtn = canEdit ? H3.span(D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${elt.name}', 'edit_${elt.name}', 'description')`, 'Edit')) : null;
+			const delBtn = canEdit ? H3.span(D.GetButton('delete', `Cat.R.Actions.delete.action('${elt.name}', Cat.R.diagram, [Cat.R.diagram.getElement('${elt.name}')])`,
+				'Delete text')) : null;
 			const editBtn = canEdit ? H3.span(D.GetButton('edit', `Cat.R.diagram.editElementText(event, '${elt.name}', '${elt.elementId()}', 'description')`, 'Edit')) : null;
 			const inDiv = H3.div(H3.span(elt.description, {id:`edit_${elt.name}`}), {class:'panelElt'})
 			editBtn && inDiv.appendChild(editBtn);
@@ -5824,8 +5825,9 @@ class ElementSection extends Section
 	}
 	update(diagram, name)
 	{
-		const elt = diagram.getElement(name);	// not the .to
-		const id = elt.elementId();
+		let elt = diagram.getElement(name);	// not the .to
+		elt = 'to' in elt ? elt.to : elt;
+		const id = this.getId(elt.name);		// element id
 		if (!DiagramText.IsA(elt))
 		{
 			document.querySelector(`#${id} proper-name`).innerHTML = U.HtmlEntitySafe(elt.properName);
@@ -5870,15 +5872,16 @@ class DiagramElementSection extends ElementSection
 			let element = args.element;
 			if (!element)
 				return;
-			if (DiagramMorphism.IsA(element) || DiagramObject.IsA(element))
-				element = element.to;
+//			if (DiagramMorphism.IsA(element) || DiagramObject.IsA(element))
+//				element = element.to;
+			const to = DiagramMorphism.IsA(element) || DiagramObject.IsA(element) ? element.to : element;
 			switch(args.command)
 			{
 				case 'new':
-					that.add(element);
+					that.add(to);
 					break;
 				case 'delete':
-					element.refcnt === 1 && that.remove(element.name);
+					element.refcnt === 1 && that.remove(to.name);
 					break;
 				case 'update':
 					that.update(diagram, element.name);
@@ -14161,7 +14164,7 @@ class Diagram extends Functor
 				if (e)
 				{
 					D.statusbar.show(e, `Uploaded diagram${R.default.internals ? '<br/>&#9201;' + delta + 'ms': ''}`, true);
-					D.diagramPanel.setToolbar(that);
+					R.EmitCATEvent('upload', that);
 					btn.setAttribute('repeatCount', 1);
 				}
 			});
