@@ -17,7 +17,7 @@ const S3 = new AWS.S3({apiVersion: '2006-03-01'});
 exports.handler = (event, context, callback) =>
 {
 	const diagram = event.diagram;
-	const user = 'user' in event ? event.user : 'stdFOO';
+	const user = 'user' in event ? event.user : 'hfdole';
 	if (diagram.user !== user)
 	{
 		const message = `Error:  User ${user} is not the owner of ${diagram.name}.  ${diagram.user} is.`;
@@ -39,11 +39,11 @@ exports.handler = (event, context, callback) =>
 	const Key = `${name}.json`;
 	const s3params =
 	{
-		Bucket:  C.DIAGRAM_BUCKET_NAME,
-		ContentType: 'json',
+		Bucket:  		C.DIAGRAM_BUCKET_NAME,
+		ContentType:	'json',
 		Key,
 		Body,
-		ACL:	 'public-read',
+		ACL:	 		'public-read',
 	};
 	bucket.putObject(s3params, function(err, data)
 	{
@@ -58,19 +58,25 @@ exports.handler = (event, context, callback) =>
 			ContentType:		'image/png',
 			ContentEncoding:	'base64',
 			Key:				name + '.png',
-			Body:				new Buffer(event.png.replace(/^data:image\/octet-stream;base64,/,""), 'base64'),
+			Body:				new Buffer.from(event.png.replace(/^data:image\/octet-stream;base64,/,""), 'base64'),
 			ACL:				'public-read',
 		};
 		const Item =
 		{
 			basename:		diagram.basename,
 			name,
-			subkey:			'D-' + name,
+//			subkey:			'D-' + name,
 			timestamp:		diagram.timestamp,
-			username:		user,
+			user,
+//			username:		user,
 			description:	'description' in diagram ? diagram.description : '',
 			properName:		'properName' in diagram ? diagram.properName : diagram.basename,
 			references:		diagram.references,
+		};
+		const params =
+		{
+			TableName:  C.DIAGRAM_TABLE,
+			Item,
 		};
 		bucket.putObject(s3params, function(err, data)
 		{
@@ -81,11 +87,6 @@ exports.handler = (event, context, callback) =>
 			}
 			AWS.config.update({region:C.REGION});
 			const db = new AWS.DynamoDB.DocumentClient();
-			const params =
-			{
-				TableName:  C.DIAGRAM_TABLE,
-				Item,
-			};
 			db.put(params, function(err, data)
 			{
 				if (err)
@@ -99,7 +100,7 @@ exports.handler = (event, context, callback) =>
 					Message:	JSON.stringify({user, name, timestamp:diagram.timestamp, cat:diagram.codomain}),
 					TopicArn:	C.CATECON_TOPIC
 				};
-				var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(msg).promise();
+				const publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(msg).promise();
 				publishTextPromise.then(  function(data)
 				{
 					console.log(`Message ${msg.Message} sent to the topic ${msg.TopicArn}`);
@@ -120,7 +121,6 @@ exports.handler = (event, context, callback) =>
 						console.log(C.RECENT_DIAGRAM_TABLE, 'putItem succeeded', err, data);
 						callback(err, data);
 					});
-
 				}).catch(function(err)
 				{
 					console.error(err, err.stack);

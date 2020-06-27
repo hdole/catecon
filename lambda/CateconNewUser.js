@@ -4,8 +4,6 @@
 const AWS = require('aws-sdk');
 const C = require('./AWSconstants.js');
 
-//AWS.config.update({region:C.REGION});
-
 const credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID});
 
 AWS.config.update(
@@ -18,7 +16,6 @@ exports.handler = (event, context, callback) =>
 {
 	const user = 'userName' in event ? event.userName : 'stdFOO';
 	const attrs = event.request.userAttributes;
-//	if (attrs['cognito:user_status'] !== 'CONFIRMED' || attrs.email_verified !== 'true')
 	if (attrs['cognito:user_status'] !== 'CONFIRMED')
 		return callback(null, 'Status is not confirmed');
 	const email = attrs.email;
@@ -105,7 +102,6 @@ exports.handler = (event, context, callback) =>
 			});
 			const CopySource = `${C.DIAGRAM_BUCKET_NAME}/Anon/Home.png`;
 			console.log({CopySource});
-//			bucket.copyObject({CopySource, Key: `${C.DIAGRAM_BUCKET_NAME}/${user}/Home.png`}, function(err, data)
 			bucket.copyObject(
 			{
 				CopySource,

@@ -23,7 +23,7 @@ function convert(data)
 		description:	data.description.S,
 		timestamp:		Number.parseInt(data.timestamp.N, 10),
 		properName:		data.properName.S,
-		user:			data.username.S,
+		user:			data.user.S,
 		basename:		data.basename.S,
 		references:		data.references.L.map(s => s.S),
 	};
@@ -37,7 +37,7 @@ exports.handler = (event, context, callback) =>
 	{
 		TableName:					C.DIAGRAM_TABLE,
 		ExpressionAttributeNames:	{'#ts':'timestamp', '#r':'references'},
-		ProjectionExpression:		'username, subkey, #ts, basename, properName, description, #r'
+		ProjectionExpression:		'user, subkey, #ts, basename, properName, description, #r'
 	};
 	db.scan(params, function(err, data)
 	{
