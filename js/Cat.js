@@ -795,6 +795,9 @@ class R
 							R.JsonDiagrams.clear();
 							R.SelectDiagram(R.loadingDiagram);
 							delete R.loadingDiagram;
+							R.postLoadFunction && R.postLoadFunction();
+							delete R.postLoadFunction;
+							R.preload
 						}
 						break;
 					case 'new':
@@ -1133,7 +1136,16 @@ class R
 				if (!diagramName)
 					diagramName = R.default.diagram;
 				R.initialized = true;
-				R.GetDiagram('hdole/HTML', function(html) { R.SelectDiagram(diagramName); });
+				R.SelectDiagram('Anon/Home', function()
+				{
+					R.EmitLoginEvent();
+				});
+				/*
+				R.SelectDiagram('hdole/HTML', function()
+				{
+					R.SelectDiagram('Anon/Home', function() { R.EmitLoginEvent(); });
+				});
+				*/
 			};
 			function bootLoader()
 			{
@@ -1305,7 +1317,7 @@ class R
 			return;
 		}
 	}
-	static SelectDiagram(name)		// can be async if diagram not local
+	static SelectDiagram(name, fn = null)		// can be async if diagram not local
 	{
 		if (R.diagram && R.diagram.name === name)
 			return;
@@ -1319,6 +1331,7 @@ class R
 			if (info && info.timestamp > R.LocalTimestamp(name))
 			{
 				R.loadingDiagram = name;
+				R.postLoadFunction = fn;
 				R.default.debug && console.log('SelectDiagram fetching', name);
 				R.FetchDiagram(name);	// will come back to SelectDiagram
 				return;
@@ -1328,6 +1341,7 @@ class R
 			if (!diagram)
 			{
 				R.loadingDiagram = name;
+				R.postLoadFunction = fn;
 				R.default.debug && console.log('SelectDiagram fetching', name);
 				R.FetchDiagram(name);	// will come back to SelectDiagram
 //				window.addEventListener('CAT', setup);
@@ -1365,7 +1379,7 @@ class R
 			info.references.map(r => R.GetReferences(r, refs));
 		return refs;
 	}
-	static GetDiagram(name, fn)
+	static GetDiagram(name, fn)		// only does local loading
 	{
 		let dgrm = R.$CAT.getElement(name);	// already loaded?
 		if (!dgrm)
@@ -1376,10 +1390,12 @@ class R
 				fn(dgrm);
 				return;
 			}
+			/*
 			function finalizer(e)
 			{
 				const args = e.detail;
 				const data = args.data;
+if (data.name === 'hdole/HTML') debugger;
 				if (args.command === 'load' && data.name === name)
 				{
 					fn && fn(R.$CAT.getElement(name));
@@ -1387,6 +1403,8 @@ class R
 				}
 			}
 			window.addEventListener('CAT', finalizer);
+			R.cloud.downloadDiagram(name);
+			*/
 		}
 		else
 			fn && fn(dgrm);
@@ -1803,28 +1821,6 @@ class Amazon extends Cloud
 		});
 		event.preventDefault();		// prevent network error
 	}
-	/*
-	/// TODO should be triggered by user pool
-	createUserHome(fn)
-	{
-		const params =
-		{
-			FunctionName:	'CateconNewUser',
-			InvocationType:	'RequestResponse',
-			LogType:		'None',
-		};
-		const handler = function(error, data)
-		{
-			if (error)
-			{
-				D.RecordError(error);
-				return;
-			}
-			fn();
-		};
-		R.cloud.lambda.invoke(params, handler);
-	}
-	*/
 	resetPassword(e)	// start the process; a code is sent to the user
 	{
 		const idPro = new window.AWS.CognitoIdentityServiceProvider();
@@ -1835,40 +1831,6 @@ class Amazon extends Cloud
 			else
 				console.log(data);
 		});
-		/*
-//		const userName = U.HtmlSafe(document.getElementById('signupUserName').value);
-		const userName = R.user.name;
-//		const email = U.HtmlSafe(document.getElementById('signupUserEmail').value);
-		const password = document.getElementById('resetSignupUserPassword').value;
-		const confirmPassword = document.getElementById('resetSignupUserPasswordConfirm').value;
-		if (password !== confirmPassword)
-		{
-			alert('Please confirm your password properly by making sure the password and confirmation are the same.');
-			return;
-		}
-//		const attributes =
-//		[
-			// TODO cloud
-//			new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
-//		];
-		const that = this;
-		// TODO how to reset cognito?
-		this.userPool.signUp(userName, password, [], null, function(err, result)
-		{
-			if (err)
-			{
-				alert(err.message);
-				return;
-			}
-debugger;
-			that.user = result.user;
-			R.user.name = userName;
-			R.user.email = email;
-			R.user.status = 'confirmed';
-//			R.EmitRegisteredEvent();
-			R.EmitLoginEvent();
-		});
-		*/
 		e.preventDefault();		// prevent network error
 	}
 	confirm(e)
@@ -1894,9 +1856,7 @@ debugger;
 		{
 			onFailure:function(err)
 			{
-				debugger;
-console.log('error',err);
-//				alert(err);
+				alert(err);
 			},
 			onSuccess:function()
 			{
@@ -2065,6 +2025,28 @@ console.log('error',err);
 				return;
 			}
 			fn && fn();
+		};
+		this.lambda.invoke(params, handler);
+	}
+	diagramSearch(search, fn)
+	{
+		const params =
+		{
+			FunctionName:	'CateconDiagramSearch',
+			InvocationType:	'RequestResponse',
+			LogType:		'None',
+			Payload:		JSON.stringify({search}),
+		};
+		const handler = function(error, data)
+		{
+			if (error)
+			{
+				D.RecordError(error);
+				fn([]);
+				return;
+			}
+			const result = JSON.parse(data.Payload);
+			fn(result);
 		};
 		this.lambda.invoke(params, handler);
 	}
@@ -5112,10 +5094,12 @@ class DiagramSection extends Section
 		super(title, parent, id, tip);
 		Object.defineProperties(this,
 		{
+			header:						{value:H3.span(),		writable: false},
 			catalog:					{value:H3.div(),		writable: false},
 			diagrams:					{value:[],				writable: false},
 		});
 		this.catalog.classList.add('catalog');
+		this.section.appendChild(this.header);
 		this.section.appendChild(this.catalog);
 	}
 	add(diagram, btns = [])
@@ -5184,6 +5168,11 @@ class DiagramSection extends Section
 			this.remove(d.name);
 			this.add(d);
 		});
+	}
+	clear()
+	{
+		while(this.catalog.firstChild)
+			this.catalog.removeChild(this.catalog.firstChild);
 	}
 }
 
@@ -5276,6 +5265,9 @@ class CatalogDiagramSection extends DiagramSection
 	{
 		super('Catalog', parent, 'diagram-all-section', 'Catalog of available diagram');
 		const that = this;
+		function onkeydown() { Cat.D.OnEnter(event, function(e) { that.search(e); }) }
+		this.searchInput = H3.input({class:'in100', id:'cloud-search', title:'Search', placeholder:'Diagram name contains...', onkeydown });
+		this.header.appendChild(H3.div(H3.span(this.searchInput)));
 		window.addEventListener('CAT', function(e)
 		{
 			const args = e.detail;
@@ -5293,6 +5285,17 @@ class CatalogDiagramSection extends DiagramSection
 					that.remove(data.name);
 					break;
 			}
+		});
+	}
+	search(e)
+	{
+		this.searchInput.classList.add('searching');
+		const that = this;
+		R.cloud.diagramSearch(this.searchInput.value, function(diagrams)
+		{
+			that.searchInput.classList.remove('searching');
+			that.clear();
+			diagrams.map(d => that.add(d));
 		});
 	}
 }
@@ -5404,8 +5407,8 @@ class DiagramPanel extends Panel
 					that.timestampElt.innerHTML = dt.toLocaleString();
 					if (R.catalog.has(diagram.name))
 						that.warningElt.innerHTML = '';
-					else
-						that.warningElt.innerHTML = 'Diagram is not on server';
+//					else
+//						that.warningElt.innerHTML = 'Diagram is not on server';
 					break;
 				case 'png':
 					const png = D.diagramPNG.get(diagram.name);
@@ -10958,15 +10961,21 @@ class DataAction extends Action
 	{
 		const from = ary[0];
 		let to = from.to;
-		if (to.constructor.name === 'Morphism' || to.constructor.name === 'Identity')
+		const isIdentity = to.constructor.name === 'Identity';
+		if (to.constructor.name === 'Morphism' || isIdentity)
 		{
 			diagram.deselectAll(e);
 			const args = to.json();
 			delete args.name;
 			delete args.properName;
-			args.description = '';
-			args.basename = diagram.getAnon('data');
+			delete args.prototype;
+			if (isIdentity)
+				args.description = 'data morphism';
+			args.basename = diagram.getAnon('data', true);
+			args.properName = args.basename;
 			from.setMorphism(new DataMorphism(diagram, args));
+			diagram.updateProperName(from.to);
+			from.update();
 			diagram.makeSelected(e, from);
 			D.statusbar.show(e, `Morphism ${from.to.htmlName()} is now a data morphism`);
 			R.EmitMorphismEvent(diagram, 'new', from);
