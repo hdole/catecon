@@ -852,3 +852,11 @@ description
 {
 	background-color:	#aaf;
 }
+
+.search
+{
+	fill:			none;
+	stroke:			black;
+	stroke-linecap:	round;
+	stroke-width:	20px;
+}
