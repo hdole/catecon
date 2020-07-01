@@ -88,6 +88,7 @@ const Boot = function(fn)
 		delete args.prototype;
 		delete args.description;
 		delete args.height;
+		delete args.weight;
 	}
 	function MakeObject(args, basename, prototype, properName, description, moreArgs = {})
 	{
@@ -1487,7 +1488,8 @@ function %Type(args)
 		js:`function %Type(args)\n{\n	return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${Cat.U.Token(N_html2F)}];\n}\n`,
 	}).to;
 	DiagramReferences(user, htmlDiagram, args.xy);
-	PlaceText(args, 'HTML Input and Formatters', 96, 'bold', false);
+	args.xy = new Cat.D2;
+	PlaceText(args, 'HTML Input and Output', 96, 'bold', false);
 	Cat.D.ShowDiagram(strings);
 	Cat.D.ShowDiagram(htmlDiagram);
 	htmlDiagram.home(false);
