@@ -636,6 +636,40 @@ class U
 	{
 		return s.replace(/^./gm, '\t$&');
 	}
+	static ConvertData(obj, data)	// hom elements have to be converted from objects to their name
+	{
+		switch(obj.constructor.name)
+		{
+			case 'CatObject':
+				return data;
+			case 'ProductObject':
+				if (this.dual)
+					return [data[0], U.ConvertData(obj.objects[data[0]], data[1])];
+				else
+					return obj.objects.map(o => U.ConvertData(o, data[i]));
+			case 'HomObject':
+				return data.name;
+			case 'NamedObject':
+				return U.ConvertData(obj.base, data);
+		}
+	}
+	static InitializeData(diagram, obj, data)	// hom elements have to be converted from objects to their objects
+	{
+		switch(obj.constructor.name)
+		{
+			case 'ProductObject':
+				if (this.dual)
+					return [data[0], U.InitializeData(diagram, obj.objects[data[0]], data[1])];
+				else
+					return obj.objects.map(o => U.InitializeData(diagram, o, data[i]));
+			case 'HomObject':
+				return diagram.getElement(data);
+			case 'CatObject':
+			case 'FiniteObject':
+			default:
+				return data;
+		}
+	}
 }
 Object.defineProperties(U,
 {
@@ -1339,7 +1373,6 @@ class R
 	}
 	static SelectDiagram(name, fn = null)		// can be async if diagram not local; fn runs in final preload event
 	{
-if (!name)debugger;
 		if (R.diagram && R.diagram.name === name)
 			return;
 		R.default.debug && console.log('SelectDiagram', name);
@@ -2287,7 +2320,7 @@ class Toolbar
 		}
 		D.RemoveChildren(this.help);
 		D.RemoveChildren(this.header);
-		this.element.style.height = '0px';
+//		this.element.style.height = '0px';
 		element.style.display = 'block';
 		if (diagram.selected.length > 0)
 		{
@@ -2329,6 +2362,7 @@ class Toolbar
 	}
 	adjustHeight()
 	{
+		return;
 		const scrollHeight = this.element.scrollHeight;
 		const toolbox = this.element.getBoundingClientRect();
 		const visHeight = window.innerHeight - (toolbox.top + scrollHeight);
@@ -2471,9 +2505,11 @@ class NewElement
 		this.descriptionElt.onkeydown = onkeydown;
 		rows.push(H3.tr(H3.td(this.descriptionElt), {class:'sidenavRow'}));
 		const existingRows = this.getMatchingRows();
+		let canSearch = false;
 		switch(this.type)
 		{
 			case 'Morphism':
+				canSearch = true;
 				const objects = R.diagram.getObjects();
 				if (!this.suppress)
 				{
@@ -2509,17 +2545,12 @@ class NewElement
 				rows.push(H3.tr(H3.td(this.codomainElt), {class:'sidenavRow'}));
 				break;
 			case 'Object':
-			{
-//				const objects = R.diagram.getObjects();
-//				objects.sort(function(a, b) { return a.refcnt < b.refcnt; });
-//				objects.map(o => existingRows.push(H3.tr(H3.td(o.properName,{onclick:`Cat.R.diagram.placeObject(event, '${o.name}')`, class:'panelElt'}))));
+				canSearch = true;
 				break;
-			}
 			case 'Text':
 			default:
 				break;
 		}
-
 		elts.push(H3.table(rows));
 		elts.push(H3.span(D.GetButton3('edit3', action, this.headline)));
 		elts.push(this.error = H3.span({class:'error', id:'new-error'}));
@@ -2533,7 +2564,7 @@ class NewElement
 			D.toolbar.adjustHeight();
 		}
 		help.appendChild(H3.div(elts));
-		help.appendChild(H3.input({class:'in100', id:'help-element-search', title:'Search', placeholder:'Name contains...', onkeyup }));
+		canSearch && help.appendChild(H3.input({class:'in100', id:'help-element-search', title:'Search', placeholder:'Name contains...', onkeyup }));
 		if (existingRows.length > 0)
 		{
 			help.appendChild(H3.br());
@@ -2713,6 +2744,7 @@ console.log('filter', this.filter);
 	{
 		try
 		{
+			let from = null;
 			if (!diagram.isEditable())
 				throw 'diagram is read only';
 			const basename = args.basename;
@@ -2726,8 +2758,8 @@ console.log('filter', this.filter);
 				case 'Object':
 				{
 					const to = new CatObject(diagram, args);
-					const from = diagram.placeObject(e, to, args.xy, save);
-					return from;
+					from = diagram.placeObject(e, to, args.xy, save);
+					break;
 				}
 				case 'Morphism':
 				{
@@ -2735,21 +2767,23 @@ console.log('filter', this.filter);
 					to.loadEquivalences();
 					if (this.suppress)
 					{
-						const dm = new DiagramMorphism(diagram, {to, domain:this.domain, codomain:this.codomain});
-						diagram.addSVG(dm);
-						dm.update();
-						return dm;
+						from = new DiagramMorphism(diagram, {to, domain:this.domain, codomain:this.codomain});
+						diagram.addSVG(from);
+						from.update();
 					}
 					else
-						return diagram.placeMorphism(e, to, args.xyDom, args.xyCod, save);
+						from = diagram.placeMorphism(e, to, args.xyDom, args.xyCod, save);
+					break;
 				}
 				case 'Text':
 				{
-					const text = diagram.placeText(e, args.xy, args.text);
+					from = diagram.placeText(e, args.xy, args.text);
 					this.update();
-					return text;
+					break;
 				}
 			}
+			diagram.makeSelected(e, from);
+			return from;
 		}
 		catch(e)
 		{
@@ -6813,6 +6847,7 @@ class CatObject extends Element
 	}
 	isTerminal() { return false; }		// fitb
 	isInitial() { return false; }
+	getSize() { return Number.MAX_VALUE; }
 	static IsA(obj)
 	{
 		return CatObject.prototype.isPrototypeOf(obj);
@@ -6863,10 +6898,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 			d.size = Number.parseInt(this.size);
 		return d;
 	}
-	isIterable()
-	{
-		return true;
-	}
+	isIterable() { return 'size' in args && args.size < Number.MAX_VALUE; }
 	isTerminal() { return this.size === 1; }
 	isInitial() { return this.size === 0; }
 	static Basename(diagram, args)
@@ -6874,6 +6906,10 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		const basename = 'basename' in args ? args.basename : '';
 		const size = 'size' in args ? args.size : '';
 		return basename === '' ? (size === '' ? basename : `${basename}#${Number.parseInt(size)}`) : basename;
+	}
+	getSize()
+	{
+		return 'size' in this ? this.size : super.getSize();
 	}
 	static Codename(diagram, args)
 	{
@@ -7081,6 +7117,32 @@ class ProductObject extends MultiObject
 			}
 		});
 		return fctrs;
+	}
+	getSize()
+	{
+		return this.objects.reduce((r, o) => this.dual ? r + o.getSize() : r * o.getSize(), this.dual ? 0 : 1);
+	}
+	[Symbol.iterator]()
+	{
+		const that = this;
+		if (this.dual)
+		{
+			let ndx = 0;
+			let iter = this.objects[0][Symbol.iterator]();
+			return {
+				next()
+				{
+					const nxt = iter.next();
+					if (nxt.done && ndx < that.objects.length -1)
+					{
+						iter = that.objects[++ndx][Symbol.iterator]();
+						return iter.next();
+					}
+					else
+						return {value:undefined, done:true};
+				}
+			};
+		}
 	}
 	static Basename(diagram, args)
 	{
@@ -8832,6 +8894,7 @@ class HomsetAction extends Action
 		const domain = diagram.getElement(domName);
 		const codomain = diagram.getElement(codName);
 		const nuFrom = new DiagramMorphism(diagram, {to, domain, codomain});
+		diagram.makeSelected(nuFrom);
 		diagram.addSVG(nuFrom);
 		nuFrom.update();
 		return nuFrom;
@@ -9451,22 +9514,24 @@ class JavascriptAction extends LanguageAction
 			const jsName = U.Token(m);
 			const header = JavascriptAction.Header(m);
 			const tail = JavascriptAction.Tail();
-			if (FiniteObject.IsA(m.domain) && m.domain.size > 0 && !DataMorphism.IsA(m))
+			const domain = NamedObject.IsA(m.domain) ? m.domain.base : m.domain;
+			const codomain = NamedObject.IsA(m.codomain) ? m.codomain.base : m.codomain;
+			if (FiniteObject.IsA(domain) && domain.size > 0 && !DataMorphism.IsA(m))
 				code +=	// TODO safety check?
 `
 function ${jsName}_Iterator(fn)
 {
 	const result = new Map;
-	for (let i=0; i<${m.domain.size}; ++i)
+	for (let i=0; i<${domain.size}; ++i)
 		result.set(i, fn(i));
 	return result;
 }
 `;
-			if ('domain' in m && m.domain.isInitial())
+			if ('domain' in m && domain.isInitial())
 				code += `${header}	return;	// abandon computation\n'${tail}`;	// domain is null, yuk
-			else if ('codomain' in m && m.codomain.isTerminal())
+			else if ('codomain' in m && codomain.isTerminal())
 				code += `${header}	return 0;${tail}`;
-			else if ('codomain' in m && m.codomain.isInitial())
+			else if ('codomain' in m && codomain.isInitial())
 				code += `${header}	throw 'do not do this';${tail}`;
 			else
 				switch(proto)
@@ -9504,10 +9569,25 @@ ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`
 							generated.add(m.name);	// add early to avoid infinite loop
 							code += this.generate(m.recursor, generated);
 						}
-						let data = JSON.stringify(U.JsonMap(m.data));
+						let homMorphs = [];
+						const that = this;
+						m.data.forEach(function(d)
+						{
+							that.findHomMorphisms(m.codomain, d, homMorphs);
+						});
+						if (homMorphs.length > 0)
+						{
+							generated.add(m.name);	// add early to avoid infinite loop
+							code += homMorphs.map(hm => this.generate(hm, generated)).join('');
+						}
+						const data = [];
+						m.data.forEach(function(d, k)
+						{
+							data.push(`[${k}, ${that.convertData(codomain, d)}]`);
+						});
 						code +=	// TODO safety check?
 `
-const ${jsName}_Data = new Map(${data});
+const ${jsName}_Data = new Map([${data.join()}]);
 function ${jsName}_Iterator(fn)
 {
 	const result = new Map;
@@ -9549,7 +9629,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 					case 'LambdaMorphism':
 						code += this.generate(m.preCurry, generated);
 						const inputs = new Array(JavascriptAction.ObjectLength(m.preCurry.domain));
-						const domLength = JavascriptAction.ObjectLength(m.domain);
+						const domLength = JavascriptAction.ObjectLength(domain);
 						const homLength = m.homFactors.length;
 						for(let i=0; i<m.domFactors.length; ++i)
 						{
@@ -9617,6 +9697,49 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		}
 		return code;
 	}
+	convertData(obj, data)	// hom elements have to be converted from objects to their name
+	{
+		let out = '';
+		switch(obj.constructor.name)
+		{
+			case 'CatObject':
+				out = JSON.stringify(data);
+				break;
+			case 'ProductObject':
+				if (this.dual)
+					return [data[0], this.convertData(obj.objects[data[0]], data[1])];
+				else
+					out = `[${obj.objects.map(o => this.convertData(o, data[i])).join()}]`;;
+				break;
+			case 'HomObject':
+				out = U.Token(data);
+				break;
+			case 'NamedObject':
+				out = this.convertData(obj.base, data);
+				break;
+		}
+		return out;
+	}
+	findHomMorphisms(obj, data, homers = [])
+	{
+		let out = '';
+		switch(obj.constructor.name)
+		{
+			case 'ProductObject':
+				if (this.dual)
+					this.findHomMorphisms(obj.objects[data[0]], data[1], homers);
+				else
+					obj.objects.map(o => this.findHomMorphisms(o, data[i], homers));
+				break;
+			case 'HomObject':
+				!homers.includes(data) && homers.push(data);
+				break;
+			case 'NamedObject':
+				this.findHomMorphisms(obj.base, data, homers);
+				break;
+		}
+		return homers;
+	}
 	loadHTML(fn)
 	{
 		const htmlDiagram = R.$CAT.getElement('hdole/HTML');
@@ -9662,7 +9785,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		if (ProductObject.IsA(o))
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
 		else if (Morphism.IsA(o))
-			return this.canFormat(o.domain) && this.canFormat(o.codomain);
+			return this.canFormat(o.domain) && (this.canFormat(o.codomain) || HomObject.IsA(o.codomain));
 		else if (o.isTerminal() && !o.dual)
 			return true;
 		else if (FiniteObject.IsA(o))
@@ -9671,14 +9794,17 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 			return this.formatters.has(o.signature);
 		return false;
 	}
-	getInput(o, prefix = '', factor = [])
+	getInputHtml(o, prefix = '', factor = [], index = null)
 	{
+		const from = R.diagram.selected[0];
+		const morph = from.to;
+		const value = index >= 0 && 'data' in morph ? morph.data.get(index) : null;
 		let html = '';
 		const id = `${prefix} ${o.name} ${factor.toString()}`;
 		switch(o.constructor.name)
 		{
 			case 'NamedObject':
-				html = this.getInput(o.getBase(), prefix, factor);
+				html = this.getInputHtml(o.getBase(), prefix, factor);
 				break;
 			case 'CatObject':
 				if (this.formatters.has(o.signature))
@@ -9693,29 +9819,35 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 			case 'ProductObject':
 				if (o.dual)
 				{
-					let options = '';
-					let divs = '';
-					for (let i=0; i<o.objects.length; ++i)
+					if (o.objects.reduce((r, oi) => r && oi.isTerminal(), true))
 					{
-						const ob = o.objects[i];
-						const f = [...factor, i];
-						const oid = `dv_${ob.name} ${f.toString()}`;
-						options += `<option value="${i}">${i}: ${ob.htmlName()}</option>`;
-						if (ProductObject.IsA(o))
-							divs += H.div(this.getInput(ob, prefix, [...factor, i]), 'nodisplay', oid);
+						html += `<input id="${id}" type="number" min="0" max="${o.objects.length -1}"/>`;
 					}
-					html +=
+					else
+					{
+						let options = '';
+						let divs = '';
+						for (let i=0; i<o.objects.length; ++i)
+						{
+							const ob = o.objects[i];
+							const f = [...factor, i];
+							const oid = `dv_${ob.name} ${f.toString()}`;
+							options += `<option value="${i}">${i}: ${ob.htmlName()}</option>`;
+							divs += H.div(this.getInputHtml(ob, prefix, [...factor, i]), 'nodisplay', oid);
+						}
+						html +=
 `<select id="${id}" onchange="Cat.D.ShowInput('${o.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
-<option>Choose one</option>
+<option>Choose</option>
 ${options}
 </select>
 <div>
 ${divs}
 </div>
 `;
+					}
 				}
 				else
-					html += o.objects.map((ob, i) => this.getInput(ob, prefix, [...factor, i]));
+					html += o.objects.map((ob, i) => this.getInputHtml(ob, prefix, [...factor, i]));
 				break;
 			case 'FiniteObject':
 				if ('size' in o)
@@ -9729,8 +9861,30 @@ ${divs}
 				break;
 			case 'DataMorphism':
 				break;
+			case 'HomObject':
+				const homset = R.diagram.codomain.getHomset(o.objects[0], o.objects[1]);
+				const options = homset.map(m => `<option value="${m.name}"${m.name === value.name ? ' selected="selected"' : ''}>${m.htmlName()}</option>`).join('');
+				const selector =
+`<select data-index="${index}" id="help-run-homset-${index ? index : 'next'}" onchange="Cat.R.Actions.javascript.setHomValue(this)"><option>Choose</option>${options}</select>`;
+				html = selector;
+				break;
 		}
 		return html;
+	}
+	setHomValue(selector)		// TODO work hierarchically
+	{
+		const from = R.diagram.selected[0];
+		const morph = from.to;
+		const index = Number.parseInt(selector.dataset.index);
+		const value = selector.value;
+		const selected = R.diagram.getElement(value);
+		if (selected)
+		{
+			morph.data.set(index, selected);
+			R.EmitMorphismEvent(R.diagram, 'update', from);
+		}
+		else
+			morph.data.delete(index);
 	}
 	getInputValue(domain, prefix = '', factor = [])
 	{
@@ -9761,10 +9915,13 @@ ${divs}
 				if (dom.dual)
 				{
 					const i = Number.parseInt(document.getElementById(`${prefix} ${dom.name} ${factor.toString()}`).value);
-					value = [i, this.getInputValue(dom.objects[i], prefix, [...factor, i])];
+					const isNumber = dom.objects.reduce((r, oi) => r && oi.isTerminal(), true);
+					value = isNumber ? i : [i, this.getInputValue(dom.objects[i], prefix, [...factor, i])];
 				}
 				else
 					value = dom.objects.map((o, i) => this.getInputValue(o, prefix, [...factor, i]));
+			case 'HomObject':
+				break;
 		}
 		return value;
 	}
@@ -9894,6 +10051,7 @@ ${this.generate(m)}
 					break;
 				case 'exception':		// exception thrown inside worker, TODO what happened?
 					w.terminate();
+					D.RecordError(args);
 					break;
 				case 'f2d3':
 					D.threeDPanel.open();
@@ -10467,47 +10625,65 @@ class RunAction extends Action
 		if (DiagramObject.IsA(from))
 		{
 			if (js.canFormat(source))
-				html += js.getInput(source) + addDataBtn;
+				html += js.getInputHtml(source) + addDataBtn;
 		}
 		else	// morphism
 		{
 			const {domain, codomain} = to;
 			const evalCode = H.h5('Evaluate the Morphism') +
-								js.getInput(domain) +
+								js.getInputHtml(domain) +
 								D.GetButton('edit', `Cat.R.Actions.javascript.evaluate(event, Cat.R.diagram, '${to.name}', Cat.R.Actions.run.postResult)`, 'Evaluate inputs');
 			if (to.constructor.name === 'Morphism' && FiniteObject.IsA(domain) && !js.hasCode(to))
 			{
 				if ('size' in domain && domain.size > 0)
 				{
 					for (let i=0; i<domain.size; ++i)
-						html += js.getInput(codomain, i.toString());
+						html += js.getInputHtml(codomain, i.toString());
 				}
 				else	// indeterminate size
 				{
-					html += js.getInput(codomain);
+					html += js.getInputHtml(codomain);
 					html += D.GetButton('add', `Cat.R.Actions.run.addDataInput(event, Cat.R.diagram, '${to.name}')`, 'Add data input');
 				}
 			}
 			else if (DataMorphism.IsA(to))
 			{
-				html += H.h5('Add Data To Morphism');
-				let rows = H.tr(H.td(H.small('Domain')) + H.td(H.small('Codomain')) + H.td(''));
-				rows += H.tr(H.td(js.getInput(domain, 'dom')) + H.td(js.getInput(codomain, 'cod')) + H.td(addDataBtn));
-				html += H.table(rows);
-				canMakeData = false;
-				if (to.data.size > 0)
+				const sz = domain.getSize();
+				let rows = H.tr(H.td(H.small('Domain')) + H.td(H.small('Codomain')) + H.td('')) +
+							H.tr(H.td(domain.htmlName(), 'smallBold') + H.td(codomain.htmlName(), 'smallBold') + H.td(''));
+				function dataRow(d,i)
 				{
-					html += H.h5('Data In Morphism');
-					let rows = '';
-					to.data.forEach(function(d,i)
+					if (d !== null)
+						rows += H.tr(H.td(i) + H.td(d));
+				}
+				if (sz < Number.MAX_VALUE)
+				{
+					for (let i=0; i<sz; ++i)
 					{
-						if (d !== null)
-							rows += H.tr(H.td(i) + H.td(d));
-					});
+						let val = 'data' in this ? this.data[i] : '';
+						val = val ? val : '';	// TODO
+						val = js.getInputHtml(codomain, '', [], i);
+						dataRow(val, i);
+					}
+					html += H.h5('Data In Morphism');
 					html += H.table(rows) + H.hr();
 				}
 				else
-					html += H.small('No data');
+				{
+					html += H.h5('Add Data To Morphism');
+					rows += H.tr(H.td(js.getInputHtml(domain, 'dom')) + H.td(js.getInputHtml(codomain, 'cod')) + H.td(addDataBtn));
+					html += H.table(rows);
+					canMakeData = false;
+					if (to.data.size > 0)
+					{
+						html += H.h5('Data In Morphism');
+						let rows = '';
+						to.data.forEach(dataRow);
+						html += H.table(rows) + H.hr();
+					}
+					else
+						html += H.small('No data');
+				}
 				html += evalCode;
 			}
 			else if (to.isIterable())
@@ -10539,18 +10715,19 @@ class RunAction extends Action
 		this.data = new Map;
 		D.toolbar.adjustHeight();
 	}
-	postResult(r)
+	postResult(result)
 	{
-		var d = document.createElement('div');
-		d.innerHTML = U.HtmlSafe(U.a2s(r[1]));
+		var div = document.createElement('div');
+//		d.innerHTML = U.HtmlSafe(U.a2s(result[1]));
+		const data = U.ConvertData(result[1]);
 		const that = R.Actions.run;
-		that.display.appendChild(d);
-		that.data.set(r[0], r[1]);
+		that.display.appendChild(div);
+		that.data.set(result[0], result[1]);
 	}
-	postResults(r)
+	postResults(result)
 	{
 		const that = R.Actions.run;
-		r.forEach(function(v, i)
+		result.forEach(function(v, i)
 		{
 			that.postResult([i, v]);
 		});
@@ -10640,7 +10817,7 @@ class FiniteObjectAction extends Action
 		this.sizeElt.classList.remove('error');
 		if (size < 0 || size.toString() !== txt)
 		{
-			this.sizseElt.classList.add('error');
+			this.sizeElt.classList.add('error');
 			return;
 		}
 		const finObj = this.doit(e, diagram, from, size);
@@ -11631,6 +11808,10 @@ class NamedObject extends CatObject	// name of an object
 		grph.width = w;
 		return grph;
 	}
+	getSize()
+	{
+		return this.base.getSize();
+	}
 	static IsA(m)
 	{
 		return NamedObject.prototype.isPrototypeOf(m);
@@ -12455,6 +12636,25 @@ class IndexCategory extends Category
 			'cells':		{value:new Map, writable: false},
 		});
 	}
+	postProcess(diagram)
+	{
+		this.forEachMorphism(function(from)
+		{
+			const to = from.to;
+			if ('recursor' in to && typeof to.recursor === 'string')	// set recursive function as it is defined after to is
+				to.setRecursor(to.recursor);
+			if (DataMorphism.IsA(to))
+				to.data.forEach(function(d, i)
+				{
+					to.data.set(i, U.InitializeData(diagram, to.codomain, d));
+				});
+		});
+	}
+	process(diagram, data)
+	{
+		super.process(diagram, data);
+		this.postProcess(diagram);
+	}
 	help(helped = new Set)
 	{
 		if (helped.has(this.name))
@@ -12462,11 +12662,11 @@ class IndexCategory extends Category
 		helped.add(this.name);
 		return super.help() + H.p('Index category');
 	}
-	json(a = {})
-	{
-		a = super.json(a);
-		return a;
-	}
+//	json(a = {})
+//	{
+//		a = super.json(a);
+//		return a;
+//	}
 	clear()
 	{
 		super.clear();
@@ -13189,8 +13389,8 @@ class DataMorphism extends Morphism
 		}
 		else
 			this.data = new Map;
-		if ('limit' in nuArgs)
-			this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
+//		if ('limit' in nuArgs)
+//			this.limit = U.GetArg(nuArgs, 'limit', Number.MAX_SAFE_INTEGER);	// TODO rethink the limit
 		if ('recursor' in nuArgs)
 			this.setRecursor(args.recursor);
 		this.signature = this.getDataSignature();
@@ -13232,9 +13432,13 @@ class DataMorphism extends Morphism
 	json()
 	{
 		let mor = super.json();
-		mor.data = U.JsonMap(this.data);
-		if ('limit' in this)
-			mor.limit = this.limit;
+		const saved = new Map;
+		const codomain = this.codomain;
+		this.data.forEach(function(d, k)
+		{
+			saved.set(k, U.ConvertData(codomain, d));
+		});
+		mor.data = U.JsonMap(saved);
 		if ('recursor' in this)
 			mor.recursor = this.recursor.name;
 		return mor;
@@ -13243,6 +13447,7 @@ class DataMorphism extends Morphism
 	{
 		this.data = new Map;
 	}
+	[Symbol.iterator]() { return this.data.values(); }
 	static HasRecursiveForm(ary)
 	{
 		if (ary.length === 2)
@@ -13695,10 +13900,6 @@ class Diagram extends Functor
 {
 	constructor(diagram, args)
 	{
-		if (!('user' in args))
-		{debugger;
-			throw 'no user for diagram';
-		}
 		const nuArgs = U.Clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		nuArgs.category = U.GetArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
@@ -13933,8 +14134,7 @@ class Diagram extends Functor
 		}
 		if (elt)
 			this.addSelected(elt);
-		if (R.default.debug)
-			console.log('selected', elt && elt.basename, elt && elt.refcnt, elt, elt && 'assyGraph' in elt ? elt.assyGraph.hasTag('info') : '');
+		R.default.debug && console.log('selected', elt && elt.basename, elt && elt.refcnt, elt, elt && 'assyGraph' in elt ? elt.assyGraph.hasTag('info') : '');
 		R.EmitDiagramEvent(this, 'select', '');
 	}
 	addSelected(elt)
@@ -14655,16 +14855,16 @@ else if (prototype === 'Diagonal')
 			elt = proto.Get(this, args);
 		if (!elt)
 		{
-			if (prototype === 'DiagramMorphism' && !this.getElement(args.to))	// bad programming
-				return null;
+//			if (prototype === 'DiagramMorphism' && !this.getElement(args.to))	// bad programming
+//				return null;
 			elt = new Cat[prototype](this, args);
-			if (prototype === 'IndexCategory')
-				elt.forEachMorphism(function(m)
-				{
-					if ('recursor' in m && typeof m.recursor === 'string')	// set recursive function as it is defined after m is
-						m.setRecursor(m.recursor);
-				});
-			else if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
+//			if (prototype === 'IndexCategory')
+//				elt.forEachMorphism(function(m)
+//				{
+//					if ('recursor' in m && typeof m.recursor === 'string')	// set recursive function as it is defined after m is
+//						m.setRecursor(m.recursor);
+//				});
+			if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 				args.actions.map(a => this.actions.set(a, R.$Actions.getElement(a)));
 		}
 		if (!DiagramMorphism.IsA(elt) && 'loadEquivalences' in elt)
@@ -14919,14 +15119,6 @@ else if (prototype === 'Diagonal')
 		if (ProductObject.IsA(codomain) && codomain.dual)
 			codomain.find(domain).map((f, i) => this.fctr(domain, f));
 	}
-/*
-	getObjects()
-	{
-		const objects = [];
-		this.forEachObject(function(o) { objects.push(o); });
-		return objects;
-	}
-	*/
 	getObjectSelector(id, text, change)
 	{
 		const options = [H3.option(text)];
@@ -15108,8 +15300,9 @@ else if (prototype === 'Diagonal')
 		}
 
 		scanning = [...references];
-		function backLinkTag(morGraph, barGraph, tag)
+		function backLinkTag(m, morGraph, barGraph, tag)
 		{
+			propagated.add(m);
 			let didAdd = false;
 			morGraph.graphs[1].scan(function(g, ndx)
 			{
@@ -15128,11 +15321,12 @@ else if (prototype === 'Diagonal')
 			const fm = scanning.pop();
 			const morGraph = fm.graph;
 			const barGraph = getBarGraph(fm);
-			const didAdd = barGraph.graphs[1].hasTag(tag) && backLinkTag(morGraph, barGraph, tag);
-			didAdd && fm.domain.codomains.forEach(function(morph)
+//			const didAdd = barGraph.graphs[1].hasTag(tag) && backLinkTag(morGraph, barGraph, tag);
+			if (barGraph.graphs[1].hasTag(tag))
 			{
-				isConveyance(morph.to) && scanning.push(morph);
-			});
+				if (backLinkTag(fm, morGraph, barGraph, tag))
+					fm.domain.codomains.forEach(function(morph) { isConveyance(morph.to) && scanning.push(morph); });
+			}
 		}
 
 		//
@@ -15158,6 +15352,13 @@ else if (prototype === 'Diagonal')
 radius = 40;
 fill = '#F003';
 inputs.forEach(addBall);
+		//
+		// now tag the inputs with info
+		//
+		inputs.forEach(function(i)
+		{
+			i.assyGraph.addTag(tag);
+		});
 		//
 		// do last info propagation for outputs
 		//
@@ -15190,10 +15391,16 @@ inputs.forEach(addBall);
 			});
 			input.codomains.forEach(function(dm)
 			{
-				if (isProConveyance(dm.to))
+				if (isConveyance(dm.to) && !propagated.has(dm))
 				{
-					if (!scanned.has(dm.to.dual ? dm.codomain : dm.domain))
-						backLinkTag(dm.graph, getBarGraph(dm), tag) && !scanning.includes(dm.domain) && scanning.push(dm.domain);
+//					if (!scanned.has(dm.to.dual ? dm.codomain : dm.domain) && !sources.has()
+//					if (!scanned.has(dm.domain) || sources.has(dm.domain))
+					if (!propagated.has(dm))
+					{
+//						backLinkTag(dm.graph, getBarGraph(dm), tag) && !scanning.includes(dm.domain) && scanning.push(dm.domain);
+						backLinkTag(dm, dm.graph, getBarGraph(dm), tag);
+						!scanning.includes(dm.domain) && scanning.push(dm.domain);
+					}
 					else
 						references.delete(dm);
 				}
@@ -15225,7 +15432,8 @@ inputs.forEach(addBall);
 			isIt = true;
 			obj.domains.forEach(function(m)
 			{
-				if (FactorMorphism.IsA(m.to) && references.has(m) && !m.dual)
+//				if (FactorMorphism.IsA(m.to) && references.has(m) && !m.dual)
+				if (isProConveyance(m.to) && references.has(m))
 				{
 					m.codomain.assyGraph.scan(scannerYes);
 					return;
@@ -15253,10 +15461,14 @@ inputs.forEach(addBall);
 		});
 		sources.forEach(function(s)
 		{
+			/*
 			s.codomains.forEach(function(m)
 			{
 				isConveyance(m) && !references.has(m) && sources.delete(s);
 			});
+			*/
+			if ([...s.domains, ...s.codomains].reduce((r, m) => r && isConveyance(m)))
+				sources.delete(s);
 		});
 fill = '#F009';
 radius = 50;
@@ -15273,9 +15485,45 @@ fill = '#0F03';
 radius = 60;
 objects.map(o => o.assyGraph.hasTag(tag) && addBall(o));
 
-		const composites = new Map;	// source to array of morphisms to compose
+		const composites = new Map;	// sources+inputs to array of morphisms to compose
 		const assemblies = new Map;	// terminus to array of morphisms to product assemble
 
+		function followComposite(cmp, m)
+		{
+			const cod = m.codomain;
+			const morphs = [...cod.domains].filter(m => !references.has(m));
+			if (morphs.length > 0)
+			{
+				const next = morphs[0];
+				cmp.push(next);
+				return followComposite(cmp, next);
+			}
+			else
+				return cod;
+		}
+		function startComposites(obj)
+		{
+			const comps = [];
+			composites.set(obj, comps);
+			obj.domains.forEach(m =>
+			{
+				if (!references.has(m))
+				{
+					const cmp = [m];
+					comps.push(cmp);
+					const cod = followComposite(cmp, m);
+					scanning.push(cod);
+				}
+			});
+		}
+		scanning = [...inputs, ...sources];
+		while(scanning.length > 0)
+		{
+			const obj = scanning.pop();
+			startComposites(obj);
+		}
+
+console.log({composites});
 return issues;
 
 		/*
