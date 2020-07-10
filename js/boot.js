@@ -241,7 +241,7 @@ const Boot = function(fn)
 	const tty = MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
 	args.xy = new Cat.D2;
 	PlaceText(args, 'Basic Objects', 96, 'bold', false);
-	Cat.D.ShowDiagram(basics);
+	Cat.R.SelectDiagram(basics.name);
 	basics.home(false);
 	//
 	// logic
@@ -271,7 +271,6 @@ const Boot = function(fn)
 	}, args.xy);
 	*/
 	args.xy.y += args.majorGrid;
-//	const two = logic.get('FiniteObject', {size:2});
 	const two = logic.coprod(one, one);
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
 	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
@@ -279,27 +278,14 @@ const Boot = function(fn)
 	args.xy.y += args.majorGrid;
 	const id2 = new Cat.DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
 	logic.addSVG(id2);
-//	const omegaPair = MakeObject(args, '', 'ProductObject', '', 'A pair of 2\'s', {objects:[omega, omega]}).to;
 	const omegaPair = args.diagram.prod(omega, omega);
 	const mfalse = args.diagram.fctr(omega, [0]);
 	const mtrue = args.diagram.fctr(omega, [1]);
 	const mFalse = new Cat.NamedMorphism(args.diagram, {name:'false', properName:'&perp;', source:mfalse});
-	const mTrue = new Cat.NamedMorphism(args.diagram, {name:'true', properName:'&#8868;', source:mfalse});
+	const mTrue = new Cat.NamedMorphism(args.diagram, {name:'true', properName:'&#8868;', source:mtrue});
 
 	PlaceMorphism(args, mFalse);
 	PlaceMorphism(args, mTrue);
-/*
-	const mTrue = MakeMorphism(args, 'true', 'Morphism', '&#8868;', 'The truth value known as true', one, omega,
-	{
-		js:'function %Type(args)\n{\n	return true;\n}\n',
-		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = true;\n}\n',
-	}).to;
-	const mFalse = MakeMorphism(args, 'false', 'Morphism', '&perp;', 'The truth value known as false', one, omega,
-	{
-		js:'function %Type(args)\n{\n	return false;\n}\n',
-		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = false;\n}\n',
-	}).to;
-*/
 	const logicNot = MakeMorphism(args, 'not', 'Morphism', '&not;', 'The negation of a logic value', omega, omega,
 	{
 		js:'function %Type(args)\n{\n	return !args;\n}\n',
@@ -318,7 +304,7 @@ const Boot = function(fn)
 	DiagramReferences(user, logic, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'Logic Operations', 96, 'bold', false);
-	Cat.D.ShowDiagram(logic);
+	Cat.R.SelectDiagram(logic.name);
 	logic.home(false);
 	//
 	// N arithemtic
@@ -503,7 +489,7 @@ args.xy.y += args.majorGrid;
 	DiagramReferences(user, Narith, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'Natural Number Operations', 96, 'bold', false);
-	Cat.D.ShowDiagram(Narith);
+	Cat.R.SelectDiagram(Narith.name);
 	Narith.home(false);
 	//
 	// integers
@@ -637,7 +623,7 @@ return [0, args[0] % args[1]];
 	}).to;
 	args.xy = new Cat.D2;
 	PlaceText(args, 'Integer Operations', 96, 'bold', false);
-	Cat.D.ShowDiagram(integers);
+	Cat.R.SelectDiagram(integers.name);
 	integers.home(false);
 	//
 	// floating point
@@ -855,7 +841,7 @@ void %Type(const %Dom & args, %Cod & out)
 	DiagramReferences(user, floats, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'Floating Point Operations', 96, 'bold', false);
-	Cat.D.ShowDiagram(floats);
+	Cat.R.SelectDiagram(floats.name);
 	floats.home(false);
 	//
 	// complex numbers
@@ -1051,7 +1037,7 @@ return [0, Math.pow(args[0], args[1])];
 	DiagramReferences(user, complex, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'Complex Number Operations', 96, 'bold', false);
-	Cat.D.ShowDiagram(complex);
+	Cat.R.SelectDiagram(complex.name);
 	complex.home(false);
 
 	//
@@ -1323,7 +1309,7 @@ function %Type(args)
 	DiagramReferences(user, strings, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'String Operations', 96, 'bold', false);
-	Cat.D.ShowDiagram(strings);
+	Cat.R.SelectDiagram(strings.name);
 	strings.home(false);
 
 	//
@@ -1355,7 +1341,7 @@ function %Type(args)
 args.xy.y += args.majorGrid;
 */
 	const html = MakeObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices').to;
-	const html2N = MakeMorphism(args, 'html2N', 'Morphism', 'input', 'read a natural number from an HTML input tag', html, N,
+	const html2N = MakeMorphism(args, 'html2N', 'Morphism', 'input', 'Read a natural number from an HTML input tag', html, N,
 	{
 		js:
 `
@@ -1370,7 +1356,7 @@ function %Type(args)
 `,
 	}).to;
 
-	const html2N8 = MakeMorphism(args, 'html2N8', 'Morphism', 'input', 'read a natural number between 0 and 255 from an HTML input tag', html, N8,
+	const html2N8 = MakeMorphism(args, 'html2N8', 'Morphism', 'input', 'Read a natural number between 0 and 255 from an HTML input tag', html, N8,
 	{
 		js:
 `
@@ -1387,7 +1373,7 @@ function %Type(args)
 `,
 	}).to;
 
-	const html2N16 = MakeMorphism(args, 'html2N16', 'Morphism', 'input', 'read a natural number between 0 and 255 from an HTML input tag', html, N16,
+	const html2N16 = MakeMorphism(args, 'html2N16', 'Morphism', 'input', 'Read a natural number between 0 and 255 from an HTML input tag', html, N16,
 	{
 		js:
 `
@@ -1404,7 +1390,7 @@ function %Type(args)
 `,
 	}).to;
 
-	const html2Z32 = MakeMorphism(args, 'html2Z32', 'Morphism', 'input', 'read a 32-bitinteger from an HTML input tag', html, Z32,
+	const html2Z32 = MakeMorphism(args, 'html2Z32', 'Morphism', 'input', 'Read a 32-bit integer from an HTML input tag', html, Z32,
 	{
 		js:
 `
@@ -1423,21 +1409,21 @@ function %Type(args)
 	const N_html2Z32 = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z32, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2Z32);
 	const strXN_html2Z32 = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z32.codomain]});
-	const html2Z32F = MakeMorphism(args, 'html2Z32F', 'Morphism', '&Zopf&#8323;&#8322;;', 'Input a 32-bit integer from HTML', html, strXN_html2Z32,
+	const html2Z32F = MakeMorphism(args, 'html2Z32F', 'Morphism', '&Zopf;&#8323;&#8322;;', 'Input a 32-bit integer from HTML', html, strXN_html2Z32,
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="-2417483648" max="2417483647" id="' + args + '" placeholder="32-bit integer"/>', ${Cat.U.Token(N_html2Z32)}];\n}\n`,
 	}).to;
 
-	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'read an integer from an HTML input tag', html, Z,
+	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'Read an integer from an HTML input tag', html, Z,
 	{
 		js:`function %Type(args)\n{\n	return Number.parseInt(document.getElementById(args).value);\n}\n`,
 	}).to;
-	const html2F = MakeMorphism(args, 'html2F', 'Morphism', 'input', 'read a floating point number from an HTML input tag', html, F,
+	const html2F = MakeMorphism(args, 'html2F', 'Morphism', 'input', 'Read a floating point number from an HTML input tag', html, F,
 	
 	{
 		js:`function %Type(args)\n{\n	return Number.parseFloat(document.getElementById(args).value);\n}\n`,
 	}).to;
-	const html2Str = MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'read a string from an HTML input tag', html, str,
+	const html2Str = MakeMorphism(args, 'html2Str', 'Morphism', 'input', 'Read a string from an HTML input tag', html, str,
 	{
 		js:`function %Type(args)\n{\n	return document.getElementById(args).value;\n}\n`,
 	}).to;
@@ -1460,7 +1446,7 @@ function %Type(args)
 	const N_html2N8 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N8, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2N8);
 	const strXN_html2N8 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N8.codomain]});
-	const html2N8F = MakeMorphism(args, 'html2N8F', 'Morphism', '&Nopf&#8328;;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N8,
+	const html2N8F = MakeMorphism(args, 'html2N8F', 'Morphism', '&Nopf;&#8328;;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N8,
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N8)}];\n}\n`,
 	}).to;
@@ -1468,7 +1454,7 @@ function %Type(args)
 	const N_html2N16 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N16, domFactors:[], homFactors:[0]});
 	PlaceMorphism(args, N_html2N16);
 	const strXN_html2N16 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N16.codomain]});
-	const html2N16F = MakeMorphism(args, 'html2N16F', 'Morphism', '&Nopf&#8321;&#8326;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N16,
+	const html2N16F = MakeMorphism(args, 'html2N16F', 'Morphism', '&Nopf;&#8321;&#8326;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N16,
 	{
 		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N16)}];\n}\n`,
 	}).to;
@@ -1490,8 +1476,7 @@ function %Type(args)
 	DiagramReferences(user, htmlDiagram, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'HTML Input and Output', 96, 'bold', false);
-	Cat.D.ShowDiagram(strings);
-	Cat.D.ShowDiagram(htmlDiagram);
+	Cat.R.SelectDiagram(htmlDiagram.name);
 	htmlDiagram.home(false);
 	//
 	// 3D diagram
@@ -1582,7 +1567,7 @@ postMessage(['fff2toQB3', args]);
 	DiagramReferences(user, threeD, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'Three-D Integration', 96, 'bold', false);
-	Cat.D.ShowDiagram(threeD);
+	Cat.R.SelectDiagram(threeD.name);
 	threeD.home(false);
 	/*
 	//
@@ -1711,9 +1696,8 @@ return matrix_multiply(%Type_matrix, args);
 }
 `
 	});
-	Cat.D.ShowDiagram(qGates);
 	qGates.home(false);
-	Cat.D.ShowDiagram(qGates);
+	Cat.R.SelectDiagram(qGates.name);
 
 	//
 	// cpp
@@ -1772,7 +1756,7 @@ namespace %Namespace
 {
 `
 	}}).to;
-	const stdin2N = MakeMorphism(args, 'stdin2N', 'Morphism', 'in', 'read a natural number from standard input', stdin, N,
+	const stdin2N = MakeMorphism(args, 'stdin2N', 'Morphism', 'in', 'Read a natural number from standard input', stdin, N,
 	{
 		cpp:
 `void %Type(const %Dom & args, %Cod & out)
@@ -1780,7 +1764,7 @@ namespace %Namespace
 	std::cin >> out;
 }
 `}).to;
-	const stdin2Z = MakeMorphism(args, 'stdin2Z', 'Morphism', 'in', 'read an integer from standard input', stdin, Z,
+	const stdin2Z = MakeMorphism(args, 'stdin2Z', 'Morphism', 'in', 'Read an integer from standard input', stdin, Z,
 	{
 		cpp:
 `void %Type(const %Dom & args, %Cod & out)
@@ -1788,7 +1772,7 @@ namespace %Namespace
 	std::cin >> out;
 }
 `}).to;
-	const stdin2F = MakeMorphism(args, 'stdin2F', 'Morphism', 'in', 'read a floating point number from standard input', stdin, F,
+	const stdin2F = MakeMorphism(args, 'stdin2F', 'Morphism', 'in', 'Read a floating point number from standard input', stdin, F,
 	{
 		cpp:
 `void %Type(const %Dom & args, %Cod & out)
@@ -1796,7 +1780,7 @@ namespace %Namespace
 	std::cin >> out;
 }
 `}).to;
-	const stdin2Str = MakeMorphism(args, 'stdin2Str', 'Morphism', 'in', 'read a string from standard input', stdin, str,
+	const stdin2Str = MakeMorphism(args, 'stdin2Str', 'Morphism', 'in', 'Read a string from standard input', stdin, str,
 	{
 		cpp:
 `void %Type(const %Dom & args, %Cod & out)
@@ -2111,7 +2095,7 @@ namespace %Namespace
 
 	args.xy = new Cat.D2;
 	PlaceText(args, 'C++ Integration', 96, 'bold', false);
-	Cat.D.ShowDiagram(cpp);
+	Cat.R.SelectDiagram(cpp.name);
 	cpp.home(false);
 
 	//
@@ -2187,7 +2171,7 @@ namespace %Namespace
 
 	args.xy = new Cat.D2;
 	PlaceText(args, 'The GDSII Graphics Design Standard Specification', 96, 'bold', false);
-	Cat.D.ShowDiagram(gds);
+	Cat.R.SelectDiagram(gds.name);
 	gds.home(false);
 
 	//
@@ -2211,14 +2195,14 @@ namespace %Namespace
 
 	args.xy = gridLocation();
 	PlaceText(args, 'Welcome to Catecon: The Categorical Console\nCreate diagrams and execute morphisms.', 32);
-	Cat.D.ShowDiagram(anon);
+	Cat.R.SelectDiagram(anon.name);
 	anon.home(false);
 
 	window.addEventListener('Login', function(e)
 	{
 		const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds, anon];
 		diagrams.map(d => Cat.R.SaveLocal(d));
-		true && diagrams.map(d => d.upload(null));
+		false && diagrams.map(d => d.upload(null));
 	});
 
 	fn && Cat.R.Actions.javascript.loadHTML(fn);
