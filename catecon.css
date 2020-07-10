@@ -578,6 +578,11 @@ td.white
 	background-color:	#fff;
 }
 
+.button
+{
+	vertical-align:	middle;
+}
+
 .buttonBarRight
 {
 	background-color:	#fff;
