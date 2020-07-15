@@ -243,6 +243,7 @@ const Boot = function(fn)
 	PlaceText(args, 'Basic Objects', 96, 'bold', false);
 	Cat.R.SelectDiagram(basics.name);
 	basics.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// logic
 	//
@@ -306,6 +307,7 @@ const Boot = function(fn)
 	PlaceText(args, 'Logic Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(logic.name);
 	logic.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// N arithemtic
 	//
@@ -491,6 +493,7 @@ args.xy.y += args.majorGrid;
 	PlaceText(args, 'Natural Number Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(Narith.name);
 	Narith.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// integers
 	//
@@ -625,6 +628,7 @@ return [0, args[0] % args[1]];
 	PlaceText(args, 'Integer Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(integers.name);
 	integers.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// floating point
 	//
@@ -843,6 +847,8 @@ void %Type(const %Dom & args, %Cod & out)
 	PlaceText(args, 'Floating Point Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(floats.name);
 	floats.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
 	//
 	// complex numbers
 	//
@@ -1039,6 +1045,7 @@ return [0, Math.pow(args[0], args[1])];
 	PlaceText(args, 'Complex Number Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(complex.name);
 	complex.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//
 	// Strings
@@ -1311,6 +1318,7 @@ function %Type(args)
 	PlaceText(args, 'String Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(strings.name);
 	strings.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//
 	// htmlDiagram
@@ -1407,11 +1415,19 @@ function %Type(args)
 `,
 	}).to;
 	const N_html2Z32 = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z32, domFactors:[], homFactors:[0]});
-	PlaceMorphism(args, N_html2Z32);
-	const strXN_html2Z32 = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z32.codomain]});
-	const html2Z32F = MakeMorphism(args, 'html2Z32F', 'Morphism', '&Zopf;&#8323;&#8322;;', 'Input a 32-bit integer from HTML', html, strXN_html2Z32,
+//	PlaceMorphism(args, N_html2Z32);
+	N_html2Z32.incrRefcnt();
+	const strXN_html2Z32 = htmlDiagram.prod(str, N_html2Z32.codomain);
+	let domain = htmlDiagram.prod(html, htmlDiagram.coprod(Z32, one));
+	const html2Z32F = MakeMorphism(args, 'html2Z32F', 'Morphism', '&Zopf;&#8323;&#8322;', 'Input a 32-bit integer from HTML', domain, strXN_html2Z32,
 	{
-		js:`function %Type(args)\n{\n	return ['<input type="number" min="-2417483648" max="2417483647" id="' + args + '" placeholder="32-bit integer"/>', ${Cat.U.Token(N_html2Z32)}];\n}\n`,
+		js:
+`function %Type(args)
+{
+	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
+	return ['<input type="number" min="-2417483648" max="2417483647" id="' + args[0] + '" placeholder="32-bit integer"' + dv + '/>', ${Cat.U.Token(N_html2Z32)}];
+}
+`,
 	}).to;
 
 	const html2Z = MakeMorphism(args, 'html2Z', 'Morphism', 'input', 'Read an integer from an HTML input tag', html, Z,
@@ -1429,55 +1445,108 @@ function %Type(args)
 	}).to;
 //TODO	const html2omega = MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
 	const N_html2str = htmlDiagram.get('LambdaMorphism', {preCurry:html2Str, domFactors:[], homFactors:[0]});
-	PlaceMorphism(args, N_html2str);
-	const strXN_html2str = htmlDiagram.get('ProductObject', {objects:[str, N_html2str.codomain]});
-	const html2line = MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', html, strXN_html2str,
+//	PlaceMorphism(args, N_html2str);
+	N_html2str.incrRefcnt();
+	const strXN_html2str = htmlDiagram.prod(str, N_html2str.codomain);
+
+	domain = htmlDiagram.prod(html, htmlDiagram.coprod(str, one));
+	const html2line = MakeMorphism(args, 'html2line', 'Morphism', 'line', 'Input a line of text from HTML', domain, strXN_html2str,
 	{
-		js:`function %Type(args)\n{\n	return ['<input type="text" id="' + args + '" value="" placeholder="Text"/>', ${Cat.U.Token(N_html2str)}]\n}\n`,
+		js:
+`function %Type(args)
+{
+	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
+	return ['<input type="text" id="' + args[0] + '" placeholder="Text"' + dv + '/>', ${Cat.U.Token(N_html2str)}]
+}
+`,
 	}).to;
 	const N_html2N = htmlDiagram.get('LambdaMorphism', {preCurry:html2N, domFactors:[], homFactors:[0]});
-	PlaceMorphism(args, N_html2N);
-	const strXN_html2N = htmlDiagram.get('ProductObject', {objects:[str, N_html2N.codomain]});
-	const html2Nat = MakeMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', html, strXN_html2N,
+//	PlaceMorphism(args, N_html2N);
+	N_html2N.incrRefcnt();
+
+	const strXN_html2N = htmlDiagram.prod(str, N_html2N.codomain);
+	domain = htmlDiagram.prod(html, htmlDiagram.coprod(N, one));
+	const html2Nat = MakeMorphism(args, 'html2Nat', 'Morphism', '&Nopf;', 'Input a natural number from HTML', domain, strXN_html2N,
 	{
-		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" id="' + args + '" placeholder="Natural number"/>', ${Cat.U.Token(N_html2N)}];\n}\n`,
+		js:
+`function %Type(args)
+{
+	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
+	return ['<input type="number" min="0" id="' + args[0] + '" placeholder="Natural number"' + dv + '/>', ${Cat.U.Token(N_html2N)}];
+}
+`,
 	}).to;
 
 	const N_html2N8 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N8, domFactors:[], homFactors:[0]});
-	PlaceMorphism(args, N_html2N8);
-	const strXN_html2N8 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N8.codomain]});
-	const html2N8F = MakeMorphism(args, 'html2N8F', 'Morphism', '&Nopf;&#8328;;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N8,
+//	PlaceMorphism(args, N_html2N8);
+	N_html2N8.incrRefcnt();
+
+	const strXN_html2N8 = htmlDiagram.prod(str, N_html2N8.codomain);
+	domain = htmlDiagram.prod(html, htmlDiagram.coprod(N8, one));
+	const html2N8F = MakeMorphism(args, 'html2N8F', 'Morphism', '&Nopf;&#8328;', 'Input a natural number between 0 and 255 from HTML', domain, strXN_html2N8,
 	{
-		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N8)}];\n}\n`,
+		js:
+`function %Type(args)
+{
+	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
+	return ['<input type="number" min="0" max="255" id="' + args[0] + '" placeholder="0 to 255"' + dv + '/>', ${Cat.U.Token(N_html2N8)}];
+}
+`,
 	}).to;
 
 	const N_html2N16 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N16, domFactors:[], homFactors:[0]});
-	PlaceMorphism(args, N_html2N16);
-	const strXN_html2N16 = htmlDiagram.get('ProductObject', {objects:[str, N_html2N16.codomain]});
-	const html2N16F = MakeMorphism(args, 'html2N16F', 'Morphism', '&Nopf;&#8321;&#8326;', 'Input a natural number between 0 and 255 from HTML', html, strXN_html2N16,
+//	PlaceMorphism(args, N_html2N16);
+	N_html2N16.incrRefcnt();
+
+	const strXN_html2N16 = htmlDiagram.prod(str, N_html2N16.codomain);
+	domain = htmlDiagram.prod(html, htmlDiagram.coprod(N16, one));
+	const html2N16F = MakeMorphism(args, 'html2N16F', 'Morphism', '&Nopf;&#8321;&#8326;', 'Input a natural number between 0 and 255 from HTML', domain, strXN_html2N16,
 	{
-		js:`function %Type(args)\n{\n	return ['<input type="number" min="0" max="255" id="' + args + '" placeholder="0 to 255"/>', ${Cat.U.Token(N_html2N16)}];\n}\n`,
+		js:
+`function %Type(args)
+{
+	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
+	return ['<input type="number" min="0" max="255" id="' + args[0] + '" placeholder="0 to 255"' + dv + '/>', ${Cat.U.Token(N_html2N16)}];
+}
+`,
 	}).to;
 
 	const N_html2Z = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z, domFactors:[], homFactors:[0]});
-	PlaceMorphism(args, N_html2Z);
-	const strXN_html2Z = htmlDiagram.get('ProductObject', {objects:[str, N_html2Z.codomain]});
-	const html2Int = MakeMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', html, strXN_html2Z,
+//	PlaceMorphism(args, N_html2Z);
+	N_html2Z.incrRefcnt();
+
+	const strXN_html2Z = htmlDiagram.prod(str, N_html2Z.codomain);
+	domain = htmlDiagram.prod(html, htmlDiagram.coprod(Z, one));
+	const html2Int = MakeMorphism(args, 'html2Int', 'Morphism', '&Zopf;', 'Input an integer from HTML', domain, strXN_html2Z,
 	{
-		js:`function %Type(args)\n{\n	return ['<input type="number" id="' + args + '" value="0" placeholder="Integer"/>', ${Cat.U.Token(N_html2Z)}];\n}\n`,
+		js:
+`function %Type(args)
+{
+	return ['<input type="number" id="' + args[0] + '" value="0" placeholder="Integer"' + dv + '/>', ${Cat.U.Token(N_html2Z)}];
+}
+`,
 	}).to;
 	const N_html2F = htmlDiagram.get('LambdaMorphism', {preCurry:html2F, domFactors:[], homFactors:[0]});
-	PlaceMorphism(args, N_html2F);
-	const strXN_html2F = htmlDiagram.get('ProductObject', {objects:[str, N_html2F.codomain]});
-	const html2Float = MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', html, strXN_html2F,
+//	PlaceMorphism(args, N_html2F);
+	N_html2F.incrRefcnt();
+	const strXN_html2F = htmlDiagram.prod(str, N_html2F.codomain);
+	domain = htmlDiagram.prod(html, htmlDiagram.coprod(F, one));
+	const html2Float = MakeMorphism(args, 'html2Float', 'Morphism', '&Fopf;', 'Input a floating point number from the HTML input tag', domain, strXN_html2F,
 	{
-		js:`function %Type(args)\n{\n	return ['<input type="number" id="' + args + '" placeholder="Float"/>', ${Cat.U.Token(N_html2F)}];\n}\n`,
+		js:
+`function %Type(args)
+{
+	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
+	return ['<input type="number" id="' + args[0] + '" placeholder="Float"' + dv + '/>', ${Cat.U.Token(N_html2F)}];
+}
+`,
 	}).to;
 	DiagramReferences(user, htmlDiagram, args.xy);
 	args.xy = new Cat.D2;
 	PlaceText(args, 'HTML Input and Output', 96, 'bold', false);
 	Cat.R.SelectDiagram(htmlDiagram.name);
 	htmlDiagram.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// 3D diagram
 	//
@@ -1569,6 +1638,7 @@ postMessage(['fff2toQB3', args]);
 	PlaceText(args, 'Three-D Integration', 96, 'bold', false);
 	Cat.R.SelectDiagram(threeD.name);
 	threeD.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
 	//
 	// quantum cat
@@ -1696,9 +1766,9 @@ return matrix_multiply(%Type_matrix, args);
 }
 `
 	});
-	qGates.home(false);
 	Cat.R.SelectDiagram(qGates.name);
-
+	qGates.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// cpp
 	//
@@ -2097,6 +2167,7 @@ namespace %Namespace
 	PlaceText(args, 'C++ Integration', 96, 'bold', false);
 	Cat.R.SelectDiagram(cpp.name);
 	cpp.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//
 	// GDS definitions
@@ -2173,6 +2244,7 @@ namespace %Namespace
 	PlaceText(args, 'The GDSII Graphics Design Standard Specification', 96, 'bold', false);
 	Cat.R.SelectDiagram(gds.name);
 	gds.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//
 	// Anon home
@@ -2197,6 +2269,7 @@ namespace %Namespace
 	PlaceText(args, 'Welcome to Catecon: The Categorical Console\nCreate diagrams and execute morphisms.', 32);
 	Cat.R.SelectDiagram(anon.name);
 	anon.home(false);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	window.addEventListener('Login', function(e)
 	{
