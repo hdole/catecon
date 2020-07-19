@@ -261,7 +261,7 @@ p
 a:hover, .offcanvas a:focus
 {
 	color: #ddd;
-	background-color:	#333;
+	background-color:	#777a;
 }
 
 #main
@@ -573,7 +573,7 @@ td.buttonBar
 	vertical-align:		top;
 }
 
-td.white
+.white
 {
 	background-color:	#fff;
 }
