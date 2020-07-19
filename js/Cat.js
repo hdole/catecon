@@ -354,33 +354,29 @@ class H
 
 class H3
 {
-	static _p(elt, args)
+	static _p(elt, arg)
 	{
-		for (let i=0; i<args.length; ++i)
+		const type = arg.constructor.name;
+		switch(arg.constructor.name)
 		{
-			const arg = args[i];
-			const type = arg.constructor.name;
-			switch(arg.constructor.name)
-			{
-				case 'String':
-					elt.innerHTML = arg;
-					break;
-				case 'Object':
-					Object.keys(arg).map(k =>
-					{
-						if (typeof arg[k] === 'function')
-							elt[k] = arg[k];
-						else
-							elt.setAttribute(k, arg[k])
-					});
-					break;
-				case 'Array':
-					arg.map(c => c && elt.appendChild(c));
-					break;
-				default:
-					elt.appendChild(arg);
-					break;
-			}
+			case 'String':
+				elt.innerHTML = arg;
+				break;
+			case 'Object':
+				Object.keys(arg).map(k =>
+				{
+					if (typeof arg[k] === 'function')
+						elt[k] = arg[k];
+					else
+						elt.setAttribute(k, arg[k])
+				});
+				break;
+			case 'Array':
+				arg.map(c => c && this._p(elt, c));
+				break;
+			default:
+				elt.appendChild(arg);
+				break;
 		}
 		return elt;
 	}
@@ -1249,7 +1245,7 @@ class R
 		R.UserDiagram.set(user, d);
 		return d;
 	}
-	static SaveLocal(diagram, savePng = true, updateTime = true)
+	static SaveLocal(diagram, updateTime = true)
 	{
 		if (R.default.debug)
 			console.log('SaveLocal', diagram.name);
@@ -2954,10 +2950,12 @@ class D
 	{
 		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		D.CancelAutohide();
+		D.setCursor();
 		D.autohideTimer = setTimeout(function()
 		{
 			if (D.mouse.onGUI)
 				return;
+			D.topSVG.style.cursor = 'none';
 			if (!window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'hide'}})))	// cancelled!
 				window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		}, D.default.autohideTimer);
@@ -3586,35 +3584,26 @@ ${button}
 		const top = document.createElementNS(D.xmlns, 'svg');
 		top.appendChild(copy);
 		D.copyStyles(copy, svg);
+		const width = D.snapshotWidth;
+		const height = D.snapshotHeight;
+		const sRat = height / width;
+		const vRat = window.innerHeight / window.innerWidth;
+		const wRat = window.innerWidth / width;
+		const hRat = window.innerHeight / height;
+		const rat = hRat < wRat ? wRat : hRat;
+		copy.setAttribute('transform', `scale(${1/rat})`);
 		const topData = (new XMLSerializer()).serializeToString(top);
 		const svgBlob = new Blob([topData], {type: "image/svg+xml;charset=utf-8"});
 		const url = D.url.createObjectURL(svgBlob);
-		const pw = D.default.panel.width;
-		const vp = new D2({x:pw, y:0, width:window.innerWidth - 2 * pw, height:window.innerHeight});
-		const sRat = D.snapHeight / D.snapWidth;
-		const vRat = vp.height / vp.width;
-		let rat = 1.0;
-		if (vRat > sRat)
-		{
-			rat = vRat / sRat;
-			const w = rat * vp.width;
-			vp.width = w;
-		}
-		else
-		{
-			rat = sRat / vRat;
-			const h = rat * vp.height;
-			vp.height = h;
-		}
-		const img = new Image(vp.width, vp.height);
+		const img = new Image(width, height);
 		img.onload = function()
 		{
 			const canvas = document.createElement('canvas');
-			canvas.width = D.snapWidth;
-			canvas.height = D.snapHeight;
+			canvas.width = width;
+			canvas.height = height;
 			const ctx = canvas.getContext('2d');
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			ctx.drawImage(img, vp.x, vp.y, vp.width, vp.height, 0, 0, D.snapWidth, D.snapHeight);
+			ctx.clearRect(0, 0, width, height);
+			ctx.drawImage(img, 0, 0);
 			D.url.revokeObjectURL(url);
 			if (fn)
 			{
@@ -3975,6 +3964,25 @@ ${button}
 		const largeArc = endAngle - startAngle <= 180 ? '0' : '1';
 		return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
 	}
+	static GetPng(name)
+	{
+		let png = D.diagramPNG.get(name);
+		if (!png)
+		{
+			png = localStorage.getItem(`${name}.png`);
+			if (png)
+				D.diagramPNG.set(name, png);
+		}
+		return png;
+	}
+	static GetImageElement(name)
+	{
+		let src = D.GetPng(name);
+		if (!src && R.cloud)
+			src = R.cloud.getURL(name + '.png');
+		const imgId = U.SafeId(`img-el_${name}`);
+		return H3.img({src, id:imgId, alt:"Not loaded", width:"200", height:"150"});
+	}
 }
 Object.defineProperties(D,
 {
@@ -4262,8 +4270,8 @@ Object.defineProperties(D,
 	'settingsPanel':	{value: null,		writable: true},
 	'shiftKey':			{value: false,		writable: true},
 	'showUploadArea':	{value: false,		writable: true},
-	'snapWidth':		{value: 1024,		writable: true},
-	'snapHeight':		{value: 768,		writable: true},
+	'snapshotWidth':	{value: 1024,		writable: true},
+	'snapshotHeight':	{value: 768,		writable: true},
 	'statusbar':		{value: new StatusBar,	writable: false},
 	'statusMessage':	{value:	'',			writable: true},
 	'svgContainers':	{value: ['svg', 'g'],	writable: false},
@@ -5312,6 +5320,7 @@ class DiagramSection extends Section
 			header:						{value:H3.span(),		writable: false},
 			catalog:					{value:H3.div(),		writable: false},
 			diagrams:					{value:[],				writable: false},
+			sortBy:						{value:'',				writable: true},
 		});
 		this.catalog.classList.add('catalog');
 		this.section.appendChild(this.header);
@@ -5319,24 +5328,19 @@ class DiagramSection extends Section
 	}
 	add(diagram, btns = [])
 	{
-//		const id = this.getId(diagram.elementId());
-		const id = U.SafeId(diagram.name);
+		const id = this.getId(U.SafeId(diagram.name));
 		if (document.getElementById(id))
 			return;
 		this.diagrams.push(diagram);
 		const user = 'user' in diagram ? diagram.user : diagram.username;
 		const dt = new Date(diagram.timestamp);
-		let src = this.getPng(diagram.name);
-		if (!src && R.cloud)
-			src = R.cloud.getURL(diagram.name + '.png');
-		const imgId = U.SafeId(`img-el_${diagram.name}`);
 		const toolbar = [...btns];
 //		R.CanDeleteDiagram(diagram) && toolbar.push(D.GetButton3('delete3', `Cat.R.DeleteDiagram(event,'${diagram.name}')`, 'Delete local copy of diagram'));
 //		toolbar.push(D.DownloadButton3('JSON', `Cat.R.LoadDiagram('${diagram.name}').downloadJSON(event)`, 'Download JSON'));
 //		toolbar.push(D.DownloadButton3('JS', `Cat.R.LoadDiagram('${diagram.name}').downloadJS(event)`, 'Download Javascript'));
 //		toolbar.push(D.DownloadButton3('C++', `Cat.R.LoadDiagram('${diagram.name}').downloadCPP(event)`, 'Download C++'));
 //		toolbar.push(D.DownloadButton3('PNG', `Cat.R.LoadDiagram('${diagram.name}').downloadPNG(event)`, 'Download PNG'));
-		const elt = H3.div({class:'grabbable', id},
+		const elt = H3.div({class:'grabbable', id, 'data-timestamp':diagram.timestamp},
 			H3.table(
 			[
 				H3.tr(
@@ -5345,22 +5349,31 @@ class DiagramSection extends Section
 					H3.td(toolbar, {class:'right'}),
 				]),
 				H3.tr(H3.td({class:'white', colspan:2}, H3.a({onclick:`Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')`},
-															H3.img({src, id:imgId, alt:"Not loaded", width:"200", height:"150"})))),
+															D.GetImageElement(diagram.name)))),
 				H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
 				H3.tr([H3.td(diagram.name, {class:'author'}), H3.td(dt.toLocaleString(), {class:'date'})], {class:'diagramSlot'}),
 			]), {class:'grabbable', draggable:true, ondragstart:`Cat.D.DragElement(event, '${diagram.name}')`});
-		this.catalog.appendChild(elt);
-	}
-	getPng(name)
-	{
-		let png = D.diagramPNG.get(name);
-		if (!png)
+		switch(this.sortBy)
 		{
-			png = localStorage.getItem(`${name}.png`);
-			if (png)
-				D.diagramPNG.set(name, png);
+			case 'timestamp':
+				const diagramNodes = this.catalog.childNodes;
+				let didIt = false;
+				const timestamp = diagram.timestamp;
+				for (let i=0; i<diagramNodes.length; ++i)
+				{
+					const node = diagramNodes[i];
+					if (didIt = node.dataset.timestamp < timestamp)
+					{
+						this.catalog.insertBefore(elt, node);
+						break;
+					}
+				}
+				if (didIt)
+					break;
+			default:
+				this.catalog.appendChild(elt);
+				break;
 		}
-		return png;
 	}
 	remove(name)
 	{
@@ -5473,6 +5486,15 @@ class UserDiagramSection extends DiagramSection
 					break;
 			}
 		});
+		this.sortBy = 'timestamp';
+	}
+//	add(diagram)
+//	{
+//		super.add(diagram);
+//	}
+	refresh()
+	{
+		this.diagrams.length = 0;
 	}
 }
 
@@ -5502,6 +5524,7 @@ class CatalogDiagramSection extends DiagramSection
 					break;
 			}
 		});
+		this.sortBy = 'timestamp';
 	}
 	search(e)
 	{
@@ -5581,16 +5604,17 @@ class DiagramPanel extends Panel
 	constructor()
 	{
 		super('diagram');
-		this.elt.innerHTML =
-			H.div('', '', 'diagramPanelToolbar') +
-			H.h3(H.span('Diagram')) +
-			H.h4(H.span('', '', 'diagram-category')) +
-			H.h4(H.span('', '', 'diagram-basename') + H.span('', '', 'diagram-basename-edit')) +
-			H.h4(H.span('', '', 'diagram-properName') + H.span('', '', 'diagram-properName-edit')) +
-			H.p(H.span('', 'description', 'diagram-description', 'Description') + H.span('', '', 'diagram-description-edit')) +
-			H.table(H.tr(H.td('By '+ H.span('', '', 'diagram-user'), 'smallPrint') + H.td(H.span('', '', 'diagram-timestamp'), 'smallPrint'))) +
-			H.span('', 'error', 'diagram-warning') +
-			H.br();
+		const top = H3.span([H3.div({id:'diagramPanelToolbar'}),
+							H3.h3(H3.span('Diagram')),
+							H3.h4([H3.span({id:'diagram-basename'}), H3.span({id:'diagram-basename-edit'})]),
+							H3.h4(H3.span({id:'diagram-category'})),
+							H3.h4([H3.span({id:'diagram-properName'}), H3.span({id:'diagram-properName-edit'})]),
+							H3.table(H3.tr(H3.td({id:'diagram-image', class:'center white'}))),
+							H3.p([H3.span({class:'description', id:'diagram-description', title:'Description'}), H3.span({id:'diagram-description-edit'})]),
+							H3.table(H3.tr([	H3.td([H3.span('By '), H3.span({id:'diagram-user'}), {class:'smallPrint'}]),
+												H3.td([H3.span({id:'diagram-timestamp'}), H3.br(), H3.span({id:'diagram-info'}), {class:'smallPrint'}])])),
+							H3.br()]);
+		this.elt.appendChild(top);
 		this.assertionSection = new AssertionSection(this.elt);
 		this.referenceSection = new ReferenceDiagramSection(this.elt);
 		this.userDiagramSection = new UserDiagramSection(this.elt);
@@ -5608,7 +5632,8 @@ class DiagramPanel extends Panel
 			diagramPanelToolbarElt:		{value:document.getElementById('diagramPanelToolbar'),		writable: false},
 			timestampElt:				{value:document.getElementById('diagram-timestamp'),		writable: false},
 			userElt:					{value:document.getElementById('diagram-user'),				writable: false},
-			warningElt:					{value:document.getElementById('diagram-warning'),			writable: false},
+			infoElt:					{value:document.getElementById('diagram-info'),				writable: false},
+			imageElt:					{value:document.getElementById('diagram-image'),			writable: false},
 			user:						{value: R.user.name,										writable: true},
 		});
 		const that = this;
@@ -5623,12 +5648,6 @@ class DiagramPanel extends Panel
 					that.categoryElt.innerHTML = diagram.codomain.htmlName();
 					that.refresh();
 					that.setToolbar(diagram);
-					const dt = new Date(diagram.timestamp);
-					that.timestampElt.innerHTML = dt.toLocaleString();
-					if (R.catalog.has(diagram.name))
-						that.warningElt.innerHTML = '';
-//					else
-//						that.warningElt.innerHTML = 'Diagram is not on server';
 					break;
 				case 'png':
 					const png = D.diagramPNG.get(diagram.name);
@@ -5641,6 +5660,10 @@ class DiagramPanel extends Panel
 			}
 		});
 		window.addEventListener('Login', function(e) { D.diagramPanel.refresh(e); });
+		window.addEventListener('Object', function(e) { D.diagramPanel.refreshInfo(e); });
+		window.addEventListener('Morphism', function(e) { D.diagramPanel.refreshInfo(e); });
+		window.addEventListener('Text', function(e) { D.diagramPanel.refreshInfo(e); });
+		window.addEventListener('Assertion', function(e) { D.diagramPanel.refreshInfo(e); });
 	}
 	setToolbar(diagram)
 	{
@@ -5654,7 +5677,6 @@ class DiagramPanel extends Panel
 		let downcloudBtn = '';
 		if (R.diagram.refcnt <= 0 && R.cloud && R.ServerDiagrams.has(diagram.name))
 		{
-//			const data = R.ServerDiagrams.get(diagram.name);
 			const data = R.catalog.get(diagram.name);
 			if (diagram.timestamp !== data.timestamp)
 			{
@@ -5693,8 +5715,30 @@ class DiagramPanel extends Panel
 			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'proper-name')`, 'Edit', D.default.button.tiny);
 		this.descriptionEditElt.innerHTML = !diagram.isEditable() ? '' :
 			D.GetButton('edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'description')`, 'Edit', D.default.button.tiny);
+		D.RemoveChildren(this.imageElt);
+		this.imageElt.appendChild(D.GetImageElement(diagram.name));
 		this.setToolbar(diagram);
+		this.refreshInfo();
 		all && this.userDiagramSection.refresh();
+	}
+	refreshInfo()
+	{
+		const diagram = R.diagram;
+		D.RemoveChildren(this.infoElt);
+		const dt = new Date(diagram.timestamp);
+		this.timestampElt.innerHTML = dt.toLocaleString();
+		if (R.catalog.has(diagram.name))
+		{
+			const info = R.catalog.get(diagram.name);
+			if (diagram.timestamp < info.timestamp)
+				this.infoElt.appendChild(H3.span('Cloud has newer version of diagram', {class:'warning'}));
+			else if (diagram.timestamp === info.timestamp)
+				this.infoElt.appendChild(H3.span('Synced with cloud', {class:'warning'}));
+			else if (diagram.timestamp > info.timestamp)
+				this.infoElt.appendChild(H3.span('Newer than cloud', {class:'warning'}));
+		}
+		else
+			this.infoElt.appendChild(H3.span('Not on cloud'));
 	}
 	static GetLockBtn(diagram)
 	{
@@ -15043,9 +15087,13 @@ else if (prototype === 'Diagonal')
 		args[dual ? 'codomain' : 'domain'] = obj;
 		return this.get('FactorMorphism', args);
 	}
-	assy(morphisms, dual = false)
+	assy(...morphisms)
 	{
-		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual}) : morphisms[0];
+		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual:false}) : morphisms[0];
+	}
+	coassy(...morphisms)
+	{
+		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual:true}) : morphisms[0];
 	}
 	hom(...elements)
 	{
@@ -15259,7 +15307,7 @@ else if (prototype === 'Diagonal')
 		const log = this._log;
 		if (log.length > 0 && log[log.length -1].command === 'view')	// replace last view command?
 			D.ttyPanel.logSection.removeLogCommand(null, log.length -1)
-		R.SaveLocal(this, true, false);		// TODO replace with event?
+		R.SaveLocal(this, false);
 		this.log({command:'view', x:Math.round(this.viewport.x), y:Math.round(this.viewport.y), scale:Math.round(10000.0 * this.viewport.scale)/10000.0});
 	}
 	getTerminal(dual = false)
@@ -15771,13 +15819,13 @@ addBall(m);
 				//
 				// does the index codomain object have elements?
 				//
-				if ([...cod.codomains].reduce((r, m) => r || (references.has(m) && isInjection(m) && m.domain.isTerminal()), false))
+				if ([...cod.codomains].reduce((r, m) => r || (references.has(m) && isInjection(m) && m.domain.to.isTerminal()), false))
 				{
 					//
 					// replace last morphism in composite with an assembly
 					//
 					const lastMorph = morphs[last];
-					morphs[last] = diagram.assy([lastMorph, diagram.id(lastMorph.domain)]);
+					morphs[last] = diagram.assy(lastMorph, diagram.id(lastMorph.domain));
 				}
 				//
 				// continue scanning on the index composite's codomain
@@ -15786,12 +15834,12 @@ addBall(m);
 				//
 				// get the composite so far
 				//
-				return diagram.comp(morphs);
+				return diagram.comp(...morphs);
 			});
 			//
 			// sum up the coproduct elements
 			//
-			const eltRefs = [...domain.codomains].filter(m => references.has(m) && isInjection(m) && m.domain.isTerminal());
+			const eltRefs = [...domain.codomains].filter(m => references.has(m) && isInjection(m) && m.domain.to.isTerminal());
 			if (eltRefs.length > 0)
 			{
 				const homMorphs = [];
@@ -15809,12 +15857,12 @@ addBall(m);
 					//
 					// get the morphisms attached to each element
 					//
-					const homMorphs = [...eltRef.codomain].map(m =>
+					const homMorphs = [...eltRef.domain.codomains].map(m =>
 					{
 						const homMorph = formMorphism(m.domain, currentDomain, ndx);
 						return homMorph;
 					});
-					const homMorph = diagram.assy(homMorphs);
+					const homMorph = diagram.assy(...homMorphs);
 					const homset = diagram.hom(currentDomain, homMorph.codomain);
 					//
 					// which homset in the coproduct of homsets is it?
@@ -15861,7 +15909,7 @@ addBall(m);
 				const doit = diagram.comp(...steps);
 				morphisms.push(doit);
 			}
-			return diagram.assy(morphisms);
+			return diagram.assy(...morphisms);
 		}
 		scanning = [...inputs];
 		while(scanning.length > 0)
