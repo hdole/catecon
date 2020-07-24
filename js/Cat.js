@@ -849,7 +849,6 @@ class R
 					case 'default':
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
-//						R.SaveDefaults();
 						if (R.initialized)
 						{
 							R.default.diagram = diagram.name;
@@ -860,12 +859,21 @@ class R
 						if (R.LoadingDiagrams.size === 0 && R.JsonDiagrams.size > 0)	// last preload event
 						{
 							const references = [...R.GetReferences(R.loadingDiagram)].reverse();
-							references.map(r =>
+							references.map(refName =>
 							{
-								if (R.JsonDiagrams.has(r))
+								if (R.JsonDiagrams.has(refName))
 								{
-									const json = R.JsonDiagrams.get(r);
-									const d = new Diagram(R.GetUserDiagram(json.user), json);
+									const json = R.JsonDiagrams.get(refName);
+									let d = R.$CAT.getElement(refName);
+									if (d) // reloading a diagram? get rid of the old one
+									{
+										R.default.debug && console.log('diagram already loaded', refName);
+										if (d.refcnt > 1)
+											// TODO reloading a diagram that is in use is bad; fix it
+											console.error('reloading diagram referenced elsewhere is bad');
+										d.decrRefcnt();
+									}
+									d = new Diagram(R.GetUserDiagram(json.user), json);
 									R.EmitCATEvent('download', d);
 								}
 							});
@@ -1375,16 +1383,24 @@ class R
 		const data = localStorage.getItem(`${name}.json`);
 		return data ? JSON.parse(data).timestamp : 0;
 	}
+	static isCloudNewer(name)
+	{
+		const cloudInfo = R.catalog.get(name);
+		return cloudInfo && cloudInfo.timestamp > R.LocalTimestamp(name);
+	}
+	/*
 	static CloudNewer(name)
 	{
 		const cloudInfo = R.catalog.get(name);
-		if (cloudInfo && cloudInfo.timestamp > R.LocalTimestamp(name) && confirm(`Download newer version of diagram ${name} from cloud?`))
+//		if (cloudInfo && cloudInfo.timestamp > R.LocalTimestamp(name) && confirm(`Download newer version of diagram ${name} from cloud?`))
+		if (R.isCloudNewer(name) && confirm(`Download newer version of diagram ${name} from cloud?`))
 		{
 			R.loadingDiagram = name;
 			R.FetchDiagram(name);
 			return;
 		}
 	}
+	*/
 	static SelectDiagram(name, fn = null)		// can be async if diagram not local; fn runs in final preload event
 	{
 		if (R.diagram && R.diagram.name === name)
@@ -1397,17 +1413,32 @@ class R
 		let diagram = R.$CAT.getElement(name);		// already loaded?
 		if (!diagram)
 		{
-			const info = R.catalog.get(name);	// check server catalog TODO one day not all remove diagrams listed
-			if (info && info.timestamp > R.LocalTimestamp(name))
+			const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
+			if (downloads.length > 0)
 			{
+				if ('loadingDiagram' in R)
+					console.error('already loading', R.loadingDiagram);
+				R.LoadingDiagrams = new Set(downloads);
 				R.loadingDiagram = name;
 				R.postLoadFunction = fn;
-				R.default.debug && console.log('SelectDiagram fetching', name);
-				R.FetchDiagram(name);	// will come back to SelectDiagram
-				return;
+				downloads.map(d => R.cloud._downloadDiagram(d));
+				R.default.debug && console.log('Fetching diagrams', ...downloads);
+				return;	// wait for downloads and try agagin
+				/*
+				const info = R.catalog.get(name);	// check server catalog
+				if (info && info.timestamp > R.LocalTimestamp(name))
+				{
+					R.loadingDiagram = name;
+					R.postLoadFunction = fn;
+					R.default.debug && console.log('SelectDiagram fetching', name);
+					R.FetchDiagram(name);	// will come back to SelectDiagram
+					return;
+				}
+				*/
 			}
-			if (R.CanLoad(name))
+			else if (R.CanLoad(name))		// immediate loading
 				diagram = R.LoadDiagram(name);
+			/*
 			if (!diagram)
 			{
 				R.loadingDiagram = name;
@@ -1416,9 +1447,11 @@ class R
 				R.FetchDiagram(name);	// will come back to SelectDiagram
 				return;
 			}
+			*/
 		}
-		R.default.debug && console.log('SelectDiagram setup', name);
-		diagram = R.$CAT.getElement(name);
+//		diagram = R.$CAT.getElement(name);
+		if (!diagram)
+			throw 'no such diagram';
 		diagram.makeSVG();
 		diagram.svgRoot.classList.remove('hidden');
 		diagram.show();
@@ -1435,11 +1468,13 @@ class R
 			return R.Cat;
 		return R.CAT ? R.CAT.getElement(name) : null;
 	}
+	/*
 	static FetchDiagram(dgrmName)
 	{
 		R.cloud && R.cloud.downloadDiagram(dgrmName);
 		R.default.debug && console.log('fetching diagram from cloud', dgrmName);
 	}
+	*/
 	static GetReferences(name, refs = new Set)
 	{
 		if (refs.has(name))
@@ -2135,7 +2170,8 @@ class Amazon extends Cloud
 	{
 		if (R.$CAT.getElement(name))
 			return;
-		const downloads = [...R.GetReferences(name)].reverse().filter(d => !(R.LocalDiagrams.has(d) || R.$CAT.getElement(d)));
+//		const downloads = [...R.GetReferences(name)].reverse().filter(d => !((R.LocalDiagrams.has(d) ? : ) || R.$CAT.getElement(d)));
+		const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
 		R.LoadingDiagrams = new Set(downloads);
 		downloads.map(d => R.cloud._downloadDiagram(d));
 	}
@@ -2321,7 +2357,7 @@ class Toolbar
 		this.element.classList.remove('hidden');
 		this.closed = false;
 	}
-	show(e)
+	show(e, toggle = true)
 	{
 		this.error.innerHTML = '';
 		const diagram = R.diagram;
@@ -2334,7 +2370,8 @@ class Toolbar
 		else
 		{
 			this.hide();
-			return;
+			if (toggle)
+				return;
 		}
 		D.RemoveChildren(this.help);
 		D.RemoveChildren(this.header);
@@ -2362,7 +2399,7 @@ class Toolbar
 				btns.push(D.GetButton3('text3', 'Cat.D.newElement.Text.html()', 'New text'));
 			}
 //			btns.push(D.GetButton3('search', 'Cat.D.toolbar.showSearch()', 'Search in a diagram'));
-		btns.push(D.GetButton3('search', 'Cat.D.toolbar.showSearch()', 'Search in a diagram', D.default.button.small,
+			btns.push(D.GetButton3('search', 'Cat.D.toolbar.showSearch()', 'Search in a diagram', D.default.button.small,
 										'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
 			btns.push(D.GetButton3('close3', 'Cat.D.toolbar.hide()', 'Close'));
 			this.header.appendChild(H3.span(btns, {class:'buttonBarLeft'}));
@@ -2406,6 +2443,7 @@ class Toolbar
 		const btn = D.GetButton3('edit3', 'Cat.D.toolbar.search()', 'Search in a diagram');
 		this.help.appendChild(H3.span(input, btn));
 		this.help.appendChild(H3.div({id:'toolbar-search-items'}));
+		input.focus();
 	}
 	search()
 	{
@@ -2421,17 +2459,26 @@ class Toolbar
 			else if (DiagramText.IsA(elt))
 				rx.exec(elt.description.toString()) && elts.push(elt);
 		});
+
 		function showElement(elt)
 		{
 			const to = elt.to;
+			let txt = '';
 			if (DiagramObject.IsA(elt))
-				return to.htmlName();
+				txt = [H3.span(to.htmlName()), H3.br(), H3.span(to.name, {class:'smallPrint'})];
 			else if (DiagramMorphism.IsA(elt))
-				return `${to.htmlName()}:${to.domain.htmlName()}&rarr;${to.codomain.htmlName()}`;
+				txt = [H3.span(`${to.htmlName()}:${to.domain.htmlName()}&rarr;${to.codomain.htmlName()}`), H3.br(), H3.span(to.name, {class:'smallPrint'})];
 			else if (DiagramText.IsA(elt))
-				return to.description.length < 15 ? to.description : to.description.substring(0,15) + '...';
+				txt = elt.description.length < 100 ? elt.description : elt.description.substring(0,15) + '...';
+			return txt;
 		}
-		const rows = elts.map(elt => H3.tr(H3.td(showElement(elt), {onclick:function(e) { R.diagram.viewElements(elt); }, class:'left'}), {class:'panelElt'}));
+		const rows = elts.map(elt =>
+		{
+			const row = H3.tr(H3.td(showElement(elt), {onclick:function(e) { R.diagram.viewElements(elt); }, class:'left'}), {class:'panelElt'});
+			row.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(elt.name, true);});
+			row.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(elt.name, false);});
+			return row;
+		});
 		searchItems.appendChild(H3.small('Click to view', {class:'italic'}));
 		searchItems.appendChild(H3.table(rows));
 	}
@@ -3336,14 +3383,16 @@ ${button}
 	{
 		scalar = 2 * scalar;
 		const diagram = R.diagram;
-		let inc = Math.log(diagram.viewport.scale)/Math.log(D.default.scale.base) + scalar;
+		const vp = diagram.viewport;
+		const scale = vp.scale;
+		let inc = Math.log(scale)/Math.log(D.default.scale.base) + scalar;
 		let nuScale = D.default.scale.base ** inc;
 		nuScale = nuScale < D.default.scale.limit.min ? D.default.scale.limit.min : nuScale;
 		nuScale = nuScale > D.default.scale.limit.max ? D.default.scale.limit.max : nuScale;
 		const pnt = D.mouse.position();
-		const dx = scalar * (1.0 - 1.0 / D.default.scale.base) * (pnt.x - diagram.viewport.x);
-		const dy = scalar * (1.0 - 1.0 / D.default.scale.base) * (pnt.y - diagram.viewport.y);
-		diagram.setView(diagram.viewport.x - dx, diagram.viewport.y - dy, nuScale);
+		const dx = pnt.x - (nuScale / scale) * (pnt.x - vp.x);
+		const dy = pnt.y - (nuScale / scale) * (pnt.y - vp.y);
+		diagram.setView(dx, dy, nuScale);
 	}
 	static AddEventListeners()
 	{
@@ -4046,8 +4095,8 @@ Object.defineProperties(D,
 	{
 		value:
 		{
-			Minus(e) { D.Zoom(e, -1);},
-			Equal(e) { D.Zoom(e, 1);},
+			Minus(e) { D.Zoom(e, -2);},
+			Equal(e) { D.Zoom(e, 2);},
 			Home(e)
 			{
 				const diagram = R.diagram;
@@ -4076,6 +4125,12 @@ Object.defineProperties(D,
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x - delta, diagram.viewport.y, diagram.viewport.scale);
+			},
+			Slash(e)
+			{
+				D.toolbar.show(e, false);
+				D.toolbar.showSearch();
+				e.preventDefault();
 			},
 			Space(e)
 			{
@@ -4113,6 +4168,12 @@ Object.defineProperties(D,
 			ControlKeyD(e)
 			{
 				D.diagramPanel.open();
+				e.preventDefault();
+			},
+			ControlKeyF(e)
+			{
+				D.toolbar.show(e, false);
+				D.toolbar.showSearch();
 				e.preventDefault();
 			},
 			ControlKeyG(e)
@@ -4233,7 +4294,7 @@ Object.defineProperties(D,
 	{
 		value:
 		{
-			down:		new D2,
+			down:		new D2(window.innerWidth/2, window.innerHeight/2),
 			onPanel:	false,
 			xy:			[new D2],
 			position()
@@ -6368,8 +6429,8 @@ class Element
 				H.tr(H.td('Base name:', 'left') + H.td(H.tag('basename', this.basename) + baseBtn, 'left')) +
 				H.tr(H.td('Description:', 'left') + H.td(H.tag('description', this.description, 'left') + descBtn)) +
 				H.tr(H.td('Type:', 'left') + H.td(U.Cap(U.DeCamel(this.constructor.name)), 'left')) +
-				H.tr(H.td('Diagram', 'left') + H.td(this.diagram ? this.diagram.htmlName() : '', 'left')) +
-				H.tr(H.td('User', 'left') + H.td(this.diagram ? this.diagram.user : '', 'left')) +
+				H.tr(H.td('Diagram:', 'left') + H.td(this.diagram ? this.diagram.htmlName() : '', 'left')) +
+				H.tr(H.td('User:', 'left') + H.td(this.diagram ? this.diagram.user : '', 'left')) +
 				(R.default.internals ? H.tr(H.td('Internal name:', 'left') + H.td(this.name, 'left')) : '') +
 				(R.default.internals ?  H.tr(H.td('Reference count:', 'left') + H.td(H.tag('refcnt', this.refcnt), 'left')) : '') +
 				(R.default.internals ? H.tr(H.td('Signature:', 'left') + H.td(this.signature, 'left')) : ''),
@@ -11420,7 +11481,7 @@ class DataAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]) && ary[0].refcnt === 1)
+		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]) && ary[0].refcnt.to === 1)
 		{
 			const from = ary[0];
 			const to = ary[0].to;
@@ -11634,36 +11695,8 @@ class Morphism extends Element
 			throw `no codomain for morphism ${args.codomain}`;
 		Object.defineProperties(this,
 		{
-			dom:	{value: domain,		writable: true,	enumerable: true},
-			cod:	{value: codomain,	writable: true,	enumerable: true},
-		});
-		Object.defineProperty(this, 'domain',
-		{
-			get()
-			{
-				return this.dom;
-			},
-			set(o)
-			{
-				if (this.dom)
-					this.dom.decrRefcnt();
-				this.dom = o;
-				o.incrRefcnt();
-			},
-		});
-		Object.defineProperty(this, 'codomain',		
-		{
-			get()
-			{
-				return this.cod;
-			},
-			set(o)
-			{
-				if (this.cod)
-					this.cod.decrRefcnt();
-				this.cod = o;
-				o.incrRefcnt();
-			},
+			domain:		{value: domain,		writable: true,	enumerable: true},
+			codomain:	{value: codomain,	writable: true,	enumerable: true},
 		});
 		diagram && diagram.addElement(this);
 		this.codomain.incrRefcnt();
@@ -13937,7 +13970,7 @@ class Distribute extends Morphism
 		const nuArgs = U.Clone(args);
 		nuArgs.domain = diagram.getElement(args.domain);
 		nuArgs.codomain = Distribute.Codomain(diagram, nuArgs.domain);
-		nuArgs.basename = Distribute.Basename(diagram, {domain:nuArgs.domain});
+		nuArgs.basename = Distribute.Basename(diagram, nuArgs);
 		nuArgs.properName = Distribute.ProperName();
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
@@ -14473,15 +14506,35 @@ class Diagram extends Functor
 	{
 		if (typeof to === 'string')
 			to = this.getElement(to);
-		const xyD = xyDom ? new D2(D.Grid(xyDom)) : D.Center(this);;
-		const domain = new DiagramObject(this, {to:to.domain, xy:xyD});
-		const codomain = new DiagramObject(this, {to:to.codomain});
+		let xyD = null;
+		let domain = null;
+		if (DiagramObject.IsA(xyDom))
+		{
+			xyD = new D2(xyDom);
+			domain = xyDom;
+		}
+		else
+		{
+			xyD = xyDom ? new D2(D.Grid(xyDom)) : D.Center(this);;
+			domain = new DiagramObject(this, {to:to.domain, xy:xyD});
+		}
+		let xyC = null;
+		let codomain = null;
+		if (DiagramObject.IsA(xyCod))
+		{
+			xyC = new D2(xyCod);
+			codomain = xyCod;
+		}
+		else
+		{
+			codomain = new DiagramObject(this, {to:to.codomain});
+			xyC = D.Grid(new D2(xyCod));
+		}
+
 		const from = new DiagramMorphism(this, {to, domain, codomain});
 		const tw = to.textwidth();
-		let xyC = null;
 		if (xyCod)
 		{
-			xyC = D.Grid(new D2(xyCod));
 			const angle = D2.Angle(xyDom, xyCod);
 			const xyCmin = D.Grid({x:xyD.x + Math.cos(angle) * tw, y:xyD.y + Math.sin(angle) * tw});
 			if (xyD.dist(xyC) < xyD.dist(xyCmin))
@@ -14496,8 +14549,8 @@ class Diagram extends Functor
 			codomain.x = xyC.x;
 			codomain.y = xyC.y;
 		}
-		this.addSVG(domain);
-		this.addSVG(codomain);
+		!domain.svg && this.addSVG(domain);
+		!codomain.svg && this.addSVG(codomain);
 		this.addSVG(from);
 		const bbox = new D2(from.svg.getBBox());
 		let offboxes = [new D2(domain.getBBox()), new D2(bbox), new D2(codomain.getBBox())];
@@ -15101,8 +15154,8 @@ else if (prototype === 'Diagonal')
 	}
 	eval(dom, codomain)
 	{
-		const hom = this.hom(dom, cod);
-		const domain = this.prod([hom, dom]);
+		const hom = this.hom(dom, codomain);
+		const domain = this.prod(hom, dom);
 //		return new Evaluation(this, {domain, codomain});
 		return this.get('Evaluation', {domain, codomain});
 	}
@@ -15759,6 +15812,7 @@ addBall(m);
 		{
 			return [...o.codomains].filter(m => references.has(m));
 		}
+		/*
 		function formProduct(objects, factor)
 		{
 			let ndx = 0;
@@ -15769,11 +15823,20 @@ addBall(m);
 				return o.to;
 			}));
 		}
+		*/
 
 		const ref2ndx = new Map;
-		function getDomainAssemblyFactors(domain)
+		function getDomainAssemblyFactors(domain, ndx)
 		{
-			return [...domain.domains].filter(m => references.has(m) && isProjection(m)).map(ref => ref2ndx.get(ref));
+			let indices = [...domain.domains].filter(m => !m.to.codomain.isTerminal() && references.has(m) && isProjection(m)).map(ref => ref2ndx.get(ref));
+			for(let i=0; i<indices.length; ++i)
+			{
+				const index = indices[i];
+				const nuIndex = ndx.slice();
+				index.length > 0 && nuIndex.push(...index);
+				indices[i] = nuIndex;
+			}
+			return indices;
 		}
 		const composite = [];
 		//
@@ -15788,14 +15851,15 @@ addBall(m);
 			//
 			// if the index object has projection references, then we need a pre-assembly factor morphism
 			//
-			const upRefs = getDomainAssemblyFactors(domain);
+			const upRefs = getDomainAssemblyFactors(domain, ndx);
 			const preFactor = upRefs.length > 0 ? diagram.fctr(currentDomain, upRefs) : null;
 			//
 			// if our domain is an output, then we're done
 			//
-			if (outputs.includes(domain))
+			const outputNdx = outputs.indexOf(domain);
+			if (outputNdx > -1)
 			{
-				outputs.delete(domain);
+				outputs.splice(outputNdx, 1);
 				return preFactor;
 			}
 			//
@@ -15830,7 +15894,9 @@ addBall(m);
 				//
 				// continue scanning on the index composite's codomain
 				//
-				scanning.push(cod);
+				const index = ndx.slice();
+				index.pop();
+				scanning.push({domain:cod, currentDomain:morphs[last].codomain, index});
 				//
 				// get the composite so far
 				//
@@ -15886,15 +15952,15 @@ addBall(m);
 					// record selection of this hom
 					//
 					const r = eltRef.to.getBase();
-					const elt = null;
-					if (FactorMorphism.isA(r))
+					let elt = null;
+					if (FactorMorphism.IsA(r))
 						elt = r.factors[0];
 					else if (DataMorphism.IsA(r))
 						elt = r.data[0];
 					data.set(elt, [homNdx, homMorph]);
 				});
-				const codomain = diagram.prod(homers, true);
-				const dataMorph = new DataMorphism(diagram, {domain, codomain, data});
+				const codomain = diagram.coprod(...homers);
+				const dataMorph = new DataMorphism(diagram, {domain:domain.to, codomain, data});
 				const id = diagram.id(currentDomain);
 				const steps = [];
 				steps.push(diagram.assy(dataMorph, id));	// CD -> codomain x CD
@@ -15905,17 +15971,17 @@ addBall(m);
 				//
 				// get the evaluation maps
 				//
-				steps.push(diagram.coprod(homers.map(hom => diagram.eval(currentDomain, hom.codomain))));
+				steps.push(diagram.coprod(...homers.map(hom => diagram.eval(currentDomain, hom.objects[1]))));
 				const doit = diagram.comp(...steps);
 				morphisms.push(doit);
 			}
 			return diagram.assy(...morphisms);
 		}
-		scanning = [...inputs];
+		scanning = inputs.map((input, i) => {return {domain:input, currentDomain:input.to, index:inputs.length === 1 ? [] : [i]}});
 		while(scanning.length > 0)
 		{
-			const domain = scanning.shift();
-			const morphism = formMorphism(domain, domain.to, []);
+			const args = scanning.shift();
+			const morphism = formMorphism(args.domain, args.currentDomain, args.index);
 console.log('formMorphism', {morphism});
 		}
 
