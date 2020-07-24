@@ -19,7 +19,7 @@ function convert(data)
 {
 	const d =
 	{
-		name:			data.subkey.S.substr(2),	// remove 'D-' prefix
+		name:			data.name.S,
 		description:	data.description.S,
 		timestamp:		Number.parseInt(data.timestamp.N, 10),
 		properName:		data.properName.S,
@@ -36,8 +36,9 @@ exports.handler = (event, context, callback) =>
 	const params =
 	{
 		TableName:					C.DIAGRAM_TABLE,
-		ExpressionAttributeNames:	{'#ts':'timestamp', '#r':'references'},
-		ProjectionExpression:		'user, subkey, #ts, basename, properName, description, #r'
+		ExpressionAttributeNames:	{'#n':'name', '#u':'user', '#ts':'timestamp', '#r':'references'},
+//		ExpressionAttributeNames:	{'#u':'user', '#ts':'timestamp', '#r':'references'},
+		ProjectionExpression:		'#n, #u, #ts, basename, properName, description, #r'
 	};
 	db.scan(params, function(err, data)
 	{
