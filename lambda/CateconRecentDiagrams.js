@@ -19,8 +19,8 @@ function convert(data)
         name:       data.name.S,
         description:data.description.S,
         timestamp:  Number.parseInt(data.timestamp.N, 10),
-        fancyName:  data.fancyName.S,
-        username:   data.username.S
+        properName:	data.properName.S,
+        user:		data.user.S
     };
     return d;
 }
@@ -32,7 +32,7 @@ exports.handler = (event, context, callback) =>
     {
         TableName:  C.RECENT_DIAGRAM_TABLE,
         ExpressionAttributeNames: {'#nm':"name", '#ts':'timestamp'},
-        ProjectionExpression:   '#nm, username, #ts, fancyName, description'
+        ProjectionExpression:   '#nm, user, #ts, properName, description'
     };
     db.scan(params, function(err, data)
     {
