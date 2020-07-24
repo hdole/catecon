@@ -68,10 +68,10 @@ const Boot = function(fn)
 		nuArgs.xy = args.xy.add(args.side),
 		Autoplace(nuArgs);
 	}
-	function PlaceObject(args, o)
+	function PlaceObject(args, o, doSideText = true)
 	{
 		CheckColumn(args);
-		PlaceSideText(args, o.description);
+		doSideText && PlaceSideText(args, o.description);
 		const i = args.diagram.placeObject(null, o, args.xy, false);
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
@@ -108,11 +108,12 @@ const Boot = function(fn)
 		args.rowCount = nuArgs.rowCount;
 		return e;
 	}
-	function PlaceMorphism(args, m, doSideText = true)
+	function PlaceMorphism(args, m, doSideText = true, codomain = null)
 	{
 		CheckColumn(args);
 		doSideText && PlaceSideText(args, m.description);
-		const i = args.diagram.placeMorphism(null, m, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
+//		const i = args.diagram.placeMorphism(null, m, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
+		const i = args.diagram.placeMorphism(null, m, args.xy, codomain ? codomain : args.xy.add(Cat.D.default.stdArrow), false, false);
 		Adjust(args, i);
 		args.xy = new Cat.D2(args.xy);
 		args.rowCount++;
@@ -1947,17 +1948,21 @@ namespace %Namespace
 	const voidPtr = MakeNamedObject(args, {basename:'voidPtr', properName:'void*', source:N, description:'Pointer to void'}).to;
 
 	let morph1 = PlaceMorphism(args, Nzero, false);
-	let xy = new Cat.D2(morph1.codomain);
-	let morph2 = cpp.placeMorphismByObject(null, 'domain', morph1.codomain, voidPtr.idTo, false, xy.add(Cat.D.default.stdArrowDown));
-	let bx = morph2.svg.getBBox();
-	let to = cpp.get('Composite', {morphisms:[morph1.to, morph2.to]});
+debugger;
+	let oxy = args.xy;
+	args.xy = new Cat.D2(morph1.codomain).add(Cat.D.default.stdArrowDown);
+	let ndxObj = PlaceObject(args, voidPtr, false);
+	args.xy = morph1.codomain;
+	let morph2 = PlaceMorphism(args, voidPtr.idTo, false, ndxObj);
+	args.xy.x = oxy.x;
+	let to = cpp.comp(morph1.to, morph2.to);
 	let dgrmcomp = cpp.get('DiagramComposite', {domain:morph1.domain, to, codomain:morph2.codomain, morphisms:[morph1, morph2]});
 	cpp.addSVG(dgrmcomp);
 	const delta = morph2.codomain.y + args.majorGrid - args.xy.y;
+
 args.rowCount += Math.round(delta/args.majorGrid);
 
 	args.xy.y = morph2.codomain.y + args.majorGrid;
-
 	morph1 = PlaceMorphism(args, to, false);
 	Cat.R.Actions.name.doit(null, cpp, {source:morph1, name:'NULL'}, false);
 
