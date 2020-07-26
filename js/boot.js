@@ -1948,7 +1948,6 @@ namespace %Namespace
 	const voidPtr = MakeNamedObject(args, {basename:'voidPtr', properName:'void*', source:N, description:'Pointer to void'}).to;
 
 	let morph1 = PlaceMorphism(args, Nzero, false);
-debugger;
 	let oxy = args.xy;
 	args.xy = new Cat.D2(morph1.codomain).add(Cat.D.default.stdArrowDown);
 	let ndxObj = PlaceObject(args, voidPtr, false);
