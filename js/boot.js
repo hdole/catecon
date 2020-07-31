@@ -5,10 +5,12 @@
 
 const Boot = function(fn)
 {
+	Cat.D.default.arrow.dir = {x:1, y:0};
+	const stdGrid = Cat.D.default.majorGridMult * Cat.D.default.layoutGrid;
 	function gridLocation()
 	{
 		const bbox = args.diagram.svgRoot.getBBox();
-		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + 160, 300));
+		return Cat.D.Grid(new Cat.D2(bbox.x + bbox.width + stdGrid, stdGrid));
 	}
 	function CheckColumn(args)
 	{
@@ -36,7 +38,14 @@ const Boot = function(fn)
 		{
 			const to = Cat.Element.Process(diagram, args);
 			if (Cat.Morphism.IsA(to))
-				index = diagram.placeMorphism(null, to, xy, xy.add(D.default.stdArrow), false, false);
+			{
+				const tw = to.textwidth();
+				let delta = stdGrid;
+				while (delta < tw)
+					delta += stdGrid;
+				const cod = {x:args.xy.x + delta, y:args.xy.y};
+				index = diagram.placeMorphism(null, to, xy, co, false, false);
+			}
 			else if (Cat.CatObject.IsA(to))
 				index = diagram.placeObject(null, to, xy, false);
 		}
@@ -102,7 +111,7 @@ const Boot = function(fn)
 		if (properName !== '')
 			nuArgs.properName = properName;
 		const e = Autoplace(nuArgs);
-		Adjust(args, e);
+//		Adjust(args, e);
 		PlaceSideText(args, description);
 		args.xy = new Cat.D2(nuArgs.xy);
 		args.rowCount = nuArgs.rowCount;
@@ -112,9 +121,9 @@ const Boot = function(fn)
 	{
 		CheckColumn(args);
 		doSideText && PlaceSideText(args, m.description);
-//		const i = args.diagram.placeMorphism(null, m, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
-		const i = args.diagram.placeMorphism(null, m, args.xy, codomain ? codomain : args.xy.add(Cat.D.default.stdArrow), false, false);
-		Adjust(args, i);
+		const cod = {x:args.xy.x + Cat.D.GetArrowLength(m), y:args.xy.y};
+		const i = args.diagram.placeMorphism(null, m, args.xy, codomain ? codomain : cod, false, false);
+//		Adjust(args, i);
 		args.xy = new Cat.D2(args.xy);
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
@@ -147,7 +156,7 @@ const Boot = function(fn)
 		CheckColumn(args);
 		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
 		const e = PlaceMorphism(args, to);
-		Adjust(args, e);
+//		Adjust(args, e);
 		args.xy = new Cat.D2(args.xy);
 		return e;
 	}
@@ -184,8 +193,9 @@ const Boot = function(fn)
 		'description' in nuArgs && PlaceSideText(nuArgs, nuArgs.description);
 		const diagram = nuArgs.diagram;
 		const nm = new Cat.NamedObject(diagram, nuArgs);
-		const nm2src = diagram.placeMorphism(null, nm.idFrom, xy, xy.add(Cat.D.default.stdArrow), false, false);
-		Adjust(args, nm2src);
+		const cod = {x:xy.x + Cat.D.GetArrowLength(nm.idFrom), y:xy.y};
+		const nm2src = diagram.placeMorphism(null, nm.idFrom, xy, cod, false, false);
+//		Adjust(args, nm2src);
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
 		return nm2src.domain;
@@ -204,9 +214,10 @@ const Boot = function(fn)
 		side,
 		rows:		100,
 		rowCount:	0,
-		majorGrid:	16 * Cat.D.default.layoutGrid,
+		majorGrid:	stdGrid,
 	};
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// basics
 	//
@@ -220,7 +231,6 @@ const Boot = function(fn)
 	});
 	args.diagram = basics;
 	args.rowCount = 0;
-//	args.xy = new Cat.D2(300, 300);
 	basics.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(basics);
@@ -244,6 +254,7 @@ const Boot = function(fn)
 	PlaceText(args, 'Basic Objects', 96, 'bold', false);
 	Cat.R.SelectDiagram(basics.name);
 	basics.home(false);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// logic
@@ -272,7 +283,6 @@ const Boot = function(fn)
 		properName:		'&Omega;',
 	}, args.xy);
 	*/
-	args.xy.y += args.majorGrid;
 	const two = logic.coprod(one, one);
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
 	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
@@ -283,8 +293,8 @@ const Boot = function(fn)
 	const omegaPair = args.diagram.prod(omega, omega);
 	const mfalse = args.diagram.fctr(omega, [0]);
 	const mtrue = args.diagram.fctr(omega, [1]);
-	const mFalse = new Cat.NamedMorphism(args.diagram, {name:'false', properName:'&perp;', source:mfalse});
-	const mTrue = new Cat.NamedMorphism(args.diagram, {name:'true', properName:'&#8868;', source:mtrue});
+	const mFalse = new Cat.NamedMorphism(args.diagram, {basename:'false', properName:'&perp;', source:mfalse});
+	const mTrue = new Cat.NamedMorphism(args.diagram, {basename:'true', properName:'&#8868;', source:mtrue});
 
 	PlaceMorphism(args, mFalse);
 	PlaceMorphism(args, mTrue);
@@ -308,6 +318,7 @@ const Boot = function(fn)
 	PlaceText(args, 'Logic Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(logic.name);
 	logic.home(false);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// N arithemtic
@@ -494,6 +505,7 @@ args.xy.y += args.majorGrid;
 	PlaceText(args, 'Natural Number Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(Narith.name);
 	Narith.home(false);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// integers
@@ -1075,7 +1087,7 @@ return [0, Math.pow(args[0], args[1])];
 	}, args.xy);
 args.xy.y += args.majorGrid;
 */
-	const str = MakeObject(args, 'str', 'CatObject', 'Str', 'the space of all strings', {code:{cpp:
+	const str = MakeObject(args, 'str', 'CatObject', 'Str', 'The space of all strings', {code:{cpp:
 `}
 
 #include <string>;
@@ -1086,7 +1098,8 @@ namespace %Namespace
 `}}).to;
 	const strPair = MakeObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]}).to;
 	const strPlusOne = MakeObject(args, '', 'ProductObject', '', 'A string or an exception', {objects:[str, one], dual:true}).to;
-	const emptyString = new Cat.DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
+//	const emptyString = new Cat.DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
+	const emptyString = new Cat.Morphism(strings, {basename:'emptyStr', domain:one, codomain:str, data:[[0, '']]});
 	PlaceMorphism(args, emptyString);
 	const strLength = MakeMorphism(args, 'length', 'Morphism', 'length', 'length of a string', str, N,
 	{
@@ -1963,7 +1976,7 @@ args.rowCount += Math.round(delta/args.majorGrid);
 
 	args.xy.y = morph2.codomain.y + args.majorGrid;
 	morph1 = PlaceMorphism(args, to, false);
-	Cat.R.Actions.name.doit(null, cpp, {source:morph1, name:'NULL'}, false);
+	Cat.R.Actions.name.doit(null, cpp, {source:morph1, basename:'NULL'}, false);
 
 	const strByZ32 = cpp.get('ProductObject', {objects:[str, Z32], dual:false});
 	const filePlusErrno = cpp.get('ProductObject', {objects:[file, errno], dual:true});
