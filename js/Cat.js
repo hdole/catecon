@@ -432,7 +432,6 @@ if (isGUI)
 {
 	(function(d)
 	{
-//		const a = d.createElement('script');
 		const a = H3.script();
 		a.type = 'text/javascript';
 		a.async = true;
@@ -744,13 +743,14 @@ class R
 	}
 	static LoadScript(url, fn)
 	{
-//		const s = document.createElement('script');
-		const s = H3.script();
+		const s = H3.script({type:'text/javascript', onload:fn, async:true, onerror:function() { debugger; }, src:url});
+		/*
 		s.type = 'text/javascript';
 		s.onload = fn;
 		s.async = true;
 		s.onerror = function() { debugger; }
 		s.src = url;
+		*/
 		document.getElementsByTagName('head')[0].appendChild(s);
 	}
 	static Busy()
@@ -934,24 +934,21 @@ class R
 				{
 					case 'CheckEquivalence':
 						const cell = diagram.domain.cells.get(args.cell);
-						const isEqual = args.isEqual;
 						const assertion = diagram.getAssertion(cell.signature);
-						if (isEqual)
+						assertion && assertion.setCell(cell);
+						let type = 'unknown';
+						if (args.isEqual)
 						{
 							if (assertion)
-							{
-								cell.setCommutes('assertion');
-								assertion.setCell(cell);
-							}
+								type = 'assertion';
 							else if (DiagramComposite.CellIsComposite(cell))
-								cell.setCommutes('composite');
+								type = 'composite';
 							else if (cell.isNamedMorphism())
-								cell.setCommutes('named');
+								type = 'named';
 							else
-								cell.setCommutes('computed');
+								type = 'computed';
 						}
-						else
-							cell.setCommutes('unknown');
+						cell.setCommutes(type);
 						const objs = cell.getObjects();
 						if (!cell.svg)
 							diagram.addSVG(cell);
@@ -1644,7 +1641,6 @@ class R
 			R.Diagrams.delete(name);		// all local diagrams
 			R.SaveLocalDiagramList();		// save updated R.Diagrams
 			['.json', '.png', '.log'].map(ext => localStorage.removeItem(`${name}${ext}`));		// remove local files
-//			R.EmitCATEvent('delete', diagram);
 		}
 	}
 	static GetDiagramInfo(name)
@@ -5641,12 +5637,17 @@ class AssertionSection extends Section
 			}
 		});
 		const that = this;
+		/*
 		window.addEventListener('CAT', function(e)
 		{
 			const args = e.detail;
 			args.command === 'default' && that.refresh(args.diagram);
 		});
-		window.addEventListener('Login', function(e) { that.refresh(R.diagram); });
+		*/
+		function refresh(e) { R.diagram === e.detail.diagram && that.refresh(R.diagram); }
+		window.addEventListener('Login', function(e) { R.diagram && that.refresh(R.diagram); });
+		window.addEventListener('CAT', refresh);
+		window.addEventListener('Assertion', refresh);
 		this.assertions = H3.div({class:'catalog'});
 		this.section.appendChild(this.assertions);
 	}
@@ -5662,13 +5663,11 @@ class AssertionSection extends Section
 		const div = H3.div({class:'right', id:`assertion ${assertion.name}`},
 				[
 					viewBtn, delBtn,
-//					H3.table(	[H3.tr([H3.td({}, H3.table(assertion.left.map(m => H3.tr(H3.td(m.to.properName))))),
-					H3.table(	[H3.tr([H3.td({}, H3.table(assertion.left.map(m => H3.tr(H3.td(m.properName))))),
-//										H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.to.properName)))))]),
-										H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.properName)))))]),
-								H3.tr(H3.td(desc, {colspan:2}))]
-					, {class:'panelElt'})
-				]);
+					H3.table(	[H3.tr([H3.td({}, H3.table(assertion.left.map(m => H3.tr(H3.td(m.to.properName))))),
+										H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.to.properName)))))])], {class:'panelElt'})]);
+//					H3.table(	[H3.tr([H3.td({}, H3.table(assertion.left.map(m => H3.tr(H3.td(m.properName))))),
+//										H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.properName)))))]),
+//								H3.tr(H3.td(desc, {colspan:2}))]
 		const sig = assertion.signature;
 		div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(sig, true);});
 		div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(sig, false);});
@@ -5684,10 +5683,7 @@ class AssertionSection extends Section
 	deleteAssertion(name)
 	{
 		const a = R.diagram.assertions.get(name);
-		if (a)
-		{
-			a.decrRefcnt();
-		}
+		a && a.decrRefcnt();
 	}
 }
 
@@ -8217,8 +8213,10 @@ class Assertion extends Element
 			this.description = `The assertion that the composite of morphisms ${left.map(m => m.to.properName).join()} equals that of ${right.map(m => m.to.properName).join()}.`;
 		Object.defineProperties(this,
 		{
+			cell:			{value: null, writable: true},
 			left:			{value: left, writable: false},
 			right:			{value: right, writable: false},
+			svg:			{value: null, writable: true},
 		});
 		this.signature = Cell.Signature(left, right);
 		this.incrRefcnt();		// nothing refers to them, to increment
@@ -8237,6 +8235,7 @@ class Assertion extends Element
 			this.diagram.domain.deleteElement(this);
 			this.removeEquivalence();
 			this.diagram.assertions.delete(this.name);
+			R.EmitAssertionEvent(this.diagram, 'delete', this);
 		}
 	}
 	json()
@@ -8248,8 +8247,7 @@ class Assertion extends Element
 	}
 	getSVG(node)
 	{
-		if ('cell' in this)
-			this.cell.getSVG(node);
+		this.cell && this.cell.getSVG(node);
 	}
 	showSelected(state = true)
 	{
@@ -8267,7 +8265,7 @@ class Assertion extends Element
 	}
 	loadEquivalences()
 	{
-		R.LoadEquivalences(this.diagram, this, this.left, this.right);
+		R.LoadEquivalences(this.diagram, this, this.left.map(m => m.to), this.right.map(m => m.to));
 	}
 	removeEquivalence()
 	{
@@ -9337,8 +9335,6 @@ class DeleteAction extends Action
 		const elements = ary.map(elt => Cell.IsA(elt) ? diagram.getAssertion(elt.signature) : elt);		// convert cells to assertions
 		diagram.deselectAll();
 		const notDeleted = this.doit(e,diagram, elements);
-//		diagram.selected.length = 0;
-//		R.EmitDiagramEvent(this, 'select', '');
 		notDeleted.map(elt => diagram.addSelected(elt));	// reselect items that were not deleted
 		diagram.log({command:'delete', elements:names});
 		const commands = elements.map(from =>
@@ -9356,16 +9352,10 @@ class DeleteAction extends Action
 	{
 		const sorted = diagram.sortByCreationOrder(items).reverse();
 		const notDeleted = [];
-//		const elements = [];
 		sorted.map(elt =>
 		{
 			if (elt.refcnt == 1)
 			{
-//				if (diagram === R.diagram)
-//				{
-//					R.EmitElementEvent(diagram, 'delete', elt);		// pre-warn
-//					elements.push(elt);
-//				}
 				elt.decrRefcnt();
 				Morphism.IsA(elt) && diagram.domain.removeMorphism(elt);
 			}
@@ -9374,7 +9364,6 @@ class DeleteAction extends Action
 		});
 		if (notDeleted.length > 0)
 			D.statusbar.show(e, 'Cannot delete an element due to it being used elsewhere');
-//		elements.length > 0 && R.EmitDiagramEvent(diagram, 'delete', elements);
 		return notDeleted;
 	}
 	replay(e, diagram, args)
@@ -11530,7 +11519,6 @@ class AssertionAction extends Action
 			const codCells = m.codomain.nodes;
 			nodes = new Set([...nodes].filter(c => codCells.has(c)));
 		});
-//		R.EmitAssertionEvent(diagram, 'new', a);
 		return a;
 	}
 	replay(e, diagram, args)
@@ -11698,13 +11686,13 @@ if (args.to === 'true')
 	}
 	deleteElement(elt)
 	{
-		R.EmitElementEvent(elt.diagram, 'delete', elt);
 		this.elements.delete(elt.name);
 		if (elt.diagram)
 		{
 			elt.diagram.elements.delete(elt.basename);
 			if (!DiagramMorphism.IsA(elt) && !DiagramObject.IsA(elt))
 				R.RemoveEquivalences(elt.diagram, elt.name);
+			R.EmitElementEvent(elt.diagram, 'delete', elt);
 		}
 	}
 	addActions(name)
@@ -12857,7 +12845,7 @@ class Cell extends DiagramCore
 	}
 	removeSVG()
 	{
-		this.svg && this.svg.parentNode.removeChild(this.svg);
+		this.svg && this.svg.parentNode && this.svg.parentNode.removeChild(this.svg);
 	}
 	update()
 	{
@@ -15032,7 +15020,6 @@ console.log('deselect', e);
 		Array.from(this.assertions).reverse().map(a =>
 		{
 			const assertion = a[1];
-//			R.EmitAssertionEvent(this, 'delete', assertion);
 			assertion.decrRefcnt();
 		});
 		this.domain.clear();
@@ -15314,7 +15301,6 @@ console.log('deselect', e);
 		}
 		else
 		{
-//			from.domains.forEach(function(m) { m.setDomain(target); m.update();});
 			[...from.domains].map(m =>
 			{
 				m.setDomain(target);
@@ -15326,7 +15312,6 @@ console.log('deselect', e);
 				m.update();
 			});
 		}
-//		R.EmitObjectEvent(this, 'delete', from);
 		from.decrRefcnt();
 		R.EmitObjectEvent(this, 'fuse', target);
 		return target;
