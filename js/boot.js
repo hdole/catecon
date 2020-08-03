@@ -291,8 +291,8 @@ const Boot = function(fn)
 	const id2 = new Cat.DiagramMorphism(logic, {to:omega.idTo, domain:omega2twoId.codomain, codomain:omega2twoId.domain});
 	logic.addSVG(id2);
 	const omegaPair = args.diagram.prod(omega, omega);
-	const mfalse = args.diagram.fctr(omega, [0]);
-	const mtrue = args.diagram.fctr(omega, [1]);
+	const mfalse = args.diagram.fctr(omega, [[0]]);
+	const mtrue = args.diagram.fctr(omega, [[1]]);
 	const mFalse = new Cat.NamedMorphism(args.diagram, {basename:'false', properName:'&perp;', source:mfalse});
 	const mTrue = new Cat.NamedMorphism(args.diagram, {basename:'true', properName:'&#8868;', source:mtrue});
 
