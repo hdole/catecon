@@ -1,0 +1,7 @@
+{
+	"esversion":8,
+	"eqeqeq":true,
+	"expr":true,
+	"leanswitch":true,
+	"forin":true
+}
