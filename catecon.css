@@ -841,7 +841,6 @@ proper-name
 	color:			black;
 	display:		inline-block;
 	font:			12px "Fira Sans", sans-serif;
-	margin:			2px;
 	text-align:		center;
 	width:			190px;
 	white-space:	nowrap;
@@ -856,7 +855,6 @@ basename
 	display:		inline-block;
 	font-weight:	lighter;
 	font-size:		9px;
-	margin:			2px;
 	text-align:		left;
 	width:			190px;
 	white-space:	nowrap;
@@ -868,7 +866,6 @@ description
 {
 	border:			none;
 	color:			black;
-	margin:			2px;
 	text-align:		left;
 	display:		inline-block;
 	width:			190px;
