@@ -1,10 +1,12 @@
 // (C) 2020 Harry Dole
 // Catecon:  The Categorical Console
 //
-'use strict';
+
+var Cat;
 
 const Boot = function(fn)
 {
+	'use strict';
 	Cat.D.default.arrow.dir = {x:1, y:0};
 	const stdGrid = Cat.D.default.majorGridMult * Cat.D.default.layoutGrid;
 	function gridLocation()
@@ -250,7 +252,7 @@ const Boot = function(fn)
 	PlaceObject(args, zero);
 	PlaceObject(args, one);
 	const tty = MakeObject(args, 'TTY', 'FiniteObject', 'TTY', 'The TTY object interacts with serial devices').to;
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'Basic Objects', 96, 'bold', false);
 	Cat.R.SelectDiagram(basics.name);
 	basics.home(false);
@@ -314,7 +316,7 @@ const Boot = function(fn)
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 || args.m_1;\n}\n',
 	}).to;
 	DiagramReferences(user, logic, args.xy);
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'Logic Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(logic.name);
 	logic.home(false);
@@ -501,7 +503,7 @@ args.xy.y += args.majorGrid;
 	}).to;
 
 	DiagramReferences(user, Narith, args.xy);
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'Natural Number Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(Narith.name);
 	Narith.home(false);
@@ -637,7 +639,7 @@ return [0, args[0] % args[1]];
 //		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	}).to;
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'Integer Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(integers.name);
 	integers.home(false);
@@ -856,7 +858,7 @@ void %Type(const %Dom & args, %Cod & out)
 `,
 	}).to;
 	DiagramReferences(user, floats, args.xy);
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'Floating Point Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(floats.name);
 	floats.home(false);
@@ -1054,7 +1056,7 @@ return [0, Math.pow(args[0], args[1])];
 	}).to;
 	const Clist = MakeObject(args, '', 'HomObject', '', 'A list of complex numbers', {objects:[N, C]}).to;
 	DiagramReferences(user, complex, args.xy);
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'Complex Number Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(complex.name);
 	complex.home(false);
@@ -1270,12 +1272,6 @@ function %Type(args)
 		cpp:
 `void %Type(const %Dom & args, %Cod & out)
 {
-	out = std::to_string(args);
-}
-`,
-		cpp:
-`void %Type(const %Dom & args, %Cod & out)
-{
 	try
 	{
 		out.value = std::stod(args);
@@ -1328,7 +1324,7 @@ function %Type(args)
 `,
 	}).to;
 	DiagramReferences(user, strings, args.xy);
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'String Operations', 96, 'bold', false);
 	Cat.R.SelectDiagram(strings.name);
 	strings.home(false);
@@ -1556,7 +1552,7 @@ function %Type(args)
 `,
 	}).to;
 	DiagramReferences(user, htmlDiagram, args.xy);
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'HTML Input and Output', 96, 'bold', false);
 	Cat.R.SelectDiagram(htmlDiagram.name);
 	htmlDiagram.home(false);
@@ -1648,7 +1644,7 @@ postMessage(['fff2toQB3', args]);
 `
 	});
 	DiagramReferences(user, threeD, args.xy);
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'Three-D Integration', 96, 'bold', false);
 	Cat.R.SelectDiagram(threeD.name);
 	threeD.home(false);
@@ -2180,7 +2176,7 @@ namespace %Namespace
 }
 `}});
 
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'C++ Integration', 96, 'bold', false);
 	Cat.R.SelectDiagram(cpp.name);
 	cpp.home(false);
@@ -2257,7 +2253,7 @@ namespace %Namespace
 	const elementStr = args.diagram.coprod(boundary, path, sref, aref, txt);
 	const element = MakeNamedObject(args, {basename:'Element', source:elementStr, description:'A GDSII element is a boundary, path, aref, sref, or text.'}).to;
 
-	args.xy = new Cat.D2;
+	args.xy = new Cat.D2();
 	PlaceText(args, 'The GDSII Graphics Design Standard Specification', 96, 'bold', false);
 	Cat.R.SelectDiagram(gds.name);
 	gds.home(false);
@@ -2296,4 +2292,4 @@ namespace %Namespace
 	});
 
 	fn && Cat.R.Actions.javascript.loadHTML(fn);
-}
+};
