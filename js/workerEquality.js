@@ -1,12 +1,12 @@
 // (C) 2020 Harry Dole
 // Catecon equality worker
 
-const sig2equivalences = new Map;		// sig to the list of pairs [leg, item]
-const equals = new Map;
-const items = new Map;
+const sig2equivalences = new Map();		// sig to the list of pairs [leg, item]
+const equals = new Map();
+const items = new Map();
 let maxLegLength = 0;
 let spoiled = false;
-let diagramItems = new Map;
+let diagramItems = new Map();
 let contextDiagrams = [];
 
 onmessage = function(e)
@@ -20,11 +20,7 @@ onmessage = function(e)
 		switch(command)
 		{
 			case 'start':
-				let url = args.url;
-				const index = url.indexOf('index.html');
-				if (index !== -1)
-					url = url.substring(0, index);
-				importScripts(url + '/js/sjcl.js');
+				importScripts(args.url + '/js/sjcl.js');
 				break;
 			case 'LoadEquivalences':
 				LoadEquivalences(args.diagram, args.item, args.leftLeg, args.rightLeg);
@@ -54,11 +50,12 @@ onmessage = function(e)
 		val.delta = Date.now() - start;
 		postMessage(val);
 	}
-	catch(e)
+	catch(x)
 	{
-		postMessage({command:'exception', value:e});
+		postMessage({command:'exception', value:x});
+		console.error('workerEQuality exception', x);
 	}
-}
+};
 
 function Sig(...elts)
 {
@@ -78,18 +75,18 @@ function LoadSigLeg(sig, leg)
 
 function LoadEquivalences(diagram, item, leftLeg, rightLeg)
 {
-	maxLegLength = Math.max(maxLegLength, leftLeg.length, rightLeg.length)
+	maxLegLength = Math.max(maxLegLength, leftLeg.length, rightLeg.length);
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	if (item)
 	{
-		!items.has(item) && items.set(item, new Map);
+		!items.has(item) && items.set(item, new Map());
 		items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg]);
-		!diagramItems.has(diagram) && diagramItems.set(diagram, new Set);
+		!diagramItems.has(diagram) && diagramItems.set(diagram, new Set());
 		diagramItems.get(diagram).add(item);
 	}
-	const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set;
-	const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set;
+	const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set();
+	const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set();
 	leftSigs.add(rightSig);
 	rightSigs.forEach(function(s) { leftSigs.add(s); });
 	equals.set(leftSig, leftSigs);
@@ -141,7 +138,7 @@ function CheckLeg(leg, ndx, cnt, sig)
 	{
 		const subSet = sig2equivalences.get(subSig);
 		for (const altLeg of subSet)
-			if (isEqual = TryAlternateLeg(leg, ndx, cnt, sig, subLeg, altLeg))
+			if ((isEqual = TryAlternateLeg(leg, ndx, cnt, sig, subLeg, altLeg)))
 				break;
 	}
 	return isEqual;
