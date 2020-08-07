@@ -7,13 +7,12 @@
 // 			delete
 // 			select
 // 		CAT
-// 			catalog
-// 				add		an entry got added to the catalog
+// 			catalogAdd	an entry got added to the catalog
 // 			default		diagram is now the default diagram for viewing
 // 			delete
 // 			download	diagram came from server
-// 			load		diagram now available
-// 			new
+// 			load		diagram now available for viewing, but may have no view yet
+// 			new			new diagram exists
 // 			png
 // 			preload
 // 			upload		diagram sent to server
@@ -975,6 +974,11 @@ class R
 						diagram.addSVG(cell);
 					cell.update();
 					break;
+				case 'start':
+				case 'Load':
+				case 'LoadEquivalences':
+				case 'Info':
+					break;
 				default:
 					console.error('bad message', args.command);
 					break;
@@ -1333,7 +1337,7 @@ class R
 		R.SetDiagramInfo(diagram);
 		R.SetLocalDiagramInfo(diagram);
 		R.SaveLocalDiagramList();
-		R.SaveLocalCategoryList();
+		R.SaveLocalCategoryList();	// TODO needed?
 		return true;
 	}
 	static HasLocal(name)
@@ -1481,7 +1485,7 @@ class R
 		if (!diagram)
 			throw 'no such diagram';
 		diagram.makeSVG();
-		diagram.svgRoot.classList.remove('hidden');
+//		diagram.svgRoot.classList.remove('hidden');
 		diagram.show();
 		R.diagram = diagram;
 		R.NotBusy();
@@ -1523,7 +1527,7 @@ class R
 	}
 	static CanLoad(name)
 	{
-		return [...R.GetReferences(name)].reverse().reduce((r, d) => r && (R.LocalDiagrams.has(d) || R.$CAT.getElement(d)), true);
+		return [...R.GetReferences(name)].reverse().reduce((r, d) => r && (R.HasLocalDiagram(d) || R.$CAT.getElement(d)), true);
 	}
 	static LoadDiagram(name)	// assumes all reference diagrams are loaded or local and so is immediate
 	{
@@ -1709,18 +1713,34 @@ class R
 	{
 		return Morphism.IsA(elt) && (elt.isIterable() || R.Actions.javascript.canFormat(elt));
 	}
+	static HasLocalDiagram(name)
+	{
+		if (R.LocalDiagrams.has(name))
+			return true;
+		// try to fix corrupted local diagram list
+		const diagram = JSON.parse(localStorage.getItem(`${name}.json`));
+		if (diagram)
+		{
+			R.SetDiagramInfo(diagram);
+			R.SetLocalDiagramInfo(diagram);
+			R.SaveLocalDiagramList();
+			R.EmitCATEvent('new', diagram);
+			return true;
+		}
+		return false;
+	}
 }
 Object.defineProperties(R,
 {
-	Actions:			{value:null,	writable:true},		// loaded actions
-	autosave:			{value:false,	writable:true},		// is autosave turned on for diagrams?
-	Cat:				{value:null,	writable:true},
-	CAT:				{value:null,	writable:true},		// working nat trans
+	Actions:			{value:null,		writable:true},		// loaded actions
+	autosave:			{value:false,		writable:true},		// is autosave turned on for diagrams?
+	Cat:				{value:null,		writable:true},
+	CAT:				{value:null,		writable:true},		// working nat trans
 	catalog:			{value:new Map(),	writable:true},
-	category:			{value:null,	writable:true},		// current category
+	category:			{value:null,		writable:true},		// current category
 	Categories:			{value:new Map(),	writable:false},	// available categories
-	clear:				{value:false,	writable:true},
-	cloud:				{value:null,	writable:true},		// cloud we're using
+	clear:				{value:false,		writable:true},
+	cloud:				{value:null,		writable:true},		// cloud we're using
 	default:
 	{
 		value:
@@ -6416,7 +6436,6 @@ class Element
 			name:			{value: name,											writable: true},
 			properName:		{value: U.HtmlEntitySafe(properName),					writable: true},
 			refcnt:			{value: 0,												writable: true},
-			svg:			{value: null,											writable: true},
 		});
 		Object.defineProperty(this, 'signature',
 		{
@@ -8019,6 +8038,7 @@ class DiagramObject extends CatObject
 			nodes:		{value:	new Set(),											writable:	false},
 			domains:	{value:	new Set(),											writable:	false},
 			codomains:	{value:	new Set(),											writable:	false},
+			svg:		{value: null,												writable:	true},
 		});
 		this.setObject(nuArgs.to);
 		this.constructor.name === 'DiagramObject' && R.EmitElementEvent(diagram, 'new', this);
@@ -12291,6 +12311,10 @@ class DiagramMorphism extends Morphism
 		if (!to)
 			throw 'no morphism to attach to index';
 		super(diagram, nuArgs);
+		if (!DiagramObject.IsA(this.domain))
+			throw 'domain must be DiagramObject';
+		if (!DiagramObject.IsA(this.codomain))
+			throw 'codomain must be DiagramObject';
 		this.setMorphism(to);
 		this.incrRefcnt();
 		this.diagram.domain.addMorphism(this);
@@ -14163,21 +14187,22 @@ class Diagram extends Functor
 		Object.defineProperties(this,
 		{
 			assertions:					{value:new Map(),	writable:false},
-			colorIndex2colorIndex:		{value:{},		writable:true},
-			colorIndex2color:			{value:{},		writable:true},
-			colorIndex:					{value:0,		writable:true},
+			colorIndex2colorIndex:		{value:{},			writable:true},
+			colorIndex2color:			{value:{},			writable:true},
+			colorIndex:					{value:0,			writable:true},
 			elements:					{value:new Map(),	writable:false},
-			link2colorIndex:			{value:{},		writable:true},
-			_log:						{value:_log,	writable:true},
+			link2colorIndex:			{value:{},			writable:true},
+			_log:						{value:_log,		writable:true},
 			_antilog:					{value:_antilog,	writable:true},
 			readonly:					{value: 'readonly' in nuArgs ? nuArgs.readonly : false,		writable: true},
 			references:					{value:new Map(),	writable:false},
 			allReferences:				{value:new Map(),	writable:true},
-			selected:					{value:[],		writable:true},
-			svgRoot:					{value:null,	writable:true},
-			svgBase:					{value:null,	writable:true},
+			selected:					{value:[],			writable:true},
+			svgRoot:					{value:null,		writable:true},
+			svgBase:					{value:null,		writable:true},
 			timestamp:					{value:U.GetArg(args, 'timestamp', Date.now()),	writable:true},
 			user:						{value:args.user,	writable:false},
+			viewport:					{value:{x:0, y:0, scale:1.0},	writable:true},
 		});
 		if ('references' in args)
 			args.references.map(r => this.addReference(r));
@@ -14210,8 +14235,8 @@ class Diagram extends Functor
 	json()
 	{
 		const a = super.json();
-		if ('viewport' in this)
-			a.viewport =	this.getViewport();		// don't want viewport.orig
+//		if ('viewport' in this)
+		a.viewport =	this.getViewport();		// don't want viewport.orig
 		a.references =	[];
 		this.references.forEach(function(ref)
 		{
@@ -14245,6 +14270,27 @@ class Diagram extends Functor
 				return basename;
 		}
 	}
+	getViewport()
+	{
+		const v =
+		{
+			x:		this.viewport.x,
+			y:		this.viewport.y,
+			width:	this.viewport.width,
+			height:	this.viewport.height,
+			scale:	this.viewport.scale,
+		};
+		return v;
+	}
+	setView(x, y, s, log = true)
+	{
+		const oldport = U.Clone(this.viewport);
+		this.viewport.x = x;
+		this.viewport.y = y;
+		this.viewport.scale = s;
+		this.svgTranslate.setAttribute('transform', `translate(${this.viewport.x} ${this.viewport.y}) scale(${this.viewport.scale} ${this.viewport.scale})`);
+		log && this.updateViewSaveTimer(oldport);
+	}
 	setViewport(bbox, log = true)
 	{
 		if (bbox.width === 0)
@@ -14255,8 +14301,6 @@ class Diagram extends Functor
 		const xRatio = bbox.width / dw;
 		const yRatio = bbox.height / dh;
 		const s = 1.0/Math.max(xRatio, yRatio);
-		if (!('viewport' in this))
-			this.viewport = {};
 		let x = - bbox.x * s + D.default.panel.width + margin;
 		let y = - bbox.y * s + 2 * margin;
 		if (xRatio > yRatio)
@@ -14282,18 +14326,6 @@ class Diagram extends Functor
 			return object;
 		return this.domain.getElement(name);
 	}
-	getViewport()
-	{
-		const v =
-		{
-			x:		this.viewport.x,
-			y:		this.viewport.y,
-			width:	this.viewport.width,
-			height:	this.viewport.height,
-			scale:	this.viewport.scale,
-		};
-		return v;
-	}
 	addSVG(element)
 	{
 		if (this.svgBase)
@@ -14317,15 +14349,6 @@ class Diagram extends Functor
 		{
 			D.RecordError(x);
 		}
-	}
-	setView(x, y, s, log = true)
-	{
-		const oldport = U.Clone(this.viewport);
-		this.viewport.x = x;
-		this.viewport.y = y;
-		this.viewport.scale = s;
-		this.svgTranslate.setAttribute('transform', `translate(${this.viewport.x} ${this.viewport.y}) scale(${this.viewport.scale} ${this.viewport.scale})`);
-		log && this.updateViewSaveTimer(oldport);
 	}
 	mousePosition(e)
 	{
@@ -14442,27 +14465,6 @@ class Diagram extends Functor
 				return true;
 		return false;
 	}
-//	showGraph(from)
-//	{
-//		if ('graph' in from)
-//		{
-//			const gsvg = from.graph.svg;
-//			if (gsvg)
-//			{
-//				gsvg.classList.contains('hidden') ? from.showGraph() : from.removeGraph();
-//				return;
-//			}
-//		}
-//		from.makeGraph();
-//		const dom = from.domain;
-//		const cod = from.codomain;
-//		let xy = new D2({x:dom.x - dom.width/2, y:dom.y}).round();
-//		from.graph.graphs[0].updateXY(xy);	// set locations inside domain
-//		xy = new D2({x:cod.x - cod.width/2, y:cod.y}).round();
-//		from.graph.graphs[1].updateXY(xy);	// set locations inside codomain
-//		from.graph.getSVG(this.svgBase.innerHTML,
-//			{index:[], root:from.graph, dom:dom.name, cod:cod.name, visited:[], elementId:from.elementId(), color:Math.floor(Math.random()*12)});
-//	}
 	updateDragObjects(e)
 	{
 		const delta = D.mouse.position().subtract(D.dragStart);
@@ -14516,16 +14518,6 @@ class Diagram extends Functor
 	{
 		const xy = xyIn ? new D2(D.Grid(xyIn)) : D.Center(this);
 		const from = new DiagramObject(this, {xy, to});
-//		this.addSVG(from);
-//		const bbox = new D2(from.svg.getBBox());
-//		let offbox = new D2(bbox);
-//		let offset = new D2;
-//		while (this.hasOverlap(offbox, from.name))
-//		{
-//			offset = offset.add(D.default.stdOffset);
-//			offbox = offbox.add(D.default.stdOffset);
-//		}
-//		from.update(offset.add(xy));
 		if (save)
 			this.makeSelected(e, from);
 		return from;
@@ -14638,9 +14630,6 @@ class Diagram extends Functor
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
 			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
 			const from = new DiagramMorphism(this, {to, domain:domainElt, codomain:codomainElt});
-//			this.addSVG(newElt);
-//			this.addSVG(from);
-//			from.update();
 			if (save)
 				this.makeSelected(e, from);
 			return from;

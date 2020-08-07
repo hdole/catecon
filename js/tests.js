@@ -4,7 +4,9 @@ module('Basics');
 
 QUnit.config.reorder = false;
 
+// overrides
 Cat.R.sync = false;
+Cat.D.url = window.URL || window.webkitURL || window;
 
 test('base classes exist', assert =>
 {
@@ -66,7 +68,7 @@ const testDiagramName = 'hdole/UnitTest';
 
 const nuDefaults = {category:'hdole/UnitTest', debug:true, diagram:testDiagramName};
 
-const {category, debug, diagram} = Cat.R.default;
+let {category, debug, diagram} = Cat.R.default;
 
 test('Save defaults', assert =>
 {
@@ -311,19 +313,275 @@ test('Bogus login', assert =>
 	assert.equal(Cat.D.loginPanel.userEmailElt.innerText, R.user.email, 'User email is correct');
 });
 
-let testDiagram = null;
+diagram = null;
 test('Create test diagram', assert =>
 {
 	args = {basename:'test', codomain:PFS, user:'tester'};
-	testDiagram = new Cat.Diagram(Cat.R.$CAT, args);
-	assert.ok(Cat.Diagram.IsA(testDiagram), 'testDiagram exists');
+	diagram = new Cat.Diagram(Cat.R.$CAT, args);
+	assert.ok(Cat.Diagram.IsA(diagram), 'New diagram exists');
 });
 
 module('Diagram test');
 
+test('Make diagram svg', assert =>
+{
+	diagram.makeSVG();
+	const svg = document.getElementById(diagram.name);
+	assert.ok(svg, 'Diagram SVG exists');
+	assert.ok(svg.classList.contains('hidden'), 'Diagram SVG is hidden');
+	diagram.show();
+	assert.ok(!svg.classList.contains('hidden'), 'Diagram SVG is visible');
+	assert.ok(svg.style.display === 'block', 'Diagram SVG style.display is block');
+	const svgTran = document.getElementById(diagram.name + ' T');
+	assert.ok(svgTran, 'SVG transform group exists');
+	assert.equal(diagram.svgTranslate, svgTran, 'Diagram translate element is ok');
+	const svgBase = document.getElementById(diagram.name + ' base');
+	assert.ok(svgBase, 'SVG base group exists');
+});
+
+test('Create PFS object', assert =>
+{
+	const args = {basename:'t0', properName:'T1', description:'this is a test'};
+	const lookforit = function(e)
+	{
+		assert.equal(e.detail.command, 'new', 'New object event occurred');
+		checkArgs(assert, e.detail.element, args);
+	};
+	window.addEventListener('Object', lookforit);
+	const obj = new Cat.CatObject(diagram, args);
+	window.removeEventListener('Object', lookforit);
+	assert.ok(obj, 'Create test object ok');
+	let didit = false;
+	try
+	{
+		const obj2 = new Cat.CatObject(diagram, args);
+	}
+	catch(x)
+	{
+		didit = true;
+	}
+	assert.ok(didit, 'Cannot create object with same basename');
+	checkArgs(assert, obj, args);
+	assert.ok(!('svg' in obj), 'Object does not have svg');
+	assert.equal(obj._sig, "869a4e90a5d64c453fe80ae1cfe0d9b05535150a561477734f63ea128f7e89b0", 'Object signature is correct');
+});
+
+test('Fetch element', assert =>
+{
+	const obj1 = diagram.getElement('t0');
+	assert.ok(obj1, 'diagram getElement by basename ok');
+	const obj2 = diagram.getElement('tester/test/t0');
+	assert.ok(obj2, 'diagram getElement by name ok');
+	assert.equal(obj1, obj2, 'Element fetched by name and basename are equal');
+});
+
+test('Create second object', assert =>
+{
+	const args = {basename:'t1', properName:'T2', description:'this is another test'};
+	const obj = new Cat.CatObject(diagram, args);
+	assert.ok(obj, 'Second object exists');
+	checkArgs(assert, obj, args);
+});
+
+test('Set view', assert =>
+{
+	const x = 0;
+	const y = 0;
+	const scale = 1;
+	const log = false;
+	diagram.setView(x, y, scale, log);
+	assert.equal(diagram.viewport.x, x, 'Diagram viewport x is correct');
+	assert.equal(diagram.viewport.y, y, 'Diagram viewport y is correct');
+	assert.equal(diagram.viewport.scale, scale, 'Diagram viewport scale is correct');
+	assert.equal(diagram.svgTranslate.getAttribute('transform'), `translate(${x} ${y}) scale(${scale} ${scale})`);
+});
+
+test('Create index object', assert =>
+{
+	const to = diagram.getElement('t0');
+	const xy = {x:100, y:100};
+	const args = {to, xy};
+	const from = new Cat.DiagramObject(diagram, args);
+	assert.ok(from, 'Index object exists');
+	assert.equal(from.to, to, 'Target object assigned');
+	assert.equal(from.x, xy.x, 'X coordinate ok');
+	assert.equal(from.y, xy.y, 'Y coordinate ok');
+	const svg = document.getElementById('el_tester--test--o_0');
+	assert.ok(svg, 'Index object svg exists');
+	assert.equal(svg.innerHTML, from.to.properName, 'Proper name is displayed');
+	assert.equal(svg.getAttribute('text-anchor'), 'middle', 'Text anchor is middle');
+	assert.equal(svg.getAttribute('x'), '100', 'Text x location ok');
+	assert.equal(svg.getAttribute('y'), '112', 'Text y location ok');
+	assert.ok(svg.classList.contains('object'), 'Svg has object class');
+	assert.ok(svg.classList.contains('grabbable'), 'Svg has grabbable class');
+	assert.equal(svg.dataset.name, 'tester/test/o_0', 'Dataset name ok');
+	assert.equal(svg.dataset.type, 'object', 'Dataset object ok');
+});
+
+const dgrmJson = 'tester/test.json';
+
+test('Diagram.placeObject', assert =>
+{
+	const to = diagram.getElement('t0');
+	const xy = {x:200, y:100};
+	localStorage.removeItem(dgrmJson);	// just in case
+	// overrides
+	Cat.R.diagram = diagram;
+	const from = diagram.placeObject(null, to, xy, false);	// do not test saving or selection here
+	assert.equal(from.to, to, 'Target object correctly assigned');
+	assert.equal(from.x, xy.x, 'Index object x value ok');
+	assert.equal(from.y, xy.y, 'Index object y value ok');
+});
+
+function checkMorphism(assert, diagram, args, morphism, domain, codomain, sig)
+{
+	assert.equal(morphism.basename, args.basename, `${args.basename}: morphism basename ok`);
+	const name = `${diagram.name}/${args.basename}`;
+	assert.equal(morphism.name, name, `${args.basename}: morphism name ok`);
+	if ('properName' in args)
+		assert.equal(morphism.properName, args.properName, `${args.basename}: morphism properName ok`);
+	else
+		assert.equal(morphism.properName, args.basename, `${args.basename}: morphism properName ok`);
+	if ('description' in args)
+		assert.equal(morphism.description, args.description, `${args.basename}: morphism description ok`);
+	assert.equal(morphism.domain, domain, `${args.basename}: morphism domain ok`);
+	assert.equal(morphism.codomain, codomain, `${args.basename}: morphism codomain ok`);
+	assert.equal(morphism.diagram, diagram, `${args.basename}: morphism belongs to diagram`);
+	assert.equal(morphism.category, PFS, `${args.basename}: morphism belongs to category`);
+	assert.ok(diagram.getElement(args.basename), `Can find morphism by basename`);
+	assert.ok(diagram.getElement(name), `Can find morphism by name`);
+	assert.ok(!morphism.dual, `${args.basename}: morphism is not dual`);
+	assert.equal(morphism.refcnt, 0, `${args.basename}: morphism has no references`);
+	assert.ok(!('svg' in morphism), `${args.basename}: morphism does not have svg`);
+	assert.equal(morphism._sig, sig, `${args.basename}: morphism signature is correct`);
+}
+
+test('New morphism', assert =>
+{
+	const domain = diagram.getElement('t0');
+	const codomain = diagram.getElement('t1');
+	assert.ok(domain, 'Found domain');
+	assert.ok(codomain, 'Found codomain');
+	const args = {basename:'m0', domain:'t0', codomain:'t1', properName:'M1', description:'this is a test morphism'};
+	const morphism = new Cat.Morphism(diagram, args);
+	checkMorphism(assert, diagram, args, morphism, domain, codomain, "7666bafec59943f203906de61b0c5bff2c41e97505e3bfeed2ada533b795788a");
+	/*
+	assert.equal(morphism.basename, args.basename, 'Morphism basename ok');
+	const name = `${diagram.name}/${args.basename}`;
+	assert.equal(morphism.name, name, 'Morphism name ok');
+	assert.equal(morphism.properName, 'M1', 'Morphism properName ok');
+	assert.equal(morphism.description, args.description, 'Morphism description ok');
+	assert.equal(morphism.domain, domain, 'Morphism domain ok');
+	assert.equal(morphism.codomain, codomain, 'Morphism codomain ok');
+	assert.equal(morphism.diagram, diagram, 'Morphism belongs to diagram');
+	assert.equal(morphism.category, PFS, 'Morphism belongs to category');
+	assert.ok(diagram.getElement(args.basename), 'Can find morphism by basename');
+	assert.ok(diagram.getElement(name), 'Can find morphism by name');
+	assert.ok(!morphism.dual, 'Morphism is not dual');
+	assert.equal(morphism.refcnt, 0, 'Morphism has no references');
+	assert.ok(!('svg' in morphism), 'Morphism does not have svg');
+	assert.equal(morphism._sig, "c3418a601c19a3ed108d6c778221257df2bbceb8264734e02456d12d51322e02", 'Morphism signature is correct');
+	*/
+});
+
+// args: from, domain, codomain, name, basename, sig, start, end, d, txy
+function checkIndexMorphism(assert, diagram, args)
+{
+	const from = args.from;
+	assert.ok(Cat.DiagramMorphism.IsA(from), 'Index morphism is a DiagramMorphism');
+	assert.equal(from.angle, 0, 'Index morphism angle is 0');
+	assert.equal(from.domain, args.domain, 'Index morphism domain is ok');
+	assert.equal(from.codomain, args.codomain, 'Index morphism codomain is ok');
+	assert.equal(from.start.x, args.start.x, 'Index morphism start.x is ok');
+	assert.equal(from.start.y, args.start.y, 'Index morphism start.y is ok');
+	assert.equal(from.end.x, args.end.x, 'Index morphism end.x is ok');
+	assert.equal(from.end.y, args.end.y, 'Index morphism end.y is ok');
+	assert.ok(!from.flipName, 'Index morphism flipName is ok');
+	assert.equal(from.homSetIndex, -1, 'Index morphism hom set index is ok');
+	assert.ok(from.svg, 'Index morphism svg exists');
+	assert.ok(from.svg_name, 'Index morphism svg_name exists');
+	assert.ok(from.svg_path, 'Index morphism svg_path exists');
+	assert.ok(from.svg_path2, 'Index morphism svg_path2 exists');
+	assert.equal(from.to, args.to, 'Index morphism target morphism is ok');
+	assert.equal(from.basename, args.basename, 'Index morphism basename is ok');
+	assert.equal(from.category, diagram.domain, 'Index category is ok');
+	assert.equal(from.description, '', 'Index morphism description is ok');
+	assert.equal(from.diagram, diagram, 'Index morphism diagram is ok');
+	assert.ok(!from.dual, 'Index morphism is not dual');
+	assert.equal(from.name, args.name, 'Index morphism name is ok');
+	assert.equal(from.properName, from.basename, 'Index is not dual');
+	assert.equal(from.refcnt, 1, 'Index refcnt is ok');
+	assert.equal(from._sig, args.sig, 'Index signature is ok');
+	assert.equal(from.svg, document.getElementById(args.id), 'Index svg is ok');
+	assert.equal(from.svg_path, document.getElementById(`${args.id}_path`), 'Index path is ok');
+	assert.equal(from.svg_path.dataset.name, args.name, 'Index path dataset name ok');
+	assert.equal(from.svg_path.dataset.type, 'morphism', 'Index path dataset type ok');
+	assert.ok(from.svg_path.classList.contains('morphism') && from.svg_path.classList.contains('grabbable'), 'Index path classes ok');
+	assert.equal(from.svg_path.getAttribute('d'), args.d, 'Index path d attribute ok');
+	assert.equal(from.svg_path.getAttribute('marker-end'), 'url(#arrowhead)', 'Index path marker-end attribute ok');
+
+	assert.equal(from.svg_path2, document.getElementById(`${args.id}_path2`), 'Index path2 is ok');
+	assert.equal(from.svg_path2.dataset.name, args.name, 'Index path2 dataset name ok');
+	assert.equal(from.svg_path2.dataset.type, 'morphism', 'Index path2 dataset type ok');
+	assert.ok(from.svg_path2.classList.contains('grabme') && from.svg_path.classList.contains('grabbable'), 'Index path2 classes ok');
+	assert.equal(from.svg_path2.getAttribute('d'), args.d, 'Index path2 d attribute is ok');
+
+	assert.equal(from.svg_name, document.getElementById(`${args.id}_name`), 'Index svg_name is ok');
+	assert.equal(from.svg_name.dataset.name, args.name, 'Index path2 dataset name ok');
+	assert.equal(from.svg_name.dataset.type, 'morphism', 'Index path2 dataset type ok');
+	assert.equal(from.svg_name.innerHTML, args.to.properName, 'Index properName text ok');
+	assert.equal(from.svg_name.getAttribute('text-anchor'), 'middle', 'Index text-anchor ok');
+	assert.equal(from.svg_name.getAttribute('x'), args.txy.x, 'Index name text x coord ok');
+	assert.equal(from.svg_name.getAttribute('y'), args.txy.y, 'Index name text y coord ok');
+}
+
+test('Diagram.placeMorphism', assert =>
+{
+	const to = diagram.getElement('m0');
+	assert.ok(Cat.Morphism.IsA(to), 'Found morphism');
+	const domain = diagram.getElement('tester/test/o_0');
+	const codomain = diagram.getElement('tester/test/o_1');
+	const name = 'tester/test/m_0';
+	const from = diagram.placeMorphism(null, to, domain, codomain, false, false);
+	const id = 'el_tester--test--m_0';
+	checkIndexMorphism(assert, diagram, {from, to, id, domain, codomain, name, basename:'m_0', sig:"0452fb6b1f9e40040141caaa361bafbb2aa47457f1525d637db26e57c0b42935",
+		start:{x:129, y:100}, end:{x:171, y:100}, d:'M129,100 L171,100', txy:{x:"150", y:"88"}});
+});
+
+test('Create identity', assert =>
+{
+	const t0 = diagram.getElement('t0');
+	const t1 = diagram.getElement('t1');
+	const id = diagram.id(t0);
+	assert.ok(Cat.Identity.IsA(id), 't0 id exists');
+	checkMorphism(assert, diagram, {name:"tester/test/Id{tester/test/t0}dI", basename:"Id{tester/test/t0}dI", properName:'id'}, id, t0, t0,
+		"ab519276ce681a5ffc0dfba60cbc8e9ab39fda63792225d75e145dc0dd642bda");
+});
+
+test('Diagram.placeMorphismByObject', assert =>
+{
+	const t0 = diagram.getElement('t0');
+	assert.ok(Cat.CatObject.IsA(t0), 't0 is an object');
+	const t1 = diagram.getElement('t1');
+	assert.ok(Cat.CatObject.IsA(t1), 't1 is an object');
+	const t0id = diagram.id(t0);
+	const t1id = diagram.id(t1);
+	const t1ndxName = 'tester/test/o_1';
+	const t1ndx = diagram.getElement(t1ndxName);
+	let from = diagram.placeMorphismByObject(null, 'domain', t1ndxName, t1id.name, false);		// false arg#5 no test of save here
+	assert.ok(Cat.DiagramMorphism.IsA(from), 'Placed morphism exists');
+	checkIndexMorphism(assert, diagram, {from, to:t1id, id:'el_tester--test--m_1', domain:t1ndx, codomain:from.codomain, name:'tester/test/m_1', basename:'m_1',
+		sig:"0d9763429ff9d15181a18daceebebac1f644b9d29ac0ad995d68280e5005b4b3",
+		start:{x:229, y:100}, end:{x:371, y:100}, d:'M229,100 L371,100', txy:{x:"300", y:"88"}});
+});
+
+
+/*
 test('SelectDiagram', assert =>
 {
 	Cat.D.url = window.URL || window.webkitURL || window;
 	Cat.R.SelectDiagram(testDiagram);
 	assert.equal(Cat.R.diagram, testDiagram, 'Test diagram is the default diagram');
 });
+
+*/
