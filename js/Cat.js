@@ -745,32 +745,6 @@ Object.defineProperties(U,
 
 class R
 {
-	/*
-	static CookieAccept()
-	{
-		if (U.secret !== U.getUserSecret(U.HtmlSafe(document.getElementById('cookieSecret').value)))
-		{
-			alert('Your secret is not good enough.');
-			return;
-		}
-		localStorage.setItem('Cookies Accepted', JSON.stringify(Date.now()));
-		const intro = document.getElementById('intro');
-		intro.parentNode.removeChild(intro);
-		R.Initialize();	// boot-up
-	}
-	*/
-//	static LoadScript(url, fn)
-//	{
-//		const s = H3.script({type:'text/javascript', onload:fn, async:true, onerror:function() { console.error('error during script loading'); }, src:url});
-		/*
-		s.type = 'text/javascript';
-		s.onload = fn;
-		s.async = true;
-		s.onerror = function() { debugger; }
-		s.src = url;
-		*/
-//		document.getElementsByTagName('head')[0].appendChild(s);
-//	}
 	static Busy()
 	{
 		if (!('busyBtn' in R))
@@ -1251,6 +1225,10 @@ class R
 			actionDiagrams:	['product', 'coproduct', 'hom', 'distribute'],
 		});
 	}
+	static InitCloud()
+	{
+		R.cloud = isCloud ? new Amazon() : null;
+	}
 	static Initialize()
 	{
 		try
@@ -1264,7 +1242,8 @@ class R
 			const intro = document.getElementById('intro');	// TODO
 			if (intro)
 				intro.parentNode.removeChild(intro);
-			R.cloud = isCloud ? new Amazon() : null;
+//			R.cloud = isCloud ? new Amazon() : null;
+			R.InitCloud();
 			if (isGUI)
 			{
 				U.autosave = true;
@@ -1455,6 +1434,28 @@ class R
 		const cloudInfo = R.catalog.get(name);
 		return cloudInfo && cloudInfo.timestamp > R.LocalTimestamp(name);
 	}
+	static DownloadDiagram(name, fn = null)
+	{
+		let diagram = null;
+		const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
+		if (downloads.length > 0)
+		{
+			if ('loadingDiagram' in R)
+				console.error('already loading', R.loadingDiagram);
+			R.LoadingDiagrams = new Set(downloads);
+			R.loadingDiagram = name;
+			R.postLoadFunction = fn;
+			downloads.map(d => R.cloud._downloadDiagram(d));
+			R.default.debug && console.log('Fetching diagrams', ...downloads);
+			// wait for downloads and try agagin
+		}
+		else if (R.CanLoad(name))
+		{
+			diagram = R.LoadDiagram(name);		// immediate loading
+			fn && fn();
+		}
+		return diagram;
+	}
 	static SelectDiagram(name, fn = null)		// can be async if diagram not local; fn runs in final preload event
 	{
 		if (R.diagram && R.diagram.name === name)
@@ -1467,6 +1468,7 @@ class R
 		let diagram = R.$CAT.getElement(name);		// already loaded?
 		if (!diagram)
 		{
+			/*
 			const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
 			if (downloads.length > 0)
 			{
@@ -1479,13 +1481,16 @@ class R
 				R.default.debug && console.log('Fetching diagrams', ...downloads);
 				return;	// wait for downloads and try agagin
 			}
-			else if (R.CanLoad(name))		// immediate loading
-				diagram = R.LoadDiagram(name);
+			*/
+//			if (!R.DownloadDiagram(name) && R.CanLoad(name))
+//				diagram = R.LoadDiagram(name);		// immediate loading
+			diagram = R.DownloadDiagram(name, fn);
+			if (!diagram)
+				return;
 		}
 		if (!diagram)
 			throw 'no such diagram';
 		diagram.makeSVG();
-//		diagram.svgRoot.classList.remove('hidden');
 		diagram.show();
 		R.diagram = diagram;
 		R.NotBusy();
@@ -1802,11 +1807,14 @@ class Amazon extends Cloud
 			'userPool':			{value:	null,																	writable: true},
 		});
 		const that = this;
-		const script = H3.script({src:"https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js", type:"text/javascript", onload:function()
+		const script = H3.script({src:"https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js", type:"text/javascript", id:'cloud-amazon', onload:function()
 		{
 			const url = document.location;
-			const host = `${url.protocol}//${url.host}/${url.pathname === '/' ? '' : url.pathname}`;
-			const script = H3.script({src:host + "js/amazon-cognito-identity.min.js", type:"text/javascript", onload:function()
+			const tokens = url.pathname.split('/');
+			tokens.pop();
+			tokens.shift();
+			const host = `${url.protocol}//${url.host}/${url.pathname === '/' ? '' : '/' + tokens.join('/')}`;
+			const script = H3.script({src:host + "/js/amazon-cognito-identity.min.js", type:"text/javascript", onload:function()
 			{
 				R.cloud = that;
 				window.AWS.config.update(
@@ -2890,7 +2898,7 @@ class NewElement
 					break;
 				}
 			}
-			diagram.makeSelected(e, from);
+			diagram.makeSelected(from);
 			return from;
 		}
 		catch(x)
@@ -3071,7 +3079,7 @@ class D
 			const pnt = diagram.mousePosition(e);
 			if (D.mouseover)
 			{
-				if (!diagram.isSelected(D.mouseover) && !D.shiftKey)
+				if (!diagram.selected.includes(D.mouseover) && !D.shiftKey)
 					diagram.deselectAll(e);
 			}
 			else
@@ -3125,7 +3133,7 @@ class D
 								diagram.activate(e, 'identity');
 								const id = diagram.getSelected();
 								id.codomain.update(xy);
-								diagram.makeSelected(e, id.codomain);	// restore from identity action
+								diagram.makeSelected(id.codomain);	// restore from identity action
 								D.dragClone = true;
 							}
 							else if (isMorphism)	// ctrl-drag morphism copy
@@ -8414,7 +8422,7 @@ class CompositeAction extends Action
 		const from = this.doit(e, diagram, morphisms);
 		diagram.log({command:'composite', morphisms:names});
 		diagram.antilog({command:'delete', elements:[from.name]});
-		diagram.makeSelected(e, from);
+		diagram.makeSelected(from);
 	}
 	doit(e, diagram, morphisms)
 	{
@@ -9170,7 +9178,7 @@ class HomObjectAction extends Action
 	{
 		const args =
 		{
-			description:	'Select a morphism listed from a common domain',
+			description:	`Select a morphism listed from a common ${dual ? 'co' : ''}domain`,
 			dual,
 			basename:		dual ? 'homLeft' : 'homRight',
 			icon:			dual ?
@@ -9275,8 +9283,6 @@ class HomsetAction extends Action
 		const codomain = diagram.getElement(codName);
 		const nuFrom = new DiagramMorphism(diagram, {to, domain, codomain});
 		diagram.makeSelected(nuFrom);
-//		diagram.addSVG(nuFrom);
-//		nuFrom.update();
 		return nuFrom;
 	}
 	replay(e, diagram, args)
@@ -9317,7 +9323,7 @@ class DetachDomainAction extends Action
 		const obj = this.doit(e, diagram, from);
 		diagram.log({command:this.name, from:from.name});
 		diagram.antilog({command:'fuse', from:obj.name, target});
-		diagram.makeSelected(e, from);
+		diagram.makeSelected(from);
 	}
 	doit(e, diagram, from)
 	{
@@ -14356,7 +14362,7 @@ class Diagram extends Functor
 	}
 	deselectAll(e)
 	{
-		this.makeSelected(e, null);
+		this.makeSelected(null);
 	}
 	deselect(e)
 	{
@@ -14376,12 +14382,12 @@ class Diagram extends Functor
 		if (elt)
 		{
 			D.dragStart = D.mouse.position();
-			if (!this.isSelected(elt))
+			if (!this.selected.includes(elt))
 			{
 				if (D.shiftKey)
 					this.addSelected(elt);
 				else
-					this.makeSelected(e, elt);
+					this.makeSelected(elt);
 			}
 			else if (D.shiftKey)
 				this.deselect(elt);
@@ -14405,7 +14411,7 @@ class Diagram extends Functor
 		else
 			this.deselectAll(e);	// error?
 	}
-	makeSelected(e, elt)
+	makeSelected(elt)
 	{
 		if (this.selected.length > 0)
 		{
@@ -14458,13 +14464,6 @@ class Diagram extends Functor
 				return a;
 		return null;
 	}
-	isSelected(elt)
-	{
-		for(let i=0; i<this.selected.length; ++i)
-			if (elt.name === this.selected[i].name)
-				return true;
-		return false;
-	}
 	updateDragObjects(e)
 	{
 		const delta = D.mouse.position().subtract(D.dragStart);
@@ -14505,13 +14504,12 @@ class Diagram extends Functor
 	placeText(e, xy, description)
 	{
 		const txt = new DiagramText(this, {description, xy});
-//		this.addSVG(txt);
 		const bbox = new D2(txt.svg.getBBox());
 		let offbox = new D2(bbox);
 		while (this.hasOverlap(offbox, txt.name))
 			offbox = offbox.add(D.default.stdOffset);
 		txt.update(new D2(xy).add(offbox.subtract(bbox)));
-		R.diagram && this.makeSelected(e, txt);
+		R.diagram && this.makeSelected(txt);
 		return txt;
 	}
 	placeObject(e, to, xyIn, save = true)
@@ -14519,7 +14517,7 @@ class Diagram extends Functor
 		const xy = xyIn ? new D2(D.Grid(xyIn)) : D.Center(this);
 		const from = new DiagramObject(this, {xy, to});
 		if (save)
-			this.makeSelected(e, from);
+			this.makeSelected(from);
 		return from;
 	}
 	placeMorphism(e, to, xyDom = null, xyCod = null, save = true, doOffset = true)
@@ -14530,6 +14528,8 @@ class Diagram extends Functor
 		let domain = null;
 		if (DiagramObject.IsA(xyDom))
 		{
+			if (xyDom.to !== to.domain)
+				throw 'index object target does not match morphism domain';
 			xyD = new D2(xyDom);
 			domain = xyDom;
 		}
@@ -14544,6 +14544,8 @@ class Diagram extends Functor
 		let codomain = null;
 		if (DiagramObject.IsA(xyCod))
 		{
+			if (xyCod.to !== to.codomain)
+				throw 'index object target does not match morphism codomain';
 			codomain = xyCod;
 			doOffset = false;
 		}
@@ -14565,7 +14567,6 @@ class Diagram extends Functor
 		}
 		xyC = new D2(codomain.getXY());
 		const from = new DiagramMorphism(this, {to, domain, codomain});
-//		this.addSVG(from);
 		const bbox = new D2(from.svg.getBBox());
 		let offboxes = [new D2(domain.getBBox()), new D2(bbox), new D2(codomain.getBBox())];
 		const names = [domain.name, from.name, codomain.name];
@@ -14584,10 +14585,7 @@ class Diagram extends Functor
 		}
 */
 		if (save)
-		{
-			this.makeSelected(e, from);
-//			R.EmitMorphismEvent(this, 'new', from);
-		}
+			this.makeSelected(from);
 		return from;
 	}
 	placeMorphismByObject(e, dir, objectName, morphismName, save = true)
@@ -14631,7 +14629,7 @@ class Diagram extends Functor
 			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
 			const from = new DiagramMorphism(this, {to, domain:domainElt, codomain:codomainElt});
 			if (save)
-				this.makeSelected(e, from);
+				this.makeSelected(from);
 			return from;
 		}
 		catch(x)
@@ -14674,15 +14672,15 @@ class Diagram extends Functor
 	}
 	makeSVG(anim = true)
 	{
-		this.svgRoot = document.getElementById(this.name);
+		this.svgRoot = document.getElementById(this.elementId('root'));
 		if (!this.svgRoot)
 		{
 			this.svgRoot = H3.g();
 			this.svgRoot.classList.add('hidden');
 			D.diagramSVG.appendChild(this.svgRoot);
-			this.svgRoot.id = this.name;
-			this.svgBase = H3.g({id:`${this.name} base`});
-			this.svgTranslate = H3.g({id:`${this.name} T`}, this.svgBase);
+			this.svgRoot.id = this.elementId('root');
+			this.svgBase = H3.g({id:`${this.elementId()}-base`});
+			this.svgTranslate = H3.g({id:`${this.elementId()}-T`}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.svgRoot.style.display = 'block';
 			this.domain.elements.forEach(function(elt) { this.addSVG(elt); }, this);
@@ -15264,7 +15262,7 @@ class Diagram extends Functor
 			oldTo.decrRefcnt();
 			m.svg_name.innerHTML = m.to.htmlName();
 			m.update();
-			this.makeSelected(e, m);
+			this.makeSelected(m);
 			this.actionHtml(e, 'help');
 			this.editElementText(e, m.name, m.to.elementId(), 'basename');
 		}
@@ -16009,7 +16007,7 @@ console.log('formMorphism', {morphism});
 	}
 	isEditable()
 	{
-		return 	('readonly' in this ? !this.readonly : true) && this.diagram.user === R.user.name;
+		return 	('readonly' in this ? !this.readonly : true) && this.user === R.user.name;
 	}
 	postProcess()
 	{
