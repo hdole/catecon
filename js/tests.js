@@ -1,5 +1,14 @@
 const {module, test} = QUnit;
 
+function cleanup()
+{
+	const locals = ['categories', 'diagramas', 'hdole/Basics.json', 'hdole/floats.json', 'hdole/hdole.json', 'hdole/HTML.json', 'hdole/Integers.json', 'hdole/Logic.json',
+		'hdole/Narithmetics.json', 'hdole/Strings.json'];
+	locals.map(file => localStorage.removeItem(file));
+}
+
+cleanup();
+
 const StartOfRun = new Date();
 
 module('Basics');
@@ -135,18 +144,23 @@ test('SetupWorkers', assert =>
 	assert.ok(true, 'SetupWorkers ok');
 });
 
-//const oldDiagrams = localStorage.getItem('diagrams');
+function checkArgs(assert, obj, args)
+{
+	for(const arg in args)
+		if (args.hasOwnProperty(arg))
+			assert.ok(obj[arg] === args[arg], `${obj.name} ${arg} is ok`);
+}
+
 test('SaveLocalDiagramList', assert =>
 {
-//	const oldDiagrams = localStorage.getItem('diagrams');
 	Cat.R.LocalDiagrams.set(testDiagramInfo.name, testDiagramInfo);
 	Cat.R.SaveLocalDiagramList();
 	Cat.R.LocalDiagrams.delete(testDiagramInfo.name);
 	diagrams = JSON.parse(localStorage.getItem('diagrams'));
-	assert.ok(diagrams.length === 1 && checkInfo(diagrams[0], testDiagramInfo), 'SaveLocalDiagramList');
-//	delete Cat.R.LocalDiagrams[testDiagram.name];
-//	Cat.R.SaveLocalDiagramList();
-//	const temp = '[{"name":"hdole/Basics","basename":"Basics","description":"Basic objects for interacting with the real world","properName":"Basics","timestamp":1596154106901,"user":"hdole","references":[]},{"name":"hdole/Logic","basename":"Logic","description":"Basic logic functions","properName":"&Omega; Logic","timestamp":1596154106917,"user":"hdole","references":["hdole/Basics"]},{"name":"hdole/Narithmetics","basename":"Narithmetics","description":"Arithmetic functions for natural numbers","properName":"&Nopf; Arithmetic","timestamp":1596154106947,"user":"hdole","references":["hdole/Logic"]},{"name":"hdole/Integers","basename":"Integers","description":"Arithmetic functions for integers","properName":"&Zopf; Arithmetic","timestamp":1596154107006,"user":"hdole","references":["hdole/Narithmetics"]},{"name":"hdole/floats","basename":"floats","description":"Floating point artihmetic functions","properName":"&Fopf; Arithmetic","timestamp":1596154107048,"user":"hdole","references":["hdole/Integers"]},{"name":"hdole/Strings","basename":"Strings","description":"functions for strings","properName":"Strings","timestamp":1596154107140,"user":"hdole","references":["hdole/floats"]},{"name":"hdole/HTML","basename":"HTML","description":"Basic HTML input and output","properName":"HTML","timestamp":1596154116710,"user":"hdole","references":["hdole/Strings"]},{"name":"Anon/Home","basename":"Home","description":"Anonymous user home","properName":"Home","timestamp":1592864363055,"user":"Anon","references":["hdole/HTML"]},{"name":"Anon/Anon","basename":"Anon","description":"Anon diagrams","properName":"Anon","timestamp":1596492289203,"user":"Anon","references":[]},{"name":"hdole/Home","basename":"Home","description":"User home diagram","properName":"Home","timestamp":1596576950712,"user":"hdole","references":["hdole/HTML"]},{"name":"hdole/hdole","basename":"hdole","description":"hdole diagrams","properName":"hdole","timestamp":1596599918517,"user":"hdole","references":[]}]';
+	assert.equal(diagrams.length, 1, 'One diagram info saved');
+	const args = Cat.U.Clone(testDiagramInfo);
+	delete args.references;
+	checkArgs(assert, diagrams[0], args);
 });
 
 module('Initialization');
@@ -189,12 +203,6 @@ test('SetupCore', assert =>
 	assert.ok($Actions.user === 'sys', '$Actions user is ok');
 });
 
-function checkArgs(assert, obj, args)
-{
-	for(const arg in args)
-		if (args.hasOwnProperty(arg))
-			assert.ok(obj[arg] === args[arg], `${obj.name} ${arg} is ok`);
-}
 test('SetupActions', assert =>
 {
 	Cat.R.SetupActions();
@@ -245,7 +253,12 @@ test('Initialize cloud', assert =>
 {
 	Cat.R.InitCloud();
 	assert.ok(Cat.R.cloud, 'Cloud exists');
-	assert.dom('#cloud-amazon').hasAttribute('src', "https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js").hasAttribute('type', "text/javascript");
+	const didit = assert.async();
+	Cat.R.cloud.load(function()
+	{
+		assert.dom('#cloud-amazon').hasAttribute('src', "https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js", 'Src is ok').hasAttribute('type', "text/javascript", 'type is ok');
+		didit();
+	});
 });
 
 /*
@@ -329,6 +342,8 @@ test('Create test diagram', assert =>
 	args = {basename:'test', codomain:PFS, user:'tester', description:'This is a test and only a test'};
 	diagram = new Cat.Diagram(Cat.R.$CAT, args);
 	assert.ok(Cat.Diagram.IsA(diagram), 'New diagram exists');
+	assert.ok(diagram.timestamp > StartOfRun, 'Diagram timestamp ok');
+	assert.ok(diagram.timestamp <= Date.now(), 'Diagram timestamp ok');
 });
 
 module('Diagram test');
@@ -376,6 +391,7 @@ test('Create PFS object', assert =>
 	{
 		assert.equal(e.detail.command, 'new', 'New object event occurred');
 		checkArgs(assert, e.detail.element, args);
+		window.removeEventListener('Object', lookforit);
 	};
 	window.addEventListener('Object', lookforit);
 	const obj = new Cat.CatObject(diagram, args);
@@ -458,25 +474,29 @@ test('Diagram.placeObject', assert =>
 
 function checkMorphism(assert, diagram, args, morphism, domain, codomain, sig)
 {
-	assert.equal(morphism.basename, args.basename, `${args.basename}: morphism basename ok`);
-	const name = `${diagram.name}/${args.basename}`;
-	assert.equal(morphism.name, name, `${args.basename}: morphism name ok`);
+	const basename = args.basename;
+	assert.equal(morphism.basename, basename, `${basename}: morphism basename ok`);
+	const name = `${diagram.name}/${basename}`;
+	assert.equal(morphism.name, name, `${basename}: morphism name ok`);
 	if ('properName' in args)
-		assert.equal(morphism.properName, args.properName, `${args.basename}: morphism properName ok`);
+		assert.equal(morphism.properName, args.properName, `${basename}: morphism properName ok`);
 	else
-		assert.equal(morphism.properName, args.basename, `${args.basename}: morphism properName ok`);
+		assert.equal(morphism.properName, basename, `${basename}: morphism properName ok`);
 	if ('description' in args)
-		assert.equal(morphism.description, args.description, `${args.basename}: morphism description ok`);
-	assert.equal(morphism.domain, domain, `${args.basename}: morphism domain ok`);
-	assert.equal(morphism.codomain, codomain, `${args.basename}: morphism codomain ok`);
-	assert.equal(morphism.diagram, diagram, `${args.basename}: morphism belongs to diagram`);
-	assert.equal(morphism.category, PFS, `${args.basename}: morphism belongs to category`);
-	assert.ok(diagram.getElement(args.basename), `Can find morphism by basename`);
+		assert.equal(morphism.description, args.description, `${basename}: morphism description ok`);
+	assert.equal(morphism.domain, domain, `${basename}: morphism domain ok`);
+	assert.equal(morphism.codomain, codomain, `${basename}: morphism codomain ok`);
+	assert.equal(morphism.diagram, diagram, `${basename}: morphism belongs to diagram`);
+	assert.equal(morphism.category, PFS, `${basename}: morphism belongs to category`);
+	assert.ok(diagram.getElement(basename), `Can find morphism by basename`);
 	assert.ok(diagram.getElement(name), `Can find morphism by name`);
-	assert.ok(!morphism.dual, `${args.basename}: morphism is not dual`);
-	assert.equal(morphism.refcnt, 0, `${args.basename}: morphism has no references`);
-	assert.ok(!('svg' in morphism), `${args.basename}: morphism does not have svg`);
-	assert.equal(morphism._sig, sig, `${args.basename}: morphism signature ok`);
+	assert.ok(!morphism.dual, `${basename}: morphism is not dual`);
+	if ('refcnt' in args)
+		assert.equal(morphism.refcnt, args.refcnt, `${basename}: morphism has no references`);
+	else
+		assert.equal(morphism.refcnt, 0, `${basename}: morphism has no references`);
+	assert.ok(!('svg' in morphism), `${basename}: morphism does not have svg`);
+	assert.equal(morphism._sig, sig, `${basename}: morphism signature ok`);
 }
 
 test('New morphism', assert =>
@@ -533,7 +553,7 @@ function checkIndexMorphism(assert, diagram, args)
 		hasAttribute('d', args.d, 'Index path2 d attribute is ok');
 	assert.equal(from.svg_name.dataset.name, args.name, 'Index path2 dataset name ok');
 	assert.equal(from.svg_name.dataset.type, 'morphism', 'Index path2 dataset type ok');
-	assert.dom(`#${args.id}_name`).exists('Index svg_name is ok').hasText(args.to.properName, 'Index properName text is ok').
+	assert.dom(`#${args.id}_name`).exists('Index svg_name is ok').hasText('properName' in args ? args.properName : args.to.properName, 'Index properName text is ok').
 		hasAttribute('text-anchor', args.textAnchor, 'Index text-anchor is ok').
 		hasAttribute('x', args.txy.x, 'Index name text x coord is ok').hasAttribute('y', args.txy.y, 'Index name text y coord is ok');
 }
@@ -606,8 +626,8 @@ test('Download Catalog', assert =>
 	const didit = assert.async();
 	Cat.R.FetchCatalog(function()
 	{
-		didit();
 		assert.ok(true);
+		didit();
 	});
 });
 
@@ -616,8 +636,10 @@ test('Download HTML diagram', assert =>
 	const didit = assert.async();
 	Cat.R.DownloadDiagram('hdole/HTML', function()
 	{
-		didit();
 		assert.ok(true);
+		// hide the html diagram
+		Cat.R.diagram.hide();
+		didit();
 	});
 });
 
@@ -652,21 +674,34 @@ test('Diagram.makeSelected object', assert =>
 	assert.ok(diagram.selected.includes(o2), 'Selected object is the diagram selected array');
 	const buttons = [...document.querySelectorAll('#toolbar-header .button')];
 	let ndx = 0;
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Move toolbar', 'Toolbar has move').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create identity morphism', 'Toolbar has identity').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create named element', 'Toolbar has named element').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Select a morphism listed from a common domain', 'Toolbar has place from domain').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Select a morphism listed from a common codomain', 'Toolbar has place from codomain').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Copy an element', 'Toolbar has copy').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create factor morphism', 'Toolbar has create factor').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create factor morphism', 'Toolbar has create factor').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Attempt to assemble a morphism from a node in your diagram', 'Toolbar has assemble').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Give help for an item', 'Toolbar has help').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Close', 'Toolbar has close').hasProperty('mousedown');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Move toolbar', 'Toolbar has move');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create identity morphism', 'Toolbar has identity');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create named element', 'Toolbar has named element');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Select a morphism listed from a common domain', 'Toolbar has place from domain');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Select a morphism listed from a common codomain', 'Toolbar has place from codomain');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Copy an element', 'Toolbar has copy');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create factor morphism', 'Toolbar has create factor');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create factor morphism', 'Toolbar has create factor');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Attempt to assemble a morphism from a node in your diagram', 'Toolbar has assemble');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Give help for an item', 'Toolbar has help');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Close', 'Toolbar has close');
 	diagram.makeSelected(null);
 	assert.dom('#' + o2.elementId()).doesNotHaveClass('selected', 'Deselected object does not have select class');
 	assert.equal(diagram.selected.length, 0, 'Diagram selected set is empty');
 });
+
+function checkSelected(assert, element)
+{
+	const id = element.elementId();
+	if (Cat.DiagramMorphism.IsA(element))
+	{
+		assert.dom('#' + id).exists('DiagramMorphism <g> exists');
+		assert.dom('#' + id + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not show select class');
+		assert.dom('#' + id + '_path').hasClass('selected', 'Selected morphism path has select class');
+		assert.dom('#' + id + '_name').hasClass('selected', 'Selected morphism name has select class');
+		assert.ok(diagram.selected.includes(element), 'Selected morphism is in the diagram selected array');
+	}
+}
 
 test('Diagram.makeSelected morphism', assert =>
 {
@@ -685,27 +720,125 @@ test('Diagram.makeSelected morphism', assert =>
 	diagram.makeSelected(m1);
 	assert.ok(sawit, 'Morphism select event occurred');
 	assert.equal(diagram.selected.length, 1, 'Diagram selected length ok');
-	const elt = document.getElementById(m1.elementId());
-	assert.dom('#' + m1.elementId() + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not show select class');
-	assert.dom('#' + m1.elementId() + '_path').hasClass('selected', 'Selected morphism path has select class');
-	assert.dom('#' + m1.elementId() + '_name').hasClass('selected', 'Selected morphism name has select class');
-	assert.ok(diagram.selected.includes(m1), 'Selected morphism is the diagram selected array');
+	checkSelected(assert, m1);
 
 	const buttons = [...document.querySelectorAll('#toolbar-header .button')];
 	let ndx = 0;
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Move toolbar', 'Toolbar has move').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create named element', 'Toolbar has named element').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Detach a morphism\'s domain', 'Toolbar has domain detach').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Copy an element', 'Toolbar has copy').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Curry a morphism', 'Toolbar has curry').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Flip the name', 'Toolbar has flip name').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Show morphism graph', 'Toolbar has assemble').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Delete objects, morphisms or text', 'Toolbar has help').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Give help for an item', 'Toolbar has help').hasProperty('mousedown');
-	assert.dom(buttons[ndx++]).hasAttribute('title', 'Close', 'Toolbar has close').hasProperty('mousedown');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Move toolbar', 'Toolbar has move');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create named element', 'Toolbar has named element');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Detach a morphism\'s domain', 'Toolbar has domain detach');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Copy an element', 'Toolbar has copy');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Curry a morphism', 'Toolbar has curry');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Flip the name', 'Toolbar has flip name');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Show morphism graph', 'Toolbar has assemble');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Delete objects, morphisms or text', 'Toolbar has help');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Give help for an item', 'Toolbar has help');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Close', 'Toolbar has close');
+
 	diagram.makeSelected(null);
 	assert.dom('#' + m1.elementId()).doesNotHaveClass('selected', 'Deselected morphism does not have select class');
 	assert.equal(diagram.selected.length, 0, 'Diagram selected set is empty');
 	assert.dom('#' + m1.elementId() + '_path').doesNotHaveClass('selected', 'Selected morphism path does not have select class');
 	assert.dom('#' + m1.elementId() + '_name').doesNotHaveClass('selected', 'Selected morphism name does not have select class');
+});
+
+function getButtonClick(domElt)
+{
+	const svg = domElt.firstChild;
+	const pushBtn = svg.lastChild;
+	return pushBtn.onclick;
+}
+
+test('Compose three morphisms', assert =>
+{
+	const m2 = diagram.getElement('tester/test/m_2');
+	diagram.makeSelected(m2);
+	assert.equal(diagram.selected.length, 1, 'Only one element selected');
+	checkSelected(assert, m2);
+	const m0 = diagram.getElement('tester/test/m_0');
+	diagram.addSelected(m0);
+	assert.equal(diagram.selected.length, 2, 'Two elements selected');
+	checkSelected(assert, m0);
+	const m3 = diagram.getElement('tester/test/m_3');
+	diagram.addSelected(m3);
+	assert.equal(diagram.selected.length, 3, 'Two elements selected');
+	checkSelected(assert, m3);
+
+	const buttons = [...document.querySelectorAll('#toolbar-header .button')];
+	let ndx = 0;
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Move toolbar', 'Toolbar has move');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create composite', 'Toolbar has move');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create product of two or more objects or morphisms', 'Toolbar has move');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Create coproduct of two or more objects or morphisms', 'Toolbar has move');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Show morphism graph', 'Toolbar has assemble');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Delete objects, morphisms or text', 'Toolbar has help');
+	assert.dom(buttons[ndx++]).hasAttribute('title', 'Close', 'Toolbar has close');
+
+	// click the composite button
+	const didit = assert.async();
+	let m4 = null;
+	const lookforit = function(e)
+	{
+		const args = e.data;
+		if (args.command === 'Info' || args.command === 'Load' || args.command === 'LoadEquivalences')
+			return;
+		assert.equal(args.command, 'CheckEquivalence', 'Equivalences for composite were loaded');
+		assert.equal(args.diagram, diagram.name, 'CheckEquivalence has correct diagram');
+		assert.ok(args.isEqual, 'CheckEquivalence is equal');
+		assert.equal(args.cell, "a65c3dda8c4de792efae970001a5de43187f12681d47f42b8a3ddd6315d458c2", 'Message has correct cell');
+		const cell = diagram.domain.cells.get(args.cell);
+		assert.ok(Cat.Cell.IsA(cell), 'Cell is ok');
+		assert.equal(cell.commutes, "composite", 'Cell commutes is composite');
+		assert.equal(cell.properName, "&#8797;", 'Cell name is ok');
+		assert.equal(cell.signature, "a65c3dda8c4de792efae970001a5de43187f12681d47f42b8a3ddd6315d458c2", 'Cell has correct signature');
+		assert.equal(cell.refcnt, 0, 'Cell has no reference count');
+		assert.equal(cell.to, null, 'Cell has no to');
+		assert.equal(cell.description, '', 'Cell has no description');
+		assert.equal(cell.diagram, diagram, 'Cell has correct diagram');
+		assert.equal(cell.name, 'tester/test/r_0', 'Cell height ok');
+		assert.equal(cell.height, 24, 'Cell height ok');
+		assert.equal(cell.width, 0, 'Cell width ok');
+		assert.equal(cell.x, 267, 'Cell x ok');
+		assert.equal(cell.y, 267, 'Cell y ok');
+		assert.equal(cell.left.length, 3, 'Cell left leg length ok');
+		assert.equal(cell.right.length, 1, 'Cell right leg length ok');
+		cell.left.map((m, i) => assert.equal(m, m4.morphisms[i], `Cell left leg matches for index ${i}`));
+		assert.equal(cell.right[0], m4, 'Cell right leg ok');
+		const svg = cell.svg;
+		assert.ok(svg, 'Cell svg exists');
+		assert.dom(svg).hasTagName('text', 'Svg is text').hasAttribute('text-anchor', 'middle', 'Cell text-anchor ok').hasClass('cellTxt', 'Cell class ok').
+			hasText('≝', 'Cell text ok').doesNotHaveClass('badGlow', 'Cell does not have badGlow').
+			hasAttribute('x', cell.x.toString(), 'Cell text x ok').hasAttribute('y', cell.y.toString(), 'Cell text y ok');
+		assert.equal(svg.dataset.type, 'assertion', 'Svg dataset type ok');
+		assert.equal(svg.dataset.name, 'tester/test/r_0', 'Svg dataset name ok');
+		// cleanup
+		Cat.R.workers.equality.removeEventListener('message', lookforit);
+		didit();
+	};
+	Cat.R.workers.equality.addEventListener('message', lookforit);
+	const compBtn = buttons[1];
+	const clicker = getButtonClick(compBtn);
+	const domain = m2.domain;
+	const codomain = m3.codomain;
+	clicker();		// create composite
+	m4 = diagram.getElement('tester/test/m_4');
+	assert.ok(Cat.DiagramComposite.IsA(m4), 'DiagramComposite exists');
+	assert.ok(Cat.Composite.IsA(m4.to), 'Composite exists');
+	m4.morphisms.map((m, i) => assert.equal(m.to, m4.to.morphisms[i], `Component morphism ${i} ok`));
+	m4.morphisms.map((m, i) => assert.equal(m.refcnt, 2, `Component morphism ${i} refcnt ok`));
+	checkSelected(assert, m4, 'DiagramComposite is selected');
+	assert.equal(diagram.selected.length, 1, 'Only one element selected');
+	const to = m4.to;
+	assert.ok(Cat.Composite.IsA(to), 'Composite ok');
+	checkMorphism(assert, diagram,
+		{
+			basename:		"Cm{tester/test/Id{tester/test/t0}dI,tester/test/m0,tester/test/Id{tester/test/t1}dI}mC",
+			properName:		"id&#8728;M1&#8728;id",
+			refcnt:			1,
+		},
+		to, domain.to, codomain.to, "447d19ec2a011a55cbd8e5ff415102d5ca903e3ccf7f27b2394f65876cb72e30");
+	checkIndexMorphism(assert, diagram, {angle: 0.4636476090008061, from:m4, to, id:m4.elementId(), domain, codomain, name:'tester/test/m_4', basename:'m_4',
+		properName:'id∘M1∘id',
+		sig:"10ddaa9e14eb0c3e9181a988312d7f379f12befa14f17dda5d19d721ccc15900", textAnchor:'start',
+		start:{x:29, y:214}, end:{x:371, y:386}, d:'M29,214 L371,386', txy:{x:"205", y:"289"}});
 });

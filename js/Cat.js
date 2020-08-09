@@ -167,17 +167,33 @@ class D2
 	{
 		return new D2(v.x + w.x, v.y + w.y);
 	}
-	static Inner(v)
+	static Dist2(v, w)
 	{
-		return v.x * v.x + v.y * v.y;
+		return D2.Inner(D2.Subtract(v, w));
+	}
+	static Dist(v, w)
+	{
+		return Math.sqrt(D2.Dist2(v, w));
 	}
 	static Cross(o, a, b)
 	{
 		return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
 	}
+	static Inner(v)
+	{
+		return v.x * v.x + v.y * v.y;
+	}
 	static Length(v)
 	{
 		return Math.sqrt(D2.Inner(v));
+	}
+	static Normal(v)
+	{
+		return new D2(-v.y, v.x);
+	}
+	static Round(v)
+	{
+		return new D2(Math.round(v.x), Math.round(v.y));
 	}
 	static Scale(a, v)
 	{
@@ -186,18 +202,6 @@ class D2
 	static Subtract(v, w)
 	{
 		return new D2(v.x - w.x, v.y - w.y);
-	}
-	static Normal(v)
-	{
-		return new D2(-v.y, v.x);
-	}
-	static Dist2(v, w)
-	{
-		return D2.Inner(D2.Subtract(v, w));
-	}
-	static Dist(v, w)
-	{
-		return Math.sqrt(D2.Dist2(v, w));
 	}
 	static SegmentDistance(p, v, w)
 	{
@@ -896,6 +900,7 @@ class R
 								}
 								d = new Diagram(R.GetUserDiagram(json.user), json);
 								R.EmitCATEvent('download', d);
+								R.EmitCATEvent('load', d);
 							}
 						});
 						R.JsonDiagrams.clear();
@@ -1264,12 +1269,13 @@ class R
 				const doDisplayMorphism = diagramName !== null;
 				if (!diagramName)
 					diagramName = R.default.diagram;
-				R.SelectDiagram('Anon/Home', function()
-				{
+//				R.SelectDiagram('Anon/Home', function()
+//				{
 					R.initialized = true;
 					R.NotBusy();
-					R.EmitLoginEvent();
-				});
+					R.EmitLoginEvent();	// Anon login
+					R.cloud.load();		// cloud login
+//				});
 			};
 			const bootLoader = function()
 			{
@@ -1458,6 +1464,7 @@ class R
 	}
 	static SelectDiagram(name, fn = null)		// can be async if diagram not local; fn runs in final preload event
 	{
+//console.trace('SelectDiagram', {name});
 		if (R.diagram && R.diagram.name === name)
 			return;
 		R.Busy();
@@ -1593,22 +1600,22 @@ class R
 	}
 	static EmitLoginEvent()
 	{
-		R.default.debug && console.log('emit LOGIN event', R.user.name, R.user.status);
+//		R.default.debug && console.log('emit LOGIN event', R.user.name, R.user.status);
 		return window.dispatchEvent(new CustomEvent('Login', {detail:	{command:R.user.status, name:R.user.name}, bubbles:true, cancelable:true}));
 	}
 	static EmitCATEvent(command, diagram)	// like diagram was loaded
 	{
-		R.default.debug && console.log('emit CAT event', {command, diagram});
+//		R.default.debug && console.log('emit CAT event', {command, diagram});
 		return window.dispatchEvent(new CustomEvent('CAT', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
 	}
 	static EmitDiagramEvent(diagram, command, name = '')	// like something happened in a diagram
 	{
-		R.default.debug && console.log('emit DIAGRAM event', diagram.name, {command, name});
+//		R.default.debug && console.log('emit DIAGRAM event', diagram.name, {command, name});
 		return window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitObjectEvent(diagram, command, element, extra = {})	// like an object changed
 	{
-		R.default.debug && console.log('emit OBJECT event', {command, name:element.name});
+//		R.default.debug && console.log('emit OBJECT event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
 		const args = {detail, bubbles:true, cancelable:true};
@@ -1616,7 +1623,7 @@ class R
 	}
 	static EmitMorphismEvent(diagram, command, element, extra = {})
 	{
-		R.default.debug && console.log('emit MORPHISM event', {command, name:element.name});
+//		R.default.debug && console.log('emit MORPHISM event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
 		const args = {detail, bubbles:true, cancelable:true};
@@ -1624,12 +1631,12 @@ class R
 	}
 	static EmitAssertionEvent(diagram, command, element)
 	{
-		R.default.debug && console.log('emit ASSERTION event', {command, name:element.name});
+//		R.default.debug && console.log('emit ASSERTION event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
 	static EmitTextEvent(diagram, command, element)
 	{
-		R.default.debug && console.log('emit TEXT event', {command, name:element.name});
+//		R.default.debug && console.log('emit TEXT event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Text', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
 	static EmitElementEvent(diagram, command, elt)
@@ -1806,6 +1813,10 @@ class Amazon extends Cloud
 			'diagramBucket':	{value:	null,																	writable: true},
 			'userPool':			{value:	null,																	writable: true},
 		});
+	}
+	load(fn = null)
+	{
+//console.trace('cognito load');
 		const that = this;
 		const script = H3.script({src:"https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js", type:"text/javascript", id:'cloud-amazon', onload:function()
 		{
@@ -1823,6 +1834,7 @@ class Amazon extends Cloud
 					credentials:	new window.AWS.CognitoIdentityCredentials(that.loginInfo),
 				});
 				isGUI && that.registerCognito();
+				fn && fn();
 			}});
 			document.body.appendChild(script);
 		}});
@@ -7470,7 +7482,7 @@ class ProductObject extends MultiObject
 	}
 	static Get(diagram, args)
 	{
-		if (args.objects.length === 0)
+		if ('objects' in args && args.objects.length === 0)
 		{
 			const size = ('dual' in args && args.dual) ? 0 : 1;
 			return diagram.get('FiniteObject', {size});
@@ -7758,7 +7770,6 @@ class DiagramText extends Element
 			y:				{value:	xy.y,												writable:	true},
 			height:			{value:	U.GetArg(nuArgs, 'height', D.default.font.height),	writable:	true},
 			weight:			{value:	U.GetArg(nuArgs, 'weight', 'normal'),				writable:	true},
-//			reference:		{value:	U.GetArg(nuArgs, 'reference', ''),					writable:	true},
 		});
 		this.refcnt = 1;
 		diagram && diagram.addElement(this);
@@ -7787,20 +7798,6 @@ class DiagramText extends Element
 </select>`),
 					{class:'sidenavRow'})));
 		}
-		/*
-		if (false && canEdit)
-		{
-			html += H.div('Choose a diagram image to reference', 'smallPrint');
-			const options = [...R.catalog.values()].map(dgrm =>
-				`<option value="${dgrm.name}" ${dgrm.name === this.reference ? ' selected="selected"' : ''}>${dgrm.properName}</option>`).join('');
-			html +=
-`<select id="toolbar-help-text-image" onchange="Cat.DiagramText.UpdateImage('${this.name}', this.value)">
-<option value=''>Choose</option>
-${options}
-</select>
-`;
-		}
-		*/
 		return H3.div(elements);
 	}
 	editText(e, attribute, value)	// only valid for attr == 'description'
@@ -7833,7 +7830,6 @@ ${options}
 		svg.addEventListener('mousedown', mousedown);
 		svg.addEventListener('mouseenter', mouseenter);
 		svg.addEventListener('mouseleave', mouseleave);
-//		this.updateImage(this.reference);
 	}
 	finishMove()
 	{
@@ -7869,8 +7865,6 @@ ${options}
 		a.height = this.height;
 		if (this.weight !== 'normal')
 			a.weight = this.weight;
-//		if (this.reference !== '')
-//			a.reference = this.reference;
 		return a;
 	}
 	showSelected(state = true)
@@ -7896,7 +7890,6 @@ ${options}
 			this.svgText.style.fontSize = `${this.height}px`;
 			this.svgText.style.fontWeight = this.weight;
 		}
-//		this.updateImage(this.reference);
 	}
 	isFusible()
 	{
@@ -7911,19 +7904,6 @@ ${options}
 		box.y = this.y;
 		return box;
 	}
-	/*
-	updateImage(reference)
-	{
-		this.reference = reference;
-		const images = [...this.svg.querySelectorAll('image')];		// remove old image
-		images.map(i => this.svg.removeChild(i));
-		if (this.reference !== '')
-		{
-			const img = D.GetSvgImageElement3(this.reference);
-			this.svg.appendChild(img);
-		}
-	}
-	*/
 	emphasis(on)
 	{
 		D.SetClass('emphasis', on, this.svgText);
@@ -7949,13 +7929,6 @@ ${options}
 	{
 		return DiagramText.prototype.isPrototypeOf(obj);
 	}
-	/*
-	static UpdateImage(name, reference)		// TODO unused due to security policy
-	{
-		const text = R.diagram.getElement(name);
-		text.updateImage(reference);
-	}
-	*/
 	static UpdateHeight(name, height)
 	{
 		const text = R.diagram.getElement(name);
@@ -8559,10 +8532,6 @@ class NameAction extends Action
 			const nidIndex = diagram.placeObject(e, nid, D.default.stdArrow.add(source));
 			const idx1 = new DiagramMorphism(diagram, {to:nid.idFrom, domain:nidIndex, codomain:source});
 			const idx2 = new DiagramMorphism(diagram, {to:nid.idTo, codomain:nidIndex, domain:source});
-//			diagram.addSVG(idx1);
-//			diagram.addSVG(idx2);
-//			idx1.update();
-//			idx2.update();
 			return nidIndex;
 		}
 		else if (Morphism.IsA(source))
@@ -8573,9 +8542,7 @@ class NameAction extends Action
 			nuArgs.codomain = source.codomain.to;
 			const to = new NamedMorphism(diagram, nuArgs);
 			const nuFrom = new DiagramMorphism(diagram, {to, domain:source.domain, codomain:source.codomain});
-//			diagram.addSVG(nuFrom);
 			source.update();
-//			nuFrom.update();
 			return nuFrom;
 		}
 	}
@@ -9031,8 +8998,6 @@ class PullbackAction extends Action
 		const sink = this.dual ? source[0].domain : source[0].codomain;
 		const xy = bary.add(bary.subtract(sink));
 		const pb = new DiagramPullback(diagram, {xy, to, source, dual:this.dual});
-//		diagram.addSVG(pb);
-//		pb.cone.map(m => diagram.addSVG(diagram.getElement(m)));
 		return pb;
 	}
 	replay(e, diagram, args)
@@ -9232,8 +9197,6 @@ class HomObjectAction extends Action
 		const domain = diagram.getElement(domName);
 		const codomain = diagram.getElement(codName);
 		const nuFrom = new DiagramMorphism(diagram, {to, domain, codomain});
-//		diagram.addSVG(nuFrom);
-//		nuFrom.update();
 	}
 }
 
@@ -9568,10 +9531,6 @@ class LambdaMorphismAction extends Action
 	doit(e, diagram, from, domFactors, homFactors)
 	{
 		const m = diagram.get('LambdaMorphism', {preCurry:from.to, domFactors, homFactors});
-		const v = D2.Subtract(from.codomain, from.domain);
-		const normV = v.normal().normalize();
-		const xyDom = normV.scale(D.default.arrow.length).add(from.domain);
-		const xyCod = normV.scale(D.default.arrow.length, normV).add(from.codomain);
 		return diagram.placeMorphism(e, m);
 	}
 	replay(e, diagram, args)
@@ -9604,7 +9563,8 @@ class LambdaMorphismAction extends Action
 		}
 		const html =
 			H.h4('Create Named Morphism') +
-			H.button(`&#10034;&rarr;[${domain.htmlName()}, ${codomain.htmlName()}]`, '', '', '', `onclick="Cat.R.Actions.lambda.createNamedElement(event, Cat.R.diagram.selected)"`) +
+			H.button(`&#10034;&rarr;[${domain.htmlName()}, ${codomain.htmlName()}]`, '', '', '',
+				`onclick="Cat.R.Actions.lambda.createNamedElement(event, Cat.R.diagram.getSElected())"`) +
 			H.hr() +
 			H.h4('Curry Morphism') +
 			H.h5('Domain') +
@@ -9675,6 +9635,12 @@ class LambdaMorphismAction extends Action
 			elt.innerHTML = '&times;';
 			elt.setAttribute('title', 'Convert to hom');
 		}
+	}
+	createNamedElement(e, morphism)
+	{
+		const factors = [[]];
+		const m = diagram.get('LambdaMorphism', {preCurry:morphism, domFactors:[[]], homFactors:[]});
+		return diagram.placeMorphism(e, m);
 	}
 }
 
@@ -12268,16 +12234,6 @@ class NamedMorphism extends Morphism	// name of a morphism
 	{
 		return H3.div(super.help(), H3.p(`Named morphism of ${this.source.htmlName()}`));
 	}
-//	getBase()
-//	{
-//		if ('base' in this)
-//			return this.base;
-//		let source = this.source;
-//		while(NamedMorphism.IsA(source))
-//			source = source.source;
-//		this.base = source;
-//		return source;
-//	}
 	loadEquivalences()	// don't call in Morphism constructor since signature may change
 	{
 		super.loadEquivalences();
@@ -12409,7 +12365,7 @@ class DiagramMorphism extends Morphism
 		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : adj + 0.5) * D.default.font.height).add(mid);
 		if (isNaN(r.x) || isNaN(r.y))
 			return new D2();
-		return r;
+		return D2.Round(r);
 	}
 	getSVG(node)
 	{
@@ -12843,7 +12799,7 @@ class Cell extends DiagramCore
 		const r = D.BaryHull([...this.left, ...this.right]);
 		if (isNaN(r.x) || isNaN(r.y))
 			return new D2();
-		return r;
+		return D2.Round(r);
 	}
 	getSVG(node)
 	{
@@ -12877,6 +12833,8 @@ class Cell extends DiagramCore
 		const xy = this.getXY();
 		if (isNaN(xy.x) || isNaN(xy.y))
 			throw 'NaN!';
+		this.x = xy.x;
+		this.y = xy.y;
 		if (this.svg)
 		{
 			this.svg.innerHTML = this.htmlName();
@@ -14241,7 +14199,6 @@ class Diagram extends Functor
 	json()
 	{
 		const a = super.json();
-//		if ('viewport' in this)
 		a.viewport =	this.getViewport();		// don't want viewport.orig
 		a.references =	[];
 		this.references.forEach(function(ref)
@@ -16057,6 +16014,7 @@ const Cat =
 	Assertion,
 	Category,
 	CatObject,
+	Cell,
 	CppAction,
 	Composite,
 	Dedistribute,
