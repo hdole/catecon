@@ -2,11 +2,6 @@
 	"actions":
 	[
 		{
-			"file":		"lambda/AWSconstants.js",
-			"method":	"copy",
-			"target":	"build"
-		},
-		{
 			"file":		"js/workerEquality.js",
 			"method":	"copyCat",
 			"target":	"js"
@@ -17,7 +12,17 @@
 			"target":	"js"
 		},
 		{
+			"file":		"js/tests.js",
+			"method":	"copyCat",
+			"target":	"js"
+		},
+		{
 			"file":		"index.html",
+			"method":	"copyCat",
+			"target":	"."
+		},
+		{
+			"file":		"test.html",
 			"method":	"copyCat",
 			"target":	"."
 		},
