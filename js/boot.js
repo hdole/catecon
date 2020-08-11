@@ -6,7 +6,10 @@ var Cat;
 
 const Boot = function(fn)
 {
+	Cat.R.sync = false;
+
 	'use strict';
+
 	Cat.D.default.arrow.dir = {x:1, y:0};
 	const stdGrid = Cat.D.default.majorGridMult * Cat.D.default.layoutGrid;
 	function gridLocation()
@@ -1532,6 +1535,7 @@ function %Type(args)
 		js:
 `function %Type(args)
 {
+	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
 	return ['<input type="number" id="' + args[0] + '" value="0" placeholder="Integer"' + dv + '/>', ${Cat.U.Token(N_html2Z)}];
 }
 `,
@@ -2291,5 +2295,10 @@ namespace %Namespace
 		false && diagrams.map(d => d.upload(null));
 	});
 
+	const diagrams = [basics, logic, Narith, integers, floats, complex, strings, htmlDiagram, threeD, qGates, cpp, gds, anon];
+	diagrams.map(d => Cat.R.SaveLocal(Cat.R.$CAT.getElement(d)));
+
 	fn && Cat.R.Actions.javascript.loadHTML(fn);
+
+	Cat.R.sync = true;
 };
