@@ -20,6 +20,116 @@ QUnit.config.hidepassed = true;
 Cat.R.sync = false;
 Cat.D.url = window.URL || window.webkitURL || window;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Support Functions
+//
+function checkInfo(info, cmpInfo)
+{
+	return info.name === cmpInfo.name && info.basename === cmpInfo.basename && info.properName === cmpInfo.properName && info.description === cmpInfo.description &&
+			info.timestamp === cmpInfo.timestamp && info.user === cmpInfo.user && info.references.length === cmpInfo.references.length &&
+			info.references.reduce((r, ref, i) => r && ref === cmpInfo.references[i], true);
+}
+
+function checkArgs(assert, obj, args)
+{
+	for(const arg in args)
+		if (args.hasOwnProperty(arg))
+			assert.ok(obj[arg] === args[arg], `${obj.name} ${arg} is ok`);
+}
+
+function checkMorphism(assert, diagram, args, morphism, domain, codomain, sig)
+{
+	const basename = args.basename;
+	assert.equal(morphism.basename, basename, `${basename}: morphism basename ok`);
+	const name = `${diagram.name}/${basename}`;
+	assert.equal(morphism.name, name, `${basename}: morphism name ok`);
+	if ('properName' in args)
+		assert.equal(morphism.properName, args.properName, `${basename}: morphism properName ok`);
+	else
+		assert.equal(morphism.properName, basename, `${basename}: morphism properName ok`);
+	if ('description' in args)
+		assert.equal(morphism.description, args.description, `${basename}: morphism description ok`);
+	assert.equal(morphism.domain, domain, `${basename}: morphism domain ok`);
+	assert.equal(morphism.codomain, codomain, `${basename}: morphism codomain ok`);
+	assert.equal(morphism.diagram, diagram, `${basename}: morphism belongs to diagram`);
+	assert.equal(morphism.category, PFS, `${basename}: morphism belongs to category`);
+	assert.ok(diagram.getElement(basename), `Can find morphism by basename`);
+	assert.ok(diagram.getElement(name), `Can find morphism by name`);
+	assert.ok(!morphism.dual, `${basename}: morphism is not dual`);
+	if ('refcnt' in args)
+		assert.equal(morphism.refcnt, args.refcnt, `${basename}: morphism has no references`);
+	else
+		assert.equal(morphism.refcnt, 0, `${basename}: morphism has no references`);
+	assert.ok(!('svg' in morphism), `${basename}: morphism does not have svg`);
+	assert.equal(morphism._sig, sig, `${basename}: morphism signature ok`);
+}
+
+// args: from, domain, codomain, name, basename, sig, start, end, d, txy
+function checkIndexMorphism(assert, diagram, args)
+{
+	const from = args.from;
+	assert.ok(Cat.DiagramMorphism.IsA(from), 'Index morphism is a DiagramMorphism');
+	assert.equal(from.angle, args.angle, 'Index morphism angle is ok');
+	assert.equal(from.domain, args.domain, 'Index morphism domain is ok');
+	assert.equal(from.codomain, args.codomain, 'Index morphism codomain is ok');
+	assert.equal(from.start.x, args.start.x, 'Index morphism start.x is ok');
+	assert.equal(from.start.y, args.start.y, 'Index morphism start.y is ok');
+	assert.equal(from.end.x, args.end.x, 'Index morphism end.x is ok');
+	assert.equal(from.end.y, args.end.y, 'Index morphism end.y is ok');
+	assert.ok(!from.flipName, 'Index morphism flipName is ok');
+	assert.equal(from.homSetIndex, -1, 'Index morphism hom set index is ok');
+	assert.ok(from.svg, 'Index morphism svg exists');
+	assert.ok(from.svg_name, 'Index morphism svg_name exists');
+	assert.ok(from.svg_path, 'Index morphism svg_path exists');
+	assert.ok(from.svg_path2, 'Index morphism svg_path2 exists');
+	assert.equal(from.to, args.to, 'Index morphism target morphism is ok');
+	assert.equal(from.basename, args.basename, 'Index morphism basename is ok');
+	assert.equal(from.category, diagram.domain, 'Index category is ok');
+	assert.equal(from.description, '', 'Index morphism description is ok');
+	assert.equal(from.diagram, diagram, 'Index morphism diagram is ok');
+	assert.ok(!from.dual, 'Index morphism is not dual');
+	assert.equal(from.name, args.name, 'Index morphism name is ok');
+	assert.equal(from.properName, from.basename, 'Index is not dual');
+	assert.equal(from.refcnt, 1, 'Index refcnt is ok');
+	assert.equal(from._sig, args.sig, 'Index signature is ok');
+	assert.equal(from.svg, document.getElementById(args.id), 'Index svg is ok');
+	assert.equal(from.svg_path, document.getElementById(`${args.id}_path`), 'Index path is ok');
+	assert.equal(from.svg_path.dataset.name, args.name, 'Index path dataset name ok');
+	assert.equal(from.svg_path.dataset.type, 'morphism', 'Index path dataset type ok');
+	assert.dom(`#${from.elementId()}_path`).exists('Index path id is ok').hasClass('morphism', 'Svg has morphism class').hasClass('grabbable', 'Svg has grabbable class').
+		hasAttribute('d', args.d, 'Index path d attribute ok').
+		hasAttribute('marker-end', 'url(#arrowhead)', 'Index path marker-end attribute ok');
+	assert.dom(`#${args.id}_path2`).exists('Index path2 id is ok');
+	assert.equal(from.svg_path2, document.getElementById(`${args.id}_path2`), 'Index path2 is ok');
+	assert.equal(from.svg_path2.dataset.name, args.name, 'Index path2 dataset name ok');
+	assert.equal(from.svg_path2.dataset.type, 'morphism', 'Index path2 dataset type ok');
+	assert.dom('#'+from.elementId() + '_path2').hasClass('grabme', 'Svg has grabme class').hasClass('grabbable', 'Svg has grabbable class').
+		hasAttribute('d', args.d, 'Index path2 d attribute is ok');
+	assert.equal(from.svg_name.dataset.name, args.name, 'Index path2 dataset name ok');
+	assert.equal(from.svg_name.dataset.type, 'morphism', 'Index path2 dataset type ok');
+	assert.dom(`#${args.id}_name`).exists('Index svg_name is ok').hasText('properName' in args ? args.properName : args.to.properName, 'Index properName text is ok').
+		hasAttribute('text-anchor', args.textAnchor, 'Index text-anchor is ok').
+		hasAttribute('x', args.txy.x, 'Index name text x coord is ok').hasAttribute('y', args.txy.y, 'Index name text y coord is ok');
+}
+
+function checkSelected(assert, element)
+{
+	const id = element.elementId();
+	if (Cat.DiagramMorphism.IsA(element))
+	{
+		assert.dom('#' + id).exists('DiagramMorphism <g> exists');
+		assert.dom('#' + id + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not show select class');
+		assert.dom('#' + id + '_path').hasClass('selected', 'Selected morphism path has select class');
+		assert.dom('#' + id + '_name').hasClass('selected', 'Selected morphism name has select class');
+		assert.ok(diagram.selected.includes(element), 'Selected morphism is in the diagram selected array');
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Tests
+//
 test('base classes exist', assert =>
 {
 	const CatClasses =
@@ -125,13 +235,6 @@ const testDiagramInfo =
 	references:		['unitTestRef'],
 };
 
-function checkInfo(info, cmpInfo)
-{
-	return info.name === cmpInfo.name && info.basename === cmpInfo.basename && info.properName === cmpInfo.properName && info.description === cmpInfo.description &&
-			info.timestamp === cmpInfo.timestamp && info.user === cmpInfo.user && info.references.length === cmpInfo.references.length &&
-			info.references.reduce((r, ref, i) => r && ref === cmpInfo.references[i], true);
-}
-
 test('AddEventListeners', assert =>
 {
 	Cat.R.AddEventListeners();
@@ -143,13 +246,6 @@ test('SetupWorkers', assert =>
 	Cat.R.SetupWorkers();
 	assert.ok(true, 'SetupWorkers ok');
 });
-
-function checkArgs(assert, obj, args)
-{
-	for(const arg in args)
-		if (args.hasOwnProperty(arg))
-			assert.ok(obj[arg] === args[arg], `${obj.name} ${arg} is ok`);
-}
 
 test('SaveLocalDiagramList', assert =>
 {
@@ -322,6 +418,71 @@ test('Setup replay', assert =>
 	assert.equal(replayCommands.length, Cat.R.ReplayCommands.size, 'ReplayCommands has the right size');
 });
 
+test('Download catalog', assert =>
+{
+	const didit = assert.async();
+	const lookforit = function()
+	{
+		const catalog = Cat.R.catalog;
+		assert.ok(catalog.size > 0, 'Downloaded catalog');
+		assert.ok(catalog.has('hdole/Integers'), 'hdole/Integers ok');
+		assert.ok(catalog.has('hdole/Logic'), 'hdole/Logic ok');
+		assert.ok(catalog.has('Anon/Home'), 'Anon/Home ok');
+		assert.ok(catalog.has('hdole/Narithmetics'), 'Anon/Narithmetics ok');
+		assert.ok(catalog.has('hdole/floats'), 'hdole/floats ok');
+		assert.ok(catalog.has('hdole/Basics'), 'hdole/Basics ok');
+		assert.ok(catalog.has('hdole/Strings'), 'hdole/Strings ok');
+		assert.ok(catalog.has('hdole/HTML'), 'hdole/HTML ok');
+		didit();
+	};
+	assert.equal(Cat.R.catalog.size, 0, 'Cat.R.catalog size empty at start');
+	Cat.R.FetchCatalog(lookforit);
+});
+
+test('Check catalog', assert =>
+{
+	const didit = assert.async();
+	fetch(Cat.R.cloud.getURL() + '/catalog.json').then(function(response)
+	{
+		if (response.ok)
+		{
+			response.json().then(function(data)
+			{
+				data.diagrams.map(d => assert.equal(JSON.stringify(d), JSON.stringify(Cat.R.catalog.get(d.name), `online catalog entry matches: ${d.name}`)));
+				const catSection = document.getElementById('diagram-catalog-section');
+				assert.dom(catSection).hasTagName('div', 'Diagram catalog section ok').hasClass('section', 'Diagram catalog section has sectioni clsss');
+				const catalogElt = catSection.querySelector('.catalog');
+				const timestamps = [];
+				const names = [];
+				assert.equal(catalogElt.children.length, data.diagrams.length, 'Diagram catalog section count ok');
+				let entry = catalogElt.firstChild;
+				while(entry)
+				{
+					timestamps.push(Number.parseInt(entry.dataset.timestamp));
+					const name = entry.dataset.name;
+					names.push(name);
+					const nameId = Cat.U.SafeId(name);
+					assert.ok(name, 'Entry has name in dataset');
+					const id = `diagram-catalog-section-${nameId}`;
+					assert.dom(entry).hasTagName('div', 'Diagram catalog section entry is a div').hasClass('grabbable', 'Entry has class grabbable').
+						hasAttribute('id', id, 'Entry id is ok').hasAttribute('draggable', "true", 'Entry is draggable');
+					assert.equal(typeof entry.ondragstart, 'function', 'Entry has ondragstart function');
+					const img = entry.querySelector('img');
+					assert.dom(img).hasAttribute('width', "200", 'Entry img width ok').hasAttribute('height', '150', 'Entry img height ok').
+						hasAttribute('id', 'img-el_' + nameId, 'Entry img id ok');
+					entry = entry.nextSibling;
+				}
+				for (let i=0; i<timestamps.length -1; ++i)
+				{
+					const ok = timestamps[i] > timestamps[i+1];
+					assert.ok(ok, `Timestamp order ${names[i]} vs ${names[i+1]} ok`);
+				}
+				didit();
+			});
+		}
+	});
+});
+
 test('Login event', assert =>
 {
 	const R = Cat.R;
@@ -337,6 +498,7 @@ test('Login event', assert =>
 });
 
 diagram = null;
+
 test('Create test diagram', assert =>
 {
 	args = {basename:'test', codomain:PFS, user:'tester', description:'This is a test and only a test'};
@@ -344,6 +506,11 @@ test('Create test diagram', assert =>
 	assert.ok(Cat.Diagram.IsA(diagram), 'New diagram exists');
 	assert.ok(diagram.timestamp > StartOfRun, 'Diagram timestamp ok');
 	assert.ok(diagram.timestamp <= Date.now(), 'Diagram timestamp ok');
+	assert.equal(diagram.refcnt, 0, 'Diagram refrence count ok');
+	assert.equal(diagram.codomain, PFS, 'Diagram codomain ok');
+	assert.ok(Cat.IndexCategory.IsA(diagram.domain), 'Diagram domain ok');
+	assert.equal(diagram.domain.name, diagram.name + '_Index', 'Diagram domain name ok');
+	assert.equal(diagram._sig, "1647952c5a96c4a8239bcf9afb5ff95000c6f4fa27ff902ff24dac41d21fea89", 'Diagram signature is ok');
 });
 
 module('Diagram test');
@@ -472,33 +639,6 @@ test('Diagram.placeObject', assert =>
 	assert.equal(from.y, xy.y, 'Index object y value ok');
 });
 
-function checkMorphism(assert, diagram, args, morphism, domain, codomain, sig)
-{
-	const basename = args.basename;
-	assert.equal(morphism.basename, basename, `${basename}: morphism basename ok`);
-	const name = `${diagram.name}/${basename}`;
-	assert.equal(morphism.name, name, `${basename}: morphism name ok`);
-	if ('properName' in args)
-		assert.equal(morphism.properName, args.properName, `${basename}: morphism properName ok`);
-	else
-		assert.equal(morphism.properName, basename, `${basename}: morphism properName ok`);
-	if ('description' in args)
-		assert.equal(morphism.description, args.description, `${basename}: morphism description ok`);
-	assert.equal(morphism.domain, domain, `${basename}: morphism domain ok`);
-	assert.equal(morphism.codomain, codomain, `${basename}: morphism codomain ok`);
-	assert.equal(morphism.diagram, diagram, `${basename}: morphism belongs to diagram`);
-	assert.equal(morphism.category, PFS, `${basename}: morphism belongs to category`);
-	assert.ok(diagram.getElement(basename), `Can find morphism by basename`);
-	assert.ok(diagram.getElement(name), `Can find morphism by name`);
-	assert.ok(!morphism.dual, `${basename}: morphism is not dual`);
-	if ('refcnt' in args)
-		assert.equal(morphism.refcnt, args.refcnt, `${basename}: morphism has no references`);
-	else
-		assert.equal(morphism.refcnt, 0, `${basename}: morphism has no references`);
-	assert.ok(!('svg' in morphism), `${basename}: morphism does not have svg`);
-	assert.equal(morphism._sig, sig, `${basename}: morphism signature ok`);
-}
-
 test('New morphism', assert =>
 {
 	const domain = diagram.getElement('t0');
@@ -509,54 +649,6 @@ test('New morphism', assert =>
 	const morphism = new Cat.Morphism(diagram, args);
 	checkMorphism(assert, diagram, args, morphism, domain, codomain, "7666bafec59943f203906de61b0c5bff2c41e97505e3bfeed2ada533b795788a");
 });
-
-// args: from, domain, codomain, name, basename, sig, start, end, d, txy
-function checkIndexMorphism(assert, diagram, args)
-{
-	const from = args.from;
-	assert.ok(Cat.DiagramMorphism.IsA(from), 'Index morphism is a DiagramMorphism');
-	assert.equal(from.angle, args.angle, 'Index morphism angle is ok');
-	assert.equal(from.domain, args.domain, 'Index morphism domain is ok');
-	assert.equal(from.codomain, args.codomain, 'Index morphism codomain is ok');
-	assert.equal(from.start.x, args.start.x, 'Index morphism start.x is ok');
-	assert.equal(from.start.y, args.start.y, 'Index morphism start.y is ok');
-	assert.equal(from.end.x, args.end.x, 'Index morphism end.x is ok');
-	assert.equal(from.end.y, args.end.y, 'Index morphism end.y is ok');
-	assert.ok(!from.flipName, 'Index morphism flipName is ok');
-	assert.equal(from.homSetIndex, -1, 'Index morphism hom set index is ok');
-	assert.ok(from.svg, 'Index morphism svg exists');
-	assert.ok(from.svg_name, 'Index morphism svg_name exists');
-	assert.ok(from.svg_path, 'Index morphism svg_path exists');
-	assert.ok(from.svg_path2, 'Index morphism svg_path2 exists');
-	assert.equal(from.to, args.to, 'Index morphism target morphism is ok');
-	assert.equal(from.basename, args.basename, 'Index morphism basename is ok');
-	assert.equal(from.category, diagram.domain, 'Index category is ok');
-	assert.equal(from.description, '', 'Index morphism description is ok');
-	assert.equal(from.diagram, diagram, 'Index morphism diagram is ok');
-	assert.ok(!from.dual, 'Index morphism is not dual');
-	assert.equal(from.name, args.name, 'Index morphism name is ok');
-	assert.equal(from.properName, from.basename, 'Index is not dual');
-	assert.equal(from.refcnt, 1, 'Index refcnt is ok');
-	assert.equal(from._sig, args.sig, 'Index signature is ok');
-	assert.equal(from.svg, document.getElementById(args.id), 'Index svg is ok');
-	assert.equal(from.svg_path, document.getElementById(`${args.id}_path`), 'Index path is ok');
-	assert.equal(from.svg_path.dataset.name, args.name, 'Index path dataset name ok');
-	assert.equal(from.svg_path.dataset.type, 'morphism', 'Index path dataset type ok');
-	assert.dom(`#${from.elementId()}_path`).exists('Index path id is ok').hasClass('morphism', 'Svg has morphism class').hasClass('grabbable', 'Svg has grabbable class').
-		hasAttribute('d', args.d, 'Index path d attribute ok').
-		hasAttribute('marker-end', 'url(#arrowhead)', 'Index path marker-end attribute ok');
-	assert.dom(`#${args.id}_path2`).exists('Index path2 id is ok');
-	assert.equal(from.svg_path2, document.getElementById(`${args.id}_path2`), 'Index path2 is ok');
-	assert.equal(from.svg_path2.dataset.name, args.name, 'Index path2 dataset name ok');
-	assert.equal(from.svg_path2.dataset.type, 'morphism', 'Index path2 dataset type ok');
-	assert.dom('#'+from.elementId() + '_path2').hasClass('grabme', 'Svg has grabme class').hasClass('grabbable', 'Svg has grabbable class').
-		hasAttribute('d', args.d, 'Index path2 d attribute is ok');
-	assert.equal(from.svg_name.dataset.name, args.name, 'Index path2 dataset name ok');
-	assert.equal(from.svg_name.dataset.type, 'morphism', 'Index path2 dataset type ok');
-	assert.dom(`#${args.id}_name`).exists('Index svg_name is ok').hasText('properName' in args ? args.properName : args.to.properName, 'Index properName text is ok').
-		hasAttribute('text-anchor', args.textAnchor, 'Index text-anchor is ok').
-		hasAttribute('x', args.txy.x, 'Index name text x coord is ok').hasAttribute('y', args.txy.y, 'Index name text y coord is ok');
-}
 
 test('Diagram.placeMorphism', assert =>
 {
@@ -637,6 +729,9 @@ test('Download HTML diagram', assert =>
 	Cat.R.DownloadDiagram('hdole/HTML', function()
 	{
 		assert.ok(true);
+		const basics = JSON.parse(localStorage.getItem('hdole/Basics.json'));
+		assert.ok(basics.elements.filter(elt => elt.name === 'hdole/Basics/#0').length === 1, '#0 ok');
+		assert.ok(basics.elements.filter(elt => elt.name === 'hdole/Basics/#1').length === 1, '#1 ok');
 		// hide the html diagram
 		Cat.R.diagram.hide();
 		didit();
@@ -689,19 +784,6 @@ test('Diagram.makeSelected object', assert =>
 	assert.dom('#' + o2.elementId()).doesNotHaveClass('selected', 'Deselected object does not have select class');
 	assert.equal(diagram.selected.length, 0, 'Diagram selected set is empty');
 });
-
-function checkSelected(assert, element)
-{
-	const id = element.elementId();
-	if (Cat.DiagramMorphism.IsA(element))
-	{
-		assert.dom('#' + id).exists('DiagramMorphism <g> exists');
-		assert.dom('#' + id + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not show select class');
-		assert.dom('#' + id + '_path').hasClass('selected', 'Selected morphism path has select class');
-		assert.dom('#' + id + '_name').hasClass('selected', 'Selected morphism name has select class');
-		assert.ok(diagram.selected.includes(element), 'Selected morphism is in the diagram selected array');
-	}
-}
 
 test('Diagram.makeSelected morphism', assert =>
 {
@@ -841,4 +923,73 @@ test('Compose three morphisms', assert =>
 		properName:'id∘M1∘id',
 		sig:"10ddaa9e14eb0c3e9181a988312d7f379f12befa14f17dda5d19d721ccc15900", textAnchor:'start',
 		start:{x:29, y:214}, end:{x:371, y:386}, d:'M29,214 L371,386', txy:{x:"205", y:"289"}});
+});
+
+test('Diagram.addReference', assert =>
+{
+	const refName = 'hdole/Integers';
+	diagram.addReference(refName);
+	assert.ok(diagram.references.size > 0, 'There are referenced diagrams');
+	const integers = Cat.R.$CAT.getElement(refName);
+	assert.ok(Cat.Diagram.IsA(integers), 'Integers diagram found');
+	assert.equal(integers.refcnt, 2, 'Integers refcnt ok');
+	assert.ok(diagram.references.has(refName), 'Diagram references has integers');
+	assert.ok(diagram.allReferences.has('hdole/Integers'), 'Diagram allReferences has Integers');
+	assert.ok(diagram.allReferences.has('hdole/Narithmetics'), 'Diagram allReferences has Narithmetics');
+	assert.ok(diagram.allReferences.has('hdole/Logic'), 'Diagram allReferences has Logic');
+	assert.ok(diagram.allReferences.has('hdole/Basics'), 'Diagram allReferences has Basics');
+	assert.equal(diagram.allReferences.size, 4, 'Diagram allReference count ok');
+	// object panel
+	assert.ok(Cat.D.objectPanel, 'Object panel exists');
+	assert.ok(Cat.D.objectPanel.referenceSection.catalog.children.length > 0, 'Object panel reference section populated');
+	assert.equal(Cat.D.objectPanel.referenceSection.type, 'Object');
+	// morphism panel
+	assert.ok(Cat.D.objectPanel, 'Morphism panel exists');
+	assert.ok(Cat.D.morphismPanel.referenceSection.catalog.children.length > 0, 'Morphism panel reference section populated');
+	assert.equal(Cat.D.morphismPanel.referenceSection.type, 'Morphism');
+});
+
+test('Place referenced morphism', assert =>
+{
+	const to = diagram.getElement("hdole/Integers/add");
+	assert.ok(to, 'Found integer addition');
+	const grid = Cat.D.default.arrow.length;
+	const domain = {x:4 * grid, y:grid};
+	const codomain = {x:5 * grid, y:grid};
+	const from = diagram.placeMorphism(null, to, domain, codomain, false, false);
+	assert.ok(Cat.DiagramMorphism.IsA(from), 'DiagramMorphism exists');
+	diagram.makeSelected(from);
+	checkSelected(assert, from);
+	const btns = [...document.querySelectorAll('#toolbar-header .button')];
+	const runBtns = btns.filter(btn => btn.dataset.name === 'run');
+	assert.equal(runBtns.length, 1, 'Got one run button from toolbar');
+	const runBtn = runBtns[0];
+	runBtn.firstChild.lastChild.onclick();
+	const in0 = document.getElementById(" hdole/Integers/Z 0");
+	assert.dom(in0).hasTagName('input', 'Input 0 ok');
+	const in1 = document.getElementById(" hdole/Integers/Z 1");
+	assert.dom(in1).hasTagName('input', 'Input 1 ok');
+	in0.value = 3;
+	in1.value = 4;
+	const evalBtn = Cat.D.toolbar.help.querySelector('.btn');
+	assert.dom(evalBtn).hasTagName('rect', 'Evaluate button ok');
+	assert.equal(evalBtn.onclick.toString(), "function onclick(evt) {\nCat.R.Actions.javascript.evaluate(event, Cat.R.diagram, 'hdole/Integers/add', Cat.R.Actions.run.postResult)\n}",
+		'Eval button onclick ok');
+	const didit = assert.async();
+	const handler = function(result)
+	{
+		Cat.R.Actions.run.postResult(result);
+		const dataDiv = document.getElementById('run-display');
+		assert.dom(dataDiv).hasTagName('div', 'Data div ok');
+		const dataDivs = [...dataDiv.querySelectorAll('div')];
+		assert.equal(dataDivs.length, 1, 'One data div ok');
+		const spans = [...dataDivs[0].querySelectorAll('span')];
+		assert.equal(spans[0].innerText, '3,4', 'Input ok');
+		assert.equal(spans[2].innerText, '7', 'Output ok');
+		didit();
+	};
+	Cat.R.Actions.javascript.evaluate(event, Cat.R.diagram, 'hdole/Integers/add', handler);
+	/*
+	evalBtn.onclick();
+	*/
 });
