@@ -389,10 +389,9 @@ a:hover, .offcanvas a:focus
 
 .hidden
 {
-	opacity:	0;
-	transition:	opacity 0.5s, height 0s 0.5s;
-	height:		0px;
+	opacity:	0;			/* needed for instant transition */
 	box-shadow:	none;
+	visibility:	hidden;		/* needed for svg.getBBox() */
 }
 
 .trans025s
