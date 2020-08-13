@@ -1536,7 +1536,7 @@ function %Type(args)
 `function %Type(args)
 {
 	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
-	return ['<input type="number" id="' + args[0] + '" value="0" placeholder="Integer"' + dv + '/>', ${Cat.U.Token(N_html2Z)}];
+	return ['<input type="number" id="' + args[0] + '" placeholder="Integer"' + dv + '/>', ${Cat.U.Token(N_html2Z)}];
 }
 `,
 	}).to;
