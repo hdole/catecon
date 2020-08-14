@@ -72,7 +72,7 @@ function checkMorphism(assert, diagram, args, morphism, domain, codomain, sig)
 function checkIndexMorphism(assert, diagram, args)
 {
 	const from = args.from;
-	assert.ok(Cat.DiagramMorphism.IsA(from), 'Index morphism is a DiagramMorphism');
+	assert.ok(from instanceof Cat.DiagramMorphism, 'Index morphism is a DiagramMorphism');
 	assert.equal(from.angle, args.angle, 'Index morphism angle is ok');
 	assert.equal(from.domain, args.domain, 'Index morphism domain is ok');
 	assert.equal(from.codomain, args.codomain, 'Index morphism codomain is ok');
@@ -121,7 +121,7 @@ function checkIndexMorphism(assert, diagram, args)
 function checkSelected(assert, element)
 {
 	const id = element.elementId();
-	if (Cat.DiagramMorphism.IsA(element))
+	if (element instanceof Cat.DiagramMorphism)
 	{
 		assert.dom('#' + id).exists('DiagramMorphism <g> exists');
 		assert.dom('#' + id + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not show select class');
@@ -129,7 +129,7 @@ function checkSelected(assert, element)
 		assert.dom('#' + id + '_name').hasClass('selected', 'Selected morphism name has select class');
 		assert.ok(diagram.selected.includes(element), 'Selected morphism is in the diagram selected array');
 	}
-	else if (Cat.DiagramObject.IsA(element))
+	else if (element instanceof Cat.DiagramObject)
 	{
 		const svg = document.getElementById(element.elementId());
 		assert.dom(svg).hasTagName('text', 'text tag ok').
@@ -196,7 +196,7 @@ function selectObject(assert, name)
 	const obj = diagram.getElement('tester/test/o_8');
 	diagram.makeSelected(obj);
 	checkSelected(assert, obj);
-	assert.ok(Cat.DiagramObject.IsA(obj), 'DiagramObject ok');
+	assert.ok(obj instanceof Cat.DiagramObject, 'DiagramObject ok');
 	checkObject(assert, name);
 	return obj;
 }
@@ -400,21 +400,21 @@ test('SetupCore', assert =>
 {
 	Cat.R.SetupCore();
 	const CAT = Cat.R.CAT;
-	assert.ok(Cat.Category.IsA(CAT), 'CAT is a category');
+	assert.ok(CAT instanceof Cat.Category, 'CAT is a category');
 	assert.ok(CAT.name === 'sys/CAT', 'CAT name ok');
 	assert.ok(CAT.basename === 'CAT', 'CAT basename ok');
 	assert.ok(CAT.user === 	'sys', 'CAT user ok');
 	assert.ok(CAT.properName === 'CAT', 'CAT proper name ok');
 	assert.ok(CAT.description === 'top category', 'CAT description ok');
 	const $CAT = Cat.R.$CAT;
-	assert.ok(Cat.Diagram.IsA($CAT), '$CAT is a diagram');
+	assert.ok($CAT instanceof Cat.Diagram, '$CAT is a diagram');
 	assert.ok($CAT.codomain === CAT, '$CAT codomain is CAT');
 	assert.ok($CAT.basename === '$CAT', '$CAT basename is ok');
 	assert.ok($CAT.properName === '$CAT', '$CAT properName is ok');
 	assert.ok($CAT.description === 'top level diagram', '$CAT description is ok');
 	assert.ok($CAT.user === 'sys', '$CAT user is ok');
 	const _Cat = Cat.R.Cat;
-	assert.ok(Cat.Category.IsA(_Cat), 'Cat is a category');
+	assert.ok(_Cat instanceof Cat.Category, 'Cat is a category');
 	assert.ok(_Cat.basename ===	'Cat', 'Cat basename is ok');
 	assert.ok(_Cat.category ===	CAT, 'Cat category is ok');
 	assert.ok(_Cat.description === 'category of smaller categories', 'Cat basename is ok');
@@ -426,7 +426,7 @@ test('SetupCore', assert =>
 	assert.ok(Actions.description === 'discrete category of currently loaded actions', 'Actions description is ok');
 	assert.ok(Actions.user === 'sys', 'Actions user is ok');
 	const $Actions = Cat.R.$CAT.getElement('$Actions');
-	assert.ok(Cat.Diagram.IsA($Actions), '$Actions is a diagram');
+	assert.ok($Actions instanceof Cat.Diagram, '$Actions is a diagram');
 	assert.ok($Actions.basename === '$Actions', '$Actions basename is ok');
 	assert.ok($Actions.codomain === Actions, '$Actions codomain is ok');
 	assert.ok($Actions.properName === 'Actions', '$Actions properName is ok');
@@ -440,28 +440,28 @@ test('SetupActions', assert =>
 	const $CAT = Cat.R.$CAT;
 	const Actions = $CAT.getElement('Actions');
 	const categoryDiagram = $CAT.getElement('category');
-	assert.ok(Cat.Diagram.IsA(categoryDiagram), 'category diagram is a diagram');
+	assert.ok(categoryDiagram instanceof Cat.Diagram, 'category diagram is a diagram');
 	let args = {basename:'category', name:'category', codomain:Actions, description:'diagram for a category', user:'sys'};
 	checkArgs(assert, categoryDiagram, args);
 	const categoryActions = ["identity", "graph", "name", "composite", "detachDomain", "detachCodomain", "homRight", "homLeft", "homset", "delete", "copy", "flipName", "help",
 		"javascript", "cpp", "run", "alignHorizontal", "alignVertical", "assert"];
-	categoryActions.map(action => assert.ok(Cat.Action.IsA(categoryDiagram.getElement(action)), `Category actions ${action} exists`));
+	categoryActions.map(action => assert.ok(categoryDiagram.getElement(action) instanceof Cat.Action, `Category actions ${action} exists`));
 
 	const productDiagram = $CAT.getElement('product');
 	const productActions = ["product", "productEdit", "project", "pullback", "productAssembly", "morphismAssembly"];
-	productActions.map(action => assert.ok(Cat.Action.IsA(productDiagram.getElement(action)), `Product actions ${action} exists`));
+	productActions.map(action => assert.ok(productDiagram.getElement(action) instanceof Cat.Action, `Product actions ${action} exists`));
 
 	const coproductDiagram = $CAT.getElement('coproduct');
 	const coproductActions = ["coproduct", "coproductEdit", "inject", "pushout", "coproductAssembly", "finiteObject", "recursion"];
-	coproductActions.map(action => assert.ok(Cat.Action.IsA(coproductDiagram.getElement(action)), `Coproduct actions ${action} exists`));
+	coproductActions.map(action => assert.ok(coproductDiagram.getElement(action) instanceof Cat.Action, `Coproduct actions ${action} exists`));
 
 	const homDiagram = $CAT.getElement('hom');
 	const homActions = ["hom", "evaluate", "lambda"];
-	homActions.map(action => assert.ok(Cat.Action.IsA(homDiagram.getElement(action)), `Hom actions ${action} exists`));
+	homActions.map(action => assert.ok(homDiagram.getElement(action) instanceof Cat.Action, `Hom actions ${action} exists`));
 
 	const distributeDiagram = $CAT.getElement('distribute');
 	const distributeActions = ["distribute"];
-	distributeActions.map(action => assert.ok(Cat.Action.IsA(distributeDiagram.getElement(action)), `Distribute actions ${action} exists`));
+	distributeActions.map(action => assert.ok(distributeDiagram.getElement(action) instanceof Cat.Action, `Distribute actions ${action} exists`));
 
 	const _Cat = Cat.R.Cat;
 	const CatActionDiagrams = ['category', 'product', 'coproduct', 'hom', 'distribute'];
@@ -665,12 +665,12 @@ test('Create test diagram', assert =>
 {
 	args = {basename:'test', codomain:PFS, user:'tester', description:'This is a test and only a test'};
 	diagram = new Cat.Diagram(Cat.R.$CAT, args);
-	assert.ok(Cat.Diagram.IsA(diagram), 'New diagram exists');
+	assert.ok(diagram instanceof Cat.Diagram, 'New diagram exists');
 	assert.ok(diagram.timestamp > StartOfRun, 'Diagram timestamp ok');
 	assert.ok(diagram.timestamp <= Date.now(), 'Diagram timestamp ok');
 	assert.equal(diagram.refcnt, 0, 'Diagram refrence count ok');
 	assert.equal(diagram.codomain, PFS, 'Diagram codomain ok');
-	assert.ok(Cat.IndexCategory.IsA(diagram.domain), 'Diagram domain ok');
+	assert.ok(diagram.domain instanceof Cat.IndexCategory, 'Diagram domain ok');
 	assert.equal(diagram.domain.name, diagram.name + '_Index', 'Diagram domain name ok');
 	assert.equal(diagram._sig, "1647952c5a96c4a8239bcf9afb5ff95000c6f4fa27ff902ff24dac41d21fea89", 'Diagram signature is ok');
 });
@@ -767,7 +767,6 @@ test('Set view', assert =>
 test('Create index object', assert =>
 {
 	const to = diagram.getElement('t0');
-//	const grid = Cat.D.default.arrow.length;
 	const xy = {x:grid, y:grid};
 	const args = {to, xy};
 	const from = new Cat.DiagramObject(diagram, args);
@@ -829,13 +828,12 @@ test('New morphism', assert =>
 test('Diagram.placeMorphism', assert =>
 {
 	const to = diagram.getElement('m0');
-	assert.ok(Cat.Morphism.IsA(to), 'Found morphism');
+	assert.ok(to instanceof Cat.Morphism, 'Found morphism');
 	const domain = diagram.getElement('tester/test/o_0');
 	const codomain = diagram.getElement('tester/test/o_1');
 	const name = 'tester/test/m_0';
 	const from = diagram.placeMorphism(null, to, domain, codomain, false, false);
 	const id = 'el_tester--test--m_0';
-//	const grid = Cat.D.default.arrow.length;
 	checkIndexMorphism(assert, diagram, {angle: 0, from, to, id, domain, codomain, name, basename:'m_0',
 		sig:"0452fb6b1f9e40040141caaa361bafbb2aa47457f1525d637db26e57c0b42935", textAnchor:'middle',
 		start:{x:229, y:grid}, end:{x:371, y:grid}, d:'M229,200 L371,200', txy:{x:"300", y:"188"}});
@@ -845,7 +843,7 @@ test('Create identity', assert =>
 {
 	const t0 = diagram.getElement('t0');
 	const id = diagram.id(t0);
-	assert.ok(Cat.Identity.IsA(id), 't0 id exists');
+	assert.ok(id instanceof Cat.Identity, 't0 id exists');
 	checkMorphism(assert, diagram, {name:"tester/test/Id{tester/test/t0}dI", basename:"Id{tester/test/t0}dI", properName:'id'}, id, t0, t0,
 		"ab519276ce681a5ffc0dfba60cbc8e9ab39fda63792225d75e145dc0dd642bda");
 });
@@ -853,9 +851,9 @@ test('Create identity', assert =>
 test('Diagram.placeMorphismByObject', assert =>
 {
 	const t0 = diagram.getElement('t0');
-	assert.ok(Cat.CatObject.IsA(t0), 't0 is an object');
+	assert.ok(t0 instanceof Cat.CatObject, 't0 is an object');
 	const t1 = diagram.getElement('t1');
-	assert.ok(Cat.CatObject.IsA(t1), 't1 is an object');
+	assert.ok(t1 instanceof Cat.CatObject, 't1 is an object');
 	const t0id = diagram.id(t0);
 	const t1id = diagram.id(t1);
 	const t0ndxName = 'tester/test/o_0';
@@ -865,8 +863,7 @@ test('Diagram.placeMorphismByObject', assert =>
 	const t1ndx = diagram.getElement(t1ndxName);
 	// placeMorphismByObject
 	let from = diagram.placeMorphismByObject(null, 'domain', t1ndxName, t1id.name, false);		// false arg#5 no test of save here
-	assert.ok(Cat.DiagramMorphism.IsA(from), 'Placed morphism exists');
-//	const grid = Cat.D.default.arrow.length;
+	assert.ok(from instanceof Cat.DiagramMorphism, 'Placed morphism exists');
 	checkIndexMorphism(assert, diagram, {angle: 0, from, to:t1id, id:'el_tester--test--m_1', domain:t1ndx, codomain:from.codomain, name:'tester/test/m_1', basename:'m_1',
 		sig:"0d9763429ff9d15181a18daceebebac1f644b9d29ac0ad995d68280e5005b4b3", textAnchor:'middle',
 		start:{x:429, y:grid}, end:{x:571, y:grid}, d:'M429,200 L571,200', txy:{x:"500", y:"188"}});
@@ -876,7 +873,7 @@ test('Diagram.placeMorphismByObject', assert =>
 	assert.equal(from.codomain.codomains.size, 1, 'codomain inbound count ok');
 	// placeMorphismByObject
 	from = diagram.placeMorphismByObject(null, 'codomain', t0ndxName, t0id.name, false);		// false arg#5 no test of save here
-	assert.ok(Cat.DiagramMorphism.IsA(from), 'Placed morphism from codomain exists');
+	assert.ok(from instanceof Cat.DiagramMorphism, 'Placed morphism from codomain exists');
 	const t2ndx = diagram.getElement(t2ndxName);
 	assert.ok(t2ndx, 'Placed object for domain exists');
 	checkIndexMorphism(assert, diagram, {angle: 0, from, to:t0id, id:'el_tester--test--m_2', domain:t2ndx, codomain:from.codomain, name:'tester/test/m_2', basename:'m_2',
@@ -884,7 +881,7 @@ test('Diagram.placeMorphismByObject', assert =>
 		start:{x:29, y:grid}, end:{x:171, y:grid}, d:'M29,200 L171,200', txy:{x:"100", y:"188"}});
 	// placeMorphismByObject
 	from = diagram.placeMorphismByObject(null, 'domain', t1ndxName, t1id.name, false);		// false arg#5 no test of save here
-	assert.ok(Cat.DiagramMorphism.IsA(from), 'Placed morphism from center domain exists');
+	assert.ok(from instanceof Cat.DiagramMorphism, 'Placed morphism from center domain exists');
 	assert.equal(from.domain.domains.size, 2, 'domain outbound count ok');
 	assert.equal(from.domain.codomains.size, 1, 'domain inbound count ok');
 	assert.equal(from.codomain.domains.size, 0, 'codomain outbound count ok');
@@ -1000,7 +997,7 @@ test('Compose three morphisms', assert =>
 		assert.ok(args.isEqual, 'CheckEquivalence is equal');
 		assert.equal(args.cell, "a65c3dda8c4de792efae970001a5de43187f12681d47f42b8a3ddd6315d458c2", 'Message has correct cell');
 		const cell = diagram.domain.cells.get(args.cell);
-		assert.ok(Cat.Cell.IsA(cell), 'Cell is ok');
+		assert.ok(cell instanceof Cat.Cell, 'Cell is ok');
 		assert.equal(cell.commutes, "composite", 'Cell commutes is composite');
 		assert.equal(cell.properName, "&#8797;", 'Cell name is ok');
 		assert.equal(cell.signature, "a65c3dda8c4de792efae970001a5de43187f12681d47f42b8a3ddd6315d458c2", 'Cell has correct signature');
@@ -1036,14 +1033,14 @@ test('Compose three morphisms', assert =>
 	// click
 	clicker();
 	m4 = diagram.getElement('tester/test/m_4');
-	assert.ok(Cat.DiagramComposite.IsA(m4), 'DiagramComposite exists');
-	assert.ok(Cat.Composite.IsA(m4.to), 'Composite exists');
+	assert.ok(m4 instanceof Cat.DiagramComposite, 'DiagramComposite exists');
+	assert.ok(m4.to instanceof Cat.Composite, 'Composite exists');
 	m4.morphisms.map((m, i) => assert.equal(m.to, m4.to.morphisms[i], `Component morphism ${i} ok`));
 	m4.morphisms.map((m, i) => assert.equal(m.refcnt, 2, `Component morphism ${i} refcnt ok`));
 	checkSelected(assert, m4, 'DiagramComposite is selected');
 	assert.equal(diagram.selected.length, 1, 'Only one element selected');
 	const to = m4.to;
-	assert.ok(Cat.Composite.IsA(to), 'Composite ok');
+	assert.ok(to instanceof Cat.Composite, 'Composite ok');
 	checkMorphism(assert, diagram,
 		{
 			basename:		"Cm{tester/test/Id{tester/test/t0}dI,tester/test/m0,tester/test/Id{tester/test/t1}dI}mC",
@@ -1063,7 +1060,7 @@ test('Diagram.addReference', assert =>
 	diagram.addReference(refName);
 	assert.ok(diagram.references.size > 0, 'There are referenced diagrams');
 	const integers = Cat.R.$CAT.getElement(refName);
-	assert.ok(Cat.Diagram.IsA(integers), 'Integers diagram found');
+	assert.ok(integers instanceof Cat.Diagram, 'Integers diagram found');
 	assert.equal(integers.refcnt, 2, 'Integers refcnt ok');
 	assert.ok(diagram.references.has(refName), 'Diagram references has integers');
 	assert.ok(diagram.allReferences.has('hdole/Integers'), 'Diagram allReferences has Integers');
@@ -1081,11 +1078,10 @@ test('Place referenced morphism', assert =>
 {
 	const to = diagram.getElement("hdole/Integers/add");
 	assert.ok(to, 'Found integer addition');
-//	const grid = Cat.D.default.arrow.length;
 	const domain = {x:4 * grid, y:grid};
 	const codomain = {x:5 * grid, y:grid};
 	const from = diagram.placeMorphism(null, to, domain, codomain, false, false);
-	assert.ok(Cat.DiagramMorphism.IsA(from), 'DiagramMorphism exists');
+	assert.ok(from instanceof Cat.DiagramMorphism, 'DiagramMorphism exists');
 	// select
 	diagram.makeSelected(from);
 	checkToolbarStart(assert);
@@ -1098,7 +1094,7 @@ test('Place referenced morphism', assert =>
 test('Evaluate selected morphism', assert =>
 {
 	const morphism = diagram.getElement('tester/test/m_5');
-	assert.ok(Cat.DiagramMorphism.IsA(morphism), 'Found morphism');
+	assert.ok(morphism instanceof Cat.DiagramMorphism, 'Found morphism');
 	// select
 	diagram.makeSelected(morphism);
 	checkToolbarStart(assert);
@@ -1140,7 +1136,7 @@ test('Evaluate selected morphism', assert =>
 		btnRect.onclick();
 		const m6 = diagram.getElement('tester/test/m_6');
 		checkSelected(assert, m6);
-		assert.ok(Cat.DiagramMorphism.IsA(m6), 'Diagram morphism m6 ok');
+		assert.ok(m6 instanceof Cat.DiagramMorphism, 'Diagram morphism m6 ok');
 		const to = m6.to;
 		assert.equal(to.basename, 'data_0', 'Morphism basename ok');
 		assert.ok('data' in to, 'Data ok');
@@ -1158,7 +1154,7 @@ test('Evaluate selected morphism', assert =>
 function checkEvaluation(assert, indexName, input0, input1, output)
 {
 	const from = diagram.getElement(indexName);
-	assert.ok(Cat.DiagramMorphism.IsA(from), `Found ${indexName}`);
+	assert.ok(from instanceof Cat.DiagramMorphism, `Found ${indexName}`);
 	// select
 	diagram.makeSelected(from);
 	checkToolbarStart(assert);
@@ -1233,7 +1229,7 @@ test('Copy object', assert =>
 	const o5 = diagram.getElement('tester/test/o_5');
 	diagram.makeSelected(o5);
 	checkSelected(assert, o5);
-	assert.ok(Cat.DiagramObject.IsA(o5), 'DiagramObject ok');
+	assert.ok(o5 instanceof Cat.DiagramObject, 'DiagramObject ok');
 	const oldCount = o5.to.refcnt;
 	const copy = getToolbarButton('copy');
 	let o8 = diagram.getElement('tester/test/o_8');
@@ -1270,7 +1266,7 @@ test('Delete object', assert =>
 test('Composite', assert =>
 {
 	const ZxZ = diagram.getElement("hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP");
-	assert.ok(Cat.CatObject.IsA(ZxZ));
+	assert.ok(ZxZ instanceof Cat.CatObject);
 	const xy = {x:2 * grid, y:3 * grid};
 	const from = diagram.placeObject(null, ZxZ, xy);	// do not test saving or selection here
 	checkObject(assert, from.name);
@@ -1282,13 +1278,13 @@ test('Composite', assert =>
 	const help = Cat.D.toolbar.help;
 	let rows = [...help.querySelectorAll('tr.sidenavRow')];
 	const candidates = new Set();
-	diagram.codomain.elements.forEach(elt => Cat.Morphism.IsA(elt) && elt.domain.isEquivalent(ZxZ) && candidates.add(elt.name));
+	diagram.codomain.elements.forEach(elt => elt instanceof Cat.Morphism && elt.domain.isEquivalent(ZxZ) && candidates.add(elt.name));
 	rows.map(row => candidates.delete(row.dataset.name));
 	assert.equal(0, candidates.size, 'Found all morphism candidates from domain');
 	rows.map(row =>
 	{
 		const m = diagram.getElement(row.dataset.name);
-		assert.ok(Cat.Morphism.IsA(m), 'Morphism ok');
+		assert.ok(m instanceof Cat.Morphism, 'Morphism ok');
 		const cells = [...row.querySelectorAll('td')];
 		assert.equal(procit(m.properName), cells[0].innerText, 'morphism properName ok');
 		assert.equal(procit(m.domain.properName), cells[1].innerText, 'morphism domain properName ok');
@@ -1301,7 +1297,7 @@ test('Composite', assert =>
 	// click to place m7
 	rows[0].onclick();
 	const m7 = diagram.getElement('tester/test/m_7');
-	assert.ok(Cat.DiagramMorphism.IsA(m7), 'Morphism m_7 ok');
+	assert.ok(m7 instanceof Cat.DiagramMorphism, 'Morphism m_7 ok');
 	checkSelected(assert, m7);
 	assert.equal(1, m7.domain.domains.size, 'one domain morphs attached');
 	assert.equal(0, m7.domain.codomains.size, 'no codomain morphs attached');
@@ -1311,7 +1307,7 @@ test('Composite', assert =>
 	assert.equal(oldRefcnt + 1, to.refcnt, 'Reference count increase ok');
 	assert.equal(1, m7.refcnt, 'index reference count ok');
 	const o9 = diagram.getElement('tester/test/o_9');
-	assert.ok(Cat.DiagramObject.IsA(o9), 'o9 is ok');
+	assert.ok(o9 instanceof Cat.DiagramObject, 'o9 is ok');
 	// select o9
 	diagram.makeSelected(o9);
 	checkSelected(assert, o9);
@@ -1326,7 +1322,7 @@ test('Composite', assert =>
 	// click button for abs
 	rows[0].onclick();
 	const o10 = diagram.getElement('tester/test/o_10');
-	assert.ok(Cat.DiagramObject.IsA(o10), 'o10 is ok');
+	assert.ok(o10 instanceof Cat.DiagramObject, 'o10 is ok');
 	// select
 	diagram.makeSelected(o10);
 	homRightBtn = getToolbarButton('homRight');
@@ -1337,7 +1333,7 @@ test('Composite', assert =>
 	// select m7
 	diagram.makeSelected(m7);
 	const m8 = diagram.getElement('tester/test/m_8');
-	assert.ok(Cat.DiagramMorphism.IsA(m8), 'Morphism m_8 ok');
+	assert.ok(m8 instanceof Cat.DiagramMorphism, 'Morphism m_8 ok');
 	// add select m8
 	diagram.addSelected(m8);
 	const m9 = diagram.getElement('tester/test/m_9');

@@ -285,10 +285,6 @@ class D2
 		const height = Math.max(...boxes.map(bx => bx.y + bx.height - y));
 		return {x, y, width, height};
 	}
-	static IsA(obj)
-	{
-		return D2.prototype.isPrototypeOf(obj);
-	}
 	static Hull(ary)
 	{
 		const cnt = ary.length;
@@ -654,7 +650,7 @@ class U
 	}
 	static IsNumeric(obj)
 	{
-		return ProductObject.IsA(obj) && obj.dual && obj.objects.reduce((r, oi) => r && oi.getBase().isTerminal(), true);	// convert to numeric?
+		return obj instanceof ProductObject && obj.dual && obj.objects.reduce((r, oi) => r && oi.getBase().isTerminal(), true);	// convert to numeric?
 	}
 	static ConvertData(obj, data)	// hom elements have to be converted from objects to their name
 	{
@@ -802,7 +798,7 @@ class R
 				case 'delete':
 				case 'detach':
 				case 'new':
-					if (DiagramMorphism.IsA(args.element))
+					if (args.element instanceof DiagramMorphism)
 						args.diagram.makeCells();
 					D.Autosave(args.diagram);
 					break;
@@ -1553,7 +1549,7 @@ class R
 		const info = new Map();
 		R.$CAT.codomain.elements.forEach(function(o)
 		{
-			if (Category.IsA(o) && !IndexCategory.IsA(o))
+			if (o instanceof Category && !(o instanceof IndexCategory))
 				info.set(o.name, o.info());
 		});
 		return info;
@@ -1633,13 +1629,13 @@ class R
 	}
 	static EmitElementEvent(diagram, command, elt)
 	{
-		if (CatObject.IsA(elt))
+		if (elt instanceof CatObject)
 			R.EmitObjectEvent(diagram, command, elt);
-		else if (Morphism.IsA(elt))
+		else if (elt instanceof Morphism)
 			R.EmitMorphismEvent(diagram, command, elt);
-		else if (DiagramText.IsA(elt))
+		else if (elt instanceof DiagramText)
 			R.EmitTextEvent(diagram, command, elt);
-		else if (Assertion.IsA(elt))
+		else if (elt instanceof Assertion)
 			R.EmitAssertionEvent(diagram, command, elt);
 	}
 	static LoadScript(url, fn)
@@ -1674,7 +1670,7 @@ class R
 	static CanDeleteDiagram(d)
 	{
 		// were we given a diagram or the name of a diagram?
-		let diagram = Diagram.IsA(d) ? d : R.$CAT.getElement(d.name);
+		let diagram = d instanceof Diagram ? d : R.$CAT.getElement(d.name);
 		// is the diagram in the catalog of diagrams?
 		diagram = diagram ? diagram : d in R.catalog ? R.catalog[d] : null;
 		return diagram ? R.diagram && ('refcnt' in diagram ? diagram.refcnt === 0 : true) && R.UserHomeDiagramName(R.user.name) !== diagram.name && diagram.name !== R.diagram.name : true;
@@ -1715,7 +1711,7 @@ class R
 	}
 	static CanFormat(elt)
 	{
-		return Morphism.IsA(elt) && (elt.isIterable() || R.Actions.javascript.canFormat(elt));
+		return elt instanceof Morphism && (elt.isIterable() || R.Actions.javascript.canFormat(elt));
 	}
 	static HasLocalDiagram(name)
 	{
@@ -2213,7 +2209,7 @@ class Amazon extends Cloud
 	}
 	downloadDiagram(name)
 	{
-		if (R.$CAT.getElement(name))
+		if (R.$CAT.getElement(name))	// but it's local
 			return;
 		const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
 		R.LoadingDiagrams = new Set(downloads);
@@ -2460,7 +2456,7 @@ class Toolbar
 			this.header.appendChild(H3.span(btns, {class:'buttonBarLeft'}));
 		}
 		const toolbox = element.getBoundingClientRect();
-		if (diagram.selected.length === 1 && DiagramObject.IsA(diagram.selected[0]))
+		if (diagram.selected.length === 1 && diagram.selected[0] instanceof DiagramObject)
 		{
 			const obj = diagram.getSelected();
 			const bbox = diagram.diagramToUserCoords(obj.svg.getBBox());
@@ -2490,20 +2486,20 @@ class Toolbar
 		R.diagram.domain.elements.forEach(function(elt)
 		{
 			const rx = new RegExp(searchInput.value, 'gi');
-			if (DiagramObject.IsA(elt) || DiagramMorphism.IsA(elt))
+			if (elt instanceof DiagramObject || elt instanceof DiagramMorphism)
 				rx.exec(elt.to.basename.toString()) && elts.push(elt);
-			else if (DiagramText.IsA(elt))
+			else if (elt instanceof DiagramText)
 				rx.exec(elt.description.toString()) && elts.push(elt);
 		});
 		function showElement(elt)
 		{
 			const to = elt.to;
 			let txt = '';
-			if (DiagramObject.IsA(elt))
+			if (elt instanceof DiagramObject)
 				txt = [H3.span(to.htmlName()), H3.br(), H3.span(to.name, {class:'smallPrint'})];
-			else if (DiagramMorphism.IsA(elt))
+			else if (elt instanceof DiagramMorphism)
 				txt = [H3.span(`${to.htmlName()}:${to.domain.htmlName()}&rarr;${to.codomain.htmlName()}`), H3.br(), H3.span(to.name, {class:'smallPrint'})];
-			else if (DiagramText.IsA(elt))
+			else if (elt instanceof DiagramText)
 				txt = elt.description.length < 100 ? elt.description : elt.description.substring(0,15) + '...';
 			return txt;
 		}
@@ -2667,7 +2663,7 @@ class NewElement
 				let categories = '';
 				this.codomainElt = H3.select({class:'w100', id:'new-codomain'});
 				for (const [name, e] of R.$CAT.elements)
-					if (Category.IsA(e) && !IndexCategory.IsA(e) && e.user !== 'sys')
+					if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
 						this.codomainElt.appendChild(H3.option(e.htmlName(), e.name));
 				rows.push(H3.tr(H3.td(this.codomainElt), {class:'sidenavRow'}));
 				break;
@@ -2937,41 +2933,28 @@ class D
 		D.parenWidth = D.textWidth('(');
 		D.commaWidth = D.textWidth(',&nbsp;'),
 		D.bracketWidth = D.textWidth('[');
-//		D.diagramSVG =		document.getElementById('diagramSVG');
 		D.NewElement =		NewElement;
-		//
 		D.Panel = 			Panel;
-		//
 		D.panels =			new Panels();
 		D.Panels =			Panels;
-		//
 		D.categoryPanel =	new CategoryPanel();
 		D.CategoryPanel =	CategoryPanel;
-		//
 		D.diagramPanel =	new DiagramPanel();
 		D.DiagramPanel =	DiagramPanel;
-		//
 		D.helpPanel =		new HelpPanel();
 		D.HelpPanel =		HelpPanel;
-		//
 		D.loginPanel =		new LoginPanel();
 		D.LoginPanel =		LoginPanel;
-		//
 		D.morphismPanel =	new MorphismPanel();
 		D.MorphismPanel =	MorphismPanel;
-		//
 		D.objectPanel =		new ObjectPanel();
 		D.ObjectPanel =		ObjectPanel;
-		//
 		D.settingsPanel =	new SettingsPanel();
 		D.SettingsPanel =	SettingsPanel;
-		//
 		D.textPanel =		new TextPanel();
 		D.TextPanel =		TextPanel;
-		//
 		D.threeDPanel =		new ThreeDPanel();
 		D.ThreeDPanel =		ThreeDPanel;
-		//
 		D.ttyPanel =		new TtyPanel();
 		D.TtyPanel =		TtyPanel;
 		//
@@ -3011,12 +2994,12 @@ class D
 		{
 			case 'delete':
 				args.diagram.selected = args.diagram.selected.filter((r, elt) => elt.name !== args.element.name);
-				if (DiagramObject.IsA(args.element))
+				if (args.element instanceof DiagramObject)
 					D.GlowBadObjects(args.diagram);
 				break;
 			case 'new':
 			case 'move':
-				if (DiagramObject.IsA(args.element))
+				if (args.element instanceof DiagramObject)
 					D.GlowBadObjects(args.diagram);
 				break;
 		}
@@ -3129,13 +3112,13 @@ class D
 					const oldMouseover = D.mouseover;
 					if (from === D.mouseover)
 						D.mouseover = null;
-					const isMorphism = Morphism.IsA(from);
+					const isMorphism = from instanceof Morphism;
 					if (diagram.selected.length === 1)		// check for fusing
 					{
 						if (e.ctrlKey && !D.dragClone)
 						{
 							const isolated = from.refcnt === 1;
-							if (DiagramObject.IsA(from))		// ctrl-drag identity
+							if (from instanceof DiagramObject)		// ctrl-drag identity
 							{
 								diagram.activate(e, 'identity');
 								const id = diagram.getSelected();
@@ -3160,8 +3143,8 @@ class D
 								if (D.mouseover && diagram.selected.length === 1)
 								{
 									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover) &&
-											((Morphism.IsA(D.mouseover) && Morphism.IsA(from)) ||
-											(CatObject.IsA(D.mouseover) && CatObject.IsA(from))))
+											((D.mouseover instanceof Morphism && from instanceof Morphism) ||
+											(D.mouseover instanceof CatObject && from instanceof CatObject)))
 									{
 										if (e.shiftKey && R.Actions.coproduct)
 											msg = 'Coproduct';
@@ -3274,7 +3257,7 @@ class D
 									diagram.deselectAll(e);
 								}
 							}
-							else if (DiagramObject.IsA(from) && DiagramObject.IsA(target))
+							else if (from instanceof DiagramObject && target instanceof DiagramObject)
 							{
 								if(from.isFusible(target))
 								{
@@ -3288,7 +3271,7 @@ class D
 								}
 							}
 						}
-						if (!DiagramText.IsA(from))
+						if (!(from instanceof DiagramText))
 							from.updateGlow(false, '');
 					}
 					const elts = new Map();
@@ -3296,9 +3279,9 @@ class D
 					const movables = new Set();
 					diagram.selected.map(e =>
 					{
-						if (Assertion.IsA(e))
+						if (e instanceof Assertion)
 							return;
-						if (DiagramMorphism.IsA(e))
+						if (e instanceof DiagramMorphism)
 						{
 							elts.set(e.domain.name, e.domain.getXY());
 							elts.set(e.codomain.name, e.codomain.getXY());
@@ -3360,12 +3343,12 @@ class D
 			else
 			{
 				let from = null;
-				if (CatObject.IsA(elt))
+				if (elt instanceof CatObject)
 				{
 					from = diagram.placeObject(e, elt, xy);
 					diagram.log({command:'copy', source:elt.name, xy});
 				}
-				else if (Morphism.IsA(elt))
+				else if (elt instanceof Morphism)
 				{
 					from = diagram.placeMorphism(e, elt, xy, null, true, false);
 					diagram.log({command:'copy', source:elt.name, xy:from.domain.getXY(), xyCod:from.codomain.getXY()});
@@ -3603,7 +3586,7 @@ ${button}
 		switch(args.command)
 		{
 			case 'new':
-				if (DiagramMorphism.IsA(element))
+				if (element instanceof DiagramMorphism)
 				{
 					element.update();
 					diagram.domain.updateHomset(element.domain, element.codomain);
@@ -3645,12 +3628,12 @@ ${button}
 				break;
 			case 'move':
 				element.finishMove();
-				if (DiagramObject.IsA(element))
+				if (element instanceof DiagramObject)
 					element.update();
 				break;
 			case 'update':
 			case 'new':
-				if (DiagramObject.IsA(element))
+				if (element instanceof DiagramObject)
 					element.update();
 				break;
 		}
@@ -3790,9 +3773,9 @@ ${button}
 		for(let i=0; i < ary.length; ++i)
 		{
 			const elt = ary[i];
-			if ((DiagramObject.IsA(elt) || DiagramText.IsA(elt)) && !(elt.name in elts))
+			if ((elt instanceof DiagramObject || elt instanceof DiagramText) && !(elt.name in elts))
 				elts.add(elt);
-			else if (DiagramMorphism.IsA(elt))
+			else if (elt instanceof DiagramMorphism)
 			{
 				if ('bezier' in elt)
 					elts.add(D.Barycenter([elt.bezier.cp1, elt.bezier.cp2]));
@@ -3802,7 +3785,7 @@ ${button}
 					elts.add(elt.codomain);
 				}
 			}
-			else if (D2.IsA(elt))
+			else if (elt instanceof D2)
 				elts.add(elt);
 		}
 		return elts;
@@ -3949,7 +3932,7 @@ ${button}
 		{
 			diagram.emphasis(from.name, on);
 			let msg = '';
-			if (on && !DiagramText.IsA(from))
+			if (on && !(from instanceof DiagramText))
 			{
 				msg = from.to.description;
 				if (R.default.debug && 'assyGraph' in from)
@@ -4116,12 +4099,12 @@ ${button}
 	}
 	static PlaceComposite(e, diagram, comp)
 	{
-		const morphisms = Composite.IsA(comp) ? comp.morphisms : [comp];
+		const morphisms = comp instanceof Composite ? comp.morphisms : [comp];
 		const objects = [morphisms[0].domain];
 		const composite = [];
 		function compScan(m)
 		{
-			if (Composite.IsA(m))
+			if (m instanceof Composite)
 				m.morphisms.map(sm => compScan(sm));
 			else
 			{
@@ -6163,7 +6146,7 @@ class ElementSection extends Section
 		let elt = diagram.getElement(name);	// not the .to
 		elt = 'to' in elt ? elt.to : elt;
 		const id = elt.elementId(this.constructor.name);		// element id
-		if (!DiagramText.IsA(elt))
+		if (!(elt instanceof DiagramText))
 		{
 			const properNameElt = document.querySelector(`#${id} proper-name`);
 			if (properNameElt)
@@ -6211,11 +6194,11 @@ class DiagramElementSection extends ElementSection
 			let element = args.element;
 			if (!element)
 				return;
-			const to = DiagramMorphism.IsA(element) || DiagramObject.IsA(element) ? element.to : element;
+			const to = element instanceof DiagramMorphism || element instanceof DiagramObject ? element.to : element;
 			switch(args.command)
 			{
 				case 'new':
-					!(DiagramMorphism.IsA(element) || DiagramObject.IsA(element)) && that.add(to);
+					!(element instanceof DiagramMorphism || element instanceof DiagramObject) && that.add(to);
 					break;
 				case 'delete':
 					to.refcnt === 1 && that.remove(to.name);
@@ -6642,7 +6625,6 @@ class Element
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return diagram ? `${diagram.name}/${args.basename}` : args.basename; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
-	static IsA(obj)					{ return Element.prototype.isPrototypeOf(obj); }
 	static SafeName(name)			{ return U.SafeId(`el_${name}`); }
 }
 
@@ -7106,10 +7088,6 @@ class CatObject extends Element
 							H3.tr(H3.td(H3.tag('description', this.description), {class:'left'}))],
 							{id, class:'panelElt grabbable sidenavRow', draggable:true, ondragstart, onclick});
 	}
-	static IsA(obj)
-	{
-		return CatObject.prototype.isPrototypeOf(obj);
-	}
 	static FromName(diagram, name)
 	{
 		const tokens = name.split('/');
@@ -7188,10 +7166,6 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 			return size.toString();
 		}
 		return basename;
-	}
-	static IsA(obj)
-	{
-		return FiniteObject.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -7363,8 +7337,8 @@ class ProductObject extends MultiObject
 			}
 			else
 			{
-				const base = NamedObject.IsA(o) ? o.base : o;
-				if (ProductObject.IsA(base) && base.dual === this.dual)		// continue the search hierarchically
+				const base = o instanceof NamedObject ? o.base : o;
+				if (base instanceof ProductObject && base.dual === this.dual)		// continue the search hierarchically
 				{
 					const subFctrs = base.find(obj, ndx);
 					subFctrs.length > 0 && fctrs.push(...subFctrs);
@@ -7421,15 +7395,11 @@ class ProductObject extends MultiObject
 	}
 	static CanFlatten(obj)
 	{
-		return ProductObject.IsA(obj) && obj.objects.reduce((r, o) => r || (ProductObject.IsA(o) && o.dual === obj.dual), false);
+		return obj instanceof ProductObject && obj.objects.reduce((r, o) => r || (o instanceof ProductObject && o.dual === obj.dual), false);
 	}
 	static Signature(diagram, objects, dual = false)
 	{
 		return U.SigArray([dual, ...objects.map(o => o.signature)]);
-	}
-	static IsA(obj)
-	{
-		return ProductObject.prototype.isPrototypeOf(obj);
 	}
 	static Get(diagram, args)
 	{
@@ -7524,10 +7494,6 @@ class PullbackObject extends ProductObject
 		return morphisms.map(m => m.domain.needsParens() ? `(${m.domain.properName})` : m.domain.properName).join(dual ? '&plus' : '&times;') + '/' +
 			morphisms[0].codomain.properName;
 	}
-	static IsA(obj)
-	{
-		return PullbackObject.prototype.isPrototypeOf(obj);
-	}
 }
 
 class HomObject extends MultiObject
@@ -7574,7 +7540,7 @@ class HomObject extends MultiObject
 	minimalHomDom()
 	{
 		let obj = this.objects[1];
-		while (HomObject.IsA(obj))
+		while (obj instanceof HomObject)
 			obj = obj.homDomain();
 		return obj;
 	}
@@ -7595,10 +7561,6 @@ class HomObject extends MultiObject
 		++uid.uid;
 		const morphism = document.getElementById(`${uid.idp}_${uid.uid}`).querySelectorAll('.selRow');
 		// TODO
-	}
-	static IsA(obj)
-	{
-		return HomObject.prototype.isPrototypeOf(obj);
 	}
 	static Signature(diagram, objects)
 	{
@@ -7876,10 +7838,6 @@ class DiagramText extends Element
 		inDiv.addEventListener('mousedown', function(e) { Cat.R.diagram.selectElement(event, this.name);});
 		return div;
 	}
-	static IsA(obj)
-	{
-		return DiagramText.prototype.isPrototypeOf(obj);
-	}
 	static UpdateHeight(name, height)
 	{
 		const text = R.diagram.getElement(name);
@@ -7934,11 +7892,7 @@ class TensorObject extends MultiObject
 	}
 	static CanFlatten(obj)
 	{
-		return TensorObject.IsA(obj) && obj.objects.reduce((r, o) => r || TensorObject.IsA(o), false);
-	}
-	static IsA(obj)
-	{
-		return TensorObject.prototype.isPrototypeOf(obj);
+		return obj instanceof TensorObject && obj.objects.reduce((r, o) => r || o instanceof TensorObject, false);
 	}
 }
 
@@ -8083,7 +8037,7 @@ class DiagramObject extends CatObject
 	{
 		if (!o || this === 0)
 			return false;
-		return DiagramObject.IsA(o) && (this.to.isEquivalent(o.to) || this.isIdentityFusible());
+		return o instanceof DiagramObject && (this.to.isEquivalent(o.to) || this.isIdentityFusible());
 	}
 	updateFusible(e, on)
 	{
@@ -8115,10 +8069,6 @@ class DiagramObject extends CatObject
 	isIsolated()
 	{
 		return this.domains.size === 0 && this.codomains.size === 0;
-	}
-	static IsA(obj)
-	{
-		return DiagramObject.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -8271,7 +8221,7 @@ class Assertion extends Element
 	static GetLegs(ary)
 	{
 		const legs = [[], []];
-		if (!ary.reduce((r, m) => r && DiagramMorphism.IsA(m), true))
+		if (!ary.reduce((r, m) => r && m instanceof DiagramMorphism, true))
 			return legs;		// not all morphisms
 		let domain = ary[0].domain;
 		let leg = 0;
@@ -8298,10 +8248,6 @@ class Assertion extends Element
 		const sig = Cell.Signature(left, right);
 		const cell = diagram.domain.cells.get(sig);
 		return cell && !cell.comuutes && left[0].domain === right[0].domain && left[length0 -1].codomain === right[length1 -1].codomain;	// legs have same domain and codomain
-	}
-	static IsA(obj)
-	{
-		return Assertion.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -8361,7 +8307,7 @@ class CompositeAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && DiagramMorphism.IsA(r), true))
+		if (diagram.isEditable() && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && r instanceof DiagramMorphism, true))
 		{
 			let cod = ary[0].codomain;
 			for(let i=1; i<ary.length; ++i)
@@ -8377,7 +8323,7 @@ class CompositeAction extends Action
 	}
 	static Reduce(leg)
 	{
-		if (leg.length === 1 && Composite.IsA(leg[0]))
+		if (leg.length === 1 && leg[0] instanceof Composite)
 			return leg[0].morphisms;
 		return null;
 	}
@@ -8417,11 +8363,11 @@ class IdentityAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject;
 	}
 	static Reduce(leg)		// remove identities
 	{
-		const nuLeg = leg.filter(m => !Identity.IsA(m) && m.domain.name === m.codomain.name);
+		const nuLeg = leg.filter(m => !(m instanceof Identity) && m.domain.name === m.codomain.name);
 		return nuLeg.length < leg.legnth ? nuLeg : null;
 	}
 }
@@ -8460,7 +8406,7 @@ class NameAction extends Action
 			const named = this.doit(e, diagram, args);
 			args.source = source.name;
 			diagram.log(args);
-			const elements = CatObject.IsA(source) ? [named.idFrom.name, named.idTo.name, named.name] : [named.name];
+			const elements = source instanceof CatObject ? [named.idFrom.name, named.idTo.name, named.name] : [named.name];
 			diagram.antilog({command:'delete', elements});
 			D.toolbar.hide();
 		}
@@ -8475,7 +8421,7 @@ class NameAction extends Action
 	{
 		const source = args.source;
 		args.source = source.to;
-		if (CatObject.IsA(source))
+		if (source instanceof CatObject)
 		{
 			const nid = new NamedObject(diagram, args);
 			const nidIndex = diagram.placeObject(e, nid, D.default.stdArrow.add(source));
@@ -8483,7 +8429,7 @@ class NameAction extends Action
 			const idx2 = new DiagramMorphism(diagram, {to:nid.idTo, codomain:nidIndex, domain:source});
 			return nidIndex;
 		}
-		else if (Morphism.IsA(source))
+		else if (source instanceof Morphism)
 		{
 			const nuArgs = U.Clone(args);
 			nuArgs.source.to = source;
@@ -8522,7 +8468,7 @@ class NameAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && (DiagramMorphism.IsA(ary[0]) || DiagramObject.IsA(ary[0]));
+		return diagram.isEditable() && ary.length === 1 && (ary[0] instanceof DiagramMorphism || ary[0] instanceof DiagramObject);
 	}
 	static Reduce(leg)
 	{
@@ -8551,18 +8497,18 @@ class CopyAction extends Action
 		const from = ary[0];
 		let elt = null;
 		let args = {};
-		if (DiagramMorphism.IsA(from))
+		if (from instanceof DiagramMorphism)
 		{
 			let dom = new D2(from.domain.getXY()).add(D.default.stdOffset);
 			let cod = new D2(from.codomain.getXY()).add(D.default.stdOffset);
 			args = {command: 'copy', source:from.to, xy:dom, xyCod:cod};
 		}
-		else if (DiagramObject.IsA(from))
+		else if (from instanceof DiagramObject)
 		{
 			const xy = new D2(from.getXY()).add(D.default.stdOffset);
 			args = {command: 'copy', source:from.to, xy};
 		}
-		else if (DiagramText.IsA(from))
+		else if (from instanceof DiagramText)
 		{
 			const xy = new D2(from.getXY()).add(D.default.stdOffset);
 			args = {command: 'copy', source:from.description, xy};
@@ -8574,9 +8520,9 @@ class CopyAction extends Action
 	doit(e, diagram, args)
 	{
 		const source = args.source;
-		if (Morphism.IsA(source))
+		if (source instanceof Morphism)
 			return diagram.placeMorphism(e, source, args.xy, args.xyCod, args.save);
-		else if (CatObject.IsA(source))
+		else if (source instanceof CatObject)
 			return diagram.placeObject(e, source, args.xy, args.save);
 		else if (typeof source === 'string')
 			return diagram.placeText(e, args.xy, source, args.save);
@@ -8591,7 +8537,7 @@ class CopyAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const elt = ary[0];
-			if (Assertion.IsA(elt))
+			if (elt instanceof Assertion)
 				return false;
 			return true;
 		}
@@ -8636,7 +8582,7 @@ class FlipNameAction extends Action
 	}
 	hasForm(diagram, ary)	// one element
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramMorphism;
 	}
 }
 
@@ -8666,13 +8612,13 @@ class ProductAction extends Action
 	doit(e, diagram, elements)
 	{
 		const elt = elements[0];
-		if (DiagramMorphism.IsA(elt))
+		if (elt instanceof DiagramMorphism)
 		{
 			const morphisms = elements.map(m => m.to);
 			const to = diagram.get('ProductMorphism', {morphisms, dual:this.dual});
 			return diagram.placeMorphism(e, to, D.Barycenter(elements));
 		}
-		else if (DiagramObject.IsA(elt))
+		else if (elt instanceof DiagramObject)
 		{
 			const objects = elements.map(o => o.to);
 			const to = diagram.get('ProductObject', {objects, dual:this.dual});
@@ -8688,8 +8634,8 @@ class ProductAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.IsA(v), true) ||
-			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.IsA(v), true));
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
+			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
 	}
 }
 
@@ -8715,16 +8661,16 @@ class ProductEditAction extends Action
 		D.RemoveChildren(D.toolbar.help);
 		const elt = ary[0].to;
 		let top = null;
-		if (ProductObject.IsA(elt))
+		if (elt instanceof ProductObject)
 		{
 			const used = new Set();
 			const that = this;
 			diagram.codomain.forEachMorphism(function(m)
 			{
-				if (FactorMorphism.IsA(m) && m.dual === that.dual)
+				if (m instanceof FactorMorphism && m.dual === that.dual)
 				{
 					let base = m[that.dual ? 'codomain' : 'domain'];
-					if (NamedObject.IsA(base))
+					if (base instanceof NamedObject)
 						base = base.base;
 					m.factors.map(fctr => elt.objects.includes(base.objects[fctr]) && used.add(base.objects[fctr]));
 				}
@@ -8841,11 +8787,11 @@ class ProductEditAction extends Action
 	{
 		const elt = elements[0];
 		const nuProd = diagram[this.dual ? 'coprod' : 'prod'](...objects);
-		if (DiagramMorphism.IsA(elt))
+		if (elt instanceof DiagramMorphism)
 		{
 			// TODO
 		}
-		else if (DiagramObject.IsA(elt))
+		else if (elt instanceof DiagramObject)
 		{
 			const objMap = new Map();
 			diagram.elements.forEach(function(elt)
@@ -8857,15 +8803,15 @@ class ProductEditAction extends Action
 					const nuIndexes = oldIndexes.map(o => new DiagramObject(diagram, {to:nuProd, xy:o.getXY()}));
 					nuIndexes.map((ndx, i) => objMap.set(oldIndexes[i], ndx));
 				}
-				else if (NamedObject.IsA(elt) && elt.source === elt)
+				else if (elt instanceof NamedObject && elt.source === elt)
 				{
 					const nuNo = new NamedObject(diagram, {basename:elt.basename, source:nuProd});
 					const oldIndexes = diagram.domain.find(elt);
 				}
-				else if (Morphism.IsA(elt))
+				else if (elt instanceof Morphism)
 				{
 					const src = this.dual ? elt.codomain : elt.domain;
-					if ((FactorMorphism.IsA(elt) && src === oldProd) || (NamedObject.IsA(src) && src.base === oldProd))
+					if ((elt instanceof FactorMorphism && src === oldProd) || (src instanceof NamedObject && src.base === oldProd))
 					{
 						const nuFactors = [];
 						for (let i=0; i<elt.factors.length; ++i)
@@ -8904,7 +8850,7 @@ class ProductEditAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length === 1 && ary[0].isEditable() && ProductObject.IsA(ary[0].to) && ary[0].to.dual === this.dual;
+		return ary.length === 1 && ary[0].isEditable() && ary[0].to instanceof ProductObject && ary[0].to.dual === this.dual;
 	}
 }
 
@@ -9042,7 +8988,7 @@ class MorphismAssemblyAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length === 1 && ary[0].isEditable() && DiagramObject.IsA(ary[0]);
+		return ary.length === 1 && ary[0].isEditable() && ary[0] instanceof DiagramObject;
 	}
 }
 
@@ -9069,9 +9015,9 @@ class HomAction extends Action
 	doit(e, diagram, elements)
 	{
 		const xy = D.Barycenter(elements);
-		if (DiagramObject.IsA(elements[0]))
+		if (elements[0] instanceof DiagramObject)
 			return diagram.placeObject(e, diagram.get('HomObject', {objects:elements.map(o => o.to)}), xy);
-		else if (DiagramMorphism.IsA(elements[0]))
+		else if (elements[0] instanceof DiagramMorphism)
 			return diagram.placeMorphism(e, diagram.get('HomMorphism', {morphisms:elements.map(m => m.to)}), xy);
 	}
 	replay(e, diagram, args)
@@ -9081,8 +9027,8 @@ class HomAction extends Action
 	}
 	hasForm(diagram, ary)	// two objects or morphisms
 	{
-		return diagram.isEditable() && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && DiagramObject.IsA(v), true) ||
-			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.IsA(v), true));
+		return diagram.isEditable() && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
+			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
 	}
 }
 
@@ -9121,8 +9067,8 @@ class HomObjectAction extends Action
 			diagram.codomain.forEachMorphism(function(m)
 			{
 				const obj = that.dual ? m.codomain : m.domain;
-				if (Morphism.IsA(m) && to.isEquivalent(obj) && to.properName === obj.properName && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
-					rows.push(D.HtmlRow3(m, {onclick:function(){Cat.R.Actions[that.basename].action(event, Cat.R.diagram, [from.name, m.name])}}));
+				if (m instanceof Morphism && to.isEquivalent(obj) && to.properName === obj.properName && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
+					rows.push(D.HtmlRow3(m, {onclick:function(){Cat.R.Actions[that.basename].action(event, Cat.R.diagram, [from.name, m.name]);}}));
 			});
 			const help = D.toolbar.help;
 			D.RemoveChildren(help);
@@ -9140,7 +9086,7 @@ class HomObjectAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject;
 	}
 	place(e, diagram, name, domName, codName)
 	{
@@ -9205,7 +9151,7 @@ class HomsetAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 2 && DiagramObject.IsA(ary[0]) && DiagramObject.IsA(ary[1]);
+		return diagram.isEditable() && ary.length === 2 && ary[0] instanceof DiagramObject && ary[1] instanceof DiagramObject;
 	}
 }
 
@@ -9254,7 +9200,7 @@ class DetachDomainAction extends Action
 	}
 	hasForm(diagram, ary)	// one morphism with connected domain but not a def of something
 	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]) && !DiagramComposite.IsA(ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramMorphism && !(ary[0] instanceof DiagramComposite))
 		{
 			const from = ary[0];
 			let soFar = from.isDeletable() && this.dual ? from.codomain.domains.size + from.codomain.codomains.size > 1 :
@@ -9283,18 +9229,18 @@ class DeleteAction extends Action
 	action(e, diagram, ary)
 	{
 		const names = ary.map(m => m.name);
-		const elements = ary.map(elt => Cell.IsA(elt) ? diagram.getAssertion(elt.signature) : elt);		// convert cells to assertions
+		const elements = ary.map(elt => elt instanceof Cell ? diagram.getAssertion(elt.signature) : elt);		// convert cells to assertions
 		diagram.deselectAll();
 		const notDeleted = this.doit(e,diagram, elements);
 		notDeleted.map(elt => diagram.addSelected(elt));	// reselect items that were not deleted
 		diagram.log({command:'delete', elements:names});
 		const commands = elements.map(from =>
 		{
-			if (DiagramMorphism.IsA(from))
+			if (from instanceof DiagramMorphism)
 				return {command:'copy', source:from.to, xy:from.domain.getXY(), xyCod:from.codomain.getXY()};
-			else if (DiagramObject.IsA(from))
+			else if (from instanceof DiagramObject)
 				return {command:'copy', source:from.to, xy:from.getXY()};
-			else if (DiagramText.IsA(from))
+			else if (from instanceof DiagramText)
 				return {command:'copy', source:from.description, xy:from.getXY()};
 		});
 		diagram.antilog({command:'multiple', commands});
@@ -9308,7 +9254,7 @@ class DeleteAction extends Action
 			if (elt.refcnt === 1)
 			{
 				elt.decrRefcnt();
-				Morphism.IsA(elt) && diagram.domain.removeMorphism(elt);
+				elt instanceof Morphism && diagram.domain.removeMorphism(elt);
 			}
 			else if (elt.refcnt > 1)
 				notDeleted.push(elt);
@@ -9378,7 +9324,7 @@ class ProjectAction extends Action
 	}
 	hasForm(diagram, ary)	// one product object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]);
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject;
 	}
 	html(e, diagram, ary)
 	{
@@ -9424,7 +9370,7 @@ class ProjectAction extends Action
 			const d = searchObjects.shift();
 			const ob = d[0];
 			const f = d[1];
-			if (ProductObject.IsA(ob) && ob.dual === this.dual)
+			if (ob instanceof ProductObject && ob.dual === this.dual)
 				ob.objects.map((obo, i) => searchObjects.push([obo, [...f, i]]));
 			else
 				factors.push(f);
@@ -9453,7 +9399,7 @@ class ProjectAction extends Action
 	}
 	static FactorButton(dir, root, object, index, dual)
 	{
-		return (ProductObject.IsA(object) && object.dual === dual) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index, dual) :
+		return (object instanceof ProductObject && object.dual === dual) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index, dual) :
 			ProjectAction.ObjectFactorButton(dir, root, object, index, dual);
 	}
 }
@@ -9491,10 +9437,10 @@ class LambdaMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramMorphism.IsA(ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramMorphism)
 		{
 			const m = ary[0].to;
-			if (m.domain.isTerminal() && !HomObject.IsA(m.codomain))
+			if (m.domain.isTerminal() && !(m.codomain instanceof HomObject))
 				return false;
 			return true;
 		}
@@ -9507,7 +9453,7 @@ class LambdaMorphismAction extends Action
 		let obj = codomain;
 		let homCod = '';
 		let id = 0;
-		while (HomObject.IsA(obj))
+		while (obj instanceof HomObject)
 		{
 			obj = obj.homDomain();
 			homCod += this.getButtons(obj, {dir:1, fromId:'lambda-codomain', toId:'lambda-domain'});
@@ -9524,7 +9470,7 @@ class LambdaMorphismAction extends Action
 			H.h5('Codomain') +
 			H.small('Click to move to codomain: [') +
 			H.span(homCod, '', 'lambda-codomain') +
-			H.span(`, ${HomObject.IsA(codomain) ? codomain.minimalHomDom().htmlName() : codomain.htmlName()}]`) +
+			H.span(`, ${codomain instanceof HomObject ? codomain.minimalHomDom().htmlName() : codomain.htmlName()}]`) +
 			H.span(D.GetButton('lambda', 'edit', `Cat.R.Actions.lambda.action(event, Cat.R.diagram, Cat.R.diagram.selected)`,
 				'Create lambda morphism'));
 		D.toolbar.help.innerHTML = html;
@@ -9628,9 +9574,9 @@ class HelpAction extends Action
 		let elt = null;
 		if (from.to)
 			elt = from.to.help();
-		else if (DiagramText.IsA(from))
+		else if (from instanceof DiagramText)
 			elt = from.help();
-		else if (Assertion.IsA(from))
+		else if (from instanceof Assertion)
 			elt = from.help();
 		D.toolbar.help.appendChild(elt);
 	}
@@ -9670,7 +9616,7 @@ class LanguageAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length === 1 && (CatObject.IsA(ary[0]) || Morphism.IsA(ary[0]));
+		return ary.length === 1 && (ary[0] instanceof CatObject || ary[0] instanceof Morphism);
 	}
 	isEditable(m)
 	{
@@ -9692,7 +9638,7 @@ class LanguageAction extends Action
 			this.currentDiagram = elt.diagram;
 			const rows =	[H3.tr([H3.td('Namespace', {class:'smallPrint left'}), H3.td(this.getNamespace(diagram), {class:'smallBold left'})]),
 							H3.tr([H3.td('Type', {class:'smallPrint left'}), H3.td(this.getType(elt), {class:'smallBold left'})])];
-			if (Morphism.IsA(elt))
+			if (elt instanceof Morphism)
 				rows.push( H3.tr([H3.td('Domain', {class:'smallPrint left'}), H3.td(this.getType(elt.domain), {class:'smallBold left'})]),
 							H3.tr([H3.td('Codomain', {class:'smallPrint left'}), H3.td(this.getType(elt.codomain), {class:'smallBold left'})]));
 			this.currentDiagram = old;
@@ -9741,7 +9687,7 @@ class LanguageAction extends Action
 		let code = '';
 		diagram.elements.forEach(function(elt)
 		{
-			if (Morphism.IsA(elt) || CatObject.IsA(elt))
+			if (elt instanceof Morphism || elt instanceof CatObject)
 				code += that.generate(elt, generated);
 		});
 		return code;
@@ -9775,7 +9721,7 @@ class LanguageAction extends Action
 	instantiate(element)
 	{
 		let code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
-		if (Morphism.IsA(element))
+		if (element instanceof Morphism)
 			code = code.replace(/%Dom/g, this.getType(element.domain)).replace(/%Cod/g, this.getType(element.codomain));
 		return U.Tab(code);
 	}
@@ -9798,13 +9744,13 @@ class JavascriptAction extends LanguageAction
 		const proto = m.constructor.name;
 		if (!generated.has(m.name))
 		{
-	 		if (MultiMorphism.IsA(m))
+	 		if (m instanceof MultiMorphism)
 				code += m.morphisms.map(n => this.generate(n, generated)).join('\n');
 			const jsName = U.Token(m);
 			const header = JavascriptAction.Header(m);
 			const tail = JavascriptAction.Tail();
-			const domain = NamedObject.IsA(m.domain) ? m.domain.base : m.domain;
-			const codomain = NamedObject.IsA(m.codomain) ? m.codomain.base : m.codomain;
+			const domain = m.domain instanceof NamedObject ? m.domain.base : m.domain;
+			const codomain = m.codomain instanceof NamedObject ? m.codomain.base : m.codomain;
 			if (R.CanFormat(m))
 				code +=	// TODO safety check?
 `
@@ -10030,7 +9976,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		}
 		return homers;
 	}
-	loadHTML(fn)
+	loadHTML(fn)	// bootstrap basic diagrams for startup
 	{
 		const htmlDiagram = R.$CAT.getElement('hdole/HTML');
 		D.htmlDiagram = htmlDiagram;
@@ -10041,12 +9987,12 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 		htmlDiagram.forEachMorphism(function(m)
 		{
 			const domain = m.domain;
-			if (ProductObject.IsA(domain) && !domain.dual && domain.objects[0].name === html.name &&
-				ProductObject.IsA(m.codomain) &&
+			if (domain instanceof ProductObject && !domain.dual && domain.objects[0].name === html.name &&
+				m.codomain instanceof ProductObject &&
 				m.codomain.objects[0].name === str.name)
 			{
 				const hom = m.codomain.objects[1];
-				if (HomObject.IsA(hom))
+				if (hom instanceof HomObject)
 				{
 					const homDom = hom.objects[0];
 					if (homDom.isEquivalent(html))
@@ -10073,17 +10019,17 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 	{
 		if (!this.formatters)
 			throw 'no formatters';
-		if (NamedObject.IsA(o))
+		if (o instanceof NamedObject)
 			return this.canFormat(o.source);
-		if (ProductObject.IsA(o))
+		if (o instanceof ProductObject)
 			return o.objects.reduce((r, ob) => r && this.canFormat(ob));
-		else if (Morphism.IsA(o))
-			return this.canFormat(o.domain) && (this.canFormat(o.codomain) || HomObject.IsA(o.codomain));
+		else if (o instanceof Morphism)
+			return this.canFormat(o.domain) && (this.canFormat(o.codomain) || o.codomain instanceof HomObject);
 		else if (o.isTerminal() && !o.dual)
 			return true;
-		else if (FiniteObject.IsA(o))
+		else if (o instanceof FiniteObject)
 			return true;
-		else if (CatObject.IsA(o))
+		else if (o instanceof CatObject)
 			return this.formatters.has(o.signature);
 		return false;
 	}
@@ -10128,13 +10074,7 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 						}
 						html +=
 `<select id="${id}" onchange="Cat.D.ShowInput('${o.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
-<option>Choose</option>
-${options}
-</select>
-<div>
-${divs}
-</div>
-`;
+<option>Choose</option>${options}</select><div>${divs}</div>`;
 					}
 				}
 				else
@@ -10179,7 +10119,7 @@ ${divs}
 	getInputValue(domain, prefix = '', factor = [])
 	{
 		let value = null;
-		const dom = NamedObject.IsA(domain) ? domain.getBase() : domain;
+		const dom = domain instanceof NamedObject ? domain.getBase() : domain;
 		const id = `${prefix} ${dom.name} ${factor.toString()}`;
 		switch(dom.constructor.name)
 		{
@@ -10259,7 +10199,7 @@ ${this.generate(m)}
 		const args = this.getInputValue(m.domain);
 		const jsName = U.Token(m);
 		const isIterable = m.isIterable();
-		const iterInvoke = Composite.IsA(m) ? `${U.Token(m.getFirstMorphism())}_Iterator(${jsName})` : `${U.Token(m.domain)}_Iterator(${jsName})`;
+		const iterInvoke = m instanceof Composite ? `${U.Token(m.getFirstMorphism())}_Iterator(${jsName})` : `${U.Token(m.domain)}_Iterator(${jsName})`;
 		const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -10383,9 +10323,9 @@ ${this.generate(m)}
 	}
 	static ObjectLength(o)
 	{
-		if (FiniteObject.IsA(o) && o.size <= 1)
+		if (o instanceof FiniteObject && o.size <= 1)
 			return 0;
-		if (ProductObject.IsA(o) && !o.dual)
+		if (o instanceof ProductObject && !o.dual)
 			return o.objects.reduce((r, o) => r + (o.isTerminal() ? 0 : 1), 0);
 		else
 			return 1;
@@ -10485,7 +10425,7 @@ ${object.objects.map((o, i) => `\t\t\t\t\tcase 0:
 		}
 		friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
 		{ 
-			out ${object.objects.map((o, i) => !HomObject.IsA(o) ? ` << obj.m_${i} << " "` : '').join('')};
+			out ${object.objects.map((o, i) => !(o instanceof HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
 			return out;            
 		}
 	};
@@ -10497,12 +10437,12 @@ ${object.objects.map((o, i) => `\t\t\t\t\tcase 0:
 ${members}
 		friend std::istream & operator>>(std::istream  & in, ${name} & obj )
 		{ 
-			in ${object.objects.map((o, i) => !HomObject.IsA(o) ? ` >> obj.m_${i}` : '').join('')};
+			in ${object.objects.map((o, i) => !(o instanceof HomObject) ? ` >> obj.m_${i}` : '').join('')};
 			return in;            
 		}
 		friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
 		{ 
-			out ${object.objects.map((o, i) => !HomObject.IsA(o) ? ` << obj.m_${i} << " "` : '').join('')};
+			out ${object.objects.map((o, i) => !(o instanceof HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
 			return out;            
 		}
 \t};
@@ -10514,7 +10454,7 @@ ${members}
 		const proto = object.constructor.name;
 		let code = '';
 		const name = this.getType(object);
-		if (CatObject.IsA(object))
+		if (object instanceof CatObject)
 		{
 			switch(proto)
 			{
@@ -10538,7 +10478,7 @@ ${members}
 		const proto = morphism.constructor.name;
 		const name = this.getType(morphism);
 		let code = '';
-		if (MultiMorphism.IsA(morphism))
+		if (morphism instanceof MultiMorphism)
 			code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
 		const header = this.header(morphism);
 		const tail = this.tail();
@@ -10738,9 +10678,9 @@ ${tail}`;
 			code += `namespace ${this.getNamespace(element.diagram)}\n{\n`;
 			this.currentDiagram = element.diagram;
 		}
-		if (CatObject.IsA(element))
+		if (element instanceof CatObject)
 			code += this.generateObject(element, generated);
-		else if (Morphism.IsA(element))
+		else if (element instanceof Morphism)
 			code += this.generateMorphism(element, generated);
 		return code;
 	}
@@ -10750,7 +10690,7 @@ ${tail}`;
 		const namedMorphisms = new Set();
 		diagram.forEachMorphism(function(m)
 		{
-			if (NamedMorphism.IsA(m))
+			if (m instanceof NamedMorphism)
 				namedMorphisms.add(m);
 		});
 		const named = [...namedMorphisms];
@@ -10915,8 +10855,8 @@ class RunAction extends Action
 		const {properName, description} = to;
 		let html = H.h3(properName) + (description !== '' ? H.p(description, 'smallPrint') : '');
 		let canMakeData = true;
-		const source = NamedObject.IsA(to) ? to.base : to;
-		if (DiagramObject.IsA(from))
+		const source = to instanceof NamedObject ? to.base : to;
+		if (from instanceof DiagramObject)
 		{
 			if (js.canFormat(source))
 				html += js.getInputHtml(source) + addDataBtn;
@@ -10927,7 +10867,7 @@ class RunAction extends Action
 			const evalCode = H.h5('Evaluate the Morphism') +
 								js.getInputHtml(domain) +
 								D.GetButton('run', 'edit', `Cat.R.Actions.javascript.evaluate(event, Cat.R.diagram, '${to.name}', Cat.R.Actions.run.postResult)`, 'Evaluate inputs');
-			if (to.constructor.name === 'Morphism' && FiniteObject.IsA(domain) && !js.hasCode(to))
+			if (to.constructor.name === 'Morphism' && domain instanceof FiniteObject && !js.hasCode(to))
 			{
 				/*
 				 * TODO?
@@ -11047,10 +10987,10 @@ class RunAction extends Action
 		let dom = null;
 		let cod = null;
 		const d = H3.div();
-		if (CatObject.IsA(to))
+		if (to instanceof CatObject)
 		{
 			dom = this.data.size;
-			cod = this.js.getInputValue(NamedObject.IsA(to) ? to.getBase() : to);
+			cod = this.js.getInputValue(to instanceof NamedObject ? to.getBase() : to);
 			d.innerHTML = U.HtmlSafe(U.a2s(cod));
 			this.data.set(dom, cod);
 		}
@@ -11081,7 +11021,7 @@ class RunAction extends Action
 			{
 				const selected = diagram.getElement(eltName);
 				const domain = diagram.get('FiniteObject', {size:this.data.size});
-				const {to, name} = DiagramObject.IsA(selected) ? selected : selected.codomain;
+				const {to, name} = selected instanceof DiagramObject ? selected : selected.codomain;
 				const data = [...this.data].map((datum, i) => [i, datum[1]]);
 				const dm = new Morphism(diagram, {basename:diagram.getAnon('data'), domain, codomain:to, data});
 				diagram.placeMorphismByObject(e, 'codomain', name, dm.name);
@@ -11112,7 +11052,7 @@ class RunAction extends Action
 			const {to} = ary[0];
 			if (R.CanFormat(to))
 				return true;
-			if (CatObject.IsA(to))
+			if (to instanceof CatObject)
 				return this.js.canFormat(to);
 		}
 		return false;
@@ -11192,7 +11132,7 @@ class FiniteObjectAction extends Action
 			{
 				if (from.to.constructor.name === 'CatObject')
 					return  true;
-				return FiniteObject.IsA(from.to);
+				return from.to instanceof FiniteObject;
 			}
 		}
 		return false;
@@ -11230,7 +11170,7 @@ class EvaluateAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]) && Evaluation.CanEvaluate(ary[0].to);
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject && Evaluation.CanEvaluate(ary[0].to);
 	}
 }
 
@@ -11319,7 +11259,7 @@ class AlignHorizontalAction extends Action
 	}
 	getItems(ary)
 	{
-		return ary.filter(s => DiagramObject.IsA(s) || DiagramText.IsA(s));
+		return ary.filter(s => s instanceof DiagramObject || s instanceof DiagramText);
 	}
 	hasForm(diagram, ary)	// one object
 	{
@@ -11378,7 +11318,7 @@ class AlignVerticalAction extends Action
 	}
 	getItems(ary)
 	{
-		return ary.filter(s => DiagramObject.IsA(s) || DiagramText.IsA(s));
+		return ary.filter(s => s instanceof DiagramObject || s instanceof DiagramText);
 	}
 	hasForm(diagram, ary)	// one object
 	{
@@ -11410,13 +11350,13 @@ class TensorAction extends Action
 	action(e, diagram, ary)
 	{
 		const elt = ary[0];
-		if (DiagramMorphism.IsA(elt))
+		if (elt instanceof DiagramMorphism)
 		{
 			const morphisms = ary.map(m => m.to);
 			const to = diagram.get('TensorMorphism', {morphisms});
 			diagram.placeMorphism(e, to, D.Barycenter(ary));
 		}
-		else if (DiagramObject.IsA(elt))
+		else if (elt instanceof DiagramObject)
 		{
 			const objects = ary.map(o => o.to);
 			const to = diagram.get('TensorObject', {objects});
@@ -11427,8 +11367,8 @@ class TensorAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && DiagramObject.IsA(v), true) ||
-			ary.reduce((hasIt, v) => hasIt && DiagramMorphism.IsA(v), true));
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
+			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
 	}
 }
 
@@ -11544,7 +11484,7 @@ class GraphAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length >= 1 && ary.reduce((r, m) => r && DiagramMorphism.IsA(m), true);	// all morphisms
+		return ary.length >= 1 && ary.reduce((r, m) => r && m instanceof DiagramMorphism, true);	// all morphisms
 	}
 }
 
@@ -11649,7 +11589,7 @@ if (name === '#1') name = 'hdole/Basics/#1';
 		if (elt.diagram)
 		{
 			elt.diagram.elements.delete(elt.basename);
-			if (!DiagramMorphism.IsA(elt) && !DiagramObject.IsA(elt))
+			if (!(elt instanceof DiagramMorphism) && !(elt instanceof DiagramObject))
 				R.RemoveEquivalences(elt.diagram, elt.name);
 			R.EmitElementEvent(elt.diagram, 'delete', elt);
 		}
@@ -11671,14 +11611,14 @@ if (name === '#1') name = 'hdole/Basics/#1';
 	{
 		this.elements.forEach(function(e)
 		{
-			CatObject.IsA(e) && fn(e);
+			e instanceof CatObject && fn(e);
 		}, this);
 	}
 	forEachMorphism(fn)
 	{
 		this.elements.forEach(function(e)
 		{
-			if (Morphism.IsA(e))
+			if (e instanceof Morphism)
 				fn(e);
 		}, this);
 	}
@@ -11707,7 +11647,7 @@ if (name === '#1') name = 'hdole/Basics/#1';
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		if (!ary.reduce((r, m) => r && DiagramMorphism.IsA(m), true))	// all morphisms
+		if (!ary.reduce((r, m) => r && m instanceof DiagramMorphism, true))	// all morphisms
 			return false;
 		const codomain = ary[0].codomain.name;
 		for(let i=1; i<ary.length; ++i)
@@ -11721,7 +11661,7 @@ if (name === '#1') name = 'hdole/Basics/#1';
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		if (!ary.reduce((r, m) => r && DiagramMorphism.IsA(m), true))	// all morphisms
+		if (!ary.reduce((r, m) => r && m instanceof DiagramMorphism, true))	// all morphisms
 			return false;
 		const domain = ary[0].domain.name;
 		for(let i=1; i<ary.length; ++i)
@@ -11730,10 +11670,6 @@ if (name === '#1') name = 'hdole/Basics/#1';
 				return false;
 		}
 		return true;
-	}
-	static IsA(obj)
-	{
-		return Category.prototype.isPrototypeOf(obj);
 	}
 }
 
@@ -11927,20 +11863,16 @@ class Morphism extends Element
 		{
 			const r = ary[0];
 			const f = ary[1];
-			if (DiagramMorphism.IsA(r) && DiagramMorphism.IsA(f))
+			if (r instanceof DiagramMorphism && f instanceof DiagramMorphism)
 				return f.to.hasMorphism(r.to);
 		}
 		return false;
 	}
 	static IsIdentity(morph)
 	{
-		if (MultiMorphism.IsA(morph))
+		if (morph instanceof MultiMorphism)
 			return morph.morphisms.reduce((r, m) => r && Identity.IsIdentity(m), true);
-		return Identity.IsA(morph);
-	}
-	static IsA(m)
-	{
-		return Morphism.prototype.isPrototypeOf(m);
+		return morph instanceof Identity;
 	}
 }
 
@@ -11991,7 +11923,7 @@ class Identity extends Morphism
 		let nobj = codomain;
 		if (codomain)
 		{
-			if (NamedObject.IsA(codomain))
+			if (codomain instanceof NamedObject)
 			{
 				nobj = codomain;
 				obj = domain;
@@ -12007,9 +11939,9 @@ class Identity extends Morphism
 		{
 			return obj.objects.map(o => Identity.Codename(diagram, {domain:o}));
 		};
-		if (ProductObject.IsA(obj))
+		if (obj instanceof ProductObject)
 			codename = ProductMorphism.Codename(diagram, {morphisms:fn(obj), dual:domain.dual});
-		else if (HomObject.IsA(obj))
+		else if (obj instanceof HomObject)
 			codename = HomMorphism.Codename(diagram, {morphisms:fn(obj)});
 		if (!codomain && codename)
 			return codename;
@@ -12022,25 +11954,21 @@ class Identity extends Morphism
 	}
 	static Signature(diagram, obj)
 	{
-		if (ProductObject.IsA(obj))
+		if (obj instanceof ProductObject)
 			return ProductMorphism.Signature(obj.objects.map(o => Identity.Signature(diagram, o)), obj.dual);
-		else if (HomObject.IsA(obj))
+		else if (obj instanceof HomObject)
 			return HomMorphism.Signature(obj.objects);
 		return U.Sig(Identity.Codename(diagram, {domain:obj}));
 	}
-	static IsA(obj)
-	{
-		return Identity.prototype.isPrototypeOf(obj);
-	}
 	static LoadEquivalences(diagram, obj, dual)
 	{
-		if (ProductObject.IsA(obj))
+		if (obj instanceof ProductObject)
 		{
 			const subs = obj.objects.map(o => Identity.Signature(this.diagram, o));
 			const op = ProductMorphism.Signature(subs, this.dual);
 			R.LoadEquivalentSigs(diagram, this, [this.signature], [op]);
 		}
-		else if (HomObject.IsA(obj))
+		else if (obj instanceof HomObject)
 		{
 			const subs = obj.objects.map(o => Identity.Signature(this.diagram, o));
 			const op = HomMorphism.Signature(subs);
@@ -12062,9 +11990,9 @@ class Identity extends Morphism
 		const m = diagram.getElement(nuArgs.name);
 		if (!codomain)
 		{
-			if (ProductObject.IsA(domain))
+			if (domain instanceof ProductObject)
 				return diagram.get('ProductMorphism', {morphisms:domain.objects.map(o => diagram.get('Identity', {domain:o})), dual:domain.dual});
-			else if (HomObject.IsA(domain))
+			else if (domain instanceof HomObject)
 				return diagram.get('HomMorphism', {morphisms:domain.objects.map(o => diagram.get('Identity', {domain:o}))});
 		}
 		return m ? m : new Identity(diagram, nuArgs);
@@ -12116,7 +12044,7 @@ class NamedObject extends CatObject	// name of an object
 		if ('base' in this)
 			return this.base;
 		let source = this.source;
-		while(NamedObject.IsA(source))
+		while(source instanceof NamedObject)
 			source = source.source;
 		this.base = source;
 		return source;
@@ -12133,7 +12061,7 @@ class NamedObject extends CatObject	// name of an object
 	{
 		if (obj.name === this.name)
 			return index;
-		if (ProductObject.IsA(this.source))
+		if (this.source instanceof ProductObject)
 			return this.source.find(obj, index);
 		return [];
 	}
@@ -12156,10 +12084,6 @@ class NamedObject extends CatObject	// name of an object
 	getSize()
 	{
 		return this.base.getSize();
-	}
-	static IsA(m)
-	{
-		return NamedObject.prototype.isPrototypeOf(m);
 	}
 }
 
@@ -12219,13 +12143,9 @@ class NamedMorphism extends Morphism	// name of a morphism
 	getBase()
 	{
 		let source = this.source;
-		while(NamedObject.IsA(source))
+		while(source instanceof NamedObject)
 			source = source.source;
 		return source;
-	}
-	static IsA(m)
-	{
-		return NamedMorphism.prototype.isPrototypeOf(m);
 	}
 }
 
@@ -12241,9 +12161,9 @@ class DiagramMorphism extends Morphism
 		if (!to)
 			throw 'no morphism to attach to index';
 		super(diagram, nuArgs);
-		if (!DiagramObject.IsA(this.domain))
+		if (!(this.domain instanceof DiagramObject))
 			throw 'domain must be DiagramObject';
-		if (!DiagramObject.IsA(this.codomain))
+		if (!(this.codomain instanceof DiagramObject))
 			throw 'codomain must be DiagramObject';
 		this.setMorphism(to);
 		this.incrRefcnt();
@@ -12702,10 +12622,6 @@ class DiagramMorphism extends Morphism
 		data.color = (data.color + 5) % cnt;
 		return `${tran[(data.color + 2) % cnt]}${tran[(data.color + 10) % cnt]}${tran[(data.color + 6) % cnt]}`;
 	}
-	static IsA(m)
-	{
-		return DiagramMorphism.prototype.isPrototypeOf(m);
-	}
 }
 
 class Cell extends DiagramCore
@@ -12845,7 +12761,7 @@ class Cell extends DiagramCore
 		{
 			const m = this.left[0];
 			const n = this.right[0];
-			const cmp = function(a, b) { return NamedMorphism.IsA(a.to) && a.to.source === b.to; };
+			const cmp = function(a, b) { return a.to instanceof NamedMorphism && a.to.source === b.to; };
 			return cmp(m, n) || cmp(n, m);
 		}
 		return false;
@@ -12908,10 +12824,6 @@ class Cell extends DiagramCore
 		});
 		return result;
 	}
-	static IsA(c)
-	{
-		return Cell.prototype.isPrototypeOf(c);
-	}
 }
 
 class DiagramComposite extends DiagramMorphism
@@ -12946,15 +12858,11 @@ class DiagramComposite extends DiagramMorphism
 	{
 		return super.isDeletable() && this.to.refcnt === 1;
 	}
-	static IsA(m)
-	{
-		return DiagramComposite.prototype.isPrototypeOf(m);
-	}
 	static CellIsComposite(cell)
 	{
 		function fn(left, right)
 		{
-			if (left.length === 1 && DiagramComposite.IsA(left[0]))
+			if (left.length === 1 && left[0] instanceof DiagramComposite)
 			{
 				const morphisms = left[0].morphisms;
 				if (morphisms.length === right.length)
@@ -13038,7 +12946,7 @@ class IndexCategory extends Category
 		const badCells = new Set();
 		obj.nodes.forEach(function(cell)
 		{
-			if (Cell.IsA(cell) && ((cell.left.includes(from)) || (cell.right.includes(from))))
+			if (cell instanceof Cell && ((cell.left.includes(from)) || (cell.right.includes(from))))
 				badCells.add(cell);
 		});
 		badCells.forEach(function(cell)
@@ -13139,11 +13047,7 @@ class IndexCategory extends Category
 	}
 	static HomKey(domain, codomain)
 	{
-		return `${CatObject.IsA(domain) ? domain.name : domain} ${CatObject.IsA(codomain) ? codomain.name : codomain}`;
-	}
-	static IsA(obj)
-	{
-		return IndexCategory.prototype.isPrototypeOf(obj);
+		return `${domain instanceof CatObject ? domain.name : domain} ${codomain instanceof CatObject ? codomain.name : codomain}`;
 	}
 }
 
@@ -13214,10 +13118,6 @@ class MultiMorphism extends Morphism
 	{
 		return false;
 	}
-	static IsA(m)
-	{
-		return MultiMorphism.prototype.isPrototypeOf(m);
-	}
 }
 
 class Composite extends MultiMorphism
@@ -13275,7 +13175,7 @@ class Composite extends MultiMorphism
 	getFirstMorphism()
 	{
 		const m = this.morphisms[0];
-		if (Composite.IsA(m))
+		if (m instanceof Composite)
 			return m.getFirstMorphism();
 		return m;
 	}
@@ -13304,7 +13204,6 @@ class Composite extends MultiMorphism
 	{
 		return MultiObject.ProperName('&#8728;', morphisms, true);	// TODO wrong redro, reverse it
 	}
-	static IsA(m) { return Composite.prototype.isPrototypeOf(m); }
 }
 
 class ProductMorphism extends MultiMorphism
@@ -13363,7 +13262,7 @@ class ProductMorphism extends MultiMorphism
 	{
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
-		if (Morphism.IsA(args.morphisms[0]))
+		if (args.morphisms[0] instanceof Morphism)
 			return `${c}Pm{${args.morphisms.map(m => m.name).join(',')}}mP${c}`;
 		else
 			return `${c}Pm{${args.morphisms.join(',')}}mP${c}`;
@@ -13390,7 +13289,6 @@ class ProductMorphism extends MultiMorphism
 		morphSigs.map((s, i) => sigs.push(s, i));
 		return U.SigArray(sigs);
 	}
-	static IsA(m) { return ProductMorphism.prototype.isPrototypeOf(m); }
 }
 
 class ProductAssembly extends MultiMorphism
@@ -13453,7 +13351,6 @@ class ProductAssembly extends MultiMorphism
 	{
 		return `${dual ? '&Sigma;' : '&Pi;'}<${morphisms.map(m => m.properName).join(',')}>`;
 	}
-	static IsA(m) { return ProductAssembly.prototype.isPrototypeOf(m); }
 }
 
 class FactorMorphism extends Morphism
@@ -13664,7 +13561,6 @@ class FactorMorphism extends Morphism
 			throw 'TODO';
 		return U.SigArray(sigs);
 	}
-	static IsA(m) { return FactorMorphism.prototype.isPrototypeOf(m) || (NamedMorphism.prototype.isPrototypeOf(m) && FactorMorphism.prototype.isPrototypeOf(m.base)); }
 }
 
 class LambdaMorphism extends Morphism
@@ -13766,7 +13662,7 @@ class LambdaMorphism extends Morphism
 	static Codomain(diagram, preCurry, factors)
 	{
 		const seq = diagram.get('ProductObject', {objects:[preCurry.domain, preCurry.codomain]});
-		const isCodHom = HomObject.IsA(preCurry.codomain);
+		const isCodHom = preCurry.codomain instanceof HomObject;
 		let codomain = isCodHom ? preCurry.codomain.minimalHomDom() : preCurry.codomain;
 		const fctrs = factors.slice();
 		let objects = [];
@@ -13818,7 +13714,6 @@ class LambdaMorphism extends Morphism
 		}).join();
 		return `&lambda;${preCurry.properName}${U.subscript(df)},${U.subscript(hf)}`;
 	}
-	static IsA(m) { return LambdaMorphism.prototype.isPrototypeOf(m); }
 }
 
 class HomMorphism extends MultiMorphism
@@ -13881,7 +13776,6 @@ class HomMorphism extends MultiMorphism
 	{
 		return U.SigArray([3, ...sigs]);
 	}
-	static IsA(m) { return HomMorphism.prototype.isPrototypeOf(m); }
 }
 
 class Evaluation extends Morphism
@@ -13922,9 +13816,9 @@ class Evaluation extends Morphism
 	}
 	static CanEvaluate(object)
 	{
-		return ProductObject.IsA(object) &&
+		return object instanceof ProductObject &&
 			object.objects.length === 2 &&
-			HomObject.IsA(object.objects[0]) &&
+			object.objects[0] instanceof HomObject &&
 			object.objects[0].objects[0].isEquivalent(object.objects[1]);
 	}
 	static Basename(diagram, args)
@@ -13939,7 +13833,6 @@ class Evaluation extends Morphism
 	{
 		return 'e';
 	}
-	static IsA(m) { return Evaluation.prototype.isPrototypeOf(m); }
 }
 
 class Distribute extends Morphism
@@ -13989,11 +13882,11 @@ class Distribute extends Morphism
 	}
 	static HasForm(diagram, ary)	// TODO what about side?
 	{
-		if (ary.length === 1 && DiagramObject.IsA(ary[0]))
+		if (ary.length === 1 && ary[0] instanceof DiagramObject)
 		{
 			const from = ary[0];
 			const to = from.to;
-			if (ProductObject.IsA(to) && !to.dual && ProductObject.IsA(to.objects[1]) && to.objects[1].dual)
+			if (to instanceof ProductObject && !to.dual && to.objects[1] instanceof ProductObject && to.objects[1].dual)
 				return true;
 		}
 		return false;
@@ -14011,7 +13904,6 @@ class Distribute extends Morphism
 		const objects = object.objects[leftie ? 1 : 0].objects.map(o => diagram[topOp](leftie ? a : o, leftie ? o : a));
 		return diagram[botOp](...objects);
 	}
-	static IsA(m) { return Distribute.prototype.isPrototypeOf(m); }
 }
 
 class Dedistribute extends Morphism	// TODO what about side?
@@ -14055,14 +13947,14 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 	static HasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && DiagramObject.IsA(ary[0]))
+		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject)
 		{
 			const from = ary[0];
 			const to = from.to;
-			if (ProductObject.IsA(to) && to.dual && ProductObject.IsA(to.objects[0]) && !to.objects[0].dual)
+			if (to instanceof ProductObject && to.dual && to.objects[0] instanceof ProductObject && !to.objects[0].dual)
 			{
 				const obj0 = to.objects[0].objects[0];
-				return to.objects.reduce((doit, o) => doit && ProductObject.IsA(o) && !o.dual && obj0.isEquivalent(o.objects[0]), true);
+				return to.objects.reduce((doit, o) => doit && o instanceof ProductObject && !o.dual && obj0.isEquivalent(o.objects[0]), true);
 			}
 		}
 		return false;
@@ -14078,7 +13970,6 @@ class Dedistribute extends Morphism	// TODO what about side?
 		const sum = diagram.get('ProductObject', {objects, dual:true});
 		return diagram.get('ProductObject', {objects:[a, sum]});
 	}
-	static IsA(m) { return Dedistribute.prototype.isPrototypeOf(m); }
 }
 
 class Functor extends Morphism
@@ -14106,7 +13997,7 @@ class Diagram extends Functor
 		const nuArgs = U.Clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		nuArgs.category = U.GetArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
-		if (!Category.IsA(nuArgs.codomain))
+		if (!(nuArgs.codomain instanceof Category))
 			nuArgs.codomain = diagram ? diagram.getElement(nuArgs.codomain) : R.Cat;
 		const indexName = `${nuArgs.basename}_Index`;
 		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
@@ -14149,7 +14040,7 @@ class Diagram extends Functor
 	}
 	addElement(elt)
 	{
-		const isIndex = DiagramObject.IsA(elt) || DiagramMorphism.IsA(elt) || DiagramComposite.IsA(elt) || Assertion.IsA(elt) || DiagramText.IsA(elt);
+		const isIndex = elt instanceof DiagramObject || elt instanceof DiagramMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
 		const cat = isIndex ? this.domain : this.codomain;
 		if (cat.elements.has(elt.name))
 			throw `Element with given name already exists in category`;
@@ -14249,7 +14140,7 @@ class Diagram extends Functor
 	}
 	getObject(name)
 	{
-		if (Element.IsA(name))
+		if (name instanceof Element)
 			return name;
 		let object = this.codomain.getElement(name);
 		if (object)
@@ -14318,7 +14209,7 @@ class Diagram extends Functor
 				this.deselect(elt);
 			else
 				D.toolbar.show();
-			if (DiagramObject.IsA(elt))
+			if (elt instanceof DiagramObject)
 				elt.orig = {x:elt.x, y:elt.y};
 		}
 		else if (this.domain.cells.has(name))
@@ -14358,9 +14249,9 @@ class Diagram extends Functor
 		if (!this.selected.includes(elt))	// not already selected
 		{
 			this.selected.push(elt);
-			if (DiagramObject.IsA(elt) || DiagramText.IsA(elt))
+			if (elt instanceof DiagramObject || elt instanceof DiagramText)
 				elt.finishMove();
-			else if (DiagramMorphism.IsA(elt))
+			else if (elt instanceof DiagramMorphism)
 			{
 				elt.domain.finishMove();
 				elt.codomain.finishMove();
@@ -14375,7 +14266,7 @@ class Diagram extends Functor
 		let selected = [];
 		this.domain.elements.forEach(function(e)
 		{
-			if (DiagramMorphism.IsA(e) && D2.Inside(p, e.domain, q) && D2.Inside(p, e.codomain, q))
+			if (e instanceof DiagramMorphism && D2.Inside(p, e.domain, q) && D2.Inside(p, e.codomain, q))
 				selected.push(e);
 			else if (D2.Inside(p, e, q))
 				selected.push(e);
@@ -14397,14 +14288,14 @@ class Diagram extends Functor
 		const dragObjects = new Set();
 		this.selected.map(elt =>
 		{
-			if (DiagramMorphism.IsA(elt))
+			if (elt instanceof DiagramMorphism)
 			{
 				dragObjects.add(elt.domain);
 				dragObjects.add(elt.codomain);
 			}
-			else if (DiagramObject.IsA(elt) || DiagramText.IsA(elt))
+			else if (elt instanceof DiagramObject || elt instanceof DiagramText)
 				dragObjects.add(elt);
-			else if (Cell.IsA(elt))
+			else if (elt instanceof Cell)
 				elt.getObjects().map(o => dragObjects.add(o));
 		});
 		const updated = new Set();
@@ -14419,7 +14310,7 @@ class Diagram extends Functor
 		dragObjects.forEach(function(o)
 		{
 			o.update(delta.add(o.orig));
-			if (DiagramObject.IsA(o))
+			if (o instanceof DiagramObject)
 			{
 				o.domains.forEach(updateMorphism);
 				o.codomains.forEach(updateMorphism);
@@ -14451,7 +14342,7 @@ class Diagram extends Functor
 			to = this.getElement(to);
 		let xyD = null;
 		let domain = null;
-		if (DiagramObject.IsA(xyDom))
+		if (xyDom instanceof DiagramObject)
 		{
 			if (xyDom.to !== to.domain)
 				throw 'index object target does not match morphism domain';
@@ -14467,7 +14358,7 @@ class Diagram extends Functor
 		}
 		let xyC = null;
 		let codomain = null;
-		if (DiagramObject.IsA(xyCod))
+		if (xyCod instanceof DiagramObject)
 		{
 			if (xyCod.to !== to.codomain)
 				throw 'index object target does not match morphism codomain';
@@ -14701,7 +14592,7 @@ class Diagram extends Functor
 					}
 					else
 						p = p.parentElement;
-				if (!DiagramText.IsA(elt))
+				if (!(elt instanceof DiagramText))
 					this.updateProperName(elt);
 				R.EmitElementEvent(this, 'update', elt);
 			}
@@ -14724,9 +14615,9 @@ class Diagram extends Functor
 	isIsolated(elt)
 	{
 		let r = false;
-		if (DiagramObject.IsA(elt))
+		if (elt instanceof DiagramObject)
 			r = elt.refcnt === 1;
-		else if (DiagramMorphism.IsA(elt))
+		else if (elt instanceof DiagramMorphism)
 			r = elt.domain.domains.size === 1 && elt.domain.codomains.size === 0 && elt.codomain.domains.size === 0 && elt.codomain.codomains.size === 1;
 		return r;
 	}
@@ -14737,26 +14628,26 @@ class Diagram extends Functor
 		{
 			const sel0 = this.selected[0].to;
 			const sel1 = this.selected[1].to;
-			if (DiagramMorphism.IsA(sel0) && DiagramMorphism.IsA(sel1))
+			if (sel0 instanceof DiagramMorphism && sel1 instanceof DiagramMorphism)
 			{
 				const domain = sel0.domain;
 				r = sel0.domain.isEquivalent(sel1.domain) &&
 					sel0.codomain.isEquivalent(sel1.codomain) &&
-					Composite.IsA(sel1) &&
+					sel1 instanceof Composite &&
 					sel1.getElement(sel0);
 				const N = this.getElement('N');
 				if (r && N)
 				{
 					if (sel0.domain.isEquivalent(N))
 						return true;
-					r = ProductObject.IsA(domain) &&
+					r = domain instanceof ProductObject &&
 						domain.objects.length === 3 &&
 						N.isEquivalent(domain.objects[0]);
 					if (r)
 					{
 						const factor1 = domain.objects[1];
 						const factor2 = domain.objects[2];
-						r = HomObject.IsA(factor1) &&
+						r = factor1 instanceof HomObject &&
 							factor2.isEquivalent(factor1.objects[0]) &&
 							factor2.isEquivalent(factor1.objects[1]);
 					}
@@ -14782,7 +14673,7 @@ class Diagram extends Functor
 	{
 		this.elements.forEach(function(e)
 		{
-			if (CatObject.IsA(e))
+			if (e instanceof CatObject)
 				fn(e);
 		}, this);
 	}
@@ -14790,7 +14681,7 @@ class Diagram extends Functor
 	{
 		this.elements.forEach(function(e)
 		{
-			if (Morphism.IsA(e))
+			if (e instanceof Morphism)
 				fn(e);
 		}, this);
 	}
@@ -14798,7 +14689,7 @@ class Diagram extends Functor
 	{
 		this.domain.elements.forEach(function(e)
 		{
-			if (DiagramText.IsA(e))
+			if (e instanceof DiagramText)
 				fn(e);
 		}, this);
 	}
@@ -14873,7 +14764,7 @@ class Diagram extends Functor
 	}
 	addReference(elt, emit = true)	// immediate, no background fn
 	{
-		const name = Diagram.IsA(elt) ? elt.name : elt;
+		const name = elt instanceof Diagram ? elt.name : elt;
 		if (name === this.name)
 			throw 'Do not reference yourself';
 		const diagram = R.LoadDiagram(name);
@@ -14958,7 +14849,7 @@ class Diagram extends Functor
 	{
 		const elt = this.getElement(c);
 		D.mouseover = on ? elt : null;
-		if (elt && (DiagramMorphism.IsA(elt) || DiagramObject.IsA(elt) || DiagramText.IsA(elt)))
+		if (elt && (elt instanceof DiagramMorphism || elt instanceof DiagramObject || elt instanceof DiagramText))
 			elt.emphasis(on);
 		else if (this.domain.cells.has(c))
 			this.domain.cells.get(c).emphasis(on);
@@ -15030,7 +14921,7 @@ class Diagram extends Functor
 			if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 				args.actions.map(a => this.actions.set(a, R.$Actions.getElement(a)));
 		}
-		if (!DiagramMorphism.IsA(elt) && 'loadEquivalences' in elt)
+		if (!(elt instanceof DiagramMorphism) && 'loadEquivalences' in elt)
 			elt.loadEquivalences();
 		return elt;
 	}
@@ -15044,13 +14935,13 @@ class Diagram extends Functor
 	}
 	prod(...elements)
 	{
-		return elements.length > 1 ? (CatObject.IsA(elements[0]) ? this.get('ProductObject', {objects:elements}) : this.get('ProductMorphism', {morphisms:elements})) :
+		return elements.length > 1 ? (elements[0] instanceof CatObject ? this.get('ProductObject', {objects:elements}) : this.get('ProductMorphism', {morphisms:elements})) :
 			elements[0];
 	}
 	coprod(...elements)
 	{
 		return elements.length > 1 ?
-			(CatObject.IsA(elements[0]) ? this.get('ProductObject', {objects:elements, dual:true}) : this.get('ProductMorphism', {morphisms:elements, dual:true})) :
+			(elements[0] instanceof CatObject ? this.get('ProductObject', {objects:elements, dual:true}) : this.get('ProductMorphism', {morphisms:elements, dual:true})) :
 			elements[0];
 	}
 	fctr(obj, factors)
@@ -15070,7 +14961,7 @@ class Diagram extends Functor
 	}
 	hom(...elements)
 	{
-		return CatObject.IsA(elements[0]) ? this.get('HomObject', {objects:elements}) : this.get('HomMorphism', {morphisms:elements});
+		return elements[0] instanceof CatObject ? this.get('HomObject', {objects:elements}) : this.get('HomMorphism', {morphisms:elements});
 	}
 	eval(dom, codomain)
 	{
@@ -15255,7 +15146,7 @@ class Diagram extends Functor
 			{
 				if ('svg_name' in from)
 					from.svg_name.innerHTML = to.htmlName();
-				else if (CatObject.IsA(to))
+				else if (to instanceof CatObject)
 				{
 					from.svg.innerHTML = to.htmlName();
 					from.domains.forEach(update);
@@ -15305,9 +15196,9 @@ class Diagram extends Functor
 	{
 		const dom = domain.getBase();
 		const cod = codomain.getBase();
-		if (ProductObject.IsA(dom) && !dom.dual)
+		if (dom instanceof ProductObject && !dom.dual)
 			domain.find(codomain).map((f, i) => this.fctr(domain, [f]));
-		if (ProductObject.IsA(codomain) && codomain.dual)
+		if (codomain instanceof ProductObject && codomain.dual)
 			codomain.find(domain).map((f, i) => this.fctr(domain, [f]));
 	}
 	getObjectSelector(id, text, change)
@@ -15339,18 +15230,18 @@ class Diagram extends Functor
 		//
 		const isConveyance = function(m)
 		{
-			const morph = DiagramMorphism.IsA(m) ? m.to.basic() : m.basic();
-			return Identity.IsA(morph) || FactorMorphism.IsA(morph);
+			const morph = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
+			return morph instanceof Identity || morph instanceof FactorMorphism;
 		};
 		const isProjection = function(m)
 		{
-			const morph = DiagramMorphism.IsA(m) ? m.to.basic() : m.basic();
-			return Identity.IsA(morph) || (FactorMorphism.IsA(morph) && !morph.dual);
+			const morph = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
+			return morph instanceof Identity || (morph instanceof FactorMorphism && !morph.dual);
 		};
 		const isInjection = function(m)
 		{
-			const morph = DiagramMorphism.IsA(m) ? m.to.basic() : m.basic();
-			return Identity.IsA(morph) || (FactorMorphism.IsA(morph) && morph.dual);
+			const morph = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
+			return morph instanceof Identity || (morph instanceof FactorMorphism && morph.dual);
 		};
 		while(scanning.length > 0)	// find loops or homsets > 1
 		{
@@ -15448,7 +15339,7 @@ class Diagram extends Functor
 		const propTag = function(dm, m, mGraph, barGraph, tag, fn)
 		{
 			propagated.add(dm);
-			if (MultiMorphism.IsA(m))	// break it down
+			if (m instanceof MultiMorphism)	// break it down
 				m.morphisms.map((subm, i) => propTag(dm, subm, mGraph.graphs[i], barGraph, tag, fn));
 			else if (isConveyance(m))		// copy tag on input links
 				mGraph.graphs[0].scan(function(g, ndx) { g.links.map(lnk => fn(dm, barGraph, tag, lnk)); }, [0]);
@@ -15469,7 +15360,7 @@ class Diagram extends Functor
 			const scanDomainsTagInfo = function(m)
 			{
 				const to = m.to;
-				if (FactorMorphism.IsA(to) && !to.dual)
+				if (to instanceof FactorMorphism && !to.dual)
 					return;
 				if (isProjection(to))
 					return;
@@ -15489,11 +15380,11 @@ class Diagram extends Functor
 		let fill = '#F007';
 		function addBall(o)
 		{
-			if (DiagramObject.IsA(o))
+			if (o instanceof DiagramObject)
 			{
 				o.svg.parentNode.insertBefore(H3.circle({class:'ball', cx:o.x, cy:o.y, r:radius, fill}), o.svg);
 			}
-			else if (DiagramMorphism.IsA(o))
+			else if (o instanceof DiagramMorphism)
 			{
 				const xy = o.getNameOffset();
 				o.svg_name.parentNode.insertBefore(H3.circle({class:'ball', cx:xy.x, cy:xy.y, r:radius, fill}), o.svg_name);
@@ -15544,7 +15435,7 @@ class Diagram extends Functor
 			const scan = scanning;		// jshint
 			const inputReducer = function(m)
 			{
-				if (FactorMorphism.IsA(m.to))
+				if (m.to instanceof FactorMorphism)
 				{
 					inputs.delete(m.codomain);
 					scan.push(m.codomain);
@@ -15795,7 +15686,7 @@ addBall(m);
 				//
 				// if we have a pre-assembly factor, add it to the composite's start
 				//
-				!Identity.IsA(preFactor) && morphs.unshift(preFactor);
+				!(preFactor instanceof Identity) && morphs.unshift(preFactor);
 				//
 				// codomain index object
 				//
@@ -15873,14 +15764,14 @@ addBall(m);
 					//
 					const r = eltRef.to.getBase();
 					let elt = null;
-					if (FactorMorphism.IsA(r))
+					if (r instanceof FactorMorphism)
 					{
 						const f = r.factors[0];
 						if (f.length > 1)
 							issues.push({message:'Factor is too deep', morphism:r});
 						elt = r.factors[0][0];
 					}
-					else if (Morphism.IsA(r) && 'data' in r)
+					else if (r instanceof Morphism && 'data' in r)
 						elt = r.data[0];
 					data.set(elt, homMorph);
 				});
@@ -15911,7 +15802,7 @@ addBall(m);
 console.log('formMorphism', {morphism});
 //			diagram.placeMorphism(e, morphism);
 //			D.PlaceComposite(e, diagram, morphism);
-			!Identity.IsA(morphism) && components.push(morphism);
+			!(morphism instanceof Identity) && components.push(morphism);
 		}
 		D.PlaceComposite(e, diagram, diagram.comp(...components));
 		return issues;
@@ -15967,10 +15858,6 @@ console.log('formMorphism', {morphism});
 			user:			diagram.user,
 			references:		refs,
 		};
-	}
-	static IsA(obj)
-	{
-		return Diagram.prototype.isPrototypeOf(obj);
 	}
 }
 

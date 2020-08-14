@@ -37,12 +37,12 @@ const Boot = function(fn)
 			index = new Cat.DiagramText(diagram, nuArgs);
 			diagram.addSVG(index);
 		}
-		else if (Cat.CatObject.IsA(args))
+		else if (args instanceof Cat.CatObject)
 			index = diagram.placeObject(null, args, xy, false);
 		else
 		{
 			const to = Cat.Element.Process(diagram, args);
-			if (Cat.Morphism.IsA(to))
+			if (to instanceof Cat.Morphism)
 			{
 				const tw = to.textwidth();
 				let delta = stdGrid;
@@ -51,7 +51,7 @@ const Boot = function(fn)
 				const cod = {x:args.xy.x + delta, y:args.xy.y};
 				index = diagram.placeMorphism(null, to, xy, co, false, false);
 			}
-			else if (Cat.CatObject.IsA(to))
+			else if (to instanceof Cat.CatObject)
 				index = diagram.placeObject(null, to, xy, false);
 		}
 		if (increment && 'rowCount' in args)
@@ -116,7 +116,6 @@ const Boot = function(fn)
 		if (properName !== '')
 			nuArgs.properName = properName;
 		const e = Autoplace(nuArgs);
-//		Adjust(args, e);
 		PlaceSideText(args, description);
 		args.xy = new Cat.D2(nuArgs.xy);
 		args.rowCount = nuArgs.rowCount;
@@ -128,7 +127,6 @@ const Boot = function(fn)
 		doSideText && PlaceSideText(args, m.description);
 		const cod = {x:args.xy.x + Cat.D.GetArrowLength(m), y:args.xy.y};
 		const i = args.diagram.placeMorphism(null, m, args.xy, codomain ? codomain : cod, false, false);
-//		Adjust(args, i);
 		args.xy = new Cat.D2(args.xy);
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
@@ -161,13 +159,13 @@ const Boot = function(fn)
 		CheckColumn(args);
 		const to = NewMorphism(args, basename, prototype, properName, description, domain, codomain, moreArgs);
 		const e = PlaceMorphism(args, to);
-//		Adjust(args, e);
 		args.xy = new Cat.D2(args.xy);
 		return e;
 	}
+	/* TODO unused
 	function Adjust(args, elt)
 	{
-		if (Cat.DiagramObject.IsA(elt))
+		if (elt instanceof Cat.DiagramObject)
 		{
 			const bx = elt.svg.getBBox();
 			const delta = args.xy.x - bx.x;
@@ -175,7 +173,7 @@ const Boot = function(fn)
 			elt.setXY({x:xy.x + delta, y:xy.y});
 			elt.update();
 		}
-		else if (Cat.DiagramMorphism.IsA(elt))
+		else if (elt instanceof Cat.DiagramMorphism)
 		{
 			const bx = elt.domain.svg.getBBox();
 			const delta = args.xy.x - bx.x;
@@ -188,6 +186,7 @@ const Boot = function(fn)
 			elt.update();
 		}
 	}
+	*/
 	function MakeNamedObject(args, extra)
 	{
 		CheckColumn(args);
@@ -200,7 +199,6 @@ const Boot = function(fn)
 		const nm = new Cat.NamedObject(diagram, nuArgs);
 		const cod = {x:xy.x + Cat.D.GetArrowLength(nm.idFrom), y:xy.y};
 		const nm2src = diagram.placeMorphism(null, nm.idFrom, xy, cod, false, false);
-//		Adjust(args, nm2src);
 		args.rowCount++;
 		args.xy.y += args.majorGrid;
 		return nm2src.domain;
@@ -628,18 +626,15 @@ return [0, args[0] % args[1]];
 	const Z32pair = args.diagram.prod(Z32, Z32);
 	const Z32add = MakeMorphism(args, 'Z32add', 'Morphism', '+', 'Addition of two 32-bit integers', Z32pair, Z32,
 	{
-//		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 + args.m_1;\n}\n',
 	}).to;
 	const Z32or = MakeMorphism(args, 'Z32or', 'Morphism', '|', 'Bitwise OR of two 32-bit integers', Z32pair, Z32,
 	{
-//		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 | args.m_1;\n}\n',
 	}).to;
 	DiagramReferences(user, integers, args.xy);
 	const Z32equals = MakeMorphism(args, 'Z32equals', 'Morphism', '|', 'Test two 32-bit integers for equality', Z32pair, omega,
 	{
-//		js:'function %Type(args)\n{\n	return args[0] + args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	}).to;
 	args.xy = new Cat.D2();
@@ -1103,7 +1098,6 @@ namespace %Namespace
 `}}).to;
 	const strPair = MakeObject(args, '', 'ProductObject', '', 'A pair of strings', {objects:[str, str]}).to;
 	const strPlusOne = MakeObject(args, '', 'ProductObject', '', 'A string or an exception', {objects:[str, one], dual:true}).to;
-//	const emptyString = new Cat.DataMorphism(strings, {domain:one, codomain:str, data:[[0, '']]});
 	const emptyString = new Cat.Morphism(strings, {basename:'emptyStr', domain:one, codomain:str, data:[[0, '']]});
 	PlaceMorphism(args, emptyString);
 	const strLength = MakeMorphism(args, 'length', 'Morphism', 'length', 'length of a string', str, N,
@@ -1458,7 +1452,6 @@ function %Type(args)
 	}).to;
 //TODO	const html2omega = MakeMorphism(args, 'html2omega', 'Morphism', 'input', 'HTML input for truth values', html, two).to;
 	const N_html2str = htmlDiagram.get('LambdaMorphism', {preCurry:html2Str, domFactors:[], homFactors:[0]});
-//	PlaceMorphism(args, N_html2str);
 	N_html2str.incrRefcnt();
 	const strXN_html2str = htmlDiagram.prod(str, N_html2str.codomain);
 
@@ -1474,7 +1467,6 @@ function %Type(args)
 `,
 	}).to;
 	const N_html2N = htmlDiagram.get('LambdaMorphism', {preCurry:html2N, domFactors:[], homFactors:[0]});
-//	PlaceMorphism(args, N_html2N);
 	N_html2N.incrRefcnt();
 
 	const strXN_html2N = htmlDiagram.prod(str, N_html2N.codomain);
@@ -1491,7 +1483,6 @@ function %Type(args)
 	}).to;
 
 	const N_html2N8 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N8, domFactors:[], homFactors:[0]});
-//	PlaceMorphism(args, N_html2N8);
 	N_html2N8.incrRefcnt();
 
 	const strXN_html2N8 = htmlDiagram.prod(str, N_html2N8.codomain);
@@ -1508,7 +1499,6 @@ function %Type(args)
 	}).to;
 
 	const N_html2N16 = htmlDiagram.get('LambdaMorphism', {preCurry:html2N16, domFactors:[], homFactors:[0]});
-//	PlaceMorphism(args, N_html2N16);
 	N_html2N16.incrRefcnt();
 
 	const strXN_html2N16 = htmlDiagram.prod(str, N_html2N16.codomain);
@@ -1525,7 +1515,6 @@ function %Type(args)
 	}).to;
 
 	const N_html2Z = htmlDiagram.get('LambdaMorphism', {preCurry:html2Z, domFactors:[], homFactors:[0]});
-//	PlaceMorphism(args, N_html2Z);
 	N_html2Z.incrRefcnt();
 
 	const strXN_html2Z = htmlDiagram.prod(str, N_html2Z.codomain);
@@ -1541,7 +1530,6 @@ function %Type(args)
 `,
 	}).to;
 	const N_html2F = htmlDiagram.get('LambdaMorphism', {preCurry:html2F, domFactors:[], homFactors:[0]});
-//	PlaceMorphism(args, N_html2F);
 	N_html2F.incrRefcnt();
 	const strXN_html2F = htmlDiagram.prod(str, N_html2F.codomain);
 	domain = htmlDiagram.prod(html, htmlDiagram.coprod(F, one));
