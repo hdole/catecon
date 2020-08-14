@@ -71,6 +71,7 @@ else
 
 class D2
 {
+	#foo = '38';
 	constructor(x = 0, y = 0)
 	{
 		if (typeof x === 'object')
@@ -1876,7 +1877,7 @@ class Amazon extends Cloud
 			this.userPool = new ACI.CognitoUserPool(poolInfo);
 			this.user = this.userPool.getCurrentUser();
 		}
-		else if (AmazonCognitoIdentity !== undefined)
+		else if (AmazonCognitoIdentity)
 		{
 			this.userPool = new AmazonCognitoIdentity.CognitoUserPool(poolInfo);
 			this.user = this.userPool.getCurrentUser();
@@ -1899,7 +1900,7 @@ class Amazon extends Cloud
 					// TODO merge with login()
 					if (err)
 					{
-						console.log('getUser error', err);
+						console.error('getUser error', err);
 						return;
 					}
 					R.user.name = data.Username;
@@ -3537,7 +3538,7 @@ ${button}
 	static RecordError(err)
 	{
 		let txt = U.GetError(err);
-		console.log('Error: ', txt);
+		console.error(txt);
 		if (isGUI)
 		{
 			if (typeof err === 'object' && 'stack' in err && err.stack !== '')
@@ -3549,11 +3550,7 @@ ${button}
 		else
 			process.exit(1);
 	}
-	static ShowDiagramRoot()
-	{
-		D.diagramSVG.style.display = 'block';
-	}
-	static UpdateDiagramDisplay(e)
+	static UpdateDiagramDisplay(e)		// event handler
 	{
 		const args = e.detail;
 		const diagram = args.diagram;
@@ -3575,32 +3572,30 @@ ${button}
 				break;
 		}
 	}
-	static UpdateMorphismDisplay(e)
+	static UpdateMorphismDisplay(e)		// event handler
 	{
 		D.UpdateDisplay(e);
 		const args = e.detail;
-		const diagram = args.diagram;
-//		if (!diagram || diagram !== R.diagram)
-//			return;
-		const element = args.element;
-		switch(args.command)
+		const {command, diagram, dual, element, old} = args;
+		const {domain, codomain} = element;
+		switch(command)
 		{
 			case 'new':
 				if (element instanceof DiagramMorphism)
 				{
 					element.update();
-					diagram.domain.updateHomset(element.domain, element.codomain);
+					diagram.domain.updateHomset(domain, codomain);
 				}
 				break;
 			case 'detach':
-				diagram.domain.updateHomset(args.old, args.dual ? element.domain : element.codomain);
-				diagram.domain.updateHomset(args.old, args.dual ? element.codomain : element.domain);
+				diagram.domain.updateHomset(old, dual ? domain : codomain);
+				diagram.domain.updateHomset(old, dual ? codomain : domain);
 				break;
 			default:
 				break;
 		}
 	}
-	static UpdateObjectDisplay(e)
+	static UpdateObjectDisplay(e)		// event handler
 	{
 		D.UpdateDisplay(e);
 		const args = e.detail;
@@ -3638,14 +3633,13 @@ ${button}
 				break;
 		}
 	}
-	static UpdateTextDisplay(e)
+	static UpdateTextDisplay(e)		// event handler
 	{
 		D.UpdateDisplay(e);
 		const args = e.detail;
-		const diagram = args.diagram;
+		const {diagram, element} = args;
 		if (!diagram)
 			return;
-		const element = args.element;
 		switch(args.command)
 		{
 			case 'move':
@@ -3692,9 +3686,7 @@ ${button}
 		if (notUs)	// for booting
 		{
 			if (R.diagram)
-//				R.diagram.svgRoot.style.display = 'none';
 				R.diagram.svgRoot.classList.add('hidden');
-//			diagram.svgRoot.style.display = 'block';
 			diagram.svgRoot.classList.remove('hidden');
 		}
 		const svg = diagram.svgRoot;
@@ -3734,9 +3726,7 @@ ${button}
 		if (notUs)
 		{
 			if (R.diagram)
-//				R.diagram.svgRoot.style.display = 'block';
 				R.diagram.svgRoot.classList.remove('hidden');
-//			diagram.svgRoot.style.display = 'none';
 			diagram.svgRoot.classList.add('hidden');
 		}
 	}
