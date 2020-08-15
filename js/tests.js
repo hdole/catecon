@@ -22,6 +22,7 @@ Cat.D.url = window.URL || window.webkitURL || window;
 
 const halfFontHeight = Cat.D.default.font.height / 2;
 const grid = Cat.D.default.arrow.length;
+const descriptionText = 'This is a test and only a test';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -120,24 +121,61 @@ function checkIndexMorphism(assert, diagram, args)
 
 function checkSelected(assert, element)
 {
-	const id = element.elementId();
+	assert.ok(diagram.selected.includes(element), 'Selected element is in the diagram selected array');
+	const id = '#' + element.elementId();
 	if (element instanceof Cat.DiagramMorphism)
 	{
-		assert.dom('#' + id).exists('DiagramMorphism <g> exists');
-		assert.dom('#' + id + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not show select class');
-		assert.dom('#' + id + '_path').hasClass('selected', 'Selected morphism path has select class');
-		assert.dom('#' + id + '_name').hasClass('selected', 'Selected morphism name has select class');
-		assert.ok(diagram.selected.includes(element), 'Selected morphism is in the diagram selected array');
+		assert.dom(id).exists('DiagramMorphism <g> exists');
+		assert.dom(id + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not show select class');
+		assert.dom(id + '_path').hasClass('selected', 'Selected morphism path has select class');
+		assert.dom(id + '_name').hasClass('selected', 'Selected morphism name has select class');
 	}
 	else if (element instanceof Cat.DiagramObject)
 	{
-		const svg = document.getElementById(element.elementId());
-		assert.dom(svg).hasTagName('text', 'text tag ok').
+		assert.dom(id).hasTagName('text', 'text tag ok').
 			hasAttribute('text-anchor', 'middle', 'text-anchor ok').
 			hasAttribute('x', element.x.toString(), 'x ok').
 			hasAttribute('y', (element.y + halfFontHeight).toString(), 'y ok').
 			hasClass('object', 'object class ok').hasClass('grabbable', 'grabbable class ok').hasClass('selected', 'selected class ok').
 			hasText(Cat.H3.span(element.to.properName).innerText, 'Proper name ok');
+	}
+	else if (element instanceof Cat.DiagramText)
+	{
+		assert.dom(id).hasTagName('g', 'text tag ok').
+			hasAttribute('text-anchor', 'left', 'text-anchor ok').
+			hasAttribute('transform', `translate(${element.x} ${element.y})`, 'g translate ok').
+			hasClass('diagramText', 'diagramText class ok').hasClass('grabbable', 'grabbable class ok').hasClass('selected', 'selected class ok').
+			hasText(Cat.H3.span(element.description).innerText, 'description ok');
+	}
+}
+
+function checkNotSelected(assert, element)
+{
+	assert.ok(!diagram.selected.includes(element), 'Selected element is not in the diagram selected array');
+	const id = '#' + element.elementId();
+	if (element instanceof Cat.DiagramMorphism)
+	{
+		assert.dom(id).exists('DiagramMorphism <g> exists');
+		assert.dom(id + '_path2').doesNotHaveClass('selected', 'Selected morphism path2 does not have select class');
+		assert.dom(id + '_path').doesNotHaveClass('selected', 'Selected morphism path does not have select class');
+		assert.dom(id + '_name').doesNotHaveClass('selected', 'Selected morphism name does not have select class');
+	}
+	else if (element instanceof Cat.DiagramObject)
+	{
+		assert.dom(id).hasTagName('text', 'text tag ok').
+			hasAttribute('text-anchor', 'middle', 'text-anchor ok').
+			hasAttribute('x', element.x.toString(), 'x ok').
+			hasAttribute('y', (element.y + halfFontHeight).toString(), 'y ok').
+			hasClass('object', 'object class ok').hasClass('grabbable', 'grabbable class ok').doesNotHaveClass('selected', 'not selected class ok').
+			hasText(Cat.H3.span(element.to.properName).innerText, 'Proper name ok');
+	}
+	else if (element instanceof Cat.DiagramText)
+	{
+		assert.dom(id).hasTagName('text', 'text tag ok').
+			hasAttribute('text-anchor', 'left', 'text-anchor ok').
+			hasAttribute('transform', `translate(${element.x} ${element.y})`, 'g translate ok').
+			hasClass('diagramText', 'diagramText class ok').hasClass('grabbable', 'grabbable class ok').doesNotHaveClass('selected', 'not selected class ok').
+			hasText(Cat.H3.span(element.description).innerText, 'description ok');
 	}
 }
 
@@ -220,7 +258,24 @@ function procit(text)
 
 function simMouseEvent(elt, type, args)
 {
-	const event = new MouseEvent(type, args);
+	const nuArgs = Cat.U.Clone(args);
+	if (!('bubbles' in args))
+		nuArgs.bubbles = true;
+	const event = new MouseEvent(type, nuArgs);
+	const cancelled = !elt.dispatchEvent(event);
+	if (cancelled)
+	{
+//		alert("cancelled");
+	}
+	else
+	{
+//		alert("not cancelled");
+	}
+}
+
+function simKeyboardEvent(elt, type, args)
+{
+	const event = new KeyboardEvent(type, args);
 	const cancelled = !elt.dispatchEvent(event);
 	if (cancelled)
 	{
@@ -244,6 +299,10 @@ function checkConnector(assert, obj)
 {
 	assert.equal(obj.domains.size, 1, `connector ${obj.name} domains size ok`);
 	assert.equal(obj.codomains.size, 1, `connector ${obj.name} codomains size ok`);
+}
+
+function selectElement(element)
+{
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,7 +500,7 @@ test('SetupActions', assert =>
 	const Actions = $CAT.getElement('Actions');
 	const categoryDiagram = $CAT.getElement('category');
 	assert.ok(categoryDiagram instanceof Cat.Diagram, 'category diagram is a diagram');
-	let args = {basename:'category', name:'category', codomain:Actions, description:'diagram for a category', user:'sys'};
+	let args = {basename:'category', name:'sys/category', codomain:Actions, description:'diagram for a category', user:'sys'};
 	checkArgs(assert, categoryDiagram, args);
 	const categoryActions = ["identity", "graph", "name", "composite", "detachDomain", "detachCodomain", "homRight", "homLeft", "homset", "delete", "copy", "flipName", "help",
 		"javascript", "cpp", "run", "alignHorizontal", "alignVertical", "assert"];
@@ -482,7 +541,7 @@ test('PFS', assert =>
 
 test('Initialize cloud', assert =>
 {
-	Cat.R.InitCloud();
+	Cat.R.NewCloud();
 	assert.ok(Cat.R.cloud, 'Cloud exists');
 	const didit = assert.async();
 	Cat.R.cloud.load(function()
@@ -1443,12 +1502,13 @@ test('check emphasis', assert =>
 	assert.dom(o1.svg).doesNotHaveClass('emphasis', 'object emphasis removed ok');
 	// morphism emphasis
 	const m1 = diagram.getElement('tester/test/m_1');
-	simMouseEvent(m1.svg_name, 'mouseenter', {clientX:o1.x, clientY:o1.y});
+	const args = {clientX:Number.parseInt(m1.svg_name.getAttribute('x')), clientY:Number.parseInt(m1.svg_name.getAttribute('y'))};
+	simMouseEvent(m1.svg_name, 'mouseenter', args);
 	assert.dom(m1.svg).hasClass('emphasis', 'morphism top g emphasis ok');
 	assert.dom(m1.svg_path2).doesNotHaveClass('emphasis', 'morphism path2 no emphasis ok');
 	assert.dom(m1.svg_path).hasClass('emphasis', 'morphism path emphasis ok');
 	assert.dom(m1.svg_name).hasClass('emphasis', 'morphism name emphasis ok');
-	simMouseEvent(m1.svg_name, 'mouseleave', {clientX:o1.x, clientY:o1.y});
+	simMouseEvent(m1.svg_name, 'mouseleave', args);
 	assert.dom(m1.svg).doesNotHaveClass('emphasis', 'morphism top g emphasis ok');
 	assert.dom(m1.svg_path2).doesNotHaveClass('emphasis', 'morphism path2 no emphasis ok');
 	assert.dom(m1.svg_path).doesNotHaveClass('emphasis', 'morphism path emphasis ok');
@@ -1497,14 +1557,14 @@ test('fuse domain and codomain', assert =>
 	const o18 = diagram.getElement('tester/test/o_18');	// codomain
 	const o19 = diagram.getElement('tester/test/o_19');	// domain
 	// fuse domain
-	simMouseEvent(document, 'mousemove', {clientX:o19.x, clientY:o19.y});
+	simMouseEvent(o19.svg, 'mousemove', {clientX:o19.x, clientY:o19.y});
 	simMouseEvent(o19.svg, 'mouseenter', {clientX:o19.x, clientY:o19.y});
 	simMouseEvent(o19.svg, 'mousedown', {clientX:o19.x, clientY:o19.y});
 	simMouseEvent(o15.svg, 'mouseenter', {clientX:o15.x, clientY:o15.y});
 	simMouseEvent(o19.svg, 'mousemove', {clientX:o15.x, clientY:o15.y});
 	assert.equal(o19.x, o15.x, 'moved x ok');
 	assert.equal(o19.y, o15.y, 'moved x ok');
-	assert.dom(o15.svg).hasClass('emphasis', 'target emphasis ok');
+//	assert.dom(o15.svg).hasClass('emphasis', 'target emphasis ok');
 	assert.dom(o19.svg).hasClass('emphasis', 'drop emphasis ok').hasClass('fuseObject', 'drop fuseObject class ok').hasClass('glow', 'drop glow class ok');
 	simMouseEvent(o19.svg, 'mouseup', {clientX:o15.x, clientY:o15.y});
 	simMouseEvent(o15.svg, 'mouseleave', {clientX:o15.x, clientY:o15.y});
@@ -1513,7 +1573,7 @@ test('fuse domain and codomain', assert =>
 	assert.equal(o19.svg.parentNode, null, 'o_19.svg parent node is null');
 	checkConnector(assert, o15);
 	// fuse codomain
-	simMouseEvent(document, 'mousemove', {clientX:o18.x, clientY:o18.y});
+	simMouseEvent(o18.svg, 'mousemove', {clientX:o18.x, clientY:o18.y});
 	simMouseEvent(o18.svg, 'mouseenter', {clientX:o18.x, clientY:o18.y});
 	simMouseEvent(o18.svg, 'mousedown', {clientX:o18.x, clientY:o18.y});
 	simMouseEvent(o16.svg, 'mouseenter', {clientX:o16.x, clientY:o16.y});
@@ -1528,4 +1588,60 @@ test('fuse domain and codomain', assert =>
 	assert.equal(o18.refcnt, 0, 'o_18 deleted ok');
 	assert.equal(o18.svg.parentNode, null, 'o_18.svg parent node is null');
 	checkConnector(assert, o16);
+});
+
+test('Default toolbar nothing selected', assert =>
+{
+	// click on nothing
+	simMouseEvent(diagram.svgRoot, 'mousedown', {clientX:3 * grid, clientY:2 * grid});
+	simMouseEvent(diagram.svgRoot, 'mouseup', {clientX:3 * grid, clientY:2 * grid});
+	assert.equal(diagram.selected.length, 0, 'Nothing selected ok');
+	checkToolbarButtons(assert, ['moveToolbar', 'newDiagram', 'newObject', 'newMorphism', 'newText', 'toolbarShowSearch', 'closeToolbar']);
+	diagram.domain.elements.forEach(elt => checkNotSelected(assert, elt));
+});
+
+test('ControlKeyA select everything', assert =>
+{
+	// controlKeyA
+	simKeyboardEvent(document.body, 'keydown', {ctrlKey:true, code:'KeyA', key:'a'});
+	simKeyboardEvent(document.body, 'keyup', {ctrlKey:true, code:'KeyA', key:'a'});
+	diagram.domain.elements.forEach(elt => checkSelected(assert, elt));
+	// click on nothing
+	simMouseEvent(diagram.svgRoot, 'mousedown', {clientX:3 * grid, clientY:2 * grid});
+	simMouseEvent(diagram.svgRoot, 'mouseup', {clientX:3 * grid, clientY:2 * grid});
+	diagram.domain.elements.forEach(elt => checkNotSelected(assert, elt));
+});
+
+test('DiagramText', assert =>
+{
+	// click on nothing
+	simMouseEvent(diagram.svgRoot, 'mousedown', {clientX:3 * grid, clientY:2 * grid});
+	simMouseEvent(diagram.svgRoot, 'mouseup', {clientX:3 * grid, clientY:2 * grid});
+	assert.equal(diagram.selected.length, 0, 'nothing selected ok');
+	const textBtn = getToolbarButton('newText');
+	// click text button
+	getButtonClick(textBtn)();
+	const help = Cat.D.toolbar.help;
+	assert.dom(help.firstChild).hasTagName('div', 'div tag ok');
+	assert.dom(help.firstChild.firstChild).hasTagName('h5', 'h5 tag ok');
+	const desc = document.getElementById('new-description');
+	assert.dom(desc).hasTagName('input').hasValue('', 'no value ok').hasClass('in100', 'class in100 ok').hasProperty('title', 'Description', 'title ok').
+		hasProperty('placeholder', 'Description', 'placeholder ok');
+	assert.equal(document.activeElement, desc, 'description focus ok');
+	desc.value = descriptionText;
+	simKeyboardEvent(desc, 'keydown', {code:'Enter', key:'Enter'});
+	simKeyboardEvent(desc, 'keyup', {code:'Enter', key:'Enter'});
+	const t0 = diagram.getElement('tester/test/t_0');
+	assert.ok(t0 instanceof Cat.DiagramText, 'DiagramText ok');
+	assert.equal(t0.x, Cat.D.toolbar.mouseCoords.x, 'text x match toolbar mouseCoords x ok');
+	assert.equal(t0.y, Cat.D.toolbar.mouseCoords.y, 'text x match toolbar mouseCoords y ok');
+	checkSelected(assert, t0);
+	const textG = document.getElementById(t0.elementId());
+	assert.equal(t0.svg, textG, 'svg equality');
+	const texts = [...textG.querySelectorAll('text')];
+	assert.equal(texts.length, 1, 'one text ok');
+	let text = texts[0];
+	assert.dom(text).hasAttribute('text-anchor', 'left', 'text-anchor ok').hasClass('diagramText', 'class diagramText ok').hasClass('grabbable', 'class grabbable ok').
+		hasText(t0.description).hasStyle({'font-size':'24px', 'font-weight':'400'}, 'text style ok');
+
 });
