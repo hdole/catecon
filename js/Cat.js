@@ -69,7 +69,6 @@ else
 
 class D2
 {
-	#foo = '38';
 	constructor(x = 0, y = 0)
 	{
 		if (typeof x === 'object')
@@ -1753,12 +1752,12 @@ Object.defineProperties(R,
 	JsonDiagrams:		{value:new Map(),	writable:false},	// diagrams presented as json
 	LoadingDiagrams:	{value:new Set(),	writable:true},		// diagrams waiting to be loaded
 	LocalDiagrams:		{value:new Map(),	writable:false},	// diagrams stored locally
-	diagram:			{value:null,	writable:true},		// current diagram
-	initialized:		{value:false,	writable:true},		// Have we finished the boot sequence and initialized properly?
+	diagram:			{value:null,		writable:true},		// current diagram
+	initialized:		{value:false,		writable:true},		// Have we finished the boot sequence and initialized properly?
 	ReplayCommands:		{value:new Map(),	writable:false},
 	ServerDiagrams:		{value:new Map(),	writable:false},
-	sync:				{value:false,	writable:true},		// when to turn on sync of gui and local storage
-	url:				{value:'',		writable:true},
+	sync:				{value:false,		writable:true},		// when to turn on sync of gui and local storage
+	url:				{value:'',			writable:true},
 	user:
 	{
 		value:
@@ -12243,14 +12242,10 @@ class DiagramMorphism extends Morphism
 	}
 	showSelected(state = true)
 	{
-		try
-		{
-			this.svg_path.classList[state ? 'add' : 'remove']('selected');
-			this.svg_name.classList[state ? 'add' : 'remove']('selected');
-			this.svg && this.svg.classList[state ? 'add' : 'remove']('selected');
-			this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
-		}
-		catch() {}
+		this.svg_path.classList[state ? 'add' : 'remove']('selected');
+		this.svg_name.classList[state ? 'add' : 'remove']('selected');
+		this.svg.classList[state ? 'add' : 'remove']('selected');
+		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);	// move front or back depending on state
 	}
 	updateFusible(e, on)
 	{
@@ -12465,17 +12460,6 @@ class DiagramMorphism extends Morphism
 	{
 		return false;
 	}
-//	removeGraph()
-//	{
-//		const id = this.graphId();
-//		const svgElt = document.getElementById(id);
-//		if (svgElt !== null)
-//		{
-//			svgElt.remove();
-//			return true;
-//		}
-//		return false;
-//	}
 	removeGraph()
 	{
 		if ('graph' in this)
@@ -12815,7 +12799,6 @@ class IndexCategory extends Category
 	process(diagram, data)
 	{
 		super.process(diagram, data);
-//		this.postProcess(diagram);
 	}
 	help()
 	{
