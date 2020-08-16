@@ -214,7 +214,7 @@ function getToolbarButton(name)
 
 function checkButton(assert, btn, name, title)
 {
-	assert.dom(btn).hasTagName('span').hasClass('button', `Button ${name} class ok`).hasAttribute('title', title, 'Title ok');
+	assert.dom(btn).hasTagName('span').hasClass('button', `Button ${name} class ok`).hasAttribute('title', title, 'Title ok').hasStyle({'vertical-align':'middle'});
 	assert.equal(btn.dataset.name, name, 'Name ok');
 	const svg = btn.firstElementChild;
 	assert.dom(svg).hasTagName('svg', 'Svg ok');
@@ -265,6 +265,12 @@ function simMouseEvent(elt, type, args)
 	elt.dispatchEvent(event);
 }
 
+function simMouseClick(elt, args)
+{
+	simMouseEvent(elt, 'mousedown', {clientX:950, clientY:400});
+	simMouseEvent(elt, 'mouseup', {clientX:950, clientY:400});
+}
+
 function simKeyboardEvent(elt, type, args)
 {
 	const nuArgs = Cat.U.Clone(args);
@@ -308,11 +314,13 @@ function selectElement(assert, element)
 	checkSelected(assert, element);
 }
 
-function keyclick(element, code)
+/*
+function simKeyclick(element, code, control = false;)
 {
 	simKeyboardEvent(element, 'keydown', {code, key:code});
 	simKeyboardEvent(element, 'keyup', {code, key:code});
 }
+*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1745,4 +1753,68 @@ test('copy and delete it', assert =>
 	getButtonClick(delBtn)();
 	assert.equal(t1.svg.parentNode, null);
 	assert.equal(diagram.selected.length, 0);
+});
+
+test('new diagram', assert =>
+{
+	simMouseClick(diagram.svgRoot, {clientX:3 * grid, clientY:2 * grid});
+	const nuDgrmBtn = getToolbarButton('newDiagram');
+	assert.dom(nuDgrmBtn).hasTagName('span');
+	getButtonClick(nuDgrmBtn)();
+	const help = Cat.D.toolbar.help;
+	const div = help.firstChild;
+	assert.dom(div).hasTagName('div');
+	assert.dom(div.firstChild).hasTagName('h5').hasText('Create a new diagram');
+	const rows = [...div.querySelectorAll('tr')];
+	rows.map(r => assert.dom(r).hasClass('sidenavRow'));
+	assert.equal(rows.length, 4);
+	const basenameElt = rows[0].querySelector('input');
+	const properNameElt = rows[1].querySelector('input');
+	const descElt = rows[2].querySelector('input');
+	const codomainElt = rows[3].querySelector('select');
+	assert.dom(basenameElt).hasAttribute('id', 'new-basename').hasAttribute('title', 'Base name').hasAttribute('placeholder', 'Base name').hasValue('');
+	assert.dom(properNameElt).hasAttribute('id', 'new-properName').hasAttribute('title', 'Proper name').hasAttribute('placeholder', 'Proper name').hasValue('');
+	assert.dom(descElt).hasClass('in100').hasAttribute('id', 'new-description').hasAttribute('title', 'Description').  hasAttribute('placeholder', 'Description').hasValue('');
+	assert.dom(codomainElt).hasClass('w100').hasAttribute('id', 'new-codomain').hasValue('hdole/PFS');
+	basenameElt.value = 'test2';
+	properNameElt.value = 'TEST2';
+	descElt.value = 'second test diagram';
+	const doit = help.querySelector('span.button');
+	assert.equal(doit.dataset.name, 'action');
+//	assert.dom(doit).hasAttribute('title', 'Create a new diagram').hasStyle({'vertical-align':'middle'});
+	checkButton(assert, doit, 'action', 'Create a new diagram');
+	getButtonClick(doit)();
+	const diagramSVG = document.getElementById('diagramSVG');
+	const nuDiagram = Cat.R.$CAT.getElement('tester/test2');
+	assert.ok(nuDiagram instanceof Cat.Diagram);
+	const cnt = diagramSVG.children.length;
+	for (let i=0; i<cnt -2; ++i)
+		assert.dom(diagramSVG.children[i]).hasTagName('g').hasClass('hidden');
+	const last = diagramSVG.children[cnt -1];
+	assert.dom(last).doesNotHaveClass('hidden');
+	const id = nuDiagram.elementId();
+	assert.dom(last.firstChild).hasTagName('g').hasAttribute('id', id + '-T').hasAttribute('transform', /^translate\(.*\) scale\(.*\)$/);
+	assert.dom(last.firstChild.firstChild).hasTagName('g').hasAttribute('id', id + '-base');
+	assert.equal(last.firstChild.firstChild.children.length, 0);
+	// navbar diagram name
+	const navbar = document.getElementById('diagram-navbar');
+	assert.equal(navbar.firstChild.nodeValue, 'TEST2');
+	assert.dom(navbar.firstChild.nextSibling).hasTagName('span').hasClass('italic').hasText('by tester');
+});
+
+test('Diagram panel', assert =>
+{
+	simKeyboardEvent(document.body, 'keydown', {ctrlKey:true, code:'KeyD', key:'d'});
+	simKeyboardEvent(document.body, 'keyup', {ctrlKey:true, code:'KeyD', key:'d'});
+	const panel = document.getElementById('diagram-sidenav');
+	assert.dom(panel).hasTagName('div').hasClass('sidenavPnl').hasClass('sidenavLeftPnl').isNotVisible();	// TODO should become visible
+});
+
+test('Diagram panel user section', assert =>
+{
+	const userSection = document.getElementById('diagram-user-section');
+	assert.dom(userSection).hasTagName('div').hasClass('section').hasStyle({display:'none'});
+	assert.equal(userSection.children.length, 2);
+	assert.dom(userSection.firstChild).hasTagName('span');
+	assert.equal(userSection.firstChild.children.length, 0);
 });
