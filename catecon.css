@@ -558,21 +558,6 @@ table.center
 	fill-opacity:	0.5;
 }
 
-table.buttonBar
-{
-	background-color:	#fff;
-	border-spacing:		0px;
-	border-collapse:	collapse;
-	padding:			0px;
-	width:				auto;
-}
-
-td.buttonBar
-{
-	padding:			0px;
-	vertical-align:		top;
-}
-
 .white
 {
 	background-color:	#fff;
@@ -580,37 +565,28 @@ td.buttonBar
 
 .button
 {
-	vertical-align:	middle;
+	background-color:	#fff;
+	border-spacing:		0px;
+	border-collapse:	collapse;
+	padding:			0px;
+	width:				auto;
+	vertical-align:		middle;
 }
 
 .buttonBarRight
 {
-	background-color:	#fff;
-	border-collapse:	collapse;
-	box-shadow:			2px 2px 2px 2px #bbbb;
-	width:			auto;
 	margin-right:	0px;
 	margin-left:	auto;
 	padding:		0px;
+	text-align:			right;
 }
 
 .buttonBarLeft
 {
-	background-color:	#fff;
-	border-collapse:	collapse;
-	box-shadow:			2px 2px 2px 2px #bbbb;
-	width:				auto;
 	margin-right:		auto;
 	margin-left:		0px;
 	padding:			0px;
-}
-
-.buttonBar
-{
-	background-color:	#fff;
-	border-collapse:	collapse;
-	width:				auto;
-	padding:			0px;
+	text-align:			left;
 }
 
 .svg
