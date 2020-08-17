@@ -2257,25 +2257,24 @@ class Navbar
 		this.element = document.getElementById('navbar');
 		const sz = D.default.button.large;
 		const left =
-			H.td(H.div(D.GetButton('diagramPaenlToggle', 'diagram', "Cat.D.diagramPanel.toggle()", 'Diagrams', sz))) +
-			H.td(H.div(D.GetButton('categoryPanelToggle', 'category', "Cat.D.categoryPanel.toggle()", 'Categories', sz))) +
-			H.td(H.div(D.GetButton('objectPanelToggle', 'object', "Cat.D.objectPanel.toggle()", 'Objects', sz))) +
-			H.td(H.div(D.GetButton('morphismPanelToggle', 'morphism', "Cat.D.morphismPanel.toggle()", 'Morphisms', sz))) +
-			H.td(H.div(D.GetButton('textPanelToggle', 'text', "Cat.D.textPanel.toggle()", 'Text', sz))) +
-			H.td(H.div(D.GetButton('showGraphs', 'string', "Cat.R.diagram.showGraphs()", 'Graph', sz)));
+			D.GetButton('diagramPaenlToggle', 'diagram', "Cat.D.diagramPanel.toggle()", 'Diagrams', sz) +
+			D.GetButton('categoryPanelToggle', 'category', "Cat.D.categoryPanel.toggle()", 'Categories', sz) +
+			D.GetButton('objectPanelToggle', 'object', "Cat.D.objectPanel.toggle()", 'Objects', sz) +
+			D.GetButton('morphismPanelToggle', 'morphism', "Cat.D.morphismPanel.toggle()", 'Morphisms', sz) +
+			D.GetButton('textPanelToggle', 'text', "Cat.D.textPanel.toggle()", 'Text', sz) +
+			D.GetButton('showGraphs', 'string', "Cat.R.diagram.showGraphs()", 'Graph', sz);
 		const right =
-			H.td(H.div(D.GetButton('homeView', 'cateapsis', "Cat.R.diagram.home()", 'Home', sz))) +
-			H.td(H.div(D.GetButton('threeDPanelToggle', 'threeD', "Cat.D.threeDPanel.toggle()", '3D view', sz))) +
-			H.td(H.div(D.GetButton('ttyPanelToggle', 'tty', "Cat.D.ttyPanel.toggle()", 'Console', sz))) +
-			H.td(H.div(D.GetButton('helpPanelToggle', 'help', "Cat.D.helpPanel.toggle()", 'Help', sz))) +
-			H.td(H.div(D.GetButton('loginPanelToggle', 'login', "Cat.D.loginPanel.toggle()", 'Login', sz))) +
-			H.td(H.div(D.GetButton('settingsPanelToggle', 'settings', "Cat.D.settingsPanel.toggle()", 'Settings', sz))) +
-			H.td('&nbsp;&nbsp;&nbsp;');		// TODO for weird spacing problem with navbar
-		const html = H.table(H.tr(	H.td(H.table(H.tr(left), 'buttonBar'), 'w20', '', '', 'align="left"') +
+			D.GetButton('homeView', 'cateapsis', "Cat.R.diagram.home()", 'Home', sz) +
+			D.GetButton('threeDPanelToggle', 'threeD', "Cat.D.threeDPanel.toggle()", '3D view', sz) +
+			D.GetButton('ttyPanelToggle', 'tty', "Cat.D.ttyPanel.toggle()", 'Console', sz) +
+			D.GetButton('helpPanelToggle', 'help', "Cat.D.helpPanel.toggle()", 'Help', sz) +
+			D.GetButton('loginPanelToggle', 'login', "Cat.D.loginPanel.toggle()", 'Login', sz) +
+			D.GetButton('settingsPanelToggle', 'settings', "Cat.D.settingsPanel.toggle()", 'Settings', sz);
+		const html = H.table(H.tr(	H.td(left, 'buttonBarLeft') +
 									H.td(H.span('', 'navbar-inset', 'category-navbar'), 'w20') +
 									H.td(H.span('Catecon', 'title'), 'w20') +
 									H.td(H.span('', 'navbar-inset', 'diagram-navbar'), 'w20') +
-									H.td(H.table(H.tr(right), 'buttonBar', '', '', 'align="right"'), 'w20')), 'navbarTbl');
+									H.td(right, 'buttonBarRight')));
 		this.element.innerHTML = html;
 		this.categoryElt = document.getElementById('category-navbar');
 		this.diagramElt = document.getElementById('diagram-navbar');
@@ -3116,7 +3115,6 @@ class D
 								D.dragClone = true;
 							}
 						}
-//						else if (D.mouse.delta().nonZero())
 						else
 						{
 							if (D.tool === 'select')
@@ -3349,21 +3347,21 @@ class D
 	static DownloadButton(txt, onclick, title, scale = D.default.button.small)
 	{
 		const html = H.span(D.SvgHeader(scale) + D.svg.download +
-`<text text-anchor="middle" x="160" y="280" style="font-size:120px;stroke:#000;">${txt}</text>
+`<text text-anchor="middle" x="160" y="280" style="font-size:110px;stroke:#000;">${txt}</text>
 ${D.Button(onclick)}
-</svg>`, '', '', title);
+</svg>`, 'button', '', title, `data-name="download-${txt}"`);
 		return html;
 	}
 	static DownloadButton3(txt, onclick, title, scale = D.default.button.small)
 	{
 		const v = 0.32 * (scale !== undefined ? scale : 1.0);
-		return H3.svg({title, width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"},
+		return H3.span(H3.svg({title, width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"},
 			[
 				H3.rect({x:0, y:0, width:320, height:320, style:'fill:white'}),
 				D.svg.download3(),
 				H3.text({'text-anchor':'middle', x:160, y:280, style:'font-size:120px;stroke:#000;'}, txt),
 				H3.rect({class:'btn', x:0, y:0, width:320, height:320, onclick})
-			]);
+			]), {'data-name':`download-${txt}`});
 	}
 	static GetButton(name, buttonName, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
 	{
@@ -3455,26 +3453,16 @@ ${button}
 		}
 		document.body.addEventListener('keydown', function(e)
 		{
-//			if (e.target === document.body)
-//			{
-				const name = getKeyName(e);
-				if (name in D.keyboardDown)
-					D.keyboardDown[name](e);
-				else
-				{
-					// TODO look up key stroke in basenames
-				}
-//			}
+			const name = getKeyName(e);
+			if (name in D.keyboardDown)
+				D.keyboardDown[name](e);
 		});
 		document.body.addEventListener('keyup', function(e)
 		{
-//			if (e.target === document.body)
-//			{
-				D.setCursor();
-				const name = getKeyName(e);
-				if (name in D.keyboardUp)
-					D.keyboardUp[name](e);
-//			}
+			D.setCursor();
+			const name = getKeyName(e);
+			if (name in D.keyboardUp)
+				D.keyboardUp[name](e);
 		});
 		document.addEventListener('wheel', function(e)
 		{
@@ -4549,7 +4537,6 @@ object3()
 	return H3.circle({cx:"160", cy:"160", r:"160", fill:"url(#radgrad1)"});
 },
 play:
-//`<polygon fill="black" points="60,60 220,160 60,260"/>`,
 `<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;">&#9654;</text>`,
 recursion:
 `<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
@@ -4792,7 +4779,7 @@ class Panel
 	}
 	closeBtnCell()
 	{
-		return H.td(D.GetButton('panelClose', 'close', `Cat.D.${this.name}Panel.close()`, 'Close'), 'buttonBar');
+		return D.GetButton('panelClose', 'close', `Cat.D.${this.name}Panel.close()`, 'Close');
 	}
 	expand(exp = 'auto')
 	{
@@ -4827,7 +4814,7 @@ class Panel
 	}
 	expandPanelBtn()
 	{
-		return H.td(D.GetButton('panelExpand', this.right ? 'chevronLeft' : 'chevronRight', `Cat.D.${this.name}Panel.expand()`, 'Expand'), 'buttonBar', `${this.name}-expandBtn`);
+		return D.GetButton('panelExpand', this.right ? 'chevronLeft' : 'chevronRight', `Cat.D.${this.name}Panel.expand()`, 'Expand', undefined, undefined, `${this.name}-expandBtn`);
 	}
 	update()	// fitb
 	{}
@@ -4980,7 +4967,7 @@ class CategoryPanel extends Panel
 	{
 		super('category');
 		this.elt.innerHTML =
-			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarRight') +
+			H.table(H.tr(H.td(this.closeBtnCell() + this.expandPanelBtn(), 'buttonBarRight'))) +
 			H.h3(H.span('Category')) +
 			H.h4(H.tag('basename', '') + H.span('', '', 'category-basename-edit')) +
 			H.h4(H.tag('proper-name', '') + H.span('', '', 'category-properName-edit')) +
@@ -5038,18 +5025,14 @@ class ThreeDPanel extends Panel
 		this.axesHelperSize =	1000;
 		this.max =		10000;
 		this.horizon =	100000;
-		this.elt.innerHTML = H.table(
-								H.tr(
-									this.closeBtnCell() +
-									this.expandPanelBtn() +
-									H.td(D.GetButton('threeDClear', 'delete', "Cat.D.threeDPanel.initialize()", 'Clear display'), 'buttonBar') +
-									H.td(D.GetButton('threeDLeft', 'threeD_left', "Cat.D.threeDPanel.view('left')", 'Left'), 'buttonBar') +
-									H.td(D.GetButton('threeDtop', 'threeD_top', "Cat.D.threeDPanel.view('top')", 'Top'), 'buttonBar') +
-									H.td(D.GetButton('threeDback', 'threeD_back', "Cat.D.threeDPanel.view('back')", 'Back'), 'buttonBar') +
-									H.td(D.GetButton('threeDright', 'threeD_right', "Cat.D.threeDPanel.view('right')", 'Right'), 'buttonBar') +
-									H.td(D.GetButton('threeDbotom', 'threeD_bottom', "Cat.D.threeDPanel.view('bottom')", 'Bottom'), 'buttonBar') +
-									H.td(D.GetButton('threeDfront', 'threeD_front', "Cat.D.threeDPanel.view('front')", 'Front'), 'buttonBar')
-								), 'buttonBarLeft') +
+		this.elt.innerHTML = H.table(H.tr(H.td(this.closeBtnCell() +this.expandPanelBtn() +
+									D.GetButton('threeDClear', 'delete', "Cat.D.threeDPanel.initialize()", 'Clear display') +
+									D.GetButton('threeDLeft', 'threeD_left', "Cat.D.threeDPanel.view('left')", 'Left') +
+									D.GetButton('threeDtop', 'threeD_top', "Cat.D.threeDPanel.view('top')", 'Top') +
+									D.GetButton('threeDback', 'threeD_back', "Cat.D.threeDPanel.view('back')", 'Back') +
+									D.GetButton('threeDright', 'threeD_right', "Cat.D.threeDPanel.view('right')", 'Right') +
+									D.GetButton('threeDbotom', 'threeD_bottom', "Cat.D.threeDPanel.view('bottom')", 'Bottom') +
+									D.GetButton('threeDfront', 'threeD_front', "Cat.D.threeDPanel.view('front')", 'Front'), 'buttonBarLeft'))) +
 						H.div('', '', 'threeDiv');
 		this.display = document.getElementById('threeDiv');
 		this.initialized = false;
@@ -5307,11 +5290,8 @@ class LogSection extends Section
 		this.diagram = null;
 		this.logElt = null;
 		const html = H.table(H.tr(
-						H.td(D.GetButton('logClear', 'delete', 'Cat.R.diagram.clearLog(event)', 'Clear log'), 'buttonBar') +
-						H.td(D.DownloadButton('LOG', 'Cat.R.diagram.downloadLog(event)', 'Download log'), 'buttonBar')
-//						H.td(D.GetButton('play', 'Cat.D.ttyPanel.logSection.replayLog(event)', 'Play log file'), 'buttonBar') +
-//						H.td(D.GetButton('save', `Cat.R.SaveLocal(Cat.R.diagram);Cat.D.statusbar.show(event, 'Diagram saved')`, 'Save diagram'), 'buttonBar')
-					), 'buttonBarLeft') + H.hr();
+						H.td(D.GetButton('logClear', 'delete', 'Cat.R.diagram.clearLog(event)', 'Clear log') +
+							D.DownloadButton('LOG', 'Cat.R.diagram.downloadLog(event)', 'Download log'), 'buttonBarLeft'))) + H.hr();
 		this.section.innerHTML = html;
 		const that = this;
 		window.addEventListener('CAT', function(e) { e.detail.command === 'default' && that.update(); });
@@ -5409,15 +5389,13 @@ class TtyPanel extends Panel
 			H.button('Output', 'sidenavAccordion', '', 'TTY output from some composite', `onclick="Cat.D.Panel.SectionToggle(event, this, \'tty-out-section\')"`) +
 			H.div(
 				H.table(H.tr(
-					H.td(D.GetButton('ttyClear', 'delete', `Cat.D.ttyPanel.out.innerHTML = ''`, 'Clear output'), 'buttonBar') +
-					H.td(D.DownloadButton('LOG', `Cat.D.DownloadString(Cat.D.ttyPanel.out.innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBar')),
-						'buttonBarLeft') +
+					H.td(D.GetButton('ttyClear', 'delete', `Cat.D.ttyPanel.out.innerHTML = ''`, 'Clear output') +
+						D.DownloadButton('LOG', `Cat.D.DownloadString(Cat.D.ttyPanel.out.innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBarLeft'))) +
 				H.pre('', 'tty', 'tty-out'), 'section', 'tty-out-section') +
 			H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.D.Panel.SectionToggle(event, this, \'tty-error-section\')"`) +
 			H.div(H.table(H.tr(
-					H.td(D.GetButton('ttyErrorClear', 'delete', `Cat.D.ttyPanel.error.innerHTML = ''`, 'Clear errors')) +
-					H.td(D.DownloadButton('ERR', `Cat.D.DownloadString(Cat.D.ttyPanel.error.innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBar')),
-						'buttonBarLeft') +
+					H.td(D.GetButton('ttyErrorClear', 'delete', `Cat.D.ttyPanel.error.innerHTML = ''`) +
+						D.DownloadButton('ERR', `Cat.D.DownloadString(Cat.D.ttyPanel.error.innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBarLeft'))) +
 				H.span('', 'tty', 'tty-error-out'), 'section', 'tty-error-section');
 		this.initialize();
 		this.out = document.getElementById('tty-out');
@@ -5616,10 +5594,7 @@ class UserDiagramSection extends DiagramSection
 		});
 		this.sortBy = 'timestamp';
 	}
-	refresh()
-	{
-		this.diagrams.length = 0;
-	}
+	refresh() { this.diagrams.length = 0; }
 }
 
 class CatalogDiagramSection extends DiagramSection
@@ -5731,7 +5706,7 @@ class DiagramPanel extends Panel
 	constructor()
 	{
 		super('diagram');
-		const top = H3.span([H3.div({id:'diagramPanelToolbar'}),
+		const top = [H3.table(H3.tr(H3.td({id:'diagramPanelToolbar', class:'buttonBarRight'}))),
 							H3.h3(H3.span('Diagram')),
 							H3.h4([H3.span({id:'diagram-basename'}), H3.span({id:'diagram-basename-edit'})]),
 							H3.h4(H3.span({id:'diagram-category'})),
@@ -5740,8 +5715,8 @@ class DiagramPanel extends Panel
 							H3.p([H3.span({class:'description', id:'diagram-description', title:'Description'}), H3.span({id:'diagram-description-edit'})]),
 							H3.table(H3.tr([	H3.td([H3.span('By '), H3.span({id:'diagram-user'}), {class:'smallPrint'}]),
 												H3.td([H3.span({id:'diagram-timestamp'}), H3.br(), H3.span({id:'diagram-info'}), {class:'smallPrint'}])])),
-							H3.br()]);
-		this.elt.appendChild(top);
+							H3.br()];
+		top.map(elt => this.elt.appendChild(elt));
 		this.assertionSection = new AssertionSection(this.elt);
 		this.referenceSection = new ReferenceDiagramSection(this.elt);
 		this.userDiagramSection = new UserDiagramSection(this.elt);
@@ -5796,11 +5771,11 @@ class DiagramPanel extends Panel
 		if (!diagram)
 			return;
 		const isUsers = diagram && (R.user.name === diagram.user);
-		const uploadBtn = (R.user.status === 'logged-in' && R.cloud && isUsers) ? H.td(D.GetButton('diagramUpload', 'upload', 'Cat.R.diagram.upload(event)',
-			'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'), 'buttonBar') : '';
+		const uploadBtn = (R.user.status === 'logged-in' && R.cloud && isUsers) ? D.GetButton('diagramUpload', 'upload', 'Cat.R.diagram.upload(event)',
+			'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn') : '';
 		const deleteBtn = R.CanDeleteDiagram(diagram) ?
-			H.td(D.GetButton('diagramDelete', 'delete', `Cat.R.DeleteDiagram(event, '${diagram.name}')`, 'Delete diagram', D.default.button.small, false,
-				'diagram-delete-btn'), 'buttonBar') : '';
+			D.GetButton('diagramDelete', 'delete', `Cat.R.DeleteDiagram(event, '${diagram.name}')`, 'Delete diagram', D.default.button.small, false,
+				'diagram-delete-btn') : '';
 		let downcloudBtn = '';
 		if (R.diagram.refcnt <= 0 && R.cloud && R.ServerDiagrams.has(diagram.name))
 		{
@@ -5810,21 +5785,20 @@ class DiagramPanel extends Panel
 				const date = new Date(data.timestamp);
 				const tip = R.ServerDiagrams.get(diagram.name).timestamp > diagram.timestamp ? `Download newer version from cloud: ${date.toLocaleString()}` :
 					'Download older version from cloud';
-				downcloudBtn = H.td(D.GetButton('diagramReload', 'downcloud', 'Cat.R.ReloadDiagramFromServer()', tip, D.default.button.small, false, 'diagramDowncloudBtn'),
-					'buttonBar');
+				downcloudBtn = D.GetButton('diagramReload', 'downcloud', 'Cat.R.ReloadDiagramFromServer()', tip, D.default.button.small, false, 'diagramDowncloudBtn');
 			}
 		}
-		const html = H.table(H.tr(
-					(isUsers ? H.td(DiagramPanel.GetLockBtn(diagram), 'buttonBar', 'lockBtn') : '') +
+		const html = 
+					(isUsers ? H.span(DiagramPanel.GetLockBtn(diagram), '', 'lockBtn') : '') +
 					deleteBtn +
 					downcloudBtn +
 					uploadBtn +
-					H.td(D.DownloadButton('JSON', 'Cat.R.diagram.downloadJSON(event)', 'Download JSON'), 'buttonBar') +
-					H.td(D.DownloadButton('JS', 'Cat.R.diagram.downloadJS(event)', 'Download Javascript'), 'buttonBar') +
-					H.td(D.DownloadButton('C++', 'Cat.R.diagram.downloadCPP(event)', 'Download C++'), 'buttonBar') +
-					H.td(D.DownloadButton('PNG', 'Cat.R.diagram.downloadPNG(event)', 'Download PNG'), 'buttonBar') +
+					D.DownloadButton('JSON', 'Cat.R.diagram.downloadJSON(event)', 'Download JSON') +
+					D.DownloadButton('JS', 'Cat.R.diagram.downloadJS(event)', 'Download Javascript') +
+					D.DownloadButton('C++', 'Cat.R.diagram.downloadCPP(event)', 'Download C++') +
+					D.DownloadButton('PNG', 'Cat.R.diagram.downloadPNG(event)', 'Download PNG') +
 					this.expandPanelBtn() +
-					this.closeBtnCell()), 'buttonBarRight');
+					this.closeBtnCell();
 		this.diagramPanelToolbarElt.innerHTML = html;
 		this.initialize();
 	}
@@ -5875,7 +5849,7 @@ class DiagramPanel extends Panel
 	static GetLockBtn(diagram)
 	{
 		const lockable = diagram.readonly ? 'unlock' : 'lock';
-		return D.GetButton('lock', lockable, `Cat.R.diagram.${lockable}(event)`, U.Formal(lockable));
+		return D.GetButton('lock', lockable, `Cat.R.diagram.${lockable}(event)`, U.Cap(lockable));
 	}
 	static UpdateLockBtn(diagram)
 	{
@@ -5896,7 +5870,7 @@ class HelpPanel extends Panel
 		super('help', true);
 		const date = '04/11/2020 00:00:01 AM';
 		this.elt.innerHTML =
-			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarLeft') +
+			H.table(H.tr(H.td(this.closeBtnCell() + this.expandPanelBtn(), 'buttonBarLeft'))) +
 			H.h3('Catecon') +
 			H.h4('The Categorical Console')	+
 			H.p(H.small('Level 1', 'smallCaps italic'), 'txtCenter') +
@@ -5984,7 +5958,7 @@ class LoginPanel extends Panel
 	{
 		super('login', true);
 		this.elt.innerHTML =
-			H.table(H.tr(this.closeBtnCell()), 'buttonBarLeft') +
+			H.table(H.tr(H.td(this.closeBtnCell(), 'buttonBarLeft'))) +
 			H.h3('User') +
 			H.table(
 				H.tr(H.td('User:') + H.td(H.span('', 'smallBold', 'user-name'))) +
@@ -6257,7 +6231,7 @@ class ElementPanel extends Panel
 	constructor(name, title, iterator)
 	{
 		super(name);
-		this.elt.innerHTML = H.table(H.tr(this.expandPanelBtn() + this.closeBtnCell()), 'buttonBarRight') + H.h3(title);
+		this.elt.innerHTML = H.table(H.tr(H.td(this.expandPanelBtn() + this.closeBtnCell(), 'buttonBarRight'))) + H.h3(title);
 		this.showSearch();
 		this.objectSection = new DiagramElementSection('Diagram', this.elt, `diagram-${name}`, `${title} in this diagram`, title);
 		this.referenceSection = new ReferenceElementSection('References', this.elt, `diagram-reference-${name}`, `${title} referenced from this diagram`, title);
@@ -6313,7 +6287,7 @@ class SettingsPanel extends Panel
 	{
 		super('settings', true);
 		this.elt.innerHTML =
-			H.table(H.tr(this.closeBtnCell()), 'buttonBarLeft') +
+			H.table(H.tr(H.td(this.closeBtnCell(), 'buttonBarLeft'))) +
 			H.button('Settings', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-actions\')"`) +
 			H.div(
 				H.table(
@@ -6356,7 +6330,7 @@ class TextPanel extends Panel
 	{
 		super('text');
 		this.elt.innerHTML =
-			H.table(H.tr(this.expandPanelBtn() + this.closeBtnCell()), 'buttonBarRight') +
+			H.table(H.tr(H.td(this.expandPanelBtn() + this.closeBtnCell(), 'buttonBarRight'))) +
 			H.h3('Text');
 		this.textSection = new DiagramElementSection('Text', this.elt, 'diagram-object', 'Text in this diagram', 'Text');
 		this.initialize();
@@ -9806,10 +9780,6 @@ function ${jsName}_Iterator(fn)
 		return ${jsName}_Data.get(args);
 	return ${U.Token(m.recursor)}(args);
 ${tail}`;
-//						if ('data' in m)
-//							code +=
-//`
-//${header}	return ${jsName}_Data.get(args);${tail}`;
 						break;
 					case 'Distribute':
 					case 'Dedistribute':
@@ -13377,7 +13347,6 @@ class FactorMorphism extends Morphism
 			this.factors.map((f, i) =>
 			{
 				// TODO
-//				const args = {factors:[i], dual:this.dual};
 				const args = {factors:[[i]], dual:this.dual};
 				const baseArgs = {factors:[this.factors[i]], dual:this.dual};
 				if (this.dual)
@@ -13952,7 +13921,6 @@ class Diagram extends Functor
 	}
 	addElement(elt)
 	{
-//		const isIndex = elt instanceof DiagramObject || elt instanceof DiagramMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
 		const isIndex = U.IsIndexElement(elt);
 		const cat = isIndex ? this.domain : this.codomain;
 		if (cat.elements.has(elt.name))
@@ -14416,7 +14384,6 @@ class Diagram extends Functor
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:`${this.elementId()}-T`}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
-//			this.svgRoot.style.display = 'block';
 			this.domain.elements.forEach(function(elt) { this.addSVG(elt); }, this);
 		}
 		this.domain.cells.forEach(function(d) { this.addSVG(d); }, this);
@@ -14453,17 +14420,7 @@ class Diagram extends Functor
 	}
 	userToDiagramCoords(xy, orig = false)
 	{
-		/*
-		const pos = D.topSVG.getBoundingClientRect();
 		const s = 1.0 / this.viewport.scale;
-		if (isNaN(pos.left) || isNaN(this.viewport.x) || isNaN(s))
-			throw 'NaN in coords';
-		return new D2(	s * (xy.x - pos.left - (orig ? this.viewport.orig.x : this.viewport.x)),
-						s * (xy.y - pos.top -  (orig ? this.viewport.orig.y : this.viewport.y)));
-						*/
-//		const pos = D.topSVG.getBoundingClientRect();
-		const s = 1.0 / this.viewport.scale;
-//		if (isNaN(pos.left) || isNaN(this.viewport.x) || isNaN(s))
 		if (isNaN(this.viewport.x) || isNaN(s))
 			throw 'NaN in coords';
 		return new D2(	s * (xy.x - (orig ? this.viewport.orig.x : this.viewport.x)),
@@ -15630,7 +15587,6 @@ addBall(m);
 				//
 				const index = ndx.slice();
 				index.pop();
-//				scanning.push({domain:cod, currentDomain:morphs[morphs.length -1].codomain, index});
 				scanning.push({domain:cod, currentDomain, index});
 				//
 				// get the composite so far
