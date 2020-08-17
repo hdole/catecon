@@ -347,14 +347,27 @@ function simKeyclick(element, code, control = false;)
 }
 */
 
-function checkDiagramPanelEntry(assert, section, element, name)
+function checkDiagramPanelEntry(assert, section, element, dgrm)
 {
-	assert.equal(element.dataset.name);
-	const nameId = Cat.U.SafeId(name);
+	const nameId = Cat.U.SafeId(dgrm.name);
 	const id = `diagram-${section}-section-${nameId}`;
 	assert.dom(element).hasTagName('div').hasClass('grabbable').hasAttribute('id', id).hasAttribute('draggable', "true");
+	assert.equal(element.dataset.name, dgrm.name);
+	assert.ok(Number.parseInt(element.dataset.timestamp) <= dgrm.timestamp);	// TODO???
 	assert.equal(typeof element.ondragstart, 'function');
+	// table
+	const rows = element.querySelectorAll('tr');
+	assert.dom(rows[0].firstChild.firstChild).hasTagName('h4').hasText(dgrm.properName);
+	// td
+	const td = rows[1].firstChild;
+	assert.dom(td).hasTagName('td').hasClass('white').hasAttribute('colspan', '2');
+	// a
+	const aLink = td.firstChild;
+	assert.dom(aLink).hasTagName('a');
+	assert.equal(aLink.onclick.toString(), `function onclick(event) {\nCat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${dgrm.name}')\n}`);
+	// image
 	const img = element.querySelector('img');
+	assert.equal(img.parentNode, aLink);
 	assert.dom(img).hasAttribute('width', "200").hasAttribute('height', '150').hasAttribute('id', 'img-el_' + nameId);
 }
 
@@ -1766,7 +1779,9 @@ test('copy and delete it', assert =>
 	assert.equal(diagram.selected.length, 0);
 });
 
-test('new diagram', assert =>
+module('Diagram Panel');
+
+test('toolbar new diagram', assert =>
 {
 	simMouseClick(diagram.svgRoot, {clientX:3 * grid, clientY:2 * grid});
 	const nuDgrmBtn = getToolbarButton('newDiagram');
@@ -1813,15 +1828,26 @@ test('new diagram', assert =>
 	assert.dom(navbar.firstChild.nextSibling).hasTagName('span').hasClass('italic').hasText('by tester');
 });
 
-test('Diagram panel', assert =>
+test('ctrl-D open panel', assert =>
 {
 	simKeyboardEvent(document.body, 'keydown', {ctrlKey:true, code:'KeyD', key:'d'});
 	simKeyboardEvent(document.body, 'keyup', {ctrlKey:true, code:'KeyD', key:'d'});
 	const panel = document.getElementById('diagram-sidenav');
 	assert.dom(panel).hasTagName('div').hasClass('sidenavPnl').hasClass('sidenavLeftPnl').isNotVisible();	// TODO should become visible
+	const dgrmPnlTB = document.getElementById('diagramPanelToolbar')
+	const btns = dgrmPnlTB.querySelectorAll('span.button');
+	let ndx = 0;
+	checkButton(assert, btns[ndx++], 'lock', 'Lock');
+	checkButton(assert, btns[ndx++], 'diagramUpload', 'Upload to cloud');
+	checkButton(assert, btns[ndx++], 'download-JSON', 'Download JSON');
+	checkButton(assert, btns[ndx++], 'download-JS', 'Download Javascript');
+	checkButton(assert, btns[ndx++], 'download-C++', 'Download C++');
+	checkButton(assert, btns[ndx++], 'download-PNG', 'Download PNG');
+	checkButton(assert, btns[ndx++], 'panelExpand', 'Expand');
+	checkButton(assert, btns[ndx++], 'panelClose', 'Close');
 });
 
-test('Diagram panel user section', assert =>
+test('user section', assert =>
 {
 	const userSection = document.getElementById('diagram-user-section');
 	assert.dom(userSection).hasTagName('div').hasClass('section').hasStyle({display:'none'});
@@ -1835,5 +1861,24 @@ test('Diagram panel user section', assert =>
 	assert.dom(userSection).hasStyle({display:'block'});
 	const catalog = userSection.querySelector('div.catalog');
 	assert.equal(catalog.children.length, 2);
-	
+	const nuDiagram = Cat.R.$CAT.getElement('tester/test2');
+	let qry = `#diagram-user-section-${Cat.U.SafeId(nuDiagram.name)}`;
+	const test2entry = catalog.querySelector(qry);
+	checkDiagramPanelEntry(assert, 'user', test2entry, nuDiagram);
+});
+
+test('click on picture', assert =>
+{
+	qry = `#diagram-user-section-${Cat.U.SafeId(diagram.name)}`;
+	const catalog = Cat.D.diagramPanel.userDiagramSection.catalog;
+	const testEntry = catalog.querySelector(qry);
+	checkDiagramPanelEntry(assert, 'user', testEntry, diagram);
+	testEntry.querySelector('a').onclick();
+	const nuDiagram = Cat.R.$CAT.getElement('tester/test2');
+	assert.dom(nuDiagram.svgRoot).hasClass('hidden');
+	assert.dom(diagram.svgRoot).doesNotHaveClass('hidden');
+	// close diagram panel
+	const dgrmPnlTB = document.getElementById('diagramPanelToolbar')
+	const btns = dgrmPnlTB.querySelectorAll('span.button');
+	getButtonClick(btns[btns.length -1])();
 });
