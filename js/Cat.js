@@ -4670,9 +4670,11 @@ class Panels
 				return;
 			}
 			if (e.detail.command === 'hide')
+			{
 				for (const name in panels)
 					if (panels.hasOwnProperty(name))
 						panels[name].elt.style.width = '0';
+			}
 			else
 				for (const name in panels)
 					if (panels.hasOwnProperty(name))
