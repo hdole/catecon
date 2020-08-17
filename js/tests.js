@@ -314,6 +314,31 @@ function selectElement(assert, element)
 	checkSelected(assert, element);
 }
 
+function checkDiagramTextHelp(assert, textElt, height, weight)
+{
+	const help = Cat.D.toolbar.help;
+	assert.equal(help.children.length, 1, 'text help has one child');
+	const helpDiv = help.firstChild;
+	assert.dom(helpDiv).hasTagName('div').hasAttribute('id', textElt.elementId());
+	const descElt = helpDiv.firstChild;
+	assert.dom(descElt).hasTagName('description').hasClass('tty').hasAttribute('id', 'descriptionElt').hasText(textElt.description);
+	let editBtn = descElt.nextSibling;
+	assert.dom(editBtn).hasTagName('span').hasAttribute('title', 'Commit editing').hasClass('button').hasStyle({'vertical-align':'middle'});
+	const table = editBtn.nextSibling;
+	assert.dom(table).hasTagName('table');
+	const rows = [...table.querySelectorAll('tr')];
+	rows.map(r => assert.dom(r).hasClass('sidenavRow'));
+	let tds = rows[0].querySelectorAll('td');
+	assert.dom(tds[0]).hasText('Text height:');
+	const input = tds[1].firstChild;
+	assert.dom(input).hasTagName('input').hasClass('in100').hasAttribute('id', 'toolbar-help-text-height').hasAttribute('type', 'number').hasAttribute('min', '3').
+		hasAttribute('max', '500').hasAttribute('width', '8').hasValue(height);
+	tds = rows[1].querySelectorAll('td');
+	assert.dom(tds[0]).hasText('Text weight:');
+	const select = tds[1].firstChild;
+	assert.dom(select).hasTagName('select').hasValue(weight);
+}
+
 /*
 function simKeyclick(element, code, control = false;)
 {
@@ -321,6 +346,17 @@ function simKeyclick(element, code, control = false;)
 	simKeyboardEvent(element, 'keyup', {code, key:code});
 }
 */
+
+function checkDiagramPanelEntry(assert, section, element, name)
+{
+	assert.equal(element.dataset.name);
+	const nameId = Cat.U.SafeId(name);
+	const id = `diagram-${section}-section-${nameId}`;
+	assert.dom(element).hasTagName('div').hasClass('grabbable').hasAttribute('id', id).hasAttribute('draggable', "true");
+	assert.equal(typeof element.ondragstart, 'function');
+	const img = element.querySelector('img');
+	assert.dom(img).hasAttribute('width', "200").hasAttribute('height', '150').hasAttribute('id', 'img-el_' + nameId);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1631,31 +1667,6 @@ test('ControlKeyA select everything', assert =>
 
 module('DiagramText');
 
-function checkDiagramTextHelp(assert, textElt, height, weight)
-{
-	const help = Cat.D.toolbar.help;
-	assert.equal(help.children.length, 1, 'text help has one child');
-	const helpDiv = help.firstChild;
-	assert.dom(helpDiv).hasTagName('div').hasAttribute('id', textElt.elementId());
-	const descElt = helpDiv.firstChild;
-	assert.dom(descElt).hasTagName('description').hasClass('tty').hasAttribute('id', 'descriptionElt').hasText(textElt.description);
-	let editBtn = descElt.nextSibling;
-	assert.dom(editBtn).hasTagName('span').hasAttribute('title', 'Commit editing').hasClass('button').hasStyle({'vertical-align':'middle'});
-	const table = editBtn.nextSibling;
-	assert.dom(table).hasTagName('table');
-	const rows = [...table.querySelectorAll('tr')];
-	rows.map(r => assert.dom(r).hasClass('sidenavRow'));
-	let tds = rows[0].querySelectorAll('td');
-	assert.dom(tds[0]).hasText('Text height:');
-	const input = tds[1].firstChild;
-	assert.dom(input).hasTagName('input').hasClass('in100').hasAttribute('id', 'toolbar-help-text-height').hasAttribute('type', 'number').hasAttribute('min', '3').
-		hasAttribute('max', '500').hasAttribute('width', '8').hasValue(height);
-	tds = rows[1].querySelectorAll('td');
-	assert.dom(tds[0]).hasText('Text weight:');
-	const select = tds[1].firstChild;
-	assert.dom(select).hasTagName('select').hasValue(weight);
-}
-
 test('DiagramText toolbar new text', assert =>
 {
 	// click on nothing
@@ -1817,4 +1828,12 @@ test('Diagram panel user section', assert =>
 	assert.equal(userSection.children.length, 2);
 	assert.dom(userSection.firstChild).hasTagName('span');
 	assert.equal(userSection.firstChild.children.length, 0);
+	const userBtn = userSection.previousSibling;
+	assert.dom(userSection).hasTagName('div').hasClass('section').hasStyle({display:'none'});
+	assert.equal(userSection.children.length, 2);
+	userBtn.onclick();
+	assert.dom(userSection).hasStyle({display:'block'});
+	const catalog = userSection.querySelector('div.catalog');
+	assert.equal(catalog.children.length, 2);
+	
 });
