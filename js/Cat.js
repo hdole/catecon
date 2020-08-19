@@ -4360,9 +4360,12 @@ Object.defineProperties(D,
 			},
 			savePosition(e)
 			{
-				this.xy.push(new D2(e.clientX, e.clientY));
-				if (this.xy.length > 2)
-					this.xy.shift();
+				const xy = this.xy;
+				if (xy.length > 0 && xy[xy.length -1].x === e.clientX && xy[xy.length -1].y === e.clientY)
+					return;
+				xy.push(new D2(e.clientX, e.clientY));
+				if (xy.length > 2)
+					xy.shift();
 			},
 			delta()
 			{
@@ -7611,6 +7614,7 @@ class DiagramCore
 	}
 	emphasis(on)
 	{
+//		console.log('EMPHASIS', this.name); 
 		D.SetClass('emphasis', on, this.svg);
 	}
 }
@@ -7765,6 +7769,7 @@ class DiagramText extends Element
 	}
 	emphasis(on)
 	{
+//		console.log('EMPHASIS', this.name); 
 		D.SetClass('emphasis', on, this.svgText);
 	}
 	getHtmlRep(idPrefix)
@@ -7926,9 +7931,9 @@ class DiagramObject extends CatObject
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `NaN in getSVG`;
 		const name = this.name;
-		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
-		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
-		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
+		const mouseenter = function(e) { console.log('mouse ENTER', name);Cat.D.Mouseover(event, name, true);};
+		const mouseleave = function(e) { console.log('mouse LEAVE', name);Cat.D.Mouseover(event, name, false);};
+		const mousedown = function(e) { console.log('mouse DOWN', name);Cat.R.diagram.selectElement(event, name);};
 		const svg = H3.text();
 		node.appendChild(svg);
 		this.svg = svg;
@@ -9305,7 +9310,7 @@ class ProjectAction extends Action
 		const isTerminal = indices.length === 1 && indices[0] === -1; 
 		const factor =  isTerminal ? R.diagram.getTerminal(this.dual) : object.getFactor(indices);
 		const sub = isTerminal ? '' : indices.join();
-		this.codomainDiv.innerHTML += H.button(factor.htmlName() + H.sub(sub), '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this)"`);
+		this.codomainDiv.innerHTML += H.button(factor.htmlName() + sub !== '' ? H.sub(sub) : '', '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this)"`);
 	}
 	flatten(e, diagram, from)
 	{
@@ -9327,8 +9332,9 @@ class ProjectAction extends Action
 	}
 	static ObjectFactorButton(dir, root, object, index, dual)
 	{
+		const subscript = index.length > 0 ? H.sub(index.join()) : '';
 		return H.table(H.tr(H.td(
-			H.button(object.htmlName() + H.sub(index.join()), '', Cat.R.diagram.elementId(), 'Place object',
+			H.button(object.htmlName() + subscript, '', Cat.R.diagram.elementId('project'), 'Place object',
 			`data-indices="${index.toString()}" onclick="Cat.R.Actions.${dual ? 'inject' : 'project'}.addFactor('${root.name}', ${index.toString()})"`)
 		)));
 	}
