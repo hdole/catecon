@@ -421,6 +421,7 @@ class H3
 	static select(...args)	{ return H3._h('select', args); }
 	static small(...args)	{ return H3._h('small', args); }
 	static span(...args)	{ return H3._h('span', args); }
+	static sub(...args)		{ return H3._h('sub', args); }
 	static svg(...args)		{ return H3._v('svg', args); }
 	static table(...args)	{ return H3._h('table', args); }
 	static tag(t, ...args)	{ return H3._h(t, args); }
@@ -575,7 +576,8 @@ class U
 		btns.forEach(function(b)
 		{
 			const idx = JSON.parse(`[${b.dataset.indices}]`);
-			factors.push(idx.length === 1 ? idx[0] : idx);
+//			factors.push(idx.length === 1 ? idx[0] : idx);
+			factors.push(idx.length === 1 && idx[0] === -1 ? idx[0] : idx);
 		});
 		return factors;
 	}
@@ -605,6 +607,7 @@ class U
 		const s = typeof e === 'string' ? e : e.name;
 		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_').replace(/#/g, '_n_')
 			.replace(/\[/g, '_br_')
+			.replace(/-/g, '_minus_')
 			.replace(/\]/g, '_rb_');
 		return r;
 	}
@@ -2428,7 +2431,7 @@ class Toolbar
 					header += D.formButton(a.basename, a.icon, `Cat.R.diagram.${'html' in a ? 'actionHtml' : 'activate'}(event, '${a.basename}')`, a.description);
 			});
 			header += D.GetButton('closeToolbar', 'close', 'Cat.D.toolbar.hide()', 'Close');
-			this.header.innerHTML = H.table(H.tr(H.td(header)), 'buttonBarLeft');
+			this.header.innerHTML = H.table(H.tr(H.td(header, 'buttonBarLeft')));
 		}
 		else
 		{
@@ -2443,7 +2446,8 @@ class Toolbar
 			btns.push(D.GetButton3('toolbarShowSearch', 'search', 'Cat.D.toolbar.showSearch()', 'Search in a diagram', D.default.button.small,
 										'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
 			btns.push(D.GetButton3('closeToolbar', 'close3', 'Cat.D.toolbar.hide()', 'Close'));
-			this.header.appendChild(H3.span(btns, {class:'buttonBarLeft'}));
+//			this.header.appendChild(H3.span(btns, {class:'buttonBarLeft'}));
+			btns.map(btn => this.header.appendChild(btn));
 		}
 		const toolbox = element.getBoundingClientRect();
 		if (diagram.selected.length === 1 && diagram.selected[0] instanceof DiagramObject)
@@ -3475,18 +3479,17 @@ ${button}
 			}
 		}, false);
 	}
-	static textWidth(txt)
+	static textWidth(txt, cls = 'object')
 	{
 		if (isGUI)
 		{
 			const safeTxt = U.HtmlEntitySafe(txt);
 			if (D.textSize.has(safeTxt))
 				return D.textSize.get(safeTxt);
-			let svg = `<text text-anchor="middle" class="object" x="0" y="0" id="testTextWidthElt">${safeTxt}</text>`;
-			D.uiSVG.innerHTML = svg;
-			const txtElt = document.getElementById('testTextWidthElt');
-			const width = txtElt.parentNode.getBBox().width;
-			D.uiSVG.innerHTML = '';
+			let text = H3.text({class:cls, x:"0", y:"0", 'text-anchor':'middle'}, safeTxt);
+			D.uiSVG.appendChild(text);
+			const width = text.getBBox().width;
+			D.uiSVG.removeChild(text);
 			D.textSize.set(safeTxt, width);
 			return width;
 		}
@@ -3510,7 +3513,7 @@ ${button}
 	static RecordError(err)
 	{
 		let txt = U.GetError(err);
-		console.error(txt);
+		console.trace(txt);
 		if (isGUI)
 		{
 			if (typeof err === 'object' && 'stack' in err && err.stack !== '')
@@ -4277,12 +4280,14 @@ Object.defineProperties(D,
 				e.preventDefault();
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
-			Digit0(e) { D.testAndFireAction(e, 'initialMorphism', R.diagram.selected); },
 			Digit1(e)
 			{
-				const diagram = R.diagram;
-				const terminal = diagram.get('FiniteObject', {size:1});
-				diagram.placeObject(e, terminal, D.mouse.diagramPosition(diagram));
+				if (R.diagram && e.target === document.body)
+				{
+					const diagram = R.diagram;
+					const terminal = diagram.get('FiniteObject', {size:1});
+					diagram.placeObject(e, terminal, D.mouse.diagramPosition(diagram));
+				}
 			},
 			ControlDigit3(e) { D.threeDPanel.toggle(); },
 			Delete(e)
@@ -7931,9 +7936,9 @@ class DiagramObject extends CatObject
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `NaN in getSVG`;
 		const name = this.name;
-		const mouseenter = function(e) { console.log('mouse ENTER', name);Cat.D.Mouseover(event, name, true);};
-		const mouseleave = function(e) { console.log('mouse LEAVE', name);Cat.D.Mouseover(event, name, false);};
-		const mousedown = function(e) { console.log('mouse DOWN', name);Cat.R.diagram.selectElement(event, name);};
+		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
+		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
+		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
 		const svg = H3.text();
 		node.appendChild(svg);
 		this.svg = svg;
@@ -9303,14 +9308,16 @@ class ProjectAction extends Action
 	addFactor(root, ...indices)
 	{
 		if (this.codomainDiv.innerHTML === '')
-			this.codomainDiv.innerHTML = H.span(D.GetButton(this.dual ? 'inject' : 'project', 'edit',
-				`Cat.R.Actions.${this.dual ? 'inject' : 'project'}.action(event, Cat.R.diagram, Cat.R.diagram.selected)`,
-				'Create morphism'));
+			this.codomainDiv.innerHTML = D.GetButton(this.dual ? 'inject' : 'project', 'edit',
+				`Cat.R.Actions.${this.dual ? 'inject' : 'project'}.action(event, Cat.R.diagram, Cat.R.diagram.selected)`, 'Create morphism');
 		const object = R.diagram.getElement(root);
-		const isTerminal = indices.length === 1 && indices[0] === -1; 
+		const isTerminal = indices.length === 1 && indices[0] === -1;
 		const factor =  isTerminal ? R.diagram.getTerminal(this.dual) : object.getFactor(indices);
 		const sub = isTerminal ? '' : indices.join();
-		this.codomainDiv.innerHTML += H.button(factor.htmlName() + sub !== '' ? H.sub(sub) : '', '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this)"`);
+//		this.codomainDiv.innerHTML += H.button(factor.htmlName() + sub !== '' ? H.sub(sub) : '', '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this)"`);
+		const btn = H3.button(factor.htmlName(), {'data-indices':indices.toString(), onclick:"Cat.H.del(this)"});
+		sub !== '' && btn.appendChild(H3.sub(sub));
+		this.codomainDiv.appendChild(btn);
 	}
 	flatten(e, diagram, from)
 	{
@@ -11754,7 +11761,7 @@ class Morphism extends Element
 	}
 	textwidth()
 	{
-		return D.textWidth(this.domain.htmlName())/2 + D.textWidth(this.htmlName()) + D.textWidth(this.codomain.htmlName())/2 + 2 * D.textWidth('&emsp;');
+		return D.textWidth(this.domain.htmlName())/2 + D.textWidth(this.htmlName(), 'morphism') + D.textWidth(this.codomain.htmlName())/2 + D.textWidth('&emsp;');
 	}
 	getHtmlRep(idPrefix)
 	{
@@ -14303,6 +14310,7 @@ class Diagram extends Functor
 			fromObj.domains.forEach(function(m) { angles.push(D2.Angle(fromObj, m.codomain)); });
 			fromObj.codomains.forEach(function(m) { angles.push(D2.Angle(fromObj, m.domain)); });
 			let xy = null;
+			const arrowLength = Cat.D.GetArrowLength(to);
 			if (angles.length > 0)
 			{
 				angles.sort();
@@ -14328,11 +14336,14 @@ class Diagram extends Functor
 				else
 					angle = (angle + Math.PI) % (2 * Math.PI);
 				const cosAngle = Math.cos(angle);
-				const arrowLength = Cat.D.GetArrowLength(to);
 				xy = D.Grid(D2.Scale(arrowLength, {x:cosAngle, y:Math.sin(angle)}).add(fromObj));
 			}
 			else
-				xy = new D2(fromObj).add(D.default.stdArrow);
+			{
+				const offset = new D2(D.default.stdArrow).scale(arrowLength / D.default.arrow.length);
+//				xy = new D2(fromObj).add(D.default.stdArrow).scale(arrowLength / D.default.arrow.length);
+				xy = new D2(fromObj).add(offset);
+			}
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
 			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
 			const from = new DiagramMorphism(this, {to, domain:domainElt, codomain:codomainElt});

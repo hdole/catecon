@@ -44,9 +44,13 @@ function checkArgs(assert, obj, args)
 			assert.ok(obj[arg] === args[arg], `${obj.name} ${arg} is ok`);
 }
 
-function checkMorphism(assert, diagram, args, morphism, domain, codomain, sig)
+function checkMorphism(assert, diagram, args)
 {
+	const morphism = args.morphism;
 	const basename = args.basename;
+	const domain = args.domain;
+	const codomain = args.codomain;
+	const sig = args.sig;
 	assert.equal(morphism.basename, basename, `${basename}: morphism basename ok`);
 	const name = `${diagram.name}/${basename}`;
 	assert.equal(morphism.name, name, `${basename}: morphism name ok`);
@@ -69,6 +73,17 @@ function checkMorphism(assert, diagram, args, morphism, domain, codomain, sig)
 		assert.equal(morphism.refcnt, 0, `${basename}: morphism has no references`);
 	assert.ok(!('svg' in morphism), `${basename}: morphism does not have svg`);
 	assert.equal(morphism._sig, sig, `${basename}: morphism signature ok`);
+	if ('instanceof' in args)
+		assert.ok(morphism instanceof args.instanceof);
+	if ('dual' in args)
+		assert.equal(morphism.dual, args.dual);
+	if ('factors' in args)
+		assert.deepEqual(morphism.factors, args.factors);
+	if ('morphisms' in args)
+	{
+		assert.equal(morphism.morphisms.length, args.morphisms.length);
+		morphism.morphisms.map((m, i) => assert.equal(m.name, args.morphisms[i].name));
+	}
 }
 
 // args: from, domain, codomain, name, basename, sig, start, end, d, txy
@@ -187,6 +202,10 @@ function checkNotSelected(assert, element)
 
 function checkToolbarStart(assert)
 {
+	const toolbar = document.getElementById('toolbar');
+	assert.dom(toolbar).hasTagName('div').hasClass('toolbar').hasStyle({display:'block'});
+	const toolbarHeader = document.getElementById('toolbar-header');
+	assert.dom(toolbarHeader).hasTagName('div').hasClass('buttonBarLeft');
 	const toolbarHelp = document.getElementById('toolbar-help');
 	assert.dom(toolbarHelp).hasTagName('div');
 	assert.equal(toolbarHelp.children.length, 0, 'Toolbar help no children ok');
@@ -381,6 +400,16 @@ function checkDiagramPanelEntry(assert, section, element, dgrm)
 	const img = element.querySelector('img');
 	assert.equal(img.parentNode, aLink);
 	assert.dom(img).hasAttribute('width', "200").hasAttribute('height', '150').hasAttribute('id', 'img-el_' + nameId);
+}
+
+function clickOnElement(assert, elt)
+{
+	assert.ok(elt instanceof Cat.Element);
+	xy = {clientX:elt.x, clientY:elt.y};
+	simMouseEvent(elt.svg, 'mouseenter', xy);
+	simMouseEvent(elt.svg, 'mousedown', xy);
+	simMouseEvent(elt.svg, 'mouseup', xy);
+	simMouseEvent(elt.svg, 'mouseleave', xy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -957,9 +986,11 @@ test('New morphism', assert =>
 	const codomain = diagram.getElement('t1');
 	assert.ok(domain, 'Found domain');
 	assert.ok(codomain, 'Found codomain');
-	const args = {basename:'m0', domain:'t0', codomain:'t1', properName:'M1', description:'this is a test morphism'};
+	const args = {basename:'m0', properName:'M1', description:'this is a test morphism', domain, codomain, instanceof:Cat.Morphism,
+		sig:"7666bafec59943f203906de61b0c5bff2c41e97505e3bfeed2ada533b795788a"};
 	const morphism = new Cat.Morphism(diagram, args);
-	checkMorphism(assert, diagram, args, morphism, domain, codomain, "7666bafec59943f203906de61b0c5bff2c41e97505e3bfeed2ada533b795788a");
+	args.morphism = morphism;
+	checkMorphism(assert, diagram, args);
 });
 
 test('Diagram.placeMorphism', assert =>
@@ -979,10 +1010,10 @@ test('Diagram.placeMorphism', assert =>
 test('Create identity', assert =>
 {
 	const t0 = diagram.getElement('t0');
-	const id = diagram.id(t0);
-	assert.ok(id instanceof Cat.Identity, 't0 id exists');
-	checkMorphism(assert, diagram, {name:"tester/test/Id{tester/test/t0}dI", basename:"Id{tester/test/t0}dI", properName:'id'}, id, t0, t0,
-		"ab519276ce681a5ffc0dfba60cbc8e9ab39fda63792225d75e145dc0dd642bda");
+	const morphism = diagram.id(t0);
+//	assert.ok(morphism instanceof Cat.Identity, 't0 id exists');
+	checkMorphism(assert, diagram, {name:"tester/test/Id{tester/test/t0}dI", basename:"Id{tester/test/t0}dI", properName:'id', morphism, domain:t0, codomain:t0,
+		instanceof:Cat.Identity, sig:"ab519276ce681a5ffc0dfba60cbc8e9ab39fda63792225d75e145dc0dd642bda"});
 });
 
 test('Diagram.placeMorphismByObject', assert =>
@@ -1163,6 +1194,7 @@ test('Compose three morphisms', assert =>
 		didit();
 	};
 	Cat.R.workers.equality.addEventListener('message', lookforit);
+	const morphisms = diagram.selected.map(e => e.to);
 	const compBtn = getToolbarButtons()[1];
 	const clicker = getButtonClick(compBtn);
 	const domain = m2.domain;
@@ -1178,13 +1210,9 @@ test('Compose three morphisms', assert =>
 	assert.equal(diagram.selected.length, 1, 'Only one element selected');
 	const to = m4.to;
 	assert.ok(to instanceof Cat.Composite, 'Composite ok');
-	checkMorphism(assert, diagram,
-		{
-			basename:		"Cm{tester/test/Id{tester/test/t0}dI,tester/test/m0,tester/test/Id{tester/test/t1}dI}mC",
-			properName:		"id&#8728;M1&#8728;id",
-			refcnt:			1,
-		},
-		to, domain.to, codomain.to, "447d19ec2a011a55cbd8e5ff415102d5ca903e3ccf7f27b2394f65876cb72e30");
+	checkMorphism(assert, diagram, {basename:"Cm{tester/test/Id{tester/test/t0}dI,tester/test/m0,tester/test/Id{tester/test/t1}dI}mC",
+			properName:"id&#8728;M1&#8728;id", refcnt:1, instanceof:Cat.Composite, morphisms,
+			morphism:to, domain:domain.to, codomain:codomain.to, sig:"447d19ec2a011a55cbd8e5ff415102d5ca903e3ccf7f27b2394f65876cb72e30"});
 	checkIndexMorphism(assert, diagram, {angle: 0.4636476090008061, from:m4, to, id:m4.elementId(), domain, codomain, name:'tester/test/m_4', basename:'m_4',
 		properName:'id∘M1∘id',
 		sig:"10ddaa9e14eb0c3e9181a988312d7f379f12befa14f17dda5d19d721ccc15900", textAnchor:'start',
@@ -2043,12 +2071,128 @@ test('project help display', assert =>
 
 	const div = span.nextSibling;
 	assert.dom(div).hasTagName('div').hasAttribute('id', 'project-codomain');
+	assert.equal(div.children.length, 0);
 });
 
+test('flatten morphism', assert =>
+{
+	const help = Cat.D.toolbar.help;
+	const btns = help.querySelectorAll("button");
+	// press flatten button
+	const flatten = btns[0];
+	flatten.onclick();
+	assert.equal(help.children.length, 0, 'toolbar cleared');
+	const m13 = diagram.getElement('tester/test/m_13');
+	checkSelected(assert, m13);
+	checkIndexMorphism(assert, diagram, {angle: 0, from:m13, to:m13.to, id:"el_tester--test--m_13", domain:m13.domain, codomain:m13.codomain,
+		name:'tester/test/m_13', basename:'m_13',
+		sig:"dfd7e6bc7944e8efbb466068e60c7b7ad3e55461979d5c996c025dc3bfb5570b", textAnchor:'middle',
+		start:{x:499, y:4 * grid}, end:{x:720, y:4 * grid}, d:'M499,800 L720,800', txy:{x:"610", y:"788"}});
+	const to = m13.to;
+	assert.ok(to instanceof Cat.FactorMorphism);
+	assert.equal(to._sig, "e6957092f35646a4ac772764b831df93d1165d7e147cb5093e84e7b4ec801df8");
+	const o17 = diagram.getElement('tester/test/o_17');
+	assert.ok(to.domain, o17);
+	assert.equal(to.category.name, 'hdole/PFS');
+	assert.equal(to.basename, "Fa{tester/test/Po{hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP}oP,hdole/Integers/Z_0,0,hdole/Integers/Z_0,1,hdole/Integers/Z_1,0,hdole/Integers/Z_1,1}aF");
+	assert.deepEqual(to.factors, [[0, 0], [0, 1], [1, 0], [1, 1]]);
+	assert.equal(to.dual, false);
+	assert.equal(to.refcnt, 1);
+	assert.equal(to.properName, "&lt;&Zopf;&#x2080;,&#x2080;,&Zopf;&#x2080;,&#x2081;,&Zopf;&#x2081;,&#x2080;,&Zopf;&#x2081;,&#x2081;&gt;");
+	assert.equal(to.description, '');
+	assert.equal(to.diagram.name, 'tester/test');
+	assert.ok(to.codomain instanceof Cat.ProductObject);
+	assert.equal(to.codomain.objects.length, 4);
+	to.codomain.objects.map(o => assert.equal(o.name, 'hdole/Integers/Z'));
+	assert.equal(to.codomain.name, "tester/test/Po{hdole/Integers/Z,hdole/Integers/Z,hdole/Integers/Z,hdole/Integers/Z}oP");
+	assert.equal(to.codomain.properName, "&Zopf;&times;&Zopf;&times;&Zopf;&times;&Zopf;");
+	assert.equal(to.codomain.dual, false);
+});
+
+test('delete o14 to clear screen', assert =>
+{
+	const o14 = diagram.getElement('tester/test/o_14');
+	simMouseEvent(o14.svg, 'mousedown', {clientX:o14.x, clientY:o14.y});
+	simMouseEvent(o14.svg, 'mouseup', {clientX:o14.x, clientY:o14.y});
+	checkSelected(assert, o14);
+	getButtonClick(getToolbarButton('delete'))();
+	assert.equal(o14.svg.parentNode, null);
+	assert.equal(o14.refcnt, 0);
+});
 
 test('create factor morphism', assert =>
 {
 	const help = Cat.D.toolbar.help;
-	const btns = help.querySelectorAll("button");
-	debugger;
+	const o17 = diagram.getElement('tester/test/o_17');
+	clickOnElement(assert, o17);
+	checkSelected(assert, o17);
+	getButtonClick(getToolbarButton('project'))();
+	const codDiv = document.getElementById('project-codomain');
+	assert.dom(codDiv).hasTagName('div');
+	assert.equal(codDiv.children.length, 0);
+	const btns = [...help.querySelectorAll("button")];
+	assert.equal(btns.length, 9);
+	// click for terminal
+	btns[1].onclick();
+	const doitBtn = codDiv.firstChild;
+	checkButton(assert, doitBtn, 'project', 'Create morphism');
+	function checkProjectButton(assert, btn, text, indices)
+	{
+		assert.dom(btn).hasTagName('button');
+		assert.equal(btn.innerHTML, text);
+		assert.equal(btn.dataset.indices, indices);
+		assert.equal(typeof btn.onclick, 'function');
+	}
+	// codomain terminal button
+	const codTermBtn = doitBtn.nextSibling;
+	checkProjectButton(assert, codTermBtn, '✲', '-1');
+	// click to place entire domain in codomain
+	btns[2].onclick();
+	const codDomBtn = codTermBtn.nextSibling;
+	checkProjectButton(assert, codDomBtn, '(ℤ×ℤ)×(ℤ×ℤ)', '');
+	// click second ZxZ button
+	const ZxZbtn = btns[6];
+	checkProjectButton(assert, ZxZbtn, 'ℤ×ℤ<sub>1</sub>', '1');
+	ZxZbtn.onclick();
+	const codZxZbtn = codDomBtn.nextSibling;
+	checkProjectButton(assert, codZxZbtn, 'ℤ×ℤ<sub>1</sub>', '1');
+	// click 3rd Z button
+	const Zbtn = btns[7];
+	checkProjectButton(assert, Zbtn, 'ℤ<sub>1,0</sub>', '1,0');
+	Zbtn.onclick();
+	const codZbtn = codZxZbtn.nextSibling;
+	checkProjectButton(assert, codZbtn, 'ℤ<sub>1,0</sub>', '1,0');
+	// check codomain div
+	assert.equal(codDiv.children.length, 5);
+	// remove from codomain div
+	codZbtn.onclick();
+	assert.equal(codZbtn.parentNode, null);
+	assert.equal(codDiv.children.length, 4);
+	codZxZbtn.onclick();
+	assert.equal(codZxZbtn.parentNode, null);
+	assert.equal(codDiv.children.length, 3);
+	codDomBtn.onclick();
+	assert.equal(codDomBtn.parentNode, null);
+	assert.equal(codDiv.children.length, 2);
+	codTermBtn.onclick();
+	assert.equal(codTermBtn.parentNode, null);
+	assert.equal(codDiv.children.length, 1);
+	// put the object back into the codomain
+	btns[1].onclick();
+	btns[2].onclick();
+	btns[6].onclick();
+	btns[7].onclick();
+	assert.equal(codDiv.children.length, 5);
+	getButtonClick(doitBtn)();
+	assert.equal(help.children.length, 0);
+	// check factor morphism
+	const m14 = diagram.getElement('tester/test/m_14');
+	checkIndexMorphism(assert, diagram, {angle:Math.PI, from:m14, to:m14.to, id:"el_tester--test--m_14", domain:o17, codomain:m14.codomain,
+		name:'tester/test/m_14', basename:'m_14',
+		sig:"8e38d902279fb92842aba71bdc0213ff06a5df738f6d07db3e58873c9df54306", textAnchor:'middle',
+		start:{x:301, y:4 * grid}, end:{x:-1, y:4 * grid}, d:'M301,800 L-1,800', txy:{x:"150", y:"836"}});
+	checkMorphism(assert, diagram, {basename:"Fa{tester/test/Po{hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP}oP,#1_-1,tester/test/Po{hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP}oP_,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP_1,hdole/Integers/Z_1,0}aF",
+			properName:"&lt;&#10034;,(&Zopf;&times;&Zopf;)&times;(&Zopf;&times;&Zopf;),&Zopf;&times;&Zopf;&#x2081;,&Zopf;&#x2081;,&#x2080;&gt;",
+			refcnt:1, instanceof:Cat.FactorMorphism, factors:[-1, [], [1], [1, 0]], dual:false,
+			morphism:m14.to, domain:o17.to, codomain:m14.codomain.to, sig:"e0d579f6b9c3311e84f4c14d6c6d53a627b5c37629c8bf9bcdd6e6fba63ae4c3"});
 });
