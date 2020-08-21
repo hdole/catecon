@@ -1290,7 +1290,7 @@ test('Evaluate selected morphism', assert =>
 		const dataDivs = [...dataDiv.querySelectorAll('div')];
 		assert.equal(dataDivs.length, 1, 'One data div ok');
 		const spans = [...dataDivs[0].querySelectorAll('span')];
-		assert.equal(spans[0].innerText, '3,4', 'Input ok');
+		assert.equal(spans[0].innerText, '[3,4]', 'Input ok');
 		assert.equal(spans[2].innerText, '7', 'Output ok');
 		const createDataBtn = document.getElementById('run-createDataBtn');
 		assert.dom(createDataBtn).hasTagName('div');
@@ -1343,7 +1343,7 @@ function checkEvaluation(assert, indexName, input0, input1, output)
 		const dataDivs = [...dataDiv.querySelectorAll('div')];
 		assert.equal(dataDivs.length, 1, 'One data div ok');
 		const spans = [...dataDivs[0].querySelectorAll('span')];
-		assert.equal(spans[0].innerText, `${input0},${input1}`, 'Input ok');
+		assert.equal(spans[0].innerText, `[${input0},${input1}]`, 'Input ok');
 		assert.equal(spans[2].innerText, output.toString(), 'Output ok');
 		const createDataBtn = document.getElementById('run-createDataBtn');
 		assert.dom(createDataBtn).hasTagName('div');
@@ -1848,7 +1848,6 @@ test('toolbar new diagram', assert =>
 	descElt.value = 'second test diagram';
 	const doit = help.querySelector('span.button');
 	assert.equal(doit.dataset.name, 'action');
-//	assert.dom(doit).hasAttribute('title', 'Create a new diagram').hasStyle({'vertical-align':'middle'});
 	checkButton(assert, doit, 'action', 'Create a new diagram');
 	getButtonClick(doit)();
 	const diagramSVG = document.getElementById('diagramSVG');
@@ -1987,7 +1986,6 @@ test('drag create product object', assert =>
 	assert.equal(o17.to.objects.length, 2);
 	assert.equal(o17.to.objects[0].name, o14.to.name);
 	assert.equal(o17.to.objects[1].name, o14.to.name);
-//	simMouseEvent(o16.svg, 'mouseleave', target);
 });
 
 module('factor morphism');
@@ -2195,4 +2193,64 @@ test('create factor morphism', assert =>
 			properName:"&lt;&#10034;,(&Zopf;&times;&Zopf;)&times;(&Zopf;&times;&Zopf;),&Zopf;&times;&Zopf;&#x2081;,&Zopf;&#x2081;,&#x2080;&gt;",
 			refcnt:1, instanceof:Cat.FactorMorphism, factors:[-1, [], [1], [1, 0]], dual:false,
 			morphism:m14.to, domain:o17.to, codomain:m14.codomain.to, sig:"e0d579f6b9c3311e84f4c14d6c6d53a627b5c37629c8bf9bcdd6e6fba63ae4c3"});
+});
+
+test('evaluate the factor morphism', assert =>
+{
+	const help = Cat.D.toolbar.help;
+	const m14 = diagram.getElement('tester/test/m_14');
+	assert.equal(help.children.length, 0);
+	getButtonClick(getToolbarButton('run'))();
+	const h3 = help.firstChild;
+	assert.dom(h3).hasTagName('h3').hasText('<✲,(ℤ×ℤ)×(ℤ×ℤ),ℤ×ℤ₁,ℤ₁,₀>');
+	const h5 = h3.nextSibling;
+	assert.dom(h5).hasTagName('h5').hasText('Evaluate the Morphism');
+	let node = h5.nextSibling;
+	const inputs = [];
+	assert.ok(node instanceof Text);
+	assert.equal(node.nodeValue, '(');
+	node = node.nextSibling;
+	assert.dom(node).hasTagName('input').hasAttribute('id', ' hdole/Integers/Z 0,0').hasAttribute('placeHolder', 'Integer');
+	inputs.push(node);
+	node = node.nextSibling;
+	assert.equal(node.nodeValue, ',');
+	node = node.nextSibling;
+	assert.dom(node).hasTagName('input').hasAttribute('id', ' hdole/Integers/Z 0,1').hasAttribute('placeHolder', 'Integer');
+	inputs.push(node);
+	node = node.nextSibling;
+	assert.equal(node.nodeValue, '),(');
+	node = node.nextSibling;
+	assert.dom(node).hasTagName('input').hasAttribute('id', ' hdole/Integers/Z 1,0').hasAttribute('placeHolder', 'Integer');
+	inputs.push(node);
+	node = node.nextSibling;
+	assert.equal(node.nodeValue, ',');
+	node = node.nextSibling;
+	assert.dom(node).hasTagName('input').hasAttribute('id', ' hdole/Integers/Z 1,1').hasAttribute('placeHolder', 'Integer');
+	inputs.push(node);
+	node = node.nextSibling;
+	assert.equal(node.nodeValue, ')');
+	const runBtn = node.nextSibling;
+	checkButton(assert, runBtn, 'run', 'Evaluate inputs')
+	const display = runBtn.nextSibling;
+	assert.equal(display.children.length, 0);
+	assert.dom(display).hasTagName('div');
+	const createDataDiv = display.nextSibling;
+	assert.dom(createDataDiv).hasTagName('div').hasAttribute('id', 'run-createDataBtn').hasStyle({display:'none'});
+	const createDataBtn = createDataDiv.firstChild;
+	// set inputs to 0, 1, 2, 3
+	inputs.map((input, i) => input.value = i);
+	getButtonClick(runBtn)();
+	const didit = assert.async();
+	Cat.R.Actions.run.postResultFun = function()
+	{
+		checkButton(assert, createDataBtn, 'createData', 'Create data morphism');
+		const dataDiv = display.firstChild.nextSibling;
+		assert.dom(createDataDiv).hasStyle({display:'block'});
+		assert.dom(display.firstChild).hasTagName('h3').hasText('Data');
+		assert.dom(dataDiv).hasTagName('div');
+		assert.dom(dataDiv.firstChild).hasTagName('span').hasText('[[0,1],[2,3]]');
+		assert.dom(dataDiv.firstChild.nextSibling).hasTagName('span').hasText('→');
+		assert.dom(dataDiv.firstChild.nextSibling.nextSibling).hasTagName('span').hasText('[0,[[0,1],[2,3]],[2,3],2]');
+		didit();
+	}
 });

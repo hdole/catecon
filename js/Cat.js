@@ -576,7 +576,6 @@ class U
 		btns.forEach(function(b)
 		{
 			const idx = JSON.parse(`[${b.dataset.indices}]`);
-//			factors.push(idx.length === 1 ? idx[0] : idx);
 			factors.push(idx.length === 1 && idx[0] === -1 ? idx[0] : idx);
 		});
 		return factors;
@@ -2446,7 +2445,6 @@ class Toolbar
 			btns.push(D.GetButton3('toolbarShowSearch', 'search', 'Cat.D.toolbar.showSearch()', 'Search in a diagram', D.default.button.small,
 										'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
 			btns.push(D.GetButton3('closeToolbar', 'close3', 'Cat.D.toolbar.hide()', 'Close'));
-//			this.header.appendChild(H3.span(btns, {class:'buttonBarLeft'}));
 			btns.map(btn => this.header.appendChild(btn));
 		}
 		const toolbox = element.getBoundingClientRect();
@@ -7619,7 +7617,6 @@ class DiagramCore
 	}
 	emphasis(on)
 	{
-//		console.log('EMPHASIS', this.name); 
 		D.SetClass('emphasis', on, this.svg);
 	}
 }
@@ -7774,7 +7771,6 @@ class DiagramText extends Element
 	}
 	emphasis(on)
 	{
-//		console.log('EMPHASIS', this.name); 
 		D.SetClass('emphasis', on, this.svgText);
 	}
 	getHtmlRep(idPrefix)
@@ -9314,7 +9310,6 @@ class ProjectAction extends Action
 		const isTerminal = indices.length === 1 && indices[0] === -1;
 		const factor =  isTerminal ? R.diagram.getTerminal(this.dual) : object.getFactor(indices);
 		const sub = isTerminal ? '' : indices.join();
-//		this.codomainDiv.innerHTML += H.button(factor.htmlName() + sub !== '' ? H.sub(sub) : '', '', '', '', `data-indices="${indices.toString()}" onclick="Cat.H.del(this)"`);
 		const btn = H3.button(factor.htmlName(), {'data-indices':indices.toString(), onclick:"Cat.H.del(this)"});
 		sub !== '' && btn.appendChild(H3.sub(sub));
 		this.codomainDiv.appendChild(btn);
@@ -9806,7 +9801,7 @@ ${tail}`;
 							''	// TODO
 							:
 `const ${jsName}_factors = ${JSON.stringify(m.factors)};
-${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
+${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
 	return ${m.factors.length === 1 ? 'r[0]' : 'r'};${tail}`;
 						break;
 					case 'HomMorphism':
@@ -9982,21 +9977,21 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 			return this.formatters.has(o.signature);
 		return false;
 	}
-	getInputHtml(o, value = null, prefix = '', factor = [], index = null)
+	getInputHtml(object, value = null, prefix = '', factor = [], index = null, first = true)
 	{
 		const from = R.diagram.selected[0];
 		const morph = from.to;
 		let html = '';
-		const id = `${prefix} ${o.name} ${factor.toString()}`;
-		switch(o.constructor.name)
+		const id = `${prefix} ${object.name} ${factor.toString()}`;
+		switch(object.constructor.name)
 		{
 			case 'NamedObject':
-				html = this.getInputHtml(o.getBase(), value, prefix, factor);
+				html = this.getInputHtml(object.getBase(), value, prefix, factor);
 				break;
 			case 'CatObject':
-				if (this.formatters.has(o.signature))
+				if (this.formatters.has(object.signature))
 				{
-					const f = this.formatters.get(o.signature);
+					const f = this.formatters.get(object.signature);
 					const out = window[U.Token(f)]([id, value !== null ? [0, value] : [1, 0]]);
 					html = out[0];
 				}
@@ -10004,44 +9999,46 @@ ${header}	const r = ${jsName}_factors.map(f => f.reduce((d, j) => j === -1 ? 0 :
 					D.RecordError('object has no formatter');
 				break;
 			case 'ProductObject':
-				if (o.dual)
+				if (object.dual)
 				{
-					const isNumeric = U.IsNumeric(o);
-					if (U.IsNumeric(o))
-						html += `<input id="${id}" type="number" min="0" max="${o.objects.length -1}"${typeof value === 'number' ? ' value="' + value.toString() + '"' : ''}/>`;
+					const isNumeric = U.IsNumeric(object);
+					if (U.IsNumeric(object))
+						html += `<input id="${id}" type="number" min="0" max="${object.objects.length -1}"${typeof value === 'number' ? ' value="' + value.toString() + '"' : ''}/>`;
 					else
 					{
 						let options = '';
 						let divs = '';
-						for (let i=0; i<o.objects.length; ++i)
+						for (let i=0; i<object.objects.length; ++i)
 						{
-							const ob = o.objects[i];
+							const ob = object.objects[i];
 							const f = [...factor, i];
 							const oid = `dv_${ob.name} ${f.toString()}`;
 							options += `<option value="${i}"${i === value[0] ? ' selected="selected"' : ''}>${i}: ${ob.htmlName()}</option>`;
-							divs += H.div(this.getInputHtml(ob, value !== null && value[0] === i ? value[1] : null, prefix, [...factor, i]), 'nodisplay', oid);
+							divs += H.div(this.getInputHtml(ob, value !== null && value[0] === i ? value[1] : null, prefix, [...factor, i]), 'nodisplay', oid, false);
 						}
 						html +=
-`<select id="${id}" onchange="Cat.D.ShowInput('${o.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
+`<select id="${id}" onchange="Cat.D.ShowInput('${object.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
 <option>Choose</option>${options}</select><div>${divs}</div>`;
 					}
 				}
 				else
-					html += o.objects.map((ob, i) => this.getInputHtml(ob, value !== null ? value[i] : null, prefix, [...factor, i]));
+					html += object.objects.map((ob, i) => this.getInputHtml(ob, value !== null ? value[i] : null, prefix, [...factor, i], null, false));
+					if (!first)
+						html = `(${html})`;
 				break;
 			case 'FiniteObject':
 				const dv = typeof value === 'number' ? ` value="${value.toString()}"` : '';
-				if ('size' in o)
+				if ('size' in object)
 				{
-					if (o.size < 2)
+					if (object.size < 2)
 						return '';
-					html = `<input type="number" min="0" id="${id}" max="${o.size}"${dv}/>`;
+					html = `<input type="number" min="0" id="${id}" max="${object.size}"${dv}/>`;
 				}
 				else
 					html = `<input type="number" min="0" id="${id}"${dv}/>`;
 				break;
 			case 'HomObject':
-				const homset = R.diagram.codomain.getHomset(o.objects[0], o.objects[1]);
+				const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
 				const options = homset.map(m => `<option value="${m.name}"${value && m.name === value.name ? ' selected="selected"' : ''}>${m.htmlName()}</option>`).join('');
 				const selector =
 `<select data-index="${index}" id="help-run-homset-${index ? index : 'next'}" onchange="Cat.R.Actions.javascript.setHomValue(this)"><option>Choose</option>${options}</select>`;
@@ -10791,9 +10788,13 @@ class RunAction extends Action
 <line class="arrow0" x1="140" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>
 </g>`,};
 		super(diagram, args);
-		this.workers = [];
-		this.data = new Map();
-		this.js = null;		// fill in later
+		Object.defineProperties(this,
+		{
+			data:			{value:	new Map(),	writable:	true},
+			js:				{value:	null,		writable:	true},
+			postResultFun:	{value:	null,		writable:	true},
+			workers:		{value:	[],			writable:	false},
+		});
 	}
 	html(e, diagram, ary)
 	{
@@ -10890,10 +10891,16 @@ class RunAction extends Action
 			D.toolbar.help.innerHTML = html + H.div('', '', 'run-display') + createDataBtn;
 			const btn = document.getElementById('run-createDataBtn');
 			btn.style.display = 'none';
+			const that = this;
 			const watcher = function(mutationsList, observer)
 			{
 				for(const m of mutationsList)
-					btn.style = m.target.children.length > 0 ? 'block' : 'none';
+					btn.style = m.target.children.length > 1 ? 'block' : 'none';
+				if (that.postResultFun)
+				{
+					that.postResultFun();
+					that.postResultFun = null;
+				}
 			};
 			const observer = new MutationObserver(watcher);
 			const childList = true;
@@ -10908,8 +10915,12 @@ class RunAction extends Action
 	{
 		const that = R.Actions.run;
 		const morphism = R.diagram.getSelected();
-		const domInfo = U.ConvertData(morphism.domain.to, result[0]).toString();
-		const codInfo = U.ConvertData(morphism.codomain.to, result[1]).toString();
+
+//		const domInfo = U.ConvertData(morphism.domain.to, result[0]).toString();
+		const domInfo = JSON.stringify(U.ConvertData(morphism.domain.to, result[0]))
+//		const codInfo = U.ConvertData(morphism.codomain.to, result[1]).toString();
+		const codInfo = JSON.stringify(U.ConvertData(morphism.codomain.to, result[1]));
+
 		const div = H3.div([H3.span(domInfo), H3.span('&rarr;'), H3.span(codInfo)]);
 		if (that.display.children.length === 0)
 			that.display.appendChild(H3.h3('Data'));
@@ -14341,7 +14352,6 @@ class Diagram extends Functor
 			else
 			{
 				const offset = new D2(D.default.stdArrow).scale(arrowLength / D.default.arrow.length);
-//				xy = new D2(fromObj).add(D.default.stdArrow).scale(arrowLength / D.default.arrow.length);
 				xy = new D2(fromObj).add(offset);
 			}
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
