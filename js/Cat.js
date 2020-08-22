@@ -10915,12 +10915,8 @@ class RunAction extends Action
 	{
 		const that = R.Actions.run;
 		const morphism = R.diagram.getSelected();
-
-//		const domInfo = U.ConvertData(morphism.domain.to, result[0]).toString();
 		const domInfo = JSON.stringify(U.ConvertData(morphism.domain.to, result[0]))
-//		const codInfo = U.ConvertData(morphism.codomain.to, result[1]).toString();
 		const codInfo = JSON.stringify(U.ConvertData(morphism.codomain.to, result[1]));
-
 		const div = H3.div([H3.span(domInfo), H3.span('&rarr;'), H3.span(codInfo)]);
 		if (that.display.children.length === 0)
 			that.display.appendChild(H3.h3('Data'));
