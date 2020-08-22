@@ -412,6 +412,69 @@ function clickOnElement(assert, elt)
 	simMouseEvent(elt.svg, 'mouseleave', xy);
 }
 
+function getRepresentation(domElt)
+{
+	const rep = {tagName:domElt.tagName};
+	const attrs = [...domElt.attributes];
+	if (domElt.classList.length > 0)
+		rep.classList = [...domElt.classList];
+	attrs.map(attr =>
+	{
+		switch(attr.nodeName)
+		{
+			case 'class':
+				break;		// skip these
+			default:
+				rep[attr.nodeName] = attr.nodeValue;
+				break;
+		}
+	});
+	if (domElt.children.length === 0 && domElt.innerText !== '')
+		rep.innerText = domElt.innerText;
+	if (rep.tagName === 'INPUT')
+		rep.value = domElt.value;
+//	rep.listeners = [];
+//	const events = ['click', 'focus', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseup'];
+//	events.map(name =>
+//	{
+//		const handler = `on${name}`;
+//		if (domElt[handler])
+//			rep.listeners.push([handler, domElt[handler].toString()]);
+//	});
+	if (domElt.children.length > 0)
+	{
+		rep.children = [];
+		[...domElt.children].map(c => rep.children.push(getRepresentation(c)));
+	}
+	return rep;
+}
+
+function compareRepresentation(assert, domElt, rep)
+{
+	for (const name in rep)
+		if (rep.hasOwnProperty(name))
+		{
+			switch(name)
+			{
+				case 'children':
+					break;
+				default:
+					assert.equal(domElt[name], rep[name]);
+					break;
+			}
+		}
+	/*
+	assert.equal(domElt.tagName, rep.tagName);
+	if ('innerText' in rep)
+		assert.equal(domElt,innerText, rep.innerText);
+	else
+		assert.equal(domElt,innerText, 'innerText' in rep ? rep.innerText : '');
+	assert.equal(domElt.children.length, 'children' in rep ? rep.children.length : 0);
+	assert.equal(domElt.attributes.length, rep.attributes.length);
+	rep.attributes.map(attr => assert.equal(domElt[attr],
+	*/
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Tests
@@ -2230,7 +2293,7 @@ test('evaluate the factor morphism', assert =>
 	node = node.nextSibling;
 	assert.equal(node.nodeValue, ')');
 	const runBtn = node.nextSibling;
-	checkButton(assert, runBtn, 'run', 'Evaluate inputs')
+	checkButton(assert, runBtn, 'run', 'Evaluate inputs');
 	const display = runBtn.nextSibling;
 	assert.equal(display.children.length, 0);
 	assert.dom(display).hasTagName('div');
@@ -2252,5 +2315,7 @@ test('evaluate the factor morphism', assert =>
 		assert.dom(dataDiv.firstChild.nextSibling).hasTagName('span').hasText('→');
 		assert.dom(dataDiv.firstChild.nextSibling.nextSibling).hasTagName('span').hasText('[0,[[0,1],[2,3]],[2,3],2]');
 		didit();
-	}
+		const repHelp = JSON.parse(`{"tagName":"DIV","id":"toolbar-help","children":[{"tagName":"H3","innerText":"<✲,(ℤ×ℤ)×(ℤ×ℤ),ℤ×ℤ₁,ℤ₁,₀>"},{"tagName":"H5","innerText":"Evaluate the Morphism"},{"tagName":"INPUT","type":"number","id":" hdole/Integers/Z 0,0","placeholder":"Integer","value":"0"},{"tagName":"INPUT","type":"number","id":" hdole/Integers/Z 0,1","placeholder":"Integer","value":"1"},{"tagName":"INPUT","type":"number","id":" hdole/Integers/Z 1,0","placeholder":"Integer","value":"2"},{"tagName":"INPUT","type":"number","id":" hdole/Integers/Z 1,1","placeholder":"Integer","value":"3"},{"tagName":"SPAN","classList":["button"],"title":"Evaluate inputs","data-name":"run","children":[{"tagName":"svg","xmlns":"http://www.w3.org/2000/svg","width":"0.21120000000000003in","height":"0.21120000000000003in","version":"1.1","viewBox":"0 0 320 320","children":[{"tagName":"rect","x":"0","y":"0","width":"320","height":"320","style":"fill:#ffffff"},{"tagName":"path","classList":["svgstr4"],"d":"M280 40 160 280 80 240","marker-end":"url(#arrowhead)"},{"tagName":"rect","classList":["btn"],"x":"0","y":"0","width":"320","height":"320","onclick":"Cat.R.Actions.javascript.evaluate(event, Cat.R.diagram, 'tester/test/Fa{tester/test/Po{hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP}oP,#1_-1,tester/test/Po{hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP}oP_,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP_1,hdole/Integers/Z_1,0}aF', Cat.R.Actions.run.postResult)"}]}]},{"tagName":"DIV","id":"run-display","children":[{"tagName":"H3","innerText":"Data"},{"tagName":"DIV","children":[{"tagName":"SPAN","innerText":"[[0,1],[2,3]]"},{"tagName":"SPAN","innerText":"→"},{"tagName":"SPAN","innerText":"[0,[[0,1],[2,3]],[2,3],2]"}]}]},{"tagName":"DIV","id":"run-createDataBtn","style":"","children":[{"tagName":"SPAN","classList":["button"],"title":"Create data morphism","data-name":"createData","children":[{"tagName":"svg","xmlns":"http://www.w3.org/2000/svg","width":"0.21120000000000003in","height":"0.21120000000000003in","version":"1.1","viewBox":"0 0 320 320","children":[{"tagName":"rect","x":"0","y":"0","width":"320","height":"320","style":"fill:#ffffff"},{"tagName":"circle","cx":"80","cy":"80","r":"60","fill":"url(#radgrad2)"},{"tagName":"circle","cx":"80","cy":"160","r":"60","fill":"url(#radgrad1)"},{"tagName":"circle","cx":"80","cy":"240","r":"60","fill":"url(#radgrad2)"},{"tagName":"circle","cx":"160","cy":"80","r":"60","fill":"url(#radgrad1)"},{"tagName":"circle","cx":"160","cy":"160","r":"60","fill":"url(#radgrad1)"},{"tagName":"circle","cx":"160","cy":"240","r":"60","fill":"url(#radgrad1)"},{"tagName":"circle","cx":"240","cy":"80","r":"60","fill":"url(#radgrad2)"},{"tagName":"circle","cx":"240","cy":"160","r":"60","fill":"url(#radgrad1)"},{"tagName":"circle","cx":"240","cy":"240","r":"60","fill":"url(#radgrad2)"},{"tagName":"rect","classList":["btn"],"x":"0","y":"0","width":"320","height":"320","onclick":"Cat.R.Actions.run.createData(event, Cat.R.diagram, 'tester/test/m_14')"}]}]}]}]}`);
+		compareRepresentation(assert, help, repHelp);
+	};
 });
