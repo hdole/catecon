@@ -638,7 +638,7 @@ class U
 	}
 	static SafeId(id)
 	{
-		return id.replace(/\//g, '--').replace(/{/g, '---').replace(/}/g, '---');
+		return id.replace(/\//g, '--').replace(/{/g, '---').replace(/}/g, '---').replace(/,/g, '-c-');
 	}
 	static Tab(s)
 	{
@@ -2520,33 +2520,24 @@ class StatusBar
 			'xy':			{value: null,									writable: true},
 		});
 	}
-	show(e, msg, record = false)
+	_prep(msg)
 	{
 		this.message = U.HtmlEntitySafe(msg);
 		if (this.timerOut)
 			clearInterval(this.timerOut);
 		if (this.timerIn)
 			clearInterval(this.timerIn);
-		const that = this;
 		if (msg === '')
 		{
 			this.hide();
 			return;	// nothing to show later
 		}
-		this.timerIn = setTimeout(function()
-		{
-			that.element.classList.remove('hidden');
-			if (!D.toolbar.element.classList.contains('hidden'))
-			{
-				const toolbox = D.toolbar.element.getBoundingClientRect();
-				const statusbox = elt.getBoundingClientRect();
-				if (D2.Overlap(toolbox, statusbox))
-					elt.style.top = `${toolbox.top + toolbox.height + D.default.font.height}px`;
-			}
-		}, D.default.statusbar.timein); 
-		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
+	}
+	_post(e, msg, record)
+	{
 		const elt = this.element;
-		elt.innerHTML = H.div(msg);
+//		elt.innerHTML = H.div(msg);
+		elt.innerText = msg;
 		if (typeof e === 'object')
 		{
 			const x = e ? e.clientX : 100;
@@ -2559,8 +2550,60 @@ class StatusBar
 		}
 		else
 			D.RecordError(msg);
+		const bbox = elt.getBoundingClientRect();
+		const delta = bbox.left + bbox.width - window.innerWidth;
+		if (delta > 0)	// shift back to onscreen
+			elt.style.left = Math.min(0, bbox.left - delta);
 		if (record)
 			document.getElementById('tty-out').innerHTML += this.message + "\n";
+	}
+	show(e, msg, record = false)
+	{
+		this._prep(msg);
+		const that = this;
+		this.timerIn = setTimeout(function()
+		{
+			that.element.classList.remove('hidden');
+			if (!D.toolbar.element.classList.contains('hidden'))
+			{
+				const toolbox = D.toolbar.element.getBoundingClientRect();
+				const statusbox = that.element.getBoundingClientRect();
+				if (D2.Overlap(toolbox, statusbox))
+					that.element.style.top = `${toolbox.top + toolbox.height + D.default.font.height}px`;
+			}
+		}, D.default.statusbar.timein); 
+		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
+
+		this._post(e, msg, record);
+		/*
+		const elt = this.element;
+//		elt.innerHTML = H.div(msg);
+		elt.innerText = msg;
+		if (typeof e === 'object')
+		{
+			const x = e ? e.clientX : 100;
+			const y = e ? e.clientY : 100;
+			elt.style.left = `${x + 10}px`;
+			elt.style.top = `${y - 30}px`;
+			elt.style.display = 'block';
+			this.xy = {x, y};
+			this.hide();
+		}
+		else
+			D.RecordError(msg);
+		const bbox = elt.getBoundingClientRect();
+		const delta = bbox.left + bbox.width - window.innerWidth;
+		if (delta > 0)	// shift back to onscreen
+			elt.style.left = Math.min(0, bbox.left - delta);
+		if (record)
+			document.getElementById('tty-out').innerHTML += this.message + "\n";
+			*/
+	}
+	alert(e, msg, record = false)
+	{
+		this._prep(msg);
+		this.thithis.classList.remove('hidden');
+		this._post(e, msg, record);
 	}
 	hide() { this.element.classList.add('hidden'); }
 }
@@ -4145,7 +4188,7 @@ Object.defineProperties(D,
 			stdArrowDown:	new D2(0, 200),
 			autohideTimer:	10000,	// ms
 			autosaveTimer:	2000,	// ms
-			statusbar:		{timein: 1000, timeout: 3000},	// ms
+			statusbar:		{timein: 200, timeout: 4000},	// ms
 			saveInterval:	5000,	// ms
 			toolbar:		{x:15, y:70},
 			margin:			5,
@@ -9977,12 +10020,17 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 			return this.formatters.has(o.signature);
 		return false;
 	}
+	getInputId(prefix, object, factor)
+	{
+		return U.SafeId(`fctr-${prefix}-${object.name}-${factor.toString()}`);
+	}
 	getInputHtml(object, value = null, prefix = '', factor = [], index = null, first = true)
 	{
 		const from = R.diagram.selected[0];
 		const morph = from.to;
 		let html = '';
-		const id = `${prefix} ${object.name} ${factor.toString()}`;
+//		const id = `${prefix}-${object.name}-${factor.toString()}`;
+		const id = this.getInputId(prefix, object, factor);
 		switch(object.constructor.name)
 		{
 			case 'NamedObject':
@@ -10030,7 +10078,9 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 				const dv = typeof value === 'number' ? ` value="${value.toString()}"` : '';
 				if ('size' in object)
 				{
-					if (object.size < 2)
+					if (object.size === 1)
+						return '0';
+					else if (object.size === 0)
 						return '';
 					html = `<input type="number" min="0" id="${id}" max="${object.size}"${dv}/>`;
 				}
@@ -10066,7 +10116,8 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 	{
 		let value = null;
 		const dom = domain instanceof NamedObject ? domain.getBase() : domain;
-		const id = `${prefix} ${dom.name} ${factor.toString()}`;
+//		const id = `${prefix} ${dom.name} ${factor.toString()}`;
+		const id = this.getInputId(prefix, dom, factor);
 		switch(dom.constructor.name)
 		{
 			case 'FiniteObject':
@@ -10844,7 +10895,7 @@ class RunAction extends Action
 					if (d !== null)
 					{
 						const editDataBtn = D.GetButton('editData', 'edit', `Cat.R.Actions.run.editData(${i})`, 'Set data');
-						rows += H.tr(H.td(i) + H.td(d) + H.td(editDataBtn));
+						rows += H.tr(H.td(i) + H.td(d) + H.td(editDataBtn), 'sidenavRow');
 					}
 				};
 				this.data = new Map(to.data);
@@ -10915,7 +10966,7 @@ class RunAction extends Action
 	{
 		const that = R.Actions.run;
 		const morphism = R.diagram.getSelected();
-		const domInfo = JSON.stringify(U.ConvertData(morphism.domain.to, result[0]))
+		const domInfo = JSON.stringify(U.ConvertData(morphism.domain.to, result[0]));
 		const codInfo = JSON.stringify(U.ConvertData(morphism.codomain.to, result[1]));
 		const div = H3.div([H3.span(domInfo), H3.span('&rarr;'), H3.span(codInfo)]);
 		if (that.display.children.length === 0)
@@ -10979,16 +11030,17 @@ class RunAction extends Action
 			D.toolbar.error.innerHTML = 'Error: ' + U.GetError(x);
 		}
 	}
-	getMorphismData(morph)
-	{
-		this.js.getInputValue(domain, prefix = '', factor = []);
-	}
+//	getMorphismData()
+//	{
+//		this.js.getInputValue(domain, prefix = '', factor = []);
+//	}
 	editData(i)
 	{
-		const morph = R.diagram.getSelected();
-		const val = this.js.getInputValue(morph.to.codomain, i);
-		morph.to.data.set(i, val);
-		R.EmitMorphismEvent(R.diagram, 'update', morph);
+		const morphism = R.diagram.getSelected();
+		const val = this.js.getInputValue(morphism.to.codomain, i);
+		morphism.to.data.set(i, val);
+		R.EmitMorphismEvent(R.diagram, 'update', morphism);
+		D.statusbar.show(event, `Data for morphism ${morphism.to.htmlName()} saved`);
 	}
 	hasForm(diagram, ary)
 	{
