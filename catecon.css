@@ -416,7 +416,7 @@ a:hover, .offcanvas a:focus
 	overflow:			hidden;
 	padding:			0px;
 	position:			absolute;
-	transition:			opacity 1s, height 0s;
+/*	transition:			opacity 1s, height 0s; */
 	z-index:			4;
 }
 
