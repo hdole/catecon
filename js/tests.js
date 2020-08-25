@@ -22,6 +22,7 @@ Cat.R.sync = false;
 Cat.D.url = window.URL || window.webkitURL || window;
 //Cat.D.default.autohideTimer = Number.MAX_VALUE;
 Cat.D.default.autohideTimer = 10000000;
+Cat.D.mouse.down = new Cat.D2(100, 100);
 
 const halfFontHeight = Cat.D.default.font.height / 2;
 const grid = Cat.D.default.arrow.length;
@@ -111,20 +112,6 @@ function checkNotSelected(assert, element)
 	}
 }
 
-function checkToolbarStart(assert)
-{
-	const toolbar = document.getElementById('toolbar');
-	assert.dom(toolbar).hasTagName('div').hasClass('toolbar').hasStyle({display:'block'});
-	const toolbarHeader = document.getElementById('toolbar-header');
-	assert.dom(toolbarHeader).hasTagName('div').hasClass('buttonBarLeft');
-	const toolbarHelp = document.getElementById('toolbar-help');
-	assert.dom(toolbarHelp).hasTagName('div');
-	assert.equal(toolbarHelp.children.length, 0, 'Toolbar help no children ok');
-	const toolbarError = document.getElementById('toolbar-error');
-	assert.dom(toolbarError).hasTagName('div');
-	assert.equal(toolbarError.children.length, 0, 'Toolbar error no children ok');
-}
-
 function getButtonClick(domElt)
 {
 	const svg = domElt.firstChild;
@@ -135,12 +122,6 @@ function getButtonClick(domElt)
 function getToolbarButtons()
 {
 	return [...document.querySelectorAll('#toolbar-header .button')];
-}
-
-function checkToolbarButtons(assert, names)
-{
-	const btns = getToolbarButtons();
-	names.map((name, i) => assert.equal(btns[i].dataset.name, name, `Button name ${name} ok`));
 }
 
 function getToolbarButton(name)
@@ -394,7 +375,6 @@ async function storeResult(testname, teststep, elt)
 	let result;
 	const promise = new Promise((resolve, reject) =>
 	{
-//		let result;
 		const tx = infoDB.transaction(['elements'], 'readwrite');
 		tx.oncomplete = _ => resolve(result);
 		tx.onerror = event => reject(event.target.error);
@@ -420,6 +400,98 @@ async function checkStore(assert, teststep, elt, didit = assert.async())
 {
 	const nuRep = getRepresentation(elt);
 	const promise = new Promise((resolve, reject) =>
+	{
+		let result;
+		const tx = infoDB.transaction(['elements'], storeRep ? 'readwrite' : 'readonly');
+		tx.oncomplete = _ => resolve(result);
+		tx.onerror = event => reject(event.target.error);
+		const store = tx.objectStore('elements');
+		let req;
+		if (storeRep)
+		{
+			const key = getKey(assert.test.testName, teststep);
+			nuRep.key = key;
+			req = store.add(nuRep);
+		}
+		else
+			req = store.get(getKey(assert.test.testName, teststep));
+		req.onsuccess = _ => result = req.result;
+	});
+	try
+	{
+		if (storeRep)
+		{
+			assert.ok(true);
+		}
+		else
+		{
+			let rep = await promise;
+			if (elt instanceof HTMLElement || elt instanceof SVGElement || elt instanceof Text)
+				compareDomRepresentation(assert, teststep, nuRep, rep);
+			else
+				compareCatRepresentation(assert, nuRep, rep);
+		}
+	}
+	catch(error)
+	{
+		console.trace(error);
+	}
+	didit && didit();
+}
+
+async function downloadElements()
+{
+	let result;
+	const promise = new Promise((resolve, reject) =>
+	{
+		const tx = infoDB.transaction(['elements'], 'readonly');
+		tx.oncomplete = _ => resolve(result);
+		tx.onerror = event => reject(event.target.error);
+		const store = tx.objectStore('elements');
+		let req;
+		req = store.getAll();
+		req.onsuccess = _ => result = req.result;
+	});
+	try
+	{
+		result = await promise;
+		Cat.D.DownloadString(JSON.stringify(result), 'json', 'testInfoElements.json');
+	}
+	catch(error)
+	{
+		console.trace(error);
+	}
+	return result;
+}
+
+async function checkStore2(assert, teststep, elt, didit = assert.async())
+{
+	// is it in the store?
+	//
+	let promise = new Promise((resolve, reject) =>
+	{
+		let result;
+		const tx = infoDB.transaction(['elements'], 'readonly');
+		tx.oncomplete = _ => resolve(result);
+		tx.onerror = event => reject(event.target.error);
+		const key = getKey(assert.test.testName, teststep);
+		const store = tx.objectStore('elements');
+		const req = store.count(IDBKeyRange.only(key));
+		req.onsuccess = _ => result = req.result;
+	});
+	try
+	{
+		let count = await promise;
+		if (count === 0)
+			storeResult(testname, teststep, elt);
+	}
+	catch(error)
+	{
+		console.trace(error);
+		return;
+	}
+	const nuRep = getRepresentation(elt);
+	promise = new Promise((resolve, reject) =>
 	{
 		let result;
 		const tx = infoDB.transaction(['elements'], storeRep ? 'readwrite' : 'readonly');
@@ -1119,25 +1191,22 @@ test('Diagram.makeSelected object', assert =>
 	window.addEventListener('Object', diditHappen);
 	diagram.makeSelected();
 	assert.equal(diagram.selected.length, 0, 'Diagram empty selected length ok');
-	checkToolbarStart(assert);
+	const toolbar = Cat.D.toolbar.element;
+	checkStore(assert, 'toolbar 1', toolbar);
 	// select
 	diagram.makeSelected(o2);
 	checkSelected(assert, o2);
-	checkToolbarStart(assert);
+	checkStore(assert, 'toolbar 2', toolbar);
 	assert.ok(sawit, 'Object select event occurred');
 	assert.equal(diagram.selected.length, 1, 'Diagram selected length ok');
 	const o2elt = document.getElementById(o2.elementId());
-	assert.equal(o2elt.dataset.type, 'object', 'Selected object is an object');
-	assert.dom('#' + o2.elementId()).hasClass('selected', 'Selected object has select class');
-	assert.ok(diagram.selected.includes(o2), 'Selected object is the diagram selected array');
-	checkToolbarButtons(assert, ['moveToolbar', 'identity', 'name', 'homRight', 'homLeft', 'copy', 'project', 'inject', 'morphismAssembly', 'help', 'closeToolbar']);
-	checkToolbarStart(assert);
+	checkStore(assert, 'object selected', o2elt);
+	checkStore(assert, 'toolbar 3', toolbar);
 	// deselect
 	diagram.makeSelected(null);
-	checkToolbarStart(assert);
-	assert.dom(o2elt).doesNotHaveClass('selected', 'Deselected object does not have select class');
+	checkStore(assert, 'toolbar 4', toolbar);
 	assert.equal(diagram.selected.length, 0, 'Diagram selected set is empty');
-	assert.dom(o2elt).doesNotHaveClass('selected', 'object style not selected');
+	checkStore(assert, 'object not selected', o2elt);
 });
 
 test('Diagram.makeSelected morphism', assert =>
@@ -1155,17 +1224,15 @@ test('Diagram.makeSelected morphism', assert =>
 	window.addEventListener('Morphism', diditHappen);
 	assert.equal(diagram.selected.length, 0, 'Diagram empty selected length ok');
 	diagram.makeSelected(m1);
-	checkToolbarStart(assert);
+	const toolbar = Cat.D.toolbar.element;
+	checkStore(assert, 'toolbar 1', toolbar);
 	assert.ok(sawit, 'Morphism select event occurred');
 	assert.equal(diagram.selected.length, 1, 'Diagram selected length ok');
 	checkSelected(assert, m1);
-	checkToolbarButtons(assert, ['moveToolbar', 'name', 'detachDomain', 'copy', 'lambda', 'flipName', 'graph', 'delete', 'help', 'closeToolbar']);
+	checkStore(assert, 'toolbar 1.5', toolbar);
 	diagram.makeSelected(null);
-	checkToolbarStart(assert);
-	assert.dom('#' + m1.elementId()).doesNotHaveClass('selected', 'Deselected morphism does not have select class');
-	assert.equal(diagram.selected.length, 0, 'Diagram selected set is empty');
-	assert.dom('#' + m1.elementId() + '_path').doesNotHaveClass('selected', 'Selected morphism path does not have select class');
-	assert.dom('#' + m1.elementId() + '_name').doesNotHaveClass('selected', 'Selected morphism name does not have select class');
+	checkStore(assert, 'toolbar 2', toolbar);
+	checkStore(assert, 'morphism not selected', m1.svg);
 });
 
 test('Compose three morphisms', assert =>
@@ -1173,7 +1240,8 @@ test('Compose three morphisms', assert =>
 	const m2 = diagram.getElement('tester/test/m_2');
 	// select
 	diagram.makeSelected(m2);
-	checkToolbarStart(assert);
+//	checkToolbarStart(assert);
+	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	assert.equal(diagram.selected.length, 1, 'Only one element selected');
 	checkSelected(assert, m2);
 	const m0 = diagram.getElement('tester/test/m_0');
@@ -1186,7 +1254,8 @@ test('Compose three morphisms', assert =>
 	diagram.addSelected(m3);
 	assert.equal(diagram.selected.length, 3, 'Two elements selected');
 	checkSelected(assert, m3);
-	checkToolbarButtons(assert, ['moveToolbar', 'composite', 'product', 'coproduct', 'graph', 'delete', 'closeToolbar']);
+//	checkToolbarButtons(assert, ['moveToolbar', 'composite', 'product', 'coproduct', 'graph', 'delete', 'closeToolbar']);
+	checkStore(assert, 'toolbar', Cat.D.toolbar.element);
 	const didit = assert.async();
 	let m4 = null;
 	const lookforit = function(e)
@@ -1279,7 +1348,7 @@ test('Place referenced morphism', assert =>
 	assert.ok(from instanceof Cat.DiagramMorphism, 'DiagramMorphism exists');
 	// select
 	diagram.makeSelected(from);
-	checkToolbarStart(assert);
+	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	checkSelected(assert, from);
 	const btns = getToolbarButtons();
 	const btnNames = ['moveToolbar', 'name', 'copy', 'run', 'lambda', 'flipName', 'graph', 'delete', 'help', 'closeToolbar'];
@@ -1292,7 +1361,7 @@ test('Evaluate selected morphism', assert =>
 	assert.ok(morphism instanceof Cat.DiagramMorphism, 'Found morphism');
 	// select
 	diagram.makeSelected(morphism);
-	checkToolbarStart(assert);
+	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	checkSelected(assert, morphism);
 	const btns = getToolbarButtons();
 	const runBtns = btns.filter(btn => btn.dataset.name === 'run');
@@ -1352,8 +1421,11 @@ function checkEvaluation(assert, indexName, input0, input1, output)
 	assert.ok(from instanceof Cat.DiagramMorphism, `Found ${indexName}`);
 	// select
 	diagram.makeSelected(from);
-	checkToolbarStart(assert);
-	checkSelected(assert, from);
+//	checkToolbarStart(assert);
+	checkStore(assert, 'evaluation ' + indexName, Cat.D.toolbar.element);
+	checkStore(assert, 'evaluation from' + indexName, from);
+	checkStore(assert, 'evaluation from svg' + indexName, from.svg);
+//	checkSelected(assert, from);
 	const run = getToolbarButton('run');
 	// click
 	getButtonClick(run)();
@@ -1395,7 +1467,8 @@ test('Data morphism', assert =>
 {
 	const from = diagram.getElement('tester/test/m_6');
 	diagram.makeSelected(from);
-	checkToolbarButtons(assert, ['moveToolbar', 'name', 'detachCodomain', 'copy', 'run', 'flipName', 'graph', 'delete', 'help', 'closeToolbar']);
+//	checkToolbarButtons(assert, ['moveToolbar', 'name', 'detachCodomain', 'copy', 'run', 'flipName', 'graph', 'delete', 'help', 'closeToolbar']);
+	checkStore(assert, 'toolbar', Cat.D.toolbar.element);
 	const run = getToolbarButton('run');
 	// click
 	getButtonClick(run)();
@@ -1416,7 +1489,6 @@ test('Data morphism', assert =>
 	assert.dom(input).hasTagName('input').hasValue('7', 'Codomain value ok').hasAttribute('type', 'number', 'Input type ok').hasAttribute('id', 'fctr-0-hdole--Integers--Z-', 'Id ok').
 		hasAttribute('placeHolder', 'Integer', 'Placeholder ok');
 	const edit = row.children[2].firstElementChild;
-//	checkButton(assert, edit, 'editData', 'Set data');
 	checkStore(assert, 'edit button', edit);
 });
 
@@ -1446,23 +1518,18 @@ test('Copy object', assert =>
 
 test('Delete object', assert =>
 {
-//	const o8 = selectObject(assert, 'tester/test/o_8');
 	const o8 = diagram.getElement('tester/test/o_8');
 	diagram.makeSelected(o8);
 	checkStore(assert, 'place object', o8);
 	checkStore(assert, 'place object to', o8.to);
-//	const oldRefcnt = o8.to.refcnt;
 	const id = o8.elementId();
 	const o8elt = document.getElementById(id);
 	const delBtn = getToolbarButton('delete');
-
-//	checkButton(assert, delBtn, 'delete', 'Delete elements');
 	checkStore(assert, 'delete button', delBtn);
 	const oldDomCnt = diagram.domain.elements.size;
 	getButtonClick(delBtn)();
 	assert.equal(oldDomCnt -1, diagram.domain.elements.size, 'Domain index category decreased by one');
 	assert.equal(undefined, document.getElementById(id), 'element with id is gone');
-//	assert.equal(oldRefcnt -1, o8.to.refcnt, 'target refcnt decreased');
 	checkStore(assert, 'target refcnt decreased', o8.to);
 });
 
@@ -1472,12 +1539,12 @@ test('Composite', assert =>
 	assert.ok(ZxZ instanceof Cat.CatObject);
 	const xy = {x:2 * grid, y:3 * grid};
 	const from = diagram.placeObject(null, ZxZ, xy);	// do not test saving or selection here
-//	checkObject(assert, from.name);
 	checkStore(assert, 'place object', from);
 	checkStore(assert, 'place object to', from.to);
 	// select
 	diagram.makeSelected(from);
-	checkToolbarStart(assert);
+//	checkToolbarStart(assert);
+	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	const homRight = getToolbarButton('homRight');
 	getButtonClick(homRight)();
 	const help = Cat.D.toolbar.help;
@@ -1545,7 +1612,8 @@ test('Composite', assert =>
 	// add select m9
 	diagram.addSelected(m9);
 	assert.equal(diagram.selected.length, 3, 'Three elements selected');
-	checkToolbarButtons(assert, ['moveToolbar', 'composite', 'product', 'coproduct', 'graph', 'delete', 'closeToolbar']);
+//	checkToolbarButtons(assert, ['moveToolbar', 'composite', 'product', 'coproduct', 'graph', 'delete', 'closeToolbar']);
+	checkStore(assert, 'toolbar 2', Cat.D.toolbar.element);
 	const compBtn = getToolbarButton('composite');
 	// click to make composite
 	getButtonClick(compBtn)();
@@ -1566,7 +1634,8 @@ test('homset', assert =>
 	const o4 = diagram.getElement('tester/test/o_4');
 	diagram.makeSelected(o3);
 	diagram.addSelected(o4);
-	checkToolbarButtons(assert, ['moveToolbar', 'homset', 'alignHorizontal', 'product', 'coproduct', 'hom', 'delete', 'closeToolbar']);
+//	checkToolbarButtons(assert, ['moveToolbar', 'homset', 'alignHorizontal', 'product', 'coproduct', 'hom', 'delete', 'closeToolbar']);
+	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	const btn = getToolbarButton('homset');
 	getButtonClick(btn)();
 	const help = Cat.D.toolbar.help;
@@ -1575,20 +1644,20 @@ test('homset', assert =>
 	const rows = tbl.querySelectorAll('tr.sidenavRow');
 	assert.equal(rows.length, 2, 'two results ok');
 	rows[0].onclick();
-	checkToolbarButtons(assert, ['moveToolbar', 'name', 'detachDomain', 'detachCodomain', 'copy', 'lambda', 'flipName', 'graph', 'delete', 'help', 'closeToolbar']);
+//	checkToolbarButtons(assert, ['moveToolbar', 'name', 'detachDomain', 'detachCodomain', 'copy', 'lambda', 'flipName', 'graph', 'delete', 'help', 'closeToolbar']);
+	checkStore(assert, 'toolbar 2', Cat.D.toolbar.element);
 	const from = diagram.getElement('tester/test/m_11');
 	checkSelected(assert, from);
-//	checkIndexMorphism(assert, diagram, {angle:0.4636476090008061, from, to:from.to, id:from.elementId(), domain:o3, codomain:o4, name:'tester/test/m_11', basename:'m_11',
-//		sig:"e2f54153b01165b8b5b6e065bff431a23dddce30a6083161ac8467f3adc3683e", textAnchor:'start',
-//		start:{x:36, y:201}, end:{x:378, y:373}, d:'M36,201 C140,208 311,294 378,373', txy:{x:"236", y:"230"}, homSetIndex:1});
 	checkStore(assert, 'm11', from);
 	checkStore(assert, 'm11 graphics', from.svg);
 	m4 = diagram.getElement('tester/test/m_4');
-//	checkIndexMorphism(assert, diagram, {angle:0.4636476090008061, from:m4, to:m4.to, id:m4.elementId(), domain:o3, codomain:o4, name:'tester/test/m_4', basename:'m_4',
-//		sig:"10ddaa9e14eb0c3e9181a988312d7f379f12befa14f17dda5d19d721ccc15900", textAnchor:'start',
-//		start:{x:25, y:223}, end:{x:367, y:395}, d:'M25,223 C91,304 262,390 367,395', txy:{x:"187", y:"326"}, homSetIndex:0});
 	checkStore(assert, 'homset', m4);
 	checkStore(assert, 'homset graphics', m4.svg);
+});
+
+test('index object check', assert =>
+{
+	['tester/test/o_1', 'tester/test/o_2', 'tester/test/o_3', 'tester/test/o_4', 'tester/test/o_5'].map(nam => checkStore(assert, nam, diagram.getElement(nam)));
 });
 
 test('move object', assert =>
@@ -1626,9 +1695,6 @@ test('homLeft action', assert =>
 	rows[9].onclick();
 	const m12 = diagram.getElement('tester/test/m_12');
 	const o13 = diagram.getElement('tester/test/o_13');
-//	checkIndexMorphism(assert, diagram, {angle:Math.PI, from:m12, to:m12.to, id:m12.elementId(), domain:o13, codomain:from, name:m12.name, basename:m12.basename,
-//		sig:"7a7846247bf9e6d17db475423e80734c1d80cad6fd179e09f39053a55ea20842", textAnchor:'middle',
-//		start:{x:1158, y:400}, end:{x:1024, y:400}, d:'M1158,400 L1024,400', txy:{x:"1091", y:"436"}});
 	checkStore(assert, 'm12', m4);
 	checkStore(assert, 'm12 graphics', m4.svg);
 });
@@ -1716,7 +1782,6 @@ test('fuse domain and codomain', assert =>
 	simMouseEvent(o19.svg, 'mousemove', {clientX:o15.x, clientY:o15.y});
 	assert.equal(o19.x, o15.x, 'moved x ok');
 	assert.equal(o19.y, o15.y, 'moved x ok');
-//	assert.dom(o15.svg).hasClass('emphasis', 'target emphasis ok');
 	assert.dom(o19.svg).hasClass('emphasis', 'drop emphasis ok').hasClass('fuseObject', 'drop fuseObject class ok').hasClass('glow', 'drop glow class ok');
 	simMouseEvent(o19.svg, 'mouseup', {clientX:o15.x, clientY:o15.y});
 	simMouseEvent(o15.svg, 'mouseleave', {clientX:o15.x, clientY:o15.y});
@@ -1748,7 +1813,8 @@ test('toolbar nothing selected', assert =>
 	simMouseEvent(diagram.svgRoot, 'mousedown', {clientX:3 * grid, clientY:2 * grid});
 	simMouseEvent(diagram.svgRoot, 'mouseup', {clientX:3 * grid, clientY:2 * grid});
 	assert.equal(diagram.selected.length, 0, 'Nothing selected ok');
-	checkToolbarButtons(assert, ['moveToolbar', 'newDiagram', 'newObject', 'newMorphism', 'newText', 'toolbarShowSearch', 'closeToolbar']);
+//	checkToolbarButtons(assert, ['moveToolbar', 'newDiagram', 'newObject', 'newMorphism', 'newText', 'toolbarShowSearch', 'closeToolbar']);
+	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	diagram.domain.elements.forEach(elt => checkNotSelected(assert, elt));
 });
 
@@ -1911,8 +1977,9 @@ test('toolbar new diagram', assert =>
 	assert.equal(last.firstChild.firstChild.children.length, 0);
 	// navbar diagram name
 	const navbar = document.getElementById('diagram-navbar');
-	assert.equal(navbar.firstChild.nodeValue, 'TEST2');
-	assert.dom(navbar.firstChild.nextSibling).hasTagName('span').hasClass('italic').hasText('by tester');
+	checkStore(assert, 'navbar updated', navbar);
+//	assert.equal(navbar.firstChild.nodeValue, 'TEST2');
+//	assert.dom(navbar.firstChild.nextSibling).hasTagName('span').hasClass('italic').hasText('by tester');
 });
 
 test('ctrl-D open panel', assert =>
@@ -1969,7 +2036,8 @@ test('select three morphisms', assert =>
 	assert.equal(diagram.selected.length, 7);
 	const elts = ["tester/test/o_14", "tester/test/o_15", "tester/test/m_13", "tester/test/o_16", "tester/test/o_17", "tester/test/m_15", "tester/test/m_14"];
 	elts.map(e => checkSelected(assert, diagram.getElement(e)));
-	checkToolbarButtons(assert, ['moveToolbar', 'delete', 'closeToolbar']);
+//	checkToolbarButtons(assert, ['moveToolbar', 'delete', 'closeToolbar']);
+	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	// click delete button
 	const svgs = elts.map(e => diagram.getElement(e).svg);
 	const delBtn = getToolbarButton('delete');
@@ -2034,14 +2102,17 @@ test('toolbar project button', assert =>
 	simMouseEvent(o17.svg, 'mousedown', {clientX:o17.x, clientY:o17.y});
 	simMouseEvent(o17.svg, 'mouseup', {clientX:o17.x, clientY:o17.y});
 	checkSelected(assert, o17);
-	checkToolbarButtons(assert,
-		['moveToolbar', 'identity', 'name', 'homRight', 'homLeft', 'copy', 'run', 'productEdit', 'project', 'inject', 'morphismAssembly', 'delete', 'help', 'closeToolbar']);
+//	checkToolbarButtons(assert,
+//		['moveToolbar', 'identity', 'name', 'homRight', 'homLeft', 'copy', 'run', 'productEdit', 'project', 'inject', 'morphismAssembly', 'delete', 'help', 'closeToolbar']);
+	checkStore(assert, 'toolbar', Cat.D.toolbar.element);
 	getButtonClick(getToolbarButton('project'))();
 });
 
 test('project help display', assert =>
 {
 	const help = Cat.D.toolbar.help;
+	checkStore(assert, 'first display', help);
+	/*
 	assert.dom(help.firstChild).hasTagName('h4').hasText('Create Factor Morphism');
 	const rmvPrnDiv = help.firstChild.nextSibling;
 	assert.dom(rmvPrnDiv).hasTagName('div');
@@ -2108,6 +2179,7 @@ test('project help display', assert =>
 	const div = span.nextSibling;
 	assert.dom(div).hasTagName('div').hasAttribute('id', 'project-codomain');
 	assert.equal(div.children.length, 0);
+	*/
 });
 
 test('flatten morphism', assert =>
@@ -2124,27 +2196,6 @@ test('flatten morphism', assert =>
 	checkStore(assert, 'm4 graphics', m4.svg);
 	checkStore(assert, 'm4 domain', m4.domain);
 	checkStore(assert, 'm4 codomain', m4.codomain);
-/*
-	const to = m13.to;
-	assert.ok(to instanceof Cat.FactorMorphism);
-	assert.equal(to._sig, "e6957092f35646a4ac772764b831df93d1165d7e147cb5093e84e7b4ec801df8");
-	const o17 = diagram.getElement('tester/test/o_17');
-	assert.ok(to.domain, o17);
-	assert.equal(to.category.name, 'hdole/PFS');
-	assert.equal(to.basename, "Fa{tester/test/Po{hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP,hdole/Integers/Po{hdole/Integers/Z,hdole/Integers/Z}oP}oP,hdole/Integers/Z_0,0,hdole/Integers/Z_0,1,hdole/Integers/Z_1,0,hdole/Integers/Z_1,1}aF");
-	assert.deepEqual(to.factors, [[0, 0], [0, 1], [1, 0], [1, 1]]);
-	assert.equal(to.dual, false);
-	assert.equal(to.refcnt, 1);
-	assert.equal(to.properName, "&lt;&Zopf;&#x2080;,&#x2080;,&Zopf;&#x2080;,&#x2081;,&Zopf;&#x2081;,&#x2080;,&Zopf;&#x2081;,&#x2081;&gt;");
-	assert.equal(to.description, '');
-	assert.equal(to.diagram.name, 'tester/test');
-	assert.ok(to.codomain instanceof Cat.ProductObject);
-	assert.equal(to.codomain.objects.length, 4);
-	to.codomain.objects.map(o => assert.equal(o.name, 'hdole/Integers/Z'));
-	assert.equal(to.codomain.name, "tester/test/Po{hdole/Integers/Z,hdole/Integers/Z,hdole/Integers/Z,hdole/Integers/Z}oP");
-	assert.equal(to.codomain.properName, "&Zopf;&times;&Zopf;&times;&Zopf;&times;&Zopf;");
-	assert.equal(to.codomain.dual, false);
-	*/
 });
 
 test('delete o14 to clear screen', assert =>
@@ -2257,4 +2308,44 @@ test(testname, assert =>
 	teststep = 'data morphism display';
 	checkStore(assert, teststep, help).then();
 	// enter 38 for the first value
+	help.querySelector('#fctr-0-hdole--Integers--Z-1-c-0-c-0').value = 38;
+	getButtonClick(help.querySelector('span.button'))();
+	checkStore(assert, 'changed data', morphism.to);
+	// close toolbar
+	const closeBtn = Cat.D.toolbar.element.querySelector('[data-name="closeToolbar"]');
+	getButtonClick(closeBtn)();
+	assert.dom(Cat.D.toolbar.element).hasClass('hidden', 'toolbar is hidden');
+});
+
+test('search diagram', assert =>
+{
+	const help = Cat.D.toolbar.help;
+	// click on nothing
+	simMouseClick(diagram.svgRoot, {clientX:2 * grid, clientY:3 * grid});
+	const searchBtn = Cat.D.toolbar.element.querySelector('[data-name="toolbarShowSearch"]');
+	assert.ok(searchBtn, 'found search button');
+	getButtonClick(searchBtn)();
+	checkStore(assert, 'toolbar search', help);
+	// input "id"
+	const input = help.querySelector('#toolbar-diagram-search');
+	assert.equal(document.activeElement, input, 'input focus ok');
+	input.value = 'id';
+	simKeyboardEvent(input, 'keydown', {code:'Enter', key:'Enter'});
+	simKeyboardEvent(input, 'keyup', {code:'Enter', key:'Enter'});
+	checkStore(assert, 'toolbar search found', help);
+	const divs = [...help.querySelectorAll('div')];
+	const m4 = diagram.getElement('tester/test/m_4');
+	const preBox = new Cat.D2(m4.svg.getBoundingClientRect());
+	const div = divs[3];
+	// enter div
+	simMouseEvent(div, 'mouseenter', {clientX:0, clientY:0});
+	checkStore(assert, 'morphism emphasis', m4);
+	// leave div
+	simMouseEvent(div, 'mouseleave', {clientX:0, clientY:0});
+	checkStore(assert, 'morphism emphasis', m4);
+	// zoomin
+	diagram.svgTranslate.classList.remove('trans025s');		// no QA for animations
+	div.onclick();
+	const postBox = new Cat.D2(m4.svg.getBoundingClientRect());
+	assert.ok(preBox.area() < postBox.area(), 'zoomed in');
 });

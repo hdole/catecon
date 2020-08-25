@@ -108,6 +108,10 @@ class D2
 			angle += 2 * Math.PI;
 		return angle % (2 * Math.PI);
 	}
+	area()
+	{
+		return this.width * this.height;
+	}
 	dist(v)
 	{
 		return D2.Dist(this, v);
@@ -2461,7 +2465,7 @@ class Toolbar
 	}
 	showSearch()
 	{
-		function onkeydown() { Cat.D.OnEnter(event, function(e) { Cat.D.toolbar.search(e); }); }
+		function onkeydown(e) { Cat.D.OnEnter(e, function(e) { Cat.D.toolbar.search(e); }); }
 		D.RemoveChildren(this.help);
 		const input = H3.input({class:'in100', id:'toolbar-diagram-search', title:'Search', placeholder:'Contains...', onkeydown, size:8});
 		const btn = D.GetButton3('toolbarSearch', 'edit3', 'Cat.D.toolbar.search()', 'Search in a diagram');
@@ -2475,13 +2479,16 @@ class Toolbar
 		const searchInput = document.getElementById('toolbar-diagram-search');
 		D.RemoveChildren(searchItems);
 		const elts = [];
+		const val = searchInput.value;
 		R.diagram.domain.elements.forEach(function(elt)
 		{
-			const rx = new RegExp(searchInput.value, 'gi');
+//			const rx = new RegExp(searchInput.value, 'gi');
 			if (elt instanceof DiagramObject || elt instanceof DiagramMorphism)
-				rx.exec(elt.to.basename.toString()) && elts.push(elt);
+//				rx.exec(elt.to.basename.toString()) && elts.push(elt);
+				(elt.to.properName.includes(val) || elt.to.basename.includes(val)) && elts.push(elt);
 			else if (elt instanceof DiagramText)
-				rx.exec(elt.description.toString()) && elts.push(elt);
+//				rx.exec(elt.description.toString()) && elts.push(elt);
+				elt.description.includes(val) && elts.push(elt);
 		});
 		function showElement(elt)
 		{
@@ -2536,12 +2543,12 @@ class StatusBar
 	_post(e, msg, record)
 	{
 		const elt = this.element;
-//		elt.innerHTML = H.div(msg);
 		elt.innerText = msg;
+		let x, y;
 		if (typeof e === 'object')
 		{
-			const x = e ? e.clientX : 100;
-			const y = e ? e.clientY : 100;
+			x = e ? e.clientX : 100;
+			y = e ? e.clientY : 100;
 			elt.style.left = `${x + 10}px`;
 			elt.style.top = `${y - 30}px`;
 			elt.style.display = 'block';
@@ -2549,7 +2556,10 @@ class StatusBar
 			this.hide();
 		}
 		else
-			D.RecordError(msg);
+		{
+			x = window.innerWidth/2;
+			y = window.innerHeight/2;
+		}
 		const bbox = elt.getBoundingClientRect();
 		const delta = bbox.left + bbox.width - window.innerWidth;
 		if (delta > 0)	// shift back to onscreen
@@ -5652,7 +5662,7 @@ class CatalogDiagramSection extends DiagramSection
 	{
 		super('Catalog', parent, 'diagram-catalog-section', 'Catalog of available diagram');
 		const that = this;
-		function onkeydown() { Cat.D.OnEnter(event, function(e) { that.search(e); }); }
+		function onkeydown(e) { Cat.D.OnEnter(e, function(e) { that.search(e); }); }
 		this.searchInput = H3.input({class:'in100', id:'cloud-search', title:'Search', placeholder:'Diagram name contains...', onkeydown });
 		const btn = D.GetButton3('CatalogSectionSearch', 'search', 'Cat.D.panels.panels.diagram.catalogSection.search()', 'Search for diagrams', D.default.button.small,
 									'catalog-search-button', 'catalog-search-button-ani');
@@ -7968,16 +7978,20 @@ class DiagramObject extends CatObject
 	}
 	getBBox()
 	{
-		return {x:this.x - this.width/2, y:this.y + this.height/2 - D.default.font.height, width:this.width, height:this.height};
+//		return {x:this.x - this.width/2, y:this.y + this.height/2 - D.default.font.height, width:this.width, height:this.height};
+		return this.svg.getBBox();
 	}
 	getSVG(node)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `NaN in getSVG`;
 		const name = this.name;
-		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
-		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
-		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
+//		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
+		const mouseenter = e => Cat.D.Mouseover(e, name, true);
+//		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
+		const mouseleave = e => Cat.D.Mouseover(e, name, false);
+//		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
+		const mousedown = e => Cat.R.diagram.selectElement(e, name);
 		const svg = H3.text();
 		node.appendChild(svg);
 		this.svg = svg;
@@ -10894,7 +10908,7 @@ class RunAction extends Action
 				{
 					if (d !== null)
 					{
-						const editDataBtn = D.GetButton('editData', 'edit', `Cat.R.Actions.run.editData(${i})`, 'Set data');
+						const editDataBtn = D.GetButton('editData', 'edit', `Cat.R.Actions.run.editData(event, ${i})`, 'Set data');
 						rows += H.tr(H.td(i) + H.td(d) + H.td(editDataBtn), 'sidenavRow');
 					}
 				};
@@ -11034,13 +11048,13 @@ class RunAction extends Action
 //	{
 //		this.js.getInputValue(domain, prefix = '', factor = []);
 //	}
-	editData(i)
+	editData(e, i)
 	{
 		const morphism = R.diagram.getSelected();
 		const val = this.js.getInputValue(morphism.to.codomain, i);
 		morphism.to.data.set(i, val);
 		R.EmitMorphismEvent(R.diagram, 'update', morphism);
-		D.statusbar.show(event, `Data for morphism ${morphism.to.htmlName()} saved`);
+		D.statusbar.show(e, `Data for morphism ${morphism.to.htmlName()} saved`, false);
 	}
 	hasForm(diagram, ary)
 	{
@@ -12360,7 +12374,7 @@ class DiagramMorphism extends Morphism
 	}
 	getBBox()
 	{
-		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox());
+		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), this.svg_name.getBBox());
 	}
 	predraw()
 	{
