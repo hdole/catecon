@@ -514,7 +514,7 @@ class U
 		for (let i=0; i<subs.length; ++i)
 		{
 			let s = subs[i].toString();
-			sub += s.replace(/[0-9]/g, submap);
+			sub += s.replace(/[0-9]/g, submap).replace(/,/g, '&#806');	// combining comma below
 		}
 		return sub;
 	}
@@ -642,7 +642,7 @@ class U
 	}
 	static SafeId(id)
 	{
-		return id.replace(/\//g, '--').replace(/{/g, '---').replace(/}/g, '---').replace(/,/g, '-c-');
+		return id.replace(/\//g, '--').replace(/{/g, '---').replace(/}/g, '---').replace(/,/g, '-c-').replace(/#/g, '-sh-');
 	}
 	static Tab(s)
 	{
@@ -2543,7 +2543,7 @@ class StatusBar
 	_post(e, msg, record)
 	{
 		const elt = this.element;
-		elt.innerText = msg;
+		elt.innerHTML = msg;
 		let x, y;
 		if (typeof e === 'object')
 		{
@@ -3548,11 +3548,11 @@ ${button}
 	}
 	static Grid(x)
 	{
-		const d = D.shiftKey && !D.ctrlKey ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
+		const grid = D.shiftKey && !D.ctrlKey ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
 		switch (typeof x)
 		{
 		case 'number':
-			return D.gridding ? d * Math.round(x / d) : x;
+			return D.gridding ? grid * Math.round(x / grid) : x;
 		case 'object':
 			return new D2(D.Grid(x.x), D.Grid(x.y));
 		}
@@ -4446,7 +4446,6 @@ Object.defineProperties(D,
 	'snapshotWidth':	{value: 1024,		writable: true},
 	'snapshotHeight':	{value: 768,		writable: true},
 	'statusbar':		{value: new StatusBar(),	writable: false},
-	'statusMessage':	{value:	'',			writable: true},
 	'svgContainers':	{value: ['svg', 'g'],	writable: false},
 	'svgStyles':	
 	{
@@ -6654,6 +6653,18 @@ class Graph
 		this.links = [];
 		this.visited = new Set();
 	}
+	json()
+	{
+		const a = {};
+		a.diagram = this.diagram.name;
+		a.tags = this.tags.slice();
+		a.position = U.Clone(this.position);
+		a.width = this.width;
+		a.graphs = this.graphs.map(g => g.json());
+		a.links = this.links.slice();
+		a.visited = [...this.visited];
+		return a;
+	}
 	isLeaf()
 	{
 		return this.graphs.length === 0;
@@ -6706,7 +6717,7 @@ class Graph
 	}
 	traceLinks(top, ndx = [])
 	{
-		if (this.isLeaf())
+		if (this.isLeaf())		// links are at the leaves of the graph
 		{
 			const links = this.links.slice();
 			this.visited = new Set();
@@ -6714,25 +6725,30 @@ class Graph
 			while(links.length > 0)
 			{
 				const lnk = links.pop();
+				if (ndx.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
+					continue;
 				if (this.visited.has(lnk.toString()))
 					continue;
 				const g = top.getFactor(lnk);
 				for (let j=0; j<g.links.length; ++j)
 				{
 					const glnk = g.links[j];
+					if (this.visited.has(glnk.toString()))
+						continue;
 					if (ndx.reduce((isEqual, lvl, i) => lvl === glnk[i] && isEqual, true))	// ignore links back to where we came from
 						continue;
-					this.visited.add(glnk.toString());
+//					this.visited.add(glnk.toString());
 					nuLinks.push(glnk);
 					links.push(glnk);
 				}
 				U.ArrayMerge(this.tags, g.tags);
-				if (ndx.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
-					continue;
 				this.visited.add(lnk.toString());
 			}
 			if (ndx.length === 1 && (ndx[0] === 0 || ndx[0] === top.graphs.length -1))
 				this.links = nuLinks.filter(lnk => lnk[0] === 0 || lnk[0] === top.graphs.length -1);
+			else
+				U.ArrayMerge(this.links, nuLinks);
+//				this.links = nuLinks;
 		}
 		else
 		{
@@ -6780,7 +6796,8 @@ class Graph
 			const index = data.index.slice();
 			index.push(i + data.offset);
 			args.index = index;
-			args.cod = data.cod.graphs[i + data.offset];
+//			args.cod = data.cod.graphs[i + data.offset];
+			args.cod = data.cod.graphs[i];
 			args.domRoot.push(i);
 			args.codRoot.push(i);
 			g.bindGraph(args);
@@ -6906,9 +6923,9 @@ class Graph
 	{
 		const name = this.name;
 		const sig = this.signature;
-		const mouseenter = function(e) { Cat.R.diagram.emphasis(sig, true);};
-		const mouseleave = function(e) { Cat.R.diagram.emphasis(sig, false);};
-		const mousedown = function(e) { Cat.R.diagram.selectElement(event, sig);};
+		const mouseenter = e => Cat.R.diagram.emphasis(sig, true);
+		const mouseleave = e => Cat.R.diagram.emphasis(sig, false);
+		const mousedown = e => Cat.R.diagram.selectElement(event, sig);
 		const g = document.createElementNS(D.xmlns, 'g');
 		node.appendChild(g);
 		g.setAttributeNS(null, 'id', id);
@@ -6936,7 +6953,6 @@ class Graph
 		const diagram = this.diagram;
 		if (this.isLeaf() && this.links.length > 0)
 		{
-			const color = Math.round(Math.random() * 0xffffff).toString(16);
 			const srcKey = DiagramMorphism.LinkColorKey(data.index, data.dom, data.cod);
 			let colorIndex = diagram.link2colorIndex[srcKey];
 			while(colorIndex in diagram.colorIndex2colorIndex)
@@ -7053,6 +7069,21 @@ class Graph
 			g = graphs[k];
 		}
 		return g;
+	}
+	removeLinks(ndx)	// for sequence graphs
+	{
+		if (this.isLeaf())
+		{
+			const nuLinks = new Set();
+			for (let i=0; i<this.links.length; ++i)
+			{
+				const lnk = this.links[i];
+				if (lnk[0] === 0 || lnk[0] === ndx)
+					nuLinks.add(lnk);
+			}
+			this.links = [...nuLinks];
+		}
+		else this.graphs.map((g, i) => g.removeLinks(ndx));
 	}
 }
 
@@ -7978,7 +8009,6 @@ class DiagramObject extends CatObject
 	}
 	getBBox()
 	{
-//		return {x:this.x - this.width/2, y:this.y + this.height/2 - D.default.font.height, width:this.width, height:this.height};
 		return this.svg.getBBox();
 	}
 	getSVG(node)
@@ -7986,13 +8016,10 @@ class DiagramObject extends CatObject
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `NaN in getSVG`;
 		const name = this.name;
-//		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
-		const mouseenter = e => Cat.D.Mouseover(e, name, true);
-//		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
-		const mouseleave = e => Cat.D.Mouseover(e, name, false);
-//		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
-		const mousedown = e => Cat.R.diagram.selectElement(e, name);
 		const svg = H3.text();
+		svg.onmouseenter = e => Cat.D.Mouseover(e, name, true);
+		svg.onmouseleave = e => Cat.D.Mouseover(e, name, false);
+		svg.onmousedown = e => Cat.R.diagram.selectElement(e, name);
 		node.appendChild(svg);
 		this.svg = svg;
 		svg.setAttributeNS(null, 'data-type', 'object');
@@ -8003,9 +8030,6 @@ class DiagramObject extends CatObject
 		svg.setAttributeNS(null, 'x', this.x);
 		svg.setAttributeNS(null, 'y', this.y + D.default.font.height/2);	// TODO should be this.height?
 		svg.innerHTML = this.to.htmlName();
-		svg.addEventListener('mouseenter', mouseenter);
-		svg.addEventListener('mouseleave', mouseleave);
-		svg.addEventListener('mousedown', mousedown);
 	}
 	update(xy = null)
 	{
@@ -9382,7 +9406,10 @@ class ProjectAction extends Action
 			const ob = d[0];
 			const f = d[1];
 			if (ob instanceof ProductObject && ob.dual === this.dual)
-				ob.objects.map((obo, i) => searchObjects.push([obo, [...f, i]]));
+			{
+				const nextSearch = ob.objects.map((obo, i) => [obo, [...f, i]]);
+				searchObjects.unshift(...nextSearch);
+			}
 			else
 				factors.push(f);
 		}
@@ -12281,12 +12308,15 @@ class DiagramMorphism extends Morphism
 		const id = this.elementId();
 		const g = H3.g();
 		const name = this.name;
-		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
-		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
-		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
-		g.addEventListener('mouseenter', mouseenter);
-		g.addEventListener('mouseleave', mouseleave);
-		g.addEventListener('mousedown', mousedown);
+//		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
+		g.onmouseenter = e => Cat.D.Mouseover(e, name, true);
+//		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
+		g.onmouseleave = e => Cat.D.Mouseover(e, name, false);
+//		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
+		g.onmousedown = e => Cat.R.diagram.selectElement(e, name);
+//		g.addEventListener('mouseenter', mouseenter);
+//		g.addEventListener('mouseleave', mouseleave);
+//		g.addEventListener('mousedown', mousedown);
 		node.appendChild(g);
 		this.svg = g;
 		g.setAttributeNS(null, 'id', id);
@@ -12543,7 +12573,8 @@ class DiagramMorphism extends Morphism
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 			const id = this.graphId();
 			this.graph.getSVG(this.svg, id,
-							{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.floor(Math.random()*12)});
+//							{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.floor(Math.random()*12)});
+							{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.round(12 * Number.parseInt(this.signature.substring(0, 6), 16)/0xFFFFFF)});
 		}
 		else
 			this.graph.svg.classList.remove('hidden');
@@ -13135,9 +13166,11 @@ class Composite extends MultiMorphism
 			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
 		seqGraph.traceLinks(seqGraph);
-		const ndx = this.morphisms.length;
+		const cnt = this.morphisms.length;
+		seqGraph.graphs[0].removeLinks(cnt);
+		seqGraph.graphs[cnt].removeLinks(cnt);
 		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[1], [1]]]});
-		graph.graphs[1].copyGraph({src:seqGraph.graphs[ndx], map:[[[0], [0]]]});
+		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
 		return graph;
 	}
 	getFirstMorphism()
@@ -14166,12 +14199,12 @@ class Diagram extends Functor
 			D.dragStart = D.mouse.position();
 			if (!this.selected.includes(elt))
 			{
-				if (D.shiftKey)
+				if (e.shiftKey)
 					this.addSelected(elt);
 				else
 					this.makeSelected(elt);
 			}
-			else if (D.shiftKey)
+			else if (e.shiftKey)
 				this.deselect(elt);
 			else
 				D.toolbar.show();
@@ -14409,7 +14442,9 @@ class Diagram extends Functor
 				else
 					angle = (angle + Math.PI) % (2 * Math.PI);
 				const cosAngle = Math.cos(angle);
-				xy = D.Grid(D2.Scale(arrowLength, {x:cosAngle, y:Math.sin(angle)}).add(fromObj));
+				const sinAngle = Math.sin(angle);
+				const length = Math.max(D.default.arrow.length, Math.abs(cosAngle * arrowLength));
+				xy = D.Grid(D2.Scale(length, {x:cosAngle, y:sinAngle}).add(fromObj));
 			}
 			else
 			{

@@ -23,6 +23,7 @@ Cat.D.url = window.URL || window.webkitURL || window;
 //Cat.D.default.autohideTimer = Number.MAX_VALUE;
 Cat.D.default.autohideTimer = 10000000;
 Cat.D.mouse.down = new Cat.D2(100, 100);
+Cat.D.default.statusbar.timein = 0;
 
 const halfFontHeight = Cat.D.default.font.height / 2;
 const grid = Cat.D.default.arrow.length;
@@ -126,7 +127,8 @@ function getToolbarButtons()
 
 function getToolbarButton(name)
 {
-	return getToolbarButtons().filter(b => b.dataset.name === name)[0];
+//	return getToolbarButtons().filter(b => b.dataset.name === name)[0];
+	return Cat.D.toolbar.element.querySelector(`[data-name="${name}"]`);
 }
 
 function checkButton(assert, btn, name, title)
@@ -173,6 +175,12 @@ function simKeyboardEvent(elt, type, args)
 		nuArgs.bubbles = true;
 	const event = new KeyboardEvent(type, nuArgs);
 	elt.dispatchEvent(event);
+}
+
+function simKeyboardClick(elt, key)
+{
+	simKeyboardEvent(elt, 'keydown', {code:key, key:key});
+	simKeyboardEvent(elt, 'keyup', {code:key, key:key});
 }
 
 function checkIsolatedMorphism(assert, m)
@@ -323,7 +331,8 @@ function getRepresentation(elt)
 	{
 		const rep = elt.json();
 		// extras
-		rep.refcnt = elt.refcnt;
+		if ('refcnt' in elt)
+			rep.refcnt = elt.refcnt;
 		if (elt instanceof Cat.DiagramObject)
 		{
 			rep.domains = [...elt.domains].map(dom => dom.name);
@@ -335,14 +344,21 @@ function getRepresentation(elt)
 
 function compareCatRepresentation(assert, elt, rep)
 {
-	const key = rep.key;
-	delete rep.key;
+//	const key = rep.key;
+//	delete rep.key;
 	assert.deepEqual(elt, rep, elt.name);
-	rep.key = key;
+//	rep.key = key;
 }
 
 function compareDomRepresentation(assert, teststep, domElt, rep)
 {
+	if (!rep)
+	{
+		assert.ok(false, `${teststep} missing rep`);
+		return;
+	}
+	const testname = assert.test.testName;
+	const key = getKey(testname, teststep);
 	for (const name in rep)
 		if (rep.hasOwnProperty(name))
 		{
@@ -352,11 +368,13 @@ function compareDomRepresentation(assert, teststep, domElt, rep)
 				case 'key':
 					break;
 				case 'classList':
+					assert.deepEqual(domElt.classList, rep.classList, `${key} :${name}`);
+					break;
 				case 'listeners':
-					assert.deepEqual(domElt.listeners, rep.listeners, `${teststep} ${name}`);
+					assert.deepEqual(domElt.listeners, rep.listeners, `${key} :${name}`);
 					break;
 				default:
-					assert.equal(domElt[name], rep[name], `${teststep} ${name}`);
+					assert.equal(domElt[name], rep[name], `${key} :${name}`);
 					break;
 			}
 		}
@@ -367,76 +385,6 @@ function compareDomRepresentation(assert, teststep, domElt, rep)
 function getKey(testname, teststep)
 {
 	return `${testname}-${teststep}`;
-}
-
-async function storeResult(testname, teststep, elt)
-{
-	const rep = getRepresentation(elt);
-	let result;
-	const promise = new Promise((resolve, reject) =>
-	{
-		const tx = infoDB.transaction(['elements'], 'readwrite');
-		tx.oncomplete = _ => resolve(result);
-		tx.onerror = event => reject(event.target.error);
-		const store = tx.objectStore('elements');
-		let req;
-		const key = getKey(testname, teststep);
-		rep.key = key;
-		req = store.add(rep);
-		req.onsuccess = _ => result = req.result;
-	});
-	try
-	{
-		result = await promise;
-	}
-	catch(error)
-	{
-		console.trace(error);
-	}
-	return result;
-}
-
-async function checkStore(assert, teststep, elt, didit = assert.async())
-{
-	const nuRep = getRepresentation(elt);
-	const promise = new Promise((resolve, reject) =>
-	{
-		let result;
-		const tx = infoDB.transaction(['elements'], storeRep ? 'readwrite' : 'readonly');
-		tx.oncomplete = _ => resolve(result);
-		tx.onerror = event => reject(event.target.error);
-		const store = tx.objectStore('elements');
-		let req;
-		if (storeRep)
-		{
-			const key = getKey(assert.test.testName, teststep);
-			nuRep.key = key;
-			req = store.add(nuRep);
-		}
-		else
-			req = store.get(getKey(assert.test.testName, teststep));
-		req.onsuccess = _ => result = req.result;
-	});
-	try
-	{
-		if (storeRep)
-		{
-			assert.ok(true);
-		}
-		else
-		{
-			let rep = await promise;
-			if (elt instanceof HTMLElement || elt instanceof SVGElement || elt instanceof Text)
-				compareDomRepresentation(assert, teststep, nuRep, rep);
-			else
-				compareCatRepresentation(assert, nuRep, rep);
-		}
-	}
-	catch(error)
-	{
-		console.trace(error);
-	}
-	didit && didit();
 }
 
 async function downloadElements()
@@ -464,71 +412,87 @@ async function downloadElements()
 	return result;
 }
 
-async function checkStore2(assert, teststep, elt, didit = assert.async())
+function getKeyCount(key)
 {
-	// is it in the store?
-	//
-	let promise = new Promise((resolve, reject) =>
+	return new Promise((resolve, reject) =>
 	{
 		let result;
 		const tx = infoDB.transaction(['elements'], 'readonly');
 		tx.oncomplete = _ => resolve(result);
-		tx.onerror = event => reject(event.target.error);
-		const key = getKey(assert.test.testName, teststep);
+		tx.onerror = e => {console.trace('error', e.target.error);reject(e.target.error);};
 		const store = tx.objectStore('elements');
 		const req = store.count(IDBKeyRange.only(key));
 		req.onsuccess = _ => result = req.result;
 	});
-	try
-	{
-		let count = await promise;
-		if (count === 0)
-			storeResult(testname, teststep, elt);
-	}
-	catch(error)
-	{
-		console.trace(error);
-		return;
-	}
-	const nuRep = getRepresentation(elt);
-	promise = new Promise((resolve, reject) =>
+}
+
+function putResult(testname, teststep, rep)
+{
+//	const rep = getRepresentation(elt);
+	return new Promise((resolve, reject) =>
 	{
 		let result;
-		const tx = infoDB.transaction(['elements'], storeRep ? 'readwrite' : 'readonly');
+		const tx = infoDB.transaction(['elements'], 'readwrite');
 		tx.oncomplete = _ => resolve(result);
 		tx.onerror = event => reject(event.target.error);
 		const store = tx.objectStore('elements');
 		let req;
-		if (storeRep)
-		{
-			const key = getKey(assert.test.testName, teststep);
-			nuRep.key = key;
-			req = store.add(nuRep);
-		}
-		else
-			req = store.get(getKey(assert.test.testName, teststep));
+		const key = getKey(testname, teststep);
+		rep.key = key;
+		req = store.put(rep);
 		req.onsuccess = _ => result = req.result;
 	});
-	try
+}
+
+function getResult(key)
+{
+	return new Promise((resolve, reject) =>
 	{
-		if (storeRep)
-		{
-			assert.ok(true);
-		}
+		let result;
+		const tx = infoDB.transaction(['elements'], 'readonly');
+		tx.oncomplete = _ => {console.log({key, result});resolve(result);};
+		tx.onerror = e => reject(e.target.error);
+		const store = tx.objectStore('elements');
+		const req = store.get(key);
+		req.onsuccess = _ => result = req.result;
+	});
+}
+
+function checkStore(assert, teststep, elt, didit = assert.async())
+{
+	const key = getKey(assert.test.testName, teststep);
+	const nuRep = getRepresentation(elt);
+	nuRep.key = key;
+	const testname = assert.test.testName;
+	// is it in the store?
+	getKeyCount(key).then(count =>
+	{
+		if (count === 0)	// nothing found; save golden
+			putResult(testname, teststep, nuRep);
+	}).then(_ =>
+	{
+		return getResult(key);
+	}).then(rep =>
+	{
+		if (elt instanceof HTMLElement || elt instanceof SVGElement || elt instanceof Text)
+			compareDomRepresentation(assert, teststep, nuRep, rep);
 		else
-		{
-			let rep = await promise;
-			if (elt instanceof HTMLElement || elt instanceof SVGElement || elt instanceof Text)
-				compareDomRepresentation(assert, teststep, nuRep, rep);
-			else
-				compareCatRepresentation(assert, nuRep, rep);
-		}
-	}
-	catch(error)
-	{
-		console.trace(error);
-	}
-	didit && didit();
+			compareCatRepresentation(assert, nuRep, rep);
+		didit && didit();
+	});
+}
+
+function genCoord(elt)
+{
+	const bbox = elt.getBoundingClientRect();
+	return {clientX:bbox.x, clientY:bbox.y};
+}
+
+function select(elt, shiftKey = false)
+{
+	const evnt = genCoord(elt.svg);
+	evnt.shiftKey = shiftKey;
+	elt.svg.onmousedown(evnt);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1777,6 +1741,7 @@ test('fuse domain and codomain', assert =>
 	// fuse domain
 	simMouseEvent(o19.svg, 'mousemove', {clientX:o19.x, clientY:o19.y});
 	simMouseEvent(o19.svg, 'mouseenter', {clientX:o19.x, clientY:o19.y});
+//	o19.svg.onmouseenter({clientX:o19.x, clientY:o19.y});
 	simMouseEvent(o19.svg, 'mousedown', {clientX:o19.x, clientY:o19.y});
 	simMouseEvent(o15.svg, 'mouseenter', {clientX:o15.x, clientY:o15.y});
 	simMouseEvent(o19.svg, 'mousemove', {clientX:o15.x, clientY:o15.y});
@@ -2112,74 +2077,6 @@ test('project help display', assert =>
 {
 	const help = Cat.D.toolbar.help;
 	checkStore(assert, 'first display', help);
-	/*
-	assert.dom(help.firstChild).hasTagName('h4').hasText('Create Factor Morphism');
-	const rmvPrnDiv = help.firstChild.nextSibling;
-	assert.dom(rmvPrnDiv).hasTagName('div');
-	assert.dom(rmvPrnDiv.firstChild).hasTagName('span').hasClass('little').hasText('Remove parenthesis');
-	const flattenBtn = rmvPrnDiv.firstChild.nextSibling;
-	assert.dom(flattenBtn).hasTagName('button').hasText('Flatten Product');
-	assert.equal(typeof flattenBtn.onclick, 'function');
-	const h5 = rmvPrnDiv.nextSibling;
-	assert.dom(h5).hasTagName('h5').hasText('Domain Factors');
-	const small = h5.nextSibling;
-	assert.dom(small).hasTagName('small').hasText('Click to place in codomain');
-	const terminalBtn = small.nextSibling;
-	assert.dom(terminalBtn).hasTagName('button').hasAttribute('id', diagram.elementId()).hasAttribute('title', 'Add terminal object');
-	assert.equal(typeof terminalBtn.onclick, 'function');
-	const table = terminalBtn.nextSibling;
-	assert.dom(table).hasTagName('table');
-	const btns = table.querySelectorAll("button[id^='el_project']");
-	function checkButton(assert, btn, indices)
-	{
-		assert.dom(btn).hasAttribute('title', 'Place object');
-		assert.equal(btn.dataset.indices, indices.toString());
-		assert.equal(typeof btn.onclick, 'function');
-	}
-
-	let ndx = 0;
-
-	const fctr = btns[ndx++];
-	checkButton(assert, fctr, []);
-	assert.equal(fctr.innerText, '(ℤ×ℤ)×(ℤ×ℤ)');
-
-	const fctr0 = btns[ndx++];
-	checkButton(assert, fctr0, [0]);
-	assert.equal(fctr0.innerHTML, 'ℤ×ℤ<sub>0</sub>');
-
-	const fctr00 = btns[ndx++];
-	checkButton(assert, fctr00, [0,0]);
-	assert.equal(fctr00.innerHTML, 'ℤ<sub>0,0</sub>');
-
-	const fctr01 = btns[ndx++];
-	checkButton(assert, fctr01, [0, 1]);
-	assert.equal(fctr01.innerHTML, 'ℤ<sub>0,1</sub>');
-
-	const fctr1 = btns[ndx++];
-	checkButton(assert, fctr1, [1]);
-	assert.equal(fctr1.innerHTML, 'ℤ×ℤ<sub>1</sub>');
-
-	const fctr10 = btns[ndx++];
-	checkButton(assert, fctr10, [1, 0]);
-	assert.equal(fctr10.innerHTML, 'ℤ<sub>1,0</sub>');
-
-	const fctr11 = btns[ndx++];
-	checkButton(assert, fctr11, [1, 1]);
-	assert.equal(fctr11.innerHTML, 'ℤ<sub>1,1</sub>');
-
-	const nxtH5 = table.nextSibling;
-	assert.dom(nxtH5).hasTagName('h5').hasText('Codomain Factors');
-
-	const br = nxtH5.nextSibling;
-	assert.dom(br).hasTagName('br');
-
-	const span = br.nextSibling;
-	assert.dom(span).hasTagName('span').hasClass('smallPrint').hasText('Click objects to remove from codomain');
-
-	const div = span.nextSibling;
-	assert.dom(div).hasTagName('div').hasAttribute('id', 'project-codomain');
-	assert.equal(div.children.length, 0);
-	*/
 });
 
 test('flatten morphism', assert =>
@@ -2290,7 +2187,7 @@ test(testname, assert =>
 	Cat.R.Actions.run.postResultFun = function()
 	{
 		const teststep = 'help with data';
-		checkStore(assert, teststep, help, didit).then();
+		checkStore(assert, teststep, help, didit);
 	};
 });
 
@@ -2302,11 +2199,11 @@ test(testname, assert =>
 	getButtonClick(btn)();
 	const morphism = diagram.getSelected();
 	let teststep = 'selected data morphism svg';
-	checkStore(assert, teststep, morphism.svg).then();
+	checkStore(assert, teststep, morphism.svg);
 	// click on run
 	getButtonClick(getToolbarButton('run'))();
 	teststep = 'data morphism display';
-	checkStore(assert, teststep, help).then();
+	checkStore(assert, teststep, help);
 	// enter 38 for the first value
 	help.querySelector('#fctr-0-hdole--Integers--Z-1-c-0-c-0').value = 38;
 	getButtonClick(help.querySelector('span.button'))();
@@ -2328,24 +2225,90 @@ test('search diagram', assert =>
 	checkStore(assert, 'toolbar search', help);
 	// input "id"
 	const input = help.querySelector('#toolbar-diagram-search');
+	// input has focus
 	assert.equal(document.activeElement, input, 'input focus ok');
+	// search for "id"
 	input.value = 'id';
+	// keyclick
 	simKeyboardEvent(input, 'keydown', {code:'Enter', key:'Enter'});
 	simKeyboardEvent(input, 'keyup', {code:'Enter', key:'Enter'});
 	checkStore(assert, 'toolbar search found', help);
+	// play with something found
 	const divs = [...help.querySelectorAll('div')];
 	const m4 = diagram.getElement('tester/test/m_4');
 	const preBox = new Cat.D2(m4.svg.getBoundingClientRect());
-	const div = divs[3];
+	const div = divs[3];	// 2nd found item
 	// enter div
 	simMouseEvent(div, 'mouseenter', {clientX:0, clientY:0});
 	checkStore(assert, 'morphism emphasis', m4);
 	// leave div
 	simMouseEvent(div, 'mouseleave', {clientX:0, clientY:0});
-	checkStore(assert, 'morphism emphasis', m4);
+	checkStore(assert, 'morphism emphasis 2', m4);
 	// zoomin
 	diagram.svgTranslate.classList.remove('trans025s');		// no QA for animations
 	div.onclick();
 	const postBox = new Cat.D2(m4.svg.getBoundingClientRect());
 	assert.ok(preBox.area() < postBox.area(), 'zoomed in');
+});
+
+test('graph factor morphism', assert =>
+{
+	const m14 = diagram.getElement('tester/test/m_14');
+	diagram.makeSelected(m14);
+	simKeyboardClick(document.body, 'Home');
+	// make graph
+	const btn = getToolbarButton('graph');
+	getButtonClick(btn)();
+	checkStore(assert, 'gen graph', m14.svg);
+	checkStore(assert, 'morphism.graph', m14.graph);
+});
+
+test('flip morphism name', assert =>
+{
+	const m14 = diagram.getElement('tester/test/m_14');		// already selected
+	const btn = getToolbarButton('flipName');
+	getButtonClick(btn)();
+	checkStore(assert, 'flip m14', m14.svg_name);
+});
+
+test('product object flatten', assert =>
+{
+	const help = Cat.D.toolbar.help;
+	const o14 = diagram.getElement('tester/test/o_14');
+	o14.svg.onmouseenter({clientX:950, clientY:400});
+	checkStore(assert, 'status bar', Cat.D.statusbar.element);
+	select(o14);
+//	o14.svg.onmousedown({shiftKey:false});
+//	o14.svg.onmouseleave(genCoord(o14.svg));
+	// project help
+	getButtonClick(getToolbarButton('project'))();
+	// flatten
+	const flattenBtn = help.querySelector('button');
+	flattenBtn.onclick();
+	const m16 = diagram.getSelected();
+	checkStore(assert, 'flatten ndx', m16);
+	checkStore(assert, 'flatten morph', m16.to);
+	checkStore(assert, 'flatten morph ndx codomain', m16.codomain);
+	checkStore(assert, 'flatten morph codomain', m16.to.codomain);
+	// graph
+	getButtonClick(getToolbarButton('graph'))();
+	checkStore(assert, 'flatten graph', m16.graph);
+debugger;
+	// select m14
+	const m14 = diagram.getElement('tester/test/m_14');
+	select(m14);
+	// add m16 to the selection
+	select(m16, true);
+	assert.equal(diagram.selected.length, 2, 'two selected');
+	assert.ok(diagram.selected.includes(m14), 'm14 selected');
+	assert.ok(diagram.selected.includes(m16), 'm16 selected');
+	// composite
+	getButtonClick(getToolbarButton('composite'))();
+	const m17 = diagram.getSelected();
+	assert.equal(diagram.selected.length, 1, 'one selected');
+	assert.ok(diagram.selected.includes(m17), 'm17 selected');
+	checkStore(assert, 'composite ndx', m17);
+	checkStore(assert, 'composite morph', m17.to);
+	getButtonClick(getToolbarButton('graph'))();
+	checkStore(assert, 'composite graph', m17.graph);
 });
