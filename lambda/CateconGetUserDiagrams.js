@@ -1,4 +1,5 @@
 // (C) 2018 Harry Dole
+INACTIVE
 // Catecon:  The Categorical Console
 //
 // Return the diagrams that belong to the event's user.
@@ -14,22 +15,24 @@ AWS.config.update(
 
 exports.handler = (event, context, callback) =>
 {
-    const username = event.user;
+    const user = event.user;
     const db = new AWS.DynamoDB({region:C.REGION});
     const params =
     {
         TableName:				C.DIAGRAM_TABLE,
-        KeyConditionExpression: 'username = :u AND begins_with(subkey, :sk)',
+//        KeyConditionExpression: 'username = :u AND begins_with(subkey, :sk)',
+        KeyConditionExpression: 'begins_with(#nm, :nm)',
         ExpressionAttributeNames:
 		{
 			'#ts':'timestamp',
 			'#nm':'name',
+//			'#u':'user',
 			'#refs':'references'
 		},
         ExpressionAttributeValues:
         {
-            ':u':   {S: username},
-            ':sk':  {S: 'D-'},
+            ':nm':   {S: `${user}/`},
+//            ':sk':  {S: 'D-'},
         },
         ProjectionExpression:   '#nm, #ts, properName, description, basename, #refs'
     };
