@@ -53,8 +53,6 @@ exports.handler = (event, context, callback) =>
 		for (let i=0; i<data.Items.length; ++i)
 		{
 			const itm = data.Items[i];
-//			if (!('description' in itm))
-//				continue;
 			const d = convert(itm);
 			diagrams.push(d);
 		}
