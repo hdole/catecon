@@ -57,7 +57,7 @@
 			"target":	"js"
 		},
 		{
-			"file":		"js/zlib_and_gzip.min.js",
+			"file":		"js/gzip.js",
 			"method":	"copyCat",
 			"target":	"js"
 		},
@@ -65,20 +65,6 @@
 			"file":		"js/amazon-cognito-identity.min.js",
 			"method":	"copyCat",
 			"target":	"js"
-		},
-		{
-			"file":		"lambda/CateconBootstrap.js",
-			"name":		"CateconBootstrap",
-			"method":	"uploadLambda",
-			"dependencies"	: ["Cat.js", "sha256.js", "sjcl.js", "peg-0.10.0.min.js", "js/amazon-cognito-identity.min.js", "lambda/AWSconstants.js"],
-			"region":	"us-west-1"
-		},
-		{
-			"file":		"lambda/CateconCatalog.js",
-			"name":		"CateconCatalog",
-			"method":	"uploadLambda",
-			"dependencies"	: ["lambda/AWSconstants.js"],
-			"region":	"us-west-1"
 		},
 		{
 			"file":		"lambda/CateconDiagramUpdate.js",
@@ -95,13 +81,6 @@
 			"region":	"us-west-1"
 		},
 		{
-			"file":		"lambda/CateconGetUserDiagrams.js",
-			"name":		"CateconGetUserDiagrams",
-			"method":	"uploadLambda",
-			"dependencies"	: ["lambda/AWSconstants.js"],
-			"region":	"us-west-1"
-		},
-		{
 			"file":		"lambda/CateconIngestCategory.js",
 			"name":		"CateconIngestCategory",
 			"method":	"uploadLambda",
@@ -112,7 +91,7 @@
 			"file":		"lambda/CateconIngestDiagram.js",
 			"name":		"CateconIngestDiagram",
 			"method":	"uploadLambda",
-			"dependencies"	: ["lambda/AWSconstants.js"],
+			"dependencies"	: ["js/gzip.js", "lambda/AWSconstants.js"],
 			"region":	"us-west-1"
 		},
 		{
