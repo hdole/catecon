@@ -1388,7 +1388,7 @@ function %Type(args)
 `,
 	}).to;
 
-	const html2N16 = MakeMorphism(args, 'html2N16', 'Morphism', 'input', 'Read a natural number between 0 and 255 from an HTML input tag', html, N16,
+	const html2N16 = MakeMorphism(args, 'html2N16', 'Morphism', 'input', 'Read a natural number between 0 and 65535 from an HTML input tag', html, N16,
 	{
 		js:
 `
