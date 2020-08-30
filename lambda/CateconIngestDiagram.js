@@ -3,7 +3,7 @@
 //
 const AWS = require('aws-sdk');
 const C = require('./AWSconstants.js');
-const zlib = require('zlib');
+//const zlib = require('zlib');
 
 const credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId:C.IDENTITY_POOL_ID});
 
@@ -17,34 +17,32 @@ const S3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 exports.handler = (event, context, callback) =>
 {
-	const bodyBuffer = Buffer.from(event.body, 'base64');
-	zlib.gunzip(bodyBuffer, (error, bodyStr) =>
-	{
-		if (error)
-			return callback(error);
-		const body = JSON.parse(bodyStr);
+//	const bodyBuffer = Buffer.from(event.body, 'base64');
+//	zlib.gunzip(bodyBuffer, (error, bodyStr) =>
+//	{
+//		if (error)
+//			return callback(error);
+//		const body = JSON.parse(bodyStr);
 		const timestamp = Date.now();
-		const user = body.user;
-		const diagram = body.diagram;
-		const png = body.png;
+		const user = event.user;
+		const diagram = event.diagram;
+		const png = event.png;
 		diagram.timestamp = timestamp;
 		const diagramString = JSON.stringify(diagram);
-		zlib.gzip(diagramString, (error, buffer) =>
-		{
-//			const Body = JSON.stringify(diagram);
-//			const Body = buffer.toString('base64');
-			const Body = buffer;
+//		zlib.gzip(diagramString, (error, buffer) =>
+//		{
+			const Body = JSON.stringify(diagram);
 			if (Body.length > 1000000)
 				return callback('Error:  Diagram is too large to load');
 			if (diagram.user !== user)
 				return callback(`Error:  User ${user} is not the owner of ${diagram.name}.  ${diagram.user} is.`);
 			const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
 			const name = `${user}/${diagram.basename}`;
-			const Key = `${name}.json.gz`;
+			const Key = `${name}.json`;
 			const s3params =
 			{
 				Bucket:  		C.DIAGRAM_BUCKET_NAME,
-				ContentType:	'json.gz',
+				ContentType:	'json',
 				Key,
 				Body,
 				ACL:	 		'public-read',
@@ -106,6 +104,6 @@ exports.handler = (event, context, callback) =>
 					});
 				});
 			});
-		});
-	});
+//		});
+//	});
 };

@@ -51,20 +51,20 @@
 
 var require;
 var sjcl;
-var zlib;
+var gzip;
 
 if (require && require !== null)
 {
 	var ACI = null;
 	AWS = require('aws-sdk');
 	sjcl = require('./sjcl.js');
-	zlib = require('./zlib_and_gzip.min.js');
+	gzip = require('./zlib.js');
 	var crypto = require('crypto');
 }
 else
 {
 	sjcl = window.sjcl;
-	zlib = window.zlib;
+	gzip = window.gzip;
 }
 
 class D2
@@ -1590,22 +1590,22 @@ class R
 	}
 	static EmitLoginEvent()
 	{
-//		R.default.debug && console.log('emit LOGIN event', R.user.name, R.user.status);
+		R.default.showEvents && console.log('emit LOGIN event', R.user.name, R.user.status);
 		return window.dispatchEvent(new CustomEvent('Login', {detail:	{command:R.user.status, name:R.user.name}, bubbles:true, cancelable:true}));
 	}
 	static EmitCATEvent(command, diagram)	// like diagram was loaded
 	{
-//		R.default.debug && console.log('emit CAT event', {command, diagram});
+		R.default.showEvents && console.log('emit CAT event', {command, diagram});
 		return window.dispatchEvent(new CustomEvent('CAT', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
 	}
 	static EmitDiagramEvent(diagram, command, name = '')	// like something happened in a diagram
 	{
-//		R.default.debug && console.log('emit DIAGRAM event', diagram.name, {command, name});
+		R.default.showEvents && console.log('emit DIAGRAM event', diagram.name, {command, name});
 		return window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitObjectEvent(diagram, command, element, extra = {})	// like an object changed
 	{
-//		R.default.debug && console.log('emit OBJECT event', {command, name:element.name});
+		R.default.showEvents && console.log('emit OBJECT event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
 		const args = {detail, bubbles:true, cancelable:true};
@@ -1613,7 +1613,7 @@ class R
 	}
 	static EmitMorphismEvent(diagram, command, element, extra = {})
 	{
-//		R.default.debug && console.log('emit MORPHISM event', {command, name:element.name});
+		R.default.showEvents && console.log('emit MORPHISM event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
 		const args = {detail, bubbles:true, cancelable:true};
@@ -1621,12 +1621,12 @@ class R
 	}
 	static EmitAssertionEvent(diagram, command, element)
 	{
-//		R.default.debug && console.log('emit ASSERTION event', {command, name:element.name});
+		R.default.showEvents && console.log('emit ASSERTION event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
 	static EmitTextEvent(diagram, command, element)
 	{
-//		R.default.debug && console.log('emit TEXT event', {command, name:element.name});
+		R.default.showEvents && console.log('emit TEXT event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Text', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
 	static EmitElementEvent(diagram, command, elt)
@@ -1751,6 +1751,7 @@ Object.defineProperties(R,
 			category:		'hdole/PFS',
 			diagram:		'Anon/Home',
 			debug:			true,
+			showEvents:		false,
 		},
 		writable:	true,
 	},
@@ -1907,11 +1908,13 @@ class Amazon extends Cloud
 					R.user.name = data.Username;
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 					R.user.status = 'logged-in';
+					/*
 					that.getUserDiagramsFromServer(function(dgrms)
 					{
 						if (R.default.debug)
 							console.log('registerCognito: user diagrams on server', dgrms);
 					});
+					*/
 					R.EmitLoginEvent();
 				});
 			});
@@ -2135,31 +2138,41 @@ class Amazon extends Cloud
 	}
 	ingestDiagramLambda(e, dgrm, fn)
 	{
-		const dgrmJson = dgrm.json();
-		const dgrmPayload = JSON.stringify(dgrmJson);
-		const Payload = JSON.stringify({diagram:dgrmJson, user:R.user.name, png:D.diagramPNG.get(dgrm.name)});
-		if (Payload.length > U.uploadLimit)
-		{
-			D.statusbar.show(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
-			return;
-		}
-		const params =
-		{
-			FunctionName:	'CateconIngestDiagram',
-			InvocationType:	'Event',
-			LogType:		'None',
-			Payload,
-		};
-		function handler(error, data)
-		{
-			if (error)
+//		const dgrmJson = dgrm.json();
+//		const dgrmPayload = gzip.zip(JSON.stringify(dgrmJson));
+//		const dgrmPayload = Zlib.Gzip(JSON.stringify(dgrmJson));
+//		const blob = new Blob([dgrmPayload], {type:'application/x-gzip'});
+		const Payload = JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)});
+//		const Payload = new Blob([gzip.zip(JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)}))], {type:'application:x-gzip'});
+//		const Payload = JSON.stringify({body:JSON.stringify(gzip.zip(JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)})))});
+//		const gz = gzip.zip(JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)}));
+//		const Payload = JSON.stringify({body:new Blob([gz], {type:'application/x-gzip'})});
+//*		const string = JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)});
+//*		zlib.gzip(string, (error, buffer) =>
+//*		{
+//*			const Payload = JSON.stringify({body:buffer.toString('base64')});
+			if (Payload.length > U.uploadLimit)
 			{
-				D.RecordError(error);
+				D.statusbar.show(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
 				return;
 			}
-			fn && fn();
-		}
-		this.lambda.invoke(params, handler);
+			const params =
+			{
+				FunctionName:	'CateconIngestDiagram',
+				LogType:		'None',
+				Payload,
+			};
+			function handler(error, data)
+			{
+				if (error)
+				{
+					D.RecordError(error);
+					return;
+				}
+				fn && fn(data);
+			}
+			this.lambda.invoke(params, handler);
+//*		});
 	}
 	diagramSearch(search, fn)
 	{
@@ -2183,6 +2196,7 @@ class Amazon extends Cloud
 		};
 		this.lambda.invoke(params, handler);
 	}
+	// TODO only used by ReloadDiagramFromServer
 	async fetchDiagram(name, cache = true)		// single diagram is fetched, no references
 	{
 		try
@@ -2202,21 +2216,53 @@ class Amazon extends Cloud
 	{
 		const url = this.getURL(name) + '.json';
 		fetch(url, {cache: true ? 'default' : 'reload'}).then(response => response.json()).then(json =>
-		{
-			R.default.debug && console.log('_downloadDiagram', name);
-			R.LoadingDiagrams.delete(name);
-			R.JsonDiagrams.set(name, json);
-			R.EmitCATEvent('preload', json);
+//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'Content-Type':'application/x-gzip'}, encoding:null}).then(response => response.arrayBuffer).then(ab =>
+//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.arrayBuffer()).then(ab =>
+//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.text()).then(ab =>
+//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.body).then(ab =>
+//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.blob()).then(ab =>
+	{
+//			const bfr = [...new Uint8Array(ab)];
+//			const bfr2 = btoa(String.fromCharCode(bfr));
+//			const result = pako.inflate(bfr, {to:'string'});
+//			const result = pako.inflateRaw(ab);
+//			const abui8 = new Uint8Array(ab);
+//			const str = btoa(String.fromCharCode(...abui8));
+//			dgrmString = zlib.gunzipSync(body);
+//			const gunzip = Zlib.Gunzip(abui8);
+//			const dgrmString = gunzip.decompress();
+//			const dgrmDeflated = blob.toString('base64');
+//			const str = btoa(String.fromCharCode(...new Uint8Array(blob)));
+//			const rdr = new FileReader();
+//			rdr.addEventListener('loadend', e =>
+//			{
+//				debugger;
+//				const dgrmCmprssd = e.srcElement.result;
+//				dgrmString = zlib.gunzipSync(dgrmCmprssd);
+//				const json = JSON.parse(dgrmString);
+				R.default.debug && console.log('_downloadDiagram', name);
+				R.LoadingDiagrams.delete(name);
+				R.JsonDiagrams.set(name, json);
+				R.EmitCATEvent('preload', json);
+//			});
+//			rdr.readAsBinaryString(blob);
+//			zlib.gunzip(str, (error, dgrmString) =>
+//			{
+//				if (error)
+//					return callback(error);
+//			});
 		});
 	}
 	downloadDiagram(name)
 	{
 		if (R.$CAT.getElement(name))	// but it's local
 			return;
+		// download newer diagrams from cloud
 		const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
-		R.LoadingDiagrams = new Set(downloads);
-		downloads.map(d => R.cloud._downloadDiagram(d));
+		R.LoadingDiagrams = new Set(downloads);	// tracker for what's going on
+		downloads.map(d => R.cloud._downloadDiagram(d));		// issue the download requests for the diagram and its references
 	}
+	/*
 	getUserDiagramsFromServer(fn)	// TODO needed?
 	{
 		const params =
@@ -2254,6 +2300,7 @@ class Amazon extends Cloud
 				fn(payload.Items);
 		});
 	}
+	*/
 }
 
 class Navbar
@@ -2290,8 +2337,8 @@ class Navbar
 			D.statusbar.show(e, title);
 		}, true);
 		const that = this;
-		this.element.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
-		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
+		this.element.onmouseenter = _ => D.mouse.onGUI = that;
+		this.element.onmouseleave = _ => D.mouse.onGUI = null;
 		window.addEventListener('Login', this.updateByUserStatus);
 		window.addEventListener('Registration', this.updateByUserStatus);
 		window.addEventListener('CAT', function(e)
@@ -2357,8 +2404,8 @@ class Toolbar
 			'mouseCoords':	{value: null,										writable: true},
 		});
 		const that = this;
-		this.element.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
-		this.element.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
+		this.element.onmouseenter = _ => D.mouse.onGUI = that;
+		this.element.onmouseleave = _ => D.mouse.onGUI = null;
 		window.addEventListener('Diagram', function(e) { e.detail.command === 'select' && D.toolbar.show(event); });
 		function hideToolbar(e)
 		{
@@ -2482,12 +2529,9 @@ class Toolbar
 		const val = searchInput.value;
 		R.diagram.domain.elements.forEach(function(elt)
 		{
-//			const rx = new RegExp(searchInput.value, 'gi');
 			if (elt instanceof DiagramObject || elt instanceof DiagramMorphism)
-//				rx.exec(elt.to.basename.toString()) && elts.push(elt);
 				(elt.to.properName.includes(val) || elt.to.basename.includes(val)) && elts.push(elt);
 			else if (elt instanceof DiagramText)
-//				rx.exec(elt.description.toString()) && elts.push(elt);
 				elt.description.includes(val) && elts.push(elt);
 		});
 		function showElement(elt)
@@ -2585,29 +2629,6 @@ class StatusBar
 		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
 
 		this._post(e, msg, record);
-		/*
-		const elt = this.element;
-//		elt.innerHTML = H.div(msg);
-		elt.innerText = msg;
-		if (typeof e === 'object')
-		{
-			const x = e ? e.clientX : 100;
-			const y = e ? e.clientY : 100;
-			elt.style.left = `${x + 10}px`;
-			elt.style.top = `${y - 30}px`;
-			elt.style.display = 'block';
-			this.xy = {x, y};
-			this.hide();
-		}
-		else
-			D.RecordError(msg);
-		const bbox = elt.getBoundingClientRect();
-		const delta = bbox.left + bbox.width - window.innerWidth;
-		if (delta > 0)	// shift back to onscreen
-			elt.style.left = Math.min(0, bbox.left - delta);
-		if (record)
-			document.getElementById('tty-out').innerHTML += this.message + "\n";
-			*/
 	}
 	alert(e, msg, record = false)
 	{
@@ -3810,7 +3831,7 @@ ${button}
 	{
 		const elts = D.GetObjects(ary);
 		const xy = new D2();
-		elts.forEach(function(pnt) { xy.increment(pnt); });
+		elts.forEach(pnt => xy.increment(pnt));
 		return xy.scale(1.0/elts.size);
 	}
 	static BaryHull(ary)
@@ -3851,19 +3872,6 @@ ${button}
 		const onmouseup = document.onmouseup;
 		const onmousemove = document.onmousemove;
 		const dragElt = document.getElementById(dragId);
-		if (dragElt)
-			dragElt.onmousedown = dragMouseDown; // if present, the header is where you move the DIV from
-		else
-			elt.onmousedown = dragMouseDown; // otherwise, move the DIV from anywhere inside the DIV
-		function dragMouseDown(e)
-		{
-			e = e || window.event;
-			e.preventDefault();
-			pos3 = e.clientX;		// get the mouse cursor position at startup
-			pos4 = e.clientY;
-			document.onmouseup = closeDragElement;
-			document.onmousemove = elementDrag;
-		}
 		function elementDrag(e)
 		{
 			e = e || window.event;
@@ -3880,6 +3888,19 @@ ${button}
 			document.onmouseup = onmouseup;
 			document.onmousemove = onmousemove;
 		}
+		function dragMouseDown(e)
+		{
+			e = e || window.event;
+			e.preventDefault();
+			pos3 = e.clientX;		// get the mouse cursor position at startup
+			pos4 = e.clientY;
+			document.onmouseup = closeDragElement;
+			document.onmousemove = elementDrag;
+		}
+		if (dragElt)
+			dragElt.onmousedown = dragMouseDown; // if present, the header is where you move the DIV from
+		else
+			elt.onmousedown = dragMouseDown; // otherwise, move the DIV from anywhere inside the DIV
 	}
 	static Download(href, filename)
 	{
@@ -4353,7 +4374,7 @@ Object.defineProperties(D,
 					D.toolbar.hide();
 				D.DeleteSelectRectangle();
 			},
-			KeyT(e)
+			ControlKeyT(e)
 			{
 				const diagram = R.diagram;
 				diagram.deselectAll(e);
@@ -6001,7 +6022,6 @@ class HelpPanel extends Panel
 			H.button('Third Party Software', 'sidenavAccordion', 'third-party', '', `onclick="Cat.D.Panel.SectionToggle(event, this, \'thirdPartySoftwarePnl\')"`) +
 			H.div(
 						H.a('3D', '', '', '', 'href="https://threejs.org/"') +
-						H.a('Compressors', '', '', '', 'href="https://github.com/imaya/zlib.js"') +
 						H.a('Crypto', '', '', '', 'href="http://bitwiseshiftleft.github.io/sjcl/"'), 'section', 'thirdPartySoftwarePnl') +
 			H.hr() +
 			H.small('&copy;2018-2020 Harry Dole') + H.br() +
@@ -6737,7 +6757,6 @@ class Graph
 						continue;
 					if (ndx.reduce((isEqual, lvl, i) => lvl === glnk[i] && isEqual, true))	// ignore links back to where we came from
 						continue;
-//					this.visited.add(glnk.toString());
 					nuLinks.push(glnk);
 					links.push(glnk);
 				}
@@ -6748,7 +6767,6 @@ class Graph
 				this.links = nuLinks.filter(lnk => lnk[0] === 0 || lnk[0] === top.graphs.length -1);
 			else
 				U.ArrayMerge(this.links, nuLinks);
-//				this.links = nuLinks;
 		}
 		else
 		{
@@ -6796,7 +6814,6 @@ class Graph
 			const index = data.index.slice();
 			index.push(i + data.offset);
 			args.index = index;
-//			args.cod = data.cod.graphs[i + data.offset];
 			args.cod = data.cod.graphs[i];
 			args.domRoot.push(i);
 			args.codRoot.push(i);
@@ -6923,10 +6940,10 @@ class Graph
 	{
 		const name = this.name;
 		const sig = this.signature;
-		const mouseenter = e => Cat.R.diagram.emphasis(sig, true);
-		const mouseleave = e => Cat.R.diagram.emphasis(sig, false);
-		const mousedown = e => Cat.R.diagram.selectElement(event, sig);
 		const g = document.createElementNS(D.xmlns, 'g');
+		g.onmouseenter = e => Cat.R.diagram.emphasis(sig, true);
+		g.onmouseleave = e => Cat.R.diagram.emphasis(sig, false);
+		g.onmousedown = e => Cat.R.diagram.selectElement(event, sig);
 		node.appendChild(g);
 		g.setAttributeNS(null, 'id', id);
 		this.svg = g;
@@ -7769,16 +7786,13 @@ class DiagramText extends Element
 		const svgText = H3.text({'text-anchor':'left', class:'diagramText grabbable', style:`font-size:${this.height}px; font-weight:${this.weight}`});
 		const svg = H3.g({'data-type':'text', 'data-name':name, 'text-anchor':'left', class:'diagramText grabbable', id:this.elementId(),
 			transform:`translate(${this.x} ${this.y})`}, svgText);
+		svg.onmousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
+		svg.onmouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
+		svg.onmouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
 		node.appendChild(svg);
 		this.svg = svg;
 		this.svgText = svgText;
 		svgText.innerHTML = this.tspan();
-		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
-		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
-		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
-		svg.addEventListener('mousedown', mousedown);
-		svg.addEventListener('mouseenter', mouseenter);
-		svg.addEventListener('mouseleave', mouseleave);
 	}
 	finishMove()
 	{
@@ -10157,7 +10171,6 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 	{
 		let value = null;
 		const dom = domain instanceof NamedObject ? domain.getBase() : domain;
-//		const id = `${prefix} ${dom.name} ${factor.toString()}`;
 		const id = this.getInputId(prefix, dom, factor);
 		switch(dom.constructor.name)
 		{
@@ -11071,10 +11084,6 @@ class RunAction extends Action
 			D.toolbar.error.innerHTML = 'Error: ' + U.GetError(x);
 		}
 	}
-//	getMorphismData()
-//	{
-//		this.js.getInputValue(domain, prefix = '', factor = []);
-//	}
 	editData(e, i)
 	{
 		const morphism = R.diagram.getSelected();
@@ -12308,15 +12317,9 @@ class DiagramMorphism extends Morphism
 		const id = this.elementId();
 		const g = H3.g();
 		const name = this.name;
-//		const mouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		g.onmouseenter = e => Cat.D.Mouseover(e, name, true);
-//		const mouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
 		g.onmouseleave = e => Cat.D.Mouseover(e, name, false);
-//		const mousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
 		g.onmousedown = e => Cat.R.diagram.selectElement(e, name);
-//		g.addEventListener('mouseenter', mouseenter);
-//		g.addEventListener('mouseleave', mouseleave);
-//		g.addEventListener('mousedown', mousedown);
 		node.appendChild(g);
 		this.svg = g;
 		g.setAttributeNS(null, 'id', id);
@@ -12573,7 +12576,6 @@ class DiagramMorphism extends Morphism
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 			const id = this.graphId();
 			this.graph.getSVG(this.svg, id,
-//							{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.floor(Math.random()*12)});
 							{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.round(12 * Number.parseInt(this.signature.substring(0, 6), 16)/0xFFFFFF)});
 		}
 		else
@@ -13169,7 +13171,7 @@ class Composite extends MultiMorphism
 		const cnt = this.morphisms.length;
 		seqGraph.graphs[0].removeLinks(cnt);
 		seqGraph.graphs[cnt].removeLinks(cnt);
-		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[1], [1]]]});
+		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[cnt], [1]]]});
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
 		return graph;
 	}
@@ -14524,7 +14526,7 @@ class Diagram extends Functor
 				btn.beginElement();
 			}
 			const that = this;
-			R.cloud.ingestDiagramLambda(e, this, function()
+			R.cloud.ingestDiagramLambda(e, this, function(res)
 			{
 				R.default.debug && console.log('uploaded', that.name);
 				R.catalog.set(that.name, R.GetDiagramInfo(that));
@@ -14585,17 +14587,6 @@ class Diagram extends Functor
 				this.log({command:'editText', name, attribute, value});		// use old name
 				this.antilog({command:'editText', name:elt.name, attribute, value:old});	// use new name
 				e && e instanceof Event && e.stopPropagation();
-/*
-				let p = e.toElement;
-				while(p.parentElement)
-					if (p.parentElement.id === 'toolbar')
-					{
-						R.diagram.actionHtml(e, 'help');	// if the toolbar is up
-						break;
-					}
-					else
-						p = p.parentElement;
-*/
 				if (!(elt instanceof DiagramText))
 					this.updateProperName(elt);
 				R.EmitElementEvent(this, 'update', elt);

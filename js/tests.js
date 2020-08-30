@@ -9,18 +9,18 @@ function cleanup()
 
 cleanup();
 
-const StartOfRun = new Date();
+const StartOfRun = new Date();	// use for timestamp comparison checks that come afterwards
 
 module('Basics');
 
 QUnit.config.reorder = false;
 QUnit.config.hidepassed = true;
 QUnit.config.maxDepth = 10;
+QUnit.dump.maxDepth = 10;
 
 // overrides
 Cat.R.sync = false;
 Cat.D.url = window.URL || window.webkitURL || window;
-//Cat.D.default.autohideTimer = Number.MAX_VALUE;
 Cat.D.default.autohideTimer = 10000000;
 Cat.D.mouse.down = new Cat.D2(100, 100);
 Cat.D.default.statusbar.timein = 0;
@@ -29,7 +29,6 @@ const halfFontHeight = Cat.D.default.font.height / 2;
 const grid = Cat.D.default.arrow.length;
 const descriptionText = 'This is a test and only a test';
 let testname = '';
-let storeRep = false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -344,10 +343,7 @@ function getRepresentation(elt)
 
 function compareCatRepresentation(assert, elt, rep)
 {
-//	const key = rep.key;
-//	delete rep.key;
 	assert.deepEqual(elt, rep, elt.name);
-//	rep.key = key;
 }
 
 function compareDomRepresentation(assert, teststep, domElt, rep)
@@ -428,7 +424,6 @@ function getKeyCount(key)
 
 function putResult(testname, teststep, rep)
 {
-//	const rep = getRepresentation(elt);
 	return new Promise((resolve, reject) =>
 	{
 		let result;
@@ -436,10 +431,9 @@ function putResult(testname, teststep, rep)
 		tx.oncomplete = _ => resolve(result);
 		tx.onerror = event => reject(event.target.error);
 		const store = tx.objectStore('elements');
-		let req;
 		const key = getKey(testname, teststep);
 		rep.key = key;
-		req = store.put(rep);
+		let req = store.put(rep);
 		req.onsuccess = _ => result = req.result;
 	});
 }
@@ -450,7 +444,7 @@ function getResult(key)
 	{
 		let result;
 		const tx = infoDB.transaction(['elements'], 'readonly');
-		tx.oncomplete = _ => {console.log({key, result});resolve(result);};
+		tx.oncomplete = _ => resolve(result);
 		tx.onerror = e => reject(e.target.error);
 		const store = tx.objectStore('elements');
 		const req = store.get(key);
@@ -460,19 +454,14 @@ function getResult(key)
 
 function checkStore(assert, teststep, elt, didit = assert.async())
 {
-	const key = getKey(assert.test.testName, teststep);
+	const testname = assert.test.testName;
+	const key = getKey(testname, teststep);
 	const nuRep = getRepresentation(elt);
 	nuRep.key = key;
-	const testname = assert.test.testName;
 	// is it in the store?
-	getKeyCount(key).then(count =>
-	{
-		if (count === 0)	// nothing found; save golden
-			putResult(testname, teststep, nuRep);
-	}).then(_ =>
-	{
-		return getResult(key);
-	}).then(rep =>
+	getKeyCount(key).then(count => count === 0 && putResult(testname, teststep, nuRep)).
+	then(_ => getResult(key)).
+	then(rep =>
 	{
 		if (elt instanceof HTMLElement || elt instanceof SVGElement || elt instanceof Text)
 			compareDomRepresentation(assert, teststep, nuRep, rep);
@@ -2293,7 +2282,6 @@ test('product object flatten', assert =>
 	// graph
 	getButtonClick(getToolbarButton('graph'))();
 	checkStore(assert, 'flatten graph', m16.graph);
-debugger;
 	// select m14
 	const m14 = diagram.getElement('tester/test/m_14');
 	select(m14);
