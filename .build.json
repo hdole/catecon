@@ -22,7 +22,7 @@
 			"target":	"."
 		},
 		{
-			"file":		"test.html",
+			"file":		"robots.txt",
 			"method":	"copyCat",
 			"target":	"."
 		},
