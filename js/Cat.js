@@ -416,10 +416,12 @@ class H3
 	static image(...args)	{ return H3._v('image', args); }
 	static input(...args)	{ return H3._h('input', args); }
 	static line(...args)	{ return H3._v('line', args); }
+	static link(...args)	{ return H3._v('link', args); }
 	static marker(...args)	{ return H3._v('marker', args); }
 	static option(...args)	{ return H3._h('option', args); }
 	static p(...args)		{ return H3._h('p', args); }
 	static path(...args)	{ return H3._v('path', args); }
+	static polyline(...args)	{ return H3._v('polyline', args); }
 	static rect(...args)	{ return H3._v('rect', args); }
 	static script(...args)	{ return H3._h('script', args); }
 	static select(...args)	{ return H3._h('select', args); }
@@ -1242,11 +1244,50 @@ class R
 	{
 		R.cloud = isCloud ? new Amazon() : null;
 	}
+	static InitTestProcedure()
+	{
+		const head = document.getElementsByTagName('HEAD')[0];
+		const link = H3.link({rel:'stylesheet', href:"https://code.jquery.com/qunit/qunit-2.10.1.css", type:'text/css'});
+		head.appendChild(link);
+		const body = document.getElementsByTagName('BODY')[0];
+		body.prepend(H3.div({id:"qunit-fixture"}));
+		body.prepend(H3.div({id:"qunit"}));
+		const dbName = 'testInfo';
+		window.infoDB = null;
+		let refStore = null;
+		let transaction = null;
+		const request = indexedDB.open(dbName);
+		request.onerror = e => alert('error');
+		request.onsuccess = e =>
+		{
+			infoDB = e.target.result;
+			transaction = infoDB.transaction(['elements'], 'readwrite');
+			transaction.complete = function(e) {};
+			transaction.onerror = e => alert('refStore error');
+			refStore = transaction.objectStore('elements');
+		};
+		request.onupgradeneeded = e =>
+		{
+			console.log('upgrading database');
+			infoDB = e.target.result;
+			refStore = infoDB.createObjectStore('elements', {keyPath:'key'});
+			refStore.transaction.complete = function(e){};
+		};
+		R.LoadScript("https://code.jquery.com/qunit/qunit-2.10.1.js", _ =>
+			R.LoadScript("https://unpkg.com/qunit-dom/dist/qunit-dom.js", _ =>
+				R.LoadScript(window.location.origin + window.location.pathname + 'js/tests.js', function(){})));
+	}
 	static Initialize()
 	{
 		try
 		{
 			R.sync = false;
+			const params = (new URL(document.location)).searchParams;
+			if (params.has('test'))
+			{
+				R.InitTestProcedure();
+				return;
+			}
 			R.Busy();
 			R.ReadDefaults();
 			R.AddEventListeners();
@@ -1268,7 +1309,6 @@ class R
 			isGUI && D.Initialize();		// initialize GUI
 			R.SetupReplay();
 			R.sync = true;
-			const params = (new URL(document.location)).searchParams;
 			const loader = function()
 			{
 				R.diagram = null;
@@ -1282,7 +1322,7 @@ class R
 				R.EmitLoginEvent();	// Anon login
 				R.cloud.load();		// cloud login
 			};
-			const bootLoader = function()
+			const bootLoader = _ =>
 			{
 				if (params.has('boot'))
 					R.LoadScript(window.location.origin + window.location.pathname + 'js/boot.js', function() { Boot(loader); });
@@ -1317,7 +1357,7 @@ class R
 		R.default.debug && console.log('SaveLocal', diagram.name);
 		localStorage.setItem(`${diagram.name}.json`, diagram.stringify());
 		// TODO put in web worker since it takes a while
-		D.Svg2canvas(diagram, function(png, pngName)
+		D.Svg2canvas(diagram, (png, pngName) =>
 		{
 			D.diagramPNG.set(diagram.name, png);
 			localStorage.setItem(`${diagram.name}.png`, png);
@@ -1549,7 +1589,7 @@ class R
 	static GetCategoriesInfo()
 	{
 		const info = new Map();
-		R.$CAT.codomain.elements.forEach(function(o)
+		R.$CAT.codomain.elements.forEach(o =>
 		{
 			if (o instanceof Category && !(o instanceof IndexCategory))
 				info.set(o.name, o.info());
@@ -1561,7 +1601,7 @@ class R
 		const name = R.diagram.name;
 		const svg = R.diagram.svgRoot;
 		// TODO remove fetchDiagram and change to 'preload' event listener that deletes itself
-		R.cloud && R.cloud.fetchDiagram(name, false).then(function(data)
+		R.cloud && R.cloud.fetchDiagram(name, false).then(data =>
 		{
 			R.diagram.clear();
 			localStorage.setItem(`${name}.json`, JSON.stringify(data));
@@ -1651,10 +1691,10 @@ class R
 	}
 	static FetchCatalog(fn)
 	{
-		R.cloud && fetch(R.cloud.getURL() + '/catalog.json').then(function(response)
+		R.cloud && fetch(R.cloud.getURL() + '/catalog.json').then(response =>
 		{
 			if (response.ok)
-				response.json().then(function(data)
+				response.json().then(data =>
 				{
 					data.diagrams.map(d =>
 					{
@@ -1706,7 +1746,7 @@ class R
 	}
 	static login(e)
 	{
-		Cat.R.cloud.login(e, function(ok)
+		Cat.R.cloud.login(e, ok =>
 		{
 			if (R.default.diagram === 'Anon/Home')
 				R.default.diagram = `${R.user.name}/Home`;
@@ -1953,13 +1993,10 @@ class Amazon extends Cloud
 			new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
 		];
 		const that = this;
-		this.userPool.signUp(userName, password, attributes, null, function(err, result)
+		this.userPool.signUp(userName, password, attributes, null, (err, result) =>
 		{
 			if (err)
-			{
-				alert(err.message);
-				return;
-			}
+				return alert(err.message);
 			that.user = result.user;
 			R.user.name = userName;
 			R.user.email = email;
@@ -1974,7 +2011,7 @@ class Amazon extends Cloud
 		idPro.forgotPassword({ClientId:'fjclc9b9lpc83tmkm8b152pin', Username:R.user.name}, function(err, data)
 		{
 			if (err)
-				console.log(err);
+				console.error(err);
 			else
 				console.log(data);
 		});
@@ -1986,10 +2023,7 @@ class Amazon extends Cloud
 		this.user.confirmRegistration(code, true, function(err, result)
 		{
 			if (err)
-			{
-				alert(err.message);
-				return;
-			}
+				return alert(err.message);
 			R.user.status = 'confirmed';
 			R.EmitLoginEvent();
 		});
@@ -2262,45 +2296,6 @@ class Amazon extends Cloud
 		R.LoadingDiagrams = new Set(downloads);	// tracker for what's going on
 		downloads.map(d => R.cloud._downloadDiagram(d));		// issue the download requests for the diagram and its references
 	}
-	/*
-	getUserDiagramsFromServer(fn)	// TODO needed?
-	{
-		const params =
-		{
-			FunctionName:	'CateconGetUserDiagrams',
-			InvocationType:	'RequestResponse',
-			LogType:		'None',
-			Payload:		JSON.stringify({user:R.user.name}),
-		};
-		const user = R.user.name;	// in case of delay
-		this.lambda.invoke(params, function(error, data)
-		{
-			if (error)
-			{
-				D.RecordError(error);
-				return;
-			}
-			if ('FunctionError' in data)
-			{
-				D.RecordError(`${data.FunctionError}: ${data.Payload}`);
-				return;
-			}
-			const payload = JSON.parse(data.Payload);
-			payload.Items.map(i => R.ServerDiagrams.set(i.name.S,
-			{
-				name:			i.name.S,
-				basename:		i.basename.S,
-				timestamp:		Number.parseInt(i.timestamp.N),
-				description:	i.description.S,
-				properName:		i.properName.S,
-				references:		i.references.L.map(r => r.S),
-				user,
-			}));
-			if (fn)
-				fn(payload.Items);
-		});
-	}
-	*/
 }
 
 class Navbar
@@ -2406,7 +2401,7 @@ class Toolbar
 		const that = this;
 		this.element.onmouseenter = _ => D.mouse.onGUI = that;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
-		window.addEventListener('Diagram', function(e) { e.detail.command === 'select' && D.toolbar.show(event); });
+		window.addEventListener('Diagram', e => e.detail.command === 'select' && D.toolbar.show(e));
 		function hideToolbar(e)
 		{
 			const args = e.detail;
@@ -2420,20 +2415,20 @@ class Toolbar
 					break;
 			}
 		}
-		window.addEventListener('Diagram', function(e) { e.detail.command === 'load' && D.toolbar.resetMouseCoords(); });
+		window.addEventListener('Diagram', e => e.detail.command === 'load' && D.toolbar.resetMouseCoords());
 		window.addEventListener('Object', hideToolbar);
 		window.addEventListener('Morphism', hideToolbar);
 		window.addEventListener('Text', hideToolbar);
 		window.addEventListener('Assertion', hideToolbar);
-		window.addEventListener('mouseenter', function(e) { D.mouse.savePosition(e); } );
-		window.addEventListener('Autohide', function(e)
+		window.addEventListener('mouseenter', e => D.mouse.savePosition(e));
+		window.addEventListener('Autohide', e =>
 		{
 			if (e.detail.command === 'hide')
 				that.element.classList.add('hidden');
 			else if (!that.closed)
 				that.element.classList.remove('hidden');
 		});
-		window.addEventListener('Login', function(e) { that.hide(); });
+		window.addEventListener('Login', e => that.hide());
 	}
 	resetMouseCoords()
 	{
@@ -2471,17 +2466,22 @@ class Toolbar
 		element.style.display = 'block';
 		if (diagram.selected.length > 0)
 		{
-			let header = H.span(D.SvgHeader(D.default.button.small, '#ffffff') + D.svg.move +
-				`<rect class="btn" x="0" y="0" width="320" height="320"/></svg>`, 'button', 'toolbar-drag-handle', 'Move toolbar', 'data-name="moveToolbar"');
+			const btns = [	D.GetButton3('moveToolbar', 'move3', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle')];
 			let actions = [...diagram.codomain.actions.values()];
-			actions.sort(function(a, b) { return a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0; });
-			actions.map(a =>
+			actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
+			actions.map(action =>
 			{
-				if (!a.hidden() && a.hasForm(diagram, diagram.selected))
-					header += D.formButton(a.basename, a.icon, `Cat.R.diagram.${'html' in a ? 'actionHtml' : 'activate'}(event, '${a.basename}')`, a.description);
+				if (!action.hidden() && action.hasForm(diagram, diagram.selected))
+				{
+//					function doit(e)
+//					{
+//						Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename);
+//					}
+					btns.push(D.GetButton3(action.basename, action.icon, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), action.description));
+				}
 			});
-			header += D.GetButton('closeToolbar', 'close', 'Cat.D.toolbar.hide()', 'Close');
-			this.header.innerHTML = H.table(H.tr(H.td(header, 'buttonBarLeft')));
+			btns.push(D.GetButton3('closeToolbar', 'close3', e => Cat.D.toolbar.hide(e), 'Close'));
+			this.header.appendChild(H3.table(H3.tr(H3.td(btns, {class:'buttonBarLeft'}))));
 		}
 		else
 		{
@@ -2489,9 +2489,9 @@ class Toolbar
 							D.GetButton3('newDiagram', 'diagram3', 'Cat.D.newElement.Diagram.html()', 'New diagram')];
 			if (diagram.isEditable())
 			{
-				btns.push(D.GetButton3('newObject', 'object3', 'Cat.D.newElement.Object.html()', 'New object'));
-				btns.push(D.GetButton3('newMorphism', 'morphism3', 'Cat.D.newElement.Morphism.html()', 'New morphism'));
-				btns.push(D.GetButton3('newText', 'text3', 'Cat.D.newElement.Text.html()', 'New text'));
+				btns.push(D.GetButton3('newObject', 'object3', e => Cat.D.newElement.Object.html(e), 'New object'));
+				btns.push(D.GetButton3('newMorphism', 'morphism3', e => Cat.D.newElement.Morphism.html(e), 'New morphism'));
+				btns.push(D.GetButton3('newText', 'text3', e => Cat.D.newElement.Text.html(e), 'New text'));
 			}
 			btns.push(D.GetButton3('toolbarShowSearch', 'search', 'Cat.D.toolbar.showSearch()', 'Search in a diagram', D.default.button.small,
 										'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
@@ -2615,7 +2615,7 @@ class StatusBar
 	{
 		this._prep(msg);
 		const that = this;
-		this.timerIn = setTimeout(function()
+		this.timerIn = setTimeout(_ =>
 		{
 			that.element.classList.remove('hidden');
 			if (!D.toolbar.element.classList.contains('hidden'))
@@ -2626,8 +2626,7 @@ class StatusBar
 					that.element.style.top = `${toolbox.top + toolbox.height + D.default.font.height}px`;
 			}
 		}, D.default.statusbar.timein); 
-		this.timerOut = setTimeout(function() { that.hide(); }, D.default.statusbar.timeout); 
-
+		this.timerOut = setTimeout(_ => that.hide(), D.default.statusbar.timeout); 
 		this._post(e, msg, record);
 	}
 	alert(e, msg, record = false)
@@ -2658,15 +2657,14 @@ class NewElement
 		});
 		R.ReplayCommands.set(`new${this.type}`, this);
 	}
-	html()
+	html(e)
 	{
 		const help = D.toolbar.help;
 		help.innerHTML = '';
 		let focus = null;
 		const that = this;
-		function action()
+		function action(e)
 		{
-			const e = event;
 			switch(that.type)
 			{
 				case 'Category':
@@ -2697,9 +2695,9 @@ class NewElement
 				focus = this.basenameElt;
 				break;
 		}
-		function onkeydown() { Cat.D.OnEnter(event, action); }
-		this.descriptionElt = H3.input({class:'in100', id:'new-description', title:'Description', placeholder:'Description', onkeydown });
-		this.descriptionElt.onkeydown = onkeydown;
+//		function onkeydown() { Cat.D.OnEnter(event, action); }
+		this.descriptionElt = H3.input({class:'in100', id:'new-description', title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
+//		this.descriptionElt.onkeydown = onkeydown;
 		rows.push(H3.tr(H3.td(this.descriptionElt), {class:'sidenavRow'}));
 		const existingRows = this.getMatchingRows();
 		let canSearch = false;
@@ -3093,7 +3091,7 @@ class D
 		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		D.CancelAutohide();
 		D.setCursor();
-		D.autohideTimer = setTimeout(function()
+		D.autohideTimer = setTimeout(_ =>
 		{
 			if (D.mouse.onGUI)
 				return;
@@ -3114,7 +3112,7 @@ class D
 		D.CancelAutosave();
 		const timestamp = Date.now();
 		diagram.timestamp = timestamp;
-		D.autosaveTimer = setTimeout(function()
+		D.autosaveTimer = setTimeout(_ =>
 		{
 			if (timestamp === diagram.timestamp)
 				R.SaveLocal(diagram);
@@ -3321,9 +3319,9 @@ class D
 								if(from.isFusible(target))
 								{
 									const domains = [];
-									from.domains.forEach(function(m) { domains.push(m.name); });
+									from.domains.forEach(m => domains.push(m.name));
 									const codomains = [];
-									from.codomains.forEach(function(m) { m.domain !== m.codomain && codomains.push(m.name); });
+									from.codomains.forEach(m => m.domain !== m.codomain && codomains.push(m.name));
 									diagram.fuse(e, from, target);
 									diagram.log({command:'fuse', from:from.name, target:target.name});
 									diagram.antilog({command:'fuse', to:from.to, xy:{x:from.orig.x, y:from.orig.y}, domains, codomains, target});
@@ -3363,7 +3361,7 @@ class D
 					{
 						diagram.log({command: 'move', elements});
 						diagram.antilog({command: 'move', elements:originals});
-						movables.forEach(function(elt) { R.EmitElementEvent(diagram, 'move', elt); });
+						movables.forEach(elt => R.EmitElementEvent(diagram, 'move', elt));
 						R.EmitDiagramEvent(diagram, 'move', '');
 					}
 				}
@@ -3457,13 +3455,12 @@ ${button}
 	}
 	static GetButton3(name, buttonName, onclick, title, scale = D.default.button.small, id = null, aniId = null, repeatCount = "1")
 	{
+		const btn = typeof buttonName === 'string' ? D.svg[buttonName]() : buttonName;
 		const children = [H3.rect({x:0, y:0, width:320, height:320, style:`fill:#ffffff`})];
 		if (aniId)
-			children.push(H3.g(	H3.animateTransform({id:aniId, attributeName:"transform", type:"rotate", from:"360 160 160", to:"0 160 160",
-														dur:"0.5s", repeatCount, begin:"indefinite"}),
-								D.svg[buttonName]()));
+			children.push(H3.g(	H3.animateTransform({id:aniId, attributeName:"transform", type:"rotate", from:"360 160 160", to:"0 160 160", dur:"0.5s", repeatCount, begin:"indefinite"}), btn));
 		else
-			children.push(D.svg[buttonName]());
+			children.push(btn);
 		children.push(H3.rect({class:"btn", x:"0", y:"0", width:"320", height:"320", onclick}));	// click on this!
 		const v = 0.32 * (scale !== undefined ? scale : 1.0);
 		const args = {width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"};
@@ -3527,29 +3524,27 @@ ${button}
 			name += e.code;
 			return name;
 		}
-		document.body.addEventListener('keydown', function(e)
+		document.body.onkeydown = e =>
 		{
 			const name = getKeyName(e);
-			if (name in D.keyboardDown)
-				D.keyboardDown[name](e);
-		});
-		document.body.addEventListener('keyup', function(e)
+			name in D.keyboardDown && D.keyboardDown[name](e);
+		};
+		document.body.onkeyup = e =>
 		{
 			D.setCursor();
 			const name = getKeyName(e);
-			if (name in D.keyboardUp)
-				D.keyboardUp[name](e);
-		});
-		document.addEventListener('wheel', function(e)
+			name in D.keyboardUp && D.keyboardUp[name](e);
+		};
+		document.onwheel = e =>
 		{
-			if (e.target.id === 'topSVG')
+			if (e.target.id === 'topSVG' || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement')
 			{
 				D.toolbar.hide();
 				R.diagram.svgTranslate.classList.remove('trans025s');
 				D.Zoom(e, Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY))));
 				R.diagram.svgTranslate.classList.add('trans025s');
 			}
-		}, false);
+		};
 	}
 	static textWidth(txt, cls = 'object')
 	{
@@ -3569,7 +3564,8 @@ ${button}
 	}
 	static Grid(x)
 	{
-		const grid = D.shiftKey && !D.ctrlKey ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
+//		const grid = D.shiftKey && !D.ctrlKey ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
+		const grid = (event && event.shiftKey && !event.ctrlKey) ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
 		switch (typeof x)
 		{
 		case 'number':
@@ -4838,11 +4834,17 @@ class Panel
 		this.width = width;
 		this.right = right;
 		this.elt = document.getElementById(`${this.name}-sidenav`);
-		this.elt.addEventListener('mouseenter', function(e){ D.mouse.onPanel = true; });
-		this.elt.addEventListener('mouseleave', function(e){ D.mouse.onPanel = false;});
 		const that = this;
-		this.elt.addEventListener('mouseenter', function(e){ D.mouse.onGUI = that; });
-		this.elt.addEventListener('mouseleave', function(e){ D.mouse.onGUI = null;});
+		this.elt.onmouseenter = e =>
+		{
+			D.mouse.onPanel = true;
+			D.mouse.onGUI = that;
+		};
+		this.elt.onmouseleave = e =>
+		{
+			D.mouse.onPanel = false;
+			D.mouse.onGUI = null;
+		};
 		D.panels.panels[this.name] = this;
 		this.state = 'closed';
 	}
@@ -5682,8 +5684,8 @@ class CatalogDiagramSection extends DiagramSection
 	{
 		super('Catalog', parent, 'diagram-catalog-section', 'Catalog of available diagram');
 		const that = this;
-		function onkeydown(e) { Cat.D.OnEnter(e, function(e) { that.search(e); }); }
-		this.searchInput = H3.input({class:'in100', id:'cloud-search', title:'Search', placeholder:'Diagram name contains...', onkeydown });
+//		function onkeydown(e) { Cat.D.OnEnter(e, function(e) { that.search(e); }); }
+		this.searchInput = H3.input({class:'in100', id:'cloud-search', title:'Search', placeholder:'Diagram name contains...', onkeydown:e => Cat.D.OnEnter(e, e => that.search(e))});
 		const btn = D.GetButton3('CatalogSectionSearch', 'search', 'Cat.D.panels.panels.diagram.catalogSection.search()', 'Search for diagrams', D.default.button.small,
 									'catalog-search-button', 'catalog-search-button-ani');
 		this.header.appendChild(H3.div(H3.span(this.searchInput), H3.span(btn)));
@@ -5762,16 +5764,16 @@ class AssertionSection extends Section
 					H3.table(	[H3.tr([H3.td({}, H3.table(assertion.left.map(m => H3.tr(H3.td(m.to.properName))))),
 										H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.to.properName)))))])], {class:'panelElt'})]);
 		const sig = assertion.signature;
-		div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(sig, true);});
-		div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(sig, false);});
-		div.addEventListener('mousedown', function(e) { Cat.R.diagram.selectElement(event, assertion.name);});
+		div.onmouseenter = _ => Cat.R.diagram.emphasis(sig, true);
+		div.onmouseleave = _ => Cat.R.diagram.emphasis(sig, false);
+		div.onmousedown = _ => Cat.R.diagram.selectElement(event, assertion.name);
 		this.assertions.appendChild(div);
 	}
 	refresh(diagram)
 	{
 		D.RemoveChildren(this.assertions);
 		const that = this;
-		diagram.assertions.forEach(function(a) { that.addAssertion(diagram, a); });
+		diagram.assertions.forEach(a => that.addAssertion(diagram, a));
 	}
 	deleteAssertion(name)
 	{
@@ -6249,13 +6251,13 @@ class DiagramElementSection extends ElementSection
 		switch(this.type)
 		{
 			case 'Object':
-				R.diagram.forEachObject(function(o){that.add(o);});
+				R.diagram.forEachObject(o => that.add(o));
 				break;
 			case 'Morphism':
-				R.diagram.forEachMorphism(function(m){that.add(m);});
+				R.diagram.forEachMorphism(m => that.add(m));
 				break;
 			case 'Text':
-				R.diagram.forEachText(function(t){that.add(t);});
+				R.diagram.forEachText(t => that.add(t));
 				break;
 		}
 	}
@@ -7051,7 +7053,7 @@ class Graph
 	noTag(tag)
 	{
 		let hasTag = false;
-		this.scan(function(g, ndx) { hasTag = hasTag || g.hasTag(tag); });
+		this.scan((g, ndx) => hasTag = hasTag || g.hasTag(tag));
 		return !hasTag;
 	}
 	addTag(tag)
@@ -7143,8 +7145,8 @@ class CatObject extends Element
 	{
 		const id = this.elementId(idPrefix);
 		const that = this;
-		const onclick = function(e) { Cat.R.diagram.placeObject(event, that.name); };
-		const ondragstart = function(e) { Cat.D.DragElement(event, that.name); };
+		const onclick = _ => Cat.R.diagram.placeObject(event, that.name);
+		const ondragstart = _ => Cat.D.DragElement(event, that.name);
 		return H3.table(	[H3.tr(H3.td(H3.tag('proper-name', this.properName), {class:'left'})),
 							H3.tr(H3.td(H3.tag('basename', this.basename), {class:'left'})),
 							H3.tr(H3.td(H3.tag('description', this.description), {class:'left'}))],
@@ -7785,7 +7787,7 @@ class DiagramText extends Element
 		const name = this.name;
 		const svgText = H3.text({'text-anchor':'left', class:'diagramText grabbable', style:`font-size:${this.height}px; font-weight:${this.weight}`});
 		const svg = H3.g({'data-type':'text', 'data-name':name, 'text-anchor':'left', class:'diagramText grabbable', id:this.elementId(),
-			transform:`translate(${this.x} ${this.y})`}, svgText);
+			transform:`translate(${this.x} ${this.y + D.default.font.height/2})`}, svgText);
 		svg.onmousedown = function(e) { Cat.R.diagram.selectElement(event, name);};
 		svg.onmouseenter = function(e) { Cat.D.Mouseover(event, name, true);};
 		svg.onmouseleave = function(e) { Cat.D.Mouseover(event, name, false);};
@@ -7849,7 +7851,7 @@ class DiagramText extends Element
 		!this.svg && this.diagram.addSVG(this);
 		if (this.svg)
 		{
-			this.svg.setAttribute('transform', `translate(${this.x} ${this.y})`);
+			this.svg.setAttribute('transform', `translate(${this.x} ${this.y + D.default.font.height/2})`);
 			this.svgText.style.fontSize = `${this.height}px`;
 			this.svgText.style.fontWeight = this.weight;
 		}
@@ -7884,9 +7886,9 @@ class DiagramText extends Element
 		editBtn && inDiv.appendChild(editBtn);
 		div.appendChild(H3.div([viewBtn, delBtn], {class:'right'}));
 		div.appendChild(inDiv);
-		div.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(this.name, true);});
-		div.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(this.name, false);});
-		inDiv.addEventListener('mousedown', function(e) { Cat.R.diagram.selectElement(event, this.name);});
+		div.onmouseenter = _ => Cat.R.diagram.emphasis(this.name, true);
+		div.onmouseleave = _ => Cat.R.diagram.emphasis(this.name, false);
+		inDiv.onmousedown = e => Cat.R.diagram.selectElement(e, this.name);
 		return div;
 	}
 	static UpdateHeight(name, height)
@@ -8034,6 +8036,7 @@ class DiagramObject extends CatObject
 		svg.onmouseenter = e => Cat.D.Mouseover(e, name, true);
 		svg.onmouseleave = e => Cat.D.Mouseover(e, name, false);
 		svg.onmousedown = e => Cat.R.diagram.selectElement(e, name);
+//		svg.onwheel = e => D.topSVG.onwheel(e);
 		node.appendChild(svg);
 		this.svg = svg;
 		svg.setAttributeNS(null, 'data-type', 'object');
@@ -8056,10 +8059,9 @@ class DiagramObject extends CatObject
 			svg.setAttribute('x', this.x);
 			svg.setAttribute('y', this.y + ('height' in this ? this.height/2 : 0));
 		}
-		this.nodes.forEach(function(d){d.update();});
-		const fn = function(m) { m.update(); };
-		this.domains.forEach(fn);
-		this.codomains.forEach(fn);
+		this.nodes.forEach(n => n.update());
+		this.domains.forEach(o => o.update());
+		this.codomains.forEach(o => o.update());
 	}
 	showSelected(state = true)
 	{
@@ -8306,7 +8308,6 @@ class Action extends CatObject
 		const nuArgs = U.Clone(args);
 		nuArgs.category = diagram ? diagram.codomain : null;
 		super(diagram, nuArgs);
-		Object.defineProperty(this, 'icon', 	{value:nuArgs.icon,	writable:	false});
 		Object.defineProperty(this, 'priority', {value:U.GetArg(args, 'priority', 0),	writable:	false});
 	}
 	help()
@@ -8326,12 +8327,11 @@ class CompositeAction extends Action
 		{
 			description:	'Create composite',
 			basename:		'composite',
-			icon:
-`<line class="arrow9" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.line({class:"arrow9", x1:"40", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
+							H3.line({class:"arrow9", x1:"260", y1:"80", x2:"260", y2:"260", "marker-end":"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"40", y1:"80", x2:"220", y2:"260", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms)
@@ -8384,13 +8384,12 @@ class IdentityAction extends Action
 		const args =
 		{
 			description:	'Create identity morphism',
-			basename:			'identity',
-			icon:	// TODO
-`<line class="arrow0" x1="160" y1="60" x2="120" y2="100"/>
-<line class="arrow0" x1="130" y1="260" x2="190" y2="260"/>
-<line class="arrow0" x1="160" y1="60" x2="160" y2="260"/>`,
+			basename:		'identity',
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"60", x2:"120", y2:"100"}),
+							H3.line({class:"arrow0", x1:"130", y1:"260", x2:"190", y2:"260"}),
+							H3.line({class:"arrow0", x1:"160", y1:"60", x2:"160", y2:"260"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8428,14 +8427,13 @@ class NameAction extends Action
 		{
 			description:	'Create named element',
 			basename:			'name',
-			icon:
-`<circle cx="80" cy="240" r="90" fill="url(#radgrad1)"/>
-<path class="svgstr4" d="M110,180 L170,120"/>
-<path class="svgstr4" d="M140,210 L200,150"/>
-<path class="svgstr3" d="M220,130 L260,40 L300,130"/>
-<line class="svgstr3" x1="235" y1="95" x2="285" y2="95"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({cx:"80", cy:"240", r:"90", fill:"url(#radgrad1)"}),
+							H3.path({class:"svgstr4", d:"M110,180 L170,120"}),
+							H3.path({class:"svgstr4", d:"M140,210 L200,150"}),
+							H3.path({class:"svgstr3", d:"M220,130 L260,40 L300,130"}),
+							H3.line({class:"svgstr3", x1:"235", y1:"95", x2:"285", y2:"95"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8532,12 +8530,11 @@ class CopyAction extends Action
 		{
 			description:	'Copy an element',
 			basename:			'copy',
-			icon:
-`<circle cx="200" cy="200" r="160" fill="#fff"/>
-<circle cx="200" cy="200" r="160" fill="url(#radgrad1)"/>
-<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([H3.circle({cx:"200", cy:"200", r:"160", fill:"#fff"}),
+						H3.circle({cx:"200", cy:"200", r:"160", fill:"url(#radgrad1)"}),
+						H3.circle({cx:"120", cy:"120", r:"120", fill:"url(#radgrad2)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8601,14 +8598,13 @@ class FlipNameAction extends Action
 			description:	'Flip the name',
 			basename:		'flipName',
 			priority:		89,
-			icon:
-`<line class="arrow0" x1="160" y1="40" x2="160" y2="280"/>
-<line class="arrow0" x1="80" y1="120" x2="80" y2="220"/>
-<line class="arrow0" x1="240" y1="120" x2="240" y2="220"/>
-<line class="arrow0" x1="40" y1="120" x2="120" y2="120"/>
-<line class="arrow0" x1="200" y1="120" x2="280" y2="120"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"280"}),
+							H3.line({class:"arrow0", x1:"80", y1:"120", x2:"80", y2:"220"}),
+							H3.line({class:"arrow0", x1:"240", y1:"120", x2:"240", y2:"220"}),
+							H3.line({class:"arrow0", x1:"40", y1:"120", x2:"120", y2:"120"}),
+							H3.line({class:"arrow0", x1:"200", y1:"120", x2:"280", y2:"120"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8642,12 +8638,10 @@ class ProductAction extends Action
 		{
 			description:	`Create ${dual ? 'co' : ''}product of two or more objects or morphisms`,
 			basename:		dual ? 'coproduct' : 'product',
-			icon:			dual ?  D.svg.add :
-`<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
-<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
 			dual,
 		};
 		super(diagram, args);
+		this.icon = ProductAction.GetIcon(this.dual);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms, log = true)
@@ -8685,6 +8679,11 @@ class ProductAction extends Action
 		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
 			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
 	}
+	static GetIcon(dual)
+	{
+		return dual ? H3.g([H3.line({class:"arrow0", x1:"160", y1:"80", x2:"160", y2:"240"}), H3.line({class:"arrow0", x1:"80", y1:"160", x2:"240", y2:"160"})]) :
+			H3.g([H3.line({class:"arrow0", x1:"103", y1:"216", x2:"216", y2:"103"}), H3.line({class:"arrow0", x1:"216", y1:"216", x2:"103", y2:"103"})]);
+	}
 }
 
 class ProductEditAction extends Action
@@ -8695,12 +8694,10 @@ class ProductEditAction extends Action
 		{
 			description:	`Edit a ${dual ? 'co' : ''}product`,
 			basename:		dual ? 'coproductEdit' : 'productEdit',
-			icon:			dual ?  D.svg.add :
-`<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
-<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>`,
 			dual,
 		};
 		super(diagram, args);
+		this.icon = ProductAction.GetIcon(this.dual);
 		R.ReplayCommands.set(this.basename, this);
 		this.table = null;
 	}
@@ -8911,17 +8908,17 @@ class PullbackAction extends Action
 		{
 			description:	`Create a ${dual ? 'pushout' : 'pullback'} of two or more morphisms with a common ${dual ? 'domain' : 'codomain'}`,
 			basename,
-			icon:			dual ?
-`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
-<path class="svgstr4" d="M160,260 160,160 260,160"/>`
-			:
-`<path class="svgstr4" d="M60,160 160,160 160,60"/>
-<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
 			dual,
 		};
 		super(diagram, args);
+		this.icon = 		dual ?
+			H3.g([	H3.line({class:"arrow0", x1:"60", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
+					H3.line({class:"arrow0", x1:"40", y1:"60", x2:"40", y2:"260", "marker-end":"url(#arrowhead)"}),
+					H3.path({class:"svgstr4", d:"M160,260 160,160 260,160"})])
+							:
+			H3.g([	H3.path({class:"svgstr4", d:"M60,160 160,160 160,60"}),
+					H3.line({class:"arrow0", x1:"60", y1:"280", x2:"250", y2:"280", "marker-end":"url(#arrowhead)"}),
+					H3.line({class:"arrow0", x1:"280", y1:"60", x2:"280", y2:"250", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, source)
@@ -8962,17 +8959,17 @@ class ProductAssemblyAction extends Action
 		{
 			description:	`Create a ${dual ? 'co' : ''}product assembly of two or more morphisms with a common ${dual ? 'co' : ''}domain`,
 			basename:		`${dual ? 'co' : ''}productAssembly`,
-			icon:	dual ?
-`<line class="arrow0" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>`
-		:
-`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="60" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
 			dual,
 		};
 		super(diagram, args);
+		this.icon = dual ?
+				H3.g([	H3.line({class:"arrow0", x1:"60", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
+						H3.line({class:"arrow9", x1:"280", y1:"280", x2:"280", y2:"100", "marker-end":"url(#arrowhead)"}),
+						H3.line({class:"arrow9", x1:"120", y1:"260", x2:"240", y2:"100", "marker-end":"url(#arrowhead)"})])
+						:
+				H3.g([	H3.line({class:"arrow0", x1:"40", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
+						H3.line({class:"arrow9", x1:"40", y1:"80", x2:"40", y2:"280", "marker-end":"url(#arrowhead)"}),
+						H3.line({class:"arrow9", x1:"60", y1:"80", x2:"160", y2:"240", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms)
@@ -9003,12 +9000,11 @@ class MorphismAssemblyAction extends Action
 			description:	'Attempt to assemble a morphism from a node in your diagram',
 			basename:		'morphismAssembly',
 			priority:		10,
-			icon:
-`<line class="arrow0" x1="40" y1="60" x2="300" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="260" x2="140" y2="100" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="180" y1="100" x2="280" y2="260" marker-end="url(#arrowhead)"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.line({class:"arrow0", x1:"40", y1:"60", x2:"300", y2:"60", "marker-end":"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"40", y1:"260", x2:"140", y2:"100", "marker-end":"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"180", y1:"100", x2:"280", y2:"260", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	html(e, diagram, ary)
@@ -9045,12 +9041,11 @@ class HomAction extends Action
 	constructor(diagram)
 	{
 		const args = {	description:	'Create a hom object or morphism from two such items',
-						basename:		'hom',
-						icon:
-`<path class="arrow0" d="M100 80 L80 80 L80 240 L 100 240"/>
-<path class="arrow0" d="M220 80 L240 80 L240 240 L 220 240"/>
-<line class="arrow0rnd" x1="170" y1="240" x2="150" y2="260"/>`};
+						basename:		'hom'};
 		super(diagram, args);
+		this.icon = H3.g([	H3.path({class:"arrow0", d:"M100 80 L80 80 L80 240 L 100 240"}),
+							H3.path({class:"arrow0", d:"M220 80 L240 80 L240 240 L 220 240"}),
+							H3.line({class:"arrow0rnd", x1:"170", y1:"240", x2:"150", y2:"260"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, elements)
@@ -9089,11 +9084,10 @@ class HomObjectAction extends Action
 			description:	`Select a morphism listed from a common ${dual ? 'co' : ''}domain`,
 			dual,
 			basename:		dual ? 'homLeft' : 'homRight',
-			icon:			dual ?
-`<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/><line class="arrow0" x1="30" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>` :
-`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/><line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
 		};
 		super(diagram, args);
+		this.icon = dual ?	H3.g([H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line({class:"arrow0", x1:"30", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]) :
+							H3.g([H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line({class:"arrow0", x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9153,13 +9147,11 @@ class HomsetAction extends Action
 		{
 			description:	'Select a morphism listed from a common domain and codomain',
 			basename:		'homset',
-			icon:
-`<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
-<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="100" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
-`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+							H3.line({class:"arrow0", x1:"100", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 		this.newMorphism = new NewElement('Morphism', '', true);
 	}
@@ -9212,16 +9204,15 @@ class DetachDomainAction extends Action
 			basename:		dual ? 'detachCodomain' : 'detachDomain',
 			description:	`Detach a morphism\'s ${dual ? 'co' : ''}domain`,
 			dual,
-			icon:			dual ?
-`<circle cx="220" cy="200" r="60" fill="url(#radgrad1)"/>
-<circle cx="280" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="40" y1="160" x2="180" y2="200" marker-end="url(#arrowhead)"/>`
-				:
-`<circle cx="40" cy="160" r="60" fill="url(#radgrad1)"/>
-<circle cx="100" cy="200" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="140" y1="200" x2="280" y2="160" marker-end="url(#arrowhead)"/>`,
 		};
 		super(diagram, args);
+		this.icon = dual ?	H3.g([	H3.circle({cx:"220", cy:"200", r:"60", fill:"url(#radgrad1)"}),
+									H3.circle({cx:"280", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+									H3.line({class:"arrow0", x1:"40", y1:"160", x2:"180", y2:"200", "marker-end":"url(#arrowhead)"})])
+				:
+							H3.g([	H3.circle({cx:"40", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+									H3.circle({cx:"100", cy:"200", r:"60", fill:"url(#radgrad1)"}),
+									H3.line({class:"arrow0", x1:"140", y1:"200", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9267,11 +9258,10 @@ class DeleteAction extends Action
 	{
 		const args = {	description:	'Delete elements',
 						basename:		'delete',
-						priority:		98,
-						icon:
-`<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
-<path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,};
+						priority:		98};
 		super(diagram, args);
+		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"230", "marker-end":"url(#arrowhead)"}),
+							H3.path({class:"svgfilNone svgstr1", d:"M90,190 A120,50 0 1,0 230,190"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9334,19 +9324,18 @@ class ProjectAction extends Action
 		{
 			basename:		dual ? 'inject' : 'project',
 			description:	'Create factor morphism',
-			icon:			dual ?
-`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x2="110" y2="120" x1="240" y1="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x2="110" y2="160" x1="280" y1="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x2="110" y2="200" x1="240" y1="280" marker-end="url(#arrowhead)"/>`
-			:
-`<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="110" y1="120" x2="240" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="110" y1="200" x2="240" y2="280" marker-end="url(#arrowhead)"/>`,
 			dual,
 		};
 		super(diagram, args);
+		this.icon = dual ?	H3.g([	H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+									H3.line({class:"arrow0", x2:"110", y2:"120", x1:"240", y1:"40", "marker-end":"url(#arrowhead)"}),
+									H3.line({class:"arrow0", x2:"110", y2:"160", x1:"280", y1:"160", "marker-end":"url(#arrowhead)"}),
+									H3.line({class:"arrow0", x2:"110", y2:"200", x1:"240", y1:"280", "marker-end":"url(#arrowhead)"})])
+												:
+							H3.g([	H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+									H3.line({class:"arrow0", x1:"110", y1:"120", x2:"240", y2:"40", "marker-end":"url(#arrowhead)"}),
+									H3.line({class:"arrow0", x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"}),
+									H3.line({class:"arrow0", x1:"110", y1:"200", x2:"240", y2:"280", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, elements)
@@ -9462,11 +9451,10 @@ class LambdaMorphismAction extends Action
 	constructor(diagram)
 	{
 		const args = {	description:	'Curry a morphism',
-						basename:		'lambda',
-						icon:
-`<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="280" x2="140" y2="180" marker-end="url(#arrowhead)"/>`,};
+						basename:		'lambda'};
 		super(diagram, args);
+		this.icon = H3.g([H3.line({class:"arrow0", x1:"40", y1:"40", x2:"280", y2:"280", "marker-end":"url(#arrowhead)"}),
+						H3.line({class:"arrow0", x1:"40", y1:"280", x2:"140", y2:"180", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9600,11 +9588,10 @@ class HelpAction extends Action
 	{
 		const args = {	description:	'Give help for an item',
 						basename:		'help',
-						priority:		99,
-						icon:
-`<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
-<path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,};
+						priority:		99};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({cx:"160", cy:"240", r:"60", fill:"url(#radgrad1)"}),
+							H3.path({class:"svgstr4", d:"M110,120 C100,40 280,40 210,120 S170,170 160,200"})]);
 	}
 	action(e, diagram, ary) {}
 	hasForm(diagram, ary)	// one element
@@ -9644,9 +9631,9 @@ class LanguageAction extends Action
 		{
 			description:	`Morphism\'s ${language} code`,
 			basename:		language,
-			icon,
 		};
 		super(diagram, args);
+		this.icon = icon;
 		Object.defineProperties(this,
 		{
 			diagram:		{value:	null,		writable:	true},
@@ -9778,7 +9765,7 @@ class JavascriptAction extends LanguageAction
 {
 	constructor(diagram)
 	{
-		super(diagram, 'javascript', 'js', '<text text-anchor="middle" x="160" y="280" style="font-size:240px;stroke:#000;">JS</text>');
+		super(diagram, 'javascript', 'js', H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:240px;stroke:#000;"}, "JS"));
 	}
 	getType(elt, first = true)
 	{
@@ -10084,7 +10071,6 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 		const from = R.diagram.selected[0];
 		const morph = from.to;
 		let html = '';
-//		const id = `${prefix}-${object.name}-${factor.toString()}`;
 		const id = this.getInputId(prefix, object, factor);
 		switch(object.constructor.name)
 		{
@@ -10387,12 +10373,8 @@ class CppAction extends LanguageAction
 {
 	constructor(diagram)
 	{
-		super(diagram, 'cpp', 'cpp',
-`
-<text text-anchor="middle" x="160" y="140" style="font-size:140px;font-weight:bold;stroke:#000;">C</text>
-<text text-anchor="middle" x="160" y="280" style="font-size:120px;font-weight:bold;stroke:#000;">++</text>
-`
-		);
+		super(diagram, 'cpp', 'cpp', H3.g([H3.text({"text-anchor":"middle", x:"160", y:"140", style:"font-size:140px;font-weight:bold;stroke:#000;"}, "C"),
+											H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:120px;font-weight:bold;stroke:#000;"}, "++")]));
 		Object.defineProperty(this, 'currentCiagram', {value:null, writable:true});
 	}
 	getType(elt, first = true)
@@ -10884,15 +10866,12 @@ class RunAction extends Action
 	constructor(diagram)
 	{
 		const args = {	description:	'Run morphism',
-						basename:		'run',
-						icon:
-`<g>
-<animateTransform id="RunAction btn" attributeName="transform" type="rotate" from="0 160 160" to="360 160 160" dur="0.5s" repeatCount="1" begin="indefinite"/>
-<line class="arrow0" x1="20" y1="80" x2="180" y2="80" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="140" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>
-</g>`,};
+						basename:		'run' };
 		super(diagram, args);
+		this.icon = H3.g([	H3.animateTransform({id:"RunAction btn", attributeName:"transform", type:"rotate", from:"0 160 160", to:"360 160 160", dur:"0.5s", repeatCount:"1", begin:"indefinite"}),
+							H3.line({class:"arrow0", x1:"20", y1:"80", x2:"180", y2:"80", "marker-end":"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"80", y1:"160", x2:"240", y2:"160", "marker-end":"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"140", y1:"240", x2:"300", y2:"240", "marker-end":"url(#arrowhead)"})]);
 		Object.defineProperties(this,
 		{
 			data:			{value:	new Map(),	writable:	true},
@@ -11114,9 +11093,17 @@ class FiniteObjectAction extends Action
 	{
 		const args = {	description:	'Convert to or edit a finite discrete object',
 						basename:		'finiteObject',
-						icon:			D.svg.table,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({cx:"80", cy:"80", r:"60", fill:"url(#radgrad2)"}),
+							H3.circle({cx:"80", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"80", cy:"240", r:"60", fill:"url(#radgrad2)"}),
+							H3.circle({cx:"160", cy:"80", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"160", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"160", cy:"240", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"240", cy:"80", r:"60", fill:"url(#radgrad2)"}),
+							H3.circle({cx:"240", cy:"160", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"240", cy:"240", r:"60", fill:"url(#radgrad2)"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -11196,20 +11183,17 @@ class EvaluateAction extends Action
 		{
 			description:	'Create an evaluation morphism',
 			basename:		'evaluate',
-			icon:	// TODO needs new icon
-`
-<circle cx="80" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
-<polyline class="svgstr3" points="50,40 30,40 30,120 50,120"/>
-<polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
-<circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
-<path class="svgfilNone svgstrThinGray" d="M80 100 A40 40 1 0 0 260 100"/>
-<line class="svgstrThinGray" x1="160" y1="100" x2="160" y2="170"/>
-<line class="svgstrThinGray" x1="160" y1="210" x2="160" y2="250"/>
-`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({cx:"80", cy:"80", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"160", cy:"80", r:"60", fill:"url(#radgrad1)"}),
+							H3.polyline({class:"svgstr3", points:"50,40 30,40 30,120 50,120"}),
+							H3.polyline({class:"svgstr3", points:"190,40 210,40 210,120 190,120"}),
+							H3.circle({cx:"260", cy:"80", r:"60", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"160", cy:"280", r:"60", fill:"url(#radgrad1)"}),
+							H3.path({class:"svgfilNone s,vgstrThinGray", d:"M80 100 A40 40 1 0 0 260 100"}),
+							H3.line({class:"svgstrThinGray", x1:"160", y1:"100", x2:"160", y2:"170"}),
+							H3.line({class:"svgstrThinGray", x1:"160", y1:"210", x2:"160", y2:"250"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -11231,16 +11215,15 @@ class DistributeAction extends Action
 		{
 			description:	'Distribute a product over a coproduct',
 			basename:		'distribute',
-			icon:	// TODO needs new icon
-`<circle class="svgstr4" cx="80" cy="80" r="60"/>
-<line class="arrow0" x1="38" y1="38" x2="122" y2="122"/>
-<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
-<line class="arrow0" x1="240" y1="80" x2="80" y2="240"/>
-<circle class="svgstr4" cx="240" cy="240" r="60"/>
-<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
-<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({class:"svgstr4", cx:"80", cy:"80", r:"60"}),
+							H3.line({class:"arrow0", x1:"38", y1:"38", x2:"122", y2:"122"}),
+							H3.line({class:"arrow0", x1:"38", y1:"122", x2:"122", y2:"38"}),
+							H3.line({class:"arrow0", x1:"240", y1:"80", x2:"80", y2:"240"}),
+							H3.circle({class:"svgstr4", cx:"240", cy:"240", r:"60"}),
+							H3.line({class:"arrow0", x1:"198", y1:"198", x2:"282", y2:"282"}),
+							H3.line({class:"arrow0", x1:"282", y1:"198", x2:"198", y2:"282"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -11272,13 +11255,12 @@ class AlignHorizontalAction extends Action
 		{
 			description:	'Align elements horizontally',
 			basename:		'alignHorizontal',
-			icon:
-`<circle cx="80" cy="160" r="80" fill="url(#radgrad1)"/>
-<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
-<circle cx="240" cy="160" r="80" fill="url(#radgrad1)"/>
-<line class="arrow6" x1="0" y1="160" x2="320" y2="160"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({cx:"80", cy:"160", r:"80", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"240", cy:"160", r:"80", fill:"url(#radgrad1)"}),
+							H3.line({class:"arrow6", x1:"0", y1:"160", x2:"320", y2:"160"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -11330,13 +11312,12 @@ class AlignVerticalAction extends Action
 		{
 			description:	'Align elements vertically',
 			basename:		'alignVertical',
-			icon:
-`<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
-<circle cx="160" cy="160" r="80" fill="url(#radgrad1)"/>
-<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
-<line class="arrow6" x1="160" y1="0" x2="160" y2="320""/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.circle({cx:"160", cy:"80", r:"80", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
+							H3.circle({cx:"160", cy:"240", r:"80", fill:"url(#radgrad1)"}),
+							H3.line({class:"arrow6", x1:"160", y1:"0", x2:"160", y2:"320"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -11389,12 +11370,11 @@ class TensorAction extends Action
 		{
 			description:	'Create a tensor product of two or more objects or morphisms',
 			basename:		'tensor',
-			icon:
-`<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
-<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>
-<circle cx="160" cy="160" r="80" class="svgfilNone svgstr1"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.line({class:"arrow0", x1:"103", y1:"216", x2:"216", y2:"103"}),
+							H3.line({class:"arrow0", x1:"216", y1:"216", x2:"103", y2:"103"}),
+							H3.circle({cx:"160", cy:"160", r:"80", class:"svgfilNone svgstr1"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -11429,9 +11409,9 @@ class AssertionAction extends Action
 		{
 			description:	'Assert that two legs of a diagram commute.',
 			basename:		'assert',
-			icon:			`<path class="svgstr4" d="${D.GetArc(160, 160, 100, 45, 360)}" marker-end="url(#arrowhead)"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.path({class:"svgstr4", d:D.GetArc(160, 160, 100, 45, 360), "marker-end":"url(#arrowhead)"});
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -11495,10 +11475,9 @@ class RecursionAction extends Action
 		{
 			description:	'Set the recursor for a recursive morphism.',
 			basename:		'recursion',
-			icon:	// TODO
-`<path class="svgstr4" d="M40,160 C40,0 280,0 280,160 C280,280 100,280 80,160 C80,60 220,60 220,160 L220,180" marker-end="url(#arrowhead)"/>`,
 		};
 		super(diagram, args);
+		this.icon = H3.path({class:"svgstr4", d:"M40,160 C40,0 280,0 280,160 C280,280 100,280 80,160 C80,60 220,60 220,160 L220,180", "marker-end":"url(#arrowhead)"});
 	}
 	action(e, diagram, ary)
 	{
@@ -11520,10 +11499,13 @@ class GraphAction extends Action
 	{
 		const args = {	description:	'Show morphism graph',
 						basename:		'graph',
-						icon:			D.svg.string,
 						priority:		97,
 		};
 		super(diagram, args);
+		this.icon = H3.g([	H3.line({class:"arrow0", x1:"60", y1:"40", x2:"260", y2:"200"}),
+							H3.path({class:"svgstr4", d:"M60,120 C120,120 120,200 60,200"}),
+							H3.path({class:"svgstr4", d:"M260,40 C200,40 200,120 260,120"}),
+							H3.line({class:"arrow0", x1:"60", y1:"260", x2:"260", y2:"260"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -12691,21 +12673,12 @@ class Cell extends DiagramCore
 			throw `NaN in getSVG`;
 		const name = this.name;
 		const sig = this.signature;
-		const mouseenter = function(e) { Cat.R.diagram.emphasis(sig, true);};
-		const mouseleave = function(e) { Cat.R.diagram.emphasis(sig, false);};
-		const mousedown = function(e) { Cat.R.diagram.selectElement(event, sig);};
-		const svg = H3.text();
+		const svg = H3.text({'data-type':'assertion', 'data-name':this.name, 'text-anchor':'middle', 'x':this.x, 'y':this.y + D.default.font.height/2}, this.properName);
+		svg.onmouseenter = _ => Cat.R.diagram.emphasis(sig, true);
+		svg.onmouseleave = _ => Cat.R.diagram.emphasis(sig, false);
+		svg.onmousedown = e => Cat.R.diagram.selectElement(e, sig);
 		node.appendChild(svg);
 		this.svg = svg;
-		svg.setAttributeNS(null, 'data-type', 'assertion');
-		svg.setAttributeNS(null, 'data-name', this.name);
-		svg.setAttributeNS(null, 'text-anchor', 'middle');
-		svg.setAttributeNS(null, 'x', this.x);
-		svg.setAttributeNS(null, 'y', this.y + D.default.font.height/2);	// TODO should be this.height?
-		svg.innerHTML = this.properName;
-		svg.addEventListener('mouseenter', mouseenter);
-		svg.addEventListener('mouseleave', mouseleave);
-		svg.addEventListener('mousedown', mousedown);
 		this.setGlow();
 	}
 	removeSVG()
@@ -12763,7 +12736,7 @@ class Cell extends DiagramCore
 		{
 			const m = this.left[0];
 			const n = this.right[0];
-			const cmp = function(a, b) { return a.to instanceof NamedMorphism && a.to.source === b.to; };
+			const cmp = (a, b) => a.to instanceof NamedMorphism && a.to.source === b.to;
 			return cmp(m, n) || cmp(n, m);
 		}
 		return false;
@@ -12820,10 +12793,7 @@ class Cell extends DiagramCore
 			return leftCommon.length > 0 && rightCommon.length > 0;
 		};
 		let result = false;
-		cells.forEach(function(cell)
-		{
-			result = result || cellCheck(cell, left, right);
-		});
+		cells.forEach(cell => result = result || cellCheck(cell, left, right));
 		return result;
 	}
 }
@@ -12898,13 +12868,13 @@ class IndexCategory extends Category
 	clear()
 	{
 		super.clear();
-		this.cells.forEach(function(c) { c => c.deregister(); });
+		this.cells.forEach(c => c.deregister());
 	}
 	getHomset(domain, codomain)
 	{
 		const homset = new Set();
-		domain.domains.forEach(function(m) { m.codomain === codomain ? homset.add(m) : null; });
-		codomain.codomains.forEach(function(m) { m.domain === domain ? homset.add(m) : null; });
+		domain.domains.forEach(m => m.codomain === codomain ? homset.add(m) : null);
+		codomain.codomains.forEach(m => m.domain === domain ? homset.add(m) : null);
 		return homset;
 	}
 	updateHomset(domain, codomain)	// actually this a symmetric update
@@ -12945,15 +12915,8 @@ class IndexCategory extends Category
 		this.elements.delete(from.name);
 		this.elements.set(from.name, from);	// reset the order in the map
 		const badCells = new Set();
-		obj.nodes.forEach(function(cell)
-		{
-			if (cell instanceof Cell && ((cell.left.includes(from)) || (cell.right.includes(from))))
-				badCells.add(cell);
-		});
-		badCells.forEach(function(cell)
-		{
-			cell.deregister();
-		});
+		obj.nodes.forEach(cell => cell instanceof Cell && ((cell.left.includes(from)) || (cell.right.includes(from))) && badCells.add(cell));
+		badCells.forEach(cell => cell.deregister());
 		return detachedObj;
 	}
 	getCell(left, right)
@@ -12963,7 +12926,7 @@ class IndexCategory extends Category
 	}
 	makeCells(diagram)
 	{
-		this.cells.forEach(function(cell) { cell.deregister(); });
+		this.cells.forEach(cell => cell.deregister());
 		const that = this;
 		this.forEachObject(function(o)
 		{
@@ -13043,7 +13006,7 @@ class IndexCategory extends Category
 	find(elt)
 	{
 		const fnd = [];
-		this.elements.forEach(function(from) { from.to === elt && fnd.push(from); });
+		this.elements.forEach(from => from.to === elt && fnd.push(from));
 		return fnd;
 	}
 	static HomKey(domain, codomain)
@@ -14060,23 +14023,9 @@ class Diagram extends Functor
 	{
 		const a = super.json();
 		a.viewport =	this.getViewport();		// don't want viewport.orig
-		a.references =	[];
-		this.references.forEach(function(ref)
-		{
-			a.references.push(ref.name);
-		});
-		a.domainElements = [];
-		this.domain.elements.forEach(function(e)
-		{
-			if ((e.to && e.to.canSave()) || (!('to' in e)))
-				a.domainElements.push(e.json());
-		});
-		a.elements = [];
-		this.elements.forEach(function(e)
-		{
-			if (e.canSave() && e.refcnt > 0)	// only referenceed elements are saved
-				a.elements.push(e.json());
-		}, this);
+		a.references =	[...this.references].map(ref => ref.name);
+		a.domainElements = [...this.domain.elements.values()].filter(e => ((e.to && e.to.canSave()) || (!('to' in e)))).map(e => e.json());
+		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
 		a.readonly = this.readonly;
 		a.user = this.user;
 		return a;
@@ -14190,8 +14139,8 @@ class Diagram extends Functor
 	selectAll()
 	{
 		this.deselectAll();
-		this.domain.elements.forEach(function(e) {this.addSelected(e);}, this);
-		this.assertions.forEach(function(e) {this.addSelected(e);}, this);
+		this.domain.elements.forEach(e => this.addSelected(e));
+		this.assertions.forEach(e =>this.addSelected(e));
 	}
 	selectElement(e, name)
 	{
@@ -14405,7 +14354,7 @@ class Diagram extends Functor
 			this.makeSelected(from);
 		return from;
 	}
-	placeMorphismByObject(e, dir, objectName, morphismName, save = true)
+	placeMorphismByObject(e, dir, objectName, morphismName, save = true, xy = null)
 	{
 		try
 		{
@@ -14415,43 +14364,45 @@ class Diagram extends Functor
 			if (!to[dir].isEquivalent(toObj))
 				throw `Source and target do not have same signature: ${to[dir].htmlName()} vs ${toObj.htmlName()}`;
 			const angles = [];
-			fromObj.domains.forEach(function(m) { angles.push(D2.Angle(fromObj, m.codomain)); });
-			fromObj.codomains.forEach(function(m) { angles.push(D2.Angle(fromObj, m.domain)); });
-			let xy = null;
+			fromObj.domains.forEach(m => angles.push(D2.Angle(fromObj, m.codomain)));
+			fromObj.codomains.forEach(m => angles.push(D2.Angle(fromObj, m.domain)));
 			const arrowLength = Cat.D.GetArrowLength(to);
-			if (angles.length > 0)
+			if (!xy)
 			{
-				angles.sort();
-				let gap = 0;
-				let angle = angles.length > 0 ? angles[0] : D.ArrowDirection().angle();
-				let lastAngle = angles[0];
-				for(let i=1; i<angles.length; ++i)
+				if (angles.length > 0)
 				{
-					const delta = angles[i] - lastAngle;
-					if (delta > gap)
+					angles.sort();
+					let gap = 0;
+					let angle = angles.length > 0 ? angles[0] : D.ArrowDirection().angle();
+					let lastAngle = angles[0];
+					for(let i=1; i<angles.length; ++i)
 					{
-						gap = delta;
-						angle = lastAngle + gap/2;
+						const delta = angles[i] - lastAngle;
+						if (delta > gap)
+						{
+							gap = delta;
+							angle = lastAngle + gap/2;
+						}
+						lastAngle = angles[i];
 					}
-					lastAngle = angles[i];
-				}
-				if (angles.length > 1)
-				{
-					const delta = 2 * Math.PI - (angles[angles.length-1] - angles[0]);
-					if (delta > gap)
-						angle = lastAngle + (delta === 0 ? 2 * Math.PI : delta)/2;
+					if (angles.length > 1)
+					{
+						const delta = 2 * Math.PI - (angles[angles.length-1] - angles[0]);
+						if (delta > gap)
+							angle = lastAngle + (delta === 0 ? 2 * Math.PI : delta)/2;
+					}
+					else
+						angle = (angle + Math.PI) % (2 * Math.PI);
+					const cosAngle = Math.cos(angle);
+					const sinAngle = Math.sin(angle);
+					const length = Math.max(D.default.arrow.length, Math.abs(cosAngle * arrowLength));
+					xy = D.Grid(D2.Scale(length, {x:cosAngle, y:sinAngle}).add(fromObj));
 				}
 				else
-					angle = (angle + Math.PI) % (2 * Math.PI);
-				const cosAngle = Math.cos(angle);
-				const sinAngle = Math.sin(angle);
-				const length = Math.max(D.default.arrow.length, Math.abs(cosAngle * arrowLength));
-				xy = D.Grid(D2.Scale(length, {x:cosAngle, y:sinAngle}).add(fromObj));
-			}
-			else
-			{
-				const offset = new D2(D.default.stdArrow).scale(arrowLength / D.default.arrow.length);
-				xy = new D2(fromObj).add(offset);
+				{
+					const offset = new D2(D.default.stdArrow).scale(arrowLength / D.default.arrow.length);
+					xy = new D2(fromObj).add(offset);
+				}
 			}
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
 			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
@@ -14510,9 +14461,9 @@ class Diagram extends Functor
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:`${this.elementId()}-T`}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
-			this.domain.elements.forEach(function(elt) { this.addSVG(elt); }, this);
+			this.domain.elements.forEach(elt => this.addSVG(elt));
 		}
-		this.domain.cells.forEach(function(d) { this.addSVG(d); }, this);
+		this.domain.cells.forEach(d => this.addSVG(d));
 	}
 	upload(e)
 	{
@@ -14556,8 +14507,10 @@ class Diagram extends Functor
 	{
 		const pos = D.topSVG.getBoundingClientRect();
 		const s = this.viewport.scale;
-		return new D2(	s * xy.x + pos.left + this.viewport.x,
-						s * xy.y + pos.top  + this.viewport.y);
+		const userXy = new D2(	s * xy.x + pos.left + this.viewport.x,
+								s * xy.y + pos.top  + this.viewport.y);
+		userXy.y -= Cat.D.topSVG.parentElement.offsetTop;
+		return userXy;
 	}
 	replaceElements(elements)
 	{
@@ -14605,7 +14558,7 @@ class Diagram extends Functor
 	}
 	updateMorphisms()
 	{
-		this.domain.forEachMorphism(function(m){m.update();});
+		this.domain.forEachMorphism(m => m.update());
 	}
 	isIsolated(elt)
 	{
@@ -14666,27 +14619,15 @@ class Diagram extends Functor
 	}
 	forEachObject(fn)
 	{
-		this.elements.forEach(function(e)
-		{
-			if (e instanceof CatObject)
-				fn(e);
-		}, this);
+		this.elements.forEach(e => e instanceof CatObject && fn(e));
 	}
 	forEachMorphism(fn)
 	{
-		this.elements.forEach(function(e)
-		{
-			if (e instanceof Morphism)
-				fn(e);
-		}, this);
+		this.elements.forEach(e => e instanceof Morphism && fn(e));
 	}
 	forEachText(fn)
 	{
-		this.domain.elements.forEach(function(e)
-		{
-			if (e instanceof DiagramText)
-				fn(e);
-		}, this);
+		this.domain.elements.forEach(e => e instanceof DiagramText && fn(e));
 	}
 	showGraph(m)
 	{
@@ -14699,8 +14640,8 @@ class Diagram extends Functor
 		this.link2colorIndex = {};
 		this.colorIndex = 0;
 		let exist = false;
-		this.domain.forEachMorphism(function(m) { exist = exist || ('graph' in m && m.graph.svg && !m.graph.svg.classList.contains('hidden')); });
-		this.domain.forEachMorphism(function(m) { exist ? m.removeGraph() : m.showGraph(); });
+		this.domain.forEachMorphism(m => exist = exist || ('graph' in m && m.graph.svg && !m.graph.svg.classList.contains('hidden')));
+		this.domain.forEachMorphism(m => exist ? m.removeGraph() : m.showGraph());
 	}
 	downloadJSON(e)
 	{
@@ -14811,24 +14752,22 @@ class Diagram extends Functor
 	getObjects()
 	{
 		const objects = new Set();
-		const fn = function(o) { objects.add(o); };
-		this.forEachObject(fn);
+		this.forEachObject(o => objects.add(o));
 		this.allReferences.forEach(function(cnt, name)
 		{
 			const diagram = R.$CAT.getElement(name);
-			diagram.forEachObject(fn);
+			diagram.forEachObject(o => objects.add(o));
 		});
 		return [...objects];
 	}
 	getMorphisms()
 	{
 		const morphisms = new Set();
-		const fn = function(m) { morphisms.add(m); };
-		this.forEachMorphism(fn);
+		this.forEachMorphism(m => morphisms.add(m));
 		this.allReferences.forEach(function(cnt, name)
 		{
 			const diagram = R.$CAT.getElement(name);
-			diagram.forEachMorphism(fn);
+			diagram.forEachMorphism(m => morphisms.add(m));
 		});
 		return [...morphisms];
 	}
@@ -15134,8 +15073,7 @@ class Diagram extends Functor
 	}
 	updateProperName(to)	// TODO change to event 'update'
 	{
-		function update(m){ m.update(); }
-		this.domain.elements.forEach(function(from)
+		this.domain.elements.forEach(from =>
 		{
 			if (from.to === to)
 			{
@@ -15144,8 +15082,8 @@ class Diagram extends Functor
 				else if (to instanceof CatObject)
 				{
 					from.svg.innerHTML = to.htmlName();
-					from.domains.forEach(update);
-					from.codomains.forEach(update);
+					from.domains.forEach(o => o.update());
+					from.codomains.forEach(o => o.update());
 				}
 				else
 					from.svg.innerHTML = to.htmlName();
@@ -15200,7 +15138,7 @@ class Diagram extends Functor
 	{
 		const options = [H3.option(text)];
 		const objects = this.getObjects().reverse();
-		this.allReferences.forEach(function(cnt, ref) { objects.push(...R.$CAT.getElement(ref).getObjects().reverse()); });
+		this.allReferences.forEach((cnt, ref) => objects.push(...R.$CAT.getElement(ref).getObjects().reverse()));
 		options.push(...objects.map(o => H3.option(o.htmlName(), {value:o.name})));
 		const sel = H3.select({class:'w100', id}, options);
 		sel.addEventListener('change', change);
