@@ -920,6 +920,16 @@ namespace %Namespace
 	}
 `,
 	}).to;
+	const Ci = MakeMorphism(args, 'i', 'Morphism', 'i', 'The first interesting complex number', one, C,
+	{
+		js:'function %Type(args)\n{\n	return [0, 1];\n}\n',
+		cpp:
+`void %Type(const %Dom & args, %Cod & out)
+{
+	out = std::complex<double>(0, 1);
+}
+`,
+	}).to;
 	const Ce = MakeMorphism(args, 'e', 'Morphism', 'e', 'Euler\'s constant', one, C,
 	{
 		js:'function %Type(args)\n{\n	return [Math.E, 0];\n}\n',
@@ -1637,9 +1647,10 @@ postMessage(['fff2toQB3', args]);
 	});
 	DiagramReferences(user, threeD, args.xy);
 	args.xy = new Cat.D2();
-	PlaceText(args, 'Three-D Integration', 96, 'bold', false);
+	PlaceText(args, 'Three-D', 96, 'bold', false);
 	Cat.R.SelectDiagram(threeD.name);
 	threeD.home(false);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
 	//
