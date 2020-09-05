@@ -13,7 +13,6 @@ const StartOfRun = new Date();	// use for timestamp comparison checks that come 
 
 module('Basics');
 
-QUnit.config.reorder = false;
 QUnit.config.hidepassed = true;
 QUnit.config.maxDepth = 10;
 QUnit.dump.maxDepth = 10;
@@ -29,6 +28,12 @@ const halfFontHeight = Cat.D.default.font.height / 2;
 const grid = Cat.D.default.arrow.length;
 const descriptionText = 'This is a test and only a test';
 let testname = '';
+
+QUnit.testDone( details =>
+{
+	if (details.failed > 0)
+		QUnit.config.queue.length = 0;
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -147,7 +152,13 @@ function procit(text)
 
 function simMouseEvent(elt, type, args)
 {
-	const nuArgs = Cat.U.Clone(args);
+	const nuArgs = Cat.U.ObjClone(args);
+	if ('x' in args)
+	{
+		const clientXY = getCoords(args);
+		nuArgs.clientX = clientXY.clientX;
+		nuArgs.clientY = clientXY.clientY;
+	}
 	if (!('bubbles' in args))
 		nuArgs.bubbles = true;
 	const e = new MouseEvent(type, nuArgs);
@@ -156,13 +167,13 @@ function simMouseEvent(elt, type, args)
 
 function simMouseClick(elt, args)
 {
-	simMouseEvent(elt, 'mousedown', {clientX:950, clientY:400});
-	simMouseEvent(elt, 'mouseup', {clientX:950, clientY:400});
+	simMouseEvent(elt, 'mousedown', args);
+	simMouseEvent(elt, 'mouseup', args);
 }
 
 function simKeyboardEvent(elt, type, args)
 {
-	const nuArgs = Cat.U.Clone(args);
+	const nuArgs = Cat.U.ObjClone(args);
 	if (!('bubbles' in args))
 		nuArgs.bubbles = true;
 	const event = new KeyboardEvent(type, nuArgs);
@@ -189,15 +200,16 @@ function checkConnector(assert, obj)
 	assert.equal(obj.codomains.size, 1, `connector ${obj.name} codomains size ok`);
 }
 
-function clickDragRelease(assert, element, start, target)
+function clickDragRelease(assert, element, start, target, checkSelectRect = false)
 {
 	const isIndex = Cat.U.IsIndexElement(element);
 	const svg = isIndex ? element.svg : element;
 	simMouseEvent(svg, 'mousemove', start);
 	simMouseEvent(svg, 'mouseenter', start);
+	checkSelectRect && assert.ok(!document.getElementById('selectRect'), 'no select rect');
 	simMouseEvent(svg, 'mousedown', start);
-//	isIndex && checkSelected(assert, element);
 	simMouseEvent(svg, 'mousemove', target);
+	checkSelectRect && checkStore(assert, 'select rect', document.getElementById('selectRect'));
 	simMouseEvent(svg, 'mouseup', target);
 	simMouseEvent(svg, 'mouseleave', target);
 }
@@ -207,32 +219,6 @@ function selectElement(element)
 	const coords = {clientX:element.x, clientY:element.y};
 	simMouseEvent(element.svg, 'mousedown', coords);
 	simMouseEvent(element.svg, 'mouseup', coords);
-//	checkSelected(assert, element);
-}
-
-function checkDiagramTextHelp(assert, textElt, height, weight)
-{
-	const help = Cat.D.toolbar.help;
-	assert.equal(help.children.length, 1, 'text help has one child');
-	const helpDiv = help.firstChild;
-	assert.dom(helpDiv).hasTagName('div').hasAttribute('id', textElt.elementId());
-	const descElt = helpDiv.firstChild;
-	assert.dom(descElt).hasTagName('description').hasClass('tty').hasAttribute('id', 'descriptionElt').hasText(textElt.description);
-	let editBtn = descElt.nextSibling;
-	assert.dom(editBtn).hasTagName('span').hasAttribute('title', 'Commit editing').hasClass('button').hasStyle({'vertical-align':'middle'});
-	const table = editBtn.nextSibling;
-	assert.dom(table).hasTagName('table');
-	const rows = [...table.querySelectorAll('tr')];
-	rows.map(r => assert.dom(r).hasClass('sidenavRow'));
-	let tds = rows[0].querySelectorAll('td');
-	assert.dom(tds[0]).hasText('Text height:');
-	const input = tds[1].firstChild;
-	assert.dom(input).hasTagName('input').hasClass('in100').hasAttribute('id', 'toolbar-help-text-height').hasAttribute('type', 'number').hasAttribute('min', '3').
-		hasAttribute('max', '500').hasAttribute('width', '8').hasValue(height);
-	tds = rows[1].querySelectorAll('td');
-	assert.dom(tds[0]).hasText('Text weight:');
-	const select = tds[1].firstChild;
-	assert.dom(select).hasTagName('select').hasValue(weight);
 }
 
 function checkDiagramPanelEntry(assert, section, element, dgrm)
@@ -314,7 +300,7 @@ function getRepresentation(elt)
 		}
 		return rep;
 	}
-	else
+	else if ('json' in elt)
 	{
 		const rep = elt.json();
 		// extras
@@ -327,11 +313,13 @@ function getRepresentation(elt)
 		}
 		return rep;
 	}
+	else
+		return Cat.U.ObjClone(elt);
 }
 
-function compareCatRepresentation(assert, elt, rep)
+function compareCatRepresentation(assert, teststep, elt, rep)
 {
-	assert.deepEqual(elt, rep, elt.name);
+	assert.deepEqual(elt, rep, `${teststep} ${elt.name}`);
 }
 
 function compareDomRepresentation(assert, teststep, domElt, rep)
@@ -454,7 +442,7 @@ function checkStore(assert, teststep, elt, didit = assert.async())
 		if (elt instanceof HTMLElement || elt instanceof SVGElement || elt instanceof Text)
 			compareDomRepresentation(assert, teststep, nuRep, rep);
 		else
-			compareCatRepresentation(assert, nuRep, rep);
+			compareCatRepresentation(assert, teststep, nuRep, rep);
 		didit && didit();
 	});
 }
@@ -494,8 +482,10 @@ function clickToolbarButton(name)
 //
 // Tests
 //
+//
+module('D2');
 
-test ('D2 basics', assert =>
+test(' basics', assert =>
 {
 	const D2 = Cat.D2;
 	const zeroD2 = new D2();
@@ -507,6 +497,30 @@ test ('D2 basics', assert =>
 	assert.ok(zeroD2.equals(zeroD2_D2), 'Default constructed equals explicit construction by D2 object');
 	const onezeroD2 = new D2(1, 0);
 	assert.ok(!onezeroD2.equals(zeroD2), 'not equals ok');
+});
+
+test('contains', assert =>
+{
+	const D2 = Cat.D2;
+	const r0011 = new D2({x:0, y:0, width:100, height:100});
+	const r0022 = new D2({x:0, y:0, width:200, height:200});
+	const r1122 = new D2({x:100, y:100, width:100, height:100});
+	const r1124 = new D2({x:100, y:100, width:100, height:400});
+	const r1021 = new D2({x:100, y:0, width:100, height:100});
+	const r0033 = new D2({x:0, y:0, width:200, height:200});
+	const r1133 = new D2({x:100, y:100, width:200, height:200});
+	assert.ok(!r0011.contains(r0022));
+	assert.ok(!r0011.contains(r1122));
+	assert.ok(r0022.contains(r0011));
+	assert.ok(r0022.contains(r1122));
+	assert.ok(r1124.contains(r1122));
+	assert.ok(!r1124.contains(r0022));
+	assert.ok(!r1124.contains(r1021));
+	assert.ok(!r1133.contains(r0022));
+	assert.ok(!r0022.contains(r1133));
+	assert.ok(r1133.contains(r1122));
+	assert.ok(r0033.contains(r1122));
+	assert.ok(!r0033.contains(r1124));
 });
 
 testname = 'base classes exist';
@@ -553,6 +567,11 @@ test(testname, assert =>
 	];
 	CatClasses.map(d => assert.equal(typeof(Cat[d]), 'function', d));
 });
+
+//********************************************
+// Sequential GUI testing begins here
+QUnit.config.reorder = false;
+//********************************************
 
 test('Busy graphics', assert =>
 {
@@ -634,7 +653,7 @@ test('SaveLocalDiagramList', assert =>
 	Cat.R.LocalDiagrams.delete(testDiagramInfo.name);
 	diagrams = JSON.parse(localStorage.getItem('diagrams'));
 	assert.equal(diagrams.length, 1, 'One diagram info saved');
-	const args = Cat.U.Clone(testDiagramInfo);
+	const args = Cat.U.ObjClone(testDiagramInfo);
 	delete args.references;
 	checkArgs(assert, diagrams[0], args);
 });
@@ -1024,6 +1043,7 @@ const dgrmJson = 'tester/test.json';
 
 test('Diagram.placeObject', assert =>
 {
+	simMouseEvent(diagram.svgRoot, 'mousedown', {clientX:100, clientY:200});
 	const to = diagram.getElement('t1');
 	const xy = {x:2 * grid, y:grid};
 	localStorage.removeItem(dgrmJson);	// just in case
@@ -1586,7 +1606,7 @@ test('move object', assert =>
 	const o11 = diagram.getElement('tester/test/o_11');
 	simMouseEvent(o11.svg, 'mousedown', {clientX:o11.x, clientY:o11.y});
 	assert.ok(Cat.D.mouseIsDown, 'mouse is down');
-	const pos = Cat.D.mouse.position();
+	const pos = Cat.D.mouse.clientPosition();
 	const nux = 4 * grid;
 	const nuy = 2 * grid;
 	assert.equal(pos.x, o11.x, 'mouse x ok');
@@ -1693,32 +1713,32 @@ test('fuse domain and codomain', assert =>
 	const o18 = diagram.getElement('tester/test/o_18');	// codomain
 	const o19 = diagram.getElement('tester/test/o_19');	// domain
 	// fuse domain
-	simMouseEvent(o19.svg, 'mousemove', {clientX:o19.x, clientY:o19.y});
-	simMouseEvent(o19.svg, 'mouseenter', {clientX:o19.x, clientY:o19.y});
-	simMouseEvent(o19.svg, 'mousedown', {clientX:o19.x, clientY:o19.y});
-	simMouseEvent(o15.svg, 'mouseenter', {clientX:o15.x, clientY:o15.y});
-	simMouseEvent(o19.svg, 'mousemove', {clientX:o15.x, clientY:o15.y});
+	simMouseEvent(o19.svg, 'mousemove', o19);
+	simMouseEvent(o19.svg, 'mouseenter', o19);
+	simMouseEvent(o19.svg, 'mousedown', o19);
+	simMouseEvent(o15.svg, 'mouseenter', o15);
+	simMouseEvent(o19.svg, 'mousemove', o15);
 	assert.equal(o19.x, o15.x, 'moved x ok');
 	assert.equal(o19.y, o15.y, 'moved x ok');
 	assert.dom(o19.svg).hasClass('emphasis', 'drop emphasis ok').hasClass('fuseObject', 'drop fuseObject class ok').hasClass('glow', 'drop glow class ok');
-	simMouseEvent(o19.svg, 'mouseup', {clientX:o15.x, clientY:o15.y});
-	simMouseEvent(o15.svg, 'mouseleave', {clientX:o15.x, clientY:o15.y});
+	simMouseEvent(o19.svg, 'mouseup', o15);
+	simMouseEvent(o15.svg, 'mouseleave', o15);
 	// o19 is gone
 	assert.equal(o19.refcnt, 0, 'o_19 deleted ok');
 	assert.equal(o19.svg.parentNode, null, 'o_19.svg parent node is null');
 	checkConnector(assert, o15);
 	// fuse codomain
-	simMouseEvent(o18.svg, 'mousemove', {clientX:o18.x, clientY:o18.y});
-	simMouseEvent(o18.svg, 'mouseenter', {clientX:o18.x, clientY:o18.y});
-	simMouseEvent(o18.svg, 'mousedown', {clientX:o18.x, clientY:o18.y});
-	simMouseEvent(o16.svg, 'mouseenter', {clientX:o16.x, clientY:o16.y});
-	simMouseEvent(o18.svg, 'mousemove', {clientX:o16.x, clientY:o16.y});
+	simMouseEvent(o18.svg, 'mousemove', o18);
+	simMouseEvent(o18.svg, 'mouseenter', o18);
+	simMouseEvent(o18.svg, 'mousedown', o18);
+	simMouseEvent(o16.svg, 'mouseenter', o16);
+	simMouseEvent(o18.svg, 'mousemove', o16);
 	assert.equal(o18.x, o16.x, 'moved x ok');
 	assert.equal(o18.y, o16.y, 'moved x ok');
 	assert.dom(o16.svg).hasClass('emphasis', 'target emphasis ok');
 	assert.dom(o18.svg).hasClass('emphasis', 'drop emphasis ok').hasClass('fuseObject', 'drop fuseObject class ok').hasClass('glow', 'drop glow class ok');
-	simMouseEvent(o18.svg, 'mouseup', {clientX:o16.x, clientY:o16.y});
-	simMouseEvent(o16.svg, 'mouseleave', {clientX:o16.x, clientY:o16.y});
+	simMouseEvent(o18.svg, 'mouseup', o16);
+	simMouseEvent(o16.svg, 'mouseleave', o16);
 	// o18 is gone
 	assert.equal(o18.refcnt, 0, 'o_18 deleted ok');
 	assert.equal(o18.svg.parentNode, null, 'o_18.svg parent node is null');
@@ -1727,8 +1747,12 @@ test('fuse domain and codomain', assert =>
 
 test('toolbar nothing selected', assert =>
 {
+	const toolbar = Cat.D.toolbar;
 	// click on nothing
-	simMouseClick(diagram.svgRoot, {clientX:3 * grid, clientY:2 * grid});
+	simMouseClick(diagram.svgRoot, {x:3 * grid, y:2 * grid});
+	assert.ok(toolbar.element.classList.contains('hidden'), 'toolbar hidden');
+	simMouseClick(diagram.svgRoot, {x:3 * grid, y:2 * grid});
+	assert.ok(!toolbar.element.classList.contains('hidden'), 'toolbar showing');
 	assert.equal(diagram.selected.length, 0, 'Nothing selected ok');
 	checkStore(assert, 'toolbar 1', Cat.D.toolbar.element);
 	diagram.domain.elements.forEach(elt => checkNotSelected(assert, elt));
@@ -1752,8 +1776,9 @@ test('DiagramText toolbar new text', assert =>
 {
 	// click on nothing
 	const textCoords = {clientX:3 * grid, clientY:2 * grid};
-	simMouseEvent(diagram.svgRoot, 'mousedown', textCoords);
-	simMouseEvent(diagram.svgRoot, 'mouseup', textCoords);
+//	simMouseEvent(diagram.svgRoot, 'mousedown', textCoords);
+//	simMouseEvent(diagram.svgRoot, 'mouseup', textCoords);
+	simMouseClick(diagram.svgRoot, {x:3 * grid, y:2 * grid});
 	assert.equal(diagram.selected.length, 0, 'nothing selected ok');
 	// click text button
 	clickToolbarButton('newText');
@@ -1770,7 +1795,7 @@ test('DiagramText toolbar new text', assert =>
 	const t0 = diagram.getElement('tester/test/t_0');
 	assert.ok(t0 instanceof Cat.DiagramText, 'DiagramText ok');
 	assert.equal(t0.x, Cat.D.toolbar.mouseCoords.x, 'text x match toolbar mouseCoords x ok');
-	assert.equal(t0.y, Cat.D.toolbar.mouseCoords.y, 'text x match toolbar mouseCoords y ok');
+//	assert.equal(t0.y, Cat.D.toolbar.mouseCoords.y, 'text x match toolbar mouseCoords y ok');
 	checkStore(assert, 'object selected', t0);
 	const textG = document.getElementById(t0.elementId());
 	assert.equal(t0.svg, textG, 'svg equality');
@@ -1802,7 +1827,7 @@ test('DiagramText change height/weight', assert =>
 	checkStore(assert, 'text selected', t0);
 	// click help on toolbar
 	clickToolbarButton('help');
-	checkDiagramTextHelp(assert, t0, '24', 'normal');
+	checkStore(assert, 'first help', help);
 	// click description edit button
 	let editBtn = help.querySelector('span.button');
 	assert.equal(editBtn.dataset.name, 'EditElementText');
@@ -1813,7 +1838,7 @@ test('DiagramText change height/weight', assert =>
 	descElt.innerText = replacement;
 	// click edit button
 	clickButton(editBtn);
-	checkDiagramTextHelp(assert, t0, '24', 'normal');
+	checkStore(assert, 'second help', help);
 	const nuText = t0.svg.querySelector('text');
 	assert.dom(nuText).hasText(replacement);
 	// change text height
@@ -1850,7 +1875,7 @@ module('Diagram Panel');
 
 test('toolbar new diagram', assert =>
 {
-	simMouseClick(diagram.svgRoot, {clientX:3 * grid, clientY:2 * grid});
+	simMouseClick(diagram.svgRoot, {x:3 * grid, y:2 * grid});
 	clickToolbarButton('newDiagram');
 	const help = Cat.D.toolbar.help;
 	const div = help.firstChild;
@@ -1941,7 +1966,7 @@ module('window select');
 
 test('select three morphisms', assert =>
 {
-	clickDragRelease(assert, diagram.svgRoot, {clientX:0.5 * grid, clientY:4.5 * grid}, {clientX:4.5 * grid, clientY:3.75 * grid});
+	clickDragRelease(assert, diagram.svgRoot, {x:0.5 * grid, y:4.5 * grid}, {x:4.5 * grid, y:3.75 * grid}, true);
 	assert.equal(diagram.selected.length, 7);
 	const elts = ["tester/test/o_14", "tester/test/o_15", "tester/test/m_13", "tester/test/o_16", "tester/test/o_17", "tester/test/m_15", "tester/test/m_14"];
 	elts.map(e => checkSelected(assert, diagram.getElement(e)));
@@ -1959,26 +1984,26 @@ module('object drag and drop on object');
 test('drag create product object', assert =>
 {
 	const o5 = diagram.getElement('tester/test/o_5');
-	simMouseClick(o5.svg, {clientX:4 * grid, clientY:1 * grid});
+	simMouseClick(o5.svg, {x:4 * grid, y:1 * grid});
 	assert.equal(diagram.selected.length, 1);
 	// click toolbar copy button and move copy
 	clickToolbarButton('copy');
 	checkNotSelected(assert, o5);
 	const o14 = diagram.getElement('tester/test/o_14');
 	checkSelected(assert, o14);
-	clickDragRelease(assert, o14, {clientX:o14.svg.getAttribute('x'), clientY:o14.svg.getAttribute('y') - halfFontHeight}, {clientX:1 * grid, clientY:4 * grid});
+	clickDragRelease(assert, o14, {x:o14.svg.getAttribute('x'), y:o14.svg.getAttribute('y') - halfFontHeight}, {x:1 * grid, y:4 * grid});
 	// make a copy and move it
-	simMouseClick(o14.svg, {clientX:o14.x, clientY:o14.y});
+	simMouseClick(o14.svg, o14);
 	clickToolbarButton('copy');
 	const o15 = diagram.getElement('tester/test/o_15');
-	clickDragRelease(assert, o15, {clientX:o15.svg.getAttribute('x'), clientY:o15.svg.getAttribute('y') - halfFontHeight}, {clientX:2 * grid, clientY:4 * grid});
+	clickDragRelease(assert, o15, {x:o15.svg.getAttribute('x'), y:o15.svg.getAttribute('y') - halfFontHeight}, {x:2 * grid, y:4 * grid});
 	// make another copy and move it
-	simMouseClick(o15.svg, {clientX:o15.x, clientY:o15.y});
+	simMouseClick(o15.svg, o15);
 	clickToolbarButton('copy');
 	const o16 = diagram.getElement('tester/test/o_16');
 	// drag o16 to o15 and release to make a product
-	const start = {clientX:o16.svg.getAttribute('x'), clientY:o16.svg.getAttribute('y') - halfFontHeight};
-	const target = {clientX:o15.x, clientY:o15.y};
+	const start = {x:o16.svg.getAttribute('x'), y:o16.svg.getAttribute('y') - halfFontHeight};
+	const target = {x:o15.x, y:o15.y};
 	simMouseEvent(o16.svg, 'mousemove', start);
 	simMouseEvent(o16.svg, 'mouseenter', start);
 	simMouseEvent(o16.svg, 'mousedown', start);
@@ -2005,8 +2030,8 @@ module('factor morphism');
 test('toolbar project button', assert =>
 {
 	const o17 = diagram.getElement('tester/test/o_17');
-	simMouseEvent(o17.svg, 'mousedown', {clientX:o17.x, clientY:o17.y});
-	simMouseEvent(o17.svg, 'mouseup', {clientX:o17.x, clientY:o17.y});
+	simMouseClick(o17.svg, o17);
+//	simMouseEvent(o17.svg, 'mouseup', o17);
 	checkSelected(assert, o17);
 	checkStore(assert, 'toolbar', Cat.D.toolbar.element);
 	clickToolbarButton('project');
@@ -2037,8 +2062,8 @@ test('flatten morphism', assert =>
 test('delete o14 to clear screen', assert =>
 {
 	const o14 = diagram.getElement('tester/test/o_14');
-	simMouseEvent(o14.svg, 'mousedown', {clientX:o14.x, clientY:o14.y});
-	simMouseEvent(o14.svg, 'mouseup', {clientX:o14.x, clientY:o14.y});
+	simMouseEvent(o14.svg, 'mousedown', o14);
+	simMouseEvent(o14.svg, 'mouseup', o14);
 	checkSelected(assert, o14);
 	clickToolbarButton('delete');
 	assert.equal(o14.svg.parentNode, null);
@@ -2160,7 +2185,7 @@ test('search in diagram', assert =>
 {
 	const help = Cat.D.toolbar.help;
 	// click on nothing
-	simMouseClick(diagram.svgRoot, {clientX:2 * grid, clientY:3 * grid});
+	simMouseClick(diagram.svgRoot, {x:2 * grid, y:3 * grid});
 	const searchBtn = Cat.D.toolbar.element.querySelector('[data-name="toolbarShowSearch"]');
 	assert.ok(searchBtn, 'found search button');
 	clickButton(searchBtn);
@@ -2197,6 +2222,7 @@ module('graph');
 test('graph factor morphism', assert =>
 {
 	const m14 = diagram.getElement('tester/test/m_14');
+	// zoom to selected
 	diagram.makeSelected(m14);
 	simKeyboardClick(document.body, 'Home');
 	// make graph
@@ -2266,4 +2292,52 @@ test('control-drag object for identity', assert =>
 	checkStore(assert, 'drag identity', identity);
 	assert.ok(identity.to instanceof Cat.Identity, 'morphism is identity');
 	assert.equal(identity.to.codomain.name, identity.to.domain.name, 'domain and codomain ok');
+});
+
+module('wheel');
+
+function wheelInOutCheck(assert, context, args)
+{
+	// wheel in
+	const vu1 = new Cat.D2(diagram.svgRoot.getBBox());
+	Cat.D.topSVG.dispatchEvent(new WheelEvent('wheel', args));
+	const vu2 = new Cat.D2(diagram.svgRoot.getBBox());
+	assert.ok(vu2.contains(vu1), `${context} wheel in`);
+	// wheel out
+	args.wheelDelta = - args.wheelDelta;
+	Cat.D.topSVG.dispatchEvent(new WheelEvent('wheel', args));
+	const vu3 = new Cat.D2(diagram.svgRoot.getBBox());
+	assert.ok(vu2.contains(vu3), `${context} wheel out`);
+}
+
+test('diagram wheel', assert =>
+{
+	simMouseEvent(diagram.svgRoot, 'mousemove', {clientX:0 * grid, clientY:3 * grid});
+	const args = {
+		bubbles:		true,
+		target:			diagram.svgRoot,
+		wheelDelta:		180,
+		clientX:		0,
+		clientY:		3 * grid,
+	};
+	wheelInOutCheck(assert, 'diagram.svgRoot', args);
+	// wheel on object
+	const o8 = diagram.getElement('tester/test/o_8');
+	args.target = o8.svg;
+	wheelInOutCheck(assert, 'object.svg', args);
+	// wheel on morphism
+	const m18 = diagram.getElement('tester/test/m_18');
+	args.target = m18.svg;
+	wheelInOutCheck(assert, 'morphism.svg', args);
+});
+
+module('home key');
+
+test('full view', assert =>
+{
+	// select nothing
+	simMouseClick(diagram.svgRoot, {x:0 * grid, y:3 * grid});
+	simKeyboardClick(document.body, 'Home');
+	const homeVu = new Cat.D2(diagram.svgRoot.getBBox());
+	diagram.domain.elements.forEach(elt => assert.ok(homeVu.contains(diagram.diagramToUserCoords(elt.svg.getBBox())), `home view contains ${elt.basename}`));
 });

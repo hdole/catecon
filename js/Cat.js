@@ -112,6 +112,13 @@ class D2
 	{
 		return this.width * this.height;
 	}
+	contains(d)
+	{
+		return D2.Inbetween(this.x, d.x, this.x + this.width) &&
+		D2.Inbetween(this.y, d.y, this.y + this.height) &&
+		D2.Inbetween(this.x, d.x + d.width, this.x + this.width) &&
+		D2.Inbetween(this.y, d.y + d.height, this.y + this.height);
+	}
 	dist(v)
 	{
 		return D2.Dist(this, v);
@@ -473,11 +480,9 @@ class U
 	{
 		return typeof err === 'string' ? err : `${err.name}: ${err.message}`;
 	}
-	static Clone(o)
+	static ObjClone(o)
 	{
-		if (null === o || o instanceof Element || o instanceof Blob)
-			return o;
-		else if (typeof o === 'object')
+		if (typeof o === 'object')
 		{
 			if (Array.isArray(o))
 				return o.map(a => U.Clone(a));
@@ -493,6 +498,12 @@ class U
 			}
 		}
 		return o;
+	}
+	static Clone(o)
+	{
+		if (null === o || o instanceof Element || o instanceof Blob)
+			return o;
+		return U.ObjClone(o);
 	}
 	static GetArg(args, key, dflt)
 	{
@@ -1312,7 +1323,8 @@ class R
 			const loader = function()
 			{
 				R.diagram = null;
-				isGUI && !params.has('boot') && R.DownloadDiagram('hdole/HTML');
+//				isGUI && !params.has('boot') && R.DownloadDiagram('hdole/HTML');
+				isGUI && !params.has('boot') && R.DownloadDiagram('Anon/Home');
 				let diagramName = params.get('d') || params.get('diagram');
 				const doDisplayMorphism = diagramName !== null;
 				if (!diagramName)
@@ -2420,7 +2432,7 @@ class Toolbar
 		window.addEventListener('Morphism', hideToolbar);
 		window.addEventListener('Text', hideToolbar);
 		window.addEventListener('Assertion', hideToolbar);
-		window.addEventListener('mouseenter', e => D.mouse.savePosition(e));
+		window.addEventListener('mouseenter', e => D.mouse.saveClientPosition(e));
 		window.addEventListener('Autohide', e =>
 		{
 			if (e.detail.command === 'hide')
@@ -2979,16 +2991,8 @@ class D
 {
 	static Initialize()
 	{
-		window.addEventListener('Diagram', D.Autohide);
-		window.addEventListener('mousemove', D.Autohide);
-		window.addEventListener('mousedown', D.Autohide);
-		window.addEventListener('keydown', D.Autohide);
 		D.navbar =			new Navbar();
 		D.Navbar =			Navbar;
-		D.topSVG.addEventListener('mousemove', D.Mousemove, true);
-		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
-		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
-		D.topSVG.addEventListener('drop', D.Drop, true);
 		D.uiSVG.style.left = '0px';
 		D.uiSVG.style.top = '0px';
 		D.AddEventListeners();
@@ -3028,24 +3032,7 @@ class D
 			Text:		new NewElement('Text', 'Create new text in this diagram'),
 		},
 		D.Resize();
-		window.addEventListener('resize', D.Resize);
-		window.addEventListener('CAT', D.UpdateDiagramDisplay);
-		function jsHtmlLoader(e)
-		{
-			const args = e.detail;
-			const diagram = args.diagram;
-			if (args.command === 'load' && diagram.name === 'hdole/HTML')
-			{
-				R.Actions.javascript.loadHTML();
-				window.removeEventListener('CAT', jsHtmlLoader);
-			}
-		}
-		window.addEventListener('CAT', 	jsHtmlLoader);
 		D.Autohide();
-		window.addEventListener('Assertion', D.UpdateDisplay);
-		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
-		window.addEventListener('Object', D.UpdateObjectDisplay);
-		window.addEventListener('Text', D.UpdateTextDisplay);
 	}
 	static UpdateDisplay(e)
 	{
@@ -3120,15 +3107,15 @@ class D
 	}
 	static Mousedown(e)
 	{
-		D.mouse.savePosition(e);
+		D.mouse.saveClientPosition(e);
 		if (e.button === 0)
 		{
 			D.mouseIsDown = true;
-			D.mouse.down = new D2(e.clientX, e.clientY);	// screen coords
+			D.mouse.down = new D2(e.clientX, e.clientY);	// client coords
 			const diagram = R.diagram;
 			if (!diagram)
 				return;
-			const pnt = diagram.mousePosition(e);
+			const pnt = diagram.mouseDiagramPosition(e);
 			if (D.mouseover)
 			{
 				if (!diagram.selected.includes(D.mouseover) && !D.shiftKey)
@@ -3136,12 +3123,35 @@ class D
 			}
 			else
 				diagram.deselectAll(e);
-			D.dragStart = D.mouse.position();
+			D.dragStart = D.mouse.clientPosition();
 			if (D.tool === 'pan' || !D.drag)
 				D.drag = true;
 		}
 		else if (e.button === 1)
 			D.keyboardDown.Space(e);
+	}
+	static GetAreaSelectCoords()
+	{
+		const xy = D.mouse.clientPosition();
+		const x = Math.min(xy.x, D.mouse.down.x);
+		const y = Math.min(xy.y, D.mouse.down.y);
+		const width = Math.abs(xy.x - D.mouse.down.x);
+		const height = Math.abs(xy.y - D.mouse.down.y);
+		return {x, y, width, height};
+	}
+	static DrawSelectRect()
+	{
+		const areaSelect = D.GetAreaSelectCoords();
+		const svg = document.getElementById('selectRect');
+		if (svg)
+		{
+			svg.setAttribute('x', areaSelect.x);
+			svg.setAttribute('y', areaSelect.y);
+			svg.setAttribute('width', areaSelect.width);
+			svg.setAttribute('height', areaSelect.height);
+		}
+		else
+			D.uiSVG.appendChild(H3.rect({id:'selectRect', x:areaSelect.x, y:areaSelect.y, width:areaSelect.width, height:areaSelect.height}));
 	}
 	static DeleteSelectRectangle()
 	{
@@ -3151,14 +3161,14 @@ class D
 	}
 	static Mousemove(e)
 	{
-		D.mouse.savePosition(e);
+		D.mouse.saveClientPosition(e);
 		try
 		{
 			const diagram = R.diagram;
 			if (!diagram)
 				return;
 			D.drag = D.mouseIsDown && diagram.selected.length > 0;
-			const xy = diagram.mousePosition(e);
+			const xy = diagram.mouseDiagramPosition(e);
 			xy.width = 2;
 			xy.height = 2;
 			if (D.drag && diagram.isEditable())
@@ -3237,26 +3247,7 @@ class D
 				D.toolbar.hide();
 			}
 			else if (D.mouseIsDown && !D.drag)
-			{
-				const xy = D.mouse.position();
-				const x = Math.min(xy.x, D.mouse.down.x);
-				const y = Math.min(xy.y, D.mouse.down.y);
-				const width = Math.abs(xy.x - D.mouse.down.x);
-				const height = Math.abs(xy.y - D.mouse.down.y);
-				const svg = document.getElementById('selectRect');
-				if (svg)
-				{
-					svg.setAttribute('x', x);
-					svg.setAttribute('y', y);
-					svg.setAttribute('width', width);
-					svg.setAttribute('height', height);
-				}
-				else
-				{
-					const s = `<rect id="selectRect" x="${x}" y="${y}" width="${width}" height="${height}">`;
-					D.uiSVG.innerHTML += s;
-				}
-			}
+				D.DrawSelectRect();
 			else if (D.tool === 'pan')
 			{
 				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale);
@@ -3289,7 +3280,7 @@ class D
 			{
 				const diagram = R.diagram;
 				const cat = diagram.codomain;
-				const pnt = diagram.mousePosition(e);
+				const pnt = diagram.mouseDiagramPosition(e);
 				if (D.drag)
 				{
 					D.drag = false;
@@ -3365,8 +3356,8 @@ class D
 						R.EmitDiagramEvent(diagram, 'move', '');
 					}
 				}
-				else
-					diagram.addWindowSelect(e);
+				else if (!D.mouseover)
+					diagram.areaSelect(e);
 			}
 			catch(x)
 			{
@@ -3389,7 +3380,7 @@ class D
 		{
 			e.preventDefault();
 			D.drag = false;
-			const xy = diagram.mousePosition(e);
+			const xy = diagram.mouseDiagramPosition(e);
 			const name = e.dataTransfer.getData('text');
 			if (name.length === 0)
 				return;
@@ -3496,43 +3487,61 @@ ${button}
 		let nuScale = D.default.scale.base ** inc;
 		nuScale = nuScale < D.default.scale.limit.min ? D.default.scale.limit.min : nuScale;
 		nuScale = nuScale > D.default.scale.limit.max ? D.default.scale.limit.max : nuScale;
-		const pnt = D.mouse.position();
+		const pnt = D.mouse.clientPosition();
 		const dx = pnt.x - (nuScale / scale) * (pnt.x - vp.x);
 		const dy = pnt.y - (nuScale / scale) * (pnt.y - vp.y);
 		diagram.setView(dx, dy, nuScale);
 	}
+	static getKeyName(e)
+	{
+		let name = e.ctrlKey && e.key !== 'Control' ? 'Control' : '';
+		name += e.shiftKey && e.key !== 'Shift' ? 'Shift' : '';
+		name += e.altKey && e.key !== 'Alt' ? 'Alt' : '';
+		name += e.code;
+		return name;
+	}
+	static jsHtmlLoader(e)
+	{
+		const args = e.detail;
+		const diagram = args.diagram;
+		if (args.command === 'load' && diagram.name === 'hdole/HTML')
+		{
+			R.Actions.javascript.loadHTML();
+			window.removeEventListener('CAT', D.jsHtmlLoader);
+		}
+	}
 	static AddEventListeners()
 	{
+		window.onresize = D.Resize;
+		window.addEventListener('mousemove', D.Autohide);
+		window.addEventListener('mousedown', D.Autohide);
+		window.addEventListener('keydown', D.Autohide);
+		window.addEventListener('CAT', 	e => {D.jsHtmlLoader(e); D.UpdateDiagramDisplay(e);});
+		window.addEventListener('Diagram', D.Autohide);
+		window.addEventListener('Assertion', D.UpdateDisplay);
+		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
+		window.addEventListener('Object', D.UpdateObjectDisplay);
+		window.addEventListener('Text', D.UpdateTextDisplay);
+		D.topSVG.onmousemove = D.Mousemove;
+		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
+		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
+		D.topSVG.addEventListener('drop', D.Drop, true);
 		document.addEventListener('mousemove', function(e)
 		{
 			if (D.statusbar.element.style.display === 'block' && D2.Dist(D.statusbar.xy, {x:e.clientX, y:e.clientY}) > 50)
 				D.statusbar.hide();
 		});
-		document.addEventListener('dragover', function(e)
-		{
-			e.preventDefault();
-		}, false);
-		document.addEventListener('drop', function(e)
-		{
-			e.preventDefault();
-		}, true);
-		function getKeyName(e)
-		{
-			let name = e.ctrlKey && e.key !== 'Control' ? 'Control' : '';
-			name += e.shiftKey && e.key !== 'Shift' ? 'Shift' : '';
-			name += e.altKey && e.key !== 'Alt' ? 'Alt' : '';
-			name += e.code;
-			return name;
-		}
+		document.ondragover = e => e.preventDefault();
+		document.addEventListener('drop', e => e.preventDefault(), true);
 		document.body.onkeydown = e =>
 		{
-			const name = getKeyName(e);
+			const name = D.getKeyName(e);
 			name in D.keyboardDown && D.keyboardDown[name](e);
 		};
 		document.body.onkeyup = e =>
 		{
 			D.setCursor();
-			const name = getKeyName(e);
+			const name = D.getKeyName(e);
 			name in D.keyboardUp && D.keyboardUp[name](e);
 		};
 		document.onwheel = e =>
@@ -3564,7 +3573,6 @@ ${button}
 	}
 	static Grid(x)
 	{
-//		const grid = D.shiftKey && !D.ctrlKey ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
 		const grid = (event && event.shiftKey && !event.ctrlKey) ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
 		switch (typeof x)
 		{
@@ -4296,7 +4304,7 @@ Object.defineProperties(D,
 			{
 				D.pasteBuffer = R.diagram.selected.slice();
 				D.copyDiagram = R.diagram;
-				const xy = D.mouse.position();
+				const xy = D.mouse.clientPosition();
 				D.statusbar.show({clientX:xy.x, clientY:xy.y}, 'Copied to paste buffer');
 			},
 			ControlKeyD(e)
@@ -4423,20 +4431,22 @@ Object.defineProperties(D,
 			down:		new D2(window.innerWidth/2, window.innerHeight/2),
 			onPanel:	false,
 			xy:			[new D2()],
-			position()
+			clientPosition()
 			{
 				return this.xy[this.xy.length -1];
 			},
 			diagramPosition(diagram)
 			{
-				return diagram.userToDiagramCoords(D.mouse.position());
+				return diagram.userToDiagramCoords(D.mouse.clientPosition());
 			},
-			savePosition(e)
+			saveClientPosition(e)
 			{
 				const xy = this.xy;
 				if (xy.length > 0 && xy[xy.length -1].x === e.clientX && xy[xy.length -1].y === e.clientY)
+//				if (xy.length > 0 && xy[xy.length -1].x === e.offsetX && xy[xy.length -1].y === e.offsetY)
 					return;
 				xy.push(new D2(e.clientX, e.clientY));
+//				xy.push(new D2(e.offsetX, e.offsetY));
 				if (xy.length > 2)
 					xy.shift();
 			},
@@ -7777,7 +7787,7 @@ class DiagramText extends Element
 	}
 	tspan()
 	{
-		return this.description.includes('\n') ? this.description.split('\n').map(t => `<tspan text-anchor="left" x="0" dy="1.2em">${t}</tspan>`).join('') :
+		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => `<tspan text-anchor="left" x="0"${i > 0 ? ' dy="1.2em"' : ''}>${t}</tspan>`).join('') :
 			this.description;
 	}
 	getSVG(node)
@@ -8032,11 +8042,10 @@ class DiagramObject extends CatObject
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `NaN in getSVG`;
 		const name = this.name;
-		const svg = H3.text();
+		const svg = H3.text({draggable:true});
 		svg.onmouseenter = e => Cat.D.Mouseover(e, name, true);
 		svg.onmouseleave = e => Cat.D.Mouseover(e, name, false);
 		svg.onmousedown = e => Cat.R.diagram.selectElement(e, name);
-//		svg.onwheel = e => D.topSVG.onwheel(e);
 		node.appendChild(svg);
 		this.svg = svg;
 		svg.setAttributeNS(null, 'data-type', 'object');
@@ -14023,7 +14032,7 @@ class Diagram extends Functor
 	{
 		const a = super.json();
 		a.viewport =	this.getViewport();		// don't want viewport.orig
-		a.references =	[...this.references].map(ref => ref.name);
+		a.references =	[...this.references.keys()];
 		a.domainElements = [...this.domain.elements.values()].filter(e => ((e.to && e.to.canSave()) || (!('to' in e)))).map(e => e.json());
 		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
 		a.readonly = this.readonly;
@@ -14122,9 +14131,10 @@ class Diagram extends Functor
 			D.RecordError(x);
 		}
 	}
-	mousePosition(e)
+	mouseDiagramPosition(e)
 	{
 		return this.userToDiagramCoords({x:e.clientX, y:e.clientY});
+//		return this.userToDiagramCoords({x:e.offsetX, y:e.offsetY});
 	}
 	deselectAll(e)
 	{
@@ -14147,7 +14157,7 @@ class Diagram extends Functor
 		const elt = this.getElement(name);
 		if (elt)
 		{
-			D.dragStart = D.mouse.position();
+			D.dragStart = D.mouse.clientPosition();
 			if (!this.selected.includes(elt))
 			{
 				if (e.shiftKey)
@@ -14195,6 +14205,7 @@ class Diagram extends Functor
 	}
 	addSelected(elt)
 	{
+console.log('addSelected', elt.basename);
 		elt.showSelected();
 		if (!this.selected.includes(elt))	// not already selected
 		{
@@ -14209,19 +14220,21 @@ class Diagram extends Functor
 		}
 		R.EmitElementEvent(this, 'select', elt);
 	}
-	addWindowSelect(e)
+	areaSelect(e)
 	{
-		const p = this.userToDiagramCoords(D.mouse.down);
-		const q = D.mouse.diagramPosition(this);
+//		const p = this.userToDiagramCoords(D.mouse.down);
+//		const q = D.mouse.diagramPosition(this);
+		const p = this.userToDiagramCoords(D.GetAreaSelectCoords());
+		const q = new D2(p.x + p.width, p.y + p.height);
 		let selected = [];
-		this.domain.elements.forEach(function(e)
+		this.domain.elements.forEach(function(elt)
 		{
-			if (e instanceof DiagramMorphism && D2.Inside(p, e.domain, q) && D2.Inside(p, e.codomain, q))
-				selected.push(e);
-			else if (D2.Inside(p, e, q))
-				selected.push(e);
+			if (elt instanceof DiagramMorphism && D2.Inside(p, elt.domain, q) && D2.Inside(p, elt.codomain, q))
+				selected.push(elt);
+			else if (D2.Inside(p, elt, q))
+				selected.push(elt);
 		}, this);
-		selected.map(e => this.addSelected(e));
+		selected.map(elt => this.addSelected(elt));
 	}
 	getAssertion(sig)
 	{
@@ -14232,7 +14245,7 @@ class Diagram extends Functor
 	}
 	updateDragObjects(e)
 	{
-		const delta = D.mouse.position().subtract(D.dragStart);
+		const delta = D.mouse.clientPosition().subtract(D.dragStart);
 		delta.x = delta.x / this.viewport.scale;
 		delta.y = delta.y / this.viewport.scale;
 		const dragObjects = new Set();
@@ -14500,16 +14513,24 @@ class Diagram extends Functor
 		const s = 1.0 / this.viewport.scale;
 		if (isNaN(this.viewport.x) || isNaN(s))
 			throw 'NaN in coords';
-		return new D2(	s * (xy.x - (orig ? this.viewport.orig.x : this.viewport.x)),
-						s * (xy.y - (orig ? this.viewport.orig.y : this.viewport.y)));
+		const d2 = new D2(	s * (xy.x - (orig ? this.viewport.orig.x : this.viewport.x)),
+							s * (xy.y - (orig ? this.viewport.orig.y : this.viewport.y)));
+		if ('width' in xy)
+		{
+			d2.width = s * xy.width;
+			d2.height = s * xy.height;
+		}
+		return d2;
 	}
 	diagramToUserCoords(xy)
 	{
-		const pos = D.topSVG.getBoundingClientRect();
 		const s = this.viewport.scale;
-		const userXy = new D2(	s * xy.x + pos.left + this.viewport.x,
-								s * xy.y + pos.top  + this.viewport.y);
-		userXy.y -= Cat.D.topSVG.parentElement.offsetTop;
+		const userXy = new D2(	s * xy.x + this.viewport.x, s * xy.y + this.viewport.y);
+		if ('width' in xy)
+		{
+			userXy.width = xy.width * s;
+			userXy.height = xy.height * s;
+		}
 		return userXy;
 	}
 	replaceElements(elements)
