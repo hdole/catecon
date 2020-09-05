@@ -20,6 +20,11 @@
 	<div id="tty-sidenav" class="sidenavPnl sidenavRightPnl"></div>
 	<div id="threeD-sidenav" class="sidenavPnl sidenavRightPnl"></div>
 	<div class="svg">
+		<div id="toolbar" class="toolbar hidden">
+			<div id="toolbar-header" class="buttonBarLeft"></div>
+			<div id="toolbar-help"></div>
+			<div id="toolbar-error"></div>
+		</div>
 		<svg id="topSVG" xmlns="http://www.w3.org/2000/svg">
 			<defs>
 				<filter id="softGlow" height="300%" width="300%">
@@ -55,11 +60,6 @@
 			<g id="diagramSVG"/>
 		</svg>
 		<svg id="uiSVG" xmlns="http://www.w3.org/2000/svg"/>
-	</div>
-	<div id="toolbar" class="toolbar hidden">
-		<div id="toolbar-header" class="buttonBarLeft"></div>
-		<div id="toolbar-help"></div>
-		<div id="toolbar-error"></div>
 	</div>
 	<div id="statusbar"></div>
 	<script type="x-shader/x-vertex" id="vertexShader">
