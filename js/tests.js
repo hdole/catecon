@@ -171,6 +171,17 @@ function simMouseClick(elt, args)
 	simMouseEvent(elt, 'mouseup', args);
 }
 
+function simMouseClick2(elt, args)
+{
+	simMouseEvent(Cat.D.topSVG, 'mousemove', args);
+	simMouseEvent(elt, 'mouseenter', args);
+	simMouseEvent(elt, 'mousedown', args);
+	simMouseEvent(Cat.D.topSVG, 'mousedown', args);
+	simMouseEvent(elt, 'mouseup', args);
+	simMouseEvent(Cat.D.topSVG, 'mouseup', args);
+	simMouseEvent(elt, 'mouseleave', args);
+}
+
 function simKeyboardEvent(elt, type, args)
 {
 	const nuArgs = Cat.U.ObjClone(args);
@@ -180,10 +191,13 @@ function simKeyboardEvent(elt, type, args)
 	elt.dispatchEvent(event);
 }
 
-function simKeyboardClick(elt, key)
+function simKeyboardClick(elt, args = {})
 {
-	simKeyboardEvent(elt, 'keydown', {code:key, key:key});
-	simKeyboardEvent(elt, 'keyup', {code:key, key:key});
+	const nuArgs = Cat.U.Clone(args);
+	if (!('code' in nuArgs))
+		nuArgs.code = nuArgs.key;
+	simKeyboardEvent(elt, 'keydown', nuArgs);
+	simKeyboardEvent(elt, 'keyup', nuArgs);
 }
 
 function checkIsolatedMorphism(assert, m)
@@ -200,25 +214,10 @@ function checkConnector(assert, obj)
 	assert.equal(obj.codomains.size, 1, `connector ${obj.name} codomains size ok`);
 }
 
-function clickDragRelease(assert, element, start, target, checkSelectRect = false)
-{
-	const isIndex = Cat.U.IsIndexElement(element);
-	const svg = isIndex ? element.svg : element;
-	simMouseEvent(svg, 'mousemove', start);
-	simMouseEvent(svg, 'mouseenter', start);
-	checkSelectRect && assert.ok(!document.getElementById('selectRect'), 'no select rect');
-	simMouseEvent(svg, 'mousedown', start);
-	simMouseEvent(svg, 'mousemove', target);
-	checkSelectRect && checkStore(assert, 'select rect', document.getElementById('selectRect'));
-	simMouseEvent(svg, 'mouseup', target);
-	simMouseEvent(svg, 'mouseleave', target);
-}
-
 function selectElement(element)
 {
-	const coords = {clientX:element.x, clientY:element.y};
-	simMouseEvent(element.svg, 'mousedown', coords);
-	simMouseEvent(element.svg, 'mouseup', coords);
+	simMouseEvent(element.svg, 'mousedown', element);
+	simMouseEvent(element.svg, 'mouseup', element);
 }
 
 function checkDiagramPanelEntry(assert, section, element, dgrm)
@@ -324,13 +323,13 @@ function compareCatRepresentation(assert, teststep, elt, rep)
 
 function compareDomRepresentation(assert, teststep, domElt, rep)
 {
-	if (!rep)
-	{
-		assert.ok(false, `${teststep} missing rep`);
-		return;
-	}
 	const testname = assert.test.testName;
 	const key = getKey(testname, teststep);
+	if (!rep)
+	{
+		assert.ok(false, `${key}:missing rep`);
+		return;
+	}
 	for (const name in rep)
 		if (rep.hasOwnProperty(name))
 		{
@@ -340,18 +339,29 @@ function compareDomRepresentation(assert, teststep, domElt, rep)
 				case 'key':
 					break;
 				case 'classList':
-					assert.deepEqual(domElt.classList, rep.classList, `${key} :${name}`);
+					assert.deepEqual(domElt.classList, rep.classList, `${key}: ${name}`);
 					break;
 				case 'listeners':
-					assert.deepEqual(domElt.listeners, rep.listeners, `${key} :${name}`);
+					assert.deepEqual(domElt.listeners, rep.listeners, `${key}: ${name}`);
 					break;
 				default:
-					assert.equal(domElt[name], rep[name], `${key} :${name}`);
+					assert.equal(domElt[name], rep[name], `${key}: ${name}: ${domElt[name]}`);
 					break;
 			}
 		}
-	assert.equal('childNodes' in domElt ? domElt.childNodes.length : 0, 'childNodes' in rep ? rep.childNodes.length : 0, 'number of childNodes');
-	'childNodes' in rep && rep.childNodes.map((c, i) => compareDomRepresentation(assert, teststep, domElt.childNodes[i], c));
+	assert.equal(	'childNodes' in domElt ? domElt.childNodes.length : 0,
+					'childNodes' in rep ? rep.childNodes.length : 0, `${key}: number of childNodes`);
+	if ('childNodes' in rep  || 'childNodes' in domElt)
+	{
+		if (!domElt.childNodes || !rep.childNodes)
+			assert.ok(false, `${key}: one has no children`);
+		else
+		{
+			assert.equal(domElt.childNodes.length, rep.childNodes.length, `${key}: child length ok`);
+			if (domElt.childNodes.length === rep.childNodes.length)
+				rep.childNodes.map((c, i) => compareDomRepresentation(assert, teststep, domElt.childNodes[i], c));
+		}
+	}
 }
 
 function getKey(testname, teststep)
@@ -428,10 +438,15 @@ function getResult(key)
 	});
 }
 
+const storedItems = new Set();
+
 function checkStore(assert, teststep, elt, didit = assert.async())
 {
 	const testname = assert.test.testName;
 	const key = getKey(testname, teststep);
+	if (storedItems.has(key))
+		throw 'two keys with the same name';
+	storedItems.add(key);
 	const nuRep = getRepresentation(elt);
 	nuRep.key = key;
 	// is it in the store?
@@ -445,6 +460,20 @@ function checkStore(assert, teststep, elt, didit = assert.async())
 			compareCatRepresentation(assert, teststep, nuRep, rep);
 		didit && didit();
 	});
+}
+
+function clickDragRelease(assert, element, start, target, checkSelectRect = false)
+{
+	const isIndex = Cat.U.IsIndexElement(element);
+	const svg = isIndex ? element.svg : element;
+	simMouseEvent(svg, 'mousemove', start);
+	simMouseEvent(svg, 'mouseenter', start);
+	checkSelectRect && assert.ok(!document.getElementById('selectRect'), 'no select rect');
+	simMouseEvent(svg, 'mousedown', start);
+	simMouseEvent(svg, 'mousemove', target);
+	checkSelectRect && checkStore(assert, 'select rect', document.getElementById('selectRect'));
+	simMouseEvent(svg, 'mouseup', target);
+	simMouseEvent(svg, 'mouseleave', target);
 }
 
 function getCoords(ndxElt)
@@ -478,6 +507,18 @@ function clickToolbarButton(name)
 	clickButton(getToolbarButton(name));
 }
 
+function getLastElement()
+{
+	return [...diagram.domain.elements].pop()[1];	// last element created
+}
+
+function getMorphismXY(morph)
+{
+	const x = morph.svg_name.getAttribute('x');
+	const y = morph.svg_name.getAttribute('y');
+	return {x, y};
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Tests
@@ -497,6 +538,8 @@ test(' basics', assert =>
 	assert.ok(zeroD2.equals(zeroD2_D2), 'Default constructed equals explicit construction by D2 object');
 	const onezeroD2 = new D2(1, 0);
 	assert.ok(!onezeroD2.equals(zeroD2), 'not equals ok');
+	const zerooneD2 = new D2(0, 1);
+	assert.ok(!onezeroD2.equals(zerooneD2), 'not equals ok');
 });
 
 test('contains', assert =>
@@ -911,7 +954,7 @@ test('Create test diagram', assert =>
 	assert.equal(diagram.codomain, PFS, 'Diagram codomain ok');
 	assert.ok(diagram.domain instanceof Cat.IndexCategory, 'Diagram domain ok');
 	assert.equal(diagram.domain.name, diagram.name + '_Index', 'Diagram domain name ok');
-	assert.equal(diagram._sig, "1647952c5a96c4a8239bcf9afb5ff95000c6f4fa27ff902ff24dac41d21fea89", 'Diagram signature is ok');
+	assert.equal(diagram.signature, "1647952c5a96c4a8239bcf9afb5ff95000c6f4fa27ff902ff24dac41d21fea89", 'Diagram signature is ok');
 });
 
 module('Diagram');
@@ -934,9 +977,7 @@ test('Cat.R.EmitCATEvent default', assert =>
 {
 	Cat.R.diagram = diagram;
 	Cat.R.EmitCATEvent('default', diagram);
-	assert.equal(document.getElementById('category-navbar').innerHTML, 'ℙ𝔽𝕊', 'Navbar category name ok');
-	console.log('diagram-navbar', document.getElementById('diagram-navbar').innerText);
-	assert.dom('#diagram-navbar').hasText(`${diagram.basename} by ${diagram.user}`, 'Navbar diagram name and user ok');
+	checkStore(assert, 'navbar', Cat.D.navbar);
 	assert.dom('#diagram-category').hasText('ℙ𝔽𝕊', 'Diagram panel category name ok');
 	assert.dom('#diagram-properName').hasText(diagram.properName, 'Diagram panel properName ok');
 	assert.dom('#diagram-description').hasText(diagram.description, 'Diagram panel description ok');
@@ -970,7 +1011,7 @@ test('Create test object', assert =>
 	// TODO					assert.ok(didit, 'Cannot create object with same basename');
 	checkArgs(assert, obj, args);
 	assert.ok(!('svg' in obj), 'Object does not have svg');
-	assert.equal(obj._sig, "869a4e90a5d64c453fe80ae1cfe0d9b05535150a561477734f63ea128f7e89b0", 'Object signature ok');
+	assert.equal(obj.signature, "869a4e90a5d64c453fe80ae1cfe0d9b05535150a561477734f63ea128f7e89b0", 'Object signature ok');
 });
 
 test('get element', assert =>
@@ -1228,7 +1269,7 @@ test('Compose three morphisms', assert =>
 		assert.equal(cell.to, null, 'Cell has no to');
 		assert.equal(cell.description, '', 'Cell has no description');
 		assert.equal(cell.diagram, diagram, 'Cell has correct diagram');
-		assert.equal(cell.name, 'tester/test/r_0', 'Cell height ok');
+		assert.equal(cell.name, 'tester/test/c_0', 'cell name ok');
 		assert.equal(cell.height, 24, 'Cell height ok');
 		assert.equal(cell.width, 0, 'Cell width ok');
 		assert.equal(cell.x, 267, 'Cell x ok');
@@ -1243,7 +1284,7 @@ test('Compose three morphisms', assert =>
 			hasText('≝', 'Cell text ok').doesNotHaveClass('badGlow', 'Cell does not have badGlow').
 			hasAttribute('x', cell.x.toString(), 'Cell text x ok').hasAttribute('y', cell.y.toString(), 'Cell text y ok');
 		assert.equal(svg.dataset.type, 'assertion', 'Svg dataset type ok');
-		assert.equal(svg.dataset.name, 'tester/test/r_0', 'Svg dataset name ok');
+		assert.equal(svg.dataset.name, 'tester/test/c_0', 'Svg dataset name ok');
 		// cleanup
 		Cat.R.workers.equality.removeEventListener('message', lookforit);
 		didit();
@@ -1761,8 +1802,7 @@ test('toolbar nothing selected', assert =>
 test('ControlKeyA select everything', assert =>
 {
 	// controlKeyA
-	simKeyboardEvent(document.body, 'keydown', {ctrlKey:true, code:'KeyA', key:'a'});
-	simKeyboardEvent(document.body, 'keyup', {ctrlKey:true, code:'KeyA', key:'a'});
+	simKeyboardClick(document.body, {ctrlKey:true, code:'KeyA', key:'a'});
 	diagram.domain.elements.forEach(elt => checkSelected(assert, elt));
 	// click on nothing
 	simMouseEvent(diagram.svgRoot, 'mousedown', {clientX:3 * grid, clientY:2 * grid});
@@ -1776,8 +1816,6 @@ test('DiagramText toolbar new text', assert =>
 {
 	// click on nothing
 	const textCoords = {clientX:3 * grid, clientY:2 * grid};
-//	simMouseEvent(diagram.svgRoot, 'mousedown', textCoords);
-//	simMouseEvent(diagram.svgRoot, 'mouseup', textCoords);
 	simMouseClick(diagram.svgRoot, {x:3 * grid, y:2 * grid});
 	assert.equal(diagram.selected.length, 0, 'nothing selected ok');
 	// click text button
@@ -1790,12 +1828,11 @@ test('DiagramText toolbar new text', assert =>
 		hasProperty('placeholder', 'Description', 'placeholder ok');
 	assert.equal(document.activeElement, desc, 'description focus ok');
 	desc.value = descriptionText;
-	simKeyboardEvent(desc, 'keydown', {code:'Enter', key:'Enter'});
-	simKeyboardEvent(desc, 'keyup', {code:'Enter', key:'Enter'});
+	// Enter
+	simKeyboardClick(desc, {code:'Enter', key:'Enter'});
 	const t0 = diagram.getElement('tester/test/t_0');
 	assert.ok(t0 instanceof Cat.DiagramText, 'DiagramText ok');
 	assert.equal(t0.x, Cat.D.toolbar.mouseCoords.x, 'text x match toolbar mouseCoords x ok');
-//	assert.equal(t0.y, Cat.D.toolbar.mouseCoords.y, 'text x match toolbar mouseCoords y ok');
 	checkStore(assert, 'object selected', t0);
 	const textG = document.getElementById(t0.elementId());
 	assert.equal(t0.svg, textG, 'svg equality');
@@ -1918,8 +1955,7 @@ test('toolbar new diagram', assert =>
 
 test('ctrl-D open panel', assert =>
 {
-	simKeyboardEvent(document.body, 'keydown', {ctrlKey:true, code:'KeyD', key:'d'});
-	simKeyboardEvent(document.body, 'keyup', {ctrlKey:true, code:'KeyD', key:'d'});
+	simKeyboardClick(document.body, {ctrlKey:true, code:'KeyD', key:'d'});
 	const panel = document.getElementById('diagram-sidenav');
 	assert.dom(panel).hasTagName('div').hasClass('sidenavPnl').hasClass('sidenavLeftPnl').isNotVisible();	// TODO should become visible
 	const dgrmPnlTB = document.getElementById('diagramPanelToolbar');
@@ -2031,7 +2067,6 @@ test('toolbar project button', assert =>
 {
 	const o17 = diagram.getElement('tester/test/o_17');
 	simMouseClick(o17.svg, o17);
-//	simMouseEvent(o17.svg, 'mouseup', o17);
 	checkSelected(assert, o17);
 	checkStore(assert, 'toolbar', Cat.D.toolbar.element);
 	clickToolbarButton('project');
@@ -2197,7 +2232,7 @@ test('search in diagram', assert =>
 	// search for "id"
 	input.value = 'id';
 	// key click: Enter
-	simKeyboardClick(input, 'Enter');
+	simKeyboardClick(input, {key:'Enter'});
 	checkStore(assert, 'toolbar search found', help);
 	// play with something found
 	const divs = [...help.querySelectorAll('div')];
@@ -2224,7 +2259,7 @@ test('graph factor morphism', assert =>
 	const m14 = diagram.getElement('tester/test/m_14');
 	// zoom to selected
 	diagram.makeSelected(m14);
-	simKeyboardClick(document.body, 'Home');
+	simKeyboardClick(document.body, {key:'Home'});
 	// make graph
 	clickToolbarButton('graph');
 	checkStore(assert, 'gen graph', m14.svg);
@@ -2337,7 +2372,126 @@ test('full view', assert =>
 {
 	// select nothing
 	simMouseClick(diagram.svgRoot, {x:0 * grid, y:3 * grid});
-	simKeyboardClick(document.body, 'Home');
+	simKeyboardClick(document.body, {key:'Home'});
 	const homeVu = new Cat.D2(diagram.svgRoot.getBBox());
 	diagram.domain.elements.forEach(elt => assert.ok(homeVu.contains(diagram.diagramToUserCoords(elt.svg.getBBox())), `home view contains ${elt.basename}`));
+});
+
+module('named elements');
+
+test('named object', assert =>
+{
+	const help = Cat.D.toolbar.help;
+	const o19 = diagram.getElement('tester/test/o_19');
+	selectElement(o19);
+	clickToolbarButton('name');
+	checkStore(assert, 'named object toolbar 1', help);
+	// fill form
+	const inputBasename = help.querySelector('#named-element-new-basename');
+	inputBasename.value = 'ZxZ';
+	const inputProperName = help.querySelector('#named-element-new-properName');
+	inputProperName.value = 'ZXZ';
+	const inputDescription = help.querySelector('#named-element-new-description');
+	inputDescription.value = 'A pair of Z\'s';
+	const btn = help.querySelector('[data-name="namedElement"]');
+	assert.ok(btn);
+	clickButton(btn);
+	checkStore(assert, 'named object toolbar 2', Cat.D.toolbar.element);
+	const idTo = diagram.getSelected();
+	checkStore(assert, 'named object idTo index', idTo);
+	checkStore(assert, 'named object idTo ', idTo.to);
+	const idFrom = diagram.getElement('tester/test/m_20');
+	checkStore(assert, 'named object idFrom index', idFrom);
+	checkStore(assert, 'named object idFrom ', idFrom.to);
+	checkStore(assert, 'named object index', idFrom.codomain);
+	checkStore(assert, 'named object', idFrom.codomain.to);
+	clickToolbarButton('help');
+	checkStore(assert, 'named object help', help);
+});
+
+test('named morphism', assert =>
+{
+	const help = Cat.D.toolbar.help;
+	const source = diagram.getElement('tester/test/m_12');
+	simMouseEvent(diagram.svgRoot, 'mousemove', source.svg_name.getBoundingClientRect());
+	source.svg.onmousedown(new MouseEvent('mousedown'));
+	clickToolbarButton('name');
+	checkStore(assert, 'named morphism help 1', help);
+	// fill form
+	const inputBasename = help.querySelector('#named-element-new-basename');
+	inputBasename.value = 'comp';
+	const inputProperName = help.querySelector('#named-element-new-properName');
+	inputProperName.value = 'COMP';
+	const inputDescription = help.querySelector('#named-element-new-description');
+	inputDescription.value = 'A composite';
+	const btn = help.querySelector('[data-name="namedElement"]');
+	assert.ok(btn);
+	clickButton(btn);
+	checkStore(assert, 'named morphism toolbar', Cat.D.toolbar.element);
+	const named = diagram.getSelected();
+	checkStore(assert, 'named morphism named index', named);
+	checkStore(assert, 'named morphism named ', named.to);
+	checkStore(assert, 'named morphism index source ', source);
+	clickToolbarButton('help');
+	checkStore(assert, 'named morphism help 2', help);
+	// get javascript source
+	const jsBtn = help.querySelector('[data-name="javascript"]');
+	clickButton(jsBtn);
+	checkStore(assert, 'javascript code', help);
+	// get c++ source
+	clickToolbarButton('help');
+	const cppBtn = help.querySelector('[data-name="cpp"]');
+	clickButton(cppBtn);
+	checkStore(assert, 'cpp code', help);
+	clickToolbarButton('closeToolbar');
+});
+
+
+module('delete all');
+
+test('control A', assert =>
+{
+	// controlKeyA
+	simKeyboardClick(document.body, {ctrlKey:true, code:'KeyA', key:'a'});
+	simKeyboardClick(document.body, {key:'Delete'});
+	assert.equal(diagram.svgBase.childElementCount, 0, 'everything deleted');
+});
+
+module('lambda');
+
+test('element morphism', assert =>
+{
+	diagram.setView(0, 0, 1);
+	const help = Cat.D.toolbar.help;
+	const txt = diagram.placeText(null, {x: 2 * grid, y: 0.5 * grid}, assert.test.testName);
+	const Z = diagram.getElement('hdole/Integers/Z');
+	const ZxZ = diagram.prod(Z, Z);
+	const coords = {x: 1 * grid, y: 1 * grid};
+	simMouseClick2(Cat.D.topSVG, coords);
+	const from = diagram.placeObject(null, ZxZ, coords);
+	// get identity on ZxZ
+	clickToolbarButton('identity');
+	const source = getLastElement();
+	simMouseClick2(source.svg, getMorphismXY(source));
+	clickToolbarButton('lambda');
+	checkStore(assert, 'lambda morphism help', help);
+	// make element morphism
+	const eltMorphBtn = help.querySelector('#lambda-element-morphism');
+	eltMorphBtn.onclick();
+	const eltMorph = getLastElement();
+	assert.equal(diagram.getSelected(), eltMorph, 'selected last element');
+	const domain = eltMorph.to.domain;
+	const codomain = eltMorph.to.codomain;
+	assert.ok(domain.isTerminal(), 'domain is terminal');
+	assert.ok(codomain instanceof Cat.HomObject, 'codomain is hom');
+	assert.equal(codomain.objects[0].name, source.to.domain.name, 'source domain is hom domain');
+	assert.equal(codomain.objects[1].name, source.to.codomain.name, 'source codomain is hom codomain');
+	checkStore(assert, 'element morphism index', eltMorph);
+	checkStore(assert, 'element morphism', eltMorph.to);
+	// click graph for element morphism
+	clickToolbarButton('graph');
+	checkStore(assert, 'element morphism graph', eltMorph.graph);
+	// click lambda for element morphism
+	clickToolbarButton('lambda');
+	checkStore(assert, 'element morphism lambda help', help);
 });
