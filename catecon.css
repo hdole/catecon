@@ -5,11 +5,6 @@ html, body
 	margin:	0px 0px 0px 0px;
 }
 
-#intro
-{
-	min-height:	100%;
-}
-
 small
 {
 	margin:	4px;
@@ -23,15 +18,6 @@ div
 img
 {
 	box-shadow:			2px 2px 2px 2px #bbbb;
-}
-
-img.intro
-{
-	margin:	15px;
-}
-
-div.intro
-{
 }
 
 .smallPrint
@@ -105,6 +91,7 @@ div.intro
 {
 	font-family:	courier;
 	display:		block;
+	overflow:		scroll;
 	tab-size:		4;
 	unicode-bidi:	embed;
 	white-space:	pre;
@@ -233,14 +220,6 @@ a
 	transition: 0.3s
 }
 
-a.intro
-{
-	text-decoration:	none;
-	color:				blue;
-	font-size:			10px;
-	transition:			0.3s;
-}
-
 tr.sidenavRow
 {
 	padding: 2px 2px 2px 2px;
@@ -264,12 +243,6 @@ a:hover, .offcanvas a:focus
 	background-color:	#777a;
 }
 
-#main
-{
-	transition: margin-left .5s;
-	padding: 20px;
-}
-
 #toolbar-error, .error
 {
 	background-color:	#f77;
@@ -286,16 +259,6 @@ a:hover, .offcanvas a:focus
 	width:				100%;
 	z-index:			1;
 	transition:			all 1s ease-in-out;
-}
-
-#footbar
-{
-	background-color:	#fff;
-	color:				#000;
-	margin:				0;
-	overflow:			hidden;
-	width:				100%;
-	z-index:			1;
 }
 
 .w10
@@ -341,27 +304,27 @@ a:hover, .offcanvas a:focus
 	color:	#777;
 }
 
-#navbar td
+.navbarFloat
 {
-	padding:		0px;
-	vertical-align:	middle;
+	float:		left;
+	margin:		0px;
+	width:		20%;
 }
 
-#navbar div
+@media screen and (max-width:800px)
 {
-	height:		32px;
-	margin:		0px;
-	overflow:	hidden;
-	padding:	0px;
-	width:		32px;
+	.navbarFloat
+	{
+		width:		100%;
+	}
 }
 
 .navbar-inset
 {
-	font-size:			14px;
-	margin:				2px 4px 2px 4px;
+	font-size:			18px;
 	padding:			0px;
 	text-align:			center;
+	margin-top:			4px;
 }
 
 .grabbable
@@ -416,7 +379,6 @@ a:hover, .offcanvas a:focus
 	overflow:			hidden;
 	padding:			0px;
 	position:			absolute;
-/*	transition:			opacity 1s, height 0s; */
 	z-index:			4;
 }
 
@@ -454,18 +416,6 @@ a:hover, .offcanvas a:focus
 	fill:			#fff;
 	stroke:			#333;
 	stroke-width:	20px;
-}
-#upSVG
-{
-	fill:				none;
-	stroke:				blue;
-	stroke-dasharray:	5;
-	stroke-linecap:		round;
-	stroke-linejoin:	round;
-	stroke-miterlimit:	2;
-	stroke-width:		1px;
-	position:			absolute;
-	z-index:			-1;
 }
 
 .sidenavAccordion
@@ -507,11 +457,6 @@ a:hover, .offcanvas a:focus
 {
 	background-color:	#aaa;
 	content:	'\02796';
-}
-
-.clickable
-{
-	cursor:	pointer;
 }
 
 .in100
@@ -578,7 +523,8 @@ table.center
 	margin-right:	0px;
 	margin-left:	auto;
 	padding:		0px;
-	text-align:			right;
+	text-align:		right;
+	height:			32px;
 }
 
 .buttonBarLeft
@@ -587,6 +533,7 @@ table.center
 	margin-left:		0px;
 	padding:			0px;
 	text-align:			left;
+	height:			32px;
 }
 
 .svg
@@ -702,12 +649,6 @@ path.emphasis
 	background:	white;
 	outline:	1px solid blue;
 	color:		blue;
-}
-
-canvas
-{
-	width:	100%;
-	height:	100%;
 }
 
 .string
