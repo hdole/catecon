@@ -153,6 +153,7 @@ h5
 table
 {
 	border-collapse:	collapse;
+	border-spacing:		0px;
 	vertical-align:		middle;
 	width:				100%;
 }
@@ -249,18 +250,6 @@ a:hover, .offcanvas a:focus
 	color:				#fff;
 }
 
-#navbar
-{
-	background-color:	#ccc;
-	color:				#fff;
-	margin:				0;
-	overflow:			hidden;
-	position:			fixed;
-	width:				100%;
-	z-index:			1;
-	transition:			all 1s ease-in-out;
-}
-
 .w10
 {
 	width:	10%;
@@ -283,12 +272,16 @@ a:hover, .offcanvas a:focus
 	width:	100%;
 }
 
-.navbarTbl
+#navbar
 {
+	background-color:	#ccc;
+	color:				#fff;
+	margin:				0;
+	overflow:			hidden;
+	position:			fixed;
 	width:				100%;
-	border-collapse:	collapse;
-	border-spacing:		0px;
-	padding:			0px;
+	z-index:			1;
+	transition:			all 1s ease-in-out;
 }
 
 #navbar a
@@ -520,7 +513,9 @@ table.center
 
 .buttonBarRight
 {
+	margin-bottom:	0px;
 	margin-right:	0px;
+	margin-top:		0px;
 	margin-left:	auto;
 	padding:		0px;
 	text-align:		right;
@@ -529,10 +524,12 @@ table.center
 
 .buttonBarLeft
 {
-	margin-right:		auto;
-	margin-left:		0px;
-	padding:			0px;
-	text-align:			left;
+	margin-bottom:	0px;
+	margin-right:	auto;
+	margin-left:	0px;
+	margin-top:		0px;
+	padding:		0px;
+	text-align:		left;
 	height:			32px;
 }
 
