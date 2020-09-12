@@ -161,6 +161,7 @@ function simMouseEvent(elt, type, args)
 	}
 	if (!('bubbles' in args))
 		nuArgs.bubbles = true;
+	nuArgs.clientY += Cat.D.topSVG.parentElement.offsetTop;
 	const e = new MouseEvent(type, nuArgs);
 	elt.dispatchEvent(e);
 }
@@ -1696,7 +1697,7 @@ test('check emphasis', assert =>
 	const o1 = diagram.getElement('tester/test/o_1');
 	diagram.makeSelected(null);
 	assert.equal(diagram.selected.length, 0, 'selected none ok');
-	simMouseEvent(o1.svg, 'mouseenter', {clientX:o1.x, clientY:o1.y});
+	simMouseEvent(o1.svg, 'mouseenter', {x:o1.x, y:o1.y});
 	assert.dom(o1.svg).hasClass('emphasis', 'object emphasis ok');
 	simMouseEvent(o1.svg, 'mouseleave', {clientX:o1.x, clientY:o1.y});
 	assert.dom(o1.svg).doesNotHaveClass('emphasis', 'object emphasis removed ok');
@@ -2489,8 +2490,8 @@ test('element morphism', assert =>
 	checkStore(assert, 'element morphism index', eltMorph);
 	checkStore(assert, 'element morphism', eltMorph.to);
 	// click graph for element morphism
-	clickToolbarButton('graph');
-	checkStore(assert, 'element morphism graph', eltMorph.graph);
+//	clickToolbarButton('graph');
+//	checkStore(assert, 'element morphism graph', eltMorph.graph);
 	// click lambda for element morphism
 	clickToolbarButton('lambda');
 	checkStore(assert, 'element morphism lambda help', help);

@@ -730,6 +730,7 @@ Object.defineProperties(U,
 {
 	basenameEx:		{value:RegExp('^[a-zA-Z_$]+[a-zA-Z0-9_$]*$'),	writable:false},
 	finiteEx:		{value:RegExp('^#[0-9]+[0-9]*$'),				writable:false},
+	/*
 	keys:			{value:new Set(
 	[
 		'Unidentified', 'Digit0', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Minus', 'Equal', 'Backspace',
@@ -745,7 +746,7 @@ Object.defineProperties(U,
 //		'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
 //		'Home', 'End', 'PageUp', 'PageDown', 'Insert',
 	]), writble:false},
-	recentDiagram:	{value:{},		writable:false},
+	*/
 	secret:			{value:'0afd575e4ad6d1b5076a20bf53fcc9d2b110d3f0aa7f64a66f4eee36ec8d201f',	writable:false},
 	submap:
 	{
@@ -767,9 +768,10 @@ Object.defineProperties(U,
 	uploadLimit:	{value:1000000,	writable:false},
 });
 
+// Runtime
 class R
 {
-	static Busy()
+	static Busy()	// TODO move to D
 	{
 		if (!('busyBtn' in R))
 		{
@@ -1960,13 +1962,6 @@ class Amazon extends Cloud
 					R.user.name = data.Username;
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 					R.user.status = 'logged-in';
-					/*
-					that.getUserDiagramsFromServer(function(dgrms)
-					{
-						if (R.default.debug)
-							console.log('registerCognito: user diagrams on server', dgrms);
-					});
-					*/
 					R.EmitLoginEvent();
 				});
 			});
@@ -2365,16 +2360,7 @@ class Navbar
 		window.addEventListener('Autohide', function(e)
 		{
 			const args = e.detail;
-			if (args.command === 'hide')
-			{
-				D.navbar.element.style.opacity = "0";
-				D.navbar.element.style.height = "0px";
-			}
-			else
-			{
-				D.navbar.element.style.opacity = "100";
-				D.navbar.element.style.height = "32px";
-			}
+			D.navbar.element.style.height = args.command === 'hide' ?  "0px" : "32px";
 		});
 	}
 	updateByUserStatus()
@@ -2998,6 +2984,7 @@ class NewElement
 	}
 }
 
+// Display
 class D
 {
 	static Initialize()
@@ -3122,7 +3109,7 @@ class D
 		if (e.button === 0)
 		{
 			D.mouseIsDown = true;
-			D.mouse.down = new D2(e.clientX, e.clientY);	// client coords
+			D.mouse.down = new D2(e.clientX, e.clientY - D.topSVG.parentElement.offsetTop);	// client coords
 			const diagram = R.diagram;
 			if (!diagram)
 				return;
@@ -4418,9 +4405,10 @@ Object.defineProperties(D,
 			saveClientPosition(e)
 			{
 				const xy = this.xy;
-				if (xy.length > 0 && xy[xy.length -1].x === e.clientX && xy[xy.length -1].y === e.clientY)
+				const clientY = e.clientY - D.topSVG.parentElement.offsetTop;
+				if (xy.length > 0 && xy[xy.length -1].x === e.clientX && xy[xy.length -1].y === clientY)
 					return;
-				xy.push(new D2(e.clientX, e.clientY));
+				xy.push(new D2(e.clientX, clientY));
 				if (xy.length > 2)
 					xy.shift();
 			},
@@ -6661,12 +6649,12 @@ class Graph
 	}
 	getIndices(indices)		// indices may be truncated by name objects; return it
 	{
-		let fctr = this;
-		let nuIndices = [];
 		if (this.graphs.length === 0)
 			return this;
 		if (indices.length === 1 && indices[0].length === 0)
 			return this;
+		let fctr = this;
+		let nuIndices = [];
 		for (let i=0; i<indices.length; ++i)
 		{
 			const k = indices[i];
@@ -6686,11 +6674,11 @@ class Graph
 	{
 		if (indices.length === 1 && indices[0] === -1)
 			return null;
-		let fctr = this;
 		if (this.graphs.length === 0)
 			return this;
 		if (indices.length === 1 && indices[0].length === 0)
 			return this;
+		let fctr = this;
 		for (let i=0; i<indices.length; ++i)
 		{
 			const k = indices[i];
@@ -6794,6 +6782,8 @@ class Graph
 	{
 		if (this.isLeaf())
 		{
+			if (!data.src.isLeaf())
+				throw 'graphs not iso';
 			this.tags = data.src.tags.slice();
 			for (let i=0; i<data.src.links.length; ++i)
 			{
@@ -6808,6 +6798,7 @@ class Graph
 						const nuLnk = pair[1].slice();
 						nuLnk.push(...lnkClip);
 						this.links.push(nuLnk);
+						break;
 					}
 				}
 			}
@@ -7057,7 +7048,7 @@ class Graph
 		}
 		return g;
 	}
-	removeLinks(ndx)	// for sequence graphs
+	reduceLinks(ndx)	// for sequence graphs
 	{
 		if (this.isLeaf())
 		{
@@ -7070,7 +7061,56 @@ class Graph
 			}
 			this.links = [...nuLinks];
 		}
-		else this.graphs.map((g, i) => g.removeLinks(ndx));
+		else this.graphs.map((g, i) => g.reduceLinks(ndx));
+	}
+	// utility function to determine if this graph or one of its subgraphs is covered.
+	_hasSomeCoverage()
+	{
+		return this.isLeaf() ? 'covered' in this : this.graphs.reduce((r, g) => r || g._hasSomeCoverage(), false);
+	}
+	// utility function to determine if this graph or all of its subgraphs are covered.
+	_isCovered()
+	{
+		if ('covered' in this)
+		{
+			delete this.covered;
+			return true;
+		}
+		return this.graphs.reduce((r, g) => r && g._isCovered(), true);
+	}
+	// utility function to remove the covered attribute
+	_removeCovered()
+	{
+		delete this.covered;
+		this.graphs.map(g => g._removeCovered());
+	}
+	doIndicesCover(indices)
+	{
+		// tag subgraphs with covered per index, but return false if errors occurred
+		const consistent = indices.reduce((r, ndx) =>
+		{
+			if (r)
+			{
+				const factor = this.getFactor(ndx);
+				if (factor._hasSomeCoverage())	// if already covered then cannot cover further up
+					return false;
+				const ndxCpy = ndx.slice();
+				let i = null;
+				while((i = ndxCpy.pop()))
+					if ('covered' in this.getFactor(i))
+						return false;		// an ancestor is covered
+				factor.covered = true;
+				return true;
+			}
+			return false;
+		}, true);
+		if (consistent)
+		{
+			const isCovered = this._isCovered();
+			this._removeCovered();
+			return isCovered;
+		}
+		return false;
 	}
 }
 
@@ -9424,16 +9464,21 @@ class LambdaMorphismAction extends Action
 		const from = ary[0];
 		const domFactors = U.GetFactorsById('lambda-domain');
 		const homFactors = U.GetFactorsById('lambda-codomain');
-		const elt = this.doit(e, diagram, from, domFactors, homFactors);
-		diagram.log({command:'lambda', from:from.name, domFactors, homFactors});
-		diagram.antilog({command:'delete', elements:[elt.name]});
+		try
+		{
+			const elt = this.doit(e, diagram, from, domFactors, homFactors);
+			diagram.log({command:'lambda', from:from.name, domFactors, homFactors});
+			diagram.antilog({command:'delete', elements:[elt.name]});
+		}
+		catch(x)
+		{
+			D.toolbar.error.innerText = x;
+		}
 	}
 	doit(e, diagram, from, domFactors, homFactors)
 	{
 		const m = diagram.get('LambdaMorphism', {preCurry:from.to, domFactors, homFactors});
-		const xyDom = new D2(from.domain.getXY()).add(D.default.stdArrow);
-		const xyCod = new D2(from.codomain.getXY()).add(D.default.stdArrow);
-		return diagram.placeMorphism(e, m, xyDom, xyCod);
+		return this.placeMorphism(e, from, m);
 	}
 	replay(e, diagram, args)
 	{
@@ -9474,7 +9519,7 @@ class LambdaMorphismAction extends Action
 		html.push(	H3.h4('Curry Morphism'),
 					H3.h5('Domain'),
 					H3.small('Click to move to codomain:'),
-					H3.span(this.getButtons(domain, {dir:	0, fromId:'lambda-domain', toId:'lambda-codomain'}), {id:'lambda-domain'}),
+					H3.span(this.getButtons(domain, {dir:0, fromId:'lambda-domain', toId:'lambda-codomain'}), {id:'lambda-domain'}),
 					H3.h5('Codomain'),
 					H3.small('Click to move to codomain: ['),
 					H3.span(...homCod, {id:'lambda-codomain'}),
@@ -9489,14 +9534,15 @@ class LambdaMorphismAction extends Action
 		let html = [];
 		const homBtn = H3.button('&times;', {title:'Convert to hom', 'data-indices':"-1", onclick:e => Cat.R.Actions.lambda.toggleOp(e.currentTarget)});
 		const codSide = data.dir === 1 && 'objects' in object;
+		const index = data.dir === 0 ? '0' : '1, 0';
 		if ('objects' in object)
 			object.objects.map((o, i) =>
 			{
-				html.push(H3.button(o.htmlName(), H3.sub(i.toString()), {id:D.elementId(), 'data-indices':`${data.dir}, ${i}`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
+				html.push(H3.button(o.htmlName(), H3.sub(i.toString()), {id:D.elementId(), 'data-indices':`${index}, ${i}`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
 				codSide && i < object.objects.length - 1 && html.push(homBtn);
 			});
 		else if (!object.isTerminal())
-			html.push(H3.button(object.htmlName(), {id:D.elementId(), 'data-indices':`${data.dir}, 0`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
+			html.push(H3.button(object.htmlName(), {id:D.elementId(), 'data-indices':`${index}, 0`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
 		if (codSide)
 			html.push(H3.button('[', {title:'Convert to product', 'data-indices':"-2", onclick:e => Cat.R.Actions.lambda.toggleOp(e.currentTarget)}));
 		return html;
@@ -9540,14 +9586,18 @@ class LambdaMorphismAction extends Action
 			elt.setAttribute('title', 'Convert to hom');
 		}
 	}
+	placeMorphism(e, adjacent, morphism)
+	{
+		const xyDom = new D2(adjacent.domain.getXY());
+		const xyCod = new D2(adjacent.codomain.getXY());
+		const delta = xyCod.subtract(xyDom).normal().normalize().scale(D.default.arrow.length);
+		return diagram.placeMorphism(e, morphism, xyDom.add(delta), xyCod.add(delta), true, false);
+	}
 	createElementMorphism(e, from)
 	{
 		const factors = [[]];
-		const m = diagram.get('LambdaMorphism', {preCurry:from.to, domFactors:[-1], homFactors:[[0]]});
-		const xyDom = new D2(from.domain.getXY());
-		const xyCod = new D2(from.codomain.getXY());
-		const delta = xyCod.subtract(xyDom).normal().normalize().scale(D.default.arrow.length);
-		return diagram.placeMorphism(e, m, xyDom.add(delta), xyCod.add(delta), true, false);
+		const m = diagram.get('LambdaMorphism', {preCurry:from.to, domFactors:[], homFactors:[[0]]});
+		return this.placeMorphism(e, from, m);
 	}
 }
 
@@ -9670,7 +9720,6 @@ class LanguageAction extends Action
 		const width = D.Width();
 		const height = D.Height();
 		if (bbox.x + width > width)
-//			codeElt.setAttribute("style", `width:${width - bbox.x}px`);
 			codeElt.style.width = `${width - bbox.x -30}px`;
 		if (bbox.y + height > height)
 			codeElt.style.height = `${height - bbox.y -30}px`;
@@ -13108,16 +13157,21 @@ class Composite extends MultiMorphism
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = this.diagram.get('ProductObject', {objects});
+		// bare graph to hang links on
 		const seqGraph = sequence.getGraph();
+		// merge the individual graphs into the sequence graph
 		graphs.map((g, i) =>
 		{
 			seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
 			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
+		// trace the links through the sequence graph
 		seqGraph.traceLinks(seqGraph);
 		const cnt = this.morphisms.length;
-		seqGraph.graphs[0].removeLinks(cnt);
-		seqGraph.graphs[cnt].removeLinks(cnt);
+		// remove duplicates
+		seqGraph.graphs[0].reduceLinks(cnt);
+		seqGraph.graphs[cnt].reduceLinks(cnt);
+		// copy ends for final anser
 		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[cnt], [1]]]});
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
 		return graph;
@@ -13522,12 +13576,20 @@ class LambdaMorphism extends Morphism
 		nuArgs.codomain = LambdaMorphism.Codomain(diagram, preCurry, args.homFactors);
 		nuArgs.category = diagram.codomain;
 		nuArgs.basename = LambdaMorphism.Basename(diagram, {preCurry, domFactors:args.domFactors, homFactors:args.homFactors});
+		nuArgs.homFactors = args.homFactors.map(hf => Array.isArray(hf) ? hf : [hf]);	// TODO remove bandage
+		let obj = nuArgs.codomain;
+		while (obj instanceof HomObject)
+			obj = obj.homDomain();
+		obj.covered = true;		// right-most obj in hom codomain does not change
+		const graph = new Graph(diagram, 0, 0, [preCurry.domain.getGraph(), preCurry.codomain.getGraph()]);
+		if (!graph.doIndicesCover([...nuArgs.domFactors, ...nuArgs.homFactors]))
+			throw 'inadequate factor coverage for lambda';
 		super(diagram, nuArgs);
 		this.properName = LambdaMorphism.ProperName(preCurry, args.domFactors, args.homFactors);
 		this.preCurry = preCurry;
 		this.preCurry.incrRefcnt();
 		this.domFactors = args.domFactors;
-		this.homFactors = args.homFactors;
+		this.homFactors = nuArgs.homFactors;
 		this.signature = this.getLambdaSignature();
 		this.constructor.name === 'LambdaMorphism' && R.EmitElementEvent(diagram, 'new', this);
 	}
@@ -13566,29 +13628,60 @@ class LambdaMorphism extends Morphism
 	}
 	getGraph(data = {position:0})
 	{
-		const graph = super.getGraph(data);
+		const graph = super.getGraph(data);		// bare graph to start
 		const preCurryGraph = this.preCurry.getGraph(data);
-		const map = this.domFactors.map((f, i) => [f, [0, i]]);
-		if (this.domFactors.length === 1)
+		const domFactors = this.domFactors.filter(f => f !== -1);
+		const factorMap = domFactors.map((f, i) => [f, [0, i]]);
+		if (domFactors.length === 1)
 		{
-			const f = map[0];
-			map[0] = [f[0], [f[1][1]]];
+			const f = factorMap[0];
+			factorMap[0] = [f[0], [f[1][1]]];
 		}
 		const dom = graph.graphs[0];
 		const cod = graph.graphs[1];
-		const homDom = cod.graphs[0];
-		const homCod = cod.graphs[1];
+		const codIsHom = this.codomain instanceof HomObject;
+		const homDom = codIsHom ? cod.graphs[0] : new Graph(this.diagram);
 		const homMap = this.homFactors.map((f, i) => [f, [1, 0, i]]);
 		if (this.homFactors.length === 1)
 		{
 			const f = homMap[0];
 			homMap[0] = [f[0], [1, 0]];
 		}
-		map.push(...homMap);
-		map.push([[1], [1, 1]]);
-		this.domFactors.map((f, i) => (dom.isLeaf() ? dom : dom.graphs[i]).copyGraph({map, src:preCurryGraph.getFactor(f)}));
-		this.homFactors.map((f, i) => (homDom.isLeaf() ? homDom : homDom.graphs[i]).copyGraph({map, src:preCurryGraph.getFactor(f)}));
-		homCod.copyGraph({map, src:preCurryGraph.graphs[1]});
+		factorMap.push(...homMap);
+		factorMap.push([[1], codIsHom ? [1, 1] : []]);
+		let obj = this.preCurry.codomain;
+		let preCurryHomCodGraph = preCurryGraph.graphs[1];
+		while (obj instanceof HomObject)
+		{
+			preCurryHomCodGraph = preCurryHomCodGraph.graphs[1];
+			obj = obj.objects[1];
+		}
+		// copy hom codomain links
+		obj = this.codomain;
+		let homCod = graph.graphs[1];
+		while (obj instanceof HomObject)
+		{
+			homCod = homCod.graphs[1];
+			obj = obj.objects[1];
+		}
+		homCod.copyGraph({map:factorMap, src:preCurryHomCodGraph});
+		// copy dom factor links
+		const domGraph = graph.graphs[0];
+		domFactors.map((ndx, i) =>
+		{
+			const src = preCurryGraph.getFactor(ndx);
+			domGraph.graphs[i].copyGraph({map:factorMap, src});
+		});
+		// copy hom factor links
+		if (this.homFactors.length > 0)
+		{
+			this.homFactors.map((ndx, i) =>
+			{
+				const src = preCurryGraph.getFactor(ndx);
+				const target = cod.getFactor(ndx);
+				target.copyGraph({map:factorMap, src});
+			});
+		}
 		graph.tagGraph(this.constructor.name);
 		return graph;
 	}
@@ -14112,7 +14205,7 @@ class Diagram extends Functor
 	}
 	mouseDiagramPosition(e)
 	{
-		return this.userToDiagramCoords({x:e.clientX, y:e.clientY});
+		return this.userToDiagramCoords({x:e.clientX, y:e.clientY - D.topSVG.parentElement.offsetTop});
 	}
 	deselectAll(e)
 	{
@@ -14179,7 +14272,6 @@ class Diagram extends Functor
 		R.EmitDiagramEvent(this, 'select', '');
 		if (elt)
 			this.addSelected(elt);
-		R.default.debug && console.log('selected', elt && elt.basename, elt && elt.refcnt, elt, elt && 'assyGraph' in elt ? elt.assyGraph.hasTag('info') : '');
 	}
 	addSelected(elt)
 	{
@@ -14199,8 +14291,6 @@ class Diagram extends Functor
 	}
 	areaSelect(e)
 	{
-//		const p = this.userToDiagramCoords(D.mouse.down);
-//		const q = D.mouse.diagramPosition(this);
 		const p = this.userToDiagramCoords(D.GetAreaSelectCoords());
 		const q = new D2(p.x + p.width, p.y + p.height);
 		let selected = [];
