@@ -584,9 +584,15 @@ class U
 	{
 		b.map(v => !a.includes(v) ? a.push(v) : null);
 	}
-	static ArrayHas(a, b)
+	static ArrayEquals(a, b)
 	{
-		return a.reduce((r, sa) => r || sa.reduce((sr, ai, i) => sr && ai === b[i], true), false);
+		if (a === b)
+			return true;
+		if (!Array.isArray(a) || !Array.isArray(b))
+			return false;
+		if (a.length !== b.length)
+			return false;
+		return a.reduce((r, suba, i) => r && U.ArrayEquals(suba, b[i]), true);
 	}
 	static GetFactorsById(id)
 	{
@@ -724,6 +730,13 @@ class U
 	static IsIndexElement(elt)
 	{
 		return elt instanceof DiagramObject || elt instanceof DiagramMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
+	}
+	static HasFactor(factors, someFactor)
+	{
+		for(let i=0; i<factors.length; ++i)
+			if (U.ArrayEquals(someFactor, factors[i]))
+				return i;
+		return -1;
 	}
 }
 Object.defineProperties(U,
@@ -2465,6 +2478,7 @@ class Toolbar
 		}
 		D.RemoveChildren(this.help);
 		D.RemoveChildren(this.header);
+		D.RemoveChildren(this.error);
 		element.style.display = 'block';
 		const moveBtn = D.GetButton3('moveToolbar', 'move3', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle');
 		let delta = null;
@@ -6621,15 +6635,19 @@ class Element
 
 class Graph
 {
-	constructor(diagram, position, width, graphs = [])
+//	constructor(diagram, position, width, graphs = [])
+	constructor(diagram, args = {})
 	{
 		this.diagram = diagram;
 		this.tags = [];
-		this.position = position;
-		this.width = width;
-		this.graphs = graphs;
-		this.links = [];
-		this.visited = new Set();
+		if ('position' in args)
+			this.position = args.position;
+		if ('width' in args)
+			this.width = args.width;
+		this.graphs = 'graphs' in args ? args.graphs.slice() : [];
+		this.tags = 'tags' in args ? args.tags.slice() : [];
+		this.links = 'links' in args ? args.links.slice() : [];
+		this.visited = new Set('visited' in args ? args.visited.slice() : []);
 	}
 	json()
 	{
@@ -7140,7 +7158,7 @@ class CatObject extends Element
 		const width = D.textWidth(this.htmlName());
 		const position = data.position;
 		data.position += width;
-		return new Graph(this.diagram, position, width);
+		return new Graph(this.diagram, {position, width});
 	}
 	getFactorProperName(indices)
 	{
@@ -7307,7 +7325,7 @@ class MultiObject extends CatObject
 			});
 		data.position += pw;
 		const width = data.position - position;
-		return new Graph(this.diagram, position, width, graphs);
+		return new Graph(this.diagram, {position, width, graphs});
 	}
 	resetPosition()
 	{
@@ -7367,6 +7385,8 @@ class ProductObject extends MultiObject
 	}
 	getGraph(data = {position:0}, first = true)
 	{
+		if ('dual' in data && this.dual !== data.dual)
+			return new Graph(this.diagram);
 		return super.getGraph(this.constructor.name, data, D.textWidth('('), D.textWidth(this.dual ? '&plus;' : '&times;'), first);
 	}
 	allSame()
@@ -9798,20 +9818,20 @@ class JavascriptAction extends LanguageAction
 	{
 		return U.Token(elt);
 	}
-	generate(m, generated = new Set())
+	generate(morphism, generated = new Set())
 	{
 		let code = '';
-		const proto = m.constructor.name;
-		if (!generated.has(m.name))
+		const proto = morphism.constructor.name;
+		if (!generated.has(morphism.name))
 		{
-	 		if (m instanceof MultiMorphism)
-				code += m.morphisms.map(n => this.generate(n, generated)).join('\n');
-			const jsName = U.Token(m);
-			const header = JavascriptAction.Header(m);
+	 		if (morphism instanceof MultiMorphism)
+				code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
+			const jsName = U.Token(morphism);
+			const header = JavascriptAction.Header(morphism);
 			const tail = JavascriptAction.Tail();
-			const domain = m.domain instanceof NamedObject ? m.domain.base : m.domain;
-			const codomain = m.codomain instanceof NamedObject ? m.codomain.base : m.codomain;
-			if (R.CanFormat(m) && domain.size)
+			const domain = morphism.domain instanceof NamedObject ? morphism.domain.base : morphism.domain;
+			const codomain = morphism.codomain instanceof NamedObject ? morphism.codomain.base : morphism.codomain;
+			if (R.CanFormat(morphism) && domain.size)
 				code +=	// TODO safety check?
 `
 function ${jsName}_Iterator(fn)
@@ -9822,61 +9842,61 @@ function ${jsName}_Iterator(fn)
 	return result;
 }
 `;
-			if ('domain' in m && domain.isInitial())
+			if ('domain' in morphism && domain.isInitial())
 				code += `${header}	return;	// abandon computation\n'${tail}`;	// domain is null, yuk
-			else if ('codomain' in m && codomain.isTerminal())
+			else if ('codomain' in morphism && codomain.isTerminal())
 				code += `${header}	return 0;${tail}`;
-			else if ('codomain' in m && codomain.isInitial())
+			else if ('codomain' in morphism && codomain.isInitial())
 				code += `${header}	throw 'do not do this';${tail}`;
 			else
 				switch(proto)
 				{
 					case 'Composite':
-						code += `${header}	return ${m.morphisms.map(n => U.Token(n) + '(').reverse().join('')}args${ ")".repeat(m.morphisms.length) };${tail}`;
+						code += `${header}	return ${morphism.morphisms.map(n => U.Token(n) + '(').reverse().join('')}args${ ")".repeat(morphism.morphisms.length) };${tail}`;
 						break;
 					case 'Identity':
 						code += `${header}	return args;${tail}`;
 						break;
 					case 'ProductMorphism':
-						if (m.dual)
+						if (morphism.dual)
 							code +=
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.Token(n)).join()}];
+`const ${jsName}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
 ${header}	return [args[0], ${jsName}_morphisms[args[0]](args[1])];${tail}`;
 						else
-							code += `${header}	return [${m.morphisms.map((n, i) => U.Token(n) + '(args[' + i + '])').join()}];${tail}`;
+							code += `${header}	return [${morphism.morphisms.map((n, i) => U.Token(n) + '(args[' + i + '])').join()}];${tail}`;
 						break;
 					case 'ProductAssembly':
 						code += this.dual ?
-`const ${jsName}_morphisms = [${m.morphisms.map((n, i) => U.Token(n)).join()}];
+`const ${jsName}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
 ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`
 							:
-								`${header}	return [${m.morphisms.map((n, i) => U.Token(n) + '(args)').join()}];${tail}`;
+								`${header}	return [${morphism.morphisms.map((n, i) => U.Token(n) + '(args)').join()}];${tail}`;
 						break;
 					case 'Morphism':
-						if ('code' in m && this.ext in m.code)
-							code += this.instantiate(m) + '\n';
+						if ('code' in morphism && this.ext in morphism.code)
+							code += this.instantiate(morphism) + '\n';
 						else
 							code += `${header}	${tail}`;
-						if ('recursor' in m)
+						if ('recursor' in morphism)
 						{
-							generated.add(m.name);	// add early to avoid infinite loop
-							code += this.generate(m.recursor, generated);
+							generated.add(morphism.name);	// add early to avoid infinite loop
+							code += this.generate(morphism.recursor, generated);
 						}
-						if ('data' in m)
+						if ('data' in morphism)
 						{
 							let homMorphs = [];
 							const that = this;
-							m.data.forEach(function(d)
+							morphism.data.forEach(function(d)
 							{
-								that.findHomMorphisms(m.codomain, d, homMorphs);
+								that.findHomMorphisms(morphism.codomain, d, homMorphs);
 							});
 							if (homMorphs.length > 0)
 							{
-								generated.add(m.name);	// add early to avoid infinite loop
+								generated.add(morphism.name);	// add early to avoid infinite loop
 								code += homMorphs.map(hm => this.generate(hm, generated)).join('');
 							}
 							const data = [];
-							m.data.forEach(function(d, k)
+							morphism.data.forEach(function(d, k)
 							{
 								data.push(`[${k}, ${that.convertData(codomain, d)}]`);
 							});
@@ -9894,11 +9914,11 @@ function ${jsName}_Iterator(fn)
 }
 `;
 						}
-						if ('recursor' in m)
+						if ('recursor' in morphism)
 							code +=
 `${header}	if (${jsName}_Data.has(args))
 		return ${jsName}_Data.get(args);
-	return ${U.Token(m.recursor)}(args);
+	return ${U.Token(morphism.recursor)}(args);
 ${tail}`;
 						break;
 					case 'Distribute':
@@ -9909,62 +9929,92 @@ ${tail}`;
 						code += `${header}	return args[0](args[1]);${tail}`;
 						break;
 					case 'FactorMorphism':
-						code += m.dual ?
+						code += morphism.dual ?
 							''	// TODO
 							:
-`const ${jsName}_factors = ${JSON.stringify(m.factors)};
+`const ${jsName}_factors = ${JSON.stringify(morphism.factors)};
 ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
-	return ${m.factors.length === 1 ? 'r[0]' : 'r'};${tail}`;
+	return ${morphism.factors.length === 1 ? 'r[0]' : 'r'};${tail}`;
 						break;
 					case 'HomMorphism':
 						break;
 					case 'LambdaMorphism':
-						code += this.generate(m.preCurry, generated);
-						const inputs = new Array(JavascriptAction.ObjectLength(m.preCurry.domain));
-						const domLength = JavascriptAction.ObjectLength(domain);
-						const homLength = m.homFactors.length;
-						for(let i=0; i<m.domFactors.length; ++i)
+						code += this.generate(morphism.preCurry, generated);
+						/*
+						const inputs = new Array(JavascriptAction.ObjectLength(morphism.preCurry.domain));
+//						const domLength = JavascriptAction.ObjectLength(domain);
+						const domLength = morphism.domFactors.length;
+						const homLength = morphism.homFactors.length;
+						// TODO
+						if (domLength > 0 && homLength > 0)		// prepare for delayed evaluation
 						{
-							const f = m.domFactors[i];
-							if (f[0] === 0)
+							for(let i=0; i<domLength; ++i)
 							{
-								const k = f[1];
-								inputs[k] = domLength > 1 ? `cargs[${k}]` : 'cargs';
+								const f = morphism.domFactors[i];
+	//							if (f[0] === 0)
+	//							{
+	//								const k = f[1];
+	//								inputs[k] = domLength > 1 ? `cargs[${k}]` : 'cargs';
+	//							}
+								if (f.length > 1)
+								{
+									if (f[0] === 0)		// factor from domain
+									{
+										inputs[f[1]] = domLength > 1 ? `cargs[${i}]` : 'cargs';		// cargs = constant arguments
+									}
+									else				// is === 1 and factor from HomDom
+									{
+										// note: f[1] === 0; f[2] gives position in HomDom
+										if (f[0] !== 1 || f[1] !== 0)
+											throw 'bad lambda homdom link';
+										if (f.length === 3)
+											inputs[f[2]] = domLength > 1 ? `args[${i}]` : 'args';	// no array for single arguments
+										else
+											throw 'TODO deep lambda homdom link';
+									}
+								}
+								else if (f.length === 1)	// should not happen in a dom factor
+									throw 'bad lambda dom factor';
+								else // else it is a terminal object
+									inputs[0] = '0';
 							}
+							for(let i=0; i<homLength; ++i)
+							{
+								const f = morphism.homFactors[i];
+								if (f[0] === 0)
+								{
+									const k = f[1];
+									inputs[k] = homLength > 1 ? `homargs[${k}]` : 'homargs';
+								}
+							}
+							let input = inputs.join();
+							if (inputs.length >= 0)
+								input = `[${input}]`;
+								code +=
+`${header}
+return function(homargs)
+{
+	return ${U.Token(morphism.preCurry)}(${input});
+}${tail}`;
 						}
-						for(let i=0; i<homLength; ++i)
+						else if (domLength === 0 && homLength > 0) // return function as morphism
 						{
-							const f = m.homFactors[i];
-							if (f[0] === 0)
-							{
-								const k = f[1];
-								inputs[k] = homLength > 1 ? `bargs[${k}]` : 'bargs';
-							}
+							code +=
+`${header}	return ${U.Token(morphism.preCurry)};${tail}`;
 						}
-						let input = inputs.join();
-						if (inputs.length >= 0)
-							input = `[${inputs}]`;
-						if (domLength >= 1 && homLength > 0)
-							code +=
-`${header}	const cargs = args;
-	return function(bargs)
-	{
-		return ${U.Token(m.preCurry)}(${input});
-	}${tail}`;
-						else if (domLength === 0 && homLength >= 1)
-							code +=
-`${header}	return ${U.Token(m.preCurry)};${tail}`;
 						else	// must evaluate lambda!
 						{
 							const preMap = new Map();
-							const postMap = new Map();
-							for (let i=0; i<m.domFactors.length; ++i)
+							const postInputMap = new Map();
+							for (let i=0; i<morphism.domFactors.length; ++i)
 							{
-								const f = m.domFactors[i];
-								if (f[0] === 1 && f.length === 2)
-									preMap.set(f[1], i);
+								const f = morphism.domFactors[i];
+								if (f[0] === 1 && f.length === 3)
+									postInputMap.set(f[2], i);
 								else if (f[0] === 0 && f.length === 2)
-									postMap.set(f[1], i);
+									preMap.set(f[1], i);
+								else
+									throw 'TODO lambda link';
 							}
 							let preInput = '';
 							for (let i=0; i<preMap.size; ++i)
@@ -9972,22 +10022,178 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 							if (preMap.size > 1)
 								preInput = `[${preInput}]`;
 							let postInput = '';
-							for (let i=0; i<postMap.size; ++i)
-								postInput += `${i > 0 ? ', ' : ''}args[${postMap.get(i)}]`;
-							if (postMap.size > 1)
+							for (let i=0; i<postInputMap.size; ++i)
+								postInput += `${i > 0 ? ', ' : ''}args[${postInputMap.get(i)}]`;
+							if (postInputMap.size > 1)
 								postInput = `[${postInput}]`;
 							code +=
-`${header}return ${U.Token(m.preCurry)}(${preInput})(${postInput});${tail}`;
+`${header}	return ${U.Token(morphism.preCurry)}(${preInput})(${postInput});${tail}`;
 						}
+						*/
+						code += `${header}	${this.generateLambda(morphism)}${tail}`;
+//debugger;
+//						code += `//	${this.generateLambda(morphism)}`;
 						break;
 					case 'NamedMorphism':
-						code += this.generate(m.source, generated);
-						code += `${header}	return ${U.Token(m.source)}(args);${tail}`;
+						code += this.generate(morphism.source, generated);
+						code += `${header}	return ${U.Token(morphism.source)}(args);${tail}`;
 						break;
 				}
-			generated.add(m.name);
+			generated.add(morphism.name);
 		}
 		return code;
+	}
+	generateLambda(morphism)
+	{
+		const domFactorsMap = new Map();
+		const homFactorsMap = new Map();
+		function factorMap(factors)
+		{
+			for (let i=0; i<factors.length; ++i)
+			{
+				const f = factors[i];
+				if (f[0] === 1 && f.length === 3)
+					homFactorsMap.set(f[2], i);
+				else if (f[0] === 0 && f.length === 2)
+					domFactorsMap.set(f[1], i);
+//				else
+//					throw 'TODO lambda link';
+			}
+		}
+		factorMap(morphism.domFactors);
+		factorMap(morphism.homFactors);
+		let domFactors = '';
+		for (let i=0; i<domFactorsMap.size; ++i)
+			domFactors += `${i > 0 ? ', ' : ''}args[${domFactorsMap.get(i)}]`;
+		if (domFactorsMap.size > 1)
+			domFactors = `[${domFactors}]`;
+		let homFactors = '';
+		for (let i=0; i<homFactorsMap.size; ++i)
+			homFactors += `${i > 0 ? ', ' : ''}args[${homFactorsMap.get(i)}]`;
+		if (homFactorsMap.size > 1)
+			homFactors = `[${homFactors}]`;
+		let code =
+`	return ${U.Token(morphism.preCurry)}`;
+		if (domFactorsMap.size > 0 || homFactorsMap.size > 0)
+			code += `(${domFactors})`;
+		if (homFactorsMap.size > 0)
+			code += `(${homFactors})`;
+
+		const preCurry = morphism.preCurry;
+		let domArgs = '';
+		domFactors = morphism.domFactors;
+		homFactors = morphism.homFactors;
+		let k = U.HasFactor(homFactors, [0]);
+		if (k >= 0 && domFactors.length === 0)	// domain is one-point set
+			domArgs += '';	// null-op
+		else
+		{
+			// scan domain
+			const scanDomain = (obj, ndx) =>
+			{
+				k = U.HasFactor(domFactors, ndx);
+				if (k >= 0 && domFactors.length === 1)	// domain unchanged
+				{
+					domArgs += 'args';
+				}
+				else if (obj instanceof ProductObject && !obj.dual)	// is product, not coproduct
+				{
+					for(let i=0; i<obj.objects.length; ++i)
+					{
+						ndx.push(i);
+						k = U.HasFactor(domFactors, ndx);
+						if (k >= 0)
+						{
+							if (i > 0)
+								domArgs += ', ';
+							domArgs += `args[${ndx.toString()}]`;
+						}
+						else
+						{
+							k = U.HasFactor(homFactors, ndx);
+							if (k >= 0)
+							{
+								if (i > 0)
+									domArgs += ', ';
+								const lnk = homFactors(k);
+								domArgs += 'homArgs';
+								if (homFactors.length > 1)
+									domArgs += `[${k}]`;
+							}
+							else
+								scanDomain(obj.objects[i], ndx);
+						}
+						ndx.pop();
+					}
+				}
+			};
+			scanDomain(preCurry.domain, [0]);
+			domArgs = `(${domArgs})`;
+		}
+		let nuCode = '';
+		// scan codomain
+		let homArgs = '';
+		if (preCurry.codomain instanceof HomObject)
+		{
+			const scanCodomain = (obj, ndx) =>
+			{
+				if (obj instanceof HomObject)
+				{
+					ndx.push(0);
+					k = U.HasFactor(domFactors, ndx);
+					if (k >= 0)
+					{
+						if (domFactors.length === 1)
+							homArgs += `args[${k}]`;
+						else if (k === 0)
+							homArgs += `[args[${k}], `;
+						else if (k === domFactors.length -1)
+							homArgs += `args[${k}]]`;
+						else
+							homArgs += `args[${k}], `;
+					}
+					else
+					{
+						const homdom = obj.objects[0];
+						if (homdom instanceof ProductObject)
+						{
+							homdom.objects.map((o, i) =>
+							{
+								const nuNdx = ndx.slice();
+								nuNdx.push(i);
+								k = U.HasFactor(domFactors, nuNdx);
+								if (k >= 0)
+								{
+									if (i > 0)
+										homArgs += ', ';
+									const argOffset = nuNdx.slice(2);
+									homArgs += `args[${argOffset.toString()}]`;
+								}
+							});
+							if (homdom.objects.length > 1)
+								homArgs = `[${homArgs}]`;
+						}
+					}
+					ndx.pop();
+					const nuNdx = ndx.slice();
+					nuNdx.push(1);
+					scanCodomain(obj.objects[1], nuNdx);
+				}
+				else
+				{
+				}
+			};
+			scanCodomain(preCurry.codomain, [1]);
+			if (homArgs !== '')
+				homArgs = `(${homArgs})`;
+			nuCode = `	return ${morphism.codomain instanceof HomObject ? ' homArgs => ' : ''}${U.Token(preCurry)}${domArgs}${homArgs}`;
+		}
+		else	// evaluate pre-curry
+		{
+			nuCode = `	return ${U.Token(preCurry)}${homArgs}`;
+		}
+
+		return nuCode + ';';
 	}
 	convertData(obj, data)	// hom elements have to be converted from objects to their name
 	{
@@ -10330,7 +10536,7 @@ ${this.generate(m)}
 	}
 	static Header(m)
 	{
-		return `function ${U.Token(m)}(args)\n{\n`;
+		return `// ${m.constructor.name}: ${m.basename}\nfunction ${U.Token(m)}(args)\n{\n`;
 	}
 	static Tail()
 	{
@@ -10602,12 +10808,12 @@ ${members}
 const ${name}_Data = new Map(${data});
 function ${name}_Iterator(fn)
 {
-const result = new Map();
-${name}_Data.forEach(function(d, i)
-{
-result.set(i, fn(i));
-});
-return result;
+	const result = new Map();
+	${name}_Data.forEach(function(d, i)		// TODO? not C++
+	{
+		result.set(i, fn(i));
+	});
+	return result;
 }
 `;
 					}
@@ -11853,7 +12059,7 @@ class Morphism extends Element
 		const codData = U.Clone(data);
 		const domGraph = this.domain.getGraph(data);
 		const codGraph = this.codomain.getGraph(codData);
-		return new Graph(this.diagram, data.position, 0, [domGraph, codGraph]);
+		return new Graph(this.diagram, {position:data.position, width:0, graphs:[domGraph, codGraph]});
 	}
 	hasInverse()
 	{
@@ -13581,9 +13787,12 @@ class LambdaMorphism extends Morphism
 		while (obj instanceof HomObject)
 			obj = obj.homDomain();
 		obj.covered = true;		// right-most obj in hom codomain does not change
-		const graph = new Graph(diagram, 0, 0, [preCurry.domain.getGraph(), preCurry.codomain.getGraph()]);
+		const graph = new Graph(diagram, {graphs:[preCurry.domain.getGraph(), preCurry.codomain.getGraph()]});
 		if (!graph.doIndicesCover([...nuArgs.domFactors, ...nuArgs.homFactors]))
 			throw 'inadequate factor coverage for lambda';
+		if (!nuArgs.homFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.domFactors, f), true) &&
+				!nuArgs.domFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.homFactors, f), true))	// do not share links
+			throw 'dom and hom factors overlap';
 		super(diagram, nuArgs);
 		this.properName = LambdaMorphism.ProperName(preCurry, args.domFactors, args.homFactors);
 		this.preCurry = preCurry;
@@ -14185,6 +14394,7 @@ class Diagram extends Functor
 	}
 	actionHtml(e, name, args = {})
 	{
+		D.RemoveChildren(D.toolbar.help);
 		D.RemoveChildren(D.toolbar.error);
 		const action = this.codomain.actions.get(name);
 		if (action && action.hasForm(R.diagram, this.selected))
@@ -15313,7 +15523,7 @@ class Diagram extends Functor
 		{
 			const domGraph = dm.domain.assyGraph;
 			const codGraph = dm.codomain.assyGraph;
-			const barGraph = new Graph();
+			const barGraph = new Graph(this);
 			barGraph.graphs.push(domGraph);
 			barGraph.graphs.push(codGraph);
 			return barGraph;

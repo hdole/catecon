@@ -567,6 +567,8 @@ test('contains', assert =>
 	assert.ok(!r0033.contains(r1124));
 });
 
+module('Base');
+
 testname = 'base classes exist';
 test(testname, assert =>
 {
@@ -612,10 +614,32 @@ test(testname, assert =>
 	CatClasses.map(d => assert.equal(typeof(Cat[d]), 'function', d));
 });
 
+module('U utility');
+
+test('array equality', assert =>
+{
+	assert.ok(Cat.U.ArrayEquals([], []), 'empty arrays ok');
+	assert.ok(Cat.U.ArrayEquals(['foo'], ['foo']), 'arrays with a string ok');
+	assert.ok(!Cat.U.ArrayEquals(['foo'], []));
+	assert.ok(!Cat.U.ArrayEquals([], ['foo']));
+	assert.ok(!Cat.U.ArrayEquals([3], ['foo']));
+	assert.ok(Cat.U.ArrayEquals([3], [3]));
+	assert.ok(Cat.U.ArrayEquals([1, 2, 3], [1, 2, 3]));
+	assert.ok(!Cat.U.ArrayEquals([1, 2, 3], [1, 2]));
+	assert.ok(!Cat.U.ArrayEquals([1, 2], [1, 2, 3]));
+	assert.ok(Cat.U.ArrayEquals([[[3]]], [[[3]]]));
+	assert.ok(Cat.U.ArrayEquals([1, [2, 3]], [1, [2, 3]]));
+	assert.ok(Cat.U.ArrayEquals([1, [2, 3], [4, 5]], [1, [2, 3], [4, 5]]));
+	assert.ok(!Cat.U.ArrayEquals([], null));
+	assert.ok(!Cat.U.ArrayEquals([1, [2, 3], [4, 5]], [1, [2, -1], [4, 5]]));
+});
+
 //********************************************
 // Sequential GUI testing begins here
 QUnit.config.reorder = false;
 //********************************************
+
+module('startup');
 
 test('Busy graphics', assert =>
 {
@@ -2490,9 +2514,34 @@ test('element morphism', assert =>
 	checkStore(assert, 'element morphism index', eltMorph);
 	checkStore(assert, 'element morphism', eltMorph.to);
 	// click graph for element morphism
-//	clickToolbarButton('graph');
-//	checkStore(assert, 'element morphism graph', eltMorph.graph);
+	clickToolbarButton('graph');
+	checkStore(assert, 'element morphism graph', eltMorph.graph);
 	// click lambda for element morphism
 	clickToolbarButton('lambda');
 	checkStore(assert, 'element morphism lambda help', help);
+	const z0 = help.querySelector('#lambda-codomain').querySelector('button');
+	let evnt = new MouseEvent('click', getEltCoords(z0));
+	z0.dispatchEvent(evnt);
+	const z1 = help.querySelector('#lambda-codomain').querySelector('button');
+	evnt = new MouseEvent('click', getEltCoords(z0));
+	z1.dispatchEvent(evnt);
+	checkStore(assert, 'both Zs back in domain', help);
+	const doit = help.querySelector('[data-name="lambda"]');
+	clickButton(doit);
+	clickToolbarButton('graph');
+	const convertedBack = getLastElement();
+	checkStore(assert, 'converted back index', convertedBack);
+	checkStore(assert, 'converted back', convertedBack.to);
+	checkStore(assert, 'converted back graph', convertedBack.graph);
+	checkStore(assert, 'converted back toolbar', Cat.D.toolbar.element);
+	clickToolbarButton('run');
+	checkEvaluation(assert, convertedBack.name, 3, 4, "[3,4]");
+	checkStore(assert, 'eval of lambda lambda', help.querySelector('#run-display'));
+});
+
+test('triple lambda', assert =>
+{
+	const help = Cat.D.toolbar.help;
+	clickToolbarButton('lambda');
+	checkStore(assert, 'triple lambda help', help);
 });
