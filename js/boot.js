@@ -1975,7 +1975,7 @@ args.rowCount += Math.round(delta/args.majorGrid);
 
 	args.xy.y = morph2.codomain.y + args.majorGrid;
 	morph1 = PlaceMorphism(args, to, false);
-	Cat.R.Actions.name.doit(null, cpp, {source:morph1, basename:'NULL'}, false);
+	Cat.R.Actions.name.doit(null, cpp, {sourceNdx:morph1, basename:'NULL'}, false);
 
 	const strByZ32 = cpp.get('ProductObject', {objects:[str, Z32], dual:false});
 	const filePlusErrno = cpp.get('ProductObject', {objects:[file, errno], dual:true});
