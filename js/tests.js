@@ -443,6 +443,8 @@ const storedItems = new Set();
 
 function checkStore(assert, teststep, elt, didit = assert.async())
 {
+	if (elt === undefined)
+		throw 'cannot check undefined';
 	const testname = assert.test.testName;
 	const key = getKey(testname, teststep);
 	if (storedItems.has(key))
@@ -541,6 +543,10 @@ test(' basics', assert =>
 	assert.ok(!onezeroD2.equals(zeroD2), 'not equals ok');
 	const zerooneD2 = new D2(0, 1);
 	assert.ok(!onezeroD2.equals(zerooneD2), 'not equals ok');
+	assert.ok(new D2(4.1, 5.9).trunc().equals({x:4, y:5}));
+	console.log(new D2(-4.1, -5.9).trunc().equals({x:4, y:5}));
+	assert.ok(new D2(-4.1, -5.9).trunc().equals({x:-4, y:-5}));
+	assert.ok(new D2(-0.9, 0.9).trunc().equals({x:0, y:0}));
 });
 
 test('contains', assert =>
@@ -704,7 +710,7 @@ const testDiagramInfo =
 
 test('AddEventListeners', assert =>
 {
-	Cat.R.AddEventListeners();
+	Cat.D.AddEventListeners();
 	assert.ok(true, 'AddEventListeners ok');
 });
 
@@ -751,7 +757,7 @@ test('SetupCore', assert =>
 	assert.ok(_Cat.category ===	CAT, 'Cat category is ok');
 	assert.ok(_Cat.description === 'category of smaller categories', 'Cat basename is ok');
 	assert.ok(_Cat.properName === 'ℂ𝕒𝕥', 'Cat basename is ok');
-	assert.ok(_Cat.user === 'sys', 'Cat basename is ok');
+	assert.ok(_Cat.user === 'sys', 'Cat user name is ok');
 	const Actions = Cat.R.$CAT.getElement('Actions');
 	assert.ok(Actions.basename === 'Actions', 'Actions basename is ok');
 	assert.ok(Actions.properName === 'Actions', 'Actions properName is ok');
@@ -2539,9 +2545,23 @@ test('element morphism', assert =>
 	checkStore(assert, 'eval of lambda lambda', help.querySelector('#run-display'));
 });
 
-test('triple lambda', assert =>
+test('double hom lambda', assert =>
 {
 	const help = Cat.D.toolbar.help;
 	clickToolbarButton('lambda');
-	checkStore(assert, 'triple lambda help', help);
+	checkStore(assert, 'double hom lambda help', help);
+	let btns = help.querySelectorAll('#lambda-domain button');
+	btns[0].onclick({currentTarget:btns[0]});
+	btns[1].onclick({currentTarget:btns[1]});
+	btns = help.querySelectorAll('#lambda-codomain button');
+	btns[1].onclick({currentTarget:btns[1]});
+	checkStore(assert, '* -> [Z, [Z, ZxZ]]', help);
+	const doit = help.querySelector('[data-name="lambda"]');
+	clickButton(doit);
+	const lambda = getLastElement();
+	checkStore(assert, 'double hom lambda index', lambda);
+	checkStore(assert, 'double hom lambda', lambda.to);
+	checkStore(assert, 'double hom lambda toolbar', Cat.D.toolbar.element);
+	clickToolbarButton('graph');
+	checkStore(assert, 'double hom lambda graph', lambda.graph);
 });
