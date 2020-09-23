@@ -239,10 +239,11 @@ a:hover, .offcanvas a:focus
 	background-color:	#777a;
 }
 
-#toolbar-error, .error
+.error
 {
 	background-color:	#f77;
 	color:				#fff;
+	margin:				4px;
 }
 
 .w10
@@ -775,11 +776,7 @@ description
 	border:			none;
 	color:			black;
 	text-align:		left;
-	display:		inline-block;
-	width:			190px;
 	white-space:	nowrap;
-	overflow:		hidden;
-	text-overflow:	ellipsis;
 }
 
 .searching
