@@ -46,26 +46,24 @@
 //
 //
 
-(function(exports)
+(function()
 {
 'use strict';
 
-var require;
 var sjcl;
-var gzip;
 
-if (require && require !== null)
+const isGUI = typeof window === 'object';
+
+if (!isGUI)
 {
 	var ACI = null;
-	AWS = require('aws-sdk');
 	sjcl = require('./sjcl.js');
-	gzip = require('./zlib.js');
-	var crypto = require('crypto');
+	global.fs = require('fs');
+	global.fetch = require('node-fetch');
 }
 else
 {
 	sjcl = window.sjcl;
-	gzip = window.gzip;
 }
 
 class D2
@@ -160,6 +158,10 @@ class D2
 	round()
 	{
 		return new D2(Math.round(this.x), Math.round(this.y));
+	}
+	trunc()
+	{
+		return new D2(Math.trunc(this.x), Math.trunc(this.y));
 	}
 	scale(a)
 	{
@@ -446,9 +448,6 @@ class H3
 	static tr(...args)		{ return H3._h('tr', args); }
 }
 
-const isCloud = true;		// TODO turn on when cloud ready
-
-const isGUI = typeof window === 'object';
 if (isGUI)
 {
 	(function(d)
@@ -465,6 +464,7 @@ if (isGUI)
 
 class U
 {
+	/*
 	static random()
 	{
 		const ary = new Uint8Array(16);
@@ -474,6 +474,7 @@ class U
 			cid += ary[i].toString(16);
 		return U.Sig(cid);
 	}
+	*/
 	static getUserSecret(s)
 	{
 		return U.Sig(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
@@ -503,7 +504,7 @@ class U
 	}
 	static Clone(o)
 	{
-		if (null === o || o instanceof Element || o instanceof Blob)
+		if (null === o || o instanceof Element || (typeof Blob === 'object' && o instanceof Blob))
 			return o;
 		return U.ObjClone(o);
 	}
@@ -786,7 +787,7 @@ class R
 {
 	static Busy()	// TODO move to D
 	{
-		if (!('busyBtn' in R))
+		if (isGUI && !('busyBtn' in R))
 		{
 			const svg = document.getElementById('topSVG');
 			const cx = window.innerWidth/2 - 160;
@@ -799,165 +800,11 @@ class R
 	}
 	static NotBusy()
 	{
-		if ('busyBtn' in R)
+		if (isGUI && 'busyBtn' in R)
 		{
 			R.busyBtn.parentNode.removeChild(R.busyBtn);
 			delete R.busyBtn;
 		}
-	}
-	static AddEventListeners()
-	{
-		window.addEventListener('Assertion', function(e)
-		{
-			if (!R.sync)
-				return;
-			const args = e.detail;
-			switch(args.command)
-			{
-				case 'delete':
-				case 'new':
-				case 'update':
-					D.Autosave(args.diagram);
-					break;
-			}
-		});
-		window.addEventListener('Morphism', function(e)
-		{
-			if (!R.sync)
-				return;
-			const args = e.detail;
-			switch(args.command)
-			{
-				case 'delete':
-				case 'detach':
-				case 'new':
-					D.Autosave(args.diagram);
-					break;
-				case 'update':
-					D.Autosave(args.diagram);
-					break;
-			}
-		});
-		window.addEventListener('Object', function(e)
-		{
-			if (!R.sync)
-				return;
-			const args = e.detail;
-			const diagram = args.diagram;
-			if (!diagram || diagram !== R.diagram)
-				return;
-			switch(args.command)
-			{
-				case 'fuse':
-					D.Autosave(args.diagram);
-					break;
-				case 'delete':
-				case 'new':
-				case 'update':
-				case 'move':
-					D.Autosave(args.diagram);
-					break;
-			}
-		});
-		window.addEventListener('Text', function(e)
-		{
-			if (!R.sync)
-				return;
-			const args = e.detail;
-			switch(args.command)
-			{
-				case 'delete':
-				case 'new':
-				case 'update':
-				case 'move':
-					D.Autosave(args.diagram);
-					break;
-			}
-		});
-		window.addEventListener('Diagram', function(e)
-		{
-			if (!R.sync)
-				return;
-			const args = e.detail;
-			const diagram = args.diagram;
-			switch(args.command)
-			{
-				case 'addReference':
-				case 'removeReference':
-					R.LoadDiagramEquivalences(diagram);
-					diagram.makeCells();
-					D.Autosave(args.diagram);
-					break;
-				case 'update':
-					D.Autosave(args.diagram);
-					break;
-				case 'delete':
-					diagram.makeCells();
-					D.Autosave(args.diagram);
-					break;
-				case 'makeCells':
-					diagram.makeCells();
-					break;
-			}
-		});
-		window.addEventListener('CAT', function(e)
-		{
-			const args = e.detail;
-			const diagram = args.diagram;
-			switch(args.command)
-			{
-				case 'load':
-					R.LoadDiagramEquivalences(diagram);
-					diagram.makeCells();
-					break;
-				case 'default':
-					R.LoadDiagramEquivalences(diagram);
-					diagram.makeCells();
-					if (R.initialized)
-					{
-						R.default.diagram = diagram.name;
-						R.SaveDefaults();
-					}
-					break;
-				case 'preload':
-					if (R.LoadingDiagrams.size === 0 && R.JsonDiagrams.size > 0)	// last preload event
-					{
-						const references = [...R.GetReferences(R.loadingDiagram)].reverse();
-						references.map(refName =>
-						{
-							if (R.JsonDiagrams.has(refName))
-							{
-								const json = R.JsonDiagrams.get(refName);
-								let d = R.$CAT.getElement(refName);
-								if (d) // reloading a diagram? get rid of the old one
-								{
-									R.default.debug && console.log('diagram already loaded', refName);
-									if (d.refcnt > 1)
-										// TODO reloading a diagram that is in use is bad; fix it
-										console.error('reloading diagram referenced elsewhere is bad');
-									d.decrRefcnt();
-								}
-								d = new Diagram(R.GetUserDiagram(json.user), json);
-								R.EmitCATEvent('download', d);
-								R.EmitCATEvent('load', d);
-							}
-						});
-						R.JsonDiagrams.clear();
-						R.SelectDiagram(R.loadingDiagram);
-						delete R.loadingDiagram;
-						R.postLoadFunction && R.postLoadFunction();
-						delete R.postLoadFunction;
-					}
-					break;
-				case 'download':
-					R.SaveLocal(diagram);
-					break;
-			}
-		});
-		window.addEventListener('Login', function(e)
-		{
-			!('loadingDiagram' in R) && R.SelectDiagram(R.default.diagram);
-		});
 	}
 	static SetupWorkers()
 	{
@@ -1027,7 +874,8 @@ class R
 			user:			'sys',
 		};
 		R.UserDiagram = new Map();
-		D.diagramSVG =		document.getElementById('diagramSVG');
+		if (isGUI)
+			D.diagramSVG = document.getElementById('diagramSVG');
 		R.$CAT = new Diagram(null, $CATargs);
 		R.UserDiagram.set('sys', R.$CAT);
 		R.Cat = new Category(R.$CAT,
@@ -1273,7 +1121,16 @@ class R
 	}
 	static NewCloud()
 	{
-		R.cloud = isCloud ? new Amazon() : null;
+//		R.cloud = isCloud ? new Amazon() : new NodeServer();
+		switch(R.cloudServer)
+		{
+			case 'Amazon':
+				R.cloud = new Amazon();
+				break;
+			case 'NodeServer':
+				R.cloud = new NodeServer();
+				break;
+		}
 	}
 	static InitTestProcedure()
 	{
@@ -1310,59 +1167,51 @@ class R
 	}
 	static Initialize()
 	{
-		try
+		R.sync = false;
+		const params = isGUI ? (new URL(document.location)).searchParams : new Map();
+		if (params.has('test'))
 		{
-			R.sync = false;
-			const params = (new URL(document.location)).searchParams;
-			if (params.has('test'))
-			{
-				R.InitTestProcedure();
-				return;
-			}
-			R.Busy();
-			R.ReadDefaults();
-			R.AddEventListeners();
-			R.SetupWorkers();
-			D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
-			R.NewCloud();
-			if (isGUI)
-			{
-				U.autosave = true;
-				R.ReadLocalDiagramList();
-				R.ReadLocalCategoryList();
-			}
-			R.SetupCore();
-			R.SetupActions();
-			R.SetupPFS();
-			isGUI && D.Initialize();		// initialize GUI
-			R.SetupReplay();
-			R.sync = true;
-			const loader = function()
-			{
-				R.diagram = null;
-				isGUI && !params.has('boot') && R.DownloadDiagram('Anon/Home');
-				let diagramName = params.get('d') || params.get('diagram');
-				const doDisplayMorphism = diagramName !== null;
-				if (!diagramName)
-					diagramName = R.default.diagram;
-				R.initialized = true;
-				R.NotBusy();
-				R.EmitLoginEvent();	// Anon login
-				R.cloud.load();		// cloud login
-			};
-			const bootLoader = _ =>
-			{
-				if (params.has('boot'))
-					R.LoadScript(window.location.origin + window.location.pathname + 'js/boot.js', function() { Boot(loader); });
-				else
-					loader();
-			};
-			R.FetchCatalog(bootLoader);
+			R.InitTestProcedure();
+			return;
 		}
-		catch(e)
+		R.Busy();
+		R.ReadDefaults();
+		isGUI && R.SetupWorkers();
+		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
+		R.NewCloud();
+		if (isGUI)
 		{
-			D.RecordError(e);
+			U.autosave = true;
+			R.ReadLocalDiagramList();
+			R.ReadLocalCategoryList();
 		}
+		R.SetupCore();
+		R.SetupActions();
+		R.SetupPFS();
+		isGUI && D.Initialize();		// initialize GUI
+		R.SetupReplay();
+		R.sync = true;
+		const loader = function()
+		{
+			R.diagram = null;
+			isGUI && !params.has('boot') && R.DownloadDiagram('Anon/Home');
+			let diagramName = params.get('d') || params.get('diagram');
+			const doDisplayMorphism = diagramName !== null;
+			if (!diagramName)
+				diagramName = R.default.diagram;
+			R.initialized = true;
+			R.NotBusy();
+			R.EmitLoginEvent();	// Anon login
+			R.cloud.load();		// cloud login
+		};
+		const bootLoader = _ =>
+		{
+			if (params.has('boot'))
+				R.LoadScript(window.location.origin + window.location.pathname + 'js/boot.js', function() { Boot(loader); });
+			else
+				loader();
+		};
+		R.FetchCatalog(bootLoader);
 	}
 	static GetUserDiagram(user)		// the user's diagram of their diagrams
 	{
@@ -1657,21 +1506,29 @@ class R
 	}
 	static EmitLoginEvent()
 	{
+		if (!isGUI)
+			return;
 		R.default.showEvents && console.log('emit LOGIN event', R.user.name, R.user.status);
 		return window.dispatchEvent(new CustomEvent('Login', {detail:	{command:R.user.status, name:R.user.name}, bubbles:true, cancelable:true}));
 	}
 	static EmitCATEvent(command, diagram)	// like diagram was loaded
 	{
+		if (!isGUI)
+			return;
 		R.default.showEvents && console.log('emit CAT event', {command, diagram});
 		return window.dispatchEvent(new CustomEvent('CAT', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
 	}
 	static EmitDiagramEvent(diagram, command, name = '')	// like something happened in a diagram
 	{
+		if (!isGUI)
+			return;
 		R.default.showEvents && console.log('emit DIAGRAM event', diagram.name, {command, name});
 		return window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitObjectEvent(diagram, command, element, extra = {})	// like an object changed
 	{
+		if (!isGUI)
+			return;
 		R.default.showEvents && console.log('emit OBJECT event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
@@ -1680,6 +1537,8 @@ class R
 	}
 	static EmitMorphismEvent(diagram, command, element, extra = {})
 	{
+		if (!isGUI)
+			return;
 		R.default.showEvents && console.log('emit MORPHISM event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
@@ -1688,11 +1547,15 @@ class R
 	}
 	static EmitAssertionEvent(diagram, command, element)
 	{
+		if (!isGUI)
+			return;
 		R.default.showEvents && console.log('emit ASSERTION event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
 	static EmitTextEvent(diagram, command, element)
 	{
+		if (!isGUI)
+			return;
 		R.default.showEvents && console.log('emit TEXT event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Text', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
@@ -1767,7 +1630,16 @@ class R
 	}
 	static ReadDefaults()
 	{
-		const defaults = JSON.parse(localStorage.getItem('defaults.json'));
+		const file = 'defaults.json';
+		let contents = null;
+		if (isGUI)
+			contents = localStorage.getItem(file);
+		else
+		{
+			if (fs.existsSync(file))
+				content = fs.readFile(file);
+		}
+		const defaults = contents ? JSON.parse(contents) : null;
 		if (defaults)
 			Object.keys(defaults).map(k => R.default[k] = defaults[k]);		// merge the defaults
 	}
@@ -1811,6 +1683,7 @@ Object.defineProperties(R,
 	Categories:			{value:new Map(),	writable:false},	// available categories
 	clear:				{value:false,		writable:true},
 	cloud:				{value:null,		writable:true},		// cloud we're using
+	cloudServer:		{value:isGUI ? 'Amazon' : 'NodeServer',		writable:false},		// cloud we're using
 	default:
 	{
 		value:
@@ -1846,12 +1719,24 @@ Object.defineProperties(R,
 });
 
 // TODO
-class Cloud
+class Cloud		// fitb
 {
 	constructor() {}
 	initialize() {}
 	login() {}
-	save() {}
+}
+
+class NodeServer extends Cloud
+{
+	constructor()
+	{
+		super();
+		Object.defineProperties(this,
+		{
+			'connection':		{value:'127.0.0.1:1337',	writable: false},
+			'user':				{value:	null,				writable: true},
+		});
+	}
 }
 
 class Amazon extends Cloud
@@ -2581,6 +2466,15 @@ class Toolbar
 			searchItems.appendChild(item);
 		});
 	}
+	clearError()
+	{
+		D.RemoveChildren(this.error);
+	}
+	showError(msg)
+	{
+		this.clearError();
+		this.error.appendChild(H3.span(msg, {class:'error'}));
+	}
 }
 
 class StatusBar
@@ -2752,6 +2646,7 @@ class NewElement
 				for (const [name, e] of R.$CAT.elements)
 					if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
 						this.codomainElt.appendChild(H3.option(e.htmlName(), e.name));
+				this.codomainElt.appendChild(H3.option(R.Cat.htmlName(), R.Cat.name));
 				rows.push(H3.tr(H3.td(this.codomainElt), {class:'sidenavRow'}));
 				break;
 			case 'Object':
@@ -3525,6 +3420,157 @@ ${button}
 	}
 	static AddEventListeners()
 	{
+		window.addEventListener('Assertion', function(e)
+		{
+			if (!R.sync)
+				return;
+			const args = e.detail;
+			switch(args.command)
+			{
+				case 'delete':
+				case 'new':
+				case 'update':
+					D.Autosave(args.diagram);
+					break;
+			}
+		});
+		window.addEventListener('Morphism', function(e)
+		{
+			if (!R.sync)
+				return;
+			const args = e.detail;
+			switch(args.command)
+			{
+				case 'delete':
+				case 'detach':
+				case 'new':
+					D.Autosave(args.diagram);
+					break;
+				case 'update':
+					D.Autosave(args.diagram);
+					break;
+			}
+		});
+		window.addEventListener('Object', function(e)
+		{
+			if (!R.sync)
+				return;
+			const args = e.detail;
+			const diagram = args.diagram;
+			if (!diagram || diagram !== R.diagram)
+				return;
+			switch(args.command)
+			{
+				case 'fuse':
+					D.Autosave(args.diagram);
+					break;
+				case 'delete':
+				case 'new':
+				case 'update':
+				case 'move':
+					D.Autosave(args.diagram);
+					break;
+			}
+		});
+		window.addEventListener('Text', function(e)
+		{
+			if (!R.sync)
+				return;
+			const args = e.detail;
+			switch(args.command)
+			{
+				case 'delete':
+				case 'new':
+				case 'update':
+				case 'move':
+					D.Autosave(args.diagram);
+					break;
+			}
+		});
+		window.addEventListener('Diagram', function(e)
+		{
+			if (!R.sync)
+				return;
+			const args = e.detail;
+			const diagram = args.diagram;
+			switch(args.command)
+			{
+				case 'addReference':
+				case 'removeReference':
+					R.LoadDiagramEquivalences(diagram);
+					diagram.makeCells();
+					D.Autosave(args.diagram);
+					break;
+				case 'update':
+					D.Autosave(args.diagram);
+					break;
+				case 'delete':
+					diagram.makeCells();
+					D.Autosave(args.diagram);
+					break;
+				case 'makeCells':
+					diagram.makeCells();
+					break;
+			}
+		});
+		window.addEventListener('CAT', function(e)
+		{
+			const args = e.detail;
+			const diagram = args.diagram;
+			switch(args.command)
+			{
+				case 'load':
+					R.LoadDiagramEquivalences(diagram);
+					diagram.makeCells();
+					break;
+				case 'default':
+					R.LoadDiagramEquivalences(diagram);
+					diagram.makeCells();
+					if (R.initialized)
+					{
+						R.default.diagram = diagram.name;
+						R.SaveDefaults();
+					}
+					break;
+				case 'preload':
+					if (R.LoadingDiagrams.size === 0 && R.JsonDiagrams.size > 0)	// last preload event
+					{
+						const references = [...R.GetReferences(R.loadingDiagram)].reverse();
+						references.map(refName =>
+						{
+							if (R.JsonDiagrams.has(refName))
+							{
+								const json = R.JsonDiagrams.get(refName);
+								let d = R.$CAT.getElement(refName);
+								if (d) // reloading a diagram? get rid of the old one
+								{
+									R.default.debug && console.log('diagram already loaded', refName);
+									if (d.refcnt > 1)
+										// TODO reloading a diagram that is in use is bad; fix it
+										console.error('reloading diagram referenced elsewhere is bad');
+									d.decrRefcnt();
+								}
+								d = new Diagram(R.GetUserDiagram(json.user), json);
+								R.EmitCATEvent('download', d);
+								R.EmitCATEvent('load', d);
+							}
+						});
+						R.JsonDiagrams.clear();
+						R.SelectDiagram(R.loadingDiagram);
+						delete R.loadingDiagram;
+						R.postLoadFunction && R.postLoadFunction();
+						delete R.postLoadFunction;
+					}
+					break;
+				case 'download':
+					R.SaveLocal(diagram);
+					break;
+			}
+		});
+		window.addEventListener('Login', function(e)
+		{
+			!('loadingDiagram' in R) && R.SelectDiagram(R.default.diagram);
+		});
 		window.onresize = D.Resize;
 		window.addEventListener('mousemove', D.Autohide);
 		window.addEventListener('mousedown', D.Autohide);
@@ -3602,7 +3648,7 @@ ${button}
 	static RecordError(err)
 	{
 		let txt = U.GetError(err);
-		console.trace(txt);
+		isGUI && console.trace(txt);
 		if (isGUI)
 		{
 			if (typeof err === 'object' && 'stack' in err && err.stack !== '')
@@ -3798,6 +3844,7 @@ ${button}
 	{
 		if (e.key === 'Enter')
 			that ? fn.call(that, e) : fn(e);
+		e.stopPropagation();
 	}
 	static Width()
 	{
@@ -4405,7 +4452,7 @@ Object.defineProperties(D,
 	{
 		value:
 		{
-			down:		new D2(window.innerWidth/2, window.innerHeight/2),
+			down:		new D2(isGUI ? window.innerWidth/2 : 500, isGUI ? window.innerHeight/2 : 500),
 			onPanel:	false,
 			xy:			[new D2()],
 			clientPosition()
@@ -4448,7 +4495,7 @@ Object.defineProperties(D,
 	'showUploadArea':	{value: false,		writable: true},
 	'snapshotWidth':	{value: 1024,		writable: true},
 	'snapshotHeight':	{value: 768,		writable: true},
-	'statusbar':		{value: new StatusBar(),	writable: false},
+	'statusbar':		{value: isGUI ? new StatusBar(): null,	writable: false},
 	'svgContainers':	{value: ['svg', 'g'],	writable: false},
 	'svgStyles':	
 	{
@@ -4464,11 +4511,11 @@ Object.defineProperties(D,
 	'textSize':			{value:	new Map(),	writable: false},
 	'threeDPanel':		{value: null,		writable: true},
 	'tool':				{value: 'select',	writable: true},
-	'toolbar':			{value: new Toolbar(),							writable: false},
-	'topSVG':			{value: document.getElementById('topSVG'),		writable: false},
-	'ttyPanel':			{value: null,									writable: true},
-	'uiSVG':			{value: document.getElementById('uiSVG'),		writable: false},
-	'xmlns':			{value: 'http://www.w3.org/2000/svg',			writable: false},
+	'toolbar':			{value: isGUI ? new Toolbar() : null,							writable: false},
+	'topSVG':			{value: isGUI ? document.getElementById('topSVG') : null,		writable: false},
+	'ttyPanel':			{value: null,													writable: true},
+	'uiSVG':			{value: isGUI ? document.getElementById('uiSVG') : null,		writable: false},
+	'xmlns':			{value: 'http://www.w3.org/2000/svg',							writable: false},
 	'svg':
 	{
 		value:
@@ -6580,7 +6627,8 @@ class Element
 	}
 	elementId(prefix = '')
 	{
-		return U.DeCamel(Element.SafeName((prefix === '' ? '' : prefix + '-') + this.name));
+//		return U.DeCamel(Element.SafeName((prefix === '' ? '' : prefix + '-') + this.name));
+		return Element.SafeName((prefix === '' ? '' : prefix + '-') + this.name);
 	}
 	usesDiagram(diagram)
 	{
@@ -6702,7 +6750,10 @@ class Graph
 			const k = indices[i];
 			if (k === -1)
 				return null;	// object is terminal object One
-			fctr = fctr.graphs.length > 0 ? fctr.graphs[k] : fctr;
+			if (fctr.graphs.length > 0)
+				fctr = fctr.graphs[k];
+			else
+				throw 'bad index for factor';
 		}
 		return fctr;
 	}
@@ -6810,7 +6861,7 @@ class Graph
 				{
 					const pair = data.map[j];
 					const fromLnk = pair[0];
-					if (Array.isArray(fromLnk) && fromLnk.reduce((isEqual, ml, i) => ml === lnk[i] && isEqual, true))
+					if (fromLnk.reduce((isEqual, ml, i) => ml === lnk[i] && isEqual, true))
 					{
 						const lnkClip = lnk.slice(fromLnk.length);
 						const nuLnk = pair[1].slice();
@@ -6939,8 +6990,8 @@ class Graph
 		const normal = dy === 0 ? ((this.xy.y - this.xy.y) > 0 ? new D2({x:0, y:-1}) : new D2({x:0, y:1})) : cod.subtract(this.xy).normal().normalize();
 		const h = (adx - ady) / (1.0 * adx);
 		const v = normal.scale(cod.dist(this.xy) * h / 4.0);
-		const cp1 = v.add(this.xy).round();
-		const cp2 = v.add(cod).round();
+		const cp1 = v.add(this.xy).trunc();		// more stable in testing than round()
+		const cp2 = v.add(cod).trunc();
 		return {coords:adx < ady ? `M${this.xy.x},${this.xy.y} L${cod.x},${cod.y}` : `M${this.xy.x},${this.xy.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${cod.x},${cod.y}`,
 			vertical:dx === 0};
 	}
@@ -7109,6 +7160,8 @@ class Graph
 		{
 			if (r)
 			{
+				if (U.ArrayEquals(ndx, [-2]))	// skip
+					return true;
 				const factor = this.getFactor(ndx);
 				if (factor._hasSomeCoverage())	// if already covered then cannot cover further up
 					return false;
@@ -7610,7 +7663,7 @@ class HomObject extends MultiObject
 	{
 		return false;
 	}
-	minimalHomDom()
+	baseHomDom()
 	{
 		let obj = this.objects[1];
 		while (obj instanceof HomObject)
@@ -8346,6 +8399,8 @@ class CompositeAction extends Action
 			basename:		'composite',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.line({class:"arrow9", x1:"40", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
 							H3.line({class:"arrow9", x1:"260", y1:"80", x2:"260", y2:"260", "marker-end":"url(#arrowhead)"}),
 							H3.line({class:"arrow0", x1:"40", y1:"80", x2:"220", y2:"260", "marker-end":"url(#arrowhead)"})]);
@@ -8405,6 +8460,8 @@ class IdentityAction extends Action
 			basename:		'identity',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"60", x2:"120", y2:"100"}),
 							H3.line({class:"arrow0", x1:"130", y1:"260", x2:"190", y2:"260"}),
 							H3.line({class:"arrow0", x1:"160", y1:"60", x2:"160", y2:"260"})]);
@@ -8447,6 +8504,8 @@ class NameAction extends Action
 			basename:		'name',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({cx:"80", cy:"240", r:"90", fill:"url(#radgrad1)"}),
 							H3.path({class:"svgstr4", d:"M110,180 L170,120"}),
 							H3.path({class:"svgstr4", d:"M140,210 L200,150"}),
@@ -8549,6 +8608,8 @@ class CopyAction extends Action
 			basename:		'copy',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([H3.circle({cx:"200", cy:"200", r:"160", fill:"#fff"}),
 						H3.circle({cx:"200", cy:"200", r:"160", fill:"url(#radgrad1)"}),
 						H3.circle({cx:"120", cy:"120", r:"120", fill:"url(#radgrad2)"})]);
@@ -8618,6 +8679,8 @@ class FlipNameAction extends Action
 			priority:		89,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"280"}),
 							H3.line({class:"arrow0", x1:"80", y1:"120", x2:"80", y2:"220"}),
 							H3.line({class:"arrow0", x1:"240", y1:"120", x2:"240", y2:"220"}),
@@ -8659,6 +8722,8 @@ class ProductAction extends Action
 			dual,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = ProductAction.GetIcon(this.dual);
 		R.ReplayCommands.set(this.basename, this);
 	}
@@ -8715,9 +8780,11 @@ class ProductEditAction extends Action
 			dual,
 		};
 		super(diagram, args);
+		this.table = null;
+		if (!isGUI)
+			return;
 		this.icon = ProductAction.GetIcon(this.dual);
 		R.ReplayCommands.set(this.basename, this);
-		this.table = null;
 	}
 	html(e, diagram, ary)
 	{
@@ -8929,6 +8996,8 @@ class PullbackAction extends Action
 			dual,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = 		dual ?
 			H3.g([	H3.line({class:"arrow0", x1:"60", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
 					H3.line({class:"arrow0", x1:"40", y1:"60", x2:"40", y2:"260", "marker-end":"url(#arrowhead)"}),
@@ -8981,6 +9050,8 @@ class ProductAssemblyAction extends Action
 			dual,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = dual ?
 				H3.g([	H3.line({class:"arrow0", x1:"60", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
 						H3.line({class:"arrow9", x1:"280", y1:"280", x2:"280", y2:"100", "marker-end":"url(#arrowhead)"}),
@@ -9021,6 +9092,8 @@ class MorphismAssemblyAction extends Action
 			priority:		10,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.line({class:"arrow0", x1:"40", y1:"60", x2:"300", y2:"60", "marker-end":"url(#arrowhead)"}),
 							H3.line({class:"arrow0", x1:"40", y1:"260", x2:"140", y2:"100", "marker-end":"url(#arrowhead)"}),
 							H3.line({class:"arrow0", x1:"180", y1:"100", x2:"280", y2:"260", "marker-end":"url(#arrowhead)"})]);
@@ -9062,6 +9135,8 @@ class HomAction extends Action
 		const args = {	description:	'Create a hom object or morphism from two such items',
 						basename:		'hom'};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.path({class:"arrow0", d:"M100 80 L80 80 L80 240 L 100 240"}),
 							H3.path({class:"arrow0", d:"M220 80 L240 80 L240 240 L 220 240"}),
 							H3.line({class:"arrow0rnd", x1:"170", y1:"240", x2:"150", y2:"260"})]);
@@ -9105,6 +9180,8 @@ class HomObjectAction extends Action
 			basename:		dual ? 'homLeft' : 'homRight',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = dual ?	H3.g([H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line({class:"arrow0", x1:"30", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]) :
 							H3.g([H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line({class:"arrow0", x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
@@ -9168,6 +9245,8 @@ class HomsetAction extends Action
 			basename:		'homset',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 							H3.line({class:"arrow0", x1:"100", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]);
@@ -9226,6 +9305,8 @@ class DetachDomainAction extends Action
 			dual,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = dual ?	H3.g([	H3.circle({cx:"220", cy:"200", r:"60", fill:"url(#radgrad1)"}),
 									H3.circle({cx:"280", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 									H3.line({class:"arrow0", x1:"40", y1:"160", x2:"180", y2:"200", "marker-end":"url(#arrowhead)"})])
@@ -9281,6 +9362,8 @@ class DeleteAction extends Action
 						basename:		'delete',
 						priority:		98};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"230", "marker-end":"url(#arrowhead)"}),
 							H3.path({class:"svgfilNone svgstr1", d:"M90,190 A120,50 0 1,0 230,190"})]);
 		R.ReplayCommands.set(this.basename, this);
@@ -9349,6 +9432,8 @@ class ProjectAction extends Action
 			dual,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = dual ?	H3.g([	H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 									H3.line({class:"arrow0", x2:"110", y2:"120", x1:"240", y1:"40", "marker-end":"url(#arrowhead)"}),
 									H3.line({class:"arrow0", x2:"110", y2:"160", x1:"280", y1:"160", "marker-end":"url(#arrowhead)"}),
@@ -9475,6 +9560,8 @@ class LambdaMorphismAction extends Action
 		const args = {	description:	'Curry a morphism',
 						basename:		'lambda'};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([H3.line({class:"arrow0", x1:"40", y1:"40", x2:"280", y2:"280", "marker-end":"url(#arrowhead)"}),
 						H3.line({class:"arrow0", x1:"40", y1:"280", x2:"140", y2:"180", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
@@ -9492,7 +9579,8 @@ class LambdaMorphismAction extends Action
 		}
 		catch(x)
 		{
-			D.toolbar.error.innerText = x;
+//			D.toolbar.error.innerText = x;
+			D.toolbar.showError(x);
 		}
 	}
 	doit(e, diagram, from, domFactors, homFactors)
@@ -9543,7 +9631,7 @@ class LambdaMorphismAction extends Action
 					H3.h5('Codomain'),
 					H3.small('Click to move to codomain: ['),
 					H3.span(...homCod, {id:'lambda-codomain'}),
-					H3.span(`, ${codomain instanceof HomObject ? codomain.minimalHomDom().htmlName() : codomain.htmlName()}]`),
+					H3.span(`, ${codomain instanceof HomObject ? codomain.baseHomDom().htmlName() : codomain.htmlName()}]`),
 					H3.span(D.GetButton3('lambda', 'edit3', e => Cat.R.Actions.lambda.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Create lambda morphism')));
 		html.map(elt => D.toolbar.help.appendChild(elt));
 		this.domainElt = document.getElementById('lambda-domain');
@@ -9629,6 +9717,8 @@ class HelpAction extends Action
 						basename:		'help',
 						priority:		99};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({cx:"160", cy:"240", r:"60", fill:"url(#radgrad1)"}),
 							H3.path({class:"svgstr4", d:"M110,120 C100,40 280,40 210,120 S170,170 160,200"})]);
 	}
@@ -9672,7 +9762,6 @@ class LanguageAction extends Action
 			basename:		language,
 		};
 		super(diagram, args);
-		this.icon = icon;
 		Object.defineProperties(this,
 		{
 			diagram:		{value:	null,		writable:	true},
@@ -9681,6 +9770,9 @@ class LanguageAction extends Action
 			ext:			{value:	ext,		writable:	false},
 			language:		{value:	language,	writable:	false},
 		});
+		if (!isGUI)
+			return;
+		this.icon = icon;
 	}
 	action(e, diagram, ary)
 	{
@@ -9812,7 +9904,7 @@ class JavascriptAction extends LanguageAction
 {
 	constructor(diagram)
 	{
-		super(diagram, 'javascript', 'js', H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:240px;font-weight:bold;stroke:#000;"}, "JS"));
+		super(diagram, 'javascript', 'js', isGUI ? H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:240px;font-weight:bold;stroke:#000;"}, "JS") : null);
 	}
 	getType(elt, first = true)
 	{
@@ -9940,99 +10032,7 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 						break;
 					case 'LambdaMorphism':
 						code += this.generate(morphism.preCurry, generated);
-						/*
-						const inputs = new Array(JavascriptAction.ObjectLength(morphism.preCurry.domain));
-//						const domLength = JavascriptAction.ObjectLength(domain);
-						const domLength = morphism.domFactors.length;
-						const homLength = morphism.homFactors.length;
-						// TODO
-						if (domLength > 0 && homLength > 0)		// prepare for delayed evaluation
-						{
-							for(let i=0; i<domLength; ++i)
-							{
-								const f = morphism.domFactors[i];
-	//							if (f[0] === 0)
-	//							{
-	//								const k = f[1];
-	//								inputs[k] = domLength > 1 ? `cargs[${k}]` : 'cargs';
-	//							}
-								if (f.length > 1)
-								{
-									if (f[0] === 0)		// factor from domain
-									{
-										inputs[f[1]] = domLength > 1 ? `cargs[${i}]` : 'cargs';		// cargs = constant arguments
-									}
-									else				// is === 1 and factor from HomDom
-									{
-										// note: f[1] === 0; f[2] gives position in HomDom
-										if (f[0] !== 1 || f[1] !== 0)
-											throw 'bad lambda homdom link';
-										if (f.length === 3)
-											inputs[f[2]] = domLength > 1 ? `args[${i}]` : 'args';	// no array for single arguments
-										else
-											throw 'TODO deep lambda homdom link';
-									}
-								}
-								else if (f.length === 1)	// should not happen in a dom factor
-									throw 'bad lambda dom factor';
-								else // else it is a terminal object
-									inputs[0] = '0';
-							}
-							for(let i=0; i<homLength; ++i)
-							{
-								const f = morphism.homFactors[i];
-								if (f[0] === 0)
-								{
-									const k = f[1];
-									inputs[k] = homLength > 1 ? `homargs[${k}]` : 'homargs';
-								}
-							}
-							let input = inputs.join();
-							if (inputs.length >= 0)
-								input = `[${input}]`;
-								code +=
-`${header}
-return function(homargs)
-{
-	return ${U.Token(morphism.preCurry)}(${input});
-}${tail}`;
-						}
-						else if (domLength === 0 && homLength > 0) // return function as morphism
-						{
-							code +=
-`${header}	return ${U.Token(morphism.preCurry)};${tail}`;
-						}
-						else	// must evaluate lambda!
-						{
-							const preMap = new Map();
-							const postInputMap = new Map();
-							for (let i=0; i<morphism.domFactors.length; ++i)
-							{
-								const f = morphism.domFactors[i];
-								if (f[0] === 1 && f.length === 3)
-									postInputMap.set(f[2], i);
-								else if (f[0] === 0 && f.length === 2)
-									preMap.set(f[1], i);
-								else
-									throw 'TODO lambda link';
-							}
-							let preInput = '';
-							for (let i=0; i<preMap.size; ++i)
-								preInput += `${i > 0 ? ', ' : ''}args[${preMap.get(i)}]`;
-							if (preMap.size > 1)
-								preInput = `[${preInput}]`;
-							let postInput = '';
-							for (let i=0; i<postInputMap.size; ++i)
-								postInput += `${i > 0 ? ', ' : ''}args[${postInputMap.get(i)}]`;
-							if (postInputMap.size > 1)
-								postInput = `[${postInput}]`;
-							code +=
-`${header}	return ${U.Token(morphism.preCurry)}(${preInput})(${postInput});${tail}`;
-						}
-						*/
 						code += `${header}	${this.generateLambda(morphism)}${tail}`;
-//debugger;
-//						code += `//	${this.generateLambda(morphism)}`;
 						break;
 					case 'NamedMorphism':
 						code += this.generate(morphism.source, generated);
@@ -10045,6 +10045,7 @@ return function(homargs)
 	}
 	generateLambda(morphism)
 	{
+		/*
 		const domFactorsMap = new Map();
 		const homFactorsMap = new Map();
 		function factorMap(factors)
@@ -10078,11 +10079,11 @@ return function(homargs)
 			code += `(${domFactors})`;
 		if (homFactorsMap.size > 0)
 			code += `(${homFactors})`;
-
+*/
 		const preCurry = morphism.preCurry;
 		let domArgs = '';
-		domFactors = morphism.domFactors;
-		homFactors = morphism.homFactors;
+		const domFactors = morphism.domFactors;
+		const homFactors = morphism.homFactors;
 		let k = U.HasFactor(homFactors, [0]);
 		if (k >= 0 && domFactors.length === 0)	// domain is one-point set
 			domArgs += '';	// null-op
@@ -10192,7 +10193,6 @@ return function(homargs)
 		{
 			nuCode = `	return ${U.Token(preCurry)}${homArgs}`;
 		}
-
 		return nuCode + ';';
 	}
 	convertData(obj, data)	// hom elements have to be converted from objects to their name
@@ -10606,8 +10606,8 @@ class CppAction extends LanguageAction
 {
 	constructor(diagram)
 	{
-		super(diagram, 'cpp', 'cpp', H3.g([H3.text({"text-anchor":"middle", x:"160", y:"200", style:"font-size:220px;font-weight:bold;stroke:#000;"}, "C"),
-											H3.text({"text-anchor":"middle", x:"160", y:"330", style:"font-size:200px;font-weight:bold;stroke:#000;"}, "++")]));
+		super(diagram, 'cpp', 'cpp', isGUI ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"200", style:"font-size:220px;font-weight:bold;stroke:#000;"}, "C"),
+											H3.text({"text-anchor":"middle", x:"160", y:"330", style:"font-size:200px;font-weight:bold;stroke:#000;"}, "++")]) : null);
 		Object.defineProperty(this, 'currentCiagram', {value:null, writable:true});
 	}
 	getType(elt, first = true)
@@ -11104,6 +11104,8 @@ class RunAction extends Action
 		const args = {	description:	'Run morphism',
 						basename:		'run' };
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.animateTransform({id:"RunAction btn", attributeName:"transform", type:"rotate", from:"0 160 160", to:"360 160 160", dur:"0.5s", repeatCount:"1", begin:"indefinite"}),
 							H3.line({class:"arrow0", x1:"20", y1:"80", x2:"180", y2:"80", "marker-end":"url(#arrowhead)"}),
 							H3.line({class:"arrow0", x1:"80", y1:"160", x2:"240", y2:"160", "marker-end":"url(#arrowhead)"}),
@@ -11283,7 +11285,7 @@ class RunAction extends Action
 	{
 		try
 		{
-			D.toolbar.error.innerHTML = '';
+			D.toolbar.clearError();
 			if (this.data.size > 0)
 			{
 				const selected = diagram.getElement(eltName);
@@ -11296,7 +11298,7 @@ class RunAction extends Action
 		}
 		catch(x)
 		{
-			D.toolbar.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.showError('Error: ' + U.GetError(x));
 		}
 	}
 	editData(e, i)
@@ -11331,6 +11333,8 @@ class FiniteObjectAction extends Action
 						basename:		'finiteObject',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({cx:"80", cy:"80", r:"60", fill:"url(#radgrad2)"}),
 							H3.circle({cx:"80", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"80", cy:"240", r:"60", fill:"url(#radgrad2)"}),
@@ -11421,6 +11425,8 @@ class EvaluateAction extends Action
 			basename:		'evaluate',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({cx:"80", cy:"80", r:"60", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"80", r:"60", fill:"url(#radgrad1)"}),
 							H3.polyline({class:"svgstr3", points:"50,40 30,40 30,120 50,120"}),
@@ -11453,6 +11459,8 @@ class DistributeAction extends Action
 			basename:		'distribute',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({class:"svgstr4", cx:"80", cy:"80", r:"60"}),
 							H3.line({class:"arrow0", x1:"38", y1:"38", x2:"122", y2:"122"}),
 							H3.line({class:"arrow0", x1:"38", y1:"122", x2:"122", y2:"38"}),
@@ -11493,6 +11501,8 @@ class AlignHorizontalAction extends Action
 			basename:		'alignHorizontal',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({cx:"80", cy:"160", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"240", cy:"160", r:"80", fill:"url(#radgrad1)"}),
@@ -11550,6 +11560,8 @@ class AlignVerticalAction extends Action
 			basename:		'alignVertical',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.circle({cx:"160", cy:"80", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"240", r:"80", fill:"url(#radgrad1)"}),
@@ -11608,6 +11620,8 @@ class TensorAction extends Action
 			basename:		'tensor',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.line({class:"arrow0", x1:"103", y1:"216", x2:"216", y2:"103"}),
 							H3.line({class:"arrow0", x1:"216", y1:"216", x2:"103", y2:"103"}),
 							H3.circle({cx:"160", cy:"160", r:"80", class:"svgfilNone svgstr1"})]);
@@ -11647,6 +11661,8 @@ class AssertionAction extends Action
 			basename:		'assert',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.path({class:"svgstr4", d:D.GetArc(160, 160, 100, 45, 360), "marker-end":"url(#arrowhead)"});
 		R.ReplayCommands.set(this.basename, this);
 	}
@@ -11666,7 +11682,7 @@ class AssertionAction extends Action
 			throw 'cannot form assertion';
 		const cell = diagram.domain.getCell(left, right);
 		const a = diagram.addAssertion(left, right);
-		a.setCell(cell);
+		cell.removeSVG();	// graphics come back later after equality engine runs
 		const dom = left[0].domain;
 		let nodes = new Set(dom.nodes);
 		left.map(m =>
@@ -11714,6 +11730,8 @@ class RecursionAction extends Action
 			basename:		'recursion',
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.path({class:"svgstr4", d:"M40,160 C40,0 280,0 280,160 C280,280 100,280 80,160 C80,60 220,60 220,160 L220,180", "marker-end":"url(#arrowhead)"});
 	}
 	action(e, diagram, ary)
@@ -11739,6 +11757,8 @@ class GraphAction extends Action
 						priority:		97,
 		};
 		super(diagram, args);
+		if (!isGUI)
+			return;
 		this.icon = H3.g([	H3.line({class:"arrow0", x1:"60", y1:"40", x2:"260", y2:"200"}),
 							H3.path({class:"svgstr4", d:"M60,120 C120,120 120,200 60,200"}),
 							H3.path({class:"svgstr4", d:"M260,40 C200,40 200,120 260,120"}),
@@ -13794,7 +13814,7 @@ class LambdaMorphism extends Morphism
 				!nuArgs.domFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.homFactors, f), true))	// do not share links
 			throw 'dom and hom factors overlap';
 		super(diagram, nuArgs);
-		this.properName = LambdaMorphism.ProperName(preCurry, args.domFactors, args.homFactors);
+		this.properName = LambdaMorphism.ProperName(preCurry, nuArgs.domFactors, nuArgs.homFactors);
 		this.preCurry = preCurry;
 		this.preCurry.incrRefcnt();
 		this.domFactors = args.domFactors;
@@ -13850,14 +13870,41 @@ class LambdaMorphism extends Morphism
 		const cod = graph.graphs[1];
 		const codIsHom = this.codomain instanceof HomObject;
 		const homDom = codIsHom ? cod.graphs[0] : new Graph(this.diagram);
-		const homMap = this.homFactors.map((f, i) => [f, [1, 0, i]]);
-		if (this.homFactors.length === 1)
-		{
-			const f = homMap[0];
-			homMap[0] = [f[0], [1, 0]];
-		}
+		const homMap = [];
+		let base = [1, 0];
+		const homFactors = this.homFactors;
+		let k = 0;
+		const codFactor = [1, 1];
+		if (homFactors.length === 1 && U.ArrayEquals(homFactors[0], [0]))	// check for entire domain
+			homMap[0] = [homFactors[0], [1, 0]];
+		else
+			homFactors.map((f, i) =>
+			{
+				if (i < homFactors.length -1 && U.ArrayEquals(homFactors[i+1], [-2]))
+				{
+					homMap.push([f, base.slice()]);
+					k = 0;
+				}
+				else if (U.ArrayEquals(f, [-2]))
+				{
+					base[base.length -1] = 1;	// switch to hom cod
+					codFactor.push(1);
+					k = 0;
+				}
+				else
+				{
+					if (k === 0)
+						base.push(k++);
+					else
+					{
+						base.pop();
+						base.push(k++);
+					}
+					homMap.push([f, base.slice()]);
+				}
+			});
 		factorMap.push(...homMap);
-		factorMap.push([[1], codIsHom ? [1, 1] : []]);
+		factorMap.push([[1], codIsHom ? codFactor : []]);
 		let obj = this.preCurry.codomain;
 		let preCurryHomCodGraph = preCurryGraph.graphs[1];
 		while (obj instanceof HomObject)
@@ -13882,13 +13929,45 @@ class LambdaMorphism extends Morphism
 			domGraph.graphs[i].copyGraph({map:factorMap, src});
 		});
 		// copy hom factor links
-		if (this.homFactors.length > 0)
+		if (homFactors.length === 1 && U.ArrayEquals(homFactors[0], [0]))	// check for entire domain
 		{
-			this.homFactors.map((ndx, i) =>
+			const src = preCurryGraph.getFactor(homFactors[0]);
+			const target = cod.graphs[0];
+			target.copyGraph({map:factorMap, src});
+		}
+		else
+		{
+			base = [1];
+			k = 0;
+			homFactors.map((ndx, i) =>
 			{
-				const src = preCurryGraph.getFactor(ndx);
-				const target = cod.getFactor(ndx);
-				target.copyGraph({map:factorMap, src});
+				if (i < homFactors.length -1 && U.ArrayEquals(homFactors[i+1], [-2]))
+				{
+					const src = preCurryGraph.getFactor(ndx);
+					base.push(0);
+					const target = graph.getFactor(base);
+					base.pop();
+					target.copyGraph({map:factorMap, src});
+					k = 0;
+				}
+				else if (U.ArrayEquals(ndx, [-2]))
+				{
+					base.push(1);
+					k = 0;
+				}
+				else
+				{
+					if (k === 0)
+						base.push(k++);
+					else
+					{
+						base.pop();
+						base.push(k++);
+					}
+					const src = preCurryGraph.getFactor(ndx);
+					const target = graph.getFactor(base);
+					target.copyGraph({map:factorMap, src});
+				}
 			});
 		}
 		graph.tagGraph(this.constructor.name);
@@ -13914,23 +13993,21 @@ class LambdaMorphism extends Morphism
 	{
 		const seq = diagram.get('ProductObject', {objects:[preCurry.domain, preCurry.codomain]});
 		const isCodHom = preCurry.codomain instanceof HomObject;
-		let codomain = isCodHom ? preCurry.codomain.minimalHomDom() : preCurry.codomain;
+		let codomain = isCodHom ? preCurry.codomain.baseHomDom() : preCurry.codomain;
 		const fctrs = factors.slice();
 		let objects = [];
 		let isProd = true;
 		while(fctrs.length > 0)
 		{
 			const f = fctrs.pop();
-			if (Array.isArray(f))
-				objects.push(seq.getFactor(f));
-			else if (f === -1)	// add to products at this level
-				isProd = true;
-			else if (f === -2)	// form hom level
+			if (U.ArrayEquals(f, [-2]))	// form hom level
 			{
-				codomain = diagram.get('HomObject', {objects: [diagram.get('ProductObject', {objects}), codomain]});
+				codomain = diagram.hom(diagram.prod(...objects), codomain);
 				objects = [];
 				isProd = false;
 			}
+			else if (U.ArrayEquals(f, [-1]))	// add to products at this level
+				isProd = true;
 			else
 				objects.push(seq.getFactor(f));
 		}
@@ -13953,21 +14030,23 @@ class LambdaMorphism extends Morphism
 			{
 				const g = f.slice();
 				g.shift();
-				return g.toString();
+				return g.length > 0 ? `[${g.toString()}]` : '';
 			}
 			return f.toString();	// for -1
 		}).join();
-		const hf = homFactors.map(f =>
+		let hf = '';
+		homFactors.map(f =>
 		{
-			if (Array.isArray(f))
+			if (U.ArrayEquals(f, [-2]))
+				hf += '/';
+			else
 			{
 				const g = f.slice();
 				g.shift();
-				return g.toString();
+				hf += g.length > 0 ? `[${g.toString()}]` : '';
 			}
-			return f.toString();	// for -1 & -2
 		}).join();
-		return `&lambda;${preCurry.properName}${U.subscript(df)},${U.subscript(hf)}`;
+		return `&lambda;&lt;${preCurry.properName}${df}${df !== '' || hf !== '' ? '::' : ''}${hf}&gt;`;
 	}
 }
 
@@ -14286,7 +14365,7 @@ class Diagram extends Functor
 			this.viewport = nuArgs.viewport;
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
-		this.makeSVG(false);
+		isGUI && this.makeSVG(false);
 		if ('domainElements' in nuArgs)
 			this.domain.process(this, nuArgs.domainElements);
 		R.SetDiagramInfo(this);
@@ -14395,7 +14474,8 @@ class Diagram extends Functor
 	actionHtml(e, name, args = {})
 	{
 		D.RemoveChildren(D.toolbar.help);
-		D.RemoveChildren(D.toolbar.error);
+//		D.RemoveChildren(D.toolbar.error);
+		D.toolbar.clearError();
 		const action = this.codomain.actions.get(name);
 		if (action && action.hasForm(R.diagram, this.selected))
 			action.html(e, R.diagram, this.selected, args);
@@ -14825,7 +14905,7 @@ class Diagram extends Functor
 	}
 	editElementText(e, name, id, attribute)
 	{
-		D.toolbar.error.innerHTML = '';
+		D.toolbar.clearError();
 		try
 		{
 			const qry = `#${id} ${attribute === 'properName' ? 'proper-name' : attribute}`;
@@ -14848,12 +14928,13 @@ class Diagram extends Functor
 			{
 				txtbox.contentEditable = true;
 				txtbox.focus();
+				txtbox.onkeydown = e => e.stopPropagation();
 			}
 			return value;
 		}
 		catch(x)
 		{
-			D.toolbar.error.innerHTML = U.HtmlEntitySafe(`Error: ${x}`);
+			D.toolbar.showError(U.HtmlEntitySafe(`Error: ${x}`));
 		}
 	}
 	updateMorphisms()
@@ -15785,7 +15866,7 @@ class Diagram extends Functor
 		});
 		sources.forEach(function(s)
 		{
-			if ([...s.domains, ...s.codomains].reduce((r, m) => r && isConveyance(m)))
+			if ([...s.domains, ...s.codomains].reduce((r, m) => r && isConveyance(m), true))
 				sources.delete(s);
 		});
 
@@ -16135,8 +16216,11 @@ const Cat =
 	TensorObject,
 };
 
-window.Cat			= Cat;
-
-!('QUnit' in window) && R.Initialize();	// boot-up
+if (isGUI)
+{
+	window.Cat = Cat;
+//	!('QUnit' in window) && R.Initialize();	// boot-up
+}
+R.Initialize();	// boot-up
 
 })();
