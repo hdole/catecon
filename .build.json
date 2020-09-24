@@ -130,6 +130,13 @@
 			"region":	"us-west-1"
 		},
 		{
+			"file":		"lambda/CateconCatalog.js",
+			"name":		"CateconCatalog",
+			"method":	"uploadLambda",
+			"dependencies"	: ["lambda/AWSconstants.js"],
+			"region":	"us-west-1"
+		},
+		{
 			"file":		"js/boot.js",
 			"method":	"copyCat",
 			"dependencies"	: ["Cat.js"],
