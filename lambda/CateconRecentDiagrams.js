@@ -20,7 +20,6 @@ function convert(data)
         description:data.description.S,
         timestamp:  Number.parseInt(data.timestamp.N, 10),
         properName:	data.properName.S,
-        user:		data.user.S
     };
     return d;
 }
@@ -31,8 +30,8 @@ exports.handler = (event, context, callback) =>
     const params =
     {
         TableName:  C.RECENT_DIAGRAM_TABLE,
-        ExpressionAttributeNames: {'#nm':"name", '#ts':'timestamp'},
-        ProjectionExpression:   '#nm, user, #ts, properName, description'
+        ExpressionAttributeNames: {'#nm':'name', '#ts':'timestamp'},
+        ProjectionExpression:   '#nm, #ts, properName, description'
     };
     db.scan(params, function(err, data)
     {
@@ -60,11 +59,11 @@ exports.handler = (event, context, callback) =>
         const bucket = new AWS.S3({apiVersion:'2006-03-01', params: {Bucket: C.DIAGRAM_BUCKET_NAME}});
         bucket.putObject(
         {
-           Bucket:  C.DIAGRAM_BUCKET_NAME,
+           Bucket:		C.DIAGRAM_BUCKET_NAME,
            ContentType: 'json',
-           Key: 'recent.json',
+           Key:			'recent.json',
            Body,
-           ACL:     'public-read',
+           ACL:			'public-read',
         }, function(err, data)
         {
             if (err)
