@@ -23,11 +23,9 @@ exports.handler = (event, context, callback) =>
 //		if (error)
 //			return callback(error);
 //		const body = JSON.parse(bodyStr);
-		const timestamp = Date.now();
 		const user = event.user;
 		const diagram = event.diagram;
 		const png = event.png;
-		diagram.timestamp = timestamp;
 		const diagramString = JSON.stringify(diagram);
 //		zlib.gzip(diagramString, (error, buffer) =>
 //		{
