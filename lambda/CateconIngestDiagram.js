@@ -1,4 +1,4 @@
-// (C) 2018 Harry Dole
+// (C) 2018-2020 Harry Dole
 // Catecon:  The Categorical Console
 //
 const AWS = require('aws-sdk');

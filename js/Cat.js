@@ -457,24 +457,12 @@ if (isGUI)
 		a.async = true;
 		a.id = 'amazon-login-sdk';
 		a.src = 'https://api-cdn.amazon.com/sdk/login1.js?v=3';
-//		d.getElementById('navbar').appendChild(a);
 		d.querySelector('body').appendChild(a);
 	})(document);
 }
 
 class U
 {
-	/*
-	static random()
-	{
-		const ary = new Uint8Array(16);
-		isGUI ? window.crypto.getRandomValues(ary) : crypto.randomFillSync(ary);
-		let cid = '';
-		for (let i=0; i<16; ++i)
-			cid += ary[i].toString(16);
-		return U.Sig(cid);
-	}
-	*/
 	static getUserSecret(s)
 	{
 		return U.Sig(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
@@ -727,7 +715,7 @@ class U
 	{
 		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 	}
-	static RefcntSorter(a, b) { return a.refcnt < b.refcnt ? -1 : b.refcnt > a.refcnt ? 1 : 0; }
+	static RefcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : b.refcnt < a.refcnt ? 1 : 0; }
 	static IsIndexElement(elt)
 	{
 		return elt instanceof DiagramObject || elt instanceof DiagramMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
@@ -1119,19 +1107,6 @@ class R
 			actionDiagrams:	['product', 'coproduct', 'hom', 'distribute'],
 		});
 	}
-	static NewCloud()
-	{
-//		R.cloud = isCloud ? new Amazon() : new NodeServer();
-		switch(R.cloudServer)
-		{
-			case 'Amazon':
-				R.cloud = new Amazon();
-				break;
-			case 'NodeServer':
-				R.cloud = new NodeServer();
-				break;
-		}
-	}
 	static InitTestProcedure()
 	{
 		const head = document.getElementsByTagName('HEAD')[0];
@@ -1178,7 +1153,9 @@ class R
 		R.ReadDefaults();
 		isGUI && R.SetupWorkers();
 		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
-		R.NewCloud();
+		R.cloud = new Amazon();
+		if (isGUI)
+			R.local = document.location.hostname === 'localhost';
 		if (isGUI)
 		{
 			U.autosave = true;
@@ -1671,6 +1648,18 @@ class R
 		}
 		return false;
 	}
+	static DiagramIngest(e, diagram, fn)
+	{
+		if (R.local)
+		{
+			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
+			const headers = {'Content-Type':'application/json;charset=utf-8'};
+//			fetch(`http://${document.location.host}/DiagramIngest?payload=${encodeURIComponent(payload)}`, {method:'POST', headers:{'Content-Type':'application/json;charset=utf-8'}}, fn);
+			fetch(`http://${document.location.host}/DiagramIngest`, {method:'POST', body, headers}, fn);
+		}
+		else
+			R.cloud.ingestDiagramLambda(e, diagram, fn);
+	}
 }
 Object.defineProperties(R,
 {
@@ -1683,7 +1672,7 @@ Object.defineProperties(R,
 	Categories:			{value:new Map(),	writable:false},	// available categories
 	clear:				{value:false,		writable:true},
 	cloud:				{value:null,		writable:true},		// cloud we're using
-	cloudServer:		{value:isGUI ? 'Amazon' : 'NodeServer',		writable:false},		// cloud we're using
+	local:				{value:null,		writable:true},		// local server, if it exists
 	default:
 	{
 		value:
@@ -1722,21 +1711,10 @@ Object.defineProperties(R,
 class Cloud		// fitb
 {
 	constructor() {}
+	diagramSearch(search, fn) {}
 	initialize() {}
+	load() {}
 	login() {}
-}
-
-class NodeServer extends Cloud
-{
-	constructor()
-	{
-		super();
-		Object.defineProperties(this,
-		{
-			'connection':		{value:'127.0.0.1:1337',	writable: false},
-			'user':				{value:	null,				writable: true},
-		});
-	}
 }
 
 class Amazon extends Cloud
@@ -1760,28 +1738,31 @@ class Amazon extends Cloud
 	}
 	load(fn = null)
 	{
-		const that = this;
-		const script = H3.script({src:"https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js", type:"text/javascript", id:'cloud-amazon', onload:function()
+		if (isGUI)
 		{
-			const url = document.location;
-			const tokens = url.pathname.split('/');
-			tokens.pop();
-			tokens.shift();
-			const host = `${url.protocol}//${url.host}/${url.pathname === '/' ? '' : '/' + tokens.join('/')}`;
-			const script = H3.script({src:host + "/js/amazon-cognito-identity.min.js", type:"text/javascript", onload:function()
+			const that = this;
+			const script = H3.script({src:"https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js", type:"text/javascript", id:'cloud-amazon', onload:function()
 			{
-				R.cloud = that;
-				window.AWS.config.update(
+				const url = document.location;
+				const tokens = url.pathname.split('/');
+				tokens.pop();
+				tokens.shift();
+				const host = `${url.protocol}//${url.host}/${url.pathname === '/' ? '' : '/' + tokens.join('/')}`;
+				const script = H3.script({src:host + "/js/amazon-cognito-identity.min.js", type:"text/javascript", onload:function()
 				{
-					region:			that.region,
-					credentials:	new window.AWS.CognitoIdentityCredentials(that.loginInfo),
-				});
-				isGUI && that.registerCognito();
-				fn && fn();
+					R.cloud = that;
+					window.AWS.config.update(
+					{
+						region:			that.region,
+						credentials:	new window.AWS.CognitoIdentityCredentials(that.loginInfo),
+					});
+					isGUI && that.registerCognito();
+					fn && fn();
+				}});
+				document.body.appendChild(script);
 			}});
 			document.body.appendChild(script);
-		}});
-		document.body.appendChild(script);
+		}
 	}
 	getURL(suffix)
 	{
@@ -2077,41 +2058,28 @@ class Amazon extends Cloud
 	}
 	ingestDiagramLambda(e, dgrm, fn)
 	{
-//		const dgrmJson = dgrm.json();
-//		const dgrmPayload = gzip.zip(JSON.stringify(dgrmJson));
-//		const dgrmPayload = Zlib.Gzip(JSON.stringify(dgrmJson));
-//		const blob = new Blob([dgrmPayload], {type:'application/x-gzip'});
 		const Payload = JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)});
-//		const Payload = new Blob([gzip.zip(JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)}))], {type:'application:x-gzip'});
-//		const Payload = JSON.stringify({body:JSON.stringify(gzip.zip(JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)})))});
-//		const gz = gzip.zip(JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)}));
-//		const Payload = JSON.stringify({body:new Blob([gz], {type:'application/x-gzip'})});
-//*		const string = JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)});
-//*		zlib.gzip(string, (error, buffer) =>
-//*		{
-//*			const Payload = JSON.stringify({body:buffer.toString('base64')});
-			if (Payload.length > U.uploadLimit)
+		if (Payload.length > U.uploadLimit)
+		{
+			D.statusbar.show(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
+			return;
+		}
+		const params =
+		{
+			FunctionName:	'CateconIngestDiagram',
+			LogType:		'None',
+			Payload,
+		};
+		function handler(error, data)
+		{
+			if (error)
 			{
-				D.statusbar.show(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
+				D.RecordError(error);
 				return;
 			}
-			const params =
-			{
-				FunctionName:	'CateconIngestDiagram',
-				LogType:		'None',
-				Payload,
-			};
-			function handler(error, data)
-			{
-				if (error)
-				{
-					D.RecordError(error);
-					return;
-				}
-				fn && fn(data);
-			}
-			this.lambda.invoke(params, handler);
-//*		});
+			fn && fn(data);
+		}
+		this.lambda.invoke(params, handler);
 	}
 	diagramSearch(search, fn)
 	{
@@ -2155,41 +2123,11 @@ class Amazon extends Cloud
 	{
 		const url = this.getURL(name) + '.json';
 		fetch(url, {cache: true ? 'default' : 'reload'}).then(response => response.json()).then(json =>
-//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'Content-Type':'application/x-gzip'}, encoding:null}).then(response => response.arrayBuffer).then(ab =>
-//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.arrayBuffer()).then(ab =>
-//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.text()).then(ab =>
-//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.body).then(ab =>
-//		fetch(url, {cache: true ? 'default' : 'reload', headers:{'content-type':'application/x-gzip'}, encoding:null}).then(response => response.blob()).then(ab =>
 	{
-//			const bfr = [...new Uint8Array(ab)];
-//			const bfr2 = btoa(String.fromCharCode(bfr));
-//			const result = pako.inflate(bfr, {to:'string'});
-//			const result = pako.inflateRaw(ab);
-//			const abui8 = new Uint8Array(ab);
-//			const str = btoa(String.fromCharCode(...abui8));
-//			dgrmString = zlib.gunzipSync(body);
-//			const gunzip = Zlib.Gunzip(abui8);
-//			const dgrmString = gunzip.decompress();
-//			const dgrmDeflated = blob.toString('base64');
-//			const str = btoa(String.fromCharCode(...new Uint8Array(blob)));
-//			const rdr = new FileReader();
-//			rdr.addEventListener('loadend', e =>
-//			{
-//				debugger;
-//				const dgrmCmprssd = e.srcElement.result;
-//				dgrmString = zlib.gunzipSync(dgrmCmprssd);
-//				const json = JSON.parse(dgrmString);
 				R.default.debug && console.log('_downloadDiagram', name);
 				R.LoadingDiagrams.delete(name);
 				R.JsonDiagrams.set(name, json);
 				R.EmitCATEvent('preload', json);
-//			});
-//			rdr.readAsBinaryString(blob);
-//			zlib.gunzip(str, (error, dgrmString) =>
-//			{
-//				if (error)
-//					return callback(error);
-//			});
 		});
 	}
 	downloadDiagram(name)
@@ -2440,27 +2378,15 @@ class Toolbar
 		R.diagram.domain.elements.forEach(function(elt)
 		{
 			if (elt instanceof DiagramObject || elt instanceof DiagramMorphism)
-				(elt.to.properName.includes(val) || elt.to.basename.includes(val)) && elts.push(elt);
+				(elt.to.properName.includes(val) || elt.to.basenameIncludes(val)) && elts.push(elt);
 			else if (elt instanceof DiagramText)
 				elt.description.includes(val) && elts.push(elt);
 		});
-		function showElement(elt)
-		{
-			const to = elt.to;
-			let txt = '';
-			if (elt instanceof DiagramObject)
-				txt = [H3.span(to.htmlName()), H3.br(), H3.span(to.name, {class:'smallPrint'})];
-			else if (elt instanceof DiagramMorphism)
-				txt = [H3.span(`${to.htmlName()}:${to.domain.htmlName()}&rarr;${to.codomain.htmlName()}`), H3.br(), H3.span(to.name, {class:'smallPrint'})];
-			else if (elt instanceof DiagramText)
-				txt = elt.description.length < 100 ? elt.description : elt.description.substring(0,15) + '...';
-			return txt;
-		}
 		searchItems.appendChild(H3.small('Click to view', {class:'italic'}));
 		elts.sort(U.RefcntSorter);
 		elts.map(elt =>
 		{
-			const item = H3.div(showElement(elt), {onclick:function(e) { R.diagram.viewElements(elt); }, class:'left panelElt'});
+			const item = H3.div(D.GetIndexHTML(elt), {onclick:function(e) { R.diagram.viewElements(elt); }, class:'left panelElt'});
 			item.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(elt.name, true);});
 			item.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(elt.name, false);});
 			searchItems.appendChild(item);
@@ -2668,13 +2594,16 @@ class NewElement
 			rows.map(r => tbl.appendChild(r));
 		}
 		help.appendChild(H3.div(elts));
-		canSearch && help.appendChild(H3.input({class:'in100', id:'help-element-search', title:'Search', placeholder:'Name contains...', onkeyup }));
-		if (existingRows.length > 0)
+		if (canSearch)
 		{
+			help.appendChild(H3.hr());
+			help.appendChild(H3.span('Search in category', {class:'italic'}));
 			help.appendChild(H3.br());
-			help.appendChild(H3.small('Click to place', {class:'italic'}));
-			help.appendChild(H3.table(existingRows, {id:'help-matching-table'}));
+			help.appendChild(H3.input({class:'in100', id:'help-element-search', title:'Search', placeholder:'Name contains...', onkeyup }));
 		}
+		help.appendChild(H3.br());
+		help.appendChild(H3.small('Click to place', {class:'italic'}));
+		help.appendChild(H3.table(existingRows, {id:'help-matching-table', style:'margin:4px;'}));
 		if (focus)
 		{
 			focus.focus();
@@ -2684,14 +2613,13 @@ class NewElement
 	getMatchingRows()
 	{
 		const rows = [];
-		const filter = new RegExp(this.filter);
 		switch(this.type)
 		{
 			case 'Morphism':
 				const objects = R.diagram.getObjects();
 				if (!this.suppress)
 				{
-					let morphisms = R.diagram.getMorphisms().filter(m => filter.test(m.name));
+					let morphisms = R.diagram.getMorphisms().filter(m => m.properName.includes(this.filter) || m.basenameIncludes(this.filter));
 					morphisms.sort(U.RefcntSorter);
 					morphisms.map(m => rows.push(H3.tr(H3.td(m.domain.htmlName()), H3.td(m.properName), H3.td(m.codomain.htmlName()),
 														{onclick:`Cat.R.diagram.placeMorphism(event, '${m.name}', null, null, true, false)`, class:'panelElt'})));
@@ -2704,7 +2632,7 @@ class NewElement
 				break;
 			case 'Object':
 			{
-				const objects = R.diagram.getObjects().filter(o => filter.test(o.name));
+				const objects = R.diagram.getObjects().filter(o => o.properName.includes(this.filter) || o.basenameIncludes(this.filter));
 				objects.sort(U.RefcntSorter);
 				objects.map(o => rows.push(H3.tr(H3.td(o.properName,{onclick:`Cat.R.diagram.placeObject(event, '${o.name}')`, class:'panelElt'}))));
 				break;
@@ -4201,6 +4129,18 @@ ${button}
 		while (delta < tw)
 			delta += stdGrid;
 		return delta;
+	}
+	static GetIndexHTML(elt)
+	{
+		const to = elt.to;
+		let txt = '';
+		if (elt instanceof DiagramObject)
+			txt = [H3.span(to.htmlName()), H3.br(), H3.span(to.name, {class:'smallPrint'})];
+		else if (elt instanceof DiagramMorphism)
+			txt = [H3.span(`${to.htmlName()}:${to.domain.htmlName()}&rarr;${to.codomain.htmlName()}`), H3.br(), H3.span(to.name, {class:'smallPrint'})];
+		else if (elt instanceof DiagramText)
+			txt = elt.description.length < 100 ? elt.description : elt.description.substring(0,15) + '...';
+		return txt;
 	}
 }
 Object.defineProperties(D,
@@ -6627,7 +6567,6 @@ class Element
 	}
 	elementId(prefix = '')
 	{
-//		return U.DeCamel(Element.SafeName((prefix === '' ? '' : prefix + '-') + this.name));
 		return Element.SafeName((prefix === '' ? '' : prefix + '-') + this.name);
 	}
 	usesDiagram(diagram)
@@ -6675,6 +6614,7 @@ class Element
 	find(elt, index = [])			{ return elt === this ? index : []; }
 	basic()							{ return 'base' in this ? this.base : this; }
 	getBase()						{ return this; }
+	basenameIncludes(val)			{ return this.basename.includes(val); }
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return diagram ? `${diagram.name}/${args.basename}` : args.basename; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
@@ -6683,7 +6623,6 @@ class Element
 
 class Graph
 {
-//	constructor(diagram, position, width, graphs = [])
 	constructor(diagram, args = {})
 	{
 		this.diagram = diagram;
@@ -7395,6 +7334,13 @@ class MultiObject extends CatObject
 	isIterable()	// Default is for a MultiObject to be iterable if all its morphisms are iterable.
 	{
 		return this.objects.reduce((r, o) => r && o.isIterable(), true);
+	}
+	basenameIncludes(val)
+	{
+		for (let i=0; i<this.objects.length; ++i)
+			if (this.objects[i].basenameIncludes(val))
+				return true;
+		return false;
 	}
 	static ProperName(sep, objects, reverse = false)
 	{
@@ -10045,41 +9991,6 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 	}
 	generateLambda(morphism)
 	{
-		/*
-		const domFactorsMap = new Map();
-		const homFactorsMap = new Map();
-		function factorMap(factors)
-		{
-			for (let i=0; i<factors.length; ++i)
-			{
-				const f = factors[i];
-				if (f[0] === 1 && f.length === 3)
-					homFactorsMap.set(f[2], i);
-				else if (f[0] === 0 && f.length === 2)
-					domFactorsMap.set(f[1], i);
-//				else
-//					throw 'TODO lambda link';
-			}
-		}
-		factorMap(morphism.domFactors);
-		factorMap(morphism.homFactors);
-		let domFactors = '';
-		for (let i=0; i<domFactorsMap.size; ++i)
-			domFactors += `${i > 0 ? ', ' : ''}args[${domFactorsMap.get(i)}]`;
-		if (domFactorsMap.size > 1)
-			domFactors = `[${domFactors}]`;
-		let homFactors = '';
-		for (let i=0; i<homFactorsMap.size; ++i)
-			homFactors += `${i > 0 ? ', ' : ''}args[${homFactorsMap.get(i)}]`;
-		if (homFactorsMap.size > 1)
-			homFactors = `[${homFactors}]`;
-		let code =
-`	return ${U.Token(morphism.preCurry)}`;
-		if (domFactorsMap.size > 0 || homFactorsMap.size > 0)
-			code += `(${domFactors})`;
-		if (homFactorsMap.size > 0)
-			code += `(${homFactors})`;
-*/
 		const preCurry = morphism.preCurry;
 		let domArgs = '';
 		const domFactors = morphism.domFactors;
@@ -11776,6 +11687,42 @@ class GraphAction extends Action
 	}
 }
 
+class SqlTable extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Create SQl Table',
+			basename:		'sqlTable',
+			priority:		1,
+		};
+		super(diagram, args);
+		if (!isGUI)
+			return;
+		this.icon = H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:200px;font-weight:bold;stroke:#000;"}, "Tbl");
+	}
+	html(e, diagram, ary)
+	{
+		const help = D.toolbar.help
+		D.RemoveChildren(help);
+		help.appendChild(H3.h3('Create MySQL Table'));
+		ary.map(m => help.appendChild(D.GetIndexHTML(m)));
+	}
+	action(e, diagram, ary)
+	{
+	}
+	hasForm(diagram, ary)
+	{
+		if (diagram.allReferences.has('hdole/mysql') && Category.IsSource(ary))
+		{
+			const mysql = R.$CAT.getElement('hdole/mysql');
+			return ary.reduce((r, m) => r && mysql.elements.has(m.to.codomain), true);	// all codomains are in mysql
+		}
+		return false;
+	}
+}
+
 class Category extends CatObject
 {
 	constructor(diagram, args)
@@ -13341,6 +13288,13 @@ class MultiMorphism extends Morphism
 	{
 		return false;
 	}
+	basenameIncludes(val)
+	{
+		for (let i=0; i<this.morphisms.length; ++i)
+			if (this.morphisms[i].basenameIncludes(val))
+				return true;
+		return false;
+	}
 }
 
 class Composite extends MultiMorphism
@@ -14397,6 +14351,7 @@ class Diagram extends Functor
 		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
 		a.readonly = this.readonly;
 		a.user = this.user;
+		a.timestamp = this.timestamp;
 		return a;
 	}
 	getAnon(s)
@@ -14474,7 +14429,6 @@ class Diagram extends Functor
 	actionHtml(e, name, args = {})
 	{
 		D.RemoveChildren(D.toolbar.help);
-//		D.RemoveChildren(D.toolbar.error);
 		D.toolbar.clearError();
 		const action = this.codomain.actions.get(name);
 		if (action && action.hasForm(R.diagram, this.selected))
@@ -14706,20 +14660,6 @@ class Diagram extends Functor
 		const bbox = new D2(from.svg.getBBox());
 		let offboxes = [new D2(domain.getBBox()), new D2(bbox), new D2(codomain.getBBox())];
 		const names = [domain.name, from.name, codomain.name];
-/*
-		if (doOffset)
-		{
-			let offset = new D2;
-			while (offboxes.reduce((r, bx, i) => r || this.hasOverlap(bx, names[i]), false))
-			{
-				offboxes = offboxes.map(bx => bx.add(D.default.stdOffset));
-				offset = offset.add(D.default.stdOffset);
-			}
-			from.domain.update(xyD.add(offset));
-			from.codomain.update(xyC.add(offset));
-			from.update();
-		}
-*/
 		if (select)
 			this.makeSelected(from);
 		return from;
@@ -14849,7 +14789,8 @@ class Diagram extends Functor
 				btn.beginElement();
 			}
 			const that = this;
-			R.cloud.ingestDiagramLambda(e, this, function(res)
+//			R.cloud.ingestDiagramLambda(e, this, function(res)
+			R.DiagramIngest(e, this, function(res)
 			{
 				R.default.debug && console.log('uploaded', that.name);
 				R.catalog.set(that.name, R.GetDiagramInfo(that));
@@ -15813,10 +15754,7 @@ class Diagram extends Functor
 			input.codomains.forEach(codScanner);
 			scanned.add(input);
 		}
-
-		//
 		// propagate tags from inputs
-		//
 		inputs.map(i => issues.push({message:'Input', element:i}));
 
 		inputs.map(i =>
@@ -15827,9 +15765,7 @@ class Diagram extends Functor
 				propTag(m, m.to, m.graph, getBarGraph(m), tag, setTag);
 			});
 		});
-		//
 		// look for outputs; they have info and no non-info factor morphisms
-		//
 		const outputs = [];
 		function scannerNo(g, ndx) { isIt = isIt && !g.hasTag('info'); }
 		function scannerYes(g, ndx) { isIt = isIt && g.hasTag('info'); }
@@ -15968,9 +15904,7 @@ addBall(m);
 		//
 		function formMorphism(domain, currentDomain, ndx = [])
 		{
-			//
 			// downstream objects that refer to this index object need to find our index
-			//
 			[...domain.codomains].map(m => references.has(m) && isProjection(m.to) && ref2ndx.set(m, ndx));
 			//
 			// if the index object has projection references, then we need a pre-assembly factor morphism
@@ -16175,6 +16109,7 @@ console.log('formMorphism', {morphism});
 
 const Cat =
 {
+	Amazon,
 	D2,
 	H3,
 	R,

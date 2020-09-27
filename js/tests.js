@@ -1,3 +1,6 @@
+// (C) 2018-2020 Harry Dole
+// Catecon:  The Categorical Console
+//
 const {module, test} = QUnit;
 
 function cleanup()
@@ -820,7 +823,7 @@ test('PFS actions', assert =>
 
 test('Initialize cloud', assert =>
 {
-	Cat.R.NewCloud();
+	Cat.R.cloud = new Cat.Amazon;
 	assert.ok(Cat.R.cloud, 'Cloud exists');
 	const didit = assert.async();
 	Cat.R.cloud.load(function()
