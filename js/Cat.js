@@ -60,6 +60,8 @@ if (!isGUI)
 	sjcl = require('./sjcl.js');
 	global.fs = require('fs');
 	global.fetch = require('node-fetch');
+	const {Worker, isMainThread, parentPort, workerData} = require('worker_threads');
+	global.Worker = Worker;
 }
 else
 {
@@ -727,6 +729,18 @@ class U
 				return i;
 		return -1;
 	}
+	static readfile(filename)
+	{
+		return isGUI ? localStorage.getItem(filename) : fs.readFileSync('diagrams/' + filename);
+	}
+	static writefile(filename, data)
+	{
+		isGUI ?  localStorage.setItem(filename, data) : fs.writeFileSync('diagrams/' +filename, data);
+	}
+	static removefile(filename)
+	{
+		isGUI ? localStorage.removeItem(filename) : fs.unlink('diagrams/' + filename);
+	}
 }
 Object.defineProperties(U,
 {
@@ -796,8 +810,10 @@ class R
 	}
 	static SetupWorkers()
 	{
-		const worker = new Worker('js/workerEquality.js');
-		worker.addEventListener('message', function(msg)
+//		const worker = isGUI ? new Worker('./js/workerEquality.js') : new Worker('./js/workerEquality.js', {eval:true});
+		const worker = new Worker('./js/workerEquality.js');
+//		worker.onmessage = msg =>
+		function onmessage(msg)
 		{
 			const args = msg.data;
 			const diagram = R.$CAT.getElement(args.diagram);
@@ -837,11 +853,22 @@ class R
 					console.error('bad message', args.command);
 					break;
 			}
-		});
+		};
+		worker.onmessage = onmessage;
 		R.workers.equality = worker;
-		const tokens = window.location.pathname.split('/');
-		tokens.pop();
-		worker.postMessage({command:'start', url:window.location.origin + tokens.join('/')});
+		let url = '';
+		if (isGUI)
+		{
+			const tokens = window.location.pathname.split('/');
+			tokens.pop();
+			url = window.location.origin + tokens.join('/');
+		}
+		else
+		{
+			url = ".";
+		}
+//		worker.postMessage({command:'start', url:window.location.origin + tokens.join('/')});
+		worker.postMessage({command:'start', url});
 	}
 	static SetupCore()
 	{
@@ -1151,7 +1178,7 @@ class R
 		}
 		R.Busy();
 		R.ReadDefaults();
-		isGUI && R.SetupWorkers();
+		R.SetupWorkers();
 		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
 		R.cloud = new Amazon();
 		if (isGUI)
@@ -1166,7 +1193,7 @@ class R
 		R.SetupActions();
 		R.SetupPFS();
 		isGUI && D.Initialize();		// initialize GUI
-		R.SetupReplay();
+		isGUI && R.SetupReplay();
 		R.sync = true;
 		const loader = function()
 		{
@@ -1208,12 +1235,12 @@ class R
 	}
 	static SaveLocal(diagram)
 	{
-		localStorage.setItem(`${diagram.name}.json`, diagram.stringify());
+		U.writefile(`${diagram.name}.json`, diagram.stringify());
 		// TODO put in web worker since it takes a while
 		D.Svg2canvas(diagram, (png, pngName) =>
 		{
 			D.diagramPNG.set(diagram.name, png);
-			localStorage.setItem(`${diagram.name}.png`, png);
+			U.writefile(`${diagram.name}.png`, png);
 			R.EmitCATEvent('png', diagram);
 		});
 		R.SetDiagramInfo(diagram);
@@ -1224,12 +1251,12 @@ class R
 	}
 	static HasLocal(name)
 	{
-		return localStorage.getItem(`${name}.json`) !== null;
+		return U.readfile(`${name}.json`) !== null;
 	}
 	static ReadLocal(name, clear = false)
 	{
 		R.sync = false;
-		const data = localStorage.getItem(`${name}.json`);
+		const data = U.readfile(`${name}.json`);
 		if (data)
 		{
 			const args = JSON.parse(data);
@@ -1240,17 +1267,16 @@ class R
 				args.domainElements = [];
 				args.timestamp = Date.now();
 			}
-			const localLog = localStorage.getItem(`${name}.log`);
+			const localLog = isGUI ? U.readfile(`${name}.log`) : null;
 			if (localLog)
 				args.log = JSON.parse(localLog);
 			const diagram = new Diagram(userDiagram, args);
-			const png = localStorage.getItem(`${diagram.name}.png`);
+			const png = U.readfile(`${diagram.name}.png`);
 			if (png)
 				D.diagramPNG.set(diagram.name, png);
 			R.SetDiagramInfo(diagram);
 			R.sync = true;
 			R.EmitCATEvent('load', diagram);
-			R.default.debug && console.log('ReadLocal',name,diagram);
 			return diagram;
 		}
 		R.sync = true;
@@ -1258,7 +1284,7 @@ class R
 	}
 	static ReadLocalDiagramList()
 	{
-		const diagrams = JSON.parse(localStorage.getItem('diagrams'));
+		const diagrams = JSON.parse(U.readfile('diagrams'));
 		if (diagrams)
 		{
 			diagrams.map(d => R.SetDiagramInfo(d));
@@ -1267,17 +1293,17 @@ class R
 	}
 	static SaveLocalDiagramList()
 	{
-		localStorage.setItem('diagrams', JSON.stringify(U.JsonMap(R.LocalDiagrams, false)));
+		U.writefile('diagrams', JSON.stringify(U.JsonMap(R.LocalDiagrams, false)));
 	}
 	static ReadLocalCategoryList()
 	{
-		const categories = JSON.parse(localStorage.getItem('categories'));
+		const categories = JSON.parse(U.readfile('categories'));
 		if (categories)
 			categories.map(d => R.Categories.set(d.name, d));
 	}
 	static SaveLocalCategoryList()
 	{
-		localStorage.setItem('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo(), false)));
+		U.writefile('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo(), false)));
 	}
 	static UserHomeDiagramName(user)
 	{
@@ -1332,13 +1358,15 @@ class R
 	}
 	static LocalTimestamp(name)
 	{
-		const data = localStorage.getItem(`${name}.json`);
+		const filename = `${name}.json`;
+		const data = U.readfile(filename);
 		return data ? JSON.parse(data).timestamp : 0;
 	}
 	static isCloudNewer(name)
 	{
 		const cloudInfo = R.catalog.get(name);
-		return cloudInfo && cloudInfo.timestamp > R.LocalTimestamp(name);
+		const localTimestamp = R.LocalTimestamp(name);
+		return cloudInfo && cloudInfo.timestamp > localTimestamp;
 	}
 	static DownloadDiagram(name, fn = null)
 	{
@@ -1353,7 +1381,7 @@ class R
 			R.postLoadFunction = fn;
 			downloads.map(d => R.cloud._downloadDiagram(d));
 			R.default.debug && console.log('Fetching diagrams', ...downloads);
-			// wait for downloads and try agagin
+			// wait for downloads and try again
 		}
 		else if (R.CanLoad(name))
 		{
@@ -1365,12 +1393,12 @@ class R
 	static SelectDiagram(name, fn = null)		// can be async if diagram not local; fn runs in final preload event
 	{
 		if (R.diagram && R.diagram.name === name)
-			return;
+			return fn ? fn() : null;
 		R.Busy();
 		R.diagram && R.diagram.hide();
 		R.default.debug && console.log('SelectDiagram', name);
 		R.diagram = null;
-		D.toolbar.hide();
+		isGUI && D.toolbar.hide();
 		let diagram = R.$CAT.getElement(name);		// already loaded?
 		if (!diagram)
 		{
@@ -1380,8 +1408,8 @@ class R
 		}
 		if (!diagram)
 			throw 'no such diagram';
-		diagram.makeSVG();
-		diagram.show();
+		isGUI && diagram.makeSVG();
+		isGUI && diagram.show();
 		R.diagram = diagram;
 		R.NotBusy();
 		R.EmitCATEvent('default', diagram);
@@ -1457,7 +1485,7 @@ class R
 		R.cloud && R.cloud.fetchDiagram(name, false).then(data =>
 		{
 			R.diagram.clear();
-			localStorage.setItem(`${name}.json`, JSON.stringify(data));
+			U.writefile(`${name}.json`, JSON.stringify(data));
 			svg && svg.parentNode.removeChild(svg);
 			R.diagram.decrRefcnt();
 			R.SelectDiagram(name);
@@ -1558,23 +1586,45 @@ class R
 	}
 	static FetchCatalog(fn)
 	{
-		R.cloud && fetch(R.cloud.getURL() + '/catalog.json').then(response =>
+		const process = (data, fn) =>
 		{
-			if (response.ok)
-				response.json().then(data =>
-				{
-					data.diagrams.map(d =>
+			data.diagrams.map(d =>
+			{
+				R.catalog.set(d.name, d);
+				if (!R.Diagrams.has(d.name))	// TODO out of sync timestamps cloud vs local
+					R.SetDiagramInfo(d);
+				R.EmitCATEvent('catalogAdd', d);
+			});
+			fn();
+		};
+		if (isGUI)
+		{
+			R.cloud && fetch(R.cloud.getURL() + '/catalog.json').then(response =>
+			{
+				if (response.ok)
+					response.json().then(data =>
 					{
-						R.catalog.set(d.name, d);
-						if (!R.Diagrams.has(d.name))	// TODO out of sync timestamps cloud vs local
-							R.SetDiagramInfo(d);
-						R.EmitCATEvent('catalogAdd', d);
+						/*
+						data.diagrams.map(d =>
+						{
+							R.catalog.set(d.name, d);
+							if (!R.Diagrams.has(d.name))	// TODO out of sync timestamps cloud vs local
+								R.SetDiagramInfo(d);
+							R.EmitCATEvent('catalogAdd', d);
+						});
+						*/
+						process(data, fn);
+//						fn();
 					});
-					fn();
-				});
-			else
-				console.error('error downloading catalog');
-		});
+				else
+					console.error('error downloading catalog');
+			});
+		}
+		else
+		{
+			const data = JSON.parse(U.readfile('catalog.json'));
+			process(data, fn);
+		}
 	}
 	static CanDeleteDiagram(d)
 	{
@@ -1593,7 +1643,7 @@ class R
 			diagram && diagram.decrRefcnt();
 			R.Diagrams.delete(name);		// all local diagrams
 			R.SaveLocalDiagramList();		// save updated R.Diagrams
-			['.json', '.png', '.log'].map(ext => localStorage.removeItem(`${name}${ext}`));		// remove local files
+			['.json', '.png', '.log'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 		}
 	}
 	static GetDiagramInfo(name)
@@ -1603,14 +1653,14 @@ class R
 	}
 	static SaveDefaults()
 	{
-		localStorage.setItem('defaults.json', JSON.stringify(R.default));
+		U.writefile('defaults.json', JSON.stringify(R.default));
 	}
 	static ReadDefaults()
 	{
 		const file = 'defaults.json';
 		let contents = null;
 		if (isGUI)
-			contents = localStorage.getItem(file);
+			contents = U.readfile(file);
 		else
 		{
 			if (fs.existsSync(file))
@@ -1637,7 +1687,7 @@ class R
 		if (R.LocalDiagrams.has(name))
 			return true;
 		// try to fix corrupted local diagram list
-		const diagram = JSON.parse(localStorage.getItem(`${name}.json`));
+		const diagram = JSON.parse(U.readfile(`${name}.json`));
 		if (diagram)
 		{
 			R.SetDiagramInfo(diagram);
@@ -2123,7 +2173,7 @@ class Amazon extends Cloud
 	{
 		const url = this.getURL(name) + '.json';
 		fetch(url, {cache: true ? 'default' : 'reload'}).then(response => response.json()).then(json =>
-	{
+		{
 				R.default.debug && console.log('_downloadDiagram', name);
 				R.LoadingDiagrams.delete(name);
 				R.JsonDiagrams.set(name, json);
@@ -3586,7 +3636,10 @@ ${button}
 			Panel.SectionOpen('tty-error-section');
 		}
 		else
+		{
+			console.trace(err);
 			process.exit(1);
+		}
 	}
 	static UpdateDiagramDisplay(e)		// event handler
 	{
@@ -4062,7 +4115,7 @@ ${button}
 		let png = D.diagramPNG.get(name);
 		if (!png)
 		{
-			png = localStorage.getItem(`${name}.png`);
+			png = U.readfile(`${name}.png`);
 			if (png)
 				D.diagramPNG.set(name, png);
 		}
@@ -4213,30 +4266,35 @@ Object.defineProperties(D,
 			{
 				const diagram = R.diagram;
 				diagram.selected.length > 0 ? diagram.viewElements(...diagram.selected) : diagram.home();
+				e.preventDefault();
 			},
 			ArrowUp(e)
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x, diagram.viewport.y + delta, diagram.viewport.scale);
+				e.preventDefault();
 			},
 			ArrowDown()
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x, diagram.viewport.y - delta, diagram.viewport.scale);
+				e.preventDefault();
 			},
 			ArrowLeft()
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x + delta, diagram.viewport.y, diagram.viewport.scale);
+				e.preventDefault();
 			},
 			ArrowRight()
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 				diagram.setView(diagram.viewport.x - delta, diagram.viewport.y, diagram.viewport.scale);
+				e.preventDefault();
 			},
 			Slash(e)
 			{
@@ -4250,6 +4308,7 @@ Object.defineProperties(D,
 				D.tool = 'pan';
 				D.drag = false;
 				D.setCursor();
+				e.preventDefault();
 			},
 			ControlLeft(e) { D.ctrlKey = true; },
 			ControlRight(e) { D.ctrlKey = true; },
@@ -7449,7 +7508,7 @@ class ProductObject extends MultiObject
 	{
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
-		return `${c}Po{${args.objects.map(o => o.name).join(',')}}oP${c}`;
+		return `${c}Po{${args.objects.map(o => typeof o === 'string' ? o : o.name).join(',')}}oP${c}`;
 	}
 	static Codename(diagram, args)
 	{
@@ -10191,7 +10250,8 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 	canFormat(o)
 	{
 		if (!this.formatters)
-			throw 'no formatters';
+//			throw 'no formatters';
+			return false;
 		if (o instanceof NamedObject)
 			return this.canFormat(o.source);
 		if (o instanceof ProductObject)
@@ -15306,7 +15366,7 @@ class Diagram extends Functor
 	}
 	saveLog()
 	{
-		localStorage.setItem(`${this.name}.log`, JSON.stringify(this._log));
+		U.writefile(`${this.name}.log`, JSON.stringify(this._log));
 	}
 	drop(e, action, from, target, log = true)
 	{
@@ -16152,10 +16212,10 @@ const Cat =
 };
 
 if (isGUI)
-{
 	window.Cat = Cat;
-//	!('QUnit' in window) && R.Initialize();	// boot-up
-}
-R.Initialize();	// boot-up
+else
+	Object.keys(Cat).forEach(cls => exports[cls] = Cat[cls]);
+
+isGUI && R.Initialize();	// boot-up
 
 })();
