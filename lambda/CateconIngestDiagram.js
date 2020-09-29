@@ -70,7 +70,7 @@ exports.handler = (event, context, callback) =>
 					{
 						basename:		diagram.basename,
 						name,
-						timestamp,
+						timestamp:		diagram.timestamp,
 						user,
 						description:	'description' in diagram ? diagram.description : '',
 						properName:		'properName' in diagram ? diagram.properName : diagram.basename,
