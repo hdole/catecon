@@ -14,7 +14,6 @@
 // 			load		diagram now available for viewing, but may have no view yet
 // 			new			new diagram exists
 // 			png
-// 			preload
 // 			upload		diagram sent to server
 // 		Diagram
 // 			addReference
@@ -853,7 +852,7 @@ class R
 					console.error('bad message', args.command);
 					break;
 			}
-		};
+		}
 		worker.onmessage = onmessage;
 		R.workers.equality = worker;
 		let url = '';
@@ -939,6 +938,7 @@ class R
 			new AlignHorizontalAction(R.$Actions),
 			new AlignVerticalAction(R.$Actions),
 			new AssertionAction(R.$Actions),
+			new MysqlTableAction(R.$Actions),
 		]);
 		const categoryDiagram = new Diagram(R.$CAT, {basename:'category', codomain:'Actions', description:'diagram for a category', user:'sys'});
 		let xy = new D2(300, 300);
@@ -1171,6 +1171,8 @@ class R
 	{
 		R.sync = false;
 		const params = isGUI ? (new URL(document.location)).searchParams : new Map();
+		if (isGUI)
+			R.local = document.location.hostname === 'localhost';
 		if (params.has('test'))
 		{
 			R.InitTestProcedure();
@@ -1181,8 +1183,6 @@ class R
 		R.SetupWorkers();
 		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
 		R.cloud = new Amazon();
-		if (isGUI)
-			R.local = document.location.hostname === 'localhost';
 		if (isGUI)
 		{
 			U.autosave = true;
@@ -1198,7 +1198,7 @@ class R
 		const loader = function()
 		{
 			R.diagram = null;
-			isGUI && !params.has('boot') && R.DownloadDiagram('Anon/Home');
+//			isGUI && !params.has('boot') && R.DownloadDiagram('Anon/Home');
 			let diagramName = params.get('d') || params.get('diagram');
 			const doDisplayMorphism = diagramName !== null;
 			if (!diagramName)
@@ -1368,41 +1368,53 @@ class R
 		const localTimestamp = R.LocalTimestamp(name);
 		return cloudInfo && cloudInfo.timestamp > localTimestamp;
 	}
-	static DownloadDiagram(name, fn = null)
+	static async DownloadDiagram(name, fn = null)
 	{
 		let diagram = null;
-		const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
-		if (downloads.length > 0)
+		const cloudDiagrams = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
+		if (cloudDiagrams.length > 0)
 		{
-			if ('loadingDiagram' in R)
-				console.error('already loading', R.loadingDiagram);
-			R.LoadingDiagrams = new Set(downloads);
-			R.loadingDiagram = name;
-			R.postLoadFunction = fn;
-			downloads.map(d => R.cloud._downloadDiagram(d));
-			R.default.debug && console.log('Fetching diagrams', ...downloads);
-			// wait for downloads and try again
+			const downloads = cloudDiagrams.map(d => this.getURL(d) + '.json');
+			let diagrams = [];
+			async function downloader()
+			{
+				const promises = downloads.map(url => fetch(url));
+				const responses = await Promise.all(promises);
+				const jsons = await Promise.all(responses.map(async res => await res.json()));
+				diagrams = jsons.map(json =>
+				{
+					const diagram = new Diagram(R.GetUserDiagram(json.user), json);
+					R.EmitCATEvent('download', diagram);
+					R.EmitCATEvent('load', diagram);
+					return diagram;
+				});
+			}
+			await downloader();
+			diagram = diagrams[diagrams.length -1];
 		}
 		else if (R.CanLoad(name))
-		{
 			diagram = R.LoadDiagram(name);		// immediate loading
-			fn && fn();
-		}
+		else
+			D.RecordError(`Cannot download diagram ${name}`);
+		fn && fn(diagram);
 		return diagram;
 	}
-	static SelectDiagram(name, fn = null)		// can be async if diagram not local; fn runs in final preload event
+	static async SelectDiagram(name, fn = null)
 	{
 		if (R.diagram && R.diagram.name === name)
 			return fn ? fn() : null;
-		R.Busy();
-		R.diagram && R.diagram.hide();
+		if (isGUI)
+		{
+			R.Busy();
+			R.diagram && R.diagram.hide();
+			D.toolbar.hide();
+		}
 		R.default.debug && console.log('SelectDiagram', name);
 		R.diagram = null;
-		isGUI && D.toolbar.hide();
 		let diagram = R.$CAT.getElement(name);		// already loaded?
 		if (!diagram)
 		{
-			diagram = R.DownloadDiagram(name, fn);
+			diagram = await R.DownloadDiagram(name, fn);
 			if (!diagram)
 				return;
 		}
@@ -1442,15 +1454,19 @@ class R
 			{
 				dgrm = R.ReadLocal(name);
 				fn(dgrm);
-				return;
+				return true;
 			}
 		}
 		else
+		{
 			fn && fn(dgrm);
+			return true;
+		}
+		return false;
 	}
 	static CanLoad(name)
 	{
-		return [...R.GetReferences(name)].reverse().reduce((r, d) => r && (R.HasLocalDiagram(d) || R.$CAT.getElement(d)), true);
+		return [...R.GetReferences(name)].reverse().reduce((r, d) => r && (R.HasLocalDiagram(d) || R.$CAT.getElement(d)) !== undefined, true);
 	}
 	static LoadDiagram(name)	// assumes all reference diagrams are loaded or local and so is immediate
 	{
@@ -1481,7 +1497,6 @@ class R
 	{
 		const name = R.diagram.name;
 		const svg = R.diagram.svgRoot;
-		// TODO remove fetchDiagram and change to 'preload' event listener that deletes itself
 		R.cloud && R.cloud.fetchDiagram(name, false).then(data =>
 		{
 			R.diagram.clear();
@@ -1599,7 +1614,7 @@ class R
 		};
 		if (isGUI)
 		{
-			R.cloud && fetch(R.cloud.getURL() + '/catalog.json').then(response =>
+			R.cloud && fetch(R.getURL() + '/catalog.json').then(response =>
 			{
 				if (response.ok)
 					response.json().then(data =>
@@ -1704,11 +1719,31 @@ class R
 		{
 			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
 			const headers = {'Content-Type':'application/json;charset=utf-8'};
-//			fetch(`http://${document.location.host}/DiagramIngest?payload=${encodeURIComponent(payload)}`, {method:'POST', headers:{'Content-Type':'application/json;charset=utf-8'}}, fn);
-			fetch(`http://${document.location.host}/DiagramIngest`, {method:'POST', body, headers}, fn);
+			fetch(`http://${document.location.host}/DiagramIngest`, {method:'POST', body, headers}).then(_ => fn());
 		}
 		else
 			R.cloud.ingestDiagramLambda(e, diagram, fn);
+	}
+	static DiagramSearch(search, fn)
+	{
+		if (R.local)
+			fetch(`http://${document.location.host}/DiagramSearch?search=${search}`).then(response => response.json()).then(diagrams => fn(diagrams));
+		else
+			diagramSearch(search, fn);
+	}
+	static getURL(suffix)
+	{
+		let url = '';
+		if (R.local)
+		{
+			url = `http://${document.location.host}/diagrams`;
+			if (suffix === undefined)
+				return url;
+			url += `/${suffix}`;
+		}
+		else
+			url = R.cloud.getURL(suffix);
+		return url;
 	}
 }
 Object.defineProperties(R,
@@ -1736,7 +1771,7 @@ Object.defineProperties(R,
 	},
 	Diagrams:			{value:new Map(),	writable:false},	// available diagrams
 	JsonDiagrams:		{value:new Map(),	writable:false},	// diagrams presented as json
-	LoadingDiagrams:	{value:new Set(),	writable:true},		// diagrams waiting to be loaded
+//	LoadingDiagrams:	{value:new Set(),	writable:true},		// diagrams waiting to be loaded
 	LocalDiagrams:		{value:new Map(),	writable:false},	// diagrams stored locally
 	diagram:			{value:null,		writable:true},		// current diagram
 	initialized:		{value:false,		writable:true},		// Have we finished the boot sequence and initialized properly?
@@ -2168,26 +2203,6 @@ class Amazon extends Cloud
 		{
 			return null;
 		}
-	}
-	_downloadDiagram(name)
-	{
-		const url = this.getURL(name) + '.json';
-		fetch(url, {cache: true ? 'default' : 'reload'}).then(response => response.json()).then(json =>
-		{
-				R.default.debug && console.log('_downloadDiagram', name);
-				R.LoadingDiagrams.delete(name);
-				R.JsonDiagrams.set(name, json);
-				R.EmitCATEvent('preload', json);
-		});
-	}
-	downloadDiagram(name)
-	{
-		if (R.$CAT.getElement(name))	// but it's local
-			return;
-		// download newer diagrams from cloud
-		const downloads = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
-		R.LoadingDiagrams = new Set(downloads);	// tracker for what's going on
-		downloads.map(d => R.cloud._downloadDiagram(d));		// issue the download requests for the diagram and its references
 	}
 }
 
@@ -3271,9 +3286,13 @@ class D
 			if (name.length === 0)
 				return;
 			let elt = diagram.getElement(name);
-			const addRef = function(ref) { D.AddReference(e, name); };
 			if (!elt)
-				R.GetDiagram(name, addRef);
+			{
+				if (R.GetDiagram(name))
+					D.AddReference(e, name);
+				else
+					D.RecordError(`Cannot reference ${name}`);
+			}
 			else
 			{
 				let from = null;
@@ -3510,36 +3529,6 @@ ${button}
 						R.SaveDefaults();
 					}
 					break;
-				case 'preload':
-					if (R.LoadingDiagrams.size === 0 && R.JsonDiagrams.size > 0)	// last preload event
-					{
-						const references = [...R.GetReferences(R.loadingDiagram)].reverse();
-						references.map(refName =>
-						{
-							if (R.JsonDiagrams.has(refName))
-							{
-								const json = R.JsonDiagrams.get(refName);
-								let d = R.$CAT.getElement(refName);
-								if (d) // reloading a diagram? get rid of the old one
-								{
-									R.default.debug && console.log('diagram already loaded', refName);
-									if (d.refcnt > 1)
-										// TODO reloading a diagram that is in use is bad; fix it
-										console.error('reloading diagram referenced elsewhere is bad');
-									d.decrRefcnt();
-								}
-								d = new Diagram(R.GetUserDiagram(json.user), json);
-								R.EmitCATEvent('download', d);
-								R.EmitCATEvent('load', d);
-							}
-						});
-						R.JsonDiagrams.clear();
-						R.SelectDiagram(R.loadingDiagram);
-						delete R.loadingDiagram;
-						R.postLoadFunction && R.postLoadFunction();
-						delete R.postLoadFunction;
-					}
-					break;
 				case 'download':
 					R.SaveLocal(diagram);
 					break;
@@ -3547,7 +3536,7 @@ ${button}
 		});
 		window.addEventListener('Login', function(e)
 		{
-			!('loadingDiagram' in R) && R.SelectDiagram(R.default.diagram);
+			R.SelectDiagram(R.default.diagram);
 		});
 		window.onresize = D.Resize;
 		window.addEventListener('mousemove', D.Autohide);
@@ -4125,7 +4114,7 @@ ${button}
 	{
 		let src = D.GetPng(name);
 		if (!src && R.cloud)
-			src = R.cloud.getURL(name + '.png');
+			src = R.getURL(name + '.png');
 		const imgId = U.SafeId(`img-el_${name}`);
 		return `<image href="${src}" id="${imgId}" alt="Not loaded" width="200" height="150"/>`;
 	}
@@ -4133,13 +4122,13 @@ ${button}
 	{
 		let src = D.GetPng(name);
 		if (!src && R.cloud)
-			src = R.cloud.getURL(name + '.png');
+			src = R.getURL(name + '.png');
 		const imgId = U.SafeId(`img-el_${name}`);
 		return H3.img({src, id:imgId, alt:"Not loaded", width:"200", height:"150"});
 	}
 	static GetSvgImageElement3(name)
 	{
-		const href = R.cloud.getURL(name + '.png');
+		const href = R.getURL(name + '.png');
 		const imgId = U.SafeId(`image-el_${name}`);
 		return H3.image({href, id:imgId, alt:"Not loaded", width:"300", height:"225"});
 	}
@@ -5735,15 +5724,14 @@ class CatalogDiagramSection extends DiagramSection
 	{
 		this.searchButton = document.getElementById('catalog-search-button-ani');
 		this.searchInput.classList.add('searching');
-		const that = this;
 		this.searchButton.setAttribute('repeatCount', 'indefinite');
 		this.searchButton.beginElement();
-		R.cloud.diagramSearch(this.searchInput.value, function(diagrams)
+		R.DiagramSearch(this.searchInput.value, diagrams =>
 		{
-			that.searchInput.classList.remove('searching');
-			that.clear();
-			that.searchButton.setAttribute('repeatCount', 1);
-			diagrams.map(d => that.add(d));
+			this.searchInput.classList.remove('searching');
+			this.clear();
+			this.searchButton.setAttribute('repeatCount', 1);
+			diagrams.map(d => this.add(d));
 		});
 	}
 }
@@ -9900,7 +9888,8 @@ class LanguageAction extends Action
 		let code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
 		if (element instanceof Morphism)
 			code = code.replace(/%Dom/g, this.getType(element.domain)).replace(/%Cod/g, this.getType(element.codomain));
-		return U.Tab(code);
+//		return U.Tab(code);
+		return code;
 	}
 	hidden() { return true; }
 }
@@ -11747,7 +11736,7 @@ class GraphAction extends Action
 	}
 }
 
-class SqlTable extends Action
+class MysqlTableAction extends Action
 {
 	constructor(diagram)
 	{
@@ -11760,14 +11749,23 @@ class SqlTable extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:200px;font-weight:bold;stroke:#000;"}, "Tbl");
+		this.icon = H3.g([
+							H3.line({class:"arrow0", x1:"40", y1:"40", x2:"300", y2:"40", 'marker-end':"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"40", y1:"100", x2:"300", y2:"100", 'marker-end':"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"40", y1:"160", x2:"300", y2:"160", 'marker-end':"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"40", y1:"220", x2:"300", y2:"220", 'marker-end':"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"40", y1:"40", x2:"40", y2:"300", 'marker-end':"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"100", y1:"40", x2:"100", y2:"300", 'marker-end':"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"300", 'marker-end':"url(#arrowhead)"}),
+							H3.line({class:"arrow0", x1:"220", y1:"40", x2:"220", y2:"300", 'marker-end':"url(#arrowhead)"}),
+						]);
 	}
 	html(e, diagram, ary)
 	{
-		const help = D.toolbar.help
+		const help = D.toolbar.help;
 		D.RemoveChildren(help);
-		help.appendChild(H3.h3('Create MySQL Table'));
-		ary.map(m => help.appendChild(D.GetIndexHTML(m)));
+		help.appendChild(H3.h3('Create Mysql Table'));
+		ary.map(m => help.appendChild(H3.div(D.GetIndexHTML(m), {class:"left panelElt"})));
 	}
 	action(e, diagram, ary)
 	{
@@ -11776,8 +11774,11 @@ class SqlTable extends Action
 	{
 		if (diagram.allReferences.has('hdole/mysql') && Category.IsSource(ary))
 		{
+			const domain = ary[0].domain.to;
+			if (domain.constructor.name !== 'CatObject')
+				return false;
 			const mysql = R.$CAT.getElement('hdole/mysql');
-			return ary.reduce((r, m) => r && mysql.elements.has(m.to.codomain), true);	// all codomains are in mysql
+			return ary.reduce((r, m) => r && m.to.constructor.name === 'Morphism' && mysql.hasIndexedElement(m.to.codomain.name), true);	// all codomains are in mysql
 		}
 		return false;
 	}
@@ -14849,7 +14850,6 @@ class Diagram extends Functor
 				btn.beginElement();
 			}
 			const that = this;
-//			R.cloud.ingestDiagramLambda(e, this, function(res)
 			R.DiagramIngest(e, this, function(res)
 			{
 				R.default.debug && console.log('uploaded', that.name);
@@ -14998,6 +14998,12 @@ class Diagram extends Functor
 	getElements(ary)
 	{
 		return ary.map(e => this.getElement(e)).filter(e => e !== undefined);
+	}
+	hasIndexedElement(name)
+	{
+		let result = false;
+		this.domain.elements.forEach(elt => {if ('to' in elt && elt.to.name === name) result = true;});
+		return result;
 	}
 	forEachObject(fn)
 	{
