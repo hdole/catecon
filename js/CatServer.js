@@ -13,6 +13,7 @@ const repl = require('repl');
 const encoding = require('encoding');
 const util = require( 'util' );
 const mysql = require( 'mysql' );
+const {VM} = require('vm2');
 const Cat = require('./Cat.js');
 
 Cat.R.default.debug = false;
@@ -28,26 +29,18 @@ const mysqlArgs =
 	database:	process.env.MYSQL_DB,
 };
 
-function makeDbcon(mysqlArgs)	// allows synchronous calls
+let dbcon = null;	// mysql server connection
+let dbconSync = null;	// mysql server synchronous connection
+
+function makeDbconSync(mysqlArgs)	// allows synchronous calls
 {
-	const connection = mysql.createConnection(mysqlArgs);
-	return {
-		query(sql, args)
-		{
-			return util.promisify(connection.query).call(connection, sql, args);
-		},
-		close()
-		{
-			return util.promisify(connection.end ).call(connection);
-		},
-		escape(arg)
-		{
-			return connection.escape(arg);
-		},
+	dbcon = mysql.createConnection(mysqlArgs);
+	dbconSync =
+	{
+		query(sql, args) { return util.promisify(dbcon.query).call(dbcon, sql, args); },
+		close() { return util.promisify(dbcon.end ).call(dbcon); },
 	};
 }
-
-let dbcon = null;	// mysql server connection
 
 function fetchCatalog(followup)
 {
@@ -60,7 +53,7 @@ async function updateDiagramInfo(diagram)
 	const hasItSql = `SELECT timestamp FROM diagrams WHERE name = '${name}'`;
 	const timestamp = diagram.timestamp ? diagram.timestamp : Date.now();
 	const assign = 'name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?';
-	const hasIt = await dbcon.query(hasItSql);
+	const hasIt = await dbconSync.query(hasItSql);
 	let sql = null;
 	if (hasIt.length > 0)
 	{
@@ -76,8 +69,8 @@ async function updateDiagramInfo(diagram)
 		sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
 	if (sql)
 	{
-		console.log(`update ${name} @ ${timestamp}`);
-		const result = await dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp]);
+		console.log(`update ${name} @ ${new Date(timestamp)}`);
+		const result = await dbconSync.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp]);
 	}
 	return sql !== null;
 }
@@ -126,7 +119,7 @@ async function updateCatalog(fn = null)
 			}
 		}
 		const sql = `SELECT * FROM diagrams`;
-		const rows = await dbcon.query(sql);
+		const rows = await dbconSync.query(sql);
 		rows.map(row =>
 		{
 			row.references = JSON.parse(row.refs);
@@ -149,15 +142,18 @@ function evaluateMorphism(diagram, morphism, args)
 const args = ${args};
 
 ${Cat.R.Actions.javascript.generate(morphism)}
+
+${jsName}(${args});
 `;
-	return code;
+	const vm = new VM();
+	return vm.run(code);
 }
 
 async function serve()
 {
 	try
 	{
-		dbcon = makeDbcon(mysqlArgs);
+		makeDbconSync(mysqlArgs);
 
 		server.use(express.static(process.env.HTTP_DIR));
 		server.use(express.urlencoded({extended:true}));
@@ -168,10 +164,10 @@ async function serve()
 			updateCatalog();
 		});
 
-		server.use('/DiagramSearch', (req, res, next) =>
+		server.use('/DiagramSearch', async (req, res, next) =>
 		{
-			console.log('DiagramSearch', req.query.diagram);
-			const search = dbcon.escape(`%${req.query.diagram}%`);
+			console.log('DiagramSearch', req.query.search);
+			const search = dbcon.escape(`%${req.query.search}%`);
 			const sql = `SELECT * FROM diagrams WHERE name LIKE ${search} OR properName LIKE ${search}`;
 			dbcon.query(sql, (err, result) =>
 			{
@@ -209,7 +205,7 @@ async function serve()
 						if (morphism && morphism instanceof Cat.Morphism)
 						{
 							if ('args' in req.query)
-								response = evaluateMorphism(diagram, morphism, req.query.args);
+								response = JSON.stringify(evaluateMorphism(diagram, morphism, req.query.args));
 							else
 								response = JSON.stringify(morphism.json());
 						}
@@ -224,6 +220,8 @@ async function serve()
 						else
 							response = `{"Error":"Object not found: ${req.query.object}"}`;
 					}
+					else
+						response = JSON.stringify(diagram.json());
 				}
 				else
 					response = `{"Error":"Diagram not found: ${req.query.diagram}"}`;
@@ -231,7 +229,7 @@ async function serve()
 			});
 		});
 
-//await dbcon.query('TRUNCATE diagrams');
+//await dbconSync.query('TRUNCATE diagrams');
 		updateCatalog(_ =>
 		{
 			Cat.R.Initialize();
