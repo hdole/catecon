@@ -4,8 +4,15 @@
 require('dotenv').config();
 
 const express = require('express');
-const server = express();
+const app = express();
 
+const cors = require('cors');
+app.use(cors());
+
+const helmet = require('helmet');
+app.use(helmet());
+
+const CognitoExpress = require('cognito-express');
 const url = require('url');
 const path = require('path');
 const fs = require('fs');
@@ -32,6 +39,21 @@ const mysqlArgs =
 let dbcon = null;	// mysql server connection
 let dbconSync = null;	// mysql server synchronous connection
 
+function currentTime()
+{
+	return new Date().toString();
+}
+
+function log(...args)
+{
+	console.log(currentTime(), ...args);
+}
+
+function reqlog(req, ...args)
+{
+	console.log(req.connection.remoteAddress, currentTime(), ...args);
+}
+
 function makeDbconSync(mysqlArgs)	// allows synchronous calls
 {
 	dbcon = mysql.createConnection(mysqlArgs);
@@ -40,6 +62,39 @@ function makeDbconSync(mysqlArgs)	// allows synchronous calls
 		query(sql, args) { return util.promisify(dbcon.query).call(dbcon, sql, args); },
 		close() { return util.promisify(dbcon.end ).call(dbcon); },
 	};
+	log('mysql server connection established');
+}
+
+function mysqlKeepAlive()
+{
+	makeDbconSync(mysqlArgs);
+	dbcon.connect(err =>
+	{
+		if (err)
+		{
+			log('Error on connection to mysql server');
+			setTimeout(mysqlKeepAlive, 2000);
+		}
+	});
+	dbcon.on('error', err =>
+	{
+		log('Error from mysql server', err);
+		if (err.code === 'PROTOCOL_CONNECTION_LOST')
+			mysqlKeepAlive();
+		else
+			throw err;
+	});
+}
+
+function saveHTMLjs()
+{
+	Cat.R.SelectDiagram('hdole/HTML', diagram =>
+	{
+console.log('got hdole/HTML', diagram);
+		const js = Cat.R.Actions.javascript.generateDiagram(diagram);
+		fs.writeFile('js/HTML.js', js, err => {if (err) throw err;});
+		res.end('ok');
+	});
 }
 
 function fetchCatalog(followup)
@@ -63,7 +118,7 @@ async function updateDiagramInfo(diagram)
 		else if (timestamp === localTimestamp)
 			console.log(`no update ${name} @ ${new Date(timestamp)}`);
 		else
-			console.log(`update ${name} local version newer @ ${new Date(localTimestamp)} vs cloud ${new Date(timestamp)}`);
+			console.log(`local version newer ${name} @ ${new Date(localTimestamp)} vs cloud @ ${new Date(timestamp)}`);
 	}
 	else
 		sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
@@ -95,6 +150,7 @@ function saveDiagramPng(name, pngBfr)
 
 async function updateCatalog(fn = null)
 {
+	log('UpdateCatalog');
 	fetchCatalog(async cloudCatalog =>
 	{
 		const cloudDiagrams = cloudCatalog.diagrams;
@@ -106,7 +162,7 @@ async function updateCatalog(fn = null)
 				if (await updateDiagramInfo(d))
 				{
 					const name = d.name;
-					console.log(`download ${name}`);
+					log(`download ${name}`);
 					// diagram.json
 					fetch(`${cloudDiagramURL}/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString)));
 					// diagram.png
@@ -115,7 +171,7 @@ async function updateCatalog(fn = null)
 			}
 			catch(err)
 			{
-				console.log(err);
+				log(err);
 			}
 		}
 		const sql = `SELECT * FROM diagrams`;
@@ -153,20 +209,25 @@ async function serve()
 {
 	try
 	{
-		makeDbconSync(mysqlArgs);
+		mysqlKeepAlive(mysqlArgs);
 
-		server.use(express.static(process.env.HTTP_DIR));
-		server.use(express.urlencoded({extended:true}));
-		server.use(express.json());
-		server.use('/UpdateCatalog', (req, res, next) =>
+		app.use(function(req, res, next)
 		{
-			console.log('UpdateCatalog');
+			res.setHeader("Content-Security-Policy", "script-src 'self' blob: 'unsafe-inline' https://api-cdn.amazon.com https://sdk.amazonaws.com https://code.jquery.com https://unpkg.com");
+			return next();
+		});
+
+		app.use(express.static(process.env.HTTP_DIR));
+		app.use(express.urlencoded({extended:true}));
+		app.use(express.json());
+		app.use('/UpdateCatalog', (req, res, next) =>
+		{
 			updateCatalog();
 		});
 
-		server.use('/DiagramSearch', async (req, res, next) =>
+		app.use('/DiagramSearch', async (req, res, next) =>
 		{
-			console.log('DiagramSearch', req.query.search);
+			log('DiagramSearch', req.query.search);
 			const search = dbcon.escape(`%${req.query.search}%`);
 			const sql = `SELECT * FROM diagrams WHERE name LIKE ${search} OR properName LIKE ${search}`;
 			dbcon.query(sql, (err, result) =>
@@ -176,29 +237,16 @@ async function serve()
 			});
 		});
 
-		server.use('/DiagramIngest', async (req, res, next) =>
+		app.use('/json', (req, res) =>
 		{
-			console.log('DiagramIngest', req.body.diagram.name);
-			const {diagram, user, png} = req.body;
-			const name = diagram.name;
-			if (await updateDiagramInfo(diagram))
-			{
-				saveDiagramJson(name, JSON.stringify(diagram));
-				saveDiagramPng(name, png);
-			}
-			res.end('ok');
-		});
-
-		server.use('/Cat', (req, res) =>
-		{
-			console.log('/Cat', {query:req.query});
+			console.log(req.connection.remoteAddress, currentTime(), '/json', {query:req.query});
 			const name = req.query.diagram;
-			Cat.R.SelectDiagram(name, _ =>
+			Cat.R.SelectDiagram(name, diagram =>
 			{
-				const diagram = Cat.R.$CAT.getElement(name);
-				let response = '{}';
+				let response = 'not found';
 				if (diagram)
 				{
+					/*
 					if ('morphism' in req.query)
 					{
 						const morphism = diagram.getElement(req.query.morphism);
@@ -222,10 +270,58 @@ async function serve()
 					}
 					else
 						response = JSON.stringify(diagram.json());
+						*/
+					let element = null;
+					if ('element' in req.query)
+					{
+						element = diagram.getElement(req.query.element);
+						if (!element)
+						{
+							res.status(404).send(`element not found ${req.query.element}`);
+							return;
+						}
+						res.send(JSON.stringify(element.json()));
+					}
+					else
+						res.send(JSON.stringify(diagram.json()));
 				}
 				else
-					response = `{"Error":"Diagram not found: ${req.query.diagram}"}`;
-				res.end(response);
+				{
+					res.status(404).send(`diagram not found: ${req.query.diagram}`);
+					return;
+				}
+				console.log(process.memoryUsage());
+			});
+		});
+
+		app.use('/js', (req, res) =>
+		{
+			reqlog(req, '/js', {query:req.query});
+			const name = req.query.diagram;
+			Cat.R.SelectDiagram(name, diagram =>
+			{
+				if (diagram)
+				{
+					let element = null;
+					if ('element' in req.query)
+					{
+						element = diagram.getElement(req.query.element);
+						if (!element)
+						{
+							res.status(404).send(`element not found ${req.query.element}`);
+							return;
+						}
+						res.send(Cat.R.Actions.javascript.generate(element));
+					}
+					else
+						res.send(Cat.R.Actions.javascript.generateDiagram(diagram));
+				}
+				else
+				{
+					res.status(404).send(`diagram not found: ${req.query.diagram}`);
+					return;
+				}
+				console.log(process.memoryUsage());
 			});
 		});
 
@@ -233,8 +329,96 @@ async function serve()
 		updateCatalog(_ =>
 		{
 			Cat.R.Initialize();
-			console.log('ready to serve');
-			server.listen(process.env.HTTP_PORT);
+			log('ready to serve');
+			const server = app.listen(process.env.HTTP_PORT, _ => log(`listening on port ${process.env.HTTP_PORT}`));
+console.log(process.memoryUsage());
+		});
+
+//		const authRoute = express.Router();
+//		app.use('/DiagramIngest', authRoute);
+
+		const cogExpress = new CognitoExpress(
+		{
+			region:				process.env.CAT_USER_COG_REGION,
+			cognitoUserPoolId:	process.env.CAT_USER_IDENTITY_POOL,
+			tokenUse:			'access',
+			tokenExpiration:	36 * 100 * 1000,
+		});
+
+		app.use((req, res, next) =>
+		{
+			res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+			res.header('Access-Control-Allow-Origin', '*');
+			res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+			res.header('Access-Control-Allow-Credentials', 'true');
+			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+			if (req.method !== 'OPTIONS')
+			{
+				const accessToken = req.headers['authorization'];
+				if (!accessToken)
+					return res.status(401).send('Error:  access token missing from header');
+				cogExpress.validate(accessToken, (err, response) =>
+				{
+					if (err)
+						return res.status(401).send(err);
+					else
+						next();
+				});
+			}
+		});
+
+		app.use('/DiagramIngest', async (req, res, next) =>
+		{
+			if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
+			{
+				reqlog(req, 'DiagramIngest: bad request', req.body);
+				res.status(401).send('missing info in body');
+				return;
+			}
+			reqlog(req, 'DiagramIngest', req.body.diagram.name);
+			const {diagram, user, png} = req.body;
+			const name = diagram.name;
+			if (await updateDiagramInfo(diagram))
+			{
+				saveDiagramJson(name, JSON.stringify(diagram));
+				saveDiagramPng(name, png);
+			}
+			res.end('ok');
+		});
+
+		app.use('/mysql', (req, res) =>
+		{
+			const query = req.query;
+			reqlog(req, '/mysql', {query});
+			const diagramName = query.diagram;
+			const command = query.command;
+			Cat.R.SelectDiagram(diagramName, diagram =>
+			{
+				const database = Cat.U.Token(diagramName);
+				switch(command)
+				{
+					case 'tableSetup':
+					let dbres = dbconSync.query(`CREATE DATABASE IF NOT EXISTS ${database} CHARACTER SET utf8 COLLATE utf8_bin`);
+					if ('table' in query)
+					{
+						const table = query.table;
+						let sql = `CREATE TABLE ${database}.${table}`;
+						sql += '(id int(11) NOT NULL, ';
+						const morphisms = JSON.parse(query.morphisms).map(m => [diagram.getElement(m[0]).to, m[1]]);
+						const typeMap = new Map([['Z', 'bigint(20) NOT NULL'],
+												['str', 'mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL']]);
+						sql += morphisms.map((m, i) => ` \`${m[0].basename}\` ${typeMap.get(m[0].codomain.basename)}`).join();
+						sql += ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+						dbcon.query(sql, result => res.end('ok')).catch(err => res.end(err)); 
+					}
+				}
+			});
+		});
+
+		app.use('/UpdateHTMLjs', (req, res) =>
+		{
+			reqlog(req, 'UpdateHTMLjs');
+			saveHTMLjs();
 		});
 	}
 	catch(err)
@@ -249,5 +433,5 @@ try
 }
 catch(error)
 {
-	console.log({error});
+	log({error});
 }
