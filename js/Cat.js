@@ -616,7 +616,7 @@ class U
 			});
 		});
 	}
-	static Token(e, cls = false)
+	static Token(e)
 	{
 		const s = typeof e === 'string' ? e : e.name;
 		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_').replace(/#/g, '_n_')
@@ -730,7 +730,16 @@ class U
 	}
 	static readfile(filename)
 	{
-		return isGUI ? localStorage.getItem(filename) : fs.readFileSync('diagrams/' + filename);
+//		return isGUI ? localStorage.getItem(filename) : fs.readFileSync('diagrams/' + filename);
+		if (isGUI)
+			return localStorage.getItem(filename);
+		else
+		{
+			const serverFile = 'diagrams/' + filename;
+			if (fs.existsSync(serverFile))
+				return fs.readFileSync('diagrams/' + filename);
+		}
+		return null;
 	}
 	static writefile(filename, data)
 	{
@@ -809,9 +818,7 @@ class R
 	}
 	static SetupWorkers()
 	{
-//		const worker = isGUI ? new Worker('./js/workerEquality.js') : new Worker('./js/workerEquality.js', {eval:true});
 		const worker = new Worker('./js/workerEquality.js');
-//		worker.onmessage = msg =>
 		function onmessage(msg)
 		{
 			const args = msg.data;
@@ -866,7 +873,6 @@ class R
 		{
 			url = ".";
 		}
-//		worker.postMessage({command:'start', url:window.location.origin + tokens.join('/')});
 		worker.postMessage({command:'start', url});
 	}
 	static SetupCore()
@@ -1395,14 +1401,15 @@ class R
 		else if (R.CanLoad(name))
 			diagram = R.LoadDiagram(name);		// immediate loading
 		else
-			D.RecordError(`Cannot download diagram ${name}`);
+//			D.RecordError(`Cannot download diagram ${name}`);
+			return null;
 		fn && fn(diagram);
 		return diagram;
 	}
 	static async SelectDiagram(name, fn = null)
 	{
 		if (R.diagram && R.diagram.name === name)
-			return fn ? fn() : null;
+			return fn ? fn(R.diagram) : null;
 		if (isGUI)
 		{
 			R.Busy();
@@ -1412,11 +1419,16 @@ class R
 		R.default.debug && console.log('SelectDiagram', name);
 		R.diagram = null;
 		let diagram = R.$CAT.getElement(name);		// already loaded?
+		let didit = false;
 		if (!diagram)
 		{
 			diagram = await R.DownloadDiagram(name, fn);
 			if (!diagram)
+			{
+				fn && fn(diagram);
 				return;
+			}
+			didit = true;
 		}
 		if (!diagram)
 			throw 'no such diagram';
@@ -1425,7 +1437,7 @@ class R
 		R.diagram = diagram;
 		R.NotBusy();
 		R.EmitCATEvent('default', diagram);
-		fn && fn();
+		!didit && fn && fn(diagram);
 	}
 	static GetCategory(name)
 	{
@@ -1619,17 +1631,7 @@ class R
 				if (response.ok)
 					response.json().then(data =>
 					{
-						/*
-						data.diagrams.map(d =>
-						{
-							R.catalog.set(d.name, d);
-							if (!R.Diagrams.has(d.name))	// TODO out of sync timestamps cloud vs local
-								R.SetDiagramInfo(d);
-							R.EmitCATEvent('catalogAdd', d);
-						});
-						*/
 						process(data, fn);
-//						fn();
 					});
 				else
 					console.error('error downloading catalog');
@@ -1718,7 +1720,7 @@ class R
 		if (R.local)
 		{
 			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
-			const headers = {'Content-Type':'application/json;charset=utf-8'};
+			const headers = {'Content-Type':'application/json;charset=utf-8', Authorization:R.cloud.accessToken};
 			fetch(`http://${document.location.host}/DiagramIngest`, {method:'POST', body, headers}).then(_ => fn());
 		}
 		else
@@ -1771,7 +1773,6 @@ Object.defineProperties(R,
 	},
 	Diagrams:			{value:new Map(),	writable:false},	// available diagrams
 	JsonDiagrams:		{value:new Map(),	writable:false},	// diagrams presented as json
-//	LoadingDiagrams:	{value:new Set(),	writable:true},		// diagrams waiting to be loaded
 	LocalDiagrams:		{value:new Map(),	writable:false},	// diagrams stored locally
 	diagram:			{value:null,		writable:true},		// current diagram
 	initialized:		{value:false,		writable:true},		// Have we finished the boot sequence and initialized properly?
@@ -3288,10 +3289,13 @@ class D
 			let elt = diagram.getElement(name);
 			if (!elt)
 			{
+				/*
 				if (R.GetDiagram(name))
 					D.AddReference(e, name);
 				else
 					D.RecordError(`Cannot reference ${name}`);
+					*/
+				R.DownloadDiagram(name, _ => D.AddReference(e, name));
 			}
 			else
 			{
@@ -3627,7 +3631,7 @@ ${button}
 		else
 		{
 			console.trace(err);
-			process.exit(1);
+			throw err;
 		}
 	}
 	static UpdateDiagramDisplay(e)		// event handler
@@ -7176,7 +7180,7 @@ class CatObject extends Element
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-		diagram && diagram.addElement(this);
+		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
 		this.constructor.name === 'CatObject' && R.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
@@ -9572,7 +9576,6 @@ class LambdaMorphismAction extends Action
 		}
 		catch(x)
 		{
-//			D.toolbar.error.innerText = x;
 			D.toolbar.showError(x);
 		}
 	}
@@ -9858,7 +9861,7 @@ class LanguageAction extends Action
 		const that = this;
 		this.currentDiagram = null;
 		this.diagram = diagram;
-		let code = '';
+		let code = `// Catecon Diagram ${diagram.name} @ ${Date.now()}`;
 		diagram.elements.forEach(function(elt)
 		{
 			if (elt instanceof Morphism || elt instanceof CatObject)
@@ -9888,7 +9891,6 @@ class LanguageAction extends Action
 		let code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
 		if (element instanceof Morphism)
 			code = code.replace(/%Dom/g, this.getType(element.domain)).replace(/%Cod/g, this.getType(element.codomain));
-//		return U.Tab(code);
 		return code;
 	}
 	hidden() { return true; }
@@ -10221,6 +10223,7 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 				}
 			}
 		});
+		/*
 		const id = 'hdole/PFS/HTML';
 		let scriptElt = document.getElementById(id);
 		if (scriptElt)
@@ -10235,6 +10238,7 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 		};
 		scriptElt.src = D.url.createObjectURL(new Blob([script], {type:'application/javascript'}));
 		document.head.appendChild(scriptElt);
+		*/
 	}
 	canFormat(o)
 	{
@@ -11760,22 +11764,57 @@ class MysqlTableAction extends Action
 							H3.line({class:"arrow0", x1:"220", y1:"40", x2:"220", y2:"300", 'marker-end':"url(#arrowhead)"}),
 						]);
 	}
+	getMorphismId(m)
+	{
+		return `mysql-${U.Token(m)}`;
+	}
 	html(e, diagram, ary)
 	{
 		const help = D.toolbar.help;
 		D.RemoveChildren(help);
-		help.appendChild(H3.h3('Create Mysql Table'));
-		ary.map(m => help.appendChild(H3.div(D.GetIndexHTML(m), {class:"left panelElt"})));
+		const databaseName = U.Token(diagram.name);
+		const domain = ary[0].to.domain;
+		const tableName = domain.basename;
+		help.appendChild(H3.h3(`Mysql Table ${domain.basename}`));
+		const table = H3.table();
+		help.appendChild(table);
+		ary.map(m => table.appendChild(H3.tr(H3.td(D.GetIndexHTML(m), {class:"display left"}), H3.td([H3.input({type:'checkbox', 'data-name':m.to.name}), H3.span('Index')]))));
+		help.appendChild(H3.button(`Create table ${tableName} in database ${databaseName}`, {onclick:e => Cat.R.Actions.sqlTable.action(e, diagram, diagram.selected), class:'display'}));
 	}
 	action(e, diagram, ary)
 	{
+		const help = D.toolbar.help;
+		const indexboxes = help.querySelectorAll('[type="checkbox"]');
+		const indexes = new Set([...indexboxes].filter(elt => elt.checked).map(elt => elt.dataset.name));
+		const domain = ary[0].to.domain;
+		const tableName = ary[0].to.domain.basename;
+		const morphisms = ary.map(m => [m.to.name, indexes.has(m.to.name) ? ['index'] : []]);
+		/*
+		if (!('code' in domain))
+			domain.code = {};
+		if (!('mysql' in domain.code))
+			domain.code.mysql = {};
+		domain.code.mysql.morphisms = morphisms;
+		*/
+debugger;
+		if (!(domain instanceof MysqlObject))
+		{
+			const args = domain.json();
+			args.prototype = 'MysqlObject';
+			args.morphisms = ary.slice();
+			diagram.replace(domain, args);
+		}
+		const url = `http://${document.location.host}/mysql?command=tableSetup&diagram=${diagram.name}&table=${tableName}&morphisms=${JSON.stringify(morphisms)}`;
+console.log({url});
+		fetch(url).then(response => response.text()).then(txt => console.log(txt)).catch(err => D.RecordError(err));
+		R.EmitElementEvent(diagram, 'update', domain);
 	}
 	hasForm(diagram, ary)
 	{
 		if (diagram.allReferences.has('hdole/mysql') && Category.IsSource(ary))
 		{
 			const domain = ary[0].domain.to;
-			if (domain.constructor.name !== 'CatObject')
+			if (domain.constructor.name !== 'CatObject' && !(domain instanceof MysqlObject))
 				return false;
 			const mysql = R.$CAT.getElement('hdole/mysql');
 			return ary.reduce((r, m) => r && m.to.constructor.name === 'Morphism' && mysql.hasIndexedElement(m.to.codomain.name), true);	// all codomains are in mysql
@@ -11879,7 +11918,7 @@ if (name === '#1') name = 'hdole/Basics/#1';
 			return this.elements.get(name);
 		return name;
 	}
-	deleteElement(elt)
+	deleteElement(elt, emit = true)
 	{
 		this.elements.delete(elt.name);
 		if (elt.diagram)
@@ -11887,7 +11926,7 @@ if (name === '#1') name = 'hdole/Basics/#1';
 			elt.diagram.elements.delete(elt.basename);
 			if (!(elt instanceof DiagramMorphism) && !(elt instanceof DiagramObject))
 				R.RemoveEquivalences(elt.diagram, elt.name);
-			R.EmitElementEvent(elt.diagram, 'delete', elt);
+			emit && R.EmitElementEvent(elt.diagram, 'delete', elt);
 		}
 	}
 	addActions(name)
@@ -12015,7 +12054,7 @@ class Morphism extends Element
 			sigs.push(this.recursor.sig);
 		if (sigs.length > 1)
 			this.signature = U.SigArray(sigs);
-		diagram && diagram.addElement(this);
+		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
 		this.constructor.name === 'Morphism' && R.EmitElementEvent(diagram, 'new', this);
 	}
 	setDomain(dom)
@@ -14321,6 +14360,36 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 }
 
+class MysqlObject extends FiniteObject		// mysql table; morphisms form the columns
+{
+	constructor(diagram, args)
+	{
+		if (!diagram.allReferences.has('hdole/mysql'))
+			throw `diagram ${diagram.name} does not reference mysql`;
+		const nuArgs = U.Clone(args);
+		nuArgs.to = diagram.getElement(args.to);
+		nuArgs.morphisms = args.morphisms.map(m => diagram.getElement(m));
+		if (!Category.IsSource(nuArgs.morphisms))
+			throw 'morphisms are not a source';
+		super(diagram, nuArgs);
+		this.morphisms = nuArgs.morphisms;
+		this.morphisms.map(m => m.incrRefcnt());
+		this.constructor.name === 'MysqlObject' && R.EmitElementEvent(diagram, 'new', this);
+	}
+	json()
+	{
+		const a = super.json();
+		a.morphisms = this.morphisms.map(m => m.name);
+		return a;
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt <= 1)
+			this.morphisms.map(m => m.decrRefcnt());
+		super.decrRefcnt();
+	}
+}
+
 class Functor extends Morphism
 {
 	constructor(diagram, args)
@@ -14993,7 +15062,9 @@ class Diagram extends Functor
 			return elt;
 		if (this.elements.has(name))
 			return this.elements.get(name);
-		return this.codomain.getElement(name);
+		if (this.codomain.elements.has(name))
+			return this.codomain.getElement(name);
+		return this.domain.getElement(name);
 	}
 	getElements(ary)
 	{
@@ -16150,6 +16221,41 @@ console.log('formMorphism', {morphism});
 			'data' in m && m.data.forEach(function(d, i) { m.data.set(i, U.InitializeData(that, m.codomain, d)); });
 		});
 	}
+	replace(oldElt, args)	// not for index objects
+	{
+		if (oldElt.name !== args.name)
+			throw 'names do not match';
+		if (U.IsIndexElement(oldElt))
+			throw 'cannot replace index elements';
+		if (oldElt.diagram !== this)
+			throw 'old element not from this diagram';
+		const nuArgs = U.Clone(args);
+		nuArgs.addElement = false;
+		const newElt = new Cat[args.prototype](this, nuArgs);
+		this.elements.set(newElt.basename, newElt);
+		this.codomain.elements.set(newElt.name, newElt);
+		this.codomain.elements.forEach(elt =>
+		{
+			if (elt === newElt)
+				return;
+			if ('objects' in elt)
+				for (let i=0; i<elt.objects.length; ++i)
+					if (elt.objects[i] === oldElt)
+						elt.objects[i] = newElt;
+			if ('morphisms' in elt)
+				for (let i=0; i<elt.morphisms.length; ++i)
+					if (elt.morphisms[i] === oldElt)
+						elt.morphisms[i] = newElt;
+			if (elt instanceof Morphism)
+			{
+				if (elt.domain === oldElt)
+					elt.domain = newElt;
+				if (elt.codomain === oldElt)
+					elt.codomain = newElt;
+			}
+		});
+		newElt.refcnt = oldElt.refcnt;
+	}
 	static Codename(args)
 	{
 		return `${args.user}/${args.basename}`;
@@ -16208,6 +16314,7 @@ const Cat =
 	JavascriptAction,
 	LambdaMorphism,
 	Morphism,
+	MysqlObject,
 	NamedObject,
 	NamedMorphism,
 	ProductObject,
