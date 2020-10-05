@@ -779,6 +779,11 @@ description
 	white-space:	nowrap;
 }
 
+.display
+{
+	margin:			3px;
+	padding:		3px;
+}
 .searching
 {
 	background-color:	#aaf;
