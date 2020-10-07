@@ -116,15 +116,15 @@ async function updateDiagramInfo(diagram)
 		if (timestamp > localTimestamp)
 			sql = `UPDATE diagrams SET ${assign} WHERE name = ${dbcon.escape(name)}`;
 		else if (timestamp === localTimestamp)
-			console.log(`no update ${name} @ ${new Date(timestamp)}`);
+			console.log(`\tno update ${name} @ ${new Date(timestamp)}`);
 		else
-			console.log(`local version newer ${name} @ ${new Date(localTimestamp)} vs cloud @ ${new Date(timestamp)}`);
+			console.log(`\tlocal version newer ${name} @ ${new Date(localTimestamp)} vs cloud @ ${new Date(timestamp)}`);
 	}
 	else
 		sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
 	if (sql)
 	{
-		console.log(`update ${name} @ ${new Date(timestamp)}`);
+		console.log(`\tupdate ${name} @ ${new Date(timestamp)}`);
 		const result = await dbconSync.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp]);
 	}
 	return sql !== null;
@@ -384,6 +384,7 @@ console.log(process.memoryUsage());
 				saveDiagramPng(name, png);
 			}
 			res.end('ok');
+			console.log(process.memoryUsage());
 		});
 
 		app.use('/mysql', (req, res) =>
