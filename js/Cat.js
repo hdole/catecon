@@ -1204,7 +1204,6 @@ class R
 		const loader = function()
 		{
 			R.diagram = null;
-//			isGUI && !params.has('boot') && R.DownloadDiagram('Anon/Home');
 			let diagramName = params.get('d') || params.get('diagram');
 			const doDisplayMorphism = diagramName !== null;
 			if (!diagramName)
@@ -1380,7 +1379,7 @@ class R
 		const cloudDiagrams = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
 		if (cloudDiagrams.length > 0)
 		{
-			const downloads = cloudDiagrams.map(d => this.getURL(d) + '.json');
+			const downloads = cloudDiagrams.map(d => this.getDiagramURL(d + '.json'));
 			let diagrams = [];
 			async function downloader()
 			{
@@ -1401,7 +1400,6 @@ class R
 		else if (R.CanLoad(name))
 			diagram = R.LoadDiagram(name);		// immediate loading
 		else
-//			D.RecordError(`Cannot download diagram ${name}`);
 			return null;
 		fn && fn(diagram);
 		return diagram;
@@ -1626,7 +1624,7 @@ class R
 		};
 		if (isGUI)
 		{
-			R.cloud && fetch(R.getURL() + '/catalog.json').then(response =>
+			R.cloud && fetch(R.getDiagramURL('/catalog.json')).then(response =>
 			{
 				if (response.ok)
 					response.json().then(data =>
@@ -1721,7 +1719,8 @@ class R
 		{
 			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
 			const headers = {'Content-Type':'application/json;charset=utf-8', Authorization:R.cloud.accessToken};
-			fetch(`http://${document.location.host}/DiagramIngest`, {method:'POST', body, headers}).then(_ => fn());
+//			fetch(`http://${document.location.host}/DiagramIngest`, {method:'POST', body, headers}).then(_ => fn());
+			fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(_ => fn());
 		}
 		else
 			R.cloud.ingestDiagramLambda(e, diagram, fn);
@@ -1729,22 +1728,26 @@ class R
 	static DiagramSearch(search, fn)
 	{
 		if (R.local)
-			fetch(`http://${document.location.host}/DiagramSearch?search=${search}`).then(response => response.json()).then(diagrams => fn(diagrams));
+//			fetch(`http://${document.location.host}/DiagramSearch?search=${search}`).then(response => response.json()).then(diagrams => fn(diagrams));
+			fetch(R.getURL(`DiagramSearch?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams));
 		else
-			diagramSearch(search, fn);
+			R.cloud.diagramSearch(search, fn);	// use lambda
 	}
 	static getURL(suffix)
 	{
+		let url = `http://${document.location.host}/`;
+		if (suffix)
+			url += suffix;
+		return url;
+	}
+	static getDiagramURL(suffix)
+	{
 		let url = '';
 		if (R.local)
-		{
-			url = `http://${document.location.host}/diagrams`;
-			if (suffix === undefined)
-				return url;
-			url += `/${suffix}`;
-		}
+//			url = `http://${document.location.host}/diagrams/`;
+			url = R.getURL(`diagrams/${suffix}`);
 		else
-			url = R.cloud.getURL(suffix);
+			url = R.cloud.getDiagramURL(suffix);
 		return url;
 	}
 }
@@ -1850,12 +1853,12 @@ class Amazon extends Cloud
 			document.body.appendChild(script);
 		}
 	}
-	getURL(suffix)
+	getDiagramURL(suffix)
 	{
-		let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}`;
+		let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}/`;
 		if (suffix === undefined)
 			return url;
-		url += `/${suffix}`;
+		url += suffix;
 		return url;
 	}
 	updateServiceObjects()
@@ -2194,8 +2197,7 @@ class Amazon extends Cloud
 	{
 		try
 		{
-			const url = this.getURL(name) + '.json';
-			const response = await fetch(url, {cache: cache ? 'default' : 'reload'});
+			const response = await fetch(this.getDiagramURL(name + '.json'), {cache: cache ? 'default' : 'reload'});
 			const json = await response.json();
 			R.ServerDiagrams.set(name, Diagram.GetInfo(json));
 			return json;
@@ -3000,10 +3002,14 @@ class D
 		D.CancelAutosave();
 		const timestamp = Date.now();
 		diagram.timestamp = timestamp;
-		D.autosaveTimer = setTimeout(_ =>
+		D.autosaveTimer = setTimeout(e =>
 		{
 			if (timestamp === diagram.timestamp)
+			{
 				R.SaveLocal(diagram);
+				if (R.local)
+					R.DiagramIngest(e, diagram, _ => {});
+			}
 		}, D.default.autosaveTimer);
 	}
 	static Mousedown(e)
@@ -4118,7 +4124,7 @@ ${button}
 	{
 		let src = D.GetPng(name);
 		if (!src && R.cloud)
-			src = R.getURL(name + '.png');
+			src = R.getDiagramURL(name + '.png');
 		const imgId = U.SafeId(`img-el_${name}`);
 		return `<image href="${src}" id="${imgId}" alt="Not loaded" width="200" height="150"/>`;
 	}
@@ -4126,13 +4132,13 @@ ${button}
 	{
 		let src = D.GetPng(name);
 		if (!src && R.cloud)
-			src = R.getURL(name + '.png');
+			src = R.getDiagramURL(name + '.png');
 		const imgId = U.SafeId(`img-el_${name}`);
 		return H3.img({src, id:imgId, alt:"Not loaded", width:"200", height:"150"});
 	}
 	static GetSvgImageElement3(name)
 	{
-		const href = R.getURL(name + '.png');
+		const href = R.getDiagramURL(name + '.png');
 		const imgId = U.SafeId(`image-el_${name}`);
 		return H3.image({href, id:imgId, alt:"Not loaded", width:"300", height:"225"});
 	}
@@ -11778,7 +11784,7 @@ class MysqlTableAction extends Action
 		help.appendChild(H3.h3(`Mysql Table ${domain.basename}`));
 		const table = H3.table();
 		help.appendChild(table);
-		ary.map(m => table.appendChild(H3.tr(H3.td(D.GetIndexHTML(m), {class:"display left"}), H3.td([H3.input({type:'checkbox', 'data-name':m.to.name}), H3.span('Index')]))));
+		ary.map(m => table.appendChild(H3.tr(H3.td(D.GetIndexHTML(m), {class:"display left"}), H3.td([H3.input({type:'checkbox', 'data-name':m.name}), H3.span('Index')]))));
 		help.appendChild(H3.button(`Create table ${tableName} in database ${databaseName}`, {onclick:e => Cat.R.Actions.sqlTable.action(e, diagram, diagram.selected), class:'display'}));
 	}
 	action(e, diagram, ary)
@@ -11786,34 +11792,26 @@ class MysqlTableAction extends Action
 		const help = D.toolbar.help;
 		const indexboxes = help.querySelectorAll('[type="checkbox"]');
 		const indexes = new Set([...indexboxes].filter(elt => elt.checked).map(elt => elt.dataset.name));
-		const domain = ary[0].to.domain;
+		const domain = ary[0].domain;
 		const tableName = ary[0].to.domain.basename;
-		const morphisms = ary.map(m => [m.to.name, indexes.has(m.to.name) ? ['index'] : []]);
-		/*
-		if (!('code' in domain))
-			domain.code = {};
-		if (!('mysql' in domain.code))
-			domain.code.mysql = {};
-		domain.code.mysql.morphisms = morphisms;
-		*/
+		const columns = ary.map(m => [m.name, indexes.has(m.name) ? ['index'] : []]);
 debugger;
 		if (!(domain instanceof MysqlObject))
 		{
-			const args = domain.json();
-			args.prototype = 'MysqlObject';
-			args.morphisms = ary.slice();
-			diagram.replace(domain, args);
+			diagram.replaceIndexObject(domain, new MysqlObject(diagram, {to:domain.to, columns}));
 		}
-		const url = `http://${document.location.host}/mysql?command=tableSetup&diagram=${diagram.name}&table=${tableName}&morphisms=${JSON.stringify(morphisms)}`;
+//		const url = `http://${document.location.host}/mysql?command=tableSetup&diagram=${diagram.name}&table=${tableName}&morphisms=${JSON.stringify(morphisms)}`;
+		const url = R.getURL(`mysql?command=tableSetup&diagram=${diagram.name}&table=${tableName}&morphisms=${JSON.stringify(morphisms)}`);
 console.log({url});
-		fetch(url).then(response => response.text()).then(txt => console.log(txt)).catch(err => D.RecordError(err));
+		const headers = {Authorization:R.cloud.accessToken};
+		fetch(url, {headers}).then(response => response.text()).then(txt => console.log(txt)).catch(err => D.RecordError(err));
 		R.EmitElementEvent(diagram, 'update', domain);
 	}
 	hasForm(diagram, ary)
 	{
 		if (diagram.allReferences.has('hdole/mysql') && Category.IsSource(ary))
 		{
-			const domain = ary[0].domain.to;
+			const domain = ary[0].domain;
 			if (domain.constructor.name !== 'CatObject' && !(domain instanceof MysqlObject))
 				return false;
 			const mysql = R.$CAT.getElement('hdole/mysql');
@@ -14360,7 +14358,7 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 }
 
-class MysqlObject extends FiniteObject		// mysql table; morphisms form the columns
+class MysqlObject extends DiagramObject		// mysql table; morphisms form the columns
 {
 	constructor(diagram, args)
 	{
@@ -14368,18 +14366,36 @@ class MysqlObject extends FiniteObject		// mysql table; morphisms form the colum
 			throw `diagram ${diagram.name} does not reference mysql`;
 		const nuArgs = U.Clone(args);
 		nuArgs.to = diagram.getElement(args.to);
-		nuArgs.morphisms = args.morphisms.map(m => diagram.getElement(m));
-		if (!Category.IsSource(nuArgs.morphisms))
+		const columns = args.columns.map(col => col[1]);
+		const morphisms = nuArgs.columns.map(col => diagram.getElement(col[0]));
+		if (morphisms.filter(m => m === undefined).length > 0)
+			throw 'morphism not found for column';
+		if (morphisms.reduce((r, m) => r || 'js' in m.to.code, false))
+			throw 'a morphism already has js code';
+		if (!Category.IsSource(morphisms))
 			throw 'morphisms are not a source';
 		super(diagram, nuArgs);
-		this.morphisms = nuArgs.morphisms;
-		this.morphisms.map(m => m.incrRefcnt());
+		this.morphisms = morphisms;
+		morphisms.map(m => m.incrRefcnt());
+		this.columns = columns;
 		this.constructor.name === 'MysqlObject' && R.EmitElementEvent(diagram, 'new', this);
+		morphisms.map(m =>
+		{
+			m.to.code.js =
+`
+async function ${jsName}_Iterator(fn)
+{
+	const result = await dbconSync.query(\`SELECT ${m.basename} FROM ${this.to.basename}\`);
+	console.log({result});
+}
+`;
+		});
 	}
 	json()
 	{
 		const a = super.json();
 		a.morphisms = this.morphisms.map(m => m.name);
+		a.columns = this.columns.slice();
 		return a;
 	}
 	decrRefcnt()
@@ -16255,6 +16271,20 @@ console.log('formMorphism', {morphism});
 			}
 		});
 		newElt.refcnt = oldElt.refcnt;
+	}
+	replaceIndexObject(from, replacement)
+	{
+		[...from.domains].map(m =>
+		{
+			m.setDomain(replacement);
+			m.update();
+		});
+		[...from.codomains].map(m =>
+		{
+			m.setCodomain(replacement);
+			m.update();
+		});
+		from.decrRefcnt();
 	}
 	static Codename(args)
 	{
