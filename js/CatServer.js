@@ -21,12 +21,19 @@ const encoding = require('encoding');
 const util = require( 'util' );
 const mysql = require( 'mysql' );
 const {VM} = require('vm2');
+const morgan = require('morgan');
+const rfs = require('rotating-file-stream');
+
 const Cat = require('./Cat.js');
 
 Cat.R.default.debug = false;
 
 const cloudDiagramURL = process.env.CAT_CLOUD_DIAGRAM_URL;
 const catalogFile = 'catalog.json';
+
+const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:'.'})
+
+app.use(morgan('combined', {stream:accessLogStream}));
 
 const mysqlArgs =
 {
@@ -52,6 +59,7 @@ function log(...args)
 function reqlog(req, ...args)
 {
 	console.log(req.connection.remoteAddress, currentTime(), ...args);
+//	(req.connection.remoteAddress, currentTime(), args);
 }
 
 function makeDbconSync(mysqlArgs)	// allows synchronous calls
@@ -72,7 +80,7 @@ function mysqlKeepAlive()
 	{
 		if (err)
 		{
-			log('Error on connection to mysql server');
+			log('Error on connection to mysql server', err);
 			setTimeout(mysqlKeepAlive, 2000);
 		}
 	});
@@ -333,9 +341,6 @@ async function serve()
 			const server = app.listen(process.env.HTTP_PORT, _ => log(`listening on port ${process.env.HTTP_PORT}`));
 console.log(process.memoryUsage());
 		});
-
-//		const authRoute = express.Router();
-//		app.use('/DiagramIngest', authRoute);
 
 		const cogExpress = new CognitoExpress(
 		{
