@@ -920,7 +920,7 @@ test('Download Catalog', assert =>
 test('Check catalog', assert =>
 {
 	const didit = assert.async();
-	fetch(Cat.R.cloud.getURL() + '/catalog.json').then(function(response)
+	fetch(Cat.R.getDiagramURL('catalog.json')).then(function(response)
 	{
 		if (response.ok)
 		{
