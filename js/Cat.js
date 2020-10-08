@@ -9912,6 +9912,19 @@ class JavascriptAction extends LanguageAction
 	{
 		return U.Token(elt);
 	}
+	generateComposite(morphism)
+	{
+		let code = '\tlet result = null;';
+		morphism.morphisms.map((m, i) =>
+		{
+			code += '\tresult = ';
+			if (this.isAsync(m))
+				code += 'await ';
+			code += `${this.getType(m)}(${i > 0 ? 'result' : 'args'});\n`;
+		});
+		code += '\treturn result;\n';
+		return this.header(morphism) + code + JavascriptAction.Tail();
+	}
 	generate(morphism, generated = new Set())
 	{
 		let code = '';
@@ -9920,15 +9933,15 @@ class JavascriptAction extends LanguageAction
 		{
 	 		if (morphism instanceof MultiMorphism)
 				code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
-			const jsName = U.Token(morphism);
-			const header = JavascriptAction.Header(morphism);
+			const name = this.getType(morphism);
+			const header = this.header(morphism);
 			const tail = JavascriptAction.Tail();
 			const domain = morphism.domain instanceof NamedObject ? morphism.domain.base : morphism.domain;
 			const codomain = morphism.codomain instanceof NamedObject ? morphism.codomain.base : morphism.codomain;
 			if (R.CanFormat(morphism) && domain.size)
 				code +=	// TODO safety check?
 `
-function ${jsName}_Iterator(fn)
+function ${name}_Iterator(fn)
 {
 	const result = new Map();
 	for (let i=0; i<${domain.size}; ++i)
@@ -9946,7 +9959,8 @@ function ${jsName}_Iterator(fn)
 				switch(proto)
 				{
 					case 'Composite':
-						code += `${header}	return ${morphism.morphisms.map(n => U.Token(n) + '(').reverse().join('')}args${ ")".repeat(morphism.morphisms.length) };${tail}`;
+//						code += `${header}	return ${morphism.morphisms.map(n => U.Token(n) + '(').reverse().join('')}args${ ")".repeat(morphism.morphisms.length) };${tail}`;
+						code += this.generateComposite(morphism);
 						break;
 					case 'Identity':
 						code += `${header}	return args;${tail}`;
@@ -9954,15 +9968,15 @@ function ${jsName}_Iterator(fn)
 					case 'ProductMorphism':
 						if (morphism.dual)
 							code +=
-`const ${jsName}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
-${header}	return [args[0], ${jsName}_morphisms[args[0]](args[1])];${tail}`;
+`const ${name}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
+${header}	return [args[0], ${name}_morphisms[args[0]](args[1])];${tail}`;
 						else
 							code += `${header}	return [${morphism.morphisms.map((n, i) => U.Token(n) + '(args[' + i + '])').join()}];${tail}`;
 						break;
 					case 'ProductAssembly':
 						code += this.dual ?
-`const ${jsName}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
-${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`
+`const ${name}_morphisms = [${morphism.morphisms.map((n, i) => U.Token(n)).join()}];
+${header}	return ${name}_morphisms[args[0]](args[1]);${tail}`
 							:
 								`${header}	return [${morphism.morphisms.map((n, i) => U.Token(n) + '(args)').join()}];${tail}`;
 						break;
@@ -9996,11 +10010,11 @@ ${header}	return ${jsName}_morphisms[args[0]](args[1]);${tail}`
 							});
 							code +=	// TODO safety check?
 `
-const ${jsName}_Data = new Map([${data.join()}]);
-function ${jsName}_Iterator(fn)
+const ${name}_Data = new Map([${data.join()}]);
+function ${name}_Iterator(fn)
 {
 	const result = new Map();
-	${jsName}_Data.forEach(function(d, i)
+	${name}_Data.forEach(function(d, i)
 	{
 		result.set(i, fn(i));
 	});
@@ -10010,8 +10024,8 @@ function ${jsName}_Iterator(fn)
 						}
 						if ('recursor' in morphism)
 							code +=
-`${header}	if (${jsName}_Data.has(args))
-		return ${jsName}_Data.get(args);
+`${header}	if (${name}_Data.has(args))
+		return ${name}_Data.get(args);
 	return ${U.Token(morphism.recursor)}(args);
 ${tail}`;
 						break;
@@ -10026,8 +10040,8 @@ ${tail}`;
 						code += morphism.dual ?
 							''	// TODO
 							:
-`const ${jsName}_factors = ${JSON.stringify(morphism.factors)};
-${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
+`const ${name}_factors = ${JSON.stringify(morphism.factors)};
+${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j === -1 ? 0 : d = d[j], args));
 	return ${morphism.factors.length === 1 ? 'r[0]' : 'r'};${tail}`;
 						break;
 					case 'HomMorphism':
@@ -10403,11 +10417,11 @@ ${header}	const r = ${jsName}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) =>
 		}
 		return value;
 	}
-	evaluate(e, diagram, name, fn)
+	evaluate(e, diagram, morphismName, fn)
 	{
-		const m = diagram.getElement(name);
-		const args = this.getInputValue(m.domain);
-		const jsName = U.Token(m);
+		const morphism = diagram.getElement(morphismName);
+		const args = this.getInputValue(morphism.domain);
+		const type = this.getType(morphism);
 		const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -10416,7 +10430,7 @@ onmessage = function(e)
 	postMessage(['start', 'Starting']);
 	try
 	{
-		const result = ${jsName}(args);
+		const result = ${type}(args);
 		postMessage(['result', [args, result]]);
 	}
 	catch(e)
@@ -10424,7 +10438,7 @@ onmessage = function(e)
 		postMessage(['exception', e]);
 	}
 }
-${this.generate(m)}
+${this.generate(morphism)}
 `;
 		R.default.debug && console.log('run code', code);
 		const blob = new Blob([code], {type:'application/javascript'});
@@ -10435,11 +10449,11 @@ ${this.generate(m)}
 	}
 	evaluateMorphism(e, diagram, name, fn)
 	{
-		const m = diagram.getElement(name);
-		const args = this.getInputValue(m.domain);
-		const jsName = U.Token(m);
-		const isIterable = m.isIterable();
-		const iterInvoke = m instanceof Composite ? `${U.Token(m.getFirstMorphism())}_Iterator(${jsName})` : `${U.Token(m.domain)}_Iterator(${jsName})`;
+		const morphism = diagram.getElement(name);
+		const args = this.getInputValue(morphism.domain);
+		const type = this.getType(morphism);
+		const isIterable = morphism.isIterable();
+		const iterInvoke = morphism instanceof Composite ? `${U.Token(morphism.getFirstMorphism())}_Iterator(${type})` : `${U.Token(morphism.domain)}_Iterator(${type})`;
 		const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -10455,7 +10469,7 @@ onmessage = function(e)
 		postMessage(['exception', e]);
 	}
 }
-${this.generate(m)}
+${this.generate(morphism)}
 `;
 		R.default.debug && console.log('run code', code);
 		const blob = new Blob([code], {type:'application/javascript'});
@@ -10504,9 +10518,22 @@ ${this.generate(m)}
 		}
 		return false;
 	}
-	static Header(m)
+	isAsync(morphism)
 	{
-		return `// ${m.constructor.name}: ${m.basename}\nfunction ${U.Token(m)}(args)\n{\n`;
+		switch(morphism.constructor.name)
+		{
+			case 'Morphism':
+				return typeof morphism.code.js === 'object' && 'async' in morphism.code.js && morphism.code.js.async;
+			case 'Composite':
+			case 'Product':
+			case 'HomMorphism':
+				return morphism.morphisms.reduce((r, subm) => r || this.isAsync(subm), false);
+		}
+		return false;
+	}
+	header(morphism)
+	{
+		return `// ${morphism.constructor.name}: ${morphism.basename}\n${this.isAsync(morphism) ? 'async ' : ''}function ${U.Token(morphism)}(args)\n{\n`;
 	}
 	static Tail()
 	{
@@ -14383,7 +14410,7 @@ class MysqlObject extends DiagramObject		// mysql table; morphisms form the colu
 		{
 			m.to.code.js =
 `
-async function ${jsName}_Iterator(fn)
+async function ${R.Actions.javascript.getType(m)}_Iterator(fn)
 {
 	const result = await dbconSync.query(\`SELECT ${m.basename} FROM ${this.to.basename}\`);
 	console.log({result});
