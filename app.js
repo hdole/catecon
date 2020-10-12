@@ -47,13 +47,15 @@ const morgan = require('morgan');
 const rfs = require('rotating-file-stream');
 
 const Cat = require('./public/js/Cat.js');
+const jsAction = require('./public/js/javascript.js');
+console.log({jsAction});
 
 Cat.R.default.debug = false;
 
 const cloudDiagramURL = process.env.AWS_DIAGRAM_URL;
 const catalogFile = 'catalog.json';
 
-const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:'.'})
+const accessLogStream = rfs.createStream(path.join(process.env.CAT_SRVR_LOG, 'access.log'), {interval:'1d', path:'.'})
 
 app.use(morgan('dev'));
 app.use(morgan('combined', {stream:accessLogStream}));
@@ -122,7 +124,6 @@ function saveHTMLjs()
 {
 	Cat.R.SelectDiagram('hdole/HTML', diagram =>
 	{
-console.log('got hdole/HTML', diagram);
 		const js = Cat.R.Actions.javascript.generateDiagram(diagram);
 		fs.writeFile('js/HTML.js', js, err => {if (err) throw err;});
 		res.end('ok');
@@ -164,7 +165,7 @@ async function updateDiagramInfo(diagram)
 
 function saveDiagramJson(name, diagramString)
 {
-	const dgrmFile = `diagram/${name}.json`;
+	const dgrmFile = `public/diagram/${name}.json`;
 	fs.mkdirSync(path.dirname(dgrmFile), {recursive:true});
 	const dgrmFD = fs.openSync(dgrmFile, 'w');
 	fs.writeSync(dgrmFD, diagramString, 0, diagramString.length +1);
@@ -258,11 +259,11 @@ async function serve()
 			updateCatalog();
 		});
 
-		app.use('/DiagramSearch', async (req, res, next) =>
+		app.use('/search', async (req, res, next) =>
 		{
-			log('DiagramSearch', req.query.search);
+			log('search', req.query.search);
 			const search = dbcon.escape(`%${req.query.search}%`);
-			const sql = `SELECT * FROM diagrams WHERE name LIKE ${search} OR properName LIKE ${search}`;
+			const sql = `SELECT * FROM diagrams WHERE name LIKE ${search} OR properName LIKE ${search} ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT}`;
 			dbcon.query(sql, (err, result) =>
 			{
 				if (err) throw err;
@@ -339,15 +340,27 @@ async function serve()
 			Cat.R.Initialize();
 			log('ready to serve');
 //			const server = app.listen(process.env.HTTP_PORT, _ => log(`listening on port ${process.env.HTTP_PORT}`));
-console.log(process.memoryUsage());
 		});
 
+		app.use('/recent', (req, res) =>
+		{
+			dbcon.query(`SELECT * FROM diagrams ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT};`, (err, result) =>
+			{
+				if (err) throw err;
+				res.end(JSON.stringify(result));
+			});
+		});
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//
+		// AUTHORIZATION REQUIRED
+		//
 		const cogExpress = new CognitoExpress(
 		{
 			region:				process.env.AWS_USER_COG_REGION,
 			cognitoUserPoolId:	process.env.AWS_USER_IDENTITY_POOL,
 			tokenUse:			'access',
-			tokenExpiration:	36 * 100 * 1000,
+			tokenExpiration:	60 * 60 * 1000,
 		});
 
 		app.use((req, res, next) =>
@@ -361,7 +374,7 @@ console.log(process.memoryUsage());
 			{
 				const accessToken = req.headers['authorization'];
 				if (!accessToken)
-					return res.status(401).send('Error:  access token missing from header');
+					return res.status(401).end('Error:  access token missing from header');
 				cogExpress.validate(accessToken, (err, response) =>
 				{
 					if (err)
@@ -398,26 +411,57 @@ console.log(process.memoryUsage());
 			reqlog(req, '/mysql', {query});
 			const diagramName = query.diagram;
 			const command = query.command;
+			const table = query.table;
+			const columns = JSON.parse(query.columns);
+			let sql = '';
+			const typeMap = new Map([['Z', 'bigint(20) NOT NULL'],
+									['str', 'mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL']]);
+			function columnDef(m)
+			{
+				return `\n\t\`${m.basename}\` ${typeMap.get(m.codomain.basename)}`;
+			}
+			function indexDef(m, colData)
+			{
+				return colData.includes('index') ? `\nINDEX(${m.basename}${m.codomain.name === 'hdole/Strings/str' ? '(64)' : ''})` : '';
+			}
 			Cat.R.SelectDiagram(diagramName, diagram =>
 			{
+				const morphisms = columns.map(col => diagram.getElement(col[0]).to);
 				const database = Cat.U.Token(diagramName);
 				switch(command)
 				{
-					case 'tableSetup':
-					let dbres = dbconSync.query(`CREATE DATABASE IF NOT EXISTS ${database} CHARACTER SET utf8 COLLATE utf8_bin`);
-					if ('table' in query)
-					{
-						const table = query.table;
-						let sql = `CREATE TABLE ${database}.${table}`;
-						sql += '(id int(11) NOT NULL, ';
-						const morphisms = JSON.parse(query.morphisms).map(m => [diagram.getElement(m[0]).to, m[1]]);
-						const typeMap = new Map([['Z', 'bigint(20) NOT NULL'],
-												['str', 'mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL']]);
-						sql += morphisms.map((m, i) => ` \`${m[0].basename}\` ${typeMap.get(m[0].codomain.basename)}`).join();
+					case 'create':
+						let dbres = dbconSync.query(`CREATE DATABASE IF NOT EXISTS ${database} CHARACTER SET utf8 COLLATE utf8_bin`);
+						sql = `CREATE TABLE ${database}.${table} (`;
+						sql += morphisms.map((m, i) => columnDef(m)).join();
+						const indexMorphisms = morphisms.filter((m, i) => columns[i][1].includes('index'));
+						if (indexMorphisms.length > 0)
+							sql += ',' + indexMorphisms.map((m, i) => indexDef(m, columns[i][1])).filter(s => s !== '').join();
 						sql += ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-						dbcon.query(sql, result => res.end('ok')).catch(err => res.end(err)); 
-					}
+						break;
+					case 'alter':
+						sql = morphisms.map((m, i) =>
+						{
+							const colInfo = columns[i][1];
+							if (colInfo.includes('add'))
+								sql += `ALTER TABLE ${table} ADD ${m.basename} ${columnDef(m)} ${indexDef(m, i)};\n`;
+							else if (colInfo.includes('modify'))
+								sql += `ALTER TABLE ${table} MODIFY ${m_basename} ${columnDef(m)} ${indexDef(m, i)};\n`;
+							else if (colInfo.includes('drop'))
+								sql += `ALTER TABLE ${table} DROP COLUMN ${m_basename};\n`;
+						}).join();
+						break;
 				}
+				dbcon.query(sql, (err, result) =>
+				{
+					if (err)
+					{
+						res.status(500).end();
+						log('mysql error:', err);
+					}
+					else
+						res.end('ok');
+				});
 			});
 		});
 
@@ -443,6 +487,7 @@ console.log(process.memoryUsage());
 			res.status(err.status || 500);
 			res.render('error');
 		});
+
 	}
 	catch(err)
 	{

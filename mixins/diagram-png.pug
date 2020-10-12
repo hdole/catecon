@@ -6,7 +6,7 @@ mixin diagram-png(diagram)
 			td.right
 		tr
 			td.white(colspan=2)
-				a(href=`/diagram/${diagram.name}`, title=diagram.description)
+				a(href=`/diagram?diagram=${diagram.name}`, title=diagram.description)
 					img(src=`/diagram/${diagram.name}.png`, width="200px", height="150px")
 		tr.diagramSlot
 			td.author #{diagram.name}

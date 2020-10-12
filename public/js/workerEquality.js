@@ -20,7 +20,7 @@ onmessage = function(e)
 		switch(command)
 		{
 			case 'start':
-				importScripts(args.url + '/js/sjcl.js');
+				importScripts((typeof exports === 'object' ? args.url : '') + '/js/sjcl.js');
 				break;
 			case 'LoadEquivalences':
 				LoadEquivalences(args.diagram, args.item, args.leftLeg, args.rightLeg);

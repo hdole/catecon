@@ -5,7 +5,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "The Categorical Console",
-  "main": "js/CatServer.js",
+  "main": "app.js",
   "scripts": {
     "start": "node ./bin/www"
   },
@@ -34,5 +34,11 @@
     "util": "^0.12.3",
     "vm2": "^3.9.2",
     "worker-threads": "^1.0.0"
+  },
+  "devDependencies": {},
+  "nodemonConfig": {
+	  "ignore": ["public/diagram/*", "logs/*"],
+	  "legacyWatch":	true,
+	  "verbose":	true
   }
 }

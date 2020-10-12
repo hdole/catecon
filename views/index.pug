@@ -1,7 +1,56 @@
-extends layout
-
-block content
-	h1 #{title}
-	.catalog
-		each diagram in result
-			+diagram-png(diagram)
+doctype html
+html
+	head
+	title Catecon
+	link(rel='stylesheet', href='/ss/catecon.css')
+script(type="text/javascript", src="/js/H3.js")
+script(type="text/javascript", src="/js/icons.js")
+script(type="text/javascript")
+	|let searchElt = null;
+	|function onEnter(e, fn, that = null)
+	|{
+	|	if (e.key === 'Enter')
+	|		that ? fn.call(that, e) : fn(e);
+	|	e.stopPropagation();
+	|}
+	|function display(diagram)
+	|{
+	|	catalog.appendChild(H3.div({class:'catalogEntry'},
+	|		H3.table(
+	|		[
+	|			H3.tr(H3.td({class:'white', colspan:2}, H3.a(H3.img({src:`diagram/${diagram.name}.png`, width:'200px', height:'150px'}), {href:`/diagram?diagram=${diagram.name}`, title:diagram.description}))),
+	|			H3.tr(H3.td({description:diagram.description, colspan:2})),
+	|			H3.tr([	H3.td(diagram.name, {class:'author'}),
+	|					H3.td(new Date(diagram.timestamp).toLocaleString(), {class:'date'})], {class:'diagramSlot'})
+	|		]),
+	|		H3.hr()));
+	|}
+	|function search()
+	|{
+	|	const search = searchElt.value;
+	|	if (search !== '')
+	|		fetch(`/search?search=${search}`).then(response => response.json()).then(diagrams => displayAll(diagrams));
+	|	else
+	|		fetch(`/recent`).then(response => response.json()).then(diagrams => displayAll(diagrams));
+	|}
+	|function displayAll(diagrams)
+	|{
+	|	let child = catalog.firstChild;
+	|	while((child = catalog.firstChild))
+	|		child.parentNode.removeChild(child);
+	|	diagrams.map(diagram => display(diagram));
+	|}
+	|window.addEventListener('load', _ =>
+	|{
+	|	catalog = document.getElementById('catalog');
+	|	searchElt = document.getElementById('search');
+	|	const btn = CatIcons.getButton('search-btn', 'search', search, 'Search for diagrams');
+	|	btn.onkeydown = onEnter(event, e => search());
+	|	searchElt.parentNode.appendChild(btn);
+	|	search();
+	|});
+body
+	h1 Catecon
+	.center
+		input.in100(id="search", title="Search for a diagram by name", placeholder="Diagram name contains...", onkeydown="onEnter(event, e => search())")
+	#catalog.catalog

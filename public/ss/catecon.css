@@ -15,6 +15,13 @@ img
 	box-shadow:			2px 2px 2px 2px #bbbb;
 }
 
+hr
+{
+	color:			#ccc;
+	border-width:	1px;
+	box-shadow:		1px 1px 1px 1px #bbbb;
+}
+
 .smallPrint
 {
 	font-style:		italic;
@@ -90,6 +97,7 @@ img
 	tab-size:		4;
 	unicode-bidi:	embed;
 	white-space:	pre;
+	margin:			10px;
 }
 
 h1
@@ -172,6 +180,11 @@ td
 	grid-template-columns:	repeat(auto-fit, minmax(210px, 210px));
 }
 
+.catalogEntry
+{
+	padding:			10px;
+}
+
 .left
 {
 	text-align:	left;
@@ -210,10 +223,15 @@ br
 a
 {
 	text-decoration: none;
-	font-size: 12px;
 	color: black;
 	display: block;
 	transition: 0.3s
+}
+
+a:hover, .offcanvas a:focus
+{
+	color: #ddd;
+	background-color:	#777a;
 }
 
 tr.sidenavRow
@@ -231,12 +249,6 @@ tr.sidenavRow:hover
 p
 {
 	margin:	2px 4px 8px 4px;
-}
-
-a:hover, .offcanvas a:focus
-{
-	color: #ddd;
-	background-color:	#777a;
 }
 
 .error
