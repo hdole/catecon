@@ -169,9 +169,10 @@ function saveDiagramJson(name, diagramString)
 	fs.closeSync(dgrmFD);
 }
 
-function saveDiagramPng(name, pngBfr)
+function saveDiagramPng(name, buf)
 {
-	const buf = new Buffer.from(pngBfr.replace(/^data:image\/octet-stream;base64,/,""), 'base64');
+//console.log({pngBfr});
+//	const buf = new Buffer.from(pngBfr.replace(/^data:image\/octet-stream;base64,/,""), 'base64');
 	const pngFile = `public/diagram/${name}.png`;
 	fs.mkdirSync(path.dirname(pngFile), {recursive:true});
 	const pngFD = fs.openSync(pngFile, 'w');
@@ -190,14 +191,14 @@ async function updateCatalog(fn = null)
 			const d = cloudDiagrams[i];
 			try
 			{
-				if (await updateDiagramInfo(d))
+				const name = d.name;
+				if (await updateDiagramInfo(d) || !fs.existsSync(`public/diagram/${name}.json`))
 				{
-					const name = d.name;
 					log(`download ${name}`);
 					// diagram.json
-					fetch(`${cloudDiagramURL}/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString)));
+					fetch(`${cloudDiagramURL}/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudDiagramURL, error}));
 					// diagram.png
-					fetch(`${cloudDiagramURL}/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr));
+					fetch(`${cloudDiagramURL}/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudDiagramURL, error}));
 				}
 			}
 			catch(err)

@@ -37,8 +37,11 @@
   },
   "devDependencies": {},
   "nodemonConfig": {
-	  "ignore": ["public/diagram/*", "logs/*"],
-	  "legacyWatch":	true,
-	  "verbose":	true
+    "ignore": [
+      "public/diagram/*",
+      "logs/*"
+    ],
+    "legacyWatch": true,
+    "verbose": true
   }
 }

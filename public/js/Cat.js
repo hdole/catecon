@@ -1569,9 +1569,10 @@ class R
 			});
 			fn();
 		};
-		if (isGUI)
-		{
-			R.cloud && fetch(R.getDiagramURL('/catalog.json')).then(response =>
+//		if (isGUI)
+//		{
+			const url = R.getDiagramURL('catalog.json');
+			R.cloud && fetch(url).then(response =>
 			{
 				if (response.ok)
 					response.json().then(data =>
@@ -1579,14 +1580,14 @@ class R
 						process(data, fn);
 					});
 				else
-					console.error('error downloading catalog');
+					console.error('error downloading catalog', url, response.statusText);
 			});
-		}
-		else
-		{
-			const data = JSON.parse(U.readfile('catalog.json'));
-			process(data, fn);
-		}
+//		}
+//		else
+//		{
+//			const data = JSON.parse(U.readfile('catalog.json'));
+//			process(data, fn);
+//		}
 	}
 	static CanDeleteDiagram(d)
 	{
