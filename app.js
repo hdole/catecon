@@ -23,9 +23,6 @@ app.use(cookieParser());
 const indexRouter = require('./routes/index');
 app.use('/', indexRouter);
 
-const usersRouter = require('./routes/users');
-app.use('/users', usersRouter);
-
 const diagramRouter = require('./routes/diagram');
 app.use('/diagram', diagramRouter);
 
