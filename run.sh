@@ -1,0 +1,1 @@
+DEBUG=catecon:* npm start

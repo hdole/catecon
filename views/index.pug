@@ -1,0 +1,7 @@
+extends layout
+
+block content
+	h1 #{title}
+	.catalog
+		each diagram in result
+			+diagram-png(diagram)

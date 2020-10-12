@@ -1,0 +1,75 @@
+doctype html
+html(lang="en")
+	head
+		meta(charset="utf-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+		link(rel="stylesheet", type="text/css", href="/ss/catecon.css")
+		link(rel="stylesheet", href="https://code.jquery.com/qunit/qunit-2.10.1.css")
+		title Catecon
+	body
+		#navbar
+		#diagram-sidenav.sidenavPnl.sidenavLeftPnl
+		#category-sidenav.sidenavPnl.sidenavLeftPnl
+		#object-sidenav.sidenavPnl.sidenavLeftPnl
+		#morphism-sidenav.sidenavPnl.sidenavLeftPnl
+		#text-sidenav.sidenavPnl.sidenavLeftPnl
+		#help-sidenav.sidenavPnl.sidenavRightPnl
+		#settings-sidenav.sidenavPnl.sidenavRightPnl
+		#login-sidenav.sidenavPnl.sidenavRightPnl
+		#tty-sidenav.sidenavPnl.sidenavRightPnl
+		#threeD-sidenav.sidenavPnl.sidenavRightPnl
+		.svg
+			#toolbar.toolbar.hidden
+				#toolbar-header.buttonBarLeft
+				#toolbar-help
+				#toolbar-error
+			svg#topSVG(xmlns="http://www.w3.org/2000/svg")
+				defs
+					filter#softGlow(height="300%", width="300%")
+						feMorphology(operator="dilate", radius="2", in="SourceAlpha", result="thicken")
+						feGaussianBlur(in="thicken", stdDeviation="2", result="blurred")
+						feFlood(flood-color="rgb(192,192,192)", result="glowColor")
+						feComposite(in="glowColor", in2="blurred", operator="in", result="softGlow_colored")
+						feMerge
+							feMergeNode(in="softGlow_colored")
+							feMergeNode(in="SourceGraphic")
+					radialGradient#radgrad1(cx="50%", cy="50%", r="50%", fx="50%", fy="50%")
+						stop(offset="0%", style="stop-color:rgb(0,0,0);stop-opacity:1")
+						stop(offset="100%", style="stop-color:rgb(255,255,255);stop-opacity:0")
+					radialGradient#radgrad2(cx="50%", cy="50%", r="50%", fx="50%", fy="50%")
+						stop(offset="0%", style="stop-color:rgb(127,127,127);stop-opacity:1")
+						stop(offset="100%", style="stop-color:rgb(255,255,255);stop-opacity:0")
+					g#threeD_base
+						line.arrow0(x1="120", y1="180", x2="280", y2="180", marker-end="url(#arrowhead)")
+						line.arrow0(x1="120", y1="180", x2="120", y2="40", marker-end="url(#arrowhead)")
+						line.arrow0(x1="120", y1="180", x2="40", y2="280", marker-end="url(#arrowhead)")
+				marker#arrowhead(viewBox="6 12 60 90", refX="50", refY="50", markerUnits="strokeWidth", markerWidth="6", markerHeight="5", orient="auto")
+					path.svgstr3(d="M10 20 L60 50 L10 80")
+				marker#arrowheadRev(viewBox="6 12 60 90", refX="15", refY="50", markerUnits="strokeWidth", markerWidth="6", markerHeight="5", orient="auto")
+					path.svgstr3(d="M60 20 L10 50 L60 80")
+				g#diagramSVG
+			svg#uiSVG(xmlns="http://www.w3.org/2000/svg")
+		#statusbar
+		script#vertexShader(type="x-shader/x-vertex")
+			|varying vec3 vWorldPosition;
+			|void main()
+			|{
+			|	vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+			|	vWorldPosition = worldPosition.xyz;
+			|	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+			|}
+		script#fragmentShader(type="x-shader/x-fragment")
+			|uniform vec3 topColor;
+			|uniform vec3 bottomColor;
+			|uniform float offset;
+			|uniform float exponent;
+			|varying vec3 vWorldPosition;
+			|void main()
+			|{
+			|	float h = normalize( vWorldPosition + offset ).y;
+			|	gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+			|}
+		script(type="text/javascript", src="/js/sjcl.js")
+		script(type="text/javascript", src="/js/sha256.js")
+		script(type="text/javascript", src="/js/Cat.js")
+		script(type="text/javascript", src="/js/HTML.js")
