@@ -5,7 +5,7 @@ var Cat = Cat || require('./Cat.js');
 
 (function()
 {
-'use strict';
+	'use strict';
 
 	const D = Cat.D;
 	const R = Cat.R;
@@ -15,9 +15,10 @@ var Cat = Cat || require('./Cat.js');
 	{
 		constructor(diagram)
 		{
-			super(diagram, 'cpp', 'cpp', typeof module !== 'undefined' ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"200", style:"font-size:220px;font-weight:bold;stroke:#000;"}, "C"),
+			super(diagram, 'cpp', 'cpp', typeof module === 'undefined' ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"200", style:"font-size:220px;font-weight:bold;stroke:#000;"}, "C"),
 												H3.text({"text-anchor":"middle", x:"160", y:"330", style:"font-size:200px;font-weight:bold;stroke:#000;"}, "++")]) : null);
 			Object.defineProperty(this, 'currentCiagram', {value:null, writable:true});
+			Cat.R.languages.set(this.basename, this);
 		}
 		getType(elt, first = true)
 		{

@@ -28,7 +28,8 @@ mkdir -p public/diagram
 cat > .env <<EOF
 CAT_DIR='/mnt/f/catecon'
 CAT_SEARCH_LIMIT=128
-CAT_SRVR_LOG='./server/logs'
+CAT_SRVR_LOG='./logs'
+CAT_SRVR_LOG_SIZE='100M'
 HTTP_DIR='public'
 HTTP_PORT=8080
 MYSQL_HOST=localhost
@@ -42,3 +43,5 @@ AWS_USER_COG_REGION='us-west-2'
 AWS_USER_IDENTITY_POOL='us-west-2_HKN5CKGDz'
 EOF
 
+echo "REMEMBER!  Set the MySQL password in the .env file!"
+echo "Execute the command ./run.sh to start the server."

@@ -52,7 +52,7 @@ Cat.R.default.debug = false;
 const cloudDiagramURL = process.env.AWS_DIAGRAM_URL;
 const catalogFile = 'catalog.json';
 
-const accessLogStream = rfs.createStream(path.join(process.env.CAT_SRVR_LOG, 'access.log'), {interval:'1d', path:'.'})
+const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:process.env.CAT_SRVR_LOG, size:process.env.CAT_SRVR_LOG_SIZE})
 
 app.use(morgan('dev'));
 app.use(morgan('combined', {stream:accessLogStream}));
@@ -81,7 +81,6 @@ function log(...args)
 function reqlog(req, ...args)
 {
 	console.log(req.connection.remoteAddress, currentTime(), ...args);
-//	(req.connection.remoteAddress, currentTime(), args);
 }
 
 function makeDbconSync(mysqlArgs)	// allows synchronous calls
@@ -169,15 +168,26 @@ function saveDiagramJson(name, diagramString)
 	fs.closeSync(dgrmFD);
 }
 
-function saveDiagramPng(name, buf)
+function saveDiagramPng(name, inbuf)
 {
-//console.log({pngBfr});
-//	const buf = new Buffer.from(pngBfr.replace(/^data:image\/octet-stream;base64,/,""), 'base64');
+	const buf = typeof inbuf === 'string' ? new Buffer.from(inbuf.replace(/^data:image\/octet-stream;base64,/,""), 'base64') : inbuf;
+	if (buf.length > 128 * 1024)
+		throw 'PNG file too large';
 	const pngFile = `public/diagram/${name}.png`;
-	fs.mkdirSync(path.dirname(pngFile), {recursive:true});
-	const pngFD = fs.openSync(pngFile, 'w');
-	fs.writeSync(pngFD, buf, 0, buf.length);
-	fs.closeSync(pngFD);
+//	fs.mkdirSync(path.dirname(pngFile), {recursive:true});
+//	const pngFD = fs.openSync(pngFile, 'w');
+//	fs.writeSync(pngFD, buf, 0, buf.length);
+//	fs.closeSync(pngFD);
+	fs.mkdir(path.dirname(pngFile), {recursive:true}, _ => fs.open(pngFile, 'w', (err, pngFD) =>
+	{
+console.log({pngFD});
+		if (err) throw err;
+		fs.write(pngFD, buf, 0, buf.length, (err, bytes, data) =>
+		{
+			if (err) throw err;
+			fs.close(pngFD);
+		});
+	}));
 }
 
 async function updateCatalog(fn = null)
@@ -337,7 +347,6 @@ async function serve()
 		{
 			Cat.R.Initialize();
 			log('ready to serve');
-//			const server = app.listen(process.env.HTTP_PORT, _ => log(`listening on port ${process.env.HTTP_PORT}`));
 		});
 
 		app.use('/recent', (req, res) =>
@@ -395,10 +404,9 @@ async function serve()
 			const {diagram, user, png} = req.body;
 			const name = diagram.name;
 			if (await updateDiagramInfo(diagram))
-			{
 				saveDiagramJson(name, JSON.stringify(diagram));
+			if (png)
 				saveDiagramPng(name, png);
-			}
 			res.end('ok');
 			console.log(process.memoryUsage());
 		});

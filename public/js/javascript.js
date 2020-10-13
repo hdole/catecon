@@ -1,14 +1,18 @@
+// (C) 2018-2020 Harry Dole
+// Catecon:  The Categorical Console
+//
 var Cat = Cat || require('./Cat.js');
 
 (function()
 {
-'use strict';
+	'use strict';
 
 	class JavascriptAction extends Cat.LanguageAction
 	{
 		constructor(diagram)
 		{
 			super(diagram, 'javascript', 'js', typeof module === 'undefined' ? H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:240px;font-weight:bold;stroke:#000;"}, "JS") : null);
+			Cat.R.languages.set(this.basename, this);
 		}
 		getType(elt, first = true)
 		{
@@ -25,7 +29,7 @@ var Cat = Cat || require('./Cat.js');
 				code += `${this.getType(m)}(${i > 0 ? 'result' : 'args'});\n`;
 			});
 			code += '\treturn result;\n';
-			return this.header(morphism) + code + JavascriptAction.Tail();
+			return this.header(morphism) + code + this.tail();
 		}
 		generate(morphism, generated = new Set())
 		{
@@ -37,7 +41,7 @@ var Cat = Cat || require('./Cat.js');
 					code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
 				const name = this.getType(morphism);
 				const header = this.header(morphism);
-				const tail = JavascriptAction.Tail();
+				const tail = this.tail();
 				const domain = morphism.domain instanceof Cat.NamedObject ? morphism.domain.base : morphism.domain;
 				const codomain = morphism.codomain instanceof Cat.NamedObject ? morphism.codomain.base : morphism.codomain;
 				if (R.CanFormat(morphism) && domain.size)
@@ -619,7 +623,7 @@ ${this.generate(morphism)}
 		{
 			return `// ${morphism.constructor.name}: ${morphism.basename}\n${this.isAsync(morphism) ? 'async ' : ''}function ${U.Token(morphism)}(args)\n{\n`;
 		}
-		static Tail()
+		tail()
 		{
 			return `\n}\n`;
 		}
@@ -668,7 +672,7 @@ ${this.generate(morphism)}
 				}
 			});
 		}
-		template()
+		template(elt)
 		{
 			return 'function %Type(args, out)\n{\n\t\n}\n';
 		}

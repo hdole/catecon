@@ -237,16 +237,6 @@ const Boot = function(fn)
 	basics.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(basics);
-	/*
-	Autoplace(
-	{
-		diagram:		'basics',
-		description:	'This diagram contains initial and terminal objects\nas well as objects for interacting with the real world.\nIn other words, device drivers',
-		prototype:		'DiagramText',
-		user,
-	}, args.xy);
-	args.xy.y += args.majorGrid;
-	*/
 	PlaceText(args, 'This diagram contains initial and terminal objects\nas well as objects for interacting with the real world.\nIn other words, device drivers', 32);
 	const zero = basics.get('FiniteObject', {size:0});
 	const one = basics.get('FiniteObject', {size:1});
@@ -276,16 +266,6 @@ const Boot = function(fn)
 	logic.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(logic);
-	/*
-	Autoplace(
-	{
-		diagram:		logic,
-		description:	'This diagram contains typical logic objects and morphisms',
-		prototype:		'DiagramText',
-		user,
-		properName:		'&Omega;',
-	}, args.xy);
-	*/
 	const two = logic.coprod(one, one);
 	const omega = new Cat.NamedObject(logic, {basename:'Omega', properName:'&Omega;', source:two});
 	const omega2twoId = logic.placeMorphism(null, omega.idFrom, args.xy, args.xy.add(Cat.D.default.stdArrow), false, false);
@@ -340,16 +320,6 @@ const Boot = function(fn)
 	Narith.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(Narith);
-	/*
-	Autoplace(
-	{
-		diagram:		Narith,
-		description:	'Basic morphisms for natural numbers are given here',
-		prototype:		'DiagramText',
-		user,
-	}, args.xy);
-args.xy.y += args.majorGrid;
-	*/
 	const N = MakeObject(args, 'N', 'CatObject', '&Nopf;', 'The natural numbers', {code:{cpp:'typedef unsigned long N;\n'}}).to;
 	const NplusOne = MakeObject(args, '', 'ProductObject', '', 'A natural number or an exception', {objects:[N, one], dual:true}).to;
 	const Nzero = MakeMorphism(args, 'zero', 'Morphism', '0', 'The first interesting natural number', one, N,
@@ -527,16 +497,6 @@ args.xy.y += args.majorGrid;
 	integers.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(integers);
-/*
-	Autoplace(args,
-	{
-		diagram:		integers,
-		description:	'Basic morphisms for the integers are given here',
-		prototype:		'DiagramText',
-		user,
-	}, args.xy);
-args.xy.y += args.majorGrid;
-*/
 	const Z = MakeObject(args, 'Z', 'CatObject', '&Zopf;', 'The integers', {code:{cpp:'typedef long Z;\n'}}).to;
 	const N2Z = MakeMorphism(args, 'N2Z', 'Morphism', '&sub;', 'every natural number is an integer', N, Z,
 	{
@@ -659,15 +619,6 @@ return [0, args[0] % args[1]];
 	floats.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(floats);
-/*
-	Autoplace(args,
-	{
-		diagram:		floats,
-		description:	'Basic floating point morphisms are given here',
-		prototype:		'DiagramText',
-	}, args.xy);
-args.xy.y += args.majorGrid;
-*/
 	const F = MakeObject(args, 'F', 'CatObject', '&Fopf;', 'Floating point numbers', {code:{cpp:
 `}
 
@@ -879,16 +830,6 @@ void %Type(const %Dom & args, %Cod & out)
 	complex.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(complex);
-/*
-	Autoplace(args,
-	{
-		diagram:		complex,
-		description:	'A complex number is a pair of floating point numbers.',
-		prototype:		'DiagramText',
-		user,
-	}, args.xy);
-args.xy.y += args.majorGrid;
-*/
 	const C = new Cat.NamedObject(complex, {basename:'C', properName:'&Copf;', source:Fpair, code:
 `}
 
@@ -1087,16 +1028,6 @@ return [0, Math.pow(args[0], args[1])];
 	strings.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(strings);
-/*
-	Autoplace(args,
-	{
-		diagram:		strings,
-		description:	'Basic morphisms for strings are given here as well as\nvarious conversion functions from and to basic types',
-		prototype:		'DiagramText',
-		user,
-	}, args.xy);
-args.xy.y += args.majorGrid;
-*/
 	const str = MakeObject(args, 'str', 'CatObject', 'Str', 'The space of all strings', {code:{cpp:
 `}
 
@@ -1354,17 +1285,6 @@ function %Type(args)
 	htmlDiagram.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(htmlDiagram);
-/*
-	Autoplace(args,
-	{
-		diagram:		htmlDiagram,
-		description:	'Various HTML input and output morphisms are found here',
-		prototype:		'DiagramText',
-		user,
-		properName:		'&Omega;',
-	}, args.xy);
-args.xy.y += args.majorGrid;
-*/
 	const html = MakeObject(args, 'HTML', 'FiniteObject', 'HTML', 'The HTML object intereacts with web devices').to;
 	const html2N = MakeMorphism(args, 'html2N', 'Morphism', 'input', 'Read a natural number from an HTML input tag', html, N,
 	{
@@ -1576,16 +1496,6 @@ function %Type(args)
 	threeD.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(threeD);
-/*
-	Autoplace(args,
-	{
-		diagram:		threeD,
-		description:	'Various 3-D morphisms are found here',
-		prototype:		'DiagramText',
-		user,
-	}, args.xy);
-args.xy.y += args.majorGrid;
-*/
 	const d3 = MakeObject(args, 'threeD', 'FiniteObject', '3D', 'The 3D object interacts with graphic devices').to;
 	const f2d3 = MakeMorphism(args, 'f2d3', 'Morphism', '1D', 'visualize a number in 3D', F, d3,
 	{
@@ -1680,15 +1590,6 @@ postMessage(['fff2toQB3', args]);
 	qGates.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(qGates);
-/*
-	Autoplace(args,
-	{
-		diagram:		qGates,
-		description:	'Basic quantum gates are given here.',
-		prototype:		'DiagramText',
-		user,
-	}, args.xy);
-	*/
 	args.xy.y += args.majorGrid;
 	const qubit = MakeObject(args, 'q', 'CatObject', '&Qopf;', 'The quantum qubit').to;
 	const qPair = MakeObject(args, '', 'TensorObject', '', 'A pair of qubits', {objects:[qubit, qubit]}).to;
@@ -1799,17 +1700,6 @@ return matrix_multiply(%Type_matrix, args);
 	cpp.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(cpp);
-/*
-	Autoplace(args,
-	{
-		diagram:		cpp,
-		description:	'Various C++ functions',
-		prototype:		'DiagramText',
-		user,
-		properName:		'C++Omega;',
-	}, args.xy);
-args.xy.y += args.majorGrid;
-*/
 	const errno = MakeNamedObject(args, {basename:'Errno', source:Z32, description:'Set by system calls and some library functions when something goes wrong'}).to;
 	const strerror = MakeMorphism(args, 'strerror', 'Morphism', '', 'return string describing error', errno, str,
 	{

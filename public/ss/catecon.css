@@ -541,6 +541,18 @@ table.center
 	height:			32px;
 }
 
+.textButton
+{
+	margin:				4px;
+	border:				solid;
+	background-color:	#fff;
+	border-color:		#999;
+	border-radius:		4px;
+	border-width:		2px;
+	cursor:				pointer;
+	padding:			4px;
+}
+
 .svg
 {
 	position:	fixed;
@@ -631,8 +643,24 @@ path.emphasis
 
 .selRow
 {
-	background-color:	#000;
-	color: 				#fff;
+	border:				solid;
+	border-collapse:	separate;
+	border-width: 		2px;
+	border-color:		#9f9;
+	border-radius:		4px;
+	padding:			4px;
+	background-color:	#efe;
+}
+
+.blueRow
+{
+	border:				solid;
+	border-collapse:	separate;
+	border-width: 		2px;
+	border-color:		#99f;
+	border-radius:		4px;
+	padding:			4px;
+	background-color:	#aaf;
 }
 
 #diagramSVG

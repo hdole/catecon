@@ -885,8 +885,6 @@ class R
 		R.Actions[action.basename] = action;
 		action = new AssertionAction(R.$Actions),
 		R.Actions[action.basename] = action;
-		action = new MysqlTableAction(R.$Actions),
-		R.Actions[action.basename] = action;
 		const categoryDiagram = new Diagram(R.$CAT, {basename:'category', codomain:'Actions', description:'diagram for a category', user:'sys'});
 		let xy = new D2(300, 300);
 		let diagram = categoryDiagram;
@@ -951,13 +949,6 @@ class R
 		R.Cat.addActions('coproduct');
 		R.Cat.addActions('hom');
 		R.Cat.addActions('distribute');
-		/*
-		R.Actions = {};
-		R.$Actions.elements.forEach(function(e)
-		{
-			R.Actions[e.basename] = e;
-		});
-		*/
 	}
 	static SetupReplay()
 	{
@@ -1149,8 +1140,6 @@ class R
 			R.diagram = null;
 			let diagramName = params.get('d') || params.get('diagram');
 			const doDisplayMorphism = diagramName !== null;
-//			if (!diagramName)
-//				diagramName = R.default.diagram;
 			if (diagramName)
 				R.default.diagram = diagramName;
 			R.initialized = true;
@@ -1195,7 +1184,6 @@ class R
 		});
 		R.SetDiagramInfo(diagram);
 		R.SetLocalDiagramInfo(diagram);
-//		R.SaveLocalDiagramList();
 		R.SaveLocalCategoryList();	// TODO needed?
 		return true;
 	}
@@ -1241,12 +1229,6 @@ class R
 			diagrams.map(d => R.LocalDiagrams.set(d.name, d));
 		}
 	}
-	/*
-	static SaveLocalDiagramList()
-	{
-		U.writefile('diagrams', JSON.stringify(U.JsonMap(R.LocalDiagrams, false)));
-	}
-	*/
 	static ReadLocalCategoryList()
 	{
 		const categories = JSON.parse(U.readfile('categories'));
@@ -1660,11 +1642,15 @@ class R
 		}
 		return false;
 	}
-	static DiagramIngest(e, diagram, fn)
+	static DiagramIngest(e, diagram, doPng, fn)
 	{
 		if (R.local)
 		{
-			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
+//			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
+			const args = {diagram:diagram.json(), user:R.user.name};
+			if (doPng)
+				args.png = D.diagramPNG.get(diagram.name);
+			const body = JSON.stringify(args);
 			const headers = {'Content-Type':'application/json;charset=utf-8', Authorization:R.cloud.accessToken};
 			fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(_ => fn()).catch(err => D.RecordError(err));
 		}
@@ -1706,7 +1692,6 @@ Object.defineProperties(R,
 	Categories:			{value:new Map(),	writable:false},	// available categories
 	clear:				{value:false,		writable:true},
 	cloud:				{value:null,		writable:true},		// cloud we're using
-	local:				{value:null,		writable:true},		// local server, if it exists
 	default:
 	{
 		value:
@@ -1718,11 +1703,13 @@ Object.defineProperties(R,
 		},
 		writable:	true,
 	},
-	Diagrams:			{value:new Map(),	writable:false},	// available diagrams
-	JsonDiagrams:		{value:new Map(),	writable:false},	// diagrams presented as json
-	LocalDiagrams:		{value:new Map(),	writable:false},	// diagrams stored locally
 	diagram:			{value:null,		writable:true},		// current diagram
+	Diagrams:			{value:new Map(),	writable:false},	// available diagrams
 	initialized:		{value:false,		writable:true},		// Have we finished the boot sequence and initialized properly?
+	JsonDiagrams:		{value:new Map(),	writable:false},	// diagrams presented as json
+	languages:			{value:new Map(),	writable:false},
+	local:				{value:null,		writable:true},		// local server, if it exists
+	LocalDiagrams:		{value:new Map(),	writable:false},	// diagrams stored locally
 	ReplayCommands:		{value:new Map(),	writable:false},
 	ServerDiagrams:		{value:new Map(),	writable:false},
 	sync:				{value:false,		writable:true},		// when to turn on sync of gui and local storage
@@ -2924,7 +2911,7 @@ class D
 			{
 				R.SaveLocal(diagram);
 				if (R.local)
-					R.DiagramIngest(e, diagram, _ => {});
+					R.DiagramIngest(e, diagram, false, _ => {});
 			}
 		}, D.default.autosaveTimer);
 	}
@@ -4396,24 +4383,24 @@ Object.defineProperties(D,
 		},
 		writable: true,
 	},
-	'mouseIsDown':		{value: false,		writable: true},	// is the mouse key down? the onmousedown attr is not connected to mousedown or mouseup
-	'mouseover':		{value: null,		writable: true},
-	'navbar':			{value: null,		writable: true},
-	'newElement':		{value: null,		writable: true},
-	'objectPanel':		{value: null,		writable: true},
-	'openPanels':		{value: [],			writable: true},
-	'Panel':			{value: null,		writable: true},
-	'panels':			{value: null,		writable: true},
-	'pasteBuffer':		{value: [],			writable: true},
-	'copyDiagram':		{value:	null,		writable: true},
-	'settingsPanel':	{value: null,		writable: true},
-	'shiftKey':			{value: false,		writable: true},
-	'showUploadArea':	{value: false,		writable: true},
-	'snapshotWidth':	{value: 1024,		writable: true},
-	'snapshotHeight':	{value: 768,		writable: true},
-	'statusbar':		{value: isGUI ? new StatusBar(): null,	writable: false},
-	'svgContainers':	{value: ['svg', 'g'],	writable: false},
-	'svgStyles':	
+	mouseIsDown:		{value: false,		writable: true},	// is the mouse key down? the onmousedown attr is not connected to mousedown or mouseup
+	mouseover:		{value: null,		writable: true},
+	navbar:			{value: null,		writable: true},
+	newElement:		{value: null,		writable: true},
+	objectPanel:		{value: null,		writable: true},
+	openPanels:		{value: [],			writable: true},
+	Panel:			{value: null,		writable: true},
+	panels:			{value: null,		writable: true},
+	pasteBuffer:		{value: [],			writable: true},
+	copyDiagram:		{value:	null,		writable: true},
+	settingsPanel:	{value: null,		writable: true},
+	shiftKey:			{value: false,		writable: true},
+	showUploadArea:	{value: false,		writable: true},
+	snapshotWidth:	{value: 1024,		writable: true},
+	snapshotHeight:	{value: 768,		writable: true},
+	statusbar:		{value: isGUI ? new StatusBar(): null,	writable: false},
+	svgContainers:	{value: ['svg', 'g'],	writable: false},
+	svgStyles:	
 	{
 		value:
 		{
@@ -4422,17 +4409,17 @@ Object.defineProperties(D,
 		},
 		writable:	false,
 	},
-	'textDisplayLimit':	{value: 60,			writable: true},
-	'textPanel':		{value: null,		writable: true},
-	'textSize':			{value:	new Map(),	writable: false},
-	'threeDPanel':		{value: null,		writable: true},
-	'tool':				{value: 'select',	writable: true},
-	'toolbar':			{value: isGUI ? new Toolbar() : null,							writable: false},
-	'topSVG':			{value: isGUI ? document.getElementById('topSVG') : null,		writable: false},
-	'ttyPanel':			{value: null,													writable: true},
-	'uiSVG':			{value: isGUI ? document.getElementById('uiSVG') : null,		writable: false},
-	'xmlns':			{value: 'http://www.w3.org/2000/svg',							writable: false},
-	'svg':
+	textDisplayLimit:	{value: 60,			writable: true},
+	textPanel:		{value: null,		writable: true},
+	textSize:			{value:	new Map(),	writable: false},
+	threeDPanel:		{value: null,		writable: true},
+	tool:				{value: 'select',	writable: true},
+	toolbar:			{value: isGUI ? new Toolbar() : null,							writable: false},
+	topSVG:			{value: isGUI ? document.getElementById('topSVG') : null,		writable: false},
+	ttyPanel:			{value: null,													writable: true},
+	uiSVG:			{value: isGUI ? document.getElementById('uiSVG') : null,		writable: false},
+	xmlns:			{value: 'http://www.w3.org/2000/svg',							writable: false},
+	svg:
 	{
 		value:
 		{
@@ -7603,12 +7590,14 @@ class HomObject extends MultiObject
 	{
 		return `[${objects[0].properName}, ${objects[1].properName}]`;
 	}
+	/* UNUSED
 	static FromInput(first = true, uid={uid:9, idp:'data'})
 	{
 		++uid.uid;
 		const morphism = document.getElementById(`${uid.idp}_${uid.uid}`).querySelectorAll('.selRow');
 		// TODO
 	}
+	*/
 	static Signature(diagram, objects)
 	{
 		return U.SigArray([2, ...objects.map(o => o.signature)]);
@@ -9655,10 +9644,11 @@ class HelpAction extends Action
 		const js = R.Actions.javascript;
 		const cpp = R.Actions.cpp;
 		let toolbar2 = [];
-		if (cpp.hasForm(diagram, ary))
-			toolbar2.push(D.GetButton3('cpp', cpp.icon, e => Cat.R.Actions.cpp.html(e, Cat.R.diagram, Cat.R.diagram.selected), cpp.description));
-		if (js.hasForm(diagram, ary))
-			toolbar2.push(D.GetButton3('javascript', js.icon, e => Cat.R.Actions.javascript.html(e, Cat.R.diagram, Cat.R.diagram.selected), js.description));
+		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.GetButton3(lang.basename, lang.icon, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
+//		if (cpp.hasForm(diagram, ary))
+//			toolbar2.push(D.GetButton3('cpp', cpp.icon, e => Cat.R.Actions.cpp.html(e, Cat.R.diagram, Cat.R.diagram.selected), cpp.description));
+//		if (js.hasForm(diagram, ary))
+//			toolbar2.push(D.GetButton3('javascript', js.icon, e => Cat.R.Actions.javascript.html(e, Cat.R.diagram, Cat.R.diagram.selected), js.description));
 		if (toolbar2.length > 0)
 			help.appendChild(H3.div(toolbar2, {id:'help-toolbar2', class:'buttonBarLeft'}));
 		let elt = null;
@@ -10492,119 +10482,6 @@ class GraphAction extends Action
 	}
 }
 
-class MysqlTableAction extends Action
-{
-	constructor(diagram)
-	{
-		const args =
-		{
-			description:	'Create SQL Table',
-			basename:		'sqlTable',
-			priority:		1,
-		};
-		super(diagram, args);
-		if (!isGUI)
-			return;
-		this.icon = H3.g([
-							H3.line({class:"arrow0", x1:"40", y1:"40", x2:"300", y2:"40", 'marker-end':"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"40", y1:"100", x2:"300", y2:"100", 'marker-end':"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"40", y1:"160", x2:"300", y2:"160", 'marker-end':"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"40", y1:"220", x2:"300", y2:"220", 'marker-end':"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"40", y1:"40", x2:"40", y2:"300", 'marker-end':"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"100", y1:"40", x2:"100", y2:"300", 'marker-end':"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"300", 'marker-end':"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"220", y1:"40", x2:"220", y2:"300", 'marker-end':"url(#arrowhead)"}),
-						]);
-	}
-	getMorphismId(m)
-	{
-		return `mysql-${U.Token(m)}`;
-	}
-	morphismRow(domain, m)
-	{
-		const attrs = [];
-		const chkbox = {type:'checkbox', 'data-name':m.name};
-		if (domain instanceof MysqlObject)
-		{
-			const ndx = domain.morphisms.indexOf(m);
-			if (ndx > -1)
-			{
-				attrs.push(H3.button('delete column'));
-				if (domain.columns[ndx].includes('index'))
-					chkbox.checked = '';
-			}
-		}
-		attrs.push([H3.input(chkbox), H3.span('Index')]);
-		return H3.tr(H3.td(D.GetIndexHTML(m), {class:"display left"}), H3.td(attrs));
-	}
-	columnTable(domain, morphisms)
-	{
-//		const table = H3.table();
-//		help.appendChild(table);
-//		ary.map(m => table.appendChild(H3.tr(H3.td(D.GetIndexHTML(m), {class:"display left"}), H3.td([H3.input({type:'checkbox', 'data-name':m.name}), H3.span('Index')]))));
-		return H3.table(morphisms.map(m => table.appendChild(this.morphismRow(domain, m))));
-//		return table;
-	}
-	html(e, diagram, ary)
-	{
-		const help = D.toolbar.help;
-		D.RemoveChildren(help);
-		const databaseName = U.Token(diagram.name);
-		if (ary[0] instanceof MysqlObject)
-		{
-			const domain = ary[0];
-			help.appendChild(this.columnTable(domain, domain.morphisms));
-			help.appendChild(H3.h3(`Modify MySQL Table ${domain.basename}`));
-		}
-		else
-		{
-			const domain = ary[0].to.domain;
-			help.appendChild(H3.h3(`Create MySQL Table ${domain.basename}`));
-			/*
-			const tableName = domain.basename;
-			help.appendChild(H3.h3(`Mysql Table ${domain.basename}`));
-			const table = H3.table();
-			help.appendChild(table);
-	//		ary.map(m => table.appendChild(H3.tr(H3.td(D.GetIndexHTML(m), {class:"display left"}), H3.td([H3.input({type:'checkbox', 'data-name':m.name}), H3.span('Index')]))));
-			morphisms.map(m => table.appendChild(this.morphismRow(domain, m)));
-			*/
-			help.appendChild(this.columnTable(domain, ary));
-			help.appendChild(H3.button(`Create table ${tableName} in database ${databaseName}`, {onclick:e => Cat.R.Actions.sqlTable.action(e, diagram, diagram.selected), class:'display'}));
-		}
-	}
-	action(e, diagram, ary)
-	{
-		const help = D.toolbar.help;
-		const indexboxes = help.querySelectorAll('[type="checkbox"]');
-		const indexes = new Set([...indexboxes].filter(elt => elt.checked).map(elt => elt.dataset.name));
-		const domain = ary[0].domain;
-		const tableName = ary[0].to.domain.basename;
-		const columns = ary.map(m => [m.name, indexes.has(m.name) ? ['index'] : []]);
-		if (!(domain instanceof MysqlObject))
-		{
-			diagram.replaceIndexObject(domain, new MysqlObject(diagram, {to:domain.to, columns, xy:domain.getXY()}));
-		}
-//		const url = `http://${document.location.host}/mysql?command=tableSetup&diagram=${diagram.name}&table=${tableName}&morphisms=${JSON.stringify(morphisms)}`;
-		const url = R.getURL(`mysql?command=create&diagram=${diagram.name}&table=${tableName}&columns=${JSON.stringify(columns)}`);
-console.log({url});
-		const headers = {Authorization:R.cloud.accessToken};
-		fetch(url, {headers}).then(response => response.text()).then(txt => console.log(txt)).catch(err => D.RecordError(err));
-		R.EmitElementEvent(diagram, 'update', domain);
-	}
-	hasForm(diagram, ary)
-	{
-		if (diagram.allReferences.has('hdole/mysql') && Category.IsSource(ary))
-		{
-			const domain = ary[0].domain;
-			if (domain.constructor.name !== 'DiagramObject' && !(domain instanceof MysqlObject))
-				return false;
-			const mysql = R.$CAT.getElement('hdole/mysql');
-			return ary.reduce((r, m) => r && m.to.constructor.name === 'Morphism' && mysql.hasIndexedElement(m.to.codomain.name), true);	// all codomains are in mysql
-		}
-		return false;
-	}
-}
-
 class Category extends CatObject
 {
 	constructor(diagram, args)
@@ -10668,6 +10545,7 @@ if (args.to === 'false') args.to = 'hdole/Logic/false';
 if (args.to === 'true') args.to = 'hdole/Logic/true';
 if (args.name === '#0') args.name = 'hdole/Basics/#0';
 if (args.name === '#1') args.name = 'hdole/Basics/#1';
+if ('source' in args && args.source === '#1') args.source = 'hdole/Basics/#1';
 //if (args.prototype === 'Assertion') return;
 					let elt = diagram.get(args.prototype, args);
 				}
@@ -13142,6 +13020,7 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 }
 
+/*
 class MysqlObject extends DiagramObject		// mysql table; morphisms form the columns
 {
 	constructor(diagram, args)
@@ -13150,39 +13029,9 @@ class MysqlObject extends DiagramObject		// mysql table; morphisms form the colu
 			throw `diagram ${diagram.name} does not reference mysql`;
 		const nuArgs = U.Clone(args);
 		nuArgs.to = diagram.getElement(args.to);
-		/*
-		const columns = args.columns.map(col => col[1]);
-		const morphisms = nuArgs.columns.map(col => diagram.getElement(col[0]));
-		if (morphisms.filter(m => m === undefined).length > 0)
-			throw 'morphism not found for column';
-		if (morphisms.reduce((r, m) => r || ('code' in m.to && 'js' in m.to.code), false))
-			throw 'a morphism already has js code';
-		if (!Category.IsSource(morphisms))
-			throw 'morphisms are not a source';
-			*/
 		super(diagram, nuArgs);
 		this.nuArgs = nuArgs;	// finish in postload
 		this.constructor.name === 'MysqlObject' && R.EmitElementEvent(diagram, 'new', this);
-		/*
-		this.columns = columns;
-		this.morphisms = morphisms;
-		morphisms.map(m => m.incrRefcnt());
-		this.columns = columns;
-		this.constructor.name === 'MysqlObject' && R.EmitElementEvent(diagram, 'new', this);
-		morphisms.map(m =>
-		{
-			if (!('code' in m.to))
-				m.to.code = {};
-			m.to.code.js =
-`
-async function ${R.Actions.javascript.getType(m)}_Iterator(fn)
-{
-	const result = await dbconSync.query(\`SELECT ${m.basename} FROM ${this.to.basename}\`);
-	console.log({result});
-}
-`;
-		});
-*/
 	}
 	postload()
 	{
@@ -13225,6 +13074,8 @@ async function ${R.Actions.javascript.getType(m)}_Iterator(fn)
 		super.decrRefcnt();
 	}
 }
+*/
+
 
 class Functor extends Morphism
 {
@@ -13755,7 +13606,7 @@ class Diagram extends Functor
 				btn.beginElement();
 			}
 			const that = this;
-			R.DiagramIngest(e, this, function(res)
+			R.DiagramIngest(e, this, true, function(res)
 			{
 				R.default.debug && console.log('uploaded', that.name);
 				R.catalog.set(that.name, R.GetDiagramInfo(that));
@@ -14136,6 +13987,8 @@ class Diagram extends Functor
 	get(prototype, args)
 	{
 		const proto = Cat[prototype];
+		if (typeof proto === 'undefined')
+			throw 'prototype not found';
 		let name = proto.Basename(this, args);
 		let elt = this.getElement(name);
 		if (elt)
@@ -15144,7 +14997,7 @@ const Cat =
 	LambdaMorphism,
 	LanguageAction,
 	Morphism,
-	MysqlObject,
+//	MysqlObject,
 	NamedObject,
 	NamedMorphism,
 	ProductObject,
@@ -15155,10 +15008,13 @@ const Cat =
 };
 
 if (isGUI)
+{
 	window.Cat = Cat;
+	window.onload = _ => R.Initialize();
+}
 else
 	Object.keys(Cat).forEach(cls => exports[cls] = Cat[cls]);
 
-isGUI && R.Initialize();	// boot-up
+//isGUI && R.Initialize();	// boot-up
 
 })();
