@@ -20,6 +20,7 @@ EOF
 
 git pull
 
+npm install -g nodemon
 npm install
 
 mkdir -p server/logs

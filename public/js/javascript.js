@@ -7,12 +7,16 @@ var Cat = Cat || require('./Cat.js');
 {
 	'use strict';
 
+	const D = Cat.D;
+	const R = Cat.R;
+	const U = Cat.U;
+
 	class JavascriptAction extends Cat.LanguageAction
 	{
 		constructor(diagram)
 		{
 			super(diagram, 'javascript', 'js', typeof module === 'undefined' ? H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:240px;font-weight:bold;stroke:#000;"}, "JS") : null);
-			Cat.R.languages.set(this.basename, this);
+			R.languages.set(this.basename, this);
 		}
 		getType(elt, first = true)
 		{
@@ -326,8 +330,8 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		}
 		loadHTML(fn)	// bootstrap basic diagrams for startup
 		{
-			const htmlDiagram = Cat.R.$CAT.getElement('hdole/HTML');
-			Cat.D.htmlDiagram = htmlDiagram;
+			const htmlDiagram = R.$CAT.getElement('hdole/HTML');
+			D.htmlDiagram = htmlDiagram;
 			const html = htmlDiagram.getElement('HTML');
 			const str = htmlDiagram.codomain.getElement('hdole/Strings/str');
 			this.formatters = new Map();
@@ -373,7 +377,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		}
 		getInputHtml(object, value = null, prefix = '', factor = [], index = null, first = true)
 		{
-			const from = Cat.R.diagram.selected[0];
+			const from = R.diagram.selected[0];
 			const morph = from.to;
 			let html = '';
 			const id = this.getInputId(prefix, object, factor);
@@ -390,7 +394,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 						html = out[0];
 					}
 					else
-						Cat.D.RecordError('object has no formatter');
+						D.RecordError('object has no formatter');
 					break;
 				case 'ProductObject':
 					if (object.dual)
@@ -434,10 +438,10 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 					html = `<input type="number" min="0" id="${id}"${dv}/>`;
 				break;
 			case 'HomObject':
-				const homset = Cat.R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
+				const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
 				const options = homset.map(m => `<option value="${m.name}"${value && m.name === value.name ? ' selected="selected"' : ''}>${m.htmlName()}</option>`).join('');
 				const selector =
-`<select data-index="${index}" id="help-run-homset-${index ? index : 'next'}" onchange="Cat.R.Actions.javascript.setHomValue(this)"><option>Choose</option>${options}</select>`;
+`<select data-index="${index}" id="help-run-homset-${index ? index : 'next'}" onchange="R.Actions.javascript.setHomValue(this)"><option>Choose</option>${options}</select>`;
 					html = selector;
 					break;
 			}
@@ -445,15 +449,15 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		}
 		setHomValue(selector)		// TODO work hierarchically
 		{
-			const from = Cat.R.diagram.selected[0];
+			const from = R.diagram.selected[0];
 			const morph = from.to;
 			const index = Number.parseInt(selector.dataset.index);
 			const value = selector.value;
-			const selected = Cat.R.diagram.getElement(value);
+			const selected = R.diagram.getElement(value);
 			if (selected)
 			{
 				morph.data.set(index, selected);
-				Cat.R.EmitMorphismEvent(Cat.R.diagram, 'update', from);
+				R.EmitMorphismEvent(R.diagram, 'update', from);
 			}
 			else
 				morph.data.delete(index);
@@ -468,7 +472,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				case 'FiniteObject':
 					if (dom.size === 1)
 						return 0;
-					const f = Cat.D.htmlDiagram.getElement('html2Nat');
+					const f = D.htmlDiagram.getElement('html2Nat');
 					const out = window[U.Token(f)]([0, dom.name + factor.toString()]);	// no default value
 					const formatter = out[1]();
 					value = formatter(id);
@@ -482,7 +486,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 						value = formatter(id);
 					}
 					else
-						Cat.D.RecordError('object has no formatter');
+						D.RecordError('object has no formatter');
 					break;
 				case 'ProductObject':
 					if (dom.dual)
@@ -528,9 +532,9 @@ onmessage = function(e)
 }
 ${this.generate(morphism)}
 `;
-			Cat.R.default.debug && console.log('run code', code);
+			R.default.debug && console.log('run code', code);
 			const blob = new Blob([code], {type:'application/javascript'});
-			const url = Cat.D.url.createObjectURL(blob);
+			const url = D.url.createObjectURL(blob);
 			const w = new Worker(url);
 			JavascriptAction.AddMessageListener(w, fn);
 			w.postMessage(args);	// start worker
@@ -559,9 +563,9 @@ onmessage = function(e)
 }
 ${this.generate(morphism)}
 `;
-			Cat.R.default.debug && console.log('run code', code);
+			R.default.debug && console.log('run code', code);
 			const blob = new Blob([code], {type:'application/javascript'});
-			const url = Cat.D.url.createObjectURL(blob);
+			const url = D.url.createObjectURL(blob);
 			const w = new Worker(url);
 			JavascriptAction.AddMessageListener(w, fn);
 			w.postMessage(args);	// start worker
@@ -642,39 +646,56 @@ ${this.generate(morphism)}
 						break;
 					case 'exception':		// exception thrown inside worker, TODO what happened?
 						w.terminate();
-						Cat.D.RecordError(args);
+						D.RecordError(args);
 						break;
 					case 'f2d3':
-						Cat.D.threeDPanel.open();
-						Cat.D.threeDPanel.Ato3D(args);
+						D.threeDPanel.open();
+						D.threeDPanel.Ato3D(args);
 						break;
 					case 'ff2d3':
-						Cat.D.threeDPanel.open();
-						Cat.D.threeDPanel.AxAto3D(args);
+						D.threeDPanel.open();
+						D.threeDPanel.AxAto3D(args);
 						break;
 					case 'fff2d3':
-						Cat.D.threeDPanel.open();
-						Cat.D.threeDPanel.AxAxAto3D(args);
+						D.threeDPanel.open();
+						D.threeDPanel.AxAxAto3D(args);
 						break;
 					case 'fff2toLine':
-						Cat.D.threeDPanel.open();
-						Cat.D.threeDPanel.AxAxAx2toLine(args);
+						D.threeDPanel.open();
+						D.threeDPanel.AxAxAx2toLine(args);
 						break;
 					case 'fff2toQB3':
-						Cat.D.threeDPanel.open();
-						Cat.D.threeDPanel.AxAxAToQuadraticBezierCurve3(args);
+						D.threeDPanel.open();
+						D.threeDPanel.AxAxAToQuadraticBezierCurve3(args);
 						break;
 					case 'str2tty':
-						Cat.D.ttyPanel.toOutput(args);
-						Cat.D.ttyPanel.open();
-						Cat.D.Panel.SectionOpen('tty-out-section');
+						D.ttyPanel.toOutput(args);
+						D.ttyPanel.open();
+						D.Panel.SectionOpen('tty-out-section');
 						break;
 				}
 			});
 		}
 		template(elt)
 		{
-			return 'function %Type(args, out)\n{\n\t\n}\n';
+			return `${this.isAsync(elt) ? 'async ' : ''}function %Type(args, out)\n{\n\t\n}\n`;
+		}
+		getEditHtml(div, elt)
+		{
+			const id = `element-${this.ext}`;
+			let code = '';
+			if (this.hasCode(elt))
+				code = typeof elt.code.js === 'object' ? elt.code.js.code : elt.code.js;
+			else
+				code = this.template(elt);
+			const asyncAttrs = {class:'textButton', onclick:e => e.target.classList.toggle('blueRow')};
+			if (this.isAsync(elt))
+				asyncAttrs.class += ' blueRow';
+			div.appendChild(H3.div([H3.button('async', asyncAttrs), H3.span('Remember to declare function as async in code!')]));
+			div.appendChild(H3.div(Cat.U.HtmlSafe(code), {class:'code padding', id, onkeydown:e => e.stopPropagation()}));
+			if (this.isEditable(elt))
+				div.appendChild(D.GetButton3(this.name, 'edit3', e => R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
+			return div;
 		}
 		static ObjectLength(o)
 		{
@@ -690,12 +711,12 @@ ${this.generate(morphism)}
 	if (typeof module !== 'undefined')
 	{
 		module.exports.JavascriptAction = JavascriptAction;
-		Cat.R.Actions.javascript = new JavascriptAction(Cat.R.$Actions);
+		R.Actions.javascript = new JavascriptAction(R.$Actions);
 	}
 	else
 	{
 		window.JavascriptAction = JavascriptAction;
-		window.Cat.R.Actions.javascript = new JavascriptAction(Cat.R.$Actions);
+		window.Cat.R.Actions.javascript = new JavascriptAction(R.$Actions);
 	}
 
 })();	// end anon function

@@ -12,13 +12,13 @@ var Cat = Cat || require('./Cat.js');
 	const D = Cat.D;
 	const R = Cat.R;
 	const U = Cat.U;
+	const js = Cat.R.Actions.javascript;
 
 	class MysqlAction extends Cat.LanguageAction
 	{
 		constructor(diagram)
 		{
-//			super(diagram, 'mysql', 'sql', typeof module === 'undefined' ? H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:240px;font-weight:bold;stroke:#000;"}, "SQL") : null);
-			super(diagram, 'mysql', 'mysql', typeof module === 'undefined' ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"160", style:"font-size:180px;font-weight:bold;stroke:#000;"}, "My"),
+			super(diagram, 'mysql', 'mysql', typeof module === 'undefined' ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"160", style:"font-size:180px;font-weight:bold;stroke:#000;"}, "MY"),
 												H3.text({"text-anchor":"middle", x:"160", y:"300", style:"font-size:180px;font-weight:bold;stroke:#000;"}, "SQL")]) : null);
 			Cat.R.languages.set(this.basename, this);
 		}
@@ -61,7 +61,9 @@ var Cat = Cat || require('./Cat.js');
 			{
 				if (!('code' in m.to))
 					m.to.code = {};
-				m.to.code.mysql = `SELECT ${m.to.basename} FROM ${this.to.basename};`;
+				const code = m.to.code;
+				code.mysql = `SELECT ${m.to.basename} FROM ${this.to.basename};`;
+				code.js = {async:true, code:`async ${js.header(m)}	return await dbconSync.query("${code.mysql}");${js.tail(m)}`};
 			});
 			this.morphisms = morphisms;
 			delete this.nuArgs;
@@ -78,6 +80,13 @@ var Cat = Cat || require('./Cat.js');
 			if (this.refcnt <= 1)
 				this.morphisms.map(m => m.decrRefcnt());
 			super.decrRefcnt();
+			// delete the table in the database on the server
+			if (this.refcnt <= 0)
+			{
+				const url = R.getURL(`mysql?command=drop&diagram=${diagram.name}&table=${tableName}`);
+				const headers = {Authorization:R.cloud.accessToken};
+				fetch(url, {headers}).then(response => response.text()).then(txt => console.log(txt)).catch(err => D.RecordError(err));
+			}
 		}
 	}
 
@@ -147,7 +156,7 @@ var Cat = Cat || require('./Cat.js');
 			if (elt instanceof MysqlObject)
 			{
 				domain = elt;
-				help.appendChild(H3.h3(`Modify MySQL Table ${domain.basename}`));
+				help.appendChild(H3.h3(`Modify MySQL Table ${domain.to.basename}`));
 				help.appendChild(this.columnTable(domain, domain.morphisms));
 			}
 			else if (elt.domain instanceof MysqlObject)
@@ -155,17 +164,17 @@ var Cat = Cat || require('./Cat.js');
 				domain = elt.domain;
 				const morphisms = domain.morphisms.slice();
 				ary.map(m => !morphisms.includes(m) && morphisms.push(m));
-				help.appendChild(H3.h3(`Modify MySQL Table ${domain.basename}`));
+				help.appendChild(H3.h3(`Modify MySQL Table ${domain.to.basename}`));
 				help.appendChild(this.columnTable(domain, morphisms));
 			}
 			else
 			{
 				domain = elt.to.domain;
-				help.appendChild(H3.h3(`Create MySQL Table ${domain.basename}`));
+				help.appendChild(H3.h3(`Create MySQL Table ${domain.to.basename}`));
 				help.appendChild(this.columnTable(domain, ary));
-				help.appendChild(H3.button(`Create table ${domain.basename} in database ${diagram.name}`, {onclick:e => Cat.R.Actions.mysqlTable.action(e, diagram, diagram.selected), class:'display'}));
+//				help.appendChild(H3.button(`Create table ${domain.to.basename} in database ${diagram.name}`, {onclick:e => Cat.R.Actions.mysqlTable.action(e, diagram, diagram.selected), class:'display'}));
 			}
-			help.appendChild(H3.button(`Issue command for ${domain.basename} in database ${diagram.name}`, {onclick:e => Cat.R.Actions.mysqlTable.action(e, diagram, diagram.selected), class:'display'}));
+			help.appendChild(H3.button(`Issue command for ${domain.to.basename} in database ${diagram.name}`, {onclick:e => Cat.R.Actions.mysqlTable.action(e, diagram, diagram.selected), class:'display'}));
 		}
 		action(e, diagram, ary)
 		{
@@ -180,7 +189,6 @@ var Cat = Cat || require('./Cat.js');
 				diagram.replaceIndexObject(domain, new MysqlObject(diagram, {to:domain.to, columns, xy:domain.getXY()}));
 			}
 			const url = R.getURL(`mysql?command=create&diagram=${diagram.name}&table=${tableName}&columns=${JSON.stringify(columns)}`);
-	console.log({url});
 			const headers = {Authorization:R.cloud.accessToken};
 			fetch(url, {headers}).then(response => response.text()).then(txt => console.log(txt)).catch(err => D.RecordError(err));
 			R.EmitElementEvent(diagram, 'update', domain);
@@ -188,13 +196,21 @@ var Cat = Cat || require('./Cat.js');
 		hasForm(diagram, ary)
 		{
 			const elt = ary[0];
-			if (diagram.allReferences.has('hdole/mysql') && (Cat.Category.IsSource(ary) || elt instanceof Cat.DiagramMorphism || elt instanceof MysqlObject))
+			if (diagram.allReferences.has('hdole/mysql'))
 			{
-				const domain = elt instanceof Cat.DiagramMorphism ? elt.domain : elt;
-				if (domain.constructor.name !== 'DiagramObject' && !(domain instanceof MysqlObject))
-					return false;
-				const mysql = R.$CAT.getElement('hdole/mysql');
-				return ary.reduce((r, m) => r && m.to.constructor.name === 'Morphism' && mysql.hasIndexedElement(m.to.codomain.name), true);	// all codomains are in mysql
+				if (elt instanceof MysqlObject)
+					return true;
+				if (Cat.Category.IsSource(ary) || elt instanceof Cat.DiagramMorphism)
+				{
+					// no data morphisms allowed; maybe later load them and delete the .data
+					if (ary.reduce((r, m) => r && !('data' in m), true))
+						return false;
+					const domain = elt instanceof Cat.DiagramMorphism ? elt.domain : elt;
+					if (domain.constructor.name !== 'DiagramObject' && !(domain instanceof MysqlObject))
+						return false;
+					const mysql = R.$CAT.getElement('hdole/mysql');
+					return ary.reduce((r, m) => r && m.to.constructor.name === 'Morphism' && mysql.hasIndexedElement(m.to.codomain.name), true);	// all codomains are in mysql
+				}
 			}
 			return false;
 		}

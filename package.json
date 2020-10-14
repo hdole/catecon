@@ -10,9 +10,9 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "aws-sdk": "^2.769.0",
+    "amazon-cognito-identity-js": "^4.4.0",
+    "aws-sdk": "^2.771.0",
     "body-parser": "^1.19.0",
-    "cognito-express": "^2.0.18",
     "connect": "^3.7.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -25,6 +25,8 @@
     "helmet": "^4.1.1",
     "http": "0.0.1-security",
     "http-errors": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.4",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",

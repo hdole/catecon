@@ -32,7 +32,8 @@ app.use(cors());
 const helmet = require('helmet');
 app.use(helmet());
 
-const CognitoExpress = require('cognito-express');		// aws user support
+//const CognitoExpress = require('cognito-express');		// aws user support
+const cognito = require('amazon-cognito-identity-js');		// aws user support
 const url = require('url');
 const fs = require('fs');
 const repl = require('repl');
@@ -42,10 +43,11 @@ const mysql = require( 'mysql' );
 const {VM} = require('vm2');
 const morgan = require('morgan');
 const rfs = require('rotating-file-stream');
+const jwt = require('jsonwebtoken');
+const jwkToPem = require('jwk-to-pem');
 
 const Cat = require('./public/js/Cat.js');
 const jsAction = require('./public/js/javascript.js');
-console.log({jsAction});
 
 Cat.R.default.debug = false;
 
@@ -185,7 +187,7 @@ console.log({pngFD});
 		fs.write(pngFD, buf, 0, buf.length, (err, bytes, data) =>
 		{
 			if (err) throw err;
-			fs.close(pngFD);
+			fs.close(pngFD, err => { if (err) throw err; });
 		});
 	}));
 }
@@ -246,7 +248,21 @@ ${jsName}(${args});
 	const vm = new VM();
 	return vm.run(code);
 }
+//
+// get our application keys
+//
+let JWK = null;
+function fetchJWK()
+{
+	const url = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}/.well-known/jwks.json`;
+	fetch(url).then(res => res.json()).then(json => {JWK = json});
+}
+fetchJWK();
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Server main
+//
 async function serve()
 {
 	try
@@ -307,7 +323,6 @@ async function serve()
 					res.status(404).send(`diagram not found: ${req.query.diagram}`);
 					return;
 				}
-				console.log(process.memoryUsage());
 			});
 		});
 
@@ -338,7 +353,6 @@ async function serve()
 					res.status(404).send(`diagram not found: ${req.query.diagram}`);
 					return;
 				}
-				console.log(process.memoryUsage());
 			});
 		});
 
@@ -357,11 +371,19 @@ async function serve()
 				res.end(JSON.stringify(result));
 			});
 		});
+		//
+		// report memory usage
+		//
+		app.use('/vm', (req, res) =>
+		{
+			res.end(JSON.stringify(process.memoryUsage()));
+		});
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
 		// AUTHORIZATION REQUIRED
 		//
+		/*
 		const cogExpress = new CognitoExpress(
 		{
 			region:				process.env.AWS_USER_COG_REGION,
@@ -369,6 +391,42 @@ async function serve()
 			tokenUse:			'access',
 			tokenExpiration:	60 * 60 * 1000,
 		});
+*/
+
+		function validate(req, fn)
+		{
+			const token = req.get('token');
+			if (typeof token === 'undefined')
+			{
+				res.status(401).end('Error:  no token');
+				return;
+			}
+			const decjwt = jwt.decode(token, {complete:true});
+			if (typeof decjwt === 'undefined')
+			{
+				res.status(401).end('Error:  no jwt');
+				return;
+			}
+			if (decjwt.payload.aud !== process.env.AWS_APP_ID)
+			{
+				res.status(401).end('Error:  bad app id');
+				return;
+			}
+			const idURL = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}`;
+			if (decjwt.payload.iss !== idURL)
+			{
+				res.status(401).end('Error:  bad identity pool');
+				return false;
+			}
+			const key = JWK.keys.find(k => k.kid === decjwt.header.kid);
+			if (typeof key === 'undefined')
+			{
+				res.status(500).end('Error:  no key');
+				return;
+			}
+			const pem = jwkToPem(key);
+			jwt.verify(token, pem, fn);
+		}
 
 		app.use((req, res, next) =>
 		{
@@ -379,13 +437,27 @@ async function serve()
 			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 			if (req.method !== 'OPTIONS')
 			{
-				const accessToken = req.headers['authorization'];
-				if (!accessToken)
-					return res.status(401).end('Error:  access token missing from header');
+
+//				const accessToken = req.headers['authorization'];
+//				if (!accessToken)
+//					return res.status(401).end('Error:  access token missing from header');
+				/*
 				cogExpress.validate(accessToken, (err, response) =>
 				{
 					if (err)
 						return res.status(401).send(err);
+					else
+						next();
+				});
+				*/
+				validate(req, (err, decoded) =>
+				{
+console.log('post validate');
+					if (err)
+{
+console.log({err});
+						return res.status(401).send(err);
+}
 					else
 						next();
 				});
@@ -407,8 +479,7 @@ async function serve()
 				saveDiagramJson(name, JSON.stringify(diagram));
 			if (png)
 				saveDiagramPng(name, png);
-			res.end('ok');
-			console.log(process.memoryUsage());
+			res.status(200).end();
 		});
 
 		app.use('/mysql', (req, res) =>
@@ -466,7 +537,7 @@ async function serve()
 						log('mysql error:', err);
 					}
 					else
-						res.end('ok');
+						res.status(200).end();
 				});
 			});
 		});

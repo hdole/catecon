@@ -1150,7 +1150,8 @@ class R
 		const bootLoader = _ =>
 		{
 			if (params.has('boot'))
-				R.LoadScript(window.location.origin + window.location.pathname + 'js/boot.js', function() { Boot(loader); });
+//				R.LoadScript(window.location.origin + window.location.pathname + 'js/boot.js', function() { Boot(loader); });
+				R.LoadScript(window.location.origin + '/js/boot.js', function() { Boot(loader); });
 			else
 				loader();
 		};
@@ -1644,6 +1645,8 @@ class R
 	}
 	static DiagramIngest(e, diagram, doPng, fn)
 	{
+		if (R.user.status !== 'logged-in')
+			return;
 		if (R.local)
 		{
 //			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
@@ -1651,7 +1654,8 @@ class R
 			if (doPng)
 				args.png = D.diagramPNG.get(diagram.name);
 			const body = JSON.stringify(args);
-			const headers = {'Content-Type':'application/json;charset=utf-8', Authorization:R.cloud.accessToken};
+//			const headers = {'Content-Type':'application/json;charset=utf-8', Authorization:R.cloud.accessToken};
+			const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
 			fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(_ => fn()).catch(err => D.RecordError(err));
 		}
 		else
@@ -1845,6 +1849,7 @@ class Amazon extends Cloud
 					alert(err.message);
 					return;
 				}
+				R.user.token = session.getIdToken().getJwtToken();
 				window.AWS.config.credentials = new window.AWS.CognitoIdentityCredentials(that.loginInfo);
 				that.accessToken = session.getAccessToken().getJwtToken();
 				const idPro = new window.AWS.CognitoIdentityServiceProvider();
@@ -9714,9 +9719,12 @@ class LanguageAction extends Action
 		D.RemoveChildren(body);
 		if (elt.constructor.name === 'Morphism' || elt.constructor.name === 'CatObject')
 		{
+			/*
 			let code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
 			if (code === '')
 				code = this.template(elt);
+			const old = this.currentDiagram;
+			*/
 			const old = this.currentDiagram;
 			this.currentDiagram = elt.diagram;
 			const rows =	[H3.tr([H3.td('Namespace', {class:'smallPrint left'}), H3.td(this.getNamespace(diagram), {class:'smallBold left'})]),
@@ -9726,10 +9734,13 @@ class LanguageAction extends Action
 							H3.tr([H3.td('Codomain', {class:'smallPrint left'}), H3.td(this.getType(elt.codomain), {class:'smallBold left'})]));
 			this.currentDiagram = old;
 			div.appendChild(H3.table(rows, {width:'auto'}));
+			/*
 			const id = `element-${this.ext}`;
 			div.appendChild(H3.div(U.HtmlSafe(code), {class:'code padding', id, onkeydown:e => e.stopPropagation()}));
 			if (this.isEditable(elt))
 				div.appendChild(D.GetButton3(this.name, 'edit3', e => Cat.R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
+				*/
+			this.getEditHtml(div, elt);
 		}
 		else
 		{
@@ -9738,6 +9749,17 @@ class LanguageAction extends Action
 			div.appendChild(H3.p(U.HtmlSafe(this.generate(elt)), {class:'code', id:`element-${this.ext}`}));
 		}
 		body.appendChild(div);
+	}
+	getEditHtml(div, elt)	// handler when the language is just a string
+	{
+		let code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
+		if (code === '')
+			code = this.template(elt);
+		const id = `element-${this.ext}`;
+		div.appendChild(H3.div(U.HtmlSafe(code), {class:'code padding', id, onkeydown:e => e.stopPropagation()}));
+		if (this.isEditable(elt))
+			div.appendChild(D.GetButton3(this.name, 'edit3', e => Cat.R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
+		return div;
 	}
 	hasCode(elt)
 	{
@@ -14910,6 +14932,32 @@ console.log('formMorphism', {morphism});
 				m.setRecursor(m.recursor);
 			'data' in m && m.data.forEach(function(d, i) { m.data.set(i, U.InitializeData(that, m.codomain, d)); });
 		});
+	}
+	replaceElement(to, nuTo, preserve = true)
+	{
+		if (!this.elements.has(to))
+		{
+			D.RecordError('Diagram does not have element');
+			return;
+		}
+		this.codomain.elements.delete(nuTo.name);
+		this.elements.delete(nuTo.basename);
+		if (preserve)
+		{
+			nuTo.name = to.name;
+			nuTo.basename = to.basename;
+			nuTo.properName = to.properName;
+		}
+		// TODO reset attached index morphism signatures
+		const elements = [...this.elements.values()];
+		const idx = elements.indexOf(to);
+		elements[idx] = nuTo;
+		for (let i=idx + 1; i<elements.length; ++i)
+		{
+			const elt = elements[i];
+			if ('replace' in elt)
+				elt.replace(to, nuTo);
+		}
 	}
 	replaceIndexObject(from, nuFrom)
 	{

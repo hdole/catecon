@@ -298,7 +298,7 @@ const Boot = function(fn)
 	}).to;
 	DiagramReferences(user, logic, args.xy);
 	args.xy = new Cat.D2();
-	PlaceText(args, 'Logic Operations', 96, 'bold', false);
+	PlaceText(args, 'Logic', 96, 'bold', false);
 	Cat.R.SelectDiagram(logic.name);
 	logic.home(false);
 
@@ -475,7 +475,7 @@ const Boot = function(fn)
 
 	DiagramReferences(user, Narith, args.xy);
 	args.xy = new Cat.D2();
-	PlaceText(args, 'Natural Number Operations', 96, 'bold', false);
+	PlaceText(args, 'Natural Numbers', 96, 'bold', false);
 	Cat.R.SelectDiagram(Narith.name);
 	Narith.home(false);
 
@@ -534,7 +534,7 @@ const Boot = function(fn)
 		js:'function %Type(args)\n{\n	return args[0] * args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 * args.m_1;\n}\n',
 	}).to;
-	const ZplusOne = MakeObject(args, '', 'ProductObject', '', 'An integer or an exception', {objects:[Z, one]}, {dual:true}).to;
+	const ZplusOne = MakeObject(args, '', 'ProductObject', '', 'An integer or an exception', {objects:[Z, one], dual:true}).to;
 	const Zdiv = MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two integers or an exception', Zpair, ZplusOne,
 	{
 		js:
@@ -598,7 +598,7 @@ return [0, args[0] % args[1]];
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 == args.m_1;\n}\n',
 	}).to;
 	args.xy = new Cat.D2();
-	PlaceText(args, 'Integer Operations', 96, 'bold', false);
+	PlaceText(args, 'Integers', 96, 'bold', false);
 	Cat.R.SelectDiagram(integers.name);
 	integers.home(false);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -701,7 +701,7 @@ void %Type(const %Dom & args, %Cod & out)
 		js:'function %Type(args)\n{\n	return args[0] * args[1];\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = args.m_0 * args.m_1;\n}\n',
 	}).to;
-	const FplusOne = MakeObject(args, '', 'ProductObject', '', 'A floating point number or an exception', {objects:[F, one]}, {dual:true}).to;
+	const FplusOne = MakeObject(args, '', 'ProductObject', '', 'A floating point number or an exception', {objects:[F, one], dual:true}).to;
 	const Fdiv = MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two floating point numbers or an exception', Fpair, FplusOne,
 	{
 		js:
@@ -808,7 +808,7 @@ void %Type(const %Dom & args, %Cod & out)
 	}).to;
 	DiagramReferences(user, floats, args.xy);
 	args.xy = new Cat.D2();
-	PlaceText(args, 'Floating Point Operations', 96, 'bold', false);
+	PlaceText(args, 'Floating Point', 96, 'bold', false);
 	Cat.R.SelectDiagram(floats.name);
 	floats.home(false);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -962,7 +962,7 @@ namespace %Namespace
 }
 `,
 	}).to;
-	const CplusOne = MakeObject(args, '', 'ProductObject', '', 'A complex number or an exception', {objects:[C, one]}, {dual:true}).to;
+	const CplusOne = MakeObject(args, '', 'ProductObject', '', 'A complex number or an exception', {objects:[C, one], dual:true}).to;
 	const Cdiv = MakeMorphism(args, 'divide', 'Morphism', '&div;', 'division of two complex numbers or an exception', Cpair, CplusOne,
 	{
 		js:
@@ -1006,7 +1006,7 @@ return [0, Math.pow(args[0], args[1])];
 	const Clist = MakeObject(args, '', 'HomObject', '', 'A list of complex numbers', {objects:[N, C]}).to;
 	DiagramReferences(user, complex, args.xy);
 	args.xy = new Cat.D2();
-	PlaceText(args, 'Complex Number Operations', 96, 'bold', false);
+	PlaceText(args, 'Complex Numbers', 96, 'bold', false);
 	Cat.R.SelectDiagram(complex.name);
 	complex.home(false);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1028,7 +1028,7 @@ return [0, Math.pow(args[0], args[1])];
 	strings.makeSVG(false);
 	args.xy = gridLocation();
 	Cat.R.SetDiagramInfo(strings);
-	const str = MakeObject(args, 'str', 'CatObject', 'Str', 'The space of all strings', {code:{cpp:
+	const str = MakeObject(args, 'str', 'CatObject', 'str', 'The space of all strings', {code:{cpp:
 `}
 
 #include <string>;
@@ -1263,7 +1263,7 @@ function %Type(args)
 	}).to;
 	DiagramReferences(user, strings, args.xy);
 	args.xy = new Cat.D2();
-	PlaceText(args, 'String Operations', 96, 'bold', false);
+	PlaceText(args, 'String', 96, 'bold', false);
 	Cat.R.SelectDiagram(strings.name);
 	strings.home(false);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1475,7 +1475,7 @@ function %Type(args)
 	}).to;
 	DiagramReferences(user, htmlDiagram, args.xy);
 	args.xy = new Cat.D2();
-	PlaceText(args, 'HTML Input and Output', 96, 'bold', false);
+	PlaceText(args, 'HTML', 96, 'bold', false);
 	Cat.R.SelectDiagram(htmlDiagram.name);
 	htmlDiagram.home(false);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2070,7 +2070,7 @@ namespace %Namespace
 `}});
 
 	args.xy = new Cat.D2();
-	PlaceText(args, 'C++ Integration', 96, 'bold', false);
+	PlaceText(args, 'C++', 96, 'bold', false);
 	Cat.R.SelectDiagram(cpp.name);
 	cpp.home(false);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
