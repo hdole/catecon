@@ -62,9 +62,10 @@ app.use(morgan('combined', {stream:accessLogStream}));
 const mysqlArgs =
 {
 	host:		process.env.MYSQL_HOST,
+	port:		process.env.MYSQL_PORT,
 	user:		process.env.MYSQL_USER,
 	password:	process.env.MYSQL_PASSWORD,
-	database:	process.env.MYSQL_DB,
+	multipleStatements:	true,
 };
 
 let dbcon = null;	// mysql server connection
@@ -94,7 +95,6 @@ function makeDbconSync(mysqlArgs)	// allows synchronous calls
 		query(sql, args) { return util.promisify(dbcon.query).call(dbcon, sql, args); },
 		close() { return util.promisify(dbcon.end ).call(dbcon); },
 	};
-	log('mysql server connection established');
 }
 
 function mysqlKeepAlive()
@@ -176,13 +176,8 @@ function saveDiagramPng(name, inbuf)
 	if (buf.length > 128 * 1024)
 		throw 'PNG file too large';
 	const pngFile = `public/diagram/${name}.png`;
-//	fs.mkdirSync(path.dirname(pngFile), {recursive:true});
-//	const pngFD = fs.openSync(pngFile, 'w');
-//	fs.writeSync(pngFD, buf, 0, buf.length);
-//	fs.closeSync(pngFD);
 	fs.mkdir(path.dirname(pngFile), {recursive:true}, _ => fs.open(pngFile, 'w', (err, pngFD) =>
 	{
-console.log({pngFD});
 		if (err) throw err;
 		fs.write(pngFD, buf, 0, buf.length, (err, bytes, data) =>
 		{
@@ -268,6 +263,47 @@ async function serve()
 	try
 	{
 		mysqlKeepAlive(mysqlArgs);
+		dbcon.query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'Catecon';", (err, result) =>
+		{
+			if (err)
+			{
+				console.log('info schema error', {err});
+				process.exit();
+			}
+			if (result.length === 0)
+			{
+				fs.readFile('sql/Catecon.sql', (err, data) =>
+				{
+					if (err)
+					{
+						console.log('readFile error', {err});
+						process.exit();
+					}
+					dbcon.query(data.toString(), (err, result) =>
+					{
+						if (err)
+						{
+							console.log('mysql intialization for Catecon', {err});
+							process.exit();
+						}
+						console.log('Catecon database initialized');
+						updateCatalog(_ => Cat.R.Initialize());
+					});
+				});
+			}
+			else
+			{
+				dbcon.query("USE `Catecon`;", (err, result) =>
+				{
+					if (err)
+					{
+						console.log('mysql intialization for Catecon', {err});
+						process.exit();
+					}
+					updateCatalog(_ => Cat.R.Initialize());
+				});
+			}
+		});
 
 		app.use(express.static(path.join(process.env.CAT_DIR, 'public')));
 
@@ -357,11 +393,13 @@ async function serve()
 		});
 
 //await dbconSync.query('TRUNCATE diagrams');
+		/*
 		updateCatalog(_ =>
 		{
 			Cat.R.Initialize();
 			log('ready to serve');
 		});
+		*/
 
 		app.use('/recent', (req, res) =>
 		{
