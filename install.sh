@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash -x
+
+sudo npm install -g nodemon
 
 git init
 
@@ -18,9 +20,18 @@ cat > .git/config <<EOF
 	mainline = refs/heads/master
 EOF
 
-git pull
 
-npm install -g nodemon
+git config --global credential.helper cache
+
+# user catecon-git-at-395668725886
+# password kcXIXICJvAA5zcUgDHhk2NCgoYLg60XY8zFyT2oeZ1E=
+if ! git pull; then
+	echo 'Error from git pull';
+	exit;
+fi
+
+cd catecon-web
+
 npm install
 
 mkdir -p server/logs
@@ -34,6 +45,7 @@ CAT_SRVR_LOG_SIZE='100M'
 HTTP_DIR='public'
 HTTP_PORT=8080
 MYSQL_HOST=localhost
+MYSQL_PORT=3306
 MYSQL_USER=root
 MYSQL_PASSWORD=
 MYSQL_DB=Catecon
