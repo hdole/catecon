@@ -1,1 +1,1 @@
-DEBUG=catecon:* npm start
+forever npm start
