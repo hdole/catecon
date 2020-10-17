@@ -1,4 +1,3 @@
-DROP DATABASE `Catecon`;
 CREATE DATABASE `Catecon`;
 USE `Catecon`;
 CREATE TABLE `diagrams` (`name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
