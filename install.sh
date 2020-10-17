@@ -21,7 +21,7 @@ cat > .git/config <<EOF
 EOF
 
 
-git config --global credential.helper cache
+# git config --global credential.helper cache
 
 # user catecon-git-at-395668725886
 # password kcXIXICJvAA5zcUgDHhk2NCgoYLg60XY8zFyT2oeZ1E=
@@ -29,8 +29,6 @@ if ! git pull; then
 	echo 'Error from git pull';
 	exit;
 fi
-
-cd catecon-web
 
 npm install
 
@@ -56,5 +54,6 @@ AWS_USER_COG_REGION='us-west-2'
 AWS_USER_IDENTITY_POOL='us-west-2_HKN5CKGDz'
 EOF
 
+chmod 0600 .env
+
 echo "REMEMBER!  Set the MySQL password in the .env file!"
-echo "Execute the command ./run.sh to start the server."
