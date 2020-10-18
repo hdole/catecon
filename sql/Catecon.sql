@@ -12,3 +12,5 @@ ALTER TABLE `diagrams`
 	ADD KEY `TimestampIndex` (`timestamp`),
 	ADD KEY `user` (`user`(64));
 ALTER TABLE `diagrams` ADD FULLTEXT KEY `DescriptionIndex` (`properName`);
+CREATE USER `catecon`@`172.26.11.254` IDENTIFIED BY `ILoveCategoryTheory`;
+GRANT ALL PRIVILEGES ON `Catecon`.* TO `catecon`@`172.26.11.254`;
