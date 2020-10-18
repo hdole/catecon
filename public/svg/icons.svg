@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+	<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
+		<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
+	</marker>
+	<marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
+		<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
+	</marker>
+</svg>
