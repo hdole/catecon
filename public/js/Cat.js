@@ -1701,19 +1701,22 @@ class R
 	}
 	static getURL(suffix)
 	{
-		let url = `http://${isGUI ? document.location.host : R.default.sifu}/`;
+		let url = `https://${isGUI ? document.location.host : R.default.sifu}/`;
 		if (suffix)
 			url += suffix;
 		return url;
 	}
 	static getDiagramURL(suffix)
 	{
+		/*
 		let url = '';
-//		if (R.local)
+		if (R.local)
 			url = R.getURL(`diagram/${suffix}`);
-//		else
-//			url = R.cloud.getDiagramURL(suffix);
+		else
+			url = R.cloud.getDiagramURL(suffix);
 		return url;
+		*/
+		return R.getURL(`diagram/${suffix}`);
 	}
 }
 Object.defineProperties(R,
@@ -6120,7 +6123,7 @@ class HelpPanel extends Panel
 			H.button('Third Party Software', 'sidenavAccordion', 'third-party', '', `onclick="Cat.D.Panel.SectionToggle(event, this, \'thirdPartySoftwarePnl\')"`) +
 			H.div(
 						H.a('3D', '', '', '', 'href="https://threejs.org/"') +
-						H.a('Crypto', '', '', '', 'href="http://bitwiseshiftleft.github.io/sjcl/"'), 'section', 'thirdPartySoftwarePnl') +
+						H.a('Crypto', '', '', '', 'href="https://bitwiseshiftleft.github.io/sjcl/"'), 'section', 'thirdPartySoftwarePnl') +
 			H.hr() +
 			H.small('&copy;2018-2020 Harry Dole') + H.br() +
 			H.small('harry@harrydole.com', 'italic');
