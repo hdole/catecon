@@ -1353,6 +1353,9 @@ class R
 		fn && fn(diagram);
 		return diagram;
 	}
+	//
+	// primvary means of displaying a diagram
+	//
 	static async SelectDiagram(name, fn = null)
 	{
 		if (isGUI)
@@ -1675,8 +1678,8 @@ class R
 	{
 		if (R.user.status !== 'logged-in')
 			return;
-		if (R.local)
-		{
+//		if (R.local)
+//		{
 //			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
 			const args = {diagram:diagram.json(), user:R.user.name};
 			if (doPng)
@@ -1685,20 +1688,20 @@ class R
 //			const headers = {'Content-Type':'application/json;charset=utf-8', Authorization:R.cloud.accessToken};
 			const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
 			fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(_ => fn()).catch(err => D.RecordError(err));
-		}
-		else
-			R.cloud.ingestDiagramLambda(e, diagram, fn);
+//		}
+//		else
+//			R.cloud.ingestDiagramLambda(e, diagram, fn);
 	}
 	static DiagramSearch(search, fn)
 	{
-		if (R.local)
+//		if (R.local)
 			fetch(R.getURL(`search?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams));
-		else
-			R.cloud.diagramSearch(search, fn);	// use lambda
+//		else
+//			R.cloud.diagramSearch(search, fn);	// use lambda
 	}
 	static getURL(suffix)
 	{
-		let url = `http://${document.location.host}/`;
+		let url = `http://${isGUI ? document.location.host : R.default.sifu}/`;
 		if (suffix)
 			url += suffix;
 		return url;
@@ -1706,10 +1709,10 @@ class R
 	static getDiagramURL(suffix)
 	{
 		let url = '';
-		if (R.local)
+//		if (R.local)
 			url = R.getURL(`diagram/${suffix}`);
-		else
-			url = R.cloud.getDiagramURL(suffix);
+//		else
+//			url = R.cloud.getDiagramURL(suffix);
 		return url;
 	}
 }
@@ -1732,6 +1735,7 @@ Object.defineProperties(R,
 			diagram:		'Anon/Home',
 			debug:			true,
 			showEvents:		false,
+			sifu:			'catecon.net',
 		},
 		writable:	true,
 	},
@@ -1784,7 +1788,7 @@ class Amazon extends Cloud
 			'userPoolId':		{value:	'us-west-2_HKN5CKGDz',													writable: false},
 			'accessToken':		{value: null,																	writable: true},
 			'user':				{value:	null,																	writable: true},
-			'diagramBucket':	{value:	null,																	writable: true},
+//			'diagramBucket':	{value:	null,																	writable: true},
 			'userPool':			{value:	null,																	writable: true},
 		});
 	}
@@ -1823,11 +1827,12 @@ class Amazon extends Cloud
 		url += suffix;
 		return url;
 	}
-	updateServiceObjects()
-	{
-		this.diagramBucket = new window.AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
-		this.lambda = new window.AWS.Lambda({region: R.cloud.region, apiVersion: '2015-03-31'});
-	}
+//	updateServiceObjects()
+//	{
+//		this.diagramBucket = new window.AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
+//		this.lambda = new window.AWS.Lambda({region: R.cloud.region, apiVersion: '2015-03-31'});
+//	}
+	/*
 	// TODO unused
 	saveCategory(category)
 	{
@@ -1849,6 +1854,7 @@ class Amazon extends Cloud
 			R.default.debug && console.log('saved category', category.name);
 		});
 	}
+	*/
 	registerCognito()
 	{
 		const poolInfo =
@@ -1895,13 +1901,13 @@ class Amazon extends Cloud
 					R.EmitLoginEvent();
 				});
 			});
-			this.updateServiceObjects();
+//			this.updateServiceObjects();
 		}
 		else
 		{
 			window.AWS.config.credentials = new window.AWS.CognitoIdentityCredentials(this.loginInfo);
 			window.AWS.config.credentials.get();
-			this.updateServiceObjects();
+//			this.updateServiceObjects();
 		}
 	}
 	signup()
@@ -4760,15 +4766,26 @@ class Catalog
 	}
 	display(diagram)
 	{
-		this.catalogDisplay.appendChild(H3.div({class:'catalogEntry'},
+		const img = H3.img(
+		{
+			src:`diagram/${diagram.name}.png`,
+			width:'200px',
+			height:'150px',
+			onclick:_ => Cat.R.SelectDiagram(diagram.name),
+//			onmouseenter:e => {e.target.width = 400; e.target.height = 300;},
+//			onmouseleave:e => {e.target.width = 200; e.target.height = 150;},
+			title:diagram.description
+		});
+		const div = H3.div({class:'catalogEntry'},
 			H3.table(
 			[
-				H3.tr(H3.td({class:'white', colspan:2}, H3.a(H3.img({src:`diagram/${diagram.name}.png`, width:'200px', height:'150px'}), {onclick:_ => Cat.R.SelectDiagram(diagram.name), title:diagram.description}))),
+				H3.tr(H3.td({class:'white', colspan:2}, H3.a(img))),
 				H3.tr(H3.td({description:diagram.description, colspan:2})),
 				H3.tr([	H3.td(diagram.name, {class:'author'}),
 						H3.td(new Date(diagram.timestamp).toLocaleString(), {class:'date'})], {class:'diagramSlot'})
-			]),
-			H3.hr()));
+			]));
+		div.style.margin = "20px 0px 0px 0px";
+		this.catalogDisplay.appendChild(div);
 	}
 	search()
 	{
@@ -4785,6 +4802,7 @@ class Catalog
 	}
 	displayAll(diagrams)
 	{
+		D.panels.closeAll();
 		R.NotBusy();
 		D.navbar.update();
 		this.clear();
