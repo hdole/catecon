@@ -222,10 +222,11 @@ br
 
 a
 {
-	text-decoration: none;
-	color: black;
-	display: block;
-	transition: 0.3s
+	text-decoration:	none;
+	color:				black;
+	cursor:				pointer;
+	display:			block;
+	transition:			0.3s
 }
 
 a:hover, .offcanvas a:focus
