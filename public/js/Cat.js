@@ -1110,14 +1110,21 @@ class R
 	static Initialize()
 	{
 		R.sync = false;
-		const params = isGUI ? (new URL(document.location)).searchParams : new Map();
+		R.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
 		if (isGUI)
 			R.local = document.location.hostname === 'localhost';
-		if (params.has('test'))
+		if (R.params.has('test'))
 		{
 			R.InitTestProcedure();
 			return;
 		}
+		D.view = isGUI ? 'catalog' : '';
+		D.catalog = isGUI ? new Catalog() : null;
+		if (R.params.has('d'))	// check for short form
+			R.params.set('diagram', R.params.get('d'));
+		if (R.params.has('diagram'))
+			D.view = 'diagram';
+		isGUI && D.catalog.show(D.view === 'catalog');
 		R.Busy();
 		R.ReadDefaults();
 		R.SetupWorkers();
@@ -1138,18 +1145,28 @@ class R
 		const loader = function()
 		{
 			R.diagram = null;
-			let diagramName = params.get('d') || params.get('diagram');
-			const doDisplayMorphism = diagramName !== null;
-			if (diagramName)
-				R.default.diagram = diagramName;
+			switch(D.view)
+			{
+				case 'catalog':
+					D.catalog.show();
+					D.catalog.search();
+					break;
+				case 'diagram':
+					D.catalog.show(false);
+					let diagramName = R.params.get('diagram');
+					const doDisplayMorphism = diagramName !== null;
+					if (diagramName)
+						R.default.diagram = diagramName;
+					break;
+			}
 			R.initialized = true;
-			R.NotBusy();
+//			R.NotBusy();
 			R.EmitLoginEvent();	// Anon login
 			R.cloud.load();		// cloud login
 		};
 		const bootLoader = _ =>
 		{
-			if (params.has('boot'))
+			if (R.params.has('boot'))
 //				R.LoadScript(window.location.origin + window.location.pathname + 'js/boot.js', function() { Boot(loader); });
 				R.LoadScript(window.location.origin + '/js/boot.js', function() { Boot(loader); });
 			else
@@ -1280,6 +1297,7 @@ class R
 				D.RecordError('Morphism in URL could not be loaded.');
 		}
 	}
+	/* NOT USED?
 	static Setup(fn)
 	{
 		R.diagram = null;
@@ -1291,6 +1309,7 @@ class R
 		fn();
 		R.SelectDiagram(diagramName);
 	}
+	*/
 	static LocalTimestamp(name)
 	{
 		const filename = `${name}.json`;
@@ -1336,8 +1355,12 @@ class R
 	}
 	static async SelectDiagram(name, fn = null)
 	{
+		D.catalog.show(false);
 		if (R.diagram && R.diagram.name === name)
+		{
+			R.diagram.show();
 			return fn ? fn(R.diagram) : null;
+		}
 		if (isGUI)
 		{
 			R.Busy();
@@ -2122,7 +2145,8 @@ class Navbar
 	constructor()
 	{
 		this.element = document.getElementById('navbar');
-		const sz = D.default.button.large;
+		/*
+		onst sz = D.default.button.large;
 		const left =
 			D.GetButton('diagramPanelToggle', 'diagram', "Cat.D.diagramPanel.toggle()", 'Diagrams', sz) +
 			D.GetButton('categoryPanelToggle', 'category', "Cat.D.categoryPanel.toggle()", 'Categories', sz) +
@@ -2147,6 +2171,8 @@ class Navbar
 		html.map(elt => this.element.appendChild(elt));
 		this.categoryElt = document.getElementById('category-navbar');
 		this.diagramElt = document.getElementById('diagram-navbar');
+*/
+		this.update();
 		this.diagramElt.addEventListener('mouseenter', function(e)
 		{
 			const title = R.diagram ? `${R.diagram.htmlName()} ${H.span('by '+R.diagram.user, 'italic')}: ${U.Formal(R.diagram.description)}` : '';
@@ -2154,8 +2180,8 @@ class Navbar
 		}, true);
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
-		window.addEventListener('Login', this.updateByUserStatus);
-		window.addEventListener('Registration', this.updateByUserStatus);
+		window.addEventListener('Login', Navbar.UpdateByUserStatus);
+		window.addEventListener('Registration', Navbar.UpdateByUserStatus);
 		window.addEventListener('CAT', e =>
 		{
 			const args = e.detail;
@@ -2194,7 +2220,53 @@ class Navbar
 				c = '#333';
 				break;
 		}
-		D.navbar.element.style.background = c;
+		this.element.style.background = c;
+	}
+	static UpdateByUserStatus()
+	{
+		Cat.D.navbar.updateByUserStatus();
+	}
+	update()
+	{
+		const sz = D.default.button.large;
+		let left = '';
+		let right = '';
+		if (D.view === 'diagram')
+		{
+			left = 
+			D.GetButton('diagramPanelToggle', 'diagram', "Cat.D.diagramPanel.toggle()", 'Diagrams', sz) +
+			D.GetButton('categoryPanelToggle', 'category', "Cat.D.categoryPanel.toggle()", 'Categories', sz) +
+			D.GetButton('objectPanelToggle', 'object', "Cat.D.objectPanel.toggle()", 'Objects', sz) +
+			D.GetButton('morphismPanelToggle', 'morphism', "Cat.D.morphismPanel.toggle()", 'Morphisms', sz) +
+			D.GetButton('textPanelToggle', 'text', "Cat.D.textPanel.toggle()", 'Text', sz) +
+			D.GetButton('showGraphs', 'string', "Cat.R.diagram.showGraphs()", 'Graph', sz);
+			right =
+			D.GetButton('homeView', 'cateapsis', "Cat.R.diagram.home()", 'Home', sz) +
+			D.GetButton('threeDPanelToggle', 'threeD', "Cat.D.threeDPanel.toggle()", '3D view', sz) +
+			D.GetButton('ttyPanelToggle', 'tty', "Cat.D.ttyPanel.toggle()", 'Console', sz) +
+			D.GetButton('helpPanelToggle', 'help', "Cat.D.helpPanel.toggle()", 'Help', sz) +
+			D.GetButton('loginPanelToggle', 'login', "Cat.D.loginPanel.toggle()", 'Login', sz) +
+			D.GetButton('settingsPanelToggle', 'settings', "Cat.D.settingsPanel.toggle()", 'Settings', sz);
+		}
+		else
+		{
+			left = '';
+			right =
+			D.GetButton('helpPanelToggle', 'help', "Cat.D.helpPanel.toggle()", 'Help', sz) +
+			D.GetButton('loginPanelToggle', 'login', "Cat.D.loginPanel.toggle()", 'Login', sz) +
+			D.GetButton('settingsPanelToggle', 'settings', "Cat.D.settingsPanel.toggle()", 'Settings', sz);
+		}
+		const html = [	H3.div({class:'navbarFloat buttonBarLeft'}),
+						H3.div({class:'navbarFloat navbar-inset', id:'category-navbar'}),
+						H3.div(H3.a('Catecon', {onclick:_ => Cat.D.catalog.showCatalog()}), {class:'navbarFloat title'}),
+						H3.div({class:'navbarFloat navbar-inset', id:'diagram-navbar'}),
+						H3.div({class:'navbarFloat buttonBarRight'})];
+		html[0].innerHTML = left;
+		html[4].innerHTML = right;
+		html.map(elt => this.element.appendChild(elt));
+		this.categoryElt = document.getElementById('category-navbar');
+		this.diagramElt = document.getElementById('diagram-navbar');
+		this.updateByUserStatus();
 	}
 }
 
@@ -3454,7 +3526,8 @@ ${button}
 		});
 		window.addEventListener('Login', function(e)
 		{
-			R.SelectDiagram(R.default.diagram);
+			if (D.view === 'diagram' && R.params.has('diagram'))
+				R.SelectDiagram(R.params.get('diagram'));
 		});
 		window.onresize = D.Resize;
 		window.addEventListener('mousemove', D.Autohide);
@@ -4658,6 +4731,68 @@ view:
 		writable:	false,
 	},
 });
+
+class Catalog
+{
+	constructor()
+	{
+		this.catalog = document.getElementById('catalog');
+//		this.catalog.appendChild(H3.h1('Catecon', {class:'center'}));
+		this.searchInput = H3.input({class:'in100', id:'catalog-search', title:'Search for a diagram by name', placeholder:'Diagram name contains...', onkeydown:e => Cat.D.OnEnter(e, _ => this.search())});
+		this.searchBtn = CatIcons.getButton('search-btn', 'search', this.search, 'Search for diagrams');
+		this.catalog.appendChild(H3.div({class:'center'}, [this.searchInput, this.searchBtn]));
+		this.catalogDisplay = H3.div({id:'catalog-display', class:'catalog'});
+		this.catalog.appendChild(this.catalogDisplay);
+		this.searchBtn.onkeydown = Cat.D.OnEnter(event, e => this.search());
+//		window.addEventListener('load', _ => {
+//			debugger;
+//			D.view === 'catalog' && this.search();
+//		});
+		this.search();
+	}
+	clear()
+	{
+		let child = this.catalogDisplay.firstChild;
+		while((child = this.catalogDisplay.firstChild))
+			child.parentNode.removeChild(child);
+	}
+	display(diagram)
+	{
+		this.catalogDisplay.appendChild(H3.div({class:'catalogEntry'},
+			H3.table(
+			[
+				H3.tr(H3.td({class:'white', colspan:2}, H3.a(H3.img({src:`diagram/${diagram.name}.png`, width:'200px', height:'150px'}), {onclick:_ => Cat.R.SelectDiagram(diagram.name), title:diagram.description}))),
+				H3.tr(H3.td({description:diagram.description, colspan:2})),
+				H3.tr([	H3.td(diagram.name, {class:'author'}),
+						H3.td(new Date(diagram.timestamp).toLocaleString(), {class:'date'})], {class:'diagramSlot'})
+			]),
+			H3.hr()));
+	}
+	search()
+	{
+		const search = this.searchInput.value;
+		if (search !== '')
+			fetch(`/search?search=${search}`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
+		else
+			fetch(`/recent`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
+		R.Busy();
+	}
+	displayAll(diagrams)
+	{
+		R.NotBusy();
+		this.clear();
+		diagrams.map(diagram => this.display(diagram));
+	}
+	show(visible = true)
+	{
+		this.catalog.style.display = visible ? 'block' : 'none';
+	}
+	showCatalog()
+	{
+		this.show();
+		R.diagram && R.diagram.hide();
+	}
+}
 
 class Panels
 {
@@ -5984,15 +6119,15 @@ class LoginPanel extends Panel
 		this.userNameElt = document.getElementById('user-name');
 		this.userEmailElt = document.getElementById('user-email');
 		this.errorElt = document.getElementById('login-error');
-		const that = this;
-		window.addEventListener('Login', function(e)
+//		const that = this;
+		window.addEventListener('Login', e =>
 		{
-			that.update();
+			this.update();
 			if (e.detail.command === 'logged-in')
-				that.close();
+				this.close();
 		});
-		window.addEventListener('Registered', function() {that.update();});
-		window.addEventListener('load', function() {that.update();});
+		window.addEventListener('Registered', _ => this.update());
+		window.addEventListener('load', _ => this.update());
 	}
 	update()
 	{
@@ -15058,7 +15193,8 @@ const Cat =
 if (isGUI)
 {
 	window.Cat = Cat;
-	window.onload = _ => R.Initialize();
+//	window.onload = _ => R.Initialize();
+	window.addEventListener('load', _ => R.Initialize());
 }
 else
 	Object.keys(Cat).forEach(cls => exports[cls] = Cat[cls]);
