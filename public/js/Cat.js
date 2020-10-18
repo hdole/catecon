@@ -1355,7 +1355,12 @@ class R
 	}
 	static async SelectDiagram(name, fn = null)
 	{
-		D.catalog.show(false);
+		if (isGUI)
+		{
+			D.view = 'diagram';
+			D.navbar.update();
+			D.catalog.show(false);
+		}
 		if (R.diagram && R.diagram.name === name)
 		{
 			R.diagram.show();
@@ -2263,6 +2268,7 @@ class Navbar
 						H3.div({class:'navbarFloat buttonBarRight'})];
 		html[0].innerHTML = left;
 		html[4].innerHTML = right;
+		D.RemoveChildren(this.element);
 		html.map(elt => this.element.appendChild(elt));
 		this.categoryElt = document.getElementById('category-navbar');
 		this.diagramElt = document.getElementById('diagram-navbar');
@@ -4737,17 +4743,13 @@ class Catalog
 	constructor()
 	{
 		this.catalog = document.getElementById('catalog');
-//		this.catalog.appendChild(H3.h1('Catecon', {class:'center'}));
 		this.searchInput = H3.input({class:'in100', id:'catalog-search', title:'Search for a diagram by name', placeholder:'Diagram name contains...', onkeydown:e => Cat.D.OnEnter(e, _ => this.search())});
-		this.searchBtn = CatIcons.getButton('search-btn', 'search', this.search, 'Search for diagrams');
+		this.searchInput.style.margin = '40px 0px 0px 0px';
+		this.searchBtn = D.GetButton3('search-btn', 'search', Catalog.search, 'Search for diagrams');
 		this.catalog.appendChild(H3.div({class:'center'}, [this.searchInput, this.searchBtn]));
 		this.catalogDisplay = H3.div({id:'catalog-display', class:'catalog'});
 		this.catalog.appendChild(this.catalogDisplay);
 		this.searchBtn.onkeydown = Cat.D.OnEnter(event, e => this.search());
-//		window.addEventListener('load', _ => {
-//			debugger;
-//			D.view === 'catalog' && this.search();
-//		});
 		this.search();
 	}
 	clear()
@@ -4777,9 +4779,14 @@ class Catalog
 			fetch(`/recent`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
 		R.Busy();
 	}
+	static Search()
+	{
+		D.catalog.search();
+	}
 	displayAll(diagrams)
 	{
 		R.NotBusy();
+		D.navbar.update();
 		this.clear();
 		diagrams.map(diagram => this.display(diagram));
 	}
@@ -4789,8 +4796,10 @@ class Catalog
 	}
 	showCatalog()
 	{
-		this.show();
 		R.diagram && R.diagram.hide();
+		D.view = 'catalog';
+		D.navbar.update();
+		this.show();
 	}
 }
 
