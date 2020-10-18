@@ -20,11 +20,8 @@ app.use(express.json());
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-const indexRouter = require('./routes/index');
-app.use('/', indexRouter);
-
 const diagramRouter = require('./routes/diagram');
-app.use('/diagram', diagramRouter);
+app.use('/', diagramRouter);
 
 const cors = require('cors');
 app.use(cors());
@@ -32,7 +29,6 @@ app.use(cors());
 const helmet = require('helmet');
 app.use(helmet());
 
-//const CognitoExpress = require('cognito-express');		// aws user support
 const cognito = require('amazon-cognito-identity-js');		// aws user support
 const url = require('url');
 const fs = require('fs');
