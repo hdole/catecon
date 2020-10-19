@@ -48,8 +48,6 @@ MYSQL_USER=root
 MYSQL_PASSWORD=
 MYSQL_DB=Catecon
 AWS_DGRM_RGN='us-west-1'
-AWS_DGRM_BKT='catecon-diagrams'
-AWS_DIAGRAM_URL='https://catecon-diagrams.s3-us-west-1.amazonaws.com'
 AWS_USER_COG_REGION='us-west-2'
 AWS_USER_IDENTITY_POOL='us-west-2_HKN5CKGDz'
 EOF
