@@ -741,11 +741,13 @@ path.emphasis
 .warningGlow
 {
 	text-shadow: 0 0 10px #ff0, 0 0 20px #fff, 0 0 30px #ff0, 0 0 40px #ff0, 0 0 50px #ff0;
+	box-shadow: 0 0 5px #ff0, 0 0 10px #fff, 0 0 15px #ff0, 0 0 20px #ff0, 0 0 25px #ff0;
 }
 
 .greenGlow
 {
 	text-shadow: 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0, 0 0 50px #0f0, 0 0 60px #0f0;
+	box-shadow: 0 0 10px #0f0, 0 0 15px #0f0, 0 0 20px #0f0, 0 0 25px #0f0, 0 0 30px #0f0;
 }
 
 .cyanGlow
