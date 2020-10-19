@@ -8,7 +8,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node ./bin/www",
-	"dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www"
   },
   "dependencies": {
     "amazon-cognito-identity-js": "^4.4.0",
@@ -41,7 +41,7 @@
   "devDependencies": {},
   "nodemonConfig": {
     "ignore": [
-		"node_modules/*",
+      "node_modules/*",
       "public/diagram/*",
       "logs/*"
     ],
