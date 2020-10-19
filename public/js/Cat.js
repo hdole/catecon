@@ -655,7 +655,6 @@ class U
 	}
 	static readfile(filename)
 	{
-//		return isGUI ? localStorage.getItem(filename) : fs.readFileSync('diagram/' + filename);
 		if (isGUI)
 			return localStorage.getItem(filename);
 		else
@@ -1162,7 +1161,7 @@ class R
 			R.initialized = true;
 //			R.NotBusy();
 			R.EmitLoginEvent();	// Anon login
-			R.cloud.load();		// cloud login
+//			R.cloud.load();		// cloud login
 		};
 		const bootLoader = _ =>
 		{
@@ -1297,19 +1296,6 @@ class R
 				D.RecordError('Morphism in URL could not be loaded.');
 		}
 	}
-	/* NOT USED?
-	static Setup(fn)
-	{
-		R.diagram = null;
-		const params = (new URL(document.location)).searchParams;
-		let diagramName = params.get('d') || params.get('diagram');
-		const doDisplayMorphism = diagramName !== null;
-		if (!diagramName)
-			diagramName = R.default.diagram;
-		fn();
-		R.SelectDiagram(diagramName);
-	}
-	*/
 	static LocalTimestamp(name)
 	{
 		const filename = `${name}.json`;
@@ -1328,7 +1314,7 @@ class R
 		const cloudDiagrams = [...R.GetReferences(name)].reverse().filter(d => R.isCloudNewer(d));
 		if (cloudDiagrams.length > 0)
 		{
-			const downloads = cloudDiagrams.map(d => this.getDiagramURL(d + '.json'));
+			const downloads = cloudDiagrams.map(d => R.getDiagramURL(d + '.json'));
 			let diagrams = [];
 			async function downloader()
 			{
@@ -1678,44 +1664,27 @@ class R
 	{
 		if (R.user.status !== 'logged-in')
 			return;
-//		if (R.local)
-//		{
-//			const body = JSON.stringify({diagram:diagram.json(), user:R.user.name, png:D.diagramPNG.get(diagram.name)});
-			const args = {diagram:diagram.json(), user:R.user.name};
-			if (doPng)
-				args.png = D.diagramPNG.get(diagram.name);
-			const body = JSON.stringify(args);
-//			const headers = {'Content-Type':'application/json;charset=utf-8', Authorization:R.cloud.accessToken};
-			const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
-			fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(_ => fn()).catch(err => D.RecordError(err));
-//		}
-//		else
-//			R.cloud.ingestDiagramLambda(e, diagram, fn);
+		const args = {diagram:diagram.json(), user:R.user.name};
+		if (doPng)
+			args.png = D.diagramPNG.get(diagram.name);
+		const body = JSON.stringify(args);
+		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
+		fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(_ => fn()).catch(err => D.RecordError(err));
 	}
 	static DiagramSearch(search, fn)
 	{
-//		if (R.local)
-			fetch(R.getURL(`search?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams));
-//		else
-//			R.cloud.diagramSearch(search, fn);	// use lambda
+		fetch(R.getURL(`search?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams));
 	}
 	static getURL(suffix)
 	{
-		let url = `https://${isGUI ? document.location.host : R.default.sifu}/`;
+		// local servers do not usually do https, or need to
+		let url = `${R.local ? 'http' : 'https'}://${isGUI ? document.location.host : R.default.sifu}/`;
 		if (suffix)
 			url += suffix;
 		return url;
 	}
 	static getDiagramURL(suffix)
 	{
-		/*
-		let url = '';
-		if (R.local)
-			url = R.getURL(`diagram/${suffix}`);
-		else
-			url = R.cloud.getDiagramURL(suffix);
-		return url;
-		*/
 		return R.getURL(`diagram/${suffix}`);
 	}
 }
@@ -1749,6 +1718,7 @@ Object.defineProperties(R,
 	languages:			{value:new Map(),	writable:false},
 	local:				{value:null,		writable:true},		// local server, if it exists
 	LocalDiagrams:		{value:new Map(),	writable:false},	// diagrams stored locally
+	params:				{value:null,		writable:true},		// URL parameters
 	ReplayCommands:		{value:new Map(),	writable:false},
 	ServerDiagrams:		{value:new Map(),	writable:false},
 	sync:				{value:false,		writable:true},		// when to turn on sync of gui and local storage
@@ -1791,73 +1761,18 @@ class Amazon extends Cloud
 			'userPoolId':		{value:	'us-west-2_HKN5CKGDz',													writable: false},
 			'accessToken':		{value: null,																	writable: true},
 			'user':				{value:	null,																	writable: true},
-//			'diagramBucket':	{value:	null,																	writable: true},
 			'userPool':			{value:	null,																	writable: true},
 		});
-	}
-	load(fn = null)
-	{
 		if (isGUI)
 		{
-			const that = this;
-			const script = H3.script({src:"https://sdk.amazonaws.com/js/aws-sdk-2.306.0.min.js", type:"text/javascript", id:'cloud-amazon', onload:function()
+			window.AWS.config.update(
 			{
-				const url = document.location;
-				const tokens = url.pathname.split('/');
-				tokens.pop();
-				tokens.shift();
-				const script = H3.script({src:"/js/amazon-cognito-identity.min.js", type:"text/javascript", onload:function()
-				{
-					R.cloud = that;
-					window.AWS.config.update(
-					{
-						region:			that.region,
-						credentials:	new window.AWS.CognitoIdentityCredentials(that.loginInfo),
-					});
-					isGUI && that.registerCognito();
-					fn && fn();
-				}});
-				document.body.appendChild(script);
-			}});
-			document.body.appendChild(script);
+				region:			this.region,
+				credentials:	new window.AWS.CognitoIdentityCredentials(this.loginInfo),
+			});
+			this.registerCognito();
 		}
 	}
-	getDiagramURL(suffix)
-	{
-		let url = `https://s3-${this.region}.amazonaws.com/${this.diagramBucketName}/`;
-		if (suffix === undefined)
-			return url;
-		url += suffix;
-		return url;
-	}
-//	updateServiceObjects()
-//	{
-//		this.diagramBucket = new window.AWS.S3({apiVersion:'2006-03-01', params: {Bucket: this.diagramBucketName}});
-//		this.lambda = new window.AWS.Lambda({region: R.cloud.region, apiVersion: '2015-03-31'});
-//	}
-	/*
-	// TODO unused
-	saveCategory(category)
-	{
-		const key = `${category.name}/${category.name}.json`;
-		this.diagramBucket.putObject(
-		{
-			Bucket:			this.diagramBucketName,
-			ContentType:	'json',
-			Key:			key,
-			Body:			JSON.stringify(category.json()),
-			ACL:			'public-read',
-		}, function(err, data)
-		{
-			if (err)
-			{
-				D.RecordError(`Cannot save category: ${err.message}`);
-				return;
-			}
-			R.default.debug && console.log('saved category', category.name);
-		});
-	}
-	*/
 	registerCognito()
 	{
 		const poolInfo =
@@ -1904,13 +1819,11 @@ class Amazon extends Cloud
 					R.EmitLoginEvent();
 				});
 			});
-//			this.updateServiceObjects();
 		}
 		else
 		{
 			window.AWS.config.credentials = new window.AWS.CognitoIdentityCredentials(this.loginInfo);
 			window.AWS.config.credentials.get();
-//			this.updateServiceObjects();
 		}
 	}
 	signup()
@@ -2064,6 +1977,7 @@ class Amazon extends Cloud
 		R.user.email = '';
 		R.EmitLoginEvent();
 	}
+	/*
 	ingestCategoryLambda(e, cat, fn)
 	{
 		const params =
@@ -2090,31 +2004,7 @@ class Amazon extends Cloud
 		};
 		this.lambda.invoke(params, handler);
 	}
-	ingestDiagramLambda(e, dgrm, fn)
-	{
-		const Payload = JSON.stringify({diagram:dgrm.json(), user:R.user.name, png:D.diagramPNG.get(dgrm.name)});
-		if (Payload.length > U.uploadLimit)
-		{
-			D.statusbar.show(e, 'CANNOT UPLOAD!<br/>Diagram too large!');
-			return;
-		}
-		const params =
-		{
-			FunctionName:	'CateconIngestDiagram',
-			LogType:		'None',
-			Payload,
-		};
-		function handler(error, data)
-		{
-			if (error)
-			{
-				D.RecordError(error);
-				return;
-			}
-			fn && fn(data);
-		}
-		this.lambda.invoke(params, handler);
-	}
+	*/
 	diagramSearch(search, fn)
 	{
 		const params =
@@ -2142,7 +2032,7 @@ class Amazon extends Cloud
 	{
 		try
 		{
-			const response = await fetch(this.getDiagramURL(name + '.json'), {cache: cache ? 'default' : 'reload'});
+			const response = await fetch(R.getDiagramURL(name + '.json'), {cache: cache ? 'default' : 'reload'});
 			const json = await response.json();
 			R.ServerDiagrams.set(name, Diagram.GetInfo(json));
 			return json;
@@ -2159,33 +2049,6 @@ class Navbar
 	constructor()
 	{
 		this.element = document.getElementById('navbar');
-		/*
-		onst sz = D.default.button.large;
-		const left =
-			D.GetButton('diagramPanelToggle', 'diagram', "Cat.D.diagramPanel.toggle()", 'Diagrams', sz) +
-			D.GetButton('categoryPanelToggle', 'category', "Cat.D.categoryPanel.toggle()", 'Categories', sz) +
-			D.GetButton('objectPanelToggle', 'object', "Cat.D.objectPanel.toggle()", 'Objects', sz) +
-			D.GetButton('morphismPanelToggle', 'morphism', "Cat.D.morphismPanel.toggle()", 'Morphisms', sz) +
-			D.GetButton('textPanelToggle', 'text', "Cat.D.textPanel.toggle()", 'Text', sz) +
-			D.GetButton('showGraphs', 'string', "Cat.R.diagram.showGraphs()", 'Graph', sz);
-		const right =
-			D.GetButton('homeView', 'cateapsis', "Cat.R.diagram.home()", 'Home', sz) +
-			D.GetButton('threeDPanelToggle', 'threeD', "Cat.D.threeDPanel.toggle()", '3D view', sz) +
-			D.GetButton('ttyPanelToggle', 'tty', "Cat.D.ttyPanel.toggle()", 'Console', sz) +
-			D.GetButton('helpPanelToggle', 'help', "Cat.D.helpPanel.toggle()", 'Help', sz) +
-			D.GetButton('loginPanelToggle', 'login', "Cat.D.loginPanel.toggle()", 'Login', sz) +
-			D.GetButton('settingsPanelToggle', 'settings', "Cat.D.settingsPanel.toggle()", 'Settings', sz);
-		const html = [	H3.div({class:'navbarFloat buttonBarLeft'}),
-						H3.div({class:'navbarFloat navbar-inset', id:'category-navbar'}),
-						H3.div(H3.a('Catecon', {href:'/'}), {class:'navbarFloat title'}),
-						H3.div({class:'navbarFloat navbar-inset', id:'diagram-navbar'}),
-						H3.div({class:'navbarFloat buttonBarRight'})];
-		html[0].innerHTML = left;
-		html[4].innerHTML = right;
-		html.map(elt => this.element.appendChild(elt));
-		this.categoryElt = document.getElementById('category-navbar');
-		this.diagramElt = document.getElementById('diagram-navbar');
-*/
 		this.update();
 		this.diagramElt.addEventListener('mouseenter', function(e)
 		{
@@ -3289,15 +3152,7 @@ class D
 				return;
 			let elt = diagram.getElement(name);
 			if (!elt)
-			{
-				/*
-				if (R.GetDiagram(name))
-					D.AddReference(e, name);
-				else
-					D.RecordError(`Cannot reference ${name}`);
-					*/
 				R.DownloadDiagram(name, _ => D.AddReference(e, name));
-			}
 			else
 			{
 				let from = null;
@@ -4116,16 +3971,6 @@ ${button}
 		}
 		return png;
 	}
-	/*
-	static GetImageElement(name)
-	{
-		let src = D.GetPng(name);
-		if (!src && R.cloud)
-			src = R.getDiagramURL(name + '.png');
-		const imgId = U.SafeId(`img-el_${name}`);
-		return `<image href="${src}" id="${imgId}" alt="Not loaded" width="200" height="150"/>`;
-	}
-	*/
 	static GetImageElement(name)
 	{
 		let src = D.GetPng(name);
@@ -4767,25 +4612,35 @@ class Catalog
 		while((child = this.catalogDisplay.firstChild))
 			child.parentNode.removeChild(child);
 	}
-	display(diagram)
+	display(info)
 	{
 		const img = H3.img(
 		{
-			src:`diagram/${diagram.name}.png`,
+			src:`diagram/${info.name}.png`,
 			width:'200px',
 			height:'150px',
-			onclick:_ => Cat.R.SelectDiagram(diagram.name),
+			onclick:_ => Cat.R.SelectDiagram(info.name),
 //			onmouseenter:e => {e.target.width = 400; e.target.height = 300;},
 //			onmouseleave:e => {e.target.width = 200; e.target.height = 150;},
-			title:diagram.description
+			title:info.description
 		});
+		const diagram = R.$CAT.getElement(info.name);
+		const localTime = R.LocalTimestamp(info.name);
+		let cls = 'white';
+		if (localTime > 0)
+		{
+			if (localTime > info.timestamp)
+				cls += ' greenGlow';
+			if (localTime < info.timestamp)
+				cls += ' warningGlow';
+		}
 		const div = H3.div({class:'catalogEntry'},
 			H3.table(
 			[
-				H3.tr(H3.td({class:'white', colspan:2}, H3.a(img))),
-				H3.tr(H3.td({description:diagram.description, colspan:2})),
-				H3.tr([	H3.td(diagram.name, {class:'author'}),
-						H3.td(new Date(diagram.timestamp).toLocaleString(), {class:'date'})], {class:'diagramSlot'})
+				H3.tr(H3.td({class:cls, colspan:2, 'data-name':info.name}, H3.a(img))),
+				H3.tr(H3.td({description:info.description, colspan:2})),
+				H3.tr([	H3.td(info.name, {class:'author'}),
+						H3.td(new Date(info.timestamp).toLocaleString(), {class:'date'})], {class:'diagramSlot'})
 			]));
 		div.style.margin = "20px 0px 0px 0px";
 		this.catalogDisplay.appendChild(div);
@@ -4817,6 +4672,7 @@ class Catalog
 	}
 	showCatalog()
 	{
+		D.panels.closeAll();
 		R.diagram && R.diagram.hide();
 		D.view = 'catalog';
 		D.navbar.update();
@@ -9884,12 +9740,6 @@ class LanguageAction extends Action
 		D.RemoveChildren(body);
 		if (elt.constructor.name === 'Morphism' || elt.constructor.name === 'CatObject')
 		{
-			/*
-			let code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
-			if (code === '')
-				code = this.template(elt);
-			const old = this.currentDiagram;
-			*/
 			const old = this.currentDiagram;
 			this.currentDiagram = elt.diagram;
 			const rows =	[H3.tr([H3.td('Namespace', {class:'smallPrint left'}), H3.td(this.getNamespace(diagram), {class:'smallBold left'})]),
@@ -9899,12 +9749,6 @@ class LanguageAction extends Action
 							H3.tr([H3.td('Codomain', {class:'smallPrint left'}), H3.td(this.getType(elt.codomain), {class:'smallBold left'})]));
 			this.currentDiagram = old;
 			div.appendChild(H3.table(rows, {width:'auto'}));
-			/*
-			const id = `element-${this.ext}`;
-			div.appendChild(H3.div(U.HtmlSafe(code), {class:'code padding', id, onkeydown:e => e.stopPropagation()}));
-			if (this.isEditable(elt))
-				div.appendChild(D.GetButton3(this.name, 'edit3', e => Cat.R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
-				*/
 			this.getEditHtml(div, elt);
 		}
 		else
@@ -13207,63 +13051,6 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 }
 
-/*
-class MysqlObject extends DiagramObject		// mysql table; morphisms form the columns
-{
-	constructor(diagram, args)
-	{
-		if (!diagram.allReferences.has('hdole/mysql'))
-			throw `diagram ${diagram.name} does not reference mysql`;
-		const nuArgs = U.Clone(args);
-		nuArgs.to = diagram.getElement(args.to);
-		super(diagram, nuArgs);
-		this.nuArgs = nuArgs;	// finish in postload
-		this.constructor.name === 'MysqlObject' && R.EmitElementEvent(diagram, 'new', this);
-	}
-	postload()
-	{
-		this.columns = this.nuArgs.columns.slice();
-		const morphisms = this.nuArgs.morphisms.map(m => this.diagram.getElement(m));
-		if (morphisms.filter(m => m === undefined).length > 0)
-			throw 'morphism not found for column';
-//		if (morphisms.reduce((r, m) => r || ('code' in m.to && 'js' in m.to.code), false))
-//			throw 'a morphism already has js code';
-		if (!Category.IsSource(morphisms))
-			throw 'morphisms are not a source';
-		morphisms.map(m => m.incrRefcnt());
-		morphisms.map(m =>
-		{
-			if (!('code' in m.to))
-				m.to.code = {};
-			m.to.code.js =
-`
-async function ${R.Actions.javascript.getType(m)}_Iterator(fn)
-{
-	const result = await dbconSync.query(\`SELECT ${m.basename} FROM ${this.to.basename}\`);
-	console.log({result});
-}
-`;
-		});
-		this.morphisms = morphisms;
-		delete this.nuArgs;
-	}
-	json()
-	{
-		const a = super.json();
-		a.morphisms = this.morphisms.map(m => m.name);
-		a.columns = this.columns.slice();
-		return a;
-	}
-	decrRefcnt()
-	{
-		if (this.refcnt <= 1)
-			this.morphisms.map(m => m.decrRefcnt());
-		super.decrRefcnt();
-	}
-}
-*/
-
-
 class Functor extends Morphism
 {
 	constructor(diagram, args)
@@ -15223,7 +15010,6 @@ const Cat =
 if (isGUI)
 {
 	window.Cat = Cat;
-//	window.onload = _ => R.Initialize();
 	window.addEventListener('load', _ => R.Initialize());
 }
 else
