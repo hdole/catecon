@@ -15,7 +15,7 @@ app.set('views', path.join(process.env.CAT_DIR, 'views'));
 app.set('view engine', 'pug');
 
 app.use(express.urlencoded({extended:true}));
-app.use(express.json());
+app.use(express.json({limit:process.env.HTTP_UPLOAD_LIMIT}));
 
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -28,6 +28,8 @@ app.use(cors());
 
 const helmet = require('helmet');
 app.use(helmet());
+
+const bodyParser = require('body-parser');
 
 const cognito = require('amazon-cognito-identity-js');		// aws user support
 const url = require('url');
@@ -47,14 +49,17 @@ const jsAction = require('./public/js/javascript.js');
 
 Cat.R.default.debug = false;
 
-const cloudDiagramURL = process.env.AWS_DIAGRAM_URL;
+const cloudDiagramURL = process.env.CAT_DIAGRAM_URL;
 const catalogFile = 'catalog.json';
-
+//
+// rotate access log files
+//
 const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:process.env.CAT_SRVR_LOG, size:process.env.CAT_SRVR_LOG_SIZE})
-
 app.use(morgan('dev'));
 app.use(morgan('combined', {stream:accessLogStream}));
-
+//
+// mysql connection arguments
+//
 const mysqlArgs =
 {
 	host:		process.env.MYSQL_HOST,
@@ -239,6 +244,7 @@ ${jsName}(${args});
 	const vm = new VM();
 	return vm.run(code);
 }
+
 //
 // get our application keys
 //
@@ -471,35 +477,20 @@ async function serve()
 			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 			if (req.method !== 'OPTIONS')
 			{
-
-//				const accessToken = req.headers['authorization'];
-//				if (!accessToken)
-//					return res.status(401).end('Error:  access token missing from header');
-				/*
-				cogExpress.validate(accessToken, (err, response) =>
-				{
-					if (err)
-						return res.status(401).send(err);
-					else
-						next();
-				});
-				*/
 				validate(req, (err, decoded) =>
 				{
-console.log('post validate');
 					if (err)
-{
-console.log({err});
 						return res.status(401).send(err);
-}
-					else
-						next();
+					if (req.body.user !== decoded['cognito:username'])
+						return res.status(401).send('user mismatch');
+					next();
 				});
 			}
 		});
 
 		app.use('/DiagramIngest', async (req, res, next) =>
 		{
+//console.log('ingest', {req});
 			if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
 			{
 				reqlog(req, 'DiagramIngest: bad request', req.body);
