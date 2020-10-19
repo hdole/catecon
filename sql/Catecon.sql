@@ -1,5 +1,9 @@
 CREATE DATABASE `Catecon`;
 USE `Catecon`;
+CREATE TABLE `users` (`name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+	`email` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+	`permissions` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+	`maxDiagrams` bigint(20) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE `diagrams` (`name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 	`basename` mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 	`user` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
