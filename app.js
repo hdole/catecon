@@ -58,6 +58,14 @@ const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:proc
 app.use(morgan('dev'));
 app.use(morgan('combined', {stream:accessLogStream}));
 //
+// user info cache
+//
+const userInfo = new Map();
+//
+// diagram info cache
+//
+const diagramInfo = new Map();
+//
 // mysql connection arguments
 //
 const mysqlArgs =
@@ -132,6 +140,19 @@ function saveHTMLjs()
 function fetchCatalog(followup)
 {
 	fetch(`${cloudDiagramURL}/${catalogFile}`).then(response => response.text().then(catalogString => followup(JSON.parse(catalogString))));
+}
+
+function getDiagramInfo(diagram)
+{
+	return {
+		name:			diagram.name,
+		basename:		diagram.basename,
+		description	:	diagram.description,
+		properName:		diagram.properName,
+		timestamp:		diagram.timestamp,
+		user:			diagram.user,
+		references:		diagram.references,
+	};
 }
 
 async function updateDiagramInfo(diagram)
@@ -394,15 +415,6 @@ async function serve()
 			});
 		});
 
-//await dbconSync.query('TRUNCATE diagrams');
-		/*
-		updateCatalog(_ =>
-		{
-			Cat.R.Initialize();
-			log('ready to serve');
-		});
-		*/
-
 		app.use('/recent', (req, res) =>
 		{
 			dbcon.query(`SELECT * FROM diagrams ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT};`, (err, result) =>
@@ -414,7 +426,7 @@ async function serve()
 		//
 		// report memory usage
 		//
-		app.use('/vm', (req, res) =>
+		app.use('/_vm', (req, res) =>
 		{
 			res.end(JSON.stringify(process.memoryUsage()));
 		});
@@ -423,17 +435,8 @@ async function serve()
 		//
 		// AUTHORIZATION REQUIRED
 		//
-		/*
-		const cogExpress = new CognitoExpress(
-		{
-			region:				process.env.AWS_USER_COG_REGION,
-			cognitoUserPoolId:	process.env.AWS_USER_IDENTITY_POOL,
-			tokenUse:			'access',
-			tokenExpiration:	60 * 60 * 1000,
-		});
-*/
 
-		function validate(req, fn)
+		function validate(req, res, fn)
 		{
 			const token = req.get('token');
 			if (typeof token === 'undefined')
@@ -477,36 +480,167 @@ async function serve()
 			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 			if (req.method !== 'OPTIONS')
 			{
-				validate(req, (err, decoded) =>
+				validate(req, res, (err, decoded) =>
 				{
 					if (err)
 						return res.status(401).send(err);
 					if (req.body.user !== decoded['cognito:username'])
 						return res.status(401).send('user mismatch');
+					const user = req.body.user;
+					if (!userInfo.has(user))
+					{
+						const sql = `SELECT * FROM Catecon.users WHERE name = '${user}';`;
+						dbcon.query(sql, (err, result) =>
+						{
+							if (err)
+							{
+								res.status(500).end();
+								log('user info error', {err});
+								return;
+							}
+							const userData = result[0];
+							//
+							// get number of diagrams user currently has
+							//
+							const sql = 'SELECT COUNT (*) FROM Catecon.diagrams WHERE user = ?;';
+							dbcon.query(sql, [req.body.user], (err, result) =>
+							{
+								if (err)
+								{
+									log('select error', {err});
+									res.status(500).end();
+									return;
+								}
+								userData.diagramCount = result[0]['COUNT (*)'];
+								userInfo.set(user, userData);
+								next();
+							});
+						});
+					}
 					next();
 				});
 			}
 		});
 
-		app.use('/DiagramIngest', async (req, res, next) =>
+		app.use('/DiagramIngest', async (req, res) =>
 		{
-//console.log('ingest', {req});
+			//
+			// check for good request
+			//
 			if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
 			{
 				reqlog(req, 'DiagramIngest: bad request', req.body);
-				res.status(401).send('missing info in body');
+				res.status(401).send('missing info in body').end();
 				return;
 			}
 			reqlog(req, 'DiagramIngest', req.body.diagram.name);
 			const {diagram, user, png} = req.body;
+			//
+			// diagram user must be save as validated user
+			//
+			if (req.body.user !== diagram.user)
+				return res.status(401).send('diagram owner not the validated user');
+			// diagram name must be first of diagram name
+			if (diagram.name.split('/')[0] !== req.body.user)
+				return res.status(401).send('diagram user and name mismatch').end();
 			const name = diagram.name;
-			if (await updateDiagramInfo(diagram))
+			function finalProcessing()
+			{
 				saveDiagramJson(name, JSON.stringify(diagram));
-			if (png)
-				saveDiagramPng(name, png);
-			res.status(200).end();
+				if (png)
+					saveDiagramPng(name, png);
+			}
+			const updateSql = `UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ? WHERE name = ${dbcon.escape(name)}`;
+			//
+			// check cache
+			//
+			if (diagramInfo.has(name))
+			{
+				const info = diagramInfo.get(name);
+				if (info.timestamp < diagram.timestamp || R.LocalTimestamp(name) < info.timestamp)
+				{
+					diagramInfo.set(name, info);
+					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp], (err, result) =>
+					{
+						if (err)
+						{
+							res.status(500).send('cannot update diagram info').end();
+							return;
+						}
+						finalProcessing();
+						res.status(200).end();
+					});
+				}
+				if (png)
+					saveDiagramPng(name, png);
+				res.status(200).end();
+				return;
+			}
+			//
+			// check for new diagram; if so validate user diagram count
+			//
+			const sql = `SELECT * FROM Catecon.diagrams WHERE name = '${name}';`;
+			dbcon.query(sql, (err, result) =>
+			{
+				if (err)
+				{
+					res.status(500).end();
+					return;
+				}
+				if (result.length > 0)
+				{
+					const timestamp = result[0].timestamp;
+					if (timestamp < diagram.timestamp)
+					{
+						const info = getDiagramInfo(diagram);
+						diagramInfo.set(name, info);
+						dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
+						{
+							if (err)
+							{
+								res.status(500).send('cannot update diagram info').end();
+								return;
+							}
+							finalProcessing();
+							res.status(200).end();
+						});
+					}
+					if (png)
+						saveDiagramPng(name, png);
+					res.status(200).end();
+				}
+				else
+				{
+					const user = userInfo.get(req.body.user);
+					//
+					// max number of diagrams for user?
+					//
+					if (user.diagramCount >= process.env.CAT_DIAGRAM_USER_LIMIT)
+					{
+						res.status(507).end('too many diagrams');
+						return;
+					}
+					//
+					// new diagram to system
+					//
+					const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
+					dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
+					{
+						if (err)
+						{
+							res.status(500).send('cannot insert new diagram').end();
+							return;
+						}
+						diagramInfo.set(name, info);
+						user.diagramCount++;
+						finalProcessing();
+						res.status(200).end();
+					});
+				}
+			});
 		});
 
+		/*
 		app.use('/mysql', (req, res) =>
 		{
 			const query = req.query;
@@ -566,6 +700,7 @@ async function serve()
 				});
 			});
 		});
+		*/
 
 		app.use('/UpdateHTMLjs', (req, res) =>
 		{
