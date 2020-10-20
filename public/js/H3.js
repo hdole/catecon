@@ -7,7 +7,7 @@ class H3
 		{
 			case 'Number':
 			case 'String':
-				elt.innerHTML = arg;
+				elt.innerHTML += arg;
 				break;
 			case 'Object':
 				Object.keys(arg).map(k =>
