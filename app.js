@@ -557,10 +557,10 @@ async function serve()
 			if (diagramInfo.has(name))
 			{
 				const info = diagramInfo.get(name);
-				if (info.timestamp < diagram.timestamp || R.LocalTimestamp(name) < info.timestamp)
+				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
 					diagramInfo.set(name, info);
-					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp], (err, result) =>
+					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
 					{
 						if (err)
 						{
