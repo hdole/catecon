@@ -177,7 +177,7 @@ td
 {
 	display:			grid;
 	grid-column-gap:	5px;
-	grid-template-columns:	repeat(auto-fit, minmax(210px, 210px));
+	grid-template-columns:	repeat(auto-fit, minmax(310px, 250px));
 }
 
 .catalogEntry
@@ -554,6 +554,11 @@ table.center
 	padding:			4px;
 }
 
+.textButton:hover
+{
+	background-color:	#ccc;
+}
+
 .svg
 {
 	position:	fixed;
@@ -838,4 +843,9 @@ description
 	stroke:			black;
 	stroke-linecap:	round;
 	stroke-width:	20px;
+}
+
+.shadow
+{
+	box-shadow:			8px 8px 4px 2px #bbbb;
 }
