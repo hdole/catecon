@@ -4405,7 +4405,8 @@ clock()
 	return H3.g([	H3.circle({cx:"160", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 					H3.circle({cx:"160", cy:"160", r:"140", fill:'none', stroke:'#aaa', 'stroke-width':'20px'}),
 					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"160", y2: "40", 'marker-end':"url(#arrowhead)"}),
-					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"260", y2: "160", 'marker-end':"url(#arrowhead)"})]);
+					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"260", y2: "160", 'marker-end':"url(#arrowhead)"}),
+					H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"})]);
 },
 close:
 `<line class="arrow0 str0" x1="40" y1="40" x2="280" y2= "280" />
