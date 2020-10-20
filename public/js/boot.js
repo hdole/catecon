@@ -2150,31 +2150,7 @@ namespace %Namespace
 	PlaceText(args, 'The GDSII Graphics Design Standard Specification', 96, 'bold', false);
 	Cat.R.SelectDiagram(gds.name);
 	gds.home(false);
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//
-	// Anon home
-	//
-	let anonDiagram = Cat.R.GetUserDiagram('Anon');
-	const anon = new Cat.Diagram(anonDiagram,
-	{
-		description:	'Anonymous user home',
-		codomain:		pfs,
-		basename:		'Home',
-		properName:		'Home',
-		references:		['hdole/HTML'],
-		user:			'Anon',
-	});
-	args.user = 'Anon';
-	args.diagram = anon;
-	args.rowCount = 0;
-	args.diagram.makeSVG(false);
-	Cat.R.SetDiagramInfo(args.diagram);
-
-	args.xy = gridLocation();
-	PlaceText(args, 'Welcome to Catecon: The Categorical Console\nCreate diagrams and execute morphisms.', 32);
-	Cat.R.SelectDiagram(anon.name);
-	anon.home(false);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	window.addEventListener('Login', function(e)
