@@ -7,6 +7,7 @@ class H3
 		{
 			case 'Number':
 			case 'String':
+			case 'Boolean':
 				elt.innerHTML += arg;
 				break;
 			case 'Object':
