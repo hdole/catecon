@@ -6,9 +6,24 @@ class H3
 		switch(arg.constructor.name)
 		{
 			case 'Number':
-			case 'String':
 			case 'Boolean':
 				elt.innerHTML += arg;
+				break;
+			case 'String':
+				if (arg.charAt(0) === '#')
+				{
+					const tokens = arg.substr(1).split('.');
+					elt.id = tokens[0];
+					tokens.shift();
+					tokens.map(c => elt.classList.add(c));
+				}
+				else if (arg.charAt(0) === '.')
+				{
+					const tokens = arg.substr(1).split('.');
+					tokens.map(c => elt.classList.add(c));
+				}
+				else
+					elt.innerHTML += arg;
 				break;
 			case 'Object':
 				Object.keys(arg).map(k =>
