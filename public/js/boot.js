@@ -881,7 +881,7 @@ namespace %Namespace
 }
 `,
 	}).to;
-	const Creal = MakeMorphism(args, 'real', 'Morphism', 'real', 'the real part of a complex numbers', C, F,
+	const Creal = MakeMorphism(args, 'real', 'Morphism', 'real', 'the real part of a complex number', C, F,
 	{
 		js:'function %Type(args)\n{\n	return args[0];\n}\n',
 		cpp:
@@ -891,7 +891,7 @@ namespace %Namespace
 }
 `,
 	}).to;
-	const Cimag = MakeMorphism(args, 'imag', 'Morphism', 'imag', 'the imaginary part of a complex numbers', C, F,
+	const Cimag = MakeMorphism(args, 'imag', 'Morphism', 'imag', 'the imaginary part of a complex number', C, F,
 	{
 		js:'function %Type(args)\n{\n	return args[1];\n}\n',
 		cpp:
