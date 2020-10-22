@@ -266,6 +266,28 @@ ${jsName}(${args});
 	return vm.run(code);
 }
 
+async function determineRefcnts()
+{
+	await dbcon.query('SELECT name,refs FROM Catecon.diagrams', (err, result) =>
+	{
+		if (err) throw err;
+		const refcnts = new Map();
+		result.forEach(row =>
+		{
+			const name = row.name;
+			const refs = JSON.parse(row.refs);
+			refs.map(ref =>
+			{
+				if (!refcnts.has(ref))
+					refcnts.set(ref, 0);
+				refcnts.set(ref, 1 + refcnts.get(ref));
+			});
+		});
+		refcnts.forEach((cnt, ref) => dbcon.query(`UPDATE Catecon.diagrams SET refcnt=${cnt} WHERE name='${ref}';`));
+	});
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // get our application keys
 //
@@ -277,6 +299,8 @@ function fetchJWK()
 }
 fetchJWK();
 
+mysqlKeepAlive(mysqlArgs);
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Server main
@@ -285,7 +309,6 @@ async function serve()
 {
 	try
 	{
-		mysqlKeepAlive(mysqlArgs);
 		dbcon.query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'Catecon';", (err, result) =>
 		{
 			if (err)
@@ -309,7 +332,6 @@ async function serve()
 							console.log('mysql intialization for Catecon', {err});
 							process.exit();
 						}
-						console.log('Catecon database initialized');
 						updateCatalog(_ => Cat.R.Initialize());
 					});
 				});
@@ -356,7 +378,6 @@ async function serve()
 
 		app.use('/json', (req, res) =>
 		{
-			console.log(req.connection.remoteAddress, currentTime(), '/json', {query:req.query});
 			const name = req.query.diagram;
 			Cat.R.SelectDiagram(name, diagram =>
 			{
@@ -438,7 +459,7 @@ async function serve()
 
 		function validate(req, res, fn)
 		{
-			const token = req.get('token');
+			const token = req.get('token') || (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
 			if (typeof token === 'undefined')
 			{
 				res.status(401).end('Error:  no token');
@@ -605,9 +626,10 @@ async function serve()
 							res.status(200).end();
 						});
 					}
+					else
+						res.status(200).end();
 					if (png)
 						saveDiagramPng(name, png);
-					res.status(200).end();
 				}
 				else
 				{
@@ -708,6 +730,19 @@ async function serve()
 			saveHTMLjs();
 		});
 
+		app.use('/refcnts', (req, res) =>
+		{
+			try
+			{
+				determineRefcnts();
+			}
+			catch(err)
+			{
+				res.status(500).send(err).end();
+			}
+			res.send({}).end();
+		});
+
 		// catch 404 and forward to error handler
 		app.use(function(req, res, next)
 		{
@@ -730,7 +765,7 @@ async function serve()
 	{
 		console.error(err);
 	}
-}
+}	// end serve
 
 try
 {
@@ -739,6 +774,9 @@ try
 catch(error)
 {
 	log({error});
+}
+finally
+{
 }
 
 module.exports = app;
