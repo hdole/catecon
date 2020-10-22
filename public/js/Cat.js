@@ -1668,10 +1668,10 @@ class R
 			return;
 		const args = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
 		if (doPng)
-			args.png = D.diagramPNG.get(diagram.name);
+			args.png = D.GetPng(name)
 		const body = JSON.stringify(args);
 		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
-		return fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(_ => fn()).catch(err => D.RecordError(err));
+		return fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(res => fn(res)).catch(err => D.RecordError(err));
 	}
 	static DiagramSearch(search, fn)
 	{
@@ -1704,6 +1704,21 @@ class R
 			R.SaveLocalCategoryList();
 			fn && fn(json);
 		});
+	}
+	static updateRefcnts()
+	{
+		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
+		fetch(R.getURL('refcnts'), {method:'POST', body:JSON.stringify({user:R.user.name}), headers}).then(response => response.json()).then(
+		{
+		}).catch(err => D.RecordError(err));
+	}
+	static uploadDiagram(e, name)
+	{
+		let diagram = R.$CAT.getElement(name);
+		if (!diagram)
+			diagram = JSON.parse(U.readfile(`${name}.json`));
+		if (diagram)
+			R.DiagramIngest(e, diagram, true, _ => _);
 	}
 }
 Object.defineProperties(R,
@@ -3676,6 +3691,8 @@ ${button}
 			canvas.height = height;
 			const ctx = canvas.getContext('2d');
 			ctx.clearRect(0, 0, width, height);
+			ctx.fillStyle = 'white';
+			ctx.fillRect(0, 0, width, height);
 			ctx.drawImage(img, 0, 0);
 			D.url.revokeObjectURL(url);
 			if (fn)
@@ -4239,7 +4256,7 @@ Object.defineProperties(D,
 			ControlKeyU(e)
 			{
 				D.diagramPanel.open();
-				D.diagramPanel.userDiagramSection.open();
+//				D.diagramPanel.userDiagramSection.open();
 				e.preventDefault();
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
@@ -4405,7 +4422,7 @@ clock()
 	return H3.g([	H3.circle({cx:"160", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 					H3.circle({cx:"160", cy:"160", r:"140", fill:'none', stroke:'#aaa', 'stroke-width':'20px'}),
 					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"160", y2: "40", 'marker-end':"url(#arrowhead)"}),
-					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"260", y2: "160", 'marker-end':"url(#arrowhead)"}),
+					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"260", y2: "120", 'marker-end':"url(#arrowhead)"}),
 					H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"})]);
 },
 close:
@@ -4613,10 +4630,20 @@ up() { return H3.line({class:"arrow0", x1:"160", y1:"260", x2:"160", y2:"60", 'm
 upload:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="300" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
+upload3()
+{
+	return H3.g(H3.circle({cx:"160", cy:"80", r:"80", fill:"url(#radgrad1)"}), 
+				H3.line('.arrow0', {x1:"160", y1:"300", x2:"160", y2:"160", 'marker-end':"url(#arrowhead)"}));
+},
 view:
 `<circle cx="160" cy="160" r="120" fill="url(#radgrad1)"/>
 <path class="svgfilNone svgstrThinGray" d="M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160" marker-end="url(#arrowheadWide)"/>
 `,
+view3()
+{
+	return H3.g(H3.circle({cx:"160", cy:"160", r:"120", fill:"url(#radgrad1)"}),
+				H3.path({class:"svgfilNone svgstrThinGray", d:"M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160", 'marker-end':"url(#arrowheadWide)"}));
+}
 		},
 		writable:	false,
 	},
@@ -4627,13 +4654,18 @@ class Catalog
 	constructor()
 	{
 		this.catalog = document.getElementById('catalog');
+		this.catalog.style.width = '100%';
+		this.catalog.style.position = 'absolute';
+		this.title = H3.h1();
+		this.title.style.margin = '40px 0px 0px 0px';
+		this.catalog.appendChild(this.title);
 		this.searchInput = H3.input({class:'in100', id:'catalog-search', title:'Search for a diagram by name', placeholder:'Diagram name contains...', onkeydown:e => Cat.D.OnEnter(e, _ => this.search())});
-		this.searchInput.style.margin = '40px 0px 0px 0px';
-		this.searchBtn = D.GetButton3('search-btn', 'search', Catalog.Search, 'Search for diagrams');
+		this.searchBtn = D.GetButton3('search-btn', 'search', _ => Catalog.Search(), 'Search for diagrams');
 		this.searchBtn.onkeydown = Cat.D.OnEnter(event, e => this.search());
 		const tools = [this.searchInput, this.searchBtn];
-		tools.push(D.GetButton3('recent-btn', 'clock', _ => Catalog.Search(false), 'Search for recent diagrams'));
+		tools.push(D.GetButton3('recent-btn', 'clock', _ => Catalog.Recent(), 'Search for recent diagrams'));
 		this.catalog.appendChild(H3.div({class:'center'}, H3.span({class:'shadow'}, tools)));
+		this.view = 'recent';
 		//
 		// info about the state of the displayed items
 		//
@@ -4644,63 +4676,124 @@ class Catalog
 		//
 		this.catalogDisplay = H3.div({id:'catalog-display', class:'catalog'});
 		this.catalog.appendChild(this.catalogDisplay);
-		this.search();
+		this.imageWidth = 300;
+		this.imageHeight = 225;
+		this.diagrams = [];
+		window.addEventListener('Login', e => D.catalog.update());
 	}
 	clear()
 	{
 		D.RemoveChildren(this.catalogDisplay);
 		D.RemoveChildren(this.catalogInfo);
 	}
+	/*
 	display(info, status)
 	{
-		const img = H3.img(
-		{
-			src:`diagram/${info.name}.png`,
-			width:'300px',
-			height:'225px',
-			onclick:_ => Cat.R.SelectDiagram(info.name),
-//			onmouseenter:e => {e.target.width = 400; e.target.height = 300;},
-//			onmouseleave:e => {e.target.width = 200; e.target.height = 150;},
-			title:info.description
-		});
 		const diagram = R.$CAT.getElement(info.name);
 		const localTime = R.LocalTimestamp(info.name);
-		let cls = 'white';
+		const div = this.getCatalogEntry(info, localTime);
 		if (localTime > 0)
 		{
 			if (localTime > info.timestamp)
 			{
-				cls += ' greenGlow';
+				div.querySelector('img').classList.add('greenGlow');
 				status.hasGreenGlow = true;
 			}
 			if (localTime < info.timestamp)
 			{
-				cls += ' warningGlow';
+				div.classList.querySelector('img').add('greenGlow');
 				status.hasWarningGlow = true;
 			}
 		}
-		const div = H3.div({class:'catalogEntry'},
+		this.catalogDisplay.appendChild(div);
+	}
+	*/
+	display(info, status)
+	{
+		const img = H3.img(
+		{
+			src:			`diagram/${info.name}.png`,
+			width:			this.imageWidth,
+			height:			this.imageHeight,
+			onclick:		_ => Cat.R.SelectDiagram(info.name),
+			style:			'cursor:pointer; transition:0.5s; height:auto width:100%',
+			title:			info.description
+		});
+		const localTime = R.LocalTimestamp(info.name);
+		const toolbar = [D.GetButton3('viewImage', 'view3', e => window.open(`diagram/${info.name}.png`, null, 'height=768, width=1024, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0'), 'Big image')];
+		if (localTime > 0)
+		{
+			if (localTime > info.timestamp)
+			{
+				img.classList.add('greenGlow');
+				status.hasGreenGlow = true;
+				const uploadBtn = (R.user.status === 'logged-in' && R.cloud && R.user.name === info.user) ? D.GetButton3('diagramUpload', 'upload3', e => Cat.R.uploadDiagram(e, info.name),
+					'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn') : null;
+				if (uploadBtn)
+					toolbar.push(uploadBtn);
+			}
+			if (localTime < info.timestamp)
+			{
+				img.classList.add('greenGlow');
+				status.hasWarningGlow = true;
+			}
+		}
+		if (info.refcnt === 0)
+			toolbar.push(D.GetButton3('deleteDiagram', 'delete3', e => e));
+		const tb = H3.table(toolbar.map(btn => H3.tr(H3.td(btn))), '.hidden.shadow.smallTable', {style:'position:absolute; top:0px; right:6px; transition:0.3s;'});
+		tb.onmouseenter = e => {tb.classList.remove('hidden');};
+		tb.onmouseleave = e => {tb.classList.add('hidden');};
+		const imgDiv = H3.div({style:'position:relative;'}, img, tb);
+		img.onmouseenter = e => {tb.classList.remove('hidden');};
+		img.onmouseleave = e => {tb.classList.add('hidden');};
+
+		tb.style.position = 'absolute';
+//		tb.style.top = '0px';
+//		tb.style.right = '0px';
+		const div = H3.div('.catalogEntry',
 			H3.table(
 			[
-				H3.tr(H3.td({class:cls, colspan:2, 'data-name':info.name, 'data-timestamp':info.timestamp}, H3.a(img))),
+				H3.tr(H3.td({colspan:2, 'data-name':info.name, 'data-timestamp':info.timestamp}, imgDiv)),
 				H3.tr(H3.td({description:info.description, colspan:2})),
-				H3.tr([	H3.td(info.name, {class:'author'}),
-						H3.td(new Date(info.timestamp).toLocaleString(), {class:'date'})], {class:'diagramSlot'})
-			]));
+				H3.tr([	H3.td(info.name, '.author'),
+						H3.td(new Date(info.timestamp).toLocaleString() + `, Refs: ${info.refcnt}`, '.date')], '.diagramSlot')
+			], {class:'smallTable'}));
 		div.style.margin = "20px 0px 0px 0px";
 		this.catalogDisplay.appendChild(div);
+		return div;
 	}
 	search(getVal = true)
 	{
-		const search = this.searchInput.value;
-		if (search !== '' && getVal)
-			fetch(`/search?search=${search}`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
-		else
-			fetch(`/recent`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
+		switch(this.view)
+		{
+			case 'recent':
+				this.title.innerHTML = 'Recent Diagrams';
+				fetch(`/recent`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
+				break;
+			case 'search':
+				if (getVal)
+				{
+					const search = this.searchInput.value;
+					this.title.innerHTML = `Search for ${encodeURIComponent(search)}`;
+					fetch(`/search?search=${encodeURIComponent(search)}`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
+				}
+				break;
+			case 'references':
+				this.title.innerHTML = `References for ${encodeURIComponent(R.diagram.name)}`;
+				const refs = new Set(R.diagram.getAllReferenceDiagrams().keys());
+				fetch(`/search?search=${encodeURIComponent(search)}`).then(response => response.json()).then(diagrams => this.displayAll(diagrams));
+				break;
+		}
 		R.Busy();
 	}
 	static Search(val)
 	{
+		D.catalog.view = 'search';
+		D.catalog.search(val);
+	}
+	static Recent(val)
+	{
+		D.catalog.view = 'recent';
 		D.catalog.search(val);
 	}
 	displayAll(diagrams)
@@ -4709,19 +4802,18 @@ class Catalog
 		R.NotBusy();
 		D.navbar.update();
 		this.clear();
+		this.diagrams = diagrams;
+		this.update();
+		/*
 		const status = {hasWarningGlow:false, hasGreenGlow:false};
 		diagrams.map(diagram => this.display(diagram, status));
 		if (status.hasWarningGlow)
-		{
-//			this.catalogInfo.appendChild(H3.span('Local diagram is older than cloud.', {class:'warningGlow'}));
-			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', {class:'warningGlow'}), ' than cloud', {class:'display'}),
-													H3.button('Download newer diagrams from cloud.', {class:'textButton', onclick:_ => this.downloadNewer()})]));
-		}
+			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
+													H3.button('Download all newer diagrams from cloud.', '.textButton', {onclick:_ => this.downloadNewer()})]));
 		if (status.hasGreenGlow)
-		{
-			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('newer', {class:'greenGlow'}), ' than cloud', {class:'display'}),
-													H3.button('Upload newer diagrams to cloud.', {class:'textButton', onclick:_ => this.uploadNewer()})]));
-		}
+			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'),
+													H3.button('Upload all newer diagrams to cloud.', '.textButton', {onclick:_ => this.uploadNewer()})]));
+													*/
 	}
 	show(visible = true)
 	{
@@ -4763,6 +4855,18 @@ class Catalog
 		});
 		await Promise.all(promises);
 		this.search();
+	}
+	update()
+	{
+		this.clear();
+		const status = {hasWarningGlow:false, hasGreenGlow:false};
+		this.diagrams.map(diagram => this.display(diagram, status));
+		if (status.hasWarningGlow)
+			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
+													H3.button('Download all newer diagrams from cloud.', '.textButton', {onclick:_ => this.downloadNewer()})]));
+		if (status.hasGreenGlow)
+			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'),
+													H3.button('Upload all newer diagrams to cloud.', '.textButton', {onclick:_ => this.uploadNewer()})]));
 	}
 }
 
@@ -5676,6 +5780,7 @@ class ReferenceDiagramSection extends DiagramSection
 	}
 }
 
+/*
 class UserDiagramSection extends DiagramSection
 {
 	constructor(parent)
@@ -5763,6 +5868,7 @@ class CatalogDiagramSection extends DiagramSection
 		});
 	}
 }
+*/
 
 class AssertionSection extends Section
 {
@@ -5842,8 +5948,8 @@ class DiagramPanel extends Panel
 		top.map(elt => this.elt.appendChild(elt));
 		this.assertionSection = new AssertionSection(this.elt);
 		this.referenceSection = new ReferenceDiagramSection(this.elt);
-		this.userDiagramSection = new UserDiagramSection(this.elt);
-		this.catalogSection = new CatalogDiagramSection(this.elt);
+//		this.userDiagramSection = new UserDiagramSection(this.elt);
+//		this.catalogSection = new CatalogDiagramSection(this.elt);
 		this.initialize();
 		Object.defineProperties(this,
 		{
@@ -5923,6 +6029,7 @@ class DiagramPanel extends Panel
 					this.expandPanelBtn() +
 					this.closeBtnCell();
 		this.diagramPanelToolbarElt.innerHTML = html;
+		this.diagramPanelToolbarElt.style.position = 'sticky';
 		this.initialize();
 	}
 	expand()
@@ -5945,7 +6052,7 @@ class DiagramPanel extends Panel
 		this.imageElt.appendChild(D.GetImageElement(diagram.name));
 		this.setToolbar(diagram);
 		this.refreshInfo(e);
-		all && this.userDiagramSection.refresh();
+//		all && this.userDiagramSection.refresh();
 	}
 	refreshInfo(e)
 	{
@@ -6408,6 +6515,7 @@ class SettingsPanel extends Panel
 	constructor()
 	{
 		super('settings', true);
+		/*
 		this.elt.innerHTML =
 			H.table(H.tr(H.td(this.closeBtnCell(), 'buttonBarLeft'))) +
 			H.button('Settings', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-actions\')"`) +
@@ -6423,15 +6531,39 @@ class SettingsPanel extends Panel
 			H.button('Equality Info', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions',
 				`onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-equality\')"`) +
 			H.div('', 'section', 'settings-equality');
+*/
+		const debugChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.debug = !Cat.R.default.debug; Cat.R.SaveDefaults();}});
+		if (R.default.debug)
+			debugChkbox.checked = true;
+		const gridChkbox = H3.input({type:"checkbox", onchange:e => {Cat.D.gridding = !D.gridding; R.SaveDefaults();}});
+		if (D.gridding)
+			gridChkbox.checked = true;
+		const elts =
+		[
+			H3.table(H3.tr(H3.td(this.closeBtnCell(), '.buttonBarLeft'))),
+			H3.button('Settings', '#catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-actions')}),
+			H3.div(
+				H3.table(
+					H3.tr(	H3.td(gridChkbox),
+							H3.td('Snap objects to a grid.', '.left'), '.sidenavRow'),
+					H3.tr(	H3.td(debugChkbox),
+							H3.td('Debug', '.left'), '.sidenavRow'),
+					H3.tr(	H3.td(H3.button('Update Ref Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2}))
+					), '#settings-actions.section'),
+			H3.button('Defaults', '#catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-defaults')}),
+			H3.div('#settings-defaults.section'),
+			H3.button('Equality Info', '#catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-equality')}),
+			H3.div('#settings-equality.section')
+		];
+		elts.map(elt => this.elt.appendChild(elt));
 
 		this.initialize();
 		this.equalityElt = document.getElementById('settings-equality');
-		const that = this;
-		R.workers.equality.addEventListener('message', function(msg)
+		R.workers.equality.addEventListener('message', msg =>
 		{
 			if (msg.data.command === 'Info')
 			{
-				const elt = that.equalityElt;
+				const elt = this.equalityElt;
 				D.RemoveChildren(elt);
 				const data = U.Clone(msg.data);
 				delete data.command;
@@ -13644,7 +13776,11 @@ class Diagram extends Functor
 		this.svgRoot = document.getElementById(this.elementId('root'));
 		if (!this.svgRoot)
 		{
-			this.svgRoot = H3.g();
+			const arrow = H3.marker('#arrowhead', {viewBox:"6 12 60 90", refX:"50", refY:"50", markerUnits:"strokeWidth", markerWidth:"6", markerHeight:"5", orient:"auto"},
+							H3.path('.svgstr3', {d:"M10 20 L60 50 L10 80"}));
+			const arrowRev = H3.marker('#arrowheadRev', {viewBox:"6 12 60 90", refX:"15", refY:"50", markerUnits:"strokeWidth", markerWidth:"6", markerHeight:"5", orient:"auto"},
+								H3.path('.svgstr3', {d:"M60 20 L10 50 L60 80"}));
+			this.svgRoot = H3.g(arrow, arrowRev);
 			this.svgRoot.classList.add('hidden');
 			D.diagramSVG.appendChild(this.svgRoot);
 			this.svgRoot.id = this.elementId('root');
@@ -13666,19 +13802,23 @@ class Diagram extends Functor
 				btn.setAttribute('repeatCount', 'indefinite');
 				btn.beginElement();
 			}
-			const that = this;
-			R.DiagramIngest(e, this, true, function(res)
+			R.DiagramIngest(e, this, true, res =>
 			{
-				R.default.debug && console.log('uploaded', that.name);
-				R.catalog.set(that.name, R.GetDiagramInfo(that));
-				R.ServerDiagrams.set(that.name, that);
+				btn && btn.setAttribute('repeatCount', 1);
+				if (!res.ok)
+				{
+					D.RecordError(res.statusText);
+					return;
+				}
+				R.default.debug && console.log('uploaded', this.name);
+				R.catalog.set(this.name, R.GetDiagramInfo(this));
+				R.ServerDiagrams.set(this.name, this);
 				const delta = Date.now() - start;
 				if (e)
 				{
 					D.statusbar.show(e, 'Uploaded diagram', true);
 					console.log('diagram uploaded ms:', delta);
-					R.EmitCATEvent('upload', that);
-					btn.setAttribute('repeatCount', 1);
+					R.EmitCATEvent('upload', this);
 				}
 			});
 		}
