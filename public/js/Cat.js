@@ -1132,7 +1132,6 @@ class R
 		if (isGUI)
 		{
 			U.autosave = true;
-			R.ReadLocalDiagramList();
 			R.ReadLocalCategoryList();
 		}
 		R.SetupCore();
@@ -1234,15 +1233,6 @@ class R
 		R.sync = true;
 		return null;
 	}
-	static ReadLocalDiagramList()
-	{
-		const diagrams = JSON.parse(U.readfile('diagrams'));
-		if (diagrams)
-		{
-			diagrams.map(d => R.SetDiagramInfo(d));
-			diagrams.map(d => R.LocalDiagrams.set(d.name, d));
-		}
-	}
 	static ReadLocalCategoryList()
 	{
 		const categories = JSON.parse(U.readfile('categories'));
@@ -1253,12 +1243,6 @@ class R
 	{
 		U.writefile('categories', JSON.stringify(U.JsonMap(R.GetCategoriesInfo(), false)));
 	}
-	/*
-	static UserHomeDiagramName(user)
-	{
-		return `${user}/Home`;
-	}
-	*/
 	static DisplayMorphismInput(morphismName)
 	{
 		if (morphismName)
@@ -1438,7 +1422,6 @@ class R
 		return R.$CAT.getElement(name);
 	}
 	static SetDiagramInfo(diagram) { R.Diagrams.set(diagram.name, Diagram.GetInfo(diagram)); }				// ut
-	static SetLocalDiagramInfo(diagram) { R.LocalDiagrams.set(diagram.name, Diagram.GetInfo(diagram)); }	// ut
 	static GetCategoriesInfo()
 	{
 		const info = new Map();
@@ -1587,29 +1570,31 @@ class R
 		// is the diagram in the catalog of diagrams?
 		diagram = diagram ? diagram : d in R.catalog ? R.catalog[d] : null;
 		return diagram ? R.diagram && ('refcnt' in diagram ? diagram.refcnt === 0 : true) : true;
-//			R.UserHomeDiagramName(R.user.name) !== diagram.name && diagram.name !== R.diagram.name : true;
 	}
 	static DeleteDiagram(e, name)
 	{
 		if (R.CanDeleteDiagram(name) && (isGUI ? confirm(`Are you sure you want to delete diagram ${name}?`) : true))
 		{
-			const diagram = R.$CAT.getElement(name);
-			if (!(diagram instanceof Diagram))
-			{
-				D.RecordError('not a diagram');
-				return;
-			}
 			//
 			// delete from server
 			//
-			const headers = {token:R.user.token};
-			fetch(R.getURL(`delete?diagram=${name}`), {method:'DELETE', headers}).then(_ =>
+			R.authFetch(R.getURL('delete'), {diagram:name}, res =>
 			{
-				Cat.D.catalog.showCatalog(true);
+				if (!res.ok)
+				{
+					D.RecordError(res.statusText);
+					return;
+				}
+				const diagram = R.$CAT.getElement(name);
 				diagram && diagram.decrRefcnt();
 				R.Diagrams.delete(name);		// all local diagrams
+				delete R.catalog[name];
 				if (R.diagram === diagram)
+				{
 					R.diagram === null;
+					R.view = 'catalog';
+					Cat.D.catalog.showCatalog(true);
+				}
 				['.json', '.png', '.log'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 				R.EmitCATEvent('delete', diagram.name);
 			}).catch(err => D.RecordError(err));
@@ -1649,29 +1634,7 @@ class R
 	}
 	static HasLocalDiagram(name)
 	{
-		if (R.LocalDiagrams.has(name))
-			return true;
-		// try to fix corrupted local diagram list
-		const diagram = JSON.parse(U.readfile(`${name}.json`));
-		if (diagram)
-		{
-			R.SetDiagramInfo(diagram);
-			R.SetLocalDiagramInfo(diagram);
-			R.EmitCATEvent('new', diagram);
-			return true;
-		}
-		return false;
-	}
-	static DiagramIngest(e, diagram, doPng, fn)
-	{
-		if (R.user.status !== 'logged-in')
-			return;
-		const args = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
-		if (doPng)
-			args.png = D.GetPng(name)
-		const body = JSON.stringify(args);
-		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
-		return fetch(R.getURL('DiagramIngest'), {method:'POST', body, headers}).then(res => fn(res)).catch(err => D.RecordError(err));
+		return !!U.readfile(`${name}.json`);
 	}
 	static DiagramSearch(search, fn)
 	{
@@ -1705,6 +1668,13 @@ class R
 			fn && fn(json);
 		});
 	}
+	static authFetch(url, body, fn)
+	{
+		body.user = R.user.name;
+		const bodyStr = JSON.stringify(body);
+		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
+		return fetch(url, {method:'POST', body:bodyStr, headers}).then(res => fn(res)).catch(err => D.RecordError(err));
+	}
 	static updateRefcnts()
 	{
 		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
@@ -1712,13 +1682,24 @@ class R
 		{
 		}).catch(err => D.RecordError(err));
 	}
+	static upload(e, diagram, doPng, fn)
+	{
+		if (R.user.status !== 'logged-in')
+			return;
+		const args = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
+		if (doPng)
+			args.png = D.GetPng(name)
+		const body = JSON.stringify(args);
+		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
+		return fetch(R.getURL('upload'), {method:'POST', body, headers}).then(res => fn(res)).catch(err => D.RecordError(err));
+	}
 	static uploadDiagram(e, name)
 	{
 		let diagram = R.$CAT.getElement(name);
 		if (!diagram)
 			diagram = JSON.parse(U.readfile(`${name}.json`));
 		if (diagram)
-			R.DiagramIngest(e, diagram, true, _ => _);
+			R.upload(e, diagram, true, _ => _);
 	}
 }
 Object.defineProperties(R,
@@ -1747,15 +1728,13 @@ Object.defineProperties(R,
 	diagram:			{value:null,		writable:true},		// current diagram
 	Diagrams:			{value:new Map(),	writable:false},	// available diagrams
 	initialized:		{value:false,		writable:true},		// Have we finished the boot sequence and initialized properly?
-	JsonDiagrams:		{value:new Map(),	writable:false},	// diagrams presented as json
 	languages:			{value:new Map(),	writable:false},
 	local:				{value:null,		writable:true},		// local server, if it exists
-	LocalDiagrams:		{value:new Map(),	writable:false},	// diagrams stored locally
 	params:				{value:null,		writable:true},		// URL parameters
 	ReplayCommands:		{value:new Map(),	writable:false},
 	ServerDiagrams:		{value:new Map(),	writable:false},
 	sync:				{value:false,		writable:true},		// when to turn on sync of gui and local storage
-	url:				{value:'',			writable:true},
+//	url:				{value:'',			writable:true},
 	user:
 	{
 		value:
@@ -2010,34 +1989,6 @@ class Amazon extends Cloud
 		R.user.email = '';
 		R.EmitLoginEvent();
 	}
-	/*
-	ingestCategoryLambda(e, cat, fn)
-	{
-		const params =
-		{
-			FunctionName:	'CateconIngestCategory',
-			InvocationType:	'RequestResponse',
-			LogType:		'None',
-			Payload:		JSON.stringify(
-							{
-								category:cat.json(),
-								user:R.user.name,
-							}),
-		};
-		const handler = function(error, data)
-		{
-			if (error)
-			{
-				D.RecordError(error);
-				return;
-			}
-			const result = JSON.parse(data.Payload);
-			if (fn)
-				fn(e, result);
-		};
-		this.lambda.invoke(params, handler);
-	}
-	*/
 	diagramSearch(search, fn)
 	{
 		const params =
@@ -2060,23 +2011,6 @@ class Amazon extends Cloud
 		};
 		this.lambda.invoke(params, handler);
 	}
-	/*
-	// TODO only used by ReloadDiagramFromServer
-	async fetchDiagram(name, cache = true)		// single diagram is fetched, no references
-	{
-		try
-		{
-			const response = await fetch(R.getDiagramURL(name + '.json'), {cache: cache ? 'default' : 'reload'});
-			const json = await response.json();
-			R.ServerDiagrams.set(name, Diagram.GetInfo(json));
-			return json;
-		}
-		catch(x)
-		{
-			return null;
-		}
-	}
-	*/
 }
 
 class Navbar
@@ -2903,7 +2837,7 @@ class D
 			{
 				R.SaveLocal(diagram);
 				if (R.local)
-					R.DiagramIngest(e, diagram, false, _ => {});
+					R.upload(e, diagram, false, _ => {});
 			}
 		}, D.default.autosaveTimer);
 	}
@@ -3407,7 +3341,7 @@ ${button}
 					break;
 			}
 		});
-		window.addEventListener('CAT', function(e)
+		window.addEventListener('CAT', e =>
 		{
 			const args = e.detail;
 			const diagram = args.diagram;
@@ -4256,7 +4190,6 @@ Object.defineProperties(D,
 			ControlKeyU(e)
 			{
 				D.diagramPanel.open();
-//				D.diagramPanel.userDiagramSection.open();
 				e.preventDefault();
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
@@ -4680,34 +4613,22 @@ class Catalog
 		this.imageHeight = 225;
 		this.diagrams = [];
 		window.addEventListener('Login', e => D.catalog.update());
+		window.addEventListener('CAT', e =>
+		{
+			const args = e.detail;
+			if (args.command === 'delete')
+			{
+				const img = Cat.D.catalog.catalog.querySelector(`[data-name="${args.name}"]`);
+				if (img)
+					img.parentNode.removeChild(img);
+			}
+		});
 	}
 	clear()
 	{
 		D.RemoveChildren(this.catalogDisplay);
 		D.RemoveChildren(this.catalogInfo);
 	}
-	/*
-	display(info, status)
-	{
-		const diagram = R.$CAT.getElement(info.name);
-		const localTime = R.LocalTimestamp(info.name);
-		const div = this.getCatalogEntry(info, localTime);
-		if (localTime > 0)
-		{
-			if (localTime > info.timestamp)
-			{
-				div.querySelector('img').classList.add('greenGlow');
-				status.hasGreenGlow = true;
-			}
-			if (localTime < info.timestamp)
-			{
-				div.classList.querySelector('img').add('greenGlow');
-				status.hasWarningGlow = true;
-			}
-		}
-		this.catalogDisplay.appendChild(div);
-	}
-	*/
 	display(info, status)
 	{
 		const img = H3.img(
@@ -4717,7 +4638,8 @@ class Catalog
 			height:			this.imageHeight,
 			onclick:		_ => Cat.R.SelectDiagram(info.name),
 			style:			'cursor:pointer; transition:0.5s; height:auto width:100%',
-			title:			info.description
+			title:			info.description,
+			'data-name':	info.name,
 		});
 		const localTime = R.LocalTimestamp(info.name);
 		const toolbar = [D.GetButton3('viewImage', 'view3', e => window.open(`diagram/${info.name}.png`, null, 'height=768, width=1024, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0'), 'Big image')];
@@ -4734,12 +4656,12 @@ class Catalog
 			}
 			if (localTime < info.timestamp)
 			{
-				img.classList.add('greenGlow');
+				img.classList.add('warningGlow');
 				status.hasWarningGlow = true;
 			}
 		}
 		if (info.refcnt === 0)
-			toolbar.push(D.GetButton3('deleteDiagram', 'delete3', e => e));
+			toolbar.push(D.GetButton3('deleteDiagram', 'delete3', e => Cat.R.DeleteDiagram(e, info.name), 'Delete diagram'));
 		const tb = H3.table(toolbar.map(btn => H3.tr(H3.td(btn))), '.hidden.shadow.smallTable', {style:'position:absolute; top:0px; right:6px; transition:0.3s;'});
 		tb.onmouseenter = e => {tb.classList.remove('hidden');};
 		tb.onmouseleave = e => {tb.classList.add('hidden');};
@@ -4748,8 +4670,6 @@ class Catalog
 		img.onmouseleave = e => {tb.classList.add('hidden');};
 
 		tb.style.position = 'absolute';
-//		tb.style.top = '0px';
-//		tb.style.right = '0px';
 		const div = H3.div('.catalogEntry',
 			H3.table(
 			[
@@ -4804,16 +4724,6 @@ class Catalog
 		this.clear();
 		this.diagrams = diagrams;
 		this.update();
-		/*
-		const status = {hasWarningGlow:false, hasGreenGlow:false};
-		diagrams.map(diagram => this.display(diagram, status));
-		if (status.hasWarningGlow)
-			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
-													H3.button('Download all newer diagrams from cloud.', '.textButton', {onclick:_ => this.downloadNewer()})]));
-		if (status.hasGreenGlow)
-			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'),
-													H3.button('Upload all newer diagrams to cloud.', '.textButton', {onclick:_ => this.uploadNewer()})]));
-													*/
 	}
 	show(visible = true)
 	{
@@ -4851,7 +4761,7 @@ class Catalog
 			const name = elt.dataset.name;
 			const data = U.readfile(`${name}.json`);
 			const json = JSON.parse(data);
-			promises.push(R.DiagramIngest(null, json, false, _ => {}));
+			promises.push(R.upload(null, json, false, _ => {}));
 		});
 		await Promise.all(promises);
 		this.search();
@@ -6199,7 +6109,6 @@ class LoginPanel extends Panel
 		this.userNameElt = document.getElementById('user-name');
 		this.userEmailElt = document.getElementById('user-email');
 		this.errorElt = document.getElementById('login-error');
-//		const that = this;
 		window.addEventListener('Login', e =>
 		{
 			this.update();
@@ -6305,7 +6214,6 @@ class ElementSection extends Section
 		});
 		this.catalog.classList.add('catalog');
 		this.section.appendChild(this.catalog);
-		const that = this;
 	}
 	add(elt)
 	{
@@ -6356,19 +6264,18 @@ class DiagramElementSection extends ElementSection
 	constructor(title, parent, id, tip, type)
 	{
 		super(title, parent, id, tip, type);
-		const that = this;
-		window.addEventListener('CAT', function(e)
+		window.addEventListener('CAT', e =>
 		{
 			const args = e.detail;
 			const diagram = R.GetDiagramInfo(args.diagram.name);
 			if (args.command === 'default')
 			{
-				D.RemoveChildren(that.catalog);
-				that.refresh();
+				D.RemoveChildren(this.catalog);
+				this.refresh();
 			}
 		});
-		window.addEventListener('Login', function(e) {that.refresh();});
-		window.addEventListener(this.type, function(e)
+		window.addEventListener('Login', e => this.refresh());
+		window.addEventListener(this.type, e =>
 		{
 			const args = e.detail;
 			const diagram = args.diagram;
@@ -6381,13 +6288,13 @@ class DiagramElementSection extends ElementSection
 			switch(args.command)
 			{
 				case 'new':
-					!(element instanceof DiagramMorphism || element instanceof DiagramObject) && that.add(to);
+					!(element instanceof DiagramMorphism || element instanceof DiagramObject) && this.add(to);
 					break;
 				case 'delete':
-					to.refcnt === 1 && that.remove(to.name);
+					to.refcnt === 1 && this.remove(to.name);
 					break;
 				case 'update':
-					that.update(diagram, element.name);
+					this.update(diagram, element.name);
 					break;
 			}
 		});
@@ -6515,23 +6422,6 @@ class SettingsPanel extends Panel
 	constructor()
 	{
 		super('settings', true);
-		/*
-		this.elt.innerHTML =
-			H.table(H.tr(H.td(this.closeBtnCell(), 'buttonBarLeft'))) +
-			H.button('Settings', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-actions\')"`) +
-			H.div(
-				H.table(
-					H.tr(	H.td(`<input type="checkbox" ${D.gridding ? 'checked' : ''} onchange="Cat.D.gridding = !D.gridding;R.SaveDefaults()">`) +
-							H.td('Snap objects to a grid.', 'left'), 'sidenavRow') +
-					H.tr(	H.td(`<input type="checkbox" ${R.default.debug ? 'checked' : ''} onchange="Cat.R.default.debug = !Cat.R.default.debug;Cat.R.SaveDefaults()">`) +
-							H.td('Debug', 'left'), 'sidenavRow')
-			), 'section', 'settings-actions') +
-			H.button('Defaults', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions', `onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-defaults\')"`) +
-			H.div('', 'section', 'settings-defaults') +
-			H.button('Equality Info', 'sidenavAccordion', 'catActionPnlBtn', 'Help for mouse and key actions',
-				`onclick="Cat.D.Panel.SectionToggle(event, this, \'settings-equality\')"`) +
-			H.div('', 'section', 'settings-equality');
-*/
 		const debugChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.debug = !Cat.R.default.debug; Cat.R.SaveDefaults();}});
 		if (R.default.debug)
 			debugChkbox.checked = true;
@@ -7369,9 +7259,8 @@ class CatObject extends Element
 	getHtmlRep(idPrefix)
 	{
 		const id = this.elementId(idPrefix);
-		const that = this;
-		const onclick = _ => Cat.R.diagram.placeObject(event, that.name);
-		const ondragstart = _ => Cat.D.DragElement(event, that.name);
+		const onclick = _ => Cat.R.diagram.placeObject(event, this.name);
+		const ondragstart = _ => Cat.D.DragElement(event, this.name);
 		return H3.table(	[H3.tr(H3.td(H3.tag('proper-name', this.properName), {class:'left'})),
 							H3.tr(H3.td(H3.tag('basename', this.basename), {class:'left'})),
 							H3.tr(H3.td(H3.tag('description', this.description), {class:'left'}))],
@@ -8949,12 +8838,11 @@ class ProductEditAction extends Action
 		if (elt instanceof ProductObject)
 		{
 			const used = new Set();
-			const that = this;
-			diagram.codomain.forEachMorphism(function(m)
+			diagram.codomain.forEachMorphism(m =>
 			{
-				if (m instanceof FactorMorphism && m.dual === that.dual)
+				if (m instanceof FactorMorphism && m.dual === this.dual)
 				{
-					let base = m[that.dual ? 'codomain' : 'domain'];
+					let base = m[this.dual ? 'codomain' : 'domain'];
 					if (base instanceof NamedObject)
 						base = base.base;
 					m.factors.map(fctr => elt.objects.includes(base.objects[fctr]) && used.add(base.objects[fctr]));
@@ -9890,10 +9778,6 @@ class HelpAction extends Action
 		const cpp = R.Actions.cpp;
 		let toolbar2 = [];
 		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.GetButton3(lang.basename, lang.icon, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
-//		if (cpp.hasForm(diagram, ary))
-//			toolbar2.push(D.GetButton3('cpp', cpp.icon, e => Cat.R.Actions.cpp.html(e, Cat.R.diagram, Cat.R.diagram.selected), cpp.description));
-//		if (js.hasForm(diagram, ary))
-//			toolbar2.push(D.GetButton3('javascript', js.icon, e => Cat.R.Actions.javascript.html(e, Cat.R.diagram, Cat.R.diagram.selected), js.description));
 		if (toolbar2.length > 0)
 			help.appendChild(H3.div(toolbar2, {id:'help-toolbar2', class:'buttonBarLeft'}));
 		let elt = null;
@@ -13802,7 +13686,7 @@ class Diagram extends Functor
 				btn.setAttribute('repeatCount', 'indefinite');
 				btn.beginElement();
 			}
-			R.DiagramIngest(e, this, true, res =>
+			R.upload(e, this, true, res =>
 			{
 				btn && btn.setAttribute('repeatCount', 1);
 				if (!res.ok)

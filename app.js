@@ -54,7 +54,7 @@ const catalogFile = 'catalog.json';
 //
 // rotate access log files
 //
-const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:process.env.CAT_SRVR_LOG, size:process.env.CAT_SRVR_LOG_SIZE})
+const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:process.env.CAT_SRVR_LOG, size:process.env.CAT_SRVR_LOG_SIZE});
 app.use(morgan('dev'));
 app.use(morgan('combined', {stream:accessLogStream}));
 //
@@ -295,11 +295,46 @@ let JWK = null;
 function fetchJWK()
 {
 	const url = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}/.well-known/jwks.json`;
-	fetch(url).then(res => res.json()).then(json => {JWK = json});
+	fetch(url).then(res => res.json()).then(json => {JWK = json;});
 }
 fetchJWK();
 
 mysqlKeepAlive(mysqlArgs);
+
+function validate(req, res, fn)
+{
+	const token = req.get('token') || (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
+	if (typeof token === 'undefined')
+	{
+		res.status(401).end('Error:  no token');
+		return;
+	}
+	const decjwt = jwt.decode(token, {complete:true});
+	if (typeof decjwt === 'undefined')
+	{
+		res.status(401).end('Error:  no jwt');
+		return;
+	}
+	if (decjwt.payload.aud !== process.env.AWS_APP_ID)
+	{
+		res.status(401).end('Error:  bad app id');
+		return;
+	}
+	const idURL = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}`;
+	if (decjwt.payload.iss !== idURL)
+	{
+		res.status(401).end('Error:  bad identity pool');
+		return false;
+	}
+	const key = JWK.keys.find(k => k.kid === decjwt.header.kid);
+	if (typeof key === 'undefined')
+	{
+		res.status(500).end('Error:  no key');
+		return;
+	}
+	const pem = jwkToPem(key);
+	jwt.verify(token, pem, fn);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -457,41 +492,6 @@ async function serve()
 		// AUTHORIZATION REQUIRED
 		//
 
-		function validate(req, res, fn)
-		{
-			const token = req.get('token') || (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
-			if (typeof token === 'undefined')
-			{
-				res.status(401).end('Error:  no token');
-				return;
-			}
-			const decjwt = jwt.decode(token, {complete:true});
-			if (typeof decjwt === 'undefined')
-			{
-				res.status(401).end('Error:  no jwt');
-				return;
-			}
-			if (decjwt.payload.aud !== process.env.AWS_APP_ID)
-			{
-				res.status(401).end('Error:  bad app id');
-				return;
-			}
-			const idURL = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}`;
-			if (decjwt.payload.iss !== idURL)
-			{
-				res.status(401).end('Error:  bad identity pool');
-				return false;
-			}
-			const key = JWK.keys.find(k => k.kid === decjwt.header.kid);
-			if (typeof key === 'undefined')
-			{
-				res.status(500).end('Error:  no key');
-				return;
-			}
-			const pem = jwkToPem(key);
-			jwt.verify(token, pem, fn);
-		}
-
 		app.use((req, res, next) =>
 		{
 			res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -505,8 +505,9 @@ async function serve()
 				{
 					if (err)
 						return res.status(401).send(err);
-					if (req.body.user !== decoded['cognito:username'])
-						return res.status(401).send('user mismatch');
+					req.user = decoded['cognito:username'];
+					if (req.body.user !== req.user)
+						return res.status(401).send('user mismatch').end();
 					const user = req.body.user;
 					if (!userInfo.has(user))
 					{
@@ -543,18 +544,18 @@ async function serve()
 			}
 		});
 
-		app.use('/DiagramIngest', async (req, res) =>
+		app.use('/upload', async (req, res) =>
 		{
 			//
 			// check for good request
 			//
 			if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
 			{
-				reqlog(req, 'DiagramIngest: bad request', req.body);
+				reqlog(req, 'upload: bad request', req.body);
 				res.status(401).send('missing info in body').end();
 				return;
 			}
-			reqlog(req, 'DiagramIngest', req.body.diagram.name);
+			reqlog(req, 'upload', req.body.diagram.name);
 			const {diagram, user, png} = req.body;
 			//
 			// diagram user must be save as validated user
@@ -659,6 +660,50 @@ async function serve()
 						res.status(200).end();
 					});
 				}
+			});
+		});
+
+		app.use('/delete', async (req, res) =>
+		{
+console.log('/delete', req.body);
+			const name = req.body.diagram;
+			dbcon.query(`SELECT user,refcnt FROM diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
+			{
+				if (err)
+				{
+					console.log({err});
+					res.status(500).send(err).end();
+					return;
+				}
+				if (result.length === 0)
+				{
+					console.log('diagram not found');
+					res.status(400).send('diagram not found').end();
+					return;
+				}
+				if (req.user !== result[0].user)
+				{
+					console.log('user not owner');
+					res.status(401).send('user not owner').end();
+					return;
+				}
+				if (result[0].refcnt > 0)
+				{
+					console.log('diagram is referenced');
+					res.status(400).send('diagram is referenced').end();
+					return;
+				}
+				diagramInfo.delete(name);
+				dbcon.query('DELETE FROM diagrams WHERE name=?', [name], (err, result) =>
+				{
+					if (err)
+					{
+						console.log({err});
+						res.status(500).send(err).end();
+						return;
+					}
+					res.status(200).end();
+				});
 			});
 		});
 
