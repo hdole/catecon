@@ -209,10 +209,45 @@ function saveDiagramPng(name, inbuf)
 	}));
 }
 
-async function updateCatalog(fn = null)
+async function updateCatalog(diagrams, fn)
 {
-	log('UpdateCatalog');
-	fetchCatalog(async cloudCatalog =>
+	for (let i=0; i<diagrams.length; ++i)
+	{
+		const d = diagrams[i];
+		try
+		{
+			const name = d.name;
+			if (await updateDiagramInfo(d) || !fs.existsSync(`public/diagram/${name}.json`))
+			{
+				log(`download ${name}`);
+				// diagram.json
+				fetch(`${cloudDiagramURL}/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudDiagramURL, error}));
+				// diagram.png
+				fetch(`${cloudDiagramURL}/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudDiagramURL, error}));
+			}
+		}
+		catch(err)
+		{
+			log(err);
+		}
+	}
+	const sql = `SELECT * FROM diagrams`;
+	const rows = await dbconSync.query(sql);
+	rows.map(row =>
+	{
+		row.references = JSON.parse(row.refs);
+		delete row.refs;
+	});
+	const payload = JSON.stringify({timestamp:Date.now(), diagrams:rows});
+	fs.writeFileSync(path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram', catalogFile), payload, err => {if (err) throw err;});
+	fn && fn();
+}
+
+async function updateCatalogFromServer(fn = null)
+{
+	log('UpdateCatalogFromServer');
+	fetchCatalog(async cloudCatalog => updateCatalog(cloudCatalog.diagrams, fn));
+	/*
 	{
 		const cloudDiagrams = cloudCatalog.diagrams;
 		for (let i=0; i<cloudDiagrams.length; ++i)
@@ -245,6 +280,17 @@ async function updateCatalog(fn = null)
 		const payload = JSON.stringify({timestamp:Date.now(), diagrams:rows});
 		fs.writeFileSync(path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram', catalogFile), payload, err => {if (err) throw err;});
 		fn && fn();
+	});
+	*/
+}
+
+function updateCatalogFromDatabase(fn = null)
+{
+	log('UpdateCatalogFromDatabase');
+	dbcon.query('SELECT * FROM diagrams', (err, result) =>
+	{
+		if (err) throw err;
+		updateCatalog([...result], fn);
 	});
 }
 
@@ -367,7 +413,7 @@ async function serve()
 							console.log('mysql intialization for Catecon', {err});
 							process.exit();
 						}
-						updateCatalog(_ => Cat.R.Initialize());
+						updateCatalogFromServer(_ => Cat.R.Initialize());
 					});
 				});
 			}
@@ -380,7 +426,7 @@ async function serve()
 						console.log('mysql intialization for Catecon', {err});
 						process.exit();
 					}
-					updateCatalog(_ => Cat.R.Initialize());
+					updateCatalogFromServer(_ => Cat.R.Initialize());
 				});
 			}
 		});
@@ -393,11 +439,33 @@ async function serve()
 			return next();
 		});
 
-		app.use(express.static(process.env.HTTP_DIR));
-		app.use('/UpdateCatalog', (req, res, next) =>
+		app.use('/UpdateCatalogFromServer', (req, res) =>
 		{
-			updateCatalog();
+			try
+			{
+				updateCatalogFromServer();
+				res.status(200).end();
+			}
+			catch(err)
+			{
+				res.status(500).send(err).end();
+			}
 		});
+
+		app.use('/UpdateCatalogFromDatabase', (req, res) =>
+		{
+			try
+			{
+				updateCatalogFromDatabase();
+				res.status(200).end();
+			}
+			catch(err)
+			{
+				res.status(500).send(err).end();
+			}
+		});
+
+		app.use(express.static(process.env.HTTP_DIR));
 
 		app.use('/search', async (req, res, next) =>
 		{
@@ -544,6 +612,22 @@ async function serve()
 			}
 		});
 
+		app.use('/userInfo', (req, res) =>
+		{
+			dbcon.query(`SELECT * FROM users WHERE name=${dbcon.escape(req.user)};`, (err, result) =>
+			{
+				if (err)
+				{
+					log('select user error', {err});
+					res.status(500).end();
+					return;
+				}
+console.log('userInfo', {result});
+				res.send(JSON.stringify(result[0]));
+
+			});
+		});
+
 		app.use('/upload', async (req, res) =>
 		{
 			//
@@ -677,7 +761,7 @@ console.log('/delete', req.body);
 				}
 				if (result.length === 0)
 				{
-					console.log('diagram not found');
+					console.log('diagram not found', sql);
 					res.status(400).send('diagram not found').end();
 					return;
 				}
