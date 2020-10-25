@@ -479,66 +479,6 @@ async function serve()
 			});
 		});
 
-		app.use('/json', (req, res) =>
-		{
-			const name = req.query.diagram;
-			Cat.R.SelectDiagram(name, diagram =>
-			{
-				let response = 'not found';
-				if (diagram)
-				{
-					let element = null;
-					if ('element' in req.query)
-					{
-						element = diagram.getElement(req.query.element);
-						if (!element)
-						{
-							res.status(404).send(`element not found ${req.query.element}`);
-							return;
-						}
-						res.send(JSON.stringify(element.json()));
-					}
-					else
-						res.send(JSON.stringify(diagram.json()));
-				}
-				else
-				{
-					res.status(404).send(`diagram not found: ${req.query.diagram}`);
-					return;
-				}
-			});
-		});
-
-		app.use('/js', (req, res) =>
-		{
-			reqlog(req, '/js', {query:req.query});
-			const name = req.query.diagram;
-			Cat.R.SelectDiagram(name, diagram =>
-			{
-				if (diagram)
-				{
-					let element = null;
-					if ('element' in req.query)
-					{
-						element = diagram.getElement(req.query.element);
-						if (!element)
-						{
-							res.status(404).send(`element not found ${req.query.element}`);
-							return;
-						}
-						res.send(Cat.R.Actions.javascript.generate(element));
-					}
-					else
-						res.send(Cat.R.Actions.javascript.generateDiagram(diagram));
-				}
-				else
-				{
-					res.status(404).send(`diagram not found: ${req.query.diagram}`);
-					return;
-				}
-			});
-		});
-
 		app.use('/recent', (req, res) =>
 		{
 			dbcon.query(`SELECT * FROM diagrams ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT};`, (err, result) =>
