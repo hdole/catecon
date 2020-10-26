@@ -53,7 +53,7 @@ const cloudDiagramURL = process.env.CAT_DIAGRAM_URL;
 const catalogFile = 'catalog.json';
 //
 // rotate access log files
-//
+
 const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:process.env.CAT_SRVR_LOG, size:process.env.CAT_SRVR_LOG_SIZE});
 app.use(morgan('dev'));
 app.use(morgan('combined', {stream:accessLogStream}));
@@ -247,41 +247,6 @@ async function updateCatalogFromServer(fn = null)
 {
 	log('UpdateCatalogFromServer');
 	fetchCatalog(async cloudCatalog => updateCatalog(cloudCatalog.diagrams, fn));
-	/*
-	{
-		const cloudDiagrams = cloudCatalog.diagrams;
-		for (let i=0; i<cloudDiagrams.length; ++i)
-		{
-			const d = cloudDiagrams[i];
-			try
-			{
-				const name = d.name;
-				if (await updateDiagramInfo(d) || !fs.existsSync(`public/diagram/${name}.json`))
-				{
-					log(`download ${name}`);
-					// diagram.json
-					fetch(`${cloudDiagramURL}/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudDiagramURL, error}));
-					// diagram.png
-					fetch(`${cloudDiagramURL}/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudDiagramURL, error}));
-				}
-			}
-			catch(err)
-			{
-				log(err);
-			}
-		}
-		const sql = `SELECT * FROM diagrams`;
-		const rows = await dbconSync.query(sql);
-		rows.map(row =>
-		{
-			row.references = JSON.parse(row.refs);
-			delete row.refs;
-		});
-		const payload = JSON.stringify({timestamp:Date.now(), diagrams:rows});
-		fs.writeFileSync(path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram', catalogFile), payload, err => {if (err) throw err;});
-		fn && fn();
-	});
-	*/
 }
 
 function updateCatalogFromDatabase(fn = null)
@@ -562,9 +527,7 @@ async function serve()
 					res.status(500).end();
 					return;
 				}
-console.log('userInfo', {result});
 				res.send(JSON.stringify(result[0]));
-
 			});
 		});
 
@@ -625,8 +588,8 @@ console.log('userInfo', {result});
 			//
 			// check for new diagram; if so validate user diagram count
 			//
-			const sql = `SELECT * FROM Catecon.diagrams WHERE name = '${name}';`;
-			dbcon.query(sql, (err, result) =>
+			const sql = 'SELECT * FROM Catecon.diagrams WHERE name = ?;';
+			dbcon.query(sql, [name], (err, result) =>
 			{
 				if (err)
 				{
@@ -649,6 +612,7 @@ console.log('userInfo', {result});
 							}
 							finalProcessing();
 							res.status(200).end();
+							updateCatalogFromDatabase();
 						});
 					}
 					else
@@ -689,7 +653,6 @@ console.log('userInfo', {result});
 
 		app.use('/delete', async (req, res) =>
 		{
-console.log('/delete', req.body);
 			const name = req.body.diagram;
 			dbcon.query(`SELECT user,refcnt FROM diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
 			{
@@ -730,68 +693,6 @@ console.log('/delete', req.body);
 				});
 			});
 		});
-
-		/*
-		app.use('/mysql', (req, res) =>
-		{
-			const query = req.query;
-			reqlog(req, '/mysql', {query});
-			const diagramName = query.diagram;
-			const command = query.command;
-			const table = query.table;
-			const columns = JSON.parse(query.columns);
-			let sql = '';
-			const typeMap = new Map([['Z', 'bigint(20) NOT NULL'],
-									['str', 'mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL']]);
-			function columnDef(m)
-			{
-				return `\n\t\`${m.basename}\` ${typeMap.get(m.codomain.basename)}`;
-			}
-			function indexDef(m, colData)
-			{
-				return colData.includes('index') ? `\nINDEX(${m.basename}${m.codomain.name === 'hdole/Strings/str' ? '(64)' : ''})` : '';
-			}
-			Cat.R.SelectDiagram(diagramName, diagram =>
-			{
-				const morphisms = columns.map(col => diagram.getElement(col[0]).to);
-				const database = Cat.U.Token(diagramName);
-				switch(command)
-				{
-					case 'create':
-						let dbres = dbconSync.query(`CREATE DATABASE IF NOT EXISTS ${database} CHARACTER SET utf8 COLLATE utf8_bin`);
-						sql = `CREATE TABLE ${database}.${table} (`;
-						sql += morphisms.map((m, i) => columnDef(m)).join();
-						const indexMorphisms = morphisms.filter((m, i) => columns[i][1].includes('index'));
-						if (indexMorphisms.length > 0)
-							sql += ',' + indexMorphisms.map((m, i) => indexDef(m, columns[i][1])).filter(s => s !== '').join();
-						sql += ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-						break;
-					case 'alter':
-						sql = morphisms.map((m, i) =>
-						{
-							const colInfo = columns[i][1];
-							if (colInfo.includes('add'))
-								sql += `ALTER TABLE ${table} ADD ${m.basename} ${columnDef(m)} ${indexDef(m, i)};\n`;
-							else if (colInfo.includes('modify'))
-								sql += `ALTER TABLE ${table} MODIFY ${m_basename} ${columnDef(m)} ${indexDef(m, i)};\n`;
-							else if (colInfo.includes('drop'))
-								sql += `ALTER TABLE ${table} DROP COLUMN ${m_basename};\n`;
-						}).join();
-						break;
-				}
-				dbcon.query(sql, (err, result) =>
-				{
-					if (err)
-					{
-						res.status(500).end();
-						log('mysql error:', err);
-					}
-					else
-						res.status(200).end();
-				});
-			});
-		});
-		*/
 
 		app.use('/UpdateHTMLjs', (req, res) =>
 		{
