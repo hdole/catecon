@@ -32,7 +32,8 @@ var Cat = Cat || require('./Cat.js');
 		}
 		hasForm(diagram, ary)
 		{
-			return ary.length === 1 && ary[0] instanceof Cat.DiagramMorphism && ary[0].domain instanceof MysqlObject;
+//			return ary.length === 1 && ary[0] instanceof Cat.DiagramMorphism && ary[0].domain instanceof MysqlObject;
+			return false;
 		}
 	}
 
