@@ -180,7 +180,7 @@ td
 	text-align:	center;
 }
 
-.catalog
+div.catalog
 {
 	display:			grid;
 	grid-column-gap:	5px;
@@ -190,6 +190,17 @@ td
 .catalogEntry
 {
 	padding:			10px;
+}
+
+#modeToolbar
+{
+	margin:				32px 0px 0px 0px;
+}
+
+#catalog
+{
+	width:				100%;
+	position:			absolute;
 }
 
 .left
@@ -246,6 +257,7 @@ tr.sidenavRow
 {
 	padding: 2px 2px 2px 2px;
 	background-color:	inherit;
+	cursor:				pointer;
 }
 
 tr.sidenavRow:hover
@@ -257,6 +269,7 @@ tr.sidenavRow:hover
 p
 {
 	margin:	2px 4px 8px 4px;
+	margin:	4px 4px 8px 4px;
 }
 
 .error
@@ -655,6 +668,7 @@ path.emphasis
 	stroke:		#9f9;
 }
 
+/*
 .selRow
 {
 	border:				solid;
@@ -676,6 +690,7 @@ path.emphasis
 	padding:			4px;
 	background-color:	#aaf;
 }
+*/
 
 #diagramSVG
 {
@@ -694,7 +709,7 @@ path.emphasis
 [contenteditable="true"]
 {
 	background:	white;
-	outline:	1px solid blue;
+	outline:	2px solid blue;
 	color:		blue;
 }
 
