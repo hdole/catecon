@@ -1,5 +1,9 @@
 class H3
 {
+	static safe(str)
+	{
+		return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\'/g, '&#39;');
+	}
 	static _p(elt, arg)
 	{
 		const type = arg.constructor.name;
@@ -23,7 +27,7 @@ class H3
 					tokens.map(c => elt.classList.add(c));
 				}
 				else
-					elt.innerHTML += arg;
+					elt.innerHTML += H3.safe(arg);
 				break;
 			case 'Object':
 				Object.keys(arg).map(k =>
