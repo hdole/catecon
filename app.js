@@ -53,18 +53,19 @@ const cloudDiagramURL = process.env.CAT_DIAGRAM_URL;
 const catalogFile = 'catalog.json';
 //
 // rotate access log files
-
+//
 const accessLogStream = rfs.createStream('access.log', {interval:'1d', path:process.env.CAT_SRVR_LOG, size:process.env.CAT_SRVR_LOG_SIZE});
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'production')
+	app.use(morgan('dev'));
 app.use(morgan('combined', {stream:accessLogStream}));
+//
+// error setup
+//
+Error.stackTraceLimit = 30;
 //
 // user info cache
 //
 const userInfo = new Map();
-//
-// diagram info cache
-//
-const diagramInfo = new Map();
 //
 // mysql connection arguments
 //
@@ -209,6 +210,18 @@ function saveDiagramPng(name, inbuf)
 	}));
 }
 
+const diagramCatalog = new Map();
+
+function writeCatalogFile(fn = null)
+{
+	const payload = JSON.stringify({timestamp:Date.now(), diagrams:[...diagramCatalog.values()]});
+	fs.writeFile(path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram', catalogFile), payload, err =>
+	{
+		if (err) throw err;
+		fn && fn();
+	});
+}
+
 async function updateCatalog(diagrams, fn)
 {
 	for (let i=0; i<diagrams.length; ++i)
@@ -231,16 +244,19 @@ async function updateCatalog(diagrams, fn)
 			log(err);
 		}
 	}
-	const sql = `SELECT * FROM diagrams`;
-	const rows = await dbconSync.query(sql);
+	const rows = await dbconSync.query('SELECT * FROM diagrams');
 	rows.map(row =>
 	{
 		row.references = JSON.parse(row.refs);
 		delete row.refs;
+		diagramCatalog.set(row.name, row);
 	});
+	/*
 	const payload = JSON.stringify({timestamp:Date.now(), diagrams:rows});
 	fs.writeFileSync(path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram', catalogFile), payload, err => {if (err) throw err;});
 	fn && fn();
+	*/
+	writeCatalogFile(fn);
 }
 
 async function updateCatalogFromServer(fn = null)
@@ -255,7 +271,7 @@ function updateCatalogFromDatabase(fn = null)
 	dbcon.query('SELECT * FROM diagrams', (err, result) =>
 	{
 		if (err) throw err;
-		updateCatalog([...result], fn);
+		updateCatalog(result, fn);
 	});
 }
 
@@ -298,6 +314,24 @@ async function determineRefcnts()
 	});
 }
 
+function updateRefcnts(oldrefs, newrefs)
+{
+	const plusOne = [];
+	const minusOne = [];
+	oldrefs.map(ref => !newrefs.includes(ref) && minusOne.push(ref));
+	newrefs.map(ref => !oldrefs.includes(ref) && plusOne.push(ref));
+	plusOne.map(name =>
+	{
+		diagramCatalog.get(name).refcnt++;
+		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt + 1 WHERE name=?;', [name]).then(_ => {});
+	});
+	plusOne.map(name =>
+	{
+		diagramCatalog.get(name).refcnt--
+		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt - 1 WHERE name=?;', [name]).then(_ => {});
+	});
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // get our application keys
@@ -323,12 +357,13 @@ function validate(req, res, fn)
 	const decjwt = jwt.decode(token, {complete:true});
 	if (typeof decjwt === 'undefined')
 	{
-		res.status(401).end('Error:  no jwt');
+		res.status(401).end({'Error':'no jwt'});
 		return;
 	}
 	if (decjwt.payload.aud !== process.env.AWS_APP_ID)
 	{
-		res.status(401).end('Error:  bad app id');
+		console.log(decjwt.payload.aud, process.env.AWS_APP_ID);
+		res.status(401).end({'Error':'bad app id'});
 		return;
 	}
 	const idURL = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}`;
@@ -512,14 +547,18 @@ async function serve()
 							});
 						});
 					}
-					next();
+					else
+						next();
 				});
 			}
 		});
 
-		app.use('/userInfo', (req, res) =>
+		//
+		// get user info
+		//
+		app.post('/userInfo', (req, res) =>
 		{
-			dbcon.query(`SELECT * FROM users WHERE name=${dbcon.escape(req.user)};`, (err, result) =>
+			dbcon.query('SELECT * FROM users WHERE name=?;', [req.user], (err, result) =>
 			{
 				if (err)
 				{
@@ -527,12 +566,16 @@ async function serve()
 					res.status(500).end();
 					return;
 				}
-				res.send(JSON.stringify(result[0]));
+				res.json(result[0]).end();
 			});
 		});
 
-		app.use('/upload', async (req, res) =>
+		//
+		// upload a diagram to this server
+		//
+		app.use('/upload', (req, res) =>
 		{
+			console.log('/upload');
 			//
 			// check for good request
 			//
@@ -558,18 +601,19 @@ async function serve()
 				saveDiagramJson(name, JSON.stringify(diagram));
 				if (png)
 					saveDiagramPng(name, png);
+				writeCatalogFile();
 			}
-			const updateSql = `UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ? WHERE name = ${dbcon.escape(name)}`;
 			//
 			// check cache
 			//
-			if (diagramInfo.has(name))
+			if (diagramCatalog.has(name))
 			{
-				const info = diagramInfo.get(name);
+				const info = diagramCatalog.get(name);
 				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
-					diagramInfo.set(name, info);
-					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
+					diagramCatalog.set(name, info);
+					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ? WHERE name = ?';
+					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, name], (err, result) =>
 					{
 						if (err)
 						{
@@ -578,6 +622,7 @@ async function serve()
 						}
 						finalProcessing();
 						res.status(200).end();
+						updateRefcnts(info.references, diagram.references);
 					});
 				}
 				if (png)
@@ -585,73 +630,44 @@ async function serve()
 				res.status(200).end();
 				return;
 			}
-			//
-			// check for new diagram; if so validate user diagram count
-			//
-			const sql = 'SELECT * FROM Catecon.diagrams WHERE name = ?;';
-			dbcon.query(sql, [name], (err, result) =>
+			else
 			{
-				if (err)
+				const user = userInfo.get(req.body.user);
+				//
+				// max number of diagrams for user?
+				//
+				if (user.diagramCount >= process.env.CAT_DIAGRAM_USER_LIMIT)
 				{
-					res.status(500).end();
+					res.status(507).end('too many diagrams');
 					return;
 				}
-				if (result.length > 0)
+				//
+				// new diagram to system
+				// no need to set refcnt; it must be 0
+				//
+				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
+				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
 				{
-					const timestamp = result[0].timestamp;
-					if (timestamp < diagram.timestamp)
+					if (err)
 					{
-						const info = getDiagramInfo(diagram);
-						diagramInfo.set(name, info);
-						dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
-						{
-							if (err)
-							{
-								res.status(500).send('cannot update diagram info').end();
-								return;
-							}
-							finalProcessing();
-							res.status(200).end();
-							updateCatalogFromDatabase();
-						});
-					}
-					else
-						res.status(200).end();
-					if (png)
-						saveDiagramPng(name, png);
-				}
-				else
-				{
-					const user = userInfo.get(req.body.user);
-					//
-					// max number of diagrams for user?
-					//
-					if (user.diagramCount >= process.env.CAT_DIAGRAM_USER_LIMIT)
-					{
-						res.status(507).end('too many diagrams');
+						res.status(500).send('cannot insert new diagram').end();
 						return;
 					}
+					const info = Cat.Diagram.GetInfo(diagram);
+					info.refcnt = 0;
+					diagramInfo.set(name, info);
+					updateRefcnts([], info.references);
 					//
-					// new diagram to system
+					// user owns one more
 					//
-					const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
-					dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
-					{
-						if (err)
-						{
-							res.status(500).send('cannot insert new diagram').end();
-							return;
-						}
-						diagramInfo.set(name, info);
-						user.diagramCount++;
-						finalProcessing();
-						res.status(200).end();
-					});
-				}
-			});
+					user.diagramCount++;
+					finalProcessing();
+					res.status(200).end();
+				});
+			}
 		});
 
-		app.use('/delete', async (req, res) =>
+		app.use('/delete', (req, res) =>
 		{
 			const name = req.body.diagram;
 			dbcon.query(`SELECT user,refcnt FROM diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
@@ -722,6 +738,7 @@ async function serve()
 		// error handler
 		app.use(function(err, req, res, next)
 		{
+			console.log('error handler', {err});
 			// set locals, only providing error in development
 			res.locals.message = err.message;
 			res.locals.error = req.app.get('env') === 'development' ? err : {};
