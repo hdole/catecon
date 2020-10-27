@@ -187,6 +187,13 @@ div.catalog
 	grid-template-columns:	repeat(auto-fill, minmax(330px, 1fr));
 }
 
+h1.catalog
+{
+	margin:				0px;
+	font-size:			18px;
+	font-weight:		bold;
+}
+
 .catalogEntry
 {
 	padding:			10px;
@@ -241,7 +248,7 @@ br
 a
 {
 	text-decoration:	none;
-	color:				black;
+	/*color:				black; */
 	cursor:				pointer;
 	display:			block;
 	transition:			0.3s
@@ -347,6 +354,7 @@ p
 	padding:			0px;
 	text-align:			center;
 	margin-top:			4px;
+	cursor:				pointer;
 }
 
 .grabbable
@@ -871,5 +879,44 @@ description
 
 .shadow
 {
-	box-shadow:			8px 8px 4px 2px #bbbb;
+	box-shadow:		8px 8px 4px 2px #bbbb;
+}
+
+.popup
+{
+	position:		relative;
+	display:		inline-block;
+	cursor:			pointer;
+	left:			65%;
+	top:			20px;
+}
+
+.popup .popupElt
+{
+	visibility:			hidden;
+	background-color:	#333a;
+	color:				#fff;
+	text-align:			left;
+	border-radius:		6px;
+	position:			absolute;
+	z-index:			1;
+}
+
+.popup .show
+{
+	visibility: visible;
+	transition:	0.5s;
+}
+
+.popupBtn
+{
+	color: #ddd;
+	/* background-color:	#777; */
+	margin:				4px;
+}
+
+.popupBtn:hover
+{
+	color:				#777;
+	background-color:	#ddd;
 }
