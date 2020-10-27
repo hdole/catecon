@@ -1140,13 +1140,8 @@ class R
 		isGUI && R.SetupReplay();
 		R.sync = true;
 		const loader = function()
-		{
-			const lastViewedDiagramStr = isGUI ? localStorage.getItem('lastViewedDiagram') : null;
-			if (lastViewedDiagramStr)
-			{
-				D.view = 'diagram';
-				R.params.set('diagram', JSON.parse(lastViewedDiagramStr)[0]);
-			}
+		{ 
+			isGUI && D.readLastViewedDiagrams()
 			R.diagram = null;
 			switch(D.view)
 			{
@@ -1321,22 +1316,16 @@ class R
 	static async SelectDiagram(name, fn = null)
 	{
 		if (isGUI)
-		{
 			D.view = 'diagram';
-//			D.navbar.update();
-//			D.catalog.show(false);
-		}
 		if (R.diagram && R.diagram.name === name)
 		{
-//			R.diagram.show();
 			isGUI && R.EmitViewEvent('diagram');
 			return fn ? fn(R.diagram) : null;
 		}
 		if (isGUI)
 		{
 			R.Busy();
-			R.diagram && R.diagram.hide();
-//			D.toolbar.hide();
+			R.diagram && R.diagram.hide();		// hide current diagram
 		}
 		R.default.debug && console.log('SelectDiagram', name);
 		R.diagram = null;
@@ -1852,7 +1841,6 @@ class Amazon extends Cloud
 				const idPro = new window.AWS.CognitoIdentityServiceProvider();
 				idPro.getUser({AccessToken:this.accessToken}, function(err, data)
 				{
-					// TODO merge with login()
 					if (err)
 					{
 						console.error('getUser error', err);
@@ -1861,7 +1849,14 @@ class Amazon extends Cloud
 					R.user.name = data.Username;
 					R.user.email = data.UserAttributes.filter(attr => attr.Name === 'email')[0].Value;
 					R.user.status = 'logged-in';
-					R.authFetch(R.getURL('userInfo'), {}).then(res => res.json()).then(json =>
+					R.authFetch(R.getURL('userInfo'), {}).then(res =>
+					{
+						if (!res.ok)
+						{
+							debugger;
+						}
+						return res.json();
+					}).then(json =>
 					{
 						R.user.cloud = json;
 						R.user.cloud.permissions = R.user.cloud.permissions.split(' ');
@@ -2055,22 +2050,32 @@ class Navbar
 	{
 		this.element = document.getElementById('navbar');
 		this.update();
-		this.diagramElt.addEventListener('mouseenter', function(e)
-		{
-			const title = R.diagram ? `${R.diagram.htmlName()} ${H.span('by '+R.diagram.user, 'italic')}: ${U.Formal(R.diagram.description)}` : '';
-			D.statusbar.show(e, title);
-		}, true);
+//		this.diagramElt.addEventListener('mouseenter', e =>
+//		{
+//			const title = R.diagram ? `${R.diagram.htmlName()} ${H.span(' by '+R.diagram.user, 'italic')}: ${U.Formal(R.diagram.description)}` : '';
+//			D.statusbar.show(e, title);
+//		});
+		this.diagramElt.onclick = e => this.showLastViewedDiagrams();
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
+		this.diagramPopup = document.getElementById('diagram-popup');
+		this.diagramPopup.onmouseenter = _ => D.mouse.onGUI = this;
+		this.diagramPopup.onmouseleave = _ => D.mouse.onGUI = null;
 		window.addEventListener('Login', Navbar.UpdateByUserStatus);
 		window.addEventListener('Registration', Navbar.UpdateByUserStatus);
-		window.addEventListener('CAT', e => e.detail.command === 'default'  && Navbar.UpdateByUserStatus());
-		window.addEventListener('Autohide', function(e)
+		window.addEventListener('CAT', e => e.detail.command === 'default'  && D.navbar.updateByUserStatus());
+		window.addEventListener('Autohide', e =>
 		{
 			if (D.view === 'catalog')
 				return;
 			const args = e.detail;
-			D.navbar.element.style.height = args.command === 'hide' ?  "0px" : "32px";
+			if (args.command === 'hide')
+			{
+				this.element.style.height = "0px";
+				D.RemoveChildren(this.diagramPopup);
+			}
+			else
+				this.element.style.height = "32px";
 		});
 		window.addEventListener('View', e => this.update());
 	}
@@ -2097,12 +2102,16 @@ class Navbar
 		if (R.diagram)
 		{
 			this.categoryElt.innerHTML = U.HtmlEntitySafe(R.diagram.codomain.htmlName());
-			this.diagramElt.innerHTML = `${U.HtmlEntitySafe(R.diagram.htmlName())} <span class="italic">by ${U.HtmlEntitySafe(R.diagram.user)}</span>`;
+//			this.diagramElt.innerHTML = `${U.HtmlEntitySafe(R.diagram.htmlName())} <span class="italic">by ${U.HtmlEntitySafe(R.diagram.user)}</span>`;
+			D.RemoveChildren(this.diagramElt);
+			this.diagramElt.appendChild(H3.div(R.diagram.htmlName(), H3.span('.italic', ' by ', R.diagram.user)));
+			this.diagramElt.onclick = _ => this.showLastViewedDiagrams();
 		}
-	}
-	static UpdateByUserStatus()
-	{
-		Cat.D.navbar.updateByUserStatus();
+		else
+		{
+			D.RemoveChildren(this.diagramElt);
+			D.RemoveChildren(this.categoryElt);
+		}
 	}
 	update()
 	{
@@ -2134,11 +2143,11 @@ class Navbar
 			D.GetButton('loginPanelToggle', 'login', "Cat.D.loginPanel.toggle()", 'Login', sz) +
 			D.GetButton('settingsPanelToggle', 'settings', "Cat.D.settingsPanel.toggle()", 'Settings', sz);
 		}
-		const html = [	H3.div({class:'navbarFloat buttonBarLeft'}),
-						H3.div({class:'navbarFloat navbar-inset', id:'category-navbar'}),
-						H3.div(H3.a('Catecon', {onclick:_ => R.EmitViewEvent('catalog', D.catalog.view)}), {class:'navbarFloat title'}),
-						H3.div({class:'navbarFloat navbar-inset', id:'diagram-navbar'}),
-						H3.div({class:'navbarFloat buttonBarRight'})];
+		const html = [	H3.div('.navbarFloat.buttonBarLeft'),
+						H3.div('#category-navbar.navbarFloat.navbar-inset'),
+						H3.div(H3.a('Catecon', {onclick:_ => R.EmitViewEvent('catalog', D.catalog.view)}), '.navbarFloat.title'),
+						H3.div('#diagram-navbar.navbarFloat.navbar-inset'),
+						H3.div('.navbarFloat.buttonBarRight')];
 		html[0].innerHTML = left;
 		html[4].innerHTML = right;
 		D.RemoveChildren(this.element);
@@ -2146,6 +2155,14 @@ class Navbar
 		this.categoryElt = document.getElementById('category-navbar');
 		this.diagramElt = document.getElementById('diagram-navbar');
 		this.updateByUserStatus();
+	}
+	showLastViewedDiagrams()
+	{
+		const diagrams = D.lastViewedDiagrams.filter((a, b) => D.lastViewedDiagrams.indexOf(a) === b).map(d => H3.div(H3.span(d), '.popupBtn', {onclick:_ => R.SelectDiagram(d)}));
+		D.RemoveChildren(this.diagramPopup);
+		const popupElt = H3.div(H3.span('Recent diagrams', '.italic.smallPrint'), diagrams, '.popupElt', {onmouseleave:e => this.diagramPopup.querySelector('.popupElt').classList.toggle('show')});
+		this.diagramPopup.appendChild(popupElt);
+		popupElt.classList.toggle('show');
 	}
 }
 
@@ -2313,7 +2330,7 @@ class Toolbar
 		elts.sort(U.RefcntSorter);
 		elts.map(elt =>
 		{
-			const item = H3.div(D.GetIndexHTML(elt), {onclick:function(e) { R.diagram.viewElements(elt); }}, '.left.panelElt');
+			const item = H3.div(D.GetIndexHTML(elt), {onclick:_ => R.diagram.viewElements(elt)}, '.left.panelElt');
 			item.addEventListener('mouseenter', function(e) { Cat.R.diagram.emphasis(elt.name, true);});
 			item.addEventListener('mouseleave', function(e) { Cat.R.diagram.emphasis(elt.name, false);});
 			searchItems.appendChild(item);
@@ -3197,7 +3214,7 @@ ${D.Button(onclick)}
 				H3.rect({x:0, y:0, width:320, height:320, style:'fill:white'}),
 				D.svg.download3(),
 				H3.text({'text-anchor':'middle', x:160, y:280, style:'font-size:120px;stroke:#000;'}, txt),
-				H3.rect({class:'btn', x:0, y:0, width:320, height:320, onclick})
+				H3.rect('.btn', {x:0, y:0, width:320, height:320, onclick})
 			]), {'data-name':`download-${txt}`});
 	}
 	static GetButton(name, buttonName, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
@@ -3224,7 +3241,7 @@ ${button}
 			children.push(H3.g(	H3.animateTransform({id:aniId, attributeName:"transform", type:"rotate", from:"360 160 160", to:"0 160 160", dur:"0.5s", repeatCount, begin:"indefinite"}), btn));
 		else
 			children.push(btn);
-		children.push(H3.rect({class:"btn", x:"0", y:"0", width:"320", height:"320", onclick}));	// click on this!
+		children.push(H3.rect(".btn", {x:"0", y:"0", width:"320", height:"320", onclick}));	// click on this!
 		const v = 0.32 * (scale !== undefined ? scale : 1.0);
 		const args = {width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"};
 		if (id)
@@ -3536,7 +3553,16 @@ ${button}
 					diagram.home();
 				D.GlowBadObjects(diagram);
 				diagram.svgTranslate.classList.add('trans025s');
-				localStorage.setItem('lastViewedDiagram', JSON.stringify([diagram.name]));
+				const name = diagram.name;
+				//
+				// last viewed diagram
+				//
+				const ndx = D.lastViewedDiagrams.indexOf(name);
+				if (ndx > -1)	// remove duplicate to get diagram at top of queue
+					D.lastViewedDiagrams.splice(ndx, 1);
+				D.lastViewedDiagrams.unshift(name);
+				D.lastViewedDiagrams.length = Math.min(D.lastViewedDiagrams.length, 20);		// keep under given length
+				localStorage.setItem('lastViewedDiagrams', JSON.stringify(D.lastViewedDiagrams));
 				break;
 		}
 	}
@@ -4038,6 +4064,36 @@ ${button}
 			txt = elt.description.length < 100 ? elt.description : elt.description.substring(0,15) + '...';
 		return txt;
 	}
+	static readLastViewedDiagrams()
+	{
+		const str = localStorage.getItem('lastViewedDiagrams');
+		if (str)
+		{
+			D.lastViewedDiagrams = JSON.parse(str);
+			const last = D.lastViewedDiagrams[0];
+			if (last !== 'catalog' && !R.params.has('diagram'))
+//			{
+//				D.view = 'catalog';
+//				D.catalog.view = 'catalog';
+//			}
+//			else
+			{
+				R.params.set('diagram', D.lastViewedDiagrams[0]);
+				D.view = 'diagram';
+			}
+		}
+	}
+	/*
+	static updateLastViewedDiagram()
+	{
+		const lastViewedDiagramStr = isGUI ? localStorage.getItem('lastViewedDiagrams') : null;
+		if (lastViewedDiagramStr)
+		{
+			D.view = 'diagram';
+			R.params.set('diagram', JSON.parse(lastViewedDiagramStr)[0]);
+		}
+	}
+	*/
 }
 Object.defineProperties(D,
 {
@@ -4384,8 +4440,8 @@ clock()
 {
 	return H3.g([	H3.circle({cx:"160", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 					H3.circle({cx:"160", cy:"160", r:"140", fill:'none', stroke:'#aaa', 'stroke-width':'20px'}),
-					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"160", y2: "40", 'marker-end':"url(#arrowhead)"}),
-					H3.line({class:"arrow0 str0", x1:"160", y1:"160", x2:"260", y2: "120", 'marker-end':"url(#arrowhead)"}),
+					H3.line(".arrow0.str0", {x1:"160", y1:"160", x2:"160", y2: "40", 'marker-end':"url(#arrowhead)"}),
+					H3.line(".arrow0.str0", {x1:"160", y1:"160", x2:"260", y2: "120", 'marker-end':"url(#arrowhead)"}),
 					H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"})]);
 },
 close:
@@ -4393,12 +4449,12 @@ close:
 <line class="arrow0 str0" x1="280" y1="40" x2="40" y2= "280" />`,
 close3()
 {
-	return H3.g([	H3.line({class:"arrow0 str0", x1:"40", y1:"40", x2:"280", y2: "280"}),
-					H3.line({class:"arrow0 str0", x1:"280", y1:"40", x2:"40", y2: "280"})]);
+	return H3.g([	H3.line(".arrow0.str0", {x1:"40", y1:"40", x2:"280", y2: "280"}),
+					H3.line(".arrow0.str0", {x1:"280", y1:"40", x2:"40", y2: "280"})]);
 },
 commutes()
 {
-	return H3.path({class:"svgfilNone svgstr1", d:D.GetArc(160, 160, 100, 45, 360), 'marker-end':'url(#arrowhead)'});
+	return H3.path(".svgfilNone.svgstr1", {d:D.GetArc(160, 160, 100, 45, 360), 'marker-end':'url(#arrowhead)'});
 },
 copy:
 `<circle cx="200" cy="200" r="160" fill="#fff"/>
@@ -4409,8 +4465,8 @@ delete:
 <path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
 delete3()
 {
-	return H3.g([H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"230", 'marker-end':"url(#arrowhead)"}),
-			H3.path({class:"svgfilNone svgstr1", d:"M90,190 A120,50 0 1,0 230,190"})]);
+	return H3.g([H3.line(".arrow0", {x1:"160", y1:"40", x2:"160", y2:"230", 'marker-end':"url(#arrowhead)"}),
+			H3.path(".svgfilNone.svgstr1", {d:"M90,190 A120,50 0 1,0 230,190"})]);
 },
 diagram:
 `<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
@@ -4419,12 +4475,12 @@ diagram:
 <line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
 diagram3()
 {
-	return H3.g([H3.line({class:"arrow0", x1:"60", y1:"40", x2:"260", y2:"40", 'marker-end':"url(#arrowhead)"}),
-			H3.line({class:"arrow0", x1:"40", y1:"60", x2:"40", y2:"260", 'marker-end':"url(#arrowhead)"}),
-			H3.line({class:"arrow0", x1:"60", y1:"280", x2:"250", y2:"280", 'marker-end':"url(#arrowhead)"}),
-			H3.line({class:"arrow0", x1:"280", y1:"60", x2:"280", y2:"250", 'marker-end':"url(#arrowhead)"})]);
+	return H3.g([H3.line(".arrow0", {x1:"60", y1:"40", x2:"260", y2:"40", 'marker-end':"url(#arrowhead)"}),
+			H3.line(".arrow0", {x1:"40", y1:"60", x2:"40", y2:"260", 'marker-end':"url(#arrowhead)"}),
+			H3.line(".arrow0", {x1:"60", y1:"280", x2:"250", y2:"280", 'marker-end':"url(#arrowhead)"}),
+			H3.line(".arrow0", {x1:"280", y1:"60", x2:"280", y2:"250", 'marker-end':"url(#arrowhead)"})]);
 },
-down(){ return H3.line({class:"arrow0", x1:"160", y1:"60", x2:"160", y2:"260", 'marker-end':"url(#arrowhead)"}); },
+down(){ return H3.line(".arrow0", {x1:"160", y1:"60", x2:"160", y2:"260", 'marker-end':"url(#arrowhead)"}); },
 downcloud:
 `<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="160" x2="160" y2="300" marker-end="url(#arrowhead)"/>`,
@@ -4432,13 +4488,13 @@ download:
 `<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
 download3()
 {
-	return H3.line({class:'arrow0', x1:160, y1:40, x2:160, y2:160, 'marker-end':'url(#arrowhead)'});
+	return H3.line('.arrow0', {x1:160, y1:40, x2:160, y2:160, 'marker-end':'url(#arrowhead)'});
 },
 edit:
 `<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
 edit3()
 {
-	return H3.path({class:"svgstr4", d:"M280 40 160 280 80 240"});
+	return H3.path(".svgstr4", {d:"M280 40 160 280 80 240"});
 },
 functor:
 `<line class="arrow0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
@@ -4473,7 +4529,7 @@ morphism:
 <line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
 morphism3()
 {
-	return H3.line({class:"arrow0", x1:"60", y1:"160", x2:"260", y2:"160", 'marker-end':"url(#arrowhead)"});
+	return H3.line(".arrow0", {x1:"60", y1:"160", x2:"260", y2:"160", 'marker-end':"url(#arrowhead)"});
 },
 move:
 `<line class="svgfilNone arrow0-30px" x1="60" y1="80" x2="240" y2="80" />
@@ -4481,9 +4537,9 @@ move:
 <line class="svgfilNone arrow0-30px" x1="60" y1="240" x2="240" y2="240" />`,
 move3()
 {
-	return H3.g([H3.line({class:"svgfilNone arrow0-30px", x1:"60", y1:"80", x2:"240", y2:"80"}),
-			H3.line({class:"svgfilNone arrow0-30px", x1:"60", y1:"160", x2:"240", y2:"160"}),
-			H3.line({class:"svgfilNone arrow0-30px", x1:"60", y1:"240", x2:"240", y2:"240"})]);
+	return H3.g([H3.line(".svgfilNone.arrow0-30px", {x1:"60", y1:"80", x2:"240", y2:"80"}),
+			H3.line(".svgfilNone.arrow0-30px", {x1:"60", y1:"160", x2:"240", y2:"160"}),
+			H3.line(".svgfilNone.arrow0-30px", {x1:"60", y1:"240", x2:"240", y2:"240"})]);
 },
 new:
 `<circle class="svgstr3" cx="80" cy="70" r="70"/>
@@ -4515,8 +4571,8 @@ save:
 `<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;">&#128190;</text>`,
 search()
 {
-	return [H3.circle({class:'search', cx:"240", cy:"80", r:"120"}),
-			H3.line({class:"arrow0", x1:"20", y1:"300", x2:"220", y2:"120", 'marker-end':"url(#arrowhead)"})];
+	return [H3.circle('.search', {cx:"240", cy:"80", r:"120"}),
+			H3.line(".arrow0", {x1:"20", y1:"300", x2:"220", y2:"120", 'marker-end':"url(#arrowhead)"})];
 },
 settings:
 `<line class="arrow0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
@@ -4545,8 +4601,8 @@ text:
 <line class="arrow0" x1="160" y1="280" x2="160" y2="60"/>`,
 text3()
 {
-	return H3.g([	H3.line({class:"arrow0", x1:"40", y1:"60", x2:"280", y2:"60", 'marker-end':"url(#arrowhead)"}),
-					H3.line({class:"arrow0", x1:"160", y1:"280", x2:"160", y2:"60"})]);
+	return H3.g([	H3.line(".arrow0", {x1:"40", y1:"60", x2:"280", y2:"60", 'marker-end':"url(#arrowhead)"}),
+					H3.line(".arrow0", {x1:"160", y1:"280", x2:"160", y2:"60"})]);
 },
 threeD:
 `<line class="arrow0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
@@ -4589,7 +4645,7 @@ unlock:
 `<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
 <line class="arrow0" x1="40" y1="280" x2="280" y2="40" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
 <rect class="svgfil5" x="120" y="120" width="80" height="80"/>`,
-up() { return H3.line({class:"arrow0", x1:"160", y1:"260", x2:"160", y2:"60", 'marker-end':"url(#arrowhead)"}); },
+up() { return H3.line(".arrow0", {x1:"160", y1:"260", x2:"160", y2:"60", 'marker-end':"url(#arrowhead)"}); },
 upload:
 `<circle cx="160" cy="80" r="100" fill="url(#radgrad1)"/>
 <line class="arrow0" x1="160" y1="300" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
@@ -4605,7 +4661,7 @@ view:
 view3()
 {
 	return H3.g(H3.circle({cx:"160", cy:"160", r:"120", fill:"url(#radgrad1)"}),
-				H3.path({class:"svgfilNone svgstrThinGray", d:"M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160", 'marker-end':"url(#arrowheadWide)"}));
+				H3.path(".svgfilNone.svgstrThinGray", {d:"M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160", 'marker-end':"url(#arrowheadWide)"}));
 }
 		},
 		writable:	false,
@@ -4617,11 +4673,11 @@ class Catalog
 	constructor()
 	{
 		this.catalog = document.getElementById('catalog');
-		this.modeTool = H3.td('.left');
-		this.closeBtn = H3.td('.right');
-		this.catalog.appendChild(H3.table(H3.tr(this.modeTool, this.closeBtn), '#modeToolbar'));
-		this.title = H3.h1('.catalog');
-		this.catalog.appendChild(this.title);
+		this.modeTool = H3.td('.left', {width:'33%'});
+		this.closeBtn = H3.td('.right', {width:'33%'});
+		this.title = H3.h1('.catalog.center');
+		this.catalog.appendChild(H3.table(H3.tr(this.modeTool, H3.td(this.title, {width:'33%'}), this.closeBtn), '#modeToolbar'));
+//		this.catalog.appendChild(this.title);
 		this.searchInput = H3.input('#catalog-search.in100', {title:'Search for a diagram by name', placeholder:'Diagram name contains...', onkeydown:e => Cat.D.OnEnter(e, _ => this.doLookup())});
 		this.searchBtn = D.GetButton3('search-btn', 'search', _ => this.doLookup(), 'Search for diagrams');
 		this.searchBtn.onkeydown = Cat.D.OnEnter(event, e => D.catalog.search());
@@ -4640,7 +4696,7 @@ class Catalog
 		this.catalog.appendChild(this.catalogDisplay);
 		this.imageWidth = 300;
 		this.imageHeight = 225;
-		this.diagrams = [];
+		this.diagrams = null;
 		window.addEventListener('Login', e => D.catalog.update());
 		window.addEventListener('CAT', e =>
 		{
@@ -4674,6 +4730,8 @@ class Catalog
 					this.show(false);
 					break;
 				case 'catalog':
+					if (this.diagrams === null)
+						this.search();
 					this.show();
 					break;
 			}
@@ -4727,7 +4785,7 @@ class Catalog
 					const newDiv = this.display(info);
 					oldDiv.parentNode.replaceChild(newDiv, oldDiv);
 					R.EmitDiagramEvent(R.diagram, 'addReference');
-				}), `Add reference diagram to ${info.name}`))));
+				}), `Add reference diagram to ${R.diagram.name}`))));
 		}
 		toolbar.style.position = 'absolute';
 		return toolbar;
@@ -4799,7 +4857,7 @@ class Catalog
 	localSearch(val)
 	{
 		this.diagrams = [];
-		R.Diagrams.forEach((info, name) => info.user !== 'sys' && name.includes(val) && this.diagrams.push(info));
+		R.Diagrams.forEach((info, name) => info.user !== 'sys' && name.includes(val) && this.diagrams.push(info) && info.basename !== R.user.name);
 	}
 	doLookup()
 	{
@@ -4849,11 +4907,11 @@ class Catalog
 		});
 		if (status.hasWarningGlow)
 			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
-													H3.button('Download all newer diagrams from cloud.', '.textButton', {onclick:_ => this.downloadNewer()})]));
-		else if (status.hasGreenGlow)
+													H3.button(`Download all newer diagrams from ${R.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.downloadNewer()})]));
+		if (status.hasGreenGlow)
 			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'),
-													H3.button('Upload all newer diagrams to cloud.', '.textButton', {onclick:_ => this.uploadNewer()})]));
-		else
+													H3.button(`Upload all newer diagrams to ${R.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.uploadNewer()})]));
+		if (!status.hasWarningGlow && !status.hasGreenGlow)
 			this.catalogInfo.appendChild(H3.p(`All diagrams synced to ${R.local ? 'local server' : 'cloud'}.`, '.center'));
 	}
 	referenceGlow()
@@ -4906,33 +4964,19 @@ class Catalog
 	}
 	update()
 	{
+		if (!this.diagrams)
+			return;
 		R.NotBusy();
 		this.clearCatalogDisplay();
 		if (R.diagram)
 		{
+			D.RemoveChildren(this.modeTool);
 			if (this.view === 'search')
 				this.modeTool.appendChild(H3.button(`Glow references for ${R.diagram.name}.`, '.textButton', {onclick:_ => this.reference()}));
 			else
 				this.modeTool.appendChild(H3.button('Glow out of date diagrams', '.textButton', {onclick:_ => this.search()}));
 		}
-//		const status = {hasWarningGlow:false, hasGreenGlow:false};
-//		if (this.diagrams instanceof Map)
-//			this.diagrams.forEach((glow, diagram) => this.display(diagram, status, glow));
-//		else
 		this.diagrams.map(diagram => this.display(diagram));
-		/*
-		if (this.view !== 'reference')
-		{
-			if (status.hasWarningGlow)
-				this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
-														H3.button('Download all newer diagrams from cloud.', '.textButton', {onclick:_ => this.downloadNewer()})]));
-			if (status.hasGreenGlow)
-				this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'),
-														H3.button('Upload all newer diagrams to cloud.', '.textButton', {onclick:_ => this.uploadNewer()})]));
-		}
-		else
-			this.catalogInfo.appendChild(H3.div(H3.span('Directly referenced ', H3.span('diagrams', '.greenGlow'), '&nbsp;&nbsp;&nbsp;&nbsp;Indirectly referenced ', H3.span('diagrams', '.warningGlow'), '.display')));
-														*/
 		if (R.diagram)
 			this.closeBtn.appendChild(D.GetButton3('closeCatalog', 'close3', e => R.EmitViewEvent('diagram'), 'Close catalog'));
 	}
@@ -5081,6 +5125,10 @@ class Panel
 	closeBtnCell()
 	{
 		return D.GetButton('panelClose', 'close', `Cat.D.${this.name}Panel.close()`, 'Close');
+	}
+	closeBtnCell3()
+	{
+		return D.GetButton3('panelClose', 'close3', _ => Cat.D[`${this.name}Panel`].close(), 'Close');
 	}
 	expand(exp = 'auto')
 	{
@@ -5623,12 +5671,12 @@ class LogSection extends Section
 	log(args)
 	{
 		const elt = document.createElement('p');
-		this.logElt.appendChild(H3.p(U.HtmlEntitySafe(R.diagram.prettifyCommand(args))));
+		this.logElt.appendChild(H3.p(R.diagram.prettifyCommand(args)));
 	}
 	antilog(args)	// TODO
 	{
 		const elt = document.createElement('p');
-		this.logElt.appendChild(H3.p(U.HtmlEntitySafe(R.diagram.prettifyCommand(args))));
+		this.logElt.appendChild(H3.p(R.diagram.prettifyCommand(args)));
 	}
 	replayCommand(e, ndx)
 	{
@@ -5737,7 +5785,7 @@ class DiagramSection extends Section
 			[
 				H3.tr(
 				[
-					H3.td(H3.h4(U.HtmlEntitySafe(diagram.properName))),
+					H3.td(H3.h4(diagram.properName)),
 					H3.td(toolbar, '.right'),
 				]),
 				H3.tr(H3.td('.white', {colspan:2}, H3.a({onclick:`Cat.D.diagramPanel.collapse();Cat.R.SelectDiagram('${diagram.name}')`},
@@ -6444,7 +6492,7 @@ class SettingsPanel extends Panel
 									H3.td('Debug', '.left'), '.sidenavRow')];
 		const elts =
 		[
-			H3.table(H3.tr(H3.td(this.closeBtnCell(), '.buttonBarLeft'))),
+			H3.table(H3.tr(H3.td(this.closeBtnCell3(), '.buttonBarLeft'))),
 			H3.button('Settings', '#catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-actions')}),
 			H3.div(H3.table('#settings-table', settings), '#settings-actions.section'),
 				/*
@@ -8526,9 +8574,9 @@ class IdentityAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"60", x2:"120", y2:"100"}),
-							H3.line({class:"arrow0", x1:"130", y1:"260", x2:"190", y2:"260"}),
-							H3.line({class:"arrow0", x1:"160", y1:"60", x2:"160", y2:"260"})]);
+		this.icon = H3.g([	H3.line(".arrow0", {x1:"160", y1:"60", x2:"120", y2:"100"}),
+							H3.line(".arrow0", {x1:"130", y1:"260", x2:"190", y2:"260"}),
+							H3.line(".arrow0", {x1:"160", y1:"60", x2:"160", y2:"260"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8571,10 +8619,10 @@ class NameAction extends Action
 		if (!isGUI)
 			return;
 		this.icon = H3.g([	H3.circle({cx:"80", cy:"240", r:"90", fill:"url(#radgrad1)"}),
-							H3.path({class:"svgstr4", d:"M110,180 L170,120"}),
-							H3.path({class:"svgstr4", d:"M140,210 L200,150"}),
-							H3.path({class:"svgstr3", d:"M220,130 L260,40 L300,130"}),
-							H3.line({class:"svgstr3", x1:"235", y1:"95", x2:"285", y2:"95"})]);
+							H3.path(".svgstr4", {d:"M110,180 L170,120"}),
+							H3.path(".svgstr4", {d:"M140,210 L200,150"}),
+							H3.path(".svgstr3", {d:"M220,130 L260,40 L300,130"}),
+							H3.line(".svgstr3", {x1:"235", y1:"95", x2:"285", y2:"95"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8745,11 +8793,11 @@ class FlipNameAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"280"}),
-							H3.line({class:"arrow0", x1:"80", y1:"120", x2:"80", y2:"220"}),
-							H3.line({class:"arrow0", x1:"240", y1:"120", x2:"240", y2:"220"}),
-							H3.line({class:"arrow0", x1:"40", y1:"120", x2:"120", y2:"120"}),
-							H3.line({class:"arrow0", x1:"200", y1:"120", x2:"280", y2:"120"})]);
+		this.icon = H3.g([	H3.line(".arrow0", {x1:"160", y1:"40", x2:"160", y2:"280"}),
+							H3.line(".arrow0", {x1:"80", y1:"120", x2:"80", y2:"220"}),
+							H3.line(".arrow0", {x1:"240", y1:"120", x2:"240", y2:"220"}),
+							H3.line(".arrow0", {x1:"40", y1:"120", x2:"120", y2:"120"}),
+							H3.line(".arrow0", {x1:"200", y1:"120", x2:"280", y2:"120"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8828,8 +8876,8 @@ class ProductAction extends Action
 	}
 	static GetIcon(dual)
 	{
-		return dual ? H3.g([H3.line({class:"arrow0", x1:"160", y1:"80", x2:"160", y2:"240"}), H3.line({class:"arrow0", x1:"80", y1:"160", x2:"240", y2:"160"})]) :
-			H3.g([H3.line({class:"arrow0", x1:"103", y1:"216", x2:"216", y2:"103"}), H3.line({class:"arrow0", x1:"216", y1:"216", x2:"103", y2:"103"})]);
+		return dual ? H3.g([H3.line(".arrow0", {x1:"160", y1:"80", x2:"160", y2:"240"}), H3.line(".arrow0", {x1:"80", y1:"160", x2:"240", y2:"160"})]) :
+			H3.g([H3.line(".arrow0", {x1:"103", y1:"216", x2:"216", y2:"103"}), H3.line(".arrow0", {x1:"216", y1:"216", x2:"103", y2:"103"})]);
 	}
 }
 
@@ -9061,13 +9109,13 @@ class PullbackAction extends Action
 		if (!isGUI)
 			return;
 		this.icon = 		dual ?
-			H3.g([	H3.line({class:"arrow0", x1:"60", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
-					H3.line({class:"arrow0", x1:"40", y1:"60", x2:"40", y2:"260", "marker-end":"url(#arrowhead)"}),
-					H3.path({class:"svgstr4", d:"M160,260 160,160 260,160"})])
+			H3.g([	H3.line(".arrow0", {x1:"60", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
+					H3.line(".arrow0", {x1:"40", y1:"60", x2:"40", y2:"260", "marker-end":"url(#arrowhead)"}),
+					H3.path(".svgstr4", {d:"M160,260 160,160 260,160"})])
 							:
-			H3.g([	H3.path({class:"svgstr4", d:"M60,160 160,160 160,60"}),
-					H3.line({class:"arrow0", x1:"60", y1:"280", x2:"250", y2:"280", "marker-end":"url(#arrowhead)"}),
-					H3.line({class:"arrow0", x1:"280", y1:"60", x2:"280", y2:"250", "marker-end":"url(#arrowhead)"})]);
+			H3.g([	H3.path(".svgstr4", {d:"M60,160 160,160 160,60"}),
+					H3.line(".arrow0", {x1:"60", y1:"280", x2:"250", y2:"280", "marker-end":"url(#arrowhead)"}),
+					H3.line(".arrow0", {x1:"280", y1:"60", x2:"280", y2:"250", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms)
@@ -9115,13 +9163,13 @@ class ProductAssemblyAction extends Action
 		if (!isGUI)
 			return;
 		this.icon = dual ?
-				H3.g([	H3.line({class:"arrow0", x1:"60", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
-						H3.line({class:"arrow9", x1:"280", y1:"280", x2:"280", y2:"100", "marker-end":"url(#arrowhead)"}),
-						H3.line({class:"arrow9", x1:"120", y1:"260", x2:"240", y2:"100", "marker-end":"url(#arrowhead)"})])
+				H3.g([	H3.line(".arrow0", {x1:"60", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
+						H3.line(".arrow9", {x1:"280", y1:"280", x2:"280", y2:"100", "marker-end":"url(#arrowhead)"}),
+						H3.line(".arrow9", {x1:"120", y1:"260", x2:"240", y2:"100", "marker-end":"url(#arrowhead)"})])
 						:
-				H3.g([	H3.line({class:"arrow0", x1:"40", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
-						H3.line({class:"arrow9", x1:"40", y1:"80", x2:"40", y2:"280", "marker-end":"url(#arrowhead)"}),
-						H3.line({class:"arrow9", x1:"60", y1:"80", x2:"160", y2:"240", "marker-end":"url(#arrowhead)"})]);
+				H3.g([	H3.line(".arrow0", {x1:"40", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
+						H3.line(".arrow9", {x1:"40", y1:"80", x2:"40", y2:"280", "marker-end":"url(#arrowhead)"}),
+						H3.line(".arrow9", {x1:"60", y1:"80", x2:"160", y2:"240", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms)
@@ -9156,9 +9204,9 @@ class MorphismAssemblyAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line({class:"arrow0", x1:"40", y1:"60", x2:"300", y2:"60", "marker-end":"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"40", y1:"260", x2:"140", y2:"100", "marker-end":"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"180", y1:"100", x2:"280", y2:"260", "marker-end":"url(#arrowhead)"})]);
+		this.icon = H3.g([	H3.line(".arrow0", {x1:"40", y1:"60", x2:"300", y2:"60", "marker-end":"url(#arrowhead)"}),
+							H3.line(".arrow0", {x1:"40", y1:"260", x2:"140", y2:"100", "marker-end":"url(#arrowhead)"}),
+							H3.line(".arrow0", {x1:"180", y1:"100", x2:"280", y2:"260", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	html(e, diagram, ary)
@@ -9199,9 +9247,9 @@ class HomAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.path({class:"arrow0", d:"M100 80 L80 80 L80 240 L 100 240"}),
-							H3.path({class:"arrow0", d:"M220 80 L240 80 L240 240 L 220 240"}),
-							H3.line({class:"arrow0rnd", x1:"170", y1:"240", x2:"150", y2:"260"})]);
+		this.icon = H3.g([	H3.path(".arrow0", {d:"M100 80 L80 80 L80 240 L 100 240"}),
+							H3.path(".arrow0", {d:"M220 80 L240 80 L240 240 L 220 240"}),
+							H3.line(".arrow0rnd", {x1:"170", y1:"240", x2:"150", y2:"260"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, elements)
@@ -9244,8 +9292,8 @@ class HomObjectAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = dual ?	H3.g([H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line({class:"arrow0", x1:"30", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]) :
-							H3.g([H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line({class:"arrow0", x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
+		this.icon = dual ?	H3.g([H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line(".arrow0", {x1:"30", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]) :
+							H3.g([H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line(".arrow0", {x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9271,7 +9319,7 @@ class HomObjectAction extends Action
 			});
 			const help = D.toolbar.help;
 			D.RemoveChildren(help);
-			help.appendChild(H3.small(`Morphisms ${this.dual ? 'to' : 'from'} ${U.HtmlEntitySafe(to.htmlName())}`, {class:'italic'}));
+			help.appendChild(H3.small(`Morphisms ${this.dual ? 'to' : 'from'} ${to.htmlName()}`, '.italic'));
 			help.appendChild(H3.table(rows));
 		}
 	}
@@ -9310,7 +9358,7 @@ class HomsetAction extends Action
 			return;
 		this.icon = H3.g([	H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-							H3.line({class:"arrow0", x1:"100", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]);
+							H3.line(".arrow0", {x1:"100", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 		this.newMorphism = new NewElement('Morphism', '', true);
 	}
@@ -9370,11 +9418,11 @@ class DetachDomainAction extends Action
 			return;
 		this.icon = dual ?	H3.g([	H3.circle({cx:"220", cy:"200", r:"60", fill:"url(#radgrad1)"}),
 									H3.circle({cx:"280", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-									H3.line({class:"arrow0", x1:"40", y1:"160", x2:"180", y2:"200", "marker-end":"url(#arrowhead)"})])
+									H3.line(".arrow0", {x1:"40", y1:"160", x2:"180", y2:"200", "marker-end":"url(#arrowhead)"})])
 				:
 							H3.g([	H3.circle({cx:"40", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 									H3.circle({cx:"100", cy:"200", r:"60", fill:"url(#radgrad1)"}),
-									H3.line({class:"arrow0", x1:"140", y1:"200", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
+									H3.line(".arrow0", {x1:"140", y1:"200", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9425,8 +9473,8 @@ class DeleteAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line({class:"arrow0", x1:"160", y1:"40", x2:"160", y2:"230", "marker-end":"url(#arrowhead)"}),
-							H3.path({class:"svgfilNone svgstr1", d:"M90,190 A120,50 0 1,0 230,190"})]);
+		this.icon = H3.g([	H3.line(".arrow0", {x1:"160", y1:"40", x2:"160", y2:"230", "marker-end":"url(#arrowhead)"}),
+							H3.path(".svgfilNone.svgstr1", {d:"M90,190 A120,50 0 1,0 230,190"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9496,14 +9544,14 @@ class ProjectAction extends Action
 		if (!isGUI)
 			return;
 		this.icon = dual ?	H3.g([	H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-									H3.line({class:"arrow0", x2:"110", y2:"120", x1:"240", y1:"40", "marker-end":"url(#arrowhead)"}),
-									H3.line({class:"arrow0", x2:"110", y2:"160", x1:"280", y1:"160", "marker-end":"url(#arrowhead)"}),
-									H3.line({class:"arrow0", x2:"110", y2:"200", x1:"240", y1:"280", "marker-end":"url(#arrowhead)"})])
+									H3.line(".arrow0", {x2:"110", y2:"120", x1:"240", y1:"40", "marker-end":"url(#arrowhead)"}),
+									H3.line(".arrow0", {x2:"110", y2:"160", x1:"280", y1:"160", "marker-end":"url(#arrowhead)"}),
+									H3.line(".arrow0", {x2:"110", y2:"200", x1:"240", y1:"280", "marker-end":"url(#arrowhead)"})])
 												:
 							H3.g([	H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-									H3.line({class:"arrow0", x1:"110", y1:"120", x2:"240", y2:"40", "marker-end":"url(#arrowhead)"}),
-									H3.line({class:"arrow0", x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"}),
-									H3.line({class:"arrow0", x1:"110", y1:"200", x2:"240", y2:"280", "marker-end":"url(#arrowhead)"})]);
+									H3.line(".arrow0", {x1:"110", y1:"120", x2:"240", y2:"40", "marker-end":"url(#arrowhead)"}),
+									H3.line(".arrow0", {x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"}),
+									H3.line(".arrow0", {x1:"110", y1:"200", x2:"240", y2:"280", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, elements)
@@ -9623,8 +9671,8 @@ class LambdaMorphismAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([H3.line({class:"arrow0", x1:"40", y1:"40", x2:"280", y2:"280", "marker-end":"url(#arrowhead)"}),
-						H3.line({class:"arrow0", x1:"40", y1:"280", x2:"140", y2:"180", "marker-end":"url(#arrowhead)"})]);
+		this.icon = H3.g([H3.line(".arrow0", {x1:"40", y1:"40", x2:"280", y2:"280", "marker-end":"url(#arrowhead)"}),
+						H3.line(".arrow0", {x1:"40", y1:"280", x2:"140", y2:"180", "marker-end":"url(#arrowhead)"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9780,7 +9828,7 @@ class HelpAction extends Action
 		if (!isGUI)
 			return;
 		this.icon = H3.g([	H3.circle({cx:"160", cy:"240", r:"60", fill:"url(#radgrad1)"}),
-							H3.path({class:"svgstr4", d:"M110,120 C100,40 280,40 210,120 S170,170 160,200"})]);
+							H3.path(".svgstr4", {d:"M110,120 C100,40 280,40 210,120 S170,170 160,200"})]);
 	}
 	action(e, diagram, ary) {}
 	hasForm(diagram, ary)	// one element
@@ -9876,7 +9924,7 @@ class LanguageAction extends Action
 		{
 			this.diagram = diagram;
 			this.currentDiagram = null;
-			div.appendChild(H3.p(U.HtmlSafe(this.generate(elt)), `#element-${this.ext}.code`));
+			div.appendChild(H3.p(this.generate(elt), `#element-${this.ext}.code`));
 		}
 		body.appendChild(div);
 	}
@@ -9886,7 +9934,7 @@ class LanguageAction extends Action
 		if (code === '')
 			code = this.template(elt);
 		const id = `element-${this.ext}`;
-		div.appendChild(H3.div(U.HtmlSafe(code), '.code.padding', {id, onkeydown:e => e.stopPropagation()}));
+		div.appendChild(H3.div(code, '.code.padding', {id, onkeydown:e => e.stopPropagation()}));
 		if (this.isEditable(elt))
 			div.appendChild(D.GetButton3(this.name, 'edit3', e => Cat.R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
 		return div;
@@ -9964,9 +10012,9 @@ class RunAction extends Action
 		if (!isGUI)
 			return;
 		this.icon = H3.g([	H3.animateTransform({id:"RunAction btn", attributeName:"transform", type:"rotate", from:"0 160 160", to:"360 160 160", dur:"0.5s", repeatCount:"1", begin:"indefinite"}),
-							H3.line({class:"arrow0", x1:"20", y1:"80", x2:"180", y2:"80", "marker-end":"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"80", y1:"160", x2:"240", y2:"160", "marker-end":"url(#arrowhead)"}),
-							H3.line({class:"arrow0", x1:"140", y1:"240", x2:"300", y2:"240", "marker-end":"url(#arrowhead)"})]);
+							H3.line(".arrow0", {x1:"20", y1:"80", x2:"180", y2:"80", "marker-end":"url(#arrowhead)"}),
+							H3.line(".arrow0", {x1:"80", y1:"160", x2:"240", y2:"160", "marker-end":"url(#arrowhead)"}),
+							H3.line(".arrow0", {x1:"140", y1:"240", x2:"300", y2:"240", "marker-end":"url(#arrowhead)"})]);
 		Object.defineProperties(this,
 		{
 			data:			{value:	new Map(),	writable:	true},
@@ -10285,13 +10333,13 @@ class EvaluateAction extends Action
 			return;
 		this.icon = H3.g([	H3.circle({cx:"80", cy:"80", r:"60", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"80", r:"60", fill:"url(#radgrad1)"}),
-							H3.polyline({class:"svgstr3", points:"50,40 30,40 30,120 50,120"}),
-							H3.polyline({class:"svgstr3", points:"190,40 210,40 210,120 190,120"}),
+							H3.polyline(".svgstr3", {points:"50,40 30,40 30,120 50,120"}),
+							H3.polyline(".svgstr3", {points:"190,40 210,40 210,120 190,120"}),
 							H3.circle({cx:"260", cy:"80", r:"60", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"280", r:"60", fill:"url(#radgrad1)"}),
-							H3.path({class:"svgfilNone s,vgstrThinGray", d:"M80 100 A40 40 1 0 0 260 100"}),
-							H3.line({class:"svgstrThinGray", x1:"160", y1:"100", x2:"160", y2:"170"}),
-							H3.line({class:"svgstrThinGray", x1:"160", y1:"210", x2:"160", y2:"250"})]);
+							H3.path(".svgfilNone.svgstrThinGray", {d:"M80 100 A40 40 1 0 0 260 100"}),
+							H3.line(".svgstrThinGray", {x1:"160", y1:"100", x2:"160", y2:"170"}),
+							H3.line(".svgstrThinGray", {x1:"160", y1:"210", x2:"160", y2:"250"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -10317,13 +10365,13 @@ class DistributeAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({class:"svgstr4", cx:"80", cy:"80", r:"60"}),
-							H3.line({class:"arrow0", x1:"38", y1:"38", x2:"122", y2:"122"}),
-							H3.line({class:"arrow0", x1:"38", y1:"122", x2:"122", y2:"38"}),
-							H3.line({class:"arrow0", x1:"240", y1:"80", x2:"80", y2:"240"}),
-							H3.circle({class:"svgstr4", cx:"240", cy:"240", r:"60"}),
-							H3.line({class:"arrow0", x1:"198", y1:"198", x2:"282", y2:"282"}),
-							H3.line({class:"arrow0", x1:"282", y1:"198", x2:"198", y2:"282"})]);
+		this.icon = H3.g([	H3.circle(".svgstr4", {cx:"80", cy:"80", r:"60"}),
+							H3.line(".arrow0", {x1:"38", y1:"38", x2:"122", y2:"122"}),
+							H3.line(".arrow0", {x1:"38", y1:"122", x2:"122", y2:"38"}),
+							H3.line(".arrow0", {x1:"240", y1:"80", x2:"80", y2:"240"}),
+							H3.circle(".svgstr4", {cx:"240", cy:"240", r:"60"}),
+							H3.line(".arrow0", {x1:"198", y1:"198", x2:"282", y2:"282"}),
+							H3.line(".arrow0", {x1:"282", y1:"198", x2:"198", y2:"282"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -10362,7 +10410,7 @@ class AlignHorizontalAction extends Action
 		this.icon = H3.g([	H3.circle({cx:"80", cy:"160", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"240", cy:"160", r:"80", fill:"url(#radgrad1)"}),
-							H3.line({class:"arrow6", x1:"0", y1:"160", x2:"320", y2:"160"})]);
+							H3.line(".arrow6", {x1:"0", y1:"160", x2:"320", y2:"160"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -10421,7 +10469,7 @@ class AlignVerticalAction extends Action
 		this.icon = H3.g([	H3.circle({cx:"160", cy:"80", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
 							H3.circle({cx:"160", cy:"240", r:"80", fill:"url(#radgrad1)"}),
-							H3.line({class:"arrow6", x1:"160", y1:"0", x2:"160", y2:"320"})]);
+							H3.line(".arrow6", {x1:"160", y1:"0", x2:"160", y2:"320"})]);
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -10478,8 +10526,8 @@ class TensorAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line({class:"arrow0", x1:"103", y1:"216", x2:"216", y2:"103"}),
-							H3.line({class:"arrow0", x1:"216", y1:"216", x2:"103", y2:"103"}),
+		this.icon = H3.g([	H3.line(".arrow0", {x1:"103", y1:"216", x2:"216", y2:"103"}),
+							H3.line(".arrow0", {x1:"216", y1:"216", x2:"103", y2:"103"}),
 							H3.circle({cx:"160", cy:"160", r:"80", class:"svgfilNone svgstr1"})]);
 	}
 	action(e, diagram, ary)
@@ -10519,7 +10567,7 @@ class AssertionAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.path({class:"svgstr4", d:D.GetArc(160, 160, 100, 45, 360), "marker-end":"url(#arrowhead)"});
+		this.icon = H3.path(".svgstr4", {d:D.GetArc(160, 160, 100, 45, 360), "marker-end":"url(#arrowhead)"});
 		R.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -10588,7 +10636,7 @@ class RecursionAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.path({class:"svgstr4", d:"M40,160 C40,0 280,0 280,160 C280,280 100,280 80,160 C80,60 220,60 220,160 L220,180", "marker-end":"url(#arrowhead)"});
+		this.icon = H3.path(".svgstr4", {d:"M40,160 C40,0 280,0 280,160 C280,280 100,280 80,160 C80,60 220,60 220,160 L220,180", "marker-end":"url(#arrowhead)"});
 	}
 	action(e, diagram, ary)
 	{
@@ -10615,10 +10663,10 @@ class GraphAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line({class:"arrow0", x1:"60", y1:"40", x2:"260", y2:"200"}),
-							H3.path({class:"svgstr4", d:"M60,120 C120,120 120,200 60,200"}),
-							H3.path({class:"svgstr4", d:"M260,40 C200,40 200,120 260,120"}),
-							H3.line({class:"arrow0", x1:"60", y1:"260", x2:"260", y2:"260"})]);
+		this.icon = H3.g([	H3.line(".arrow0", {x1:"60", y1:"40", x2:"260", y2:"200"}),
+							H3.path(".svgstr4", {d:"M60,120 C120,120 120,200 60,200"}),
+							H3.path(".svgstr4", {d:"M260,40 C200,40 200,120 260,120"}),
+							H3.line(".arrow0", {x1:"60", y1:"260", x2:"260", y2:"260"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -14562,12 +14610,12 @@ class Diagram extends Functor
 		{
 			if (o instanceof DiagramObject)
 			{
-				o.svg.parentNode.insertBefore(H3.circle({class:'ball', cx:o.x, cy:o.y, r:radius, fill}), o.svg);
+				o.svg.parentNode.insertBefore(H3.circle('.ball', {cx:o.x, cy:o.y, r:radius, fill}), o.svg);
 			}
 			else if (o instanceof DiagramMorphism)
 			{
 				const xy = o.getNameOffset();
-				o.svg_name.parentNode.insertBefore(H3.circle({class:'ball', cx:xy.x, cy:xy.y, r:radius, fill}), o.svg_name);
+				o.svg_name.parentNode.insertBefore(H3.circle('.ball', {cx:xy.x, cy:xy.y, r:radius, fill}), o.svg_name);
 			}
 		}
 
