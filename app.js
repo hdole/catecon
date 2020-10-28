@@ -159,7 +159,7 @@ function getDiagramInfo(diagram)
 async function updateDiagramInfo(diagram)
 {
 	const name = diagram.name;
-	const hasItSql = `SELECT timestamp FROM diagrams WHERE name = '${name}'`;
+	const hasItSql = `SELECT timestamp FROM Catecon.diagrams WHERE name = '${name}'`;
 	const timestamp = diagram.timestamp ? diagram.timestamp : Date.now();
 	const assign = 'name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?';
 	const hasIt = await dbconSync.query(hasItSql);
@@ -244,7 +244,7 @@ async function updateCatalog(diagrams, fn)
 			log(err);
 		}
 	}
-	const rows = await dbconSync.query('SELECT * FROM diagrams');
+	const rows = await dbconSync.query('SELECT * FROM Catecon.diagrams');
 	rows.map(row =>
 	{
 		row.references = JSON.parse(row.refs);
@@ -268,7 +268,7 @@ async function updateCatalogFromServer(fn = null)
 function updateCatalogFromDatabase(fn = null)
 {
 	log('UpdateCatalogFromDatabase');
-	dbcon.query('SELECT * FROM diagrams', (err, result) =>
+	dbcon.query('SELECT * FROM Catecon.diagrams', (err, result) =>
 	{
 		if (err) throw err;
 		updateCatalog(result, fn);
@@ -471,7 +471,7 @@ async function serve()
 		{
 			log('search', req.query.search);
 			const search = dbcon.escape(`%${req.query.search}%`);
-			const sql = `SELECT * FROM diagrams WHERE name LIKE ${search} OR properName LIKE ${search} ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT}`;
+			const sql = `SELECT * FROM Catecon.diagrams WHERE name LIKE ${search} OR properName LIKE ${search} ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT}`;
 			dbcon.query(sql, (err, result) =>
 			{
 				if (err) throw err;
@@ -481,7 +481,7 @@ async function serve()
 
 		app.use('/recent', (req, res) =>
 		{
-			dbcon.query(`SELECT * FROM diagrams ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT};`, (err, result) =>
+			dbcon.query(`SELECT * FROM Catecon.diagrams ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT};`, (err, result) =>
 			{
 				if (err) throw err;
 				res.end(JSON.stringify(result));
@@ -558,7 +558,7 @@ async function serve()
 		//
 		app.post('/userInfo', (req, res) =>
 		{
-			dbcon.query('SELECT * FROM users WHERE name=?;', [req.user], (err, result) =>
+			dbcon.query('SELECT * FROM Catecon.users WHERE name=?;', [req.user], (err, result) =>
 			{
 				if (err)
 				{
@@ -670,7 +670,7 @@ async function serve()
 		app.use('/delete', (req, res) =>
 		{
 			const name = req.body.diagram;
-			dbcon.query(`SELECT user,refcnt FROM diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
+			dbcon.query(`SELECT user,refcnt FROM Catecon.diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
 			{
 				if (err)
 				{
