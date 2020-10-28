@@ -2050,11 +2050,6 @@ class Navbar
 	{
 		this.element = document.getElementById('navbar');
 		this.update();
-//		this.diagramElt.addEventListener('mouseenter', e =>
-//		{
-//			const title = R.diagram ? `${R.diagram.htmlName()} ${H.span(' by '+R.diagram.user, 'italic')}: ${U.Formal(R.diagram.description)}` : '';
-//			D.statusbar.show(e, title);
-//		});
 		this.diagramElt.onclick = e => this.showLastViewedDiagrams();
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
@@ -2102,7 +2097,6 @@ class Navbar
 		if (R.diagram)
 		{
 			this.categoryElt.innerHTML = U.HtmlEntitySafe(R.diagram.codomain.htmlName());
-//			this.diagramElt.innerHTML = `${U.HtmlEntitySafe(R.diagram.htmlName())} <span class="italic">by ${U.HtmlEntitySafe(R.diagram.user)}</span>`;
 			D.RemoveChildren(this.diagramElt);
 			this.diagramElt.appendChild(H3.div(R.diagram.htmlName(), H3.span('.italic', ' by ', R.diagram.user)));
 			this.diagramElt.onclick = _ => this.showLastViewedDiagrams();
@@ -4072,28 +4066,12 @@ ${button}
 			D.lastViewedDiagrams = JSON.parse(str);
 			const last = D.lastViewedDiagrams[0];
 			if (last !== 'catalog' && !R.params.has('diagram'))
-//			{
-//				D.view = 'catalog';
-//				D.catalog.view = 'catalog';
-//			}
-//			else
 			{
 				R.params.set('diagram', D.lastViewedDiagrams[0]);
 				D.view = 'diagram';
 			}
 		}
 	}
-	/*
-	static updateLastViewedDiagram()
-	{
-		const lastViewedDiagramStr = isGUI ? localStorage.getItem('lastViewedDiagrams') : null;
-		if (lastViewedDiagramStr)
-		{
-			D.view = 'diagram';
-			R.params.set('diagram', JSON.parse(lastViewedDiagramStr)[0]);
-		}
-	}
-	*/
 }
 Object.defineProperties(D,
 {
@@ -4909,8 +4887,12 @@ class Catalog
 			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
 													H3.button(`Download all newer diagrams from ${R.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.downloadNewer()})]));
 		if (status.hasGreenGlow)
-			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'),
-													H3.button(`Upload all newer diagrams to ${R.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.uploadNewer()})]));
+		{
+			const div = H3.div(H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'));
+			if (R.user.status === 'logged-in')
+				div.appendChild(H3.button(`Upload all newer diagrams to ${R.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.uploadNewer()}));
+			this.catalogInfo.appendChild(div);
+		}
 		if (!status.hasWarningGlow && !status.hasGreenGlow)
 			this.catalogInfo.appendChild(H3.p(`All diagrams synced to ${R.local ? 'local server' : 'cloud'}.`, '.center'));
 	}
