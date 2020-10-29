@@ -12,7 +12,7 @@ CREATE TABLE `diagrams` (`name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin
 	`properName` mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 	`refs` longtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 	`timestamp` bigint(20) NOT NULL,
-	`refcnt` bigint(20) DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	`refcnt` int DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ALTER TABLE `diagrams`
 	ADD UNIQUE KEY `Name` (`name`) USING HASH,
 	ADD KEY `TimestampIndex` (`timestamp`),
