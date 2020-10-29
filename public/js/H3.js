@@ -6,44 +6,47 @@ class H3
 	}
 	static _p(elt, arg)
 	{
-		const type = arg.constructor.name;
-		switch(arg.constructor.name)
+		if (arg)
 		{
-			case 'Number':
-			case 'Boolean':
-				elt.innerHTML += arg;
-				break;
-			case 'String':
-				if (arg.charAt(0) === '#')
-				{
-					const tokens = arg.substr(1).split('.');
-					elt.id = tokens[0];
-					tokens.shift();
-					tokens.map(c => elt.classList.add(c));
-				}
-				else if (arg.charAt(0) === '.')
-				{
-					const tokens = arg.substr(1).split('.');
-					tokens.map(c => elt.classList.add(c));
-				}
-				else
-					elt.innerHTML += H3.safe(arg);
-				break;
-			case 'Object':
-				Object.keys(arg).map(k =>
-				{
-					if (typeof arg[k] === 'function')
-						elt[k] = arg[k];
-					else
-						elt.setAttribute(k, arg[k]);
-				});
-				break;
-			case 'Array':
-				arg.map(c => c && this._p(elt, c));
-				break;
-			default:
-				elt.appendChild(arg);
-				break;
+			const type = arg.constructor.name;
+			switch(arg.constructor.name)
+			{
+				case 'Number':
+				case 'Boolean':
+					elt.innerHTML += arg;
+					break;
+				case 'String':
+					if (arg.charAt(0) === '#')
+					{
+						const tokens = arg.substr(1).split('.');
+						elt.id = tokens[0];
+						tokens.shift();
+						tokens.map(c => elt.classList.add(c));
+					}
+					else if (arg.charAt(0) === '.')
+					{
+						const tokens = arg.substr(1).split('.');
+						tokens.map(c => elt.classList.add(c));
+					}
+					else if (arg !== '')
+						elt.innerHTML += H3.safe(arg);
+					break;
+				case 'Object':
+					Object.keys(arg).map(k =>
+					{
+						if (typeof arg[k] === 'function')
+							elt[k] = arg[k];
+						else
+							elt.setAttribute(k, arg[k]);
+					});
+					break;
+				case 'Array':
+					arg.map(c => c && this._p(elt, c));
+					break;
+				default:
+					elt.appendChild(arg);
+					break;
+			}
 		}
 		return elt;
 	}
