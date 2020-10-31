@@ -140,7 +140,19 @@ function saveHTMLjs()
 
 function fetchCatalog(followup)
 {
-	fetch(`${cloudDiagramURL}/${catalogFile}`).then(response => response.text().then(catalogString => followup(JSON.parse(catalogString))));
+	fetch(`${cloudDiagramURL}/${catalogFile}`).then(response =>
+	{
+		if (!response.ok)
+		{
+			console.log('fetachCatalog bad response', response);
+			throw 'bad response';
+		}
+		return response.json();
+	}).then(json => followup(json)).catch(error =>
+	{
+		console.log('fetchCatalog error:', {error});
+		followup({diagrams:[]});
+	});
 }
 
 function getDiagramInfo(diagram)
@@ -327,7 +339,7 @@ function updateRefcnts(oldrefs, newrefs)
 	});
 	plusOne.map(name =>
 	{
-		diagramCatalog.get(name).refcnt--
+		diagramCatalog.get(name).refcnt--;
 		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt - 1 WHERE name=?;', [name]).then(_ => {});
 	});
 }
@@ -413,7 +425,15 @@ async function serve()
 							console.log('mysql intialization for Catecon', {err});
 							process.exit();
 						}
-						updateCatalogFromServer(_ => Cat.R.Initialize());
+						try
+						{
+							updateCatalogFromServer(_ => Cat.R.Initialize());
+console.log('R.init 2');
+						}
+						catch(x)
+						{
+							Cat.R.Initialize();
+						}
 					});
 				});
 			}
@@ -426,7 +446,15 @@ async function serve()
 						console.log('mysql intialization for Catecon', {err});
 						process.exit();
 					}
-					updateCatalogFromServer(_ => Cat.R.Initialize());
+					try
+					{
+						updateCatalogFromServer(_ => Cat.R.Initialize());
+					}
+					catch(x)
+					{
+						Cat.R.Initialize();
+console.log('R.init 1');
+					}
 				});
 			}
 		});
