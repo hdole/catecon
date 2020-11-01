@@ -16,9 +16,9 @@ class H3
 					elt.innerHTML += arg;
 					break;
 				case 'String':
-					if (arg.charAt(0) === '#')
+					if (arg.charAt(0) === '#' && arg.charAt(1) === '#')
 					{
-						const tokens = arg.substr(1).split('.');
+						const tokens = arg.substr(2).split('.');
 						elt.id = tokens[0];
 						tokens.shift();
 						tokens.map(c => elt.classList.add(c));
