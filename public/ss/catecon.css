@@ -496,8 +496,6 @@ p
 
 .in100
 {
-	-webkit-box-sizing:	border-box;
-	-moz-box-sizing:	border-box;    
 	box-sizing:			border-box;
 }
 
@@ -698,12 +696,6 @@ path.emphasis
 [contenteditable="true"]
 {
 	background:	white;
-	outline:	1px solid;
-}
-
-input
-{
-	margin:		4px;
 	outline:	1px solid;
 }
 
