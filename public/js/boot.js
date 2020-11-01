@@ -382,7 +382,7 @@ const Boot = function(fn)
 
 	const N16 = MakeObject(args, 'N16', 'FiniteObject', '&Nopf;&#8321;&#8326;', 'The 16-bit natural (unsigned) numbers', {size:65536, code:{cpp:'typedef unsigned short %1;\n'}}).to;
 
-	const N162Z = MakeMorphism(args, 'N162Z', 'Morphism', '&sub;', 'every sixteen bit natural number is a natural number', N16, N,
+	const N16toN = MakeMorphism(args, 'N16toN', 'Morphism', '&sub;', 'every sixteen bit natural number is a natural number', N16, N,
 	{
 		js:'function %Type(args)\n{\n	return args;\n}\n',
 		cpp: 'void %Type(const %Dom & args, %Cod & out)\n{\n	out = (unsigned short)args;\n}\n',
@@ -397,7 +397,7 @@ const Boot = function(fn)
 		js:'function %Type(args)\n{\n	return 1;\n}\n',
 		cpp: `void %Type(const %Dom & args, %Cod & out) { out = 1; }\n`,
 	}).to;
-	const N16maxN6 = MakeMorphism(args, 'N16maxN6', 'Morphism', "'MAX_N16'", 'Max sixteen bit number 65535', one, N16,
+	const N16max = MakeMorphism(args, 'N16max', 'Morphism', "'MAX_N16'", 'Max sixteen bit number 65535', one, N16,
 	{
 		js:'function %Type(args)\n{\n	return 65535;\n}\n',
 		cpp: `void %Type(const %Dom & args, %Cod & out) { out = 65535; }\n`,
