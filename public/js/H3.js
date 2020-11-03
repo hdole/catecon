@@ -68,6 +68,7 @@ class H3
 	static br(...args)			{ return H3._h('br', args); }
 	static button(...args)		{ return H3._h('button', args); }
 	static div(...args)			{ return H3._h('div', args); }
+	static form(...args)		{ return H3._h('form', args); }
 	static h1(...args)			{ return H3._h('h1', args); }
 	static h2(...args)			{ return H3._h('h2', args); }
 	static h3(...args)			{ return H3._h('h3', args); }
