@@ -331,16 +331,15 @@ p
 	color:	#777;
 }
 
-.navbarFloat
+.navbar-float
 {
 	float:		left;
-	margin:		0px;
 	width:		20%;
 }
 
 @media screen and (max-width:800px)
 {
-	.navbarFloat
+	.navbar-float
 	{
 		width:		100%;
 	}
@@ -352,14 +351,27 @@ p
 	font-size:			18px;
 	padding:			0px;
 	text-align:			center;
-	vertical-align:		center;
-	width:				20%;
+	height:				32px;
+	margin:				auto 0;
 }
 
 .navbar-inset:hover, .offcanvas .navbar-inset:focus
 {
 	color: #ddd;
 	background-color:	#777a;
+}
+
+.navbar-text
+{
+	position:		relative;
+	top:			10%;
+}
+
+.navbar-tools
+{
+	font-size:			18px;
+	padding:			0px;
+	width:			20%;
 }
 
 .grabbable
