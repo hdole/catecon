@@ -101,7 +101,7 @@ ${object.objects.map((o, i) => `\t\t\t\t\tcase 0:
 		}
 		friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
 		{ 
-			out ${object.objects.map((o, i) => !(o instanceof HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
+			out ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
 			return out;            
 		}
 	};
@@ -113,12 +113,12 @@ ${object.objects.map((o, i) => `\t\t\t\t\tcase 0:
 ${members}
 		friend std::istream & operator>>(std::istream  & in, ${name} & obj )
 		{ 
-			in ${object.objects.map((o, i) => !(o instanceof HomObject) ? ` >> obj.m_${i}` : '').join('')};
+			in ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) ? ` >> obj.m_${i}` : '').join('')};
 			return in;            
 		}
 		friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
 		{ 
-			out ${object.objects.map((o, i) => !(o instanceof HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
+			out ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
 			return out;            
 		}
 \t};
@@ -130,7 +130,7 @@ ${members}
 			const proto = object.constructor.name;
 			let code = '';
 			const name = this.getType(object);
-			if (object instanceof CatObject)
+			if (object instanceof Cat.CatObject)
 			{
 				switch(proto)
 				{
@@ -154,7 +154,7 @@ ${members}
 			const proto = morphism.constructor.name;
 			const name = this.getType(morphism);
 			let code = '';
-			if (morphism instanceof MultiMorphism)
+			if (morphism instanceof Cat.MultiMorphism)
 				code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
 			const header = this.header(morphism);
 			const tail = this.tail();
@@ -357,9 +357,9 @@ ${tail}`;
 				code += `namespace ${this.getNamespace(element.diagram)}\n{\n`;
 				this.currentDiagram = element.diagram;
 			}
-			if (element instanceof CatObject)
+			if (element instanceof Cat.CatObject)
 				code += this.generateObject(element, generated);
-			else if (element instanceof Morphism)
+			else if (element instanceof Cat.Morphism)
 				code += this.generateMorphism(element, generated);
 			return code;
 		}
@@ -367,9 +367,9 @@ ${tail}`;
 		{
 			this.currentDiagram = null;
 			const namedMorphisms = new Set();
-			diagram.forEachMorphism(function(m)
+			diagram.forEachMorphism(m =>
 			{
-				if (m instanceof NamedMorphism)
+				if (m instanceof Cat.NamedMorphism)
 					namedMorphisms.add(m);
 			});
 			const named = [...namedMorphisms];
