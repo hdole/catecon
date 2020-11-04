@@ -162,31 +162,6 @@ const Boot = function(fn)
 		args.xy = new Cat.D2(args.xy);
 		return e;
 	}
-	/* TODO unused
-	function Adjust(args, elt)
-	{
-		if (elt instanceof Cat.DiagramObject)
-		{
-			const bx = elt.svg.getBBox();
-			const delta = args.xy.x - bx.x;
-			let xy = elt.getXY();
-			elt.setXY({x:xy.x + delta, y:xy.y});
-			elt.update();
-		}
-		else if (elt instanceof Cat.DiagramMorphism)
-		{
-			const bx = elt.domain.svg.getBBox();
-			const delta = args.xy.x - bx.x;
-			let xy = elt.domain.getXY();
-			elt.domain.setXY({x:xy.x + delta, y:xy.y});
-			xy = elt.codomain.getXY();
-			elt.codomain.setXY({x:xy.x + delta, y:xy.y});
-			elt.domain.update();
-			elt.codomain.update();
-			elt.update();
-		}
-	}
-	*/
 	function MakeNamedObject(args, extra)
 	{
 		CheckColumn(args);
