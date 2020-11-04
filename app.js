@@ -428,7 +428,6 @@ async function serve()
 						try
 						{
 							updateCatalogFromServer(_ => Cat.R.Initialize());
-console.log('R.init 2');
 						}
 						catch(x)
 						{
@@ -453,7 +452,6 @@ console.log('R.init 2');
 					catch(x)
 					{
 						Cat.R.Initialize();
-console.log('R.init 1');
 					}
 				});
 			}
@@ -640,11 +638,12 @@ console.log('R.init 1');
 				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
 					diagramCatalog.set(name, info);
-					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ? WHERE name = ?';
-					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, name], (err, result) =>
+					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, category = ? WHERE name = ?';
+					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.category, name], (err, result) =>
 					{
 						if (err)
 						{
+							console.log({err});
 							res.status(500).send('cannot update diagram info').end();
 							return;
 						}
@@ -673,17 +672,18 @@ console.log('R.init 1');
 				// new diagram to system
 				// no need to set refcnt; it must be 0
 				//
-				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
-				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp], (err, result) =>
+				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.category], (err, result) =>
 				{
 					if (err)
 					{
+						console.log({err});
 						res.status(500).send('cannot insert new diagram').end();
 						return;
 					}
 					const info = Cat.Diagram.GetInfo(diagram);
 					info.refcnt = 0;
-					diagramInfo.set(name, info);
+//					diagramInfo.set(name, info);
 					updateRefcnts([], info.references);
 					//
 					// user owns one more
@@ -724,7 +724,7 @@ console.log('R.init 1');
 					res.status(400).send('diagram is referenced').end();
 					return;
 				}
-				diagramInfo.delete(name);
+//				diagramInfo.delete(name);
 				dbcon.query('DELETE FROM diagrams WHERE name=?', [name], (err, result) =>
 				{
 					if (err)
