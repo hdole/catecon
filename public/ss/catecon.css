@@ -668,7 +668,6 @@ table.center
 {
 	fill:			black;
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
-	margin:			2px;
 	user-select:	none;
 }
 
@@ -886,18 +885,11 @@ description
 {
 	background-color:	#333a;
 	color:				#fff;
-	border-radius:		6px;
+	border-radius:		2px;
 	padding:			4px;
 	position:			absolute;
 	text-align:			left;
-	visibility:			hidden;
 	z-index:			1;
-}
-
-.popup .show
-{
-	visibility: visible;
-	transition:	0.5s;
 }
 
 .popupBtn
