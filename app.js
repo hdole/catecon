@@ -66,6 +66,16 @@ Error.stackTraceLimit = 30;
 // user info cache
 //
 const userInfo = new Map();
+function hasPermission(name, priv)
+{
+	console.log({name}, {priv}, {userInfo});
+	const user = userInfo.get(name);
+console.log( user.permissions.split(' ').includes(priv));
+console.log( user.permissions.split(' '));
+	if (user)
+		return user.permissions.split(' ').includes(priv);
+	return false;
+}
 //
 // mysql connection arguments
 //
@@ -614,13 +624,16 @@ async function serve()
 			reqlog(req, 'upload', req.body.diagram.name);
 			const {diagram, user, png} = req.body;
 			//
-			// diagram user must be save as validated user
+			// diagram user must be same as validated user or have admin privileges
 			//
-			if (req.body.user !== diagram.user)
-				return res.status(401).send('diagram owner not the validated user');
-			// diagram name must be first of diagram name
-			if (diagram.name.split('/')[0] !== req.body.user)
-				return res.status(401).send('diagram user and name mismatch').end();
+			if (!hasPermission(req.body.user, 'admin'))
+			{
+				if (req.body.user !== diagram.user)
+					return res.status(401).send('diagram owner not the validated user');
+				// diagram name must be first of diagram name
+				if (diagram.name.split('/')[0] !== req.body.user)
+					return res.status(401).send('diagram user and name mismatch').end();
+			}
 			const name = diagram.name;
 			function finalProcessing()
 			{
