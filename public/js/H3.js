@@ -96,6 +96,7 @@ class H3
 	// SVG
 	static animateTransform(...args)	{ return H3._v('animateTransform', args); }
 	static circle(...args)				{ return H3._v('circle', args); }
+	static defs(...args)				{ return H3._v('defs', args); }
 	static g(...args)					{ return H3._v('g', args); }
 	static image(...args)				{ return H3._v('image', args); }
 	static line(...args)				{ return H3._v('line', args); }
@@ -104,6 +105,8 @@ class H3
 	static path(...args)				{ return H3._v('path', args); }
 	static polyline(...args)			{ return H3._v('polyline', args); }
 	static rect(...args)				{ return H3._v('rect', args); }
-	static svg(...args)					{ return H3._v('svg', args); }
+	static svg(...args)					{ return H3._v('svg', [{xmlns:"http://www.w3.org/2000/svg"}, ...args]); }
+	static symbol(...args)				{ return H3._v('symbol', args); }
 	static text(...args)				{ return H3._v('text', args); }
+	static use(...args)					{ return H3._v('use', args); }
 }
