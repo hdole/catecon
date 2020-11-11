@@ -2135,12 +2135,12 @@ class Toolbar
 		}
 		else
 		{
-			btns.push(D.GetButton3('newDiagram', 'diagram3', _ => Cat.D.newElement.Diagram.html(), 'Diagram'));
+			btns.push(D.GetButton3('newDiagram', 'diagram3', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
 			if (diagram.isEditable())
 			{
-				btns.push(D.GetButton3('newObject', 'object3', e => Cat.D.newElement.Object.html(e), 'New object'));
-				btns.push(D.GetButton3('newMorphism', 'morphism3', e => Cat.D.newElement.Morphism.html(e), 'New morphism'));
-				btns.push(D.GetButton3('newText', 'text3', e => Cat.D.newElement.Text.html(e), 'New text'));
+				btns.push(D.GetButton3('newObject', 'object3', e => Cat.D.elementTool.Object.html(e), 'New object'));
+				btns.push(D.GetButton3('newMorphism', 'morphism3', e => Cat.D.elementTool.Morphism.html(e), 'New morphism'));
+				btns.push(D.GetButton3('newText', 'text3', e => Cat.D.elementTool.Text.html(e), 'New text'));
 			}
 			btns.push(D.GetButton3('toolbarShowSearch', 'search', _ => Cat.D.toolbar.showSearch(), 'Search in a diagram', D.default.button.small,
 										'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
@@ -2312,7 +2312,7 @@ class StatusBar
 	hide() { this.element.classList.add('hidden'); }
 }
 
-class NewElement
+class ElementTool
 {
 	constructor(type, headline, suppress = false)
 	{
@@ -2527,12 +2527,12 @@ class NewElement
 			const args =
 			{
 				basename,
-				properName:		U.HtmlSafe(D.newElement.Object.properNameElt.value),
-				description:	U.HtmlSafe(D.newElement.Object.descriptionElt.value),
+				properName:		U.HtmlSafe(D.elementTool.Object.properNameElt.value),
+				description:	U.HtmlSafe(D.elementTool.Object.descriptionElt.value),
 			};
 			args.xy = D.toolbar.mouseCoords;	// use original location
-			const from = D.newElement.Object.doit(e, R.diagram, args);
-			D.newElement.Object.update();
+			const from = D.elementTool.Object.doit(e, R.diagram, args);
+			D.elementTool.Object.update();
 			args.command = 'newObject';
 			R.diagram.log(args);
 			R.diagram.antilog({command:'delete', elements:[from.name]});
@@ -2675,7 +2675,7 @@ class D
 		D.parenWidth = D.textWidth('(');
 		D.commaWidth = D.textWidth(',&nbsp;'),
 		D.bracketWidth = D.textWidth('[');
-		D.NewElement =		NewElement;
+		D.ElementTool =		ElementTool;
 		D.Panel = 			Panel;
 		D.panels =			new Panels();
 		D.Panels =			Panels;
@@ -2700,12 +2700,12 @@ class D
 		D.ttyPanel =		new TtyPanel();
 		D.TtyPanel =		TtyPanel;
 		//
-		D.newElement =
+		D.elementTool =
 		{
-			Diagram:	new NewElement('Diagram', 'Create a new diagram'),
-			Object:		new NewElement('Object', 'Create a new object in this diagram'),
-			Morphism:	new NewElement('Morphism', 'Create a new morphism in this diagram'),
-			Text:		new NewElement('Text', 'Create new text in this diagram'),
+			Diagram:	new ElementTool('Diagram', 'Create a new diagram'),
+			Object:		new ElementTool('Object', 'Create a new object in this diagram'),
+			Morphism:	new ElementTool('Morphism', 'Create a new morphism in this diagram'),
+			Text:		new ElementTool('Text', 'Create new text in this diagram'),
 		},
 		D.Resize();
 		D.Autohide();
@@ -4402,7 +4402,7 @@ Object.defineProperties(D,
 	mouseIsDown:{value: false,		writable: true},	// is the mouse key down? the onmousedown attr is not connected to mousedown or mouseup
 	mouseover:		{value: null,		writable: true},
 	navbar:			{value: null,		writable: true},
-	newElement:		{value: null,		writable: true},
+	elementTool:	{value: null,		writable: true},
 	objectPanel:	{value: null,		writable: true},
 	openPanels:		{value: [],			writable: true},
 	Panel:			{value: null,		writable: true},
@@ -6182,14 +6182,12 @@ class HelpPanel extends Panel
 							H.p('Press the spacebar and move the mouse to pan the view.') +
 						H.h5('Home') +
 							H.p('Return to the home view.') +
-						H.h5('Ccontrol-D') +
-							H.p('Toggle the diagram panel.') +
 						H.h5('Control-A') +
 							H.p('Select all elements.') +
 						H.h5('Control-C') +
 							H.p('Copy elements into the paste buffer.') +
-						H.h5('Control-D') +
-							H.p('Open diagram panel.') +
+						H.h5('Ccontrol-D') +
+							H.p('Open the diagram panel.') +
 						H.h5('Control-L') +
 							H.p('Open output panel.') +
 						H.h5('Control-M') +
@@ -9418,7 +9416,7 @@ class HomsetAction extends Action
 							H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
 							H3.line(".arrow0", {x1:"100", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
-		this.newMorphism = new NewElement('Morphism', '', true);
+		this.newMorphism = new ElementTool('Morphism', '', true);
 	}
 	action(e, diagram, morphism, domain, codomain)
 	{
