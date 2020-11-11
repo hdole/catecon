@@ -94,7 +94,7 @@ function hdole_HTML_Lm_Br_hdole_HTML_html2Str__br__rb___br_0_rb__rB_mL(args)
 function hdole_HTML_html2line(args)
 {
 	const dv = args[1][0] !== 1 ? ' value="' + args[1][1].toString() + '" ' : '';
-	return ['<input type="text" id="' + args[0] + '" placeholder="Text"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Str__br__rb___br_0_rb__rB_mL]
+	return ['<input type="text" id="' + args[0] + '" placeholder="Text"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Str__br__rb___br_0_rb__rB_mL];
 }
 
 
