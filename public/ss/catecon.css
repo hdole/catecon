@@ -904,3 +904,8 @@ description
 	color:				#777;
 	background-color:	#ddd;
 }
+
+.svgShadow
+{
+	filter: drop-shadow( 4px 4px 3px rgba(0, 0, 0, .7));
+}
