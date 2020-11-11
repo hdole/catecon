@@ -277,11 +277,11 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				scanCodomain(preCurry.codomain, [1]);
 				if (homArgs !== '')
 					homArgs = `(${homArgs})`;
-				nuCode = `	return ${morphism.codomain instanceof Cat.HomObject ? ' homArgs => ' : ''}${U.Token(preCurry)}${domArgs}${homArgs}`;
+				nuCode = `	return ${morphism.codomain instanceof Cat.HomObject ? ' homArgs => ' : ''}${U.Token(preCurry)}${domArgs}${homArgs};`;
 			}
 			else	// evaluate pre-curry
 			{
-				nuCode = `	return ${U.Token(preCurry)}${homArgs}`;
+				nuCode = `	return ${U.Token(preCurry)}${homArgs};`;
 			}
 			return nuCode + ';';
 		}
