@@ -68,10 +68,7 @@ Error.stackTraceLimit = 30;
 const userInfo = new Map();
 function hasPermission(name, priv)
 {
-	console.log({name}, {priv}, {userInfo});
 	const user = userInfo.get(name);
-console.log( user.permissions.split(' ').includes(priv));
-console.log( user.permissions.split(' '));
 	if (user)
 		return user.permissions.split(' ').includes(priv);
 	return false;
