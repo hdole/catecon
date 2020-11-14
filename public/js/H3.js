@@ -80,6 +80,7 @@ class H3
 	static label(...args)		{ return H3._h('label', args); }
 	static option(...args)		{ return H3._h('option', args); }
 	static p(...args)			{ return H3._h('p', args); }
+	static pre(...args)			{ return H3._h('pre', args); }
 	static script(...args)		{ return H3._h('script', args); }
 	static select(...args)		{ return H3._h('select', args); }
 	static small(...args)		{ return H3._h('small', args); }
