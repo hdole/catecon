@@ -346,47 +346,6 @@ class D2
 	}
 }
 
-class H
-{
-	static ok(a)
-	{
-		return a !== undefined && a !== '' && a !== null;
-	}
-	static x(tag, h, c, i, t, x)
-	{
-		return `<${tag}${H.ok(c) ? ` class="${c}"` : ''}${H.ok(i) ? ` id="${i}"` : ''}${H.ok(t) ? ` title="${t}"` : ''}${H.ok(x) ? ` ${x}` : ''}>${h}</${tag}>`;
-	}
-	static a	(h, c, i, t, x)	{return H.x('a', h, c, i, t, x); }
-	static br	()				{return '<br/>'; }
-	static button	(h, c, i, t, x)	{return H.x('button', h, c, i, t, x); }
-	static div	(h, c, i, t, x)	{return H.x('div', h, c, i, t, x); }
-	static form	(h, c, i, t, x)	{return H.x('form', h, c, i, t, x); }
-	static h1	(h, c, i, t, x)	{return H.x('h1', h, c, i, t, x); }
-	static h2	(h, c, i, t, x)	{return H.x('h2', h, c, i, t, x); }
-	static h3	(h, c, i, t, x)	{return H.x('h3', h, c, i, t, x); }
-	static h4	(h, c, i, t, x)	{return H.x('h4', h, c, i, t, x); }
-	static h5	(h, c, i, t, x)	{return H.x('h5', h, c, i, t, x); }
-	static hr	()				{return '<hr/>'; }
-	static input(h, c, i, t, x)	{return `<input id="${i}" class="${c}" type="${t}" value="${h}" placeholder="${x.ph}" ${'x' in x ? x.x : ''}/>`;}
-	static p	(h, c, i, t, x)	{return H.x('p', h, c, i, t, x); }
-	static pre	(h, c, i, t, x)	{return H.x('pre', h, c, i, t, x); }
-	static small(h, c, i, t, x)	{return H.x('small', h, c, i, t, x); }
-	static span	(h, c, i, t, x)	{return H.x('span', h, c, i, t, x); }
-	static sub	(h, c, i, t, x)	{return H.x('sub', h, c, i, t, x); }
-	static table(h, c, i, t, x)	{return H.x('table', h, c, i, t, x); }
-	static tag(tg, h, c, i, t, x)	{return H.x(tg, h, c, i, t, x); }
-	static td	(h, c, i, t, x)	{return H.x('td', h, c, i, t, x); }
-	static textarea	(h, c, i, t, x)	{return H.x('textarea', h, c, i, t, x); }
-	static th	(h, c, i, t, x)	{return H.x('th', h, c, i, t, x); }
-	static tr	(h, c, i, t, x)	{return H.x('tr', h, c, i, t, x); }
-	static label(h, i)			{return `<label for="${i}">${h}</label>`; }
-	static select(h, c, i, t, x) {return H.x('select', '', c, i, t, x); }
-	static option(h, v, sel = false)			{return H.x('option', h, '', '', '', `${sel ? 'selected ' : ''}value="${v}"`); }
-	static del(elt) {elt.parentElement.removeChild(elt);}
-	static move(elt, toId) {document.getElementById(toId).appendChild(elt); }
-	static toggle(elt, here, there) {elt.parentNode.id === here ? H.move(elt, there) : H.move(elt, here); }
-}
-
 if (isGUI)
 {
 	(function(d)
@@ -739,15 +698,15 @@ Object.defineProperties(U,
 // Runtime
 class R
 {
-	static Busy()	// TODO move to D 
+	static Busy()	// TODO move to D
 	{
 		if (isGUI && !('busyBtn' in R))
 		{
 			const svg = document.getElementById('topSVG');
 			const cx = window.innerWidth/2 - 160;
 			const cy = window.innerHeight/2 - 160;
-			const btn = H3.g(H3.g(H3.animateTransform({attributeName:"transform", type:"rotate", from:"360 160 160", to:"0 160 160", dur:"0.5s", repeatCount:'indefinite'}),
-									D.svg.commutes()), {transform:`translate(${cx}, ${cy})`});
+			const btn = H3.g(H3.g(H3.animateTransform({attributeName:"transform", type:"rotate", from:"360 160 160", to:"0 160 160", dur:"1s", repeatCount:'indefinite'}),
+									H3.path({class:"svgfilNone svgstr1", d:D.GetArc(160, 160, 100, 45, 360), 'marker-end':'url(#arrowhead)'})), {transform:`translate(${cx}, ${cy})`});
 			R.busyBtn = btn;
 			svg.appendChild(btn);
 		}
@@ -1980,24 +1939,24 @@ class Navbar
 		let right = [];
 		if (D.view === 'diagram')
 		{
-			left.push(D.GetButton3('diagramPanelToggle', 'diagram3', _ => Cat.D.diagramPanel.toggle(), 'Diagrams', sz));
-			left.push(D.GetButton3('categoryPanelToggle', 'category3', _ => Cat.D.categoryPanel.toggle(), 'Categories', sz));
-			left.push(D.GetButton3('objectPanelToggle', 'object3', _ => Cat.D.objectPanel.toggle(), 'Objects', sz));
-			left.push(D.GetButton3('morphismPanelToggle', 'morphism3', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
-			left.push(D.GetButton3('textPanelToggle', 'text3', _ => Cat.D.textPanel.toggle(), 'Text', sz));
-			left.push(D.GetButton3('showGraphs', 'string3', _ => Cat.R.diagram.showGraphs, 'Graph', sz));
-			right.push(D.GetButton3('cateapsis3', 'cateapsis3', _ => Cat.R.diagram.home(), 'Home', sz));
-			right.push(D.GetButton3('threeDPanelToggle', 'threeD3', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
-			right.push(D.GetButton3('ttyPanelToggle', 'tty3', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
-			right.push(D.GetButton3('helpPanelToggle', 'help3', _ => Cat.D.helpPanel.toggle(), 'Help', sz));
-			right.push(D.GetButton3('loginPanelToggle', 'login3', _ => Cat.D.loginPanel.toggle(), 'Login', sz));
-			right.push(D.GetButton3('settingsPanelToggle', 'settings3', _ => Cat.D.settingsPanel.toggle(), 'Settings', sz));
+			left.push(D.getIcon('diagramPanelToggle', 'diagram', _ => Cat.D.diagramPanel.toggle(), 'Diagrams', sz));
+			left.push(D.getIcon('categoryPanelToggle', 'category', _ => Cat.D.categoryPanel.toggle(), 'Categories', sz));
+			left.push(D.getIcon('objectPanelToggle', 'object', _ => Cat.D.objectPanel.toggle(), 'Objects', sz));
+			left.push(D.getIcon('morphismPanelToggle', 'morphism', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
+			left.push(D.getIcon('textPanelToggle', 'text', _ => Cat.D.textPanel.toggle(), 'Text', sz));
+			left.push(D.getIcon('showGraphs', 'string', _ => Cat.R.diagram.showGraphs, 'Graph', sz));
+			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram.home(), 'Home', sz));
+			right.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
+			right.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
+			right.push(D.getIcon('helpPanelToggle', 'help', _ => Cat.D.helpPanel.toggle(), 'Help', sz));
+			right.push(D.getIcon('loginPanelToggle', 'login', _ => Cat.D.loginPanel.toggle(), 'Login', sz));
+			right.push(D.getIcon('settingsPanelToggle', 'settings', _ => Cat.D.settingsPanel.toggle(), 'Settings', sz));
 		}
 		else
 		{
-			right.push(D.GetButton3('helpPanelToggle', 'help3', _ => Cat.D.helpPanel.toggle(), 'Help', sz));
-			right.push(D.GetButton3('loginPanelToggle', 'login3', _ => Cat.D.loginPanel.toggle(), 'Login', sz));
-			right.push(D.GetButton3('settingsPanelToggle', 'settings3', _ => Cat.D.settingsPanel.toggle(), 'Settings', sz));
+			right.push(D.getIcon('helpPanelToggle', 'help', _ => Cat.D.helpPanel.toggle(), 'Help', sz));
+			right.push(D.getIcon('loginPanelToggle', 'login', _ => Cat.D.loginPanel.toggle(), 'Login', sz));
+			right.push(D.getIcon('settingsPanelToggle', 'settings', _ => Cat.D.settingsPanel.toggle(), 'Settings', sz));
 		}
 		const divs = [	H3.div('.navbar-float.navbar-tools.buttonBarLeft', left),
 						H3.div(H3.span('##category-navbar.navbar-text'), '.navbar-float.navbar-inset', {title:'Current category scope'}),
@@ -2016,7 +1975,6 @@ class Navbar
 		// sort by most recent first
 		const result = diagrams.sort((a, b) => a[1].timestamp > b[1].timestamp ? -1 : a[1].timestamp < b[1].timestamp ? 1 : 0);
 		const rows = diagrams.map(info => H3.tr(H3.td(H3.span(info[0]), '.left.popupBtn', {onclick:_ => R.SelectDiagram(info[0])})));
-//												H3.td(D.GetButton3('apply', 'derive', _ => {}, 'title', D.default.button.tiny), '.right')));
 		const popupElt = H3.div(H3.span('Recent diagrams', '.italic.smallPrint'), H3.table(rows), '.popupElt', {onmouseleave:e => this.diagramPopup.classList.toggle('hidden')});
 		D.RemoveChildren(this.diagramPopup);
 		this.diagramPopup.appendChild(popupElt);
@@ -2104,7 +2062,7 @@ class Toolbar
 		D.RemoveChildren(this.header);
 		D.RemoveChildren(this.error);
 		element.style.display = 'block';
-		const moveBtn = D.GetButton3('moveToolbar', 'move3', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle');
+		const moveBtn = D.getIcon('moveToolbar', 'move', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle');
 		let delta = null;
 		moveBtn.onmousedown = e =>
 		{
@@ -2113,6 +2071,7 @@ class Toolbar
 			const tbLoc = new D2(tb.offsetLeft, tb.offsetTop);
 			delta = click.subtract(tbLoc);
 			document.addEventListener('mousemove', onMouseMove);
+			e.preventDefault();
 		};
 		const onMouseMove = e =>
 		{
@@ -2128,23 +2087,22 @@ class Toolbar
 			actions.map(action =>
 			{
 				if (!action.hidden() && action.hasForm(diagram, diagram.selected))
-					btns.push(D.GetButton3(action.basename, action.icon, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), action.description));
+					btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), action.description));
 			});
-			btns.push(D.GetButton3('closeToolbar', 'close3', e => Cat.D.toolbar.hide(e), 'Close'));
+			btns.push(D.getIcon('closeToolbar', 'close', e => Cat.D.toolbar.hide(e), 'Close'));
 			this.header.appendChild(H3.table(H3.tr(H3.td(btns, '.buttonBarLeft'))));
 		}
 		else
 		{
-			btns.push(D.GetButton3('newDiagram', 'diagram3', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
+			btns.push(D.getIcon('newDiagram', 'diagram', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
 			if (diagram.isEditable())
 			{
-				btns.push(D.GetButton3('newObject', 'object3', e => Cat.D.elementTool.Object.html(e), 'New object'));
-				btns.push(D.GetButton3('newMorphism', 'morphism3', e => Cat.D.elementTool.Morphism.html(e), 'New morphism'));
-				btns.push(D.GetButton3('newText', 'text3', e => Cat.D.elementTool.Text.html(e), 'New text'));
+				btns.push(D.getIcon('newObject', 'object', e => Cat.D.elementTool.Object.html(e), 'New object'));
+				btns.push(D.getIcon('newMorphism', 'morphism', e => Cat.D.elementTool.Morphism.html(e), 'New morphism'));
+				btns.push(D.getIcon('newText', 'text', e => Cat.D.elementTool.Text.html(e), 'New text'));
 			}
-			btns.push(D.GetButton3('toolbarShowSearch', 'search', _ => Cat.D.toolbar.showSearch(), 'Search in a diagram', D.default.button.small,
-										'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
-			btns.push(D.GetButton3('closeToolbar', 'close3', _ => Cat.D.toolbar.hide(), 'Close'));
+			btns.push(D.getIcon('toolbarShowSearch', 'search', _ => Cat.D.toolbar.showSearch(), 'Search in a diagram', D.default.button.small, 'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
+			btns.push(D.getIcon('closeToolbar', 'close', _ => Cat.D.toolbar.hide(), 'Close'));
 			btns.map(btn => this.header.appendChild(btn));
 		}
 		const toolbox = element.getBoundingClientRect();
@@ -2160,7 +2118,7 @@ class Toolbar
 		D.RemoveChildren(this.help);
 		const input = H3.input('##toolbar-diagram-search.in100', {title:'Search', placeholder:'Find...', onkeydown, size:8});
 		const btns = [];
-		btns.push(D.GetButton3('toolbarSearch', 'search', _ => Cat.D.toolbar.search(), 'Search for elements'));
+		btns.push(D.getIcon('toolbarSearch', 'search', _ => Cat.D.toolbar.search(), 'Search for elements'));
 		this.help.appendChild(H3.div(input, btns));
 		this.help.appendChild(H3.div({id:'toolbar-search-items'}));
 		input.focus();
@@ -2187,15 +2145,15 @@ class Toolbar
 			const btns = [];
 			let text = '';
 			if (U.IsIndexElement(elt))
-				btns.push(D.GetButton3('viewElement', 'view3', _ => R.diagram.viewElements(elt), 'View element'));
+				btns.push(D.getIcon('viewElement', 'view', _ => R.diagram.viewElements(elt), 'View element'));
 			if (elt instanceof DiagramObject || elt instanceof DiagramMorphism)
 			{
-				btns.push(D.GetButton3('placeElement', 'edit3', e => R.diagram.placeMorphism(e, elt.to), 'Place element'));
+				btns.push(D.getIcon('placeElement', 'edit', e => R.diagram.placeMorphism(e, elt.to), 'Place element'));
 				text = elt.getHtmlRep();
 			}
 			else
 			{
-				btns.push(D.GetButton3('placeElement', 'edit3', e => R.diagram.placeMorphism(e, elt), 'Place element'));
+				btns.push(D.getIcon('placeElement', 'edit', e => R.diagram.placeMorphism(e, elt), 'Place element'));
 				text = elt.getHtmlRep();
 			}
 			const row = H3.tr(H3.td(btns), H3.td(text, '.left'));
@@ -2410,7 +2368,7 @@ class ElementTool
 		}
 		const elts = [H3.h5(this.headline)];
 		elts.push(H3.table(rows));
-		elts.push(H3.span(D.GetButton3(action.name, 'edit3', action, this.headline)));
+		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
 		elts.push(this.error = H3.span('##new-error.error'));
 		const onkeyup = e =>
 		{
@@ -3093,25 +3051,9 @@ class D
 	}
 	static DownloadButton(txt, onclick, title, scale = D.default.button.small)
 	{
-		const html = H.span(D.SvgHeader(scale) + D.svg.download +
-`<text text-anchor="middle" x="160" y="280" style="font-size:110px;stroke:#000;">${txt}</text>
-${D.Button(onclick)}
-</svg>`, 'button', '', title, `data-name="download-${txt}"`);
-		return html;
-	}
-	static DownloadButton3(txt, onclick, title, scale = D.default.button.small)
-	{
-		const v = 0.32 * (scale !== undefined ? scale : 1.0);
-		return H3.span(H3.svg({title, width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"},
-								H3.rect({x:0, y:0, width:320, height:320, style:'fill:white'}),
-								D.svg.download3(),
-								H3.text({'text-anchor':'middle', x:160, y:280, style:'font-size:120px;stroke:#000;'}, txt),
-								H3.rect('.btn', {x:0, y:0, width:320, height:320, onclick})), {'data-name':`download-${txt}`});
-	}
-	static GetButton(name, buttonName, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
-	{
-		let btn = D.svg[buttonName];
-		return D.formButton(name, btn, onclick, title, scale, addNew, id, bgColor);
+		const btn = D.getIcon(txt, 'download', onclick, title, scale);
+		btn.querySelector('svg').appendChild(H3.text({'text-anchor':'middle', x:12, y:18, style:'font-size:8px;stroke:#000;'}, txt));
+		return btn;
 	}
 	static formButton(name, btn, onclick, title, scale = D.default.button.small, addNew = false, id = null, bgColor = '#ffffff')
 	{
@@ -3124,22 +3066,13 @@ ${button}
 </g>`;
 		return H.span(D.SvgHeader(scale, bgColor) + button + (addNew ? D.svg.new : '') + D.Button(onclick) + '</svg>', 'button', '', title, `data-name='${name}'`);
 	}
-	static GetButton3(name, buttonName, onclick, title, scale = D.default.button.small, id = null, aniId = null, repeatCount = "1")
+	static getIcon(name, buttonName, onclick, title, scale = D.default.button.small, id = null, aniId = null, repeatCount = "1")
 	{
-		const btn = typeof buttonName === 'string' ? D.svg[buttonName]() : buttonName;
-		const children = [H3.rect({x:0, y:0, width:320, height:320, style:`fill:#ffffff`})];
-		if (aniId)
-			children.push(H3.g(	H3.animateTransform({id:aniId, attributeName:"transform", type:"rotate", from:"360 160 160", to:"0 160 160", dur:"0.5s", repeatCount, begin:"indefinite"}), btn));
-		else
-			children.push(btn);
-		children.push(H3.rect(".btn", {x:"0", y:"0", width:"320", height:"320", onclick}));	// click on this!
-		const v = 0.32 * (scale !== undefined ? scale : 1.0);
-		const args = {width:`${v}in`, height:`${v}in`, viewBox:"0 0 320 320"};
-		if (id)
-			args.id = id;
-		const span = H3.span(H3.svg(args, children), '.button', {title, 'data-name':name});
-		span.style.verticalAlign = 'middle';
-		return span;
+		const inches = 0.32 * scale;
+		return H3.span('.button', H3.svg(	{viewbox:"0 0 320 320", width:`${inches}in`, height:`${inches}in`},
+											H3.rect('.icon', {x:"0", y:"0", width:"32", height:"32", onclick}),
+											H3.use({href:`#icon-${buttonName}`}),
+											H3.rect('.btn', {x:"0", y:"0", width:"32", height:"32", onclick})), {title});
 	}
 	static setCursor()
 	{
@@ -3425,13 +3358,14 @@ ${button}
 	}
 	static RecordError(err)
 	{
-		let txt = U.GetError(err);
-		isGUI && console.trace(txt);
+		const errTxt = U.GetError(err);
+		const elements = [H3.br(), H3.span(errTxt)];
+		isGUI && console.trace(errTxt);
 		if (isGUI)
 		{
 			if (typeof err === 'object' && 'stack' in err && err.stack !== '')
-				txt += H.br() + H.small('Stack Trace') + H.pre(err.stack);
-			D.ttyPanel.error.innerHTML += '<br/>' + txt;
+				elements.push(H3.br(), H3.small('Stack Trace'), H3.pre(err.stack));
+			elements.map(elt => D.ttyPanel.error.appendChild(elt));
 			D.ttyPanel.open();
 			Panel.SectionOpen('tty-error-section');
 		}
@@ -3648,19 +3582,6 @@ ${button}
 	{
 		return isGUI ? window.innerHeight : 768;
 	}
-	static SvgHeader(scale, bgColor = '#ffffff')
-	{
-		const v = 0.32 * (scale !== undefined ? scale : 1.0);
-		return `<svg xmlns="${D.xmlns}" width="${v}in" height="${v}in" version="1.1" viewBox="0 0 320 320"><rect x="0" y="0" width="320" height="320" style="fill:${bgColor}"/>`;
-	}
-	static Button(onclick)
-	{
-		return `<rect class="btn" x="0" y="0" width="320" height="320" onclick="${onclick}"/>`;
-	}
-	static Input(val, id, ph, x='', cls='in100', type='text')
-	{
-		return H.input(val, cls, id, type, {ph});
-	}
 	static GetObjects(ary)
 	{
 		const elts = new Set();
@@ -3836,6 +3757,7 @@ ${button}
 		else
 			elts.map((e, i) => e.classList.remove(cls));
 	}
+	static del(elt) {elt.parentElement.removeChild(elt);}
 	static RemoveChildren(elt)
 	{
 		while(elt.firstChild)
@@ -4435,336 +4357,6 @@ Object.defineProperties(D,
 	ttyPanel:			{value: null,													writable: true},
 	uiSVG:			{value: isGUI ? document.getElementById('uiSVG') : null,		writable: false},
 	xmlns:			{value: 'http://www.w3.org/2000/svg',							writable: false},
-	svg:
-	{
-		value:
-		{
-add:
-`<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
-<line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>`,
-add3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"160", y1:"80", x2:"160", y2:"240"}),
-				H3.line(".arrow0", {x1:"80", y1:"160", x2:"240", y2:"160"}));
-},
-cateapsis:
-`<circle cx="160" cy="60" r="60" fill="url(#radgrad1)"/>
-<path class="svgstr4" d="M40,280 40,160 110,90" marker-end="url(#arrowhead)"/>
-<path class="svgstr4" d="M280,280 280,160 210,90" marker-end="url(#arrowhead)"/>`,
-cateapsis3()
-{
-	return H3.g(H3.circle({cx:"160", cy:"60", r:"60", fill:"url(#radgrad1)"}),
-				H3.path(".svgstr4", {d:"M40,280 40,160 110,90", 'marker-end':"url(#arrowhead)"}),
-				H3.path(".svgstr4", {d:"M280,280 280,160 210,90", 'marker-end':"url(#arrowhead)"}));
-},
-category:
-`<line class="arrow0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>`,
-category3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"40", y1:"40", x2:"260", y2:"40", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"260", y1:"80", x2:"260", y2:"260", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"40", y1:"80", x2:"220", y2:"260", 'marker-end':"url(#arrowhead)"}));
-},
-chevronLeft:
-`<path class="svgfilNone svgstr1" d="M120,40 80,160 120,280"/>
-<path class="svgfilNone svgstr1" d="M200,40 160,160 200,280"/>`,
-chevronLeft3()
-{
-	return H3.g(H3.path(".svgfilNone.svgstr1", {d:"M120,40 80,160 120,280"}), 
-				H3.path(".svgfilNone.svgstr1", {d:"M200,40 160,160 200,280"}));
-},
-chevronRight:
-`<path class="svgfilNone svgstr1" d="M120,40 160,160 120,280"/>
-<path class="svgfilNone svgstr1" d="M200,40 240,160 200,280"/>`,
-chevronRight3()
-{
-	return H3.g(H3.path(".svgfilNone.svgstr1", {d:"M120,40 160,160 120,280"}),
-				H3.path(".svgfilNone.svgstr1", {d:"M200,40 240,160 200,280"}));
-},
-clock()
-{
-	return H3.g([	H3.circle({cx:"160", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-					H3.circle({cx:"160", cy:"160", r:"140", fill:'none', stroke:'#aaa', 'stroke-width':'20px'}),
-					H3.line(".arrow0.str0", {x1:"160", y1:"160", x2:"160", y2: "40", 'marker-end':"url(#arrowhead)"}),
-					H3.line(".arrow0.str0", {x1:"160", y1:"160", x2:"260", y2: "120", 'marker-end':"url(#arrowhead)"}),
-					H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"})]);
-},
-close:
-`<line class="arrow0 str0" x1="40" y1="40" x2="280" y2= "280" />
-<line class="arrow0 str0" x1="280" y1="40" x2="40" y2= "280" />`,
-close3()
-{
-	return H3.g([	H3.line(".arrow0.str0", {x1:"40", y1:"40", x2:"280", y2: "280"}),
-					H3.line(".arrow0.str0", {x1:"280", y1:"40", x2:"40", y2: "280"})]);
-},
-commutes()
-{
-	return H3.path(".svgfilNone.svgstr1", {d:D.GetArc(160, 160, 100, 45, 360), 'marker-end':'url(#arrowhead)'});
-},
-copy:
-`<circle cx="200" cy="200" r="160" fill="#fff"/>
-<circle cx="200" cy="200" r="160" fill="url(#radgrad1)"/>
-<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>`,
-copy3()
-{
-	return H3.g(H3.circle({cx:"200", cy:"200", r:"160", fill:"#fff"}),
-				H3.circle({cx:"200", cy:"200", r:"160", fill:"url(#radgrad1)"}),
-				H3.circle({cx:"120", cy:"120", r:"120", fill:"url(#radgrad2)"}));
-},
-delete:
-`<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
-<path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>`,
-delete3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"160", y1:"40", x2:"160", y2:"230", 'marker-end':"url(#arrowhead)"}),
-				H3.path(".svgfilNone.svgstr1", {d:"M90,190 A120,50 0 1,0 230,190"}));
-},
-derive()
-{
-	return H3.g(H3.line('.arrow0', {x1:"60", y1:"300", x2:"60", y2:"40", 'marker-end':"url(#arrowhead)"}),
-				H3.line('.arrow0', {x1:"60", y1:"160", x2:"260", y2:"160", 'marker-end':"url(#arrowhead)"}));
-},
-diagram:
-`<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="60" x2="280" y2="250" marker-end="url(#arrowhead)"/>`,
-diagram3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"60", y1:"40", x2:"260", y2:"40", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"40", y1:"60", x2:"40", y2:"260", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"60", y1:"280", x2:"250", y2:"280", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"280", y1:"60", x2:"280", y2:"250", 'marker-end':"url(#arrowhead)"}));
-},
-down(){ return H3.line(".arrow0", {x1:"160", y1:"60", x2:"160", y2:"260", 'marker-end':"url(#arrowhead)"}); },
-downcloud:
-`<circle cx="160" cy="80" r="80" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="160" y1="160" x2="160" y2="300" marker-end="url(#arrowhead)"/>`,
-download:
-`<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
-download3()
-{
-	return H3.line('.arrow0', {x1:160, y1:40, x2:160, y2:160, 'marker-end':'url(#arrowhead)'});
-},
-edit:
-`<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>`,
-edit3()
-{
-	return H3.path(".svgstr4", {d:"M280 40 160 280 80 240", 'marker-end':"url(#arrowhead)"});
-},
-functor:
-`<line class="arrow0" x1="40" y1="40" x2="40" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="80" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
-help:
-`<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
-<path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>`,
-help3()
-{
-	return H3.g(H3.circle({cx:"160", cy:"240", r:"60", fill:"url(#radgrad1)"}),
-				H3.path(".svgstr4", {d:"M110,120 C100,40 280,40 210,120 S170,170 160,200"}));
-},
-	/*
-io:
-`
-	<line class="arrow0" x1="100" y1="160" x2="220" y2="160" marker-end="url(#arrowhead)"/>
-	<polygon points="0 0, 120 160, 0 320" fill="url(#radgrad1)"/>
-	<polygon points="320 0, 200 160, 320 320" fill="url(#radgrad1)"/>
-`,
-lambda2:
-`<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="120" y1="120" x2="40" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="200" y1="200" x2="280" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="120" y1="200" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
-*/
-login:
-`<polyline class="svgstr4" points="160,60 160,200 70,280 70,40 250,40 250,280"/>`,
-login3()
-{
-	return H3.polyline(".svgstr4", {points:"160,60 160,200 70,280 70,40 250,40 250,280"});
-},
-morphism:
-`<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
-</marker>
-<marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
-</marker>
-<marker id="arrowheadWide" viewBox="0 -20 60 140" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-<path class="svgstr4" d="M0 0 L80 50 L10 100"/>
-</marker>
-<line class="arrow0" x1="60" y1="160" x2="260" y2="160" marker-end="url(#arrowhead)"/>`,
-morphism3()
-{
-	return H3.line(".arrow0", {x1:"60", y1:"160", x2:"260", y2:"160", 'marker-end':"url(#arrowhead)"});
-},
-move:
-`<line class="svgfilNone arrow0-30px" x1="60" y1="80" x2="240" y2="80" />
-<line class="svgfilNone arrow0-30px" x1="60" y1="160" x2="240" y2="160" />
-<line class="svgfilNone arrow0-30px" x1="60" y1="240" x2="240" y2="240" />`,
-move3()
-{
-	return H3.g(H3.line(".svgfilNone.arrow0-30px", {x1:"60", y1:"80", x2:"240", y2:"80"}),
-				H3.line(".svgfilNone.arrow0-30px", {x1:"60", y1:"160", x2:"240", y2:"160"}),
-				H3.line(".svgfilNone.arrow0-30px", {x1:"60", y1:"240", x2:"240", y2:"240"}));
-},
-new:
-`<circle class="svgstr3" cx="80" cy="70" r="70"/>
-<line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
-<line class="svgfilNone arrow0" x1="30" y1="70" x2="130" y2= "70" />`,
-object:
-`<circle cx="160" cy="160" r="160" fill="url(#radgrad1)"/>`,
-object3()
-{
-	return H3.circle({cx:"160", cy:"160", r:"160", fill:"url(#radgrad1)"});
-},
-play:
-`<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;">&#9654;</text>`,
-recursion:
-`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow3" x1="40" y1="120" x2="240" y2="120" marker-end="url(#arrowhead)"/>
-<line class="arrow6" x1="40" y1="180" x2="200" y2="180" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="40" y1="240" x2="160" y2="240" marker-end="url(#arrowhead)"/>`,
-reference:
-`<line class="arrow9" x1="120" y1="100" x2="260" y2="100"/>
-<line class="arrow9" x1="100" y1="120" x2="100" y2="260"/>
-<line class="arrow9" x1="120" y1="280" x2="250" y2="280" marker-end="url(#arrowhead)"/>
-<line class="arrow9" x1="280" y1="120" x2="280" y2="250" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="40" x2="200" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="60" x2="40" y2="200" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="220" x2="190" y2="220" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="220" y1="60" x2="220" y2="190" marker-end="url(#arrowhead)"/>`,
-save:
-`<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;">&#128190;</text>`,
-search()
-{
-	return [H3.circle('.search', {cx:"240", cy:"80", r:"120"}),
-			H3.line(".arrow0", {x1:"20", y1:"300", x2:"220", y2:"120", 'marker-end':"url(#arrowhead)"})];
-},
-settings:
-`<line class="arrow0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="160" y1="40" x2="160" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="80" y1="60" x2="240" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="80" y1="260" x2="240" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<circle class="svgfil4" cx="160" cy="160" r="60"/>
-<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>`,
-settings3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"40", y1:"160", x2:"280", y2:"160", 'marker-start':"url(#arrowheadRev)", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"160", y1:"40", x2:"160", y2:"280", 'marker-start':"url(#arrowheadRev)", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"80", y1:"60", x2:"240", y2:"260", 'marker-start':"url(#arrowheadRev)", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"80", y1:"260", x2:"240", y2:"60", 'marker-start':"url(#arrowheadRev)", 'marker-end':"url(#arrowhead)"}),
-				H3.circle(".svgfil4", {cx:"160", cy:"160", r:"60"}),
-				H3.circle({cx:"160", cy:"160", r:"60", fill:"url(#radgrad1)"}));
-},
-string:
-`<line class="arrow0" x1="60" y1="40" x2="260" y2="200"/>
-<path class="svgstr4" d="M60,120 C120,120 120,200 60,200"/>
-<path class="svgstr4" d="M260,40 C200,40 200,120 260,120"/>
-<line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>`,
-string3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"60", y1:"40", x2:"260", y2:"200"}),
-				H3.path(".svgstr4", {d:"M60,120 C120,120 120,200 60,200"}),
-				H3.path(".svgstr4", {d:"M260,40 C200,40 200,120 260,120"}),
-				H3.line(".arrow0", {x1:"60", y1:"260", x2:"260", y2:"260"}));
-},
-table:
-`<circle cx="80" cy="80" r="60" fill="url(#radgrad2)"/>
-<circle cx="80" cy="160" r="60" fill="url(#radgrad1)"/>
-<circle cx="80" cy="240" r="60" fill="url(#radgrad2)"/>
-<circle cx="160" cy="80" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
-<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
-<circle cx="240" cy="80" r="60" fill="url(#radgrad2)"/>
-<circle cx="240" cy="160" r="60" fill="url(#radgrad1)"/>
-<circle cx="240" cy="240" r="60" fill="url(#radgrad2)"/>`,
-text:
-`<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="160" y1="280" x2="160" y2="60"/>`,
-text3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"40", y1:"60", x2:"280", y2:"60", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"160", y1:"280", x2:"160", y2:"60"}));
-},
-threeD:
-`<line class="arrow0" x1="120" y1="180" x2="280" y2="180" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>`,
-threeD3()
-{
-	return H3.g(H3.line(".arrow0", {x1:"120", y1:"180", x2:"280", y2:"180", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"120", y1:"180", x2:"120", y2:"40", 'marker-end':"url(#arrowhead)"}),
-				H3.line(".arrow0", {x1:"120", y1:"180", x2:"40", y2:"280", 'marker-end':"url(#arrowhead)"}));
-},
-threeD_bottom:
-`<polygon class="svgfil1" points="120,180 280,180 200,280 40,280"/>
-<use href="#threeD_base" x="0" y="0"/>`,
-threeD_front:
-`<polygon class="svgfil1" points="40,120 200,120 200,280 40,280"/>
-<use href="#threeD_base" x="0" y="0"/>`,
-threeD_back:
-`<polygon class="svgfil1" points="120,40 280,40 280,180 120,180"/>
-<use href="#threeD_base" x="0" y="0"/>`,
-threeD_top:
-`<polygon class="svgfil1" points="120,40 280,40 200,140 40,140"/>
-<use href="#threeD_base" x="0" y="0"/>`,
-threeD_left:
-`<polygon class="svgfil1" points="120,20 120,180 40,280 40,120"/>
-<use href="#threeD_base" x="0" y="0"/>`,
-threeD_right:
-`<polygon class="svgfil1" points="280,20 280,180 200,280 200,120"/>
-<use href="#threeD_base" x="0" y="0"/>`,
-transform:
-`<circle cx="50" cy="160" r="60" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="100" y1="160" x2="240" y2="160" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="280" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>`,
-tty:
-`<path class="svgstrThinGray" d="M70,40 240,40 240,280 70,280 70,40"/>
-<line class="svgstr3" x1="90" y1="80" x2="220" y2="80"/>
-<line class="svgstr3" x1="90" y1="120" x2="200" y2="120"/>
-<line class="svgstr3" x1="90" y1="160" x2="160" y2="160"/>
-<line class="svgstr3" x1="90" y1="200" x2="120" y2="200"/>`,
-tty3()
-{
-	return H3.g(H3.path(".svgstrThinGray", {d:"M70,40 240,40 240,280 70,280 70,40"}),
-				H3.line(".svgstr3", {x1:"90", y1:"80", x2:"220", y2:"80"}),
-				H3.line(".svgstr3", {x1:"90", y1:"120", x2:"200", y2:"120"}),
-				H3.line(".svgstr3", {x1:"90", y1:"160", x2:"160", y2:"160"}),
-				H3.line(".svgstr3", {x1:"90", y1:"200", x2:"120", y2:"200"}));
-},
-lock:
-`<rect class="svgfil5" x="20" y="20" width="280" height="280"/>
-<line class="arrow0" x1="60" y1="60" x2="260" y2="260" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="60" y1="260" x2="260" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<circle class="svgfil4" cx="160" cy="160" r="40"/>`,
-unlock:
-`<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<line class="arrow0" x1="40" y1="280" x2="280" y2="40" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-<rect class="svgfil5" x="120" y="120" width="80" height="80"/>`,
-up() { return H3.line(".arrow0", {x1:"160", y1:"260", x2:"160", y2:"60", 'marker-end':"url(#arrowhead)"}); },
-upload:
-`<circle cx="160" cy="80" r="100" fill="url(#radgrad1)"/>
-<line class="arrow0" x1="160" y1="300" x2="160" y2="160" marker-end="url(#arrowhead)"/>`,
-upload3()
-{
-	return H3.g(H3.circle({cx:"160", cy:"80", r:"80", fill:"url(#radgrad1)"}), 
-				H3.line('.arrow0', {x1:"160", y1:"300", x2:"160", y2:"160", 'marker-end':"url(#arrowhead)"}));
-},
-view:
-`<circle cx="160" cy="160" r="120" fill="url(#radgrad1)"/>
-<path class="svgfilNone svgstrThinGray" d="M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160" marker-end="url(#arrowheadWide)"/>
-`,
-view3()
-{
-	return H3.g(H3.circle({cx:"160", cy:"160", r:"120", fill:"url(#radgrad1)"}),
-				H3.path(".svgfilNone.svgstrThinGray", {d:"M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160", 'marker-end':"url(#arrowheadWide)"}));
-}
-		},
-		writable:	false,
-	},
 });
 
 class Catalog
@@ -4777,7 +4369,7 @@ class Catalog
 		this.title = H3.h1('.catalog.center');
 		this.catalog.appendChild(H3.table(H3.tr(this.modeTool, H3.td(this.title, {width:'33%'}), this.closeBtn), '##modeToolbar'));
 		this.searchInput = H3.input('##catalog-search.in100', {title:'Search for a diagram by name', placeholder:'Diagram name contains...', onkeydown:e => Cat.D.OnEnter(e, _ => this.doLookup())});
-		this.searchBtn = D.GetButton3('search-btn', 'search', _ => this.doLookup(), 'Search for diagrams');
+		this.searchBtn = D.getIcon('search-btn', 'search', _ => this.doLookup(), 'Search for diagrams');
 		this.searchBtn.onkeydown = Cat.D.OnEnter(event, e => D.catalog.search());
 		const tools = [this.searchInput, this.searchBtn];
 		this.catalog.appendChild(H3.div('.center', H3.span('.shadow', tools)));		// show the toolbar
@@ -4843,18 +4435,18 @@ class Catalog
 	}
 	imageToolbar(info)
 	{
-		const buttons = [D.GetButton3('viewImage', 'view3', e => window.open(`diagram/${info.name}.png`, null, 'height=768, width=1024, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0'), 'Big image')];
+		const buttons = [D.getIcon('viewImage', 'view', e => window.open(`diagram/${info.name}.png`, null, 'height=768, width=1024, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0'), 'Big image')];
 		if (info.localTimestamp > info.timestamp && R.user.status === 'logged-in' && R.cloud && R.user.name === info.user)
-			buttons.push(D.GetButton3('diagramUpload', 'upload3', e => Cat.R.uploadDiagram(e, info.name), `Upload diagram to ${R.local ? 'local server' : 'cloud'}`));
+			buttons.push(D.getIcon('diagramUpload', 'upload', e => Cat.R.uploadDiagram(e, info.name), `Upload diagram to ${R.local ? 'local server' : 'cloud'}`));
 		if (info.refcnt === 0)
 		{
-			const btn = D.GetButton3('deleteDiagram', 'delete3', e => Cat.R.DeleteDiagram(e, info.name), 'Delete diagram');
+			const btn = D.getIcon('deleteDiagram', 'delete', e => Cat.R.DeleteDiagram(e, info.name), 'Delete diagram');
 			buttons.push(btn);
 			btn.querySelector('rect.btn').style.fill = 'red';
 		}
 		if (R.diagram && R.diagram.isEditable() && R.diagram.references.has(info.name) && R.diagram.canRemoveReferenceDiagram(info.name))
 		{
-			const btn = D.GetButton3('removeReference', 'delete3', e =>
+			const btn = D.getIcon('removeReference', 'delete', e =>
 			{
 				Cat.R.RemoveReference(e, info.name);
 				const oldDiv = this.catalog.querySelector(`[data-name="${info.name}"]`);
@@ -4871,7 +4463,7 @@ class Catalog
 		if (this.view === 'reference')
 		{
 			if (!R.diagram.allReferences.has(info.name))
-				toolbar.appendChild(H3.tr(H3.td(D.GetButton3('referenceDiagram', 'edit3', e => R.DownloadDiagram(info.name, _ =>
+				toolbar.appendChild(H3.tr(H3.td(D.getIcon('referenceDiagram', 'edit', e => R.DownloadDiagram(info.name, _ =>
 				{
 					R.AddReference(e, info.name);
 					const oldDiv = this.catalog.querySelector(`[data-name="${info.name}"]`);
@@ -5076,7 +4668,7 @@ class Catalog
 		}
 		this.diagrams.map(diagram => this.display(diagram));
 		if (R.diagram)
-			this.closeBtn.appendChild(D.GetButton3('closeCatalog', 'close3', e => R.EmitViewEvent('diagram'), 'Close catalog'));
+			this.closeBtn.appendChild(D.getIcon('closeCatalog', 'close', e => R.EmitViewEvent('diagram'), 'Close catalog'));
 	}
 }
 
@@ -5212,22 +4804,18 @@ class Panel
 	collapse()
 	{
 		this.elt.style.width = this.width + 'px';
-		this.expandBtnElt.innerHTML = D.GetButton('panelCollapse', this.right ? 'chevronLeft' : 'chevronRight', `Cat.D.${this.name}Panel.expand()`, 'Collapse');
+		this.expandBtnElt.appendChild(D.getIcon('panelCollapse', this.right ? 'chevronLeft' : 'chevronRight', e => this.expand(), 'Collapse'));
 		this.state = 'open';
 	}
 	closeBtnCell()
 	{
-		return D.GetButton('panelClose', 'close', `Cat.D.${this.name}Panel.close()`, 'Close');
-	}
-	closeBtnCell3()
-	{
-		return D.GetButton3('panelClose', 'close3', _ => Cat.D[`${this.name}Panel`].close(), 'Close');
+		return D.getIcon('panelClose', 'close', e => this.close(), 'Close');
 	}
 	expand(exp = 'auto')
 	{
 		this.elt.style.width = exp;
 		D.panels.closeAll(this);
-		this.expandBtnElt.innerHTML = D.GetButton('panelExpand', this.right ? 'chevronRight' : 'chevronLeft', `Cat.D.${this.name}Panel.collapse()`, 'Expand');
+		this.expandBtnElt.appendChild(D.getIcon('panelExpand', this.right ? 'chevronRight' : 'chevronLeft', e => this.collapse(), 'Expand'));
 		D.toolbar.hide();
 		this.state = 'expand';
 	}
@@ -5256,7 +4844,7 @@ class Panel
 	}
 	expandPanelBtn()
 	{
-		return D.GetButton('panelExpand', this.right ? 'chevronLeft' : 'chevronRight', `Cat.D.${this.name}Panel.expand()`, 'Expand', undefined, undefined, `${this.name}-expandBtn`);
+		return D.getIcon('panelExpand', this.right ? 'chevronLeft' : 'chevronRight', e => this.expand(), 'Expand', undefined, undefined, `${this.name}-expandBtn`);
 	}
 	update()	// fitb
 	{}
@@ -5399,14 +4987,15 @@ class CategoryPanel extends Panel
 	constructor()
 	{
 		super('category');
-		this.elt.innerHTML =
-			H.table(H.tr(H.td(this.closeBtnCell() + this.expandPanelBtn(), 'buttonBarRight'))) +
-			H.h3(H.span('Category')) +
-			H.h4(H.tag('basename', '') + H.span('', '', 'category-basename-edit')) +
-			H.h4(H.tag('proper-name', '') + H.span('', '', 'category-properName-edit')) +
-			H.p(H.tag('description', '', 'description') + H.span('', '', 'category-description-edit')) +
-			H.p(H.span('Actions: ', 'smallBold') + H.span('', 'left', 'category-actions')) +
-			H.p('User: ' + H.span('', '', 'category-user', 'User'), 'description');
+		const elements = [
+			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn(), '.buttonBarRight'))),
+			H3.h3('Category'),
+			H3.h4(H3.tag('basename'), H3.span('##category-basename-edit')),
+			H3.h4(H3.tag('proper-name'), H3.span('##category-properName-edit')),
+			H3.p(H3.tag('description'), H3.span('##category-description-edit')),
+			H3.p(H3.span('Actions: ', '.smallBold'), H3.span('##category-actions.left')),
+			H3.p('User: ', H3.span('##category-user'), '.description')];
+		elements.map(elt => this.elt.appendChild(elt));
 		this.categorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories');
 		this.basenamelt = document.getElementById('category-basename');
 		this.properNameElt = this.elt.querySelector('proper-name');
@@ -5430,13 +5019,14 @@ class CategoryPanel extends Panel
 			this.descriptionElt.innerHTML = this.category.description;
 			this.userElt.innerHTML = this.category.user;
 			const isEditable = this.category.isEditable();
-			this.properNameEditElt.innerHTML = isEditable ?
+			D.RemoveChildren(this.properNameEditElt);
+			D.RemoveChildren(this.descriptionEditElt);
 				// TODO editElementText cannot work
-				D.GetButton('editProperName', 'edit', `Cat.R.$CAT.editElementText(event, '${category.name}', '${category.elementId()}', 'proper-name')`, 'Edit',
-					D.default.button.tiny) : '';
-			this.descriptionEditElt.innerHTML = isEditable ?
-				D.GetButton('editDescription', `Cat.R.$CAT.editElementText(event, '${category.name}', '${category.elementId()}', 'description')`, 'Edit',
-					D.default.button.tiny) : '';
+			if (isEditable)
+			{
+				this.properNameEditElt.appendChild(D.getIcon('editProperName', 'edit', e => Cat.R.$CAT.editElementText(e, category.name, category.elementId(), 'proper-name'), 'Edit', D.default.button.tiny));
+				this.descriptionEditElt.appendChild(D.getIcon('editDescription', e => Cat.R.$CAT.editElementText(e, category.name, category.elementId(), 'description'), 'Edit', D.default.button.tiny));
+			}
 			const actions = [];
 			this.category.actions.forEach(function(a) { actions.push(U.DeCamel(a.properName)); });
 			this.actionsElt.innerHTML = actions.join(', ');
@@ -5459,15 +5049,15 @@ class ThreeDPanel extends Panel
 		this.axesHelperSize =	1000;
 		this.max =		10000;
 		this.horizon =	100000;
-		this.elt.innerHTML = H.table(H.tr(H.td(this.closeBtnCell() +this.expandPanelBtn() +
-									D.GetButton('threeDClear', 'delete', "Cat.D.threeDPanel.initialize()", 'Clear display') +
-									D.GetButton('threeDLeft', 'threeD_left', "Cat.D.threeDPanel.view('left')", 'Left') +
-									D.GetButton('threeDtop', 'threeD_top', "Cat.D.threeDPanel.view('top')", 'Top') +
-									D.GetButton('threeDback', 'threeD_back', "Cat.D.threeDPanel.view('back')", 'Back') +
-									D.GetButton('threeDright', 'threeD_right', "Cat.D.threeDPanel.view('right')", 'Right') +
-									D.GetButton('threeDbotom', 'threeD_bottom', "Cat.D.threeDPanel.view('bottom')", 'Bottom') +
-									D.GetButton('threeDfront', 'threeD_front', "Cat.D.threeDPanel.view('front')", 'Front'), 'buttonBarLeft'))) +
-						H.div('', '', 'threeDiv');
+		this.elt.appendChild(H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn(), 
+									D.getIcon('threeDClear', 'delete', e => Cat.D.threeDPanel.initialize(), 'Clear display'), 
+									D.getIcon('threeDLeft', 'threeD_left', e => Cat.D.threeDPanel.view('left'), 'Left'), 
+									D.getIcon('threeDtop', 'threeD_top', e => Cat.D.threeDPanel.view('top'), 'Top'), 
+									D.getIcon('threeDback', 'threeD_back', e => Cat.D.threeDPanel.view('back'), 'Back'), 
+									D.getIcon('threeDright', 'threeD_right', e => Cat.D.threeDPanel.view('right'), 'Right'), 
+									D.getIcon('threeDbotom', 'threeD_bottom', e => Cat.D.threeDPanel.view('bottom'), 'Bottom'), 
+									D.getIcon('threeDfront', 'threeD_front', e => Cat.D.threeDPanel.view('front'), 'Front'), '.buttonBarLeft'))));
+		this.elt.appendChild(H3.div('##threeDiv'));
 		this.display = document.getElementById('threeDiv');
 		this.initialized = false;
 	}
@@ -5620,7 +5210,8 @@ class ThreeDPanel extends Panel
 		if (!this.initialized)
 			this.initialize();
 		this.elt.style.width = '100%';
-		this.expandBtnElt.innerHTML = D.GetButton('threeDPanelCollapse', 'chevronRight', `Cat.D.threeDPanel.collapse(true)`, 'Expand');
+		D.RemoveChildren(this.expandBtnElt);
+		this.expandBtnElt.appendChild(D.getIcon('threeDPanelCollapse', 'chevronRight', e => this.collapse(true), 'Expand'));
 		this.resizeCanvas();
 	}
 	open()
@@ -5722,8 +5313,8 @@ class LogSection extends Section
 		super('Log', parent, 'tty-log-section', 'Diagram log');
 		this.diagram = null;
 		this.logElt = null;
-		const div = H3.div(H3.table(H3.tr(H3.td(D.GetButton3('logClear', 'delete3', _ => Cat.R.diagram.clearLog(), 'Clear log'),
-												D.DownloadButton3('LOG', _ => Cat.R.diagram.downloadLog(), 'Download log'), 'buttonBarLeft'))), H3.hr());
+		const div = H3.div(H3.table(H3.tr(H3.td('.buttonBarLeft', D.getIcon('logClear', 'delete', _ => Cat.R.diagram.clearLog(), 'Clear log'),
+												D.DownloadButton('LOG', _ => Cat.R.diagram.downloadLog(), 'Download log')))), H3.hr());
 		this.section.appendChild(div);
 		window.addEventListener('CAT', e => e.detail.command === 'default' && this.update());
 	}
@@ -5814,20 +5405,18 @@ class TtyPanel extends Panel
 	constructor()
 	{
 		super('tty', true);
-		this.elt.innerHTML =
-			H.table(H.tr(this.closeBtnCell() + this.expandPanelBtn()), 'buttonBarLeft') +
-			H.h3('TTY') +
-			H.button('Output', 'sidenavAccordion', '', 'TTY output from some composite', `onclick="Cat.D.Panel.SectionToggle(event, this, \'tty-out-section\')"`) +
-			H.div(
-				H.table(H.tr(
-					H.td(D.GetButton('ttyClear', 'delete', `Cat.D.ttyPanel.out.innerHTML = ''`, 'Clear output') +
-						D.DownloadButton('LOG', `Cat.D.DownloadString(Cat.D.ttyPanel.out.innerHTML, 'text', 'console.log')`, 'Download tty log file'), 'buttonBarLeft'))) +
-				H.pre('', 'tty', 'tty-out'), 'section', 'tty-out-section') +
-			H.button('Errors', 'sidenavAccordion', '', 'Errors from some action', `onclick="Cat.D.Panel.SectionToggle(event, this, \'tty-error-section\')"`) +
-			H.div(H.table(H.tr(
-					H.td(D.GetButton('ttyErrorClear', 'delete', `Cat.D.ttyPanel.error.innerHTML = ''`) +
-						D.DownloadButton('ERR', `Cat.D.DownloadString(Cat.D.ttyPanel.error.innerHTML, 'text', 'console.err')`, 'Download error log file'), 'buttonBarLeft'))) +
-				H.span('', 'tty', 'tty-error-out'), 'section', 'tty-error-section');
+		const elements = [
+			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn())), '.buttonBarLeft'),
+			H3.h3('TTY'),
+			H3.button('Output', '.sidenavAccordion', {title:'TTY output from some composite', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'tty-out-section')}),
+			H3.div(H3.table(H3.tr(H3.td(	D.getIcon('ttyClear', 'delete', _ => D.RemoveChildren(this.out), 'Clear output'),
+											D.DownloadButton('LOG', e => Cat.D.DownloadString(this.out.innerHTML, 'text', 'console.log'), 'Download tty log file'), '.buttonBarLeft'))),
+				H3.pre('##tty-out.tty'), '##tty-out-section.section'),
+			H3.button('Errors', '.sidenavAccordion', {title:'Errors from some action', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'tty-error-section')}),
+			H3.div(H3.table(H3.tr(H3.td(	D.getIcon('ttyErrorClear', 'delete', _ => D.RemoveChildren(this.error)),
+											D.DownloadButton('ERR', e => Cat.D.DownloadString(this.error.innerHTML, 'text', 'console.err'), 'Download error log file'), '.buttonBarLeft'))),
+				H3.span('##tty-error-out.tty'), '##tty-error-section.section')];
+		elements.map(elt => this.elt.appendChild(elt));
 		this.initialize();
 		this.out = document.getElementById('tty-out');
 		this.error = document.getElementById('tty-error-out');
@@ -5865,17 +5454,10 @@ class DiagramSection extends Section
 		const dt = new Date(diagram.timestamp);
 		const toolbar = [...btns];
 		const elt = H3.div('.grabbable', {id, 'data-timestamp':diagram.timestamp, 'data-name':diagram.name},
-			H3.table(
-			[
-				H3.tr(
-				[
-					H3.td(H3.h4(diagram.properName)),
-					H3.td(toolbar, '.right'),
-				]),
-				H3.tr(H3.td('.imageBackground', {colspan:2}, H3.a({onclick:_ => {Cat.D.diagramPanel.collapse(); Cat.R.SelectDiagram(diagram.name);}}, D.GetImageElement(diagram.name)))),
-				H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
-				H3.tr([H3.td(diagram.name, '.author'), H3.td(dt.toLocaleString(), '.date')], '.diagramSlot'),
-			]), {draggable:true, ondragstart:`Cat.D.DragElement(event, '${diagram.name}')`});
+			H3.table(	H3.tr( H3.td(H3.h4(diagram.properName)), H3.td(toolbar, '.right'),),
+						H3.tr(H3.td('.imageBackground', {colspan:2}, H3.a({onclick:_ => {Cat.D.diagramPanel.collapse(); Cat.R.SelectDiagram(diagram.name);}}, D.GetImageElement(diagram.name)))),
+						H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
+						H3.tr(H3.td(diagram.name, '.author'), H3.td(dt.toLocaleString(), '.date'), '.diagramSlot')), {draggable:true, ondragstart:e => Cat.D.DragElement(e, diagram.name)});
 		switch(this.sortBy)
 		{
 			case 'timestamp':
@@ -5966,10 +5548,10 @@ class AssertionSection extends Section
 		if (diagram !== R.diagram)
 			return;
 		const canEdit = diagram.isEditable();
-		const delBtn = H3.span(canEdit ? D.GetButton3('assertionDelete', 'delete3', _ => this.deleteAssertion(assertion.name), 'Delete assertion') : '');
-		const viewBtn = H3.span(D.GetButton3('assertionView', 'view3', _ => Cat.R.diagram.viewElements(assertion.name), 'View assertion'));
+		const delBtn = H3.span(canEdit ? D.getIcon('assertionDelete', 'delete', _ => this.deleteAssertion(assertion.name), 'Delete assertion') : '');
+		const viewBtn = H3.span(D.getIcon('assertionView', 'view', _ => Cat.R.diagram.viewElements(assertion.name), 'View assertion'));
 		const desc = H3.span(assertion.description, `##a_${assertion.name}`) +
-					(canEdit ? D.GetButton3('assertionEdit', 'edit3', e => Cat.R.diagram.editElementText(e, assertion.name, `a_${assertion.name}`, 'description'), 'Edit') : '');
+					(canEdit ? D.getIcon('assertionEdit', 'edit', e => Cat.R.diagram.editElementText(e, assertion.name, `a_${assertion.name}`, 'description'), 'Edit') : '');
 		const div = H3.div(`##assertion ${assertion.name}.right`, viewBtn, delBtn,
 					H3.table(	H3.tr(H3.td(H3.table(assertion.left.map(m => H3.tr(H3.td(m.to.properName))))),
 										H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.to.properName)))))), '.panelElt'));
@@ -6058,11 +5640,10 @@ class DiagramPanel extends Panel
 		if (!diagram)
 			return;
 		const isUsers = diagram && (R.user.name === diagram.user || R.user.isAdmin());
-		const uploadBtn = (R.user.status === 'logged-in' && R.cloud && isUsers) ? D.GetButton('diagramUpload', 'upload', 'Cat.R.diagram.upload(event)', 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn') : '';
+		const uploadBtn = (R.user.status === 'logged-in' && R.cloud && isUsers) ? D.getIcon('diagramUpload', 'upload', e => diagram.upload(e), 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn') : '';
 		const deleteBtn = R.CanDeleteDiagram(diagram) ?
-			D.GetButton('diagramDelete', 'delete', `Cat.R.DeleteDiagram(event, '${diagram.name}')`, 'Delete diagram', D.default.button.small, false,
-				'diagram-delete-btn') : '';
-		let downcloudBtn = '';
+			D.getIcon('diagramDelete', 'delete', e => Cat.R.DeleteDiagram(e, diagram.name), 'Delete diagram', D.default.button.small, false, 'diagram-delete-btn') : '';
+		let downcloudBtn = null;
 		if (R.diagram.refcnt <= 0 && R.cloud && R.ServerDiagrams.has(diagram.name))
 		{
 			const data = R.catalog.get(diagram.name);
@@ -6071,21 +5652,21 @@ class DiagramPanel extends Panel
 				const date = new Date(data.timestamp);
 				const tip = R.ServerDiagrams.get(diagram.name).timestamp > diagram.timestamp ? `Download newer version from cloud: ${date.toLocaleString()}` :
 					'Download older version from cloud';
-				downcloudBtn = D.GetButton('diagramReload', 'downcloud', 'Cat.R.ReloadDiagramFromServer()', tip, D.default.button.small, false, 'diagramDowncloudBtn');
+				downcloudBtn = D.getIcon('diagramReload', 'downcloud', e => Cat.R.ReloadDiagramFromServer(), tip, D.default.button.small, false, 'diagramDowncloudBtn');
 			}
 		}
-		const html = 
-					(isUsers ? H.span(DiagramPanel.GetLockBtn(diagram), '', 'lockBtn') : '') +
-					deleteBtn +
-					downcloudBtn +
-					uploadBtn +
-					D.DownloadButton('JSON', 'Cat.R.diagram.downloadJSON(event)', 'Download JSON') +
-					D.DownloadButton('JS', 'Cat.R.diagram.downloadJS(event)', 'Download Javascript') +
-					D.DownloadButton('C++', 'Cat.R.diagram.downloadCPP(event)', 'Download C++') +
-					D.DownloadButton('PNG', 'Cat.R.diagram.downloadPNG(event)', 'Download PNG') +
-					this.expandPanelBtn() +
-					this.closeBtnCell();
-		this.diagramPanelToolbarElt.innerHTML = html;
+		const elements = [(isUsers ? H3.span(DiagramPanel.GetLockBtn(diagram), '.lockBtn') : null),
+					deleteBtn,
+					downcloudBtn,
+					uploadBtn,
+					D.DownloadButton('JSON', e => Cat.R.diagram.downloadJSON(e), 'Download JSON'),
+					D.DownloadButton('JS', e => Cat.R.diagram.downloadJS(e), 'Download Javascript'),
+					D.DownloadButton('C++', e => Cat.R.diagram.downloadCPP(e), 'Download C++'),
+					D.DownloadButton('PNG', e => Cat.R.diagram.downloadPNG(e), 'Download PNG'),
+					this.expandPanelBtn(),
+					this.closeBtnCell()];
+		D.RemoveChildren(this.diagramPanelToolbarElt);
+		elements.map(elt => elt && this.diagramPanelToolbarElt.appendChild(elt));
 		this.diagramPanelToolbarElt.style.position = 'sticky';
 		this.initialize();
 	}
@@ -6101,10 +5682,12 @@ class DiagramPanel extends Panel
 		this.descriptionElt.innerHTML = U.HtmlEntitySafe(diagram.description);
 		this.properNameElt.innerHTML = diagram.properName;
 		this.userElt.innerHTML = diagram.user;
-		this.properNameEditElt.innerHTML = !diagram.isEditable() ? '' :
-			D.GetButton('editProperName', 'edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'proper-name')`, 'Edit', D.default.button.tiny);
-		this.descriptionEditElt.innerHTML = !diagram.isEditable() ? '' :
-			D.GetButton('editDescription', 'edit', `Cat.R.$CAT.editElementText(event, '${R.diagram.name}', '${diagram.elementId()}', 'description')`, 'Edit', D.default.button.tiny);
+		D.RemoveChildren(this.properNameEditElt);
+		if (diagram.isEditable())
+		{
+			this.properNameEditElt.appendChild(D.getIcon('editProperName', 'edit', e => Cat.R.$CAT.editElementText(e, diagram.name, diagram.elementId(), 'proper-name'), 'Edit', D.default.button.tiny));
+			this.descriptionEditElt.appendChild(D.getIcon('editDescription', 'edit', e => Cat.R.$CAT.editElementText(e, diagram.name, diagram.elementId(), 'description'), 'Edit', D.default.button.tiny));
+		}
 		D.RemoveChildren(this.imageElt);
 		this.imageElt.appendChild(D.GetImageElement(diagram.name));
 		this.setToolbar(diagram);
@@ -6135,7 +5718,7 @@ class DiagramPanel extends Panel
 	static GetLockBtn(diagram)
 	{
 		const lockable = diagram.readonly ? 'unlock' : 'lock';
-		return D.GetButton('lock', lockable, `Cat.R.diagram.${lockable}(event)`, U.Cap(lockable));
+		return D.getIcon('lock', lockable, e => Cat.R.diagram[lockable](e), U.Cap(lockable));
 	}
 	static UpdateLockBtn(diagram)
 	{
@@ -6150,6 +5733,7 @@ class HelpPanel extends Panel
 	{
 		super('help', true);
 		const date = '04/11/2020 00:00:01 AM';
+		/*
 		this.elt.innerHTML =
 			H.table(H.tr(H.td(this.closeBtnCell() + this.expandPanelBtn(), 'buttonBarLeft'))) +
 			H.h3('Catecon') +
@@ -6224,6 +5808,80 @@ class HelpPanel extends Panel
 			H.hr() +
 			H.small('&copy;2018-2020 Harry Dole') + H.br() +
 			H.small('harry@harrydole.com', 'italic');
+			*/
+		const elements = [
+			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn(), '.buttonBarLeft'))),
+			H3.h3('Catecon'),
+			H3.h4('The Categorical Console'),
+			H3.p(H3.small('Level 1', '.smallCaps.italic'), '.txtCenter'),
+			H3.p(H3.small(`Deployed ${date}`, '.smallCaps'), '.txtCenter'),
+			H3.br(),
+			H3.button('Help', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catActionHelpPnl')}),
+			H3.div(	H3.h4('Mouse Actions'),
+						H3.h5('Select'),
+							H3.p('Select an object or a morphism with the mouse by left-clicking on the element.  Previously selected objects are unselected.'),
+						H3.h5('Region Select'),
+							H3.p('Click the mouse button, then drag without releasing to cover some elements, and then release to select those elements.'),
+						H3.h5('Multi-Select With Shift Click'),
+							H3.p('Shift left mouse click to add another element to the select list'),
+						H3.h5('Control Drag'),
+							H3.p('Left click with the mouse on an object with the Ctrl key down and then drag to create an identity morphism for that object.'),
+							H3.p('Doing the same with a morphism makes a copy of the morphism.'),
+						H3.h5('Mouse Wheel'),
+							H3.p('Use the mouse wheel to zoom in and out.'),
+						H3.h5('Middle Mouse Button'),
+							H3.p('Click and drag to pan the diagram view.'),
+					H3.h4('Key Actions'),
+						H3.h5('Arrow Keys'),
+							H3.p('Pan the diagram view in the indicated direction.'),
+						H3.h5('Delete'),
+							H3.p('Selected objects or morphisms are deleted.  Some elements cannot be deleted if they are referred to by another element.'),
+						H3.h5('Escape'),
+							H3.p('Dismiss toolbar and side panels.'),
+						H3.h5('Spacebar'),
+							H3.p('Press the spacebar and move the mouse to pan the view.'),
+						H3.h5('Home'),
+							H3.p('Return to the home view.'),
+						H3.h5('Control-A'),
+							H3.p('Select all elements.'),
+						H3.h5('Control-C'),
+							H3.p('Copy elements into the paste buffer.'),
+						H3.h5('Ccontrol-D'),
+							H3.p('Open the diagram panel.'),
+						H3.h5('Control-L'),
+							H3.p('Open output panel.'),
+						H3.h5('Control-M'),
+							H3.p('Open morphism panel.'),
+						H3.h5('Control-O'),
+							H3.p('Open object panel.'),
+						H3.h5('Control-V'),
+							H3.p('Paste elements from the paste buffer.'),
+						H3.h5('Control-Z'),
+							H3.p('Undo the last edit action.'), '##catActionHelpPnl.section'),
+			H3.button('Category Theory', '##catHelpPnlBtn.sidenavAccordion', {title:'References', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catHelpPnl')}),
+			H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
+					H3.h4('References'),
+					H3.p(H3.a('"Categories For The Working Mathematician"', '.italic', {href:"https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician", target:"_blank"})), '##catHelpPnl.section'),
+			H3.button('Articles', '##referencesPnlBTn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'referencesPnl')}),
+			H3.div(	H3.p(H3.a('Intro To Categorical Programming', {href:"https://harrydole.com/wp/2017/09/16/cat-prog/"})),
+					H3.p(H3.a('V Is For Vortex - More Categorical Programming', {href:"https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"})), '##referencesPnl.section'),
+			H3.button('Terms and Conditions', '##TermsPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'TermsPnl')}),
+			H3.div(	H3.p('No hate.'), '##TermsPnl.section'),
+			H3.button('License', '##licensePnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'licensePnl')}),
+			H3.div(	H3.p('Vernacular code generated by the Categorical Console is freely usable by those with a cortex. Machines are good to go, too.'),
+					H3.p('Upload a diagram to Catecon and others there are expected to make full use of it.'),
+					H3.p('Inelegant or unreferenced diagrams are removed.  See T&amp;C\'s'), '##licensePnl.section'),
+			H3.button('Credits', '##creditaPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'creditsPnl')}),
+			H3.div(	H3.a('Saunders Mac Lane', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"}),
+					H3.a('Harry Dole', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"}), '##creditsPnl.section'),
+			H3.button('Third Party Software', '##third-party.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'thirdPartySoftwarePnl')}),
+			H3.div( H3.a('3D', {href:"https://threejs.org/"}),
+					H3.a('Crypto', {href:"https://bitwiseshiftleft.github.io/sjcl/"}), '##thirdPartySoftwarePnl.section'),
+			H3.hr(),
+			H3.small('&copy;2018-2020 Harry Dole'),
+			H3.br(),
+			H3.small('harry@harrydole.com', '.italic')];
+		elements.map(elt => this.elt.appendChild(elt));
 		this.initialize();
 	}
 }
@@ -6238,7 +5896,7 @@ class LoginPanel extends Panel
 		this.userEmailElt = H3.span('##user-email.smallBold');
 		this.permissionsElt = H3.span('##login-permission.smallBold');
 		this.errorElt = H3.span('##login-error.error');
-		this.elt.appendChild(H3.div(	H3.table(H3.tr(H3.td(this.closeBtnCell3(), '.buttonBarLeft'))),
+		this.elt.appendChild(H3.div(	H3.table(H3.tr(H3.td(this.closeBtnCell(), '.buttonBarLeft'))),
 										H3.h3('User'),
 										H3.table(	H3.tr(H3.td('User:'), H3.td(this.userNameElt)),
 													H3.tr(H3.td('Email:'), H3.td(this.userEmailElt)),
@@ -6284,11 +5942,11 @@ class LoginPanel extends Panel
 		switch(R.user.status)
 		{
 			case 'logged-in':
-				this.loginInfoElt.appendChild(H3.table(H3.tr(H3.td(getLogoutButton()), H.td(getResetButton()))));
+				this.loginInfoElt.appendChild(H3.table(H3.tr(H3.td(getLogoutButton()), H3.td(getResetButton()))));
 				break;
 			case 'unauthorized':
 				this.loginInfoElt.appendChild(this.getLoginForm());
-				const form = H3.form(	H3.button('Signup', '.sidenavAccordion', {title:'Signup for the Categorical Console', onclick:e => Cat.D.Panel.SectionToggle(e, this, 'signupPnl')}),
+				const form = H3.form(	H3.button('Signup', '.sidenavAccordion', {title:'Signup for the Categorical Console', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'signupPnl')}),
 										H3.div( H3.table(	H3.tr(H3.td('User name')),
 															H3.tr(H3.td(H3.input('##signupUserName', {type:'text', placeholder:'No spaces'}))),
 															H3.tr(H3.td('Email')),
@@ -6489,7 +6147,7 @@ class ElementPanel extends Panel
 	constructor(name, title, iterator)
 	{
 		super(name);
-		this.elt.innerHTML = H.table(H.tr(H.td(this.expandPanelBtn() + this.closeBtnCell(), 'buttonBarRight'))) + H.h3(title);
+		this.elt.appendChild(H3.div(H3.table(H3.tr(H3.td(this.expandPanelBtn(), this.closeBtnCell(), '.buttonBarRight'))), H3.h3(title)));
 		this.showSearch();
 		this.objectSection = new DiagramElementSection('Diagram', this.elt, `diagram-${name}`, `${title} in this diagram`, title);
 		this.referenceSection = new ReferenceElementSection('References', this.elt, `diagram-reference-${name}`, `${title} referenced from this diagram`, title);
@@ -6505,7 +6163,7 @@ class ElementPanel extends Panel
 		const thatSearch = e => this.search(e);
 		function onkeydown(e) { Cat.D.OnEnter(event, thatSearch); }
 		this.searchInput = H3.input(`##element-panel-${this.name}-diagram-search.in100`, {title:'Search', placeholder:'Search', onkeydown, size:8});
-		const btn = D.GetButton3(`${name}Search`, 'edit3', thatSearch, 'Search in a diagram');
+		const btn = D.getIcon(`${name}Search`, 'edit', thatSearch, 'Search in a diagram');
 		this.elt.appendChild(H3.div(H3.span('Find in category:', '.smallPrint.italic'), this.searchInput, btn));
 		this.searchItems = H3.div(`##element-panel-${this.name}-search-items.catalog`);
 		this.elt.appendChild(this.searchItems);
@@ -6554,7 +6212,7 @@ class SettingsPanel extends Panel
 									H3.td('Debug', '.left'), '.sidenavRow')];
 		const elts =
 		[
-			H3.table(H3.tr(H3.td(this.closeBtnCell3(), '.buttonBarLeft'))),
+			H3.table(H3.tr(H3.td(this.closeBtnCell(), '.buttonBarLeft'))),
 			H3.button('Settings', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-actions')}),
 			H3.div(H3.table('##settings-table', settings), '##settings-actions.section'),
 			H3.button('Defaults', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-defaults')}),
@@ -6600,9 +6258,7 @@ class TextPanel extends Panel
 	constructor()
 	{
 		super('text');
-		this.elt.innerHTML =
-			H.table(H.tr(H.td(this.expandPanelBtn() + this.closeBtnCell(), 'buttonBarRight'))) +
-			H.h3('Text');
+		this.elt.appendChild(H3.div(H3.table(H3.tr(H3.td(this.expandPanelBtn(), this.closeBtnCell(), '.buttonBarRight'))), H3.h3('Text')));
 		this.textSection = new DiagramElementSection('Text', this.elt, 'diagram-object', 'Text in this diagram', 'Text');
 		this.initialize();
 	}
@@ -6684,9 +6340,9 @@ class Element
 				case 'NamedObject':
 				case 'NamedMorphism':
 					const tny = Cat.D.default.button.tiny;
-					baseBtn = this.refcnt <= 1 ? D.GetButton3('elt-edit-basename', 'edit3', e => Cat.R.diagram.editElementText(e, this.name, id, 'basename'), 'Edit', tny) : '';
-					descBtn = D.GetButton3('elt-edit-description', 'edit3', e => Cat.R.diagram.editElementText(e, this.name, id, 'description'), 'Edit', tny);
-					pNameBtn = this.canChangeProperName() ? D.GetButton3('elt-edit-propername', 'edit3', e => Cat.R.diagram.editElementText(e, this.name, id, 'properName'), 'Edit', tny) : '';
+					baseBtn = this.refcnt <= 1 ? D.getIcon('elt-edit-basename', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'basename'), 'Edit', tny) : '';
+					descBtn = D.getIcon('elt-edit-description', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'description'), 'Edit', tny);
+					pNameBtn = this.canChangeProperName() ? D.getIcon('elt-edit-propername', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'properName'), 'Edit', tny) : '';
 					break;
 			}
 		}
@@ -7986,7 +7642,7 @@ class DiagramText extends Element
 		const div = H3.div({id}, H3.tag('description', this.description, '##descriptionElt.tty'));
 		if (canEdit)
 		{
-			div.appendChild(D.GetButton3('EditElementText', 'edit3', e => Cat.R.diagram.editElementText(e, this.name, id, 'description'), 'Commit editing', D.default.button.tiny));
+			div.appendChild(D.getIcon('EditElementText', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'description'), 'Commit editing', D.default.button.tiny));
 			const selectWeight = H3.select({onchange:e => Cat.DiagramText.UpdateWeight(this.name, e.target.value), value:this.weight},
 				['normal', 'bold', 'lighter', 'bolder'].map(w =>
 				{
@@ -8112,8 +7768,8 @@ class DiagramText extends Element
 	{
 		const div = H3.div();
 		const canEdit = R.diagram.isEditable();
-		const delBtn = canEdit ? H3.span(D.GetButton3('delete', 'delete3', _ => Cat.R.Actions.delete.action(this.name, Cat.R.diagram, [this]), 'Delete text')) : null;
-		const editBtn = canEdit ? H3.span(D.GetButton3('editDescription', 'edit3', e => Cat.R.diagram.editElementText(e, this.name, this.elementId(idPrefix), 'description'), 'Edit')) : null;
+		const delBtn = canEdit ? H3.span(D.getIcon('delete', 'delete', _ => Cat.R.Actions.delete.action(this.name, Cat.R.diagram, [this]), 'Delete text')) : null;
+		const editBtn = canEdit ? H3.span(D.getIcon('editDescription', 'edit', e => Cat.R.diagram.editElementText(e, this.name, this.elementId(idPrefix), 'description'), 'Edit')) : null;
 		const inDiv = H3.div(H3.span(this.description, `.edit_${this.name}`), '.panelElt', {title:'Click to view'});
 		editBtn && inDiv.appendChild(editBtn);
 		div.appendChild(inDiv);
@@ -8567,9 +8223,6 @@ class CompositeAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line(".arrow9", {x1:"40", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
-							H3.line(".arrow9", {x1:"260", y1:"80", x2:"260", y2:"260", "marker-end":"url(#arrowhead)"}),
-							H3.line(".arrow0", {x1:"40", y1:"80", x2:"220", y2:"260", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms)
@@ -8628,9 +8281,6 @@ class IdentityAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line(".arrow0", {x1:"160", y1:"60", x2:"120", y2:"100"}),
-							H3.line(".arrow0", {x1:"130", y1:"260", x2:"190", y2:"260"}),
-							H3.line(".arrow0", {x1:"160", y1:"60", x2:"160", y2:"260"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8672,11 +8322,6 @@ class NameAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({cx:"80", cy:"240", r:"90", fill:"url(#radgrad1)"}),
-							H3.path(".svgstr4", {d:"M110,180 L170,120"}),
-							H3.path(".svgstr4", {d:"M140,210 L200,150"}),
-							H3.path(".svgstr3", {d:"M220,130 L260,40 L300,130"}),
-							H3.line(".svgstr3", {x1:"235", y1:"95", x2:"285", y2:"95"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8739,6 +8384,7 @@ class NameAction extends Action
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
+		/*
 		let html =
 			H.h5('Create Named Element') +
 			H.table(H.tr(H.td(D.Input('', 'named-element-new-basename', 'Base name')), 'sidenavRow') +
@@ -8750,6 +8396,16 @@ class NameAction extends Action
 			H.span(D.GetButton('namedElement', 'edit', `Cat.R.Actions.name.create(event)`, 'Create named element')) +
 			H.span('', 'error', 'named-element-new-error');
 		D.toolbar.help.innerHTML = html;
+			*/
+		D.RemoveChildren(D.toolbar.help);
+		const elements = [
+			H3.h5('Create Named Element'),
+			H3.table(H3.tr(H3.td(H3.Input('##named-element-new-basename', {placeholder:'Base name'})), '.sidenavRow'),
+					H3.tr(H3.td(H3.Input('##named-element-new-properName', {placeholder:'Proper name'})), '.sidenavRow'),
+					H3.tr(H3.td(H3.input('##named-element-new-description.in100', {type:'text', placeholder:'Description'})), '.sidenavRow')),
+			D.getIcon('namedElement', 'edit', e => this.create(e), 'Create named element'),
+			H3.span('##named-element-new-error.error')];
+		elements.map(elt => D.toolbar.help.appendChild(elt));
 	}
 	create(e)
 	{
@@ -8777,9 +8433,6 @@ class CopyAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([H3.circle({cx:"200", cy:"200", r:"160", fill:"#fff"}),
-						H3.circle({cx:"200", cy:"200", r:"160", fill:"url(#radgrad1)"}),
-						H3.circle({cx:"120", cy:"120", r:"120", fill:"url(#radgrad2)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8848,11 +8501,6 @@ class FlipNameAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line(".arrow0", {x1:"160", y1:"40", x2:"160", y2:"280"}),
-							H3.line(".arrow0", {x1:"80", y1:"120", x2:"80", y2:"220"}),
-							H3.line(".arrow0", {x1:"240", y1:"120", x2:"240", y2:"220"}),
-							H3.line(".arrow0", {x1:"40", y1:"120", x2:"120", y2:"120"}),
-							H3.line(".arrow0", {x1:"200", y1:"120", x2:"280", y2:"120"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -8892,7 +8540,6 @@ class ProductAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = ProductAction.GetIcon(this.dual);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms, log = true)
@@ -8930,11 +8577,6 @@ class ProductAction extends Action
 		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
 			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
 	}
-	static GetIcon(dual)
-	{
-		return dual ? H3.g([H3.line(".arrow0", {x1:"160", y1:"80", x2:"160", y2:"240"}), H3.line(".arrow0", {x1:"80", y1:"160", x2:"240", y2:"160"})]) :
-			H3.g([H3.line(".arrow0", {x1:"103", y1:"216", x2:"216", y2:"103"}), H3.line(".arrow0", {x1:"216", y1:"216", x2:"103", y2:"103"})]);
-	}
 }
 
 class ProductEditAction extends Action
@@ -8951,7 +8593,6 @@ class ProductEditAction extends Action
 		this.table = null;
 		if (!isGUI)
 			return;
-		this.icon = ProductAction.GetIcon(this.dual);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	html(e, diagram, ary)
@@ -8980,7 +8621,7 @@ class ProductEditAction extends Action
 					const row = [
 						H3.td(style),
 						H3.td(style),
-						H3.td(!used.has(o) ? D.GetButton3(this.name, 'delete3', e => Cat.R.Actions[this.name].remove(e, this), 'Remove', D.default.button.tiny) : '&nbsp;', style),
+						H3.td(!used.has(o) ? D.getIcon(this.name, 'delete', e => Cat.R.Actions[this.name].remove(e, this), 'Remove', D.default.button.tiny) : '&nbsp;', style),
 						H3.td(o.properName),
 					];
 					return H3.tr(row, {'data-ndx':i, 'data-name':o.name});
@@ -8989,7 +8630,7 @@ class ProductEditAction extends Action
 			]);
 			top = H3.div([	H3.h4(`Edit a ${this.dual ? 'Cop' : 'P'}roduct`),
 							this.table,
-							D.GetButton3(this.name, 'edit3', e => Cat.R.Actions[this.name].action(e, Cat.R.diagram, elt.name), 'Commit editing', D.default.button.tiny)]);
+							D.getIcon(this.name, 'edit', e => Cat.R.Actions[this.name].action(e, Cat.R.diagram, elt.name), 'Commit editing', D.default.button.tiny)]);
 			this.updateTable();
 		}
 		D.toolbar.help.appendChild(top);
@@ -9001,8 +8642,8 @@ class ProductEditAction extends Action
 		const down = row.children[1];
 		const i = row.rowIndex;
 		i === 0 && up.children.length > 0 && D.RemoveChildren(row.children[0].children);
-		i > 0 && up.children.length === 0 && up.appendChild(D.GetButton3(this.name, 'up', e => Cat.R.Actions[this.name].up(e, this), 'Move down', D.default.button.tiny));
-		i < cnt -1 && down.children.length === 0 && down.appendChild(D.GetButton3(this.name, 'down', e => Cat.R.Actions[this.name].down(e, this), 'Move down', D.default.button.tiny));
+		i > 0 && up.children.length === 0 && up.appendChild(D.getIcon(this.name, 'up', e => Cat.R.Actions[this.name].up(e, this), 'Move down', D.default.button.tiny));
+		i < cnt -1 && down.children.length === 0 && down.appendChild(D.getIcon(this.name, 'down', e => Cat.R.Actions[this.name].down(e, this), 'Move down', D.default.button.tiny));
 	}
 	updateTable()
 	{
@@ -9164,14 +8805,6 @@ class PullbackAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = 		dual ?
-			H3.g([	H3.line(".arrow0", {x1:"60", y1:"40", x2:"260", y2:"40", "marker-end":"url(#arrowhead)"}),
-					H3.line(".arrow0", {x1:"40", y1:"60", x2:"40", y2:"260", "marker-end":"url(#arrowhead)"}),
-					H3.path(".svgstr4", {d:"M160,260 160,160 260,160"})])
-							:
-			H3.g([	H3.path(".svgstr4", {d:"M60,160 160,160 160,60"}),
-					H3.line(".arrow0", {x1:"60", y1:"280", x2:"250", y2:"280", "marker-end":"url(#arrowhead)"}),
-					H3.line(".arrow0", {x1:"280", y1:"60", x2:"280", y2:"250", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms)
@@ -9218,14 +8851,6 @@ class ProductAssemblyAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = dual ?
-				H3.g([	H3.line(".arrow0", {x1:"60", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
-						H3.line(".arrow9", {x1:"280", y1:"280", x2:"280", y2:"100", "marker-end":"url(#arrowhead)"}),
-						H3.line(".arrow9", {x1:"120", y1:"260", x2:"240", y2:"100", "marker-end":"url(#arrowhead)"})])
-						:
-				H3.g([	H3.line(".arrow0", {x1:"40", y1:"60", x2:"280", y2:"60", "marker-end":"url(#arrowhead)"}),
-						H3.line(".arrow9", {x1:"40", y1:"80", x2:"40", y2:"280", "marker-end":"url(#arrowhead)"}),
-						H3.line(".arrow9", {x1:"60", y1:"80", x2:"160", y2:"240", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, morphisms)
@@ -9260,9 +8885,6 @@ class MorphismAssemblyAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line(".arrow0", {x1:"40", y1:"60", x2:"300", y2:"60", "marker-end":"url(#arrowhead)"}),
-							H3.line(".arrow0", {x1:"40", y1:"260", x2:"140", y2:"100", "marker-end":"url(#arrowhead)"}),
-							H3.line(".arrow0", {x1:"180", y1:"100", x2:"280", y2:"260", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	html(e, diagram, ary)
@@ -9303,9 +8925,6 @@ class HomAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.path(".arrow0", {d:"M100 80 L80 80 L80 240 L 100 240"}),
-							H3.path(".arrow0", {d:"M220 80 L240 80 L240 240 L 220 240"}),
-							H3.line(".arrow0rnd", {x1:"170", y1:"240", x2:"150", y2:"260"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, elements)
@@ -9348,8 +8967,6 @@ class HomObjectAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = dual ?	H3.g([H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line(".arrow0", {x1:"30", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]) :
-							H3.g([H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}), H3.line(".arrow0", {x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9412,9 +9029,6 @@ class HomsetAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({cx:"260", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-							H3.line(".arrow0", {x1:"100", y1:"160", x2:"200", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 		this.newMorphism = new ElementTool('Morphism', '', true);
 	}
@@ -9472,13 +9086,6 @@ class DetachDomainAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = dual ?	H3.g([	H3.circle({cx:"220", cy:"200", r:"60", fill:"url(#radgrad1)"}),
-									H3.circle({cx:"280", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-									H3.line(".arrow0", {x1:"40", y1:"160", x2:"180", y2:"200", "marker-end":"url(#arrowhead)"})])
-				:
-							H3.g([	H3.circle({cx:"40", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-									H3.circle({cx:"100", cy:"200", r:"60", fill:"url(#radgrad1)"}),
-									H3.line(".arrow0", {x1:"140", y1:"200", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9529,8 +9136,6 @@ class DeleteAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line(".arrow0", {x1:"160", y1:"40", x2:"160", y2:"230", "marker-end":"url(#arrowhead)"}),
-							H3.path(".svgfilNone.svgstr1", {d:"M90,190 A120,50 0 1,0 230,190"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9602,15 +9207,6 @@ class ProjectAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = dual ?	H3.g([	H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-									H3.line(".arrow0", {x2:"110", y2:"120", x1:"240", y1:"40", "marker-end":"url(#arrowhead)"}),
-									H3.line(".arrow0", {x2:"110", y2:"160", x1:"280", y1:"160", "marker-end":"url(#arrowhead)"}),
-									H3.line(".arrow0", {x2:"110", y2:"200", x1:"240", y1:"280", "marker-end":"url(#arrowhead)"})])
-												:
-							H3.g([	H3.circle({cx:"60", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-									H3.line(".arrow0", {x1:"110", y1:"120", x2:"240", y2:"40", "marker-end":"url(#arrowhead)"}),
-									H3.line(".arrow0", {x1:"110", y1:"160", x2:"280", y2:"160", "marker-end":"url(#arrowhead)"}),
-									H3.line(".arrow0", {x1:"110", y1:"200", x2:"240", y2:"280", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, elements)
@@ -9644,6 +9240,7 @@ class ProjectAction extends Action
 		const canFlatten = ProductObject.CanFlatten(to);
 		const id = this.dual ? 'inject-domain' : 'project-codomain';
 		const obj = this.dual ? 'domain' : 'codomain';
+		/*
 		const html = H.h4(`Create ${this.dual ? 'Cof' : 'F'}actor Morphism`) +
 					(canFlatten ?
 						H.div(H.span('Remove parenthesis', 'little') +
@@ -9658,18 +9255,35 @@ class ProjectAction extends Action
 					H.span(`Click objects to remove from ${obj}`, 'smallPrint.italic') +
 					H.div('', '', id);
 		D.toolbar.help.innerHTML = html;
+		*/
+		D.RemoveChildren(D.toolbar.help);
+		const elements = [H3.h4(`Create ${this.dual ? 'Cof' : 'F'}actor Morphism`),
+					(canFlatten ?
+						H3.div(H3.span('Remove parenthesis', '.little'),
+							H3.button(`Flatten ${this.dual ? 'Coproduct' : 'Product'}`, {onclick:e => this.flatten(e, diagram, diagram.getSelected())})) : null),
+					H3.h5(`${this.dual ? 'Codomain' : 'Domain'} Factors`),
+					H3.small(`Click to place in ${obj}`),
+					H3.button(this.dual ? '0' : '*', {id:diagram.elementId(), title:`Add ${this.dual ? 'initial' : 'terminal'} object`, onclick:e => this.addFactor(to.name, -1)}),
+					ProjectAction.FactorButton(obj, to, to, [], this.dual),
+					H3.h5(`${this.dual ? 'Domain' : 'Codomain'} Factors`),
+					H3.br(),
+					H3.span(`Click objects to remove from ${obj}`, '.smallPrint.italic'),
+					H3.div({id})];
+		elements.map(elt => elt && D.toolbar.help.appendChild(elt));
 		this.codomainDiv = document.getElementById(id);
 	}
 	addFactor(root, ...indices)
 	{
-		if (this.codomainDiv.innerHTML === '')
-			this.codomainDiv.innerHTML = D.GetButton(this.dual ? 'inject' : 'project', 'edit',
-				`Cat.R.Actions.${this.dual ? 'inject' : 'project'}.action(event, Cat.R.diagram, Cat.R.diagram.selected)`, 'Create morphism');
+		if (this.codomainDiv.childElementCount === 0)
+		{
+			D.RemoveChildren(this.codomainDiv);
+			this.codomainDiv.appendChild(D.getIcon(this.dual ? 'inject' : 'project', 'edit', e => this.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Create morphism'));
+		}
 		const object = R.diagram.getElement(root);
 		const isTerminal = indices.length === 1 && indices[0] === -1;
 		const factor =  isTerminal ? R.diagram.getTerminal(this.dual) : object.getFactor(indices);
 		const sub = isTerminal ? '' : indices.join();
-		const btn = H3.button(factor.properName, {'data-indices':indices.toString(), onclick:"Cat.H.del(this)"});
+		const btn = H3.button(factor.properName, {'data-indices':indices.toString(), onclick:e => Cat.D.del(e.target)});
 		sub !== '' && btn.appendChild(H3.sub(sub));
 		this.codomainDiv.appendChild(btn);
 	}
@@ -9696,14 +9310,13 @@ class ProjectAction extends Action
 	}
 	static ObjectFactorButton(dir, root, object, index, dual)
 	{
-		const subscript = index.length > 0 ? H.sub(index.join()) : '';
-		return H.table(H.tr(H.td(
-			H.button(object.properName + subscript, '', Cat.R.diagram.elementId('project'), 'Place object',
-			`data-indices="${index.toString()}" onclick="Cat.R.Actions.${dual ? 'inject' : 'project'}.addFactor('${root.name}', ${index.toString()})"`)
-		)));
+		const subscript = index.length > 0 ? H3.sub(index.join()) : '';
+		return H3.table(H3.tr(H3.td(H3.button(object.properName + subscript, {id:Cat.R.diagram.elementId('project'), title:'Place object',
+			'data-indices':index.toString(), onclick:e => Cat.R.Actions[dual ? 'inject' : 'project'].addFactor(root.name, index.toString())}))));
 	}
 	static ProductObjectFactorButton(dir, root, object, index, dual)
 	{
+		/*
 		let header = H.tr(H.td(ProjectAction.ObjectFactorButton(dir, root, object, index, dual)), 'sidename');
 		let tbl = '';
 		object.objects.map((o, i) =>
@@ -9713,6 +9326,16 @@ class ProjectAction extends Action
 			tbl += H.td(ProjectAction.FactorButton(dir, root, o, subIndex, dual));
 		});
 		return H.table(header + H.tr(H.td(H.table(H.tr(tbl))), 'sidename'));
+		*/
+		const header = H3.tr(H3.td(ProjectAction.ObjectFactorButton(dir, root, object, index, dual)), '.sidename');
+		const cells = [];
+		object.objects.map((o, i) =>
+		{
+			const subIndex = index.slice();
+			subIndex.push(i);
+			cells.push(H3.td(ProjectAction.FactorButton(dir, root, o, subIndex, dual)));
+		});
+		return H3.table(header, H3.tr(H3.td(H3.table(H3.tr(cells))), '.sidename'));
 	}
 	static FactorButton(dir, root, object, index, dual)
 	{
@@ -9730,8 +9353,6 @@ class LambdaMorphismAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([H3.line(".arrow0", {x1:"40", y1:"40", x2:"280", y2:"280", "marker-end":"url(#arrowhead)"}),
-						H3.line(".arrow0", {x1:"40", y1:"280", x2:"140", y2:"180", "marker-end":"url(#arrowhead)"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -9799,7 +9420,7 @@ class LambdaMorphismAction extends Action
 					H3.small('Click to move to codomain: ['),
 					H3.span(...homCod, {id:'lambda-codomain'}),
 					H3.span(`, ${codomain instanceof HomObject ? codomain.baseHomDom().properName : codomain.properName}]`),
-					H3.span(D.GetButton3('lambda', 'edit3', e => Cat.R.Actions.lambda.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Create lambda morphism')));
+					H3.span(D.getIcon('lambda', 'edit', e => Cat.R.Actions.lambda.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Create lambda morphism')));
 		html.map(elt => D.toolbar.help.appendChild(elt));
 		this.domainElt = document.getElementById('lambda-domain');
 		this.codomainElt = document.getElementById('lambda-codomain');
@@ -9886,8 +9507,6 @@ class HelpAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({cx:"160", cy:"240", r:"60", fill:"url(#radgrad1)"}),
-							H3.path(".svgstr4", {d:"M110,120 C100,40 280,40 210,120 S170,170 160,200"})]);
 	}
 	action(e, diagram, ary) {}
 	hasForm(diagram, ary)	// one element
@@ -9902,7 +9521,7 @@ class HelpAction extends Action
 		const js = R.Actions.javascript;
 		const cpp = R.Actions.cpp;
 		let toolbar2 = [];
-		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.GetButton3(lang.basename, lang.icon, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
+		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.getIcon(lang.basename, lang.icon, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
 		if (toolbar2.length > 0)
 			help.appendChild(H3.div(toolbar2, '##help-toolbar2.buttonBarLeft'));
 		D.toolbar.help.appendChild(H3.div(from.help(), '##help-body'));
@@ -9911,7 +9530,8 @@ class HelpAction extends Action
 
 class LanguageAction extends Action
 {
-	constructor(diagram, language, ext, icon)
+//	constructor(diagram, language, ext, icon)
+	constructor(diagram, language, ext)
 	{
 		const args =
 		{
@@ -9929,7 +9549,6 @@ class LanguageAction extends Action
 		});
 		if (!isGUI)
 			return;
-		this.icon = icon;
 	}
 	action(e, diagram, ary)
 	{
@@ -9957,7 +9576,7 @@ class LanguageAction extends Action
 		const elt = ary[0].to;
 		let div = H3.div();
 		const help = D.toolbar.help;
-		const body = help.querySelector('#help-body');
+		const body = help.querySelector('##help-body');
 		D.RemoveChildren(body);
 		if (elt.constructor.name === 'Morphism' || elt.constructor.name === 'CatObject')
 		{
@@ -9988,7 +9607,7 @@ class LanguageAction extends Action
 		const id = `element-${this.ext}`;
 		div.appendChild(H3.div(code, '.code.padding', {id, onkeydown:e => e.stopPropagation()}));
 		if (this.isEditable(elt))
-			div.appendChild(D.GetButton3(this.name, 'edit3', e => Cat.R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
+			div.appendChild(D.getIcon(this.name, 'edit', e => Cat.R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
 		return div;
 	}
 	hasCode(elt)
@@ -10063,10 +9682,6 @@ class RunAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.animateTransform({id:"RunAction btn", attributeName:"transform", type:"rotate", from:"0 160 160", to:"360 160 160", dur:"0.5s", repeatCount:"1", begin:"indefinite"}),
-							H3.line(".arrow0", {x1:"20", y1:"80", x2:"180", y2:"80", "marker-end":"url(#arrowhead)"}),
-							H3.line(".arrow0", {x1:"80", y1:"160", x2:"240", y2:"160", "marker-end":"url(#arrowhead)"}),
-							H3.line(".arrow0", {x1:"140", y1:"240", x2:"300", y2:"240", "marker-end":"url(#arrowhead)"})]);
 		Object.defineProperties(this,
 		{
 			data:			{value:	new Map(),	writable:	true},
@@ -10080,22 +9695,28 @@ class RunAction extends Action
 		const from = ary[0];
 		const to = from.to;
 		const js = R.Actions.javascript;
-		const addDataBtn = D.GetButton('addInput', 'edit', `Cat.R.Actions.run.addInput()`, 'Add data');
+//		const addDataBtn = D.GetButton('addInput', 'edit', `Cat.R.Actions.run.addInput()`, 'Add data');
+		const addDataBtn = D.getIcon('addInput', 'edit', e => this.addInput(), 'Add data');
 		const {properName, description} = to;
-		let html = H.h3(properName) + (description !== '' ? H.p(description, 'smallPrint.italic') : '');
+//		let html = H.h3(properName) + (description !== '' ? H.p(description, 'smallPrint.italic') : '');
+		const elements = [H3.h3(properName)];
+		description !== '' && elements.push(H3.p(description, '.smallPrint.italic'));
 		let canMakeData = true;
 		const source = to instanceof NamedObject ? to.base : to;
 		if (from instanceof DiagramObject)
 		{
 			if (js.canFormat(source))
-				html += js.getInputHtml(source) + addDataBtn;
+//				html += js.getInputHtml(source) + addDataBtn;
+				elements.push(H3.span({innerHTML:js.getInputHtml(source)}), addDataBtn);
 		}
 		else	// morphism
 		{
 			const {domain, codomain} = to;
+			/*
 			const evalCode = H.h5('Evaluate the Morphism') +
 								js.getInputHtml(domain) +
 								D.GetButton('run', 'edit', `Cat.R.Actions.javascript.evaluate(event, Cat.R.diagram, '${to.name}', Cat.R.Actions.run.postResult)`, 'Evaluate inputs');
+								*/
 			if (to.constructor.name === 'Morphism' && domain instanceof FiniteObject && !js.hasCode(to))
 			{
 				/*
@@ -10115,15 +9736,21 @@ class RunAction extends Action
 			if (R.CanFormat(to) && ('data' in to))
 			{
 				const sz = domain.getSize();
+				/*
 				let rows = H.tr(H.td(H.small('Domain')) + H.td(H.small('Codomain')) + H.td('')) +
 							H.tr(H.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), 'smallBold') +
 								H.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), 'smallBold') + H.td(''));
+				*/
+				const rows = [	H3.tr(H3.td(H3.small('Domain')), H3.td(H3.small('Codomain')), H3.td()),
+								H3.tr(	H3.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), '.smallBold'),
+										H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold'), H.td())];
 				const dataRow = function(d,i)
 				{
 					if (d !== null)
 					{
-						const editDataBtn = D.GetButton('editData', 'edit', `Cat.R.Actions.run.editData(event, ${i})`, 'Set data');
-						rows += H.tr(H.td(i) + H.td(d) + H.td(editDataBtn), 'sidenavRow');
+//						const editDataBtn = D.GetButton('editData', 'edit', `Cat.R.Actions.run.editData(event, ${i})`, 'Set data');
+						const editDataBtn = D.getIcon('editData', 'edit', e => this.editData(e, i), 'Set data');
+						rows.push(H3.tr(H3.td(i), H3.td(d), H3.td(editDataBtn), '.sidenavRow'));
 					}
 				};
 				this.data = new Map(to.data);
@@ -10136,44 +9763,59 @@ class RunAction extends Action
 						dataRow(input, i);
 					}
 					// TODO domain not numeric
-					html += H.h5('Data in Morphism');
-					html += H.table(rows);
+//					html += H.h5('Data in Morphism');
+					elements.push(H3.h5('Data in Morphism'));
+//					html += H.table(rows);
+					elements.push(H.table(rows));
 					canMakeData = false;
 				}
 				else
 				{
-					html += H.h5('Add Data To Morphism');
-					rows += H.tr(H.td(js.getInputHtml(domain, null, 'dom')) + H.td(js.getInputHtml(codomain, null, 'cod')) + H.td(addDataBtn));
-					html += H.table(rows);
+//					html += H.h5('Add Data To Morphism');
+					elements.push(H3.h5('Add Data To Morphism'));
+//					rows += H.tr(H.td(js.getInputHtml(domain, null, 'dom')) + H.td(js.getInputHtml(codomain, null, 'cod')) + H.td(addDataBtn));
+					rows.push(H3.tr(H3.td(H3.span({innerHTML:js.getInputHtml(domain, null, 'dom')})), H3.td(H3.span({innerHTML:js.getInputHtml(codomain, null, 'cod')})), H3.td(addDataBtn)));
+//					html += H.table(rows);
+					elements.push(H3.table(rows));
 					canMakeData = false;
 					if ('data' in to && to.data.size > 0)
 					{
-						html += H.h5('Data in Morphism');
+//						html += H.h5('Data in Morphism');
+						elements.push(H3.h5('Data in Morphism'));
 						let rows = '';
 						to.data.forEach(dataRow);
-						html += H.table(rows);
+//						html += H.table(rows);
+						elements.push(H3.table(rows));
 					}
 					else
-						html += H.small('No data');
+//						html += H.small('No data');
+						elements.push(H3.small('No data'));
 				}
 			}
 			else if (to.isIterable())
-				html += D.GetButton('evaluate', 'edit',
-					`Cat.R.Actions.javascript.evaluateMorphism(event, Cat.R.diagram, '${to.name}', Cat.R.Actions.run.postResults)`, 'Evaluate morphism');
+//				html += D.GetButton('evaluate', 'edit',
+//					`Cat.R.Actions.javascript.evaluateMorphism(event, Cat.R.diagram, '${to.name}', Cat.R.Actions.run.postResults)`, 'Evaluate morphism');
+				elements.push(D.getIcon('evaluate', 'edit', e => this.evaluateMorphism(e, Cat.R.diagram, to.name, this.postResults), 'Evaluate morphism'));
 			else		// try to evaluate an input
-				html += evalCode;
+//				html += H.h5('Evaluate the Morphism') +
+//								js.getInputHtml(domain) +
+//								D.GetButton('run', 'edit', `Cat.R.Actions.javascript.evaluate(event, Cat.R.diagram, '${to.name}', Cat.R.Actions.run.postResult)`, 'Evaluate inputs');
+				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.evaluate(e, Cat.R.diagram, to.name, this.postResult), 'Evaluate inputs'));
 		}
 		if (canMakeData)
 		{
-			const createDataBtn = H.div(D.GetButton('createData', 'table',
-				`Cat.R.Actions.run.createData(event, Cat.R.diagram, '${from.name}')`, 'Create data morphism'), '', 'run-createDataBtn');
-			D.toolbar.help.innerHTML = html + H.div('', '', 'run-display') + createDataBtn;
+//			const createDataBtn = H.div(D.GetButton('createData', 'table', `Cat.R.Actions.run.createData(event, Cat.R.diagram, '${from.name}')`, 'Create data morphism'), '', 'run-createDataBtn');
+			const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), 'Create data morphism'), '##run-createDataBtn', {display:'none'});
+//			D.toolbar.help.innerHTML = html + H.div('', '', 'run-display') + createDataBtn;
+			elements.push(H3.div('##run-display'), createDataBtn);
+			elements.map(elt => D.toolbar.help.appendChild(elt));
 			const btn = document.getElementById('run-createDataBtn');
-			btn.style.display = 'none';
+//			btn.style.display = 'none';
 			const watcher = (mutationsList, observer) =>
 			{
 				for(const m of mutationsList)
-					btn.style = m.target.children.length > 1 ? 'block' : 'none';
+//					btn.style = m.target.children.length > 1 ? 'block' : 'none';
+					btn.style.display = m.target.children.length > 1 ? 'block' : 'none';
 				if (this.postResultFun)
 				{
 					this.postResultFun();
@@ -10185,7 +9827,11 @@ class RunAction extends Action
 			observer.observe(document.getElementById('run-display'), {childList});
 		}
 		else
-			D.toolbar.help.innerHTML = html + H.div('', '', 'run-display');
+		{
+//			D.toolbar.help.innerHTML = html + H.div('', '', 'run-display');
+			elements.push(H3.div('##run-display'));
+			elements.map(elt => D.toolbar.help.appendChild(elt));
+		}
 		this.display = document.getElementById('run-display');
 		this.data = new Map();
 	}
@@ -10291,15 +9937,6 @@ class FiniteObjectAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({cx:"80", cy:"80", r:"60", fill:"url(#radgrad2)"}),
-							H3.circle({cx:"80", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"80", cy:"240", r:"60", fill:"url(#radgrad2)"}),
-							H3.circle({cx:"160", cy:"80", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"160", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"160", cy:"240", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"240", cy:"80", r:"60", fill:"url(#radgrad2)"}),
-							H3.circle({cx:"240", cy:"160", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"240", cy:"240", r:"60", fill:"url(#radgrad2)"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -10338,12 +9975,21 @@ class FiniteObjectAction extends Action
 	{
 		const from = ary[0];
 		const to = from.to;
+		/*
 		let html = H.h4('Finite Object');
 		html += (to.constructor.name === 'CatObject' ? H.span('Convert generic object to a finite object.', 'smallPrint.italic') : H.span('Finite object', 'smallPrint.italic')) +
 					H.table(H.tr(H.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')), 'sidenavRow')) +
 					H.span('Leave size blank to indicate finite of unknown size', 'smallPrint.italic') +
 					D.GetButton('finiteObject', 'edit', 'Cat.R.Actions.finiteObject.action(event, Cat.R.diagram, Cat.R.diagram.selected)', 'Finite object', D.default.button.tiny);
 		D.toolbar.help.innerHTML = html;
+		*/
+		const elements = [H3.h4('Finite Object')];
+		elements.push(to.constructor.name === 'CatObject' ? H3.span('Convert generic object to a finite object.', '.smallPrint.italic') : H3.span('Finite object', '.smallPrint.italic'),
+						H3.table(H3.tr(H3.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')), '.sidenavRow')),
+						H3.span('Leave size blank to indicate finite of unknown size', '.smallPrint.italic'), 
+						D.getIcon('finiteObject', 'edit', e => this.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Finite object', D.default.button.tiny));
+//		D.toolbar.help.innerHTML = html;
+		elements.map(elt => D.toolbar.help.appendChild(elt));
 		this.sizeElt = document.getElementById('finite-new-size');
 		U.SetInputFilter(this.sizeElt, function(v)
 		{
@@ -10383,15 +10029,6 @@ class EvaluateAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({cx:"80", cy:"80", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"160", cy:"80", r:"60", fill:"url(#radgrad1)"}),
-							H3.polyline(".svgstr3", {points:"50,40 30,40 30,120 50,120"}),
-							H3.polyline(".svgstr3", {points:"190,40 210,40 210,120 190,120"}),
-							H3.circle({cx:"260", cy:"80", r:"60", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"160", cy:"280", r:"60", fill:"url(#radgrad1)"}),
-							H3.path(".svgfilNone.svgstrThinGray", {d:"M80 100 A40 40 1 0 0 260 100"}),
-							H3.line(".svgstrThinGray", {x1:"160", y1:"100", x2:"160", y2:"170"}),
-							H3.line(".svgstrThinGray", {x1:"160", y1:"210", x2:"160", y2:"250"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -10417,13 +10054,6 @@ class DistributeAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle(".svgstr4", {cx:"80", cy:"80", r:"60"}),
-							H3.line(".arrow0", {x1:"38", y1:"38", x2:"122", y2:"122"}),
-							H3.line(".arrow0", {x1:"38", y1:"122", x2:"122", y2:"38"}),
-							H3.line(".arrow0", {x1:"240", y1:"80", x2:"80", y2:"240"}),
-							H3.circle(".svgstr4", {cx:"240", cy:"240", r:"60"}),
-							H3.line(".arrow0", {x1:"198", y1:"198", x2:"282", y2:"282"}),
-							H3.line(".arrow0", {x1:"282", y1:"198", x2:"198", y2:"282"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -10459,10 +10089,6 @@ class AlignHorizontalAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({cx:"80", cy:"160", r:"80", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"240", cy:"160", r:"80", fill:"url(#radgrad1)"}),
-							H3.line(".arrow6", {x1:"0", y1:"160", x2:"320", y2:"160"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -10518,10 +10144,6 @@ class AlignVerticalAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.circle({cx:"160", cy:"80", r:"80", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"160", cy:"160", r:"80", fill:"url(#radgrad1)"}),
-							H3.circle({cx:"160", cy:"240", r:"80", fill:"url(#radgrad1)"}),
-							H3.line(".arrow6", {x1:"160", y1:"0", x2:"160", y2:"320"})]);
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -10578,9 +10200,6 @@ class TensorAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line(".arrow0", {x1:"103", y1:"216", x2:"216", y2:"103"}),
-							H3.line(".arrow0", {x1:"216", y1:"216", x2:"103", y2:"103"}),
-							H3.circle({cx:"160", cy:"160", r:"80", class:"svgfilNone svgstr1"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -10619,7 +10238,6 @@ class AssertionAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.path(".svgstr4", {d:D.GetArc(160, 160, 100, 45, 360), "marker-end":"url(#arrowhead)"});
 		D.ReplayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -10688,7 +10306,6 @@ class RecursionAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.path(".svgstr4", {d:"M40,160 C40,0 280,0 280,160 C280,280 100,280 80,160 C80,60 220,60 220,160 L220,180", "marker-end":"url(#arrowhead)"});
 	}
 	action(e, diagram, ary)
 	{
@@ -10715,10 +10332,6 @@ class GraphAction extends Action
 		super(diagram, args);
 		if (!isGUI)
 			return;
-		this.icon = H3.g([	H3.line(".arrow0", {x1:"60", y1:"40", x2:"260", y2:"200"}),
-							H3.path(".svgstr4", {d:"M60,120 C120,120 120,200 60,200"}),
-							H3.path(".svgstr4", {d:"M260,40 C200,40 200,120 260,120"}),
-							H3.line(".arrow0", {x1:"60", y1:"260", x2:"260", y2:"260"})]);
 	}
 	action(e, diagram, ary)
 	{
@@ -14763,7 +14376,7 @@ class Diagram extends Functor
 		let isIt = true;
 		objects.map(o => o.assyGraph.noTag(tag) && inputSet.add(o));
 		let radius = 100;
-		let fill = '#F007';
+		let fill = '##F007';
 		function addBall(o)
 		{
 			if (o instanceof DiagramObject)
@@ -15408,7 +15021,7 @@ const Cat =
 	R,
 	D,
 	U,
-	H,
+//	H,
 	Action,
 	Assertion,
 	Category,
