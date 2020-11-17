@@ -867,11 +867,6 @@ description
 	stroke-width:	20px;
 }
 
-.shadow
-{
-	box-shadow:		8px 8px 4px 2px #bbbb;
-}
-
 .popup
 {
 	position:		relative;
@@ -905,11 +900,6 @@ description
 	background-color:	#ddd;
 }
 
-.svgShadow
-{
-	filter: drop-shadow( 4px 4px 3px rgba(0, 0, 0, .7));
-}
-
 .iconSet
 {
 	width:				0px;
@@ -923,4 +913,17 @@ description
 	width:				0.32in;
 	height:				0.32in;
 	fill-opacity:		1;
+}
+
+.diagramBackground
+{
+	fill:				#fff;
+	fill-opacity:		1;
+	filter:				url(#diagramShadow);
+	stroke:				#aaaa;
+}
+
+.catalogTop
+{
+	background-color:	white;
 }
