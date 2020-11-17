@@ -44,6 +44,8 @@ html(lang="en")
 						line.arrow0(x1="120", y1="180", x2="280", y2="180", marker-end="url(#arrowhead)")
 						line.arrow0(x1="120", y1="180", x2="120", y2="40", marker-end="url(#arrowhead)")
 						line.arrow0(x1="120", y1="180", x2="40", y2="280", marker-end="url(#arrowhead)")
+					filter#diagramShadow
+						feDropShadow(dx="4", dy="4", stdDeviation="0.2", flood-color="#bbbb")
 				marker#arrowhead(viewBox="6 12 60 90", refX="50", refY="50", markerUnits="strokeWidth", markerWidth="6", markerHeight="5", orient="auto")
 					path.svgstr3(d="M10 20 L60 50 L10 80")
 				marker#arrowheadRev(viewBox="6 12 60 90", refX="15", refY="50", markerUnits="strokeWidth", markerWidth="6", markerHeight="5", orient="auto")
