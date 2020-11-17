@@ -654,6 +654,69 @@ class U
 		const p3 = cp3.scale(t**3);
 		return p0.add(p1).add(p2).add(p3);
 	}
+	// TODO what about dedist?
+	static prettifyCommand(cmd)
+	{
+		const fn = function(v)
+		{
+			let line = '';
+			if (v === null)
+				line += 'null';
+			else if (Array.isArray(v))
+			{
+				line += '[';
+				v.map((w, i) =>
+				{
+					line += fn(w);
+					if (i < v.length -1)
+						line += ', ';
+				});
+				line += ']';
+			}
+			else if (v instanceof Date)
+				line += v.toString();
+			else if (v instanceof Map)
+			{
+				line += '{';
+				const size = v.size;
+				let i = 0;
+				v.forEach(function(p, k)
+				{
+					line += `${k}:${fn(p)}`;
+					if (i < size -1)
+						line += ', ';
+					++i;
+				});
+				line += '}';
+			}
+			else if (typeof v === 'object')
+			{
+				line += '{';
+				const keys = Object.keys(v);
+				keys.map((k, i) =>
+				{
+					line += `${k}:${fn(v[k])}`;
+					if (i < keys.length -1)
+						line += ', ';
+				});
+				line += '}';
+			}
+			else
+				line += v;
+			return line;
+		};
+		const args = U.Clone(cmd);
+		let line = args.command + ' ';
+		delete args.command;
+		const keys = Object.keys(args);
+		keys.map((k, i) =>
+		{
+			line += `${k}:${fn(cmd[k])}`;
+			if (i < keys.length -1)
+				line += ' ';
+		});
+		return line;
+	}
 }
 Object.defineProperties(U,
 {
@@ -1130,7 +1193,7 @@ class R
 			R.EmitCATEvent('default', R.diagram);
 			return fn ? fn(R.diagram) : null;
 		}
-		if (isGUI)
+		if (isGUI && name)
 		{
 			D.Busy();
 //			R.diagram && R.diagram.hide();		// hide current diagram
@@ -1154,7 +1217,7 @@ class R
 		if (isGUI)
 		{
 			diagram.makeSVG();
-			D.diagramSVG.appendChild(diagram.svgRoot);
+			D.default.fullscreen && D.diagramSVG.appendChild(diagram.svgRoot);
 		}
 		R.diagram = diagram;
 		D.NotBusy();
@@ -2448,7 +2511,7 @@ class ElementTool
 			R.SetDiagramInfo(diagram);
 			diagram.makeSVG();
 			diagram.home();
-			diagram.svgRoot.classList.remove('hidden');
+//			diagram.svgRoot.classList.remove('hidden');
 			this.update();
 			R.EmitCATEvent('new', diagram);
 			R.SelectDiagram(diagram.name);
@@ -3282,6 +3345,9 @@ class D
 		document.onwheel = e =>
 		{
 //			if (e.target.id === 'topSVG' || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement')
+			// TODO R.diagram is null => zoom all diagrams
+			if (!R.diagram)
+				return;
 			if (e.target.id === R.diagram.elementId('background') || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement')
 			{
 				D.toolbar.hide();
@@ -3306,9 +3372,7 @@ class D
 				D.updateLastViewedDiagrams(diagram);
 				R.SaveView(diagram);
 				if (args.mode === 'contain')
-				{
-					diagram.updateBackground();
-				}
+					R.Diagrams.forEach(d => d.updateBackground());
 			}
 		});
 	}
@@ -3510,9 +3574,9 @@ class D
 		const notUs = diagram !== R.diagram;
 		if (notUs)	// for booting
 		{
-			if (R.diagram)
-				R.diagram.svgRoot.classList.add('hidden');
-			diagram.svgRoot.classList.remove('hidden');
+//			if (R.diagram)
+//				R.diagram.svgRoot.classList.add('hidden');
+//			diagram.svgRoot.classList.remove('hidden');
 		}
 		const svg = diagram.svgRoot;
 		const copy = svg.cloneNode(true);
@@ -3555,9 +3619,9 @@ class D
 		img.src = url;
 		if (notUs)
 		{
-			if (R.diagram)
-				R.diagram.svgRoot.classList.remove('hidden');
-			diagram.svgRoot.classList.add('hidden');
+//			if (R.diagram)
+//				R.diagram.svgRoot.classList.remove('hidden');
+//			diagram.svgRoot.classList.add('hidden');
 		}
 	}
 	static OnEnter(e, fn, that = null)
@@ -4060,7 +4124,8 @@ Object.defineProperties(D,
 				imageHeight:	225,
 				margin:			20,
 			},
-			font:		{height:24},
+			font:			{height:24},
+			fullscreen:		true,
 			fuse:
 			{
 				fillStyle:	'#3f3a',
@@ -4147,7 +4212,7 @@ Object.defineProperties(D,
 			},
 			Space(e)
 			{
-				R.diagram.svgTranslate.classList.remove('trans025s');
+				R.diagram && R.diagram.svgTranslate.classList.remove('trans025s');
 				D.tool = 'pan';
 				D.drag = false;
 				D.setCursor();
@@ -4242,7 +4307,7 @@ Object.defineProperties(D,
 				else if (D.view === 'diagram')
 				{
 					let isOpen = false;
-					Object.values(D.panels).forEach(pnl => isOpen = isOpen || pnl.width > 0);
+					Object.values(D.panels.panels).forEach(pnl => isOpen = isOpen || (pnl.elt.style.width != '0px' && pnl.elt.style.width !== ''));
 					if (isOpen)
 					{
 						D.panels.closeAll();
@@ -4253,7 +4318,7 @@ Object.defineProperties(D,
 						D.toolbar.hide();
 						return;
 					}
-					R.diagram.viewport.fullscreen = !R.diagram.viewport.fullscreen;
+					D.default.fullscreen = !D.default.fullscreen;
 					R.EmitDiagramEvent(R.diagram, 'view', 'contain');
 				}
 				D.DeleteSelectRectangle();
@@ -4296,7 +4361,7 @@ Object.defineProperties(D,
 			},
 			Space(e)
 			{
-				R.diagram.svgTranslate.classList.add('trans025s');
+				R.diagram && R.diagram.svgTranslate.classList.add('trans025s');
 				D.tool = 'select';
 				D.setCursor();
 			},
@@ -5376,12 +5441,12 @@ class LogSection extends Section
 	log(args)
 	{
 		const elt = document.createElement('p');
-		this.logElt.appendChild(H3.p(R.diagram.prettifyCommand(args)));
+		this.logElt.appendChild(H3.p(U.prettifyCommand(args)));
 	}
 	antilog(args)	// TODO
 	{
 		const elt = document.createElement('p');
-		this.logElt.appendChild(H3.p(R.diagram.prettifyCommand(args)));
+		this.logElt.appendChild(H3.p(U.prettifyCommand(args)));
 	}
 	replayCommand(e, ndx)
 	{
@@ -5641,6 +5706,8 @@ class DiagramPanel extends Panel
 		{
 			const args = e.detail;
 			const diagram = R.GetDiagramInfo(args.diagram.name);
+			if (!diagram)
+				return;
 			switch(args.command)
 			{
 				case 'default':
@@ -12940,7 +13007,8 @@ class Diagram extends Functor
 			svgBase:					{value:null,		writable:true},
 			timestamp:					{value:U.GetArg(args, 'timestamp', Date.now()),	writable:true},
 			user:						{value:args.user,	writable:false},
-			viewport:					{value:{x:0, y:0, scale:1.0, fullscreen:true, width:D.Width(), height:D.Height()},	writable:true},
+//			viewport:					{value:{x:0, y:0, scale:1.0, fullscreen:true, width:D.Width(), height:D.Height()},	writable:true},
+			viewport:					{value:{x:0, y:0, scale:1.0, width:D.Width(), height:D.Height()},	writable:true},
 		});
 		if ('references' in args)
 			args.references.map(r => this.addReference(r, false));
@@ -12948,9 +13016,8 @@ class Diagram extends Functor
 		if ('viewport' in nuArgs)
 		{
 			this.viewport = nuArgs.viewport;
-			if (!('fullscreen' in nuArgs))
+			if (!('width' in nuArgs))
 			{
-				this.viewport.fullscreen = true;
 				this.viewport.width = D.Width();
 				this.viewport.height = D.Height();
 			}
@@ -13420,14 +13487,33 @@ class Diagram extends Functor
 //			this.svgRoot = H3.g(arrow, arrowRev);
 			this.svgRoot = H3.g();
 //			this.svgRoot.classList.add('hidden');
-			this.svgRoot.appendChild(H3.rect(`##${this.elementId('background')}.diagramBackground`, {x:0, y:0, width:D.Width(), height:D.Height()}));
+			const bkgnd = H3.rect(`##${this.elementId('background')}.diagramBackground`,
+//				{x:0, y:0, width:D.Width(), height:D.Height(), onmouseenter:_ => R.SelectDiagram(this), onmouseleave:_ => R.SelectDiagram(null)});
+				{x:0, y:0, width:D.Width(), height:D.Height(), onmouseenter:_ => R.SelectDiagram(this)});
+			bkgnd.onmouseenter = e =>
+			{
+				if (R.diagram != this)
+					R.SelectDiagram(this);
+//				else if (e.to.classList.has('diagramBackground'))
+//				debugger;
+			};
+			bkgnd.onmouseleave = e =>
+			{
+				if (e.target === null)
+					R.SelectDiagram(null);
+//				else if (e.to.classList.has('diagramBackground'))
+//				debugger;
+			};
+			this.svgRoot.appendChild(bkgnd);
 			D.diagramSVG.appendChild(this.svgRoot);
 			this.svgRoot.id = this.elementId('root');
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:this.elementId('T')}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.domain.elements.forEach(elt => this.addSVG(elt));
-			this.svgRoot.appendChild(H3.div(`##${this.elementId('header')}`));
+//			this.svgRoot.appendChild(H3.div(`##${this.elementId('header')}`));
+//			this.svgRoot.appendChild(H3.rect(`##${this.elementId('foreground')}.diagramForeground`,
+//				{x:0, y:0, width:D.Width(), height:D.Height(), onmouseenter:_ => R.SelectDiagram(this), onmouseleave:_ => R.SelectDiagram(null)}));
 		}
 		this.domain.cells.forEach(d => this.addSVG(d));
 	}
@@ -13890,73 +13976,11 @@ class Diagram extends Functor
 	{
 		return this.get('Distribute', {domain, side});
 	}
-	// TODO what about dedist?
-	prettifyCommand(cmd)
-	{
-		const fn = function(v)
-		{
-			let line = '';
-			if (v === null)
-				line += 'null';
-			else if (Array.isArray(v))
-			{
-				line += '[';
-				v.map((w, i) =>
-				{
-					line += fn(w);
-					if (i < v.length -1)
-						line += ', ';
-				});
-				line += ']';
-			}
-			else if (v instanceof Date)
-				line += v.toString();
-			else if (v instanceof Map)
-			{
-				line += '{';
-				const size = v.size;
-				let i = 0;
-				v.forEach(function(p, k)
-				{
-					line += `${k}:${fn(p)}`;
-					if (i < size -1)
-						line += ', ';
-					++i;
-				});
-				line += '}';
-			}
-			else if (typeof v === 'object')
-			{
-				line += '{';
-				const keys = Object.keys(v);
-				keys.map((k, i) =>
-				{
-					line += `${k}:${fn(v[k])}`;
-					if (i < keys.length -1)
-						line += ', ';
-				});
-				line += '}';
-			}
-			else
-				line += v;
-			return line;
-		};
-		const args = U.Clone(cmd);
-		let line = args.command + ' ';
-		delete args.command;
-		const keys = Object.keys(args);
-		keys.map((k, i) =>
-		{
-			line += `${k}:${fn(cmd[k])}`;
-			if (i < keys.length -1)
-				line += ' ';
-		});
-		return line;
-	}
 	log(cmd)
 	{
 		cmd.date = new Date();
 		this._log.push(cmd);
+		cmd.diagram = this;
 		D.ttyPanel.logSection.log(cmd);
 		this.saveLog();
 	}
@@ -14080,7 +14104,7 @@ class Diagram extends Functor
 		oldport.name = this.name;
 		this.viewSaveTimer = setTimeout(_ =>
 		{
-			if (oldport.name === this.name && (oldport.x !== this.viewport.x || oldport.y !== this.viewport.y || oldport.scale !== this.viewport.scale))
+			if (R.diagram && oldport.name === this.name && (oldport.x !== this.viewport.x || oldport.y !== this.viewport.y || oldport.scale !== this.viewport.scale))
 				this.logViewCommand();
 		}, D.default.saveInterval);
 	}
@@ -14727,8 +14751,8 @@ console.log('formMorphism', {morphism});
 			this.replay(e, this._antilog.pop());
 		}
 	}
-	hide() { this.svgRoot.classList.add('hidden'); }
-	show() { this.svgRoot.classList.remove('hidden'); }
+//	hide() { this.svgRoot.classList.add('hidden'); }
+//	show() { this.svgRoot.classList.remove('hidden'); }
 	postProcess()
 	{
 		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());
@@ -14905,23 +14929,26 @@ console.log('formMorphism', {morphism});
 	}
 	updateBackground()
 	{
-		const bkgnd = document.getElementById(this.elementId('background'));
-		if (this.viewport.fullscreen)
+		if (this.svgRoot)
 		{
-			bkgnd.setAttribute('x', '0px');
-			bkgnd.setAttribute('y', '0px');
-			bkgnd.setAttribute('width', `${D.Width()}px`);
-			bkgnd.setAttribute('height', `${D.Height()}px`);
-		}
-		else
-		{
-			const group = this.svgRoot.querySelector('#' + this.elementId('T'));
-			const bbox = group.getBBox();
-			const scale = this.viewport.scale;
-			bkgnd.setAttribute('x', `${scale * bbox.x + this.viewport.x - D.default.diagram.margin}px`);
-			bkgnd.setAttribute('y', `${scale * bbox.y + this.viewport.y - D.default.diagram.margin}px`);
-			bkgnd.setAttribute('width', `${scale * bbox.width + 2 * D.default.diagram.margin}px`);
-			bkgnd.setAttribute('height', `${scale * bbox.height + 2 * D.default.diagram.margin}px`);
+			const bkgnd = document.getElementById(this.elementId('background'));
+			if (D.default.fullscreen)
+			{
+				bkgnd.setAttribute('x', '0px');
+				bkgnd.setAttribute('y', '0px');
+				bkgnd.setAttribute('width', `${D.Width()}px`);
+				bkgnd.setAttribute('height', `${D.Height()}px`);
+			}
+			else
+			{
+				const group = this.svgRoot.querySelector('#' + this.elementId('T'));
+				const bbox = group.getBBox();
+				const scale = this.viewport.scale;
+				bkgnd.setAttribute('x', `${scale * bbox.x + this.viewport.x - D.default.diagram.margin}px`);
+				bkgnd.setAttribute('y', `${scale * bbox.y + this.viewport.y - D.default.diagram.margin}px`);
+				bkgnd.setAttribute('width', `${scale * bbox.width + 2 * D.default.diagram.margin}px`);
+				bkgnd.setAttribute('height', `${scale * bbox.height + 2 * D.default.diagram.margin}px`);
+			}
 		}
 	}
 	static Codename(args)
