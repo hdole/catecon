@@ -992,6 +992,7 @@ class R
 		isGUI && D.catalog.show(D.view === 'catalog');
 		D.Busy();
 		R.ReadDefaults();
+		isGUI && D.readLastViewedDiagrams();
 		R.SetupWorkers();
 		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
 		R.cloud = new Amazon();
@@ -1008,7 +1009,6 @@ class R
 		R.sync = true;
 		const loader = function()
 		{ 
-			isGUI && D.readLastViewedDiagrams();
 			R.diagram = null;
 			switch(D.view)
 			{
@@ -1208,6 +1208,7 @@ class R
 			if (!diagram)
 			{
 				fn && fn(diagram);
+				R.EmitCATEvent('default', null);
 				return;
 			}
 			didit = true;
@@ -1351,7 +1352,7 @@ class R
 	{
 		if (!isGUI)
 			return;
-		R.default.showEvents && console.log('emit DIAGRAM event', diagram.name, {command, name});
+		R.default.showEvents && console.log('emit DIAGRAM event', {diagram, command, name});
 		return window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitObjectEvent(diagram, command, element, extra = {})	// like an object changed
@@ -1474,7 +1475,7 @@ class R
 	}
 	static SaveDefaults()
 	{
-		U.writefile('defaults.json', JSON.stringify(R.default));
+		U.writefile('defaults.json', JSON.stringify({R:R.default, D:D.default}));
 	}
 	static ReadDefaults()
 	{
@@ -1489,7 +1490,10 @@ class R
 		}
 		const defaults = contents ? JSON.parse(contents) : null;
 		if (defaults)
-			Object.keys(defaults).map(k => R.default[k] = defaults[k]);		// merge the defaults
+		{
+			Object.keys(defaults.R).map(k => R.default[k] = defaults.R[k]);		// merge the R defaults
+			isGUI && Object.keys(defaults.D).map(k => D.default[k] = defaults.D[k]);		// merge the D defaults
+		}
 	}
 	static login(e)
 	{
@@ -1609,7 +1613,7 @@ Object.defineProperties(R,
 			category:		'hdole/PFS',
 			diagram:		'',
 			debug:			true,
-			showEvents:		false,
+			showEvents:		true,
 			sifu:			'catecon.net',
 		},
 		writable:	true,
@@ -2937,7 +2941,7 @@ class D
 				D.DrawSelectRect();
 			else if (D.tool === 'pan')
 			{
-				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale);
+//				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale);
 				D.DeleteSelectRectangle();
 			}
 			else
@@ -3241,24 +3245,25 @@ class D
 				return;
 			const args = e.detail;
 			const diagram = args.diagram;
-			switch(args.command)
-			{
-				case 'addReference':
-				case 'removeReference':
-					R.LoadDiagramEquivalences(diagram);
-					diagram.makeCells();
-					D.Autosave(args.diagram);
-					break;
-				case 'update':
-					D.Autosave(args.diagram);
-					break;
-				case 'makeCells':
-					diagram.makeCells();
-					break;
-				case 'view':
-					diagram.updateBackground();
-					break;
-			}
+			if (diagram)
+				switch(args.command)
+				{
+					case 'addReference':
+					case 'removeReference':
+						R.LoadDiagramEquivalences(diagram);
+						diagram.makeCells();
+						D.Autosave(args.diagram);
+						break;
+					case 'update':
+						D.Autosave(args.diagram);
+						break;
+					case 'makeCells':
+						diagram.makeCells();
+						break;
+					case 'view':
+						diagram.updateBackground();
+						break;
+				}
 			D.Autohide(e);
 		});
 		window.addEventListener('CAT', e =>
@@ -3274,21 +3279,30 @@ class D
 				case 'default':
 					if (isGUI)
 					{
-						if(D.lastViewedDiagrams.has(R.diagram.name))
+						/*
+						if(D.lastViewedDiagrams.has(diagram.name))
 						{
-							const viewport = D.lastViewedDiagrams.get(R.diagram.name);
-							R.diagram.setView(viewport.x, viewport.y, viewport.scale, false);
+							const viewport = D.lastViewedDiagrams.get(diagram.name);
+							diagram.setView(viewport.x, viewport.y, viewport.scale, false);
 						}
-						D.updateLastViewedDiagrams(R.diagram);
+						*/
+						if (diagram)
+						{
+							diagram.updateFromLastView();
+							D.updateLastViewedDiagrams(diagram);
+						}
 					}
-					R.LoadDiagramEquivalences(diagram);
-					diagram.makeCells();
-					if (R.initialized)
+					if (diagram)
 					{
-						R.default.diagram = diagram.name;
-						R.SaveDefaults();
+						R.LoadDiagramEquivalences(diagram);
+						diagram.makeCells();
+						if (R.initialized)
+						{
+							R.default.diagram = diagram.name;
+							R.SaveDefaults();
+						}
+						isGUI && R.EmitViewEvent('diagram');
 					}
-					isGUI && R.EmitViewEvent('diagram');
 					break;
 				case 'download':
 					R.SaveLocal(diagram);
@@ -4319,6 +4333,16 @@ Object.defineProperties(D,
 						return;
 					}
 					D.default.fullscreen = !D.default.fullscreen;
+					R.SaveDefaults();
+					let dgrmSvg = D.diagramSVG.firstChild;
+					do
+					{
+						const dgrm = R.$CAT.getElement(dgrmSvg.dataset.name);
+						dgrm && R.EmitDiagramEvent(R.$CAT.getElement(dgrmSvg.dataset.name), 'view', 'contain');
+						if (!dgrm)
+							console.log('missed', dgrmSvg.dataset.name);
+					}
+					while((dgrmSvg = dgrmSvg.nextSibling));
 					R.EmitDiagramEvent(R.diagram, 'view', 'contain');
 				}
 				D.DeleteSelectRectangle();
@@ -5422,7 +5446,7 @@ class LogSection extends Section
 	{
 		if (super.update())
 		{
-			if (this.diagram !== R.diagram)
+			if (this.diagram && this.diagram !== R.diagram)
 			{
 				this.diagram = R.diagram;
 				this.logElt && this.section.removeChild(this.logElt);
@@ -5441,7 +5465,7 @@ class LogSection extends Section
 	log(args)
 	{
 		const elt = document.createElement('p');
-		this.logElt.appendChild(H3.p(U.prettifyCommand(args)));
+		this.logElt && this.logElt.appendChild(H3.p(U.prettifyCommand(args)));
 	}
 	antilog(args)	// TODO
 	{
@@ -5631,7 +5655,7 @@ class AssertionSection extends Section
 					break;
 			}
 		});
-		const refresh = e => R.diagram === e.detail.diagram && this.refresh(R.diagram);
+		const refresh = e => R.diagram && R.diagram === e.detail.diagram && this.refresh(R.diagram);
 		window.addEventListener('Login', e => R.diagram && this.refresh(R.diagram));
 		window.addEventListener('CAT', refresh);
 		window.addEventListener('Assertion', refresh);
@@ -5705,6 +5729,8 @@ class DiagramPanel extends Panel
 		window.addEventListener('CAT', e =>
 		{
 			const args = e.detail;
+			if (!args.diagram)
+				return;
 			const diagram = R.GetDiagramInfo(args.diagram.name);
 			if (!diagram)
 				return;
@@ -6071,6 +6097,8 @@ class DiagramElementSection extends ElementSection
 		window.addEventListener('CAT', e =>
 		{
 			const args = e.detail;
+			if (!args.diagram)
+				return;
 			const diagram = R.GetDiagramInfo(args.diagram.name);
 			if (args.command === 'default')
 			{
@@ -6129,7 +6157,7 @@ class ReferenceElementSection extends ElementSection
 		super(title, parent, id, tip, type);
 		const addRefs = diagram =>
 		{
-			diagram.allReferences.forEach((cnt, name) =>
+			diagram && diagram.allReferences.forEach((cnt, name) =>
 			{
 				const ref = R.$CAT.getElement(name);
 				ref[this.type === 'Object' ? 'forEachObject' : 'forEachMorphism'](o => this.add(o));
@@ -6228,10 +6256,15 @@ class SettingsPanel extends Panel
 		const gridChkbox = H3.input({type:"checkbox", onchange:e => {Cat.D.gridding = !D.gridding; R.SaveDefaults();}});
 		if (D.gridding)
 			gridChkbox.checked = true;
+		const showEventsChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.showEvents = !Cat.R.default.showEvents; Cat.R.SaveDefaults();}});
+		if (R.default.showEvents)
+			showEventsChkbox.checked = true;
 		const settings = [	H3.tr(	H3.td(gridChkbox),
 									H3.td('Snap objects to a grid.', '.left'), '.sidenavRow'),
 							H3.tr(	H3.td(debugChkbox),
-									H3.td('Debug', '.left'), '.sidenavRow')];
+									H3.td('Debug', '.left'), '.sidenavRow'),
+							H3.tr(	H3.td(showEventsChkbox),
+									H3.td('Show events on console', '.left'), '.sidenavRow')];
 		const elts =
 		[
 			H3.table(H3.tr(H3.td(this.closeBtnCell(), '.buttonBarLeft'))),
@@ -13007,7 +13040,6 @@ class Diagram extends Functor
 			svgBase:					{value:null,		writable:true},
 			timestamp:					{value:U.GetArg(args, 'timestamp', Date.now()),	writable:true},
 			user:						{value:args.user,	writable:false},
-//			viewport:					{value:{x:0, y:0, scale:1.0, fullscreen:true, width:D.Width(), height:D.Height()},	writable:true},
 			viewport:					{value:{x:0, y:0, scale:1.0, width:D.Width(), height:D.Height()},	writable:true},
 		});
 		if ('references' in args)
@@ -13030,6 +13062,7 @@ class Diagram extends Functor
 		R.SetDiagramInfo(this);
 		this.postProcess();
 		diagram && this.constructor.name === 'Diagram' && R.EmitCATEvent(diagram, 'new', this);
+		isGUI && this.updateFromLastView();
 	}
 	addElement(elt)
 	{
@@ -13116,10 +13149,6 @@ class Diagram extends Functor
 	home(log = true)
 	{
 		this.setViewport(this.svgBase.getBBox(), log);
-	}
-	initializeView()
-	{
-		this.viewport.orig = this.getViewport();
 	}
 	getObject(name)
 	{
@@ -13479,41 +13508,41 @@ class Diagram extends Functor
 	{
 		if (!this.svgRoot)
 		{
-//			this.svgRoot = document.getElementById(this.elementId('root'));
-//			const arrow = H3.marker('##arrowhead', {viewBox:"6 12 60 90", refX:"50", refY:"50", markerUnits:"strokeWidth", markerWidth:"6", markerHeight:"5", orient:"auto"},
-//							H3.path('.svgstr3', {d:"M10 20 L60 50 L10 80"}));
-//			const arrowRev = H3.marker('##arrowheadRev', {viewBox:"6 12 60 90", refX:"15", refY:"50", markerUnits:"strokeWidth", markerWidth:"6", markerHeight:"5", orient:"auto"},
-//								H3.path('.svgstr3', {d:"M60 20 L10 50 L60 80"}));
-//			this.svgRoot = H3.g(arrow, arrowRev);
-			this.svgRoot = H3.g();
-//			this.svgRoot.classList.add('hidden');
+			this.svgRoot = H3.g({id:this.elementId('root'), 'data-name':this.name});
 			const bkgnd = H3.rect(`##${this.elementId('background')}.diagramBackground`,
-//				{x:0, y:0, width:D.Width(), height:D.Height(), onmouseenter:_ => R.SelectDiagram(this), onmouseleave:_ => R.SelectDiagram(null)});
 				{x:0, y:0, width:D.Width(), height:D.Height(), onmouseenter:_ => R.SelectDiagram(this)});
 			bkgnd.onmouseenter = e =>
 			{
 				if (R.diagram != this)
 					R.SelectDiagram(this);
-//				else if (e.to.classList.has('diagramBackground'))
-//				debugger;
 			};
 			bkgnd.onmouseleave = e =>
 			{
-				if (e.target === null)
+				if (!e.toElement || e.toElement.id === 'topSVG')
 					R.SelectDiagram(null);
-//				else if (e.to.classList.has('diagramBackground'))
-//				debugger;
+			};
+			let delta = null;
+			const onMouseMove = e => this.setView(e.clientX - delta.x, e.clientY - delta.y, this.viewport.scale);
+			bkgnd.onmouseup = e =>
+			{
+				document.removeEventListener('mousemove', onMouseMove);
+				bkgnd.nextSibling.classList.add('trans025s');
+			};
+			bkgnd.onmousedown = e =>
+			{
+				const click = new D2(e.clientX, e.clientY);
+				const loc = new D2(this.viewport);
+				delta = click.subtract(loc);
+				document.addEventListener('mousemove', onMouseMove);
+				bkgnd.nextSibling.classList.remove('trans025s');
+				e.preventDefault();
 			};
 			this.svgRoot.appendChild(bkgnd);
 			D.diagramSVG.appendChild(this.svgRoot);
-			this.svgRoot.id = this.elementId('root');
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:this.elementId('T')}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.domain.elements.forEach(elt => this.addSVG(elt));
-//			this.svgRoot.appendChild(H3.div(`##${this.elementId('header')}`));
-//			this.svgRoot.appendChild(H3.rect(`##${this.elementId('foreground')}.diagramForeground`,
-//				{x:0, y:0, width:D.Width(), height:D.Height(), onmouseenter:_ => R.SelectDiagram(this), onmouseleave:_ => R.SelectDiagram(null)}));
 		}
 		this.domain.cells.forEach(d => this.addSVG(d));
 	}
@@ -14838,7 +14867,7 @@ console.log('formMorphism', {morphism});
 		const locations = [];
 		const grid = D.default.layoutGrid * D.default.majorGridMult;
 		let hasTitle = false;
-		let tx = 2 * grid;
+		let tx = 1 * grid;
 		let ty = 1 * grid;
 		this.forEachText(txt =>
 		{
@@ -14949,6 +14978,14 @@ console.log('formMorphism', {morphism});
 				bkgnd.setAttribute('width', `${scale * bbox.width + 2 * D.default.diagram.margin}px`);
 				bkgnd.setAttribute('height', `${scale * bbox.height + 2 * D.default.diagram.margin}px`);
 			}
+		}
+	}
+	updateFromLastView()
+	{
+		if(D.lastViewedDiagrams.has(this.name))
+		{
+			const viewport = D.lastViewedDiagrams.get(this.name);
+			this.setView(viewport.x, viewport.y, viewport.scale, false);
 		}
 	}
 	static Codename(args)
