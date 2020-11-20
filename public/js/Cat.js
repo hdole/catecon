@@ -987,45 +987,53 @@ class R
 		D.catalog = isGUI ? new Catalog() : null;
 		if (R.params.has('d'))	// check for short form
 			R.params.set('diagram', R.params.get('d'));
-		if (R.params.has('diagram'))
+		else if (R.params.has('diagram'))
 			D.view = 'diagram';
+		else
+		{
+			const savedViewMode = D.readViewMode();
+			D.view = [...Object.keys(savedViewMode)][0];
+			if (D.view === 'diagram')
+			{
+				const diagrams = savedViewMode.diagram;
+				R.params.set('diagram', diagrams[0]);		// set default diagram
+				diagrams.shift();
+				D.loadedDiagrams = diagrams;
+			}
+		}
 		isGUI && D.catalog.show(D.view === 'catalog');
 		D.Busy();
 		R.ReadDefaults();
-		isGUI && D.readLastViewedDiagrams();
 		R.SetupWorkers();
 		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
 		R.cloud = new Amazon();
-		if (isGUI)
-			U.autosave = true;
 		R.SetupCore();
 		R.SetupActions();
 		R.SetupPFS();
-		if (isGUI)
-		{
-			D.Initialize();		// initialize GUI
-			D.SetupReplay();
-		}
+		isGUI && D.Initialize();		// initialize GUI
 		R.sync = true;
 		const loader = function()
 		{ 
 			R.diagram = null;
-			switch(D.view)
+			if (isGUI)
 			{
-				case 'catalog':
-					D.catalog.show();
-					D.catalog.search();
-					break;
-				case 'diagram':
-					D.catalog.show(false);
-					let diagramName = R.params.get('diagram');
-					const doDisplayMorphism = diagramName !== null;
-					if (diagramName)
-						R.default.diagram = diagramName;
-					break;
+				switch(D.view)
+				{
+					case 'catalog':
+						D.catalog.show();
+						D.catalog.search();
+						break;
+					case 'diagram':
+						D.catalog.show(false);
+						let diagramName = R.params.get('diagram');
+						const doDisplayMorphism = diagramName !== null;
+						if (diagramName)
+							R.default.diagram = diagramName;
+						break;
+				}
+				R.$CAT.autoplace();
 			}
 			R.initialized = true;
-			isGUI && R.$CAT.autoplace();
 			if (R.user.name === 'Anon')
 				R.EmitLoginEvent();	// Anon login
 		};
@@ -1054,20 +1062,10 @@ class R
 		R.UserDiagram.set(user, d);
 		return d;
 	}
-	static SaveView(diagram)
-	{
-		D.Svg2canvas(diagram, (png, pngName) =>
-		{
-			D.diagramPNG.set(diagram.name, png);
-			U.writefile(`${diagram.name}.png`, png);
-			R.EmitCATEvent('png', diagram);
-		});
-		R.SetDiagramInfo(diagram);
-	}
 	static SaveLocal(diagram)
 	{
 		U.writefile(`${diagram.name}.json`, diagram.stringify());
-		R.SaveView(diagram);
+		isGUI && diagram.savePng();
 	}
 	static HasLocal(name)
 	{
@@ -1093,8 +1091,14 @@ class R
 			const diagram = new Diagram(userDiagram, args);
 			const png = U.readfile(`${diagram.name}.png`);
 			if (png)
-				D.diagramPNG.set(diagram.name, png);
+				D.diagramPNGs.set(diagram.name, png);
 			R.SetDiagramInfo(diagram);
+			if (isGUI)
+			{
+				const viewport = U.readfile(`${diagram.name}-viewport.json`);
+				if (viewport)
+					D.viewports.set(diagram.name, JSON.parse(viewport));
+			}
 			R.sync = true;
 			R.EmitCATEvent('load', diagram);
 			return diagram;
@@ -1123,7 +1127,7 @@ class R
 					if (foundIt)
 					{
 						const bbox = foundIt.getBBox();
-						R.diagram.setViewport(bbox);
+						R.diagram.setViewportByBBox(bbox);
 						const center = R.diagram.diagramToUserCoords(D.Center(R.diagram));
 						center.y = center.y / 4;
 						R.diagram.addSelected(foundIt);
@@ -1194,10 +1198,7 @@ class R
 			return fn ? fn(R.diagram) : null;
 		}
 		if (isGUI && name)
-		{
 			D.Busy();
-//			R.diagram && R.diagram.hide();		// hide current diagram
-		}
 		R.default.debug && console.log('SelectDiagram', name);
 		R.diagram = null;
 		let diagram = name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
@@ -1326,13 +1327,13 @@ class R
 	{
 		R.workers.equality.postMessage({command:'Load', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
 	}
-	static EmitViewEvent(command, diagram = null, mode = '')
+	static EmitViewEvent(command, diagram = null)
 	{
 		if (!isGUI)
 			return;
 		D.view = command;
 		R.default.showEvents && console.log('emit View event', {command});
-		return window.dispatchEvent(new CustomEvent('View', {detail:	{command, diagram, mode}, bubbles:true, cancelable:true}));
+		return window.dispatchEvent(new CustomEvent('View', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
 	}
 	static EmitLoginEvent()
 	{
@@ -1996,7 +1997,7 @@ class Navbar
 			left.push(D.getIcon('morphismPanelToggle', 'morphism', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
 			left.push(D.getIcon('textPanelToggle', 'text', _ => Cat.D.textPanel.toggle(), 'Text', sz));
 			left.push(D.getIcon('showGraphs', 'string', _ => Cat.R.diagram.showGraphs, 'Graph', sz));
-			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram.home(), 'Home', sz));
+			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram && Cat.R.diagram.home(), 'Home', sz));
 			right.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
 			right.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
 			right.push(D.getIcon('helpPanelToggle', 'help', _ => Cat.D.helpPanel.toggle(), 'Help', sz));
@@ -2022,9 +2023,10 @@ class Navbar
 	}
 	updateLastViewedDiagrams()
 	{
-		const diagrams = [...D.lastViewedDiagrams];
+		const diagrams = [...D.viewports];
 		// sort by most recent first
 		const result = diagrams.sort((a, b) => a[1].timestamp > b[1].timestamp ? -1 : a[1].timestamp < b[1].timestamp ? 1 : 0);
+		result.length = 20;
 		const rows = diagrams.map(info => H3.tr(H3.td(H3.span(info[0]), '.left.popupBtn', {onclick:_ => R.SelectDiagram(info[0])})));
 		const popupElt = H3.div(H3.span('Recent diagrams', '.italic.smallPrint'), H3.table(rows), '.popupElt', {onmouseleave:e => this.diagramPopup.classList.toggle('hidden')});
 		D.RemoveChildren(this.diagramPopup);
@@ -2515,7 +2517,6 @@ class ElementTool
 			R.SetDiagramInfo(diagram);
 			diagram.makeSVG();
 			diagram.home();
-//			diagram.svgRoot.classList.remove('hidden');
 			this.update();
 			R.EmitCATEvent('new', diagram);
 			R.SelectDiagram(diagram.name);
@@ -2718,6 +2719,7 @@ class D
 		},
 		D.Resize();
 		D.Autohide();
+		D.SetupReplay();
 	}
 	static UpdateDisplay(e)
 	{
@@ -2741,7 +2743,7 @@ class D
 	static Resize()
 	{
 		const diagram = R.diagram;
-		const scale = diagram !== null ? diagram.viewport.scale : 1.0;
+		const scale = diagram !== null ? diagram.getViewport().scale() : 1.0;
 		const width = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 		const height = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
 		if (D.topSVG)
@@ -2902,7 +2904,7 @@ class D
 								{
 									if (diagram.isIsolated(from) && diagram.isIsolated(D.mouseover) &&
 											((D.mouseover instanceof Morphism && from instanceof Morphism) ||
-											(D.mouseover instanceof CatObject && from instanceof CatObject)))
+											(D.mouseover instanceof CatObject && from instanceof CatObject))) // check for creating products, coproducts, homs
 									{
 										if (e.shiftKey && R.Actions.coproduct)
 											msg = 'Coproduct';
@@ -2937,13 +2939,10 @@ class D
 					diagram.updateFusible(e);
 				D.toolbar.hide();
 			}
-			else if (D.mouseIsDown && !D.drag)
-				D.DrawSelectRect();
-			else if (D.tool === 'pan')
-			{
-//				diagram.setView(diagram.viewport.x + e.movementX, diagram.viewport.y + e.movementY, diagram.viewport.scale);
-				D.DeleteSelectRectangle();
-			}
+//			else if (D.mouseIsDown && !D.drag)
+//				D.DrawSelectRect();
+//			else if (D.tool === 'pan')
+//				D.DeleteSelectRectangle();
 			else
 				D.DeleteSelectRectangle();
 		}
@@ -3134,16 +3133,16 @@ class D
 	{
 		scalar = 2 * scalar;
 		const diagram = R.diagram;
-		const vp = diagram.viewport;
-		const scale = vp.scale;
-		let inc = Math.log(scale)/Math.log(D.default.scale.base) + scalar;
-		let nuScale = D.default.scale.base ** inc;
-		nuScale = nuScale < D.default.scale.limit.min ? D.default.scale.limit.min : nuScale;
-		nuScale = nuScale > D.default.scale.limit.max ? D.default.scale.limit.max : nuScale;
+		const vp = diagram.getViewport();
+		const upScale = vp.scale;
+		let inc = Math.log(upScale)/Math.log(D.default.scale.base) + scalar;
+		let scale = D.default.scale.base ** inc;
+		scale = scale < D.default.scale.limit.min ? D.default.scale.limit.min : scale;
+		scale = scale > D.default.scale.limit.max ? D.default.scale.limit.max : scale;
 		const pnt = D.mouse.clientPosition();
-		const dx = pnt.x - (nuScale / scale) * (pnt.x - vp.x);
-		const dy = pnt.y - (nuScale / scale) * (pnt.y - vp.y);
-		diagram.setView(dx, dy, nuScale);
+		const x = pnt.x - (scale / upScale) * (pnt.x - vp.x);
+		const y = pnt.y - (scale / upScale) * (pnt.y - vp.y);
+		diagram.setViewport({x, y, scale});
 	}
 	static getKeyName(e)
 	{
@@ -3194,6 +3193,7 @@ class D
 					break;
 				case 'detach':
 				case 'new':
+					isGUI && args.diagram.updateBackground();
 					D.Autosave(args.diagram);
 					break;
 				case 'update':
@@ -3220,6 +3220,7 @@ class D
 				case 'new':
 				case 'update':
 				case 'move':
+					isGUI && args.diagram.updateBackground();
 					D.Autosave(args.diagram);
 					break;
 			}
@@ -3235,6 +3236,7 @@ class D
 				case 'new':
 				case 'update':
 				case 'move':
+					isGUI && args.diagram.updateBackground();
 					D.Autosave(args.diagram);
 					break;
 			}
@@ -3261,7 +3263,12 @@ class D
 						diagram.makeCells();
 						break;
 					case 'view':
-						diagram.updateBackground();
+						let diagrams = [];
+						if (D.default.fullscreen)
+							diagrams.push(diagram.name);
+						else
+							D.forEachDiagramSVG(diagram => diagrams.push(diagram.name));
+						D.saveViewMode('diagram', diagrams);
 						break;
 				}
 			D.Autohide(e);
@@ -3279,17 +3286,12 @@ class D
 				case 'default':
 					if (isGUI)
 					{
-						/*
-						if(D.lastViewedDiagrams.has(diagram.name))
-						{
-							const viewport = D.lastViewedDiagrams.get(diagram.name);
-							diagram.setView(viewport.x, viewport.y, viewport.scale, false);
-						}
-						*/
 						if (diagram)
 						{
-							diagram.updateFromLastView();
-							D.updateLastViewedDiagrams(diagram);
+							D.diagramSVG.appendChild(diagram.svgRoot);
+							const viewport = diagram.getViewport();
+							viewport.visible = true;
+							diagram.setViewport(viewport);
 						}
 					}
 					if (diagram)
@@ -3301,7 +3303,7 @@ class D
 							R.default.diagram = diagram.name;
 							R.SaveDefaults();
 						}
-						isGUI && R.EmitViewEvent('diagram');
+						isGUI && R.EmitViewEvent('diagram', diagram);
 					}
 					break;
 				case 'download':
@@ -3328,7 +3330,7 @@ class D
 		window.addEventListener('CAT', e =>
 		{
 			D.jsHtmlLoader(e);
-			D.UpdateDiagramDisplay(e);
+//			D.UpdateDiagramDisplay(e);
 		});
 		window.addEventListener('Assertion', D.UpdateDisplay);
 		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
@@ -3358,8 +3360,6 @@ class D
 		};
 		document.onwheel = e =>
 		{
-//			if (e.target.id === 'topSVG' || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement')
-			// TODO R.diagram is null => zoom all diagrams
 			if (!R.diagram)
 				return;
 			if (e.target.id === R.diagram.elementId('background') || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement')
@@ -3375,18 +3375,18 @@ class D
 			const args = e.detail;
 			const command = args.command;
 			const diagram = args.diagram;
-//			if (command === 'catalog' && R.diagram)
-//				R.diagram.hide();
-//			else if (command === 'diagram' && diagram)
-			if (command === 'diagram' && diagram)
+			if (command === 'diagram')
 			{
-				if (diagram.user === 'sys')
-					diagram.autoplace();
-				diagram.show();
-				D.updateLastViewedDiagrams(diagram);
-				R.SaveView(diagram);
-				if (args.mode === 'contain')
-					R.Diagrams.forEach(d => d.updateBackground());
+				D.forEachDiagramSVG(diagram => diagram.updateBackground());
+				if (diagram)
+				{
+					if (diagram.user === 'sys')
+						diagram.autoplace();
+					diagram.show();
+					diagram.savePng();
+					diagram.show();
+					D.diagramSVG.appendChild(diagram.svgRoot);
+				}
 			}
 		});
 	}
@@ -3442,28 +3442,6 @@ class D
 			throw err;
 		}
 	}
-	static updateLastViewedDiagrams(diagram)
-	{
-		const viewport = diagram.getViewport();
-		viewport.timestamp = Date.now();
-		D.lastViewedDiagrams.set(diagram.name, viewport);
-		if (D.lastViewedDiagrams.size > 20)
-		{
-			let name = null;
-			let time = Number.MAX_VALUE;
-			D.lastViewedDiagrams.forEach((viewport, nm) =>
-			{
-				if (viewport.timestamp < time)
-				{
-					time = viewport.timestamp;
-					name = nm;
-				}
-			});
-			D.lastViewedDiagrams.delete(name);
-		}
-		localStorage.setItem('lastViewedDiagrams', JSON.stringify(U.JsonMap(D.lastViewedDiagrams)));
-		R.SaveView(diagram);
-	}
 	static UpdateDiagramDisplay(e)		// event handler
 	{
 		const args = e.detail;
@@ -3477,10 +3455,9 @@ class D
 			case 'default':
 				if (!diagram.svgRoot)
 					diagram.makeSVG();
-				if ('viewport' in diagram)
-					diagram.setView(diagram.viewport.x, diagram.viewport.y, diagram.viewport.scale, false);
-				else
-					diagram.home();
+				const viewport = diagram.getViewport();
+				viewport.visible = true;
+				diagram.setViewport(viewport);
 				D.GlowBadObjects(diagram);
 				diagram.svgTranslate.classList.add('trans025s');
 				break;
@@ -3585,16 +3562,8 @@ class D
 	{
 		if (!diagram.svgRoot)
 			return;
-		const notUs = diagram !== R.diagram;
-		if (notUs)	// for booting
-		{
-//			if (R.diagram)
-//				R.diagram.svgRoot.classList.add('hidden');
-//			diagram.svgRoot.classList.remove('hidden');
-		}
 		const svg = diagram.svgRoot;
 		const copy = svg.cloneNode(true);
-//		const top = document.createElementNS(D.xmlns, 'svg');
 		const top = H3.svg();
 		top.appendChild(copy);
 		D.copyStyles(copy, svg);
@@ -3631,12 +3600,6 @@ class D
 		};
 		img.crossOrigin = "";
 		img.src = url;
-		if (notUs)
-		{
-//			if (R.diagram)
-//				R.diagram.svgRoot.classList.remove('hidden');
-//			diagram.svgRoot.classList.add('hidden');
-		}
 	}
 	static OnEnter(e, fn, that = null)
 	{
@@ -3878,12 +3841,12 @@ class D
 	}
 	static GetPng(name)
 	{
-		let png = D.diagramPNG.get(name);
+		let png = D.diagramPNGs.get(name);
 		if (!png)
 		{
 			png = U.readfile(`${name}.png`);
 			if (png)
-				D.diagramPNG.set(name, png);
+				D.diagramPNGs.set(name, png);
 		}
 		return png;
 	}
@@ -3947,29 +3910,6 @@ class D
 		while (delta < tw)
 			delta += stdGrid;
 		return delta;
-	}
-	static readLastViewedDiagrams()
-	{
-		const str = localStorage.getItem('lastViewedDiagrams');
-		if (str)
-		{
-			D.lastViewedDiagrams = new Map(JSON.parse(str));
-			let last = null;
-			let time = 0;
-			D.lastViewedDiagrams.forEach((viewport, name) =>
-			{
-				if (viewport.timestamp > time)
-				{
-					last = name;
-					time = viewport.timestamp;
-				}
-			});
-			if (!R.params.has('diagram') && last)
-			{
-				R.params.set('diagram', last);
-				D.view = 'diagram';
-			}
-		}
 	}
 	static SetupReplay()
 	{
@@ -4055,7 +3995,7 @@ class D
 		{
 			replay(e, diagram, args)
 			{
-				diagram.setView(args.x, args.y, args.scale, false);		// TODO avoid saving
+				diagram.setViewport(args);
 			}
 		};
 		D.ReplayCommands.set('view', replayView);
@@ -4104,6 +4044,29 @@ class D
 			R.busyBtn.parentNode.removeChild(R.busyBtn);
 			delete R.busyBtn;
 		}
+	}
+	static saveViewMode(mode, args)
+	{
+		const viewMode = {};
+		viewMode[mode] = args;
+		U.writefile('viewMode.json', JSON.stringify(viewMode));
+	}
+	static readViewMode()
+	{
+		const viewMode = U.readfile('viewMode.json');
+		if (viewMode)
+			return JSON.parse(viewMode);
+		return {catalog:''};
+	}
+	static forEachDiagramSVG(fn)
+	{
+		let dgrmSvg = D.diagramSVG.firstChild;
+		do
+		{
+			const dgrm = R.$CAT.getElement(dgrmSvg.dataset.name);
+			dgrm && fn(dgrm, dgrmSvg);
+		}
+		while((dgrmSvg = dgrmSvg.nextSibling));
 	}
 }
 Object.defineProperties(D,
@@ -4166,7 +4129,7 @@ Object.defineProperties(D,
 		writable:		false,
 	},
 	diagramPanel:	{value: null,		writable: true},
-	diagramPNG:		{value: new Map(),	writable: true},
+	diagramPNGs:	{value: new Map(),	writable: true},
 	diagramSVG:		{value: null,		writable: true},
 	directions:		{value: [new D2(0, -1), new D2(-1, -1), new D2(-1, 0), new D2(-1, 1), new D2(0, 1), new D2(1, 1), new D2(1, 0), new D2(1, -1)]},
 	drag:			{value: false,		writable: true},
@@ -4191,28 +4154,32 @@ Object.defineProperties(D,
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				diagram.setView(diagram.viewport.x, diagram.viewport.y + delta, diagram.viewport.scale);
+				const viewport = diagram.getViewport();
+				diagram.setViewport({x:viewport.x, y:viewport.y + delta, scale:viewport.scale});
 				e.preventDefault();
 			},
 			ArrowDown(e)
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				diagram.setView(diagram.viewport.x, diagram.viewport.y - delta, diagram.viewport.scale);
+				const viewport = diagram.getViewport();
+				diagram.setViewport({x:viewport.x, y:viewport.y - delta, scale:viewport.scale});
 				e.preventDefault();
 			},
 			ArrowLeft(e)
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				diagram.setView(diagram.viewport.x + delta, diagram.viewport.y, diagram.viewport.scale);
+				const viewport = diagram.getViewport();
+				diagram.setViewport({x:viewport.x + delta, y:viewport.y, scale:viewport.scale});
 				e.preventDefault();
 			},
 			ArrowRight(e)
 			{
 				const diagram = R.diagram;
 				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				diagram.setView(diagram.viewport.x - delta, diagram.viewport.y, diagram.viewport.scale);
+				const viewport = diagram.getViewport();
+				diagram.setViewport({x:viewport.x - delta, y:viewport.y, scale:viewport.scale});
 				e.preventDefault();
 			},
 			Slash(e)
@@ -4317,7 +4284,10 @@ Object.defineProperties(D,
 			Escape(e)
 			{
 				if (D.view === 'catalog' && R.diagram)
+				{
 					R.EmitViewEvent('diagram', R.diagram);
+//					D.forEachDiagramSVG(diagram => R.EmitDiagramEvent(diagram, 'view', 'contain'));
+				}
 				else if (D.view === 'diagram')
 				{
 					let isOpen = false;
@@ -4334,6 +4304,7 @@ Object.defineProperties(D,
 					}
 					D.default.fullscreen = !D.default.fullscreen;
 					R.SaveDefaults();
+					/*
 					let dgrmSvg = D.diagramSVG.firstChild;
 					do
 					{
@@ -4343,7 +4314,10 @@ Object.defineProperties(D,
 							console.log('missed', dgrmSvg.dataset.name);
 					}
 					while((dgrmSvg = dgrmSvg.nextSibling));
-					R.EmitDiagramEvent(R.diagram, 'view', 'contain');
+					*/
+//					D.forEachDiagramSVG(diagram => R.EmitDiagramEvent(diagram, 'view', 'contain'));
+					R.EmitViewEvent('diagram', R.diagram);
+//					R.EmitDiagramEvent(R.diagram, 'view', 'contain');
 				}
 				D.DeleteSelectRectangle();
 				// TODO abort drag element
@@ -4466,13 +4440,14 @@ Object.defineProperties(D,
 	},
 	textDisplayLimit:	{value: 60,			writable: true},
 	textPanel:		{value: null,		writable: true},
-	textSize:			{value:	new Map(),	writable: false},
-	threeDPanel:		{value: null,		writable: true},
-	tool:				{value: 'select',	writable: true},
-	toolbar:			{value: isGUI ? new Toolbar() : null,							writable: false},
+	textSize:		{value:	new Map(),	writable: false},
+	threeDPanel:	{value: null,		writable: true},
+	tool:			{value: 'select',	writable: true},
+	toolbar:		{value: isGUI ? new Toolbar() : null,							writable: false},
 	topSVG:			{value: isGUI ? document.getElementById('topSVG') : null,		writable: false},
-	ttyPanel:			{value: null,													writable: true},
+	ttyPanel:		{value: null,													writable: true},
 	uiSVG:			{value: isGUI ? document.getElementById('uiSVG') : null,		writable: false},
+	viewports:		{value: new Map(),												writable: false},
 	xmlns:			{value: 'http://www.w3.org/2000/svg',							writable: false},
 });
 
@@ -4561,7 +4536,7 @@ class Catalog
 			buttons.push(btn);
 			btn.querySelector('rect.btn').style.fill = 'red';
 		}
-		if (R.diagram && R.diagram.isEditable() && R.diagram.references.has(info.name) && R.diagram.canRemoveReferenceDiagram(info.name))
+		if (R.diagram && R.diagram.isEditable() && R.diagram.references.has(info.name) && R.diagram.canRemoveReference(info.name))
 		{
 			const btn = D.getIcon('removeReference', 'delete', e =>
 			{
@@ -5743,7 +5718,7 @@ class DiagramPanel extends Panel
 					this.setToolbar(diagram);
 					break;
 				case 'png':
-					const png = D.diagramPNG.get(diagram.name);
+					const png = D.diagramPNGs.get(diagram.name);
 					const images = [...document.querySelectorAll(`#img-${diagram.elementId()}`)];
 					images.map(img => img.src = png);
 					break;
@@ -8174,7 +8149,6 @@ class Assertion extends Element
 		if (!this.svg)
 		{
 			console.error('assertion svg missing');
-			debuger;
 			return;
 		}
 		this.svg.classList[state ? 'add' : 'remove']('selected');
@@ -9621,7 +9595,7 @@ class LanguageAction extends Action
 		const elt = ary[0].to;
 		let div = H3.div();
 		const help = D.toolbar.help;
-		const body = help.querySelector('##help-body');
+		const body = help.querySelector('#help-body');
 		D.RemoveChildren(body);
 		if (elt.constructor.name === 'Morphism' || elt.constructor.name === 'CatObject')
 		{
@@ -13040,7 +13014,7 @@ class Diagram extends Functor
 			svgBase:					{value:null,		writable:true},
 			timestamp:					{value:U.GetArg(args, 'timestamp', Date.now()),	writable:true},
 			user:						{value:args.user,	writable:false},
-			viewport:					{value:{x:0, y:0, scale:1.0, width:D.Width(), height:D.Height()},	writable:true},
+			viewport:					{value:{x:0, y:0, scale:1.0, width:D.Width(), height:D.Height(), visible:false},	writable:true},
 		});
 		if ('references' in args)
 			args.references.map(r => this.addReference(r, false));
@@ -13052,6 +13026,7 @@ class Diagram extends Functor
 			{
 				this.viewport.width = D.Width();
 				this.viewport.height = D.Height();
+				this.viewport.visible = false;
 			}
 		}
 		if ('elements' in nuArgs)
@@ -13062,7 +13037,7 @@ class Diagram extends Functor
 		R.SetDiagramInfo(this);
 		this.postProcess();
 		diagram && this.constructor.name === 'Diagram' && R.EmitCATEvent(diagram, 'new', this);
-		isGUI && this.updateFromLastView();
+//		isGUI && this.updateFromLastView();
 	}
 	addElement(elt)
 	{
@@ -13088,8 +13063,9 @@ class Diagram extends Functor
 	json()
 	{
 		const a = super.json();
-		a.viewport =	this.getViewport();		// don't want viewport.orig
-		a.references =	[...this.references.keys()];
+		if ('viewport' in this)
+			a.viewport = this.viewport;
+		a.references = [...this.references.keys()];
 		a.domainElements = [...this.domain.elements.values()].filter(e => ((e.to && e.to.canSave()) || (!('to' in e)))).map(e => e.json());
 		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
 		a.readonly = this.readonly;
@@ -13108,27 +13084,42 @@ class Diagram extends Functor
 				return basename;
 		}
 	}
-	getViewport()
+	getViewport(orig = false)
 	{
-		const v =
+		if (orig)
+			return this.viewport;
+		let viewport = D.viewports.get(this.name);
+		if (!viewport)
 		{
-			x:		this.viewport.x,
-			y:		this.viewport.y,
-			scale:	this.viewport.scale,
-		};
-		return v;
+			const str = U.readfile(`${this.name}-viewport.json`);
+			if (str)
+			{
+				viewport = JSON.parse(str);
+				D.viewports.set(this.name, viewport);
+				return viewport;
+			}
+		}
+		return viewport ? viewport : {x:0, y:0, scale:1, visible:false};
 	}
-	setView(x, y, s, log = true)
+	setViewport(args)
 	{
-		const oldport = U.Clone(this.viewport);
-		this.viewport.x = x;
-		this.viewport.y = y;
-		this.viewport.scale = s;
-		this.svgTranslate.setAttribute('transform', `translate(${this.viewport.x} ${this.viewport.y}) scale(${this.viewport.scale} ${this.viewport.scale})`);
+		const x = Math.round(args.x);
+		const y = Math.round(args.y);
+		const scale = args.scale;
+		const visible = 'visible' in args ? args.visible : true;
+		if (visible)
+			this.svgRoot.classList.remove('hidden');
+		else
+			this.svgRoot.classList.add('hidden');
+		this.svgTranslate.setAttribute('transform', `translate(${x} ${y}) scale(${scale} ${scale})`);
+		const viewport = {x, y, scale, visible, timestamp:Date.now()};
+if (isNaN(x)) debugger;
+		U.writefile(`${this.name}-viewport.json`, JSON.stringify(viewport));
+		D.viewports.set(this.name, viewport);
+		this.updateBackground();
 		R.EmitDiagramEvent(this, 'view');
-		log && this.updateViewSaveTimer(oldport);
 	}
-	setViewport(bbox, log = true)
+	setViewportByBBox(bbox, log = true)
 	{
 		if (bbox.width === 0)
 			bbox.width = D.Width();
@@ -13137,18 +13128,18 @@ class Diagram extends Functor
 		const dh = D.Height() - 4 * margin;
 		const xRatio = bbox.width / dw;
 		const yRatio = bbox.height / dh;
-		const s = 1.0/Math.max(xRatio, yRatio);
-		let x = - bbox.x * s + D.default.panel.width + margin;
-		let y = - bbox.y * s + 2 * margin;
+		const scale = 1.0/Math.max(xRatio, yRatio);
+		let x = - bbox.x * scale + D.default.panel.width + margin;
+		let y = - bbox.y * scale + 2 * margin;
 		if (xRatio > yRatio)
-			y += dh/2 - s * bbox.height/2;
+			y += dh/2 - scale * bbox.height/2;
 		else
-			x += dw/2 - s * bbox.width/2;
-		this.setView(x, y, s, log);
+			x += dw/2 - scale * bbox.width/2;
+		this.setViewport({x, y, scale});
 	}
 	home(log = true)
 	{
-		this.setViewport(this.svgBase.getBBox(), log);
+		this.setViewportByBBox(this.svgBase.getBBox(), log);
 	}
 	getObject(name)
 	{
@@ -13295,8 +13286,9 @@ class Diagram extends Functor
 	updateDragObjects(e)
 	{
 		const delta = D.mouse.clientPosition().subtract(D.dragStart);
-		delta.x = delta.x / this.viewport.scale;
-		delta.y = delta.y / this.viewport.scale;
+		const viewport = this.getViewport();
+		delta.x = delta.x / viewport.scale;
+		delta.y = delta.y / viewport.scale;
 		const dragObjects = new Set();
 		this.selected.map(elt =>
 		{
@@ -13509,8 +13501,7 @@ class Diagram extends Functor
 		if (!this.svgRoot)
 		{
 			this.svgRoot = H3.g({id:this.elementId('root'), 'data-name':this.name});
-			const bkgnd = H3.rect(`##${this.elementId('background')}.diagramBackground`,
-				{x:0, y:0, width:D.Width(), height:D.Height(), onmouseenter:_ => R.SelectDiagram(this)});
+			const bkgnd = H3.rect(`##${this.elementId('background')}.diagramBackground`, {x:0, y:0, width:D.Width(), height:D.Height()});
 			bkgnd.onmouseenter = e =>
 			{
 				if (R.diagram != this)
@@ -13522,7 +13513,11 @@ class Diagram extends Functor
 					R.SelectDiagram(null);
 			};
 			let delta = null;
-			const onMouseMove = e => this.setView(e.clientX - delta.x, e.clientY - delta.y, this.viewport.scale);
+			const onMouseMove = e =>
+			{
+				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.getViewport().scale});
+				D.toolbar.hide();
+			};
 			bkgnd.onmouseup = e =>
 			{
 				document.removeEventListener('mousemove', onMouseMove);
@@ -13530,9 +13525,11 @@ class Diagram extends Functor
 			};
 			bkgnd.onmousedown = e =>
 			{
+				// move the diagram
+				// TODO area select
 				const click = new D2(e.clientX, e.clientY);
-				const loc = new D2(this.viewport);
-				delta = click.subtract(loc);
+				const viewport = this.getViewport();
+				delta = click.subtract(viewport);
 				document.addEventListener('mousemove', onMouseMove);
 				bkgnd.nextSibling.classList.remove('trans025s');
 				e.preventDefault();
@@ -13542,6 +13539,7 @@ class Diagram extends Functor
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:this.elementId('T')}, this.svgBase);
 			this.svgRoot.appendChild(this.svgTranslate);
+			this.svgRoot.classList.add('hidden');
 			this.domain.elements.forEach(elt => this.addSVG(elt));
 		}
 		this.domain.cells.forEach(d => this.addSVG(d));
@@ -13580,13 +13578,14 @@ class Diagram extends Functor
 		else
 			D.RecordError('You need to be logged in to upload your work.');
 	}
-	userToDiagramCoords(xy, orig = false)
+	userToDiagramCoords(xy)
 	{
-		const s = 1.0 / this.viewport.scale;
-		if (isNaN(this.viewport.x) || isNaN(s))
+		const viewport = this.getViewport();
+		const s = 1.0 / viewport.scale;
+		if (isNaN(viewport.x) || isNaN(s))
 			throw 'NaN in coords';
-		const d2 = new D2(	s * (xy.x - (orig ? this.viewport.orig.x : this.viewport.x)),
-							s * (xy.y - (orig ? this.viewport.orig.y : this.viewport.y)));
+		const d2 = new D2(	s * (xy.x - viewport.x),
+							s * (xy.y - viewport.y));
 		if ('width' in xy)
 		{
 			d2.width = s * xy.width;
@@ -13596,8 +13595,9 @@ class Diagram extends Functor
 	}
 	diagramToUserCoords(xy)
 	{
-		const s = this.viewport.scale;
-		const userXy = new D2(xy).scale(s).add(this.viewport);
+		const viewport = this.getViewport();
+		const s = viewport.scale;
+		const userXy = new D2(xy).scale(s).add(viewport);
 		return userXy;
 	}
 	replaceElements(elements)
@@ -13754,7 +13754,7 @@ class Diagram extends Functor
 	}
 	downloadPNG()
 	{
-		D.Download(D.diagramPNG.get(this.name), `${this.name}.png`);
+		D.Download(D.diagramPNGs.get(this.name), `${this.name}.png`);
 	}
 	downloadLog(e)
 	{
@@ -13772,7 +13772,7 @@ class Diagram extends Functor
 		});
 		return refs;
 	}
-	canRemoveReferenceDiagram(name)
+	canRemoveReference(name)
 	{
 		const ref = R.CAT.getElement(name);		// TODO fix this
 		for(const [name, e] of this.elements)
@@ -13784,7 +13784,7 @@ class Diagram extends Functor
 	}
 	removeReference(name)
 	{
-		if (R.diagram.canRemoveReferenceDiagram(name))
+		if (R.diagram.canRemoveReference(name))
 		{
 			const r = this.references.get(name);
 			if (r)
@@ -14126,24 +14126,13 @@ class Diagram extends Functor
 			}
 		});
 	}
-	updateViewSaveTimer(oldport)
-	{
-		if (this.viewSaveTimer)
-			clearInterval(this.viewSaveTimer);
-		oldport.name = this.name;
-		this.viewSaveTimer = setTimeout(_ =>
-		{
-			if (R.diagram && oldport.name === this.name && (oldport.x !== this.viewport.x || oldport.y !== this.viewport.y || oldport.scale !== this.viewport.scale))
-				this.logViewCommand();
-		}, D.default.saveInterval);
-	}
 	logViewCommand()
 	{
 		const log = this._log;
 		if (log.length > 0 && log[log.length -1].command === 'view')	// replace last view command?
 			D.ttyPanel.logSection.removeLogCommand(null, log.length -1);
-		D.updateLastViewedDiagrams(this);
-		this.log({command:'view', x:Math.round(this.viewport.x), y:Math.round(this.viewport.y), scale:Math.round(10000.0 * this.viewport.scale)/10000.0});
+		const viewport = this.getViewport();
+		this.log({command:'view', x:Math.round(viewport.x), y:Math.round(viewport.y), scale:Math.round(10000.0 * viewport.scale)/10000.0});
 	}
 	getTerminal(dual = false)
 	{
@@ -14155,7 +14144,7 @@ class Diagram extends Functor
 		if (elements.length > 0)
 		{
 			const bbox = D2.Merge(...elements.map(a => a.getBBox()));
-			this.setViewport(bbox);
+			this.setViewportByBBox(bbox);
 		}
 	}
 	addFactorMorphisms(domain, codomain)
@@ -14778,10 +14767,11 @@ console.log('formMorphism', {morphism});
 		{
 			this.deselectAll();
 			this.replay(e, this._antilog.pop());
+			D.toolbar.hide();
 		}
 	}
-//	hide() { this.svgRoot.classList.add('hidden'); }
-//	show() { this.svgRoot.classList.remove('hidden'); }
+	hide() { this.svgRoot.classList.add('hidden'); }
+	show() { this.svgRoot.classList.remove('hidden'); }
 	postProcess()
 	{
 		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());
@@ -14972,21 +14962,34 @@ console.log('formMorphism', {morphism});
 			{
 				const group = this.svgRoot.querySelector('#' + this.elementId('T'));
 				const bbox = group.getBBox();
-				const scale = this.viewport.scale;
-				bkgnd.setAttribute('x', `${scale * bbox.x + this.viewport.x - D.default.diagram.margin}px`);
-				bkgnd.setAttribute('y', `${scale * bbox.y + this.viewport.y - D.default.diagram.margin}px`);
+				const viewport = this.getViewport();
+				const scale = viewport.scale;
+				bkgnd.setAttribute('x', `${scale * bbox.x + viewport.x - D.default.diagram.margin}px`);
+				bkgnd.setAttribute('y', `${scale * bbox.y + viewport.y - D.default.diagram.margin}px`);
 				bkgnd.setAttribute('width', `${scale * bbox.width + 2 * D.default.diagram.margin}px`);
 				bkgnd.setAttribute('height', `${scale * bbox.height + 2 * D.default.diagram.margin}px`);
 			}
 		}
 	}
+	/*
 	updateFromLastView()
 	{
 		if(D.lastViewedDiagrams.has(this.name))
 		{
 			const viewport = D.lastViewedDiagrams.get(this.name);
-			this.setView(viewport.x, viewport.y, viewport.scale, false);
+			this.setViewport(viewport.x, viewport.y, viewport.scale, false);
 		}
+	}
+	*/
+	savePng()
+	{
+		D.Svg2canvas(this, (png, pngName) =>
+		{
+			D.diagramPNGs.set(this.name, png);
+			U.writefile(`${this.name}.png`, png);
+			R.EmitCATEvent('png', this);
+		});
+//		R.SetDiagramInfo(diagram);
 	}
 	static Codename(args)
 	{
