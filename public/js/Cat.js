@@ -64,288 +64,11 @@ if (!isGUI)
 	global.fetch = require('node-fetch');
 	const {Worker, isMainThread, parentPort, workerData} = require('worker_threads');
 	global.Worker = Worker;
-	require('./H3.js');
+//	require('./H3.js');	// TODO oy?
+	global.D2 = require('./D2.js');	// TODO oy?
 }
 else
 	sjcl = window.sjcl;
-
-class D2
-{
-	constructor(x = 0, y = 0)
-	{
-		if (typeof x === 'object')
-		{
-			this.x = x.x;
-			this.y = x.y;
-			this.width = 'width' in x ? x.width : 0;
-			this.height = 'height' in x ? x.height : 0;
-		}
-		else
-		{
-			this.x = x;
-			this.y = y;
-			this.width = 0;
-			this.height = 0;
-		}
-	}
-	add(w)
-	{
-		const a = new D2(this);
-		a.x += w.x;
-		a.y += w.y;
-		return a;
-	}
-	angle()
-	{
-		let angle = 0;
-		if (this.x !== 0)
-		{
-			angle = Math.atan(this.y/this.x);
-			if (this.x < 0.0)
-				angle += Math.PI;
-		}
-		else
-			angle = this.y > 0 ? Math.PI/2 : - Math.PI/2;
-		if (angle < 0)
-			angle += 2 * Math.PI;
-		return angle % (2 * Math.PI);
-	}
-	area()
-	{
-		return this.width * this.height;
-	}
-	contains(d)
-	{
-		return D2.Inbetween(this.x, d.x, this.x + this.width) &&
-		D2.Inbetween(this.y, d.y, this.y + this.height) &&
-		D2.Inbetween(this.x, d.x + d.width, this.x + this.width) &&
-		D2.Inbetween(this.y, d.y + d.height, this.y + this.height);
-	}
-	dist(v)
-	{
-		return D2.Dist(this, v);
-	}
-	equals(v)
-	{
-		return this.x === v.x && this.y === v.y && ('width' in v ? this.width === v.width && this.height === v.height : true);
-	}
-	grid(g)
-	{
-		this.x = g * Math.round(this.x / g);
-		this.y = g * Math.round(this.y / g);
-		return this;
-	}
-	increment(w)
-	{
-		this.x += w.x;
-		this.y += w.y;
-		return this;
-	}
-	inner()
-	{
-		return D2.Inner(this);
-	}
-	length()
-	{
-		return Math.sqrt(this.inner());
-	}
-	normal()
-	{
-		return D2.Normal(this);
-	}
-	normalize()
-	{
-		const length = this.length();
-		return new D2(this.x / length, this.y / length);
-	}
-	round()
-	{
-		return new D2(Math.round(this.x), Math.round(this.y));
-	}
-	trunc()
-	{
-		return new D2(Math.trunc(this.x), Math.trunc(this.y));
-	}
-	scale(a)
-	{
-		return D2.Scale(a, this);
-	}
-	subtract(w)
-	{
-		return D2.Subtract(this, w);
-	}
-	getXY()
-	{
-		return {x:this.x, y:this.y};
-	}
-	nonZero()
-	{
-		return this.x !== 0 || this.y !== 0;
-	}
-	static Add(v, w)
-	{
-		return new D2(v.x + w.x, v.y + w.y);
-	}
-	static Dist2(v, w)
-	{
-		return D2.Inner(D2.Subtract(v, w));
-	}
-	static Dist(v, w)
-	{
-		return Math.sqrt(D2.Dist2(v, w));
-	}
-	static Cross(o, a, b)
-	{
-		return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-	}
-	static Inner(v)
-	{
-		return v.x * v.x + v.y * v.y;
-	}
-	static Length(v)
-	{
-		return Math.sqrt(D2.Inner(v));
-	}
-	static Normal(v)
-	{
-		return new D2(-v.y, v.x);
-	}
-	static Round(v)
-	{
-		return new D2(Math.round(v.x), Math.round(v.y));
-	}
-	static Scale(a, v)
-	{
-		const args = {x:v.x * a, y:v.y * a};
-		if ('width' in v)
-		{
-			args.width = v.width * a;
-			args.height = v.height * a;
-		}
-		return new D2(args);
-	}
-	static Subtract(v, w)
-	{
-		return new D2(v.x - w.x, v.y - w.y);
-	}
-	static SegmentDistance(p, v, w)
-	{
-		const l2 = D2.Dist2(v, w);
-		if (l2 === 0)
-			return D2.Dist(p, v);
-		let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-		t = Math.max(0, Math.min(1, t));
-		return D2.Dist(p, {x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y)});
-	}
-	static UpdatePoint(p, c, basePoint)
-	{
-		return D2.Dist2(c, basePoint) < D2.Dist2(p, basePoint) ? c : p;
-	}
-	static Inbetween(a, b, c)
-	{
-		return (a - D2.Eps() <= b && b <= c + D2.Eps()) || (c - D2.Eps() <= b && b <= a + D2.Eps());
-	}
-	static Inside(a, b, c)
-	{
-		return D2.Inbetween(a.x, b.x, c.x) && D2.Inbetween(a.y, b.y, c.y);
-	}
-	static SegmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
-	{
-		const deltaX12 = x1 - x2;
-		const deltaX34 = x3 - x4;
-		const deltaY12 = y1 - y2;
-		const deltaY34 = y3 - y4;
-		const x1y2 = x1 * y2;
-		const x2y1 = x2 * y1;
-		const x3y4 = x3 * y4;
-		const x4y3 = x4 * y3;
-		const deltaX1Y1_X2Y1 = x1y2 - x2y1;
-		const deltaX3Y4_X4Y3 = x3y4 - x4y3;
-		const denom = deltaX12 * deltaY34 - deltaY12 * deltaX34;
-		const x = (deltaX1Y1_X2Y1 * deltaX34 - deltaX12 * deltaX3Y4_X4Y3) / denom;
-		const y = (deltaX1Y1_X2Y1 * deltaY34 - deltaY12 * deltaX3Y4_X4Y3) / denom;
-		if (denom === 0.0)
-			return null;
-		if (!(D2.Inbetween(x2, x, x1) && D2.Inbetween(y2, y, y1) && D2.Inbetween(x3, x, x4) && D2.Inbetween(y3, y, y4)))
-			return null;
-		return new D2(x, y);
-	}
-	static Angle(from, to)
-	{
-		return D2.Subtract(to, from).angle();
-	}
-	static Eps()
-	{
-		return(0.0000001);
-	}
-	static Overlap(abox, bbox)	// do two bounding boxes overlap?
-	{
-		const aLeft = abox.x;
-		const aRight = abox.x + abox.width;
-		const aTop = abox.y;
-		const aBottom = abox.y + abox.height;
-		const bLeft = bbox.x;
-		const bRight = bbox.x + bbox.width;
-		const bTop = bbox.y;
-		const bBottom = bbox.y + bbox.height;
-		const h =	D2.Inbetween(aLeft, bLeft, aRight) ||
-					D2.Inbetween(aLeft, bRight, aRight) ||
-					D2.Inbetween(bLeft, aLeft, bRight) ||
-					D2.Inbetween(bLeft, aRight, bRight);
-		const w =	D2.Inbetween(bBottom, aBottom, bTop) ||
-					D2.Inbetween(bBottom, aTop, bTop) ||
-					D2.Inbetween(aBottom, bBottom, aTop) ||
-					D2.Inbetween(aBottom, bTop, aTop);
-		return h && w;
-	}
-	static Merge(...boxes)
-	{
-		const x = Math.min(...boxes.map(bx => bx.x));
-		const y = Math.min(...boxes.map(bx => bx.y));
-		const width = Math.max(...boxes.map(bx => bx.x + bx.width - x));
-		const height = Math.max(...boxes.map(bx => bx.y + bx.height - y));
-		return {x, y, width, height};
-	}
-	static Hull(ary)
-	{
-		const cnt = ary.length;
-		if (cnt <= 3)
-			return ary;
-		ary.sort((a, b) => a.x < b.x ? true : a.y < b.y);
-		let k = 0;
-		const r = [];
-		for (let i=0; i<cnt; ++i)
-		{
-			while(k >= 2 && D2.Cross(r[k -2], r[k -1], ary[i]) <= 0)
-				k--;
-			r[k++] = ary[i];
-		}
-		let t = k + 1;
-		for (let i=cnt -1; i>0; --i)
-		{
-			while(k >= t && D2.Cross(r[k -2], r[k -1], ary[i -1]) <= 0)
-				k--;
-			r[k++] = ary[i -1];
-		}
-		return r;
-	}
-	static Expand(box, dist)
-	{
-		return new D2({x:box.x - dist, y:box.y - dist, width:box.width + 2 * dist, height:box.height + 2 * dist});
-	}
-	static Polar(cx, cy, r, angleDeg)
-	{
-		const angleRad = angleDeg * Math.PI / 180.0;
-		return new D2({x:cx + r * Math.cos(angleRad), y:cy + r * -Math.sin(angleRad)});
-	}
-	static lineBoxIntersect(pt0, pt1, box)
-	{
-		return	D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y, box.x + box.width, box.y) ||			// top edge
-				D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y, box.x, box.y + box.height) ||		// left edge
-				D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y + box.height, box.x + box.width, box.y + box.height) ||	// bottom edge
-				D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x + box.width, box.y, box.x + box.width, box.y + box.height);		// right edge
-	}
-}
 
 if (isGUI)
 {
@@ -843,7 +566,53 @@ class R
 		};
 		R.UserDiagram = new Map();
 		if (isGUI)
-			D.diagramSVG = document.getElementById('diagramSVG');
+		{
+			let delta = null;
+			const sessionMove = e =>
+			{
+				D.toolbar.hide();
+				if (!R.diagram)
+				{
+					const viewport = {x:e.clientX - delta.x, y:e.clientY - delta.y, scale:D.session.viewport.scale};
+					D.session.viewport = viewport;
+					D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
+					return true;
+				}
+				return false;
+			};
+			const cursorOnDiagram = e =>
+			{
+				let findCursor = false;
+				D.forEachDiagramSVG(d =>
+				{
+					if (!d.svgRoot.classList.contains('hidden'))
+					{
+						const bbox = new D2(d.svgRoot.getBBox());
+						if (bbox.pointInside({x:e.clientX - D.session.viewport.x, y:e.clientY - D.session.viewport.y}))
+							findCursor = true;
+					}
+				});
+				if (!findCursor)
+					R.SelectDiagram(null);
+			};
+//			D.topSVG.addEventListener('mousemove', cursorOnDiagram);
+			D.topSVG.onmouseup = e =>
+			{
+				D.topSVG.removeEventListener('mousemove', sessionMove);
+			};
+			D.topSVG.onmousedown = e =>
+			{
+				if (!R.diagram)
+				{
+					const click = new D2(e.clientX, e.clientY);
+					delta = click.subtract(D.session.viewport);
+					D.topSVG.addEventListener('mousemove', sessionMove);
+					e.preventDefault();
+					return true;
+				}
+				return false;
+			};
+		}
 		R.$CAT = new Diagram(null, $CATargs);
 		R.UserDiagram.set('sys', R.$CAT);
 		R.Cat = new Category(R.$CAT,
@@ -868,30 +637,30 @@ class R
 		{
 			if (isGUI)
 			{
-				diagram.autoplace();
-				diagram.makeSVG();
-				diagram.domain.elements.forEach(elt => diagram.addSVG(elt));
+//				diagram.autoplace();
+//				diagram.makeSVG();
+//				diagram.domain.elements.forEach(elt => diagram.addSVG(elt));
 				diagram.elements.forEach(action => {R.Actions[action.basename] = action;});
 			}
 		};
 		const diagramDiagram = new Diagram(R.$CAT, {basename:'diagram', codomain:'Actions', description:'actions for a diagram', user:'sys'});
 		let action = new IdentityAction(diagramDiagram);
-		new GraphAction(diagramDiagram),
-		new NameAction(diagramDiagram),
-		new CompositeAction(diagramDiagram),
-		new DetachDomainAction(diagramDiagram),
-		new DetachDomainAction(diagramDiagram, true),
-		new HomObjectAction(diagramDiagram),
-		new HomObjectAction(diagramDiagram, true),
-		new HomsetAction(diagramDiagram, true),
-		new DeleteAction(diagramDiagram),
-		new CopyAction(diagramDiagram),
-		new FlipNameAction(diagramDiagram),
-		new HelpAction(diagramDiagram),
-		new RunAction(diagramDiagram),
-		new AlignHorizontalAction(diagramDiagram),
-		new AlignVerticalAction(diagramDiagram),
-		new AssertionAction(diagramDiagram),
+		new GraphAction(diagramDiagram);
+		new NameAction(diagramDiagram);
+		new CompositeAction(diagramDiagram);
+		new DetachDomainAction(diagramDiagram);
+		new DetachDomainAction(diagramDiagram, true);
+		new HomObjectAction(diagramDiagram);
+		new HomObjectAction(diagramDiagram, true);
+		new HomsetAction(diagramDiagram, true);
+		new DeleteAction(diagramDiagram);
+		new CopyAction(diagramDiagram);
+		new FlipNameAction(diagramDiagram);
+		new HelpAction(diagramDiagram);
+		new RunAction(diagramDiagram);
+		new AlignHorizontalAction(diagramDiagram);
+		new AlignVerticalAction(diagramDiagram);
+		new AssertionAction(diagramDiagram);
 		setup(diagramDiagram);
 		const productDiagram = new Diagram(R.$CAT, {basename:'product', codomain:'Actions', description:'diagram for product actions', user:'sys'});
 		new ProductAction(productDiagram);
@@ -983,25 +752,19 @@ class R
 			R.InitTestProcedure();
 			return;
 		}
-		D.view = isGUI ? 'catalog' : '';
-		D.catalog = isGUI ? new Catalog() : null;
+		if (isGUI)
+		{
+			D.diagramSVG = document.getElementById('diagramSVG');
+			isGUI && D.readSession();
+			D.catalog = new Catalog();
+		}
 		if (R.params.has('d'))	// check for short form
 			R.params.set('diagram', R.params.get('d'));
 		else if (R.params.has('diagram'))
-			D.view = 'diagram';
-		else
-		{
-			const savedViewMode = D.readViewMode();
-			D.view = [...Object.keys(savedViewMode)][0];
-			if (D.view === 'diagram')
-			{
-				const diagrams = savedViewMode.diagram;
-				R.params.set('diagram', diagrams[0]);		// set default diagram
-				diagrams.shift();
-				D.loadedDiagrams = diagrams;
-			}
-		}
-		isGUI && D.catalog.show(D.view === 'catalog');
+			D.session.mode = 'diagram';
+		else if (isGUI && D.session.mode === 'diagram' && D.session.default)
+			R.params.set('diagram', D.session.default);		// set default diagram
+		isGUI && D.catalog.show(D.session.mode === 'catalog');
 		D.Busy();
 		R.ReadDefaults();
 		R.SetupWorkers();
@@ -1017,7 +780,7 @@ class R
 			R.diagram = null;
 			if (isGUI)
 			{
-				switch(D.view)
+				switch(D.session.mode)
 				{
 					case 'catalog':
 						D.catalog.show();
@@ -1025,15 +788,18 @@ class R
 						break;
 					case 'diagram':
 						D.catalog.show(false);
-						let diagramName = R.params.get('diagram');
-						const doDisplayMorphism = diagramName !== null;
-						if (diagramName)
-							R.default.diagram = diagramName;
+//						let diagramName = R.params.get('diagram');
+//						if (diagramName)
+//							R.default.diagram = diagramName;
 						break;
 				}
-				R.$CAT.autoplace();
 			}
 			R.initialized = true;
+			isGUI && D.session.diagrams.map(d => R.DownloadDiagram(d, diagram =>
+			{
+				diagram.makeSVG();
+				diagram.setViewport(diagram.getViewport());
+			}));
 			if (R.user.name === 'Anon')
 				R.EmitLoginEvent();	// Anon login
 		};
@@ -1065,7 +831,6 @@ class R
 	static SaveLocal(diagram)
 	{
 		U.writefile(`${diagram.name}.json`, diagram.stringify());
-		isGUI && diagram.savePng();
 	}
 	static HasLocal(name)
 	{
@@ -1188,14 +953,14 @@ class R
 	//
 	// primvary means of displaying a diagram
 	//
-	static async SelectDiagram(name, fn = null)
+	static async SelectDiagram(name)
 	{
 		if (isGUI)
-			D.view = 'diagram';
+			D.session.mode = 'diagram';
 		if (R.diagram && R.diagram.name === name)
 		{
 			R.EmitCATEvent('default', R.diagram);
-			return fn ? fn(R.diagram) : null;
+			return;
 		}
 		if (isGUI && name)
 			D.Busy();
@@ -1205,10 +970,9 @@ class R
 		let didit = false;
 		if (!diagram)
 		{
-			diagram = await R.DownloadDiagram(name, fn);
+			diagram = await R.DownloadDiagram(name);
 			if (!diagram)
 			{
-				fn && fn(diagram);
 				R.EmitCATEvent('default', null);
 				return;
 			}
@@ -1220,11 +984,15 @@ class R
 		{
 			diagram.makeSVG();
 			D.default.fullscreen && D.diagramSVG.appendChild(diagram.svgRoot);
+			/* TODO
+			D.forEachDiagramSVG(diagram => diagram.svgRoot.classList.remove('glow'));
+			diagram.svgRoot.querySelector('#' + diagram.elementId('background')).classList.add('glow');
+					lnkElt.setAttribute('filter', vertical ? '' : 'url(#softGlow)');
+					*/
 		}
 		R.diagram = diagram;
 		D.NotBusy();
 		R.EmitCATEvent('default', diagram);
-		!didit && fn && fn(diagram);
 	}
 	static GetCategory(name)
 	{
@@ -1300,6 +1068,7 @@ class R
 	{
 		const name = R.diagram.name;
 		const svg = R.diagram.svgRoot;
+		// TODO replace fetchDiagram()
 		R.cloud && R.cloud.fetchDiagram(name, false).then(data =>
 		{
 			R.diagram.clear();
@@ -1331,7 +1100,7 @@ class R
 	{
 		if (!isGUI)
 			return;
-		D.view = command;
+		D.session.mode = command;
 		R.default.showEvents && console.log('emit View event', {command});
 		return window.dispatchEvent(new CustomEvent('View', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
 	}
@@ -1612,7 +1381,7 @@ Object.defineProperties(R,
 		value:
 		{
 			category:		'hdole/PFS',
-			diagram:		'',
+//			diagram:		'',
 			debug:			true,
 			showEvents:		true,
 			sifu:			'catecon.net',
@@ -1826,8 +1595,9 @@ class Amazon extends Cloud
 	{
 		try
 		{
-			const userName = U.HtmlSafe(D.loginPanel.loginUserNameElt.value);
-			const password = D.loginPanel.passwordElt.value;
+			const userName = U.HtmlSafe(document.getElementById('login-user-name').value);
+//			const password = D.loginPanel.passwordElt.value;
+			const password = U.HtmlSafe(document.getElementById('login-password').value);
 			const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username:userName, Password:password});
 			const userData = {Username:userName, Pool:this.userPool};
 			this.user = new AmazonCognitoIdentity.CognitoUser(userData);
@@ -1934,7 +1704,7 @@ class Navbar
 		window.addEventListener('CAT', e => e.detail.command === 'default' && D.navbar.updateByCatDefaultEvent());
 		window.addEventListener('Autohide', e =>
 		{
-			if (D.view === 'catalog')	// no autohide in catalog view
+			if (D.session.mode === 'catalog')	// no autohide in catalog view
 				return;
 			const args = e.detail;
 			if (args.command === 'hide')
@@ -1989,7 +1759,7 @@ class Navbar
 		const sz = D.default.button.large;
 		let left = [];
 		let right = [];
-		if (D.view === 'diagram')
+		if (D.session.mode === 'diagram')
 		{
 			left.push(D.getIcon('diagramPanelToggle', 'diagram', _ => Cat.D.diagramPanel.toggle(), 'Diagrams', sz));
 			left.push(D.getIcon('categoryPanelToggle', 'category', _ => Cat.D.categoryPanel.toggle(), 'Categories', sz));
@@ -2056,13 +1826,9 @@ class Toolbar
 			const args = e.detail;
 			const element = args.element;
 			if (!args.diagram || args.diagram !== R.diagram || !U.IsIndexElement(element))
-				return;
-			switch (args.command)
-			{
-				case 'select':
-					D.toolbar.show();
-					break;
-			}
+				D.toolbar.hide();
+			else if (args.command === 'select')
+				D.toolbar.show();
 		}
 		window.addEventListener('Diagram', e => e.detail.command === 'load' && D.toolbar.resetMouseCoords());
 		window.addEventListener('Object', hideToolbar);
@@ -2079,6 +1845,7 @@ class Toolbar
 		});
 		window.addEventListener('Login', e => this.hide());
 		window.addEventListener('View', e => e.detail.command === 'catalog' ? this.hide() : null);
+		window.addEventListener('CAT', hideToolbar);
 	}
 	resetMouseCoords()
 	{
@@ -2167,7 +1934,7 @@ class Toolbar
 	}
 	showSearch()
 	{
-		function onkeydown(e) { Cat.D.OnEnter(e, function(e) { Cat.D.toolbar.search(e); }); }
+		const onkeydown = e => Cat.D.OnEnter(e, e => Cat.D.toolbar.search(e));
 		D.RemoveChildren(this.help);
 		const input = H3.input('##toolbar-diagram-search.in100', {title:'Search', placeholder:'Find...', onkeydown, size:8});
 		const btns = [];
@@ -2686,6 +2453,8 @@ class D
 		D.commaWidth = D.textWidth(',&nbsp;'),
 		D.bracketWidth = D.textWidth('[');
 		D.ElementTool =		ElementTool;
+		D.screenPan = D.getScreenPan();
+		const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 		D.Panel = 			Panel;
 		D.panels =			new Panels();
 		D.Panels =			Panels;
@@ -2743,7 +2512,7 @@ class D
 	static Resize()
 	{
 		const diagram = R.diagram;
-		const scale = diagram !== null ? diagram.getViewport().scale() : 1.0;
+		const scale = diagram !== null ? diagram.getViewport().scale : 1.0;
 		const width = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 		const height = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
 		if (D.topSVG)
@@ -2754,6 +2523,7 @@ class D
 			D.uiSVG.setAttribute('height', height);
 		}
 		D.panels.resize();
+		D.screenPan = D.getScreenPan();
 	}
 	static CancelAutohide()
 	{
@@ -2919,7 +2689,7 @@ class D
 									D.statusbar.show(e, msg);
 									from.updateGlow(true, 'glow');
 								}
-								else if (D.mouseover)
+								else if (D.mouseover && D.mouseOver !== from)
 									from.updateGlow(true, from.isFusible(D.mouseover) ? 'glow' : 'badGlow');
 								else if (!fusible)	// no glow
 									from.updateGlow(false, '');
@@ -3047,8 +2817,8 @@ class D
 						R.EmitDiagramEvent(diagram, 'move', '');
 					}
 				}
-				else if (!D.mouseover)
-					diagram.areaSelect(e);
+//				else if (!D.mouseover)
+//					diagram.areaSelect(e);
 			}
 			catch(x)
 			{
@@ -3199,6 +2969,7 @@ class D
 				case 'update':
 					args.element.update();
 					R.diagram.domain.updateCells(args.element);
+					isGUI && args.diagram.updateBackground();
 					D.Autosave(args.diagram);
 					break;
 			}
@@ -3263,12 +3034,7 @@ class D
 						diagram.makeCells();
 						break;
 					case 'view':
-						let diagrams = [];
-						if (D.default.fullscreen)
-							diagrams.push(diagram.name);
-						else
-							D.forEachDiagramSVG(diagram => diagrams.push(diagram.name));
-						D.saveViewMode('diagram', diagrams);
+//						D.saveSession('diagram');
 						break;
 				}
 			D.Autohide(e);
@@ -3288,21 +3054,29 @@ class D
 					{
 						if (diagram)
 						{
+							D.session.default = diagram.name;
+							if (!diagram.svgRoot)
+								diagram.makeSVG();
 							D.diagramSVG.appendChild(diagram.svgRoot);
 							const viewport = diagram.getViewport();
 							viewport.visible = true;
 							diagram.setViewport(viewport);
+							D.GlowBadObjects(diagram);
+							diagram.svgTranslate.classList.add('trans025s');
+							D.saveSession();
 						}
+						else
+							D.session.default = null;
 					}
 					if (diagram)
 					{
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
-						if (R.initialized)
-						{
-							R.default.diagram = diagram.name;
-							R.SaveDefaults();
-						}
+//						if (R.initialized)
+//						{
+//							R.default.diagram = diagram.name;
+//							R.SaveDefaults();
+//						}
 						isGUI && R.EmitViewEvent('diagram', diagram);
 					}
 					break;
@@ -3313,7 +3087,7 @@ class D
 		});
 		window.addEventListener('Login', e =>
 		{
-			if (D.view === 'diagram' && R.params.has('diagram'))
+			if (D.session.mode === 'diagram' && R.params.has('diagram'))
 				R.SelectDiagram(R.params.get('diagram'));
 			if (R.user.status !== 'logged-in')
 				return;
@@ -3330,13 +3104,13 @@ class D
 		window.addEventListener('CAT', e =>
 		{
 			D.jsHtmlLoader(e);
-//			D.UpdateDiagramDisplay(e);
 		});
 		window.addEventListener('Assertion', D.UpdateDisplay);
 		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
 		window.addEventListener('Object', D.UpdateObjectDisplay);
 		window.addEventListener('Text', D.UpdateTextDisplay);
-		D.topSVG.onmousemove = D.Mousemove;
+//		D.topSVG.onmousemove = D.Mousemove;
+		D.topSVG.addEventListener('mousemove', D.Mousemove);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
 		D.topSVG.addEventListener('drop', D.Drop, true);
@@ -3383,7 +3157,7 @@ class D
 					if (diagram.user === 'sys')
 						diagram.autoplace();
 					diagram.show();
-					diagram.savePng();
+//					diagram.savePng();
 					diagram.show();
 					D.diagramSVG.appendChild(diagram.svgRoot);
 				}
@@ -3440,27 +3214,6 @@ class D
 		{
 			console.trace(err);
 			throw err;
-		}
-	}
-	static UpdateDiagramDisplay(e)		// event handler
-	{
-		const args = e.detail;
-		const diagram = args.diagram;
-		if (!diagram)
-			return;
-		switch(args.command)
-		{
-			case 'new':
-				break;
-			case 'default':
-				if (!diagram.svgRoot)
-					diagram.makeSVG();
-				const viewport = diagram.getViewport();
-				viewport.visible = true;
-				diagram.setViewport(viewport);
-				D.GlowBadObjects(diagram);
-				diagram.svgTranslate.classList.add('trans025s');
-				break;
 		}
 	}
 	static UpdateMorphismDisplay(e)		// event handler
@@ -4045,18 +3798,20 @@ class D
 			delete R.busyBtn;
 		}
 	}
-	static saveViewMode(mode, args)
+	static saveSession()
 	{
-		const viewMode = {};
-		viewMode[mode] = args;
-		U.writefile('viewMode.json', JSON.stringify(viewMode));
+		D.session.diagrams.length = 0;
+		D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && D.session.diagrams.push(d.name));
+		U.writefile('session.json', JSON.stringify(D.session));
 	}
-	static readViewMode()
+	static readSession()
 	{
-		const viewMode = U.readfile('viewMode.json');
-		if (viewMode)
-			return JSON.parse(viewMode);
-		return {catalog:''};
+		const str = U.readfile('session.json');
+		if (str)
+			D.session = JSON.parse(str);
+		else
+			D.session = {mode:'catalog', default:null, diagrams:[], viewport:{x:0, y:0, scale:1}};
+		D.setViewport(D.session.viewport);
 	}
 	static forEachDiagramSVG(fn)
 	{
@@ -4068,10 +3823,74 @@ class D
 		}
 		while((dgrmSvg = dgrmSvg.nextSibling));
 	}
+	static setViewport(viewport)
+	{
+		D.session.viewport.x = viewport.x;
+		D.session.viewport.y = viewport.y;
+		D.session.viewport.scale = viewport.scale;
+		R.initialized && D.saveSession();
+		D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
+	}
+	static getScreenPan()
+	{
+		return Math.min(D.Width(), D.Height()) * D.default.pan.scale;
+	}
+	static panHandler(e, dir)
+	{
+		let offset;
+		switch(dir)
+		{
+			case 'up':
+				offset = new D2(0, - D.screenPan);
+				break;
+			case 'down':
+				offset = new D2(0, D.screenPan);
+				break;
+			case 'left':
+				offset = new D2(-D.screenPan, 0);
+				break;
+			case 'right':
+				offset = new D2(D.screenPan, 0);
+				break;
+		}
+		if (D.default.fullscreen)
+		{
+			if(R.diagram)
+			{
+				const viewport = R.diagram.getViewport();
+				R.diagram.setViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
+			}
+			e.preventDefault();
+		}
+		else	// pan session
+		{
+			const viewport = D.session.viewport;
+			D.setViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
+		}
+	}
+	static getViewportByBBox(bbox)
+	{
+		if (bbox.width === 0)
+			bbox.width = D.Width();
+		const margin = D.navbar.element.getBoundingClientRect().height;
+		const dw = D.Width() - 2 * D.default.panel.width - 2 * margin;
+		const dh = D.Height() - 4 * margin;
+		const xRatio = bbox.width / dw;
+		const yRatio = bbox.height / dh;
+		const scale = 1.0/Math.max(xRatio, yRatio);
+		let x = - bbox.x * scale + D.default.panel.width + margin;
+		let y = - bbox.y * scale + 2 * margin;
+		if (xRatio > yRatio)
+			y += dh/2 - scale * bbox.height/2;
+		else
+			x += dw/2 - scale * bbox.width/2;
+		return {x:x - D.session.viewport.x, y:y - D.session.viewport.y, scale};
+	}
 }
 Object.defineProperties(D,
 {
 	bracketWidth:	{value: 0,			writable: true},
+	catalog:		{value: null,		writable: true},
 	category:		{value: null,		writable: true},
 	categoryPanel:	{value: null,		writable: true},
 	commaWidth:		{value: 0,			writable: true},
@@ -4087,6 +3906,8 @@ Object.defineProperties(D,
 				margin:	16,
 				dir:	{x:0, y:1},
 			},
+			autohideTimer:	10000,	// ms
+			autosaveTimer:	2000,	// ms
 			button:		{tiny:0.4, small:0.66, large:1.0},
 			cell:		{
 							unknown:		'&#8799;',
@@ -4112,6 +3933,7 @@ Object.defineProperties(D,
 			},
 			layoutGrid:		10,
 			majorGridMult:	20,
+			margin:			5,
 			pan:			{scale:	0.05},
 			panel:			{width:	230},
 			scale:			{base:1.05, limit:{min:0.05, max:20}},
@@ -4119,12 +3941,8 @@ Object.defineProperties(D,
 			stdOffset:		new D2(50, 50),
 			stdArrow:		new D2(200, 0),
 			stdArrowDown:	new D2(0, 200),
-			autohideTimer:	10000,	// ms
-			autosaveTimer:	2000,	// ms
 			statusbar:		{timein: 200, timeout: 4000},	// ms
-			saveInterval:	5000,	// ms
 			toolbar:		{x:15, y:70},
-			margin:			5,
 		},
 		writable:		false,
 	},
@@ -4144,43 +3962,76 @@ Object.defineProperties(D,
 		{
 			Minus(e) { D.Zoom(e, -2);},
 			Equal(e) { D.Zoom(e, 2);},
+			ControlHome(e)
+			{
+				D.setViewport({x:0, y:0, scale:1});
+			},
 			Home(e)
 			{
 				const diagram = R.diagram;
-				diagram.selected.length > 0 ? diagram.viewElements(...diagram.selected) : diagram.home();
+				if (D.default.fullscreen && diagram)
+				{
+					diagram.selected.length > 0 ? diagram.viewElements(...diagram.selected) : diagram.home();
+				}
+				else
+				{
+					const bbox = new D2();
+					D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && bbox.merge(d.svgRoot.getBBox()));
+					D.setViewport(D.getViewportByBBox(bbox));
+				}
 				e.preventDefault();
 			},
 			ArrowUp(e)
 			{
+				D.panHandler(e, 'up');
+				/*
 				const diagram = R.diagram;
-				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				const viewport = diagram.getViewport();
-				diagram.setViewport({x:viewport.x, y:viewport.y + delta, scale:viewport.scale});
-				e.preventDefault();
+				if (D.default.fullscreen && R.diagram)
+				{
+					const viewport = diagram.getViewport();
+					diagram.setViewport({x:viewport.x, y:viewport.y + D.screenPan, scale:viewport.scale});
+					e.preventDefault();
+				}
+				*/
 			},
 			ArrowDown(e)
 			{
-				const diagram = R.diagram;
-				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				const viewport = diagram.getViewport();
-				diagram.setViewport({x:viewport.x, y:viewport.y - delta, scale:viewport.scale});
-				e.preventDefault();
+				D.panHandler(e, 'down');
+				/*
+				if (D.default.fullscreen && R.diagram)
+				{
+					const diagram = R.diagram;
+					const viewport = diagram.getViewport();
+					diagram.setViewport({x:viewport.x, y:viewport.y - D.screenPan, scale:viewport.scale});
+					e.preventDefault();
+				}
+				*/
 			},
 			ArrowLeft(e)
 			{
-				const diagram = R.diagram;
-				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				const viewport = diagram.getViewport();
-				diagram.setViewport({x:viewport.x + delta, y:viewport.y, scale:viewport.scale});
-				e.preventDefault();
+				D.panHandler(e, 'left');
+				/*
+				if (D.default.fullscreen && R.diagram)
+				{
+					const diagram = R.diagram;
+					const viewport = diagram.getViewport();
+					diagram.setViewport({x:viewport.x + D.screenPan, y:viewport.y, scale:viewport.scale});
+					e.preventDefault();
+				}
+				*/
 			},
 			ArrowRight(e)
 			{
-				const diagram = R.diagram;
-				const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
-				const viewport = diagram.getViewport();
-				diagram.setViewport({x:viewport.x - delta, y:viewport.y, scale:viewport.scale});
-				e.preventDefault();
+				D.panHandler(e, 'right');
+				/*
+				if (D.default.fullscreen && R.diagram)
+				{
+					const diagram = R.diagram;
+					const viewport = diagram.getViewport();
+					diagram.setViewport({x:viewport.x - D.screenPan, y:viewport.y, scale:viewport.scale});
+					e.preventDefault();
+				}
+				*/
 			},
 			Slash(e)
 			{
@@ -4193,11 +4044,13 @@ Object.defineProperties(D,
 			},
 			Space(e)
 			{
+				/*
 				R.diagram && R.diagram.svgTranslate.classList.remove('trans025s');
 				D.tool = 'pan';
 				D.drag = false;
 				D.setCursor();
 				e.preventDefault();
+				*/
 			},
 			ControlLeft(e) { D.ctrlKey = true; },
 			ControlRight(e) { D.ctrlKey = true; },
@@ -4283,12 +4136,12 @@ Object.defineProperties(D,
 			},
 			Escape(e)
 			{
-				if (D.view === 'catalog' && R.diagram)
+				if (D.session.mode === 'catalog' && R.diagram)
 				{
 					R.EmitViewEvent('diagram', R.diagram);
 //					D.forEachDiagramSVG(diagram => R.EmitDiagramEvent(diagram, 'view', 'contain'));
 				}
-				else if (D.view === 'diagram')
+				else if (D.session.mode === 'diagram')
 				{
 					let isOpen = false;
 					Object.values(D.panels.panels).forEach(pnl => isOpen = isOpen || (pnl.elt.style.width != '0px' && pnl.elt.style.width !== ''));
@@ -4302,22 +4155,12 @@ Object.defineProperties(D,
 						D.toolbar.hide();
 						return;
 					}
-					D.default.fullscreen = !D.default.fullscreen;
-					R.SaveDefaults();
-					/*
-					let dgrmSvg = D.diagramSVG.firstChild;
-					do
+					if (R.diagram)
 					{
-						const dgrm = R.$CAT.getElement(dgrmSvg.dataset.name);
-						dgrm && R.EmitDiagramEvent(R.$CAT.getElement(dgrmSvg.dataset.name), 'view', 'contain');
-						if (!dgrm)
-							console.log('missed', dgrmSvg.dataset.name);
+						D.default.fullscreen = !D.default.fullscreen;
+						R.SaveDefaults();
+						R.EmitViewEvent('diagram', R.diagram);
 					}
-					while((dgrmSvg = dgrmSvg.nextSibling));
-					*/
-//					D.forEachDiagramSVG(diagram => R.EmitDiagramEvent(diagram, 'view', 'contain'));
-					R.EmitViewEvent('diagram', R.diagram);
-//					R.EmitDiagramEvent(R.diagram, 'view', 'contain');
 				}
 				D.DeleteSelectRectangle();
 				// TODO abort drag element
@@ -4359,9 +4202,11 @@ Object.defineProperties(D,
 			},
 			Space(e)
 			{
+				/*
 				R.diagram && R.diagram.svgTranslate.classList.add('trans025s');
 				D.tool = 'select';
 				D.setCursor();
+				*/
 			},
 		},
 		writable:	true,
@@ -4401,7 +4246,7 @@ Object.defineProperties(D,
 				const clientY = e.clientY - D.topSVG.parentElement.offsetTop;
 				if (xy.length > 0 && xy[xy.length -1].x === e.clientX && xy[xy.length -1].y === clientY)
 					return;
-				xy.push(new D2(e.clientX, clientY));
+				xy.push(new D2(e.clientX - D.session.viewport.x, clientY - D.session.viewport.y));
 				if (xy.length > 2)
 					xy.shift();
 			},
@@ -4422,6 +4267,7 @@ Object.defineProperties(D,
 	panels:			{value: null,		writable: true},
 	pasteBuffer:	{value: [],			writable: true},
 	ReplayCommands:	{value:	new Map(),	writable:false},
+	screenPan:		{value: 0,			writable: true},
 	settingsPanel:	{value: null,		writable: true},
 	shiftKey:		{value: false,		writable: true},
 	showUploadArea:	{value: false,		writable: true},
@@ -4448,6 +4294,7 @@ Object.defineProperties(D,
 	ttyPanel:		{value: null,													writable: true},
 	uiSVG:			{value: isGUI ? document.getElementById('uiSVG') : null,		writable: false},
 	viewports:		{value: new Map(),												writable: false},
+	session:		{value: null,													writable: true},
 	xmlns:			{value: 'http://www.w3.org/2000/svg',							writable: false},
 });
 
@@ -5914,16 +5761,17 @@ class LoginPanel extends Panel
 	constructor()
 	{
 		super('login', true);
-		this.loginInfoElt = H3.div('##login-info');
 		this.userNameElt = H3.span('##user-name.smallBold');
 		this.userEmailElt = H3.span('##user-email.smallBold');
 		this.permissionsElt = H3.span('##login-permission.smallBold');
+		this.loginInfoElt = H3.div('##login-info');
 		this.errorElt = H3.span('##login-error.error');
 		this.elt.appendChild(H3.div(	H3.table(H3.tr(H3.td(this.closeBtnCell(), '.buttonBarLeft'))),
 										H3.h3('User'),
 										H3.table(	H3.tr(H3.td('User:'), H3.td(this.userNameElt)),
 													H3.tr(H3.td('Email:'), H3.td(this.userEmailElt)),
 													H3.tr(H3.td('Permissions:'), H3.td(this.permissionsElt))),
+										this.loginInfoElt,
 										this.errorElt));
 		this.initialize();
 		window.addEventListener('Login', e =>
@@ -5939,8 +5787,8 @@ class LoginPanel extends Panel
 	{
 		return H3.form(H3.table(H3.tr(H3.td('User name')),
 								H3.tr(H3.td(H3.input('##login-user-name', {title:'Text', placeholder:'Name', autocomplete:"username"}))),
-								H3.tr(H3.td('Password')),
-								H3.tr(H3.td(H3.input('##login-password.password', {placeholder:'********'}))),
+								H3.tr(H3.td(H3.label('Password', {for:'login-password'}))),
+								H3.tr(H3.td(H3.input('##login-password.password', {type:'password', placeholder:'********'}))),
 								H3.tr(H3.td(H3.button('Login', {onclick:e => Cat.R.login(e)})))));
 	}
 	update()
@@ -7952,7 +7800,7 @@ class DiagramObject extends CatObject
 		const svg = H3.text({draggable:true});
 		svg.onmouseenter = e => Cat.D.Mouseover(e, this, true);
 		svg.onmouseleave = e => Cat.D.Mouseover(e, this, false);
-		svg.onmousedown = e => Cat.R.diagram.selectElement(e, name);
+		svg.onmousedown = e => R.diagram && R.diagram.selectElement(e, name);
 		node.appendChild(svg);
 		this.svg = svg;
 		svg.setAttributeNS(null, 'data-type', 'object');
@@ -9541,7 +9389,7 @@ class HelpAction extends Action
 		const js = R.Actions.javascript;
 		const cpp = R.Actions.cpp;
 		let toolbar2 = [];
-		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.getIcon(lang.basename, lang.icon, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
+		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
 		if (toolbar2.length > 0)
 			help.appendChild(H3.div(toolbar2, '##help-toolbar2.buttonBarLeft'));
 		D.toolbar.help.appendChild(H3.div(from.help(), '##help-body'));
@@ -9550,21 +9398,22 @@ class HelpAction extends Action
 
 class LanguageAction extends Action
 {
-	constructor(diagram, language, ext)
+//	constructor(diagram, language, ext)
+	constructor(diagram, args)
 	{
-		const args =
-		{
-			description:	`Morphism\'s ${language} code`,
-			basename:		language,
-		};
+//		const args =
+//		{
+//			description:	`Morphism\'s ${language} code`,
+//			basename:		language,
+//		};
 		super(diagram, args);
 		Object.defineProperties(this,
 		{
-			diagram:		{value:	null,		writable:	true},
+			genDiagram:		{value:	null,		writable:	true},
 			currentDiagram:	{value:	null,		writable:	true},
 			htmlReady:		{value:	false,		writable:	true},
-			ext:			{value:	ext,		writable:	false},
-			language:		{value:	language,	writable:	false},
+			ext:			{value:	args.ext,		writable:	false},
+//			basename:		{value:	basename,	writable:	false},
 		});
 		if (!isGUI)
 			return;
@@ -9612,7 +9461,7 @@ class LanguageAction extends Action
 		}
 		else
 		{
-			this.diagram = diagram;
+			this.genDiagram = diagram;
 			this.currentDiagram = null;
 			div.appendChild(H3.p(this.generate(elt), `##element-${this.ext}.code`));
 		}
@@ -9656,7 +9505,7 @@ class LanguageAction extends Action
 		const generated = new Set();
 		generated.add('');	// no exec
 		this.currentDiagram = null;
-		this.diagram = diagram;
+		this.genDiagram = diagram;
 		let code = `// Catecon Diagram ${diagram.name} @ ${Date.now()}`;
 		diagram.elements.forEach(elt =>
 		{
@@ -13031,13 +12880,15 @@ class Diagram extends Functor
 		}
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
-		isGUI && this.makeSVG(false);
 		if ('domainElements' in nuArgs)
+		{
+			if (R.initialized)
+				this.makeSVG();
 			this.domain.process(this, nuArgs.domainElements);
+		}
 		R.SetDiagramInfo(this);
 		this.postProcess();
 		diagram && this.constructor.name === 'Diagram' && R.EmitCATEvent(diagram, 'new', this);
-//		isGUI && this.updateFromLastView();
 	}
 	addElement(elt)
 	{
@@ -13099,7 +12950,7 @@ class Diagram extends Functor
 				return viewport;
 			}
 		}
-		return viewport ? viewport : {x:0, y:0, scale:1, visible:false};
+		return viewport ? U.Clone(viewport) : {x:0, y:0, scale:1, visible:false};
 	}
 	setViewport(args)
 	{
@@ -13113,7 +12964,6 @@ class Diagram extends Functor
 			this.svgRoot.classList.add('hidden');
 		this.svgTranslate.setAttribute('transform', `translate(${x} ${y}) scale(${scale} ${scale})`);
 		const viewport = {x, y, scale, visible, timestamp:Date.now()};
-if (isNaN(x)) debugger;
 		U.writefile(`${this.name}-viewport.json`, JSON.stringify(viewport));
 		D.viewports.set(this.name, viewport);
 		this.updateBackground();
@@ -13121,6 +12971,7 @@ if (isNaN(x)) debugger;
 	}
 	setViewportByBBox(bbox, log = true)
 	{
+		/*
 		if (bbox.width === 0)
 			bbox.width = D.Width();
 		const margin = D.navbar.element.getBoundingClientRect().height;
@@ -13136,10 +12987,13 @@ if (isNaN(x)) debugger;
 		else
 			x += dw/2 - scale * bbox.width/2;
 		this.setViewport({x, y, scale});
+			*/
+		this.setViewport(D.getViewportByBBox(bbox));
 	}
 	home(log = true)
 	{
-		this.setViewportByBBox(this.svgBase.getBBox(), log);
+		const bbox = new D2(this.svgBase.getBBox());
+		this.setViewportByBBox(bbox, log);
 	}
 	getObject(name)
 	{
@@ -13320,6 +13174,7 @@ if (isNaN(x)) debugger;
 				o.codomains.forEach(updateMorphism);
 			}
 		});
+		this.updateBackground();
 	}
 	placeText(e, xy, description, height = '24', weight = 'normal')
 	{
@@ -13509,8 +13364,42 @@ if (isNaN(x)) debugger;
 			};
 			bkgnd.onmouseleave = e =>
 			{
-				if (!e.toElement || e.toElement.id === 'topSVG')
+				if (D.default.fullscreen)
+					return;
+				if (!e.toElement)
 					R.SelectDiagram(null);
+				else
+				{
+					let elt = e.toElement;
+					let notOurs = true;
+					let diagram = null;
+					while(elt && 'id' in elt && elt.id !== 'topSVG')
+					{
+						// if the name is not one of our elements, or not our own name, then we were left behind
+						if ('name' in elt.dataset)
+						{
+							const name = elt.dataset.name;
+							const isOwnElt = this.domain.elements.has(name);
+							if (isOwnElt || name === this.name)
+							{
+								notOurs = false;
+								break;
+							}
+							if (R.$CAT.codomain.elements.has(name))
+							{
+								diagram = name;
+								break;
+							}
+						}
+						else if (elt.id === 'navbar' || elt.id === 'toolbar')
+						{
+							notOurs = false;
+							break;
+						}
+						elt = elt.parentElement;
+					}
+					notOurs && R.SelectDiagram(diagram);
+				}
 			};
 			let delta = null;
 			const onMouseMove = e =>
@@ -13584,6 +13473,8 @@ if (isNaN(x)) debugger;
 		const s = 1.0 / viewport.scale;
 		if (isNaN(viewport.x) || isNaN(s))
 			throw 'NaN in coords';
+//		const d2 = new D2(	s * (xy.x - viewport.x + D.session.viewport.x),
+//							s * (xy.y - viewport.y + D.session.viewport.y));
 		const d2 = new D2(	s * (xy.x - viewport.x),
 							s * (xy.y - viewport.y));
 		if ('width' in xy)
@@ -13598,7 +13489,8 @@ if (isNaN(x)) debugger;
 		const viewport = this.getViewport();
 		const s = viewport.scale;
 		const userXy = new D2(xy).scale(s).add(viewport);
-		return userXy;
+//		return new D2(xy).scale(s).add(viewport).subtract(D.session.viewport);
+		return new D2(xy).scale(s).add(viewport);
 	}
 	replaceElements(elements)
 	{
@@ -14770,8 +14662,14 @@ console.log('formMorphism', {morphism});
 			D.toolbar.hide();
 		}
 	}
-	hide() { this.svgRoot.classList.add('hidden'); }
-	show() { this.svgRoot.classList.remove('hidden'); }
+	hide()
+	{
+		this.svgRoot.classList.add('hidden');
+	}
+	show()
+	{
+		this.svgRoot.classList.remove('hidden');
+	}
 	postProcess()
 	{
 		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());
@@ -14953,8 +14851,8 @@ console.log('formMorphism', {morphism});
 			const bkgnd = document.getElementById(this.elementId('background'));
 			if (D.default.fullscreen)
 			{
-				bkgnd.setAttribute('x', '0px');
-				bkgnd.setAttribute('y', '0px');
+				bkgnd.setAttribute('x', `${-D.session.viewport.x}px`);
+				bkgnd.setAttribute('y', `${-D.session.viewport.y}px`);
 				bkgnd.setAttribute('width', `${D.Width()}px`);
 				bkgnd.setAttribute('height', `${D.Height()}px`);
 			}
@@ -14971,16 +14869,6 @@ console.log('formMorphism', {morphism});
 			}
 		}
 	}
-	/*
-	updateFromLastView()
-	{
-		if(D.lastViewedDiagrams.has(this.name))
-		{
-			const viewport = D.lastViewedDiagrams.get(this.name);
-			this.setViewport(viewport.x, viewport.y, viewport.scale, false);
-		}
-	}
-	*/
 	savePng()
 	{
 		D.Svg2canvas(this, (png, pngName) =>
@@ -14989,7 +14877,6 @@ console.log('formMorphism', {morphism});
 			U.writefile(`${this.name}.png`, png);
 			R.EmitCATEvent('png', this);
 		});
-//		R.SetDiagramInfo(diagram);
 	}
 	static Codename(args)
 	{
@@ -15023,7 +14910,6 @@ const Cat =
 	R,
 	D,
 	U,
-//	H,
 	Action,
 	Assertion,
 	Category,
