@@ -15,9 +15,9 @@ var Cat = Cat || require('./Cat.js');
 	{
 		constructor(diagram)
 		{
-			super(diagram, 'cpp', 'cpp', typeof module === 'undefined' ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"200", style:"font-size:220px;font-weight:bold;stroke:#000;"}, "C"),
-												H3.text({"text-anchor":"middle", x:"160", y:"330", style:"font-size:200px;font-weight:bold;stroke:#000;"}, "++")]) : null);
-			Object.defineProperty(this, 'currentCiagram', {value:null, writable:true});
+			const args = {basename:'cpp', description:'C++ support'};
+			super(diagram, args);
+			Object.defineProperty(this, 'currentDiagram', {value:null, writable:true});
 			Cat.R.languages.set(this.basename, this);
 		}
 		getType(elt, first = true)
@@ -515,7 +515,8 @@ ${this.generateMain(diagram)}
 	else
 	{
 		window.CppAction = CppAction;
-		window.Cat.R.Actions.cpp = new CppAction(Cat.R.$Actions);
+//		window.Cat.R.Actions.cpp = new CppAction(Cat.R.$Actions);
+		window.addEventListener('load', _ => {window.Cat.R.Actions.cpp = new CppAction(Cat.R.$Actions)});
 	}
 
 })();	// end anon function

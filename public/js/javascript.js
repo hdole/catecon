@@ -15,7 +15,8 @@ var Cat = Cat || require('./Cat.js');
 	{
 		constructor(diagram)
 		{
-			super(diagram, 'javascript', 'js', typeof module === 'undefined' ? H3.text({"text-anchor":"middle", x:"160", y:"280", style:"font-size:240px;font-weight:bold;stroke:#000;"}, "JS") : null);
+			const args = {basename:'javascript', description:'Javascript support'};
+			super(diagram, args);
 			R.languages.set(this.basename, this);
 		}
 		getType(elt, first = true)
@@ -48,7 +49,7 @@ var Cat = Cat || require('./Cat.js');
 				const tail = this.tail();
 				const domain = morphism.domain instanceof Cat.NamedObject ? morphism.domain.base : morphism.domain;
 				const codomain = morphism.codomain instanceof Cat.NamedObject ? morphism.codomain.base : morphism.codomain;
-				if (R.CanFormat(morphism) && domain.size)
+				if (Cat.R.CanFormat(morphism) && domain.size)
 					code +=	// TODO safety check?
 `
 function ${name}_Iterator(fn)
@@ -457,7 +458,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 			if (selected)
 			{
 				morph.data.set(index, selected);
-				R.EmitMorphismEvent(R.diagram, 'update', from);
+				R.EmitMorphismEvent(Cat.R.diagram, 'update', from);
 			}
 			else
 				morph.data.delete(index);
@@ -711,12 +712,15 @@ ${this.generate(morphism)}
 	if (typeof module !== 'undefined')
 	{
 		module.exports.JavascriptAction = JavascriptAction;
-		R.Actions.javascript = new JavascriptAction(R.$Actions);
+		R.Actions.javascript = new JavascriptAction(Cat.R.$Actions);
 	}
 	else
 	{
 		window.JavascriptAction = JavascriptAction;
-		window.Cat.R.Actions.javascript = new JavascriptAction(R.$Actions);
+		window.addEventListener('load', _ =>
+		{
+			window.Cat.R.Actions.javascript = new JavascriptAction(Cat.R.$Actions);
+		});
 	}
 
 })();	// end anon function

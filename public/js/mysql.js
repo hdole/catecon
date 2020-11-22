@@ -12,14 +12,16 @@ var Cat = Cat || require('./Cat.js');
 	const D = Cat.D;
 	const R = Cat.R;
 	const U = Cat.U;
-	const js = Cat.R.Actions.javascript;
+	let js = null;
 
 	class MysqlAction extends Cat.LanguageAction
 	{
 		constructor(diagram)
 		{
-			super(diagram, 'mysql', 'mysql', typeof module === 'undefined' ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"160", style:"font-size:180px;font-weight:bold;stroke:#000;"}, "MY"),
-												H3.text({"text-anchor":"middle", x:"160", y:"300", style:"font-size:180px;font-weight:bold;stroke:#000;"}, "SQL")]) : null);
+			const args = {basename:'mysql', description:'MySQL support', ext:'sql'};
+//			super(diagram, 'mysql', 'mysql', typeof module === 'undefined' ? H3.g([H3.text({"text-anchor":"middle", x:"160", y:"160", style:"font-size:180px;font-weight:bold;stroke:#000;"}, "MY"),
+//												H3.text({"text-anchor":"middle", x:"160", y:"300", style:"font-size:180px;font-weight:bold;stroke:#000;"}, "SQL")]) : null);
+			super(diagram, args);
 			Cat.R.languages.set(this.basename, this);
 		}
 		getType(elt, first = true)
@@ -32,11 +34,11 @@ var Cat = Cat || require('./Cat.js');
 		}
 		hasForm(diagram, ary)
 		{
-//			return ary.length === 1 && ary[0] instanceof Cat.DiagramMorphism && ary[0].domain instanceof MysqlObject;
 			return ary.length === 1 && ary[0] instanceof Cat.DiagramMorphism && ary[0].to.constructor.name === 'Morphism';
 		}
 	}
 
+/*
 	class MysqlObject extends Cat.DiagramObject		// mysql table; morphisms form the columns
 	{
 		constructor(diagram, args)
@@ -52,7 +54,7 @@ var Cat = Cat || require('./Cat.js');
 		postload()
 		{
 			this.columns = this.nuArgs.columns.slice();
-			const morphisms = this.nuArgs.morphisms.map(m => this.diagram.getElement(m));
+			const morphisms = this.nuArgs.morphisms.map(m => this.genDiagram.getElement(m));
 			if (morphisms.filter(m => m === undefined).length > 0)
 				throw 'morphism not found for column';
 			if (!Cat.Category.IsSource(morphisms))
@@ -123,7 +125,6 @@ var Cat = Cat || require('./Cat.js');
 		{
 			const attrs = [];
 			const indexId = m.elementId('index');
-//			const indexChkbox = {type:'checkbox', 'data-type':'index', id:indexId, onclick:e => e.target.previousSibling.classList.toggle('blueRow'), class:'nodisplay'};
 			const indexAttrs = {class:'textButton', onclick:e => e.target.classList.toggle('blueRow')};
 			if (domain instanceof MysqlObject)
 			{
@@ -133,7 +134,6 @@ var Cat = Cat || require('./Cat.js');
 					attrs.push(H3.button('delete column'));
 					if (domain.columns[ndx].includes('index'))
 						indexAttrs.class += ' blueRow';
-//						indexChkbox.checked = '';
 
 				}
 				else
@@ -173,7 +173,6 @@ var Cat = Cat || require('./Cat.js');
 				domain = elt.to.domain;
 				help.appendChild(H3.h3(`Create MySQL Table ${domain.to.basename}`));
 				help.appendChild(this.columnTable(domain, ary));
-//				help.appendChild(H3.button(`Create table ${domain.to.basename} in database ${diagram.name}`, {onclick:e => Cat.R.Actions.mysqlTable.action(e, diagram, diagram.selected), class:'display'}));
 			}
 			help.appendChild(H3.button(`Issue command for ${domain.to.basename} in database ${diagram.name}`, {onclick:e => Cat.R.Actions.mysqlTable.action(e, diagram, diagram.selected), class:'display'}));
 		}
@@ -216,19 +215,23 @@ var Cat = Cat || require('./Cat.js');
 			return false;
 		}
 	}
+*/
 
 	if (isGUI)
 	{
-		window.Cat.R.Actions.mysql = new MysqlAction(Cat.R.$Actions);
-		window.Cat.R.Actions.mysqlTable = new MysqlTableAction(Cat.R.$Actions);
-		window.Cat.MysqlObject = MysqlObject;
-		window.Cat.MysqlAction = MysqlAction;
+//		window.Cat.MysqlObject = MysqlObject;
+//		window.Cat.MysqlAction = MysqlAction;
+		window.addEventListener('load', _ =>
+		{
+			window.Cat.R.Actions.mysql = new MysqlAction(Cat.R.$Actions);
+//			window.Cat.R.Actions.mysqlTable = new MysqlTableAction(Cat.R.$Actions);
+			js = Cat.R.Actions.javascript;
+		});
 	}
 	else
 	{
 		Cat.R.Actions.mysql = new MysqlAction(Cat.R.$Actions);
-		Cat.MysqlObject = MysqlObject;
-		Cat.MysqlAction = MysqlAction;
+//		Cat.MysqlObject = MysqlObject;
+//		Cat.MysqlAction = MysqlAction;
 	}
-
 })();	// end anon function
