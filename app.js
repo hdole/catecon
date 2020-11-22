@@ -44,6 +44,7 @@ const rfs = require('rotating-file-stream');
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 
+const D2 = require('./public/js/D2.js');
 const Cat = require('./public/js/Cat.js');
 const jsAction = require('./public/js/javascript.js');
 
