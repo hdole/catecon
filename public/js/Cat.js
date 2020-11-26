@@ -951,12 +951,15 @@ class R
 		return diagram;
 	}
 	//
-	// primvary means of displaying a diagram
+	// primary means of displaying a diagram
 	//
 	static async SelectDiagram(name)
 	{
 		if (isGUI)
+		{
 			D.session.mode = 'diagram';
+			R.diagram && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
+		}
 		if (R.diagram && R.diagram.name === name)
 		{
 			R.EmitCATEvent('default', R.diagram);
@@ -970,9 +973,11 @@ class R
 		let didit = false;
 		if (!diagram)
 		{
-			diagram = await R.DownloadDiagram(name);
+			if (name)
+				diagram = await R.DownloadDiagram(name);
 			if (!diagram)
 			{
+				D.NotBusy();
 				R.EmitCATEvent('default', null);
 				return;
 			}
@@ -991,6 +996,7 @@ class R
 					*/
 		}
 		R.diagram = diagram;
+		isGUI && R.diagram && R.diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
 		D.NotBusy();
 		R.EmitCATEvent('default', diagram);
 	}
@@ -1766,7 +1772,7 @@ class Navbar
 			left.push(D.getIcon('objectPanelToggle', 'object', _ => Cat.D.objectPanel.toggle(), 'Objects', sz));
 			left.push(D.getIcon('morphismPanelToggle', 'morphism', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
 			left.push(D.getIcon('textPanelToggle', 'text', _ => Cat.D.textPanel.toggle(), 'Text', sz));
-			left.push(D.getIcon('showGraphs', 'string', _ => Cat.R.diagram.showGraphs, 'Graph', sz));
+//			left.push(D.getIcon('showGraphs', 'string', _ => Cat.R.diagram.showGraphs, 'Graph', sz));
 			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram && Cat.R.diagram.home(), 'Home', sz));
 			right.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
 			right.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
@@ -1828,7 +1834,7 @@ class Toolbar
 			if (!args.diagram || args.diagram !== R.diagram || !U.IsIndexElement(element))
 				D.toolbar.hide();
 			else if (args.command === 'select')
-				D.toolbar.show();
+				D.toolbar.show(e);
 		}
 		window.addEventListener('Diagram', e => e.detail.command === 'load' && D.toolbar.resetMouseCoords());
 		window.addEventListener('Object', hideToolbar);
@@ -1865,12 +1871,17 @@ class Toolbar
 	{
 		this.error.innerHTML = '';
 		const diagram = R.diagram;
-		if (!diagram)
-			return;
+//		if (!diagram)
+//			return;
 		let xy = U.Clone(D.mouse.down);
-		this.mouseCoords = diagram.userToDiagramCoords(xy);
+		if (diagram)
+			this.mouseCoords = diagram.userToDiagramCoords(xy);
+		else
+		{
+		// TODO this.mouseCoords = D.session.userToDiagramCoords(xy);
+		}
 		const element = this.element;
-		if (element.classList.contains('hidden') || diagram.selected.length > 0)
+		if (element.classList.contains('hidden') || (diagram && diagram.selected.length > 0))
 			this.reveal();
 		else
 		{
@@ -1879,7 +1890,7 @@ class Toolbar
 				return;
 		}
 		D.RemoveChildren(this.help);
-		D.RemoveChildren(this.header);
+//		D.RemoveChildren(this.header);
 		D.RemoveChildren(this.error);
 		element.style.display = 'block';
 		const moveBtn = D.getIcon('moveToolbar', 'move', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle');
@@ -1897,40 +1908,65 @@ class Toolbar
 		{
 			element.style.left = `${e.clientX - delta.x}px`;
 			element.style.top = `${e.clientY - delta.y}px`;
+			return true;
 		};
 		moveBtn.onmouseup = e => document.removeEventListener('mousemove', onMouseMove);
 		const btns = [moveBtn];
-		if (diagram.selected.length > 0)
+		if (diagram)
 		{
-			let actions = [...diagram.codomain.actions.values()];
-			actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
-			actions.map(action =>
-			{
-				if (!action.hidden() && action.hasForm(diagram, diagram.selected))
-					btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), action.description));
-			});
-			btns.push(D.getIcon('closeToolbar', 'close', e => Cat.D.toolbar.hide(e), 'Close'));
-			this.header.appendChild(H3.table(H3.tr(H3.td(btns, '.buttonBarLeft'))));
+			if (diagram.selected.length > 0)
+				this.showSelectedElementsToolbar(diagram, btns);
+			else
+				this.showDiagramToolbar(diagram, btns);
 		}
 		else
-		{
-			btns.push(D.getIcon('newDiagram', 'diagram', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
-			if (diagram.isEditable())
-			{
-				btns.push(D.getIcon('newObject', 'object', e => Cat.D.elementTool.Object.html(e), 'New object'));
-				btns.push(D.getIcon('newMorphism', 'morphism', e => Cat.D.elementTool.Morphism.html(e), 'New morphism'));
-				btns.push(D.getIcon('newText', 'text', e => Cat.D.elementTool.Text.html(e), 'New text'));
-			}
-			btns.push(D.getIcon('toolbarShowSearch', 'search', _ => Cat.D.toolbar.showSearch(), 'Search in a diagram', D.default.button.small, 'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
-			btns.push(D.getIcon('closeToolbar', 'close', _ => Cat.D.toolbar.hide(), 'Close'));
-			btns.map(btn => this.header.appendChild(btn));
-		}
+			this.showSessionToolbar(btns);
+		// adjust toolbar location relative to mouse
 		const toolbox = element.getBoundingClientRect();
 		xy.y = xy.y + D.default.margin + 20;
 		element.style.left = `${xy.x - toolbox.width/2}px`;
 		element.style.top = `${xy.y}px`;
-		this.automove();
+		this.automove(diagram);
 		D.drag = false;
+	}
+	showSelectedElementsToolbar(diagram, btns)
+	{
+		D.RemoveChildren(this.header);
+		let actions = [...diagram.codomain.actions.values()];
+		actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
+		actions.map(action =>
+		{
+			if (!action.hidden() && action.hasForm(diagram, diagram.selected))
+				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), action.description));
+		});
+		this.addCloseToolbarBtn(btns);
+		btns.map(btn => this.header.appendChild(btn));
+	}
+	showDiagramToolbar(diagram, btns)
+	{
+		D.RemoveChildren(this.header);
+		btns.push(D.getIcon('newDiagram', 'diagram', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
+		if (diagram.isEditable())
+		{
+			btns.push(D.getIcon('newObject', 'object', e => Cat.D.elementTool.Object.html(e), 'Object'));
+			btns.push(D.getIcon('newMorphism', 'morphism', e => Cat.D.elementTool.Morphism.html(e), 'Morphism'));
+			btns.push(D.getIcon('newText', 'text', e => Cat.D.elementTool.Text.html(e), 'Text'));
+		}
+		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), 'Show graphs in diagram'));
+		btns.push(D.getIcon('toolbarShowSearch', 'search', _ => Cat.D.toolbar.showSearch(), 'Search in a diagram', D.default.button.small, 'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
+		this.addCloseToolbarBtn(btns);
+		btns.map(btn => this.header.appendChild(btn));
+	}
+	showSessionToolbar(btns)
+	{
+		D.RemoveChildren(this.header);
+		btns.push(D.getIcon('newDiagram', 'diagram', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
+		this.addCloseToolbarBtn(btns);
+		btns.map(btn => this.header.appendChild(btn));
+	}
+	addCloseToolbarBtn(btns)
+	{
+		btns.push(D.getIcon('closeToolbar', 'close', _ => Cat.D.toolbar.hide(), 'Close'));
 	}
 	showSearch()
 	{
@@ -1988,16 +2024,17 @@ class Toolbar
 	}
 	clearError()
 	{
-		D.RemoveChildren(this.error);
-	}
+		D.RemoveChildren(this.error); }
 	showError(msg)
 	{
 		this.clearError();
 		this.error.appendChild(H3.span(msg, '.error'));
 	}
-	automove()		// vertically displace the toolbar to avoid selected items
+	automove(diagram)		// vertically displace the toolbar to avoid selected items
 	{
-		const selected = R.diagram.selected;
+		if (!diagram)
+			return;
+		const selected = diagram.selected;
 		const toolBbox = new D2(this.element.getBoundingClientRect());
 		selected.map(obj =>
 		{
@@ -2112,8 +2149,83 @@ class ElementTool
 	html(e)
 	{
 		const help = D.toolbar.help;
-		help.innerHTML = '';
-		let focus = null;
+		D.RemoveChildren(help);
+		const toolbar2 = [];
+		// create new element
+		R.diagram.isEditable() && toolbar2.push(H3.span(D.getIcon('new', 'edit', _ => help.querySelector('#help-new').classList.toggle('hidden'), 'New')));
+		// search for an elment
+		toolbar2.push(H3.span(D.getIcon('search', 'search', _ => help.querySelector('#help-search').classList.toggle('hidden'), 'Search')));
+		toolbar2.push(H3.span(D.getIcon('reference', 'reference', _ => this.showReferences(), 'References')));
+//		const isUsers = R.diagram && (R.user.name === R.diagram.user || R.user.isAdmin());
+		if (this.type === 'Diagram')
+		{
+			if (R.user.status === 'logged-in' && R.cloud && R.diagram && R.diagram.isEditable())
+				toolbar2.push(D.getIcon('diagramUpload', 'upload', e => R.diagram.upload(e), 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'));
+			toolbar2.push(D.getIcon('download', 'download2', e => D.toolbar.help.querySelector('#help-download').classList.toggle('hidden'), 'Download stuff', D.default.button.small));
+		}
+		help.appendChild(H3.div(toolbar2, '##help-toolbar2.buttonBarLeft'));
+		const downloadToolbar = [];
+		switch(this.type)
+		{
+			case 'Object':
+			case 'Morphism':
+				break;
+			case 'Diagram':
+				downloadToolbar.push(D.DownloadButton('JSON', e => Cat.R.diagram.downloadJSON(e), 'Download JSON'));
+				downloadToolbar.push(D.DownloadButton('JS', e => Cat.R.diagram.downloadJS(e), 'Download Javascript'));
+				downloadToolbar.push(D.DownloadButton('C++', e => Cat.R.diagram.downloadCPP(e), 'Download C++'));
+				downloadToolbar.push(D.DownloadButton('PNG', e => Cat.R.diagram.downloadPNG(e), 'Download PNG'));
+				break;
+		}
+		downloadToolbar.length > 0 && help.appendChild(H3.div(downloadToolbar, '##help-download.hidden'));
+		help.appendChild(H3.h4(this.type));
+		if (this.type === 'Diagram' && R.diagram)
+		{
+			help.appendChild(H3.div(
+//							H3.h4(H3.span(R.diagram.basename), H3.span('##diagram-basename-edit')),
+							H3.h4(H3.span(R.diagram.codomain.properName)),
+							H3.h4(H3.span(R.diagram.properName), H3.span('##diagram-properName-edit')),
+//							H3.table(H3.tr(H3.td('##diagram-image.center.imageBackground'))),
+							H3.table(H3.tr(H3.td(D.GetImageElement(R.diagram.name)))),
+							H3.p(H3.span(R.diagram.description, {title:'Description'}), H3.span({id:'diagram-description-edit'})),
+							H3.table(H3.tr(	H3.td(H3.span('By '), H3.span(R.diagram.user), '.smallPrint.italic'),
+											H3.td(H3.span(new Date(R.diagram.timestamp).toLocaleString()), H3.br(), H3.span('##diagram-info'), '.smallPrint.italic')))));
+		;
+		}
+//		const focus = this.addNewSection();
+		this.addNewSection();
+		const onkeyup = e =>
+		{
+			this.filter = document.getElementById('help-element-search').value;
+			const tbl = document.getElementById('help-matching-table');
+			D.RemoveChildren(tbl);
+			this.getMatchingRows(tbl);
+//			rows.map(r => tbl.appendChild(r));
+		};
+		help.appendChild(H3.div('##help-search.hidden', H3.hr(), H3.span('Search in category', '.italic'), H3.br(), H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup })));
+		help.appendChild(H3.div('##help-references.hidden'));
+//		if (this.type !== 'Diagram')
+//		{
+		help.appendChild(H3.hr());
+//			help.appendChild(H3.small('Click to place', '.italic'));
+//			const existingRows = this.getMatchingRows(tbl);
+		help.appendChild(H3.table({id:'help-matching-table', style:'margin:4px;'}));
+//		}
+//		else
+//		{
+//			help.appendChild(H3.hr());
+//			help.appendChild(H3.div(H3.button('View references', '.textButton', {onclick:e => D.catalog.reference()}), '.center'));
+//		}
+//		if (focus)
+//		{
+//			focus.focus();
+//			focus.select();
+//		}
+	}
+	addNewSection()
+	{
+		const help = D.toolbar.help;
+//		let focus = null;
 		const action = e =>
 		{
 			switch(this.type)
@@ -2142,17 +2254,16 @@ class ElementTool
 			case 'Diagram':
 				rows.push(H3.tr(H3.td(this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name'}))));
 				rows.push(H3.tr(H3.td(this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name'}))));
-				focus = this.basenameElt;
+//				focus = this.basenameElt;
 				break;
 		}
 		this.descriptionElt = H3.input('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
 		rows.push(H3.tr(H3.td(this.descriptionElt)));
-		const existingRows = this.getMatchingRows();
-		let canSearch = false;
+//		let canSearch = false;
 		switch(this.type)
 		{
 			case 'Morphism':
-				canSearch = true;
+//				canSearch = true;
 				const objects = R.diagram.getObjects();
 				if (!this.suppress)
 				{
@@ -2180,52 +2291,21 @@ class ElementTool
 				rows.push(H3.tr(H3.td(this.codomainElt), '.sidenavRow'));
 				break;
 			case 'Object':
-				canSearch = true;
+//				canSearch = true;
 				break;
 			case 'Text':
-				focus = this.descriptionElt;
+//				focus = this.descriptionElt;
 				break;
 		}
-		const elts = [H3.h5(this.headline)];
+		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
 		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
 		elts.push(this.error = H3.span('##new-error.error'));
-		const onkeyup = e =>
-		{
-			this.filter = document.getElementById('help-element-search').value;
-			const rows = this.getMatchingRows();
-			const tbl = document.getElementById('help-matching-table');
-			D.RemoveChildren(tbl);
-			rows.map(r => tbl.appendChild(r));
-		};
-		help.appendChild(H3.div(elts));
-		if (canSearch)
-		{
-			help.appendChild(H3.hr());
-			help.appendChild(H3.span('Search in category', '.italic'));
-			help.appendChild(H3.br());
-			help.appendChild(H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup }));
-		}
-		if (this.type !== 'Diagram')
-		{
-			help.appendChild(H3.br());
-			help.appendChild(H3.small('Click to place', '.italic'));
-			help.appendChild(H3.table(existingRows, {id:'help-matching-table', style:'margin:4px;'}));
-		}
-		else
-		{
-			help.appendChild(H3.hr());
-			help.appendChild(H3.div(H3.button('View references', '.textButton', {onclick:e => D.catalog.reference()}), '.center'));
-		}
-		if (focus)
-		{
-			focus.focus();
-			focus.select();
-		}
+		help.appendChild(H3.div(elts, '##help-new.hidden'));
+//		return focus;
 	}
-	getMatchingRows()
+	getMatchingRows(tbl)
 	{
-		const rows = [];
 		switch(this.type)
 		{
 			case 'Morphism':
@@ -2233,7 +2313,7 @@ class ElementTool
 				{
 					let morphisms = R.diagram.getMorphisms().filter(m => m.properName.includes(this.filter) || m.basenameIncludes(this.filter));
 					morphisms.sort(U.RefcntSorter);
-					morphisms.map(m => rows.push(H3.tr(H3.td(m.getHtmlRep()), '.panelElt')));
+					morphisms.map(m => tbl.appendChild(H3.tr(H3.td(m.getHtmlRep()), '.panelElt')));
 				}
 				else
 				{
@@ -2245,11 +2325,19 @@ class ElementTool
 			{
 				const objects = R.diagram.getObjects().filter(o => o.properName.includes(this.filter) || o.basenameIncludes(this.filter));
 				objects.sort(U.RefcntSorter);
-				objects.map(o => rows.push(H3.tr(H3.td(o.getHtmlRep()), '.panelElt')));
+				objects.map(o => tbl.appendChild(H3.tr(H3.td(o.getHtmlRep()), '.panelElt')));
+				break;
+			}
+			case 'Diagram':
+			{
+//				const diagrams = R.diagram.getObjects().filter(o => o.properName.includes(this.filter) || o.basenameIncludes(this.filter));
+				const diagrams = [];
+				R.Diagrams.forEach((info, name) => name.includes(this.filter) && diagrams.push(info));
+				diagrams.sort(U.RefcntSorter);
+				diagrams.map(d => tbl.appendChild(H3.tr(H3.td(d.name))));
 				break;
 			}
 		}
-		return rows;
 	}
 	update()
 	{
@@ -2437,6 +2525,22 @@ class ElementTool
 	{
 		this.doit(e, diagram, args, false);
 	}
+	showReferences()
+	{
+		const refElt = D.toolbar.help.querySelector('#help-references');
+		if (refElt.classList.contains('hidden'))
+		{
+			refElt.classList.remove('hidden');
+			D.RemoveChildren(refElt);
+			refElt.appendChild(H3.hr());
+			refElt.appendChild(H3.h5('References'));
+			const tbl = H3.table();
+			R.diagram.references.forEach(d => tbl.appendChild(H3.tr(H3.td(d.properName))));
+			refElt.appendChild(tbl);
+		}
+		else
+			refElt.classList.add('hidden');
+	}
 }
 
 // Display
@@ -2576,19 +2680,24 @@ class D
 			D.mouseIsDown = true;
 			D.mouse.down = new D2(e.clientX, e.clientY - D.topSVG.parentElement.offsetTop);	// client coords
 			const diagram = R.diagram;
-			if (!diagram)
-				return;
-			const pnt = diagram.mouseDiagramPosition(e);
-			if (D.mouseover)
+//			if (!diagram)
+//				return;
+			if (diagram)
 			{
-				if (!diagram.selected.includes(D.mouseover) && !D.shiftKey)
+				const pnt = diagram.mouseDiagramPosition(e);
+				if (D.mouseover)
+				{
+					if (!diagram.selected.includes(D.mouseover) && !D.shiftKey)
+						diagram.deselectAll(e);
+				}
+				else
 					diagram.deselectAll(e);
+				D.dragStart = D.mouse.clientPosition();
+				if (D.tool === 'pan' || !D.drag)
+					D.drag = true;
 			}
 			else
-				diagram.deselectAll(e);
-			D.dragStart = D.mouse.clientPosition();
-			if (D.tool === 'pan' || !D.drag)
-				D.drag = true;
+				D.toolbar.show(e, true);
 		}
 		else if (e.button === 1)
 			D.keyboardDown.Space(e);
@@ -2628,6 +2737,9 @@ class D
 		try
 		{
 			const diagram = R.diagram;
+//			if (diagram && !D.checkMouseOverDiagram(e))
+//			if (!D.checkMouseOverDiagram(e))
+//				R.SelectDiagram(null);
 			if (!diagram)
 				return;
 			D.drag = D.mouseIsDown && diagram.selected.length > 0;
@@ -3033,9 +3145,6 @@ class D
 					case 'makeCells':
 						diagram.makeCells();
 						break;
-					case 'view':
-//						D.saveSession('diagram');
-						break;
 				}
 			D.Autohide(e);
 		});
@@ -3063,10 +3172,10 @@ class D
 							diagram.setViewport(viewport);
 							D.GlowBadObjects(diagram);
 							diagram.svgTranslate.classList.add('trans025s');
-							D.saveSession();
 						}
 						else
 							D.session.default = null;
+						D.saveSession();
 					}
 					if (diagram)
 					{
@@ -3087,7 +3196,8 @@ class D
 		});
 		window.addEventListener('Login', e =>
 		{
-			if (D.session.mode === 'diagram' && R.params.has('diagram'))
+//			if (D.session.mode === 'diagram' && R.params.has('diagram'))
+			if (D.session.mode === 'diagram')
 				R.SelectDiagram(R.params.get('diagram'));
 			if (R.user.status !== 'logged-in')
 				return;
@@ -3886,6 +3996,36 @@ class D
 			x += dw/2 - scale * bbox.width/2;
 		return {x:x - D.session.viewport.x, y:y - D.session.viewport.y, scale};
 	}
+	static userToSvgCoords(xy)
+	{
+		return new D2(xy).subtract(D.session.viewport).scale(1/D.session.viewport.scale);
+//		return new D2(xy).subtract(D.session.viewport).scale(D.session.viewport.scale);
+//		return new D2(xy).scale(D.session.viewport.scale).subtract(D.session.viewport);
+//		return new D2(xy).scale(1/D.session.viewport.scale).subtract(D.session.viewport);
+	}
+	static svgToUserCoords(xy)
+	{
+//		return new D2(xy).add(D.session.viewport).scale(D.session.viewport.scale);
+		return new D2(xy).scale(1/D.session.viewport.scale).add(D.session.viewport);
+	}
+	static checkMouseOverDiagram(e)
+	{
+//		const xy = new D2(e.clientX, e.clientY).subtract(D.session.viewport).scale(1/D.session.viewport.scale);
+		const xy = D.userToSvgCoords({x:e.clientX, y:e.clientY});
+		let diagram = null;
+		D.forEachDiagramSVG(d =>
+		{
+			if (!d.svgRoot.classList.contains('hidden'))
+			{
+				const box = new D2(d.svgRoot.getBBox());
+if (d.basename === 'nat/add') console.log({xy, box}, box.x < xy.x, xy.x < box.x + box.width, box.y < xy.y, xy.y < box.y + box.height, box.y, xy.y);
+				if (box.pointInside(xy))
+					diagram = d;
+			}
+		});
+console.log('*****', diagram !== null);
+		return diagram;
+	}
 }
 Object.defineProperties(D,
 {
@@ -4455,7 +4595,7 @@ class Catalog
 				H3.tr(H3.td('.imageBackground', {colspan:2}, imgDiv)),
 				H3.tr(H3.td({description:info.description, colspan:2})),
 				H3.tr([	H3.td(info.name, '.author'),
-						H3.td(new Date(info.timestamp).toLocaleString() + `, Refs: ${info.refcnt}`, '.date')], '.diagramSlot')
+						H3.td(new Date(info.timestamp).toLocaleString() + `, Refs: ${info.refcnt ? info.refcnt : '?'}`, '.date')], '.diagramSlot')
 			], '.smallTable'));
 		div.style.margin = "20px 0px 0px 0px";
 		this.catalogDisplay.appendChild(div);
@@ -4605,9 +4745,15 @@ class Catalog
 			else
 				this.modeTool.appendChild(H3.button('Glow out of date diagrams', '.textButton', {onclick:_ => this.search()}));
 		}
-		this.diagrams.map(diagram => this.display(diagram));
+		this.diagrams.map(diagram => this.filter(diagram) && this.display(diagram));
 		if (R.diagram)
 			this.closeBtn.appendChild(D.getIcon('closeCatalog', 'close', e => R.EmitViewEvent('diagram', R.diagram), 'Close catalog'));
+	}
+	filter(diagram)
+	{
+		if (diagram.user === 'sys')
+			return false;
+		return true;
 	}
 }
 
@@ -13366,9 +13512,10 @@ class Diagram extends Functor
 			{
 				if (D.default.fullscreen)
 					return;
-				if (!e.toElement)
-					R.SelectDiagram(null);
-				else
+//				if (!e.toElement)
+//					R.SelectDiagram(null);
+//				else
+				if (e.toElement)
 				{
 					let elt = e.toElement;
 					let notOurs = true;
@@ -13398,7 +13545,7 @@ class Diagram extends Functor
 						}
 						elt = elt.parentElement;
 					}
-					notOurs && R.SelectDiagram(diagram);
+					diagram && notOurs && R.SelectDiagram(diagram);
 				}
 			};
 			let delta = null;
