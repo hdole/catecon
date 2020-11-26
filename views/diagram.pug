@@ -34,6 +34,14 @@ html(lang="en")
 						feMerge
 							feMergeNode(in="softGlow_colored")
 							feMergeNode(in="SourceGraphic")
+					filter#diagramGlow(height="300%", width="300%")
+						feMorphology(operator="dilate", radius="4", in="SourceAlpha", result="thicken")
+						feGaussianBlur(in="thicken", stdDeviation="5", result="blurred")
+						feFlood(flood-color="rgb(255,255,0)", result="glowColor")
+						feComposite(in="glowColor", in2="blurred", operator="in", result="diagramGlow_colored")
+						feMerge
+							feMergeNode(in="diagramGlow_colored")
+							feMergeNode(in="SourceGraphic")
 					radialGradient#radgrad1(cx="50%", cy="50%", r="50%", fx="50%", fy="50%")
 						stop(offset="0%", style="stop-color:rgb(0,0,0);stop-opacity:1")
 						stop(offset="100%", style="stop-color:rgb(255,255,255);stop-opacity:0")
@@ -46,6 +54,8 @@ html(lang="en")
 						line.arrow0(x1="120", y1="180", x2="40", y2="280", marker-end="url(#arrowhead)")
 					filter#diagramShadow
 						feDropShadow(dx="4", dy="4", stdDeviation="0.2", flood-color="#bbbb")
+					filter#defaultGlow
+						feDropShadow(dx="4", dy="4", stdDeviation="0.2", flood-color="#bb0b")
 				marker#arrowhead(viewBox="6 12 60 90", refX="50", refY="50", markerUnits="strokeWidth", markerWidth="6", markerHeight="5", orient="auto")
 					path.svgstr3(d="M10 20 L60 50 L10 80")
 				marker#arrowheadRev(viewBox="6 12 60 90", refX="15", refY="50", markerUnits="strokeWidth", markerWidth="6", markerHeight="5", orient="auto")
