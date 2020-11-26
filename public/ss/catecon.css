@@ -402,6 +402,7 @@ p
 	opacity:	0;			/* needed for instant transition */
 	box-shadow:	none;
 	visibility:	hidden;		/* needed for svg.getBBox() */
+	display:	none;
 }
 
 .trans025s
@@ -921,6 +922,11 @@ description
 	fill-opacity:		1;
 	filter:				url(#diagramShadow);
 	stroke:				#aaaa;
+}
+
+.defaultGlow
+{
+	filter:				url(#diagramGlow);
 }
 
 .catalogTop
