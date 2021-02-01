@@ -3921,7 +3921,7 @@ class D
 			D.session = JSON.parse(str);
 		else
 			D.session = {mode:'catalog', default:null, diagrams:[], viewport:{x:0, y:0, scale:1}};
-		D.setViewport(D.session.viewport);
+		D.setSessionView(D.session.viewport);
 	}
 	static forEachDiagramSVG(fn)
 	{
@@ -3933,7 +3933,7 @@ class D
 		}
 		while((dgrmSvg = dgrmSvg.nextSibling));
 	}
-	static setViewport(viewport)
+	static setSessionView(viewport)
 	{
 		D.session.viewport.x = viewport.x;
 		D.session.viewport.y = viewport.y;
@@ -3975,7 +3975,7 @@ class D
 		else	// pan session
 		{
 			const viewport = D.session.viewport;
-			D.setViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
+			D.setSessionView({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
 		}
 	}
 	static getViewportByBBox(bbox)
@@ -4104,7 +4104,7 @@ Object.defineProperties(D,
 			Equal(e) { D.Zoom(e, 2);},
 			ControlHome(e)
 			{
-				D.setViewport({x:0, y:0, scale:1});
+				D.setSessionView({x:0, y:0, scale:1});
 			},
 			Home(e)
 			{
@@ -4117,7 +4117,7 @@ Object.defineProperties(D,
 				{
 					const bbox = new D2();
 					D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && bbox.merge(d.svgRoot.getBBox()));
-					D.setViewport(D.getViewportByBBox(bbox));
+					D.setSessionView(D.getViewportByBBox(bbox));
 				}
 				e.preventDefault();
 			},
@@ -4129,7 +4129,7 @@ Object.defineProperties(D,
 				if (D.default.fullscreen && R.diagram)
 				{
 					const viewport = diagram.getViewport();
-					diagram.setViewport({x:viewport.x, y:viewport.y + D.screenPan, scale:viewport.scale});
+					diagram.setSessionView({x:viewport.x, y:viewport.y + D.screenPan, scale:viewport.scale});
 					e.preventDefault();
 				}
 				*/
@@ -4142,7 +4142,7 @@ Object.defineProperties(D,
 				{
 					const diagram = R.diagram;
 					const viewport = diagram.getViewport();
-					diagram.setViewport({x:viewport.x, y:viewport.y - D.screenPan, scale:viewport.scale});
+					diagram.setSessionView({x:viewport.x, y:viewport.y - D.screenPan, scale:viewport.scale});
 					e.preventDefault();
 				}
 				*/
@@ -4155,7 +4155,7 @@ Object.defineProperties(D,
 				{
 					const diagram = R.diagram;
 					const viewport = diagram.getViewport();
-					diagram.setViewport({x:viewport.x + D.screenPan, y:viewport.y, scale:viewport.scale});
+					diagram.setSessionView({x:viewport.x + D.screenPan, y:viewport.y, scale:viewport.scale});
 					e.preventDefault();
 				}
 				*/
@@ -4168,7 +4168,7 @@ Object.defineProperties(D,
 				{
 					const diagram = R.diagram;
 					const viewport = diagram.getViewport();
-					diagram.setViewport({x:viewport.x - D.screenPan, y:viewport.y, scale:viewport.scale});
+					diagram.setSessionView({x:viewport.x - D.screenPan, y:viewport.y, scale:viewport.scale});
 					e.preventDefault();
 				}
 				*/
@@ -8424,8 +8424,8 @@ class NameAction extends Action
 		D.RemoveChildren(D.toolbar.help);
 		const elements = [
 			H3.h5('Create Named Element'),
-			H3.table(H3.tr(H3.td(H3.Input('##named-element-new-basename', {placeholder:'Base name'})), '.sidenavRow'),
-					H3.tr(H3.td(H3.Input('##named-element-new-properName', {placeholder:'Proper name'})), '.sidenavRow'),
+			H3.table(H3.tr(H3.td(H3.input('##named-element-new-basename', {placeholder:'Base name'})), '.sidenavRow'),
+					H3.tr(H3.td(H3.input('##named-element-new-properName', {placeholder:'Proper name'})), '.sidenavRow'),
 					H3.tr(H3.td(H3.input('##named-element-new-description.in100', {type:'text', placeholder:'Description'})), '.sidenavRow')),
 			D.getIcon('namedElement', 'edit', e => this.create(e), 'Create named element'),
 			H3.span('##named-element-new-error.error')];
@@ -13081,9 +13081,9 @@ class Diagram extends Functor
 				return basename;
 		}
 	}
-	getViewport(orig = false)
+	getViewport(current = false)
 	{
-		if (orig)
+		if (current)
 			return this.viewport;
 		let viewport = D.viewports.get(this.name);
 		if (!viewport)
@@ -13285,10 +13285,12 @@ class Diagram extends Functor
 	}
 	updateDragObjects(e)
 	{
-		const delta = D.mouse.clientPosition().subtract(D.dragStart);
-		const viewport = this.getViewport();
-		delta.x = delta.x / viewport.scale;
-		delta.y = delta.y / viewport.scale;
+		let delta = D.mouse.clientPosition().subtract(D.dragStart);
+Cat.foo = true;
+		const viewport = this.getViewport(Cat.foo);
+//		delta.x = delta.x / viewport.scale;
+//		delta.y = delta.y / viewport.scale;
+		delta = delta.scale(1.0 / (viewport.scale * D.session.viewport.scale));
 		const dragObjects = new Set();
 		this.selected.map(elt =>
 		{
@@ -13551,7 +13553,8 @@ class Diagram extends Functor
 			let delta = null;
 			const onMouseMove = e =>
 			{
-				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.getViewport().scale});
+//				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.getViewport(true).scale});
+				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.viewport.scale});
 				D.toolbar.hide();
 			};
 			bkgnd.onmouseup = e =>
@@ -14425,23 +14428,23 @@ class Diagram extends Functor
 			const obj = scanning.pop();
 			const graph = obj.assyGraph;
 			if (graph.hasTag(tag))
-				inputs.delete(obj);
+				inputSet.delete(obj);
 			const scan = scanning;		// jshint
 			const inputReducer = function(m)
 			{
 				if (m.to instanceof FactorMorphism)
 				{
-					inputs.delete(m.codomain);
+					inputSet.delete(m.codomain);
 					scan.push(m.codomain);
 				}
 			};
 			obj.domains.forEach(inputReducer);
 		}
-		inputs = [...inputs];
+		const inputs = [...inputSet];
 		//
 		// now tag the inputs with info
 		//
-		inputs.forEach(function(i)
+		inputSet.forEach(function(i)
 		{
 			i.assyGraph.addTag(tag);
 		});
@@ -14824,7 +14827,8 @@ console.log('formMorphism', {morphism});
 		{
 			if ('recursor' in m && typeof m.recursor === 'string')	// set recursive function as it is defined after m is
 				m.setRecursor(m.recursor);
-			'data' in m && m.data.forEach(function(d, i) { m.data.set(i, U.InitializeData(this, m.codomain, d)); });
+			const that = this;
+			'data' in m && m.data.forEach(function(d, i) { m.data.set(i, U.InitializeData(that, m.codomain, d)); });
 		});
 	}
 	replaceElement(to, nuTo, preserve = true)

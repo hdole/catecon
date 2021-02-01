@@ -1,4 +1,4 @@
-// (C) 2018-2020 Harry Dole, All Rights Reserved
+// (C) 2018-2021 Harry Dole, All Rights Reserved
 // Catecon:  The Categorical Console
 //
 require('dotenv').config();
@@ -375,7 +375,7 @@ function validate(req, res, fn)
 		return;
 	}
 	const decjwt = jwt.decode(token, {complete:true});
-	if (typeof decjwt === 'undefined')
+	if (typeof decjwt === 'undefined' || decjwt === null)
 	{
 		res.status(401).end({'Error':'no jwt'});
 		return;
