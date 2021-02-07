@@ -1,4 +1,4 @@
-// (C) 2018-2020 Harry Dole
+// (C) 2018-2021 Harry Dole
 // Catecon:  The Categorical Console
 //
 // Events:
@@ -1786,6 +1786,19 @@ class Navbar
 			right.push(D.getIcon('loginPanelToggle', 'login', _ => Cat.D.loginPanel.toggle(), 'Login', sz));
 			right.push(D.getIcon('settingsPanelToggle', 'settings', _ => Cat.D.settingsPanel.toggle(), 'Settings', sz));
 		}
+		if (true)	// view all icons, sorta
+		{
+			const icons = document.getElementById('CatIcons');
+			let icon = icons.firstChild;
+			do
+			{
+				if (icon.nodeName === 'symbol')
+				{
+					const name = icon.id.substr(5);
+					left.push(D.getIcon(name, name, _ => {}, `btn-${name}`, sz));
+				}
+			} while((icon = icon.nextSibling));
+		}
 		const divs = [	H3.div('.navbar-float.navbar-tools.buttonBarLeft', left),
 						H3.div(H3.span('##category-navbar.navbar-text'), '.navbar-float.navbar-inset', {title:'Current category scope'}),
 						H3.div('Catecon', {onclick:_ => R.EmitViewEvent('catalog', D.catalog.view)}, '.title.navbar-float.navbar-inset'),
@@ -1861,18 +1874,18 @@ class Toolbar
 	{
 		this.element.classList.add('hidden');
 		this.closed = true;
+console.log('toolbar hide');
 	}
 	reveal()
 	{
 		this.element.classList.remove('hidden');
 		this.closed = false;
+console.log('toolbar reveal', D.drag);
 	}
 	show(e, toggle = true)
 	{
 		this.error.innerHTML = '';
 		const diagram = R.diagram;
-//		if (!diagram)
-//			return;
 		let xy = U.Clone(D.mouse.down);
 		if (diagram)
 			this.mouseCoords = diagram.userToDiagramCoords(xy);
@@ -1890,7 +1903,6 @@ class Toolbar
 				return;
 		}
 		D.RemoveChildren(this.help);
-//		D.RemoveChildren(this.header);
 		D.RemoveChildren(this.error);
 		element.style.display = 'block';
 		const moveBtn = D.getIcon('moveToolbar', 'move', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle');
@@ -2987,7 +2999,7 @@ class D
 		return H3.span('.button', H3.svg(	{viewbox:"0 0 320 320", width:`${inches}in`, height:`${inches}in`},
 											H3.rect('.icon', {x:"0", y:"0", width:"32", height:"32", onclick}),
 											H3.use({href:`#icon-${buttonName}`}),
-											H3.rect('.btn', {x:"0", y:"0", width:"32", height:"32", onclick})), {title, id});
+											H3.rect('.btn', {x:"0", y:"0", width:"32", height:"32", onclick})), {title, id, 'data-name':`button-${name}`});
 	}
 	static DownloadButton(txt, onclick, title, scale = D.default.button.small)
 	{
@@ -4018,7 +4030,6 @@ class D
 			if (!d.svgRoot.classList.contains('hidden'))
 			{
 				const box = new D2(d.svgRoot.getBBox());
-if (d.basename === 'nat/add') console.log({xy, box}, box.x < xy.x, xy.x < box.x + box.width, box.y < xy.y, xy.y < box.y + box.height, box.y, xy.y);
 				if (box.pointInside(xy))
 					diagram = d;
 			}
@@ -9376,7 +9387,6 @@ class LambdaMorphismAction extends Action
 		const homFactors = U.GetFactorsById('lambda-codomain');
 		try
 		{
-			const elt = this.doit(e, diagram, from, domFactors, homFactors);
 			diagram.log({command:'lambda', from:from.name, domFactors, homFactors});
 			diagram.antilog({command:'delete', elements:[elt.name]});
 		}
@@ -9544,14 +9554,8 @@ class HelpAction extends Action
 
 class LanguageAction extends Action
 {
-//	constructor(diagram, language, ext)
 	constructor(diagram, args)
 	{
-//		const args =
-//		{
-//			description:	`Morphism\'s ${language} code`,
-//			basename:		language,
-//		};
 		super(diagram, args);
 		Object.defineProperties(this,
 		{
@@ -9559,7 +9563,6 @@ class LanguageAction extends Action
 			currentDiagram:	{value:	null,		writable:	true},
 			htmlReady:		{value:	false,		writable:	true},
 			ext:			{value:	args.ext,		writable:	false},
-//			basename:		{value:	basename,	writable:	false},
 		});
 		if (!isGUI)
 			return;
@@ -13014,16 +13017,6 @@ class Diagram extends Functor
 		if ('references' in args)
 			args.references.map(r => this.addReference(r, false));
 		R.sync = true;
-		if ('viewport' in nuArgs)
-		{
-			this.viewport = nuArgs.viewport;
-			if (!('width' in nuArgs))
-			{
-				this.viewport.width = D.Width();
-				this.viewport.height = D.Height();
-				this.viewport.visible = false;
-			}
-		}
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
@@ -13060,8 +13053,6 @@ class Diagram extends Functor
 	json()
 	{
 		const a = super.json();
-		if ('viewport' in this)
-			a.viewport = this.viewport;
 		a.references = [...this.references.keys()];
 		a.domainElements = [...this.domain.elements.values()].filter(e => ((e.to && e.to.canSave()) || (!('to' in e)))).map(e => e.json());
 		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
@@ -13081,10 +13072,8 @@ class Diagram extends Functor
 				return basename;
 		}
 	}
-	getViewport(current = false)
+	getViewport()
 	{
-		if (current)
-			return this.viewport;
 		let viewport = D.viewports.get(this.name);
 		if (!viewport)
 		{
@@ -13117,23 +13106,6 @@ class Diagram extends Functor
 	}
 	setViewportByBBox(bbox, log = true)
 	{
-		/*
-		if (bbox.width === 0)
-			bbox.width = D.Width();
-		const margin = D.navbar.element.getBoundingClientRect().height;
-		const dw = D.Width() - 2 * D.default.panel.width - 2 * margin;
-		const dh = D.Height() - 4 * margin;
-		const xRatio = bbox.width / dw;
-		const yRatio = bbox.height / dh;
-		const scale = 1.0/Math.max(xRatio, yRatio);
-		let x = - bbox.x * scale + D.default.panel.width + margin;
-		let y = - bbox.y * scale + 2 * margin;
-		if (xRatio > yRatio)
-			y += dh/2 - scale * bbox.height/2;
-		else
-			x += dw/2 - scale * bbox.width/2;
-		this.setViewport({x, y, scale});
-			*/
 		this.setViewport(D.getViewportByBBox(bbox));
 	}
 	home(log = true)
@@ -13286,10 +13258,7 @@ class Diagram extends Functor
 	updateDragObjects(e)
 	{
 		let delta = D.mouse.clientPosition().subtract(D.dragStart);
-Cat.foo = true;
-		const viewport = this.getViewport(Cat.foo);
-//		delta.x = delta.x / viewport.scale;
-//		delta.y = delta.y / viewport.scale;
+		const viewport = this.getViewport();
 		delta = delta.scale(1.0 / (viewport.scale * D.session.viewport.scale));
 		const dragObjects = new Set();
 		this.selected.map(elt =>
@@ -13553,8 +13522,7 @@ Cat.foo = true;
 			let delta = null;
 			const onMouseMove = e =>
 			{
-//				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.getViewport(true).scale});
-				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.viewport.scale});
+				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.getViewport().scale});
 				D.toolbar.hide();
 			};
 			bkgnd.onmouseup = e =>
@@ -13577,6 +13545,11 @@ Cat.foo = true;
 			D.diagramSVG.appendChild(this.svgRoot);
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:this.elementId('T')}, this.svgBase);
+			if (true)
+			{
+				this.svgTranslate.appendChild(H3.path('.svgstr3', {d:"M-1000 0 L1000 0"}));
+				this.svgTranslate.appendChild(H3.path('.svgstr3', {d:"M0 -1000 L0 1000"}));
+			}
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.svgRoot.classList.add('hidden');
 			this.domain.elements.forEach(elt => this.addSVG(elt));
@@ -13620,18 +13593,21 @@ Cat.foo = true;
 	userToDiagramCoords(xy)
 	{
 		const viewport = this.getViewport();
-		const s = 1.0 / viewport.scale;
-		if (isNaN(viewport.x) || isNaN(s))
+		const sessScale = 1.0 / D.session.viewport.scale;
+		const dgrmScale = 1.0 / viewport.scale;
+		if (isNaN(viewport.x) || isNaN(sessScale) || isNaN(dgrmScale))
 			throw 'NaN in coords';
-//		const d2 = new D2(	s * (xy.x - viewport.x + D.session.viewport.x),
-//							s * (xy.y - viewport.y + D.session.viewport.y));
-		const d2 = new D2(	s * (xy.x - viewport.x),
-							s * (xy.y - viewport.y));
-		if ('width' in xy)
+		let d2 = new D2(	sessScale * (xy.x - D.session.viewport.x),
+							sessScale * (xy.y - D.session.viewport.y));
+		d2 = d2.subtract({x:viewport.x, y:viewport.y}).scale(dgrmScale);
+		if ('width' in xy && xy.width > 0)
 		{
+			const s = sessScale * dgrmScale;
 			d2.width = s * xy.width;
 			d2.height = s * xy.height;
 		}
+		if (false)
+			this.svgTranslate.appendChild(H3.circle('.ball', {cx:d2.x, cy:d2.y, r:5, fill:'red'}));
 		return d2;
 	}
 	diagramToUserCoords(xy)
