@@ -64,8 +64,7 @@ if (!isGUI)
 	global.fetch = require('node-fetch');
 	const {Worker, isMainThread, parentPort, workerData} = require('worker_threads');
 	global.Worker = Worker;
-//	require('./H3.js');	// TODO oy?
-	global.D2 = require('./D2.js');	// TODO oy?
+	global.D2 = require('./D2.js');
 }
 else
 	sjcl = window.sjcl;
@@ -580,22 +579,6 @@ class R
 				}
 				return false;
 			};
-			const cursorOnDiagram = e =>
-			{
-				let findCursor = false;
-				D.forEachDiagramSVG(d =>
-				{
-					if (!d.svgRoot.classList.contains('hidden'))
-					{
-						const bbox = new D2(d.svgRoot.getBBox());
-						if (bbox.pointInside({x:e.clientX - D.session.viewport.x, y:e.clientY - D.session.viewport.y}))
-							findCursor = true;
-					}
-				});
-				if (!findCursor)
-					R.SelectDiagram(null);
-			};
-//			D.topSVG.addEventListener('mousemove', cursorOnDiagram);
 			D.topSVG.onmouseup = e =>
 			{
 				D.topSVG.removeEventListener('mousemove', sessionMove);
@@ -637,9 +620,6 @@ class R
 		{
 			if (isGUI)
 			{
-//				diagram.autoplace();
-//				diagram.makeSVG();
-//				diagram.domain.elements.forEach(elt => diagram.addSVG(elt));
 				diagram.elements.forEach(action => {R.Actions[action.basename] = action;});
 			}
 		};
@@ -755,6 +735,11 @@ class R
 		if (isGUI)
 		{
 			D.diagramSVG = document.getElementById('diagramSVG');
+			if (true)
+			{
+				D.diagramSVG.appendChild(H3.path({stroke:'red', d:"M-1000 0 L1000 0"}));
+				D.diagramSVG.appendChild(H3.path({stroke:'red', d:"M0 -1000 L0 1000"}));
+			}
 			isGUI && D.readSession();
 			D.catalog = new Catalog();
 		}
@@ -788,9 +773,6 @@ class R
 						break;
 					case 'diagram':
 						D.catalog.show(false);
-//						let diagramName = R.params.get('diagram');
-//						if (diagramName)
-//							R.default.diagram = diagramName;
 						break;
 				}
 			}
@@ -958,7 +940,7 @@ class R
 		if (isGUI)
 		{
 			D.session.mode = 'diagram';
-			R.diagram && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
+			R.diagram && R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
 		}
 		if (R.diagram && R.diagram.name === name)
 		{
@@ -1387,7 +1369,6 @@ Object.defineProperties(R,
 		value:
 		{
 			category:		'hdole/PFS',
-//			diagram:		'',
 			debug:			true,
 			showEvents:		true,
 			sifu:			'catecon.net',
@@ -1602,7 +1583,6 @@ class Amazon extends Cloud
 		try
 		{
 			const userName = U.HtmlSafe(document.getElementById('login-user-name').value);
-//			const password = D.loginPanel.passwordElt.value;
 			const password = U.HtmlSafe(document.getElementById('login-password').value);
 			const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username:userName, Password:password});
 			const userData = {Username:userName, Pool:this.userPool};
@@ -1772,7 +1752,6 @@ class Navbar
 			left.push(D.getIcon('objectPanelToggle', 'object', _ => Cat.D.objectPanel.toggle(), 'Objects', sz));
 			left.push(D.getIcon('morphismPanelToggle', 'morphism', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
 			left.push(D.getIcon('textPanelToggle', 'text', _ => Cat.D.textPanel.toggle(), 'Text', sz));
-//			left.push(D.getIcon('showGraphs', 'string', _ => Cat.R.diagram.showGraphs, 'Graph', sz));
 			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram && Cat.R.diagram.home(), 'Home', sz));
 			right.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
 			right.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
@@ -1786,7 +1765,7 @@ class Navbar
 			right.push(D.getIcon('loginPanelToggle', 'login', _ => Cat.D.loginPanel.toggle(), 'Login', sz));
 			right.push(D.getIcon('settingsPanelToggle', 'settings', _ => Cat.D.settingsPanel.toggle(), 'Settings', sz));
 		}
-		if (true)	// view all icons, sorta
+		if (false)	// view all icons, sorta
 		{
 			const icons = document.getElementById('CatIcons');
 			let icon = icons.firstChild;
@@ -1874,7 +1853,6 @@ class Toolbar
 	{
 		this.element.classList.add('hidden');
 		this.closed = true;
-console.log('toolbar hide');
 	}
 	reveal()
 	{
@@ -2168,7 +2146,6 @@ class ElementTool
 		// search for an elment
 		toolbar2.push(H3.span(D.getIcon('search', 'search', _ => help.querySelector('#help-search').classList.toggle('hidden'), 'Search')));
 		toolbar2.push(H3.span(D.getIcon('reference', 'reference', _ => this.showReferences(), 'References')));
-//		const isUsers = R.diagram && (R.user.name === R.diagram.user || R.user.isAdmin());
 		if (this.type === 'Diagram')
 		{
 			if (R.user.status === 'logged-in' && R.cloud && R.diagram && R.diagram.isEditable())
@@ -2194,17 +2171,14 @@ class ElementTool
 		if (this.type === 'Diagram' && R.diagram)
 		{
 			help.appendChild(H3.div(
-//							H3.h4(H3.span(R.diagram.basename), H3.span('##diagram-basename-edit')),
 							H3.h4(H3.span(R.diagram.codomain.properName)),
 							H3.h4(H3.span(R.diagram.properName), H3.span('##diagram-properName-edit')),
-//							H3.table(H3.tr(H3.td('##diagram-image.center.imageBackground'))),
 							H3.table(H3.tr(H3.td(D.GetImageElement(R.diagram.name)))),
 							H3.p(H3.span(R.diagram.description, {title:'Description'}), H3.span({id:'diagram-description-edit'})),
 							H3.table(H3.tr(	H3.td(H3.span('By '), H3.span(R.diagram.user), '.smallPrint.italic'),
 											H3.td(H3.span(new Date(R.diagram.timestamp).toLocaleString()), H3.br(), H3.span('##diagram-info'), '.smallPrint.italic')))));
 		;
 		}
-//		const focus = this.addNewSection();
 		this.addNewSection();
 		const onkeyup = e =>
 		{
@@ -2212,32 +2186,15 @@ class ElementTool
 			const tbl = document.getElementById('help-matching-table');
 			D.RemoveChildren(tbl);
 			this.getMatchingRows(tbl);
-//			rows.map(r => tbl.appendChild(r));
 		};
 		help.appendChild(H3.div('##help-search.hidden', H3.hr(), H3.span('Search in category', '.italic'), H3.br(), H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup })));
 		help.appendChild(H3.div('##help-references.hidden'));
-//		if (this.type !== 'Diagram')
-//		{
 		help.appendChild(H3.hr());
-//			help.appendChild(H3.small('Click to place', '.italic'));
-//			const existingRows = this.getMatchingRows(tbl);
 		help.appendChild(H3.table({id:'help-matching-table', style:'margin:4px;'}));
-//		}
-//		else
-//		{
-//			help.appendChild(H3.hr());
-//			help.appendChild(H3.div(H3.button('View references', '.textButton', {onclick:e => D.catalog.reference()}), '.center'));
-//		}
-//		if (focus)
-//		{
-//			focus.focus();
-//			focus.select();
-//		}
 	}
 	addNewSection()
 	{
 		const help = D.toolbar.help;
-//		let focus = null;
 		const action = e =>
 		{
 			switch(this.type)
@@ -2266,16 +2223,13 @@ class ElementTool
 			case 'Diagram':
 				rows.push(H3.tr(H3.td(this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name'}))));
 				rows.push(H3.tr(H3.td(this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name'}))));
-//				focus = this.basenameElt;
 				break;
 		}
 		this.descriptionElt = H3.input('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
 		rows.push(H3.tr(H3.td(this.descriptionElt)));
-//		let canSearch = false;
 		switch(this.type)
 		{
 			case 'Morphism':
-//				canSearch = true;
 				const objects = R.diagram.getObjects();
 				if (!this.suppress)
 				{
@@ -2303,10 +2257,8 @@ class ElementTool
 				rows.push(H3.tr(H3.td(this.codomainElt), '.sidenavRow'));
 				break;
 			case 'Object':
-//				canSearch = true;
 				break;
 			case 'Text':
-//				focus = this.descriptionElt;
 				break;
 		}
 		const elts = [H3.hr(), H3.h5(this.headline)];
@@ -2314,7 +2266,6 @@ class ElementTool
 		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
 		elts.push(this.error = H3.span('##new-error.error'));
 		help.appendChild(H3.div(elts, '##help-new.hidden'));
-//		return focus;
 	}
 	getMatchingRows(tbl)
 	{
@@ -2342,7 +2293,6 @@ class ElementTool
 			}
 			case 'Diagram':
 			{
-//				const diagrams = R.diagram.getObjects().filter(o => o.properName.includes(this.filter) || o.basenameIncludes(this.filter));
 				const diagrams = [];
 				R.Diagrams.forEach((info, name) => name.includes(this.filter) && diagrams.push(info));
 				diagrams.sort(U.RefcntSorter);
@@ -2692,8 +2642,6 @@ class D
 			D.mouseIsDown = true;
 			D.mouse.down = new D2(e.clientX, e.clientY - D.topSVG.parentElement.offsetTop);	// client coords
 			const diagram = R.diagram;
-//			if (!diagram)
-//				return;
 			if (diagram)
 			{
 				const pnt = diagram.mouseDiagramPosition(e);
@@ -2749,9 +2697,6 @@ class D
 		try
 		{
 			const diagram = R.diagram;
-//			if (diagram && !D.checkMouseOverDiagram(e))
-//			if (!D.checkMouseOverDiagram(e))
-//				R.SelectDiagram(null);
 			if (!diagram)
 				return;
 			D.drag = D.mouseIsDown && diagram.selected.length > 0;
@@ -2833,10 +2778,6 @@ class D
 					diagram.updateFusible(e);
 				D.toolbar.hide();
 			}
-//			else if (D.mouseIsDown && !D.drag)
-//				D.DrawSelectRect();
-//			else if (D.tool === 'pan')
-//				D.DeleteSelectRectangle();
 			else
 				D.DeleteSelectRectangle();
 		}
@@ -2941,8 +2882,6 @@ class D
 						R.EmitDiagramEvent(diagram, 'move', '');
 					}
 				}
-//				else if (!D.mouseover)
-//					diagram.areaSelect(e);
 			}
 			catch(x)
 			{
@@ -3027,16 +2966,28 @@ class D
 	{
 		scalar = 2 * scalar;
 		const diagram = R.diagram;
-		const vp = diagram.getViewport();
-		const upScale = vp.scale;
-		let inc = Math.log(upScale)/Math.log(D.default.scale.base) + scalar;
+		const zoomDgrm = diagram && e.target.id === diagram.elementId('background') || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement';
+		const viewport = zoomDgrm ? diagram.getViewport() : D.session.viewport;
+		const vpScale = viewport.scale;
+		let inc = Math.log(vpScale)/Math.log(D.default.scale.base) + scalar;
 		let scale = D.default.scale.base ** inc;
 		scale = scale < D.default.scale.limit.min ? D.default.scale.limit.min : scale;
 		scale = scale > D.default.scale.limit.max ? D.default.scale.limit.max : scale;
-		const pnt = D.mouse.clientPosition();
-		const x = pnt.x - (scale / upScale) * (pnt.x - vp.x);
-		const y = pnt.y - (scale / upScale) * (pnt.y - vp.y);
-		diagram.setViewport({x, y, scale});
+		const pnt = Cat.D.default.fullscreen ? D.mouse.clientPosition() : D.userToSessionCoords({x:e.clientX, y:e.clientY});
+		let x = pnt.x;
+		let y = pnt.y;
+		if (zoomDgrm)
+		{
+			x = x - (scale / vpScale) * (x - viewport.x);
+			y = y - (scale / vpScale) * (y - viewport.y);
+			diagram.setViewport({x, y, scale});
+		}
+		else
+		{
+			x = viewport.x + x - (scale / vpScale) * x;
+			y = viewport.y + y - (scale / vpScale) * y;
+			D.setSessionViewport({x, y, scale});
+		}
 	}
 	static getKeyName(e)
 	{
@@ -3193,11 +3144,6 @@ class D
 					{
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
-//						if (R.initialized)
-//						{
-//							R.default.diagram = diagram.name;
-//							R.SaveDefaults();
-//						}
 						isGUI && R.EmitViewEvent('diagram', diagram);
 					}
 					break;
@@ -3208,7 +3154,6 @@ class D
 		});
 		window.addEventListener('Login', e =>
 		{
-//			if (D.session.mode === 'diagram' && R.params.has('diagram'))
 			if (D.session.mode === 'diagram')
 				R.SelectDiagram(R.params.get('diagram'));
 			if (R.user.status !== 'logged-in')
@@ -3231,7 +3176,6 @@ class D
 		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
 		window.addEventListener('Object', D.UpdateObjectDisplay);
 		window.addEventListener('Text', D.UpdateTextDisplay);
-//		D.topSVG.onmousemove = D.Mousemove;
 		D.topSVG.addEventListener('mousemove', D.Mousemove);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
@@ -3256,15 +3200,10 @@ class D
 		};
 		document.onwheel = e =>
 		{
-			if (!R.diagram)
-				return;
-			if (e.target.id === R.diagram.elementId('background') || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement')
-			{
-				D.toolbar.hide();
-				R.diagram.svgTranslate.classList.remove('trans025s');
-				D.Zoom(e, Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY))));
-				R.diagram.svgTranslate.classList.add('trans025s');
-			}
+			D.toolbar.hide();
+			R.diagram.svgTranslate.classList.remove('trans025s');
+			D.Zoom(e, Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY))));
+			R.diagram.svgTranslate.classList.add('trans025s');
 		};
 		window.addEventListener('View', e =>
 		{
@@ -3278,8 +3217,6 @@ class D
 				{
 					if (diagram.user === 'sys')
 						diagram.autoplace();
-					diagram.show();
-//					diagram.savePng();
 					diagram.show();
 					D.diagramSVG.appendChild(diagram.svgRoot);
 				}
@@ -3933,7 +3870,7 @@ class D
 			D.session = JSON.parse(str);
 		else
 			D.session = {mode:'catalog', default:null, diagrams:[], viewport:{x:0, y:0, scale:1}};
-		D.setSessionView(D.session.viewport);
+		D.setSessionViewport(D.session.viewport);
 	}
 	static forEachDiagramSVG(fn)
 	{
@@ -3945,13 +3882,37 @@ class D
 		}
 		while((dgrmSvg = dgrmSvg.nextSibling));
 	}
-	static setSessionView(viewport)
+	static setSessionViewport(viewport)
 	{
 		D.session.viewport.x = viewport.x;
 		D.session.viewport.y = viewport.y;
 		D.session.viewport.scale = viewport.scale;
 		R.initialized && D.saveSession();
 		D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
+	}
+	static setSessionViewportByBBox(bbox)
+	{
+		D.setSessionViewport(D.getViewportByBBox(bbox));
+	}
+	static userToSessionCoords(xy)
+	{
+		const viewport = D.session.viewport;
+		const scale = 1.0 / viewport.scale;
+		if (isNaN(viewport.x) || isNaN(scale))
+			throw 'NaN in coords';
+		let d2 = new D2(	scale * (xy.x - viewport.x),
+							scale * (xy.y - viewport.y));
+		return d2;
+	}
+	static sessionToUserCoords(xy)
+	{
+		const viewport = D.session.viewport;
+		const scale = viewport.scale;
+		if (isNaN(viewport.x) || isNaN(scale))
+			throw 'NaN in coords';
+		let d2 = new D2(	scale * xy.x + viewport.x,
+							scale * xy.y + viewport.y);
+		return d2;
 	}
 	static getScreenPan()
 	{
@@ -3987,10 +3948,10 @@ class D
 		else	// pan session
 		{
 			const viewport = D.session.viewport;
-			D.setSessionView({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
+			D.setSessionViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
 		}
 	}
-	static getViewportByBBox(bbox)
+	static getViewportByBBox(bbox)	// bbox in session coordinates
 	{
 		if (bbox.width === 0)
 			bbox.width = D.Width();
@@ -4006,36 +3967,7 @@ class D
 			y += dh/2 - scale * bbox.height/2;
 		else
 			x += dw/2 - scale * bbox.width/2;
-		return {x:x - D.session.viewport.x, y:y - D.session.viewport.y, scale};
-	}
-	static userToSvgCoords(xy)
-	{
-		return new D2(xy).subtract(D.session.viewport).scale(1/D.session.viewport.scale);
-//		return new D2(xy).subtract(D.session.viewport).scale(D.session.viewport.scale);
-//		return new D2(xy).scale(D.session.viewport.scale).subtract(D.session.viewport);
-//		return new D2(xy).scale(1/D.session.viewport.scale).subtract(D.session.viewport);
-	}
-	static svgToUserCoords(xy)
-	{
-//		return new D2(xy).add(D.session.viewport).scale(D.session.viewport.scale);
-		return new D2(xy).scale(1/D.session.viewport.scale).add(D.session.viewport);
-	}
-	static checkMouseOverDiagram(e)
-	{
-//		const xy = new D2(e.clientX, e.clientY).subtract(D.session.viewport).scale(1/D.session.viewport.scale);
-		const xy = D.userToSvgCoords({x:e.clientX, y:e.clientY});
-		let diagram = null;
-		D.forEachDiagramSVG(d =>
-		{
-			if (!d.svgRoot.classList.contains('hidden'))
-			{
-				const box = new D2(d.svgRoot.getBBox());
-				if (box.pointInside(xy))
-					diagram = d;
-			}
-		});
-console.log('*****', diagram !== null);
-		return diagram;
+		return {x, y, scale};
 	}
 }
 Object.defineProperties(D,
@@ -4115,7 +4047,8 @@ Object.defineProperties(D,
 			Equal(e) { D.Zoom(e, 2);},
 			ControlHome(e)
 			{
-				D.setSessionView({x:0, y:0, scale:1});
+				// TODO respect D.default.fullscreen
+				D.setSessionViewport({x:0, y:0, scale:1});
 			},
 			Home(e)
 			{
@@ -4128,61 +4061,25 @@ Object.defineProperties(D,
 				{
 					const bbox = new D2();
 					D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && bbox.merge(d.svgRoot.getBBox()));
-					D.setSessionView(D.getViewportByBBox(bbox));
+					D.setSessionViewport(D.getViewportByBBox(bbox));
 				}
 				e.preventDefault();
 			},
 			ArrowUp(e)
 			{
 				D.panHandler(e, 'up');
-				/*
-				const diagram = R.diagram;
-				if (D.default.fullscreen && R.diagram)
-				{
-					const viewport = diagram.getViewport();
-					diagram.setSessionView({x:viewport.x, y:viewport.y + D.screenPan, scale:viewport.scale});
-					e.preventDefault();
-				}
-				*/
 			},
 			ArrowDown(e)
 			{
 				D.panHandler(e, 'down');
-				/*
-				if (D.default.fullscreen && R.diagram)
-				{
-					const diagram = R.diagram;
-					const viewport = diagram.getViewport();
-					diagram.setSessionView({x:viewport.x, y:viewport.y - D.screenPan, scale:viewport.scale});
-					e.preventDefault();
-				}
-				*/
 			},
 			ArrowLeft(e)
 			{
 				D.panHandler(e, 'left');
-				/*
-				if (D.default.fullscreen && R.diagram)
-				{
-					const diagram = R.diagram;
-					const viewport = diagram.getViewport();
-					diagram.setSessionView({x:viewport.x + D.screenPan, y:viewport.y, scale:viewport.scale});
-					e.preventDefault();
-				}
-				*/
 			},
 			ArrowRight(e)
 			{
 				D.panHandler(e, 'right');
-				/*
-				if (D.default.fullscreen && R.diagram)
-				{
-					const diagram = R.diagram;
-					const viewport = diagram.getViewport();
-					diagram.setSessionView({x:viewport.x - D.screenPan, y:viewport.y, scale:viewport.scale});
-					e.preventDefault();
-				}
-				*/
 			},
 			Slash(e)
 			{
@@ -4288,10 +4185,7 @@ Object.defineProperties(D,
 			Escape(e)
 			{
 				if (D.session.mode === 'catalog' && R.diagram)
-				{
 					R.EmitViewEvent('diagram', R.diagram);
-//					D.forEachDiagramSVG(diagram => R.EmitDiagramEvent(diagram, 'view', 'contain'));
-				}
 				else if (D.session.mode === 'diagram')
 				{
 					let isOpen = false;
@@ -8419,19 +8313,6 @@ class NameAction extends Action
 	html(e, diagram, ary)
 	{
 		const from = ary[0];
-		/*
-		let html =
-			H.h5('Create Named Element') +
-			H.table(H.tr(H.td(D.Input('', 'named-element-new-basename', 'Base name')), 'sidenavRow') +
-					H.tr(H.td(D.Input('', 'named-element-new-properName', 'Proper name')
-						), 'sidenavRow') +
-					H.tr(H.td(H.input('', 'in100', 'named-element-new-description', 'text',
-										{ph: 'Description'})), 'sidenavRow')
-			) +
-			H.span(D.GetButton('namedElement', 'edit', `Cat.R.Actions.name.create(event)`, 'Create named element')) +
-			H.span('', 'error', 'named-element-new-error');
-		D.toolbar.help.innerHTML = html;
-			*/
 		D.RemoveChildren(D.toolbar.help);
 		const elements = [
 			H3.h5('Create Named Element'),
@@ -8591,7 +8472,6 @@ class ProductAction extends Action
 		{
 			const morphisms = elements.map(m => m.to);
 			const to = diagram.get('ProductMorphism', {morphisms, dual:this.dual});
-//			return diagram.placeMorphism(e, to, D.Barycenter(elements), elt.domain.getXY(), elt.codomain.getXY());
 			return diagram.placeMorphism(e, to, elt.domain.getXY(), elt.codomain.getXY());
 		}
 		else if (elt instanceof DiagramObject)
@@ -9276,22 +9156,6 @@ class ProjectAction extends Action
 		const canFlatten = ProductObject.CanFlatten(to);
 		const id = this.dual ? 'inject-domain' : 'project-codomain';
 		const obj = this.dual ? 'domain' : 'codomain';
-		/*
-		const html = H.h4(`Create ${this.dual ? 'Cof' : 'F'}actor Morphism`) +
-					(canFlatten ?
-						H.div(H.span('Remove parenthesis', 'little') +
-							H.button(`Flatten ${this.dual ? 'Coproduct' : 'Product'}`, '', '', '',
-								`onclick="Cat.R.Actions.${this.dual ? 'inject' : 'project'}.flatten(event, Cat.R.diagram, Cat.R.diagram.getSelected())"`)) : '') +
-					H.h5(`${this.dual ? 'Codomain' : 'Domain'} Factors`) +
-					H.small(`Click to place in ${obj}`) +
-					H.button(this.dual ? '0' : '*', '', Cat.R.diagram.elementId(), `Add ${this.dual ? 'initial' : 'terminal'} object`,
-						`onclick="Cat.R.Actions.${this.dual ? 'inject' : 'project'}.addFactor('${to.name}', -1)"`) +
-					ProjectAction.FactorButton(obj, to, to, [], this.dual) +
-					H.h5(`${this.dual ? 'Domain' : 'Codomain'} Factors`) + H.br() +
-					H.span(`Click objects to remove from ${obj}`, 'smallPrint.italic') +
-					H.div('', '', id);
-		D.toolbar.help.innerHTML = html;
-		*/
 		D.RemoveChildren(D.toolbar.help);
 		const elements = [H3.h4(`Create ${this.dual ? 'Cof' : 'F'}actor Morphism`),
 					(canFlatten ?
@@ -13104,14 +12968,14 @@ class Diagram extends Functor
 		this.updateBackground();
 		R.EmitDiagramEvent(this, 'view');
 	}
-	setViewportByBBox(bbox, log = true)
+	setViewportByBBox(bbox)
 	{
 		this.setViewport(D.getViewportByBBox(bbox));
 	}
-	home(log = true)
+	home()
 	{
 		const bbox = new D2(this.svgBase.getBBox());
-		this.setViewportByBBox(bbox, log);
+		D.setSessionViewportByBBox(bbox);
 	}
 	getObject(name)
 	{
@@ -13483,9 +13347,6 @@ class Diagram extends Functor
 			{
 				if (D.default.fullscreen)
 					return;
-//				if (!e.toElement)
-//					R.SelectDiagram(null);
-//				else
 				if (e.toElement)
 				{
 					let elt = e.toElement;
@@ -13519,10 +13380,13 @@ class Diagram extends Functor
 					diagram && notOurs && R.SelectDiagram(diagram);
 				}
 			};
-			let delta = null;
+			let origClick = null;	// the original mousedown location in session coords
+			let origLoc = null;		// the original diagram location in sesssion coords
 			const onMouseMove = e =>
 			{
-				this.setViewport({x:e.clientX - delta.x, y:e.clientY - delta.y, scale:this.getViewport().scale});
+				const viewport = D.session.viewport;
+				const locNow = D.userToSessionCoords({x:e.clientX, y:e.clientY}).subtract(origClick).add(origLoc);
+				this.setViewport({x:locNow.x, y:locNow.y, scale:this.getViewport().scale});	// scale unchanged
 				D.toolbar.hide();
 			};
 			bkgnd.onmouseup = e =>
@@ -13534,9 +13398,8 @@ class Diagram extends Functor
 			{
 				// move the diagram
 				// TODO area select
-				const click = new D2(e.clientX, e.clientY);
-				const viewport = this.getViewport();
-				delta = click.subtract(viewport);
+				origClick = D.userToSessionCoords({x:e.clientX, y:e.clientY});
+				origLoc = new D2(this.getViewport());
 				document.addEventListener('mousemove', onMouseMove);
 				bkgnd.nextSibling.classList.remove('trans025s');
 				e.preventDefault();
@@ -13547,8 +13410,8 @@ class Diagram extends Functor
 			this.svgTranslate = H3.g({id:this.elementId('T')}, this.svgBase);
 			if (true)
 			{
-				this.svgTranslate.appendChild(H3.path('.svgstr3', {d:"M-1000 0 L1000 0"}));
-				this.svgTranslate.appendChild(H3.path('.svgstr3', {d:"M0 -1000 L0 1000"}));
+				this.svgTranslate.appendChild(H3.path({stroke:'red', d:"M-30 0 L30 0"}));
+				this.svgTranslate.appendChild(H3.path({stroke:'red', d:"M0 -30 L0 30"}));
 			}
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.svgRoot.classList.add('hidden');
@@ -13615,7 +13478,6 @@ class Diagram extends Functor
 		const viewport = this.getViewport();
 		const s = viewport.scale;
 		const userXy = new D2(xy).scale(s).add(viewport);
-//		return new D2(xy).scale(s).add(viewport).subtract(D.session.viewport);
 		return new D2(xy).scale(s).add(viewport);
 	}
 	replaceElements(elements)
@@ -14764,9 +14626,6 @@ addBall(m);
 		{
 			const args = scanning.shift();
 			const morphism = formMorphism(args.domain, args.currentDomain, args.index);
-console.log('formMorphism', {morphism});
-//			diagram.placeMorphism(e, morphism);
-//			D.PlaceComposite(e, diagram, morphism);
 			!(morphism instanceof Identity) && components.push(morphism);
 		}
 		D.PlaceComposite(e, diagram, diagram.comp(...components));
@@ -14976,12 +14835,13 @@ console.log('formMorphism', {morphism});
 		if (this.svgRoot)
 		{
 			const bkgnd = document.getElementById(this.elementId('background'));
+			const scale = 1 / D.session.viewport.scale;
 			if (D.default.fullscreen)
 			{
-				bkgnd.setAttribute('x', `${-D.session.viewport.x}px`);
-				bkgnd.setAttribute('y', `${-D.session.viewport.y}px`);
-				bkgnd.setAttribute('width', `${D.Width()}px`);
-				bkgnd.setAttribute('height', `${D.Height()}px`);
+				bkgnd.setAttribute('x', `${-scale * D.session.viewport.x}px`);
+				bkgnd.setAttribute('y', `${-scale * D.session.viewport.y}px`);
+				bkgnd.setAttribute('width', `${scale * D.Width()}px`);
+				bkgnd.setAttribute('height', `${scale * D.Height()}px`);
 			}
 			else
 			{
