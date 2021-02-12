@@ -970,7 +970,7 @@ class R
 		if (isGUI)
 		{
 			diagram.makeSVG();
-			D.default.fullscreen && D.diagramSVG.appendChild(diagram.svgRoot);
+			D.diagramSVG.appendChild(diagram.svgRoot);
 			/* TODO
 			D.forEachDiagramSVG(diagram => diagram.svgRoot.classList.remove('glow'));
 			diagram.svgRoot.querySelector('#' + diagram.elementId('background')).classList.add('glow');
@@ -2971,8 +2971,9 @@ class D
 		const vpScale = viewport.scale;
 		let inc = Math.log(vpScale)/Math.log(D.default.scale.base) + scalar;
 		let scale = D.default.scale.base ** inc;
-		scale = scale < D.default.scale.limit.min ? D.default.scale.limit.min : scale;
-		scale = scale > D.default.scale.limit.max ? D.default.scale.limit.max : scale;
+//	TODO keep?
+//		scale = scale < D.default.scale.limit.min ? D.default.scale.limit.min : scale;
+//		scale = scale > D.default.scale.limit.max ? D.default.scale.limit.max : scale;
 		const pnt = Cat.D.default.fullscreen ? D.mouse.clientPosition() : D.userToSessionCoords({x:e.clientX, y:e.clientY});
 		let x = pnt.x;
 		let y = pnt.y;
@@ -2984,8 +2985,9 @@ class D
 		}
 		else
 		{
-			x = viewport.x + x - (scale / vpScale) * x;
-			y = viewport.y + y - (scale / vpScale) * y;
+			const ratio = scale / vpScale;
+			x = e.clientX + ratio * (viewport.x - e.clientX);
+			y = e.clientY + ratio * (viewport.y - e.clientY);
 			D.setSessionViewport({x, y, scale});
 		}
 	}
@@ -3889,6 +3891,7 @@ class D
 		D.session.viewport.scale = viewport.scale;
 		R.initialized && D.saveSession();
 		D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
+		R.EmitViewEvent('diagram', null);
 	}
 	static setSessionViewportByBBox(bbox)
 	{
@@ -3900,7 +3903,7 @@ class D
 		const scale = 1.0 / viewport.scale;
 		if (isNaN(viewport.x) || isNaN(scale))
 			throw 'NaN in coords';
-		let d2 = new D2(	scale * (xy.x - viewport.x),
+		const d2 = new D2(	scale * (xy.x - viewport.x),
 							scale * (xy.y - viewport.y));
 		return d2;
 	}
@@ -3912,6 +3915,11 @@ class D
 			throw 'NaN in coords';
 		let d2 = new D2(	scale * xy.x + viewport.x,
 							scale * xy.y + viewport.y);
+		if ('width' in xy)
+		{
+			d2.width = xy.width * scale;
+			d2.height = xy.height * scale;
+		}
 		return d2;
 	}
 	static getScreenPan()
@@ -4054,14 +4062,12 @@ Object.defineProperties(D,
 			{
 				const diagram = R.diagram;
 				if (D.default.fullscreen && diagram)
-				{
 					diagram.selected.length > 0 ? diagram.viewElements(...diagram.selected) : diagram.home();
-				}
 				else
 				{
 					const bbox = new D2();
 					D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && bbox.merge(d.svgRoot.getBBox()));
-					D.setSessionViewport(D.getViewportByBBox(bbox));
+					D.setSessionViewportByBBox(bbox);
 				}
 				e.preventDefault();
 			},
@@ -4200,11 +4206,12 @@ Object.defineProperties(D,
 						D.toolbar.hide();
 						return;
 					}
-					if (R.diagram)
+					if (R.diagram)		// toggle fullscreen/catalog
 					{
 						D.default.fullscreen = !D.default.fullscreen;
 						R.SaveDefaults();
-						R.EmitViewEvent('diagram', R.diagram);
+						if (D.default.fullscreen)
+							R.EmitViewEvent('diagram', R.diagram);
 					}
 				}
 				D.DeleteSelectRectangle();
@@ -12965,17 +12972,25 @@ class Diagram extends Functor
 		const viewport = {x, y, scale, visible, timestamp:Date.now()};
 		U.writefile(`${this.name}-viewport.json`, JSON.stringify(viewport));
 		D.viewports.set(this.name, viewport);
-		this.updateBackground();
-		R.EmitDiagramEvent(this, 'view');
+		R.EmitViewEvent('diagram', this);
 	}
 	setViewportByBBox(bbox)
 	{
 		this.setViewport(D.getViewportByBBox(bbox));
 	}
+	getSessionBBox()
+	{
+		const group = this.svgRoot.querySelector('#' + this.elementId('T'));
+		return group.getBBox();
+	}
 	home()
 	{
-		const bbox = new D2(this.svgBase.getBBox());
-		D.setSessionViewportByBBox(bbox);
+		const bbox = new D2(this.getSessionBBox());
+		const viewport = this.getViewport();
+		const offbox = bbox.add(viewport);
+		offbox.width = bbox.width;
+		offbox.height = bbox.height;
+		D.setSessionViewportByBBox(offbox);
 	}
 	getObject(name)
 	{
@@ -13394,15 +13409,18 @@ class Diagram extends Functor
 				document.removeEventListener('mousemove', onMouseMove);
 				bkgnd.nextSibling.classList.add('trans025s');
 			};
-			bkgnd.onmousedown = e =>
+			bkgnd.onmousedown = e =>	// move diagram in session coordinates
 			{
-				// move the diagram
-				// TODO area select
-				origClick = D.userToSessionCoords({x:e.clientX, y:e.clientY});
-				origLoc = new D2(this.getViewport());
-				document.addEventListener('mousemove', onMouseMove);
-				bkgnd.nextSibling.classList.remove('trans025s');
-				e.preventDefault();
+				if (!D.default.fullscreen)
+				{
+					// move the diagram
+					// TODO area select
+					origClick = D.userToSessionCoords({x:e.clientX, y:e.clientY});
+					origLoc = new D2(this.getViewport());
+					document.addEventListener('mousemove', onMouseMove);
+					bkgnd.nextSibling.classList.remove('trans025s');
+					e.preventDefault();
+				}
 			};
 			this.svgRoot.appendChild(bkgnd);
 			D.diagramSVG.appendChild(this.svgRoot);
@@ -14834,26 +14852,27 @@ addBall(m);
 	{
 		if (this.svgRoot)
 		{
-			const bkgnd = document.getElementById(this.elementId('background'));
-			const scale = 1 / D.session.viewport.scale;
+			const dgrmBkgnd = document.getElementById(this.elementId('background'));
+			const bkgnd = document.getElementById('diagram-background');
+			bkgnd && bkgnd.parentNode.removeChild(bkgnd);
 			if (D.default.fullscreen)
 			{
-				bkgnd.setAttribute('x', `${-scale * D.session.viewport.x}px`);
-				bkgnd.setAttribute('y', `${-scale * D.session.viewport.y}px`);
-				bkgnd.setAttribute('width', `${scale * D.Width()}px`);
-				bkgnd.setAttribute('height', `${scale * D.Height()}px`);
+				const scale = 1 / D.session.viewport.scale;
+				const svgRoot = this.svgRoot;
+				const pnt = D.userToSessionCoords({x:0, y:0});
+				const rect = H3.rect('.diagramBackground', {id:'diagram-background', x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.Width()}px`, height:`${scale * D.Height()}px`});
+				svgRoot.parentNode.insertBefore(rect, svgRoot);
+				dgrmBkgnd.classList.add('hidden');
 			}
 			else
-			{
-				const group = this.svgRoot.querySelector('#' + this.elementId('T'));
-				const bbox = group.getBBox();
-				const viewport = this.getViewport();
-				const scale = viewport.scale;
-				bkgnd.setAttribute('x', `${scale * bbox.x + viewport.x - D.default.diagram.margin}px`);
-				bkgnd.setAttribute('y', `${scale * bbox.y + viewport.y - D.default.diagram.margin}px`);
-				bkgnd.setAttribute('width', `${scale * bbox.width + 2 * D.default.diagram.margin}px`);
-				bkgnd.setAttribute('height', `${scale * bbox.height + 2 * D.default.diagram.margin}px`);
-			}
+				dgrmBkgnd.classList.remove('hidden');
+			const bbox = this.getSessionBBox();
+			const viewport = this.getViewport();
+			const scale = viewport.scale;
+			dgrmBkgnd.setAttribute('x', `${scale * bbox.x + viewport.x - D.default.diagram.margin}px`);
+			dgrmBkgnd.setAttribute('y', `${scale * bbox.y + viewport.y - D.default.diagram.margin}px`);
+			dgrmBkgnd.setAttribute('width', `${scale * bbox.width + 2 * D.default.diagram.margin}px`);
+			dgrmBkgnd.setAttribute('height', `${scale * bbox.height + 2 * D.default.diagram.margin}px`);
 		}
 	}
 	savePng()
