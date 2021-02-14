@@ -1843,7 +1843,7 @@ class Toolbar
 		});
 		window.addEventListener('Login', e => this.hide());
 		window.addEventListener('View', e => e.detail.command === 'catalog' ? this.hide() : null);
-		window.addEventListener('CAT', hideToolbar);
+//		window.addEventListener('CAT', hideToolbar);
 	}
 	resetMouseCoords()
 	{
@@ -1853,6 +1853,7 @@ class Toolbar
 	{
 		this.element.classList.add('hidden');
 		this.closed = true;
+console.trace('toolbar hide');
 	}
 	reveal()
 	{
@@ -1885,7 +1886,7 @@ console.log('toolbar reveal', D.drag);
 		element.style.display = 'block';
 		const moveBtn = D.getIcon('moveToolbar', 'move', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle');
 		let delta = null;
-		moveBtn.onmousedown = e =>
+		moveBtn.onmousedown = e =>	// start to move toolbar
 		{
 			const click = new D2(e.clientX, e.clientY);
 			const tb = Cat.D.toolbar.element;
@@ -2703,7 +2704,7 @@ class D
 			const xy = diagram.mouseDiagramPosition(e);
 			xy.width = 2;
 			xy.height = 2;
-			if (D.drag && diagram.isEditable())
+			if (D.default.fullscreen && D.drag && diagram.isEditable())
 			{
 				if (diagram.selected.length > 0)
 				{
@@ -3521,17 +3522,20 @@ class D
 	}
 	static Mouseover(e, from, on)
 	{
-		from.diagram.emphasis(from.name, on);
-		let msg = '';
-		if (on && !(from instanceof DiagramText))
+		if (D.default.fullscreen)
 		{
-			msg = from.to.description;
-			if (R.default.debug && 'assyGraph' in from)
-				msg = msg + `  <br>Has info: ${from.assyGraph.hasTag('info')}`;
-			D.statusbar.show(e, msg);
+			from.diagram.emphasis(from.name, on);
+			let msg = '';
+			if (on && !(from instanceof DiagramText))
+			{
+				msg = from.to.description;
+				if (R.default.debug && 'assyGraph' in from)
+					msg = msg + `  <br>Has info: ${from.assyGraph.hasTag('info')}`;
+				D.statusbar.show(e, msg);
+			}
+			else
+				clearInterval(D.statusbar.timerIn);
 		}
-		else
-			clearInterval(D.statusbar.timerIn);
 	}
 	static Paste(e)
 	{
@@ -4210,8 +4214,7 @@ Object.defineProperties(D,
 					{
 						D.default.fullscreen = !D.default.fullscreen;
 						R.SaveDefaults();
-						if (D.default.fullscreen)
-							R.EmitViewEvent('diagram', R.diagram);
+						R.EmitViewEvent('diagram', R.diagram);
 					}
 				}
 				D.DeleteSelectRectangle();
@@ -7858,7 +7861,7 @@ class DiagramObject extends CatObject
 		const svg = H3.text({draggable:true});
 		svg.onmouseenter = e => Cat.D.Mouseover(e, this, true);
 		svg.onmouseleave = e => Cat.D.Mouseover(e, this, false);
-		svg.onmousedown = e => R.diagram && R.diagram.selectElement(e, name);
+		svg.onmousedown = e => D.default.fullscreen && R.diagram && R.diagram.selectElement(e, name);
 		node.appendChild(svg);
 		this.svg = svg;
 		svg.setAttributeNS(null, 'data-type', 'object');
@@ -12985,12 +12988,7 @@ class Diagram extends Functor
 	}
 	home()
 	{
-		const bbox = new D2(this.getSessionBBox());
-		const viewport = this.getViewport();
-		const offbox = bbox.add(viewport);
-		offbox.width = bbox.width;
-		offbox.height = bbox.height;
-		D.setSessionViewportByBBox(offbox);
+		D.setSessionViewportByBBox(this.svgRoot.getBBox());
 	}
 	getObject(name)
 	{
@@ -13353,12 +13351,13 @@ class Diagram extends Functor
 		{
 			this.svgRoot = H3.g({id:this.elementId('root'), 'data-name':this.name});
 			const bkgnd = H3.rect(`##${this.elementId('background')}.diagramBackground`, {x:0, y:0, width:D.Width(), height:D.Height()});
-			bkgnd.onmouseenter = e =>
+			const f4gnd = H3.rect(`##${this.elementId('foreground')}.diagramForeground`, {x:0, y:0, width:D.Width(), height:D.Height()});
+			f4gnd.onmouseenter = e =>
 			{
 				if (R.diagram != this)
 					R.SelectDiagram(this);
 			};
-			bkgnd.onmouseleave = e =>
+			f4gnd.onmouseleave = e =>
 			{
 				if (D.default.fullscreen)
 					return;
@@ -13404,12 +13403,12 @@ class Diagram extends Functor
 				this.setViewport({x:locNow.x, y:locNow.y, scale:this.getViewport().scale});	// scale unchanged
 				D.toolbar.hide();
 			};
-			bkgnd.onmouseup = e =>
+			f4gnd.onmouseup = e =>
 			{
 				document.removeEventListener('mousemove', onMouseMove);
-				bkgnd.nextSibling.classList.add('trans025s');
+				f4gnd.previousSibling.classList.add('trans025s');
 			};
-			bkgnd.onmousedown = e =>	// move diagram in session coordinates
+			f4gnd.onmousedown = e =>	// move diagram in session coordinates
 			{
 				if (!D.default.fullscreen)
 				{
@@ -13418,7 +13417,7 @@ class Diagram extends Functor
 					origClick = D.userToSessionCoords({x:e.clientX, y:e.clientY});
 					origLoc = new D2(this.getViewport());
 					document.addEventListener('mousemove', onMouseMove);
-					bkgnd.nextSibling.classList.remove('trans025s');
+					f4gnd.previousSibling.classList.remove('trans025s');
 					e.preventDefault();
 				}
 			};
@@ -13433,6 +13432,7 @@ class Diagram extends Functor
 			}
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.svgRoot.classList.add('hidden');
+			this.svgRoot.appendChild(f4gnd);
 			this.domain.elements.forEach(elt => this.addSVG(elt));
 		}
 		this.domain.cells.forEach(d => this.addSVG(d));
@@ -13776,14 +13776,17 @@ class Diagram extends Functor
 	}
 	emphasis(c, on)
 	{
-		const elt = this.getElement(c);
-		D.mouseover = on ? elt : null;
-		if (elt && (elt instanceof DiagramMorphism || elt instanceof DiagramObject || elt instanceof DiagramText))
-			elt.emphasis(on);
-		else if (this.domain.cells.has(c))
-			this.domain.cells.get(c).emphasis(on);
-		if (!on && this.selected.length === 1 && 'dragAlternates' in this.selected[0])
-			this.removeDragAlternates();
+		if (D.default.fullscreen)
+		{
+			const elt = this.getElement(c);
+			D.mouseover = on ? elt : null;
+			if (elt && (elt instanceof DiagramMorphism || elt instanceof DiagramObject || elt instanceof DiagramText))
+				elt.emphasis(on);
+			else if (this.domain.cells.has(c))
+				this.domain.cells.get(c).emphasis(on);
+			if (!on && this.selected.length === 1 && 'dragAlternates' in this.selected[0])
+				this.removeDragAlternates();
+		}
 	}
 	removeDragAlternates()
 	{
@@ -14853,26 +14856,43 @@ addBall(m);
 		if (this.svgRoot)
 		{
 			const dgrmBkgnd = document.getElementById(this.elementId('background'));
+			const dgrmF4gnd = document.getElementById(this.elementId('foreground'));
 			const bkgnd = document.getElementById('diagram-background');
 			bkgnd && bkgnd.parentNode.removeChild(bkgnd);
 			if (D.default.fullscreen)
 			{
+//				dgrmBkgnd.classList.remove('grabbable');
+				dgrmF4gnd.classList.remove('grabbable');
 				const scale = 1 / D.session.viewport.scale;
 				const svgRoot = this.svgRoot;
 				const pnt = D.userToSessionCoords({x:0, y:0});
 				const rect = H3.rect('.diagramBackground', {id:'diagram-background', x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.Width()}px`, height:`${scale * D.Height()}px`});
 				svgRoot.parentNode.insertBefore(rect, svgRoot);
 				dgrmBkgnd.classList.add('hidden');
+				dgrmF4gnd.classList.add('hidden');
 			}
 			else
+			{
 				dgrmBkgnd.classList.remove('hidden');
+//				dgrmBkgnd.classList.add('grabbable');
+				dgrmF4gnd.classList.remove('hidden');
+				dgrmF4gnd.classList.add('grabbable');
+			}
 			const bbox = this.getSessionBBox();
 			const viewport = this.getViewport();
 			const scale = viewport.scale;
-			dgrmBkgnd.setAttribute('x', `${scale * bbox.x + viewport.x - D.default.diagram.margin}px`);
-			dgrmBkgnd.setAttribute('y', `${scale * bbox.y + viewport.y - D.default.diagram.margin}px`);
-			dgrmBkgnd.setAttribute('width', `${scale * bbox.width + 2 * D.default.diagram.margin}px`);
-			dgrmBkgnd.setAttribute('height', `${scale * bbox.height + 2 * D.default.diagram.margin}px`);
+			const x = scale * bbox.x + viewport.x - D.default.diagram.margin;
+			const y = scale * bbox.y + viewport.y - D.default.diagram.margin;
+			const width = scale * bbox.width + 2 * D.default.diagram.margin;
+			const height = scale * bbox.height + 2 * D.default.diagram.margin;
+			dgrmBkgnd.setAttribute('x', `${x}px`);
+			dgrmBkgnd.setAttribute('y', `${y}px`);
+			dgrmBkgnd.setAttribute('width', `${width}px`);
+			dgrmBkgnd.setAttribute('height', `${height}px`);
+			dgrmF4gnd.setAttribute('x', `${x}px`);
+			dgrmF4gnd.setAttribute('y', `${y}px`);
+			dgrmF4gnd.setAttribute('width', `${width}px`);
+			dgrmF4gnd.setAttribute('height', `${height}px`);
 		}
 	}
 	savePng()

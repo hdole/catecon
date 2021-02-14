@@ -924,6 +924,10 @@ description
 	stroke:				#aaaa;
 }
 
+.diagramForeground
+{
+	opacity:			0;
+}
 .defaultGlow
 {
 	filter:				url(#diagramGlow);
@@ -932,4 +936,6 @@ description
 .catalogTop
 {
 	background-color:	white;
+	height:				100%;
+	width:				100%;
 }
