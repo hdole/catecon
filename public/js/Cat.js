@@ -1778,11 +1778,11 @@ class Navbar
 				}
 			} while((icon = icon.nextSibling));
 		}
-		const divs = [	H3.div('.navbar-float.navbar-tools.buttonBarLeft', left),
+		const divs = [	H3.div('.navbar-float.navbar-tools', H3.table('.buttonBarLeft', H3.tr(H3.td(left)))),
 						H3.div(H3.span('##category-navbar.navbar-text'), '.navbar-float.navbar-inset', {title:'Current category scope'}),
 						H3.div('Catecon', {onclick:_ => R.EmitViewEvent('catalog', D.catalog.view)}, '.title.navbar-float.navbar-inset'),
 						H3.div(H3.span('##diagram-navbar.navbar-text'), '.navbar-float.navbar-inset', {title:'Current diagram', onclick:_ => this.diagramPopup.classList.toggle('hidden')}),
-						H3.div('.navbar-float.navbar-tools.buttonBarRight', right)];
+						H3.div('.navbar-float.navbar-tools', H3.table('.buttonBarRight', H3.tr(H3.td(right))))];
 		D.RemoveChildren(this.element);
 		divs.map(div => this.element.appendChild(div));
 		this.categoryElt = document.getElementById('category-navbar');
@@ -1815,6 +1815,7 @@ class Toolbar
 			'header':		{value: document.getElementById('toolbar-header'),	writable: false},
 			'help':			{value: document.getElementById('toolbar-help'),	writable: false},
 			'mouseCoords':	{value: null,										writable: true},
+			'sections':		{value: ['help-new', 'help-search', 'help-references'],	writable: false},
 		});
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
@@ -1843,7 +1844,6 @@ class Toolbar
 		});
 		window.addEventListener('Login', e => this.hide());
 		window.addEventListener('View', e => e.detail.command === 'catalog' ? this.hide() : null);
-//		window.addEventListener('CAT', hideToolbar);
 	}
 	resetMouseCoords()
 	{
@@ -1853,13 +1853,11 @@ class Toolbar
 	{
 		this.element.classList.add('hidden');
 		this.closed = true;
-console.trace('toolbar hide');
 	}
 	reveal()
 	{
 		this.element.classList.remove('hidden');
 		this.closed = false;
-console.log('toolbar reveal', D.drag);
 	}
 	show(e, toggle = true)
 	{
@@ -2037,6 +2035,12 @@ console.log('toolbar reveal', D.drag);
 			}
 		});
 	}
+	showSection(section)
+	{
+		this.sections.map(s => D.toolbar.help.querySelector('#' + s).classList.add('hidden'));
+		const s = D.toolbar.help.querySelector('#' + section);
+		s && s.classList.remove('hidden');
+	}
 }
 
 class StatusBar
@@ -2139,25 +2143,28 @@ class ElementTool
 	}
 	html(e)
 	{
-		const help = D.toolbar.help;
+		const toolbar = D.toolbar;
+		const help = toolbar.help;
 		D.RemoveChildren(help);
 		const toolbar2 = [];
 		// create new element
-		R.diagram.isEditable() && toolbar2.push(H3.span(D.getIcon('new', 'edit', _ => help.querySelector('#help-new').classList.toggle('hidden'), 'New')));
+		toolbar2.push(H3.span(D.getIcon('diagram', 'diagram', _ => toolbar.showSection('help-diagram'), 'New')));
+		R.diagram.isEditable() && toolbar2.push(H3.span(D.getIcon('new', 'edit', _ => toolbar.showSection('help-new'), 'New')));
 		// search for an elment
-		toolbar2.push(H3.span(D.getIcon('search', 'search', _ => help.querySelector('#help-search').classList.toggle('hidden'), 'Search')));
+		toolbar2.push(H3.span(D.getIcon('search', 'search', _ => toolbar.showSection('help-search'), 'Search')));
 		toolbar2.push(H3.span(D.getIcon('reference', 'reference', _ => this.showReferences(), 'References')));
 		if (this.type === 'Diagram')
 		{
 			if (R.user.status === 'logged-in' && R.cloud && R.diagram && R.diagram.isEditable())
 				toolbar2.push(D.getIcon('diagramUpload', 'upload', e => R.diagram.upload(e), 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'));
-			toolbar2.push(D.getIcon('download', 'download2', e => D.toolbar.help.querySelector('#help-download').classList.toggle('hidden'), 'Download stuff', D.default.button.small));
+			toolbar2.push(D.getIcon('download', 'download2', e => D.toolbar.toolbar.showSection('help-download'), 'Download stuff', D.default.button.small));
 		}
-		help.appendChild(H3.div(toolbar2, '##help-toolbar2.buttonBarLeft'));
+		help.appendChild(H3.div(toolbar2, '##help-toolbar2'));
 		const downloadToolbar = [];
 		switch(this.type)
 		{
 			case 'Object':
+				break;
 			case 'Morphism':
 				break;
 			case 'Diagram':
@@ -2178,9 +2185,21 @@ class ElementTool
 							H3.p(H3.span(R.diagram.description, {title:'Description'}), H3.span({id:'diagram-description-edit'})),
 							H3.table(H3.tr(	H3.td(H3.span('By '), H3.span(R.diagram.user), '.smallPrint.italic'),
 											H3.td(H3.span(new Date(R.diagram.timestamp).toLocaleString()), H3.br(), H3.span('##diagram-info'), '.smallPrint.italic')))));
-		;
 		}
+		//
+		// add diagram section
+		//
+		const diagramRowsTable = H3.table();
+		const diagramRows = H3.div('##help-diagram.hidden', H3.hr(), H3.h5('Defined In Diagram'), diagramRowsTable);
+		help.appendChild(diagramRows);
+		this.getDiagramRows(diagramRowsTable);
+		//
+		// add new section
+		//
 		this.addNewSection();
+		//
+		// add search section
+		//
 		const onkeyup = e =>
 		{
 			this.filter = document.getElementById('help-element-search').value;
@@ -2188,10 +2207,15 @@ class ElementTool
 			D.RemoveChildren(tbl);
 			this.getMatchingRows(tbl);
 		};
-		help.appendChild(H3.div('##help-search.hidden', H3.hr(), H3.span('Search in category', '.italic'), H3.br(), H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup })));
+		help.appendChild(H3.div('##help-search.hidden', H3.hr(), H3.span('Search in category', '.italic'), H3.br(), H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup }),
+			H3.hr(),
+			H3.table({id:'help-matching-table', style:'margin:4px;'}),
+		));
+		//
+		// add references section
 		help.appendChild(H3.div('##help-references.hidden'));
-		help.appendChild(H3.hr());
-		help.appendChild(H3.table({id:'help-matching-table', style:'margin:4px;'}));
+		//
+		toolbar.showSection('help-diagram');
 	}
 	addNewSection()
 	{
@@ -2267,6 +2291,22 @@ class ElementTool
 		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
 		elts.push(this.error = H3.span('##new-error.error'));
 		help.appendChild(H3.div(elts, '##help-new.hidden'));
+	}
+	getDiagramRows(tbl)
+	{
+		switch(this.type)
+		{
+			case 'Object':
+				let objects = R.diagram.getObjects(false);
+				objects.sort(U.RefcntSorter);
+				objects.map(m => tbl.appendChild(H3.tr(H3.td(m.getHtmlRep()), '.panelElt')));
+				break;
+			case 'Morphism':
+				let morphisms = R.diagram.getMorphisms(false);
+				morphisms.sort(U.RefcntSorter);
+				morphisms.map(m => tbl.appendChild(H3.tr(H3.td(m.getHtmlRep()), '.panelElt')));
+				break;
+		}
 	}
 	getMatchingRows(tbl)
 	{
@@ -2936,7 +2976,7 @@ class D
 	static getIcon(name, buttonName, onclick, title, scale = D.default.button.small, id = null, aniId = null, repeatCount = "1")
 	{
 		const inches = 0.32 * scale;
-		return H3.span('.button', H3.svg(	{viewbox:"0 0 320 320", width:`${inches}in`, height:`${inches}in`},
+		return H3.span(H3.svg(	{viewbox:"0 0 320 320", width:`${inches}in`, height:`${inches}in`},
 											H3.rect('.icon', {x:"0", y:"0", width:"32", height:"32", onclick}),
 											H3.use({href:`#icon-${buttonName}`}),
 											H3.rect('.btn', {x:"0", y:"0", width:"32", height:"32", onclick})), {title, id, 'data-name':`button-${name}`});
@@ -3873,7 +3913,16 @@ class D
 	{
 		const str = U.readfile('session.json');
 		if (str)
+		{
 			D.session = JSON.parse(str);
+			const viewport = D.session.viewport;
+			if (isNaN(viewport.x))
+				viewport.x = 0;
+			if (isNaN(viewport.y))
+				viewport.y = 0;
+			if (isNaN(viewport.scale) || viewport.scale <= 0)
+				viewport.scale = 1;
+		}
 		else
 			D.session = {mode:'catalog', default:null, diagrams:[], viewport:{x:0, y:0, scale:1}};
 		D.setSessionViewport(D.session.viewport);
@@ -9421,7 +9470,7 @@ class HelpAction extends Action
 		let toolbar2 = [];
 		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
 		if (toolbar2.length > 0)
-			help.appendChild(H3.div(toolbar2, '##help-toolbar2.buttonBarLeft'));
+			help.appendChild(H3.div(toolbar2, '##help-toolbar2'));
 		D.toolbar.help.appendChild(H3.div(from.help(), '##help-body'));
 	}
 }
@@ -11846,9 +11895,7 @@ class Composite extends MultiMorphism
 	}
 	help()
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Composite')));
-		return help;
+		return super.help(H3.tr(H3.td('Type:'), H3.td('Composite')));
 	}
 	isIterable()		// A composite is considered iterable if the first morphism is iterable.
 	{
@@ -13744,22 +13791,22 @@ class Diagram extends Functor
 		Array.from(this.elements).reverse().map(a => a[1].decrRefcnt());
 		save && R.SaveLocal(this);		// TODO replace with event?
 	}
-	getObjects()
+	getObjects(all = true)
 	{
 		const objects = new Set();
 		this.forEachObject(o => objects.add(o));
-		this.allReferences.forEach(function(cnt, name)
+		all && this.allReferences.forEach(function(cnt, name)
 		{
 			const diagram = R.$CAT.getElement(name);
 			diagram.forEachObject(o => objects.add(o));
 		});
 		return [...objects];
 	}
-	getMorphisms()
+	getMorphisms(all = true)
 	{
 		const morphisms = new Set();
 		this.forEachMorphism(m => morphisms.add(m));
-		this.allReferences.forEach(function(cnt, name)
+		all && this.allReferences.forEach(function(cnt, name)
 		{
 			const diagram = R.$CAT.getElement(name);
 			diagram.forEachMorphism(m => morphisms.add(m));
@@ -14861,7 +14908,6 @@ addBall(m);
 			bkgnd && bkgnd.parentNode.removeChild(bkgnd);
 			if (D.default.fullscreen)
 			{
-//				dgrmBkgnd.classList.remove('grabbable');
 				dgrmF4gnd.classList.remove('grabbable');
 				const scale = 1 / D.session.viewport.scale;
 				const svgRoot = this.svgRoot;
@@ -14874,7 +14920,6 @@ addBall(m);
 			else
 			{
 				dgrmBkgnd.classList.remove('hidden');
-//				dgrmBkgnd.classList.add('grabbable');
 				dgrmF4gnd.classList.remove('hidden');
 				dgrmF4gnd.classList.add('grabbable');
 			}
