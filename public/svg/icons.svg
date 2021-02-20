@@ -80,8 +80,8 @@
 		<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>
 	</symbol>
 	<symbol id="icon-cpp" class="icon" viewbox="0 0 320 320">
-			<text text-anchor="middle" x="160" y="200" style="font-size:220px;font-weight:bold;stroke:#000;">C</text>
-			<text text-anchor="middle" x="160" y="330" style="font-size:200px;font-weight:bold;stroke:#000;">++</text>
+			<text text-anchor="middle" x="160" y="200" style="font-size:220px;font-weight:bold;stroke:#000;fill:black;">C</text>
+			<text text-anchor="middle" x="160" y="330" style="font-size:200px;font-weight:bold;stroke:#000;fill:black;">++</text>
 	</symbol>
 	<symbol id="icon-delete" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
@@ -212,7 +212,7 @@
 		<polygon points="320 0, 200 160, 320 320" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-javascript" class="icon" viewbox="0 0 320 320">
-			<text text-anchor="middle" x="160" y="280" style="font-size:240px;font-weight:bold;stroke:#000;">JS</text>
+			<text text-anchor="middle" x="160" y="240" style="font-size:240px;font-weight:bold;stroke:#000;fill:black;">JS</text>
 	</symbol>
 	<symbol id="icon-lambda" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>
@@ -241,8 +241,8 @@
 		<line class="svgfilNone arrow0-30px" x1="60" y1="240" x2="240" y2="240" />
 	</symbol>
 	<symbol id="icon-mysql" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="160" style="font-size:180px;font-weight:bold;stroke:#000;">My</text>
-		<text text-anchor="middle" x="160" y="300" style="font-size:180px;font-weight:bold;stroke:#000;">SQL</text>
+		<text text-anchor="middle" x="160" y="160" style="font-size:180px;font-weight:bold;stroke:#000;fill:black;">My</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:180px;font-weight:bold;stroke:#000;fill:black;">SQL</text>
 	</symbol>
 	<symbol id="icon-name" class="icon" viewbox="0 0 320 320">
 		<circle cx="80" cy="240" r="90" fill="url(#radgrad1)"/>
@@ -260,7 +260,7 @@
 		<circle cx="160" cy="160" r="160" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-play" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;">&#9654;</text>
+		<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;fill:black;">&#9654;</text>
 	</symbol>
 	<symbol id="icon-product" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
@@ -310,7 +310,7 @@
 		<line class="arrow0" x1="140" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-save" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;">&#128190;</text>
+		<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;fill:black;">&#128190;</text>
 	</symbol>
 	<symbol id="icon-search" class="icon" viewbox="0 0 320 320">
 		<circle class="search" cx="240" cy="80" r="120"/>
