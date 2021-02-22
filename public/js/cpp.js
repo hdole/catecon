@@ -15,7 +15,7 @@ var Cat = Cat || require('./Cat.js');
 	{
 		constructor(diagram)
 		{
-			const args = {basename:'cpp', description:'C++ support'};
+			const args = {basename:'cpp', description:'C++ support', ext:'cpp'};
 			super(diagram, args);
 			Object.defineProperty(this, 'currentDiagram', {value:null, writable:true});
 			Cat.R.languages.set(this.basename, this);

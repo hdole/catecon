@@ -15,7 +15,7 @@ var Cat = Cat || require('./Cat.js');
 	{
 		constructor(diagram)
 		{
-			const args = {basename:'javascript', description:'Javascript support'};
+			const args = {basename:'javascript', description:'Javascript support', ext:'js'};
 			super(diagram, args);
 			R.languages.set(this.basename, this);
 		}
