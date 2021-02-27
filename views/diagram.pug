@@ -37,7 +37,7 @@ html(lang="en")
 					filter#diagramGlow(height="300%", width="300%")
 						feMorphology(operator="dilate", radius="4", in="SourceAlpha", result="thicken")
 						feGaussianBlur(in="thicken", stdDeviation="5", result="blurred")
-						feFlood(flood-color="rgb(255,255,0)", result="glowColor")
+						feFlood(flood-color="rgb(0,255,0)", result="glowColor")
 						feComposite(in="glowColor", in2="blurred", operator="in", result="diagramGlow_colored")
 						feMerge
 							feMergeNode(in="diagramGlow_colored")
