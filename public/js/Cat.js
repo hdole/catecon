@@ -929,7 +929,7 @@ class R
 	//
 	// primary means of displaying a diagram
 	//
-	static async SelectDiagram(name)
+	static async SelectDiagram(name, action = null)
 	{
 		if (isGUI)
 		{
@@ -964,7 +964,7 @@ class R
 		R.diagram = diagram;
 		isGUI && R.diagram && R.diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
 		D.NotBusy();
-		R.EmitCATEvent('default', diagram);
+		R.EmitCATEvent('default', diagram, action);
 	}
 	static GetCategory(name)
 	{
@@ -1083,12 +1083,12 @@ class R
 		R.default.showEvents && console.log('emit LOGIN event', R.user.name, R.user.status);
 		return window.dispatchEvent(new CustomEvent('Login', {detail:	{command:R.user.status, name:R.user.name}, bubbles:true, cancelable:true}));
 	}
-	static EmitCATEvent(command, diagram)	// like diagram was loaded
+	static EmitCATEvent(command, diagram, action = null)	// like diagram was loaded
 	{
 		if (!isGUI)
 			return;
-		R.default.showEvents && console.log('emit CAT event', {command, diagram});
-		return window.dispatchEvent(new CustomEvent('CAT', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
+		R.default.showEvents && console.log('emit CAT event', {command, diagram, action});
+		return window.dispatchEvent(new CustomEvent('CAT', {detail:	{command, diagram, action}, bubbles:true, cancelable:true}));
 	}
 	static EmitDiagramEvent(diagram, command, name = '')	// like something happened in a diagram
 	{
@@ -1671,7 +1671,7 @@ class Navbar
 		this.diagramPopup.onmouseleave = _ => D.mouse.onGUI = null;
 		window.addEventListener('Login', Navbar.UpdateByUserStatus);
 		window.addEventListener('Registration', Navbar.UpdateByUserStatus);
-		window.addEventListener('CAT', e => e.detail.command === 'default' && D.navbar.updateByCatDefaultEvent(e));
+		window.addEventListener('CAT', e => D.navbar.eventUpdate(e));
 		window.addEventListener('Autohide', e =>
 		{
 			if (D.session.mode === 'catalog')	// no autohide in catalog view
@@ -1687,7 +1687,7 @@ class Navbar
 		});
 		window.addEventListener('View', _ => this.update());
 	}
-	updateByCatDefaultEvent(e)
+	eventUpdate(e)
 	{
 		switch (e.detail.command)
 		{
@@ -1702,6 +1702,7 @@ class Navbar
 					const viewport = U.readfile(`${diagram.name}-viewport.json`);
 					if (viewport)
 						D.viewports.set(diagram.name, JSON.parse(viewport));
+					this.updateLastViewedDiagrams();
 				}
 				break;
 		}
@@ -1750,7 +1751,8 @@ class Navbar
 			left.push(D.getIcon('objectPanelToggle', 'object', _ => Cat.D.objectPanel.toggle(), 'Objects', sz));
 			left.push(D.getIcon('morphismPanelToggle', 'morphism', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
 			left.push(D.getIcon('textPanelToggle', 'text', _ => Cat.D.textPanel.toggle(), 'Text', sz));
-			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram && Cat.R.diagram.home(), 'Home', sz));
+//			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram && Cat.R.diagram.home(), 'Home', sz));
+			right.push(D.getIcon('cateapsis', 'cateapsis', e => Cat.R.diagram && Cat.D.keyboardDown.Home(e), 'Home', sz));
 			right.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
 			right.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
 			right.push(D.getIcon('helpPanelToggle', 'help', _ => Cat.D.helpPanel.toggle(), 'Help', sz));
@@ -1789,11 +1791,24 @@ class Navbar
 	}
 	updateLastViewedDiagrams()
 	{
-		const diagrams = [...D.viewports];
+		const views = [...D.viewports];
 		// sort by most recent first
-		const result = diagrams.sort((a, b) => a[1].timestamp > b[1].timestamp ? -1 : a[1].timestamp < b[1].timestamp ? 1 : 0);
+		const result = views.sort((a, b) => a[1].timestamp > b[1].timestamp ? -1 : a[1].timestamp < b[1].timestamp ? 1 : 0);
 		result.length = 20;
-		const rows = diagrams.map(info => H3.tr(H3.td(H3.span(info[0]), '.left.popupBtn', {onclick:_ => R.SelectDiagram(info[0])})));
+		const closeFn = d =>
+		{
+			d.hide();
+			D.viewports.delete(d.name);
+			this.updateLastViewedDiagrams();
+			D.saveSession();
+		};
+		const closeBtn = diagram =>
+		{
+			if (diagram && diagram.svgRoot)
+				return D.getIcon('closeDiagram', 'close', e => closeFn(diagram), 'Hide diagram', D.default.button.tiny);
+		};
+		const diagrams = views.map(info => R.$CAT.getElement(info[0]));
+		const rows = diagrams.map(d => H3.tr(H3.td(H3.span(d.name), '.left.popupBtn', {onclick:_ => R.SelectDiagram(d.name, 'home')}), H3.td(closeBtn(d))));
 		const popupElt = H3.div(H3.span('Recent diagrams', '.italic.smallPrint'), H3.table(rows), '.popupElt', {onmouseleave:e => this.diagramPopup.classList.toggle('hidden')});
 		D.RemoveChildren(this.diagramPopup);
 		this.diagramPopup.appendChild(popupElt);
@@ -3179,7 +3194,16 @@ class D
 							placement.visible = true;
 							diagram.setPlacement(placement, false);
 							const viewport = diagram.getViewport();
-							viewport && D.setSessionViewport(viewport);
+							if ('action' in args && viewport)
+								switch(args.action)
+								{
+									case 'home':
+										diagram.home();
+										break;
+									case 'view':
+										D.setSessionViewport(viewport);
+										break;
+								}
 							D.GlowBadObjects(diagram);
 							diagram.svgTranslate.classList.add('trans025s');
 						}
@@ -3255,7 +3279,6 @@ class D
 			const diagram = args.diagram;
 			if (command === 'diagram')
 			{
-				D.forEachDiagramSVG(diagram => diagram.updateBackground());
 				if (diagram)
 				{
 					if (diagram.user === 'sys')
@@ -3264,6 +3287,7 @@ class D
 					D.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					D.default.fullscreen && diagram.saveViewport(D.session.viewport);
 				}
+				D.forEachDiagramSVG(diagram => diagram.updateBackground());
 			}
 		});
 	}
@@ -4141,25 +4165,6 @@ Object.defineProperties(D,
 			{
 				D.panHandler(e, 'right');
 			},
-			Slash(e)
-			{
-				if (e.target instanceof HTMLBodyElement)
-				{
-					D.toolbar.show(e, false);
-					D.toolbar.showSearch();
-					e.preventDefault();
-				}
-			},
-			Space(e)
-			{
-				/*
-				R.diagram && R.diagram.svgTranslate.classList.remove('trans025s');
-				D.tool = 'pan';
-				D.drag = false;
-				D.setCursor();
-				e.preventDefault();
-				*/
-			},
 			ControlLeft(e) { D.ctrlKey = true; },
 			ControlRight(e) { D.ctrlKey = true; },
 			ControlKeyA(e)
@@ -4222,6 +4227,16 @@ Object.defineProperties(D,
 				D.objectPanel.open();
 				e.preventDefault();
 			},
+			ControlKeyT(e)
+			{
+				const diagram = R.diagram;
+				diagram.deselectAll(e);
+				const text = 'Lorem ipsum cateconium';
+				const xy = D.Grid(D.mouse.diagramPosition(diagram));
+				const t = diagram.placeText(e, xy, text);
+				diagram.log({command:'text', xy:xy.getXY(), text});
+				diagram.antilog({command:'delete', elements:[t.name]});
+			},
 			ControlKeyU(e)
 			{
 				D.diagramPanel.open();
@@ -4270,18 +4285,45 @@ Object.defineProperties(D,
 				D.DeleteSelectRectangle();
 				// TODO abort drag element
 			},
-			ControlKeyT(e)
+			PageUp(e)
 			{
-				const diagram = R.diagram;
-				diagram.deselectAll(e);
-				const text = 'Lorem ipsum cateconium';
-				const xy = D.Grid(D.mouse.diagramPosition(diagram));
-				const t = diagram.placeText(e, xy, text);
-				diagram.log({command:'text', xy:xy.getXY(), text});
-				diagram.antilog({command:'delete', elements:[t.name]});
+				if (!Cat.D.default.fullscreen && Cat.R.diagram)
+				{
+					const svg = Cat.R.diagram.svgRoot;
+					const nxt = svg.nextSibling;
+					nxt && svg.parentNode.insertBefore(nxt, svg);
+				}
+			},
+			PageDown(e)
+			{
+				if (!Cat.D.default.fullscreen && Cat.R.diagram)
+				{
+					const svg = Cat.R.diagram.svgRoot;
+					const before = svg.previousSibling;
+					before && svg.parentNode.insertBefore(svg, before);
+				}
 			},
 			ShiftLeft(e) { D.shiftKey = true; },
 			ShiftRight(e) { D.shiftKey = true; },
+			Slash(e)
+			{
+				if (e.target instanceof HTMLBodyElement)
+				{
+					D.toolbar.show(e, false);
+					D.toolbar.showSearch();
+					e.preventDefault();
+				}
+			},
+			Space(e)
+			{
+				/*
+				R.diagram && R.diagram.svgTranslate.classList.remove('trans025s');
+				D.tool = 'pan';
+				D.drag = false;
+				D.setCursor();
+				e.preventDefault();
+				*/
+			},
 		},
 		writable:	true,
 	},
@@ -12998,22 +13040,6 @@ class Diagram extends Functor
 				return basename;
 		}
 	}
-	// where the diagram is placed in the current session
-	getPlacement()
-	{
-		let placement = D.placements.get(this.name);
-		if (!placement)
-		{
-			const str = U.readfile(`${this.name}-placement.json`);
-			if (str)
-			{
-				placement = JSON.parse(str);
-				D.placements.set(this.name, placement);
-				return placement;
-			}
-		}
-		return placement ? U.Clone(placement) : {x:0, y:0, scale:1, visible:false};
-	}
 	// in full-screen mode, where were we
 	getViewport()
 	{
@@ -13030,12 +13056,45 @@ class Diagram extends Functor
 		}
 		return viewport ? U.Clone(viewport) : {x:0, y:0, scale:1, visible:false};
 	}
+	setViewport(args)
+	{
+		const x = Math.round(args.x);
+		const y = Math.round(args.y);
+		const scale = args.scale;
+		const visible = 'visible' in args ? args.visible : true;
+		this.setVisibility(visible);
+		this.saveViewport({x, y, scale, timestamp:Date.now()});
+		R.EmitViewEvent('diagram', this);
+	}
+	saveViewport(vp)
+	{
+		const viewport = {x:vp.x, y:vp.y, scale:vp.scale, timestamp:Date.now()};
+		U.writefile(`${this.name}-viewport.json`, JSON.stringify(viewport));
+console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport});
+		D.viewports.set(this.name, viewport);
+	}
 	setVisibility(visible)
 	{
 		if (visible)
 			this.svgRoot.classList.remove('hidden');
 		else
 			this.svgRoot.classList.add('hidden');
+	}
+	// where the diagram is placed in the current session
+	getPlacement()
+	{
+		let placement = D.placements.get(this.name);
+		if (!placement)
+		{
+			const str = U.readfile(`${this.name}-placement.json`);
+			if (str)
+			{
+				placement = JSON.parse(str);
+				D.placements.set(this.name, placement);
+				return placement;
+			}
+		}
+		return placement ? U.Clone(placement) : {x:0, y:0, scale:1, visible:false};
 	}
 	setPlacement(args, emit = true)
 	{
@@ -13049,23 +13108,6 @@ class Diagram extends Functor
 		U.writefile(`${this.name}-placement.json`, JSON.stringify(placement));
 		D.placements.set(this.name, placement);
 		emit && R.EmitViewEvent('diagram', this);
-	}
-	saveViewport(vp)
-	{
-		const viewport = {x:vp.x, y:vp.y, scale:vp.scale, timestamp:Date.now()};
-		U.writefile(`${this.name}-viewport.json`, JSON.stringify(viewport));
-console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport});
-		D.viewports.set(this.name, viewport);
-	}
-	setViewport(args)
-	{
-		const x = Math.round(args.x);
-		const y = Math.round(args.y);
-		const scale = args.scale;
-		const visible = 'visible' in args ? args.visible : true;
-		this.setVisibility(visible);
-		this.saveViewport({x, y, scale, timestamp:Date.now()});
-		R.EmitViewEvent('diagram', this);
 	}
 	setPlacementByBBox(bbox)
 	{
