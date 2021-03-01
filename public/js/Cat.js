@@ -1751,7 +1751,6 @@ class Navbar
 			left.push(D.getIcon('objectPanelToggle', 'object', _ => Cat.D.objectPanel.toggle(), 'Objects', sz));
 			left.push(D.getIcon('morphismPanelToggle', 'morphism', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
 			left.push(D.getIcon('textPanelToggle', 'text', _ => Cat.D.textPanel.toggle(), 'Text', sz));
-//			right.push(D.getIcon('cateapsis', 'cateapsis', _ => Cat.R.diagram && Cat.R.diagram.home(), 'Home', sz));
 			right.push(D.getIcon('cateapsis', 'cateapsis', e => Cat.R.diagram && Cat.D.keyboardDown.Home(e), 'Home', sz));
 			right.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
 			right.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
@@ -3594,6 +3593,7 @@ class D
 			if (on && !(from instanceof DiagramText))
 			{
 				msg = from.to.description;
+				// TODO remove
 				if (R.default.debug && 'assyGraph' in from)
 					msg = msg + `  <br>Has info: ${from.assyGraph.hasTag('info')}`;
 				D.statusbar.show(e, msg);
@@ -4006,6 +4006,8 @@ class D
 	}
 	static panHandler(e, dir)
 	{
+		if (D.textEditActive())
+			return;
 		let offset;
 		switch(dir)
 		{
@@ -4054,6 +4056,18 @@ class D
 		else
 			x += dw/2 - scale * bbox.width/2;
 		return {x, y, scale};
+	}
+	static textEditActive()
+	{
+		return D.editElement !== null;
+	}
+	static closeActiveTextEdit()
+	{
+		if (D.textEditActive())
+		{
+			D.editElement.onfocusout({target:D.editElement});	// simulated event
+			D.editElement = null;
+		}
 	}
 }
 Object.defineProperties(D,
@@ -4122,6 +4136,8 @@ Object.defineProperties(D,
 	drag:			{value: false,		writable: true},
 	dragClone:		{value: false,		writable: true},
 	dragStart:		{value: new D2(),	writable: true},
+	// the svg text element being editted
+	editElement:	{value: null,		writable: true},
 	gridding:		{value: true,		writable: true},
 	helpPanel:		{value: null,		writable: true},
 	id:				{value: 0,			writable: true},
@@ -4252,14 +4268,15 @@ Object.defineProperties(D,
 					diagram.placeObject(e, terminal, D.mouse.diagramPosition(diagram));
 				}
 			},
-			ControlDigit3(e) { D.threeDPanel.toggle(); },
 			Delete(e)
 			{
-				R.diagram && R.diagram.activate(e, 'delete');
+				R.diagram && !D.textEditActive() && R.diagram.activate(e, 'delete');
 			},
 			Escape(e)
 			{
-				if (D.session.mode === 'catalog' && R.diagram)
+				if (D.textEditActive())
+					D.closeActiveTextEdit();
+				else if (D.session.mode === 'catalog' && R.diagram)
 					R.EmitViewEvent('diagram', R.diagram);
 				else if (D.session.mode === 'diagram')
 				{
@@ -5119,7 +5136,7 @@ class CategoryPanel extends Panel
 			const isEditable = this.category.isEditable();
 			D.RemoveChildren(this.properNameEditElt);
 			D.RemoveChildren(this.descriptionEditElt);
-				// TODO editElementText cannot work
+			// TODO editElementText cannot work
 			if (isEditable)
 			{
 				this.properNameEditElt.appendChild(D.getIcon('editProperName', 'edit', e => Cat.R.$CAT.editElementText(e, category.name, category.elementId(), 'proper-name'), 'Edit', D.default.button.tiny));
@@ -6389,6 +6406,9 @@ class Element
 						H3.tr(H3.td('Diagram:', '.left'), H3.td(this.diagram ? this.diagram.properName : '', '.left')),
 						H3.tr(H3.td('User:', '.left'), H3.td(this.diagram ? this.diagram.user : '', '.left')), {id});
 	}
+	//
+	// can only edit the current diagram
+	//
 	isEditable()
 	{
 		return R.diagram && this.diagram && (R.diagram.name === this.diagram.name || R.diagram.name === this.name) && ('readonly' in this ? !this.readonly : true) &&
@@ -7701,18 +7721,26 @@ class DiagramText extends Element
 		this.svgText.innerHTML = this.tspan(U.HtmlEntitySafe(value));
 		return old;
 	}
+	lineDeltaY()
+	{
+		return '1.2em';
+	}
 	tspan()
 	{
-		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => `<tspan text-anchor="left" x="0"${i > 0 ? ' dy="1.2em"' : ''}>${t}</tspan>`).join('') :
+		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => `<tspan text-anchor="left" x="0"${i > 0 ? ' dy='+this.lineDeltaY() : ''}>${t === '' ? '&ZeroWidthSpace;' : t}</tspan>`).join('') :
 			this.description;
+	}
+	ssStyle()
+	{
+		return `font-size:${this.height}px; font-weight:${this.weight}`;
 	}
 	getSVG(node)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `NaN in getSVG`;
 		const name = this.name;
-		const svgText = H3.text('.grabbable', {'text-anchor':'left', style:`font-size:${this.height}px; font-weight:${this.weight}`});
-		const svg = H3.g('.diagramText.grabbable', {'data-type':'text', 'data-name':name, 'text-anchor':'left', id:this.elementId(),
+		const svgText = H3.text(this.isEditable ? '.grabbable' : null, {'text-anchor':'left', style:this.ssStyle(), ondblclick:e => this.textEdit()});
+		const svg = H3.g('.diagramText', {'data-type':'text', 'data-name':name, 'text-anchor':'left', id:this.elementId(),
 			transform:`translate(${this.x} ${this.y + D.default.font.height/2})`}, svgText);
 		svg.onmousedown = e => this.diagram.selectElement(e, name);
 		svg.onmouseenter = e => Cat.D.Mouseover(e, this, true);
@@ -7812,6 +7840,49 @@ class DiagramText extends Element
 		div.onmouseenter = _ => Cat.R.diagram.emphasis(this.name, true);
 		div.onmouseleave = _ => Cat.R.diagram.emphasis(this.name, false);
 		return div;
+	}
+	textEdit()
+	{
+		D.toolbar.hide();
+		D.closeActiveTextEdit();
+		const bbox = this.svgText.getBBox();
+		this.svgText.classList.add('hidden');
+		const onfocusout = e =>
+		{
+			const text = e.target.innerText;
+			if (text !== this.description)
+			{
+				this.description = text;
+				this.svgText.innerHTML = this.tspan();
+				this.svg.removeChild(this.svgText.nextSibling);	// delete foreignObject
+				// TODO event generation
+			}
+			D.editElement = null;
+			this.svgText.classList.remove('hidden');
+		};
+		const span = H3.span('.selected', this.description,
+			{
+				style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap;`,
+				contentEditable:true,
+			});
+		D.editElement = span;		// remember which element is being editted
+		const scale = D.session.viewport.scale;
+		const forn = H3.foreignObject(H3.div(span, {xmlns:'http://www.w3.org/1999/xhtml'}), {width:scale * bbox.width + 'px', height:scale * bbox.height + 'px', y:`-${this.height}px`});
+		const onkeydown = e =>
+		{
+			const bbox = span.getBoundingClientRect();
+			const scale = D.session.viewport.scale;
+			forn.setAttribute('width', scale * bbox.width + 'px');
+			forn.setAttribute('height', scale * bbox.height + 'px');
+			if (e.key === 'Escape')
+				D.closeActiveTextEdit();
+			e.stopPropagation();
+		};
+		this.svgText.parentNode.appendChild(forn);
+		span.focus();
+		span.addEventListener('focusout', onfocusout);
+		span.onfocusout = onfocusout;	// do this to get to the handler
+		span.addEventListener('keydown', onkeydown);
 	}
 	static UpdateHeight(name, height)
 	{
@@ -13268,7 +13339,7 @@ console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport})
 	{
 		let delta = D.mouse.clientPosition().subtract(D.dragStart);
 		const placement = this.getPlacement();
-		delta = delta.scale(1.0 / (placement.scale * D.session.viewport.scale));
+		delta = delta.scale(1.0 / placement.scale);
 		const dragObjects = new Set();
 		this.selected.map(elt =>
 		{
@@ -14978,10 +15049,11 @@ addBall(m);
 		svg.setAttribute('y', xy.y + offset.y);
 		svg.classList.remove('hidden');
 	}
-	isEditable()
-	{
-		return ('readonly' in this ? !this.readonly : true) && (this.user === R.user.name || R.user.isAdmin());
-	}
+//	TODO use the element.isEditable only?
+//	isEditable()
+//	{
+//		return ('readonly' in this ? !this.readonly : true) && (this.user === R.user.name || R.user.isAdmin());
+//	}
 	updateBackground()
 	{
 		if (this.svgRoot)
