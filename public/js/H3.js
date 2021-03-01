@@ -67,6 +67,7 @@ class H3
 	static blockquote(...args)	{ return H3._h('blockquote', args); }
 	static br(...args)			{ return H3._h('br', args); }
 	static button(...args)		{ return H3._h('button', args); }
+	static code(...args)		{ return H3._h('code', args); }
 	static div(...args)			{ return H3._h('div', args); }
 	static form(...args)		{ return H3._h('form', args); }
 	static h1(...args)			{ return H3._h('h1', args); }
@@ -98,6 +99,7 @@ class H3
 	static animateTransform(...args)	{ return H3._v('animateTransform', args); }
 	static circle(...args)				{ return H3._v('circle', args); }
 	static defs(...args)				{ return H3._v('defs', args); }
+	static foreignObject(...args)		{ return H3._v('foreignObject', args); }
 	static g(...args)					{ return H3._v('g', args); }
 	static image(...args)				{ return H3._v('image', args); }
 	static line(...args)				{ return H3._v('line', args); }
