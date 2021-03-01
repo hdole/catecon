@@ -671,14 +671,12 @@ table.center
 
 text.emphasis
 {
-	cursor:		grab;
 	fill:		#00f;
 }
 
 path.emphasis
 {
 	stroke-dasharray:	5,5;
-	cursor:		grab;
 	stroke:		#00fa;
 }
 
@@ -936,4 +934,11 @@ description
 	background-color:	white;
 	height:				100%;
 	width:				100%;
+}
+
+span[contenteditable="true"].selected
+{
+	border:	none;
+	color:	blue;
+	outline:	none;
 }
