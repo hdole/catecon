@@ -342,7 +342,12 @@ function updateRefcnts(oldrefs, newrefs)
 	newrefs.map(ref => !oldrefs.includes(ref) && plusOne.push(ref));
 	plusOne.map(name =>
 	{
-		diagramCatalog.get(name).refcnt++;
+//		diagramCatalog.get(name).refcnt++;
+		const diagram = diagramCatalog.get(name);
+		if (diagram)
+			diagram.refcnt++;
+		else
+			console.trace('updateRefcnts: diagram catalog does not contain', name);
 		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt + 1 WHERE name=?;', [name]).then(_ => {});
 	});
 	plusOne.map(name =>
@@ -683,6 +688,7 @@ async function serve()
 				// new diagram to system
 				// no need to set refcnt; it must be 0
 				//
+console.log('inserting new diagram', name, {diagramCatalog});
 				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.category], (err, result) =>
 				{
