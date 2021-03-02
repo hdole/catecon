@@ -917,6 +917,8 @@ description
 	fill:				#fff;
 	fill-opacity:		1;
 	filter:				url(#diagramShadow);
+	stroke:				#aaaa;
+	stroke-width:		1px;
 }
 
 .diagramForeground
