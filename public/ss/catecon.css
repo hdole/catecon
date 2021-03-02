@@ -304,6 +304,7 @@ p
 #navbar
 {
 	color:				#fff;
+	height:				32px;
 	margin:				0;
 	overflow:			hidden;
 	position:			fixed;
@@ -328,7 +329,7 @@ p
 .navbar-float
 {
 	float:		left;
-	width:		20%;
+	width:		25%;
 }
 
 @media screen and (max-width:800px)
@@ -364,7 +365,6 @@ p
 .navbar-tools
 {
 	padding:			0px;
-	width:				20%;
 }
 
 .grabbable
@@ -509,7 +509,7 @@ p
 {
 	font-weight:	bold;
 	font-size:		22px;
-	text-align:		center;
+	text-align:		left;
 }
 
 table.center
@@ -865,7 +865,7 @@ description
 	position:		relative;
 	display:		inline-block;
 	cursor:			pointer;
-	left:			65%;
+	left:			35%;
 	top:			20px;
 }
 
@@ -917,7 +917,6 @@ description
 	fill:				#fff;
 	fill-opacity:		1;
 	filter:				url(#diagramShadow);
-	stroke:				#aaaa;
 }
 
 .diagramForeground
