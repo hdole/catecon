@@ -735,7 +735,7 @@ class R
 		if (isGUI)
 		{
 			D.diagramSVG = document.getElementById('diagramSVG');
-			if (true)
+			if (false)
 			{
 				D.diagramSVG.appendChild(H3.path({stroke:'red', d:"M-1000 0 L1000 0"}));
 				D.diagramSVG.appendChild(H3.path({stroke:'red', d:"M0 -1000 L0 1000"}));
@@ -749,6 +749,7 @@ class R
 			D.session.mode = 'diagram';
 		else if (isGUI && D.session.mode === 'diagram' && D.session.default)
 			R.params.set('diagram', D.session.default);		// set default diagram
+		isGUI && D.session.mode === 'diagram' && R.EmitViewEvent('diagram');
 		isGUI && D.catalog.show(D.session.mode === 'catalog');
 		D.Busy();
 		R.ReadDefaults();
@@ -780,7 +781,7 @@ class R
 			isGUI && D.session.diagrams.map(d => R.DownloadDiagram(d, diagram =>
 			{
 				diagram.makeSVG();
-				diagram.setPlacement(diagram.getPlacement());
+				diagram.setPlacement(diagram.getPlacement(), false);
 			}));
 			if (R.user.name === 'Anon')
 				R.EmitLoginEvent();	// Anon login
@@ -938,7 +939,7 @@ class R
 		}
 		if (R.diagram && R.diagram.name === name)
 		{
-			R.EmitCATEvent('default', R.diagram);
+			R.EmitCATEvent('default', R.diagram, action);
 			return;
 		}
 		if (isGUI && name)
@@ -1421,6 +1422,7 @@ class Amazon extends Cloud
 	}
 	registerCognito()
 	{
+console.log('REGISTER COGNITO');
 		const poolInfo =
 		{
 			UserPoolId:	this.userPoolId,
@@ -1669,8 +1671,8 @@ class Navbar
 		this.diagramPopup = document.getElementById('diagram-popup');
 		this.diagramPopup.onmouseenter = _ => D.mouse.onGUI = this;
 		this.diagramPopup.onmouseleave = _ => D.mouse.onGUI = null;
-		window.addEventListener('Login', Navbar.UpdateByUserStatus);
-		window.addEventListener('Registration', Navbar.UpdateByUserStatus);
+		window.addEventListener('Login', _ => this.updateByUserStatus());
+		window.addEventListener('Registration', _ => this.updateByUserStatus());
 		window.addEventListener('CAT', e => D.navbar.eventUpdate(e));
 		window.addEventListener('Autohide', e =>
 		{
@@ -1685,7 +1687,7 @@ class Navbar
 			else
 				this.element.style.height = "32px";
 		});
-		window.addEventListener('View', _ => this.update());
+		window.addEventListener('View', e => this.eventUpdate(e));
 	}
 	eventUpdate(e)
 	{
@@ -1705,7 +1707,17 @@ class Navbar
 					this.updateLastViewedDiagrams();
 				}
 				break;
+			case 'catalog':
+				this.updateByUserStatus();
+				this.updateLastViewedDiagrams();
+				break;
+			case 'catalogAdd':
+				const name = e.detail.diagram.name;
+				const viewport = D.readViewport(name);
+				viewport && D.viewports.set(name, viewport);
+				break;
 		}
+		this.update();
 	}
 	updateByUserStatus()
 	{
@@ -1742,15 +1754,9 @@ class Navbar
 	update()
 	{
 		const sz = D.default.button.large;
-		let left = [];
 		let right = [];
 		if (D.session.mode === 'diagram')
 		{
-			left.push(D.getIcon('diagramPanelToggle', 'diagram', _ => Cat.D.diagramPanel.toggle(), 'Diagrams', sz));
-			left.push(D.getIcon('categoryPanelToggle', 'category', _ => Cat.D.categoryPanel.toggle(), 'Categories', sz));
-			left.push(D.getIcon('objectPanelToggle', 'object', _ => Cat.D.objectPanel.toggle(), 'Objects', sz));
-			left.push(D.getIcon('morphismPanelToggle', 'morphism', _ => Cat.D.morphismPanel.toggle(), 'Morphisms', sz));
-			left.push(D.getIcon('textPanelToggle', 'text', _ => Cat.D.textPanel.toggle(), 'Text', sz));
 			right.push(D.getIcon('cateapsis', 'cateapsis', e => Cat.R.diagram && Cat.D.keyboardDown.Home(e), 'Home', sz));
 			right.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), '3D view', sz));
 			right.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
@@ -1773,14 +1779,13 @@ class Navbar
 				if (icon.nodeName === 'symbol')
 				{
 					const name = icon.id.substr(5);
-					left.push(D.getIcon(name, name, _ => {}, `btn-${name}`, sz));
+					right.push(D.getIcon(name, name, _ => {}, `btn-${name}`, sz));
 				}
 			} while((icon = icon.nextSibling));
 		}
-		const divs = [	H3.div('.navbar-float.navbar-tools', H3.table('.buttonBarLeft', H3.tr(H3.td(left)))),
-						H3.div(H3.span('##category-navbar.navbar-text'), '.navbar-float.navbar-inset', {title:'Current category scope'}),
-						H3.div('Catecon', {onclick:_ => R.EmitViewEvent('catalog', D.catalog.view)}, '.title.navbar-float.navbar-inset'),
+		const divs = [	H3.div('&nbsp;Catecon', {onclick:_ => R.EmitViewEvent('catalog', D.catalog.view)}, '.title.navbar-float.navbar-inset'),
 						H3.div(H3.span('##diagram-navbar.navbar-text'), '.navbar-float.navbar-inset', {title:'Current diagram', onclick:_ => this.diagramPopup.classList.toggle('hidden')}),
+						H3.div(H3.span('##category-navbar.navbar-text'), '.navbar-float.navbar-inset', {title:'Current category scope'}),
 						H3.div('.navbar-float.navbar-tools', H3.table('.buttonBarRight', H3.tr(H3.td(right))))];
 		D.RemoveChildren(this.element);
 		divs.map(div => this.element.appendChild(div));
@@ -1801,13 +1806,14 @@ class Navbar
 			this.updateLastViewedDiagrams();
 			D.saveSession();
 		};
-		const closeBtn = diagram =>
+		const closeBtn = name =>
 		{
+			const diagram = R.$CAT.getElement(name);
 			if (diagram && diagram.svgRoot)
 				return D.getIcon('closeDiagram', 'close', e => closeFn(diagram), 'Hide diagram', D.default.button.tiny);
 		};
-		const diagrams = views.map(info => R.$CAT.getElement(info[0]));
-		const rows = diagrams.map(d => H3.tr(H3.td(H3.span(d.name), '.left.popupBtn', {onclick:_ => R.SelectDiagram(d.name, 'home')}), H3.td(closeBtn(d))));
+		const diagrams = views.map(info => info[0]);
+		const rows = diagrams.map(name => H3.tr(H3.td(H3.span(name), '.left.popupBtn', {onclick:_ => R.SelectDiagram(name, 'home')}), H3.td(closeBtn(name))));
 		const popupElt = H3.div(H3.span('Recent diagrams', '.italic.smallPrint'), H3.table(rows), '.popupElt', {onmouseleave:e => this.diagramPopup.classList.toggle('hidden')});
 		D.RemoveChildren(this.diagramPopup);
 		this.diagramPopup.appendChild(popupElt);
@@ -2577,22 +2583,12 @@ class D
 		D.Panel = 			Panel;
 		D.panels =			new Panels();
 		D.Panels =			Panels;
-		D.categoryPanel =	new CategoryPanel();
-		D.CategoryPanel =	CategoryPanel;
-		D.diagramPanel =	new DiagramPanel();
-		D.DiagramPanel =	DiagramPanel;
 		D.helpPanel =		new HelpPanel();
 		D.HelpPanel =		HelpPanel;
 		D.loginPanel =		new LoginPanel();
 		D.LoginPanel =		LoginPanel;
-		D.morphismPanel =	new MorphismPanel();
-		D.MorphismPanel =	MorphismPanel;
-		D.objectPanel =		new ObjectPanel();
-		D.ObjectPanel =		ObjectPanel;
 		D.settingsPanel =	new SettingsPanel();
 		D.SettingsPanel =	SettingsPanel;
-		D.textPanel =		new TextPanel();
-		D.TextPanel =		TextPanel;
 		D.threeDPanel =		new ThreeDPanel();
 		D.ThreeDPanel =		ThreeDPanel;
 		D.ttyPanel =		new TtyPanel();
@@ -3186,6 +3182,7 @@ class D
 					{
 						if (diagram)
 						{
+							D.catalog.hide();
 							D.session.default = diagram.name;
 							diagram.makeSVG();
 							D.diagramSVG.appendChild(diagram.svgRoot);
@@ -3208,7 +3205,7 @@ class D
 						}
 						else
 							D.session.default = null;
-						D.saveSession();
+						R.EmitViewEvent('diagram', diagram);
 					}
 					if (diagram)
 					{
@@ -3266,10 +3263,18 @@ class D
 		};
 		document.onwheel = e =>
 		{
-			D.toolbar.hide();
-			R.diagram.svgTranslate.classList.remove('trans025s');
-			D.Zoom(e, Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY))));
-			R.diagram.svgTranslate.classList.add('trans025s');
+			if (D.session.mode === 'diagram')
+			{
+				D.toolbar.hide();
+				R.diagram.svgTranslate.classList.remove('trans025s');
+				D.Zoom(e, Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY))));
+				R.diagram.svgTranslate.classList.add('trans025s');
+			}
+			else if (D.session.mode === 'catalog' && e.shiftKey)
+			{
+				D.catalog.onwheel(e);
+				e.stopPropagation();
+			}
 		};
 		window.addEventListener('View', e =>
 		{
@@ -3285,9 +3290,12 @@ class D
 					diagram.show();
 					D.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					D.default.fullscreen && diagram.saveViewport(D.session.viewport);
+					D.saveSession();
 				}
 				D.forEachDiagramSVG(diagram => diagram.updateBackground());
 			}
+			else if (command === 'catalog')
+				R.initialized && D.saveSession();
 		});
 	}
 	static textWidth(txt, cls = 'object')
@@ -3748,12 +3756,6 @@ class D
 			nuArgs.alt = 'Image not available';
 		return H3.img('.imageBackground', nuArgs);
 	}
-	static GetSvgImageElement3(name)
-	{
-		const href = R.getDiagramURL(name + '.png');
-		const imgId = U.SafeId(`image-el_${name}`);
-		return H3.image({href, id:imgId, alt:"Not loaded", width:"300", height:"225"});
-	}
 	static PlaceComposite(e, diagram, comp)
 	{
 		const morphisms = comp instanceof Composite ? comp.morphisms : [comp];
@@ -3967,9 +3969,8 @@ class D
 		D.session.viewport.x = viewport.x;
 		D.session.viewport.y = viewport.y;
 		D.session.viewport.scale = viewport.scale;
-		R.initialized && D.saveSession();
 		D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
-		R.EmitViewEvent('diagram', R.diagram);
+		R.EmitViewEvent(D.session.mode, R.diagram);
 	}
 	static setSessionViewportByBBox(bbox)
 	{
@@ -4009,21 +4010,23 @@ class D
 		if (D.textEditActive())
 			return;
 		let offset;
+		const scale = 1 / D.session.viewport.scale;
 		switch(dir)
 		{
 			case 'up':
-				offset = new D2(0, - D.screenPan);
-				break;
-			case 'down':
 				offset = new D2(0, D.screenPan);
 				break;
-			case 'left':
-				offset = new D2(-D.screenPan, 0);
+			case 'down':
+				offset = new D2(0, -D.screenPan);
 				break;
-			case 'right':
+			case 'left':
 				offset = new D2(D.screenPan, 0);
 				break;
+			case 'right':
+				offset = new D2(-D.screenPan, 0);
+				break;
 		}
+		offset = offset.scale(scale);
 		if (D.default.fullscreen)
 		{
 			if(R.diagram)
@@ -4057,6 +4060,11 @@ class D
 			x += dw/2 - scale * bbox.width/2;
 		return {x, y, scale};
 	}
+	static readViewport(name)
+	{
+		const str = U.readfile(`${name}-viewport.json`);
+		return str ? JSON.parse(str) : null;
+	}
 	static textEditActive()
 	{
 		return D.editElement !== null;
@@ -4069,13 +4077,18 @@ class D
 			D.editElement = null;
 		}
 	}
+	static setFullscreen(full)
+	{
+		D.default.fullscreen = full;
+		R.SaveDefaults();
+		R.diagram && R.EmitViewEvent('diagram', R.diagram);
+	}
 }
 Object.defineProperties(D,
 {
 	bracketWidth:	{value: 0,			writable: true},
 	catalog:		{value: null,		writable: true},
 	category:		{value: null,		writable: true},
-	categoryPanel:	{value: null,		writable: true},
 	commaWidth:		{value: 0,			writable: true},
 	copyDiagram:	{value:	null,		writable: true},
 	ctrlKey:		{value: false,		writable: true},
@@ -4129,7 +4142,6 @@ Object.defineProperties(D,
 		},
 		writable:		false,
 	},
-	diagramPanel:	{value: null,		writable: true},
 	diagramPNGs:	{value: new Map(),	writable: true},
 	diagramSVG:		{value: null,		writable: true},
 	directions:		{value: [new D2(0, -1), new D2(-1, -1), new D2(-1, 0), new D2(-1, 1), new D2(0, 1), new D2(1, 1), new D2(1, 0), new D2(1, -1)]},
@@ -4188,12 +4200,14 @@ Object.defineProperties(D,
 				R.diagram.selectAll();
 				e.preventDefault();
 			},
+			/*
 			ControlShiftKeyA(e)
 			{
 				D.diagramPanel.open();
 				D.diagramPanel.assertionSection.open();
 				e.preventDefault();
 			},
+			*/
 			ControlKeyC(e)
 			{
 				D.pasteBuffer = R.diagram.selected.slice();
@@ -4201,11 +4215,13 @@ Object.defineProperties(D,
 				const xy = D.mouse.clientPosition();
 				D.statusbar.show({clientX:xy.x, clientY:xy.y}, 'Copied to paste buffer');
 			},
+			/*
 			ControlKeyD(e)
 			{
 				D.diagramPanel.open();
 				e.preventDefault();
 			},
+			*/
 			ControlKeyF(e)
 			{
 				D.toolbar.show(e, false);
@@ -4233,6 +4249,7 @@ Object.defineProperties(D,
 				D.ttyPanel.logSection.open();
 				e.preventDefault();
 			},
+			/*
 			ControlKeyM(e)
 			{
 				D.morphismPanel.open();
@@ -4243,6 +4260,7 @@ Object.defineProperties(D,
 				D.objectPanel.open();
 				e.preventDefault();
 			},
+			*/
 			ControlKeyT(e)
 			{
 				const diagram = R.diagram;
@@ -4253,11 +4271,13 @@ Object.defineProperties(D,
 				diagram.log({command:'text', xy:xy.getXY(), text});
 				diagram.antilog({command:'delete', elements:[t.name]});
 			},
+			/*
 			ControlKeyU(e)
 			{
 				D.diagramPanel.open();
 				e.preventDefault();
 			},
+			*/
 			ControlKeyV(e)	{	D.Paste(e);	},
 			Digit1(e)
 			{
@@ -4292,12 +4312,7 @@ Object.defineProperties(D,
 						D.toolbar.hide();
 						return;
 					}
-					if (R.diagram)		// toggle fullscreen/catalog
-					{
-						D.default.fullscreen = !D.default.fullscreen;
-						R.SaveDefaults();
-						R.EmitViewEvent('diagram', R.diagram);
-					}
+					R.diagram && D.setFullscreen(!D.default.fullscreen);
 				}
 				D.DeleteSelectRectangle();
 				// TODO abort drag element
@@ -4388,7 +4403,6 @@ Object.defineProperties(D,
 		},
 		writeable:	false,
 	},
-	morphismPanel:	{value: null,		writable: true},
 	mouse:
 	{
 		value:
@@ -4410,7 +4424,6 @@ Object.defineProperties(D,
 				const clientY = e.clientY - D.topSVG.parentElement.offsetTop;
 				if (xy.length > 0 && xy[xy.length -1].x === e.clientX && xy[xy.length -1].y === clientY)
 					return;
-//				xy.push(new D2(e.clientX - D.session.viewport.x, clientY - D.session.viewport.y));
 				xy.push(D.userToSessionCoords({x:e.clientX, y:clientY}));
 				if (xy.length > 2)
 					xy.shift();
@@ -4426,7 +4439,6 @@ Object.defineProperties(D,
 	mouseover:		{value: null,		writable: true},
 	navbar:			{value: null,		writable: true},
 	elementTool:	{value: null,		writable: true},
-	objectPanel:	{value: null,		writable: true},
 	openPanels:		{value: [],			writable: true},
 	Panel:			{value: null,		writable: true},
 	panels:			{value: null,		writable: true},
@@ -4450,7 +4462,6 @@ Object.defineProperties(D,
 		writable:	false,
 	},
 	textDisplayLimit:	{value: 60,			writable: true},
-	textPanel:		{value: null,		writable: true},
 	textSize:		{value:	new Map(),	writable: false},
 	threeDPanel:	{value: null,		writable: true},
 	tool:			{value: 'select',	writable: true},
@@ -4489,6 +4500,9 @@ class Catalog
 		this.imageHeight = D.default.diagram.imageHeight;
 		this.diagrams = null;
 		this.glowMap = new Map();
+		this.imageScale = 1.0;
+		this.imageScaleFactor = 1.1;
+		this.gridTemplateColumns = 330;
 		window.addEventListener('Login', e => D.catalog.update());
 		window.addEventListener('CAT', e =>
 		{
@@ -4518,13 +4532,13 @@ class Catalog
 			const args = e.detail;
 			switch(args.command)
 			{
-				case 'diagram':
-					this.show(false);
-					break;
 				case 'catalog':
 					if (this.diagrams === null)
 						this.search();
 					this.show();
+					break;
+				default:
+					this.hide();
 					break;
 			}
 		});
@@ -4588,13 +4602,17 @@ class Catalog
 		{
 			width:			this.imageWidth,
 			height:			this.imageHeight,
-			onclick:		_ => Cat.R.SelectDiagram(info.name),
-			style:			'cursor:pointer; transition:0.5s; height:auto width:100%',
+			onclick:		_ =>
+			{
+				Cat.D.catalog.hide();
+				Cat.D.setFullscreen(true);
+				Cat.R.SelectDiagram(info.name, 'home');
+			},
+			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
 			title:			info.description,
 			'data-name':	info.name,
 		};
 		const img = D.GetImageElement(info.name, args);
-		img.onclick = _ => Cat.R.SelectDiagram(info.name);
 		if (this.glowMap.has(info.name))
 			img.classList.add(this.glowMap.get(info.name));
 		const toolbar = this.imageToolbar(info);
@@ -4621,7 +4639,7 @@ class Catalog
 			H3.table(
 			[
 				H3.tr(H3.td('.imageBackground', {colspan:2}, imgDiv)),
-				H3.tr(H3.td({description:info.description, colspan:2})),
+				H3.tr(H3.td(info.description, {colspan:2})),
 				H3.tr([	H3.td(info.name, '.author'),
 						H3.td(new Date(info.timestamp).toLocaleString() + `, Refs: ${info.refcnt ? info.refcnt : '?'}`, '.date')], '.diagramSlot')
 			], '.smallTable'));
@@ -4782,6 +4800,28 @@ class Catalog
 		if (diagram.user === 'sys')
 			return false;
 		return true;
+	}
+	onwheel(e)
+	{
+		const imgs = [...this.catalogDisplay.querySelectorAll('img')];
+		const dir = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY)));
+		const nuScale = dir === 1 ? this.imageScaleFactor : 1 / this.imageScaleFactor;
+		this.imageScale = this.imageScale * nuScale;
+		this.gridTemplateColumns = this.gridTemplateColumns * nuScale;
+		this.catalogDisplay.style.gridTemplateColumns = `repeat(auto-fill, minmax(${this.gridTemplateColumns}px, 1fr))`;
+		imgs.map(img =>
+		{
+			img.setAttribute('width', Math.round(this.imageScale * this.imageWidth) + 'px');
+			img.setAttribute('height', Math.round(this.imageScale * this.imageHeight) + 'px');
+		});
+	}
+	show()
+	{
+		this.catalog.classList.remove('hidden');
+	}
+	hide()
+	{
+		this.catalog.classList.add('hidden');
 	}
 }
 
@@ -4979,173 +5019,6 @@ class Panel
 	{
 		const elt = document.getElementById(pnlId);
 		elt.style.display = 'none';
-	}
-}
-
-/* 	TODO nneds work
-class NewCategorySection extends Section
-{
-	constructor(parent)
-	{
-		super('New', parent, 'category-new-section', 'Create new category');
-		const categoryActions = [];
-		R.$CAT.getElement('category').elements.forEach(function(a) { categoryActions.push(U.DeCamel(a.properName)); });
-		const productActions = [];
-		R.$CAT.getElement('product').elements.forEach(function(a) { productActions.push(U.DeCamel(a.properName)); });
-		const coproductActions = [];
-		R.$CAT.getElement('coproduct').elements.forEach(function(a) { coproductActions.push(U.DeCamel(a.properName)); });
-		const homActions = [];
-		R.$CAT.getElement('hom').elements.forEach(function(a) { homActions.push(U.DeCamel(a.properName)); });
-		this.section.innerHTML = H.table(
-				H.tr(H.td(D.Input('', 'category-new-basename', 'Name')), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-properName', 'Proper name')), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-description', 'Description')), 'sidenavRow') +
-				H.tr(H.td(H.span('All categories have these actions: ', 'smallBold') + H.span(categoryActions.join(', ')), 'left')) +
-				H.tr(H.td('Select additional actions:', 'left smallBold')) +
-				H.tr(H.td(
-					D.Input('', 'category-new-hasProducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasProducts">Products</label>' + H.br() +
-					H.span('Actions: ', 'smallBold') + H.span(productActions.join(', ')), 'left'),
-					'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-hasCoproducts', '', '', 'in100', 'checkbox') + '<label for="category-new-hasCoproducts">Coproducts</label>' + H.br() +
-					H.span('Actions: ', 'smallBold') + H.span(coproductActions.join(', ')), 'left'), 'sidenavRow') +
-				H.tr(H.td(H.span('Selecting both products and coproducts adds actions for finite objects and data', 'smallPrint'), 'left')) +
-				H.tr(H.td(D.Input('', 'category-new-isClosed', '', '', 'in100', 'checkbox') + '<label for="category-new-isClosed">Closed</label>' + H.br() +
-					H.span('Actions: ', 'smallBold') + H.span(homActions.join(', ')), 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-monoid', '', '', 'in100', 'checkbox') + '<label for="category-new-monoid">Monoid</label>', 'left'), 'sidenavRow') +
-				H.tr(H.td(D.Input('', 'category-new-naturalNumbers', '', '', 'in100', 'checkbox') + '<label for="category-new-naturalNumbers">Natural numbers</label>', 'left'), 'sidenavRow'), 'sidenav') +
-			H.span(D.GetButton('edit', 'Cat.D.categoryPanel.Create()', 'Create new category')) + H.br() +
-			H.span('', 'error', 'category-new-error');
-		this.error = document.getElementById('category-new-error');
-		this.basenameElt = document.getElementById('category-new-basename');
-		this.properNameElt = document.getElementById('category-new-properName');
-		this.descriptionElt = document.getElementById('category-new-description');
-		this.hasProductsElt = document.getElementById('category-new-hasProducts');
-		this.hasCoproductsElt = document.getElementById('category-new-hasCoproducts');
-		this.hasHomElt = document.getElementById('category-new-isClosed');
-	}
-	update()
-	{
-		if (super.update())
-		{
-			this.error.innerHTML = '';
-			this.basenameElt.value = '';
-			this.properNameElt.value = '';
-			this.descriptionElt.value = '';
-			this.error.style.padding = '0px';
-			this.hasProductsElt.checked = false;
-			this.hasCoproductsElt.checked = false;
-			this.hasHomElt.checked = false;
-		}
-	}
-	create(e)
-	{
-		try
-		{
-			const basename = U.HtmlSafe(this.basenameElt.value);
-			const name = Element.Codename(R.$CAT, {basename});
-			if (R.$CAT.getElement(name))
-				throw 'Category already exists';
-			const category = new Category(R.$CAT,
-			{
-				basename:		U.HtmlSafe(this.basenameElt.value),
-				category:		R.CAT,
-				description:	U.HtmlEntitySafe(this.descriptionElt.value),
-				properName:		U.HtmlEntitySafe(this.properNameElt.value),
-				user:			R.user.name,
-			});
-			if (this.hasProductsElt.checked)
-				category.addActions('product');
-			if (this.hasCoproductsElt.checked)
-				category.addActions('coproduct');
-			if (this.hasHomElt.checked)
-				category.addActions('hom');
-		}
-		catch(e)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(e);
-		}
-	}
-}
-*/
-
-class CategorySection extends Section
-{
-	constructor(title, parent, id, tip, updateFn = function(diagram){return '';}, filterFn = function(diagram){return true;})
-	{
-		super(title, parent, id, tip);
-		this.diagrams = null;
-		this.updateFn = updateFn;
-		this.filterFn = filterFn;
-	}
-	setCategories(categories)
-	{
-		this.categories = categories;
-		this.update();
-	}
-	update()
-	{
-		if (this.categories && super.update())
-		{
-			let rows = '';
-			this.categories.forEach(category => this.filterFn(category) && rows.push(this.categoryRow(category, this.updateFn(category))));
-			this.section.appendChild(H3.table(rows));
-		}
-	}
-	categoryRow(category, tb = '')
-	{
-	}
-}
-
-class CategoryPanel extends Panel
-{
-	constructor()
-	{
-		super('category');
-		const elements = [
-			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn(), '.buttonBarRight'))),
-			H3.h3('Category'),
-			H3.h4(H3.tag('basename'), H3.span('##category-basename-edit')),
-			H3.h4(H3.tag('proper-name'), H3.span('##category-properName-edit')),
-			H3.p(H3.tag('description'), H3.span('##category-description-edit')),
-			H3.p(H3.span('Actions: ', '.smallBold'), H3.span('##category-actions.left')),
-			H3.p('User: ', H3.span('##category-user'), '.description')];
-		elements.map(elt => this.elt.appendChild(elt));
-		this.categorySection = new CategorySection('Categories', this.elt, 'category-all-section', 'All available categories');
-		this.basenamelt = document.getElementById('category-basename');
-		this.properNameElt = this.elt.querySelector('proper-name');
-		this.properNameEditElt = document.getElementById('category-properName-edit');
-		this.descriptionElt = this.elt.querySelector('description');
-		this.descriptionEditElt = document.getElementById('category-description-edit');
-		this.actionsElt = document.getElementById('category-actions');
-		this.userElt = document.getElementById('category-user');
-		this.category = null;
-		this.initialize();
-		window.addEventListener('CAT', e => e.detail.command === 'default' && this.update());
-	}
-	update()
-	{
-// TODO?		this.newCategorySection.update();
-		this.categorySection.update();
-		if (R.diagram && this.category !== R.diagram.codomain)
-		{
-			this.category = R.diagram.codomain;
-			this.properNameElt.innerHTML = this.category.properName;
-			this.descriptionElt.innerHTML = this.category.description;
-			this.userElt.innerHTML = this.category.user;
-			const isEditable = this.category.isEditable();
-			D.RemoveChildren(this.properNameEditElt);
-			D.RemoveChildren(this.descriptionEditElt);
-			// TODO editElementText cannot work
-			if (isEditable)
-			{
-				this.properNameEditElt.appendChild(D.getIcon('editProperName', 'edit', e => Cat.R.$CAT.editElementText(e, category.name, category.elementId(), 'proper-name'), 'Edit', D.default.button.tiny));
-				this.descriptionEditElt.appendChild(D.getIcon('editDescription', e => Cat.R.$CAT.editElementText(e, category.name, category.elementId(), 'description'), 'Edit', D.default.button.tiny));
-			}
-			const actions = [];
-			this.category.actions.forEach(function(a) { actions.push(U.DeCamel(a.properName)); });
-			this.actionsElt.innerHTML = actions.join(', ');
-		}
 	}
 }
 
@@ -5543,310 +5416,6 @@ class TtyPanel extends Panel
 	}
 }
 
-class DiagramSection extends Section
-{
-	constructor(title, parent, id, tip)
-	{
-		super(title, parent, id, tip);
-		Object.defineProperties(this,
-		{
-			header:						{value:H3.span(),		writable: false},
-			catalog:					{value:H3.div(),		writable: false},
-			diagrams:					{value:[],				writable: false},
-			sortBy:						{value:'',				writable: true},
-		});
-		this.catalog.classList.add('catalog');
-		this.section.appendChild(this.header);
-		this.section.appendChild(this.catalog);
-	}
-	add(diagram, btns = [])
-	{
-		const id = this.getId(U.SafeId(diagram.name));
-		if (document.getElementById(id))
-			return;
-		this.diagrams.push(diagram);
-		const user = 'user' in diagram ? diagram.user : diagram.username;
-		const dt = new Date(diagram.timestamp);
-		const toolbar = [...btns];
-		const elt = H3.div('.grabbable', {id, 'data-timestamp':diagram.timestamp, 'data-name':diagram.name},
-			H3.table(	H3.tr( H3.td(H3.h4(diagram.properName)), H3.td(toolbar, '.right'),),
-						H3.tr(H3.td('.imageBackground', {colspan:2}, H3.a({onclick:_ => {Cat.D.diagramPanel.collapse(); Cat.R.SelectDiagram(diagram.name);}}, D.GetImageElement(diagram.name)))),
-						H3.tr(H3.td({description:U.HtmlEntitySafe(diagram.description), colspan:2})),
-						H3.tr(H3.td(diagram.name, '.author'), H3.td(dt.toLocaleString(), '.date'), '.diagramSlot')), {draggable:true, ondragstart:e => Cat.D.DragElement(e, diagram.name)});
-		switch(this.sortBy)
-		{
-			case 'timestamp':
-				const diagramNodes = this.catalog.childNodes;
-				let didIt = false;
-				const timestamp = diagram.timestamp;
-				if (diagramNodes.length > 0)
-				{
-					for (let i=0; i<diagramNodes.length; ++i)
-					{
-						const node = diagramNodes[i];
-						const nodeTime = Number.parseInt(node.dataset.timestamp);
-						didIt = timestamp >= nodeTime;
-						if (didIt)
-						{
-							this.catalog.insertBefore(elt, node);
-							break;
-						}
-					}
-					!didIt && this.catalog.appendChild(elt);
-				}
-				else
-					this.catalog.appendChild(elt);
-				break;
-			default:
-				this.catalog.appendChild(elt);
-				break;
-		}
-	}
-	remove(name)
-	{
-		const elt = document.getElementById(this.getId(name));
-		elt && elt.parentNode.removeChild(elt);
-		let ndx = -1;
-		for (let i=0; i<this.diagrams.length; ++i)
-			if (this.diagrams.name === name)
-			{
-				ndx = i;
-				break;
-			}
-		if (ndx > -1)
-			this.diagrams.splice(ndx, 1);
-	}
-	refresh()
-	{
-		const diagrams = this.diagrams.slice();
-		diagrams.map(d =>
-		{
-			this.remove(d.name);
-			this.add(d);
-		});
-	}
-	clear()
-	{
-		while(this.catalog.firstChild)
-			this.catalog.removeChild(this.catalog.firstChild);
-	}
-}
-
-class AssertionSection extends Section
-{
-	constructor(parent)
-	{
-		super('Assertions', parent, 'assertions-section', 'Assertions in this diagram');
-		window.addEventListener('Assertion', function(e)
-		{
-			const args = e.detail;
-			const diagram = args.diagram;
-			switch(args.command)
-			{
-				case 'new':
-				case 'load':
-					D.diagramPanel.assertionSection.addAssertion(diagram, args.element);
-					break;
-				case 'delete':
-					break;
-			}
-		});
-		const refresh = e => R.diagram && R.diagram === e.detail.diagram && this.refresh(R.diagram);
-		window.addEventListener('Login', e => R.diagram && this.refresh(R.diagram));
-		window.addEventListener('CAT', refresh);
-		window.addEventListener('Assertion', refresh);
-		this.assertions = H3.div('.catalog');
-		this.section.appendChild(this.assertions);
-	}
-	addAssertion(diagram, assertion)
-	{
-		if (diagram !== R.diagram)
-			return;
-		const canEdit = diagram.isEditable();
-		const delBtn = H3.span(canEdit ? D.getIcon('assertionDelete', 'delete', _ => this.deleteAssertion(assertion.name), 'Delete assertion') : '');
-		const viewBtn = H3.span(D.getIcon('assertionView', 'view', _ => Cat.R.diagram.viewElements(assertion.name), 'View assertion'));
-		const desc = H3.span(assertion.description, `##a_${assertion.name}`) +
-					(canEdit ? D.getIcon('assertionEdit', 'edit', e => Cat.R.diagram.editElementText(e, assertion.name, `a_${assertion.name}`, 'description'), 'Edit') : '');
-		const div = H3.div(`##assertion ${assertion.name}.right`, viewBtn, delBtn,
-					H3.table(	H3.tr(H3.td(H3.table(assertion.left.map(m => H3.tr(H3.td(m.to.properName))))),
-										H3.td(H3.table(assertion.right.map(m => H3.tr(H3.td(m.to.properName)))))), '.panelElt'));
-		const sig = assertion.signature;
-		div.onmouseenter = _ => Cat.R.diagram.emphasis(sig, true);
-		div.onmouseleave = _ => Cat.R.diagram.emphasis(sig, false);
-		div.onmousedown = e => Cat.R.diagram.selectElement(e, assertion.name);
-		this.assertions.appendChild(div);
-	}
-	refresh(diagram)
-	{
-		D.RemoveChildren(this.assertions);
-		diagram.assertions.forEach(a => this.addAssertion(diagram, a));
-	}
-	deleteAssertion(name)
-	{
-		const a = R.diagram.assertions.get(name);
-		a && a.decrRefcnt();
-	}
-}
-
-class DiagramPanel extends Panel
-{
-	constructor()
-	{
-		super('diagram');
-		const top = [H3.table(H3.tr(H3.td('##diagramPanelToolbar.buttonBarRight'))),
-							H3.h3(H3.span('Diagram')),
-							H3.h4(H3.span('##diagram-basename'), H3.span('##diagram-basename-edit')),
-							H3.h4(H3.span('##diagram-category')),
-							H3.h4([H3.span('##diagram-properName'), H3.span('##diagram-properName-edit')]),
-							H3.table(H3.tr(H3.td('##diagram-image.center.imageBackground'))),
-							H3.p([H3.span('##diagram-description.description', {title:'Description'}), H3.span({id:'diagram-description-edit'})]),
-							H3.table(H3.tr(	H3.td(H3.span('By '), H3.span('##diagram-user'), '.smallPrint.italic'),
-											H3.td(H3.span('##diagram-timestamp'), H3.br(), H3.span('##diagram-info'), '.smallPrint.italic'))),
-							H3.br()];
-		top.map(elt => this.elt.appendChild(elt));
-		this.assertionSection = new AssertionSection(this.elt);
-		this.initialize();
-		Object.defineProperties(this,
-		{
-			diagram:					{value: R.diagram,											writable: true},
-			categoryElt:				{value:document.getElementById('diagram-category'),			writable: false},
-			basenameElt:				{value:document.getElementById('diagram-basename'),			writable: false},
-			properNameElt:				{value:document.getElementById('diagram-properName'),		writable: false},
-			properNameEditElt:			{value:document.getElementById('diagram-properName-edit'),	writable: false},
-			descriptionElt:				{value:document.getElementById('diagram-description'),		writable: false},
-			descriptionEditElt:			{value:document.getElementById('diagram-description-edit'),	writable: false},
-			diagramPanelToolbarElt:		{value:document.getElementById('diagramPanelToolbar'),		writable: false},
-			timestampElt:				{value:document.getElementById('diagram-timestamp'),		writable: false},
-			userElt:					{value:document.getElementById('diagram-user'),				writable: false},
-			infoElt:					{value:document.getElementById('diagram-info'),				writable: false},
-			imageElt:					{value:document.getElementById('diagram-image'),			writable: false},
-			user:						{value: R.user.name,										writable: true},
-		});
-		window.addEventListener('CAT', e =>
-		{
-			const args = e.detail;
-			if (!args.diagram)
-				return;
-			const diagram = R.GetDiagramInfo(args.diagram.name);
-			if (!diagram)
-				return;
-			switch(args.command)
-			{
-				case 'default':
-					D.RemoveChildren(this.categoryElt);
-					this.categoryElt.appendChild(H3.span(diagram.codomain.properName));
-					this.update(e);
-					this.setToolbar(diagram);
-					break;
-				case 'png':
-					const png = D.diagramPNGs.get(diagram.name);
-					const images = [...document.querySelectorAll(`#img-${diagram.elementId()}`)];
-					images.map(img => img.src = png);
-					break;
-				case 'upload':
-					this.update(e, false);
-					break;
-			}
-		});
-		window.addEventListener('Login', function(e) { D.diagramPanel.update(e); });
-		window.addEventListener('Object', function(e) { D.diagramPanel.updateInfo(e); });
-		window.addEventListener('Morphism', function(e) { D.diagramPanel.updateInfo(e); });
-		window.addEventListener('Text', function(e) { D.diagramPanel.updateInfo(e); });
-		window.addEventListener('Assertion', function(e) { D.diagramPanel.updateInfo(e); });
-	}
-	setToolbar(diagram)
-	{
-		if (!diagram)
-			return;
-		const isUsers = diagram && (R.user.name === diagram.user || R.user.isAdmin());
-		const uploadBtn = (R.user.status === 'logged-in' && R.cloud && isUsers) ? D.getIcon('diagramUpload', 'upload', e => diagram.upload(e), 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn') : '';
-		const deleteBtn = R.CanDeleteDiagram(diagram) ?
-			D.getIcon('diagramDelete', 'delete', e => Cat.R.DeleteDiagram(e, diagram.name), 'Delete diagram', D.default.button.small, false, 'diagram-delete-btn') : '';
-		let downcloudBtn = null;
-		if (R.diagram.refcnt <= 0 && R.cloud && R.ServerDiagrams.has(diagram.name))
-		{
-			const data = R.catalog.get(diagram.name);
-			if (diagram.timestamp !== data.timestamp)
-			{
-				const date = new Date(data.timestamp);
-				const tip = R.ServerDiagrams.get(diagram.name).timestamp > diagram.timestamp ? `Download newer version from cloud: ${date.toLocaleString()}` :
-					'Download older version from cloud';
-				downcloudBtn = D.getIcon('diagramReload', 'downcloud', e => Cat.R.ReloadDiagramFromServer(), tip, D.default.button.small, false, 'diagramDowncloudBtn');
-			}
-		}
-		const elements = [(isUsers ? H3.span(DiagramPanel.GetLockBtn(diagram), '.lockBtn') : null),
-					deleteBtn,
-					downcloudBtn,
-					uploadBtn,
-					D.DownloadButton('JSON', e => Cat.R.diagram.downloadJSON(e), 'Download JSON'),
-					D.DownloadButton('JS', e => Cat.R.diagram.downloadJS(e), 'Download Javascript'),
-					D.DownloadButton('C++', e => Cat.R.diagram.downloadCPP(e), 'Download C++'),
-					D.DownloadButton('PNG', e => Cat.R.diagram.downloadPNG(e), 'Download PNG'),
-					this.expandPanelBtn(),
-					this.closeBtnCell()];
-		D.RemoveChildren(this.diagramPanelToolbarElt);
-		elements.map(elt => elt && this.diagramPanelToolbarElt.appendChild(elt));
-		this.diagramPanelToolbarElt.style.position = 'sticky';
-		this.initialize();
-	}
-	expand()
-	{
-		super.expand("100%");
-	}
-	update(e, all = true)
-	{
-		const diagram = R.diagram;
-		if (!diagram)
-			return;
-		this.descriptionElt.innerHTML = U.HtmlEntitySafe(diagram.description);
-		this.properNameElt.innerHTML = diagram.properName;
-		this.userElt.innerHTML = diagram.user;
-		D.RemoveChildren(this.properNameEditElt);
-		D.RemoveChildren(this.descriptionEditElt);
-		if (diagram.isEditable())
-		{
-			this.properNameEditElt.appendChild(D.getIcon('editProperName', 'edit', e => Cat.R.$CAT.editElementText(e, diagram.name, diagram.elementId(), 'proper-name'), 'Edit', D.default.button.tiny));
-			this.descriptionEditElt.appendChild(D.getIcon('editDescription', 'edit', e => Cat.R.$CAT.editElementText(e, diagram.name, diagram.elementId(), 'description'), 'Edit', D.default.button.tiny));
-		}
-		D.RemoveChildren(this.imageElt);
-		this.imageElt.appendChild(D.GetImageElement(diagram.name));
-		this.setToolbar(diagram);
-		this.updateInfo(e);
-	}
-	updateInfo(e)
-	{
-		const args = e.detail;
-		const diagram = args.diagram;
-		if (!diagram || diagram !== R.diagram)
-			return;
-		D.RemoveChildren(this.infoElt);
-		const dt = new Date(diagram.timestamp);
-		this.timestampElt.innerHTML = dt.toLocaleString();
-		if (R.catalog.has(diagram.name))
-		{
-			const info = R.catalog.get(diagram.name);
-			if (diagram.timestamp < info.timestamp)
-				this.infoElt.appendChild(H3.span('Cloud has newer version of diagram', '.warning'));
-			else if (diagram.timestamp === info.timestamp)
-				this.infoElt.appendChild(H3.span('Synced with cloud', '.warning'));
-			else if (diagram.timestamp > info.timestamp)
-				this.infoElt.appendChild(H3.span('Newer than cloud', '.warning'));
-		}
-		else
-			this.infoElt.appendChild(H3.span('Not on cloud'));
-	}
-	static GetLockBtn(diagram)
-	{
-		const lockable = diagram.readonly ? 'unlock' : 'lock';
-		return D.getIcon('lock', lockable, e => Cat.R.diagram[lockable](e), U.Cap(lockable));
-	}
-	static UpdateLockBtn(diagram)
-	{
-		if (diagram && R.user.name === diagram.user)
-			document.getElementById('lockBtn').innerHTML = DiagramPanel.GetLockBtn(diagram);
-	}
-}
-
 class HelpPanel extends Panel
 {
 	constructor()
@@ -6029,219 +5598,6 @@ class LoginPanel extends Panel
 	}
 }
 
-class ElementSection extends Section
-{
-	constructor(title, parent, id, tip, type)
-	{
-		super(title, parent, id, tip);
-		Object.defineProperties(this,
-		{
-			catalog:					{value:H3.div(),	writable: false},
-			type:						{value:type,		writable: false},	// 'Object', 'Morphism'
-		});
-		this.catalog.classList.add('catalog');
-		this.section.appendChild(this.catalog);
-	}
-	add(elt)
-	{
-		const diagram = elt.diagram;
-		let id = diagram.elementId(this.constructor.name);
-		let diagramElt = document.getElementById(id);
-		if (!diagramElt)	// add diagram header?
-		{
-			diagramElt = H3.div({id}, H3.h3(diagram.name));
-			this.catalog.appendChild(diagramElt);
-		}
-		id = elt.elementId(this.constructor.name);
-		let domElt = document.getElementById(id);
-		if (domElt)
-			domElt.parentNode.removeChild(domElt);
-		domElt = elt.getHtmlRep(this.constructor.name);
-		domElt && this.catalog.appendChild(domElt);
-	}
-	update(diagram, name)
-	{
-		let elt = diagram.getElement(name);	// not the .to
-		elt = 'to' in elt ? elt.to : elt;
-		const id = elt.elementId(this.constructor.name);		// element id
-		if (!(elt instanceof DiagramText))
-		{
-			const properNameElt = document.querySelector(`#${id} proper-name`);
-			if (properNameElt)
-				properNameElt.innerHTML = U.HtmlEntitySafe(elt.properName);
-		}
-		const descElt = document.querySelector(`#${id} description`);
-		if (descElt)
-			descElt.innerHTML = U.HtmlEntitySafe(elt.description);
-	}
-	remove(name)
-	{
-		const id = Element.SafeName(name);
-		const elt = document.getElementById(this.getId(id));
-		elt && elt.parentNode.removeChild(elt);
-	}
-	expand()
-	{
-		super.expand("100%");
-	}
-}
-
-class DiagramElementSection extends ElementSection
-{
-	constructor(title, parent, id, tip, type)
-	{
-		super(title, parent, id, tip, type);
-		window.addEventListener('CAT', e =>
-		{
-			const args = e.detail;
-			if (!args.diagram)
-				return;
-			const diagram = R.GetDiagramInfo(args.diagram.name);
-			if (args.command === 'default')
-			{
-				D.RemoveChildren(this.catalog);
-				this.refresh();
-			}
-		});
-		window.addEventListener('Login', e => this.refresh());
-		window.addEventListener(this.type, e =>
-		{
-			const args = e.detail;
-			const diagram = args.diagram;
-			if (!diagram || diagram !== R.diagram)
-				return;
-			let element = args.element;
-			if (!element)
-				return;
-			const to = element instanceof DiagramMorphism || element instanceof DiagramObject ? element.to : element;
-			switch(args.command)
-			{
-				case 'new':
-					!(element instanceof DiagramMorphism || element instanceof DiagramObject) && this.add(to);
-					break;
-				case 'delete':
-					to.refcnt === 1 && this.remove(to.name);
-					break;
-				case 'update':
-					this.update(diagram, element.name);
-					break;
-			}
-		});
-	}
-	refresh()
-	{
-		if (!R.diagram)
-			return;
-		switch(this.type)
-		{
-			case 'Object':
-				R.diagram.forEachObject(o => this.add(o));
-				break;
-			case 'Morphism':
-				R.diagram.forEachMorphism(m => this.add(m));
-				break;
-			case 'Text':
-				R.diagram.forEachText(t => this.add(t));
-				break;
-		}
-	}
-}
-
-class ReferenceElementSection extends ElementSection
-{
-	constructor(title, parent, id, tip, type)
-	{
-		super(title, parent, id, tip, type);
-		const addRefs = diagram =>
-		{
-			diagram && diagram.allReferences.forEach((cnt, name) =>
-			{
-				const ref = R.$CAT.getElement(name);
-				ref[this.type === 'Object' ? 'forEachObject' : 'forEachMorphism'](o => this.add(o));
-			});
-		};
-		window.addEventListener('CAT', e =>
-		{
-			const args = e.detail;
-			switch(args.command)
-			{
-				case 'default':
-					D.RemoveChildren(this.catalog);
-					addRefs(args.diagram);
-					break;
-			}
-		});
-		window.addEventListener('Diagram', e =>
-		{
-			const args = e.detail;
-			const diagram = args.diagram;
-			switch (args.command)
-			{
-				case 'addReference':
-					addRefs(diagram);
-					break;
-				case 'removeReference':
-					this.remove(args.name);
-					diagram[this.type === 'Object' ? 'forEachObject' : 'forEachMorphism'](o => this.remove(o));
-					break;
-			}
-		});
-	}
-}
-
-class ElementPanel extends Panel
-{
-	constructor(name, title, iterator)
-	{
-		super(name);
-		this.elt.appendChild(H3.div(H3.table(H3.tr(H3.td(this.expandPanelBtn(), this.closeBtnCell(), '.buttonBarRight'))), H3.h3(title)));
-		this.showSearch();
-		this.objectSection = new DiagramElementSection('Diagram', this.elt, `diagram-${name}`, `${title} in this diagram`, title);
-		this.referenceSection = new ReferenceElementSection('References', this.elt, `diagram-reference-${name}`, `${title} referenced from this diagram`, title);
-		this.initialize();
-		this.iterator = iterator;
-	}
-	expand()
-	{
-		super.expand("100%");
-	}
-	showSearch()
-	{
-		const thatSearch = e => this.search(e);
-		function onkeydown(e) { Cat.D.OnEnter(event, thatSearch); }
-		this.searchInput = H3.input(`##element-panel-${this.name}-diagram-search.in100`, {title:'Search', placeholder:'Search', onkeydown, size:8});
-		const btn = D.getIcon(`${name}Search`, 'edit', thatSearch, 'Search in a diagram');
-		this.elt.appendChild(H3.div(H3.span('Find in category:', '.smallPrint.italic'), this.searchInput, btn));
-		this.searchItems = H3.div(`##element-panel-${this.name}-search-items.catalog`);
-		this.elt.appendChild(this.searchItems);
-	}
-	search(e)
-	{
-		D.RemoveChildren(this.searchItems);
-		R.diagram.codomain[this.iterator](o =>
-		{
-			const rx = new RegExp(this.searchInput.value, 'gi');
-			rx.exec(o.basename.toString()) && this.searchItems.appendChild(o.getHtmlRep(this.constructor.name));
-		});
-	}
-}
-
-class ObjectPanel extends ElementPanel
-{
-	constructor()
-	{
-		super('object', 'Object', 'forEachObject');
-	}
-}
-
-class MorphismPanel extends ElementPanel
-{
-	constructor()
-	{
-		super('morphism', 'Morphism', 'forEachMorphism');
-	}
-}
-
 class SettingsPanel extends Panel
 {
 	constructor()
@@ -6302,21 +5658,6 @@ class SettingsPanel extends Panel
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update catalog.json by database', '.textButton', {onclick:_ => R.authFetch(R.getURL('updateCatalogFromDatabase'), {}).then()}), {colspan:2})));
 		}
-	}
-}
-
-class TextPanel extends Panel
-{
-	constructor()
-	{
-		super('text');
-		this.elt.appendChild(H3.div(H3.table(H3.tr(H3.td(this.expandPanelBtn(), this.closeBtnCell(), '.buttonBarRight'))), H3.h3('Text')));
-		this.textSection = new DiagramElementSection('Text', this.elt, 'diagram-text', 'Text in this diagram', 'Text');
-		this.initialize();
-	}
-	expand()
-	{
-		super.expand("100%");
 	}
 }
 
@@ -13066,7 +12407,7 @@ class Diagram extends Functor
 		}
 		R.SetDiagramInfo(this);
 		this.postProcess();
-		diagram && this.constructor.name === 'Diagram' && R.EmitCATEvent(diagram, 'new', this);
+		diagram && this.constructor.name === 'Diagram' && R.EmitCATEvent('new', diagram, this);
 	}
 	addElement(elt)
 	{
@@ -13114,18 +12455,12 @@ class Diagram extends Functor
 	// in full-screen mode, where were we
 	getViewport()
 	{
-		let viewport = D.viewports.get(this.name);
+		let viewport = U.Clone(D.viewports.get(this.name));
 		if (!viewport)
-		{
-			const str = U.readfile(`${this.name}-viewport.json`);
-			if (str)
-			{
-				viewport = JSON.parse(str);
-				D.viewports.set(this.name, viewport);
-				return viewport;
-			}
-		}
-		return viewport ? U.Clone(viewport) : {x:0, y:0, scale:1, visible:false};
+			viewport = D.readViewport(this.name);
+		viewport = viewport ? viewport : {x:0, y:0, scale:1, visible:false};
+		D.viewports.set(this.name, viewport);
+		return viewport;
 	}
 	setViewport(args)
 	{
@@ -13191,6 +12526,7 @@ console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport})
 	}
 	home()
 	{
+		this.updateBackground();
 		D.setSessionViewportByBBox(this.svgRoot.getBBox());
 	}
 	getObject(name)
@@ -13451,7 +12787,6 @@ console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport})
 			const to = this.getElement(morphismName);
 			const fromObj = this.domain.getElement(objectName);
 			const toObj = fromObj.to;
-//TODO?		if (to[dir].name !== toObj.name)	// by name, not equivalence
 			if (!to[dir].isEquivalent(toObj))
 				throw `Source and target do not have same signature: ${to[dir].properName} vs ${toObj.properName}`;
 			const angles = [];
@@ -13628,7 +12963,7 @@ console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport})
 			D.diagramSVG.appendChild(this.svgRoot);
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:this.elementId('T')}, this.svgBase);
-			if (true)
+			if (false)
 			{
 				this.svgTranslate.appendChild(H3.path({stroke:'red', d:"M-30 0 L30 0"}));
 				this.svgTranslate.appendChild(H3.path({stroke:'red', d:"M0 -30 L0 30"}));
@@ -13917,20 +13252,14 @@ console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport})
 	unlock(e)
 	{
 		if (this.user === R.user.name)
-		{
 			this.readonly = false;
-			D.DiagramPanel.UpdateLockBtn(this);
-		}
 		this.log({command:'unlock'});
 		R.EmitCATEvent('update', this);
 	}
 	lock(e)
 	{
 		if (this.user === R.user.name)
-		{
 			this.readonly = true;
-			D.DiagramPanel.UpdateLockBtn(this);
-		}
 		this.log({command:'lock'});
 		R.EmitCATEvent('update', this);
 	}
@@ -15049,11 +14378,6 @@ addBall(m);
 		svg.setAttribute('y', xy.y + offset.y);
 		svg.classList.remove('hidden');
 	}
-//	TODO use the element.isEditable only?
-//	isEditable()
-//	{
-//		return ('readonly' in this ? !this.readonly : true) && (this.user === R.user.name || R.user.isAdmin());
-//	}
 	updateBackground()
 	{
 		if (this.svgRoot)
