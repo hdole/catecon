@@ -36,6 +36,14 @@ hr
 	margin:			5px;
 }
 
+.diagramRowDescription
+{
+	font-style:		italic;
+	font-weight:	normal;
+	font-size:		10px;
+	margin:			5px;
+}
+
 .author
 {
 	color:			inherit;
@@ -157,7 +165,6 @@ table
 	border-collapse:	collapse;
 	border-spacing:		0px;
 	vertical-align:		middle;
-	width:				100%;
 }
 
 table.diagramSlot
@@ -328,8 +335,9 @@ p
 
 .navbar-float
 {
-	float:		left;
-	width:		25%;
+	float:			left;
+	text-align:		left;
+	width:			33%;
 }
 
 @media screen and (max-width:800px)
@@ -343,7 +351,8 @@ p
 .navbar-inset
 {
 	cursor:				pointer;
-	font-size:			18px;
+	font-weight:		bold;
+	font-size:			22px;
 	padding:			0px;
 	text-align:			center;
 	height:				32px;
@@ -503,13 +512,6 @@ p
 .in100
 {
 	box-sizing:			border-box;
-}
-
-.title
-{
-	font-weight:	bold;
-	font-size:		22px;
-	text-align:		left;
 }
 
 table.center
@@ -789,7 +791,7 @@ path.emphasis
 	border-width: 		1px 1px 1px 1px;
 	border-color:		#ccc #eee #eee #ccc;
 	border-radius:		4px;
-	cursor:				pointer;
+/*	cursor:				pointer;	*/
 	padding:			2px;
 	background-color:	inherit;
 }
@@ -838,8 +840,9 @@ description
 {
 	border:			none;
 	color:			black;
+/*	cursor:			pointer;	*/
 	text-align:		left;
-	white-space:	nowrap;
+	white-space:	pre;
 }
 
 .display
@@ -865,7 +868,7 @@ description
 	position:		relative;
 	display:		inline-block;
 	cursor:			pointer;
-	left:			35%;
+	left:			50%;
 	top:			20px;
 }
 
@@ -921,10 +924,18 @@ description
 	stroke-width:		1px;
 }
 
+.diagramBackgroundActive
+{
+	fill:				#fff;
+	fill-opacity:		1;
+	filter:				url(#diagramShadow);
+}
+
 .diagramForeground
 {
 	opacity:			0;
 }
+
 .defaultGlow
 {
 	filter:				url(#diagramGlow);
@@ -939,7 +950,12 @@ description
 
 span[contenteditable="true"].selected
 {
-	border:	none;
-	color:	blue;
+	border:		none;
+	color:		blue;
 	outline:	none;
+}
+
+.diagramRowsTable
+{
+	width:		100%;
 }
