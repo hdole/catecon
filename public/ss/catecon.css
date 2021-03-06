@@ -749,7 +749,7 @@ path.emphasis
 
 .badCell
 {
-	cursor:			pointer;
+/*	cursor:			pointer;	*/
 	fill:			#f00;
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
@@ -791,7 +791,6 @@ path.emphasis
 	border-width: 		1px 1px 1px 1px;
 	border-color:		#ccc #eee #eee #ccc;
 	border-radius:		4px;
-/*	cursor:				pointer;	*/
 	padding:			2px;
 	background-color:	inherit;
 }
@@ -840,7 +839,6 @@ description
 {
 	border:			none;
 	color:			black;
-/*	cursor:			pointer;	*/
 	text-align:		left;
 	white-space:	pre;
 }
@@ -885,8 +883,8 @@ description
 
 .popupBtn
 {
-	color: #ddd;
-	margin:				4px;
+	color:		#ddd;
+	margin:		4px;
 }
 
 .popupBtn:hover
@@ -913,6 +911,12 @@ description
 .icon-table
 {
 	background-color:	#fff;
+}
+
+.icon-active
+{
+	fill:			#888;
+	fill-opacity:	0.5;
 }
 
 .diagramBackground
@@ -955,7 +959,7 @@ span[contenteditable="true"].selected
 	outline:	none;
 }
 
-.diagramRowsTable
+.infoRowsTable
 {
 	width:		100%;
 }
