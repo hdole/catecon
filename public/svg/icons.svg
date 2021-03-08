@@ -127,8 +127,8 @@
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-download2" class="icon" viewbox="0 0 320 320">
-		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
+		<line class="arrow0" x1="160" y1="20" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+		<circle cx="160" cy="240" r="100" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-edit" class="icon" viewbox="0 0 320 320">
 		<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>
@@ -188,11 +188,11 @@
 		<line class="arrow0rnd" x1="170" y1="240" x2="150" y2="260"/>
 	</symbol>
 	<symbol id="icon-homLeft" class="icon" viewbox="0 0 320 320">
-		<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
+		<circle cx="260" cy="160" r="120" fill="url(#radgrad1)"/>
 		<line class="arrow0" x1="30" y1="160" x2="200" y2="160" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-homRight" class="icon" viewbox="0 0 320 320">
-		<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+		<circle cx="60" cy="160" r="120" fill="url(#radgrad1)"/>
 		<line class="arrow0" x1="110" y1="160" x2="280" y2="160" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-homset" class="icon" viewbox="0 0 320 320">
