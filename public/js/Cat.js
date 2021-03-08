@@ -1837,8 +1837,10 @@ class Toolbar
 			'error':		{value: document.getElementById('toolbar-error'),	writable: false},
 			'header':		{value: document.getElementById('toolbar-header'),	writable: false},
 			'help':			{value: document.getElementById('toolbar-help'),	writable: false},
+			'mode':			{value: null,										writable: true},
 			'mouseCoords':	{value: null,										writable: true},
-			'sections':		{value: ['help-element', 'help-new', 'help-search', 'help-references'],	writable: false},
+//			'sections':		{value: ['help-element', 'help-new', 'help-search', 'help-references'],	writable: false},
+			'sections':		{value: ['help-element', 'help-new', 'help-references'],	writable: false},
 			'currentSection':	{value: 'help-element',							writable: true},
 		});
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
@@ -1958,15 +1960,18 @@ class Toolbar
 	showDiagramToolbar(diagram, btns)
 	{
 		D.RemoveChildren(this.header);
-		btns.push(D.getIcon('newDiagram', 'diagram', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
-		if (diagram.isEditable())
+		const setActive = (e, mod, fn) =>
 		{
-			btns.push(D.getIcon('newObject', 'object', e => Cat.D.elementTool.Object.html(e), 'Object'));
-			btns.push(D.getIcon('newMorphism', 'morphism', e => Cat.D.elementTool.Morphism.html(e), 'Morphism'));
-			btns.push(D.getIcon('newText', 'text', e => Cat.D.elementTool.Text.html(e), 'Text'));
-		}
+			D.setActiveIcon(e.target);
+			this.mode = mod;
+			fn(e);
+		};
+		btns.push(D.getIcon('diagram', 'diagram', e => setActive(e, 'diagram', ee => Cat.D.elementTool.Diagram.html(ee)), 'Diagram'));
+		btns.push(D.getIcon('object', 'object', e => setActive(e, 'object', ee =>Cat.D.elementTool.Object.html(ee)), 'Object'));
+		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), 'Morphism'));
+		btns.push(D.getIcon('text', 'text', e => setActive(e, 'text', ee => Cat.D.elementTool.Text.html(ee)), 'Text'));
 		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), 'Show graphs in diagram'));
-		btns.push(D.getIcon('toolbarShowSearch', 'search', _ => Cat.D.toolbar.showSearch(), 'Search in a diagram', D.default.button.small, 'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
+//		btns.push(D.getIcon('toolbarShowSearch', 'search', _ => Cat.D.toolbar.showSearch(), 'Search in a diagram', D.default.button.small, 'toolbar-diagram-search-button', 'toolbar-diagram-search-button-ani'));
 		this.addCloseToolbarBtn(btns);
 		btns.map(btn => this.header.appendChild(btn));
 	}
@@ -1981,6 +1986,7 @@ class Toolbar
 	{
 		btns.push(D.getIcon('closeToolbar', 'close', _ => Cat.D.toolbar.hide(), 'Close'));
 	}
+	/*
 	showSearch()
 	{
 		const onkeydown = e => Cat.D.OnEnter(e, e => Cat.D.toolbar.search(e));
@@ -2035,6 +2041,7 @@ class Toolbar
 		});
 		searchItems.appendChild(H3.table(rows));
 	}
+	*/
 	clearError()
 	{
 		D.RemoveChildren(this.error); }
@@ -2061,6 +2068,10 @@ class Toolbar
 	}
 	showSection(section)
 	{
+		if (section === 'help-new')
+			D.tool.push('create');
+		else if (D.getTool() === 'create')
+			D.tool.pop();
 		D.setActiveIcon(D.toolbar.help.querySelector(`#${section}-icon`));
 		this.sections.map(s => D.toolbar.help.querySelector('#' + s).classList.add('hidden'));
 		const s = D.toolbar.help.querySelector('#' + section);
@@ -2147,477 +2158,27 @@ class StatusBar
 	hide() { this.element.classList.add('hidden'); }
 }
 
-/*
 class ElementTool
 {
 	constructor(type, headline, suppress = false)
 	{
 		Object.defineProperties(this,
 		{
-			type:				{value: type,										writable: false},
-			headline:			{value: headline,									writable: false},
-			suppress:			{value: suppress,									writable: false},
-			filter:				{value: '',											writable: true},
-			basenameElt:		{value: null,										writable: true},
-			properNameElt:		{value: null,										writable: true},
-			descriptionElt:		{value: null,										writable: true},
-			domainElt:			{value: null,										writable: true},
-			codomainElt:		{value: null,										writable: true},
-			error:				{value: null,										writable: true},
-		});
-		D.ReplayCommands.set(`new${this.type}`, this);
-	}
-	html(e)
-	{
-		const toolbar = D.toolbar;
-		const help = toolbar.help;
-		D.RemoveChildren(help);
-		const toolbar2 = [];
-		// create new element
-		toolbar2.push(H3.span(D.getIcon('diagram', 'diagram', _ => toolbar.showSection('help-diagram'), 'New')));
-		R.diagram.isEditable() && toolbar2.push(H3.span(D.getIcon('new', 'edit', _ => toolbar.showSection('help-new'), 'New')));
-		// search for an elment
-		toolbar2.push(H3.span(D.getIcon('search', 'search', _ => toolbar.showSection('help-search'), 'Search')));
-		toolbar2.push(H3.span(D.getIcon('reference', 'reference', _ => this.showReferences(), 'References')));
-		if (this.type === 'Diagram')
-		{
-			if (R.user.status === 'logged-in' && R.cloud && R.diagram && R.diagram.isEditable())
-				toolbar2.push(D.getIcon('diagramUpload', 'upload', e => R.diagram.upload(e), 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'));
-			toolbar2.push(D.getIcon('download', 'download2', e => D.toolbar.toolbar.showSection('help-download'), 'Download stuff', D.default.button.small));
-		}
-		help.appendChild(H3.div(toolbar2, '##help-toolbar2'));
-		const downloadToolbar = [];
-		switch(this.type)
-		{
-			case 'Object':
-				break;
-			case 'Morphism':
-				break;
-			case 'Diagram':
-				downloadToolbar.push(D.DownloadButton('JSON', e => Cat.R.diagram.downloadJSON(e), 'Download JSON'));
-				downloadToolbar.push(D.DownloadButton('JS', e => Cat.R.diagram.downloadJS(e), 'Download Javascript'));
-				downloadToolbar.push(D.DownloadButton('C++', e => Cat.R.diagram.downloadCPP(e), 'Download C++'));
-				downloadToolbar.push(D.DownloadButton('PNG', e => Cat.R.diagram.downloadPNG(e), 'Download PNG'));
-				break;
-		}
-		downloadToolbar.length > 0 && help.appendChild(H3.div(downloadToolbar, '##help-download.hidden'));
-		help.appendChild(H3.h4(this.type));
-		if (this.type === 'Diagram' && R.diagram)
-		{
-			help.appendChild(H3.div(
-							H3.h4(H3.span(R.diagram.codomain.properName)),
-							H3.h4(H3.span(R.diagram.properName), H3.span('##diagram-properName-edit')),
-							H3.table(H3.tr(H3.td(D.GetImageElement(R.diagram.name)))),
-							H3.p(H3.span(R.diagram.description, {title:'Description'}), H3.span({id:'diagram-description-edit'})),
-							H3.table(H3.tr(	H3.td(H3.span('By '), H3.span(R.diagram.user), '.smallPrint.italic'),
-											H3.td(H3.span(new Date(R.diagram.timestamp).toLocaleString()), H3.br(), H3.span('##diagram-info'), '.smallPrint.italic')))));
-		}
-		//
-		// add diagram section
-		//
-		const diagramRowsTable = H3.table('.diagramRowsTable');
-		const diagramRows = H3.div('##help-diagram.w100.hidden', H3.hr(), H3.h5('Defined In Diagram'), diagramRowsTable);
-		help.appendChild(diagramRows);
-		this.getDiagramRows(diagramRowsTable);
-		//
-		// add new section
-		//
-		this.addNewSection();
-		//
-		// add search section
-		//
-		const onkeyup = e =>
-		{
-			this.filter = document.getElementById('help-element-search').value;
-			const tbl = document.getElementById('help-matching-table');
-			D.RemoveChildren(tbl);
-			this.getMatchingRows(tbl);
-		};
-		help.appendChild(H3.div('##help-search.hidden', H3.hr(), H3.span('Search in category', '.italic'), H3.br(), H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup }),
-			H3.hr(),
-			H3.table({id:'help-matching-table', style:'margin:4px;'}),
-		));
-		//
-		// add references section
-		help.appendChild(H3.div('##help-references.hidden'));
-		//
-		toolbar.showSection('help-diagram');
-	}
-	addNewSection()
-	{
-		const help = D.toolbar.help;
-		const action = e =>
-		{
-			switch(this.type)
-			{
-				case 'Category':
-					break;
-				case 'Object':
-					this.createObject(e);
-					break;
-				case 'Morphism':
-					this.createMorphism(e);
-					break;
-				case 'Text':
-					this.createText(e);
-					break;
-				case 'Diagram':
-					this.createDiagram(e);
-					break;
-			}
-		};
-		const rows = [];
-		switch(this.type)
-		{
-			case 'Object':
-			case 'Morphism':
-			case 'Diagram':
-				rows.push(H3.tr(H3.td(this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name'}))));
-				rows.push(H3.tr(H3.td(this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name'}))));
-				break;
-		}
-		this.descriptionElt = H3.input('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
-		rows.push(H3.tr(H3.td(this.descriptionElt)));
-		switch(this.type)
-		{
-			case 'Morphism':
-				const objects = R.diagram.getObjects();
-				if (!this.suppress)
-				{
-					this.domainElt = H3.select('##new-domain.w100');
-					this.domainElt.appendChild(H3.option('Domain'));
-					objects.map(o => this.domainElt.appendChild(H3.option(o.properName, {value:o.name})));
-					this.codomainElt = H3.select('##new-codomain.w100');
-					this.codomainElt.appendChild(H3.option('Codomain'));
-					objects.map(o => this.codomainElt.appendChild(H3.option(o.properName, {value:o.name})));
-					rows.push(H3.tr(H3.td(this.domainElt)));
-					rows.push(H3.tr(H3.td(this.codomainElt)));
-				}
-				else
-				{
-					this.domainElt = {value:''};
-					this.codomainElt = {value:''};
-				}
-				break;
-			case 'Diagram':
-				this.codomainElt = H3.select('##new-codomain.w100');
-				for (const [name, e] of R.$CAT.elements)
-					if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
-						this.codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
-				this.codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
-				rows.push(H3.tr(H3.td(this.codomainElt), '.sidenavRow'));
-				break;
-			case 'Object':
-				break;
-			case 'Text':
-				break;
-		}
-		const elts = [H3.hr(), H3.h5(this.headline)];
-		elts.push(H3.table(rows));
-		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
-		elts.push(this.error = H3.span('##new-error.error'));
-		help.appendChild(H3.div(elts, '##help-new.hidden'));
-	}
-	getDiagramRows(tbl)
-	{
-		switch(this.type)
-		{
-			case 'Object':
-				const objects = R.diagram.getObjects(false);
-				objects.sort(U.RefcntSorter);
-				objects.map(m => tbl.appendChild(H3.tr(H3.td(m.getHtmlRep()), '.panelElt')));
-				break;
-			case 'Morphism':
-				const morphisms = R.diagram.getMorphisms(false);
-				morphisms.sort(U.RefcntSorter);
-				morphisms.map(m => tbl.appendChild(H3.tr(H3.td(m.getHtmlRep()), '.panelElt')));
-				break;
-			case 'Text':
-				const texts = R.diagram.getTexts();
-				texts.map(txt =>
-				{
-					const txtHtml = txt.getHtmlRep();
-					if (txt.isEditable())
-					{
-						const id = txt.elementId();
-						txtHtml.addEventListener('dblclick', e => Cat.R.diagram.editElementText(e, txt.name, id, 'description'));
-						const onfocusout = e =>
-						{
-							txtHtml.firstChild.contentEditable = false;
-							const description = e.target.innerText;
-							if (description && description !== txt.description)
-							{
-								txt.description = description;
-								txt.svgText.innerHTML = txt.tspan();
-								txt.diagram.commitElementText(e, txt.name, txtHtml.firstChild, 'description');
-								R.EmitTextEvent(txt.diagram, 'update', txt);
-							}
-							D.editElement = null;
-						};
-						txtHtml.addEventListener('focusout', onfocusout);
-						txtHtml.appendChild(D.getIcon('delete', 'delete', _ => Cat.R.Actions.delete.action(txt.name, Cat.R.diagram, [txt]), 'Delete text'));
-					}
-					txtHtml.appendChild(D.getIcon('viewText', 'view', e => R.diagram.viewElements(txt)));
-					tbl.appendChild(H3.tr(H3.td(txtHtml), '.panelElt'));
-				});
-		}
-	}
-	getMatchingRows(tbl)
-	{
-		switch(this.type)
-		{
-			case 'Morphism':
-				if (!this.suppress)
-				{
-					let morphisms = R.diagram.getMorphisms().filter(m => m.properName.includes(this.filter) || m.basenameIncludes(this.filter));
-					morphisms.sort(U.RefcntSorter);
-					morphisms.map(m => tbl.appendChild(H3.tr(H3.td(m.getHtmlRep()), '.panelElt')));
-				}
-				else
-				{
-					this.domainElt = {value:''};
-					this.codomainElt = {value:''};
-				}
-				break;
-			case 'Object':
-			{
-				const objects = R.diagram.getObjects().filter(o => o.properName.includes(this.filter) || o.basenameIncludes(this.filter));
-				objects.sort(U.RefcntSorter);
-				objects.map(o => tbl.appendChild(H3.tr(H3.td(o.getHtmlRep()), '.panelElt')));
-				break;
-			}
-			case 'Diagram':
-			{
-				const diagrams = [];
-				R.Diagrams.forEach((info, name) => name.includes(this.filter) && diagrams.push(info));
-				diagrams.sort(U.RefcntSorter);
-				diagrams.map(d => tbl.appendChild(H3.tr(H3.td(d.name))));
-				break;
-			}
-		}
-	}
-	update()
-	{
-		this.error.innerHTML = '';
-		this.basenameElt && (this.basenameElt.value = '');
-		this.properNameElt && (this.properNameElt.value = '');
-		this.descriptionElt.value = '';
-		this.error.style.padding = '0px';
-		this.filter = '';
-	}
-	createDiagram(e)
-	{
-		try
-		{
-			const basename = U.HtmlSafe(this.basenameElt.value);
-			if (!U.basenameEx.test(basename))
-				throw 'Invalid basename';
-			const userDiagram = R.GetUserDiagram(R.user.name);
-			if (userDiagram.elements.has(basename))
-				throw 'diagram already exists';
-			const name = `${R.user.name}/${basename}`;
-			if (R.Diagrams.has(name))
-				throw 'diagram already exists';
-			const diagram = new Diagram(userDiagram,
-			{
-				basename,
-				codomain:		this.codomainElt.value,
-				properName:		U.HtmlEntitySafe(this.properNameElt.value),
-				description:	U.HtmlEntitySafe(this.descriptionElt.value),
-				user:			R.user.name,
-			});
-			R.SetDiagramInfo(diagram);
-			diagram.makeSVG();
-			diagram.home();
-			this.update();
-			R.EmitCATEvent('new', diagram);
-			R.SelectDiagram(diagram.name);
-		}
-		catch(x)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
-		}
-	}
-	createObject(e)
-	{
-		try
-		{
-			const basename = U.HtmlSafe(this.basenameElt.value);
-			if (!U.basenameEx.test(basename))
-				throw 'Invalid basename';
-			const args =
-			{
-				basename,
-				properName:		U.HtmlSafe(D.elementTool.Object.properNameElt.value),
-				description:	U.HtmlSafe(D.elementTool.Object.descriptionElt.value),
-			};
-			args.xy = D.toolbar.mouseCoords;	// use original location
-			const from = D.elementTool.Object.doit(e, R.diagram, args);
-			D.elementTool.Object.update();
-			args.command = 'newObject';
-			R.diagram.log(args);
-			R.diagram.antilog({command:'delete', elements:[from.name]});
-		}
-		catch(x)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
-		}
-	}
-	createMorphism(e)
-	{
-		try
-		{
-			const basename = U.HtmlSafe(this.basenameElt.value);
-			if (!U.basenameEx.test(basename))
-				throw 'Invalid basename';
-			const diagram = R.diagram;
-			const args =
-			{
-				basename,
-				properName:		U.HtmlSafe(this.properNameElt.value),
-				description:	U.HtmlSafe(this.descriptionElt.value),
-				domain:			diagram.codomain.getElement(this.domainElt.value),
-				codomain:		diagram.codomain.getElement(this.codomainElt.value),
-			};
-			args.xyDom = D.toolbar.mouseCoords;	// use original location
-			const from = this.doit(e, diagram, args);
-			if (from)
-			{
-				this.update();
-				diagram.log(
-				{
-					command:'newMorphism',
-					domain:args.domain.name,
-					codomain:args.codomain.name,
-					basename:args.basename,
-					properName:args.properName,
-					description:args.description,
-					xyDom:from.domain.getXY(),
-					xyCod:from.codomain.getXY(),
-				});
-				R.diagram.antilog({command:'delete', elements:[from.name]});
-			}
-		}
-		catch(x)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
-			return null;
-		}
-	}
-	createText(e)
-	{
-		try
-		{
-			const diagram = R.diagram;
-			if (!diagram.isEditable())
-				throw 'Diagram is not editable';	// TODO should disable instead
-			const xy = D.toolbar.mouseCoords;	// use original location
-			const text = U.HtmlEntitySafe(this.descriptionElt.value);
-			const args = { xy, text };
-			const from = this.doit(e, diagram, args);
-			if (from)
-			{
-				diagram.log({command:'text', xy, text});
-				diagram.antilog({command:'delete', elements:[from.name]});
-				this.update();
-			}
-		}
-		catch(x)
-		{
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
-		}
-	}
-	doit(e, diagram, args, save = true)
-	{
-		try
-		{
-			let from = null;
-			if (!diagram.isEditable())
-				throw 'diagram is read only';
-			const basename = args.basename;
-			const name = Element.Codename(diagram, {basename});
-			if (diagram.getElement(name))
-				throw 'name already exists';
-			const properName = args.properName;
-			const description = args.description;
-			switch (this.type)
-			{
-				case 'Object':
-				{
-					const to = new CatObject(diagram, args);
-					from = diagram.placeObject(e, to, args.xy, save);
-					break;
-				}
-				case 'Morphism':
-				{
-					const to = new Morphism(diagram, args);
-					to.loadEquivalences();
-					if (this.suppress)
-						from = new DiagramMorphism(diagram, {to, domain:this.domain, codomain:this.codomain});
-					else
-						from = diagram.placeMorphism(e, to, args.xyDom, args.xyCod, save, false);
-					R.EmitDiagramEvent(diagram, 'makeCells');
-					break;
-				}
-				case 'Text':
-				{
-					from = diagram.placeText(e, args.xy, args.text);
-					this.update();
-					break;
-				}
-			}
-			diagram.makeSelected(from);
-			return from;
-		}
-		catch(x)
-		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
-		}
-	}
-	replay(e, diagram, args)
-	{
-		this.doit(e, diagram, args, false);
-	}
-	showReferences()
-	{
-		const refElt = D.toolbar.help.querySelector('#help-references');
-		if (refElt.classList.contains('hidden'))
-		{
-			refElt.classList.remove('hidden');
-			D.RemoveChildren(refElt);
-			refElt.appendChild(H3.hr());
-			refElt.appendChild(H3.h5('References'));
-			const tbl = H3.table();
-			R.diagram.references.forEach(d => tbl.appendChild(H3.tr(H3.td(d.properName))));
-			refElt.appendChild(tbl);
-		}
-		else
-			refElt.classList.add('hidden');
-	}
-}
-*/
-
-class ElementTool
-{
-	constructor(type, headline, suppress = false)
-	{
-		Object.defineProperties(this,
-		{
-			type:				{value: type,										writable: false},
-			headline:			{value: headline,									writable: false},
-			suppress:			{value: suppress,									writable: false},
-			filter:				{value: '',											writable: true},
-			error:				{value: null,										writable: true},
+			type:				{value: type,		writable: false},
+			headline:			{value: headline,	writable: false},
+			suppress:			{value: suppress,	writable: false},
+			filter:				{value: '',			writable: true},
+			error:				{value: null,		writable: true},
 		});
 		D.ReplayCommands.set(`new${this.type}`, this);
 	}
 	html(e)		// call me sometime
 	{
-		D.RemoveChildren(D.toolbar.help);
+		const help = D.toolbar.help;
+		D.RemoveChildren(help);
+		this.setupToolbar2();
+		help.appendChild(H3.h4(this.type));
+		help.appendChild(H3.div('##help-header'));
 	}
 	addNewSection()		// fitb
 	{}
@@ -2639,7 +2200,6 @@ class ElementTool
 		const elementBtn = D.getIcon(tType, tType, e => toolbar.showSection('help-element'), this.type, D.default.button.small, 'help-element-icon');
 		toolbar2.push(elementBtn);
 		R.diagram.isEditable() && toolbar2.push(D.getIcon('new', 'edit', _ => toolbar.showSection('help-new'), 'New', D.default.button.small, 'help-new-icon'));
-		toolbar2.push(D.getIcon('search', 'search', _ => toolbar.showSection('help-search'), 'Search', D.default.button.small, 'help-search-icon'));
 		toolbar2.push(D.getIcon('reference', 'reference', _ => this.showReferences(), 'References', D.default.button.small, 'help-references-icon'));
 		this.toolbar2 = H3.div(toolbar2, '##help-toolbar2');
 		toolbar.help.appendChild(this.toolbar2);
@@ -2653,8 +2213,8 @@ class TextTool extends ElementTool
 		super('Text', headline, suppress);
 		Object.defineProperties(this,
 		{
-			descriptionElt:		{value: null,										writable: true},
-			error:				{value: null,										writable: true},
+			descriptionElt:		{value: null,		writable: true},
+			error:				{value: null,		writable: true},
 		});
 		D.ReplayCommands.set(`new${this.type}`, this);
 	}
@@ -2662,25 +2222,25 @@ class TextTool extends ElementTool
 	{
 		super.html(e);
 		const help = D.toolbar.help;
-		this.setupToolbar2();
-		help.appendChild(H3.h4(this.type));
-		const diagramRowsTable = H3.table('.diagramRowsTable');
-		const diagramRows = H3.div('##help-element.w100.hidden', H3.hr(), H3.h5('Defined In Diagram'), diagramRowsTable);
-		help.appendChild(diagramRows);
-		this.getRows(diagramRowsTable);
 		this.addNewSection();
 		const onkeyup = e =>
 		{
 			this.filter = document.getElementById('help-element-search').value;
 			const tbl = document.getElementById('help-matching-table');
 			D.RemoveChildren(tbl);
-			this.getMatchingRows(tbl);
+			this.getRows(tbl, this.getMatchingElements());
 		};
-		help.appendChild(H3.div('##help-search.hidden', H3.hr(), H3.span('Search in category', '.italic'), H3.br(), H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup }),
-			H3.hr(),
-			H3.table({id:'help-matching-table', style:'margin:4px;'}),
+		const matchTable = H3.table({id:'help-matching-table', style:'margin:4px;'});
+		help.appendChild(H3.div('##help-element.w100.hidden',
+									H3.hr(),
+									H3.span('Search in diagram', '.italic'),
+									H3.br(),
+									H3.input('##help-element-search.in100', {title:'Search', placeholder:'Text contains...', onkeyup }),
+									H3.br(),
+									matchTable,
 		));
-		help.appendChild(H3.div('##help-references.hidden'));
+		this.getRows(matchTable, this.getMatchingElements());
+		help.appendChild(H3.div('##help-references.hidden'));	// TODO remove
 		D.toolbar.showSection('help-element');
 	}
 	addNewSection()
@@ -2688,16 +2248,14 @@ class TextTool extends ElementTool
 		const action = e => this.createText(e);
 		const rows = [];
 		this.descriptionElt = H3.input('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
-		rows.push(H3.tr(H3.td(this.descriptionElt)));
+		rows.push(H3.tr(H3.td(H3.span('.smallPrint.italic', 'Enter new text below or click directly on the diagram'), H3.br(), this.descriptionElt, D.getIcon(action.name, 'edit', action, this.headline))));
 		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
-		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
 		elts.push(this.error = H3.span('##new-error.error'));
 		D.toolbar.help.appendChild(H3.div(elts, '##help-new.hidden'));
 	}
-	getRows(tbl)
+	getRows(tbl, texts)
 	{
-		const texts = R.diagram.getTexts();
 		texts.map(txt =>
 		{
 			const txtHtml = txt.getHtmlRep();
@@ -2725,8 +2283,10 @@ class TextTool extends ElementTool
 			tbl.appendChild(H3.tr(H3.td(txtHtml), '.panelElt'));
 		});
 	}
-	getMatchingRows(tbl)
+	getMatchingElements()
 	{
+		const texts = R.diagram.getTexts().filter(txt => txt.description.includes(this.filter));
+		return texts;
 	}
 	update()
 	{
@@ -2779,6 +2339,22 @@ class TextTool extends ElementTool
 			this.error.innerHTML = 'Error: ' + U.GetError(x);
 		}
 	}
+	showReferences()
+	{
+		const refElt = D.toolbar.help.querySelector('#help-references');
+		if (refElt.classList.contains('hidden'))
+		{
+			refElt.classList.remove('hidden');
+			D.RemoveChildren(refElt);
+			refElt.appendChild(H3.hr());
+			refElt.appendChild(H3.h5('References'));
+			const tbl = H3.table();
+			R.diagram.references.forEach(d => tbl.appendChild(H3.tr(H3.td(d.properName))));
+			refElt.appendChild(tbl);
+		}
+		else
+			refElt.classList.add('hidden');
+	}
 }
 
 class BpdTool extends ElementTool	// basename, proper name, description
@@ -2798,9 +2374,7 @@ class BpdTool extends ElementTool	// basename, proper name, description
 	html(e)
 	{
 		super.html(e);
-		this.setupToolbar2();
 		const help = D.toolbar.help;
-		help.appendChild(H3.h4(this.type));
 		//
 		// add element info section
 		//
@@ -2824,7 +2398,7 @@ class BpdTool extends ElementTool	// basename, proper name, description
 		};
 		help.appendChild(H3.div('##help-search.hidden', H3.hr(), H3.span('Search in category', '.italic'), H3.br(), H3.input('##help-element-search.in100', {title:'Search', placeholder:'Name contains...', onkeyup }),
 			H3.hr(),
-			H3.table({id:'help-matching-table', style:'margin:4px;'}),
+			H3.div('##help-search-results', H3.table({id:'help-matching-table', style:'margin:4px;'})),
 		));
 		//
 		// add references section
@@ -2848,7 +2422,7 @@ class BpdTool extends ElementTool	// basename, proper name, description
 	}
 	getRows(tbl)
 	{
-		const elements = this.getElements();
+		const elements = [...R.diagram.references.values()];
 		elements.map(elt => tbl.appendChild(H3.tr(H3.td(elt.getHtmlRep()), '.panelElt')));
 	}
 	getMatchingRows(tbl)
@@ -2911,7 +2485,7 @@ class ObjectTool extends BpdTool
 	}
 	getMatchingElements()
 	{
-		const objects = R.diagram.getObjects().filter(o => o.properName.includes(this.filter) || o.basenameIncludes(this.filter));
+		const objects = R.diagram.getObjects().filter(o => o.name.includes(this.filter));
 		objects.sort(U.RefcntSorter);
 		return objects;
 	}
@@ -2920,9 +2494,7 @@ class ObjectTool extends BpdTool
 		try
 		{
 			args = this.getArgs();
-//			const from = D.elementTool.Object.doit(e, R.diagram, args);
 			const from = this.doit(e, R.diagram, args);
-//			D.elementTool.Object.update();
 			this.update();
 			args.command = 'newObject';
 			R.diagram.log(args);
@@ -2991,7 +2563,7 @@ class MorphismTool extends BpdTool
 	addNewSection()
 	{
 		super.addNewSection();
-		const table = D.toolbar.help.querySelector('table#help-new');
+		const table = D.toolbar.help.querySelector('div#help-new');
 		if (!this.suppress)
 		{
 			const objects = R.diagram.getObjects();
@@ -3016,11 +2588,11 @@ class MorphismTool extends BpdTool
 		morphisms.sort(U.RefcntSorter);
 		return morphisms;
 	}
-	getMatchingRows()
+	getMatchingElements()
 	{
 		if (!this.suppress)
 		{
-			let morphisms = R.diagram.getMorphisms().filter(m => m.properName.includes(this.filter) || m.basenameIncludes(this.filter));
+			let morphisms = R.diagram.getMorphisms().filter(m => m.name.includes(this.filter));
 			morphisms.sort(U.RefcntSorter);
 			return morphisms;
 		}
@@ -3124,26 +2696,23 @@ class DiagramTool extends BpdTool
 	html(e)
 	{
 		super.html(e);
-		const help = toolbar.help;
+		const help = D.toolbar.help;
 		if (R.user.status === 'logged-in' && R.cloud && R.diagram && R.diagram.isEditable())
 			this.toolbar2.appendChild(D.getIcon('diagramUpload', 'upload', e => R.diagram.upload(e), 'Upload to cloud', D.default.button.small, false, 'diagramUploadBtn'));
-		this.toolbar2.appendChild(D.getIcon('download', 'download2', e => D.toolbar.toolbar.showSection('help-download'), 'Download stuff', D.default.button.small));
+		this.toolbar2.appendChild(D.getIcon('download', 'download2', e => D.toolbar.showSection('help-download'), 'Download stuff', D.default.button.small));
 		const downloadToolbar = [];
 		downloadToolbar.push(D.DownloadButton('JSON', e => Cat.R.diagram.downloadJSON(e), 'Download JSON'));
 		downloadToolbar.push(D.DownloadButton('JS', e => Cat.R.diagram.downloadJS(e), 'Download Javascript'));
 		downloadToolbar.push(D.DownloadButton('C++', e => Cat.R.diagram.downloadCPP(e), 'Download C++'));
 		downloadToolbar.push(D.DownloadButton('PNG', e => Cat.R.diagram.downloadPNG(e), 'Download PNG'));
 		downloadToolbar.length > 0 && help.appendChild(H3.div(downloadToolbar, '##help-download.hidden'));
-		help.appendChild(H3.h4(this.type));
-		if (R.diagram)
-		{
-			help.appendChild(H3.div(	H3.h4(H3.span(R.diagram.codomain.properName)),
-										H3.h4(H3.span(R.diagram.properName), H3.span('##diagram-properName-edit')),
-										H3.table(H3.tr(H3.td(D.GetImageElement(R.diagram.name)))),
-										H3.p(H3.span(R.diagram.description, {title:'Description'}), H3.span({id:'diagram-description-edit'})),
-										H3.table(H3.tr(	H3.td(H3.span('By '), H3.span(R.diagram.user), '.smallPrint.italic'),
-														H3.td(H3.span(new Date(R.diagram.timestamp).toLocaleString()), H3.br(), H3.span('##diagram-info'), '.smallPrint.italic')))));
-		}
+		const header = help.querySelector('#help-header');
+		header.appendChild(H3.div(	H3.h4(H3.span(R.diagram.codomain.properName)),
+									H3.h4(H3.span(R.diagram.properName), H3.span('##diagram-properName-edit')),
+									H3.table('.w100', H3.tr(H3.td('.image-element', D.GetImageElement(R.diagram.name)))),
+									H3.p(H3.span(R.diagram.description, {title:'Description'}), H3.span({id:'diagram-description-edit'})),
+									H3.table(H3.tr(	H3.td(H3.span('By '), H3.span(R.diagram.user), '.smallPrint.italic'),
+													H3.td(H3.span(new Date(R.diagram.timestamp).toLocaleString()), H3.br(), H3.span('##diagram-info'), '.smallPrint.italic')))));
 	}
 	addNewSection()
 	{
@@ -3165,10 +2734,7 @@ class DiagramTool extends BpdTool
 		elts.push(this.error = H3.span('##new-error.error'));
 		D.toolbar.help.appendChild(H3.div(elts, '##help-new.hidden'));
 	}
-	getDiagramRows(tbl)
-	{
-	}
-	getMatchingRows(tbl)
+	getMatchingElements(tbl)
 	{
 		const diagrams = [];
 		R.Diagrams.forEach((info, name) => name.includes(this.filter) && diagrams.push(info));
@@ -3266,7 +2832,7 @@ class D
 		D.parenWidth = D.textWidth('(');
 		D.commaWidth = D.textWidth(',&nbsp;'),
 		D.bracketWidth = D.textWidth('[');
-		D.ElementTool =		ElementTool;
+//		D.ElementTool =		ElementTool;
 		D.screenPan = D.getScreenPan();
 		const delta = Math.min(D.Width(), D.Height()) * D.default.pan.scale;
 		D.Panel = 			Panel;
@@ -3285,16 +2851,10 @@ class D
 		//
 		D.elementTool =
 		{
-			/*
-			Diagram:	new ElementTool('Diagram', 'Create a new diagram'),
-			Object:		new ElementTool('Object', 'Create a new object in this diagram'),
-			Morphism:	new ElementTool('Morphism', 'Create a new morphism in this diagram'),
-			Text:		new ElementTool('Text', 'Create new text in this diagram'),
-			*/
-			Diagram:	new DiagramTool('Diagram', 'Create a new diagram'),
-			Object:		new ObjectTool('Object', 'Create a new object in this diagram'),
-			Morphism:	new MorphismTool('Morphism', 'Create a new morphism in this diagram'),
-			Text:		new TextTool('Text', 'Create new text in this diagram'),
+			Diagram:	new DiagramTool('Create a new diagram'),
+			Object:		new ObjectTool('Create a new object in this diagram'),
+			Morphism:	new MorphismTool('Create a new morphism in this diagram'),
+			Text:		new TextTool('Create new text in this diagram'),
 		},
 		D.Resize();
 		D.Autohide();
@@ -3397,7 +2957,7 @@ class D
 				else
 					diagram.deselectAll(e);
 				D.dragStart = D.mouse.clientPosition();
-				if (D.tool === 'pan' || !D.drag)
+				if (D.getTool() === 'pan' || !D.drag)
 					D.drag = true;
 			}
 			else
@@ -3479,7 +3039,7 @@ class D
 							}
 							else
 							{
-								if (D.tool === 'select')
+								if (D.getTool() === 'select')
 								{
 									let fusible = false;
 									diagram.updateDragObjects(e);
@@ -3514,7 +3074,7 @@ class D
 						else if (D.mouse.delta().nonZero())
 						{
 							const from = diagram.getSelected();
-							if (D.tool === 'select')
+							if (D.getTool() === 'select')
 								diagram.updateDragObjects(e);
 						}
 						D.DeleteSelectRectangle();
@@ -3546,7 +3106,7 @@ class D
 			D.dragClone = false;
 			if (e.which === 2)
 			{
-				D.tool = 'select';
+				D.setTool('select');
 				D.drag = false;
 				return;
 			}
@@ -3694,6 +3254,8 @@ class D
 	}
 	static setActiveIcon(elt)
 	{
+		if (!elt)
+			return;
 		let icon = elt;
 		while(icon.tagName !== 'SPAN')
 			icon = icon.parentNode;
@@ -3713,7 +3275,7 @@ class D
 	}
 	static setCursor()
 	{
-		switch(D.tool)
+		switch(D.getTool())
 		{
 		case 'select':
 			D.topSVG.style.cursor = 'default';
@@ -3736,9 +3298,6 @@ class D
 		const vpScale = viewport.scale;
 		let inc = Math.log(vpScale)/Math.log(D.default.scale.base) + scalar;
 		let scale = D.default.scale.base ** inc;
-//	TODO keep?
-//		scale = scale < D.default.scale.limit.min ? D.default.scale.limit.min : scale;
-//		scale = scale > D.default.scale.limit.max ? D.default.scale.limit.max : scale;
 		const pnt = Cat.D.default.fullscreen ? D.mouse.clientPosition() : D.userToSessionCoords({x:e.clientX, y:e.clientY});
 		let x = pnt.x;
 		let y = pnt.y;
@@ -3974,6 +3533,13 @@ class D
 		};
 		document.onwheel = e =>
 		{
+			let node = e.target;
+			while(node)
+			{
+				if (node.id === 'toolbar')
+					return;
+				node = node.parentNode;
+			}
 			if (D.session.mode === 'diagram')
 			{
 				D.toolbar.hide();
@@ -4794,6 +4360,15 @@ class D
 		R.SaveDefaults();
 		R.diagram && R.EmitViewEvent('diagram', R.diagram);
 	}
+	static getTool()
+	{
+		return D.tool[D.tool.length -1];
+	}
+	static setTool(tool)
+	{
+		D.tool.length = 0;
+		D.tool.push(tool);
+	}
 }
 Object.defineProperties(D,
 {
@@ -4843,7 +4418,8 @@ Object.defineProperties(D,
 			margin:			5,
 			pan:			{scale:	0.05},
 			panel:			{width:	230},
-			scale:			{base:1.05, limit:{min:0.05, max:20}},
+//			scale:			{base:1.05, limit:{min:0.05, max:20}},
+			scale:			{base:1.05},
 			scale3D:		1,
 			stdOffset:		new D2(50, 50),
 			stdArrow:		new D2(200, 0),
@@ -4861,6 +4437,7 @@ Object.defineProperties(D,
 	dragStart:		{value: new D2(),	writable: true},
 	// the svg text element being editted
 	editElement:	{value: null,		writable: true},
+	elementTool:	{value: null,		writable: true},
 	gridding:		{value: true,		writable: true},
 	helpPanel:		{value: null,		writable: true},
 	id:				{value: 0,			writable: true},
@@ -4936,7 +4513,7 @@ Object.defineProperties(D,
 			ControlKeyF(e)
 			{
 				D.toolbar.show(e, false);
-				D.toolbar.showSearch();
+//				D.toolbar.showSearch();
 				e.preventDefault();
 			},
 			ControlKeyG(e)
@@ -5053,7 +4630,7 @@ Object.defineProperties(D,
 				if (e.target instanceof HTMLBodyElement)
 				{
 					D.toolbar.show(e, false);
-					D.toolbar.showSearch();
+//					D.toolbar.showSearch();
 					e.preventDefault();
 				}
 			},
@@ -5149,7 +4726,6 @@ Object.defineProperties(D,
 	mouseIsDown:{value: false,		writable: true},	// is the mouse key down? the onmousedown attr is not connected to mousedown or mouseup
 	mouseover:		{value: null,		writable: true},
 	navbar:			{value: null,		writable: true},
-	elementTool:	{value: null,		writable: true},
 	openPanels:		{value: [],			writable: true},
 	Panel:			{value: null,		writable: true},
 	panels:			{value: null,		writable: true},
@@ -5526,9 +5102,12 @@ class Catalog
 			img.setAttribute('height', Math.round(this.imageScale * this.imageHeight) + 'px');
 		});
 	}
-	show()
+	show(doit = true)
 	{
-		this.catalog.classList.remove('hidden');
+		if (doit)
+			this.catalog.classList.remove('hidden');
+		else
+			this.hide();
 	}
 	hide()
 	{
@@ -7150,6 +6729,7 @@ class CatObject extends Element
 //			items.push(H3.span(this.properName, '.smallPrint'));
 		if (this.description !== '')
 			items.push(H3.span(this.description, '.smallPrint.italic'));
+		items.push(H3.br(), H3.span(this.name, '.tinyPrint'));
 //		return H3.div('.panelElt.grabbable.sidenavRow', {id, draggable, ondragstart, onclick, title:this.description}, items);
 		return H3.div('.panelElt.sidenavRow', {id}, items);
 	}
@@ -13175,7 +12755,6 @@ class Diagram extends Functor
 	{
 		const viewport = {x:vp.x, y:vp.y, scale:vp.scale, timestamp:Date.now()};
 		U.writefile(`${this.name}-viewport.json`, JSON.stringify(viewport));
-console.trace('saveViewport', this.name, D.viewports.get(this.name), {viewport});
 		D.viewports.set(this.name, viewport);
 	}
 	setVisibility(visible)
