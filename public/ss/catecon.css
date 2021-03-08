@@ -36,6 +36,13 @@ hr
 	margin:			5px;
 }
 
+.tinyPrint
+{
+	font-weight:	bolder;
+	font-size:		8px;
+	margin:			5px;
+}
+
 .diagramRowDescription
 {
 	font-style:		italic;
@@ -749,7 +756,6 @@ path.emphasis
 
 .badCell
 {
-/*	cursor:			pointer;	*/
 	fill:			#f00;
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
@@ -962,4 +968,15 @@ span[contenteditable="true"].selected
 .infoRowsTable
 {
 	width:		100%;
+}
+
+#help-search-results
+{
+	max-height:	600px;
+	overflow-y:	auto;
+}
+
+.image-element
+{
+	text-align:	center;
 }
