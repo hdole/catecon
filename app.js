@@ -271,11 +271,6 @@ async function updateCatalog(diagrams, fn)
 		delete row.refs;
 		diagramCatalog.set(row.name, row);
 	});
-	/*
-	const payload = JSON.stringify({timestamp:Date.now(), diagrams:rows});
-	fs.writeFileSync(path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram', catalogFile), payload, err => {if (err) throw err;});
-	fn && fn();
-	*/
 	writeCatalogFile(fn);
 }
 
@@ -313,6 +308,9 @@ ${jsName}(${args});
 	return vm.run(code);
 }
 
+//
+// Update the reference count field for each diagram in our database.
+//
 async function determineRefcnts()
 {
 	await dbcon.query('SELECT name,refs FROM Catecon.diagrams', (err, result) =>
@@ -322,6 +320,8 @@ async function determineRefcnts()
 		result.forEach(row =>
 		{
 			const name = row.name;
+			if (!refcnts.has(name))
+				refcnts.set(name, 0);
 			const refs = JSON.parse(row.refs);
 			refs.map(ref =>
 			{
@@ -342,18 +342,17 @@ function updateRefcnts(oldrefs, newrefs)
 	newrefs.map(ref => !oldrefs.includes(ref) && plusOne.push(ref));
 	plusOne.map(name =>
 	{
-//		diagramCatalog.get(name).refcnt++;
 		const diagram = diagramCatalog.get(name);
 		if (diagram)
 			diagram.refcnt++;
 		else
 			console.trace('updateRefcnts: diagram catalog does not contain', name);
-		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt + 1 WHERE name=?;', [name]).then(_ => {});
+		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt + 1 WHERE name=?;', [name]);
 	});
-	plusOne.map(name =>
+	minusOne.map(name =>
 	{
 		diagramCatalog.get(name).refcnt--;
-		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt - 1 WHERE name=?;', [name]).then(_ => {});
+		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt - 1 WHERE name=?;', [name]);
 	});
 }
 
@@ -653,7 +652,8 @@ async function serve()
 				const info = diagramCatalog.get(name);
 				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
-					diagramCatalog.set(name, info);
+					const oldrefs = Cat.U.Clone(info.references);
+					diagramCatalog.set(name, diagram);
 					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, category = ? WHERE name = ?';
 					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.category, name], (err, result) =>
 					{
@@ -665,7 +665,7 @@ async function serve()
 						}
 						finalProcessing();
 						res.status(200).end();
-						updateRefcnts(info.references, diagram.references);
+						updateRefcnts(oldrefs, diagram.references);
 					});
 				}
 				if (png)
@@ -688,7 +688,6 @@ async function serve()
 				// new diagram to system
 				// no need to set refcnt; it must be 0
 				//
-console.log('inserting new diagram', name, {diagramCatalog});
 				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.category], (err, result) =>
 				{
@@ -700,7 +699,6 @@ console.log('inserting new diagram', name, {diagramCatalog});
 					}
 					const info = Cat.Diagram.GetInfo(diagram);
 					info.refcnt = 0;
-//					diagramInfo.set(name, info);
 					updateRefcnts([], info.references);
 					//
 					// user owns one more
