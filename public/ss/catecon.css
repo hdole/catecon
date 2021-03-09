@@ -427,15 +427,18 @@ p
 #statusbar
 {
 	background-color:	#ffe;
-	border-width: 		0px;
+	border-color: 		red;
+	border-width: 		1px;
 	border-radius:		4px;
 	box-shadow:			4px 4px 2px 1px #bdde;
 	cursor:				none;
 	display:			inline-block;
-	margin:				0px;
+	font-size:			18px;
+	margin:				2px;
 	overflow:			hidden;
 	padding:			0px;
 	position:			absolute;
+	white-space:		pre;
 	z-index:			4;
 }
 
@@ -792,13 +795,14 @@ path.emphasis
 
 .panelElt
 {
+	background-color:	#f4f4f4;
 	border:				solid;
 	border-collapse:	separate;
 	border-width: 		1px 1px 1px 1px;
 	border-color:		#ccc #eee #eee #ccc;
 	border-radius:		4px;
+	margin:				1px;
 	padding:			2px;
-	background-color:	inherit;
 }
 
 .panelElt:hover
@@ -908,6 +912,12 @@ description
 
 .icon
 {
+	position:			relative;
+	top:				0.3em;
+}
+
+.icon-background
+{
 	fill:				#fff;
 	width:				0.32in;
 	height:				0.32in;
@@ -921,7 +931,7 @@ description
 
 .icon-active
 {
-	fill:			#888;
+	fill:			#8B8;
 	fill-opacity:	0.5;
 }
 
@@ -972,6 +982,7 @@ span[contenteditable="true"].selected
 
 #help-search-results
 {
+	margin:		4px;
 	max-height:	600px;
 	overflow-y:	auto;
 }
@@ -979,4 +990,15 @@ span[contenteditable="true"].selected
 .image-element
 {
 	text-align:	center;
+}
+
+#help-matching-table
+{
+	margin:		4px;
+	width:		95%;
+}
+
+#modeToolbar
+{
+	width:	100%;
 }
