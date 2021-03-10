@@ -282,8 +282,7 @@ tr.sidenavRow:hover
 
 p
 {
-	margin:	2px 4px 8px 4px;
-	margin:	4px 4px 8px 4px;
+	margin:	2px;
 }
 
 .error
@@ -728,7 +727,7 @@ path.emphasis
 	stroke-miterlimit:	2.6;
 }
 
-#uiSVG
+#selectRect
 {
 	fill:				none;
 	stroke:				green;
@@ -738,7 +737,6 @@ path.emphasis
 	stroke-miterlimit:	2;
 	stroke-width:		1px;
 	position:			absolute;
-	z-index:			-1;
 }
 
 .indent
@@ -871,38 +869,6 @@ description
 	stroke-width:	20px;
 }
 
-.popup
-{
-	position:		relative;
-	display:		inline-block;
-	cursor:			pointer;
-	left:			50%;
-	top:			20px;
-}
-
-.popup .popupElt
-{
-	background-color:	#333a;
-	color:				#fff;
-	border-radius:		2px;
-	padding:			4px;
-	position:			absolute;
-	text-align:			left;
-	z-index:			1;
-}
-
-.popupBtn
-{
-	color:		#ddd;
-	margin:		4px;
-}
-
-.popupBtn:hover
-{
-	color:				#777;
-	background-color:	#ddd;
-}
-
 .iconSet
 {
 	width:				0px;
@@ -1001,4 +967,21 @@ span[contenteditable="true"].selected
 #modeToolbar
 {
 	width:	100%;
+}
+
+#tool-diagram-actions
+{
+	float:		right;
+	position:	relative;
+	top:		-1em;
+}
+
+#tool-search-filter
+{
+	margin:	0px 4px 0px 4px;
+}
+
+#tool-search-sorter
+{
+	margin:	0px 4px 0px 4px;
 }
