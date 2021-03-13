@@ -354,9 +354,8 @@ p
 	}
 }
 
-.navbar-inset
+[class*="navtxt-"]
 {
-	cursor:				pointer;
 	font-weight:		bold;
 	font-size:			22px;
 	padding:			0px;
@@ -364,18 +363,29 @@ p
 	height:				32px;
 	margin:				auto 0;
 }
+.navtxt-link
+{
+	cursor:				pointer;
+}
+.navtxt-text
+{
+	position:		relative;
+	top:			10%;
+}
 
-.navbar-inset:hover, .offcanvas .navbar-inset:focus
+.navtxt-link:hover, .offcanvas .navtxt-link:focus
 {
 	color: #ddd;
 	background-color:	#777a;
 }
 
+/*
 .navbar-text
 {
 	position:		relative;
 	top:			10%;
 }
+*/
 
 .navbar-tools
 {
@@ -969,7 +979,7 @@ span[contenteditable="true"].selected
 	width:	100%;
 }
 
-#tool-diagram-actions
+.tool-entry-actions
 {
 	float:		right;
 	position:	relative;
