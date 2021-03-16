@@ -713,6 +713,12 @@ async function serve()
 		app.use('/delete', (req, res) =>
 		{
 			const name = req.body.diagram;
+			if (name.includes('..'))
+			{
+				console.log('/delete bad name', name);
+				res.status(400).send('bad name').end();
+				return;
+			}
 			dbcon.query(`SELECT user,refcnt FROM Catecon.diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
 			{
 				if (err)
@@ -723,23 +729,22 @@ async function serve()
 				}
 				if (result.length === 0)
 				{
-					console.log('diagram not found', sql);
+					console.log('diagram not found', name);
 					res.status(400).send('diagram not found').end();
 					return;
 				}
 				if (req.user !== result[0].user)
 				{
-					console.log('user not owner');
+					console.log('user not owner', req.user, result[0].user);
 					res.status(401).send('user not owner').end();
 					return;
 				}
 				if (result[0].refcnt > 0)
 				{
-					console.log('diagram is referenced');
+					console.log('diagram is referenced', result[0].refcnt);
 					res.status(400).send('diagram is referenced').end();
 					return;
 				}
-//				diagramInfo.delete(name);
 				dbcon.query('DELETE FROM diagrams WHERE name=?', [name], (err, result) =>
 				{
 					if (err)
@@ -748,6 +753,10 @@ async function serve()
 						res.status(500).send(err).end();
 						return;
 					}
+					console.log('deleted from database', name);
+					const dgrmFile = `public/diagram/${name}`;
+					fs.unlink(`${dgrmFile}.json`, err => {});
+					fs.unlink(`${dgrmFile}.png`, err => {});
 					res.status(200).end();
 				});
 			});
