@@ -124,9 +124,29 @@
 	<symbol id="icon-download" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
 	</symbol>
-	<symbol id="icon-download2" class="icon" viewbox="0 0 320 320">
-		<line class="arrow0" x1="160" y1="20" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<circle cx="160" cy="240" r="100" fill="url(#radgrad1)"/>
+	<symbol id="icon-download-cpp" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">C++</text>
+	</symbol>
+	<symbol id="icon-download-error" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">ERR</text>
+	</symbol>
+	<symbol id="icon-download-js" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">JS</text>
+	</symbol>
+	<symbol id="icon-download-json" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">JSON</text>
+	</symbol>
+	<symbol id="icon-download-log" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">LOG</text>
+	</symbol>
+	<symbol id="icon-download-png" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">PNG</text>
 	</symbol>
 	<symbol id="icon-edit" class="icon" viewbox="0 0 320 320">
 		<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>
@@ -422,5 +442,10 @@
 	<symbol id="icon-view" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="120" fill="url(#radgrad1)"/>
 		<path class="svgfilNone svgstrThinGray" d="M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160" marker-end="url(#arrowheadWide)"/>
+	</symbol>
+	<symbol id="icon-view-png" class="icon" viewbox="0 0 320 320">
+		<circle cx="160" cy="120" r="120" fill="url(#radgrad1)"/>
+		<path class="svgfilNone svgstrThinGray" d="M20 120 A40 25 0 0 0 300 120 A40 25 0 0 0 20 120" marker-end="url(#arrowheadWide)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">PNG</text>
 	</symbol>
 </svg>
