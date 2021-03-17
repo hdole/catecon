@@ -176,12 +176,12 @@ function getDiagramInfo(diagram)
 	};
 }
 
-async function updateDiagramInfo(diagram)
+async function updateDiagramInfo(diagram, cloud)
 {
 	const name = diagram.name;
 	const hasItSql = `SELECT timestamp FROM Catecon.diagrams WHERE name = '${name}'`;
 	const timestamp = diagram.timestamp ? diagram.timestamp : Date.now();
-	const assign = 'name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?';
+	const assign = `name = ?, basename = ?, user = ?, codomain = ?, description = ?, properName = ?, refs = ?, ${cloud ? 'cloudTimestamp' : 'timestamp'} = ?`;
 	const hasIt = await dbconSync.query(hasItSql);
 	let sql = null;
 	if (hasIt.length > 0)
@@ -195,11 +195,11 @@ async function updateDiagramInfo(diagram)
 			console.log(`\tlocal version newer ${name} @ ${new Date(localTimestamp)} vs cloud @ ${new Date(timestamp)}`);
 	}
 	else
-		sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
+		sql = `INSERT into diagrams (name, basename, user, codomain, description, properName, refs, ${cloud ? 'cloudTimestamp' : 'timestamp'}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 	if (sql)
 	{
 		console.log(`\tupdate ${name} @ ${new Date(timestamp)}`);
-		const result = await dbconSync.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp]);
+		const result = await dbconSync.query(sql, [name, diagram.basename, diagram.user, diagram.codomain, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp]);
 	}
 	return sql !== null;
 }
@@ -242,7 +242,7 @@ function writeCatalogFile(fn = null)
 	});
 }
 
-async function updateCatalog(diagrams, fn)
+async function updateCatalog(diagrams, fn, cloud)
 {
 	for (let i=0; i<diagrams.length; ++i)
 	{
@@ -250,7 +250,7 @@ async function updateCatalog(diagrams, fn)
 		try
 		{
 			const name = d.name;
-			if (await updateDiagramInfo(d) || !fs.existsSync(`public/diagram/${name}.json`))
+			if (await updateDiagramInfo(d, cloud) || !fs.existsSync(`public/diagram/${name}.json`))
 			{
 				log(`download ${name}`);
 				// diagram.json
@@ -277,7 +277,7 @@ async function updateCatalog(diagrams, fn)
 async function updateCatalogFromServer(fn = null)
 {
 	log('UpdateCatalogFromServer');
-	fetchCatalog(async cloudCatalog => updateCatalog(cloudCatalog.diagrams, fn));
+	fetchCatalog(async cloudCatalog => updateCatalog(cloudCatalog.diagrams, fn, true));
 }
 
 function updateCatalogFromDatabase(fn = null)
@@ -286,7 +286,7 @@ function updateCatalogFromDatabase(fn = null)
 	dbcon.query('SELECT * FROM Catecon.diagrams', (err, result) =>
 	{
 		if (err) throw err;
-		updateCatalog(result, fn);
+		updateCatalog(result, fn, false);
 	});
 }
 
@@ -356,6 +356,47 @@ function updateRefcnts(oldrefs, newrefs)
 	});
 }
 
+function uploadToSifu(name, res)
+{
+	console.log('uploadToSifu', name);
+	fs.readFile(`public/diagram/${name}.json`, (err, data) =>
+	{
+		if (err)
+		{
+			console.log('readFile diagram error', {err});
+			res.status(400).send('diagram not found').end();
+			return;
+		}
+		const diagram = data.toString();
+		Cat.R.user.name = diagram.name;
+		fs.readFile(`public/diagram/${name}.png`, (err, data) =>
+		{
+			if (err)
+			{
+				console.log('readFile diagram png error', {err});
+				res.status(400).send('diagram png not found').end();
+				return;
+			}
+			const png = data.toString();
+			Cat.R.user.name = JSON.parse(diagram).user;
+			const body = {diagram, png, user:diagram.user};
+			console.log('url', Cat.R.getURL('upload'));
+			const prom = Cat.R.authFetch(Cat.R.getURL('upload'), body).then(r =>
+			{
+				console.log('somehow', body.user);
+				if (!r.ok)
+				{
+					console.log('updateToSifu bad response', r.statusText);
+					res.status(400).end();
+					return;
+				}
+				res.status(200).end();
+				return;
+			}).catch(err => Cat.D.RecordError(err));
+		});
+	});
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // get our application keys
@@ -378,6 +419,7 @@ function validate(req, res, fn)
 		res.status(401).end('Error:  no token');
 		return;
 	}
+	Cat.R.user.token = token;
 	const decjwt = jwt.decode(token, {complete:true});
 	if (typeof decjwt === 'undefined' || decjwt === null)
 	{
@@ -540,6 +582,7 @@ async function serve()
 
 		app.use((req, res, next) =>
 		{
+console.log('app.user body', req.body);
 			res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 			res.header('Access-Control-Allow-Origin', '*');
 			res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -652,10 +695,11 @@ async function serve()
 				const info = diagramCatalog.get(name);
 				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
+console.log('info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp');
 					const oldrefs = Cat.U.Clone(info.references);
 					diagramCatalog.set(name, diagram);
-					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, category = ? WHERE name = ?';
-					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.category, name], (err, result) =>
+					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ? WHERE name = ?';
+					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain, name], (err, result) =>
 					{
 						if (err)
 						{
@@ -664,8 +708,22 @@ async function serve()
 							return;
 						}
 						finalProcessing();
-						res.status(200).end();
 						updateRefcnts(oldrefs, diagram.references);
+						//////////////////////////
+						//
+						// EXPERIMENTAL
+						//
+						if (true)
+						{
+							if (name === 'hdole/test')
+							{
+								uploadToSifu(name, res);
+							}
+						}
+						else
+						{
+							res.status(200).end();
+						}
 					});
 				}
 				if (png)
@@ -688,8 +746,8 @@ async function serve()
 				// new diagram to system
 				// no need to set refcnt; it must be 0
 				//
-				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.category], (err, result) =>
+				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp, codomain) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain], (err, result) =>
 				{
 					if (err)
 					{
