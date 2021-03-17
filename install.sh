@@ -32,7 +32,7 @@ fi
 
 npm install
 
-mkdir -p server/logs
+mkdir -p logs
 mkdir -p public/diagram
 
 cat > .env <<EOF
