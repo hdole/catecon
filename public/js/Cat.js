@@ -910,7 +910,7 @@ class R
 	{
 		const cloudInfo = R.catalog.get(name);
 		const localTimestamp = R.LocalTimestamp(name);
-		return cloudInfo && cloudInfo.timestamp > localTimestamp;
+		return cloudInfo && cloudInfo.cloudTimestamp > localTimestamp;
 	}
 	static async DownloadDiagram(name, fn = null)
 	{
@@ -1315,14 +1315,6 @@ class R
 		const prom = R.authFetch(R.getURL('upload'), body).then(res => fn(res)).catch(err => D.RecordError(err));
 		R.EmitCATEvent('upload', diagram.name);
 		return prom;
-	}
-	static uploadDiagram(e, name)
-	{
-		let diagram = R.$CAT.getElement(name);
-		if (!diagram)
-			diagram = JSON.parse(U.readfile(`${name}.json`));
-		if (diagram)
-			R.upload(e, diagram, true, _ => _);
 	}
 	static AddReference(e, name)
 	{
@@ -2523,7 +2515,7 @@ class DiagramTool extends BpdTool
 		const diagram = R.$CAT.getElement(name);
 		if (diagram)
 		{
-			if (!nobuts.has('upload') && R.user.status === 'logged-in' && R.cloud && info.user === R.user.name)
+			if (!nobuts.has('upload') && R.user.status === 'logged-in' && R.cloud && info.user === R.user.name && !R.isCloudNewer(diagram.name))
 				buttons.push(D.getIcon('diagramUpload', 'upload', e => diagram.upload(e), 'Upload to cloud', btnSize, false, 'diagramUploadBtn'));
 			if (!nobuts.has('download'))
 			{
@@ -3744,9 +3736,9 @@ class D
 	static RecordError(err)
 	{
 		const errTxt = U.GetError(err);
-		const elements = [H3.br(), H3.span(errTxt)];
 		if (isGUI)
 		{
+			const elements = [H3.br(), H3.span(errTxt)];
 			if (R.default.debug)
 				debugger;
 			console.trace(errTxt);
@@ -4533,7 +4525,7 @@ class D
 		items.push(H3.span('.smallBold', info.properName !== '' & info.properName !== info.basename ? info.properName : info.basename));
 		info.description !== '' && items.push(H3.span('.diagramRowDescription', info.description));
 		items.push(H3.br(), H3.span(info.name, '.tinyPrint'));
-		items.push(H3.span(info.category instanceof Category ? info.category.name : info.category, '.smallPrint'));
+		items.push(H3.span(info.codomain instanceof Category ? info.codomain.name : info.codomain, '.smallPrint'));
 		items.push(H3.span(new Date(info.timestamp).toLocaleString(), '.smallPrint'));
 		return H3.div(items);
 	}
