@@ -43,7 +43,8 @@
     "ignore": [
       "node_modules/*",
       "public/diagram/*",
-      "logs/*"
+      "logs/*",
+	  "stack/*"
     ],
     "legacyWatch": true,
     "verbose": true
