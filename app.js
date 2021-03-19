@@ -50,8 +50,7 @@ const jsAction = require('./public/js/javascript.js');
 
 Cat.R.default.debug = false;
 
-const cloudDiagramURL = process.env.CAT_DIAGRAM_URL;
-//const catalogFile = 'catalog.json';
+const cloudURL = process.env.CAT_CLOUD;
 //
 // rotate access log files
 //
@@ -148,21 +147,22 @@ function saveHTMLjs()
 
 function fetchCatalog(followup)
 {
-//	fetch(`${cloudDiagramURL}/${catalogFile}`).then(response =>
-	fetch(`${cloudDiagramURL}/catalog`).then(response =>
-	{
-		if (!response.ok)
+	if (cloudURL !== '')
+		fetch(`${cloudURL}/catalog`).then(response =>
 		{
-			console.log('fetachCatalog bad response', response);
-			throw 'bad response';
-		}
-		return response.json();
-	}).then(json => followup(json)).catch(error =>
-	{
-		console.log('fetchCatalog error:', {error});
-//		followup({diagrams:[]});
+			if (!response.ok)
+			{
+				console.log('fetchCatalog bad response', response);
+				throw 'bad response';
+			}
+			return response.json();
+		}).then(json => followup(json)).catch(error =>
+		{
+			console.log('fetchCatalog error:', {error});
+			followup([]);
+		});
+	else
 		followup([]);
-	});
 }
 
 function getDiagramInfo(diagram)
@@ -258,9 +258,9 @@ async function updateCatalog(diagrams, fn, cloud)
 			{
 				log(`download ${name}`);
 				// diagram.json
-				fetch(`${cloudDiagramURL}/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudDiagramURL, error}));
+				fetch(`${cloudURL}/diagram/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudURL, error}));
 				// diagram.png
-				fetch(`${cloudDiagramURL}/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudDiagramURL, error}));
+				fetch(`${cloudURL}/diagram/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudURL, error}));
 			}
 		}
 		catch(err)
@@ -359,48 +359,6 @@ function updateRefcnts(oldrefs, newrefs)
 	{
 		diagramCatalog.get(name).refcnt--;
 		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt - 1 WHERE name=?;', [name]);
-	});
-}
-
-function uploadToSifu(name, res)
-{
-return;
-	console.log('uploadToSifu', name);
-	fs.readFile(`public/diagram/${name}.json`, (err, data) =>
-	{
-		if (err)
-		{
-			console.log('readFile diagram error', {err});
-			res.status(400).send('diagram not found').end();
-			return;
-		}
-		const diagram = data.toString();
-		Cat.R.user.name = diagram.name;
-		fs.readFile(`public/diagram/${name}.png`, (err, data) =>
-		{
-			if (err)
-			{
-				console.log('readFile diagram png error', {err});
-				res.status(400).send('diagram png not found').end();
-				return;
-			}
-			const png = data.toString();
-			Cat.R.user.name = JSON.parse(diagram).user;
-			const body = {diagram, png, user:diagram.user};
-			console.log('url', Cat.R.getURL('upload'));
-			Cat.R.authFetch(Cat.R.getURL('upload'), body).then(r =>
-			{
-				console.log('somehow', body.user);
-				if (!r.ok)
-				{
-					console.log('updateToSifu bad response', r.statusText);
-					res.status(400).end();
-					return;
-				}
-				res.status(200).end();
-				return;
-			}).catch(err => Cat.D.RecordError(err));
-		});
 	});
 }
 
@@ -605,7 +563,6 @@ async function serve()
 
 		app.use((req, res, next) =>
 		{
-console.log('app.use statusCode', req.statusCode, res.statusCode);
 			res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 			res.header('Access-Control-Allow-Origin', '*');
 			res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -731,21 +688,7 @@ console.log('app.use statusCode', req.statusCode, res.statusCode);
 						}
 						finalProcessing();
 						updateRefcnts(oldrefs, diagram.references);
-						//////////////////////////
-						//
-						// EXPERIMENTAL
-						//
-						if (true)
-						{
-							if (name === 'hdole/test')
-							{
-								uploadToSifu(name, res);
-							}
-						}
-						else
-						{
-							res.status(200).end();
-						}
+						res.status(200).end();
 					});
 				}
 				if (png)
