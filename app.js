@@ -51,7 +51,7 @@ const jsAction = require('./public/js/javascript.js');
 Cat.R.default.debug = false;
 
 const cloudDiagramURL = process.env.CAT_DIAGRAM_URL;
-const catalogFile = 'catalog.json';
+//const catalogFile = 'catalog.json';
 //
 // rotate access log files
 //
@@ -79,14 +79,14 @@ function hasPermission(name, priv)
 //
 const mysqlArgs =
 {
-	host:		process.env.MYSQL_HOST,
-	port:		process.env.MYSQL_PORT,
-	user:		process.env.MYSQL_USER,
-	password:	process.env.MYSQL_PASSWORD,
+	host:				process.env.MYSQL_HOST,
+	port:				process.env.MYSQL_PORT,
+	user:				process.env.MYSQL_USER,
+	password:			process.env.MYSQL_PASSWORD,
 	multipleStatements:	true,
 };
 
-let dbcon = null;	// mysql server connection
+let dbcon = null;		// mysql server connection
 let dbconSync = null;	// mysql server synchronous connection
 
 function currentTime()
@@ -148,7 +148,8 @@ function saveHTMLjs()
 
 function fetchCatalog(followup)
 {
-	fetch(`${cloudDiagramURL}/${catalogFile}`).then(response =>
+//	fetch(`${cloudDiagramURL}/${catalogFile}`).then(response =>
+	fetch(`${cloudDiagramURL}/catalog`).then(response =>
 	{
 		if (!response.ok)
 		{
@@ -159,7 +160,8 @@ function fetchCatalog(followup)
 	}).then(json => followup(json)).catch(error =>
 	{
 		console.log('fetchCatalog error:', {error});
-		followup({diagrams:[]});
+//		followup({diagrams:[]});
+		followup([]);
 	});
 }
 
@@ -232,6 +234,7 @@ function saveDiagramPng(name, inbuf)
 
 const diagramCatalog = new Map();
 
+/*
 function writeCatalogFile(fn = null)
 {
 	const payload = JSON.stringify({timestamp:Date.now(), diagrams:[...diagramCatalog.values()]});
@@ -241,6 +244,7 @@ function writeCatalogFile(fn = null)
 		fn && fn();
 	});
 }
+*/
 
 async function updateCatalog(diagrams, fn, cloud)
 {
@@ -271,13 +275,15 @@ async function updateCatalog(diagrams, fn, cloud)
 		delete row.refs;
 		diagramCatalog.set(row.name, row);
 	});
-	writeCatalogFile(fn);
+//	writeCatalogFile(fn);
+	fn && fn();
 }
 
 async function updateCatalogFromServer(fn = null)
 {
 	log('UpdateCatalogFromServer');
-	fetchCatalog(async cloudCatalog => updateCatalog(cloudCatalog.diagrams, fn, true));
+//	fetchCatalog(async cloudCatalog => updateCatalog(cloudCatalog.diagrams, fn, true));
+	fetchCatalog(async diagrams => updateCatalog(diagrams, fn, true));
 }
 
 function updateCatalogFromDatabase(fn = null)
@@ -358,6 +364,7 @@ function updateRefcnts(oldrefs, newrefs)
 
 function uploadToSifu(name, res)
 {
+return;
 	console.log('uploadToSifu', name);
 	fs.readFile(`public/diagram/${name}.json`, (err, data) =>
 	{
@@ -381,7 +388,7 @@ function uploadToSifu(name, res)
 			Cat.R.user.name = JSON.parse(diagram).user;
 			const body = {diagram, png, user:diagram.user};
 			console.log('url', Cat.R.getURL('upload'));
-			const prom = Cat.R.authFetch(Cat.R.getURL('upload'), body).then(r =>
+			Cat.R.authFetch(Cat.R.getURL('upload'), body).then(r =>
 			{
 				console.log('somehow', body.user);
 				if (!r.ok)
@@ -513,6 +520,22 @@ async function serve()
 
 		app.use(express.static(path.join(process.env.CAT_DIR, 'public')));
 
+		app.use('/catalog', (req, res) =>
+		{
+			try
+			{
+				dbcon.query('SELECT * FROM Catecon.diagrams', (err, result) =>
+				{
+					if (err) throw err;
+					res.end(JSON.stringify(result));
+				});
+			}
+			catch(err)
+			{
+				res.status(500).send(err).end();
+			}
+		});
+
 		app.use(function(req, res, next)
 		{
 			res.setHeader("Content-Security-Policy", "script-src 'self' blob: 'unsafe-inline' https://api-cdn.amazon.com https://sdk.amazonaws.com https://code.jquery.com https://unpkg.com");
@@ -582,7 +605,7 @@ async function serve()
 
 		app.use((req, res, next) =>
 		{
-console.log('app.user body', req.body);
+console.log('app.use statusCode', req.statusCode, res.statusCode);
 			res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 			res.header('Access-Control-Allow-Origin', '*');
 			res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -695,7 +718,6 @@ console.log('app.user body', req.body);
 				const info = diagramCatalog.get(name);
 				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
-console.log('info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp');
 					const oldrefs = Cat.U.Clone(info.references);
 					diagramCatalog.set(name, diagram);
 					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ? WHERE name = ?';

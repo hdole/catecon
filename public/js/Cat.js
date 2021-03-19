@@ -909,8 +909,8 @@ class R
 	static isCloudNewer(name)
 	{
 		const cloudInfo = R.catalog.get(name);
-		const localTimestamp = R.LocalTimestamp(name);
-		return cloudInfo && cloudInfo.cloudTimestamp > localTimestamp;
+		const timestamp = R.LocalTimestamp(name);
+		return cloudInfo && cloudInfo.cloudTimestamp > timestamp;
 	}
 	static async DownloadDiagram(name, fn = null)
 	{
@@ -1044,7 +1044,8 @@ class R
 	static SetDiagramInfo(diagram)
 	{
 		const info = Diagram.GetInfo(diagram);
-		info.localTimestamp = R.LocalTimestamp(diagram.name);
+//		info.localTimestamp = R.LocalTimestamp(diagram.name);
+		info.timestamp = R.LocalTimestamp(diagram.name);
 		R.Diagrams.set(diagram.name, info);
 	}
 	static GetCategoriesInfo()
@@ -1176,9 +1177,10 @@ class R
 	{
 		const process = (data, fn) =>
 		{
-			data.diagrams.map(d =>
+			data.map(d =>
 			{
-				d.localTimestamp = R.LocalTimestamp(d.name);
+//				d.localTimestamp = R.LocalTimestamp(d.name);
+				d.timestamp = R.LocalTimestamp(d.name);
 				R.catalog.set(d.name, d);
 				if (!R.Diagrams.has(d.name))
 					R.SetDiagramInfo(d);
@@ -1186,8 +1188,8 @@ class R
 			});
 			fn();
 		};
-		const url = R.getDiagramURL('catalog.json');
-		R.cloud && fetch(url).then(response =>
+//		const url = R.getDiagramURL('catalog.json');
+		R.cloud && fetch(R.getURL('catalog')).then(response =>
 		{
 			if (response.ok)
 				response.json().then(data =>
@@ -1296,7 +1298,8 @@ class R
 		body.user = R.user.name;
 		const bodyStr = JSON.stringify(body);
 		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
-		return fetch(url, {method:'POST', body:bodyStr, headers});
+		const args = {method:'POST', body:bodyStr, headers};
+		return fetch(url, args);
 	}
 	static updateRefcnts()
 	{
@@ -1310,9 +1313,11 @@ class R
 		if (R.user.status !== 'logged-in')
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
-		if (doPng)
+//		if (doPng)
 			body.png = D.GetPng(diagram.name);
 		const prom = R.authFetch(R.getURL('upload'), body).then(res => fn(res)).catch(err => D.RecordError(err));
+console.log('second fetch', {body});
+		const prom2 = R.authFetch('https://www.catecon.net/upload', body).then(res => console.log('upload', diagram.name)).catch(err => D.RecordError(err));
 		R.EmitCATEvent('upload', diagram.name);
 		return prom;
 	}
@@ -5087,14 +5092,16 @@ class Catalog extends DiagramTool
 		const status = {hasWarningGlow:false, hasGreenGlow:false};
 		this.diagrams.forEach(info =>
 		{
-			if (info.localTimestamp > 0)
+//			if (info.localTimestamp > 0)
+			if (info.timestamp > 0)
 			{
-				if (info.localTimestamp > info.timestamp)
+//				if (info.localTimestamp > info.timestamp)
+				if (info.timestamp > info.cloudTimestamp)
 				{
 					this.glowMap.set(info.name, 'greenGlow');
 					status.hasGreenGlow = true;
 				}
-				if (info.localTimestamp < info.timestamp)
+				if (info.timestamp < info.cloudTimestamp)
 				{
 					this.glowMap.set(info.name, 'warningGlow');
 					status.hasWarningGlow = true;
@@ -6048,7 +6055,7 @@ class SettingsPanel extends Panel
 		{
 			const tbl = this.elt.querySelector('#settings-table');
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
-			tbl.appendChild(H3.tr(	H3.td(H3.button('Update catalog.json by database', '.textButton', {onclick:_ => R.authFetch(R.getURL('updateCatalogFromDatabase'), {}).then()}), {colspan:2})));
+//			tbl.appendChild(H3.tr(	H3.td(H3.button('Update catalog.json by database', '.textButton', {onclick:_ => R.authFetch(R.getURL('updateCatalogFromDatabase'), {}).then()}), {colspan:2})));
 		}
 	}
 }
