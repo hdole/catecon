@@ -49,8 +49,10 @@ const Cat = require('./public/js/Cat.js');
 const jsAction = require('./public/js/javascript.js');
 
 Cat.R.default.debug = false;
-
-const cloudURL = process.env.CAT_CLOUD;
+Cat.R.cloudURL = process.env.CAT_CLOUD;
+console.log('cloudURL', Cat.R.cloudURL);
+Cat.R.URL = process.env.CAT_URL;
+Cat.R.local = process.env.CAT_LOCAL === 'true';
 //
 // rotate access log files
 //
@@ -147,8 +149,8 @@ function saveHTMLjs()
 
 function fetchCatalog(followup)
 {
-	if (cloudURL !== '')
-		fetch(`${cloudURL}/catalog`).then(response =>
+	if (Cat.R.cloudURL && Cat.R.cloudURL !== '')
+		fetch(`${Cat.R.cloudURL}/catalog`).then(response =>
 		{
 			if (!response.ok)
 			{
@@ -234,18 +236,6 @@ function saveDiagramPng(name, inbuf)
 
 const diagramCatalog = new Map();
 
-/*
-function writeCatalogFile(fn = null)
-{
-	const payload = JSON.stringify({timestamp:Date.now(), diagrams:[...diagramCatalog.values()]});
-	fs.writeFile(path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram', catalogFile), payload, err =>
-	{
-		if (err) throw err;
-		fn && fn();
-	});
-}
-*/
-
 async function updateCatalog(diagrams, fn, cloud)
 {
 	for (let i=0; i<diagrams.length; ++i)
@@ -258,9 +248,9 @@ async function updateCatalog(diagrams, fn, cloud)
 			{
 				log(`download ${name}`);
 				// diagram.json
-				fetch(`${cloudURL}/diagram/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudURL, error}));
+				fetch(`${Cat.R.cloudURL}/diagram/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudURL:Cat.R.cloudURL, error}));
 				// diagram.png
-				fetch(`${cloudURL}/diagram/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudURL, error}));
+				fetch(`${Cat.R.cloudURL}/diagram/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudURL:Cat.R.cloudURL, error}));
 			}
 		}
 		catch(err)
@@ -275,15 +265,16 @@ async function updateCatalog(diagrams, fn, cloud)
 		delete row.refs;
 		diagramCatalog.set(row.name, row);
 	});
-//	writeCatalogFile(fn);
 	fn && fn();
 }
 
 async function updateCatalogFromServer(fn = null)
 {
 	log('UpdateCatalogFromServer');
-//	fetchCatalog(async cloudCatalog => updateCatalog(cloudCatalog.diagrams, fn, true));
-	fetchCatalog(async diagrams => updateCatalog(diagrams, fn, true));
+	if (Cat.R.cloudURL && Cat.R.cloudURL !== '')
+		fetchCatalog(async data => updateCatalog(data.diagrams, fn, true));
+	else
+		updateCatalogFromDatabase(fn);
 }
 
 function updateCatalogFromDatabase(fn = null)
@@ -466,7 +457,10 @@ async function serve()
 					}
 					try
 					{
-						updateCatalogFromServer(_ => Cat.R.Initialize());
+						if (Cat.R.local)
+							updateCatalogFromServer(_ => Cat.R.Initialize());
+						else
+							updateCatalogFromDatabase(_ => Cat.R.Initialize());
 					}
 					catch(x)
 					{
@@ -482,10 +476,10 @@ async function serve()
 		{
 			try
 			{
-				dbcon.query('SELECT * FROM Catecon.diagrams', (err, result) =>
+				dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
 				{
 					if (err) throw err;
-					res.end(JSON.stringify(result));
+					res.end(JSON.stringify({cloudURL:Cat.R.local ? Cat.R.cloudURL : Cat.R.URL, diagrams}));
 				});
 			}
 			catch(err)
@@ -665,7 +659,6 @@ async function serve()
 				saveDiagramJson(name, JSON.stringify(diagram));
 				if (png)
 					saveDiagramPng(name, png);
-				writeCatalogFile();
 			}
 			//
 			// check cache
