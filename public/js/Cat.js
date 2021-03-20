@@ -771,45 +771,44 @@ class R
 		R.ReadDefaults();
 		R.SetupWorkers();
 		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
-		R.cloud = new Amazon();
-		R.SetupCore();
-		R.SetupActions();
-		R.SetupPFS();
-		isGUI && D.Initialize();		// initialize GUI
-		R.sync = true;
-		const loader = function()
-		{ 
-			R.diagram = null;
-			if (isGUI)
-			{
-				switch(D.session.mode)
-				{
-					case 'catalog':
-						D.catalog.show();
-						D.catalog.html();
-						break;
-					case 'diagram':
-						D.catalog.show(false);
-						break;
-				}
-			}
-			R.initialized = true;
-			isGUI && D.session.diagrams.map(d => R.DownloadDiagram(d, diagram =>
-			{
-				diagram.makeSVG();
-				diagram.setPlacement(diagram.getPlacement(), false);
-			}));
-			if (R.user.name === 'Anon')
-				R.EmitLoginEvent();	// Anon login
-		};
-		const bootLoader = _ =>
+		R.FetchCatalog( _ =>
 		{
+			R.cloud = new Amazon();
+			R.SetupCore();
+			R.SetupActions();
+			R.SetupPFS();
+			isGUI && D.Initialize();		// initialize GUI
+			R.sync = true;
+			const loader = function()
+			{ 
+				R.diagram = null;
+				if (isGUI)
+				{
+					switch(D.session.mode)
+					{
+						case 'catalog':
+							D.catalog.show();
+							D.catalog.html();
+							break;
+						case 'diagram':
+							D.catalog.show(false);
+							break;
+					}
+				}
+				R.initialized = true;
+				isGUI && D.session.diagrams.map(d => R.DownloadDiagram(d, diagram =>
+				{
+					diagram.makeSVG();
+					diagram.setPlacement(diagram.getPlacement(), false);
+				}));
+				if (R.user.name === 'Anon')
+					R.EmitLoginEvent();	// Anon login
+			};
 			if (R.params.has('boot'))
 				R.LoadScript(window.location.origin + '/js/boot.js', function() { Boot(loader); });
 			else
 				loader();
-		};
-		R.FetchCatalog(bootLoader);
+		});
 	}
 	static GetUserDiagram(user)		// the user's diagram of their diagrams
 	{
@@ -910,7 +909,7 @@ class R
 	{
 		const cloudInfo = R.catalog.get(name);
 		const timestamp = R.LocalTimestamp(name);
-		return cloudInfo && cloudInfo.cloudTimestamp > timestamp;
+		return cloudInfo && cloudInfo.cloudTimestamp >= timestamp;
 	}
 	static async DownloadDiagram(name, fn = null)
 	{
@@ -1176,7 +1175,9 @@ class R
 	{
 		const process = (data, fn) =>
 		{
-			data.map(d =>
+			R.cloudURL = data.cloudURL;
+			const diagrams = data.diagrams;
+			diagrams.map(d =>
 			{
 				const localTime = R.LocalTimestamp(d.name);
 				d.cloudTimestamp = d.timestamp;
@@ -1190,7 +1191,7 @@ class R
 			});
 			fn();
 		};
-		R.cloud && fetch(R.getURL('catalog')).then(response =>
+		(isGUI || R.cloudURL) && fetch(R.getURL('catalog')).then(response =>
 		{
 			if (response.ok)
 				response.json().then(data =>
@@ -1228,7 +1229,16 @@ class R
 	static GetDiagramInfo(name)
 	{
 		const diagram = name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;
-		return diagram ? diagram : R.catalog.get(name);
+		const info = {name};
+		info.basename = diagram.basename;
+		info.properName = diagram.properName;
+		info.user = diagram.user;
+		info.timestamp = diagram.timestamp;
+		info.refcnt = diagram.refcnt;
+		info.description = diagram.description;
+		info.codomain = diagram.codomain.name;
+		info.references = [...diagram.references.values()];
+		return info;
 	}
 	static SaveDefaults()
 	{
@@ -1268,12 +1278,15 @@ class R
 	{
 		fetch(R.getURL(`search?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams));
 	}
-	static getURL(suffix)
+	static getURL(suffix, local = true)
 	{
-		// local servers do not usually do https, or need to
-		let url = `${R.local ? 'http' : 'https'}://${isGUI ? document.location.host : R.default.sifu}/`;
+		let url = '';
+		if (isGUI)
+			url = local ? R.URL : R.cloudURL;
+		else
+			url = R.cloudURL;
 		if (suffix)
-			url += suffix;
+			url += '/' + suffix;
 		return url;
 	}
 	static getDiagramURL(suffix)
@@ -1309,16 +1322,13 @@ class R
 		{
 		}).catch(err => D.RecordError(err));
 	}
-	static upload(e, diagram, doPng, fn)
+	static upload(e, diagram, local, fn)
 	{
 		if (R.user.status !== 'logged-in')
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
-//		if (doPng)
-			body.png = D.GetPng(diagram.name);
-		const prom = R.authFetch(R.getURL('upload'), body).then(res => fn(res)).catch(err => D.RecordError(err));
-//console.log('second fetch', {body});
-//		const prom2 = R.authFetch('https://www.catecon.net/upload', body).then(res => console.log('upload', diagram.name)).catch(err => D.RecordError(err));
+		body.png = D.GetPng(diagram.name);
+		const prom = R.authFetch(R.getURL('upload', local), body).then(res => fn(res)).catch(err => D.RecordError(err));
 		R.EmitCATEvent('upload', diagram.name);
 		return prom;
 	}
@@ -1357,7 +1367,9 @@ Object.defineProperties(R,
 	catalog:			{value:new Map(),	writable:true},
 	Categories:			{value:new Map(),	writable:false},	// available categories
 	clear:				{value:false,		writable:true},
-	cloud:				{value:null,		writable:true},		// cloud we're using
+	cloud:				{value:null,		writable:true},		// the authentication cloud we're using
+	cloudURL:			{value:null,		writable:true},		// the server we upload to
+	URL:				{value:isGUI ? document.location.origin : '',		writable:false},		// the server we upload to
 	default:
 	{
 		value:
@@ -1365,7 +1377,6 @@ Object.defineProperties(R,
 			category:		'hdole/PFS',
 			debug:			true,
 			showEvents:		true,
-			sifu:			'catecon.net',
 		},
 		writable:	true,
 	},
@@ -2040,6 +2051,7 @@ class ElementTool
 		D.RemoveChildren(searchSorter);
 		searchSorter.appendChild(this.textSortIcon);
 		searchSorter.appendChild(D.getIcon('reference', 'reference', e => this.setRefcntSorter(e), 'Sort by reference count'));
+		this.resetFilter();
 	}
 	html(e)		// call me sometime
 	{
@@ -2522,12 +2534,15 @@ class DiagramTool extends BpdTool
 		if (diagram)
 		{
 			if (!nobuts.has('upload') && R.user.status === 'logged-in' && R.cloud && info.user === R.user.name && !R.isCloudNewer(diagram.name))
-				buttons.push(D.getIcon('diagramUpload', 'upload', e => diagram.upload(e), 'Upload to cloud', btnSize, false, 'diagramUploadBtn'));
+				buttons.push(D.getIcon('diagramUpload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn'));
 			if (!nobuts.has('download'))
 			{
 				buttons.push(D.getIcon('json', 'download-json', e => diagram.downloadJSON(e), 'Download JSON', btnSize));
-				buttons.push(D.getIcon('js', 'download-js', e => diagram.downloadJS(e), 'Download Javascript', btnSize));
-				buttons.push(D.getIcon('cpp', 'download-cpp', e => diagram.downloadCPP(e), 'Download C++', btnSize));
+				if (info.category === 'hdole/PFS')
+				{
+					buttons.push(D.getIcon('js', 'download-js', e => diagram.downloadJS(e), 'Download Javascript', btnSize));
+					buttons.push(D.getIcon('cpp', 'download-cpp', e => diagram.downloadCPP(e), 'Download C++', btnSize));
+				}
 				buttons.push(D.getIcon('png', 'download-png', e => window.open(`diagram/${name}.png`, btnSize,
 					`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), 'View PNG'));
 			}
@@ -3047,7 +3062,7 @@ class D
 			{
 				R.SaveLocal(diagram);
 				if (R.local)
-					R.upload(e, diagram, false, _ => {});
+					R.upload(e, diagram, R.local, _ => {});
 			}
 		}, D.default.autosaveTimer);
 	}
@@ -7003,6 +7018,13 @@ class MultiObject extends CatObject
 				return true;
 		return false;
 	}
+	usesDiagram(diagram)
+	{
+		for (let i=0; i<this.objects.length; ++i)
+			if (this.objects[i].usesDiagram(diagram))
+				return true;
+		return false;
+	}
 	static ProperName(sep, objects, reverse = false)
 	{
 		const obs = reverse ? objects.slice().reverse() : objects;
@@ -10436,6 +10458,10 @@ class Morphism extends Element
 			// TODO manage reference counts in hom morphisms
 			this.data = new Map();
 	}
+	usesDiagram(diagram)
+	{
+		return super.usesDiagram(diagram) || this.domain.usesDiagram(diagram) || this.codomain.usesDiagram(diagram);
+	}
 	static HasRecursiveForm(ary)	// TODO move
 	{
 		if (ary.length === 2)
@@ -13332,7 +13358,7 @@ class Diagram extends Functor
 			this.domain.elements.forEach(elt => this.addSVG(elt));
 		}
 	}
-	upload(e)
+	upload(e, local = true)
 	{
 		if (R.cloud && ((this.user === R.user.name && R.user.status === 'logged-in') || R.user.isAdmin()))
 		{
@@ -13345,7 +13371,7 @@ class Diagram extends Functor
 					btn.setAttribute('repeatCount', 'indefinite');
 					btn.beginElement();
 				}
-				R.upload(e, this, true, res =>
+				R.upload(e, this, local, res =>
 				{
 					btn && btn.setAttribute('repeatCount', 1);
 					if (!res.ok)
@@ -13354,7 +13380,9 @@ class Diagram extends Functor
 						return;
 					}
 					R.default.debug && console.log('uploaded', this.name);
-					R.catalog.set(this.name, R.GetDiagramInfo(this));
+					const info = R.GetDiagramInfo(this);
+					info.cloudTimestamp = info.timestamp;
+					R.catalog.set(info);
 					R.ServerDiagrams.set(this.name, this);
 					const delta = Date.now() - start;
 					if (e)
