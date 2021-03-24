@@ -1003,3 +1003,21 @@ span[contenteditable="true"].selected
 {
 	box-shadow:			2px 2px 2px 2px #bbbb;
 }
+
+table.verticalTools
+{
+	width:				auto;
+	margin:				0px;
+	border-collapse:	collapse;
+	box-shadow:			2px 2px 2px 2px #bbbb;
+	opacity:			0;
+	position:			absolute;
+	top:				0px;
+	right:				6px;
+	transition:			0.3s;
+}
+
+tspan
+{
+	white-space:		pre;
+}
