@@ -107,6 +107,7 @@ function reqlog(req, ...args)
 
 function makeDbconSync(mysqlArgs)	// allows synchronous calls
 {
+	log('Connecting to mysql server');
 	dbcon = mysql.createConnection(mysqlArgs);
 	global.dbcon = dbcon;
 	dbconSync =
@@ -129,7 +130,7 @@ function mysqlKeepAlive()
 	});
 	dbcon.on('error', err =>
 	{
-		log('Error from mysql server', err);
+		log('Error from mysql server:', err);
 		if (err.code === 'PROTOCOL_CONNECTION_LOST')
 			mysqlKeepAlive();
 		else
