@@ -2,6 +2,8 @@
 // Catecon:  The Categorical Console
 //
 // Events:
+//		Application
+//			start		app is up and running
 // 		Assertion
 // 			new			an assertion was created
 // 			delete
@@ -341,10 +343,6 @@ class U
 				break;
 		}
 		return ret;
-	}
-	static EscapeRegExp(str)
-	{
-		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 	}
 	static RefcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : b.refcnt < a.refcnt ? 1 : 0; }		// high to low
 	static TimestampSorter(a, b) { return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0; };
@@ -808,6 +806,7 @@ class R
 				R.LoadScript(window.location.origin + '/js/boot.js', function() { Boot(loader); });
 			else
 				loader();
+			R.EmitApplicationEvent('start');
 		});
 	}
 	static GetUserDiagram(user)		// the user's diagram of their diagrams
@@ -842,7 +841,7 @@ class R
 		{
 			const args = JSON.parse(data);
 			const userDiagram = R.GetUserDiagram(args.user);
-			if (clear)
+			if (clear)	// debugging feature
 			{
 				args.elements = [];
 				args.domainElements = [];
@@ -905,11 +904,17 @@ class R
 		const data = U.readfile(filename);
 		return data ? JSON.parse(data).timestamp : 0;
 	}
+	static isLocalNewer(name)
+	{
+		const cloudInfo = R.catalog.get(name);
+		const timestamp = R.LocalTimestamp(name);
+		return cloudInfo && cloudInfo.cloudTimestamp < timestamp;
+	}
 	static isCloudNewer(name)
 	{
 		const cloudInfo = R.catalog.get(name);
 		const timestamp = R.LocalTimestamp(name);
-		return cloudInfo && cloudInfo.cloudTimestamp >= timestamp;
+		return cloudInfo && cloudInfo.cloudTimestamp > timestamp;
 	}
 	static async DownloadDiagram(name, fn = null)
 	{
@@ -1095,6 +1100,13 @@ class R
 		D.session.mode = command;
 		R.default.showEvents && console.log('emit View event', {command});
 		return window.dispatchEvent(new CustomEvent('View', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
+	}
+	static EmitApplicationEvent(command)
+	{
+		if (!isGUI)
+			return;
+		R.default.showEvents && console.log('emit APPLICATION event', command);
+		return window.dispatchEvent(new CustomEvent('Application', {detail:	{command}, bubbles:true, cancelable:true}));
 	}
 	static EmitLoginEvent()
 	{
@@ -1329,7 +1341,6 @@ class R
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
 		body.png = D.GetPng(diagram.name);
 		const prom = R.authFetch(R.getURL('upload', local), body).then(res => fn(res)).catch(err => D.RecordError(err));
-		R.EmitCATEvent('upload', diagram.name);
 		return prom;
 	}
 	static AddReference(e, name)
@@ -1994,10 +2005,10 @@ class Toolbar
 	}
 	showSection(type, section)
 	{
-		if (section === 'new')
-			D.tool.push('create');
-		else if (D.getTool() === 'create')
-			D.tool.pop();
+//		if (section === 'new')
+//			D.tool.push('create');
+//		else if (D.getTool() === 'create')
+//			D.tool.pop();
 		D.setActiveIcon(D.toolbar.help.querySelector(`#${type}-${section}-icon`));
 		this.sections.map(s => D.toolbar.help.querySelector(`#${type}-${s}`).classList.add('hidden'));
 		const s = D.toolbar.help.querySelector(`#${type}-${section}`);
@@ -2533,8 +2544,8 @@ class DiagramTool extends BpdTool
 		const diagram = R.$CAT.getElement(name);
 		if (diagram)
 		{
-			if (!nobuts.has('upload') && R.user.status === 'logged-in' && R.cloud && info.user === R.user.name && !R.isCloudNewer(diagram.name))
-				buttons.push(D.getIcon('diagramUpload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn'));
+			if (!nobuts.has('upload') && R.user.status === 'logged-in' && R.cloud && info.user === R.user.name && R.isLocalNewer(diagram.name))
+				buttons.push(D.getIcon('upload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn'));
 			if (!nobuts.has('download'))
 			{
 				buttons.push(D.getIcon('json', 'download-json', e => diagram.downloadJSON(e), 'Download JSON', btnSize));
@@ -3054,8 +3065,8 @@ class D
 		if (!R.sync)
 			return;
 		D.CancelAutosave();
-		const timestamp = Date.now();
-		diagram.timestamp = timestamp;
+		const timestamp = diagram.timestamp;
+//		diagram.timestamp = timestamp;
 		D.autosaveTimer = setTimeout(e =>
 		{
 			if (timestamp === diagram.timestamp)
@@ -3527,6 +3538,7 @@ class D
 			switch(args.command)
 			{
 				case 'fuse':
+					diagram.updateTimestamp();
 					D.Autosave(args.diagram);
 					break;
 				case 'delete':
@@ -3534,6 +3546,7 @@ class D
 				case 'update':
 				case 'move':
 					isGUI && args.diagram.updateBackground();
+					diagram.updateTimestamp();
 					D.Autosave(args.diagram);
 					break;
 			}
@@ -3550,6 +3563,7 @@ class D
 				case 'update':
 				case 'move':
 					isGUI && args.diagram.updateBackground();
+					args.diagram.updateTimestamp();
 					D.Autosave(args.diagram);
 					break;
 			}
@@ -3567,9 +3581,11 @@ class D
 					case 'removeReference':
 						R.LoadDiagramEquivalences(diagram);
 						diagram.makeCells();
+						diagram.updateTimestamp();
 						D.Autosave(args.diagram);
 						break;
 					case 'update':
+						diagram.updateTimestamp();
 						D.Autosave(args.diagram);
 						break;
 					case 'makeCells':
@@ -4121,7 +4137,7 @@ class D
 		Object.keys(obj).forEach(function(i)
 		{
 			const d = obj[i];
-			if (typeof d === 'object')
+			if (d && typeof d === 'object')
 			{
 				elt.appendChild(H3.p(`${tab.repeat(indent)}${i}:`));
 				return D.Pretty(d, elt, indent + 1);
@@ -4176,10 +4192,12 @@ class D
 		nuArgs.id = U.SafeId(`img-el_${name}`);
 		if (!nuArgs.src && R.cloud)
 			nuArgs.src = R.getDiagramURL(name + '.png');
-		if (!('width' in nuArgs))
-			nuArgs.width = 200;
-		if (!('height' in nuArgs))
-			nuArgs.height = 150;
+//		if (!('width' in nuArgs))
+//			nuArgs.width = 200;
+//			nuArgs.width = D.default.diagram.imageWidth + 'px';
+//		if (!('height' in nuArgs))
+//			nuArgs.height = 150;
+//			nuArgs.height = D.default.diagram.imageHeight + 'px';
 		if (!('alt' in nuArgs))
 			nuArgs.alt = 'Image not available';
 		return H3.img('.imageBackground', nuArgs);
@@ -4588,8 +4606,7 @@ Object.defineProperties(D,
 						},
 			diagram:
 			{
-				imageWidth:		300,
-				imageHeight:	225,
+				imageScale:		1.0,
 				margin:			20,
 			},
 			font:			{height:24},
@@ -4899,16 +4916,13 @@ class Catalog extends DiagramTool
 		searchField.classList.remove('hidden');
 		this.catalog.appendChild(searchField);
 		//
-		this.catalogDisplay = H3.div('##catalog-display.catalog');		// the actual catalog display
+		this.catalogDisplay = H3.div('##catalog-display.catalog', {style:'grid-template-columns:repeat(auto-fill, minmax(330rx, 1fr))'});		// the actual catalog display
 		this.catalog.appendChild(this.catalogDisplay);
 		//
-		this.imageWidth = D.default.diagram.imageWidth;					// size of the png's shown in the catalog
-		this.imageHeight = D.default.diagram.imageHeight;
 		this.diagrams = null;
 		this.glowMap = new Map();
-		this.imageScale = 1.0;
 		this.imageScaleFactor = 1.1;
-		this.gridTemplateColumns = 330;
+		this.setSearchBar();
 		window.addEventListener('Login', e => D.catalog.update());
 		window.addEventListener('CAT', e =>
 		{
@@ -4938,6 +4952,11 @@ class Catalog extends DiagramTool
 					div = this.catalogDisplay.querySelector(`div[data-name="${args.diagram.name}"]`);
 					div && div.replaceWith(this.display(args.diagram));
 					break;
+				case 'load':
+					if (isGUI && e.detail.diagram)
+					{
+					}
+					break;
 			}
 		});
 		window.addEventListener('View', e =>
@@ -4946,7 +4965,6 @@ class Catalog extends DiagramTool
 			switch(args.command)
 			{
 				case 'catalog':
-					this.setSearchBar();
 					if (this.diagrams === null)
 						this.search();
 					this.show();
@@ -4956,6 +4974,20 @@ class Catalog extends DiagramTool
 					break;
 			}
 		});
+		window.addEventListener('Application', e =>
+		{
+			const args = e.detail;
+			switch (args.command)
+			{
+				case 'start':
+					this.setImageScale();
+					break;
+			}
+		});
+	}
+	setImageScale()
+	{
+		this.catalogDisplay.style.gridTemplateColumns = `repeat(auto-fill, minmax(${D.default.diagram.imageScale * 330}px, 1fr))`;
 	}
 	html()
 	{
@@ -4991,33 +5023,10 @@ class Catalog extends DiagramTool
 		D.RemoveChildren(this.closeBtn);
 		this.clearSearch();
 	}
-	imageToolbar(info)
-	{
-		const buttons = this.getButtons(info, 'view');
-		const toolbar = H3.table(buttons.map(btn => H3.tr(H3.td(btn))), '.shadow.smallTable', {style:'opacity:0; position:absolute; top:0px; right:6px; transition:0.3s;'});
-		toolbar.onmouseenter = e => {toolbar.style.opacity = 100;};
-		toolbar.onmouseleave = e => {toolbar.style.opacity = 0;};
-		if (this.view === 'reference')
-		{
-			if (!R.diagram.allReferences.has(info.name))
-				toolbar.appendChild(H3.tr(H3.td(D.getIcon('referenceDiagram', 'edit', e => R.DownloadDiagram(info.name, _ =>
-				{
-					R.AddReference(e, info.name);
-					const oldDiv = this.catalog.querySelector(`[data-name="${info.name}"]`);
-					const newDiv = this.display(info);
-					oldDiv.parentNode.replaceChild(newDiv, oldDiv);
-					R.EmitDiagramEvent(R.diagram, 'addReference');
-				}), `Add reference diagram to ${R.diagram.name}`))));
-		}
-		toolbar.style.position = 'absolute';
-		return toolbar;
-	}
 	display(info)
 	{
 		const args =
 		{
-			width:			this.imageWidth,
-			height:			this.imageHeight,
 			onclick:		_ =>
 			{
 				Cat.D.catalog.hide();
@@ -5025,21 +5034,56 @@ class Catalog extends DiagramTool
 				Cat.R.SelectDiagram(info.name, 'home');
 			},
 			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
-			title:			info.description,
 			'data-name':	info.name,
 		};
 		const img = D.GetImageElement(info.name, args);
 		if (this.glowMap.has(info.name))
 			img.classList.add(this.glowMap.get(info.name));
-		const toolbar = this.imageToolbar(info);
+		const toolbar = H3.table('.verticalTools');
+		toolbar.onmouseenter = e => {toolbar.style.opacity = 100;};
+		toolbar.onmouseleave = e => {toolbar.style.opacity = 0;};
 		const imgDiv = H3.div({style:'position:relative;'}, img, toolbar);
+		const div = H3.div('.catalogEntry', {'data-name':info.name},
+			H3.table(
+			[
+				H3.tr(H3.td('.imageBackground', {colspan:2}, imgDiv)),
+				H3.tr(H3.td(D.getDiagramHtml(info))),
+			], '.smallTable'));
 		if (this.view !== 'reference')
 		{
-			img.onmouseenter = e => {toolbar.style.opacity = 100;};
-			img.onmouseleave = e => {toolbar.style.opacity = 0;};
+			let listener = null;
+			img.onmouseenter = evnt =>
+			{
+				const showToolbar = e =>
+				{
+					D.RemoveChildren(toolbar);
+					this.getButtons(info).map(btn => toolbar.appendChild(H3.tr(H3.td(btn))));
+					toolbar.style.opacity = 100;
+					listener = e =>
+					{
+						const args = e.detail;
+						const diagram = args.diagram;
+						switch(args.command)
+						{
+							case 'upload':
+								window.removeEventListener('CAT', listener);
+								showToolbar(e);
+								break;
+						}
+					};
+					window.addEventListener('CAT', listener);
+				};
+				showToolbar(evnt);
+			};
+			img.onmouseleave = e =>
+			{
+				toolbar.style.opacity = 0;
+				window.removeEventListener('CAT', listener);
+			};
 		}
 		else	// reference view
 		{
+			// TODO
 			img.onmouseenter = e =>
 			{
 				R.Diagrams.get(e.target.dataset.name).references.map(refName => this.catalog.querySelector(`img[data-name="${refName}"]`).classList.add('glow'));
@@ -5051,12 +5095,6 @@ class Catalog extends DiagramTool
 				toolbar.classList.add('hidden');
 			};
 		}
-		const div = H3.div('.catalogEntry', {'data-name':info.name},
-			H3.table(
-			[
-				H3.tr(H3.td('.imageBackground', {colspan:2}, imgDiv)),
-				H3.tr(H3.td(D.getDiagramHtml(info))),
-			], '.smallTable'));
 		div.style.margin = "20px 0px 0px 0px";
 		this.catalogDisplay.appendChild(div);
 		return div;
@@ -5072,6 +5110,7 @@ class Catalog extends DiagramTool
 					fetch(`/search?search=${encodeURIComponent(search)}`).then(response => response.json()).then(diagrams => {this.diagrams = diagrams; this.update();});
 				}
 				break;
+			// TODO
 			case 'references':
 				const refs = new Set(R.diagram.getAllReferenceDiagrams().keys());
 				fetch(`/search?search=${encodeURIComponent(search)}`).then(response => response.json()).then(diagrams => {this.diagrams = diagrams; this.update();});
@@ -5084,6 +5123,7 @@ class Catalog extends DiagramTool
 		this.diagrams = [];
 		R.Diagrams.forEach((info, name) => name.includes(val) && this.diagrams.push(info));
 	}
+	// TODO
 	doLookup()
 	{
 		this.localSearch(this.searchInput.value);
@@ -5093,6 +5133,7 @@ class Catalog extends DiagramTool
 			this.referenceGlow();
 		this.update();
 	}
+	// TODO
 	reference()
 	{
 		this.clear();
@@ -5213,14 +5254,10 @@ class Catalog extends DiagramTool
 		const imgs = [...this.catalogDisplay.querySelectorAll('img')];
 		const dir = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY)));
 		const nuScale = dir === 1 ? this.imageScaleFactor : 1 / this.imageScaleFactor;
-		this.imageScale = this.imageScale * nuScale;
-		this.gridTemplateColumns = this.gridTemplateColumns * nuScale;
-		this.catalogDisplay.style.gridTemplateColumns = `repeat(auto-fill, minmax(${this.gridTemplateColumns}px, 1fr))`;
-		imgs.map(img =>
-		{
-			img.setAttribute('width', Math.round(this.imageScale * this.imageWidth) + 'px');
-			img.setAttribute('height', Math.round(this.imageScale * this.imageHeight) + 'px');
-		});
+		D.default.diagram.imageScale = D.default.diagram.imageScale * nuScale;
+		D.default.diagram.imageScale = D.default.diagram.imageScale * nuScale;
+		this.setImageScale();
+		R.SaveDefaults();
 	}
 	show(doit = true)
 	{
@@ -7478,8 +7515,20 @@ class DiagramText extends Element
 	}
 	tspan()
 	{
-		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => `<tspan text-anchor="left" x="0"${i > 0 ? ' dy='+this.lineDeltaY() : ''}>${t === '' ? '&ZeroWidthSpace;' : t}</tspan>`).join('') :
-			this.description;
+		const wrapTspan = (t, i) =>
+		{
+			return `<tspan text-anchor="left" x="0"${i > 0 ? ' dy='+this.lineDeltaY() : ''}>${t === '' ? '&ZeroWidthSpace;' : t}</tspan>`;
+		};
+		const procText = (txt, i) =>
+		{
+			if (txt === '')
+//				return '<tspan>&ZeroWidthSpace;</tspan>';
+				return wrapTspan('&ZeroWidthSpace;', i);
+			const tx = txt.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+			return wrapTspan(tx, i);
+		};
+//		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => `<tspan text-anchor="left" x="0"${i > 0 ? ' dy='+this.lineDeltaY() : ''}>${t === '' ? '&ZeroWidthSpace;' : t}</tspan>`).join('') :
+		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => procText(t, i)).join('') : this.description;
 	}
 	ssStyle()
 	{
@@ -7619,7 +7668,7 @@ class DiagramText extends Element
 			foreign.parentNode && foreign.remove();
 			if (text !== this.description)
 			{
-				this.description = text;
+				this.description = U.HtmlEntitySafe(text);
 				this.svgText.innerHTML = this.tspan();
 				R.EmitTextEvent(this.diagram, 'update', this);
 			}
@@ -14856,6 +14905,11 @@ addBall(m);
 			R.EmitCATEvent('png', this);
 			fn(e);
 		});
+	}
+	updateTimestamp()
+	{
+		this.timestamp = Date.now();
+		R.SetDiagramInfo(this);
 	}
 	static Codename(args)
 	{
