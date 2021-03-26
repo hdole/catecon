@@ -695,7 +695,7 @@ ${this.generate(morphism)}
 			div.appendChild(H3.div([H3.button('async', asyncAttrs), H3.span('Remember to declare function as async in code!')]));
 			div.appendChild(H3.div(Cat.U.HtmlSafe(code), {class:'code padding', id, onkeydown:e => e.stopPropagation()}));
 			if (this.isEditable(elt))
-				div.appendChild(D.GetButton3(this.name, 'edit3', e => R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
+				div.appendChild(D.getIcon(this.name, 'edit', e => R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
 			return div;
 		}
 		static ObjectLength(o)
