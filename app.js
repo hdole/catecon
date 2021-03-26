@@ -193,14 +193,14 @@ async function updateDiagramInfo(diagram, cloud)
 	{
 		const localTimestamp = hasIt[0].timestamp;
 		if (timestamp > localTimestamp)
-			sql = `UPDATE diagrams SET ${assign} WHERE name = ${dbcon.escape(name)}`;
+			sql = `UPDATE Catecon.diagrams SET ${assign} WHERE name = ${dbcon.escape(name)}`;
 		else if (timestamp === localTimestamp)
 			console.log(`\tno update ${name} @ ${new Date(timestamp)}`);
 		else
 			console.log(`\tlocal version newer ${name} @ ${new Date(localTimestamp)} vs cloud @ ${new Date(timestamp)}`);
 	}
 	else
-		sql = `INSERT into diagrams (name, basename, user, codomain, description, properName, refs, ${cloud ? 'cloudTimestamp' : 'timestamp'}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+		sql = `INSERT into Catecon.diagrams (name, basename, user, codomain, description, properName, refs, ${cloud ? 'cloudTimestamp' : 'timestamp'}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 	if (sql)
 	{
 		console.log(`\tupdate ${name} @ ${new Date(timestamp)}`);
@@ -480,6 +480,7 @@ async function serve()
 				dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
 				{
 					if (err) throw err;
+console.log('/catalog local', Cat.R.local, Cat.R.cloudURL, '-', Cat.R.URL);
 					res.end(JSON.stringify({cloudURL:Cat.R.local ? Cat.R.cloudURL : Cat.R.URL, diagrams}));
 				});
 			}
@@ -671,7 +672,7 @@ async function serve()
 				{
 					const oldrefs = Cat.U.Clone(info.references);
 					diagramCatalog.set(name, diagram);
-					const updateSql = 'UPDATE diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ? WHERE name = ?';
+					const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ? WHERE name = ?';
 					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain, name], (err, result) =>
 					{
 						if (err)
@@ -705,7 +706,7 @@ async function serve()
 				// new diagram to system
 				// no need to set refcnt; it must be 0
 				//
-				const sql = 'INSERT into diagrams (name, basename, user, description, properName, refs, timestamp, codomain) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+				const sql = 'INSERT into Catecon.diagrams (name, basename, user, description, properName, refs, timestamp, codomain) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain], (err, result) =>
 				{
 					if (err)
