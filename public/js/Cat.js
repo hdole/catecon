@@ -828,6 +828,8 @@ class R
 	static SaveLocal(diagram)
 	{
 		U.writefile(`${diagram.name}.json`, diagram.stringify());
+		const info = R.catalog.get(diagram.name);
+		info.localTimestamp = diagram.timestamp;
 	}
 	static HasLocal(name)
 	{
@@ -906,15 +908,13 @@ class R
 	}
 	static isLocalNewer(name)
 	{
-		const cloudInfo = R.catalog.get(name);
-		const timestamp = R.LocalTimestamp(name);
-		return cloudInfo && cloudInfo.cloudTimestamp < timestamp;
+		const info = R.catalog.get(name);
+		return info && info.cloudTimestamp < info.localTimestamp;
 	}
 	static isCloudNewer(name)
 	{
-		const cloudInfo = R.catalog.get(name);
-		const timestamp = R.LocalTimestamp(name);
-		return cloudInfo && cloudInfo.cloudTimestamp > timestamp;
+		const info = R.catalog.get(name);
+		return info && info.cloudTimestamp > info.localTimestamp;
 	}
 	static async DownloadDiagram(name, fn = null)
 	{
@@ -1003,10 +1003,9 @@ class R
 	{
 		if (refs.has(name))
 			return refs;
-		const info = R.Diagrams.get(name);
+		const info = R.catalog.get(name);
 		refs.add(name);
-		if (info && 'references' in info)	// TODO remove if clause
-			info.references.map(r => R.GetReferences(r, refs));
+		info && info.references.map(r => R.GetReferences(r, refs));
 		return refs;
 	}
 	static GetDiagram(name, fn)		// only does local loading
@@ -1048,8 +1047,10 @@ class R
 	static SetDiagramInfo(diagram)
 	{
 		const info = Diagram.GetInfo(diagram);
-		info.timestamp = R.LocalTimestamp(diagram.name);
-		R.Diagrams.set(diagram.name, info);
+		info.localTimestamp = diagram.timestamp;
+		const catInfo = R.catalog.get(diagram.name);
+		info.cloudTimestamp = catInfo ? catInfo.cloudTimestamp : 0;
+		R.catalog.set(diagram.name, info);
 	}
 	static GetCategoriesInfo()
 	{
@@ -1187,18 +1188,15 @@ class R
 	{
 		const process = (data, fn) =>
 		{
-			R.cloudURL = data.cloudURL;
+			if (isGUI)
+				R.cloudURL = data.cloudURL;
 			const diagrams = data.diagrams;
 			diagrams.map(d =>
 			{
-				const localTime = R.LocalTimestamp(d.name);
-				d.cloudTimestamp = d.timestamp;
-				d.timestamp = localTime;
+				d.localTimestamp = R.LocalTimestamp(d.name);
 				d.references = JSON.parse(d.refs);
 				delete d.refs;
 				R.catalog.set(d.name, d);
-				if (!R.Diagrams.has(d.name))
-					R.SetDiagramInfo(d);
 				R.EmitCATEvent('catalogAdd', d);
 			});
 			fn();
@@ -1392,12 +1390,10 @@ Object.defineProperties(R,
 		writable:	true,
 	},
 	diagram:			{value:null,		writable:true},		// current diagram
-	Diagrams:			{value:new Map(),	writable:false},	// available diagrams
 	initialized:		{value:false,		writable:true},		// Have we finished the boot sequence and initialized properly?
 	languages:			{value:new Map(),	writable:false},
 	local:				{value:null,		writable:true},		// local server, if it exists
 	params:				{value:null,		writable:true},		// URL parameters
-	ServerDiagrams:		{value:new Map(),	writable:false},
 	sync:				{value:false,		writable:true},		// when to turn on sync of gui and local storage
 	sys:				{value:{},			writable:false},	// system diagrams
 	user:
@@ -1760,7 +1756,7 @@ class Navbar
 				break;
 		}
 		this.element.style.background = c;
-		if (R.diagram)
+		if (R.diagram && D.session.mode === 'diagram')
 		{
 			this.categoryElt.innerHTML = U.HtmlEntitySafe(R.diagram.codomain.properName);
 			D.RemoveChildren(this.diagramElt);
@@ -2544,8 +2540,13 @@ class DiagramTool extends BpdTool
 		const diagram = R.$CAT.getElement(name);
 		if (diagram)
 		{
-			if (!nobuts.has('upload') && R.user.status === 'logged-in' && R.cloud && info.user === R.user.name && R.isLocalNewer(diagram.name))
-				buttons.push(D.getIcon('upload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn'));
+			if (R.user.status === 'logged-in' && R.cloud && info.user === R.user.name)
+			{
+				if (!nobuts.has('upload') && R.isLocalNewer(diagram.name))
+					buttons.push(D.getIcon('upload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn'));
+				if (!nobuts.has('download') && R.isCloudNewer(diagram.name))
+					buttons.push(D.getIcon('downcloud', 'downcloud', e => diagram.download(e, false), 'Download from cloud ' + R.cloudURL, btnSize, false));
+			}
 			if (!nobuts.has('download'))
 			{
 				buttons.push(D.getIcon('json', 'download-json', e => diagram.downloadJSON(e), 'Download JSON', btnSize));
@@ -2700,7 +2701,8 @@ class DiagramTool extends BpdTool
 	getMatchingElements()
 	{
 		const diagrams = [];
-		R.Diagrams.forEach((info, name) => info.user !== 'sys' && name.includes(this.filter) &&
+//		R.Diagrams.forEach((info, name) => info.user !== 'sys' && name.includes(this.filter) &&
+		R.catalog.forEach((info, name) => info.user !== 'sys' && name.includes(this.filter) &&
 			info.basename !== info.user &&
 			((this.searchArgs.userOnly && info.user === R.user.name) || !this.searchArgs.userOnly) &&
 			((this.searchArgs.referenceOnly && R.diagram.references.has(name)) || !this.searchArgs.referenceOnly) &&
@@ -2733,7 +2735,7 @@ class DiagramTool extends BpdTool
 			if (userDiagram.elements.has(basename))
 				throw 'diagram already exists';
 			const name = `${R.user.name}/${basename}`;
-			if (R.Diagrams.has(name))
+			if (R.catalog.has(name))
 				throw 'diagram already exists';
 			const diagram = new Diagram(userDiagram,
 			{
@@ -3131,8 +3133,7 @@ class D
 	static DeleteSelectRectangle()
 	{
 		const svg = document.getElementById('selectRect');
-		if (svg)
-			svg.remove();
+		svg && svg.remove();
 	}
 	static Mousemove(e)
 	{
@@ -5086,12 +5087,12 @@ class Catalog extends DiagramTool
 			// TODO
 			img.onmouseenter = e =>
 			{
-				R.Diagrams.get(e.target.dataset.name).references.map(refName => this.catalog.querySelector(`img[data-name="${refName}"]`).classList.add('glow'));
+				R.catalog.get(e.target.dataset.name).references.map(refName => this.catalog.querySelector(`img[data-name="${refName}"]`).classList.add('glow'));
 				toolbar.classList.remove('hidden');
 			};
 			img.onmouseleave = e =>
 			{
-				R.Diagrams.get(e.target.dataset.name).references.map(refName => this.catalog.querySelector(`img[data-name="${refName}"]`).classList.remove('glow'));
+				R.catalog.get(e.target.dataset.name).references.map(refName => this.catalog.querySelector(`img[data-name="${refName}"]`).classList.remove('glow'));
 				toolbar.classList.add('hidden');
 			};
 		}
@@ -5121,7 +5122,7 @@ class Catalog extends DiagramTool
 	localSearch(val)
 	{
 		this.diagrams = [];
-		R.Diagrams.forEach((info, name) => name.includes(val) && this.diagrams.push(info));
+		R.catalog.forEach((info, name) => info.localTimestamp > 0 && name.includes(val) && this.diagrams.push(info));
 	}
 	// TODO
 	doLookup()
@@ -12867,8 +12868,7 @@ class Diagram extends Functor
 		if (this.refcnt <= 0)
 		{
 			const name = this.name;
-			R.Diagrams.delete(name);		// all local diagrams
-			delete R.catalog[name];
+			R.catalog.delete(name);
 			D.diagramPNGs.delete(name);
 			if (R.diagram === this)
 			{
@@ -13432,7 +13432,6 @@ class Diagram extends Functor
 					const info = R.GetDiagramInfo(this);
 					info.cloudTimestamp = info.timestamp;
 					R.catalog.set(info);
-					R.ServerDiagrams.set(this.name, this);
 					const delta = Date.now() - start;
 					if (e)
 					{
@@ -13694,6 +13693,7 @@ class Diagram extends Functor
 			{
 				this.references.delete(r.name);
 				this.allReferences = this.getAllReferenceDiagrams();
+				this.updateTimestamp();
 				R.SetDiagramInfo(this);
 			}
 		}
@@ -14909,7 +14909,8 @@ addBall(m);
 	updateTimestamp()
 	{
 		this.timestamp = Date.now();
-		R.SetDiagramInfo(this);
+		const info = R.catalog.get(this.name);
+		info.timestamp = this.timestamp;
 	}
 	static Codename(args)
 	{
