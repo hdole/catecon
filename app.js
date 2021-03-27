@@ -50,7 +50,7 @@ const jsAction = require('./public/js/javascript.js');
 
 Cat.R.default.debug = false;
 Cat.R.cloudURL = process.env.CAT_CLOUD;
-console.log('cloudURL', Cat.R.cloudURL);
+
 Cat.R.URL = process.env.CAT_URL;
 Cat.R.local = process.env.CAT_LOCAL === 'true';
 //
@@ -148,26 +148,6 @@ function saveHTMLjs()
 	});
 }
 
-function fetchCatalog(followup)
-{
-	if (Cat.R.cloudURL && Cat.R.cloudURL !== '')
-		fetch(`${Cat.R.cloudURL}/catalog`).then(response =>
-		{
-			if (!response.ok)
-			{
-				console.log('fetchCatalog bad response', response);
-				throw 'bad response';
-			}
-			return response.json();
-		}).then(json => followup(json)).catch(error =>
-		{
-			console.log('fetchCatalog error:', {error});
-			followup([]);
-		});
-	else
-		followup([]);
-}
-
 function getDiagramInfo(diagram)
 {
 	return {
@@ -179,34 +159,6 @@ function getDiagramInfo(diagram)
 		user:			diagram.user,
 		references:		diagram.references,
 	};
-}
-
-async function updateDiagramInfo(diagram, cloud)
-{
-	const name = diagram.name;
-	const hasItSql = `SELECT timestamp FROM Catecon.diagrams WHERE name = '${name}'`;
-	const timestamp = diagram.timestamp ? diagram.timestamp : Date.now();
-	const assign = `name = ?, basename = ?, user = ?, codomain = ?, description = ?, properName = ?, refs = ?, ${cloud ? 'cloudTimestamp' : 'timestamp'} = ?`;
-	const hasIt = await dbconSync.query(hasItSql);
-	let sql = null;
-	if (hasIt.length > 0)
-	{
-		const localTimestamp = hasIt[0].timestamp;
-		if (timestamp > localTimestamp)
-			sql = `UPDATE Catecon.diagrams SET ${assign} WHERE name = ${dbcon.escape(name)}`;
-		else if (timestamp === localTimestamp)
-			console.log(`\tno update ${name} @ ${new Date(timestamp)}`);
-		else
-			console.log(`\tlocal version newer ${name} @ ${new Date(localTimestamp)} vs cloud @ ${new Date(timestamp)}`);
-	}
-	else
-		sql = `INSERT into Catecon.diagrams (name, basename, user, codomain, description, properName, refs, ${cloud ? 'cloudTimestamp' : 'timestamp'}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-	if (sql)
-	{
-		console.log(`\tupdate ${name} @ ${new Date(timestamp)}`);
-		const result = await dbconSync.query(sql, [name, diagram.basename, diagram.user, diagram.codomain, diagram.description, diagram.properName, JSON.stringify(diagram.references), timestamp]);
-	}
-	return sql !== null;
 }
 
 function saveDiagramJson(name, diagramString)
@@ -233,59 +185,6 @@ function saveDiagramPng(name, inbuf)
 			fs.close(pngFD, err => { if (err) throw err; });
 		});
 	}));
-}
-
-const diagramCatalog = new Map();
-
-async function updateCatalog(diagrams, fn, cloud)
-{
-	for (let i=0; i<diagrams.length; ++i)
-	{
-		const d = diagrams[i];
-		try
-		{
-			const name = d.name;
-			if (await updateDiagramInfo(d, cloud) || !fs.existsSync(`public/diagram/${name}.json`))
-			{
-				log(`download ${name}`);
-				// diagram.json
-				fetch(`${Cat.R.cloudURL}/diagram/${name}.json`).then(response => response.text().then(diagramString => saveDiagramJson(name, diagramString))).catch(error => console.log({cloudURL:Cat.R.cloudURL, error}));
-				// diagram.png
-				fetch(`${Cat.R.cloudURL}/diagram/${name}.png`).then(response => response.buffer()).then(pngBfr => saveDiagramPng(name, pngBfr)).catch(error => console.log({cloudURL:Cat.R.cloudURL, error}));
-			}
-		}
-		catch(err)
-		{
-			log(err);
-		}
-	}
-	const rows = await dbconSync.query('SELECT * FROM Catecon.diagrams');
-	rows.map(row =>
-	{
-		row.references = JSON.parse(row.refs);
-		delete row.refs;
-		diagramCatalog.set(row.name, row);
-	});
-	fn && fn();
-}
-
-async function updateCatalogFromServer(fn = null)
-{
-	log('UpdateCatalogFromServer');
-	if (Cat.R.cloudURL && Cat.R.cloudURL !== '')
-		fetchCatalog(async data => updateCatalog(data.diagrams, fn, true));
-	else
-		updateCatalogFromDatabase(fn);
-}
-
-function updateCatalogFromDatabase(fn = null)
-{
-	log('UpdateCatalogFromDatabase');
-	dbcon.query('SELECT * FROM Catecon.diagrams', (err, result) =>
-	{
-		if (err) throw err;
-		updateCatalog(result, fn, false);
-	});
 }
 
 function evaluateMorphism(diagram, morphism, args)
@@ -340,7 +239,7 @@ function updateRefcnts(oldrefs, newrefs)
 	newrefs.map(ref => !oldrefs.includes(ref) && plusOne.push(ref));
 	plusOne.map(name =>
 	{
-		const diagram = diagramCatalog.get(name);
+		const diagram = Cat.R.catalog.get(name);
 		if (diagram)
 			diagram.refcnt++;
 		else
@@ -349,7 +248,7 @@ function updateRefcnts(oldrefs, newrefs)
 	});
 	minusOne.map(name =>
 	{
-		diagramCatalog.get(name).refcnt--;
+		Cat.R.catalog.get(name).refcnt--;
 		dbcon.query('UPDATE Catecon.diagrams SET refcnt=refcnt - 1 WHERE name=?;', [name]);
 	});
 }
@@ -405,6 +304,37 @@ function validate(req, res, fn)
 	jwt.verify(token, pem, fn);
 }
 
+function updateDiagramTable(name, info, fn)
+{
+	if (info.user === 'sys')
+		return;
+	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ? WHERE name = ?';
+	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, info.refcnt, info.timestamp, name];
+	console.log('updating diagram table', args);
+	dbcon.query(updateSql, args, fn);
+}
+
+function updateSQLDiagramsByCatalog()
+{
+	// make local server match cloud
+	dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
+	{
+		if (err) throw err;
+		const remaining = new Set(Cat.R.catalog.keys());
+		diagrams.map(info =>
+		{
+			if (info.user !== 'sys')
+			{
+				const cloudInfo = Cat.R.catalog.get(info.name);
+				if (cloudInfo && cloudInfo.timestamp > info.timestamp)		// cloud is newer
+					updateDiagramTable(info.name, cloudInfo, (err, result) => err && console.log({err}));
+			}
+			remaining.delete(info.name);
+		});
+		remaining.forEach(name => updateDiagramTable(name, Cat.R.catalog.get(name), (err, result) => err && console.log({err})));
+	});
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Server main
@@ -436,14 +366,7 @@ async function serve()
 							console.log('mysql intialization for Catecon', {err});
 							process.exit();
 						}
-						try
-						{
-							updateCatalogFromServer(_ => Cat.R.Initialize());
-						}
-						catch(x)
-						{
-							Cat.R.Initialize();
-						}
+						Cat.R.Initialize();
 					});
 				});
 			}
@@ -456,17 +379,7 @@ async function serve()
 						console.log('mysql intialization for Catecon', {err});
 						process.exit();
 					}
-					try
-					{
-						if (Cat.R.local)
-							updateCatalogFromServer(_ => Cat.R.Initialize());
-						else
-							updateCatalogFromDatabase(_ => Cat.R.Initialize());
-					}
-					catch(x)
-					{
-						Cat.R.Initialize();
-					}
+					Cat.R.Initialize(_ => updateSQLDiagramsByCatalog());
 				});
 			}
 		});
@@ -480,7 +393,6 @@ async function serve()
 				dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
 				{
 					if (err) throw err;
-console.log('/catalog local', Cat.R.local, Cat.R.cloudURL, '-', Cat.R.URL);
 					res.end(JSON.stringify({cloudURL:Cat.R.local ? Cat.R.cloudURL : Cat.R.URL, diagrams}));
 				});
 			}
@@ -496,24 +408,12 @@ console.log('/catalog local', Cat.R.local, Cat.R.cloudURL, '-', Cat.R.URL);
 			return next();
 		});
 
-		app.use('/UpdateCatalogFromServer', (req, res) =>
+		Cat.R.local && app.use('/updateCatalog', (req, res) =>
 		{
 			try
 			{
-				updateCatalogFromServer();
-				res.status(200).end();
-			}
-			catch(err)
-			{
-				res.status(500).send(err).end();
-			}
-		});
-
-		app.use('/UpdateCatalogFromDatabase', (req, res) =>
-		{
-			try
-			{
-				updateCatalogFromDatabase();
+				log('/updateCatalog', req.user);
+				Cat.R.FetchCatalog(_ => updateSQLDiagramsByCatalog());
 				res.status(200).end();
 			}
 			catch(err)
@@ -665,15 +565,14 @@ console.log('/catalog local', Cat.R.local, Cat.R.cloudURL, '-', Cat.R.URL);
 			//
 			// check cache
 			//
-			if (diagramCatalog.has(name))
+			if (Cat.R.catalog.has(name))
 			{
-				const info = diagramCatalog.get(name);
+				const info = Cat.R.catalog.get(name);
 				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
 					const oldrefs = Cat.U.Clone(info.references);
-					diagramCatalog.set(name, diagram);
-					const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ? WHERE name = ?';
-					dbcon.query(updateSql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain, name], (err, result) =>
+					Cat.R.catalog.set(name, diagram);
+					updateDiagramTable(name, diagram, (err, result) =>
 					{
 						if (err)
 						{
