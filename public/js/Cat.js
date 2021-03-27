@@ -735,7 +735,7 @@ class R
 			R.LoadScript("https://unpkg.com/qunit-dom/dist/qunit-dom.js", _ =>
 				R.LoadScript(window.location.origin + window.location.pathname + 'js/tests.js', function(){})));
 	}
-	static Initialize()
+	static Initialize(fn = null)
 	{
 		R.sync = false;
 		R.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
@@ -777,8 +777,8 @@ class R
 			R.SetupPFS();
 			isGUI && D.Initialize();		// initialize GUI
 			R.sync = true;
-			const loader = function()
-			{ 
+			const loader = _ =>
+			{
 				R.diagram = null;
 				if (isGUI)
 				{
@@ -801,6 +801,7 @@ class R
 				}));
 				if (R.user.name === 'Anon')
 					R.EmitLoginEvent();	// Anon login
+				fn && fn();
 			};
 			if (R.params.has('boot'))
 				R.LoadScript(window.location.origin + '/js/boot.js', function() { Boot(loader); });
@@ -1338,8 +1339,10 @@ class R
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
 		body.png = D.GetPng(diagram.name);
-		const prom = R.authFetch(R.getURL('upload', local), body).then(res => fn(res)).catch(err => D.RecordError(err));
-		return prom;
+		if (local)
+			return R.authFetch(R.getURL('upload', local), body).then(res => fn(res)).catch(err => D.RecordError(err));
+		// keep local server up to date after update to cloud
+		return R.authFetch(R.getURL('upload', false), body).then(res => R.upload(e, diagram, true, fn)).catch(err => D.RecordError(err));
 	}
 	static AddReference(e, name)
 	{
@@ -2543,7 +2546,10 @@ class DiagramTool extends BpdTool
 			if (R.user.status === 'logged-in' && R.cloud && info.user === R.user.name)
 			{
 				if (!nobuts.has('upload') && R.isLocalNewer(diagram.name))
-					buttons.push(D.getIcon('upload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn'));
+				{
+					const btn = D.getIcon('upload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn');
+					buttons.push(btn);
+				}
 				if (!nobuts.has('download') && R.isCloudNewer(diagram.name))
 					buttons.push(D.getIcon('downcloud', 'downcloud', e => diagram.download(e, false), 'Download from cloud ' + R.cloudURL, btnSize, false));
 			}
@@ -2948,8 +2954,8 @@ class StatusBar
 	show(e, msg, record = false)
 	{
 		this._prep(msg);
-		this.timerIn = setTimeout(_ => this.element.classList.remove('hidden'), D.default.statusbar.timein); 
-		this.timerOut = setTimeout(_ => this.hide(), D.default.statusbar.timeout); 
+		this.timerIn = setTimeout(_ => this.element.classList.remove('hidden'), D.default.statusbar.timein);
+		this.timerOut = setTimeout(_ => this.hide(), D.default.statusbar.timeout);
 		this._post(e, msg, record);
 	}
 	alert(e, msg, record = false)
@@ -3395,6 +3401,7 @@ class D
 		if (id)
 			args.id = id;
 		return H3.span('.icon', H3.svg(		{viewbox:"0 0 320 320", width:`${inches}in`, height:`${inches}in`},
+											H3.animateTransform({attributeName:"transform", type:"rotate", from:"360 0 0", to:"0 0 0", dur:"0.5s", repeatCount, begin:"indefinite"}),
 											H3.rect('.icon-background', {x:"0", y:"0", width:"32", height:"32", onclick}),
 											H3.use({href:`#icon-${buttonName}`}),
 											H3.rect('.btn', {x:"0", y:"0", width:"32", height:"32", onclick})), args);
@@ -3989,10 +3996,10 @@ class D
 	}
 	static HtmlRow(m, handler)
 	{
-		return H3.tr([	H3.td(m.properName),
+		return H3.tr(	H3.td(m.properName),
 						H3.td(m.domain.properName),
 						H3.td('&rarr;'),
-						H3.td(m.codomain.properName)], {title:U.HtmlSafe(U.Formal(m.description)), 'data-name':m.name}, handler);
+						H3.td(m.codomain.properName), {title:U.HtmlSafe(U.Formal(m.description)), 'data-name':m.name}, handler);
 	}
 	static Center(diagram)
 	{
@@ -4966,6 +4973,7 @@ class Catalog extends DiagramTool
 			switch(args.command)
 			{
 				case 'catalog':
+					R.diagram && R.diagram.hide();
 					if (this.diagrams === null)
 						this.search();
 					this.show();
@@ -5486,12 +5494,12 @@ class ThreeDPanel extends Panel
 		this.max =		10000;
 		this.horizon =	100000;
 		this.elt.appendChild(H3.table('.buttonBarRight', H3.tr(H3.td(
-			D.getIcon('threeDClear', 'delete', e => Cat.D.threeDPanel.initialize(), 'Clear display'), 
-			D.getIcon('threeDLeft', 'threeD_left', e => Cat.D.threeDPanel.view('left'), 'Left'), 
-			D.getIcon('threeDtop', 'threeD_top', e => Cat.D.threeDPanel.view('top'), 'Top'), 
-			D.getIcon('threeDback', 'threeD_back', e => Cat.D.threeDPanel.view('back'), 'Back'), 
-			D.getIcon('threeDright', 'threeD_right', e => Cat.D.threeDPanel.view('right'), 'Right'), 
-			D.getIcon('threeDbotom', 'threeD_bottom', e => Cat.D.threeDPanel.view('bottom'), 'Bottom'), 
+			D.getIcon('threeDClear', 'delete', e => Cat.D.threeDPanel.initialize(), 'Clear display'),
+			D.getIcon('threeDLeft', 'threeD_left', e => Cat.D.threeDPanel.view('left'), 'Left'),
+			D.getIcon('threeDtop', 'threeD_top', e => Cat.D.threeDPanel.view('top'), 'Top'),
+			D.getIcon('threeDback', 'threeD_back', e => Cat.D.threeDPanel.view('back'), 'Back'),
+			D.getIcon('threeDright', 'threeD_right', e => Cat.D.threeDPanel.view('right'), 'Right'),
+			D.getIcon('threeDbotom', 'threeD_bottom', e => Cat.D.threeDPanel.view('bottom'), 'Bottom'),
 			D.getIcon('threeDfront', 'threeD_front', e => Cat.D.threeDPanel.view('front'), 'Front'),
 			this.closeBtnCell(),
 			this.expandPanelBtn()
@@ -9795,7 +9803,7 @@ class FiniteObjectAction extends Action
 		const elements = [H3.h4('Finite Object')];
 		elements.push(to.constructor.name === 'CatObject' ? H3.span('Convert generic object to a finite object.', '.smallPrint.italic') : H3.span('Finite object', '.smallPrint.italic'),
 						H3.table(H3.tr(H3.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')))),
-						H3.span('Leave size blank to indicate finite of unknown size', '.smallPrint.italic'), 
+						H3.span('Leave size blank to indicate finite of unknown size', '.smallPrint.italic'),
 						D.getIcon('finiteObject', 'edit', e => this.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Finite object', D.default.button.tiny));
 		elements.map(elt => elt && D.toolbar.help.appendChild(elt));
 		this.sizeElt = document.getElementById('finite-new-size');
@@ -10978,7 +10986,7 @@ class DiagramMorphism extends Morphism
 		const off = this.getNameOffset();
 		if (isNaN(off.x) || isNaN(off.y))
 			throw 'bad name offset';
-		const coords = this.bezier ? 
+		const coords = this.bezier ?
 				`M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`
 			:
 				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
@@ -13414,8 +13422,8 @@ class Diagram extends Functor
 			const start = Date.now();
 			this.savePng(e, e =>
 			{
-				const btn = document.getElementById('diagramUploadBtn');
-				if (e && btn)	// start button animation
+				const btn = e.target.parentNode.querySelector('animateTransform');
+				if (btn)	// start button animation
 				{
 					btn.setAttribute('repeatCount', 'indefinite');
 					btn.beginElement();
@@ -13429,9 +13437,9 @@ class Diagram extends Functor
 						return;
 					}
 					R.default.debug && console.log('uploaded', this.name);
-					const info = R.GetDiagramInfo(this);
+					const info = R.GetDiagramInfo(this.name);
 					info.cloudTimestamp = info.timestamp;
-					R.catalog.set(info);
+					R.catalog.set(this.name, info);
 					const delta = Date.now() - start;
 					if (e)
 					{
