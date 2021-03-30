@@ -268,21 +268,6 @@ a:hover, .offcanvas a:focus
 	background-color:	#777a;
 }
 
-/*
-tr.sidenavRow
-{
-	padding: 2px 2px 2px 2px;
-	background-color:	inherit;
-	cursor:				pointer;
-}
-
-tr.sidenavRow:hover
-{
-	background-color:	#ddd;
-	color: 				#000;
-}
-*/
-
 p
 {
 	margin:	2px;
@@ -292,7 +277,6 @@ p
 {
 	background-color:	#f77;
 	color:				#fff;
-	margin:				4px;
 }
 
 .w10
@@ -382,14 +366,6 @@ p
 	background-color:	#777a;
 }
 
-/*
-.navbar-text
-{
-	position:		relative;
-	top:			10%;
-}
-*/
-
 .navbar-tools
 {
 	padding:			0px;
@@ -401,7 +377,7 @@ p
 	user-select:	none;
 }
 
-.toolbar
+#toolbar
 {
 	background-color:	#eee;
 	border-width: 		0px;
@@ -416,6 +392,12 @@ p
 	text-align:			left;
 	transition:			opacity 1s, height 0s;
 	z-index:			1;
+}
+
+#toolbar-error
+{
+	margin:		4px;
+	padding:	4px;
 }
 
 .hidden
