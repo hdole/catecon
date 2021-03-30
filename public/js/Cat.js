@@ -64,6 +64,18 @@
 {
 'use strict';
 
+	const baseOldNew = new Map();
+	const baseNewOld = new Map();
+
+	function setNames(old, nu)
+	{
+		if (!baseOldNew.has(old))
+		{
+			baseOldNew.set(old, nu);
+			baseNewOld.set(nu, old);
+		}
+	}
+
 var sjcl;
 
 const isGUI = typeof window === 'object';
@@ -324,7 +336,7 @@ class U
 		}
 		return ret;
 	}
-	static InitializeData(diagram, obj, data)	// hom elements have to be converted from objects to their objects
+	static InitializeData(diagram, obj, data)	// hom elements have to be converted from strings to their objects
 	{
 		let ret = null;
 		switch(obj.constructor.name)
@@ -337,6 +349,7 @@ class U
 				break;
 			case 'HomObject':
 				ret = diagram.getElement(data);
+				ret.incrRefcnt();
 				break;
 			default:
 				ret = data;
@@ -1008,25 +1021,6 @@ class R
 		refs.add(name);
 		info && info.references.map(r => R.GetReferences(r, refs));
 		return refs;
-	}
-	static GetDiagram(name, fn)		// only does local loading
-	{
-		let dgrm = R.$CAT.getElement(name);	// already loaded?
-		if (!dgrm)
-		{
-			if (R.CanLoad(name))
-			{
-				dgrm = R.ReadLocal(name);
-				fn(dgrm);
-				return true;
-			}
-		}
-		else
-		{
-			fn && fn(dgrm);
-			return true;
-		}
-		return false;
 	}
 	static CanLoad(name)
 	{
@@ -2004,14 +1998,20 @@ class Toolbar
 	}
 	showSection(type, section)
 	{
-//		if (section === 'new')
-//			D.tool.push('create');
-//		else if (D.getTool() === 'create')
-//			D.tool.pop();
 		D.setActiveIcon(D.toolbar.help.querySelector(`#${type}-${section}-icon`));
 		this.sections.map(s => D.toolbar.help.querySelector(`#${type}-${s}`).classList.add('hidden'));
 		const s = D.toolbar.help.querySelector(`#${type}-${section}`);
 		s && s.classList.remove('hidden');
+	}
+	clearError()
+	{
+		this.error.classList.add('hidden');
+		this.error.innerHTML = '';
+	}
+	setError(x)
+	{
+		this.error.classList.remove('hidden');
+		this.error.innerHTML = 'Error ' + U.GetError(x);
 	}
 }
 
@@ -2072,13 +2072,13 @@ class ElementTool
 		help.appendChild(H3.h4(this.type));
 		help.appendChild(H3.div('##' + this.headerId));
 		this.addNewSection();
-		help.appendChild(	H3.div(`##${this.type}-search.w100.hidden`,
-							H3.hr(),
-							H3.h5('Search'),
-							H3.br(),
-							this.getSearchBar()));
 		const matchTable = H3.table({id:`${this.type}-matching-table.matching-table`});
-		help.appendChild(H3.div(`##${this.type}-search-results.tool-search-results`, matchTable));
+		help.appendChild(	H3.div(`##${this.type}-search.w100.hidden`,
+									H3.hr(),
+									H3.h5('Search'),
+									H3.br(),
+									this.getSearchBar(),
+									H3.div(`##${this.type}-search-results.tool-search-results`, matchTable)));
 		this.resetFilter();
 		D.toolbar.showSection(this.type, 'search');
 		this.setSearchBar();
@@ -2139,6 +2139,7 @@ class ElementTool
 	}
 	clearSearch()
 	{
+		D.toolbar.clearError();
 		const tbl = document.getElementById(`${this.type}-matching-table.matching-table`);
 		D.RemoveChildren(tbl);
 	}
@@ -2171,7 +2172,6 @@ class TextTool extends ElementTool
 		rows.push(H3.tr(H3.td(H3.span('.smallPrint.italic', 'Enter new text below or click directly on the diagram'), H3.br(), this.descriptionElt, D.getIcon(action.name, 'edit', action, this.headline))));
 		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
-		elts.push(this.error = H3.span('##new-error.error'));
 		D.toolbar.help.appendChild(H3.div(elts, `##${this.type}-new.hidden`));
 	}
 	getRows(tbl, texts)
@@ -2234,7 +2234,7 @@ class TextTool extends ElementTool
 		}
 		catch(x)
 		{
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 	doit(e, diagram, args, save = true)
@@ -2255,8 +2255,7 @@ class TextTool extends ElementTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 }
@@ -2279,7 +2278,7 @@ class BpdTool extends ElementTool	// basename, proper name, description
 	{
 		const action = e => this.create(e);
 		const rows = [];
-		this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name'});
+		this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name', onkeyup:e => D.inputBasenameSearch(e, action)});
 		rows.push(H3.tr(H3.td(this.basenameElt)));
 		this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name'});
 		rows.push(H3.tr(H3.td(this.properNameElt)));
@@ -2288,7 +2287,6 @@ class BpdTool extends ElementTool	// basename, proper name, description
 		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
 		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
-		elts.push(this.error = H3.span('##new-error.error'));
 		D.toolbar.help.appendChild(H3.div(elts, `##${this.type}-new.hidden`));
 	}
 	getRows(tbl, elements)
@@ -2360,8 +2358,7 @@ class ObjectTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 	doit(e, diagram, args, save = true)
@@ -2384,8 +2381,7 @@ class ObjectTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 	getButtons(elt)
@@ -2469,8 +2465,7 @@ class MorphismTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 			return null;
 		}
 	}
@@ -2509,8 +2504,7 @@ class MorphismTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 	getButtons(elt)
@@ -2601,7 +2595,7 @@ class DiagramTool extends BpdTool
 						}
 						catch(x)
 						{
-							D.toolbar.error.innerHTML = U.GetError(x);
+							D.toolbar.setError(x);
 						}
 					});
 				}
@@ -2701,13 +2695,11 @@ class DiagramTool extends BpdTool
 		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
 		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
-		elts.push(this.error = H3.span('##new-error.error'));
 		D.toolbar.help.appendChild(H3.div(elts, `##${this.type}-new.hidden`));
 	}
 	getMatchingElements()
 	{
 		const diagrams = [];
-//		R.Diagrams.forEach((info, name) => info.user !== 'sys' && name.includes(this.filter) &&
 		R.catalog.forEach((info, name) => info.user !== 'sys' && name.includes(this.filter) &&
 			info.basename !== info.user &&
 			((this.searchArgs.userOnly && info.user === R.user.name) || !this.searchArgs.userOnly) &&
@@ -2760,8 +2752,7 @@ class DiagramTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 	doit(e, diagram, args, save = true)
@@ -2779,8 +2770,7 @@ class DiagramTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 	getRows(tbl, elements)
@@ -2866,8 +2856,7 @@ class HomsetTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 			return null;
 		}
 	}
@@ -2892,8 +2881,7 @@ class HomsetTool extends BpdTool
 		}
 		catch(x)
 		{
-			this.error.style.padding = '4px';
-			this.error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.setError(x);
 		}
 	}
 }
@@ -3074,7 +3062,6 @@ class D
 			return;
 		D.CancelAutosave();
 		const timestamp = diagram.timestamp;
-//		diagram.timestamp = timestamp;
 		D.autosaveTimer = setTimeout(e =>
 		{
 			if (timestamp === diagram.timestamp)
@@ -3943,8 +3930,12 @@ class D
 	static OnEnter(e, fn, that = null)
 	{
 		if (e.key === 'Enter')
+		{
 			that ? fn.call(that, e) : fn(e);
+			return true;
+		}
 		e.stopPropagation();
+		return false;
 	}
 	static Width()
 	{
@@ -4200,12 +4191,6 @@ class D
 		nuArgs.id = U.SafeId(`img-el_${name}`);
 		if (!nuArgs.src && R.cloud)
 			nuArgs.src = R.getDiagramURL(name + '.png');
-//		if (!('width' in nuArgs))
-//			nuArgs.width = 200;
-//			nuArgs.width = D.default.diagram.imageWidth + 'px';
-//		if (!('height' in nuArgs))
-//			nuArgs.height = 150;
-//			nuArgs.height = D.default.diagram.imageHeight + 'px';
 		if (!('alt' in nuArgs))
 			nuArgs.alt = 'Image not available';
 		return H3.img('.imageBackground', nuArgs);
@@ -4582,6 +4567,13 @@ class D
 			D.setActiveIcon(icon, false);
 		else
 			D.setUnactiveIcon(icon);
+	}
+	static inputBasenameSearch(e, action)
+	{
+		if (D.OnEnter(e, action))
+			return;
+		const elt = R.diagram.getElement(e.target.value);
+		elt ? e.target.classList.add('error') : e.target.classList.remove('error');
 	}
 }
 Object.defineProperties(D,
@@ -6129,7 +6121,7 @@ class Element
 		const basename = args.basename;
 		if (!basename || basename === '')
 			throw 'invalid base name';
-		if (name === '')
+		if (!(this instanceof Diagram) && !(this instanceof Category))
 			name = Element.Codename(diagram, {basename});
 		if ('category' in args)
 			Object.defineProperty(this, 'category', {value: R.GetCategory(args.category),	writable: false});
@@ -6339,8 +6331,19 @@ class Element
 	basic()							{ return 'base' in this ? this.base : this; }
 	getBase()						{ return this; }
 	basenameIncludes(val)			{ return this.basename.includes(val); }
+	refName(diagram, old = false)
+	{
+		if (old)
+		{
+			if (baseNewOld.has(this.name))
+				return baseNewOld.get(this.name);
+			return this.name;
+		}
+		else
+			return this.diagram.name === diagram.name ? this.basename : this.name;
+	}
 	static Basename(diagram, args)	{ return args.basename; }
-	static Codename(diagram, args)	{ return diagram ? `${diagram.name}/${args.basename}` : args.basename; }
+	static Codename(diagram, args)	{ return `${diagram ? diagram.name : 'sys'}/${args.basename}`; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
 	static SafeName(name)			{ return U.SafeId(`el_${name}`); }
 }
@@ -7179,7 +7182,10 @@ class ProductObject extends MultiObject
 	{
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
-		return `${c}Po{${args.objects.map(o => typeof o === 'string' ? o : o.name).join(',')}}oP${c}`;
+		const oldBasename = `${c}Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oP${c}`;
+		const basename = `${c}Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram)).join(',')}}oP${c}`;
+if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -7292,7 +7298,9 @@ class PullbackObject extends ProductObject
 	}
 	static Basename(diagram, args)
 	{
-		return `Pb{${args.morphisms.map(m => m.name).join(',')}}bP`;
+const oldBasename = `Pb{${args.morphisms.map(m => m.refName(diagram, true)).join(',')}}bP`;
+		const basename = `Pb{${args.morphisms.map(m => m.refName(diagram)).join(',')}}bP`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 	}
 	static Codename(diagram, args)
 	{
@@ -7355,7 +7363,10 @@ class HomObject extends MultiObject
 	}
 	static Basename(diagram, args)
 	{
-		return `Ho{${args.objects.map(o => o.name).join(',')}}oH`;
+		const oldBasename = `Ho{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oH`;
+		const basename = `Ho{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram)).join(',')}}oH`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -7531,12 +7542,10 @@ class DiagramText extends Element
 		const procText = (txt, i) =>
 		{
 			if (txt === '')
-//				return '<tspan>&ZeroWidthSpace;</tspan>';
 				return wrapTspan('&ZeroWidthSpace;', i);
 			const tx = txt.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 			return wrapTspan(tx, i);
 		};
-//		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => `<tspan text-anchor="left" x="0"${i > 0 ? ' dy='+this.lineDeltaY() : ''}>${t === '' ? '&ZeroWidthSpace;' : t}</tspan>`).join('') :
 		return this.description.includes('\n') ? this.description.split('\n').map((t, i) => procText(t, i)).join('') : this.description;
 	}
 	ssStyle()
@@ -7725,7 +7734,10 @@ class TensorObject extends MultiObject
 	}
 	static Basename(diagram, args)
 	{
-		return `Po{${args.objects.map(o => o.name).join(',')}}oP`;
+		const basename = `Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram)).join(',')}}oP`;
+		const oldBasename = `Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oP`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -8021,11 +8033,6 @@ class Assertion extends Element
 	}
 	showSelected(state = true)
 	{
-		if (!this.svg)
-		{
-			console.error('assertion svg missing');
-			return;
-		}
 		this.svg.classList[state ? 'add' : 'remove']('selected');
 		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
 	}
@@ -8251,9 +8258,8 @@ class NameAction extends Action
 		}
 		catch(x)
 		{
-			const error = document.getElementById('named-element-new-error');
-			error.style.padding = '4px';
-			error.innerHTML = 'Error: ' + U.GetError(x);
+			D.toolbar.error.classList.add('error');
+			D.toolbar.error.innerHTML = 'Error ' + U.GetError(x);
 		}
 	}
 	doit(e, diagram, args)
@@ -8290,13 +8296,13 @@ class NameAction extends Action
 	{
 		const from = ary[0];
 		D.RemoveChildren(D.toolbar.help);
+		const action = e => this.create(e);
 		const elements = [
 			H3.h5('Create Named Element'),
-			H3.table(H3.tr(H3.td(H3.input('##named-element-new-basename', {placeholder:'Base name'}))),
+			H3.table(H3.tr(H3.td(H3.input('##named-element-new-basename', {placeholder:'Base name', onkeyup:e => D.inputBasenameSearch(e, action)}))),
 					H3.tr(H3.td(H3.input('##named-element-new-properName', {placeholder:'Proper name'}))),
 					H3.tr(H3.td(H3.input('##named-element-new-description.in100', {type:'text', placeholder:'Description'})))),
-			D.getIcon('namedElement', 'edit', e => this.create(e), 'Create named element'),
-			H3.span('##named-element-new-error.error')];
+			D.getIcon('namedElement', 'edit', e => this.create(e), 'Create named element')];
 		elements.map(elt => D.toolbar.help.appendChild(elt));
 	}
 	create(e)
@@ -10446,7 +10452,19 @@ class Morphism extends Element
 	}
 	hasMorphism(mor, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
 	{
-		return this.isEquivalent(mor);
+		if (this.isEquivalent(mor))
+			return true;
+		if ('data' in this)
+		{
+			const values = [...this.data.values()];
+			for (let i=0; i<values.length; ++i)
+			{
+				const val = values[i];
+				if (val instanceof Morphism && val.hasMorphism(mor))
+					return true;
+			}
+		}
+		return false;
 	}
 	getGraph(data = {position:0})
 	{
@@ -10580,12 +10598,23 @@ class Identity extends Morphism
 		const domain = args.domain;
 		const codomain = 'codomain' in args ? args.codomain : null;
 		let basename = '';
+		let oldBasename = '';
 		if (domain && codomain && domain.name !== codomain.name)
-			basename = `Id{${domain.name},${codomain.name}}dI`;
+		{
+			oldBasename = `Id{${domain.refName(diagram, true)},${codomain.refName(diagram, true)}}dI`;
+			basename = `Id{${domain.refName(diagram)},${codomain.refName(diagram)}}dI`;
+		}
 		else if (domain)
-			basename = `Id{${domain.name}}dI`;
+		{
+			oldBasename = `Id{${typeof domain === 'string' ? domain : domain.refName(diagram, true)}}dI`;
+			basename = `Id{${typeof domain === 'string' ? domain : domain.refName(diagram)}}dI`;
+		}
 		else if (codomain)
-			basename = `Id{${codomain.name}}dI`;
+		{
+			oldBasename = `Id{${typeof codomain === 'string' ? codomain : codomain.refName(diagram, true)}}dI`;
+			basename = `Id{${typeof codomain === 'string' ? codomain : codomain.refName(diagram)}}dI`;
+		}
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -11865,7 +11894,10 @@ class Composite extends MultiMorphism
 	}
 	static Basename(diagram, args)
 	{
-		return `Cm{${args.morphisms.map(m => m.name).join(',')}}mC`;
+		const oldBasename = `Cm{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}mC`;
+		const basename = `Cm{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}mC`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -11942,7 +11974,12 @@ class ProductMorphism extends MultiMorphism
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
 		if (args.morphisms[0] instanceof Morphism)
-			return `${c}Pm{${args.morphisms.map(m => m.name).join(',')}}mP${c}`;
+		{
+			const oldBasename = `${c}Pm{${args.morphisms.map(m => m.refName(diagram, true)).join(',')}}mP${c}`;
+			const basename = `${c}Pm{${args.morphisms.map(m => m.refName(diagram)).join(',')}}mP${c}`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+			return basename;
+		}
 		else
 			return `${c}Pm{${args.morphisms.join(',')}}mP${c}`;
 	}
@@ -12012,7 +12049,10 @@ class ProductAssembly extends MultiMorphism
 	{
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
-		return `${c}Pa{${args.morphisms.map(m => m.name).join(',')}}aP${c}`;
+		const oldBasename = `${c}Pa{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}aP${c}`;
+		const basename = `${c}Pa{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}aP${c}`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -12181,7 +12221,25 @@ class FactorMorphism extends Morphism
 		const cofactors = 'cofactors' in args ? args.cofactors : null;
 		const c = this.dual ? 'C' : '';
 		const obj = diagram.getElement(dual ? args.codomain : args.domain);
-		let basename = `${c}Fa{${obj.name},`;
+
+		let oldBasename = `${c}Fa{${obj.refName(diagram, true)},`;
+		for (let i=0; i<factors.length; ++i)
+		{
+			const indices = factors[i];
+			const f = obj.getFactor(indices);
+			if (f.isTerminal())	// TODO dual object
+				oldBasename += this.dual ? '#0' : '#1';
+			else
+				oldBasename += f.refName(diagram, true);
+			oldBasename += `_${indices.toString()}`;
+			if (i !== factors.length -1)
+				oldBasename += ',';
+		}
+		if (cofactors)
+			oldBasename += `__${cofactors.toString()}`;
+		oldBasename += `}aF${c}`;
+
+		let basename = `${c}Fa{${obj.refName(diagram)},`;
 		for (let i=0; i<factors.length; ++i)
 		{
 			const indices = factors[i];
@@ -12197,6 +12255,9 @@ class FactorMorphism extends Morphism
 		if (cofactors)
 			basename += `__${cofactors.toString()}`;
 		basename += `}aF${c}`;
+
+
+if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -12235,6 +12296,10 @@ class FactorMorphism extends Morphism
 			return factors.length > 1 ? diagram.get('ProductObject', {objects:factors.map(f =>
 				f === -1 ? diagram.getTerminal(dual) : domain.getFactor(f)
 			), dual}) : (factors[0] === -1 ? diagram.getTerminal(dual) : domain.getFactor(factors[0]));
+	}
+	static Codename(diagram, args)
+	{
+		return Element.Codename(diagram, {basename:FactorMorphism.Basename(diagram, args)});
 	}
 	static ProperName(diagram, domain, factors, dual, cofactors = null)
 	{
@@ -12447,7 +12512,10 @@ class LambdaMorphism extends Morphism
 	static Basename(diagram, args)
 	{
 		const preCur = diagram.codomain.getElement(args.preCurry);
-		return `Lm{${preCur.name}:${U.a2s(args.domFactors)}:${U.a2s(args.homFactors)}}mL`;
+		const oldBasename = `Lm{${preCur.refName(diagram, true)}:${U.a2s(args.domFactors)}:${U.a2s(args.homFactors)}}mL`;
+		const basename = `Lm{${preCur.refName(diagram)}:${U.a2s(args.domFactors)}:${U.a2s(args.homFactors)}}mL`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -12559,7 +12627,10 @@ class HomMorphism extends MultiMorphism
 	}
 	static Basename(diagram, args)
 	{
-		return `Ho{${args.morphisms.map(m => m.name).join(',')}}oH`;
+		const oldBasename = `Ho{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}oH`;
+		const basename = `Ho{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}oH`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -12636,7 +12707,10 @@ class Evaluation extends Morphism
 	}
 	static Basename(diagram, args)
 	{
-		return `Ev{${args.domain.name}}vE`;
+		const oldBasename = `Ev{${typeof args.domain === 'string' ? args.domain : args.domain.refName(diagram, true)}}vE`;
+		const basename = `Ev{${typeof args.domain === 'string' ? args.domain : args.domain.refName(diagram)}}vE`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -12689,7 +12763,10 @@ class Distribute extends Morphism
 	}
 	static Basename(diagram, args)
 	{
-		return `Di{${args.domain.name}}-${args.side}iD`;
+		const oldBasename = `Di{${args.domain.refName(diagram, true)}}-${args.side}iD`;
+		const basename = `Di{${args.domain.refName(diagram)}}-${args.side}iD`;
+oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -12762,7 +12839,10 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 	static Basename(diagram, args)
 	{
-		return `De{${args.domain.name}}eD`;
+		const oldBasename = `De{${args.domain.refName(diagram, true)}}eD`;
+		const basename = `De{${args.domain.refName(diagram)}}eD`;
+setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+		return basename;
 	}
 	static Codename(diagram, args)
 	{
@@ -13612,7 +13692,13 @@ class Diagram extends Functor
 			return this.elements.get(name);
 		if (this.codomain.elements.has(name))
 			return this.codomain.getElement(name);
-		return this.domain.getElement(name);
+//		return this.domain.getElement(name);
+		//		TODO remove
+		elt = this.domain.getElement(name);
+		if (elt)
+			return elt;
+		if (baseOldNew.has(name))
+			return this.getElement(baseOldNew.get(name));
 	}
 	getElements(ary)
 	{
@@ -14637,6 +14723,7 @@ addBall(m);
 					else if (r instanceof Morphism && 'data' in r)
 						elt = r.data[0];
 					data.set(elt, homMorph);
+					homMorph.incrRefcnt();
 				});
 				const codomain = diagram.coprod(...homers);
 				const dataMorph = new Morphism(diagram, {basename:diagram.getAnon('select'), domain:domain.to, codomain, data});
