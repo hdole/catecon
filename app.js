@@ -107,7 +107,6 @@ function reqlog(req, ...args)
 
 function makeDbconSync(mysqlArgs)	// allows synchronous calls
 {
-	log('Connecting to mysql server');
 	dbcon = mysql.createConnection(mysqlArgs);
 	global.dbcon = dbcon;
 	dbconSync =
@@ -367,6 +366,7 @@ async function serve()
 							process.exit();
 						}
 						Cat.R.Initialize();
+						log('server started');
 					});
 				});
 			}
@@ -380,6 +380,7 @@ async function serve()
 						process.exit();
 					}
 					Cat.R.Initialize(_ => updateSQLDiagramsByCatalog());
+					log('server started');
 				});
 			}
 		});
