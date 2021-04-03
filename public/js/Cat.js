@@ -606,10 +606,7 @@ class R
 				}
 				return false;
 			};
-			D.topSVG.onmouseup = e =>
-			{
-				D.topSVG.removeEventListener('mousemove', sessionMove);
-			};
+			D.topSVG.onmouseup = e => D.topSVG.removeEventListener('mousemove', sessionMove);
 			D.topSVG.onmousedown = e =>
 			{
 				if (!R.diagram)
@@ -1772,7 +1769,6 @@ class Navbar
 		if (D.session.mode === 'diagram')
 		{
 			left.push(D.getIcon('loginPanelToggle', 'login', _ => Cat.D.loginPanel.toggle(), 'Login', sz));
-			left.push(D.getIcon('cateapsis', 'cateapsis', e => Cat.R.diagram && Cat.D.keyboardDown.Home(e), 'Home', sz));
 			left.push(D.getIcon('helpPanelToggle', 'help', _ => Cat.D.helpPanel.toggle(), 'Help', sz));
 			left.push(D.getIcon('settingsPanelToggle', 'settings', _ => Cat.D.settingsPanel.toggle(), 'Settings', sz));
 			left.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), 'Console', sz));
@@ -1866,6 +1862,7 @@ class Toolbar
 	{
 		this.element.classList.add('hidden');
 		this.closed = true;
+		R.diagram && R.diagram.svgRoot.querySelectorAll('.emphasis').forEach(elt => elt.classList.remove('emphasis'));
 	}
 	reveal()
 	{
@@ -1879,12 +1876,8 @@ class Toolbar
 		let xy = U.Clone(D.mouse.down);
 		if (diagram)
 			this.mouseCoords = diagram.userToDiagramCoords(xy);
-		else
-		{
-		// TODO this.mouseCoords = D.session.userToDiagramCoords(xy);
-		}
 		const element = this.element;
-		if (element.classList.contains('hidden') || (diagram && diagram.selected.length > 0))
+		if (D.editElement === null && (element.classList.contains('hidden') || (diagram && diagram.selected.length > 0)))
 			this.reveal();
 		else
 		{
@@ -1941,8 +1934,7 @@ class Toolbar
 			if (!action.hidden() && action.hasForm(diagram, diagram.selected))
 				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), action.description));
 		});
-		this.addCloseToolbarBtn(btns);
-		btns.map(btn => this.header.appendChild(btn));
+		this.header.appendChild(H3.table(H3.tr(H3.td(btns), H3.td(this.getCloseToolbarBtn(), '.right')), '.w100'));
 	}
 	showDiagramToolbar(diagram, btns)
 	{
@@ -1958,19 +1950,18 @@ class Toolbar
 		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), 'Morphism'));
 		btns.push(D.getIcon('text', 'text', e => setActive(e, 'text', ee => Cat.D.elementTool.Text.html(ee)), 'Text'));
 		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), 'Show graphs in diagram'));
-		this.addCloseToolbarBtn(btns);
-		btns.map(btn => this.header.appendChild(btn));
+		btns.push(D.getIcon('home', 'home', e => Cat.D.keyboardDown.Home(e), 'Home'));
+		this.header.appendChild(H3.table(H3.tr(H3.td(btns), H3.td(this.getCloseToolbarBtn(), '.right')), '.w100'));
 	}
 	showSessionToolbar(btns)
 	{
 		D.RemoveChildren(this.header);
 		btns.push(D.getIcon('diagram', 'diagram', _ => Cat.D.elementTool.Diagram.html(), 'Diagram'));
-		this.addCloseToolbarBtn(btns);
-		btns.map(btn => this.header.appendChild(btn));
+		this.header.appendChild(H3.table(H3.tr(H3.td(btns), H3.td(this.getCloseToolbarBtn(), '.right')), '.w100'));
 	}
-	addCloseToolbarBtn(btns)
+	getCloseToolbarBtn(btns)
 	{
-		btns.push(D.getIcon('closeToolbar', 'close', _ => Cat.D.toolbar.hide(), 'Close'));
+		return D.getIcon('closeToolbar', 'close', _ => Cat.D.toolbar.hide(), 'Close');
 	}
 	clearError()
 	{
@@ -2042,15 +2033,13 @@ class ElementTool
 			this.filter = document.getElementById(`${this.type}-search-value`).value;
 			this.search();
 		};
-		return H3.table('.center',
-					H3.tr(
-						H3.td('Filter by', '.tinyPrint.center.italic'),
-						H3.td(),
-						H3.td('Sort by', '.tinyPrint.center.italic')),
-					H3.tr(
-						H3.td(`##${this.type}-search-filter`),
-						H3.td(H3.input(`##${this.type}-search-value.in100`, {title:'Search', type:'search', placeholder:'Contains...', onkeyup, onsearch:onkeyup})),
-						H3.td(`##${this.type}-search-sorter`)));
+		return H3.table(	'##search-tools',
+							H3.tr(	H3.td('Filter by', '.tinyPrint.center.italic'),
+									H3.td(),
+									H3.td('Sort by', '.tinyPrint.center.italic')),
+							H3.tr(	H3.td(`##${this.type}-search-filter`),
+									H3.td(H3.input(`##${this.type}-search-value.in100`, {title:'Search', type:'search', placeholder:'Contains...', onkeyup, onsearch:onkeyup})),
+									H3.td(`##${this.type}-search-sorter`)));
 	}
 	setSearchBar()
 	{
@@ -2111,10 +2100,6 @@ class ElementTool
 	{}
 	getRows(tbl, elts)	// fitb
 	{}
-	getButtons(elt)		// fitb
-	{
-		return [];
-	}
 	resetFilter()
 	{
 		this.filter = '';
@@ -2168,7 +2153,7 @@ class TextTool extends ElementTool
 	{
 		const action = e => this.create(e);
 		const rows = [];
-		this.descriptionElt = H3.input('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
+		this.descriptionElt = H3.textarea('##new-description.in100', {title:'Description', placeholder:'Description'});
 		rows.push(H3.tr(H3.td(H3.span('.smallPrint.italic', 'Enter new text below or click directly on the diagram'), H3.br(), this.descriptionElt, D.getIcon(action.name, 'edit', action, this.headline))));
 		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
@@ -2291,17 +2276,7 @@ class BpdTool extends ElementTool	// basename, proper name, description
 	}
 	getRows(tbl, elements)
 	{
-		elements.map(elt =>
-		{
-			const html = elt.getHtmlRep();
-			html.classList.add('element');
-			const tools = H3.span('.tool-entry-actions');
-			html.appendChild(tools);
-			const buttons = this.getButtons(elt);
-			buttons.map(btn => tools.appendChild(btn));
-			const row = H3.tr(H3.td(html), {onmouseenter: e => R.diagram.emphasis(elt, true), onmouseleave: e => R.diagram.emphasis(elt, false)});
-			tbl.appendChild(row);
-		});
+		elements.map(elt => tbl.appendChild(elt.getHtmlRow()));
 	}
 	reset()
 	{
@@ -2383,13 +2358,6 @@ class ObjectTool extends BpdTool
 		{
 			D.toolbar.setError(x);
 		}
-	}
-	getButtons(elt)
-	{
-		const buttons = [];
-		if (R.diagram.isEditable())
-			buttons.push(D.getIcon('place', 'place', e => Cat.R.diagram.placeObject(elt.name, D.mouse.diagramPosition(R.diagram)), 'Place element', D.default.button.small));
-		return buttons;
 	}
 }
 
@@ -2506,13 +2474,6 @@ class MorphismTool extends BpdTool
 		{
 			D.toolbar.setError(x);
 		}
-	}
-	getButtons(elt)
-	{
-		const buttons = [];
-		if (R.diagram.isEditable())
-			buttons.push(D.getIcon('place', 'place', e => this.doit(e, R.diagram, {to:elt.name}), 'Place morphism', D.default.button.small));
-		return buttons;
 	}
 }
 
@@ -3072,34 +3033,6 @@ class D
 			}
 		}, D.default.autosaveTimer);
 	}
-	static Mousedown(e)
-	{
-		D.mouse.saveClientPosition(e);
-		if (e.button === 0)
-		{
-			D.mouseIsDown = true;
-			D.mouse.down = new D2(e.clientX, e.clientY - D.topSVG.parentElement.offsetTop);	// client coords
-			const diagram = R.diagram;
-			if (diagram)
-			{
-				const pnt = diagram.mouseDiagramPosition(e);
-				if (D.mouseover)
-				{
-					if (!diagram.selected.includes(D.mouseover) && !D.shiftKey)
-						diagram.deselectAll(e);
-				}
-				else
-					diagram.deselectAll(e);
-				D.dragStart = D.mouse.clientPosition();
-				if (D.getTool() === 'pan' || !D.drag)
-					D.drag = true;
-			}
-			else
-				D.toolbar.show(e, true);
-		}
-		else if (e.button === 1)
-			D.keyboardDown.Space(e);
-	}
 	static GetAreaSelectCoords(e)
 	{
 		const xy = {x:e.clientX, y:e.clientY};
@@ -3127,6 +3060,36 @@ class D
 	{
 		const svg = document.getElementById('selectRect');
 		svg && svg.remove();
+	}
+	static Mousedown(e)
+	{
+		D.mouse.saveClientPosition(e);
+		if (e.target.id === 'foreign-text')
+			return true;
+		if (e.button === 0)
+		{
+			D.mouseIsDown = true;
+			D.mouse.down = new D2(e.clientX, e.clientY - D.topSVG.parentElement.offsetTop);	// client coords
+			const diagram = R.diagram;
+			if (diagram)
+			{
+				const pnt = diagram.mouseDiagramPosition(e);
+				if (D.mouseover)
+				{
+					if (!diagram.selected.includes(D.mouseover) && !D.shiftKey)
+						diagram.deselectAll(e);
+				}
+				else
+					diagram.deselectAll(e);
+				D.dragStart = D.mouse.clientPosition();
+				if (D.getTool() === 'pan' || !D.drag)
+					D.drag = true;
+			}
+			else
+				D.toolbar.show(e, true);
+		}
+		else if (e.button === 1)
+			D.startMousePan(e);
 	}
 	static Mousemove(e)
 	{
@@ -3221,6 +3184,11 @@ class D
 					else
 						diagram.updateFusible(e);
 					D.toolbar.hide();
+				}
+				else if (D.getTool() === 'pan')
+				{
+					D.panHandler(e);
+					D.DeleteSelectRectangle();
 				}
 				else if (D.mouseIsDown && !D.drag)
 					D.DrawSelectRect(e);
@@ -3339,7 +3307,7 @@ class D
 			D.drag = false;
 		}
 		else if (e.button === 1)
-			D.keyboardUp.Space(e);
+			D.stopMousePan();
 	}
 	static Drop(e)	// from panel dragging
 	{
@@ -3512,6 +3480,7 @@ class D
 				case 'detach':
 				case 'new':
 					isGUI && args.diagram.updateBackground();
+					!(args.element instanceof DiagramMorphism) && args.element.loadEquivalences();
 					D.Autosave(args.diagram);
 					break;
 				case 'update':
@@ -3672,18 +3641,18 @@ class D
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
 		D.topSVG.addEventListener('drop', D.Drop, true);
-		document.addEventListener('mousemove', function(e)
+		document.addEventListener('mousemove', e =>
 		{
 			if (D.statusbar.element.style.display === 'block' && D2.Dist(D.statusbar.xy, {x:e.clientX, y:e.clientY}) > D.default.statusbar.hideDistance)
 				D.statusbar.hide();
 		});
 		document.ondragover = e => e.preventDefault();
 		document.addEventListener('drop', e => e.preventDefault(), true);
-		document.body.onkeydown = e =>
+		document.addEventListener('keydown', e =>
 		{
 			const name = D.getKeyName(e);
 			name in D.keyboardDown && D.keyboardDown[name](e);
-		};
+		});
 		document.body.onkeyup = e =>
 		{
 			D.setCursor();
@@ -3934,8 +3903,6 @@ class D
 			that ? fn.call(that, e) : fn(e);
 			return true;
 		}
-		e.stopPropagation();
-		return false;
 	}
 	static Width()
 	{
@@ -3984,13 +3951,6 @@ class D
 		const diagram = R.diagram;
 		const a = diagram.codomain.getElement(name);
 		a && a.hasForm(diagram, ary) && a.action(e, diagram);
-	}
-	static HtmlRow(m, handler)
-	{
-		return H3.tr(	H3.td(m.properName),
-						H3.td(m.domain.properName),
-						H3.td('&rarr;'),
-						H3.td(m.codomain.properName), {title:U.HtmlSafe(U.Formal(m.description)), 'data-name':m.name}, handler);
 	}
 	static Center(diagram)
 	{
@@ -4458,21 +4418,24 @@ class D
 			return;
 		let offset;
 		const scale = 1 / D.session.viewport.scale;
-		switch(dir)
-		{
-			case 'up':
-				offset = new D2(0, D.screenPan);
-				break;
-			case 'down':
-				offset = new D2(0, -D.screenPan);
-				break;
-			case 'left':
-				offset = new D2(D.screenPan, 0);
-				break;
-			case 'right':
-				offset = new D2(-D.screenPan, 0);
-				break;
-		}
+		if (typeof dir === 'string')
+			switch(dir)
+			{
+				case 'up':
+					offset = new D2(0, D.screenPan);
+					break;
+				case 'down':
+					offset = new D2(0, -D.screenPan);
+					break;
+				case 'left':
+					offset = new D2(D.screenPan, 0);
+					break;
+				case 'right':
+					offset = new D2(-D.screenPan, 0);
+					break;
+			}
+		else
+			offset = new D2(e.movementX, e.movementY);
 		offset = offset.scale(scale);
 		if (D.default.fullscreen)
 		{
@@ -4534,10 +4497,18 @@ class D
 	{
 		return D.tool[D.tool.length -1];
 	}
+	static popTool()
+	{
+		D.tool.pop();
+	}
+	static pushTool(tool)
+	{
+		D.tool.push(tool);
+	}
 	static setTool(tool)
 	{
 		D.tool.length = 0;
-		D.tool.push(tool);
+		D.pushTool(tool);
 	}
 	static findAncestor(tag, elt)
 	{
@@ -4574,6 +4545,19 @@ class D
 			return;
 		const elt = R.diagram.getElement(e.target.value);
 		elt ? e.target.classList.add('error') : e.target.classList.remove('error');
+	}
+	static startMousePan(e)
+	{
+		R.diagram.svgTranslate.classList.remove('trans025s');
+		D.getTool() !== 'pan' && D.pushTool('pan');
+		D.drag = false;
+		D.setCursor();
+		e.preventDefault();
+	}
+	static stopMousePan()
+	{
+		D.getTool() === 'pan' && D.popTool();
+		R.diagram.svgTranslate.classList.add('trans025s');
 	}
 }
 Object.defineProperties(D,
@@ -4794,6 +4778,10 @@ Object.defineProperties(D,
 					before && svg.parentNode.insertBefore(svg, before);
 				}
 			},
+			Space(e)
+			{
+				D.startMousePan(e);
+			},
 			ShiftLeft(e) { D.shiftKey = true; },
 			ShiftRight(e) { D.shiftKey = true; },
 		},
@@ -4818,6 +4806,10 @@ Object.defineProperties(D,
 			ShiftRight(e)
 			{
 				D.shiftKey = false;
+			},
+			Space(e)
+			{
+				D.stopMousePan();
 			},
 		},
 		writable:	true,
@@ -6342,6 +6334,27 @@ class Element
 		else
 			return this.diagram.name === diagram.name ? this.basename : this.name;
 	}
+	getButtons()
+	{
+		const buttons = [];
+		return buttons;
+	}
+	getHtmlRow()
+	{
+		const html = this.getHtmlRep();
+		html.classList.add('element');
+		const tools = H3.span('.tool-entry-actions');
+		html.appendChild(tools);
+		const buttons = this.getButtons();
+		buttons.map(btn => tools.appendChild(btn));
+		const actions =
+		{
+			onclick:		e => Cat.R.diagram.placeObject(this.name, D.mouse.diagramPosition(R.diagram)),
+			onmouseenter:	e => R.diagram.emphasis(this, true),
+			onmouseleave:	e => R.diagram.emphasis(this, false),
+		};
+		return H3.tr(H3.td(html, '.clickable'), actions);
+	}
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return `${diagram ? diagram.name : 'sys'}/${args.basename}`; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
@@ -7659,20 +7672,21 @@ class DiagramText extends Element
 		D.closeActiveTextEdit();
 		const bbox = this.svgText.getBBox();
 		this.svgText.classList.add('hidden');
-		const span = H3.span('.selected', this.description,
+		const span = H3.span('##foreign-text.selected', this.description,
 			{
 				style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap;`,
 				contentEditable:true,
 			});
 		D.editElement = span;		// remember which element is being editted
+		span.addEventListener('mousedown', e => e.stopPropagation());
 		const placement = this.diagram.getPlacement();
 		const scale = 1 / placement.scale;
 		const foreign = H3.foreignObject(H3.div(span, {xmlns:'http://www.w3.org/1999/xhtml'}), {width:scale * bbox.width + 'px', height:scale * bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
-			const bbox = span.getBoundingClientRect();
-			foreign.setAttribute('width', scale * bbox.width + 'px');
-			foreign.setAttribute('height', scale * bbox.height + 'px');
+			const nubox = foreign.getBoundingClientRect();
+			foreign.setAttribute('width', scale * nubox.width + 'px');
+			foreign.setAttribute('height', scale * nubox.height + 'px');
 			if (e.key === 'Escape')
 				D.closeActiveTextEdit();
 			e.stopPropagation();
@@ -8886,7 +8900,11 @@ class HomObjectAction extends Action
 			{
 				const obj = this.dual ? m.codomain : m.domain;
 				if (m instanceof Morphism && to.isEquivalent(obj) && to.properName === obj.properName && (m.diagram.name === diagram.name || diagram.allReferences.has(m.diagram.name)))
-					rows.push(D.HtmlRow(m, {onclick:e => Cat.R.Actions[this.basename].action(e, Cat.R.diagram, [from.name, m.name])}));
+				{
+					const row = m.getHtmlRow();
+					row.onclick = e => Cat.R.Actions[this.basename].action(e, Cat.R.diagram, [from.name, m.name]);		// replace std action
+					rows.push(row);
+				}
 			});
 			const help = D.toolbar.help;
 			D.RemoveChildren(help);
@@ -8947,9 +8965,14 @@ class HomsetAction extends Action
 		this.newMorphism.domainElt.value = domain.name;
 		this.newMorphism.codomainElt.value = codomain.name;
 		const homset = diagram.codomain.getHomset(domain, codomain);
-		const rows = homset.map(m => D.HtmlRow(m, {onclick:function(){Cat.R.Actions.homset.action(event, Cat.R.diagram, m.name, ary[0].name, ary[1].name); }}));
+		const rows = homset.map(m =>
+		{
+			const row = m.getHtmlRow();
+			row.onclick = e => this.action(e, Cat.R.diagram, m.name, ary[0].name, ary[1].name);
+			return row;
+		});
 		D.toolbar.help.appendChild(H3.h4('Place Morphism'));
-		D.toolbar.help.appendChild(H3.table(rows, {id:'help-homset-morphism-table'}));
+		D.toolbar.help.appendChild(H3.table(rows, '##help-homset-morphism-table'));
 	}
 	doit(e, diagram, morphism, domName, codName, save = true)
 	{
@@ -9640,7 +9663,7 @@ class RunAction extends Action
 		}
 		if (canMakeData)
 		{
-			const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), 'Create data morphism'), '##run-createDataBtn', {display:'none'});
+			const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), 'Add data'), '##run-createDataBtn', {display:'none'});
 			elements.push(H3.div('##run-display'), createDataBtn);
 			elements.map(elt => D.toolbar.help.appendChild(elt));
 			const btn = document.getElementById('run-createDataBtn');
@@ -10134,7 +10157,7 @@ class RecursionAction extends Action
 		const recursor = ary[0].to;
 		const form = ary[1].to;
 		recursor.setRecursor(form);
-		D.statusbar.show(e, `Data morphism ${recursor.properName} is now recursive with morphism ${form.properName}`);
+		D.statusbar.show(e, `Morphism ${recursor.properName} is now recursive with morphism ${form.properName}`);
 		R.EmitElementEvent(diagram, 'update', ary[0]);
 	}
 	hasForm(diagram, ary)
@@ -10380,15 +10403,19 @@ class Morphism extends Element
 			this.setRecursor(args.recursor);
 		this.domain.incrRefcnt();
 		this.codomain.incrRefcnt();
-		let sigs = [this.signature];
-		if ('data' in this)
-			this.data.forEach(function(d, i) { sigs.push(U.SigArray([U.Sig(i.toString()), U.Sig(d ? d.toString() : 'null')])); });
-		if ('recursor' in this && typeof this.recursor !== 'string')
-			sigs.push(this.recursor.sig);
-		if (sigs.length > 1)
-			this.signature = U.SigArray(sigs);
+		this.signature = this.getSignature();
 		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
 		this.constructor.name === 'Morphism' && R.EmitElementEvent(diagram, 'new', this);
+	}
+	getSignature()
+	{
+		let sigs = [this.getElementSignature()];
+		if ('data' in this)
+			// TODO
+			this.data.forEach(function(d, i) { sigs.push(U.SigArray([U.Sig(i.toString()), U.Sig(typeof d === 'string' ? d : d.name)])); });
+		if ('recursor' in this)
+			sigs.push(this.recursor instanceof Morphism ? this.recursor.name : this.recursor);		// just use the morphism's name
+		return U.SigArray(sigs);
 	}
 	setDomain(dom)
 	{
@@ -10459,7 +10486,9 @@ class Morphism extends Element
 			const values = [...this.data.values()];
 			for (let i=0; i<values.length; ++i)
 			{
-				const val = values[i];
+				let val = values[i];
+				if (typeof val === 'string')
+					val = this.diagram.getElement(val);
 				if (val instanceof Morphism && val.hasMorphism(mor))
 					return true;
 			}
@@ -10525,8 +10554,6 @@ class Morphism extends Element
 		}
 		else	// have to set it later
 			this.recursor = r;
-		if (typeof r !== 'string')
-			this.signature = this.getDataSignature();
 	}
 	clear()
 	{
@@ -10812,8 +10839,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 		this.signature = this.base.signature;
 		this.source.incrRefcnt();
 		if (this.constructor.name === 'NamedMorphism')
-			this.signature = this.source.sig;
-		this.loadEquivalences();
+			this.signature = this.source.signature;
 		this.constructor.name === 'NamedMorphism' && R.EmitElementEvent(diagram, 'new', this);
 	}
 	json()
@@ -11704,7 +11730,7 @@ class IndexCategory extends Category
 				}
 			}
 		});
-		this.cells.forEach(function(cell, sig)
+		this.cells.forEach((cell, sig) =>
 		{
 			cell.register();
 			const left = cell.left;
@@ -13021,16 +13047,6 @@ class Diagram extends Functor
 		D.viewports.set(this.name, viewport);
 		return viewport;
 	}
-	setViewport(args)
-	{
-		const x = Math.round(args.x);
-		const y = Math.round(args.y);
-		const scale = args.scale;
-		const visible = 'visible' in args ? args.visible : true;
-		this.setVisibility(visible);
-		this.saveViewport({x, y, scale, timestamp:Date.now()});
-		R.EmitViewEvent('diagram', this);
-	}
 	saveViewport(vp)
 	{
 		const viewport = {x:vp.x, y:vp.y, scale:vp.scale, timestamp:Date.now()};
@@ -13428,9 +13444,12 @@ class Diagram extends Functor
 			}
 			else if (e instanceof SVGPathElement)
 			{
-				const morphism = this.getElement(e.dataset.name);
-				if (!this.bezier && D2.lineBoxIntersect(morphism.start, morphism.end, box))
-					return true;
+				if ('name' in e.dataset)
+				{
+					const morphism = this.getElement(e.dataset.name);
+					if (!this.bezier && D2.lineBoxIntersect(morphism.start, morphism.end, box))
+						return true;
+				}
 			}
 			else if (D2.Overlap(box, new D2(compBox)))
 				return true;
@@ -13877,15 +13896,18 @@ class Diagram extends Functor
 	{
 		const elt = this.getElement(c);
 		D.mouseover = on ? elt : null;
-		if (elt && (elt instanceof DiagramMorphism || elt instanceof DiagramObject || elt instanceof DiagramText))
-			elt.emphasis(on);
+		if (elt)
+		{
+			if (elt instanceof DiagramMorphism || elt instanceof DiagramObject || elt instanceof DiagramText)
+				elt.emphasis(on);
+			else
+			{
+				const emphs = [...this.svgRoot.querySelectorAll(`[data-to="${elt.name}"]`)];
+				emphs.map(emph => on ? emph.classList.add('emphasis') : emph.classList.remove('emphasis'));
+			}
+		}
 		else if (this.domain.cells.has(c))
 			this.domain.cells.get(c).emphasis(on);
-		else
-		{
-			const emphs = [...this.svgRoot.querySelectorAll(`[data-to="${elt.name}"]`)];
-			emphs.map(emph => on ? emph.classList.add('emphasis') : emph.classList.remove('emphasis'));
-		}
 		if (!on && this.selected.length === 1 && 'dragAlternates' in this.selected[0])
 			this.removeDragAlternates();
 	}
@@ -14752,6 +14774,7 @@ addBall(m);
 			!(morphism instanceof Identity) && components.push(morphism);
 		}
 		D.PlaceComposite(e, diagram, diagram.comp(...components));
+		R.EmitDiagramEvent(diagram, 'makeCells');
 		return issues;
 	}
 	sortByCreationOrder(ary)
