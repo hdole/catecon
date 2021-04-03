@@ -688,7 +688,7 @@ path.emphasis
 
 .selected
 {
-	margin:		2px;
+/*	margin:		2px;		*/
 	stroke:		#9f9;
 }
 
@@ -1001,4 +1001,22 @@ table.verticalTools
 tspan
 {
 	white-space:		pre;
+}
+
+#search-tools
+{
+	margin:			8px;
+}
+
+.clickable
+{
+	cursor:				pointer;
+	transition:			0.3s
+}
+
+#new-description
+{
+	font:	12px "Fira Sans",sans-serif;
+	white-space:		pre;
+	width:	100%;
 }
