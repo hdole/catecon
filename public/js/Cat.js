@@ -6133,7 +6133,7 @@ class Element
 		});
 		if ('code' in args)
 			Object.defineProperty(this, 'code', {value:args.code,	writable:false});
-		this.signature = this.getElementSignature();
+		this.signature = this.getSignature();
 	}
 	editText(e, attribute, value)
 	{
@@ -6150,7 +6150,7 @@ class Element
 		{
 			this.name = Element.Codename(this.diagram, {basename:this.basename});
 			this.properName = this.properName === old ? this.basename : this.properName;	// update if the old proper name was its basename
-			this.signature = this.getElementSignature();
+			this.signature = this.getSignature();
 			this.diagram.updateProperName(this);	// TODO change to event processing
 			this.diagram.reconstituteElements();
 		}
@@ -6201,10 +6201,11 @@ class Element
 	{
 		return false;		// fitb
 	}
-	getElementSignature()
+	getSignature()
 	{
-		const preSig = U.Sig(this.name);
-		return 'code' in this ? U.SigArray([preSig, U.Sig(this.code)]) : preSig;
+//		const preSig = U.Sig(this.name);
+//		return 'code' in this ? U.SigArray([preSig, U.Sig(this.code)]) : preSig;
+		return U.Sig(this.name);
 	}
 	incrRefcnt()
 	{
@@ -10403,10 +10404,11 @@ class Morphism extends Element
 			this.setRecursor(args.recursor);
 		this.domain.incrRefcnt();
 		this.codomain.incrRefcnt();
-		this.signature = this.getSignature();
+//		this.signature = this.getSignature();
 		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
 		this.constructor.name === 'Morphism' && R.EmitElementEvent(diagram, 'new', this);
 	}
+	/*
 	getSignature()
 	{
 		let sigs = [this.getElementSignature()];
@@ -10417,6 +10419,7 @@ class Morphism extends Element
 			sigs.push(this.recursor instanceof Morphism ? this.recursor.name : this.recursor);		// just use the morphism's name
 		return U.SigArray(sigs);
 	}
+	*/
 	setDomain(dom)
 	{
 		if (dom === this.domain)
@@ -11778,10 +11781,14 @@ class MultiMorphism extends Morphism
 		const morphisms = diagram.getElements(nuArgs.morphisms);
 		Object.defineProperty(this, 'morphisms', {value:morphisms, writable:true}); 	// TODO back to false
 		this.morphisms.map(m => m.incrRefcnt());
+		/*
 		if (this.constructor.name !== 'Composite')
 			this.signature = U.SigArray([U.Sig(this.constructor.name), ...this.morphisms.map(m => m.signature)]);
 		else
 			this.signature = U.SigArray(this.morphisms.map(m => m.signature));
+			*/
+		if (this.constructor.name === 'Composite')
+			this.signature === U.SigArray(this.expand().map(m => m.signature));
 	}
 	help(hdr)
 	{
@@ -11844,6 +11851,12 @@ class MultiMorphism extends Morphism
 		const nuConfig = U.Clone(config);
 		nuConfig.addbase = false;
 		return super.getHtmlRep(idPrefix, nuConfig);
+	}
+	expand(expansion = [])
+	{
+		const type = this.constructor.name;
+		this.morphisms.map(m => m.class === type ? m.expand(expansion) : expansion.push(m));
+		return expansion;
 	}
 }
 
