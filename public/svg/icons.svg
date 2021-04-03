@@ -27,11 +27,6 @@
 	<symbol id="icon-assert" class="icon" viewbox="0 0 320 320">
 		<path class="svgfilNone svgstr1" d="M 230 89 A 100 100 0 1 0 260 160" marker-end="url(#arrowhead)"/>
 	</symbol>
-	<symbol id="icon-cateapsis" class="icon" viewbox="0 0 320 320">
-		<circle cx="160" cy="60" r="60" fill="url(#radgrad1)"/>
-		<path class="svgstr4" d="M40,280 40,160 110,90" marker-end="url(#arrowhead)"/>
-		<path class="svgstr4" d="M280,280 280,160 210,90" marker-end="url(#arrowhead)"/>
-	</symbol>
 	<symbol id="icon-category" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
 		<line class="arrow0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
@@ -204,6 +199,11 @@
 		<path class="arrow0" d="M100 80 L80 80 L80 240 L 100 240"/>
 		<path class="arrow0" d="M220 80 L240 80 L240 240 L 220 240"/>
 		<line class="arrow0rnd" x1="170" y1="240" x2="150" y2="260"/>
+	</symbol>
+	<symbol id="icon-home" class="icon" viewbox="0 0 320 320">
+		<circle cx="160" cy="60" r="80" fill="url(#radgrad1)"/>
+		<path class="svgstr4" d="M40,280 40,160 110,90" marker-end="url(#arrowhead)"/>
+		<path class="svgstr4" d="M280,280 280,160 210,90" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-homLeft" class="icon" viewbox="0 0 320 320">
 		<circle cx="260" cy="160" r="120" fill="url(#radgrad1)"/>
