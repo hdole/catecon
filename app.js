@@ -49,7 +49,7 @@ const Cat = require('./public/js/Cat.js');
 const jsAction = require('./public/js/javascript.js');
 
 Cat.R.default.debug = false;
-Cat.R.cloudURL = process.env.CAT_CLOUD;
+Cat.R.cloudURL = process.env.CAT_PARENT;
 
 Cat.R.URL = process.env.CAT_URL;
 Cat.R.local = process.env.CAT_LOCAL === 'true';
