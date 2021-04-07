@@ -424,7 +424,7 @@ p
 	border-color: 		red;
 	border-width: 		1px;
 	border-radius:		4px;
-	box-shadow:			4px 4px 2px 1px #bdde;
+	box-shadow:			4px 4px 2px 1px #bdd9;
 	cursor:				none;
 	display:			inline-block;
 	font-size:			18px;
@@ -688,7 +688,6 @@ path.emphasis
 
 .selected
 {
-/*	margin:		2px;		*/
 	stroke:		#9f9;
 }
 
