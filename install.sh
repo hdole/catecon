@@ -36,20 +36,28 @@ mkdir -p logs
 mkdir -p public/diagram
 
 cat > .env <<EOF
+CAT_PARENT='https://www.catecon.net'
+CAT_URL='http://localhost:3000'
+CAT_LOCAL=true
+CAT_DIAGRAM_USER_LIMIT=1024
 CAT_DIR='/mnt/f/catecon'
 CAT_SEARCH_LIMIT=128
 CAT_SRVR_LOG='./logs'
 CAT_SRVR_LOG_SIZE='100M'
 HTTP_DIR='public'
 HTTP_PORT=3000
+CAT_DIAGRAM_USER_LIMIT=1024
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
 MYSQL_USER=root
 MYSQL_PASSWORD=
 MYSQL_DB=Catecon
 AWS_DGRM_RGN='us-west-1'
+AWS_DIAGRAM_URL='https://catecon-diagrams.s3-us-west-1.amazonaws.com'
 AWS_USER_COG_REGION='us-west-2'
 AWS_USER_IDENTITY_POOL='us-west-2_HKN5CKGDz'
+AWS_APP_ID='fjclc9b9lpc83tmkm8b152pin'
+NODE_ENV='production'
 EOF
 
 chmod 0600 .env
