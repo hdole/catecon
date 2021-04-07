@@ -125,7 +125,7 @@ function checkLeg(leg, ndx, cnt, sig)
 		{
 			const nuLeg = leg.slice(0, ndx);	// first part of leg
 			nuLeg.push(equ)						// replace sub-leg with sig
-			if (ndx + cnt < leg.length)			// add rest of leg
+			if (ndx + cnt < leg.length)			// add rest of original leg
 				nuLeg.push(...leg.slice(ndx + cnt, leg.length));
 			if (Sig(...nuLeg) === sig)
 				return true;
@@ -140,8 +140,9 @@ function checkLeg(leg, ndx, cnt, sig)
 			{
 				const nuLeg = leg.slice(0, ndx);	// first part of leg
 				nuLeg.push(...altLeg);				// push alternate leg
-				if (ndx + cnt < leg.length)			// add rest of leg
+				if (ndx + cnt < leg.length)			// add rest of original leg
 					nuLeg.push(...leg.slice(ndx + cnt, leg.length));
+				const nuSig = Sig(nuLeg);
 				isEqual = sig === nuSig ? true : equals.get(sig).has(nuSig);
 				if (!isEqual)
 					isEqual = scanLeg(nuLeg, sig);
