@@ -11660,7 +11660,8 @@ class IndexCategory extends Category
 			from.setCodomain(detachedObj);
 		else
 			from.setDomain(detachedObj);
-		this.elements.set(from.name, from);	// reset the order in the map
+		this.elements.delete(from.name);	// reset the order in the map
+		this.elements.set(from.name, from);
 		const badCells = new Set();
 		obj.nodes.forEach(cell => cell instanceof Cell && ((cell.left.includes(from)) || (cell.right.includes(from))) && badCells.add(cell));
 		badCells.forEach(cell => cell.deregister());
