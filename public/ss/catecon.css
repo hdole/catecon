@@ -1019,3 +1019,39 @@ tspan
 	white-space:		pre;
 	width:	100%;
 }
+
+.assyError
+{
+	fill:	#f009;
+	r:		40;
+}
+.assyInput
+{
+	fill:				none;
+	r:					35;
+	stroke:				#0f06;
+	stroke-width:		10;
+}
+.assyOutput
+{
+	fill:				none;
+	r:					35;
+	stroke:				#00f6;
+	stroke-width:		10;
+}
+.assyReference
+{
+	fill:				none;
+	r:					35;
+	stroke:				#aaa3;
+	stroke-dasharray:	5, 20;
+	stroke-linecap:		round;
+	stroke-width:		10;
+}
+.assySource
+{
+	fill:				none;
+	r:					35;
+	stroke:				#aaa3;
+	stroke-width:		10;
+}
