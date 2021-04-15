@@ -358,8 +358,8 @@ class U
 		return ret;
 	}
 	static RefcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : b.refcnt < a.refcnt ? 1 : 0; }		// high to low
-	static TimestampSorter(a, b) { return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0; };
-	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; };		// a to z
+	static TimestampSorter(a, b) { return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0; }
+	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
 	static IsIndexElement(elt)
 	{
 		return elt instanceof DiagramObject || elt instanceof DiagramMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
@@ -1965,7 +1965,8 @@ class Toolbar
 	}
 	clearError()
 	{
-		D.RemoveChildren(this.error); }
+		D.RemoveChildren(this.error);
+	}
 	showError(msg)
 	{
 		this.clearError();
@@ -1993,11 +1994,6 @@ class Toolbar
 		this.sections.map(s => D.toolbar.help.querySelector(`#${type}-${s}`).classList.add('hidden'));
 		const s = D.toolbar.help.querySelector(`#${type}-${section}`);
 		s && s.classList.remove('hidden');
-	}
-	clearError()
-	{
-		this.error.classList.add('hidden');
-		this.error.innerHTML = '';
 	}
 	setError(x)
 	{
@@ -2551,7 +2547,7 @@ class DiagramTool extends BpdTool
 					{
 						try
 						{
-							R.AddReference(e, name)
+							R.AddReference(e, name);
 							this.search();
 						}
 						catch(x)
@@ -2559,7 +2555,7 @@ class DiagramTool extends BpdTool
 							D.toolbar.setError(x);
 						}
 					});
-				}
+				};
 				buttons.push(D.getIcon('reference', 'reference', e => addRef(e, name), 'Add reference', btnSize));
 			}
 		}
@@ -2587,7 +2583,6 @@ class DiagramTool extends BpdTool
 		const searchFilter = document.getElementById(this.searchFilterId);
 		searchFilter.appendChild(D.getIcon('user', 'user', e => this.toggleUserFilter(e), `Restrict to ${R.user.name}`));
 		R.diagram && searchFilter.appendChild(D.getIcon('reference', 'reference', e => this.toggleReferenceFilter(e), 'Restrict to this diagram\'s references'));
-		searchFilter.appendChild(D.getIcon('clock', 'clock', e => this.toggleRecentFilter(e), 'Recent diagrams only'));
 		const searchSorter = document.getElementById(this.searchSorterId);
 		searchSorter.appendChild(D.getIcon('clock', 'clock', e => this.setSaveSorter(e), 'Sort by last save time'));
 	}
@@ -2625,12 +2620,6 @@ class DiagramTool extends BpdTool
 	{
 		this.searchArgs.referenceOnly = !this.searchArgs.referenceOnly;
 		D.toggleIcon(e.target, this.searchArgs.referenceOnly);
-		this.search();
-	}
-	toggleRecentFilter(e)
-	{
-		this.searchArgs.sorter = U.TimestampSorter;
-		D.toggleIcon(e.target, this.searchArgs.recentOnly);
 		this.search();
 	}
 	addNewSection()
@@ -2875,8 +2864,8 @@ class StatusBar
 		{
 			x = e ? e.clientX : 100;
 			y = e ? e.clientY : 100;
-			elt.style.left = `${x + 10}px`;
-			elt.style.top = `${y - 30}px`;
+			elt.style.left = `${x + 20}px`;
+			elt.style.top = `${y - 60}px`;
 			elt.style.display = 'block';
 			this.xy = {x, y};
 			this.hide();
@@ -3653,7 +3642,7 @@ class D
 		document.onwheel = e =>
 		{
 			let node = e.target;
-			while(node)
+			while(node)		// no wheeling on the toolbar
 			{
 				if (node.id === 'toolbar')
 					return;
@@ -3661,16 +3650,24 @@ class D
 			}
 			if (D.session.mode === 'diagram')
 			{
-				const dir = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail || -e.deltaY)));
+				const dirX = Math.max(-1, Math.min(1, e.wheelDeltaX));
+				const dirY = Math.max(-1, Math.min(1, e.wheelDeltaY));
 				if (e.shiftKey)
 				{
 					D.toolbar.hide();
 					R.diagram.svgTranslate.classList.remove('trans025s');
-					D.Zoom(e, dir);
+					D.Zoom(e, dirY);
 					R.diagram.svgTranslate.classList.add('trans025s');
 				}
 				else
-					D.panHandler(e, dir < 0 ? 'down' : 'up');
+				{
+					let compass = '';
+					if (dirY !== 0)
+						compass = dirY < 0 ? 'down' : 'up';
+					else
+						compass = dirX < 0 ? 'left' : 'right';
+					D.panHandler(e, compass);
+				}
 			}
 			else if (D.session.mode === 'catalog' && e.shiftKey)
 			{
@@ -4743,7 +4740,7 @@ Object.defineProperties(D,
 				else if (D.session.mode === 'diagram')
 				{
 					let isOpen = false;
-					Object.values(D.panels.panels).forEach(pnl => isOpen = isOpen || (pnl.elt.style.width != '0px' && pnl.elt.style.width !== ''));
+					Object.values(D.panels.panels).forEach(pnl => isOpen = isOpen || (pnl.elt.style.width !== '0px' && pnl.elt.style.width !== ''));
 					if (isOpen)
 					{
 						D.panels.closeAll();
@@ -5186,7 +5183,10 @@ class Catalog extends DiagramTool
 	}
 	show(visible = true)
 	{
-		this.catalog.style.display = visible ? 'block' : 'none';
+		if (visible)
+			this.catalog.classList.remove('hidden');
+		else
+			this.hide();
 	}
 	async downloadNewer()
 	{
@@ -5250,13 +5250,6 @@ class Catalog extends DiagramTool
 		D.default.diagram.imageScale = D.default.diagram.imageScale * nuScale;
 		this.setImageScale();
 		R.SaveDefaults();
-	}
-	show(doit = true)
-	{
-		if (doit)
-			this.catalog.classList.remove('hidden');
-		else
-			this.hide();
 	}
 	hide()
 	{
@@ -6415,6 +6408,8 @@ class Graph
 	}
 	getFactor(indices)
 	{
+		if (typeof indices === 'number')
+			return this.graphs[indices];
 		if (indices.length === 1 && indices[0] === -1)
 			return null;
 		if (this.graphs.length === 0)
@@ -7128,7 +7123,7 @@ class ProductObject extends MultiObject
 	}
 	getGraph(data = {position:0}, first = true)
 	{
-		if ('dual' in data && this.dual !== data.dual)
+		if ('dual' in data && this.dual !== data.dual)	// TODO ????
 			return new Graph(this.diagram);
 		return super.getGraph(this.constructor.name, data, D.textWidth('('), D.textWidth(this.dual ? '&plus;' : '&times;'), first);
 	}
@@ -7220,24 +7215,6 @@ if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diag
 	{
 		return U.SigArray([dual, ...objects.map(o => o.signature)]);
 	}
-	/*
-	static Get(diagram, args)
-	{
-		if ('objects' in args && args.objects.length === 0)
-		{
-			const size = ('dual' in args && args.dual) ? 0 : 1;
-			return diagram.get('FiniteObject', {size});
-		}
-		const sig = ProductObject.Signature(diagram, args.objects, args.dual);
-		let found = null;
-		diagram.codomain.elements.forEach(elt =>
-		{
-			if (sig === elt.signature)
-				found = elt;
-		});
-		return found;
-	}
-	*/
 }
 
 class PullbackObject extends ProductObject
@@ -7902,7 +7879,7 @@ class DiagramObject extends CatObject
 		if (this.domains.size === 0 && this.codomains.size === 1)
 		{
 			const m = [...this.codomains][0].to;
-			isId = Identity.IsIdentity(m);
+			isId = Identity.isIdentity(m);
 		}
 		return isId;
 	}
@@ -8802,29 +8779,21 @@ class MorphismAssemblyAction extends Action
 	html(e, diagram, ary)
 	{
 		D.RemoveChildren(D.toolbar.help);
-		if (false)
+		const asmblr = new Assembler(diagram);
+		asmblr.assemble(e, ary[0]);
+		const rows = asmblr.issues.map(isu =>
 		{
-			const issues = diagram.assemble(e, ary[0]);
-			const rows = issues.map(isu => H3.tr(H3.td(isu.message), H3.td(H3.button(isu.element.to.properName,
-			{
-				onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
-				onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
-				onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
-			}))));
-			D.toolbar.help.appendChild(issues.length > 0 ? H3.table(rows) : H3.span('No issues were detected'));
-		}
-		else
-		{
-			const asmblr = new Assembler(diagram);
-			asmblr.assemble(e, ary[0]);
-			const rows = asmblr.issues.map(isu => H3.tr(H3.td(isu.message), H3.td(H3.button(isu.element.to.properName,
-			{
-				onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
-				onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
-				onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
-			}))));
-			D.toolbar.help.appendChild(asmblr.issues.length > 0 ? H3.table(rows) : H3.span('No issues were detected'));
-		}
+			if ('to' in isu.element)
+				return H3.tr(H3.td(isu.message), H3.td(H3.button(isu.element.to.properName,
+				{
+					onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
+					onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
+					onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
+				})))
+			else
+				return H3.tr(H3.td(isu.message), H3.td(isu.element.properName));
+		});
+		D.toolbar.help.appendChild(asmblr.issues.length > 0 ? H3.table(rows) : H3.span('No issues were detected'));
 	}
 	action(e, diagram, ary)
 	{
@@ -10580,10 +10549,11 @@ class Morphism extends Element
 		}
 		return false;
 	}
-	static IsIdentity(morph)
+	static isIdentity(morph)
 	{
 		if (morph instanceof MultiMorphism)
-			return morph.morphisms.reduce((r, m) => r && Identity.IsIdentity(m), true);
+			return morph.morphisms.reduce((r, m) => r && Identity.isIdentity(m), true);
+		// TODO factor morphism whose factors form an identity
 		return morph instanceof Identity;
 	}
 }
@@ -12328,10 +12298,6 @@ if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diag
 				f === -1 ? diagram.getTerminal(dual) : domain.getFactor(f)
 			), dual}) : (factors[0] === -1 ? diagram.getTerminal(dual) : domain.getFactor(factors[0]));
 	}
-	static Codename(diagram, args)
-	{
-		return Element.Codename(diagram, {basename:FactorMorphism.Basename(diagram, args)});
-	}
 	static ProperName(diagram, domain, factors, dual, cofactors = null)
 	{
 		return `&lt;${factors.map(f => f === -1 ? diagram.getTerminal(dual).properName : domain.getFactorProperName(f)).join(',')}&gt;`;	// TODO cofactors
@@ -12346,6 +12312,19 @@ if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diag
 		else
 			throw 'TODO';
 		return U.SigArray(sigs);
+	}
+	static isReference(factors)		// no duplicate factors
+	{
+		const unique = [];
+		if (factors.length > 0)
+			for (let i=0; i<factors.length; ++i)
+			{
+				const factor = factors[i];
+				if (unique.length > 0 && unique.reduce((r, f) => r || U.ArrayEquals(factor, f), false))
+					return false;
+				unique.push(factor);
+			}
+		return true;
 	}
 }
 
@@ -13316,7 +13295,7 @@ class Diagram extends Functor
 		let domain = null;
 		if (xyDom instanceof DiagramObject)
 		{
-			if (xyDom.to !== to.domain)
+			if (!xyDom.to.isEquivalent(to.domain))
 				throw 'index object target does not match morphism domain';
 			xyD = new D2(xyDom);
 			domain = xyDom;
@@ -13474,7 +13453,7 @@ class Diagram extends Functor
 			const f4gnd = H3.rect(`##${this.elementId('foreground')}.diagramForeground`, {x:0, y:0, width:D.Width(), height:D.Height(), 'data-name':this.name, 'data-type':'diagram'});
 			f4gnd.ondblclick = e =>
 			{
-				if (R.diagram != this)
+				if (R.diagram !== this)
 					R.SelectDiagram(this);
 			};
 			let origClick = null;	// the original mousedown location in session coords
@@ -13886,7 +13865,7 @@ class Diagram extends Functor
 		const obj = this.selected[0];
 		obj.dragAlternates.diagMorphisms.map(m => m.decrRefcnt());
 	}
-	flattenObject(obj, obj2flat)
+	flattenObject(obj, obj2flat = new Map())
 	{
 		if (obj2flat.has(obj))
 			return obj2flat.get(obj);
@@ -13906,6 +13885,54 @@ class Diagram extends Functor
 		}
 		obj2flat.set(obj, flat);
 		return flat;
+	}
+	// is an object covered by the listed factors
+	isCovered(obj, factors, issues)
+	{
+		const graph = this.flattenObject(obj).getGraph();
+		factors.map(fctr => graph.getFactor(fctr).tags.push('covered'));
+		let cover = false;
+		let good = true;
+		let popCover = false;
+		const scan = (g, fctr = []) =>
+		{
+			if (g.tags.includes('covered'))
+			{
+				if (cover)	// double cover not allowed
+				{
+					issues.push({message:'Double cover', element:obj.getFactor(fctr)});
+					good = false;
+				}
+				else
+				{
+					popCover = true;
+					cover = true;
+				}
+			}
+			else if (g.isLeaf())		// hit a leaf with no cover
+			{
+				issues.push({message:'Leaf not covered', element:obj.getFactor(fctr)});
+				good = false;
+			}
+			else
+				g.graphs.map((sub, i) =>
+				{
+					const nuFctr = fctr.slice();
+					nuFctr.push(i);
+					scan(sub, nuFctr);
+				});
+			if (popCover)
+			{
+				cover = false;
+				popCover = false;
+			}
+		};
+		scan(graph);
+		return good;
+	}
+	isIdentity(factors)
+	{
+		return factors.reduce((r, fctr, i) => r && typeof fctr === 'number' ? i === fctr : false, true);
 	}
 	decompose(leg)
 	{
@@ -14418,14 +14445,16 @@ class Assembler
 		this.diagram = diagram;
 		this.objects = new Set();
 		this.morphisms = new Set();
-		this.sources = new Set();
+		this.sources = new Set();			// objects that are the domains of the composites
 		this.references = new Set();		// factor, identity, or terminal morphisms used as references
 		this.propagated = new Set();
 		this.inputs = new Set();
 		this.outputs = new Set();
 		this.composites = new Map();	// sources+inputs to array of morphisms to compose
+		this.ref2comp = new Map();
 		this.ref2ndx = new Map();
 		this.obj2flat = new Map();
+		this.processed = new Set();
 		this.issues = [];
 	}
 	reset()
@@ -14438,14 +14467,16 @@ class Assembler
 		this.inputs.clear();
 		this.outputs.clear();
 		this.composites.clear();
+		this.ref2comp.clear();
 		this.ref2ndx.clear();
 		this.obj2flat.clear();
+		this.processed.clear();
 		this.issues = [];
-		Assembler.clearBalls();
+		this.clearGraphics();
 	}
-	static clearBalls()
+	clearGraphics()
 	{
-		[...document.querySelectorAll('.ball')].map(ball => ball.remove());
+		[...this.diagram.svgRoot.querySelectorAll('.ball')].map(ball => ball.remove());
 	}
 	static isConveyance(m)
 	{
@@ -14461,6 +14492,30 @@ class Assembler
 	{
 		const morph = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
 		return morph instanceof Identity || (morph instanceof FactorMorphism && morph.dual);
+	}
+	static isReference(m)
+	{
+		if (Assembler.isProjection(m) && !(m.to instanceof Identity))
+			return FactorMorphism.isReference(m.to.factors);
+		return false;
+	}
+	static addBall(title, cls, o)
+	{
+		if (R.default.debug)
+		{
+			const onmouseenter = e => D.statusbar.show(e, title);
+			if (o instanceof DiagramObject)
+				o.svg.parentNode.insertBefore(H3.circle('.ball', {class:cls, onmouseenter, cx:o.x, cy:o.y}), o.svg);
+			else if (o instanceof DiagramMorphism)
+			{
+				const xy = o.getNameOffset();
+				o.svg_name.parentNode.insertBefore(H3.circle('.ball', {class:cls, onmouseenter, cx:xy.x, cy:xy.y}), o.svg_name);
+			}
+		}
+	}
+	addError(msg, elt)
+	{
+		Assembler.addBall(msg, 'assyError', elt);
 	}
 	findBlob(obj)
 	{
@@ -14479,18 +14534,19 @@ class Assembler
 			domain.domains.forEach(m =>
 			{
 				this.morphisms.add(m);
-				Assembler.isConveyance(m) && this.references.add(m);		// candidate reference
+				// inputs do not have references
+				Assembler.isReference(m) && this.references.add(m);		// candidate reference
 				m.makeGraph();
 				if (m.isEndo())		// in the index cat, not the target cat
 				{
-					m.svg.classList.add('badGlow');
+					this.addError('Circularity', m);
 					this.issues.push({message:'Circularity cannot be scanned', morphism:m});
 					return;
 				}
 				if (scanned.has(m.codomain) && !Assembler.isConveyance(m.to) && m.to.dual)
 				{
-					m.svg.classList.add('badGlow');
-					this.issues.push({message:`Codomain ${m.codomain} has already been scanned`, element:m});
+					this.addError('Already scanned', m);
+					this.issues.push({message:`Codomain ${m.codomain.name} has already been scanned`, element:m});
 					return;
 				}
 				!scanned.has(m.codomain) && scan.push(m.codomain) && scanned.add(m.codomain);
@@ -14505,6 +14561,7 @@ class Assembler
 		if (this.morphisms.size === 0)
 			this.issues.push({message:'No morphisms', element:base});
 		this.morphisms.forEach(m => !Assembler.isConveyance(m.to) && this.sources.delete(m.codomain)); // remove sources that are outputs
+		this.morphisms.forEach(m => Morphism.isIdentity(m.to) && this.sources.has(m.codomain) && this.references.add(m)); // add references that are identities to sources
 	}
 	static getBarGraph(dm)
 	{
@@ -14573,27 +14630,12 @@ class Assembler
 			const scanDomainsTagInfo = m =>
 			{
 				const to = m.to;
-				if (to instanceof FactorMorphism && !to.dual)
-					return;
-				if (Assembler.isProjection(to))
+				if ((to instanceof FactorMorphism && !to.dual) || Assembler.isProjection(to))
 					return;
 				tagInfo(m);
 				!scanned.has(m.codomain) && scan.push(m.codomain) && scanned.add(m.codomain);
 			};
 			src.domains.forEach(scanDomainsTagInfo);
-		}
-	}
-	static addBall(o, radius, fill)
-	{
-		if (R.default.debug)
-		{
-			if (o instanceof DiagramObject)
-				o.svg.parentNode.insertBefore(H3.circle('.ball', {cx:o.x, cy:o.y, r:radius, fill}), o.svg);
-			else if (o instanceof DiagramMorphism)
-			{
-				const xy = o.getNameOffset();
-				o.svg_name.parentNode.insertBefore(H3.circle('.ball', {cx:xy.x, cy:xy.y, r:radius, fill}), o.svg_name);
-			}
 		}
 	}
 	backLinkTag(m, morGraph, barGraph, tag)
@@ -14612,10 +14654,16 @@ class Assembler
 		}, [1]);
 		return didAdd;
 	}
+	getReferences(obj)
+	{
+		const references = [];
+		obj.domains.forEach(m => this.references.has(m) && references.push(m));
+		return references;
+	}
 	inputScan()
 	{
 		let isIt = true;
-		this.objects.forEach(o => o.assyGraph.noTag('info') && this.inputs.add(o));
+		this.objects.forEach(o => o.assyGraph.noTag('info') && this.inputs.add(o));		// candidate inputs
 		let scanning = [...this.references];
 		while(scanning.length > 0)
 		{
@@ -14636,10 +14684,10 @@ class Assembler
 		scanning = [...this.inputs];
 		while(scanning.length > 0)
 		{
-			const obj = scanning.pop();
-			const graph = obj.assyGraph;
+			const input = scanning.pop();
+			const graph = input.assyGraph;
 			if (graph.hasTag('info'))
-				this.inputs.delete(obj);
+				this.inputs.delete(input);
 			const scan = scanning;		// jshint
 			const inputReducer = m =>
 			{
@@ -14649,12 +14697,37 @@ class Assembler
 					scan.push(m.codomain);
 				}
 			};
-			obj.domains.forEach(inputReducer);
+			input.domains.forEach(inputReducer);
+			const refs = [...input.domains].filter(m => this.references.has(m));
+			if (refs.length > 0)
+			{
+				const refIds = refs.filter(ref => Morphism.isIdentity(ref.to));
+				if (refIds.length === 0)
+				{
+					const factors = [];
+					refs.map(ref => factors.push(...ref.to.factors));
+					if (FactorMorphism.isReference(factors))
+					{
+						// do the factors cover the source?
+						if (this.diagram.isCovered(input.to, factors, this.issues))
+							this.inputs.delete(input);
+					}
+					else
+					{
+						this.issues.push({message:'Factor morphism is not a reference', element:r});
+						this.addError('Duplicate factors found', input);
+					}
+				}
+			}
 		}
 		//
 		// now tag the inputs with info
 		//
 		this.inputs.forEach(i => i.assyGraph.addTag('info'));
+		//
+		// inputs do not have references
+		//
+		this.references.forEach(ref => this.inputs.has(ref.domain) && this.references.delete(ref));
 	}
 	static setTag(dm, graph, tag, ndx)
 	{
@@ -14663,7 +14736,7 @@ class Assembler
 	infoProp()
 	{
 		const scanning = [...this.inputs];
-		const scanned = new Set;
+		const scanned = new Set();
 		while(scanning.length > 0)
 		{
 			const input = scanning.pop();
@@ -14672,7 +14745,7 @@ class Assembler
 			const inputs2 = this.inputs;		// jshint
 			const domScanner = dm =>
 			{
-				if (Assembler.isProjection(dm))
+				if (this.references.has(dm))
 				{
 					if (dm.codomain.assyGraph.hasTag('info'))
 						inputs2.delete(input);
@@ -14699,7 +14772,6 @@ class Assembler
 			scanned.add(input);
 		}
 		// propagate tags from inputs
-		this.inputs.forEach(i => this.issues.push({message:'Input', element:i}));
 		this.inputs.forEach(i => i.domains.forEach(m =>
 			{
 				Assembler.isConveyance(m) && this.references.delete(m);
@@ -14717,42 +14789,72 @@ class Assembler
 			obj.domains.forEach(m =>
 			{
 				if (Assembler.isProjection(m.to) && this.references.has(m))
-				{
 					m.codomain.assyGraph.scan(scannerYes);
-					return;
-				}
-				isIt = false;
+				else
+					isIt = false;
 			});
-			obj.codomains.forEach(m =>
+			isIt && obj.codomains.forEach(m =>
 			{
 				if (Assembler.isConveyance(m.to))
-				{
-					if (m.to.dual)		// coproduct
-						isIt = isIt && !this.sources.has(m.domain);
-					else
-						isIt = isIt && !this.references.has(m);
-					return;
-				}
+					isIt = m.to.dual ? isIt && !this.sources.has(m.domain) : isIt && !this.references.has(m);
 			});
 			if (isIt)
-			{
 				this.outputs.add(obj);
-				this.issues.push({message:'Output', element:obj});
+		});
+		// drop inputs that are outputs
+		this.outputs.forEach(o => this.inputs.has(o) && this.inputs.delete(o));
+	}
+	showGraphics()
+	{
+		this.inputs.forEach(i => Assembler.addBall('Input', 'assyInput', i));
+		this.references.forEach(r => Assembler.addBall('Reference', 'assyReference'));
+		this.sources.forEach(s => Assembler.addBall('Source', 'assySource'));
+		this.outputs.forEach(o => Assembler.addBall('Output', 'assyOutput', o));
+	}
+	sourceScan()
+	{
+		const issueCnt = this.issues.length;
+		this.sources.forEach(src =>
+		{
+			if (!this.inputs.has(src))		// no assembly for inputs
+			{
+				const refs = [...src.domains].filter(m => this.references.has(m));
+				if (refs.length > 0)
+				{
+					const refIds = refs.filter(ref => Morphism.isIdentity(ref.to));
+					if (refIds.length > 1)
+					{
+						refIds.map(id =>
+						{
+							this.issues.push({message:'Only one identity allowed to be a reference', element:id});
+							this.addError('Only one identity allowed to be a reference', id);
+						});
+					}
+					else if (refIds.length === 0)
+					{
+						const factors = [];
+						refs.map(ref => factors.push(...ref.to.factors));
+						if (FactorMorphism.isReference(factors))
+						{
+							// do the factors cover the source?
+							if (!this.diagram.isCovered(src.to, factors, this.issues))
+								this.addError('Source not covered', src);
+						}
+						else
+						{
+							this.issues.push({message:'Factor morphism is not a reference', element:r});
+							this.addError('Duplicate factors found', src);
+						}
+					}	// else the single identity as reference covers everything
+				}
 			}
 		});
+		return this.issues.length === issueCnt;
 	}
-	showBalls()
+	cleanSources()		// no input or output is a source
 	{
-		this.inputs.forEach(i => Assembler.addBall(i, 50, '#F009'));
-		this.references.forEach(r => Assembler.addBall(r, 50, '#00F3'));
-//		this.sources.forEach(s => Assembler.addBall(s, 20, '#F0F3'));
-		this.objects.forEach(o => o.assyGraph.hasTag('info') && Assembler.addBall(o, 20, '#99FA'));
-//		this.homers.forEach(h => Assembler.addBall(h, 20, '#0FF3'));
-		this.outputs.forEach(o => Assembler.addBall(o, 30, '#0F0A'));
-	}
-	cleanSources()
-	{
-		this.sources.forEach(s => [...s.domains, ...s.codomains].reduce((r, m) => r && Assembler.isConveyance(m), true) && this.sources.delete(s));
+		this.inputs.forEach(i => this.sources.delete(i));
+		this.outputs.forEach(i => this.sources.delete(i));
 	}
 	followComposite(homers, cmp, m)
 	{
@@ -14764,7 +14866,6 @@ class Assembler
 		{
 			const next = morphs[0];
 			cmp.push(next);
-Assembler.addBall(next, 30, '#0F03');
 			return this.followComposite(homers, cmp, next);
 		}
 		else
@@ -14779,13 +14880,13 @@ Assembler.addBall(next, 30, '#0F03');
 		{
 			if (!this.references.has(m))
 			{
-Assembler.addBall(m, 30, '#0F03');
 				const cmp = [m];
 				comps.push(cmp);
 				const cod = this.followComposite(homers, cmp, m);
 				scanning.push(cod);
 			}
 		});
+		comps.length === 0 && this.composites.delete(obj);
 	}
 	setupComposites()
 	{
@@ -14813,68 +14914,68 @@ Assembler.addBall(m, 30, '#0F03');
 		}
 		return indices;
 	}
-	// recursive
-	formMorphism(scanning, domain, currentDomain, ndx = [])
+	getCompositeMorphisms(scanning, domain, currentDomain, index)
 	{
-if (domain.basename === 'o_45')debugger;
-		// downstream objects that refer to this index object need to find our index
-		[...domain.codomains].map(m => this.references.has(m) && Assembler.isProjection(m.to) && this.ref2ndx.set(m, ndx));
-		//
-		// if the index object has projection references, then we need a pre-assembly factor morphism
-		//
-		const upRefs = this.getDomainAssemblyFactors(domain, ndx);
-		const preFactor = upRefs.length > 0 ? this.diagram.fctr(currentDomain, upRefs) : this.diagram.id(currentDomain);
-		//
-		// if our domain is an output, then we're done
-		//
-		if (this.outputs.has(domain))
+		if (this.composites.has(domain))
 		{
-			this.outputs.delete(domain);
-			return preFactor;
-		}
-		//
-		// we get outbound morphisms from the domain from the composites shown in the directed graph,
-		// or from the domain being a coproduct assembly of elements
-		//
-		// first the outbound composites from the domain
-		//
-		const morphisms = this.composites.get(domain).map(comp =>
-		{
-			const last = comp.length -1;
-			const morphs = comp.map(m =>m.to);
-			//
-			// if we have a pre-assembly factor, add it to the composite's start
-			//
-			!(preFactor instanceof Identity) && morphs.unshift(preFactor);
-			//
-			// codomain index object
-			//
-			const cod = comp[last].codomain;
-			//
-			// does the index codomain object have elements?
-			//
-			if ([...cod.codomains].reduce((r, m) => r || (this.references.has(m) && Assembler.isInjection(m) && m.domain.to.isTerminal()), false))
+			const composites = this.composites.get(domain);
+			return composites.length === 0 ? [] : this.composites.get(domain).map(comp =>
 			{
+				const last = comp.length -1;
+				const morphs = comp.map(m =>m.to);
 				//
-				// replace last morphism in composite with an assembly
+				// if we have a pre-assembly factor, add it to the composite's start
 				//
-				const lastMorph = morphs[last];
-				morphs[last] = this.diagram.assy(lastMorph, this.diagram.id(lastMorph.domain));
-			}
-			//
-			// continue scanning on the index composite's codomain
-			//
-			const index = ndx.slice();
-			index.pop();
-			scanning.unshift({domain:cod, currentDomain, index});
-			//
-			// get the composite so far
-			//
-			return this.diagram.comp(...morphs);
-		});
-		//
-		// sum up the coproduct elements
-		//
+	//			!(preFactor instanceof Identity) && morphs.unshift(preFactor);
+				//
+				// codomain index object
+				//
+				const codomain = comp[last].codomain;
+				//
+				// does the index codomain object have elements?
+				//
+				if ([...codomain.codomains].reduce((r, m) => r || (this.references.has(m) && Assembler.isInjection(m) && m.domain.to.isTerminal()), false))
+				{
+					//
+					// replace last morphism in composite with an assembly
+					//
+					const lastMorph = morphs[last];
+					morphs[last] = this.diagram.assy(lastMorph, this.diagram.id(lastMorph.domain));
+				}
+				//
+				// continue scanning on the index composite's codomain
+				//
+				const nuNdx = index.slice();
+				nuNdx.pop();
+				scanning.unshift({domain:codomain, currentDomain, nuNdx});
+				//
+				// get the composite so far
+				//
+				let composite = this.diagram.comp(...morphs);
+				//
+				// map the references to the composite that creates the referenced value
+				//
+	//			let hasRef = false;
+				codomain.codomains.forEach(m =>
+				{
+					if (this.references.has(m))
+					{
+						this.ref2comp.set(m, composite);
+	//					hasRef = true;
+	//					const refs = this.getReferences(m.domain);
+					}
+				});
+				// if the codomain has a reference then it best be a source in order to return the composite
+	//			return hasRef && !this.sources.has(codomain) ? null : composite;
+	//			return hasRef ? composite : null;
+				return this.composites.has(codomain) ? composite : null;
+			}).filter(m => m);
+		}
+		else
+			return [];
+	}
+	assembleElements(morphisms, domain)
+	{
 		const eltRefs = [...domain.codomains].filter(m => this.references.has(m) && Assembler.isInjection(m) && m.domain.to.isTerminal());
 		if (eltRefs.length > 0)
 		{
@@ -14893,7 +14994,7 @@ if (domain.basename === 'o_45')debugger;
 				//
 				// get the morphisms attached to each element
 				//
-				const homMorphs = [...eltRef.domain.codomains].map(m => this.formMorphism(scanning, m.domain, currentDomain, ndx));
+				const homMorphs = [...eltRef.domain.codomains].map(m => this.formMorphism(scanning, m.domain, currentDomain, index));
 				const homMorph = this.diagram.assy(...homMorphs);
 				const homset = this.diagram.hom(currentDomain, homMorph.codomain);
 				//
@@ -14947,13 +15048,64 @@ if (domain.basename === 'o_45')debugger;
 			const doit = this.diagram.comp(...steps);
 			morphisms.push(doit);
 		}
-		return this.diagram.assy(...morphisms);
+	}
+	// recursive
+	formMorphism(scanning, domain, currentDomain, index = [])
+	{
+console.log(domain.basename);
+		if (this.processed.has(domain))
+			return null;
+		//
+		// downstream objects that refer to this index object need to find our index
+		//
+		[...domain.codomains].map(m => this.references.has(m) && Assembler.isProjection(m.to) && this.ref2ndx.set(m, index));
+		//
+		// if the domain is a source then build its preamble
+		//
+		let preamble = null;
+		if (this.sources.has(domain))
+		{
+			const refs = [...domain.domains].filter(m => this.references.has(m));
+			// all references satisfied?
+			if (refs.reduce((r, m) => r && this.references.has(m) && this.ref2comp.has(m), true))
+			{
+				const product = this.diagram.prod(...refs.map(ref => this.ref2comp.get(ref)));
+				const factors = [];
+				refs.map((ref, i) => ref.to.factors.map(fctr => factors.push(fctr)));
+				preamble = !this.diagram.isIdentity(factors) ? this.diagram.comp(product, this.diagram.fctr(product.codomain, factors)) : product;
+				this.processed.add(domain);
+			}
+			else
+				return null;
+		}
+		//
+		// advance scanning
+		//
+		[...domain.codomains].map((m, i) => this.references.has(m) && scanning.push({domain:m.domain, currentDomain, index}));
+		//
+		// we get outbound morphisms from the domain from the composites shown in the directed graph,
+		// or from the domain being a coproduct assembly of elements
+		//
+		// first the outbound composites from the domain
+		//
+		const morphisms = this.getCompositeMorphisms(scanning, domain, currentDomain, index);
+		let assy = null;
+		if (morphisms.length > 0)
+		{
+			//
+			// sum up the coproduct elements
+			//
+			this.assembleElements(morphisms, domain);
+			assy = this.diagram.assy(...morphisms);
+		}
+		if (preamble && assy)
+			return this.diagram.comp(preamble, assy);
+		return preamble ? preamble : assy;
 	}
 	getFinalComposite()
 	{
 		let ndx = 0;
 		const scanning = [];
-//		this.inputs.forEach(input => scanning.push({domain:input, currentDomain:input.to, index:this.inputs.size === 1 ? [] : [ndx++]}));
 		// ignore inputs that are terminals; the rest form the domain
 		[...this.inputs].filter(input => !input.isTerminal()).map(input => scanning.push({domain:input, currentDomain:input.to, index:this.inputs.size === 1 ? [] : [ndx++]}));
 		const components = [];
@@ -14989,10 +15141,15 @@ if (domain.basename === 'o_45')debugger;
 		//
 		this.outputScan();
 		//
-		// remove sources that are affected by conveyances
+		// remove sources that are inputs or outputs
 		//
-		this.cleanSources();
-		this.showBalls();
+		this.cleanSources();		// TODO
+		this.showGraphics();
+		//
+		// scan sources for assembly checks
+		//
+		if (!this.sourceScan())
+			return;		// errors found
 		//
 		// setup the composites
 		//
