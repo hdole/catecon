@@ -408,9 +408,9 @@ p
 	display:	none;
 }
 
-.trans025s
+.trans
 {
-	transition: all 0.25s ease-in-out;
+	transition: all 0.15s ease-in-out;
 }
 
 .nodisplay
@@ -1023,26 +1023,26 @@ tspan
 .assyError
 {
 	fill:	#f009;
-	r:		40;
+	ry:		50;
 }
 .assyInput
 {
 	fill:				none;
-	r:					35;
+	ry:					35;
 	stroke:				#0f06;
 	stroke-width:		10;
 }
 .assyOutput
 {
 	fill:				none;
-	r:					35;
+	ry:					35;
 	stroke:				#00f6;
 	stroke-width:		10;
 }
 .assyReference
 {
 	fill:				none;
-	r:					35;
+	ry:					35;
 	stroke:				#aaa3;
 	stroke-dasharray:	5, 20;
 	stroke-linecap:		round;
@@ -1051,7 +1051,7 @@ tspan
 .assySource
 {
 	fill:				none;
-	r:					35;
+	ry:					35;
 	stroke:				#aaa3;
 	stroke-width:		10;
 }
