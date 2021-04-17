@@ -99,6 +99,7 @@ class H3
 	static animateTransform(...args)	{ return H3._v('animateTransform', args); }
 	static circle(...args)				{ return H3._v('circle', args); }
 	static defs(...args)				{ return H3._v('defs', args); }
+	static ellipse(...args)				{ return H3._v('ellipse', args); }
 	static foreignObject(...args)		{ return H3._v('foreignObject', args); }
 	static g(...args)					{ return H3._v('g', args); }
 	static image(...args)				{ return H3._v('image', args); }
