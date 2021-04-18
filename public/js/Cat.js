@@ -513,8 +513,9 @@ class R
 {
 	static SetupWorkers()
 	{
+		// equality engine
 		const worker = new Worker((isGUI ? '' : './public') + '/js/workerEquality.js');
-		function onmessage(msg)
+		worker.onmessage = msg =>
 		{
 			const args = msg.data;
 			switch(args.command)
@@ -554,8 +555,7 @@ class R
 					console.error('bad message', args.command);
 					break;
 			}
-		}
-		worker.onmessage = onmessage;
+		};
 		R.workers.equality = worker;
 		let url = '';
 		if (isGUI)
@@ -567,9 +567,7 @@ class R
 			url = window.location.origin + tokens.join('/');
 		}
 		else
-		{
 			url = ".";
-		}
 		worker.postMessage({command:'start', url});
 	}
 	static SetupCore()
@@ -638,15 +636,11 @@ class R
 			user:			'sys',
 		});
 	}
+	// build categorical actions
 	static SetupActions()
 	{
-		const setup = diagram =>
-		{
-			if (isGUI)
-			{
-				diagram.elements.forEach(action => {R.Actions[action.basename] = action;});
-			}
-		};
+		// function to register a diagram's actions
+		const setup = diagram => isGUI && diagram.elements.forEach(action => {R.Actions[action.basename] = action});
 		const diagramDiagram = new Diagram(R.$CAT, {basename:'diagram', codomain:'Actions', description:'actions for a diagram', user:'sys'});
 		let action = new IdentityAction(diagramDiagram);
 		new GraphAction(diagramDiagram);
@@ -759,7 +753,7 @@ class R
 		if (isGUI)
 		{
 			D.diagramSVG = document.getElementById('diagramSVG');
-			if (false)
+			if (R.default.debug)
 			{
 				D.diagramSVG.appendChild(H3.path({stroke:'red', d:"M-1000 0 L1000 0"}));
 				D.diagramSVG.appendChild(H3.path({stroke:'red', d:"M0 -1000 L0 1000"}));
@@ -1828,12 +1822,6 @@ class Toolbar
 		});
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
-		window.addEventListener('Diagram', e => e.detail.command === 'select' && D.toolbar.show(e));
-		function hideToolbar(e)
-		{
-			if (R.diagram && U.IsIndexElement(e.detail.element) && e.detail.command !== 'select')
-				D.toolbar.hide();
-		}
 		window.addEventListener('Diagram', e =>
 		{
 			switch(e.detail.command)
@@ -1846,10 +1834,6 @@ class Toolbar
 					break;
 			}
 		});
-		window.addEventListener('Object', hideToolbar);
-		window.addEventListener('Morphism', hideToolbar);
-		window.addEventListener('Text', hideToolbar);
-		window.addEventListener('Assertion', hideToolbar);
 		window.addEventListener('mouseenter', e => D.mouse.saveClientPosition(e));
 		window.addEventListener('Autohide', e =>
 		{
@@ -9222,9 +9206,6 @@ class ProjectAction extends Action
 	}
 	static FactorButton(dir, root, object, index, dual)
 	{
-//		const base = object.getBase();
-//		return (base instanceof ProductObject && base.dual === dual) ? ProjectAction.ProductObjectFactorButton(dir, root, base, index, dual) :
-//			ProjectAction.ObjectFactorButton(dir, root, base, index, dual);
 		return (object instanceof ProductObject && object.dual === dual) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index, dual) :
 			ProjectAction.ObjectFactorButton(dir, root, object, index, dual);
 	}
@@ -9404,7 +9385,6 @@ class HelpAction extends Action
 		D.RemoveChildren(help);
 		const from = ary[0];
 		const js = R.Actions.javascript;
-		const cpp = R.Actions.cpp;
 		let toolbar2 = [];
 		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), lang.description)));
 		if (toolbar2.length > 0)
@@ -9608,7 +9588,7 @@ class RunAction extends Action
 				const sz = domain.getSize();
 				const rows = [	H3.tr(H3.td(H3.small('Domain')), H3.td(H3.small('Codomain')), H3.td()),
 								H3.tr(	H3.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), '.smallBold'),
-										H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold'), H.td())];
+										H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold'), H3.td())];
 				const dataRow = function(d,i)
 				{
 					if (d !== null)
@@ -9628,7 +9608,7 @@ class RunAction extends Action
 					}
 					// TODO domain not numeric
 					elements.push(H3.h5('Data in Morphism'));
-					elements.push(H.table(rows));
+					elements.push(H3.table(rows));
 					canMakeData = false;
 				}
 				else
@@ -10444,10 +10424,7 @@ class Morphism extends Element
 		{
 			const saved = new Map();
 			const codomain = this.codomain;
-			this.data.forEach(function(d, k)
-			{
-				saved.set(k, U.ConvertData(codomain, d));
-			});
+			this.data.forEach((d, k) => saved.set(k, U.ConvertData(codomain, d)));
 			a.data = U.JsonMap(saved);
 		}
 		if ('recursor' in this)
@@ -13139,34 +13116,7 @@ class Diagram extends Functor
 		const ndx = this.selected.indexOf(elt);
 		ndx > -1 && this.selected.splice(ndx, 1);
 		elt.showSelected(false);
-	}
-	makeSelected(elt)
-	{
-		if (this.selected.length > 0)
-		{
-			this.selected.map(elt =>
-			{
-				elt.showSelected(false);
-				R.EmitDiagramEvent(this, 'deselect', elt);
-			});
-			this.selected.length = 0;
-			R.EmitDiagramEvent(this, 'select', '');
-		}
-		if (elt)
-		{
-			this.addSelected(elt);
-			R.EmitDiagramEvent(this, 'select', elt);
-		}
-	}
-	deselectAll(e)
-	{
-		this.selected.length > 0 && this.makeSelected(null);
-	}
-	selectAll()
-	{
-		this.deselectAll();
-		this.domain.elements.forEach(e => this.addSelected(e));
-		this.assertions.forEach(e =>this.addSelected(e));
+		R.EmitDiagramEvent(this, 'deselect', elt);
 	}
 	addSelected(elt)
 	{
@@ -13181,8 +13131,35 @@ class Diagram extends Functor
 				elt.domain.finishMove();
 				elt.codomain.finishMove();
 			}
+			R.EmitElementEvent(this, 'select', elt);		// TODO?
+			R.EmitDiagramEvent(this, 'select', elt);
 		}
-		R.EmitElementEvent(this, 'select', elt);
+	}
+	makeSelected(elt)
+	{
+		if (this.selected.length > 0)
+		{
+			this.selected.map(elt =>
+			{
+				elt.showSelected(false);
+				R.EmitDiagramEvent(this, 'deselect', elt);
+			});
+			this.selected.length = 0;
+		}
+		if (elt)
+			this.addSelected(elt);
+		else
+			R.EmitDiagramEvent(this, 'select', '');
+	}
+	deselectAll(e)
+	{
+		this.makeSelected(null);
+	}
+	selectAll()
+	{
+		this.deselectAll();
+		this.domain.elements.forEach(e => this.addSelected(e));
+		this.assertions.forEach(e =>this.addSelected(e));
 	}
 	userSelectElement(e, name)
 	{
@@ -13191,12 +13168,7 @@ class Diagram extends Functor
 		{
 			D.dragStart = D.mouse.clientPosition();
 			if (!this.selected.includes(elt))
-			{
-				if (e.shiftKey)
-					this.addSelected(elt);
-				else
-					this.makeSelected(elt);
-			}
+				e.shiftKey ? this.addSelected(elt) : this.makeSelected(elt);
 			else if (e.shiftKey)
 				this.deselect(elt);
 			else
@@ -13224,13 +13196,13 @@ class Diagram extends Functor
 		const p = this.userToDiagramCoords(D.GetAreaSelectCoords(e));
 		const q = new D2(p.x + p.width, p.y + p.height);
 		let selected = [];
-		this.domain.elements.forEach(function(elt)
+		this.domain.elements.forEach(elt =>
 		{
 			if (elt instanceof DiagramMorphism && D2.Inside(p, elt.domain, q) && D2.Inside(p, elt.codomain, q))
 				selected.push(elt);
 			else if (D2.Inside(p, elt, q))
 				selected.push(elt);
-		}, this);
+		});
 		selected.map(elt => this.addSelected(elt));
 	}
 	getAssertion(sig)
@@ -15158,7 +15130,7 @@ class Assembler
 			return this.diagram.comp(preamble, assy);
 		return preamble ? preamble : assy;
 	}
-	getFinalComposite()
+	getBlobMorphism()
 	{
 		let ndx = 0;
 		const scanning = [];
@@ -15173,6 +15145,7 @@ class Assembler
 		}
 		return this.diagram.comp(...components);
 	}
+	// try to form a morphism from a blob
 	assemble(e, base)
 	{
 		//
@@ -15210,9 +15183,9 @@ class Assembler
 		//
 		this.setupComposites();
 		//
-		// get the final composite
+		// get the blob's morphism
 		//
-		const comp = this.getFinalComposite();
+		const comp = this.getBlobMorphism();
 		//
 		// place on screen the assemblage of the final composite
 		//
