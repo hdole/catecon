@@ -217,21 +217,14 @@ var Cat = Cat || require('./Cat.js');
 	}
 */
 
+	const pfs = Cat.R.$CAT.getElement('sys/pfs');
 	if (isGUI)
 	{
-//		window.Cat.MysqlObject = MysqlObject;
-//		window.Cat.MysqlAction = MysqlAction;
-		window.addEventListener('load', _ =>
-		{
-			window.Cat.R.Actions.mysql = new MysqlAction(Cat.R.$Actions);
-//			window.Cat.R.Actions.mysqlTable = new MysqlTableAction(Cat.R.$Actions);
-			js = Cat.R.Actions.javascript;
-		});
+//		window.addEventListener('load', _ =>
+//		{
+			window.Cat.R.Actions.mysql = new MysqlAction(pfs);
+//		});
 	}
 	else
-	{
-		Cat.R.Actions.mysql = new MysqlAction(Cat.R.$Actions);
-//		Cat.MysqlObject = MysqlObject;
-//		Cat.MysqlAction = MysqlAction;
-	}
+		Cat.R.Actions.mysql = new MysqlAction(pfs);
 })();	// end anon function

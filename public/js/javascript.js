@@ -18,6 +18,7 @@ var Cat = Cat || require('./Cat.js');
 			const args = {basename:'javascript', description:'Javascript support', ext:'js'};
 			super(diagram, args);
 			R.languages.set(this.basename, this);
+			R.DownloadDiagram('hdole/HTML', diagram => this.loadHTML(diagram));
 		}
 		getType(elt, first = true)
 		{
@@ -103,21 +104,15 @@ ${header}	return ${name}_morphisms[args[0]](args[1]);${tail}`
 							if ('data' in morphism)
 							{
 								let homMorphs = [];
-								const that = this;
-								morphism.data.forEach(function(d)
-								{
-									that.findHomMorphisms(morphism.codomain, d, homMorphs);
-								});
+//								const that = this;
+								morphism.data.forEach(d => this.findHomMorphisms(morphism.codomain, d, homMorphs));
 								if (homMorphs.length > 0)
 								{
 									generated.add(morphism.name);	// add early to avoid infinite loop
 									code += homMorphs.map(hm => this.generate(hm, generated)).join('');
 								}
 								const data = [];
-								morphism.data.forEach(function(d, k)
-								{
-									data.push(`[${k}, ${that.convertData(codomain, d)}]`);
-								});
+								morphism.data.forEach((d, k) => data.push(`[${k}, ${that.convertData(codomain, d)}]`));
 								code +=	// TODO safety check?
 `
 const ${name}_Data = new Map([${data.join()}]);
@@ -329,15 +324,15 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 			}
 			return homers;
 		}
-		loadHTML(fn)	// bootstrap basic diagrams for startup
+		loadHTML(htmlDiagram)	// bootstrap basic diagrams for startup
 		{
-			const htmlDiagram = R.$CAT.getElement('hdole/HTML');
+//			const htmlDiagram = R.$CAT.getElement('hdole/HTML');
 			D.htmlDiagram = htmlDiagram;
 			const html = htmlDiagram.getElement('HTML');
 			const str = htmlDiagram.codomain.getElement('hdole/Strings/str');
 			this.formatters = new Map();
-			const that = this;
-			htmlDiagram.forEachMorphism(function(m)
+//			const that = this;
+			htmlDiagram.forEachMorphism(m =>
 			{
 				const domain = m.domain;
 				if (domain instanceof Cat.ProductObject && !domain.dual && domain.objects[0].name === html.name &&
@@ -349,7 +344,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 					{
 						const homDom = hom.objects[0];
 						if (homDom.isEquivalent(html))
-							that.formatters.set(hom.objects[1].signature, m);
+							this.formatters.set(hom.objects[1].signature, m);
 					}
 				}
 			});
@@ -709,18 +704,16 @@ ${this.generate(morphism)}
 		}
 	}
 
+	const pfs = Cat.R.$CAT.getElement('sys/pfs');
 	if (typeof module !== 'undefined')
 	{
 		module.exports.JavascriptAction = JavascriptAction;
-		R.Actions.javascript = new JavascriptAction(Cat.R.$Actions);
+		R.Actions.javascript = new JavascriptAction(pfs);
 	}
 	else
 	{
 		window.JavascriptAction = JavascriptAction;
-		window.addEventListener('load', _ =>
-		{
-			window.Cat.R.Actions.javascript = new JavascriptAction(Cat.R.$Actions);
-		});
+		Cat.R.Actions.javascript = new JavascriptAction(pfs);
 	}
 
 })();	// end anon function

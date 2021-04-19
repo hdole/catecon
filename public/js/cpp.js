@@ -510,12 +510,12 @@ ${this.generateMain(diagram)}
 	if (typeof module !== 'undefined')
 	{
 		module.exports.CppAction = CppAction;
-		Cat.R.Actions.cpp = new CppAction(Cat.R.$Actions);
+		Cat.R.Actions.cpp = new CppAction(Cat.R.Actions);
 	}
 	else
 	{
 		window.CppAction = CppAction;
-		window.addEventListener('load', _ => {window.Cat.R.Actions.cpp = new CppAction(Cat.R.$Actions)});
+		window.addEventListener('load', _ => {window.Cat.R.Actions.cpp = new CppAction(Cat.R.Actions)});
 	}
 
 })();	// end anon function
