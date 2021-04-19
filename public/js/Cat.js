@@ -170,7 +170,7 @@ class U
 	static JsonMap(m, doKeys = true)
 	{
 		let data = [];
-		m.forEach(function(d, i) { data.push(doKeys ? [i, d] : d); });
+		m.forEach((d, i) => data.push(doKeys ? [i, d] : d));
 		return data;
 	}
 	static jsonArray(map)
@@ -232,7 +232,7 @@ class U
 	{
 		const btns = document.getElementById(id).querySelectorAll('button');
 		let factors = [];
-		btns.forEach(function(b)
+		btns.forEach(b =>
 		{
 			const idx = JSON.parse(`[${b.dataset.indices}]`);
 			factors.push(idx.length === 1 && idx[0] === -1 ? idx[0] : idx);
@@ -241,10 +241,10 @@ class U
 	}
 	static SetInputFilter(textbox, inputFilter)
 	{
-		["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(e)
+		["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(e =>
 		{
 			textbox.oldValue = "";
-			textbox.addEventListener(e, function()
+			textbox.addEventListener(e, _ =>
 			{
 				if (inputFilter(this.value))
 				{
@@ -697,11 +697,11 @@ class R
 	}
 	static SetupPFS()
 	{
-		const user = 'hdole';
+		const pfsDiagram = new Diagram(R.$CAT, {basename:'pfs', codomain:'Actions', description:'diagram for PFS actions', user:'sys'});
 		const pfs = new Category(R.$CAT,
 		{
 			basename:'PFS',
-			user,
+			user:'hdole',
 			properName:'&Popf;&Fopf;&Sopf;',
 			actionDiagrams:	['diagram', 'product', 'coproduct', 'hom', 'distribute'],
 		});
@@ -767,7 +767,7 @@ class R
 			D.session.mode = 'diagram';
 		else if (isGUI && D.session.mode === 'diagram' && D.session.default)
 			R.params.set('diagram', D.session.default);		// set default diagram
-		isGUI && D.session.mode === 'diagram' && R.EmitViewEvent('diagram');
+//		isGUI && D.session.mode === 'diagram' && R.EmitViewEvent('diagram');
 		isGUI && D.catalog.show(D.session.mode === 'catalog');
 		D.Busy();
 		R.ReadDefaults();
@@ -805,6 +805,12 @@ class R
 				}));
 				if (R.user.name === 'Anon')
 					R.EmitLoginEvent();	// Anon login
+				if (isGUI)
+				{
+					R.LoadScript('js/javascript.js');
+					R.LoadScript('js/cpp.js');
+					R.LoadScript('js/mysql.js');
+				}
 				fn && fn();
 			};
 			if (R.params.has('boot'))
@@ -961,6 +967,7 @@ class R
 		{
 			D.session.mode = 'diagram';
 			R.diagram && R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
+			D.diagramSVG.classList.add('hidden');
 		}
 		if (R.diagram && R.diagram.name === name)
 		{
@@ -1161,13 +1168,13 @@ class R
 		else if (elt instanceof Assertion)
 			R.EmitAssertionEvent(diagram, command, elt);
 	}
-	static LoadScript(url, fn)
+	static LoadScript(url, fn = null)
 	{
 		const script = H3.script();
 		script.type = 'text/javascript';
 		script.async = true;
 		script.src = url;
-		script.addEventListener('load', fn);
+		fn && script.addEventListener('load', fn);
 		document.body.appendChild(script);
 	}
 	static FetchCatalog(fn)
@@ -1190,10 +1197,7 @@ class R
 		(isGUI || R.cloudURL) && fetch(R.getURL('catalog')).then(response =>
 		{
 			if (response.ok)
-				response.json().then(data =>
-				{
-					process(data, fn);
-				});
+				response.json().then(data => process(data, fn));
 			else
 				console.error('error downloading catalog', url, response.statusText);
 		});
@@ -1466,7 +1470,7 @@ class Amazon extends Cloud
 				window.AWS.config.credentials = new window.AWS.CognitoIdentityCredentials(this.loginInfo);
 				this.accessToken = session.getAccessToken().getJwtToken();
 				const idPro = new window.AWS.CognitoIdentityServiceProvider();
-				idPro.getUser({AccessToken:this.accessToken}, function(err, data)
+				idPro.getUser({AccessToken:this.accessToken}, (err, data) =>
 				{
 					if (err)
 					{
@@ -1827,10 +1831,10 @@ class Toolbar
 			switch(e.detail.command)
 			{
 				case 'load':
-					D.toolbar.resetMouseCoords();
+					this.resetMouseCoords();
 					break;
 				case 'select':
-					D.toolbar.show(e);
+					this.show(e);
 					break;
 			}
 		});
@@ -1860,25 +1864,17 @@ class Toolbar
 		this.element.classList.remove('hidden');
 		this.closed = false;
 	}
-	show(e, toggle = true)
+	show(e)
 	{
 		this.error.innerHTML = '';
-		const diagram = R.diagram;
+		const diagram = e.detail.diagram;
 		let xy = U.Clone(D.mouse.down);
 		if (diagram)
 			this.mouseCoords = diagram.userToDiagramCoords(xy);
 		const element = this.element;
-		if (D.editElement === null && (element.classList.contains('hidden') || (diagram && diagram.selected.length > 0)))
-			this.reveal();
-		else
-		{
-			this.hide();
-			if (toggle)
-				return;
-		}
 		D.RemoveChildren(this.help);
 		D.RemoveChildren(this.error);
-		element.style.display = 'block';
+		this.reveal();
 		const moveBtn = D.getIcon('moveToolbar', 'move', '', 'Move toolbar', D.default.button.small, 'toolbar-drag-handle');
 		let delta = null;
 		moveBtn.onmousedown = e =>	// start to move toolbar
@@ -3076,7 +3072,6 @@ class D
 			if (!diagram)
 				return;
 			D.drag = D.mouseIsDown && diagram.selected.length > 0 && (e.movementX !== 0 || e.movementY !== 0);
-D.drag && console.log('mousemove drag');
 			const xy = diagram.mouseDiagramPosition(e);
 			xy.width = 2;
 			xy.height = 2;
@@ -3161,7 +3156,7 @@ D.drag && console.log('mousemove drag');
 					D.panHandler(e);
 					D.DeleteSelectRectangle();
 				}
-				else if (D.mouseIsDown && !D.drag)
+				else if (D.mouseIsDown && !D.drag && (e.movementX !== 0 || e.movementY !== 0))
 					D.DrawSelectRect(e);
 			}
 			else
@@ -3408,16 +3403,6 @@ D.drag && console.log('mousemove drag');
 		name += e.code;
 		return name;
 	}
-	static jsHtmlLoader(e)
-	{
-		const args = e.detail;
-		const diagram = args.diagram;
-		if (args.command === 'load' && diagram.name === 'hdole/HTML')
-		{
-			R.Actions.javascript.loadHTML();
-			window.removeEventListener('CAT', D.jsHtmlLoader);
-		}
-	}
 	static AddEventListeners()
 	{
 		window.addEventListener('Assertion', function(e)
@@ -3552,6 +3537,8 @@ D.drag && console.log('mousemove drag');
 							diagram.setPlacement(placement, false);
 							const viewport = diagram.getViewport();
 							if ('action' in args && viewport)
+							{
+								D.diagramSVG.classList.remove('trans');
 								switch(args.action)
 								{
 									case 'home':
@@ -3561,6 +3548,8 @@ D.drag && console.log('mousemove drag');
 										D.setSessionViewport(viewport);
 										break;
 								}
+								D.diagramSVG.classList.add('trans');
+							}
 							D.GlowBadObjects(diagram);
 						}
 						else
@@ -3601,7 +3590,6 @@ D.drag && console.log('mousemove drag');
 		window.addEventListener('mousemove', D.Autohide);
 		window.addEventListener('mousedown', D.Autohide);
 		window.addEventListener('keydown', D.Autohide);
-		window.addEventListener('CAT', e => D.jsHtmlLoader(e));
 		window.addEventListener('Assertion', D.UpdateDisplay);
 		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
 		window.addEventListener('Object', D.UpdateObjectDisplay);
@@ -3673,6 +3661,7 @@ D.drag && console.log('mousemove drag');
 				{
 					if (diagram.user === 'sys')
 						diagram.autoplace();
+					D.diagramSVG.classList.remove('hidden');
 					diagram.show();
 					D.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					D.default.fullscreen && diagram.saveViewport(D.session.viewport);
@@ -4353,7 +4342,7 @@ D.drag && console.log('mousemove drag');
 		D.session.viewport.y = viewport.y;
 		D.session.viewport.scale = viewport.scale;
 		D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
-		R.EmitViewEvent(D.session.mode, R.diagram);
+		R.diagram && R.EmitViewEvent(D.session.mode, R.diagram);
 	}
 	static setSessionViewportByBBox(bbox)
 	{
@@ -4470,11 +4459,11 @@ D.drag && console.log('mousemove drag');
 			D.editElement = null;
 		}
 	}
-	static setFullscreen(full)
+	static setFullscreen(full, emit = true)
 	{
 		D.default.fullscreen = full;
 		R.SaveDefaults();
-		R.diagram && R.EmitViewEvent('diagram', R.diagram);
+		emit && R.diagram && R.EmitViewEvent('diagram', R.diagram);
 	}
 	static getTool()
 	{
@@ -4864,6 +4853,7 @@ Object.defineProperties(D,
 	uiSVG:			{value: isGUI ? document.getElementById('uiSVG') : null,		writable: false},
 	// where a diagram is placed in the session
 	placements:		{value: new Map(),												writable: false},
+	version:		{value: 1,														writable: false},
 	// the last viewport on a diagram in the session
 	viewports:		{value: new Map(),												writable: false},
 	session:		{value: null,													writable: true},
@@ -5001,18 +4991,18 @@ class Catalog extends DiagramTool
 	{
 		const args =
 		{
-			onclick:		_ =>
+			onclick:_ =>
 			{
-				Cat.D.catalog.hide();
-				Cat.D.setFullscreen(true);
-				Cat.R.SelectDiagram(info.name, 'home');
+				D.catalog.hide();
+				D.diagramSVG.classList.add('hidden');
+				D.setFullscreen(true, false);
+				R.SelectDiagram(info.name, 'home');
 			},
 			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
 			'data-name':	info.name,
 		};
 		const img = D.GetImageElement(info.name, args);
-		if (this.glowMap.has(info.name))
-			img.classList.add(this.glowMap.get(info.name));
+		this.glowMap.has(info.name) && img.classList.add(this.glowMap.get(info.name));
 		const toolbar = H3.table('.verticalTools');
 		toolbar.onmouseenter = e => {toolbar.style.opacity = 100;};
 		toolbar.onmouseleave = e => {toolbar.style.opacity = 0;};
@@ -11574,10 +11564,6 @@ class IndexCategory extends Category
 		});
 		this.constructor.name === 'IndexCategory' && R.EmitElementEvent(diagram, 'new', this);
 	}
-	process(diagram, data)
-	{
-		super.process(diagram, data);
-	}
 	help()
 	{
 		const help = super.help();
@@ -12928,6 +12914,7 @@ class Diagram extends Functor
 			svgBase:					{value:null,		writable:true},
 			timestamp:					{value:U.GetArg(args, 'timestamp', Date.now()),	writable:true},
 			user:						{value:args.user,	writable:false},
+			version:					{value:U.GetArg(args, 'version', 0),			writable:true},
 //			viewport:					{value:{x:0, y:0, scale:1.0, width:D.Width(), height:D.Height(), visible:false},	writable:true},
 		});
 		if ('references' in args)
@@ -12937,7 +12924,7 @@ class Diagram extends Functor
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
 		{
-			if (R.initialized)
+			if (R.initialized && isGUI)
 				this.makeSVG();
 			this.domain.process(this, nuArgs.domainElements);
 		}
@@ -12968,14 +12955,10 @@ class Diagram extends Functor
 		const isIndex = U.IsIndexElement(elt);
 		const cat = isIndex ? this.domain : this.codomain;
 		if (cat.elements.has(elt.name))
-		{
-			console.log('duplicate name', elt.name);
-			throw `Element with given name already exists in category ${elt.name}`;
-		}
+			throw `Element with given name U.HtmlSAfe(elt.name) already exists in category ${U.HtmlSafe(cat.name)}`;
 		if (this.elements.has(elt.basename))
-			throw `Element with given basename already exists in diagram`;
-		if (!isIndex)
-			this.elements.set(elt.basename, elt);
+			throw `Element with given basename ${U.HtmlSAfe(elt.basename)} already exists in diagram`;
+		!isIndex && this.elements.set(elt.basename, elt);
 		cat.elements.set(elt.name, elt);
 	}
 	help()
@@ -12993,6 +12976,7 @@ class Diagram extends Functor
 		a.readonly = this.readonly;
 		a.user = this.user;
 		a.timestamp = this.timestamp;
+		a.version = this.version;
 		return a;
 	}
 	getAnon(s)
@@ -13022,13 +13006,6 @@ class Diagram extends Functor
 		U.writefile(`${this.name}-viewport.json`, JSON.stringify(viewport));
 		D.viewports.set(this.name, viewport);
 	}
-	setVisibility(visible)
-	{
-		if (visible)
-			this.svgRoot.classList.remove('hidden');
-		else
-			this.svgRoot.classList.add('hidden');
-	}
 	// where the diagram is placed in the current session
 	getPlacement()
 	{
@@ -13051,7 +13028,7 @@ class Diagram extends Functor
 		const y = Math.round(args.y);
 		const scale = args.scale;
 		const visible = 'visible' in args ? args.visible : true;
-		this.setVisibility(visible);
+		visible ? this.show() : this.hide();
 		this.svgTranslate.setAttribute('transform', `translate(${x} ${y}) scale(${scale} ${scale})`);
 		const placement = {x, y, scale, visible, timestamp:Date.now()};
 		U.writefile(`${this.name}-placement.json`, JSON.stringify(placement));
@@ -13171,8 +13148,6 @@ class Diagram extends Functor
 				e.shiftKey ? this.addSelected(elt) : this.makeSelected(elt);
 			else if (e.shiftKey)
 				this.deselect(elt);
-			else
-				D.toolbar.show();
 			if (elt instanceof DiagramObject)
 				elt.orig = {x:elt.x, y:elt.y};
 		}
@@ -13239,7 +13214,7 @@ class Diagram extends Functor
 				updated.add(m);
 			}
 		}
-		dragObjects.forEach(function(o)
+		dragObjects.forEach(o =>
 		{
 			o.update(delta.add(o.orig));
 			if (o instanceof DiagramObject)
@@ -13704,7 +13679,7 @@ class Diagram extends Functor
 	}
 	getAllReferenceDiagrams(refs = new Map())
 	{
-		this.references.forEach(function(r)
+		this.references.forEach(r =>
 		{
 			if (refs.has(r.name))
 				refs.set(r.name, 1 + refs[r.name]);
@@ -13787,7 +13762,7 @@ class Diagram extends Functor
 	{
 		const objects = new Set();
 		this.forEachObject(o => objects.add(o));
-		all && this.allReferences.forEach(function(cnt, name)
+		all && this.allReferences.forEach((cnt, name) =>
 		{
 			const diagram = R.$CAT.getElement(name);
 			diagram.forEachObject(o => objects.add(o));
@@ -13798,7 +13773,7 @@ class Diagram extends Functor
 	{
 		const morphisms = new Set();
 		this.forEachMorphism(m => morphisms.add(m));
-		all && this.allReferences.forEach(function(cnt, name)
+		all && this.allReferences.forEach((cnt, name) =>
 		{
 			const diagram = R.$CAT.getElement(name);
 			diagram.forEachMorphism(m => morphisms.add(m));
@@ -13910,7 +13885,7 @@ class Diagram extends Functor
 	}
 	isIdentity(factors)
 	{
-		return factors.reduce((r, fctr, i) => r && typeof fctr === 'number' ? i === fctr : false, true);
+		return factors.reduce((r, fctr, i) => r && typeof fctr === 'number' ? i === fctr : i === fctr[0] && fctr.length === 1, true);
 	}
 	decompose(leg)
 	{
@@ -14172,7 +14147,7 @@ class Diagram extends Functor
 	{
 		const indexing = new Map();
 		let ndx = 0;
-		this.domain.elements.forEach(function(elt) { indexing.set(elt, ndx++); });
+		this.domain.elements.forEach(elt => indexing.set(elt, ndx++));
 		return ary.sort(function(a, b) { return indexing.get(a) < indexing.get(b) ? -1 : indexing.get(b) > indexing.get(a) ? 1 : 0; });
 	}
 	undo(e)
@@ -14200,7 +14175,7 @@ class Diagram extends Functor
 			if ('recursor' in m && typeof m.recursor === 'string')	// set recursive function as it is defined after m is
 				m.setRecursor(m.recursor);
 			const that = this;
-			'data' in m && m.data.forEach(function(d, i) { m.data.set(i, U.InitializeData(that, m.codomain, d)); });
+			'data' in m && m.data.forEach((d, i) => m.data.set(i, U.InitializeData(that, m.codomain, d)));
 		});
 	}
 	replaceElement(to, nuTo, preserve = true)
@@ -15091,7 +15066,7 @@ class Assembler
 		// if the domain is a source then build its preamble
 		//
 		let preamble = null;
-		if (this.sources.has(domain))
+		if (this.sources.has(domain) || this.outputs.has(domain))
 		{
 			const refs = [...domain.domains].filter(m => this.references.has(m));
 			// all references satisfied?
@@ -15100,6 +15075,7 @@ class Assembler
 				const product = this.diagram.prod(...refs.map(ref => this.ref2comp.get(ref)));
 				const factors = [];
 				refs.map((ref, i) => ref.to.factors.map(fctr => factors.push(fctr)));
+				// TODO drop factor assembly if its an identity
 				preamble = !this.diagram.isIdentity(factors) ? this.diagram.comp(product, this.diagram.fctr(product.codomain, factors)) : product;
 				this.processed.add(domain);
 			}
@@ -15185,18 +15161,26 @@ class Assembler
 		//
 		// get the blob's morphism
 		//
-		const comp = this.getBlobMorphism();
+		const morphism = this.getBlobMorphism();
 		//
 		// place on screen the assemblage of the final composite
 		//
-		if (comp)
+		if (morphism)
 		{
-			const compObjs = D.PlaceComposite(e, this.diagram, comp);
-			this.diagram.viewElements(...this.objects, ...compObjs);
-			R.EmitDiagramEvent(this.diagram, 'makeCells');
+			if (morphism instanceof Composite)
+			{
+				const compObjs = D.PlaceComposite(e, this.diagram, morphism);
+				this.diagram.viewElements(...this.objects, ...compObjs);
+				R.EmitDiagramEvent(this.diagram, 'makeCells');
+			}
+			else
+			{
+				const from = this.diagram.placeMorphism(morphism);
+				this.diagram.viewElements(...this.objects, from);
+			}
 		}
 		else
-			D.statusbar.show(e, 'No composite formed');
+			D.statusbar.show(e, 'No morphism formed');
 		this.finished = true;
 	}
 }
