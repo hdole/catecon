@@ -46,7 +46,6 @@ const jwkToPem = require('jwk-to-pem');
 
 const D2 = require('./public/js/D2.js');
 const Cat = require('./public/js/Cat.js');
-const jsAction = require('./public/js/javascript.js');
 
 Cat.R.default.debug = false;
 Cat.R.cloudURL = process.env.CAT_PARENT;
@@ -305,7 +304,7 @@ function validate(req, res, fn)
 
 function updateDiagramTable(name, info, fn)
 {
-	if (info.user === 'sys')
+	if (info.user === 'sys' || name === info.user + '/' + info.user)
 		return;
 	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ? WHERE name = ?';
 	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, info.refcnt, info.timestamp, name];
@@ -365,7 +364,7 @@ async function serve()
 							console.log('mysql intialization for Catecon', {err});
 							process.exit();
 						}
-						Cat.R.Initialize();
+						Cat.R.Initialize(_ => require('./public/js/javascript.js'));
 						log('server started');
 					});
 				});
@@ -379,7 +378,11 @@ async function serve()
 						console.log('mysql intialization for Catecon', {err});
 						process.exit();
 					}
-					Cat.R.Initialize(_ => updateSQLDiagramsByCatalog());
+					Cat.R.Initialize(_ =>
+					{
+						updateSQLDiagramsByCatalog();
+						require('./public/js/javascript.js');
+					});
 					log('server started');
 				});
 			}
