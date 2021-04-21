@@ -963,11 +963,12 @@ class R
 	//
 	static async SelectDiagram(name, action = null)
 	{
+if (R.default.debug)debugger;
 		if (isGUI)
 		{
 			D.session.mode = 'diagram';
 			R.diagram && R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
-			D.diagramSVG.classList.add('hidden');
+			D.default.fullscreen && D.diagramSVG.classList.add('hidden');
 		}
 		if (R.diagram && R.diagram.name === name)
 		{
@@ -3368,7 +3369,8 @@ class D
 	{
 		scalar = 2 * scalar;
 		const diagram = R.$CAT.getElement(e.target.dataset.name);
-		const zoomDgrm = diagram && (e.target.dataset.type === 'diagram' || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement');
+		const zoomDgrm = diagram && !D.default.fullscreen &&
+							(e.target.dataset.type === 'diagram' || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.constructor.name === 'SVGTextElement');
 		const viewport = zoomDgrm ? diagram.getPlacement() : D.session.viewport;
 		const vpScale = viewport.scale;
 		let inc = Math.log(vpScale)/Math.log(D.default.scale.base) + scalar;
@@ -3392,7 +3394,9 @@ class D
 			const ratio = scale / vpScale;
 			x = userPnt.x + ratio * (viewport.x - userPnt.x);
 			y = userPnt.y + ratio * (viewport.y - userPnt.y);
+			D.diagramSVG.classList.remove('trans');
 			D.setSessionViewport({x, y, scale});
+			D.diagramSVG.classList.add('trans');
 		}
 	}
 	static getKeyName(e)
@@ -3439,9 +3443,12 @@ class D
 					D.Autosave(args.diagram);
 					break;
 				case 'update':
-					args.element.update();
-					R.diagram.domain.updateCells(args.element);
-					isGUI && args.diagram.updateBackground();
+					if ('update' in args.element)
+					{
+						args.element.update();
+						args.diagram.domain.updateCells(args.element);
+						isGUI && args.diagram.updateBackground();
+					}
 					D.Autosave(args.diagram);
 					break;
 			}
@@ -3522,23 +3529,24 @@ class D
 				case 'load':
 					R.LoadDiagramEquivalences(diagram);
 					diagram.makeCells();
+					diagram.updateBackground();
 					break;
 				case 'default':
 					if (isGUI)
 					{
 						if (diagram)
 						{
-							D.catalog.hide();
+//							D.catalog.hide();
 							D.session.default = diagram.name;
 							diagram.makeSVG();
 							D.diagramSVG.appendChild(diagram.svgRoot);
 							const placement = diagram.getPlacement();
 							placement.visible = true;
+							D.diagramSVG.classList.remove('trans');
 							diagram.setPlacement(placement, false);
 							const viewport = diagram.getViewport();
 							if ('action' in args && viewport)
 							{
-								D.diagramSVG.classList.remove('trans');
 								switch(args.action)
 								{
 									case 'home':
@@ -3548,8 +3556,8 @@ class D
 										D.setSessionViewport(viewport);
 										break;
 								}
-								D.diagramSVG.classList.add('trans');
 							}
+							D.diagramSVG.classList.add('trans');
 							D.GlowBadObjects(diagram);
 						}
 						else
@@ -3662,12 +3670,26 @@ class D
 					if (diagram.user === 'sys')
 						diagram.autoplace();
 					D.diagramSVG.classList.remove('hidden');
+					diagram.updateBackground();
 					diagram.show();
 					D.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					D.default.fullscreen && diagram.saveViewport(D.session.viewport);
 					D.saveSession();
+					/*
+					if (D.default.fullscreen)	// for transition effect on diagramSVG
+					{
+						const fn = _ =>
+						{
+							diagram.updateBackground();
+console.log('transition end');
+							D.diagramSVG.removeEventListener('transitionend', fn);
+						};
+						D.diagramSVG.addEventListener('transitionend', fn);
+					}
+					else
+						diagram.updateBackground();
+						*/
 				}
-				D.forEachDiagramSVG(diagram => diagram.updateBackground());
 			}
 			else if (command === 'catalog')
 				R.initialized && D.saveSession();
@@ -4331,8 +4353,11 @@ class D
 		let dgrmSvg = D.diagramSVG.firstChild;
 		do
 		{
-			const dgrm = R.$CAT.getElement(dgrmSvg.dataset.name);
-			dgrm && fn(dgrm, dgrmSvg);
+			if ('name' in dgrmSvg.dataset)
+			{
+				const dgrm = R.$CAT.getElement(dgrmSvg.dataset.name);
+				dgrm && fn(dgrm, dgrmSvg);
+			}
 		}
 		while((dgrmSvg = dgrmSvg.nextSibling));
 	}
@@ -4340,7 +4365,10 @@ class D
 	{
 		D.session.viewport.x = viewport.x;
 		D.session.viewport.y = viewport.y;
+		const oldScale = D.session.viewport.scale;
 		D.session.viewport.scale = viewport.scale;
+		if (oldScale > viewport.scale)		// due to transition effect on diagramSVG
+			R.diagram && R.diagram.updateBackground();
 		D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
 		R.diagram && R.EmitViewEvent(D.session.mode, R.diagram);
 	}
@@ -4421,7 +4449,7 @@ class D
 		else	// pan session
 		{
 			const viewport = D.session.viewport;
-			D.setSessionViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
+			D.setSessionViewport({x:viewport.x + viewport.scale * offset.x, y:viewport.y + viewport.scale * offset.y, scale:viewport.scale});
 		}
 	}
 	static getViewportByBBox(bbox)	// bbox in session coordinates
@@ -4463,7 +4491,18 @@ class D
 	{
 		D.default.fullscreen = full;
 		R.SaveDefaults();
-		emit && R.diagram && R.EmitViewEvent('diagram', R.diagram);
+		if (emit)
+		{
+			const diagrams = D.session.diagrams.map(diagram => R.CAT.getElement(diagram));
+			if (full && R.diagram)
+				R.diagram.updateBackground();
+			else
+			{
+				diagrams.map(diagram => diagram.updateBackground());
+				const bkgnd = document.getElementById('diagram-background');
+				bkgnd && bkgnd.remove();
+			}
+		}
 	}
 	static getTool()
 	{
@@ -4670,11 +4709,11 @@ Object.defineProperties(D,
 				Cat.R.diagram.undo(e);
 				e.preventDefault();
 			},
-			ControlShiftKeyH(e)
-			{
-				R.SelectDiagram(`${R.user.name}/Home`);
-				e.preventDefault();
-			},
+//			ControlShiftKeyH(e)
+//			{
+//				R.SelectDiagram(`${R.user.name}/Home`);
+//				e.preventDefault();
+//			},
 			ControlKeyL(e)
 			{
 				D.ttyPanel.open();
@@ -4818,14 +4857,14 @@ Object.defineProperties(D,
 		},
 		writable: true,
 	},
-	mouseIsDown:{value: false,		writable: true},	// is the mouse key down? the onmousedown attr is not connected to mousedown or mouseup
+	mouseIsDown:	{value: false,		writable: true},	// is the mouse key down? the onmousedown attr is not connected to mousedown or mouseup
 	mouseover:		{value: null,		writable: true},
 	navbar:			{value: null,		writable: true},
 	openPanels:		{value: [],			writable: true},
 	Panel:			{value: null,		writable: true},
 	panels:			{value: null,		writable: true},
 	pasteBuffer:	{value: [],			writable: true},
-	ReplayCommands:	{value:	new Map(),	writable:false},
+	ReplayCommands:	{value:	new Map(),	writable: false},
 	screenPan:		{value: 0,			writable: true},
 	settingsPanel:	{value: null,		writable: true},
 	shiftKey:		{value: false,		writable: true},
@@ -4928,7 +4967,6 @@ class Catalog extends DiagramTool
 			switch(args.command)
 			{
 				case 'catalog':
-					R.diagram && R.diagram.hide();
 					if (this.diagrams === null)
 						this.search();
 					this.show();
@@ -5832,6 +5870,7 @@ class HelpPanel extends Panel
 	{
 		super('help');
 		const date = '04/11/2020 00:00:01 AM';
+		// TODO move to pdf
 		const elements = [
 			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn())), '.buttonBarRight'),
 			H3.h3('Catecon'),
@@ -7632,7 +7671,9 @@ class DiagramText extends Element
 		D.editElement = span;		// remember which element is being editted
 		span.addEventListener('mousedown', e => e.stopPropagation());
 		const placement = this.diagram.getPlacement();
-		const scale = 1 / (placement.scale * D.session.viewport.scale);
+//		const scale = 1 / (placement.scale * D.session.viewport.scale);
+//		const scale = 1 / (1 * D.session.viewport.scale);
+		const scale = 1 / placement.scale;
 		const foreign = H3.foreignObject(H3.div(span, {xmlns:'http://www.w3.org/1999/xhtml'}), {width:scale * bbox.width + 'px', height:scale * bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
@@ -13046,7 +13087,7 @@ class Diagram extends Functor
 	}
 	home()
 	{
-		this.updateBackground();
+//		this.updateBackground();
 		D.setSessionViewportByBBox(this.svgRoot.getBBox());
 	}
 	getObject(name)
@@ -13409,11 +13450,7 @@ class Diagram extends Functor
 			this.svgRoot = H3.g({id:this.elementId('root'), 'data-name':this.name});
 			const bkgnd = H3.rect(`##${this.elementId('background')}.diagramBackground`, {x:0, y:0, width:D.Width(), height:D.Height()});
 			const f4gnd = H3.rect(`##${this.elementId('foreground')}.diagramForeground`, {x:0, y:0, width:D.Width(), height:D.Height(), 'data-name':this.name, 'data-type':'diagram'});
-			f4gnd.ondblclick = e =>
-			{
-				if (R.diagram !== this)
-					R.SelectDiagram(this);
-			};
+			f4gnd.ondblclick = e => R.diagram !== this && R.SelectDiagram(this);
 			let origClick = null;	// the original mousedown location in session coords
 			let origLoc = null;		// the original diagram location in sesssion coords
 			const onMouseMove = e =>
@@ -14314,16 +14351,24 @@ class Diagram extends Functor
 		{
 			const dgrmBkgnd = document.getElementById(this.elementId('background'));
 			const dgrmF4gnd = document.getElementById(this.elementId('foreground'));
-			const bkgnd = document.getElementById('diagram-background');
-			bkgnd && bkgnd.remove();
+			let bkgnd = document.getElementById('diagram-background');
 			if (D.default.fullscreen)
 			{
 				dgrmF4gnd.classList.remove('grabbable');
 				const scale = 1 / D.session.viewport.scale;
-				const svgRoot = this.svgRoot;
 				const pnt = D.userToSessionCoords({x:0, y:0});
-				const rect = H3.rect('.diagramBackgroundActive', {id:'diagram-background', x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.Width()}px`, height:`${scale * D.Height()}px`});
-				svgRoot.parentNode.insertBefore(rect, svgRoot);
+				const bbox = D.diagramSVG.getBBox();
+				if (bkgnd)
+				{
+					bkgnd.setAttribute('x', `${pnt.x}px`);
+					bkgnd.setAttribute('y', `${pnt.y}px`);
+					bkgnd.setAttribute('width', `${scale * D.Width()}px`);
+					bkgnd.setAttribute('height', `${scale * D.Height()}px`);
+				}
+				else
+					bkgnd = H3.rect('.diagramBackgroundActive', {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
+																		x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.Width()}px`, height:`${scale * D.Height()}px`});
+				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
 				dgrmBkgnd.classList.add('hidden');
 				dgrmF4gnd.classList.add('hidden');
 			}
@@ -14338,8 +14383,8 @@ class Diagram extends Functor
 			const scale = placement.scale;
 			const x = scale * bbox.x + placement.x - D.default.diagram.margin;
 			const y = scale * bbox.y + placement.y - D.default.diagram.margin;
-			const width = scale * bbox.width + 2 * D.default.diagram.margin;
-			const height = scale * bbox.height + 2 * D.default.diagram.margin;
+			const width = 1.1 * scale * bbox.width + 2 * D.default.diagram.margin;
+			const height = 1.1 * scale * bbox.height + 2 * D.default.diagram.margin;
 			dgrmBkgnd.setAttribute('x', `${x}px`);
 			dgrmBkgnd.setAttribute('y', `${y}px`);
 			dgrmBkgnd.setAttribute('width', `${width}px`);
