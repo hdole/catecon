@@ -767,7 +767,6 @@ class R
 			D.session.mode = 'diagram';
 		else if (isGUI && D.session.mode === 'diagram' && D.session.default)
 			R.params.set('diagram', D.session.default);		// set default diagram
-//		isGUI && D.session.mode === 'diagram' && R.EmitViewEvent('diagram');
 		isGUI && D.catalog.show(D.session.mode === 'catalog');
 		D.Busy();
 		R.ReadDefaults();
@@ -798,8 +797,9 @@ class R
 					}
 				}
 				R.initialized = true;
-				isGUI && D.session.diagrams.map(d => R.DownloadDiagram(d, diagram =>
+				isGUI && D.session.diagrams.map(d => R.DownloadDiagram(d, _ =>
 				{
+					const diagram = R.$CAT.getElement(d);
 					diagram.makeSVG();
 					diagram.setPlacement(diagram.getPlacement(), false);
 				}));
@@ -927,7 +927,7 @@ class R
 		const info = R.catalog.get(name);
 		return info && info.cloudTimestamp > info.localTimestamp;
 	}
-	static async DownloadDiagram(name, fn = null)
+	static async DownloadDiagram(name, fn = null, e = null)
 	{
 		let diagram = null;
 		const cloudDiagrams = [...R.GetReferences(name)].reverse().filter(d => R.LocalTimestamp(d) === 0);
@@ -955,7 +955,7 @@ class R
 			diagram = R.LoadDiagram(name);		// immediate loading
 		else
 			return null;
-		fn && fn(diagram);
+		fn && fn(e);
 		return diagram;
 	}
 	//
@@ -963,7 +963,6 @@ class R
 	//
 	static async SelectDiagram(name, action = null)
 	{
-if (R.default.debug)debugger;
 		if (isGUI)
 		{
 			D.session.mode = 'diagram';
@@ -1358,6 +1357,25 @@ if (R.default.debug)debugger;
 		D.statusbar.show(e, `${diagram.properName} reference removed`);
 		diagram.log({command:'removeReference', name});
 		diagram.antilog({command:'addReference', name});
+	}
+	static createDiagram(codomain, base, proper, desc)
+	{
+		const basename = U.HtmlSafe(base);
+		if (!U.isValidBasename(basename))
+			return 'Invalid basename';
+		const userDiagram = R.GetUserDiagram(R.user.name);
+		if (userDiagram.elements.has(basename))
+			return 'diagram already exists';
+		const name = `${R.user.name}/${basename}`;
+		if (R.catalog.has(name))
+			return 'diagram already exists';
+		const properName = U.HtmlSafe(proper);
+		const description = U.HtmlSafe(desc);
+		const diagram = new Diagram(userDiagram, {basename, codomain, properName, description, user:R.user.name});
+		R.SetDiagramInfo(diagram);
+		diagram.makeSVG();
+		diagram.home();
+		return diagram;
 	}
 }
 Object.defineProperties(R,
@@ -2018,6 +2036,7 @@ class ElementTool
 			this.search();
 		};
 		return H3.table(	'##search-tools',
+							H3.tr(	H3.th('.center', 'Search for Diagram', {colspan:3})),
 							H3.tr(	H3.td('Filter by', '.tinyPrint.center.italic'),
 									H3.td(),
 									H3.td('Sort by', '.tinyPrint.center.italic')),
@@ -2036,7 +2055,7 @@ class ElementTool
 		searchSorter.appendChild(D.getIcon('reference', 'reference', e => this.setRefcntSorter(e), 'Sort by reference count'));
 		this.resetFilter();
 	}
-	html(e)		// call me sometime
+	html(e)
 	{
 		const help = D.toolbar.help;
 		D.RemoveChildren(help);
@@ -2531,18 +2550,18 @@ class DiagramTool extends BpdTool
 			{
 				const addRef = (e, name) =>
 				{
-					R.DownloadDiagram(name, e =>
+					R.DownloadDiagram(name, ev =>
 					{
 						try
 						{
-							R.AddReference(e, name);
+							R.AddReference(ev, name);
 							this.search();
 						}
 						catch(x)
 						{
 							D.toolbar.setError(x);
 						}
-					});
+					}, e);
 				};
 				buttons.push(D.getIcon('reference', 'reference', e => addRef(e, name), 'Add reference', btnSize));
 			}
@@ -2655,35 +2674,15 @@ class DiagramTool extends BpdTool
 	}
 	create(e)
 	{
-		try
+		const args = this.getArgs();
+		const diagram = R.createDiagram(this.codomainElt.value, args.basename, args.properName, args.description);
+		if (typeof diagram === 'string')
+			D.toolbar.setError(diagram);
+		else
 		{
-			const basename = U.HtmlSafe(this.basenameElt.value);
-			if (!U.isValidBasename(basename))
-				throw 'Invalid basename';
-			const userDiagram = R.GetUserDiagram(R.user.name);
-			if (userDiagram.elements.has(basename))
-				throw 'diagram already exists';
-			const name = `${R.user.name}/${basename}`;
-			if (R.catalog.has(name))
-				throw 'diagram already exists';
-			const diagram = new Diagram(userDiagram,
-			{
-				basename,
-				codomain:		this.codomainElt.value,
-				properName:		U.HtmlEntitySafe(this.properNameElt.value),
-				description:	U.HtmlEntitySafe(this.descriptionElt.value),
-				user:			R.user.name,
-			});
-			R.SetDiagramInfo(diagram);
-			diagram.makeSVG();
-			diagram.home();
 			this.reset();
 			R.EmitCATEvent('new', diagram);
 			R.SelectDiagram(diagram.name);
-		}
-		catch(x)
-		{
-			D.toolbar.setError(x);
 		}
 	}
 	doit(e, diagram, args, save = true)
@@ -2764,14 +2763,14 @@ class HomsetTool extends BpdTool
 		try
 		{
 			const args = this.getArgs();
-			args.domain = diagram.codomain.getElement(this.domainElt.value),
-			args.codomain = diagram.codomain.getElement(this.codomainElt.value),
+			args.domain = R.diagram.codomain.getElement(this.domainElt.value),
+			args.codomain = R.diagram.codomain.getElement(this.codomainElt.value),
 			args.xyDom = D.toolbar.mouseCoords;	// use original location
-			const from = this.doit(e, diagram, args);
+			const from = this.doit(e, R.diagram, args);
 			if (from)
 			{
 				this.reset();
-				diagram.log(
+				R.diagram.log(
 				{
 					command:'toolHomset',
 					domain:args.domain.name,
@@ -2848,21 +2847,21 @@ class StatusBar
 		const elt = this.element;
 		elt.innerHTML = msg;
 		let x, y;
-		if (typeof e === 'object')
+		if (e instanceof MouseEvent)
 		{
-			x = e ? e.clientX : 100;
-			y = e ? e.clientY : 100;
-			elt.style.left = `${x + 20}px`;
-			elt.style.top = `${y - 60}px`;
-			elt.style.display = 'block';
-			this.xy = {x, y};
-			this.hide();
+			x = e.clientX + 20;
+			y = e.clientY - 60;
 		}
 		else
 		{
-			x = window.innerWidth/2;
-			y = window.innerHeight/2;
+			x = D.Width()/2;
+			y = D.Height()/2;
 		}
+		elt.style.left = `${x}px`;
+		elt.style.top = `${y}px`;
+		elt.style.display = 'block';
+		this.xy = {x, y};
+		this.hide();
 		const bbox = elt.getBoundingClientRect();
 		const delta = bbox.left + bbox.width - window.innerWidth;
 		if (delta > 0)	// shift back to onscreen
@@ -2873,9 +2872,12 @@ class StatusBar
 	show(e, msg, record = false)
 	{
 		this._prep(msg);
-		this.timerIn = setTimeout(_ => this.element.classList.remove('hidden'), D.default.statusbar.timein);
-		this.timerOut = setTimeout(_ => this.hide(), D.default.statusbar.timeout);
-		this._post(e, msg, record);
+		if (msg !== '')
+		{
+			this.timerIn = setTimeout(_ => this.element.classList.remove('hidden'), D.default.statusbar.timein);
+			this.timerOut = setTimeout(_ => this.hide(), D.default.statusbar.timeout);
+			this._post(e, msg, record);
+		}
 	}
 	alert(e, msg, record = false)
 	{
@@ -3045,10 +3047,7 @@ class D
 			{
 				const pnt = diagram.mouseDiagramPosition(e);
 				if (D.mouseover)
-				{
-					if (!diagram.selected.includes(D.mouseover) && !D.shiftKey)
-						diagram.deselectAll(e);
-				}
+					!diagram.selected.includes(D.mouseover) && !D.shiftKey && diagram.deselectAll(e);
 				else
 					diagram.deselectAll(e);
 				D.dragStart = D.mouse.clientPosition();
@@ -3111,7 +3110,7 @@ class D
 								if (D.getTool() === 'select')
 								{
 									let fusible = false;
-									diagram.updateDragObjects(e);
+									diagram.updateDragObjects(e.shiftKey);
 									fusible = diagram.updateFusible(e);
 									let msg = '';
 									if (D.mouseover && diagram.selected.length === 1)
@@ -3133,19 +3132,15 @@ class D
 										D.statusbar.show(e, msg);
 										from.updateGlow(true, 'glow');
 									}
-									else if (!e.shiftKey && D.mouseover && D.mouseOver !== from)
+									else if (D.mouseover && D.mouseOver !== from && D.mouseover.constructor.name === from.constructor.name)
 										from.updateGlow(true, from.isFusible(D.mouseover) ? 'glow' : 'badGlow');
 									else if (!fusible)	// no glow
 										from.updateGlow(false, '');
 								}
 							}
 						}
-						else if (D.mouse.delta().nonZero())
-						{
-							const from = diagram.getSelected();
-							if (D.getTool() === 'select')
-								diagram.updateDragObjects(e);
-						}
+						else if (D.mouse.delta().nonZero() && D.getTool() === 'select')
+							diagram.updateDragObjects(e.shiftKey);
 						D.DeleteSelectRectangle();
 						D.mouseover = oldMouseover;
 					}
@@ -3293,7 +3288,7 @@ class D
 				return;
 			let elt = diagram.getElement(name);
 			if (!elt)
-				R.DownloadDiagram(name, e => R.AddReference(e, name));
+				R.DownloadDiagram(name, ev => R.AddReference(ev, name), e);
 			else
 			{
 				let from = null;
@@ -3536,7 +3531,6 @@ class D
 					{
 						if (diagram)
 						{
-//							D.catalog.hide();
 							D.session.default = diagram.name;
 							diagram.makeSVG();
 							D.diagramSVG.appendChild(diagram.svgRoot);
@@ -3606,23 +3600,29 @@ class D
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
 		D.topSVG.addEventListener('drop', D.Drop, true);
-		document.addEventListener('mousemove', e =>
+		D.topSVG.addEventListener('mousemove', e =>
 		{
 			if (D.statusbar.element.style.display === 'block' && D2.Dist(D.statusbar.xy, {x:e.clientX, y:e.clientY}) > D.default.statusbar.hideDistance)
 				D.statusbar.hide();
 		});
-		document.ondragover = e => e.preventDefault();
-		document.addEventListener('drop', e => e.preventDefault(), true);
-		document.addEventListener('keydown', e =>
+		D.topSVG.ondragover = e => e.preventDefault();
+		D.topSVG.addEventListener('drop', e => e.preventDefault(), true);
+		window.addEventListener('keydown', e =>
 		{
-			const name = D.getKeyName(e);
-			name in D.keyboardDown && D.keyboardDown[name](e);
+			if (D.session.mode === 'diagram')
+			{
+				const name = D.getKeyName(e);
+				name in D.keyboardDown && D.keyboardDown[name](e);
+			}
 		});
-		document.body.onkeyup = e =>
+		window.onkeyup = e =>
 		{
-			D.setCursor();
-			const name = D.getKeyName(e);
-			name in D.keyboardUp && D.keyboardUp[name](e);
+			if (D.session.mode === 'diagram')
+			{
+				D.setCursor();
+				const name = D.getKeyName(e);
+				name in D.keyboardUp && D.keyboardUp[name](e);
+			}
 		};
 		document.onwheel = e =>
 		{
@@ -3675,24 +3675,22 @@ class D
 					D.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					D.default.fullscreen && diagram.saveViewport(D.session.viewport);
 					D.saveSession();
-					/*
-					if (D.default.fullscreen)	// for transition effect on diagramSVG
-					{
-						const fn = _ =>
-						{
-							diagram.updateBackground();
-console.log('transition end');
-							D.diagramSVG.removeEventListener('transitionend', fn);
-						};
-						D.diagramSVG.addEventListener('transitionend', fn);
-					}
-					else
-						diagram.updateBackground();
-						*/
 				}
 			}
 			else if (command === 'catalog')
 				R.initialized && D.saveSession();
+		});
+		window.addEventListener('Application', e =>
+		{
+			const args = e.detail;
+			switch (args.command)
+			{
+				case 'start':
+					D.NotBusy();
+					// initial view
+					R.EmitViewEvent(D.session.mode, R.diagram);
+					break;
+			}
 		});
 	}
 	static textWidth(txt, cls = 'object')
@@ -3711,15 +3709,15 @@ console.log('transition end');
 		}
 		return 10;
 	}
-	static Grid(x)
+	static Grid(x, majorGrid = false)
 	{
-		const grid = (event && event.shiftKey && !event.ctrlKey) ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
+		const grid = majorGrid ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
 		switch (typeof x)
 		{
 		case 'number':
 			return D.gridding ? grid * Math.round(x / grid) : x;
 		case 'object':
-			return new D2(D.Grid(x.x), D.Grid(x.y));
+			return new D2(D.Grid(x.x, majorGrid), D.Grid(x.y, majorGrid));
 		}
 	}
 	static limit(s)
@@ -4709,11 +4707,6 @@ Object.defineProperties(D,
 				Cat.R.diagram.undo(e);
 				e.preventDefault();
 			},
-//			ControlShiftKeyH(e)
-//			{
-//				R.SelectDiagram(`${R.user.name}/Home`);
-//				e.preventDefault();
-//			},
 			ControlKeyL(e)
 			{
 				D.ttyPanel.open();
@@ -4909,14 +4902,30 @@ class Catalog extends DiagramTool
 		this.closeBtn = H3.td('.right', {width:'33%'});
 		this.title = H3.h1('.catalog', 'Catecon Catalog');
 		this.catalog.appendChild(H3.table(H3.tr(this.modeTool, H3.td(this.title, {width:'33%'}), this.closeBtn), '##modeToolbar'));
-		this.catalog.appendChild(H3.div(H3.span('Search for diagrams.', '.smallPrint'), '.center.w100'));
 		this.view = 'search';								// what viewing mode are we in?
 		this.catalogInfo = H3.div('##catalog-info');		// info about the state of the displayed items
 		this.catalog.appendChild(this.catalogInfo);
 		//
-		const searchField = this.getSearchBar();
-		searchField.classList.remove('hidden');
-		this.catalog.appendChild(searchField);
+		const searchTable = this.getSearchBar();
+		searchTable.classList.remove('hidden');
+		const action = e => this.createDiagram();
+		const inputBasenameSearch = e =>
+		{
+			if (D.OnEnter(e, action))
+				return;
+			const elt = R.$CAT.getElement(R.user.name + '/' + e.target.value);
+			elt || (e.target.value !== '' && !U.isValidBasename(e.target.value)) ? e.target.classList.add('error') : e.target.classList.remove('error');
+		};
+		const topBar = H3.table('.w100', H3.tr(H3.td(searchTable), H3.td(
+						H3.table('##catalog-diagram-new',
+							H3.tr(H3.th('New diagram', '.center')),
+							H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => inputBasenameSearch(e)}),
+											H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.OnEnter(e, action)}),
+											H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.OnEnter(e, action)}),
+											H3.span('##catalog-select-codomain-span'),
+											D.getIcon('edit', 'edit', action))),
+							H3.tr(H3.td(H3.span('##catalog-new-error')))))));
+		this.catalog.appendChild(topBar);
 		//
 		this.catalogDisplay = H3.div('##catalog-display.catalog', {style:'grid-template-columns:repeat(auto-fill, minmax(330rx, 1fr))'});		// the actual catalog display
 		this.catalog.appendChild(this.catalogDisplay);
@@ -4969,6 +4978,14 @@ class Catalog extends DiagramTool
 				case 'catalog':
 					if (this.diagrams === null)
 						this.search();
+					const codomainElt = H3.select('##catalog-select-codomain');
+					for (const [name, e] of R.$CAT.elements)
+						if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
+							codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
+					codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
+					const span = document.getElementById('catalog-select-codomain-span');
+					D.RemoveChildren(span);
+					span.appendChild(codomainElt);
 					this.show();
 					break;
 				default:
@@ -5267,6 +5284,23 @@ class Catalog extends DiagramTool
 	hide()
 	{
 		this.catalog.classList.add('hidden');
+	}
+	createDiagram()
+	{
+		const errorElt = document.getElementById('catalog-new-error');
+		D.RemoveChildren(errorElt);
+		const basenameElt = document.getElementById('catalog-new-basename');
+		const properNameElt = document.getElementById('catalog-new-properName');
+		const descriptionElt = document.getElementById('catalog-new-description');
+		const codomainElt = document.getElementById('catalog-select-codomain');
+		const diagram = R.createDiagram(codomainElt.value, basenameElt.value, properNameElt.value, descriptionElt.value)
+		if (diagram instanceof Diagram)
+		{
+			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
+			R.SelectDiagram(diagram);
+		}
+		else
+			errorElt.innerHTML = U.HtmlSafe(diagram);
 	}
 }
 
@@ -6295,8 +6329,7 @@ class Element
 		if (this.svg)
 		{
 			this.svg.classList.remove(...['glow', 'badGlow']);
-			if (state)
-				this.svg.classList.add(...[glow]);
+			state && this.svg.classList.add(glow);
 		}
 	}
 	canSave()
@@ -7474,8 +7507,7 @@ class DiagramCore
 	updateGlow(state, glow)	// same as Element
 	{
 		this.svg && this.svg.classList.remove(...['glow', 'badGlow']);
-		if (state)
-			this.svg.classList.add(...[glow]);
+		state && this.svg.classList.add(glow);
 	}
 	emphasis(on)
 	{
@@ -7671,8 +7703,6 @@ class DiagramText extends Element
 		D.editElement = span;		// remember which element is being editted
 		span.addEventListener('mousedown', e => e.stopPropagation());
 		const placement = this.diagram.getPlacement();
-//		const scale = 1 / (placement.scale * D.session.viewport.scale);
-//		const scale = 1 / (1 * D.session.viewport.scale);
 		const scale = 1 / placement.scale;
 		const foreign = H3.foreignObject(H3.div(span, {xmlns:'http://www.w3.org/1999/xhtml'}), {width:scale * bbox.width + 'px', height:scale * bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
@@ -7834,10 +7864,10 @@ class DiagramObject extends CatObject
 	{
 		return {x:this.x, y:this.y};
 	}
-	setXY(xy)
+	setXY(xy, majorGrid = false)
 	{
-		this.x = D.Grid(xy.x);
-		this.y = D.Grid(xy.y);
+		this.x = D.Grid(xy.x, majorGrid);
+		this.y = D.Grid(xy.y, majorGrid);
 	}
 	getBBox()
 	{
@@ -7864,9 +7894,9 @@ class DiagramObject extends CatObject
 		svg.setAttributeNS(null, 'y', this.y + D.default.font.height/2);	// TODO should be this.height?
 		svg.innerHTML = this.to.properName;
 	}
-	update(xy = null)
+	update(xy = null, majorGrid = false)
 	{
-		xy && this.setXY(xy);
+		xy && this.setXY(xy, majorGrid);
 		if (!this.svg)
 			this.diagram.addSVG(this);
 		const svg = this.svg;
@@ -8079,6 +8109,7 @@ class Assertion extends Element
 	{
 		return this.cell.getBBox();
 	}
+	// get the two legs from a given (presumably selected) array
 	static GetLegs(ary)
 	{
 		const legs = [[], []];
@@ -9113,9 +9144,7 @@ class DeleteAction extends Action
 	{
 		if (!diagram.isEditable())
 			return false;
-		if (ary.length === 1 && ary[0].refcnt > 1)
-			return false;
-		return true;
+		return ary.length > 0 && ary.filter(a => a.refcnt > 1).length === 0;
 	}
 }
 
@@ -9583,7 +9612,6 @@ class RunAction extends Action
 	{
 		const from = ary[0];
 		const to = from.to;
-		const js = R.Actions.javascript;
 		const addDataBtn = D.getIcon('addInput', 'edit', e => this.addInput(), 'Add data');
 		const {properName, description} = to;
 		const elements = [H3.h3(properName)];
@@ -9592,24 +9620,24 @@ class RunAction extends Action
 		const source = to instanceof NamedObject ? to.base : to;
 		if (from instanceof DiagramObject)
 		{
-			if (js.canFormat(source))
-				elements.push(H3.span({innerHTML:js.getInputHtml(source)}), addDataBtn);
+			if (this.js.canFormat(source))
+				elements.push(H3.span({innerHTML:this.js.getInputHtml(source)}), addDataBtn);
 		}
 		else	// morphism
 		{
 			const {domain, codomain} = to;
-			if (to.constructor.name === 'Morphism' && domain instanceof FiniteObject && !js.hasCode(to))
+			if (to.constructor.name === 'Morphism' && domain instanceof FiniteObject && !this.js.hasCode(to))
 			{
 				/*
 				 * TODO?
 				if ('size' in domain && domain.size > 0)
 				{
 					for (let i=0; i<domain.size; ++i)
-						html += js.getInputHtml(codomain, null, i.toString());
+						html += this.js.getInputHtml(codomain, null, i.toString());
 				}
 				else	// indeterminate size
 				{
-					html += js.getInputHtml(codomain);
+					html += this.js.getInputHtml(codomain);
 					html += D.GetButton('addData', 'add', `Cat.R.Actions.run.addDataInput(event, Cat.R.diagram, '${to.name}')`, 'Add data input');
 				}
 				*/
@@ -9634,7 +9662,7 @@ class RunAction extends Action
 					for (let i=0; i<sz; ++i)
 					{
 						const value = to.data.has(i) ? to.data.get(i) : null;
-						const input = js.getInputHtml(codomain, value, i, [], i);
+						const input = this.js.getInputHtml(codomain, value, i, [], i);
 						dataRow(input, i);
 					}
 					// TODO domain not numeric
@@ -9645,7 +9673,7 @@ class RunAction extends Action
 				else
 				{
 					elements.push(H3.h5('Add Data To Morphism'));
-					rows.push(H3.tr(H3.td(H3.span({innerHTML:js.getInputHtml(domain, null, 'dom')})), H3.td(H3.span({innerHTML:js.getInputHtml(codomain, null, 'cod')})), H3.td(addDataBtn)));
+					rows.push(H3.tr(H3.td(H3.span({innerHTML:this.js.getInputHtml(domain, null, 'dom')})), H3.td(H3.span({innerHTML:this.js.getInputHtml(codomain, null, 'cod')})), H3.td(addDataBtn)));
 					elements.push(H3.table(rows));
 					canMakeData = false;
 					if ('data' in to && to.data.size > 0)
@@ -9662,7 +9690,7 @@ class RunAction extends Action
 			else if (to.isIterable())
 				elements.push(D.getIcon('evaluate', 'edit', e => this.evaluateMorphism(e, Cat.R.diagram, to.name, this.postResults), 'Evaluate morphism'));
 			else		// try to evaluate an input
-				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.evaluate(e, Cat.R.diagram, to.name, this.postResult), 'Evaluate inputs'));
+				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:this.js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), 'Evaluate inputs'));
 		}
 		if (canMakeData)
 		{
@@ -11277,7 +11305,7 @@ class DiagramMorphism extends Morphism
 	}
 	removeGraph()
 	{
-		if ('graph' in this)
+		if ('graph' in this && 'svg' in this.graph)
 		{
 			this.graph.svg.remove();
 			delete this.graph;
@@ -13087,7 +13115,6 @@ class Diagram extends Functor
 	}
 	home()
 	{
-//		this.updateBackground();
 		D.setSessionViewportByBBox(this.svgRoot.getBBox());
 	}
 	getObject(name)
@@ -13228,7 +13255,7 @@ class Diagram extends Functor
 				return a;
 		return null;
 	}
-	updateDragObjects(e)
+	updateDragObjects(majorGrid)
 	{
 		let delta = D.mouse.clientPosition().subtract(D.dragStart);
 		const placement = this.getPlacement();
@@ -13257,7 +13284,7 @@ class Diagram extends Functor
 		}
 		dragObjects.forEach(o =>
 		{
-			o.update(delta.add(o.orig));
+			o.update(delta.add(o.orig), majorGrid);
 			if (o instanceof DiagramObject)
 			{
 				o.domains.forEach(updateMorphism);
@@ -13286,6 +13313,15 @@ class Diagram extends Functor
 		R.EmitElementEvent(this, 'new', from);
 		return from;
 	}
+	findEmptySpot(xy)
+	{
+		let gxy = D.Grid(xy, true);
+		gxy.width = 20;
+		gxy.height = 20;
+		while(this.hasOverlap(gxy))
+			gxy.y += D.default.layoutGrid * D.default.majorGridMult;
+		return gxy;
+	}
 	placeMorphism(to, xyDom = null, xyCod = null, select = true, doOffset = true)
 	{
 		if (typeof to === 'string')
@@ -13301,7 +13337,7 @@ class Diagram extends Functor
 		}
 		else
 		{
-			xyD = xyDom ? new D2(D.Grid(xyDom)) : D.toolbar.mouseCoords ? D.toolbar.mouseCoords : D.Center(R.diagram);	// use original location
+			xyD = xyDom ? this.findEmptySpot(xyDom) : D.toolbar.mouseCoords ? D.toolbar.mouseCoords : D.Center(R.diagram);	// use original location
 			if (doOffset)
 				xyD = xyD.add(D.default.stdOffset);
 			domain = new DiagramObject(this, {to:to.domain, xy:xyD});
@@ -14524,7 +14560,7 @@ class Assembler
 	static isProjection(m)
 	{
 		const morph = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
-		return morph instanceof Identity || (morph instanceof FactorMorphism && !morph.dual);
+		return morph instanceof Identity || (morph instanceof FactorMorphism && !morph.dual && morph.factors.length === 1 && morph.factors[0] !== -1);
 	}
 	static isInjection(m)
 	{
@@ -14675,7 +14711,7 @@ class Assembler
 			{
 				const to = m.to;
 				// TODO if the product src is covered by projections, then an identity must be propagated
-				if ((to instanceof FactorMorphism && !to.dual) || Assembler.isProjection(to))
+				if (Assembler.isProjection(to))
 					return;
 				tagInfo(m);
 				!scanned.has(m.codomain) && scan.push(m.codomain) && scanned.add(m.codomain);
@@ -15220,7 +15256,7 @@ class Assembler
 			}
 			else
 			{
-				const from = this.diagram.placeMorphism(morphism);
+				const from = this.diagram.placeMorphism(morphism, base.getXY(), null, true, false);
 				this.diagram.viewElements(...this.objects, from);
 			}
 		}
