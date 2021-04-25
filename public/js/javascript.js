@@ -18,7 +18,7 @@ var Cat = Cat || require('./Cat.js');
 			const args = {basename:'javascript', description:'Javascript support', ext:'js'};
 			super(diagram, args);
 			R.languages.set(this.basename, this);
-			R.DownloadDiagram('hdole/HTML', diagram => this.loadHTML(diagram));
+			R.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
 		}
 		getType(elt, first = true)
 		{
@@ -104,7 +104,6 @@ ${header}	return ${name}_morphisms[args[0]](args[1]);${tail}`
 							if ('data' in morphism)
 							{
 								let homMorphs = [];
-//								const that = this;
 								morphism.data.forEach(d => this.findHomMorphisms(morphism.codomain, d, homMorphs));
 								if (homMorphs.length > 0)
 								{
