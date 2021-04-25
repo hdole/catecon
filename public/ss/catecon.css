@@ -199,7 +199,7 @@ div.catalog
 h1.catalog
 {
 	margin:				0px;
-	font-size:			18px;
+	font-size:			36px;
 	font-weight:		bold;
 }
 
@@ -421,16 +421,17 @@ p
 #statusbar
 {
 	background-color:	#ffe;
+	border:				solid;
 	border-color: 		red;
-	border-width: 		1px;
-	border-radius:		4px;
+	border-width: 		2px;
+	border-radius:		6px;
 	box-shadow:			4px 4px 2px 1px #bdd9;
 	cursor:				none;
 	display:			inline-block;
 	font-size:			18px;
 	margin:				2px;
 	overflow:			hidden;
-	padding:			0px;
+	padding:			4px;
 	position:			absolute;
 	white-space:		pre;
 	z-index:			4;
@@ -1013,12 +1014,14 @@ tspan
 	transition:			0.3s
 }
 
+/*
 #new-description
 {
 	font:	12px "Fira Sans",sans-serif;
 	white-space:		pre;
 	width:	100%;
 }
+*/
 
 .assyError
 {
@@ -1054,4 +1057,14 @@ tspan
 	ry:					35;
 	stroke:				#aaa3;
 	stroke-width:		10;
+}
+
+#catalog-diagram-new
+{
+	margin-left:		auto;
+}
+
+.catalog-input
+{
+	margin:	0px 4px 0px 4px;
 }
