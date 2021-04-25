@@ -402,6 +402,7 @@ async function serve()
 			}
 			catch(err)
 			{
+				console.error('****** cannot fetch catalog');
 				res.status(500).send(err).end();
 			}
 		});
