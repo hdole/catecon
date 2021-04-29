@@ -371,7 +371,7 @@ async function serve()
 			}
 			else
 			{
-				dbcon.query("USE `Catecon`;", (err, result) =>
+				dbcon.query('SELECT * FROM Catecon.diagrams', (err, result) =>
 				{
 					if (err)
 					{
@@ -381,11 +381,22 @@ async function serve()
 					Cat.R.Initialize(_ =>
 					{
 						updateSQLDiagramsByCatalog();
+						result.map(r =>
+						{
+							if (!Cat.R.catalog.has(r.name))
+							{
+								r.references = JSON.parse(r.refs);
+								Cat.R.catalog.set(r.name, r);
+							}
+						});
 						require('./public/js/javascript.js');
+						log('server started');
 					});
-					log('server started');
 				});
 			}
+		});
+		dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
+		{
 		});
 
 		app.use(express.static(path.join(process.env.CAT_DIR, 'public')));
