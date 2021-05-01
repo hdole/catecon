@@ -304,7 +304,7 @@ function validate(req, res, fn)
 
 function updateDiagramTable(name, info, fn)
 {
-	if (info.user === 'sys' || name === info.user + '/' + info.user)
+	if (info.user === 'sys' || name === info.user + '/' + info.user)	// do not track system or user/user diagrams
 		return;
 	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ? WHERE name = ?';
 	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, info.refcnt, info.timestamp, name];
@@ -566,7 +566,10 @@ async function serve()
 			if (!hasPermission(req.body.user, 'admin'))
 			{
 				if (req.body.user !== diagram.user)
+				{
+					console.log('*** unauthorized req.body.user', req.body.user, 'diagram.user', diagram.user);
 					return res.status(401).send('diagram owner not the validated user');
+				}
 				// diagram name must be first of diagram name
 				if (diagram.name.split('/')[0] !== req.body.user)
 					return res.status(401).send('diagram user and name mismatch').end();
