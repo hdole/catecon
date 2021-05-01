@@ -1252,8 +1252,10 @@ class R
 	{
 		U.writefile('defaults.json', JSON.stringify({R:R.default, D:D.default}));
 	}
-	static ReadDefaults()
+	static ReadDefaults()	// assume run only one per loading
 	{
+		R.factoryDefaults = U.Clone(R.default);
+		D.factoryDefaults = U.Clone(D.default);
 		const file = 'defaults.json';
 		let contents = null;
 		if (isGUI)
@@ -1403,8 +1405,8 @@ Object.defineProperties(R,
 		value:
 		{
 			category:		'hdole/PFS',
-			debug:			true,
-			showEvents:		true,
+			debug:			false,
+			showEvents:		false,
 		},
 		writable:	true,
 	},
@@ -2010,6 +2012,10 @@ class Toolbar
 	{
 		return !this.element.classList.contains('hidden');
 	}
+	hasActiveInputs()
+	{
+		return this.element.querySelector('input') !== null;
+	}
 }
 
 class ElementTool
@@ -2068,7 +2074,7 @@ class ElementTool
 		help.appendChild(H3.h4(this.type));
 		help.appendChild(H3.div('##' + this.headerId));
 		this.addNewSection();
-		const matchTable = H3.table({id:`${this.type}-matching-table.matching-table`});
+		const matchTable = H3.table({id:`${this.type}-matching-table`}, '.matching-table');
 		help.appendChild(	H3.div(`##${this.type}-search.w100.hidden`,
 									H3.hr(),
 									H3.h5('Search'),
@@ -2105,8 +2111,10 @@ class ElementTool
 	{}
 	reset()				// fitb
 	{}
-	getRows(tbl, elts)	// fitb
-	{}
+	getRows(tbl, elements)	// or replace
+	{
+		elements.map(elt => tbl.appendChild(elt.getHtmlRow()));
+	}
 	resetFilter()
 	{
 		this.filter = '';
@@ -2132,13 +2140,13 @@ class ElementTool
 	clearSearch()
 	{
 		D.toolbar.clearError();
-		const tbl = document.getElementById(`${this.type}-matching-table.matching-table`);
+		const tbl = document.getElementById(`${this.type}-matching-table`);
 		D.RemoveChildren(tbl);
 	}
 	search()
 	{
 		this.clearSearch();
-		const tbl = document.getElementById(`${this.type}-matching-table.matching-table`);
+		const tbl = document.getElementById(`${this.type}-matching-table`);
 		this.getRows(tbl, this.getMatchingElements());
 	}
 }
@@ -2252,23 +2260,19 @@ class TextTool extends ElementTool
 	}
 }
 
-class BpdTool extends ElementTool	// basename, proper name, description
+class BPD			// basename, proper name, description
 {
-	constructor(type, headline)
+	constructor()
 	{
-		super(type, headline);
 		Object.defineProperties(this,
 		{
 			basenameElt:		{value: null, writable: true},
 			properNameElt:		{value: null, writable: true},
 			descriptionElt:		{value: null, writable: true},
-			toolbar2:			{value: null, writable: true},
 		});
-		D.ReplayCommands.set(`new${this.type}`, this);
 	}
-	addNewSection()
+	getNewSection(id, action, headline)
 	{
-		const action = e => this.create(e);
 		const rows = [];
 		this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name', onkeyup:e => D.inputBasenameSearch(e, action)});
 		rows.push(H3.tr(H3.td(this.basenameElt)));
@@ -2276,18 +2280,13 @@ class BpdTool extends ElementTool	// basename, proper name, description
 		rows.push(H3.tr(H3.td(this.properNameElt)));
 		this.descriptionElt = H3.input('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
 		rows.push(H3.tr(H3.td(this.descriptionElt)));
-		const elts = [H3.hr(), H3.h5(this.headline)];
+		const elts = [H3.h5(headline)];
 		elts.push(H3.table(rows));
-		elts.push(H3.span(D.getIcon(action.name, 'edit', action, this.headline)));
-		D.toolbar.help.appendChild(H3.div(elts, `##${this.type}-new.hidden`));
-	}
-	getRows(tbl, elements)
-	{
-		elements.map(elt => tbl.appendChild(elt.getHtmlRow()));
+		elts.push(H3.span(D.getIcon(action.name, 'edit', action, headline)));
+		return H3.div(elts, `##${id}`);
 	}
 	reset()
 	{
-		super.reset();
 		this.basenameElt && (this.basenameElt.value = '');
 		this.properNameElt && (this.properNameElt.value = '');
 		this.descriptionElt && (this.descriptionElt.value = '');
@@ -2303,16 +2302,21 @@ class BpdTool extends ElementTool	// basename, proper name, description
 			properName:		U.HtmlSafe(this.properNameElt.value),
 			description:	U.HtmlSafe(this.descriptionElt.value),
 		};
-		args.xy = D.toolbar.mouseCoords;	// use original location
-		return args;
 	}
 }
 
-class ObjectTool extends BpdTool
+//class ObjectTool extends BpdTool
+class ObjectTool extends ElementTool
 {
 	constructor(headline)
 	{
 		super('Object', headline);
+		this.bpd = new BPD();
+		D.ReplayCommands.set('newObject', this);
+	}
+	addNewSection()
+	{
+		D.toolbar.help.appendChild(this.bpd.getNewSection('Object-new', e => this.create(e), this.headline));
 	}
 	getMatchingElements()
 	{
@@ -2331,9 +2335,10 @@ class ObjectTool extends BpdTool
 	{
 		try
 		{
-			args = this.getArgs();
+			args = this.bpd.getArgs();
+			args.xy = D.toolbar.mouseCoords;	// use last mouse location
 			const from = this.doit(e, R.diagram, args);
-			this.reset();
+			this.bpd.reset();
 			args.command = 'toolObject';
 			R.diagram.log(args);
 			R.diagram.antilog({command:'delete', elements:[from.name]});
@@ -2368,7 +2373,7 @@ class ObjectTool extends BpdTool
 	}
 }
 
-class MorphismTool extends BpdTool
+class MorphismTool extends ElementTool
 {
 	constructor(headline)
 	{
@@ -2377,13 +2382,15 @@ class MorphismTool extends BpdTool
 		{
 			domainElt:			{value: null,										writable: true},
 			codomainElt:		{value: null,										writable: true},
+			bpd:				{value: new BPD(),									writable: false},
 		});
-		D.ReplayCommands.set(`new${this.type}`, this);
+		D.ReplayCommands.set('newMorphism', this);
 	}
 	addNewSection()
 	{
-		super.addNewSection();
-		const table = D.toolbar.help.querySelector(`div#${this.type}-new`);
+		const newSection = this.bpd.getNewSection('Morphism-new', e => this.create(e), this.headline);
+		D.toolbar.help.appendChild(newSection);
+		const table = newSection.querySelector('table');
 		const objects = R.diagram.getObjects();
 		this.domainElt = H3.select('##new-domain.w100');
 		this.domainElt.appendChild(H3.option('Domain', {value:'', selected:true, disabled:true}));
@@ -2411,7 +2418,7 @@ class MorphismTool extends BpdTool
 	{
 		try
 		{
-			const args = this.getArgs();
+			const args = this.bpd.getArgs();
 			const diagram = R.diagram;
 			args.domain = diagram.codomain.getElement(this.domainElt.value);
 			if (args.domain === '')
@@ -2423,7 +2430,7 @@ class MorphismTool extends BpdTool
 			const from = this.doit(e, diagram, args);
 			if (from)
 			{
-				this.reset();
+				this.bpd.reset();
 				diagram.log(
 				{
 					command:	'toolMorphism',
@@ -2473,7 +2480,7 @@ class MorphismTool extends BpdTool
 					throw 'name already exists';
 				const to = new Morphism(diagram, args);
 				to.loadEquivalences();
-				from = diagram.placeMorphism(to, args.xyDom, args.xyCod, select, false);
+				from = diagram.placeMorphism(to, args.xyDom, args.xyCod, select);
 			}
 			return from;
 		}
@@ -2484,15 +2491,17 @@ class MorphismTool extends BpdTool
 	}
 }
 
-class DiagramTool extends BpdTool
+//class DiagramTool extends BpdTool
+class DiagramTool extends ElementTool
 {
 	constructor(type, headline)
 	{
 		super(type, headline);
 		Object.defineProperties(this,
 		{
-			domainElt:			{value: null,	writable: true},
-			codomainElt:		{value: null,	writable: true},
+			bpd:				{value: new BPD(),	writable: false},
+			domainElt:			{value: null,		writable: true},
+			codomainElt:		{value: null,		writable: true},
 		});
 		this.hasDiagramOnlyButton = false;
 	}
@@ -2666,10 +2675,7 @@ class DiagramTool extends BpdTool
 	}
 	reset()
 	{
-		super.reset();
-		this.basenameElt && (this.basenameElt.value = '');
-		this.properNameElt && (this.properNameElt.value = '');
-		this.descriptionElt && (this.descriptionElt.value = '');
+		this.bpd.reset();
 	}
 	resetFilter()
 	{
@@ -2679,13 +2685,13 @@ class DiagramTool extends BpdTool
 	}
 	create(e)
 	{
-		const args = this.getArgs();
+		const args = this.bpd.getArgs();
 		const diagram = R.createDiagram(this.codomainElt.value, args.basename, args.properName, args.description);
 		if (typeof diagram === 'string')
 			D.toolbar.setError(diagram);
 		else
 		{
-			this.reset();
+			this.bpd.reset();
 			R.EmitCATEvent('new', diagram);
 			R.SelectDiagram(diagram.name);
 		}
@@ -2725,102 +2731,6 @@ class DiagramTool extends BpdTool
 	}
 }
 
-class HomsetTool extends BpdTool
-{
-	constructor(headline)
-	{
-		super('Homset', headline);
-		Object.defineProperties(this,
-		{
-			domain:				{value: null,										writable: true},
-			codomain:			{value: null,										writable: true},
-			domainElt:			{value: null,										writable: true},
-			codomainElt:		{value: null,										writable: true},
-		});
-		D.ReplayCommands.set(`new${this.type}`, this);
-	}
-	addNewSection()
-	{
-		super.addNewSection();
-		const table = D.toolbar.help.querySelector(`div#${this.type}-new`);
-		this.domainElt = H3.span('##new-domain.w100');
-		this.codomainElt = H3.span('##new-codomain.w100');
-		table.appendChild(H3.tr(H3.td(this.domainElt)));
-		table.appendChild(H3.tr(H3.td(this.codomainElt)));
-	}
-	getMatchingElements()
-	{
-		const morphisms = R.diagram.getMorphisms().filter(m => m.name.includes(this.filter) &&
-			(m.domain.signature === this.domain.signature && m.codomain.signature === this.codomain.signature) &&
-			((this.diagramOnly && m.diagram === R.diagram) || !this.diagramOnly));
-		const sigs = new Map();
-		morphisms.map(m =>
-		{
-			if (!sigs.has(m.signature))
-				sigs.set(m.signature, m);
-		});
-		const remaining = [...sigs.values()];
-		remaining.sort(U.RefcntSorter);
-		return remaining;
-	}
-	create(e)
-	{
-		try
-		{
-			const args = this.getArgs();
-			args.domain = R.diagram.codomain.getElement(this.domainElt.value),
-			args.codomain = R.diagram.codomain.getElement(this.codomainElt.value),
-			args.xyDom = D.toolbar.mouseCoords;	// use original location
-			const from = this.doit(e, R.diagram, args);
-			if (from)
-			{
-				this.reset();
-				R.diagram.log(
-				{
-					command:'toolHomset',
-					domain:args.domain.name,
-					codomain:args.codomain.name,
-					basename:args.basename,
-					properName:args.properName,
-					description:args.description,
-					xyDom:from.domain.getXY(),
-					xyCod:from.codomain.getXY(),
-				});
-				R.diagram.antilog({command:'delete', elements:[from.name]});
-			}
-		}
-		catch(x)
-		{
-			D.toolbar.setError(x);
-			return null;
-		}
-	}
-	doit(e, diagram, args, save = true)
-	{
-		try
-		{
-			if (!diagram.isEditable())
-				throw 'diagram is read only';
-			const basename = args.basename;
-			const name = Element.Codename(diagram, {basename});
-			if (diagram.getElement(name))
-				throw 'name already exists';
-			const properName = args.properName;
-			const description = args.description;
-			const to = new Morphism(diagram, args);
-			to.loadEquivalences();
-			const from = diagram.placeMorphism(to, args.xyDom, args.xyCod, save, false);
-			R.EmitDiagramEvent(diagram, 'makeCells');
-			diagram.makeSelected(from);
-			return from;
-		}
-		catch(x)
-		{
-			D.toolbar.setError(x);
-		}
-	}
-}
-
 class StatusBar
 {
 	constructor()
@@ -2838,35 +2748,22 @@ class StatusBar
 	_prep(msg)
 	{
 		this.message = U.HtmlEntitySafe(msg);
-		if (this.timerOut)
-			clearInterval(this.timerOut);
-		if (this.timerIn)
-			clearInterval(this.timerIn);
-		if (msg === '')
-		{
-			this.hide();
-			return;	// nothing to show later
-		}
+		this.timerOut && clearInterval(this.timerOut);
+		this.timerIn && clearInterval(this.timerIn);
+		msg === '' && this.hide();
 	}
 	_post(e, msg, record)
 	{
 		const elt = this.element;
 		elt.innerHTML = msg;
-		let x, y;
-		if ('clientX' in e)
-		{
-			x = e.clientX + 20;
-			y = e.clientY - 60;
-		}
+		if (e && 'clientX' in e)
+			this.xy = new D2(e.clientX, e.clientY);
 		else
-		{
-			x = D.Width()/2;
-			y = D.Height()/2;
-		}
-		elt.style.left = `${x}px`;
-		elt.style.top = `${y}px`;
+			this.xy = D.mouse.clientPosition();
+		this.xy = D2.Add(this.xy, new D2(20, -60));
+		elt.style.left = `${this.xy.x}px`;
+		elt.style.top = `${this.xy.y}px`;
 		elt.style.display = 'block';
-		this.xy = {x, y};
 		this.hide();
 		const bbox = elt.getBoundingClientRect();
 		const delta = bbox.left + bbox.width - window.innerWidth;
@@ -3305,7 +3202,7 @@ class D
 				}
 				else if (elt instanceof Morphism)
 				{
-					from = diagram.placeMorphism(elt, xy, null, true, false);
+					from = diagram.placeMorphism(elt, xy, null, true);
 					diagram.log({command:'copy', source:elt.name, xy:from.domain.getXY(), xyCod:from.codomain.getXY()});
 				}
 				from && diagram.antilog({command:'delete', elements:[from.name]});
@@ -3616,7 +3513,7 @@ class D
 		D.topSVG.addEventListener('drop', e => e.preventDefault(), true);
 		window.addEventListener('keydown', e =>
 		{
-			if (D.session.mode === 'diagram')
+			if (D.session.mode === 'diagram' && (!D.toolbar.hasActiveInputs() || D.getKeyName(e) === 'Escape'))
 			{
 				const name = D.getKeyName(e);
 				name in D.keyboardDown && D.keyboardDown[name](e);
@@ -4181,8 +4078,8 @@ class D
 			return ndxObj;
 		});
 		diagram.deselectAll();
-		composite.map((m, i) => diagram.addSelected(diagram.placeMorphism(m, indexObjects[i], indexObjects[i+1], false)));
-		diagram.addSelected(diagram.placeMorphism(diagram.comp(...morphisms), indexObjects[0], indexObjects[indexObjects.length -1], false));
+		composite.map((m, i) => diagram.addSelected(diagram.placeMorphism(m, indexObjects[i], indexObjects[i+1])));
+		diagram.addSelected(diagram.placeMorphism(diagram.comp(...morphisms), indexObjects[0], indexObjects[indexObjects.length -1]));
 		return indexObjects;
 	}
 	static GetArrowLength(m)
@@ -4449,7 +4346,7 @@ class D
 				const placement = R.diagram.getPlacement();
 				R.diagram.setPlacement({x:placement.x + offset.x, y:placement.y + offset.y, scale:placement.scale});
 			}
-			e.preventDefault();
+			e.currentTarget !== document && e.preventDefault();
 		}
 		else	// pan session
 		{
@@ -4573,6 +4470,14 @@ class D
 	{
 		D.getTool() === 'pan' && D.popTool();
 	}
+	static resetDefaults()
+	{
+		U.removefile('defaults.json');
+		R.default = U.Clone(R.factoryDefaults);
+		D.default = U.Clone(D.factoryDefaults);
+		D.statusbar.show(null, 'Defaults reset to original values');
+		isGUI && D.panels.panels.settings.update();
+	}
 }
 Object.defineProperties(D,
 {
@@ -4619,7 +4524,7 @@ Object.defineProperties(D,
 				margin:		2,
 			},
 			layoutGrid:		10,
-			majorGridMult:	20,
+			majorGridMult:	10,
 			margin:			5,
 			pan:			{scale:	0.05},
 			panel:			{width:	230},
@@ -4635,7 +4540,7 @@ Object.defineProperties(D,
 							},
 			toolbar:		{x:15, y:70},
 		},
-		writable:		false,
+		writable:		true,
 	},
 	diagramPNGs:	{value: new Map(),	writable: true},	// a map of the loaded diagram png's
 	diagramSVG:		{value: null,		writable: true},	// the svg g element containing the session transform
@@ -6125,7 +6030,6 @@ class SettingsPanel extends Panel
 			H3.div('##settings-equality.section')
 		];
 		elts.map(elt => this.elt.appendChild(elt));
-
 		this.initialize();
 		this.equalityElt = document.getElementById('settings-equality');
 		R.workers.equality.addEventListener('message', msg =>
@@ -6142,8 +6046,6 @@ class SettingsPanel extends Panel
 			else if (msg.data.command === 'Load')
 				R.workers.equality.postMessage({command:'Info'});
 		});
-		this.defaultsElt = document.getElementById('settings-defaults');
-		D.Pretty(D.default, this.defaultsElt);
 		window.addEventListener('Login', _ => this.update());
 	}
 	update()
@@ -6153,6 +6055,10 @@ class SettingsPanel extends Panel
 			const tbl = this.elt.querySelector('#settings-table');
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
 		}
+		this.defaultsElt = document.getElementById('settings-defaults');
+		D.RemoveChildren(this.defaultsElt);
+		this.defaultsElt.appendChild(H3.button('Reset Defaults', '.textButton', {onclick:_ => Cat.D.resetDefaults()}));
+		D.Pretty(D.default, this.defaultsElt);
 	}
 }
 
@@ -7088,7 +6994,7 @@ class MultiObject extends CatObject
 	getFactorProperName(indices)
 	{
 		const f = this.getFactor(indices);
-		return `${f.properName}${U.subscript(indices)}`;
+		return `${f.properName}&#8202;${U.subscript(indices)}`;
 	}
 	needsParens()
 	{
@@ -7639,10 +7545,10 @@ class DiagramText extends Element
 			this.category && this.diagram.domain.deleteElement(this);
 		}
 	}
-	setXY(xy, grid = true)
+	setXY(xy, majorGrid = false)
 	{
-		this.x = grid ? D.Grid(xy.x) : xy.x;
-		this.y = grid ? D.Grid(xy.y) : xy.y;
+		this.x = D.Grid(xy.x, majorGrid);
+		this.y = D.Grid(xy.y, majorGrid);
 	}
 	getXY()
 	{
@@ -7670,9 +7576,9 @@ class DiagramText extends Element
 	{
 		return t && this.name === t.name;
 	}
-	update(xy = null)
+	update(xy = null, majorGrid = false)
 	{
-		this.setXY(xy ? xy : this.getXY());
+		this.setXY(xy ? xy : this.getXY(), majorGrid);
 		!this.svg && this.diagram.addSVG(this);
 		if (this.svg)
 		{
@@ -7720,7 +7626,7 @@ class DiagramText extends Element
 		D.editElement = span;		// remember which element is being editted
 		span.addEventListener('mousedown', e => e.stopPropagation());
 		const placement = this.diagram.getPlacement();
-		const scale = 1 / placement.scale;
+		const scale = (D.session.viewport.scale * placement.scale);
 		const foreign = H3.foreignObject(H3.div(span, {xmlns:'http://www.w3.org/1999/xhtml'}), {width:scale * bbox.width + 'px', height:scale * bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
@@ -8841,7 +8747,10 @@ class MorphismAssemblyAction extends Action
 	}
 	html(e, diagram, ary)
 	{
-		D.RemoveChildren(D.toolbar.help);
+		const help = D.toolbar.help;
+		const elts = [H3.h5('Assemble Morphism')];
+		elts.map(elt => help.appendChild(elt));
+
 		this.assembler = new Assembler(diagram);
 		this.assembler.assemble(e, ary[0]);
 		const rows = this.assembler.issues.map(isu =>
@@ -8856,7 +8765,7 @@ class MorphismAssemblyAction extends Action
 			else
 				return H3.tr(H3.td(isu.message), H3.td(isu.element.properName));
 		});
-		D.toolbar.help.appendChild(this.assembler.issues.length > 0 ? H3.table(rows) : H3.span('No issues were detected'));
+		help.appendChild(this.assembler.issues.length > 0 ? H3.table(rows) : H3.span('No issues were detected'));
 	}
 	action(e, diagram, ary)
 	{
@@ -8995,40 +8904,46 @@ class HomsetAction extends Action
 		if (!isGUI)
 			return;
 		D.ReplayCommands.set(this.basename, this);
-		this.newMorphism = new HomsetTool('');
+		this.bpd = new BPD();
+		this.domain = null;
+		this.codomain = null;
 	}
-	action(e, diagram, morphism, domain, codomain)
+	action(e, diagram, args)
 	{
-		const from = this.doit(e, diagram, morphism, domain, codomain);
-		diagram.log({command:this.name, domain, morphism, codomain});
+		const from = this.doit(e, diagram, args);
+		diagram.log({command:this.name, args});
 		diagram.antilog({command:'delete', elements:[from.name]});
 	}
 	html(e, diagram, ary)
 	{
-		const domain = ary[0].to;
-		const codomain = ary[1].to;
-		this.newMorphism.domain = ary[0];
-		this.newMorphism.codomain = ary[1];
-		diagram.addFactorMorphisms(domain, codomain);
-		this.newMorphism.html();
-		this.newMorphism.domainElt.value = domain.name;
-		this.newMorphism.codomainElt.value = codomain.name;
-		const homset = diagram.codomain.getHomset(domain, codomain);
+		const help = D.toolbar.help;
+		D.RemoveChildren(help);
+		this.domain = ary[0];
+		this.codomain = ary[1];
+		help.appendChild(H3.h3('Homset'));
+		help.appendChild(H3.table(H3.tr(H3.td('Domain'), H3.td(this.domain.to.properName)),
+									H3.tr(H3.td('Codomain'), H3.td(this.codomain.to.properName)), '.w100'));
+		const newSection = this.bpd.getNewSection('Homset-new', e => this.create(e), 'New Morphism');
+		D.toolbar.help.appendChild(newSection);
+		diagram.addFactorMorphisms(this.domain, this.codomain);
+		const homset = diagram.codomain.getHomset(this.domain.to, this.codomain.to);
 		const rows = homset.map(m =>
 		{
 			const row = m.getHtmlRow();
-			row.onclick = e => this.action(e, Cat.R.diagram, m.name, ary[0].name, ary[1].name);
+			row.onclick = e => diagram.placeMorphism(m, this.domain, this.codomain);
 			return row;
 		});
-		D.toolbar.help.appendChild(H3.h4('Place Morphism'));
-		D.toolbar.help.appendChild(H3.table(rows, '##help-homset-morphism-table'));
+		if (rows.length > 0)
+		{
+			help.appendChild(H3.h5('Place existing morphism'));
+			help.appendChild(H3.table(rows, '##help-homset-morphism-table'));
+		}
 	}
-	doit(e, diagram, morphism, domName, codName, save = true)
+	doit(e, diagram, args)
 	{
-		const to = diagram.getElement(morphism);
-		const domain = diagram.getElement(domName);
-		const codomain = diagram.getElement(codName);
-		const nuFrom = new DiagramMorphism(diagram, {to, domain, codomain});
+		const toArgs = {basename:args.basename, properName:args.properName, description:args.description, domain:args.domain.to, codomain:args.codomain.to};
+		const to = new Morphism(diagram, toArgs);
+		const nuFrom = new DiagramMorphism(diagram, {to, domain:this.domain, codomain:this.codomain});
 		diagram.makeSelected(nuFrom);
 		R.EmitDiagramEvent(diagram, 'makeCells');
 		return nuFrom;
@@ -9040,6 +8955,13 @@ class HomsetAction extends Action
 	hasForm(diagram, ary)	// one object
 	{
 		return diagram.isEditable() && ary.length === 2 && ary[0] instanceof DiagramObject && ary[1] instanceof DiagramObject;
+	}
+	create(e)
+	{
+		const args = this.bpd.getArgs();
+		args.domain = this.domain;
+		args.codomain = this.codomain;
+		this.action(e, R.diagram, args);
 	}
 }
 
@@ -9427,7 +9349,7 @@ class LambdaMorphismAction extends Action
 		const xyDom = new D2(adjacent.domain.getXY());
 		const xyCod = new D2(adjacent.codomain.getXY());
 		const delta = xyCod.subtract(xyDom).normal().normalize().scale(D.default.arrow.length);
-		return diagram.placeMorphism(morphism, xyDom.add(delta), xyCod.add(delta), true, false);
+		return diagram.placeMorphism(morphism, xyDom.add(delta), xyCod.add(delta), true);
 	}
 	createElementMorphism(e, from)
 	{
@@ -10154,7 +10076,6 @@ class CellAction extends Action
 	action(e, diagram, ary, equal)
 	{
 		const a = this.doit(e, diagram, ary, equal);
-//TODO		diagram.log({command:this.name, left:left.map(m => m.name), right:right.map(m => m.name)});
 		diagram.antilog({command:'delete', elements:[a.name]});
 		diagram.userSelectElement(e, a);
 	}
@@ -11013,11 +10934,6 @@ class DiagramMorphism extends Morphism
 			this.codomain.codomains.delete(this);
 		}
 		super.decrRefcnt();
-		if (this.refcnt <= 0)
-		{
-			this.domain.decrRefcnt();
-			this.codomain.decrRefcnt();
-		}
 	}
 	json()
 	{
@@ -13462,7 +13378,7 @@ class Diagram extends Functor
 		if (elt instanceof CatObject)
 			this.placeObject(elt, position);
 		else if (elt instanceof Morphism)
-			this.placeMorphism(elt, position, null, true, false);
+			this.placeMorphism(elt, position, null, true);
 		else if (typeof elt === 'string')
 			this.placeText(elt, position);
 	}
@@ -14376,7 +14292,7 @@ class Diagram extends Functor
 				while (delta < tw)
 					delta += grid;
 				const cod = {x:x + delta, y};
-				this.placeMorphism(elt, {x, y}, cod, false, false);
+				this.placeMorphism(elt, {x, y}, cod, false);
 				if (elt.description !== '')
 					new DiagramText(this, {xy:{x:x, y:y + grid/4}, height:grid/10, weight:'normal', description:elt.description});
 			}
@@ -14512,6 +14428,7 @@ class Assembler
 		this.morphisms = new Set();
 		this.sources = new Set();			// objects that are the domains of the composites
 		this.references = new Set();		// factor, identity, or terminal morphisms used as references
+		this.elements = new Set();
 		this.propagated = new Set();
 		this.inputs = new Set();
 		this.outputs = new Set();
@@ -14530,6 +14447,7 @@ class Assembler
 		this.morphisms.clear();
 		this.sources.clear();
 		this.references.clear();
+		this.elements.clear();
 		this.propagated.clear();
 		this.inputs.clear();
 		this.outputs.clear();
@@ -14586,7 +14504,7 @@ class Assembler
 	static isConveyance(m)
 	{
 		const morph = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
-		return morph instanceof Identity || morph instanceof FactorMorphism;
+		return morph instanceof Identity || (morph instanceof FactorMorphism && morph.factors.length === 1);
 	}
 	static isProjection(m)
 	{
@@ -14604,7 +14522,7 @@ class Assembler
 			return FactorMorphism.isReference(m.to.factors);
 		return false;
 	}
-	static addBall(title, cls, o)
+	static addBall(title, type, cls, o)
 	{
 		if (R.default.debug)
 		{
@@ -14612,19 +14530,76 @@ class Assembler
 			if (o instanceof DiagramObject)
 			{
 				const bbox = o.svg.getBBox();
-				o.svg.parentNode.insertBefore(H3.ellipse('.ball', {class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin, cx:o.x, cy:o.y}), o.svg);
+				o.svg.parentNode.insertBefore(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin, cx:o.x, cy:o.y}), o.svg);
 			}
 			else if (o instanceof DiagramMorphism)
 			{
 				const bbox = o.svg_name.getBBox();
 				const xy = o.getNameOffset();
-				o.svg_name.parentNode.insertBefore(H3.ellipse('.ball', {class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin, cx:xy.x, cy:xy.y}), o.svg_name);
+				o.svg_name.parentNode.insertBefore(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin, cx:xy.x, cy:xy.y}), o.svg_name);
 			}
 		}
 	}
+	deleteEllipse(type, elt)
+	{
+		const ellipse = this.diagram.svgBase.querySelector(`#${type}-${elt.elementId('asmblr')}`);
+		ellipse && ellipse.remove();
+		/*
+		if (elt instanceof DiagramObject)
+		{
+			const ellipse = elt.svg.previousElementSibling;
+			ellipse && ellipse instanceof SVGEllipseElement && ellipse.remove();
+		}
+		else
+		{
+			const ellipse = elt.svg.querySelector('ellipse');
+			ellipse && ellipse.remove();
+		}
+		*/
+	}
+	addReference(ref)
+	{
+		this.references.add(ref);
+		Assembler.addBall('Reference', 'ref', 'assyReference', ref);
+	}
+	deleteReference(ref)
+	{
+		this.references.delete(ref);
+		this.deleteEllipse('ref', ref);
+	}
+	addElement(elt)
+	{
+		this.elements.add(elt);
+		Assembler.addBall('Element', 'elt', 'assyReference', elt);
+	}
+	addInput(obj)
+	{
+		this.inputs.add(obj);
+		Assembler.addBall('Input', 'input', 'assyInput', obj);
+	}
+	deleteInput(obj)
+	{
+		this.inputs.delete(obj);
+		this.deleteEllipse('input', obj);
+	}
+	addOutput(obj)
+	{
+		this.outputs.add(obj);
+		Assembler.addBall('Output', 'output', 'assyOutput', obj);
+	}
+	addSource(obj)
+	{
+		this.sources.add(obj);
+		Assembler.addBall('Source', 'source', 'assySource', obj);
+	}
+	deleteSource(obj)
+	{
+		this.sources.delete(obj);
+		this.deleteEllipse('source', obj);
+	}
 	addError(msg, elt)
 	{
-		Assembler.addBall(msg, 'assyError', elt);
+		Assembler.addBall(msg, 'error', 'assyError', elt);
 	}
 	findBlob(obj)
 	{
@@ -14638,13 +14613,13 @@ class Assembler
 		{
 			const domain = scanning.pop();
 			this.objects.add(domain);
-			[...domain.codomains].filter(m => !Assembler.isConveyance(m.to)).length === 0 && this.sources.add(domain);
+			[...domain.codomains].filter(m => !Assembler.isConveyance(m.to)).length === 0 && this.addSource(domain);
 			const scan = scanning;		// jshint
 			domain.domains.forEach(m =>
 			{
 				this.morphisms.add(m);
 				// inputs do not have references
-				Assembler.isReference(m) && this.references.add(m);		// candidate reference
+				Assembler.isReference(m) && this.addReference(m);		// candidate reference
 				m.makeGraph();
 				if (m.isEndo())		// in the index cat, not the target cat
 				{
@@ -14669,8 +14644,8 @@ class Assembler
 		}
 		if (this.morphisms.size === 0)
 			this.issues.push({message:'No morphisms', element:base});
-		this.morphisms.forEach(m => !Assembler.isConveyance(m.to) && this.sources.delete(m.codomain)); // remove sources that are outputs
-		this.morphisms.forEach(m => Morphism.isIdentity(m.to) && this.sources.has(m.codomain) && this.references.add(m)); // add references that are identities to sources
+//		this.morphisms.forEach(m => !Assembler.isConveyance(m.to) && this.deleteSource(m.codomain)); // remove sources that are outputs
+		this.morphisms.forEach(m => Morphism.isIdentity(m.to) && this.sources.has(m.codomain) && this.addReference(m)); // add references that are identities to sources
 	}
 	static getBarGraph(dm)
 	{
@@ -14776,7 +14751,7 @@ class Assembler
 	inputScan()
 	{
 		let isIt = true;
-		this.objects.forEach(o => o.assyGraph.noTag('info') && this.inputs.add(o));		// candidate inputs
+		this.objects.forEach(o => o.assyGraph.noTag('info') && this.addInput(o));		// candidate inputs
 		let scanning = [...this.references];
 		while(scanning.length > 0)
 		{
@@ -14800,13 +14775,13 @@ class Assembler
 			const input = scanning.pop();
 			const graph = input.assyGraph;
 			if (graph.hasTag('info'))
-				this.inputs.delete(input);
+				this.deleteInput(input);
 			const scan = scanning;		// jshint
 			const inputReducer = m =>
 			{
 				if (m.to instanceof FactorMorphism)
 				{
-					this.inputs.delete(m.codomain);
+					this.deleteInput(m.codomain);
 					scan.push(m.codomain);
 				}
 			};
@@ -14824,7 +14799,7 @@ class Assembler
 						// do the factors cover the source?
 						const isuCnt = this.issues.length;
 						if (this.diagram.isCovered(input.to, factors, this.issues))
-							this.inputs.delete(input);
+							this.deleteInput(input);
 						else if (this.issues.length > isuCnt)
 							this.addError('Factor not covered', input);
 					}
@@ -14843,7 +14818,7 @@ class Assembler
 		//
 		// inputs do not have references
 		//
-		this.references.forEach(ref => this.inputs.has(ref.domain) && this.references.delete(ref));
+		this.references.forEach(ref => this.inputs.has(ref.domain) && this.deleteReference(ref));
 	}
 	static setTag(dm, graph, tag, ndx)
 	{
@@ -14889,19 +14864,31 @@ class Assembler
 		}
 		// propagate tags from inputs
 		this.inputs.forEach(i => i.domains.forEach(m =>
-			{
-				Assembler.isConveyance(m) && this.references.delete(m);
-				this.propTag(m, m.to, m.graph, Assembler.getBarGraph(m), 'info', this.issues, Assembler.setTag);
-			}));
+		{
+			Assembler.isConveyance(m) && this.deleteReference(m);
+			this.propTag(m, m.to, m.graph, Assembler.getBarGraph(m), 'info', this.issues, Assembler.setTag);
+		}));
 	}
-	outputScan()
+	outputScan()		// find outputs
 	{
 		let isIt = true;
-		const scannerNo = (g, ndx) => isIt = isIt && !g.hasTag('info');
 		const scannerYes = (g, ndx) => isIt = isIt && g.hasTag('info');
+		const alternates = new Set();
 		this.objects.forEach(obj =>
 		{
 			isIt = true;
+			const inCnt = [...obj.codomains].filter(m => !this.references.has(m) && !Assembler.isInjection(m)).length;
+			if (inCnt > 1)
+				this.issues.push({message:'Too many inputs', element:obj});
+			else if (inCnt === 1)
+				this.references.forEach(ref =>
+				{
+					if (ref.domain === obj)
+					{
+						this.deleteReference(ref);
+						alternates.add(ref);
+					}
+				});
 			obj.domains.forEach(m =>
 			{
 				if (Assembler.isProjection(m.to) && this.references.has(m))
@@ -14915,17 +14902,16 @@ class Assembler
 					isIt = m.to.dual ? isIt && !this.sources.has(m.domain) : isIt && !this.references.has(m);
 			});
 			if (isIt)
-				this.outputs.add(obj);
+				this.addOutput(obj);
 		});
 		// drop inputs that are outputs
-		this.outputs.forEach(o => this.inputs.has(o) && this.inputs.delete(o));
-	}
-	showGraphics()
-	{
-		this.inputs.forEach(i => Assembler.addBall('Input', 'assyInput', i));
-		this.references.forEach(r => Assembler.addBall('Reference', 'assyReference', r));
-		this.sources.forEach(s => Assembler.addBall('Source', 'assySource', s));
-		this.outputs.forEach(o => Assembler.addBall('Output', 'assyOutput', o));
+		this.outputs.forEach(o => this.inputs.has(o) && this.deleteInput(o));
+		// search alternates for new sources
+		alternates.forEach(ref =>
+		{
+			this.deleteSource(ref.codomain);
+			!this.sources.has(ref.domain) && this.addSource(ref.domain);
+		});
 	}
 	sourceScan()
 	{
@@ -14969,13 +14955,17 @@ class Assembler
 	}
 	cleanSources()		// no input or output is a source
 	{
-		this.inputs.forEach(i => this.sources.delete(i));
-		this.outputs.forEach(i => this.sources.delete(i));
+		this.inputs.forEach(i => this.deleteSource(i));
+		this.outputs.forEach(i => this.deleteSource(i));
+	}
+	elementScan()
+	{
+		this.morphisms.forEach(m => this.sources.has(m.domain) && Assembler.isInjection(m.to) && m.to.factors.length === 1 && this.addElement(m));
 	}
 	followComposite(homers, cmp, m)
 	{
 		const cod = m.codomain;
-		if (homers.has(cod))
+		if (homers.has(cod) || this.sources.has(cod))
 			return cod;
 		const morphs = [...cod.domains].filter(m => !this.references.has(m));
 		if (morphs.length > 0)
@@ -14994,7 +14984,7 @@ class Assembler
 		this.composites.set(obj, comps);
 		obj.domains.forEach(m =>
 		{
-			if (!this.references.has(m))
+			if (!this.references.has(m) && !this.elements.has(m))
 			{
 				const cmp = [m];
 				comps.push(cmp);
@@ -15071,20 +15061,16 @@ class Assembler
 				//
 				// map the references to the composite that creates the referenced value
 				//
-	//			let hasRef = false;
 				codomain.codomains.forEach(m =>
 				{
 					if (this.references.has(m))
-					{
 						this.ref2comp.set(m, composite);
-	//					hasRef = true;
-	//					const refs = this.getReferences(m.domain);
-					}
 				});
 				// if the codomain has a reference then it best be a source in order to return the composite
 	//			return hasRef && !this.sources.has(codomain) ? null : composite;
 	//			return hasRef ? composite : null;
-				return this.composites.has(codomain) ? composite : null;
+//				return this.composites.has(codomain) ? composite : null;
+				return composite;
 			}).filter(m => m);
 		}
 		else
@@ -15182,7 +15168,9 @@ class Assembler
 		{
 			const refs = [...domain.domains].filter(m => this.references.has(m));
 			// all references satisfied?
-			if (refs.reduce((r, m) => r && this.references.has(m) && this.ref2comp.has(m), true))
+			if (refs.length === 0)
+				this.processed.add(domain);
+			else if (refs.reduce((r, m) => r && this.references.has(m) && this.ref2comp.has(m), true))
 			{
 				const product = this.diagram.prod(...refs.map(ref => this.ref2comp.get(ref)));
 				const factors = [];
@@ -15260,12 +15248,12 @@ class Assembler
 		// remove sources that are inputs or outputs
 		//
 		this.cleanSources();		// TODO
-		this.showGraphics();
 		//
 		// scan sources for assembly checks
 		//
 		if (!this.sourceScan())
 			return;		// errors found
+		this.elementScan();
 		//
 		// setup the composites
 		//
@@ -15287,7 +15275,7 @@ class Assembler
 			}
 			else
 			{
-				const from = this.diagram.placeMorphism(morphism, base.getXY(), null, true, false);
+				const from = this.diagram.placeMorphism(morphism, base.getXY(), null, true);
 				this.diagram.viewElements(...this.objects, from);
 			}
 		}
