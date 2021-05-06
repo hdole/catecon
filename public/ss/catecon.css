@@ -1028,6 +1028,24 @@ tspan
 	fill:	#f009;
 	ry:		50;
 }
+.assyFold
+{
+	fill:				none;
+	ry:					35;
+	stroke:				#f0f6;
+	stroke-dasharray:	5, 20;
+	stroke-linecap:		round;
+	stroke-width:		10;
+}
+.assyInjection
+{
+	fill:				none;
+	ry:					35;
+	stroke:				#ff06;
+	stroke-dasharray:	5, 20;
+	stroke-linecap:		round;
+	stroke-width:		10;
+}
 .assyInput
 {
 	fill:				none;
@@ -1042,11 +1060,18 @@ tspan
 	stroke:				#00f6;
 	stroke-width:		10;
 }
+.assyOverload
+{
+	fill:				none;
+	ry:					35;
+	stroke:				#f006;
+	stroke-width:		10;
+}
 .assyReference
 {
 	fill:				none;
 	ry:					35;
-	stroke:				#aaa3;
+	stroke:				#0aa3;
 	stroke-dasharray:	5, 20;
 	stroke-linecap:		round;
 	stroke-width:		10;
