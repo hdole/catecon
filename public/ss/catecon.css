@@ -687,6 +687,13 @@ path.emphasis
 	stroke:		#00fa;
 }
 
+rect.emphasis
+{
+	fill:		none;
+	stroke-dasharray:	5,5;
+	stroke:		#00fa;
+}
+
 .selected
 {
 	stroke:		#9f9;
@@ -1032,9 +1039,7 @@ tspan
 {
 	fill:				none;
 	ry:					35;
-	stroke:				#f0f6;
-	stroke-dasharray:	5, 20;
-	stroke-linecap:		round;
+	stroke:				#ff06;
 	stroke-width:		10;
 }
 .assyInjection
