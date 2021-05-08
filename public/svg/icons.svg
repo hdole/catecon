@@ -24,6 +24,11 @@
 		<circle cx="160" cy="240" r="80" fill="url(#radgrad1)"/>
 		<line class="arrow6" x1="160" y1="0" x2="160" y2="320"/>
 	</symbol>
+	<symbol id="icon-assyColor" class="icon" viewbox="0 0 320 320">
+		<circle cx="160" cy="160" r="120" fill="#00f6"/>
+		<circle cx="160" cy="160" r="80" fill="#aaa"/>
+		<circle cx="160" cy="160" r="40" fill="#0f0"/>
+	</symbol>
 	<symbol id="icon-category" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
 		<line class="arrow0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
