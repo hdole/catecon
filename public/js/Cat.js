@@ -4062,8 +4062,8 @@ class D
 			return ndxObj;
 		});
 		diagram.deselectAll();
-		composite.map((m, i) => diagram.addSelected(diagram.placeMorphism(m, indexObjects[i], indexObjects[i+1])));
-		const indexComp = diagram.placeMorphism(comp, indexObjects[0], indexObjects[indexObjects.length -1]);
+		composite.map((m, i) => diagram.addSelected(diagram.placeMorphism(m, indexObjects[i], indexObjects[i+1], false)));
+		const indexComp = diagram.placeMorphism(comp, indexObjects[0], indexObjects[indexObjects.length -1], false);
 		indexComp.flipName = true;
 		indexComp.update();
 		diagram.addSelected(indexComp);
@@ -8796,6 +8796,7 @@ class MorphismAssemblyAction extends Action
 	html(e, diagram, ary)
 	{
 		const elts = [H3.h4('Assemble Morphism'),
+						D.getIcon('assyColor', 'assyColor', e => this.toggle(e, diagram, ary)),
 						D.getIcon('edit', 'edit', e => this.action(e, diagram, ary))];
 		elts.map(elt => D.toolbar.help.appendChild(elt));
 
@@ -11117,6 +11118,9 @@ class DiagramMorphism extends Morphism
 		svg.setAttribute('x', off.x);
 		svg.setAttribute('y', off.y);
 		const bbox = svg.getBBox();
+		// odd; sometimes the bbox does not have the x set correctly
+		bbox.x = off.x;
+		bbox.y = off.y;		// just in case since x is weird
 		const pntTop = this.intersect(bbox, 'top');
 		const pntBtm = this.intersect(bbox, 'bottom');
 		const pntLft = this.intersect(bbox, 'left');
@@ -11124,19 +11128,22 @@ class DiagramMorphism extends Morphism
 		let anchor = 'middle';
 		if (pntTop || pntBtm || pntLft || pntRgt)	// intersection
 		{
-			if (this.start.x < this.end.x)
+			if (this.domain.y !== this.codomain.y)
 			{
-				if (this.start.y < this.end.y)
-					anchor = this.flipName ? 'end' : 'start';
+				if (this.start.x < this.end.x)
+				{
+					if (this.start.y < this.end.y)
+						anchor = this.flipName ? 'end' : 'start';
+					else
+						anchor = this.flipName ? 'start' : 'end';
+				}
 				else
-					anchor = this.flipName ? 'start' : 'end';
-			}
-			else
-			{
-				if (this.start.y < this.end.y)
-					anchor = this.flipName ? 'end' : 'start';
-				else
-					anchor = this.flipName ? 'start' : 'end';
+				{
+					if (this.start.y < this.end.y)
+						anchor = this.flipName ? 'end' : 'start';
+					else
+						anchor = this.flipName ? 'start' : 'end';
+				}
 			}
 		}
 		else
@@ -11148,7 +11155,8 @@ class DiagramMorphism extends Morphism
 			else if (angle > bnd && angle < Math.PI - bnd)
 				anchor = this.flipName ? 'end' : 'start';
 		}
-		svg.setAttribute('text-anchor', anchor);
+//		svg.setAttribute('text-anchor', anchor);
+		svg.style.textAnchor = anchor;
 	}
 	getBBox()
 	{
@@ -12773,7 +12781,7 @@ oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagra
 	}
 	static ProperName(object)
 	{
-		return 'e';
+		return `&#119890;${object.objects[0].objects[1].properName}`;
 	}
 }
 
@@ -14597,8 +14605,9 @@ class Assembler
 	}
 	addInput(obj)
 	{
+		!this.inputs.has(obj) && Assembler.addBall('Input', 'input', 'assyInput', obj);
 		this.inputs.add(obj);
-		Assembler.addBall('Input', 'input', 'assyInput', obj);
+		this.deleteSource(obj);
 	}
 	deleteInput(obj)
 	{
@@ -14622,8 +14631,8 @@ class Assembler
 	}
 	addReference(ref)
 	{
+		!this.references.has(ref) && Assembler.addBall('Reference', 'ref', 'assyReference', ref);
 		this.references.add(ref);
-		Assembler.addBall('Reference', 'ref', 'assyReference', ref);
 	}
 	deleteReference(ref)
 	{
@@ -14632,8 +14641,11 @@ class Assembler
 	}
 	addSource(obj)
 	{
-		this.sources.add(obj);
-		Assembler.addBall('Source', 'source', 'assySource', obj);
+		if (!this.inputs.has(obj))
+		{
+			!this.sources.has(obj) && Assembler.addBall('Source', 'source', 'assySource', obj);
+			this.sources.add(obj);
+		}
 	}
 	deleteSource(obj)
 	{
@@ -14916,9 +14928,9 @@ class Assembler
 		{
 			isIt = true;
 			const inCnt = [...obj.codomains].filter(m => !this.references.has(m) && !Assembler.isInjection(m)).length;
-			if (inCnt > 1)
-				this.issues.push({message:'Too many inputs', element:obj});
-			else if (inCnt === 1)
+//			if (inCnt > 1)
+//				this.issues.push({message:'Too many inputs', element:obj});
+			if (inCnt === 1)
 				this.references.forEach(ref =>
 				{
 					if (ref.domain === obj)
