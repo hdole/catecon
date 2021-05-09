@@ -1898,6 +1898,7 @@ class Toolbar
 	}
 	show(e)
 	{
+		this.element.style.maxWidth = `${Math.round(D.Width()/4)}px`;
 		this.error.innerHTML = '';
 		const diagram = R.diagram;
 		let xy = U.Clone(D.mouse.down);
@@ -2309,7 +2310,6 @@ class BPD			// basename, proper name, description
 	}
 }
 
-//class ObjectTool extends BpdTool
 class ObjectTool extends ElementTool
 {
 	constructor(headline)
@@ -2495,7 +2495,6 @@ class MorphismTool extends ElementTool
 	}
 }
 
-//class DiagramTool extends BpdTool
 class DiagramTool extends ElementTool
 {
 	constructor(type, headline)
@@ -3466,11 +3465,6 @@ class D
 							D.session.default = null;
 						R.EmitViewEvent('diagram', diagram);
 					}
-//					if (diagram)
-//					{
-//						R.LoadDiagramEquivalences(diagram);
-//						diagram.makeCells();
-//					}
 					break;
 				case 'download':
 					R.SaveLocal(diagram);
@@ -3865,10 +3859,7 @@ class D
 			bubbles: false,
 			cancelable: true
 		});
-		const a = document.createElement('a');
-		a.setAttribute("download", filename);
-		a.setAttribute("href", href);
-		a.setAttribute("target", '_blank');
+		const a = H3.a({download:filename, href, target:'_blank'});
 		a.dispatchEvent(evt);
 	}
 	static DownloadString(string, type, filename)
@@ -5279,16 +5270,9 @@ class Section
 {
 	constructor(title, parent, id, tip)
 	{
-		this.elt = document.createElement('button');
-		this.elt.innerHTML = U.HtmlEntitySafe(title);
-		this.elt.title = tip;
-		this.elt.section = this;
-		this.elt.onclick = function() {this.section.toggle();};
-		this.elt.classList.add('sidenavAccordion');
+		this.elt = H3.button(U.HtmlEntitySafe(title), {title:tip, onclick:e => this.section.toggle()}, '.sidenavAccordion');
 		parent.appendChild(this.elt);
-		this.section = document.createElement('div');
-		this.section.id = id;
-		this.section.classList.add('section');
+		this.section = H3.div({id}, '.section');
 		parent.appendChild(this.section);
 		this.close();
 	}
@@ -5715,7 +5699,7 @@ class LogSection extends Section
 			{
 				this.diagram = R.diagram;
 				this.logElt && this.section.removeChild(this.logElt);
-				this.logElt = document.createElement('div');
+				this.logElt = H3.div();
 				this.section.appendChild(this.logElt);
 				R.diagram._log.map(c => this.log(c));
 			}
@@ -5729,12 +5713,10 @@ class LogSection extends Section
 	}
 	log(args)
 	{
-		const elt = document.createElement('p');
 		this.logElt && this.logElt.appendChild(H3.p(U.prettifyCommand(args)));
 	}
 	antilog(args)	// TODO
 	{
-		const elt = document.createElement('p');
 		this.logElt.appendChild(H3.p(U.prettifyCommand(args)));
 	}
 	replayCommand(e, ndx)
@@ -6591,7 +6573,8 @@ class Graph
 					color = diagram.colorIndex2color[colorIndex];
 				else
 				{
-					color = DiagramMorphism.ColorWheel(data);
+//					color = DiagramMorphism.ColorWheel(data);
+					color = data.color;
 					diagram.colorIndex2color[colorIndex] = color;
 				}
 				data.visited.push(idxStr + ' ' + visitedStr);
@@ -6612,12 +6595,8 @@ class Graph
 	{
 		const name = this.name;
 		const sig = this.signature;
-		const g = document.createElementNS(D.xmlns, 'g');
-		g.onmouseenter = e => Cat.R.diagram.emphasis(sig, true);
-		g.onmouseleave = e => Cat.R.diagram.emphasis(sig, false);
-		g.onmousedown = e => Cat.R.diagram.userSelectElement(e, sig);
+		const g = H3.g({id, onmouseenter:e => Cat.R.diagram.emphasis(sig, true), onmouseleave:e => Cat.R.diagram.emphasis(sig, false), onmousedown:e => Cat.R.diagram.userSelectElement(e, sig)});
 		node.appendChild(g);
-		g.setAttributeNS(null, 'id', id);
 		this.svg = g;
 		this.makeSVG(g, data);
 	}
@@ -9379,14 +9358,7 @@ class LambdaMorphismAction extends Action
 		if (elt.parentNode.id === 'lambda-domain')
 		{
 			if (this.codomainElt.children.length > 0)
-			{
-				var b = document.createElement('button');
-				b.setAttribute('data-indices', -1);
-				b.setAttribute('onclick', "Cat.R.Actions.lambda.toggleOp(this)");
-				b.setAttribute('title', 'Convert to hom');
-				b.innerHTML = '&times;';
-				this.codomainElt.appendChild(b);
-			}
+				this.codomainElt.appendChild(H3.button('&times;', {title:'Convert to hom', onclick:e => this.toggleOp(e.target), 'data-indices':-1}));
 			this.codomainElt.appendChild(elt);
 		}
 		else
@@ -10954,6 +10926,7 @@ class DiagramMorphism extends Morphism
 			svg_path:	{value: null,	writable: true,	enumerable: true},
 			svg_path2:	{value: null,	writable: true,	enumerable: true},
 			svg_name:	{value: null,	writable: true,	enumerable: true},
+			svg_nameGroup:	{value: null,	writable: true,	enumerable: true},
 		});
 		this.constructor.name === 'DiagramMorphism' && R.EmitElementEvent(diagram, 'new', this);
 	}
@@ -11084,15 +11057,14 @@ class DiagramMorphism extends Morphism
 		g.appendChild(this.svg_path2);
 		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, class:'morphism grabbable', id:`${id}_path`, d:coords, 'marker-end':'url(#arrowhead)'});
 		g.appendChild(this.svg_path);
-		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, id:`${id}_name`, x:off.x, y:off.y + D.default.font.height/2,
-			ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
+		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, id:`${id}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
 			this.to.properName);
 		const width = D.textWidth(this.to.properName, 'morphTxt');
 		const bbox = {x:off.x, y:off.y, width, height:D.default.font.height};
 		const place = this.diagram.autoplaceSvg(bbox, this.name);
-		this.svg_name.setAttribute('x', place.x);
-		this.svg_name.setAttribute('y', place.y + D.default.font.height);
-		g.appendChild(this.svg_name);
+		this.svg_nameGroup = H3.g({transform:`translate(${place.x}, ${place.y + D.default.font.height})`}, this.svg_name);
+		g.appendChild(this.svg_nameGroup);
+
 		this.updateDecorations();
 	}
 	showSelected(state = true)
@@ -11130,9 +11102,8 @@ class DiagramMorphism extends Morphism
 		const off = this.getNameOffset();
 		if (isNaN(off.x) || isNaN(off.y))
 			throw 'NaN';
-		const svg = this.svg_name;
-		svg.setAttribute('x', off.x);
-		svg.setAttribute('y', off.y);
+		const svg = this.svg_nameGroup;
+		svg.setAttribute('transform', `translate (${off.x}, ${off.y})`);
 		const bbox = svg.getBBox();
 		// odd; sometimes the bbox does not have the x set correctly
 		bbox.x = off.x;
@@ -11171,12 +11142,14 @@ class DiagramMorphism extends Morphism
 			else if (angle > bnd && angle < Math.PI - bnd)
 				anchor = this.flipName ? 'end' : 'start';
 		}
-//		svg.setAttribute('text-anchor', anchor);
 		svg.style.textAnchor = anchor;
 	}
 	getBBox()
 	{
-		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), this.svg_name.getBBox());
+		const txtBox = this.svg_name.getBBox();
+		txtBox.x += this.x;
+		txtBox.y += this.y;
+		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), txtBox);
 	}
 	predraw()
 	{
@@ -11349,7 +11322,8 @@ class DiagramMorphism extends Morphism
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 			const id = this.graphId();
 			this.graph.getSVG(this.svg, id,
-							{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.round(12 * Number.parseInt(this.signature.substring(0, 6), 16)/0xFFFFFF)});
+//				{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:Math.round(12 * Number.parseInt(this.signature.substring(0, 6), 16)/0xFFFFFF)});
+				{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:this.signature.substring(0, 6)});
 		}
 		else
 			this.graph.svg.classList.remove('hidden');
@@ -11404,13 +11378,15 @@ class DiagramMorphism extends Morphism
 	{
 		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;	// TODO use U.a2s?
 	}
+	/*
 	static ColorWheel(data)
 	{
 		const tran = ['ff', 'ff', 'ff', 'ff', 'ff', '90', '00', '00', '00', '00', '00', '90'];
 		const cnt = tran.length;
-		data.color = (data.color + 5) % cnt;
-		return `${tran[(data.color + 2) % cnt]}${tran[(data.color + 10) % cnt]}${tran[(data.color + 6) % cnt]}`;
+		const color = (data.color + 5) % cnt;
+		return `${tran[(color + 2) % cnt]}${tran[(color + 10) % cnt]}${tran[(color + 6) % cnt]}`;
 	}
+	*/
 }
 
 class Cell extends DiagramCore
@@ -13498,9 +13474,7 @@ class Diagram extends Functor
 			let compBox = elt instanceof DiagramObject ? elt.getBBox() : e.getBBox();
 			if (e.classList.contains('diagramText'))
 			{
-//				const txt = this.getElement(e.dataset.name);
-//				compBox.x += txt.x;
-//				compBox.y += txt.y;
+				// TODO
 			}
 			else if (e instanceof SVGPathElement)
 			{
@@ -14596,13 +14570,12 @@ class Assembler
 		if (o instanceof DiagramObject)
 		{
 			const bbox = o.svg.getBBox();
-			o.svg.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}), o.svg);
+			o.svg.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
 		}
 		else if (o instanceof DiagramMorphism)
 		{
-			const bbox = o.svg_name.getBBox();
-			const xy = o.getNameOffset();
-			o.svg_name.parentNode.insertBefore(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin, cx:xy.x, cy:xy.y}), o.svg_name);
+			const bbox = o.svg_nameGroup.getBBox();
+			o.svg_nameGroup.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
 		}
 	}
 	deleteEllipse(type, elt)
@@ -15156,7 +15129,7 @@ class Assembler
 				homMorph.incrRefcnt();
 				const data = new Map();
 				data.set(0, homMorph);
-				dataMorphs[fctr] = new Morphism(diagram, {basename:diagram.getAnon('select'), domain:terminal, codomain:homObj, data});
+				dataMorphs[fctr] = new Morphism(diagram, {basename:diagram.getAnon('&sect;'), domain:terminal, codomain:homObj, data});
 			});
 			// map each coproduct factor A to 1xA
 			const step1 = diagram.coprod(...domain.objects.map(o => diagram.fctr(o, [-1, []])));
