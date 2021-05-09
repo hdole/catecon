@@ -3466,11 +3466,11 @@ class D
 							D.session.default = null;
 						R.EmitViewEvent('diagram', diagram);
 					}
-					if (diagram)
-					{
-						R.LoadDiagramEquivalences(diagram);
-						diagram.makeCells();
-					}
+//					if (diagram)
+//					{
+//						R.LoadDiagramEquivalences(diagram);
+//						diagram.makeCells();
+//					}
 					break;
 				case 'download':
 					R.SaveLocal(diagram);
@@ -7017,7 +7017,7 @@ class MultiObject extends CatObject
 		const cap = this.objects.length - 1;
 		const graphs = this.objects.map((o, i) =>
 			{
-				const g = o.getGraph(data, false);
+				const g = o.getGraph(data);
 				if (this.resetPosition())
 					data.position = 0;
 				else if (i < cap)
@@ -8796,8 +8796,8 @@ class MorphismAssemblyAction extends Action
 	html(e, diagram, ary)
 	{
 		const elts = [H3.h4('Assemble Morphism'),
-						D.getIcon('assyColor', 'assyColor', e => this.toggle(e, diagram, ary)),
-						D.getIcon('edit', 'edit', e => this.action(e, diagram, ary))];
+						D.getIcon('assyColor', 'assyColor', e => this.toggle(e, diagram, ary), 'Show or dismiss assembly colors'),
+						D.getIcon('edit', 'edit', e => this.action(e, diagram, ary), 'Assemble and place the morphism')];
 		elts.map(elt => D.toolbar.help.appendChild(elt));
 
 	}
@@ -8829,6 +8829,18 @@ class MorphismAssemblyAction extends Action
 	hasForm(diagram, ary)
 	{
 		return ary.length === 1 && ary[0].isEditable() && ary[0] instanceof DiagramObject;
+	}
+	toggle(e, diagram, ary)
+	{
+		if (this.assembler)
+		{
+			diagram.svgBase.querySelectorAll('.ball').forEach(elt => elt.remove());
+			this.assembler = null;
+		}
+		else
+		{
+			// TODO
+		}
 	}
 }
 
@@ -11075,7 +11087,11 @@ class DiagramMorphism extends Morphism
 		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, id:`${id}_name`, x:off.x, y:off.y + D.default.font.height/2,
 			ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
 			this.to.properName);
-		this.diagram.autoplaceSvg(this.svg_name, off, this.name);
+		const width = D.textWidth(this.to.properName, 'morphTxt');
+		const bbox = {x:off.x, y:off.y, width, height:D.default.font.height};
+		const place = this.diagram.autoplaceSvg(bbox, this.name);
+		this.svg_name.setAttribute('x', place.x);
+		this.svg_name.setAttribute('y', place.y + D.default.font.height);
 		g.appendChild(this.svg_name);
 		this.updateDecorations();
 	}
@@ -11483,7 +11499,15 @@ class Cell extends DiagramCore
 		if (this.svg)
 		{
 			this.svg.innerHTML = this.properName;
-			this.diagram.autoplaceSvg(this.svg, xy, this.name);
+			const bbox = {x:xy.x, y:xy.y - D.default.font.height, width:D.textWidth(this.properName, 'cellTxt'), height:D.default.font.height};
+			if (true)
+			{
+				const place = this.diagram.autoplaceSvg(bbox, this.name);
+				this.svg.setAttribute('x', place.x + bbox.width / 2);
+				this.svg.setAttribute('y', place.y + D.default.font.height);
+			}
+			else
+				this.diagram.autoplaceSvg2(this.svg, xy, this.name);
 		}
 	}
 	getObjects()
@@ -13474,9 +13498,9 @@ class Diagram extends Functor
 			let compBox = elt instanceof DiagramObject ? elt.getBBox() : e.getBBox();
 			if (e.classList.contains('diagramText'))
 			{
-				const txt = this.getElement(e.dataset.name);
-				compBox.x += txt.x;
-				compBox.y += txt.y;
+//				const txt = this.getElement(e.dataset.name);
+//				compBox.x += txt.x;
+//				compBox.y += txt.y;
 			}
 			else if (e instanceof SVGPathElement)
 			{
@@ -13484,11 +13508,17 @@ class Diagram extends Functor
 				{
 					const morphism = this.getElement(e.dataset.name);
 					if (!this.bezier && D2.lineBoxIntersect(morphism.start, morphism.end, box))
+{
+this.overlap = e;
 						return true;
+}
 				}
 			}
 			else if (D2.Overlap(box, new D2(compBox)))
+			{
+this.overlap = e;
 				return true;
+			}
 		}
 		return false;
 	}
@@ -14382,15 +14412,11 @@ class Diagram extends Functor
 		R.sync = true;
 		D.default.arrow.dir = oldArrowDir;
 	}
-	autoplaceSvg(svg, xy, name)
+	autoplaceSvg(bbox, name)
 	{
-		svg.setAttribute('x', xy.x);
-		svg.setAttribute('y', xy.y);
-		const bbox = new D2(svg.getBBox());
-		svg.classList.add('hidden');
 		let nubox = new D2(bbox);
-		nubox.x -= 20;
-		nubox.width += 20;
+		nubox.x -= D.default.margin;
+		nubox.width += D.default.margin;
 		let elt = null;
 		let ndx = 0;
 		const scl = 4;
@@ -14398,16 +14424,12 @@ class Diagram extends Functor
 		while(this.hasOverlap(nubox, name))
 		{
 			nubox = new D2(bbox);
-			nubox.x -= 20;
-			nubox.width += 20;
 			const dir = D.directions[ndx % 8];
 			offset = dir.scale(scl * Math.trunc((8 + ndx)/8));
 			nubox = nubox.add(offset);
 			ndx++;
 		}
-		svg.setAttribute('x', xy.x + offset.x);
-		svg.setAttribute('y', xy.y + offset.y);
-		svg.classList.remove('hidden');
+		return offset.add(bbox);
 	}
 	updateBackground()
 	{
