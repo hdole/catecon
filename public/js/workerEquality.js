@@ -113,7 +113,6 @@ function loadEquivalences(diagram, item, leftLeg, rightLeg, equal)
 function compareSigs(leftSig, rightSig)
 {
 	const equ = equals.get(leftSig);
-//	return equ ? equ.has(rightSig) : false;
 	if (equ && equ.has(rightSig))
 		return true;
 	const notEqu = notEquals.get(leftSig);
@@ -163,7 +162,7 @@ function checkLeg(leg, ndx, cnt, sig)
 				if (ndx + cnt < leg.length)			// add rest of original leg
 					nuLeg.push(...leg.slice(ndx + cnt, leg.length));
 				const nuSig = Sig(nuLeg);
-				isEqual = sig === nuSig ? true : equals.get(sig).has(nuSig);
+				isEqual = sig === nuSig ? true : equals.has(sig) && equals.get(sig).has(nuSig);
 				if (!isEqual)
 					isEqual = scanLeg(nuLeg, sig);
 				if (isEqual)
