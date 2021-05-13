@@ -1033,7 +1033,7 @@ tspan
 	stroke:				#ff06;
 	stroke-width:		10;
 }
-.assyInjection
+.assyCoreference
 {
 	fill:				none;
 	ry:					35;
@@ -1072,7 +1072,7 @@ tspan
 	stroke-linecap:		round;
 	stroke-width:		10;
 }
-.assySource
+.assyOrigin
 {
 	fill:				none;
 	ry:					35;
