@@ -397,6 +397,12 @@ async function serve()
 		});
 		dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
 		{
+			diagrams.filter(d => !Cat.R.catalog.has(d.name)).map(d =>
+			{
+				d.references = JSON.parse(d.refs);
+				delete d.refs;
+				Cat.R.catalog.set(d.name, d);
+			});
 		});
 
 		app.use(express.static(path.join(process.env.CAT_DIR, 'public')));
