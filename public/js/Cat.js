@@ -978,7 +978,7 @@ class R
 		{
 			D.session.mode = 'diagram';
 			R.diagram && R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
-			D.default.fullscreen && D.diagramSVG.classList.add('hidden');
+			D.default.fullscreen && D.diagramSVG.lastElementChild.dataset.name !== name && D.diagramSVG.classList.add('hidden');
 		}
 		if (R.diagram && R.diagram.name === name)
 		{
@@ -2906,7 +2906,7 @@ class D
 			{
 				R.SaveLocal(diagram);
 				if (R.local)
-					R.upload(e, diagram, R.local, _ => {});
+					diagram.upload(e);
 			}
 		}, D.default.autosaveTimer);
 	}
@@ -3430,7 +3430,6 @@ class D
 				case 'load':
 					R.LoadDiagramEquivalences(diagram);
 					diagram.makeCells();
-					diagram.updateBackground();
 					break;
 				case 'default':
 					if (isGUI)
@@ -3612,7 +3611,7 @@ class D
 	}
 	static Grid(x, majorGrid = false)
 	{
-		const grid = majorGrid ? D.default.majorGridMult * D.default.layoutGrid : D.default.layoutGrid;
+		const grid = majorGrid ? D.gridSize() : D.default.layoutGrid;
 		switch (typeof x)
 		{
 		case 'number':
@@ -4061,7 +4060,7 @@ class D
 	}
 	static GetArrowLength(m)
 	{
-		const stdGrid = Cat.D.default.majorGridMult * Cat.D.default.layoutGrid;
+		const stdGrid = Cat.D.gridSize();
 		let delta = stdGrid;
 		const tw = m.textWidth();
 		while (delta < tw)
@@ -4455,6 +4454,10 @@ class D
 		D.statusbar.show(null, 'Defaults reset to original values');
 		isGUI && D.panels.panels.settings.update();
 	}
+	static gridSize()
+	{
+		return D.default.majorGridMult * D.default.layoutGrid;
+	}
 }
 Object.defineProperties(D,
 {
@@ -4515,6 +4518,7 @@ Object.defineProperties(D,
 								timeout:		5000,	// ms
 								hideDistance:	50,		// px
 							},
+			title:			{height:76, weight:'bold'},
 			toolbar:		{x:15, y:70},
 		},
 		writable:		true,
@@ -4742,6 +4746,10 @@ Object.defineProperties(D,
 				else if (R.Actions.project.hasForm(R.diagram, R.diagram.selected))
 					R.diagram.actionHtml(e, 'project');
 			},
+			KeyV(e)
+			{
+				R.diagram.selected.length > 0 && R.diagram.viewElements(...R.diagram.selected);
+			},
 			ShiftKeyO(e)
 			{
 				D.toolbar.show();
@@ -4961,6 +4969,7 @@ class Catalog extends DiagramTool
 				case 'load':
 					if (isGUI && e.detail.diagram)
 					{
+						// TODO
 					}
 					break;
 			}
@@ -5292,6 +5301,9 @@ class Catalog extends DiagramTool
 		if (diagram instanceof Diagram)
 		{
 			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
+			// TODO change to context?
+			diagram.placeText(diagram.properName, {x:0, y:0}, D.default.title.height, D.default.title.weight);
+			diagram.description !== '' && diagram.placeText(diagram.description, {x:0, y:D.gridSize()}, D.default.font.height);
 			R.SelectDiagram(diagram);
 		}
 		else
@@ -7732,6 +7744,11 @@ class DiagramText extends Element
 		span.addEventListener('focusout', onfocusout);
 		span.onfocusout = onfocusout;	// do this to get to the handler
 		span.addEventListener('keydown', onkeydown);
+	}
+	mouseenter(e)
+	{
+		D.mouseover = this;
+		this.emphasis(true);
 	}
 	static UpdateHeight(name, height)
 	{
@@ -11160,6 +11177,11 @@ class DiagramMorphism extends Morphism
 		g.appendChild(this.svg_nameGroup);
 		this.updateDecorations();
 	}
+	getNameSvgOffset()
+	{
+		const matrix = this.svg_name.parentElement.transform.baseVal.getItem(0).matrix;
+		return new D2(matrix.e, matrix.f);
+	}
 	showSelected(state = true)
 	{
 		[this.svg_path, this.svg_name, this.svg].map(svg => svg.classList[state ? 'add' : 'remove']('selected'));
@@ -11239,9 +11261,7 @@ class DiagramMorphism extends Morphism
 	}
 	getBBox()
 	{
-		const txtBox = this.svg_name.getBBox();
-		txtBox.x += this.x;
-		txtBox.y += this.y;
+		const txtBox = this.getNameSvgOffset().add(this.svg_name.getBBox());
 		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), txtBox);
 	}
 	predraw()
@@ -12443,7 +12463,7 @@ if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diag
 			return 'id';
 		if (factors.length > 1 && FactorMorphism.allFactorsEqual(factors))
 			return (dual ? '&nabla;' : '&Delta;') + domain.properName;
-		return `${dual ? '&#119894;' : '&#119901;'}&lt;${factors.map(f => f === -1 ? diagram.getTerminal(dual).properName : domain.getFactorProperName(f)).join(',')}&gt;`;	// TODO cofactors
+		return `${dual ? '&#119894;' : '&#119901;'}${factors.map(f => f === -1 || f.length === 0 ? '' : `&#8202;${U.subscript(f)}`).join(',')}`;
 	}
 	static Signature(diagram, domain, factors = [-1], dual = false, cofactors = null)	// default to terminal morphism
 	{
@@ -13433,7 +13453,7 @@ class Diagram extends Functor
 		gxy.width = 20;
 		gxy.height = 20;
 		while(this.hasOverlap(gxy))
-			gxy.y += D.default.layoutGrid * D.default.majorGridMult;
+			gxy.y += D.gridSize();
 		return gxy;
 	}
 	placeMorphism(to, xyDom = null, xyCod = null, select = true)
@@ -13652,11 +13672,15 @@ this.overlap = e;
 			const start = Date.now();
 			this.savePng(e, e =>
 			{
-				const btn = e.target.parentNode.querySelector('animateTransform');
-				if (btn)	// start button animation
+				let btn = null;
+				if (e && 'target' in e)
 				{
-					btn.setAttribute('repeatCount', 'indefinite');
-					btn.beginElement();
+					btn = e.target.parentNode.querySelector('animateTransform');
+					if (btn)	// start button animation
+					{
+						btn.setAttribute('repeatCount', 'indefinite');
+						btn.beginElement();
+					}
 				}
 				R.upload(e, this, local, res =>
 				{
@@ -14422,7 +14446,7 @@ this.overlap = e;
 		D.default.arrow.dir = {x:1, y:0};
 		const indexed = new Set();
 		const locations = [];
-		const grid = D.default.layoutGrid * D.default.majorGridMult;
+		const grid = D.gridSize();
 		let hasTitle = false;
 		let tx = 1 * grid;
 		let ty = 1 * grid;
@@ -15068,8 +15092,6 @@ class Assembler
 				scanning.push(cod);
 			}
 		});
-//		comps.length === 0 && comps.push([this.diagram.id(obj)]);		// use identity if no other morphism
-//		comps.length === 0 && comps.push([]);		// use identity if no other morphism
 	}
 	setupComposites()
 	{
