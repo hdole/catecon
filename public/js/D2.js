@@ -2,7 +2,7 @@
 
 class D2
 {
-	constructor(x = 0, y = 0)
+	constructor(x = 0, y = 0, width = 0, height = 0)
 	{
 		if (typeof x === 'object')
 		{
@@ -15,8 +15,8 @@ class D2
 		{
 			this.x = x;
 			this.y = y;
-			this.width = 0;
-			this.height = 0;
+			this.width = width;
+			this.height = height;
 		}
 	}
 	add(w)
@@ -24,6 +24,11 @@ class D2
 		const a = new D2(this);
 		a.x += w.x;
 		a.y += w.y;
+		if ('width' in w)
+		{
+			a.width = w.width;
+			a.height = w.height;
+		}
 		return a;
 	}
 	angle()
