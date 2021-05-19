@@ -373,6 +373,12 @@
 		<path class="svgstr4" d="M260,40 C200,40 200,120 260,120"/>
 		<line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>
 	</symbol>
+	<symbol id="icon-swap" class="icon" viewbox="0 0 320 320">
+		<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
+		<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
+		<path class="svgfilNone svgstr1" d="M 260 100 A 100 75 0 1 0 60 100" marker-end="url(#arrowhead)"/>
+		<path class="svgfilNone svgstr1" d="M 60 220 A -100 -75 0 1 0 260 220" marker-end="url(#arrowhead)"/>
+	</symbol>
 	<symbol id="icon-table" class="icon" viewbox="0 0 320 320">
 		<circle cx="80" cy="80" r="60" fill="url(#radgrad2)"/>
 		<circle cx="80" cy="160" r="60" fill="url(#radgrad1)"/>
