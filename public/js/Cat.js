@@ -654,6 +654,7 @@ class R
 		const diagramDiagram = new Diagram(R.$CAT, {basename:'diagram', codomain:'Actions', description:'actions for a diagram', user:'sys'});
 		let action = new IdentityAction(diagramDiagram);
 		new GraphAction(diagramDiagram);
+		new SwapAction(diagramDiagram);
 		new NameAction(diagramDiagram);
 		new CompositeAction(diagramDiagram);
 		new DetachDomainAction(diagramDiagram);
@@ -1808,7 +1809,6 @@ class Toolbar
 	{
 		this.element.classList.add('hidden');
 		this.closed = true;
-		R.diagram && R.diagram.svgRoot.querySelectorAll('.emphasis').forEach(elt => elt.classList.remove('emphasis'));
 	}
 	reveal()
 	{
@@ -1865,7 +1865,7 @@ class Toolbar
 		actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
 		actions.map(action => !action.hidden() && action.hasForm(diagram, diagram.selected) &&
 				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), action.description)));
-		btns.push(D.getIcon('view', 'view', e => Cat.D.keyboardDown.Home(e), 'Home'));
+		btns.push(D.getIcon('view', 'view', e => Cat.R.diagram.viewElements(...R.diagram.selected), 'Home'));
 		this.buttons = H3.td(btns);
 		this.header.appendChild(H3.table(H3.tr(this.buttons, H3.td(this.getCloseToolbarBtn(), '.right')), '.w100'));
 	}
@@ -2208,7 +2208,7 @@ class BPD			// basename, proper name, description
 		const rows = [];
 		this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name', onkeyup:e => D.inputBasenameSearch(e, action)});
 		rows.push(H3.tr(H3.td(this.basenameElt)));
-		this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name'});
+		this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name', onkeydown:e => Cat.D.OnEnter(e, action)});
 		rows.push(H3.tr(H3.td(this.properNameElt)));
 		this.descriptionElt = H3.input('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => Cat.D.OnEnter(e, action)});
 		rows.push(H3.tr(H3.td(this.descriptionElt)));
@@ -3230,7 +3230,7 @@ class D
 	}
 	static AddEventListeners()
 	{
-		window.addEventListener('Assertion', function(e)
+		window.addEventListener('Assertion', e =>
 		{
 			if (!R.sync)
 				return;
@@ -3247,7 +3247,7 @@ class D
 					break;
 			}
 		});
-		window.addEventListener('Morphism', function(e)
+		window.addEventListener('Morphism', e =>
 		{
 			if (!R.sync)
 				return;
@@ -3275,7 +3275,7 @@ class D
 					break;
 			}
 		});
-		window.addEventListener('Object', function(e)
+		window.addEventListener('Object', e =>
 		{
 			if (!R.sync)
 				return;
@@ -3299,7 +3299,7 @@ class D
 					break;
 			}
 		});
-		window.addEventListener('Text', function(e)
+		window.addEventListener('Text', e =>
 		{
 			if (!R.sync)
 				return;
@@ -3316,7 +3316,7 @@ class D
 					break;
 			}
 		});
-		window.addEventListener('Diagram', function(e)
+		window.addEventListener('Diagram', e =>
 		{
 			if (!R.sync)
 				return;
@@ -3431,7 +3431,7 @@ class D
 			R.authFetch(R.getURL('userInfo'), {}).then(res => res.json()).then(json =>
 			{
 				R.user.cloud = json;
-				R.user.cloud.permissions = R.user.cloud.permissions.split(' ');
+				R.user.cloud.permissions = 'permissions' in json ? R.user.cloud.permissions.split(' ') : [];
 			});
 		});
 		window.onresize = D.Resize;
@@ -4724,12 +4724,8 @@ Object.defineProperties(D,
 			},
 			KeyC(e)
 			{
-				if (R.Actions.coproductAssembly.hasForm(R.diagram, R.diagram.selected))
-					R.Actions.coproductAssembly.action(e, R.diagram, R.diagram.selected);
-				else if (R.Actions.coproduct.hasForm(R.diagram, R.diagram.selected))
-					R.Actions.coproduct.action(e, R.diagram, R.diagram.selected);
-				else if (R.Actions.inject.hasForm(R.diagram, R.diagram.selected))
-					R.diagram.actionHtml(e, 'inject');
+				if (R.Actions.copy.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.copy.action(e, R.diagram, R.diagram.selected);
 			},
 			KeyD(e)
 			{
@@ -4753,12 +4749,19 @@ Object.defineProperties(D,
 				{
 					D.toolbar.show();
 					R.diagram.actionHtml(e, 'homset');
+					D.toolbar.help.querySelector('#new-basename').focus();
+					e.preventDefault();
 				}
 			},
 			KeyI(e)
 			{
 				if (R.Actions.identity.hasForm(R.diagram, R.diagram.selected))
 					R.Actions.identity.action(e, R.diagram, R.diagram.selected[0]);
+			},
+			KeyL(e)
+			{
+				if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.lambda.html(e, R.diagram, R.diagram.selected);
 			},
 			KeyM(e)
 			{
@@ -4770,11 +4773,21 @@ Object.defineProperties(D,
 				D.toolbar.show();
 				D.elementTool.Morphism.html(e);
 				D.toolbar.showSection('Morphism', 'new');
+				D.toolbar.help.querySelector('#new-basename').focus();
+				e.preventDefault();
 			},
 			KeyO(e)
 			{
 				D.toolbar.show();
 				Cat.D.elementTool.Object.html(e);
+			},
+			ShiftKeyO(e)
+			{
+				D.toolbar.show();
+				Cat.D.elementTool.Object.html(e);
+				D.toolbar.showSection('Object', 'new');
+				D.toolbar.help.querySelector('#new-basename').focus();
+				e.preventDefault();
 			},
 			KeyP(e)
 			{
@@ -4784,6 +4797,15 @@ Object.defineProperties(D,
 					R.Actions.product.action(e, R.diagram, R.diagram.selected);
 				else if (R.Actions.project.hasForm(R.diagram, R.diagram.selected))
 					R.diagram.actionHtml(e, 'project');
+			},
+			ShiftKeyP(e)
+			{
+				if (R.Actions.coproductAssembly.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.coproductAssembly.action(e, R.diagram, R.diagram.selected);
+				else if (R.Actions.coproduct.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.coproduct.action(e, R.diagram, R.diagram.selected);
+				else if (R.Actions.inject.hasForm(R.diagram, R.diagram.selected))
+					R.diagram.actionHtml(e, 'inject');
 			},
 			KeyT(e)
 			{
@@ -4795,16 +4817,12 @@ Object.defineProperties(D,
 				D.toolbar.show();
 				D.elementTool.Text.html(e);
 				D.toolbar.showSection('Text', 'new');
+				D.toolbar.help.querySelector('#new-description').focus();
+				e.preventDefault();
 			},
 			KeyV(e)
 			{
 				R.diagram.selected.length > 0 && R.diagram.viewElements(...R.diagram.selected);
-			},
-			ShiftKeyO(e)
-			{
-				D.toolbar.show();
-				Cat.D.elementTool.Object.html(e);
-				D.toolbar.showSection('Object', 'new');
 			},
 			PageUp(e)
 			{
@@ -5948,57 +5966,12 @@ class HelpPanel extends Panel
 	constructor()
 	{
 		super('help');
-		const date = '04/11/2020 00:00:01 AM';
+		const date = '04/11/2021 00:00:01 AM';
 		// TODO move to pdf
 		const elements = [
 			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn())), '.buttonBarRight'),
 			H3.h3('Catecon'),
 			H3.h4('The Categorical Console'),
-			H3.p(H3.small('Level 1', '.smallCaps.italic'), '.txtCenter'),
-			H3.p(H3.small(`Deployed ${date}`, '.smallCaps'), '.txtCenter'),
-			H3.br(),
-			H3.button('Help', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catActionHelpPnl')}),
-			H3.div(	H3.h4('Mouse Actions'),
-						H3.h5('Select'),
-							H3.p('Select an object or a morphism with the mouse by left-clicking on the element.  Previously selected objects are unselected.'),
-						H3.h5('Region Select'),
-							H3.p('Click the mouse button, then drag without releasing to cover some elements, and then release to select those elements.'),
-						H3.h5('Multi-Select With Shift Click'),
-							H3.p('Shift left mouse click to add another element to the select list'),
-						H3.h5('Control Drag'),
-							H3.p('Left click with the mouse on an object with the Ctrl key down and then drag to create an identity morphism for that object.'),
-							H3.p('Doing the same with a morphism makes a copy of the morphism.'),
-						H3.h5('Shift Mouse Wheel'),
-							H3.p('Use the mouse wheel to zoom in and out.'),
-						H3.h5('Middle Mouse Button'),
-							H3.p('Click and drag to pan the diagram view.'),
-					H3.h4('Key Actions'),
-						H3.h5('Arrow Keys'),
-							H3.p('Pan the diagram view in the indicated direction.'),
-						H3.h5('Delete'),
-							H3.p('Selected objects or morphisms are deleted.  Some elements cannot be deleted if they are referred to by another element.'),
-						H3.h5('Escape'),
-							H3.p('Dismiss toolbar and side panels.'),
-						H3.h5('Spacebar'),
-							H3.p('Press the spacebar and move the mouse to pan the view.'),
-						H3.h5('Home'),
-							H3.p('Return to the home view.'),
-						H3.h5('Control-A'),
-							H3.p('Select all elements.'),
-						H3.h5('Control-C'),
-							H3.p('Copy elements into the paste buffer.'),
-						H3.h5('Ccontrol-D'),
-							H3.p('Open the diagram panel.'),
-						H3.h5('Control-L'),
-							H3.p('Open output panel.'),
-						H3.h5('Control-M'),
-							H3.p('Open morphism panel.'),
-						H3.h5('Control-O'),
-							H3.p('Open object panel.'),
-						H3.h5('Control-V'),
-							H3.p('Paste elements from the paste buffer.'),
-						H3.h5('Control-Z'),
-							H3.p('Undo the last edit action.'), '##catActionHelpPnl.section'),
 			H3.button('Category Theory', '##catHelpPnlBtn.sidenavAccordion', {title:'References', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catHelpPnl')}),
 			H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
 					H3.h4('References'),
@@ -6019,7 +5992,7 @@ class HelpPanel extends Panel
 			H3.div( H3.a('3D', {href:"https://threejs.org/"}),
 					H3.a('Crypto', {href:"https://bitwiseshiftleft.github.io/sjcl/"}), '##thirdPartySoftwarePnl.section'),
 			H3.hr(),
-			H3.small('&copy;2018-2020 Harry Dole'),
+			H3.small('&copy;2018-2021 Harry Dole'),
 			H3.br(),
 			H3.small('harry@harrydole.com', '.italic')];
 		elements.map(elt => this.elt.appendChild(elt));
@@ -7766,9 +7739,9 @@ class DiagramText extends Element
 		const foreign = H3.foreignObject(H3.div(span, {xmlns:'http://www.w3.org/1999/xhtml'}), {width:bbox.width + 'px', height:bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
-			const nubox = foreign.getBoundingClientRect();
-			foreign.setAttribute('width', nubox.width + 'px');
-			foreign.setAttribute('height', nubox.height + 'px');
+			const nubox = span.getBoundingClientRect();
+			span.setAttribute('width', nubox.width + 'px');
+			span.setAttribute('height', nubox.height + 'px');
 			if (e.key === 'Escape')
 				D.closeActiveTextEdit();
 			e.stopPropagation();
@@ -7913,7 +7886,7 @@ class DiagramObject extends CatObject
 			this.to.decrRefcnt();
 		to.incrRefcnt();
 		this.to = to;
-		this.width = D.textWidth(to.properName);
+		this.width = D.textWidth(to.properName);		// TODO width still used?
 	}
 	decrRefcnt()
 	{
@@ -7966,12 +7939,14 @@ class DiagramObject extends CatObject
 	}
 	mousemove(e)
 	{
-		const result = this.getMouseFactor(e);
-		if (result.factor >= 0)
+		if ('objects' in this.to)
 		{
-			const g = result.graph.graphs[result.factor];
-			const rect = H3.rect('.emphasis', {x:g.position - result.graph.width/2, y:-D.default.font.height/2, width:g.width, height:1.25 * D.default.font.height});
-			this.svg.appendChild(rect);
+			const result = this.getMouseFactor(e);
+			if (result.factor >= 0)
+			{
+				const g = result.graph.graphs[result.factor];
+				this.svg.appendChild(H3.rect('.emphasis', {x:g.position - result.graph.width/2, y:-D.default.font.height/2, width:g.width, height:1.25 * D.default.font.height}));
+			}
 		}
 	}
 	placeProjection(e)		// or injection
@@ -8135,7 +8110,6 @@ class Assertion extends Element
 			signature:		{value: null,								writable: true},
 			svg:			{value: null,								writable: true},
 		});
-//		this.signature = cell instanceof Cell ? Cell.Signature(cell.left, cell.right) : cell;
 		this.signature = cell instanceof Cell ? cell.signature : cell;
 		this.incrRefcnt();		// nothing refers to them, to increment
 		diagram.assertions.set(this.name, this);
@@ -8485,39 +8459,43 @@ class CopyAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		const from = ary[0];
-		let elt = null;
-		let args = {};
-		if (from instanceof DiagramMorphism)
+		const elts = ary.slice();
+		const copied = elts.map(from =>
 		{
-			const xy = D.mouse.diagramPosition(R.diagram);
-			args = {command: 'copy', source:from.to, xy};
-		}
-		else if (from instanceof DiagramObject)
-		{
-			const xy = new D2(from.getXY()).add(D.default.stdOffset);
-			args = {command: 'copy', source:from.to, xy};
-		}
-		else if (from instanceof DiagramText)
-		{
-			const xy = D.mouse.diagramPosition(R.diagram);
-			args = {command: 'copy', source:from.description, xy, height:from.height, weight:from.weight};
-		}
-		elt = this.doit(e, diagram, args);
+			let args = {};
+			if (from instanceof DiagramMorphism)
+			{
+				const xy = D.mouse.diagramPosition(R.diagram);
+				args = {command: 'copy', source:from.to, xy};
+			}
+			else if (from instanceof DiagramObject)
+			{
+				const xy = diagram.findEmptySpot(from.getXY());
+				args = {command: 'copy', source:from.to, xy};
+			}
+			else if (from instanceof DiagramText)
+			{
+				const xy = D.mouse.diagramPosition(R.diagram);
+				args = {command: 'copy', source:from.description, xy, height:from.height, weight:from.weight};
+			}
+			const elt = this.doit(e, diagram, args);
+			args.source = args.source.name;
+			diagram.log(args);
+			diagram.antilog({command:'delete', elements:[elt.name]});
+			return elt;
+		});
+		diagram.makeSelected(...copied);
 		D.EmitCellEvent(diagram, 'check');
-		args.source = args.source.name;
-		diagram.log(args);
-		diagram.antilog({command:'delete', elements:[elt.name]});
 	}
 	doit(e, diagram, args)
 	{
 		const source = args.source;
 		if (source instanceof Morphism)
-			return diagram.placeMorphism(source, args.xy);
+			return diagram.placeMorphism(source, args.xy, null, false);
 		else if (source instanceof CatObject)
-			return diagram.placeObject(source, args.xy, true);
+			return diagram.placeObject(source, args.xy, false);
 		else if (typeof source === 'string')
-			return diagram.placeText(source, args.xy, args.height, args.weight);
+			return diagram.placeText(source, args.xy, args.height, args.weight, false);
 	}
 	replay(e, diagram, args)
 	{
@@ -8526,7 +8504,7 @@ class CopyAction extends Action
 	}
 	hasForm(diagram, ary)	// one element
 	{
-		return diagram.isEditable() && ary.length === 1 && !(ary[0] instanceof Cell)
+		return diagram.isEditable() && ary.length > 0 && ary.filter(elt => elt instanceof Cell).length === 0;
 	}
 }
 
@@ -8604,7 +8582,8 @@ class ProductAction extends Action
 		{
 			const objects = elements.map(o => o.to);
 			const to = diagram.get('ProductObject', {objects, dual:this.dual});
-			return diagram.placeObject(to, elt);
+			const xy = diagram.findEmptySpot(elt.getXY());
+			return diagram.placeObject(to, xy);
 		}
 	}
 	replay(e, diagram, args)
@@ -9102,6 +9081,7 @@ class HomsetAction extends Action
 		this.bpd = new BPD();
 		this.domain = null;
 		this.codomain = null;
+		this.swapped = false;
 	}
 	action(e, diagram, args)
 	{
@@ -9111,13 +9091,15 @@ class HomsetAction extends Action
 	}
 	html(e, diagram, ary)
 	{
+		this.swapped = false;
 		const help = D.toolbar.help;
 		D.RemoveChildren(help);
 		this.domain = ary[0];
 		this.codomain = ary[1];
 		help.appendChild(H3.h3('Homset'));
-		help.appendChild(H3.table(H3.tr(H3.td('Domain'), H3.td(this.domain.to.properName)),
-									H3.tr(H3.td('Codomain'), H3.td(this.codomain.to.properName)), '.w100'));
+		const icon = this.domain.to !== this.codomain.to ? D.getIcon('swap', 'swap', e => this.swap(), 'Swap domain and codomain') : null;
+		help.appendChild(H3.table(	H3.tr(H3.td('Domain'), H3.td('##domain', this.domain.to.properName), H3.td(icon, {rowspan:2})),
+									H3.tr(H3.td('Codomain'), H3.td('##codomain', this.codomain.to.properName)), '.w100'));
 		const newSection = this.bpd.getNewSection('Homset-new', e => this.create(e), 'New Morphism');
 		D.toolbar.help.appendChild(newSection);
 		diagram.addFactorMorphisms(this.domain, this.codomain);
@@ -9136,9 +9118,9 @@ class HomsetAction extends Action
 	}
 	doit(e, diagram, args)
 	{
-		const toArgs = {basename:args.basename, properName:args.properName, description:args.description, domain:args.domain.to, codomain:args.codomain.to};
+		const toArgs = {basename:args.basename, properName:args.properName, description:args.description, domain:this.swapped ? args.codomain.to : args.domain.to, codomain:this.swapped ? args.domain.to : args.codomain.to};
 		const to = new Morphism(diagram, toArgs);
-		const nuFrom = new DiagramMorphism(diagram, {to, domain:this.domain, codomain:this.codomain});
+		const nuFrom = new DiagramMorphism(diagram, {to, domain:this.swapped ? this.codomain : this.domain, codomain:this.swapped ? this.domain : this.codomain});
 		diagram.makeSelected(nuFrom);
 		D.EmitCellEvent(diagram, 'check');
 		return nuFrom;
@@ -9157,6 +9139,15 @@ class HomsetAction extends Action
 		args.domain = this.domain;
 		args.codomain = this.codomain;
 		this.action(e, R.diagram, args);
+	}
+	swap(e)
+	{
+		const dom = D.toolbar.help.querySelector('#domain');
+		const cod = D.toolbar.help.querySelector('#codomain');
+		const html = dom.innerHTML;
+		dom.innerHTML = cod.innerHTML;
+		cod.innerHTML = html;
+		this.swapped = !this.swapped;
 	}
 }
 
@@ -9425,7 +9416,6 @@ class LambdaMorphismAction extends Action
 			return;
 		D.ReplayCommands.set(this.basename, this);
 	}
-	/*
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
@@ -9433,6 +9423,7 @@ class LambdaMorphismAction extends Action
 		const homFactors = U.GetFactorsById('lambda-codomain');
 		try
 		{
+			const elt = this.doit(e, diagram, from, domFactors, homFactors);
 			diagram.log({command:'lambda', from:from.name, domFactors, homFactors});
 			diagram.antilog({command:'delete', elements:[elt.name]});
 		}
@@ -9441,11 +9432,10 @@ class LambdaMorphismAction extends Action
 			D.toolbar.showError(x);
 		}
 	}
-	*/
 	doit(e, diagram, from, domFactors, homFactors)
 	{
 		const m = diagram.get('LambdaMorphism', {preCurry:from.to, domFactors, homFactors});
-		return this.placeMorphism(from, m);
+		return this.placeMorphism(from, diagram, m);
 	}
 	replay(e, diagram, args)
 	{
@@ -9547,12 +9537,11 @@ class LambdaMorphismAction extends Action
 			elt.setAttribute('title', 'Convert to hom');
 		}
 	}
-	placeMorphism(adjacent, diagram, morphism)
+	placeMorphism(source, diagram, morphism)
 	{
-		const xyDom = new D2(adjacent.domain.getXY());
-		const xyCod = new D2(adjacent.codomain.getXY());
-		const delta = xyCod.subtract(xyDom).normal().normalize().scale(D.default.arrow.length);
-		return diagram.placeMorphism(morphism, xyDom.add(delta), xyCod.add(delta), true);
+		const xyDom = diagram.findEmptySpot(source.domain.getXY());
+		const xyCod = diagram.findEmptySpot(source.codomain.getXY());
+		return diagram.placeMorphism(morphism, xyDom, xyCod, true);
 	}
 	createElementMorphism(e, diagram, from)
 	{
@@ -10391,6 +10380,46 @@ class GraphAction extends Action
 	hasForm(diagram, ary)
 	{
 		return ary.length >= 1 && ary.reduce((r, m) => r && m instanceof DiagramMorphism, true);	// all morphisms
+	}
+}
+
+class SwapAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Swap domain and codomain',
+						basename:		'swap',
+						priority:		90,
+		};
+		super(diagram, args);
+		if (!isGUI)
+			return;
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		from.domain.domains.delete(from);
+		from.codomain.codomains.delete(from);
+		let obj = from.domain;
+		from.domain = from.codomain;
+		from.codomain = obj;
+		obj = from.to.domain;
+		from.to.domain = from.to.codomain;
+		from.to.codomain = obj;
+		from.domain.domains.add(from);
+		from.codomain.codomains.add(from);
+		D.EmitMorphismEvent(diagram, 'update', from);
+		diagram.log({command:this.name, morphism:ary[0].name});
+		diagram.antilog({command:this.name, morphism:ary[0].name});
+	}
+	hasForm(diagram, ary)
+	{
+		if (ary.length === 1)
+		{
+			const from = ary[0];
+			return from instanceof DiagramMorphism && from.refcnt === 1 && from.to.refcnt === 1 && from.to.constructor.name === 'Morphism';
+		}
+		return false;
 	}
 }
 
@@ -11587,7 +11616,6 @@ class Cell extends DiagramCore
 		Object.defineProperties(this,
 		{
 			assertion:		{value:null,			writable:true},
-//			cells:			{value:new Map(),		writable:false},
 			hidden:			{value:false,			writable:true},
 			left:			{value:nuArgs.left,		writable:true},
 			right:			{value:nuArgs.right,	writable:true},
@@ -11990,18 +12018,6 @@ class IndexCategory extends Category
 					cell.getSVG(diagram.svgBase);
 				cell.hide();
 			}
-			/*
-			else
-				R.workers.equality.postMessage(
-				{
-//					command:'CheckEquivalence',
-					command:'LoadItem',
-					diagram:diagram.name,
-					cell:cell.signature,
-					leftLeg:left.map(m => m.to.signature),
-					rightLeg:right.map(m => m.to.signature)
-				});
-				*/
 		});
 	}
 	checkCells()
@@ -12664,8 +12680,8 @@ class LambdaMorphism extends Morphism
 		const graph = new Graph(diagram, {graphs:[preCurry.domain.getGraph(), preCurry.codomain.getGraph()]});
 		if (!graph.doIndicesCover([...nuArgs.domFactors, ...nuArgs.homFactors]))
 			throw 'inadequate factor coverage for lambda';
-		if (!nuArgs.homFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.domFactors, f), true) &&
-				!nuArgs.domFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.homFactors, f), true))	// do not share links
+		if (!nuArgs.homFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.domFactors, f) >= 0, true) &&
+				!nuArgs.domFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.homFactors, f) >= 0, true))	// do not share links
 			throw 'dom and hom factors overlap';
 		super(diagram, nuArgs);
 		this.properName = LambdaMorphism.ProperName(preCurry, nuArgs.domFactors, nuArgs.homFactors);
@@ -13580,7 +13596,7 @@ class Diagram extends Functor
 		});
 		this.updateBackground();
 	}
-	placeText(description, xy, height = '24', weight = 'normal')
+	placeText(description, xy, height = '24', weight = 'normal', select = true)
 	{
 		const txt = new DiagramText(this, {description, xy, height, weight});
 		const bbox = new D2(txt.svg.getBBox());
@@ -13588,7 +13604,8 @@ class Diagram extends Functor
 		while (this.hasOverlap(offbox, txt.name))
 			offbox = offbox.add(D.default.stdOffset);
 		txt.update(new D2(xy).add(offbox.subtract(bbox)));
-		R.diagram && this.makeSelected(txt);
+		if (select && R.diagram)
+			this.makeSelected(txt);
 		return txt;
 	}
 	placeObject(to, xyIn, select = true)
@@ -14843,8 +14860,6 @@ class Diagram extends Functor
 					elt.morphisms = elt.morphisms.map(m => change(m));
 					break;
 				case 'Assertion':
-//					elt.left = elt.left.map(m => change(m));
-//					elt.right = elt.right.map(m => change(m));
 					break;
 			}
 		});
