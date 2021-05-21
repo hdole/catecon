@@ -6,7 +6,7 @@
 		<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
 	</marker>
 	<marker id="arrowheadWide" viewBox="0 -20 60 140" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
-		<path class="svgstr4" d="M0 0 L80 50 L10 100"/>
+		<path class="svgstr4" d="M0 -20 L80 50 L0 100"/>
 	</marker>
 	<symbol id="icon-add" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
@@ -35,7 +35,7 @@
 		<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-cell" class="icon" viewbox="0 0 320 320">
-		<path class="svgfilNone svgstr1" d="M 230 89 A 100 100 0 1 0 260 160" marker-end="url(#arrowhead)"/>
+		<path class="svgfilNone svgstr1" d="M 230 89 A 100 100 0 1 0 260 160" marker-end="url(#arrowheadWide)"/>
 	</symbol>
 	<symbol id="icon-chevronLeft" class="icon" viewbox="0 0 320 320">
 		<path class="svgfilnone svgstr1" d="M120,40 80,160 120,280"/>
@@ -376,8 +376,8 @@
 	<symbol id="icon-swap" class="icon" viewbox="0 0 320 320">
 		<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
 		<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-		<path class="svgfilNone svgstr1" d="M 260 100 A 100 75 0 1 0 60 100" marker-end="url(#arrowhead)"/>
-		<path class="svgfilNone svgstr1" d="M 60 220 A -100 -75 0 1 0 260 220" marker-end="url(#arrowhead)"/>
+		<path class="svgfilNone svgstr1" d="M 260 80 A 100 75 0 1 0 60 80" marker-end="url(#arrowheadWide)"/>
+		<path class="svgfilNone svgstr1" d="M 60 240 A -100 -75 0 1 0 260 240" marker-end="url(#arrowheadWide)"/>
 	</symbol>
 	<symbol id="icon-table" class="icon" viewbox="0 0 320 320">
 		<circle cx="80" cy="80" r="60" fill="url(#radgrad2)"/>
