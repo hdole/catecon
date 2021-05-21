@@ -4392,6 +4392,7 @@ console.log('save session');
 		D.drag = false;
 		D.setCursor();
 		e.preventDefault();
+		D.toolbar.hide();
 	}
 	static stopMousePan()
 	{
@@ -4526,7 +4527,7 @@ Object.defineProperties(D,
 				margin:	16,
 				dir:	{x:0, y:1},
 			},
-			autohideTimer:	10000,	// ms
+			autohideTimer:	60000,	// ms
 			autosaveTimer:	2000,	// ms
 			button:		{tiny:0.4, small:0.66, large:1.0},
 			diagram:
@@ -4603,19 +4604,31 @@ Object.defineProperties(D,
 			},
 			ArrowUp(e)
 			{
-				D.panHandler(e, 'up');
+				if (R.diagram.selected.length === 0)
+					D.panHandler(e, 'up');
+				else
+					R.diagram.moveElements({x:0, y:-D.gridSize()}, ...R.diagram.selected);
 			},
 			ArrowDown(e)
 			{
-				D.panHandler(e, 'down');
+				if (R.diagram.selected.length === 0)
+					D.panHandler(e, 'down');
+				else
+					R.diagram.moveElements({x:0, y:D.gridSize()}, ...R.diagram.selected);
 			},
 			ArrowLeft(e)
 			{
-				D.panHandler(e, 'left');
+				if (R.diagram.selected.length === 0)
+					D.panHandler(e, 'left');
+				else
+					R.diagram.moveElements({x:-D.gridSize(), y:0}, ...R.diagram.selected);
 			},
 			ArrowRight(e)
 			{
-				D.panHandler(e, 'right');
+				if (R.diagram.selected.length === 0)
+					D.panHandler(e, 'right');
+				else
+					R.diagram.moveElements({x:D.gridSize(), y:0}, ...R.diagram.selected);
 			},
 			ControlLeft(e) { D.ctrlKey = true; },
 			ControlRight(e) { D.ctrlKey = true; },
@@ -11372,10 +11385,13 @@ class DiagramMorphism extends Morphism
 		}
 		svg.style.textAnchor = anchor;
 	}
+	getSvgNameBBox()
+	{
+		return this.getNameSvgOffset().add(this.svg_name.getBBox());
+	}
 	getBBox()
 	{
-		const txtBox = this.getNameSvgOffset().add(this.svg_name.getBBox());
-		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), txtBox);
+		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), txtBox, this.getSvgNameBBox());
 	}
 	predraw()
 	{
@@ -12620,7 +12636,8 @@ if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diag
 	}
 	static ProperName(diagram, domain, factors, dual, cofactors = null)
 	{
-		if (FactorMorphism.isIdentity(factors, 'objects' in domain ? domain.objects.length : 1))
+		const obj = domain instanceof NamedObject ? domain.source : domain;
+		if (FactorMorphism.isIdentity(factors, 'objects' in obj ? obj.objects.length : 1))
 			return 'id';
 		if (factors.length > 1 && FactorMorphism.allFactorsEqual(factors))
 			return (dual ? '&nabla;' : '&Delta;') + domain.properName;
@@ -13753,7 +13770,7 @@ class Diagram extends Functor
 	}
 	hasOverlap(box, except = '')
 	{
-		const elts = this.svgBase.querySelectorAll('.object, .diagramText, .morphTxt, .cellTxt, path');
+		const elts = this.svgBase.querySelectorAll('.object, .diagramText, .morphTxt, .cellTxt, .morphism');
 		let r = null;
 		for (let i=0; i<elts.length; ++i)
 		{
@@ -13761,10 +13778,15 @@ class Diagram extends Functor
 			if (e.dataset.name === except)
 				continue;
 			const elt = this.getElement(e.dataset.name);
-			let compBox = elt instanceof DiagramObject ? elt.getBBox() : e.getBBox();
-			if (e.classList.contains('diagramText'))
+			let compBox = null;
+			if (elt instanceof DiagramObject)
+				compBox = elt.getBBox();
+			else if (e instanceof SVGTextElement)
 			{
-				// TODO
+				if (elt instanceof DiagramMorphism)
+					compBox = elt.getSvgNameBBox();
+				else
+					compBox = e.getBBox();
 			}
 			else if (e instanceof SVGPathElement)
 			{
@@ -13774,8 +13796,11 @@ class Diagram extends Functor
 					if (!this.bezier && D2.lineBoxIntersect(morphism.start, morphism.end, box))
 						return true;
 				}
+				continue;
 			}
-			else if (D2.Overlap(box, new D2(compBox)))
+			else
+				compBox = e.getBBox();
+			if (D2.Overlap(box, new D2(compBox)))
 				return true;
 		}
 		return false;
@@ -14696,7 +14721,7 @@ class Diagram extends Functor
 			nubox = new D2(bbox);
 			const dir = D.directions[ndx % 8];
 			offset = dir.scale(scl * Math.trunc((8 + ndx)/8));
-			nubox = nubox.add(offset);
+			nubox = nubox.add(offset.getXY());
 			ndx++;
 		}
 		return offset.add(bbox);
@@ -14865,6 +14890,16 @@ class Diagram extends Functor
 		});
 		const diagram = new Diagram(R.GetUserDiagram(user), json);
 		return diagram;
+	}
+	moveElements(offset, ...elements)
+	{
+		const off = new D2(offset);
+		elements.filter(elt => elt instanceof DiagramText || elt instanceof DiagramObject).map(elt =>
+		{
+			elt.setXY(off.add(elt.getXY()));
+			D.EmitElementEvent(this, 'move', elt);
+		});
+		D.EmitDiagramEvent(this, 'move', '');
 	}
 	static Codename(args)
 	{
