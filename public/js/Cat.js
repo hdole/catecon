@@ -8037,14 +8037,17 @@ class DiagramObject extends CatObject
 	}
 	placeProjection(e)		// or injection
 	{
-		const result = this.getMouseFactor(e)
-		if (result.factor > -1)
+		if (this.to instanceof ProductObject)
 		{
-			const morphism = this.to.dual ? R.diagram.cofctr(this.to, [result.factor]) : R.diagram.fctr(this.to, [result.factor]);
-			this.diagram.placeMorphismByObject(e, this.to.dual ? 'codomain' : 'domain', this, morphism);
+			const result = this.getMouseFactor(e)
+			if (result.factor > -1)
+			{
+				const morphism = this.to.dual ? R.diagram.cofctr(this.to, [result.factor]) : R.diagram.fctr(this.to, [result.factor]);
+				this.diagram.placeMorphismByObject(e, this.to.dual ? 'codomain' : 'domain', this, morphism);
+				return;
+			}
 		}
-		else
-			this.diagram.placeMorphismByObject(e, e.shiftKey ? 'codomain' : 'domain', this, this.diagram.id(this.to));
+		this.diagram.placeMorphismByObject(e, e.shiftKey ? 'codomain' : 'domain', this, this.diagram.id(this.to));
 	}
 	getSVG(node)
 	{
@@ -9688,7 +9691,7 @@ class LanguageAction extends Action
 		{
 			if (!('code' in m))
 				m.code = {};
-			m.code[this.ext] = document.getElementById(`element-${this.ext}`).innerText;
+			m.code[this.ext] = document.getElementById(`element-${this.ext}`).value;
 			D.EmitElementEvent(diagram, 'update', from);
 		}
 	}
@@ -9704,10 +9707,11 @@ class LanguageAction extends Action
 	html(e, diagram, ary)
 	{
 		const elt = ary[0].to;
-		let div = H3.div();
+		const div = H3.div();
 		const help = D.toolbar.help;
 		const body = help.querySelector('#help-body');
 		D.RemoveChildren(body);
+		body.appendChild(div);
 		if (elt.constructor.name === 'Morphism' || elt.constructor.name === 'CatObject')
 		{
 			const old = this.currentDiagram;
@@ -9727,7 +9731,6 @@ class LanguageAction extends Action
 			this.currentDiagram = null;
 			div.appendChild(H3.p(this.generate(elt), `##element-${this.ext}.code`));
 		}
-		body.appendChild(div);
 	}
 	getEditHtml(div, elt)	// handler when the language is just a string
 	{
@@ -9735,9 +9738,32 @@ class LanguageAction extends Action
 		if (code === '')
 			code = this.template(elt);
 		const id = `element-${this.ext}`;
-		div.appendChild(H3.div(code, '.code.padding', {id, onkeydown:e => e.stopPropagation()}));
+		const textarea = H3.textarea(code, '.code.w100',
+		{
+			id,
+			disabled:true,
+			onkeydown:e =>
+			{
+				e.stopPropagation();
+				if (e.key === 'Tab')	// insert tab character
+				{
+					e.preventDefault();
+					const target = e.target;
+					const start = target.selectionStart;
+					const end = target.selectionEnd;
+					target.value = target.value.substring(0, start) + '\t' + target.value.substring(end);
+					target.selectionStart = target.selectionEnd = start +1;
+				}
+			},
+			oninput: e =>
+			{
+				e.target.style.height = e.target.scrollHeight + 'px';
+			},
+		});
+		div.appendChild(textarea);
+		textarea.style.height = textarea.scrollHeight + 'px';
 		if (this.isEditable(elt))
-			div.appendChild(D.getIcon(this.name, 'edit', e => Cat.R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
+			div.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
 		return div;
 	}
 	hasCode(elt)
@@ -9751,13 +9777,16 @@ class LanguageAction extends Action
 	setCode(e, id, type)
 	{
 		const elt = document.getElementById(id);
-		if (R.diagram.isEditable() && elt.contentEditable === 'true' && elt.textContent !== '')
+//		if (R.diagram.isEditable() && elt.disabled === false && elt.textContent !== '')
+		if (R.diagram.isEditable() && elt.disabled === false)
 		{
 			elt.contentEditable = false;
+			elt.disabled = true;
 			R.diagram.activate(e, type);
 		}
 		else
 		{
+			elt.disabled = false;
 			elt.contentEditable = true;
 			elt.focus();
 		}
@@ -11167,7 +11196,11 @@ class DiagramMorphism extends Morphism
 		if ('homsetIndex' in args)
 			return args.homsetIndex;
 		else
-			return this.diagram.domain.getHomset(this.domain, this.codomain).length - 1;
+		{
+			const homsetLength = this.diagram.domain.getHomset(this.domain, this.codomain).length;
+			const cohomsetLength = this.diagram.domain.getHomset(this.codomain, this.domain).length;
+			return (cohomsetLength > 0 ? 1 : 0) + homsetLength - 1;
+		}
 	}
 	setDomain(dom)
 	{
@@ -11215,7 +11248,8 @@ class DiagramMorphism extends Morphism
 		{
 			let mor = super.json();
 			mor.flipName = this.flipName;
-			mor.homsetIndex = this.homsetIndex;
+			if (this.homsetIndex !== 0)
+				mor.homsetIndex = this.homsetIndex;
 			mor.to = this.to.name;
 			return mor;
 		}
@@ -11446,7 +11480,7 @@ class DiagramMorphism extends Morphism
 			const band = Math.trunc(halfNdx);
 			const alt = ndx % 2;
 			const sign = alt > 0 ? -1 : 1;
-			const scale = 4;
+			const scale = 2;
 			const offset = normal.scale(scale * D.default.font.height * (band + 1) * sign);
 			const w = normal.scale(10 * (1 + (halfNdx)) * sign);
 			this.start = this.start.add(w).round();
@@ -13893,7 +13927,7 @@ class Diagram extends Functor
 			const elt = this.getElement(svg.dataset.name);
 			if (svg instanceof SVGPathElement)
 			{
-				if (!this.bezier && D2.lineBoxIntersect(elt.start, elt.end, box))
+				if (!elt.bezier && D2.lineBoxIntersect(elt.start, elt.end, box))
 						return true;
 				continue;
 			}

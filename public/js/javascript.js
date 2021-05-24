@@ -18,6 +18,7 @@ var Cat = Cat || require('./Cat.js');
 			const args = {basename:'javascript', description:'Javascript support', ext:'js'};
 			super(diagram, args);
 			R.languages.set(this.basename, this);
+			Cat.R.$CAT.getElement('PFS').actions.set(args.basename, this);
 			R.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
 		}
 		getType(elt, first = true)
