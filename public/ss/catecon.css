@@ -974,7 +974,7 @@ span[contenteditable="true"].selected
 	text-align:	center;
 }
 
-#matching-table
+.matching-table
 {
 	margin:		4px;
 	width:		95%;
