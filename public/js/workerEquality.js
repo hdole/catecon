@@ -84,6 +84,7 @@ function loadItem(diagram, item, leftLeg, rightLeg, equal)
 	items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg, equal]);
 	!diagramItems.has(diagram) && diagramItems.set(diagram, new Set());
 	diagramItems.get(diagram).add(item);
+	loadEquivalences(diagram, item, leftLeg, rightLeg, equal);
 }
 
 function loadEquivalences(diagram, item, leftLeg, rightLeg, equal)
@@ -184,6 +185,7 @@ function loadDiagrams(diagrams)
 	sig2legs.clear();
 	equals.clear();
 	diagrams.map(diagram => diagramItems.has(diagram) && diagramItems.get(diagram).forEach(item => items.get(item).forEach(equ => loadEquivalences(diagram, item, equ[0], equ[1], equ[2]))));
+	console.log({spoiled});
 	spoiled = false;
 }
 
@@ -191,7 +193,7 @@ function loadDiagrams(diagrams)
 function checkEquivalence(diagram, cell, leftLeg, rightLeg)
 {
 	if (spoiled)		// spoilage comes from editting
-		reload(contextDiagrams);
+		loadDiagrams(contextDiagrams);
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	let isEqual = compareSigs(leftSig, rightSig);
@@ -214,4 +216,5 @@ function removeEquivalences(diagram, delItems)		// when deletion occurs due to e
 		myItems.delete(item);
 	});
 	spoiled = true;
+	console.log({spoiled});
 }
