@@ -525,14 +525,15 @@ class R
 			{
 				case 'CheckEquivalence':
 					const diagram = R.$CAT.getElement(args.diagram);
+					if (diagram.domain.hiddenCells.has(args.cell))		// ignore hidden cells
+						return;
 					const cell = diagram.domain.cells.get(args.cell);
 					if (!cell)
-						return;
+						return;	// TODO bad cell request
+					cell.removeSVG();
 					const assertion = diagram.getAssertion(cell.signature);
 					if (assertion)
-					{
 						assertion.setCell(cell);
-					}
 					let type = '';
 					if (args.isEqual === 'unknown')
 						type = 'unknown';
@@ -669,7 +670,6 @@ class R
 		new RunAction(diagramDiagram);
 		new AlignHorizontalAction(diagramDiagram);
 		new AlignVerticalAction(diagramDiagram);
-		new CellAction(diagramDiagram);
 		setup(diagramDiagram);
 		const productDiagram = new Diagram(R.$CAT, {basename:'product', codomain:'Actions', description:'diagram for product actions', user:'sys'});
 		new ProductAction(productDiagram);
@@ -859,6 +859,7 @@ class R
 	}
 	static ReadLocal(name, clear = false)
 	{
+		let sync = R.sync;
 		R.sync = false;
 		const data = U.readfile(`${name}.json`);
 		if (data)
@@ -879,11 +880,11 @@ class R
 			if (png)
 				D.diagramPNGs.set(diagram.name, png);
 			R.SetDiagramInfo(diagram);
-			R.sync = true;
 			D.EmitCATEvent('load', diagram);
+			R.sync = sync;
 			return diagram;
 		}
-		R.sync = true;
+		R.sync = sync;
 		return null;
 	}
 	static DisplayMorphismInput(morphismName)
@@ -1878,9 +1879,10 @@ class Toolbar
 			this.mode = mod;
 			fn(e);
 		};
-		btns.push(D.getIcon('diagram', 'diagram', e => setActive(e, 'diagram', ee => Cat.D.elementTool.Diagram.html(ee)), 'Diagram'));
-		btns.push(D.getIcon('object', 'object', e => setActive(e, 'object', ee =>Cat.D.elementTool.Object.html(ee)), 'Object'));
-		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), 'Morphism'));
+		btns.push(D.getIcon('diagram', 'diagram', e => setActive(e, 'diagram', ee => Cat.D.elementTool.Diagram.html(ee)), 'Diagrams'));
+		btns.push(D.getIcon('object', 'object', e => setActive(e, 'object', ee =>Cat.D.elementTool.Object.html(ee)), 'Objects'));
+		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), 'Morphisms'));
+		btns.push(D.getIcon('cell', 'cell', e => setActive(e, 'cell', ee => Cat.D.elementTool.Assert.html(ee)), 'Assertions'));
 		btns.push(D.getIcon('text', 'text', e => setActive(e, 'text', ee => Cat.D.elementTool.Text.html(ee)), 'Text'));
 		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), 'Show graphs in diagram'));
 		btns.push(D.getIcon('home', 'home', e => Cat.D.keyboardDown.Home(e), 'Home'));
@@ -1952,11 +1954,12 @@ class Toolbar
 
 class ElementTool
 {
-	constructor(type, headline)
+	constructor(type, headline, sections)
 	{
 		Object.defineProperties(this,
 		{
 			type:				{value: type,						writable: false},
+			sections:			{value: sections,					writable: false},
 			headline:			{value: headline,					writable: false},
 			filter:				{value: '',							writable: true},
 			diagramOnly:		{value: false,						writable: true},
@@ -1978,7 +1981,7 @@ class ElementTool
 			this.search();
 		};
 		return H3.table(	'##search-tools',
-							H3.tr(	H3.th('.center', 'Search for Diagram', {colspan:3})),
+							H3.tr(	H3.th('Search for Diagram', {colspan:3})),
 							H3.tr(	H3.td('Filter by', '.tinyPrint.center.italic'),
 									H3.td(),
 									H3.td('Sort by', '.tinyPrint.center.italic')),
@@ -2002,20 +2005,23 @@ class ElementTool
 		const help = D.toolbar.help;
 		D.RemoveChildren(help);
 		this.reset();
-		this.setupToolbar2();
+		this.setupToolbar();
 		help.appendChild(H3.h4(this.type));
 		help.appendChild(H3.div('##' + this.headerId));
-		this.addNewSection();
+		this.sections.includes('new') && this.addNewSection();
 		const matchTable = H3.table({id:`${this.type}-matching-table`}, '.matching-table');
-		help.appendChild(	H3.div(`##${this.type}-search.w100.hidden`,
-									H3.hr(),
-									H3.h5('Search'),
-									H3.br(),
-									this.getSearchBar(),
-									H3.div(`##${this.type}-search-results.tool-search-results`, matchTable)));
-		this.resetFilter();
-		D.toolbar.showSection(this.type, 'search');
-		this.setSearchBar();
+		if (this.sections.includes('search'))
+		{
+			help.appendChild(	H3.div(`##${this.type}-search.w100.hidden`,
+										H3.hr(),
+										H3.h5('Search'),
+										H3.br(),
+										this.getSearchBar()));
+			this.resetFilter();
+			D.toolbar.showSection(this.type, 'search');
+			this.setSearchBar();
+		}
+		help.appendChild(H3.div(`##${this.type}-search-results.tool-search-results`, matchTable));
 		this.search();
 	}
 	toggleDiagramFilter(e)
@@ -2058,7 +2064,7 @@ class ElementTool
 	{
 		this.doit(e, diagram, args, false);
 	}
-	setupToolbar2()
+	setupToolbar()
 	{
 		const toolbar = D.toolbar;
 		const toolbar2 = [];
@@ -2073,11 +2079,11 @@ class ElementTool
 	{
 		D.toolbar.clearError();
 		const tbl = document.getElementById(`${this.type}-matching-table`);
-		D.RemoveChildren(tbl);
+		tbl && D.RemoveChildren(tbl);
 	}
 	search()
 	{
-		this.clearSearch();
+		this.sections.includes('search') && this.clearSearch();
 		const tbl = document.getElementById(`${this.type}-matching-table`);
 		this.getRows(tbl, this.getMatchingElements());
 	}
@@ -2087,7 +2093,7 @@ class TextTool extends ElementTool
 {
 	constructor(type, headline)
 	{
-		super('Text', headline);
+		super('Text', headline, ['new', 'search']);
 		this.hasDiagramOnlyButton = false;
 		Object.defineProperties(this,
 		{
@@ -2242,7 +2248,7 @@ class ObjectTool extends ElementTool
 {
 	constructor(headline)
 	{
-		super('Object', headline);
+		super('Object', headline, ['new', 'search']);
 		this.bpd = new BPD();
 		D.ReplayCommands.set('newObject', this);
 	}
@@ -2309,7 +2315,7 @@ class MorphismTool extends ElementTool
 {
 	constructor(headline)
 	{
-		super('Morphism', headline);
+		super('Morphism', headline, ['new', 'search']);
 		Object.defineProperties(this,
 		{
 			domainElt:			{value: null,										writable: true},
@@ -2427,7 +2433,7 @@ class DiagramTool extends ElementTool
 {
 	constructor(type, headline)
 	{
-		super(type, headline);
+		super(type, headline, ['new', 'search']);
 		Object.defineProperties(this,
 		{
 			bpd:				{value: new BPD(),	writable: false},
@@ -2675,6 +2681,38 @@ class DiagramTool extends ElementTool
 	}
 }
 
+class CellTool extends ElementTool
+{
+	constructor(type, headline)
+	{
+		super('Assert', headline, []);
+		this.hasDiagramOnlyButton = false;
+		Object.defineProperties(this,
+		{
+			descriptionElt:		{value: null,		writable: true},
+			error:				{value: null,		writable: true},
+		});
+		D.ReplayCommands.set(`new${this.type}`, this);
+	}
+	addNewSection()
+	{
+		D.toolbar.help.appendChild(H3.div(`##${this.type}-new.hidden`));
+	}
+	getRows(tbl, cells)
+	{
+		cells.map(cell => tbl.appendChild(cell.getHtmlRow()));
+	}
+	getMatchingElements()
+	{
+		return [...R.diagram.domain.cells.values()];
+	}
+	reset()
+	{
+		super.reset();
+		this.descriptionElt && (this.descriptionElt.value = '');
+	}
+}
+
 class StatusBar
 {
 	constructor()
@@ -2770,6 +2808,7 @@ class D
 			Object:		new ObjectTool('Create a new object in this diagram'),
 			Morphism:	new MorphismTool('Create a new morphism in this diagram'),
 			Text:		new TextTool('Create new text in this diagram'),
+			Assert:		new CellTool('Create new assertion in this diagram'),
 		},
 		D.Resize();
 		D.Autohide();
@@ -3239,6 +3278,7 @@ class D
 			{
 				case 'delete':
 					R.diagram.loadCells();
+					R.diagram.domain.checkCells();
 					D.Autosave(args.diagram);
 					break;
 				case 'new':
@@ -3252,26 +3292,31 @@ class D
 			if (!R.sync)
 				return;
 			const args = e.detail;
+			const diagram = args.diagram;
 			switch(args.command)
 			{
 				case 'delete':
-					D.Autosave(args.diagram);
+					diagram.domain.findCells(diagram);
+					diagram.domain.checkCells();
+					D.Autosave(diagram);
 					break;
 				case 'detach':
 					args.element.homsetIndex = 0;
 				case 'new':
-					isGUI && args.diagram.updateBackground();
+					isGUI && diagram.updateBackground();
 					!(args.element instanceof DiagramMorphism) && args.element.loadItem();
-					D.Autosave(args.diagram);
+					diagram.domain.findCells(diagram);
+					diagram.domain.checkCells();
+					D.Autosave(diagram);
 					break;
 				case 'update':
 					if ('update' in args.element)
 					{
 						args.element.update();
-						args.diagram.domain.updateCells(args.element);
-						isGUI && args.diagram.updateBackground();
+						diagram.domain.updateCells(args.element);
+						isGUI && diagram.updateBackground();
 					}
-					D.Autosave(args.diagram);
+					D.Autosave(diagram);
 					break;
 			}
 		});
@@ -3286,6 +3331,8 @@ class D
 			switch(args.command)
 			{
 				case 'fuse':
+					args.diagram.domain.findCells(diagram);
+					diagram.domain.checkCells();
 					diagram.updateTimestamp();
 					D.Autosave(args.diagram);
 					break;
@@ -3329,6 +3376,7 @@ class D
 					case 'removeReference':
 						R.LoadDiagramEquivalences(diagram);
 						diagram.loadCells();
+						diagram.domain.checkCells();
 						diagram.updateTimestamp();
 						D.Autosave(diagram);
 						break;
@@ -3349,7 +3397,7 @@ class D
 			switch(args.command)
 			{
 				case 'check':
-					diagram.loadCells();
+					diagram.domain.checkCells();
 					break;
 				case 'hide':
 				case 'show':
@@ -4263,7 +4311,7 @@ console.log('save session');
 	{
 		if (D.textEditActive())
 			return;
-		let offset;
+		let offset = null;
 		const scale = 1 / D.session.viewport.scale;
 		if (typeof dir === 'string')
 			switch(dir)
@@ -4281,6 +4329,8 @@ console.log('save session');
 					offset = new D2(-D.screenPan, 0);
 					break;
 			}
+		else if (dir instanceof D2)
+			offset = new D2(dir.x * D.screenPan, dir.y * D.screenPan);
 		else
 			offset = new D2(e.movementX, e.movementY);
 		offset = offset.scale(scale);
@@ -4632,45 +4682,6 @@ Object.defineProperties(D,
 			},
 			ControlLeft(e) { D.ctrlKey = true; },
 			ControlRight(e) { D.ctrlKey = true; },
-			ControlKeyA(e)
-			{
-				R.diagram.selectAll();
-				e.preventDefault();
-			},
-			ControlKeyC(e)
-			{
-				D.pasteBuffer = R.diagram.selected.slice();
-				D.copyDiagram = R.diagram;
-				const xy = D.mouse.clientPosition();
-				D.statusbar.show({clientX:xy.x, clientY:xy.y}, 'Copied to paste buffer');
-			},
-			ControlKeyG(e)
-			{
-				Cat.R.diagram.showGraphs();
-				e.preventDefault();
-			},
-			ControlKeyZ(e)
-			{
-				Cat.R.diagram.undo(e);
-				e.preventDefault();
-			},
-			ControlKeyL(e)
-			{
-				D.ttyPanel.open();
-				D.ttyPanel.logSection.open();
-				e.preventDefault();
-			},
-			ControlKeyT(e)
-			{
-				const diagram = R.diagram;
-				diagram.deselectAll(e);
-				const text = 'Lorem ipsum cateconium';
-				const xy = D.Grid(D.mouse.diagramPosition(diagram));
-				const t = diagram.placeText(text, xy);
-				diagram.log({command:'text', xy:xy.getXY(), text});
-				diagram.antilog({command:'delete', elements:[t.name]});
-			},
-			ControlKeyV(e)	{	D.Paste(e);	},
 			Digit1(e)
 			{
 				if (R.diagram && e.target === document.body)
@@ -4720,25 +4731,31 @@ Object.defineProperties(D,
 			},
 			KeyA(e)
 			{
-				if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
-				{
-					D.toolbar.show();
-					R.diagram.actionHtml(e, 'morphismAssembly');
-				}
+				D.toolbar.show();
+				Cat.D.CellTool.Object.html(e);
 			},
 			ShiftKeyA(e)
 			{
-				if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
-				{
-					D.toolbar.show();
-					R.diagram.actionHtml(e, 'morphismAssembly');
-					R.Actions.morphismAssembly.action(e, R.diagram, R.diagram.selected);
-				}
+				D.toolbar.show();
+				Cat.D.CellTool.Object.html(e);
+				e.preventDefault();
+			},
+			ControlKeyA(e)
+			{
+				R.diagram.selectAll();
+				e.preventDefault();
 			},
 			KeyC(e)
 			{
 				if (R.Actions.copy.hasForm(R.diagram, R.diagram.selected))
 					R.Actions.copy.action(e, R.diagram, R.diagram.selected);
+			},
+			ControlKeyC(e)
+			{
+				D.pasteBuffer = R.diagram.selected.slice();
+				D.copyDiagram = R.diagram;
+				const xy = D.mouse.clientPosition();
+				D.statusbar.show({clientX:xy.x, clientY:xy.y}, 'Copied to paste buffer');
 			},
 			KeyD(e)
 			{
@@ -4751,12 +4768,12 @@ Object.defineProperties(D,
 				D.elementTool.Diagram.html(e);
 				D.toolbar.showSection('diagram', 'new');
 			},
-			KeyH(e)
+			KeyG(e)
 			{
-				if (R.Actions.hom.hasForm(R.diagram, R.diagram.selected))
-					R.Actions.hom.action(e, R.diagram, R.diagram.selected);
+				Cat.R.diagram.showGraphs();
+				e.preventDefault();
 			},
-			ShiftKeyH(e)
+			KeyH(e)
 			{
 				if (R.Actions.homset.hasForm(R.diagram, R.diagram.selected))
 				{
@@ -4765,6 +4782,11 @@ Object.defineProperties(D,
 					D.toolbar.help.querySelector('#new-basename').focus();
 					e.preventDefault();
 				}
+			},
+			ShiftKeyH(e)
+			{
+				if (R.Actions.hom.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.hom.action(e, R.diagram, R.diagram.selected);
 			},
 			KeyI(e)
 			{
@@ -4775,6 +4797,12 @@ Object.defineProperties(D,
 			{
 				if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
 					R.Actions.lambda.html(e, R.diagram, R.diagram.selected);
+			},
+			ControlKeyL(e)
+			{
+				D.ttyPanel.open();
+				D.ttyPanel.logSection.open();
+				e.preventDefault();
 			},
 			KeyM(e)
 			{
@@ -4833,10 +4861,52 @@ Object.defineProperties(D,
 				D.toolbar.help.querySelector('#new-description').focus();
 				e.preventDefault();
 			},
+			ControlKeyT(e)
+			{
+				const diagram = R.diagram;
+				diagram.deselectAll(e);
+				const text = 'Lorem ipsum cateconium';
+				const xy = D.Grid(D.mouse.diagramPosition(diagram));
+				const t = diagram.placeText(text, xy);
+				diagram.log({command:'text', xy:xy.getXY(), text});
+				diagram.antilog({command:'delete', elements:[t.name]});
+			},
 			KeyV(e)
 			{
 				R.diagram.selected.length > 0 && R.diagram.viewElements(...R.diagram.selected);
 			},
+			ControlKeyV(e)	{	D.Paste(e);	},
+			KeyY(e)
+			{
+				if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
+				{
+					D.toolbar.show();
+					R.diagram.actionHtml(e, 'morphismAssembly');
+				}
+			},
+			ShiftKeyY(e)
+			{
+				if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
+				{
+					D.toolbar.show();
+					R.diagram.actionHtml(e, 'morphismAssembly');
+					R.Actions.morphismAssembly.action(e, R.diagram, R.diagram.selected);
+				}
+			},
+			ControlKeyZ(e)
+			{
+				Cat.R.diagram.undo(e);
+				e.preventDefault();
+			},
+			Numpad1(e) { D.panHandler(e, new D2(1, -1)); },
+			Numpad2(e) { D.panHandler(e, new D2(0, -1)); },
+			Numpad3(e) { D.panHandler(e, new D2(-1, -1)); },
+			Numpad4(e) { D.panHandler(e, new D2(1, 0)); },
+			Numpad5(e) {},
+			Numpad6(e) { D.panHandler(e, new D2(-1, 0)); },
+			Numpad7(e) { D.panHandler(e, new D2(1, 1)); },
+			Numpad8(e) { D.panHandler(e, new D2(0, 1)); },
+			Numpad9(e) { D.panHandler(e, new D2(-1, 1)); },
 			PageUp(e)
 			{
 				if (!Cat.D.default.fullscreen && Cat.R.diagram)
@@ -4861,6 +4931,11 @@ Object.defineProperties(D,
 			},
 			ShiftLeft(e) { D.shiftKey = true; },
 			ShiftRight(e) { D.shiftKey = true; },
+			ShiftSlash(e)
+			{
+				if (R.Actions.help.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.help.html(e, R.diagram, R.diagram.selected);
+			}
 		},
 		writable:	true,
 	},
@@ -5001,7 +5076,7 @@ class Catalog extends DiagramTool
 		};
 		const topBar = H3.table('.w100', H3.tr(H3.td(searchTable), H3.td(
 						H3.table('##catalog-diagram-new',
-							H3.tr(H3.th('New diagram', '.center')),
+							H3.tr(H3.th('New diagram')),
 							H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => inputBasenameSearch(e)}),
 											H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.OnEnter(e, action)}),
 											H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.OnEnter(e, action)}),
@@ -6253,7 +6328,7 @@ class Element
 					break;
 			}
 		}
-		return H3.table(H3.tr(H3.th(H3.tag('proper-name', this.properName), pNameBtn, '.center', {colspan:2})),
+		return H3.table(H3.tr(H3.th(H3.tag('proper-name', this.properName), pNameBtn, {colspan:2})),
 						H3.tr(H3.td('Base name:', '.left'), H3.td(H3.tag('basename', this.basename), baseBtn, '.left')),
 						H3.tr(H3.td('Description:', '.left'), H3.td(H3.tag('description', this.description), descBtn, '.left')),
 						H3.tr(H3.td('Type:', '.left'), H3.td(U.Cap(U.DeCamel(this.constructor.name)), '.left')),
@@ -7864,16 +7939,16 @@ class DiagramObject extends CatObject
 		const xy = U.GetArg(nuArgs, 'xy', new D2());
 		Object.defineProperties(this,
 		{
-			x:			{value:	xy.x,												writable:	true},
-			y:			{value:	xy.y,												writable:	true},
-			orig:		{value:	{x:xy.x, y:xy.y},									writable:	true},
-			width:		{value:	U.GetArg(nuArgs, 'width', 0),						writable:	true},
-			height:		{value:	U.GetArg(nuArgs, 'height', D.default.font.height),	writable:	true},
-			to:			{value:	null,												writable:	true},
-			nodes:		{value:	new Set(),											writable:	false},
-			domains:	{value:	new Set(),											writable:	false},
-			codomains:	{value:	new Set(),											writable:	false},
-			svg:		{value: null,												writable:	true},
+			x:			{value:	xy.x,				writable:	true},
+			y:			{value:	xy.y,				writable:	true},
+			orig:		{value:	{x:xy.x, y:xy.y},	writable:	true},
+			width:		{value:	0,					writable:	true},
+			height:		{value:	0,					writable:	true},
+			to:			{value:	null,				writable:	true},
+			nodes:		{value:	new Set(),			writable:	false},
+			domains:	{value:	new Set(),			writable:	false},
+			codomains:	{value:	new Set(),			writable:	false},
+			svg:		{value: null,				writable:	true},
 		});
 		this.setObject(nuArgs.to);
 		this.constructor.name === 'DiagramObject' && D.EmitElementEvent(diagram, 'new', this);
@@ -7886,9 +7961,7 @@ class DiagramObject extends CatObject
 	{
 		let a = super.json();
 		a.to = this.to ? this.to.name : null;
-		a.height = this.height;
 		a.xy = this.getXY();
-		a.width = this.width;
 		return a;
 	}
 	setObject(to)
@@ -8121,7 +8194,6 @@ class Assertion extends Element
 			cell:			{value: cell,								writable: true},
 			equal:			{value: U.GetArg(nuArgs, 'equal', true),	writable: false},
 			signature:		{value: null,								writable: true},
-			svg:			{value: null,								writable: true},
 		});
 		this.signature = cell instanceof Cell ? cell.signature : cell;
 		this.incrRefcnt();		// nothing refers to them, to increment
@@ -8129,10 +8201,11 @@ class Assertion extends Element
 		diagram.addElement(this);
 		D.EmitElementEvent(diagram, 'new', this);
 	}
-	update()
+	initialize()
 	{
 		const cell = typeof this.cell === 'string' ? this.diagram.domain.cells.get(this.cell) : this.cell;
 		this.cell = cell;
+		cell.setCommutes('assertion');
 		this.signature = cell.signature;
 		cell.left.map(m => m.incrRefcnt());
 		cell.right.map(m => m.incrRefcnt());
@@ -8147,8 +8220,10 @@ class Assertion extends Element
 		{
 			this.cell.left.map(m => m.decrRefcnt());
 			this.cell.right.map(m => m.decrRefcnt());
+			this.cell.assertion = null;
+			this.cell.setCommutes('unknown');
 			this.diagram.domain.deleteElement(this);
-			this.removeEquivalence();
+			this.removeItem();
 			this.diagram.assertions.delete(this.name);
 			D.EmitAssertionEvent(this.diagram, 'delete', this);
 		}
@@ -8160,16 +8235,12 @@ class Assertion extends Element
 		a.equal = this.equal;
 		return a;
 	}
-	getSVG(node)
-	{
-		this.cell && this.cell.getSVG(node);
-	}
 	showSelected(state = true)
 	{
-		if (this.svg)
+		if (this.cell.svg)
 		{
-			this.svg.classList[state ? 'add' : 'remove']('selected');
-			this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
+			this.cell.svg.classList[state ? 'add' : 'remove']('selected');
+			this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.cell.svg);
 		}
 	}
 	canSave()
@@ -8178,11 +8249,11 @@ class Assertion extends Element
 	}
 	loadItem()
 	{
-		R.LoadItem(this.diagram, this, this.cell.left.map(m => m.to), this.cell.right.map(m => m.to), this.equal);
+		R.LoadItem(this.diagram, this.cell, this.cell.left.map(m => m.to), this.cell.right.map(m => m.to), this.equal);
 	}
-	removeEquivalence()
+	removeItem()
 	{
-		R.RemoveEquivalences(this.diagram, this.name);
+		R.RemoveEquivalences(this.diagram, this.cell.name);
 		R.LoadDiagramEquivalences(this.diagram);
 	}
 	isFusible()
@@ -8488,7 +8559,7 @@ class CopyAction extends Action
 			}
 			else if (from instanceof DiagramText)
 			{
-				const xy = D.mouse.diagramPosition(R.diagram);
+				const xy = diagram.findEmptySpot(from.getXY());
 				args = {command: 'copy', source:from.description, xy, height:from.height, weight:from.weight};
 			}
 			const elt = this.doit(e, diagram, args);
@@ -9578,7 +9649,7 @@ class HelpAction extends Action
 	action(e, diagram, ary) {}
 	hasForm(diagram, ary)	// one element
 	{
-		return ary.length === 1 && !(ary[0] instanceof Cell);
+		return ary.length === 1;
 	}
 	html(e, diagram, ary)
 	{
@@ -10244,107 +10315,6 @@ class TensorAction extends Action
 	}
 }
 
-class CellAction extends Action
-{
-	constructor(diagram)
-	{
-		const args =
-		{
-			description:	'cell commutativity',
-			basename:		'cell',
-		};
-		super(diagram, args);
-		if (!isGUI)
-			return;
-		D.ReplayCommands.set(this.basename, this);
-	}
-	html(e, diagram, ary)
-	{
-		const help = D.toolbar.help;
-		D.RemoveChildren(help);
-		const cell = ary[0];
-		const elts = [H3.h3('Cell')];
-		if (cell.assertion)
-			elts.push(D.getIcon('delete', 'delete', e => Cat.R.Actions.delete.action(e, diagram, ary), 'Delete assertion'));
-		else if (cell.commutes === 'unknown')
-			elts.push(	H3.p('Assert that the two legs are:'),
-						D.getIcon('equal', 'equal', e => this.action(e, diagram, ary, 'equal'), 'Set to equal'),
-						D.getIcon('notEqual', 'notEqual', e => this.action(e, diagram, ary, 'notEqual'), 'Set to not equal'),
-						D.getIcon('hide', 'hide', e => this.action(e, diagram, ary, 'hidden'), 'Hide this cell'));
-		else if (cell.commutes === 'hidden')
-			elts.push(	H3.p('Show the hidden assertion.'),
-						D.getIcon('view', 'view', e => this.action(e, diagram, ary, 'show'), 'Reveal this cell'));
-		help.appendChild(H3.div(elts));
-		const rows = [	H3.tr(H3.td(`Commutativity: ${U.Cap(cell.commutes)}`)),
-						H3.tr(H3.th('Left leg:'))];
-		cell.left.map(m => rows.push(m.to.getHtmlRow()));
-		rows.push(H3.tr(H3.th('Right leg:')));
-		cell.right.map(m => rows.push(m.to.getHtmlRow()));
-		help.appendChild(H3.table(rows));
-	}
-	action(e, diagram, ary, act)
-	{
-		const a = this.doit(e, diagram, ary, act);
-		if (act !== 'hidden' && act !== 'show')
-		{
-			diagram.antilog({command:'delete', elements:[a.name]});
-			diagram.userSelectElement(e, a);
-		}
-		else
-		{
-			// TODO
-		}
-	}
-	doit(e, diagram, ary, act, save = true)
-	{
-		if (!this.hasForm(diagram, ary))
-			throw 'not a cell';
-		const cell = ary[0];
-		if (act === 'hidden')
-		{
-			cell.hide();
-			return null;
-		}
-		else if (act === 'show')
-		{
-			cell.show();
-			return null;
-		}
-		else
-		{
-			const assert = diagram.addAssertion(cell, act === 'equal' ? true : false);
-			const parent = cell.svg.parentNode;
-			cell.removeSVG();	// graphics come back later after equality engine runs
-			cell.setCommutes('assertion');
-			const dom = cell.left[0].domain;
-			let nodes = new Set(dom.nodes);
-			cell.left.map(m =>
-			{
-				const codCells = m.codomain.nodes;
-				nodes = new Set([...nodes].filter(c => codCells.has(c)));
-			});
-			cell.right.map(m =>
-			{
-				const codCells = m.codomain.nodes;
-				nodes = new Set([...nodes].filter(c => codCells.has(c)));
-			});
-			D.EmitCellEvent(diagram, 'check');
-			return assert;
-		}
-	}
-	replay(e, diagram, args)
-	{
-		const left = diagram.getElements(args.left);
-		const right = diagram.getElements(args.right);
-		const equal = todo; // TODO
-		this.doit(e, diagram, left, right, equal, false);
-	}
-	hasForm(diagram, ary)
-	{
-		return ary.length === 1 && ary[0] instanceof Cell;
-	}
-}
-
 class RecursionAction extends Action
 {
 	constructor(diagram)
@@ -10481,6 +10451,7 @@ class Category extends CatObject
 	}
 	process(diagram, data)
 	{
+		const sync = R.sync;
 		try
 		{
 			R.sync = false;
@@ -10491,7 +10462,7 @@ class Category extends CatObject
 					return;
 				try
 				{
-					let elt = diagram.get(args.prototype, args);
+					diagram.get(args.prototype, args);
 				}
 				catch(x)
 				{
@@ -10505,7 +10476,7 @@ class Category extends CatObject
 		{
 			D.RecordError(x);
 		}
-		R.sync = true;
+		R.sync = sync;
 	}
 	json()
 	{
@@ -10670,11 +10641,35 @@ class Morphism extends Element
 		cod.incrRefcnt();
 		this.codomain = cod;
 	}
-	help()
+	help(from = null)
 	{
 		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Domain:'), H3.td(this.domain.properName)));
-		help.appendChild(H3.tr(H3.td('Codomain:'), H3.td(this.codomain.properName)));
+		let domainElt = null;
+		let codomainElt = null;
+		if (this.isEditable() && from && from.to.refcnt === 1)
+		{
+			const objects = R.diagram.getObjects();
+			if (from.domain.refcnt === 2)
+			{
+				domainElt = H3.select('##new-domain.w100', {onchange: e => from.setToDomain(R.diagram.getElement(e.target.value))});
+				domainElt.appendChild(H3.option(this.domain.properName, {value:this.domain.properName, selected:true, disabled:false}));
+				objects.map(o => o.name !== this.domain.name && domainElt.appendChild(H3.option(o.properName, {value:o.name})));
+				help.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
+			}
+			if (from.codomain.refcnt === 2)
+			{
+				codomainElt = H3.select('##new-codomain.w100', {onchange: e => from.setToCodomain(R.diagram.getElement(e.target.value))});
+				codomainElt.appendChild(H3.option(this.codomain.properName, {value:this.codomain.properName, selected:true, disabled:true}));
+				objects.map(o => o.name !== this.codomain.name && codomainElt.appendChild(H3.option(o.properName, {value:o.name})));
+				help.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
+			}
+		}
+		if (!domainElt)
+			domainElt = this.domain.properName;
+		if (!codomainElt)
+			codomainElt = this.codomain.properName;
+		help.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
+		help.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
 		if ('recursor' in this)
 		{
 			const btn = this.isEditable() ? D.getIcon('delete', 'delete', e => Cat.D.deleteRecursor(e, this), 'Delete recursor') : '';
@@ -11192,7 +11187,7 @@ class DiagramMorphism extends Morphism
 	}
 	help()
 	{
-		const help = this.to.help();
+		const help = this.to.help(this);
 		if (this.isEditable())
 		{
 			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseInt(e.target.value)), min:0, max:10, width:2, value:this.homsetIndex};
@@ -11391,7 +11386,7 @@ class DiagramMorphism extends Morphism
 	}
 	getBBox()
 	{
-		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), txtBox, this.getSvgNameBBox());
+		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), this.getSvgNameBBox());
 	}
 	predraw()
 	{
@@ -11611,6 +11606,24 @@ class DiagramMorphism extends Morphism
 			D.EmitMorphismEvent(this.diagram, 'update', this);
 		}
 	}
+	setToDomain(obj, dual = false)
+	{
+		this.to.setDomain(obj);
+		this.domain.setObject(obj);
+		this.domain.svg.remove();
+		this.domain.svg = null;
+		this.domain.update();
+		D.EmitMorphismEvent(this.diagram, 'update', this);
+	}
+	setToCodomain(obj)
+	{
+		this.to.setCodomain(obj);
+		this.codomain.setObject(obj);
+		this.codomain.svg.remove();
+		this.codomain.svg = null;
+		this.codomain.update();
+		D.EmitMorphismEvent(this.diagram, 'update', this);
+	}
 	static LinkId(data, lnk)
 	{
 		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
@@ -11640,6 +11653,63 @@ class Cell extends DiagramCore
 			svg:			{value:null,			writable:true},
 		});
 		this.description = '';
+	}
+	action(e, act)
+	{
+		let assert = null;
+		switch(act)
+		{
+			case 'hidden':
+				this.hide();
+				break;
+			case 'show':
+				this.show();
+				break;
+			case 'remove':
+				this.assertion.decrRefcnt();
+				break;
+			case 'equal':
+			case 'notEqual':
+				assert = this.diagram.addAssertion(this, act === 'equal' ? true : false);
+				const parent = this.svg.parentNode;
+				const dom = this.left[0].domain;
+				D.EmitCellEvent(this.diagram, 'check');
+				break;
+		}
+		R.Actions.help.html(e, this.diagram, [this]);
+		return assert;
+	}
+	help()
+	{
+		const rows = [H3.tr(H3.th('Cell'))];
+		const buttons = [];
+		switch(this.commutes)
+		{
+			case 'assertion':
+			case 'notequal':
+				buttons.push(D.getIcon('delete', 'delete', e => this.action(e, 'remove'), 'Remove assertion'));
+				break;
+			case 'hidden':
+				buttons.push(D.getIcon('delete', 'delete', e => this.action(e, 'show'), 'Reveal this cell'));
+				break;
+			case 'composite':
+			case 'named':
+			case 'computed':
+				break;
+			case 'unknown':
+				buttons.push(	D.getIcon('cell', 'cell', e => this.action(e, 'equal'), 'Set to equal'),
+								D.getIcon('notEqual', 'notEqual', e => this.action(e, 'notEqual'), 'Set to not equal'),
+								D.getIcon('hide', 'hide', e => this.action(e, 'hidden'), 'Hide this cell'));
+				break;
+		}
+		rows.push(	
+					H3.tr(H3.td(H3.table(H3.tr(H3.td('.left', 'Commutativity:'), H3.td('.right', U.Cap(this.commutes))), '.w100'))),
+					H3.tr(H3.td(buttons)),
+					H3.tr(H3.th('Left leg:')));
+		this.left.map(m => rows.push(m.to.getHtmlRow()));
+		rows.push(H3.tr(H3.th('Right leg:')));
+		this.right.map(m => rows.push(m.to.getHtmlRow()));
+		return H3.table(rows);
 	}
 	setCommutes(com)
 	{
@@ -11691,6 +11761,8 @@ class Cell extends DiagramCore
 	{
 		if (isNaN(this.x) || isNaN(this.y))
 			throw `NaN in getSVG`;
+		if (this.svg)
+			this.svg.remove();
 		const name = this.name;
 		const sig = this.signature;
 		const svg = H3.text('.grabbable', {id:this.elementId('cell'), 'data-type':'cell', 'data-name':this.name, 'text-anchor':'middle', 'x':this.x, 'y':this.y + D.default.font.height/2}, this.properName);
@@ -11700,14 +11772,12 @@ class Cell extends DiagramCore
 		node.appendChild(svg);
 		this.svg = svg;
 		this.setGlow();
-		this.diagram.selected.filter(elt => elt instanceof Assertion && elt.signature === this.signature).map(assert =>
-		{
-			assert.svg = this.svg;
-			assert.showSelected();
-		});
+		this.diagram.selected.filter(elt => elt instanceof Assertion && elt.signature === this.signature).map(assert => assert.showSelected());
 	}
 	removeSVG()
 	{
+		const svg = this.diagram.svgBase.querySelector('#' + this.elementId('cell'));
+		svg && svg.remove();
 		this.svg && this.svg.remove();
 		this.svg = null;
 	}
@@ -11803,6 +11873,42 @@ class Cell extends DiagramCore
 		this.setCommutes('hidden');
 		this.svg && this.update();
 		D.EmitCellEvent(this.diagram, 'hide');
+	}
+	getHtmlRep(idPrefix)
+	{
+		const id = this.elementId(idPrefix);
+		const items = [H3.h5(U.Cap(this.commutes)), H3.br()];
+		items.push(H3.span('Left: ', this.left.map(m => m.to.properName).join(', '), '.tinyPrint'));
+		items.push(H3.span(' Right: ', this.right.map(m => m.to.properName).join(', '), '.tinyPrint'));
+		return H3.div({id}, items);
+	}
+	getButtons()
+	{
+		const buttons = [];
+		if (this.isEditable())
+			buttons.push(D.getIcon('delete', 'delete', _ => Cat.R.Actions.delete.action(this.name, Cat.R.diagram, [this]), 'Delete assertion'));
+		buttons.push(D.getIcon('viewCell', 'view', e => R.diagram.viewElements(this)));
+		return buttons;
+	}
+	getHtmlRow()
+	{
+		const html = this.getHtmlRep();
+		html.classList.add('element');
+		const tools = H3.span('.tool-entry-actions');
+		html.appendChild(tools);
+		const buttons = this.getButtons();
+		buttons.map(btn => tools.appendChild(btn));
+		const actions =
+		{
+			onclick:		e => {},
+			onmouseenter:	e => R.diagram.emphasis(this, true),
+			onmouseleave:	e => R.diagram.emphasis(this, false),
+		};
+		return H3.tr(H3.td(html, '.w100'), actions);
+	}
+	isEditable()
+	{
+		return super.isEditable() ? this.commutes === 'assertion' : false;
 	}
 	static Signature(left, right)
 	{
@@ -12022,22 +12128,11 @@ class IndexCategory extends Category
 	loadCells(diagram)
 	{
 		this.findCells(diagram);
-		this.cells.forEach((cell, sig) =>
-		{
-			cell.register();
-			const left = cell.left;
-			const right = cell.right;
-			const firstLeft = left[0];
-			if (diagram.domain.hiddenCells.has(sig))
-			{
-				if (!cell.svg)
-					cell.getSVG(diagram.svgBase);
-				cell.hide();
-			}
-		});
+		this.cells.forEach((cell, sig) => cell.register());
 	}
 	checkCells()
 	{
+console.log('check cells');
 		this.cells.forEach(cell => R.workers.equality.postMessage(
 		{
 			command:'CheckEquivalence',
@@ -13283,7 +13378,6 @@ class Diagram extends Functor
 			colorIndex2color:			{value:{},			writable:true},
 			colorIndex:					{value:0,			writable:true},
 			elements:					{value:new Map(),	writable:false},
-			hiddenCells:				{value:new Set(),	writable:false},
 			link2colorIndex:			{value:{},			writable:true},
 			_log:						{value:_log,		writable:true},
 			_antilog:					{value:_antilog,	writable:true},
@@ -13300,7 +13394,6 @@ class Diagram extends Functor
 		});
 		if ('references' in args)
 			args.references.map(r => this.addReference(r, false));
-		R.sync = true;
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
@@ -13355,7 +13448,27 @@ class Diagram extends Functor
 		const a = super.json();
 		a.references = [...this.references.keys()];
 		a.domainElements = [...this.domain.elements.values()].filter(e => ((e.to && e.to.canSave()) || (!('to' in e)))).map(e => e.json());
+		a.domainElements.map(elt =>
+		{
+			delete elt.diagram;
+			delete elt.name;
+			delete elt.category;
+			if (elt.description === '')
+				delete elt.description;
+		});
 		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
+		a.elements.map(elt =>
+		{
+			if (elt.diagram === this.name)
+			{
+				delete elt.diagram;
+				delete elt.name;
+			}
+			if (elt.category === this.codomain.name)
+				delete elt.category;
+			if (elt.description === '')
+				delete elt.description;
+		});
 		a.readonly = this.readonly;
 		a.user = this.user;
 		a.timestamp = this.timestamp;
@@ -13616,7 +13729,7 @@ class Diagram extends Functor
 	placeText(description, xy, height = '24', weight = 'normal', select = true)
 	{
 		const txt = new DiagramText(this, {description, xy, height, weight});
-		const bbox = new D2(txt.svg.getBBox());
+		const bbox = new D2(txt.getBBox());
 		let offbox = new D2(bbox);
 		while (this.hasOverlap(offbox, txt.name))
 			offbox = offbox.add(D.default.stdOffset);
@@ -13774,32 +13887,25 @@ class Diagram extends Functor
 		let r = null;
 		for (let i=0; i<elts.length; ++i)
 		{
-			const e = elts[i];
-			if (e.dataset.name === except)
+			const svg = elts[i];
+			if (svg.dataset.name === except)
 				continue;
-			const elt = this.getElement(e.dataset.name);
+			const elt = this.getElement(svg.dataset.name);
+			if (svg instanceof SVGPathElement)
+			{
+				if (!this.bezier && D2.lineBoxIntersect(elt.start, elt.end, box))
+						return true;
+				continue;
+			}
 			let compBox = null;
 			if (elt instanceof DiagramObject)
 				compBox = elt.getBBox();
-			else if (e instanceof SVGTextElement)
-			{
-				if (elt instanceof DiagramMorphism)
-					compBox = elt.getSvgNameBBox();
-				else
-					compBox = e.getBBox();
-			}
-			else if (e instanceof SVGPathElement)
-			{
-				if ('name' in e.dataset)
-				{
-					const morphism = this.getElement(e.dataset.name);
-					if (!this.bezier && D2.lineBoxIntersect(morphism.start, morphism.end, box))
-						return true;
-				}
-				continue;
-			}
+			else if (elt instanceof DiagramText)
+				compBox = elt.getBBox();
+			else if (elt instanceof DiagramMorphism)
+				compBox = elt.getSvgNameBBox();
 			else
-				compBox = e.getBBox();
+				compBox = svg.getBBox();
 			if (D2.Overlap(box, new D2(compBox)))
 				return true;
 		}
@@ -13992,7 +14098,6 @@ class Diagram extends Functor
 		{
 			const qry = `#${id} ${attribute === 'properName' ? 'proper-name' : attribute}`;
 			const txtbox = document.querySelector(qry);
-			let value = null;
 			if (this.isEditable() && txtbox.contentEditable === 'true' && txtbox.textContent !== '')
 				this.commitElementText(e, name, txtbox, attribute);
 			else
@@ -14000,9 +14105,13 @@ class Diagram extends Functor
 				D.editElement = txtbox;
 				txtbox.contentEditable = true;
 				txtbox.focus();
-				txtbox.onkeydown = e => e.stopPropagation();
+				txtbox.onkeydown = e =>
+				{
+					if (e.key === 'Enter')
+						this.commitElementText(e, name, txtbox, attribute);
+					e.stopPropagation();
+				};
 			}
-			return value;
 		}
 		catch(x)
 		{
@@ -14207,7 +14316,9 @@ class Diagram extends Functor
 	}
 	addAssertion(cell, equal)
 	{
-		return this.get('Assertion', {cell, equal});
+		const a = this.get('Assertion', {cell, equal});
+		a.initialize();
+		return a;
 	}
 	loadCells()
 	{
@@ -14343,6 +14454,8 @@ class Diagram extends Functor
 				elt = proto.Get(this, args);
 			if (!elt)
 			{
+				if (prototype === 'Assertion' && !('cell' in args))
+					return null;
 				elt = new Cat[prototype](this, args);
 				if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 					args.actions.map(a => elt.actions.set(a, R.Actions[a]));
@@ -14599,10 +14712,9 @@ class Diagram extends Functor
 		this.forEachMorphism(m =>
 		{
 			'recursor' in m && typeof m.recursor === 'string' && m.setRecursor(m.recursor);
-//			const that = this;
 			'data' in m && m.data.forEach((d, i) => m.data.set(i, U.InitializeData(this, m.codomain, d)));
 		});
-		this.domain.forEachAssertion(a => a.update());
+		this.domain.forEachAssertion(a => a.initialize());
 	}
 	replaceElement(to, nuTo, preserve = true)
 	{
@@ -14810,7 +14922,6 @@ class Diagram extends Functor
 		const user = R.user.name;
 		const name = `${user}/${basename}`;
 		const change = str => str.replace(this.name + '/', name + '/');
-		const hiddenCells = [...this.hiddenCells];
 		const json = this.json();
 		json.name = name;
 		json.user = user;
@@ -14894,7 +15005,18 @@ class Diagram extends Functor
 	moveElements(offset, ...elements)
 	{
 		const off = new D2(offset);
-		elements.filter(elt => elt instanceof DiagramText || elt instanceof DiagramObject).map(elt =>
+		const items = new Set();
+		elements.map(elt =>
+		{
+			if (elt instanceof DiagramText || elt instanceof DiagramObject)
+				items.add(elt);
+			else if (elt instanceof DiagramMorphism)
+			{
+				items.add(elt.domain);
+				items.add(elt.codomain);
+			}
+		});
+		items.forEach(elt =>
 		{
 			elt.setXY(off.add(elt.getXY()));
 			D.EmitElementEvent(this, 'move', elt);
