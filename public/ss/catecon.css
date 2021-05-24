@@ -22,6 +22,12 @@ hr
 	box-shadow:		1px 1px 1px 1px #bbbb;
 }
 
+th
+{
+	text-align:	center;
+	font-weight:	bold;
+}
+
 .smallPrint
 {
 	font-weight:	lighter;
