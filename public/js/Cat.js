@@ -2475,7 +2475,8 @@ class DiagramTool extends ElementTool
 		}
 		if (!nobuts.has('view') && (!R.diagram || name !== R.diagram.name))
 			buttons.push(D.getIcon('view', 'view', e => R.SelectDiagram(name, 'home'), 'View diagram', btnSize));
-		if (!nobuts.has('delete') && diagram && diagram.refcnt === 0 && diagram.user === R.user.name && diagram !== R.diagram)
+		const refcnt = diagram ? diagram.refcnt : info ? info.refcnt : 0;
+		if (!nobuts.has('delete') && refcnt === 0 && info.user === R.user.name)
 		{
 			const btn = D.getIcon('delete', 'delete', e => Cat.R.DeleteDiagram(e, info.name), 'Delete diagram');
 			btn.querySelector('rect.btn').style.fill = 'red';
@@ -4732,12 +4733,12 @@ Object.defineProperties(D,
 			KeyA(e)
 			{
 				D.toolbar.show();
-				Cat.D.CellTool.Object.html(e);
+				Cat.D.elementTool.Assert.html(e);
 			},
 			ShiftKeyA(e)
 			{
 				D.toolbar.show();
-				Cat.D.CellTool.Object.html(e);
+				Cat.D.elementTool.Assert.html(e);
 				e.preventDefault();
 			},
 			ControlKeyA(e)
@@ -5100,9 +5101,10 @@ class Catalog extends DiagramTool
 			{
 				case 'close':
 					break;
-				case 'delete':
-					div = Cat.D.catalog.catalog.querySelector(`div[data-name="${args.diagram}"]`);
-					div && div.remove();
+				case 'delete':		// delete diagram
+					R.catalog.delete(args.diagram);
+//					div = Cat.D.catalog.catalog.querySelector(`div[data-name="${args.diagram}"]`);
+//					div && div.remove();
 					break;
 				case 'upload':
 					if (this.view === 'search')
@@ -5135,14 +5137,17 @@ class Catalog extends DiagramTool
 				case 'catalog':
 					if (this.diagrams === null)
 						this.search();
+					this.updateDiagramCodomain();
+					/*
 					const codomainElt = H3.select('##catalog-select-codomain');
-					for (const [name, e] of R.$CAT.elements)
-						if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
-							codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
+					for (const [name, elt] of R.$CAT.elements)
+						if (elt instanceof Category && !(elt instanceof IndexCategory) && elt.user !== 'sys')
+							codomainElt.appendChild(H3.option(elt.properName, {value:elt.name}));
 					codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
 					const span = document.getElementById('catalog-select-codomain-span');
 					D.RemoveChildren(span);
 					span.appendChild(codomainElt);
+					*/
 					this.show();
 					break;
 				default:
@@ -5157,9 +5162,21 @@ class Catalog extends DiagramTool
 			{
 				case 'start':
 					this.setImageScale();
+					this.updateDiagramCodomain();
 					break;
 			}
 		});
+	}
+	updateDiagramCodomain()
+	{
+		const codomainElt = H3.select('##catalog-select-codomain');
+		for (const [name, e] of R.$CAT.elements)
+			if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
+				codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
+		codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
+		const span = document.getElementById('catalog-select-codomain-span');
+		D.RemoveChildren(span);
+		span.appendChild(codomainElt);
 	}
 	setImageScale()
 	{
@@ -5454,7 +5471,7 @@ class Catalog extends DiagramTool
 		if (diagram instanceof Diagram)
 		{
 			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
-			// TODO change to context?
+			diagram.setPlacement({x:0, y:-100, scale:0.5});
 			diagram.placeText(diagram.properName, {x:0, y:0}, D.default.title.height, D.default.title.weight);
 			diagram.description !== '' && diagram.placeText(diagram.description, {x:0, y:D.gridSize()}, D.default.font.height);
 			R.SelectDiagram(diagram);
@@ -7708,7 +7725,7 @@ class DiagramText extends Element
 	}
 	ssStyle()
 	{
-		return `font-size:${this.height}px; font-weight:${this.weight}`;
+		return `font-family:"Fira Sans",sans-serif;font-size:${this.height}px; font-weight:${this.weight}`;
 	}
 	getSVG(node)
 	{
@@ -7817,29 +7834,38 @@ class DiagramText extends Element
 		D.closeActiveTextEdit();
 		const bbox = this.svgText.getBBox();
 		this.svgText.classList.add('hidden');
-		const span = H3.span('##foreign-text.selected', this.description,
-			{
-				style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap;`,
-				contentEditable:true,
-			});
-		D.editElement = span;		// remember which element is being editted
-		span.addEventListener('mousedown', e => e.stopPropagation());
-		const foreign = H3.foreignObject(H3.div(span, {xmlns:'http://www.w3.org/1999/xhtml'}), {width:bbox.width + 'px', height:bbox.height + 'px', y:`-${this.height}px`});
+		const hidden = H3.div(this.description, '.text-editor', {style:`font-size:${this.height}px; font-weight:${this.weight}`});
+		hidden.style.visibility = 'visible';
+		hidden.style.display = 'none';
+		hidden.style.whiteSpace = 'pre-wrap';
+		hidden.style.wordWrap = 'break-word';
+		document.body.appendChild(hidden);
+		const div = H3.div('##foreign-text.text-editor', this.description,
+		{
+	
+			style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap; word-wrap: break-word; width: fit-content;`,
+			contentEditable:true,
+		});
+		div.addEventListener('mousedown', e => e.stopPropagation());
+		const foreign = H3.foreignObject(div, {width:bbox.width + 'px', height:bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
-			const nubox = span.getBoundingClientRect();
-			span.setAttribute('width', nubox.width + 'px');
-			span.setAttribute('height', nubox.height + 'px');
+			hidden.innerHTML = div.innerHTML;
+			hidden.style.visibility = 'hidden';
+			hidden.style.display = 'block';
+			hidden.style.width = 'fit-content';
+			foreign.style.width = (32 + hidden.offsetWidth) + 'px';
+			foreign.style.height = hidden.offsetHeight + 'px';
 			if (e.key === 'Escape')
 				D.closeActiveTextEdit();
 			e.stopPropagation();
 		};
 		this.svgText.parentNode.appendChild(foreign);
-		span.focus();
+		div.focus();
 		const onfocusout = e =>
 		{
 			const text = e.target.innerText;
-			span.removeEventListener('focusout', onfocusout);	// avoid calling this function again
+			div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
 			foreign.parentNode && foreign.remove();
 			if (text !== this.description)
 			{
@@ -7849,10 +7875,12 @@ class DiagramText extends Element
 			}
 			D.editElement = null;
 			this.svgText.classList.remove('hidden');
+			hidden.remove();
 		};
-		span.addEventListener('focusout', onfocusout);
-		span.onfocusout = onfocusout;	// do this to get to the handler
-		span.addEventListener('keydown', onkeydown);
+		div.addEventListener('focusout', onfocusout);
+		div.onfocusout = onfocusout;	// do this to get to the handler
+		div.addEventListener('keydown', onkeydown);
+		div.addEventListener('keyup', onkeydown);
 	}
 	mouseenter(e)
 	{
@@ -9750,8 +9778,7 @@ class LanguageAction extends Action
 					e.preventDefault();
 					const target = e.target;
 					const start = target.selectionStart;
-					const end = target.selectionEnd;
-					target.value = target.value.substring(0, start) + '\t' + target.value.substring(end);
+					target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
 					target.selectionStart = target.selectionEnd = start +1;
 				}
 			},
@@ -9777,7 +9804,6 @@ class LanguageAction extends Action
 	setCode(e, id, type)
 	{
 		const elt = document.getElementById(id);
-//		if (R.diagram.isEditable() && elt.disabled === false && elt.textContent !== '')
 		if (R.diagram.isEditable() && elt.disabled === false)
 		{
 			elt.contentEditable = false;
@@ -13453,7 +13479,9 @@ class Diagram extends Functor
 			if (R.diagram === this)
 			{
 				R.diagram = null;
+				D.session.default = null;
 				D.EmitViewEvent('catalog');
+				this.svgRoot && this.svgRoot.remove();
 			}
 			['.json', '.png', '.log', '-viewport.json', '-placement.json'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 			const userDiagram = R.GetUserDiagram(this.user);
@@ -13551,6 +13579,8 @@ class Diagram extends Functor
 				D.placements.set(this.name, placement);
 				return placement;
 			}
+			const bbox = this.svgRoot.getBBox();
+			return {x:bbox.x, y:bbox.y, scale:1, visible:false};
 		}
 		return placement ? U.Clone(placement) : {x:0, y:0, scale:1, visible:false};
 	}
@@ -14047,6 +14077,10 @@ class Diagram extends Functor
 		else
 			D.RecordError('You need to be logged in to upload your work.');
 	}
+	diagramToUserCoords(xy)
+	{
+		return D.sessionToUserCoords(this.diagramToSessionCoords(xy));
+	}
 	userToDiagramCoords(xy)
 	{
 		const placement = this.getPlacement();
@@ -14078,10 +14112,6 @@ class Diagram extends Functor
 			sssn.height = xy.height * s;
 		}
 		return sssn;
-	}
-	diagramToUserCoords(xy)
-	{
-		return D.sessionToUserCoords(this.diagramToSessionCoords(xy));
 	}
 	sessionToDiagramCoords(xy)
 	{
