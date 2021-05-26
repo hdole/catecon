@@ -365,6 +365,7 @@ async function serve()
 							process.exit();
 						}
 						Cat.R.Initialize(_ => require('./public/js/javascript.js'));
+						determineRefcnts();
 						log('server started');
 					});
 				});
@@ -390,6 +391,7 @@ async function serve()
 							}
 						});
 						require('./public/js/javascript.js');
+						determineRefcnts();
 						log('server started');
 					});
 				});
@@ -661,6 +663,7 @@ async function serve()
 				res.status(400).send('bad name').end();
 				return;
 			}
+			Cat.R.catalog.delete(name);
 			dbcon.query(`SELECT user,refcnt FROM Catecon.diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
 			{
 				if (err)
@@ -669,25 +672,19 @@ async function serve()
 					res.status(500).send(err).end();
 					return;
 				}
-				if (result.length === 0)
-				{
-					console.log('diagram not found', name);
-					res.status(400).send('diagram not found').end();
-					return;
-				}
 				if (req.user !== result[0].user)
 				{
 					console.log('user not owner', req.user, result[0].user);
 					res.status(401).send('user not owner').end();
 					return;
 				}
-				if (result[0].refcnt > 0)
+				if (result.length > 0 && result[0].refcnt > 0)
 				{
 					console.log('diagram is referenced', result[0].refcnt);
 					res.status(400).send('diagram is referenced').end();
 					return;
 				}
-				dbcon.query('DELETE FROM diagrams WHERE name=?', [name], (err, result) =>
+				result.length > 0 && dbcon.query('DELETE FROM Catecon.diagrams WHERE name=?', [name], (err, result) =>
 				{
 					if (err)
 					{
