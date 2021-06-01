@@ -374,6 +374,12 @@ class U
 				return i;
 		return -1;
 	}
+	static pushFactor(factor, ndx)
+	{
+		const nu = factor.slice();
+		nu.push(ndx);
+		return nu;
+	}
 	static readfile(filename)
 	{
 		if (isGUI)
@@ -1600,8 +1606,8 @@ class Amazon extends Cloud
 	{
 		this.user.signOut();
 		R.user.status = 'unauthorized';
-		R.user.name = 'Anon';
-		R.user.email = '';
+//		R.user.name = 'Anon';
+//		R.user.email = '';
 		D.EmitLoginEvent();
 	}
 	diagramSearch(search, fn)
@@ -2882,13 +2888,13 @@ class D
 			return;
 		D.CancelAutosave();
 		const timestamp = diagram.timestamp;
-		D.autosaveTimer = setTimeout(e =>
+		D.autosaveTimer = setTimeout(_ =>
 		{
 			if (timestamp === diagram.timestamp)
 			{
 				R.SaveLocal(diagram);
 				if (R.local)
-					diagram.upload(e);
+					diagram.upload();
 			}
 		}, D.default.autosaveTimer);
 	}
@@ -3270,6 +3276,11 @@ class D
 	}
 	static AddEventListeners()
 	{
+		window.addEventListener('resize', e =>
+		{
+			D.Resize();
+			R.diagram && R.diagram.updateBackground();
+		});
 		window.addEventListener('Assertion', e =>
 		{
 			if (!R.sync)
@@ -4632,6 +4643,7 @@ Object.defineProperties(D,
 		{
 			Minus(e) { D.Zoom(D.mouse.clientEvent(), -2);},
 			Equal(e) { D.Zoom(D.mouse.clientEvent(), 2);},
+//			AltHome(e)		BROWSER RESERVED
 			ControlHome(e)
 			{
 				if (R.diagram && D.session.mode === 'diagram')
@@ -4705,6 +4717,7 @@ Object.defineProperties(D,
 						R.diagram.activate(e, 'delete');
 				}
 			},
+//			ControlShiftKeyDelete(e)		BROWSER RESERVED: Open the window for clearing browser history
 			Escape(e)
 			{
 				if (D.textEditActive())
@@ -4769,11 +4782,20 @@ Object.defineProperties(D,
 				D.elementTool.Diagram.html(e);
 				D.toolbar.showSection('diagram', 'new');
 			},
+//			ControlKeyD(e)		BROWSER RESERVED: bookmark current page
+			KeyE(e)
+			{
+				if (R.Actions.composite.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.composite.action(e, R.diagram, R.diagram.selected);
+			},
+//			ControlKeyF(e)		BROWSER RESERVED: search on page
 			KeyG(e)
 			{
 				Cat.R.diagram.showGraphs();
 				e.preventDefault();
 			},
+//			ControlKeyG(e)		BROWSER RESERVED: find next match
+//			ShiftControlKeyG(e)	BROWSER RESERVED: find previous match
 			KeyH(e)
 			{
 				if (R.Actions.homset.hasForm(R.diagram, R.diagram.selected))
@@ -4789,16 +4811,20 @@ Object.defineProperties(D,
 				if (R.Actions.hom.hasForm(R.diagram, R.diagram.selected))
 					R.Actions.hom.action(e, R.diagram, R.diagram.selected);
 			},
+//			ControlKeyH(e)		BROWSER RESERVED: open browsing history
 			KeyI(e)
 			{
 				if (R.Actions.identity.hasForm(R.diagram, R.diagram.selected))
 					R.Actions.identity.action(e, R.diagram, R.diagram.selected[0]);
 			},
+//			ControlKeyJ(e)		BROWSER RESERVED: open download history
+//			ControlKeyK(e)		BROWSER RESERVED: focus on search box
 			KeyL(e)
 			{
 				if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
 					R.Actions.lambda.html(e, R.diagram, R.diagram.selected);
 			},
+//			ControlKeyL(e)		BROWSER RESERVED: focus on address bok
 			ControlKeyL(e)
 			{
 				D.ttyPanel.open();
@@ -4818,6 +4844,7 @@ Object.defineProperties(D,
 				D.toolbar.help.querySelector('#new-basename').focus();
 				e.preventDefault();
 			},
+//			ControlKeyN(e)		BROWSER RESERVED: open a new browser window
 			KeyO(e)
 			{
 				D.toolbar.show();
@@ -4831,6 +4858,7 @@ Object.defineProperties(D,
 				D.toolbar.help.querySelector('#new-basename').focus();
 				e.preventDefault();
 			},
+//			ControlKeyO(e)		BROWSER RESERVED: open local page
 			KeyP(e)
 			{
 				if (R.Actions.productAssembly.hasForm(R.diagram, R.diagram.selected))
@@ -4849,6 +4877,13 @@ Object.defineProperties(D,
 				else if (R.Actions.inject.hasForm(R.diagram, R.diagram.selected))
 					R.diagram.actionHtml(e, 'inject');
 			},
+//			ControlKeyP(e)		BROWSER RESERVED: print page
+			KeyQ(e)
+			{
+				if (R.Actions.help.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.help.html(e, R.diagram, R.diagram.selected);
+			},
+//			ControlKeyS(e)		BROWSER RESERVED: save page
 			KeyT(e)
 			{
 				D.toolbar.show();
@@ -4862,21 +4897,15 @@ Object.defineProperties(D,
 				D.toolbar.help.querySelector('#new-description').focus();
 				e.preventDefault();
 			},
-			ControlKeyT(e)
-			{
-				const diagram = R.diagram;
-				diagram.deselectAll(e);
-				const text = 'Lorem ipsum cateconium';
-				const xy = D.Grid(D.mouse.diagramPosition(diagram));
-				const t = diagram.placeText(text, xy);
-				diagram.log({command:'text', xy:xy.getXY(), text});
-				diagram.antilog({command:'delete', elements:[t.name]});
-			},
+//			ControlKeyT(e)		BROWSER RESERVED: open a new tab
+//			ControlShiftKeyT(e)	BROWSER RESERVED: reopen last closed tab
+//			ControlKeyU(e)		BROWSER RESERVED: open current page source code
 			KeyV(e)
 			{
 				R.diagram.selected.length > 0 && R.diagram.viewElements(...R.diagram.selected);
 			},
 			ControlKeyV(e)	{	D.Paste(e);	},
+//			ControlKeyW(e)	 BROWSER RESERVED
 			KeyY(e)
 			{
 				if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
@@ -4928,15 +4957,13 @@ Object.defineProperties(D,
 			},
 			Space(e)
 			{
-				!D.toolbar.isVisible() && D.startMousePan(e);
+				D.toolbar.hide();
+				D.startMousePan(e);
 			},
 			ShiftLeft(e) { D.shiftKey = true; },
 			ShiftRight(e) { D.shiftKey = true; },
-			ShiftSlash(e)
-			{
-				if (R.Actions.help.hasForm(R.diagram, R.diagram.selected))
-					R.Actions.help.html(e, R.diagram, R.diagram.selected);
-			}
+//			ControlTab(e)	 BROWSER RESERVED
+//			ControlShiftTab(e)	 BROWSER RESERVED
 		},
 		writable:	true,
 	},
@@ -6417,7 +6444,7 @@ class Element
 	}
 	stringify()
 	{
-		return JSON.stringify(this.json());
+		return JSON.stringify(this.json(), null, 2);
 	}
 	isEquivalent(elt)
 	{
@@ -6639,8 +6666,8 @@ class Graph
 						continue;
 					if (ndx.reduce((isEqual, lvl, i) => lvl === glnk[i] && isEqual, true))	// ignore links back to where we came from
 						continue;
-					nuLinks.push(glnk);
-					links.push(glnk);
+					U.HasFactor(nuLinks, glnk) === -1 && nuLinks.push(glnk);
+					U.HasFactor(links, glnk) === -1 && links.push(glnk);
 				}
 				U.ArrayMerge(this.tags, g.tags);
 				this.visited.add(lnk.toString());
@@ -12305,7 +12332,7 @@ class MultiMorphism extends Morphism
 	expand(expansion = [])
 	{
 		const type = this.constructor.name;
-		this.morphisms.map(m => m.constructor.name === type ? m.expand(expansion) : expansion.push(m));
+		this.morphisms.map(m => m.constructor.name === type && m.dual === this.dual ? m.expand(expansion) : expansion.push(m));
 		return expansion;
 	}
 }
@@ -12339,8 +12366,32 @@ class Composite extends MultiMorphism
 	{
 		return D.default.composite;
 	}
+	getSequenceGraph()
+	{
+		const graphs = this.morphisms.map(m => m.getGraph());
+		const objects = this.morphisms.map(m => m.domain);
+		objects.push(this.morphisms[this.morphisms.length -1].codomain);
+		const sequence = this.diagram.get('ProductObject', {objects});
+		// bare graph to hang links on
+		const seqGraph = sequence.getGraph();
+		// merge the individual graphs into the sequence graph
+		graphs.map((g, i) =>
+		{
+			seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
+			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
+		});
+		// trace the links through the sequence graph
+		seqGraph.traceLinks(seqGraph);
+		const cnt = this.morphisms.length;
+		// remove duplicates
+		seqGraph.graphs[0].reduceLinks(cnt);
+		seqGraph.graphs[cnt].reduceLinks(cnt);
+//		seqGraph.graphs.map(g => g.reduceLinks(this.morphisms.length));
+		return seqGraph;
+	}
 	getGraph(data = {position:0})
 	{
+		/*
 		const graph = super.getGraph(data);
 		const graphs = this.morphisms.map(m => m.getGraph());
 		const objects = this.morphisms.map(m => m.domain);
@@ -12360,7 +12411,11 @@ class Composite extends MultiMorphism
 		// remove duplicates
 		seqGraph.graphs[0].reduceLinks(cnt);
 		seqGraph.graphs[cnt].reduceLinks(cnt);
-		// copy ends for final anser
+		*/
+		const seqGraph = this.getSequenceGraph();
+		// copy ends for final answer
+		const graph = super.getGraph(data);
+		const cnt = this.morphisms.length;
 		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[cnt], [1]]]});
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
 		return graph;
@@ -12852,8 +12907,8 @@ class LambdaMorphism extends Morphism
 		const graph = new Graph(diagram, {graphs:[preCurry.domain.getGraph(), preCurry.codomain.getGraph()]});
 		if (!graph.doIndicesCover([...nuArgs.domFactors, ...nuArgs.homFactors]))
 			throw 'inadequate factor coverage for lambda';
-		if (!nuArgs.homFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.domFactors, f) >= 0, true) &&
-				!nuArgs.domFactors.reduce((r, f) => r && !U.HasFactor(nuArgs.homFactors, f) >= 0, true))	// do not share links
+		if (!nuArgs.homFactors.reduce((r, f) => r && U.HasFactor(nuArgs.domFactors, f) === -1, true) &&
+				!nuArgs.domFactors.reduce((r, f) => r && U.HasFactor(nuArgs.homFactors, f) === -1, true))	// do not share links
 			throw 'dom and hom factors overlap';
 		super(diagram, nuArgs);
 		this.properName = LambdaMorphism.ProperName(preCurry, nuArgs.domFactors, nuArgs.homFactors);
@@ -14057,6 +14112,8 @@ class Diagram extends Functor
 					btn && btn.setAttribute('repeatCount', 1);
 					if (!res.ok)
 					{
+						if (res.status === 401)		// Unauthorized
+							R.cloud.logout();
 						D.RecordError(res.statusText);
 						return;
 					}
