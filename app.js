@@ -585,7 +585,7 @@ async function serve()
 			const name = diagram.name;
 			function finalProcessing()
 			{
-				saveDiagramJson(name, JSON.stringify(diagram));
+				saveDiagramJson(name, JSON.stringify(diagram, null, 2));
 				if (png)
 					saveDiagramPng(name, png);
 			}
