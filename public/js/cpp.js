@@ -11,6 +11,10 @@ var Cat = Cat || require('./Cat.js');
 	const R = Cat.R;
 	const U = Cat.U;
 
+	function cline(indent, line)
+	{
+		return "\t".repeat(indent) + line + '\n';
+	}
 	class CppAction extends Cat.LanguageAction
 	{
 		constructor(diagram)
@@ -20,6 +24,7 @@ var Cat = Cat || require('./Cat.js');
 			Object.defineProperty(this, 'currentDiagram', {value:null, writable:true});
 			Cat.R.languages.set(this.basename, this);
 			Cat.R.$CAT.getElement('PFS').actions.set(args.basename, this);
+			this.varMap = new Map();
 		}
 		getType(elt, first = true)
 		{
@@ -76,7 +81,7 @@ var Cat = Cat || require('./Cat.js');
 		{
 			const name = this.getType(object);
 			let code = '';
-			code += object.objects.map(o => this.generate(o, generated)).join('');
+			code += object.objects.map(o => this.generateObject(o, generated)).join('');
 			code += this.getComments(object);
 			const members = object.objects.map((o, i) => `${object.dual ? '\t\t\t' : '\t\t'}${this.getType(o)} m_${i};`).join('\n');
 			if (object.dual)
@@ -142,7 +147,7 @@ ${members}
 						code += this.generateProductObject(object, generated);
 						break;
 					case 'HomObject':
-						code += `\t\t${this.getComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);\n`;
+						code += cline(2, `${this.getComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);`);
 						break;
 					default:
 						break;
@@ -150,6 +155,7 @@ ${members}
 			}
 			return code;
 		}
+		/*
 		generateMorphism(morphism, generated)
 		{
 			const proto = morphism.constructor.name;
@@ -159,8 +165,8 @@ ${members}
 				code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
 			const header = this.header(morphism);
 			const tail = this.tail();
-			const domainStruct = this.getType(morphism.domain);
-			const codomainStruct = this.getType(morphism.codomain);
+//			const domainStruct = this.getType(morphism.domain);
+//			const codomainStruct = this.getType(morphism.codomain);
 			if (morphism.domain.isInitial())
 				code += `${header}	return;	// abandon computation\n'${tail}\n${tail}`;	// domain is null, yuk
 			else if (morphism.codomain.isTerminal())
@@ -179,8 +185,8 @@ ${members}
 						{
 							const m = morphism.morphisms[i];
 							if (i !== lngth -1)
-								code += `\t\t${this.getType(m.codomain)} out_${i};\n`;
-							code += `\t\t${this.getType(m)}(${i === 0 ? 'args' : `out_${i -1}`}, ${i !== lngth -1 ? `out_${i}` : 'out'});${i !== lngth -1 ? '\n' : ''}`;
+								code += cline(2, `${this.getType(m.codomain)} out_${i};`);
+							code += cline(2, `${this.getType(m)}(${i === 0 ? 'args' : `out_${i -1}`}, ${i !== lngth -1 ? `out_${i}` : 'out'});${i !== lngth -1 ? '\n' : ''}`);
 						}
 						code += tail;
 						break;
@@ -197,10 +203,10 @@ ${members}
 							code += `${header}		const void (*)(void*)[] fns = {${subcode}};\n\t\tfns[args.index]();${tail}`;
 						}
 						else
-							code += `${header}\t\t${morphism.morphisms.map((m, i) => `\t\t${this.getType(m)}(args.m_${i}, out.m_${i});\n`).join('')}${tail}`;
+							code += `${header}\t\t${morphism.morphisms.map((m, i) => cline(2, `${this.getType(m)}(args.m_${i}, out.m_${i});`)).join('')}${tail}`;
 						break;
 					case 'ProductAssembly':
-						code += `${header}\t\t${morphism.morphisms.map((m, i) => `\t\t${this.getType(m)}(args, out.m_${i});\n`).join('')}${tail}`;
+						code += `${header}\t\t${morphism.morphisms.map((m, i) => cline(2, `${this.getType(m)}(args, out.m_${i});\n`)).join('')}${tail}`;
 						break;
 					case 'Morphism':
 						code += this.getComments(morphism);
@@ -343,6 +349,212 @@ ${tail}`;
 				}
 			return code;
 		}
+		*/
+
+		generateObjects(morphism)		// not recursive
+		{
+			const generated = new Set();
+			return this.generateObject(morphism.domain, generated) + this.generateObject(morphism.codomain, generated);
+		}
+		generateMorphism(morphism, generated = new Set())		// recursive
+		{
+			switch(morphism.prototype.name)
+			{
+				case 'Morphism':
+					if ('data' in morphism)
+					{
+						const data = JSON.stringify(U.JsonMap(morphism.data));
+						const type = this.getType(morphism);
+						code += `std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain})> ${type}_data ${data};\n`;
+//						morphism.code.cpp = `%1 = ${type}_data.get(%0);`;
+					}
+					break;
+				case 'Identity':
+				case 'FactorMorphism':
+				case 'LambdaMorphism':
+				case 'Distribute':
+				case 'DeDistribute':
+				case 'Evaluation':
+					break;
+				case 'Composite':
+					code += this.generateComposite(morphism, generated);
+					break;
+				case 'ProductMorphism':
+					// TODO skip id's, factor morphisms, and product, coproduct, ... thereof
+					code += morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
+					code += this.getComments(morphism);
+					if (morphism.dual)
+					{
+						const subcode = morphism.morphisms.map((m, i) => this.getType(m).join(',\n\t\t\t'));
+						code += `${header}		const void (*)(void*)[] fns = {${subcode}};\n\t\tfns[args.index]();${tail}`;
+					}
+					else
+						code += `${header}\t\t${morphism.morphisms.map((m, i) => `\t\t${this.getType(m)}(args.m_${i}, out.m_${i});\n`).join('')}${tail}`;
+					break;
+				case 'ProductAssembly':
+					code += morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
+					code += `${this.header(morphism)}\t\t${morphism.morphisms.map((m, i) => cline(2, `${this.getType(m)}(args, out.m_${i});\n`)).join('')}${this.tail()}`;
+					break;
+				case 'HomMorphism':
+					code += morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
+					break;
+				case 'NamedMorphism':
+					code += this.generateMorphism(morphism.base, generated);
+					break;
+			}
+			return code;
+		}
+		//
+		// top level code emitter; not recursive
+		//
+		generate(morphism)
+		{
+			let code =
+`
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <map>
+#include <cstring>
+
+// objects
+${this.generateObjects(morphism)}
+
+// morphisms
+${this.generateMorphism(morphism)}
+
+// runtime morphism
+${this.instantiateMorphism(morphism)}
+
+int main(int argc, char ** argv)
+{
+	unsigned long index = 0;
+	typedef void (*CatFn)(void*);
+	try
+	{
+		if (argc == 1 && (strcmp("-h", argv[1]) || strcmp("--help", argv[1])))
+		{
+			std::cout << "${morphism.basename}: ${morphism.description}" << std::endl;
+			return 1;
+		}
+		${this.getType(morphism.domain)} args;
+		std::cin >> args;
+		${this.getType(morphism.codomain)} out;
+		${this.getType(morphism)}(args, out);
+		std::cout << out << std::endl;
+		return 0;
+	}
+	catch(std::exception x)
+	{
+		std::cerr << "An error occurred" << std::endl;
+		return 1;
+	}
+}
+`;
+			return code;
+		}
+		getVarMap(morphism)
+		{
+			if (this.varMap.has(morphism.name))
+				return this.varMap.get(morphism.name);
+			const map = new Map();
+			this.varMap.set(morphism.name, map);
+			return map;
+		}
+		setupComposite(morphism, graph, factor)		// assume morphism is flattened composite
+		{
+			let val = 0;
+			let loc = 'args';
+			const varmap = this.getVarMap(morphism);
+			const _inoutScanner = (g, fctr) =>
+			{
+				const f = fctr.slice();
+				f.unshift(val);
+				const ref = loc + f.join('.m_');
+				g.visited.forEach(v => varmap.set(v, ref));
+			};
+			if (morphism.domain instanceof ProductObject && !morphism.domain.dual)
+				graph[0].scan(g, fctr) => _inoutScanner(g, fctr));
+			if (morphism.codomain instanceof ProductObject && !morphism.domain.dual)
+			{
+				val = graph.graphs.length -1;
+				loc = 'out';
+				graph[val].scan(g, fctr) => _inoutScanner(g, fctr));
+			}
+			const _internalScanner = (m, f) =>
+			{
+				switch(m.prototype.name)
+				{
+					case 'Morphism':
+					case 'Evaluation':
+					case 'Composite':
+						const fndx = f.join(',');
+						if (varmap.has(fndx))
+							return;
+						const ref = 'out_' + fndx;
+						const g = graph.getFactor(f);
+						g.visited.forEach(v => varmap.set(v, ref));
+						break;
+					case 'Identity':
+					case 'FactorMorphism':
+					case 'LambdaMorphism':
+					case 'Distribute':
+					case 'DeDistribute':
+						break;
+					case 'ProductMorphism':
+					case 'HomMorphism':
+						m.morphisms.map((mm, i) => _internalScanner(mm, Cat.U.pushFactor(f, i)));
+						break;
+					case 'ProductAssembly':
+						break;
+					case 'NamedMorphism':
+						_internalScanner(m.base, f);
+						break;
+				}
+			};
+			_internalScanner(morphism, factor);
+			graph.scan((g, fctr) => !varmap.has(fctr.join(',')) && console.log('morphism', morphism.name, 'missing in var map', fctr));	// integrity check
+		}
+		evalComposite(morphism, factor)
+		{
+			let code = '';
+			switch(morphism.prototype.name)
+			{
+				case 'Morphism':
+					break;
+				case 'Evaluation':
+					break;
+				case 'Composite':
+					break;
+				case 'Identity':
+				case 'FactorMorphism':
+				case 'LambdaMorphism':
+				case 'Distribute':
+				case 'DeDistribute':
+					break;
+				case 'ProductMorphism':
+				case 'ProductAssembly':
+				case 'HomMorphism':
+					morphism.morphisms.map((mm, i) => evalComposite(mm, Cat.U.pushFactor(factor, i)));
+					break;
+				case 'NamedMorphism':
+					evalComposite(morphism.base);
+					break;
+			}
+			return code;
+		}
+		generateComposite(morph, factor, generated)
+		{
+			const morphism = morphism.diagram.comp(morph.expand());
+			let code = morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
+			this.setupComposite(morphism);
+			code += this.getComments(morphism);
+			code += this.header(morphism);
+			code += this.evalComposite(morphism);
+			return code + this.tail();
+		}
+
+			/*
 		generate(element, generated = new Set())
 		{
 			if (generated.has(element.name))
@@ -461,6 +673,7 @@ ${named.map((nm, i) => `\t\tstd::cout << '\t' << ${i} << ":\t${nm.basename}" << 
 `;
 			return code;
 		}
+		*/
 		getFactorAccessor(factor)
 		{
 			return Array.isArray(factor) ? factor.map(i => `m_${i}`).join('.') : `m_${factor}`;
@@ -507,7 +720,9 @@ ${this.generateMain(diagram)}
 `;
 		}
 	}
-
+	//
+	// Loading
+	//
 	const pfs = Cat.R.$CAT.getElement('sys/pfs');
 	if (typeof module !== 'undefined')
 	{
