@@ -1606,8 +1606,6 @@ class Amazon extends Cloud
 	{
 		this.user.signOut();
 		R.user.status = 'unauthorized';
-//		R.user.name = 'Anon';
-//		R.user.email = '';
 		D.EmitLoginEvent();
 	}
 	diagramSearch(search, fn)
@@ -2132,13 +2130,8 @@ class TextTool extends ElementTool
 					txtHtml.firstChild.contentEditable = false;
 					const description = e.target.innerText;
 					if (description && description !== txt.description)
-					{
-						txt.description = description;
-						txt.svgText.innerHTML = txt.tspan();
-						txt.diagram.commitElementText(e, txt.name, txtHtml.firstChild, 'description');
-						D.EmitTextEvent(txt.diagram, 'update', txt);
-					}
-					D.editElement = null;
+						R.diagram.commitElementText(e, txt.name, e.target, 'description')
+					D.closeActiveTextEdit();
 				};
 				txtHtml.addEventListener('focusout', onfocusout);
 				txtHtml.appendChild(D.getIcon('delete', 'delete', _ => Cat.R.Actions.delete.action(txt.name, Cat.R.diagram, [txt]), 'Delete text'));
@@ -2893,7 +2886,7 @@ class D
 			if (timestamp === diagram.timestamp)
 			{
 				R.SaveLocal(diagram);
-				if (R.local)
+				if (R.local && !D.textEditActive())
 					diagram.upload();
 			}
 		}, D.default.autosaveTimer);
@@ -5130,8 +5123,6 @@ class Catalog extends DiagramTool
 					break;
 				case 'delete':		// delete diagram
 					R.catalog.delete(args.diagram);
-//					div = Cat.D.catalog.catalog.querySelector(`div[data-name="${args.diagram}"]`);
-//					div && div.remove();
 					break;
 				case 'upload':
 					if (this.view === 'search')
@@ -7895,12 +7886,8 @@ class DiagramText extends Element
 			div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
 			foreign.parentNode && foreign.remove();
 			if (text !== this.description)
-			{
-				this.description = U.HtmlEntitySafe(text);
-				this.svgText.innerHTML = this.tspan();
-				D.EmitTextEvent(this.diagram, 'update', this);
-			}
-			D.editElement = null;
+				R.diagram.commitElementText(e, this.name, e.target, 'description')
+			D.closeActiveTextEdit();
 			this.svgText.classList.remove('hidden');
 			hidden.remove();
 		};
@@ -10754,8 +10741,13 @@ class Morphism extends Element
 		help.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
 		if ('recursor' in this)
 		{
-			const btn = this.isEditable() ? D.getIcon('delete', 'delete', e => Cat.D.deleteRecursor(e, this), 'Delete recursor') : '';
-			help.appendChild(H3.tr(H3.td('Recursor:'), H3.td(this.recursor.properName, btn)));
+			const deleteRecursor = e =>
+			{
+				this.setRecursor(null);
+				document.getElementById('help-recursor').remove();
+			}
+			const btn = this.isEditable() ? D.getIcon('delete', 'delete', deleteRecursor, 'Delete recursor') : '';
+			help.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.properName, btn)));
 		}
 		return help;
 	}
@@ -10783,7 +10775,7 @@ class Morphism extends Element
 			this.data.forEach((d, k) => saved.set(k, U.ConvertData(codomain, d)));
 			a.data = U.JsonMap(saved);
 		}
-		if ('recursor' in this)
+		if ('recursor' in this && this.recursor)
 			a.recursor = this.recursor.name;
 		return a;
 	}
@@ -10858,12 +10850,17 @@ class Morphism extends Element
 	}
 	setRecursor(r)
 	{
+		if (this.recursor && this.recursor instanceof Morphism)
+		{
+			this.recursor.decrRefcnt();
+			this.recursor = null;
+		}
 		const rcrs = typeof r === 'string' ? this.diagram.codomain.getElement(r) : r;
 		if (rcrs)
 		{
 			if (!rcrs.hasMorphism(this))
 				throw `The recursive morphism does not refer to itself so no recursion.`;
-			Object.defineProperty(this, 'recursor', {value:rcrs,	writable:false});
+			this.recursor = rcrs;
 			this.recursor.incrRefcnt();
 		}
 		else	// have to set it later
@@ -12386,32 +12383,10 @@ class Composite extends MultiMorphism
 		// remove duplicates
 		seqGraph.graphs[0].reduceLinks(cnt);
 		seqGraph.graphs[cnt].reduceLinks(cnt);
-//		seqGraph.graphs.map(g => g.reduceLinks(this.morphisms.length));
 		return seqGraph;
 	}
 	getGraph(data = {position:0})
 	{
-		/*
-		const graph = super.getGraph(data);
-		const graphs = this.morphisms.map(m => m.getGraph());
-		const objects = this.morphisms.map(m => m.domain);
-		objects.push(this.morphisms[this.morphisms.length -1].codomain);
-		const sequence = this.diagram.get('ProductObject', {objects});
-		// bare graph to hang links on
-		const seqGraph = sequence.getGraph();
-		// merge the individual graphs into the sequence graph
-		graphs.map((g, i) =>
-		{
-			seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
-			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
-		});
-		// trace the links through the sequence graph
-		seqGraph.traceLinks(seqGraph);
-		const cnt = this.morphisms.length;
-		// remove duplicates
-		seqGraph.graphs[0].reduceLinks(cnt);
-		seqGraph.graphs[cnt].reduceLinks(cnt);
-		*/
 		const seqGraph = this.getSequenceGraph();
 		// copy ends for final answer
 		const graph = super.getGraph(data);
@@ -14200,7 +14175,7 @@ class Diagram extends Functor
 	}
 	commitElementText(e, name, txtbox, attribute)
 	{
-		D.editElement = null;
+		D.closeActiveTextEdit();
 		txtbox.contentEditable = false;
 		const elt = this.getElement(name);
 		const value = txtbox.innerText.trimRight();	// cannot get rid of newlines on the end in a text box
@@ -15016,7 +14991,7 @@ class Diagram extends Functor
 	}
 	savePng(e, fn)
 	{
-		!D.editElement && D.Svg2canvas(this, (png, pngName) =>
+		!D.textEditActive() && D.Svg2canvas(this, (png, pngName) =>
 		{
 			D.diagramPNGs.set(this.name, png);
 			U.writefile(`${this.name}.png`, png);
