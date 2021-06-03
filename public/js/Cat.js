@@ -4693,8 +4693,18 @@ Object.defineProperties(D,
 				if (R.diagram && e.target === document.body)
 				{
 					const diagram = R.diagram;
-					const terminal = diagram.get('FiniteObject', {size:1});
-					diagram.placeObject(terminal, D.mouse.diagramPosition(diagram));
+					const one = diagram.get('FiniteObject', {size:1});
+					diagram.placeObject(one, D.mouse.diagramPosition(diagram));
+				}
+			},
+			Digit2(e)
+			{
+				if (R.diagram && e.target === document.body)
+				{
+					const diagram = R.diagram;
+					const one = diagram.get('FiniteObject', {size:1});
+					const two = diagram.coprod(one, one);
+					diagram.placeObject(two, D.mouse.diagramPosition(diagram));
 				}
 			},
 			Delete(e)
@@ -8067,15 +8077,29 @@ class DiagramObject extends CatObject
 	}
 	mousemove(e)
 	{
+		const args = {x:0, y:-D.default.font.height/2, width:0, height:1.25 * D.default.font.height};
 		if ('objects' in this.to)
 		{
 			const result = this.getMouseFactor(e);
 			if (result.factor >= 0)
 			{
 				const g = result.graph.graphs[result.factor];
-				this.svg.appendChild(H3.rect('.emphasis', {x:g.position - result.graph.width/2, y:-D.default.font.height/2, width:g.width, height:1.25 * D.default.font.height}));
+				args.x = g.position - result.graph.width/2;
+				args.width = g.width;
+			}
+			else
+			{
+				args.x = - result.graph.width/2;
+				args.width = result.graph.width;
 			}
 		}
+		else
+		{
+			const graph = this.to.getGraph();
+			args.x = - graph.width/2;
+			args.width = graph.width;
+		}
+		this.svg.appendChild(H3.rect('.emphasis', args));
 	}
 	placeProjection(e)		// or injection
 	{
