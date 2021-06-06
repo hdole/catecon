@@ -365,7 +365,7 @@ ${tail}`;
 					{
 						const data = JSON.stringify(U.JsonMap(morphism.data));
 						const type = this.getType(morphism);
-						code += `std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain})> ${type}_data ${data};\n`;
+						code += `std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${type}_data ${data};\n`;
 //						morphism.code.cpp = `%1 = ${type}_data.get(%0);`;
 					}
 					break;
@@ -474,12 +474,12 @@ int main(int argc, char ** argv)
 				g.visited.forEach(v => varmap.set(v, ref));
 			};
 			if (morphism.domain instanceof ProductObject && !morphism.domain.dual)
-				graph[0].scan(g, fctr) => _inoutScanner(g, fctr));
+				graph[0].scan(g, fctr => _inoutScanner(g, fctr));
 			if (morphism.codomain instanceof ProductObject && !morphism.domain.dual)
 			{
 				val = graph.graphs.length -1;
 				loc = 'out';
-				graph[val].scan(g, fctr) => _inoutScanner(g, fctr));
+				graph[val].scan((g, fctr) => _inoutScanner(g, fctr));
 			}
 			const _internalScanner = (m, f) =>
 			{

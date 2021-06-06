@@ -270,6 +270,7 @@ function validate(req, res, fn)
 	const token = req.get('token') || (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
 	if (typeof token === 'undefined')
 	{
+		console.log('*** no user token');
 		res.status(401).end('Error:  no token');
 		return;
 	}
@@ -277,6 +278,7 @@ function validate(req, res, fn)
 	const decjwt = jwt.decode(token, {complete:true});
 	if (typeof decjwt === 'undefined' || decjwt === null)
 	{
+		console.log('*** no user jwt');
 		res.status(401).end({'Error':'no jwt'});
 		return;
 	}
@@ -289,6 +291,7 @@ function validate(req, res, fn)
 	const idURL = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}`;
 	if (decjwt.payload.iss !== idURL)
 	{
+		console.log('*** bad identity pool');
 		res.status(401).end('Error:  bad identity pool');
 		return false;
 	}
@@ -493,10 +496,16 @@ async function serve()
 				validate(req, res, (err, decoded) =>
 				{
 					if (err)
+					{
+						console.log('*** cannot validate', req.user);
 						return res.status(401).send(err);
+					}
 					req.user = decoded['cognito:username'];
 					if (req.body.user !== req.user)
+					{
+						console.log('*** user mismatch', req.user, req.body.user);
 						return res.status(401).send('user mismatch').end();
+					}
 					const user = req.body.user;
 					if (!userInfo.has(user))
 					{
@@ -580,9 +589,14 @@ async function serve()
 				}
 				// diagram name must be first of diagram name
 				if (diagram.name.split('/')[0] !== req.body.user)
+				{
+					console.log('*** name mismatch req.body.user', req.body.user, 'diagram.user', diagram.user);
 					return res.status(401).send('diagram user and name mismatch').end();
+				}
 			}
 			const name = diagram.name;
+			if (!('properName' in diagram))
+				diagram.properName = diagram.name;
 			function finalProcessing()
 			{
 				saveDiagramJson(name, JSON.stringify(diagram, null, 2));
@@ -674,7 +688,7 @@ async function serve()
 				}
 				if (req.user !== result[0].user)
 				{
-					console.log('user not owner', req.user, result[0].user);
+					console.log('*** user not owner', req.user, result[0].user);
 					res.status(401).send('user not owner').end();
 					return;
 				}

@@ -531,8 +531,6 @@ class R
 			{
 				case 'CheckEquivalence':
 					const diagram = R.$CAT.getElement(args.diagram);
-					if (diagram.domain.hiddenCells.has(args.cell))		// ignore hidden cells
-						return;
 					const cell = diagram.domain.cells.get(args.cell);
 					if (!cell)
 						return;	// TODO bad cell request
@@ -542,7 +540,7 @@ class R
 						assertion.setCell(cell);
 					let type = '';
 					if (args.isEqual === 'unknown')
-						type = 'unknown';
+						type = diagram.domain.hiddenCells.has(args.cell) ? 'hidden' : 'unknown';
 					else if (args.isEqual === true)
 					{
 						if (assertion)
@@ -3306,12 +3304,18 @@ class D
 					D.Autosave(diagram);
 					break;
 				case 'detach':
-					args.element.homsetIndex = 0;
+					if (args.element instanceof DiagramMorphism)
+						args.element.homsetIndex = 0;
 				case 'new':
-					isGUI && diagram.updateBackground();
-					!(args.element instanceof DiagramMorphism) && args.element.loadItem();
-					diagram.domain.findCells(diagram);
-					diagram.domain.checkCells();
+					if (args.element instanceof DiagramMorphism)
+					{
+						isGUI && diagram.updateBackground();
+						diagram.domain.findCells(diagram);
+						diagram.domain.checkCells();
+					}
+					else
+//					!(args.element instanceof DiagramMorphism) && args.element.loadItem();
+						args.element.loadItem();
 					D.Autosave(diagram);
 					break;
 				case 'update':
@@ -6414,7 +6418,8 @@ class Element
 		if ('name' in this)
 			a.name =	this.name;
 		a.prototype =	this.constructor.name;
-		a.properName =	this.properName;
+		if (this.properName !== this.basename)
+			a.properName =	this.properName;
 		if ('category' in this && this.category)
 			a.category = this.category.name;
 		if ('diagram' in this && this.diagram)
@@ -13288,7 +13293,8 @@ oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagra
 	}
 	static ProperName(object)
 	{
-		return `&#119890;${object.objects[0].objects[1].properName}`;
+//		return `&#119890;${object.objects[0].objects[1].properName}`;
+		return '&#119890;';
 	}
 }
 
@@ -15262,7 +15268,9 @@ class Assembler
 	}
 	isInput(object)
 	{
-		return this.codomainCount(object) === 0 && this.domainCount(object) > 0;
+		let refcnt = 0;
+		this.references.forEach(ref => object.domains.has(ref) && refcnt++);
+		return refcnt === 0 && this.codomainCount(object) === 0 && this.domainCount(object) > 0;
 	}
 	addInput(obj)
 	{
@@ -15680,8 +15688,23 @@ class Assembler
 				const codomain = comp[last].codomain;
 				if (!this.origins.has(codomain))
 				{
-					const continuance = this.formMorphism(scanning, codomain, codomain.to, index);
-					continuance && morphisms.push(continuance);
+					if (codomain.dual && codomain instanceof ProductObject)
+					{
+						//
+						const injections = [...codomain.codomains].filter(m => this.coreferences.has(m));
+						injections.map((inj, i) =>
+						{
+							const fctr = U.pushFactor(index, i);
+							this.formMorphism(scanning, inj.domain, inj.domain.to, fctr);
+							const references = [...inj.domain.codomains].filter(m => this.references.has(m));
+							references.map((ref, j) => this.formMorphism(scanning, ref.domain, ref.domain.to, U.pushFactor(fctr, j)));
+						});
+					}
+					else
+					{
+						const continuance = this.formMorphism(scanning, codomain, codomain.to, index);
+						continuance && morphisms.push(continuance);
+					}
 				}
 				else
 				{
@@ -15719,7 +15742,7 @@ class Assembler
 				//
 				// get the morphisms attached to each element
 				//
-				const starters = [...inject.domain.domains].filter(m => !this.coreferences.has(m));
+				const starters = [...inject.domain.codomains].filter(m => !this.coreferences.has(m));
 				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index));
 				const homMorph = diagram.assy(...homMorphs);
 				const homObj = diagram.hom(homMorph.domain, homMorph.codomain);
@@ -15784,7 +15807,7 @@ class Assembler
 				this.processed.add(domain);
 			}
 			else
-				return null;
+				return this.diagram.id(domain.to);
 		}
 		//
 		// advance scanning
@@ -15796,8 +15819,8 @@ class Assembler
 		//
 		// first the outbound composites from the domain
 		//
-		const coreferences = [...domain.codomains].filter(m => this.coreferences.has(m));
 		const morphisms = this.getCompositeMorphisms(scanning, domain, currentDomain, index);
+		const coreferences = [...domain.codomains].filter(m => this.coreferences.has(m));
 		coreferences.length > 0 && morphisms.push(this.assembleCoreferences(scanning, coreferences, domain, index));
 		if (preamble)
 			morphisms.unshift(preamble);
