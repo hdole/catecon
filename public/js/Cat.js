@@ -11,7 +11,6 @@
 // 		CAT
 // 			catalogAdd	an entry got added to the catalog
 // 			default		diagram is now the default diagram for viewing
-// 			delete		delete diagram
 // 			download	diagram came from server
 // 			load		diagram now available for viewing, but may have no view yet
 // 			new			new diagram exists
@@ -20,6 +19,7 @@
 // 			upload		diagram sent to server
 // 		Diagram
 // 			addReference
+// 			delete		delete diagram
 // 			loadCells	determine cell commutativity
 // 			move
 // 			removeReference
@@ -1149,6 +1149,7 @@ class R
 	{
 		if (R.CanDeleteDiagram(name) && (isGUI ? confirm(`Are you sure you want to delete diagram ${name}?`) : true))
 		{
+			const diagram = R.$CAT.getElement(name);
 			R.authFetch(R.getURL('delete'), {diagram:name}).then(res =>
 			{
 				if (!res.ok)
@@ -1750,10 +1751,9 @@ class Navbar
 		const divs = [	H3.div('.navbar-float',
 							H3.table('.w100', H3.tr(
 								H3.td(H3.table(H3.tr(H3.td('.buttonBarLeft.navbar-tools', left))), {style:`width:${width}px`}),
-								H3.td('.navtxt-link', 'Catecon', {onclick:_ => D.EmitViewEvent('catalog', D.catalog.view)})))),
-						H3.div(H3.span('##diagram-navbar'), '.navbar-float.navtxt-text', {title:'Current diagram'}),
-						H3.div(H3.span('##category-navbar'), '.navbar-float.navtxt-text', {title:'Current category scope'})
-		];
+								H3.td('##diagram-navbar.navtxt-', {title:'Current diagram'})))),
+						H3.div('.navbar-float.navtxt-text.navtxt-link', 'Catecon', {onclick:_ => D.EmitViewEvent('catalog', D.catalog.view)}),
+						H3.div(H3.span('##category-navbar'), '.navbar-float.navtxt-text', {title:'Current category scope'})];
 		D.RemoveChildren(this.element);
 		divs.map(div => this.element.appendChild(div));
 		this.categoryElt = document.getElementById('category-navbar');
@@ -1905,11 +1905,15 @@ class Toolbar
 	clearError()
 	{
 		D.RemoveChildren(this.error);
+		this.error.classList.add('hidden');
+		this.error.innerHTML = '';
 	}
-	showError(msg)
+	showError(x)
 	{
 		this.clearError();
-		this.error.appendChild(H3.span(msg, '.error'));
+		this.error.classList.remove('hidden');
+		this.error.classList.add('error');
+		this.error.innerHTML = 'Error ' + U.GetError(x);
 	}
 	automove(diagram)		// vertically displace the toolbar to avoid selected items
 	{
@@ -1933,11 +1937,6 @@ class Toolbar
 		this.sections.map(s => D.toolbar.help.querySelector(`#${type}-${s}`).classList.add('hidden'));
 		const s = D.toolbar.help.querySelector(`#${type}-${section}`);
 		s && s.classList.remove('hidden');
-	}
-	setError(x)
-	{
-		this.error.classList.remove('hidden');
-		this.error.innerHTML = 'Error ' + U.GetError(x);
 	}
 	isVisible()
 	{
@@ -2122,7 +2121,7 @@ class TextTool extends ElementTool
 			if (txt.isEditable())
 			{
 				const id = txt.elementId();
-				txtHtml.addEventListener('dblclick', e => Cat.R.diagram.editElementText(e, txt.name, id, 'description'));
+				txtHtml.addEventListener('dblclick', e => Cat.R.diagram.editElementText(e, txt, id, 'description'));
 				const onfocusout = e =>
 				{
 					txtHtml.firstChild.contentEditable = false;
@@ -2169,7 +2168,7 @@ class TextTool extends ElementTool
 		}
 		catch(x)
 		{
-			D.toolbar.setError(x);
+			D.toolbar.showError(x);
 		}
 	}
 	doit(e, diagram, args, save = true)
@@ -2190,7 +2189,7 @@ class TextTool extends ElementTool
 		}
 		catch(x)
 		{
-			D.toolbar.setError(x);
+			D.toolbar.showError(x);
 		}
 	}
 }
@@ -2206,10 +2205,10 @@ class BPD			// basename, proper name, description
 			descriptionElt:		{value: null, writable: true},
 		});
 	}
-	getNewSection(id, action, headline)
+	getNewSection(diagram, id, action, headline)
 	{
 		const rows = [];
-		this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name', onkeyup:e => D.inputBasenameSearch(e, action)});
+		this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name', onkeyup:e => D.inputBasenameSearch(e, diagram, action)});
 		rows.push(H3.tr(H3.td(this.basenameElt)));
 		this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name', onkeydown:e => Cat.D.OnEnter(e, action)});
 		rows.push(H3.tr(H3.td(this.properNameElt)));
@@ -2251,7 +2250,7 @@ class ObjectTool extends ElementTool
 	}
 	addNewSection()
 	{
-		D.toolbar.help.appendChild(this.bpd.getNewSection('Object-new', e => this.create(e), this.headline));
+		D.toolbar.help.appendChild(this.bpd.getNewSection(R.diagram, 'Object-new', e => this.create(e), this.headline));
 	}
 	getMatchingElements()
 	{
@@ -2280,7 +2279,7 @@ class ObjectTool extends ElementTool
 		}
 		catch(x)
 		{
-			D.toolbar.setError(x);
+			D.toolbar.showError(x);
 		}
 	}
 	doit(e, diagram, args, save = true)
@@ -2303,7 +2302,7 @@ class ObjectTool extends ElementTool
 		}
 		catch(x)
 		{
-			D.toolbar.setError(x);
+			D.toolbar.showError(x);
 		}
 	}
 }
@@ -2323,7 +2322,7 @@ class MorphismTool extends ElementTool
 	}
 	addNewSection()
 	{
-		const newSection = this.bpd.getNewSection('Morphism-new', e => this.create(e), this.headline);
+		const newSection = this.bpd.getNewSection(R.diagram, 'Morphism-new', e => this.create(e), this.headline);
 		D.toolbar.help.appendChild(newSection);
 		const table = newSection.querySelector('table');
 		const objects = R.diagram.getObjects();
@@ -2382,7 +2381,7 @@ class MorphismTool extends ElementTool
 		}
 		catch(x)
 		{
-			D.toolbar.setError(x);
+			D.toolbar.showError(x);
 			return null;
 		}
 	}
@@ -2421,7 +2420,7 @@ class MorphismTool extends ElementTool
 		}
 		catch(x)
 		{
-			D.toolbar.setError(x);
+			D.toolbar.showError(x);
 		}
 	}
 }
@@ -2507,7 +2506,7 @@ class DiagramTool extends ElementTool
 						}
 						catch(x)
 						{
-							D.toolbar.setError(x);
+							D.toolbar.showError(x);
 						}
 					}, e);
 				};
@@ -2580,7 +2579,7 @@ class DiagramTool extends ElementTool
 	}
 	addNewSection()
 	{
-		const newSection = this.bpd.getNewSection('diagram-new', e => this.create(e), this.headline);
+		const newSection = this.bpd.getNewSection(R.$CAT, 'diagram-new', e => this.create(e), this.headline);
 		newSection.appendChild(D.getIcon('copy', 'copy', e => this.copy(e), 'Copy diagram'));
 		const action = e => this.create(e);
 		this.bpd.basenameElt.onkeydown = e => Cat.D.OnEnter(e, action);
@@ -2622,7 +2621,7 @@ class DiagramTool extends ElementTool
 		const args = this.bpd.getArgs();
 		const diagram = R.createDiagram(this.codomainElt.value, args.basename, args.properName, args.description);
 		if (typeof diagram === 'string')
-			D.toolbar.setError(diagram);
+			D.toolbar.showError(diagram);
 		else
 		{
 			this.bpd.reset();
@@ -2633,15 +2632,24 @@ class DiagramTool extends ElementTool
 	copy(e)
 	{
 		const args = this.bpd.getArgs();
-		const diagram = R.diagram.copy(args.basename, args.properName, args.description);
-		if (typeof diagram === 'string')
-			D.toolbar.setError(diagram);
-		else
+		try
 		{
-			R.SaveLocal(diagram);
-			this.bpd.reset();
-			D.EmitCATEvent('new', diagram);
-			R.SelectDiagram(diagram.name);
+			const diagram = R.diagram.copy(args.basename, args.properName, args.description);
+			if (typeof diagram === 'string')
+				D.toolbar.showError(diagram);		// did not work
+			else
+			{
+				R.SaveLocal(diagram);
+				diagram.savePng(e)
+				this.bpd.reset();
+				D.EmitCATEvent('new', diagram);
+				R.SelectDiagram(diagram.name);
+				D.toolbar.clearError();
+			}
+		}
+		catch(x)
+		{
+			D.toolbar.showError(x);
 		}
 	}
 	doit(e, diagram, args, save = true)
@@ -2659,7 +2667,7 @@ class DiagramTool extends ElementTool
 		}
 		catch(x)
 		{
-			D.toolbar.setError(x);
+			D.toolbar.showError(x);
 		}
 	}
 	getRows(tbl, elements)
@@ -3314,7 +3322,6 @@ class D
 						diagram.domain.checkCells();
 					}
 					else
-//					!(args.element instanceof DiagramMorphism) && args.element.loadItem();
 						args.element.loadItem();
 					D.Autosave(diagram);
 					break;
@@ -3467,6 +3474,20 @@ class D
 					R.SaveLocal(diagram);
 					break;
 				case 'close':
+				case 'delete':
+					D.viewports.delete(diagram);
+					D.placements.delete(diagram);
+					D.saveSession();
+					D.statusbar.show(e, `Diagram ${diagram} ${args.command}`);
+					break;
+			}
+		});
+		window.addEventListener('Diagram', e =>
+		{
+			const args = e.detail;
+			const diagram = args.diagram;
+			switch(args.command)
+			{
 				case 'delete':
 					D.viewports.delete(diagram);
 					D.placements.delete(diagram);
@@ -4371,7 +4392,7 @@ console.log('save session');
 	{
 		if (D.textEditActive())
 		{
-			D.editElement.onfocusout({target:D.editElement});	// simulated event
+			D.editElement.contentEditable = false;
 			D.editElement = null;
 		}
 	}
@@ -4438,12 +4459,21 @@ console.log('save session');
 		else
 			D.setUnactiveIcon(icon);
 	}
-	static inputBasenameSearch(e, action)
+	static inputBasenameSearch(e, diagram, action, base = null)
 	{
 		if (D.OnEnter(e, action))
 			return;
-		const elt = R.diagram.getElement(e.target.value);
-		elt ? e.target.classList.add('error') : e.target.classList.remove('error');
+		const basename = 'value' in e.target ? e.target.value : e.target.innerText;	// input elements vs other tags
+		const elt = diagram.getElement(`${R.user.name}/${basename}`);
+		if (elt && elt === base)
+			return;
+		if (e.target.contentEditable)
+		{
+			e.target.style.backgroundColor = elt ? 'red' : '';
+			e.target.style.color = elt ? 'white' : '';
+		}
+		else
+			elt ? e.target.classList.add('error') : e.target.classList.remove('error');
 	}
 	static startMousePan(e)
 	{
@@ -5170,16 +5200,6 @@ class Catalog extends DiagramTool
 					if (this.diagrams === null)
 						this.search();
 					this.updateDiagramCodomain();
-					/*
-					const codomainElt = H3.select('##catalog-select-codomain');
-					for (const [name, elt] of R.$CAT.elements)
-						if (elt instanceof Category && !(elt instanceof IndexCategory) && elt.user !== 'sys')
-							codomainElt.appendChild(H3.option(elt.properName, {value:elt.name}));
-					codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
-					const span = document.getElementById('catalog-select-codomain-span');
-					D.RemoveChildren(span);
-					span.appendChild(codomainElt);
-					*/
 					this.show();
 					break;
 				default:
@@ -5195,6 +5215,17 @@ class Catalog extends DiagramTool
 				case 'start':
 					this.setImageScale();
 					this.updateDiagramCodomain();
+					break;
+			}
+		});
+		window.addEventListener('Diagram', e =>
+		{
+			const args = e.detail;
+			switch (args.command)
+			{
+				case 'delete':
+					const div = this.catalog.querySelector(`div[data-name="${args.diagram.name}"]`);
+					div && div.remove();
 					break;
 			}
 		});
@@ -6371,9 +6402,9 @@ class Element
 				case 'NamedObject':
 				case 'NamedMorphism':
 					const sz = Cat.D.default.button.small;
-					baseBtn = this.refcnt <= 1 ? D.getIcon('elt-edit-basename', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'basename'), 'Edit', sz) : '';
-					descBtn = D.getIcon('elt-edit-description', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'description'), 'Edit', sz);
-					pNameBtn = this.canChangeProperName() ? D.getIcon('elt-edit-propername', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'properName'), 'Edit', sz) : '';
+					baseBtn = this.refcnt <= 1 ? D.getIcon('elt-edit-basename', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'basename'), 'Edit', sz) : '';
+					descBtn = D.getIcon('elt-edit-description', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'description'), 'Edit', sz);
+					pNameBtn = this.canChangeProperName() ? D.getIcon('elt-edit-propername', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'properName'), 'Edit', sz) : '';
 					break;
 			}
 		}
@@ -6559,8 +6590,16 @@ class Element
 	mouseout(e)
 	{
 		if (D.mouseover === this)
+		{
 			D.mouseover = null;
-		this.emphasis(false);
+			this.emphasis(false);
+		}
+	}
+	mouseover(e)
+	{
+		D.mouseover = this;
+		this.description !== '' && D.statusbar.show(e, this.description);
+		this.emphasis(true);
 	}
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return `${diagram ? diagram.name : 'sys'}/${args.basename}`; }
@@ -7713,7 +7752,7 @@ class DiagramText extends Element
 		const div = H3.div({id}, H3.tag('description', this.description, '##descriptionElt.tty'));
 		if (canEdit)
 		{
-			div.appendChild(D.getIcon('EditElementText', 'edit', e => Cat.R.diagram.editElementText(e, this.name, id, 'description'), 'Commit editing', D.default.button.tiny));
+			div.appendChild(D.getIcon('EditElementText', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'description'), 'Commit editing', D.default.button.tiny));
 			const selectWeight = H3.select({onchange:e => Cat.DiagramText.UpdateWeight(this.name, e.target.value), value:this.weight},
 				['normal', 'bold', 'lighter', 'bolder'].map(w =>
 				{
@@ -7910,6 +7949,7 @@ class DiagramText extends Element
 		div.onfocusout = onfocusout;	// do this to get to the handler
 		div.addEventListener('keydown', onkeydown);
 		div.addEventListener('keyup', onkeydown);
+		D.editElement = div;
 	}
 	mouseenter(e)
 	{
@@ -8581,7 +8621,7 @@ class NameAction extends Action
 		const action = e => this.create(e);
 		const elements = [
 			H3.h5('Create Named Element'),
-			H3.table(H3.tr(H3.td(H3.input('##named-element-new-basename', {placeholder:'Base name', onkeyup:e => D.inputBasenameSearch(e, action)}))),
+			H3.table(H3.tr(H3.td(H3.input('##named-element-new-basename', {placeholder:'Base name', onkeyup:e => D.inputBasenameSearch(e, diagram, action)}))),
 					H3.tr(H3.td(H3.input('##named-element-new-properName', {placeholder:'Proper name'}))),
 					H3.tr(H3.td(H3.input('##named-element-new-description.in100', {type:'text', placeholder:'Description'})))),
 			D.getIcon('namedElement', 'edit', e => this.create(e), 'Create named element')];
@@ -9258,7 +9298,7 @@ class HomsetAction extends Action
 		const icon = this.domain.to !== this.codomain.to ? D.getIcon('swap', 'swap', e => this.swap(), 'Swap domain and codomain') : null;
 		help.appendChild(H3.table(	H3.tr(H3.td('Domain'), H3.td('##domain', this.domain.to.properName), H3.td(icon, {rowspan:2})),
 									H3.tr(H3.td('Codomain'), H3.td('##codomain', this.codomain.to.properName)), '.w100'));
-		const newSection = this.bpd.getNewSection('Homset-new', e => this.create(e), 'New Morphism');
+		const newSection = this.bpd.getNewSection(R.diagram, 'Homset-new', e => this.create(e), 'New Morphism');
 		D.toolbar.help.appendChild(newSection);
 		diagram.addFactorMorphisms(this.domain, this.codomain);
 		const homset = diagram.codomain.getHomset(this.domain.to, this.codomain.to);
@@ -11394,6 +11434,7 @@ class DiagramMorphism extends Morphism
 		const name = this.name;
 		g.onmouseenter = e => this.mouseenter(e);
 		g.onmouseout = e => this.mouseout(e);
+		g.onmouseover = e => this.mouseover(e);
 		g.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
 		node.appendChild(g);
 		this.svg = g;
@@ -11699,7 +11740,7 @@ class DiagramMorphism extends Morphism
 	emphasis(on)
 	{
 		super.emphasis(on);
-		D.SetClass('emphasis', on, this.svg_path, this.svg_name);
+		D.SetClass('emphasis', on, this.svg_path);
 	}
 	isEndo()
 	{
@@ -12772,22 +12813,6 @@ class FactorMorphism extends Morphism
 		const cofactors = 'cofactors' in args ? args.cofactors : null;
 		const c = args.dual ? 'C' : '';
 		const obj = diagram.getElement(dual ? args.codomain : args.domain);
-		let oldBasename = `${c}Fa{${obj.refName(diagram, true)},`;
-		for (let i=0; i<factors.length; ++i)
-		{
-			const indices = factors[i];
-			const f = obj.getFactor(indices);
-			if (f.isTerminal())	// TODO dual object
-				oldBasename += this.dual ? '#0' : '#1';
-			else
-				oldBasename += f.refName(diagram, true);
-			oldBasename += `_${indices.toString()}`;
-			if (i !== factors.length -1)
-				oldBasename += ',';
-		}
-		if (cofactors)
-			oldBasename += `__${cofactors.toString()}`;
-		oldBasename += `}aF${c}`;
 		let basename = `${c}Fa{${obj.refName(diagram)},`;
 		for (let i=0; i<factors.length; ++i)
 		{
@@ -12796,7 +12821,7 @@ class FactorMorphism extends Morphism
 			if (f.isTerminal())	// TODO dual object
 				basename += this.dual ? '#0' : '#1';
 			else
-				basename += f.name;
+				basename += f.refName(diagram);
 			basename += `_${indices.toString()}`;
 			if (i !== factors.length -1)
 				basename += ',';
@@ -12804,7 +12829,6 @@ class FactorMorphism extends Morphism
 		if (cofactors)
 			basename += `__${cofactors.toString()}`;
 		basename += `}aF${c}`;
-if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -13293,7 +13317,6 @@ oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagra
 	}
 	static ProperName(object)
 	{
-//		return `&#119890;${object.objects[0].objects[1].properName}`;
 		return '&#119890;';
 	}
 }
@@ -13544,8 +13567,7 @@ class Diagram extends Functor
 				this.svgRoot && this.svgRoot.remove();
 			}
 			['.json', '.png', '.log', '-viewport.json', '-placement.json'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
-			const userDiagram = R.GetUserDiagram(this.user);
-			D.EmitCATEvent('delete', name);
+			D.EmitDiagramEvent(this, 'delete', this.name);
 		}
 	}
 	addElement(elt)
@@ -13553,9 +13575,9 @@ class Diagram extends Functor
 		const isIndex = U.IsIndexElement(elt);
 		const cat = isIndex ? this.domain : this.codomain;
 		if (cat.elements.has(elt.name))
-			throw `Element with given name U.HtmlSAfe(elt.name) already exists in category ${U.HtmlSafe(cat.name)}`;
+			throw `Element with given name ${U.HtmlSafe(elt.name)} already exists in category ${U.HtmlSafe(cat.name)}`;
 		if (this.elements.has(elt.basename))
-			throw `Element with given basename ${U.HtmlSAfe(elt.basename)} already exists in diagram`;
+			throw `Element with given basename ${U.HtmlSafe(elt.basename)} already exists in diagram`;
 		!isIndex && this.elements.set(elt.basename, elt);
 		cat.elements.set(elt.name, elt);
 	}
@@ -14209,6 +14231,7 @@ class Diagram extends Functor
 		txtbox.contentEditable = false;
 		const elt = this.getElement(name);
 		const value = txtbox.innerText.trimRight();	// cannot get rid of newlines on the end in a text box
+		txtbox.innerHTML = U.HtmlEntitySafe(value);
 		const old = elt.editText(e, attribute, value);
 		this.log({command:'editText', name, attribute, value});		// use old name
 		this.antilog({command:'editText', name:elt.name, attribute, value:old});	// use new name
@@ -14217,7 +14240,7 @@ class Diagram extends Functor
 			this.updateProperName(elt);
 		D.EmitElementEvent(this, 'update', elt);
 	}
-	editElementText(e, name, id, attribute)
+	editElementText(e, elt, id, attribute)
 	{
 		D.toolbar.clearError();
 		try
@@ -14225,18 +14248,20 @@ class Diagram extends Functor
 			const qry = `#${id} ${attribute === 'properName' ? 'proper-name' : attribute}`;
 			const txtbox = document.querySelector(qry);
 			if (this.isEditable() && txtbox.contentEditable === 'true' && txtbox.textContent !== '')
-				this.commitElementText(e, name, txtbox, attribute);
+				this.commitElementText(e, elt.name, txtbox, attribute);
 			else
 			{
-				D.editElement = txtbox;
 				txtbox.contentEditable = true;
 				txtbox.focus();
 				txtbox.onkeydown = e =>
 				{
-					if (e.key === 'Enter')
-						this.commitElementText(e, name, txtbox, attribute);
 					e.stopPropagation();
+					e.key === 'Enter' && this.commitElementText(e, elt.name, txtbox, attribute);
 				};
+				if (attribute === 'basename')
+					txtbox.onkeyup = e => D.inputBasenameSearch(e, this, e => e.stopPropagation(), elt);
+				else
+					txtbox.onkeyup = e => e.stopPropagation();
 			}
 		}
 		catch(x)
@@ -14702,7 +14727,7 @@ class Diagram extends Functor
 			m.update();
 			this.makeSelected(m);
 			this.actionHtml(e, 'help');
-			this.editElementText(e, m.name, m.to.elementId(), 'basename');
+			this.editElementText(e, m, m.to.elementId(), 'basename');
 		}
 		else
 		{
@@ -15019,14 +15044,14 @@ class Diagram extends Functor
 			dgrmF4gnd.setAttribute('height', `${height}px`);
 		}
 	}
-	savePng(e, fn)
+	savePng(e, fn = null)
 	{
 		!D.textEditActive() && D.Svg2canvas(this, (png, pngName) =>
 		{
 			D.diagramPNGs.set(this.name, png);
 			U.writefile(`${this.name}.png`, png);
 			D.EmitCATEvent('png', this);
-			fn(e);
+			fn && fn(e);
 		});
 	}
 	updateTimestamp()
@@ -15061,7 +15086,7 @@ class Diagram extends Functor
 		json.elements.forEach(elt =>
 		{
 			const nuName = `${name}/${elt.basename}`;
-			nameMap.set(elt.name, nuName);
+			nameMap.set(`${this.name}/${elt.basename}`, nuName);
 			elt.name = nuName;
 			elt.diagram = name;
 			switch(elt.prototype)
