@@ -279,7 +279,7 @@ function validate(req, res, fn)
 	if (typeof decjwt === 'undefined' || decjwt === null)
 	{
 		console.log('*** no user jwt');
-		res.status(401).end({'Error':'no jwt'});
+		res.status(401).end('Error: no jwt');
 		return;
 	}
 	if (decjwt.payload.aud !== process.env.AWS_APP_ID)
@@ -686,32 +686,37 @@ async function serve()
 					res.status(500).send(err).end();
 					return;
 				}
-				if (req.user !== result[0].user)
+				if (result.length > 0)		// found it
 				{
-					console.log('*** user not owner', req.user, result[0].user);
-					res.status(401).send('user not owner').end();
-					return;
-				}
-				if (result.length > 0 && result[0].refcnt > 0)
-				{
-					console.log('diagram is referenced', result[0].refcnt);
-					res.status(400).send('diagram is referenced').end();
-					return;
-				}
-				result.length > 0 && dbcon.query('DELETE FROM Catecon.diagrams WHERE name=?', [name], (err, result) =>
-				{
-					if (err)
+					if (req.user !== result[0].user)
 					{
-						console.log({err});
-						res.status(500).send(err).end();
+						console.log('*** user not owner', req.user, result[0].user);
+						res.status(401).send('user not owner').end();
 						return;
 					}
-					console.log('deleted from database', name);
-					const dgrmFile = `public/diagram/${name}`;
-					fs.unlink(`${dgrmFile}.json`, err => {});
-					fs.unlink(`${dgrmFile}.png`, err => {});
+					if (result[0].refcnt > 0)
+					{
+						console.log('diagram is referenced', result[0].refcnt);
+						res.status(400).send('diagram is referenced').end();
+						return;
+					}
+					dbcon.query('DELETE FROM Catecon.diagrams WHERE name=?', [name], (err, result) =>
+					{
+						if (err)
+						{
+							console.log({err});
+							res.status(500).send(err).end();
+							return;
+						}
+						console.log('deleted from database', name);
+						const dgrmFile = `public/diagram/${name}`;
+						fs.unlink(`${dgrmFile}.json`, err => {});
+						fs.unlink(`${dgrmFile}.png`, err => {});
+						res.status(200).end();
+					});
+				}
+				else
 					res.status(200).end();
-				});
 			});
 		});
 
