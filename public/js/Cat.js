@@ -982,8 +982,11 @@ class R
 		if (isGUI)
 		{
 			D.session.mode = 'diagram';
-			R.diagram && R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
-			D.default.fullscreen && D.diagramSVG.lastElementChild.dataset.name !== name && D.diagramSVG.classList.add('hidden');
+			if (R.diagram)
+			{
+				R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
+				D.default.fullscreen && D.diagramSVG.lastElementChild.dataset.name !== name && D.diagramSVG.classList.add('hidden');
+			}
 		}
 		if (R.diagram && R.diagram.name === name)
 		{
@@ -5124,7 +5127,7 @@ class Catalog extends DiagramTool
 		this.catalog = document.getElementById('catalog');
 		this.modeTool = H3.td('.left', {width:'33%'});
 		this.closeBtn = H3.td('.right', {width:'33%'});
-		this.title = H3.h1('.catalog', 'Catecon Catalog');
+		this.title = H3.h1('.catalog', 'Catalog');
 		this.catalog.appendChild(H3.table(H3.tr(this.modeTool, H3.td(this.title, {width:'33%'}), this.closeBtn), '##modeToolbar'));
 		this.view = 'search';								// what viewing mode are we in?
 		this.catalogInfo = H3.div('##catalog-info');		// info about the state of the displayed items
@@ -8303,13 +8306,25 @@ class Assertion extends Element
 			nuArgs.basename = `a_${--idx}`;
 		}
 		super(diagram, nuArgs);
+		let left = null;
+		let right = null;
+		let signature = null;
+		if ('left' in nuArgs)
+		{
+			left = nuArgs.left.map(m => diagram.getElement(m));
+			right = nuArgs.right.map(m => diagram.getElement(m));
+			signature = Cell.Signature(nuArgs.left, nuArgs.right);
+		}
+		else
+			signature = cell;
 		Object.defineProperties(this,
 		{
-			cell:			{value: cell,								writable: true},
-			equal:			{value: U.GetArg(nuArgs, 'equal', true),	writable: false},
-			signature:		{value: null,								writable: true},
+			left:			{value: left,								writable:true},
+			right:			{value: right,								writable:true},
+			cell:			{value: cell,								writable:true},
+			equal:			{value: U.GetArg(nuArgs, 'equal', true),	writable:false},
+			signature:		{value: signature,							writable:true},
 		});
-		this.signature = cell instanceof Cell ? cell.signature : cell;
 		this.incrRefcnt();		// nothing refers to them, to increment
 		diagram.assertions.set(this.name, this);
 		diagram.addElement(this);
@@ -8319,6 +8334,11 @@ class Assertion extends Element
 	{
 		const cell = typeof this.cell === 'string' ? this.diagram.domain.cells.get(this.cell) : this.cell;
 		this.cell = cell;
+		if (this.left === null)
+		{
+			this.left = cell.left;
+			this.right = cell.right;
+		}
 		cell.setCommutes('assertion');
 		this.signature = cell.signature;
 		cell.left.map(m => m.incrRefcnt());
@@ -8347,6 +8367,8 @@ class Assertion extends Element
 		const a = super.json();
 		a.cell = this.cell.signature;
 		a.equal = this.equal;
+		a.left = this.left.map(m => m.name);
+		a.right = this.right.map(m => m.name);
 		return a;
 	}
 	showSelected(state = true)
@@ -10729,7 +10751,7 @@ class Morphism extends Element
 			throw 'no domain for morphism';
 		const codomain = this.diagram ? this.diagram.getElement(args.codomain) : args.codomain;
 		if (!codomain)
-			throw `no codomain for morphism ${args.codomain}`;
+			throw `no codomain ${args.codomain} for morphism ${args.basename}`;
 		Object.defineProperties(this,
 		{
 			domain:		{value: domain,		writable: true,	enumerable: true},
@@ -14617,7 +14639,7 @@ class Diagram extends Functor
 		}
 		catch(x)
 		{
-			D.RecordError(x);
+			D.RecordError(this.name + ': ' + x);
 		}
 	}
 	id(domain)
@@ -15147,6 +15169,9 @@ class Diagram extends Functor
 					elt.morphisms = elt.morphisms.map(m => change(m));
 					break;
 				case 'Assertion':
+					elt.left = elt.left.map(m => change(m));
+					elt.right = elt.right.map(m => change(m));
+					elt.cell = Cell.Signature(elt.left, elt.right);
 					break;
 			}
 		});
