@@ -113,7 +113,7 @@ th
 {
 	font-family:	courier;
 	display:		block;
-	overflow:		scroll;
+/*	overflow:		scroll; */
 	tab-size:		4;
 	unicode-bidi:	embed;
 	white-space:	pre;
