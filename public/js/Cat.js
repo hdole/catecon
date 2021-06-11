@@ -2236,8 +2236,8 @@ class BPD			// basename, proper name, description
 		const args =
 		{
 			basename,
-			properName:		U.HtmlSafe(this.properNameElt.value),
-			description:	U.HtmlSafe(this.descriptionElt.value),
+			properName:		U.HtmlEntitySafe(this.properNameElt.value),
+			description:	U.HtmlEntitySafe(this.descriptionElt.value),
 		};
 		return args;
 	}
@@ -2257,16 +2257,7 @@ class ObjectTool extends ElementTool
 	}
 	getMatchingElements()
 	{
-		const objects = R.diagram.getObjects().filter(o => o.name.includes(this.filter) && ((this.diagramOnly && o.diagram === R.diagram) || !this.diagramOnly));
-		const sigs = new Map();
-		objects.map(o =>
-		{
-			if (!sigs.has(o.signature))
-				sigs.set(o.signature, o);
-		});
-		const remaining = [...sigs.values()];
-		remaining.sort(U.RefcntSorter);
-		return remaining;
+		return R.diagram.getObjects().filter(o => o.name.includes(this.filter) && ((this.diagramOnly && o.diagram === R.diagram) || !this.diagramOnly));
 	}
 	create(e)
 	{
@@ -4467,9 +4458,12 @@ console.log('save session');
 		if (D.OnEnter(e, action))
 			return;
 		const basename = 'value' in e.target ? e.target.value : e.target.innerText;	// input elements vs other tags
-		const elt = diagram.getElement(`${R.user.name}/${basename}`);
+		const name = `${diagram.name}/${basename}`;
+		let elt = diagram.getElement(name);
 		if (elt && elt === base)
 			return;
+		if (elt === undefined)
+			elt = diagram.codomain.elements.get(name);
 		if (e.target.contentEditable)
 		{
 			e.target.style.backgroundColor = elt ? 'red' : '';
@@ -7360,10 +7354,15 @@ class ProductObject extends MultiObject
 		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
 		nuArgs.basename = ProductObject.Basename(diagram, {objects:nuArgs.objects, dual});
 		nuArgs.properName = ProductObject.ProperName(nuArgs.objects, dual);
-		nuArgs.description = `The ${dual ? 'coproduct' : 'product'} of the objects ${nuArgs.objects.map(o => o.properName).join(', ')}.`;
 		super(diagram, nuArgs);
 		this.constructor.name === 'ProductObject' && D.EmitElementEvent(diagram, 'new', this);
 		this.signature = ProductObject.Signature(diagram, this.objects, this.dual);
+	}
+	json()
+	{
+		const a = super.json();
+		delete a.description;		// TODO remove after all diagrams updated
+		return a;
 	}
 	help()
 	{
@@ -8313,7 +8312,6 @@ class Assertion extends Element
 		{
 			left = nuArgs.left.map(m => diagram.getElement(m));
 			right = nuArgs.right.map(m => diagram.getElement(m));
-			signature = Cell.Signature(nuArgs.left, nuArgs.right);
 		}
 		else
 			signature = cell;
@@ -8332,7 +8330,8 @@ class Assertion extends Element
 	}
 	initialize()
 	{
-		const cell = typeof this.cell === 'string' ? this.diagram.domain.cells.get(this.cell) : this.cell;
+		this.signature = Cell.Signature(this.left, this.right);
+		const cell = typeof this.cell === 'string' ? this.diagram.domain.cells.get(this.signature) : this.cell;
 		this.cell = cell;
 		if (this.left === null)
 		{
@@ -8685,8 +8684,9 @@ class CopyAction extends Action
 			let args = {};
 			if (from instanceof DiagramMorphism)
 			{
-				const xy = D.mouse.diagramPosition(R.diagram);
-				args = {command: 'copy', source:from.to, xy};
+				const domxy = diagram.findEmptySpot(from.domain.getXY());
+				const codxy = diagram.findEmptySpot(from.codomain.getXY());
+				args = {command: 'copy', source:from.to, domxy, codxy};
 			}
 			else if (from instanceof DiagramObject)
 			{
@@ -8711,7 +8711,7 @@ class CopyAction extends Action
 	{
 		const source = args.source;
 		if (source instanceof Morphism)
-			return diagram.placeMorphism(source, args.xy, null, false);
+			return diagram.placeMorphism(source, args.domxy, args.codxy, false);
 		else if (source instanceof CatObject)
 			return diagram.placeObject(source, args.xy, false);
 		else if (typeof source === 'string')
@@ -9323,7 +9323,15 @@ class HomsetAction extends Action
 		const newSection = this.bpd.getNewSection(R.diagram, 'Homset-new', e => this.create(e), 'New Morphism');
 		D.toolbar.help.appendChild(newSection);
 		diagram.addFactorMorphisms(this.domain, this.codomain);
-		const homset = diagram.codomain.getHomset(this.domain.to, this.codomain.to);
+		this.addRows(diagram.codomain.getHomset(this.domain.to, this.codomain.to));
+	}
+	addRows(homset)
+	{
+		const help = D.toolbar.help;
+		const title = help.querySelector('#help-homset-morphism-title');
+		const table = help.querySelector('#help-homset-morphism-table');
+		title && title.remove();
+		table && table.remove();
 		const rows = homset.map(m =>
 		{
 			const row = m.getHtmlRow();
@@ -9332,7 +9340,7 @@ class HomsetAction extends Action
 		});
 		if (rows.length > 0)
 		{
-			help.appendChild(H3.h5('Place existing morphism'));
+			help.appendChild(H3.h5('Place existing morphism', '##help-homset-morphism-title'));
 			help.appendChild(H3.table(rows, '##help-homset-morphism-table'));
 		}
 	}
@@ -9368,6 +9376,7 @@ class HomsetAction extends Action
 		dom.innerHTML = cod.innerHTML;
 		cod.innerHTML = html;
 		this.swapped = !this.swapped;
+		this.addRows(R.diagram.codomain.getHomset(this.swapped ? this.codomain.to : this.domain.to, this.swapped ? this.domain.to : this.codomain.to));
 	}
 }
 
@@ -9820,7 +9829,7 @@ class LanguageAction extends Action
 	{
 		const from = ary[0];
 		const m = from.to;
-		if (m.constructor.name === 'CatObject' || m.constructor.name === 'Morphism')	// only edit basic elements and not derived ones
+		if (m instanceof CatObject || m instanceof Morphism)	// only edit basic elements and not derived ones
 		{
 			if (!('code' in m))
 				m.code = {};
@@ -9835,7 +9844,7 @@ class LanguageAction extends Action
 	isEditable(m)
 	{
 		return m.isEditable() &&
-			((m.constructor.name === 'Morphism' && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial()) || m.constructor.name === 'CatObject');
+			((m instanceof Morphism && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial()) || m instanceof CatObject);
 	}
 	html(e, diagram, ary)
 	{
@@ -9845,7 +9854,7 @@ class LanguageAction extends Action
 		const body = help.querySelector('#help-body');
 		D.RemoveChildren(body);
 		body.appendChild(div);
-		if (elt.constructor.name === 'Morphism' || elt.constructor.name === 'CatObject')
+		if (elt instanceof Morphism || elt instanceof CatObject)
 		{
 			const old = this.currentDiagram;
 			this.currentDiagram = elt.diagram;
@@ -9889,11 +9898,11 @@ class LanguageAction extends Action
 			},
 			oninput: e =>
 			{
-				e.target.style.height = e.target.scrollHeight + 'px';
+				e.target.style.width = e.target.scrollWidth + 'px';
 			},
 		});
 		div.appendChild(textarea);
-		textarea.style.height = textarea.scrollHeight + 'px';
+		textarea.style.width = textarea.scrollWidth + 'px';
 		if (this.isEditable(elt))
 			div.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
 		return div;
@@ -10698,7 +10707,8 @@ class Category extends CatObject
 	getHomset(domain, codomain)
 	{
 		const homset = [];
-		this.forEachMorphism(function(m) { m.domain === domain && m.codomain === codomain && homset.push(m); });
+		const chkObjs = (a, b) => (a instanceof FiniteObject && b instanceof FiniteObject && a.size === 1 && b.size === 1) || a === b;
+		this.forEachMorphism(m => chkObjs(m.domain, domain) && chkObjs(m.codomain, codomain) && homset.push(m));
 		return homset;
 	}
 	replaceElements(elements)
