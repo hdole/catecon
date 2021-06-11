@@ -34,7 +34,7 @@
     {
       "basename": "o_2",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/nat/#1",
       "xy": {
         "x": 800,
         "y": 600
@@ -60,7 +60,7 @@
     {
       "basename": "o_4",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/nat/#1",
       "xy": {
         "x": 800,
         "y": 800
@@ -86,7 +86,7 @@
     {
       "basename": "o_6",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/nat/#1",
       "xy": {
         "x": 800,
         "y": 1000
@@ -175,7 +175,7 @@
     {
       "basename": "o_18",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1000,
         "y": 4000
@@ -201,7 +201,7 @@
     {
       "basename": "o_20",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1000,
         "y": 4200
@@ -227,7 +227,7 @@
     {
       "basename": "o_22",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1000,
         "y": 3800
@@ -273,7 +273,7 @@
     {
       "basename": "o_27",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/nat/#1",
       "xy": {
         "x": 0,
         "y": 600
@@ -309,7 +309,7 @@
     {
       "basename": "o_29",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/nat/#1",
       "xy": {
         "x": 0,
         "y": 800
@@ -345,7 +345,7 @@
     {
       "basename": "o_31",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/nat/#1",
       "xy": {
         "x": 0,
         "y": 1000
@@ -680,7 +680,7 @@
     {
       "basename": "o_52",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 200,
         "y": 4000
@@ -716,7 +716,7 @@
     {
       "basename": "o_54",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 200,
         "y": 4200
@@ -805,7 +805,7 @@
     {
       "basename": "o_16",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 200,
         "y": 3800
@@ -2008,7 +2008,7 @@
     {
       "basename": "o_152",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 600,
         "y": 3800
@@ -2017,7 +2017,7 @@
     {
       "basename": "o_153",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 600,
         "y": 4000
@@ -2026,7 +2026,7 @@
     {
       "basename": "o_154",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 600,
         "y": 4200
@@ -2035,7 +2035,7 @@
     {
       "basename": "o_155",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1400,
         "y": 3800
@@ -2044,7 +2044,7 @@
     {
       "basename": "o_156",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1400,
         "y": 4000
@@ -2053,7 +2053,7 @@
     {
       "basename": "o_157",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1400,
         "y": 4200
@@ -2062,7 +2062,7 @@
     {
       "basename": "o_158",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": -200,
         "y": 3800
@@ -2071,7 +2071,7 @@
     {
       "basename": "o_159",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": -200,
         "y": 4000
@@ -2080,7 +2080,7 @@
     {
       "basename": "o_160",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": -200,
         "y": 4200
@@ -2678,7 +2678,7 @@
     {
       "basename": "o_195",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": -200,
         "y": 4400
@@ -2687,7 +2687,7 @@
     {
       "basename": "o_196",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": -200,
         "y": 4600
@@ -3099,7 +3099,14 @@
       "basename": "a_0",
       "prototype": "Assertion",
       "cell": "5d10a799e91afc702cb7da5d0ad57c8306695538093fafdf5386b2f4405d6923",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_27",
+        "hdole/nat/m_10"
+      ],
+      "right": [
+        "hdole/nat/m_36"
+      ]
     },
     {
       "basename": "o_133",
@@ -3121,7 +3128,7 @@
     {
       "basename": "o_137",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/nat/#1",
       "xy": {
         "x": 1100,
         "y": 0
@@ -3148,7 +3155,15 @@
       "basename": "a_4",
       "prototype": "Assertion",
       "cell": "223391f87df5ef5d115d6f8c9f084f26b5839c5cb9c7f31305c14e98ac5c1129",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_84",
+        "hdole/nat/m_83"
+      ],
+      "right": [
+        "hdole/nat/m_99",
+        "hdole/nat/m_78"
+      ]
     },
     {
       "basename": "o_219",
@@ -3281,21 +3296,45 @@
       "basename": "a_5",
       "prototype": "Assertion",
       "cell": "5e0a2df949ce95b8d5cb91a63bb382422690026c7813c6bdbc6e3b37ce9c6b74",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_87",
+        "hdole/nat/m_94"
+      ],
+      "right": [
+        "hdole/nat/m_27",
+        "hdole/nat/m_91"
+      ]
     },
     {
       "description": "The assertion that the composite of morphisms &#119901;,\n\n0 equals that of ⊂,&#119901;&#8202;&#x2081;.",
       "basename": "a_6",
       "prototype": "Assertion",
       "cell": "88b1823f34968d8a835ae0417c3d801e064f8ac61751f57eba02bc3e1bc693e5",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_86",
+        "hdole/nat/m_93"
+      ],
+      "right": [
+        "hdole/nat/m_30",
+        "hdole/nat/m_90"
+      ]
     },
     {
       "description": "The assertion that the composite of morphisms &#119901;,0 equals that of ⊂,&#119901;&#8202;&#x2081;.",
       "basename": "a_7",
       "prototype": "Assertion",
       "cell": "339c64608b9a5b1881e0c464e98d2d0bea2c7e5d8e5cbcb9e1435398079aa57b",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_85",
+        "hdole/nat/m_89"
+      ],
+      "right": [
+        "hdole/nat/m_31",
+        "hdole/nat/m_88"
+      ]
     },
     {
       "basename": "o_225",
@@ -3573,7 +3612,7 @@
     {
       "basename": "o_230",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 200,
         "y": 4400
@@ -3591,7 +3630,7 @@
     {
       "basename": "o_232",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 600,
         "y": 4400
@@ -3609,7 +3648,7 @@
     {
       "basename": "o_234",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1000,
         "y": 4400
@@ -3627,7 +3666,7 @@
     {
       "basename": "o_236",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1400,
         "y": 4400
@@ -3645,7 +3684,7 @@
     {
       "basename": "o_238",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 200,
         "y": 4600
@@ -3663,7 +3702,7 @@
     {
       "basename": "o_240",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 600,
         "y": 4600
@@ -3681,7 +3720,7 @@
     {
       "basename": "o_242",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1000,
         "y": 4600
@@ -3699,7 +3738,7 @@
     {
       "basename": "o_244",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/nat/CPo{#1,#1}oPC",
       "xy": {
         "x": 1400,
         "y": 4600
@@ -3796,21 +3835,42 @@
       "basename": "a_1",
       "prototype": "Assertion",
       "cell": "4eb116efe27e82b8c62cbbf923c7df6e2f83b1f33a963e5f1f5656a7fe62c9a8",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_30",
+        "hdole/nat/m_28"
+      ],
+      "right": [
+        "hdole/nat/m_37"
+      ]
     },
     {
       "description": "The assertion that the composite of morphisms ⊂,&#119901;&#8202;&#x2080; equals that of id.",
       "basename": "a_2",
       "prototype": "Assertion",
       "cell": "410c5275563e6ab2385f1d4de0e21a41eb11ad5f22c9e3938d7da8257124978f",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_31",
+        "hdole/nat/m_29"
+      ],
+      "right": [
+        "hdole/nat/m_100"
+      ]
     },
     {
       "description": "The assertion that the composite of morphisms ⊂,&#119901;&#8202;&#x2080; equals that of id.",
       "basename": "a_3",
       "prototype": "Assertion",
       "cell": "03e8a65ba281da9cd1f257bf403016839793ef1fabdbf72a926ca816984fd88f",
-      "equal": true
+      "equal": true,
+      "left": [
+        "hdole/nat/m_99",
+        "hdole/nat/m_35"
+      ],
+      "right": [
+        "hdole/nat/m_101"
+      ]
     },
     {
       "basename": "m_137",
@@ -4102,7 +4162,6 @@
       "size": 256
     },
     {
-      "description": "The product of the objects &Nopf;&#8328, &Nopf;&#8328.",
       "basename": "Po{N8,N8}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -4133,12 +4192,6 @@
       "properName": "&#10034;",
       "size": 1
     },
-	{
-		"description":"The coproduct of the objects &#10034;, &#10034;.",
-		"basename":"CPo{#1,#1}oPC","name":"hdole/Logic/CPo{#1,#1}oPC",
-		"prototype":"ProductObject",
-		"dual":true,"objects":["#1","#1"]
-	},
     {
       "basename": "Id{Po{N8,N8}oP,N16}dI",
       "prototype": "Identity",
@@ -4147,7 +4200,15 @@
       "codomain": "hdole/nat/N16"
     },
     {
-      "description": "The product of the objects &Nopf;&#8321;&#8326;, &Nopf;&#8321;&#8326;.",
+      "basename": "CPo{#1,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/#1",
+        "hdole/nat/#1"
+      ]
+    },
+    {
       "basename": "Po{N16,N16}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -4180,7 +4241,6 @@
       "codomain": "hdole/nat/N32"
     },
     {
-      "description": "The product of the objects ℕ₃₂, ℕ₃₂.",
       "basename": "Po{N32,N32}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -4213,7 +4273,6 @@
       "codomain": "hdole/nat/N64"
     },
     {
-      "description": "The product of the objects ℕ&#x2086;&#x2084;, ℕ&#x2086;&#x2084;.",
       "basename": "Po{N64,N64}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -4254,7 +4313,7 @@
         "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
         "cpp": "%0 = 0;"
       },
-      "domain": "#1",
+      "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N64"
     },
     {
@@ -4266,7 +4325,7 @@
         "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
         "cpp": "%0 = 1;"
       },
-      "domain": "#1",
+      "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N64"
     },
     {
@@ -4278,7 +4337,7 @@
         "js": "function %Type(args)\n{\n\treturn Number.MAX_SAFE_INTEGER;\n}\n",
         "cpp": "%0 = ULONG_MAX;"
       },
-      "domain": "#1",
+      "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N64"
     },
     {
@@ -4303,7 +4362,7 @@
         "cpp": "%2 = %0 < %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "description": "Is the first natural number less than or equal to the second",
@@ -4315,7 +4374,7 @@
         "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "description": "compare two 64-bit natural numbers for equality",
@@ -4327,7 +4386,7 @@
         "cpp": "%2 = %0 == %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "description": "Sixteen bit zero",
@@ -4338,7 +4397,7 @@
         "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
         "cpp": "%0 = 0;"
       },
-      "domain": "#1",
+      "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N16"
     },
     {
@@ -4350,7 +4409,7 @@
         "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
         "cpp": "%0 = 1;"
       },
-      "domain": "#1",
+      "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N16"
     },
     {
@@ -4362,17 +4421,16 @@
         "js": "function %Type(args)\n{\n\treturn 65535;\n}\n",
         "cpp": "%0 = 65535;"
       },
-      "domain": "#1",
+      "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N16"
     },
     {
-      "description": "The coproduct of the objects &Nopf;&#8321;&#8326;, &#10034;.",
       "basename": "CPo{N16,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/nat/N16",
-        "#1"
+        "hdole/nat/#1"
       ]
     },
     {
@@ -4461,7 +4519,7 @@
         "cpp": "%2 = %0 < %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "description": "Is the 16-bit natural number less than or equal to the second",
@@ -4472,10 +4530,9 @@
         "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
-      "description": "The coproduct of the objects ℕ&#x2086;&#x2084;, &#10034;.",
       "basename": "CPo{N64,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
@@ -4514,7 +4571,7 @@
         "cpp": "%2 = %0 == %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "description": "32-bit zero",
@@ -4569,17 +4626,6 @@
       "codomain": "hdole/nat/N64"
     },
     {
-      "description": "The coproduct of the objects &Nopf;&#8321;&#8326;, &#10034;.",
-      "basename": "CPo{N16,#1}oPC",
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/nat/N16",
-        "hdole/nat/#1"
-      ]
-    },
-    {
-      "description": "The coproduct of the objects ℕ₃₂, &#10034;.",
       "basename": "CPo{N32,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
@@ -4662,7 +4708,6 @@
       "codomain": "hdole/nat/N8"
     },
     {
-      "description": "The coproduct of the objects &Nopf;&#8328, &#10034;.",
       "basename": "CPo{N8,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
@@ -4881,7 +4926,6 @@
       "codomain": "hdole/nat/N8"
     },
     {
-      "description": "The coproduct of the objects ℕ&#x2081;&#x2082;&#x2088;, &#10034;.",
       "basename": "CPo{N128,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
@@ -4891,7 +4935,6 @@
       ]
     },
     {
-      "description": "The product of the objects ℕ&#x2081;&#x2082;&#x2088;, ℕ&#x2081;&#x2082;&#x2088;.",
       "basename": "Po{N128,N128}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -5118,7 +5161,7 @@
         "cpp": "%2 = %0 == %1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "equ32",
@@ -5128,7 +5171,7 @@
         "cpp": "%2 = %0 == %1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "lt8",
@@ -5138,7 +5181,7 @@
         "cpp": "%2 = %0 < %1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "lt32",
@@ -5148,7 +5191,7 @@
         "cpp": "%2 = %0 < %1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "or32",
@@ -5188,7 +5231,7 @@
         "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "mod32",
@@ -5228,7 +5271,7 @@
         "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "xor64",
@@ -5298,7 +5341,7 @@
         "cpp": "%2 = %0 < %1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "gt8",
@@ -5308,7 +5351,7 @@
         "cpp": "%2 = %0 > %1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "gteq8",
@@ -5318,7 +5361,7 @@
         "cpp": "%2 = %0 >= %1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "lshf8",
@@ -5539,7 +5582,7 @@
         "cpp": "%2 = %0 > %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "gt32",
@@ -5549,7 +5592,7 @@
         "cpp": "%2 = %0 > %1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "gt64",
@@ -5559,7 +5602,7 @@
         "cpp": "%2 = %0 > %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "gt128",
@@ -5569,7 +5612,7 @@
         "cpp": "%2 = %0 > %1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "Id{N16}dI",
@@ -5600,7 +5643,7 @@
         "cpp": "%2 = %0 >= %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "lteq8",
@@ -5610,10 +5653,9 @@
         "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
-      "description": "The product of the objects &Nopf;&#8321;&#8326;, &Nopf;&#8328.",
       "basename": "Po{N16,N8}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -5622,7 +5664,6 @@
       ]
     },
     {
-      "description": "The product of the objects ℕ₃₂, &Nopf;&#8328.",
       "basename": "Po{N32,N8}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -5631,7 +5672,6 @@
       ]
     },
     {
-      "description": "The product of the objects ℕ&#x2086;&#x2084;, &Nopf;&#8328.",
       "basename": "Po{N64,N8}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -5640,7 +5680,6 @@
       ]
     },
     {
-      "description": "The product of the objects ℕ&#x2081;&#x2082;&#x2088;, &Nopf;&#8328.",
       "basename": "Po{N128,N8}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -5676,7 +5715,7 @@
         "cpp": "%2 = %0 >= %1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "gteq64",
@@ -5686,7 +5725,7 @@
         "cpp": "%2 = %0 >= %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "gteq128",
@@ -5696,7 +5735,7 @@
         "cpp": "%2 = %0 >= %1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
       "basename": "lshf64",
@@ -5839,7 +5878,6 @@
       "codomain": "hdole/nat/N8"
     },
     {
-      "description": "The product of the objects &Nopf;&#8328&times;&Nopf;&#8328, &Nopf;&#8328&times;&Nopf;&#8328.",
       "basename": "Po{Po{N8,N8}oP,Po{N8,N8}oP}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -5848,7 +5886,6 @@
       ]
     },
     {
-      "description": "The product of the objects (&Nopf;&#8328&times;&Nopf;&#8328)&times;(&Nopf;&#8328&times;&Nopf;&#8328), (&Nopf;&#8328&times;&Nopf;&#8328)&times;(&Nopf;&#8328&times;&Nopf;&#8328).",
       "basename": "Po{Po{Po{N8,N8}oP,Po{N8,N8}oP}oP,Po{Po{N8,N8}oP,Po{N8,N8}oP}oP}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -5859,6 +5896,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623230232676,
+  "timestamp": 1623368016037,
   "version": 0
 }
