@@ -9,16 +9,16 @@
   "domain": "hdole/floats_Index",
   "codomain": "hdole/PFS",
   "references": [
-    "hdole/Integers"
+    "hdole/int"
   ],
   "domainElements": [
     {
       "basename": "o_0",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
-        "x": 200,
-        "y": 200
+        "x": 700,
+        "y": 300
       }
     },
     {
@@ -26,8 +26,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -220,
-        "y": 200
+        "x": -700,
+        "y": 300
       },
       "height": 24
     },
@@ -36,8 +36,8 @@
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
-        "x": -250,
-        "y": 400
+        "x": -700,
+        "y": 500
       },
       "height": 24
     },
@@ -46,34 +46,26 @@
       "prototype": "DiagramObject",
       "to": "hdole/floats/#1",
       "xy": {
-        "x": 200,
-        "y": 400
+        "x": 600,
+        "y": 500
       }
     },
     {
       "basename": "o_2",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
-        "x": 400,
-        "y": 400
+        "x": 800,
+        "y": 500
       }
     },
     {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/floats/o_1",
-      "codomain": "hdole/floats/o_2",
-      "flipName": false,
-      "to": "hdole/floats/zero"
-    },
-    {
-      "description": "Euler&#39;s constant",
+      "description": "The first interesting real number, or Euler&#39;s constant",
       "basename": "t_2",
       "prototype": "DiagramText",
       "xy": {
-        "x": -220,
-        "y": 590
+        "x": -700,
+        "y": 890
       },
       "height": 24
     },
@@ -82,34 +74,26 @@
       "prototype": "DiagramObject",
       "to": "hdole/floats/#1",
       "xy": {
-        "x": 200,
-        "y": 600
+        "x": 600,
+        "y": 900
       }
     },
     {
       "basename": "o_4",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
-        "x": 400,
-        "y": 600
+        "x": 800,
+        "y": 900
       }
-    },
-    {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/floats/o_3",
-      "codomain": "hdole/floats/o_4",
-      "flipName": false,
-      "to": "hdole/floats/e"
     },
     {
       "description": "a random number between 0.0 and 1.0",
       "basename": "t_3",
       "prototype": "DiagramText",
       "xy": {
-        "x": -380,
-        "y": 800
+        "x": -700,
+        "y": 2300
       },
       "height": 24
     },
@@ -118,34 +102,26 @@
       "prototype": "DiagramObject",
       "to": "hdole/floats/#1",
       "xy": {
-        "x": 200,
-        "y": 800
+        "x": 600,
+        "y": 2300
       }
     },
     {
       "basename": "o_6",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
-        "x": 400,
-        "y": 800
+        "x": 800,
+        "y": 2300
       }
-    },
-    {
-      "basename": "m_2",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/floats/o_5",
-      "codomain": "hdole/floats/o_6",
-      "flipName": false,
-      "to": "hdole/floats/random"
     },
     {
       "description": "ratio of a circle&#39;s circumference to its diameter",
       "basename": "t_4",
       "prototype": "DiagramText",
       "xy": {
-        "x": -480,
-        "y": 1000
+        "x": -700,
+        "y": 1100
       },
       "height": 24
     },
@@ -154,18 +130,1403 @@
       "prototype": "DiagramObject",
       "to": "hdole/floats/#1",
       "xy": {
-        "x": 200,
-        "y": 1000
+        "x": 600,
+        "y": 1100
       }
     },
     {
       "basename": "o_8",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1100
+      }
+    },
+    {
+      "description": "Every integer is (sort of) a floating point number",
+      "basename": "t_5",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 1900
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_9",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 600,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_10",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 2000
+      }
+    },
+    {
+      "description": "The absolute value of a floating point number",
+      "basename": "t_6",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 2500
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_11",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 600,
+        "y": 2500
+      }
+    },
+    {
+      "basename": "o_12",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 2500
+      }
+    },
+    {
+      "description": "Addition of two floating point numbers",
+      "basename": "t_8",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 2700
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_14",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 2700
+      }
+    },
+    {
+      "basename": "o_15",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 2700
+      }
+    },
+    {
+      "description": "Subtraction of two floating point numbers",
+      "basename": "t_9",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 2900
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_16",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_17",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 2900
+      }
+    },
+    {
+      "description": "Multiplication of two floating point numbers",
+      "basename": "t_10",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 3100
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_18",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 3100
+      }
+    },
+    {
+      "basename": "o_19",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 3100
+      }
+    },
+    {
+      "description": "division of two floating point numbers or an exception",
+      "basename": "t_12",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 3300
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_21",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 3300
+      }
+    },
+    {
+      "basename": "o_22",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{Po{F64,F64}oP,#1}oPC",
+      "xy": {
+        "x": 800,
+        "y": 3300
+      }
+    },
+    {
+      "description": "Is the first given floating point number less than the second",
+      "basename": "t_14",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 3500
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_25",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 3500
+      }
+    },
+    {
+      "basename": "o_26",
+      "prototype": "DiagramObject",
+      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 800,
+        "y": 3500
+      }
+    },
+    {
+      "description": "Is the first floating point number less than or equal to the second",
+      "basename": "t_15",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 3700
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_27",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 3700
+      }
+    },
+    {
+      "basename": "o_28",
+      "prototype": "DiagramObject",
+      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 800,
+        "y": 3700
+      }
+    },
+    {
+      "description": "Compare two floating point numbers for equality",
+      "basename": "t_16",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 3900
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_29",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 3900
+      }
+    },
+    {
+      "basename": "o_30",
+      "prototype": "DiagramObject",
+      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 800,
+        "y": 3900
+      }
+    },
+    {
+      "description": "The smallest integer greater than or equal to a given floating point number",
+      "basename": "t_17",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 4100
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_31",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 600,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 4100
+      }
+    },
+    {
+      "description": "The nearest integer to a given floating point number",
+      "basename": "t_18",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 4300
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_33",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 600,
+        "y": 4300
+      }
+    },
+    {
+      "basename": "o_34",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 4300
+      }
+    },
+    {
+      "description": "The greatest integer smaller than or equal to a given floating point number",
+      "basename": "t_19",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 4500
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_35",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 600,
+        "y": 4500
+      }
+    },
+    {
+      "basename": "o_36",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 4500
+      }
+    },
+    {
+      "description": "The integer portion of a floating point number",
+      "basename": "t_20",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 4700
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_37",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 600,
+        "y": 4700
+      }
+    },
+    {
+      "basename": "o_38",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 4700
+      }
+    },
+    {
+      "description": "the natural logarithm of a given floating point number or an exception",
+      "basename": "t_21",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 4900
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_39",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 600,
+        "y": 4900
+      }
+    },
+    {
+      "basename": "o_40",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{F64,#1}oPC",
+      "xy": {
+        "x": 800,
+        "y": 4900
+      }
+    },
+    {
+      "description": "raise the first number to the second number as exponent or an exception",
+      "basename": "t_22",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 5100
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_41",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 5100
+      }
+    },
+    {
+      "basename": "o_42",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{F64,#1}oPC",
+      "xy": {
+        "x": 800,
+        "y": 5100
+      }
+    },
+    {
+      "description": "The maximum floating point number of the given pair",
+      "basename": "t_24",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 5300
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_44",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 5300
+      }
+    },
+    {
+      "basename": "o_45",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 5300
+      }
+    },
+    {
+      "description": "The minimum floating point number of the given pair",
+      "basename": "t_25",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 5500
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_46",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 5500
+      }
+    },
+    {
+      "basename": "o_47",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 5500
+      }
+    },
+    {
+      "description": "Floating Point",
+      "basename": "t_27",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": -100
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_48",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 600,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_49",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 700
+      }
+    },
+    {
+      "description": "The floating point one",
+      "basename": "t_28",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -700,
+        "y": 700
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_13",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 300,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_20",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 200,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_43",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
       "xy": {
         "x": 400,
-        "y": 1000
+        "y": 500
       }
+    },
+    {
+      "basename": "o_50",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 200,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_51",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_52",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 200,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_53",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_54",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 200,
+        "y": 2300
+      }
+    },
+    {
+      "basename": "o_55",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 2300
+      }
+    },
+    {
+      "basename": "o_56",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1100,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_57",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 1000,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_58",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_59",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 1000,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_60",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_61",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 1000,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_62",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_63",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 1000,
+        "y": 2300
+      }
+    },
+    {
+      "basename": "o_64",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 2300
+      }
+    },
+    {
+      "basename": "o_65",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 200,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_66",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_67",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 1000,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_68",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_69",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_70",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 200,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_71",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1000,
+        "y": 2100
+      }
+    },
+    {
+      "basename": "o_72",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 2100
+      }
+    },
+    {
+      "basename": "o_73",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 600,
+        "y": 1300
+      }
+    },
+    {
+      "basename": "o_74",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1300
+      }
+    },
+    {
+      "basename": "o_75",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 1000,
+        "y": 1300
+      }
+    },
+    {
+      "basename": "o_76",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1300
+      }
+    },
+    {
+      "basename": "o_77",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 200,
+        "y": 2500
+      }
+    },
+    {
+      "basename": "o_78",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 2500
+      }
+    },
+    {
+      "basename": "o_79",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 2500
+      }
+    },
+    {
+      "basename": "o_80",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 2500
+      }
+    },
+    {
+      "basename": "o_81",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 2700
+      }
+    },
+    {
+      "basename": "o_82",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 2700
+      }
+    },
+    {
+      "basename": "o_83",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 2700
+      }
+    },
+    {
+      "basename": "o_84",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 2700
+      }
+    },
+    {
+      "basename": "o_85",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_86",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_87",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_88",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_89",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 3100
+      }
+    },
+    {
+      "basename": "o_90",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 3100
+      }
+    },
+    {
+      "basename": "o_91",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 3100
+      }
+    },
+    {
+      "basename": "o_92",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 3100
+      }
+    },
+    {
+      "basename": "o_95",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{Po{F128,F128}oP,#1}oPC",
+      "xy": {
+        "x": 1300,
+        "y": 3300
+      }
+    },
+    {
+      "basename": "o_93",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 3300
+      }
+    },
+    {
+      "basename": "o_96",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 3300
+      }
+    },
+    {
+      "basename": "o_23",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 3500
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 400,
+        "y": 3500
+      }
+    },
+    {
+      "basename": "o_97",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 3500
+      }
+    },
+    {
+      "basename": "o_98",
+      "prototype": "DiagramObject",
+      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1200,
+        "y": 3500
+      }
+    },
+    {
+      "basename": "o_99",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 3700
+      }
+    },
+    {
+      "basename": "o_100",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 400,
+        "y": 3700
+      }
+    },
+    {
+      "basename": "o_101",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 3700
+      }
+    },
+    {
+      "basename": "o_102",
+      "prototype": "DiagramObject",
+      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1200,
+        "y": 3700
+      }
+    },
+    {
+      "basename": "o_103",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 3900
+      }
+    },
+    {
+      "basename": "o_104",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 400,
+        "y": 3900
+      }
+    },
+    {
+      "basename": "o_105",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 3900
+      }
+    },
+    {
+      "basename": "o_106",
+      "prototype": "DiagramObject",
+      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1200,
+        "y": 3900
+      }
+    },
+    {
+      "basename": "o_107",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 200,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_108",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_109",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_110",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_111",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 200,
+        "y": 4300
+      }
+    },
+    {
+      "basename": "o_112",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 4300
+      }
+    },
+    {
+      "basename": "o_113",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 4300
+      }
+    },
+    {
+      "basename": "o_114",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 4300
+      }
+    },
+    {
+      "basename": "o_115",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 200,
+        "y": 4500
+      }
+    },
+    {
+      "basename": "o_116",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 4500
+      }
+    },
+    {
+      "basename": "o_117",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 4500
+      }
+    },
+    {
+      "basename": "o_118",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 4500
+      }
+    },
+    {
+      "basename": "o_119",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 200,
+        "y": 4700
+      }
+    },
+    {
+      "basename": "o_120",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 4700
+      }
+    },
+    {
+      "basename": "o_121",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 4700
+      }
+    },
+    {
+      "basename": "o_122",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 4700
+      }
+    },
+    {
+      "basename": "o_124",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{F32,#1}oPC",
+      "xy": {
+        "x": 400,
+        "y": 4900
+      }
+    },
+    {
+      "basename": "o_125",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{F128,#1}oPC",
+      "xy": {
+        "x": 1200,
+        "y": 4900
+      }
+    },
+    {
+      "basename": "o_126",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 4900
+      }
+    },
+    {
+      "basename": "o_123",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 200,
+        "y": 4900
+      }
+    },
+    {
+      "basename": "o_127",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{F32,#1}oPC",
+      "xy": {
+        "x": 400,
+        "y": 5100
+      }
+    },
+    {
+      "basename": "o_128",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{F128,#1}oPC",
+      "xy": {
+        "x": 1200,
+        "y": 5100
+      }
+    },
+    {
+      "basename": "o_129",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 5100
+      }
+    },
+    {
+      "basename": "o_130",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 5100
+      }
+    },
+    {
+      "basename": "o_131",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 5300
+      }
+    },
+    {
+      "basename": "o_132",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 5300
+      }
+    },
+    {
+      "basename": "o_133",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 5500
+      }
+    },
+    {
+      "basename": "o_134",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1000,
+        "y": 5500
+      }
+    },
+    {
+      "basename": "o_135",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 5300
+      }
+    },
+    {
+      "basename": "o_136",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 5500
+      }
+    },
+    {
+      "basename": "o_137",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 5300
+      }
+    },
+    {
+      "basename": "o_138",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 5500
+      }
+    },
+    {
+      "basename": "o_139",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/CPo{Po{F32,F32}oP,#1}oPC",
+      "xy": {
+        "x": 400,
+        "y": 3300
+      }
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_1",
+      "codomain": "hdole/floats/o_2",
+      "flipName": false,
+      "to": "hdole/floats/zero64"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_3",
+      "codomain": "hdole/floats/o_4",
+      "flipName": false,
+      "to": "hdole/floats/e64"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_5",
+      "codomain": "hdole/floats/o_6",
+      "flipName": false,
+      "to": "hdole/floats/rand64"
     },
     {
       "basename": "m_3",
@@ -173,35 +1534,7 @@
       "domain": "hdole/floats/o_7",
       "codomain": "hdole/floats/o_8",
       "flipName": false,
-      "to": "hdole/floats/pi"
-    },
-    {
-      "description": "every integer is (sort of) a floating point number",
-      "basename": "t_5",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -450,
-        "y": 1200
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_9",
-      "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
-      "xy": {
-        "x": 200,
-        "y": 1200
-      }
-    },
-    {
-      "basename": "o_10",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 400,
-        "y": 1200
-      }
+      "to": "hdole/floats/pi64"
     },
     {
       "basename": "m_4",
@@ -209,35 +1542,7 @@
       "domain": "hdole/floats/o_9",
       "codomain": "hdole/floats/o_10",
       "flipName": false,
-      "to": "hdole/floats/Z2F"
-    },
-    {
-      "description": "the absolute value of a floating point number",
-      "basename": "t_6",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 1470
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_11",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 200,
-        "y": 1400
-      }
-    },
-    {
-      "basename": "o_12",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 400,
-        "y": 1400
-      }
+      "to": "hdole/floats/Z64toF64"
     },
     {
       "basename": "m_5",
@@ -245,54 +1550,7 @@
       "domain": "hdole/floats/o_11",
       "codomain": "hdole/floats/o_12",
       "flipName": false,
-      "to": "hdole/floats/abs"
-    },
-    {
-      "basename": "o_13",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 1600
-      }
-    },
-    {
-      "description": "A pair of floating point numbers",
-      "basename": "t_7",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 1670
-      },
-      "height": 24
-    },
-    {
-      "description": "Addition of two floating point numbers",
-      "basename": "t_8",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 1870
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_14",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 1800
-      }
-    },
-    {
-      "basename": "o_15",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 400,
-        "y": 1800
-      }
+      "to": "hdole/floats/abs64"
     },
     {
       "basename": "m_6",
@@ -300,35 +1558,7 @@
       "domain": "hdole/floats/o_14",
       "codomain": "hdole/floats/o_15",
       "flipName": false,
-      "to": "hdole/floats/add"
-    },
-    {
-      "description": "Subtraction of two floating point numbers",
-      "basename": "t_9",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 2070
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_16",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 2000
-      }
-    },
-    {
-      "basename": "o_17",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 400,
-        "y": 2000
-      }
+      "to": "hdole/floats/add64"
     },
     {
       "basename": "m_7",
@@ -336,35 +1566,7 @@
       "domain": "hdole/floats/o_16",
       "codomain": "hdole/floats/o_17",
       "flipName": false,
-      "to": "hdole/floats/subtract"
-    },
-    {
-      "description": "Multiplication of two floating point numbers",
-      "basename": "t_10",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 2270
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_18",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 2200
-      }
-    },
-    {
-      "basename": "o_19",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 400,
-        "y": 2200
-      }
+      "to": "hdole/floats/sub64"
     },
     {
       "basename": "m_8",
@@ -372,54 +1574,7 @@
       "domain": "hdole/floats/o_18",
       "codomain": "hdole/floats/o_19",
       "flipName": false,
-      "to": "hdole/floats/multiply"
-    },
-    {
-      "basename": "o_20",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/CPo{F,#1}oPC",
-      "xy": {
-        "x": 200,
-        "y": 2400
-      }
-    },
-    {
-      "description": "A floating point number or an exception",
-      "basename": "t_11",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 2470
-      },
-      "height": 24
-    },
-    {
-      "description": "division of two floating point numbers or an exception",
-      "basename": "t_12",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 2670
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_21",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 2600
-      }
-    },
-    {
-      "basename": "o_22",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/CPo{F,#1}oPC",
-      "xy": {
-        "x": 400,
-        "y": 2600
-      }
+      "to": "hdole/floats/mult64"
     },
     {
       "basename": "m_9",
@@ -427,71 +1582,7 @@
       "domain": "hdole/floats/o_21",
       "codomain": "hdole/floats/o_22",
       "flipName": false,
-      "to": "hdole/floats/divide"
-    },
-    {
-      "description": "The modulus of two floating point numbers or an exception",
-      "basename": "t_13",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 2870
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_23",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 2800
-      }
-    },
-    {
-      "basename": "o_24",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/CPo{F,#1}oPC",
-      "xy": {
-        "x": 400,
-        "y": 2800
-      }
-    },
-    {
-      "basename": "m_10",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/floats/o_23",
-      "codomain": "hdole/floats/o_24",
-      "flipName": false,
-      "to": "hdole/floats/modulus"
-    },
-    {
-      "description": "Is the first given floating point number less than the second",
-      "basename": "t_14",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 3070
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_25",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 3000
-      }
-    },
-    {
-      "basename": "o_26",
-      "prototype": "DiagramObject",
-      "to": "hdole/Logic/Omega",
-      "xy": {
-        "x": 400,
-        "y": 3000
-      }
+      "to": "hdole/floats/div64"
     },
     {
       "basename": "m_11",
@@ -499,35 +1590,7 @@
       "domain": "hdole/floats/o_25",
       "codomain": "hdole/floats/o_26",
       "flipName": false,
-      "to": "hdole/floats/lessThan"
-    },
-    {
-      "description": "Is the first floating point number less than or equal to the second",
-      "basename": "t_15",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 3270
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_27",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 3200
-      }
-    },
-    {
-      "basename": "o_28",
-      "prototype": "DiagramObject",
-      "to": "hdole/Logic/Omega",
-      "xy": {
-        "x": 400,
-        "y": 3200
-      }
+      "to": "hdole/floats/lt64"
     },
     {
       "basename": "m_12",
@@ -535,35 +1598,7 @@
       "domain": "hdole/floats/o_27",
       "codomain": "hdole/floats/o_28",
       "flipName": false,
-      "to": "hdole/floats/lessThanEq"
-    },
-    {
-      "description": "Compare two floating point numbers for equality",
-      "basename": "t_16",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 3470
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_29",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 3400
-      }
-    },
-    {
-      "basename": "o_30",
-      "prototype": "DiagramObject",
-      "to": "hdole/Logic/Omega",
-      "xy": {
-        "x": 400,
-        "y": 3400
-      }
+      "to": "hdole/floats/lte64"
     },
     {
       "basename": "m_13",
@@ -571,35 +1606,7 @@
       "domain": "hdole/floats/o_29",
       "codomain": "hdole/floats/o_30",
       "flipName": false,
-      "to": "hdole/floats/equals"
-    },
-    {
-      "description": "The smallest integer greater than or equal to a given floating point number",
-      "basename": "t_17",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 3670
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_31",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 200,
-        "y": 3600
-      }
-    },
-    {
-      "basename": "o_32",
-      "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
-      "xy": {
-        "x": 400,
-        "y": 3600
-      }
+      "to": "hdole/floats/eq64"
     },
     {
       "basename": "m_14",
@@ -607,35 +1614,7 @@
       "domain": "hdole/floats/o_31",
       "codomain": "hdole/floats/o_32",
       "flipName": false,
-      "to": "hdole/floats/ceil"
-    },
-    {
-      "description": "The nearest integer to a given floating point number",
-      "basename": "t_18",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 3870
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_33",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 200,
-        "y": 3800
-      }
-    },
-    {
-      "basename": "o_34",
-      "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
-      "xy": {
-        "x": 400,
-        "y": 3800
-      }
+      "to": "hdole/floats/ceil64"
     },
     {
       "basename": "m_15",
@@ -643,35 +1622,7 @@
       "domain": "hdole/floats/o_33",
       "codomain": "hdole/floats/o_34",
       "flipName": false,
-      "to": "hdole/floats/round"
-    },
-    {
-      "description": "The greatest integer smaller than or equal to a given floating point number",
-      "basename": "t_19",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 4070
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_35",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 200,
-        "y": 4000
-      }
-    },
-    {
-      "basename": "o_36",
-      "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
-      "xy": {
-        "x": 400,
-        "y": 4000
-      }
+      "to": "hdole/floats/rnd64"
     },
     {
       "basename": "m_16",
@@ -679,35 +1630,7 @@
       "domain": "hdole/floats/o_35",
       "codomain": "hdole/floats/o_36",
       "flipName": false,
-      "to": "hdole/floats/floor"
-    },
-    {
-      "description": "The integer portion of a floating point number",
-      "basename": "t_20",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 4270
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_37",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 200,
-        "y": 4200
-      }
-    },
-    {
-      "basename": "o_38",
-      "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
-      "xy": {
-        "x": 400,
-        "y": 4200
-      }
+      "to": "hdole/floats/floor64"
     },
     {
       "basename": "m_17",
@@ -715,35 +1638,7 @@
       "domain": "hdole/floats/o_37",
       "codomain": "hdole/floats/o_38",
       "flipName": false,
-      "to": "hdole/floats/truncate"
-    },
-    {
-      "description": "the natural logarithm of a given floating point number or an exception",
-      "basename": "t_21",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 4470
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_39",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 200,
-        "y": 4400
-      }
-    },
-    {
-      "basename": "o_40",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/CPo{F,#1}oPC",
-      "xy": {
-        "x": 400,
-        "y": 4400
-      }
+      "to": "hdole/floats/trunc64"
     },
     {
       "basename": "m_18",
@@ -751,35 +1646,7 @@
       "domain": "hdole/floats/o_39",
       "codomain": "hdole/floats/o_40",
       "flipName": false,
-      "to": "hdole/floats/log"
-    },
-    {
-      "description": "raise the first number to the second number as exponent or an exception",
-      "basename": "t_22",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 4670
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_41",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
-      "xy": {
-        "x": 200,
-        "y": 4600
-      }
-    },
-    {
-      "basename": "o_42",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/CPo{F,#1}oPC",
-      "xy": {
-        "x": 400,
-        "y": 4600
-      }
+      "to": "hdole/floats/log64"
     },
     {
       "basename": "m_19",
@@ -787,54 +1654,7 @@
       "domain": "hdole/floats/o_41",
       "codomain": "hdole/floats/o_42",
       "flipName": false,
-      "to": "hdole/floats/pow"
-    },
-    {
-      "basename": "o_43",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Ho{hdole/Narithmetics/N,F}oH",
-      "xy": {
-        "x": 200,
-        "y": 4800
-      }
-    },
-    {
-      "description": "A list of floating point numbers",
-      "basename": "t_23",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 4870
-      },
-      "height": 24
-    },
-    {
-      "description": "The maximum floating point number of the given list",
-      "basename": "t_24",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 5070
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_44",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Ho{hdole/Narithmetics/N,F}oH",
-      "xy": {
-        "x": 200,
-        "y": 5000
-      }
-    },
-    {
-      "basename": "o_45",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 400,
-        "y": 5000
-      }
+      "to": "hdole/floats/pow64"
     },
     {
       "basename": "m_20",
@@ -842,35 +1662,7 @@
       "domain": "hdole/floats/o_44",
       "codomain": "hdole/floats/o_45",
       "flipName": false,
-      "to": "hdole/floats/max"
-    },
-    {
-      "description": "The minimum floating point number of the given list",
-      "basename": "t_25",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 5270
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_46",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/Ho{hdole/Narithmetics/N,F}oH",
-      "xy": {
-        "x": 200,
-        "y": 5200
-      }
-    },
-    {
-      "basename": "o_47",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
-      "xy": {
-        "x": 400,
-        "y": 5200
-      }
+      "to": "hdole/floats/max64"
     },
     {
       "basename": "m_21",
@@ -878,28 +1670,617 @@
       "domain": "hdole/floats/o_46",
       "codomain": "hdole/floats/o_47",
       "flipName": false,
-      "to": "hdole/floats/min"
+      "to": "hdole/floats/min64"
     },
     {
-      "description": "References: &Zopf; Arithmetic",
-      "basename": "t_26",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 70,
-        "y": 100
-      },
-      "height": 24
+      "basename": "m_22",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_48",
+      "codomain": "hdole/floats/o_49",
+      "flipName": false,
+      "to": "hdole/floats/one64"
     },
     {
-      "description": "Floating Point Operations",
-      "basename": "t_27",
-      "prototype": "DiagramText",
+      "basename": "m_23",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_20",
+      "codomain": "hdole/floats/o_43",
+      "flipName": false,
+      "to": "hdole/floats/zero32"
+    },
+    {
+      "basename": "m_24",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_50",
+      "codomain": "hdole/floats/o_51",
+      "flipName": false,
+      "to": "hdole/floats/one32"
+    },
+    {
+      "basename": "m_25",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_52",
+      "codomain": "hdole/floats/o_53",
+      "flipName": false,
+      "to": "hdole/floats/e32"
+    },
+    {
+      "basename": "m_26",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_57",
+      "codomain": "hdole/floats/o_58",
+      "flipName": false,
+      "to": "hdole/floats/zero128"
+    },
+    {
+      "basename": "m_27",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_59",
+      "codomain": "hdole/floats/o_60",
+      "flipName": false,
+      "to": "hdole/floats/one128"
+    },
+    {
+      "basename": "m_28",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_54",
+      "codomain": "hdole/floats/o_55",
+      "flipName": false,
+      "to": "hdole/floats/rand32"
+    },
+    {
+      "basename": "m_29",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_61",
+      "codomain": "hdole/floats/o_62",
+      "flipName": false,
+      "to": "hdole/floats/e128"
+    },
+    {
+      "basename": "m_30",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_63",
+      "codomain": "hdole/floats/o_64",
+      "flipName": false,
+      "to": "hdole/floats/rand128"
+    },
+    {
+      "basename": "m_31",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_65",
+      "codomain": "hdole/floats/o_66",
+      "flipName": false,
+      "to": "hdole/floats/pi32"
+    },
+    {
+      "basename": "m_32",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_67",
+      "codomain": "hdole/floats/o_68",
+      "flipName": false,
+      "to": "hdole/floats/pi128"
+    },
+    {
+      "basename": "m_33",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_70",
+      "codomain": "hdole/floats/o_69",
+      "flipName": false,
+      "to": "hdole/floats/Z32toF32"
+    },
+    {
+      "basename": "m_34",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_71",
+      "codomain": "hdole/floats/o_72",
+      "flipName": false,
+      "to": "hdole/floats/Z128toF128"
+    },
+    {
+      "basename": "m_35",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_73",
+      "codomain": "hdole/floats/o_74",
+      "flipName": false,
+      "to": "hdole/floats/F32toF64"
+    },
+    {
+      "basename": "m_36",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_75",
+      "codomain": "hdole/floats/o_76",
+      "flipName": false,
+      "to": "hdole/floats/F64toF128"
+    },
+    {
+      "basename": "m_37",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_77",
+      "codomain": "hdole/floats/o_78",
+      "flipName": false,
+      "to": "hdole/floats/abs32"
+    },
+    {
+      "basename": "m_38",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_80",
+      "codomain": "hdole/floats/o_79",
+      "flipName": false,
+      "to": "hdole/floats/abs128"
+    },
+    {
+      "basename": "m_39",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_81",
+      "codomain": "hdole/floats/o_82",
+      "flipName": false,
+      "to": "hdole/floats/add32"
+    },
+    {
+      "basename": "m_40",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_83",
+      "codomain": "hdole/floats/o_84",
+      "flipName": false,
+      "to": "hdole/floats/add128"
+    },
+    {
+      "basename": "m_41",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_85",
+      "codomain": "hdole/floats/o_86",
+      "flipName": false,
+      "to": "hdole/floats/sub32"
+    },
+    {
+      "basename": "m_42",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_87",
+      "codomain": "hdole/floats/o_88",
+      "flipName": false,
+      "to": "hdole/floats/sub128"
+    },
+    {
+      "basename": "m_43",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_89",
+      "codomain": "hdole/floats/o_90",
+      "flipName": false,
+      "to": "hdole/floats/mult32"
+    },
+    {
+      "basename": "m_44",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_91",
+      "codomain": "hdole/floats/o_92",
+      "flipName": false,
+      "to": "hdole/floats/mult128"
+    },
+    {
+      "basename": "m_46",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_96",
+      "codomain": "hdole/floats/o_95",
+      "flipName": false,
+      "to": "hdole/floats/div128"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_23",
+      "codomain": "hdole/floats/o_24",
+      "flipName": false,
+      "to": "hdole/floats/lt32"
+    },
+    {
+      "basename": "m_47",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_97",
+      "codomain": "hdole/floats/o_98",
+      "flipName": false,
+      "to": "hdole/floats/lt128"
+    },
+    {
+      "basename": "m_48",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_99",
+      "codomain": "hdole/floats/o_100",
+      "flipName": false,
+      "to": "hdole/floats/lte32"
+    },
+    {
+      "basename": "m_49",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_101",
+      "codomain": "hdole/floats/o_102",
+      "flipName": false,
+      "to": "hdole/floats/lte128"
+    },
+    {
+      "basename": "m_50",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_103",
+      "codomain": "hdole/floats/o_104",
+      "flipName": false,
+      "to": "hdole/floats/eq32"
+    },
+    {
+      "basename": "m_51",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_105",
+      "codomain": "hdole/floats/o_106",
+      "flipName": false,
+      "to": "hdole/floats/eq128"
+    },
+    {
+      "basename": "m_52",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_108",
+      "codomain": "hdole/floats/o_110",
+      "flipName": false,
+      "to": "hdole/floats/ceil128"
+    },
+    {
+      "basename": "m_53",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_107",
+      "codomain": "hdole/floats/o_109",
+      "flipName": false,
+      "to": "hdole/floats/ceil32"
+    },
+    {
+      "basename": "m_54",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_111",
+      "codomain": "hdole/floats/o_112",
+      "flipName": false,
+      "to": "hdole/floats/rnd32"
+    },
+    {
+      "basename": "m_55",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_113",
+      "codomain": "hdole/floats/o_114",
+      "flipName": false,
+      "to": "hdole/floats/rnd128"
+    },
+    {
+      "basename": "m_56",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_115",
+      "codomain": "hdole/floats/o_116",
+      "flipName": false,
+      "to": "hdole/floats/floor32"
+    },
+    {
+      "basename": "m_57",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_117",
+      "codomain": "hdole/floats/o_118",
+      "flipName": false,
+      "to": "hdole/floats/florr128"
+    },
+    {
+      "basename": "m_58",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_119",
+      "codomain": "hdole/floats/o_120",
+      "flipName": false,
+      "to": "hdole/floats/trunc32"
+    },
+    {
+      "basename": "m_59",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_121",
+      "codomain": "hdole/floats/o_122",
+      "flipName": false,
+      "to": "hdole/floats/trnuc128"
+    },
+    {
+      "basename": "m_60",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_123",
+      "codomain": "hdole/floats/o_124",
+      "flipName": false,
+      "to": "hdole/floats/log32"
+    },
+    {
+      "basename": "m_61",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_126",
+      "codomain": "hdole/floats/o_125",
+      "flipName": false,
+      "to": "hdole/floats/log128"
+    },
+    {
+      "basename": "m_62",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_129",
+      "codomain": "hdole/floats/o_127",
+      "flipName": false,
+      "to": "hdole/floats/pow32"
+    },
+    {
+      "basename": "m_63",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_130",
+      "codomain": "hdole/floats/o_128",
+      "flipName": false,
+      "to": "hdole/floats/pow128"
+    },
+    {
+      "basename": "m_45",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_93",
+      "codomain": "hdole/floats/o_139",
+      "flipName": false,
+      "to": "hdole/floats/div32"
+    },
+    {
+      "basename": "m_64",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_132",
+      "codomain": "hdole/floats/o_137",
+      "flipName": false,
+      "to": "hdole/floats/max128"
+    },
+    {
+      "basename": "m_65",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_131",
+      "codomain": "hdole/floats/o_135",
+      "flipName": false,
+      "to": "hdole/floats/max32"
+    },
+    {
+      "basename": "m_66",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_133",
+      "codomain": "hdole/floats/o_136",
+      "flipName": false,
+      "to": "hdole/floats/min32"
+    },
+    {
+      "basename": "m_67",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_134",
+      "codomain": "hdole/floats/o_138",
+      "flipName": false,
+      "to": "hdole/floats/min128"
+    },
+    {
+      "basename": "o_94",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
       "xy": {
-        "x": 0,
-        "y": 0
-      },
-      "height": 96,
-      "weight": "bold"
+        "x": 200,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_140",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "m_68",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_94",
+      "codomain": "hdole/floats/o_140",
+      "flipName": false,
+      "to": "hdole/floats/N32toF32"
+    },
+    {
+      "basename": "o_141",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_142",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_143",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 1000,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_144",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "m_69",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_141",
+      "codomain": "hdole/floats/o_142",
+      "flipName": false,
+      "to": "hdole/floats/Z32toF64"
+    },
+    {
+      "basename": "m_70",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_143",
+      "codomain": "hdole/floats/o_144",
+      "flipName": false,
+      "to": "hdole/floats/Z32toF128"
+    },
+    {
+      "basename": "o_145",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_146",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "m_71",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_145",
+      "codomain": "hdole/floats/o_146",
+      "flipName": false,
+      "to": "hdole/floats/Z64toF128"
+    },
+    {
+      "basename": "o_147",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 600,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_148",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_149",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 1000,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_150",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "m_72",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_147",
+      "codomain": "hdole/floats/o_148",
+      "flipName": false,
+      "to": "hdole/floats/N32toF64"
+    },
+    {
+      "basename": "m_73",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_149",
+      "codomain": "hdole/floats/o_150",
+      "flipName": false,
+      "to": "hdole/floats/N32toF128"
+    },
+    {
+      "basename": "o_151",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 600,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_152",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "m_74",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_151",
+      "codomain": "hdole/floats/o_152",
+      "flipName": false,
+      "to": "hdole/floats/N64toF64"
+    },
+    {
+      "basename": "o_153",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 1000,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_154",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "m_75",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_153",
+      "codomain": "hdole/floats/o_154",
+      "flipName": false,
+      "to": "hdole/floats/N64toF128"
+    },
+    {
+      "basename": "o_155",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": 1000,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "o_156",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "m_76",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_155",
+      "codomain": "hdole/floats/o_156",
+      "flipName": false,
+      "to": "hdole/floats/N128toF128"
     }
   ],
   "elements": [
@@ -911,295 +2292,868 @@
     },
     {
       "description": "Floating point numbers",
-      "basename": "F",
+      "basename": "F64",
       "prototype": "CatObject",
-      "properName": "&Fopf;",
+      "properName": "𝔽₆₄",
       "code": {
-        "cpp": "}\n\n#include <math.h>\n#include <climits>\n\nnamespace %Namespace\n{\n\ttypedef double F;\n"
+        "cpp": "}\n\n#include <math.h>\n#include <climits>\n\nnamespace %Namespace\n{\n\ttypedef double %0;\n"
       }
     },
     {
-      "description": "The floating point zero",
-      "basename": "zero",
-      "prototype": "Morphism",
-      "properName": "0.0",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn 0.0;\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = 0.0d;\n}\n"
-      },
-      "domain": "hdole/floats/#1",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "description": "Euler&#39;s constant",
-      "basename": "e",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn Math.E;\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::numbers:e_v;\n}\n"
-      },
-      "domain": "hdole/floats/#1",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "description": "a random number between 0.0 and 1.0",
-      "basename": "random",
-      "prototype": "Morphism",
-      "properName": "?",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn Math.random();\n}\n",
-        "cpp": "\n}\n\n#include <random>\n\nnamespace %Namespace\n{\n\tstd::random_device %Type_dev;\n\tstd::mt19937 %Type_rng(%Type_dev);\n\tstd::uniform_int_distribution<std::mt19937::result_type> %Type_dist;\n\tvoid %Type(const %Dom & args, %Cod & out)\n\t{\n\t\tout = %Type_dist(%Type_rng);\n\t}\n"
-      },
-      "domain": "hdole/floats/#1",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "description": "ratio of a circle&#39;s circumference to its diameter",
-      "basename": "pi",
-      "prototype": "Morphism",
-      "properName": "&pi;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn Math.PI;\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::numbers::pi_v;\n}\n"
-      },
-      "domain": "hdole/floats/#1",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "description": "every integer is (sort of) a floating point number",
-      "basename": "Z2F",
-      "prototype": "Morphism",
-      "properName": "&sub;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args;\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = (double)args;\n}\n"
-      },
-      "domain": "hdole/Integers/Z",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "description": "the absolute value of a floating point number",
-      "basename": "abs",
-      "prototype": "Morphism",
-      "properName": "||",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn Math.abs(args);\n}\n",
-        "cpp": "\nvoid %Type(const %Dom & args, %Cod & out)\n{\n\tout = fabs(args);\n}\n"
-      },
-      "domain": "hdole/floats/F",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "basename": "Po{F,F}oP",
+      "basename": "Po{F64,F64}oP",
       "prototype": "ProductObject",
       "objects": [
-        "hdole/floats/F",
-        "hdole/floats/F"
+        "hdole/floats/F64",
+        "hdole/floats/F64"
       ]
     },
     {
-      "description": "Addition of two floating point numbers",
-      "basename": "add",
-      "prototype": "Morphism",
-      "properName": "+",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0] + args[1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.m_0 + args.m_1;\n}\n"
-      },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "description": "subtraction of two floating point numbers",
-      "basename": "subtract",
-      "prototype": "Morphism",
-      "properName": "&ndash;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0] - args[1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.m_0 - args.m_1;\n}\n"
-      },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "description": "Multiplication of two floating point numbers",
-      "basename": "multiply",
-      "prototype": "Morphism",
-      "properName": "&sdot;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0] * args[1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.m_0 * args.m_1;\n}\n"
-      },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/floats/F"
-    },
-    {
-      "basename": "CPo{F,#1}oPC",
+      "basename": "CPo{F64,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/floats/F",
+        "hdole/floats/F64",
         "hdole/floats/#1"
       ]
     },
     {
-      "description": "division of two floating point numbers or an exception",
-      "basename": "divide",
+      "basename": "F32",
+      "prototype": "CatObject",
+      "properName": "&Fopf;&#8323;&#8322;"
+    },
+    {
+      "description": "The 128-bit floating point numbers",
+      "basename": "F128",
+      "prototype": "CatObject",
+      "properName": "&Fopf;&#8321;&#8322;&#8328;"
+    },
+    {
+      "basename": "Po{F32,F32}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F32",
+        "hdole/floats/F32"
+      ]
+    },
+    {
+      "basename": "Po{F128,F128}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F128",
+        "hdole/floats/F128"
+      ]
+    },
+    {
+      "basename": "CPo{Po{F64,F64}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/floats/Po{F64,F64}oP",
+        "hdole/floats/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Po{F128,F128}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/floats/Po{F128,F128}oP",
+        "hdole/floats/#1"
+      ]
+    },
+    {
+      "basename": "CPo{#1,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/floats/#1",
+        "hdole/floats/#1"
+      ]
+    },
+    {
+      "basename": "CPo{F32,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/floats/F32",
+        "hdole/floats/#1"
+      ]
+    },
+    {
+      "basename": "CPo{F128,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/floats/F128",
+        "hdole/floats/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Po{F32,F32}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/floats/Po{F32,F32}oP",
+        "hdole/floats/#1"
+      ]
+    },
+    {
+      "description": "The 64-bit floating point zero",
+      "basename": "zero64",
       "prototype": "Morphism",
-      "properName": "&div;",
+      "properName": "0.0",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 0.0;\n}\n",
+        "cpp": "%0 = (F64)0.0;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "Euler&#39;s constant",
+      "basename": "e64",
+      "prototype": "Morphism",
+      "properName": "e",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Math.E;\n}\n",
+        "cpp": "%0 = std::numbers:e_v;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "a random number between 0.0 and 1.0",
+      "basename": "rand64",
+      "prototype": "Morphism",
+      "properName": "rand",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Math.random();\n}\n",
+        "cpp": "#include <random>\nstd::random_device %Type_dev;\nstd::mt19937 %Type_rng(%Type_dev);\nstd::uniform_int_distribution<std::mt19937::result_type> %Type_dist;\n%0 = %Type_dist(%Type_rng);"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "ratio of a circle&#39;s circumference to its diameter",
+      "basename": "pi64",
+      "prototype": "Morphism",
+      "properName": "&pi;",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Math.PI;\n}\n",
+        "cpp": "%0 = std::numbers::pi_v;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "every integer is (sort of) a floating point number",
+      "basename": "Z64toF64",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args;\n}\n",
+        "cpp": "%1 = (F64)%0;"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "the absolute value of a floating point number",
+      "basename": "abs64",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Math.abs(args);\n}\n",
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "Addition of two floating point numbers",
+      "basename": "add64",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] + args[1];\n}\n",
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "subtraction of two floating point numbers",
+      "basename": "sub64",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] - args[1];\n}\n",
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "Multiplication of two floating point numbers",
+      "basename": "mult64",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] * args[1];\n}\n",
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "division of two floating point numbers or an exception",
+      "basename": "div64",
+      "prototype": "Morphism",
+      "properName": "div",
       "code": {
         "js": "function %Type(args)\n{\n\tif (args[1] === 0)\n\t\treturn [1, 0];\n\treturn [0, args[0] / args[1]];\n}\n"
       },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/floats/CPo{F,#1}oPC"
-    },
-    {
-      "description": "The modulus of two floating point numbers or an exception",
-      "basename": "modulus",
-      "prototype": "Morphism",
-      "properName": "%",
-      "code": {
-        "js": "function %Type(args)\n{\n\tif (args[1] === 0)\n\t\treturn [1, 0];\n\treturn [0, args[0] % args[1]];\n}\n"
-      },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/floats/CPo{F,#1}oPC"
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/CPo{Po{F64,F64}oP,#1}oPC"
     },
     {
       "description": "Is the first given floating point number less than the second",
-      "basename": "lessThan",
+      "basename": "lt64",
       "prototype": "Morphism",
-      "properName": "&lt;",
+      "properName": "lt",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0] < args[1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.m_0 < args.m_1;\n}\n"
+        "cpp": "%2 = %0 < %1;"
       },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/Logic/Omega"
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC"
     },
     {
       "description": "Is the first floating point number less than or equal to the second",
-      "basename": "lessThanEq",
+      "basename": "lte64",
       "prototype": "Morphism",
-      "properName": "&le;",
+      "properName": "lte",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0] <= args[1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.m_0 <= args.m_1;\n}\n"
+        "cpp": "%2 = %0 <= %1;"
       },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/Logic/Omega"
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC"
     },
     {
       "description": "compare two floating point numbers for equality",
-      "basename": "equals",
+      "basename": "eq64",
       "prototype": "Morphism",
-      "properName": "=",
+      "properName": "eq",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0] === args[1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.m_0 == args.m_1;\n}\n"
+        "cpp": "%2 = %0 == %1;"
       },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/Logic/Omega"
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC"
     },
     {
       "description": "The smallest integer greater than or equal to a given floating point number",
-      "basename": "ceil",
+      "basename": "ceil64",
       "prototype": "Morphism",
+      "properName": "ceil",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.ceil(args);\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = ::ceil(args);\n}\n"
+        "cpp": "%1 = ::ceil(%0);"
       },
-      "domain": "hdole/floats/F",
-      "codomain": "hdole/Integers/Z"
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/int/Z64"
     },
     {
       "description": "The nearest integer to a given floating point number",
-      "basename": "round",
+      "basename": "rnd64",
       "prototype": "Morphism",
+      "properName": "rnd",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.round(args);\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = ::round(args);\n}\n"
+        "cpp": "%1 = ::round(%0);\n"
       },
-      "domain": "hdole/floats/F",
-      "codomain": "hdole/Integers/Z"
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/int/Z64"
     },
     {
       "description": "The greatest integer smaller than or equal to a given floating point number",
-      "basename": "floor",
+      "basename": "floor64",
       "prototype": "Morphism",
+      "properName": "floor",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.floor(args);\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = ::floor(args);\n}\n"
+        "cpp": "%1 = ::floor(%0);"
       },
-      "domain": "hdole/floats/F",
-      "codomain": "hdole/Integers/Z"
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/int/Z64"
     },
     {
       "description": "The integer portion of a floating point number",
-      "basename": "truncate",
+      "basename": "trunc64",
       "prototype": "Morphism",
       "properName": "trunc",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.trunc(args);\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = ::trunc(args);\n}\n"
+        "cpp": "%1 = ::trunc(%0);\n"
       },
-      "domain": "hdole/floats/F",
-      "codomain": "hdole/Integers/Z"
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/int/Z64"
     },
     {
       "description": "the natural logarithm of a given floating point number or an exception",
-      "basename": "log",
+      "basename": "log64",
       "prototype": "Morphism",
+      "properName": "log",
       "code": {
-        "js": "function %Type(args)\n{\nif (args <= 0.0)\n\treturn [1, 0];\nreturn [0, Math.log(args)];\n}\n"
+        "js": "function %Type(args)\n{\nif (args <= 0.0)\n\treturn [1, 0];\nreturn [0, Math.log(args)];\n}\n",
+        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/floats/F",
-      "codomain": "hdole/floats/CPo{F,#1}oPC"
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/CPo{F64,#1}oPC"
     },
     {
       "description": "raise the first number to the second number as exponent or an exception",
-      "basename": "pow",
+      "basename": "pow64",
       "prototype": "Morphism",
-      "properName": "x&#x02b8;",
+      "properName": "pow",
       "code": {
-        "js": "function %Type(args)\n{\nif (args[0] === 0 && args[1] === 0)\n\treturn [1, 0];\nreturn [0, Math.pow(args[0], args[1])];\n}\n"
+        "js": "if (args[0] === 0 && args[1] === 0)\n\treturn [1, 0];\nreturn [0, Math.pow(args[0], args[1])];\n}\n",
+        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;else\n{\n\t %2.c = 0; %2.v = ::pow(%0, %r);\n}\n"
       },
-      "domain": "hdole/floats/Po{F,F}oP",
-      "codomain": "hdole/floats/CPo{F,#1}oPC"
-    },
-    {
-      "description": "The homset from ℕ&#x2086;&#x2084; to &Fopf;",
-      "basename": "Ho{hdole/Narithmetics/N,F}oH",
-      "prototype": "HomObject",
-      "objects": [
-        "hdole/Narithmetics/N",
-        "hdole/floats/F"
-      ]
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/CPo{F64,#1}oPC"
     },
     {
       "description": "The maximum floating point number of the given list",
-      "basename": "max",
+      "basename": "max64",
       "prototype": "Morphism",
+      "properName": "max",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.max(...args);\n}\n",
-        "cpp": "\nvoid %Type(const %Dom & args, %Cod & out)\n{\n\tauto i = out;\n\tout = *std::max_element(args);\n}\n"
+        "cpp": "%2 = *std::max_element(%0, %1);"
       },
-      "domain": "hdole/floats/Ho{hdole/Narithmetics/N,F}oH",
-      "codomain": "hdole/floats/F"
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/F64"
     },
     {
       "description": "The minimum floating point number of the given list",
-      "basename": "min",
+      "basename": "min64",
       "prototype": "Morphism",
+      "properName": "min",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.min(...args);\n}\n",
-        "cpp": "\nvoid %Type(const %Dom & args, %Cod & out)\n{\n\tauto i = out;\n\tout = *std::min_element(args);\n}\n"
+        "cpp": "%2 = *std::min_element(%0, %1);"
       },
-      "domain": "hdole/floats/Ho{hdole/Narithmetics/N,F}oH",
-      "codomain": "hdole/floats/F"
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "basename": "one64",
+      "prototype": "Morphism",
+      "properName": "1.0",
+      "code": {
+        "cpp": "%0 = (F64)1.0;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "The 32-bit floating point zero",
+      "basename": "zero32",
+      "prototype": "Morphism",
+      "properName": "0.0",
+      "code": {
+        "cpp": "%0 = (F32)0.0;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "description": "The 32-bit floating point one",
+      "basename": "one32",
+      "prototype": "Morphism",
+      "properName": "1.0",
+      "code": {
+        "cpp": "%0 = (F32)1.0;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "description": "The 32-bit Euler number",
+      "basename": "e32",
+      "prototype": "Morphism",
+      "properName": "e",
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "description": "The 128-bit floating point zero",
+      "basename": "zero128",
+      "prototype": "Morphism",
+      "properName": "0.0",
+      "code": {
+        "cpp": "%0 = (F128)0.0;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "description": "The 128-bit floating point one",
+      "basename": "one128",
+      "prototype": "Morphism",
+      "properName": "1.0",
+      "code": {
+        "cpp": "%0 = (F128)1.0;"
+      },
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "rand32",
+      "prototype": "Morphism",
+      "properName": "rand",
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "basename": "e128",
+      "prototype": "Morphism",
+      "properName": "e",
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "rand128",
+      "prototype": "Morphism",
+      "properName": "rand",
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "pi32",
+      "prototype": "Morphism",
+      "properName": "&pi;",
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "basename": "pi128",
+      "prototype": "Morphism",
+      "properName": "&pi;",
+      "domain": "hdole/floats/#1",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "Z32toF32",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = (F32)%0;"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "basename": "Z128toF128",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = (F128)%0;"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "F32toF64",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = (F64)%0;"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "basename": "F64toF128",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = (F128)%0;"
+      },
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "description": "The absolute value of a 32-bit number",
+      "basename": "abs32",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "code": {
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "description": "The absolute value of a 128-bit number",
+      "basename": "abs128",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "code": {
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "description": "The addition of two 32-bit numbers",
+      "basename": "add32",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "description": "The addition of two 128-bit numbers",
+      "basename": "add128",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "description": "The subtraction of two 32-bit numbers",
+      "basename": "sub32",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "description": "The subtraction of two 128-bit floating point numbers",
+      "basename": "sub128",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "description": "The multiplication of two 32-bit floating point numbers",
+      "basename": "mult32",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "description": "The multiplication of two 128-bit floating point numbers",
+      "basename": "mult128",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "div128",
+      "prototype": "Morphism",
+      "properName": "div",
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/CPo{Po{F128,F128}oP,#1}oPC"
+    },
+    {
+      "basename": "lt32",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt128",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lte32",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lte128",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "eq32",
+      "prototype": "Morphism",
+      "properName": "eq",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "eq128",
+      "prototype": "Morphism",
+      "properName": "eq",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "ceil128",
+      "prototype": "Morphism",
+      "properName": "ceil",
+      "code": {
+        "cpp": "%1 = ::ceil(%0);"
+      },
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "ceil32",
+      "prototype": "Morphism",
+      "properName": "ceil",
+      "code": {
+        "cpp": "%1 = ::ceil(%0);"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "rnd32",
+      "prototype": "Morphism",
+      "properName": "round",
+      "code": {
+        "cpp": "%1 = ::round(%0);"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "rnd128",
+      "prototype": "Morphism",
+      "properName": "rnd",
+      "code": {
+        "cpp": "%1 = ::round(%0);"
+      },
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "floor32",
+      "prototype": "Morphism",
+      "properName": "floor",
+      "code": {
+        "cpp": "%1 = ::floor(%0);"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "florr128",
+      "prototype": "Morphism",
+      "properName": "floor",
+      "code": {
+        "cpp": "%1 = ::floor(%0);"
+      },
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "trunc32",
+      "prototype": "Morphism",
+      "properName": "trunc",
+      "code": {
+        "cpp": "%1 = ::trunc(%0);"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "trnuc128",
+      "prototype": "Morphism",
+      "properName": "trunc",
+      "code": {
+        "cpp": "%1 = ::trunc(%0);"
+      },
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "log32",
+      "prototype": "Morphism",
+      "properName": "log",
+      "code": {
+        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.m0 = 0;\n\t%1.m1 = ::log(%0);\n}\nelse\n\t%1.m0 = 1;"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/CPo{F32,#1}oPC"
+    },
+    {
+      "basename": "log128",
+      "prototype": "Morphism",
+      "properName": "log",
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/floats/CPo{F128,#1}oPC"
+    },
+    {
+      "basename": "pow32",
+      "prototype": "Morphism",
+      "properName": "pow",
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/CPo{F32,#1}oPC"
+    },
+    {
+      "basename": "pow128",
+      "prototype": "Morphism",
+      "properName": "pow",
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/CPo{F128,#1}oPC"
+    },
+    {
+      "basename": "div32",
+      "prototype": "Morphism",
+      "properName": "div",
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/CPo{Po{F32,F32}oP,#1}oPC"
+    },
+    {
+      "description": "The maximum value of the two 128-bit floating point numbers",
+      "basename": "max128",
+      "prototype": "Morphism",
+      "properName": "max",
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "description": "The maximum value of two 32-bit floating point numbers",
+      "basename": "max32",
+      "prototype": "Morphism",
+      "properName": "max",
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "basename": "min32",
+      "prototype": "Morphism",
+      "properName": "min",
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "basename": "min128",
+      "prototype": "Morphism",
+      "properName": "min",
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "N32toF32",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "basename": "Z32toF64",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "basename": "Z32toF128",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "Z64toF128",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "N32toF64",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "basename": "N32toF128",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "N64toF64",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "basename": "N64toF128",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "N128toF128",
+      "prototype": "Morphism",
+      "properName": "&sub;",
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/floats/F128"
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623401325236,
+  "timestamp": 1623832430731,
   "version": 0
 }

@@ -46,14 +46,6 @@
       }
     },
     {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_2",
-      "codomain": "hdole/category/o_3",
-      "flipName": false,
-      "to": "hdole/category/id"
-    },
-    {
       "basename": "o_4",
       "prototype": "DiagramObject",
       "to": "hdole/category/C1",
@@ -70,14 +62,6 @@
         "x": 800,
         "y": 400
       }
-    },
-    {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_4",
-      "codomain": "hdole/category/o_5",
-      "flipName": false,
-      "to": "hdole/category/dom"
     },
     {
       "basename": "o_6",
@@ -98,14 +82,6 @@
       }
     },
     {
-      "basename": "m_2",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_6",
-      "codomain": "hdole/category/o_7",
-      "flipName": false,
-      "to": "hdole/category/cod"
-    },
-    {
       "basename": "o_8",
       "prototype": "DiagramObject",
       "to": "hdole/category/C0",
@@ -124,14 +100,6 @@
       }
     },
     {
-      "basename": "m_3",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_8",
-      "codomain": "hdole/category/o_9",
-      "flipName": false,
-      "to": "hdole/category/id"
-    },
-    {
       "basename": "o_10",
       "prototype": "DiagramObject",
       "to": "hdole/category/C0",
@@ -139,22 +107,6 @@
         "x": 800,
         "y": 1000
       }
-    },
-    {
-      "basename": "m_4",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_8",
-      "codomain": "hdole/category/o_10",
-      "flipName": true,
-      "to": "hdole/category/Id{C0}dI"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_9",
-      "codomain": "hdole/category/o_10",
-      "flipName": false,
-      "to": "hdole/category/dom"
     },
     {
       "basename": "o_11",
@@ -175,14 +127,6 @@
       }
     },
     {
-      "basename": "m_6",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_11",
-      "codomain": "hdole/category/o_12",
-      "flipName": false,
-      "to": "hdole/category/id"
-    },
-    {
       "basename": "o_13",
       "prototype": "DiagramObject",
       "to": "hdole/category/C0",
@@ -190,22 +134,6 @@
         "x": 800,
         "y": 1400
       }
-    },
-    {
-      "basename": "m_7",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_11",
-      "codomain": "hdole/category/o_13",
-      "flipName": true,
-      "to": "hdole/category/Id{C0}dI"
-    },
-    {
-      "basename": "m_8",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/category/o_12",
-      "codomain": "hdole/category/o_13",
-      "flipName": false,
-      "to": "hdole/category/cod"
     },
     {
       "description": "Category",
@@ -247,18 +175,92 @@
         "y": 190
       },
       "height": "24"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_2",
+      "codomain": "hdole/category/o_3",
+      "flipName": false,
+      "to": "hdole/category/id"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_4",
+      "codomain": "hdole/category/o_5",
+      "flipName": false,
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_6",
+      "codomain": "hdole/category/o_7",
+      "flipName": false,
+      "to": "hdole/category/cod"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_8",
+      "codomain": "hdole/category/o_9",
+      "flipName": false,
+      "to": "hdole/category/id"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_8",
+      "codomain": "hdole/category/o_10",
+      "flipName": true,
+      "to": "hdole/category/Id{C0}dI"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_9",
+      "codomain": "hdole/category/o_10",
+      "flipName": false,
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_11",
+      "codomain": "hdole/category/o_12",
+      "flipName": false,
+      "to": "hdole/category/id"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_11",
+      "codomain": "hdole/category/o_13",
+      "flipName": true,
+      "to": "hdole/category/Id{C0}dI"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/category/o_12",
+      "codomain": "hdole/category/o_13",
+      "flipName": false,
+      "to": "hdole/category/cod"
     }
   ],
   "elements": [
     {
       "description": "objects in this category",
       "basename": "C0",
-      "prototype": "CatObject"
+      "prototype": "CatObject",
+      "properName": "C&#8320;"
     },
     {
       "description": "morphisms in this category",
       "basename": "C1",
-      "prototype": "CatObject"
+      "prototype": "CatObject",
+      "properName": "C&#8321;"
     },
     {
       "description": "identity morphism of an object",
@@ -292,7 +294,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623309132700,
+  "timestamp": 1623655941952,
   "version": 0,
   "properName": "hdole/category"
 }

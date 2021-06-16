@@ -24,7 +24,7 @@
     {
       "basename": "o_1",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/Po{F,F}oP",
+      "to": "hdole/floats/Po{F64,F64}oP",
       "xy": {
         "x": 400,
         "y": 200
@@ -37,7 +37,7 @@
       "codomain": "hdole/complex/o_1",
       "flipName": false,
       "homsetIndex": 1,
-      "to": "hdole/complex/Id{C,hdole/floats/Po{F,F}oP}dI"
+      "to": "hdole/complex/Id{C,hdole/floats/Po{F64,F64}oP}dI"
     },
     {
       "basename": "m_1",
@@ -46,7 +46,7 @@
       "codomain": "hdole/complex/o_0",
       "flipName": false,
       "homsetIndex": 1,
-      "to": "hdole/complex/Id{hdole/floats/Po{F,F}oP,C}dI"
+      "to": "hdole/complex/Id{hdole/floats/Po{F64,F64}oP,C}dI"
     },
     {
       "description": "The complex number zero",
@@ -178,7 +178,7 @@
     {
       "basename": "o_9",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
         "y": 1000
@@ -214,7 +214,7 @@
     {
       "basename": "o_11",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
         "y": 1200
@@ -241,7 +241,7 @@
     {
       "basename": "o_12",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 200,
         "y": 1400
@@ -322,7 +322,7 @@
     {
       "basename": "o_17",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
         "y": 1800
@@ -601,20 +601,20 @@
       "prototype": "NamedObject",
       "properName": "&Copf;",
       "code": "}\n\n#include <complex>\n#include <cmath>\n\nnamespace %Namespace\n{\n",
-      "source": "hdole/floats/Po{F,F}oP"
+      "source": "hdole/floats/Po{F64,F64}oP"
     },
     {
-      "basename": "Id{C,hdole/floats/Po{F,F}oP}dI",
+      "basename": "Id{C,hdole/floats/Po{F64,F64}oP}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/Po{F,F}oP"
+      "codomain": "hdole/floats/Po{F64,F64}oP"
     },
     {
-      "basename": "Id{hdole/floats/Po{F,F}oP,C}dI",
+      "basename": "Id{hdole/floats/Po{F64,F64}oP,C}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/floats/Po{F,F}oP",
+      "domain": "hdole/floats/Po{F64,F64}oP",
       "codomain": "hdole/complex/C"
     },
     {
@@ -660,7 +660,7 @@
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.real();\n}\n"
       },
       "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/F"
+      "codomain": "hdole/floats/F64"
     },
     {
       "description": "the imaginary part of a complex numbers",
@@ -671,7 +671,7 @@
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.imag();\n}\n"
       },
       "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/F"
+      "codomain": "hdole/floats/F64"
     },
     {
       "description": "every floating point number is a complex number",
@@ -682,7 +682,7 @@
         "js": "function %Type(args)\n{\n\treturn [args, 0];\n}\n",
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::complex(args);\n}\n"
       },
-      "domain": "hdole/floats/F",
+      "domain": "hdole/floats/F64",
       "codomain": "hdole/complex/C"
     },
     {
@@ -707,7 +707,7 @@
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.abs();\n}\n"
       },
       "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/F"
+      "codomain": "hdole/floats/F64"
     },
     {
       "description": "The product of the objects &Copf;, &Copf;.",

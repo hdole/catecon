@@ -448,7 +448,7 @@
     {
       "basename": "o_24",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 200,
         "y": 2800
@@ -474,7 +474,7 @@
     {
       "basename": "o_26",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/CPo{F,#1}oPC",
+      "to": "hdole/floats/CPo{F64,#1}oPC",
       "xy": {
         "x": 600,
         "y": 2800
@@ -738,7 +738,7 @@
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\ttry\n\t{\n\t\tout.value = std::stod(args);\n\t\tout.idx = 0;\n\t}\n\tcatch(x)\n\t{\n\t\tout.idx = 1;\n\t\tout.value = 0;\n\t}\n}\n"
       },
-      "domain": "hdole/floats/F",
+      "domain": "hdole/floats/F64",
       "codomain": "hdole/Strings/str"
     },
     {
@@ -751,7 +751,7 @@
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\ttry\n\t{\n\t\tout.value = std::stod(args);\n\t\tout.idx = 0;\n\t}\n\tcatch(x)\n\t{\n\t\tout.idx = 1;\n\t\tout.value = 0;\n\t}\n}\n"
       },
       "domain": "hdole/Strings/str",
-      "codomain": "hdole/floats/CPo{F,#1}oPC"
+      "codomain": "hdole/floats/CPo{F64,#1}oPC"
     },
     {
       "description": "emit the string to the TTY",
