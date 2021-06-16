@@ -6373,15 +6373,15 @@ class Element
 		if (attribute === 'basename')
 		{
 			this.name = Element.Codename(this.diagram, {basename:this.basename});
-			this.properName = this.properName === old ? this.basename : this.properName;	// update if the old proper name was its basename
 			this.signature = this.getSignature();
-			this.diagram.updateProperName(this);	// TODO change to event processing
 			this.diagram.reconstituteElements();
 		}
 		else if (attribute === 'properName')
 			this.diagram.updateProperName(this);
 		return old;
 	}
+	updateProperName()
+	{}
 	help()
 	{
 		let baseBtn = '';
@@ -7148,6 +7148,10 @@ class CatObject extends Element
 		items.push(H3.br(), H3.span(this.name, '.tinyPrint'));
 		return H3.div({id}, items);
 	}
+	uses(obj)		// True if the given object is used in the construction of this object somehow or identical to it
+	{
+		return this.isEquivalent(obj);
+	}
 	static FromName(diagram, name)
 	{
 		const tokens = name.split('/');
@@ -7310,6 +7314,10 @@ class MultiObject extends CatObject
 	{
 		return false;
 	}
+	updateProperName()
+	{
+		this.objects.map(o => o.updateProperName());
+	}
 	isIterable()	// Default is for a MultiObject to be iterable if all its morphisms are iterable.
 	{
 		return this.objects.reduce((r, o) => r && o.isIterable(), true);
@@ -7325,6 +7333,15 @@ class MultiObject extends CatObject
 	{
 		for (let i=0; i<this.objects.length; ++i)
 			if (this.objects[i].usesDiagram(diagram))
+				return true;
+		return false;
+	}
+	uses(obj, start = true)
+	{
+		if (!start && this.isEquivalent(obj))
+			return true;
+		for (let i=0; i<this.objects.length; ++i)
+			if (this.objects[i].uses(obj, false))
 				return true;
 		return false;
 	}
@@ -7436,6 +7453,11 @@ class ProductObject extends MultiObject
 				}
 			};
 		}
+	}
+	updateProperName()
+	{
+		super.updateProperName();
+		this.properName = MultiObject.ProperName(this.dual ? '&plus;' : '&times;', this.objects);
 	}
 	static Basename(diagram, args)
 	{
@@ -7603,6 +7625,11 @@ class HomObject extends MultiObject
 		while (obj instanceof HomObject)
 			obj = obj.homDomain();
 		return obj;
+	}
+	updateProperName()
+	{
+		super.updateProperName();
+		this.properName = HomObject.ProperName(this.objects);
 	}
 	static Basename(diagram, args)
 	{
@@ -8245,6 +8272,11 @@ class DiagramObject extends CatObject
 	isIsolated()
 	{
 		return this.domains.size === 0 && this.codomains.size === 0;
+	}
+	updateProperName()
+	{
+		const text = this.svg.querySelector('text');
+		text.innerHTML = this.to.properName;
 	}
 }
 
@@ -10621,21 +10653,56 @@ class Category extends CatObject
 	process(diagram, data)
 	{
 		const sync = R.sync;
+		const procElt = (args, ndx) =>
+		{
+			if (!args || !('prototype' in args))
+				return;
+			try
+			{
+				diagram.get(args.prototype, args);
+			}
+			catch(x)
+			{
+				errMsg += x + '\n';
+			}
+		};
 		try
 		{
 			R.sync = false;
 			let errMsg = '';
-			data.map((args, ndx) =>
+			data.filter((args, ndx) =>
 			{
-				if (!args || !('prototype' in args))
-					return;
-				try
+				switch(args.prototype)
 				{
-					diagram.get(args.prototype, args);
+					case 'CatObject':
+					case 'FiniteObject':
+					case 'ProductObject':
+					case 'HomObject':
+					case 'NamedObject':
+					case 'DiagramObject':
+					case 'DiagramText':
+						procElt(args, ndx);
 				}
-				catch(x)
+			});
+			data.filter((args, ndx) =>
+			{
+				switch(args.prototype)
 				{
-					errMsg += x + '\n';
+					case 'Morphism':
+					case 'DiagramMorphism':
+					case 'FactorMorphism':
+					case 'Identity':
+					case 'NamedMorphism':
+					case 'DiagramComposite':
+					case 'Composite':
+					case 'ProductMorphism':
+					case 'ProductAssembly':
+					case 'LambdaMorphism':
+					case 'HomMorphism':
+					case 'Evaluation':
+					case 'Distribute':
+					case 'Dedistribute':
+						procElt(args, ndx);
 				}
 			});
 			if (errMsg !== '')
@@ -10884,7 +10951,7 @@ class Morphism extends Element
 	{
 		return this.domain.isIterable();
 	}
-	hasMorphism(mor, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
+	uses(mor, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
 	{
 		if (this.isEquivalent(mor))
 			return true;
@@ -10896,7 +10963,7 @@ class Morphism extends Element
 				let val = values[i];
 				if (typeof val === 'string')
 					val = this.diagram.getElement(val);
-				if (val instanceof Morphism && val.hasMorphism(mor))
+				if (val instanceof Morphism && val.uses(mor))
 					return true;
 			}
 		}
@@ -10959,7 +11026,7 @@ class Morphism extends Element
 		const rcrs = typeof r === 'string' ? this.diagram.codomain.getElement(r) : r;
 		if (rcrs)
 		{
-			if (!rcrs.hasMorphism(this))
+			if (!rcrs.uses(this))
 				throw `The recursive morphism does not refer to itself so no recursion.`;
 			this.recursor = rcrs;
 			this.recursor.incrRefcnt();
@@ -10984,7 +11051,7 @@ class Morphism extends Element
 			const r = ary[0];
 			const f = ary[1];
 			if (r instanceof DiagramMorphism && f instanceof DiagramMorphism)
-				return f.to !== r.to && f.to.hasMorphism(r.to);
+				return f.to !== r.to && f.to.uses(r.to);
 		}
 		return false;
 	}
@@ -11810,6 +11877,10 @@ class DiagramMorphism extends Morphism
 		this.codomain.update();
 		D.EmitMorphismEvent(this.diagram, 'update', this);
 	}
+	updateProperName()
+	{
+		this.svg_name.innerHTML = this.to.properName;
+	}
 	static LinkId(data, lnk)
 	{
 		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
@@ -12387,12 +12458,12 @@ class MultiMorphism extends Morphism
 			a.morphisms = this.morphisms.map(r => r.name);
 		return a;
 	}
-	hasMorphism(mor, start = true)
+	uses(mor, start = true)
 	{
 		if (!start && this.isEquivalent(mor))		// if looking for a recursive function, this and mor may be the same from the start
 			return true;
 		for (let i=0; i<this.morphisms.length; ++i)
-			if (this.morphisms[i].hasMorphism(mor, false))
+			if (this.morphisms[i].uses(mor, false))
 				return true;
 		return false;
 	}
@@ -12433,6 +12504,10 @@ class MultiMorphism extends Morphism
 		const type = this.constructor.name;
 		this.morphisms.map(m => m.constructor.name === type && m.dual === this.dual ? m.expand(expansion) : expansion.push(m));
 		return expansion;
+	}
+	updateProperName()
+	{
+		this.morphisms.map(m => m.updateProperName());
 	}
 }
 
@@ -12592,6 +12667,11 @@ class ProductMorphism extends MultiMorphism
 			else
 				R.LoadItem(this.diagram, this, [pCod, this], [m, pDom]);
 		});
+	}
+	updateProperName()
+	{
+		super.updateProperName();
+		this.properName = MultiMorphism.ProperName(this.morphisms, this.dual);
 	}
 	static Basename(diagram, args)
 	{
@@ -13633,7 +13713,8 @@ class Diagram extends Functor
 				delete elt.description;
 		});
 		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
-		a.elements.map(elt =>
+		[...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => console.log('dropping element', e.name));	// TODO
+		const procJson = elt =>
 		{
 			if (elt.diagram === this.name)
 			{
@@ -13644,7 +13725,8 @@ class Diagram extends Functor
 				delete elt.category;
 			if (elt.description === '')
 				delete elt.description;
-		});
+		};
+		a.elements.map(procJson);
 		a.readonly = this.readonly;
 		a.user = this.user;
 		a.timestamp = this.timestamp;
@@ -14807,22 +14889,8 @@ class Diagram extends Functor
 	}
 	updateProperName(to)	// TODO change to event 'update'
 	{
-		this.domain.elements.forEach(from =>
-		{
-			if (from.to === to)
-			{
-				if ('svg_name' in from)
-					from.svg_name.innerHTML = to.properName;
-				else if (to instanceof CatObject)
-				{
-					from.svg.innerHTML = to.properName;
-					from.domains.forEach(o => o.update());
-					from.codomains.forEach(o => o.update());
-				}
-				else
-					from.svg.innerHTML = to.properName;
-			}
-		});
+		this.elements.forEach(elt => elt.uses(to) && elt.updateProperName());
+		this.domain.elements.forEach(from => from.to && from.to.uses(to) && from.updateProperName());
 	}
 	logViewCommand()
 	{
