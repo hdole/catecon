@@ -1,0 +1,6609 @@
+{
+  "description": "",
+  "basename": "int",
+  "name": "hdole/int",
+  "prototype": "Diagram",
+  "properName": "hdole/int",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/int_Index",
+  "codomain": "hdole/PFS",
+  "references": [
+    "hdole/nat"
+  ],
+  "domainElements": [
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 900,
+        "y": 200
+      }
+    },
+    {
+      "description": "The 64-bit integers",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 760,
+        "y": -380
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 800,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 800,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_7",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_9",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_10",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 3200
+      }
+    },
+    {
+      "description": "The successor function for the integers with carry",
+      "basename": "t_8",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 2000
+      },
+      "height": 24
+    },
+    {
+      "basename": "t_9",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 2200
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_17",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_18",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_19",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_20",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_21",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_22",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 5000
+      }
+    },
+    {
+      "description": "The 16-bit integers",
+      "basename": "t_14",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -40,
+        "y": -380
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_25",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 100,
+        "y": 200
+      }
+    },
+    {
+      "description": "The number zero",
+      "basename": "t_16",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 600
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_27",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 0,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_28",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 600
+      }
+    },
+    {
+      "description": "The number 1",
+      "basename": "t_17",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 800
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_29",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 0,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_30",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 800
+      }
+    },
+    {
+      "description": "Last number allowed",
+      "basename": "t_18",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 1200
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_31",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 0,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 1200
+      }
+    },
+    {
+      "description": "Addition of two integers",
+      "basename": "t_19",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 2400
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_33",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_34",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 2400
+      }
+    },
+    {
+      "description": "Subtraction of two integers",
+      "basename": "t_20",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 2800
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_35",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_36",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 2800
+      }
+    },
+    {
+      "description": "Multiplication of two integers",
+      "basename": "t_21",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 3200
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_37",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_38",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 200,
+        "y": 3200
+      }
+    },
+    {
+      "description": "Bit-wise and of two integers",
+      "basename": "t_22",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 3600
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_39",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_40",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 3600
+      }
+    },
+    {
+      "description": "Bit-wise or of two integers",
+      "basename": "t_23",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 3800
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_41",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_42",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 3800
+      }
+    },
+    {
+      "description": "Bit-wise exclusive or",
+      "basename": "t_24",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 4000
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_43",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_44",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 4000
+      }
+    },
+    {
+      "description": "Division of one integer of the other, or an exception",
+      "basename": "t_25",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 4200
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_45",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_46",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z16,Z16}oP,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 4200
+      }
+    },
+    {
+      "description": "Modulus of one integer of the other, or an exception",
+      "basename": "t_26",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 4800
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_47",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_48",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z16,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 4800
+      }
+    },
+    {
+      "description": "Compare two numbers for equality",
+      "basename": "t_27",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5000
+      },
+      "height": 24
+    },
+    {
+      "description": "Is the first number less than the second",
+      "basename": "t_28",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5200
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_51",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_52",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 5200
+      }
+    },
+    {
+      "description": "Is the first number less than or equal to the second",
+      "basename": "t_29",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5400
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_53",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_54",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 5400
+      }
+    },
+    {
+      "description": "Integers",
+      "basename": "t_31",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1220,
+        "y": -700
+      },
+      "height": "600",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_14",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_55",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z64,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z64,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_15",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_16",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 5000
+      }
+    },
+    {
+      "description": "The 8-bit integers",
+      "basename": "t_5",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -440,
+        "y": -380
+      },
+      "height": 24
+    },
+    {
+      "description": "The 32-bit integers",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 360,
+        "y": -380
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_23",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_50",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_56",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 400,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_57",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_58",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -300,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_62",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 500,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_65",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_66",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_67",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 10,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_68",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 400,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_70",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z32,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_71",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z32,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_73",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_59",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z16,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_69",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -300,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_74",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": -400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_75",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": -400,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_49",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": -400,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_76",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_79",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z8,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_80",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z16,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_81",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -400,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_82",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 0,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_77",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z8,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_78",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -400,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_83",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_84",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -410,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_85",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_86",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_89",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_90",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_91",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_92",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_87",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_88",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z16,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_93",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z8,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_94",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z16,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_95",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 600,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_97",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z64,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_98",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z64,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_101",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_102",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_103",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1000,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_104",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z32,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_105",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_106",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_107",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z8,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_108",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_109",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": -200,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_110",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_111",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_112",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_113",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_114",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_115",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_117",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -100,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_119",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 300,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_120",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 1100,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_123",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 700,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_116",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 100,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_118",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 500,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_121",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 900,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_122",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1300,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_63",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 1200,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_64",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 1200,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_72",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_100",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_124",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z128,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_125",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_126",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_127",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z128,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_128",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_129",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_130",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z128,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_131",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_132",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z128,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_134",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z128,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_136",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_138",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z32,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_139",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_141",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_143",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_140",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_142",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_144",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_145",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z32,Z32}oP,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_146",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_147",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z32,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_148",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_150",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_149",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_151",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_152",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_153",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_154",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_155",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_156",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_157",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_158",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_159",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_160",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_161",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_162",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_163",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_164",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_165",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_166",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_167",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_168",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z64,Z64}oP,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_169",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z64,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_170",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_171",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_172",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_173",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_174",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_175",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_176",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_177",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_178",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_179",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 3600
+      }
+    },
+    {
+      "basename": "o_180",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_181",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_182",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z128,Z128}oP,#1}oPC",
+      "xy": {
+        "x": 1500,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_183",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z128,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_184",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1300,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_26",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": 100,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_60",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 500,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_61",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 900,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_185",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1300,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_186",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_187",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_188",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_189",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 5200
+      }
+    },
+    {
+      "basename": "o_190",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 5400
+      }
+    },
+    {
+      "basename": "o_191",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z8,Z8}oP,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_192",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Z8,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_193",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_194",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_195",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_196",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_199",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_200",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_201",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -400,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_202",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_203",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_204",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_205",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_206",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 410,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_207",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_208",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_209",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_210",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_211",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_212",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_12",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 3200
+      }
+    },
+    {
+      "basename": "o_99",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 0,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_135",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_213",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_214",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_215",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_216",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_217",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_218",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 3400
+      }
+    },
+    {
+      "basename": "o_133",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1300,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_137",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 1100,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_219",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 700,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_220",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 300,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_221",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": -100,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_222",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_223",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 500,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_224",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "basename": "o_225",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_226",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_227",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_228",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_270",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_271",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_272",
+      "prototype": "DiagramObject",
+      "properName": "o_273",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_273",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_280",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_281",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_282",
+      "prototype": "DiagramObject",
+      "properName": "o_283",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_283",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_290",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_291",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_292",
+      "prototype": "DiagramObject",
+      "properName": "o_293",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_293",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_300",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_301",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_302",
+      "prototype": "DiagramObject",
+      "properName": "o_303",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_303",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 6600
+      }
+    },
+    {
+      "basename": "o_229",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_230",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_231",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_232",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_233",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_234",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_235",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_236",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 5600
+      }
+    },
+    {
+      "basename": "o_237",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_238",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_239",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_240",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_241",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_242",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_243",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 5800
+      }
+    },
+    {
+      "basename": "o_244",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1400,
+        "y": 5800
+      }
+    },
+    {
+      "description": "Bit-wise not operation of an integer",
+      "basename": "t_2",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 3400
+      },
+      "height": 24
+    },
+    {
+      "description": "Addition of two integers with carry",
+      "basename": "t_3",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 2600
+      },
+      "height": 24
+    },
+    {
+      "description": "Subtraction of two integers with underflow",
+      "basename": "t_4",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 3000
+      },
+      "height": 24
+    },
+    {
+      "basename": "t_6",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1210,
+        "y": 2190
+      },
+      "height": "24"
+    },
+    {
+      "description": "The predecessor function for the integers with underflow",
+      "basename": "t_7",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 2200
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_96",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_253",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z8}oP",
+      "xy": {
+        "x": 0,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_254",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_255",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z8}oP",
+      "xy": {
+        "x": 400,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_256",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_257",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z8}oP",
+      "xy": {
+        "x": 800,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_258",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 6000
+      }
+    },
+    {
+      "basename": "o_259",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z8}oP",
+      "xy": {
+        "x": 1200,
+        "y": 6000
+      }
+    },
+    {
+      "description": "The 128-bit integers",
+      "basename": "t_10",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1170,
+        "y": -380
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_260",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 800,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_261",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_262",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 0,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_263",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_264",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 400,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_265",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_266",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": -400,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_267",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_268",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_269",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_274",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 800,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_275",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_276",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 0,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_277",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_278",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 400,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_279",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_284",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": -400,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_285",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_286",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_287",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 1400
+      }
+    },
+    {
+      "description": "The first interesting integer:  -1",
+      "basename": "t_11",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 1000
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_288",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": -400,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_289",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_294",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 0,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_295",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_296",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 400,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_297",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_298",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 800,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_299",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_304",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_305",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_197",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_198",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -200,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_245",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z8}oP",
+      "xy": {
+        "x": 0,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_246",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 200,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_247",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z8}oP",
+      "xy": {
+        "x": 400,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_248",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_249",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z8}oP",
+      "xy": {
+        "x": 800,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_250",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_251",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z8}oP",
+      "xy": {
+        "x": 1200,
+        "y": 6200
+      }
+    },
+    {
+      "basename": "o_252",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1400,
+        "y": 6200
+      }
+    },
+    {
+      "description": "The maximum safe integer",
+      "basename": "t_12",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 1400
+      },
+      "height": "24"
+    },
+    {
+      "description": "The minimum safe integer",
+      "basename": "t_13",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 1800
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_306",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z8,Z8}oP",
+      "xy": {
+        "x": -400,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_308",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z8,Z8}oP,#1}oPC",
+      "xy": {
+        "x": -200,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_310",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z16,Z16}oP",
+      "xy": {
+        "x": 0,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_312",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z16,Z16}oP,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_314",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z32,Z32}oP",
+      "xy": {
+        "x": 400,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_316",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z32,Z32}oP,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_317",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z64,Z64}oP",
+      "xy": {
+        "x": 800,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_318",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z64,Z64}oP,#1}oPC",
+      "xy": {
+        "x": 1000,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_319",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Po{Z128,Z128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_320",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/CPo{Po{Z128,Z128}oP,#1}oPC",
+      "xy": {
+        "x": 1500,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_321",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": -400,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_322",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N8",
+      "xy": {
+        "x": -200,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_323",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 0,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_324",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N16",
+      "xy": {
+        "x": 200,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_325",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 400,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_326",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 600,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_327",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 800,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_328",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 1000,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_329",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 1200,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_330",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": 1400,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_2",
+      "codomain": "hdole/int/o_3",
+      "flipName": false,
+      "to": "hdole/int/zero64"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_4",
+      "codomain": "hdole/int/o_5",
+      "flipName": false,
+      "to": "hdole/int/one64"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_6",
+      "codomain": "hdole/int/o_7",
+      "flipName": false,
+      "to": "hdole/int/inf64"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_9",
+      "codomain": "hdole/int/o_10",
+      "flipName": false,
+      "to": "hdole/int/add64"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_17",
+      "codomain": "hdole/int/o_18",
+      "flipName": false,
+      "to": "hdole/int/lt64"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_19",
+      "codomain": "hdole/int/o_20",
+      "flipName": false,
+      "to": "hdole/int/lte64"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_21",
+      "codomain": "hdole/int/o_22",
+      "flipName": false,
+      "to": "hdole/int/equ128"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_27",
+      "codomain": "hdole/int/o_28",
+      "flipName": false,
+      "to": "hdole/int/zero16"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_31",
+      "codomain": "hdole/int/o_32",
+      "flipName": false,
+      "to": "hdole/int/inf16"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_33",
+      "codomain": "hdole/int/o_34",
+      "flipName": false,
+      "to": "hdole/int/add16"
+    },
+    {
+      "basename": "m_16",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_37",
+      "codomain": "hdole/int/o_38",
+      "flipName": false,
+      "to": "hdole/int/mult16"
+    },
+    {
+      "basename": "m_17",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_39",
+      "codomain": "hdole/int/o_40",
+      "flipName": false,
+      "to": "hdole/int/and16"
+    },
+    {
+      "basename": "m_18",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_41",
+      "codomain": "hdole/int/o_42",
+      "flipName": false,
+      "to": "hdole/int/or16"
+    },
+    {
+      "basename": "m_19",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_43",
+      "codomain": "hdole/int/o_44",
+      "flipName": false,
+      "to": "hdole/int/xor16"
+    },
+    {
+      "basename": "m_21",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_47",
+      "codomain": "hdole/int/o_48",
+      "flipName": false,
+      "to": "hdole/int/mod16"
+    },
+    {
+      "basename": "m_23",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_51",
+      "codomain": "hdole/int/o_52",
+      "flipName": false,
+      "to": "hdole/int/lt16"
+    },
+    {
+      "basename": "m_24",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_53",
+      "codomain": "hdole/int/o_54",
+      "flipName": false,
+      "to": "hdole/int/lte16"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_14",
+      "codomain": "hdole/int/o_55",
+      "flipName": false,
+      "to": "hdole/int/succ64"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_15",
+      "codomain": "hdole/int/o_13",
+      "flipName": false,
+      "to": "hdole/int/decr"
+    },
+    {
+      "basename": "m_22",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_8",
+      "codomain": "hdole/int/o_16",
+      "flipName": false,
+      "to": "hdole/int/Z16_equals"
+    },
+    {
+      "basename": "m_25",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_23",
+      "codomain": "hdole/int/o_50",
+      "flipName": false,
+      "to": "hdole/int/zero32"
+    },
+    {
+      "basename": "m_27",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_58",
+      "codomain": "hdole/int/o_25",
+      "flipName": false,
+      "to": "hdole/int/Z82Z16"
+    },
+    {
+      "basename": "m_30",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_25",
+      "codomain": "hdole/int/o_62",
+      "flipName": false,
+      "to": "hdole/int/Z162Z32"
+    },
+    {
+      "basename": "m_31",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_62",
+      "codomain": "hdole/int/o_0",
+      "flipName": false,
+      "to": "hdole/int/Z322Z64"
+    },
+    {
+      "basename": "m_32",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_66",
+      "codomain": "hdole/int/o_70",
+      "flipName": false,
+      "to": "hdole/int/succ32"
+    },
+    {
+      "basename": "m_33",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_73",
+      "codomain": "hdole/int/o_71",
+      "flipName": false,
+      "to": "hdole/int/decr32"
+    },
+    {
+      "basename": "m_34",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_68",
+      "codomain": "hdole/int/o_65",
+      "flipName": false,
+      "to": "hdole/int/inf32"
+    },
+    {
+      "basename": "m_38",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_67",
+      "codomain": "hdole/int/o_59",
+      "flipName": false,
+      "to": "hdole/int/succ16"
+    },
+    {
+      "basename": "m_39",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_74",
+      "codomain": "hdole/int/o_1",
+      "flipName": false,
+      "to": "hdole/int/zero8"
+    },
+    {
+      "basename": "m_41",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_49",
+      "codomain": "hdole/int/o_76",
+      "flipName": false,
+      "to": "hdole/int/inf8"
+    },
+    {
+      "basename": "m_43",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_81",
+      "codomain": "hdole/int/o_79",
+      "flipName": false,
+      "to": "hdole/int/decr8"
+    },
+    {
+      "basename": "m_44",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_78",
+      "codomain": "hdole/int/o_77",
+      "flipName": false,
+      "to": "hdole/int/succ8"
+    },
+    {
+      "basename": "m_45",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_82",
+      "codomain": "hdole/int/o_80",
+      "flipName": false,
+      "to": "hdole/int/decr16"
+    },
+    {
+      "basename": "m_46",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_86",
+      "codomain": "hdole/int/o_85",
+      "flipName": false,
+      "to": "hdole/int/add32"
+    },
+    {
+      "basename": "m_42",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_84",
+      "codomain": "hdole/int/o_83",
+      "flipName": false,
+      "to": "hdole/int/add8"
+    },
+    {
+      "basename": "m_47",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_90",
+      "codomain": "hdole/int/o_89",
+      "flipName": false,
+      "to": "hdole/int/sub32"
+    },
+    {
+      "basename": "m_51",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_11",
+      "codomain": "hdole/int/o_103",
+      "flipName": false,
+      "to": "hdole/int/mult64"
+    },
+    {
+      "basename": "m_52",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_87",
+      "codomain": "hdole/int/o_95",
+      "flipName": false,
+      "to": "hdole/int/mult32"
+    },
+    {
+      "basename": "m_53",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_91",
+      "codomain": "hdole/int/o_92",
+      "flipName": false,
+      "to": "hdole/int/sub64"
+    },
+    {
+      "basename": "m_57",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_105",
+      "codomain": "hdole/int/o_106",
+      "flipName": false,
+      "to": "hdole/int/sub8"
+    },
+    {
+      "basename": "m_59",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_108",
+      "codomain": "hdole/int/o_109",
+      "flipName": false,
+      "to": "hdole/int/mult8"
+    },
+    {
+      "basename": "m_61",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_110",
+      "codomain": "hdole/int/o_111",
+      "flipName": false,
+      "to": "hdole/int/and8"
+    },
+    {
+      "basename": "m_62",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_112",
+      "codomain": "hdole/int/o_113",
+      "flipName": false,
+      "to": "hdole/int/or8"
+    },
+    {
+      "basename": "m_63",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_117",
+      "codomain": "hdole/int/o_116",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Po{Z8,Z8}oP,Z16}dI"
+    },
+    {
+      "basename": "m_64",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_116",
+      "codomain": "hdole/int/o_117",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Z16,Po{Z8,Z8}oP}dI"
+    },
+    {
+      "basename": "m_65",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_119",
+      "codomain": "hdole/int/o_118",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Po{Z16,Z16}oP,Z32}dI"
+    },
+    {
+      "basename": "m_66",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_118",
+      "codomain": "hdole/int/o_119",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Z32,Po{Z16,Z16}oP}dI"
+    },
+    {
+      "basename": "m_67",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_123",
+      "codomain": "hdole/int/o_121",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Po{Z32,Z32}oP,Z64}dI"
+    },
+    {
+      "basename": "m_68",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_121",
+      "codomain": "hdole/int/o_123",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Z64,Po{Z32,Z32}oP}dI"
+    },
+    {
+      "basename": "m_69",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_120",
+      "codomain": "hdole/int/o_122",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Po{Z64,Z64}oP,Z128}dI"
+    },
+    {
+      "basename": "m_70",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_122",
+      "codomain": "hdole/int/o_120",
+      "flipName": true,
+      "homsetIndex": 1,
+      "to": "hdole/int/Id{Z128,Po{Z64,Z64}oP}dI"
+    },
+    {
+      "basename": "m_71",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_63",
+      "codomain": "hdole/int/o_101",
+      "flipName": false,
+      "to": "hdole/int/zero128"
+    },
+    {
+      "basename": "m_72",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_64",
+      "codomain": "hdole/int/o_102",
+      "flipName": false,
+      "to": "hdole/int/one128"
+    },
+    {
+      "basename": "m_73",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_100",
+      "codomain": "hdole/int/o_72",
+      "flipName": false,
+      "to": "hdole/int/inf128"
+    },
+    {
+      "basename": "m_74",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_125",
+      "codomain": "hdole/int/o_124",
+      "flipName": false,
+      "to": "hdole/int/succ128"
+    },
+    {
+      "basename": "m_75",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_126",
+      "codomain": "hdole/int/o_127",
+      "flipName": false,
+      "to": "hdole/int/decr128"
+    },
+    {
+      "basename": "m_76",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_129",
+      "codomain": "hdole/int/o_128",
+      "flipName": false,
+      "to": "hdole/int/add127"
+    },
+    {
+      "basename": "m_96",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_139",
+      "codomain": "hdole/int/o_140",
+      "flipName": false,
+      "to": "hdole/int/and32"
+    },
+    {
+      "basename": "m_97",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_161",
+      "codomain": "hdole/int/o_162",
+      "flipName": false,
+      "to": "hdole/int/and64"
+    },
+    {
+      "basename": "m_98",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_171",
+      "codomain": "hdole/int/o_179",
+      "flipName": false,
+      "to": "hdole/int/and128"
+    },
+    {
+      "basename": "m_99",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_0",
+      "codomain": "hdole/int/o_184",
+      "flipName": false,
+      "to": "hdole/int/N62toZ128"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_25",
+      "codomain": "hdole/int/o_26",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z16,Z8_0}aF"
+    },
+    {
+      "basename": "m_28",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_62",
+      "codomain": "hdole/int/o_60",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z32,Z16_0}aF"
+    },
+    {
+      "basename": "m_29",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_0",
+      "codomain": "hdole/int/o_61",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z64,Z32_0}aF"
+    },
+    {
+      "basename": "m_35",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_184",
+      "codomain": "hdole/int/o_185",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z128,Z64_0}aF"
+    },
+    {
+      "basename": "m_36",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_58",
+      "codomain": "hdole/int/o_26",
+      "flipName": true,
+      "to": "hdole/int/Id{Z8}dI"
+    },
+    {
+      "basename": "m_102",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_114",
+      "codomain": "hdole/int/o_115",
+      "flipName": false,
+      "to": "hdole/int/xor8"
+    },
+    {
+      "basename": "m_104",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_186",
+      "codomain": "hdole/int/o_192",
+      "flipName": false,
+      "to": "hdole/int/mod8"
+    },
+    {
+      "basename": "m_105",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_188",
+      "codomain": "hdole/int/o_158",
+      "flipName": false,
+      "to": "hdole/int/equ8"
+    },
+    {
+      "basename": "m_106",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_150",
+      "codomain": "hdole/int/o_152",
+      "flipName": false,
+      "to": "hdole/int/equ32"
+    },
+    {
+      "basename": "m_107",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_189",
+      "codomain": "hdole/int/o_159",
+      "flipName": false,
+      "to": "hdole/int/lt8"
+    },
+    {
+      "basename": "m_109",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_149",
+      "codomain": "hdole/int/o_153",
+      "flipName": false,
+      "to": "hdole/int/lt32"
+    },
+    {
+      "basename": "m_110",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_141",
+      "codomain": "hdole/int/o_142",
+      "flipName": false,
+      "to": "hdole/int/or32"
+    },
+    {
+      "basename": "m_111",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_163",
+      "codomain": "hdole/int/o_164",
+      "flipName": false,
+      "to": "hdole/int/or64"
+    },
+    {
+      "basename": "m_112",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_172",
+      "codomain": "hdole/int/o_180",
+      "flipName": false,
+      "to": "hdole/int/or128"
+    },
+    {
+      "basename": "m_113",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_151",
+      "codomain": "hdole/int/o_154",
+      "flipName": false,
+      "to": "hdole/int/lte32"
+    },
+    {
+      "basename": "m_114",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_148",
+      "codomain": "hdole/int/o_147",
+      "flipName": false,
+      "to": "hdole/int/mod32"
+    },
+    {
+      "basename": "m_116",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_143",
+      "codomain": "hdole/int/o_144",
+      "flipName": false,
+      "to": "hdole/int/xor32"
+    },
+    {
+      "basename": "m_117",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_178",
+      "codomain": "hdole/int/o_157",
+      "flipName": false,
+      "to": "hdole/int/lte128"
+    },
+    {
+      "basename": "m_118",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_165",
+      "codomain": "hdole/int/o_166",
+      "flipName": false,
+      "to": "hdole/int/xor64"
+    },
+    {
+      "basename": "m_120",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_170",
+      "codomain": "hdole/int/o_169",
+      "flipName": false,
+      "to": "hdole/int/mod64"
+    },
+    {
+      "basename": "m_121",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_173",
+      "codomain": "hdole/int/o_181",
+      "flipName": false,
+      "to": "hdole/int/xor128"
+    },
+    {
+      "basename": "m_123",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_175",
+      "codomain": "hdole/int/o_183",
+      "flipName": false,
+      "to": "hdole/int/mod128"
+    },
+    {
+      "basename": "m_124",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_176",
+      "codomain": "hdole/int/o_155",
+      "flipName": false,
+      "to": "hdole/int/equ128"
+    },
+    {
+      "basename": "m_125",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_177",
+      "codomain": "hdole/int/o_156",
+      "flipName": false,
+      "to": "hdole/int/lt128"
+    },
+    {
+      "basename": "m_126",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_193",
+      "codomain": "hdole/int/o_195",
+      "flipName": false,
+      "to": "hdole/int/gt8"
+    },
+    {
+      "basename": "m_127",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_194",
+      "codomain": "hdole/int/o_196",
+      "flipName": false,
+      "to": "hdole/int/gteq8"
+    },
+    {
+      "basename": "m_129",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_199",
+      "codomain": "hdole/int/o_200",
+      "flipName": false,
+      "to": "hdole/int/rsh8"
+    },
+    {
+      "basename": "m_130",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_201",
+      "codomain": "hdole/int/o_202",
+      "flipName": false,
+      "to": "hdole/int/not8"
+    },
+    {
+      "basename": "m_131",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_136",
+      "codomain": "hdole/int/o_131",
+      "flipName": false,
+      "to": "hdole/int/sub128"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_35",
+      "codomain": "hdole/int/o_36",
+      "flipName": false,
+      "to": "hdole/int/sub16"
+    },
+    {
+      "basename": "m_49",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_203",
+      "codomain": "hdole/int/o_93",
+      "flipName": false,
+      "to": "hdole/int/add8c"
+    },
+    {
+      "basename": "m_58",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_204",
+      "codomain": "hdole/int/o_107",
+      "flipName": false,
+      "to": "hdole/int/sub8u"
+    },
+    {
+      "basename": "m_92",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_205",
+      "codomain": "hdole/int/o_94",
+      "flipName": false,
+      "to": "hdole/int/sub16c"
+    },
+    {
+      "basename": "m_56",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_206",
+      "codomain": "hdole/int/o_104",
+      "flipName": false,
+      "to": "hdole/int/sub32u"
+    },
+    {
+      "basename": "m_54",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_207",
+      "codomain": "hdole/int/o_98",
+      "flipName": false,
+      "to": "hdole/int/sub64u"
+    },
+    {
+      "basename": "m_79",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_208",
+      "codomain": "hdole/int/o_132",
+      "flipName": false,
+      "to": "hdole/int/sub128c"
+    },
+    {
+      "basename": "m_80",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_209",
+      "codomain": "hdole/int/o_130",
+      "flipName": false,
+      "to": "hdole/int/add128"
+    },
+    {
+      "basename": "m_55",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_210",
+      "codomain": "hdole/int/o_97",
+      "flipName": false,
+      "to": "hdole/int/add64o"
+    },
+    {
+      "basename": "m_77",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_211",
+      "codomain": "hdole/int/o_138",
+      "flipName": false,
+      "to": "hdole/int/add32c"
+    },
+    {
+      "basename": "m_48",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_212",
+      "codomain": "hdole/int/o_88",
+      "flipName": false,
+      "to": "hdole/int/add16c"
+    },
+    {
+      "basename": "m_81",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_12",
+      "codomain": "hdole/int/o_134",
+      "flipName": false,
+      "to": "hdole/int/mult128c"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_99",
+      "codomain": "hdole/int/o_135",
+      "flipName": false,
+      "to": "hdole/int/not16"
+    },
+    {
+      "basename": "m_50",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_213",
+      "codomain": "hdole/int/o_214",
+      "flipName": false,
+      "to": "hdole/int/not32"
+    },
+    {
+      "basename": "m_60",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_215",
+      "codomain": "hdole/int/o_216",
+      "flipName": false,
+      "to": "hdole/int/not64"
+    },
+    {
+      "basename": "m_82",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_217",
+      "codomain": "hdole/int/o_218",
+      "flipName": false,
+      "to": "hdole/int/not128"
+    },
+    {
+      "basename": "m_78",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_184",
+      "codomain": "hdole/int/o_133",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z128,Z64_1}aF"
+    },
+    {
+      "basename": "m_83",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_137",
+      "codomain": "hdole/int/o_133",
+      "flipName": false,
+      "to": "hdole/int/zero64"
+    },
+    {
+      "basename": "m_84",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_0",
+      "codomain": "hdole/int/o_137",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z64,Z64_-1}aF"
+    },
+    {
+      "basename": "m_85",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_62",
+      "codomain": "hdole/int/o_219",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z32,Z32_-1}aF"
+    },
+    {
+      "basename": "m_86",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_25",
+      "codomain": "hdole/int/o_220",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z16,Z16_-1}aF"
+    },
+    {
+      "basename": "m_87",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_58",
+      "codomain": "hdole/int/o_221",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z8,Z8_-1}aF"
+    },
+    {
+      "basename": "m_88",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_0",
+      "codomain": "hdole/int/o_222",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z64,Z32_1}aF"
+    },
+    {
+      "basename": "m_89",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_219",
+      "codomain": "hdole/int/o_222",
+      "flipName": false,
+      "to": "hdole/int/zero32"
+    },
+    {
+      "basename": "m_90",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_62",
+      "codomain": "hdole/int/o_223",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z32,Z16_1}aF"
+    },
+    {
+      "basename": "m_91",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_25",
+      "codomain": "hdole/int/o_224",
+      "flipName": false,
+      "to": "hdole/int/Fa{Z16,Z8_1}aF"
+    },
+    {
+      "basename": "m_93",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_220",
+      "codomain": "hdole/int/o_223",
+      "flipName": false,
+      "to": "hdole/int/zero16"
+    },
+    {
+      "basename": "m_94",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_221",
+      "codomain": "hdole/int/o_224",
+      "flipName": false,
+      "to": "hdole/int/zero8"
+    },
+    {
+      "basename": "m_95",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_225",
+      "codomain": "hdole/int/o_226",
+      "flipName": false,
+      "to": "hdole/int/max8"
+    },
+    {
+      "basename": "m_132",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_227",
+      "codomain": "hdole/int/o_228",
+      "flipName": false,
+      "to": "hdole/int/min8"
+    },
+    {
+      "basename": "m_200",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_270",
+      "codomain": "hdole/int/o_271",
+      "flipName": false,
+      "to": "hdole/int/max16"
+    },
+    {
+      "basename": "m_201",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_272",
+      "codomain": "hdole/int/o_273",
+      "flipName": false,
+      "to": "hdole/int/min16"
+    },
+    {
+      "basename": "m_202",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_280",
+      "codomain": "hdole/int/o_281",
+      "flipName": false,
+      "to": "hdole/int/max32"
+    },
+    {
+      "basename": "m_203",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_282",
+      "codomain": "hdole/int/o_283",
+      "flipName": false,
+      "to": "hdole/int/min32"
+    },
+    {
+      "basename": "m_204",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_290",
+      "codomain": "hdole/int/o_291",
+      "flipName": false,
+      "to": "hdole/int/max64"
+    },
+    {
+      "basename": "m_205",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_292",
+      "codomain": "hdole/int/o_293",
+      "flipName": false,
+      "to": "hdole/int/min64"
+    },
+    {
+      "basename": "m_206",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_300",
+      "codomain": "hdole/int/o_301",
+      "flipName": false,
+      "to": "hdole/int/max128"
+    },
+    {
+      "basename": "m_207",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_302",
+      "codomain": "hdole/int/o_303",
+      "flipName": false,
+      "to": "hdole/int/min128"
+    },
+    {
+      "basename": "m_133",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_229",
+      "codomain": "hdole/int/o_230",
+      "flipName": false,
+      "to": "hdole/int/gt16"
+    },
+    {
+      "basename": "m_134",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_231",
+      "codomain": "hdole/int/o_232",
+      "flipName": false,
+      "to": "hdole/int/gt32"
+    },
+    {
+      "basename": "m_135",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_233",
+      "codomain": "hdole/int/o_234",
+      "flipName": false,
+      "to": "hdole/int/gt64"
+    },
+    {
+      "basename": "m_136",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_235",
+      "codomain": "hdole/int/o_236",
+      "flipName": false,
+      "to": "hdole/int/gt128"
+    },
+    {
+      "basename": "m_37",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_25",
+      "codomain": "hdole/int/o_60",
+      "flipName": false,
+      "to": "hdole/int/Id{Z16}dI"
+    },
+    {
+      "basename": "m_100",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_62",
+      "codomain": "hdole/int/o_61",
+      "flipName": false,
+      "to": "hdole/int/Id{Z32}dI"
+    },
+    {
+      "basename": "m_101",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_0",
+      "codomain": "hdole/int/o_185",
+      "flipName": false,
+      "to": "hdole/int/Id{Z64}dI"
+    },
+    {
+      "basename": "m_137",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_237",
+      "codomain": "hdole/int/o_238",
+      "flipName": false,
+      "to": "hdole/int/gte16"
+    },
+    {
+      "basename": "m_108",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_190",
+      "codomain": "hdole/int/o_160",
+      "flipName": false,
+      "to": "hdole/int/lte8"
+    },
+    {
+      "basename": "m_140",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_239",
+      "codomain": "hdole/int/o_240",
+      "flipName": false,
+      "to": "hdole/int/gteq32"
+    },
+    {
+      "basename": "m_141",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_241",
+      "codomain": "hdole/int/o_242",
+      "flipName": false,
+      "to": "hdole/int/gteq64"
+    },
+    {
+      "basename": "m_142",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_243",
+      "codomain": "hdole/int/o_244",
+      "flipName": false,
+      "to": "hdole/int/gteq128"
+    },
+    {
+      "basename": "m_145",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_253",
+      "codomain": "hdole/int/o_96",
+      "flipName": false,
+      "to": "hdole/int/rsh16"
+    },
+    {
+      "basename": "m_146",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_255",
+      "codomain": "hdole/int/o_254",
+      "flipName": false,
+      "to": "hdole/int/rsh32"
+    },
+    {
+      "basename": "m_147",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_257",
+      "codomain": "hdole/int/o_256",
+      "flipName": false,
+      "to": "hdole/int/rsh64"
+    },
+    {
+      "basename": "m_148",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_259",
+      "codomain": "hdole/int/o_258",
+      "flipName": false,
+      "to": "hdole/int/rsh128"
+    },
+    {
+      "basename": "m_150",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_262",
+      "codomain": "hdole/int/o_263",
+      "flipName": false,
+      "to": "hdole/int/minus_one16"
+    },
+    {
+      "basename": "m_151",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_264",
+      "codomain": "hdole/int/o_265",
+      "flipName": false,
+      "to": "hdole/int/minus_one32"
+    },
+    {
+      "basename": "m_152",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_266",
+      "codomain": "hdole/int/o_267",
+      "flipName": false,
+      "to": "hdole/int/minus_one8"
+    },
+    {
+      "basename": "m_154",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_274",
+      "codomain": "hdole/int/o_275",
+      "flipName": false,
+      "to": "hdole/int/inf64"
+    },
+    {
+      "basename": "m_155",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_276",
+      "codomain": "hdole/int/o_277",
+      "flipName": false,
+      "to": "hdole/int/inf16"
+    },
+    {
+      "basename": "m_156",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_278",
+      "codomain": "hdole/int/o_279",
+      "flipName": false,
+      "to": "hdole/int/inf32"
+    },
+    {
+      "basename": "m_157",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_284",
+      "codomain": "hdole/int/o_285",
+      "flipName": false,
+      "to": "hdole/int/inf8"
+    },
+    {
+      "basename": "m_158",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_286",
+      "codomain": "hdole/int/o_287",
+      "flipName": false,
+      "to": "hdole/int/inf128"
+    },
+    {
+      "basename": "m_20",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_187",
+      "codomain": "hdole/int/o_191",
+      "flipName": false,
+      "to": "hdole/int/div8"
+    },
+    {
+      "basename": "m_103",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_45",
+      "codomain": "hdole/int/o_46",
+      "flipName": false,
+      "to": "hdole/int/div16"
+    },
+    {
+      "basename": "m_115",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_146",
+      "codomain": "hdole/int/o_145",
+      "flipName": false,
+      "to": "hdole/int/div32"
+    },
+    {
+      "basename": "m_119",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_167",
+      "codomain": "hdole/int/o_168",
+      "flipName": false,
+      "to": "hdole/int/div64"
+    },
+    {
+      "basename": "m_122",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_174",
+      "codomain": "hdole/int/o_182",
+      "flipName": false,
+      "to": "hdole/int/div128"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_75",
+      "codomain": "hdole/int/o_24",
+      "flipName": false,
+      "to": "hdole/int/one8"
+    },
+    {
+      "basename": "m_26",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_29",
+      "codomain": "hdole/int/o_30",
+      "flipName": false,
+      "to": "hdole/int/one16"
+    },
+    {
+      "basename": "m_40",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_56",
+      "codomain": "hdole/int/o_57",
+      "flipName": false,
+      "to": "hdole/int/one32"
+    },
+    {
+      "basename": "m_149",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_260",
+      "codomain": "hdole/int/o_261",
+      "flipName": false,
+      "to": "hdole/int/minus_one64"
+    },
+    {
+      "basename": "m_153",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_268",
+      "codomain": "hdole/int/o_269",
+      "flipName": false,
+      "to": "hdole/int/minus_one128"
+    },
+    {
+      "basename": "m_159",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_288",
+      "codomain": "hdole/int/o_289",
+      "flipName": false,
+      "to": "hdole/int/minus_inf8"
+    },
+    {
+      "basename": "m_160",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_294",
+      "codomain": "hdole/int/o_295",
+      "flipName": false,
+      "to": "hdole/int/minus_inf16"
+    },
+    {
+      "basename": "m_161",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_296",
+      "codomain": "hdole/int/o_297",
+      "flipName": false,
+      "to": "hdole/int/minus_inf32"
+    },
+    {
+      "basename": "m_162",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_298",
+      "codomain": "hdole/int/o_299",
+      "flipName": false,
+      "to": "hdole/int/minus_inf64"
+    },
+    {
+      "basename": "m_163",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_304",
+      "codomain": "hdole/int/o_305",
+      "flipName": false,
+      "to": "hdole/int/minus_infin128"
+    },
+    {
+      "basename": "m_128",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_197",
+      "codomain": "hdole/int/o_198",
+      "flipName": false,
+      "to": "hdole/int/lshf8"
+    },
+    {
+      "basename": "m_138",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_245",
+      "codomain": "hdole/int/o_246",
+      "flipName": false,
+      "to": "hdole/int/lsh16"
+    },
+    {
+      "basename": "m_139",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_247",
+      "codomain": "hdole/int/o_248",
+      "flipName": false,
+      "to": "hdole/int/lsh32"
+    },
+    {
+      "basename": "m_143",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_249",
+      "codomain": "hdole/int/o_250",
+      "flipName": false,
+      "to": "hdole/int/lsh64"
+    },
+    {
+      "basename": "m_144",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_251",
+      "codomain": "hdole/int/o_252",
+      "flipName": false,
+      "to": "hdole/int/lsh128"
+    },
+    {
+      "basename": "m_164",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_306",
+      "codomain": "hdole/int/o_308",
+      "flipName": false,
+      "to": "hdole/int/div8"
+    },
+    {
+      "basename": "m_165",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_310",
+      "codomain": "hdole/int/o_312",
+      "flipName": false,
+      "to": "hdole/int/div16"
+    },
+    {
+      "basename": "m_166",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_314",
+      "codomain": "hdole/int/o_316",
+      "flipName": false,
+      "to": "hdole/int/div32"
+    },
+    {
+      "basename": "m_167",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_317",
+      "codomain": "hdole/int/o_318",
+      "flipName": false,
+      "to": "hdole/int/div64"
+    },
+    {
+      "basename": "m_168",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_319",
+      "codomain": "hdole/int/o_320",
+      "flipName": false,
+      "to": "hdole/int/div128"
+    },
+    {
+      "basename": "m_169",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_321",
+      "codomain": "hdole/int/o_322",
+      "flipName": false,
+      "to": "hdole/int/abs8"
+    },
+    {
+      "basename": "m_170",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_323",
+      "codomain": "hdole/int/o_324",
+      "flipName": false,
+      "to": "hdole/int/abs16"
+    },
+    {
+      "basename": "m_171",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_325",
+      "codomain": "hdole/int/o_326",
+      "flipName": false,
+      "to": "hdole/int/abs32"
+    },
+    {
+      "basename": "m_172",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_327",
+      "codomain": "hdole/int/o_328",
+      "flipName": false,
+      "to": "hdole/int/abs64"
+    },
+    {
+      "basename": "m_173",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/int/o_329",
+      "codomain": "hdole/int/o_330",
+      "flipName": false,
+      "to": "hdole/int/abs128"
+    }
+  ],
+  "elements": [
+    {
+      "description": "An 8-bit integer",
+      "basename": "Z8",
+      "prototype": "FiniteObject",
+      "properName": "&Zopf;&#8328",
+      "code": {
+        "cpp": "#include <stdint.h>\ntypedef int8_t %0;\n"
+      },
+      "size": 256
+    },
+    {
+      "basename": "Po{Z8,Z8}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z8",
+        "hdole/int/Z8"
+      ]
+    },
+    {
+      "description": "The 16-bit integers",
+      "basename": "Z16",
+      "prototype": "NamedObject",
+      "properName": "&Zopf;&#8321;&#8326;",
+      "code": {
+        "cpp": "#include <stdint.h>\ntypedef int16_t  %0;\n"
+      },
+      "source": "hdole/int/Po{Z8,Z8}oP"
+    },
+    {
+      "basename": "Id{Z16,Po{Z8,Z8}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Po{Z8,Z8}oP"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "basename": "Id{Po{Z8,Z8}oP,Z16}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "CPo{#1,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/#1",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "Po{Z16,Z16}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z16",
+        "hdole/int/Z16"
+      ]
+    },
+    {
+      "description": "The 32-bit integers",
+      "basename": "Z32",
+      "prototype": "NamedObject",
+      "properName": "&Zopf;₃₂",
+      "code": {
+        "cpp": "#include <stdint.h>\ntypedef int32_t %0;\n"
+      },
+      "source": "hdole/int/Po{Z16,Z16}oP"
+    },
+    {
+      "basename": "Id{Z32,Po{Z16,Z16}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Po{Z16,Z16}oP"
+    },
+    {
+      "basename": "Id{Po{Z16,Z16}oP,Z32}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "Po{Z32,Z32}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z32",
+        "hdole/int/Z32"
+      ]
+    },
+    {
+      "description": "The 64-bit integers",
+      "basename": "Z64",
+      "prototype": "NamedObject",
+      "properName": "&Zopf;&#x2086;&#x2084;",
+      "code": {
+        "cpp": "#include <stdint.h>\ntypedef int64_t %0;\n"
+      },
+      "source": "hdole/int/Po{Z32,Z32}oP"
+    },
+    {
+      "basename": "Id{Z64,Po{Z32,Z32}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Po{Z32,Z32}oP"
+    },
+    {
+      "basename": "Id{Po{Z32,Z32}oP,Z64}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "Po{Z64,Z64}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z64",
+        "hdole/int/Z64"
+      ]
+    },
+    {
+      "description": "The 128-bit unsigned numbers",
+      "basename": "Z128",
+      "prototype": "NamedObject",
+      "properName": "&Zopf;&#x2081;&#x2082;&#x2088;",
+      "code": {
+        "cpp": "#include <stdint.h>\ntypedef __int128_t %0;\n"
+      },
+      "source": "hdole/int/Po{Z64,Z64}oP"
+    },
+    {
+      "basename": "Id{Z128,Po{Z64,Z64}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/Po{Z64,Z64}oP"
+    },
+    {
+      "basename": "Id{Po{Z64,Z64}oP,Z128}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "CPo{Z16,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Z16",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Z64,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Z64",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Z32,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Z32",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Z8,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Z8",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Z128,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Z128",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "Po{Z128,Z128}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z128",
+        "hdole/int/Z128"
+      ]
+    },
+    {
+      "basename": "Po{Z16,Z8}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z16",
+        "hdole/int/Z8"
+      ]
+    },
+    {
+      "basename": "Po{Z32,Z8}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z32",
+        "hdole/int/Z8"
+      ]
+    },
+    {
+      "basename": "Po{Z64,Z8}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z64",
+        "hdole/int/Z8"
+      ]
+    },
+    {
+      "basename": "Po{Z128,Z8}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Z128",
+        "hdole/int/Z8"
+      ]
+    },
+    {
+      "basename": "Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Po{Z8,Z8}oP",
+        "hdole/int/Po{Z8,Z8}oP"
+      ]
+    },
+    {
+      "basename": "CPo{Po{Z8,Z8}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Po{Z8,Z8}oP",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Po{Z16,Z16}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Po{Z16,Z16}oP",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Po{Z32,Z32}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Po{Z32,Z32}oP",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Po{Z64,Z64}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Po{Z64,Z64}oP",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "basename": "CPo{Po{Z128,Z128}oP,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Po{Z128,Z128}oP",
+        "hdole/int/#1"
+      ]
+    },
+    {
+      "description": "The 64-bit zero",
+      "basename": "zero64",
+      "prototype": "Morphism",
+      "properName": "0",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "The 64-bit one",
+      "basename": "one64",
+      "prototype": "Morphism",
+      "properName": "1",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "The maximum safe integer",
+      "basename": "inf64",
+      "prototype": "Morphism",
+      "properName": "&infin;",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Number.MAX_SAFE_INTEGER;\n}\n",
+        "cpp": "%0 = 0x7fffffffffffffff;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Addition of two integers with rollover",
+      "basename": "add64",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] + args[1];\n}\n",
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Is the first 64-bit integer less than the second",
+      "basename": "lt64",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] < args[1];\n}\n",
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the first integer less than or equal to the second",
+      "basename": "lte64",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] <= args[1];\n}\n",
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "compare two 64-bit integers for equality",
+      "basename": "equ128",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] === args[1];\n}\n",
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Sixteen bit zero",
+      "basename": "zero16",
+      "prototype": "Morphism",
+      "properName": "\n\n0",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Sixteen bit one",
+      "basename": "minus_one16",
+      "prototype": "Morphism",
+      "properName": "-1",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
+        "cpp": "%0 = -1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Max sixteen bit number 65535",
+      "basename": "inf16",
+      "prototype": "Morphism",
+      "properName": "&infin;",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 65535;\n}\n",
+        "cpp": "%0 = 0x7fff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Addition of two 16-bit integers with rollover",
+      "basename": "add16",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Mulitiplication of two 16-bit integers",
+      "basename": "mult16",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Bit-wise and of two 16-bit integers",
+      "basename": "and16",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Bit-wise or of two 16-bit integers",
+      "basename": "or16",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Bit-wise exclusive or of two 16-bit integers",
+      "basename": "xor16",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Modulus of one 16-bit integer of the other, or an exception",
+      "basename": "mod16",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "description": "Is the 16-bit integer less than to the second",
+      "basename": "lt16",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the 16-bit integer less than or equal to the second",
+      "basename": "lte16",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "The successor function for 64-bit integers",
+      "basename": "succ64",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "%1 = %0++;// TODO exception"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "Decrement function for integers",
+      "basename": "decr",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%1 = %0--;// TODO exception"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "Test for equality of two 16-bit integers",
+      "basename": "Z16_equals",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "32-bit zero",
+      "basename": "zero32",
+      "prototype": "Morphism",
+      "properName": "0",
+      "code": {
+        "cpp": "%0 = 0;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "The number one",
+      "basename": "minus_one32",
+      "prototype": "Morphism",
+      "properName": "-1",
+      "code": {
+        "cpp": "%0 = -1;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "Z82Z16",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "Z162Z32",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "Z322Z64",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "succ32",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "%1 = %0++;// TODO exception"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "decr32",
+      "prototype": "Morphism",
+      "properName": "decr",
+      "code": {
+        "cpp": "%1 = %0--;// TODO exception"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "inf32",
+      "prototype": "Morphism",
+      "properName": "∞",
+      "code": {
+        "cpp": "%0 = 0x7fffffff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "succ16",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "%1 = %0++;// TODO exception"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "description": "Zero for unsigned eight bit numbers",
+      "basename": "zero8",
+      "prototype": "Morphism",
+      "properName": "0",
+      "code": {
+        "cpp": "%0 = 0;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "One in the eight bit unsigned numbers",
+      "basename": "minus_one8",
+      "prototype": "Morphism",
+      "properName": "-1",
+      "code": {
+        "cpp": "%0 = -1;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "The maximum safe unsigned eight bit number",
+      "basename": "inf8",
+      "prototype": "Morphism",
+      "properName": "∞",
+      "code": {
+        "cpp": "%0 = 0x7f;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Decrement an eight bit unsigned number.",
+      "basename": "decr8",
+      "prototype": "Morphism",
+      "properName": "decr",
+      "code": {
+        "cpp": "%1 = %0--;// TODO exception"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "The successor for eight bit unsigned numbers.",
+      "basename": "succ8",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "%1 = %0++;// TODO exception"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "The decrement of a sixteen bit unsigned number.",
+      "basename": "decr16",
+      "prototype": "Morphism",
+      "properName": "decr",
+      "code": {
+        "cpp": "%1 = %0--;// TODO exception"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "description": "Addition of two 32 bit unsigned numbers",
+      "basename": "add32",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Addition of eight bit unsigned numbers",
+      "basename": "add8",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Subtraction of two 32 bit numbers",
+      "basename": "sub32",
+      "prototype": "Morphism",
+      "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Addition with carry",
+      "basename": "add16c",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "description": "Addition with carry",
+      "basename": "add8c",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "Multiplication of two 64-bit numbers",
+      "basename": "mult64",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "description": "Multiplication of two unsigned 32-bit numbers",
+      "basename": "mult32",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Subtraction of two 64-bit unsigned numbers",
+      "basename": "sub64",
+      "prototype": "Morphism",
+      "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Subtraction of two 64-bit numbers with underflow",
+      "basename": "sub64u",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "Addition of two 64-bit numbers with overflow",
+      "basename": "add64o",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "Subtraction of two 32-bit unsigned numbers with underflow",
+      "basename": "sub32u",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "description": "Subtraction of two 8-bit numbers",
+      "basename": "sub8",
+      "prototype": "Morphism",
+      "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Subtraction of two 8-bit numbers with underflow",
+      "basename": "sub8u",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "Multiplication of two 8-bit unsigned numbers",
+      "basename": "mult8",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Bit-wise and of two 8-bit unsigned numbers",
+      "basename": "and8",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Bit-wise or of two unsigned numbers",
+      "basename": "or8",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "zero128",
+      "prototype": "Morphism",
+      "properName": "0",
+      "code": {
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "one128",
+      "prototype": "Morphism",
+      "properName": "1",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "inf128",
+      "prototype": "Morphism",
+      "properName": "&infin;",
+      "code": {
+        "cpp": "%0 = 0x7fffffffffffffffffffffffffffffff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "succ128",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "%1 = %0++;// TODO exception"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "decr128",
+      "prototype": "Morphism",
+      "properName": "decr",
+      "code": {
+        "cpp": "%1 = %0--;// TODO exception"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "add127",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "add32c",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "add128",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "sub128c",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "Fa{Z128,Z64_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/Z64",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "and32",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "and64",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "and128",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "N62toZ128",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "Fa{Z16,Z8_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Z8",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Fa{Z32,Z16_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Z16",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Fa{Z64,Z32_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Z32",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Id{Z8}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "xor8",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "mod8",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "basename": "equ8",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "equ32",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt8",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt32",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "or32",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "or64",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "or128",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "lte32",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "mod32",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "xor32",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "lte128",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "xor64",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "mod64",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "basename": "xor128",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "mod128",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "lt128",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt8",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gteq8",
+      "prototype": "Morphism",
+      "properName": "gteq",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh8",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Bit-wise not operation of an eight bit number",
+      "basename": "not8",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "sub128",
+      "prototype": "Morphism",
+      "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "sub16",
+      "prototype": "Morphism",
+      "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "sub16c",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "basename": "mult128c",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "not16",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "not32",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "not64",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "not128",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "Fa{Z128,Z64_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/Z64",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "Fa{Z64,Z64_-1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
+      "basename": "Fa{Z32,Z32_-1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
+      "basename": "Fa{Z16,Z16_-1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
+      "basename": "Fa{Z8,Z8_-1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
+      "basename": "Fa{Z64,Z32_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Z32",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "Fa{Z32,Z16_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Z16",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "Fa{Z16,Z8_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Z8",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "max8",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "min8",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "gt16",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt32",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt64",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt128",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "Id{Z16}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "Id{Z32}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "Id{Z64}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "gte16",
+      "prototype": "Morphism",
+      "properName": "gteq",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lte8",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gteq32",
+      "prototype": "Morphism",
+      "properName": "gteq",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gteq64",
+      "prototype": "Morphism",
+      "properName": "gteq",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gteq128",
+      "prototype": "Morphism",
+      "properName": "gteq",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh16",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z8}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh32",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z8}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh64",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z8}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh128",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z8}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "max16",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "min16",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "max32",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "min32",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "max64",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "min64",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "max128",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "min128",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "div8",
+      "prototype": "Morphism",
+      "properName": "div",
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Po{Z8,Z8}oP,#1}oPC"
+    },
+    {
+      "basename": "div16",
+      "prototype": "Morphism",
+      "properName": "div",
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Po{Z16,Z16}oP,#1}oPC"
+    },
+    {
+      "basename": "div32",
+      "prototype": "Morphism",
+      "properName": "div",
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Po{Z32,Z32}oP,#1}oPC"
+    },
+    {
+      "basename": "div64",
+      "prototype": "Morphism",
+      "properName": "div",
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Po{Z64,Z64}oP,#1}oPC"
+    },
+    {
+      "basename": "div128",
+      "prototype": "Morphism",
+      "properName": "div",
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Po{Z128,Z128}oP,#1}oPC"
+    },
+    {
+      "basename": "one8",
+      "prototype": "Morphism",
+      "properName": "1",
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "one16",
+      "prototype": "Morphism",
+      "properName": "1",
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "one32",
+      "prototype": "Morphism",
+      "properName": "1",
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "minus_one64",
+      "prototype": "Morphism",
+      "properName": "-1",
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "minus_one128",
+      "prototype": "Morphism",
+      "properName": "-1",
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "minus_inf8",
+      "prototype": "Morphism",
+      "properName": "-&infin;",
+      "code": {
+        "cpp": "%0 = 0xff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "minus_inf16",
+      "prototype": "Morphism",
+      "properName": "-&infin;",
+      "code": {
+        "cpp": "%0 = 0xffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "minus_inf32",
+      "prototype": "Morphism",
+      "properName": "-&infin;",
+      "code": {
+        "cpp": "%0 = 0xffffffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "minus_inf64",
+      "prototype": "Morphism",
+      "properName": "-&infin;",
+      "code": {
+        "cpp": "%0 = 0xffffffffffffffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "minus_infin128",
+      "prototype": "Morphism",
+      "properName": "-&infin;",
+      "code": {
+        "cpp": "%0 = 0xffffffffffffffffffffffffffffffff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lshf8",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh16",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "domain": "hdole/int/Po{Z16,Z8}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh32",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "domain": "hdole/int/Po{Z32,Z8}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh64",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "domain": "hdole/int/Po{Z64,Z8}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh128",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "domain": "hdole/int/Po{Z128,Z8}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "abs8",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "basename": "abs16",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "abs32",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/nat/N32"
+    },
+    {
+      "basename": "abs64",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "abs128",
+      "prototype": "Morphism",
+      "properName": "abs",
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "Po{Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP,Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/int/Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP",
+        "hdole/int/Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP"
+      ]
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1623834401111,
+  "version": 0
+}
