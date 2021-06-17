@@ -818,8 +818,8 @@ class R
 					diagram.makeSVG();
 					diagram.setPlacement(diagram.getPlacement(), false);
 				}));
-				if (R.user.name === 'Anon')
-					D.EmitLoginEvent();	// Anon login
+//				if (R.user.name === 'Anon')
+//					D.EmitLoginEvent();	// Anon login
 				if (isGUI)
 				{
 					R.LoadScript('js/javascript.js');
@@ -945,6 +945,7 @@ class R
 	}
 	static async DownloadDiagram(name, fn = null, e = null)
 	{
+if (name==='hdole/MySQL')return null;	// TODO get rid of this
 		let diagram = null;
 		const cloudDiagrams = [...R.GetReferences(name)].reverse().filter(d => R.LocalTimestamp(d) === 0);
 		if (cloudDiagrams.length > 0)
@@ -955,7 +956,7 @@ class R
 			{
 				const promises = downloads.map(url => fetch(url));
 				const responses = await Promise.all(promises);
-				const jsons = await Promise.all(responses.map(async res => await res.json()));
+				const jsons = await Promise.all(responses.map(async res => await res.ok ? res.json() : {}));
 				diagrams = jsons.map(json =>
 				{
 					const diagram = new Diagram(R.GetUserDiagram(json.user), json);
@@ -1261,6 +1262,17 @@ class R
 		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
 		fetch(R.getURL('refcnts'), {method:'POST', body:JSON.stringify({user:R.user.name}), headers}).then(response => response.json()).then(
 		{
+		}).catch(err => D.RecordError(err));
+	}
+	static rewriteDiagrams()
+	{
+		const headers = {'Content-Type':'application/json;charset=utf-8', token:R.user.token};
+		fetch(R.getURL('rewrite'), {method:'POST', body:JSON.stringify({user:R.user.name}), headers}).then(response =>
+		{
+			if (response.ok)
+				response.json().then(json => D.statusbar.show(null, json.join('\n')));
+			else
+				throw 'error rewriting diagrams: ' + response.statusText;
 		}).catch(err => D.RecordError(err));
 	}
 	static upload(e, diagram, local, fn)
@@ -3422,6 +3434,7 @@ class D
 			switch(args.command)
 			{
 				case 'load':
+					diagram.purge();
 					diagram.loadCells();
 					break;
 				case 'default':
@@ -3514,7 +3527,8 @@ class D
 		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
 		window.addEventListener('Object', D.UpdateObjectDisplay);
 		window.addEventListener('Text', D.UpdateTextDisplay);
-		D.topSVG.addEventListener('mousemove', D.Mousemove);
+//		D.topSVG.addEventListener('mousemove', D.Mousemove);
+		window.addEventListener('mousemove', D.Mousemove);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
 		D.topSVG.addEventListener('drop', D.Drop, true);
@@ -6319,6 +6333,7 @@ class SettingsPanel extends Panel
 		{
 			const tbl = this.elt.querySelector('#settings-table');
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
+			tbl.appendChild(H3.tr(	H3.td(H3.button('Rewrite diagrams', '.textButton', {onclick:_ => Cat.R.rewriteDiagrams()}), {colspan:2})));
 		}
 		this.defaultsElt = document.getElementById('settings-defaults');
 		D.RemoveChildren(this.defaultsElt);
@@ -10653,6 +10668,7 @@ class Category extends CatObject
 	process(diagram, data)
 	{
 		const sync = R.sync;
+		let errMsg = '';
 		const procElt = (args, ndx) =>
 		{
 			if (!args || !('prototype' in args))
@@ -10669,7 +10685,6 @@ class Category extends CatObject
 		try
 		{
 			R.sync = false;
-			let errMsg = '';
 			data.filter((args, ndx) =>
 			{
 				switch(args.prototype)
@@ -10681,7 +10696,9 @@ class Category extends CatObject
 					case 'NamedObject':
 					case 'DiagramObject':
 					case 'DiagramText':
+					case 'TensorObject':
 						procElt(args, ndx);
+						break;
 				}
 			});
 			data.filter((args, ndx) =>
@@ -10703,6 +10720,7 @@ class Category extends CatObject
 					case 'Distribute':
 					case 'Dedistribute':
 						procElt(args, ndx);
+						break;
 				}
 			});
 			if (errMsg !== '')
@@ -12004,7 +12022,7 @@ class Cell extends DiagramCore
 	{
 		this.getObjects().map(o => o.nodes.delete(this));
 		this.diagram.domain.cells.delete(this.signature);
-		this.removeSVG();
+		isGUI && this.removeSVG();
 	}
 	getXY()
 	{
@@ -13699,6 +13717,16 @@ class Diagram extends Functor
 		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Diagram')));
 		return help;
 	}
+	purge()
+	{
+		let cnt = 0;
+		do
+		{
+//			[...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => console.log('dropping element', e.name));	// TODO
+			cnt = [...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => e.decrRefcnt()).length;
+		}
+		while(cnt > 0)
+	}
 	json()
 	{
 		const a = super.json();
@@ -13712,8 +13740,8 @@ class Diagram extends Functor
 			if (elt.description === '')
 				delete elt.description;
 		});
-		a.elements = [...this.elements.values()].filter(e => e.canSave() && e.refcnt > 0).map(e => e.json());
-		[...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => console.log('dropping element', e.name));	// TODO
+		this.purge();
+		a.elements = [...this.elements.values()].filter(e => e.canSave()).map(e => e.json());
 		const procJson = elt =>
 		{
 			if (elt.diagram === this.name)
