@@ -64,6 +64,17 @@ app.use(morgan('combined', {stream:accessLogStream}));
 //
 Error.stackTraceLimit = 30;
 //
+// HTTP status codes
+//
+const HTTP =
+{
+	OK:						200,
+	BAD_REQUEST:			400,
+	UNAUTHORIZED:			401,
+	INTERNAL_ERROR:			500,
+	INSUFFICIENT_STORAGE:	507,
+};
+//
 // user info cache
 //
 const userInfo = new Map();
@@ -118,33 +129,35 @@ function makeDbconSync(mysqlArgs)	// allows synchronous calls
 function mysqlKeepAlive()
 {
 	makeDbconSync(mysqlArgs);
-	dbcon.connect(err =>
+	dbcon.connect(error =>
 	{
-		if (err)
+		if (error)
 		{
-			log('Error on connection to mysql server', err);
+			log('Error on connection to mysql server', error);
 			setTimeout(mysqlKeepAlive, 2000);
 		}
 	});
-	dbcon.on('error', err =>
+	dbcon.on('error', error =>
 	{
-		log('Error from mysql server:', err);
-		if (err.code === 'PROTOCOL_CONNECTION_LOST')
+		log('Error from mysql server:', error);
+		if (error.code === 'PROTOCOL_CONNECTION_LOST')
 			mysqlKeepAlive();
 		else
-			throw err;
+			throw error;
 	});
 }
 
+/*
 function saveHTMLjs()
 {
 	Cat.R.SelectDiagram('hdole/HTML', diagram =>
 	{
 		const js = Cat.R.Actions.javascript.generateDiagram(diagram);
-		fs.writeFile('js/HTML.js', js, err => {if (err) throw err;});
+		fs.writeFile('js/HTML.js', js, error => {if (error) throw error;});
 		res.end('ok');
 	});
 }
+*/
 
 function getDiagramInfo(diagram)
 {
@@ -174,13 +187,13 @@ function saveDiagramPng(name, inbuf)
 	if (buf.length > 128 * 1024)
 		throw 'PNG file too large';
 	const pngFile = `public/diagram/${name}.png`;
-	fs.mkdir(path.dirname(pngFile), {recursive:true}, _ => fs.open(pngFile, 'w', (err, pngFD) =>
+	fs.mkdir(path.dirname(pngFile), {recursive:true}, _ => fs.open(pngFile, 'w', (error, pngFD) =>
 	{
-		if (err) throw err;
-		fs.write(pngFD, buf, 0, buf.length, (err, bytes, data) =>
+		if (error) throw error;
+		fs.write(pngFD, buf, 0, buf.length, (error, bytes, data) =>
 		{
-			if (err) throw err;
-			fs.close(pngFD, err => { if (err) throw err; });
+			if (error) throw error;
+			fs.close(pngFD, error => { if (error) throw error; });
 		});
 	}));
 }
@@ -208,9 +221,9 @@ ${jsName}(${args});
 //
 async function determineRefcnts()
 {
-	await dbcon.query('SELECT name,refs FROM Catecon.diagrams', (err, result) =>
+	await dbcon.query('SELECT name,refs FROM Catecon.diagrams', (error, result) =>
 	{
-		if (err) throw err;
+		if (error) throw error;
 		const refcnts = new Map();
 		result.forEach(row =>
 		{
@@ -222,7 +235,9 @@ async function determineRefcnts()
 			{
 				if (!refcnts.has(ref))
 					refcnts.set(ref, 0);
+				const cnt = 1 + refcnts.get(ref);
 				refcnts.set(ref, 1 + refcnts.get(ref));
+				Cat.R.catalog.get(ref).refcnt = cnt;
 			});
 		});
 		refcnts.forEach((cnt, ref) => dbcon.query(`UPDATE Catecon.diagrams SET refcnt=${cnt} WHERE name='${ref}';`));
@@ -271,7 +286,7 @@ function validate(req, res, fn)
 	if (typeof token === 'undefined')
 	{
 		console.log('*** no user token');
-		res.status(401).end('Error:  no token');
+		res.status(HTTP.UNAUTHORIZED).end('Error:  no token');
 		return;
 	}
 	Cat.R.user.token = token;
@@ -279,26 +294,26 @@ function validate(req, res, fn)
 	if (typeof decjwt === 'undefined' || decjwt === null)
 	{
 		console.log('*** no user jwt');
-		res.status(401).end('Error: no jwt');
+		res.status(HTTP.UNAUTHORIZED).end('Error: no jwt');
 		return;
 	}
 	if (decjwt.payload.aud !== process.env.AWS_APP_ID)
 	{
 		console.log(decjwt.payload.aud, process.env.AWS_APP_ID);
-		res.status(401).end({'Error':'bad app id'});
+		res.status(HTTP.UNAUTHORIZED).end({'Error':'bad app id'});
 		return;
 	}
 	const idURL = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}`;
 	if (decjwt.payload.iss !== idURL)
 	{
 		console.log('*** bad identity pool');
-		res.status(401).end('Error:  bad identity pool');
+		res.status(HTTP.UNAUTHORIZED).end('Error:  bad identity pool');
 		return false;
 	}
 	const key = JWK.keys.find(k => k.kid === decjwt.header.kid);
 	if (typeof key === 'undefined')
 	{
-		res.status(500).end('Error:  no key');
+		res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:'No key'}).end();
 		return;
 	}
 	const pem = jwkToPem(key);
@@ -318,9 +333,9 @@ function updateDiagramTable(name, info, fn)
 function updateSQLDiagramsByCatalog()
 {
 	// make local server match cloud
-	dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
+	dbcon.query('SELECT * FROM Catecon.diagrams', (error, diagrams) =>
 	{
-		if (err) throw err;
+		if (error) throw error;
 		const remaining = new Set(Cat.R.catalog.keys());
 		diagrams.map(info =>
 		{
@@ -328,11 +343,11 @@ function updateSQLDiagramsByCatalog()
 			{
 				const cloudInfo = Cat.R.catalog.get(info.name);
 				if (cloudInfo && cloudInfo.timestamp > info.timestamp)		// cloud is newer
-					updateDiagramTable(info.name, cloudInfo, (err, result) => err && console.log({err}));
+					updateDiagramTable(info.name, cloudInfo, (error, result) => error && console.log({error}));
 			}
 			remaining.delete(info.name);
 		});
-		remaining.forEach(name => updateDiagramTable(name, Cat.R.catalog.get(name), (err, result) => err && console.log({err})));
+		remaining.forEach(name => updateDiagramTable(name, Cat.R.catalog.get(name), (error, result) => error && console.log({error})));
 	});
 }
 
@@ -344,27 +359,27 @@ async function serve()
 {
 	try
 	{
-		dbcon.query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'Catecon';", (err, result) =>
+		dbcon.query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'Catecon';", (error, result) =>
 		{
-			if (err)
+			if (error)
 			{
-				console.log('info schema error', {err});
+				console.log('info schema error', {error});
 				process.exit();
 			}
 			if (result.length === 0)
 			{
-				fs.readFile('sql/Catecon.sql', (err, data) =>
+				fs.readFile('sql/Catecon.sql', (error, data) =>
 				{
-					if (err)
+					if (error)
 					{
-						console.log('readFile error', {err});
+						console.log('readFile error', {error});
 						process.exit();
 					}
-					dbcon.query(data.toString(), (err, result) =>
+					dbcon.query(data.toString(), (error, result) =>
 					{
-						if (err)
+						if (error)
 						{
-							console.log('mysql intialization for Catecon', {err});
+							console.log('mysql intialization for Catecon', {error});
 							process.exit();
 						}
 						Cat.R.Initialize(_ => require('./public/js/javascript.js'));
@@ -375,11 +390,11 @@ async function serve()
 			}
 			else
 			{
-				dbcon.query('SELECT * FROM Catecon.diagrams', (err, result) =>
+				dbcon.query('SELECT * FROM Catecon.diagrams', (error, result) =>
 				{
-					if (err)
+					if (error)
 					{
-						console.log('mysql intialization for Catecon', {err});
+						console.log('mysql intialization for Catecon', {error});
 						process.exit();
 					}
 					Cat.R.Initialize(_ =>
@@ -400,7 +415,7 @@ async function serve()
 				});
 			}
 		});
-		dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
+		dbcon.query('SELECT * FROM Catecon.diagrams', (error, diagrams) =>
 		{
 			diagrams.filter(d => !Cat.R.catalog.has(d.name)).map(d =>
 			{
@@ -416,16 +431,17 @@ async function serve()
 		{
 			try
 			{
-				dbcon.query('SELECT * FROM Catecon.diagrams', (err, diagrams) =>
+				dbcon.query('SELECT * FROM Catecon.diagrams', (error, diagrams) =>
 				{
-					if (err) throw err;
+					if (error) throw error;
 					res.end(JSON.stringify({cloudURL:Cat.R.local ? Cat.R.cloudURL : Cat.R.URL, diagrams}));
 				});
 			}
-			catch(err)
+			catch(error)
 			{
 				console.error('****** cannot fetch catalog');
-				res.status(500).send(err).end();
+//				res.status(HTTP.INTERNAL_ERROR).send(error).end();
+				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 			}
 		});
 
@@ -441,11 +457,12 @@ async function serve()
 			{
 				log('/updateCatalog', req.user);
 				Cat.R.FetchCatalog(_ => updateSQLDiagramsByCatalog());
-				res.status(200).end();
+				res.status(HTTP.OK).end();
 			}
-			catch(err)
+			catch(error)
 			{
-				res.status(500).send(err).end();
+//				res.status(HTTP.INTERNAL_ERROR).send(error).end();
+				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 			}
 		});
 
@@ -456,18 +473,18 @@ async function serve()
 			log('search', req.query.search);
 			const search = dbcon.escape(`%${req.query.search}%`);
 			const sql = `SELECT * FROM Catecon.diagrams WHERE name LIKE ${search} OR properName LIKE ${search} ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT}`;
-			dbcon.query(sql, (err, result) =>
+			dbcon.query(sql, (error, result) =>
 			{
-				if (err) throw err;
+				if (error) throw error;
 				res.end(JSON.stringify(result));
 			});
 		});
 
 		app.use('/recent', (req, res) =>
 		{
-			dbcon.query(`SELECT * FROM Catecon.diagrams ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT};`, (err, result) =>
+			dbcon.query(`SELECT * FROM Catecon.diagrams ORDER BY timestamp DESC LIMIT ${process.env.CAT_SEARCH_LIMIT};`, (error, result) =>
 			{
-				if (err) throw err;
+				if (error) throw error;
 				res.end(JSON.stringify(result));
 			});
 		});
@@ -493,29 +510,31 @@ async function serve()
 			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 			if (req.method !== 'OPTIONS')
 			{
-				validate(req, res, (err, decoded) =>
+				validate(req, res, (error, decoded) =>
 				{
-					if (err)
+					if (error)
 					{
 						console.log('*** cannot validate', req.user);
-						return res.status(401).send(err);
+						return res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:error});
 					}
 					req.user = decoded['cognito:username'];
 					if (req.body.user !== req.user)
 					{
 						console.log('*** user mismatch', req.user, req.body.user);
-						return res.status(401).send('user mismatch').end();
+//						return res.status(HTTP.UNAUTHORIZED).send('user mismatch').end();
+						return res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'user mismatch'});
 					}
 					const user = req.body.user;
 					if (!userInfo.has(user))
 					{
 						const sql = `SELECT * FROM Catecon.users WHERE name = '${user}';`;
-						dbcon.query(sql, (err, result) =>
+						dbcon.query(sql, (error, result) =>
 						{
-							if (err)
+							if (error)
 							{
-								res.status(500).end();
-								log('user info error', {err});
+//								res.status(HTTP.INTERNAL_ERROR).end();
+								res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
+								log('user info error', {error});
 								return;
 							}
 							const userData = result[0];
@@ -523,12 +542,13 @@ async function serve()
 							// get number of diagrams user currently has
 							//
 							const sql = 'SELECT COUNT (*) FROM Catecon.diagrams WHERE user = ?;';
-							dbcon.query(sql, [req.body.user], (err, result) =>
+							dbcon.query(sql, [req.body.user], (error, result) =>
 							{
-								if (err)
+								if (error)
 								{
-									log('select error', {err});
-									res.status(500).end();
+									log('select error', {error});
+//									res.status(HTTP.INTERNAL_ERROR).end();
+									res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 									return;
 								}
 								userData.diagramCount = result[0]['COUNT (*)'];
@@ -548,12 +568,13 @@ async function serve()
 		//
 		app.post('/userInfo', (req, res) =>
 		{
-			dbcon.query('SELECT * FROM Catecon.users WHERE name=?;', [req.user], (err, result) =>
+			dbcon.query('SELECT * FROM Catecon.users WHERE name=?;', [req.user], (error, result) =>
 			{
-				if (err)
+				if (error)
 				{
-					log('select user error', {err});
-					res.status(500).end();
+					log('select user error', {error});
+//					res.status(HTTP.INTERNAL_ERROR).end();
+					res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 					return;
 				}
 				res.json(result[0]).end();
@@ -572,7 +593,8 @@ async function serve()
 			if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
 			{
 				reqlog(req, 'upload: bad request', req.body);
-				res.status(401).send('missing info in body').end();
+//				res.status(HTTP.UNAUTHORIZED).send('missing info in body').end();
+				res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'missing info in body'}).end();
 				return;
 			}
 			reqlog(req, 'upload', req.body.diagram.name);
@@ -585,13 +607,13 @@ async function serve()
 				if (req.body.user !== diagram.user)
 				{
 					console.log('*** unauthorized req.body.user', req.body.user, 'diagram.user', diagram.user);
-					return res.status(401).send('diagram owner not the validated user');
+					return res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'diagram owner not the validated user'});
 				}
 				// diagram name must be first of diagram name
 				if (diagram.name.split('/')[0] !== req.body.user)
 				{
 					console.log('*** name mismatch req.body.user', req.body.user, 'diagram.user', diagram.user);
-					return res.status(401).send('diagram user and name mismatch').end();
+					return res.status(HTTP.UNAUTHORIZED).send('diagram user and name mismatch').end();
 				}
 			}
 			const name = diagram.name;
@@ -613,22 +635,22 @@ async function serve()
 				{
 					const oldrefs = Cat.U.Clone(info.references);
 					Cat.R.catalog.set(name, diagram);
-					updateDiagramTable(name, diagram, (err, result) =>
+					updateDiagramTable(name, diagram, (error, result) =>
 					{
-						if (err)
+						if (error)
 						{
-							console.log({err});
-							res.status(500).send('cannot update diagram info').end();
+							console.log({error});
+							res.status(HTTP.INTERNAL_ERROR).send('cannot update diagram info').end();
 							return;
 						}
 						finalProcessing();
 						updateRefcnts(oldrefs, diagram.references);
-						res.status(200).end();
+						res.status(HTTP.OK).end();
 					});
 				}
 				if (png)
 					saveDiagramPng(name, png);
-				res.status(200).end();
+				res.status(HTTP.OK).end();
 				return;
 			}
 			else
@@ -639,7 +661,7 @@ async function serve()
 				//
 				if (user.diagramCount >= process.env.CAT_DIAGRAM_USER_LIMIT)
 				{
-					res.status(507).end('too many diagrams');
+					res.status(HTTP.INSUFFICIENT_STORAGE).end('too many diagrams');
 					return;
 				}
 				//
@@ -647,12 +669,12 @@ async function serve()
 				// no need to set refcnt; it must be 0
 				//
 				const sql = 'INSERT into Catecon.diagrams (name, basename, user, description, properName, refs, timestamp, codomain) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain], (err, result) =>
+				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain], (error, result) =>
 				{
-					if (err)
+					if (error)
 					{
-						console.log({err});
-						res.status(500).send('cannot insert new diagram').end();
+						console.log({error});
+						res.status(HTTP.INTERNAL_ERROR).send('cannot insert new diagram').end();
 						return;
 					}
 					const info = Cat.Diagram.GetInfo(diagram);
@@ -663,7 +685,7 @@ async function serve()
 					//
 					user.diagramCount++;
 					finalProcessing();
-					res.status(200).end();
+					res.status(HTTP.OK).end();
 				});
 			}
 		});
@@ -674,16 +696,16 @@ async function serve()
 			if (name.includes('..'))
 			{
 				console.log('/delete bad name', name);
-				res.status(400).send('bad name').end();
+				res.status(HTTP.BAD_REQUEST).send('bad name').end();
 				return;
 			}
 			Cat.R.catalog.delete(name);
-			dbcon.query(`SELECT user,refcnt FROM Catecon.diagrams WHERE name=${dbcon.escape(name)};`, (err, result) =>
+			dbcon.query(`SELECT user,refcnt FROM Catecon.diagrams WHERE name=${dbcon.escape(name)};`, (error, result) =>
 			{
-				if (err)
+				if (error)
 				{
-					console.log({err});
-					res.status(500).send(err).end();
+					console.log({error});
+					res.status(HTTP.INTERNAL_ERROR).send(error).end();
 					return;
 				}
 				if (result.length > 0)		// found it
@@ -691,40 +713,42 @@ async function serve()
 					if (req.user !== result[0].user)
 					{
 						console.log('*** user not owner', req.user, result[0].user);
-						res.status(401).send('user not owner').end();
+						res.status(HTTP.UNAUTHORIZED).send('user not owner').end();
 						return;
 					}
 					if (result[0].refcnt > 0)
 					{
 						console.log('diagram is referenced', result[0].refcnt);
-						res.status(400).send('diagram is referenced').end();
+						res.status(HTTP.BAD_REQUEST).send('diagram is referenced').end();
 						return;
 					}
-					dbcon.query('DELETE FROM Catecon.diagrams WHERE name=?', [name], (err, result) =>
+					dbcon.query('DELETE FROM Catecon.diagrams WHERE name=?', [name], (error, result) =>
 					{
-						if (err)
+						if (error)
 						{
-							console.log({err});
-							res.status(500).send(err).end();
+							console.log({error});
+							res.status(HTTP.INTERNAL_ERROR).send(error).end();
 							return;
 						}
 						console.log('deleted from database', name);
 						const dgrmFile = `public/diagram/${name}`;
-						fs.unlink(`${dgrmFile}.json`, err => {});
-						fs.unlink(`${dgrmFile}.png`, err => {});
-						res.status(200).end();
+						fs.unlink(`${dgrmFile}.json`, error => {});
+						fs.unlink(`${dgrmFile}.png`, error => {});
+						res.status(HTTP.OK).end();
 					});
 				}
 				else
-					res.status(200).end();
+					res.status(HTTP.OK).end();
 			});
 		});
 
+		/*
 		app.use('/UpdateHTMLjs', (req, res) =>
 		{
 			reqlog(req, 'UpdateHTMLjs');
 			saveHTMLjs();
 		});
+		*/
 
 		app.use('/refcnts', (req, res) =>
 		{
@@ -732,11 +756,49 @@ async function serve()
 			{
 				determineRefcnts();
 			}
-			catch(err)
+			catch(error)
 			{
-				res.status(500).send(err).end();
+				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 			}
-			res.send({}).end();
+//			res.send({}).end();
+			res.status(HTTP.OK).end();
+		});
+
+		app.use('/rewrite', (req, res) =>
+		{
+			let diagrams = [];
+			if (hasPermission(req.body.user, 'admin'))
+			{
+				try
+				{
+					diagrams = [...Cat.R.catalog.values()].filter(info => info.user !== 'sys' && Cat.R.CanLoad(info.name) && !Cat.R.$CAT.elements.has(info.name));
+					const loaded = new Set();
+					const loadit = info =>
+					{
+						const refs = Cat.R.GetReferences(info.name);
+						refs.delete(info.name);
+						[...refs].reverse().map(ref => !loaded.has(info.name) && loadit(Cat.R.catalog.get(ref)));
+						if (!loaded.has(info.name))
+						{
+							const diagram = Cat.R.LoadDiagram(info.name);
+							if (diagram)
+							{
+								console.log('read diagram', diagram.name);
+								loaded.add(info.name);
+							}
+							else
+								console.log('error: cannot read diagram', info.name);
+						}
+					};
+					diagrams.map(info => loadit(info));
+				}
+				catch(error)
+				{
+					res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
+					return;
+				}
+			}
+			res.status(HTTP.OK).json(diagrams.map(d => d.name)).end();
 		});
 
 		// catch 404 and forward to error handler
@@ -746,21 +808,21 @@ async function serve()
 		});
 
 		// error handler
-		app.use(function(err, req, res, next)
+		app.use(function(error, req, res, next)
 		{
-			console.log('error handler', {err});
+			console.log('error handler', {error});
 			// set locals, only providing error in development
-			res.locals.message = err.message;
-			res.locals.error = req.app.get('env') === 'development' ? err : {};
+			res.locals.message = error.message;
+			res.locals.error = req.app.get('env') === 'development' ? error : {};
 			// render the error page
-			res.status(err.status || 500);
+			res.status(error.status || HTTP.INTERNAL_ERROR);
 			res.render('error');
 		});
 
 	}
-	catch(err)
+	catch(error)
 	{
-		console.error(err);
+		console.error(error);
 	}
 }	// end serve
 
