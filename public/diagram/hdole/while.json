@@ -51,7 +51,7 @@
       "domain": "hdole/while/o_13",
       "codomain": "hdole/while/o_10",
       "flipName": true,
-      "to": "hdole/while/Fa{S,hdole/while/S_-1}aF"
+      "to": "hdole/while/Fa{S,S_-1}aF"
     },
     {
       "basename": "m_8",
@@ -76,7 +76,7 @@
       "domain": "hdole/while/o_12",
       "codomain": "hdole/while/o_11",
       "flipName": false,
-      "to": "hdole/while/Fa{S,hdole/while/S_-1}aF"
+      "to": "hdole/while/Fa{S,S_-1}aF"
     },
     {
       "basename": "o_14",
@@ -281,7 +281,7 @@
       "codomain": "hdole/while/S"
     },
     {
-      "basename": "Fa{S,hdole/while/S_-1}aF",
+      "basename": "Fa{S,S_-1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/while/S",
       "codomain": "hdole/while/#1",

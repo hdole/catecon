@@ -116,7 +116,7 @@
       }
     },
     {
-      "description": "ratio of a circle&#39;s circumference to its diameter",
+      "description": "Ratio of a circle&#39;s circumference to its diameter",
       "basename": "t_4",
       "prototype": "DiagramText",
       "xy": {
@@ -1505,6 +1505,168 @@
       }
     },
     {
+      "basename": "o_94",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 200,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_140",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 400,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_141",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 600,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_142",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_143",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 1000,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_144",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1900
+      }
+    },
+    {
+      "basename": "o_145",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_146",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_147",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 600,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_148",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_149",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 1000,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_150",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_151",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 600,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_152",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 800,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_153",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 1000,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_154",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_155",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": 1000,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "o_156",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 1700
+      }
+    },
+    {
       "basename": "m_0",
       "prototype": "DiagramMorphism",
       "domain": "hdole/floats/o_1",
@@ -2049,66 +2211,12 @@
       "to": "hdole/floats/min128"
     },
     {
-      "basename": "o_94",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N32",
-      "xy": {
-        "x": 200,
-        "y": 1500
-      }
-    },
-    {
-      "basename": "o_140",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F32",
-      "xy": {
-        "x": 400,
-        "y": 1500
-      }
-    },
-    {
       "basename": "m_68",
       "prototype": "DiagramMorphism",
       "domain": "hdole/floats/o_94",
       "codomain": "hdole/floats/o_140",
       "flipName": false,
       "to": "hdole/floats/N32toF32"
-    },
-    {
-      "basename": "o_141",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Z32",
-      "xy": {
-        "x": 600,
-        "y": 1900
-      }
-    },
-    {
-      "basename": "o_142",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 800,
-        "y": 1900
-      }
-    },
-    {
-      "basename": "o_143",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Z32",
-      "xy": {
-        "x": 1000,
-        "y": 1900
-      }
-    },
-    {
-      "basename": "o_144",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F128",
-      "xy": {
-        "x": 1200,
-        "y": 1900
-      }
     },
     {
       "basename": "m_69",
@@ -2127,66 +2235,12 @@
       "to": "hdole/floats/Z32toF128"
     },
     {
-      "basename": "o_145",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Z64",
-      "xy": {
-        "x": 1000,
-        "y": 2000
-      }
-    },
-    {
-      "basename": "o_146",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F128",
-      "xy": {
-        "x": 1200,
-        "y": 2000
-      }
-    },
-    {
       "basename": "m_71",
       "prototype": "DiagramMorphism",
       "domain": "hdole/floats/o_145",
       "codomain": "hdole/floats/o_146",
       "flipName": false,
       "to": "hdole/floats/Z64toF128"
-    },
-    {
-      "basename": "o_147",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N32",
-      "xy": {
-        "x": 600,
-        "y": 1500
-      }
-    },
-    {
-      "basename": "o_148",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 800,
-        "y": 1500
-      }
-    },
-    {
-      "basename": "o_149",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N32",
-      "xy": {
-        "x": 1000,
-        "y": 1500
-      }
-    },
-    {
-      "basename": "o_150",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F128",
-      "xy": {
-        "x": 1200,
-        "y": 1500
-      }
     },
     {
       "basename": "m_72",
@@ -2205,24 +2259,6 @@
       "to": "hdole/floats/N32toF128"
     },
     {
-      "basename": "o_151",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 600,
-        "y": 1600
-      }
-    },
-    {
-      "basename": "o_152",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 800,
-        "y": 1600
-      }
-    },
-    {
       "basename": "m_74",
       "prototype": "DiagramMorphism",
       "domain": "hdole/floats/o_151",
@@ -2231,48 +2267,12 @@
       "to": "hdole/floats/N64toF64"
     },
     {
-      "basename": "o_153",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 1000,
-        "y": 1600
-      }
-    },
-    {
-      "basename": "o_154",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F128",
-      "xy": {
-        "x": 1200,
-        "y": 1600
-      }
-    },
-    {
       "basename": "m_75",
       "prototype": "DiagramMorphism",
       "domain": "hdole/floats/o_153",
       "codomain": "hdole/floats/o_154",
       "flipName": false,
       "to": "hdole/floats/N64toF128"
-    },
-    {
-      "basename": "o_155",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N128",
-      "xy": {
-        "x": 1000,
-        "y": 1700
-      }
-    },
-    {
-      "basename": "o_156",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F128",
-      "xy": {
-        "x": 1200,
-        "y": 1700
-      }
     },
     {
       "basename": "m_76",
@@ -3154,6 +3154,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623832430731,
+  "timestamp": 1623910718651,
   "version": 0
 }

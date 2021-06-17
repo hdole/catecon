@@ -187,7 +187,7 @@
     {
       "basename": "o_10",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
         "y": 1200
@@ -341,7 +341,7 @@
     {
       "basename": "o_18",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 200,
         "y": 2200
@@ -504,7 +504,7 @@
     {
       "basename": "o_27",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 200,
         "y": 3200
@@ -1511,7 +1511,7 @@
     {
       "basename": "o_85",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
         "y": 9200
@@ -1547,7 +1547,7 @@
     {
       "basename": "o_87",
       "prototype": "DiagramObject",
-      "to": "hdole/floats/F",
+      "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
         "y": 9400
@@ -1865,7 +1865,7 @@
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tstd::cin >> out;\n}\n"
       },
       "domain": "hdole/cpp/stdin",
-      "codomain": "hdole/floats/F"
+      "codomain": "hdole/floats/F64"
     },
     {
       "description": "Read a string from standard input",
@@ -1913,7 +1913,7 @@
       "code": {
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tstd::cout << args;\n}\n"
       },
-      "domain": "hdole/floats/F",
+      "domain": "hdole/floats/F64",
       "codomain": "hdole/cpp/stdout"
     },
     {
@@ -1962,7 +1962,7 @@
       "code": {
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tstd::cerr << args;\n}\n"
       },
-      "domain": "hdole/floats/F",
+      "domain": "hdole/floats/F64",
       "codomain": "hdole/cpp/stderr"
     },
     {
@@ -2335,7 +2335,7 @@
         }
       },
       "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/floats/F"
+      "codomain": "hdole/floats/F64"
     },
     {
       "description": "Get an IBM S/360 floating point number from memory",
@@ -2347,7 +2347,7 @@
         }
       },
       "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/floats/F"
+      "codomain": "hdole/floats/F64"
     },
     {
       "description": "Get a string from memory having the form of a null terminated string",

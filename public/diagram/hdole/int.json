@@ -4954,14 +4954,6 @@
       ]
     },
     {
-      "basename": "Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/int/Po{Z8,Z8}oP",
-        "hdole/int/Po{Z8,Z8}oP"
-      ]
-    },
-    {
       "basename": "CPo{Po{Z8,Z8}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
@@ -6592,18 +6584,10 @@
       "properName": "abs",
       "domain": "hdole/int/Z128",
       "codomain": "hdole/nat/N128"
-    },
-    {
-      "basename": "Po{Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP,Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/int/Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP",
-        "hdole/int/Po{Po{Z8,Z8}oP,Po{Z8,Z8}oP}oP"
-      ]
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623834401111,
+  "timestamp": 1623917416760,
   "version": 0
 }

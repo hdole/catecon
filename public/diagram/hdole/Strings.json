@@ -3,6 +3,7 @@
   "basename": "Strings",
   "name": "hdole/Strings",
   "prototype": "Diagram",
+  "properName": "hdole/Strings",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/Strings_Index",
@@ -31,50 +32,12 @@
       "height": 24
     },
     {
-      "basename": "o_1",
-      "prototype": "DiagramObject",
-      "to": "hdole/Strings/Po{str,str}oP",
-      "xy": {
-        "x": 200,
-        "y": 400
-      }
-    },
-    {
-      "description": "A pair of strings",
-      "basename": "t_1",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -800,
-        "y": 400
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_2",
-      "prototype": "DiagramObject",
-      "to": "hdole/Strings/CPo{str,#1}oPC",
-      "xy": {
-        "x": 200,
-        "y": 600
-      }
-    },
-    {
-      "description": "A string or an exception",
-      "basename": "t_2",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -800,
-        "y": 600
-      },
-      "height": 24
-    },
-    {
       "basename": "o_3",
       "prototype": "DiagramObject",
-      "to": "#1",
+      "to": "hdole/Strings/#1",
       "xy": {
         "x": 200,
-        "y": 800
+        "y": 400
       }
     },
     {
@@ -83,16 +46,8 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 800
+        "y": 400
       }
-    },
-    {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_3",
-      "codomain": "hdole/Strings/o_4",
-      "flipName": false,
-      "to": "hdole/Strings/emptyStr"
     },
     {
       "description": "length of a string",
@@ -100,7 +55,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 1000
+        "y": 600
       },
       "height": 24
     },
@@ -110,7 +65,7 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 200,
-        "y": 1000
+        "y": 600
       }
     },
     {
@@ -119,16 +74,8 @@
       "to": "hdole/Narithmetics/N",
       "xy": {
         "x": 400,
-        "y": 1000
+        "y": 600
       }
-    },
-    {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_5",
-      "codomain": "hdole/Strings/o_6",
-      "flipName": false,
-      "to": "hdole/Strings/length"
     },
     {
       "description": "Append two strings",
@@ -136,7 +83,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 1200
+        "y": 800
       },
       "height": 24
     },
@@ -146,7 +93,7 @@
       "to": "hdole/Strings/Po{str,str}oP",
       "xy": {
         "x": 200,
-        "y": 1200
+        "y": 800
       }
     },
     {
@@ -155,16 +102,8 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 1200
+        "y": 800
       }
-    },
-    {
-      "basename": "m_2",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_7",
-      "codomain": "hdole/Strings/o_8",
-      "flipName": false,
-      "to": "hdole/Strings/append"
     },
     {
       "description": "Is the first string included in the second",
@@ -172,7 +111,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 1400
+        "y": 1000
       },
       "height": 24
     },
@@ -182,25 +121,17 @@
       "to": "hdole/Strings/Po{str,str}oP",
       "xy": {
         "x": 200,
-        "y": 1400
+        "y": 1000
       }
     },
     {
       "basename": "o_10",
       "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "to": "hdole/Strings/CPo{#1,#1}oPC",
       "xy": {
         "x": 400,
-        "y": 1400
+        "y": 1000
       }
-    },
-    {
-      "basename": "m_3",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_9",
-      "codomain": "hdole/Strings/o_10",
-      "flipName": false,
-      "to": "hdole/Strings/includes"
     },
     {
       "description": "Where in the first string is the second",
@@ -208,7 +139,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 1600
+        "y": 1200
       },
       "height": 24
     },
@@ -218,7 +149,7 @@
       "to": "hdole/Strings/Po{str,str}oP",
       "xy": {
         "x": 200,
-        "y": 1600
+        "y": 1200
       }
     },
     {
@@ -227,16 +158,8 @@
       "to": "hdole/Narithmetics/CPo{N,#1}oPC",
       "xy": {
         "x": 400,
-        "y": 1600
+        "y": 1200
       }
-    },
-    {
-      "basename": "m_4",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_11",
-      "codomain": "hdole/Strings/o_12",
-      "flipName": false,
-      "to": "hdole/Strings/indexOf"
     },
     {
       "basename": "o_13",
@@ -244,7 +167,7 @@
       "to": "hdole/Strings/Ho{hdole/Narithmetics/N,str}oH",
       "xy": {
         "x": 200,
-        "y": 1800
+        "y": 1400
       }
     },
     {
@@ -253,7 +176,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 1800
+        "y": 1400
       },
       "height": 24
     },
@@ -263,7 +186,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 2000
+        "y": 1600
       },
       "height": 24
     },
@@ -273,7 +196,7 @@
       "to": "hdole/Strings/Po{Ho{hdole/Narithmetics/N,str}oH,str}oP",
       "xy": {
         "x": 200,
-        "y": 2000
+        "y": 1600
       }
     },
     {
@@ -282,16 +205,8 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 2000
+        "y": 1600
       }
-    },
-    {
-      "basename": "m_5",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_14",
-      "codomain": "hdole/Strings/o_15",
-      "flipName": false,
-      "to": "hdole/Strings/join"
     },
     {
       "description": "The n&#39;th character in the string",
@@ -299,7 +214,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 2200
+        "y": 1800
       },
       "height": 24
     },
@@ -309,7 +224,7 @@
       "to": "hdole/Strings/Po{str,hdole/Narithmetics/N}oP",
       "xy": {
         "x": 200,
-        "y": 2200
+        "y": 1800
       }
     },
     {
@@ -318,16 +233,8 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 2200
+        "y": 1800
       }
-    },
-    {
-      "basename": "m_6",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_16",
-      "codomain": "hdole/Strings/o_17",
-      "flipName": false,
-      "to": "hdole/Strings/charAt"
     },
     {
       "description": "Convert a natural number to a string and back again.",
@@ -335,7 +242,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 2400
+        "y": 2000
       },
       "height": 24
     },
@@ -345,7 +252,7 @@
       "to": "hdole/Narithmetics/N",
       "xy": {
         "x": 200,
-        "y": 2400
+        "y": 2000
       }
     },
     {
@@ -354,16 +261,8 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 2400
+        "y": 2000
       }
-    },
-    {
-      "basename": "m_7",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_18",
-      "codomain": "hdole/Strings/o_19",
-      "flipName": false,
-      "to": "hdole/Strings/N64toString"
     },
     {
       "basename": "o_20",
@@ -371,16 +270,8 @@
       "to": "hdole/Narithmetics/CPo{N,#1}oPC",
       "xy": {
         "x": 600,
-        "y": 2400
+        "y": 2000
       }
-    },
-    {
-      "basename": "m_8",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_19",
-      "codomain": "hdole/Strings/o_20",
-      "flipName": false,
-      "to": "hdole/Strings/toN64"
     },
     {
       "description": "Convert an integer to a string and back again.",
@@ -388,7 +279,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 2600
+        "y": 2200
       },
       "height": 24
     },
@@ -398,7 +289,7 @@
       "to": "hdole/Integers/Z",
       "xy": {
         "x": 200,
-        "y": 2600
+        "y": 2200
       }
     },
     {
@@ -407,16 +298,8 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 2600
+        "y": 2200
       }
-    },
-    {
-      "basename": "m_9",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_21",
-      "codomain": "hdole/Strings/o_22",
-      "flipName": false,
-      "to": "hdole/Strings/Z64toString"
     },
     {
       "basename": "o_23",
@@ -424,16 +307,8 @@
       "to": "hdole/Integers/CPo{Z,#1}oPC",
       "xy": {
         "x": 600,
-        "y": 2600
+        "y": 2200
       }
-    },
-    {
-      "basename": "m_10",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_22",
-      "codomain": "hdole/Strings/o_23",
-      "flipName": false,
-      "to": "hdole/Strings/str2Z"
     },
     {
       "description": "Convert a floating point number to a string and back again.",
@@ -441,7 +316,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 2800
+        "y": 2400
       },
       "height": 24
     },
@@ -451,7 +326,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 200,
-        "y": 2800
+        "y": 2400
       }
     },
     {
@@ -460,16 +335,8 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 2800
+        "y": 2400
       }
-    },
-    {
-      "basename": "m_11",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_24",
-      "codomain": "hdole/Strings/o_25",
-      "flipName": false,
-      "to": "hdole/Strings/F64toString"
     },
     {
       "basename": "o_26",
@@ -477,16 +344,8 @@
       "to": "hdole/floats/CPo{F64,#1}oPC",
       "xy": {
         "x": 600,
-        "y": 2800
+        "y": 2400
       }
-    },
-    {
-      "basename": "m_12",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_25",
-      "codomain": "hdole/Strings/o_26",
-      "flipName": false,
-      "to": "hdole/Strings/str2F"
     },
     {
       "description": "Emit the string to the TTY",
@@ -494,7 +353,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -800,
-        "y": 3000
+        "y": 2600
       },
       "height": 24
     },
@@ -504,7 +363,7 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 200,
-        "y": 3000
+        "y": 2600
       }
     },
     {
@@ -513,16 +372,8 @@
       "to": "hdole/Basics/TTY",
       "xy": {
         "x": 400,
-        "y": 3000
+        "y": 2600
       }
-    },
-    {
-      "basename": "m_13",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_27",
-      "codomain": "hdole/Strings/o_28",
-      "flipName": false,
-      "to": "hdole/Strings/str2tty"
     },
     {
       "description": "References: &Fopf; Arithmetic",
@@ -539,16 +390,141 @@
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": 0,
-        "y": 0
+        "x": -830,
+        "y": -110
       },
-      "height": 96,
+      "height": "400",
       "weight": "bold"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_3",
+      "codomain": "hdole/Strings/o_4",
+      "flipName": false,
+      "to": "hdole/Strings/emptyStr"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_5",
+      "codomain": "hdole/Strings/o_6",
+      "flipName": false,
+      "to": "hdole/Strings/length"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_7",
+      "codomain": "hdole/Strings/o_8",
+      "flipName": false,
+      "to": "hdole/Strings/append"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_9",
+      "codomain": "hdole/Strings/o_10",
+      "flipName": false,
+      "to": "hdole/Strings/includes"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_11",
+      "codomain": "hdole/Strings/o_12",
+      "flipName": false,
+      "to": "hdole/Strings/indexOf"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_14",
+      "codomain": "hdole/Strings/o_15",
+      "flipName": false,
+      "to": "hdole/Strings/join"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_16",
+      "codomain": "hdole/Strings/o_17",
+      "flipName": false,
+      "to": "hdole/Strings/charAt"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_18",
+      "codomain": "hdole/Strings/o_19",
+      "flipName": false,
+      "to": "hdole/Strings/N64toString"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_19",
+      "codomain": "hdole/Strings/o_20",
+      "flipName": false,
+      "to": "hdole/Strings/toN64"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_21",
+      "codomain": "hdole/Strings/o_22",
+      "flipName": false,
+      "to": "hdole/Strings/Z64toString"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_22",
+      "codomain": "hdole/Strings/o_23",
+      "flipName": false,
+      "to": "hdole/Strings/str2Z"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_24",
+      "codomain": "hdole/Strings/o_25",
+      "flipName": false,
+      "to": "hdole/Strings/F64toString"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_25",
+      "codomain": "hdole/Strings/o_26",
+      "flipName": false,
+      "to": "hdole/Strings/str2F"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Strings/o_27",
+      "codomain": "hdole/Strings/o_28",
+      "flipName": false,
+      "to": "hdole/Strings/str2tty"
     }
   ],
   "elements": [
-	{"description":"","basename":"#1","prototype":"FiniteObject","properName":"&#10034;","size":1},
-	{"description":"The coproduct of the objects &#10034;, &#10034;.","basename":"CPo{#1,#1}oPC","prototype":"ProductObject","category":"hdole/PFS","dual":true,"objects":["#1","#1"]},
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "basename": "CPo{#1,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/Strings/#1",
+        "hdole/Strings/#1"
+      ]
+    },
     {
       "description": "The space of all strings",
       "basename": "str",
@@ -558,7 +534,6 @@
       }
     },
     {
-      "description": "The product of the objects str, str.",
       "basename": "Po{str,str}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -567,19 +542,37 @@
       ]
     },
     {
-      "description": "The coproduct of the objects str, &#10034;.",
-      "basename": "CPo{str,#1}oPC",
+      "description": "The homset from ℕ&#x2086;&#x2084; to str",
+      "basename": "Ho{hdole/Narithmetics/N,str}oH",
+      "prototype": "HomObject",
+      "objects": [
+        "hdole/Narithmetics/N",
+        "hdole/Strings/str"
+      ]
+    },
+    {
+      "basename": "Po{Ho{hdole/Narithmetics/N,str}oH,str}oP",
       "prototype": "ProductObject",
-      "dual": true,
+      "objects": [
+        "hdole/Strings/Ho{hdole/Narithmetics/N,str}oH",
+        "hdole/Strings/str"
+      ]
+    },
+    {
+      "basename": "Po{str,hdole/Narithmetics/N}oP",
+      "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
-        "#1"
+        "hdole/Narithmetics/N"
       ]
     },
     {
       "basename": "emptyStr",
       "prototype": "Morphism",
-      "domain": "#1",
+      "code": {
+        "cpp": "%0 = std::string('');"
+      },
+      "domain": "hdole/Strings/#1",
       "codomain": "hdole/Strings/str",
       "data": [
         [
@@ -619,7 +612,7 @@
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args[0].find(args[1]) != std::string::npos;\n}"
       },
       "domain": "hdole/Strings/Po{str,str}oP",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/Strings/CPo{#1,#1}oPC"
     },
     {
       "description": "where in the first string is the second",
@@ -634,24 +627,6 @@
       "codomain": "hdole/Narithmetics/CPo{N,#1}oPC"
     },
     {
-      "description": "The homset from ℕ&#x2086;&#x2084; to str",
-      "basename": "Ho{hdole/Narithmetics/N,str}oH",
-      "prototype": "HomObject",
-      "objects": [
-        "hdole/Narithmetics/N",
-        "hdole/Strings/str"
-      ]
-    },
-    {
-      "description": "The product of the objects [ℕ&#x2086;&#x2084;, str], str.",
-      "basename": "Po{Ho{hdole/Narithmetics/N,str}oH,str}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/Strings/Ho{hdole/Narithmetics/N,str}oH",
-        "hdole/Strings/str"
-      ]
-    },
-    {
       "description": "join a list of strings into a single string with another string as the conjunction",
       "basename": "join",
       "prototype": "Morphism",
@@ -661,15 +636,6 @@
       },
       "domain": "hdole/Strings/Po{Ho{hdole/Narithmetics/N,str}oH,str}oP",
       "codomain": "hdole/Strings/str"
-    },
-    {
-      "description": "The product of the objects str, ℕ&#x2086;&#x2084;.",
-      "basename": "Po{str,hdole/Narithmetics/N}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/Strings/str",
-        "hdole/Narithmetics/N"
-      ]
     },
     {
       "description": "the n&#39;th character in the string",
@@ -767,7 +733,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623191688534,
-  "version": 0,
-  "properName": "hdole/Strings"
+  "timestamp": 1623918305139,
+  "version": 0
 }
