@@ -785,6 +785,7 @@ async function serve()
 							{
 								console.log('read diagram', diagram.name);
 								loaded.add(info.name);
+								Cat.R.SaveLocal(diagram);
 							}
 							else
 								console.log('error: cannot read diagram', info.name);
