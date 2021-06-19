@@ -3,6 +3,7 @@
   "basename": "category",
   "name": "hdole/category",
   "prototype": "Diagram",
+  "properName": "hdole/category",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/category_Index",
@@ -295,6 +296,5 @@
   "readonly": false,
   "user": "hdole",
   "timestamp": 1623655941952,
-  "version": 0,
-  "properName": "hdole/category"
+  "version": 0
 }

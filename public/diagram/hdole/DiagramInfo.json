@@ -3,6 +3,7 @@
   "basename": "DiagramInfo",
   "name": "hdole/DiagramInfo",
   "prototype": "Diagram",
+  "properName": "hdole/DiagramInfo",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/DiagramInfo_Index",
@@ -242,6 +243,5 @@
   "readonly": false,
   "user": "hdole",
   "timestamp": 1623901458475,
-  "version": 0,
-  "properName": "hdole/DiagramInfo"
+  "version": 0
 }

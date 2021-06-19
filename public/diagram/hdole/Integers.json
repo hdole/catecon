@@ -60,14 +60,6 @@
       }
     },
     {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_1",
-      "codomain": "hdole/Integers/o_2",
-      "flipName": false,
-      "to": "hdole/Integers/N2Z"
-    },
-    {
       "description": "the absolute value of an integer is a natural number",
       "basename": "t_2",
       "prototype": "DiagramText",
@@ -94,14 +86,6 @@
         "x": 400,
         "y": 600
       }
-    },
-    {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_3",
-      "codomain": "hdole/Integers/o_4",
-      "flipName": false,
-      "to": "hdole/Integers/abs"
     },
     {
       "description": "The integer zero",
@@ -132,14 +116,6 @@
       }
     },
     {
-      "basename": "m_2",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_5",
-      "codomain": "hdole/Integers/o_6",
-      "flipName": false,
-      "to": "hdole/Integers/zero"
-    },
-    {
       "description": "The first interesting integer: minus one",
       "basename": "t_4",
       "prototype": "DiagramText",
@@ -166,14 +142,6 @@
         "x": 400,
         "y": 1000
       }
-    },
-    {
-      "basename": "m_3",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_7",
-      "codomain": "hdole/Integers/o_8",
-      "flipName": false,
-      "to": "hdole/Integers/minusOne"
     },
     {
       "basename": "o_9",
@@ -223,14 +191,6 @@
       }
     },
     {
-      "basename": "m_4",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_10",
-      "codomain": "hdole/Integers/o_11",
-      "flipName": false,
-      "to": "hdole/Integers/add"
-    },
-    {
       "description": "subtraction of two integers",
       "basename": "t_7",
       "prototype": "DiagramText",
@@ -259,14 +219,6 @@
       }
     },
     {
-      "basename": "m_5",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_12",
-      "codomain": "hdole/Integers/o_13",
-      "flipName": false,
-      "to": "hdole/Integers/subtract"
-    },
-    {
       "description": "Multiplication of two integers",
       "basename": "t_8",
       "prototype": "DiagramText",
@@ -293,14 +245,6 @@
         "x": 400,
         "y": 1800
       }
-    },
-    {
-      "basename": "m_6",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_14",
-      "codomain": "hdole/Integers/o_15",
-      "flipName": false,
-      "to": "hdole/Integers/multiply"
     },
     {
       "basename": "o_16",
@@ -350,14 +294,6 @@
       }
     },
     {
-      "basename": "m_7",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_17",
-      "codomain": "hdole/Integers/o_18",
-      "flipName": false,
-      "to": "hdole/Integers/divide"
-    },
-    {
       "description": "The successor function for the integers",
       "basename": "t_11",
       "prototype": "DiagramText",
@@ -384,14 +320,6 @@
         "x": 400,
         "y": 2400
       }
-    },
-    {
-      "basename": "m_8",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_19",
-      "codomain": "hdole/Integers/o_20",
-      "flipName": false,
-      "to": "hdole/Integers/successor"
     },
     {
       "description": "The modulus of two integers or an exception",
@@ -422,14 +350,6 @@
       }
     },
     {
-      "basename": "m_9",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_21",
-      "codomain": "hdole/Integers/o_22",
-      "flipName": false,
-      "to": "hdole/Integers/modulus"
-    },
-    {
       "description": "Is the first given integer number less than the second",
       "basename": "t_13",
       "prototype": "DiagramText",
@@ -456,14 +376,6 @@
         "x": 400,
         "y": 2800
       }
-    },
-    {
-      "basename": "m_10",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_23",
-      "codomain": "hdole/Integers/o_24",
-      "flipName": false,
-      "to": "hdole/Integers/lessThan"
     },
     {
       "description": "Is the first integer less than or equal to the second",
@@ -494,14 +406,6 @@
       }
     },
     {
-      "basename": "m_11",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_25",
-      "codomain": "hdole/Integers/o_26",
-      "flipName": false,
-      "to": "hdole/Integers/lessThanEq"
-    },
-    {
       "description": "compare two integers for equality",
       "basename": "t_15",
       "prototype": "DiagramText",
@@ -528,14 +432,6 @@
         "x": 400,
         "y": 3200
       }
-    },
-    {
-      "basename": "m_12",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_27",
-      "codomain": "hdole/Integers/o_28",
-      "flipName": false,
-      "to": "hdole/Integers/equals"
     },
     {
       "basename": "o_29",
@@ -585,14 +481,6 @@
       }
     },
     {
-      "basename": "m_13",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_30",
-      "codomain": "hdole/Integers/o_31",
-      "flipName": false,
-      "to": "hdole/Integers/zero32"
-    },
-    {
       "description": "Addition of two 32-bit integers",
       "basename": "t_18",
       "prototype": "DiagramText",
@@ -621,14 +509,6 @@
       }
     },
     {
-      "basename": "m_14",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_32",
-      "codomain": "hdole/Integers/o_33",
-      "flipName": false,
-      "to": "hdole/Integers/Z32add"
-    },
-    {
       "description": "Bitwise OR of two 32-bit integers",
       "basename": "t_19",
       "prototype": "DiagramText",
@@ -655,14 +535,6 @@
         "x": 0,
         "y": 800
       }
-    },
-    {
-      "basename": "m_15",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_34",
-      "codomain": "hdole/Integers/o_35",
-      "flipName": false,
-      "to": "hdole/Integers/Z32or"
     },
     {
       "description": "References: &Nopf; Arithmetic",
@@ -703,14 +575,6 @@
       }
     },
     {
-      "basename": "m_16",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Integers/o_36",
-      "codomain": "hdole/Integers/o_37",
-      "flipName": false,
-      "to": "hdole/Integers/Z32equals"
-    },
-    {
       "description": "Integers",
       "basename": "t_22",
       "prototype": "DiagramText",
@@ -720,6 +584,142 @@
       },
       "height": 96,
       "weight": "bold"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_1",
+      "codomain": "hdole/Integers/o_2",
+      "flipName": false,
+      "to": "hdole/Integers/N2Z"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_3",
+      "codomain": "hdole/Integers/o_4",
+      "flipName": false,
+      "to": "hdole/Integers/abs"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_5",
+      "codomain": "hdole/Integers/o_6",
+      "flipName": false,
+      "to": "hdole/Integers/zero"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_7",
+      "codomain": "hdole/Integers/o_8",
+      "flipName": false,
+      "to": "hdole/Integers/minusOne"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_10",
+      "codomain": "hdole/Integers/o_11",
+      "flipName": false,
+      "to": "hdole/Integers/add"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_12",
+      "codomain": "hdole/Integers/o_13",
+      "flipName": false,
+      "to": "hdole/Integers/subtract"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_14",
+      "codomain": "hdole/Integers/o_15",
+      "flipName": false,
+      "to": "hdole/Integers/multiply"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_17",
+      "codomain": "hdole/Integers/o_18",
+      "flipName": false,
+      "to": "hdole/Integers/divide"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_19",
+      "codomain": "hdole/Integers/o_20",
+      "flipName": false,
+      "to": "hdole/Integers/successor"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_21",
+      "codomain": "hdole/Integers/o_22",
+      "flipName": false,
+      "to": "hdole/Integers/modulus"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_23",
+      "codomain": "hdole/Integers/o_24",
+      "flipName": false,
+      "to": "hdole/Integers/lessThan"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_25",
+      "codomain": "hdole/Integers/o_26",
+      "flipName": false,
+      "to": "hdole/Integers/lessThanEq"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_27",
+      "codomain": "hdole/Integers/o_28",
+      "flipName": false,
+      "to": "hdole/Integers/equals"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_30",
+      "codomain": "hdole/Integers/o_31",
+      "flipName": false,
+      "to": "hdole/Integers/zero32"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_32",
+      "codomain": "hdole/Integers/o_33",
+      "flipName": false,
+      "to": "hdole/Integers/Z32add"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_34",
+      "codomain": "hdole/Integers/o_35",
+      "flipName": false,
+      "to": "hdole/Integers/Z32or"
+    },
+    {
+      "basename": "m_16",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/Integers/o_36",
+      "codomain": "hdole/Integers/o_37",
+      "flipName": false,
+      "to": "hdole/Integers/Z32equals"
     }
   ],
   "elements": [
@@ -737,6 +737,40 @@
       "code": {
         "cpp": "typedef long Z;\n"
       }
+    },
+    {
+      "basename": "Po{Z,Z}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/Integers/Z",
+        "hdole/Integers/Z"
+      ]
+    },
+    {
+      "basename": "CPo{Z,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/Integers/Z",
+        "hdole/Integers/#1"
+      ]
+    },
+    {
+      "description": "The 32-bit integers",
+      "basename": "Z32",
+      "prototype": "CatObject",
+      "properName": "&Zopf;&#8323;&#8322;",
+      "code": {
+        "cpp": "typedef int %1;\n"
+      }
+    },
+    {
+      "basename": "Po{Z32,Z32}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/Integers/Z32",
+        "hdole/Integers/Z32"
+      ]
     },
     {
       "description": "every natural number is an integer",
@@ -787,15 +821,6 @@
       "codomain": "hdole/Integers/Z"
     },
     {
-      "description": "The product of the objects &Zopf;, &Zopf;.",
-      "basename": "Po{Z,Z}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/Integers/Z",
-        "hdole/Integers/Z"
-      ]
-    },
-    {
       "description": "Addition of two integers",
       "basename": "add",
       "prototype": "Morphism",
@@ -830,16 +855,6 @@
       },
       "domain": "hdole/Integers/Po{Z,Z}oP",
       "codomain": "hdole/Integers/Z"
-    },
-    {
-      "description": "The coproduct of the objects &Zopf;, &#10034;.",
-      "basename": "CPo{Z,#1}oPC",
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/Integers/Z",
-        "hdole/Integers/#1"
-      ]
     },
     {
       "description": "division of two integers or an exception",
@@ -912,15 +927,6 @@
       "codomain": "hdole/Logic/Omega"
     },
     {
-      "description": "The 32-bit integers",
-      "basename": "Z32",
-      "prototype": "CatObject",
-      "properName": "&Zopf;&#8323;&#8322;",
-      "code": {
-        "cpp": "typedef int %1;\n"
-      }
-    },
-    {
       "description": "The 32-bit integer zero",
       "basename": "zero32",
       "prototype": "Morphism",
@@ -931,15 +937,6 @@
       },
       "domain": "hdole/Integers/#1",
       "codomain": "hdole/Integers/Z"
-    },
-    {
-      "description": "The product of the objects &Zopf;&#8323;&#8322;, &Zopf;&#8323;&#8322;.",
-      "basename": "Po{Z32,Z32}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/Integers/Z32",
-        "hdole/Integers/Z32"
-      ]
     },
     {
       "description": "Addition of two 32-bit integers",

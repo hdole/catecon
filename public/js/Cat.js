@@ -64,17 +64,17 @@
 {
 'use strict';
 
-	const baseOldNew = new Map();
-	const baseNewOld = new Map();
-
-	function setNames(old, nu)
-	{
-		if (!baseOldNew.has(old))
-		{
-			baseOldNew.set(old, nu);
-			baseNewOld.set(nu, old);
-		}
-	}
+//	const baseOldNew = new Map();
+//	const baseNewOld = new Map();
+//
+//	function setNames(old, nu)
+//	{
+//		if (!baseOldNew.has(old))
+//		{
+//			baseOldNew.set(old, nu);
+//			baseNewOld.set(nu, old);
+//		}
+//	}
 
 var sjcl;
 
@@ -3527,7 +3527,6 @@ class D
 		window.addEventListener('Morphism', D.UpdateMorphismDisplay);
 		window.addEventListener('Object', D.UpdateObjectDisplay);
 		window.addEventListener('Text', D.UpdateTextDisplay);
-//		D.topSVG.addEventListener('mousemove', D.Mousemove);
 		window.addEventListener('mousemove', D.Mousemove);
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
@@ -6565,8 +6564,8 @@ class Element
 	{
 		if (old)
 		{
-			if (baseNewOld.has(this.name))
-				return baseNewOld.get(this.name);
+//			if (baseNewOld.has(this.name))
+//				return baseNewOld.get(this.name);
 			return this.name;
 		}
 		else
@@ -7478,9 +7477,9 @@ class ProductObject extends MultiObject
 	{
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
-		const oldBasename = `${c}Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oP${c}`;
+//const oldBasename = `${c}Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oP${c}`;
 		const basename = `${c}Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram)).join(',')}}oP${c}`;
-if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//if (oldBasename !== basename) setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -7578,9 +7577,9 @@ class PullbackObject extends ProductObject
 	}
 	static Basename(diagram, args)
 	{
-const oldBasename = `Pb{${args.morphisms.map(m => m.refName(diagram, true)).join(',')}}bP`;
+//const oldBasename = `Pb{${args.morphisms.map(m => m.refName(diagram, true)).join(',')}}bP`;
 		const basename = `Pb{${args.morphisms.map(m => m.refName(diagram)).join(',')}}bP`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 	}
 	static Codename(diagram, args)
 	{
@@ -7648,9 +7647,9 @@ class HomObject extends MultiObject
 	}
 	static Basename(diagram, args)
 	{
-		const oldBasename = `Ho{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oH`;
+//const oldBasename = `Ho{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oH`;
 		const basename = `Ho{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram)).join(',')}}oH`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -8038,8 +8037,8 @@ class TensorObject extends MultiObject
 	static Basename(diagram, args)
 	{
 		const basename = `Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram)).join(',')}}oP`;
-		const oldBasename = `Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oP`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//const oldBasename = `Po{${args.objects.map(o => typeof o === 'string' ? o : o.refName(diagram, true)).join(',')}}oP`;
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -8342,8 +8341,12 @@ class Assertion extends Element
 {
 	constructor(diagram, args)
 	{
+if (typeof args.cell === 'string')		// TODO remove
+{
+args.signature = args.cell;
+delete args.cell;
+}
 		const nuArgs = U.Clone(args);
-		const cell = args.cell;
 		let idx = 0;
 		let name = `a_0`;
 		if (!('basename' in nuArgs))
@@ -8352,39 +8355,35 @@ class Assertion extends Element
 			nuArgs.basename = `a_${--idx}`;
 		}
 		super(diagram, nuArgs);
-		let left = null;
-		let right = null;
-		let signature = null;
-		if ('left' in nuArgs)
-		{
-			left = nuArgs.left.map(m => diagram.getElement(m));
-			right = nuArgs.right.map(m => diagram.getElement(m));
-		}
-		else
-			signature = cell;
 		Object.defineProperties(this,
 		{
-			left:			{value: left,								writable:true},
-			right:			{value: right,								writable:true},
-			cell:			{value: cell,								writable:true},
+			left:			{value: null,								writable:true},
+			right:			{value: null,								writable:true},
+			cell:			{value: null,								writable:true},
 			equal:			{value: U.GetArg(nuArgs, 'equal', true),	writable:false},
-			signature:		{value: signature,							writable:true},
+			signature:		{value: nuArgs.signature,					writable:true},
 		});
-		this.incrRefcnt();		// nothing refers to them, to increment
+		this.incrRefcnt();		// nothing refers to them, so increment
 		diagram.assertions.set(this.name, this);
 		diagram.addElement(this);
 		D.EmitElementEvent(diagram, 'new', this);
 	}
 	initialize()
 	{
-		this.signature = Cell.Signature(this.left, this.right);
-		const cell = typeof this.cell === 'string' ? this.diagram.domain.cells.get(this.signature) : this.cell;
-		this.cell = cell;
+		let cell = null
+		if (this.cell instanceof Cell)
+			cell = this.cell;
+		else
+		{
+			cell = this.diagram.domain.cells.get(this.signature);
+			this.cell = cell;
+		}
 		if (this.left === null)
 		{
 			this.left = cell.left;
 			this.right = cell.right;
 		}
+		this.signature = Cell.Signature(this.left, this.right);
 		cell.setCommutes('assertion');
 		this.signature = cell.signature;
 		cell.left.map(m => m.incrRefcnt());
@@ -8411,7 +8410,7 @@ class Assertion extends Element
 	json()
 	{
 		const a = super.json();
-		a.cell = this.cell.signature;
+		a.signature = this.signature;
 		a.equal = this.equal;
 		a.left = this.left.map(m => m.name);
 		a.right = this.right.map(m => m.name);
@@ -10719,6 +10718,7 @@ class Category extends CatObject
 					case 'Evaluation':
 					case 'Distribute':
 					case 'Dedistribute':
+					case 'Assertion':
 						procElt(args, ndx);
 						break;
 				}
@@ -11130,23 +11130,23 @@ class Identity extends Morphism
 		const domain = args.domain;
 		const codomain = 'codomain' in args ? args.codomain : null;
 		let basename = '';
-		let oldBasename = '';
+//		let oldBasename = '';
 		if (domain && codomain && domain.name !== codomain.name)
-		{
-			oldBasename = `Id{${domain.refName(diagram, true)},${codomain.refName(diagram, true)}}dI`;
+//		{
+//			oldBasename = `Id{${domain.refName(diagram, true)},${codomain.refName(diagram, true)}}dI`;
 			basename = `Id{${domain.refName(diagram)},${codomain.refName(diagram)}}dI`;
-		}
+//		}
 		else if (domain)
-		{
-			oldBasename = `Id{${typeof domain === 'string' ? domain : domain.refName(diagram, true)}}dI`;
+//		{
+//			oldBasename = `Id{${typeof domain === 'string' ? domain : domain.refName(diagram, true)}}dI`;
 			basename = `Id{${typeof domain === 'string' ? domain : domain.refName(diagram)}}dI`;
-		}
+//		}
 		else if (codomain)
-		{
-			oldBasename = `Id{${typeof codomain === 'string' ? codomain : codomain.refName(diagram, true)}}dI`;
+//		{
+//			oldBasename = `Id{${typeof codomain === 'string' ? codomain : codomain.refName(diagram, true)}}dI`;
 			basename = `Id{${typeof codomain === 'string' ? codomain : codomain.refName(diagram)}}dI`;
-		}
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//		}
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -12604,9 +12604,9 @@ class Composite extends MultiMorphism
 	}
 	static Basename(diagram, args)
 	{
-		const oldBasename = `Cm{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}mC`;
+//const oldBasename = `Cm{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}mC`;
 		const basename = `Cm{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}mC`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -12697,9 +12697,9 @@ class ProductMorphism extends MultiMorphism
 		const c = dual ? 'C' : '';
 		if (args.morphisms[0] instanceof Morphism)
 		{
-			const oldBasename = `${c}Pm{${args.morphisms.map(m => m.refName(diagram, true)).join(',')}}mP${c}`;
+//const oldBasename = `${c}Pm{${args.morphisms.map(m => m.refName(diagram, true)).join(',')}}mP${c}`;
 			const basename = `${c}Pm{${args.morphisms.map(m => m.refName(diagram)).join(',')}}mP${c}`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 			return basename;
 		}
 		else
@@ -12771,9 +12771,9 @@ class ProductAssembly extends MultiMorphism
 	{
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
-		const oldBasename = `${c}Pa{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}aP${c}`;
+//const oldBasename = `${c}Pa{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}aP${c}`;
 		const basename = `${c}Pa{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}aP${c}`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -13241,9 +13241,9 @@ class LambdaMorphism extends Morphism
 	static Basename(diagram, args)
 	{
 		const preCur = diagram.codomain.getElement(args.preCurry);
-		const oldBasename = `Lm{${preCur.refName(diagram, true)}:${U.a2s(args.domFactors)}:${U.a2s(args.homFactors)}}mL`;
+//const oldBasename = `Lm{${preCur.refName(diagram, true)}:${U.a2s(args.domFactors)}:${U.a2s(args.homFactors)}}mL`;
 		const basename = `Lm{${preCur.refName(diagram)}:${U.a2s(args.domFactors)}:${U.a2s(args.homFactors)}}mL`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -13356,9 +13356,9 @@ class HomMorphism extends MultiMorphism
 	}
 	static Basename(diagram, args)
 	{
-		const oldBasename = `Ho{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}oH`;
+//const oldBasename = `Ho{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram, true)).join(',')}}oH`;
 		const basename = `Ho{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}oH`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -13436,9 +13436,9 @@ class Evaluation extends Morphism
 	}
 	static Basename(diagram, args)
 	{
-		const oldBasename = `Ev{${typeof args.domain === 'string' ? args.domain : args.domain.refName(diagram, true)}}vE`;
+//const oldBasename = `Ev{${typeof args.domain === 'string' ? args.domain : args.domain.refName(diagram, true)}}vE`;
 		const basename = `Ev{${typeof args.domain === 'string' ? args.domain : args.domain.refName(diagram)}}vE`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -13492,9 +13492,9 @@ class Distribute extends Morphism
 	}
 	static Basename(diagram, args)
 	{
-		const oldBasename = `Di{${args.domain.refName(diagram, true)}}-${args.side}iD`;
+//const oldBasename = `Di{${args.domain.refName(diagram, true)}}-${args.side}iD`;
 		const basename = `Di{${args.domain.refName(diagram)}}-${args.side}iD`;
-oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//oldBasename !== basename && setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -13568,9 +13568,9 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 	static Basename(diagram, args)
 	{
-		const oldBasename = `De{${args.domain.refName(diagram, true)}}eD`;
+//const oldBasename = `De{${args.domain.refName(diagram, true)}}eD`;
 		const basename = `De{${args.domain.refName(diagram)}}eD`;
-setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
+//setNames(`${diagram.name}/${oldBasename}`, `${diagram.name}/${basename}`);
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -13722,7 +13722,6 @@ class Diagram extends Functor
 		let cnt = 0;
 		do
 		{
-//			[...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => console.log('dropping element', e.name));	// TODO
 			cnt = [...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => e.decrRefcnt()).length;
 		}
 		while(cnt > 0)
@@ -14433,13 +14432,13 @@ class Diagram extends Functor
 			return this.elements.get(name);
 		if (this.codomain.elements.has(name))
 			return this.codomain.getElement(name);
-//		return this.domain.getElement(name);
+		return this.domain.getElement(name);
 		//		TODO remove
-		elt = this.domain.getElement(name);
-		if (elt)
-			return elt;
-		if (baseOldNew.has(name))
-			return this.getElement(baseOldNew.get(name));
+//		elt = this.domain.getElement(name);
+//		if (elt)
+//			return elt;
+//		if (baseOldNew.has(name))
+//			return this.getElement(baseOldNew.get(name));
 	}
 	getElements(ary)
 	{
@@ -14609,7 +14608,7 @@ class Diagram extends Functor
 	}
 	addAssertion(cell, equal)
 	{
-		const a = this.get('Assertion', {cell, equal});
+		const a = this.get('Assertion', {signature:cell.signature, equal});
 		a.initialize();
 		return a;
 	}
@@ -14747,8 +14746,6 @@ class Diagram extends Functor
 				elt = proto.Get(this, args);
 			if (!elt)
 			{
-				if (prototype === 'Assertion' && !('cell' in args))
-					return null;
 				elt = new Cat[prototype](this, args);
 				if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 					args.actions.map(a => elt.actions.set(a, R.Actions[a]));

@@ -1,1 +1,108 @@
-{"description":"","basename":"doc","name":"hdole/doc","prototype":"Diagram","properName":"doc","category":"sys/CAT","diagram":"hdole/hdole","domain":"hdole/doc_Index","codomain":"hdole/PFS","references":[],"domainElements":[{"description":"","basename":"o_0","name":"hdole/doc/o_0","prototype":"DiagramObject","properName":"o_0","category":"hdole/doc_Index","diagram":"hdole/doc","to":"hdole/doc/A","height":24,"xy":{"x":200,"y":-600},"width":19.375},{"description":"","basename":"o_1","name":"hdole/doc/o_1","prototype":"DiagramObject","properName":"o_1","category":"hdole/doc_Index","diagram":"hdole/doc","to":"hdole/doc/B","height":24,"xy":{"x":430,"y":-600},"width":17.21875},{"description":"","basename":"o_2","name":"hdole/doc/o_2","prototype":"DiagramObject","properName":"o_2","category":"hdole/doc_Index","diagram":"hdole/doc","to":"hdole/doc/C","height":24,"xy":{"x":430,"y":-410},"width":18.59375},{"description":"","basename":"m_0","name":"hdole/doc/m_0","prototype":"DiagramMorphism","properName":"m_0","category":"hdole/doc_Index","diagram":"hdole/doc","domain":"hdole/doc/o_0","codomain":"hdole/doc/o_1","flipName":false,"homsetIndex":0,"to":"hdole/doc/f"},{"description":"","basename":"m_1","name":"hdole/doc/m_1","prototype":"DiagramMorphism","properName":"m_1","category":"hdole/doc_Index","diagram":"hdole/doc","domain":"hdole/doc/o_1","codomain":"hdole/doc/o_2","flipName":false,"homsetIndex":0,"to":"hdole/doc/g"},{"description":"","basename":"m_2","name":"hdole/doc/m_2","prototype":"DiagramComposite","properName":"m_2","category":"hdole/doc_Index","diagram":"hdole/doc","domain":"hdole/doc/o_0","codomain":"hdole/doc/o_2","flipName":true,"homsetIndex":0,"to":"hdole/doc/Cm{f,g}mC","morphisms":["hdole/doc/m_0","hdole/doc/m_1"]}],"elements":[{"description":"","basename":"A","name":"hdole/doc/A","prototype":"CatObject","properName":"A","category":"hdole/PFS","diagram":"hdole/doc"},{"description":"","basename":"B","name":"hdole/doc/B","prototype":"CatObject","properName":"B","category":"hdole/PFS","diagram":"hdole/doc"},{"description":"","basename":"C","name":"hdole/doc/C","prototype":"CatObject","properName":"C","category":"hdole/PFS","diagram":"hdole/doc"},{"description":"","basename":"f","name":"hdole/doc/f","prototype":"Morphism","properName":"f","category":"hdole/PFS","diagram":"hdole/doc","domain":"hdole/doc/A","codomain":"hdole/doc/B"},{"description":"","basename":"g","name":"hdole/doc/g","prototype":"Morphism","properName":"g","category":"hdole/PFS","diagram":"hdole/doc","domain":"hdole/doc/B","codomain":"hdole/doc/C"},{"description":"","basename":"Cm{f,g}mC","name":"hdole/doc/Cm{f,g}mC","prototype":"Composite","category":"hdole/PFS","diagram":"hdole/doc","domain":"hdole/doc/A","codomain":"hdole/doc/C","morphisms":["hdole/doc/f","hdole/doc/g"]}],"readonly":false,"user":"hdole","timestamp":1620967819980,"version":0}
+{
+  "description": "",
+  "basename": "doc",
+  "name": "hdole/doc",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/doc_Index",
+  "codomain": "hdole/PFS",
+  "references": [],
+  "domainElements": [
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/doc/A",
+      "xy": {
+        "x": 200,
+        "y": -600
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/doc/B",
+      "xy": {
+        "x": 430,
+        "y": -600
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/doc/C",
+      "xy": {
+        "x": 430,
+        "y": -410
+      }
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/doc/o_0",
+      "codomain": "hdole/doc/o_1",
+      "flipName": false,
+      "to": "hdole/doc/f"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/doc/o_1",
+      "codomain": "hdole/doc/o_2",
+      "flipName": false,
+      "to": "hdole/doc/g"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramComposite",
+      "domain": "hdole/doc/o_0",
+      "codomain": "hdole/doc/o_2",
+      "flipName": true,
+      "to": "hdole/doc/Cm{f,g}mC",
+      "morphisms": [
+        "hdole/doc/m_0",
+        "hdole/doc/m_1"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "C",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/doc/A",
+      "codomain": "hdole/doc/B"
+    },
+    {
+      "basename": "g",
+      "prototype": "Morphism",
+      "domain": "hdole/doc/B",
+      "codomain": "hdole/doc/C"
+    },
+    {
+      "basename": "Cm{f,g}mC",
+      "prototype": "Composite",
+      "domain": "hdole/doc/A",
+      "codomain": "hdole/doc/C",
+      "morphisms": [
+        "hdole/doc/f",
+        "hdole/doc/g"
+      ]
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1620967819980,
+  "version": 0
+}

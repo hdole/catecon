@@ -1,28 +1,299 @@
-{"description":"","basename":"ackermann","name":"hdole/ackermann","prototype":"Diagram","properName":"ackermann","category":"sys/CAT","diagram":"hdole/hdole","domain":"hdole/ackermann_Index","codomain":"hdole/PFS",
-	"references":["hdole/Narithmetics"],
-	"domainElements":[
-		{"basename":"o_0","prototype":"DiagramObject","properName":"o_0","to":"hdole/Narithmetics/N","xy":{"x":600,"y":500}},
-		{"basename":"o_2","prototype":"DiagramObject","properName":"o_2","to":"hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP","xy":{"x":600,"y":300}},
-		{"basename":"o_4","prototype":"DiagramObject","properName":"o_4","to":"hdole/ackermann/Po{hdole/Narithmetics/N,#1}oP","xy":{"x":800,"y":500}},
-		{"basename":"m_1","prototype":"DiagramMorphism","properName":"m_1","domain":"hdole/ackermann/o_0","codomain":"hdole/ackermann/o_4","flipName":false,"to":"hdole/ackermann/Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_,hdole/Narithmetics/N_-1}aF"},
-		{"basename":"o_7","prototype":"DiagramObject","properName":"o_7","to":"hdole/ackermann/#1","xy":{"x":1200,"y":300}},
-		{"basename":"o_10","prototype":"DiagramObject","properName":"o_10","to":"hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP","xy":{"x":1000,"y":500}},
-		{"basename":"m_4","prototype":"DiagramMorphism","properName":"m_4","domain":"hdole/ackermann/o_4","codomain":"hdole/ackermann/o_10","flipName":false,"to":"hdole/ackermann/Pm{Id{hdole/Narithmetics/N}dI,hdole/Narithmetics/zero}mP"},
-		{"basename":"o_11","prototype":"DiagramObject","properName":"o_11","to":"hdole/Logic/CPo{#1,#1}oPC","xy":{"x":1200,"y":500}},
-		{"basename":"m_7","prototype":"DiagramMorphism","properName":"m_7","domain":"hdole/ackermann/o_7","codomain":"hdole/ackermann/o_11","flipName":true,"to":"hdole/ackermann/CFa{hdole/Logic/CPo{#1,#1}oPC,#1_1}aFC"},
-		{"basename":"o_13","prototype":"DiagramObject","properName":"o_13","to":"hdole/Basics/#1","xy":{"x":1200,"y":700}},
-		{"basename":"m_8","prototype":"DiagramMorphism","properName":"m_8","domain":"hdole/ackermann/o_13","codomain":"hdole/ackermann/o_11","flipName":false,"to":"hdole/ackermann/CFa{hdole/Logic/CPo{#1,#1}oPC,#1_0}aFC"},
-		{"basename":"o_6","prototype":"DiagramObject","properName":"o_6","to":"hdole/Narithmetics/N","xy":{"x":600,"y":700}},{"basename":"m_9","prototype":"DiagramMorphism","properName":"m_9","domain":"hdole/ackermann/o_6","codomain":"hdole/ackermann/o_0","flipName":false,"to":"hdole/ackermann/Id{hdole/Narithmetics/N}dI"},{"basename":"m_2","prototype":"DiagramMorphism","properName":"m_2","domain":"hdole/ackermann/o_6","codomain":"hdole/ackermann/o_13","flipName":false,"to":"hdole/ackermann/Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_-1}aF"},{"basename":"m_10","prototype":"DiagramMorphism","properName":"m_10","domain":"hdole/ackermann/o_10","codomain":"hdole/ackermann/o_11","flipName":false,"to":"hdole/Narithmetics/equals"},{"description":"Ackermann&#39;s Function","basename":"t_0","prototype":"DiagramText","properName":"t_0","xy":{"x":510,"y":10},"height":"72","weight":"bold"},{"basename":"o_1","prototype":"DiagramObject","properName":"o_1","to":"hdole/Narithmetics/N","xy":{"x":800,"y":300}},{"basename":"o_3","prototype":"DiagramObject","properName":"o_3","to":"hdole/Narithmetics/N","xy":{"x":800,"y":100}},{"basename":"m_3","prototype":"DiagramMorphism","properName":"m_3","domain":"hdole/ackermann/o_1","codomain":"hdole/ackermann/o_3","flipName":false,"to":"hdole/ackermann/Id{hdole/Narithmetics/N}dI"},{"basename":"m_0","prototype":"DiagramMorphism","properName":"m_0","domain":"hdole/ackermann/o_2","codomain":"hdole/ackermann/o_1","flipName":false,"to":"hdole/ackermann/ack"},{"basename":"m_5","prototype":"DiagramMorphism","properName":"m_5","domain":"hdole/ackermann/o_2","codomain":"hdole/ackermann/o_3","flipName":false,"to":"hdole/ackermann/ack"}],
-	"elements":[
-		{"description":"The product of the objects ℕ&#x2086;&#x2084;, ℕ&#x2086;&#x2084;.","basename":"Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP","prototype":"ProductObject","objects":["hdole/Narithmetics/N","hdole/Narithmetics/N"]},
-		{"basename":"ack","prototype":"Morphism","properName":"ack","domain":"hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP","codomain":"hdole/Narithmetics/N"},
-		{"basename":"#1","prototype":"FiniteObject","properName":"&#10034;","size":1},
-		{"description":"The product of the objects ℕ&#x2086;&#x2084;, &#10034;.","basename":"Po{hdole/Narithmetics/N,#1}oP","prototype":"ProductObject","objects":["hdole/Narithmetics/N","hdole/ackermann/#1"]},
-		{"basename":"Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_,hdole/Narithmetics/N_-1}aF","prototype":"FactorMorphism","domain":"hdole/Narithmetics/N","codomain":"hdole/ackermann/Po{hdole/Narithmetics/N,#1}oP","factors":[[],-1]},
-		{"basename":"Id{hdole/Narithmetics/N}dI","prototype":"FactorMorphism","domain":"hdole/Narithmetics/N","codomain":"hdole/Narithmetics/N","factors":[[]]},
-		{"basename":"Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_-1}aF","prototype":"FactorMorphism","domain":"hdole/Narithmetics/N","codomain":"hdole/ackermann/#1","factors":[-1]},
-		{"description":"The product of the objects ℕ&#x2086;&#x2084;, &#10034;.","basename":"Po{hdole/Narithmetics/N,hdole/Basics/#1}oP","prototype":"ProductObject","objects":["hdole/Narithmetics/N","hdole/Basics/#1"]},
-		{"basename":"Pm{Id{hdole/Narithmetics/N}dI,hdole/Narithmetics/zero}mP","prototype":"ProductMorphism","domain":"hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Basics/#1}oP","codomain":"hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP","morphisms":["hdole/ackermann/Id{hdole/Narithmetics/N}dI","hdole/Narithmetics/zero"]},
-		{"basename":"CFa{hdole/Logic/CPo{#1,#1}oPC,#1_1}aFC","prototype":"FactorMorphism","dual":true,"domain":"hdole/Basics/#1","codomain":"hdole/Logic/CPo{#1,#1}oPC","factors":[1]},
-		{"basename":"CFa{hdole/Logic/CPo{#1,#1}oPC,#1_0}aFC","prototype":"FactorMorphism","dual":true,"domain":"hdole/Basics/#1","codomain":"hdole/Logic/CPo{#1,#1}oPC","factors":[0]}]
-		,"readonly":false,"user":"hdole","timestamp":1622276255059,"version":0,"hiddenCells":["3c39be35906145755726c52affca1f3cb6a991ca8626c11213299db4797cfdb9"]}
+{
+  "description": "",
+  "basename": "ackermann",
+  "name": "hdole/ackermann",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/ackermann_Index",
+  "codomain": "hdole/PFS",
+  "references": [
+    "hdole/Narithmetics"
+  ],
+  "domainElements": [
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 600,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "xy": {
+        "x": 600,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "DiagramObject",
+      "to": "hdole/ackermann/Po{hdole/Narithmetics/N,#1}oP",
+      "xy": {
+        "x": 800,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_7",
+      "prototype": "DiagramObject",
+      "to": "hdole/ackermann/#1",
+      "xy": {
+        "x": 1200,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_10",
+      "prototype": "DiagramObject",
+      "to": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "xy": {
+        "x": 1000,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "DiagramObject",
+      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1200,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "DiagramObject",
+      "to": "hdole/Basics/#1",
+      "xy": {
+        "x": 1200,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 600,
+        "y": 700
+      }
+    },
+    {
+      "description": "Ackermann&#39;s Function",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 510,
+        "y": 10
+      },
+      "height": "72",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 800,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 800,
+        "y": 100
+      }
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_0",
+      "codomain": "hdole/ackermann/o_4",
+      "flipName": false,
+      "to": "hdole/ackermann/Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_,hdole/Narithmetics/N_-1}aF"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_4",
+      "codomain": "hdole/ackermann/o_10",
+      "flipName": false,
+      "to": "hdole/ackermann/Pm{Id{hdole/Narithmetics/N}dI,hdole/Narithmetics/zero}mP"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_7",
+      "codomain": "hdole/ackermann/o_11",
+      "flipName": true,
+      "to": "hdole/ackermann/CFa{hdole/Logic/CPo{#1,#1}oPC,#1_1}aFC"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_13",
+      "codomain": "hdole/ackermann/o_11",
+      "flipName": false,
+      "to": "hdole/ackermann/CFa{hdole/Logic/CPo{#1,#1}oPC,#1_0}aFC"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_6",
+      "codomain": "hdole/ackermann/o_0",
+      "flipName": false,
+      "to": "hdole/ackermann/Id{hdole/Narithmetics/N}dI"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_6",
+      "codomain": "hdole/ackermann/o_13",
+      "flipName": false,
+      "to": "hdole/ackermann/Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_-1}aF"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_10",
+      "codomain": "hdole/ackermann/o_11",
+      "flipName": false,
+      "to": "hdole/Narithmetics/equals"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_1",
+      "codomain": "hdole/ackermann/o_3",
+      "flipName": false,
+      "to": "hdole/ackermann/Id{hdole/Narithmetics/N}dI"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_2",
+      "codomain": "hdole/ackermann/o_1",
+      "flipName": false,
+      "to": "hdole/ackermann/ack"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_2",
+      "codomain": "hdole/ackermann/o_3",
+      "flipName": false,
+      "to": "hdole/ackermann/ack"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/Narithmetics/N",
+        "hdole/Narithmetics/N"
+      ]
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "basename": "Po{hdole/Narithmetics/N,#1}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/Narithmetics/N",
+        "hdole/ackermann/#1"
+      ]
+    },
+    {
+      "basename": "ack",
+      "prototype": "Morphism",
+      "domain": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "codomain": "hdole/Narithmetics/N"
+    },
+    {
+      "basename": "Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_,hdole/Narithmetics/N_-1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/Narithmetics/N",
+      "codomain": "hdole/ackermann/Po{hdole/Narithmetics/N,#1}oP",
+      "factors": [
+        [],
+        -1
+      ]
+    },
+    {
+      "basename": "Id{hdole/Narithmetics/N}dI",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/Narithmetics/N",
+      "codomain": "hdole/Narithmetics/N",
+      "factors": [
+        []
+      ]
+    },
+    {
+      "basename": "Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_-1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/Narithmetics/N",
+      "codomain": "hdole/ackermann/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
+      "basename": "Po{hdole/Narithmetics/N,hdole/Narithmetics/#1}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/Narithmetics/N",
+        "hdole/Narithmetics/#1"
+      ]
+    },
+    {
+      "basename": "Pm{Id{hdole/Narithmetics/N}dI,hdole/Narithmetics/zero}mP",
+      "prototype": "ProductMorphism",
+      "domain": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/#1}oP",
+      "codomain": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "morphisms": [
+        "hdole/ackermann/Id{hdole/Narithmetics/N}dI",
+        "hdole/Narithmetics/zero"
+      ]
+    },
+    {
+      "basename": "CFa{hdole/Logic/CPo{#1,#1}oPC,#1_1}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/Logic/#1",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "CFa{hdole/Logic/CPo{#1,#1}oPC,#1_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/Logic/#1",
+      "codomain": "hdole/Logic/CPo{#1,#1}oPC",
+      "factors": [
+        0
+      ]
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1622276255059,
+  "version": 0,
+  "hiddenCells": [
+    "3c39be35906145755726c52affca1f3cb6a991ca8626c11213299db4797cfdb9"
+  ]
+}

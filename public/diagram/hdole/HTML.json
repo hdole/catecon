@@ -3,6 +3,7 @@
   "basename": "HTML",
   "name": "hdole/HTML",
   "prototype": "Diagram",
+  "properName": "hdole/HTML",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/HTML_Index",
@@ -958,6 +959,5 @@
   "readonly": false,
   "user": "hdole",
   "timestamp": 1623917284672,
-  "version": 0,
-  "properName": "hdole/HTML"
+  "version": 0
 }

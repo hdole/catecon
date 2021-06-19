@@ -3,6 +3,7 @@
   "basename": "while",
   "name": "hdole/while",
   "prototype": "Diagram",
+  "properName": "hdole/while",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/while_Index",
@@ -46,22 +47,6 @@
       }
     },
     {
-      "basename": "m_7",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_13",
-      "codomain": "hdole/while/o_10",
-      "flipName": true,
-      "to": "hdole/while/Fa{S,S_-1}aF"
-    },
-    {
-      "basename": "m_8",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_13",
-      "codomain": "hdole/while/o_8",
-      "flipName": false,
-      "to": "hdole/while/Id{S}dI"
-    },
-    {
       "basename": "o_12",
       "prototype": "DiagramObject",
       "to": "hdole/while/S",
@@ -69,14 +54,6 @@
         "x": 200,
         "y": 600
       }
-    },
-    {
-      "basename": "m_9",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_12",
-      "codomain": "hdole/while/o_11",
-      "flipName": false,
-      "to": "hdole/while/Fa{S,S_-1}aF"
     },
     {
       "basename": "o_14",
@@ -88,14 +65,6 @@
       }
     },
     {
-      "basename": "m_10",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_12",
-      "codomain": "hdole/while/o_14",
-      "flipName": false,
-      "to": "hdole/while/update"
-    },
-    {
       "basename": "o_15",
       "prototype": "DiagramObject",
       "to": "hdole/while/S",
@@ -103,22 +72,6 @@
         "x": 600,
         "y": 600
       }
-    },
-    {
-      "basename": "m_11",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_14",
-      "codomain": "hdole/while/o_15",
-      "flipName": false,
-      "to": "hdole/while/while"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_12",
-      "codomain": "hdole/while/o_8",
-      "flipName": true,
-      "to": "hdole/while/Id{S}dI"
     },
     {
       "description": "While",
@@ -148,14 +101,6 @@
         "x": 190,
         "y": 200
       }
-    },
-    {
-      "basename": "m_14",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_4",
-      "codomain": "hdole/while/o_7",
-      "flipName": true,
-      "to": "hdole/while/update"
     },
     {
       "description": "The purpose of a &#39;while&#39; statement in a\nvernacular programming language is to\ntest an expression and if true run an\nupdate function on our state.",
@@ -216,14 +161,6 @@
       }
     },
     {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/while/o_4",
-      "codomain": "hdole/while/o_1",
-      "flipName": false,
-      "to": "hdole/while/test"
-    },
-    {
       "basename": "o_3",
       "prototype": "DiagramObject",
       "to": "hdole/while/CPo{#1,#1}oPC",
@@ -231,6 +168,70 @@
         "x": 0,
         "y": 800
       }
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_13",
+      "codomain": "hdole/while/o_10",
+      "flipName": true,
+      "to": "hdole/while/Fa{S,S_-1}aF"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_13",
+      "codomain": "hdole/while/o_8",
+      "flipName": false,
+      "to": "hdole/while/Id{S}dI"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_12",
+      "codomain": "hdole/while/o_11",
+      "flipName": false,
+      "to": "hdole/while/Fa{S,S_-1}aF"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_12",
+      "codomain": "hdole/while/o_14",
+      "flipName": false,
+      "to": "hdole/while/update"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_14",
+      "codomain": "hdole/while/o_15",
+      "flipName": false,
+      "to": "hdole/while/while"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_12",
+      "codomain": "hdole/while/o_8",
+      "flipName": true,
+      "to": "hdole/while/Id{S}dI"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_4",
+      "codomain": "hdole/while/o_7",
+      "flipName": true,
+      "to": "hdole/while/update"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_4",
+      "codomain": "hdole/while/o_1",
+      "flipName": false,
+      "to": "hdole/while/test"
     },
     {
       "basename": "m_2",
@@ -269,6 +270,15 @@
       "size": 1
     },
     {
+      "basename": "CPo{#1,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/while/#1",
+        "hdole/while/#1"
+      ]
+    },
+    {
       "basename": "while",
       "prototype": "Morphism",
       "domain": "hdole/while/S",
@@ -295,16 +305,6 @@
       "properName": "id",
       "domain": "hdole/while/S",
       "codomain": "hdole/while/S"
-    },
-    {
-      "description": "The coproduct of the objects &#10034;, &#10034;.",
-      "basename": "CPo{#1,#1}oPC",
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/while/#1",
-        "hdole/while/#1"
-      ]
     },
     {
       "basename": "test",
@@ -340,6 +340,5 @@
   "hiddenCells": [
     "8901823568e5dafc364b7e06357dd9d01318f1b37269e38f12a42911ec7b9800",
     "ce18ae784869bc058864cf12812c165721df1800bcbf615259df86efbe164d76"
-  ],
-  "properName": "hdole/while"
+  ]
 }

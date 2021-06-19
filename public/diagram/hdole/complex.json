@@ -31,24 +31,6 @@
       }
     },
     {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_0",
-      "codomain": "hdole/complex/o_1",
-      "flipName": false,
-      "homsetIndex": 1,
-      "to": "hdole/complex/Id{C,hdole/floats/Po{F64,F64}oP}dI"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_1",
-      "codomain": "hdole/complex/o_0",
-      "flipName": false,
-      "homsetIndex": 1,
-      "to": "hdole/complex/Id{hdole/floats/Po{F64,F64}oP,C}dI"
-    },
-    {
       "description": "The complex number zero",
       "basename": "t_0",
       "prototype": "DiagramText",
@@ -75,14 +57,6 @@
         "x": 400,
         "y": 400
       }
-    },
-    {
-      "basename": "m_2",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_2",
-      "codomain": "hdole/complex/o_3",
-      "flipName": false,
-      "to": "hdole/complex/zero"
     },
     {
       "description": "The first interesting complex number",
@@ -113,14 +87,6 @@
       }
     },
     {
-      "basename": "m_3",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_4",
-      "codomain": "hdole/complex/o_5",
-      "flipName": false,
-      "to": "hdole/complex/i"
-    },
-    {
       "description": "Euler&#39;s constant",
       "basename": "t_2",
       "prototype": "DiagramText",
@@ -147,14 +113,6 @@
         "x": 400,
         "y": 800
       }
-    },
-    {
-      "basename": "m_4",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_6",
-      "codomain": "hdole/complex/o_7",
-      "flipName": false,
-      "to": "hdole/complex/e"
     },
     {
       "description": "the real part of a complex number",
@@ -185,14 +143,6 @@
       }
     },
     {
-      "basename": "m_5",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_8",
-      "codomain": "hdole/complex/o_9",
-      "flipName": false,
-      "to": "hdole/complex/real"
-    },
-    {
       "description": "the imaginary part of a complex numbers",
       "basename": "t_4",
       "prototype": "DiagramText",
@@ -219,14 +169,6 @@
         "x": 400,
         "y": 1200
       }
-    },
-    {
-      "basename": "m_6",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_10",
-      "codomain": "hdole/complex/o_11",
-      "flipName": false,
-      "to": "hdole/complex/imag"
     },
     {
       "description": "every floating point number is a complex number",
@@ -257,14 +199,6 @@
       }
     },
     {
-      "basename": "m_7",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_12",
-      "codomain": "hdole/complex/o_13",
-      "flipName": false,
-      "to": "hdole/complex/F2C"
-    },
-    {
       "description": "conjugate of a complex number",
       "basename": "t_6",
       "prototype": "DiagramText",
@@ -293,14 +227,6 @@
       }
     },
     {
-      "basename": "m_8",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_14",
-      "codomain": "hdole/complex/o_15",
-      "flipName": false,
-      "to": "hdole/complex/conjugate"
-    },
-    {
       "description": "the absolute value of a complex number",
       "basename": "t_7",
       "prototype": "DiagramText",
@@ -327,14 +253,6 @@
         "x": 400,
         "y": 1800
       }
-    },
-    {
-      "basename": "m_9",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_16",
-      "codomain": "hdole/complex/o_17",
-      "flipName": false,
-      "to": "hdole/complex/abs"
     },
     {
       "basename": "o_18",
@@ -384,14 +302,6 @@
       }
     },
     {
-      "basename": "m_10",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_19",
-      "codomain": "hdole/complex/o_20",
-      "flipName": false,
-      "to": "hdole/complex/add"
-    },
-    {
       "description": "subtraction of two complex numbers",
       "basename": "t_10",
       "prototype": "DiagramText",
@@ -420,14 +330,6 @@
       }
     },
     {
-      "basename": "m_11",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_21",
-      "codomain": "hdole/complex/o_22",
-      "flipName": false,
-      "to": "hdole/complex/subtract"
-    },
-    {
       "description": "Multiplication of two complex numbers",
       "basename": "t_11",
       "prototype": "DiagramText",
@@ -454,14 +356,6 @@
         "x": 400,
         "y": 2600
       }
-    },
-    {
-      "basename": "m_12",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_23",
-      "codomain": "hdole/complex/o_24",
-      "flipName": false,
-      "to": "hdole/complex/multiply"
     },
     {
       "basename": "o_25",
@@ -511,14 +405,6 @@
       }
     },
     {
-      "basename": "m_13",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_26",
-      "codomain": "hdole/complex/o_27",
-      "flipName": false,
-      "to": "hdole/complex/divide"
-    },
-    {
       "description": "raise the first number to the second number as exponent or an exception",
       "basename": "t_14",
       "prototype": "DiagramText",
@@ -545,14 +431,6 @@
         "x": 400,
         "y": 3200
       }
-    },
-    {
-      "basename": "m_14",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/complex/o_28",
-      "codomain": "hdole/complex/o_29",
-      "flipName": false,
-      "to": "hdole/complex/pow"
     },
     {
       "basename": "o_30",
@@ -593,6 +471,128 @@
       },
       "height": 96,
       "weight": "bold"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_0",
+      "codomain": "hdole/complex/o_1",
+      "flipName": false,
+      "homsetIndex": 1,
+      "to": "hdole/complex/Id{C,hdole/floats/Po{F64,F64}oP}dI"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_1",
+      "codomain": "hdole/complex/o_0",
+      "flipName": false,
+      "homsetIndex": 1,
+      "to": "hdole/complex/Id{hdole/floats/Po{F64,F64}oP,C}dI"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_2",
+      "codomain": "hdole/complex/o_3",
+      "flipName": false,
+      "to": "hdole/complex/zero"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_4",
+      "codomain": "hdole/complex/o_5",
+      "flipName": false,
+      "to": "hdole/complex/i"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_6",
+      "codomain": "hdole/complex/o_7",
+      "flipName": false,
+      "to": "hdole/complex/e"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_8",
+      "codomain": "hdole/complex/o_9",
+      "flipName": false,
+      "to": "hdole/complex/real"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_10",
+      "codomain": "hdole/complex/o_11",
+      "flipName": false,
+      "to": "hdole/complex/imag"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_12",
+      "codomain": "hdole/complex/o_13",
+      "flipName": false,
+      "to": "hdole/complex/F2C"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_14",
+      "codomain": "hdole/complex/o_15",
+      "flipName": false,
+      "to": "hdole/complex/conjugate"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_16",
+      "codomain": "hdole/complex/o_17",
+      "flipName": false,
+      "to": "hdole/complex/abs"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_19",
+      "codomain": "hdole/complex/o_20",
+      "flipName": false,
+      "to": "hdole/complex/add"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_21",
+      "codomain": "hdole/complex/o_22",
+      "flipName": false,
+      "to": "hdole/complex/subtract"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_23",
+      "codomain": "hdole/complex/o_24",
+      "flipName": false,
+      "to": "hdole/complex/multiply"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_26",
+      "codomain": "hdole/complex/o_27",
+      "flipName": false,
+      "to": "hdole/complex/divide"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/complex/o_28",
+      "codomain": "hdole/complex/o_29",
+      "flipName": false,
+      "to": "hdole/complex/pow"
     }
   ],
   "elements": [
@@ -616,6 +616,32 @@
       "properName": "&#8797;",
       "domain": "hdole/floats/Po{F64,F64}oP",
       "codomain": "hdole/complex/C"
+    },
+    {
+      "basename": "Po{C,C}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/complex/C",
+        "hdole/complex/C"
+      ]
+    },
+    {
+      "basename": "CPo{C,hdole/Basics/#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/complex/C",
+        "hdole/Basics/#1"
+      ]
+    },
+    {
+      "description": "The homset from ℕ&#x2086;&#x2084; to &Copf;",
+      "basename": "Ho{hdole/Narithmetics/N,C}oH",
+      "prototype": "HomObject",
+      "objects": [
+        "hdole/Narithmetics/N",
+        "hdole/complex/C"
+      ]
     },
     {
       "description": "The complex number zero",
@@ -710,15 +736,6 @@
       "codomain": "hdole/floats/F64"
     },
     {
-      "description": "The product of the objects &Copf;, &Copf;.",
-      "basename": "Po{C,C}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/complex/C",
-        "hdole/complex/C"
-      ]
-    },
-    {
       "description": "Addition of two complex numbers",
       "basename": "add",
       "prototype": "Morphism",
@@ -755,16 +772,6 @@
       "codomain": "hdole/complex/C"
     },
     {
-      "description": "The coproduct of the objects &Copf;, &#10034;.",
-      "basename": "CPo{C,hdole/Basics/#1}oPC",
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/complex/C",
-        "hdole/Basics/#1"
-      ]
-    },
-    {
       "description": "division of two complex numbers or an exception",
       "basename": "divide",
       "prototype": "Morphism",
@@ -786,15 +793,6 @@
       },
       "domain": "hdole/complex/Po{C,C}oP",
       "codomain": "hdole/complex/CPo{C,hdole/Basics/#1}oPC"
-    },
-    {
-      "description": "The homset from ℕ&#x2086;&#x2084; to &Copf;",
-      "basename": "Ho{hdole/Narithmetics/N,C}oH",
-      "prototype": "HomObject",
-      "objects": [
-        "hdole/Narithmetics/N",
-        "hdole/complex/C"
-      ]
     }
   ],
   "readonly": false,

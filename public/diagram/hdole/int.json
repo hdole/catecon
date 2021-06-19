@@ -4712,6 +4712,122 @@
       "codomain": "hdole/int/o_330",
       "flipName": false,
       "to": "hdole/int/abs128"
+    },
+    {
+      "description": "The assertion that the composite of morphisms &#119901;,0 equals that of ⊂,&#119901;&#8202;&#x2081;.",
+      "basename": "a_0",
+      "prototype": "Assertion",
+      "signature": "545836439614a1878ffc3c724ffb98bba25268a5985672d77d3d4c969ef3312f",
+      "equal": true,
+      "left": [
+        "hdole/int/m_87",
+        "hdole/int/m_94"
+      ],
+      "right": [
+        "hdole/int/m_27",
+        "hdole/int/m_91"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms ⊂,&#119901;&#8202;&#x2080; equals that of id.",
+      "basename": "a_1",
+      "prototype": "Assertion",
+      "signature": "fdef8d5a742c5a338f2b7950dbd322684aa6d74ca87d104450ecb1dd7603acf7",
+      "equal": true,
+      "left": [
+        "hdole/int/m_27",
+        "hdole/int/m_10"
+      ],
+      "right": [
+        "hdole/int/m_36"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms &#119901;,\n\n0 equals that of ⊂,&#119901;&#8202;&#x2081;.",
+      "basename": "a_2",
+      "prototype": "Assertion",
+      "signature": "6512ada397c124f0c8fcd40818d2b74b3fe5d7d78073fdad46465dc57b6ff14a",
+      "equal": true,
+      "left": [
+        "hdole/int/m_86",
+        "hdole/int/m_93"
+      ],
+      "right": [
+        "hdole/int/m_30",
+        "hdole/int/m_90"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms &#119901;,0 equals that of ⊂,&#119901;&#8202;&#x2081;.",
+      "basename": "a_3",
+      "prototype": "Assertion",
+      "signature": "a276c71711d1c5e003f69157664faf8a3ff7dc0453c63e8b5c417d0fad5af25f",
+      "equal": true,
+      "left": [
+        "hdole/int/m_85",
+        "hdole/int/m_89"
+      ],
+      "right": [
+        "hdole/int/m_31",
+        "hdole/int/m_88"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms &#119901;,0 equals that of ⊂,&#119901;&#8202;&#x2081;.",
+      "basename": "a_4",
+      "prototype": "Assertion",
+      "signature": "8a8903418eed68d26799167a81be34364021858ce3de5c382dfad548f82a93ce",
+      "equal": true,
+      "left": [
+        "hdole/int/m_84",
+        "hdole/int/m_83"
+      ],
+      "right": [
+        "hdole/int/m_99",
+        "hdole/int/m_78"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms ⊂,&#119901;&#8202;&#x2080; equals that of id.",
+      "basename": "a_5",
+      "prototype": "Assertion",
+      "signature": "d2c6d135ee90229f8e31e77985593496299f32a089f626a83b1091fe10108f14",
+      "equal": true,
+      "left": [
+        "hdole/int/m_30",
+        "hdole/int/m_28"
+      ],
+      "right": [
+        "hdole/int/m_37"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms ⊂,&#119901;&#8202;&#x2080; equals that of id.",
+      "basename": "a_6",
+      "prototype": "Assertion",
+      "signature": "5d114968e1191f5e819e17183335e6a543e8ccf2406d87df9071126f0cbc81b5",
+      "equal": true,
+      "left": [
+        "hdole/int/m_31",
+        "hdole/int/m_29"
+      ],
+      "right": [
+        "hdole/int/m_100"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms ⊂,&#119901;&#8202;&#x2080; equals that of id.",
+      "basename": "a_7",
+      "prototype": "Assertion",
+      "signature": "0da1bffeef2303e0ff5bccd957a25426a346eb57f1cb5467f5a3bcd2059f685e",
+      "equal": true,
+      "left": [
+        "hdole/int/m_99",
+        "hdole/int/m_35"
+      ],
+      "right": [
+        "hdole/int/m_101"
+      ]
     }
   ],
   "elements": [
@@ -6588,6 +6704,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623917416760,
+  "timestamp": 1624073814508,
   "version": 0
 }
