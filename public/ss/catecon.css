@@ -5,7 +5,7 @@ html, body
 	margin:	0px 0px 0px 0px;
 }
 
-small
+label
 {
 	margin:	4px;
 }
@@ -459,6 +459,7 @@ p
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
 .arrow6 {fill:none; stroke:#666; stroke-width:20px;}
 .arrow9 {fill:none; stroke:#999; stroke-width:20px;}
+.arrowF {fill:none; stroke:#FFF; stroke-width:20px;}
 .svgstrThinGray {fill:none; stroke:#777; stroke-width:10px;}
 .svgfilNone {fill:none;}
 .svgfil0 {fill:black;fill-rule:nonzero;}
