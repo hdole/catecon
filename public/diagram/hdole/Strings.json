@@ -26,7 +26,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 200
       },
       "height": 24
@@ -50,11 +50,11 @@
       }
     },
     {
-      "description": "length of a string",
+      "description": "Length of a string",
       "basename": "t_4",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 600
       },
       "height": 24
@@ -71,7 +71,7 @@
     {
       "basename": "o_6",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/N",
+      "to": "hdole/nat/N64",
       "xy": {
         "x": 400,
         "y": 600
@@ -82,7 +82,7 @@
       "basename": "t_5",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 800
       },
       "height": 24
@@ -110,7 +110,7 @@
       "basename": "t_6",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 1000
       },
       "height": 24
@@ -138,7 +138,7 @@
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 1200
       },
       "height": 24
@@ -155,57 +155,10 @@
     {
       "basename": "o_12",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/CPo{N,#1}oPC",
+      "to": "hdole/nat/CPo{N64,#1}oPC",
       "xy": {
         "x": 400,
         "y": 1200
-      }
-    },
-    {
-      "basename": "o_13",
-      "prototype": "DiagramObject",
-      "to": "hdole/Strings/Ho{hdole/Narithmetics/N,str}oH",
-      "xy": {
-        "x": 200,
-        "y": 1400
-      }
-    },
-    {
-      "description": "A list of strings",
-      "basename": "t_8",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -800,
-        "y": 1400
-      },
-      "height": 24
-    },
-    {
-      "description": "Join a list of strings into a single string with another string as the conjunction",
-      "basename": "t_9",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -800,
-        "y": 1600
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_14",
-      "prototype": "DiagramObject",
-      "to": "hdole/Strings/Po{Ho{hdole/Narithmetics/N,str}oH,str}oP",
-      "xy": {
-        "x": 200,
-        "y": 1600
-      }
-    },
-    {
-      "basename": "o_15",
-      "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
-      "xy": {
-        "x": 400,
-        "y": 1600
       }
     },
     {
@@ -213,18 +166,18 @@
       "basename": "t_10",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
-        "y": 1800
+        "x": -500,
+        "y": 1400
       },
       "height": 24
     },
     {
       "basename": "o_16",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/Po{str,hdole/Narithmetics/N}oP",
+      "to": "hdole/Strings/Po{str,hdole/nat/N64}oP",
       "xy": {
         "x": 200,
-        "y": 1800
+        "y": 1400
       }
     },
     {
@@ -233,7 +186,7 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 1800
+        "y": 1400
       }
     },
     {
@@ -241,18 +194,18 @@
       "basename": "t_11",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
-        "y": 2000
+        "x": -500,
+        "y": 1600
       },
       "height": 24
     },
     {
       "basename": "o_18",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/N",
+      "to": "hdole/nat/N64",
       "xy": {
         "x": 200,
-        "y": 2000
+        "y": 1900
       }
     },
     {
@@ -261,16 +214,16 @@
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
-        "y": 2000
+        "y": 1900
       }
     },
     {
       "basename": "o_20",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/CPo{N,#1}oPC",
+      "to": "hdole/nat/CPo{N64,#1}oPC",
       "xy": {
         "x": 600,
-        "y": 2000
+        "y": 1900
       }
     },
     {
@@ -278,7 +231,7 @@
       "basename": "t_12",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 2200
       },
       "height": 24
@@ -286,7 +239,7 @@
     {
       "basename": "o_21",
       "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
+      "to": "hdole/int/Z64",
       "xy": {
         "x": 200,
         "y": 2200
@@ -304,7 +257,7 @@
     {
       "basename": "o_23",
       "prototype": "DiagramObject",
-      "to": "hdole/Integers/CPo{Z,#1}oPC",
+      "to": "hdole/int/CPo{Z64,#1}oPC",
       "xy": {
         "x": 600,
         "y": 2200
@@ -315,7 +268,7 @@
       "basename": "t_13",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 2400
       },
       "height": 24
@@ -352,7 +305,7 @@
       "basename": "t_14",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
+        "x": -500,
         "y": 2600
       },
       "height": 24
@@ -376,24 +329,14 @@
       }
     },
     {
-      "description": "References: &Fopf; Arithmetic",
-      "basename": "t_15",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 190,
-        "y": 110
-      },
-      "height": 24
-    },
-    {
       "description": "String",
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": -830,
-        "y": -110
+        "x": -400,
+        "y": -150
       },
-      "height": "400",
+      "height": "300",
       "weight": "bold"
     },
     {
@@ -402,7 +345,7 @@
       "domain": "hdole/Strings/o_3",
       "codomain": "hdole/Strings/o_4",
       "flipName": false,
-      "to": "hdole/Strings/emptyStr"
+      "to": "hdole/Strings/empty"
     },
     {
       "basename": "m_1",
@@ -437,14 +380,6 @@
       "to": "hdole/Strings/indexOf"
     },
     {
-      "basename": "m_5",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_14",
-      "codomain": "hdole/Strings/o_15",
-      "flipName": false,
-      "to": "hdole/Strings/join"
-    },
-    {
       "basename": "m_6",
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_16",
@@ -458,7 +393,7 @@
       "domain": "hdole/Strings/o_18",
       "codomain": "hdole/Strings/o_19",
       "flipName": false,
-      "to": "hdole/Strings/N64toString"
+      "to": "hdole/Strings/N64ToStr"
     },
     {
       "basename": "m_8",
@@ -466,7 +401,7 @@
       "domain": "hdole/Strings/o_19",
       "codomain": "hdole/Strings/o_20",
       "flipName": false,
-      "to": "hdole/Strings/toN64"
+      "to": "hdole/Strings/strToN64"
     },
     {
       "basename": "m_9",
@@ -474,7 +409,7 @@
       "domain": "hdole/Strings/o_21",
       "codomain": "hdole/Strings/o_22",
       "flipName": false,
-      "to": "hdole/Strings/Z64toString"
+      "to": "hdole/Strings/Z64ToStr"
     },
     {
       "basename": "m_10",
@@ -482,7 +417,7 @@
       "domain": "hdole/Strings/o_22",
       "codomain": "hdole/Strings/o_23",
       "flipName": false,
-      "to": "hdole/Strings/str2Z"
+      "to": "hdole/Strings/strToZ64"
     },
     {
       "basename": "m_11",
@@ -490,7 +425,7 @@
       "domain": "hdole/Strings/o_24",
       "codomain": "hdole/Strings/o_25",
       "flipName": false,
-      "to": "hdole/Strings/F64toString"
+      "to": "hdole/Strings/F64ToStr"
     },
     {
       "basename": "m_12",
@@ -498,7 +433,7 @@
       "domain": "hdole/Strings/o_25",
       "codomain": "hdole/Strings/o_26",
       "flipName": false,
-      "to": "hdole/Strings/str2F"
+      "to": "hdole/Strings/strToF64"
     },
     {
       "basename": "m_13",
@@ -507,6 +442,142 @@
       "codomain": "hdole/Strings/o_28",
       "flipName": false,
       "to": "hdole/Strings/str2tty"
+    },
+    {
+      "description": "The string of no length",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -500,
+        "y": 400
+      },
+      "height": 24
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N8",
+      "xy": {
+        "x": 200,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N16",
+      "xy": {
+        "x": 1300,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 200,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_14",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": 200,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_15",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": 400,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_29",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": 400,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_30",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": 400,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_31",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/#1",
+      "xy": {
+        "x": 700,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/CPo{hdole/nat/N8,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_33",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N16",
+      "xy": {
+        "x": 200,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "o_34",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": 400,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "o_35",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/CPo{hdole/nat/N16,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "o_36",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/CPo{hdole/nat/N32,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_37",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/CPo{hdole/nat/N128,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 2000
+      }
     }
   ],
   "elements": [
@@ -542,33 +613,18 @@
       ]
     },
     {
-      "description": "The homset from ℕ&#x2086;&#x2084; to str",
-      "basename": "Ho{hdole/Narithmetics/N,str}oH",
-      "prototype": "HomObject",
-      "objects": [
-        "hdole/Narithmetics/N",
-        "hdole/Strings/str"
-      ]
-    },
-    {
-      "basename": "Po{Ho{hdole/Narithmetics/N,str}oH,str}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/Strings/Ho{hdole/Narithmetics/N,str}oH",
-        "hdole/Strings/str"
-      ]
-    },
-    {
-      "basename": "Po{str,hdole/Narithmetics/N}oP",
+      "basename": "Po{str,hdole/nat/N64}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
-        "hdole/Narithmetics/N"
+        "hdole/nat/N64"
       ]
     },
     {
-      "basename": "emptyStr",
+      "description": "The string with zero length",
+      "basename": "empty",
       "prototype": "Morphism",
+      "properName": "&ldquo;&rdquo;",
       "code": {
         "cpp": "%0 = std::string('');"
       },
@@ -587,10 +643,10 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.length;\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.length;\n}\n"
+        "cpp": "%1 = %0.length;"
       },
       "domain": "hdole/Strings/str",
-      "codomain": "hdole/Narithmetics/N"
+      "codomain": "hdole/nat/N64"
     },
     {
       "description": "append two strings",
@@ -598,44 +654,33 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0].concat(args[1]);\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args[0] + args[1];\n}"
+        "cpp": "%2 = %0 + %1;"
       },
       "domain": "hdole/Strings/Po{str,str}oP",
       "codomain": "hdole/Strings/str"
     },
     {
-      "description": "is the first string included in the second",
+      "description": "is the second string included in the first",
       "basename": "includes",
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[1].includes(args[0]);\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args[0].find(args[1]) != std::string::npos;\n}"
+        "cpp": "%2 = %0.find(%1) != std::string::npos;"
       },
       "domain": "hdole/Strings/Po{str,str}oP",
       "codomain": "hdole/Strings/CPo{#1,#1}oPC"
     },
     {
-      "description": "where in the first string is the second",
+      "description": "Where in the first string is the second",
       "basename": "indexOf",
       "prototype": "Morphism",
       "properName": "index",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\tconst i = args[0].indexOf(args[1]);\n\treturn i > -1 ? [0, i] : [1, 1]\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tauto i = args[0].find(args[1]);\n\tif (i != std::string::npos)\n\t{\n\t\tout.idx = 0;\n\t\tout.value = i;\n\t}\n\telse\n\t{\n\t\tout.idx = 1;\n\t\tout.value = 0;\n\t}\n}\n"
+        "cpp": "{auto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.v = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.v = 0;\n}\n}"
       },
       "domain": "hdole/Strings/Po{str,str}oP",
-      "codomain": "hdole/Narithmetics/CPo{N,#1}oPC"
-    },
-    {
-      "description": "join a list of strings into a single string with another string as the conjunction",
-      "basename": "join",
-      "prototype": "Morphism",
-      "code": {
-        "js": "// function %Type(args)\n{\n\tTODO\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\t// TODO\n}\n"
-      },
-      "domain": "hdole/Strings/Po{Ho{hdole/Narithmetics/N,str}oH,str}oP",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/nat/CPo{N64,#1}oPC"
     },
     {
       "description": "the n&#39;th character in the string",
@@ -643,78 +688,79 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0].charAt(args[1]);\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::string(args[0][args[1]]);\n}\n"
+        "cpp": "%2 = std::string(%0[%1]);"
       },
-      "domain": "hdole/Strings/Po{str,hdole/Narithmetics/N}oP",
+      "domain": "hdole/Strings/Po{str,hdole/nat/N64}oP",
       "codomain": "hdole/Strings/str"
     },
     {
       "description": "convert a natural number to a string",
-      "basename": "N64toString",
+      "basename": "N64ToStr",
       "prototype": "Morphism",
-      "properName": "toString",
+      "properName": "to",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::to_string(args);\n}\n"
+        "cpp": "%1 = std::to_string(%0);"
       },
-      "domain": "hdole/Narithmetics/N",
+      "domain": "hdole/nat/N64",
       "codomain": "hdole/Strings/str"
     },
     {
       "description": "convert a string to a natural number",
-      "basename": "toN64",
+      "basename": "strToN64",
       "prototype": "Morphism",
+      "properName": "to",
       "code": {
         "js": "function %Type(args)\n{\n\tconst v = parseInt(args);\n\tif (!isNan(v) && v >= 0)\n\t\treturn [0, v];\n\telse\n\t\treturn [1, 0];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\ttry\n\t{\n\t\tout.value = std::stoul(args);\n\t\tout.idx = 0;\n\t}\n\tcatch(x)\n\t{\n\t\tout.idx = 1;\n\t\tout.value = 0;\n\t}\n}\n"
+        "cpp": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/Strings/str",
-      "codomain": "hdole/Narithmetics/CPo{N,#1}oPC"
+      "codomain": "hdole/nat/CPo{N64,#1}oPC"
     },
     {
       "description": "convert a 64-bit integer to a string",
-      "basename": "Z64toString",
+      "basename": "Z64ToStr",
       "prototype": "Morphism",
-      "properName": "toString",
+      "properName": "to",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::to_string(args);\n}\n"
+        "cpp": "%1 = std::to_string(%0);"
       },
-      "domain": "hdole/Integers/Z",
+      "domain": "hdole/int/Z64",
       "codomain": "hdole/Strings/str"
     },
     {
       "description": "convert a string to an integer",
-      "basename": "str2Z",
+      "basename": "strToZ64",
       "prototype": "Morphism",
-      "properName": "toInt",
+      "properName": "to",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\ttry\n\t{\n\t\tout.value = std::stol(args);\n\t\tout.idx = 0;\n\t}\n\tcatch(x)\n\t{\n\t\tout.idx = 1;\n\t\tout.value = 0;\n\t}\n}\n"
+        "cpp": "try\n{\n\t\t%1.v = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t\t%1.c = 0;\n}"
       },
       "domain": "hdole/Strings/str",
-      "codomain": "hdole/Integers/CPo{Z,#1}oPC"
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
     },
     {
       "description": "Convert a floating point number to a string",
-      "basename": "F64toString",
+      "basename": "F64ToStr",
       "prototype": "Morphism",
-      "properName": "toString",
+      "properName": "to",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\ttry\n\t{\n\t\tout.value = std::stod(args);\n\t\tout.idx = 0;\n\t}\n\tcatch(x)\n\t{\n\t\tout.idx = 1;\n\t\tout.value = 0;\n\t}\n}\n"
+        "cpp": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/floats/F64",
       "codomain": "hdole/Strings/str"
     },
     {
       "description": "convert a string to a floating point number",
-      "basename": "str2F",
+      "basename": "strToF64",
       "prototype": "Morphism",
-      "properName": "toFloat",
+      "properName": "to",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\ttry\n\t{\n\t\tout.value = std::stod(args);\n\t\tout.idx = 0;\n\t}\n\tcatch(x)\n\t{\n\t\tout.idx = 1;\n\t\tout.value = 0;\n\t}\n}\n"
+        "cpp": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/Strings/str",
       "codomain": "hdole/floats/CPo{F64,#1}oPC"
@@ -725,14 +771,51 @@
       "prototype": "Morphism",
       "properName": "&#120451;&#120451;&#120456;",
       "code": {
-        "js": "\nfunction %Type(args)\n{\n\tpostMessage(['str2tty', args]);\n}\n"
+        "js": "\nfunction %Type(args)\n{\n\tpostMessage(['str2tty', args]);\n}\n",
+        "cpp": "#include <iostream>\nstd::cout << %0;"
       },
       "domain": "hdole/Strings/str",
       "codomain": "hdole/Basics/TTY"
+    },
+    {
+      "basename": "CPo{hdole/nat/N8,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N8",
+        "hdole/Strings/#1"
+      ]
+    },
+    {
+      "basename": "CPo{hdole/nat/N16,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N16",
+        "hdole/Strings/#1"
+      ]
+    },
+    {
+      "basename": "CPo{hdole/nat/N32,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N32",
+        "hdole/Strings/#1"
+      ]
+    },
+    {
+      "basename": "CPo{hdole/nat/N128,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N128",
+        "hdole/Strings/#1"
+      ]
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623918305139,
+  "timestamp": 1624438916356,
   "version": 0
 }
