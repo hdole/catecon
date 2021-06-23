@@ -358,7 +358,8 @@ ${tail}`;
 		}
 		generateMorphism(morphism, generated = new Set())		// recursive
 		{
-			switch(morphism.prototype.name)
+			let code = '';
+			switch(morphism.constructor.name)
 			{
 				case 'Morphism':
 					if ('data' in morphism)
@@ -483,7 +484,7 @@ int main(int argc, char ** argv)
 			}
 			const _internalScanner = (m, f) =>
 			{
-				switch(m.prototype.name)
+				switch(m.constructor.name)
 				{
 					case 'Morphism':
 					case 'Evaluation':
@@ -518,7 +519,7 @@ int main(int argc, char ** argv)
 		evalComposite(morphism, factor)
 		{
 			let code = '';
-			switch(morphism.prototype.name)
+			switch(morphism.constructor.name)
 			{
 				case 'Morphism':
 					break;
@@ -543,9 +544,9 @@ int main(int argc, char ** argv)
 			}
 			return code;
 		}
-		generateComposite(morph, factor, generated)
+		generateComposite(morph, generated)
 		{
-			const morphism = morphism.diagram.comp(morph.expand());
+			const morphism = morph.diagram.comp(...morph.expand());
 			let code = morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
 			this.setupComposite(morphism);
 			code += this.getComments(morphism);
@@ -695,6 +696,7 @@ ${named.map((nm, i) => `\t\tstd::cout << '\t' << ${i} << ":\t${nm.basename}" << 
 		{
 			return `\n\t}\n`;
 		}
+		/*
 		template(elt)
 		{
 			if (elt.constructor.name === 'CatObject')
@@ -710,6 +712,7 @@ void %Type(const %Dom args, %Cod out)
 }
 `;
 		}
+		*/
 		generateDiagram(diagram)
 		{
 			const code = super.generateDiagram(diagram);
