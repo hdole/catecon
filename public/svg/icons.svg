@@ -2,6 +2,9 @@
 	<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 		<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
 	</marker>
+	<marker id="arrowheadF" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
+		<path class="arrowF" d="M10 20 L60 50 L10 80"/>
+	</marker>
 	<marker id="arrowheadRev" viewBox="6 12 60 90" refX="15" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 		<path class="svgstr3" d="M60 20 L10 50 L60 80"/>
 	</marker>
@@ -457,6 +460,11 @@
 	<symbol id="icon-upload" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="80" r="100" fill="url(#radgrad1)"/>
 		<line class="arrow0" x1="160" y1="300" x2="160" y2="160" marker-end="url(#arrowhead)"/>
+	</symbol>
+	<symbol id="icon-upload-json" class="icon" viewbox="0 0 320 320">
+		<circle cx="160" cy="80" r="140" fill="url(#radgrad1)"/>
+		<line class="arrowF" x1="160" y1="200" x2="160" y2="50" marker-end="url(#arrowheadF)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">JSON</text>
 	</symbol>
 	<symbol id="icon-user" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="140" fill="none" stroke="#aaa" stroke-width="20px"/>
