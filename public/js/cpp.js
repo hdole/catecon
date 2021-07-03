@@ -141,7 +141,8 @@ ${members}
 				switch(proto)
 				{
 					case 'CatObject':
-						code += this.getComments(object) + this.instantiate(object);
+//						code += this.getComments(object) + this.instantiate(object);
+						code += this.instantiate(object);
 						break;
 					case 'ProductObject':
 						code += this.generateProductObject(object, generated);
@@ -369,6 +370,11 @@ ${tail}`;
 						code += `std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${type}_data ${data};\n`;
 //						morphism.code.cpp = `%1 = ${type}_data.get(%0);`;
 					}
+					else if ('code' in morphism && 'cpp' in morphism.code)
+					{
+						const mcode = morphism.code.cpp;
+
+					}
 					break;
 				case 'Identity':
 				case 'FactorMorphism':
@@ -465,21 +471,21 @@ int main(int argc, char ** argv)
 		setupComposite(morphism, graph, factor)		// assume morphism is flattened composite
 		{
 			let val = 0;
-			let loc = 'args';
+//			let loc = 'args';
 			const varmap = this.getVarMap(morphism);
 			const _inoutScanner = (g, fctr) =>
 			{
 				const f = fctr.slice();
 				f.unshift(val);
-				const ref = loc + f.join('.m_');
+//				const ref = loc + f.join('.m_');
 				g.visited.forEach(v => varmap.set(v, ref));
 			};
-			if (morphism.domain instanceof ProductObject && !morphism.domain.dual)
-				graph[0].scan(g, fctr => _inoutScanner(g, fctr));
-			if (morphism.codomain instanceof ProductObject && !morphism.domain.dual)
+			if (morphism.domain instanceof Cat.ProductObject && !morphism.domain.dual)
+				graph.graphs[0].scan((g, fctr) => _inoutScanner(g, fctr));
+			if (morphism.codomain instanceof Cat.ProductObject && !morphism.domain.dual)
 			{
 				val = graph.graphs.length -1;
-				loc = 'out';
+//				loc = 'out';
 				graph[val].scan((g, fctr) => _inoutScanner(g, fctr));
 			}
 			const _internalScanner = (m, f) =>
@@ -544,11 +550,11 @@ int main(int argc, char ** argv)
 			}
 			return code;
 		}
-		generateComposite(morph, generated)
+		generateComposite(morph, generated, factor = [])
 		{
 			const morphism = morph.diagram.comp(...morph.expand());
 			let code = morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
-			this.setupComposite(morphism);
+			this.setupComposite(morphism, morphism.getSequenceGraph(), factor);
 			code += this.getComments(morphism);
 			code += this.header(morphism);
 			code += this.evalComposite(morphism);
