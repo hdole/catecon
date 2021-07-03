@@ -141,6 +141,7 @@ class U
 	{
 		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\'/g, '&#39;');
 	}
+	// return subscript character for a number or comma
 	static subscript(...subs)
 	{
 		let sub = '';
@@ -180,6 +181,7 @@ class U
 	{
 		return str.replace(/[.;:!?]$/, l => '');
 	}
+	// remove CambelBack
 	static DeCamel(s)
 	{
 		return s.replace(/([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g, '$1$4 $2$3$5').replace(/(^|\s)\S/g, l => l.toLowerCase());
@@ -461,7 +463,7 @@ class U
 	}
 	static isValidBasename(str)
 	{
-		return U.basenameEx.test(str);
+		return U.basenameEx.test(str) || U.finiteEx.test(str);
 	}
 }
 Object.defineProperties(U,
@@ -874,6 +876,8 @@ class R
 			R.SetDiagramInfo(diagram);
 			D.EmitCATEvent('load', diagram);
 			R.sync = sync;
+			const errors = diagram.check();
+if (errors.length > 0) debugger;
 			return diagram;
 		}
 		R.sync = sync;
@@ -1270,6 +1274,7 @@ if (name==='hdole/MySQL')return null;	// TODO get rid of this
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:R.user.name};
 		body.png = D.GetPng(diagram.name);
+		console.log('uploading', diagram.name);
 		if (local)
 			return R.authFetch(R.getURL('upload', local), body).then(res => fn(res)).catch(err => D.RecordError(err));
 		// keep local server up to date after update to cloud
@@ -1344,6 +1349,7 @@ if (name==='hdole/MySQL')return null;	// TODO get rid of this
 		D.EmitCATEvent('new', diagram);
 		R.SelectDiagram(diagram.name);
 		D.toolbar.clearError();
+		R.upload(null, json, true, _ => {});
 		D.statusbar.show(e, `Diagram ${diagram.name} loaded from local JSON file`);
 	}
 }
@@ -2595,7 +2601,7 @@ class DiagramTool extends ElementTool
 		const pNameBtn = diagram.canChangeProperName() ? D.getIcon('elt-edit-propername', 'edit', e => diagram.diagram.editElementText(e, diagram, id, 'properName'), 'Edit', sz) : '';
 		pNameBtn && header.querySelector('#diagram-properName-edit').appendChild(pNameBtn);
 		const div = D.toolbar.element.querySelector('div #diagram-toolbar2');
-		div.appendChild(H3.div('##diagram-upload-json.hidden', H3.label('Select json file to upload as diagram:', {for:'upload-json'}), H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => D.uploadJSON(e)})));
+		div.appendChild(H3.div('##diagram-upload-json.hidden', H3.h4('Upload Diagram JSON'), H3.label('Select JSON file to upload as diagram:', {for:'upload-json'}), H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => D.uploadJSON(e)})));
 		this.setSearchBar();
 	}
 	setSaveSorter(e)
@@ -3133,8 +3139,6 @@ class D
 					const movables = new Set();
 					diagram.selected.map(e =>
 					{
-						if (e instanceof Assertion)
-							return;
 						if (e instanceof DiagramMorphism)
 						{
 							elts.set(e.domain.name, e.domain.getXY());
@@ -3144,6 +3148,8 @@ class D
 							movables.add(e.domain);
 							movables.add(e.codomain);
 						}
+						else if (e instanceof Cell)
+							e.getObjects().map(o => movables.add(o));
 						else if (!(e instanceof Cell))
 						{
 							!orig.has(e) && orig.set(e, {x:e.orig.x, y:e.orig.y});
@@ -8015,9 +8021,9 @@ class DiagramText extends Element
 		{
 			const text = e.target.innerText;
 			div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
-			foreign.parentNode && foreign.remove();
 			if (text !== this.description)
 				R.diagram.commitElementText(e, this.name, e.target, 'description')
+			foreign.parentNode && foreign.remove();		// do not do this earlier or the textbox gets corrupted
 			D.closeActiveTextEdit();
 			this.svgText.classList.remove('hidden');
 			hidden.remove();
@@ -8482,8 +8488,11 @@ console.log('fixup in diagram', diagram.name);
 	{
 		cell.assertion = this;
 		this.cell = cell;
-		cell.removeSVG();
-		cell.getSVG(this.diagram.svgBase);
+		if (isGUI)
+		{
+			cell.removeSVG();
+			cell.getSVG(this.diagram.svgBase);
+		}
 	}
 	getXY()
 	{
@@ -9402,9 +9411,9 @@ class HomsetAction extends Action
 		const newSection = this.bpd.getNewSection(R.diagram, 'Homset-new', e => this.create(e), 'New Morphism');
 		D.toolbar.help.appendChild(newSection);
 		diagram.addFactorMorphisms(this.domain, this.codomain);
-		this.addRows(diagram.codomain.getHomset(this.domain.to, this.codomain.to));
+		this.addRows(diagram, diagram.codomain.getHomset(this.domain.to, this.codomain.to));
 	}
-	addRows(homset)
+	addRows(diagram, homset)
 	{
 		const help = D.toolbar.help;
 		const title = help.querySelector('#help-homset-morphism-title');
@@ -9455,7 +9464,7 @@ class HomsetAction extends Action
 		dom.innerHTML = cod.innerHTML;
 		cod.innerHTML = html;
 		this.swapped = !this.swapped;
-		this.addRows(R.diagram.codomain.getHomset(this.swapped ? this.codomain.to : this.domain.to, this.swapped ? this.domain.to : this.codomain.to));
+		this.addRows(R.diagram, R.diagram.codomain.getHomset(this.swapped ? this.codomain.to : this.domain.to, this.swapped ? this.domain.to : this.codomain.to));
 	}
 }
 
@@ -9967,6 +9976,7 @@ class LanguageAction extends Action
 		{
 			id,
 			disabled:true,
+			resize:'both',
 			onkeydown:e =>
 			{
 				e.stopPropagation();
@@ -12068,10 +12078,13 @@ class Cell extends DiagramCore
 	}
 	removeSVG()
 	{
-		const svg = this.diagram.svgBase.querySelector('#' + this.elementId('cell'));
-		svg && svg.remove();
-		this.svg && this.svg.remove();
-		this.svg = null;
+		if (this.diagram.svgBase)
+		{
+			const svg = this.diagram.svgBase.querySelector('#' + this.elementId('cell'));
+			svg && svg.remove();
+			this.svg && this.svg.remove();
+			this.svg = null;
+		}
 	}
 	update()
 	{
@@ -12593,13 +12606,13 @@ class Composite extends MultiMorphism
 		seqGraph.traceLinks(seqGraph);
 		const cnt = this.morphisms.length;
 		// remove duplicates
-		seqGraph.graphs[0].reduceLinks(cnt);
-		seqGraph.graphs[cnt].reduceLinks(cnt);
 		return seqGraph;
 	}
 	getGraph(data = {position:0})
 	{
 		const seqGraph = this.getSequenceGraph();
+		seqGraph.graphs[0].reduceLinks(cnt);
+		seqGraph.graphs[cnt].reduceLinks(cnt);
 		// copy ends for final answer
 		const graph = super.getGraph(data);
 		const cnt = this.morphisms.length;
@@ -15296,6 +15309,30 @@ class Diagram extends Functor
 			D.EmitElementEvent(this, 'move', elt);
 		});
 		D.EmitDiagramEvent(this, 'move', '');
+	}
+	check()
+	{
+		const errors = [];
+		const refs = new Set(this.allReferences.keys());
+		refs.add(this.name);
+		const chkBasename = elt =>
+		{
+			switch(elt.prototype)
+			{
+				case 'CatObject':
+				case 'Morphism':
+				case 'Assertion':
+				case 'DiagramText':
+				case 'DiagramObject':
+				case 'DiagramMorphism':
+					!U.isValidBasename(elt.basename) && errors.push(`Invalid basename: ${U.HtmlEntitySafe(elt.basename)}`);
+					break;
+			}
+		};
+		this.domain.elements.forEach(chkBasename);
+		this.elements.forEach(chkBasename);
+		this.elements.forEach(elt => !refs.has(elt.diagram.name) && errors.push(`Element not in scope: ${U.HtmlEntitySafe(elt.name)}`));
+		return errors;
 	}
 	static Codename(args)
 	{
