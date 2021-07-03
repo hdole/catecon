@@ -152,7 +152,7 @@
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
-        "x": 910,
+        "x": -100,
         "y": -180
       },
       "height": "24"
@@ -162,7 +162,7 @@
       "basename": "t_2",
       "prototype": "DiagramText",
       "xy": {
-        "x": 910,
+        "x": -100,
         "y": -10
       },
       "height": "24"
@@ -172,7 +172,7 @@
       "basename": "t_3",
       "prototype": "DiagramText",
       "xy": {
-        "x": 900,
+        "x": -110,
         "y": 190
       },
       "height": "24"
@@ -295,6 +295,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623655941952,
+  "timestamp": 1624699648089,
   "version": 0
 }

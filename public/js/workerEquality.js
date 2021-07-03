@@ -185,7 +185,6 @@ function loadDiagrams(diagrams)
 	sig2legs.clear();
 	equals.clear();
 	diagrams.map(diagram => diagramItems.has(diagram) && diagramItems.get(diagram).forEach(item => items.get(item).forEach(equ => loadEquivalences(diagram, item, equ[0], equ[1], equ[2]))));
-	console.log({spoiled});
 	spoiled = false;
 }
 
@@ -216,5 +215,4 @@ function removeEquivalences(diagram, delItems)		// when deletion occurs due to e
 		myItems.delete(item);
 	});
 	spoiled = true;
-	console.log({spoiled});
 }

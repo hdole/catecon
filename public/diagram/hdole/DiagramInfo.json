@@ -61,7 +61,7 @@
     {
       "basename": "o_5",
       "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
+      "to": "hdole/int/Z32",
       "xy": {
         "x": 200,
         "y": 200
@@ -224,7 +224,7 @@
         "mysql": "SELECT timestamp FROM DiagramInfo;"
       },
       "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/Integers/Z"
+      "codomain": "hdole/int/Z32"
     },
     {
       "basename": "basename",

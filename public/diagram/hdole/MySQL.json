@@ -23,7 +23,7 @@
     {
       "basename": "o_1",
       "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z",
+      "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
         "y": -200
@@ -32,7 +32,7 @@
     {
       "basename": "o_2",
       "prototype": "DiagramObject",
-      "to": "hdole/Integers/Z32",
+      "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
         "y": 0

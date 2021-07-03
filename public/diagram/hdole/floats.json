@@ -88,7 +88,7 @@
       }
     },
     {
-      "description": "a random number between 0.0 and 1.0",
+      "description": "A random number between 0.0 and 1.0",
       "basename": "t_3",
       "prototype": "DiagramText",
       "xy": {
@@ -284,7 +284,7 @@
       }
     },
     {
-      "description": "division of two floating point numbers or an exception",
+      "description": "Division of two floating point numbers or an exception",
       "basename": "t_12",
       "prototype": "DiagramText",
       "xy": {
@@ -2568,7 +2568,7 @@
       "description": "The nearest integer to a given floating point number",
       "basename": "rnd64",
       "prototype": "Morphism",
-      "properName": "rnd",
+      "properName": "round",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.round(args);\n}\n",
         "cpp": "%1 = ::round(%0);\n"
@@ -2619,7 +2619,7 @@
       "properName": "pow",
       "code": {
         "js": "if (args[0] === 0 && args[1] === 0)\n\treturn [1, 0];\nreturn [0, Math.pow(args[0], args[1])];\n}\n",
-        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;else\n{\n\t %2.c = 0; %2.v = ::pow(%0, %r);\n}\n"
+        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = ::pow(%0, %1);\n}\n"
       },
       "domain": "hdole/floats/Po{F64,F64}oP",
       "codomain": "hdole/floats/CPo{F64,#1}oPC"
@@ -2973,7 +2973,7 @@
     {
       "basename": "rnd128",
       "prototype": "Morphism",
-      "properName": "rnd",
+      "properName": "round",
       "code": {
         "cpp": "%1 = ::round(%0);"
       },
@@ -3025,7 +3025,7 @@
       "prototype": "Morphism",
       "properName": "log",
       "code": {
-        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.m0 = 0;\n\t%1.m1 = ::log(%0);\n}\nelse\n\t%1.m0 = 1;"
+        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/floats/F32",
       "codomain": "hdole/floats/CPo{F32,#1}oPC"
@@ -3034,6 +3034,9 @@
       "basename": "log128",
       "prototype": "Morphism",
       "properName": "log",
+      "code": {
+        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
+      },
       "domain": "hdole/floats/F128",
       "codomain": "hdole/floats/CPo{F128,#1}oPC"
     },
@@ -3041,6 +3044,9 @@
       "basename": "pow32",
       "prototype": "Morphism",
       "properName": "pow",
+      "code": {
+        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = ::pow(%0, %1);\n}\n"
+      },
       "domain": "hdole/floats/Po{F32,F32}oP",
       "codomain": "hdole/floats/CPo{F32,#1}oPC"
     },
@@ -3048,6 +3054,9 @@
       "basename": "pow128",
       "prototype": "Morphism",
       "properName": "pow",
+      "code": {
+        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = ::pow(%0, %1);\n}\n"
+      },
       "domain": "hdole/floats/Po{F128,F128}oP",
       "codomain": "hdole/floats/CPo{F128,#1}oPC"
     },
@@ -3063,6 +3072,9 @@
       "basename": "max128",
       "prototype": "Morphism",
       "properName": "max",
+      "code": {
+        "cpp": "%2 = *std::max_element(%0, %1);"
+      },
       "domain": "hdole/floats/Po{F128,F128}oP",
       "codomain": "hdole/floats/F128"
     },
@@ -3071,6 +3083,9 @@
       "basename": "max32",
       "prototype": "Morphism",
       "properName": "max",
+      "code": {
+        "cpp": "%2 = *std::max_element(%0, %1);"
+      },
       "domain": "hdole/floats/Po{F32,F32}oP",
       "codomain": "hdole/floats/F32"
     },
@@ -3078,6 +3093,9 @@
       "basename": "min32",
       "prototype": "Morphism",
       "properName": "min",
+      "code": {
+        "cpp": "%2 = *std::min_element(%0, %1);"
+      },
       "domain": "hdole/floats/Po{F32,F32}oP",
       "codomain": "hdole/floats/F32"
     },
@@ -3085,6 +3103,9 @@
       "basename": "min128",
       "prototype": "Morphism",
       "properName": "min",
+      "code": {
+        "cpp": "%2 = *std::min_element(%0, %1);"
+      },
       "domain": "hdole/floats/Po{F128,F128}oP",
       "codomain": "hdole/floats/F128"
     },
@@ -3154,6 +3175,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623910718651,
+  "timestamp": 1625125098516,
   "version": 0
 }
