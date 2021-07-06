@@ -73,7 +73,7 @@ var Cat = Cat || require('./Cat.js');
 			}
 			if (!first && elt.needsParens())
 				basetype = `Pa_${basetype}_aP`;
-			basetype = isLocal ? basetype : `${this.getNamespace(elt.diagram)}::${basetype}`;
+			basetype = isLocal ? basetype : `${this.getNamespace(elt.diagram)}__${basetype}`;
 			this.currentDiagram = priorDiagram;
 			return !first ? U.Token(basetype) : basetype;
 		}
@@ -131,8 +131,19 @@ ${members}
 `;
 			return code;
 		}
-		generateObject(object, generated)
+		instantiate(element)
 		{
+			const code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
+			return code.slice(-1) === '\n' ? code : code + '\n';
+//			if (element instanceof Morphism)
+//				code = code.replace(/%Dom/g, this.getType(element.domain)).replace(/%Cod/g, this.getType(element.codomain));
+//			return code;
+		}
+		generateObject(object, generated = new Set())
+		{
+			if (generated.has(object.name))
+				return;
+			generated.add(object.name);
 			const proto = object.constructor.name;
 			let code = '';
 			const name = this.getType(object);
@@ -145,10 +156,10 @@ ${members}
 						code += this.instantiate(object);
 						break;
 					case 'ProductObject':
-						code += this.generateProductObject(object, generated);
+//						code += this.generateProductObject(object, generated);
 						break;
 					case 'HomObject':
-						code += cline(2, `${this.getComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);`);
+//						code += cline(2, `${this.getComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);`);
 						break;
 					default:
 						break;
@@ -357,7 +368,7 @@ ${tail}`;
 			const generated = new Set();
 			return this.generateObject(morphism.domain, generated) + this.generateObject(morphism.codomain, generated);
 		}
-		generateMorphism(morphism, generated = new Set())		// recursive
+		generateMorphism(morphism, ndxMap = new Map(), generated = new Set())		// recursive
 		{
 			let code = '';
 			switch(morphism.constructor.name)
@@ -368,12 +379,6 @@ ${tail}`;
 						const data = JSON.stringify(U.JsonMap(morphism.data));
 						const type = this.getType(morphism);
 						code += `std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${type}_data ${data};\n`;
-//						morphism.code.cpp = `%1 = ${type}_data.get(%0);`;
-					}
-					else if ('code' in morphism && 'cpp' in morphism.code)
-					{
-						const mcode = morphism.code.cpp;
-
 					}
 					break;
 				case 'Identity':
@@ -384,11 +389,11 @@ ${tail}`;
 				case 'Evaluation':
 					break;
 				case 'Composite':
-					code += this.generateComposite(morphism, generated);
+					code += this.generateComposite(morphism, ndxMap);
 					break;
 				case 'ProductMorphism':
 					// TODO skip id's, factor morphisms, and product, coproduct, ... thereof
-					code += morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
+					code += morphism.morphisms.map(m => this.generateMorphism(m, ndxMap, generated)).join('');
 					code += this.getComments(morphism);
 					if (morphism.dual)
 					{
@@ -399,27 +404,151 @@ ${tail}`;
 						code += `${header}\t\t${morphism.morphisms.map((m, i) => `\t\t${this.getType(m)}(args.m_${i}, out.m_${i});\n`).join('')}${tail}`;
 					break;
 				case 'ProductAssembly':
-					code += morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
+					code += morphism.morphisms.map(m => this.generateMorphism(m, ndxMap, generated)).join('');
 					code += `${this.header(morphism)}\t\t${morphism.morphisms.map((m, i) => cline(2, `${this.getType(m)}(args, out.m_${i});\n`)).join('')}${this.tail()}`;
 					break;
 				case 'HomMorphism':
-					code += morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
+					code += morphism.morphisms.map(m => this.generateMorphism(m, ndxMap, generated)).join('');
 					break;
 				case 'NamedMorphism':
-					code += this.generateMorphism(morphism.base, generated);
+					code += this.generateMorphism(morphism.base, ndxMap, generated);
 					break;
 			}
 			return code;
 		}
-		//
+		initialize()
+		{
+			this.varCount = 0;
+		}
+		copyVariables(graph, ndxMap, upGraph, domFactor, codFactor)
+		{
+			const fn = (g, f) =>
+			{
+				const upFactor = U.pushFactor(factor, f);
+				g.var = upGraph.getFactor(upFactor).var;
+				ndxMap.set(upFactor.toString(), g.var);
+			}
+			let factor = domFactor;
+			graph.graphs[0].scan(fn);
+			factor = codFactor;
+			graph.graphs[graph.graphs.length -1].scan(fn);
+		}
+		// label the leafs in the graphs with a variable name
+		setupVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor)		// assume morphism is flattened composite
+		{
+			if (upGraph)
+				this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor);
+			const doLeaf = (g, f) => !('var' in g);
+			let code = '';
+			const doit = (g, ndx) =>
+			{
+				if ('var' in g)
+					return;
+				const indexes = g.links.filter(lnk => ndxMap.has(lnk.toString()));
+				const strNdx = ndx.toString();
+				if (indexes.length > 0)
+				{
+					const v = ndxMap.get(indexes[0].toString());
+					g.var = v;
+					ndxMap.set(strNdx, v);
+				}
+				else
+				{
+					if (!ndxMap.has(strNdx))
+					{
+						const v = `var_${this.varCount++}`;
+						ndxMap.set(strNdx, v);
+						code += `${this.getType(R.diagram.getElement(g.name))} ${v};\n`;
+					}
+					g.var = ndxMap.get(strNdx);
+				}
+			};
+			graph.funLinks(graph, doLeaf, doit);
+			return code;
+		}
+		generateComposite(m, ndxMap, upGraph = null, domFactor = [], codFactor = [])
+		{
+			const morphism = m.diagram.comp(...m.expand());
+			const graph = morphism.getSequenceGraph();
+			const nuNdxMap = new Map();
+			const code = this.setupVariables(morphism, graph, nuNdxMap, upGraph, domFactor, codFactor);
+//			return m.morphisms.map((m, i) => this.scanner(m, U.pushFactor(domFactor, i), U.pushFactor(codFactor, i+1), graph, nuNdxMap)).join('');
+			return code + m.morphisms.map((m, i) => this.scanner(m, [i], [i+1], graph, nuNdxMap)).join('');
+		}
+		scanner(morphism, domFactor, codFactor, graph, ndxMap)
+		{
+			let code = '';
+			switch(morphism.constructor.name)
+			{
+				case 'Morphism':
+					const dom = morphism.domain;
+					const cod = morphism.codomain;
+					const domCnt = !dom.dual && 'objects' in dom ? dom.objects.filter(o => !o.isTerminal()).length : 1;
+					const codCnt = !cod.dual && 'objects' in cod ? cod.objects.filter(o => !o.isTerminal()).length : 1;
+					let nuCode = morphism.code.cpp;
+					if (domCnt > 1)
+					{
+						for (let i=0; i<domCnt; ++i)
+						{
+							const arg = `%${i}`;
+							const rx = new RegExp(arg, 'g');
+							const v = graph.getFactor(U.pushFactor(domFactor, i)).var;
+							nuCode = nuCode.replace(rx, v);
+						}
+					}
+					else
+						nuCode = nuCode.replace(/%0/g, graph.getFactor(domFactor).var);
+					if (codCnt > 1)
+					{
+						for (let i=domCnt; i<domCnt+codCnt; ++i)
+						{
+							const rx = new RegExp(`%${i}`, 'g');
+							nuCode = nuCode.replace(rx, graph.getFactor(codFactor).var);
+						}
+					}
+					else
+					{
+						const rx = new RegExp(`%${domCnt}`, 'g');
+						nuCode = nuCode.replace(rx, graph.getFactor(codFactor).var);
+					}
+					if (nuCode.slice(-1) !== '\n')
+						nuCode = nuCode + '\n';
+					code += nuCode;
+					break;
+				case 'Evaluation':
+					break;
+				case 'Composite':
+					code += this.generateComposite(morphism, ndxMap, graph, domFactor, codFactor);
+					break;
+				case 'Identity':
+				case 'FactorMorphism':
+				case 'LambdaMorphism':
+				case 'Distribute':
+				case 'DeDistribute':
+					break;
+				case 'ProductMorphism':
+				case 'HomMorphism':
+					morphism.morphisms.map((m, i) => this.scanner(m, Cat.U.pushFactor(domFactor, i), Cat.U.pushFactor(codFactor, i+1), graph, ndxMap));
+					break;
+				case 'ProductAssembly':
+					if (!morphism.dual)
+						code += morphism.morphisms.map((m, i) => this.scanner(m, domFactor, Cat.U.pushFactor(codFactor, i+1), graph, ndxMap)).join('');
+					break;
+				case 'NamedMorphism':
+					this.scanner(morphism.base, domFactor, codFactor, graph, ndxMap);
+					break;
+			}
+			return cline(2, code);
+		}
 		// top level code emitter; not recursive
-		//
 		generate(morphism)
 		{
+			this.initialize();
 			let code =
 `
+#include <iostream>
+
 #include <string>
-#include <stdio.h>
 #include <stdlib.h>
 #include <map>
 #include <cstring>
@@ -427,16 +556,9 @@ ${tail}`;
 // objects
 ${this.generateObjects(morphism)}
 
-// morphisms
-${this.generateMorphism(morphism)}
-
-// runtime morphism
-${this.instantiateMorphism(morphism)}
 
 int main(int argc, char ** argv)
 {
-	unsigned long index = 0;
-	typedef void (*CatFn)(void*);
 	try
 	{
 		if (argc == 1 && (strcmp("-h", argv[1]) || strcmp("--help", argv[1])))
@@ -444,11 +566,7 @@ int main(int argc, char ** argv)
 			std::cout << "${morphism.basename}: ${morphism.description}" << std::endl;
 			return 1;
 		}
-		${this.getType(morphism.domain)} args;
-		std::cin >> args;
-		${this.getType(morphism.codomain)} out;
-		${this.getType(morphism)}(args, out);
-		std::cout << out << std::endl;
+${this.generateMorphism(morphism)}
 		return 0;
 	}
 	catch(std::exception x)
@@ -460,68 +578,8 @@ int main(int argc, char ** argv)
 `;
 			return code;
 		}
-		getVarMap(morphism)
-		{
-			if (this.varMap.has(morphism.name))
-				return this.varMap.get(morphism.name);
-			const map = new Map();
-			this.varMap.set(morphism.name, map);
-			return map;
-		}
-		setupComposite(morphism, graph, factor)		// assume morphism is flattened composite
-		{
-			let val = 0;
-//			let loc = 'args';
-			const varmap = this.getVarMap(morphism);
-			const _inoutScanner = (g, fctr) =>
-			{
-				const f = fctr.slice();
-				f.unshift(val);
-//				const ref = loc + f.join('.m_');
-				g.visited.forEach(v => varmap.set(v, ref));
-			};
-			if (morphism.domain instanceof Cat.ProductObject && !morphism.domain.dual)
-				graph.graphs[0].scan((g, fctr) => _inoutScanner(g, fctr));
-			if (morphism.codomain instanceof Cat.ProductObject && !morphism.domain.dual)
-			{
-				val = graph.graphs.length -1;
-//				loc = 'out';
-				graph[val].scan((g, fctr) => _inoutScanner(g, fctr));
-			}
-			const _internalScanner = (m, f) =>
-			{
-				switch(m.constructor.name)
-				{
-					case 'Morphism':
-					case 'Evaluation':
-					case 'Composite':
-						const fndx = f.join(',');
-						if (varmap.has(fndx))
-							return;
-						const ref = 'out_' + fndx;
-						const g = graph.getFactor(f);
-						g.visited.forEach(v => varmap.set(v, ref));
-						break;
-					case 'Identity':
-					case 'FactorMorphism':
-					case 'LambdaMorphism':
-					case 'Distribute':
-					case 'DeDistribute':
-						break;
-					case 'ProductMorphism':
-					case 'HomMorphism':
-						m.morphisms.map((mm, i) => _internalScanner(mm, Cat.U.pushFactor(f, i)));
-						break;
-					case 'ProductAssembly':
-						break;
-					case 'NamedMorphism':
-						_internalScanner(m.base, f);
-						break;
-				}
-			};
-			_internalScanner(morphism, factor);
-			graph.scan((g, fctr) => !varmap.has(fctr.join(',')) && console.log('morphism', morphism.name, 'missing in var map', fctr));	// integrity check
-		}
+
+			/*
 		evalComposite(morphism, factor)
 		{
 			let code = '';
@@ -550,18 +608,6 @@ int main(int argc, char ** argv)
 			}
 			return code;
 		}
-		generateComposite(morph, generated, factor = [])
-		{
-			const morphism = morph.diagram.comp(...morph.expand());
-			let code = morphism.morphisms.map(m => this.generateMorphism(m, generated)).join('');
-			this.setupComposite(morphism, morphism.getSequenceGraph(), factor);
-			code += this.getComments(morphism);
-			code += this.header(morphism);
-			code += this.evalComposite(morphism);
-			return code + this.tail();
-		}
-
-			/*
 		generate(element, generated = new Set())
 		{
 			if (generated.has(element.name))

@@ -153,7 +153,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -100,
-        "y": -180
+        "y": -200
       },
       "height": "24"
     },
@@ -163,7 +163,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -100,
-        "y": -10
+        "y": 0
       },
       "height": "24"
     },
@@ -172,8 +172,8 @@
       "basename": "t_3",
       "prototype": "DiagramText",
       "xy": {
-        "x": -110,
-        "y": 190
+        "x": -100,
+        "y": 200
       },
       "height": "24"
     },
@@ -248,6 +248,34 @@
       "codomain": "hdole/category/o_13",
       "flipName": false,
       "to": "hdole/category/cod"
+    },
+    {
+      "description": "The assertion that the composite of morphisms id,dom equals that of 1.",
+      "basename": "a_0",
+      "prototype": "Assertion",
+      "signature": "1f06915fdeaba6743f830eb93ca02fdb39529dc624f11c15ba39f32c6325cb2b",
+      "equal": true,
+      "left": [
+        "hdole/category/m_3",
+        "hdole/category/m_5"
+      ],
+      "right": [
+        "hdole/category/m_4"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms id,cod equals that of 1.",
+      "basename": "a_1",
+      "prototype": "Assertion",
+      "signature": "231fe9d5bb7a66e1d9481063c5e9cff48898db78caebdbfa69fa044ce8fb64d3",
+      "equal": true,
+      "left": [
+        "hdole/category/m_6",
+        "hdole/category/m_8"
+      ],
+      "right": [
+        "hdole/category/m_7"
+      ]
     }
   ],
   "elements": [
@@ -295,6 +323,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1624699648089,
+  "timestamp": 1625390602684,
   "version": 0
 }

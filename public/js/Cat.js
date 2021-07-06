@@ -367,7 +367,10 @@ class U
 	static pushFactor(factor, ndx)
 	{
 		const nu = factor.slice();
-		nu.push(ndx);
+		if (typeof ndx === 'number')
+			nu.push(ndx);
+		else
+			nu.push(...ndx);
 		return nu;
 	}
 	static readfile(filename)
@@ -6658,6 +6661,10 @@ class Element
 		this.description !== '' && D.statusbar.show(e, this.description);
 		this.emphasis(true);
 	}
+	getFactor(factor)
+	{
+		return this;
+	}
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return `${diagram ? diagram.name : 'sys'}/${args.basename}`; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
@@ -6678,6 +6685,8 @@ class Graph
 		this.tags = 'tags' in args ? args.tags.slice() : [];
 		this.links = 'links' in args ? args.links.slice() : [];
 		this.visited = new Set('visited' in args ? args.visited.slice() : []);
+		if ('name' in args)
+			this.name = args.name;
 	}
 	json()
 	{
@@ -6780,14 +6789,38 @@ class Graph
 				U.ArrayMerge(this.links, nuLinks);
 		}
 		else
+			this.graphs.map((g, i) => g.traceLinks(top, U.pushFactor(ndx, i)));
+	}
+	funLinks(top, doLeaf, doit, ndx = [])
+	{
+		if (this.isLeaf() && doLeaf(this, ndx))		// links are at the leaves of the graph
 		{
-			this.graphs.map((g, i) =>
+			doit(this, ndx);
+			const links = this.links.slice();
+			this.visited = new Set();
+			while(links.length > 0)
 			{
-				const ndxi = ndx.slice();
-				ndxi.push(i);
-				g.traceLinks(top, ndxi);
-			});
+				const lnk = links.pop();
+				if (ndx.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
+					continue;
+				if (this.visited.has(lnk.toString()))
+					continue;
+				const g = top.getFactor(lnk);
+				doit(g, lnk);
+				for (let j=0; j<g.links.length; ++j)
+				{
+					const glnk = g.links[j];
+					if (this.visited.has(glnk.toString()))
+						continue;
+//					if (ndx.reduce((isEqual, lvl, i) => lvl === glnk[i] && isEqual, true))	// ignore links back to where we came from
+//						continue;
+					doit(top.getFactor(glnk), glnk);
+				}
+				this.visited.add(lnk.toString());
+			}
 		}
+		else
+			this.graphs.map((g, i) => g.funLinks(top, doLeaf, doit, U.pushFactor(ndx, i)));
 	}
 	mergeGraphs(data) // data: {from, base, inbound, outbound}
 	{
@@ -7189,7 +7222,7 @@ class CatObject extends Element
 		const width = D.textWidth(this.properName);
 		const position = data.position;
 		data.position += width;
-		return new Graph(this.diagram, {position, width});
+		return new Graph(this.diagram, {position, width, name:this.name});
 	}
 	getFactorProperName(indices)
 	{
@@ -9968,7 +10001,7 @@ class LanguageAction extends Action
 		if (elt.constructor.name === 'Morphism')
 			code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
 		else if (elt instanceof Morphism)
-			code = this.generateMorphism(elt);
+			code = this.generate(elt);
 		else if (elt instanceof CatObject)
 			code = this.generateObject(elt);
 		const id = `element-${this.ext}`;
@@ -10056,6 +10089,7 @@ class LanguageAction extends Action
 			D.statusbar.show(e, `Diagram ${name} ${this.name} generated<br/>&#9201;${delta}ms`, true);
 		}
 	}
+	// TODO need version for JS only
 	instantiate(element)
 	{
 		let code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
@@ -12603,19 +12637,18 @@ class Composite extends MultiMorphism
 			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
 		// trace the links through the sequence graph
-		seqGraph.traceLinks(seqGraph);
-		const cnt = this.morphisms.length;
 		// remove duplicates
 		return seqGraph;
 	}
 	getGraph(data = {position:0})
 	{
 		const seqGraph = this.getSequenceGraph();
+		seqGraph.traceLinks(seqGraph);
+		const cnt = this.morphisms.length;
 		seqGraph.graphs[0].reduceLinks(cnt);
 		seqGraph.graphs[cnt].reduceLinks(cnt);
 		// copy ends for final answer
 		const graph = super.getGraph(data);
-		const cnt = this.morphisms.length;
 		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[cnt], [1]]]});
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
 		return graph;

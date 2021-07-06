@@ -1667,6 +1667,15 @@
       }
     },
     {
+      "basename": "o_157",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1600,
+        "y": 3300
+      }
+    },
+    {
       "basename": "m_0",
       "prototype": "DiagramMorphism",
       "domain": "hdole/floats/o_1",
@@ -2281,6 +2290,14 @@
       "codomain": "hdole/floats/o_156",
       "flipName": false,
       "to": "hdole/floats/N128toF128"
+    },
+    {
+      "basename": "m_77",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/floats/o_157",
+      "codomain": "hdole/floats/o_95",
+      "flipName": false,
+      "to": "hdole/floats/CFa{CPo{Po{F128,F128}oP,#1}oPC,Po{F128,F128}oP_0}aFC"
     }
   ],
   "elements": [
@@ -2296,7 +2313,7 @@
       "prototype": "CatObject",
       "properName": "𝔽₆₄",
       "code": {
-        "cpp": "}\n\n#include <math.h>\n#include <climits>\n\nnamespace %Namespace\n{\n\ttypedef double %0;\n"
+        "cpp": "#include <math.h>\n#include <climits>\n\ntypedef double %Type;\n\n"
       }
     },
     {
@@ -3171,10 +3188,20 @@
       "properName": "&sub;",
       "domain": "hdole/nat/N128",
       "codomain": "hdole/floats/F128"
+    },
+    {
+      "basename": "CFa{CPo{Po{F128,F128}oP,#1}oPC,Po{F128,F128}oP_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/CPo{Po{F128,F128}oP,#1}oPC",
+      "factors": [
+        0
+      ]
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625125098516,
+  "timestamp": 1625529767768,
   "version": 0
 }
