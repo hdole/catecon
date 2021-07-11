@@ -1339,8 +1339,8 @@
       "basename": "t_46",
       "prototype": "DiagramText",
       "xy": {
-        "x": 90,
-        "y": -290
+        "x": 120,
+        "y": -260
       },
       "height": "700",
       "weight": "bold"
@@ -3202,6 +3202,9 @@
       "basename": "stdinToN8",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/nat/N8"
     },
@@ -3209,6 +3212,9 @@
       "basename": "stdinToN16",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/nat/N16"
     },
@@ -3216,6 +3222,9 @@
       "basename": "stdinToN32",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/nat/N32"
     },
@@ -3223,6 +3232,9 @@
       "basename": "stdinToN128",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/nat/N128"
     },
@@ -3230,6 +3242,9 @@
       "basename": "N8ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3237,6 +3252,9 @@
       "basename": "N16ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3244,6 +3262,9 @@
       "basename": "N32ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3251,6 +3272,9 @@
       "basename": "N128ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3258,6 +3282,9 @@
       "basename": "stdinToZ8",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/int/Z8"
     },
@@ -3265,6 +3292,9 @@
       "basename": "stdinToZ16",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/int/Z16"
     },
@@ -3272,6 +3302,9 @@
       "basename": "stdinToZ64",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/int/Z64"
     },
@@ -3279,6 +3312,9 @@
       "basename": "stdinToZ128",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/int/Z128"
     },
@@ -3286,6 +3322,9 @@
       "basename": "stdinToF32",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/floats/F32"
     },
@@ -3293,6 +3332,9 @@
       "basename": "stdinToF128",
       "prototype": "Morphism",
       "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %0;"
+      },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/floats/F128"
     },
@@ -3300,6 +3342,9 @@
       "basename": "Z8ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3307,6 +3352,9 @@
       "basename": "Z16ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/int/Z16",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3314,6 +3362,9 @@
       "basename": "Z32ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/int/Z32",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3321,6 +3372,9 @@
       "basename": "Z128ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/int/Z128",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3328,6 +3382,9 @@
       "basename": "F32ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/floats/F32",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3335,6 +3392,9 @@
       "basename": "F128ToStdout",
       "prototype": "Morphism",
       "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
       "domain": "hdole/floats/F128",
       "codomain": "hdole/cpp/stdout"
     },
@@ -3349,6 +3409,9 @@
       "basename": "Z8ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3356,6 +3419,9 @@
       "basename": "N16ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3363,6 +3429,9 @@
       "basename": "Z16ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/int/Z16",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3411,6 +3480,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625217034371,
+  "timestamp": 1625899401565,
   "version": 0
 }

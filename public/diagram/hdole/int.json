@@ -3,8 +3,12 @@
   "basename": "int",
   "name": "hdole/int",
   "prototype": "Diagram",
+  "properName": "hdole/int",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
+  "code": {
+    "cpp": "#include <stdint.h>"
+  },
   "domain": "hdole/int_Index",
   "codomain": "hdole/PFS",
   "references": [
@@ -72,7 +76,7 @@
       "to": "hdole/int/Po{Z64,Z64}oP",
       "xy": {
         "x": 800,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -81,7 +85,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1000,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -186,7 +190,7 @@
       }
     },
     {
-      "description": "The number zero",
+      "description": "The first number:  zero",
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
@@ -214,7 +218,7 @@
       }
     },
     {
-      "description": "The number 1",
+      "description": "After zero there is one",
       "basename": "t_17",
       "prototype": "DiagramText",
       "xy": {
@@ -247,7 +251,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 2000
+        "y": 2200
       },
       "height": 24
     },
@@ -257,7 +261,7 @@
       "to": "hdole/int/Po{Z16,Z16}oP",
       "xy": {
         "x": 0,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -266,7 +270,7 @@
       "to": "hdole/int/Z16",
       "xy": {
         "x": 200,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -536,8 +540,8 @@
       "basename": "t_31",
       "prototype": "DiagramText",
       "xy": {
-        "x": -490,
-        "y": -820
+        "x": -600,
+        "y": -900
       },
       "height": "500",
       "weight": "bold"
@@ -829,7 +833,7 @@
       "to": "hdole/int/Z8",
       "xy": {
         "x": -200,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -838,7 +842,7 @@
       "to": "hdole/int/Po{Z8,Z8}oP",
       "xy": {
         "x": -410,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -847,7 +851,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 600,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -856,7 +860,7 @@
       "to": "hdole/int/Po{Z32,Z32}oP",
       "xy": {
         "x": 400,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -910,7 +914,7 @@
       "to": "hdole/int/CPo{Z16,#1}oPC",
       "xy": {
         "x": 200,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -919,7 +923,7 @@
       "to": "hdole/int/CPo{Z8,#1}oPC",
       "xy": {
         "x": -200,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -946,7 +950,7 @@
       "to": "hdole/int/CPo{Z64,#1}oPC",
       "xy": {
         "x": 1000,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -1225,7 +1229,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1400,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -1234,7 +1238,7 @@
       "to": "hdole/int/Po{Z128,Z128}oP",
       "xy": {
         "x": 1200,
-        "y": 2000
+        "y": 2200
       }
     },
     {
@@ -1243,7 +1247,7 @@
       "to": "hdole/int/CPo{Z128,#1}oPC",
       "xy": {
         "x": 1400,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -1288,7 +1292,7 @@
       "to": "hdole/int/CPo{Z32,#1}oPC",
       "xy": {
         "x": 600,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -1882,7 +1886,7 @@
       "to": "hdole/int/Po{Z8,Z8}oP",
       "xy": {
         "x": -400,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -1936,7 +1940,7 @@
       "to": "hdole/int/Po{Z128,Z128}oP",
       "xy": {
         "x": 1200,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -1945,7 +1949,7 @@
       "to": "hdole/int/Po{Z64,Z64}oP",
       "xy": {
         "x": 800,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -1954,7 +1958,7 @@
       "to": "hdole/int/Po{Z32,Z32}oP",
       "xy": {
         "x": 400,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -1963,7 +1967,7 @@
       "to": "hdole/int/Po{Z16,Z16}oP",
       "xy": {
         "x": 0,
-        "y": 2200
+        "y": 2000
       }
     },
     {
@@ -2463,7 +2467,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 2200
+        "y": 2000
       },
       "height": 24
     },
@@ -2674,7 +2678,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 800,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2683,7 +2687,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1000,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2692,7 +2696,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 0,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2701,7 +2705,7 @@
       "to": "hdole/int/Z16",
       "xy": {
         "x": 200,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2710,7 +2714,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 400,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2719,7 +2723,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 600,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2728,7 +2732,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": -400,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2737,7 +2741,7 @@
       "to": "hdole/int/Z8",
       "xy": {
         "x": -200,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2746,7 +2750,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 1200,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2755,7 +2759,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1400,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2774,7 +2778,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": -400,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2783,7 +2787,7 @@
       "to": "hdole/int/Z8",
       "xy": {
         "x": -200,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2792,7 +2796,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 0,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2801,7 +2805,7 @@
       "to": "hdole/int/Z16",
       "xy": {
         "x": 200,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2810,7 +2814,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 400,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2819,7 +2823,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 600,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2828,7 +2832,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 800,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2837,7 +2841,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1000,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2846,7 +2850,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 1200,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2855,7 +2859,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1400,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2954,7 +2958,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 1200
+        "y": 1400
       },
       "height": "24"
     },
@@ -2964,7 +2968,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 1400
+        "y": 1200
       },
       "height": "24"
     },
@@ -3720,7 +3724,7 @@
       "domain": "hdole/int/o_194",
       "codomain": "hdole/int/o_196",
       "flipName": false,
-      "to": "hdole/int/gteq8"
+      "to": "hdole/int/gte8"
     },
     {
       "basename": "m_129",
@@ -4128,7 +4132,7 @@
       "domain": "hdole/int/o_239",
       "codomain": "hdole/int/o_240",
       "flipName": false,
-      "to": "hdole/int/gteq32"
+      "to": "hdole/int/gte32"
     },
     {
       "basename": "m_141",
@@ -4136,7 +4140,7 @@
       "domain": "hdole/int/o_241",
       "codomain": "hdole/int/o_242",
       "flipName": false,
-      "to": "hdole/int/gteq64"
+      "to": "hdole/int/gte64"
     },
     {
       "basename": "m_142",
@@ -4144,7 +4148,7 @@
       "domain": "hdole/int/o_243",
       "codomain": "hdole/int/o_244",
       "flipName": false,
-      "to": "hdole/int/gteq128"
+      "to": "hdole/int/gte128"
     },
     {
       "basename": "m_145",
@@ -4566,7 +4570,7 @@
       "prototype": "FiniteObject",
       "properName": "&Zopf;&#8328",
       "code": {
-        "cpp": "#include <stdint.h>\ntypedef int8_t %0;\n"
+        "cpp": "typedef int8_t %0;\n"
       },
       "size": 256
     },
@@ -4584,7 +4588,7 @@
       "prototype": "NamedObject",
       "properName": "&Zopf;&#8321;&#8326;",
       "code": {
-        "cpp": "#include <stdint.h>\ntypedef int16_t  %0;\n"
+        "cpp": "typedef int16_t  %0;\n"
       },
       "source": "hdole/int/Po{Z8,Z8}oP"
     },
@@ -4631,7 +4635,7 @@
       "prototype": "NamedObject",
       "properName": "&Zopf;₃₂",
       "code": {
-        "cpp": "#include <stdint.h>\ntypedef int32_t %0;\n"
+        "cpp": "typedef int32_t %0;\n"
       },
       "source": "hdole/int/Po{Z16,Z16}oP"
     },
@@ -4663,7 +4667,7 @@
       "prototype": "NamedObject",
       "properName": "&Zopf;&#x2086;&#x2084;",
       "code": {
-        "cpp": "#include <stdint.h>\ntypedef int64_t %0;\n"
+        "cpp": "typedef int64_t %0;\n"
       },
       "source": "hdole/int/Po{Z32,Z32}oP"
     },
@@ -4695,7 +4699,7 @@
       "prototype": "NamedObject",
       "properName": "&Zopf;&#x2081;&#x2082;&#x2088;",
       "code": {
-        "cpp": "#include <stdint.h>\ntypedef __int128_t %0;\n"
+        "cpp": "typedef __int128_t %0;\n"
       },
       "source": "hdole/int/Po{Z64,Z64}oP"
     },
@@ -5067,7 +5071,7 @@
       "basename": "decr",
       "prototype": "Morphism",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z64",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -5150,7 +5154,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z32",
       "codomain": "hdole/int/CPo{Z32,#1}oPC"
@@ -5214,7 +5218,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/int/CPo{Z8,#1}oPC"
@@ -5236,7 +5240,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z16",
       "codomain": "hdole/int/CPo{Z16,#1}oPC"
@@ -5462,7 +5466,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z128",
       "codomain": "hdole/int/CPo{Z128,#1}oPC"
@@ -5789,9 +5793,9 @@
       "codomain": "hdole/int/CPo{#1,#1}oPC"
     },
     {
-      "basename": "gteq8",
+      "basename": "gte8",
       "prototype": "Morphism",
-      "properName": "gteq",
+      "properName": "gte",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -6064,7 +6068,7 @@
     {
       "basename": "gte16",
       "prototype": "Morphism",
-      "properName": "gteq",
+      "properName": "gte",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -6082,9 +6086,9 @@
       "codomain": "hdole/int/CPo{#1,#1}oPC"
     },
     {
-      "basename": "gteq32",
+      "basename": "gte32",
       "prototype": "Morphism",
-      "properName": "gteq",
+      "properName": "gte",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -6092,9 +6096,9 @@
       "codomain": "hdole/int/CPo{#1,#1}oPC"
     },
     {
-      "basename": "gteq64",
+      "basename": "gte64",
       "prototype": "Morphism",
-      "properName": "gteq",
+      "properName": "gte",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -6102,9 +6106,9 @@
       "codomain": "hdole/int/CPo{#1,#1}oPC"
     },
     {
-      "basename": "gteq128",
+      "basename": "gte128",
       "prototype": "Morphism",
-      "properName": "gteq",
+      "properName": "gte",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -6433,7 +6437,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1624081784698,
-  "version": 0,
-  "properName": "hdole/int"
+  "timestamp": 1625910271626,
+  "version": 0
 }

@@ -4,6 +4,9 @@
   "name": "hdole/floats",
   "prototype": "Diagram",
   "properName": "&Fopf; Arithmetic",
+  "code": {
+	"cpp": "#include <math.h>\n#include <climits>\n#include <random>\n"
+  },
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/floats_Index",
@@ -2313,7 +2316,7 @@
       "prototype": "CatObject",
       "properName": "𝔽₆₄",
       "code": {
-        "cpp": "#include <math.h>\n#include <climits>\n\ntypedef double %Type;\n\n"
+        "cpp": "typedef double %Type;"
       }
     },
     {
@@ -2445,7 +2448,7 @@
       "properName": "rand",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Math.random();\n}\n",
-        "cpp": "#include <random>\nstd::random_device %Type_dev;\nstd::mt19937 %Type_rng(%Type_dev);\nstd::uniform_int_distribution<std::mt19937::result_type> %Type_dist;\n%0 = %Type_dist(%Type_rng);"
+        "cpp": "std::random_device %Type_dev;\nstd::mt19937 %Type_rng(%Type_dev);\nstd::uniform_int_distribution<std::mt19937::result_type> %Type_dist;\n%0 = %Type_dist(%Type_rng);"
       },
       "domain": "hdole/floats/#1",
       "codomain": "hdole/floats/F64"
@@ -2624,7 +2627,7 @@
       "properName": "log",
       "code": {
         "js": "function %Type(args)\n{\nif (args <= 0.0)\n\treturn [1, 0];\nreturn [0, Math.log(args)];\n}\n",
-        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/floats/F64",
       "codomain": "hdole/floats/CPo{F64,#1}oPC"
@@ -3042,7 +3045,7 @@
       "prototype": "Morphism",
       "properName": "log",
       "code": {
-        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/floats/F32",
       "codomain": "hdole/floats/CPo{F32,#1}oPC"
@@ -3052,7 +3055,7 @@
       "prototype": "Morphism",
       "properName": "log",
       "code": {
-        "cpp": "#include <math.h>\n\nif (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/floats/F128",
       "codomain": "hdole/floats/CPo{F128,#1}oPC"
