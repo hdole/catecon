@@ -811,8 +811,6 @@ class R
 					diagram.makeSVG();
 					diagram.setPlacement(diagram.getPlacement(), false);
 				}));
-//				if (R.user.name === 'Anon')
-//					D.EmitLoginEvent();	// Anon login
 				if (isGUI)
 				{
 					R.LoadScript('js/javascript.js');
@@ -940,7 +938,6 @@ if (errors.length > 0) debugger;
 	}
 	static async DownloadDiagram(name, fn = null, e = null)
 	{
-if (name==='hdole/MySQL')return null;	// TODO get rid of this
 		let diagram = null;
 		const cloudDiagrams = [...R.GetReferences(name)].reverse().filter(d => R.LocalTimestamp(d) === 0);
 		if (cloudDiagrams.length > 0)
@@ -1342,7 +1339,8 @@ if (name==='hdole/MySQL')return null;	// TODO get rid of this
 		if (R.catalog.has(json.name))
 		{
 			const old = R.$CAT.getElement(json.name);
-			if (old)
+			// TODO reload diagrams that were referencing this one
+			while(old && old.refcnt > 0)
 				old.decrRefcnt();
 		}
 		D.EmitViewEvent('diagram', null);	// needed if R.diagram = diagram since old.decrRefcnt() puts it into catalog view
@@ -1860,7 +1858,7 @@ class Toolbar
 	}
 	show(e)
 	{
-		this.element.style.maxWidth = `${Math.round(D.Width()/4)}px`;
+//		this.element.style.maxWidth = `${Math.round(D.Width()/4)}px`;
 		this.error.innerHTML = '';
 		const diagram = R.diagram;
 		let xy = U.Clone(D.mouse.down);
@@ -2496,11 +2494,13 @@ class DiagramTool extends ElementTool
 			if (!nobuts.has('download'))
 			{
 				buttons.push(D.getIcon('json', 'download-json', e => diagram.downloadJSON(e), 'Download JSON', btnSize));
+				/*
 				if (info.category === 'hdole/PFS')
 				{
 					buttons.push(D.getIcon('js', 'download-js', e => diagram.downloadJS(e), 'Download Javascript', btnSize));
 					buttons.push(D.getIcon('cpp', 'download-cpp', e => diagram.downloadCPP(e), 'Download C++', btnSize));
 				}
+				*/
 				buttons.push(D.getIcon('png', 'download-png', e => window.open(`diagram/${name}.png`, btnSize,
 					`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), 'View PNG'));
 			}
@@ -5399,7 +5399,6 @@ class Catalog extends DiagramTool
 		}
 		else	// reference view
 		{
-			// TODO
 			img.onmouseenter = e =>
 			{
 				R.catalog.get(e.target.dataset.name).references.map(refName => this.catalog.querySelector(`img[data-name="${refName}"]`).classList.add('glow'));
@@ -5426,7 +5425,6 @@ class Catalog extends DiagramTool
 					fetch(`/search?search=${encodeURIComponent(search)}`).then(response => response.json()).then(diagrams => {this.diagrams = diagrams; this.update();});
 				}
 				break;
-			// TODO
 			case 'references':
 				const refs = new Set(R.diagram.getAllReferenceDiagrams().keys());
 				fetch(`/search?search=${encodeURIComponent(search)}`).then(response => response.json()).then(diagrams => {this.diagrams = diagrams; this.update();});
@@ -5439,7 +5437,6 @@ class Catalog extends DiagramTool
 		this.diagrams = [];
 		R.catalog.forEach((info, name) => info.localTimestamp > 0 && name.includes(val) && this.diagrams.push(info));
 	}
-	// TODO
 	doLookup()
 	{
 		this.localSearch(this.searchInput.value);
@@ -5449,7 +5446,6 @@ class Catalog extends DiagramTool
 			this.referenceGlow();
 		this.update();
 	}
-	// TODO
 	reference()
 	{
 		this.clear();
@@ -6814,7 +6810,8 @@ class Graph
 						continue;
 //					if (ndx.reduce((isEqual, lvl, i) => lvl === glnk[i] && isEqual, true))	// ignore links back to where we came from
 //						continue;
-					doit(top.getFactor(glnk), glnk);
+					const lnkFactor = top.getFactor(glnk);
+					doLeaf(lnkFactor, glnk) && doit(lnkFactor, glnk);
 				}
 				this.visited.add(lnk.toString());
 			}
@@ -9962,10 +9959,10 @@ class LanguageAction extends Action
 	{
 		return ary.length === 1 && (ary[0] instanceof CatObject || ary[0] instanceof Morphism);
 	}
-	isEditable(m)
+	checkEditable(m)
 	{
 		return m.isEditable() &&
-			((m instanceof Morphism && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial()) || m instanceof CatObject);
+			((m.constructor.name === 'Morphism' && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial()) || m.constructor.name === 'CatObject');
 	}
 	html(e, diagram, ary)
 	{
@@ -9995,13 +9992,18 @@ class LanguageAction extends Action
 			div.appendChild(H3.p(this.generate(elt), `##element-${this.ext}.code`));
 		}
 	}
+	setEditorSize(textarea)
+	{
+		textarea.style.width = Math.min(D.toolbar.element.clientWidth - 40, textarea.scrollWidth) + 'px';
+		textarea.style.height = Math.min(D.Height()/2, textarea.scrollHeight) + 'px';
+	}
 	getEditHtml(div, elt)	// handler when the language is just a string
 	{
 		let code = '';
 		if (elt.constructor.name === 'Morphism')
 			code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
 		else if (elt instanceof Morphism)
-			code = this.generate(elt);
+			code = this.generate(R.diagram, elt);
 		else if (elt instanceof CatObject)
 			code = this.generateObject(elt);
 		const id = `element-${this.ext}`;
@@ -10009,7 +10011,6 @@ class LanguageAction extends Action
 		{
 			id,
 			disabled:true,
-			resize:'both',
 			onkeydown:e =>
 			{
 				e.stopPropagation();
@@ -10022,16 +10023,13 @@ class LanguageAction extends Action
 					target.selectionStart = target.selectionEnd = start +1;
 				}
 			},
-			oninput: e =>
-			{
-				e.target.style.width = e.target.scrollWidth + 'px';
-			},
+			oninput: e => this.setEditorSize(e.target),
 		});
 		div.appendChild(textarea);
-		textarea.style.width = textarea.scrollWidth + 'px';
-		textarea.style.height = textarea.scrollHeight + 'px';
-		if (this.isEditable(elt))
-			div.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
+		this.setEditorSize(textarea);
+		if (this.checkEditable(elt))
+			div.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.ext), 'Edit code'));
+		div.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), `Download ${this.properName}`));
 		return div;
 	}
 	hasCode(elt)
@@ -10058,36 +10056,16 @@ class LanguageAction extends Action
 			elt.focus();
 		}
 	}
-	generateDiagram(diagram)
-	{
-		const generated = new Set();
-		generated.add('');	// no exec
-		this.currentDiagram = null;
-		this.genDiagram = diagram;
-		let code = `// Catecon Diagram ${diagram.name} @ ${Date.now()}`;
-		diagram.elements.forEach(elt =>
-		{
-			if (elt instanceof Morphism || elt instanceof CatObject)
-				code += this.generate(elt, generated);
-		});
-		return code;
-	}
 	getNamespace(diagram) { return U.Token(diagram.name); }
 	generate(m, generated = new Set())	{}
 	evaluate(e, diagram, name, fn) {}
 	evaluateMorphism(e, diagram, name, fn) {}
-	download(e, diagram)
+	download(e, elt)
 	{
-		if (diagram.codomain.actions.has(this.name))
-		{
-			const code = this.generateDiagram(diagram);
-			const start = Date.now();
-			const blob = new Blob([code], {type:`application/${this.ext}`});
-			const url = D.url.createObjectURL(blob);
-			D.Download(url, `${diagram.basename}.${this.ext}`);
-			const delta = Date.now() - start;
-			D.statusbar.show(e, `Diagram ${name} ${this.name} generated<br/>&#9201;${delta}ms`, true);
-		}
+		const code = D.toolbar.element.querySelector(`textarea#element-${this.basename}`).value;
+		const blob = new Blob([code], {type:`application/${this.ext}`});
+		const url = D.url.createObjectURL(blob);
+		D.Download(url, `${this.getType(elt)}.${this.ext}`);
 	}
 	// TODO need version for JS only
 	instantiate(element)
@@ -12471,7 +12449,6 @@ class IndexCategory extends Category
 	}
 	checkCells()
 	{
-console.log('check cells');
 		this.cells.forEach(cell => R.workers.equality.postMessage(
 		{
 			command:'CheckEquivalence',
@@ -12636,8 +12613,6 @@ class Composite extends MultiMorphism
 			seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
 			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
-		// trace the links through the sequence graph
-		// remove duplicates
 		return seqGraph;
 	}
 	getGraph(data = {position:0})
@@ -12647,7 +12622,6 @@ class Composite extends MultiMorphism
 		const cnt = this.morphisms.length;
 		seqGraph.graphs[0].reduceLinks(cnt);
 		seqGraph.graphs[cnt].reduceLinks(cnt);
-		// copy ends for final answer
 		const graph = super.getGraph(data);
 		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[cnt], [1]]]});
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
