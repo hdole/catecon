@@ -170,6 +170,42 @@
       }
     },
     {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/while/S",
+      "xy": {
+        "x": 0,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "DiagramObject",
+      "to": "hdole/while/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 0,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "DiagramObject",
+      "to": "hdole/while/S",
+      "xy": {
+        "x": 0,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_9",
+      "prototype": "DiagramObject",
+      "to": "hdole/while/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 0,
+        "y": 1400
+      }
+    },
+    {
       "basename": "m_7",
       "prototype": "DiagramMorphism",
       "domain": "hdole/while/o_13",
@@ -256,6 +292,48 @@
       "codomain": "hdole/while/o_3",
       "flipName": true,
       "to": "hdole/while/CFa{CPo{#1,#1}oPC,#1_1}aFC"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_2",
+      "codomain": "hdole/while/o_5",
+      "flipName": false,
+      "to": "hdole/while/test"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_6",
+      "codomain": "hdole/while/o_9",
+      "flipName": false,
+      "to": "hdole/while/test"
+    },
+    {
+      "basename": "o_16",
+      "prototype": "DiagramObject",
+      "to": "hdole/while/S",
+      "xy": {
+        "x": 0,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "o_17",
+      "prototype": "DiagramObject",
+      "to": "hdole/while/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 0,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "m_12",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/while/o_16",
+      "codomain": "hdole/while/o_17",
+      "flipName": false,
+      "to": "hdole/while/test"
     }
   ],
   "elements": [
@@ -335,7 +413,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1622968987175,
+  "timestamp": 1626056099595,
   "version": 0,
   "hiddenCells": [
     "8901823568e5dafc364b7e06357dd9d01318f1b37269e38f12a42911ec7b9800",

@@ -570,7 +570,7 @@
       "prototype": "FiniteObject"
     },
     {
-      "description": "The homset from HTML to &Zopf;&#8323;&#8322;",
+      "description": "The homset from HTML to &Zopf;₃₂",
       "basename": "Ho{HTML,hdole/int/Z32}oH",
       "prototype": "HomObject",
       "objects": [
@@ -592,7 +592,7 @@
       "dual": true,
       "objects": [
         "hdole/int/Z32",
-        "#1"
+        "hdole/HTML/#1"
       ]
     },
     {
@@ -626,7 +626,7 @@
       "dual": true,
       "objects": [
         "hdole/Strings/str",
-        "#1"
+        "hdole/HTML/#1"
       ]
     },
     {
@@ -660,7 +660,7 @@
       "dual": true,
       "objects": [
         "hdole/nat/N64",
-        "#1"
+        "hdole/HTML/#1"
       ]
     },
     {
@@ -694,7 +694,7 @@
       "dual": true,
       "objects": [
         "hdole/nat/N8",
-        "#1"
+        "hdole/HTML/#1"
       ]
     },
     {
@@ -728,7 +728,7 @@
       "dual": true,
       "objects": [
         "hdole/nat/N16",
-        "#1"
+        "hdole/HTML/#1"
       ]
     },
     {
@@ -740,7 +740,7 @@
       ]
     },
     {
-      "description": "The homset from HTML to &Zopf;",
+      "description": "The homset from HTML to &Zopf;&#x2086;&#x2084;",
       "basename": "Ho{HTML,hdole/int/Z64}oH",
       "prototype": "HomObject",
       "objects": [
@@ -762,7 +762,7 @@
       "dual": true,
       "objects": [
         "hdole/int/Z64",
-        "#1"
+        "hdole/HTML/#1"
       ]
     },
     {
@@ -796,7 +796,7 @@
       "dual": true,
       "objects": [
         "hdole/floats/F64",
-        "#1"
+        "hdole/HTML/#1"
       ]
     },
     {
@@ -964,6 +964,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623917284672,
+  "timestamp": 1625979085427,
   "version": 0
 }

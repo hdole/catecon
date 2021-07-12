@@ -5071,7 +5071,7 @@
       "basename": "decr",
       "prototype": "Morphism",
       "code": {
-        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%1 != 0x8000000000000000)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z64",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -5154,7 +5154,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%1 != 0x80000000)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z32",
       "codomain": "hdole/int/CPo{Z32,#1}oPC"
@@ -5218,7 +5218,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%1 != 0x80)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/int/CPo{Z8,#1}oPC"
@@ -5229,7 +5229,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "%1 = %0++;// TODO exception"
+        "cpp": "if (%0 <= 0xff)\n{\n\t%1.c = 0;\n\t%1.v = %0++;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/int/CPo{Z8,#1}oPC"
@@ -5240,7 +5240,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%1 != INT_MIN)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%1 != 0x8000)\n{\n\t%1.c = 0;\n\t%1.v = %0--;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z16",
       "codomain": "hdole/int/CPo{Z16,#1}oPC"
@@ -5889,7 +5889,7 @@
       "prototype": "Morphism",
       "properName": "not",
       "code": {
-        "cpp": "%1 = ~ %0;"
+        "cpp": "%1 = ! %0;"
       },
       "domain": "hdole/int/Z64",
       "codomain": "hdole/int/Z64"
@@ -6437,6 +6437,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625910271626,
+  "timestamp": 1625994519088,
   "version": 0
 }
