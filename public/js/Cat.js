@@ -1013,7 +1013,6 @@ if (errors.length > 0) debugger;
 			R.diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
 		}
 		D.NotBusy();
-		D.EmitViewEvent('diagram', diagram);
 		D.EmitCATEvent('default', diagram, action);
 	}
 	static GetCategory(name)
@@ -2556,13 +2555,9 @@ class DiagramTool extends ElementTool
 				const diagram = R.$CAT.getElement(nm);
 				if (diagram)
 				{
-					diagram.hide();
-					diagram.svgRoot.remove();
-					diagram.svgRoot = null;
-					diagram.svgBase = null;
+					diagram.close();
+					this.search();
 				}
-				D.EmitCATEvent('close', name);
-				this.search();
 			};
 			buttons.push(D.getIcon('close', 'close', e => closeFn(name), 'Close diagram', btnSize));
 		}
@@ -3491,7 +3486,7 @@ class D
 							diagram.makeSVG();
 							D.diagramSVG.appendChild(diagram.svgRoot);
 							const placement = diagram.getPlacement();
-							placement.visible = true;
+//							placement.visible = true;
 							D.diagramSVG.classList.remove('trans');
 							diagram.setPlacement(placement, false);
 							if ('action' in args)
@@ -4277,7 +4272,6 @@ class D
 	}
 	static saveSession()
 	{
-console.log('save session');
 		D.session.diagrams.length = 0;
 		D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && D.session.diagrams.push(d.name));
 		U.writefile('session.json', JSON.stringify(D.session));
@@ -4595,7 +4589,7 @@ console.log('save session');
 	}
 	static EmitMorphismEvent(diagram, command, element, extra = {})
 	{
-		if (!isGUI)
+		if (!isGUI || diagram.svgRoot === null)
 			return;
 		R.default.showEvents && console.log('emit MORPHISM event', {command, name:element.name});
 		const detail = {diagram, command, element};
@@ -5154,6 +5148,7 @@ Object.defineProperties(D,
 	{
 		value:
 		{
+			ellipse:['fill', 'margin', 'stroke', 'stroke-width', 'rx', 'ry'],
 			path:	['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
 			text:	['fill', 'font', 'margin', 'stroke'],
 		},
@@ -6808,8 +6803,6 @@ class Graph
 					const glnk = g.links[j];
 					if (this.visited.has(glnk.toString()))
 						continue;
-//					if (ndx.reduce((isEqual, lvl, i) => lvl === glnk[i] && isEqual, true))	// ignore links back to where we came from
-//						continue;
 					const lnkFactor = top.getFactor(glnk);
 					doLeaf(lnkFactor, glnk) && doit(lnkFactor, glnk);
 				}
@@ -8521,7 +8514,7 @@ console.log('fixup in diagram', diagram.name);
 		if (isGUI)
 		{
 			cell.removeSVG();
-			cell.getSVG(this.diagram.svgBase);
+			this.diagram.svgBase && cell.getSVG(this.diagram.svgBase);
 		}
 	}
 	getXY()
@@ -13692,8 +13685,8 @@ class Diagram extends Functor
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
 		{
-			if (R.initialized && isGUI)
-				this.makeSVG();
+//			if (R.initialized && isGUI)
+//				this.makeSVG();
 			this.domain.process(this, nuArgs.domainElements);
 		}
 		R.SetDiagramInfo(this);
@@ -13831,13 +13824,15 @@ class Diagram extends Functor
 	}
 	setPlacement(args, emit = true)
 	{
+console.log('setPlacement', this.name, args);
 		const x = Math.round(args.x);
 		const y = Math.round(args.y);
 		const scale = args.scale;
-		const visible = 'visible' in args ? args.visible : true;
-		visible ? this.show() : this.hide();
+//		const visible = 'visible' in args ? args.visible : true;
+//		visible ? this.show() : this.hide();
 		this.svgTranslate.setAttribute('transform', `translate(${x} ${y}) scale(${scale} ${scale})`);
-		const placement = {x, y, scale, visible, timestamp:Date.now()};
+//		const placement = {x, y, scale, visible, timestamp:Date.now()};
+		const placement = {x, y, scale, timestamp:Date.now()};
 		U.writefile(`${this.name}-placement.json`, JSON.stringify(placement));
 		D.placements.set(this.name, placement);
 		emit && D.EmitViewEvent('diagram', this);
@@ -13867,7 +13862,7 @@ class Diagram extends Functor
 	}
 	addSVG(element)
 	{
-		if (this.svgBase)
+		if (this.svgBase && !(element instanceof Assertion))
 			element.getSVG(this.svgBase);
 	}
 	actionHtml(e, name, args = {})
@@ -15340,6 +15335,14 @@ class Diagram extends Functor
 		this.elements.forEach(chkBasename);
 		this.elements.forEach(elt => !refs.has(elt.diagram.name) && errors.push(`Element not in scope: ${U.HtmlEntitySafe(elt.name)}`));
 		return errors;
+	}
+	close()
+	{
+		this.hide();
+		this.svgRoot.remove();
+		this.svgRoot = null;
+		this.svgBase = null;
+		D.EmitCATEvent('close', this.name);
 	}
 	static Codename(args)
 	{
