@@ -653,6 +653,7 @@ class R
 		let action = new IdentityAction(diagramDiagram);
 		new GraphAction(diagramDiagram);
 		new SwapAction(diagramDiagram);
+		new AssemblyMorphismAction(diagramDiagram);
 		new NameAction(diagramDiagram);
 		new CompositeAction(diagramDiagram);
 		new DetachDomainAction(diagramDiagram);
@@ -2783,7 +2784,7 @@ class StatusBar
 		this.timerIn && clearInterval(this.timerIn);
 		msg === '' && this.hide();
 	}
-	_post(e, msg, record)
+	_post(e, msg, level = 0)
 	{
 		const elt = this.element;
 		elt.innerHTML = msg;
@@ -2800,17 +2801,24 @@ class StatusBar
 		const delta = bbox.left + bbox.width - window.innerWidth;
 		if (delta > 0)	// shift back to onscreen
 			elt.style.left = Math.max(0, bbox.left - delta) + 'px';
-		if (record)
-			document.getElementById('tty-out').innerHTML += this.message + "\n";
+		switch (level)
+		{
+			case 1:
+				document.getElementById('tty-out').innerHTML += this.message + "\n";
+				break;
+			case 2:
+				D.recordError(this.message);
+				break;
+		}
 	}
-	show(e, msg, record = false)
+	show(e, msg, level = 0)
 	{
 		this._prep(msg);
 		if (msg !== '')
 		{
 			this.timerIn = setTimeout(_ => this.element.classList.remove('hidden'), D.default.statusbar.timein);
 			this.timerOut = setTimeout(_ => this.hide(), D.default.statusbar.timeout);
-			this._post(e, msg, record);
+			this._post(e, msg, level);
 		}
 	}
 	hide() { this.element.classList.add('hidden'); }
@@ -3994,8 +4002,10 @@ class D
 				case 'DiagramMorphism':
 					const domain = pasteObject(elt.domain);
 					const codomain = pasteObject(elt.codomain);
-					const {to, flipName} = elt;
-					copy = new DiagramMorphism(diagram, {domain, codomain, to, flipName});
+//					const {to, flipName} = elt;
+					const to = elt.to;
+					const flipName = elt.attributes.get('flipName');
+					copy = new DiagramMorphism(diagram, {domain, codomain, to, attributes:[['flipName', true]]});
 					break;
 				case 'DiagramObject':
 				case 'DiagramPullback':
@@ -4121,7 +4131,7 @@ class D
 		diagram.deselectAll();
 		composite.map((m, i) => diagram.addSelected(diagram.placeMorphism(m, indexObjects[i], indexObjects[i+1], false)));
 		const indexComp = diagram.placeMorphism(comp, indexObjects[0], indexObjects[indexObjects.length -1], false);
-		indexComp.flipName = true;
+		indexComp.attributes.set('flipName') = true;
 		indexComp.update();
 		diagram.addSelected(indexComp);
 		return indexObjects;
@@ -4972,6 +4982,11 @@ Object.defineProperties(D,
 			{
 				if (R.Actions.help.hasForm(R.diagram, R.diagram.selected))
 					R.Actions.help.html(e, R.diagram, R.diagram.selected);
+			},
+			KeyR(e)
+			{
+				if (R.Actions.assyMorphism.hasForm(R.diagram, R.diagram.selected))
+					R.Actions.assyMorphism.action(e, R.diagram, R.diagram.selected);
 			},
 //			ControlKeyS(e)		BROWSER RESERVED: save page
 			KeyT(e)
@@ -8864,7 +8879,7 @@ class FlipNameAction extends Action
 	}
 	doit(e, diagram, from)
 	{
-		from.flipName = !from.flipName;
+		from.attributes.set('flipName', !from.attributes.get('flipName'));
 		from.update();
 	}
 	replay(e, diagram, args)
@@ -10674,6 +10689,36 @@ class SwapAction extends Action
 	}
 }
 
+class AssemblyMorphismAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Set projection or injection as an assembly morphism',
+						basename:		'assyMorphism',
+						priority:		80,
+		};
+		super(diagram, args);
+		if (!isGUI)
+			return;
+	}
+	action(e, diagram, ary)
+	{
+		ary.map(m =>
+		{
+			if (!m.attributes.has('assyMorphism'))
+				m.attributes.set('assyMorphism', false);
+			const isAssy = !m.attributes.get('assyMorphism');
+			m.attributes.set('assyMorphism', isAssy);
+			if ('svg' in m && m.svg)
+				D.EmitMorphismEvent(this.diagram, 'update', m);
+		});
+	}
+	hasForm(diagram, ary)
+	{
+		return  ary.reduce((r, elt) => r && elt instanceof DiagramMorphism && Assembler.isReference(elt.to), true);
+	}
+}
+
 class Category extends CatObject
 {
 	constructor(diagram, args)
@@ -11457,16 +11502,22 @@ class DiagramMorphism extends Morphism
 		this.setMorphism(to);
 		this.incrRefcnt();
 		this.diagram.domain.addMorphism(this);
+		const attributes = new Map('attributes' in nuArgs ? nuArgs.attributes : []);
 		Object.defineProperties(this,
 		{
-			bezier:		{value: null,	writable: true,	enumerable: true},
-			flipName:	{value: U.GetArg(args, 'flipName', false),	writable: true,	enumerable: true},
+			attributes:	{value: attributes,	writable: false},
+			bezier:		{value: null,		writable: true,	enumerable: true},
+//			flipName:	{value: U.GetArg(args, 'flipName', false),	writable: true,	enumerable: true},
 			homsetIndex:{value: this.setHomsetIndex(args, 'homsetIndex'),	writable: true,	enumerable: true},
-			svg_path:	{value: null,	writable: true,	enumerable: true},
-			svg_path2:	{value: null,	writable: true,	enumerable: true},
-			svg_name:	{value: null,	writable: true,	enumerable: true},
+			svg_path:	{value: null,		writable: true,	enumerable: true},
+			svg_path2:	{value: null,		writable: true,	enumerable: true},
+			svg_name:	{value: null,		writable: true,	enumerable: true},
 			svg_nameGroup:	{value: null,	writable: true,	enumerable: true},
 		});
+		if ('flipName' in nuArgs)	// TODO remove; for reading old files
+			this.attributes.set('flipName', nuArgs.flipName);
+		if (!this.attributes.has('flipName'))
+			this.attributes.set('flipName', false);
 		this.constructor.name === 'DiagramMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	setHomsetIndex(args)
@@ -11521,7 +11572,17 @@ class DiagramMorphism extends Morphism
 	json()
 	{
 		const mor = super.json();
-		mor.flipName = this.flipName;
+//		mor.flipName = this.flipName;
+		if (this.attributes.size > 0)
+		{
+			const keys = new Set(this.attributes.keys());
+			if (keys.has('flipName') && !this.attributes.get('flipName'))
+				keys.delete('flipName');
+			if (keys.has('assyMorphism') && !this.attributes.get('assyMorphism'))
+				keys.delete('assyMorphism');
+			if (keys.size > 0)
+				mor.attributes = [...keys].map(key => [key, this.attributes.get(key)]);
+		}
 		if (this.homsetIndex !== 0)
 			mor.homsetIndex = this.homsetIndex;
 		mor.to = this.to.name;
@@ -11561,7 +11622,7 @@ class DiagramMorphism extends Morphism
 			pt2 = this.end;
 			mid = pt1.add(pt2).scale(0.5);
 		}
-		const normal = D2.Subtract(pt2, pt1).normal().scale(this.flipName ? 1 : -1).normalize();
+		const normal = D2.Subtract(pt2, pt1).normal().scale(this.attributes.get('flipName') ? 1 : -1).normalize();
 		const adj = (normal.y < 0 && this.bezier) ? 0.5 : 0.0;
 		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : adj + 0.5) * D.default.font.height).add(mid);
 		if (isNaN(r.x) || isNaN(r.y))
@@ -11590,7 +11651,8 @@ class DiagramMorphism extends Morphism
 		g.setAttributeNS(null, 'id', id);
 		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':this.name, class:'grabme grabbable', id:`${id}_path2`, d:coords});
 		g.appendChild(this.svg_path2);
-		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, class:'morphism grabbable', id:`${id}_path`, d:coords, 'marker-end':'url(#arrowhead)'});
+		const cls = this.attributes.has('assyMorphism') && this.attributes.get('assyMorphism') ? 'assyMorphism grabbable' : 'morphism grabbable';
+		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, class:cls, id:`${id}_path`, d:coords, 'marker-end':'url(#arrowhead)'});
 		g.appendChild(this.svg_path);
 		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, id:`${id}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
 			this.to.properName);
@@ -11659,16 +11721,16 @@ class DiagramMorphism extends Morphism
 				if (this.start.x < this.end.x)
 				{
 					if (this.start.y < this.end.y)
-						anchor = this.flipName ? 'end' : 'start';
+						anchor = this.attributes.get('flipName') ? 'end' : 'start';
 					else
-						anchor = this.flipName ? 'start' : 'end';
+						anchor = this.attributes.get('flipName') ? 'start' : 'end';
 				}
 				else
 				{
 					if (this.start.y < this.end.y)
-						anchor = this.flipName ? 'end' : 'start';
+						anchor = this.attributes.get('flipName') ? 'end' : 'start';
 					else
-						anchor = this.flipName ? 'start' : 'end';
+						anchor = this.attributes.get('flipName') ? 'start' : 'end';
 				}
 			}
 		}
@@ -11677,9 +11739,9 @@ class DiagramMorphism extends Morphism
 			const angle = this.angle;
 			const bnd = Math.PI/12;
 			if (angle > Math.PI + bnd && angle < 2 * Math.PI - bnd)
-				anchor = this.flipName ? 'start' : 'end';
+				anchor = this.attributes.get('flipName') ? 'start' : 'end';
 			else if (angle > bnd && angle < Math.PI - bnd)
-				anchor = this.flipName ? 'end' : 'start';
+				anchor = this.attributes.get('flipName') ? 'end' : 'start';
 		}
 		svg.style.textAnchor = anchor;
 	}
@@ -13824,7 +13886,6 @@ class Diagram extends Functor
 	}
 	setPlacement(args, emit = true)
 	{
-console.log('setPlacement', this.name, args);
 		const x = Math.round(args.x);
 		const y = Math.round(args.y);
 		const scale = args.scale;
@@ -14309,7 +14370,7 @@ console.log('setPlacement', this.name, args);
 					const delta = Date.now() - start;
 					if (e)
 					{
-						D.statusbar.show(e, 'Uploaded diagram', true);
+						D.statusbar.show(e, 'Uploaded diagram', 1);
 						console.log('diagram uploaded ms:', delta);
 						D.EmitCATEvent('upload', this.name);
 					}
@@ -14317,7 +14378,7 @@ console.log('setPlacement', this.name, args);
 			});
 		}
 		else
-			D.RecordError('You need to be logged in to upload your work.');
+			D.statusbar.show(e, 'You need to be logged in to upload your work.', 2);
 	}
 	diagramToUserCoords(xy)
 	{
@@ -15434,10 +15495,41 @@ class Assembler
 			o.svg_nameGroup.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
 		}
 	}
+	static isReference(m)
+	{
+		const morphism = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
+		if (Morphism.isIdentity(morphism))
+			return !(morphism.domain instanceof NamedObject || morphism.codomain instanceof NamedObject)
+		if (morphism.codomain.isTerminal())
+			return true;
+		if (morphism instanceof FactorMorphism && !morphism.dual && morphism.domain instanceof ProductObject && !morphism.domain.dual)
+			return FactorMorphism.isReference(morphism.factors);
+		return false;
+	}
 	deleteEllipse(type, elt)
 	{
 		const ellipse = this.diagram.svgBase.querySelector(`#${type}-${elt.elementId('asmblr')}`);
 		ellipse && ellipse.remove();
+	}
+	domainCount(object)
+	{
+		return [...object.domains].filter(m => !(Assembler.isReference(m) || Assembler.isCoreference(m))).length;
+	}
+	codomainCount(object)
+	{
+		return [...object.codomains].filter(m => !(Assembler.isReference(m) || Assembler.isCoreference(m))).length;
+	}
+	referenceCount(object)
+	{
+		return [...object.domains].filter(m => Assembler.isReference(m)).length;
+	}
+	coreferenceCount(object)
+	{
+		return [...object.domains].filter(m => Assembler.isCoreference(m)).length;
+	}
+	useCount(object)
+	{
+		return [...object.codomains].filter(m => Assembler.isReference(m) || Assembler.isCoreference(m)).length;
 	}
 	addFold(fld)
 	{
@@ -15497,17 +15589,6 @@ class Assembler
 		this.overloaded.delete(ovr);
 		this.deleteEllipse('ovr', ovr);
 	}
-	static isReference(m)
-	{
-		const morphism = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
-		if (Morphism.isIdentity(morphism))
-			return !(morphism.domain instanceof NamedObject || morphism.codomain instanceof NamedObject)
-		if (morphism.codomain.isTerminal())
-			return true;
-		if (morphism instanceof FactorMorphism && !morphism.dual && morphism.domain instanceof ProductObject && !morphism.domain.dual)
-			return FactorMorphism.isReference(morphism.factors);
-		return false;
-	}
 	addReference(ref)
 	{
 		!this.references.has(ref) && Assembler.addBall('Reference', 'ref', 'assyReference', ref);
@@ -15544,26 +15625,6 @@ class Assembler
 		this.origins.delete(obj);
 		this.deleteEllipse('origin', obj);
 	}
-	domainCount(object)
-	{
-		return [...object.domains].filter(m => !(Assembler.isReference(m) || Assembler.isCoreference(m))).length;
-	}
-	codomainCount(object)
-	{
-		return [...object.codomains].filter(m => !(Assembler.isReference(m) || Assembler.isCoreference(m))).length;
-	}
-	referenceCount(object)
-	{
-		return [...object.domains].filter(m => Assembler.isReference(m)).length;
-	}
-	coreferenceCount(object)
-	{
-		return [...object.domains].filter(m => Assembler.isCoreference(m)).length;
-	}
-	useCount(object)
-	{
-		return [...object.codomains].filter(m => Assembler.isReference(m) || Assembler.isCoreference(m)).length;
-	}
 	addError(message, element)
 	{
 		Assembler.addBall(message, 'error', 'assyError', element);
@@ -15585,6 +15646,8 @@ class Assembler
 			const scan = scanning;		// jshint
 			domain.domains.forEach(m =>
 			{
+				if (this.morphisms.has(m))
+					return;
 				this.morphisms.add(m);
 				// inputs do not have references
 				Assembler.isReference(m) && this.addReference(m);		// candidate reference

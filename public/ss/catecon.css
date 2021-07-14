@@ -448,6 +448,14 @@ p
 .svgstr3 {fill:none; stroke:black; stroke-width:10px}
 .svgstr4 {fill:none; stroke:black; stroke-width:20px}
 .arrow0 {fill:none;	stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;}
+.arrow0dash
+{
+	fill:				none;
+	stroke:				black;
+	stroke-dasharray:	2,2;
+	stroke-width:		20px;
+	stroke-miterlimit:	2.61313;
+}
 .arrow0rnd {fill:none;	stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;	stroke-linecap:round;}
 .arrow0-30px
 {
@@ -1093,6 +1101,16 @@ tspan
 	ry:					35;
 	stroke:				#aaa3;
 	stroke-width:		10;
+}
+.assyMorphism
+{
+	fill:			none;
+	margin:			2px;
+	padding:		2px;
+	stroke:			black;
+	stroke-dasharray:	7,5;
+	stroke-width:	2.5px;
+	user-select:	none;
 }
 
 #catalog-diagram-new
