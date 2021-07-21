@@ -102,6 +102,8 @@ var Cat = Cat || require('./Cat.js');
 				code += nuCode;
 			});
 			this.references.set(this.context.name, []);
+			if (code !== '')
+				code = '// from diagrams\n' + code;
 			return code;
 		}
 		generateProductObject(object, generated)
@@ -235,6 +237,8 @@ ${members}
 				this.currentDiagram = null;
 			});
 			this.tab = oldIndent;
+			if (code !== '')
+				code += '// objects from diagrams\n' + code;
 			return code;
 		}
 		initialize(diagram)
@@ -424,16 +428,13 @@ ${members}
 			let code =
 `
 #include <iostream>
-
 #include <string>
 #include <stdlib.h>
 #include <map>
 #include <cstring>
 
 ${this.generateHeader()}
-
 ${this.generateObjects(morphism)}
-
 int main(int argc, char ** argv)
 {
 	try
@@ -452,7 +453,6 @@ int main(int argc, char ** argv)
 		}
 
 ${morphismCode}
-
 		return 0;
 	}
 	catch(std::exception x)
