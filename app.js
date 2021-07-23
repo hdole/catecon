@@ -586,7 +586,7 @@ async function serve()
 		//
 		app.use('/upload', (req, res) =>
 		{
-			console.log('/upload');
+			console.log('/upload', req.body.diagram.name);
 			//
 			// check for good request
 			//
