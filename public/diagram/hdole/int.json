@@ -3067,7 +3067,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_2",
       "codomain": "hdole/int/o_3",
-      "flipName": false,
       "to": "hdole/int/zero64"
     },
     {
@@ -3075,7 +3074,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_4",
       "codomain": "hdole/int/o_5",
-      "flipName": false,
       "to": "hdole/int/one64"
     },
     {
@@ -3083,7 +3081,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_9",
       "codomain": "hdole/int/o_10",
-      "flipName": false,
       "to": "hdole/int/add64"
     },
     {
@@ -3091,7 +3088,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_17",
       "codomain": "hdole/int/o_18",
-      "flipName": false,
       "to": "hdole/int/lt64"
     },
     {
@@ -3099,7 +3095,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_19",
       "codomain": "hdole/int/o_20",
-      "flipName": false,
       "to": "hdole/int/lte64"
     },
     {
@@ -3107,7 +3102,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_21",
       "codomain": "hdole/int/o_22",
-      "flipName": false,
       "to": "hdole/int/equ128"
     },
     {
@@ -3115,7 +3109,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_27",
       "codomain": "hdole/int/o_28",
-      "flipName": false,
       "to": "hdole/int/zero16"
     },
     {
@@ -3123,7 +3116,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_33",
       "codomain": "hdole/int/o_34",
-      "flipName": false,
       "to": "hdole/int/add16"
     },
     {
@@ -3131,7 +3123,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_37",
       "codomain": "hdole/int/o_38",
-      "flipName": false,
       "to": "hdole/int/mult16"
     },
     {
@@ -3139,7 +3130,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_39",
       "codomain": "hdole/int/o_40",
-      "flipName": false,
       "to": "hdole/int/and16"
     },
     {
@@ -3147,7 +3137,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_41",
       "codomain": "hdole/int/o_42",
-      "flipName": false,
       "to": "hdole/int/or16"
     },
     {
@@ -3155,7 +3144,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_43",
       "codomain": "hdole/int/o_44",
-      "flipName": false,
       "to": "hdole/int/xor16"
     },
     {
@@ -3163,7 +3151,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_47",
       "codomain": "hdole/int/o_48",
-      "flipName": false,
       "to": "hdole/int/mod16"
     },
     {
@@ -3171,7 +3158,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_51",
       "codomain": "hdole/int/o_52",
-      "flipName": false,
       "to": "hdole/int/lt16"
     },
     {
@@ -3179,7 +3165,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_53",
       "codomain": "hdole/int/o_54",
-      "flipName": false,
       "to": "hdole/int/lte16"
     },
     {
@@ -3187,7 +3172,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_14",
       "codomain": "hdole/int/o_55",
-      "flipName": false,
       "to": "hdole/int/succ64"
     },
     {
@@ -3195,7 +3179,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_15",
       "codomain": "hdole/int/o_13",
-      "flipName": false,
       "to": "hdole/int/decr"
     },
     {
@@ -3203,7 +3186,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_8",
       "codomain": "hdole/int/o_16",
-      "flipName": false,
       "to": "hdole/int/Z16_equals"
     },
     {
@@ -3211,7 +3193,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_23",
       "codomain": "hdole/int/o_50",
-      "flipName": false,
       "to": "hdole/int/zero32"
     },
     {
@@ -3219,7 +3200,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_58",
       "codomain": "hdole/int/o_25",
-      "flipName": false,
       "to": "hdole/int/Z82Z16"
     },
     {
@@ -3227,7 +3207,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_25",
       "codomain": "hdole/int/o_62",
-      "flipName": false,
       "to": "hdole/int/Z162Z32"
     },
     {
@@ -3235,7 +3214,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_62",
       "codomain": "hdole/int/o_0",
-      "flipName": false,
       "to": "hdole/int/Z322Z64"
     },
     {
@@ -3243,7 +3221,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_66",
       "codomain": "hdole/int/o_70",
-      "flipName": false,
       "to": "hdole/int/succ32"
     },
     {
@@ -3251,7 +3228,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_73",
       "codomain": "hdole/int/o_71",
-      "flipName": false,
       "to": "hdole/int/decr32"
     },
     {
@@ -3259,7 +3235,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_67",
       "codomain": "hdole/int/o_59",
-      "flipName": false,
       "to": "hdole/int/succ16"
     },
     {
@@ -3267,7 +3242,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_74",
       "codomain": "hdole/int/o_1",
-      "flipName": false,
       "to": "hdole/int/zero8"
     },
     {
@@ -3275,7 +3249,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_81",
       "codomain": "hdole/int/o_79",
-      "flipName": false,
       "to": "hdole/int/decr8"
     },
     {
@@ -3283,7 +3256,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_78",
       "codomain": "hdole/int/o_77",
-      "flipName": false,
       "to": "hdole/int/succ8"
     },
     {
@@ -3291,7 +3263,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_82",
       "codomain": "hdole/int/o_80",
-      "flipName": false,
       "to": "hdole/int/decr16"
     },
     {
@@ -3299,7 +3270,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_86",
       "codomain": "hdole/int/o_85",
-      "flipName": false,
       "to": "hdole/int/add32"
     },
     {
@@ -3307,7 +3277,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_84",
       "codomain": "hdole/int/o_83",
-      "flipName": false,
       "to": "hdole/int/add8"
     },
     {
@@ -3315,7 +3284,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_90",
       "codomain": "hdole/int/o_89",
-      "flipName": false,
       "to": "hdole/int/sub32"
     },
     {
@@ -3323,7 +3291,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_11",
       "codomain": "hdole/int/o_103",
-      "flipName": false,
       "to": "hdole/int/mult64"
     },
     {
@@ -3331,7 +3298,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_87",
       "codomain": "hdole/int/o_95",
-      "flipName": false,
       "to": "hdole/int/mult32"
     },
     {
@@ -3339,7 +3305,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_91",
       "codomain": "hdole/int/o_92",
-      "flipName": false,
       "to": "hdole/int/sub64"
     },
     {
@@ -3347,7 +3312,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_105",
       "codomain": "hdole/int/o_106",
-      "flipName": false,
       "to": "hdole/int/sub8"
     },
     {
@@ -3355,7 +3319,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_108",
       "codomain": "hdole/int/o_109",
-      "flipName": false,
       "to": "hdole/int/mult8"
     },
     {
@@ -3363,7 +3326,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_110",
       "codomain": "hdole/int/o_111",
-      "flipName": false,
       "to": "hdole/int/and8"
     },
     {
@@ -3371,7 +3333,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_112",
       "codomain": "hdole/int/o_113",
-      "flipName": false,
       "to": "hdole/int/or8"
     },
     {
@@ -3379,7 +3340,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_117",
       "codomain": "hdole/int/o_116",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Po{Z8,Z8}oP,Z16}dI"
     },
@@ -3388,7 +3354,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_116",
       "codomain": "hdole/int/o_117",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Z16,Po{Z8,Z8}oP}dI"
     },
@@ -3397,7 +3368,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_119",
       "codomain": "hdole/int/o_118",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Po{Z16,Z16}oP,Z32}dI"
     },
@@ -3406,7 +3382,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_118",
       "codomain": "hdole/int/o_119",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Z32,Po{Z16,Z16}oP}dI"
     },
@@ -3415,7 +3396,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_123",
       "codomain": "hdole/int/o_121",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Po{Z32,Z32}oP,Z64}dI"
     },
@@ -3424,7 +3410,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_121",
       "codomain": "hdole/int/o_123",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Z64,Po{Z32,Z32}oP}dI"
     },
@@ -3433,7 +3424,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_120",
       "codomain": "hdole/int/o_122",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Po{Z64,Z64}oP,Z128}dI"
     },
@@ -3442,7 +3438,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_122",
       "codomain": "hdole/int/o_120",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/int/Id{Z128,Po{Z64,Z64}oP}dI"
     },
@@ -3451,7 +3452,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_63",
       "codomain": "hdole/int/o_101",
-      "flipName": false,
       "to": "hdole/int/zero128"
     },
     {
@@ -3459,7 +3459,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_64",
       "codomain": "hdole/int/o_102",
-      "flipName": false,
       "to": "hdole/int/one128"
     },
     {
@@ -3467,7 +3466,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_125",
       "codomain": "hdole/int/o_124",
-      "flipName": false,
       "to": "hdole/int/succ128"
     },
     {
@@ -3475,7 +3473,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_126",
       "codomain": "hdole/int/o_127",
-      "flipName": false,
       "to": "hdole/int/decr128"
     },
     {
@@ -3483,7 +3480,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_129",
       "codomain": "hdole/int/o_128",
-      "flipName": false,
       "to": "hdole/int/add127"
     },
     {
@@ -3491,7 +3487,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_139",
       "codomain": "hdole/int/o_140",
-      "flipName": false,
       "to": "hdole/int/and32"
     },
     {
@@ -3499,7 +3494,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_161",
       "codomain": "hdole/int/o_162",
-      "flipName": false,
       "to": "hdole/int/and64"
     },
     {
@@ -3507,7 +3501,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_171",
       "codomain": "hdole/int/o_179",
-      "flipName": false,
       "to": "hdole/int/and128"
     },
     {
@@ -3515,7 +3508,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_0",
       "codomain": "hdole/int/o_184",
-      "flipName": false,
       "to": "hdole/int/N62toZ128"
     },
     {
@@ -3523,7 +3515,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_25",
       "codomain": "hdole/int/o_26",
-      "flipName": false,
       "to": "hdole/int/Fa{Z16,Z8_0}aF"
     },
     {
@@ -3531,7 +3522,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_62",
       "codomain": "hdole/int/o_60",
-      "flipName": false,
       "to": "hdole/int/Fa{Z32,Z16_0}aF"
     },
     {
@@ -3539,7 +3529,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_0",
       "codomain": "hdole/int/o_61",
-      "flipName": false,
       "to": "hdole/int/Fa{Z64,Z32_0}aF"
     },
     {
@@ -3547,7 +3536,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_184",
       "codomain": "hdole/int/o_185",
-      "flipName": false,
       "to": "hdole/int/Fa{Z128,Z64_0}aF"
     },
     {
@@ -3555,7 +3543,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_58",
       "codomain": "hdole/int/o_26",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/int/Id{Z8}dI"
     },
     {
@@ -3563,7 +3556,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_114",
       "codomain": "hdole/int/o_115",
-      "flipName": false,
       "to": "hdole/int/xor8"
     },
     {
@@ -3571,7 +3563,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_186",
       "codomain": "hdole/int/o_192",
-      "flipName": false,
       "to": "hdole/int/mod8"
     },
     {
@@ -3579,7 +3570,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_188",
       "codomain": "hdole/int/o_158",
-      "flipName": false,
       "to": "hdole/int/equ8"
     },
     {
@@ -3587,7 +3577,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_150",
       "codomain": "hdole/int/o_152",
-      "flipName": false,
       "to": "hdole/int/equ32"
     },
     {
@@ -3595,7 +3584,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_189",
       "codomain": "hdole/int/o_159",
-      "flipName": false,
       "to": "hdole/int/lt8"
     },
     {
@@ -3603,7 +3591,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_149",
       "codomain": "hdole/int/o_153",
-      "flipName": false,
       "to": "hdole/int/lt32"
     },
     {
@@ -3611,7 +3598,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_141",
       "codomain": "hdole/int/o_142",
-      "flipName": false,
       "to": "hdole/int/or32"
     },
     {
@@ -3619,7 +3605,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_163",
       "codomain": "hdole/int/o_164",
-      "flipName": false,
       "to": "hdole/int/or64"
     },
     {
@@ -3627,7 +3612,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_172",
       "codomain": "hdole/int/o_180",
-      "flipName": false,
       "to": "hdole/int/or128"
     },
     {
@@ -3635,7 +3619,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_151",
       "codomain": "hdole/int/o_154",
-      "flipName": false,
       "to": "hdole/int/lte32"
     },
     {
@@ -3643,7 +3626,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_148",
       "codomain": "hdole/int/o_147",
-      "flipName": false,
       "to": "hdole/int/mod32"
     },
     {
@@ -3651,7 +3633,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_143",
       "codomain": "hdole/int/o_144",
-      "flipName": false,
       "to": "hdole/int/xor32"
     },
     {
@@ -3659,7 +3640,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_178",
       "codomain": "hdole/int/o_157",
-      "flipName": false,
       "to": "hdole/int/lte128"
     },
     {
@@ -3667,7 +3647,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_165",
       "codomain": "hdole/int/o_166",
-      "flipName": false,
       "to": "hdole/int/xor64"
     },
     {
@@ -3675,7 +3654,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_170",
       "codomain": "hdole/int/o_169",
-      "flipName": false,
       "to": "hdole/int/mod64"
     },
     {
@@ -3683,7 +3661,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_173",
       "codomain": "hdole/int/o_181",
-      "flipName": false,
       "to": "hdole/int/xor128"
     },
     {
@@ -3691,7 +3668,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_175",
       "codomain": "hdole/int/o_183",
-      "flipName": false,
       "to": "hdole/int/mod128"
     },
     {
@@ -3699,7 +3675,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_176",
       "codomain": "hdole/int/o_155",
-      "flipName": false,
       "to": "hdole/int/equ128"
     },
     {
@@ -3707,7 +3682,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_177",
       "codomain": "hdole/int/o_156",
-      "flipName": false,
       "to": "hdole/int/lt128"
     },
     {
@@ -3715,7 +3689,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_193",
       "codomain": "hdole/int/o_195",
-      "flipName": false,
       "to": "hdole/int/gt8"
     },
     {
@@ -3723,7 +3696,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_194",
       "codomain": "hdole/int/o_196",
-      "flipName": false,
       "to": "hdole/int/gte8"
     },
     {
@@ -3731,7 +3703,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_199",
       "codomain": "hdole/int/o_200",
-      "flipName": false,
       "to": "hdole/int/rsh8"
     },
     {
@@ -3739,7 +3710,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_201",
       "codomain": "hdole/int/o_202",
-      "flipName": false,
       "to": "hdole/int/not8"
     },
     {
@@ -3747,7 +3717,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_136",
       "codomain": "hdole/int/o_131",
-      "flipName": false,
       "to": "hdole/int/sub128"
     },
     {
@@ -3755,7 +3724,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_35",
       "codomain": "hdole/int/o_36",
-      "flipName": false,
       "to": "hdole/int/sub16"
     },
     {
@@ -3763,7 +3731,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_203",
       "codomain": "hdole/int/o_93",
-      "flipName": false,
       "to": "hdole/int/add8c"
     },
     {
@@ -3771,7 +3738,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_204",
       "codomain": "hdole/int/o_107",
-      "flipName": false,
       "to": "hdole/int/sub8u"
     },
     {
@@ -3779,7 +3745,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_205",
       "codomain": "hdole/int/o_94",
-      "flipName": false,
       "to": "hdole/int/sub16c"
     },
     {
@@ -3787,7 +3752,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_206",
       "codomain": "hdole/int/o_104",
-      "flipName": false,
       "to": "hdole/int/sub32u"
     },
     {
@@ -3795,7 +3759,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_207",
       "codomain": "hdole/int/o_98",
-      "flipName": false,
       "to": "hdole/int/sub64u"
     },
     {
@@ -3803,7 +3766,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_208",
       "codomain": "hdole/int/o_132",
-      "flipName": false,
       "to": "hdole/int/sub128c"
     },
     {
@@ -3811,7 +3773,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_209",
       "codomain": "hdole/int/o_130",
-      "flipName": false,
       "to": "hdole/int/add128"
     },
     {
@@ -3819,7 +3780,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_210",
       "codomain": "hdole/int/o_97",
-      "flipName": false,
       "to": "hdole/int/add64o"
     },
     {
@@ -3827,7 +3787,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_211",
       "codomain": "hdole/int/o_138",
-      "flipName": false,
       "to": "hdole/int/add32c"
     },
     {
@@ -3835,7 +3794,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_212",
       "codomain": "hdole/int/o_88",
-      "flipName": false,
       "to": "hdole/int/add16c"
     },
     {
@@ -3843,7 +3801,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_12",
       "codomain": "hdole/int/o_134",
-      "flipName": false,
       "to": "hdole/int/mult128c"
     },
     {
@@ -3851,7 +3808,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_99",
       "codomain": "hdole/int/o_135",
-      "flipName": false,
       "to": "hdole/int/not16"
     },
     {
@@ -3859,7 +3815,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_213",
       "codomain": "hdole/int/o_214",
-      "flipName": false,
       "to": "hdole/int/not32"
     },
     {
@@ -3867,7 +3822,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_215",
       "codomain": "hdole/int/o_216",
-      "flipName": false,
       "to": "hdole/int/not64"
     },
     {
@@ -3875,7 +3829,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_217",
       "codomain": "hdole/int/o_218",
-      "flipName": false,
       "to": "hdole/int/not128"
     },
     {
@@ -3883,7 +3836,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_184",
       "codomain": "hdole/int/o_133",
-      "flipName": false,
       "to": "hdole/int/Fa{Z128,Z64_1}aF"
     },
     {
@@ -3891,7 +3843,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_137",
       "codomain": "hdole/int/o_133",
-      "flipName": false,
       "to": "hdole/int/zero64"
     },
     {
@@ -3899,7 +3850,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_0",
       "codomain": "hdole/int/o_137",
-      "flipName": false,
       "to": "hdole/int/Fa{Z64,Z64_-1}aF"
     },
     {
@@ -3907,7 +3857,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_62",
       "codomain": "hdole/int/o_219",
-      "flipName": false,
       "to": "hdole/int/Fa{Z32,Z32_-1}aF"
     },
     {
@@ -3915,7 +3864,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_25",
       "codomain": "hdole/int/o_220",
-      "flipName": false,
       "to": "hdole/int/Fa{Z16,Z16_-1}aF"
     },
     {
@@ -3923,7 +3871,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_58",
       "codomain": "hdole/int/o_221",
-      "flipName": false,
       "to": "hdole/int/Fa{Z8,Z8_-1}aF"
     },
     {
@@ -3931,7 +3878,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_0",
       "codomain": "hdole/int/o_222",
-      "flipName": false,
       "to": "hdole/int/Fa{Z64,Z32_1}aF"
     },
     {
@@ -3939,7 +3885,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_219",
       "codomain": "hdole/int/o_222",
-      "flipName": false,
       "to": "hdole/int/zero32"
     },
     {
@@ -3947,7 +3892,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_62",
       "codomain": "hdole/int/o_223",
-      "flipName": false,
       "to": "hdole/int/Fa{Z32,Z16_1}aF"
     },
     {
@@ -3955,7 +3899,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_25",
       "codomain": "hdole/int/o_224",
-      "flipName": false,
       "to": "hdole/int/Fa{Z16,Z8_1}aF"
     },
     {
@@ -3963,7 +3906,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_220",
       "codomain": "hdole/int/o_223",
-      "flipName": false,
       "to": "hdole/int/zero16"
     },
     {
@@ -3971,7 +3913,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_221",
       "codomain": "hdole/int/o_224",
-      "flipName": false,
       "to": "hdole/int/zero8"
     },
     {
@@ -3979,7 +3920,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_225",
       "codomain": "hdole/int/o_226",
-      "flipName": false,
       "to": "hdole/int/max8"
     },
     {
@@ -3987,7 +3927,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_227",
       "codomain": "hdole/int/o_228",
-      "flipName": false,
       "to": "hdole/int/min8"
     },
     {
@@ -3995,7 +3934,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_270",
       "codomain": "hdole/int/o_271",
-      "flipName": false,
       "to": "hdole/int/max16"
     },
     {
@@ -4003,7 +3941,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_272",
       "codomain": "hdole/int/o_273",
-      "flipName": false,
       "to": "hdole/int/min16"
     },
     {
@@ -4011,7 +3948,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_280",
       "codomain": "hdole/int/o_281",
-      "flipName": false,
       "to": "hdole/int/max32"
     },
     {
@@ -4019,7 +3955,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_282",
       "codomain": "hdole/int/o_283",
-      "flipName": false,
       "to": "hdole/int/min32"
     },
     {
@@ -4027,7 +3962,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_290",
       "codomain": "hdole/int/o_291",
-      "flipName": false,
       "to": "hdole/int/max64"
     },
     {
@@ -4035,7 +3969,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_292",
       "codomain": "hdole/int/o_293",
-      "flipName": false,
       "to": "hdole/int/min64"
     },
     {
@@ -4043,7 +3976,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_300",
       "codomain": "hdole/int/o_301",
-      "flipName": false,
       "to": "hdole/int/max128"
     },
     {
@@ -4051,7 +3983,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_302",
       "codomain": "hdole/int/o_303",
-      "flipName": false,
       "to": "hdole/int/min128"
     },
     {
@@ -4059,7 +3990,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_229",
       "codomain": "hdole/int/o_230",
-      "flipName": false,
       "to": "hdole/int/gt16"
     },
     {
@@ -4067,7 +3997,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_231",
       "codomain": "hdole/int/o_232",
-      "flipName": false,
       "to": "hdole/int/gt32"
     },
     {
@@ -4075,7 +4004,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_233",
       "codomain": "hdole/int/o_234",
-      "flipName": false,
       "to": "hdole/int/gt64"
     },
     {
@@ -4083,7 +4011,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_235",
       "codomain": "hdole/int/o_236",
-      "flipName": false,
       "to": "hdole/int/gt128"
     },
     {
@@ -4091,7 +4018,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_25",
       "codomain": "hdole/int/o_60",
-      "flipName": false,
       "to": "hdole/int/Id{Z16}dI"
     },
     {
@@ -4099,7 +4025,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_62",
       "codomain": "hdole/int/o_61",
-      "flipName": false,
       "to": "hdole/int/Id{Z32}dI"
     },
     {
@@ -4107,7 +4032,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_0",
       "codomain": "hdole/int/o_185",
-      "flipName": false,
       "to": "hdole/int/Id{Z64}dI"
     },
     {
@@ -4115,7 +4039,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_237",
       "codomain": "hdole/int/o_238",
-      "flipName": false,
       "to": "hdole/int/gte16"
     },
     {
@@ -4123,7 +4046,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_190",
       "codomain": "hdole/int/o_160",
-      "flipName": false,
       "to": "hdole/int/lte8"
     },
     {
@@ -4131,7 +4053,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_239",
       "codomain": "hdole/int/o_240",
-      "flipName": false,
       "to": "hdole/int/gte32"
     },
     {
@@ -4139,7 +4060,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_241",
       "codomain": "hdole/int/o_242",
-      "flipName": false,
       "to": "hdole/int/gte64"
     },
     {
@@ -4147,7 +4067,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_243",
       "codomain": "hdole/int/o_244",
-      "flipName": false,
       "to": "hdole/int/gte128"
     },
     {
@@ -4155,7 +4074,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_253",
       "codomain": "hdole/int/o_96",
-      "flipName": false,
       "to": "hdole/int/rsh16"
     },
     {
@@ -4163,7 +4081,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_255",
       "codomain": "hdole/int/o_254",
-      "flipName": false,
       "to": "hdole/int/rsh32"
     },
     {
@@ -4171,7 +4088,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_257",
       "codomain": "hdole/int/o_256",
-      "flipName": false,
       "to": "hdole/int/rsh64"
     },
     {
@@ -4179,7 +4095,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_259",
       "codomain": "hdole/int/o_258",
-      "flipName": false,
       "to": "hdole/int/rsh128"
     },
     {
@@ -4187,7 +4102,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_262",
       "codomain": "hdole/int/o_263",
-      "flipName": false,
       "to": "hdole/int/minus_one16"
     },
     {
@@ -4195,7 +4109,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_264",
       "codomain": "hdole/int/o_265",
-      "flipName": false,
       "to": "hdole/int/minus_one32"
     },
     {
@@ -4203,7 +4116,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_266",
       "codomain": "hdole/int/o_267",
-      "flipName": false,
       "to": "hdole/int/minus_one8"
     },
     {
@@ -4211,7 +4123,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_274",
       "codomain": "hdole/int/o_275",
-      "flipName": false,
       "to": "hdole/int/inf64"
     },
     {
@@ -4219,7 +4130,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_276",
       "codomain": "hdole/int/o_277",
-      "flipName": false,
       "to": "hdole/int/inf16"
     },
     {
@@ -4227,7 +4137,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_278",
       "codomain": "hdole/int/o_279",
-      "flipName": false,
       "to": "hdole/int/inf32"
     },
     {
@@ -4235,7 +4144,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_284",
       "codomain": "hdole/int/o_285",
-      "flipName": false,
       "to": "hdole/int/inf8"
     },
     {
@@ -4243,7 +4151,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_286",
       "codomain": "hdole/int/o_287",
-      "flipName": false,
       "to": "hdole/int/inf128"
     },
     {
@@ -4251,7 +4158,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_187",
       "codomain": "hdole/int/o_191",
-      "flipName": false,
       "to": "hdole/int/div8"
     },
     {
@@ -4259,7 +4165,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_45",
       "codomain": "hdole/int/o_46",
-      "flipName": false,
       "to": "hdole/int/div16"
     },
     {
@@ -4267,7 +4172,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_146",
       "codomain": "hdole/int/o_145",
-      "flipName": false,
       "to": "hdole/int/div32"
     },
     {
@@ -4275,7 +4179,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_167",
       "codomain": "hdole/int/o_168",
-      "flipName": false,
       "to": "hdole/int/div64"
     },
     {
@@ -4283,7 +4186,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_174",
       "codomain": "hdole/int/o_182",
-      "flipName": false,
       "to": "hdole/int/div128"
     },
     {
@@ -4291,7 +4193,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_75",
       "codomain": "hdole/int/o_24",
-      "flipName": false,
       "to": "hdole/int/one8"
     },
     {
@@ -4299,7 +4200,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_29",
       "codomain": "hdole/int/o_30",
-      "flipName": false,
       "to": "hdole/int/one16"
     },
     {
@@ -4307,7 +4207,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_56",
       "codomain": "hdole/int/o_57",
-      "flipName": false,
       "to": "hdole/int/one32"
     },
     {
@@ -4315,7 +4214,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_260",
       "codomain": "hdole/int/o_261",
-      "flipName": false,
       "to": "hdole/int/minus_one64"
     },
     {
@@ -4323,7 +4221,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_268",
       "codomain": "hdole/int/o_269",
-      "flipName": false,
       "to": "hdole/int/minus_one128"
     },
     {
@@ -4331,7 +4228,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_288",
       "codomain": "hdole/int/o_289",
-      "flipName": false,
       "to": "hdole/int/minus_inf8"
     },
     {
@@ -4339,7 +4235,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_294",
       "codomain": "hdole/int/o_295",
-      "flipName": false,
       "to": "hdole/int/minus_inf16"
     },
     {
@@ -4347,7 +4242,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_296",
       "codomain": "hdole/int/o_297",
-      "flipName": false,
       "to": "hdole/int/minus_inf32"
     },
     {
@@ -4355,7 +4249,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_298",
       "codomain": "hdole/int/o_299",
-      "flipName": false,
       "to": "hdole/int/minus_inf64"
     },
     {
@@ -4363,7 +4256,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_304",
       "codomain": "hdole/int/o_305",
-      "flipName": false,
       "to": "hdole/int/minus_infin128"
     },
     {
@@ -4371,7 +4263,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_197",
       "codomain": "hdole/int/o_198",
-      "flipName": false,
       "to": "hdole/int/lshf8"
     },
     {
@@ -4379,7 +4270,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_245",
       "codomain": "hdole/int/o_246",
-      "flipName": false,
       "to": "hdole/int/lsh16"
     },
     {
@@ -4387,7 +4277,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_247",
       "codomain": "hdole/int/o_248",
-      "flipName": false,
       "to": "hdole/int/lsh32"
     },
     {
@@ -4395,7 +4284,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_249",
       "codomain": "hdole/int/o_250",
-      "flipName": false,
       "to": "hdole/int/lsh64"
     },
     {
@@ -4403,7 +4291,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_251",
       "codomain": "hdole/int/o_252",
-      "flipName": false,
       "to": "hdole/int/lsh128"
     },
     {
@@ -4411,7 +4298,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_321",
       "codomain": "hdole/int/o_322",
-      "flipName": false,
       "to": "hdole/int/abs8"
     },
     {
@@ -4419,7 +4305,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_323",
       "codomain": "hdole/int/o_324",
-      "flipName": false,
       "to": "hdole/int/abs16"
     },
     {
@@ -4427,7 +4312,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_325",
       "codomain": "hdole/int/o_326",
-      "flipName": false,
       "to": "hdole/int/abs32"
     },
     {
@@ -4435,7 +4319,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_327",
       "codomain": "hdole/int/o_328",
-      "flipName": false,
       "to": "hdole/int/abs64"
     },
     {
@@ -4443,7 +4326,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_329",
       "codomain": "hdole/int/o_330",
-      "flipName": false,
       "to": "hdole/int/abs128"
     },
     {
@@ -5819,7 +5701,7 @@
       "prototype": "Morphism",
       "properName": "not",
       "code": {
-        "cpp": "%1 = ~ %0;"
+        "cpp": "%1 = ! %0;"
       },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/int/Z8"
@@ -5869,7 +5751,7 @@
       "prototype": "Morphism",
       "properName": "not",
       "code": {
-        "cpp": "%1 = ~ %0;"
+        "cpp": "%1 = ! %0;"
       },
       "domain": "hdole/int/Z16",
       "codomain": "hdole/int/Z16"
@@ -5879,7 +5761,7 @@
       "prototype": "Morphism",
       "properName": "not",
       "code": {
-        "cpp": "%1 = ~ %0;"
+        "cpp": "%1 = ! %0;"
       },
       "domain": "hdole/int/Z32",
       "codomain": "hdole/int/Z32"
@@ -5899,7 +5781,7 @@
       "prototype": "Morphism",
       "properName": "not",
       "code": {
-        "cpp": "%1 = ~ %0;"
+        "cpp": "%1 = ! %0;"
       },
       "domain": "hdole/int/Z128",
       "codomain": "hdole/int/Z128"
@@ -6437,6 +6319,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625994519088,
+  "timestamp": 1627001356872,
   "version": 0
 }
