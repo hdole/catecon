@@ -1,7 +1,14 @@
-#!/bin/bash -x
+#!/bin/bash
 
+if [ "`basename $0`" == "install.sh" ] && [ "`dirname $0`" == "." ]; then
+	echo "*** Renaming install.sh to install.sh-temp so as not to block install.sh from git pull"
+	mv $0 "$0-temp"
+fi
+
+echo "*** Install npm nodemon"
 sudo npm install -g nodemon
 
+echo "*** Initializing git"
 git init
 
 cat > .git/config <<EOF
@@ -20,21 +27,18 @@ cat > .git/config <<EOF
 	mainline = refs/heads/master
 EOF
 
-
-# git config --global credential.helper cache
-
-# user catecon-git-at-395668725886
-# password kcXIXICJvAA5zcUgDHhk2NCgoYLg60XY8zFyT2oeZ1E=
 if ! git pull; then
 	echo 'Error from git pull';
 	exit;
 fi
 
+echo "*** Installing npm packages"
 npm install
 
 mkdir -p logs
 mkdir -p public/diagram
 
+echo "*** Create .env file"
 cat > .env <<EOF
 CAT_PARENT='https://www.catecon.net'
 CAT_URL='http://localhost:3000'
@@ -44,9 +48,10 @@ CAT_DIR='/mnt/f/catecon'
 CAT_SEARCH_LIMIT=128
 CAT_SRVR_LOG='./logs'
 CAT_SRVR_LOG_SIZE='100M'
+HTTP_ADMINS='hdole'
 HTTP_DIR='public'
 HTTP_PORT=3000
-CAT_DIAGRAM_USER_LIMIT=1024
+HTTP_UPLOAD_LIMIT='1mb'
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
 MYSQL_USER=root
@@ -62,4 +67,4 @@ EOF
 
 chmod 0600 .env
 
-echo "REMEMBER!  Set the MySQL password in the .env file!"
+echo "*** REMEMBER!  Set the MySQL password in the .env file!"
