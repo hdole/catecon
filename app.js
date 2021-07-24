@@ -29,8 +29,6 @@ app.use(cors());
 const helmet = require('helmet');
 app.use(helmet());
 
-const bodyParser = require('body-parser');
-
 const cognito = require('amazon-cognito-identity-js');		// aws user support
 const url = require('url');
 const fs = require('fs');
@@ -440,7 +438,6 @@ async function serve()
 			catch(error)
 			{
 				console.error('****** cannot fetch catalog');
-//				res.status(HTTP.INTERNAL_ERROR).send(error).end();
 				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 			}
 		});
@@ -461,7 +458,6 @@ async function serve()
 			}
 			catch(error)
 			{
-//				res.status(HTTP.INTERNAL_ERROR).send(error).end();
 				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 			}
 		});
@@ -521,7 +517,6 @@ async function serve()
 					if (req.body.user !== req.user)
 					{
 						console.log('*** user mismatch', req.user, req.body.user);
-//						return res.status(HTTP.UNAUTHORIZED).send('user mismatch').end();
 						return res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'user mismatch'});
 					}
 					const user = req.body.user;
@@ -532,7 +527,6 @@ async function serve()
 						{
 							if (error)
 							{
-//								res.status(HTTP.INTERNAL_ERROR).end();
 								res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 								log('user info error', {error});
 								return;
@@ -547,7 +541,6 @@ async function serve()
 								if (error)
 								{
 									log('select error', {error});
-//									res.status(HTTP.INTERNAL_ERROR).end();
 									res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 									return;
 								}
@@ -573,7 +566,6 @@ async function serve()
 				if (error)
 				{
 					log('select user error', {error});
-//					res.status(HTTP.INTERNAL_ERROR).end();
 					res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 					return;
 				}
@@ -593,7 +585,6 @@ async function serve()
 			if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
 			{
 				reqlog(req, 'upload: bad request', req.body);
-//				res.status(HTTP.UNAUTHORIZED).send('missing info in body').end();
 				res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'missing info in body'}).end();
 				return;
 			}
@@ -742,14 +733,6 @@ async function serve()
 			});
 		});
 
-		/*
-		app.use('/UpdateHTMLjs', (req, res) =>
-		{
-			reqlog(req, 'UpdateHTMLjs');
-			saveHTMLjs();
-		});
-		*/
-
 		app.use('/refcnts', (req, res) =>
 		{
 			try
@@ -760,7 +743,6 @@ async function serve()
 			{
 				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 			}
-//			res.send({}).end();
 			res.status(HTTP.OK).end();
 		});
 
