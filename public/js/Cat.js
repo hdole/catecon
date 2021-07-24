@@ -473,6 +473,7 @@ Object.defineProperties(U,
 {
 	basenameEx:		{value:RegExp('^[a-zA-Z_$]+[a-zA-Z0-9_$\/]*$'),	writable:false},
 	finiteEx:		{value:RegExp('^#[0-9]+[0-9]*$'),				writable:false},
+
 	/*
 	keys:			{value:new Set(
 	[
@@ -1915,8 +1916,8 @@ class Toolbar
 		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), 'Morphisms'));
 		btns.push(D.getIcon('cell', 'cell', e => setActive(e, 'cell', ee => Cat.D.elementTool.Assert.html(ee)), 'Assertions'));
 		btns.push(D.getIcon('text', 'text', e => setActive(e, 'text', ee => Cat.D.elementTool.Text.html(ee)), 'Text'));
+		btns.push(D.getIcon('help', 'help', e => setActive(e, 'help', ee => R.Actions.help.html(e, diagram, [diagram]), 'Show help')));
 		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), 'Show graphs in diagram'));
-		btns.push(D.getIcon('help', 'help', e => setActive(e, 'help', ee => R.Actions.help.html(e, diagram, [diagram]), 'Show graphs in diagram')));
 		btns.push(D.getIcon('home', 'home', e => Cat.D.keyboardDown.Home(e), 'Home'));
 		this.buttons = H3.td(btns);
 		this.header.appendChild(H3.table(H3.tr(this.buttons, H3.td(this.getCloseToolbarBtn(), '.right')), '.w100'));
@@ -9945,18 +9946,7 @@ class LanguageAction extends Action
 		D.RemoveChildren(body);
 		body.appendChild(div);
 		if (elt instanceof Morphism || elt instanceof CatObject)
-		{
-			const old = this.currentDiagram;
-			this.currentDiagram = elt.diagram;
-			const rows =	[H3.tr([H3.td('Namespace', '.smallPrint.italic.left'), H3.td(this.getNamespace(diagram), '.smallBold.left')]),
-							H3.tr([H3.td('Type', '.smallPrint.italic.left'), H3.td(this.getType(elt), '.smallBold.left')])];
-			if (elt instanceof Morphism)
-				rows.push( H3.tr([H3.td('Domain', '.smallPrint.italic.left'), H3.td(this.getType(elt.domain), '.smallBold.left')]),
-							H3.tr([H3.td('Codomain', '.smallPrint.italic.left'), H3.td(this.getType(elt.codomain), '.smallBold.left')]));
-			this.currentDiagram = old;
-			div.appendChild(H3.table(rows, {width:'auto'}));
 			this.getEditHtml(div, elt);
-		}
 		else
 		{
 			this.genDiagram = diagram;

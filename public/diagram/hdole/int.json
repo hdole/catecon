@@ -108,15 +108,6 @@
       "height": 24
     },
     {
-      "basename": "t_9",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -1200,
-        "y": 1800
-      },
-      "height": 24
-    },
-    {
       "basename": "o_17",
       "prototype": "DiagramObject",
       "to": "hdole/int/Po{Z64,Z64}oP",
@@ -279,7 +270,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 2400
+        "y": 2600
       },
       "height": 24
     },
@@ -289,7 +280,7 @@
       "to": "hdole/int/Po{Z16,Z16}oP",
       "xy": {
         "x": 0,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -298,7 +289,7 @@
       "to": "hdole/int/Z16",
       "xy": {
         "x": 200,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -869,7 +860,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 600,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -878,7 +869,7 @@
       "to": "hdole/int/Po{Z32,Z32}oP",
       "xy": {
         "x": 400,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -887,7 +878,7 @@
       "to": "hdole/int/Po{Z64,Z64}oP",
       "xy": {
         "x": 800,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -896,7 +887,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1000,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -932,7 +923,7 @@
       "to": "hdole/int/CPo{Z16,#1}oPC",
       "xy": {
         "x": 200,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -959,7 +950,7 @@
       "to": "hdole/int/CPo{Z64,#1}oPC",
       "xy": {
         "x": 1000,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -995,7 +986,7 @@
       "to": "hdole/int/CPo{Z32,#1}oPC",
       "xy": {
         "x": 600,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -1004,7 +995,7 @@
       "to": "hdole/int/Po{Z8,Z8}oP",
       "xy": {
         "x": -400,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -1013,7 +1004,7 @@
       "to": "hdole/int/Z8",
       "xy": {
         "x": -200,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -1022,7 +1013,7 @@
       "to": "hdole/int/CPo{Z8,#1}oPC",
       "xy": {
         "x": -200,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -1256,7 +1247,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1400,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -1265,7 +1256,7 @@
       "to": "hdole/int/CPo{Z128,#1}oPC",
       "xy": {
         "x": 1400,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -1283,7 +1274,7 @@
       "to": "hdole/int/Po{Z128,Z128}oP",
       "xy": {
         "x": 1200,
-        "y": 2400
+        "y": 2600
       }
     },
     {
@@ -1895,7 +1886,7 @@
       "to": "hdole/int/Po{Z8,Z8}oP",
       "xy": {
         "x": -400,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -1904,7 +1895,7 @@
       "to": "hdole/int/Po{Z16,Z16}oP",
       "xy": {
         "x": 0,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -1913,7 +1904,7 @@
       "to": "hdole/int/Po{Z32,Z32}oP",
       "xy": {
         "x": 410,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -1922,7 +1913,7 @@
       "to": "hdole/int/Po{Z64,Z64}oP",
       "xy": {
         "x": 800,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -1931,7 +1922,7 @@
       "to": "hdole/int/Po{Z128,Z128}oP",
       "xy": {
         "x": 1200,
-        "y": 2600
+        "y": 2400
       }
     },
     {
@@ -2477,7 +2468,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 2600
+        "y": 2400
       },
       "height": 24
     },
@@ -2678,7 +2669,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 800,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2687,7 +2678,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1000,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2696,7 +2687,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 0,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2705,7 +2696,7 @@
       "to": "hdole/int/Z16",
       "xy": {
         "x": 200,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2714,7 +2705,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 400,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2723,7 +2714,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 600,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2732,7 +2723,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": -400,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2741,7 +2732,7 @@
       "to": "hdole/int/Z8",
       "xy": {
         "x": -200,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2750,7 +2741,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 1200,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2759,7 +2750,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1400,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -2778,7 +2769,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": -400,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2787,7 +2778,7 @@
       "to": "hdole/int/Z8",
       "xy": {
         "x": -200,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2796,7 +2787,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 0,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2805,7 +2796,7 @@
       "to": "hdole/int/Z16",
       "xy": {
         "x": 200,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2814,7 +2805,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 400,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2823,7 +2814,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 600,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2832,7 +2823,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 800,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2841,7 +2832,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1000,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2850,7 +2841,7 @@
       "to": "hdole/int/#1",
       "xy": {
         "x": 1200,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2859,7 +2850,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1400,
-        "y": 1200
+        "y": 1400
       }
     },
     {
@@ -2958,7 +2949,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 1400
+        "y": 1200
       },
       "height": "24"
     },
@@ -2968,7 +2959,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1200,
-        "y": 1200
+        "y": 1400
       },
       "height": "24"
     },
@@ -3063,6 +3054,76 @@
       }
     },
     {
+      "description": "Is the first number greater than the second",
+      "basename": "t_9",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 4800
+      },
+      "height": 24
+    },
+    {
+      "description": "Is the first number greater than or equal to the second",
+      "basename": "t_15",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5000
+      },
+      "height": 24
+    },
+    {
+      "description": "Right shift the first number by the amount given by the second",
+      "basename": "t_18",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5200
+      },
+      "height": 24
+    },
+    {
+      "description": "Left shift the first number by the amount given by the second",
+      "basename": "t_30",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5400
+      },
+      "height": 24
+    },
+    {
+      "description": "The maximum of two integers",
+      "basename": "t_33",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5600
+      },
+      "height": 24
+    },
+    {
+      "description": "The minimum of two integers",
+      "basename": "t_32",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 5800
+      },
+      "height": 24
+    },
+    {
+      "description": "The absolute value of an integer is a natural number",
+      "basename": "t_34",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1200,
+        "y": 6000
+      },
+      "height": 24
+    },
+    {
       "basename": "m_0",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_2",
@@ -3081,7 +3142,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_9",
       "codomain": "hdole/int/o_10",
-      "to": "hdole/int/add64"
+      "to": "hdole/int/addr64"
     },
     {
       "basename": "m_7",
@@ -3116,7 +3177,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_33",
       "codomain": "hdole/int/o_34",
-      "to": "hdole/int/add16"
+      "to": "hdole/int/addr16"
     },
     {
       "basename": "m_16",
@@ -3270,21 +3331,21 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_86",
       "codomain": "hdole/int/o_85",
-      "to": "hdole/int/add32"
+      "to": "hdole/int/addr32"
     },
     {
       "basename": "m_42",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_84",
       "codomain": "hdole/int/o_83",
-      "to": "hdole/int/add8"
+      "to": "hdole/int/addr8"
     },
     {
       "basename": "m_47",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_90",
       "codomain": "hdole/int/o_89",
-      "to": "hdole/int/sub32"
+      "to": "hdole/int/subr32"
     },
     {
       "basename": "m_51",
@@ -3305,14 +3366,14 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_91",
       "codomain": "hdole/int/o_92",
-      "to": "hdole/int/sub64"
+      "to": "hdole/int/subr64"
     },
     {
       "basename": "m_57",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_105",
       "codomain": "hdole/int/o_106",
-      "to": "hdole/int/sub8"
+      "to": "hdole/int/subr8"
     },
     {
       "basename": "m_59",
@@ -3480,7 +3541,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_129",
       "codomain": "hdole/int/o_128",
-      "to": "hdole/int/add127"
+      "to": "hdole/int/addr128"
     },
     {
       "basename": "m_96",
@@ -3717,56 +3778,56 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_136",
       "codomain": "hdole/int/o_131",
-      "to": "hdole/int/sub128"
+      "to": "hdole/int/subr128"
     },
     {
       "basename": "m_15",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_35",
       "codomain": "hdole/int/o_36",
-      "to": "hdole/int/sub16"
+      "to": "hdole/int/subr16"
     },
     {
       "basename": "m_49",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_203",
       "codomain": "hdole/int/o_93",
-      "to": "hdole/int/add8c"
+      "to": "hdole/int/add8"
     },
     {
       "basename": "m_58",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_204",
       "codomain": "hdole/int/o_107",
-      "to": "hdole/int/sub8u"
+      "to": "hdole/int/sub8"
     },
     {
       "basename": "m_92",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_205",
       "codomain": "hdole/int/o_94",
-      "to": "hdole/int/sub16c"
+      "to": "hdole/int/sub16"
     },
     {
       "basename": "m_56",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_206",
       "codomain": "hdole/int/o_104",
-      "to": "hdole/int/sub32u"
+      "to": "hdole/int/sub32"
     },
     {
       "basename": "m_54",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_207",
       "codomain": "hdole/int/o_98",
-      "to": "hdole/int/sub64u"
+      "to": "hdole/int/sub64"
     },
     {
       "basename": "m_79",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_208",
       "codomain": "hdole/int/o_132",
-      "to": "hdole/int/sub128c"
+      "to": "hdole/int/sub128"
     },
     {
       "basename": "m_80",
@@ -3780,21 +3841,21 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_210",
       "codomain": "hdole/int/o_97",
-      "to": "hdole/int/add64o"
+      "to": "hdole/int/add64"
     },
     {
       "basename": "m_77",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_211",
       "codomain": "hdole/int/o_138",
-      "to": "hdole/int/add32c"
+      "to": "hdole/int/add32"
     },
     {
       "basename": "m_48",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_212",
       "codomain": "hdole/int/o_88",
-      "to": "hdole/int/add16c"
+      "to": "hdole/int/add16"
     },
     {
       "basename": "m_81",
@@ -4754,7 +4815,7 @@
       "codomain": "hdole/int/Z64"
     },
     {
-      "description": "The maximum safe integer",
+      "description": "The maximum 64-bit integer 9,223,372,036,854,775,807",
       "basename": "inf64",
       "prototype": "Morphism",
       "properName": "&infin;",
@@ -4767,7 +4828,7 @@
     },
     {
       "description": "Addition of two integers with rollover",
-      "basename": "add64",
+      "basename": "addr64",
       "prototype": "Morphism",
       "properName": "addr",
       "code": {
@@ -4838,7 +4899,7 @@
       "codomain": "hdole/int/Z16"
     },
     {
-      "description": "Max sixteen bit number 65535",
+      "description": "Max sixteen bit integer 32767",
       "basename": "inf16",
       "prototype": "Morphism",
       "properName": "&infin;",
@@ -4851,7 +4912,7 @@
     },
     {
       "description": "Addition of two 16-bit integers with rollover",
-      "basename": "add16",
+      "basename": "addr16",
       "prototype": "Morphism",
       "properName": "addr",
       "code": {
@@ -5042,6 +5103,7 @@
       "codomain": "hdole/int/CPo{Z32,#1}oPC"
     },
     {
+      "description": "The maximum 32-bit integer 2,147,483,647",
       "basename": "inf32",
       "prototype": "Morphism",
       "properName": "∞",
@@ -5129,7 +5191,7 @@
     },
     {
       "description": "Addition of two 32 bit unsigned numbers",
-      "basename": "add32",
+      "basename": "addr32",
       "prototype": "Morphism",
       "properName": "addr",
       "code": {
@@ -5140,7 +5202,7 @@
     },
     {
       "description": "Addition of eight bit unsigned numbers",
-      "basename": "add8",
+      "basename": "addr8",
       "prototype": "Morphism",
       "properName": "addr",
       "code": {
@@ -5151,7 +5213,7 @@
     },
     {
       "description": "Subtraction of two 32 bit numbers",
-      "basename": "sub32",
+      "basename": "subr32",
       "prototype": "Morphism",
       "properName": "subr",
       "code": {
@@ -5162,7 +5224,7 @@
     },
     {
       "description": "Addition with carry",
-      "basename": "add16c",
+      "basename": "add16",
       "prototype": "Morphism",
       "properName": "add",
       "code": {
@@ -5173,7 +5235,7 @@
     },
     {
       "description": "Addition with carry",
-      "basename": "add8c",
+      "basename": "add8",
       "prototype": "Morphism",
       "properName": "add",
       "code": {
@@ -5206,7 +5268,7 @@
     },
     {
       "description": "Subtraction of two 64-bit unsigned numbers",
-      "basename": "sub64",
+      "basename": "subr64",
       "prototype": "Morphism",
       "properName": "subr",
       "code": {
@@ -5217,7 +5279,7 @@
     },
     {
       "description": "Subtraction of two 64-bit numbers with underflow",
-      "basename": "sub64u",
+      "basename": "sub64",
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
@@ -5228,7 +5290,7 @@
     },
     {
       "description": "Addition of two 64-bit numbers with overflow",
-      "basename": "add64o",
+      "basename": "add64",
       "prototype": "Morphism",
       "properName": "add",
       "code": {
@@ -5239,7 +5301,7 @@
     },
     {
       "description": "Subtraction of two 32-bit unsigned numbers with underflow",
-      "basename": "sub32u",
+      "basename": "sub32",
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
@@ -5250,7 +5312,7 @@
     },
     {
       "description": "Subtraction of two 8-bit numbers",
-      "basename": "sub8",
+      "basename": "subr8",
       "prototype": "Morphism",
       "properName": "subr",
       "code": {
@@ -5261,7 +5323,7 @@
     },
     {
       "description": "Subtraction of two 8-bit numbers with underflow",
-      "basename": "sub8u",
+      "basename": "sub8",
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
@@ -5354,7 +5416,7 @@
       "codomain": "hdole/int/CPo{Z128,#1}oPC"
     },
     {
-      "basename": "add127",
+      "basename": "addr128",
       "prototype": "Morphism",
       "properName": "addr",
       "code": {
@@ -5364,7 +5426,7 @@
       "codomain": "hdole/int/Z128"
     },
     {
-      "basename": "add32c",
+      "basename": "add32",
       "prototype": "Morphism",
       "properName": "add",
       "code": {
@@ -5384,7 +5446,7 @@
       "codomain": "hdole/int/CPo{Z128,#1}oPC"
     },
     {
-      "basename": "sub128c",
+      "basename": "sub128",
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
@@ -5707,7 +5769,7 @@
       "codomain": "hdole/int/Z8"
     },
     {
-      "basename": "sub128",
+      "basename": "subr128",
       "prototype": "Morphism",
       "properName": "subr",
       "code": {
@@ -5717,7 +5779,7 @@
       "codomain": "hdole/int/Z128"
     },
     {
-      "basename": "sub16",
+      "basename": "subr16",
       "prototype": "Morphism",
       "properName": "subr",
       "code": {
@@ -5727,7 +5789,7 @@
       "codomain": "hdole/int/Z16"
     },
     {
-      "basename": "sub16c",
+      "basename": "sub16",
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
@@ -6160,6 +6222,9 @@
       "basename": "one8",
       "prototype": "Morphism",
       "properName": "1",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
       "domain": "hdole/int/#1",
       "codomain": "hdole/int/Z8"
     },
@@ -6167,6 +6232,9 @@
       "basename": "one16",
       "prototype": "Morphism",
       "properName": "1",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
       "domain": "hdole/int/#1",
       "codomain": "hdole/int/Z16"
     },
@@ -6174,6 +6242,9 @@
       "basename": "one32",
       "prototype": "Morphism",
       "properName": "1",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
       "domain": "hdole/int/#1",
       "codomain": "hdole/int/Z32"
     },
@@ -6181,6 +6252,9 @@
       "basename": "minus_one64",
       "prototype": "Morphism",
       "properName": "-1",
+      "code": {
+        "cpp": "%0 = -1;"
+      },
       "domain": "hdole/int/#1",
       "codomain": "hdole/int/Z64"
     },
@@ -6188,6 +6262,9 @@
       "basename": "minus_one128",
       "prototype": "Morphism",
       "properName": "-1",
+      "code": {
+        "cpp": "%0 = -1;"
+      },
       "domain": "hdole/int/#1",
       "codomain": "hdole/int/Z128"
     },
@@ -6222,6 +6299,7 @@
       "codomain": "hdole/int/Z32"
     },
     {
+      "description": "The minimum 64-bit integer -9,223,372,036,854,775,808",
       "basename": "minus_inf64",
       "prototype": "Morphism",
       "properName": "-&infin;",
@@ -6319,6 +6397,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627001356872,
+  "timestamp": 1627112233266,
   "version": 0
 }
