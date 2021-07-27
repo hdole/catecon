@@ -301,7 +301,7 @@ class U
 	{
 		if (data === undefined || data === null)
 		{
-			console.error('no data to convert');
+			console.error(`no data to convert: ${obj.name}`);
 			return;
 		}
 		let ret = null;
@@ -808,7 +808,7 @@ class R
 					}
 				}
 				R.initialized = true;
-				isGUI && D.session.diagrams.map(d => R.DownloadDiagram(d, _ =>
+				isGUI && D.session.diagrams.filter(d => R.catalog.has(d)).map(d => R.DownloadDiagram(d, _ =>
 				{
 					const diagram = R.$CAT.getElement(d);
 					diagram.makeSVG();
@@ -943,6 +943,8 @@ if (errors.length > 0) debugger;
 	{
 		let diagram = null;
 		const cloudDiagrams = [...R.GetReferences(name)].reverse().filter(d => R.LocalTimestamp(d) === 0);
+// TODO fix this issue
+if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		if (cloudDiagrams.length > 0)
 		{
 			const downloads = cloudDiagrams.map(d => R.getDiagramURL(d + '.json'));
@@ -1342,8 +1344,9 @@ if (errors.length > 0) debugger;
 		{
 			const old = R.$CAT.getElement(json.name);
 			// TODO reload diagrams that were referencing this one
-			while(old && old.refcnt > 0)
-				old.decrRefcnt();
+			if (old)
+				while(old.refcnt >= 0)
+					old.decrRefcnt();
 		}
 		D.EmitViewEvent('diagram', null);	// needed if R.diagram = diagram since old.decrRefcnt() puts it into catalog view
 		const diagram = new Diagram(R.GetUserDiagram(R.user.name), json);
@@ -1820,7 +1823,10 @@ class Toolbar
 					this.resetMouseCoords();
 					break;
 				case 'select':
-					this.show(e);
+					if (this.element.classList.contains('hidden') || R.diagram.selected.length > 0)
+						this.show(e);
+					else
+						this.hide();
 					break;
 			}
 		});
@@ -2515,7 +2521,7 @@ class DiagramTool extends ElementTool
 					buttons.push(btn);
 				}
 			}
-			else if (diagram && name !== R.diagram.name && !diagram.allReferences.has(name))
+			else if (R.catalog.has(diagram) && name !== R.diagram.name && !diagram.allReferences.has(name))
 			{
 				const addRef = (e, name) =>
 				{
@@ -2568,6 +2574,7 @@ class DiagramTool extends ElementTool
 		const jsonUploadSection = H3.div('##Diagram-upload-json.hidden',
 			H3.h4('Upload Diagram JSON'),
 			H3.label('Select JSON file to upload as diagram:', {for:'upload-json'}),
+			H3.br(),
 			H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => D.uploadJSON(e)}));
 		toolbar2.parentNode.insertBefore(jsonUploadSection, toolbar2.nextSibling);
 		this.setSearchBar();
@@ -2900,6 +2907,7 @@ class D
 		if (!R.sync || diagram.user === diagram.basename)
 			return;
 		D.CancelAutosave();
+		diagram.updateTimestamp();
 		const timestamp = diagram.timestamp;
 		D.autosaveTimer = setTimeout(_ =>
 		{
@@ -2967,11 +2975,6 @@ class D
 	static Mousemove(e)
 	{
 		D.mouse.saveClientPosition(e);
-		if (false && R.diagram)
-		{
-			const foo = D.mouse.diagramPosition(R.diagram);
-			D.statusbar.show(e, `${Math.round(foo.x)} ${Math.round(foo.y)} sssn`);
-		}
 		try
 		{
 			const diagram = R.diagram;
@@ -3328,6 +3331,7 @@ class D
 				case 'detach':
 					if (args.element instanceof DiagramMorphism)
 						args.element.homsetIndex = 0;
+					// fall through
 				case 'new':
 					if (args.element instanceof DiagramMorphism)
 					{
@@ -3363,7 +3367,6 @@ class D
 				case 'fuse':
 					args.diagram.domain.findCells(diagram);
 					diagram.domain.checkCells();
-					diagram.updateTimestamp();
 					D.Autosave(args.diagram);
 					break;
 				case 'delete':
@@ -3373,7 +3376,6 @@ class D
 					if (args.element instanceof DiagramObject)
 					{
 						isGUI && args.diagram.updateBackground();
-						diagram.updateTimestamp();
 						D.Autosave(args.diagram);
 					}
 					break;
@@ -3391,7 +3393,6 @@ class D
 				case 'update':
 				case 'move':
 					isGUI && args.diagram.updateBackground();
-					args.diagram.updateTimestamp();
 					D.Autosave(args.diagram);
 					break;
 			}
@@ -3410,11 +3411,9 @@ class D
 						R.LoadDiagramEquivalences(diagram);
 						diagram.loadCells();
 						diagram.domain.checkCells();
-						diagram.updateTimestamp();
 						D.Autosave(diagram);
 						break;
 					case 'update':
-						diagram.updateTimestamp();
 						D.Autosave(diagram);
 						break;
 					case 'loadCells':
@@ -3469,7 +3468,7 @@ class D
 							{
 								if (args.action === 'home')
 									diagram.home();
-								else
+								else if (D.default.fullscreen)
 								{
 									const viewport = diagram.getViewport();
 									if (viewport)
@@ -3496,6 +3495,9 @@ class D
 					D.placements.delete(diagram);
 					D.saveSession();
 					D.statusbar.show(e, `Diagram ${diagram} ${args.command}`);
+					break;
+				case 'new':
+					D.Autosave(diagram);
 					break;
 			}
 		});
@@ -3633,6 +3635,8 @@ class D
 			{
 				case 'start':
 					D.NotBusy();
+					D.forEachDiagramSVG(d => d.show());
+					D.setFullscreen(D.default.fullscreen);
 					break;
 			}
 		});
@@ -4250,7 +4254,7 @@ class D
 	static saveSession()
 	{
 		D.session.diagrams.length = 0;
-		D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && D.session.diagrams.push(d.name));
+		D.forEachDiagramSVG(d => D.session.diagrams.push(d.name));
 		U.writefile('session.json', JSON.stringify(D.session));
 	}
 	static readSession()
@@ -4418,7 +4422,7 @@ class D
 		R.SaveDefaults();
 		if (emit)
 		{
-			const diagrams = D.session.diagrams.map(diagram => R.CAT.getElement(diagram));
+			const diagrams = D.session.diagrams.map(diagram => R.CAT.getElement(diagram)).filter(d => d);
 			if (full && R.diagram)
 				R.diagram.updateBackground();
 			else
@@ -4755,6 +4759,16 @@ Object.defineProperties(D,
 				if (R.diagram && e.target === document.body)
 				{
 					const diagram = R.diagram;
+					if (diagram.selected.length === 1)
+					{
+						const elt = diagram.getSelected();
+						if (elt instanceof DiagramObject)
+						{
+							const morphism = R.diagram.fctr(elt.to, [-1]);
+							diagram.placeMorphismByObject(e, 'domain', elt, morphism);
+							return;
+						}
+					}
 					const one = diagram.get('FiniteObject', {size:1});
 					diagram.placeObject(one, D.mouse.diagramPosition(diagram));
 				}
@@ -5638,7 +5652,7 @@ class Section
 {
 	constructor(title, parent, id, tip)
 	{
-		this.elt = H3.button(U.HtmlEntitySafe(title), {title:tip, onclick:e => this.section.toggle()}, '.sidenavAccordion');
+		this.elt = H3.button(U.HtmlEntitySafe(title), {title:tip, onclick:e => this.toggle()}, '.sidenavAccordion');
 		parent.appendChild(this.elt);
 		this.section = H3.div({id}, '.section');
 		parent.appendChild(this.section);
@@ -9956,18 +9970,18 @@ class LanguageAction extends Action
 	}
 	setEditorSize(textarea)
 	{
-		textarea.style.width = Math.min(D.toolbar.element.clientWidth - 40, textarea.scrollWidth) + 'px';
-		textarea.style.height = Math.min(D.Height()/2, textarea.scrollHeight) + 'px';
+		if (textarea.scrollWidth - Math.abs(textarea.scrollLeft) !== textarea.clientWidth)
+			textarea.style.width = Math.max(D.toolbar.element.clientWidth - 40, textarea.scrollWidth) + 'px';
+		if (textarea.scrollHeight - Math.abs(textarea.scrollTop) !== textarea.clientHeight)
+			textarea.style.height = Math.min(D.Height()/2, textarea.scrollHeight) + 'px';
 	}
 	getEditHtml(div, elt)	// handler when the language is just a string
 	{
 		let code = '';
-		if (elt.constructor.name === 'Morphism' || elt instanceof Diagram)
+		if (elt.constructor.name === 'Morphism' || elt instanceof Diagram || elt instanceof CatObject)
 			code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
 		else if (elt instanceof Morphism)
 			code = this.generate(R.diagram, elt);
-		else if (elt instanceof CatObject)
-			code = this.generateObject(elt);
 		const id = `element-${this.ext}`;
 		const textarea = H3.textarea(code, '.code.w100',
 		{
@@ -9976,6 +9990,7 @@ class LanguageAction extends Action
 			onkeydown:e =>
 			{
 				e.stopPropagation();
+				D.CancelAutohide();
 				if (e.key === 'Tab')	// insert tab character
 				{
 					e.preventDefault();
@@ -11010,7 +11025,7 @@ class Morphism extends Element
 		{
 			const saved = new Map();
 			const codomain = this.codomain;
-			this.data.forEach((d, k) => saved.set(k, U.ConvertData(codomain, d)));
+			this.data.forEach((d, k) => d && saved.set(k, U.ConvertData(codomain, d)));		// drop undefined data
 			a.data = U.JsonMap(saved);
 		}
 		if ('recursor' in this && this.recursor)
@@ -11134,7 +11149,7 @@ class Morphism extends Element
 			if (morph.dual)
 				return FactorMorphism.isIdentity(morph.factors, 'objects' in morph.codomain ? morph.codomain.objects.length : 1);
 			else
-				return FactorMorphism.isIdentity(morph.factors, 'objects' in morph.domain ? morph.domain.objects.length : 1);
+				return FactorMorphism.isIdentity(morph.factors, 'objects' in morph.domain.basic() ? morph.domain.basic().objects.length : 1);
 		}
 		// TODO factor morphism whose factors form an identity
 		return morph instanceof Identity;
@@ -11456,7 +11471,7 @@ class DiagramMorphism extends Morphism
 		nuArgs.category = diagram.domain;
 		const to = diagram.getElement(nuArgs.to);
 		if (!to)
-			throw 'no morphism to attach to index';
+			throw 'no morphism to attach to index: ' + nuArgs.to;
 		const domain = diagram.getElement(nuArgs.domain);
 		const codomain = diagram.getElement(nuArgs.codomain);
 		if (domain.to !== to.domain)
@@ -11514,7 +11529,7 @@ class DiagramMorphism extends Morphism
 		const help = this.to.help(this);
 		if (this.isEditable())
 		{
-			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseInt(e.target.value)), min:0, max:10, width:2, value:this.homsetIndex};
+			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseInt(e.target.value)), min:0, max:100, width:2, value:this.homsetIndex};
 			help.appendChild(H3.tr(H3.td('Homset Index'), H3.td(H3.input('.in100', inputArgs))));
 		}
 		return help;
@@ -15475,10 +15490,10 @@ class Assembler
 	{
 		const morphism = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
 		if (Morphism.isIdentity(morphism))
-			return !(morphism.domain instanceof NamedObject || morphism.codomain instanceof NamedObject)
+			return true;
 		if (morphism.codomain.isTerminal())
 			return true;
-		if (morphism instanceof FactorMorphism && !morphism.dual && morphism.domain instanceof ProductObject && !morphism.domain.dual)
+		if (morphism instanceof FactorMorphism && !morphism.dual && morphism.domain.basic() instanceof ProductObject && !morphism.domain.dual)
 			return FactorMorphism.isReference(morphism.factors);
 		return false;
 	}
