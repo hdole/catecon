@@ -323,7 +323,7 @@ function updateDiagramTable(name, info, fn)
 	if (info.user === 'sys' || name === info.user + '/' + info.user)	// do not track system or user/user diagrams
 		return;
 	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ? WHERE name = ?';
-	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, info.refcnt, info.timestamp, name];
+	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, info.timestamp, name];
 	console.log('updating diagram table', args);
 	dbcon.query(updateSql, args, fn);
 }
@@ -625,7 +625,8 @@ async function serve()
 				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
 				{
 					const oldrefs = Cat.U.Clone(info.references);
-					Cat.R.catalog.set(name, diagram);
+					const nuInfo = Cat.Diagram.GetInfo(diagram);
+					Cat.R.catalog.set(name, nuInfo);
 					updateDiagramTable(name, diagram, (error, result) =>
 					{
 						if (error)
@@ -671,6 +672,7 @@ async function serve()
 					const info = Cat.Diagram.GetInfo(diagram);
 					info.refcnt = 0;
 					updateRefcnts([], info.references);
+					Cat.R.catalog.set(name, info);
 					//
 					// user owns one more
 					//
