@@ -81,7 +81,7 @@
         "x": 0,
         "y": 0
       },
-      "height": "100",
+      "height": "122",
       "weight": "bold"
     },
     {
@@ -141,15 +141,6 @@
         "y": 1410
       },
       "height": "24"
-    },
-    {
-      "basename": "o_0",
-      "prototype": "DiagramObject",
-      "to": "hdole/while/#1",
-      "xy": {
-        "x": -890,
-        "y": 760
-      }
     },
     {
       "basename": "o_1",
@@ -378,7 +369,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627028674135,
+  "timestamp": 1627194067085,
   "version": 0,
   "hiddenCells": [
     "8901823568e5dafc364b7e06357dd9d01318f1b37269e38f12a42911ec7b9800",

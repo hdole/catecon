@@ -162,8 +162,7 @@ ${members}
 		}
 		instantiate(element)
 		{
-			const code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
-			return this.cline(code);
+			return this.cline(this.getCode(element).replace(/%0/g, this.getType(element)));
 		}
 		generateObject(object, generated = new Set())
 		{

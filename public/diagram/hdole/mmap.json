@@ -1,0 +1,1161 @@
+{
+  "description": "Memory map a file using mmap",
+  "basename": "mmap",
+  "name": "hdole/mmap",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/mmap_Index",
+  "codomain": "hdole/PFS",
+  "references": [
+    "hdole/gds"
+  ],
+  "domainElements": [
+    {
+      "basename": "o_25",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/file",
+      "xy": {
+        "x": -1100,
+        "y": -700
+      }
+    },
+    {
+      "basename": "o_27",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/stat",
+      "xy": {
+        "x": -1100,
+        "y": -300
+      }
+    },
+    {
+      "basename": "o_31",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/size_t",
+      "xy": {
+        "x": -1100,
+        "y": 100
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -1300,
+        "y": -100
+      }
+    },
+    {
+      "basename": "o_33",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/voidPtr",
+      "xy": {
+        "x": -1300,
+        "y": 100
+      }
+    },
+    {
+      "basename": "o_21",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -700,
+        "y": -100
+      }
+    },
+    {
+      "basename": "o_23",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": -700,
+        "y": 100
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "xy": {
+        "x": -1100,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_38",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -900,
+        "y": -100
+      }
+    },
+    {
+      "basename": "o_39",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": -900,
+        "y": 100
+      }
+    },
+    {
+      "basename": "o_19",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/off_t",
+      "xy": {
+        "x": -500,
+        "y": 100
+      }
+    },
+    {
+      "basename": "o_44",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": -1100,
+        "y": -1500
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": -500,
+        "y": -100
+      }
+    },
+    {
+      "basename": "o_64",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
+      "xy": {
+        "x": -1100,
+        "y": -1100
+      }
+    },
+    {
+      "basename": "o_35",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/CPo{file,Errno}oPC",
+      "xy": {
+        "x": -1100,
+        "y": -900
+      }
+    },
+    {
+      "basename": "o_22",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/Errno",
+      "xy": {
+        "x": -900,
+        "y": -900
+      }
+    },
+    {
+      "basename": "o_65",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/CPo{voidPtr,Errno}oPC",
+      "xy": {
+        "x": -1100,
+        "y": 500
+      }
+    },
+    {
+      "description": "Take a string as a file name, open the file and memory map it.\nGive errors on stderr in all cases in which something can go wrong.",
+      "basename": "hdole/gdsReader/t_0",
+      "prototype": "DiagramText",
+      "properName": "t_0",
+      "xy": {
+        "x": -1700,
+        "y": -1700
+      },
+      "height": "31"
+    },
+    {
+      "basename": "o_3",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -500,
+        "y": -300
+      }
+    },
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/stderr",
+      "xy": {
+        "x": -500,
+        "y": -900
+      }
+    },
+    {
+      "basename": "o_9",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": -900,
+        "y": -1300
+      }
+    },
+    {
+      "basename": "o_68",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -900,
+        "y": -1500
+      }
+    },
+    {
+      "description": "Memory Map a File",
+      "basename": "t_7",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -1880,
+        "y": -1860
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_26",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": -700,
+        "y": -900
+      }
+    },
+    {
+      "basename": "o_34",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/off_t",
+      "xy": {
+        "x": -1100,
+        "y": -100
+      }
+    },
+    {
+      "basename": "o_82",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/CPo{stat,Errno}oPC",
+      "xy": {
+        "x": -1100,
+        "y": -500
+      }
+    },
+    {
+      "basename": "o_86",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/Errno",
+      "xy": {
+        "x": -900,
+        "y": -500
+      }
+    },
+    {
+      "basename": "o_175",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -500,
+        "y": -700
+      }
+    },
+    {
+      "basename": "o_113",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -700,
+        "y": -500
+      }
+    },
+    {
+      "basename": "o_178",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/file",
+      "xy": {
+        "x": -900,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_179",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/CPo{#1,Errno}oPC",
+      "xy": {
+        "x": -900,
+        "y": 1300
+      }
+    },
+    {
+      "basename": "o_180",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/Errno",
+      "xy": {
+        "x": -700,
+        "y": 1300
+      }
+    },
+    {
+      "basename": "o_181",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -500,
+        "y": 1300
+      }
+    },
+    {
+      "basename": "o_183",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/Errno",
+      "xy": {
+        "x": -900,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_184",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -700,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_177",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/voidPtr",
+      "xy": {
+        "x": -1100,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_182",
+      "prototype": "DiagramObject",
+      "to": "hdole/mmap/Po{hdole/cpp/voidPtr,hdole/cpp/file}oP",
+      "xy": {
+        "x": -1100,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_29",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/voidPtr",
+      "xy": {
+        "x": -1100,
+        "y": 1500
+      }
+    },
+    {
+      "description": "Good housekeeping is to close the file after memory mapping.",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -800,
+        "y": 1200
+      },
+      "height": "12"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_21",
+      "codomain": "hdole/mmap/o_23",
+      "to": "hdole/cpp/MAP_SHARED"
+    },
+    {
+      "basename": "m_25",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_38",
+      "codomain": "hdole/mmap/o_39",
+      "to": "hdole/cpp/PROT_READ"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_24",
+      "codomain": "hdole/mmap/o_33",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/voidPtr_0}aF"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_24",
+      "codomain": "hdole/mmap/o_31",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/size_t_1}aF"
+    },
+    {
+      "basename": "m_26",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_24",
+      "codomain": "hdole/mmap/o_39",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_2}aF"
+    },
+    {
+      "basename": "m_27",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_24",
+      "codomain": "hdole/mmap/o_23",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_3}aF"
+    },
+    {
+      "basename": "m_28",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_24",
+      "codomain": "hdole/mmap/o_25",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "homsetIndex": 6,
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/file_4}aF"
+    },
+    {
+      "basename": "m_29",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_24",
+      "codomain": "hdole/mmap/o_19",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/off_t_5}aF"
+    },
+    {
+      "basename": "m_42",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_64",
+      "codomain": "hdole/mmap/o_44",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/Strings/str_0}aF"
+    },
+    {
+      "basename": "m_43",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_24",
+      "codomain": "hdole/mmap/o_65",
+      "to": "hdole/cpp/mmap"
+    },
+    {
+      "basename": "m_88",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_3",
+      "codomain": "hdole/mmap/o_1",
+      "to": "hdole/int/zero32"
+    },
+    {
+      "basename": "m_50",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_68",
+      "codomain": "hdole/mmap/o_9",
+      "to": "hdole/cpp/O_RDONLY"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_64",
+      "codomain": "hdole/mmap/o_35",
+      "to": "hdole/cpp/open"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_64",
+      "codomain": "hdole/mmap/o_9",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/int/Z32_1}aF"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_22",
+      "codomain": "hdole/mmap/o_35",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{file,Errno}oPC,hdole/cpp/Errno_1}aFC"
+    },
+    {
+      "basename": "m_16",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_25",
+      "codomain": "hdole/mmap/o_35",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{file,Errno}oPC,hdole/cpp/file_0}aFC"
+    },
+    {
+      "basename": "m_20",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_32",
+      "codomain": "hdole/mmap/o_33",
+      "to": "hdole/cpp/NULL"
+    },
+    {
+      "basename": "m_21",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_1",
+      "codomain": "hdole/mmap/o_19",
+      "to": "hdole/cpp/Z64toOff_t"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_22",
+      "codomain": "hdole/mmap/o_26",
+      "to": "hdole/cpp/strerror"
+    },
+    {
+      "basename": "m_22",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_26",
+      "codomain": "hdole/mmap/o_0",
+      "to": "hdole/cpp/StrToStderr"
+    },
+    {
+      "basename": "m_44",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_27",
+      "codomain": "hdole/mmap/o_34",
+      "to": "hdole/cpp/filesize"
+    },
+    {
+      "basename": "m_45",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_34",
+      "codomain": "hdole/mmap/o_31",
+      "to": "hdole/cpp/off_tToSize_t"
+    },
+    {
+      "basename": "m_51",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_25",
+      "codomain": "hdole/mmap/o_82",
+      "to": "hdole/cpp/fstat"
+    },
+    {
+      "basename": "m_68",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_86",
+      "codomain": "hdole/mmap/o_82",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{stat,Errno}oPC,hdole/cpp/Errno_1}aFC"
+    },
+    {
+      "basename": "m_118",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_27",
+      "codomain": "hdole/mmap/o_82",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{stat,Errno}oPC,hdole/cpp/stat_0}aFC"
+    },
+    {
+      "basename": "m_140",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_0",
+      "codomain": "hdole/mmap/o_175",
+      "to": "hdole/mmap/Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF"
+    },
+    {
+      "basename": "m_23",
+      "prototype": "DiagramComposite",
+      "domain": "hdole/mmap/o_22",
+      "codomain": "hdole/mmap/o_175",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC",
+      "morphisms": [
+        "hdole/mmap/m_2",
+        "hdole/mmap/m_22",
+        "hdole/mmap/m_140"
+      ]
+    },
+    {
+      "basename": "m_87",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_86",
+      "codomain": "hdole/mmap/o_113",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC"
+    },
+    {
+      "basename": "m_143",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_178",
+      "codomain": "hdole/mmap/o_179",
+      "to": "hdole/cpp/close"
+    },
+    {
+      "basename": "m_146",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_180",
+      "codomain": "hdole/mmap/o_179",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{#1,Errno}oPC,hdole/cpp/Errno_1}aFC"
+    },
+    {
+      "basename": "m_171",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_180",
+      "codomain": "hdole/mmap/o_181",
+      "to": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC"
+    },
+    {
+      "basename": "m_173",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_183",
+      "codomain": "hdole/mmap/o_65",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/Errno_1}aFC"
+    },
+    {
+      "basename": "m_174",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_183",
+      "codomain": "hdole/mmap/o_184",
+      "to": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC"
+    },
+    {
+      "basename": "m_33",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_177",
+      "codomain": "hdole/mmap/o_65",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/voidPtr_0}aFC"
+    },
+    {
+      "basename": "m_41",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_182",
+      "codomain": "hdole/mmap/o_177",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/mmap/Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/voidPtr_0}aF"
+    },
+    {
+      "basename": "m_142",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_182",
+      "codomain": "hdole/mmap/o_25",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "homsetIndex": 12,
+      "to": "hdole/mmap/Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/file_1}aF"
+    },
+    {
+      "basename": "m_172",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_182",
+      "codomain": "hdole/mmap/o_178",
+      "to": "hdole/mmap/Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/file_1}aF"
+    },
+    {
+      "basename": "m_175",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_182",
+      "codomain": "hdole/mmap/o_29",
+      "to": "hdole/mmap/Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/voidPtr_0}aF"
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/#1",
+      "xy": {
+        "x": -900,
+        "y": 1500
+      }
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/mmap/o_2",
+      "codomain": "hdole/mmap/o_179",
+      "to": "hdole/mmap/CFa{hdole/cpp/CPo{#1,Errno}oPC,#1_0}aFC"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "basename": "Halt",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/gds/Layer",
+        "hdole/gds/Datatype",
+        "hdole/gds/Points",
+        "hdole/gds/Properties"
+      ]
+    },
+    {
+      "basename": "BndryData",
+      "prototype": "NamedObject",
+      "source": "hdole/mmap/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP"
+    },
+    {
+      "basename": "Id{BndryData,Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/BndryData",
+      "codomain": "hdole/mmap/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP"
+    },
+    {
+      "basename": "Id{Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP,BndryData}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
+      "codomain": "hdole/mmap/BndryData"
+    },
+    {
+      "basename": "Po{hdole/gds/Width,hdole/gds/EndType}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/gds/Width",
+        "hdole/gds/EndType"
+      ]
+    },
+    {
+      "basename": "PathData",
+      "prototype": "NamedObject",
+      "source": "hdole/mmap/Po{hdole/gds/Width,hdole/gds/EndType}oP"
+    },
+    {
+      "basename": "Id{PathData,Po{hdole/gds/Width,hdole/gds/EndType}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/PathData",
+      "codomain": "hdole/mmap/Po{hdole/gds/Width,hdole/gds/EndType}oP"
+    },
+    {
+      "basename": "Id{Po{hdole/gds/Width,hdole/gds/EndType}oP,PathData}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/Po{hdole/gds/Width,hdole/gds/EndType}oP",
+      "codomain": "hdole/mmap/PathData"
+    },
+    {
+      "basename": "Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/gds/Rows",
+        "hdole/gds/Cols",
+        "hdole/gds/RowPitch",
+        "hdole/gds/ColPitch"
+      ]
+    },
+    {
+      "basename": "Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/gds/Reflection",
+        "hdole/gds/Angle",
+        "hdole/gds/Mag"
+      ]
+    },
+    {
+      "basename": "SrefData",
+      "prototype": "NamedObject",
+      "source": "hdole/mmap/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP"
+    },
+    {
+      "basename": "Id{SrefData,Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/SrefData",
+      "codomain": "hdole/mmap/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP"
+    },
+    {
+      "basename": "Id{Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP,SrefData}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
+      "codomain": "hdole/mmap/SrefData"
+    },
+    {
+      "basename": "ArefData",
+      "prototype": "NamedObject",
+      "source": "hdole/mmap/Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP"
+    },
+    {
+      "basename": "Id{ArefData,Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/ArefData",
+      "codomain": "hdole/mmap/Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP"
+    },
+    {
+      "basename": "Id{Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP,ArefData}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP",
+      "codomain": "hdole/mmap/ArefData"
+    },
+    {
+      "basename": "Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/mmap/Halt",
+        "hdole/cpp/voidPtr",
+        "hdole/gds/EltType",
+        "hdole/Strings/str",
+        "hdole/mmap/BndryData",
+        "hdole/mmap/PathData",
+        "hdole/mmap/SrefData",
+        "hdole/mmap/ArefData"
+      ]
+    },
+    {
+      "basename": "Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/State",
+      "codomain": "hdole/mmap/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP"
+    },
+    {
+      "basename": "Id{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,State}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP",
+      "codomain": "hdole/mmap/State"
+    },
+    {
+      "basename": "Id{cell,hdole/Strings/str}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/cell",
+      "codomain": "hdole/Strings/str"
+    },
+    {
+      "basename": "Id{hdole/Strings/str,cell}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/Strings/str",
+      "codomain": "hdole/mmap/cell"
+    },
+    {
+      "basename": "Id{RecordLength,hdole/nat/N16}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/mmap/RecordLength",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "Id{hdole/nat/N16,RecordLength}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/mmap/RecordLength"
+    },
+    {
+      "basename": "Po{hdole/cpp/voidPtr,hdole/cpp/file}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/cpp/voidPtr",
+        "hdole/cpp/file"
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/voidPtr_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "hdole/cpp/voidPtr",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/size_t_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "hdole/cpp/size_t",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_2}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "hdole/int/Z32",
+      "factors": [
+        2
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_3}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "hdole/int/Z32",
+      "factors": [
+        3
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/file_4}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "hdole/cpp/file",
+      "factors": [
+        4
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/off_t_5}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "hdole/cpp/off_t",
+      "factors": [
+        5
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/Strings/str_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
+      "codomain": "hdole/Strings/str",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/int/Z32_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
+      "codomain": "hdole/int/Z32",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{file,Errno}oPC,hdole/cpp/Errno_1}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/cpp/CPo{file,Errno}oPC",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{file,Errno}oPC,hdole/cpp/file_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/file",
+      "codomain": "hdole/cpp/CPo{file,Errno}oPC",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{stat,Errno}oPC,hdole/cpp/Errno_1}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/cpp/CPo{stat,Errno}oPC",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{stat,Errno}oPC,hdole/cpp/stat_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/stat",
+      "codomain": "hdole/cpp/CPo{stat,Errno}oPC",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/voidPtr_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/cpp/CPo{voidPtr,Errno}oPC",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/cpp/stderr",
+      "codomain": "hdole/mmap/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
+      "basename": "Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC",
+      "prototype": "Composite",
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/mmap/#1",
+      "morphisms": [
+        "hdole/cpp/strerror",
+        "hdole/cpp/StrToStderr",
+        "hdole/mmap/Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF"
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{#1,Errno}oPC,hdole/cpp/Errno_1}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/cpp/CPo{#1,Errno}oPC",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/Errno_1}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/cpp/CPo{voidPtr,Errno}oPC",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/voidPtr_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/mmap/Po{hdole/cpp/voidPtr,hdole/cpp/file}oP",
+      "codomain": "hdole/cpp/voidPtr",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/file_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/mmap/Po{hdole/cpp/voidPtr,hdole/cpp/file}oP",
+      "codomain": "hdole/cpp/file",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "CFa{hdole/cpp/CPo{#1,Errno}oPC,#1_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/cpp/CPo{#1,Errno}oPC",
+      "factors": [
+        0
+      ]
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1627285132288,
+  "version": 0,
+  "hiddenCells": [
+    "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e"
+  ],
+  "properName": "hdole/mmap"
+}

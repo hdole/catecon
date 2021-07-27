@@ -6,6 +6,9 @@
   "properName": "C++",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
+  "code": {
+    "cpp": "#include <sys/types.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <math.h>\n#include <stdint.h>\n#include \"errno.h\"\n#include <stdio.h>"
+  },
   "domain": "hdole/cpp_Index",
   "codomain": "hdole/PFS",
   "references": [
@@ -471,15 +474,6 @@
       "height": 24
     },
     {
-      "basename": "o_32",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/size_t",
-      "xy": {
-        "x": 200,
-        "y": 3800
-      }
-    },
-    {
       "basename": "o_33",
       "prototype": "DiagramObject",
       "to": "hdole/nat/N64",
@@ -522,33 +516,6 @@
       "xy": {
         "x": 400,
         "y": 4200
-      }
-    },
-    {
-      "basename": "o_38",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/#1",
-      "xy": {
-        "x": 200,
-        "y": 4400
-      }
-    },
-    {
-      "basename": "o_39",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 400,
-        "y": 4400
-      }
-    },
-    {
-      "basename": "o_40",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/voidPtr",
-      "xy": {
-        "x": 400,
-        "y": 4600
       }
     },
     {
@@ -769,7 +736,7 @@
     {
       "basename": "o_58",
       "prototype": "DiagramObject",
-      "to": "hdole/int/Z32",
+      "to": "hdole/cpp/CPo{#1,Errno}oPC",
       "xy": {
         "x": 400,
         "y": 6200
@@ -816,7 +783,7 @@
     {
       "basename": "o_61",
       "prototype": "DiagramObject",
-      "to": "hdole/cpp/CPo{stat,#1}oPC",
+      "to": "hdole/cpp/CPo{stat,Errno}oPC",
       "xy": {
         "x": 400,
         "y": 6600
@@ -838,15 +805,6 @@
       "to": "hdole/cpp/stat",
       "xy": {
         "x": 200,
-        "y": 6800
-      }
-    },
-    {
-      "basename": "o_63",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/size_t",
-      "xy": {
-        "x": 400,
         "y": 6800
       }
     },
@@ -1014,7 +972,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/cpp/CPo{voidPtr,Errno}oPC",
       "xy": {
-        "x": 600,
+        "x": 700,
         "y": 8000
       }
     },
@@ -1040,9 +998,9 @@
     {
       "basename": "o_77",
       "prototype": "DiagramObject",
-      "to": "hdole/int/Z32",
+      "to": "hdole/cpp/CPo{#1,Errno}oPC",
       "xy": {
-        "x": 400,
+        "x": 500,
         "y": 8200
       }
     },
@@ -1182,7 +1140,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/floats/F64",
       "xy": {
-        "x": 400,
+        "x": 500,
         "y": 9200
       }
     },
@@ -1264,7 +1222,7 @@
     {
       "basename": "o_93",
       "prototype": "DiagramObject",
-      "to": "hdole/cpp/CPo{voidPtr,#1}oPC",
+      "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 400,
         "y": 9800
@@ -1886,19 +1844,129 @@
       }
     },
     {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_0",
-      "codomain": "hdole/cpp/o_1",
-      "flipName": false,
-      "to": "hdole/cpp/Id{Errno,hdole/int/Z32}dI"
+      "basename": "o_32",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/size_t",
+      "xy": {
+        "x": 200,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_38",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/off_t",
+      "xy": {
+        "x": 600,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_39",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/voidPtr",
+      "xy": {
+        "x": 600,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_40",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/voidPtr",
+      "xy": {
+        "x": 400,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_41",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/#1",
+      "xy": {
+        "x": 200,
+        "y": 4400
+      }
+    },
+    {
+      "description": "The null pointer",
+      "basename": "t_43",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -600,
+        "y": 4400
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_42",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/off_t",
+      "xy": {
+        "x": 400,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_63",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/size_t",
+      "xy": {
+        "x": 600,
+        "y": 3800
+      }
+    },
+    {
+      "basename": "o_160",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/off_t",
+      "xy": {
+        "x": 800,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_161",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1000,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_162",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 1200,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_163",
+      "prototype": "DiagramObject",
+      "to": "hdole/cpp/size_t",
+      "xy": {
+        "x": 1200,
+        "y": 4200
+      }
+    },
+    {
+      "description": "As it happens the fstat function\ngives the file size in off_t, but other\nfunctions want size_t.",
+      "basename": "t_44",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1270,
+        "y": 3990
+      },
+      "height": "12"
     },
     {
       "basename": "m_1",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_2",
       "codomain": "hdole/cpp/o_3",
-      "flipName": false,
       "to": "hdole/cpp/strerror"
     },
     {
@@ -1906,7 +1974,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_5",
       "codomain": "hdole/cpp/o_6",
-      "flipName": false,
       "to": "hdole/cpp/stdinToN64"
     },
     {
@@ -1914,7 +1981,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_7",
       "codomain": "hdole/cpp/o_8",
-      "flipName": false,
       "to": "hdole/cpp/stdinToZ32"
     },
     {
@@ -1922,7 +1988,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_9",
       "codomain": "hdole/cpp/o_10",
-      "flipName": false,
       "to": "hdole/cpp/stdinToF64"
     },
     {
@@ -1930,7 +1995,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_11",
       "codomain": "hdole/cpp/o_12",
-      "flipName": false,
       "to": "hdole/cpp/stdinToStr"
     },
     {
@@ -1938,7 +2002,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_14",
       "codomain": "hdole/cpp/o_15",
-      "flipName": false,
       "to": "hdole/cpp/N64ToStdout"
     },
     {
@@ -1946,7 +2009,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_16",
       "codomain": "hdole/cpp/o_17",
-      "flipName": false,
       "to": "hdole/cpp/Z64ToStdout"
     },
     {
@@ -1954,7 +2016,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_18",
       "codomain": "hdole/cpp/o_19",
-      "flipName": false,
       "to": "hdole/cpp/F64ToStdout"
     },
     {
@@ -1962,7 +2023,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_20",
       "codomain": "hdole/cpp/o_21",
-      "flipName": false,
       "to": "hdole/cpp/StrToStdout"
     },
     {
@@ -1970,7 +2030,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_23",
       "codomain": "hdole/cpp/o_24",
-      "flipName": false,
       "to": "hdole/cpp/N64ToStderr"
     },
     {
@@ -1978,7 +2037,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_25",
       "codomain": "hdole/cpp/o_26",
-      "flipName": false,
       "to": "hdole/cpp/Z64ToStderr"
     },
     {
@@ -1986,7 +2044,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_27",
       "codomain": "hdole/cpp/o_28",
-      "flipName": false,
       "to": "hdole/cpp/F64ToStderr"
     },
     {
@@ -1994,67 +2051,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_29",
       "codomain": "hdole/cpp/o_30",
-      "flipName": false,
       "to": "hdole/cpp/StrToStderr"
-    },
-    {
-      "basename": "m_14",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_32",
-      "codomain": "hdole/cpp/o_33",
-      "flipName": false,
-      "to": "hdole/cpp/Id{size_t,hdole/nat/N64}dI"
-    },
-    {
-      "basename": "m_15",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_34",
-      "codomain": "hdole/cpp/o_35",
-      "flipName": false,
-      "to": "hdole/cpp/Id{off_t,hdole/int/Z64}dI"
-    },
-    {
-      "basename": "m_16",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_36",
-      "codomain": "hdole/cpp/o_37",
-      "flipName": false,
-      "to": "hdole/cpp/Id{voidPtr,hdole/nat/N64}dI"
-    },
-    {
-      "basename": "m_17",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_38",
-      "codomain": "hdole/cpp/o_39",
-      "flipName": false,
-      "to": "hdole/nat/zero64"
-    },
-    {
-      "basename": "m_18",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_39",
-      "codomain": "hdole/cpp/o_40",
-      "flipName": false,
-      "to": "hdole/cpp/Id{hdole/nat/N64,voidPtr}dI"
-    },
-    {
-      "basename": "m_19",
-      "prototype": "DiagramComposite",
-      "domain": "hdole/cpp/o_38",
-      "codomain": "hdole/cpp/o_40",
-      "flipName": false,
-      "to": "hdole/cpp/Cm{hdole/nat/zero64,Id{hdole/nat/N64,voidPtr}dI}mC",
-      "morphisms": [
-        "hdole/cpp/m_17",
-        "hdole/cpp/m_18"
-      ]
     },
     {
       "basename": "m_22",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_43",
       "codomain": "hdole/cpp/o_44",
-      "flipName": false,
       "to": "hdole/cpp/O_RDONLY"
     },
     {
@@ -2062,7 +2065,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_45",
       "codomain": "hdole/cpp/o_46",
-      "flipName": false,
       "to": "hdole/cpp/O_WRONLY"
     },
     {
@@ -2070,7 +2072,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_47",
       "codomain": "hdole/cpp/o_48",
-      "flipName": false,
       "to": "hdole/cpp/O_RDWR"
     },
     {
@@ -2078,7 +2079,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_49",
       "codomain": "hdole/cpp/o_50",
-      "flipName": false,
       "to": "hdole/cpp/O_APPEND"
     },
     {
@@ -2086,7 +2086,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_51",
       "codomain": "hdole/cpp/o_52",
-      "flipName": false,
       "to": "hdole/cpp/O_ASYNC"
     },
     {
@@ -2094,7 +2093,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_53",
       "codomain": "hdole/cpp/o_54",
-      "flipName": false,
       "to": "hdole/cpp/O_CREAT"
     },
     {
@@ -2102,7 +2100,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_55",
       "codomain": "hdole/cpp/o_56",
-      "flipName": false,
       "to": "hdole/cpp/open"
     },
     {
@@ -2110,7 +2107,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_57",
       "codomain": "hdole/cpp/o_58",
-      "flipName": false,
       "to": "hdole/cpp/close"
     },
     {
@@ -2118,23 +2114,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_60",
       "codomain": "hdole/cpp/o_61",
-      "flipName": false,
       "to": "hdole/cpp/fstat"
-    },
-    {
-      "basename": "m_31",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_62",
-      "codomain": "hdole/cpp/o_63",
-      "flipName": false,
-      "to": "hdole/cpp/filesize"
     },
     {
       "basename": "m_32",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_64",
       "codomain": "hdole/cpp/o_65",
-      "flipName": false,
       "to": "hdole/cpp/PROT_READ"
     },
     {
@@ -2142,7 +2128,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_66",
       "codomain": "hdole/cpp/o_67",
-      "flipName": false,
       "to": "hdole/cpp/PROT_WRITE"
     },
     {
@@ -2150,7 +2135,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_68",
       "codomain": "hdole/cpp/o_69",
-      "flipName": false,
       "to": "hdole/cpp/MAP_SHARED"
     },
     {
@@ -2158,7 +2142,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_70",
       "codomain": "hdole/cpp/o_71",
-      "flipName": false,
       "to": "hdole/cpp/MAP_PRIVATE"
     },
     {
@@ -2166,7 +2149,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_72",
       "codomain": "hdole/cpp/o_73",
-      "flipName": false,
       "to": "hdole/cpp/MAP_ANONYMOUS"
     },
     {
@@ -2174,7 +2156,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_74",
       "codomain": "hdole/cpp/o_75",
-      "flipName": false,
       "to": "hdole/cpp/mmap"
     },
     {
@@ -2182,7 +2163,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_76",
       "codomain": "hdole/cpp/o_77",
-      "flipName": false,
       "to": "hdole/cpp/munmap"
     },
     {
@@ -2190,31 +2170,27 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_78",
       "codomain": "hdole/cpp/o_79",
-      "flipName": false,
-      "to": "hdole/cpp/ubyte"
+      "to": "hdole/cpp/uint8"
     },
     {
       "basename": "m_40",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_80",
       "codomain": "hdole/cpp/o_81",
-      "flipName": false,
-      "to": "hdole/cpp/ushort"
+      "to": "hdole/cpp/uint16"
     },
     {
       "basename": "m_41",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_82",
       "codomain": "hdole/cpp/o_83",
-      "flipName": false,
-      "to": "hdole/cpp/int"
+      "to": "hdole/cpp/int32"
     },
     {
       "basename": "m_42",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_84",
       "codomain": "hdole/cpp/o_85",
-      "flipName": false,
       "to": "hdole/cpp/float"
     },
     {
@@ -2222,7 +2198,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_86",
       "codomain": "hdole/cpp/o_87",
-      "flipName": false,
       "to": "hdole/cpp/IBM S/360 float"
     },
     {
@@ -2230,7 +2205,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_88",
       "codomain": "hdole/cpp/o_89",
-      "flipName": false,
       "to": "hdole/cpp/mem2str"
     },
     {
@@ -2238,7 +2212,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_90",
       "codomain": "hdole/cpp/o_91",
-      "flipName": false,
       "to": "hdole/cpp/memRec2str"
     },
     {
@@ -2246,7 +2219,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_92",
       "codomain": "hdole/cpp/o_93",
-      "flipName": false,
       "to": "hdole/cpp/voidPtrPlus2"
     },
     {
@@ -2254,7 +2226,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_94",
       "codomain": "hdole/cpp/o_95",
-      "flipName": false,
       "to": "hdole/cpp/voidPtrPlus4"
     },
     {
@@ -2262,7 +2233,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_96",
       "codomain": "hdole/cpp/o_97",
-      "flipName": false,
       "to": "hdole/cpp/voidPtrPlus8"
     },
     {
@@ -2270,7 +2240,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_98",
       "codomain": "hdole/cpp/o_99",
-      "flipName": false,
       "to": "hdole/cpp/voidPtrPlusN"
     },
     {
@@ -2278,7 +2247,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_100",
       "codomain": "hdole/cpp/o_101",
-      "flipName": false,
       "to": "hdole/cpp/stdinToN8"
     },
     {
@@ -2286,7 +2254,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_103",
       "codomain": "hdole/cpp/o_102",
-      "flipName": false,
       "to": "hdole/cpp/stdinToN16"
     },
     {
@@ -2294,7 +2261,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_104",
       "codomain": "hdole/cpp/o_105",
-      "flipName": false,
       "to": "hdole/cpp/stdinToN32"
     },
     {
@@ -2302,7 +2268,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_107",
       "codomain": "hdole/cpp/o_106",
-      "flipName": false,
       "to": "hdole/cpp/stdinToN128"
     },
     {
@@ -2310,7 +2275,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_108",
       "codomain": "hdole/cpp/o_112",
-      "flipName": false,
       "to": "hdole/cpp/N8ToStdout"
     },
     {
@@ -2318,7 +2282,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_109",
       "codomain": "hdole/cpp/o_113",
-      "flipName": false,
       "to": "hdole/cpp/N16ToStdout"
     },
     {
@@ -2326,7 +2289,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_110",
       "codomain": "hdole/cpp/o_114",
-      "flipName": false,
       "to": "hdole/cpp/N32ToStdout"
     },
     {
@@ -2334,7 +2296,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_111",
       "codomain": "hdole/cpp/o_115",
-      "flipName": false,
       "to": "hdole/cpp/N128ToStdout"
     },
     {
@@ -2342,7 +2303,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_128",
       "codomain": "hdole/cpp/o_125",
-      "flipName": false,
       "to": "hdole/cpp/stdinToZ8"
     },
     {
@@ -2350,7 +2310,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_129",
       "codomain": "hdole/cpp/o_124",
-      "flipName": false,
       "to": "hdole/cpp/stdinToZ16"
     },
     {
@@ -2358,7 +2317,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_130",
       "codomain": "hdole/cpp/o_126",
-      "flipName": false,
       "to": "hdole/cpp/stdinToZ64"
     },
     {
@@ -2366,7 +2324,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_131",
       "codomain": "hdole/cpp/o_127",
-      "flipName": false,
       "to": "hdole/cpp/stdinToZ128"
     },
     {
@@ -2374,7 +2331,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_135",
       "codomain": "hdole/cpp/o_132",
-      "flipName": false,
       "to": "hdole/cpp/stdinToF32"
     },
     {
@@ -2382,7 +2338,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_134",
       "codomain": "hdole/cpp/o_133",
-      "flipName": false,
       "to": "hdole/cpp/stdinToF128"
     },
     {
@@ -2390,7 +2345,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_136",
       "codomain": "hdole/cpp/o_122",
-      "flipName": false,
       "to": "hdole/cpp/Z8ToStdout"
     },
     {
@@ -2398,7 +2352,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_137",
       "codomain": "hdole/cpp/o_120",
-      "flipName": false,
       "to": "hdole/cpp/Z16ToStdout"
     },
     {
@@ -2406,7 +2359,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_138",
       "codomain": "hdole/cpp/o_118",
-      "flipName": false,
       "to": "hdole/cpp/Z32ToStdout"
     },
     {
@@ -2414,7 +2366,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_140",
       "codomain": "hdole/cpp/o_116",
-      "flipName": false,
       "to": "hdole/cpp/Z128ToStdout"
     },
     {
@@ -2422,7 +2373,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_139",
       "codomain": "hdole/cpp/o_119",
-      "flipName": false,
       "to": "hdole/cpp/F32ToStdout"
     },
     {
@@ -2430,7 +2380,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_141",
       "codomain": "hdole/cpp/o_117",
-      "flipName": false,
       "to": "hdole/cpp/F128ToStdout"
     },
     {
@@ -2438,7 +2387,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_142",
       "codomain": "hdole/cpp/o_150",
-      "flipName": false,
       "to": "hdole/cpp/N8ToStderr"
     },
     {
@@ -2446,7 +2394,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_143",
       "codomain": "hdole/cpp/o_151",
-      "flipName": false,
       "to": "hdole/cpp/Z8ToStderr"
     },
     {
@@ -2454,7 +2401,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_121",
       "codomain": "hdole/cpp/o_153",
-      "flipName": false,
       "to": "hdole/cpp/N16ToStderr"
     },
     {
@@ -2462,7 +2408,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_123",
       "codomain": "hdole/cpp/o_152",
-      "flipName": false,
       "to": "hdole/cpp/Z16ToStderr"
     },
     {
@@ -2470,7 +2415,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_144",
       "codomain": "hdole/cpp/o_155",
-      "flipName": false,
       "to": "hdole/cpp/N32ToStderr"
     },
     {
@@ -2478,7 +2422,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_145",
       "codomain": "hdole/cpp/o_154",
-      "flipName": false,
       "to": "hdole/cpp/Z32ToStderr"
     },
     {
@@ -2486,7 +2429,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_146",
       "codomain": "hdole/cpp/o_158",
-      "flipName": false,
       "to": "hdole/cpp/F32ToStderr"
     },
     {
@@ -2494,7 +2436,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_147",
       "codomain": "hdole/cpp/o_157",
-      "flipName": false,
       "to": "hdole/cpp/N128ToStderr"
     },
     {
@@ -2502,7 +2443,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_148",
       "codomain": "hdole/cpp/o_156",
-      "flipName": false,
       "to": "hdole/cpp/Z128ToStderr"
     },
     {
@@ -2510,32 +2450,124 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_149",
       "codomain": "hdole/cpp/o_159",
-      "flipName": false,
       "to": "hdole/cpp/F128ToStderr"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_32",
+      "codomain": "hdole/cpp/o_33",
+      "to": "hdole/cpp/size_tToN64"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_34",
+      "codomain": "hdole/cpp/o_35",
+      "to": "hdole/cpp/off_tToZ64"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_36",
+      "codomain": "hdole/cpp/o_37",
+      "to": "hdole/cpp/voidPtrToN64"
+    },
+    {
+      "basename": "m_16",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_0",
+      "codomain": "hdole/cpp/o_1",
+      "to": "hdole/cpp/ErrnoToZ32"
+    },
+    {
+      "basename": "m_17",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_35",
+      "codomain": "hdole/cpp/o_38",
+      "to": "hdole/cpp/Z64toOff_t"
+    },
+    {
+      "basename": "m_18",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_37",
+      "codomain": "hdole/cpp/o_39",
+      "to": "hdole/cpp/N64toVoidPtr"
+    },
+    {
+      "basename": "m_19",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_41",
+      "codomain": "hdole/cpp/o_40",
+      "to": "hdole/cpp/NULL"
+    },
+    {
+      "basename": "m_20",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_62",
+      "codomain": "hdole/cpp/o_42",
+      "to": "hdole/cpp/filesize"
+    },
+    {
+      "basename": "m_21",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_33",
+      "codomain": "hdole/cpp/o_63",
+      "to": "hdole/cpp/N64toSize_t"
+    },
+    {
+      "basename": "m_31",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_160",
+      "codomain": "hdole/cpp/o_161",
+      "to": "hdole/cpp/off_tToZ64"
     },
     {
       "basename": "m_80",
       "prototype": "DiagramMorphism",
-      "domain": "hdole/cpp/o_38",
-      "codomain": "hdole/cpp/o_40",
-      "flipName": true,
+      "domain": "hdole/cpp/o_161",
+      "codomain": "hdole/cpp/o_162",
+      "to": "hdole/int/abs64"
+    },
+    {
+      "basename": "m_81",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_162",
+      "codomain": "hdole/cpp/o_163",
+      "to": "hdole/cpp/N64toSize_t"
+    },
+    {
+      "basename": "m_82",
+      "prototype": "DiagramComposite",
+      "domain": "hdole/cpp/o_160",
+      "codomain": "hdole/cpp/o_163",
+      "to": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC",
+      "morphisms": [
+        "hdole/cpp/m_31",
+        "hdole/cpp/m_80",
+        "hdole/cpp/m_81"
+      ]
+    },
+    {
+      "basename": "m_83",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/cpp/o_160",
+      "codomain": "hdole/cpp/o_163",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
-      "to": "hdole/cpp/NULL"
+      "to": "hdole/cpp/off_tToSize_t"
     }
   ],
   "elements": [
     {
       "description": "Set by system calls and some library functions when something goes wrong",
       "basename": "Errno",
-      "prototype": "NamedObject",
-      "source": "hdole/int/Z32"
-    },
-    {
-      "basename": "Id{Errno,hdole/int/Z32}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/cpp/Errno",
-      "codomain": "hdole/int/Z32"
+      "prototype": "CatObject"
     },
     {
       "basename": "#1",
@@ -2544,18 +2576,11 @@
       "size": 1
     },
     {
-      "basename": "Id{hdole/int/Z32,Errno}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/int/Z32",
-      "codomain": "hdole/cpp/Errno"
-    },
-    {
       "description": "The standard input object reads from a tty device.",
       "basename": "stdin",
       "prototype": "CatObject",
       "code": {
-        "cpp": "#include <stdio.h>"
+        "cpp": ""
       }
     },
     {
@@ -2563,7 +2588,7 @@
       "basename": "stdout",
       "prototype": "CatObject",
       "code": {
-        "cpp": "#include <stdio.h>"
+        "cpp": ""
       }
     },
     {
@@ -2579,69 +2604,27 @@
       "basename": "file",
       "prototype": "CatObject",
       "code": {
-        "cpp": "#include <sys/types.h>\n#include <sys/stat.h>\n#include <fcntl.h>\ntypedef int %Name;"
+        "cpp": "typedef int %0;\n"
       }
     },
     {
       "description": "Used for sizes of objects",
       "basename": "size_t",
-      "prototype": "NamedObject",
-      "source": "hdole/nat/N64"
-    },
-    {
-      "basename": "Id{size_t,hdole/nat/N64}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/cpp/size_t",
-      "codomain": "hdole/nat/N64"
-    },
-    {
-      "basename": "Id{hdole/nat/N64,size_t}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/cpp/size_t"
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "typedef size_t %Name;"
+      }
     },
     {
       "description": "Used for file sizes",
       "basename": "off_t",
-      "prototype": "NamedObject",
-      "source": "hdole/int/Z64"
-    },
-    {
-      "basename": "Id{off_t,hdole/int/Z64}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/cpp/off_t",
-      "codomain": "hdole/int/Z64"
-    },
-    {
-      "basename": "Id{hdole/int/Z64,off_t}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/int/Z64",
-      "codomain": "hdole/cpp/off_t"
+      "prototype": "CatObject"
     },
     {
       "description": "Pointer to void",
       "basename": "voidPtr",
-      "prototype": "NamedObject",
-      "properName": "void*",
-      "source": "hdole/nat/N64"
-    },
-    {
-      "basename": "Id{voidPtr,hdole/nat/N64}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/nat/N64"
-    },
-    {
-      "basename": "Id{hdole/nat/N64,voidPtr}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/cpp/voidPtr"
+      "prototype": "CatObject",
+      "properName": "void*"
     },
     {
       "basename": "Po{hdole/Strings/str,hdole/int/Z32}oP",
@@ -2665,17 +2648,8 @@
       "basename": "stat",
       "prototype": "CatObject",
       "code": {
-        "cpp": "#include <sys/types.h>\n#include <sys/stat.h>\n#include <unistd.h>\ntypedef stat %Name;\n"
+        "cpp": "typedef stat %0;"
       }
-    },
-    {
-      "basename": "CPo{stat,#1}oPC",
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/cpp/stat",
-        "hdole/cpp/#1"
-      ]
     },
     {
       "basename": "Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
@@ -2715,15 +2689,6 @@
       ]
     },
     {
-      "basename": "CPo{voidPtr,#1}oPC",
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/cpp/voidPtr",
-        "hdole/cpp/#1"
-      ]
-    },
-    {
       "basename": "Po{voidPtr,hdole/nat/N16}oP",
       "prototype": "ProductObject",
       "objects": [
@@ -2732,11 +2697,29 @@
       ]
     },
     {
+      "basename": "CPo{#1,Errno}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/cpp/#1",
+        "hdole/cpp/Errno"
+      ]
+    },
+    {
+      "basename": "CPo{stat,Errno}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/cpp/stat",
+        "hdole/cpp/Errno"
+      ]
+    },
+    {
       "description": "return string describing error",
       "basename": "strerror",
       "prototype": "Morphism",
       "code": {
-        "cpp": "#include \"errno.h\"\n#include \"string.h\"\n%1 = std::string(::strerror(%0));"
+        "cpp": "%1 = std::string(::strerror(%0));"
       },
       "domain": "hdole/cpp/Errno",
       "codomain": "hdole/Strings/str"
@@ -2874,23 +2857,6 @@
       "codomain": "hdole/cpp/stderr"
     },
     {
-      "basename": "Cm{hdole/nat/zero64,Id{hdole/nat/N64,voidPtr}dI}mC",
-      "prototype": "Composite",
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/cpp/voidPtr",
-      "morphisms": [
-        "hdole/nat/zero64",
-        "hdole/cpp/Id{hdole/nat/N64,voidPtr}dI"
-      ]
-    },
-    {
-      "basename": "NULL",
-      "prototype": "NamedMorphism",
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/cpp/voidPtr",
-      "source": "hdole/cpp/Cm{hdole/nat/zero64,Id{hdole/nat/N64,voidPtr}dI}mC"
-    },
-    {
       "description": "The file is opened in read only mode",
       "basename": "O_RDONLY",
       "prototype": "Morphism",
@@ -2955,7 +2921,7 @@
       "basename": "open",
       "prototype": "Morphism",
       "code": {
-        "cpp": "{\n\tconst int fd = ::open(%0.c_str(), %1);\n\tif (fd >= 0)\n\t{\n\t\tout.index = 0;\n\t\tout.m_0 = fd;\n\t}\n\telse\n\t{\n\t\tout.index = 1;\n\t\tout.m_0 = fd;\n\t}\n}"
+        "cpp": "{\n\tconst int fd = ::open(%0.c_str(), %1);\n\tif (fd >= 0)\n\t{\n\t\t%2.c = 0;\n\t\t%2.m0 = fd;\n\t}\n\telse\n\t{\n\t\t%2.c = 1;\n\t\t%2.m1 = ::errno;\n\t}\n}"
       },
       "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
       "codomain": "hdole/cpp/CPo{file,Errno}oPC"
@@ -2965,30 +2931,20 @@
       "basename": "close",
       "prototype": "Morphism",
       "code": {
-        "cpp": "%0 = ::close(args);"
+        "cpp": "if (::close(args) == 0)\n{\n\t%1.c = 0;\n}\nelse\n{\n\t%1.c = 1;\n\t%1.m0 = ::errno;\n}"
       },
       "domain": "hdole/cpp/file",
-      "codomain": "hdole/int/Z32"
+      "codomain": "hdole/cpp/CPo{#1,Errno}oPC"
     },
     {
       "description": "Get file status",
       "basename": "fstat",
       "prototype": "Morphism",
       "code": {
-        "cpp": "{\n\tint status = ::fstat(%0, &%1.v);\n\tif (status != -1)\n\t\t%1.c = 0;\n\telse\n\t\t%1.c = 1;"
+        "cpp": "\nif (::fstat(%0, & %1.m0))\n\t%1.c = 0;\nelse\n{\n\t%1.c = 1;\n\t%1.m1 = ::errno;\n}"
       },
       "domain": "hdole/cpp/file",
-      "codomain": "hdole/cpp/CPo{stat,#1}oPC"
-    },
-    {
-      "description": "Get file size",
-      "basename": "filesize",
-      "prototype": "Morphism",
-      "code": {
-        "cpp": "%1 = (size_t)%0.st_size;\t// for some reason it's off_t in stat struct as st_size"
-      },
-      "domain": "hdole/cpp/stat",
-      "codomain": "hdole/cpp/size_t"
+      "codomain": "hdole/cpp/CPo{stat,Errno}oPC"
     },
     {
       "description": "Pages may be read",
@@ -3045,7 +3001,7 @@
       "basename": "mmap",
       "prototype": "Morphism",
       "code": {
-        "cpp": "{\n\tvoid * ptr = ::mmap(%0, %1, %2, %3, %4, %5);\n\tif (ptr != MAP_FAILED)\n\t{\n\t\t%6.c = 0;\n\t\t%6.v = ptr;\n\t}\n\telse\n\t\t%6.c = 1;}"
+        "cpp": "{\n\tvoid * ptr = ::mmap(%0, %1, %2, %3, %4, %5);\n\tif (ptr != MAP_FAILED)\n\t{\n\t\t%6.c = 0;\n\t\t%6.v = ptr;\n\t}\n\telse\n\t\t%6.c = 1;\n}"
       },
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/cpp/CPo{voidPtr,Errno}oPC"
@@ -3055,14 +3011,14 @@
       "basename": "munmap",
       "prototype": "Morphism",
       "code": {
-        "cpp": "%2 = ::munmap(%0, %1);"
+        "cpp": "if (::munmap(%0, %1) == 0)\n\t%1.c = 0;\nelse\n{\n\t%1.c =1;\n\t%1.m1 = ::errno;\n}"
       },
       "domain": "hdole/cpp/Po{voidPtr,size_t}oP",
-      "codomain": "hdole/int/Z32"
+      "codomain": "hdole/cpp/CPo{#1,Errno}oPC"
     },
     {
       "description": "Get an unsigned byte from memory",
-      "basename": "ubyte",
+      "basename": "uint8",
       "prototype": "Morphism",
       "code": {
         "code": {
@@ -3074,24 +3030,20 @@
     },
     {
       "description": "Get an unsigned short from memory",
-      "basename": "ushort",
+      "basename": "uint16",
       "prototype": "Morphism",
       "code": {
-        "code": {
-          "cpp": "#include <byteswap.h>\n%1 = ::bswap_16(%0);"
-        }
+        "cpp": "#include <byteswap.h>\n%1 = ::bswap_16(%0);"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/nat/N16"
     },
     {
-      "description": "Get an integer from memory",
-      "basename": "int",
+      "description": "Get a 32 bit integer from memory",
+      "basename": "int32",
       "prototype": "Morphism",
       "code": {
-        "code": {
-          "cpp": "#include <byteswap.h>\n%1 = ::bswap_32(%0);"
-        }
+        "cpp": "#include <byteswap.h>\n%1 = ::bswap_32(%0);"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/int/Z32"
@@ -3101,9 +3053,7 @@
       "basename": "float",
       "prototype": "Morphism",
       "code": {
-        "code": {
-          "cpp": "%0 = (double)%0;"
-        }
+        "cpp": "%0 = *(double*)%0;"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/floats/F64"
@@ -3113,9 +3063,7 @@
       "basename": "IBM S/360 float",
       "prototype": "Morphism",
       "code": {
-        "code": {
-          "cpp": "#include <math.h>\n#include <stdint.h>\n{\n\t\t%1 = %0 + sizeof(%0);\n\tstruct dbl\n\t\t{\n\t\t\tunsigned char mantissa:56;\n\t\t\tunsigned char exponent:7;\n\t\t\tunsigned char sign:1;\n\t\t};\n\t\tconst dbl data = ::bswap_64(args);\n\t\tauto val = ldexp((double)(data.mantissa), 4 * dbl.exponent - 312);\n\t\t%1 = dbl.sign ? -val : val;\n}"
-        }
+        "cpp": "{\n\tstruct dbl\n\t{\n\t\tunsigned char mantissa:56;\n\t\tunsigned char exponent:7;\n\t\tunsigned char sign:1;\n\t};\n\tconst dbl data = ::bswap_64(%0);\n\tauto val = ldexp((double)(data.mantissa), 4 * dbl.exponent - 312);\n\t%1 = dbl.sign ? -val : val;\n}"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/floats/F64"
@@ -3126,9 +3074,7 @@
       "prototype": "Morphism",
       "properName": "str",
       "code": {
-        "code": {
-          "cpp": "%1 = std::string((const char *)%0);"
-        }
+        "cpp": "%1 = std::string((const char *)%0);"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/Strings/str"
@@ -3139,9 +3085,7 @@
       "prototype": "Morphism",
       "properName": "str",
       "code": {
-        "code": {
-          "cpp": "%2 = std::string(%0, %1); }\n"
-        }
+        "cpp": "%2 = std::string(%0, %1);"
       },
       "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N64}oP",
       "codomain": "hdole/Strings/str"
@@ -3152,12 +3096,10 @@
       "prototype": "Morphism",
       "properName": "+2",
       "code": {
-        "code": {
-          "cpp": "%1 = %0 + 2;"
-        }
+        "cpp": "%1 = %0 + 2;"
       },
       "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/cpp/CPo{voidPtr,#1}oPC"
+      "codomain": "hdole/cpp/voidPtr"
     },
     {
       "description": "Increment void pointer by 4",
@@ -3165,9 +3107,7 @@
       "prototype": "Morphism",
       "properName": "+4",
       "code": {
-        "code": {
-          "cpp": "%1 = %0 + 4;"
-        }
+        "cpp": "%1 = %0 + 4;"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/cpp/voidPtr"
@@ -3178,9 +3118,7 @@
       "prototype": "Morphism",
       "properName": "+8",
       "code": {
-        "code": {
-          "cpp": "%1 = %0 + 8;"
-        }
+        "cpp": "%1 = %0 + 8;"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/cpp/voidPtr"
@@ -3191,9 +3129,7 @@
       "prototype": "Morphism",
       "properName": "+n",
       "code": {
-        "code": {
-          "cpp": "%2 = %0 + %1;"
-        }
+        "cpp": "%2 = %0 + %1;"
       },
       "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N16}oP",
       "codomain": "hdole/cpp/voidPtr"
@@ -3402,6 +3338,9 @@
       "basename": "N8ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3439,6 +3378,9 @@
       "basename": "N32ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3446,6 +3388,9 @@
       "basename": "Z32ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/int/Z32",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3460,6 +3405,9 @@
       "basename": "N128ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3467,6 +3415,9 @@
       "basename": "Z128ToStderr",
       "prototype": "Morphism",
       "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
       "domain": "hdole/int/Z128",
       "codomain": "hdole/cpp/stderr"
     },
@@ -3476,10 +3427,118 @@
       "properName": "err",
       "domain": "hdole/floats/F128",
       "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "description": "Convert size_t to N64",
+      "basename": "size_tToN64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/cpp/size_t",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "off_tToZ64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/cpp/off_t",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "voidPtrToN64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "ErrnoToZ32",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = ::errno;"
+      },
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "Z64toOff_t",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/cpp/off_t"
+    },
+    {
+      "basename": "N64toVoidPtr",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
+      "basename": "NULL",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = NULL;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
+      "basename": "filesize",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%1 = %0.st_size;"
+      },
+      "domain": "hdole/cpp/stat",
+      "codomain": "hdole/cpp/off_t"
+    },
+    {
+      "basename": "N64toSize_t",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/size_t"
+    },
+    {
+      "basename": "Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC",
+      "prototype": "Composite",
+      "domain": "hdole/cpp/off_t",
+      "codomain": "hdole/cpp/size_t",
+      "morphisms": [
+        "hdole/cpp/off_tToZ64",
+        "hdole/int/abs64",
+        "hdole/cpp/N64toSize_t"
+      ]
+    },
+    {
+      "basename": "off_tToSize_t",
+      "prototype": "NamedMorphism",
+      "properName": "to",
+      "domain": "hdole/cpp/off_t",
+      "codomain": "hdole/cpp/size_t",
+      "source": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625899401565,
+  "timestamp": 1627290414892,
   "version": 0
 }

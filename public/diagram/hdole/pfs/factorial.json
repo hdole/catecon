@@ -1,0 +1,291 @@
+{
+  "description": "",
+  "basename": "pfs/factorial",
+  "name": "hdole/pfs/factorial",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/pfs/factorial_Index",
+  "codomain": "hdole/PFS",
+  "references": [
+    "hdole/Narithmetics"
+  ],
+  "domainElements": [
+    {
+      "description": "Factorial",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -10,
+        "y": -10
+      },
+      "height": "133",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_5",
+      "prototype": "DiagramObject",
+      "to": "hdole/pfs/factorial/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "xy": {
+        "x": -30,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": -30,
+        "y": 1020
+      }
+    },
+    {
+      "basename": "o_10",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 200,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": -20,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_12",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 180,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 200,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_16",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/CPo{N,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/#1",
+      "xy": {
+        "x": 400,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": -30,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/Narithmetics/N",
+      "xy": {
+        "x": 400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_5",
+      "codomain": "hdole/pfs/factorial/o_6",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/Narithmetics/multiply"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_11",
+      "codomain": "hdole/pfs/factorial/o_12",
+      "to": "hdole/pfs/factorial/factorial"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_13",
+      "codomain": "hdole/pfs/factorial/o_10",
+      "to": "hdole/pfs/factorial/factorial"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_2",
+      "codomain": "hdole/pfs/factorial/o_16",
+      "to": "hdole/Narithmetics/decr"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_13",
+      "codomain": "hdole/pfs/factorial/o_16",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ],
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/CFa{hdole/Narithmetics/CPo{N,#1}oPC,hdole/Narithmetics/N_0}aFC"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_3",
+      "codomain": "hdole/pfs/factorial/o_16",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ],
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/CFa{hdole/Narithmetics/CPo{N,#1}oPC,#1_1}aFC"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_5",
+      "codomain": "hdole/pfs/factorial/o_10",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/Fa{Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP,hdole/Narithmetics/N_1}aF"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_5",
+      "codomain": "hdole/pfs/factorial/o_2",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/Fa{Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP,hdole/Narithmetics/N_0}aF"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_3",
+      "codomain": "hdole/pfs/factorial/o_0",
+      "to": "hdole/Narithmetics/one"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/Narithmetics/N",
+        "hdole/Narithmetics/N"
+      ]
+    },
+    {
+      "basename": "Fa{Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP,hdole/Narithmetics/N_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/pfs/factorial/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "codomain": "hdole/Narithmetics/N",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Fa{Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP,hdole/Narithmetics/N_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/pfs/factorial/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "codomain": "hdole/Narithmetics/N",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "factorial",
+      "prototype": "Morphism",
+      "properName": "n!",
+      "domain": "hdole/Narithmetics/N",
+      "codomain": "hdole/Narithmetics/N",
+      "data": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "CFa{hdole/Narithmetics/CPo{N,#1}oPC,#1_1}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/Narithmetics/#1",
+      "codomain": "hdole/Narithmetics/CPo{N,#1}oPC",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "CFa{hdole/Narithmetics/CPo{N,#1}oPC,hdole/Narithmetics/N_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/Narithmetics/N",
+      "codomain": "hdole/Narithmetics/CPo{N,#1}oPC",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1627288725628,
+  "version": 0,
+  "properName": "hdole/pfs/factorial"
+}
