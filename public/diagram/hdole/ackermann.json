@@ -8,13 +8,13 @@
   "domain": "hdole/ackermann_Index",
   "codomain": "hdole/PFS",
   "references": [
-    "hdole/Narithmetics"
+    "hdole/nat"
   ],
   "domainElements": [
     {
       "basename": "o_0",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/N",
+      "to": "hdole/nat/N64",
       "xy": {
         "x": 600,
         "y": 500
@@ -23,7 +23,7 @@
     {
       "basename": "o_2",
       "prototype": "DiagramObject",
-      "to": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "to": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "xy": {
         "x": 600,
         "y": 300
@@ -32,7 +32,7 @@
     {
       "basename": "o_4",
       "prototype": "DiagramObject",
-      "to": "hdole/ackermann/Po{hdole/Narithmetics/N,#1}oP",
+      "to": "hdole/ackermann/Po{hdole/nat/N64,#1}oP",
       "xy": {
         "x": 800,
         "y": 500
@@ -50,7 +50,7 @@
     {
       "basename": "o_10",
       "prototype": "DiagramObject",
-      "to": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "to": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "xy": {
         "x": 1000,
         "y": 500
@@ -59,7 +59,7 @@
     {
       "basename": "o_11",
       "prototype": "DiagramObject",
-      "to": "hdole/Logic/CPo{#1,#1}oPC",
+      "to": "hdole/ackermann/CPo{#1,#1}oPC",
       "xy": {
         "x": 1200,
         "y": 500
@@ -77,7 +77,7 @@
     {
       "basename": "o_6",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/N",
+      "to": "hdole/nat/N64",
       "xy": {
         "x": 600,
         "y": 700
@@ -88,8 +88,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 510,
-        "y": 10
+        "x": 540,
+        "y": 20
       },
       "height": "72",
       "weight": "bold"
@@ -97,7 +97,7 @@
     {
       "basename": "o_1",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/N",
+      "to": "hdole/nat/N64",
       "xy": {
         "x": 800,
         "y": 300
@@ -106,7 +106,7 @@
     {
       "basename": "o_3",
       "prototype": "DiagramObject",
-      "to": "hdole/Narithmetics/N",
+      "to": "hdole/nat/N64",
       "xy": {
         "x": 800,
         "y": 100
@@ -117,71 +117,68 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_0",
       "codomain": "hdole/ackermann/o_4",
-      "flipName": false,
-      "to": "hdole/ackermann/Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_,hdole/Narithmetics/N_-1}aF"
+      "to": "hdole/ackermann/Fa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_-1}aF"
     },
     {
       "basename": "m_4",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_4",
       "codomain": "hdole/ackermann/o_10",
-      "flipName": false,
-      "to": "hdole/ackermann/Pm{Id{hdole/Narithmetics/N}dI,hdole/Narithmetics/zero}mP"
+      "to": "hdole/ackermann/Pm{Id{hdole/nat/N64}dI,hdole/nat/zero64}mP"
     },
     {
       "basename": "m_7",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_7",
       "codomain": "hdole/ackermann/o_11",
-      "flipName": true,
-      "to": "hdole/ackermann/CFa{hdole/Logic/CPo{#1,#1}oPC,#1_1}aFC"
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/ackermann/CFa{CPo{#1,#1}oPC,#1_1}aFC"
     },
     {
       "basename": "m_8",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_13",
       "codomain": "hdole/ackermann/o_11",
-      "flipName": false,
-      "to": "hdole/ackermann/CFa{hdole/Logic/CPo{#1,#1}oPC,#1_0}aFC"
+      "to": "hdole/ackermann/CFa{CPo{#1,#1}oPC,#1_0}aFC"
     },
     {
       "basename": "m_9",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_6",
       "codomain": "hdole/ackermann/o_0",
-      "flipName": false,
-      "to": "hdole/ackermann/Id{hdole/Narithmetics/N}dI"
+      "to": "hdole/ackermann/Id{hdole/nat/N64}dI"
     },
     {
       "basename": "m_2",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_6",
       "codomain": "hdole/ackermann/o_13",
-      "flipName": false,
-      "to": "hdole/ackermann/Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_-1}aF"
+      "to": "hdole/ackermann/Fa{hdole/nat/N64,hdole/nat/N64_-1}aF"
     },
     {
       "basename": "m_10",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_10",
       "codomain": "hdole/ackermann/o_11",
-      "flipName": false,
-      "to": "hdole/Narithmetics/equals"
+      "to": "hdole/nat/equ64"
     },
     {
       "basename": "m_3",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_1",
       "codomain": "hdole/ackermann/o_3",
-      "flipName": false,
-      "to": "hdole/ackermann/Id{hdole/Narithmetics/N}dI"
+      "to": "hdole/ackermann/Id{hdole/nat/N64}dI"
     },
     {
       "basename": "m_0",
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_2",
       "codomain": "hdole/ackermann/o_1",
-      "flipName": false,
       "to": "hdole/ackermann/ack"
     },
     {
@@ -189,17 +186,31 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_2",
       "codomain": "hdole/ackermann/o_3",
-      "flipName": false,
       "to": "hdole/ackermann/ack"
     }
   ],
   "elements": [
     {
-      "basename": "Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "basename": "CPo{#1,#1}oPC",
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/ackermann/#1",
+        "hdole/ackermann/#1"
+      ]
+    },
+    {
+      "basename": "Po{hdole/nat/N64,hdole/nat/N64}oP",
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Narithmetics/N",
-        "hdole/Narithmetics/N"
+        "hdole/nat/N64",
+        "hdole/nat/N64"
       ]
     },
     {
@@ -209,81 +220,81 @@
       "size": 1
     },
     {
-      "basename": "Po{hdole/Narithmetics/N,#1}oP",
+      "basename": "Po{hdole/nat/N64,#1}oP",
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Narithmetics/N",
+        "hdole/nat/N64",
         "hdole/ackermann/#1"
+      ]
+    },
+    {
+      "basename": "Po{hdole/nat/N64,hdole/nat/#1}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/nat/N64",
+        "hdole/nat/#1"
       ]
     },
     {
       "basename": "ack",
       "prototype": "Morphism",
-      "domain": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
-      "codomain": "hdole/Narithmetics/N"
+      "domain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "codomain": "hdole/nat/N64"
     },
     {
-      "basename": "Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_,hdole/Narithmetics/N_-1}aF",
+      "basename": "Fa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_-1}aF",
       "prototype": "FactorMorphism",
-      "domain": "hdole/Narithmetics/N",
-      "codomain": "hdole/ackermann/Po{hdole/Narithmetics/N,#1}oP",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/ackermann/Po{hdole/nat/N64,#1}oP",
       "factors": [
         [],
         -1
       ]
     },
     {
-      "basename": "Id{hdole/Narithmetics/N}dI",
+      "basename": "Id{hdole/nat/N64}dI",
       "prototype": "FactorMorphism",
-      "domain": "hdole/Narithmetics/N",
-      "codomain": "hdole/Narithmetics/N",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64",
       "factors": [
         []
       ]
     },
     {
-      "basename": "Fa{hdole/Narithmetics/N,hdole/Narithmetics/N_-1}aF",
+      "basename": "Fa{hdole/nat/N64,hdole/nat/N64_-1}aF",
       "prototype": "FactorMorphism",
-      "domain": "hdole/Narithmetics/N",
+      "domain": "hdole/nat/N64",
       "codomain": "hdole/ackermann/#1",
       "factors": [
         -1
       ]
     },
     {
-      "basename": "Po{hdole/Narithmetics/N,hdole/Narithmetics/#1}oP",
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/Narithmetics/N",
-        "hdole/Narithmetics/#1"
-      ]
-    },
-    {
-      "basename": "Pm{Id{hdole/Narithmetics/N}dI,hdole/Narithmetics/zero}mP",
+      "basename": "Pm{Id{hdole/nat/N64}dI,hdole/nat/zero64}mP",
       "prototype": "ProductMorphism",
-      "domain": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/#1}oP",
-      "codomain": "hdole/ackermann/Po{hdole/Narithmetics/N,hdole/Narithmetics/N}oP",
+      "domain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/#1}oP",
+      "codomain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "morphisms": [
-        "hdole/ackermann/Id{hdole/Narithmetics/N}dI",
-        "hdole/Narithmetics/zero"
+        "hdole/ackermann/Id{hdole/nat/N64}dI",
+        "hdole/nat/zero64"
       ]
     },
     {
-      "basename": "CFa{hdole/Logic/CPo{#1,#1}oPC,#1_1}aFC",
+      "basename": "CFa{CPo{#1,#1}oPC,#1_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
-      "domain": "hdole/Logic/#1",
-      "codomain": "hdole/Logic/CPo{#1,#1}oPC",
+      "domain": "hdole/ackermann/#1",
+      "codomain": "hdole/ackermann/CPo{#1,#1}oPC",
       "factors": [
         1
       ]
     },
     {
-      "basename": "CFa{hdole/Logic/CPo{#1,#1}oPC,#1_0}aFC",
+      "basename": "CFa{CPo{#1,#1}oPC,#1_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
-      "domain": "hdole/Logic/#1",
-      "codomain": "hdole/Logic/CPo{#1,#1}oPC",
+      "domain": "hdole/ackermann/#1",
+      "codomain": "hdole/ackermann/CPo{#1,#1}oPC",
       "factors": [
         0
       ]
@@ -291,9 +302,10 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1622276255059,
+  "timestamp": 1627377571168,
   "version": 0,
   "hiddenCells": [
     "3c39be35906145755726c52affca1f3cb6a991ca8626c11213299db4797cfdb9"
-  ]
+  ],
+  "properName": "hdole/ackermann"
 }

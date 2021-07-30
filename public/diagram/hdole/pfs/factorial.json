@@ -1,0 +1,294 @@
+{
+  "description": "",
+  "basename": "pfs/factorial",
+  "name": "hdole/pfs/factorial",
+  "prototype": "Diagram",
+  "properName": "hdole/pfs/factorial",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/pfs/factorial_Index",
+  "codomain": "hdole/PFS",
+  "references": [
+    "hdole/nat"
+  ],
+  "domainElements": [
+    {
+      "description": "Factorial",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -30,
+        "y": -10
+      },
+      "height": "133",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_5",
+      "prototype": "DiagramObject",
+      "to": "hdole/pfs/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "xy": {
+        "x": -30,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_10",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 200,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -20,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_12",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 180,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 200,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_16",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/CPo{N64,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/#1",
+      "xy": {
+        "x": 400,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -30,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": -30,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -30,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "m_14",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_11",
+      "codomain": "hdole/pfs/factorial/o_12",
+      "to": "hdole/pfs/factorial/factorial"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_13",
+      "codomain": "hdole/pfs/factorial/o_10",
+      "to": "hdole/pfs/factorial/factorial"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_2",
+      "codomain": "hdole/pfs/factorial/o_16",
+      "to": "hdole/nat/decr"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_3",
+      "codomain": "hdole/pfs/factorial/o_16",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ],
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/CFa{hdole/nat/CPo{N64,#1}oPC,#1_1}aFC"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_3",
+      "codomain": "hdole/pfs/factorial/o_0",
+      "to": "hdole/nat/one64"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_13",
+      "codomain": "hdole/pfs/factorial/o_16",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/CFa{hdole/nat/CPo{N64,#1}oPC,hdole/nat/N64_0}aFC"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_5",
+      "codomain": "hdole/pfs/factorial/o_2",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_0}aF"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_5",
+      "codomain": "hdole/pfs/factorial/o_10",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/pfs/factorial/Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_1}aF"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_5",
+      "codomain": "hdole/pfs/factorial/o_1",
+      "to": "hdole/nat/mult64"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/pfs/factorial/o_1",
+      "codomain": "hdole/pfs/factorial/o_4",
+      "to": "hdole/nat/lo64"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/nat/N64",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "basename": "factorial",
+      "prototype": "Morphism",
+      "properName": "n!",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64",
+      "data": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "CFa{hdole/nat/CPo{N64,#1}oPC,#1_1}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "basename": "CFa{hdole/nat/CPo{N64,#1}oPC,hdole/nat/N64_0}aFC",
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/pfs/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "codomain": "hdole/nat/N64",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_1}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/pfs/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "codomain": "hdole/nat/N64",
+      "factors": [
+        1
+      ]
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1627379208471,
+  "version": 0,
+  "hiddenCells": [
+    "8aa77e45b3107e20f4679af002f46a03476b965865a58d9898b29b98881fa24c"
+  ]
+}

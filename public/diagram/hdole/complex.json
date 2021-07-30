@@ -433,25 +433,6 @@
       }
     },
     {
-      "basename": "o_30",
-      "prototype": "DiagramObject",
-      "to": "hdole/complex/Ho{hdole/Narithmetics/N,C}oH",
-      "xy": {
-        "x": 200,
-        "y": 3400
-      }
-    },
-    {
-      "description": "A list of complex numbers",
-      "basename": "t_15",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 200,
-        "y": 3470
-      },
-      "height": 24
-    },
-    {
       "description": "References: &Fopf; Arithmetic",
       "basename": "t_16",
       "prototype": "DiagramText",
@@ -477,7 +458,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_0",
       "codomain": "hdole/complex/o_1",
-      "flipName": false,
       "homsetIndex": 1,
       "to": "hdole/complex/Id{C,hdole/floats/Po{F64,F64}oP}dI"
     },
@@ -486,7 +466,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_1",
       "codomain": "hdole/complex/o_0",
-      "flipName": false,
       "homsetIndex": 1,
       "to": "hdole/complex/Id{hdole/floats/Po{F64,F64}oP,C}dI"
     },
@@ -495,7 +474,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_2",
       "codomain": "hdole/complex/o_3",
-      "flipName": false,
       "to": "hdole/complex/zero"
     },
     {
@@ -503,7 +481,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_4",
       "codomain": "hdole/complex/o_5",
-      "flipName": false,
       "to": "hdole/complex/i"
     },
     {
@@ -511,7 +488,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_6",
       "codomain": "hdole/complex/o_7",
-      "flipName": false,
       "to": "hdole/complex/e"
     },
     {
@@ -519,7 +495,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_8",
       "codomain": "hdole/complex/o_9",
-      "flipName": false,
       "to": "hdole/complex/real"
     },
     {
@@ -527,7 +502,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_10",
       "codomain": "hdole/complex/o_11",
-      "flipName": false,
       "to": "hdole/complex/imag"
     },
     {
@@ -535,7 +509,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_12",
       "codomain": "hdole/complex/o_13",
-      "flipName": false,
       "to": "hdole/complex/F2C"
     },
     {
@@ -543,7 +516,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_14",
       "codomain": "hdole/complex/o_15",
-      "flipName": false,
       "to": "hdole/complex/conjugate"
     },
     {
@@ -551,7 +523,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_16",
       "codomain": "hdole/complex/o_17",
-      "flipName": false,
       "to": "hdole/complex/abs"
     },
     {
@@ -559,7 +530,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_19",
       "codomain": "hdole/complex/o_20",
-      "flipName": false,
       "to": "hdole/complex/add"
     },
     {
@@ -567,7 +537,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_21",
       "codomain": "hdole/complex/o_22",
-      "flipName": false,
       "to": "hdole/complex/subtract"
     },
     {
@@ -575,7 +544,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_23",
       "codomain": "hdole/complex/o_24",
-      "flipName": false,
       "to": "hdole/complex/multiply"
     },
     {
@@ -583,7 +551,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_26",
       "codomain": "hdole/complex/o_27",
-      "flipName": false,
       "to": "hdole/complex/divide"
     },
     {
@@ -591,7 +558,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/complex/o_28",
       "codomain": "hdole/complex/o_29",
-      "flipName": false,
       "to": "hdole/complex/pow"
     }
   ],
@@ -632,15 +598,6 @@
       "objects": [
         "hdole/complex/C",
         "hdole/Basics/#1"
-      ]
-    },
-    {
-      "description": "The homset from ℕ&#x2086;&#x2084; to &Copf;",
-      "basename": "Ho{hdole/Narithmetics/N,C}oH",
-      "prototype": "HomObject",
-      "objects": [
-        "hdole/Narithmetics/N",
-        "hdole/complex/C"
       ]
     },
     {
@@ -797,6 +754,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1623232210511,
+  "timestamp": 1627417499220,
   "version": 0
 }

@@ -6,6 +6,9 @@
   "properName": "hdole/nat",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
+  "code": {
+    "cpp": "#include <algorithm>"
+  },
   "domain": "hdole/nat_Index",
   "codomain": "hdole/PFS",
   "references": [
@@ -563,7 +566,7 @@
       "basename": "t_31",
       "prototype": "DiagramText",
       "xy": {
-        "x": -320,
+        "x": -340,
         "y": -650
       },
       "height": "197",
@@ -664,7 +667,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/nat/N8",
       "xy": {
-        "x": -200,
+        "x": 0,
         "y": 200
       }
     },
@@ -1722,42 +1725,6 @@
       }
     },
     {
-      "basename": "o_26",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N8",
-      "xy": {
-        "x": 200,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_60",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N16",
-      "xy": {
-        "x": 600,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_61",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N32",
-      "xy": {
-        "x": 1000,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_185",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 1400,
-        "y": 400
-      }
-    },
-    {
       "basename": "o_186",
       "prototype": "DiagramObject",
       "to": "hdole/nat/Po{N8,N8}oP",
@@ -2771,11 +2738,37 @@
       }
     },
     {
+      "basename": "o_26",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N16",
+      "xy": {
+        "x": 400,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_60",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 800,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_61",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 1200,
+        "y": 200
+      }
+    },
+    {
       "basename": "m_0",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_2",
       "codomain": "hdole/nat/o_3",
-      "flipName": false,
       "to": "hdole/nat/zero64"
     },
     {
@@ -2783,7 +2776,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_4",
       "codomain": "hdole/nat/o_5",
-      "flipName": false,
       "to": "hdole/nat/one64"
     },
     {
@@ -2791,7 +2783,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_6",
       "codomain": "hdole/nat/o_7",
-      "flipName": false,
       "to": "hdole/nat/inf64"
     },
     {
@@ -2799,7 +2790,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_9",
       "codomain": "hdole/nat/o_10",
-      "flipName": false,
       "to": "hdole/nat/add64"
     },
     {
@@ -2807,7 +2797,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_17",
       "codomain": "hdole/nat/o_18",
-      "flipName": false,
       "to": "hdole/nat/lt64"
     },
     {
@@ -2815,7 +2804,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_19",
       "codomain": "hdole/nat/o_20",
-      "flipName": false,
       "to": "hdole/nat/lteq64"
     },
     {
@@ -2823,15 +2811,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_21",
       "codomain": "hdole/nat/o_22",
-      "flipName": false,
-      "to": "hdole/nat/equ128"
+      "to": "hdole/nat/equ64"
     },
     {
       "basename": "m_11",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_27",
       "codomain": "hdole/nat/o_28",
-      "flipName": false,
       "to": "hdole/nat/zero16"
     },
     {
@@ -2839,7 +2825,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_29",
       "codomain": "hdole/nat/o_30",
-      "flipName": false,
       "to": "hdole/nat/one16"
     },
     {
@@ -2847,7 +2832,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_31",
       "codomain": "hdole/nat/o_32",
-      "flipName": false,
       "to": "hdole/nat/inf16"
     },
     {
@@ -2855,7 +2839,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_33",
       "codomain": "hdole/nat/o_34",
-      "flipName": false,
       "to": "hdole/nat/add16"
     },
     {
@@ -2863,7 +2846,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_37",
       "codomain": "hdole/nat/o_38",
-      "flipName": false,
       "to": "hdole/nat/mult16"
     },
     {
@@ -2871,7 +2853,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_39",
       "codomain": "hdole/nat/o_40",
-      "flipName": false,
       "to": "hdole/nat/and16"
     },
     {
@@ -2879,7 +2860,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_41",
       "codomain": "hdole/nat/o_42",
-      "flipName": false,
       "to": "hdole/nat/or16"
     },
     {
@@ -2887,7 +2867,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_43",
       "codomain": "hdole/nat/o_44",
-      "flipName": false,
       "to": "hdole/nat/xor16"
     },
     {
@@ -2895,7 +2874,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_45",
       "codomain": "hdole/nat/o_46",
-      "flipName": false,
       "to": "hdole/nat/div16"
     },
     {
@@ -2903,7 +2881,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_47",
       "codomain": "hdole/nat/o_48",
-      "flipName": false,
       "to": "hdole/nat/mod16"
     },
     {
@@ -2911,7 +2888,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_51",
       "codomain": "hdole/nat/o_52",
-      "flipName": false,
       "to": "hdole/nat/lt16"
     },
     {
@@ -2919,7 +2895,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_53",
       "codomain": "hdole/nat/o_54",
-      "flipName": false,
       "to": "hdole/nat/lteq16"
     },
     {
@@ -2927,7 +2902,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_14",
       "codomain": "hdole/nat/o_55",
-      "flipName": false,
       "to": "hdole/nat/succ64"
     },
     {
@@ -2935,7 +2909,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_15",
       "codomain": "hdole/nat/o_13",
-      "flipName": false,
       "to": "hdole/nat/decr"
     },
     {
@@ -2943,15 +2916,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_8",
       "codomain": "hdole/nat/o_16",
-      "flipName": false,
-      "to": "hdole/nat/N16_equals"
+      "to": "hdole/nat/equ16"
     },
     {
       "basename": "m_25",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_23",
       "codomain": "hdole/nat/o_50",
-      "flipName": false,
       "to": "hdole/nat/zero32"
     },
     {
@@ -2959,7 +2930,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_56",
       "codomain": "hdole/nat/o_57",
-      "flipName": false,
       "to": "hdole/nat/one32"
     },
     {
@@ -2967,31 +2937,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_58",
       "codomain": "hdole/nat/o_25",
-      "flipName": false,
-      "to": "hdole/nat/N82N16"
-    },
-    {
-      "basename": "m_30",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_25",
-      "codomain": "hdole/nat/o_62",
-      "flipName": false,
-      "to": "hdole/nat/N162N32"
-    },
-    {
-      "basename": "m_31",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_62",
-      "codomain": "hdole/nat/o_0",
-      "flipName": false,
-      "to": "hdole/nat/N322N64"
+      "to": "hdole/nat/N8ToN16"
     },
     {
       "basename": "m_32",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_66",
       "codomain": "hdole/nat/o_70",
-      "flipName": false,
       "to": "hdole/nat/succ32"
     },
     {
@@ -2999,7 +2951,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_73",
       "codomain": "hdole/nat/o_71",
-      "flipName": false,
       "to": "hdole/nat/decr32"
     },
     {
@@ -3007,7 +2958,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_68",
       "codomain": "hdole/nat/o_65",
-      "flipName": false,
       "to": "hdole/nat/inf32"
     },
     {
@@ -3015,7 +2965,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_67",
       "codomain": "hdole/nat/o_59",
-      "flipName": false,
       "to": "hdole/nat/succ16"
     },
     {
@@ -3023,7 +2972,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_74",
       "codomain": "hdole/nat/o_1",
-      "flipName": false,
       "to": "hdole/nat/zero8"
     },
     {
@@ -3031,7 +2979,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_75",
       "codomain": "hdole/nat/o_24",
-      "flipName": false,
       "to": "hdole/nat/one8"
     },
     {
@@ -3039,7 +2986,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_49",
       "codomain": "hdole/nat/o_76",
-      "flipName": false,
       "to": "hdole/nat/inf8"
     },
     {
@@ -3047,7 +2993,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_81",
       "codomain": "hdole/nat/o_79",
-      "flipName": false,
       "to": "hdole/nat/decr8"
     },
     {
@@ -3055,7 +3000,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_78",
       "codomain": "hdole/nat/o_77",
-      "flipName": false,
       "to": "hdole/nat/succ8"
     },
     {
@@ -3063,7 +3007,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_82",
       "codomain": "hdole/nat/o_80",
-      "flipName": false,
       "to": "hdole/nat/decr16"
     },
     {
@@ -3071,7 +3014,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_86",
       "codomain": "hdole/nat/o_85",
-      "flipName": false,
       "to": "hdole/nat/add32"
     },
     {
@@ -3079,7 +3021,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_84",
       "codomain": "hdole/nat/o_83",
-      "flipName": false,
       "to": "hdole/nat/add8"
     },
     {
@@ -3087,7 +3028,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_90",
       "codomain": "hdole/nat/o_89",
-      "flipName": false,
       "to": "hdole/nat/sub32"
     },
     {
@@ -3095,7 +3035,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_11",
       "codomain": "hdole/nat/o_103",
-      "flipName": false,
       "to": "hdole/nat/mult64"
     },
     {
@@ -3103,7 +3042,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_87",
       "codomain": "hdole/nat/o_95",
-      "flipName": false,
       "to": "hdole/nat/mult32"
     },
     {
@@ -3111,7 +3049,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_91",
       "codomain": "hdole/nat/o_92",
-      "flipName": false,
       "to": "hdole/nat/sub64"
     },
     {
@@ -3119,7 +3056,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_105",
       "codomain": "hdole/nat/o_106",
-      "flipName": false,
       "to": "hdole/nat/sub8"
     },
     {
@@ -3127,7 +3063,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_108",
       "codomain": "hdole/nat/o_109",
-      "flipName": false,
       "to": "hdole/nat/mult8"
     },
     {
@@ -3135,7 +3070,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_110",
       "codomain": "hdole/nat/o_111",
-      "flipName": false,
       "to": "hdole/nat/and8"
     },
     {
@@ -3143,7 +3077,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_112",
       "codomain": "hdole/nat/o_113",
-      "flipName": false,
       "to": "hdole/nat/or8"
     },
     {
@@ -3151,7 +3084,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_63",
       "codomain": "hdole/nat/o_101",
-      "flipName": false,
       "to": "hdole/nat/zero128"
     },
     {
@@ -3159,7 +3091,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_64",
       "codomain": "hdole/nat/o_102",
-      "flipName": false,
       "to": "hdole/nat/one128"
     },
     {
@@ -3167,7 +3098,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_100",
       "codomain": "hdole/nat/o_72",
-      "flipName": false,
       "to": "hdole/nat/inf128"
     },
     {
@@ -3175,7 +3105,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_125",
       "codomain": "hdole/nat/o_124",
-      "flipName": false,
       "to": "hdole/nat/succ128"
     },
     {
@@ -3183,7 +3112,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_126",
       "codomain": "hdole/nat/o_127",
-      "flipName": false,
       "to": "hdole/nat/decr128"
     },
     {
@@ -3191,7 +3119,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_129",
       "codomain": "hdole/nat/o_128",
-      "flipName": false,
       "to": "hdole/nat/add127"
     },
     {
@@ -3199,7 +3126,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_139",
       "codomain": "hdole/nat/o_140",
-      "flipName": false,
       "to": "hdole/nat/and32"
     },
     {
@@ -3207,7 +3133,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_161",
       "codomain": "hdole/nat/o_162",
-      "flipName": false,
       "to": "hdole/nat/and64"
     },
     {
@@ -3215,31 +3140,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_171",
       "codomain": "hdole/nat/o_179",
-      "flipName": false,
       "to": "hdole/nat/and128"
-    },
-    {
-      "basename": "m_99",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_0",
-      "codomain": "hdole/nat/o_184",
-      "flipName": false,
-      "to": "hdole/nat/N62toN128"
-    },
-    {
-      "basename": "m_36",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_58",
-      "codomain": "hdole/nat/o_26",
-      "flipName": true,
-      "to": "hdole/nat/Id{N8}dI"
     },
     {
       "basename": "m_102",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_114",
       "codomain": "hdole/nat/o_115",
-      "flipName": false,
       "to": "hdole/nat/xor8"
     },
     {
@@ -3247,7 +3154,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_187",
       "codomain": "hdole/nat/o_191",
-      "flipName": false,
       "to": "hdole/nat/div8"
     },
     {
@@ -3255,7 +3161,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_186",
       "codomain": "hdole/nat/o_192",
-      "flipName": false,
       "to": "hdole/nat/mod8"
     },
     {
@@ -3263,7 +3168,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_188",
       "codomain": "hdole/nat/o_158",
-      "flipName": false,
       "to": "hdole/nat/equ8"
     },
     {
@@ -3271,7 +3175,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_150",
       "codomain": "hdole/nat/o_152",
-      "flipName": false,
       "to": "hdole/nat/equ32"
     },
     {
@@ -3279,7 +3182,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_189",
       "codomain": "hdole/nat/o_159",
-      "flipName": false,
       "to": "hdole/nat/lt8"
     },
     {
@@ -3287,7 +3189,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_149",
       "codomain": "hdole/nat/o_153",
-      "flipName": false,
       "to": "hdole/nat/lt32"
     },
     {
@@ -3295,7 +3196,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_141",
       "codomain": "hdole/nat/o_142",
-      "flipName": false,
       "to": "hdole/nat/or32"
     },
     {
@@ -3303,7 +3203,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_163",
       "codomain": "hdole/nat/o_164",
-      "flipName": false,
       "to": "hdole/nat/or64"
     },
     {
@@ -3311,7 +3210,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_172",
       "codomain": "hdole/nat/o_180",
-      "flipName": false,
       "to": "hdole/nat/or128"
     },
     {
@@ -3319,7 +3217,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_151",
       "codomain": "hdole/nat/o_154",
-      "flipName": false,
       "to": "hdole/nat/lteq32"
     },
     {
@@ -3327,7 +3224,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_148",
       "codomain": "hdole/nat/o_147",
-      "flipName": false,
       "to": "hdole/nat/mod32"
     },
     {
@@ -3335,7 +3231,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_146",
       "codomain": "hdole/nat/o_145",
-      "flipName": false,
       "to": "hdole/nat/div32"
     },
     {
@@ -3343,7 +3238,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_143",
       "codomain": "hdole/nat/o_144",
-      "flipName": false,
       "to": "hdole/nat/xor32"
     },
     {
@@ -3351,7 +3245,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_178",
       "codomain": "hdole/nat/o_157",
-      "flipName": false,
       "to": "hdole/nat/lteq128"
     },
     {
@@ -3359,7 +3252,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_165",
       "codomain": "hdole/nat/o_166",
-      "flipName": false,
       "to": "hdole/nat/xor64"
     },
     {
@@ -3367,7 +3259,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_167",
       "codomain": "hdole/nat/o_168",
-      "flipName": false,
       "to": "hdole/nat/div64"
     },
     {
@@ -3375,7 +3266,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_170",
       "codomain": "hdole/nat/o_169",
-      "flipName": false,
       "to": "hdole/nat/mod64"
     },
     {
@@ -3383,7 +3273,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_173",
       "codomain": "hdole/nat/o_181",
-      "flipName": false,
       "to": "hdole/nat/xor128"
     },
     {
@@ -3391,7 +3280,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_174",
       "codomain": "hdole/nat/o_182",
-      "flipName": false,
       "to": "hdole/nat/div128"
     },
     {
@@ -3399,23 +3287,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_175",
       "codomain": "hdole/nat/o_183",
-      "flipName": false,
       "to": "hdole/nat/mod128"
-    },
-    {
-      "basename": "m_124",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_176",
-      "codomain": "hdole/nat/o_155",
-      "flipName": false,
-      "to": "hdole/nat/equ128"
     },
     {
       "basename": "m_125",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_177",
       "codomain": "hdole/nat/o_156",
-      "flipName": false,
       "to": "hdole/nat/lt128"
     },
     {
@@ -3423,7 +3301,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_193",
       "codomain": "hdole/nat/o_195",
-      "flipName": false,
       "to": "hdole/nat/gt8"
     },
     {
@@ -3431,7 +3308,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_194",
       "codomain": "hdole/nat/o_196",
-      "flipName": false,
       "to": "hdole/nat/gteq8"
     },
     {
@@ -3439,7 +3315,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_197",
       "codomain": "hdole/nat/o_198",
-      "flipName": false,
       "to": "hdole/nat/lshf8"
     },
     {
@@ -3447,7 +3322,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_199",
       "codomain": "hdole/nat/o_200",
-      "flipName": false,
       "to": "hdole/nat/rshf8"
     },
     {
@@ -3455,7 +3329,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_201",
       "codomain": "hdole/nat/o_202",
-      "flipName": false,
       "to": "hdole/nat/not8"
     },
     {
@@ -3463,7 +3336,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_136",
       "codomain": "hdole/nat/o_131",
-      "flipName": false,
       "to": "hdole/nat/sub128"
     },
     {
@@ -3471,7 +3343,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_35",
       "codomain": "hdole/nat/o_36",
-      "flipName": false,
       "to": "hdole/nat/sub16"
     },
     {
@@ -3479,7 +3350,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_203",
       "codomain": "hdole/nat/o_93",
-      "flipName": false,
       "to": "hdole/nat/add8c"
     },
     {
@@ -3487,7 +3357,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_204",
       "codomain": "hdole/nat/o_107",
-      "flipName": false,
       "to": "hdole/nat/sub8u"
     },
     {
@@ -3495,7 +3364,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_205",
       "codomain": "hdole/nat/o_94",
-      "flipName": false,
       "to": "hdole/nat/sub16c"
     },
     {
@@ -3503,7 +3371,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_206",
       "codomain": "hdole/nat/o_104",
-      "flipName": false,
       "to": "hdole/nat/sub32u"
     },
     {
@@ -3511,7 +3378,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_207",
       "codomain": "hdole/nat/o_98",
-      "flipName": false,
       "to": "hdole/nat/sub64u"
     },
     {
@@ -3519,7 +3385,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_208",
       "codomain": "hdole/nat/o_132",
-      "flipName": false,
       "to": "hdole/nat/sub128c"
     },
     {
@@ -3527,7 +3392,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_209",
       "codomain": "hdole/nat/o_130",
-      "flipName": false,
       "to": "hdole/nat/add128"
     },
     {
@@ -3535,7 +3399,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_210",
       "codomain": "hdole/nat/o_97",
-      "flipName": false,
       "to": "hdole/nat/add64o"
     },
     {
@@ -3543,7 +3406,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_211",
       "codomain": "hdole/nat/o_138",
-      "flipName": false,
       "to": "hdole/nat/add32c"
     },
     {
@@ -3551,7 +3413,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_212",
       "codomain": "hdole/nat/o_88",
-      "flipName": false,
       "to": "hdole/nat/add16c"
     },
     {
@@ -3559,7 +3420,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_12",
       "codomain": "hdole/nat/o_134",
-      "flipName": false,
       "to": "hdole/nat/mult128c"
     },
     {
@@ -3567,7 +3427,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_99",
       "codomain": "hdole/nat/o_135",
-      "flipName": false,
       "to": "hdole/nat/not16"
     },
     {
@@ -3575,7 +3434,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_213",
       "codomain": "hdole/nat/o_214",
-      "flipName": false,
       "to": "hdole/nat/not32"
     },
     {
@@ -3583,7 +3441,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_215",
       "codomain": "hdole/nat/o_216",
-      "flipName": false,
       "to": "hdole/nat/not64"
     },
     {
@@ -3591,7 +3448,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_217",
       "codomain": "hdole/nat/o_218",
-      "flipName": false,
       "to": "hdole/nat/not128"
     },
     {
@@ -3599,7 +3455,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_225",
       "codomain": "hdole/nat/o_226",
-      "flipName": false,
       "to": "hdole/nat/max8"
     },
     {
@@ -3607,7 +3462,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_227",
       "codomain": "hdole/nat/o_228",
-      "flipName": false,
       "to": "hdole/nat/min8"
     },
     {
@@ -3615,7 +3469,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_270",
       "codomain": "hdole/nat/o_271",
-      "flipName": false,
       "to": "hdole/nat/max16"
     },
     {
@@ -3623,7 +3476,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_272",
       "codomain": "hdole/nat/o_273",
-      "flipName": false,
       "to": "hdole/nat/min16"
     },
     {
@@ -3631,7 +3483,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_280",
       "codomain": "hdole/nat/o_281",
-      "flipName": false,
       "to": "hdole/nat/max32"
     },
     {
@@ -3639,7 +3490,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_282",
       "codomain": "hdole/nat/o_283",
-      "flipName": false,
       "to": "hdole/nat/min32"
     },
     {
@@ -3647,7 +3497,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_290",
       "codomain": "hdole/nat/o_291",
-      "flipName": false,
       "to": "hdole/nat/max64"
     },
     {
@@ -3655,7 +3504,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_292",
       "codomain": "hdole/nat/o_293",
-      "flipName": false,
       "to": "hdole/nat/min64"
     },
     {
@@ -3663,7 +3511,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_300",
       "codomain": "hdole/nat/o_301",
-      "flipName": false,
       "to": "hdole/nat/max128"
     },
     {
@@ -3671,7 +3518,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_302",
       "codomain": "hdole/nat/o_303",
-      "flipName": false,
       "to": "hdole/nat/min128"
     },
     {
@@ -3679,7 +3525,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_229",
       "codomain": "hdole/nat/o_230",
-      "flipName": false,
       "to": "hdole/nat/gt16"
     },
     {
@@ -3687,7 +3532,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_231",
       "codomain": "hdole/nat/o_232",
-      "flipName": false,
       "to": "hdole/nat/gt32"
     },
     {
@@ -3695,7 +3539,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_233",
       "codomain": "hdole/nat/o_234",
-      "flipName": false,
       "to": "hdole/nat/gt64"
     },
     {
@@ -3703,39 +3546,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_235",
       "codomain": "hdole/nat/o_236",
-      "flipName": false,
       "to": "hdole/nat/gt128"
-    },
-    {
-      "basename": "m_37",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_25",
-      "codomain": "hdole/nat/o_60",
-      "flipName": false,
-      "to": "hdole/nat/Id{N16}dI"
-    },
-    {
-      "basename": "m_100",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_62",
-      "codomain": "hdole/nat/o_61",
-      "flipName": false,
-      "to": "hdole/nat/Id{N32}dI"
-    },
-    {
-      "basename": "m_101",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_0",
-      "codomain": "hdole/nat/o_185",
-      "flipName": false,
-      "to": "hdole/nat/Id{N64}dI"
     },
     {
       "basename": "m_137",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_237",
       "codomain": "hdole/nat/o_238",
-      "flipName": false,
       "to": "hdole/nat/gte16"
     },
     {
@@ -3743,7 +3560,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_190",
       "codomain": "hdole/nat/o_160",
-      "flipName": false,
       "to": "hdole/nat/lteq8"
     },
     {
@@ -3751,7 +3567,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_246",
       "codomain": "hdole/nat/o_245",
-      "flipName": false,
       "to": "hdole/nat/lshf16"
     },
     {
@@ -3759,7 +3574,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_248",
       "codomain": "hdole/nat/o_247",
-      "flipName": false,
       "to": "hdole/nat/lshf32"
     },
     {
@@ -3767,7 +3581,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_239",
       "codomain": "hdole/nat/o_240",
-      "flipName": false,
       "to": "hdole/nat/gteq32"
     },
     {
@@ -3775,7 +3588,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_241",
       "codomain": "hdole/nat/o_242",
-      "flipName": false,
       "to": "hdole/nat/gteq64"
     },
     {
@@ -3783,7 +3595,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_243",
       "codomain": "hdole/nat/o_244",
-      "flipName": false,
       "to": "hdole/nat/gteq128"
     },
     {
@@ -3791,7 +3602,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_250",
       "codomain": "hdole/nat/o_249",
-      "flipName": false,
       "to": "hdole/nat/lshf64"
     },
     {
@@ -3799,7 +3609,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_252",
       "codomain": "hdole/nat/o_251",
-      "flipName": false,
       "to": "hdole/nat/lshf128"
     },
     {
@@ -3807,7 +3616,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_253",
       "codomain": "hdole/nat/o_96",
-      "flipName": false,
       "to": "hdole/nat/rshf16"
     },
     {
@@ -3815,7 +3623,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_255",
       "codomain": "hdole/nat/o_254",
-      "flipName": false,
       "to": "hdole/nat/rshf32"
     },
     {
@@ -3823,7 +3630,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_257",
       "codomain": "hdole/nat/o_256",
-      "flipName": false,
       "to": "hdole/nat/rshf64"
     },
     {
@@ -3831,7 +3637,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_259",
       "codomain": "hdole/nat/o_258",
-      "flipName": false,
       "to": "hdole/nat/rshf128"
     },
     {
@@ -3839,7 +3644,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_116",
       "codomain": "hdole/nat/o_117",
-      "flipName": false,
       "to": "hdole/nat/hi8"
     },
     {
@@ -3847,7 +3651,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_118",
       "codomain": "hdole/nat/o_120",
-      "flipName": false,
       "to": "hdole/nat/hi16"
     },
     {
@@ -3855,7 +3658,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_121",
       "codomain": "hdole/nat/o_260",
-      "flipName": false,
       "to": "hdole/nat/hi32"
     },
     {
@@ -3863,103 +3665,13 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_122",
       "codomain": "hdole/nat/o_262",
-      "flipName": false,
       "to": "hdole/nat/hi64"
-    },
-    {
-      "basename": "m_67",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_25",
-      "codomain": "hdole/nat/o_26",
-      "flipName": false,
-      "to": "hdole/nat/lo8"
-    },
-    {
-      "basename": "m_68",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_62",
-      "codomain": "hdole/nat/o_60",
-      "flipName": false,
-      "to": "hdole/nat/lo16"
-    },
-    {
-      "basename": "m_69",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_0",
-      "codomain": "hdole/nat/o_61",
-      "flipName": false,
-      "to": "hdole/nat/lo32"
-    },
-    {
-      "basename": "m_70",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_184",
-      "codomain": "hdole/nat/o_185",
-      "flipName": false,
-      "to": "hdole/nat/lo64"
-    },
-    {
-      "description": "The assertion that the composite of morphisms ⊂,lo equals that of id.",
-      "basename": "a_0",
-      "prototype": "Assertion",
-      "signature": "40c598799e0038c40b4f0e3e07974009899280102a01d31992a95854c5af9fb9",
-      "equal": true,
-      "left": [
-        "hdole/nat/m_27",
-        "hdole/nat/m_67"
-      ],
-      "right": [
-        "hdole/nat/m_36"
-      ]
-    },
-    {
-      "description": "The assertion that the composite of morphisms ⊂,lo equals that of id.",
-      "basename": "a_1",
-      "prototype": "Assertion",
-      "signature": "4e59b086bbd9df767a4abc5c7569c52989a5a2c9f1079f5257141d405491ead4",
-      "equal": true,
-      "left": [
-        "hdole/nat/m_30",
-        "hdole/nat/m_68"
-      ],
-      "right": [
-        "hdole/nat/m_37"
-      ]
-    },
-    {
-      "description": "The assertion that the composite of morphisms ⊂,lo equals that of id.",
-      "basename": "a_2",
-      "prototype": "Assertion",
-      "signature": "136302ca52b0161f3dcbb22ef66ba789c1961196118dbb7d7d7fc1443b6cb821",
-      "equal": true,
-      "left": [
-        "hdole/nat/m_31",
-        "hdole/nat/m_69"
-      ],
-      "right": [
-        "hdole/nat/m_100"
-      ]
-    },
-    {
-      "description": "The assertion that the composite of morphisms ⊂,lo equals that of id.",
-      "basename": "a_3",
-      "prototype": "Assertion",
-      "signature": "97f9a314a5dd085c61f6e3916de07c27aea247f70a43be8eae6114c45402bd1c",
-      "equal": true,
-      "left": [
-        "hdole/nat/m_99",
-        "hdole/nat/m_70"
-      ],
-      "right": [
-        "hdole/nat/m_101"
-      ]
     },
     {
       "basename": "m_28",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_133",
       "codomain": "hdole/nat/o_119",
-      "flipName": false,
       "to": "hdole/nat/lo8"
     },
     {
@@ -3967,7 +3679,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_137",
       "codomain": "hdole/nat/o_123",
-      "flipName": false,
       "to": "hdole/nat/lo16"
     },
     {
@@ -3975,7 +3686,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_219",
       "codomain": "hdole/nat/o_261",
-      "flipName": false,
       "to": "hdole/nat/lo32"
     },
     {
@@ -3983,8 +3693,35 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_220",
       "codomain": "hdole/nat/o_263",
-      "flipName": false,
       "to": "hdole/nat/lo64"
+    },
+    {
+      "basename": "m_30",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/o_26",
+      "codomain": "hdole/nat/o_62",
+      "to": "hdole/nat/N16ToN32"
+    },
+    {
+      "basename": "m_31",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/o_60",
+      "codomain": "hdole/nat/o_0",
+      "to": "hdole/nat/N32ToN64"
+    },
+    {
+      "basename": "m_99",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/o_61",
+      "codomain": "hdole/nat/o_184",
+      "to": "hdole/nat/N62toN128"
+    },
+    {
+      "basename": "m_36",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/o_176",
+      "codomain": "hdole/nat/o_155",
+      "to": "hdole/nat/equ128"
     }
   ],
   "elements": [
@@ -3994,12 +3731,11 @@
       "prototype": "FiniteObject",
       "properName": "&Nopf;&#8328",
       "code": {
-        "cpp": "typedef unsigned char %0;\n"
+        "cpp": "typedef uint8_t %0;\n"
       },
       "size": 256
     },
     {
-      "basename": "Po{N8,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N8",
@@ -4009,19 +3745,11 @@
     {
       "description": "The 16-bit natural (unsigned) numbers",
       "basename": "N16",
-      "prototype": "NamedObject",
+      "prototype": "CatObject",
       "properName": "&Nopf;&#8321;&#8326;",
       "code": {
-        "cpp": "typedef unsigned short %0;\n"
-      },
-      "source": "hdole/nat/Po{N8,N8}oP"
-    },
-    {
-      "basename": "Id{N16,Po{N8,N8}oP}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/Po{N8,N8}oP"
+        "cpp": "typedef uint16_t %0;"
+      }
     },
     {
       "basename": "#1",
@@ -4030,14 +3758,6 @@
       "size": 1
     },
     {
-      "basename": "Id{Po{N8,N8}oP,N16}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "basename": "CPo{#1,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4046,7 +3766,6 @@
       ]
     },
     {
-      "basename": "Po{N16,N16}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N16",
@@ -4056,29 +3775,13 @@
     {
       "description": "The 32-bit natural numbers",
       "basename": "N32",
-      "prototype": "NamedObject",
+      "prototype": "CatObject",
       "properName": "ℕ₃₂",
       "code": {
-        "cpp": "typedef unsigned short %0;\n"
-      },
-      "source": "hdole/nat/Po{N16,N16}oP"
+        "cpp": "typedef uint32_t %0;"
+      }
     },
     {
-      "basename": "Id{N32,Po{N16,N16}oP}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/Po{N16,N16}oP"
-    },
-    {
-      "basename": "Id{Po{N16,N16}oP,N32}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N32"
-    },
-    {
-      "basename": "Po{N32,N32}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N32",
@@ -4088,29 +3791,13 @@
     {
       "description": "The 64-bit natural numbers",
       "basename": "N64",
-      "prototype": "NamedObject",
+      "prototype": "CatObject",
       "properName": "ℕ&#x2086;&#x2084;",
       "code": {
-        "cpp": "typedef unsigned short %0;\n"
-      },
-      "source": "hdole/nat/Po{N32,N32}oP"
+        "cpp": "typedef uint64_t %0;"
+      }
     },
     {
-      "basename": "Id{N64,Po{N32,N32}oP}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/Po{N32,N32}oP"
-    },
-    {
-      "basename": "Id{Po{N32,N32}oP,N64}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N64"
-    },
-    {
-      "basename": "Po{N64,N64}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
@@ -4120,29 +3807,13 @@
     {
       "description": "The 128-bit unsigned numbers",
       "basename": "N128",
-      "prototype": "NamedObject",
+      "prototype": "CatObject",
       "properName": "ℕ&#x2081;&#x2082;&#x2088;",
       "code": {
-        "cpp": "typedef unsigned short %0;\n"
-      },
-      "source": "hdole/nat/Po{N64,N64}oP"
+        "cpp": "typedef unsigned __int128 %0;"
+      }
     },
     {
-      "basename": "Id{N128,Po{N64,N64}oP}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/N128",
-      "codomain": "hdole/nat/Po{N64,N64}oP"
-    },
-    {
-      "basename": "Id{Po{N64,N64}oP,N128}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N128"
-    },
-    {
-      "basename": "CPo{N16,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4151,7 +3822,6 @@
       ]
     },
     {
-      "basename": "CPo{N64,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4160,7 +3830,6 @@
       ]
     },
     {
-      "basename": "CPo{N32,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4169,7 +3838,6 @@
       ]
     },
     {
-      "basename": "CPo{N8,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4178,7 +3846,6 @@
       ]
     },
     {
-      "basename": "CPo{N128,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4187,7 +3854,6 @@
       ]
     },
     {
-      "basename": "Po{N128,N128}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N128",
@@ -4195,7 +3861,6 @@
       ]
     },
     {
-      "basename": "Po{N16,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N16",
@@ -4203,7 +3868,6 @@
       ]
     },
     {
-      "basename": "Po{N32,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N32",
@@ -4211,7 +3875,6 @@
       ]
     },
     {
-      "basename": "Po{N64,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
@@ -4219,7 +3882,6 @@
       ]
     },
     {
-      "basename": "Po{N128,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N128",
@@ -4227,7 +3889,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N8,N8}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4236,7 +3897,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N16,N16}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4245,7 +3905,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N32,N32}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4254,7 +3913,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N64,N64}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4263,7 +3921,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N128,N128}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4345,7 +4002,7 @@
     },
     {
       "description": "compare two 64-bit natural numbers for equality",
-      "basename": "equ128",
+      "basename": "equ64",
       "prototype": "Morphism",
       "properName": "equ",
       "code": {
@@ -4452,7 +4109,7 @@
       "prototype": "Morphism",
       "properName": "div",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 / %1;\n\t%2.m1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC"
@@ -4463,7 +4120,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4496,7 +4153,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "%1 = %0++;// TODO exception"
+        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -4513,7 +4170,7 @@
     },
     {
       "description": "Test for equality of two 16-bit natural numbers",
-      "basename": "N16_equals",
+      "basename": "equ16",
       "prototype": "Morphism",
       "properName": "equ",
       "code": {
@@ -4545,7 +4202,7 @@
       "codomain": "hdole/nat/N32"
     },
     {
-      "basename": "N82N16",
+      "basename": "N8ToN16",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -4555,7 +4212,7 @@
       "codomain": "hdole/nat/N16"
     },
     {
-      "basename": "N162N32",
+      "basename": "N16ToN32",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -4565,7 +4222,7 @@
       "codomain": "hdole/nat/N32"
     },
     {
-      "basename": "N322N64",
+      "basename": "N32ToN64",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -4579,7 +4236,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "%1 = %0++;// TODO exception"
+        "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -4609,7 +4266,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "%1 = %0++;// TODO exception"
+        "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4664,7 +4321,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "%1 = %0++;// TODO exception"
+        "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4891,7 +4548,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "%1 = %0++;// TODO exception"
+        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -4987,13 +4644,6 @@
       "codomain": "hdole/nat/N128"
     },
     {
-      "basename": "Id{N8}dI",
-      "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/nat/N8",
-      "codomain": "hdole/nat/N8"
-    },
-    {
       "basename": "xor8",
       "prototype": "Morphism",
       "properName": "xor",
@@ -5008,7 +4658,7 @@
       "prototype": "Morphism",
       "properName": "div",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 / %1;\n\t%2.m1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
       "codomain": "hdole/nat/CPo{Po{N8,N8}oP,#1}oPC"
@@ -5018,7 +4668,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -5108,7 +4758,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -5168,7 +4818,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -5198,7 +4848,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -5403,27 +5053,6 @@
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
-    },
-    {
-      "basename": "Id{N16}dI",
-      "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "basename": "Id{N32}dI",
-      "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/N32"
-    },
-    {
-      "basename": "Id{N64}dI",
-      "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/N64"
     },
     {
       "basename": "gte16",
@@ -5640,6 +5269,9 @@
       "basename": "hi8",
       "prototype": "Morphism",
       "properName": "hi",
+      "code": {
+        "cpp": "%1 = %0 >> 8;"
+      },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/N8"
     },
@@ -5655,6 +5287,9 @@
       "basename": "hi16",
       "prototype": "Morphism",
       "properName": "hi",
+      "code": {
+        "cpp": "%1 = %1 >> 16;"
+      },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/N16"
     },
@@ -5662,6 +5297,9 @@
       "basename": "lo16",
       "prototype": "Morphism",
       "properName": "lo",
+      "code": {
+        "cpp": "%1 = (uint16_t)%0;"
+      },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/N16"
     },
@@ -5669,6 +5307,9 @@
       "basename": "hi32",
       "prototype": "Morphism",
       "properName": "hi",
+      "code": {
+        "cpp": "%1 = %0 >> 32;"
+      },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/N32"
     },
@@ -5676,6 +5317,9 @@
       "basename": "lo32",
       "prototype": "Morphism",
       "properName": "lo",
+      "code": {
+        "cpp": "%1 = (uint32_t)%0;"
+      },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/N32"
     },
@@ -5683,6 +5327,9 @@
       "basename": "hi64",
       "prototype": "Morphism",
       "properName": "hi",
+      "code": {
+        "cpp": "%1 = %0 >> 64;"
+      },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/N64"
     },
@@ -5690,12 +5337,25 @@
       "basename": "lo64",
       "prototype": "Morphism",
       "properName": "lo",
+      "code": {
+        "cpp": "%1 = (uint64_t)%0;"
+      },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "equ128",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1624523045167,
+  "timestamp": 1627424089864,
   "version": 0
 }

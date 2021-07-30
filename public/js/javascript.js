@@ -400,19 +400,22 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 							html += `<input id="${id}" type="number" min="0" max="${object.objects.length -1}"${typeof value === 'number' ? ' value="' + value.toString() + '"' : ''}/>`;
 						else
 						{
-							let options = '';
-							let divs = '';
+							html = H3.select({id, onchange:_ => Cat.D.ShowInput(object.name, id, factor.length === 0 ? [] : factor.toString())});
+							html.appendChild(H3.option('Choose'));
+//		object.objects.map(o => this.domainElt.appendChild(H3.option(o.properName, {value:o.name})));
+//							let options = '';
+//							let divs = '';
 							for (let i=0; i<object.objects.length; ++i)
 							{
 								const ob = object.objects[i];
 								const f = [...factor, i];
 								const oid = `dv_${ob.name} ${f.toString()}`;
-								options += `<option value="${i}"${i === value[0] ? ' selected="selected"' : ''}>${i}: ${ob.htmlName()}</option>`;
+//								options += `<option value="${i}"${i === value[0] ? ' selected="selected"' : ''}>${i}: ${ob.properName}</option>`;
+//								html.appendChild(H3.option({value:i}"${i === value[0] ? ' selected="selected"' : ''}>${i}: ${ob.properName}</option>`;
 								divs += H.div(this.getInputHtml(ob, value !== null && value[0] === i ? value[1] : null, prefix, [...factor, i]), 'nodisplay', oid, false);
 							}
-							html +=
-`<select id="${id}" onchange="Cat.D.ShowInput('${object.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
-<option>Choose</option>${options}</select><div>${divs}</div>`;
+//`<select id="${id}" onchange="Cat.D.ShowInput('${object.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
+//<option>Choose</option>${options}</select><div>${divs}</div>`;
 					}
 				}
 				else
@@ -435,11 +438,18 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				break;
 			case 'HomObject':
 				const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
-				const options = homset.map(m => `<option value="${m.name}"${value && m.name === value.name ? ' selected="selected"' : ''}>${m.htmlName()}</option>`).join('');
-				const selector =
-`<select data-index="${index}" id="help-run-homset-${index ? index : 'next'}" onchange="R.Actions.javascript.setHomValue(this)"><option>Choose</option>${options}</select>`;
-					html = selector;
-					break;
+//				const options = homset.map(m => `<option value="${m.name}"${value && m.name === value.name ? ' selected="selected"' : ''}>${m.properName}</option>`).join('');
+				html = H3.select({dataIndex:index, id:`help-run-homset-${index ? index : 'next'}`, onchange:_ => R.Actions.javascript(setHomValue(this))});
+//`<select data-index="${index}" id="help-run-homset-${index ? index : 'next'}" onchange="R.Actions.javascript.setHomValue(this)"><option>Choose</option>${options}</select>`;
+				html.appendChild(H3.option('Choose'));
+				homset.map(m =>
+				{
+					const args = {value:m.name};
+					if (m.name === value.name)
+						args.selected = "selected";
+					html.appendChild(H3.option(args, m.properName));
+				});
+				break;
 			}
 			return html;
 		}

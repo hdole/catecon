@@ -449,7 +449,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_1",
       "codomain": "hdole/HTML/o_2",
-      "flipName": false,
       "to": "hdole/HTML/html2N64"
     },
     {
@@ -457,7 +456,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_3",
       "codomain": "hdole/HTML/o_4",
-      "flipName": false,
       "to": "hdole/HTML/html2N8"
     },
     {
@@ -465,7 +463,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_5",
       "codomain": "hdole/HTML/o_6",
-      "flipName": false,
       "to": "hdole/HTML/html2N16"
     },
     {
@@ -473,7 +470,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_7",
       "codomain": "hdole/HTML/o_8",
-      "flipName": false,
       "to": "hdole/HTML/html2Z32"
     },
     {
@@ -481,7 +477,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_9",
       "codomain": "hdole/HTML/o_10",
-      "flipName": false,
       "to": "hdole/HTML/html2Z32F"
     },
     {
@@ -489,7 +484,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_11",
       "codomain": "hdole/HTML/o_12",
-      "flipName": false,
       "to": "hdole/HTML/html2Z"
     },
     {
@@ -497,7 +491,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_13",
       "codomain": "hdole/HTML/o_14",
-      "flipName": false,
       "to": "hdole/HTML/html2F"
     },
     {
@@ -505,7 +498,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_15",
       "codomain": "hdole/HTML/o_16",
-      "flipName": false,
       "to": "hdole/HTML/html2Str"
     },
     {
@@ -513,7 +505,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_17",
       "codomain": "hdole/HTML/o_18",
-      "flipName": false,
       "to": "hdole/HTML/html2line"
     },
     {
@@ -521,7 +512,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_19",
       "codomain": "hdole/HTML/o_20",
-      "flipName": false,
       "to": "hdole/HTML/html2Nat"
     },
     {
@@ -529,7 +519,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_21",
       "codomain": "hdole/HTML/o_22",
-      "flipName": false,
       "to": "hdole/HTML/html2N8F"
     },
     {
@@ -537,7 +526,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_23",
       "codomain": "hdole/HTML/o_24",
-      "flipName": false,
       "to": "hdole/HTML/html2N16F"
     },
     {
@@ -545,7 +533,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_25",
       "codomain": "hdole/HTML/o_26",
-      "flipName": false,
       "to": "hdole/HTML/html2Int"
     },
     {
@@ -553,7 +540,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/HTML/o_27",
       "codomain": "hdole/HTML/o_28",
-      "flipName": false,
       "to": "hdole/HTML/html2Float"
     }
   ],
@@ -571,7 +557,6 @@
     },
     {
       "description": "The homset from HTML to &Zopf;₃₂",
-      "basename": "Ho{HTML,hdole/int/Z32}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -579,7 +564,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/Strings/str,Ho{HTML,hdole/int/Z32}oH}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -587,7 +571,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/int/Z32,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -596,7 +579,6 @@
       ]
     },
     {
-      "basename": "Po{HTML,CPo{hdole/int/Z32,#1}oPC}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -605,7 +587,6 @@
     },
     {
       "description": "The homset from HTML to str",
-      "basename": "Ho{HTML,hdole/Strings/str}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -613,7 +594,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/Strings/str,Ho{HTML,hdole/Strings/str}oH}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -621,7 +601,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/Strings/str,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -630,7 +609,6 @@
       ]
     },
     {
-      "basename": "Po{HTML,CPo{hdole/Strings/str,#1}oPC}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -639,7 +617,6 @@
     },
     {
       "description": "The homset from HTML to ℕ&#x2086;&#x2084;",
-      "basename": "Ho{HTML,hdole/nat/N64}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -647,7 +624,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/Strings/str,Ho{HTML,hdole/nat/N64}oH}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -655,7 +631,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N64,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -664,7 +639,6 @@
       ]
     },
     {
-      "basename": "Po{HTML,CPo{hdole/nat/N64,#1}oPC}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -673,7 +647,6 @@
     },
     {
       "description": "The homset from HTML to &Nopf;&#8328",
-      "basename": "Ho{HTML,hdole/nat/N8}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -681,7 +654,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/Strings/str,Ho{HTML,hdole/nat/N8}oH}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -689,7 +661,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N8,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -698,7 +669,6 @@
       ]
     },
     {
-      "basename": "Po{HTML,CPo{hdole/nat/N8,#1}oPC}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -707,7 +677,6 @@
     },
     {
       "description": "The homset from HTML to &Nopf;&#8321;&#8326;",
-      "basename": "Ho{HTML,hdole/nat/N16}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -715,7 +684,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/Strings/str,Ho{HTML,hdole/nat/N16}oH}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -723,7 +691,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N16,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -732,7 +699,6 @@
       ]
     },
     {
-      "basename": "Po{HTML,CPo{hdole/nat/N16,#1}oPC}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -741,7 +707,6 @@
     },
     {
       "description": "The homset from HTML to &Zopf;&#x2086;&#x2084;",
-      "basename": "Ho{HTML,hdole/int/Z64}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -749,7 +714,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/Strings/str,Ho{HTML,hdole/int/Z64}oH}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -757,7 +721,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/int/Z64,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -766,7 +729,6 @@
       ]
     },
     {
-      "basename": "Po{HTML,CPo{hdole/int/Z64,#1}oPC}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -775,7 +737,6 @@
     },
     {
       "description": "The homset from HTML to 𝔽₆₄",
-      "basename": "Ho{HTML,hdole/floats/F64}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -783,7 +744,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/Strings/str,Ho{HTML,hdole/floats/F64}oH}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -791,7 +751,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/floats/F64,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -800,7 +759,6 @@
       ]
     },
     {
-      "basename": "Po{HTML,CPo{hdole/floats/F64,#1}oPC}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/HTML/HTML",
@@ -964,6 +922,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625979085427,
+  "timestamp": 1626254594941,
   "version": 0
 }
