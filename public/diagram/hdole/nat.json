@@ -566,7 +566,7 @@
       "basename": "t_31",
       "prototype": "DiagramText",
       "xy": {
-        "x": -320,
+        "x": -340,
         "y": -650
       },
       "height": "197",
@@ -2738,6 +2738,33 @@
       }
     },
     {
+      "basename": "o_26",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N16",
+      "xy": {
+        "x": 400,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_60",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 800,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_61",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 1200,
+        "y": 200
+      }
+    },
+    {
       "basename": "m_0",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_2",
@@ -2784,7 +2811,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_21",
       "codomain": "hdole/nat/o_22",
-      "to": "hdole/nat/equ128"
+      "to": "hdole/nat/equ64"
     },
     {
       "basename": "m_11",
@@ -2889,7 +2916,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_8",
       "codomain": "hdole/nat/o_16",
-      "to": "hdole/nat/N16_equals"
+      "to": "hdole/nat/equ16"
     },
     {
       "basename": "m_25",
@@ -2910,7 +2937,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_58",
       "codomain": "hdole/nat/o_25",
-      "to": "hdole/nat/N82N16"
+      "to": "hdole/nat/N8ToN16"
     },
     {
       "basename": "m_32",
@@ -3261,13 +3288,6 @@
       "domain": "hdole/nat/o_175",
       "codomain": "hdole/nat/o_183",
       "to": "hdole/nat/mod128"
-    },
-    {
-      "basename": "m_124",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/nat/o_176",
-      "codomain": "hdole/nat/o_155",
-      "to": "hdole/nat/equ128"
     },
     {
       "basename": "m_125",
@@ -3676,45 +3696,18 @@
       "to": "hdole/nat/lo64"
     },
     {
-      "basename": "o_26",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N16",
-      "xy": {
-        "x": 400,
-        "y": 200
-      }
-    },
-    {
       "basename": "m_30",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_26",
       "codomain": "hdole/nat/o_62",
-      "to": "hdole/nat/N162N32"
-    },
-    {
-      "basename": "o_60",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N32",
-      "xy": {
-        "x": 800,
-        "y": 200
-      }
+      "to": "hdole/nat/N16ToN32"
     },
     {
       "basename": "m_31",
       "prototype": "DiagramMorphism",
       "domain": "hdole/nat/o_60",
       "codomain": "hdole/nat/o_0",
-      "to": "hdole/nat/N322N64"
-    },
-    {
-      "basename": "o_61",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 1200,
-        "y": 200
-      }
+      "to": "hdole/nat/N32ToN64"
     },
     {
       "basename": "m_99",
@@ -3722,6 +3715,13 @@
       "domain": "hdole/nat/o_61",
       "codomain": "hdole/nat/o_184",
       "to": "hdole/nat/N62toN128"
+    },
+    {
+      "basename": "m_36",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/o_176",
+      "codomain": "hdole/nat/o_155",
+      "to": "hdole/nat/equ128"
     }
   ],
   "elements": [
@@ -3736,7 +3736,6 @@
       "size": 256
     },
     {
-      "basename": "Po{N8,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N8",
@@ -3759,7 +3758,6 @@
       "size": 1
     },
     {
-      "basename": "CPo{#1,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3768,7 +3766,6 @@
       ]
     },
     {
-      "basename": "Po{N16,N16}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N16",
@@ -3785,7 +3782,6 @@
       }
     },
     {
-      "basename": "Po{N32,N32}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N32",
@@ -3802,7 +3798,6 @@
       }
     },
     {
-      "basename": "Po{N64,N64}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
@@ -3819,7 +3814,6 @@
       }
     },
     {
-      "basename": "CPo{N16,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3828,7 +3822,6 @@
       ]
     },
     {
-      "basename": "CPo{N64,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3837,7 +3830,6 @@
       ]
     },
     {
-      "basename": "CPo{N32,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3846,7 +3838,6 @@
       ]
     },
     {
-      "basename": "CPo{N8,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3855,7 +3846,6 @@
       ]
     },
     {
-      "basename": "CPo{N128,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3864,7 +3854,6 @@
       ]
     },
     {
-      "basename": "Po{N128,N128}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N128",
@@ -3872,7 +3861,6 @@
       ]
     },
     {
-      "basename": "Po{N16,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N16",
@@ -3880,7 +3868,6 @@
       ]
     },
     {
-      "basename": "Po{N32,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N32",
@@ -3888,7 +3875,6 @@
       ]
     },
     {
-      "basename": "Po{N64,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
@@ -3896,7 +3882,6 @@
       ]
     },
     {
-      "basename": "Po{N128,N8}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N128",
@@ -3904,7 +3889,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N8,N8}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3913,7 +3897,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N16,N16}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3922,7 +3905,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N32,N32}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3931,7 +3913,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N64,N64}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3940,7 +3921,6 @@
       ]
     },
     {
-      "basename": "CPo{Po{N128,N128}oP,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -4022,7 +4002,7 @@
     },
     {
       "description": "compare two 64-bit natural numbers for equality",
-      "basename": "equ128",
+      "basename": "equ64",
       "prototype": "Morphism",
       "properName": "equ",
       "code": {
@@ -4190,7 +4170,7 @@
     },
     {
       "description": "Test for equality of two 16-bit natural numbers",
-      "basename": "N16_equals",
+      "basename": "equ16",
       "prototype": "Morphism",
       "properName": "equ",
       "code": {
@@ -4222,7 +4202,7 @@
       "codomain": "hdole/nat/N32"
     },
     {
-      "basename": "N82N16",
+      "basename": "N8ToN16",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -4232,7 +4212,7 @@
       "codomain": "hdole/nat/N16"
     },
     {
-      "basename": "N162N32",
+      "basename": "N16ToN32",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -4242,7 +4222,7 @@
       "codomain": "hdole/nat/N32"
     },
     {
-      "basename": "N322N64",
+      "basename": "N32ToN64",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -5362,10 +5342,20 @@
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "equ128",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627184153183,
+  "timestamp": 1627424089864,
   "version": 0
 }

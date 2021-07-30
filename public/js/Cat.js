@@ -649,7 +649,7 @@ class R
 	static SetupActions()
 	{
 		// function to register a diagram's actions
-		const setup = diagram => isGUI && diagram.elements.forEach(action => {R.Actions[action.basename] = action});
+		const setup = diagram => isGUI && diagram.elements.forEach(action => {R.Actions[action.basename] = action;});
 		const diagramDiagram = new Diagram(R.$CAT, {basename:'diagram', codomain:'Actions', description:'actions for a diagram', user:'sys'});
 		let action = new IdentityAction(diagramDiagram);
 		new GraphAction(diagramDiagram);
@@ -1351,7 +1351,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		D.EmitViewEvent('diagram', null);	// needed if R.diagram = diagram since old.decrRefcnt() puts it into catalog view
 		const diagram = new Diagram(R.GetUserDiagram(R.user.name), json);
 		R.SaveLocal(diagram);
-		diagram.savePng(e)
+		diagram.savePng(e);
 		D.EmitCATEvent('new', diagram);
 		R.SelectDiagram(diagram.name);
 		D.toolbar.clearError();
@@ -2164,7 +2164,7 @@ class TextTool extends ElementTool
 					txtHtml.firstChild.contentEditable = false;
 					const description = e.target.innerText;
 					if (description && description !== txt.description)
-						R.diagram.commitElementText(e, txt.name, e.target, 'description')
+						R.diagram.commitElementText(e, txt.name, e.target, 'description');
 					D.closeActiveTextEdit();
 				};
 				txtHtml.addEventListener('focusout', onfocusout);
@@ -2660,7 +2660,7 @@ class DiagramTool extends ElementTool
 			else
 			{
 				R.SaveLocal(diagram);
-				diagram.savePng(e)
+				diagram.savePng(e);
 				this.bpd.reset();
 				D.EmitCATEvent('new', diagram);
 				R.SelectDiagram(diagram.name);
@@ -2711,7 +2711,7 @@ class CellTool extends ElementTool
 {
 	constructor(type, headline)
 	{
-		super('Assert', headline, []);
+		super('Assert', headline, ['search']);
 		this.hasDiagramOnlyButton = false;
 		Object.defineProperties(this,
 		{
@@ -4278,15 +4278,16 @@ class D
 	static forEachDiagramSVG(fn)
 	{
 		let dgrmSvg = D.diagramSVG.firstChild;
-		do
-		{
-			if (dgrmSvg.constructor.name === 'SVGGElement' && 'name' in dgrmSvg.dataset)
+		if (dgrmSvg)
+			do
 			{
-				const dgrm = R.$CAT.getElement(dgrmSvg.dataset.name);
-				dgrm && fn(dgrm, dgrmSvg);
+				if (dgrmSvg.constructor.name === 'SVGGElement' && 'name' in dgrmSvg.dataset)
+				{
+					const dgrm = R.$CAT.getElement(dgrmSvg.dataset.name);
+					dgrm && fn(dgrm, dgrmSvg);
+				}
 			}
-		}
-		while((dgrmSvg = dgrmSvg.nextSibling));
+			while((dgrmSvg = dgrmSvg.nextSibling));
 	}
 	static setSessionViewport(viewport)
 	{
@@ -4613,10 +4614,12 @@ class D
 	static uploadJSON(e)
 	{
 		const files = e.target.files;
+		const proc = txt => R.uploadJSON(e, JSON.parse(txt));
 		for (let i=0; i<files.length; ++i)
 		{
 			const file = files[i];
-			file.text().then(txt => R.uploadJSON(e, JSON.parse(txt)));
+//			file.text().then(txt => R.uploadJSON(e, JSON.parse(txt)));
+			file.text().then(proc);
 		}
 	}
 }
@@ -5577,7 +5580,7 @@ class Catalog extends DiagramTool
 		const properNameElt = document.getElementById('catalog-new-properName');
 		const descriptionElt = document.getElementById('catalog-new-description');
 		const codomainElt = document.getElementById('catalog-select-codomain');
-		const diagram = R.createDiagram(codomainElt.value, basenameElt.value, properNameElt.value, descriptionElt.value)
+		const diagram = R.createDiagram(codomainElt.value, basenameElt.value, properNameElt.value, descriptionElt.value);
 		if (diagram instanceof Diagram)
 		{
 			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
@@ -7337,6 +7340,7 @@ class MultiObject extends CatObject
 		const a = super.json();
 		a.objects = this.objects.map(o => o.name);
 		delete a.properName;
+		delete a.basename;
 		return a;
 	}
 	getFactor(factor)
@@ -8042,7 +8046,7 @@ class DiagramText extends Element
 			const text = e.target.innerText;
 			div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
 			if (text !== this.description)
-				R.diagram.commitElementText(e, this.name, e.target, 'description')
+				R.diagram.commitElementText(e, this.name, e.target, 'description');
 			foreign.parentNode && foreign.remove();		// do not do this earlier or the textbox gets corrupted
 			D.closeActiveTextEdit();
 			this.svgText.classList.remove('hidden');
@@ -8200,11 +8204,11 @@ class DiagramObject extends CatObject
 	mouseout(e)
 	{
 		super.mouseout(e);
-		this.svg.querySelectorAll('rect').forEach(rect => rect.remove());;
+		this.svg.querySelectorAll('rect').forEach(rect => rect.remove());
 	}
 	getMouseFactor(e)
 	{
-		this.svg.querySelectorAll('rect').forEach(rect => rect.remove());;
+		this.svg.querySelectorAll('rect').forEach(rect => rect.remove());
 		const graph = this.to.getGraph();
 		const xy = this.diagram.userToDiagramCoords({x:e.clientX, y:e.clientY}).subtract(this.getXY()).add({x:graph.width/2, y:0});
 		let pos = 0;
@@ -8251,7 +8255,7 @@ class DiagramObject extends CatObject
 	{
 		if (this.to instanceof ProductObject)
 		{
-			const result = this.getMouseFactor(e)
+			const result = this.getMouseFactor(e);
 			if (result.factor > -1)
 			{
 				const morphism = this.to.dual ? R.diagram.cofctr(this.to, [result.factor]) : R.diagram.fctr(this.to, [result.factor]);
@@ -8426,7 +8430,7 @@ console.log('fixup in diagram', diagram.name);
 	}
 	initialize()
 	{
-		let cell = null
+		let cell = null;
 		if (this.cell instanceof Cell)
 			cell = this.cell;
 		else
@@ -9252,7 +9256,7 @@ class MorphismAssemblyAction extends Action
 					onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
 					onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
 					onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
-				})))
+				})));
 			else
 				return H3.tr(H3.td(isu.message), H3.td(isu.element.properName));
 		});
@@ -9612,7 +9616,51 @@ class DeleteAction extends Action
 	{
 		if (!diagram.isEditable())
 			return false;
-		return ary.length > 0 && ary.filter(a => a.refcnt > 1).length === 0 && ary.filter(a => a instanceof Cell).length === 0;
+//		return ary.length > 0 && ary.filter(a => a.refcnt > 1).length === 0 && ary.filter(a => a instanceof Cell).length === 0;
+
+
+		let form = ary.length > 0;
+		const ignore = new Set();
+		const proc = m =>
+		{
+			if (ary.includes(m))
+			{
+				if (m.refcnt > 2)
+					form = false;
+				else
+					ignore.add(m);
+			}
+		};
+		for (let i=0; i<ary.length; ++i)
+		{
+			const elt = ary[i];
+			if (elt instanceof Cell)
+			{
+				form = false;
+				break;
+			}
+			if (elt instanceof DiagramComposite)
+			{
+				/*
+				elt.morphisms.map(m =>
+				{
+					if (ary.includes(m))
+					{
+						if (m.refcnt > 2)
+							form = false;
+						else
+							ignore.add(m);
+					}
+				});
+				*/
+				elt.morphisms.map(proc);
+				if (!form)
+					break;
+			}
+		}
+		if (form)
+			form = ary.filter(elt => !ignore.has(elt) && elt.refcnt > 1).length === 0;
+		return form;
 	}
 }
 
@@ -10327,7 +10375,8 @@ class FiniteObjectAction extends Action
 		const to = from.to;
 		const elements = [H3.h4('Finite Object')];
 		elements.push(to.constructor.name === 'CatObject' ? H3.span('Convert generic object to a finite object.', '.smallPrint.italic') : H3.span('Finite object', '.smallPrint.italic'),
-						H3.table(H3.tr(H3.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')))),
+//						H3.table(H3.tr(H3.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')))),
+						H3.table(H3.tr(H3.td(H3.input('##finite-new-size.in100', 'size' in to ? to.size : '', {placeholder:'Size'})))),
 						H3.span('Leave size blank to indicate finite of unknown size', '.smallPrint.italic'),
 						D.getIcon('finiteObject', 'edit', e => this.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Finite object', D.default.button.tiny));
 		elements.map(elt => elt && D.toolbar.help.appendChild(elt));
@@ -10998,7 +11047,7 @@ class Morphism extends Element
 			{
 				this.setRecursor(null);
 				document.getElementById('help-recursor').remove();
-			}
+			};
 			const btn = this.isEditable() ? D.getIcon('delete', 'delete', deleteRecursor, 'Delete recursor') : '';
 			help.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.properName, btn)));
 		}
@@ -12427,6 +12476,8 @@ class IndexCategory extends Category
 	findCells(diagram)
 	{
 		this.cells.forEach(cell => cell.deregister());
+		if (!('morphismToCells' in this))
+			this.morphismToCells = new Map();
 		this.forEachObject(o =>
 		{
 			if (o.domains.size > 1)
@@ -12484,6 +12535,7 @@ class IndexCategory extends Category
 				}
 			}
 		});
+		this.cells.forEach((cell, sig) => cell.register());
 	}
 	loadCells(diagram)
 	{
@@ -12556,8 +12608,9 @@ class MultiMorphism extends Morphism
 	{
 		a = super.json(a);
 		delete a.properName;
+		delete a.basename;
 		if (!('morphisms' in a))
-			a.morphisms = this.morphisms.map(r => r.name);
+			a.morphisms = this.morphisms.map(r => r.name);	// TODO use local name if possible
 		return a;
 	}
 	uses(mor, start = true)
@@ -13103,7 +13156,9 @@ class FactorMorphism extends Morphism
 			for (let i=0; i<factors.length; ++i)
 			{
 				const factor = factors[i];
-				if (factor.length === 0 || factor === -1)
+				if (factor === -1)
+					continue;
+				if (factor.length === 0)
 					return false;
 				if (unique.length > 0 && unique.reduce((r, f) => r || U.ArrayEquals(factor, f), false))
 					return false;
@@ -13800,7 +13855,7 @@ class Diagram extends Functor
 		{
 			cnt = [...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => e.decrRefcnt()).length;
 		}
-		while(cnt > 0)
+		while(cnt > 0);
 	}
 	json()
 	{
@@ -14732,6 +14787,8 @@ class Diagram extends Functor
 	// is an object covered by the listed factors
 	isCovered(obj, factors, issues)
 	{
+		if (!obj.isTerminal() && factors.length === 1 && factors[0] === -1)		// terminals only cover terminals
+			return false;
 		const graph = this.flattenObject(obj).getGraph();
 		factors.map(fctr => graph.getFactor(fctr).tags.push('covered'));
 		let cover = false;
@@ -15043,11 +15100,11 @@ class Diagram extends Functor
 	}
 	hide()
 	{
-		this.svgRoot.classList.add('hidden');
+		this.svgRoot && this.svgRoot.classList.add('hidden');
 	}
 	show()
 	{
-		this.svgRoot.classList.remove('hidden');
+		this.svgRoot && this.svgRoot.classList.remove('hidden');
 	}
 	postProcess()
 	{
@@ -15444,7 +15501,7 @@ class Assembler
 //		this.ref2ndx = new Map();
 		this.obj2flat = new Map();
 		this.processed = new Set();
-		this.folds = new Set();
+//		this.folds = new Set();
 		this.issues = [];
 		this.finished = false;
 	}
@@ -15464,7 +15521,7 @@ class Assembler
 //		this.ref2ndx.clear();
 		this.obj2flat.clear();
 		this.processed.clear();
-		this.folds.clear();
+//		this.folds.clear();
 		this.issues = [];
 		this.clearGraphics();
 	}
@@ -15504,6 +15561,10 @@ class Assembler
 			return FactorMorphism.isReference(morphism.factors);		// unique factors
 		return false;
 	}
+	static isTerminalId(m)
+	{
+		return m.domain.isTerminal() && m.codomain.isTerminal();
+	}
 	deleteEllipse(type, elt)
 	{
 		const ellipse = this.diagram.svgBase.querySelector(`#${type}-${elt.elementId('asmblr')}`);
@@ -15523,12 +15584,14 @@ class Assembler
 	}
 	coreferenceCount(object)	// the number of coreferences whose domain is the given object
 	{
-		return [...object.domains].filter(m => this.coreferences.has(m)).length;
+//		return [...object.domains].filter(m => this.coreferences.has(m)).length;
+		return [...object.codomains].filter(m => this.coreferences.has(m)).length;
 	}
 	useCount(object)	// the number of ref's or coref's whose codomain is this object
 	{
 		return [...object.codomains].filter(m => this.references.has(m) || this.coreferences.has(m)).length;
 	}
+	/*
 	addFold(fld)
 	{
 		this.folds.add(fld);
@@ -15539,11 +15602,23 @@ class Assembler
 		this.folds.delete(fld);
 		this.deleteEllipse('fold', fld);
 	}
+	*/
 	isInput(object)
 	{
-		let refcnt = 0;
-		object.domains.forEach(m => this.references.has(m) && refcnt++);
-		return refcnt === 0 && this.codomainCount(object) === 0 && this.domainCount(object) > 0;
+//		let refcnt = 0;
+//		object.domains.forEach(m => this.references.has(m) && refcnt++);
+//		const refs = [...object.domains].filter(m => this.references.has(m) && (!m.codomain.isTerminal() || m.domain.isTerminal()));
+//		return refs.length === 0 && this.codomainCount(object) === 0 && (this.domainCount(object) > 0 || this.coreferenceCount(object) === 0);
+		if (this.codomainCount(object) === 0)
+		{
+			const refs = [...object.domains].filter(m => this.references.has(m) && !Assembler.isTerminalId(m));
+			if (refs.length > 0)
+				return false;
+			// must have a way out
+			 if (this.domainCount(object) > 0 || this.coreferenceCount(object) === 0)
+				return true;
+		}
+		return false;
 	}
 	addInput(obj)
 	{
@@ -15570,11 +15645,13 @@ class Assembler
 		this.overloaded.add(ovr);
 		Assembler.addBall('Overload', 'ovr', 'assyOverload', ovr);
 	}
+	/*
 	deleteOverloaded(ovr)
 	{
 		this.overloaded.delete(ovr);
 		this.deleteEllipse('ovr', ovr);
 	}
+	*/
 	isOrigin(object)
 	{
 		const codCnt = this.codomainCount(object);
@@ -15711,8 +15788,9 @@ class Assembler
 			const scan = scanning;
 			src.domains.forEach(m =>
 			{
-				// TODO if the product src is covered by projections, then an identity must be propagated
-				if (this.references.has(m) && !this.references.has(m))
+//				// TODO if the product src is covered by projections, then an identity must be propagated
+//				if (this.references.has(m) && !this.references.has(m))
+				if (this.references.has(m))
 					return;
 				tagInfo(m);
 				!scanned.has(m.codomain) && !scanning.includes(m.codomain) && scan.push(m.codomain) && scanned.add(m.codomain);
@@ -15877,8 +15955,9 @@ class Assembler
 		while(scanning.length > 0)
 			this.startComposites(scanning);
 	}
-	coreferenceScan()
-	{
+//	coreferenceScan()
+//	{
+		/*
 		this.coreferences.forEach(cor =>
 		{
 			if (!this.outputs.has(cor.domain))
@@ -15888,8 +15967,10 @@ class Assembler
 			}
 		});
 		this.folds.forEach(fld => this.deleteOverloaded(fld));
-		this.composites.forEach((cmps, obj) => this.composites.set(obj, cmps.filter(cmp => !this.coreferences.has(cmp[0]))));
-	}
+		*/
+// TODO NEEDED?
+//		this.composites.forEach((cmps, obj) => this.composites.set(obj, cmps.filter(cmp => !this.coreferences.has(cmp[0]))));
+//	}
 	getCompositeMorphisms(scanning, domain, currentDomain, index)
 	{
 		if (this.composites.has(domain))
@@ -15954,11 +16035,15 @@ class Assembler
 			const step1s = [];
 			const step2s = [];
 			const step3s = [];
-			coreferences.map(inject =>
+			coreferences.map(insert =>
 			{
-				const fctr = inject.to.factors[0];	// what factor are we hitting in the coproduct?
+				const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
 				// get the morphisms attached to each element
-				const starters = [...inject.domain.codomains].filter(m => !this.coreferences.has(m));
+//				const starters = [...insert.domain.codomains].filter(m => !this.coreferences.has(m));
+				const starters = [...insert.domain.codomains].filter(m => !this.references.has(m));
+				const comps = this.composites.get(insert.domain);
+//				starters.concat(this.composites.get(insert.domain));
+				comps.map(cmp => starters.push(cmp[0]));
 				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index));
 				const homMorph = diagram.prod(...homMorphs);
 				step1s[fctr] = diagram.fctr(homMorph.domain, [-1, []]);	// A --> * x A
@@ -16108,7 +16193,7 @@ class Assembler
 		// setup the composites
 		//
 		this.setupComposites();
-		this.coreferenceScan();
+//		this.coreferenceScan();
 		//
 		// check for overloaded reference objects
 		//

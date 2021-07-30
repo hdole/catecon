@@ -1297,7 +1297,7 @@
       "basename": "t_46",
       "prototype": "DiagramText",
       "xy": {
-        "x": 120,
+        "x": 110,
         "y": -260
       },
       "height": "700",
@@ -3539,6 +3539,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627290414892,
+  "timestamp": 1627377803786,
   "version": 0
 }

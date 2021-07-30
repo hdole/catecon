@@ -1,0 +1,228 @@
+{
+  "description": "Addition of natural numbers",
+  "basename": "nat/add",
+  "name": "hdole/nat/add",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/nat/add_Index",
+  "codomain": "sys/Cat",
+  "references": [
+    "hdole/nat/nat"
+  ],
+  "domainElements": [
+    {
+      "basename": "o_4",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP",
+      "xy": {
+        "x": 20,
+        "y": 70
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+      "xy": {
+        "x": 250,
+        "y": 70
+      }
+    },
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/nat/nat",
+      "xy": {
+        "x": 250,
+        "y": 290
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+      "xy": {
+        "x": 500,
+        "y": 70
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/nat/nat",
+      "xy": {
+        "x": 500,
+        "y": 290
+      }
+    },
+    {
+      "description": "Addition of Natural Numbers",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 10,
+        "y": -20
+      },
+      "height": "37",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/nat/nat/nat",
+      "xy": {
+        "x": 20,
+        "y": 290
+      }
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/add/o_4",
+      "codomain": "hdole/nat/add/o_5",
+      "to": "hdole/nat/add/Pm{hdole/nat/nat/succ,hdole/nat/nat/zero}mP"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/add/o_5",
+      "codomain": "hdole/nat/add/o_0",
+      "to": "hdole/nat/add/add"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/add/o_5",
+      "codomain": "hdole/nat/add/o_8",
+      "to": "hdole/nat/add/Pm{hdole/nat/nat/succ,Id{hdole/nat/nat/nat}dI}mP"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/add/o_8",
+      "codomain": "hdole/nat/add/o_1",
+      "to": "hdole/nat/add/add"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/add/o_0",
+      "codomain": "hdole/nat/add/o_1",
+      "to": "hdole/nat/nat/succ"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/add/o_4",
+      "codomain": "hdole/nat/add/o_2",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/nat/add/Fa{Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP,hdole/nat/nat/nat_0}aF"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/nat/add/o_2",
+      "codomain": "hdole/nat/add/o_0",
+      "to": "hdole/nat/nat/succ"
+    },
+    {
+      "description": "The assertion that the composite of morphisms &#119901;&#8202;&#x2080;,succ equals that of succ&times;&#39;0&#39;,add.",
+      "basename": "a_0",
+      "prototype": "Assertion",
+      "signature": "b2791d59f176081916de47fff726ba09997753b79ef80266fc273f9466427994",
+      "equal": true,
+      "left": [
+        "hdole/nat/add/m_1",
+        "hdole/nat/add/m_6"
+      ],
+      "right": [
+        "hdole/nat/add/m_2",
+        "hdole/nat/add/m_0"
+      ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms succ&times;id,add equals that of add,succ.",
+      "basename": "a_1",
+      "prototype": "Assertion",
+      "signature": "6f6b3dcef0b4ed76d468ce634ea2f226efa01a60afa4745a8206dc36e252154b",
+      "equal": true,
+      "left": [
+        "hdole/nat/add/m_5",
+        "hdole/nat/add/m_3"
+      ],
+      "right": [
+        "hdole/nat/add/m_0",
+        "hdole/nat/add/m_4"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/nat/nat/nat",
+        "hdole/nat/nat/one"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/nat/nat/nat",
+        "hdole/nat/nat/nat"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP",
+      "codomain": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+      "morphisms": [
+        "hdole/nat/nat/succ",
+        "hdole/nat/nat/zero"
+      ]
+    },
+    {
+      "basename": "add",
+      "prototype": "Morphism",
+      "domain": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+      "codomain": "hdole/nat/nat/nat"
+    },
+    {
+      "basename": "Id{hdole/nat/nat/nat}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/nat/nat/nat",
+      "codomain": "hdole/nat/nat/nat"
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+      "codomain": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+      "morphisms": [
+        "hdole/nat/nat/succ",
+        "hdole/nat/add/Id{hdole/nat/nat/nat}dI"
+      ]
+    },
+    {
+      "basename": "Fa{Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP,hdole/nat/nat/nat_0}aF",
+      "prototype": "FactorMorphism",
+      "domain": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP",
+      "codomain": "hdole/nat/nat/nat",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1627551585317,
+  "version": 0,
+  "properName": "hdole/nat/add"
+}

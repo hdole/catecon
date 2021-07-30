@@ -162,6 +162,7 @@ ${members}
 		}
 		instantiate(element)
 		{
+//			const code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
 			return this.cline(this.getCode(element).replace(/%0/g, this.getType(element)));
 		}
 		generateObject(object, generated = new Set())
@@ -258,7 +259,7 @@ ${members}
 					const thisFactor = U.pushFactor(downFactor, f);
 					ndxMap.set(thisFactor.toString(), g.var);
 				}
-			}
+			};
 			let factor = domFactor;
 			let downFactor = [0];
 			graph.graphs[0].scan(fn);
