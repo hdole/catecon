@@ -1159,7 +1159,10 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 					return;
 				}
 				const diagram = R.$CAT.getElement(name);
-				diagram && diagram.decrRefcnt();
+				if (diagram)
+					diagram.decrRefcnt();
+				else
+					R.catalog.delete(name);
 			}).catch(err => D.RecordError(err));
 		}
 	}
