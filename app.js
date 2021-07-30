@@ -318,12 +318,12 @@ function validate(req, res, fn)
 	jwt.verify(token, pem, fn);
 }
 
-function updateDiagramTable(name, info, fn)
+function updateDiagramTable(name, info, fn, cloudTimestamp)
 {
 	if (info.user === 'sys' || name === info.user + '/' + info.user)	// do not track system or user/user diagrams
 		return;
 	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ? WHERE name = ?';
-	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, info.timestamp, name];
+	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, name];
 	console.log('updating diagram table', args);
 	dbcon.query(updateSql, args, fn);
 }
@@ -341,11 +341,15 @@ function updateSQLDiagramsByCatalog()
 			{
 				const cloudInfo = Cat.R.catalog.get(info.name);
 				if (cloudInfo && cloudInfo.timestamp > info.timestamp)		// cloud is newer
-					updateDiagramTable(info.name, cloudInfo, (error, result) => error && console.log({error}));
+					updateDiagramTable(info.name, cloudInfo, (error, result) => error && console.log({error}), cloudInfo.cloudTimestamp);
 			}
 			remaining.delete(info.name);
 		});
-		remaining.forEach(name => updateDiagramTable(name, Cat.R.catalog.get(name), (error, result) => error && console.log({error})));
+		remaining.forEach(name =>
+		{
+			const info = Cat.R.catalog.get(name);
+			updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp);
+		});
 	});
 }
 
@@ -561,6 +565,7 @@ async function serve()
 		//
 		app.post('/userInfo', (req, res) =>
 		{
+console.log('inbound query userinfo');
 			dbcon.query('SELECT * FROM Catecon.users WHERE name=?;', [req.user], (error, result) =>
 			{
 				if (error)
@@ -569,6 +574,7 @@ async function serve()
 					res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 					return;
 				}
+console.log('outbound query userinfo');
 				res.json(result[0]).end();
 			});
 		});
@@ -638,7 +644,7 @@ async function serve()
 						finalProcessing();
 						updateRefcnts(oldrefs, diagram.references);
 						res.status(HTTP.OK).end();
-					});
+					}, info.cloudTimestamp);
 				}
 				if (png)
 					saveDiagramPng(name, png);
