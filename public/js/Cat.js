@@ -751,6 +751,7 @@ class R
 	}
 	static Initialize(fn = null)
 	{
+		const start = Date.now();
 		R.sync = false;
 		R.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
 		if (isGUI)
@@ -777,8 +778,15 @@ class R
 			D.session.mode = 'diagram';
 		else if (isGUI && D.session.mode === 'diagram' && D.session.default)
 			R.params.set('diagram', D.session.default);		// set default diagram
-		isGUI && D.catalog.show(D.session.mode === 'catalog');
-		D.Busy();
+		if (isGUI)
+		{
+			D.catalog.show(D.session.mode === 'catalog');
+			D.topSVG.setAttribute('width', window.innerWidth);
+			D.topSVG.setAttribute('height', window.innerHeight);
+			D.uiSVG.setAttribute('width', window.innerWidth);
+			D.uiSVG.setAttribute('height', window.innerHeight);
+			D.Busy();
+		}
 		R.ReadDefaults();
 		R.SetupWorkers();
 		D.url = isGUI ? (window.URL || window.webkitURL || window) : null;
@@ -808,12 +816,6 @@ class R
 					}
 				}
 				R.initialized = true;
-				isGUI && D.session.diagrams.filter(d => R.catalog.has(d)).map(d => R.DownloadDiagram(d, _ =>
-				{
-					const diagram = R.$CAT.getElement(d);
-					diagram.makeSVG();
-					diagram.setPlacement(diagram.getPlacement(), false);
-				}));
 				if (isGUI)
 				{
 					R.LoadScript('js/javascript.js');
@@ -827,6 +829,8 @@ class R
 			else
 				loader();
 			D.EmitApplicationEvent('start');
+			const end = Date.now();
+			console.log(`R initialization ${end - start}ms`);
 		});
 	}
 	static GetUserDiagram(user)		// the user's diagram of their diagrams
@@ -991,8 +995,6 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 			D.EmitCATEvent('default', R.diagram, action);
 			return;
 		}
-		if (isGUI && name)
-			D.Busy();
 		R.default.debug && console.log('SelectDiagram', name);
 		R.diagram = null;
 		let diagram = name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
@@ -1003,7 +1005,6 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 				diagram = await R.DownloadDiagram(name);
 			if (!diagram)
 			{
-				D.NotBusy();
 				D.EmitCATEvent('default', null);
 				return;
 			}
@@ -1012,12 +1013,6 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		if (!diagram)
 			throw 'no such diagram';
 		R.diagram = diagram;
-		if (isGUI && R.diagram)
-		{
-			R.diagram.makeSVG();
-			R.diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
-		}
-		D.NotBusy();
 		D.EmitCATEvent('default', diagram, action);
 	}
 	static GetCategory(name)
@@ -1497,7 +1492,7 @@ class Amazon extends Cloud
 					}).then(json =>
 					{
 						R.user.cloud = json;
-						R.user.cloud.permissions = R.user.cloud.permissions.split(' ');
+						R.user.cloud.permissions = 'permissions' in json ? R.user.cloud.permissions.split(' ') : [];
 						D.EmitLoginEvent();
 					}).catch(err => D.RecordError(err));
 				});
@@ -3463,6 +3458,7 @@ class D
 						{
 							D.session.default = diagram.name;
 							diagram.makeSVG();
+							diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
 							D.diagramSVG.appendChild(diagram.svgRoot);
 							const placement = diagram.getPlacement();
 							D.diagramSVG.classList.remove('trans');
@@ -3528,11 +3524,6 @@ class D
 			}
 			if (R.user.status !== 'logged-in')
 				return;
-			R.authFetch(R.getURL('userInfo'), {}).then(res => res.json()).then(json =>
-			{
-				R.user.cloud = json;
-				R.user.cloud.permissions = 'permissions' in json ? R.user.cloud.permissions.split(' ') : [];
-			});
 		});
 		window.onresize = D.Resize;
 		window.addEventListener('mousemove', D.Autohide);
@@ -3637,7 +3628,6 @@ class D
 			switch (args.command)
 			{
 				case 'start':
-					D.NotBusy();
 					D.forEachDiagramSVG(d => d.show());
 					D.setFullscreen(D.default.fullscreen);
 					break;
@@ -4232,19 +4222,21 @@ class D
 		};
 		D.ReplayCommands.set('removeReference', replayRemoveReference);
 	}
-	static Busy()
+	static Busy(msg = '')
 	{
-		if (isGUI && !('busyBtn' in R))
-		{
-			D.toolbar.hide();
-			const svg = document.getElementById('topSVG');
-			const cx = window.innerWidth/2 - 160;
-			const cy = window.innerHeight/2 - 160;
-			const btn = H3.g(H3.g(H3.animateTransform({attributeName:"transform", type:"rotate", from:"360 160 160", to:"0 160 160", dur:"1s", repeatCount:'indefinite'}),
-									H3.path({class:"svgfilNone svgstr1", d:D.GetArc(160, 160, 100, 45, 360), 'marker-end':'url(#arrowhead)'})), {transform:`translate(${cx}, ${cy})`});
-			R.busyBtn = btn;
-			svg.appendChild(btn);
-		}
+		if ('busyBtn' in R)
+			R.busyBtn.remove();
+		D.toolbar.hide();
+		const svg = document.getElementById('topSVG');
+		const size = 160;
+		const cx = window.innerWidth/2 - size;
+		const cy = window.innerHeight/2 - size;
+		const btn = H3.g(H3.g(H3.animateTransform({attributeName:"transform", type:"rotate", from:`360 ${size} ${size}`, to:`0 ${size} ${size}`, dur:"1s", repeatCount:'indefinite'}),
+								H3.path({class:"svgfilNone svgstr1", d:D.GetArc(size, size, 100, 45, 360), 'marker-end':'url(#arrowhead)'})), {transform:`translate(${cx}, ${cy})`});
+		R.busyBtn = btn;
+		svg.appendChild(btn);
+		if (msg !== '')
+			btn.appendChild(H3.text(msg, {x:-size, y:size + window.innerHeight * .25, textAnchor:'middle', style:'"Fira Sans",sans-serif;font-size:96px;font-weight:bold'}));
 	}
 	static NotBusy()
 	{
@@ -4621,7 +4613,6 @@ class D
 		for (let i=0; i<files.length; ++i)
 		{
 			const file = files[i];
-//			file.text().then(txt => R.uploadJSON(e, JSON.parse(txt)));
 			file.text().then(proc);
 		}
 	}
@@ -5233,6 +5224,7 @@ class Catalog extends DiagramTool
 					}
 					break;
 				case 'default':
+					D.NotBusy();
 					if (this.view === 'reference')
 						this.reference();
 					break;
@@ -5504,7 +5496,10 @@ class Catalog extends DiagramTool
 	show(visible = true)
 	{
 		if (visible)
+		{
 			this.catalog.classList.remove('hidden');
+			document.getElementById('diagramView').classList.add('hidden');
+		}
 		else
 			this.hide();
 	}
@@ -5540,7 +5535,6 @@ class Catalog extends DiagramTool
 	{
 		if (!this.diagrams)
 			return;
-		D.NotBusy();
 		this.clearSearch();
 		if (R.diagram)
 		{
@@ -5574,6 +5568,7 @@ class Catalog extends DiagramTool
 	hide()
 	{
 		this.catalog.classList.add('hidden');
+		document.getElementById('diagramView').classList.remove('hidden');
 	}
 	createDiagram()
 	{
@@ -6193,6 +6188,7 @@ class HelpPanel extends Panel
 			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn())), '.buttonBarRight'),
 			H3.h3('Catecon'),
 			H3.h4('The Categorical Console'),
+			H3.p('.center', H3.a('Documentation', {href:'/doc/Catecon.pdf', target:'_blank'})),
 			H3.button('Category Theory', '##catHelpPnlBtn.sidenavAccordion', {title:'References', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catHelpPnl')}),
 			H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
 					H3.h4('References'),
@@ -6471,10 +6467,7 @@ class Element
 						H3.tr(H3.td('Diagram:', '.left'), H3.td(this.diagram ? this.diagram.properName : '', '.left')),
 						H3.tr(H3.td('User:', '.left'), H3.td(this.diagram ? this.diagram.user : '', '.left')), {id});
 	}
-	//
-	// can only edit the current diagram
-	//
-	isEditable()
+	isEditable()		// can only edit the current diagram
 	{
 		const writable = 'readonly' in this ? !this.readonly : true;
 		if (this instanceof Diagram)
@@ -9619,9 +9612,6 @@ class DeleteAction extends Action
 	{
 		if (!diagram.isEditable())
 			return false;
-//		return ary.length > 0 && ary.filter(a => a.refcnt > 1).length === 0 && ary.filter(a => a instanceof Cell).length === 0;
-
-
 		let form = ary.length > 0;
 		const ignore = new Set();
 		const proc = m =>
@@ -9644,18 +9634,6 @@ class DeleteAction extends Action
 			}
 			if (elt instanceof DiagramComposite)
 			{
-				/*
-				elt.morphisms.map(m =>
-				{
-					if (ary.includes(m))
-					{
-						if (m.refcnt > 2)
-							form = false;
-						else
-							ignore.add(m);
-					}
-				});
-				*/
 				elt.morphisms.map(proc);
 				if (!form)
 					break;
@@ -10314,6 +10292,8 @@ class RunAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
+		if (!diagram.isEditable())
+			return false;
 		if (!this.js)
 			this.js = R.Actions.javascript;
 		if (ary.length === 1 && 'to' in ary[0])
@@ -10378,7 +10358,6 @@ class FiniteObjectAction extends Action
 		const to = from.to;
 		const elements = [H3.h4('Finite Object')];
 		elements.push(to.constructor.name === 'CatObject' ? H3.span('Convert generic object to a finite object.', '.smallPrint.italic') : H3.span('Finite object', '.smallPrint.italic'),
-//						H3.table(H3.tr(H3.td(D.Input('size' in to ? to.size : '', 'finite-new-size', 'Size')))),
 						H3.table(H3.tr(H3.td(H3.input('##finite-new-size.in100', 'size' in to ? to.size : '', {placeholder:'Size'})))),
 						H3.span('Leave size blank to indicate finite of unknown size', '.smallPrint.italic'),
 						D.getIcon('finiteObject', 'edit', e => this.action(e, Cat.R.diagram, Cat.R.diagram.selected), 'Finite object', D.default.button.tiny));
@@ -10466,6 +10445,8 @@ class DistributeAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
+		if (!diagram.isEditable())
+			return false;
 		return Distribute.HasForm(diagram, ary) || Dedistribute.HasForm(diagram, ary);
 	}
 }
@@ -10515,6 +10496,8 @@ class AlignHorizontalAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
+		if (!diagram.isEditable())
+			return false;
 		const items = this.getItems(ary);
 		const length = items.length;
 		const midX = items.map(i => i.x).reduce((r, x) => r + x, 0)/length;
@@ -10571,6 +10554,8 @@ class AlignVerticalAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
+		if (!diagram.isEditable())
+			return false;
 		const items = this.getItems(ary);
 		const length = items.length;
 		const midX = items.map(i => i.x).reduce((r, x) => r + x, 0)/length;
@@ -10642,7 +10627,7 @@ class RecursionAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return Morphism.HasRecursiveForm(ary);
+		return diagram.isEditable() && Morphism.HasRecursiveForm(ary);
 	}
 }
 
@@ -10701,7 +10686,7 @@ class SwapAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (ary.length === 1)
+		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
 			return from instanceof DiagramMorphism && from.refcnt === 1 && from.to.refcnt === 1 && from.to.constructor.name === 'Morphism';
@@ -10815,7 +10800,7 @@ class Category extends CatObject
 					case 'DiagramObject':
 					case 'DiagramText':
 					case 'TensorObject':
-						procElt(args, ndx);
+						setTimeout(_ => procElt(args, ndx), 0);
 						break;
 				}
 			});
@@ -10838,7 +10823,7 @@ class Category extends CatObject
 					case 'Distribute':
 					case 'Dedistribute':
 					case 'Assertion':
-						procElt(args, ndx);
+						setTimeout(_ => procElt(args, ndx), 0);
 						break;
 				}
 			});
@@ -11773,7 +11758,8 @@ class DiagramMorphism extends Morphism
 			else if (angle > bnd && angle < Math.PI - bnd)
 				anchor = this.attributes.get('flipName') ? 'end' : 'start';
 		}
-		svg.style.textAnchor = anchor;
+		if (svg.style.textAnchor !== anchor)
+			svg.style.textAnchor = anchor;
 	}
 	getSvgNameBBox()
 	{
@@ -14272,8 +14258,7 @@ class Diagram extends Functor
 			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
 			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
 			const from = new DiagramMorphism(this, {to, domain:domainElt, codomain:codomainElt});
-			if (select)
-				this.makeSelected(from);
+			select && this.makeSelected(from);
 			return from;
 		}
 		catch(x)
@@ -14373,6 +14358,7 @@ class Diagram extends Functor
 	{
 		if (!this.svgRoot)
 		{
+			D.Busy(`Loading ${this.name}`);
 			this.svgRoot = H3.g({id:this.elementId('root'), 'data-name':this.name});
 			this.makeGrounds();
 			const f4gnd = this.svgRoot.lastElementChild;
@@ -14387,7 +14373,8 @@ class Diagram extends Functor
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.svgRoot.classList.add('hidden');
 			this.svgRoot.appendChild(f4gnd);
-			this.domain.elements.forEach(elt => this.addSVG(elt));
+			this.domain.elements.forEach(elt => setTimeout(_ => this.addSVG(elt), 0));
+			D.NotBusy();
 		}
 	}
 	upload(e, local = true)
@@ -15456,9 +15443,12 @@ class Diagram extends Functor
 	close()
 	{
 		this.hide();
-		this.svgRoot.remove();
-		this.svgRoot = null;
-		this.svgBase = null;
+		if (this.svgRoot)
+		{
+			this.svgRoot.remove();
+			this.svgRoot = null;
+			this.svgBase = null;
+		}
 		D.EmitCATEvent('close', this.name);
 	}
 	static Codename(args)
@@ -15958,22 +15948,6 @@ class Assembler
 		while(scanning.length > 0)
 			this.startComposites(scanning);
 	}
-//	coreferenceScan()
-//	{
-		/*
-		this.coreferences.forEach(cor =>
-		{
-			if (!this.outputs.has(cor.domain))
-			{
-				const comps = this.composites.get(cor.domain).filter(cmp => !this.coreferences.has(cmp[cmp.length -1]));
-				comps.map(cmp => cmp.length > 0 && this.addFold(cmp[cmp.length -1]));
-			}
-		});
-		this.folds.forEach(fld => this.deleteOverloaded(fld));
-		*/
-// TODO NEEDED?
-//		this.composites.forEach((cmps, obj) => this.composites.set(obj, cmps.filter(cmp => !this.coreferences.has(cmp[0]))));
-//	}
 	getCompositeMorphisms(scanning, domain, currentDomain, index)
 	{
 		if (this.composites.has(domain))
@@ -16042,10 +16016,8 @@ class Assembler
 			{
 				const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
 				// get the morphisms attached to each element
-//				const starters = [...insert.domain.codomains].filter(m => !this.coreferences.has(m));
 				const starters = [...insert.domain.codomains].filter(m => !this.references.has(m));
 				const comps = this.composites.get(insert.domain);
-//				starters.concat(this.composites.get(insert.domain));
 				comps.map(cmp => starters.push(cmp[0]));
 				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index));
 				const homMorph = diagram.prod(...homMorphs);
@@ -16196,7 +16168,6 @@ class Assembler
 		// setup the composites
 		//
 		this.setupComposites();
-//		this.coreferenceScan();
 		//
 		// check for overloaded reference objects
 		//
