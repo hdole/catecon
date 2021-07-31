@@ -453,7 +453,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
       "xy": {
-        "x": 820,
+        "x": 760,
         "y": 370
       }
     },
@@ -462,7 +462,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/test/Point",
       "xy": {
-        "x": 1020,
+        "x": 1100,
         "y": 370
       }
     },
@@ -480,8 +480,8 @@
       "prototype": "DiagramObject",
       "to": "hdole/test/tst",
       "xy": {
-        "x": 370,
-        "y": -20
+        "x": 470,
+        "y": 200
       }
     },
     {
@@ -711,6 +711,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/test/o_9",
       "codomain": "hdole/test/o_10",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/test/h"
     },
@@ -1601,7 +1607,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627596691752,
+  "timestamp": 1627706396675,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"

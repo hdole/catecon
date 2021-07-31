@@ -2627,7 +2627,6 @@
       "properName": "void*"
     },
     {
-      "basename": "Po{hdole/Strings/str,hdole/int/Z32}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -2635,7 +2634,6 @@
       ]
     },
     {
-      "basename": "CPo{file,Errno}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -2652,7 +2650,6 @@
       }
     },
     {
-      "basename": "Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/cpp/voidPtr",
@@ -2664,7 +2661,6 @@
       ]
     },
     {
-      "basename": "CPo{voidPtr,Errno}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -2673,7 +2669,6 @@
       ]
     },
     {
-      "basename": "Po{voidPtr,size_t}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/cpp/voidPtr",
@@ -2681,7 +2676,6 @@
       ]
     },
     {
-      "basename": "Po{voidPtr,hdole/nat/N64}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/cpp/voidPtr",
@@ -2689,7 +2683,6 @@
       ]
     },
     {
-      "basename": "Po{voidPtr,hdole/nat/N16}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/cpp/voidPtr",
@@ -2697,7 +2690,6 @@
       ]
     },
     {
-      "basename": "CPo{#1,Errno}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -2706,7 +2698,6 @@
       ]
     },
     {
-      "basename": "CPo{stat,Errno}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -3518,7 +3509,6 @@
       "codomain": "hdole/cpp/size_t"
     },
     {
-      "basename": "Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC",
       "prototype": "Composite",
       "domain": "hdole/cpp/off_t",
       "codomain": "hdole/cpp/size_t",
@@ -3539,6 +3529,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627377803786,
+  "timestamp": 1627710289196,
   "version": 0
 }

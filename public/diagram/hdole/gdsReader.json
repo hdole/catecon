@@ -2558,7 +2558,6 @@
       "prototype": "CatObject"
     },
     {
-      "basename": "Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gds/Layer",
@@ -2587,7 +2586,6 @@
       "codomain": "hdole/gdsReader/BndryData"
     },
     {
-      "basename": "Po{hdole/gds/Width,hdole/gds/EndType}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gds/Width",
@@ -2614,7 +2612,6 @@
       "codomain": "hdole/gdsReader/PathData"
     },
     {
-      "basename": "Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gds/Rows",
@@ -2624,7 +2621,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gds/Reflection",
@@ -2671,7 +2667,6 @@
       "codomain": "hdole/gdsReader/ArefData"
     },
     {
-      "basename": "Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gdsReader/Halt",
@@ -2730,7 +2725,6 @@
     },
     {
       "description": "The homset from State to State",
-      "basename": "Ho{State,State}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/gdsReader/State",
@@ -2738,7 +2732,6 @@
       ]
     },
     {
-      "basename": "Po{Ho{State,State}oH,State}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gdsReader/Ho{State,State}oH",
@@ -2747,7 +2740,6 @@
     },
     {
       "description": "The homset from State to G",
-      "basename": "Ho{State,G}oH",
       "prototype": "HomObject",
       "objects": [
         "hdole/gdsReader/State",
@@ -2774,7 +2766,6 @@
       "codomain": "hdole/gdsReader/RecordLength"
     },
     {
-      "basename": "Po{hdole/nat/N16,hdole/nat/N16}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N16",
@@ -2782,7 +2773,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/cpp/voidPtr,RecordLength}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/cpp/voidPtr",
@@ -2790,7 +2780,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/cpp/voidPtr,hdole/nat/N16}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/cpp/voidPtr",
@@ -2798,7 +2787,6 @@
       ]
     },
     {
-      "basename": "Po{State,State}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gdsReader/State",
@@ -2806,7 +2794,6 @@
       ]
     },
     {
-      "basename": "Po{#1,#1,#1}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gdsReader/#1",
@@ -2815,7 +2802,6 @@
       ]
     },
     {
-      "basename": "Po{#1,#1}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gdsReader/#1",
@@ -2823,7 +2809,6 @@
       ]
     },
     {
-      "basename": "Po{#1,#1,#1,#1}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/gdsReader/#1",
@@ -2833,7 +2818,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/cpp/voidPtr,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -2868,7 +2852,6 @@
     },
     {
       "description": "The morphism &lt;void*&#x2081;&gt;&#8728;&#8797; is the composite of &#8797;, &lt;void*&#x2081;&gt;.",
-      "basename": "Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC",
       "prototype": "Composite",
       "domain": "hdole/gdsReader/State",
       "codomain": "hdole/cpp/voidPtr",
@@ -3308,7 +3291,6 @@
       "codomain": "hdole/cpp/voidPtr"
     },
     {
-      "basename": "Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP",
       "prototype": "ProductMorphism",
       "domain": "hdole/gdsReader/Po{hdole/cpp/voidPtr,RecordLength}oP",
       "codomain": "hdole/gdsReader/Po{hdole/cpp/voidPtr,hdole/nat/N16}oP",
@@ -3326,7 +3308,6 @@
     },
     {
       "description": "The morphism +n&#8728;(Id&times;&#8797;)&#8728;&lt;&gt; is the composite of &lt;&gt;, Id&times;&#8797;, +n.",
-      "basename": "Cm{State2voidSxN16,Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP,hdole/cpp/voidPtrPlusN}mC",
       "prototype": "Composite",
       "domain": "hdole/gdsReader/State",
       "codomain": "hdole/cpp/voidPtr",
@@ -3538,7 +3519,6 @@
       ]
     },
     {
-      "basename": "Pm{data_6,data_4,data_5}mP",
       "prototype": "ProductMorphism",
       "domain": "hdole/gdsReader/Po{#1,#1,#1}oP",
       "codomain": "hdole/gdsReader/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
@@ -3549,7 +3529,6 @@
       ]
     },
     {
-      "basename": "Pm{data_7,data_8}mP",
       "prototype": "ProductMorphism",
       "domain": "hdole/gdsReader/Po{#1,#1}oP",
       "codomain": "hdole/gdsReader/Po{hdole/gds/Width,hdole/gds/EndType}oP",
@@ -3559,7 +3538,6 @@
       ]
     },
     {
-      "basename": "Pm{initialLayer,initialDatatype,noPointsFn,noProperties}mP",
       "prototype": "ProductMorphism",
       "domain": "hdole/gdsReader/Po{#1,#1,#1,#1}oP",
       "codomain": "hdole/gdsReader/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
@@ -3599,7 +3577,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627343234342,
+  "timestamp": 1627702299469,
   "version": 0,
   "hiddenCells": [
     "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e",
