@@ -283,7 +283,6 @@ function validate(req, res, fn)
 	const token = req.get('token') || (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
 	if (typeof token === 'undefined')
 	{
-		console.log('*** no user token');
 		res.status(HTTP.UNAUTHORIZED).end('Error:  no token');
 		return;
 	}
@@ -565,7 +564,6 @@ async function serve()
 		//
 		app.post('/userInfo', (req, res) =>
 		{
-console.log('inbound query userinfo');
 			dbcon.query('SELECT * FROM Catecon.users WHERE name=?;', [req.user], (error, result) =>
 			{
 				if (error)
@@ -574,7 +572,6 @@ console.log('inbound query userinfo');
 					res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
 					return;
 				}
-console.log('outbound query userinfo');
 				res.json(result[0]).end();
 			});
 		});
