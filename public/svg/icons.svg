@@ -129,8 +129,8 @@
 		<line class="arrow0" x1="38" y1="122" x2="122" y2="38"/>
 		<line class="arrow0" x1="240" y1="80" x2="80" y2="240"/>
 		<circle class="svgstr4" cx="240" cy="240" r="60"/>
-		<line class="arrow0" x1="198" y1="198" x2="282" y2="282"/>
-		<line class="arrow0" x1="282" y1="198" x2="198" y2="282"/>
+		<line class="arrow0" x1="240" y1="180" x2="240" y2="300"/>
+		<line class="arrow0" x1="180" y1="240" x2="300" y2="240"/>
 	</symbol>
 	<symbol id="icon-down" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="60" x2="160" y2="260" marker-end="url(#arrowhead)"/>
