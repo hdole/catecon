@@ -1028,6 +1028,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		if (refs.has(name))
 			return refs;
 		const info = R.catalog.get(name);
+if (info instanceof Diagram)debugger;
 		refs.add(name);
 		info && info.references.map(r => R.GetReferences(r, refs));
 		return refs;
@@ -2519,24 +2520,29 @@ class DiagramTool extends ElementTool
 					buttons.push(btn);
 				}
 			}
-			else if (R.catalog.has(diagram) && name !== R.diagram.name && !diagram.allReferences.has(name))
+			else if (!R.diagram.allReferences.has(name) && R.catalog.has(name) && name !== R.diagram.name)
+//			else if (R.catalog.has(name) && name !== R.diagram.name && !R.GetReferences(name).has(name))
 			{
-				const addRef = (e, name) =>
+				const allRefs = R.GetReferences(name);
+				if (!allRefs.has(R.diagram.name))
 				{
-					R.DownloadDiagram(name, ev =>
+					const addRef = (e, name) =>
 					{
-						try
+						R.DownloadDiagram(name, ev =>
 						{
-							R.AddReference(ev, name);
-							this.search();
-						}
-						catch(x)
-						{
-							D.toolbar.showError(x);
-						}
-					}, e);
-				};
-				buttons.push(D.getIcon('reference', 'reference', e => addRef(e, name), 'Add reference', btnSize));
+							try
+							{
+								R.AddReference(ev, name);
+								this.search();
+							}
+							catch(x)
+							{
+								D.toolbar.showError(x);
+							}
+						}, e);
+					};
+					buttons.push(D.getIcon('reference', 'reference', e => addRef(e, name), 'Add reference', btnSize));
+				}
 			}
 		}
 		if ((!R.diagram || name !== R.diagram.name) && !nobuts.has('close') && D.viewports.has(name))
@@ -2569,12 +2575,14 @@ class DiagramTool extends ElementTool
 		const diagram = R.diagram;
 		const toolbar2 = D.toolbar.element.querySelector('div #Diagram-toolbar2');
 		toolbar2.appendChild(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload-json'), 'Upload', D.default.button.small, `${this.type}-upload-json-icon`));
+/*
 		const jsonUploadSection = H3.div('##Diagram-upload-json.hidden',
 			H3.h4('Upload Diagram JSON'),
 			H3.label('Select JSON file to upload as diagram:', {for:'upload-json'}),
 			H3.br(),
 			H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => D.uploadJSON(e)}));
-		toolbar2.parentNode.insertBefore(jsonUploadSection, toolbar2.nextSibling);
+*/
+		toolbar2.parentNode.insertBefore(D.uploadJSONForm(), toolbar2.nextSibling);
 		this.setSearchBar();
 	}
 	setSaveSorter(e)
@@ -4616,6 +4624,14 @@ class D
 			file.text().then(proc);
 		}
 	}
+	static uploadJSONForm()
+	{
+		return H3.div('##Diagram-upload-json.hidden',
+			H3.h4('Upload Diagram JSON'),
+			H3.label('Select JSON file to upload as diagram:', {for:'upload-json'}),
+			H3.br(),
+			H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => D.uploadJSON(e)}));
+	}
 }
 Object.defineProperties(D,
 {
@@ -5187,10 +5203,12 @@ class Catalog extends DiagramTool
 			const elt = R.$CAT.getElement(R.user.name + '/' + e.target.value);
 			elt || (e.target.value !== '' && !U.isValidBasename(e.target.value)) ? e.target.classList.add('error') : e.target.classList.remove('error');
 		};
+		const uploadForm = D.uploadJSONForm();
 		const topBar = H3.table('.w100', H3.tr(H3.td(searchTable), H3.td(
 						H3.table('##catalog-diagram-new',
-							H3.tr(H3.th('New diagram')),
-							H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => inputBasenameSearch(e)}),
+							H3.tr(H3.th('New Diagram')),
+							H3.tr(H3.td(D.getIcon('upload-json', 'upload-json', _ => uploadForm.classList.remove('hidden'), 'Upload', D.default.button.small), uploadForm),
+								  H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => inputBasenameSearch(e)}),
 											H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.OnEnter(e, action)}),
 											H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.OnEnter(e, action)}),
 											H3.span('##catalog-select-codomain-span'),
@@ -6496,12 +6514,12 @@ class Element
 		const a = {};
 		a.description =	this.description;
 		if ('basename' in this)
-			a.basename =	this.basename;
+			a.basename = this.basename;
 		if ('name' in this)
-			a.name =	this.name;
-		a.prototype =	this.constructor.name;
+			a.name = this.name;
+		a.prototype = this.constructor.name;
 		if (this.properName !== this.basename)
-			a.properName =	this.properName;
+			a.properName = this.properName;
 		if ('category' in this && this.category)
 			a.category = this.category.name;
 		if ('diagram' in this && this.diagram)
@@ -6948,7 +6966,7 @@ class Graph
 					color = diagram.colorIndex2color[colorIndex];
 				else
 				{
-					color = data.color;
+					color = U.Sig(colorIndex).substring(0, 6);
 					diagram.colorIndex2color[colorIndex] = color;
 				}
 				data.visited.push(idxStr + ' ' + visitedStr);
@@ -7331,12 +7349,13 @@ class MultiObject extends CatObject
 		if (this.refcnt <= 0)
 			this.objects.map(o => o.decrRefcnt());
 	}
-	json()
+	json(delBasename = true)
 	{
 		const a = super.json();
 		a.objects = this.objects.map(o => o.name);
 		delete a.properName;
-		delete a.basename;
+		if (delBasename)
+			delete a.basename;
 		return a;
 	}
 	getFactor(factor)
@@ -7375,7 +7394,7 @@ class MultiObject extends CatObject
 		const cap = this.objects.length - 1;
 		const graphs = this.objects.map((o, i) =>
 			{
-				const g = o.getGraph(data);
+				const g = o.getGraph(data, false);
 				if (this.resetPosition())
 					data.position = 0;
 				else if (i < cap)
@@ -7455,9 +7474,9 @@ class ProductObject extends MultiObject
 		this.constructor.name === 'ProductObject' && D.EmitElementEvent(diagram, 'new', this);
 		this.signature = ProductObject.Signature(diagram, this.objects, this.dual);
 	}
-	json()
+	json(delBasename = true)
 	{
-		const a = super.json();
+		const a = super.json(delBasename);
 		delete a.description;		// TODO remove after all diagrams updated
 		return a;
 	}
@@ -7610,9 +7629,9 @@ class PullbackObject extends ProductObject
 			this.morphisms.map(m => m.decrRefcnt());
 		}
 	}
-	json()
+	json(delBasename = true)
 	{
-		const a = super.json();
+		const a = super.json(delBasename);
 		delete a.properName;
 		a.morphisms = this.morphisms.map(m => m.name);
 		a.cone = this.cone;
@@ -9747,7 +9766,7 @@ class ProjectAction extends Action
 	{
 		const subscript = index.length > 0 ? H3.sub(index.join()) : null;
 		return H3.table(H3.tr(H3.td(H3.button(object.properName, subscript, {id:Cat.R.diagram.elementId('project'), title:'Place object',
-			'data-indices':index.toString(), onclick:e => Cat.R.Actions[dual ? 'inject' : 'project'].addFactor(root.name, index.toString())}))));
+			'data-indices':index.toString(), onclick:e => Cat.R.Actions[dual ? 'inject' : 'project'].addFactor(root.name, ...index)}))));
 	}
 	static ProductObjectFactorButton(dir, root, object, index, dual)
 	{
@@ -10116,7 +10135,8 @@ class RunAction extends Action
 		if (from instanceof DiagramObject)
 		{
 			if (this.js.canFormat(source))
-				elements.push(H3.span({innerHTML:this.js.getInputHtml(source)}), addDataBtn);
+//				elements.push(H3.span({innerHTML:this.js.getInputHtml(source)}), addDataBtn);
+				elements.push(this.js.getInputHtml(source), addDataBtn);
 		}
 		else	// morphism
 		{
@@ -10193,7 +10213,7 @@ class RunAction extends Action
 			const watcher = (mutationsList, observer) =>
 			{
 				for(const m of mutationsList)
-					btn.style.display = m.target.children.length > 1 ? 'block' : 'none';
+					btn.style.display = m.target.children.length > 0 ? 'block' : 'none';
 				if (this.postResultFun)
 				{
 					this.postResultFun();
@@ -10427,6 +10447,23 @@ class DistributeAction extends Action
 		if (!isGUI)
 			return;
 	}
+	html(e, diagram, ary)
+	{
+		const from = ary[0];
+		const to = from.to.getBase();
+		D.RemoveChildren(D.toolbar.help);
+		const objLeft = to.objects[0];
+		const objRight = to.objects[1];
+		const rightBtn = H3.button(`${objRight.properName} over ${objLeft.properName}`, {title:'Distribute over this object', onclick:e => this.doit(e, diagram, from, true)});
+		const leftBtn = H3.button(`${objLeft.properName} over ${objRight.properName}`, {title:'Distribute over this object', onclick:e => this.doit(e, diagram, from, false)});
+		const elements = [	H3.h4(`Create Distribution Morphism`),
+							H3.div('.center',
+								H3.span('.smallBold', to.properName),
+								H3.table(H3.tr(H3.th('Left'), H3.th('Right')),
+									H3.tr(	H3.td(objRight instanceof ProductObject && objRight.dual ?  leftBtn : ''),
+											H3.td(objLeft instanceof ProductObject && objLeft.dual ?  rightBtn : ''))))];
+		elements.map(elt => elt && D.toolbar.help.appendChild(elt));
+	}
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
@@ -10434,13 +10471,13 @@ class DistributeAction extends Action
 		diagram.log({command:'distribute', from:from.name});
 		diagram.antilog({command:'delete', elements:[elt.name]});
 	}
-	doit(e, diagram, from)
+	doit(e, diagram, from, side)
 	{
 		let m = null;
-		if (Distribute.HasForm(diagram, ary))
-			m = diagram.get('Distribute', {domain:from.to});
-		if (Dedistribute.HasForm(diagram, ary))
-			m = diagram.get('Dedistribute', {domain:from.to});
+		if (Distribute.HasForm(diagram, [from]))
+			m = diagram.get('Distribute', {domain:from.to, side});
+//		if (Dedistribute.HasForm(diagram, [from]))
+//			m = diagram.get('Dedistribute', {domain:from.to});
 		return diagram.placeMorphismByObject(e, 'domain', from, m.name);
 	}
 	hasForm(diagram, ary)	// one object
@@ -10689,7 +10726,8 @@ class SwapAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const from = ary[0];
-			return from instanceof DiagramMorphism && from.refcnt === 1 && from.to.refcnt === 1 && from.to.constructor.name === 'Morphism';
+			const to = from.to;
+			return from instanceof DiagramMorphism && from.refcnt === 1 && to.refcnt === 1 && to.constructor.name === 'Morphism' && !('data' in to);
 		}
 		return false;
 	}
@@ -10800,7 +10838,7 @@ class Category extends CatObject
 					case 'DiagramObject':
 					case 'DiagramText':
 					case 'TensorObject':
-						setTimeout(_ => procElt(args, ndx), 0);
+						procElt(args, ndx);
 						break;
 				}
 			});
@@ -10823,7 +10861,7 @@ class Category extends CatObject
 					case 'Distribute':
 					case 'Dedistribute':
 					case 'Assertion':
-						setTimeout(_ => procElt(args, ndx), 0);
+						procElt(args, ndx);
 						break;
 				}
 			});
@@ -10882,11 +10920,7 @@ class Category extends CatObject
 	}
 	forEachMorphism(fn)
 	{
-		this.elements.forEach(function(e)
-		{
-			if (e instanceof Morphism)
-				fn(e);
-		}, this);
+		this.elements.forEach(e => e instanceof Morphism && fn(e), this);
 	}
 	clear()
 	{
@@ -11083,7 +11117,7 @@ class Morphism extends Element
 			for (let i=0; i<values.length; ++i)
 			{
 				let val = values[i];
-				if (typeof val === 'string')
+				if (typeof val === 'string' && this.codomain.getBase() instanceof HomObject)
 					val = this.diagram.getElement(val);
 				if (val instanceof Morphism && val.uses(mor))
 					return true;
@@ -11409,9 +11443,10 @@ class NamedObject extends CatObject	// name of an object
 	{
 		return this.name === obj.name;
 	}
-	getGraph(data = {position:0}, obj2flat = new Map())
+//	getGraph(data = {position:0}, obj2flat = new Map())
+	getGraph(data = {position:0})
 	{
-		const grph = this.diagram.flattenObject(this.base, obj2flat).getGraph();
+		const grph = this.diagram.flattenObject(this.base).getGraph();
 		const w = D.textWidth(this.properName);
 		grph.deepScan((g, ndx) => g.position = data.position);
 		data.position += w;
@@ -12593,11 +12628,12 @@ class MultiMorphism extends Morphism
 		if (this.refcnt <= 0)
 			this.morphisms.map(m => m.decrRefcnt());
 	}
-	json(a = {})
+	json(delBasename = true)
 	{
-		a = super.json(a);
+		const a = super.json();
 		delete a.properName;
-		delete a.basename;
+		if (delBasename)
+			delete a.basename;
 		if (!('morphisms' in a))
 			a.morphisms = this.morphisms.map(r => r.name);	// TODO use local name if possible
 		return a;
@@ -12770,9 +12806,9 @@ class ProductMorphism extends MultiMorphism
 		this.signature = ProductMorphism.Signature(this.morphisms.map(m => m.signature), dual);
 		this.constructor.name === 'ProductMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
-	json()
+	json(delBasename = true)
 	{
-		const a = super.json();
+		const a = super.json(delBasename);
 		if (this.dual)
 			a.dual = true;
 		return a;
@@ -13568,13 +13604,17 @@ class Distribute extends Morphism
 	constructor(diagram, args)
 	{
 		const nuArgs = U.Clone(args);
-		nuArgs.domain = diagram.getElement(args.domain);
-		nuArgs.codomain = Distribute.Codomain(diagram, nuArgs.domain);
+		const domain = diagram.getElement(args.domain);
+		nuArgs.domain = domain;
+		nuArgs.side = U.GetArg(args, 'side', false);
+		if (!Distribute.HasForm(diagram, [nuArgs.domain]))
+			throw `object does not have correct form for Distribute: ${nuArgs.domain.name}`;
+		nuArgs.codomain = Distribute.Codomain(diagram, domain, nuArgs.side);
 		nuArgs.basename = Distribute.Basename(diagram, nuArgs);
 		nuArgs.properName = Distribute.ProperName();
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		Object.defineProperty(this, 'side', {value: nuArgs.side, writable: false});
+		this.side = nuArgs.side;
 		this.constructor.name === 'Distribute' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
@@ -13589,12 +13629,14 @@ class Distribute extends Morphism
 	}
 	getInverse()
 	{
-		return this.diagram.get('Dedistribute', {domain:this.codomain, side:this.side});
+//		return this.diagram.get('Dedistribute', {domain:this.codomain, side:this.side});
 	}
 	json()
 	{
 		const a = super.json();
-		a.side = this.side;
+		if (this.side)
+			a.side = this.side;
+		return a;
 	}
 	getHtmlRep(idPrefix, config = {})
 	{
@@ -13602,10 +13644,28 @@ class Distribute extends Morphism
 		nuConfig.addbase = false;
 		return super.getHtmlRep(idPrefix, nuConfig);
 	}
+	getGraph(data = {position:0}, first = true)
+	{
+		const side = this.side;
+		const graph = super.getGraph(data, first);
+		const dtorGraph = graph.graphs[0].graphs[side ? 1 : 0];	// distributor
+		const dteeGraph = graph.graphs[0].graphs[side ? 0 : 1];	// distributee
+//		const domRoot = [1, side ? 0 : 1];
+		let offset = 0;
+		graph.graphs[1].graphs.map((g, i) =>
+		{
+			const sideFctr = side ? 1 : 0;
+			const opFctr = side ? 0 : 1;
+			g.graphs[sideFctr].bindGraph({cod:dtorGraph, index:[1, i, sideFctr], tag:this.constructor.name, domRoot:[1, i, sideFctr], codRoot:[0, sideFctr], offset:offset++});
+			g.graphs[opFctr].bindGraph({cod:dteeGraph, index:[1, i, opFctr], tag:this.constructor.name, domRoot:[1, i, opFctr], codRoot:[0, opFctr, i], offset:offset++});
+		});
+		graph.tagGraph('distribute');
+		return graph;
+	}
 	static Basename(diagram, args)
 	{
-		const basename = `Di{${args.domain.refName(diagram)}}-${args.side}iD`;
-		return basename;
+		const domain = diagram.getElement(args.domain);
+		return `Di{${domain.refName(diagram)}}-${args.side ? 'L' : 'R'}iD`;
 	}
 	static Codename(diagram, args)
 	{
@@ -13617,29 +13677,25 @@ class Distribute extends Morphism
 		const m = diagram.getElement(name);
 		return m ? m : new Distribute(diagram, args);
 	}
-	static HasForm(diagram, ary)	// TODO what about side?
+	static HasForm(diagram, ary)
 	{
-		if (ary.length === 1 && ary[0] instanceof DiagramObject)
+		if (ary.length === 1 && ary[0] instanceof CatObject)	// distribute only one object
 		{
-			const from = ary[0];
-			const to = from.to;
-			if (to instanceof ProductObject && !to.dual && to.objects[1] instanceof ProductObject && to.objects[1].dual)
-				return true;
+			const obj = ary[0] instanceof DiagramObject ? ary[0].to : ary[0];
+			if (obj instanceof ProductObject && !obj.to && obj.objects.length === 2)	// product of two objects
+				return obj.objects.reduce((doit, o) => doit || o instanceof ProductObject && o.dual, false);	// some component object is a coproduct
 		}
 		return false;
 	}
 	static ProperName()
 	{
-		return 'dist';	// TODO what about side?
+		return 'dist';
 	}
-	static Codomain(diagram, object)
+	static Codomain(diagram, object, side)
 	{
-		const leftie = this.side === 'left';
-		const topOp = object.dual ? 'coprod' : 'prod';
-		const botOp = object.dual ? 'prod' : 'coprod';
-		const a = object.objects[leftie ? 0 : 1];
-		const objects = object.objects[leftie ? 1 : 0].objects.map(o => diagram[topOp](leftie ? a : o, leftie ? o : a));
-		return diagram[botOp](...objects);
+		const dtor = object.objects[side ? 1 : 0];	// distributor
+		const dtee = object.objects[side ? 0 : 1];	// distributee
+		return diagram.coprod(...dtee.objects.map(o => diagram.prod(side ? o : dtor, side ? dtor : o)));
 	}
 }
 
@@ -13846,7 +13902,7 @@ class Diagram extends Functor
 		}
 		while(cnt > 0);
 	}
-	json()
+	json(delBasename = true)
 	{
 		const a = super.json();
 		a.references = [...this.references.keys()];
@@ -13860,7 +13916,7 @@ class Diagram extends Functor
 				delete elt.description;
 		});
 		this.purge();
-		a.elements = [...this.elements.values()].filter(e => e.canSave()).map(e => e.json());
+		a.elements = [...this.elements.values()].filter(e => e.canSave()).map(e => e.json(delBasename));
 		const procJson = elt =>
 		{
 			if (elt.diagram === this.name)
@@ -15312,7 +15368,7 @@ class Diagram extends Functor
 		const user = R.user.name;
 		const name = `${user}/${basename}`;
 		const change = str => str.replace(this.name + '/', name + '/');
-		const json = this.json();
+		const json = this.json(false);
 		json.name = name;
 		json.user = user;
 		json.basename = basename;
@@ -15324,6 +15380,7 @@ class Diagram extends Functor
 		const nameMap = new Map();
 		json.elements.forEach(elt =>
 		{
+if (!('basename' in elt)) debugger;
 			const nuName = `${name}/${elt.basename}`;
 			nameMap.set(`${this.name}/${elt.basename}`, nuName);
 			elt.name = nuName;
@@ -16148,7 +16205,7 @@ class Assembler
 		//
 		this.mergeObjectTags();
 		//
-		// look for inputs; they have no info; there will be too many at first
+		// look for inputs
 		//
 		this.inputScan();
 		//
