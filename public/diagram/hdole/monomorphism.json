@@ -98,7 +98,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/monomorphism/o_0",
       "codomain": "hdole/monomorphism/o_1",
-      "flipName": false,
       "to": "hdole/monomorphism/f"
     },
     {
@@ -106,7 +105,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_0",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/monomorphism/g"
     },
     {
@@ -114,7 +118,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_0",
-      "flipName": false,
       "homsetIndex": 2,
       "to": "hdole/monomorphism/h"
     },
@@ -123,7 +126,12 @@
       "prototype": "DiagramComposite",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/monomorphism/Cm{g,f}mC",
       "morphisms": [
@@ -136,7 +144,6 @@
       "prototype": "DiagramComposite",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
-      "flipName": false,
       "homsetIndex": 1,
       "to": "hdole/monomorphism/Cm{h,f}mC",
       "morphisms": [
@@ -149,7 +156,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/monomorphism/o_3",
       "codomain": "hdole/monomorphism/o_4",
-      "flipName": false,
       "to": "hdole/monomorphism/h"
     },
     {
@@ -157,7 +163,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/monomorphism/o_3",
       "codomain": "hdole/monomorphism/o_4",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/monomorphism/g"
     },
@@ -166,7 +177,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/monomorphism/o_5",
       "codomain": "hdole/monomorphism/o_6",
-      "flipName": false,
       "to": "hdole/monomorphism/f"
     }
   ],
@@ -202,7 +212,6 @@
       "codomain": "hdole/monomorphism/A"
     },
     {
-      "basename": "Cm{g,f}mC",
       "prototype": "Composite",
       "domain": "hdole/monomorphism/C",
       "codomain": "hdole/monomorphism/B",
@@ -212,7 +221,6 @@
       ]
     },
     {
-      "basename": "Cm{h,f}mC",
       "prototype": "Composite",
       "domain": "hdole/monomorphism/C",
       "codomain": "hdole/monomorphism/B",
@@ -224,6 +232,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1622362486841,
-  "version": 0
+  "timestamp": 1627716695675,
+  "version": 0,
+  "properName": "hdole/monomorphism"
 }

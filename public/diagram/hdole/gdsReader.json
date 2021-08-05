@@ -1657,7 +1657,7 @@
           true
         ]
       ],
-      "to": "hdole/nat/N16"
+      "to": "hdole/cpp/memToN16"
     },
     {
       "basename": "m_66",
@@ -1841,7 +1841,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_4",
       "codomain": "hdole/gdsReader/o_14",
-      "to": "hdole/nat/N8"
+      "to": "hdole/cpp/memToN8"
     },
     {
       "basename": "m_46",
@@ -2554,8 +2554,32 @@
       "size": 1
     },
     {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/gdsReader/#1",
+        "hdole/gdsReader/#1"
+      ]
+    },
+    {
       "basename": "Halt",
-      "prototype": "CatObject"
+      "prototype": "NamedObject",
+      "dual": true,
+      "source": "hdole/gdsReader/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "Id{Halt,CPo{#1,#1}oPC}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/gdsReader/Halt",
+      "codomain": "hdole/gdsReader/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "Id{CPo{#1,#1}oPC,Halt}dI",
+      "prototype": "Identity",
+      "properName": "&#8797;",
+      "domain": "hdole/gdsReader/CPo{#1,#1}oPC",
+      "codomain": "hdole/gdsReader/Halt"
     },
     {
       "prototype": "ProductObject",
@@ -3577,7 +3601,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627702299469,
+  "timestamp": 1628022582421,
   "version": 0,
   "hiddenCells": [
     "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e",

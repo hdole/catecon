@@ -2170,28 +2170,28 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_78",
       "codomain": "hdole/cpp/o_79",
-      "to": "hdole/cpp/uint8"
+      "to": "hdole/cpp/memToN8"
     },
     {
       "basename": "m_40",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_80",
       "codomain": "hdole/cpp/o_81",
-      "to": "hdole/cpp/uint16"
+      "to": "hdole/cpp/memToN16"
     },
     {
       "basename": "m_41",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_82",
       "codomain": "hdole/cpp/o_83",
-      "to": "hdole/cpp/int32"
+      "to": "hdole/cpp/memToZ32"
     },
     {
       "basename": "m_42",
       "prototype": "DiagramMorphism",
       "domain": "hdole/cpp/o_84",
       "codomain": "hdole/cpp/o_85",
-      "to": "hdole/cpp/float"
+      "to": "hdole/cpp/memToF64"
     },
     {
       "basename": "m_43",
@@ -2992,7 +2992,7 @@
       "basename": "mmap",
       "prototype": "Morphism",
       "code": {
-        "cpp": "{\n\tvoid * ptr = ::mmap(%0, %1, %2, %3, %4, %5);\n\tif (ptr != MAP_FAILED)\n\t{\n\t\t%6.c = 0;\n\t\t%6.v = ptr;\n\t}\n\telse\n\t\t%6.c = 1;\n}"
+        "cpp": "{\n\tvoid * ptr = ::mmap(%0, %1, %2, %3, %4, %5);\n\tif (ptr != MAP_FAILED)\n\t{\n\t\t%6.c = 0;\n\t\t%6.v = ptr;\n\t}\n\telse\n\t{\n\t\t%6.c = 1;\n\t\t%6.v = errno;\n\t}\n}"
       },
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/cpp/CPo{voidPtr,Errno}oPC"
@@ -3009,8 +3009,9 @@
     },
     {
       "description": "Get an unsigned byte from memory",
-      "basename": "uint8",
+      "basename": "memToN8",
       "prototype": "Morphism",
+      "properName": "to",
       "code": {
         "code": {
           "cpp": "%1 = *(unsigned char*)%0;"
@@ -3021,8 +3022,9 @@
     },
     {
       "description": "Get an unsigned short from memory",
-      "basename": "uint16",
+      "basename": "memToN16",
       "prototype": "Morphism",
+      "properName": "to",
       "code": {
         "cpp": "#include <byteswap.h>\n%1 = ::bswap_16(%0);"
       },
@@ -3031,8 +3033,9 @@
     },
     {
       "description": "Get a 32 bit integer from memory",
-      "basename": "int32",
+      "basename": "memToZ32",
       "prototype": "Morphism",
+      "properName": "to",
       "code": {
         "cpp": "#include <byteswap.h>\n%1 = ::bswap_32(%0);"
       },
@@ -3041,8 +3044,9 @@
     },
     {
       "description": "Get a double precision float from memory",
-      "basename": "float",
+      "basename": "memToF64",
       "prototype": "Morphism",
+      "properName": "to",
       "code": {
         "cpp": "%0 = *(double*)%0;"
       },
@@ -3063,7 +3067,7 @@
       "description": "Get a string from memory having the form of a null terminated string",
       "basename": "mem2str",
       "prototype": "Morphism",
-      "properName": "str",
+      "properName": "to",
       "code": {
         "cpp": "%1 = std::string((const char *)%0);"
       },
@@ -3529,6 +3533,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627710289196,
+  "timestamp": 1628022375319,
   "version": 0
 }

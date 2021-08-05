@@ -333,7 +333,7 @@
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": -400,
+        "x": -420,
         "y": -150
       },
       "height": "300",
@@ -462,7 +462,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_3",
       "codomain": "hdole/Strings/o_4",
-      "flipName": false,
       "to": "hdole/Strings/empty"
     },
     {
@@ -470,7 +469,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_5",
       "codomain": "hdole/Strings/o_6",
-      "flipName": false,
       "to": "hdole/Strings/length"
     },
     {
@@ -478,7 +476,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_7",
       "codomain": "hdole/Strings/o_8",
-      "flipName": false,
       "to": "hdole/Strings/append"
     },
     {
@@ -486,7 +483,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_9",
       "codomain": "hdole/Strings/o_10",
-      "flipName": false,
       "to": "hdole/Strings/includes"
     },
     {
@@ -494,7 +490,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_11",
       "codomain": "hdole/Strings/o_12",
-      "flipName": false,
       "to": "hdole/Strings/indexOf"
     },
     {
@@ -502,7 +497,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_16",
       "codomain": "hdole/Strings/o_17",
-      "flipName": false,
       "to": "hdole/Strings/charAt"
     },
     {
@@ -510,7 +504,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_18",
       "codomain": "hdole/Strings/o_19",
-      "flipName": false,
       "to": "hdole/Strings/N64ToStr"
     },
     {
@@ -518,7 +511,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_19",
       "codomain": "hdole/Strings/o_20",
-      "flipName": false,
       "to": "hdole/Strings/strToN64"
     },
     {
@@ -526,7 +518,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_21",
       "codomain": "hdole/Strings/o_22",
-      "flipName": false,
       "to": "hdole/Strings/Z64ToStr"
     },
     {
@@ -534,7 +525,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_22",
       "codomain": "hdole/Strings/o_23",
-      "flipName": false,
       "to": "hdole/Strings/strToZ64"
     },
     {
@@ -542,7 +532,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_24",
       "codomain": "hdole/Strings/o_25",
-      "flipName": false,
       "to": "hdole/Strings/F64ToStr"
     },
     {
@@ -550,7 +539,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_25",
       "codomain": "hdole/Strings/o_26",
-      "flipName": false,
       "to": "hdole/Strings/strToF64"
     },
     {
@@ -558,7 +546,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_27",
       "codomain": "hdole/Strings/o_28",
-      "flipName": false,
       "to": "hdole/Strings/str2tty"
     },
     {
@@ -566,7 +553,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_1",
       "codomain": "hdole/Strings/o_29",
-      "flipName": false,
       "to": "hdole/Strings/N8ToStr"
     },
     {
@@ -574,7 +560,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_29",
       "codomain": "hdole/Strings/o_32",
-      "flipName": false,
       "to": "hdole/Strings/strToN8"
     },
     {
@@ -582,7 +567,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_33",
       "codomain": "hdole/Strings/o_34",
-      "flipName": false,
       "to": "hdole/Strings/N16ToStr"
     },
     {
@@ -590,7 +574,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_34",
       "codomain": "hdole/Strings/o_35",
-      "flipName": false,
       "to": "hdole/Strings/strToN16"
     },
     {
@@ -598,7 +581,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_13",
       "codomain": "hdole/Strings/o_30",
-      "flipName": false,
       "to": "hdole/Strings/N32ToStr"
     },
     {
@@ -606,7 +588,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_30",
       "codomain": "hdole/Strings/o_36",
-      "flipName": false,
       "to": "hdole/Strings/strToN32"
     },
     {
@@ -614,7 +595,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_14",
       "codomain": "hdole/Strings/o_15",
-      "flipName": false,
       "to": "hdole/Strings/N128ToStr"
     },
     {
@@ -622,7 +602,6 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/Strings/o_15",
       "codomain": "hdole/Strings/o_37",
-      "flipName": false,
       "to": "hdole/Strings/strToN128"
     }
   ],
@@ -634,7 +613,6 @@
       "size": 1
     },
     {
-      "basename": "CPo{#1,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -651,7 +629,6 @@
       }
     },
     {
-      "basename": "Po{str,str}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -659,7 +636,6 @@
       ]
     },
     {
-      "basename": "Po{str,hdole/nat/N64}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/Strings/str",
@@ -667,7 +643,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N8,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -676,7 +651,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N16,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -685,7 +659,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N32,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -694,7 +667,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N128,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -712,12 +684,7 @@
       },
       "domain": "hdole/Strings/#1",
       "codomain": "hdole/Strings/str",
-      "data": [
-        [
-          0,
-          ""
-        ]
-      ]
+      "data": []
     },
     {
       "description": "length of a string",
@@ -918,6 +885,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625120633879,
+  "timestamp": 1627723851452,
   "version": 0
 }

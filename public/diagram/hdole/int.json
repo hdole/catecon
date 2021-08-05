@@ -20,7 +20,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z64",
       "xy": {
-        "x": 900,
+        "x": 1000,
         "y": 200
       }
     },
@@ -176,7 +176,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z16",
       "xy": {
-        "x": 100,
+        "x": 200,
         "y": 200
       }
     },
@@ -652,7 +652,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z8",
       "xy": {
-        "x": -300,
+        "x": -200,
         "y": 200
       }
     },
@@ -661,7 +661,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z32",
       "xy": {
-        "x": 500,
+        "x": 600,
         "y": 200
       }
     },
@@ -1696,7 +1696,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z128",
       "xy": {
-        "x": 1300,
+        "x": 1400,
         "y": 200
       }
     },
@@ -5713,6 +5713,6 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627551979962,
+  "timestamp": 1627722226726,
   "version": 0
 }

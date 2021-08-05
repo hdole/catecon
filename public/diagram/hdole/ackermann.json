@@ -3,6 +3,7 @@
   "basename": "ackermann",
   "name": "hdole/ackermann",
   "prototype": "Diagram",
+  "properName": "hdole/ackermann",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/ackermann_Index",
@@ -135,6 +136,10 @@
         [
           "flipName",
           true
+        ],
+        [
+          "assyMorphism",
+          true
         ]
       ],
       "to": "hdole/ackermann/CFa{CPo{#1,#1}oPC,#1_1}aFC"
@@ -144,6 +149,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_13",
       "codomain": "hdole/ackermann/o_11",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
       "to": "hdole/ackermann/CFa{CPo{#1,#1}oPC,#1_0}aFC"
     },
     {
@@ -151,6 +162,12 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/ackermann/o_6",
       "codomain": "hdole/ackermann/o_0",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
       "to": "hdole/ackermann/Id{hdole/nat/N64}dI"
     },
     {
@@ -159,13 +176,6 @@
       "domain": "hdole/ackermann/o_6",
       "codomain": "hdole/ackermann/o_13",
       "to": "hdole/ackermann/Fa{hdole/nat/N64,hdole/nat/N64_-1}aF"
-    },
-    {
-      "basename": "m_10",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/ackermann/o_10",
-      "codomain": "hdole/ackermann/o_11",
-      "to": "hdole/nat/equ64"
     },
     {
       "basename": "m_3",
@@ -187,6 +197,13 @@
       "domain": "hdole/ackermann/o_2",
       "codomain": "hdole/ackermann/o_3",
       "to": "hdole/ackermann/ack"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/ackermann/o_10",
+      "codomain": "hdole/ackermann/o_11",
+      "to": "hdole/nat/equ64"
     }
   ],
   "elements": [
@@ -197,7 +214,6 @@
       "size": 1
     },
     {
-      "basename": "CPo{#1,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -206,7 +222,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/nat/N64,hdole/nat/N64}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
@@ -214,13 +229,6 @@
       ]
     },
     {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "&#10034;",
-      "size": 1
-    },
-    {
-      "basename": "Po{hdole/nat/N64,#1}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
@@ -228,7 +236,6 @@
       ]
     },
     {
-      "basename": "Po{hdole/nat/N64,hdole/nat/#1}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
@@ -270,7 +277,6 @@
       ]
     },
     {
-      "basename": "Pm{Id{hdole/nat/N64}dI,hdole/nat/zero64}mP",
       "prototype": "ProductMorphism",
       "domain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/#1}oP",
       "codomain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
@@ -302,10 +308,9 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627377571168,
+  "timestamp": 1627982560478,
   "version": 0,
   "hiddenCells": [
     "3c39be35906145755726c52affca1f3cb6a991ca8626c11213299db4797cfdb9"
-  ],
-  "properName": "hdole/ackermann"
+  ]
 }
