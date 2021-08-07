@@ -955,6 +955,7 @@ description
 .catalogTop
 {
 	background-color:	white;
+	text-align:			center;
 	top:				32px;
 	width:				100%;
 }
@@ -1032,11 +1033,6 @@ table.verticalTools
 tspan
 {
 	white-space:		pre;
-}
-
-#search-tools
-{
-	margin:			8px;
 }
 
 .clickable
