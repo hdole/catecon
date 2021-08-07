@@ -807,11 +807,7 @@ class R
 					switch(D.session.mode)
 					{
 						case 'catalog':
-							D.catalog.show();
 							D.catalog.html();
-							break;
-						case 'diagram':
-							D.catalog.show(false);
 							break;
 					}
 				}
@@ -1748,6 +1744,11 @@ class Navbar
 			D.RemoveChildren(this.categoryElt);
 		}
 	}
+	catalogView()
+	{
+		D.catalog.mode = 'search';
+		D.EmitViewEvent('catalog', 'search');
+	}
 	update()
 	{
 		const sz = D.default.button.large;
@@ -1785,7 +1786,7 @@ class Navbar
 							H3.table('.w100', H3.tr(
 								H3.td(H3.table(H3.tr(H3.td('.buttonBarLeft.navbar-tools', left))), {style:`width:${width}px`}),
 								H3.td('##diagram-navbar.navtxt-', {title:'Current diagram'})))),
-						H3.div('.navbar-float.navtxt-text.navtxt-link', 'Catecon', {onclick:_ => D.EmitViewEvent('catalog', D.catalog.view)}),
+						H3.div('.navbar-float.navtxt-text.navtxt-link', 'Catecon', {onclick:_ => this.catalogView()}),
 						H3.div(H3.span('##category-navbar'), '.navbar-float.navtxt-text', {title:'Current category scope'})];
 		D.RemoveChildren(this.element);
 		divs.map(div => this.element.appendChild(div));
@@ -1884,7 +1885,7 @@ class Toolbar
 		};
 		moveBtn.onmouseup = e => document.removeEventListener('mousemove', onMouseMove);
 		const btns = [moveBtn];
-		if (diagram)
+		if (D.default.fullscreen && diagram)
 			diagram.selected.length > 0 ? this.showSelectedElementsToolbar(diagram, btns) : this.showDiagramToolbar(diagram, btns);
 		else
 			this.showSessionToolbar(btns);
@@ -1984,11 +1985,12 @@ class Toolbar
 
 class ElementTool
 {
-	constructor(type, headline, sections)
+	constructor(type, toolbar, headline, sections)
 	{
 		Object.defineProperties(this,
 		{
 			type:				{value: type,						writable: false},
+			toolbar:			{value: toolbar,					writable: false},
 			sections:			{value: sections,					writable: false},
 			headline:			{value: headline,					writable: false},
 			filter:				{value: '',							writable: true},
@@ -2009,6 +2011,7 @@ class ElementTool
 		{
 			this.filter = document.getElementById(`${this.type}-search-value`).value;
 			this.search();
+			D.EmitViewEvent('catalog', 'search');
 		};
 		return H3.table(	'##search-tools',
 							H3.tr(	H3.th('Search', {colspan:3})),
@@ -2032,18 +2035,18 @@ class ElementTool
 	}
 	showSection(section)
 	{
-		D.setActiveIcon(D.toolbar.help.querySelector(`#${this.type}-${section}-icon`));
+		D.setActiveIcon(document.getElementById(`${this.type}-${section}-icon`));
 		this.sections.map(s =>
 		{
-			const elt = D.toolbar.help.querySelector(`#${this.type}-${s}`);
+			const elt = document.getElementById(`${this.type}-${s}`);
 			elt && elt.classList.add('hidden');
 		});
-		const s = D.toolbar.help.querySelector(`#${this.type}-${section}`);
+		const s = document.getElementById(`${this.type}-${section}`);
 		s && s.classList.remove('hidden');
 	}
 	html(e)
 	{
-		const help = D.toolbar.help;
+		const help = this.toolbar;
 		D.RemoveChildren(help);
 		this.reset();
 		this.setupToolbar();
@@ -2069,18 +2072,21 @@ class ElementTool
 		else
 			D.setUnactiveIcon(e.target);
 		this.search();
+		D.EmitViewEvent('catalog', 'search');
 	}
 	setTextSorter(e)
 	{
 		this.searchArgs.sorter = U.NameSorter;
 		D.setActiveIcon(e.target);
 		this.search();
+		D.EmitViewEvent('catalog', 'search');
 	}
 	setRefcntSorter(e)
 	{
 		this.searchArgs.sorter = U.RefcntSorter;
 		D.setActiveIcon(e.target);
 		this.search();
+		D.EmitViewEvent('catalog', 'search');
 	}
 	addNewSection()		// fitb
 	{}
@@ -2120,9 +2126,7 @@ class ElementTool
 	}
 	search()
 	{
-		this.sections.includes('search') && this.clearSearch();
-		const tbl = document.getElementById(`${this.type}-matching-table`);
-		this.getRows(tbl, this.getMatchingElements());
+		this.diagrams = this.getMatchingElements();
 	}
 }
 
@@ -2130,7 +2134,7 @@ class TextTool extends ElementTool
 {
 	constructor(type, headline)
 	{
-		super('Text', headline, ['new', 'search']);
+		super('Text', D.toolbar.help, headline, ['new', 'search']);
 		this.hasDiagramOnlyButton = false;
 		Object.defineProperties(this,
 		{
@@ -2147,7 +2151,7 @@ class TextTool extends ElementTool
 		rows.push(H3.tr(H3.td(H3.span('.smallPrint.italic', 'Enter new text below or click directly on the diagram'), H3.br(), this.descriptionElt, D.getIcon(action.name, 'edit', action, 'Edit description'))));
 		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
-		D.toolbar.help.appendChild(H3.div(elts, `##${this.type}-new.hidden`));
+		this.toolbar.appendChild(H3.div(elts, `##${this.type}-new.hidden`));
 	}
 	getRows(tbl, texts)
 	{
@@ -2280,13 +2284,13 @@ class ObjectTool extends ElementTool
 {
 	constructor(headline)
 	{
-		super('Object', headline, ['new', 'search']);
+		super('Object', D.toolbar.help, headline, ['new', 'search']);
 		this.bpd = new BPD();
 		D.ReplayCommands.set('newObject', this);
 	}
 	addNewSection()
 	{
-		D.toolbar.help.appendChild(this.bpd.getNewSection(R.diagram, 'Object-new', e => this.create(e), this.headline));
+		this.toolbar.appendChild(this.bpd.getNewSection(R.diagram, 'Object-new', e => this.create(e), this.headline));
 	}
 	getMatchingElements()
 	{
@@ -2338,7 +2342,7 @@ class MorphismTool extends ElementTool
 {
 	constructor(headline)
 	{
-		super('Morphism', headline, ['new', 'search']);
+		super('Morphism', D.toolbar.help, headline, ['new', 'search']);
 		Object.defineProperties(this,
 		{
 			domainElt:			{value: null,										writable: true},
@@ -2350,7 +2354,7 @@ class MorphismTool extends ElementTool
 	addNewSection()
 	{
 		const newSection = this.bpd.getNewSection(R.diagram, 'Morphism-new', e => this.create(e), this.headline);
-		D.toolbar.help.appendChild(newSection);
+		this.toolbar.appendChild(newSection);
 		const table = newSection.querySelector('table');
 		const objects = R.diagram.getObjects();
 		this.domainElt = H3.select('##new-domain.w100');
@@ -2454,9 +2458,9 @@ class MorphismTool extends ElementTool
 
 class DiagramTool extends ElementTool
 {
-	constructor(type, headline)
+	constructor(type, toolbar, headline)
 	{
-		super(type, headline, ['new', 'search', 'upload-json']);
+		super(type, toolbar, headline, ['new', 'search', 'upload-json']);
 		Object.defineProperties(this,
 		{
 			bpd:				{value: new BPD(),	writable: false},
@@ -2496,7 +2500,7 @@ class DiagramTool extends ElementTool
 					`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), 'View PNG'));
 			}
 		}
-		if (!nobuts.has('view') && (!R.diagram || name !== R.diagram.name))
+		if (!nobuts.has('view'))
 			buttons.push(D.getIcon('view', 'view', e => R.SelectDiagram(name, 'home'), 'View diagram', btnSize));
 		const refcnt = diagram ? diagram.refcnt : info ? info.refcnt : 0;
 		if (!nobuts.has('delete') && refcnt === 0 && info.user === R.user.name)
@@ -2521,7 +2525,6 @@ class DiagramTool extends ElementTool
 				}
 			}
 			else if (!R.diagram.allReferences.has(name) && R.catalog.has(name) && name !== R.diagram.name)
-//			else if (R.catalog.has(name) && name !== R.diagram.name && !R.GetReferences(name).has(name))
 			{
 				const allRefs = R.GetReferences(name);
 				if (!allRefs.has(R.diagram.name))
@@ -2575,14 +2578,9 @@ class DiagramTool extends ElementTool
 		const diagram = R.diagram;
 		const toolbar2 = D.toolbar.element.querySelector('div #Diagram-toolbar2');
 		toolbar2.appendChild(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload-json'), 'Upload', D.default.button.small, `${this.type}-upload-json-icon`));
-/*
-		const jsonUploadSection = H3.div('##Diagram-upload-json.hidden',
-			H3.h4('Upload Diagram JSON'),
-			H3.label('Select JSON file to upload as diagram:', {for:'upload-json'}),
-			H3.br(),
-			H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => D.uploadJSON(e)}));
-*/
-		toolbar2.parentNode.insertBefore(D.uploadJSONForm(), toolbar2.nextSibling);
+		const form = D.uploadJSONForm();
+		toolbar2.appendChild(form);
+		form.insertBefore(H3.h4('Upload Diagram JSON'), form.firstChild);
 		this.setSearchBar();
 	}
 	setSaveSorter(e)
@@ -2590,18 +2588,21 @@ class DiagramTool extends ElementTool
 		this.searchArgs.sorter = U.TimestampSorter;
 		D.setActiveIcon(e.target);
 		this.search();
+		D.EmitViewEvent('catalog', 'search');
 	}
 	toggleUserFilter(e)
 	{
 		this.searchArgs.userOnly = !this.searchArgs.userOnly;
 		D.toggleIcon(e.target, this.searchArgs.userOnly);
 		this.search();
+		D.EmitViewEvent('catalog', 'search');
 	}
 	toggleReferenceFilter(e)
 	{
 		this.searchArgs.referenceOnly = !this.searchArgs.referenceOnly;
 		D.toggleIcon(e.target, this.searchArgs.referenceOnly);
 		this.search();
+		D.EmitViewEvent('catalog', 'search');
 	}
 	addNewSection()
 	{
@@ -2619,7 +2620,7 @@ class DiagramTool extends ElementTool
 		const tbl = newSection.querySelector('table');
 		tbl.appendChild(H3.tr(H3.td(this.codomainElt)));
 		const elts = [newSection, H3.hr()];
-		D.toolbar.help.appendChild(newSection);
+		this.toolbar.appendChild(newSection);
 	}
 	getMatchingElements()
 	{
@@ -2717,7 +2718,7 @@ class CellTool extends ElementTool
 {
 	constructor(type, headline)
 	{
-		super('Assert', headline, ['search']);
+		super('Assert', D.toolbar.help, headline, ['search']);
 		this.hasDiagramOnlyButton = false;
 		Object.defineProperties(this,
 		{
@@ -2728,7 +2729,7 @@ class CellTool extends ElementTool
 	}
 	addNewSection()
 	{
-		D.toolbar.help.appendChild(H3.div(`##${this.type}-new.hidden`));
+		this.toolbar.appendChild(H3.div(`##${this.type}-new.hidden`));
 	}
 	getRows(tbl, cells)
 	{
@@ -3227,7 +3228,7 @@ class D
 			if (radio)
 				while(btn)
 				{
-					D.setUnactiveIcon(btn);
+					btn.classList.contains('icon') && D.setUnactiveIcon(btn);
 					btn = btn.nextSibling;
 				}
 		}
@@ -3490,7 +3491,8 @@ class D
 						}
 						else
 							D.session.default = null;
-						saveSession && D.EmitViewEvent('diagram', diagram);
+//	TODO						saveSession && D.EmitViewEvent('diagram', diagram);
+						D.EmitViewEvent('diagram', diagram);
 					}
 					break;
 				case 'download':
@@ -3610,7 +3612,7 @@ class D
 			const diagram = args.diagram;
 			if (command === 'diagram')
 			{
-				D.topSVG.classList.remove('hidden');
+				D.catalog.hide();
 				if (diagram)
 				{
 					if (diagram.user === 'sys')
@@ -3626,7 +3628,6 @@ class D
 			else if (command === 'catalog')
 			{
 				R.initialized && D.saveSession();
-				D.topSVG.classList.add('hidden');
 				D.catalog.show();
 			}
 		});
@@ -4004,7 +4005,7 @@ class D
 	static del(elt) {elt.parentElement.removeChild(elt);}
 	static RemoveChildren(elt)
 	{
-		while(elt.firstChild)
+		while(elt && elt.firstChild)
 			elt.removeChild(elt.firstChild);
 	}
 	static Pretty(obj, elt, indent = 0)
@@ -4627,7 +4628,6 @@ class D
 	static uploadJSONForm()
 	{
 		return H3.div('##Diagram-upload-json.hidden',
-			H3.h4('Upload Diagram JSON'),
 			H3.label('Select JSON file to upload as diagram:', {for:'upload-json'}),
 			H3.br(),
 			H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => D.uploadJSON(e)}));
@@ -4872,7 +4872,6 @@ Object.defineProperties(D,
 			{
 				D.toolbar.show();
 				D.elementTool.Diagram.html(e);
-//				D.toolbar.showSection('diagram', 'new');
 				D.elementTool.Diagram.showSection('new');
 			},
 //			ControlKeyD(e)		BROWSER RESERVED: bookmark current page
@@ -4933,7 +4932,6 @@ Object.defineProperties(D,
 			{
 				D.toolbar.show();
 				D.elementTool.Morphism.html(e);
-//				D.toolbar.showSection('Morphism', 'new');
 				D.elementTool.Morphism.showSection('new');
 				D.toolbar.help.querySelector('#new-basename').focus();
 				e.preventDefault();
@@ -4992,7 +4990,6 @@ Object.defineProperties(D,
 			{
 				D.toolbar.show();
 				D.elementTool.Text.html(e);
-//				D.toolbar.showSection('Text', 'new');
 				D.elementTool.Text.showSection('new');
 				D.toolbar.help.querySelector('#new-description').focus();
 				e.preventDefault();
@@ -5184,43 +5181,44 @@ class Catalog extends DiagramTool
 {
 	constructor()
 	{
-		super('catalog', 'Catalog');
+		const toolbar = H3.td('##catalog-toolbar');	// buttons
+		super('catalog', toolbar, 'Catalog');
+		this.sections.length = 0;
+		this.sections.push('search', 'new', 'upload');
 		this.catalog = document.getElementById('catalog');
 		this.modeTool = H3.td('.left', {width:'33%'});
-		this.closeBtn = H3.td('.right', {width:'33%'});
-		this.title = H3.h1('.catalog', 'Catalog');
-		this.catalog.appendChild(H3.table(H3.tr(this.modeTool, H3.td(this.title, {width:'33%'}), this.closeBtn), '##modeToolbar'));
-		this.view = 'search';								// what viewing mode are we in?
+		this.catalog.appendChild(H3.h1('.catalog', 'Catalog'));
+		this.toolbarInfo = H3.span('##catalog-toolbar-info');		// display area per button
+		this.catalog.appendChild(H3.table(H3.tr(this.toolbar)));
+		this.toolbar.appendChild(this.toolbarInfo);
+		this.mode = 'search';								// what viewing mode are we in?
 		this.catalogInfo = H3.div('##catalog-info');		// info about the state of the displayed items
 		this.catalog.appendChild(this.catalogInfo);
-		const searchTable = this.getSearchBar();
-		searchTable.classList.remove('hidden');
 		const action = e => this.createDiagram();
-		const inputBasenameSearch = e =>
-		{
-			if (D.OnEnter(e, action))
-				return;
-			const elt = R.$CAT.getElement(R.user.name + '/' + e.target.value);
-			elt || (e.target.value !== '' && !U.isValidBasename(e.target.value)) ? e.target.classList.add('error') : e.target.classList.remove('error');
-		};
 		const uploadForm = D.uploadJSONForm();
-		const topBar = H3.table('.w100', H3.tr(H3.td(searchTable), H3.td(
-						H3.table('##catalog-diagram-new',
-							H3.tr(H3.th('New Diagram')),
-							H3.tr(H3.td(D.getIcon('upload-json', 'upload-json', _ => uploadForm.classList.remove('hidden'), 'Upload', D.default.button.small), uploadForm),
-								  H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => inputBasenameSearch(e)}),
-											H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.OnEnter(e, action)}),
-											H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.OnEnter(e, action)}),
-											H3.span('##catalog-select-codomain-span'),
-											D.getIcon('edit', 'edit', action))),
-							H3.tr(H3.td(H3.span('##catalog-new-error')))))));
+		uploadForm.classList.remove('hidden');
+		const topBar = H3.div(
+							H3.div('##catalog-search.hidden', this.getSearchBar()),
+							H3.div('##catalog-new.hidden',
+								H3.table('##catalog-diagram-new',
+									H3.tr(H3.th('New Diagram'),
+										H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => inputBasenameSearch(e)}),
+												H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.OnEnter(e, action)}),
+												H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.OnEnter(e, action)}),
+												H3.span('##catalog-select-codomain-span'),
+												D.getIcon('edit', 'edit', action)))),
+								H3.span('##catalog-new-error')),
+							H3.div('##catalog-upload.hidden',
+								H3.h3('Upload'),
+								uploadForm)
+							);
 		this.catalog.appendChild(topBar);
 		this.catalogDisplay = H3.div('##catalog-display');		// the actual catalog display
 		this.catalog.appendChild(this.catalogDisplay);
 		this.diagrams = null;
 		this.glowMap = new Map();
 		this.imageScaleFactor = 1.1;
-		this.setSearchBar();
+		this.searchInput = document.getElementById('catalog-search-value');
 		window.addEventListener('Login', e => D.catalog.update());
 		window.addEventListener('CAT', e =>
 		{
@@ -5235,7 +5233,7 @@ class Catalog extends DiagramTool
 					R.catalog.delete(args.diagram);
 					break;
 				case 'upload':
-					if (this.view === 'search')
+					if (this.mode === 'search')
 					{
 						img = this.catalogDisplay.querySelector(`img[data-name="${args.diagram.name}"]`);
 						img && ['greenGlow', 'warningGlow'].map(glow => img.classList.remove(glow));
@@ -5243,7 +5241,7 @@ class Catalog extends DiagramTool
 					break;
 				case 'default':
 					D.NotBusy();
-					if (this.view === 'reference')
+					if (this.mode === 'reference')
 						this.reference();
 					break;
 				case 'png':
@@ -5267,10 +5265,7 @@ class Catalog extends DiagramTool
 					if (this.diagrams === null)
 						this.search();
 					this.updateDiagramCodomain();
-					this.show();
-					break;
-				default:
-					this.hide();
+					this.update();
 					break;
 			}
 		});
@@ -5316,36 +5311,25 @@ class Catalog extends DiagramTool
 	html()
 	{
 		this.reset();
-		this.addNewSection();
+		this.filter = document.getElementById(this.searchFilterId).value;
 		const onkeyup = e =>
 		{
-			this.filter = document.getElementById(`${this.type}-search-filter`).value;
+			this.filter = document.getElementById(this.searchFilterId).value;
 			this.search();
 		};
 		this.resetFilter();
 		this.setSearchBar();
 		this.search();
+		D.EmitViewEvent('catalog');
 	}
-	//
-	// methods from DiagramTool
-	//
 	getRows(tbl, elements)
 	{
 		elements.map(diagram => this.display(diagram));
 	}
-	clearSearch()
-	{
-		D.RemoveChildren(this.catalogDisplay);
-	}
-	//
-	// methods
-	//
 	clear()
 	{
 		D.RemoveChildren(this.catalogInfo);
-		D.RemoveChildren(this.modeTool);
-		D.RemoveChildren(this.closeBtn);
-		this.clearSearch();
+		D.RemoveChildren(this.catalogDisplay);
 	}
 	display(info)
 	{
@@ -5353,7 +5337,6 @@ class Catalog extends DiagramTool
 		{
 			onclick:_ =>
 			{
-				D.EmitViewEvent('diagram');
 				D.setFullscreen(true, false);
 				R.SelectDiagram(info.name, 'view');
 			},
@@ -5372,7 +5355,7 @@ class Catalog extends DiagramTool
 				H3.tr(H3.td('.imageBackground', {colspan:2}, imgDiv)),
 				H3.tr(H3.td(D.getDiagramHtml(info))),
 			], '.smallTable'));
-		if (this.view !== 'reference')
+		if (this.mode !== 'reference')
 		{
 			let listener = null;
 			img.onmouseenter = evnt =>
@@ -5380,7 +5363,7 @@ class Catalog extends DiagramTool
 				const showToolbar = e =>
 				{
 					D.RemoveChildren(toolbar);
-					this.getButtons(info).map(btn => toolbar.appendChild(H3.tr(H3.td(btn))));
+					super.getButtons(info).map(btn => toolbar.appendChild(H3.tr(H3.td(btn))));
 					toolbar.style.opacity = 100;
 					listener = e =>
 					{
@@ -5423,7 +5406,7 @@ class Catalog extends DiagramTool
 	}
 	askCloud(getVal = true)
 	{
-		switch(this.view)
+		switch(this.mode)
 		{
 			case 'search':
 				if (getVal)
@@ -5439,24 +5422,23 @@ class Catalog extends DiagramTool
 		}
 		D.Busy();
 	}
-	localSearch(val)
+	referenceSearch()
 	{
 		this.diagrams = [];
-		R.catalog.forEach((info, name) => info.localTimestamp > 0 && name.includes(val) && this.diagrams.push(info));
+		R.catalog.forEach((info, name) => info.localTimestamp > 0 && this.diagramFilter(info) && this.diagrams.push(info));
 	}
 	doLookup()
 	{
-		this.localSearch(this.searchInput.value);
-		if (this.view === 'search')
+		this.referenceSearch();
+		if (this.mode === 'search')
 			this.outOfDateGlow();
 		else
 			this.referenceGlow();
-		this.update();
 	}
 	reference()
 	{
 		this.clear();
-		this.view = 'reference';
+		this.mode = 'reference';
 		this.title.innerHTML = `References for ${U.HtmlSafe(R.diagram.name)}`;
 		this.doLookup();
 		D.EmitViewEvent('catalog');
@@ -5511,6 +5493,11 @@ class Catalog extends DiagramTool
 		this.catalogInfo.appendChild(H3.div(H3.span('Directly referenced ', H3.span('diagrams', '.greenGlow'), '&nbsp;&nbsp;&nbsp;&nbsp;Indirectly referenced ', H3.span('diagrams', '.warningGlow'), '.display')));
 		D.EmitViewEvent('catalog');
 	}
+	hide()
+	{
+		this.catalog.classList.add('hidden');
+		document.getElementById('diagramView').classList.remove('hidden');
+	}
 	show(visible = true)
 	{
 		if (visible)
@@ -5549,25 +5536,50 @@ class Catalog extends DiagramTool
 		await Promise.all(promises);
 		this.askCloud();
 	}
+	getButtons(exclude = [])
+	{
+
+		const btns = [
+						D.getIcon('search', 'search', _ => this.showSection('search'), 'Search for diagram', D.default.button.small, 'catalog-search-icon'),
+						D.getIcon('new', 'edit', _ => this.showSection('new'), 'New diagram', D.default.button.small, 'catalog-new-icon'),
+					];
+		if (exclude.includes('upload-json'))
+			btns.push(D.getIcon('upload', 'upload', _ => this.showSection('upload'), 'Upload local diagram', D.default.button.small, 'catalog-upload-icon'));
+		else
+			btns.push(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload'), 'Upload JSON file for diagram', D.default.button.small, 'catalog-upload-icon'));
+		R.diagram && btns.push(D.getIcon('closeCatalog', 'close', e => D.EmitViewEvent('diagram', R.diagram), 'Return to diagram'));
+		return btns;
+	}
 	update()
 	{
-		if (!this.diagrams)
-			return;
-		this.clearSearch();
+		this.clear();
+		this.toolbar.querySelectorAll('.icon').forEach(elt => elt.remove());
+		this.getButtons().map(btn => this.toolbar.appendChild(btn));
 		if (R.diagram)
 		{
-			D.RemoveChildren(this.modeTool);
-			if (this.view === 'search')
+			if (this.mode === 'search')
 				this.modeTool.appendChild(H3.button(`Glow references for ${R.diagram.name}.`, '.textButton', {onclick:_ => this.reference()}));
 			else
 				this.modeTool.appendChild(H3.button('Glow out of date diagrams', '.textButton', {onclick:_ => this.search()}));
 		}
-		this.diagrams.map(diagram => this.filter(diagram) && this.display(diagram));
-		if (R.diagram)
-			this.closeBtn.appendChild(D.getIcon('closeCatalog', 'close', e => D.EmitViewEvent('diagram', R.diagram), 'Close catalog'));
-		this.setSearchBar();
+		switch(this.mode)
+		{
+			case 'search':
+				const tbl = document.getElementById(`${this.type}-matching-table`);
+				this.diagrams && this.getRows(tbl, this.diagrams);
+				break;
+			case 'reference':
+				this.diagrams.map(diagram =>
+				{
+					if (this.filter)
+						this.diagramFilter(diagram) && this.display(diagram);
+					else
+						this.display(diagram);
+				});
+				break;
+		}
 	}
-	filter(diagram)
+	diagramFilter(diagram)
 	{
 		if (diagram.user === 'sys')
 			return false;
@@ -5582,11 +5594,6 @@ class Catalog extends DiagramTool
 		D.default.diagram.imageScale = D.default.diagram.imageScale * nuScale;
 		this.setImageScale();
 		R.SaveDefaults();
-	}
-	hide()
-	{
-		this.catalog.classList.add('hidden');
-		document.getElementById('diagramView').classList.remove('hidden');
 	}
 	createDiagram()
 	{
@@ -10133,11 +10140,7 @@ class RunAction extends Action
 		let codomain = null;
 		const source = to instanceof NamedObject ? to.base : to;
 		if (from instanceof DiagramObject)
-		{
-			if (this.js.canFormat(source))
-//				elements.push(H3.span({innerHTML:this.js.getInputHtml(source)}), addDataBtn);
-				elements.push(this.js.getInputHtml(source), addDataBtn);
-		}
+			this.js.canFormat(source) && elements.push(this.js.getInputHtml(source), addDataBtn);
 		else	// morphism
 		{
 			domain = to.domain;
@@ -11443,7 +11446,6 @@ class NamedObject extends CatObject	// name of an object
 	{
 		return this.name === obj.name;
 	}
-//	getGraph(data = {position:0}, obj2flat = new Map())
 	getGraph(data = {position:0})
 	{
 		const grph = this.diagram.flattenObject(this.base).getGraph();
@@ -13650,7 +13652,6 @@ class Distribute extends Morphism
 		const graph = super.getGraph(data, first);
 		const dtorGraph = graph.graphs[0].graphs[side ? 1 : 0];	// distributor
 		const dteeGraph = graph.graphs[0].graphs[side ? 0 : 1];	// distributee
-//		const domRoot = [1, side ? 0 : 1];
 		let offset = 0;
 		graph.graphs[1].graphs.map((g, i) =>
 		{
@@ -15380,7 +15381,6 @@ class Diagram extends Functor
 		const nameMap = new Map();
 		json.elements.forEach(elt =>
 		{
-if (!('basename' in elt)) debugger;
 			const nuName = `${name}/${elt.basename}`;
 			nameMap.set(`${this.name}/${elt.basename}`, nuName);
 			elt.name = nuName;
@@ -15634,7 +15634,6 @@ class Assembler
 	}
 	coreferenceCount(object)	// the number of coreferences whose domain is the given object
 	{
-//		return [...object.domains].filter(m => this.coreferences.has(m)).length;
 		return [...object.codomains].filter(m => this.coreferences.has(m)).length;
 	}
 	useCount(object)	// the number of ref's or coref's whose codomain is this object
