@@ -654,6 +654,7 @@ class R
 		let action = new IdentityAction(diagramDiagram);
 		new GraphAction(diagramDiagram);
 		new SwapAction(diagramDiagram);
+		new ActionAction(diagramDiagram);
 		new AssemblyMorphismAction(diagramDiagram);
 		new NameAction(diagramDiagram);
 		new CompositeAction(diagramDiagram);
@@ -1352,6 +1353,10 @@ if (info instanceof Diagram)debugger;
 		D.toolbar.clearError();
 		R.upload(null, json, true, _ => {});
 		D.statusbar.show(e, `Diagram ${diagram.name} loaded from local JSON file`);
+	}
+	static isNamed(elt)
+	{
+		return elt instanceof NamedObject || elt instanceof NamedMorphism;
 	}
 }
 Object.defineProperties(R,
@@ -6677,6 +6682,10 @@ class Element
 	{
 		return this;
 	}
+	isBare()
+	{
+		return true;
+	}
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return `${diagram ? diagram.name : 'sys'}/${args.basename}`; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
@@ -7449,6 +7458,10 @@ class MultiObject extends CatObject
 		for (let i=0; i<this.objects.length; ++i)
 			if (this.objects[i].uses(obj, false))
 				return true;
+		return false;
+	}
+	isBare()
+	{
 		return false;
 	}
 	static ProperName(sep, objects, reverse = false)
@@ -8372,6 +8385,10 @@ class DiagramObject extends CatObject
 	{
 		const text = this.svg.querySelector('text');
 		text.innerHTML = this.to.properName;
+	}
+	isBare()
+	{
+		return false;
 	}
 }
 
@@ -10766,6 +10783,109 @@ class AssemblyMorphismAction extends Action
 	}
 }
 
+class ActionAction extends Action
+{
+	constructor(diagram)
+	{
+		const args = {	description:	'Make action from selected objects',
+						basename:		'action',
+						priority:		80,
+		};
+		super(diagram, args);
+		if (!isGUI)
+			return;
+	}
+	html(e, diagram, ary)
+	{
+		D.RemoveChildren(D.toolbar.help);
+		const named = ary.filter(elt => 'to' in elt && (elt.to instanceof NamedObject || elt.to instanceof NamedMorphism))[0].to;
+		const selected = ary.filter(elt => !(elt.to instanceof NamedObject || elt.to instanceof NamedMorphism)).map(elt => elt.to);
+		const bareMor = new Set();
+		const bareObj = new Set();
+		const ops = new Set();
+		if (named.base instanceof CatObject)
+			this.getBareObjects(named, bareObj, ops);
+		else
+		{
+			this.getBareMorphisms(named, bareMor, ops);
+			this.getBareObjects(named.domain, bareObj, ops);
+			this.getBareObjects(named.codomain, bareObj, ops);
+		}
+		const bareObjects = [...bareObj.values()].filter(o => !selected.includes(o));
+		const bareMorphs = [...bareMor.values()].filter(m => !selected.includes(m));;
+		const actions = [...ops.values()].filter(a => a !== 'CatObject' && a !== 'Morphism');
+		const elements = [	H3.h4('Create Action'),
+							H3.div('.center', H3.span('.smallBold', named.properName), H3.br(), H3.h5('Selected')),
+							H3.span('.smallPrint', 'These elements are selected as the template for the action.'),
+							...selected.map(elt => elt.getHtmlRep()),
+						];
+		if (bareObjects.length > 0)
+			elements.push(	H3.h5('Bare Objects'),
+						H3.span('.smallPrint', 'These objects are required for the action.'),
+							...bareObjects.map(o => o.getHtmlRep()));
+		if (named.base instanceof Morphism && bareMorphs.length > 0)
+			elements.push(	H3.h5('Bare Morphisms'),
+						H3.span('.smallPrint', 'These morphisms are required for the action.'),
+							...bareMorphs.map(m => m.getHtmlRep()));
+		elements.push(	H3.h5('Required Actions'),
+						H3.span('.smallPrint', 'These actions are required to complete the action.'),
+						...actions.map(op => H3.div(op)));
+		const references = new Set();
+		bareObjects.map(o => references.add(o.diagram.name));
+		bareMorphs.map(m => references.add(m.diagram.name));
+		const refs = [...references.values()];
+		if (refs.length > 0)
+			elements.push(	H3.h5('Required References'),
+						...refs.map(r => H3.div(r)));
+		elements.map(elt => elt && D.toolbar.help.appendChild(elt));
+	}
+	action(e, diagram, ary)
+	{
+	}
+	hasForm(diagram, ary)
+	{
+		if (ary.length > 1)
+		{
+			const last = ary[ary.length -1];
+			if ('to' in last && R.isNamed(last.to))
+			{
+				const named = last.to;
+				const elements = ary.filter(elt => !R.isNamed(elt.to));
+				return elements.reduce((r, elt) => r && named.uses(elt.to) && elt.to.isBare(), true);
+			}
+		}
+		return false;
+	}
+	getBareMorphisms(morphism, bare, ops, scanned = new Set())
+	{
+		if (scanned.has(morphism))
+			return;
+		scanned.add(morphism);
+		const base = morphism.getBase();
+		ops.add(base.constructor.name);
+		if (base instanceof MultiMorphism)
+			base.morphisms.map(m => this.getBareMorphisms(m, bare, ops, scanned));
+		else if (base.constructor.name === 'Morphism' && !('data' in base))
+			bare.add(base);
+		else
+			ops.add(base.constructor.name);
+	}
+	getBareObjects(obj, bare, ops, scanned = new Set())
+	{
+		if (scanned.has(obj))
+			return;
+		scanned.add(obj);
+		const base = obj.getBase();
+		ops.add(base.constructor.name);
+		if (base instanceof MultiObject)
+			base.objects.map(o => this.getBareObjects(o, bare, ops, scanned));
+		else if (base.constructor.name === 'CatObjects')
+			bare.add(base);
+		else
+			ops.add(base.constructor.name);
+	}
+}
+
 class Category extends CatObject
 {
 	constructor(diagram, args)
@@ -11465,6 +11585,14 @@ class NamedObject extends CatObject	// name of an object
 		nuConfig.addbase = false;
 		return super.getHtmlRep(idPrefix, nuConfig);
 	}
+	uses(obj, start = true)		// True if the given object is used in the construction of this object somehow or identical to it
+	{
+		return this.base.uses(obj, start);
+	}
+	isBare()
+	{
+		return this.base.isBare();
+	}
 }
 
 class NamedMorphism extends Morphism	// name of a morphism
@@ -11532,6 +11660,14 @@ class NamedMorphism extends Morphism	// name of a morphism
 	{
 		const nuConfig = U.Clone(config);
 		return super.getHtmlRep(idPrefix, nuConfig);
+	}
+	uses(mor, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
+	{
+		return this.base.uses(mor, start);
+	}
+	isBare()
+	{
+		return this.base.isBare();
 	}
 }
 
@@ -12055,6 +12191,10 @@ class DiagramMorphism extends Morphism
 	updateProperName()
 	{
 		this.svg_name.innerHTML = this.to.properName;
+	}
+	isBare()
+	{
+		return false;
 	}
 	static LinkId(data, lnk)
 	{
@@ -12690,6 +12830,10 @@ class MultiMorphism extends Morphism
 	updateProperName()
 	{
 		this.morphisms.map(m => m.updateProperName());
+	}
+	isBare()
+	{
+		return false;
 	}
 }
 
