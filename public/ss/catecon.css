@@ -408,6 +408,11 @@ p
 	padding:	4px;
 }
 
+#toolbar-help
+{
+	margin:		4px;
+}
+
 .hidden
 {
 	opacity:	0;			/* needed for instant transition */
@@ -472,12 +477,11 @@ p
 .svgstrThinGray {fill:none; stroke:#777; stroke-width:10px;}
 .svgfilNone {fill:none;}
 .svgfil0 {fill:black;fill-rule:nonzero;}
-.svgfil1
+.svgfill
 {
-	fill:#CCCCCC;
+	fill:#bbb;
 	fill-opacity:	0.7;
 }
-.svgfil2 {fill:#999999;}
 .svgfil3 {fill:#333333;}
 .svgfil4
 {
