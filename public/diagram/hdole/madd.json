@@ -70,10 +70,10 @@
       "basename": "t_2",
       "prototype": "DiagramText",
       "xy": {
-        "x": -280,
-        "y": -870
+        "x": -210,
+        "y": -860
       },
-      "height": "240",
+      "height": "217",
       "weight": "bold"
     },
     {
@@ -173,42 +173,6 @@
       "xy": {
         "x": 600,
         "y": 300
-      }
-    },
-    {
-      "basename": "o_11",
-      "prototype": "DiagramObject",
-      "to": "hdole/madd/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "xy": {
-        "x": -700,
-        "y": -500
-      }
-    },
-    {
-      "basename": "o_13",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": -400,
-        "y": -500
-      }
-    },
-    {
-      "basename": "o_14",
-      "prototype": "DiagramObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": -1000,
-        "y": -500
-      }
-    },
-    {
-      "basename": "o_15",
-      "prototype": "DiagramObject",
-      "to": "hdole/madd/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "xy": {
-        "x": -700,
-        "y": -300
       }
     },
     {
@@ -391,33 +355,6 @@
       ],
       "homsetIndex": 3,
       "to": "hdole/madd/madd"
-    },
-    {
-      "basename": "m_11",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/madd/o_11",
-      "codomain": "hdole/madd/o_13",
-      "to": "hdole/madd/Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC"
-    },
-    {
-      "basename": "m_12",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/madd/o_11",
-      "codomain": "hdole/madd/o_14",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/madd/Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF"
-    },
-    {
-      "basename": "m_13",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/madd/o_11",
-      "codomain": "hdole/madd/o_15",
-      "to": "hdole/madd/Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF}aP"
     }
   ],
   "elements": [
@@ -516,7 +453,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627630322994,
+  "timestamp": 1628414760721,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
