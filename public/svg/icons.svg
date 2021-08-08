@@ -10,6 +10,9 @@
 	<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 		<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
 	</marker>
+	<marker id="arrowhead9Small" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="3" markerHeight="3" orient="auto">
+		<path class="arrow9" d="M10 20 L60 50 L10 80"/>
+	</marker>
 	<marker id="arrowheadF" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 		<path class="arrowF" d="M10 20 L60 50 L10 80"/>
 	</marker>
@@ -19,6 +22,13 @@
 	<marker id="arrowheadWide" viewBox="0 -20 60 140" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 		<path class="svgstr4" d="M0 -20 L80 50 L0 100"/>
 	</marker>
+	<symbol id="icon-action" class="icon" viewbox="0 0 320 320">
+		<path class="svgfill" d="M60,240 300,240 20,80"/>
+		<circle cx="60" cy="240" r="100" fill="url(#radgrad1)"/>
+		<line class="arrow0" x1="120" y1="240" x2="300" y2="240" marker-end="url(#arrowhead)"/>
+		<line class="arrow0" x1="20" y1="80" x2="200" y2="80" marker-end="url(#arrowhead)"/>
+		<circle cx="260" cy="80" r="100" fill="url(#radgrad1)"/>
+	</symbol>
 	<symbol id="icon-add" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="80" x2="160" y2="240"/>
 		<line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>
@@ -42,7 +52,7 @@
 	</symbol>
 	<symbol id="icon-assyMorphism" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="60" y1="40" x2="60" y2="260" marker-end="url(#arrowhead)"/>
-		<line class="svgstr3" x1="100" y1="120" x2="100" y2="200""/>
+		<line class="svgstrThinGray" x1="100" y1="120" x2="100" y2="200""/>
 		<line class="arrow0" x1="100" y1="160" x2="220" y2="160" marker-end="url(#arrowhead)"/>
 		<line class="arrow0" x1="260" y1="60" x2="260" y2="140"/>
 		<line class="arrow0" x1="260" y1="180" x2="260" y2="260" marker-end="url(#arrowhead)"/>
@@ -375,7 +385,7 @@
 	</symbol>
 	<symbol id="icon-search" class="icon" viewbox="0 0 320 320">
 		<circle class="search" cx="240" cy="80" r="120"/>
-		<line class="arrow0" x1="20" y1="300" x2="220" y2="120" marker-end="url(#arrowhead)"/>
+		<line class="arrow0" x1="20" y1="300" x2="220" y2="100" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-settings" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="160" x2="280" y2="160" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
