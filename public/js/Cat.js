@@ -874,10 +874,9 @@ class R
 			const localLog = isGUI ? U.readfile(`${name}.log`) : null;
 			if (localLog)
 				args.log = JSON.parse(localLog);
-			const diagram = new Diagram(userDiagram, args);
+			const diagram = new Cat[args.prototype](userDiagram, args);
 			const png = U.readfile(`${diagram.name}.png`);
-			if (png)
-				D.diagramPNGs.set(diagram.name, png);
+			png && D.diagramPNGs.set(diagram.name, png);
 			R.SetDiagramInfo(diagram);
 			D.EmitCATEvent('load', diagram);
 			R.sync = sync;
@@ -957,7 +956,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 				const jsons = await Promise.all(responses.map(async res => await res.ok ? res.json() : {}));
 				diagrams = jsons.map(json =>
 				{
-					const diagram = new Diagram(R.GetUserDiagram(json.user), json);
+					const diagram = new Cat[json.prototype](R.GetUserDiagram(json.user), json);
 					D.EmitCATEvent('download', diagram);
 					D.EmitCATEvent('load', diagram);
 					return diagram;
@@ -978,42 +977,52 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 	//
 	static async SelectDiagram(name, action = null)
 	{
-		if (isGUI)
+		try
 		{
-			D.session.mode = 'diagram';
-			if (R.diagram)
+			if (isGUI)
 			{
-				R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
-				D.default.fullscreen && D.diagramSVG.lastElementChild.dataset.name !== name && D.diagramSVG.classList.add('hidden');
+				D.session.mode = 'diagram';
+				if (R.diagram)
+				{
+					R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
+					D.default.fullscreen && D.diagramSVG.lastElementChild.dataset.name !== name && D.diagramSVG.classList.add('hidden');
+				}
 			}
-		}
-		if (R.diagram && R.diagram.name === name)
-		{
-			D.EmitCATEvent('default', R.diagram, action);
-			return;
-		}
-		R.default.debug && console.log('SelectDiagram', name);
-		R.diagram = null;
-		let diagram = name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
-		let didit = false;
-		if (!diagram)
-		{
-			if (name)
-				diagram = await R.DownloadDiagram(name);
-			if (!diagram)
+			if (R.diagram && R.diagram.name === name)
 			{
-				D.EmitCATEvent('default', null);
+				D.EmitCATEvent('default', R.diagram, action);
 				return;
 			}
-			didit = true;
+			R.default.debug && console.log('SelectDiagram', name);
+			R.diagram = null;
+			let diagram = name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
+			let didit = false;
+			if (!diagram)
+			{
+				if (name)
+					diagram = await R.DownloadDiagram(name);
+				if (!diagram)
+				{
+					D.EmitCATEvent('default', null);
+					return;
+				}
+				didit = true;
+			}
+			if (!diagram)
+				throw 'no such diagram';
+			R.diagram = diagram;
+			D.EmitCATEvent('default', diagram, action);
 		}
-		if (!diagram)
-			throw 'no such diagram';
-		R.diagram = diagram;
-		D.EmitCATEvent('default', diagram, action);
+		catch(x)
+		{
+			D.statusbar.show(null, x, 2);
+			D.EmitCATEvent('default', null);
+		}
 	}
 	static GetCategory(name)
 	{
+		if (name instanceof Category)
+			return name;
 		if (name === 'sys/CAT')
 			return R.CAT;
 		else if (name === 'sys/Cat')
@@ -1025,7 +1034,6 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		if (refs.has(name))
 			return refs;
 		const info = R.catalog.get(name);
-if (info instanceof Diagram)debugger;
 		refs.add(name);
 		info && info.references.map(r => R.GetReferences(r, refs));
 		return refs;
@@ -1134,7 +1142,13 @@ if (info instanceof Diagram)debugger;
 	static CanDeleteDiagram(d)
 	{
 		// were we given a diagram or the name of a diagram?
-		let diagram = d instanceof Diagram ? d : R.$CAT.getElement(d.name);
+		let diagram = null;
+		if (d instanceof Diagram)
+			diagram = d;
+		else if (typeof d === 'string')
+			diagram = R.$CAT.getElement(d);
+		else
+			diagram = R.$CAT.getElement(d.name);
 		// is the diagram in the catalog of diagrams?
 		diagram = diagram ? diagram : d in R.catalog ? R.catalog[d] : null;
 		return diagram ? R.diagram && ('refcnt' in diagram ? diagram.refcnt === 0 : true) : true;
@@ -1292,7 +1306,7 @@ if (info instanceof Diagram)debugger;
 		diagram.log({command:'addReference', name});
 		diagram.antilog({command:'removeReference', name});
 	}
-	static RemoveReference(e, name)
+	static removeReference(e, name)
 	{
 		const diagram = R.diagram;
 		const ref = R.$CAT.getElement(name);
@@ -1345,7 +1359,7 @@ if (info instanceof Diagram)debugger;
 					old.decrRefcnt();
 		}
 		D.EmitViewEvent('diagram', null);	// needed if R.diagram = diagram since old.decrRefcnt() puts it into catalog view
-		const diagram = new Diagram(R.GetUserDiagram(R.user.name), json);
+		const diagram = new Cat[json.prototype](R.GetUserDiagram(R.user.name), json);
 		R.SaveLocal(diagram);
 		diagram.savePng(e);
 		D.EmitCATEvent('new', diagram);
@@ -1357,6 +1371,63 @@ if (info instanceof Diagram)debugger;
 	static isNamed(elt)
 	{
 		return elt instanceof NamedObject || elt instanceof NamedMorphism;
+	}
+	static sameForm(refElt, testElt, eltMap = new Map())
+	{
+		const ref = refElt.to.getBase();		// no longer named
+		const test = testElt.to.getBase();	// no longer named
+		if (ref.prototype.name === 'CatObject' && testElt instanceof CatObject)
+		{
+			if (eltMap.has(ref))
+			{
+				if (test !== eltMap.get(ref))
+					return false;
+			}
+			else
+				eltMap.set(ref, test);
+			return true;
+		}
+		if (ref.prototype.name === 'Morphism' && ref.isBare() && testElt instanceof Morphism)
+		{
+			if (eltMap.has(ref))
+			{
+				if (test !== eltMap.get(ref))
+					return false;
+			}
+			else
+				eltMap.set(ref, test);
+			return true;
+		}
+		if (ref.prototype.name === test.prototype.name && ref.dual === test.dual)
+		{
+			if (ref instanceof MultiObject && ref.objects.length === test.objects.length)
+				return ref.objects.reduce((r, o, i) => r && R.sameForm(o, test.objects[i], eltMap), true);
+			if (ref instanceof MultiMorphism && ref.morphisms.length === test.morphisms.length)
+				return ref.morphisms.reduce((r, m, i) => r && R.sameForm(m, test.morphisms[i], eltMap), true);
+			if (ref.prototype.name === 'FiniteObject')
+			{
+				if ('size' in ref)
+					return 'size' in test ? (ref.size === test.size) : false;
+				return 'size' in ref ? false : true;
+			}
+			if (ref instanceof Morphism && U.sameForm(ref.domain, test.domain, eltMap) && U.sameForm(ref.codomain, test.codomain, eltMap))
+				switch(ref.prototype.name)
+				{
+					case 'Identity':
+						return Morphism.isIdentity(test);
+					case 'FactorMorphism':
+						return FactorMorphism.equalFactors(ref.factors, test.factors);
+					case 'LambdaMorphism':
+						if (U.sameForm(ref.preCurry, test.preCurry, eltMap))
+							return FactorMorphism.equalFactors(ref.domFactors, test.domFactors) && FactorMorphism.equalFactors(ref.homFactors, test.homFactors);
+					case 'Evaluation':
+						return true;
+					case 'Distribute':
+					case 'Dedistribute':
+						return ref.side === test.side;
+				}
+		}
+		return false;
 	}
 }
 Object.defineProperties(R,
@@ -1898,7 +1969,7 @@ class Toolbar
 		const toolbox = element.getBoundingClientRect();
 		xy.y = xy.y + D.default.margin + 20;
 		element.style.left = `${xy.x - toolbox.width/2}px`;
-		element.style.top = `${xy.y}px`;
+		element.style.top = xy.y + toolbox.height < D.Height() ? `${xy.y}px` : `${D.mouse.down.y - toolbox.height - 4 * D.default.margin}px`;
 		this.automove(diagram);
 		D.drag = false;
 	}
@@ -1985,6 +2056,13 @@ class Toolbar
 	{
 		const btns = this.buttons.querySelectorAll('span.icon');
 		btns.forEach(btn => btn.querySelector('.btn').classList.remove('icon-active'));
+	}
+	adjustPosition()
+	{
+		const screenHeight = D.Height();
+		const bottom = this.element.offsetHeight + this.element.offsetTop;
+		if (bottom > screenHeight)
+			this.element.style.top = `${this.element.offsetTop - bottom + screenHeight - 4 * D.default.margin}px`;
 	}
 }
 
@@ -2131,7 +2209,8 @@ class ElementTool
 	}
 	search()
 	{
-		this.diagrams = this.getMatchingElements();
+		const tbl = document.getElementById(`${this.type}-matching-table`);
+		this.getRows(tbl, this.getMatchingElements());
 	}
 }
 
@@ -2522,7 +2601,7 @@ class DiagramTool extends ElementTool
 				{
 					const btn = D.getIcon('reference', 'reference', e =>
 					{
-						R.RemoveReference(e, name);
+						R.removeReference(e, name);
 						this.search();
 					}, 'Remove reference', btnSize);
 					btn.querySelector('rect.btn').style.fill = 'red';
@@ -2843,7 +2922,7 @@ class D
 		//
 		D.elementTool =
 		{
-			Diagram:	new DiagramTool('Diagram', 'Create a new diagram'),
+			Diagram:	new DiagramTool('Diagram', D.toolbar.help, 'Create a new diagram'),
 			Object:		new ObjectTool('Create a new object in this diagram'),
 			Morphism:	new MorphismTool('Create a new morphism in this diagram'),
 			Text:		new TextTool('Create new text in this diagram'),
@@ -3085,7 +3164,7 @@ class D
 				const pnt = diagram.mouseDiagramPosition(e);
 				if (D.drag)
 				{
-					if (diagram.selected.length === 1 && D.mouseover)
+					if (diagram.selected.length === 1 && D.mouseover)	// check for fusing
 					{
 						const from = diagram.getSelected();
 						const target = from.name === D.mouseover.name ? null : D.mouseover;	// do not target yourself
@@ -3155,7 +3234,7 @@ class D
 						diagram.log({command: 'move', elements});
 						diagram.antilog({command: 'move', elements:originals});
 						movables.forEach(elt => D.EmitElementEvent(diagram, 'move', elt));
-						D.EmitDiagramEvent(diagram, 'move', '');
+						D.EmitDiagramEvent(diagram, 'move', '');	// no more items to move
 					}
 				}
 				else if (!D.mouseover)
@@ -3465,40 +3544,37 @@ class D
 						R.LoadDiagramEquivalences(diagram);
 						diagram.domain.checkCells();
 					}
-					if (isGUI)
+					let saveSession = true;
+					if (diagram)
 					{
-						let saveSession = true;
-						if (diagram)
+						D.session.default = diagram.name;
+						diagram.makeSVG();
+						diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
+						D.diagramSVG.appendChild(diagram.svgRoot);
+						const placement = diagram.getPlacement();
+						D.diagramSVG.classList.remove('trans');
+						diagram.setPlacement(placement, false);
+						if ('action' in args)
 						{
-							D.session.default = diagram.name;
-							diagram.makeSVG();
-							diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
-							D.diagramSVG.appendChild(diagram.svgRoot);
-							const placement = diagram.getPlacement();
-							D.diagramSVG.classList.remove('trans');
-							diagram.setPlacement(placement, false);
-							if ('action' in args)
+							if (args.action === 'home')
+								diagram.home();
+							else if (D.default.fullscreen)
 							{
-								if (args.action === 'home')
+								const viewport = diagram.getViewport();
+								if (viewport)
+									D.setSessionViewport(viewport);
+								else
 									diagram.home();
-								else if (D.default.fullscreen)
-								{
-									const viewport = diagram.getViewport();
-									if (viewport)
-										D.setSessionViewport(viewport);
-									else
-										diagram.home();
-								}
-								saveSession = false;
 							}
-							D.diagramSVG.classList.add('trans');
-							D.GlowBadObjects(diagram);
+							saveSession = false;
 						}
-						else
-							D.session.default = null;
-//	TODO						saveSession && D.EmitViewEvent('diagram', diagram);
-						D.EmitViewEvent('diagram', diagram);
+						D.diagramSVG.classList.add('trans');
+						D.GlowBadObjects(diagram);
 					}
+					else
+						D.session.default = null;
+//	TODO						saveSession && D.EmitViewEvent('diagram', diagram);
+					D.EmitViewEvent('diagram', diagram);
 					break;
 				case 'download':
 					R.SaveLocal(diagram);
@@ -3508,7 +3584,7 @@ class D
 					D.viewports.delete(diagram);
 					D.placements.delete(diagram);
 					D.saveSession();
-					D.statusbar.show(e, `Diagram ${diagram} ${args.command}`);
+					D.statusbar.show(e, `Delete diagram ${diagram.name}`);
 					break;
 				case 'new':
 					D.Autosave(diagram);
@@ -3658,6 +3734,7 @@ class D
 			const text = H3.text({class:cls, x:"100", y:"100", 'text-anchor':'middle'}, safeTxt);
 			D.uiSVG.appendChild(text);
 			const width = text.getBBox().width;
+if (width === 0)debugger;
 			D.uiSVG.removeChild(text);
 			D.textSize.set(safeTxt, width);
 			return width;
@@ -4231,7 +4308,7 @@ class D
 		{
 			replay(e, diagram, args)
 			{
-				R.RemoveReference(e, args.name);
+				R.removeReference(e, args.name);
 			}
 		};
 		D.ReplayCommands.set('removeReference', replayRemoveReference);
@@ -4664,7 +4741,7 @@ Object.defineProperties(D,
 			{
 				length:	200,
 				margin:	16,
-				dir:	{x:0, y:1},
+				dir:	{x:1, y:0},
 			},
 			autohideTimer:	60000,	// ms
 			autosaveTimer:	2000,	// ms
@@ -4692,7 +4769,6 @@ Object.defineProperties(D,
 			scale3D:		1,
 			stdOffset:		new D2(50, 50),
 			stdArrow:		new D2(200, 0),
-			stdArrowDown:	new D2(0, 200),
 			statusbar:		{
 								timein:			100,	// ms
 								timeout:		5000,	// ms
@@ -5104,7 +5180,7 @@ Object.defineProperties(D,
 		{
 			down:		new D2(isGUI ? window.innerWidth/2 : 500, isGUI ? window.innerHeight/2 : 500),
 			onPanel:	false,			// is the mouse not on the main gui?
-			xy:			[new D2()],		// in session coordinates
+			xy:			[new D2(D.Width()/2, D.Height()/2)],		// in session coordinates
 			clientPosition()			// return client coords
 			{
 				return this.xy[this.xy.length -1];
@@ -5229,18 +5305,19 @@ class Catalog extends DiagramTool
 		{
 			let img = null;
 			const args = e.detail;
+			const diagram = args.diagram;
 			let div = null;
 			switch(args.command)
 			{
 				case 'close':
 					break;
 				case 'delete':		// delete diagram
-					R.catalog.delete(args.diagram);
+					R.catalog.delete(diagram);
 					break;
 				case 'upload':
 					if (this.mode === 'search')
 					{
-						img = this.catalogDisplay.querySelector(`img[data-name="${args.diagram.name}"]`);
+						img = this.catalogDisplay.querySelector(`img[data-name="${diagram.name}"]`);
 						img && ['greenGlow', 'warningGlow'].map(glow => img.classList.remove(glow));
 					}
 					break;
@@ -5250,14 +5327,9 @@ class Catalog extends DiagramTool
 						this.reference();
 					break;
 				case 'png':
-					div = this.catalogDisplay.querySelector(`div[data-name="${args.diagram.name}"]`);
-					div && div.replaceWith(this.display(args.diagram));
-					break;
 				case 'load':
-					if (isGUI && e.detail.diagram)
-					{
-						// TODO
-					}
+				case 'new':
+					this.display(diagram);
 					break;
 			}
 		});
@@ -5406,7 +5478,8 @@ class Catalog extends DiagramTool
 			};
 		}
 		div.style.margin = "20px 0px 0px 0px";
-		this.catalogDisplay.appendChild(div);
+		const oldDiv = this.catalogDisplay.querySelector(`div[data-name="${info.name}"]`);
+		oldDiv ? oldDiv.replaceWith(div) : this.catalogDisplay.appendChild(div);
 		return div;
 	}
 	askCloud(getVal = true)
@@ -5543,7 +5616,6 @@ class Catalog extends DiagramTool
 	}
 	getButtons(exclude = [])
 	{
-
 		const btns = [
 						D.getIcon('search', 'search', _ => this.showSection('search'), 'Search for diagram', D.default.button.small, 'catalog-search-icon'),
 						D.getIcon('new', 'edit', _ => this.showSection('new'), 'New diagram', D.default.button.small, 'catalog-new-icon'),
@@ -5560,6 +5632,7 @@ class Catalog extends DiagramTool
 		this.clear();
 		this.toolbar.querySelectorAll('.icon').forEach(elt => elt.remove());
 		this.getButtons().map(btn => this.toolbar.appendChild(btn));
+		this.setSearchBar();
 		if (R.diagram)
 		{
 			if (this.mode === 'search')
@@ -5619,6 +5692,10 @@ class Catalog extends DiagramTool
 		}
 		else
 			errorElt.innerHTML = U.HtmlSafe(diagram);
+	}
+	search()
+	{
+		this.diagrams = this.getMatchingElements();
 	}
 }
 
@@ -6493,7 +6570,7 @@ class Element
 						H3.tr(H3.td('Base name:', '.left'), H3.td(H3.tag('basename', this.basename), baseBtn, '.left')),
 						H3.tr(H3.td('Description:', '.left'), H3.td(H3.tag('description', this.description), descBtn, '.left')),
 						H3.tr(H3.td('Type:', '.left'), H3.td(U.Cap(U.DeCamel(this.constructor.name)), '.left')),
-						H3.tr(H3.td('Category:', '.left'), H3.td(this.diagram ? this.category.properName : '', '.left')),
+						H3.tr(H3.td('Category:', '.left'), H3.td(this.category ? this.category.properName : '', '.left')),
 						H3.tr(H3.td('Diagram:', '.left'), H3.td(this.diagram ? this.diagram.properName : '', '.left')),
 						H3.tr(H3.td('User:', '.left'), H3.td(this.diagram ? this.diagram.user : '', '.left')), {id});
 	}
@@ -7920,7 +7997,7 @@ class DiagramText extends Element
 	}
 	lineDeltaY()
 	{
-		return '1.2em';
+		return '1.5em';
 	}
 	tspan()
 	{
@@ -10798,49 +10875,206 @@ class ActionAction extends Action
 	html(e, diagram, ary)
 	{
 		D.RemoveChildren(D.toolbar.help);
-		const named = ary.filter(elt => 'to' in elt && (elt.to instanceof NamedObject || elt.to instanceof NamedMorphism))[0].to;
-		const selected = ary.filter(elt => !(elt.to instanceof NamedObject || elt.to instanceof NamedMorphism)).map(elt => elt.to);
-		const bareMor = new Set();
-		const bareObj = new Set();
+		const named = ary[ary.length -1].to;
+		const selected = ary.slice(0, ary.length -1).map(elt => elt.to);
 		const ops = new Set();
-		if (named.base instanceof CatObject)
-			this.getBareObjects(named, bareObj, ops);
-		else
-		{
-			this.getBareMorphisms(named, bareMor, ops);
-			this.getBareObjects(named.domain, bareObj, ops);
-			this.getBareObjects(named.codomain, bareObj, ops);
-		}
-		const bareObjects = [...bareObj.values()].filter(o => !selected.includes(o));
-		const bareMorphs = [...bareMor.values()].filter(m => !selected.includes(m));;
-		const actions = [...ops.values()].filter(a => a !== 'CatObject' && a !== 'Morphism');
+		const namedBare = new Set();
+		this.getBareElements(named, namedBare, ops);
+		const unused = selected.filter(elt => !namedBare.has(elt));
+		const actions = [...ops.values()];
 		const elements = [	H3.h4('Create Action'),
-							H3.div('.center', H3.span('.smallBold', named.properName), H3.br(), H3.h5('Selected')),
-							H3.span('.smallPrint', 'These elements are selected as the template for the action.'),
-							...selected.map(elt => elt.getHtmlRep()),
+							H3.span('.smallPrint', 'Create an action based on your selection.'),
 						];
-		if (bareObjects.length > 0)
-			elements.push(	H3.h5('Bare Objects'),
-						H3.span('.smallPrint', 'These objects are required for the action.'),
-							...bareObjects.map(o => o.getHtmlRep()));
-		if (named.base instanceof Morphism && bareMorphs.length > 0)
-			elements.push(	H3.h5('Bare Morphisms'),
-						H3.span('.smallPrint', 'These morphisms are required for the action.'),
-							...bareMorphs.map(m => m.getHtmlRep()));
+		if (unused.length > 0)
+		{
+			const unusedHtml = unused.map(o => o.getHtmlRep());
+			unusedHtml.map(elt => elt.classList.add('element'));
+			elements.push(	H3.h5('Unused Elements'),
+						H3.span('.smallPrint', 'These elements are selected, but are not used by the named element.'),
+							...unusedHtml);
+		}
+		if (namedBare.size > 0)
+		{
+			const namedBareValues = [...namedBare.values()];
+			const html = namedBareValues.map(elt => elt.getHtmlRep());
+			html.map(mh => mh.classList.add('element'));
+			elements.push(	H3.h5('Generalized Elements'),
+							H3.table(H3.tr(H3.td('.smallPrint', 'These elements are used for the action.'), H3.td('.smallPrint', 'Give the corresponding basename', H3.br(), 'for the generalization.')),
+							...html.map((h, i) => H3.tr(H3.td(h), H3.td(H3.input('.in100', {value:namedBareValues[i].basename, id:`match_${i}`}))))));
+			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseInt(e.target.value)), min:0, max:100, width:2, value:this.homsetIndex};
+		}
 		elements.push(	H3.h5('Required Actions'),
-						H3.span('.smallPrint', 'These actions are required to complete the action.'),
-						...actions.map(op => H3.div(op)));
+						H3.span('.smallPrint', 'These actions are required to complete the action.'), H3.br(),
+						...actions.map(op => H3.span('.element', U.DeCamel(op))));
+		const selectedBare = new Set();
+		selected.map(elt => this.getBareElements(elt, selectedBare, ops));
+		const notGeneralized = [];
+		namedBare.forEach(elt => !selectedBare.has(elt) && notGeneralized.push(elte));
+		if (notGeneralized.length > 0)
+		{
+			const html = notGeneralized.map(elt => elt.getHtmlRep());
+			html.map(mh => mh.classList.add('element'));
+			elements.push(	H3.h5('Not Generalized'),
+							H3.span('.smallPrint', 'These bare elements are not generalized for the action.  Their diagrams will be referenced by the new action.'), ...html);
+		}
 		const references = new Set();
-		bareObjects.map(o => references.add(o.diagram.name));
-		bareMorphs.map(m => references.add(m.diagram.name));
+		notGeneralized.map(elt => references.add(elt.diagram.name));
 		const refs = [...references.values()];
 		if (refs.length > 0)
 			elements.push(	H3.h5('Required References'),
-						...refs.map(r => H3.div(r)));
+						...refs.map(r => H3.div('.element', r)));
+		elements.push(D.getIcon('edit', 'edit', e => this.action(e, diagram, ary, namedBare, [...ops.values()], [...refs.values()]), `Create action: ${named.basename}`));
 		elements.map(elt => elt && D.toolbar.help.appendChild(elt));
 	}
-	action(e, diagram, ary)
+	_build(diagram, elt, nameMap)
 	{
+		let newElt = null;
+		if (elt instanceof Morphism)
+		{
+			this._build(diagram, elt.domain, nameMap);
+			this._build(diagram, elt.codomain, nameMap);
+		}
+		if (elt.constructor.name === 'CatObject')
+		{
+			const basename = nameMap.get(elt.name);
+			newElt = diagram.get(elt.constructor.name, {basename});
+		}
+		else if (elt.constructor.name === 'Morphism')
+		{
+			const basename = nameMap.get(elt.name);
+			const domain = diagram.getElement(nameMap.get(elt.domain.name));
+			const codomain = diagram.getElement(nameMap.get(elt.codomain.name));
+			newElt = diagram.get(elt.constructor.name, {basename, domain, codomain});
+		}
+		else if (elt instanceof NamedObject || elt instanceof NamedMorphism)
+		{
+			const source = this._build(diagram, elt.source, nameMap);
+			const basename = nameMap.has(elt.name) ? nameMap.get(elt.name) : elt.basename;
+			newElt = diagram.get(elt.constructor.name, {basename, source});
+		}
+		else if (elt.constructor.name === 'Identity' || elt.constructor.name === 'Evaluation')
+		{
+			const domain = this._build(diagram, elt.domain, nameMap);
+			newElt = diagram.get(elt.constructor.name, {domain});
+		}
+		else if (elt instanceof MultiObject)
+		{
+			const objects = elt.objects.map(o => this._build(diagram, o, nameMap));
+			newElt = diagram.get(elt.constructor.name, {objects, dual:elt.dual});
+		}
+		else if (elt instanceof MultiMorphism)
+		{
+			const morphisms = elt.morphisms.map(m => this._build(diagram, m, nameMap));
+			newElt = diagram.get(elt.constructor.name, {morphisms, dual:elt.dual});
+		}
+		else if (elt instanceof FactorMorphism)
+		{
+			const args = {factors:elt.factors, dual:elt.dual};
+			const side = elt.dual ? 'codomain' : 'domain';
+			args[side] = diagram.getElement(nameMap.get(elt[side].name));
+			newElt = diagram.get(elt.constructor.name, args);
+		}
+		else if (elt instanceof LambdaMorphism)
+		{
+			const preCurry = this._build(diagram, elt.preCurry, nameMap);
+			newElt = diagram.get(elt.constructor.name, {preCurry, domFactors:elt.domFactors, homFactors:elt.homFactors});
+		}
+		else if (elt instanceof Distribute || elt instanceof Dedistribute)
+		{
+			const domain = this._build(diagram, elt.domain, nameMap);
+			newElt = diagram.get(elt.constructor.name, {domain, side:elt.side});
+		}
+		nameMap.set(elt.name, newElt.basename);
+		return newElt;
+	}
+	action(e, diagram, ary, namedBare, ops, references)
+	{
+		const matchSource = ary.map(elt => elt.to);
+		const namedSource = matchSource.pop();
+		try
+		{
+			const namedBareValues = [...namedBare.values()];
+			const namedBare2Names = new Map();
+			const names = namedBareValues.map((elt, i) =>
+			{
+				const val = D.toolbar.help.querySelector(`#match_${i}`).value;
+				namedBare2Names.set(namedBareValues[i], val);
+				return val;
+			});
+			const args = {basename:namedSource.basename, names, codomain:diagram.codomain, user:R.user.name, ops, references};
+			R.sync = false;		// turn off autosave
+			const action = new ActionDiagram(R.GetUserDiagram(R.user.name), args);
+			const nameMap = new Map();
+			namedBareValues.map((elt, i) =>
+			{
+				nameMap.set(elt.name, names[i]);
+				this._build(action, elt, nameMap);
+			});
+			const named = this._build(action, namedSource, nameMap);
+			action.named = named;
+			let xy = new D2();
+			action.makeSVG();
+			const grid = D.gridSize();
+			const xDelta = new D2(grid, 0);
+			const yDelta = new D2(0, grid);
+			const xDelta2 = xDelta.scale(2);
+			const xDelta4 = xDelta.scale(4);
+			const yDelta2 = yDelta.scale(2);
+			action.placeText(`Action ${named.basename}`, xy.sub(xDelta2), '100', 'bold', false);
+			xy = xy.add(yDelta);
+			let history = `This action was created from the diagram ${diagram.name} on ${Date()} from the following elements:\n`;
+			history += ary.map(from => from.to.name).join(', ') + '\n';
+			history += 'Actions required to build the named item:\n' + [...ops.values()].map(op => U.DeCamel(op)).join(', ') + '\n';
+			history += references.length > 0 ? 'Reference diagrams required:  ' + references.map(ref => ref).join(', ') : 'No reference diagrams required.';
+			const txt = action.placeText(history, xy, 12, 'normal', false);
+			xy = xy.add(yDelta2);
+			let {height} = txt.getBBox();
+			while(height > grid)
+			{
+				height -= grid;
+				xy = xy.add(yDelta);
+			}
+			action.placeText('These elements must be selected\nfor the action to be enabled in\nyour working diagram.', xy.sub(xDelta4), 12, 'normal', false);
+
+			const match = matchSource.map(origName =>
+			{
+				const name = namedBare2Names.get(origName);
+				const elt = action.getElement(name);
+				if (elt instanceof CatObject)
+					action.placeObject(elt, xy, false);
+				else
+					action.placeMorphism(elt, xy, null, false);
+				xy = xy.add(yDelta2);
+				return name;
+			});
+			action.match = match;
+			if (named instanceof NamedObject)
+			{
+				action.placeObject(named.source, xy, false);
+				action.placeText('This object is the construction.', xy.sub(xDelta4), 12, 'normal', false);
+				xy = xy.add(yDelta2);
+				action.placeObject(named, xy, false);
+				action.placeText('The named object for the construction.', xy.sub(xDelta4), 12, 'normal', false);
+			}
+			else
+			{
+				action.placeMorphism(named.source, xy, null, false);
+				action.placeText('This morphism is the construction\nfrom the given elements.', xy.sub(xDelta4), 12, 'normal', false);
+				xy = xy.add(yDelta2);
+				action.placeMorphism(named, xy, null, false);
+				action.placeText('The named morphism for the construction.', xy.sub(xDelta4), 12, 'normal', false);
+			}
+			R.sync = true;		// turn on autosave
+			R.SelectDiagram(action);
+			action.home();
+			action.savePng(e);
+			D.EmitCATEvent('new', action);
+		}
+		catch(x)
+		{
+			D.toolbar.showError(U.HtmlEntitySafe(`Error: ${x}`));
+			R.sync = true;		// turn on autosave
+		}
 	}
 	hasForm(diagram, ary)
 	{
@@ -10856,33 +11090,31 @@ class ActionAction extends Action
 		}
 		return false;
 	}
-	getBareMorphisms(morphism, bare, ops, scanned = new Set())
+	getBareElements(elt, bare, ops, scanned = new Set())
 	{
-		if (scanned.has(morphism))
+		if (scanned.has(elt))
 			return;
-		scanned.add(morphism);
-		const base = morphism.getBase();
-		ops.add(base.constructor.name);
-		if (base instanceof MultiMorphism)
-			base.morphisms.map(m => this.getBareMorphisms(m, bare, ops, scanned));
-		else if (base.constructor.name === 'Morphism' && !('data' in base))
-			bare.add(base);
-		else
-			ops.add(base.constructor.name);
-	}
-	getBareObjects(obj, bare, ops, scanned = new Set())
-	{
-		if (scanned.has(obj))
-			return;
-		scanned.add(obj);
-		const base = obj.getBase();
-		ops.add(base.constructor.name);
+		scanned.add(elt);
+		const base = elt.getBase();
+		if (base instanceof Morphism)
+		{
+			this.getBareElements(base.domain, bare, ops, scanned);
+			this.getBareElements(base.codomain, bare, ops, scanned);
+			if ('recursor' in base)
+				this.getBareElements(base.recursor, bare, ops, scanned);
+		}
 		if (base instanceof MultiObject)
-			base.objects.map(o => this.getBareObjects(o, bare, ops, scanned));
-		else if (base.constructor.name === 'CatObjects')
+			base.objects.map(o => this.getBareElements(o, bare, ops, scanned));
+		else if (base instanceof MultiMorphism)
+			base.morphisms.map(m => this.getBareElements(m, bare, ops, scanned));
+		else if (base instanceof LambdaMorphism)
+			this.getBareElements(base.preCurry, bare, ops, scanned);
+		else if (base.constructor.name === 'CatObject' || base.constructor.name === 'Morphism')
+		{
 			bare.add(base);
-		else
-			ops.add(base.constructor.name);
+			return;		// not an op
+		}
+		ops.add(base.constructor.name);
 	}
 }
 
@@ -11008,7 +11240,9 @@ class Category extends CatObject
 	{
 		if (typeof name === 'string')
 			return this.elements.get(name);
-		return name;
+		if (name && 'name' in name && this.elements.has(name.name))
+			return name;
+		return null;
 	}
 	deleteElement(elt, emit = true)
 	{
@@ -13300,6 +13534,12 @@ class FactorMorphism extends Morphism
 	{
 		return factors.every((v, i) => U.ArrayEquals(v, factors[0]));
 	}
+	static equalFactors(left, right)
+	{
+		if (left.length === right.lenght)
+			return left.reduce((r, ary, i) => U.ArrayEquals(ary, right[i]));
+		return false;
+	}
 	static ProperName(diagram, domain, factors, dual, cofactors = null)
 	{
 		const obj = domain instanceof NamedObject ? domain.source : domain;
@@ -13700,12 +13940,6 @@ class Evaluation extends Morphism
 		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Evaluation')));
 		return help;
 	}
-	$(args)
-	{
-		if (typeof args[0] === 'string')
-			args[0] = this.diagram.getElement(args[0]);
-		return args[0].$([args[1]]);
-	}
 	getGraph()
 	{
 		const graph = super.getGraph();
@@ -13984,7 +14218,6 @@ class Diagram extends Functor
 		if ('hiddenCells' in nuArgs)
 			nuArgs.hiddenCells.map(sig => this.domain.hiddenCells.add(sig));
 		this.postProcess();
-		diagram && this.constructor.name === 'Diagram' && D.EmitCATEvent('new', diagram, this);
 	}
 	decrRefcnt()
 	{
@@ -14040,12 +14273,14 @@ class Diagram extends Functor
 	}
 	purge()
 	{
+		R.sync = false;
 		let cnt = 0;
 		do
 		{
 			cnt = [...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => e.decrRefcnt()).length;
 		}
 		while(cnt > 0);
+		R.sync = true;
 	}
 	json(delBasename = true)
 	{
@@ -14177,6 +14412,7 @@ class Diagram extends Functor
 		{
 			D.setActiveIcon(e.target, true);
 			action.html(e, R.diagram, this.selected, args);
+			D.toolbar.adjustPosition();
 		}
 	}
 	activate(e, name, args)
@@ -14397,7 +14633,7 @@ class Diagram extends Functor
 		{
 			const ad = D.ArrowDirection();
 			const tw = to.textWidth();
-			let xy = new D2({x:xyD.x + Math.min(ad.x, tw), y:xyD.y + ad.y});
+			let xy = new D2({x:xyD.x + Math.max(ad.x, tw), y:xyD.y + ad.y});
 			codomain = new DiagramObject(this, {to:to.codomain, xy});
 		}
 		xyC = new D2(codomain.getXY());
@@ -14748,11 +14984,16 @@ class Diagram extends Functor
 		let elt = this.domain.getElement(name);
 		if (elt)
 			return elt;
-		if (this.elements.has(name))
-			return this.elements.get(name);
-		if (this.codomain.elements.has(name))
-			return this.codomain.getElement(name);
-		return this.domain.getElement(name);
+		if (typeof name === 'string')
+		{
+			if (this.elements.has(name))
+				return this.elements.get(name);
+			if (this.codomain.elements.has(name))
+				return this.codomain.getElement(name);
+			return this.domain.getElement(name);
+		}
+		else if ('name' in name)
+			return this.getElement(name.name);
 	}
 	getElements(ary)
 	{
@@ -15126,6 +15367,10 @@ class Diagram extends Functor
 	{
 		return this.get('Distribute', {domain, side});
 	}
+	lambda(preCurry, domFactors, homFactors)
+	{
+		return this.get('LambdaMorphism', {preCurry, domFactors, homFactors});;
+	}
 	log(cmd)
 	{
 		cmd.date = new Date();
@@ -15307,42 +15552,6 @@ class Diagram extends Functor
 			'data' in m && m.data.forEach((d, i) => m.data.set(i, U.InitializeData(this, m.codomain, d)));
 		});
 		this.domain.forEachAssertion(a => a.initialize());
-	}
-	replaceElement(to, nuTo, preserve = true)
-	{
-		if (!this.elements.has(to))
-		{
-			D.RecordError('Diagram does not have element');
-			return;
-		}
-		this.codomain.elements.delete(nuTo.name);
-		this.elements.delete(nuTo.basename);
-		if (preserve)
-		{
-			nuTo.name = to.name;
-			nuTo.basename = to.basename;
-			nuTo.properName = to.properName;
-		}
-		// TODO reset attached index morphism signatures
-		const elements = [...this.elements.values()];
-		const idx = elements.indexOf(to);
-		elements[idx] = nuTo;
-		for (let i=idx + 1; i<elements.length; ++i)
-		{
-			const elt = elements[i];
-			if ('replace' in elt)
-				elt.replace(to, nuTo);
-		}
-	}
-	search(str)
-	{
-		const rx = new RegExp(str, 'gi');
-		const results = [];
-		// search index category
-		this.domain.elements.forEach(elt => ('to' in elt ? rx.test(elt.to.basename) : rx.test(elt.description) ) && results.push(elt));
-		const indexed = new Set(results.filter(r => 'to' in r).map(r => r.to));
-		this.codomain.elements.forEach(elt => rx.test(elt.basename) && !indexed.has(elt) && results.push(elt));
-		return results;
 	}
 	autoplace()
 	{
@@ -15593,7 +15802,7 @@ class Diagram extends Functor
 					break;
 			}
 		});
-		const diagram = new Diagram(R.GetUserDiagram(user), json);
+		const diagram = new Cat[json.prototype](R.GetUserDiagram(user), json);
 		return diagram;
 	}
 	moveElements(offset, ...elements)
@@ -15674,6 +15883,127 @@ class Diagram extends Functor
 			};
 		}
 		return diagram;
+	}
+}
+
+class ActionDiagram extends Diagram
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.Clone(args);
+		nuArgs.category = diagram ? diagram.codomain : null;
+		super(diagram, nuArgs);
+		let named = null;
+		const namedMorph = U.GetArg(nuArgs, 'named', null);
+		if (namedMorph)
+		{
+			named = this.getElement(namedMorph);
+			if (named === undefined)
+				throw `cannot find named element ${nuArgs.named}`;
+			if (!(named instanceof NamedMorphism || named instanceof NamedObject))
+				throw `provided element is not a named element: ${named.name}`;
+		}
+		const attributes = new Map('attributes' in nuArgs ? nuArgs.attributes : []);
+		attributes.set('priority', U.GetArg(args, 'priority', 0));
+		const match = 'match' in nuArgs ? nuArgs.match.map(elt => this.domain.getElement(elt)) : null;
+		Object.defineProperties(this,
+		{
+			attributes:	{value:attributes,	writable:	false},
+			match:		{value:match,		writable:	true},
+			named:		{value:named,		writable:	true},
+			ops:		{value:nuArgs.ops,	writable:	false},
+		});
+	}
+	help()
+	{
+		return super.help(H3.tr(H3.td('Type:'), H3.td('Action')));
+	}
+	action(e, diagram, ary)
+	{
+	}
+	_construct(diagram, ref, eltMap)
+	{
+		if (ref instanceof CatObject)
+		{
+			if (ref.constructor.name === 'CatObject')
+				return eltMap.get(ref);
+			if (ref instanceof MultiObject)
+			{
+				const objects = ref.objects.map(o => this._construct(diagram, o, eltMap));
+				if (ref instanceof ProductObject)
+					return diagram[ref.dual ? 'coprod' : 'prod'](...objects)
+				if (ref instanceof HomObject)
+					return diagram.hom(...objects)
+			}
+			else
+				switch(ref.prototype.name)
+				{
+					case 'FiniteObject':
+					case 'NamedObject':
+						break;		// TODO
+				}
+		}
+		else if (ref instanceof Morphism)
+		{
+			if (ref.constructor.name === 'Morphism')
+			{
+				const elt = eltMap.get(ref);
+				'recursor' in ref && elt.setRecursor(this._construct(diagram, ref.recursor, eltMap));
+				return elt;
+			}
+			if (ref instanceof MultiMorphism)
+			{
+				const morphisms = ref.morphisms.map(m => this._construct(diagram, m, eltMap));
+				if (ref instanceof ProductMorphism)
+					return diagram[ref.dual ? 'coprod' : 'prod'](...morphisms)
+				if (ref instanceof HomMorphism)
+					return diagram.hom(...morphisms)
+				if (ref instanceof ProductAssembly)
+					return diagram[ref.dual ? 'coassy' : 'assy'](...morphisms)
+			}
+			else
+				switch(ref.prototype.name)
+				{
+					case 'FactorMorphism':
+						return diagram[ref.dual ? 'cofctr' : 'fctr'](this._construct(diagram, ref[ref.dual ? ref.codomain : ref.doamin], eltMap), ref.factors);
+					case 'Identity':
+						return diagram.id(this._construct(diagram, ref.domain, eltMap));
+					case 'LambdaMorphism':
+						return diagram.lambda(this._construct(diagram, ref, eltMap), ref.domFactors, ref.homFactors);
+					case 'Evaluation':
+						return diagram.eval(this._construct(diagram, ref.domain, eltMap), this._construct(diagram, ref.domain.objects[0].objects[1], eltMap));
+					case 'NamedMorphism':
+					case 'Distribute':
+					case 'Dedistribute':
+						break;	// TODO
+				}
+		}
+		throw `type not handled: ${ref.prototype.name}`;
+	}
+	doit(e, diagram, ary)
+	{
+		const eltMap = new Map();
+		this.hasForm(diagram, ary, eltMap);
+		const base = this.named.getBase();
+		const elt = this._construct(ref, eltMap);
+	}
+	hasForm(diagram, ary, eltMap = new Map())
+	{
+		let allObjects = false;
+		let allMorphisms = false;
+		let isBinaryOp = false;
+		if (this.match.length === ary.length)
+			return this.match.reduce((r, ref, i) => r && R.sameForm(ref, ary[i], eltMap), true);	// do all elements have the same form?
+		return false;
+	}
+	json()
+	{
+		const a = super.json();
+		a.attributes = U.JsonMap(this.attributes);
+		a.match = this.match.map(elt => elt.name);
+		a.named = this.named.name;
+		a.ops	= this.ops;
+		return a;
 	}
 }
 
@@ -15784,24 +16114,8 @@ class Assembler
 	{
 		return [...object.codomains].filter(m => this.references.has(m) || this.coreferences.has(m)).length;
 	}
-	/*
-	addFold(fld)
-	{
-		this.folds.add(fld);
-		Assembler.addBall('Fold', 'fold', 'assyFold', fld);
-	}
-	deleteFold(fld)
-	{
-		this.folds.delete(fld);
-		this.deleteEllipse('fold', fld);
-	}
-	*/
 	isInput(object)
 	{
-//		let refcnt = 0;
-//		object.domains.forEach(m => this.references.has(m) && refcnt++);
-//		const refs = [...object.domains].filter(m => this.references.has(m) && (!m.codomain.isTerminal() || m.domain.isTerminal()));
-//		return refs.length === 0 && this.codomainCount(object) === 0 && (this.domainCount(object) > 0 || this.coreferenceCount(object) === 0);
 		if (this.codomainCount(object) === 0)
 		{
 			const refs = [...object.domains].filter(m => this.references.has(m) && !Assembler.isTerminalId(m));
@@ -15838,13 +16152,6 @@ class Assembler
 		this.overloaded.add(ovr);
 		Assembler.addBall('Overload', 'ovr', 'assyOverload', ovr);
 	}
-	/*
-	deleteOverloaded(ovr)
-	{
-		this.overloaded.delete(ovr);
-		this.deleteEllipse('ovr', ovr);
-	}
-	*/
 	isOrigin(object)
 	{
 		const codCnt = this.codomainCount(object);
@@ -16411,6 +16718,7 @@ const Cat =
 	D,
 	U,
 	Action,
+	ActionDiagram,
 	Assertion,
 	Category,
 	CatObject,
