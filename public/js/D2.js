@@ -118,6 +118,10 @@ class D2
 	{
 		return D2.Scale(a, this);
 	}
+	sub(w)
+	{
+		return D2.Subtract(this, w);
+	}
 	subtract(w)
 	{
 		return D2.Subtract(this, w);
