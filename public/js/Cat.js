@@ -1123,10 +1123,11 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 			const diagrams = data.diagrams;
 			diagrams.map(d =>
 			{
-				d.localTimestamp = R.LocalTimestamp(d.name);
-				d.references = JSON.parse(d.refs);
-				delete d.refs;
-				R.catalog.set(d.name, d);
+				const info = Diagram.GetInfo(d);
+				info.localTimestamp = R.LocalTimestamp(d.name);
+				info.references = JSON.parse(d.refs);
+				delete info.refs;
+				R.catalog.set(info.name, info);
 				D.EmitCATEvent('catalogAdd', d);
 			});
 			fn();
@@ -1150,8 +1151,10 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		else
 			diagram = R.$CAT.getElement(d.name);
 		// is the diagram in the catalog of diagrams?
-		diagram = diagram ? diagram : d in R.catalog ? R.catalog[d] : null;
-		return diagram ? R.diagram && ('refcnt' in diagram ? diagram.refcnt === 0 : true) : true;
+		diagram = diagram ? diagram : R.catalog.has(d) ? R.catalog.get(d) : null;
+		if (diagram && 'refcnt' in diagram)
+			return diagram.refcnt === 0;
+		return false;
 	}
 	static DeleteDiagram(e, name)
 	{
@@ -1808,7 +1811,7 @@ class Navbar
 				break;
 		}
 		this.element.style.background = c;
-		if (R.diagram && D.session.mode === 'diagram')
+		if (R.diagram)
 		{
 			this.categoryElt.innerHTML = U.HtmlEntitySafe(R.diagram.codomain.properName);
 			D.RemoveChildren(this.diagramElt);
@@ -2076,10 +2079,14 @@ class ElementTool
 			toolbar:			{value: toolbar,					writable: false},
 			sections:			{value: sections,					writable: false},
 			headline:			{value: headline,					writable: false},
-			filter:				{value: '',							writable: true},
-			diagramOnly:		{value: false,						writable: true},
 			hasDiagramOnlyButton:		{value: true,				writable: true},
-			searchArgs:			{value: {userOnly: false, recentOnly: false, referenceOnly: false, sorter:U.NameSorter},	writable: false},
+			searchArgs:			{value: {
+											diagramOnly: false, 
+											userOnly: false, 
+											sessionOnly: false,
+											referenceOnly: false,
+											sorter:U.NameSorter,
+										},	writable: false},
 			textSortIcon:		{value: D.getIcon('text', 'text', e => this.setTextSorter(e), 'Sort by name'),				writable: false},
 			buttonSize:			{value: D.default.button.small,		writable: true},
 			headerId:			{value: 'help-header',				writable: true},
@@ -2092,11 +2099,10 @@ class ElementTool
 	{
 		const onkeyup = e =>
 		{
-			this.filter = document.getElementById(`${this.type}-search-value`).value;
 			this.search();
 			D.EmitViewEvent('catalog', 'search');
 		};
-		return H3.table(	'##search-tools',
+		return H3.table(	`##${this.type}-search-tools`,
 							H3.tr(	H3.th('Search', {colspan:3})),
 							H3.tr(	H3.td('Filter by', '.tinyPrint.center.italic'),
 									H3.td(),
@@ -2114,7 +2120,6 @@ class ElementTool
 		D.RemoveChildren(searchSorter);
 		searchSorter.appendChild(this.textSortIcon);
 		searchSorter.appendChild(D.getIcon('reference', 'reference', e => this.setRefcntSorter(e), 'Sort by reference count'));
-		this.resetFilter();
 	}
 	showSection(section)
 	{
@@ -2149,31 +2154,30 @@ class ElementTool
 	}
 	toggleDiagramFilter(e)
 	{
-		this.diagramOnly = !this.diagramOnly;
-		if (this.diagramOnly)
+		this.searchArgs.diagramOnly = !this.searchArgs.diagramOnly;
+		if (this.searchArgs.diagramOnly)
 			D.setActiveIcon(e.target, false);
 		else
 			D.setUnactiveIcon(e.target);
 		this.search();
-		D.EmitViewEvent('catalog', 'search');
 	}
 	setTextSorter(e)
 	{
 		this.searchArgs.sorter = U.NameSorter;
 		D.setActiveIcon(e.target);
 		this.search();
-		D.EmitViewEvent('catalog', 'search');
 	}
 	setRefcntSorter(e)
 	{
 		this.searchArgs.sorter = U.RefcntSorter;
 		D.setActiveIcon(e.target);
 		this.search();
-		D.EmitViewEvent('catalog', 'search');
 	}
 	addNewSection()		// fitb
 	{}
 	reset()				// fitb
+	{}
+	getMatchingElements()	// fitb
 	{}
 	getRows(tbl, elements)	// or replace
 	{
@@ -2181,8 +2185,7 @@ class ElementTool
 	}
 	resetFilter()
 	{
-		this.filter = '';
-		this.diagramOnly = false;
+		this.searchArgs.diagramOnly = false;
 		this.searchArgs.sorter = U.NameSorter;
 		D.setActiveIcon(this.textSortIcon);
 	}
@@ -2209,8 +2212,17 @@ class ElementTool
 	}
 	search()
 	{
+		this.clearSearch();
 		const tbl = document.getElementById(`${this.type}-matching-table`);
-		this.getRows(tbl, this.getMatchingElements());
+		this.getRows(tbl, this.filter(this.getMatchingElements()));
+	}
+	filter(elements)
+	{
+		const args = this.searchArgs;
+		return elements.filter(info =>	((args.userOnly && info.user === R.user.name) || !args.userOnly) &&
+										((args.referenceOnly && R.diagram.references.has(info.name)) || !args.referenceOnly) &&
+										((args.sessionOnly && D.session.diagrams.includes(info.name)) || !args.sessionOnly) &&
+										((args.diagramOnly && info.diagram === R.diagram) || !this.searchArgs.diagramOnly));
 	}
 }
 
@@ -2264,7 +2276,8 @@ class TextTool extends ElementTool
 	}
 	getMatchingElements()
 	{
-		const texts = R.diagram.getTexts().filter(txt => txt.description.includes(this.filter));
+		const filter = document.getElementById(`${this.type}-search-value`).value;
+		const texts = R.diagram.getTexts().filter(txt => txt.description.includes(filter));
 		return texts;
 	}
 	reset()
@@ -2378,7 +2391,9 @@ class ObjectTool extends ElementTool
 	}
 	getMatchingElements()
 	{
-		return R.diagram.getObjects().filter(o => o.name.includes(this.filter) && ((this.diagramOnly && o.diagram === R.diagram) || !this.diagramOnly));
+		const filter = document.getElementById(`${this.type}-search-value`).value;
+		const objects = R.diagram.getObjects().filter(o => o.name.includes(filter) && ((this.searchArgs.diagramOnly && o.diagram === R.diagram) || !this.searchArgs.diagramOnly));
+		return objects.sort(this.searchArgs.sorter);
 	}
 	create(e)
 	{
@@ -2452,7 +2467,8 @@ class MorphismTool extends ElementTool
 	}
 	getMatchingElements()
 	{
-		const morphisms = R.diagram.getMorphisms().filter(m => m.name.includes(this.filter) && ((this.diagramOnly && m.diagram === R.diagram) || !this.diagramOnly));
+		const filter = document.getElementById(`${this.type}-search-value`).value;
+		const morphisms = R.diagram.getMorphisms().filter(m => m.name.includes(filter) && ((this.searchArgs.diagramOnly && m.diagram === R.diagram) || !this.searchArgs.diagramOnly));
 		const sigs = new Map();
 		morphisms.map(m =>
 		{
@@ -2460,7 +2476,7 @@ class MorphismTool extends ElementTool
 				sigs.set(m.signature, m);
 		});
 		const remaining = [...sigs.values()];
-		remaining.sort(U.RefcntSorter);
+		remaining.sort(this.searchArgs.sorter);
 		return remaining;
 	}
 	create(e)
@@ -2565,10 +2581,7 @@ class DiagramTool extends ElementTool
 			if (R.user.status === 'logged-in' && R.cloud && info.user === R.user.name)
 			{
 				if (!nobuts.has('upload') && R.isLocalNewer(diagram.name))
-				{
-					const btn = D.getIcon('upload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn');
-					buttons.push(btn);
-				}
+					buttons.push(D.getIcon('upload', 'upload', e => diagram.upload(e, false), 'Upload to cloud ' + R.cloudURL, btnSize, false, 'diagramUploadBtn'));
 				if (!nobuts.has('download') && R.isCloudNewer(diagram.name))
 					buttons.push(D.getIcon('downcloud', 'downcloud', e => diagram.download(e, false), 'Download from cloud ' + R.cloudURL, btnSize, false));
 			}
@@ -2587,7 +2600,7 @@ class DiagramTool extends ElementTool
 		if (!nobuts.has('view'))
 			buttons.push(D.getIcon('view', 'view', e => R.SelectDiagram(name, 'home'), 'View diagram', btnSize));
 		const refcnt = diagram ? diagram.refcnt : info ? info.refcnt : 0;
-		if (!nobuts.has('delete') && refcnt === 0 && info.user === R.user.name)
+		if (!nobuts.has('delete') && refcnt === 0 && info.user === R.user.name && R.CanDeleteDiagram(info.name))
 		{
 			const btn = D.getIcon('delete', 'delete', e => Cat.R.DeleteDiagram(e, info.name), 'Delete diagram');
 			btn.querySelector('rect.btn').style.fill = 'red';
@@ -2632,18 +2645,17 @@ class DiagramTool extends ElementTool
 				}
 			}
 		}
-		if ((!R.diagram || name !== R.diagram.name) && !nobuts.has('close') && D.viewports.has(name))
+		if ((!R.diagram || name !== R.diagram.name) && !nobuts.has('close') && D.session.diagrams.includes(name))
 		{
 			const closeFn = nm =>
 			{
 				const diagram = R.$CAT.getElement(nm);
 				if (diagram)
-				{
 					diagram.close();
-					this.search();
-				}
+				else
+					D.EmitCATEvent('close', nm);
 			};
-			buttons.push(D.getIcon('close', 'close', e => closeFn(name), 'Close diagram', btnSize));
+			buttons.push(D.getIcon('close', 'close', e => closeFn(name), 'Remove from session', btnSize));
 		}
 		return buttons;
 	}
@@ -2651,8 +2663,9 @@ class DiagramTool extends ElementTool
 	{
 		super.setSearchBar();
 		const searchFilter = document.getElementById(this.searchFilterId);
-		searchFilter.appendChild(D.getIcon('user', 'user', e => this.toggleUserFilter(e), `Restrict to ${R.user.name}`));
-		R.diagram && searchFilter.appendChild(D.getIcon('reference', 'reference', e => this.toggleReferenceFilter(e), 'Restrict to this diagram\'s references'));
+		searchFilter.appendChild(D.getIcon('user', 'user', e => this.toggleUserFilter(e), `Restrict to ${R.user.name}`, D.default.button.small, 'filter-user'));
+		R.diagram && searchFilter.appendChild(D.getIcon('reference', 'reference', e => this.toggleReferenceFilter(e), 'Restrict to this diagram\'s references', D.default.button.small, 'filter-reference'));
+		searchFilter.appendChild(D.getIcon('session', 'session', e => this.toggleSessionFilter(e), 'Show diagrams in user session', D.default.button.small, 'filter-session'));
 		const searchSorter = document.getElementById(this.searchSorterId);
 		searchSorter.appendChild(D.getIcon('clock', 'clock', e => this.setSaveSorter(e), 'Sort by last save time'));
 	}
@@ -2665,7 +2678,9 @@ class DiagramTool extends ElementTool
 		const form = D.uploadJSONForm();
 		toolbar2.appendChild(form);
 		form.insertBefore(H3.h4('Upload Diagram JSON'), form.firstChild);
-		this.setSearchBar();
+		const searchTable = document.getElementById(`${this.type}-search-results`);
+		this.infoElement = H3.div(`##${this.type}-search-info`);
+		searchTable.parentNode.insertBefore(this.infoElement, searchTable);
 	}
 	setSaveSorter(e)
 	{
@@ -2678,15 +2693,40 @@ class DiagramTool extends ElementTool
 	{
 		this.searchArgs.userOnly = !this.searchArgs.userOnly;
 		D.toggleIcon(e.target, this.searchArgs.userOnly);
+		if (this.searchArgs.userOnly)
+			this.infoElement.appendChild(H3.p('##filter-user-info.smallPrint.center', `Diagrams owned by the user ${R.user.name}.`));
+		else
+		{
+			const elt = document.getElementById('filter-user-info');
+			elt && elt.remove();
+		}
 		this.search();
-		D.EmitViewEvent('catalog', 'search');
 	}
 	toggleReferenceFilter(e)
 	{
 		this.searchArgs.referenceOnly = !this.searchArgs.referenceOnly;
 		D.toggleIcon(e.target, this.searchArgs.referenceOnly);
+		if (this.searchArgs.referenceOnly)
+			this.infoElement.appendChild(H3.p('##filter-reference-info.smallPrint.center', `Reference diagrams of the diagram ${R.diagram.name}.`));
+		else
+		{
+			const elt = document.getElementById('filter-reference-info');
+			elt && elt.remove();
+		}
 		this.search();
-		D.EmitViewEvent('catalog', 'search');
+	}
+	toggleSessionFilter(e)
+	{
+		this.searchArgs.sessionOnly = !this.searchArgs.sessionOnly;
+		D.toggleIcon(e.target, this.searchArgs.sessionOnly);
+		if (this.searchArgs.sessionOnly)
+			this.infoElement.appendChild(H3.p('##filter-session-info.smallPrint.center', 'Session diagrams'));
+		else
+		{
+			const elt = document.getElementById('filter-session-info');
+			elt && elt.remove();
+		}
+		this.search();
 	}
 	addNewSection()
 	{
@@ -2709,10 +2749,9 @@ class DiagramTool extends ElementTool
 	getMatchingElements()
 	{
 		const diagrams = [];
-		R.catalog.forEach((info, name) => info.user !== 'sys' && name.includes(this.filter) &&
+		const filter = document.getElementById(`${this.type}-search-value`).value;
+		R.catalog.forEach((info, name) => info.user !== 'sys' && name.includes(filter) &&
 			info.basename !== info.user &&
-			((this.searchArgs.userOnly && info.user === R.user.name) || !this.searchArgs.userOnly) &&
-			((this.searchArgs.referenceOnly && R.diagram.references.has(name)) || !this.searchArgs.referenceOnly) &&
 			diagrams.push(info));
 		diagrams.sort(this.searchArgs.sorter);
 		return diagrams;
@@ -2726,6 +2765,7 @@ class DiagramTool extends ElementTool
 		super.resetFilter();
 		this.searchArgs.userOnly = false;
 		this.searchArgs.referenceOnly = false;
+		this.searchArgs.sessionOnly = false;
 	}
 	create(e)
 	{
@@ -3318,6 +3358,14 @@ class D
 		}
 		icon.querySelector('.btn').classList.add('icon-active');
 	}
+	static findActiveIcons(container)
+	{
+		const icons = [];
+		for (let icon of container.querySelectorAll('.icon'))
+			if (icon.querySelector('.icon-active'))
+				icons.push(icon);
+		return icons;
+	}
 	static setUnactiveIcon(elt)
 	{
 		const icon = D.findAncestor('SPAN', elt);
@@ -3539,14 +3587,12 @@ class D
 					diagram.loadCells();
 					break;
 				case 'default':
+					let saveSession = true;
 					if (diagram)
 					{
 						R.LoadDiagramEquivalences(diagram);
 						diagram.domain.checkCells();
-					}
-					let saveSession = true;
-					if (diagram)
-					{
+						!D.session.diagrams.includes(diagram.name) && D.session.diagrams.push(diagram.name);
 						D.session.default = diagram.name;
 						diagram.makeSVG();
 						diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
@@ -3584,7 +3630,7 @@ class D
 					D.viewports.delete(diagram);
 					D.placements.delete(diagram);
 					D.saveSession();
-					D.statusbar.show(e, `Delete diagram ${diagram.name}`);
+					D.statusbar.show(e, `${U.Cap(args.command)} diagram: ${diagram}`);
 					break;
 				case 'new':
 					D.Autosave(diagram);
@@ -4339,8 +4385,6 @@ if (width === 0)debugger;
 	}
 	static saveSession()
 	{
-		D.session.diagrams.length = 0;
-		D.forEachDiagramSVG(d => D.session.diagrams.push(d.name));
 		U.writefile('session.json', JSON.stringify(D.session));
 	}
 	static readSession()
@@ -5258,7 +5302,7 @@ Object.defineProperties(D,
 	xmlns:			{value: 'http://www.w3.org/2000/svg',							writable: false},
 });
 
-class Catalog extends DiagramTool
+class Catalog extends DiagramTool		// GUI only
 {
 	constructor()
 	{
@@ -5267,14 +5311,9 @@ class Catalog extends DiagramTool
 		this.sections.length = 0;
 		this.sections.push('search', 'new', 'upload');
 		this.catalog = document.getElementById('catalog');
-		this.modeTool = H3.td('.left', {width:'33%'});
 		this.catalog.appendChild(H3.h1('.catalog', 'Catalog'));
-		this.toolbarInfo = H3.span('##catalog-toolbar-info');		// display area per button
 		this.catalog.appendChild(H3.table(H3.tr(this.toolbar)));
-		this.toolbar.appendChild(this.toolbarInfo);
 		this.mode = 'search';								// what viewing mode are we in?
-		this.catalogInfo = H3.div('##catalog-info');		// info about the state of the displayed items
-		this.catalog.appendChild(this.catalogInfo);
 		const action = e => this.createDiagram();
 		const uploadForm = D.uploadJSONForm();
 		uploadForm.classList.remove('hidden');
@@ -5294,6 +5333,8 @@ class Catalog extends DiagramTool
 								uploadForm)
 							);
 		this.catalog.appendChild(topBar);
+		this.infoElement = H3.div(`##${this.type}-tool-info`);		// info about the state of the displayed items; needed since super.html() is not called
+		this.catalog.appendChild(this.infoElement);
 		this.catalogDisplay = H3.div('##catalog-display');		// the actual catalog display
 		this.catalog.appendChild(this.catalogDisplay);
 		this.diagrams = null;
@@ -5310,6 +5351,7 @@ class Catalog extends DiagramTool
 			switch(args.command)
 			{
 				case 'close':
+					D.catalog.remove(typeof diagram === 'string' ? diagram : diagram.name);
 					break;
 				case 'delete':		// delete diagram
 					R.catalog.delete(diagram);
@@ -5354,6 +5396,7 @@ class Catalog extends DiagramTool
 				case 'start':
 					this.setImageScale();
 					this.updateDiagramCodomain();
+					this.showSection('search');
 					break;
 			}
 		});
@@ -5388,14 +5431,7 @@ class Catalog extends DiagramTool
 	html()
 	{
 		this.reset();
-		this.filter = document.getElementById(this.searchFilterId).value;
-		const onkeyup = e =>
-		{
-			this.filter = document.getElementById(this.searchFilterId).value;
-			this.search();
-		};
-		this.resetFilter();
-		this.setSearchBar();
+		const onkeyup = e => this.search();
 		this.search();
 		D.EmitViewEvent('catalog');
 	}
@@ -5405,7 +5441,6 @@ class Catalog extends DiagramTool
 	}
 	clear()
 	{
-		D.RemoveChildren(this.catalogInfo);
 		D.RemoveChildren(this.catalogDisplay);
 	}
 	display(info)
@@ -5482,6 +5517,11 @@ class Catalog extends DiagramTool
 		oldDiv ? oldDiv.replaceWith(div) : this.catalogDisplay.appendChild(div);
 		return div;
 	}
+	remove(name)
+	{
+		const elt = this.catalog.querySelector(`div[data-name="${name}"]`);
+		elt && elt.remove();
+	}
 	askCloud(getVal = true)
 	{
 		switch(this.mode)
@@ -5523,7 +5563,7 @@ class Catalog extends DiagramTool
 	}
 	outOfDateGlow()
 	{
-		D.RemoveChildren(this.catalogInfo);
+		D.RemoveChildren(this.infoElement);
 		this.glowMap = new Map();
 		const status = {hasWarningGlow:false, hasGreenGlow:false};
 		this.diagrams.forEach(info =>
@@ -5543,21 +5583,21 @@ class Catalog extends DiagramTool
 			}
 		});
 		if (status.hasWarningGlow)
-			this.catalogInfo.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
+			this.infoElement.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
 													H3.button(`Download all newer diagrams from ${R.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.downloadNewer()})]));
 		if (status.hasGreenGlow)
 		{
 			const div = H3.div(H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'));
 			if (R.user.status === 'logged-in')
 				div.appendChild(H3.button(`Upload all newer diagrams to ${R.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.uploadNewer()}));
-			this.catalogInfo.appendChild(div);
+			this.infoElement.appendChild(div);
 		}
 		if (!status.hasWarningGlow && !status.hasGreenGlow)
-			this.catalogInfo.appendChild(H3.p(`All diagrams synced to ${R.local ? 'local server' : 'cloud'}.`, '.center'));
+			this.infoElement.appendChild(H3.p(`All diagrams synced to ${R.local ? 'local server' : 'cloud'}.`, '.center'));
 	}
 	referenceGlow()
 	{
-		D.RemoveChildren(this.catalogInfo);
+		D.RemoveChildren(this.infoElement);
 		const status = {hasWarningGlow:false, hasGreenGlow:false};
 		const refs = R.diagram.references;
 		this.diagrams.forEach(info =>
@@ -5568,7 +5608,7 @@ class Catalog extends DiagramTool
 			else if (R.diagram.allReferences.has(name))
 				this.glowMap.set(name, 'warningGlow');
 		});
-		this.catalogInfo.appendChild(H3.div(H3.span('Directly referenced ', H3.span('diagrams', '.greenGlow'), '&nbsp;&nbsp;&nbsp;&nbsp;Indirectly referenced ', H3.span('diagrams', '.warningGlow'), '.display')));
+		this.infoElement.appendChild(H3.div(H3.span('Directly referenced ', H3.span('diagrams', '.greenGlow'), '&nbsp;&nbsp;&nbsp;&nbsp;Indirectly referenced ', H3.span('diagrams', '.warningGlow'), '.display')));
 		D.EmitViewEvent('catalog');
 	}
 	hide()
@@ -5630,32 +5670,28 @@ class Catalog extends DiagramTool
 	update()
 	{
 		this.clear();
+		const icons = D.findActiveIcons(document.getElementById(this.searchFilterId));
 		this.toolbar.querySelectorAll('.icon').forEach(elt => elt.remove());
 		this.getButtons().map(btn => this.toolbar.appendChild(btn));
 		this.setSearchBar();
-		if (R.diagram)
-		{
-			if (this.mode === 'search')
-				this.modeTool.appendChild(H3.button(`Glow references for ${R.diagram.name}.`, '.textButton', {onclick:_ => this.reference()}));
-			else
-				this.modeTool.appendChild(H3.button('Glow out of date diagrams', '.textButton', {onclick:_ => this.search()}));
-		}
 		switch(this.mode)
 		{
 			case 'search':
 				const tbl = document.getElementById(`${this.type}-matching-table`);
-				this.diagrams && this.getRows(tbl, this.diagrams);
+				this.diagrams && this.getRows(tbl, this.filter(this.diagrams));
 				break;
 			case 'reference':
 				this.diagrams.map(diagram =>
 				{
-					if (this.filter)
+					const filter = document.getElementById(`${this.type}-search-value`).value;
+					if (filter !== '')
 						this.diagramFilter(diagram) && this.display(diagram);
 					else
 						this.display(diagram);
 				});
 				break;
 		}
+		icons.map(icon => D.setActiveIcon(document.getElementById(icon.id), false));
 	}
 	diagramFilter(diagram)
 	{
@@ -5696,6 +5732,21 @@ class Catalog extends DiagramTool
 	search()
 	{
 		this.diagrams = this.getMatchingElements();
+	}
+	toggleUserFilter(e)
+	{
+		super.toggleUserFilter(e);
+		D.EmitViewEvent('catalog', 'search');
+	}
+	toggleReferenceFilter(e)
+	{
+		super.toggleReferenceFilter(e);
+		D.EmitViewEvent('catalog', 'search');
+	}
+	toggleSessionFilter(e)
+	{
+		super.toggleSessionFilter(e);
+		D.EmitViewEvent('catalog', 'search');
 	}
 }
 
