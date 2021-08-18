@@ -983,6 +983,16 @@ span[contenteditable="true"].selected
 	overflow-y:	auto;
 }
 
+#tool-search-filter
+{
+	margin:	0px 4px 0px 4px;
+}
+
+#tool-search-sorter
+{
+	margin:	0px 4px 0px 4px;
+}
+
 .image-element
 {
 	text-align:	center;
@@ -1004,16 +1014,6 @@ span[contenteditable="true"].selected
 	float:		right;
 	position:	relative;
 	top:		-1em;
-}
-
-#tool-search-filter
-{
-	margin:	0px 4px 0px 4px;
-}
-
-#tool-search-sorter
-{
-	margin:	0px 4px 0px 4px;
 }
 
 .shadow
