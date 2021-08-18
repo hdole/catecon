@@ -354,7 +354,7 @@
         ]
       ],
       "homsetIndex": 3,
-      "to": "hdole/madd/madd"
+      "to": "hdole/madd/a/madd"
     }
   ],
   "elements": [
@@ -444,8 +444,9 @@
       ]
     },
     {
-      "basename": "madd",
+      "basename": "a/madd",
       "prototype": "NamedMorphism",
+      "properName": "madd",
       "domain": "hdole/madd/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "codomain": "hdole/floats/F64",
       "source": "hdole/madd/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
@@ -453,7 +454,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1628414760721,
+  "timestamp": 1629152653947,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
