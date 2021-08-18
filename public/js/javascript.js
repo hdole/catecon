@@ -326,6 +326,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		}
 		loadHTML(htmlDiagram)	// bootstrap basic diagrams for startup
 		{
+			htmlDiagram.incrRefcnt();
 //			const htmlDiagram = R.$CAT.getElement('hdole/HTML');
 			D.htmlDiagram = htmlDiagram;
 			const html = htmlDiagram.getElement('HTML');
