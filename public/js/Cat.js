@@ -1034,6 +1034,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 	}
 	static GetReferences(name, refs = new Set())
 	{
+if (name instanceof Diagram)debugger;
 		if (refs.has(name))
 			return refs;
 		const info = R.catalog.get(name);
@@ -1190,7 +1191,7 @@ if (info instanceof Diagram)debugger;
 		info.refcnt = diagram.refcnt;
 		info.description = diagram.description;
 		info.codomain = diagram.codomain.name;
-		info.references = [...diagram.references.values()];
+		info.references = [...diagram.references.values()].map(ref => ref.name);
 		return info;
 	}
 	static SaveDefaults()
@@ -1867,7 +1868,7 @@ class Navbar
 		const width = left.length * 32;
 		const divs = [	H3.div('.navbar-float',
 							H3.table('.w100', H3.tr(
-								H3.td(H3.table(H3.tr(H3.td('.buttonBarLeft.navbar-tools', left))), {style:`width:${width}px`}),
+								H3.td('.buttonBarLeft', H3.table(H3.tr(H3.td('.navbar-tools', left))), {style:`width:${width}px`}),
 								H3.td('##diagram-navbar.navtxt-', {title:'Current diagram'})))),
 						H3.div('.navbar-float.navtxt-text.navtxt-link', 'Catecon', {onclick:_ => this.catalogView()}),
 						H3.div(H3.span('##category-navbar'), '.navbar-float.navtxt-text', {title:'Current category scope'})];
@@ -3912,6 +3913,10 @@ if (width === 0)debugger;
 			const srcChild = src.childNodes[cd];
 			if ('data' in srcChild)
 				continue;
+			const hasEmphasis = srcChild.classList.contains('emphasis');
+			hasEmphasis && srcChild.classList.remove('emphasis');
+			const hasSelected = srcChild.classList.contains('emphasis');
+			hasSelected && srcChild.classList.remove('emphasis');
 			var srcStyle = window.getComputedStyle(srcChild);
 			if (srcStyle === "undefined" || srcStyle === null)
 				continue;
@@ -3923,6 +3928,8 @@ if (width === 0)debugger;
 					style += `${D.svgStyles[dstChild.tagName][i]}:${srcStyle.getPropertyValue(styles[i])};`;
 			}
 			dstChild.setAttribute('style', style);
+			hasEmphasis && srcChild.classList.add('emphasis');
+			hasSelected && srcChild.classList.add('selected');
 		}
 	}
 	static Svg2canvas(diagram, fn)
@@ -3935,6 +3942,8 @@ if (width === 0)debugger;
 		const markers = ['arrowhead', 'arrowheadRev'];
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
 		top.appendChild(copy);
+		const emphs = copy.querySelectorAll('.emphasis');
+		emphs && emphs.forEach(elt => elt.classList.remove('emphasis'));
 		D.copyStyles(copy, svg);
 		const width = D.snapshotWidth;
 		const height = D.snapshotHeight;
@@ -14952,6 +14961,7 @@ class Diagram extends Functor
 					R.default.debug && console.log('uploaded', this.name);
 					const info = R.GetDiagramInfo(this.name);
 					info.cloudTimestamp = info.timestamp;
+if (info.references.filter(ref => ref instanceof Diagram).length > 0)debugger;
 if (info instanceof Diagram)debugger;
 					R.catalog.set(this.name, info);
 					const delta = Date.now() - start;
