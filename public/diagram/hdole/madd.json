@@ -70,8 +70,8 @@
       "basename": "t_2",
       "prototype": "DiagramText",
       "xy": {
-        "x": -210,
-        "y": -860
+        "x": -200,
+        "y": -780
       },
       "height": "217",
       "weight": "bold"
@@ -454,10 +454,15 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1629152653947,
+  "timestamp": 1629610589790,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
   ],
+  "viewport": {
+    "x": -113.93050300467439,
+    "y": 671.0308146004895,
+    "scale": 0.8838637881148452
+  },
   "properName": "hdole/madd"
 }

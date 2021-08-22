@@ -30,7 +30,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 760,
-        "y": -380
+        "y": -80
       },
       "height": 24
     },
@@ -167,7 +167,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -40,
-        "y": -380
+        "y": -80
       },
       "height": 24
     },
@@ -597,7 +597,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -440,
-        "y": -380
+        "y": -80
       },
       "height": 24
     },
@@ -607,7 +607,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 360,
-        "y": -380
+        "y": -80
       },
       "height": "24"
     },
@@ -742,8 +742,8 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z8",
       "xy": {
-        "x": -300,
-        "y": -200
+        "x": -200,
+        "y": 0
       }
     },
     {
@@ -1089,48 +1089,12 @@
       }
     },
     {
-      "basename": "o_117",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Po{Z8,Z8}oP",
-      "xy": {
-        "x": -100,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_119",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Po{Z16,Z16}oP",
-      "xy": {
-        "x": 300,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_120",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Po{Z64,Z64}oP",
-      "xy": {
-        "x": 1100,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_123",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Po{Z32,Z32}oP",
-      "xy": {
-        "x": 700,
-        "y": -200
-      }
-    },
-    {
       "basename": "o_116",
       "prototype": "DiagramObject",
       "to": "hdole/int/Z16",
       "xy": {
-        "x": 100,
-        "y": -200
+        "x": 200,
+        "y": 0
       }
     },
     {
@@ -1138,8 +1102,8 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z32",
       "xy": {
-        "x": 500,
-        "y": -200
+        "x": 600,
+        "y": 0
       }
     },
     {
@@ -1147,8 +1111,8 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z64",
       "xy": {
-        "x": 900,
-        "y": -200
+        "x": 1000,
+        "y": 0
       }
     },
     {
@@ -1156,8 +1120,8 @@
       "prototype": "DiagramObject",
       "to": "hdole/int/Z128",
       "xy": {
-        "x": 1300,
-        "y": -200
+        "x": 1400,
+        "y": 0
       }
     },
     {
@@ -2365,15 +2329,6 @@
       "height": 24
     },
     {
-      "basename": "t_6",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -1210,
-        "y": 1590
-      },
-      "height": "24"
-    },
-    {
       "description": "The predecessor function for the integers with underflow",
       "basename": "t_7",
       "prototype": "DiagramText",
@@ -2461,7 +2416,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1170,
-        "y": -380
+        "y": -80
       },
       "height": 24
     },
@@ -3014,6 +2969,33 @@
         "y": 5800
       },
       "height": 24
+    },
+    {
+      "basename": "o_6",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 1200,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_7",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 800,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_26",
+      "prototype": "DiagramObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 400,
+        "y": 200
+      }
     },
     {
       "basename": "m_0",
@@ -4003,15 +3985,6 @@
       "to": "hdole/int/abs128"
     },
     {
-      "basename": "o_6",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Z64",
-      "xy": {
-        "x": 1200,
-        "y": 200
-      }
-    },
-    {
       "basename": "m_99",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_6",
@@ -4019,29 +3992,11 @@
       "to": "hdole/int/N62toZ128"
     },
     {
-      "basename": "o_7",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Z32",
-      "xy": {
-        "x": 800,
-        "y": 200
-      }
-    },
-    {
       "basename": "m_31",
       "prototype": "DiagramMorphism",
       "domain": "hdole/int/o_7",
       "codomain": "hdole/int/o_0",
       "to": "hdole/int/Z322Z64"
-    },
-    {
-      "basename": "o_26",
-      "prototype": "DiagramObject",
-      "to": "hdole/int/Z16",
-      "xy": {
-        "x": 400,
-        "y": 200
-      }
     },
     {
       "basename": "m_30",
@@ -4436,7 +4391,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
       },
       "domain": "hdole/int/Po{Z16,Z16}oP",
       "codomain": "hdole/int/CPo{Z16,#1}oPC"
@@ -4975,7 +4930,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
       },
       "domain": "hdole/int/Po{Z8,Z8}oP",
       "codomain": "hdole/int/CPo{Z8,#1}oPC"
@@ -5065,7 +5020,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
       },
       "domain": "hdole/int/Po{Z32,Z32}oP",
       "codomain": "hdole/int/CPo{Z32,#1}oPC"
@@ -5105,7 +5060,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
       },
       "domain": "hdole/int/Po{Z64,Z64}oP",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -5125,7 +5080,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 % %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
       },
       "domain": "hdole/int/Po{Z128,Z128}oP",
       "codomain": "hdole/int/CPo{Z128,#1}oPC"
@@ -5740,6 +5695,12 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1629181984842,
-  "version": 0
+  "timestamp": 1629344982521,
+  "version": 0,
+  "viewport": {
+    "x": 1042.9968749999998,
+    "y": 2908.19375,
+    "scale": 0.7953125,
+    "timestamp": 1629344981220
+  }
 }
