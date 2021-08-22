@@ -111,7 +111,6 @@ var Cat = Cat || require('./Cat.js');
 			const name = this.getType(object);
 			let code = '';
 			code += object.objects.map(o => this.generateObject(o, generated)).join('');
-//			code += this.getComments(object);
 			const members = object.objects.map((o, i) => `${object.dual ? '\t\t\t' : '\t\t'}${this.getType(o)} m_${i};`).join('\n');
 			if (object.dual)
 				code +=
@@ -162,7 +161,6 @@ ${members}
 		}
 		instantiate(element)
 		{
-//			const code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
 			return this.cline(this.getCode(element).replace(/%0/g, this.getType(element)));
 		}
 		generateObject(object, generated = new Set())
@@ -178,7 +176,6 @@ ${members}
 				switch(proto)
 				{
 					case 'CatObject':
-//						code += this.getComments(object) + this.instantiate(object);
 						code += this.instantiate(object);
 						break;
 					case 'ProductObject':
@@ -315,7 +312,6 @@ ${members}
 			let code = varCode + morphism.morphisms.map((m, i) => this.generateMorphism(m, nuNdxMap, [i], [i+1], graph)).join('');
 			this.tab--;
 			if (varCode !== '')
-//				code = this.cline(`{\t//${morphism.name}`) + code + this.cline('}');
 				code = this.cline('{') + code + this.cline('}');
 			return code;
 		}
@@ -398,7 +394,6 @@ ${members}
 				code += this.generateOutputs(morphGraph);
 			this.tab--;
 			if (code !== '')
-//				code = this.cline(`{\t//${morphism.name}`) + code + this.cline('}');
 				code = this.cline('{') + code + this.cline('}');
 			return code;
 		}
