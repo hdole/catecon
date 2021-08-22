@@ -11,6 +11,7 @@
 // 		CAT
 // 			catalogAdd	an entry got added to the catalog
 // 			default		diagram is now the default diagram for viewing
+//			delete		diagram is deleted
 // 			download	diagram came from server
 // 			load		diagram now available for viewing, but may have no view yet
 // 			new			new diagram exists
@@ -112,6 +113,8 @@ class U
 				return o.map(a => U.Clone(a));
 			else if (Map.prototype.isPrototypeOf(o))
 				return new Map(o);
+			else if (Set.prototype.isPrototypeOf(o))
+				return new Set(o);
 			else
 			{
 				let c = {};
@@ -825,7 +828,7 @@ class R
 				R.LoadScript(window.location.origin + '/js/boot.js', function() { Boot(loader); });
 			else
 				loader();
-			D.EmitApplicationEvent('start');
+			isGUI && D.EmitApplicationEvent('start');
 			const end = Date.now();
 			console.log(`R initialization ${end - start}ms`);
 		});
@@ -878,9 +881,9 @@ class R
 			const png = U.readfile(`${diagram.name}.png`);
 			png && D.diagramPNGs.set(diagram.name, png);
 			R.SetDiagramInfo(diagram);
-			D.EmitCATEvent('load', diagram);
+			isGUI && D.EmitCATEvent('load', diagram);
 			R.sync = sync;
-			const errors = diagram.check();
+const errors = diagram.check();
 if (errors.length > 0) debugger;
 			return diagram;
 		}
@@ -953,7 +956,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 			{
 				const promises = downloads.map(url => fetch(url));
 				const responses = await Promise.all(promises);
-				const jsons = await Promise.all(responses.map(async res => await res.ok ? res.json() : {}));
+				const jsons = (await Promise.all(responses.map(async res => await res.ok ? res.json() : null))).filter(j => j);
 				diagrams = jsons.map(json =>
 				{
 					const diagram = new Cat[json.prototype](R.GetUserDiagram(json.user), json);
@@ -1048,9 +1051,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		{
 			let diagram = R.$CAT.getElement(ref);
 			if (!diagram)
-			{
 				diagram = R.ReadLocal(ref);
-			}
 		}
 		[...R.GetReferences(name)].reverse().map(ref => setup(ref));
 		return R.$CAT.getElement(name);
@@ -1061,6 +1062,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		info.localTimestamp = diagram.timestamp;
 		const catInfo = R.catalog.get(diagram.name);
 		info.cloudTimestamp = catInfo ? catInfo.cloudTimestamp : 0;
+if (info instanceof Diagram)debugger;
 		R.catalog.set(diagram.name, info);
 	}
 	static GetCategoriesInfo()
@@ -1127,8 +1129,9 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 				info.localTimestamp = R.LocalTimestamp(d.name);
 				info.references = JSON.parse(d.refs);
 				delete info.refs;
+if (info instanceof Diagram)debugger;
 				R.catalog.set(info.name, info);
-				D.EmitCATEvent('catalogAdd', d);
+				isGUI && D.EmitCATEvent('catalogAdd', d);
 			});
 			fn();
 		};
@@ -1339,6 +1342,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 		R.SetDiagramInfo(diagram);
 		diagram.makeSVG();
 		diagram.home();
+		D.EmitViewEvent(D.session.mode, R.diagram);
 		return diagram;
 	}
 	static uploadJSON(e, json)
@@ -2221,7 +2225,7 @@ class ElementTool
 		const args = this.searchArgs;
 		return elements.filter(info =>	((args.userOnly && info.user === R.user.name) || !args.userOnly) &&
 										((args.referenceOnly && R.diagram.references.has(info.name)) || !args.referenceOnly) &&
-										((args.sessionOnly && D.session.diagrams.includes(info.name)) || !args.sessionOnly) &&
+										((args.sessionOnly && D.session.diagrams.has(info.name)) || !args.sessionOnly) &&
 										((args.diagramOnly && info.diagram === R.diagram) || !this.searchArgs.diagramOnly));
 	}
 }
@@ -2254,6 +2258,7 @@ class TextTool extends ElementTool
 		texts.map(txt =>
 		{
 			const txtHtml = txt.getHtmlRep();
+			const btns = [];
 			if (txt.isEditable())
 			{
 				const id = txt.elementId();
@@ -2267,9 +2272,10 @@ class TextTool extends ElementTool
 					D.closeActiveTextEdit();
 				};
 				txtHtml.addEventListener('focusout', onfocusout);
-				txtHtml.appendChild(D.getIcon('delete', 'delete', _ => Cat.R.Actions.delete.action(txt.name, Cat.R.diagram, [txt]), 'Delete text'));
+				btns.push(D.getIcon('delete', 'delete', _ => Cat.R.Actions.delete.action(txt.name, Cat.R.diagram, [txt]), 'Delete text'));
 			}
-			txtHtml.appendChild(D.getIcon('viewText', 'view', e => R.diagram.viewElements(txt)));
+			btns.push(D.getIcon('viewText', 'view', e => R.diagram.viewElements(txt)));
+			txtHtml.appendChild(H3.span('.tool-entry-actions', btns));
 			txtHtml.classList.add('element');
 			tbl.appendChild(H3.tr(H3.td(txtHtml)));
 		});
@@ -2645,7 +2651,7 @@ class DiagramTool extends ElementTool
 				}
 			}
 		}
-		if ((!R.diagram || name !== R.diagram.name) && !nobuts.has('close') && D.session.diagrams.includes(name))
+		if ((!R.diagram || name !== R.diagram.name) && !nobuts.has('close') && D.session.diagrams.has(name))
 		{
 			const closeFn = nm =>
 			{
@@ -3044,6 +3050,14 @@ class D
 		{
 			if (timestamp === diagram.timestamp)
 			{
+				const currentVp = diagram.getViewport();
+				const vp = new D2(currentVp);
+				const placement = diagram.getPlacement();
+				const placePosition = new D2(placement);
+				const nuvp = vp.add(placePosition);
+				// TODO add to upload btn
+				diagram.viewport = ({x:nuvp.x, y:nuvp.y, scale:placement.scale * currentVp.scale});
+//				this.viewport = this.getViewport();
 				R.SaveLocal(diagram);
 				if (R.local && !D.textEditActive())
 					diagram.upload();
@@ -3332,7 +3346,9 @@ class D
 	static getIcon(name, buttonName, onclick, title, scale = D.default.button.small, id = null, aniId = null, repeatCount = "1")
 	{
 		const inches = 0.32 * scale;
-		const args = {title, 'data-name':`button-${name}`};
+		const args = {'data-name':`button-${name}`};
+		if (title && title !== '')
+			args.title = title;
 		if (id)
 			args.id = id;
 		return H3.span('.icon', H3.svg(		{viewbox:"0 0 320 320", width:`${inches}in`, height:`${inches}in`},
@@ -3419,6 +3435,7 @@ class D
 			D.diagramSVG.classList.remove('trans');
 			D.setSessionViewport({x, y, scale});
 			D.diagramSVG.classList.add('trans');
+			D.EmitViewEvent(D.session.mode, R.diagram);
 		}
 	}
 	static getKeyName(e)
@@ -3586,13 +3603,13 @@ class D
 					diagram.purge();
 					diagram.loadCells();
 					break;
-				case 'default':
+				case 'default':		// make it the viewable diagram
 					let saveSession = true;
 					if (diagram)
 					{
 						R.LoadDiagramEquivalences(diagram);
 						diagram.domain.checkCells();
-						!D.session.diagrams.includes(diagram.name) && D.session.diagrams.push(diagram.name);
+						!D.session.diagrams.has(diagram.name) && D.session.diagrams.add(diagram.name);
 						D.session.default = diagram.name;
 						diagram.makeSVG();
 						diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
@@ -3600,27 +3617,13 @@ class D
 						const placement = diagram.getPlacement();
 						D.diagramSVG.classList.remove('trans');
 						diagram.setPlacement(placement, false);
-						if ('action' in args)
-						{
-							if (args.action === 'home')
-								diagram.home();
-							else if (D.default.fullscreen)
-							{
-								const viewport = diagram.getViewport();
-								if (viewport)
-									D.setSessionViewport(viewport);
-								else
-									diagram.home();
-							}
-							saveSession = false;
-						}
 						D.diagramSVG.classList.add('trans');
 						D.GlowBadObjects(diagram);
 					}
 					else
 						D.session.default = null;
-//	TODO						saveSession && D.EmitViewEvent('diagram', diagram);
-					D.EmitViewEvent('diagram', diagram);
+					const action = 'action' in args ? args.action : null;
+					D.EmitViewEvent('diagram', diagram, action);
 					break;
 				case 'download':
 					R.SaveLocal(diagram);
@@ -3629,6 +3632,7 @@ class D
 				case 'delete':
 					D.viewports.delete(diagram);
 					D.placements.delete(diagram);
+					D.session.diagrams.delete(diagram.name);
 					D.saveSession();
 					D.statusbar.show(e, `${U.Cap(args.command)} diagram: ${diagram}`);
 					break;
@@ -3674,11 +3678,7 @@ class D
 		D.topSVG.addEventListener('mousedown', D.Mousedown, true);
 		D.topSVG.addEventListener('mouseup', D.Mouseup, true);
 		D.topSVG.addEventListener('drop', D.Drop, true);
-		D.topSVG.addEventListener('mousemove', e =>
-		{
-			if (D.statusbar.element.style.display === 'block' && D2.Dist(D.statusbar.xy, {x:e.clientX, y:e.clientY}) > D.default.statusbar.hideDistance)
-				D.statusbar.hide();
-		});
+		D.topSVG.addEventListener('mousemove', e => D.statusbar.element.style.display === 'block' && D2.Dist(D.statusbar.xy, {x:e.clientX, y:e.clientY}) > D.default.statusbar.hideDistance && D.statusbar.hide());
 		D.topSVG.ondragover = e => e.preventDefault();
 		D.topSVG.addEventListener('drop', e => e.preventDefault(), true);
 		window.addEventListener('keydown', e =>
@@ -3739,7 +3739,6 @@ class D
 			const diagram = args.diagram;
 			if (command === 'diagram')
 			{
-				D.catalog.hide();
 				if (diagram)
 				{
 					if (diagram.user === 'sys')
@@ -3748,6 +3747,14 @@ class D
 					diagram.updateBackground();
 					diagram.show();
 					D.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
+					if ('action' in args && args.action === 'home')		// TODO change 'home'
+					{
+						const vp = new D2(diagram.viewport);
+						const placement = diagram.getPlacement();
+						const placePosition = new D2(placement);
+						const nuvp = vp.sub(placePosition);
+						D.setSessionViewport({x:nuvp.x, y:nuvp.y, scale:placement.scale * diagram.viewport.scale});
+					}
 					D.default.fullscreen && diagram.saveViewport(D.session.viewport);
 					D.saveSession();
 				}
@@ -3764,6 +3771,7 @@ class D
 			switch (args.command)
 			{
 				case 'start':
+					D.loadSessionDiagrams();
 					D.forEachDiagramSVG(d => d.show());
 					D.setFullscreen(D.default.fullscreen);
 					break;
@@ -3823,9 +3831,10 @@ if (width === 0)debugger;
 	}
 	static UpdateMorphismDisplay(e)		// event handler
 	{
+		const {command, diagram, dual, element, old} = e.detail;
+		if (Cat.R.diagram !== diagram)
+			return;
 		D.UpdateDisplay(e);
-		const args = e.detail;
-		const {command, diagram, dual, element, old} = args;
 		const {domain, codomain} = element;
 		switch(command)
 		{
@@ -4385,7 +4394,9 @@ if (width === 0)debugger;
 	}
 	static saveSession()
 	{
-		U.writefile('session.json', JSON.stringify(D.session));
+		const ssn = U.Clone(D.session);
+		ssn.diagrams = [...ssn.diagrams];
+		U.writefile('session.json', JSON.stringify(ssn));
 	}
 	static readSession()
 	{
@@ -4393,6 +4404,7 @@ if (width === 0)debugger;
 		if (str)
 		{
 			D.session = JSON.parse(str);
+			D.session.diagrams = new Set(D.session.diagrams);
 			const viewport = D.session.viewport;
 			if (isNaN(viewport.x))
 				viewport.x = 0;
@@ -4402,8 +4414,13 @@ if (width === 0)debugger;
 				viewport.scale = 1;
 		}
 		else
-			D.session = {mode:'catalog', default:null, diagrams:[], viewport:{x:0, y:0, scale:1}};
+			D.session = {mode:'catalog', default:null, diagrams:new Set(), viewport:{x:0, y:0, scale:1}};
 		D.setSessionViewport(D.session.viewport);
+		D.EmitViewEvent(D.session.mode, R.diagram);
+	}
+	static loadSessionDiagrams()
+	{
+		D.session.diagrams.forEach(d => R.DownloadDiagram(d));
 	}
 	static forEachDiagramSVG(fn)
 	{
@@ -4428,7 +4445,6 @@ if (width === 0)debugger;
 		if (oldScale > viewport.scale)		// due to transition effect on diagramSVG
 			R.diagram && R.diagram.updateBackground();
 		D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
-		R.diagram && D.EmitViewEvent(D.session.mode, R.diagram);
 	}
 	static getViewportByBBox(bbox)	// bbox in session coordinates
 	{
@@ -4448,9 +4464,45 @@ if (width === 0)debugger;
 			x += dw/2 - scale * bbox.width/2;
 		return {x, y, scale};
 	}
+	static getViewportByBBoxTop(bbox)	// bbox in session coordinates
+	{
+		if (bbox.width === 0)
+			bbox.width = D.Width();
+		const margin = D.navbar.element.getBoundingClientRect().height;
+		const dw = D.Width() - 2 * D.default.panel.width - 2 * margin;
+		const xRatio = bbox.width / dw;
+		const scale = 1.0/xRatio;
+		let x = - bbox.x * scale + D.default.panel.width + margin;
+		x += dw/2 - scale * bbox.width/2;
+		let y = - bbox.y * scale + 2 * margin;
+		return {x, y, scale};
+	}
+	static getViewportByBBoxBottom(bbox)	// bbox in session coordinates
+	{
+		if (bbox.width === 0)
+			bbox.width = D.Width();
+		const margin = D.navbar.element.getBoundingClientRect().height;
+		const dw = D.Width() - 2 * D.default.panel.width - 2 * margin;
+		const xRatio = bbox.width / dw;
+		const scale = 1.0/xRatio;
+		let x = - bbox.x * scale + D.default.panel.width + margin;
+		x += dw/2 - scale * bbox.width/2;
+		const h = D.Height() - 4 * margin;
+		const dy = bbox.y + bbox.height;
+		let y = - bbox.y * scale - h;
+		return {x, y, scale};
+	}
 	static setSessionViewportByBBox(bbox)
 	{
 		D.setSessionViewport(D.getViewportByBBox(bbox));
+	}
+	static setSessionViewportByBBoxTop(bbox)
+	{
+		D.setSessionViewport(D.getViewportByBBoxTop(bbox));
+	}
+	static setSessionViewportByBBoxEnd(bbox)
+	{
+		D.setSessionViewport(D.getViewportByBBoxBottom(bbox));
 	}
 	static userToSessionCoords(xy)
 	{
@@ -4528,6 +4580,7 @@ if (width === 0)debugger;
 		{
 			const viewport = D.session.viewport;
 			D.setSessionViewport({x:viewport.x + viewport.scale * offset.x, y:viewport.y + viewport.scale * offset.y, scale:viewport.scale});
+			D.EmitViewEvent(D.session.mode, R.diagram);
 		}
 	}
 	static readViewport(name)
@@ -4553,7 +4606,7 @@ if (width === 0)debugger;
 		R.SaveDefaults();
 		if (emit)
 		{
-			const diagrams = D.session.diagrams.map(diagram => R.CAT.getElement(diagram)).filter(d => d);
+			const diagrams = [...D.session.diagrams].map(diagram => R.CAT.getElement(diagram)).filter(d => d);
 			if (full && R.diagram)
 				R.diagram.updateBackground();
 			else
@@ -4653,46 +4706,34 @@ if (width === 0)debugger;
 	{
 		return D.default.majorGridMult * D.default.layoutGrid;
 	}
-	static EmitViewEvent(command, diagram = null)
+	static EmitViewEvent(command, diagram = null, action = null)
 	{
-		if (!isGUI)
-			return;
 		D.session.mode = command;
 		R.default.showEvents && console.log('emit View event', {command});
-		return window.dispatchEvent(new CustomEvent('View', {detail:	{command, diagram}, bubbles:true, cancelable:true}));
+		return window.dispatchEvent(new CustomEvent('View', {detail:	{command, diagram, action}, bubbles:true, cancelable:true}));
 	}
 	static EmitApplicationEvent(command)
 	{
-		if (!isGUI)
-			return;
 		R.default.showEvents && console.log('emit APPLICATION event', command);
 		return window.dispatchEvent(new CustomEvent('Application', {detail:	{command}, bubbles:true, cancelable:true}));
 	}
 	static EmitLoginEvent()
 	{
-		if (!isGUI)
-			return;
 		R.default.showEvents && console.log('emit LOGIN event', R.user.name, R.user.status);
 		return window.dispatchEvent(new CustomEvent('Login', {detail:	{command:R.user.status, name:R.user.name}, bubbles:true, cancelable:true}));
 	}
 	static EmitCATEvent(command, diagram, action = null)	// like diagram was loaded
 	{
-		if (!isGUI)
-			return;
 		R.default.showEvents && console.log('emit CAT event', {command, diagram, action});
 		return window.dispatchEvent(new CustomEvent('CAT', {detail:	{command, diagram, action}, bubbles:true, cancelable:true}));
 	}
 	static EmitDiagramEvent(diagram, command, name = '')	// like something happened in a diagram
 	{
-		if (!isGUI)
-			return;
 		R.default.showEvents && console.log('emit DIAGRAM event', {diagram, command, name});
 		return window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, name}, bubbles:true, cancelable:true}));
 	}
 	static EmitObjectEvent(diagram, command, element, extra = {})	// like an object changed
 	{
-		if (!isGUI)
-			return;
 		R.default.showEvents && console.log('emit OBJECT event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
@@ -4701,8 +4742,6 @@ if (width === 0)debugger;
 	}
 	static EmitMorphismEvent(diagram, command, element, extra = {})
 	{
-		if (!isGUI || diagram.svgRoot === null)
-			return;
 		R.default.showEvents && console.log('emit MORPHISM event', {command, name:element.name});
 		const detail = {diagram, command, element};
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
@@ -4711,15 +4750,11 @@ if (width === 0)debugger;
 	}
 	static EmitAssertionEvent(diagram, command, element)
 	{
-		if (!isGUI)
-			return;
 		R.default.showEvents && console.log('emit ASSERTION event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
 	static EmitTextEvent(diagram, command, element)
 	{
-		if (!isGUI)
-			return;
 		R.default.showEvents && console.log('emit TEXT event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Text', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
@@ -4846,21 +4881,38 @@ Object.defineProperties(D,
 				if (R.diagram && D.session.mode === 'diagram')
 				{
 					D.setFullscreen(true);
-					R.diagram.home();
+					R.diagram.homeTop();
+					D.EmitViewEvent(D.session.mode, R.diagram);
+				}
+			},
+			ControlEnd(e)
+			{
+				if (R.diagram && D.session.mode === 'diagram')
+				{
+					D.setFullscreen(true);
+					R.diagram.homeEnd();
+					D.EmitViewEvent(D.session.mode, R.diagram);
 				}
 			},
 			Home(e)
 			{
-				const diagram = R.diagram;
-				if (D.default.fullscreen && diagram)
-					diagram.home();
-				else
+				if (R.diagram && D.session.mode === 'diagram')
 				{
-					const bbox = new D2();
-					D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && bbox.merge(d.svgRoot.getBBox()));
-					D.setSessionViewportByBBox(bbox);
+					const diagram = R.diagram;
+					if (D.default.fullscreen && diagram)
+					{
+						diagram.home();
+						D.EmitViewEvent(D.session.mode, R.diagram);
+					}
+					else
+					{
+						const bbox = new D2();
+						D.forEachDiagramSVG(d => !d.svgRoot.classList.contains('hidden') && bbox.merge(d.svgRoot.getBBox()));
+						D.setSessionViewportByBBox(bbox);
+						D.EmitViewEvent(D.session.mode, R.diagram);
+					}
+					e.preventDefault();
 				}
-				e.preventDefault();
 			},
 			ArrowUp(e)
 			{
@@ -5351,7 +5403,7 @@ class Catalog extends DiagramTool		// GUI only
 			switch(args.command)
 			{
 				case 'close':
-					D.catalog.remove(typeof diagram === 'string' ? diagram : diagram.name);
+					D.catalog.display(typeof diagram === 'string' ? diagram : diagram.name);
 					break;
 				case 'delete':		// delete diagram
 					R.catalog.delete(diagram);
@@ -5362,11 +5414,6 @@ class Catalog extends DiagramTool		// GUI only
 						img = this.catalogDisplay.querySelector(`img[data-name="${diagram.name}"]`);
 						img && ['greenGlow', 'warningGlow'].map(glow => img.classList.remove(glow));
 					}
-					break;
-				case 'default':
-					D.NotBusy();
-					if (this.mode === 'reference')
-						this.reference();
 					break;
 				case 'png':
 				case 'load':
@@ -5385,6 +5432,9 @@ class Catalog extends DiagramTool		// GUI only
 						this.search();
 					this.updateDiagramCodomain();
 					this.update();
+					break;
+				case 'diagram':
+					this.hide();
 					break;
 			}
 		});
@@ -5450,7 +5500,7 @@ class Catalog extends DiagramTool		// GUI only
 			onclick:_ =>
 			{
 				D.setFullscreen(true, false);
-				R.SelectDiagram(info.name, 'view');
+				R.SelectDiagram(info.name, 'home');
 			},
 			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
 			'data-name':	info.name,
@@ -7065,10 +7115,7 @@ class Graph
 			}
 			else
 				colorIndex = this.colorIndex;
-			//
-			// look for a new color
-			//
-			while(colorIndex in diagram.colorIndex2colorIndex)
+			while(colorIndex in diagram.colorIndex2colorIndex)	// look for new color
 				colorIndex = diagram.colorIndex2colorIndex[colorIndex];
 			let path = null;
 			const fs = this.tags.sort().join();
@@ -7348,7 +7395,7 @@ class CatObject extends Element
 	{
 		super(diagram, args);
 		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
-		this.constructor.name === 'CatObject' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'CatObject' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -7424,7 +7471,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 			Object.defineProperty(this, 'size', {value:	Number.parseInt(nuArgs.size), writable:	false});
 		if ('size' in this)		// signature is the sig of the coproduct of 1's/Show
 			this.signature = U.Sig(this.size.toString());
-		D.EmitElementEvent(diagram, 'new', this);
+		isGUI && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -7619,7 +7666,7 @@ class ProductObject extends MultiObject
 		nuArgs.basename = ProductObject.Basename(diagram, {objects:nuArgs.objects, dual});
 		nuArgs.properName = ProductObject.ProperName(nuArgs.objects, dual);
 		super(diagram, nuArgs);
-		this.constructor.name === 'ProductObject' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'ProductObject' && D.EmitElementEvent(diagram, 'new', this);
 		this.signature = ProductObject.Signature(diagram, this.objects, this.dual);
 	}
 	json(delBasename = true)
@@ -7763,7 +7810,7 @@ class PullbackObject extends ProductObject
 			});
 			this.cone = cone;
 		}
-		D.EmitElementEvent(diagram, 'new', this);
+		isGUI && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -7832,7 +7879,7 @@ class HomObject extends MultiObject
 		nuArgs.description = `The homset from ${nuArgs.objects[0].properName} to ${nuArgs.objects[1].properName}`;
 		super(diagram, nuArgs);
 		this.signature = HomObject.Signature(diagram, nuArgs.objects);
-		D.EmitElementEvent(diagram, 'new', this);
+		isGUI && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -8013,7 +8060,7 @@ class DiagramText extends Element
 		});
 		this.refcnt = 1;
 		diagram && diagram.addElement(this);
-		D.EmitElementEvent(diagram, 'new', this);
+		isGUI && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -8251,7 +8298,7 @@ class TensorObject extends MultiObject
 		nuArgs.basename = TensorObject.Basename(diagram, {objects:nuArgs.objects});
 		nuArgs.properName = TensorObject.ProperName(nuArgs.objects);
 		super(diagram, nuArgs);
-		D.EmitElementEvent(diagram, 'new', this);
+		isGUI && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -8316,7 +8363,7 @@ class DiagramObject extends CatObject
 			svg:		{value: null,				writable:	true},
 		});
 		this.setObject(nuArgs.to);
-		this.constructor.name === 'DiagramObject' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'DiagramObject' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -8505,10 +8552,6 @@ class DiagramObject extends CatObject
 		}
 		return false;
 	}
-	isIsolated()
-	{
-		return this.domains.size === 0 && this.codomains.size === 0;
-	}
 	updateProperName()
 	{
 		const text = this.svg.querySelector('text');
@@ -8541,7 +8584,7 @@ class DiagramPullback extends DiagramObject
 				const from = new DiagramMorphism(diagram, {to, anon:'pb', domain:this, codomain:this.morphisms[index].domain});
 				return from.name;
 			});
-		D.EmitElementEvent(diagram, 'new', this);
+		isGUI && D.EmitElementEvent(diagram, 'new', this);
 	}
 	json()
 	{
@@ -8593,7 +8636,7 @@ console.log('fixup in diagram', diagram.name);
 		this.incrRefcnt();		// nothing refers to them, so increment
 		diagram.assertions.set(this.name, this);
 		diagram.addElement(this);
-		D.EmitElementEvent(diagram, 'new', this);
+		isGUI && D.EmitElementEvent(diagram, 'new', this);
 	}
 	initialize()
 	{
@@ -9025,7 +9068,7 @@ class FlipNameAction extends Action
 		this.doit(e, diagram, from);
 		diagram.log({command:'flipName', from:from.name});
 		diagram.antilog({command:'flipName', from:from.name});
-		D.EmitElementEvent(diagram, 'update', from);
+		isGUI && D.EmitElementEvent(diagram, 'update', from);
 	}
 	doit(e, diagram, from)
 	{
@@ -10139,7 +10182,7 @@ class LanguageAction extends Action
 			if (!('code' in m))
 				m.code = {};
 			m.code[this.ext] = document.getElementById(`element-${this.ext}`).value;
-			D.EmitElementEvent(diagram, 'update', from);
+			isGUI && D.EmitElementEvent(diagram, 'update', from);
 		}
 	}
 	hasForm(diagram, ary)
@@ -10503,7 +10546,7 @@ class FiniteObjectAction extends Action
 		diagram.log({command:'finiteObject', from:from.name, size});
 		// TODO undo; may need new action
 		this.html(e, diagram, ary);
-		D.EmitElementEvent(diagram, 'update', finObj);
+		isGUI && D.EmitElementEvent(diagram, 'update', finObj);
 	}
 	doit(e, diagram, from, size)
 	{
@@ -10665,7 +10708,7 @@ class AlignHorizontalAction extends Action
 		elements.map(i =>
 		{
 			i.setXY({x:i.x, y:xy.y});
-			D.EmitElementEvent(diagram, 'move', i);
+			isGUI && D.EmitElementEvent(diagram, 'move', i);
 		});
 		diagram.updateMorphisms();
 		D.EmitDiagramEvent(diagram, 'move');	// finished
@@ -10723,7 +10766,7 @@ class AlignVerticalAction extends Action
 		elements.map(i =>
 		{
 			i.setXY({x:xy.x, y:i.y});
-			D.EmitElementEvent(diagram, 'move', i);
+			isGUI && D.EmitElementEvent(diagram, 'move', i);
 		});
 		diagram.updateMorphisms();
 		D.EmitDiagramEvent(diagram, 'move');
@@ -10808,7 +10851,7 @@ class RecursionAction extends Action
 		const form = ary[1].to;
 		recursor.setRecursor(form);
 		D.statusbar.show(e, `Morphism ${recursor.properName} is now recursive with morphism ${form.properName}`);
-		D.EmitElementEvent(diagram, 'update', ary[0]);
+		isGUI && D.EmitElementEvent(diagram, 'update', ary[0]);
 	}
 	hasForm(diagram, ary)
 	{
@@ -11087,9 +11130,9 @@ class ActionAction extends Action
 			}
 			action.placeText('These elements must be selected\nfor the action to be enabled in\nyour working diagram.', xy.sub(xDelta4), 12, 'normal', false);
 
-			const match = matchSource.map(origName =>
+			const match = matchSource.map(orig =>
 			{
-				const name = namedBare2Names.get(origName);
+				const name = namedBare2Names.get(orig);
 				const elt = action.getElement(name);
 				if (elt instanceof CatObject)
 					action.placeObject(elt, xy, false);
@@ -11120,6 +11163,7 @@ class ActionAction extends Action
 			action.home();
 			action.savePng(e);
 			D.EmitCATEvent('new', action);
+			D.EmitViewEvent(D.session.mode, diagram);
 		}
 		catch(x)
 		{
@@ -11191,7 +11235,7 @@ class Category extends CatObject
 				nuArgs.actionDiagrams.map(a => this.addActions(a));
 		}
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
-		this.constructor.name === 'Category' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Category' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -11303,7 +11347,7 @@ class Category extends CatObject
 			elt.diagram.elements.delete(elt.basename);
 			if (!(elt instanceof DiagramMorphism) && !(elt instanceof DiagramObject))
 				R.RemoveEquivalences(elt.diagram, elt.name);
-			emit && D.EmitElementEvent(elt.diagram, 'delete', elt);
+			isGUI && emit && D.EmitElementEvent(elt.diagram, 'delete', elt);
 		}
 	}
 	addActions(name)
@@ -11422,7 +11466,7 @@ class Morphism extends Element
 		this.domain.incrRefcnt();
 		this.codomain.incrRefcnt();
 		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
-		this.constructor.name === 'Morphism' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Morphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	setDomain(dom)
 	{
@@ -11661,7 +11705,7 @@ class Identity extends Morphism
 		nuArgs.properName = 'properName' in nuArgs ? U.HtmlEntitySafe(nuArgs.properName) : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		super(diagram, nuArgs);
 		this.signature = Identity.Signature(diagram, this.domain);
-		this.constructor.name === 'Identity' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Identity' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -11797,7 +11841,7 @@ class NamedObject extends CatObject	// name of an object
 		this.idFrom.incrRefcnt();
 		this.idTo.incrRefcnt();
 		this.refcnt = 0;	// id's increased it so set it back
-		this.constructor.name === 'NamedObject' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'NamedObject' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	json()
 	{
@@ -11896,7 +11940,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 		this.source.incrRefcnt();
 		if (this.constructor.name === 'NamedMorphism')
 			this.signature = this.source.signature;
-		this.constructor.name === 'NamedMorphism' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'NamedMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	json()
 	{
@@ -11992,7 +12036,7 @@ class DiagramMorphism extends Morphism
 			this.attributes.set('flipName', nuArgs.flipName);
 		if (!this.attributes.has('flipName'))
 			this.attributes.set('flipName', false);
-		this.constructor.name === 'DiagramMorphism' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'DiagramMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	setHomsetIndex(args)
 	{
@@ -12822,7 +12866,7 @@ class DiagramComposite extends DiagramMorphism
 		super(diagram, args);
 		this.morphisms = args.morphisms.map(m => diagram.domain.getElement(m));
 		this.morphisms.map((m, i) => { m.incrRefcnt(); });
-		this.constructor.name === 'DiagramComposite' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'DiagramComposite' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	decrRefcnt()
 	{
@@ -12873,7 +12917,7 @@ class IndexCategory extends Category
 			'cells':		{value:new Map(), writable: false},
 			'hiddenCells':	{value:new Set(), writable: false},
 		});
-		this.constructor.name === 'IndexCategory' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'IndexCategory' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -13141,7 +13185,7 @@ class Composite extends MultiMorphism
 		nuArgs.properName = Composite.ProperName(morphisms);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.constructor.name === 'Composite' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Composite' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -13235,7 +13279,7 @@ class ProductMorphism extends MultiMorphism
 		nuArgs.properName = ProductMorphism.ProperName(morphisms, dual);
 		super(diagram, nuArgs);
 		this.signature = ProductMorphism.Signature(this.morphisms.map(m => m.signature), dual);
-		this.constructor.name === 'ProductMorphism' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'ProductMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	json(delBasename = true)
 	{
@@ -13326,7 +13370,7 @@ class ProductAssembly extends MultiMorphism
 		nuArgs.basename = ProductAssembly.Basename(diagram, {morphisms:nuArgs.morphisms, dual});
 		nuArgs.properName = ProductAssembly.ProperName(nuArgs.morphisms, dual);
 		super(diagram, nuArgs);
-		this.constructor.name === 'ProductAssembly' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'ProductAssembly' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -13405,7 +13449,7 @@ class FactorMorphism extends Morphism
 		super(diagram, nuArgs);
 		this.factors = nuArgs.factors;
 		this.signature = FactorMorphism.Signature(this.diagram, nuArgs.domain, nuArgs.factors, dual, nuArgs.cofactors);
-		this.constructor.name === 'FactorMorphism' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'FactorMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -13666,7 +13710,7 @@ class LambdaMorphism extends Morphism
 		this.domFactors = args.domFactors;
 		this.homFactors = nuArgs.homFactors;
 		this.signature = this.getLambdaSignature();
-		this.constructor.name === 'LambdaMorphism' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'LambdaMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -13922,7 +13966,7 @@ class HomMorphism extends MultiMorphism
 		nuArgs.properName = HomMorphism.ProperName(morphisms);
 		nuArgs.description = `The hom morphism formed from ${nuArgs.morphisms[0].properName} and ${nuArgs.morphisms[1].properName}`;
 		super(diagram, nuArgs);
-		this.constructor.name === 'HomMorphism' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'HomMorphism' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -13983,7 +14027,7 @@ class Evaluation extends Morphism
 		nuArgs.properName = Evaluation.ProperName(nuArgs.domain);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.constructor.name === 'Evaluation' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Evaluation' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -14046,7 +14090,7 @@ class Distribute extends Morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.side = nuArgs.side;
-		this.constructor.name === 'Distribute' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Distribute' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -14140,7 +14184,7 @@ class Dedistribute extends Morphism	// TODO what about side?
 		nuArgs.properName = Distribute.ProperName();
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
-		this.constructor.name === 'Dedistribute' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Dedistribute' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -14214,7 +14258,7 @@ class Functor extends Morphism
 		if (typeof nuArgs.codomain === 'string')
 			nuArgs.codomain = diagram.getElement(args.codomain);
 		super(diagram, nuArgs);
-		this.constructor.name === 'Functor' && D.EmitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Functor' && D.EmitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -14257,7 +14301,7 @@ class Diagram extends Functor
 			timestamp:					{value:U.GetArg(args, 'timestamp', Date.now()),	writable:true},
 			user:						{value:args.user,	writable:false},
 			version:					{value:U.GetArg(args, 'version', 0),			writable:true},
-//			viewport:					{value:{x:0, y:0, scale:1.0, width:D.Width(), height:D.Height(), visible:false},	writable:true},
+			viewport:					{value:{x:0, y:0, scale:1.0, width:D.Width(), height:D.Height(), visible:false},	writable:true},
 		});
 		if ('references' in args)
 			args.references.map(r => this.addReference(r, false));
@@ -14268,6 +14312,8 @@ class Diagram extends Functor
 		R.SetDiagramInfo(this);
 		if ('hiddenCells' in nuArgs)
 			nuArgs.hiddenCells.map(sig => this.domain.hiddenCells.add(sig));
+		if ('viewport' in nuArgs)
+			this.viewport = nuArgs.viewport;
 		this.postProcess();
 	}
 	decrRefcnt()
@@ -14282,12 +14328,12 @@ class Diagram extends Functor
 			{
 				R.diagram = null;
 				D.session.default = null;
-				D.EmitViewEvent('catalog');
+				isGUI && D.EmitViewEvent('catalog');
 			}
 			this.svgRoot && this.svgRoot.remove();
 			['.json', '.png', '.log', '-viewport.json', '-placement.json'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 			this.elements.forEach(elt => this.codomain.elements.delete(elt.name));
-			D.EmitDiagramEvent(this, 'delete', this.name);
+			D.EmitDiagramEvent(this, 'delete', this);
 		}
 	}
 	addElement(elt)
@@ -14367,6 +14413,7 @@ class Diagram extends Functor
 		a.version = this.version;
 		if (this.domain.hiddenCells.size > 0)
 			a.hiddenCells = U.Clone([...this.domain.hiddenCells]);
+		a.viewport = U.Clone(this.viewport);
 		return a;
 	}
 	getAnon(s)
@@ -14421,9 +14468,12 @@ class Diagram extends Functor
 		const scale = args.scale;
 		this.svgTranslate.setAttribute('transform', `translate(${x} ${y}) scale(${scale} ${scale})`);
 		const placement = {x, y, scale, timestamp:Date.now()};
-		U.writefile(`${this.name}-placement.json`, JSON.stringify(placement));
 		D.placements.set(this.name, placement);
-		emit && D.EmitViewEvent('diagram', this);
+		if (isGUI && emit)
+		{
+			D.EmitViewEvent('diagram', this);
+			U.writefile(`${this.name}-placement.json`, JSON.stringify(placement));
+		}
 	}
 	setPlacementByBBox(bbox)
 	{
@@ -14438,6 +14488,16 @@ class Diagram extends Functor
 	{
 		this.removeGrounds();
 		D.setSessionViewportByBBox(this.svgRoot.getBBox());
+	}
+	homeTop()
+	{
+		this.removeGrounds();
+		D.setSessionViewportByBBoxTop(this.svgRoot.getBBox());
+	}
+	homeEnd()
+	{
+		this.removeGrounds();
+		D.setSessionViewportByBBoxEnd(this.svgRoot.getBBox());
 	}
 	getObject(name)
 	{
@@ -14826,7 +14886,6 @@ class Diagram extends Functor
 		{
 			if (!D.default.fullscreen)
 			{
-				// move the diagram
 				// TODO area select
 				origClick = D.userToSessionCoords({x:e.clientX, y:e.clientY});
 				origLoc = new D2(this.getPlacement());
@@ -14895,6 +14954,7 @@ class Diagram extends Functor
 					R.default.debug && console.log('uploaded', this.name);
 					const info = R.GetDiagramInfo(this.name);
 					info.cloudTimestamp = info.timestamp;
+if (info instanceof Diagram)debugger;
 					R.catalog.set(this.name, info);
 					const delta = Date.now() - start;
 					if (e)
@@ -15548,6 +15608,7 @@ class Diagram extends Functor
 		{
 			const bbox = this.diagramToSessionCoords(D2.Merge(...elements.map(a => a.getBBox())));
 			D.setSessionViewportByBBox(bbox);
+			D.EmitViewEvent(D.session.mode, R.diagram);
 		}
 	}
 	addFactorMorphisms(domain, codomain)
@@ -15922,6 +15983,7 @@ class Diagram extends Functor
 		{
 			let refs = [];
 			diagram.references.forEach(r => refs.push(typeof r === 'string' ? r : r.name));
+if (refs.reduce((r, ref) => r || ref instanceof Diagram, false))debugger;
 			return {
 				name:			diagram.name,
 				basename:		diagram.basename,
@@ -16051,7 +16113,7 @@ class ActionDiagram extends Diagram
 	{
 		const a = super.json();
 		a.attributes = U.JsonMap(this.attributes);
-		a.match = this.match.map(elt => elt.name);
+		a.match = this.match.slice();
 		a.named = this.named.name;
 		a.ops	= this.ops;
 		return a;
