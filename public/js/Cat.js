@@ -4474,7 +4474,7 @@ if (width === 0)debugger;
 		const scale = 1.0/xRatio;
 		let x = - bbox.x * scale + D.default.panel.width + margin;
 		x += dw/2 - scale * bbox.width/2;
-		let y = - bbox.y * scale + 2 * margin;
+		const y = - bbox.y * scale + 2 * margin;
 		return {x, y, scale};
 	}
 	static getViewportByBBoxBottom(bbox)	// bbox in session coordinates
@@ -4487,9 +4487,7 @@ if (width === 0)debugger;
 		const scale = 1.0/xRatio;
 		let x = - bbox.x * scale + D.default.panel.width + margin;
 		x += dw/2 - scale * bbox.width/2;
-		const h = D.Height() - 4 * margin;
-		const dy = bbox.y + bbox.height;
-		let y = - bbox.y * scale - h;
+		const y = - scale * (bbox.y + bbox.height) + D.Height() - 4 * margin;
 		return {x, y, scale};
 	}
 	static setSessionViewportByBBox(bbox)
