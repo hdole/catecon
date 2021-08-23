@@ -19,7 +19,7 @@ var Cat = Cat || require('./Cat.js');
 			super(diagram, args);
 			R.languages.set(this.basename, this);
 			Cat.R.$CAT.getElement('PFS').actions.set(args.basename, this);
-			R.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
+			Cat.Runtime.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
 		}
 		getType(elt, first = true)
 		{
@@ -51,7 +51,7 @@ var Cat = Cat || require('./Cat.js');
 				const tail = this.tail();
 				const domain = morphism.domain instanceof Cat.NamedObject ? morphism.domain.base : morphism.domain;
 				const codomain = morphism.codomain instanceof Cat.NamedObject ? morphism.codomain.base : morphism.codomain;
-				if (Cat.R.CanFormat(morphism) && domain.size)
+				if (Cat.R.canFormat(morphism) && domain.size)
 					code +=	// TODO safety check?
 `
 function ${name}_Iterator(fn)
@@ -328,7 +328,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		{
 			htmlDiagram.incrRefcnt();
 //			const htmlDiagram = R.$CAT.getElement('hdole/HTML');
-			D.htmlDiagram = htmlDiagram;
+			this.htmlDiagram = htmlDiagram;
 			const html = htmlDiagram.getElement('HTML');
 			const str = htmlDiagram.codomain.getElement('hdole/Strings/str');
 			this.formatters = new Map();
@@ -441,9 +441,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				break;
 			case 'HomObject':
 				const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
-//				const options = homset.map(m => `<option value="${m.name}"${value && m.name === value.name ? ' selected="selected"' : ''}>${m.properName}</option>`).join('');
 				html = H3.select({dataIndex:index, id:`help-run-homset-${index ? index : 'next'}`, onchange:_ => R.Actions.javascript(setHomValue(this))});
-//`<select data-index="${index}" id="help-run-homset-${index ? index : 'next'}" onchange="R.Actions.javascript.setHomValue(this)"><option>Choose</option>${options}</select>`;
 				html.appendChild(H3.option('Choose'));
 				homset.map(m =>
 				{
@@ -466,7 +464,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 			if (selected)
 			{
 				morph.data.set(index, selected);
-				R.EmitMorphismEvent(Cat.R.diagram, 'update', from);
+				R.emitMorphismEvent(Cat.R.diagram, 'update', from);
 			}
 			else
 				morph.data.delete(index);
@@ -481,7 +479,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				case 'FiniteObject':
 					if (dom.size === 1)
 						return 0;
-					const f = D.htmlDiagram.getElement('html2Nat');
+					const f = this.htmlDiagram.getElement('html2Nat');
 					const out = window[U.Token(f)]([0, dom.name + factor.toString()]);	// no default value
 					const formatter = out[1]();
 					value = formatter(id);
