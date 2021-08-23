@@ -217,8 +217,8 @@
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": -1880,
-        "y": -1860
+        "x": -1860,
+        "y": -1840
       },
       "height": "200",
       "weight": "bold"
@@ -786,7 +786,6 @@
       "size": 1
     },
     {
-      "basename": "Po{hdole/cpp/voidPtr,hdole/cpp/file}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/cpp/voidPtr",
@@ -925,7 +924,6 @@
       ]
     },
     {
-      "basename": "Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC",
       "prototype": "Composite",
       "domain": "hdole/cpp/Errno",
       "codomain": "hdole/mmap/#1",
@@ -986,9 +984,14 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627375668641,
+  "timestamp": 1629665135901,
   "version": 0,
   "hiddenCells": [
     "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e"
-  ]
+  ],
+  "viewport": {
+    "x": 3095.5622250473307,
+    "y": 3225.0537238080424,
+    "scale": 1.1917649103231294
+  }
 }

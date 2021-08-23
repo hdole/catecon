@@ -44,7 +44,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 820,
+        "x": 810,
         "y": -680
       }
     },
@@ -53,7 +53,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/test/C",
       "xy": {
-        "x": 1020,
+        "x": 1010,
         "y": -680
       }
     },
@@ -62,7 +62,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 670,
+        "x": 680,
         "y": -870
       }
     },
@@ -1784,9 +1784,14 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1628416688589,
+  "timestamp": 1629706673906,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
-  ]
+  ],
+  "viewport": {
+    "x": -2314.93219605993,
+    "y": -1138.6248069994854,
+    "scale": 0.5677360324812718
+  }
 }

@@ -692,7 +692,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/gdsReader/RecordLength",
       "xy": {
-        "x": 600,
+        "x": 640,
         "y": 270
       }
     },
@@ -803,8 +803,8 @@
       "prototype": "DiagramText",
       "properName": "t_6",
       "xy": {
-        "x": 3400,
-        "y": -570
+        "x": 3530,
+        "y": -520
       },
       "height": 24
     },
@@ -1835,13 +1835,6 @@
       "domain": "hdole/gdsReader/o_87",
       "codomain": "hdole/gdsReader/o_13",
       "to": "hdole/gdsReader/noPointsFn"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/gdsReader/o_4",
-      "codomain": "hdole/gdsReader/o_14",
-      "to": "hdole/cpp/memToN8"
     },
     {
       "basename": "m_46",
@@ -3601,12 +3594,17 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1628022582421,
+  "timestamp": 1629699187352,
   "version": 0,
   "hiddenCells": [
     "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e",
     "b585bce39e76d4d31ee5c8dd06f11ae300450e4ddc25f01398d82d28ffb2e59f",
     "0f7ebb46be575a37b04caa92f0b7a6b4e0ff8bfdec14ff9df803b011cde5fc15",
     "8a209721031996493f9b676ef849ab8450d756b29a9cd63af63f0e39dab9c4d6"
-  ]
+  ],
+  "viewport": {
+    "x": 1056.806652633492,
+    "y": 1868.3117787806282,
+    "scale": 0.2466608110973135
+  }
 }

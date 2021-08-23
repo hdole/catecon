@@ -46,7 +46,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/nat/N64",
       "xy": {
-        "x": -20,
+        "x": 0,
         "y": 200
       }
     },
@@ -55,7 +55,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/nat/N64",
       "xy": {
-        "x": 180,
+        "x": 200,
         "y": 200
       }
     },
@@ -285,9 +285,14 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627724533213,
+  "timestamp": 1629662819954,
   "version": 0,
   "hiddenCells": [
     "8aa77e45b3107e20f4679af002f46a03476b965865a58d9898b29b98881fa24c"
-  ]
+  ],
+  "viewport": {
+    "x": 1140.165755876949,
+    "y": 174.03422527912562,
+    "scale": 0.9354124464125878
+  }
 }

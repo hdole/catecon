@@ -333,8 +333,8 @@
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": -500,
-        "y": -100
+        "x": -580,
+        "y": 20
       },
       "height": "300",
       "weight": "bold"
@@ -455,15 +455,6 @@
       "xy": {
         "x": 600,
         "y": 2000
-      }
-    },
-    {
-      "basename": "o_2",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/#1",
-      "xy": {
-        "x": 600,
-        "y": 1200
       }
     },
     {
@@ -612,13 +603,6 @@
       "domain": "hdole/Strings/o_15",
       "codomain": "hdole/Strings/o_37",
       "to": "hdole/Strings/strToN128"
-    },
-    {
-      "basename": "m_21",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/Strings/o_2",
-      "codomain": "hdole/Strings/o_12",
-      "to": "hdole/Strings/CFa{hdole/nat/CPo{N64,#1}oPC,#1_1}aFC"
     }
   ],
   "elements": [
@@ -897,25 +881,15 @@
       "properName": "to",
       "domain": "hdole/Strings/str",
       "codomain": "hdole/Strings/CPo{hdole/nat/N128,#1}oPC"
-    },
-    {
-      "basename": "CFa{hdole/nat/CPo{N64,#1}oPC,#1_1}aFC",
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC",
-      "factors": [
-        1
-      ]
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1629610720745,
+  "timestamp": 1629706633717,
   "version": 0,
   "viewport": {
-    "x": 1224,
-    "y": 476,
-    "scale": 1
+    "x": 6396.349431488197,
+    "y": 3406.2526102499905,
+    "scale": 1.6817108268910599
   }
 }
