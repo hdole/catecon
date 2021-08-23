@@ -503,7 +503,6 @@ class Runtime
 		Object.defineProperties(this,
 		{
 			Actions:			{value:{},			writable:false},	// loaded actions
-//			autosave:			{value:false,		writable:true},		// is autosave turned on for diagrams?
 			Cat:				{value:null,		writable:true},
 			CAT:				{value:null,		writable:true},		// working nat trans
 			$CAT:				{value:null,		writable:true},
@@ -627,37 +626,6 @@ class Runtime
 			description:	'top level diagram',
 			user:			'sys',
 		};
-		/*
-		if (isGUI)
-		{
-			let delta = null;
-			const sessionMove = e =>
-			{
-				D.toolbar.hide();
-				if (!this.diagram)
-				{
-					const viewport = {x:e.clientX - delta.x, y:e.clientY - delta.y, scale:D.session.viewport.scale};
-					D.session.viewport = viewport;
-					D.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
-					return true;
-				}
-				return false;
-			};
-			D.topSVG.onmouseup = e => D.topSVG.removeEventListener('mousemove', sessionMove);
-			D.topSVG.onmousedown = e =>
-			{
-				if (!this.diagram)
-				{
-					const click = new D2(e.clientX, e.clientY);
-					delta = click.subtract(D.session.viewport);
-					D.topSVG.addEventListener('mousemove', sessionMove);
-					e.preventDefault();
-					return true;
-				}
-				return false;
-			};
-		}
-		*/
 		this.$CAT = new Diagram(null, $CATargs);
 		this.userDiagram.set('sys', this.$CAT);
 		this.Cat = new Category(this.$CAT,
@@ -784,20 +752,6 @@ class Runtime
 	initialize(fn = null)
 	{
 		const start = Date.now();
-		/*
-		this.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
-		if (isGUI)
-			this.local = document.location.hostname === 'localhost';
-		if (this.params.has('test'))
-		{
-			this.initTestProcedure();
-			return;
-		}
-		if (this.params.has('d'))	// check for short form
-			this.params.set('diagram', this.params.get('d'));
-		else if (this.params.has('diagram'))
-			D.session.mode = 'diagram';
-			*/
 		this.setupWorkers();
 		this.fetchCatalog( _ =>
 		{
@@ -1180,10 +1134,6 @@ if (info instanceof Diagram)debugger;
 	{
 		U.writefile('defaults.json', JSON.stringify({R:this.default, D:D.default}));
 	}
-//	Login(e)
-//	{
-//		this.cloud.login(e, ok => ok);
-//	}
 	canFormat(elt)
 	{
 		return elt instanceof Morphism && (elt.isIterable() || this.Actions.javascript.canFormat(elt));
@@ -3340,7 +3290,6 @@ class Display
 				{
 					down:		new D2(isGUI ? window.innerWidth/2 : 500, isGUI ? window.innerHeight/2 : 500),
 					onPanel:	false,			// is the mouse not on the main gui?
-//					xy:			[new D2(D.width()/2, D.height()/2)],		// in session coordinates
 					xy:			null,			// in session coordinates
 					clientPosition()			// return client coords
 					{
@@ -3928,14 +3877,6 @@ class Display
 		}
 		icon.querySelector('.btn').classList.add('icon-active');
 	}
-	findActiveIcons(container)
-	{
-		const icons = [];
-		for (let icon of container.querySelectorAll('.icon'))
-			if (icon.querySelector('.icon-active'))
-				icons.push(icon);
-		return icons;
-	}
 	setUnactiveIcon(elt)
 	{
 		const icon = this.findAncestor('SPAN', elt);
@@ -3960,6 +3901,11 @@ class Display
 	zoom(e, scalar)
 	{
 		scalar = 2 * scalar;
+		if (!('name' in e.target.dataset))
+		{
+			console.error('zoom: no name in target');
+			return;
+		}
 		const diagram = R.$CAT.getElement(e.target.dataset.name);
 		const zoomDgrm = diagram && !this.default.fullscreen &&
 						(e.target.dataset.type === 'diagram' || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.dataset.type === 'cell' || e.target.constructor.name === 'SVGTextElement');
@@ -4314,10 +4260,7 @@ class Display
 				}
 			}
 			else if (command === 'catalog')
-//			{
-				R.initialized && this.saveSession();
-//				this.catalog.show();
-//			}
+				args.action !== 'startup' && this.saveSession();
 		});
 		window.addEventListener('Application', e =>
 		{
@@ -4340,7 +4283,6 @@ class Display
 		const text = H3.text({class:cls, x:"100", y:"100", 'text-anchor':'middle'}, safeTxt);
 		this.uiSVG.appendChild(text);
 		const width = text.getBBox().width;
-if (width === 0)debugger;
 		this.uiSVG.removeChild(text);
 		this.textSize.set(safeTxt, width);
 		return width;
@@ -4976,7 +4918,6 @@ if (width === 0)debugger;
 		else
 			this.session = {mode:'catalog', default:null, diagrams:new Set(), viewport:{x:0, y:0, scale:1}};
 		this.setSessionViewport(this.session.viewport);
-//		this.emitViewEvent(this.session.mode, R.diagram);
 	}
 	loadSessionDiagrams()
 	{
@@ -5390,7 +5331,6 @@ class Catalog extends DiagramTool		// GUI only
 		this.glowMap = new Map();
 		this.imageScaleFactor = 1.1;
 		this.searchInput = document.getElementById('catalog-search-value');
-//		window.addEventListener('Login', e => D.catalog.update());
 		window.addEventListener('CAT', e =>
 		{
 			let img = null;
@@ -5425,10 +5365,9 @@ class Catalog extends DiagramTool		// GUI only
 			switch(args.command)
 			{
 				case 'catalog':
-//					if (this.diagrams === null)
-//						this.search();
 					this.updateDiagramCodomain();
 					this.update();
+					this.show();
 					break;
 				case 'diagram':
 					this.hide();
@@ -5446,6 +5385,8 @@ class Catalog extends DiagramTool		// GUI only
 					this.updateDiagramCodomain();
 					this.showSection('search');
 					this.setSearchBar();
+					this.diagrams = this.getMatchingElements();
+					this.update();
 					break;
 			}
 		});
@@ -5482,7 +5423,6 @@ class Catalog extends DiagramTool		// GUI only
 		this.reset();
 		const onkeyup = e => this.search();
 		this.getButtons().map(btn => this.toolbar.appendChild(btn));
-		this.search();
 	}
 	getRows(tbl, elements)
 	{
@@ -5716,13 +5656,22 @@ class Catalog extends DiagramTool		// GUI only
 		R.diagram && btns.push(D.getIcon('closeCatalog', 'close', e => D.emitViewEvent('diagram', R.diagram), 'Return to diagram'));
 		return btns;
 	}
+	setCurrentDiagramButton()
+	{
+		const name = R.diagram ? R.diagram.name : D.session.default;
+		if (name !== '')
+		{
+			const toolbar = document.getElementById('catalog-toolbar');
+			const btn = toolbar.querySelector('#catalog-cwd-icon');
+			if (btn !== null)
+				btn.remove();
+			toolbar.appendChild(D.getIcon('closeCatalog', 'close', e => Runtime.SelectDiagram(name), `View diagram ${name}`, D.default.button.small, 'catalog-cwd-icon'));
+		}
+	}
 	update()
 	{
 		this.clear();
-//		const icons = D.findActiveIcons(document.getElementById('catalog-search-tools'));
-//		this.toolbar.querySelectorAll('.icon').forEach(elt => elt.remove());
-//		this.getButtons().map(btn => this.toolbar.appendChild(btn));
-//		this.setSearchBar();
+		this.setCurrentDiagramButton()
 		switch(this.mode)
 		{
 			case 'search':
@@ -5740,8 +5689,6 @@ class Catalog extends DiagramTool		// GUI only
 				});
 				break;
 		}
-//		icons.map(icon => D.setActiveIcon(document.getElementById(icon.id), false));
-//		icons.map(icon => D.setActiveIcon(icon, false));
 	}
 	diagramFilter(diagram)
 	{
@@ -9592,10 +9539,6 @@ class HomsetAction extends Action
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
-//		this.bpd = new BPD();
-//		this.domain = null;
-//		this.codomain = null;
-//		this.swapped = false;
 		Object.defineProperties(this,
 		{
 			bpd:		{value:	new BPD(),	writable:	false},
