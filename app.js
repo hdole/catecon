@@ -383,7 +383,7 @@ async function serve()
 							console.log('mysql intialization for Catecon', {error});
 							process.exit();
 						}
-						Cat.R.Initialize(_ => require('./public/js/javascript.js'));
+						Cat.R.initialize(_ => require('./public/js/javascript.js'));
 						determineRefcnts();
 						log('server started');
 					});
@@ -398,7 +398,7 @@ async function serve()
 						console.log('mysql intialization for Catecon', {error});
 						process.exit();
 					}
-					Cat.R.Initialize(_ =>
+					Cat.R.initialize(_ =>
 					{
 						updateSQLDiagramsByCatalog();
 						result.map(r =>
@@ -456,7 +456,7 @@ async function serve()
 			try
 			{
 				log('/updateCatalog', req.user);
-				Cat.R.FetchCatalog(_ => updateSQLDiagramsByCatalog());
+				Cat.R.fetchCatalog(_ => updateSQLDiagramsByCatalog());
 				res.status(HTTP.OK).end();
 			}
 			catch(error)
@@ -625,7 +625,7 @@ async function serve()
 			if (Cat.R.catalog.has(name))
 			{
 				const info = Cat.R.catalog.get(name);
-				if (info.timestamp < diagram.timestamp || Cat.R.LocalTimestamp(name) < info.timestamp)
+				if (info.timestamp < diagram.timestamp || Cat.R.localTimestamp(name) < info.timestamp)
 				{
 					const oldrefs = Cat.U.Clone(info.references);
 					const nuInfo = Cat.Diagram.GetInfo(diagram);
@@ -758,21 +758,21 @@ async function serve()
 			{
 				try
 				{
-					diagrams = [...Cat.R.catalog.values()].filter(info => info.user !== 'sys' && Cat.R.CanLoad(info.name) && !Cat.R.$CAT.elements.has(info.name));
+					diagrams = [...Cat.R.catalog.values()].filter(info => info.user !== 'sys' && Cat.R.canLoad(info.name) && !Cat.R.$CAT.elements.has(info.name));
 					const loaded = new Set();
 					const loadit = info =>
 					{
-						const refs = Cat.R.GetReferences(info.name);
+						const refs = Cat.R.getReferences(info.name);
 						refs.delete(info.name);
 						[...refs].reverse().map(ref => !loaded.has(info.name) && loadit(Cat.R.catalog.get(ref)));
 						if (!loaded.has(info.name))
 						{
-							const diagram = Cat.R.LoadDiagram(info.name);
+							const diagram = Cat.R.loadDiagram(info.name);
 							if (diagram)
 							{
 								console.log('read diagram', diagram.name);
 								loaded.add(info.name);
-								Cat.R.SaveLocal(diagram);
+								Cat.R.saveLocal(diagram);
 							}
 							else
 								console.log('error: cannot read diagram', info.name);
