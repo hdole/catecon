@@ -20,7 +20,7 @@
 // 			upload		diagram sent to server
 // 		Diagram
 // 			addReference
-// 			delete		delete diagram
+//// 			delete		delete diagram
 // 			loadCells	determine cell commutativity
 // 			move
 // 			removeReference
@@ -914,7 +914,7 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 	//
 	// primary means of displaying a diagram
 	//
-	static async SelectDiagram(name, action = null)
+	static async SelectDiagram(name, eventAction = null, fn = null)
 	{
 		try
 		{
@@ -929,28 +929,29 @@ if (cloudDiagrams.filter(cd => typeof cd === 'object').length > 0) debugger;
 			}
 			if (R.diagram && R.diagram.name === name)
 			{
-				D.emitCATEvent('default', R.diagram, action);
+				D.emitCATEvent('default', R.diagram, eventAction);
+				fn && fn(R.diagram);
 				return;
 			}
 			R.default.debug && console.log('SelectDiagram', name);
 			R.diagram = null;
 			let diagram = name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
-			let didit = false;
 			if (!diagram)
 			{
 				if (name)
-					diagram = await Runtime.DownloadDiagram(name);
+					diagram = await Runtime.DownloadDiagram(name);		// we're already async
 				if (!diagram)
 				{
 					D.emitCATEvent('default', null);
+					fn && fn(diagram);
 					return;
 				}
-				didit = true;
 			}
 			if (!diagram)
 				throw 'no such diagram';
 			R.diagram = diagram;
-			D.emitCATEvent('default', diagram, action);
+			D.emitCATEvent('default', diagram, eventAction);
+			fn && fn(diagram);
 		}
 		catch(x)
 		{
@@ -1765,21 +1766,7 @@ class Toolbar
 		});
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
-		window.addEventListener('Diagram', e =>
-		{
-			switch(e.detail.command)
-			{
-				case 'load':
-					this.resetMouseCoords();
-					break;
-				case 'select':
-					if (this.element.classList.contains('hidden') || R.diagram.selected.length > 0)
-						this.show(e);
-					else
-						this.hide();
-					break;
-			}
-		});
+		window.addEventListener('Diagram', e => (this.element.classList.contains('hidden') || R.diagram.selected.length > 0) ? this.show(e) : this.hide());
 		window.addEventListener('mouseenter', e => D.mouse.saveClientPosition(e));
 		window.addEventListener('Autohide', e =>
 		{
@@ -1790,10 +1777,6 @@ class Toolbar
 		});
 		window.addEventListener('Login', e => this.hide());
 		window.addEventListener('View', e => e.detail.command === 'catalog' ? this.hide() : null);
-	}
-	resetMouseCoords()
-	{
-		this.mouseCoords = D.center(R.diagram);
 	}
 	hide()
 	{
@@ -2472,7 +2455,7 @@ class DiagramTool extends ElementTool
 			}
 		}
 		if (!nobuts.has('view'))
-			buttons.push(D.getIcon('view', 'view', e => Runtime.SelectDiagram(name, 'home'), 'View diagram', btnSize));
+			buttons.push(D.getIcon('view', 'view', e => Runtime.SelectDiagram(name, 'default'), 'View diagram', btnSize));
 		const refcnt = diagram ? diagram.refcnt : info ? info.refcnt : 0;
 		if (!nobuts.has('delete') && refcnt === 0 && info.user === R.user.name && R.canDeleteDiagram(info.name))
 		{
@@ -3554,13 +3537,7 @@ class Display
 		{
 			if (timestamp === diagram.timestamp)
 			{
-				const currentVp = diagram.getViewport();
-				const vp = new D2(currentVp);
-				const placement = diagram.getPlacement();
-				const placePosition = new D2(placement);
-				const nuvp = vp.add(placePosition);
-				// TODO add to upload btn
-				diagram.viewport = ({x:nuvp.x, y:nuvp.y, scale:placement.scale * currentVp.scale});
+				diagram.setViewport();
 				R.saveLocal(diagram);
 				if (this.local && !this.textEditActive())
 					diagram.upload();
@@ -4097,6 +4074,7 @@ class Display
 		{
 			const args = e.detail;
 			const diagram = args.diagram;
+			const name = diagram.name;
 			switch(args.command)
 			{
 				case 'load':
@@ -4109,8 +4087,8 @@ class Display
 					{
 						R.loadDiagramEquivalences(diagram);
 						diagram.domain.checkCells();
-						!this.session.diagrams.has(diagram.name) && this.session.diagrams.add(diagram.name);
-						this.session.default = diagram.name;
+						!this.session.diagrams.has(name) && this.session.diagrams.add(name);
+						this.session.default = name;
 						diagram.makeSVG();
 						diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
 						this.diagramSVG.appendChild(diagram.svgRoot);
@@ -4130,28 +4108,24 @@ class Display
 					break;
 				case 'close':
 				case 'delete':
-					this.viewports.delete(diagram);
-					this.placements.delete(diagram);
-					this.session.diagrams.delete(diagram.name);
+					if (R.diagram === diagram)
+					{
+						R.diagram = null;
+						D.session.default = null;
+					}
+					this.session.diagrams.delete(name);
+					this.statusbar.show(e, `${U.Cap(args.command)} diagram: ${name}`);
+					this.viewports.delete(name);
+					this.placements.delete(name);
 					this.saveSession();
-					this.statusbar.show(e, `${U.Cap(args.command)} diagram: ${diagram}`);
+					if (args.command === 'delete')
+					{
+						R.catalog.delete(name);
+						this.diagramPNGs.delete(name);
+					}
 					break;
 				case 'new':
 					this.autosave(diagram);
-					break;
-			}
-		});
-		window.addEventListener('Diagram', e =>
-		{
-			const args = e.detail;
-			const diagram = args.diagram;
-			switch(args.command)
-			{
-				case 'delete':
-					this.viewports.delete(diagram.name);
-					this.placements.delete(diagram.name);
-					this.saveSession();
-					this.statusbar.show(e, `Diagram ${diagram.name} ${args.command}`);
 					break;
 			}
 		});
@@ -4244,10 +4218,12 @@ class Display
 					if (diagram.user === 'sys')
 						diagram.autoplace();
 					this.diagramSVG.classList.remove('hidden');
-					diagram.updateBackground();
 					diagram.show();
+					if ('action' in args && args.action === 'home')
+						diagram.home();
+					diagram.updateBackground();
 					this.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
-					if ('action' in args && args.action === 'home')		// TODO change 'home'
+					if ('action' in args && args.action === 'default')
 					{
 						const vp = new D2(diagram.viewport);
 						const placement = diagram.getPlacement();
@@ -5290,6 +5266,15 @@ class Display
 			H3.br(),
 			H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => this.uploadJSON(e)}));
 	}
+	setViewport()
+	{
+		const currentVp = diagram.getViewport();
+		const vp = new D2(currentVp);
+		const placement = diagram.getPlacement();
+		const placePosition = new D2(placement);
+		const nuvp = vp.add(placePosition);
+		this.viewport = ({x:nuvp.x, y:nuvp.y, scale:placement.scale * currentVp.scale});
+	}
 }
 
 class Catalog extends DiagramTool		// GUI only
@@ -5343,7 +5328,10 @@ class Catalog extends DiagramTool		// GUI only
 					D.catalog.display(typeof diagram === 'string' ? diagram : diagram.name);
 					break;
 				case 'delete':		// delete diagram
-					R.catalog.delete(diagram);
+					this.setCurrentDiagramButton()
+					const div = this.catalog.querySelector(`div[data-name="${diagram.name}"]`);
+					div && div.remove();		// remove image in catalog
+					this.diagrams = this.diagrams.filter(d => d.name !== diagram.name);
 					break;
 				case 'upload':
 					if (this.mode === 'search')
@@ -5353,9 +5341,9 @@ class Catalog extends DiagramTool		// GUI only
 					}
 					break;
 				case 'png':
-//				case 'load':
-//				case 'new':
-					this.display(diagram);
+				case 'load':
+				case 'new':
+					this.diagrams.includes(diagram.name) && this.display(diagram);
 					break;
 			}
 		});
@@ -5365,9 +5353,9 @@ class Catalog extends DiagramTool		// GUI only
 			switch(args.command)
 			{
 				case 'catalog':
+					this.show();
 					this.updateDiagramCodomain();
 					this.update();
-					this.show();
 					break;
 				case 'diagram':
 					this.hide();
@@ -5387,17 +5375,6 @@ class Catalog extends DiagramTool		// GUI only
 					this.setSearchBar();
 					this.diagrams = this.getMatchingElements();
 					this.update();
-					break;
-			}
-		});
-		window.addEventListener('Diagram', e =>
-		{
-			const args = e.detail;
-			switch (args.command)
-			{
-				case 'delete':
-					const div = this.catalog.querySelector(`div[data-name="${args.diagram.name}"]`);
-					div && div.remove();
 					break;
 			}
 		});
@@ -5439,7 +5416,7 @@ class Catalog extends DiagramTool		// GUI only
 			onclick:_ =>
 			{
 				D.setFullscreen(true, false);
-				Runtime.SelectDiagram(info.name, 'home');
+				Runtime.SelectDiagram(info.name, 'default');
 			},
 			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
 			'data-name':	info.name,
@@ -5658,15 +5635,12 @@ class Catalog extends DiagramTool		// GUI only
 	}
 	setCurrentDiagramButton()
 	{
-		const name = R.diagram ? R.diagram.name : D.session.default;
-		if (name !== '')
-		{
-			const toolbar = document.getElementById('catalog-toolbar');
-			const btn = toolbar.querySelector('#catalog-cwd-icon');
-			if (btn !== null)
-				btn.remove();
+		const toolbar = document.getElementById('catalog-toolbar');
+		const btn = toolbar.querySelector('#catalog-cwd-icon');
+		btn && btn.remove();	// remove old button
+		const name = R.diagram ? R.diagram.name : R.catalog.has(D.session.default) ? D.session.default : null;
+		if (name && name !== '')
 			toolbar.appendChild(D.getIcon('closeCatalog', 'close', e => Runtime.SelectDiagram(name), `View diagram ${name}`, D.default.button.small, 'catalog-cwd-icon'));
-		}
 	}
 	update()
 	{
@@ -11008,6 +10982,8 @@ class ActionAction extends Action
 			history += references.length > 0 ? 'Reference diagrams required:  ' + references.map(ref => ref).join(', ') : 'No reference diagrams required.';
 			const txt = action.placeText(history, xy, 12, 'normal', false);
 			xy = xy.add(yDelta2);
+			const xyAction = new D2(xy);
+			xy = xy.add(yDelta2);
 			let {height} = txt.getBBox();
 			while(height > grid)
 			{
@@ -11015,7 +10991,6 @@ class ActionAction extends Action
 				xy = xy.add(yDelta);
 			}
 			action.placeText('These elements must be selected\nfor the action to be enabled in\nyour working diagram.', xy.sub(xDelta4), 12, 'normal', false);
-
 			const match = matchSource.map(orig =>
 			{
 				const name = namedBare2Names.get(orig);
@@ -11025,7 +11000,7 @@ class ActionAction extends Action
 				else
 					action.placeMorphism(elt, xy, null, false);
 				xy = xy.add(yDelta2);
-				return name;
+				return elt;
 			});
 			action.match = match;
 			if (named instanceof NamedObject)
@@ -11044,12 +11019,20 @@ class ActionAction extends Action
 				action.placeMorphism(named, xy, null, false);
 				action.placeText('The named morphism for the construction.', xy.sub(xDelta4), 12, 'normal', false);
 			}
-			R.sync = true;		// turn on autosave
-			Runtime.SelectDiagram(action);
-			action.home();
-			action.savePng(e);
+			const domain = action.prod(...match.map(elt => elt instanceof CatObject ? elt : action.hom(elt.domain, elt.codomain)));
+			const codomain = named instanceof CatObject ? elt : action.hom(named.domain, named.codomain);
+			const actionMorphism = new Morphism(action, {domain, codomain, basename:'action'});
+			action.placeMorphism(actionMorphism, xyAction, null, false);
+			action.placeText('This morphism shows the general\nform of the action.', xyAction.sub(xDelta4), 12, 'normal', false);
 			D.emitCATEvent('new', action);
-			D.emitViewEvent(D.session.mode, diagram);
+			R.sync = true;		// turn on autosave
+			const postProcess = _ =>
+			{
+				action.home();
+				action.setViewport();
+				action.savePng(e);
+			};
+			Runtime.SelectDiagram(action, 'home', postProcess);		// select is async so post-process
 		}
 		catch(x)
 		{
@@ -11872,6 +11855,8 @@ class NamedMorphism extends Morphism	// name of a morphism
 	}
 	uses(mor, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
 	{
+		if (this.isEquivalent(mor))
+			return true;
 		return this.base.uses(mor, start);
 	}
 	isBare()
@@ -14202,18 +14187,10 @@ class Diagram extends Functor
 		if (this.refcnt <= 0)
 		{
 			const name = this.name;
-			R.catalog.delete(name);
-			D.diagramPNGs.delete(name);
-			if (R.diagram === this)
-			{
-				R.diagram = null;
-				D.session.default = null;
-				isGUI && D.emitViewEvent('catalog');
-			}
 			this.svgRoot && this.svgRoot.remove();
 			['.json', '.png', '.log', '-viewport.json', '-placement.json'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 			this.elements.forEach(elt => this.codomain.elements.delete(elt.name));
-			D.emitDiagramEvent(this, 'delete', this);
+			isGUI && D.emitCATEvent('delete', this);
 		}
 	}
 	addElement(elt)
@@ -14629,6 +14606,7 @@ class Diagram extends Functor
 		}
 		xyC = new D2(codomain.getXY());
 		const from = new DiagramMorphism(this, {to, domain, codomain});
+		from.update();
 		if (select)
 			this.makeSelected(from);
 		return from;
@@ -15657,8 +15635,13 @@ if (info instanceof Diagram)debugger;
 					bkgnd.setAttribute('height', `${scale * D.height()}px`);
 				}
 				else
+				{
+					const args = {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
+																		x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.width()}px`, height:`${scale * D.height()}px`};
 					bkgnd = H3.rect('.diagramBackgroundActive', {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
 																		x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.width()}px`, height:`${scale * D.height()}px`});
+console.log('updateBackground', this.name, args);
+}
 				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
 				dgrmBkgnd.classList.add('hidden');
 				dgrmF4gnd.classList.add('hidden');
@@ -15899,7 +15882,7 @@ class ActionDiagram extends Diagram
 		}
 		const attributes = new Map('attributes' in nuArgs ? nuArgs.attributes : []);
 		attributes.set('priority', U.GetArg(args, 'priority', 0));
-		const match = 'match' in nuArgs ? nuArgs.match.map(elt => this.domain.getElement(elt)) : null;
+		const match = 'match' in nuArgs ? nuArgs.match.map(elt => this.getElement(elt)) : null;
 		Object.defineProperties(this,
 		{
 			attributes:	{value:attributes,	writable:	false},
@@ -15915,7 +15898,7 @@ class ActionDiagram extends Diagram
 	action(e, diagram, ary)
 	{
 	}
-	_construct(diagram, ref, eltMap)
+	_build(diagram, ref, eltMap)
 	{
 		if (ref instanceof CatObject)
 		{
@@ -15923,7 +15906,7 @@ class ActionDiagram extends Diagram
 				return eltMap.get(ref);
 			if (ref instanceof MultiObject)
 			{
-				const objects = ref.objects.map(o => this._construct(diagram, o, eltMap));
+				const objects = ref.objects.map(o => this._build(diagram, o, eltMap));
 				if (ref instanceof ProductObject)
 					return diagram[ref.dual ? 'coprod' : 'prod'](...objects)
 				if (ref instanceof HomObject)
@@ -15942,12 +15925,12 @@ class ActionDiagram extends Diagram
 			if (ref.constructor.name === 'Morphism')
 			{
 				const elt = eltMap.get(ref);
-				'recursor' in ref && elt.setRecursor(this._construct(diagram, ref.recursor, eltMap));
+				'recursor' in ref && elt.setRecursor(this._build(diagram, ref.recursor, eltMap));
 				return elt;
 			}
 			if (ref instanceof MultiMorphism)
 			{
-				const morphisms = ref.morphisms.map(m => this._construct(diagram, m, eltMap));
+				const morphisms = ref.morphisms.map(m => this._build(diagram, m, eltMap));
 				if (ref instanceof ProductMorphism)
 					return diagram[ref.dual ? 'coprod' : 'prod'](...morphisms)
 				if (ref instanceof HomMorphism)
@@ -15959,13 +15942,13 @@ class ActionDiagram extends Diagram
 				switch(ref.prototype.name)
 				{
 					case 'FactorMorphism':
-						return diagram[ref.dual ? 'cofctr' : 'fctr'](this._construct(diagram, ref[ref.dual ? ref.codomain : ref.doamin], eltMap), ref.factors);
+						return diagram[ref.dual ? 'cofctr' : 'fctr'](this._build(diagram, ref[ref.dual ? ref.codomain : ref.doamin], eltMap), ref.factors);
 					case 'Identity':
-						return diagram.id(this._construct(diagram, ref.domain, eltMap));
+						return diagram.id(this._build(diagram, ref.domain, eltMap));
 					case 'LambdaMorphism':
-						return diagram.lambda(this._construct(diagram, ref, eltMap), ref.domFactors, ref.homFactors);
+						return diagram.lambda(this._build(diagram, ref, eltMap), ref.domFactors, ref.homFactors);
 					case 'Evaluation':
-						return diagram.eval(this._construct(diagram, ref.domain, eltMap), this._construct(diagram, ref.domain.objects[0].objects[1], eltMap));
+						return diagram.eval(this._build(diagram, ref.domain, eltMap), this._build(diagram, ref.domain.objects[0].objects[1], eltMap));
 					case 'NamedMorphism':
 					case 'Distribute':
 					case 'Dedistribute':
@@ -15979,7 +15962,7 @@ class ActionDiagram extends Diagram
 		const eltMap = new Map();
 		this.hasForm(diagram, ary, eltMap);
 		const base = this.named.getBase();
-		const elt = this._construct(ref, eltMap);
+		const elt = this._build(ref, eltMap);
 	}
 	hasForm(diagram, ary, eltMap = new Map())
 	{
@@ -15994,7 +15977,7 @@ class ActionDiagram extends Diagram
 	{
 		const a = super.json();
 		a.attributes = U.JsonMap(this.attributes);
-		a.match = this.match.slice();
+		a.match = this.match.map(elt => elt.name);
 		a.named = this.named.name;
 		a.ops	= this.ops;
 		return a;
