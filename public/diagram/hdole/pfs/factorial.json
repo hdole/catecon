@@ -18,7 +18,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -30,
-        "y": -10
+        "y": 0
       },
       "height": "133",
       "weight": "bold"
@@ -28,7 +28,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/pfs/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "xy": {
-        "x": -30,
+        "x": 0,
         "y": 800
       }
     },
@@ -91,7 +91,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/nat/N64",
       "xy": {
-        "x": -30,
+        "x": 0,
         "y": 400
       }
     },
@@ -109,7 +109,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/nat/N128",
       "xy": {
-        "x": -30,
+        "x": 0,
         "y": 1000
       }
     },
@@ -118,7 +118,7 @@
       "prototype": "DiagramObject",
       "to": "hdole/nat/N64",
       "xy": {
-        "x": -30,
+        "x": 0,
         "y": 1200
       }
     },
@@ -285,14 +285,14 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1629662819954,
+  "timestamp": 1629796668518,
   "version": 0,
   "hiddenCells": [
     "8aa77e45b3107e20f4679af002f46a03476b965865a58d9898b29b98881fa24c"
   ],
   "viewport": {
-    "x": 1140.165755876949,
-    "y": 174.03422527912562,
-    "scale": 0.9354124464125878
+    "x": -1670.5304651845527,
+    "y": 32.32530892204224,
+    "scale": 3.4776481891697135
   }
 }
