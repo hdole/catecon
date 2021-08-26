@@ -78,8 +78,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 0,
-        "y": 0
+        "x": -40,
+        "y": 50
       },
       "height": "122",
       "weight": "bold"
@@ -90,7 +90,7 @@
       "to": "hdole/while/S",
       "xy": {
         "x": 0,
-        "y": 200
+        "y": 190
       }
     },
     {
@@ -99,7 +99,7 @@
       "to": "hdole/while/S",
       "xy": {
         "x": 190,
-        "y": 200
+        "y": 190
       }
     },
     {
@@ -108,7 +108,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 400,
-        "y": 200
+        "y": 190
       },
       "height": "24"
     },
@@ -148,7 +148,7 @@
       "to": "hdole/while/CPo{#1,#1}oPC",
       "xy": {
         "x": 0,
-        "y": 400
+        "y": 390
       }
     },
     {
@@ -304,7 +304,6 @@
       "size": 1
     },
     {
-      "basename": "CPo{#1,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -369,10 +368,15 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627194067085,
+  "timestamp": 1629963356123,
   "version": 0,
   "hiddenCells": [
     "8901823568e5dafc364b7e06357dd9d01318f1b37269e38f12a42911ec7b9800",
     "ce18ae784869bc058864cf12812c165721df1800bcbf615259df86efbe164d76"
-  ]
+  ],
+  "viewport": {
+    "x": -15434.745773136998,
+    "y": 8987.008118599584,
+    "scale": 9.312656237036895
+  }
 }
