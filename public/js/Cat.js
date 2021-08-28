@@ -1114,16 +1114,7 @@ if (errors.length > 0) debugger;
 	getDiagramInfo(name)
 	{
 		const diagram = name !== 'sys/$CAT' ? this.$CAT.getElement(name) : this.$CAT;
-		const info = {name};
-		info.basename = diagram.basename;
-		info.properName = diagram.properName;
-		info.user = diagram.user;
-		info.timestamp = diagram.timestamp;
-		info.refcnt = diagram.refcnt;
-		info.description = diagram.description;
-		info.codomain = diagram.codomain.name;
-		info.references = [...diagram.references.values()].map(ref => ref.name);
-		return info;
+		return Diagram.GetInfo(diagram);
 	}
 	saveDefaults()
 	{
@@ -1989,7 +1980,6 @@ class ElementTool
 			help.appendChild(	H3.div(`##${this.type}-search.w100.hidden`,
 										this.getSearchBar(),
 										H3.div(`##${this.type}-search-results.tool-search-results`, matchTable)));
-			this.resetFilter();
 			this.showSection('search');
 			this.setSearchBar();
 		}
@@ -2026,12 +2016,6 @@ class ElementTool
 	getRows(tbl, elements)	// or replace
 	{
 		elements.map(elt => tbl.appendChild(elt.getHtmlRow()));
-	}
-	resetFilter()
-	{
-		this.searchArgs.diagramOnly = false;
-		this.searchArgs.sorter = U.NameSorter;
-		D.setActiveIcon(document.getElementById(`${this.constructor.name}-text-icon`));
 	}
 	replay(e, diagram, args)
 	{
@@ -2621,13 +2605,6 @@ class DiagramTool extends ElementTool
 	reset()
 	{
 		this.bpd.reset();
-	}
-	resetFilter()
-	{
-		super.resetFilter();
-		this.searchArgs.userOnly = false;
-		this.searchArgs.referenceOnly = false;
-		this.searchArgs.sessionOnly = false;
 	}
 	create(e)
 	{
@@ -3337,7 +3314,7 @@ class Display
 				{
 					ellipse:['fill', 'margin', 'stroke', 'stroke-width', 'rx', 'ry'],
 					path:	['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
-					text:	['fill', 'font', 'margin', 'stroke'],
+					text:	['fill', 'font', 'margin', 'stroke', 'text-anchor'],
 				},
 				writable:	false,
 			},
@@ -3417,10 +3394,16 @@ class Display
 			return;
 		}
 		if (this.params.has('d'))	// check for short form
+		{
 			this.params.set('diagram', this.params.get('d'));
-		else if (this.params.has('diagram'))
 			this.session.mode = 'diagram';
-		if (this.session.mode === 'diagram' && this.session.default && this.session.default !== '')
+		}
+		else if (this.params.has('diagram'))
+		{
+			this.params.set('diagram', this.params.get('diagram'));
+			this.session.mode = 'diagram';
+		}
+		else if (this.session.default && this.session.default !== '')
 			this.params.set('diagram', this.session.default);		// set default diagram
 		this.mouse.xy = [new D2(this.width()/2, this.height()/2)];		// in session coordinates
 		let delta = null;
@@ -4229,7 +4212,6 @@ class Display
 					diagram.show();
 					if ('action' in args && args.action === 'home')
 						diagram.home();
-					diagram.updateBackground();
 					this.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					if ('action' in args && args.action === 'default')
 					{
@@ -4241,6 +4223,7 @@ class Display
 					}
 					this.default.fullscreen && diagram.saveViewport(this.session.viewport);
 					this.saveSession();
+					diagram.updateBackground();
 				}
 			}
 			else if (command === 'catalog')
@@ -4256,7 +4239,7 @@ class Display
 					this.forEachDiagramSVG(d => d.show());
 					this.setFullscreen(this.default.fullscreen);
 					const name = this.params.get('diagram');
-					if (!R.diagram || R.diagram.name !== name)
+					if (name && D.session.mode === 'diagram' && (!R.diagram || R.diagram.name !== name))
 					{
 						Runtime.SelectDiagram(name, null, diagram =>
 						{
@@ -5163,12 +5146,31 @@ class Display
 		if (this.onEnter(e, action))
 			return;
 		const basename = 'value' in e.target ? e.target.value : e.target.innerText;	// input elements vs other tags
-		const name = `${diagram.name}/${basename}`;
+		let name = `${diagram.name}/${basename}`;
 		let elt = diagram.getElement(name);
 		if (elt && elt === base)
 			return;
 		if (elt === undefined)
 			elt = diagram.codomain.elements.get(name);
+		if (e.target.contentEditable)
+		{
+			e.target.style.backgroundColor = elt ? 'red' : '';
+			e.target.style.color = elt ? 'white' : '';
+		}
+		else
+			elt ? e.target.classList.add('error') : e.target.classList.remove('error');
+	}
+	inputDiagramBasenameSearch(e, action, base = null)
+	{
+		if (this.onEnter(e, action))
+			return;
+		const basename = 'value' in e.target ? e.target.value : e.target.innerText;	// input elements vs other tags
+		let name = `${R.user.name}/${basename}`;
+		let elt = R.$CAT.getElement(name);
+		if (elt && elt === base)
+			return;
+		if (elt === undefined)
+			elt = R.$CAT.codomain.elements.get(name);
 		if (e.target.contentEditable)
 		{
 			e.target.style.backgroundColor = elt ? 'red' : '';
@@ -5317,7 +5319,7 @@ class Catalog extends DiagramTool		// GUI only
 							H3.div('##catalog-new.hidden',
 								H3.table('##catalog-diagram-new',
 									H3.tr(H3.th('New Diagram')),
-									H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => inputBasenameSearch(e)}),
+									H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => D.inputDiagramBasenameSearch(e, R.$CAT, action)}),
 													H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.onEnter(e, action)}),
 													H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.onEnter(e, action)}),
 													H3.span('##catalog-select-codomain-span'),
@@ -5332,7 +5334,7 @@ class Catalog extends DiagramTool		// GUI only
 		this.catalog.appendChild(this.infoElement);
 		this.catalogDisplay = H3.div('##catalog-display');		// the actual catalog display
 		this.catalog.appendChild(this.catalogDisplay);
-		this.diagrams = null;
+		this.diagrams = [];
 		this.glowMap = new Map();
 		this.imageScaleFactor = 1.1;
 		this.searchInput = document.getElementById('catalog-search-value');
@@ -5364,7 +5366,7 @@ class Catalog extends DiagramTool		// GUI only
 				case 'png':
 				case 'load':
 				case 'new':
-					this.diagrams && this.diagrams.includes(diagram.name) && this.display(diagram);
+					this.diagrams.filter(info => info.name === diagram.name).length > 0 && this.display(diagram);
 					break;
 			}
 		});
@@ -5428,7 +5430,12 @@ class Catalog extends DiagramTool		// GUI only
 	}
 	clear()
 	{
-		D.removeChildren(this.catalogDisplay);
+		let elt = this.catalogDisplay.firstChild;
+		while(elt)
+		{
+			elt.classList.add('hidden');
+			elt = elt.nextSibling;
+		}
 	}
 	display(info)
 	{
@@ -5442,13 +5449,27 @@ class Catalog extends DiagramTool		// GUI only
 			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
 			'data-name':	info.name,
 		};
+		let div = this.catalog.querySelector(`div[data-name="${info.name}"]`);
+		if (div)
+		{
+			div.classList.remove('hidden');
+			if (Number.parseInt(div.dataset.time) < info.timestamp)
+			{
+				const img = div.querySelector('img');
+				const parent = img.parentNode;
+				img && img.remove();
+				parent.appendChild(D.getImageElement(info.name, args));
+				div.dataset.time = info.timestamp;
+			}
+			return;
+		}
 		const img = D.getImageElement(info.name, args);
 		this.glowMap.has(info.name) && img.classList.add(this.glowMap.get(info.name));
 		const diagramToolbar = H3.table('.verticalTools');
 		diagramToolbar.onmouseenter = e => {diagramToolbar.style.opacity = 100;};
 		diagramToolbar.onmouseleave = e => {diagramToolbar.style.opacity = 0;};
 		const imgDiv = H3.div({style:'position:relative;'}, img, diagramToolbar);
-		const div = H3.div('.catalogEntry', {'data-name':info.name},
+		div = H3.div('.catalogEntry', {'data-name':info.name, 'data-time':info.timestamp},
 			H3.table(	[
 							H3.tr(H3.td('.imageBackground', {colspan:2}, imgDiv)),
 							H3.tr(H3.td(D.getDiagramHtml(info))),
@@ -5642,15 +5663,13 @@ class Catalog extends DiagramTool		// GUI only
 	}
 	getButtons(exclude = [])
 	{
-		const btns = [
-						D.getIcon('search', 'search', _ => this.showSection('search'), 'Search for diagram', D.default.button.small, 'catalog-search-icon'),
-						D.getIcon('new', 'edit', _ => this.showSection('new'), 'New diagram', D.default.button.small, 'catalog-new-icon'),
-					];
+		const btns = [	D.getIcon('search', 'search', _ => this.showSection('search'), 'Search for diagram', D.default.button.small, 'catalog-search-icon'),
+						D.getIcon('new', 'edit', _ => this.showSection('new'), 'New diagram', D.default.button.small, 'catalog-new-icon')];
 		if (exclude.includes('upload-json'))
 			btns.push(D.getIcon('upload', 'upload', _ => this.showSection('upload'), 'Upload local diagram', D.default.button.small, 'catalog-upload-icon'));
 		else
 			btns.push(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload'), 'Upload JSON file for diagram', D.default.button.small, 'catalog-upload-icon'));
-		R.diagram && btns.push(D.getIcon('closeCatalog', 'close', e => D.emitViewEvent('diagram', R.diagram), 'Return to diagram'));
+		this.setCurrentDiagramButton();
 		return btns;
 	}
 	setCurrentDiagramButton()
@@ -5658,8 +5677,7 @@ class Catalog extends DiagramTool		// GUI only
 		const btn = this.toolbar.querySelector('#catalog-cwd-icon');
 		btn && btn.remove();	// remove old button
 		const name = R.diagram ? R.diagram.name : R.catalog.has(D.session.default) ? D.session.default : null;
-		if (name && name !== '')
-			this.toolbar.appendChild(D.getIcon('closeCatalog', 'close', e => Runtime.SelectDiagram(name), `View diagram ${name}`, D.default.button.small, 'catalog-cwd-icon'));
+		name && name !== '' && this.toolbar.appendChild(D.getIcon('closeCatalog', 'close', e => Runtime.SelectDiagram(name), `View diagram ${name}`, D.default.button.small, 'catalog-cwd-icon'));
 	}
 	update()
 	{
@@ -9135,11 +9153,11 @@ class ProductEditAction extends Action
 	updateTable()
 	{
 		let row = this.table.firstElementChild;
-		do
+		while(row)
 		{
 			this.updateRow(row);
+			row = row.nextSibling;
 		}
-		while((row = row.nextSibling));
 	}
 	getObjectSelectorRow(diagram)
 	{
@@ -14837,8 +14855,6 @@ class Diagram extends Functor
 					R.default.debug && console.log('uploaded', this.name);
 					const info = R.getDiagramInfo(this.name);
 					info.cloudTimestamp = info.timestamp;
-if (info.references.filter(ref => ref instanceof Diagram).length > 0)debugger;
-if (info instanceof Diagram)debugger;
 					R.catalog.set(this.name, info);
 					const delta = Date.now() - start;
 					if (e)
@@ -15873,7 +15889,6 @@ console.log('updateBackground', this.name, args);
 		{
 			let refs = [];
 			diagram.references.forEach(r => refs.push(typeof r === 'string' ? r : r.name));
-if (refs.reduce((r, ref) => r || ref instanceof Diagram, false))debugger;
 			return {
 				name:			diagram.name,
 				basename:		diagram.basename,
@@ -15883,6 +15898,7 @@ if (refs.reduce((r, ref) => r || ref instanceof Diagram, false))debugger;
 				timestamp:		diagram.timestamp,
 				user:			diagram.user,
 				references:		refs,
+				prototype:		diagram.constructor.name,
 			};
 		}
 		return diagram;
