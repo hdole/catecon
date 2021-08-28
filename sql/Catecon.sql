@@ -15,6 +15,7 @@ CREATE TABLE `users` (`name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin NO
   `timestamp` bigint(20) NOT NULL,
   `refcnt` int(11) DEFAULT '0',
   `cloudTimestamp` bigint(20) DEFAULT NULL,
+  `prototype` mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
