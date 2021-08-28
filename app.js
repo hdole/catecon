@@ -321,8 +321,8 @@ function updateDiagramTable(name, info, fn, cloudTimestamp)
 {
 	if (info.user === 'sys' || name === info.user + '/' + info.user)	// do not track system or user/user diagrams
 		return;
-	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ? WHERE name = ?';
-	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, name];
+	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ?, prototype = ? WHERE name = ?';
+	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, info.prototype, name];
 	console.log('updating diagram table', args);
 	dbcon.query(updateSql, args, fn);
 }
@@ -663,8 +663,8 @@ async function serve()
 				// new diagram to system
 				// no need to set refcnt; it must be 0
 				//
-				const sql = 'INSERT into Catecon.diagrams (name, basename, user, description, properName, refs, timestamp, codomain) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain], (error, result) =>
+				const sql = 'INSERT into Catecon.diagrams (name, basename, user, description, properName, refs, timestamp, codomain, prototype) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain, diagram.prototype], (error, result) =>
 				{
 					if (error)
 					{
