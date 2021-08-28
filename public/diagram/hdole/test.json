@@ -341,15 +341,6 @@
       }
     },
     {
-      "basename": "o_46",
-      "prototype": "DiagramObject",
-      "to": "hdole/test/C",
-      "xy": {
-        "x": 1100,
-        "y": -300
-      }
-    },
-    {
       "basename": "o_47",
       "prototype": "DiagramObject",
       "to": "hdole/test/A",
@@ -746,12 +737,6 @@
       "prototype": "DiagramComposite",
       "domain": "hdole/test/o_4",
       "codomain": "hdole/test/o_8",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
       "to": "hdole/test/Cm{f,g}mC",
       "morphisms": [
         "hdole/test/m_5",
@@ -1022,13 +1007,6 @@
       "to": "hdole/test/h2"
     },
     {
-      "basename": "m_40",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/test/o_4",
-      "codomain": "hdole/test/o_46",
-      "to": "hdole/test/h"
-    },
-    {
       "basename": "m_41",
       "prototype": "DiagramMorphism",
       "domain": "hdole/test/o_47",
@@ -1283,6 +1261,20 @@
       "domain": "hdole/test/o_85",
       "codomain": "hdole/test/o_86",
       "to": "hdole/test/Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD"
+    },
+    {
+      "basename": "m_31",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/test/o_4",
+      "codomain": "hdole/test/o_8",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 3,
+      "to": "hdole/test/comp"
     }
   ],
   "elements": [
@@ -1780,18 +1772,25 @@
       "properName": "dist",
       "domain": "hdole/test/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
       "codomain": "hdole/test/CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
+    },
+    {
+      "basename": "comp",
+      "prototype": "NamedMorphism",
+      "domain": "hdole/test/A",
+      "codomain": "hdole/test/C",
+      "source": "hdole/test/Cm{f,g}mC"
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1629706673906,
+  "timestamp": 1630127824754,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
   ],
   "viewport": {
-    "x": -2314.93219605993,
-    "y": -1138.6248069994854,
-    "scale": 0.5677360324812718
+    "x": 3720.158390563285,
+    "y": 3382.2455669564524,
+    "scale": 1.5063727121103578
   }
 }

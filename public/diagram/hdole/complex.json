@@ -448,7 +448,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 0,
-        "y": 0
+        "y": -10
       },
       "height": 96,
       "weight": "bold"
@@ -584,7 +584,6 @@
       "codomain": "hdole/complex/C"
     },
     {
-      "basename": "Po{C,C}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/complex/C",
@@ -592,7 +591,6 @@
       ]
     },
     {
-      "basename": "CPo{C,hdole/Basics/#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -754,6 +752,11 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627417499220,
-  "version": 0
+  "timestamp": 1630143424793,
+  "version": 0,
+  "viewport": {
+    "x": 8963.113261240753,
+    "y": 632.4424840321255,
+    "scale": 2.060077151710618
+  }
 }
