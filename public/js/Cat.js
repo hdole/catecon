@@ -921,7 +921,11 @@ if (errors.length > 0) debugger;
 				D.session.mode = 'diagram';
 				if (R.diagram)
 				{
-					R.diagram.name !== name && R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
+					if ( R.diagram.name !== name)
+					{
+						const bkgnd = R.diagram.svgRoot.querySelector('.diagramBackground').classList.remove('defaultGlow');
+						bkgnd && bkgnd.classList.remove('defaultGlow');
+					}
 					D.default.fullscreen && D.diagramSVG.lastElementChild.dataset.name !== name && D.diagramSVG.classList.add('hidden');
 				}
 			}
@@ -4118,19 +4122,6 @@ class Display
 					break;
 			}
 		});
-		/*
-		window.addEventListener('Login', e =>
-		{
-			if (this.session.mode === 'diagram')
-			{
-				const name = this.params.get('diagram');
-				if (!R.diagram || R.diagram.name !== name)
-					Runtime.SelectDiagram(name);
-			}
-			if (R.user.status !== 'logged-in')
-				return;
-		});
-		*/
 		window.onresize = this.Resize;
 		window.addEventListener('mousemove', e => this.autohide(e));
 		window.addEventListener('mousedown', e => this.autohide(e));
@@ -4204,6 +4195,7 @@ class Display
 			const diagram = args.diagram;
 			if (command === 'diagram')
 			{
+				document.getElementById('diagramView').classList.remove('hidden');
 				if (diagram)
 				{
 					if (diagram.user === 'sys')
@@ -4227,7 +4219,10 @@ class Display
 				}
 			}
 			else if (command === 'catalog')
+			{
 				args.action !== 'startup' && this.saveSession();
+				document.getElementById('diagramView').classList.add('hidden');
+			}
 		});
 		window.addEventListener('Application', e =>
 		{
@@ -4236,20 +4231,25 @@ class Display
 			{
 				case 'start':
 					this.loadSessionDiagrams();
-					this.forEachDiagramSVG(d => d.show());
 					this.setFullscreen(this.default.fullscreen);
 					const name = this.params.get('diagram');
-					if (name && D.session.mode === 'diagram' && (!R.diagram || R.diagram.name !== name))
+					if (D.session.mode === 'diagram')
 					{
-						Runtime.SelectDiagram(name, null, diagram =>
+						if (name && (!R.diagram || R.diagram.name !== name))
 						{
-							if (!diagram)
+							Runtime.SelectDiagram(name, null, diagram =>
 							{
-								D.statusbar.show(null, `cannot load diagram ${name}`);
-								D.emitViewEvent('catalog');
-							}
-						});
+								if (!diagram)
+								{
+									D.statusbar.show(null, `cannot load diagram ${name}`);
+									D.emitViewEvent('catalog');
+								}
+							});
+						}
 					}
+					else if (D.session.mode === 'catalog')
+						D.emitViewEvent('catalog');
+					D.notBusy();
 					break;
 			}
 		});
@@ -5308,7 +5308,6 @@ class Catalog extends DiagramTool		// GUI only
 		this.sections.length = 0;
 		this.sections.push('search', 'new', 'upload');
 		this.catalog = document.getElementById('catalog');
-		this.catalog.appendChild(H3.h1('.catalog', 'Catalog'));
 		this.catalog.appendChild(H3.table(H3.tr(this.toolbar)));
 		this.mode = 'search';								// what viewing mode are we in?
 		const action = e => this.createDiagram();
@@ -5453,7 +5452,7 @@ class Catalog extends DiagramTool		// GUI only
 		if (div)
 		{
 			div.classList.remove('hidden');
-			if (Number.parseInt(div.dataset.time) < info.timestamp)
+			if (Number.parseInt(div.dataset.time) < info.timestamp)		// regenerate png if timestamp expired
 			{
 				const img = div.querySelector('img');
 				const parent = img.parentNode;
@@ -5461,6 +5460,7 @@ class Catalog extends DiagramTool		// GUI only
 				parent.appendChild(D.getImageElement(info.name, args));
 				div.dataset.time = info.timestamp;
 			}
+			this.catalogDisplay.appendChild(div);
 			return;
 		}
 		const img = D.getImageElement(info.name, args);
@@ -5621,17 +5621,10 @@ class Catalog extends DiagramTool		// GUI only
 	hide()
 	{
 		this.catalog.classList.add('hidden');
-		document.getElementById('diagramView').classList.remove('hidden');
 	}
 	show(visible = true)
 	{
-		if (visible)
-		{
-			this.catalog.classList.remove('hidden');
-			document.getElementById('diagramView').classList.add('hidden');
-		}
-		else
-			this.hide();
+		visible ? this.catalog.classList.remove('hidden') : this.hide();
 	}
 	async downloadNewer()
 	{
@@ -11030,8 +11023,7 @@ class ActionAction extends Action
 			action.placeText('These elements must be selected\nfor the action to be enabled in\nyour working diagram.', xy.sub(xDelta4), 12, 'normal', false);
 			const match = matchSource.map(orig =>
 			{
-				const name = namedBare2Names.get(orig);
-				const elt = action.getElement(name);
+				const elt = this._build(action, orig, nameMap);
 				if (elt instanceof CatObject)
 					action.placeObject(elt, xy, false);
 				else
@@ -11058,9 +11050,9 @@ class ActionAction extends Action
 			}
 			const domain = action.prod(...match.map(elt => elt instanceof CatObject ? elt : action.hom(elt.domain, elt.codomain)));
 			const codomain = named instanceof CatObject ? elt : action.hom(named.domain, named.codomain);
-			const actionMorphism = new Morphism(action, {domain, codomain, basename:'action'});
-			action.placeMorphism(actionMorphism, xyAction, null, false);
-			action.placeText('This morphism shows the general\nform of the action.', xyAction.sub(xDelta4), 12, 'normal', false);
+			action.placeObject(domain, xyAction, false);
+			action.placeText('The action takes an element of the form to produce\none of the form that follows:', xyAction.sub(xDelta4), 12, 'normal', false);
+			action.placeObject(codomain, xyAction.add(xDelta4), false);
 			D.emitCATEvent('new', action);
 			R.sync = true;		// turn on autosave
 			const postProcess = _ =>
@@ -11086,7 +11078,7 @@ class ActionAction extends Action
 			{
 				const named = last.to;
 				const elements = ary.filter(elt => !R.isNamed(elt.to));
-				return elements.reduce((r, elt) => r && named.uses(elt.to) && elt.to.isBare(), true);
+				return elements.reduce((r, elt) => r && named.uses(elt.to), true);
 			}
 		}
 		return false;
@@ -11462,9 +11454,11 @@ class Morphism extends Element
 	{
 		return this.domain.isIterable();
 	}
-	uses(mor, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
+	uses(elt, start = true)		// True if the given morphism is used in the construction of this morphism somehow or identical to it
 	{
-		if (this.isEquivalent(mor))
+		if (elt instanceof CatObject)
+			return this.domain.uses(elt, false) || this.codomain.uses(elt, false);
+		if (this.isEquivalent(elt))
 			return true;
 		if ('data' in this)
 		{
@@ -11474,7 +11468,7 @@ class Morphism extends Element
 				let val = values[i];
 				if (typeof val === 'string' && this.codomain.getBase() instanceof HomObject)
 					val = this.diagram.getElement(val);
-				if (val instanceof Morphism && val.uses(mor))
+				if (val instanceof Morphism && val.uses(elt))
 					return true;
 			}
 		}
@@ -14806,7 +14800,6 @@ class Diagram extends Functor
 	{
 		if (!this.svgRoot)
 		{
-			D.busy(`Loading ${this.name}`);
 			this.svgRoot = H3.g({id:this.elementId('root'), 'data-name':this.name});
 			this.makeGrounds();
 			const f4gnd = this.svgRoot.lastElementChild;
@@ -14822,7 +14815,6 @@ class Diagram extends Functor
 			this.svgRoot.classList.add('hidden');
 			this.svgRoot.appendChild(f4gnd);
 			this.domain.elements.forEach(elt => setTimeout(_ => this.addSVG(elt), 0));
-			D.notBusy();
 		}
 	}
 	upload(e, local = true)
