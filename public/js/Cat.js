@@ -9,7 +9,7 @@
 // 			delete
 // 			select
 // 		CAT
-// 			catalogAdd	an entry got added to the catalog
+//// 			catalogAdd	an entry got added to the catalog
 // 			default		diagram is now the default diagram for viewing
 //			delete		diagram is deleted
 // 			download	diagram came from server
@@ -1067,7 +1067,7 @@ if (errors.length > 0) debugger;
 				info.references = JSON.parse(d.refs);
 				delete info.refs;
 				this.catalog.set(info.name, info);
-				isGUI && D.emitCATEvent('catalogAdd', d);
+//				isGUI && D.emitCATEvent('catalogAdd', d);
 			});
 			fn();
 		};
@@ -1600,14 +1600,19 @@ class Navbar
 	constructor()
 	{
 		this.element = document.getElementById('navbar');
-		this.categoryElt = null;
-		this.diagramElt = null;
-		this.update();
+		const divs = [	H3.div('.navbar-float', H3.div('.buttonBarLeft.navbar-tools')),
+						H3.div('##diagram-navbar.navbar-float.navtxt-text', {title:'Current diagram'}),
+						H3.div('.navbar-float.navtxt-text.navtxt-link', 'Catecon', {onclick:_ => this.catalogView()}),
+						H3.div('##category-navbar.navtxt-text.navbar-float', {title:'Current category'}),
+						H3.div('.navbar-float')];
+		divs.map(div => this.element.appendChild(div));
+		this.categoryElt = document.getElementById('category-navbar');
+		this.diagramElt = document.getElementById('diagram-navbar');
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
 		window.addEventListener('Login', _ => this.updateByUserStatus());
 		window.addEventListener('Registration', _ => this.updateByUserStatus());
-		window.addEventListener('CAT', e => D.navbar.eventUpdate(e));
+		window.addEventListener('CAT', e => e.detail.command === 'default' && D.navbar.update(e));
 		window.addEventListener('Autohide', e =>
 		{
 			if (D.session.mode === 'catalog')	// no autohide in catalog view
@@ -1618,33 +1623,9 @@ class Navbar
 			else
 				this.element.style.height = "32px";
 		});
-		window.addEventListener('View', e => this.eventUpdate(e));
-	}
-	eventUpdate(e)
-	{
-		switch (e.detail.command)
-		{
-			case 'default':
-				this.updateByUserStatus();
-				break;
-			case 'load':
-				if (isGUI && e.detail.diagram)
-				{
-					const diagram = e.detail.diagram;
-					const viewport = U.readfile(`${diagram.name}-viewport.json`);
-					if (viewport)
-						D.viewports.set(diagram.name, JSON.parse(viewport));
-				}
-				break;
-			case 'catalog':
-				this.updateByUserStatus();
-				break;
-			case 'catalogAdd':
-				const name = e.detail.diagram.name;
-				const viewport = D.readViewport(name);
-				viewport && D.viewports.set(name, viewport);
-				break;
-		}
+		window.addEventListener('View', e => this.update(e));
+		window.addEventListener('Application', e => this.update(e));
+		window.addEventListener('Morphism', e => e.detail.command === 'update' && e.detail.element instanceof Diagram && this.update());
 		this.update();
 	}
 	updateByUserStatus()
@@ -1667,17 +1648,6 @@ class Navbar
 				break;
 		}
 		this.element.style.background = c;
-		if (R.diagram)
-		{
-			this.categoryElt.innerHTML = U.HtmlEntitySafe(R.diagram.codomain.properName);
-			D.removeChildren(this.diagramElt);
-			this.diagramElt.appendChild(H3.span(R.diagram.properName, H3.span('.italic', ' by ', R.diagram.user)));
-		}
-		else
-		{
-			D.removeChildren(this.diagramElt);
-			D.removeChildren(this.categoryElt);
-		}
 	}
 	catalogView()
 	{
@@ -1717,16 +1687,25 @@ class Navbar
 			} while((icon = icon.nextSibling));
 		}
 		const width = left.length * 32;
-		const divs = [	H3.div('.navbar-float',
-							H3.table('.w100', H3.tr(
-								H3.td('.buttonBarLeft', H3.table(H3.tr(H3.td('.navbar-tools', left))), {style:`width:${width}px`}),
-								H3.td('##diagram-navbar.navtxt-', {title:'Current diagram'})))),
-						H3.div('.navbar-float.navtxt-text.navtxt-link', 'Catecon', {onclick:_ => this.catalogView()}),
-						H3.div(H3.span('##category-navbar'), '.navbar-float.navtxt-text', {title:'Current category scope'})];
-		D.removeChildren(this.element);
-		divs.map(div => this.element.appendChild(div));
-		this.categoryElt = document.getElementById('category-navbar');
-		this.diagramElt = document.getElementById('diagram-navbar');
+		let toolbar = this.element.querySelector('.buttonBarLeft');
+		D.removeChildren(toolbar);
+		toolbar.style.width = `${width}px`;
+		left.map(btn => toolbar.appendChild(btn));
+		const info = R.diagram ? Diagram.GetInfo(R.diagram) : R.catalog.get(D.session.default);
+		if (info)
+		{
+			const cat = R.$CAT.getElement(info.category);
+			if (cat)
+				this.categoryElt.innerHTML = U.HtmlEntitySafe(cat.properName);
+			D.removeChildren(this.diagramElt);
+			this.diagramElt.appendChild(H3.span('.navtxt-link', info.properName, {onclick:e => Runtime.SelectDiagram(info.name, 'default'), title:`View diagram ${info.name}`}));
+			this.diagramElt.appendChild(H3.span('.italic', ' by ', info.user));
+		}
+		else
+		{
+			D.removeChildren(this.diagramElt);
+			D.removeChildren(this.categoryElt);
+		}
 		this.updateByUserStatus();
 	}
 }
@@ -1935,19 +1914,14 @@ class ElementTool
 	}
 	getSearchBar()
 	{
-		const onkeyup = e =>
-		{
-			this.search();
-			D.emitViewEvent('catalog', 'search');
-		};
-		return H3.table(	`##${this.type}-search-tools`,
-							H3.tr(	H3.th('Search', {colspan:3})),
+		const onkeyup = e => this.search();
+		return H3.div(H3.h3('Search'), H3.table(	`##${this.type}-search-tools`,
 							H3.tr(	H3.td('Filter by', '.tinyPrint.center.italic'),
 									H3.td(),
 									H3.td('Sort by', '.tinyPrint.center.italic')),
 							H3.tr(	H3.td(`##${this.type}-search-filter`),
 									H3.td(H3.input(`##${this.type}-search-value.in100`, {title:'Search', type:'search', placeholder:'Contains...', onkeyup, onsearch:onkeyup})),
-									H3.td(`##${this.type}-search-sorter`)));
+									H3.td(`##${this.type}-search-sorter`))));
 	}
 	setSearchBar()
 	{
@@ -2009,7 +1983,6 @@ class ElementTool
 		this.searchArgs.sorter = U.RefcntSorter;
 		D.setActiveIcon(e.target);
 		this.search();
-		D.emitViewEvent('catalog', 'search');
 	}
 	addNewSection()		// fitb
 	{}
@@ -3947,6 +3920,7 @@ class Display
 				return;
 			const args = e.detail;
 			const diagram = args.diagram;
+			const element = args.element;
 			switch(args.command)
 			{
 				case 'delete':
@@ -3955,11 +3929,11 @@ class Display
 					this.autosave(diagram);
 					break;
 				case 'detach':
-					if (args.element instanceof DiagramMorphism)
-						args.element.homsetIndex = 0;
+					if (element instanceof DiagramMorphism)
+						element.homsetIndex = 0;
 					// fall through
 				case 'new':
-					if (args.element instanceof DiagramMorphism)
+					if (DiagramMorphism)
 					{
 						diagram.updateBackground();
 						diagram.domain.findCells(diagram);
@@ -3967,16 +3941,16 @@ class Display
 						this.autosave(diagram);
 					}
 					else
-						args.element.loadItem();
+						loadItem();
 					break;
 				case 'update':
-					if ('update' in args.element)
+					if ('update' in element)
 					{
-						args.element.update();
-						diagram.domain.updateCells(args.element);
+						element.update();
+						diagram.domain.updateCells(element);
 						diagram.updateBackground();
 					}
-					this.autosave(diagram);
+					this.autosave(element instanceof Diagram ? element : diagram);
 					break;
 			}
 		});
@@ -4370,7 +4344,7 @@ class Display
 				break;
 		}
 	}
-	copyStyles(dest, src)
+	copyStyles(dest, src, wndow)
 	{
 		for (var cd = 0; cd < dest.childNodes.length; cd++)
 		{
@@ -4383,6 +4357,17 @@ class Display
 				dstChild.remove();
 				continue;
 			}
+			let hidden = false;
+			if ('name' in srcChild.dataset)
+			{
+				const elt = R.diagram.getElement(srcChild.dataset.name);
+				if (elt)
+				{
+					const bbox = R.diagram.diagramToUserCoords(elt.getBBox());
+					if (!D2.Overlap(wndow, bbox))
+						hidden = true;
+				}
+			}
 			const hasEmphasis = srcChild.classList.contains('emphasis');
 			hasEmphasis && srcChild.classList.remove('emphasis');
 			const hasSelected = srcChild.classList.contains('selected');
@@ -4391,7 +4376,9 @@ class Display
 			if (srcStyle === "undefined" || srcStyle === null)
 				continue;
 			let style = '';
-			if (dstChild.tagName in this.svgStyles)
+			if (hidden)
+				style = 'opacity:0;';
+			else if (dstChild.tagName in this.svgStyles)
 			{
 				const styles = this.svgStyles[dstChild.tagName];
 				for (let i = 0; i<styles.length; i++)
@@ -4399,7 +4386,7 @@ class Display
 			}
 			dstChild.setAttribute('style', style);
 			if (this.svgContainers.includes(dstChild.tagName))
-				this.copyStyles(dstChild, src.childNodes[cd]);
+				this.copyStyles(dstChild, src.childNodes[cd], wndow);
 			hasEmphasis && srcChild.classList.add('emphasis');
 			hasSelected && srcChild.classList.add('selected');
 		}
@@ -4414,9 +4401,6 @@ class Display
 		const markers = ['arrowhead', 'arrowheadRev'];
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
 		top.appendChild(copy);
-		const emphs = copy.querySelectorAll('.emphasis');
-		emphs && emphs.forEach(elt => elt.classList.remove('emphasis'));
-		this.copyStyles(copy, svg);
 		const width = this.snapshotWidth;
 		const height = this.snapshotHeight;
 		const wRat = window.innerWidth / width;
@@ -4428,6 +4412,7 @@ class Display
 		const y = (p.y * vp.scale + vp.y) / rat;
 		const s = vp.scale * p.scale / rat;
 		copy.setAttribute('transform', `translate(${x} ${y}) scale(${s} ${s})`);
+		this.copyStyles(copy, svg, new D2({x:0, y:0, width:D.width(), height:D.height()}));
 		const topData = (new XMLSerializer()).serializeToString(top);
 		const svgBlob = new Blob([topData], {type: "image/svg+xml;charset=utf-8"});
 		const url = this.url.createObjectURL(svgBlob);
@@ -5310,15 +5295,16 @@ class Catalog extends DiagramTool		// GUI only
 		this.catalog = document.getElementById('catalog');
 		this.catalog.appendChild(H3.table(H3.tr(this.toolbar)));
 		this.mode = 'search';								// what viewing mode are we in?
+		this.initialized = false;
 		const action = e => this.createDiagram();
 		const uploadForm = D.uploadJSONForm();
 		uploadForm.classList.remove('hidden');
 		const topBar = H3.div(
 							H3.div('##catalog-search.hidden', this.getSearchBar()),
 							H3.div('##catalog-new.hidden',
+								H3.h3('New Diagram'),
 								H3.table('##catalog-diagram-new',
-									H3.tr(H3.th('New Diagram')),
-									H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => D.inputDiagramBasenameSearch(e, R.$CAT, action)}),
+									H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => D.inputDiagramBasenameSearch(e, action, R.$CAT)}),
 													H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.onEnter(e, action)}),
 													H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.onEnter(e, action)}),
 													H3.span('##catalog-select-codomain-span'),
@@ -5343,7 +5329,6 @@ class Catalog extends DiagramTool		// GUI only
 			const args = e.detail;
 			const diagram = args.diagram;
 			let div = null;
-			this.setCurrentDiagramButton()
 			switch(args.command)
 			{
 				case 'close':
@@ -5396,6 +5381,7 @@ class Catalog extends DiagramTool		// GUI only
 					this.showSection('search');
 					this.setSearchBar(false);
 					this.diagrams = this.getMatchingElements();
+					this.initialized = true;
 					this.update();
 					break;
 			}
@@ -5421,7 +5407,6 @@ class Catalog extends DiagramTool		// GUI only
 	{
 		this.reset();
 		const onkeyup = e => this.search();
-		this.getButtons().map(btn => this.toolbar.appendChild(btn));
 	}
 	getRows(tbl, elements)
 	{
@@ -5662,20 +5647,23 @@ class Catalog extends DiagramTool		// GUI only
 			btns.push(D.getIcon('upload', 'upload', _ => this.showSection('upload'), 'Upload local diagram', D.default.button.small, 'catalog-upload-icon'));
 		else
 			btns.push(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload'), 'Upload JSON file for diagram', D.default.button.small, 'catalog-upload-icon'));
-		this.setCurrentDiagramButton();
 		return btns;
-	}
-	setCurrentDiagramButton()
-	{
-		const btn = this.toolbar.querySelector('#catalog-cwd-icon');
-		btn && btn.remove();	// remove old button
-		const name = R.diagram ? R.diagram.name : R.catalog.has(D.session.default) ? D.session.default : null;
-		name && name !== '' && this.toolbar.appendChild(D.getIcon('closeCatalog', 'close', e => Runtime.SelectDiagram(name), `View diagram ${name}`, D.default.button.small, 'catalog-cwd-icon'));
 	}
 	update()
 	{
+		if (!this.initialized)
+			return;
 		this.clear();
-		this.setCurrentDiagramButton()
+		const toolbar = D.navbar.element.querySelector('.buttonBarLeft');
+		const buttons = this.getButtons();
+		const size = '.32in';
+		buttons.map(btn =>
+		{
+			btn.firstChild.style.width = size;
+			btn.firstChild.style.height = size;
+			toolbar.appendChild(btn);
+		});
+		toolbar.style.width = `${toolbar.childElementCount * 32}px`;
 		switch(this.mode)
 		{
 			case 'search':
@@ -6613,9 +6601,9 @@ class Element
 				case 'NamedObject':
 				case 'NamedMorphism':
 					const sz = Cat.D.default.button.small;
-					baseBtn = this.refcnt <= 1 ? D.getIcon('elt-edit-basename', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'basename'), 'Edit', sz) : '';
-					descBtn = D.getIcon('elt-edit-description', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'description'), 'Edit', sz);
-					pNameBtn = this.canChangeProperName() ? D.getIcon('elt-edit-propername', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'properName'), 'Edit', sz) : '';
+					baseBtn = this.refcnt <= 1 ? D.getIcon('elt-edit-basename', 'edit', e => this.diagram.editElementText(e, this, id, 'basename'), 'Edit', sz) : '';
+					descBtn = D.getIcon('elt-edit-description', 'edit', e => this.diagram.editElementText(e, this, id, 'description'), 'Edit', sz);
+					pNameBtn = this.canChangeProperName() ? D.getIcon('elt-edit-propername', 'edit', e => this.diagram.editElementText(e, this, id, 'properName'), 'Edit', sz) : '';
 					break;
 			}
 		}
@@ -6791,7 +6779,8 @@ class Element
 	mouseenter(e)
 	{
 		D.mouseover = this;
-		this.description !== '' && D.statusbar.show(e, this.description);
+		if ((this instanceof DiagramObject || this instanceof DiagramMorphism) && this.to.description !== '')
+			D.statusbar.show(e, this.to.description);
 		this.emphasis(true);
 	}
 	mouseout(e)
