@@ -719,6 +719,42 @@
       }
     },
     {
+      "basename": "o_24",
+      "prototype": "DiagramObject",
+      "to": "hdole/test/CPo{Po{A,B}oP,C}oPC",
+      "xy": {
+        "x": 550,
+        "y": -70
+      }
+    },
+    {
+      "basename": "o_26",
+      "prototype": "DiagramObject",
+      "to": "hdole/test/CPo{A,B}oPC",
+      "xy": {
+        "x": 700,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_28",
+      "prototype": "DiagramObject",
+      "to": "hdole/test/Po{CPo{A,B}oPC,C}oP",
+      "xy": {
+        "x": 810,
+        "y": -100
+      }
+    },
+    {
+      "basename": "o_29",
+      "prototype": "DiagramObject",
+      "to": "hdole/test/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
+      "xy": {
+        "x": 1110,
+        "y": -100
+      }
+    },
+    {
       "basename": "m_5",
       "prototype": "DiagramMorphism",
       "domain": "hdole/test/o_4",
@@ -1275,6 +1311,36 @@
       ],
       "homsetIndex": 3,
       "to": "hdole/test/comp"
+    },
+    {
+      "basename": "m_35",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/test/o_28",
+      "codomain": "hdole/test/o_29",
+      "to": "hdole/test/Di{Po{CPo{A,B}oPC,C}oP}-LiD"
+    },
+    {
+      "basename": "m_36",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/test/o_28",
+      "codomain": "hdole/test/o_29",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 1,
+      "to": "hdole/test/a/dist"
+    },
+    {
+      "basename": "o_40",
+      "prototype": "DiagramObject",
+      "to": "hdole/test/Po{CPo{A,B}oPC,C}oP",
+      "xy": {
+        "x": 800,
+        "y": 0
+      }
     }
   ],
   "elements": [
@@ -1779,18 +1845,25 @@
       "domain": "hdole/test/A",
       "codomain": "hdole/test/C",
       "source": "hdole/test/Cm{f,g}mC"
+    },
+    {
+      "basename": "a/dist",
+      "prototype": "NamedMorphism",
+      "domain": "hdole/test/Po{CPo{A,B}oPC,C}oP",
+      "codomain": "hdole/test/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
+      "source": "hdole/test/Di{Po{CPo{A,B}oPC,C}oP}-LiD"
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630127824754,
+  "timestamp": 1630183767285,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
   ],
   "viewport": {
     "x": 3720.158390563285,
-    "y": 3382.2455669564524,
+    "y": 2797.2455669564524,
     "scale": 1.5063727121103578
   }
 }

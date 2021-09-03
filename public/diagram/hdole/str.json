@@ -332,7 +332,7 @@
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": -400,
+        "x": -410,
         "y": -150
       },
       "height": "300",
@@ -612,7 +612,6 @@
       "size": 1
     },
     {
-      "basename": "CPo{#1,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -629,7 +628,6 @@
       }
     },
     {
-      "basename": "Po{str,str}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/str/str",
@@ -637,7 +635,6 @@
       ]
     },
     {
-      "basename": "Po{str,hdole/nat/N64}oP",
       "prototype": "ProductObject",
       "objects": [
         "hdole/str/str",
@@ -645,7 +642,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N8,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -654,7 +650,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N16,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -663,7 +658,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N32,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -672,7 +666,6 @@
       ]
     },
     {
-      "basename": "CPo{hdole/nat/N128,#1}oPC",
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -891,7 +884,12 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1627377236936,
+  "timestamp": 1630313697829,
   "version": 0,
+  "viewport": {
+    "x": 1532.324973536357,
+    "y": 916.40496159379,
+    "scale": 1.7683684824797112
+  },
   "properName": "hdole/str"
 }

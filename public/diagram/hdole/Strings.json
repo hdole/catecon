@@ -3,7 +3,6 @@
   "basename": "Strings",
   "name": "hdole/Strings",
   "prototype": "Diagram",
-  "properName": "hdole/Strings",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/Strings_Index",
@@ -190,7 +189,7 @@
       }
     },
     {
-      "description": "Convert a natural number to a string and back again.",
+      "description": "Convert a natural number to a string and back again.\nNot all strings form a number so an exception may\noccur.",
       "basename": "t_11",
       "prototype": "DiagramText",
       "xy": {
@@ -830,6 +829,9 @@
       "basename": "N8ToStr",
       "prototype": "Morphism",
       "properName": "to",
+      "code": {
+        "cpp": "%1 = std::to_string(%0);"
+      },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/Strings/str"
     },
@@ -844,6 +846,9 @@
       "basename": "N16ToStr",
       "prototype": "Morphism",
       "properName": "to",
+      "code": {
+        "cpp": "%1 = std::to_string(%0);"
+      },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/Strings/str"
     },
@@ -858,6 +863,9 @@
       "basename": "N32ToStr",
       "prototype": "Morphism",
       "properName": "to",
+      "code": {
+        "cpp": "%1 = std::to_string(%0);"
+      },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/Strings/str"
     },
@@ -885,11 +893,12 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630143353410,
+  "timestamp": 1630569739619,
   "version": 0,
   "viewport": {
     "x": 6205.959943120501,
-    "y": 6799.7031347206175,
+    "y": 5979.7031347206175,
     "scale": 1.6543808641113213
-  }
+  },
+  "properName": "hdole/Strings"
 }
