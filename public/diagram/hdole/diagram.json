@@ -1,0 +1,277 @@
+{
+  "description": "",
+  "basename": "diagram",
+  "name": "hdole/diagram",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/diagram_Index",
+  "codomain": "sys/Cat",
+  "references": [
+    "hdole/HTML"
+  ],
+  "domainElements": [
+    {
+      "description": "Diagram",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -200,
+        "y": 200
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "description": "A diagram D is a functor whose domain\ncategory is an Index category with some\ntarget category C.",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -200,
+        "y": 400
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/index",
+      "xy": {
+        "x": 400,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/C",
+      "xy": {
+        "x": 600,
+        "y": 400
+      }
+    },
+    {
+      "description": "A list of diagrams may be given that provide\nmorphisms that may be instantiated in this diagram.",
+      "basename": "t_2",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -200,
+        "y": 580
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/k",
+      "xy": {
+        "x": 400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/diagram",
+      "xy": {
+        "x": 640,
+        "y": 600
+      }
+    },
+    {
+      "description": "A user is associated with the diagram as the\nowner of the diagram.",
+      "basename": "t_3",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -200,
+        "y": 800
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_5",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/#1",
+      "xy": {
+        "x": 400,
+        "y": 800
+      }
+    },
+    {
+      "description": "A timestamp is associated with the diagram\nrepresenting the time the diagram was last\nmodified.",
+      "basename": "t_4",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -190,
+        "y": 980
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_6",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/#1",
+      "xy": {
+        "x": 400,
+        "y": 1000
+      }
+    },
+    {
+      "description": "A viewport gives the default view for the diagram.\nThe first number is x, then y, and lastly scale.",
+      "basename": "t_5",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -200,
+        "y": 1200
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_4",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": 600,
+        "y": 800
+      }
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/diagram/o_0",
+      "codomain": "hdole/diagram/o_1",
+      "to": "hdole/diagram/d"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/diagram/o_2",
+      "codomain": "hdole/diagram/o_3",
+      "to": "hdole/diagram/references"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/diagram/o_5",
+      "codomain": "hdole/diagram/o_4",
+      "to": "hdole/diagram/user"
+    },
+    {
+      "basename": "o_7",
+      "prototype": "DiagramObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 600,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/diagram/o_6",
+      "codomain": "hdole/diagram/o_7",
+      "to": "hdole/diagram/time"
+    },
+    {
+      "basename": "o_11",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+      "xy": {
+        "x": 700,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "DiagramObject",
+      "to": "hdole/diagram/#1",
+      "xy": {
+        "x": 400,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/diagram/o_8",
+      "codomain": "hdole/diagram/o_11",
+      "to": "hdole/diagram/viewport"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "index",
+      "prototype": "CatObject",
+      "properName": "Index"
+    },
+    {
+      "basename": "C",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "diagram",
+      "prototype": "CatObject",
+      "properName": "Diagram"
+    },
+    {
+      "basename": "k",
+      "prototype": "FiniteObject"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "basename": "d",
+      "prototype": "Morphism",
+      "properName": "D",
+      "domain": "hdole/diagram/index",
+      "codomain": "hdole/diagram/C"
+    },
+    {
+      "basename": "references",
+      "prototype": "Morphism",
+      "domain": "hdole/diagram/k",
+      "codomain": "hdole/diagram/diagram"
+    },
+    {
+      "basename": "user",
+      "prototype": "Morphism",
+      "domain": "hdole/diagram/#1",
+      "codomain": "hdole/Strings/str"
+    },
+    {
+      "description": "A number giving the milliseconds elapsed since the beginning of the epoch.",
+      "basename": "time",
+      "prototype": "Morphism",
+      "domain": "hdole/diagram/#1",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F64",
+        "hdole/floats/F64",
+        "hdole/floats/F64"
+      ]
+    },
+    {
+      "basename": "viewport",
+      "prototype": "Morphism",
+      "domain": "hdole/diagram/#1",
+      "codomain": "hdole/diagram/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1630700376894,
+  "version": 0,
+  "viewport": {
+    "x": 217.5461011336106,
+    "y": 294.42865860772577,
+    "scale": 5.9239444904486085
+  },
+  "properName": "hdole/diagram"
+}

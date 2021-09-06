@@ -1,0 +1,197 @@
+{
+  "description": "",
+  "basename": "select",
+  "name": "hdole/select",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/select_Index",
+  "codomain": "hdole/PFS",
+  "references": [
+    "hdole/Strings"
+  ],
+  "domainElements": [
+    {
+      "description": "Select",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -70,
+        "y": 140
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_0",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": 200,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/#1",
+      "xy": {
+        "x": 400,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "DiagramObject",
+      "to": "hdole/select/#1",
+      "xy": {
+        "x": 0,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "DiagramObject",
+      "to": "hdole/select/#1",
+      "xy": {
+        "x": 0,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "DiagramObject",
+      "to": "hdole/select/#1",
+      "xy": {
+        "x": 400,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "DiagramObject",
+      "to": "hdole/Strings/str",
+      "xy": {
+        "x": 200,
+        "y": 500
+      }
+    },
+    {
+      "basename": "m_0",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/select/o_1",
+      "codomain": "hdole/select/o_0",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/Strings/empty"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/select/o_2",
+      "codomain": "hdole/select/o_0",
+      "to": "hdole/select/a"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/select/o_3",
+      "codomain": "hdole/select/o_0",
+      "to": "hdole/select/b"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/select/o_4",
+      "codomain": "hdole/select/o_0",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/select/c"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "DiagramMorphism",
+      "domain": "hdole/select/o_5",
+      "codomain": "hdole/select/o_0",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/select/Id{hdole/Strings/str}dI"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "basename": "a",
+      "prototype": "Morphism",
+      "properName": "&#39;a&#39;",
+      "domain": "hdole/select/#1",
+      "codomain": "hdole/Strings/str",
+      "data": [
+        [
+          0,
+          "a"
+        ]
+      ]
+    },
+    {
+      "basename": "b",
+      "prototype": "Morphism",
+      "properName": "&#39;b&#39;",
+      "domain": "hdole/select/#1",
+      "codomain": "hdole/Strings/str",
+      "data": [
+        [
+          0,
+          "b"
+        ]
+      ]
+    },
+    {
+      "basename": "c",
+      "prototype": "Morphism",
+      "properName": "&#39;c&#39;",
+      "domain": "hdole/select/#1",
+      "codomain": "hdole/Strings/str",
+      "data": [
+        [
+          0,
+          "c"
+        ]
+      ]
+    },
+    {
+      "basename": "Id{hdole/Strings/str}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/Strings/str",
+      "codomain": "hdole/Strings/str"
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1629963620727,
+  "version": 0,
+  "viewport": {
+    "x": -946.9123473715758,
+    "y": -2635.652024271965,
+    "scale": 0.1268125744949703
+  },
+  "properName": "hdole/select"
+}
