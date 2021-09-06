@@ -358,7 +358,7 @@ class U		// utilities
 	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
 	static IsIndexElement(elt)
 	{
-		return elt instanceof DiagramObject || elt instanceof DiagramMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
+		return elt instanceof IndexObject || elt instanceof IndexMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
 	}
 	static HasFactor(factors, someFactor)
 	{
@@ -1067,7 +1067,6 @@ if (errors.length > 0) debugger;
 				info.references = JSON.parse(d.refs);
 				delete info.refs;
 				this.catalog.set(info.name, info);
-//				isGUI && D.emitCATEvent('catalogAdd', d);
 			});
 			fn();
 		};
@@ -1243,40 +1242,7 @@ if (errors.length > 0) debugger;
 		const description = U.HtmlSafe(desc);
 		const diagram = new Diagram(userDiagram, {basename, codomain, properName, description, user:this.user.name});
 		this.setDiagramInfo(diagram);
-		diagram.makeSVG();
-		diagram.home();
-		D.emitViewEvent(D.session.mode, this.diagram);
 		return diagram;
-	}
-	uploadJSON(e, json)
-	{
-		if (json.user !== this.user.name && !this.user.isAdmin())
-		{
-			isGUI && D.statusbar.show(e, `User ${json.user} is not the logged in user ${this.user.name}`);
-			return;
-		}
-		if (!this.canDeleteDiagram(json.name))
-		{
-			isGUI && D.statusbar.show(e, `Cannot delete diagram ${json.name}`);
-			return;
-		}
-		if (this.catalog.has(json.name))
-		{
-			const old = this.$CAT.getElement(json.name);
-			// TODO reload diagrams that were referencing this one
-			if (old)
-				while(old.refcnt >= 0)
-					old.decrRefcnt();
-		}
-		D.emitViewEvent('diagram', null);	// needed if this.diagram = diagram since old.decrRefcnt() puts it into catalog view
-		const diagram = new Cat[json.prototype](this.getUserDiagram(this.user.name), json);
-		this.saveLocal(diagram);
-		diagram.savePng(e);
-		D.emitCATEvent('new', iagram);
-		Runtime.SelectDiagram(diagram.name);
-		D.toolbar.clearError();
-		this.upload(null, json, true, _ => {});
-		D.statusbar.show(e, `Diagram ${diagram.name} loaded from local JSON file`);
 	}
 	isNamed(elt)
 	{
@@ -1856,7 +1822,7 @@ class Toolbar
 		const toolBbox = new D2(this.element.getBoundingClientRect());
 		selected.map(obj =>
 		{
-			if (obj instanceof DiagramObject)
+			if (obj instanceof IndexObject)
 			{
 				const selBbox = R.diagram.diagramToUserCoords(obj.svg.getBBox());
 				if (D2.Overlap(toolBbox, selBbox))
@@ -1895,6 +1861,7 @@ class ElementTool
 			type:				{value: type,						writable: false},
 			toolbar:			{value: toolbar,					writable: false},
 			sections:			{value: sections,					writable: false},
+			currentSection:		{value: 'search',					writable: true},
 			headline:			{value: headline,					writable: false},
 			hasDiagramOnlyButton:		{value: true,				writable: true},
 			searchArgs:			{value: {
@@ -1907,8 +1874,8 @@ class ElementTool
 										},	writable: false},
 			buttonSize:			{value: D.default.button.small,		writable: true},
 			headerId:			{value: 'help-header',				writable: true},
-			searchFilterId:		{value: `${type}-search-filter`,		writable: true},
-			searchSorterId:		{value: `${type}-search-sorter`,		writable: true},
+			searchFilterId:		{value: `${type}-search-filter`,	writable: true},
+			searchSorterId:		{value: `${type}-search-sorter`,	writable: true},
 		});
 		D.replayCommands.set(`tool${type}`, this);
 	}
@@ -1920,7 +1887,7 @@ class ElementTool
 									H3.td(),
 									H3.td('Sort by', '.tinyPrint.center.italic')),
 							H3.tr(	H3.td(`##${this.type}-search-filter`),
-									H3.td(H3.input(`##${this.type}-search-value.in100`, {title:'Search', type:'search', placeholder:'Contains...', onkeyup, onsearch:onkeyup})),
+									H3.td(H3.input(`##${this.type}-search-value.in100.ifocus`, {title:'Search', type:'search', placeholder:'Contains...', onkeyup, onsearch:onkeyup})),
 									H3.td(`##${this.type}-search-sorter`))));
 	}
 	setSearchBar()
@@ -1935,6 +1902,7 @@ class ElementTool
 	}
 	showSection(section)
 	{
+		this.currentSection = section;
 		D.setActiveIcon(document.getElementById(`${this.type}-${section}-icon`));
 		this.sections.map(s =>
 		{
@@ -1942,7 +1910,12 @@ class ElementTool
 			elt && elt.classList.add('hidden');
 		});
 		const s = document.getElementById(`${this.type}-${section}`);
-		s && s.classList.remove('hidden');
+		if (s)
+		{
+			s.classList.remove('hidden');
+			const focus = s.querySelector('.ifocus');
+			focus && focus.focus();
+		}
 	}
 	html(e)
 	{
@@ -2049,7 +2022,7 @@ class TextTool extends ElementTool
 	{
 		const action = e => this.create(e);
 		const rows = [];
-		this.descriptionElt = H3.textarea('##new-description.in100', {title:'Description', placeholder:'Description', onkeydown:e => e.stopPropagation()});
+		this.descriptionElt = H3.textarea('##new-description.in100.ifocus', {title:'Description', placeholder:'Description', onkeydown:e => e.stopPropagation()});
 		rows.push(H3.tr(H3.td(H3.span('.smallPrint.italic', 'Enter new text below or click directly on the diagram'), H3.br(), this.descriptionElt, D.getIcon(action.name, 'edit', action, 'Edit description'))));
 		const elts = [H3.hr(), H3.h5(this.headline)];
 		elts.push(H3.table(rows));
@@ -2153,7 +2126,7 @@ class BPD			// basename, proper name, description
 	getNewSection(diagram, id, action, headline)
 	{
 		const rows = [];
-		this.basenameElt = H3.input('##new-basename', {placeholder:'Base name', title:'Base name', onkeyup:e => D.inputBasenameSearch(e, diagram, action)});
+		this.basenameElt = H3.input('##new-basename.ifocus', {placeholder:'Base name', title:'Base name', onkeyup:e => D.inputBasenameSearch(e, diagram, action)});
 		rows.push(H3.tr(H3.td(this.basenameElt)));
 		this.properNameElt = H3.input('##new-properName', {placeholder:'Proper name', title:'Proper name', onkeydown:e => Cat.D.onEnter(e, action)});
 		rows.push(H3.tr(H3.td(this.properNameElt)));
@@ -2908,7 +2881,7 @@ class Display
 							if (diagram.selected.length === 1)
 							{
 								const elt = diagram.getSelected();
-								if (elt instanceof DiagramObject)
+								if (elt instanceof IndexObject)
 								{
 									const morphism = R.diagram.fctr(elt.to, [-1]);
 									diagram.placeMorphismByObject(e, 'domain', elt, morphism);
@@ -3440,12 +3413,12 @@ class Display
 		{
 			case 'delete':
 				args.diagram.selected = args.diagram.selected.filter((r, elt) => elt.name !== args.element.name);
-				if (args.element instanceof DiagramObject)
+				if (args.element instanceof IndexObject)
 					this.glowBadObjects(args.diagram);
 				break;
 			case 'new':
 			case 'move':
-				if (args.element instanceof DiagramObject)
+				if (args.element instanceof IndexObject)
 					this.glowBadObjects(args.diagram);
 				break;
 		}
@@ -3685,7 +3658,7 @@ class Display
 									diagram.deselectAll(e);
 								}
 							}
-							else if (from instanceof DiagramObject && target instanceof DiagramObject)
+							else if (from instanceof IndexObject && target instanceof IndexObject)
 							{
 								if(from.isFusible(target))
 								{
@@ -3708,7 +3681,7 @@ class Display
 					const movables = new Set();
 					diagram.selected.map(e =>
 					{
-						if (e instanceof DiagramMorphism)
+						if (e instanceof IndexMorphism)
 						{
 							elts.set(e.domain.name, e.domain.getXY());
 							elts.set(e.codomain.name, e.codomain.getXY());
@@ -3929,11 +3902,11 @@ class Display
 					this.autosave(diagram);
 					break;
 				case 'detach':
-					if (element instanceof DiagramMorphism)
+					if (element instanceof IndexMorphism)
 						element.homsetIndex = 0;
 					// fall through
 				case 'new':
-					if (DiagramMorphism)
+					if (IndexMorphism)
 					{
 						diagram.updateBackground();
 						diagram.domain.findCells(diagram);
@@ -3973,7 +3946,7 @@ class Display
 				case 'new':
 				case 'update':
 				case 'move':
-					if (args.element instanceof DiagramObject)
+					if (args.element instanceof IndexObject)
 					{
 						args.diagram.updateBackground();
 						this.autosave(args.diagram);
@@ -4284,7 +4257,7 @@ class Display
 		switch(command)
 		{
 			case 'new':
-				if (element instanceof DiagramMorphism)
+				if (element instanceof IndexMorphism)
 					element.update();
 				break;
 		}
@@ -4314,12 +4287,12 @@ class Display
 				break;
 			case 'move':
 				element.finishMove();
-				if (element instanceof DiagramObject)
+				if (element instanceof IndexObject)
 					element.update();
 				break;
 			case 'update':
 			case 'new':
-				if (element instanceof DiagramObject)
+				if (element instanceof IndexObject)
 					element.update();
 				break;
 		}
@@ -4459,9 +4432,9 @@ class Display
 		for(let i=0; i < ary.length; ++i)
 		{
 			const elt = ary[i];
-			if ((elt instanceof DiagramObject || elt instanceof DiagramText) && !(elt.name in elts))
+			if ((elt instanceof IndexObject || elt instanceof DiagramText) && !(elt.name in elts))
 				elts.add(elt);
-			else if (elt instanceof DiagramMorphism)
+			else if (elt instanceof IndexMorphism)
 			{
 				if (elt.bezier)
 					elts.add(this.barycenter([elt.bezier.cp1, elt.bezier.cp2]));
@@ -4576,14 +4549,14 @@ class Display
 				case 'Assertion':
 					break;
 				case 'DiagramComposite':
-				case 'DiagramMorphism':
+				case 'IndexMorphism':
 					const domain = pasteObject(elt.domain);
 					const codomain = pasteObject(elt.codomain);
 					const to = elt.to;
 					const flipName = elt.attributes.get('flipName');
-					copy = new DiagramMorphism(diagram, {domain, codomain, to, attributes:[['flipName', true]]});
+					copy = new IndexMorphism(diagram, {domain, codomain, to, attributes:[['flipName', true]]});
 					break;
-				case 'DiagramObject':
+				case 'IndexObject':
 				case 'DiagramPullback':
 					copy = pasteObject(elt);
 					copy.update();
@@ -5259,7 +5232,34 @@ class Display
 	uploadJSON(e)
 	{
 		const files = e.target.files;
-		const proc = txt => R.uploadJSON(e, JSON.parse(txt));
+		const json = JSON.parse(txt);
+		if (json.user !== this.user.name && !this.user.isAdmin())
+		{
+			isGUI && D.statusbar.show(e, `User ${json.user} is not the logged in user ${this.user.name}`);
+			return;
+		}
+		if (!this.canDeleteDiagram(json.name))
+		{
+			isGUI && D.statusbar.show(e, `Cannot delete diagram ${json.name}`);
+			return;
+		}
+		if (this.catalog.has(json.name))
+		{
+			const old = this.$CAT.getElement(json.name);
+			// TODO reload diagrams that were referencing this one
+			if (old)
+				while(old.refcnt >= 0)
+					old.decrRefcnt();
+		}
+		D.emitViewEvent('diagram', null);	// needed if this.diagram = diagram since old.decrRefcnt() puts it into catalog view
+		const diagram = new Cat[json.prototype](this.getUserDiagram(this.user.name), json);
+		this.saveLocal(diagram);
+		diagram.savePng(e);
+		D.emitCATEvent('new', iagram);
+		Runtime.SelectDiagram(diagram.name);
+		D.toolbar.clearError();
+		this.upload(null, json, true, _ => {});
+		D.statusbar.show(e, `Diagram ${diagram.name} loaded from local JSON file`);
 		for (let i=0; i<files.length; ++i)
 		{
 			const file = files[i];
@@ -5271,7 +5271,7 @@ class Display
 		return H3.div('##Diagram-upload-json.hidden',
 			H3.label('Select JSON file to upload as diagram:', {for:'upload-json'}),
 			H3.br(),
-			H3.input('##upload-json', {type:'file', accept:'.json', onchange:e => this.uploadJSON(e)}));
+			H3.input('##upload-json.ifocus', {type:'file', accept:'.json', onchange:e => this.uploadJSON(e)}));
 	}
 	setViewport()
 	{
@@ -5304,7 +5304,7 @@ class Catalog extends DiagramTool		// GUI only
 							H3.div('##catalog-new.hidden',
 								H3.h3('New Diagram'),
 								H3.table('##catalog-diagram-new',
-									H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input', {placeholder:'Base name', onkeyup:e => D.inputDiagramBasenameSearch(e, action, R.$CAT)}),
+									H3.tr(H3.td(	H3.input('##catalog-new-basename.catalog-input.ifocus', {placeholder:'Base name', onkeyup:e => D.inputDiagramBasenameSearch(e, action, R.$CAT)}),
 													H3.input('##catalog-new-properName.catalog-input', {placeholder:'Proper name', onkeyup:e => Cat.D.onEnter(e, action)}),
 													H3.input('##catalog-new-description.catalog-input', {placeholder:'Description', onkeyup:e => Cat.D.onEnter(e, action)}),
 													H3.span('##catalog-select-codomain-span'),
@@ -5378,11 +5378,11 @@ class Catalog extends DiagramTool		// GUI only
 					this.html();
 					this.setImageScale();
 					this.updateDiagramCodomain();
-					this.showSection('search');
 					this.setSearchBar(false);
 					this.diagrams = this.getMatchingElements();
 					this.initialized = true;
 					this.update();
+					this.showSection('search');
 					break;
 			}
 		});
@@ -5654,6 +5654,7 @@ class Catalog extends DiagramTool		// GUI only
 		if (!this.initialized)
 			return;
 		this.clear();
+		this.showSection(this.currentSection);
 		const toolbar = D.navbar.element.querySelector('.buttonBarLeft');
 		const buttons = this.getButtons();
 		const size = '.32in';
@@ -5709,6 +5710,7 @@ class Catalog extends DiagramTool		// GUI only
 		const diagram = R.createDiagram(codomainElt.value, basenameElt.value, properNameElt.value, descriptionElt.value);
 		if (diagram instanceof Diagram)
 		{
+			D.emitCATEvent('new', diagram);
 			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
 			diagram.setPlacement({x:0, y:-100, scale:0.5});
 			diagram.placeText(diagram.properName, {x:0, y:0}, D.default.title.height, D.default.title.weight);
@@ -6779,7 +6781,7 @@ class Element
 	mouseenter(e)
 	{
 		D.mouseover = this;
-		if ((this instanceof DiagramObject || this instanceof DiagramMorphism) && this.to.description !== '')
+		if ((this instanceof IndexObject || this instanceof IndexMorphism) && this.to.description !== '')
 			D.statusbar.show(e, this.to.description);
 		this.emphasis(true);
 	}
@@ -7047,7 +7049,7 @@ class Graph
 		if (this.isLeaf() && this.links.length > 0)
 		{
 			let colorIndex = Number.MAX_VALUE;
-			const srcKey = DiagramMorphism.LinkColorKey(data.index, data.dom, data.cod);
+			const srcKey = IndexMorphism.LinkColorKey(data.index, data.dom, data.cod);
 			if (!('colorIndex' in this))
 			{
 				if (!(srcKey in diagram.link2colorIndex))
@@ -7069,8 +7071,8 @@ class Graph
 				if (data.visited.includes(visitedStr + ' ' + idxStr))
 					continue;
 				const {coords, vertical} = this.svgLinkUpdate(nuLnk, data);
-				const linkId = DiagramMorphism.LinkId(data, lnk);
-				const lnkKey = DiagramMorphism.LinkColorKey(lnk, data.dom, data.cod);
+				const linkId = IndexMorphism.LinkId(data, lnk);
+				const lnkKey = IndexMorphism.LinkColorKey(lnk, data.dom, data.cod);
 				if (lnkKey in diagram.link2colorIndex)
 				{
 					let linkColorIndex = diagram.link2colorIndex[lnkKey];
@@ -7144,7 +7146,7 @@ class Graph
 		const diagram = this.diagram;
 		if (this.isLeaf() && this.links.length > 0)
 		{
-			const srcKey = DiagramMorphism.LinkColorKey(data.index, data.dom, data.cod);
+			const srcKey = IndexMorphism.LinkColorKey(data.index, data.dom, data.cod);
 			let colorIndex = diagram.link2colorIndex[srcKey];
 			while(colorIndex in diagram.colorIndex2colorIndex)
 				colorIndex = diagram.colorIndex2colorIndex[colorIndex];
@@ -7152,7 +7154,7 @@ class Graph
 			{
 				const lnk = this.links[i];
 				const lnkStr = lnk.toString();	// TODO use U.a2s?
-				const lnkKey = DiagramMorphism.LinkColorKey(lnk, data.dom, data.cod);
+				const lnkKey = IndexMorphism.LinkColorKey(lnk, data.dom, data.cod);
 				let linkColorIndex = diagram.link2colorIndex[lnkKey];
 				while(linkColorIndex in diagram.colorIndex2colorIndex)
 					linkColorIndex = diagram.colorIndex2colorIndex[linkColorIndex];
@@ -7174,7 +7176,7 @@ class Graph
 				if (data.visited.includes(lnkStr + ' ' + idxStr))
 					continue;
 				const {coords, vertical} = this.svgLinkUpdate(lnk, data);
-				const linkId = DiagramMorphism.LinkId(data, lnk);
+				const linkId = IndexMorphism.LinkId(data, lnk);
 				const lnkElt = document.getElementById(linkId);
 				if (lnkElt)
 				{
@@ -7924,7 +7926,7 @@ class DiagramCore		// only used by class Cell
 			description:this.description,
 			height:		this.height,
 			xy:			this.getXY(),
-			width:		this.width,
+//			width:		this.width,
 			prototype:	this.constructor.name,
 		};
 		return a;
@@ -8272,7 +8274,7 @@ class TensorObject extends MultiObject
 	}
 }
 
-class DiagramObject extends CatObject
+class IndexObject extends CatObject
 {
 	constructor(diagram, args)
 	{
@@ -8281,7 +8283,7 @@ class DiagramObject extends CatObject
 		nuArgs.category = diagram.domain;
 		if ('to' in args)
 		{
-			let to = diagram.getElement(args.to);
+			let to = args.to instanceof CatObject ? args.to : diagram.getElement(args.to);
 			if (!to)
 				throw `no to! ${args.to}`;
 			nuArgs.to = to;
@@ -8294,8 +8296,6 @@ class DiagramObject extends CatObject
 			x:			{value:	xy.x,				writable:	true},
 			y:			{value:	xy.y,				writable:	true},
 			orig:		{value:	{x:xy.x, y:xy.y},	writable:	true},
-			width:		{value:	0,					writable:	true},
-			height:		{value:	0,					writable:	true},
 			to:			{value:	null,				writable:	true},
 			nodes:		{value:	new Set(),			writable:	false},
 			domains:	{value:	new Set(),			writable:	false},
@@ -8303,7 +8303,7 @@ class DiagramObject extends CatObject
 			svg:		{value: null,				writable:	true},
 		});
 		this.setObject(nuArgs.to);
-		isGUI && this.constructor.name === 'DiagramObject' && D.emitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'IndexObject' && D.emitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
@@ -8324,7 +8324,10 @@ class DiagramObject extends CatObject
 			this.to.decrRefcnt();
 		to.incrRefcnt();
 		this.to = to;
-		this.width = isGUI ? D.textWidth(to.properName) : 0;		// TODO width still used?
+	}
+	width()
+	{
+		return isGUI ? D.textWidth(to.properName) : 0;
 	}
 	decrRefcnt()
 	{
@@ -8464,7 +8467,7 @@ class DiagramObject extends CatObject
 	{
 		if (!o || this === 0)
 			return false;
-		return o instanceof DiagramObject && (this.to.isEquivalent(o.to) || this.isIdentityFusible());
+		return o instanceof IndexObject && (this.to.isEquivalent(o.to) || this.isIdentityFusible());
 	}
 	updateFusible(e, on)
 	{
@@ -8504,7 +8507,7 @@ class DiagramObject extends CatObject
 	}
 }
 
-class DiagramPullback extends DiagramObject
+class DiagramPullback extends IndexObject
 {
 	constructor(diagram, args)
 	{
@@ -8522,7 +8525,7 @@ class DiagramPullback extends DiagramObject
 			this.cone = this.morphisms.map((m, index) =>
 			{
 				const to = diagram.get('FactorMorphism', {domain:this.to, factors:[index], dual:this.dual});
-				const from = new DiagramMorphism(diagram, {to, anon:'pb', domain:this, codomain:this.morphisms[index].domain});
+				const from = new IndexMorphism(diagram, {to, anon:'pb', domain:this, codomain:this.morphisms[index].domain});
 				return from.name;
 			});
 		isGUI && D.emitElementEvent(diagram, 'new', this);
@@ -8678,7 +8681,7 @@ console.log('fixup in diagram', diagram.name);
 	static GetLegs(ary)
 	{
 		const legs = [[], []];
-		if (!ary.reduce((r, m) => r && m instanceof DiagramMorphism, true))
+		if (!ary.reduce((r, m) => r && m instanceof IndexMorphism, true))
 			return legs;		// not all morphisms
 		let domain = ary[0].domain;
 		let leg = 0;
@@ -8760,7 +8763,7 @@ class CompositeAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && r instanceof DiagramMorphism, true))
+		if (diagram.isEditable() && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && r instanceof IndexMorphism, true))
 		{
 			let cod = ary[0].codomain;
 			for(let i=1; i<ary.length; ++i)
@@ -8812,7 +8815,7 @@ class IdentityAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject;
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexObject;
 	}
 	static Reduce(leg)		// remove identities
 	{
@@ -8867,7 +8870,7 @@ class NameAction extends Action
 		{
 			const nid = new NamedObject(diagram, args);
 			const idToNdx = diagram.placeMorphismByObject(e, 'domain', sourceNdx, nid.idTo);
-			const idFromNdx = new DiagramMorphism(diagram, {to:nid.idFrom, domain:idToNdx.codomain, codomain:sourceNdx});
+			const idFromNdx = new IndexMorphism(diagram, {to:nid.idFrom, domain:idToNdx.codomain, codomain:sourceNdx});
 			return idToNdx.codomain;
 		}
 		else if (sourceNdx instanceof Morphism)
@@ -8876,7 +8879,7 @@ class NameAction extends Action
 			nuArgs.domain = sourceNdx.domain.to;
 			nuArgs.codomain = sourceNdx.codomain.to;
 			const to = new NamedMorphism(diagram, nuArgs);
-			const nuFrom = new DiagramMorphism(diagram, {to, domain:sourceNdx.domain, codomain:sourceNdx.codomain});
+			const nuFrom = new IndexMorphism(diagram, {to, domain:sourceNdx.domain, codomain:sourceNdx.codomain});
 			sourceNdx.update();
 			diagram.makeSelected(nuFrom);
 			D.emitCellEvent(diagram, 'check');
@@ -8908,7 +8911,7 @@ class NameAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return diagram.isEditable() && ary.length === 1 && (ary[0] instanceof DiagramMorphism || ary[0] instanceof DiagramObject);
+		return diagram.isEditable() && ary.length === 1 && (ary[0] instanceof IndexMorphism || ary[0] instanceof IndexObject);
 	}
 	static Reduce(leg)
 	{
@@ -8934,13 +8937,13 @@ class CopyAction extends Action
 		const copied = elts.map(from =>
 		{
 			let args = {};
-			if (from instanceof DiagramMorphism)
+			if (from instanceof IndexMorphism)
 			{
 				const domxy = diagram.findEmptySpot(from.domain.getXY());
 				const codxy = diagram.findEmptySpot(from.codomain.getXY());
 				args = {command: 'copy', source:from.to, domxy, codxy};
 			}
-			else if (from instanceof DiagramObject)
+			else if (from instanceof IndexObject)
 			{
 				const xy = diagram.findEmptySpot(from.getXY());
 				args = {command: 'copy', source:from.to, xy};
@@ -9012,7 +9015,7 @@ class FlipNameAction extends Action
 	}
 	hasForm(diagram, ary)	// one element
 	{
-		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramMorphism;
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexMorphism;
 	}
 	hidden() { return true; }
 }
@@ -9040,13 +9043,13 @@ class ProductAction extends Action
 	doit(e, diagram, elements)
 	{
 		const elt = elements[0];
-		if (elt instanceof DiagramMorphism)
+		if (elt instanceof IndexMorphism)
 		{
 			const morphisms = elements.map(m => m.to);
 			const to = diagram.get('ProductMorphism', {morphisms, dual:this.dual});
 			return diagram.placeMorphism(to, elt.domain.getXY());
 		}
-		else if (elt instanceof DiagramObject)
+		else if (elt instanceof IndexObject)
 		{
 			const objects = elements.map(o => o.to);
 			const to = diagram.get('ProductObject', {objects, dual:this.dual});
@@ -9063,8 +9066,8 @@ class ProductAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
-			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof IndexObject, true) ||
+			ary.reduce((hasIt, v) => hasIt && v instanceof IndexMorphism, true));
 	}
 }
 
@@ -9211,11 +9214,11 @@ class ProductEditAction extends Action
 	{
 		const elt = elements[0];
 		const nuProd = diagram[this.dual ? 'coprod' : 'prod'](...objects);
-		if (elt instanceof DiagramMorphism)
+		if (elt instanceof IndexMorphism)
 		{
 			// TODO
 		}
-		else if (elt instanceof DiagramObject)
+		else if (elt instanceof IndexObject)
 		{
 			const objMap = new Map();
 			diagram.elements.forEach(elt =>
@@ -9224,7 +9227,7 @@ class ProductEditAction extends Action
 				if (elt === oldProd)
 				{
 					const oldIndexes = diagram.domain.find(elt);
-					const nuIndexes = oldIndexes.map(o => new DiagramObject(diagram, {to:nuProd, xy:o.getXY()}));
+					const nuIndexes = oldIndexes.map(o => new IndexObject(diagram, {to:nuProd, xy:o.getXY()}));
 					nuIndexes.map((ndx, i) => objMap.set(oldIndexes[i], ndx));
 				}
 				else if (elt instanceof NamedObject && elt.source === elt)
@@ -9260,7 +9263,7 @@ class ProductEditAction extends Action
 						{
 							const domain = nuProd.dual ? objMap(elt.domain) : ndx.domain;
 							const codomain = nuProd.dual ? ndx.codomain : objMap(elt.codomain);
-							new DiagramMorphism(diagram, {to:nuFctrMorph, domain, codomain});
+							new IndexMorphism(diagram, {to:nuFctrMorph, domain, codomain});
 						});
 					}
 				}
@@ -9402,7 +9405,7 @@ class MorphismAssemblyAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length === 1 && ary[0].isEditable() && ary[0] instanceof DiagramObject;
+		return ary.length === 1 && ary[0].isEditable() && ary[0] instanceof IndexObject;
 	}
 	toggle(e, diagram, ary)
 	{
@@ -9439,9 +9442,9 @@ class HomAction extends Action
 	doit(e, diagram, elements)
 	{
 		const xy = D.barycenter(elements);
-		if (elements[0] instanceof DiagramObject)
+		if (elements[0] instanceof IndexObject)
 			return diagram.placeObject(diagram.get('HomObject', {objects:elements.map(o => o.to)}), xy);
-		else if (elements[0] instanceof DiagramMorphism)
+		else if (elements[0] instanceof IndexMorphism)
 			return diagram.placeMorphism(diagram.get('HomMorphism', {morphisms:elements.map(m => m.to)}), xy);
 	}
 	replay(e, diagram, args)
@@ -9451,8 +9454,8 @@ class HomAction extends Action
 	}
 	hasForm(diagram, ary)	// two objects or morphisms
 	{
-		return diagram.isEditable() && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
-			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
+		return diagram.isEditable() && ary.length === 2 && (ary.reduce((hasIt, v) => hasIt && v instanceof IndexObject, true) ||
+			ary.reduce((hasIt, v) => hasIt && v instanceof IndexMorphism, true));
 	}
 }
 
@@ -9510,14 +9513,14 @@ class HomObjectAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject;
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexObject;
 	}
 	place(e, diagram, name, domName, codName)
 	{
 		const to = diagram.getElement(name);
 		const domain = diagram.getElement(domName);
 		const codomain = diagram.getElement(codName);
-		const nuFrom = new DiagramMorphism(diagram, {to, domain, codomain});
+		const nuFrom = new IndexMorphism(diagram, {to, domain, codomain});
 	}
 }
 
@@ -9585,7 +9588,7 @@ class HomsetAction extends Action
 	{
 		const toArgs = {basename:args.basename, properName:args.properName, description:args.description, domain:this.swapped ? args.codomain.to : args.domain.to, codomain:this.swapped ? args.domain.to : args.codomain.to};
 		const to = new Morphism(diagram, toArgs);
-		const nuFrom = new DiagramMorphism(diagram, {to, domain:this.swapped ? this.codomain : this.domain, codomain:this.swapped ? this.domain : this.codomain});
+		const nuFrom = new IndexMorphism(diagram, {to, domain:this.swapped ? this.codomain : this.domain, codomain:this.swapped ? this.domain : this.codomain});
 		diagram.makeSelected(nuFrom);
 		D.emitCellEvent(diagram, 'check');
 		return nuFrom;
@@ -9596,7 +9599,7 @@ class HomsetAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 2 && ary[0] instanceof DiagramObject && ary[1] instanceof DiagramObject;
+		return diagram.isEditable() && ary.length === 2 && ary[0] instanceof IndexObject && ary[1] instanceof IndexObject;
 	}
 	create(e)
 	{
@@ -9655,7 +9658,7 @@ class DetachDomainAction extends Action
 	}
 	hasForm(diagram, ary)	// one morphism with connected domain but not a def of something
 	{
-		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramMorphism && !(ary[0] instanceof DiagramComposite) && ary[0].refcnt === 1)
+		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexMorphism && !(ary[0] instanceof DiagramComposite) && ary[0].refcnt === 1)
 		{
 			const from = ary[0];
 			let soFar = from.isDeletable() && this.dual ? from.codomain.domains.size + from.codomain.codomains.size > 1 :
@@ -9691,9 +9694,9 @@ class DeleteAction extends Action
 		diagram.log({command:'delete', elements:names});
 		const commands = elements.map(from =>
 		{
-			if (from instanceof DiagramMorphism)
+			if (from instanceof IndexMorphism)
 				return {command:'copy', source:from.to, xy:from.domain.getXY(), xyCod:from.codomain.getXY()};
-			else if (from instanceof DiagramObject)
+			else if (from instanceof IndexObject)
 				return {command:'copy', source:from.to, xy:from.getXY()};
 			else if (from instanceof DiagramText)
 				return {command:'copy', source:from.description, xy:from.getXY()};
@@ -9707,7 +9710,7 @@ class DeleteAction extends Action
 		let hasMorphism = false;
 		sorted.map(elt =>
 		{
-			hasMorphism = hasMorphism || elt instanceof DiagramMorphism;
+			hasMorphism = hasMorphism || elt instanceof IndexMorphism;
 			if (elt.refcnt === 1)
 			{
 				elt.decrRefcnt();
@@ -9721,7 +9724,7 @@ class DeleteAction extends Action
 		if (hasMorphism)
 		{
 			const objects = new Set();
-			sorted.filter(elt => elt instanceof DiagramMorphism).map(m =>
+			sorted.filter(elt => elt instanceof IndexMorphism).map(m =>
 			{
 				m.domain.refcnt === 1 && objects.add(m.domain);
 				m.codomain.refcnt === 1 && objects.add(m.codomain);
@@ -9809,7 +9812,7 @@ class ProjectAction extends Action
 	}
 	hasForm(diagram, ary)	// one product object
 	{
-		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject;
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexObject;
 	}
 	html(e, diagram, ary)
 	{
@@ -9931,7 +9934,7 @@ class LambdaMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramMorphism)
+		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexMorphism)
 		{
 			const m = ary[0].to;
 			if (m.domain.isTerminal() && !(m.codomain instanceof HomObject))
@@ -10231,7 +10234,7 @@ class RunAction extends Action
 		let domain = null;
 		let codomain = null;
 		const source = to instanceof NamedObject ? to.base : to;
-		if (from instanceof DiagramObject)
+		if (from instanceof IndexObject)
 			this.js.canFormat(source) && elements.push(this.js.getInputHtml(source), addDataBtn);
 		else	// morphism
 		{
@@ -10386,7 +10389,7 @@ class RunAction extends Action
 			{
 				const selected = diagram.getElement(eltName);
 				const domain = diagram.get('FiniteObject', {size:this.data.size});
-				const {to, name} = selected instanceof DiagramObject ? selected : selected.codomain;
+				const {to, name} = selected instanceof IndexObject ? selected : selected.codomain;
 				const data = [...this.data].map((datum, i) => [i, datum[1]]);
 				const dm = new Morphism(diagram, {basename:diagram.getAnon('data'), domain, codomain:to, data});
 				diagram.placeMorphismByObject(e, 'codomain', name, dm.name);
@@ -10518,7 +10521,7 @@ class EvaluateAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject && Evaluation.CanEvaluate(ary[0].to);
+		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexObject && Evaluation.CanEvaluate(ary[0].to);
 	}
 }
 
@@ -10613,7 +10616,7 @@ class AlignHorizontalAction extends Action
 	}
 	getItems(ary)
 	{
-		return ary.filter(s => s instanceof DiagramObject || s instanceof DiagramText);
+		return ary.filter(s => s instanceof IndexObject || s instanceof DiagramText);
 	}
 	hasForm(diagram, ary)	// one object
 	{
@@ -10669,7 +10672,7 @@ class AlignVerticalAction extends Action
 	}
 	getItems(ary)
 	{
-		return ary.filter(s => s instanceof DiagramObject || s instanceof DiagramText);
+		return ary.filter(s => s instanceof IndexObject || s instanceof DiagramText);
 	}
 	hasForm(diagram, ary)	// one object
 	{
@@ -10699,13 +10702,13 @@ class TensorAction extends Action
 	action(e, diagram, ary)
 	{
 		const elt = ary[0];
-		if (elt instanceof DiagramMorphism)
+		if (elt instanceof IndexMorphism)
 		{
 			const morphisms = ary.map(m => m.to);
 			const to = diagram.get('TensorMorphism', {morphisms});
 			diagram.placeMorphism(to, D.barycenter(ary));
 		}
-		else if (elt instanceof DiagramObject)
+		else if (elt instanceof IndexObject)
 		{
 			const objects = ary.map(o => o.to);
 			const to = diagram.get('TensorObject', {objects});
@@ -10716,8 +10719,8 @@ class TensorAction extends Action
 	{
 		if (ary.length < 2)
 			return false;
-		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof DiagramObject, true) ||
-			ary.reduce((hasIt, v) => hasIt && v instanceof DiagramMorphism, true));
+		return diagram.isEditable() && (ary.reduce((hasIt, v) => hasIt && v instanceof IndexObject, true) ||
+			ary.reduce((hasIt, v) => hasIt && v instanceof IndexMorphism, true));
 	}
 }
 
@@ -10764,7 +10767,7 @@ class GraphAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length >= 1 && ary.reduce((r, m) => r && m instanceof DiagramMorphism, true);	// all morphisms
+		return ary.length >= 1 && ary.reduce((r, m) => r && m instanceof IndexMorphism, true);	// all morphisms
 	}
 }
 
@@ -10801,7 +10804,7 @@ class SwapAction extends Action
 		{
 			const from = ary[0];
 			const to = from.to;
-			return from instanceof DiagramMorphism && from.refcnt === 1 && to.refcnt === 1 && to.constructor.name === 'Morphism' && !('data' in to);
+			return from instanceof IndexMorphism && from.refcnt === 1 && to.refcnt === 1 && to.constructor.name === 'Morphism' && !('data' in to);
 		}
 		return false;
 	}
@@ -10831,7 +10834,7 @@ class AssemblyMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return  ary.reduce((r, elt) => r && elt instanceof DiagramMorphism && (Assembler.isReference(elt.to) || Assembler.isCoreference(elt.to)), true);
+		return  ary.reduce((r, elt) => r && elt instanceof IndexMorphism && (Assembler.isReference(elt.to) || Assembler.isCoreference(elt.to)), true);
 	}
 }
 
@@ -11167,12 +11170,14 @@ class Category extends CatObject
 			{
 				switch(args.prototype)
 				{
+					case 'DiagramObject':		// TODO remove
+						args.prototype = 'IndexObject';
 					case 'CatObject':
 					case 'FiniteObject':
 					case 'ProductObject':
 					case 'HomObject':
 					case 'NamedObject':
-					case 'DiagramObject':
+					case 'IndexObject':
 					case 'DiagramText':
 					case 'TensorObject':
 						procElt(args, ndx);
@@ -11183,8 +11188,10 @@ class Category extends CatObject
 			{
 				switch(args.prototype)
 				{
+					case 'DiagramMorphism':		// TODO remove
+						args.prototype = 'IndexMorphism';
 					case 'Morphism':
-					case 'DiagramMorphism':
+					case 'IndexMorphism':
 					case 'FactorMorphism':
 					case 'Identity':
 					case 'NamedMorphism':
@@ -11232,7 +11239,7 @@ class Category extends CatObject
 		if (elt.diagram)
 		{
 			elt.diagram.elements.delete(elt.basename);
-			if (!(elt instanceof DiagramMorphism) && !(elt instanceof DiagramObject))
+			if (!(elt instanceof IndexMorphism) && !(elt instanceof IndexObject))
 				R.removeEquivalences(elt.diagram, elt.name);
 			isGUI && emit && D.emitElementEvent(elt.diagram, 'delete', elt);
 		}
@@ -11284,7 +11291,7 @@ class Category extends CatObject
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		if (!ary.reduce((r, m) => r && m instanceof DiagramMorphism, true))	// all morphisms
+		if (!ary.reduce((r, m) => r && m instanceof IndexMorphism, true))	// all morphisms
 			return false;
 		const codomain = ary[0].codomain.name;
 		for(let i=1; i<ary.length; ++i)
@@ -11298,7 +11305,7 @@ class Category extends CatObject
 	{
 		if (ary.length < 2)		// just don't bother
 			return false;
-		if (!ary.reduce((r, m) => r && m instanceof DiagramMorphism, true))	// all morphisms
+		if (!ary.reduce((r, m) => r && m instanceof IndexMorphism, true))	// all morphisms
 			return false;
 		const domain = ary[0].domain.name;
 		for(let i=1; i<ary.length; ++i)
@@ -11315,10 +11322,10 @@ class Morphism extends Element
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-		const domain = this.diagram ? this.diagram.getElement(args.domain) : args.domain;
+		const domain = args.domain instanceof CatObject ? args.domain : this.diagram.getElement(args.domain);
 		if (!domain)
 			throw 'no domain for morphism';
-		const codomain = this.diagram ? this.diagram.getElement(args.codomain) : args.codomain;
+		const codomain = args.codomain instanceof CatObject ? args.codomain : this.diagram.getElement(args.codomain);
 		if (!codomain)
 			throw `no codomain ${args.codomain} for morphism ${args.basename}`;
 		Object.defineProperties(this,
@@ -11544,7 +11551,7 @@ class Morphism extends Element
 		{
 			const r = ary[0];
 			const f = ary[1];
-			if (r instanceof DiagramMorphism && f instanceof DiagramMorphism)
+			if (r instanceof IndexMorphism && f instanceof IndexMorphism)
 				return f.to !== r.to && f.to.uses(r.to);
 		}
 		return false;
@@ -11885,7 +11892,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 	}
 }
 
-class DiagramMorphism extends Morphism
+class IndexMorphism extends Morphism
 {
 	constructor(diagram, args)
 	{
@@ -11921,7 +11928,7 @@ class DiagramMorphism extends Morphism
 			this.attributes.set('flipName', nuArgs.flipName);
 		if (!this.attributes.has('flipName'))
 			this.attributes.set('flipName', false);
-		isGUI && this.constructor.name === 'DiagramMorphism' && D.emitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'IndexMorphism' && D.emitElementEvent(diagram, 'new', this);
 	}
 	setHomsetIndex(args)
 	{
@@ -12230,9 +12237,9 @@ class DiagramMorphism extends Morphism
 	{
 		if (this.graph)
 		{
-			let xy = new D2({x:this.domain.x - this.domain.width/2, y:this.domain.y}).round();
+			let xy = new D2({x:this.domain.x - this.domain.width()/2, y:this.domain.y}).round();
 			this.graph.graphs[0].updateXY(xy);	// set locations inside domain
-			xy = new D2({x:this.codomain.x - this.codomain.width/2, y:this.codomain.y}).round();
+			xy = new D2({x:this.codomain.x - this.codomain.width()/2, y:this.codomain.y}).round();
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 		}
 		this.predraw();
@@ -12331,9 +12338,9 @@ class DiagramMorphism extends Morphism
 			this.makeGraph();
 			const dom = this.domain;
 			const cod = this.codomain;
-			let xy = new D2({x:dom.x - dom.width/2, y:dom.y}).round();
+			let xy = new D2({x:dom.x - dom.width()/2, y:dom.y}).round();
 			this.graph.graphs[0].updateXY(xy);	// set locations inside domain
-			xy = new D2({x:cod.x - cod.width/2, y:cod.y}).round();
+			xy = new D2({x:cod.x - cod.width()/2, y:cod.y}).round();
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 			const id = this.graphId();
 			this.graph.getSVG(this.svg, id,
@@ -12744,7 +12751,7 @@ class Cell extends DiagramCore
 	}
 }
 
-class DiagramComposite extends DiagramMorphism
+class DiagramComposite extends IndexMorphism
 {
 	constructor(diagram, args)
 	{
@@ -12836,7 +12843,7 @@ class IndexCategory extends Category
 	{
 		const obj = dual ? from.codomain : from.domain;
 		const to = obj.to;
-		const detachedObj = new DiagramObject(from.diagram, {to, xy});
+		const detachedObj = new IndexObject(from.diagram, {to, xy});
 		if (dual)
 			from.setCodomain(detachedObj);
 		else
@@ -14040,7 +14047,7 @@ class Distribute extends Morphism
 	{
 		if (ary.length === 1 && ary[0] instanceof CatObject)	// distribute only one object
 		{
-			const obj = ary[0] instanceof DiagramObject ? ary[0].to : ary[0];
+			const obj = ary[0] instanceof IndexObject ? ary[0].to : ary[0];
 			if (obj instanceof ProductObject && !obj.to && obj.objects.length === 2)	// product of two objects
 				return obj.objects.reduce((doit, o) => doit || o instanceof ProductObject && o.dual, false);	// some component object is a coproduct
 		}
@@ -14108,7 +14115,7 @@ class Dedistribute extends Morphism	// TODO what about side?
 	}
 	static HasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof DiagramObject)
+		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexObject)
 		{
 			const from = ary[0];
 			const to = from.to;
@@ -14443,9 +14450,9 @@ class Diagram extends Functor
 		if (!this.selected.includes(elt))	// not already selected
 		{
 			this.selected.push(elt);
-			if (elt instanceof DiagramObject || elt instanceof DiagramText)
+			if (elt instanceof IndexObject || elt instanceof DiagramText)
 				elt.finishMove();
-			else if (elt instanceof DiagramMorphism)
+			else if (elt instanceof IndexMorphism)
 			{
 				elt.domain.finishMove();
 				elt.codomain.finishMove();
@@ -14490,7 +14497,7 @@ class Diagram extends Functor
 				this.deselect(elt);
 			else
 				D.toolbar.show(e);
-			if (elt instanceof DiagramObject)
+			if (elt instanceof IndexObject)
 				elt.orig = {x:elt.x, y:elt.y};
 		}
 		else if (this.domain.cells.has(name))
@@ -14508,7 +14515,7 @@ class Diagram extends Functor
 		let selected = [];
 		this.domain.elements.forEach(elt =>
 		{
-			if (elt instanceof DiagramMorphism && D2.Inside(p, elt.domain, q) && D2.Inside(p, elt.codomain, q))
+			if (elt instanceof IndexMorphism && D2.Inside(p, elt.domain, q) && D2.Inside(p, elt.codomain, q))
 				selected.push(elt);
 			else if (D2.Inside(p, elt, q))
 				selected.push(elt);
@@ -14532,12 +14539,12 @@ class Diagram extends Functor
 		const dragObjects = new Set();
 		this.selected.map(elt =>
 		{
-			if (elt instanceof DiagramMorphism)
+			if (elt instanceof IndexMorphism)
 			{
 				dragObjects.add(elt.domain);
 				dragObjects.add(elt.codomain);
 			}
-			else if (elt instanceof DiagramObject || elt instanceof DiagramText)
+			else if (elt instanceof IndexObject || elt instanceof DiagramText)
 				dragObjects.add(elt);
 			else if (elt instanceof Cell)
 				elt.getObjects().map(o => dragObjects.add(o));
@@ -14554,7 +14561,7 @@ class Diagram extends Functor
 		dragObjects.forEach(o =>
 		{
 			o.update(delta.add(o.orig), majorGrid);
-			if (o instanceof DiagramObject)
+			if (o instanceof IndexObject)
 			{
 				o.domains.forEach(updateMorphism);
 				o.codomains.forEach(updateMorphism);
@@ -14577,7 +14584,7 @@ class Diagram extends Functor
 	placeObject(to, xyIn, select = true)
 	{
 		const xy = xyIn ? new D2(D.grid(xyIn)) : D.center(this);
-		const from = new DiagramObject(this, {xy, to});
+		const from = new IndexObject(this, {xy, to});
 		if (select)
 			this.makeSelected(from);
 		D.emitElementEvent(this, 'new', from);
@@ -14598,7 +14605,7 @@ class Diagram extends Functor
 			to = this.getElement(to);
 		let xyD = null;
 		let domain = null;
-		if (xyDom instanceof DiagramObject)
+		if (xyDom instanceof IndexObject)
 		{
 			if (!xyDom.to.isEquivalent(to.domain))
 				throw 'index object target does not match morphism domain';
@@ -14608,11 +14615,11 @@ class Diagram extends Functor
 		else
 		{
 			xyD = xyDom ? this.findEmptySpot(xyDom) : D.toolbar.mouseCoords ? D.toolbar.mouseCoords : D.center(R.diagram);	// use original location
-			domain = new DiagramObject(this, {to:to.domain, xy:xyD});
+			domain = new IndexObject(this, {to:to.domain, xy:xyD});
 		}
 		let xyC = null;
 		let codomain = null;
-		if (xyCod instanceof DiagramObject)
+		if (xyCod instanceof IndexObject)
 		{
 			if (xyCod.to !== to.codomain)
 				throw 'index object target does not match morphism codomain';
@@ -14621,17 +14628,17 @@ class Diagram extends Functor
 		else if (typeof xyCod === 'object' && xyCod !== null)
 		{
 			let xy = new D2(xyCod);
-			codomain = new DiagramObject(this, {to:to.codomain, xy});
+			codomain = new IndexObject(this, {to:to.codomain, xy});
 		}
 		else
 		{
 			const ad = D.arrowDirection();
 			const tw = to.textWidth();
 			let xy = new D2({x:xyD.x + Math.max(ad.x, tw), y:xyD.y + ad.y});
-			codomain = new DiagramObject(this, {to:to.codomain, xy});
+			codomain = new IndexObject(this, {to:to.codomain, xy});
 		}
 		xyC = new D2(codomain.getXY());
-		const from = new DiagramMorphism(this, {to, domain, codomain});
+		const from = new IndexMorphism(this, {to, domain, codomain});
 		from.update();
 		if (select)
 			this.makeSelected(from);
@@ -14687,9 +14694,9 @@ class Diagram extends Functor
 					xy = new D2(fromObj).add(offset);
 				}
 			}
-			const newElt = new DiagramObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
+			const newElt = new IndexObject(this, {xy, to: dir === 'domain' ? to.codomain : to.domain});
 			const {domainElt, codomainElt} = dir === 'domain' ? {domainElt:fromObj, codomainElt:newElt} : {domainElt:newElt, codomainElt:fromObj};
-			const from = new DiagramMorphism(this, {to, domain:domainElt, codomain:codomainElt});
+			const from = new IndexMorphism(this, {to, domain:domainElt, codomain:codomainElt});
 			select && this.makeSelected(from);
 			return from;
 		}
@@ -14734,11 +14741,11 @@ class Diagram extends Functor
 				continue;
 			}
 			let compBox = null;
-			if (elt instanceof DiagramObject)
+			if (elt instanceof IndexObject)
 				compBox = elt.getBBox();
 			else if (elt instanceof DiagramText)
 				compBox = elt.getBBox();
-			else if (elt instanceof DiagramMorphism)
+			else if (elt instanceof IndexMorphism)
 				compBox = elt.getSvgNameBBox();
 			else
 				compBox = svg.getBBox();
@@ -14965,15 +14972,15 @@ class Diagram extends Functor
 	isIsolated(elt)
 	{
 		let r = false;
-		if (elt instanceof DiagramObject)
+		if (elt instanceof IndexObject)
 			r = elt.refcnt === 1;
-		else if (elt instanceof DiagramMorphism)
+		else if (elt instanceof IndexMorphism)
 			r = elt.domain.domains.size === 1 && elt.domain.codomains.size === 0 && elt.codomain.domains.size === 0 && elt.codomain.codomains.size === 1;
 		return r;
 	}
 	getElement(name)
 	{
-		let elt = this.domain.getElement(name);
+		let elt = this.domain.getElement(name);		// does the requested element live in the domain category?
 		if (elt)
 			return elt;
 		if (typeof name === 'string')
@@ -14982,11 +14989,19 @@ class Diagram extends Functor
 				return this.elements.get(name);
 			if (this.codomain.elements.has(name))
 				return this.codomain.getElement(name);
-			return this.domain.getElement(name);
+			const refs = this.allReferences.keys();
+			let nxtref = refs.next();
+			while(!elt && !nxtref.done)
+			{
+				const ref = R.$CAT.getElement(nxtref.value);
+				if (ref)
+					elt = ref.getElement(name);
+				nxtref = refs.next();
+			}
 		}
 		else if (name && 'name' in name)
 			return this.getElement(name.name);
-		return null;
+		return elt;
 	}
 	getElements(ary)
 	{
@@ -15089,8 +15104,6 @@ class Diagram extends Functor
 		const diagram = R.loadDiagram(name);
 		if (!diagram)
 			throw 'cannot load diagram';
-		if (diagram.codomain.name !== this.codomain.name)
-			throw 'diagram category does not match';
 		if (this.allReferences.has(diagram.name))
 			throw `Diagram ${diagram.name} is already referenced `;
 		if (diagram.allReferences.has(this.name))
@@ -15170,7 +15183,7 @@ class Diagram extends Functor
 		D.mouseover = on ? elt : null;
 		if (elt)
 		{
-			if (elt instanceof DiagramMorphism || elt instanceof DiagramObject || elt instanceof DiagramText)
+			if (elt instanceof IndexMorphism || elt instanceof IndexObject || elt instanceof DiagramText)
 				elt.emphasis(on);
 			else
 			{
@@ -15286,7 +15299,7 @@ class Diagram extends Functor
 			const proto = Cat[prototype];
 			if (typeof proto === 'undefined')
 				throw 'prototype not found';
-			let name = proto.Basename(this, args);
+			let name = `${this.name}/${proto.Basename(this, args)}`;
 			let elt = this.getElement(name);
 			if (elt)
 				return elt;
@@ -15300,7 +15313,7 @@ class Diagram extends Functor
 				if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 					args.actions.map(a => elt.actions.set(a, R.Actions[a]));
 			}
-			if (!(elt instanceof DiagramMorphism) && !(elt instanceof Assertion) && 'loadItem' in elt)
+			if (!(elt instanceof IndexMorphism) && !(elt instanceof Assertion) && 'loadItem' in elt)
 				elt.loadItem();
 			return elt;
 		}
@@ -15571,13 +15584,13 @@ class Diagram extends Functor
 		}
 		this.domain.elements.forEach(elt =>
 		{
-			if (elt instanceof DiagramObject)
+			if (elt instanceof IndexObject)
 			{
 				indexed.add(elt.to);
 				if (elt.x === 0 && elt.y % grid === 0)
 					locations.push(elt.y);
 			}
-			else if (elt instanceof DiagramMorphism)
+			else if (elt instanceof IndexMorphism)
 				indexed.add(elt.to);
 		});
 		locations.sort();
@@ -15663,8 +15676,7 @@ class Diagram extends Functor
 																		x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.width()}px`, height:`${scale * D.height()}px`};
 					bkgnd = H3.rect('.diagramBackgroundActive', {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
 																		x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.width()}px`, height:`${scale * D.height()}px`});
-console.log('updateBackground', this.name, args);
-}
+				}
 				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
 				dgrmBkgnd.classList.add('hidden');
 				dgrmF4gnd.classList.add('hidden');
@@ -15782,10 +15794,10 @@ console.log('updateBackground', this.name, args);
 				elt.to = nameMap.get(elt.to);
 			switch(elt.prototype)
 			{
-				case 'DiagramObject':
+				case 'IndexObject':
 				case 'DiagramText':
 					break;
-				case 'DiagramMorphism':
+				case 'IndexMorphism':
 					elt.domain = change(elt.domain);
 					elt.codomain = change(elt.codomain);
 					break;
@@ -15810,9 +15822,9 @@ console.log('updateBackground', this.name, args);
 		const items = new Set();
 		elements.map(elt =>
 		{
-			if (elt instanceof DiagramText || elt instanceof DiagramObject)
+			if (elt instanceof DiagramText || elt instanceof IndexObject)
 				items.add(elt);
-			else if (elt instanceof DiagramMorphism)
+			else if (elt instanceof IndexMorphism)
 			{
 				items.add(elt.domain);
 				items.add(elt.codomain);
@@ -15838,8 +15850,8 @@ console.log('updateBackground', this.name, args);
 				case 'Morphism':
 				case 'Assertion':
 				case 'DiagramText':
-				case 'DiagramObject':
-				case 'DiagramMorphism':
+				case 'IndexObject':
+				case 'IndexMorphism':
 					!U.isValidBasename(elt.basename) && errors.push(`Invalid basename: ${U.HtmlEntitySafe(elt.basename)}`);
 					break;
 			}
@@ -16056,12 +16068,12 @@ class Assembler
 	static addBall(title, type, cls, o)
 	{
 		const onmouseenter = e => D.statusbar.show(e, title);
-		if (o instanceof DiagramObject)
+		if (o instanceof IndexObject)
 		{
 			const bbox = o.svg.getBBox();
 			o.svg.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
 		}
-		else if (o instanceof DiagramMorphism)
+		else if (o instanceof IndexMorphism)
 		{
 			const bbox = o.svg_nameGroup.getBBox();
 			o.svg_nameGroup.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
@@ -16069,7 +16081,7 @@ class Assembler
 	}
 	static isReference(m)
 	{
-		const morphism = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
+		const morphism = m instanceof IndexMorphism ? m.to.basic() : m.basic();
 		if (Morphism.isIdentity(morphism))
 			return true;
 		if (morphism.codomain.isTerminal())
@@ -16080,7 +16092,7 @@ class Assembler
 	}
 	static isCoreference(m)
 	{
-		const morphism = m instanceof DiagramMorphism ? m.to.basic() : m.basic();
+		const morphism = m instanceof IndexMorphism ? m.to.basic() : m.basic();
 		if (morphism instanceof FactorMorphism && morphism.dual && morphism.codomain instanceof ProductObject && morphism.codomain.dual)
 			return FactorMorphism.isReference(morphism.factors);		// unique factors
 		return false;
@@ -16731,8 +16743,8 @@ const Cat =
 	Dedistribute,
 	Diagram,
 	DiagramComposite,
-	DiagramMorphism,
-	DiagramObject,
+	IndexMorphism,
+	IndexObject,
 	DiagramPullback,
 	DiagramText,
 	Distribute,
