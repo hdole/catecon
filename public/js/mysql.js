@@ -34,7 +34,7 @@ var Cat = Cat || require('./Cat.js');
 		}
 		hasForm(diagram, ary)
 		{
-			return ary.length === 1 && ary[0] instanceof Cat.DiagramMorphism && ary[0].to.constructor.name === 'Morphism';
+			return ary.length === 1 && ary[0] instanceof Cat.IndexMorphism && ary[0].to.constructor.name === 'Morphism';
 		}
 	}
 
