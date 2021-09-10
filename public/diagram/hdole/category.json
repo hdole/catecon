@@ -7,12 +7,12 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/category_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "sys/Cat",
   "references": [],
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 600,
@@ -21,7 +21,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
         "x": 600,
@@ -30,7 +30,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 600,
@@ -39,7 +39,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
@@ -48,7 +48,7 @@
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
         "x": 600,
@@ -57,7 +57,7 @@
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
@@ -66,7 +66,7 @@
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
         "x": 600,
@@ -75,7 +75,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
@@ -84,7 +84,7 @@
     },
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 600,
@@ -93,7 +93,7 @@
     },
     {
       "basename": "o_9",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
@@ -102,7 +102,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
@@ -111,7 +111,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 600,
@@ -120,7 +120,7 @@
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
@@ -129,7 +129,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
@@ -178,75 +178,105 @@
       "height": "24"
     },
     {
+      "basename": "o_14",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 600,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "o_15",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 800,
+        "y": 1700
+      }
+    },
+    {
+      "basename": "o_16",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 800,
+        "y": 1500
+      }
+    },
+    {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_2",
       "codomain": "hdole/category/o_3",
-      "flipName": false,
       "to": "hdole/category/id"
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_4",
       "codomain": "hdole/category/o_5",
-      "flipName": false,
       "to": "hdole/category/dom"
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_6",
       "codomain": "hdole/category/o_7",
-      "flipName": false,
       "to": "hdole/category/cod"
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_8",
       "codomain": "hdole/category/o_9",
-      "flipName": false,
       "to": "hdole/category/id"
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_8",
       "codomain": "hdole/category/o_10",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/category/Id{C0}dI"
     },
     {
       "basename": "m_5",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_9",
       "codomain": "hdole/category/o_10",
-      "flipName": false,
       "to": "hdole/category/dom"
     },
     {
       "basename": "m_6",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_11",
       "codomain": "hdole/category/o_12",
-      "flipName": false,
       "to": "hdole/category/id"
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_11",
       "codomain": "hdole/category/o_13",
-      "flipName": true,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/category/Id{C0}dI"
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/category/o_12",
       "codomain": "hdole/category/o_13",
-      "flipName": false,
       "to": "hdole/category/cod"
     },
     {
@@ -276,6 +306,20 @@
       "right": [
         "hdole/category/m_7"
       ]
+    },
+    {
+      "basename": "m_9",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_14",
+      "codomain": "hdole/category/o_15",
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_16",
+      "codomain": "hdole/category/o_15",
+      "to": "hdole/category/cod"
     }
   ],
   "elements": [
@@ -323,6 +367,11 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1625390602684,
-  "version": 0
+  "timestamp": 1631085419006,
+  "version": 0,
+  "viewport": {
+    "x": 0,
+    "y": -612,
+    "scale": 1
+  }
 }

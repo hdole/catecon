@@ -6,14 +6,14 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/str_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/floats"
   ],
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 200,
@@ -21,7 +21,7 @@
       }
     },
     {
-      "description": "The space of all strings",
+      "description": "The space of all finite strings per UTF-8",
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
@@ -32,20 +32,20 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/#1",
       "xy": {
         "x": 200,
-        "y": 400
+        "y": 600
       }
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
-        "y": 400
+        "y": 600
       }
     },
     {
@@ -54,26 +54,26 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -500,
-        "y": 600
+        "y": 400
       },
       "height": 24
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 200,
-        "y": 600
+        "y": 400
       }
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 400,
-        "y": 600
+        "y": 400
       }
     },
     {
@@ -88,7 +88,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/Po{str,str}oP",
       "xy": {
         "x": 200,
@@ -97,7 +97,7 @@
     },
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -116,7 +116,7 @@
     },
     {
       "basename": "o_9",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/Po{str,str}oP",
       "xy": {
         "x": 200,
@@ -125,7 +125,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/CPo{#1,#1}oPC",
       "xy": {
         "x": 400,
@@ -144,7 +144,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/Po{str,str}oP",
       "xy": {
         "x": 200,
@@ -153,7 +153,7 @@
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/CPo{N64,#1}oPC",
       "xy": {
         "x": 400,
@@ -172,7 +172,7 @@
     },
     {
       "basename": "o_16",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/Po{str,hdole/nat/N64}oP",
       "xy": {
         "x": 200,
@@ -181,7 +181,7 @@
     },
     {
       "basename": "o_17",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -189,7 +189,7 @@
       }
     },
     {
-      "description": "Convert a natural number to a string and back again.",
+      "description": "Convert a natural number to a string and back again.\nIf a string cannot be converted then an exception\nis thrown.",
       "basename": "t_11",
       "prototype": "DiagramText",
       "xy": {
@@ -200,7 +200,7 @@
     },
     {
       "basename": "o_18",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 200,
@@ -209,7 +209,7 @@
     },
     {
       "basename": "o_19",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -218,7 +218,7 @@
     },
     {
       "basename": "o_20",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/CPo{N64,#1}oPC",
       "xy": {
         "x": 600,
@@ -237,7 +237,7 @@
     },
     {
       "basename": "o_21",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z64",
       "xy": {
         "x": 200,
@@ -246,7 +246,7 @@
     },
     {
       "basename": "o_22",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -255,7 +255,7 @@
     },
     {
       "basename": "o_23",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/CPo{Z64,#1}oPC",
       "xy": {
         "x": 600,
@@ -274,7 +274,7 @@
     },
     {
       "basename": "o_24",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 200,
@@ -283,7 +283,7 @@
     },
     {
       "basename": "o_25",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -292,7 +292,7 @@
     },
     {
       "basename": "o_26",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/CPo{F64,#1}oPC",
       "xy": {
         "x": 600,
@@ -311,7 +311,7 @@
     },
     {
       "basename": "o_27",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 200,
@@ -320,7 +320,7 @@
     },
     {
       "basename": "o_28",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Basics/TTY",
       "xy": {
         "x": 400,
@@ -332,25 +332,25 @@
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": -410,
-        "y": -150
+        "x": -510,
+        "y": 0
       },
       "height": "300",
       "weight": "bold"
     },
     {
-      "description": "The string of no length",
+      "description": "The string of length zero",
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
         "x": -500,
-        "y": 400
+        "y": 600
       },
       "height": 24
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N8",
       "xy": {
         "x": 200,
@@ -359,7 +359,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N32",
       "xy": {
         "x": 200,
@@ -368,7 +368,7 @@
     },
     {
       "basename": "o_14",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N128",
       "xy": {
         "x": 200,
@@ -377,7 +377,7 @@
     },
     {
       "basename": "o_15",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -386,7 +386,7 @@
     },
     {
       "basename": "o_29",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -395,7 +395,7 @@
     },
     {
       "basename": "o_30",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -404,7 +404,7 @@
     },
     {
       "basename": "o_32",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/CPo{hdole/nat/N8,#1}oPC",
       "xy": {
         "x": 600,
@@ -413,7 +413,7 @@
     },
     {
       "basename": "o_33",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 200,
@@ -422,7 +422,7 @@
     },
     {
       "basename": "o_34",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -431,7 +431,7 @@
     },
     {
       "basename": "o_35",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/CPo{hdole/nat/N16,#1}oPC",
       "xy": {
         "x": 600,
@@ -440,7 +440,7 @@
     },
     {
       "basename": "o_36",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/CPo{hdole/nat/N32,#1}oPC",
       "xy": {
         "x": 600,
@@ -449,7 +449,7 @@
     },
     {
       "basename": "o_37",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/CPo{hdole/nat/N128,#1}oPC",
       "xy": {
         "x": 600,
@@ -458,147 +458,147 @@
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_3",
       "codomain": "hdole/str/o_4",
       "to": "hdole/str/empty"
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_5",
       "codomain": "hdole/str/o_6",
       "to": "hdole/str/length"
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_7",
       "codomain": "hdole/str/o_8",
       "to": "hdole/str/append"
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_9",
       "codomain": "hdole/str/o_10",
       "to": "hdole/str/includes"
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_11",
       "codomain": "hdole/str/o_12",
       "to": "hdole/str/indexOf"
     },
     {
       "basename": "m_6",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_16",
       "codomain": "hdole/str/o_17",
       "to": "hdole/str/charAt"
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_18",
       "codomain": "hdole/str/o_19",
       "to": "hdole/str/N64ToStr"
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_19",
       "codomain": "hdole/str/o_20",
       "to": "hdole/str/strToN64"
     },
     {
       "basename": "m_9",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_21",
       "codomain": "hdole/str/o_22",
       "to": "hdole/str/Z64ToStr"
     },
     {
       "basename": "m_10",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_22",
       "codomain": "hdole/str/o_23",
       "to": "hdole/str/strToZ64"
     },
     {
       "basename": "m_11",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_24",
       "codomain": "hdole/str/o_25",
       "to": "hdole/str/F64ToStr"
     },
     {
       "basename": "m_12",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_25",
       "codomain": "hdole/str/o_26",
       "to": "hdole/str/strToF64"
     },
     {
       "basename": "m_13",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_27",
       "codomain": "hdole/str/o_28",
       "to": "hdole/str/str2tty"
     },
     {
       "basename": "m_5",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_1",
       "codomain": "hdole/str/o_29",
       "to": "hdole/str/N8ToStr"
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_29",
       "codomain": "hdole/str/o_32",
       "to": "hdole/str/strToN8"
     },
     {
       "basename": "m_15",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_33",
       "codomain": "hdole/str/o_34",
       "to": "hdole/str/N16ToStr"
     },
     {
       "basename": "m_16",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_34",
       "codomain": "hdole/str/o_35",
       "to": "hdole/str/strToN16"
     },
     {
       "basename": "m_17",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_13",
       "codomain": "hdole/str/o_30",
       "to": "hdole/str/N32ToStr"
     },
     {
       "basename": "m_18",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_30",
       "codomain": "hdole/str/o_36",
       "to": "hdole/str/strToN32"
     },
     {
       "basename": "m_19",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_14",
       "codomain": "hdole/str/o_15",
       "to": "hdole/str/N128ToStr"
     },
     {
       "basename": "m_20",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/str/o_15",
       "codomain": "hdole/str/o_37",
       "to": "hdole/str/strToN128"
@@ -884,12 +884,12 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630313697829,
+  "timestamp": 1631088889309,
   "version": 0,
   "viewport": {
-    "x": 1532.324973536357,
-    "y": 916.40496159379,
-    "scale": 1.7683684824797112
+    "x": 1784.6494566490233,
+    "y": 2792.631809452433,
+    "scale": 1.8601339641200993
   },
   "properName": "hdole/str"
 }

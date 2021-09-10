@@ -10,14 +10,14 @@
     "cpp": "#include <sys/types.h>\n#include <time.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <math.h>\n#include <stdint.h>\n#include \"errno.h\"\n#include <stdio.h>"
   },
   "domain": "hdole/cpp_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/Strings"
   ],
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/Errno",
       "xy": {
         "x": 200,
@@ -26,7 +26,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -45,7 +45,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/Errno",
       "xy": {
         "x": 200,
@@ -54,7 +54,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
@@ -63,7 +63,7 @@
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 200,
@@ -92,7 +92,7 @@
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1400,
@@ -101,7 +101,7 @@
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 1600,
@@ -120,7 +120,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1000,
@@ -129,7 +129,7 @@
     },
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 1200,
@@ -148,7 +148,7 @@
     },
     {
       "basename": "o_9",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1400,
@@ -157,7 +157,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 1600,
@@ -176,7 +176,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 200,
@@ -185,7 +185,7 @@
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
@@ -194,7 +194,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 200,
@@ -223,7 +223,7 @@
     },
     {
       "basename": "o_14",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 1400,
@@ -232,7 +232,7 @@
     },
     {
       "basename": "o_15",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 1600,
@@ -251,7 +251,7 @@
     },
     {
       "basename": "o_16",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1400,
@@ -260,7 +260,7 @@
     },
     {
       "basename": "o_17",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 1600,
@@ -279,7 +279,7 @@
     },
     {
       "basename": "o_18",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 1400,
@@ -288,7 +288,7 @@
     },
     {
       "basename": "o_19",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 1600,
@@ -307,7 +307,7 @@
     },
     {
       "basename": "o_20",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": 200,
@@ -316,7 +316,7 @@
     },
     {
       "basename": "o_21",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 400,
@@ -325,7 +325,7 @@
     },
     {
       "basename": "o_22",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 200,
@@ -354,7 +354,7 @@
     },
     {
       "basename": "o_23",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 1400,
@@ -363,7 +363,7 @@
     },
     {
       "basename": "o_24",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 1600,
@@ -382,7 +382,7 @@
     },
     {
       "basename": "o_25",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1400,
@@ -391,7 +391,7 @@
     },
     {
       "basename": "o_26",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 1600,
@@ -410,7 +410,7 @@
     },
     {
       "basename": "o_27",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 1400,
@@ -419,7 +419,7 @@
     },
     {
       "basename": "o_28",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 1600,
@@ -438,7 +438,7 @@
     },
     {
       "basename": "o_29",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": 200,
@@ -447,7 +447,7 @@
     },
     {
       "basename": "o_30",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 400,
@@ -456,7 +456,7 @@
     },
     {
       "basename": "o_31",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/file",
       "xy": {
         "x": 200,
@@ -475,7 +475,7 @@
     },
     {
       "basename": "o_33",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 400,
@@ -484,7 +484,7 @@
     },
     {
       "basename": "o_34",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/off_t",
       "xy": {
         "x": 200,
@@ -493,7 +493,7 @@
     },
     {
       "basename": "o_35",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z64",
       "xy": {
         "x": 400,
@@ -502,7 +502,7 @@
     },
     {
       "basename": "o_36",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -511,7 +511,7 @@
     },
     {
       "basename": "o_37",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 400,
@@ -530,7 +530,7 @@
     },
     {
       "basename": "o_43",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -539,7 +539,7 @@
     },
     {
       "basename": "o_44",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -558,7 +558,7 @@
     },
     {
       "basename": "o_45",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -567,7 +567,7 @@
     },
     {
       "basename": "o_46",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -586,7 +586,7 @@
     },
     {
       "basename": "o_47",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -595,7 +595,7 @@
     },
     {
       "basename": "o_48",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -614,7 +614,7 @@
     },
     {
       "basename": "o_49",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -623,7 +623,7 @@
     },
     {
       "basename": "o_50",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -642,7 +642,7 @@
     },
     {
       "basename": "o_51",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -651,7 +651,7 @@
     },
     {
       "basename": "o_52",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -670,7 +670,7 @@
     },
     {
       "basename": "o_53",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -679,7 +679,7 @@
     },
     {
       "basename": "o_54",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -698,7 +698,7 @@
     },
     {
       "basename": "o_55",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
       "xy": {
         "x": 200,
@@ -707,7 +707,7 @@
     },
     {
       "basename": "o_56",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/CPo{file,Errno}oPC",
       "xy": {
         "x": 400,
@@ -726,7 +726,7 @@
     },
     {
       "basename": "o_57",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/file",
       "xy": {
         "x": 200,
@@ -735,7 +735,7 @@
     },
     {
       "basename": "o_58",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/CPo{#1,Errno}oPC",
       "xy": {
         "x": 400,
@@ -744,7 +744,7 @@
     },
     {
       "basename": "o_59",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stat",
       "xy": {
         "x": 200,
@@ -773,7 +773,7 @@
     },
     {
       "basename": "o_60",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/file",
       "xy": {
         "x": 200,
@@ -782,7 +782,7 @@
     },
     {
       "basename": "o_61",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/CPo{stat,Errno}oPC",
       "xy": {
         "x": 400,
@@ -801,7 +801,7 @@
     },
     {
       "basename": "o_62",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stat",
       "xy": {
         "x": 200,
@@ -820,7 +820,7 @@
     },
     {
       "basename": "o_64",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -829,7 +829,7 @@
     },
     {
       "basename": "o_65",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -848,7 +848,7 @@
     },
     {
       "basename": "o_66",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -857,7 +857,7 @@
     },
     {
       "basename": "o_67",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -876,7 +876,7 @@
     },
     {
       "basename": "o_68",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -885,7 +885,7 @@
     },
     {
       "basename": "o_69",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -904,7 +904,7 @@
     },
     {
       "basename": "o_70",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -913,7 +913,7 @@
     },
     {
       "basename": "o_71",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -932,7 +932,7 @@
     },
     {
       "basename": "o_72",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -941,7 +941,7 @@
     },
     {
       "basename": "o_73",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 500,
@@ -960,7 +960,7 @@
     },
     {
       "basename": "o_74",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "xy": {
         "x": 200,
@@ -969,7 +969,7 @@
     },
     {
       "basename": "o_75",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/CPo{voidPtr,Errno}oPC",
       "xy": {
         "x": 700,
@@ -988,7 +988,7 @@
     },
     {
       "basename": "o_76",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/Po{voidPtr,size_t}oP",
       "xy": {
         "x": 200,
@@ -997,7 +997,7 @@
     },
     {
       "basename": "o_77",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/CPo{#1,Errno}oPC",
       "xy": {
         "x": 500,
@@ -1016,7 +1016,7 @@
     },
     {
       "basename": "o_78",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -1025,7 +1025,7 @@
     },
     {
       "basename": "o_79",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N8",
       "xy": {
         "x": 400,
@@ -1044,7 +1044,7 @@
     },
     {
       "basename": "o_80",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -1053,7 +1053,7 @@
     },
     {
       "basename": "o_81",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 400,
@@ -1072,7 +1072,7 @@
     },
     {
       "basename": "o_82",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -1081,7 +1081,7 @@
     },
     {
       "basename": "o_83",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -1100,7 +1100,7 @@
     },
     {
       "basename": "o_84",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -1109,7 +1109,7 @@
     },
     {
       "basename": "o_85",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
@@ -1128,7 +1128,7 @@
     },
     {
       "basename": "o_86",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -1137,7 +1137,7 @@
     },
     {
       "basename": "o_87",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 500,
@@ -1156,7 +1156,7 @@
     },
     {
       "basename": "o_88",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -1165,7 +1165,7 @@
     },
     {
       "basename": "o_89",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
@@ -1184,7 +1184,7 @@
     },
     {
       "basename": "o_90",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/Po{voidPtr,hdole/nat/N64}oP",
       "xy": {
         "x": 200,
@@ -1193,7 +1193,7 @@
     },
     {
       "basename": "o_91",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": 400,
@@ -1212,7 +1212,7 @@
     },
     {
       "basename": "o_92",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 200,
@@ -1221,7 +1221,7 @@
     },
     {
       "basename": "o_93",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 400,
@@ -1230,7 +1230,7 @@
     },
     {
       "basename": "o_94",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 600,
@@ -1239,7 +1239,7 @@
     },
     {
       "basename": "o_95",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 800,
@@ -1248,7 +1248,7 @@
     },
     {
       "basename": "o_96",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 1000,
@@ -1257,7 +1257,7 @@
     },
     {
       "basename": "o_97",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 1200,
@@ -1276,7 +1276,7 @@
     },
     {
       "basename": "o_98",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/Po{voidPtr,hdole/nat/N16}oP",
       "xy": {
         "x": 200,
@@ -1285,7 +1285,7 @@
     },
     {
       "basename": "o_99",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 400,
@@ -1297,15 +1297,15 @@
       "basename": "t_46",
       "prototype": "DiagramText",
       "xy": {
-        "x": 120,
-        "y": -230
+        "x": -340,
+        "y": -200
       },
       "height": "700",
       "weight": "bold"
     },
     {
       "basename": "o_100",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 200,
@@ -1314,7 +1314,7 @@
     },
     {
       "basename": "o_101",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N8",
       "xy": {
         "x": 400,
@@ -1323,7 +1323,7 @@
     },
     {
       "basename": "o_102",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 800,
@@ -1332,7 +1332,7 @@
     },
     {
       "basename": "o_103",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 600,
@@ -1341,7 +1341,7 @@
     },
     {
       "basename": "o_104",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1000,
@@ -1350,7 +1350,7 @@
     },
     {
       "basename": "o_105",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N32",
       "xy": {
         "x": 1200,
@@ -1359,7 +1359,7 @@
     },
     {
       "basename": "o_106",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N128",
       "xy": {
         "x": 2000,
@@ -1368,7 +1368,7 @@
     },
     {
       "basename": "o_107",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1800,
@@ -1377,7 +1377,7 @@
     },
     {
       "basename": "o_108",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N8",
       "xy": {
         "x": 200,
@@ -1386,7 +1386,7 @@
     },
     {
       "basename": "o_109",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 600,
@@ -1395,7 +1395,7 @@
     },
     {
       "basename": "o_110",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N32",
       "xy": {
         "x": 1000,
@@ -1404,7 +1404,7 @@
     },
     {
       "basename": "o_111",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N128",
       "xy": {
         "x": 1800,
@@ -1413,7 +1413,7 @@
     },
     {
       "basename": "o_112",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 400,
@@ -1422,7 +1422,7 @@
     },
     {
       "basename": "o_113",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 800,
@@ -1431,7 +1431,7 @@
     },
     {
       "basename": "o_114",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 1200,
@@ -1440,7 +1440,7 @@
     },
     {
       "basename": "o_115",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 2000,
@@ -1449,7 +1449,7 @@
     },
     {
       "basename": "o_116",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 2000,
@@ -1458,7 +1458,7 @@
     },
     {
       "basename": "o_117",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 2000,
@@ -1467,7 +1467,7 @@
     },
     {
       "basename": "o_118",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 1200,
@@ -1476,7 +1476,7 @@
     },
     {
       "basename": "o_119",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 1200,
@@ -1485,7 +1485,7 @@
     },
     {
       "basename": "o_120",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 800,
@@ -1494,7 +1494,7 @@
     },
     {
       "basename": "o_122",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdout",
       "xy": {
         "x": 400,
@@ -1503,7 +1503,7 @@
     },
     {
       "basename": "o_124",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z16",
       "xy": {
         "x": 800,
@@ -1512,7 +1512,7 @@
     },
     {
       "basename": "o_125",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z8",
       "xy": {
         "x": 400,
@@ -1521,7 +1521,7 @@
     },
     {
       "basename": "o_126",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1600,
@@ -1530,7 +1530,7 @@
     },
     {
       "basename": "o_127",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z128",
       "xy": {
         "x": 2000,
@@ -1539,7 +1539,7 @@
     },
     {
       "basename": "o_128",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 200,
@@ -1548,7 +1548,7 @@
     },
     {
       "basename": "o_129",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 600,
@@ -1557,7 +1557,7 @@
     },
     {
       "basename": "o_130",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1400,
@@ -1566,7 +1566,7 @@
     },
     {
       "basename": "o_131",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1800,
@@ -1575,7 +1575,7 @@
     },
     {
       "basename": "o_134",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1800,
@@ -1584,7 +1584,7 @@
     },
     {
       "basename": "o_135",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stdin",
       "xy": {
         "x": 1000,
@@ -1593,7 +1593,7 @@
     },
     {
       "basename": "o_132",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F32",
       "xy": {
         "x": 1200,
@@ -1602,7 +1602,7 @@
     },
     {
       "basename": "o_133",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
         "x": 2000,
@@ -1611,7 +1611,7 @@
     },
     {
       "basename": "o_136",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z8",
       "xy": {
         "x": 200,
@@ -1620,7 +1620,7 @@
     },
     {
       "basename": "o_137",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z16",
       "xy": {
         "x": 600,
@@ -1629,7 +1629,7 @@
     },
     {
       "basename": "o_138",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 1000,
@@ -1638,7 +1638,7 @@
     },
     {
       "basename": "o_139",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F32",
       "xy": {
         "x": 1000,
@@ -1647,7 +1647,7 @@
     },
     {
       "basename": "o_140",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1800,
@@ -1656,7 +1656,7 @@
     },
     {
       "basename": "o_141",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
         "x": 1800,
@@ -1665,7 +1665,7 @@
     },
     {
       "basename": "o_121",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 600,
@@ -1674,7 +1674,7 @@
     },
     {
       "basename": "o_123",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z16",
       "xy": {
         "x": 600,
@@ -1683,7 +1683,7 @@
     },
     {
       "basename": "o_142",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N8",
       "xy": {
         "x": 200,
@@ -1692,7 +1692,7 @@
     },
     {
       "basename": "o_143",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z8",
       "xy": {
         "x": 200,
@@ -1701,7 +1701,7 @@
     },
     {
       "basename": "o_144",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N32",
       "xy": {
         "x": 1000,
@@ -1710,7 +1710,7 @@
     },
     {
       "basename": "o_145",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 1000,
@@ -1719,7 +1719,7 @@
     },
     {
       "basename": "o_146",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F32",
       "xy": {
         "x": 1000,
@@ -1728,7 +1728,7 @@
     },
     {
       "basename": "o_147",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N128",
       "xy": {
         "x": 1800,
@@ -1737,7 +1737,7 @@
     },
     {
       "basename": "o_148",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1800,
@@ -1746,7 +1746,7 @@
     },
     {
       "basename": "o_149",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
         "x": 1800,
@@ -1755,7 +1755,7 @@
     },
     {
       "basename": "o_150",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 400,
@@ -1764,7 +1764,7 @@
     },
     {
       "basename": "o_151",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 400,
@@ -1773,7 +1773,7 @@
     },
     {
       "basename": "o_152",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 800,
@@ -1782,7 +1782,7 @@
     },
     {
       "basename": "o_153",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 800,
@@ -1791,7 +1791,7 @@
     },
     {
       "basename": "o_154",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 1200,
@@ -1800,7 +1800,7 @@
     },
     {
       "basename": "o_155",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 1200,
@@ -1809,7 +1809,7 @@
     },
     {
       "basename": "o_156",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 2000,
@@ -1818,7 +1818,7 @@
     },
     {
       "basename": "o_157",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 2000,
@@ -1827,7 +1827,7 @@
     },
     {
       "basename": "o_158",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 1200,
@@ -1836,7 +1836,7 @@
     },
     {
       "basename": "o_159",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/stderr",
       "xy": {
         "x": 2000,
@@ -1845,7 +1845,7 @@
     },
     {
       "basename": "o_32",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/size_t",
       "xy": {
         "x": 200,
@@ -1854,7 +1854,7 @@
     },
     {
       "basename": "o_38",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/off_t",
       "xy": {
         "x": 600,
@@ -1863,7 +1863,7 @@
     },
     {
       "basename": "o_39",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 600,
@@ -1872,7 +1872,7 @@
     },
     {
       "basename": "o_40",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/voidPtr",
       "xy": {
         "x": 400,
@@ -1881,7 +1881,7 @@
     },
     {
       "basename": "o_41",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/#1",
       "xy": {
         "x": 200,
@@ -1900,7 +1900,7 @@
     },
     {
       "basename": "o_42",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/off_t",
       "xy": {
         "x": 400,
@@ -1909,7 +1909,7 @@
     },
     {
       "basename": "o_63",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/size_t",
       "xy": {
         "x": 600,
@@ -1918,7 +1918,7 @@
     },
     {
       "basename": "o_160",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/off_t",
       "xy": {
         "x": 800,
@@ -1927,7 +1927,7 @@
     },
     {
       "basename": "o_161",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z64",
       "xy": {
         "x": 1000,
@@ -1936,7 +1936,7 @@
     },
     {
       "basename": "o_162",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 1200,
@@ -1945,7 +1945,7 @@
     },
     {
       "basename": "o_163",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/cpp/size_t",
       "xy": {
         "x": 1200,
@@ -1963,575 +1963,657 @@
       "height": "12"
     },
     {
+      "basename": "o_164",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/time_t",
+      "xy": {
+        "x": 200,
+        "y": 6400
+      }
+    },
+    {
+      "basename": "o_165",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/stat",
+      "xy": {
+        "x": 240,
+        "y": 7710
+      }
+    },
+    {
+      "basename": "o_166",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/time_t",
+      "xy": {
+        "x": 540,
+        "y": 7710
+      }
+    },
+    {
+      "description": "The number of seconds since the start of this epoch.",
+      "basename": "t_47",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -600,
+        "y": 6400
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_167",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/timespec",
+      "xy": {
+        "x": 210,
+        "y": 6590
+      }
+    },
+    {
+      "basename": "o_168",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/timespec",
+      "xy": {
+        "x": 200,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_169",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/time_t",
+      "xy": {
+        "x": 500,
+        "y": 6800
+      }
+    },
+    {
+      "basename": "o_170",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 500,
+        "y": 7000
+      }
+    },
+    {
+      "basename": "o_171",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/timespec",
+      "xy": {
+        "x": 200,
+        "y": 7000
+      }
+    },
+    {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_2",
       "codomain": "hdole/cpp/o_3",
       "to": "hdole/cpp/strerror"
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_5",
       "codomain": "hdole/cpp/o_6",
       "to": "hdole/cpp/stdinToN64"
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_7",
       "codomain": "hdole/cpp/o_8",
       "to": "hdole/cpp/stdinToZ32"
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_9",
       "codomain": "hdole/cpp/o_10",
       "to": "hdole/cpp/stdinToF64"
     },
     {
       "basename": "m_5",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_11",
       "codomain": "hdole/cpp/o_12",
       "to": "hdole/cpp/stdinToStr"
     },
     {
       "basename": "m_6",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_14",
       "codomain": "hdole/cpp/o_15",
       "to": "hdole/cpp/N64ToStdout"
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_16",
       "codomain": "hdole/cpp/o_17",
       "to": "hdole/cpp/Z64ToStdout"
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_18",
       "codomain": "hdole/cpp/o_19",
       "to": "hdole/cpp/F64ToStdout"
     },
     {
       "basename": "m_9",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_20",
       "codomain": "hdole/cpp/o_21",
       "to": "hdole/cpp/StrToStdout"
     },
     {
       "basename": "m_10",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_23",
       "codomain": "hdole/cpp/o_24",
       "to": "hdole/cpp/N64ToStderr"
     },
     {
       "basename": "m_11",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_25",
       "codomain": "hdole/cpp/o_26",
       "to": "hdole/cpp/Z64ToStderr"
     },
     {
       "basename": "m_12",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_27",
       "codomain": "hdole/cpp/o_28",
       "to": "hdole/cpp/F64ToStderr"
     },
     {
       "basename": "m_13",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_29",
       "codomain": "hdole/cpp/o_30",
       "to": "hdole/cpp/StrToStderr"
     },
     {
       "basename": "m_22",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_43",
       "codomain": "hdole/cpp/o_44",
       "to": "hdole/cpp/O_RDONLY"
     },
     {
       "basename": "m_23",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_45",
       "codomain": "hdole/cpp/o_46",
       "to": "hdole/cpp/O_WRONLY"
     },
     {
       "basename": "m_24",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_47",
       "codomain": "hdole/cpp/o_48",
       "to": "hdole/cpp/O_RDWR"
     },
     {
       "basename": "m_25",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_49",
       "codomain": "hdole/cpp/o_50",
       "to": "hdole/cpp/O_APPEND"
     },
     {
       "basename": "m_26",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_51",
       "codomain": "hdole/cpp/o_52",
       "to": "hdole/cpp/O_ASYNC"
     },
     {
       "basename": "m_27",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_53",
       "codomain": "hdole/cpp/o_54",
       "to": "hdole/cpp/O_CREAT"
     },
     {
       "basename": "m_28",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_55",
       "codomain": "hdole/cpp/o_56",
       "to": "hdole/cpp/open"
     },
     {
       "basename": "m_29",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_57",
       "codomain": "hdole/cpp/o_58",
       "to": "hdole/cpp/close"
     },
     {
       "basename": "m_30",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_60",
       "codomain": "hdole/cpp/o_61",
       "to": "hdole/cpp/fstat"
     },
     {
       "basename": "m_32",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_64",
       "codomain": "hdole/cpp/o_65",
       "to": "hdole/cpp/PROT_READ"
     },
     {
       "basename": "m_33",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_66",
       "codomain": "hdole/cpp/o_67",
       "to": "hdole/cpp/PROT_WRITE"
     },
     {
       "basename": "m_34",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_68",
       "codomain": "hdole/cpp/o_69",
       "to": "hdole/cpp/MAP_SHARED"
     },
     {
       "basename": "m_35",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_70",
       "codomain": "hdole/cpp/o_71",
       "to": "hdole/cpp/MAP_PRIVATE"
     },
     {
       "basename": "m_36",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_72",
       "codomain": "hdole/cpp/o_73",
       "to": "hdole/cpp/MAP_ANONYMOUS"
     },
     {
       "basename": "m_37",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_74",
       "codomain": "hdole/cpp/o_75",
       "to": "hdole/cpp/mmap"
     },
     {
       "basename": "m_38",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_76",
       "codomain": "hdole/cpp/o_77",
       "to": "hdole/cpp/munmap"
     },
     {
       "basename": "m_39",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_78",
       "codomain": "hdole/cpp/o_79",
       "to": "hdole/cpp/memToN8"
     },
     {
       "basename": "m_40",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_80",
       "codomain": "hdole/cpp/o_81",
       "to": "hdole/cpp/memToN16"
     },
     {
       "basename": "m_41",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_82",
       "codomain": "hdole/cpp/o_83",
       "to": "hdole/cpp/memToZ32"
     },
     {
       "basename": "m_42",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_84",
       "codomain": "hdole/cpp/o_85",
       "to": "hdole/cpp/memToF64"
     },
     {
       "basename": "m_43",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_86",
       "codomain": "hdole/cpp/o_87",
       "to": "hdole/cpp/IBM S/360 float"
     },
     {
       "basename": "m_44",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_88",
       "codomain": "hdole/cpp/o_89",
       "to": "hdole/cpp/mem2str"
     },
     {
       "basename": "m_45",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_90",
       "codomain": "hdole/cpp/o_91",
       "to": "hdole/cpp/memRec2str"
     },
     {
       "basename": "m_46",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_92",
       "codomain": "hdole/cpp/o_93",
       "to": "hdole/cpp/voidPtrPlus2"
     },
     {
       "basename": "m_47",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_94",
       "codomain": "hdole/cpp/o_95",
       "to": "hdole/cpp/voidPtrPlus4"
     },
     {
       "basename": "m_48",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_96",
       "codomain": "hdole/cpp/o_97",
       "to": "hdole/cpp/voidPtrPlus8"
     },
     {
       "basename": "m_49",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_98",
       "codomain": "hdole/cpp/o_99",
       "to": "hdole/cpp/voidPtrPlusN"
     },
     {
       "basename": "m_50",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_100",
       "codomain": "hdole/cpp/o_101",
       "to": "hdole/cpp/stdinToN8"
     },
     {
       "basename": "m_51",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_103",
       "codomain": "hdole/cpp/o_102",
       "to": "hdole/cpp/stdinToN16"
     },
     {
       "basename": "m_52",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_104",
       "codomain": "hdole/cpp/o_105",
       "to": "hdole/cpp/stdinToN32"
     },
     {
       "basename": "m_53",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_107",
       "codomain": "hdole/cpp/o_106",
       "to": "hdole/cpp/stdinToN128"
     },
     {
       "basename": "m_54",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_108",
       "codomain": "hdole/cpp/o_112",
       "to": "hdole/cpp/N8ToStdout"
     },
     {
       "basename": "m_55",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_109",
       "codomain": "hdole/cpp/o_113",
       "to": "hdole/cpp/N16ToStdout"
     },
     {
       "basename": "m_56",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_110",
       "codomain": "hdole/cpp/o_114",
       "to": "hdole/cpp/N32ToStdout"
     },
     {
       "basename": "m_57",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_111",
       "codomain": "hdole/cpp/o_115",
       "to": "hdole/cpp/N128ToStdout"
     },
     {
       "basename": "m_58",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_128",
       "codomain": "hdole/cpp/o_125",
       "to": "hdole/cpp/stdinToZ8"
     },
     {
       "basename": "m_59",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_129",
       "codomain": "hdole/cpp/o_124",
       "to": "hdole/cpp/stdinToZ16"
     },
     {
       "basename": "m_60",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_130",
       "codomain": "hdole/cpp/o_126",
       "to": "hdole/cpp/stdinToZ64"
     },
     {
       "basename": "m_61",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_131",
       "codomain": "hdole/cpp/o_127",
       "to": "hdole/cpp/stdinToZ128"
     },
     {
       "basename": "m_62",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_135",
       "codomain": "hdole/cpp/o_132",
       "to": "hdole/cpp/stdinToF32"
     },
     {
       "basename": "m_63",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_134",
       "codomain": "hdole/cpp/o_133",
       "to": "hdole/cpp/stdinToF128"
     },
     {
       "basename": "m_64",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_136",
       "codomain": "hdole/cpp/o_122",
       "to": "hdole/cpp/Z8ToStdout"
     },
     {
       "basename": "m_65",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_137",
       "codomain": "hdole/cpp/o_120",
       "to": "hdole/cpp/Z16ToStdout"
     },
     {
       "basename": "m_66",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_138",
       "codomain": "hdole/cpp/o_118",
       "to": "hdole/cpp/Z32ToStdout"
     },
     {
       "basename": "m_67",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_140",
       "codomain": "hdole/cpp/o_116",
       "to": "hdole/cpp/Z128ToStdout"
     },
     {
       "basename": "m_68",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_139",
       "codomain": "hdole/cpp/o_119",
       "to": "hdole/cpp/F32ToStdout"
     },
     {
       "basename": "m_69",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_141",
       "codomain": "hdole/cpp/o_117",
       "to": "hdole/cpp/F128ToStdout"
     },
     {
       "basename": "m_70",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_142",
       "codomain": "hdole/cpp/o_150",
       "to": "hdole/cpp/N8ToStderr"
     },
     {
       "basename": "m_71",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_143",
       "codomain": "hdole/cpp/o_151",
       "to": "hdole/cpp/Z8ToStderr"
     },
     {
       "basename": "m_72",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_121",
       "codomain": "hdole/cpp/o_153",
       "to": "hdole/cpp/N16ToStderr"
     },
     {
       "basename": "m_73",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_123",
       "codomain": "hdole/cpp/o_152",
       "to": "hdole/cpp/Z16ToStderr"
     },
     {
       "basename": "m_74",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_144",
       "codomain": "hdole/cpp/o_155",
       "to": "hdole/cpp/N32ToStderr"
     },
     {
       "basename": "m_75",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_145",
       "codomain": "hdole/cpp/o_154",
       "to": "hdole/cpp/Z32ToStderr"
     },
     {
       "basename": "m_76",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_146",
       "codomain": "hdole/cpp/o_158",
       "to": "hdole/cpp/F32ToStderr"
     },
     {
       "basename": "m_77",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_147",
       "codomain": "hdole/cpp/o_157",
       "to": "hdole/cpp/N128ToStderr"
     },
     {
       "basename": "m_78",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_148",
       "codomain": "hdole/cpp/o_156",
       "to": "hdole/cpp/Z128ToStderr"
     },
     {
       "basename": "m_79",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_149",
       "codomain": "hdole/cpp/o_159",
       "to": "hdole/cpp/F128ToStderr"
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_32",
       "codomain": "hdole/cpp/o_33",
       "to": "hdole/cpp/size_tToN64"
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_34",
       "codomain": "hdole/cpp/o_35",
       "to": "hdole/cpp/off_tToZ64"
     },
     {
       "basename": "m_15",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_36",
       "codomain": "hdole/cpp/o_37",
       "to": "hdole/cpp/voidPtrToN64"
     },
     {
       "basename": "m_16",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_0",
       "codomain": "hdole/cpp/o_1",
       "to": "hdole/cpp/ErrnoToZ32"
     },
     {
       "basename": "m_17",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_35",
       "codomain": "hdole/cpp/o_38",
       "to": "hdole/cpp/Z64toOff_t"
     },
     {
       "basename": "m_18",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_37",
       "codomain": "hdole/cpp/o_39",
       "to": "hdole/cpp/N64toVoidPtr"
     },
     {
       "basename": "m_19",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_41",
       "codomain": "hdole/cpp/o_40",
       "to": "hdole/cpp/NULL"
     },
     {
       "basename": "m_20",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_62",
       "codomain": "hdole/cpp/o_42",
       "to": "hdole/cpp/filesize"
     },
     {
       "basename": "m_21",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_33",
       "codomain": "hdole/cpp/o_63",
       "to": "hdole/cpp/N64toSize_t"
     },
     {
       "basename": "m_31",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_160",
       "codomain": "hdole/cpp/o_161",
       "to": "hdole/cpp/off_tToZ64"
     },
     {
       "basename": "m_80",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_161",
       "codomain": "hdole/cpp/o_162",
       "to": "hdole/int/abs64"
     },
     {
       "basename": "m_81",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_162",
       "codomain": "hdole/cpp/o_163",
       "to": "hdole/cpp/N64toSize_t"
@@ -2550,7 +2632,7 @@
     },
     {
       "basename": "m_83",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_160",
       "codomain": "hdole/cpp/o_163",
       "attributes": [
@@ -2563,104 +2645,22 @@
       "to": "hdole/cpp/off_tToSize_t"
     },
     {
-      "basename": "o_164",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/time_t",
-      "xy": {
-        "x": 200,
-        "y": 6400
-      }
-    },
-    {
-      "basename": "o_165",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/stat",
-      "xy": {
-        "x": 240,
-        "y": 7710
-      }
-    },
-    {
-      "basename": "o_166",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/time_t",
-      "xy": {
-        "x": 540,
-        "y": 7710
-      }
-    },
-    {
       "basename": "m_84",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_165",
       "codomain": "hdole/cpp/o_166",
       "to": "hdole/cpp/modtime"
     },
     {
-      "description": "The number of seconds since the start of this epoch.",
-      "basename": "t_47",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -600,
-        "y": 6400
-      },
-      "height": "24"
-    },
-    {
-      "basename": "o_167",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/timespec",
-      "xy": {
-        "x": 210,
-        "y": 6590
-      }
-    },
-    {
-      "basename": "o_168",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/timespec",
-      "xy": {
-        "x": 200,
-        "y": 6800
-      }
-    },
-    {
-      "basename": "o_169",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/time_t",
-      "xy": {
-        "x": 500,
-        "y": 6800
-      }
-    },
-    {
       "basename": "m_85",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_168",
       "codomain": "hdole/cpp/o_169",
       "to": "hdole/cpp/seconds"
     },
     {
-      "basename": "o_170",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 500,
-        "y": 7000
-      }
-    },
-    {
-      "basename": "o_171",
-      "prototype": "DiagramObject",
-      "to": "hdole/cpp/timespec",
-      "xy": {
-        "x": 200,
-        "y": 7000
-      }
-    },
-    {
       "basename": "m_86",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_171",
       "codomain": "hdole/cpp/o_170",
       "to": "hdole/cpp/nanoseconds"
@@ -2807,6 +2807,19 @@
         "hdole/cpp/stat",
         "hdole/cpp/Errno"
       ]
+    },
+    {
+      "description": "Number of seconds since the start of this epoch.",
+      "basename": "time_t",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "typedef long int %0;"
+      }
+    },
+    {
+      "description": "Structure containing the number of seconds since the epoch and the number of nanoseconds",
+      "basename": "timespec",
+      "prototype": "CatObject"
     },
     {
       "description": "return string describing error",
@@ -3634,24 +3647,11 @@
       "source": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
     },
     {
-      "description": "Number of seconds since the start of this epoch.",
-      "basename": "time_t",
-      "prototype": "CatObject",
-      "code": {
-        "cpp": "typedef long int %0;"
-      }
-    },
-    {
       "description": "Time of last modification",
       "basename": "modtime",
       "prototype": "Morphism",
       "domain": "hdole/cpp/stat",
       "codomain": "hdole/cpp/time_t"
-    },
-    {
-      "description": "Structure containing the number of seconds since the epoch and the number of nanoseconds",
-      "basename": "timespec",
-      "prototype": "CatObject"
     },
     {
       "description": "Extract nanoseconds from the timespec",
@@ -3670,11 +3670,11 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630700009578,
+  "timestamp": 1631091435839,
   "version": 0,
   "viewport": {
-    "x": 2094.4940996853347,
-    "y": -16482.734042384887,
-    "scale": 0.27528564494588037
+    "x": 883.4086792616494,
+    "y": -2643.779500364315,
+    "scale": 0.8374134172998857
   }
 }

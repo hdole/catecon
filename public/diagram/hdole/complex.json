@@ -7,14 +7,14 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/complex_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/floats"
   ],
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 200,
@@ -23,7 +23,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/Po{F64,F64}oP",
       "xy": {
         "x": 400,
@@ -35,14 +35,14 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 470
+        "x": -400,
+        "y": 400
       },
       "height": 24
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Basics/#1",
       "xy": {
         "x": 200,
@@ -51,7 +51,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -63,14 +63,14 @@
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 670
+        "x": -400,
+        "y": 600
       },
       "height": 24
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Basics/#1",
       "xy": {
         "x": 200,
@@ -79,7 +79,7 @@
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -91,14 +91,14 @@
       "basename": "t_2",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 870
+        "x": -400,
+        "y": 800
       },
       "height": 24
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Basics/#1",
       "xy": {
         "x": 200,
@@ -107,7 +107,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -115,18 +115,18 @@
       }
     },
     {
-      "description": "the real part of a complex number",
+      "description": "The real part of a complex number",
       "basename": "t_3",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 1070
+        "x": -400,
+        "y": 1000
       },
       "height": 24
     },
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 200,
@@ -135,7 +135,7 @@
     },
     {
       "basename": "o_9",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
@@ -143,18 +143,18 @@
       }
     },
     {
-      "description": "the imaginary part of a complex numbers",
+      "description": "The imaginary part of a complex numbers",
       "basename": "t_4",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 1270
+        "x": -400,
+        "y": 1200
       },
       "height": 24
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 200,
@@ -163,7 +163,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
@@ -171,18 +171,18 @@
       }
     },
     {
-      "description": "every floating point number is a complex number",
+      "description": "Every floating point number is a complex number",
       "basename": "t_5",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 1470
+        "x": -400,
+        "y": 1400
       },
       "height": 24
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 200,
@@ -191,7 +191,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -199,18 +199,18 @@
       }
     },
     {
-      "description": "conjugate of a complex number",
+      "description": "Conjugate of a complex number",
       "basename": "t_6",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 1670
+        "x": -400,
+        "y": 1600
       },
       "height": 24
     },
     {
       "basename": "o_14",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 200,
@@ -219,7 +219,7 @@
     },
     {
       "basename": "o_15",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -227,18 +227,18 @@
       }
     },
     {
-      "description": "the absolute value of a complex number",
+      "description": "The absolute value of a complex number",
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 1870
+        "x": -400,
+        "y": 1800
       },
       "height": 24
     },
     {
       "basename": "o_16",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 200,
@@ -247,7 +247,7 @@
     },
     {
       "basename": "o_17",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
@@ -256,7 +256,7 @@
     },
     {
       "basename": "o_18",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/Po{C,C}oP",
       "xy": {
         "x": 200,
@@ -268,8 +268,8 @@
       "basename": "t_8",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 2070
+        "x": -400,
+        "y": 2000
       },
       "height": 24
     },
@@ -278,14 +278,14 @@
       "basename": "t_9",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 2270
+        "x": -400,
+        "y": 2200
       },
       "height": 24
     },
     {
       "basename": "o_19",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/Po{C,C}oP",
       "xy": {
         "x": 200,
@@ -294,7 +294,7 @@
     },
     {
       "basename": "o_20",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -302,18 +302,18 @@
       }
     },
     {
-      "description": "subtraction of two complex numbers",
+      "description": "Subtraction of two complex numbers",
       "basename": "t_10",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 2470
+        "x": -400,
+        "y": 2400
       },
       "height": 24
     },
     {
       "basename": "o_21",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/Po{C,C}oP",
       "xy": {
         "x": 200,
@@ -322,7 +322,7 @@
     },
     {
       "basename": "o_22",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -334,14 +334,14 @@
       "basename": "t_11",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 2670
+        "x": -400,
+        "y": 2600
       },
       "height": 24
     },
     {
       "basename": "o_23",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/Po{C,C}oP",
       "xy": {
         "x": 200,
@@ -350,7 +350,7 @@
     },
     {
       "basename": "o_24",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/C",
       "xy": {
         "x": 400,
@@ -359,7 +359,7 @@
     },
     {
       "basename": "o_25",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/CPo{C,hdole/Basics/#1}oPC",
       "xy": {
         "x": 200,
@@ -371,24 +371,24 @@
       "basename": "t_12",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 2870
+        "x": -400,
+        "y": 2800
       },
       "height": 24
     },
     {
-      "description": "division of two complex numbers or an exception",
+      "description": "Division of two complex numbers or an exception",
       "basename": "t_13",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 3070
+        "x": -400,
+        "y": 3000
       },
       "height": 24
     },
     {
       "basename": "o_26",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/Po{C,C}oP",
       "xy": {
         "x": 200,
@@ -397,7 +397,7 @@
     },
     {
       "basename": "o_27",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/CPo{C,hdole/Basics/#1}oPC",
       "xy": {
         "x": 400,
@@ -405,18 +405,18 @@
       }
     },
     {
-      "description": "raise the first number to the second number as exponent or an exception",
+      "description": "Raise the first number to the second number\nas exponent or an exception",
       "basename": "t_14",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 3270
+        "x": -400,
+        "y": 3200
       },
       "height": 24
     },
     {
       "basename": "o_28",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/Po{C,C}oP",
       "xy": {
         "x": 200,
@@ -425,7 +425,7 @@
     },
     {
       "basename": "o_29",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/complex/CPo{C,hdole/Basics/#1}oPC",
       "xy": {
         "x": 400,
@@ -455,7 +455,7 @@
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_0",
       "codomain": "hdole/complex/o_1",
       "homsetIndex": 1,
@@ -463,7 +463,7 @@
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_1",
       "codomain": "hdole/complex/o_0",
       "homsetIndex": 1,
@@ -471,91 +471,91 @@
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_2",
       "codomain": "hdole/complex/o_3",
       "to": "hdole/complex/zero"
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_4",
       "codomain": "hdole/complex/o_5",
       "to": "hdole/complex/i"
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_6",
       "codomain": "hdole/complex/o_7",
       "to": "hdole/complex/e"
     },
     {
       "basename": "m_5",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_8",
       "codomain": "hdole/complex/o_9",
       "to": "hdole/complex/real"
     },
     {
       "basename": "m_6",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_10",
       "codomain": "hdole/complex/o_11",
       "to": "hdole/complex/imag"
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_12",
       "codomain": "hdole/complex/o_13",
       "to": "hdole/complex/F2C"
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_14",
       "codomain": "hdole/complex/o_15",
       "to": "hdole/complex/conjugate"
     },
     {
       "basename": "m_9",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_16",
       "codomain": "hdole/complex/o_17",
       "to": "hdole/complex/abs"
     },
     {
       "basename": "m_10",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_19",
       "codomain": "hdole/complex/o_20",
       "to": "hdole/complex/add"
     },
     {
       "basename": "m_11",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_21",
       "codomain": "hdole/complex/o_22",
       "to": "hdole/complex/subtract"
     },
     {
       "basename": "m_12",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_23",
       "codomain": "hdole/complex/o_24",
       "to": "hdole/complex/multiply"
     },
     {
       "basename": "m_13",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_26",
       "codomain": "hdole/complex/o_27",
       "to": "hdole/complex/divide"
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_28",
       "codomain": "hdole/complex/o_29",
       "to": "hdole/complex/pow"
@@ -752,11 +752,11 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630568688400,
+  "timestamp": 1631089046857,
   "version": 0,
   "viewport": {
-    "x": 8963.113261240753,
-    "y": 1094.4424840321255,
-    "scale": 2.060077151710618
+    "x": 2007.1831838118487,
+    "y": -2195.0298649927627,
+    "scale": 1.1471280424051202
   }
 }
