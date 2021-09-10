@@ -19,7 +19,7 @@ var Cat = Cat || require('./Cat.js');
 			super(diagram, args);
 			Object.defineProperty(this, 'currentDiagram', {value:null, writable:true});
 			Cat.R.languages.set(this.basename, this);
-			Cat.R.$CAT.getElement('PFS').actions.set(args.basename, this);
+			Cat.R.$CAT.getElement('Set').actions.set(args.basename, this);
 			this.tab = 3;
 			this.context = null;
 			this.references = new Map();
