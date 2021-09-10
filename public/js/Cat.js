@@ -516,7 +516,7 @@ class Runtime
 			{
 				value:
 				{
-					category:		'hdole/PFS',
+					category:		'sys/Cat',
 					debug:			false,
 					showEvents:		false,
 				},
@@ -674,7 +674,8 @@ class Runtime
 		new ProductAction(productDiagram);
 		new ProductEditAction(productDiagram);
 		new ProjectAction(productDiagram);
-		new PullbackAction(productDiagram);
+		new PullbackAction(productDiagram, true);
+		new PullbackAction(productDiagram, false);
 		new ProductAssemblyAction(productDiagram);
 		new MorphismAssemblyAction(productDiagram);
 		setup(productDiagram);
@@ -705,16 +706,10 @@ class Runtime
 		this.Cat.addActions('distribute');
 		this.sys.Actions.addActions('diagram');
 	}
-	setupPFS()
+	setupSet()
 	{
-		const pfsDiagram = new Diagram(this.$CAT, {basename:'pfs', codomain:'Actions', description:'diagram for PFS actions', user:'sys'});
-		const pfs = new Category(this.$CAT,
-		{
-			basename:'PFS',
-			user:'hdole',
-			properName:'&Popf;&Fopf;&Sopf;',
-			actionDiagrams:	['diagram', 'product', 'coproduct', 'hom', 'distribute'],
-		});
+		new Diagram(this.$CAT, {basename:'set', codomain:'Actions', description:'diagram for Set actions', user:'zf'});
+		new Category(this.$CAT, {basename:'Set', user:'zf', properName:'&Sopf;&eopf;&topf;', actionDiagrams:['diagram', 'product', 'coproduct', 'hom', 'distribute'] });
 	}
 	initTestProcedure()
 	{
@@ -757,7 +752,7 @@ class Runtime
 		{
 			this.setupCore();
 			this.setupActions();
-			this.setupPFS();
+			this.setupSet();
 			isGUI && D.initialize();		// initialize GUI
 			this.cloud = new Amazon();
 			this.cloud.initialize();
@@ -813,6 +808,8 @@ class Runtime
 			const localLog = isGUI ? U.readfile(`${name}.log`) : null;
 			if (localLog)
 				args.log = JSON.parse(localLog);
+if (args.codomain === 'hdole/PFS') 	// TODO remove
+args.codomain = 'zf/Set';
 			const diagram = new Cat[args.prototype](userDiagram, args);
 			const png = U.readfile(`${diagram.name}.png`);
 			isGUI && png && D.diagramPNGs.set(diagram.name, png);
@@ -2368,7 +2365,7 @@ class DiagramTool extends ElementTool
 			}
 			if (!nobuts.has('download'))
 			{
-				if (info.category === 'hdole/PFS')
+				if (info.category === 'sys/Cat')
 				{
 					buttons.push(D.getIcon('js', 'download-js', e => diagram.downloadJS(e), 'Download Javascript', btnSize));
 					buttons.push(D.getIcon('cpp', 'download-cpp', e => diagram.downloadCPP(e), 'Download C++', btnSize));
@@ -4557,7 +4554,7 @@ class Display
 					copy = new IndexMorphism(diagram, {domain, codomain, to, attributes:[['flipName', true]]});
 					break;
 				case 'IndexObject':
-				case 'DiagramPullback':
+				case 'IndexPullback':
 					copy = pasteObject(elt);
 					copy.update();
 					break;
@@ -4719,10 +4716,10 @@ class Display
 					{
 						const xy = elements[i][1];
 						elt.setXY(xy);
-						this.emitElementEvent(diagram, 'move', elt);
+						D.emitElementEvent(diagram, 'move', elt);
 					}
 				}
-				this.emitDiagramEvent(diagram, 'move');
+				D.emitDiagramEvent(diagram, 'move');
 			},
 		};
 		this.replayCommands.set('move', replayMove);
@@ -4750,8 +4747,8 @@ class Display
 					morphs.forEach(m => { minNdx = Math.min(minNdx, elements.indexOf(m)); });
 					elements.splice(minNdx, 0, from);	// put from to be before the morphisms
 					diagram.domain.replaceElements(elements);
-					this.emitObjectEvent(diagram, 'fuse', from, {target});
-					this.emitCellEvent(diagram, 'check');
+					D.emitObjectEvent(diagram, 'fuse', from, {target});
+					D.emitCellEvent(diagram, 'check');
 				}
 			}
 		};
@@ -4786,7 +4783,7 @@ class Display
 		{
 			replay(e, diagram, args)
 			{
-				this.doPaste(e, args.xy, diagram.getElements(args.elements));
+				D.doPaste(e, args.xy, diagram.getElements(args.elements));
 			}
 		};
 		this.replayCommands.set('paste', replayPaste);
@@ -5656,7 +5653,7 @@ class Catalog extends DiagramTool		// GUI only
 		this.clear();
 		this.showSection(this.currentSection);
 		const toolbar = D.navbar.element.querySelector('.buttonBarLeft');
-		const buttons = this.getButtons();
+		const buttons = D.session.mode === 'catalog' ? this.getButtons() : [];
 		const size = '.32in';
 		buttons.map(btn =>
 		{
@@ -8507,11 +8504,12 @@ class IndexObject extends CatObject
 	}
 }
 
-class DiagramPullback extends IndexObject
+class IndexPullback extends IndexObject
 {
 	constructor(diagram, args)
 	{
 		super(diagram, args);
+		isGUI && D.emitElementEvent(diagram, 'new', this);
 		this.morphisms = args.morphisms.map(m =>
 		{
 			const mo = diagram.getElement(m);
@@ -8528,7 +8526,6 @@ class DiagramPullback extends IndexObject
 				const from = new IndexMorphism(diagram, {to, anon:'pb', domain:this, codomain:this.morphisms[index].domain});
 				return from.name;
 			});
-		isGUI && D.emitElementEvent(diagram, 'new', this);
 	}
 	json()
 	{
@@ -9298,7 +9295,7 @@ class PullbackAction extends Action
 	action(e, diagram, morphisms)
 	{
 		const names = morphisms.map(m => m.name);
-		const pg = this.doit(e, diagram, morphisms);
+		const pb = this.doit(e, diagram, morphisms);
 		diagram.log({command:this.name, morphisms:names});
 		// 	TODO antilog
 		diagram.deselectAll(e);
@@ -9308,10 +9305,10 @@ class PullbackAction extends Action
 	{
 		const morphisms = source.map(m => m.to);
 		const to = diagram.get('PullbackObject', {morphisms, dual:this.dual});
-		const bary = D.barycenter(morphisms.map(m => m.domain));
-		const sink = this.dual ? morphisms[0].domain : morphisms[0].codomain;
+		const bary = D.barycenter(source.map(m => m.domain));
+		const sink = this.dual ? source[0].domain : source[0].codomain;
 		const xy = bary.add(bary.subtract(sink));
-		const pb = new DiagramPullback(diagram, {xy, to, morphisms:source, dual:this.dual});
+		const pb = new IndexPullback(diagram, {xy, to, morphisms:source, dual:this.dual});
 		D.emitCellEvent(diagram, 'check');
 		return pb;
 	}
@@ -11168,6 +11165,10 @@ class Category extends CatObject
 			R.sync = false;
 			data.filter((args, ndx) =>
 			{
+if (args.category === 'hdole/PFS')	// TODO remove
+	args.category = 'zf/Set';
+if (args.codomain === 'hdole/PFS')	// TODO remove
+	args.codomain = 'zf/Set';
 				switch(args.prototype)
 				{
 					case 'DiagramObject':		// TODO remove
@@ -16745,7 +16746,7 @@ const Cat =
 	DiagramComposite,
 	IndexMorphism,
 	IndexObject,
-	DiagramPullback,
+	IndexPullback,
 	DiagramText,
 	Distribute,
 	Element,
