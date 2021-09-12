@@ -5,6 +5,7 @@ const sig2legs = new Map();		// sig to the list of pairs [leg, item]
 const equals = new Map();		// sig maps to a set of sigs that are equal to each other
 const notEquals = new Map();		// sig maps to a set of sigs that are not equal to each other
 const items = new Map();		// equivalences loaded by the client can be tracked by an item; typically the name of the element
+const identities = new Set();	// sigs of identities
 let maxLegLength = 0;			// keep track of this since no point substituting legs bigger than our biggest leg
 let spoiled = false;			// gets spoiled by editting deleting something
 let diagramItems = new Map();	// tracks which items belong to which diagram
@@ -22,6 +23,9 @@ onmessage = e =>
 		{
 			case 'start':
 				importScripts((typeof exports === 'object' ? args.url : '') + '/js/sjcl.js');
+				break;
+			case 'LoadIdentity':
+				loadIdentity(args.diagram, args.item, args.signature);
 				break;
 			case 'LoadItem':
 				loadItem(args.diagram, args.item, args.leftLeg, args.rightLeg, args.equal);
@@ -76,19 +80,15 @@ function loadSigLeg(sig, leg)
 	equs.push(leg);
 }
 
-function loadItem(diagram, item, leftLeg, rightLeg, equal)
+function loadIdentity(diagram, item, sig)
 {
-	const leftSig = Sig(...leftLeg);
-	const rightSig = Sig(...rightLeg);
-	!items.has(item) && items.set(item, new Map());
-	items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg, equal]);
-	!diagramItems.has(diagram) && diagramItems.set(diagram, new Set());
-	diagramItems.get(diagram).add(item);
-	loadEquivalences(diagram, item, leftLeg, rightLeg, equal);
+	identities.add(sig);
 }
 
-function loadEquivalences(diagram, item, leftLeg, rightLeg, equal)
+function loadEquivalences(diagram, lLeg, rLeg, equal)
 {
+	const leftLeg = lLeg.length > 1 ? removeIdentities(lLeg) : lLeg;
+	const rightLeg = rLeg.length > 1 ? removeIdentities(rLeg) : rLeg;
 	maxLegLength = Math.max(maxLegLength, leftLeg.length, rightLeg.length);
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
@@ -98,6 +98,8 @@ function loadEquivalences(diagram, item, leftLeg, rightLeg, equal)
 		const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set();
 		leftSigs.add(rightSig);
 		rightSigs.forEach(s => leftSigs.add(s));
+		leftSigs.add(leftSig);
+		leftSigs.add(rightSig);
 		equals.set(leftSig, leftSigs);
 		equals.set(rightSig, leftSigs);	// since equal set is same
 		loadSigLeg(leftSig, rightLeg);
@@ -115,6 +117,17 @@ function loadEquivalences(diagram, item, leftLeg, rightLeg, equal)
 	return true;
 }
 
+function loadItem(diagram, item, leftLeg, rightLeg, equal)
+{
+	const leftSig = Sig(...leftLeg);
+	const rightSig = Sig(...rightLeg);
+	!items.has(item) && items.set(item, new Map());
+	items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg, equal]);
+	!diagramItems.has(diagram) && diagramItems.set(diagram, new Set());
+	diagramItems.get(diagram).add(item);
+	loadEquivalences(diagram, leftLeg, rightLeg, equal);
+}
+
 function compareSigs(leftSig, rightSig)
 {
 	const equ = equals.get(leftSig);
@@ -126,18 +139,48 @@ function compareSigs(leftSig, rightSig)
 	return 'unknown';
 }
 
-function scanLeg(leg, sig)		// recursive scanning of the leg trying to match the sig
+function removeIdentities(leg)
+{
+	return leg.filter(s => !identities.has(s));
+}
+
+function scanLeg(leg, sig, scanned)		// recursive scanning of the leg trying to match the sig
 {
 	const len = leg.length;
 	if (len > 2)
+	{
 		for (let ndx=0; ndx < len-1; ++ndx)
 			for (let cnt=2; cnt <= Math.min(maxLegLength, len - ndx); ++cnt)
-				if (checkLeg(leg, ndx, cnt, sig))
+				if (checkLeg(leg, ndx, cnt, sig, scanned))
 					return true;
+	}
+//return false;
+	else		// expand leg
+	{
+		for (let i=0; i<2; i++)
+		{
+			const otherLegs = sig2legs.get(leg[i]);
+			if (otherLegs)
+			{
+				scanned.add(leg[0]);
+				for(let l=0; l<otherLegs.length; l++)
+				{
+					const nuLeg = [];
+					if (i === 1)
+						nuLeg.push(leg[0]);
+					nuLeg.push(...otherLegs[l]);
+					if (i === 0)
+						nuLeg.push(leg[1]);
+					if (scanLeg(nuLeg, sig, scanned))
+						return true;
+				}
+			}
+		}
+	}
 	return false;
 }
 
-function checkLeg(leg, ndx, cnt, sig)
+function checkLeg(leg, ndx, cnt, sig, scanned)
 {
 	let isEqual = false;
 	const subLeg = leg.slice(ndx, ndx + cnt);
@@ -147,15 +190,17 @@ function checkLeg(leg, ndx, cnt, sig)
 	{
 		for (const equ of equs)
 		{
+			if (scanned.has(equ))
+				continue;
 			const nuLeg = leg.slice(0, ndx);	// first part of leg
-			nuLeg.push(equ)						// replace sub-leg with sig
+			!identities.has(equ) && nuLeg.push(equ)						// replace sub-leg with sig
 			if (ndx + cnt < leg.length)			// add rest of original leg
 				nuLeg.push(...leg.slice(ndx + cnt, leg.length));
 			if (Sig(...nuLeg) === sig)
 				return true;
 		}
 	}
-	if (sig2legs.has(subSig))		// try substituting shorter legs for the sub-leg and scanning that leg
+	if (sig2legs.has(subSig) && !scanned.has(subSig))		// try substituting shorter legs for the sub-leg and scanning that leg
 	{
 		const subSet = sig2legs.get(subSig);
 		for (const altLeg of subSet)
@@ -169,9 +214,9 @@ function checkLeg(leg, ndx, cnt, sig)
 				const nuSig = Sig(nuLeg);
 				isEqual = sig === nuSig ? true : equals.has(sig) && equals.get(sig).has(nuSig);
 				if (!isEqual)
-					isEqual = scanLeg(nuLeg, sig);
+					isEqual = scanLeg(nuLeg, sig, scanned);
 				if (isEqual)
-					loadEquivalences(null, null, leg, nuLeg, true);
+					loadEquivalences(null, leg, nuLeg, true);
 			}
 		}
 	}
@@ -184,23 +229,26 @@ function loadDiagrams(diagrams)
 	maxLegLength = 0;
 	sig2legs.clear();
 	equals.clear();
-	diagrams.map(diagram => diagramItems.has(diagram) && diagramItems.get(diagram).forEach(item => items.get(item).forEach(equ => loadEquivalences(diagram, item, equ[0], equ[1], equ[2]))));
+	diagrams.map(diagram => diagramItems.has(diagram) && diagramItems.get(diagram).forEach(item => items.get(item).forEach(equ => loadEquivalences(diagram, equ[0], equ[1], equ[2]))));
 	spoiled = false;
 }
 
 // cell: tracking token for client; typically the sig of a cell
-function checkEquivalence(diagram, cell, leftLeg, rightLeg)
+function checkEquivalence(diagram, cell, lLeg, rLeg)
 {
 	if (spoiled)		// spoilage comes from editting
 		loadDiagrams(contextDiagrams);
+	const leftLeg = lLeg.length > 1 ? removeIdentities(lLeg) : lLeg;
+	const rightLeg = rLeg.length > 1 ? removeIdentities(rLeg) : rLeg;
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	let isEqual = compareSigs(leftSig, rightSig);
+	const scanned = new Set();
 	if (typeof isEqual === 'string')
 	{
-		let equal = scanLeg(leftLeg, rightSig);
+		let equal = scanLeg(leftLeg, rightSig, scanned);
 		if (!equal)
-			equal = scanLeg(rightLeg, leftSig);
+			equal = scanLeg(rightLeg, leftSig, scanned);
 		isEqual = equal ? true : 'unknown';
 	}
 	return {diagram, cell, isEqual};
