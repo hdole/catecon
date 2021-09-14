@@ -447,10 +447,10 @@
       "basename": "t_17",
       "prototype": "DiagramText",
       "xy": {
-        "x": 0,
+        "x": -450,
         "y": 0
       },
-      "height": 96,
+      "height": "200",
       "weight": "bold"
     },
     {
@@ -586,15 +586,15 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/complex/C",
-        "hdole/complex/C"
+        "C",
+        "C"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/complex/C",
+        "C",
         "hdole/Basics/#1"
       ]
     },
@@ -752,11 +752,11 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631089046857,
+  "timestamp": 1631343948656,
   "version": 0,
   "viewport": {
     "x": 2007.1831838118487,
-    "y": -2195.0298649927627,
+    "y": 24.97013500723733,
     "scale": 1.1471280424051202
   }
 }

@@ -16,7 +16,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -200,
+        "x": -190,
         "y": 200
       },
       "height": "200",
@@ -34,7 +34,7 @@
     },
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/index",
       "xy": {
         "x": 400,
@@ -43,7 +43,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/C",
       "xy": {
         "x": 600,
@@ -62,7 +62,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/k",
       "xy": {
         "x": 400,
@@ -71,7 +71,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/diagram",
       "xy": {
         "x": 640,
@@ -90,7 +90,7 @@
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/#1",
       "xy": {
         "x": 400,
@@ -109,7 +109,7 @@
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/#1",
       "xy": {
         "x": 400,
@@ -128,7 +128,7 @@
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": 600,
@@ -136,29 +136,8 @@
       }
     },
     {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/diagram/o_0",
-      "codomain": "hdole/diagram/o_1",
-      "to": "hdole/diagram/d"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/diagram/o_2",
-      "codomain": "hdole/diagram/o_3",
-      "to": "hdole/diagram/references"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/diagram/o_5",
-      "codomain": "hdole/diagram/o_4",
-      "to": "hdole/diagram/user"
-    },
-    {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 600,
@@ -166,15 +145,8 @@
       }
     },
     {
-      "basename": "m_3",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/diagram/o_6",
-      "codomain": "hdole/diagram/o_7",
-      "to": "hdole/diagram/time"
-    },
-    {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "xy": {
         "x": 700,
@@ -183,7 +155,7 @@
     },
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/diagram/#1",
       "xy": {
         "x": 400,
@@ -191,8 +163,36 @@
       }
     },
     {
+      "basename": "m_0",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/diagram/o_0",
+      "codomain": "hdole/diagram/o_1",
+      "to": "hdole/diagram/d"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/diagram/o_2",
+      "codomain": "hdole/diagram/o_3",
+      "to": "hdole/diagram/references"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/diagram/o_5",
+      "codomain": "hdole/diagram/o_4",
+      "to": "hdole/diagram/user"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/diagram/o_6",
+      "codomain": "hdole/diagram/o_7",
+      "to": "hdole/diagram/time"
+    },
+    {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/diagram/o_8",
       "codomain": "hdole/diagram/o_11",
       "to": "hdole/diagram/viewport"
@@ -224,6 +224,14 @@
       "size": 1
     },
     {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F64",
+        "hdole/floats/F64",
+        "hdole/floats/F64"
+      ]
+    },
+    {
       "basename": "d",
       "prototype": "Morphism",
       "properName": "D",
@@ -250,14 +258,6 @@
       "codomain": "hdole/floats/F64"
     },
     {
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/floats/F64",
-        "hdole/floats/F64",
-        "hdole/floats/F64"
-      ]
-    },
-    {
       "basename": "viewport",
       "prototype": "Morphism",
       "domain": "hdole/diagram/#1",
@@ -266,11 +266,11 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630700376894,
+  "timestamp": 1631525759611,
   "version": 0,
   "viewport": {
     "x": 217.5461011336106,
-    "y": 294.42865860772577,
+    "y": 386.42865860772577,
     "scale": 5.9239444904486085
   },
   "properName": "hdole/diagram"

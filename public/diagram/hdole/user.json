@@ -6,7 +6,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/user_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/HTML"
   ],
@@ -24,7 +24,7 @@
     },
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/user/user",
       "xy": {
         "x": -800,
@@ -33,7 +33,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": -600,
@@ -42,7 +42,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": -800,
@@ -51,7 +51,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/Strings/str",
       "xy": {
         "x": -1000,
@@ -60,7 +60,7 @@
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": -800,
@@ -68,7 +68,7 @@
       }
     },
     {
-      "description": "This diagram shows the information stored in Catecon\nwith regards to a user which is supported by the AWS Cognito user pool.\nThe privileges string is a list of space separated tokens giving\nthe user&#39;s access tokens.\nThe maxDiagrams refers to the maximum number of diagrams\nthe user may have on the server.\nThe phoneNumber is for multi-factor authentication.",
+      "description": "This diagram shows the Catecon user info in the AWS Cognito user pool.\nThe privileges string is a list of space separated tokens giving the user&#39;s\naccess tokens.  The maxDiagrams refers to the maximum number of\ndiagrams the user may have on the server.  The phoneNumber is for\nAWS multi-factor authentication and is not stored by Catecon.",
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
@@ -79,21 +79,21 @@
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/user/o_0",
       "codomain": "hdole/user/o_1",
       "to": "hdole/user/name"
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/user/o_0",
       "codomain": "hdole/user/o_2",
       "to": "hdole/user/phoneNumber"
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/user/o_0",
       "codomain": "hdole/user/o_3",
       "attributes": [
@@ -106,7 +106,7 @@
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/user/o_0",
       "codomain": "hdole/user/o_4",
       "attributes": [
@@ -152,7 +152,7 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630474719081,
+  "timestamp": 1631503458434,
   "version": 0,
   "viewport": {
     "x": 1959.7487618567952,

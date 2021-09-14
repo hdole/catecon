@@ -154,7 +154,6 @@ function scanLeg(leg, sig, scanned)		// recursive scanning of the leg trying to 
 				if (checkLeg(leg, ndx, cnt, sig, scanned))
 					return true;
 	}
-//return false;
 	else		// expand leg
 	{
 		for (let i=0; i<2; i++)

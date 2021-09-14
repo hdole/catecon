@@ -218,7 +218,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1870,
-        "y": -1890
+        "y": -1880
       },
       "height": "200",
       "weight": "bold"
@@ -793,7 +793,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/voidPtr_0}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/cpp/voidPtr",
@@ -802,7 +801,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/size_t_1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/cpp/size_t",
@@ -811,7 +809,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_2}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/int/Z32",
@@ -820,7 +817,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_3}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/int/Z32",
@@ -829,7 +825,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/file_4}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/cpp/file",
@@ -838,7 +833,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/off_t_5}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
       "codomain": "hdole/cpp/off_t",
@@ -847,7 +841,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/Strings/str_0}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
       "codomain": "hdole/Strings/str",
@@ -856,7 +849,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/int/Z32_1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
       "codomain": "hdole/int/Z32",
@@ -865,7 +857,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{file,Errno}oPC,hdole/cpp/Errno_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/Errno",
@@ -875,7 +866,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{file,Errno}oPC,hdole/cpp/file_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/file",
@@ -885,7 +875,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{stat,Errno}oPC,hdole/cpp/Errno_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/Errno",
@@ -895,7 +884,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{stat,Errno}oPC,hdole/cpp/stat_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/stat",
@@ -905,7 +893,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/voidPtr_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/voidPtr",
@@ -915,7 +902,6 @@
       ]
     },
     {
-      "basename": "Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/stderr",
       "codomain": "hdole/mmap/#1",
@@ -930,11 +916,10 @@
       "morphisms": [
         "hdole/cpp/strerror",
         "hdole/cpp/StrToStderr",
-        "hdole/mmap/Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF"
+        "Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF"
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{#1,Errno}oPC,hdole/cpp/Errno_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/Errno",
@@ -944,7 +929,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/Errno_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/Errno",
@@ -954,7 +938,6 @@
       ]
     },
     {
-      "basename": "Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/voidPtr_0}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/mmap/Po{hdole/cpp/voidPtr,hdole/cpp/file}oP",
       "codomain": "hdole/cpp/voidPtr",
@@ -963,7 +946,6 @@
       ]
     },
     {
-      "basename": "Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/file_1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/mmap/Po{hdole/cpp/voidPtr,hdole/cpp/file}oP",
       "codomain": "hdole/cpp/file",
@@ -972,7 +954,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/cpp/CPo{#1,Errno}oPC,#1_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/cpp/#1",
@@ -984,14 +965,14 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631091260048,
+  "timestamp": 1631350400200,
   "version": 0,
   "hiddenCells": [
     "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e"
   ],
   "viewport": {
     "x": 3119.5097727168795,
-    "y": 3336.0058627155086,
+    "y": 4932.005862715509,
     "scale": 1.1917867105684365
   }
 }

@@ -141,10 +141,10 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 380,
-        "y": -390
+        "x": 60,
+        "y": -510
       },
-      "height": "128",
+      "height": "200",
       "weight": "bold"
     },
     {
@@ -183,7 +183,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 600,
-        "y": 1700
+        "y": 1800
       }
     },
     {
@@ -192,7 +192,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
-        "y": 1700
+        "y": 1800
       }
     },
     {
@@ -201,7 +201,87 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
-        "y": 1500
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_17",
+      "prototype": "IndexPullback",
+      "to": "hdole/category/Pb{cod,dom}bP",
+      "xy": {
+        "x": 600,
+        "y": 1600
+      },
+      "morphisms": [
+        "hdole/category/m_10",
+        "hdole/category/m_9"
+      ],
+      "cone": [
+        "hdole/category/m_11",
+        "hdole/category/m_12"
+      ]
+    },
+    {
+      "basename": "o_18",
+      "prototype": "IndexObject",
+      "to": "hdole/category/Pb{cod,dom}bP",
+      "xy": {
+        "x": 600,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_19",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 800,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_20",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 600,
+        "y": 2300
+      }
+    },
+    {
+      "basename": "o_21",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 800,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_22",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 1040,
+        "y": 2300
+      }
+    },
+    {
+      "basename": "o_23",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 600,
+        "y": 2500
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 1040,
+        "y": 2500
       }
     },
     {
@@ -320,6 +400,73 @@
       "domain": "hdole/category/o_16",
       "codomain": "hdole/category/o_15",
       "to": "hdole/category/cod"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_17",
+      "codomain": "hdole/category/o_16",
+      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_17",
+      "codomain": "hdole/category/o_14",
+      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_18",
+      "codomain": "hdole/category/o_19",
+      "to": "hdole/category/comp"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_20",
+      "codomain": "hdole/category/o_21",
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_21",
+      "codomain": "hdole/category/o_22",
+      "to": "hdole/category/id"
+    },
+    {
+      "basename": "m_16",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_20",
+      "codomain": "hdole/category/o_23",
+      "to": "hdole/category/Id{C1}dI"
+    },
+    {
+      "basename": "m_18",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_23",
+      "codomain": "hdole/category/o_24",
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_19",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_22",
+      "codomain": "hdole/category/o_24",
+      "to": "hdole/category/cod"
+    },
+    {
+      "basename": "m_17",
+      "prototype": "DiagramComposite",
+      "domain": "hdole/category/o_20",
+      "codomain": "hdole/category/o_22",
+      "to": "hdole/category/Cm{dom,id}mC",
+      "morphisms": [
+        "hdole/category/m_14",
+        "hdole/category/m_15"
+      ]
     }
   ],
   "elements": [
@@ -334,6 +481,21 @@
       "basename": "C1",
       "prototype": "CatObject",
       "properName": "C&#8321;"
+    },
+    {
+      "prototype": "PullbackObject",
+      "objects": [
+        "C1",
+        "C1"
+      ],
+      "morphisms": [
+        "cod",
+        "dom"
+      ],
+      "cone": [
+        "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF",
+        "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+      ]
     },
     {
       "description": "identity morphism of an object",
@@ -363,15 +525,54 @@
       "properName": "1",
       "domain": "hdole/category/C0",
       "codomain": "hdole/category/C0"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{cod,dom}bP",
+      "codomain": "hdole/category/C1",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{cod,dom}bP",
+      "codomain": "hdole/category/C1",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "description": "Composition of two morphisms",
+      "basename": "comp",
+      "prototype": "Morphism",
+      "domain": "hdole/category/Pb{cod,dom}bP",
+      "codomain": "hdole/category/C1"
+    },
+    {
+      "basename": "Id{C1}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/category/C1",
+      "codomain": "hdole/category/C1"
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/category/C1",
+      "codomain": "hdole/category/C1",
+      "morphisms": [
+        "dom",
+        "id"
+      ]
     }
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631085419006,
+  "timestamp": 1631410332910,
   "version": 0,
   "viewport": {
-    "x": 0,
-    "y": -612,
+    "x": 544,
+    "y": -1632,
     "scale": 1
   }
 }
