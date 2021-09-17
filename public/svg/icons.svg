@@ -498,11 +498,6 @@
 		<line class="arrowF" x1="160" y1="200" x2="160" y2="50" marker-end="url(#arrowheadF)"/>
 		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">JSON</text>
 	</symbol>
-	<symbol id="icon-user" class="icon" viewbox="0 0 320 320">
-		<circle cx="100" cy="120" r="100" fill="url(#radgrad1)"/>
-		<circle cx="220" cy="120" r="100" fill="url(#radgrad1)"/>
-		<line class="arrow0" x1="80" y1="240" x2="240" y2="240" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
-	</symbol>
 	<symbol id="icon-view" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="120" fill="url(#radgrad1)"/>
 		<path class="svgfilNone svgstrThinGray" d="M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160" marker-end="url(#arrowheadWide)"/>
