@@ -112,5 +112,6 @@ class H3
 	static svg(...args)					{ return H3._v('svg', [{xmlns:"http://www.w3.org/2000/svg"}, ...args]); }
 	static symbol(...args)				{ return H3._v('symbol', args); }
 	static text(...args)				{ return H3._v('text', args); }
+	static tspan(...args)				{ return H3._v('tspan', args); }
 	static use(...args)					{ return H3._v('use', args); }
 }
