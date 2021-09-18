@@ -12,12 +12,12 @@
   ],
   "domainElements": [
     {
-      "description": "User",
+      "description": "<icon>login</icon> User",
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -1030,
-        "y": -180
+        "x": -810,
+        "y": -310
       },
       "height": "200",
       "weight": "bold"
@@ -72,8 +72,18 @@
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
-        "x": -500,
-        "y": 200
+        "x": -520,
+        "y": -40
+      },
+      "height": "24"
+    },
+    {
+      "description": "The Access panel allows login access to the server for uploading diagrams.\nWhen logged in the panel shows the username, email, and permissions on the\nserver.  The user may log out or reset the account’s password.",
+      "basename": "t_2",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -520,
+        "y": 230
       },
       "height": "24"
     },
@@ -152,12 +162,12 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631503458434,
+  "timestamp": 1631931690893,
   "version": 0,
   "viewport": {
-    "x": 1959.7487618567952,
-    "y": 393.36145387391923,
-    "scale": 6.661630151934861
+    "x": 1877,
+    "y": 882,
+    "scale": 1.567642352714717
   },
   "properName": "hdole/user"
 }

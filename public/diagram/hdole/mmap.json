@@ -213,12 +213,12 @@
       }
     },
     {
-      "description": "Memory Map a File",
+      "description": "Memory Map",
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": -1870,
-        "y": -1880
+        "x": -1700,
+        "y": -1840
       },
       "height": "200",
       "weight": "bold"
@@ -965,14 +965,14 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631350400200,
+  "timestamp": 1631765065126,
   "version": 0,
   "hiddenCells": [
     "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e"
   ],
   "viewport": {
-    "x": 3119.5097727168795,
-    "y": 4932.005862715509,
-    "scale": 1.1917867105684365
+    "x": 1295,
+    "y": 774,
+    "scale": 0.34901005338939073
   }
 }

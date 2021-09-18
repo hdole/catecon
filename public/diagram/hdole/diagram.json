@@ -12,11 +12,11 @@
   ],
   "domainElements": [
     {
-      "description": "Diagram",
+      "description": "<icon>diagram</icon>Diagram",
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -190,
+        "x": -210,
         "y": 200
       },
       "height": "200",
@@ -220,7 +220,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1
     },
     {
@@ -266,12 +266,12 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631525759611,
+  "timestamp": 1631941022696,
   "version": 0,
   "viewport": {
-    "x": 217.5461011336106,
-    "y": 386.42865860772577,
-    "scale": 5.9239444904486085
+    "x": 982,
+    "y": 220,
+    "scale": 1.0275001294733026
   },
   "properName": "hdole/diagram"
 }

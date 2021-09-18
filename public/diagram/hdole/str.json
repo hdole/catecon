@@ -615,8 +615,8 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/str/#1",
-        "hdole/str/#1"
+        "#1",
+        "#1"
       ]
     },
     {
@@ -630,14 +630,14 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/str/str",
-        "hdole/str/str"
+        "str",
+        "str"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/str/str",
+        "str",
         "hdole/nat/N64"
       ]
     },
@@ -646,7 +646,7 @@
       "dual": true,
       "objects": [
         "hdole/nat/N8",
-        "hdole/str/#1"
+        "#1"
       ]
     },
     {
@@ -654,7 +654,7 @@
       "dual": true,
       "objects": [
         "hdole/nat/N16",
-        "hdole/str/#1"
+        "#1"
       ]
     },
     {
@@ -662,7 +662,7 @@
       "dual": true,
       "objects": [
         "hdole/nat/N32",
-        "hdole/str/#1"
+        "#1"
       ]
     },
     {
@@ -670,7 +670,7 @@
       "dual": true,
       "objects": [
         "hdole/nat/N128",
-        "hdole/str/#1"
+        "#1"
       ]
     },
     {
@@ -884,12 +884,12 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631088889309,
+  "timestamp": 1631779446556,
   "version": 0,
   "viewport": {
-    "x": 1784.6494566490233,
-    "y": 2792.631809452433,
-    "scale": 1.8601339641200993
+    "x": 1412,
+    "y": 477,
+    "scale": 1.543796350380586
   },
   "properName": "hdole/str"
 }

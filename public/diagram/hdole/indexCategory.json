@@ -6,7 +6,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/indexCategory_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [],
   "domainElements": [
     {
@@ -14,7 +14,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 130,
+        "x": 120,
         "y": -440
       },
       "height": "200",
@@ -64,12 +64,12 @@
   "elements": [],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630964627567,
+  "timestamp": 1631781882073,
   "version": 0,
   "viewport": {
-    "x": 262,
-    "y": 684.5,
-    "scale": 0.7953125
+    "x": 103,
+    "y": 900,
+    "scale": 1.428905813932552
   },
   "properName": "hdole/indexCategory"
 }

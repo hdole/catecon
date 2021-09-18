@@ -7,7 +7,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/pfs/factorial_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/nat"
   ],
@@ -25,7 +25,7 @@
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/pfs/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "xy": {
         "x": 0,
@@ -34,7 +34,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 200,
@@ -43,7 +43,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 0,
@@ -52,7 +52,7 @@
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 200,
@@ -61,7 +61,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 200,
@@ -70,7 +70,7 @@
     },
     {
       "basename": "o_16",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/CPo{N64,#1}oPC",
       "xy": {
         "x": 200,
@@ -79,7 +79,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/#1",
       "xy": {
         "x": 400,
@@ -88,7 +88,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 0,
@@ -97,7 +97,7 @@
     },
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 600,
@@ -106,7 +106,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N128",
       "xy": {
         "x": 0,
@@ -115,7 +115,7 @@
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 0,
@@ -124,28 +124,28 @@
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_11",
       "codomain": "hdole/pfs/factorial/o_12",
       "to": "hdole/pfs/factorial/factorial"
     },
     {
       "basename": "m_11",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_13",
       "codomain": "hdole/pfs/factorial/o_10",
       "to": "hdole/pfs/factorial/factorial"
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_2",
       "codomain": "hdole/pfs/factorial/o_16",
       "to": "hdole/nat/decr"
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_3",
       "codomain": "hdole/pfs/factorial/o_16",
       "attributes": [
@@ -162,14 +162,14 @@
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_3",
       "codomain": "hdole/pfs/factorial/o_0",
       "to": "hdole/nat/one64"
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_13",
       "codomain": "hdole/pfs/factorial/o_16",
       "attributes": [
@@ -182,7 +182,7 @@
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_5",
       "codomain": "hdole/pfs/factorial/o_2",
       "attributes": [
@@ -195,7 +195,7 @@
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_5",
       "codomain": "hdole/pfs/factorial/o_10",
       "attributes": [
@@ -208,14 +208,14 @@
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_5",
       "codomain": "hdole/pfs/factorial/o_1",
       "to": "hdole/nat/mult64"
     },
     {
       "basename": "m_5",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/pfs/factorial/o_1",
       "codomain": "hdole/pfs/factorial/o_4",
       "to": "hdole/nat/lo64"
@@ -243,7 +243,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/nat/CPo{N64,#1}oPC,#1_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/nat/#1",
@@ -255,7 +254,6 @@
       ]
     },
     {
-      "basename": "CFa{hdole/nat/CPo{N64,#1}oPC,hdole/nat/N64_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/nat/N64",
@@ -265,7 +263,6 @@
       ]
     },
     {
-      "basename": "Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_0}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/pfs/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "codomain": "hdole/nat/N64",
@@ -274,7 +271,6 @@
       ]
     },
     {
-      "basename": "Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/pfs/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "codomain": "hdole/nat/N64",
@@ -285,14 +281,14 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630653920073,
+  "timestamp": 1631775729740,
   "version": 0,
   "hiddenCells": [
     "8aa77e45b3107e20f4679af002f46a03476b965865a58d9898b29b98881fa24c"
   ],
   "viewport": {
-    "x": 1123.2460366323994,
-    "y": 37.6664589414446,
-    "scale": 0.7807568426146718
+    "x": 1004,
+    "y": 120,
+    "scale": 0.9710377231514677
   }
 }

@@ -1297,8 +1297,8 @@
       "basename": "t_46",
       "prototype": "DiagramText",
       "xy": {
-        "x": -340,
-        "y": -200
+        "x": -350,
+        "y": -180
       },
       "height": "700",
       "weight": "bold"
@@ -2740,8 +2740,8 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/cpp/file",
-        "hdole/cpp/Errno"
+        "file",
+        "Errno"
       ]
     },
     {
@@ -2755,40 +2755,40 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/cpp/voidPtr",
-        "hdole/cpp/size_t",
+        "voidPtr",
+        "size_t",
         "hdole/int/Z32",
         "hdole/int/Z32",
-        "hdole/cpp/file",
-        "hdole/cpp/off_t"
+        "file",
+        "off_t"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/cpp/voidPtr",
-        "hdole/cpp/Errno"
+        "voidPtr",
+        "Errno"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/cpp/voidPtr",
-        "hdole/cpp/size_t"
+        "voidPtr",
+        "size_t"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/cpp/voidPtr",
+        "voidPtr",
         "hdole/nat/N64"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/cpp/voidPtr",
+        "voidPtr",
         "hdole/nat/N16"
       ]
     },
@@ -2796,16 +2796,16 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/cpp/#1",
-        "hdole/cpp/Errno"
+        "#1",
+        "Errno"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/cpp/stat",
-        "hdole/cpp/Errno"
+        "stat",
+        "Errno"
       ]
     },
     {
@@ -3633,9 +3633,9 @@
       "domain": "hdole/cpp/off_t",
       "codomain": "hdole/cpp/size_t",
       "morphisms": [
-        "hdole/cpp/off_tToZ64",
+        "off_tToZ64",
         "hdole/int/abs64",
-        "hdole/cpp/N64toSize_t"
+        "N64toSize_t"
       ]
     },
     {
@@ -3670,11 +3670,11 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1631091435839,
+  "timestamp": 1631764589986,
   "version": 0,
   "viewport": {
-    "x": 883.4086792616494,
-    "y": -2643.779500364315,
-    "scale": 0.8374134172998857
+    "x": 831,
+    "y": 535,
+    "scale": 0.6310332214818467
   }
 }

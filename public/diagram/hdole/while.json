@@ -7,12 +7,12 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/while_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [],
   "domainElements": [
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
         "x": 0,
@@ -21,7 +21,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/#1",
       "xy": {
         "x": -200,
@@ -30,7 +30,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/#1",
       "xy": {
         "x": 200,
@@ -39,7 +39,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
         "x": -200,
@@ -48,7 +48,7 @@
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
         "x": 200,
@@ -57,7 +57,7 @@
     },
     {
       "basename": "o_14",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
         "x": 400,
@@ -66,7 +66,7 @@
     },
     {
       "basename": "o_15",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
         "x": 600,
@@ -78,15 +78,15 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 20,
-        "y": 50
+        "x": 50,
+        "y": 60
       },
       "height": "200",
       "weight": "bold"
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
         "x": 0,
@@ -95,7 +95,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
         "x": 190,
@@ -144,7 +144,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/CPo{#1,#1}oPC",
       "xy": {
         "x": 0,
@@ -153,7 +153,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/while/CPo{#1,#1}oPC",
       "xy": {
         "x": 0,
@@ -162,7 +162,7 @@
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_13",
       "codomain": "hdole/while/o_10",
       "attributes": [
@@ -179,7 +179,7 @@
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_13",
       "codomain": "hdole/while/o_8",
       "attributes": [
@@ -192,7 +192,7 @@
     },
     {
       "basename": "m_9",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_12",
       "codomain": "hdole/while/o_11",
       "attributes": [
@@ -205,21 +205,21 @@
     },
     {
       "basename": "m_10",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_12",
       "codomain": "hdole/while/o_14",
       "to": "hdole/while/update"
     },
     {
       "basename": "m_11",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_14",
       "codomain": "hdole/while/o_15",
       "to": "hdole/while/while"
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_12",
       "codomain": "hdole/while/o_8",
       "attributes": [
@@ -236,28 +236,28 @@
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_4",
       "codomain": "hdole/while/o_7",
       "to": "hdole/while/update"
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_4",
       "codomain": "hdole/while/o_1",
       "to": "hdole/while/test"
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_8",
       "codomain": "hdole/while/o_3",
       "to": "hdole/while/test"
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_10",
       "codomain": "hdole/while/o_3",
       "attributes": [
@@ -270,7 +270,7 @@
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/while/o_11",
       "codomain": "hdole/while/o_3",
       "attributes": [
@@ -301,8 +301,8 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/while/#1",
-        "hdole/while/#1"
+        "#1",
+        "#1"
       ]
     },
     {
@@ -318,7 +318,6 @@
       "codomain": "hdole/while/S"
     },
     {
-      "basename": "Fa{S,S_-1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/while/S",
       "codomain": "hdole/while/#1",
@@ -340,7 +339,6 @@
       "codomain": "hdole/while/CPo{#1,#1}oPC"
     },
     {
-      "basename": "CFa{CPo{#1,#1}oPC,#1_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/while/#1",
@@ -350,7 +348,6 @@
       ]
     },
     {
-      "basename": "CFa{CPo{#1,#1}oPC,#1_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/while/#1",
@@ -362,15 +359,15 @@
   ],
   "readonly": false,
   "user": "hdole",
-  "timestamp": 1630452370828,
+  "timestamp": 1631864118542,
   "version": 0,
   "hiddenCells": [
     "8901823568e5dafc364b7e06357dd9d01318f1b37269e38f12a42911ec7b9800",
     "ce18ae784869bc058864cf12812c165721df1800bcbf615259df86efbe164d76"
   ],
   "viewport": {
-    "x": -14735.938441488368,
-    "y": 9126.03767766951,
-    "scale": 9.278991957451604
+    "x": 353,
+    "y": 334,
+    "scale": 2.3670474542905717
   }
 }
