@@ -692,19 +692,54 @@ table.center
 text.emphasis
 {
 	fill:		#00f;
+	stroke:		none;
+}
+
+circle.emphasis
+{
+	fill:		#00f;
+}
+
+svg path
+{
+	stroke-dasharray:	inherit;
+	stroke:				inherit;
+}
+
+svg line
+{
+	stroke-dasharray:	inherit;
+	stroke:				inherit;
+	fill:				inherit;
+}
+
+svg line.emphasis
+{
+	stroke-dasharray:	5,5;
+	stroke:		#00fa;
+	fill:		#00fa;
 }
 
 path.emphasis
 {
 	stroke-dasharray:	5,5;
-	stroke:		#00fa;
+}
+
+polyline.emphasis
+{
+	stroke-dasharray:	5,5;
 }
 
 rect.emphasis
 {
 	fill:		none;
 	stroke-dasharray:	5,5;
+}
+
+.emphasis
+{
 	stroke:		#00fa;
+	fill:		blue;
 }
 
 .selected
