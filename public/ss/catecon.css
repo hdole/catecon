@@ -1,8 +1,9 @@
 html, body
 {
-	font:	12px "Fira Sans",sans-serif;
-	height:	100%;
-	margin:	0px 0px 0px 0px;
+	font:		12px "Fira Sans",sans-serif;
+	height:		100%;
+	margin:		0px 0px 0px 0px;
+	overflow:	hidden;
 }
 
 label
@@ -742,6 +743,12 @@ rect.emphasis
 	fill:		blue;
 }
 
+use.emphasis
+{
+	stroke:		#00fa;
+	fill:		blue;
+}
+
 .selected
 {
 	stroke:		#9f9;
@@ -1137,7 +1144,7 @@ tspan
 	stroke:				#aaa3;
 	stroke-width:		10;
 }
-.assyMorphism
+.referenceMorphism
 {
 	fill:			none;
 	margin:			2px;
@@ -1168,4 +1175,10 @@ tspan
 
 .ifocus
 {
+}
+
+.borderAlert
+{
+	cursor:			grab;
+	user-select:	none;
 }
