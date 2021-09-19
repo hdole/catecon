@@ -1,0 +1,68 @@
+{
+  "description": "",
+  "basename": "object",
+  "name": "hdole/object",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/object_Index",
+  "codomain": "sys/Cat",
+  "references": [],
+  "domainElements": [
+    {
+      "description": "<icon>object</icon>Object",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 220,
+        "y": 1560
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "description": "An object A in a category is something awaiting its structure\nto be defined in terms of its morphisms.  The least to be said\nof one is that it has an assigned identity morphism in its\ncategory which, as an identity, has no effect on any other\nmorphism.",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 270,
+        "y": 1760
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/object/A",
+      "xy": {
+        "x": 280,
+        "y": 2040
+      }
+    },
+    {
+      "description": "In Catecon, if you are the owner of the diagram first expressing the object,\nand the object is heretofore unreferenced, then you may change the object&#39;s\nbase name, proper name, and description.",
+      "basename": "t_2",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 260,
+        "y": 2150
+      },
+      "height": "24"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "A",
+      "prototype": "CatObject"
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1631958014568,
+  "version": 0,
+  "viewport": {
+    "x": 324,
+    "y": -1886,
+    "scale": 1.4251570069980262
+  },
+  "properName": "hdole/object"
+}

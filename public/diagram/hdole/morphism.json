@@ -1,0 +1,95 @@
+{
+  "description": "",
+  "basename": "morphism",
+  "name": "hdole/morphism",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/morphism_Index",
+  "codomain": "sys/Cat",
+  "references": [],
+  "domainElements": [
+    {
+      "description": "<icon>morphism</icon>Morphism",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 50,
+        "y": 1740
+      },
+      "height": "164",
+      "weight": "bold"
+    },
+    {
+      "description": "A morphism f in a category has domain and codomain objects \nand is generally shown as an arrow emanating from the\ndomain object and terminating at the codomain.",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 120,
+        "y": 1890
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/morphism/A",
+      "xy": {
+        "x": 100,
+        "y": 2100
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "IndexObject",
+      "to": "hdole/morphism/B",
+      "xy": {
+        "x": 300,
+        "y": 2100
+      }
+    },
+    {
+      "description": "In Catecon, if you are the owner of the diagram that describes\nthe morphism, and the element is unreferenced, then you may\nchange the base name, proper name, description as well as the\ndomain and codomain.",
+      "basename": "t_2",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 140,
+        "y": 2210
+      },
+      "height": "24"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/morphism/o_0",
+      "codomain": "hdole/morphism/o_1",
+      "to": "hdole/morphism/f"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/morphism/A",
+      "codomain": "hdole/morphism/B"
+    }
+  ],
+  "readonly": false,
+  "user": "hdole",
+  "timestamp": 1631938011006,
+  "version": 0,
+  "viewport": {
+    "x": 16,
+    "y": -3479,
+    "scale": 2.232456140350877
+  },
+  "properName": "hdole/morphism"
+}
