@@ -47,7 +47,7 @@
 // 			update		change weight, height, ...							[DiagramText.updateWeight, .updateHeight]
 //		View																-
 //			catalog															[Navbar.catalogView, Catalog.search .toggle]
-//			diagram		view a diagram										[D.eventListener 'CAT','default', keyboard events, D.zoom, D.replay, D.panHandler, D.uploadJSON, Diagram.viewElements]
+//			diagram		view a diagram										[D.eventListener 'CAT','default'; keyboard events, D.zoom, D.replay, D.panHandler, D.uploadJSON, Diagram.viewElements]
 //		Cell																-
 //			check															[D.mouseup, doit: CompositeAction, NameAction.CopyAction, FlipNameAction, PullbackAction, HomSetAction, DetachDomainAction, DeleteAction]
 //
@@ -1610,15 +1610,9 @@ class Navbar
 				return;
 			const args = e.detail;
 			if (args.command === 'hide')
-			{
 				this.element.style.height = "0px";
-				D.setTopBorderHeight(0);
-			}
 			else
-			{
 				this.element.style.height = `${D.default.icon}px`;
-				D.setTopBorderHeight(D.default.icon);
-			}
 		});
 		window.addEventListener('View', e => this.update(e));
 		window.addEventListener('Application', e => this.update(e));
@@ -3615,6 +3609,7 @@ class Display
 		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		this.cancelAutohide();
 		this.setCursor();
+		this.topSVG.querySelectorAll('.borderAlert').forEach(elt => elt.classList.remove('hidden'));
 		this.autohideTimer = setTimeout(_ =>
 		{
 			if (this.mouse.onGUI)
@@ -3622,6 +3617,7 @@ class Display
 			if (R.default.debug)
 				return;
 			this.topSVG.style.cursor = 'none';
+			this.topSVG.querySelectorAll('.borderAlert').forEach(elt => elt.classList.add('hidden'));
 			if (!window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'hide'}})))	// cancelled!
 				window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		}, this.default.autohideTimer);
@@ -5449,10 +5445,10 @@ class Display
 			const box = D.sessionToUserCoords(dgrmBbox);
 			const wid = D.width();
 			const hgt = D.height();
-			const topLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y, box.x + box.width, box.y);			// top edge
-			const topRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y, box.x + box.width, box.y);			// top edge
-			const botLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);	// bottom edge
-			const botRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);	// bottom edge
+			const topLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y, box.x + box.width, box.y);
+			const topRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y, box.x + box.width, box.y);
+			const botLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);
+			const botRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);
 			const vpLftTop = new D2();
 			const vpTopRgt = new D2(wid, 0);
 			const vpLftBot = new D2(0, hgt);
@@ -5482,10 +5478,10 @@ class Display
 			const borders = D.topSVG.querySelectorAll('.borderAlert');
 			borders.forEach(elt => elt.remove());
 			const margin = D.default.borderMargin;
-			lftOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert', {style:`opacity:${lftOpa}`, x:0, y:0, width:margin, height:hgt, fill:'url(#borderLftGrad)'}));
-			rgtOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert', {style:`opacity:${rgtOpa}`, x:wid - margin, y:0, width:margin, height:hgt, fill:'url(#borderRgtGrad)'}));
-			topOpa > 0 && D.topSVG.appendChild(H3.rect('##borderTop.borderAlert.trans', {style:`opacity:${topOpa}`, x:0, y:D.default.icon, width:wid, height:margin, fill:'url(#borderTopGrad)'}));
-			botOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert', {style:`opacity:${botOpa}`, x:0, y:hgt - margin, width:wid, height:margin, fill:'url(#borderBotGrad)'}));
+			lftOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${lftOpa}`, x:0, y:0, width:margin, height:hgt, fill:'url(#borderLftGrad)'}));
+			rgtOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${rgtOpa}`, x:wid - margin, y:0, width:margin, height:hgt, fill:'url(#borderRgtGrad)'}));
+			topOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${topOpa}`, x:0, y:D.default.icon, width:wid, height:margin, fill:'url(#borderTopGrad)'}));
+			botOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${botOpa}`, x:0, y:hgt - margin, width:wid, height:margin, fill:'url(#borderBotGrad)'}));
 		}
 	}
 	setTopBorderHeight(y)
@@ -8271,25 +8267,28 @@ class DiagramText extends Element
 		{
 			let x = 0;
 			if (txt === '')
-				return wrapTspan(txt, i, x);
-			const tx = txt.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/ /g, '&nbsp;');
-			div.innerHTML = tx;
-			let child = div.firstChild;
-			while(child)
+				this.svgText.appendChild(wrapTspan(txt, i, x));
+			else
 			{
-				if (child instanceof Text)
+				const tx = txt.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/ /g, '&nbsp;');
+				div.innerHTML = tx;
+				let child = div.firstChild;
+				while(child)
 				{
-					const tspan = wrapTspan(child.data, i, x);
-					this.svgText.appendChild(tspan);
-					x += tspan.getBBox().width;
+					if (child instanceof Text)
+					{
+						const tspan = wrapTspan(child.data, i, x);
+						this.svgText.appendChild(tspan);
+						x += tspan.getBBox().width;
+					}
+					else if (child.tagName === 'ICON')
+					{
+						const use = H3.use({href:`#icon-${child.innerText}`, width:this.height, height:this.height, x, y:- 0.8 * Number.parseInt(this.height)});
+						this.svg.appendChild(use);
+						x += this.height;
+					}
+					child = child.nextSibling;
 				}
-				else if (child.tagName === 'ICON')
-				{
-					const use = H3.use({href:`#icon-${child.innerText}`, width:this.height, height:this.height, x, y:- 0.8 * Number.parseInt(this.height)});
-					this.svg.appendChild(use);
-					x += this.height;
-				}
-				child = child.nextSibling;
 			}
 		};
 		this.description.split('\n').map((t, i) => procText(t, i));
