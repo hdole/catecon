@@ -1,13 +1,16 @@
 // (C) 2018-2021 Harry Dole
 // Catecon:  The Categorical Console
 //
-// Events:																	Emitters
-//		Application
+// Custom Events:															Emitters
+//		Application															-
 //			start		app is up and running								[R.initialize]
-// 		Assertion
+//		Autohide		parts of the GUI are to disapear					-
+//			show															[D.autohide]
+//			hide															[D.autohide]
+// 		Assertion															-
 // 			new			an assertion was created							[Assertion.constructor]
 // 			delete															[Assertion.decrRefcnt]
-// 		CAT
+// 		CAT																	-
 //			close		remove diagram from session							[DiagramTool.getButtons, Diagram.close]
 // 			default		diagram is now the default diagram for viewing		[R.SelectDiagram]
 //			delete		diagram is deleted
@@ -17,7 +20,7 @@
 // 			png																[Diagram.savePng]
 // 			unload		diagram unloaded from session
 // 			upload		diagram sent to server								[Diagram.upload]
-// 		Diagram
+// 		Diagram																-
 // 			addReference													[Diagram.addReference]
 //			deselect														[Diagram.deselect]
 // 			loadCells	determine cell commutativity
@@ -26,26 +29,26 @@
 // 			showInternals
 // 			view		view changed
 // 		Login																[Amazon.registerCognito, .signup, .confirm, .login, .logout]
-// 		Object
+// 		Object																-
 // 			delete
 // 			fuse															[Diagram.fuse]
 // 			move															[D.mouseup, AlignHorizontalAction.doit, AlignVerticalAction.doit, Diagram.moveElements]
 // 			new																[constructors: CatObject, FiniteObject, ProductObject, PullbackObject, HomObject, TensorObject, IndexObject; IndexPullback.postLoad]
 // 			update															[LanguageAction.action, FiniteObjectAction.doit]
-// 		Morphism
+// 		Morphism															-
 // 			detach		detach index morphism domain or codomain			[DetachDomainAction.doit]
 // 			new																[Assembly.assemble]
 // 			delete
 // 			update															[LanguageAction.action, RunAction.editData]
-// 		Text
+// 		Text																-
 // 			delete
 // 			move															[D.mouseup, Diagram.moveElements]
 // 			new																[constructors: DiagramText]
 // 			update		change weight, height, ...							[DiagramText.updateWeight, .updateHeight]
-//		View
+//		View																-
 //			catalog															[Navbar.catalogView, Catalog.search .toggle]
 //			diagram		view a diagram										[D.eventListener 'CAT','default', keyboard events, D.zoom, D.replay, D.panHandler, D.uploadJSON, Diagram.viewElements]
-//		Cell
+//		Cell																-
 //			check															[D.mouseup, doit: CompositeAction, NameAction.CopyAction, FlipNameAction, PullbackAction, HomSetAction, DetachDomainAction, DeleteAction]
 //
 // Coordinate frames:
@@ -653,7 +656,7 @@ class Runtime
 		new GraphAction(diagramDiagram);
 		new SwapAction(diagramDiagram);
 		new ActionAction(diagramDiagram);
-		new AssemblyMorphismAction(diagramDiagram);
+		new ReferenceMorphismAction(diagramDiagram);
 		new NameAction(diagramDiagram);
 		new CompositeAction(diagramDiagram);
 		new DetachDomainAction(diagramDiagram);
@@ -1607,9 +1610,15 @@ class Navbar
 				return;
 			const args = e.detail;
 			if (args.command === 'hide')
+			{
 				this.element.style.height = "0px";
+				D.setTopBorderHeight(0);
+			}
 			else
-				this.element.style.height = "32px";
+			{
+				this.element.style.height = `${D.default.icon}px`;
+				D.setTopBorderHeight(D.default.icon);
+			}
 		});
 		window.addEventListener('View', e => this.update(e));
 		window.addEventListener('Application', e => this.update(e));
@@ -2517,7 +2526,7 @@ class DiagramTool extends ElementTool
 	{
 		this.searchArgs.sessionOnly = !this.searchArgs.sessionOnly;
 		D.toggleIcon(e.target, this.searchArgs.sessionOnly);
-		if (this.searchArgs.sessionOnly)
+		if (!this.searchArgs.sessionOnly)
 			this.infoElement.appendChild(H3.p('##filter-session-info.smallPrint.center', 'Session diagrams'));
 		else
 		{
@@ -2873,6 +2882,9 @@ class Display
 					},
 					autohideTimer:	60000,	// ms
 					autosaveTimer:	500,	// ms
+					borderAlert:	2,		// screen widths
+					borderMargin:	20,		// px
+					borderMinOpacity:	0.12,
 					button:		{tiny:0.4, small:0.66, large:1.0},	// inches
 					diagram:
 					{
@@ -3226,8 +3238,8 @@ class Display
 					},
 					KeyR(e)
 					{
-						if (R.Actions.assyMorphism.hasForm(R.diagram, R.diagram.selected))
-							R.Actions.assyMorphism.action(e, R.diagram, R.diagram.selected);
+						if (R.Actions.referenceMorphism.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.referenceMorphism.action(e, R.diagram, R.diagram.selected);
 					},
 		//			ControlKeyS(e)		BROWSER RESERVED: save page
 					KeyT(e)
@@ -4340,6 +4352,7 @@ class Display
 					}
 					this.session.save();
 					diagram.updateBackground();
+					D.updateBorder();
 				}
 			}
 			else if (command === 'catalog')
@@ -4510,9 +4523,12 @@ class Display
 			if (dstChild.tagName === 'use')
 			{
 				const src = document.querySelector(dstChild.href.animVal);
-				const used = src.cloneNode(true);
-				this.copyStyles(used, src, wndow);
-				dstChild.appendChild(used);
+				if (src)
+				{
+					const used = src.cloneNode(true);
+					this.copyStyles(used, src, wndow);
+					dstChild.appendChild(used);
+				}
 				continue;
 			}
 			let hidden = false;
@@ -5422,6 +5438,61 @@ class Display
 	clickOrHelp(e, name, clickme)
 	{
 		e.ctrlKey ? Runtime.SelectDiagram(name) : clickme(e);
+	}
+	updateBorder()
+	{
+		if (R.diagram.ready !== 0)
+			setTimeout(_ => this.updateBorder(), 10);
+		else if (D.default.fullscreen)
+		{
+			const dgrmBbox = R.diagram.svgRoot.getBBox();
+			const box = D.sessionToUserCoords(dgrmBbox);
+			const wid = D.width();
+			const hgt = D.height();
+			const topLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y, box.x + box.width, box.y);			// top edge
+			const topRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y, box.x + box.width, box.y);			// top edge
+			const botLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);	// bottom edge
+			const botRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);	// bottom edge
+			const vpLftTop = new D2();
+			const vpTopRgt = new D2(wid, 0);
+			const vpLftBot = new D2(0, hgt);
+			const vpRgtBot = vpLftBot.add(vpTopRgt);
+			const boxLftBot = box.add({x:0, y:box.height});
+			const boxRgtTop = box.add({x:box.width, y:0});
+			const boxRgtBot = boxRgtTop.add({x:box.width, y:box.height});
+			const lftDst = topLft ? D2.SegmentDistance(topLft, box, boxLftBot) : botLft ? D2.SegmentDistance(botLft, box, boxLftBot) : D2.SegmentDistance(vpLftTop, box, boxLftBot);
+			const rgtDst = topRgt ? D2.SegmentDistance(topRgt, boxRgtTop, boxRgtBot) : botRgt ? D2.SegmentDistance(botRgt, boxRgtTop, boxRgtBot) : D2.SegmentDistance(vpTopRgt, boxRgtTop, boxRgtBot);
+			const topDst = topRgt ? D2.SegmentDistance(topRgt, box, boxRgtTop) : topLft ? D2.SegmentDistance(botLft, box, boxRgtTop) : D2.SegmentDistance(vpLftTop, box, boxRgtTop);
+			const botDst = botRgt ? D2.SegmentDistance(botRgt, boxLftBot, boxRgtBot) : botLft ? D2.SegmentDistance(botLft, boxLftBot, boxRgtBot) : D2.SegmentDistance(vpLftBot, boxLftBot, boxRgtBot);
+			const maxLvl = D.default.borderAlert;
+			const opacMag = 0.5;
+			const minOpc = D.default.borderMinOpacity;
+			let lftOpa = box.x < 0 ? opacMag * Math.min(maxLvl, lftDst / wid) / maxLvl : 0;
+			if (lftOpa > 0)
+				lftOpa = Math.max(minOpc, lftOpa);
+			let rgtOpa = box.x + box.width > wid ? opacMag * Math.min(maxLvl, rgtDst / wid) / maxLvl : 0;
+			if (rgtOpa > 0)
+				rgtOpa = Math.max(minOpc, rgtOpa);
+			let topOpa = box.y < 0 ? opacMag * Math.min(maxLvl, topDst / hgt) / maxLvl : 0;
+			if (topOpa > 0)
+				topOpa = Math.max(minOpc, topOpa);
+			let botOpa = box.y + box.height > hgt ? opacMag * Math.min(maxLvl, botDst / hgt) / maxLvl : 0;
+			if (botOpa > 0)
+				botOpa = Math.max(minOpc, botOpa);
+			const borders = D.topSVG.querySelectorAll('.borderAlert');
+			borders.forEach(elt => elt.remove());
+			const margin = D.default.borderMargin;
+			lftOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert', {style:`opacity:${lftOpa}`, x:0, y:0, width:margin, height:hgt, fill:'url(#borderLftGrad)'}));
+			rgtOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert', {style:`opacity:${rgtOpa}`, x:wid - margin, y:0, width:margin, height:hgt, fill:'url(#borderRgtGrad)'}));
+			topOpa > 0 && D.topSVG.appendChild(H3.rect('##borderTop.borderAlert.trans', {style:`opacity:${topOpa}`, x:0, y:D.default.icon, width:wid, height:margin, fill:'url(#borderTopGrad)'}));
+			botOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert', {style:`opacity:${botOpa}`, x:0, y:hgt - margin, width:wid, height:margin, fill:'url(#borderBotGrad)'}));
+		}
+	}
+	setTopBorderHeight(y)
+	{
+		const borderTop = this.topSVG.querySelector('#borderTop');
+		if (borderTop)
+			borderTop.setAttribute('y', y);
 	}
 }
 
@@ -11040,12 +11111,12 @@ class SwapAction extends Action
 	}
 }
 
-class AssemblyMorphismAction extends Action
+class ReferenceMorphismAction extends Action
 {
 	constructor(diagram)
 	{
 		const args = {	description:	'Set projection or injection as an assembly morphism',
-						basename:		'assyMorphism',
+						basename:		'referenceMorphism',
 						priority:		80,
 		};
 		super(diagram, args);
@@ -11054,10 +11125,10 @@ class AssemblyMorphismAction extends Action
 	{
 		ary.map(m =>
 		{
-			if (!m.attributes.has('assyMorphism'))
-				m.attributes.set('assyMorphism', false);
-			const isAssy = !m.attributes.get('assyMorphism');
-			m.attributes.set('assyMorphism', isAssy);
+			if (!m.attributes.has('referenceMorphism'))
+				m.attributes.set('referenceMorphism', false);
+			const isreference = !m.attributes.get('referenceMorphism');
+			m.attributes.set('referenceMorphism', isreference);
 			if ('svg' in m && m.svg)
 				D.emitMorphismEvent(diagram, 'update', m);
 		});
@@ -12226,8 +12297,8 @@ class IndexMorphism extends Morphism
 			const keys = new Set(this.attributes.keys());
 			if (keys.has('flipName') && !this.attributes.get('flipName'))
 				keys.delete('flipName');
-			if (keys.has('assyMorphism') && !this.attributes.get('assyMorphism'))
-				keys.delete('assyMorphism');
+			if (keys.has('referenceMorphism') && !this.attributes.get('referenceMorphism'))
+				keys.delete('referenceMorphism');
 			if (keys.size > 0)
 				mor.attributes = [...keys].map(key => [key, this.attributes.get(key)]);
 		}
@@ -12299,7 +12370,7 @@ class IndexMorphism extends Morphism
 		g.setAttributeNS(null, 'id', id);
 		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':this.name, class:'grabme grabbable', id:`${id}_path2`, d:coords});
 		g.appendChild(this.svg_path2);
-		const cls = this.attributes.has('assyMorphism') && this.attributes.get('assyMorphism') ? 'assyMorphism grabbable' : 'morphism grabbable';
+		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
 		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, class:cls, id:`${id}_path`, d:coords, 'marker-end':'url(#arrowhead)'});
 		g.appendChild(this.svg_path);
 		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, id:`${id}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
@@ -12496,14 +12567,14 @@ class IndexMorphism extends Morphism
 			svg.setAttribute('d', coords);
 			this.svg_path2.setAttribute('d', coords);
 			this.updateDecorations();
-			if (this.attributes.has('assyMorphism') && this.attributes.get('assyMorphism'))
+			if (this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism'))
 			{
 				this.svg_path.classList.remove('morphism');
-				this.svg_path.classList.add('assyMorphism');
+				this.svg_path.classList.add('referenceMorphism');
 			}
 			else
 			{
-				this.svg_path.classList.remove('assyMorphism');
+				this.svg_path.classList.remove('referenceMorphism');
 				this.svg_path.classList.add('morphism');
 			}
 		}
@@ -14421,6 +14492,7 @@ class Diagram extends Functor
 			_antilog:					{value:_antilog,	writable:true},
 			references:					{value:new Map(),	writable:false},
 			allReferences:				{value:new Map(),	writable:true},
+			ready:						{value:-1,			writable:true},
 			selected:					{value:[],			writable:true},
 			svgRoot:					{value:null,		writable:true},
 			svgBase:					{value:null,		writable:true},
@@ -15001,7 +15073,16 @@ class Diagram extends Functor
 			this.svgRoot.appendChild(this.svgTranslate);
 			this.svgRoot.classList.add('hidden');
 			this.svgRoot.appendChild(f4gnd);
-			this.domain.elements.forEach(elt => setTimeout(_ => this.addSVG(elt), 0));
+			this.ready = 0;
+			this.domain.elements.forEach(elt =>
+			{
+				this.ready++;
+				setTimeout(_ =>
+				{
+					this.addSVG(elt);
+					this.ready--;
+				}, 0);
+			});
 		}
 	}
 	upload(e, local = true)
@@ -15855,6 +15936,7 @@ class Diagram extends Functor
 				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
 				dgrmBkgnd.classList.add('hidden');
 				dgrmF4gnd.classList.add('hidden');
+				return;
 			}
 			else
 			{
@@ -16398,7 +16480,7 @@ class Assembler
 				if (this.morphisms.has(m))
 					return;
 				this.morphisms.add(m);
-				if (m.attributes.has('assyMorphism') && m.attributes.get('assyMorphism'))
+				if (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism'))
 					m.to.dual ? this.coreferences.add(m) : this.references.add(m);
 				m.makeGraph();
 				if (m.isEndo())		// in the index cat, not the target cat
