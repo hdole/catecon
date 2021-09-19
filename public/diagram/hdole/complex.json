@@ -447,8 +447,8 @@
       "basename": "t_17",
       "prototype": "DiagramText",
       "xy": {
-        "x": -450,
-        "y": 0
+        "x": -490,
+        "y": -70
       },
       "height": "200",
       "weight": "bold"
@@ -750,13 +750,12 @@
       "codomain": "hdole/complex/CPo{C,hdole/Basics/#1}oPC"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631343948656,
+  "timestamp": 1631956786737,
   "version": 0,
   "viewport": {
-    "x": 2007.1831838118487,
-    "y": 24.97013500723733,
+    "x": 987,
+    "y": 297,
     "scale": 1.1471280424051202
   }
 }

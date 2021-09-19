@@ -156,6 +156,10 @@
         [
           "flipName",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/pfs/factorial/CFa{hdole/nat/CPo{N64,#1}oPC,#1_1}aFC"
@@ -176,6 +180,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/pfs/factorial/CFa{hdole/nat/CPo{N64,#1}oPC,hdole/nat/N64_0}aFC"
@@ -189,6 +197,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/pfs/factorial/Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_0}aF"
@@ -201,6 +213,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -279,9 +295,8 @@
       ]
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631775729740,
+  "timestamp": 1632022316050,
   "version": 0,
   "hiddenCells": [
     "8aa77e45b3107e20f4679af002f46a03476b965865a58d9898b29b98881fa24c"

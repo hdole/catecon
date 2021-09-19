@@ -141,8 +141,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 60,
-        "y": -510
+        "x": 40,
+        "y": -530
       },
       "height": "200",
       "weight": "bold"
@@ -566,13 +566,12 @@
       ]
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631410332910,
+  "timestamp": 1631957433118,
   "version": 0,
   "viewport": {
     "x": 544,
-    "y": -1632,
+    "y": 816,
     "scale": 1
   }
 }

@@ -200,14 +200,14 @@
       "height": 24
     },
     {
-      "description": "Three-D Integration",
+      "description": "3D",
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": 20,
+        "x": 130,
         "y": 10
       },
-      "height": 96,
+      "height": "200",
       "weight": "bold"
     },
     {
@@ -367,9 +367,8 @@
       "codomain": "hdole/threeD/threeD"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631778775948,
+  "timestamp": 1631957208369,
   "version": 0,
   "viewport": {
     "x": 544,

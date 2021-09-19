@@ -531,8 +531,8 @@
       "basename": "t_31",
       "prototype": "DiagramText",
       "xy": {
-        "x": -800,
-        "y": -480
+        "x": -850,
+        "y": -470
       },
       "height": "500",
       "weight": "bold"
@@ -4011,7 +4011,7 @@
       "description": "An 8-bit integer",
       "basename": "Z8",
       "prototype": "FiniteObject",
-      "properName": "&Zopf;&#8328",
+      "properName": "256",
       "code": {
         "cpp": "typedef int8_t %0;\n"
       },
@@ -4020,8 +4020,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z8",
-        "hdole/int/Z8"
+        "Z8",
+        "Z8"
       ]
     },
     {
@@ -4036,22 +4036,22 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/#1",
-        "hdole/int/#1"
+        "#1",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z16",
-        "hdole/int/Z16"
+        "Z16",
+        "Z16"
       ]
     },
     {
@@ -4066,8 +4066,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z32",
-        "hdole/int/Z32"
+        "Z32",
+        "Z32"
       ]
     },
     {
@@ -4082,8 +4082,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z64",
-        "hdole/int/Z64"
+        "Z64",
+        "Z64"
       ]
     },
     {
@@ -4099,115 +4099,115 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Z16",
-        "hdole/int/#1"
+        "Z16",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Z64",
-        "hdole/int/#1"
+        "Z64",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Z32",
-        "hdole/int/#1"
+        "Z32",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Z8",
-        "hdole/int/#1"
+        "Z8",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Z128",
-        "hdole/int/#1"
+        "Z128",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z128",
-        "hdole/int/Z128"
+        "Z128",
+        "Z128"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z16",
-        "hdole/int/Z8"
+        "Z16",
+        "Z8"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z32",
-        "hdole/int/Z8"
+        "Z32",
+        "Z8"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z64",
-        "hdole/int/Z8"
+        "Z64",
+        "Z8"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/int/Z128",
-        "hdole/int/Z8"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/int/Po{Z8,Z8}oP",
-        "hdole/int/#1"
+        "Z128",
+        "Z8"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Po{Z16,Z16}oP",
-        "hdole/int/#1"
+        "Po{Z8,Z8}oP",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Po{Z32,Z32}oP",
-        "hdole/int/#1"
+        "Po{Z16,Z16}oP",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Po{Z64,Z64}oP",
-        "hdole/int/#1"
+        "Po{Z32,Z32}oP",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/int/Po{Z128,Z128}oP",
-        "hdole/int/#1"
+        "Po{Z64,Z64}oP",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{Z128,Z128}oP",
+        "#1"
       ]
     },
     {
@@ -5693,13 +5693,12 @@
       "codomain": "hdole/nat/N128"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631090701024,
+  "timestamp": 1631957243540,
   "version": 0,
   "viewport": {
-    "x": 1260.742768300861,
-    "y": -3910.1881849330803,
-    "scale": 0.7295909462525606
+    "x": 1139,
+    "y": 760,
+    "scale": 0.7299003489746418
   }
 }
