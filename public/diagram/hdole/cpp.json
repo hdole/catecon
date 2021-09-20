@@ -1297,7 +1297,7 @@
       "basename": "t_46",
       "prototype": "DiagramText",
       "xy": {
-        "x": -350,
+        "x": -340,
         "y": -180
       },
       "height": "700",
@@ -2675,7 +2675,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1
     },
     {
@@ -3668,13 +3668,12 @@
       "codomain": "hdole/nat/N64"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631764589986,
+  "timestamp": 1632032021339,
   "version": 0,
   "viewport": {
-    "x": 831,
-    "y": 535,
-    "scale": 0.6310332214818467
+    "x": 725,
+    "y": 617,
+    "scale": 0.7701227548626174
   }
 }

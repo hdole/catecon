@@ -687,7 +687,7 @@
       "prototype": "IndexObject",
       "to": "hdole/test/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
       "xy": {
-        "x": 1610,
+        "x": 1580,
         "y": 780
       }
     },
@@ -1843,14 +1843,14 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632024414986,
+  "timestamp": 1632032798565,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
   ],
   "viewport": {
-    "x": 997,
-    "y": 681,
-    "scale": 0.5676832798461857
+    "x": 991,
+    "y": 669,
+    "scale": 0.5783020241735838
   }
 }

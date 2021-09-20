@@ -15,7 +15,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 140,
-        "y": -240
+        "y": -230
       },
       "height": "200",
       "weight": "bold"
@@ -39,17 +39,26 @@
         "y": 20
       },
       "height": "24"
+    },
+    {
+      "description": "Hot keys are defined <diagram name=\"hdole/hotkeys\">here</diagram>.",
+      "basename": "t_3",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 170,
+        "y": 200
+      },
+      "height": "24"
     }
   ],
   "elements": [],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631764551364,
+  "timestamp": 1632118808022,
   "version": 0,
   "viewport": {
-    "x": 218,
-    "y": 1258,
-    "scale": 2.9619722452243042
+    "x": 94,
+    "y": 1110,
+    "scale": 2.5095263673417803
   },
   "properName": "hdole/help"
 }

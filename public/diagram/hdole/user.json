@@ -16,8 +16,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -810,
-        "y": -310
+        "x": -820,
+        "y": -240
       },
       "height": "200",
       "weight": "bold"
@@ -160,14 +160,13 @@
       "codomain": "hdole/int/Z32"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631931690893,
+  "timestamp": 1632119777884,
   "version": 0,
   "viewport": {
-    "x": 1877,
-    "y": 882,
-    "scale": 1.567642352714717
+    "x": 2026,
+    "y": 732,
+    "scale": 1.7347959464726457
   },
   "properName": "hdole/user"
 }

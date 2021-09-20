@@ -14,8 +14,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 1000,
-        "y": 300
+        "x": 970,
+        "y": 330
       },
       "height": "200",
       "weight": "bold"
@@ -800,7 +800,7 @@
       "height": "24"
     },
     {
-      "description": "shift-\nDelete",
+      "description": "shift-Delete",
       "basename": "t_78",
       "prototype": "DiagramText",
       "xy": {
@@ -826,7 +826,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3700
+        "y": 3600
       },
       "height": "36",
       "weight": "bold"
@@ -837,7 +837,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3700
+        "y": 3600
       },
       "height": "24"
     },
@@ -847,7 +847,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3800
+        "y": 3700
       },
       "height": "36",
       "weight": "bold"
@@ -858,7 +858,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3800
+        "y": 3700
       },
       "height": "24"
     },
@@ -868,7 +868,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3900
+        "y": 3800
       },
       "height": "36",
       "weight": "bold"
@@ -879,7 +879,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3900
+        "y": 3800
       },
       "height": "24"
     },
@@ -889,7 +889,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4000
+        "y": 3900
       },
       "height": "24"
     },
@@ -899,7 +899,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4000
+        "y": 3900
       },
       "height": "36",
       "weight": "bold"
@@ -910,7 +910,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4100
+        "y": 4000
       },
       "height": "24"
     },
@@ -920,7 +920,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4100
+        "y": 4000
       },
       "height": "36",
       "weight": "bold"
@@ -931,7 +931,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1200,
-        "y": 4100
+        "y": 4000
       },
       "height": "48"
     },
@@ -941,7 +941,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4200
+        "y": 4100
       },
       "height": "36",
       "weight": "bold"
@@ -952,7 +952,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4200
+        "y": 4100
       },
       "height": "24"
     },
@@ -962,7 +962,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4300
+        "y": 4200
       },
       "height": "36",
       "weight": "bold"
@@ -973,7 +973,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4300
+        "y": 4200
       },
       "height": "24"
     },
@@ -983,7 +983,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4400
+        "y": 4300
       },
       "height": "36",
       "weight": "bold"
@@ -994,17 +994,17 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4400
+        "y": 4300
       },
       "height": "24"
     },
     {
-      "description": "Page up\nPage Down",
+      "description": "Page Up\nPage Down",
       "basename": "t_97",
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4500
+        "y": 4400
       },
       "height": "36",
       "weight": "bold"
@@ -1015,7 +1015,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4500
+        "y": 4400
       },
       "height": "24"
     },
@@ -1025,7 +1025,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4700
+        "y": 4600
       },
       "height": "36",
       "weight": "bold"
@@ -1036,7 +1036,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4700
+        "y": 4600
       },
       "height": "24"
     },
@@ -1063,12 +1063,12 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1632025307851,
+  "timestamp": 1632118703192,
   "version": 0,
   "viewport": {
-    "x": -606,
-    "y": -144,
-    "scale": 1.3456430592560464
+    "x": -1223,
+    "y": -216,
+    "scale": 1.514804989375574
   },
   "properName": "hdole/hotkeys"
 }

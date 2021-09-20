@@ -3729,7 +3729,7 @@
       "description": "An unsigned byte",
       "basename": "N8",
       "prototype": "FiniteObject",
-      "properName": "&Nopf;&#8328",
+      "properName": "ℕ&#x2088;",
       "code": {
         "cpp": "typedef uint8_t %0;\n"
       },
@@ -3754,7 +3754,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1
     },
     {
@@ -5354,9 +5354,8 @@
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631762110100,
+  "timestamp": 1632035525449,
   "version": 0,
   "viewport": {
     "x": 1298,

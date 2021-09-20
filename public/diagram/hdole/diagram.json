@@ -12,7 +12,7 @@
   ],
   "domainElements": [
     {
-      "description": "<icon>diagram</icon>Diagram",
+      "description": "<icon>diagram</icon> Diagram",
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
@@ -264,9 +264,8 @@
       "codomain": "hdole/diagram/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631941022696,
+  "timestamp": 1632032072574,
   "version": 0,
   "viewport": {
     "x": 982,
