@@ -2805,9 +2805,19 @@ class Session
 				this.mode = 'catalog';
 		}
 	}
+	loadAction(action)
+	{
+		
+	}
 	loadDiagrams()
 	{
-		this.diagrams.forEach((v, d) => Runtime.DownloadDiagram(d));
+		this.diagrams.forEach((v, d) => Runtime.DownloadDiagram(d, _ =>
+		{
+			const diagram = R.$CAT.getElement(d);
+			if (diagram instanceof ActionDiagram)
+			{
+			}
+		}));
 	}
 	getCurrentViewport()
 	{
@@ -2934,7 +2944,7 @@ class Display
 		//			AltHome(e)		BROWSER RESERVED
 					Backspace(e)
 					{
-						const diagrams = D.session.diagrams;
+						const diagrams = [...D.session.diagrams.keys()];
 						let ndx = diagrams.indexOf(R.diagram.name);
 						if (ndx === 0)
 							ndx = diagrams.length -1;
@@ -2945,7 +2955,7 @@ class Display
 					},
 					ShiftBackspace(e)
 					{
-						const diagrams = D.session.diagrams;
+						const diagrams = [...D.session.diagrams.keys()];
 						let ndx = diagrams.indexOf(R.diagram.name);
 						if (ndx === diagrams.length -1)
 							ndx = 0;
@@ -4314,6 +4324,7 @@ class Display
 			const action = 'action' in args ? args.action : null;
 			if (command === 'diagram')
 			{
+				document.body.style.overflow = 'hidden';
 				document.getElementById('diagramView').classList.remove('hidden');
 				if (diagram)
 				{
@@ -5568,6 +5579,7 @@ class Catalog extends DiagramTool		// GUI only
 			switch(args.command)
 			{
 				case 'catalog':
+					document.body.style.overflow = '';		// turn on scrollbars
 					this.show();
 					this.updateDiagramCodomain();
 					this.update();
@@ -5922,10 +5934,11 @@ class Catalog extends DiagramTool		// GUI only
 		{
 			D.emitCATEvent('new', diagram);
 			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
-			diagram.setPlacement({x:0, y:-100, scale:0.5});
+//			diagram.setPlacement({x:0, y:-100, scale:0.5});
+			diagram.makeSVG();
 			diagram.placeText(diagram.properName, {x:0, y:0}, D.default.title.height, D.default.title.weight);
 			diagram.description !== '' && diagram.placeText(diagram.description, {x:0, y:D.gridSize()}, D.default.font.height);
-			Runtime.SelectDiagram(diagram);
+			Runtime.SelectDiagram(diagram, 'home');
 		}
 		else
 			errorElt.innerHTML = U.HtmlSafe(diagram);
@@ -8263,31 +8276,65 @@ class DiagramText extends Element
 		{
 			return H3.tspan(t === '' ? '&ZeroWidthSpace;' : t, {'text-anchor':"left", x, dy:i > 0 ? this.lineDeltaY() : ''});
 		};
+		let tspan = null;
+		let x = 0;
+		const placeText = (tx, i) =>
+		{
+			tspan = wrapTspan(tx, i, x);
+			this.svgText.appendChild(tspan);
+			x += tspan.getBBox().width;
+		};
 		const procText = (txt, i) =>
 		{
-			let x = 0;
+			x = 0;
+			let line = i;
 			if (txt === '')
-				this.svgText.appendChild(wrapTspan(txt, i, x));
+				this.svgText.appendChild(wrapTspan(txt, line, x));
 			else
 			{
-				const tx = txt.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/ /g, '&nbsp;');
-				div.innerHTML = tx;
-				let child = div.firstChild;
-				while(child)
+				let tx = txt.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/ /g, '&nbsp;');
+				while(tx.length > 0)
 				{
-					if (child instanceof Text)
+					const matches = tx.match(/<(?<tag>.*)(\s*.*)>(.*)<\/\k<tag>>/);
+					if (matches && matches.length > 0)
 					{
-						const tspan = wrapTspan(child.data, i, x);
-						this.svgText.appendChild(tspan);
-						x += tspan.getBBox().width;
+						if (matches.index > 0)
+						{
+							placeText(tx.substring(0, matches.index), line);
+							line = 0;		// stay on this line
+						}
+						if (matches[1] === 'icon')
+						{
+							const height = Number.parseInt(this.height);
+							const use = H3.use({href:`#icon-${matches[3]}`, width:this.height, height:this.height, x, y:- 0.8 * height});
+							this.svg.appendChild(use);
+							x += height;
+							tx = tx.substring(matches.index + matches[0].length);
+						}
+						else if (matches[1] === 'diagram')
+						{
+							placeText(matches[3], line);
+							const nameResults = matches[2].match(/\s*name="(.*)"/);
+							if (nameResults)
+							{
+								tspan.onclick = _ => Runtime.SelectDiagram(nameResults[1]);
+								tspan.style.fill = 'blue';
+							}
+							tx = tx.substring(matches.index + matches[0].length);
+							line = 0;
+						}
+						else		// not our tag
+						{
+							placeText(tx.substring(matches.index), line);
+							line = 0;
+							break;
+						}
 					}
-					else if (child.tagName === 'ICON')
+					else
 					{
-						const use = H3.use({href:`#icon-${child.innerText}`, width:this.height, height:this.height, x, y:- 0.8 * Number.parseInt(this.height)});
-						this.svg.appendChild(use);
-						x += this.height;
+						placeText(tx, line);
+						break;
 					}
-					child = child.nextSibling;
 				}
 			}
 		};
@@ -14673,7 +14720,7 @@ class Diagram extends Functor
 	actionHtml(e, name, args = {})
 	{
 		D.toolbar.deactivateButtons();
-		D.removeChildren(D.toolbar.help);
+//		D.removeChildren(D.toolbar.help);
 		D.toolbar.clearError();
 		const action = this.codomain.actions.get(name);
 		if (action && action.hasForm(R.diagram, this.selected))
@@ -15221,11 +15268,12 @@ class Diagram extends Functor
 			{
 				txtbox.contentEditable = true;
 				txtbox.focus();
-				txtbox.onkeydown = e =>
-				{
-					e.stopPropagation();
-					e.key === 'Enter' && this.commitElementText(e, elt.name, txtbox, attribute);
-				};
+				if (attribute !== 'description')
+					txtbox.onkeydown = e =>
+					{
+						e.stopPropagation();
+						e.key === 'Enter' && this.commitElementText(e, elt.name, txtbox, attribute);
+					};
 				if (attribute === 'basename')
 					txtbox.onkeyup = e => D.inputBasenameSearch(e, this, e => e.stopPropagation(), elt);
 				else
