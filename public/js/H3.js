@@ -23,7 +23,7 @@ class H3
 						tokens.shift();
 						tokens.map(c => elt.classList.add(c));
 					}
-					else if (arg.charAt(0) === '.')
+					else if (arg.charAt(0) === '.' && arg.length > 1)
 					{
 						const tokens = arg.substr(1).split('.');
 						tokens.map(c => elt.classList.add(c));
