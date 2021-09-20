@@ -3,7 +3,6 @@ html, body
 	font:		12px "Fira Sans",sans-serif;
 	height:		100%;
 	margin:		0px 0px 0px 0px;
-	overflow:	hidden;
 }
 
 label
@@ -1179,6 +1178,6 @@ tspan
 
 .borderAlert
 {
-	cursor:			grab;
+	cursor:			none;
 	user-select:	none;
 }
