@@ -12939,6 +12939,11 @@ class Cell extends DiagramCore
 	}
 	update()
 	{
+		if (this.diagram.ready > 0)
+		{
+			setTimeout(_ => this.update());
+			return;
+		}
 		const xy = this.getXY();
 		if (isNaN(xy.x) || isNaN(xy.y))
 			throw 'NaN!';
