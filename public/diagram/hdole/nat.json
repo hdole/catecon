@@ -3,7 +3,6 @@
   "basename": "nat",
   "name": "hdole/nat",
   "prototype": "Diagram",
-  "properName": "hdole/nat",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "code": {
@@ -566,8 +565,8 @@
       "basename": "t_31",
       "prototype": "DiagramText",
       "xy": {
-        "x": -1260,
-        "y": -400
+        "x": -1390,
+        "y": -380
       },
       "height": "350",
       "weight": "bold"
@@ -3729,7 +3728,7 @@
       "description": "An unsigned byte",
       "basename": "N8",
       "prototype": "FiniteObject",
-      "properName": "ℕ&#x2088;",
+      "properName": "256",
       "code": {
         "cpp": "typedef uint8_t %0;\n"
       },
@@ -5355,11 +5354,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632035525449,
+  "timestamp": 1632387832991,
   "version": 0,
   "viewport": {
     "x": 1298,
-    "y": 669,
+    "y": 593,
     "scale": 0.7278263341801406
-  }
+  },
+  "properName": "hdole/nat"
 }

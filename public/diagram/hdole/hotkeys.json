@@ -14,8 +14,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 970,
-        "y": 330
+        "x": 1010,
+        "y": 350
       },
       "height": "200",
       "weight": "bold"
@@ -721,8 +721,8 @@
       "basename": "t_70",
       "prototype": "DiagramText",
       "xy": {
-        "x": 1160,
-        "y": 3000
+        "x": 1190,
+        "y": 3010
       },
       "height": "48"
     },
@@ -1063,12 +1063,12 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1632118703192,
+  "timestamp": 1632474219551,
   "version": 0,
   "viewport": {
-    "x": -1223,
-    "y": -216,
-    "scale": 1.514804989375574
+    "x": -1198,
+    "y": -199,
+    "scale": 1.5048412881309605
   },
   "properName": "hdole/hotkeys"
 }

@@ -176,6 +176,60 @@
       }
     },
     {
+      "basename": "o_11",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1400,
+        "y": -500
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1600,
+        "y": -500
+      }
+    },
+    {
+      "basename": "o_14",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1400,
+        "y": -400
+      }
+    },
+    {
+      "basename": "o_15",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1600,
+        "y": -400
+      }
+    },
+    {
+      "basename": "o_16",
+      "prototype": "IndexObject",
+      "to": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP",
+      "xy": {
+        "x": 1400,
+        "y": -300
+      }
+    },
+    {
+      "basename": "o_17",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1800,
+        "y": -300
+      }
+    },
+    {
       "basename": "m_0",
       "prototype": "IndexMorphism",
       "domain": "hdole/madd/o_12",
@@ -363,6 +417,27 @@
       ],
       "homsetIndex": 3,
       "to": "hdole/madd/a/madd"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/madd/o_11",
+      "codomain": "hdole/madd/o_13",
+      "to": "hdole/floats/mult128"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/madd/o_14",
+      "codomain": "hdole/madd/o_15",
+      "to": "hdole/floats/add128"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/madd/o_16",
+      "codomain": "hdole/madd/o_17",
+      "to": "hdole/madd/Cm{Pa{Cm{Fa{Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_0,hdole/floats/F128_1}aF,hdole/floats/mult128}mC,Fa{Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_2}aF}aP,hdole/floats/add128}mC"
     }
   ],
   "elements": [
@@ -379,6 +454,21 @@
       "objects": [
         "hdole/floats/F64",
         "hdole/floats/F64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F128",
+        "hdole/floats/F128",
+        "hdole/floats/F128"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F128",
+        "hdole/floats/F128"
       ]
     },
     {
@@ -454,18 +544,68 @@
       "domain": "hdole/madd/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "codomain": "hdole/floats/F64",
       "source": "hdole/madd/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP",
+      "codomain": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128}oP",
+      "factors": [
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP",
+      "codomain": "hdole/floats/F128",
+      "morphisms": [
+        "Fa{Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_0,hdole/floats/F128_1}aF",
+        "hdole/floats/mult128"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP",
+      "codomain": "hdole/floats/F128",
+      "factors": [
+        [
+          2
+        ]
+      ]
+    },
+    {
+      "prototype": "ProductAssembly",
+      "domain": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP",
+      "codomain": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128}oP",
+      "morphisms": [
+        "Cm{Fa{Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_0,hdole/floats/F128_1}aF,hdole/floats/mult128}mC",
+        "Fa{Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_2}aF"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/madd/Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP",
+      "codomain": "hdole/floats/F128",
+      "morphisms": [
+        "Pa{Cm{Fa{Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_0,hdole/floats/F128_1}aF,hdole/floats/mult128}mC,Fa{Po{hdole/floats/F128,hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_2}aF}aP",
+        "hdole/floats/add128"
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1632120020907,
+  "timestamp": 1632295838339,
   "version": 0,
   "hiddenCells": [
     "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
   ],
   "viewport": {
-    "x": 836,
-    "y": 1064,
-    "scale": 1
+    "x": 605,
+    "y": 1031,
+    "scale": 0.9990509685134568
   },
   "properName": "hdole/madd"
 }

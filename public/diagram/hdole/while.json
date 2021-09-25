@@ -78,7 +78,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 50,
+        "x": 40,
         "y": 60
       },
       "height": "200",
@@ -173,6 +173,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/while/Fa{S,S_-1}aF"
@@ -186,6 +190,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/while/Id{S}dI"
@@ -198,6 +206,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -229,6 +241,10 @@
         ],
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -264,6 +280,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/while/CFa{CPo{#1,#1}oPC,#1_0}aFC"
@@ -281,6 +301,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/while/CFa{CPo{#1,#1}oPC,#1_1}aFC"
@@ -294,7 +318,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1
     },
     {
@@ -357,17 +381,16 @@
       ]
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631864118542,
+  "timestamp": 1632475617760,
   "version": 0,
   "hiddenCells": [
     "8901823568e5dafc364b7e06357dd9d01318f1b37269e38f12a42911ec7b9800",
     "ce18ae784869bc058864cf12812c165721df1800bcbf615259df86efbe164d76"
   ],
   "viewport": {
-    "x": 353,
-    "y": 334,
-    "scale": 2.3670474542905717
+    "x": 504,
+    "y": 165,
+    "scale": 1.0835432710266413
   }
 }
