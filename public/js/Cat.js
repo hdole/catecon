@@ -540,6 +540,7 @@ class Runtime
 				},
 				writable:true
 			},	// TODO fix after bootstrap removed	writable:true,
+			userSessionActions:	{value:null,		writable:true},
 			userDiagram:		{value:new Map(),	writable:false},
 			workers:			{value:{},		writable: false},
 		});
@@ -672,6 +673,7 @@ class Runtime
 		new AlignHorizontalAction(diagramDiagram);
 		new AlignVerticalAction(diagramDiagram);
 		setup(diagramDiagram);
+		this.userSessionActions = new Diagram(this.$CAT, {basename:'userSessionActions', codomain:'Actions', description:'diagram for user defined actions', user:'sys'});
 		const productDiagram = new Diagram(this.$CAT, {basename:'product', codomain:'Actions', description:'diagram for product actions', user:'sys'});
 		new ProductAction(productDiagram);
 		new ProductEditAction(productDiagram);
@@ -1256,9 +1258,9 @@ args.codomain = 'zf/Set';
 	}
 	sameForm(refElt, testElt, eltMap = new Map())
 	{
-		const ref = refElt.to.getBase();		// no longer named
-		const test = testElt.to.getBase();	// no longer named
-		if (ref.prototype.name === 'CatObject' && testElt instanceof CatObject)
+		const ref = refElt.getBase();
+		const test = testElt.getBase();
+		if (ref.constructor.name === 'CatObject' && testElt instanceof CatObject)
 		{
 			if (eltMap.has(ref))
 			{
@@ -1269,7 +1271,7 @@ args.codomain = 'zf/Set';
 				eltMap.set(ref, test);
 			return true;
 		}
-		if (ref.prototype.name === 'Morphism' && ref.isBare() && testElt instanceof Morphism)
+		if (ref.constructor.name === 'Morphism' && ref.isBare() && testElt instanceof Morphism)
 		{
 			if (eltMap.has(ref))
 			{
@@ -1278,22 +1280,22 @@ args.codomain = 'zf/Set';
 			}
 			else
 				eltMap.set(ref, test);
-			return true;
+			return this.sameForm(refElt.domain, testElt.domain, eltMap) && this.sameForm(refElt.codomain, testElt.codomain, eltMap);
 		}
-		if (ref.prototype.name === test.prototype.name && ref.dual === test.dual)
+		if (ref.constructor.name === test.constructor.name && ref.dual === test.dual)
 		{
 			if (ref instanceof MultiObject && ref.objects.length === test.objects.length)
 				return ref.objects.reduce((r, o, i) => r && this.sameForm(o, test.objects[i], eltMap), true);
 			if (ref instanceof MultiMorphism && ref.morphisms.length === test.morphisms.length)
 				return ref.morphisms.reduce((r, m, i) => r && this.sameForm(m, test.morphisms[i], eltMap), true);
-			if (ref.prototype.name === 'FiniteObject')
+			if (ref.constructor.name === 'FiniteObject')
 			{
 				if ('size' in ref)
 					return 'size' in test ? (ref.size === test.size) : false;
 				return 'size' in ref ? false : true;
 			}
 			if (ref instanceof Morphism && U.sameForm(ref.domain, test.domain, eltMap) && U.sameForm(ref.codomain, test.codomain, eltMap))
-				switch(ref.prototype.name)
+				switch(ref.constructor.name)
 				{
 					case 'Identity':
 						return Morphism.isIdentity(test);
@@ -1786,6 +1788,7 @@ class Toolbar
 		actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
 		actions.map(action => !action.hidden() && action.hasForm(diagram, diagram.selected) &&
 				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), {title:action.description})));
+		R.userSessionActions.forEachMorphism(action => action.hasForm(diagram, diagram.selected) && btns.push(H3.button(action.name, {onclick:e => Cat.R.diagram.activate(e, action.name)})));
 		btns.push(D.getIcon('view', 'view', e => Cat.R.diagram.viewElements(...R.diagram.selected), {title:'Home'}));
 		this.buttons = H3.td(btns);
 		this.header.appendChild(H3.table(H3.tr(this.buttons, H3.td(this.getCloseToolbarBtn(), '.right')), '.w100'));
@@ -8617,7 +8620,7 @@ class IndexObject extends CatObject
 	}
 	width()
 	{
-		return isGUI ? D.textWidth(to.properName) : 0;
+		return isGUI ? D.textWidth(this.to.properName) : 0;
 	}
 	decrRefcnt()
 	{
@@ -11326,7 +11329,8 @@ class ActionAction extends Action
 			});
 			const args = {basename:namedSource.basename, names, codomain:diagram.codomain, user:R.user.name, ops, references};
 			R.sync = false;		// turn off autosave
-			const action = new ActionDiagram(R.getUserDiagram(R.user.name), args);
+//			const action = new ActionDiagram(R.getUserDiagram(R.user.name), args);
+			const action = new ActionDiagram(R.userSessionActions, args);
 			const nameMap = new Map();
 			namedBareValues.map((elt, i) =>
 			{
@@ -14735,7 +14739,9 @@ class Diagram extends Functor
 		D.toolbar.deactivateButtons();
 		try
 		{
-			const action = this.codomain.actions.get(name);
+			let action = this.codomain.actions.get(name);
+			if (!action)
+				action = R.userSessionActions.getElement(name);
 			if (action && action.hasForm(R.diagram, this.selected))
 				args ? action.action(e, this, this.selected, args) : action.action(e, this, this.selected);
 		}
@@ -16241,6 +16247,7 @@ class ActionDiagram extends Diagram
 			named:		{value:named,		writable:	true},
 			ops:		{value:nuArgs.ops,	writable:	false},
 		});
+		R.userSessionActions.addElement(this);
 	}
 	help()
 	{
@@ -16248,6 +16255,7 @@ class ActionDiagram extends Diagram
 	}
 	action(e, diagram, ary)
 	{
+		this.doit(e, diagram, ary);
 	}
 	_build(diagram, ref, eltMap)
 	{
@@ -16259,12 +16267,12 @@ class ActionDiagram extends Diagram
 			{
 				const objects = ref.objects.map(o => this._build(diagram, o, eltMap));
 				if (ref instanceof ProductObject)
-					return diagram[ref.dual ? 'coprod' : 'prod'](...objects)
+					return diagram[ref.dual ? 'coprod' : 'prod'](...objects);
 				if (ref instanceof HomObject)
-					return diagram.hom(...objects)
+					return diagram.hom(...objects);
 			}
 			else
-				switch(ref.prototype.name)
+				switch(ref.constructor.name)
 				{
 					case 'FiniteObject':
 					case 'NamedObject':
@@ -16282,18 +16290,20 @@ class ActionDiagram extends Diagram
 			if (ref instanceof MultiMorphism)
 			{
 				const morphisms = ref.morphisms.map(m => this._build(diagram, m, eltMap));
+				if (ref instanceof Composite)
+					return diagram.comp(...morphisms);
 				if (ref instanceof ProductMorphism)
-					return diagram[ref.dual ? 'coprod' : 'prod'](...morphisms)
+					return diagram[ref.dual ? 'coprod' : 'prod'](...morphisms);
 				if (ref instanceof HomMorphism)
-					return diagram.hom(...morphisms)
+					return diagram.hom(...morphisms);
 				if (ref instanceof ProductAssembly)
-					return diagram[ref.dual ? 'coassy' : 'assy'](...morphisms)
+					return diagram[ref.dual ? 'coassy' : 'assy'](...morphisms);
 			}
 			else
-				switch(ref.prototype.name)
+				switch(ref.constructor.name)
 				{
 					case 'FactorMorphism':
-						return diagram[ref.dual ? 'cofctr' : 'fctr'](this._build(diagram, ref[ref.dual ? ref.codomain : ref.doamin], eltMap), ref.factors);
+						return diagram[ref.dual ? 'cofctr' : 'fctr'](this._build(diagram, ref[ref.dual ? 'codomain' : 'domain'], eltMap), ref.factors);
 					case 'Identity':
 						return diagram.id(this._build(diagram, ref.domain, eltMap));
 					case 'LambdaMorphism':
@@ -16306,14 +16316,22 @@ class ActionDiagram extends Diagram
 						break;	// TODO
 				}
 		}
-		throw `type not handled: ${ref.prototype.name}`;
+		throw `type not handled: ${ref.constructor.name}`;
 	}
 	doit(e, diagram, ary)
 	{
 		const eltMap = new Map();
-		this.hasForm(diagram, ary, eltMap);
-		const base = this.named.getBase();
-		const elt = this._build(ref, eltMap);
+		if (this.hasForm(diagram, ary, eltMap))
+		{
+			const ref = this.named.getBase();
+			const elt = this._build(diagram, ref, eltMap);
+			const last = ary[ary.length -1];
+			const xy = last instanceof Morphism ? last.domain.getXY() : last.getXY();
+			if (elt instanceof Morphism)
+				diagram.placeMorphism(elt, xy, null, true);
+			else
+				placeObject(elt, xy);
+		}
 	}
 	hasForm(diagram, ary, eltMap = new Map())
 	{
@@ -16321,7 +16339,7 @@ class ActionDiagram extends Diagram
 		let allMorphisms = false;
 		let isBinaryOp = false;
 		if (this.match.length === ary.length)
-			return this.match.reduce((r, ref, i) => r && R.sameForm(ref, ary[i], eltMap), true);	// do all elements have the same form?
+			return this.match.reduce((r, ref, i) => r && R.sameForm(ref, ary[i].to, eltMap), true);	// do all elements have the same form?
 		return false;
 	}
 	json()
