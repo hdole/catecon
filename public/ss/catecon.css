@@ -723,6 +723,7 @@ svg line.emphasis
 path.emphasis
 {
 	stroke-dasharray:	5,5;
+	fill:				none;
 }
 
 polyline.emphasis
