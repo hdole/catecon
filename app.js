@@ -335,7 +335,7 @@ function updateSQLDiagramsByCatalog()
 	{
 		if (error) throw error;
 		const remaining = new Set(Cat.R.catalog.keys());
-		const localDiagrams = new Set(diagrams);
+		const localDiagrams = new Set(diagrams.map(info => info.name));
 		diagrams.map(info =>
 		{
 			if (info.user !== 'sys')
@@ -349,7 +349,7 @@ function updateSQLDiagramsByCatalog()
 		remaining.forEach(name =>
 		{
 			const info = Cat.R.catalog.get(name);
-			updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp, !localDiagrams.has(name));
+			updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp, localDiagrams.has(name));
 		});
 	});
 }
