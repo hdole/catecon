@@ -1,0 +1,44 @@
+{
+  "description": "The &#39;Action&#39; action",
+  "basename": "actionAction",
+  "name": "hdole/actionAction",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/actionAction_Index",
+  "codomain": "zf/Set",
+  "references": [],
+  "domainElements": [
+    {
+      "description": " Action Action",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -120,
+        "y": 100
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "description": "A bare object or morphism is one that is not constructed by categorical operators\nand has no data.\n\nTo create a new action, select bare objects or morphisms and lastly a named object\nor morphism that uses all the selected elements, then a new action may be created.\n\nAll actions from all diagrams in the user’s session are available for the user\ndepending on the user’s selection of elements.  An action appears on the toolbar\nfor the user to invoke when the pattern of the action’s selected elements, minus\nthe named element, is matched.\n\nWhen activated, a form shows the selected items and aspects of the contemplated\naction.  A list of all bare objects and morphisms used by the named element and not\nin the selected list are shown.  These bare elements must be used in the action.\n\nA list of all diagrams that must be referenced is shown.  If an action is used in a\ndiagram, these reference diagrams are added as references in that diagram.\n\nObjects and morphisms in the select list are said to be generalized for the action.\nA conflict occurs if a selected object is attached to a morphism that has data as that\nspecific data cannot be generalized. \n\nLook at the <diagram name=\"hdole/madd\">multiply-add example</diagram> add∘(Π<mult∘𝑝 ₀, ₁,𝑝 ₂>):𝔽₆₄×𝔽₆₄→𝔽₆₄.  If only the\nadd and multiply are selected for generalization, then the replacements must have\nmatching domains and codomains specific to 𝔽₆₄.  Selecting a diagram object 𝔽₆₄\nand the multiply and add then generalizes to a form like F×F→F\nfor some F.",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 0,
+        "y": 280
+      },
+      "height": 24
+    }
+  ],
+  "elements": [],
+  "user": "hdole",
+  "timestamp": 1632119976193,
+  "version": 0,
+  "viewport": {
+    "x": 720,
+    "y": 191,
+    "scale": 1.1641992319193222
+  },
+  "properName": "hdole/actionAction"
+}
