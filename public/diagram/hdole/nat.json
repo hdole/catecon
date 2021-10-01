@@ -10,9 +10,7 @@
   },
   "domain": "hdole/nat_Index",
   "codomain": "zf/Set",
-  "references": [
-    "hdole/Logic"
-  ],
+  "references": [],
   "domainElements": [
     {
       "basename": "o_0",
@@ -5354,7 +5352,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632387832991,
+  "timestamp": 1632777122803,
   "version": 0,
   "viewport": {
     "x": 1298,

@@ -129,7 +129,7 @@
     {
       "basename": "o_4",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 600,
         "y": 800
@@ -248,7 +248,7 @@
       "basename": "user",
       "prototype": "Morphism",
       "domain": "hdole/diagram/#1",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "description": "A number giving the milliseconds elapsed since the beginning of the epoch.",

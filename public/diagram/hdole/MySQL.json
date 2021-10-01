@@ -14,7 +14,7 @@
     {
       "basename": "o_0",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 200

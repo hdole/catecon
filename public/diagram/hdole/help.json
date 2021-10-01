@@ -3,6 +3,7 @@
   "basename": "help",
   "name": "hdole/help",
   "prototype": "Diagram",
+  "properName": "hdole/help",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/help_Index",
@@ -10,12 +11,12 @@
   "references": [],
   "domainElements": [
     {
-      "description": "Help",
+      "description": "<icon>help</icon>Help",
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 140,
-        "y": -230
+        "x": 150,
+        "y": -250
       },
       "height": "200",
       "weight": "bold"
@@ -53,12 +54,11 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1632118808022,
+  "timestamp": 1632903252904,
   "version": 0,
   "viewport": {
-    "x": 94,
-    "y": 1110,
-    "scale": 2.5095263673417803
-  },
-  "properName": "hdole/help"
+    "x": -618,
+    "y": 1982,
+    "scale": 4.1405796168040645
+  }
 }

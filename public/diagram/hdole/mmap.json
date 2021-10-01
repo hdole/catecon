@@ -114,7 +114,7 @@
     {
       "basename": "o_44",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": -1100,
         "y": -1500
@@ -132,7 +132,7 @@
     {
       "basename": "o_64",
       "prototype": "IndexObject",
-      "to": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
+      "to": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
       "xy": {
         "x": -1100,
         "y": -1100
@@ -226,7 +226,7 @@
     {
       "basename": "o_26",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": -700,
         "y": -900
@@ -481,7 +481,7 @@
           true
         ]
       ],
-      "to": "hdole/mmap/Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/Strings/str_0}aF"
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP,hdole/str/str_0}aF"
     },
     {
       "basename": "m_43",
@@ -522,7 +522,7 @@
           true
         ]
       ],
-      "to": "hdole/mmap/Fa{hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP,hdole/int/Z32_1}aF"
+      "to": "hdole/mmap/Fa{hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP,hdole/int/Z32_1}aF"
     },
     {
       "basename": "m_0",
@@ -842,15 +842,15 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
-      "codomain": "hdole/Strings/str",
+      "domain": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
+      "codomain": "hdole/str/str",
       "factors": [
         0
       ]
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
+      "domain": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
       "codomain": "hdole/int/Z32",
       "factors": [
         1

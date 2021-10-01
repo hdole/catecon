@@ -16,7 +16,7 @@
     {
       "basename": "o_0",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 200,
         "y": -600
@@ -34,7 +34,7 @@
     {
       "basename": "o_2",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 1000,
         "y": -600
@@ -43,7 +43,7 @@
     {
       "basename": "o_3",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 1000,
         "y": -200
@@ -52,7 +52,7 @@
     {
       "basename": "o_4",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 200,
         "y": -200
@@ -70,7 +70,7 @@
     {
       "basename": "o_6",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 600,
         "y": -600
@@ -183,7 +183,7 @@
         "mysql": "SELECT categoryName FROM DiagramInfo;"
       },
       "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "basename": "userName",
@@ -197,7 +197,7 @@
         "mysql": "SELECT userName FROM DiagramInfo;"
       },
       "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "basename": "name",
@@ -210,7 +210,7 @@
         "mysql": "SELECT name FROM DiagramInfo;"
       },
       "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "basename": "references",
@@ -223,7 +223,7 @@
         "mysql": "SELECT references FROM DiagramInfo;"
       },
       "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "basename": "timestamp",
@@ -249,7 +249,7 @@
         "mysql": "SELECT basename FROM DiagramInfo;"
       },
       "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     }
   ],
   "user": "hdole",

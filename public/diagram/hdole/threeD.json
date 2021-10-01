@@ -9,7 +9,7 @@
   "domain": "hdole/threeD_Index",
   "codomain": "zf/Set",
   "references": [
-    "hdole/Strings"
+    "hdole/str"
   ],
   "domainElements": [
     {
@@ -101,7 +101,7 @@
       "prototype": "IndexObject",
       "to": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "xy": {
-        "x": 400,
+        "x": 460,
         "y": 800
       }
     },
@@ -190,7 +190,7 @@
       }
     },
     {
-      "description": "References: Strings",
+      "description": "References: str",
       "basename": "t_6",
       "prototype": "DiagramText",
       "xy": {
@@ -204,7 +204,7 @@
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": 130,
+        "x": 140,
         "y": 10
       },
       "height": "200",
@@ -368,11 +368,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1631957208369,
+  "timestamp": 1632822258991,
   "version": 0,
   "viewport": {
     "x": 544,
-    "y": 204,
+    "y": 280,
     "scale": 1
   }
 }

@@ -19,7 +19,7 @@ var Cat = Cat || require('./Cat.js');
 			super(diagram, args);
 			R.languages.set(this.basename, this);
 			Cat.R.$CAT.getElement('Set').actions.set(args.basename, this);
-			Cat.Runtime.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
+			Cat.R.loadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
 		}
 		getType(elt, first = true)
 		{
@@ -685,24 +685,17 @@ ${this.generate(morphism)}
 		}
 		template(elt)
 		{
-			return `${this.isAsync(elt) ? 'async ' : ''}function %Type(args, out)\n{\n\t\n}\n`;
+			return `${this.isAsync(elt) ? 'async ' : ''}function %Type(args)\n{\n\t\n}\n`;
 		}
-		getEditHtml(div, elt)
+		getEditHtml(textarea, elt)
 		{
-			const id = `element-${this.ext}`;
-			let code = '';
-			if (this.hasCode(elt))
-				code = typeof elt.code.js === 'object' ? elt.code.js.code : elt.code.js;
-			else
-				code = this.template(elt);
-			const asyncAttrs = {class:'textButton', onclick:e => e.target.classList.toggle('blueRow')};
-			if (this.isAsync(elt))
-				asyncAttrs.class += ' blueRow';
-			div.appendChild(H3.div([H3.button('async', asyncAttrs), H3.span('Remember to declare function as async in code!')]));
-			div.appendChild(H3.div(Cat.U.HtmlSafe(code), {class:'code padding', id, onkeydown:e => e.stopPropagation()}));
-			if (this.isEditable(elt))
-				div.appendChild(D.getIcon(this.name, 'edit', e => R.Actions[this.basename].setCode(e, id, this.ext), 'Edit code', D.default.button.tiny));
-			return div;
+			super.getEditHtml(textarea, elt);
+//			if (!this.hasCode(elt))
+//				textarea.innerText = this.template(elt);
+// TODO			const asyncAttrs = {class:'textButton', onclick:e => e.target.classList.toggle('blueRow')};
+// TODO			if (this.isAsync(elt))
+// TODO				asyncAttrs.class += ' blueRow';
+			return textarea;
 		}
 		static ObjectLength(o)
 		{

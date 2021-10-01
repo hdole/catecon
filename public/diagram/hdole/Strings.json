@@ -6,7 +6,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/Strings_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/floats"
   ],
@@ -321,7 +321,7 @@
     {
       "basename": "o_28",
       "prototype": "DiagramObject",
-      "to": "hdole/Basics/TTY",
+      "to": "TTY",
       "xy": {
         "x": 400,
         "y": 2600
@@ -620,6 +620,11 @@
       ]
     },
     {
+      "description": "The TTY object interacts with serial devices",
+      "basename": "TTY",
+      "prototype": "FiniteObject"
+    },
+    {
       "description": "The space of all strings",
       "basename": "str",
       "prototype": "CatObject",
@@ -823,7 +828,7 @@
         "cpp": "#include <iostream>\nstd::cout << %0;"
       },
       "domain": "hdole/Strings/str",
-      "codomain": "hdole/Basics/TTY"
+      "codomain": "TTY"
     },
     {
       "basename": "N8ToStr",

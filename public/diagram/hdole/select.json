@@ -6,9 +6,9 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/select_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
-    "hdole/Strings"
+    "hdole/str"
   ],
   "domainElements": [
     {
@@ -25,7 +25,7 @@
     {
       "basename": "o_0",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 200,
         "y": 300
@@ -34,7 +34,7 @@
     {
       "basename": "o_1",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/#1",
+      "to": "hdole/str/#1",
       "xy": {
         "x": 400,
         "y": 300
@@ -70,7 +70,7 @@
     {
       "basename": "o_5",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 200,
         "y": 500
@@ -87,7 +87,7 @@
           true
         ]
       ],
-      "to": "hdole/Strings/empty"
+      "to": "hdole/str/empty"
     },
     {
       "basename": "m_1",
@@ -127,7 +127,7 @@
           true
         ]
       ],
-      "to": "hdole/select/Id{hdole/Strings/str}dI"
+      "to": "hdole/select/Id{hdole/str/str}dI"
     }
   ],
   "elements": [
@@ -142,7 +142,7 @@
       "prototype": "Morphism",
       "properName": "&#39;a&#39;",
       "domain": "hdole/select/#1",
-      "codomain": "hdole/Strings/str",
+      "codomain": "hdole/str/str",
       "data": [
         [
           0,
@@ -155,7 +155,7 @@
       "prototype": "Morphism",
       "properName": "&#39;b&#39;",
       "domain": "hdole/select/#1",
-      "codomain": "hdole/Strings/str",
+      "codomain": "hdole/str/str",
       "data": [
         [
           0,
@@ -168,7 +168,7 @@
       "prototype": "Morphism",
       "properName": "&#39;c&#39;",
       "domain": "hdole/select/#1",
-      "codomain": "hdole/Strings/str",
+      "codomain": "hdole/str/str",
       "data": [
         [
           0,
@@ -177,11 +177,11 @@
       ]
     },
     {
-      "basename": "Id{hdole/Strings/str}dI",
+      "basename": "Id{hdole/str/str}dI",
       "prototype": "Identity",
       "properName": "id",
-      "domain": "hdole/Strings/str",
-      "codomain": "hdole/Strings/str"
+      "domain": "hdole/str/str",
+      "codomain": "hdole/str/str"
     }
   ],
   "readonly": false,

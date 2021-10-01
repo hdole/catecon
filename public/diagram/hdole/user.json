@@ -3,6 +3,7 @@
   "basename": "user",
   "name": "hdole/user",
   "prototype": "Diagram",
+  "properName": "hdole/user",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/user_Index",
@@ -34,7 +35,7 @@
     {
       "basename": "o_1",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": -600,
         "y": 200
@@ -43,7 +44,7 @@
     {
       "basename": "o_2",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": -800,
         "y": 400
@@ -52,7 +53,7 @@
     {
       "basename": "o_3",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": -1000,
         "y": 200
@@ -137,21 +138,21 @@
       "basename": "name",
       "prototype": "Morphism",
       "domain": "hdole/user/user",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "description": "For MFA",
       "basename": "phoneNumber",
       "prototype": "Morphism",
       "domain": "hdole/user/user",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "basename": "permissions",
       "prototype": "Morphism",
       "properName": "privileges",
       "domain": "hdole/user/user",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "basename": "maxDiagrams",
@@ -161,12 +162,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632119777884,
+  "timestamp": 1632988677255,
   "version": 0,
   "viewport": {
-    "x": 2026,
-    "y": 732,
-    "scale": 1.7347959464726457
-  },
-  "properName": "hdole/user"
+    "x": 2017,
+    "y": 739,
+    "scale": 1.7103299656068351
+  }
 }

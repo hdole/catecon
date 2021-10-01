@@ -12,7 +12,7 @@
   "domain": "hdole/cpp_Index",
   "codomain": "zf/Set",
   "references": [
-    "hdole/Strings"
+    "hdole/str"
   ],
   "domainElements": [
     {
@@ -55,7 +55,7 @@
     {
       "basename": "o_3",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 400
@@ -186,7 +186,7 @@
     {
       "basename": "o_12",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 1400
@@ -308,7 +308,7 @@
     {
       "basename": "o_20",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 200,
         "y": 2400
@@ -439,7 +439,7 @@
     {
       "basename": "o_29",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 200,
         "y": 3400
@@ -699,7 +699,7 @@
     {
       "basename": "o_55",
       "prototype": "IndexObject",
-      "to": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
+      "to": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
       "xy": {
         "x": 200,
         "y": 6000
@@ -1166,7 +1166,7 @@
     {
       "basename": "o_89",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 10200
@@ -1194,7 +1194,7 @@
     {
       "basename": "o_91",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 10400
@@ -2732,7 +2732,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "hdole/int/Z32"
       ]
     },
@@ -2829,7 +2829,7 @@
         "cpp": "%1 = std::string(::strerror(%0));"
       },
       "domain": "hdole/cpp/Errno",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "description": "Read a natural number from standard input",
@@ -2873,7 +2873,7 @@
         "cpp": "std::cin >> %0;"
       },
       "domain": "hdole/cpp/stdin",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "description": "Write a natural number to standard out.",
@@ -2916,7 +2916,7 @@
       "code": {
         "cpp": "std::cout << %0;"
       },
-      "domain": "hdole/Strings/str",
+      "domain": "hdole/str/str",
       "codomain": "hdole/cpp/stdout"
     },
     {
@@ -2960,7 +2960,7 @@
       "code": {
         "cpp": "std::cerr << %0;"
       },
-      "domain": "hdole/Strings/str",
+      "domain": "hdole/str/str",
       "codomain": "hdole/cpp/stderr"
     },
     {
@@ -3030,7 +3030,7 @@
       "code": {
         "cpp": "{\n\tconst int fd = ::open(%0.c_str(), %1);\n\tif (fd >= 0)\n\t{\n\t\t%2.c = 0;\n\t\t%2.m0 = fd;\n\t}\n\telse\n\t{\n\t\t%2.c = 1;\n\t\t%2.m1 = ::errno;\n\t}\n}"
       },
-      "domain": "hdole/cpp/Po{hdole/Strings/str,hdole/int/Z32}oP",
+      "domain": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
       "codomain": "hdole/cpp/CPo{file,Errno}oPC"
     },
     {
@@ -3188,7 +3188,7 @@
         "cpp": "%1 = std::string((const char *)%0);"
       },
       "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "description": "Get a string from memory with a specified size",
@@ -3199,7 +3199,7 @@
         "cpp": "%2 = std::string(%0, %1);"
       },
       "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N64}oP",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "description": "Increment void pointer by 2",

@@ -7,7 +7,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/gdsReader_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/gds",
     "hdole/mmap"
@@ -70,7 +70,7 @@
     {
       "basename": "o_8",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": -2600,
         "y": -1600
@@ -178,7 +178,7 @@
     {
       "basename": "o_51",
       "prototype": "DiagramObject",
-      "to": "hdole/Logic/Omega",
+      "to": "CPo{#1,#1}oPC",
       "xy": {
         "x": -1400,
         "y": -2000
@@ -268,7 +268,7 @@
     {
       "basename": "o_12",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP",
+      "to": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
       "xy": {
         "x": -390,
         "y": 270
@@ -313,7 +313,7 @@
     {
       "basename": "o_50",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": 1000
@@ -322,7 +322,7 @@
     {
       "basename": "o_71",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": 800
@@ -331,7 +331,7 @@
     {
       "basename": "o_72",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": 600
@@ -340,7 +340,7 @@
     {
       "basename": "o_73",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": 400
@@ -349,7 +349,7 @@
     {
       "basename": "o_74",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": 0
@@ -358,7 +358,7 @@
     {
       "basename": "o_75",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -200
@@ -367,7 +367,7 @@
     {
       "basename": "o_76",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": 200
@@ -376,7 +376,7 @@
     {
       "basename": "o_77",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -400
@@ -385,7 +385,7 @@
     {
       "basename": "o_78",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -600
@@ -394,7 +394,7 @@
     {
       "basename": "o_79",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -1000
@@ -403,7 +403,7 @@
     {
       "basename": "o_80",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -1400
@@ -412,7 +412,7 @@
     {
       "basename": "o_81",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -1600
@@ -421,7 +421,7 @@
     {
       "basename": "o_83",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -1800
@@ -470,7 +470,7 @@
     {
       "basename": "o_48",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 600,
         "y": -2000
@@ -506,7 +506,7 @@
     {
       "basename": "o_5",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -800
@@ -515,7 +515,7 @@
     {
       "basename": "o_87",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -2800,
         "y": -1200
@@ -735,7 +735,7 @@
     {
       "basename": "o_107",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": 5000,
         "y": -260
@@ -856,7 +856,7 @@
     {
       "basename": "o_114",
       "prototype": "DiagramObject",
-      "to": "hdole/Logic/Omega",
+      "to": "CPo{#1,#1}oPC",
       "xy": {
         "x": 4060,
         "y": -50
@@ -946,7 +946,7 @@
     {
       "basename": "o_122",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": 1800,
         "y": -800
@@ -955,7 +955,7 @@
     {
       "basename": "o_127",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": 1800,
         "y": -400
@@ -964,7 +964,7 @@
     {
       "basename": "o_129",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 1800,
         "y": 800
@@ -991,7 +991,7 @@
     {
       "basename": "o_132",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 1400,
         "y": 800
@@ -1009,7 +1009,7 @@
     {
       "basename": "o_134",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": 1790,
         "y": 390
@@ -1137,7 +1137,7 @@
     {
       "basename": "o_150",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -800,
         "y": -1200
@@ -1146,7 +1146,7 @@
     {
       "basename": "o_151",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -600,
         "y": -1200
@@ -1155,7 +1155,7 @@
     {
       "basename": "o_152",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -1000,
         "y": -1200
@@ -1164,7 +1164,7 @@
     {
       "basename": "o_153",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -1200,
         "y": -1200
@@ -1200,7 +1200,7 @@
     {
       "basename": "o_157",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -400,
         "y": -1200
@@ -1209,7 +1209,7 @@
     {
       "basename": "o_158",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": -200,
         "y": -1200
@@ -1254,7 +1254,7 @@
     {
       "basename": "o_163",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": 0,
         "y": -1200
@@ -1263,7 +1263,7 @@
     {
       "basename": "o_164",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": 200,
         "y": -1200
@@ -1272,7 +1272,7 @@
     {
       "basename": "o_165",
       "prototype": "DiagramObject",
-      "to": "hdole/gdsReader/#1",
+      "to": "#1",
       "xy": {
         "x": 400,
         "y": -1200
@@ -1399,7 +1399,7 @@
     {
       "basename": "o_1",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": -430,
         "y": 1660
@@ -1446,7 +1446,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_52",
       "codomain": "hdole/gdsReader/o_51",
-      "to": "hdole/gdsReader/Id{Halt,hdole/Logic/Omega}dI"
+      "to": "hdole/gdsReader/Id{Halt,CPo{#1,#1}oPC}dI"
     },
     {
       "basename": "m_9",
@@ -1454,7 +1454,7 @@
       "domain": "hdole/gdsReader/o_51",
       "codomain": "hdole/gdsReader/o_52",
       "homsetIndex": 1,
-      "to": "hdole/gdsReader/Id{hdole/Logic/Omega,Halt}dI"
+      "to": "hdole/gdsReader/Id{CPo{#1,#1}oPC,Halt}dI"
     },
     {
       "basename": "m_10",
@@ -1521,7 +1521,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_37",
       "codomain": "hdole/gdsReader/o_12",
-      "to": "hdole/gdsReader/Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI"
+      "to": "hdole/gdsReader/Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI"
     },
     {
       "basename": "m_38",
@@ -1529,7 +1529,7 @@
       "domain": "hdole/gdsReader/o_12",
       "codomain": "hdole/gdsReader/o_37",
       "homsetIndex": 1,
-      "to": "hdole/gdsReader/Id{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,State}dI"
+      "to": "hdole/gdsReader/Id{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,State}dI"
     },
     {
       "basename": "m_47",
@@ -1542,14 +1542,14 @@
           true
         ]
       ],
-      "to": "hdole/gdsReader/Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF"
+      "to": "hdole/gdsReader/Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF"
     },
     {
       "basename": "m_48",
       "prototype": "DiagramComposite",
       "domain": "hdole/gdsReader/o_37",
       "codomain": "hdole/gdsReader/o_62",
-      "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC",
+      "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC",
       "morphisms": [
         "hdole/gdsReader/m_24",
         "hdole/gdsReader/m_47"
@@ -1785,7 +1785,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_36",
       "codomain": "hdole/gdsReader/o_8",
-      "to": "hdole/gdsReader/Fa{State,hdole/Strings/str_3}aF"
+      "to": "hdole/gdsReader/Fa{State,hdole/str/str_3}aF"
     },
     {
       "basename": "m_85",
@@ -1799,7 +1799,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_55",
       "codomain": "hdole/gdsReader/o_48",
-      "to": "hdole/gdsReader/Id{cell,hdole/Strings/str}dI"
+      "to": "hdole/gdsReader/Id{cell,hdole/str/str}dI"
     },
     {
       "basename": "m_72",
@@ -1807,7 +1807,7 @@
       "domain": "hdole/gdsReader/o_48",
       "codomain": "hdole/gdsReader/o_55",
       "homsetIndex": 1,
-      "to": "hdole/gdsReader/Id{hdole/Strings/str,cell}dI"
+      "to": "hdole/gdsReader/Id{hdole/str/str,cell}dI"
     },
     {
       "basename": "m_86",
@@ -2093,7 +2093,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_96",
       "codomain": "hdole/gdsReader/o_92",
-      "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
+      "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
     },
     {
       "basename": "m_112",
@@ -2113,7 +2113,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_110",
       "codomain": "hdole/gdsReader/o_94",
-      "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
+      "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
     },
     {
       "basename": "m_117",
@@ -2127,7 +2127,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gdsReader/o_114",
       "codomain": "hdole/gdsReader/o_116",
-      "to": "hdole/gdsReader/Id{hdole/Logic/Omega,Halt}dI"
+      "to": "hdole/gdsReader/Id{CPo{#1,#1}oPC,Halt}dI"
     },
     {
       "basename": "m_122",
@@ -2550,28 +2550,28 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/gdsReader/#1",
-        "hdole/gdsReader/#1"
+        "#1",
+        "#1"
       ]
     },
     {
       "basename": "Halt",
       "prototype": "NamedObject",
       "dual": true,
-      "source": "hdole/gdsReader/CPo{#1,#1}oPC"
+      "source": "CPo{#1,#1}oPC"
     },
     {
       "basename": "Id{Halt,CPo{#1,#1}oPC}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gdsReader/Halt",
-      "codomain": "hdole/gdsReader/CPo{#1,#1}oPC"
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "Id{CPo{#1,#1}oPC,Halt}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/gdsReader/CPo{#1,#1}oPC",
+      "domain": "CPo{#1,#1}oPC",
       "codomain": "hdole/gdsReader/Halt"
     },
     {
@@ -2689,7 +2689,7 @@
         "hdole/gdsReader/Halt",
         "hdole/cpp/voidPtr",
         "hdole/gds/EltType",
-        "hdole/Strings/str",
+        "hdole/str/str",
         "hdole/gdsReader/BndryData",
         "hdole/gdsReader/PathData",
         "hdole/gdsReader/SrefData",
@@ -2699,20 +2699,20 @@
     {
       "basename": "State",
       "prototype": "NamedObject",
-      "source": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP"
+      "source": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP"
     },
     {
-      "basename": "Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI",
+      "basename": "Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gdsReader/State",
-      "codomain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP"
+      "codomain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP"
     },
     {
-      "basename": "Id{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,State}dI",
+      "basename": "Id{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,State}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP",
+      "domain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
       "codomain": "hdole/gdsReader/State"
     },
     {
@@ -2720,20 +2720,20 @@
       "basename": "cell",
       "prototype": "NamedObject",
       "properName": "Cell",
-      "source": "hdole/Strings/str"
+      "source": "hdole/str/str"
     },
     {
-      "basename": "Id{cell,hdole/Strings/str}dI",
+      "basename": "Id{cell,hdole/str/str}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gdsReader/cell",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
-      "basename": "Id{hdole/Strings/str,cell}dI",
+      "basename": "Id{hdole/str/str,cell}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/Strings/str",
+      "domain": "hdole/str/str",
       "codomain": "hdole/gdsReader/cell"
     },
     {
@@ -2813,25 +2813,25 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gdsReader/#1",
-        "hdole/gdsReader/#1",
-        "hdole/gdsReader/#1"
+        "#1",
+        "#1",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gdsReader/#1",
-        "hdole/gdsReader/#1"
+        "#1",
+        "#1"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gdsReader/#1",
-        "hdole/gdsReader/#1",
-        "hdole/gdsReader/#1",
-        "hdole/gdsReader/#1"
+        "#1",
+        "#1",
+        "#1",
+        "#1"
       ]
     },
     {
@@ -2839,29 +2839,29 @@
       "dual": true,
       "objects": [
         "hdole/cpp/voidPtr",
-        "hdole/gdsReader/#1"
+        "#1"
       ]
     },
     {
       "description": "Identity between objects Halt and &Omega;",
-      "basename": "Id{Halt,hdole/Logic/Omega}dI",
+      "basename": "Id{Halt,CPo{#1,#1}oPC}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gdsReader/Halt",
-      "codomain": "hdole/Logic/Omega"
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "Identity between objects &Omega; and Halt",
-      "basename": "Id{hdole/Logic/Omega,Halt}dI",
+      "basename": "Id{CPo{#1,#1}oPC,Halt}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/Logic/Omega",
+      "domain": "CPo{#1,#1}oPC",
       "codomain": "hdole/gdsReader/Halt"
     },
     {
-      "basename": "Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF",
+      "basename": "Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF",
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP",
+      "domain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
       "codomain": "hdole/cpp/voidPtr",
       "factors": [
         1
@@ -2873,15 +2873,15 @@
       "domain": "hdole/gdsReader/State",
       "codomain": "hdole/cpp/voidPtr",
       "morphisms": [
-        "hdole/gdsReader/Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP}dI",
-        "hdole/gdsReader/Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/Strings/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF"
+        "hdole/gdsReader/Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI",
+        "hdole/gdsReader/Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF"
       ]
     },
     {
       "basename": "data_0",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/ColPitch",
       "data": []
     },
@@ -2889,7 +2889,7 @@
       "basename": "data_1",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/RowPitch",
       "data": []
     },
@@ -2897,7 +2897,7 @@
       "basename": "data_2",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Cols",
       "data": []
     },
@@ -2905,7 +2905,7 @@
       "basename": "data_3",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Rows",
       "data": []
     },
@@ -2913,7 +2913,7 @@
       "basename": "data_4",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Angle",
       "data": []
     },
@@ -2921,7 +2921,7 @@
       "basename": "data_5",
       "prototype": "Morphism",
       "properName": "&#39;1&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Mag",
       "data": [
         [
@@ -2934,7 +2934,7 @@
       "basename": "data_6",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Reflection",
       "data": []
     },
@@ -2942,7 +2942,7 @@
       "basename": "data_7",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Width",
       "data": []
     },
@@ -2950,7 +2950,7 @@
       "basename": "data_8",
       "prototype": "Morphism",
       "properName": "ptFlush",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/EndType",
       "data": [
         [
@@ -2966,7 +2966,7 @@
       "basename": "initialDatatype",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Datatype",
       "data": []
     },
@@ -2974,7 +2974,7 @@
       "basename": "initialLayer",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Layer",
       "data": []
     },
@@ -2982,15 +2982,15 @@
       "basename": "data_11",
       "prototype": "Morphism",
       "properName": "&#39;&#39;",
-      "domain": "hdole/gdsReader/#1",
-      "codomain": "hdole/Strings/str",
+      "domain": "#1",
+      "codomain": "hdole/str/str",
       "data": []
     },
     {
       "basename": "data_12",
       "prototype": "Morphism",
       "properName": "&#39;0,0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/EltType",
       "data": [
         [
@@ -3177,10 +3177,10 @@
       ]
     },
     {
-      "basename": "Fa{State,hdole/Strings/str_3}aF",
+      "basename": "Fa{State,hdole/str/str_3}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/gdsReader/State",
-      "codomain": "hdole/Strings/str",
+      "codomain": "hdole/str/str",
       "factors": [
         [
           3
@@ -3212,7 +3212,7 @@
     {
       "basename": "noProperties",
       "prototype": "Morphism",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Properties"
     },
     {
@@ -3281,7 +3281,7 @@
       "basename": "data_14",
       "prototype": "Morphism",
       "properName": "&#39;4&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/nat/N16",
       "data": []
     },
@@ -3407,7 +3407,7 @@
       "basename": "Fa{hdole/cpp/voidPtr,hdole/cpp/voidPtr_-1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/gdsReader/#1",
+      "codomain": "#1",
       "factors": [
         -1
       ]
@@ -3432,7 +3432,7 @@
     {
       "basename": "noPointsFn",
       "prototype": "Morphism",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Points",
       "data": []
     },
@@ -3588,7 +3588,7 @@
     {
       "basename": "mmap",
       "prototype": "Morphism",
-      "domain": "hdole/Strings/str",
+      "domain": "hdole/str/str",
       "codomain": "hdole/gdsReader/CPo{hdole/cpp/voidPtr,#1}oPC"
     }
   ],

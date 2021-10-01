@@ -897,10 +897,18 @@ args.codomain = 'zf/Set';
 				const jsons = (await Promise.all(responses.map(async res => await res.ok ? res.json() : null))).filter(j => j);
 				diagrams = jsons.map(json =>
 				{
-					const diagram = new Cat[json.prototype](R.getUserDiagram(json.user), json);
-					D.emitCATEvent('download', diagram);
-					D.emitCATEvent('load', diagram);
-					return diagram;
+					try
+					{
+						const diagram = new Cat[json.prototype](R.getUserDiagram(json.user), json);
+						D.emitCATEvent('download', diagram);
+						D.emitCATEvent('load', diagram);
+						return diagram;
+					}
+					catch(x)
+					{
+						console.error('Cannot load diagram ' + json.name);
+						return null;
+					}
 				});
 			};
 			await downloader();
@@ -1106,12 +1114,14 @@ args.codomain = 'zf/Set';
 	{
 		if (this.canDeleteDiagram(name) && (isGUI ? confirm(`Are you sure you want to delete diagram ${name}?`) : true))
 		{
+			R.sync = 0;
 			const diagram = this.$CAT.getElement(name);
 			this.authFetch(this.getURL('delete'), {diagram:name}).then(res =>
 			{
 				if (!res.ok)
 				{
 					D.recordError(res.statusText);
+					R.sync = 1;
 					return;
 				}
 				const diagram = this.$CAT.getElement(name);
@@ -1119,6 +1129,7 @@ args.codomain = 'zf/Set';
 					diagram.decrRefcnt();
 				else
 					this.catalog.delete(name);
+				R.sync = 1;
 			}).catch(err => D.recordError(err));
 		}
 	}
@@ -1727,7 +1738,7 @@ class Toolbar
 		});
 		window.addEventListener('Login', e => this.hide());
 		window.addEventListener('View', e => e.detail.command === 'catalog' ? this.hide() : null);
-		window.addEventListener('CAT', e => e.detail.command === 'new' ? this.hide() : null);
+		window.addEventListener('CAT', e => e.detail.command === 'new' || e.detail.command === 'default' ? this.hide() : null);
 	}
 	hide()
 	{
@@ -2891,7 +2902,7 @@ class Display
 					autosaveTimer:	500,	// ms
 					borderAlert:	2,		// screen widths
 					borderMargin:	20,		// px
-					borderMinOpacity:	0.12,
+					borderMinOpacity:	0.15,
 					button:		{tiny:0.4, small:0.66, large:1.0},	// inches
 					diagram:
 					{
@@ -5472,7 +5483,7 @@ class Display
 			const boxRgtBot = boxRgtTop.add({x:box.width, y:box.height});
 			const lftDst = topLft ? D2.SegmentDistance(topLft, box, boxLftBot) : botLft ? D2.SegmentDistance(botLft, box, boxLftBot) : D2.SegmentDistance(vpLftTop, box, boxLftBot);
 			const rgtDst = topRgt ? D2.SegmentDistance(topRgt, boxRgtTop, boxRgtBot) : botRgt ? D2.SegmentDistance(botRgt, boxRgtTop, boxRgtBot) : D2.SegmentDistance(vpTopRgt, boxRgtTop, boxRgtBot);
-			const topDst = topRgt ? D2.SegmentDistance(topRgt, box, boxRgtTop) : topLft ? D2.SegmentDistance(botLft, box, boxRgtTop) : D2.SegmentDistance(vpLftTop, box, boxRgtTop);
+			const topDst = topRgt ? D2.SegmentDistance(topRgt, box, boxRgtTop) : topLft ? D2.SegmentDistance(topLft, box, boxRgtTop) : D2.SegmentDistance(vpLftTop, box, boxRgtTop);
 			const botDst = botRgt ? D2.SegmentDistance(botRgt, boxLftBot, boxRgtBot) : botLft ? D2.SegmentDistance(botLft, boxLftBot, boxRgtBot) : D2.SegmentDistance(vpLftBot, boxLftBot, boxRgtBot);
 			const maxLvl = D.default.borderAlert;
 			const opacMag = 0.5;
@@ -7619,7 +7630,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		const nuArgs = U.Clone(args);
 		if (('basename' in nuArgs && nuArgs.basename === '') || !('basename' in nuArgs))
 			nuArgs.basename = 'size' in nuArgs ? '#' + Number.parseInt(nuArgs.size).toString() : diagram.getAnon('#');
-		if ('size' in nuArgs)
+		if ('size' in nuArgs && !('properName' in nuArgs))
 		{
 			if (nuArgs.size === 0)
 				nuArgs.properName = '&empty;';
@@ -9727,6 +9738,7 @@ class MorphismAssemblyAction extends Action
 	}
 	html(e, diagram, ary)
 	{
+		D.removeChildren(D.toolbar.help);
 		const elts = [H3.h4('Assemble Morphism'),
 						D.getIcon('assyColor', 'assyColor', e => this.toggle(e, diagram, ary), {title:'Show or dismiss assembly colors'}),
 						D.getIcon('edit', 'edit', e => this.action(e, diagram, ary), {title:'Assemble and place the morphism'})];
@@ -10459,18 +10471,43 @@ class LanguageAction extends Action
 	html(e, diagram, ary)
 	{
 		const elt = ary.length === 1 ? ary[0].to : diagram;
-		const div = H3.div();
+		const id = `element-${this.ext}`;
+		const textarea = H3.textarea('.code.w100',	{
+													id,
+													disabled:true,
+													onkeydown:e =>
+													{
+														e.stopPropagation();
+														D.cancelAutohide();
+														if (e.key === 'Tab')	// insert tab character
+														{
+															e.preventDefault();
+															const target = e.target;
+															const start = target.selectionStart;
+															target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
+															target.selectionStart = target.selectionEnd = start +1;
+														}
+														else if (e.key === 'Enter' && e.ctrlKey)
+															this.setCode(e, id, this.basename);
+													},
+													oninput: e => this.setEditorSize(e.target),
+												});
 		const help = D.toolbar.help;
 		const body = help.querySelector('#help-body');
 		D.removeChildren(body);
-		body.appendChild(div);
+		body.appendChild(textarea);
 		if (elt instanceof Morphism || elt instanceof CatObject)
-			this.getEditHtml(div, elt);
+		{
+			this.getEditHtml(textarea, elt);
+			if (this.checkEditable(elt))
+				body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
+			body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download ${this.properName}`}));
+		}
 		else
 		{
 			this.genDiagram = diagram;
 			this.currentDiagram = null;
-			div.appendChild(H3.p(this.generate(elt), `##element-${this.ext}.code`));
+			textarea.appendChild(H3.p(this.generate(elt), `##element-${this.ext}.code`));
 		}
 	}
 	setEditorSize(textarea)
@@ -10480,39 +10517,16 @@ class LanguageAction extends Action
 		if (textarea.scrollHeight - Math.abs(textarea.scrollTop) !== textarea.clientHeight)
 			textarea.style.height = Math.min(D.height()/2, textarea.scrollHeight) + 'px';
 	}
-	getEditHtml(div, elt)	// handler when the language is just a string
+	getEditHtml(textarea, elt)	// handler when the language is just a string
 	{
 		let code = '';
+		const id = `element-${this.ext}`;
 		if (elt.constructor.name === 'Morphism' || elt instanceof Diagram || elt instanceof CatObject)
 			code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
 		else if (elt instanceof Morphism)
 			code = this.generate(R.diagram, elt);
-		const id = `element-${this.ext}`;
-		const textarea = H3.textarea(code, '.code.w100',
-		{
-			id,
-			disabled:true,
-			onkeydown:e =>
-			{
-				e.stopPropagation();
-				D.cancelAutohide();
-				if (e.key === 'Tab')	// insert tab character
-				{
-					e.preventDefault();
-					const target = e.target;
-					const start = target.selectionStart;
-					target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
-					target.selectionStart = target.selectionEnd = start +1;
-				}
-			},
-			oninput: e => this.setEditorSize(e.target),
-		});
-		div.appendChild(textarea);
+		textarea.value = code;
 		this.setEditorSize(textarea);
-		if (this.checkEditable(elt))
-			div.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.ext), {title:'Edit code'}));
-		div.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download ${this.properName}`}));
-		return div;
 	}
 	hasCode(elt)
 	{
@@ -16343,7 +16357,7 @@ class ActionDiagram extends Diagram
 		let allObjects = false;
 		let allMorphisms = false;
 		let isBinaryOp = false;
-		if (this.match.length === ary.length)
+		if (this.match.length === ary.length && ary.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism).length == ary.length)
 			return this.match.reduce((r, ref, i) => r && R.sameForm(ref, ary[i].to, eltMap), true);	// do all elements have the same form?
 		return false;
 	}
@@ -16373,7 +16387,7 @@ class Assembler
 		this.inputs = new Set();
 		this.outputs = new Set();
 		this.composites = new Map();	// origins+inputs to array of morphisms to compose
-//		this.ref2ndx = new Map();
+		this.ref2factor = new Map();
 		this.obj2flat = new Map();
 		this.processed = new Set();
 //		this.folds = new Set();
@@ -16393,7 +16407,7 @@ class Assembler
 		this.inputs.clear();
 		this.outputs.clear();
 		this.composites.clear();
-//		this.ref2ndx.clear();
+//		this.ref2factor.clear();
 		this.obj2flat.clear();
 		this.processed.clear();
 //		this.folds.clear();
@@ -16459,7 +16473,11 @@ class Assembler
 	}
 	coreferenceCount(object)	// the number of coreferences whose domain is the given object
 	{
-		return [...object.codomains].filter(m => this.coreferences.has(m)).length;
+		return [...object.domains].filter(m => this.coreferences.has(m)).length;
+	}
+	referenceUseCount(object)	// the number of ref's or coref's whose codomain is this object
+	{
+		return [...object.codomains].filter(m => this.references.has(m)).length;
 	}
 	useCount(object)	// the number of ref's or coref's whose codomain is this object
 	{
@@ -16469,7 +16487,7 @@ class Assembler
 	{
 		if (this.codomainCount(object) === 0)
 		{
-			const refs = [...object.domains].filter(m => this.references.has(m) && !Assembler.isTerminalId(m));
+			const refs = [...object.domains].filter(m => (this.references.has(m) && !Assembler.isTerminalId(m)) || (this.coreferences.has(m) && !Assembler.isTerminalId(m)));
 			if (refs.length > 0)
 				return false;
 			// must have a way out
@@ -16518,11 +16536,8 @@ class Assembler
 	}
 	addOrigin(obj)
 	{
-		if (!this.inputs.has(obj))
-		{
-			!this.origins.has(obj) && Assembler.addBall('Origin', 'origin', 'assyOrigin', obj);
-			this.origins.add(obj);
-		}
+		!this.origins.has(obj) && Assembler.addBall('Origin', 'origin', 'assyOrigin', obj);
+		this.origins.add(obj);
 	}
 	deleteOrigin(obj)
 	{
@@ -16920,13 +16935,7 @@ class Assembler
 	{
 		if (this.processed.has(domain))
 			return null;
-		//
-		// downstream objects that refer to this index object need to find our index
-		//
-//		[...domain.codomains].map(m => this.references.has(m) && this.ref2ndx.set(m, index));
-		//
 		// if the domain is an origin then build its preamble
-		//
 		let preamble = null;
 		if (this.origins.has(domain) || this.outputs.has(domain))
 		{
@@ -16957,7 +16966,9 @@ class Assembler
 		//
 		// advance scanning
 		//
-		[...domain.codomains].map((m, i) => this.references.has(m) && scanning.push({domain:m.domain, currentDomain, index}));
+//		[...domain.codomains].map((m, i) => this.references.has(m) && scanning.filter(scan => scan.domain === domain).length === 0 && scanning.push({domain:m.domain, currentDomain, index}));
+		if (scanning.filter(scan => scan.domain === domain).length === 0)
+			[...domain.codomains].map((m, i) => this.references.has(m) && scanning.push({domain:m.domain, currentDomain, index}));
 		//
 		// we get outbound morphisms from the domain from the composites shown in the directed graph,
 		// or from the domain being a coproduct assembly of elements
@@ -16967,8 +16978,16 @@ class Assembler
 		let morphisms = this.getCompositeMorphisms(scanning, domain, currentDomain, index);
 		const coreferences = [...domain.codomains].filter(m => this.coreferences.has(m));
 		coreferences.length > 0 && morphisms.push(this.assembleCoreferences(scanning, coreferences, domain, index));
+		// add references from the domain
+		if (this.referenceUseCount(domain) > 0)
+		{
+			morphisms.push(this.diagram.id(domain.to));
+			this.ref2factor.set(domain, [morphisms.length -1]);
+		}
+		// add preamble morphism if required
 		if (preamble && !Morphism.isIdentity(preamble))
 			morphisms = morphisms.map(m => this.diagram.comp(preamble, m));
+		// if we got more than one morphism formed, make a product assembly
 		if (morphisms.length > 0)
 			return this.diagram.assy(...morphisms);
 		else

@@ -7,7 +7,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/gds_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/cpp"
   ],
@@ -150,7 +150,7 @@
     {
       "basename": "o_15",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 1600
@@ -240,7 +240,7 @@
     {
       "basename": "o_25",
       "prototype": "DiagramObject",
-      "to": "hdole/gds/Po{hdole/nat/N16,hdole/Strings/str}oP",
+      "to": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP",
       "xy": {
         "x": 400,
         "y": 2600
@@ -420,7 +420,7 @@
     {
       "basename": "o_45",
       "prototype": "DiagramObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 4600
@@ -438,7 +438,7 @@
     {
       "basename": "o_47",
       "prototype": "DiagramObject",
-      "to": "hdole/Logic/Omega",
+      "to": "CPo{#1,#1}oPC",
       "xy": {
         "x": 400,
         "y": 4800
@@ -600,7 +600,7 @@
     {
       "basename": "o_65",
       "prototype": "DiagramObject",
-      "to": "hdole/gds/Po{Layer,Datatype,hdole/Strings/str,Point,Properties}oP",
+      "to": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
       "xy": {
         "x": 600,
         "y": 6600
@@ -689,7 +689,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gds/o_14",
       "codomain": "hdole/gds/o_15",
-      "to": "hdole/gds/Id{Strname,hdole/Strings/str}dI"
+      "to": "hdole/gds/Id{Strname,hdole/str/str}dI"
     },
     {
       "basename": "m_8",
@@ -724,7 +724,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gds/o_24",
       "codomain": "hdole/gds/o_25",
-      "to": "hdole/gds/Id{Property,Po{hdole/nat/N16,hdole/Strings/str}oP}dI"
+      "to": "hdole/gds/Id{Property,Po{hdole/nat/N16,hdole/str/str}oP}dI"
     },
     {
       "basename": "m_13",
@@ -794,14 +794,14 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gds/o_44",
       "codomain": "hdole/gds/o_45",
-      "to": "hdole/gds/Id{Sname,hdole/Strings/str}dI"
+      "to": "hdole/gds/Id{Sname,hdole/str/str}dI"
     },
     {
       "basename": "m_23",
       "prototype": "DiagramMorphism",
       "domain": "hdole/gds/o_46",
       "codomain": "hdole/gds/o_47",
-      "to": "hdole/gds/Id{Reflection,hdole/Logic/Omega}dI"
+      "to": "hdole/gds/Id{Reflection,CPo{#1,#1}oPC}dI"
     },
     {
       "basename": "m_24",
@@ -864,7 +864,7 @@
       "prototype": "DiagramMorphism",
       "domain": "hdole/gds/o_64",
       "codomain": "hdole/gds/o_65",
-      "to": "hdole/gds/Id{Text,Po{Layer,Datatype,hdole/Strings/str,Point,Properties}oP}dI"
+      "to": "hdole/gds/Id{Text,Po{Layer,Datatype,hdole/str/str,Point,Properties}oP}dI"
     },
     {
       "basename": "m_33",
@@ -880,6 +880,14 @@
       "prototype": "FiniteObject",
       "properName": "&#10034;",
       "size": 1
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "#1",
+        "#1"
+      ]
     },
     {
       "description": "The boundary element type",
@@ -1037,20 +1045,20 @@
       "description": "The name of the structure",
       "basename": "Strname",
       "prototype": "NamedObject",
-      "source": "hdole/Strings/str"
+      "source": "hdole/str/str"
     },
     {
-      "basename": "Id{Strname,hdole/Strings/str}dI",
+      "basename": "Id{Strname,hdole/str/str}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gds/Strname",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
-      "basename": "Id{hdole/Strings/str,Strname}dI",
+      "basename": "Id{hdole/str/str,Strname}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/Strings/str",
+      "domain": "hdole/str/str",
       "codomain": "hdole/gds/Strname"
     },
     {
@@ -1152,27 +1160,27 @@
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N16",
-        "hdole/Strings/str"
+        "hdole/str/str"
       ]
     },
     {
       "description": "A property on a gds element",
       "basename": "Property",
       "prototype": "NamedObject",
-      "source": "hdole/gds/Po{hdole/nat/N16,hdole/Strings/str}oP"
+      "source": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP"
     },
     {
-      "basename": "Id{Property,Po{hdole/nat/N16,hdole/Strings/str}oP}dI",
+      "basename": "Id{Property,Po{hdole/nat/N16,hdole/str/str}oP}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gds/Property",
-      "codomain": "hdole/gds/Po{hdole/nat/N16,hdole/Strings/str}oP"
+      "codomain": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP"
     },
     {
-      "basename": "Id{Po{hdole/nat/N16,hdole/Strings/str}oP,Property}dI",
+      "basename": "Id{Po{hdole/nat/N16,hdole/str/str}oP,Property}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/gds/Po{hdole/nat/N16,hdole/Strings/str}oP",
+      "domain": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP",
       "codomain": "hdole/gds/Property"
     },
     {
@@ -1397,20 +1405,20 @@
       "description": "The name of the cell to be placed",
       "basename": "Sname",
       "prototype": "NamedObject",
-      "source": "hdole/Strings/str"
+      "source": "hdole/str/str"
     },
     {
-      "basename": "Id{Sname,hdole/Strings/str}dI",
+      "basename": "Id{Sname,hdole/str/str}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gds/Sname",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
-      "basename": "Id{hdole/Strings/str,Sname}dI",
+      "basename": "Id{hdole/str/str,Sname}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/Strings/str",
+      "domain": "hdole/str/str",
       "codomain": "hdole/gds/Sname"
     },
     {
@@ -1418,20 +1426,20 @@
       "basename": "Reflection",
       "prototype": "NamedObject",
       "dual": true,
-      "source": "hdole/Logic/Omega"
+      "source": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "Id{Reflection,hdole/Logic/Omega}dI",
+      "basename": "Id{Reflection,CPo{#1,#1}oPC}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gds/Reflection",
-      "codomain": "hdole/Logic/Omega"
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "Id{hdole/Logic/Omega,Reflection}dI",
+      "basename": "Id{CPo{#1,#1}oPC,Reflection}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/Logic/Omega",
+      "domain": "CPo{#1,#1}oPC",
       "codomain": "hdole/gds/Reflection"
     },
     {
@@ -1625,7 +1633,7 @@
       "objects": [
         "hdole/gds/Layer",
         "hdole/gds/Datatype",
-        "hdole/Strings/str",
+        "hdole/str/str",
         "hdole/gds/Point",
         "hdole/gds/Properties"
       ]
@@ -1634,20 +1642,20 @@
       "description": "The text string is placed accordingly",
       "basename": "Text",
       "prototype": "NamedObject",
-      "source": "hdole/gds/Po{Layer,Datatype,hdole/Strings/str,Point,Properties}oP"
+      "source": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP"
     },
     {
-      "basename": "Id{Text,Po{Layer,Datatype,hdole/Strings/str,Point,Properties}oP}dI",
+      "basename": "Id{Text,Po{Layer,Datatype,hdole/str/str,Point,Properties}oP}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gds/Text",
-      "codomain": "hdole/gds/Po{Layer,Datatype,hdole/Strings/str,Point,Properties}oP"
+      "codomain": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP"
     },
     {
-      "basename": "Id{Po{Layer,Datatype,hdole/Strings/str,Point,Properties}oP,Text}dI",
+      "basename": "Id{Po{Layer,Datatype,hdole/str/str,Point,Properties}oP,Text}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "hdole/gds/Po{Layer,Datatype,hdole/Strings/str,Point,Properties}oP",
+      "domain": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
       "codomain": "hdole/gds/Text"
     },
     {

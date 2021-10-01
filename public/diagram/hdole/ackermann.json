@@ -7,7 +7,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/ackermann_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/nat"
   ],
@@ -69,7 +69,7 @@
     {
       "basename": "o_13",
       "prototype": "DiagramObject",
-      "to": "hdole/Basics/#1",
+      "to": "#1",
       "xy": {
         "x": 1200,
         "y": 700

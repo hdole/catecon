@@ -9,7 +9,7 @@
   "domain": "hdole/HTML_Index",
   "codomain": "zf/Set",
   "references": [
-    "hdole/Strings"
+    "hdole/str"
   ],
   "domainElements": [
     {
@@ -165,7 +165,7 @@
     {
       "basename": "o_10",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/int/Z32}oH}oP",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z32}oH}oP",
       "xy": {
         "x": 600,
         "y": 1200
@@ -249,7 +249,7 @@
     {
       "basename": "o_16",
       "prototype": "IndexObject",
-      "to": "hdole/Strings/str",
+      "to": "hdole/str/str",
       "xy": {
         "x": 400,
         "y": 1800
@@ -268,7 +268,7 @@
     {
       "basename": "o_17",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{HTML,CPo{hdole/Strings/str,#1}oPC}oP",
+      "to": "hdole/HTML/Po{HTML,CPo{hdole/str/str,#1}oPC}oP",
       "xy": {
         "x": 200,
         "y": 2000
@@ -277,7 +277,7 @@
     {
       "basename": "o_18",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/Strings/str}oH}oP",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/str/str}oH}oP",
       "xy": {
         "x": 600,
         "y": 2000
@@ -305,7 +305,7 @@
     {
       "basename": "o_20",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/nat/N64}oH}oP",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N64}oH}oP",
       "xy": {
         "x": 600,
         "y": 2200
@@ -333,7 +333,7 @@
     {
       "basename": "o_22",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/nat/N8}oH}oP",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N8}oH}oP",
       "xy": {
         "x": 600,
         "y": 2400
@@ -361,7 +361,7 @@
     {
       "basename": "o_24",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/nat/N16}oH}oP",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N16}oH}oP",
       "xy": {
         "x": 600,
         "y": 2600
@@ -389,7 +389,7 @@
     {
       "basename": "o_26",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/int/Z64}oH}oP",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z64}oH}oP",
       "xy": {
         "x": 600,
         "y": 2800
@@ -417,14 +417,14 @@
     {
       "basename": "o_28",
       "prototype": "IndexObject",
-      "to": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/floats/F64}oH}oP",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/floats/F64}oH}oP",
       "xy": {
         "x": 600,
         "y": 3000
       }
     },
     {
-      "description": "References: Strings",
+      "description": "References: str",
       "basename": "t_15",
       "prototype": "DiagramText",
       "xy": {
@@ -566,7 +566,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "Ho{HTML,hdole/int/Z32}oH"
       ]
     },
@@ -590,21 +590,21 @@
       "prototype": "HomObject",
       "objects": [
         "HTML",
-        "hdole/Strings/str"
+        "hdole/str/str"
       ]
     },
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
-        "Ho{HTML,hdole/Strings/str}oH"
+        "hdole/str/str",
+        "Ho{HTML,hdole/str/str}oH"
       ]
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "#1"
       ]
     },
@@ -612,7 +612,7 @@
       "prototype": "ProductObject",
       "objects": [
         "HTML",
-        "CPo{hdole/Strings/str,#1}oPC"
+        "CPo{hdole/str/str,#1}oPC"
       ]
     },
     {
@@ -626,7 +626,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "Ho{HTML,hdole/nat/N64}oH"
       ]
     },
@@ -656,7 +656,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "Ho{HTML,hdole/nat/N8}oH"
       ]
     },
@@ -686,7 +686,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "Ho{HTML,hdole/nat/N16}oH"
       ]
     },
@@ -716,7 +716,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "Ho{HTML,hdole/int/Z64}oH"
       ]
     },
@@ -746,7 +746,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/Strings/str",
+        "hdole/str/str",
         "Ho{HTML,hdole/floats/F64}oH"
       ]
     },
@@ -818,7 +818,7 @@
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-2417483648\" max=\"2417483647\" id=\"' + args[0] + '\" placeholder=\"32-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z32__br__rb___br_0_rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/int/Z32,#1}oPC}oP",
-      "codomain": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/int/Z32}oH}oP"
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z32}oH}oP"
     },
     {
       "description": "Read an integer from an HTML input tag",
@@ -851,7 +851,7 @@
         "js": "function %Type(args)\n{\n\treturn document.getElementById(args).value;\n}\n"
       },
       "domain": "hdole/HTML/HTML",
-      "codomain": "hdole/Strings/str"
+      "codomain": "hdole/str/str"
     },
     {
       "description": "Input a line of text from HTML",
@@ -861,8 +861,8 @@
       "code": {
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"text\" id=\"' + args[0] + '\" placeholder=\"Text\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Str__br__rb___br_0_rb__rB_mL]\n}\n"
       },
-      "domain": "hdole/HTML/Po{HTML,CPo{hdole/Strings/str,#1}oPC}oP",
-      "codomain": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/Strings/str}oH}oP"
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/str/str,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/str/str}oH}oP"
     },
     {
       "description": "Input a natural number from HTML",
@@ -873,7 +873,7 @@
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" id=\"' + args[0] + '\" placeholder=\"Natural number\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N__br__rb___br_0_rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N64,#1}oPC}oP",
-      "codomain": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/nat/N64}oH}oP"
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N64}oH}oP"
     },
     {
       "description": "Input a natural number between 0 and 255 from HTML",
@@ -884,7 +884,7 @@
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"255\" id=\"' + args[0] + '\" placeholder=\"0 to 255\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N8__br__rb___br_0_rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N8,#1}oPC}oP",
-      "codomain": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/nat/N8}oH}oP"
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N8}oH}oP"
     },
     {
       "description": "Input a natural number between 0 and 255 from HTML",
@@ -895,7 +895,7 @@
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"255\" id=\"' + args[0] + '\" placeholder=\"0 to 255\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N16__br__rb___br_0_rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N16,#1}oPC}oP",
-      "codomain": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/nat/N16}oH}oP"
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N16}oH}oP"
     },
     {
       "description": "Input an integer from HTML",
@@ -906,7 +906,7 @@
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z__br__rb___br_0_rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/int/Z64,#1}oPC}oP",
-      "codomain": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/int/Z64}oH}oP"
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z64}oH}oP"
     },
     {
       "description": "Input a floating point number from the HTML input tag",
@@ -917,7 +917,7 @@
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Float\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2F__br__rb___br_0_rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/floats/F64,#1}oPC}oP",
-      "codomain": "hdole/HTML/Po{hdole/Strings/str,Ho{HTML,hdole/floats/F64}oH}oP"
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/floats/F64}oH}oP"
     }
   ],
   "readonly": false,

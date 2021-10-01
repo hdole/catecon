@@ -43,7 +43,7 @@
     {
       "basename": "o_2",
       "prototype": "IndexObject",
-      "to": "hdole/Basics/#1",
+      "to": "#1",
       "xy": {
         "x": 200,
         "y": 400
@@ -71,7 +71,7 @@
     {
       "basename": "o_4",
       "prototype": "IndexObject",
-      "to": "hdole/Basics/#1",
+      "to": "#1",
       "xy": {
         "x": 200,
         "y": 600
@@ -99,7 +99,7 @@
     {
       "basename": "o_6",
       "prototype": "IndexObject",
-      "to": "hdole/Basics/#1",
+      "to": "#1",
       "xy": {
         "x": 200,
         "y": 800
@@ -360,7 +360,7 @@
     {
       "basename": "o_25",
       "prototype": "IndexObject",
-      "to": "hdole/complex/CPo{C,hdole/Basics/#1}oPC",
+      "to": "hdole/complex/CPo{C,#1}oPC",
       "xy": {
         "x": 200,
         "y": 2800
@@ -398,7 +398,7 @@
     {
       "basename": "o_27",
       "prototype": "IndexObject",
-      "to": "hdole/complex/CPo{C,hdole/Basics/#1}oPC",
+      "to": "hdole/complex/CPo{C,#1}oPC",
       "xy": {
         "x": 400,
         "y": 3000
@@ -426,7 +426,7 @@
     {
       "basename": "o_29",
       "prototype": "IndexObject",
-      "to": "hdole/complex/CPo{C,hdole/Basics/#1}oPC",
+      "to": "hdole/complex/CPo{C,#1}oPC",
       "xy": {
         "x": 400,
         "y": 3200
@@ -437,7 +437,7 @@
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": 90,
+        "x": -120,
         "y": 110
       },
       "height": 24
@@ -458,6 +458,12 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_0",
       "codomain": "hdole/complex/o_1",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/complex/Id{C,hdole/floats/Po{F64,F64}oP}dI"
     },
@@ -466,6 +472,12 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_1",
       "codomain": "hdole/complex/o_0",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "homsetIndex": 1,
       "to": "hdole/complex/Id{hdole/floats/Po{F64,F64}oP,C}dI"
     },
@@ -559,9 +571,33 @@
       "domain": "hdole/complex/o_28",
       "codomain": "hdole/complex/o_29",
       "to": "hdole/complex/pow"
+    },
+    {
+      "description": "C++ implementation uses std::complex.",
+      "basename": "t_15",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 750,
+        "y": 110
+      },
+      "height": "24"
     }
   ],
   "elements": [
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "#1",
+        "#1"
+      ]
+    },
     {
       "basename": "C",
       "prototype": "NamedObject",
@@ -595,7 +631,7 @@
       "dual": true,
       "objects": [
         "C",
-        "hdole/Basics/#1"
+        "#1"
       ]
     },
     {
@@ -605,9 +641,9 @@
       "properName": "0",
       "code": {
         "js": "function %Type(args)\n{\n\treturn 0.0;\n}\n",
-        "cpp": "\n}\n\n\ntypedef std::complex<double> complexDbl;\n\nnamespace %Namespace\n{\n\tvoid %Type(const %Dom & args, %Cod & out)\n\t{\n\t\tout = std::complex(0.0);\n\t}\n"
+        "cpp": "%0 = std::complex(0.0);\n"
       },
-      "domain": "hdole/Basics/#1",
+      "domain": "#1",
       "codomain": "hdole/complex/C"
     },
     {
@@ -616,9 +652,9 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn [0, 1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::complex<double>(0, 1);\n}\n"
+        "cpp": "%0 = std::complex<double>(0, 1);"
       },
-      "domain": "hdole/Basics/#1",
+      "domain": "#1",
       "codomain": "hdole/complex/C"
     },
     {
@@ -627,9 +663,9 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn [Math.E, 0];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::complex(std::numbers::e_v);\n}\n"
+        "cpp": "%0 = std::complex(std::numbers::e_v);"
       },
-      "domain": "hdole/Basics/#1",
+      "domain": "#1",
       "codomain": "hdole/complex/C"
     },
     {
@@ -638,7 +674,7 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.real();\n}\n"
+        "cpp": "%1 = %0.real();"
       },
       "domain": "hdole/complex/C",
       "codomain": "hdole/floats/F64"
@@ -649,7 +685,7 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[1];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.imag();\n}\n"
+        "cpp": "%1 = %0.imag();"
       },
       "domain": "hdole/complex/C",
       "codomain": "hdole/floats/F64"
@@ -661,7 +697,7 @@
       "properName": "&sub;",
       "code": {
         "js": "function %Type(args)\n{\n\treturn [args, 0];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = std::complex(args);\n}\n"
+        "cpp": "%1 = std::complex(%0);"
       },
       "domain": "hdole/floats/F64",
       "codomain": "hdole/complex/C"
@@ -673,7 +709,7 @@
       "properName": "&dagger;",
       "code": {
         "js": "function %Type(args)\n{\n\treturn [args[0], -args[1]];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.conj();\n}\n"
+        "cpp": "%1 = %0.conj();"
       },
       "domain": "hdole/complex/C",
       "codomain": "hdole/complex/C"
@@ -684,7 +720,7 @@
       "prototype": "Morphism",
       "properName": "||",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn Math.sqrt(args[0] * args[0] + args[1] * args[1]);\n}\n",
+        "js": "%1 = std::abs(%0);",
         "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.abs();\n}\n"
       },
       "domain": "hdole/complex/C",
@@ -697,7 +733,7 @@
       "properName": "+",
       "code": {
         "js": "function %Type(args)\n{\n\treturn [args[0][0] + args[1][0], args[0][1] + args[1][1]];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args[0] + args[1];\n}\n"
+        "cpp": "%2 = %0 + %1;"
       },
       "domain": "hdole/complex/Po{C,C}oP",
       "codomain": "hdole/complex/C"
@@ -709,7 +745,7 @@
       "properName": "&ndash;",
       "code": {
         "js": "function %Type(args)\n{\n\treturn [args[0][0] - args[1][0], args[0][1] - args[1][1]];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args[0] - args[1];\n}\n"
+        "cpp": "%2 = %0 - %1;"
       },
       "domain": "hdole/complex/Po{C,C}oP",
       "codomain": "hdole/complex/C"
@@ -721,7 +757,7 @@
       "properName": "&sdot;",
       "code": {
         "js": "function %Type(args)\n{\n\treturn [args[0][0] * args[1][0] - args[0][1] * args[1][1], args[0][0] * args[1][1] + args[0][1] * args[1][0]];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args[0] * args[1];\n}\n"
+        "cpp": "%2 = %0 * %1;"
       },
       "domain": "hdole/complex/Po{C,C}oP",
       "codomain": "hdole/complex/C"
@@ -733,10 +769,10 @@
       "properName": "&div;",
       "code": {
         "js": "function %Type(args)\n{\nconst x = args[1][0];\nconst y = args[1][1];\nconst n = x * x + y * y;\nif (n === 0.0)\n\treturn [1, [0, 0]];\t\t// exception\nreturn [0, [(args[0][0] * x + args[0][1] * y) / n, (args[0][0] * y - args[0][1] * x) / n]];\n}\n",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tif (args[1] != 0)\n\t{\n\t\tout[0] = 0;\n\t\tout[1] = args[0] / args[1];\n\t}\n\te;se\n\t{\n\t\tout[0] = 1;\n\t\tout[1] = 1;\n\t}\n}\n"
+        "cpp": "if (%1 != 0)\n{\n\t%1.c = 0;\n\t%1.v = %0 / %1;\n}\nelse\n\t%1.c = 1;\n\n"
       },
       "domain": "hdole/complex/Po{C,C}oP",
-      "codomain": "hdole/complex/CPo{C,hdole/Basics/#1}oPC"
+      "codomain": "hdole/complex/CPo{C,#1}oPC"
     },
     {
       "description": "raise the first number to the second number as exponent or an exception",
@@ -744,18 +780,19 @@
       "prototype": "Morphism",
       "properName": "x&#x02b8;",
       "code": {
-        "js": "function %Type(args)\n{\nif (args[0] === 0 && args[1] === 0)\n\treturn [1, 0];\nreturn [0, Math.pow(args[0], args[1])];\n}\n"
+        "js": "function %Type(args)\n{\nif (args[0] === 0 && args[1] === 0)\n\treturn [1, 0];\nreturn [0, Math.pow(args[0], args[1])];\n}\n",
+        "cpp": "if (%0 == 0i && %1 == 0i)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = std::pow(%0, %1);\n}"
       },
       "domain": "hdole/complex/Po{C,C}oP",
-      "codomain": "hdole/complex/CPo{C,hdole/Basics/#1}oPC"
+      "codomain": "hdole/complex/CPo{C,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1631956786737,
+  "timestamp": 1632634227875,
   "version": 0,
   "viewport": {
     "x": 987,
-    "y": 297,
+    "y": 753,
     "scale": 1.1471280424051202
   }
 }
