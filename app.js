@@ -317,11 +317,12 @@ function validate(req, res, fn)
 	jwt.verify(token, pem, fn);
 }
 
-function updateDiagramTable(name, info, fn, cloudTimestamp)
+function updateDiagramTable(name, info, fn, cloudTimestamp, update = true)
 {
 	if (info.user === 'sys' || name === info.user + '/' + info.user)	// do not track system or user/user diagrams
 		return;
-	const updateSql = 'UPDATE Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ?, category = ?, prototype = ? WHERE name = ?';
+	const updateSql = (update ? 'UPDATE ' : 'INSERT INTO ') + 'Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ?, category = ?, prototype = ?' +
+						(update ? ' WHERE name = ?' : '');
 	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, info.category, info.prototype, name];
 	console.log('updating diagram table', args);
 	dbcon.query(updateSql, args, fn);
@@ -334,6 +335,7 @@ function updateSQLDiagramsByCatalog()
 	{
 		if (error) throw error;
 		const remaining = new Set(Cat.R.catalog.keys());
+		const localDiagrams = new Set(diagrams);
 		diagrams.map(info =>
 		{
 			if (info.user !== 'sys')
@@ -347,7 +349,7 @@ function updateSQLDiagramsByCatalog()
 		remaining.forEach(name =>
 		{
 			const info = Cat.R.catalog.get(name);
-			updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp);
+			updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp, !localDiagrams.has(name));
 		});
 	});
 }
