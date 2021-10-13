@@ -21,6 +21,7 @@ CREATE TABLE `users` (`name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_bin NO
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   FULLTEXT KEY `DescriptionIndex` (`properName`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4
-CREATE USER `catecon`@`XXX.XXX.XXX.XXX` IDENTIFIED BY `ILoveCategoryTheory`;
-GRANT ALL PRIVILEGES ON `Catecon`.* TO `catecon`@`XXX.XXX.XXX.XXX`;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4;
+CREATE USER IF NOT EXISTS `cat`@`localhost` IDENTIFIED BY 'cat8tac!';
+GRANT ALL PRIVILEGES ON `Catecon`.* TO `cat`@`localhost`;
+INSERT INTO users SET name='hdole', email='harry@harrydole.com', permissions='admin', maxDiagrams=1024;
