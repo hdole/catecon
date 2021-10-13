@@ -6,7 +6,7 @@ if [ "`basename $0`" == "install.sh" ] && [ "`dirname $0`" == "." ]; then
 fi
 
 echo "*** Install npm nodemon"
-sudo npm install -g nodemon
+npm install nodemon
 
 echo "*** Initializing git"
 git init
@@ -54,8 +54,8 @@ HTTP_PORT=3000
 HTTP_UPLOAD_LIMIT='1mb'
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=
+MYSQL_USER=cat
+MYSQL_PASSWORD='cat8tac!'
 MYSQL_DB=Catecon
 AWS_DGRM_RGN='us-west-1'
 AWS_DIAGRAM_URL='https://catecon-diagrams.s3-us-west-1.amazonaws.com'
@@ -67,4 +67,5 @@ EOF
 
 chmod 0600 .env
 
-echo "*** REMEMBER!  Set the MySQL password in the .env file!"
+echo "Setup mysql database and user"
+sudo mysql -u root -p < sql/Catecon.sql
