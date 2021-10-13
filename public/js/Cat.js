@@ -941,7 +941,7 @@ args.codomain = 'zf/Set';
 					D.default.fullscreen && D.diagramSVG.lastElementChild.dataset.name !== name && D.diagramSVG.classList.add('hidden');
 				}
 			}
-			if (R.diagram && R.diagram.name === name)
+			if (R.diagram && R.diagram.name === name)	// already selected
 			{
 				D.emitCATEvent('default', R.diagram, eventAction);
 				fn && fn(R.diagram);
@@ -949,7 +949,7 @@ args.codomain = 'zf/Set';
 			}
 			R.default.debug && console.log('SelectDiagram', name);
 			R.diagram = null;
-			let diagram = name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
+			let diagram = name instanceof Diagram ? name : name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
 			if (!diagram)
 			{
 				if (name)		// try to download from server
@@ -988,7 +988,9 @@ args.codomain = 'zf/Set';
 			return refs;
 		const info = this.catalog.get(name);
 		refs.add(name);
-		info && info.references.map(r => this.getReferences(r, refs));
+		info && info.references && info.references.map(r => this.getReferences(r, refs));
+		if (info && !info.references)
+			console.error('ERROR: missing references', info);
 		return refs;
 	}
 	canLoad(name)
@@ -3622,6 +3624,7 @@ class Display
 		}
 		this.panels.resize();
 		this.screenPan = this.getScreenPan();
+		this.updateBorder();
 	}
 	cancelAutohide()
 	{
@@ -4264,7 +4267,7 @@ class Display
 					break;
 			}
 		});
-		window.onresize = this.Resize;
+		window.onresize = Display.Resize;
 		window.addEventListener('mousemove', e => this.autohide(e));
 		window.addEventListener('mousedown', e => this.autohide(e));
 		window.addEventListener('keydown', e => this.autohide(e));
@@ -4373,7 +4376,7 @@ class Display
 					}
 					this.session.save();
 					diagram.updateBackground();
-					D.updateBorder();
+					this.updateBorder();
 				}
 			}
 			else if (command === 'catalog')
@@ -5462,6 +5465,8 @@ class Display
 	}
 	updateBorder()
 	{
+		if (!R.diagram)
+			return;
 		if (R.diagram.ready !== 0)
 			setTimeout(_ => this.updateBorder(), 10);
 		else if (D.default.fullscreen)
@@ -5514,6 +5519,10 @@ class Display
 		const borderTop = this.topSVG.querySelector('#borderTop');
 		if (borderTop)
 			borderTop.setAttribute('y', y);
+	}
+	static Resize()
+	{
+		D.resize();
 	}
 }
 
@@ -16219,23 +16228,36 @@ class Diagram extends Functor
 	}
 	static GetInfo(diagram)
 	{
-		if (diagram instanceof Diagram)
+		const info =
 		{
-			let refs = [];
-			diagram.references.forEach(r => refs.push(typeof r === 'string' ? r : r.name));
-			return {
 				name:			diagram.name,
 				basename:		diagram.basename,
-				category:		diagram.codomain.name,
 				description	:	diagram.description,
 				properName:		diagram.properName,
 				timestamp:		diagram.timestamp,
 				user:			diagram.user,
-				references:		refs,
-				prototype:		diagram.constructor.name,
-			};
+		};
+		if (diagram instanceof Diagram)
+		{
+			const refs = [];
+			diagram.references.forEach(r => refs.push(typeof r === 'string' ? r : r.name));
+			info.category = diagram.category ? diagram.category.name : 'CAT';		// TODO simplify
+			info.codomain = diagram.codomain.name;
+			info.prototype = diagram.constructor.name;
+			info.references = refs;
 		}
-		return diagram;
+		else
+		{
+			info.category = diagram.category;
+			info.codomain = diagram.codomain;
+			info.prototype = diagram.prototype;
+			info.references = diagram.references;
+		}
+		if (!info.category || info.category === 'undefined')	// TODO remove
+			info.category = 'CAT';
+		if (!info.prototype || info.prototype === 'undefined')	// TODO remove
+			info.prototype = 'Diagram';
+		return info;
 	}
 }
 
@@ -16266,7 +16288,7 @@ class ActionDiagram extends Diagram
 			named:		{value:named,		writable:	true},
 			ops:		{value:nuArgs.ops,	writable:	false},
 		});
-		R.userSessionActions.addElement(this);
+//		R.userSessionActions.addElement(this);
 	}
 	help()
 	{
