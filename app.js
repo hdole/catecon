@@ -42,8 +42,8 @@ const rfs = require('rotating-file-stream');
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 
-const D2 = require('./public/js/D2.js');
-const Cat = require('./public/js/Cat.js');
+const D2 = require('./' + path.join(process.env.HTTP_DIR, 'js', 'D2.js'));
+const Cat = require('./' + path.join(process.env.HTTP_DIR, 'js', 'Cat.js'));
 
 Cat.R.default.debug = false;
 Cat.R.cloudURL = process.env.CAT_PARENT;
@@ -172,7 +172,7 @@ function getDiagramInfo(diagram)
 
 function saveDiagramJson(name, diagramString)
 {
-	const dgrmFile = `public/diagram/${name}.json`;
+	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', name + '.json');
 	fs.mkdirSync(path.dirname(dgrmFile), {recursive:true});
 	const dgrmFD = fs.openSync(dgrmFile, 'w');
 	fs.writeSync(dgrmFD, diagramString, 0, diagramString.length +1);
@@ -184,7 +184,7 @@ function saveDiagramPng(name, inbuf)
 	const buf = typeof inbuf === 'string' ? new Buffer.from(inbuf.replace(/^data:image\/octet-stream;base64,/,""), 'base64') : inbuf;
 	if (buf.length > 128 * 1024)
 		throw 'PNG file too large';
-	const pngFile = `public/diagram/${name}.png`;
+	const pngFile = path.join(process.env.HTTP_DIR, 'diagram', name + '.png');
 	fs.mkdir(path.dirname(pngFile), {recursive:true}, _ => fs.open(pngFile, 'w', (error, pngFD) =>
 	{
 		if (error) throw error;
@@ -235,7 +235,10 @@ async function determineRefcnts()
 					refcnts.set(ref, 0);
 				const cnt = 1 + refcnts.get(ref);
 				refcnts.set(ref, 1 + refcnts.get(ref));
-				Cat.R.catalog.get(ref).refcnt = cnt;
+				if (Cat.R.catalog.has(ref))
+					Cat.R.catalog.get(ref).refcnt = cnt;
+				else
+					console.error('ERROR: catalog missing reference diagram', ref);
 			});
 		});
 		refcnts.forEach((cnt, ref) => dbcon.query(`UPDATE Catecon.diagrams SET refcnt=${cnt} WHERE name='${ref}';`));
@@ -321,15 +324,22 @@ function updateDiagramTable(name, info, fn, cloudTimestamp, update = true)
 {
 	if (info.user === 'sys' || name === info.user + '/' + info.user)	// do not track system or user/user diagrams
 		return;
+	if (!('category' in info))	// TODO remove
+		info.category = 'CAT';
+	if (!('prototype' in info))	// TODO remove
+		info.prototype = 'Diagram';
+	if (!('codomain' in info))	// TODO remove
+		info.codomain = 'Cat';
 	const updateSql = (update ? 'UPDATE ' : 'INSERT INTO ') + 'Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ?, category = ?, prototype = ?' +
 						(update ? ' WHERE name = ?' : '');
 	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, info.category, info.prototype, name];
-	console.log('updating diagram table', args);
+//console.log('updating diagram table', args);
 	dbcon.query(updateSql, args, fn);
 }
 
 function updateSQLDiagramsByCatalog()
 {
+	console.log('Updating SQL diagrams by catalog');
 	// make local server match cloud
 	dbcon.query('SELECT * FROM Catecon.diagrams', (error, diagrams) =>
 	{
@@ -354,6 +364,21 @@ function updateSQLDiagramsByCatalog()
 	});
 }
 
+function findDiagramJsons(dir)
+{
+	if (!fs.existsSync(dir))
+	{
+		console.error('missing directory', dir);
+		return;
+	}
+	const files = fs.readdirSync(dir);
+//console.log({files});
+	const diagrams = files.filter(f => fs.lstatSync(path.join(dir, f)).isFile() && path.extname(f) === '.json').map(f => path.join(dir, f));
+	const subdirs = files.filter(f => fs.lstatSync(path.join(dir, f)).isDirectory());
+	subdirs.map(subdir => diagrams.push(...findDiagramJsons(`${dir}/${subdir}`)));
+	return diagrams;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Server main
@@ -371,55 +396,59 @@ async function serve()
 			}
 			if (result.length === 0)
 			{
-				fs.readFile('sql/Catecon.sql', (error, data) =>
+				console.error('ERROR:  Catecon database does not exist in the mysql database.\nPlease use install.sh.');
+				process.exit();
+			}
+			dbcon.query('SELECT * FROM Catecon.diagrams', (error, result) =>
+			{
+				if (error)
 				{
-					if (error)
+					console.error('mysql initialization for Catecon', {error});
+					process.exit();
+				}
+				Cat.R.initialize(_ =>
+				{
+					console.log('Catecon runtime initialized');
+					updateSQLDiagramsByCatalog();
+					result.map(r =>
 					{
-						console.log('readFile error', {error});
-						process.exit();
-					}
-					dbcon.query(data.toString(), (error, result) =>
+						if (!Cat.R.catalog.has(r.name))
+						{
+							r.references = JSON.parse(r.refs);
+							Cat.R.catalog.set(r.name, r);
+						}
+					});
+					// load diagrams from storage
+					const dir = path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram');
+					const fsDiagrams = findDiagramJsons(dir);
+					fsDiagrams.map(f => fs.readFile(f, (error, data) =>
 					{
 						if (error)
 						{
-							console.log('mysql intialization for Catecon', {error});
-							process.exit();
+							console.error('ERROR: cannot read diageram file', f, error);
+							return;
 						}
-						Cat.R.initialize(_ => require('./public/js/javascript.js'));
-						determineRefcnts();
-						log('server started');
-					});
+						const diagInfo = JSON.parse(data);
+						const info = Cat.Diagram.GetInfo(diagInfo);
+						const inCloud = Cat.R.catalog.has(info.name);
+						let cloudTimestamp = inCloud ? Cat.R.catalog.get(info.name).cloudTimestamp : 0;
+						cloudTimestamp = cloudTimestamp ? cloudTimestamp: 0;
+						updateDiagramTable(info.name, info, _ => {}, cloudTimestamp, inCloud)
+					}));
+					require('./' + path.join(process.env.HTTP_DIR, 'js', 'javascript.js'));
+					determineRefcnts();
+					log('server started');
 				});
-			}
-			else
-			{
-				dbcon.query('SELECT * FROM Catecon.diagrams', (error, result) =>
-				{
-					if (error)
-					{
-						console.log('mysql intialization for Catecon', {error});
-						process.exit();
-					}
-					Cat.R.initialize(_ =>
-					{
-						updateSQLDiagramsByCatalog();
-						result.map(r =>
-						{
-							if (!Cat.R.catalog.has(r.name))
-							{
-								r.references = JSON.parse(r.refs);
-								Cat.R.catalog.set(r.name, r);
-							}
-						});
-						require('./public/js/javascript.js');
-						determineRefcnts();
-						log('server started');
-					});
-				});
-			}
+			});
 		});
+		/*
 		dbcon.query('SELECT * FROM Catecon.diagrams', (error, diagrams) =>
 		{
+			if (error)
+			{
+				console.error({error});
+				return;
+			}
 			diagrams.filter(d => !Cat.R.catalog.has(d.name)).map(d =>
 			{
 				d.references = JSON.parse(d.refs);
@@ -427,8 +456,9 @@ async function serve()
 				Cat.R.catalog.set(d.name, d);
 			});
 		});
+		*/
 
-		app.use(express.static(path.join(process.env.CAT_DIR, 'public')));
+		app.use(express.static(path.join(process.env.CAT_DIR, process.env.HTTP_DIR)));
 
 		app.use('/catalog', (req, res) =>
 		{
@@ -537,6 +567,12 @@ async function serve()
 								return;
 							}
 							const userData = result[0];
+							if (!userData)
+							{
+								console.error('ERROR: no user', user);
+								next();
+								return;
+							}
 							//
 							// get number of diagrams user currently has
 							//
@@ -729,7 +765,7 @@ async function serve()
 							return;
 						}
 						console.log('deleted from database', name);
-						const dgrmFile = `public/diagram/${name}`;
+						const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', name);
 						fs.unlink(`${dgrmFile}.json`, error => {});
 						fs.unlink(`${dgrmFile}.png`, error => {});
 						res.status(HTTP.OK).end();
