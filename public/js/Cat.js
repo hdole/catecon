@@ -5957,7 +5957,6 @@ class Catalog extends DiagramTool		// GUI only
 		{
 			D.emitCATEvent('new', diagram);
 			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
-//			diagram.setPlacement({x:0, y:-100, scale:0.5});
 			diagram.makeSVG();
 			diagram.placeText(diagram.properName, {x:0, y:0}, D.default.title.height, D.default.title.weight);
 			diagram.description !== '' && diagram.placeText(diagram.description, {x:0, y:D.gridSize()}, D.default.font.height);
@@ -7891,9 +7890,7 @@ class ProductObject extends MultiObject
 			const ndx = index.slice();
 			ndx.push(i);
 			if (obj.name === o.name)	// by name not by equivalence
-			{
 				fctrs.push(ndx);
-			}
 			else
 			{
 				const base = o instanceof NamedObject ? o.base : o;
@@ -10662,7 +10659,7 @@ class RunAction extends Action
 				}
 				else
 				{
-					rows.push(H3.tr(H3.td('##runAction-in'), H3.td('##runAction-out'), H3.td(addDataBtn)));
+					rows.push(H3.tr(H3.td(this.js.getInputHtml(domain, null, 'dom')), H3.td(this.js.getInputHtml(codomain, null, 'cod')), H3.td(addDataBtn)));
 					elements.push(H3.h5('Data in Morphism'));
 					'data' in to && to.data.forEach(dataRow);
 					elements.push(H3.table(rows));
@@ -10678,11 +10675,6 @@ class RunAction extends Action
 			const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), {title:'Add data'}), '##run-createDataBtn', {display:'none'});
 			elements.push(H3.div('##run-display'), createDataBtn);
 			elements.map(elt => D.toolbar.help.appendChild(elt));
-			if (domain && codomain)
-			{
-				document.getElementById('runAction-in').innerHTML = this.js.getInputHtml(domain, null, 'dom');
-				document.getElementById('runAction-out').innerHTML = this.js.getInputHtml(codomain, null, 'cod');
-			}
 			const btn = document.getElementById('run-createDataBtn');
 			const watcher = (mutationsList, observer) =>
 			{
@@ -10788,7 +10780,7 @@ class RunAction extends Action
 	{
 		if (!diagram.isEditable())
 			return false;
-		if (!this.js)
+		if (!this.js)		// initial setup
 			this.js = R.Actions.javascript;
 		if (ary.length === 1 && 'to' in ary[0])
 		{
@@ -10797,6 +10789,8 @@ class RunAction extends Action
 				return true;
 			if (to instanceof CatObject)
 				return this.js.canFormat(to);
+			else if (to instanceof Morphism && this.js.canFormat(to.domain))
+				return true;
 		}
 		return false;
 	}
@@ -11352,7 +11346,6 @@ class ActionAction extends Action
 			});
 			const args = {basename:namedSource.basename, names, codomain:diagram.codomain, user:R.user.name, ops, references};
 			R.sync = false;		// turn off autosave
-//			const action = new ActionDiagram(R.getUserDiagram(R.user.name), args);
 			const action = new ActionDiagram(R.userSessionActions, args);
 			const nameMap = new Map();
 			namedBareValues.map((elt, i) =>
@@ -11912,7 +11905,7 @@ class Morphism extends Element
 		else	// have to set it later
 		{
 			this.recursor = r;
-			this.postload = _ => m.setRecursor(r);
+			this.postload = _ => this.setRecursor(r);
 		}
 	}
 	clear()
@@ -14752,7 +14745,6 @@ class Diagram extends Functor
 	actionHtml(e, name, args = {})
 	{
 		D.toolbar.deactivateButtons();
-//		D.removeChildren(D.toolbar.help);
 		D.toolbar.clearError();
 		const action = this.codomain.actions.get(name);
 		if (action && action.hasForm(R.diagram, this.selected))
@@ -16056,7 +16048,8 @@ class Diagram extends Functor
 	{
 		this.timestamp = Date.now();
 		const info = R.catalog.get(this.name);
-		info.timestamp = this.timestamp;
+		if (info)
+			info.timestamp = this.timestamp;
 	}
 	replaceJson(name, json)
 	{
@@ -16288,7 +16281,6 @@ class ActionDiagram extends Diagram
 			named:		{value:named,		writable:	true},
 			ops:		{value:nuArgs.ops,	writable:	false},
 		});
-//		R.userSessionActions.addElement(this);
 	}
 	help()
 	{
@@ -16412,7 +16404,6 @@ class Assembler
 		this.ref2factor = new Map();
 		this.obj2flat = new Map();
 		this.processed = new Set();
-//		this.folds = new Set();
 		this.issues = [];
 		this.finished = false;
 	}
@@ -16429,10 +16420,8 @@ class Assembler
 		this.inputs.clear();
 		this.outputs.clear();
 		this.composites.clear();
-//		this.ref2factor.clear();
 		this.obj2flat.clear();
 		this.processed.clear();
-//		this.folds.clear();
 		this.issues = [];
 		this.clearGraphics();
 	}
@@ -16921,7 +16910,7 @@ class Assembler
 				homMorph.incrRefcnt();
 				const data = new Map();
 				data.set(0, homMorph);	// 0 is the value since the domain is the terminal object
-				const dataMorph = new Morphism(diagram, {basename:diagram.getAnon('&sect;'), domain:terminal, codomain:homObj, data});
+				const dataMorph = new Morphism(diagram, {basename:diagram.getAnon('s'), domain:terminal, codomain:homObj, data});
 				dataMorphs[fctr] = dataMorph;
 				step2s[fctr] = diagram.prod(dataMorph, diagram.id(homMorph.domain));
 				step3s[fctr] = diagram.eval(homMorph.domain, homMorph.codomain);
