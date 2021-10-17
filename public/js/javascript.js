@@ -1,4 +1,4 @@
-// (C) 2018-2020 Harry Dole
+// (C) 2018-2021 Harry Dole
 // Catecon:  The Categorical Console
 //
 var Cat = Cat || require('./Cat.js');
@@ -19,7 +19,7 @@ var Cat = Cat || require('./Cat.js');
 			super(diagram, args);
 			R.languages.set(this.basename, this);
 			Cat.R.$CAT.getElement('Set').actions.set(args.basename, this);
-			Cat.R.loadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
+			Cat.Runtime.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
 		}
 		getType(elt, first = true)
 		{
@@ -112,7 +112,7 @@ ${header}	return ${name}_morphisms[args[0]](args[1]);${tail}`
 									code += homMorphs.map(hm => this.generate(hm, generated)).join('');
 								}
 								const data = [];
-								morphism.data.forEach((d, k) => data.push(`[${k}, ${that.convertData(codomain, d)}]`));
+								morphism.data.forEach((d, k) => data.push(`[${k}, ${this.convertData(codomain, d)}]`));
 								code +=	// TODO safety check?
 `
 const ${name}_Data = new Map([${data.join()}]);
@@ -327,12 +327,10 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		loadHTML(htmlDiagram)	// bootstrap basic diagrams for startup
 		{
 			htmlDiagram.incrRefcnt();
-//			const htmlDiagram = R.$CAT.getElement('hdole/HTML');
 			this.htmlDiagram = htmlDiagram;
 			const html = htmlDiagram.getElement('HTML');
-			const str = htmlDiagram.codomain.getElement('hdole/Strings/str');
+			const str = htmlDiagram.codomain.getElement('hdole/str/str');
 			this.formatters = new Map();
-//			const that = this;
 			htmlDiagram.forEachMorphism(m =>
 			{
 				const domain = m.domain;
@@ -358,13 +356,15 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				return this.canFormat(o.source);
 			if (o instanceof Cat.ProductObject)
 				return o.objects.reduce((r, ob) => r && this.canFormat(ob));
-			else if (o instanceof Cat.Morphism)
+			if (o instanceof Cat.Composite)
+				return false;
+			if (o instanceof Cat.Morphism)
 				return this.canFormat(o.domain) && (this.canFormat(o.codomain) || o.codomain instanceof Cat.HomObject);
-			else if (o.isTerminal() && !o.dual)
+			if (o.isTerminal() && !o.dual)
 				return true;
-			else if (o instanceof Cat.FiniteObject)
+			if (o instanceof Cat.FiniteObject)
 				return true;
-			else if (o instanceof Cat.CatObject)
+			if (o instanceof Cat.CatObject)
 				return this.formatters.has(o.signature);
 			return false;
 		}
@@ -405,52 +405,45 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 						{
 							html = H3.select({id, onchange:_ => Cat.D.ShowInput(object.name, id, factor.length === 0 ? [] : factor.toString())});
 							html.appendChild(H3.option('Choose'));
-//		object.objects.map(o => this.domainElt.appendChild(H3.option(o.properName, {value:o.name})));
-//							let options = '';
-//							let divs = '';
 							for (let i=0; i<object.objects.length; ++i)
 							{
 								const ob = object.objects[i];
 								const f = [...factor, i];
 								const oid = `dv_${ob.name} ${f.toString()}`;
-//								options += `<option value="${i}"${i === value[0] ? ' selected="selected"' : ''}>${i}: ${ob.properName}</option>`;
-//								html.appendChild(H3.option({value:i}"${i === value[0] ? ' selected="selected"' : ''}>${i}: ${ob.properName}</option>`;
 								divs += H.div(this.getInputHtml(ob, value !== null && value[0] === i ? value[1] : null, prefix, [...factor, i]), 'nodisplay', oid, false);
 							}
-//`<select id="${id}" onchange="Cat.D.ShowInput('${object.name}', '${id}', ${factor.length === 0 ? '[]' : factor.toString()})">
-//<option>Choose</option>${options}</select><div>${divs}</div>`;
+						}
 					}
-				}
-				else
-					html += object.objects.map((ob, i) => this.getInputHtml(ob, value !== null ? value[i] : null, prefix, [...factor, i], null, false));
+					else
+						html += object.objects.map((ob, i) => this.getInputHtml(ob, value !== null ? value[i] : null, prefix, [...factor, i], null, false));
 					if (!first)
 						html = `(${html})`;
-				break;
-			case 'FiniteObject':
-				const dv = typeof value === 'number' ? ` value="${value.toString()}"` : '';
-				if ('size' in object)
-				{
-					if (object.size === 1)
-						return '0';
-					else if (object.size === 0)
-						return '';
-					html = `<input type="number" min="0" id="${id}" max="${object.size}"${dv}/>`;
-				}
-				else
-					html = `<input type="number" min="0" id="${id}"${dv}/>`;
-				break;
-			case 'HomObject':
-				const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
-				html = H3.select({dataIndex:index, id:`help-run-homset-${index ? index : 'next'}`, onchange:_ => R.Actions.javascript(setHomValue(this))});
-				html.appendChild(H3.option('Choose'));
-				homset.map(m =>
-				{
-					const args = {value:m.name};
-					if (m.name === value.name)
-						args.selected = "selected";
-					html.appendChild(H3.option(args, m.properName));
-				});
-				break;
+					break;
+				case 'FiniteObject':
+					const dv = typeof value === 'number' ? ` value="${value.toString()}"` : '';
+					if ('size' in object)
+					{
+						if (object.size === 1)
+							return '0';
+						else if (object.size === 0)
+							return '';
+						html = `<input type="number" min="0" id="${id}" max="${object.size}"${dv}/>`;
+					}
+					else
+						html = `<input type="number" min="0" id="${id}"${dv}/>`;
+					break;
+				case 'HomObject':
+					const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
+					html = H3.select({dataIndex:index, id:`help-run-homset-${index ? index : 'next'}`, onchange:_ => R.Actions.javascript(setHomValue(this))});
+					html.appendChild(H3.option('Choose'));
+					homset.map(m =>
+					{
+						const args = {value:m.name};
+						if (m.name === value.name)
+							args.selected = "selected";
+						html.appendChild(H3.option(args, m.properName));
+					});
+					break;
 			}
 			return html;
 		}
@@ -521,6 +514,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 			const morphism = diagram.getElement(morphismName);
 			const args = this.getInputValue(morphism.domain);
 			const type = this.getType(morphism);
+debugger;
 			const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
@@ -690,8 +684,6 @@ ${this.generate(morphism)}
 		getEditHtml(textarea, elt)
 		{
 			super.getEditHtml(textarea, elt);
-//			if (!this.hasCode(elt))
-//				textarea.innerText = this.template(elt);
 // TODO			const asyncAttrs = {class:'textButton', onclick:e => e.target.classList.toggle('blueRow')};
 // TODO			if (this.isAsync(elt))
 // TODO				asyncAttrs.class += ' blueRow';
