@@ -159,7 +159,7 @@ function scanLeg(leg, sig, scanned)		// recursive scanning of the leg trying to 
 		for (let i=0; i<2; i++)
 		{
 			const otherLegs = sig2legs.get(leg[i]);
-			if (otherLegs)
+			if (otherLegs && !scanned.has(leg[0]))
 			{
 				scanned.add(leg[0]);
 				for(let l=0; l<otherLegs.length; l++)
