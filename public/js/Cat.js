@@ -6805,7 +6805,7 @@ class Element
 		});
 		if ('code' in args)
 			Object.defineProperty(this, 'code', {value:args.code,	writable:false});
-		this.signature = this.getSignature();
+//		this.setSignature();
 	}
 	editText(e, attribute, value)
 	{
@@ -6821,7 +6821,7 @@ class Element
 		if (attribute === 'basename')
 		{
 			this.name = Element.Codename(this.diagram, {basename:this.basename});
-			this.signature = this.getSignature();
+			this.setSignature();
 			this.diagram.reconstituteElements();
 		}
 		else if (attribute === 'properName')
@@ -6830,12 +6830,12 @@ class Element
 	}
 	updateProperName()
 	{}
-	help()
+	help(root)
 	{
 		let baseBtn = '';
 		let descBtn = '';
 		let pNameBtn = '';
-		const id = this.elementId();
+//		const id = this.elementId();
 		if (this.isEditable() && this.diagram.isEditable())
 		{
 			switch(this.constructor.name)	// the others have auto-generated names
@@ -6853,13 +6853,13 @@ class Element
 					break;
 			}
 		}
-		return H3.table(H3.tr(H3.th(H3.tag('proper-name', this.properName), pNameBtn, {colspan:2})),
-						H3.tr(H3.td('Base name:', '.left'), H3.td(H3.tag('basename', this.basename), baseBtn, '.left')),
-						H3.tr(H3.td('Description:', '.left'), H3.td(H3.tag('description', this.description), descBtn, '.left')),
-						H3.tr(H3.td('Type:', '.left'), H3.td(U.Cap(U.DeCamel(this.constructor.name)), '.left')),
-						H3.tr(H3.td('Category:', '.left'), H3.td(this.category ? this.category.properName : '', '.left')),
-						H3.tr(H3.td('Diagram:', '.left'), H3.td(this.diagram ? this.diagram.properName : '', '.left')),
-						H3.tr(H3.td('User:', '.left'), H3.td(this.diagram ? this.diagram.user : '', '.left')), {id});
+		[H3.tr(H3.th(H3.tag('proper-name', this.properName), pNameBtn, {colspan:2})),
+		H3.tr(H3.td('Base name:', '.left'), H3.td(H3.tag('basename', this.basename), baseBtn, '.left')),
+		H3.tr(H3.td('Description:', '.left'), H3.td(H3.tag('description', this.description), descBtn, '.left')),
+		H3.tr(H3.td('Type:', '.left'), H3.td(U.Cap(U.DeCamel(this.constructor.name)), '.left')),
+		H3.tr(H3.td('Category:', '.left'), H3.td(this.category ? this.category.properName : '', '.left')),
+		H3.tr(H3.td('Diagram:', '.left'), H3.td(this.diagram ? this.diagram.properName : '', '.left')),
+		H3.tr(H3.td('User:', '.left'), H3.td(this.diagram ? this.diagram.user : '', '.left'))].map(row => root.appendChild(row));
 	}
 	isEditable()		// can only edit the current diagram
 	{
@@ -6872,9 +6872,9 @@ class Element
 	{
 		return false;		// fitb
 	}
-	getSignature()
+	setSignature()			// override as necessary
 	{
-		return U.Sig(this.name);
+		this.signature = U.Sig(this.name);
 	}
 	incrRefcnt()
 	{
@@ -7578,13 +7578,13 @@ class CatObject extends Element
 	{
 		super(diagram, args);
 		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
+		this.constructor.name === 'CatObject' && this.setSignature();
 		isGUI && this.constructor.name === 'CatObject' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Category:'), H3.td(this.category.properName)));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Category:'), H3.td(this.category.properName)));
 	}
 	decrRefcnt()
 	{
@@ -7652,15 +7652,19 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 		super(diagram, nuArgs);
 		if ('size' in nuArgs && nuArgs.size !== '')
 			Object.defineProperty(this, 'size', {value:	Number.parseInt(nuArgs.size), writable:	false});
-		if ('size' in this)		// signature is the sig of the coproduct of 1's/Show
-			this.signature = U.Sig(this.size.toString());
+//		if ('size' in this)		// signature is the sig of the coproduct of 1's/Show
+//			this.signature = U.Sig(this.size.toString());
+		this.setSignature();
 		isGUI && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	setSignature()
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Finite object'), H3.td('size' in this ? 'size: ' + this.size.toString() : 'indeterminate size')));
-		return help;
+		this.signature = 'size' in this ? U.Sig(this.size.toString()) : super.setSignature();
+	}
+	help(root)
+	{
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Finite object'), H3.td('size' in this ? 'size: ' + this.size.toString() : 'indeterminate size')));
 	}
 	json()
 	{
@@ -7708,14 +7712,18 @@ class MultiObject extends CatObject
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'objects', {value:	nuArgs.objects.map(o => this.diagram.getElement(o)), writable:	false});
 		this.objects.map(o => o.incrRefcnt());
+//		this.signature = U.SigArray([U.Sig((this.dual ? 'Co' : '') + this.constructor.name), ...this.objects.map(o => o.signature)]);
+		this.setSignature();
+	}
+	setSignature()
+	{
 		this.signature = U.SigArray([U.Sig((this.dual ? 'Co' : '') + this.constructor.name), ...this.objects.map(o => o.signature)]);
 	}
-	help(hdr)
+	help(root, hdr)
 	{
-		const help = super.help();
-		help.appendChild(hdr);
-		this.objects.map(o => help.appendChild(H3.tr(H3.td(o.getHtmlRep()))));
-		return help;
+		super.help(root);
+		root.appendChild(hdr);
+		this.objects.map(o => root.appendChild(H3.tr(H3.td(o.getHtmlRep()))));
 	}
 	decrRefcnt()
 	{
@@ -7849,8 +7857,13 @@ class ProductObject extends MultiObject
 		nuArgs.basename = 'basename' in nuArgs ? nuArgs.basename : ProductObject.Basename(diagram, {objects:nuArgs.objects, dual});
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : ProductObject.ProperName(nuArgs.objects, dual);
 		super(diagram, nuArgs);
+		this.setSignature();
 		isGUI && this.constructor.name === 'ProductObject' && D.emitElementEvent(diagram, 'new', this);
-		this.signature = ProductObject.Signature(diagram, this.objects, this.dual);
+//		this.signature = ProductObject.Signature(diagram, this.objects, this.dual);
+	}
+	setSignature()
+	{
+		this.signature = ProductObject.Signature(this.diagram, this.objects, this.dual);
 	}
 	json(delBasename = true)
 	{
@@ -7858,9 +7871,9 @@ class ProductObject extends MultiObject
 		delete a.description;		// TODO remove after all diagrams updated
 		return a;
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td(this.dual ? 'Coproduct' : 'Product')));
+		super.help(root, H3.tr(H3.td('Type:'), H3.td(this.dual ? 'Coproduct' : 'Product')));
 	}
 	getFactor(factor)
 	{
@@ -8001,9 +8014,9 @@ class PullbackObject extends ProductObject
 		this.loadItem();
 		isGUI && D.emitElementEvent(this.diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:', H3.td('Pullback object'))));
+		super.help(root, H3.tr(H3.td('Type:', H3.td('Pullback object'))));
 	}
 	decrRefcnt()
 	{
@@ -8069,12 +8082,17 @@ class HomObject extends MultiObject
 		nuArgs.properName = HomObject.ProperName(nuArgs.objects);
 		nuArgs.description = `The homset from ${nuArgs.objects[0].properName} to ${nuArgs.objects[1].properName}`;
 		super(diagram, nuArgs);
-		this.signature = HomObject.Signature(diagram, nuArgs.objects);
+//		this.signature = HomObject.Signature(diagram, nuArgs.objects);
+		this.setSignature();
 		isGUI && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	setSignature()
 	{
-		return super.help(H3.tr(H3.td('Type'), H3.td('Hom')));
+		this.signature = HomObject.Signature(this.diagram, this.objects);
+	}
+	help(root)
+	{
+		super.help(root, H3.tr(H3.td('Type'), H3.td('Hom')));
 	}
 	homDomain()
 	{
@@ -8252,7 +8270,7 @@ class DiagramText extends Element
 		diagram && diagram.addElement(this);
 		isGUI && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
 		const canEdit = this.isEditable() && this.diagram.isEditable();
 		const id = this.elementId();
@@ -8274,7 +8292,7 @@ class DiagramText extends Element
 				H3.tr(H3.td('Text height:'), H3.td(H3.input(`##${inId}.in100`, inputArgs)),
 				H3.tr(H3.td('Text weight:'), H3.td(selectWeight)))));
 		}
-		return H3.tr(H3.td(div, {colspan:2}));
+		root.appendChild(H3.tr(H3.td(div, {colspan:2})));
 	}
 	editText(e, attribute, value)	// only valid for attr == 'description'
 	{
@@ -8552,9 +8570,9 @@ class TensorObject extends MultiObject
 		super(diagram, nuArgs);
 		isGUI && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td('Tensor')));
+		super.help(root, H3.tr(H3.td('Type:'), H3.td('Tensor')));
 	}
 	getGraph(data = {position:0}, first = true)
 	{
@@ -8613,11 +8631,12 @@ class IndexObject extends CatObject
 			svg:		{value: null,				writable:	true},
 		});
 		this.setObject(nuArgs.to);
+		this.constructor.name === 'IndexObject' && this.setSignature();
 		isGUI && this.constructor.name === 'IndexObject' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		return this.to.help();
+		return this.to.help(root);
 	}
 	json()
 	{
@@ -8915,14 +8934,19 @@ console.log('fixup in diagram', diagram.name);
 			this.left = cell.left;
 			this.right = cell.right;
 		}
-		this.signature = Cell.Signature(this.left, this.right);
+//		this.signature = Cell.Signature(this.left, this.right);
 		cell.setCommutes('assertion');
-		this.signature = cell.signature;
+//		this.signature = cell.signature;
+		this.setSignature();
 		cell.left.map(m => m.incrRefcnt());
 		cell.right.map(m => m.incrRefcnt());
 		this.description = `The assertion that the composite of morphisms ${cell.left.map(m => m.to.properName).join()} equals that of ${cell.right.map(m => m.to.properName).join()}.`;
 		this.setCell(cell);
 		this.loadItem();
+	}
+	setSignature()
+	{
+		this.signature = this.cell.signature;
 	}
 	decrRefcnt()
 	{
@@ -9038,9 +9062,9 @@ class Action extends CatObject
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'priority', {value:U.GetArg(args, 'priority', 0),	writable:	false});
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td('Action')));
+		super.help(root, H3.tr(H3.td('Type:'), H3.td('Action')));
 	}
 	action(e, diagram, ary) {}	// fitb
 	hasForm(diagram, ary) {return false;}	// fitb
@@ -10436,7 +10460,10 @@ class HelpAction extends Action
 		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), {title:lang.description})));
 		if (toolbar2.length > 0)
 			help.appendChild(H3.div(toolbar2, '##help-toolbar2'));
-		D.toolbar.help.appendChild(H3.div(from.help(), '##help-body'));
+//		D.toolbar.help.appendChild(H3.div(from.help(), '##help-body'));
+		const table = H3.table('##help-body');
+		D.toolbar.help.appendChild(table);
+		from.help(table);
 	}
 }
 
@@ -10599,11 +10626,13 @@ class RunAction extends Action
 	{
 		const from = ary[0];
 		const to = from.to;
-		const addDataBtn = D.getIcon('addInput', 'edit', e => this.addInput(), {title:'Add data'});
+		const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), {title:'Add data'}), '##run-createDataBtn', {display:'none'});
+		this.display = H3.tr(H3.td('##run-display'), H3.td(createDataBtn));
+		const addDataBtn = D.getIcon('addInput', 'edit', e => this.addInput(this.display), {title:'Add data'});
 		const {properName, description} = to;
 		const elements = [H3.h3(properName)];
 		description !== '' && elements.push(H3.p(description, '.smallPrint.italic'));
-		let canMakeData = true;
+//		let canMakeData = true;
 		let domain = null;
 		let codomain = null;
 		const source = to instanceof NamedObject ? to.base : to;
@@ -10629,6 +10658,7 @@ class RunAction extends Action
 				}
 				*/
 			}
+			/*
 			if (R.canFormat(to))
 			{
 				const sz = domain.getSize();
@@ -10665,11 +10695,14 @@ class RunAction extends Action
 					elements.push(H3.table(rows));
 				}
 			}
-			else if (to.isIterable())
+				*/
+//			else if (to.isIterable())
+			if (to.isIterable())
 				elements.push(D.getIcon('evaluate', 'edit', e => this.evaluateMorphism(e, Cat.R.diagram, to.name, this.postResults), {title:'Evaluate morphism'}));
 			else		// try to evaluate an input
 				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:this.js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), {title:'Evaluate inputs'}));
 		}
+		/*
 		if (canMakeData)
 		{
 			const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), {title:'Add data'}), '##run-createDataBtn', {display:'none'});
@@ -10695,7 +10728,10 @@ class RunAction extends Action
 			elements.push(H3.div('##run-display'));
 			elements.map(elt => elt && D.toolbar.help.appendChild(elt));
 		}
-		this.display = document.getElementById('run-display');
+		*/
+		this.display = H3.tr(H3.td('##run-display'), H3.td(createDataBtn));
+		root.appendChild(this.display);
+//		this.display = document.getElementById('run-display');
 		this.data = new Map();
 	}
 	postResult(result)
@@ -10715,7 +10751,7 @@ class RunAction extends Action
 		const that = R.Actions.run;
 		result.forEach((v, i) => that.postResult([i, v]));
 	}
-	addInput()
+	addInput(root)
 	{
 		const to = R.diagram.getSelected().to;
 		let dom = null;
@@ -10733,7 +10769,7 @@ class RunAction extends Action
 			const {domain, codomain} = this.setEvaluation(to);
 			d.innerHTML = this.htmlInputValue(domain, codomain);
 		}
-		this.display.appendChild(d);
+		root.appendChild(d);
 	}
 	htmlInputValue(domain, codomain)
 	{
@@ -11494,11 +11530,10 @@ class Category extends CatObject
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
 		isGUI && this.constructor.name === 'Category' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Category'), H3.td(`${this.elements.size} elements and ${this.actions.size} actions.`)));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Category'), H3.td(`${this.elements.size} elements and ${this.actions.size} actions.`)));
 	}
 	info()
 	{
@@ -11731,6 +11766,7 @@ class Morphism extends Element
 		this.domain.incrRefcnt();
 		this.codomain.incrRefcnt();
 		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
+		this.constructor.name === 'Morphism' && this.setSignature();
 		isGUI && this.constructor.name === 'Morphism' && D.emitElementEvent(diagram, 'new', this);
 	}
 	setDomain(dom)
@@ -11751,9 +11787,9 @@ class Morphism extends Element
 		cod.incrRefcnt();
 		this.codomain = cod;
 	}
-	help(from = null)
+	help(root, from = null)
 	{
-		const help = super.help();
+		super.help(root);
 		let domainElt = null;
 		let codomainElt = null;
 		if (this.isEditable() && from && from.to.refcnt === 1)
@@ -11764,22 +11800,22 @@ class Morphism extends Element
 				domainElt = H3.select('##new-domain.w100', {onchange: e => from.setToDomain(R.diagram.getElement(e.target.value))});
 				domainElt.appendChild(H3.option(this.domain.properName, {value:this.domain.properName, selected:true, disabled:false}));
 				objects.map(o => o.name !== this.domain.name && domainElt.appendChild(H3.option(o.properName, {value:o.name})));
-				help.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
+				root.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
 			}
 			if (from.codomain.refcnt === 2)
 			{
 				codomainElt = H3.select('##new-codomain.w100', {onchange: e => from.setToCodomain(R.diagram.getElement(e.target.value))});
 				codomainElt.appendChild(H3.option(this.codomain.properName, {value:this.codomain.properName, selected:true, disabled:true}));
 				objects.map(o => o.name !== this.codomain.name && codomainElt.appendChild(H3.option(o.properName, {value:o.name})));
-				help.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
+				root.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
 			}
 		}
 		if (!domainElt)
 			domainElt = this.domain.properName;
 		if (!codomainElt)
 			codomainElt = this.codomain.properName;
-		help.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
-		help.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
+		root.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
+		root.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
 		if ('recursor' in this)
 		{
 			const deleteRecursor = e =>
@@ -11788,9 +11824,64 @@ class Morphism extends Element
 				document.getElementById('help-recursor').remove();
 			};
 			const btn = this.isEditable() ? D.getIcon('delete', 'delete', deleteRecursor, {title:'Delete recursor'}) : '';
-			help.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.properName, btn)));
+			root.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.properName, btn)));
 		}
-		return help;
+		let canMakeData = true;
+//		const elements = [];
+		const infoDisplay = H3.tr(H3.td('##info-display', {colspan:2}));
+		if (R.canFormat(this))
+		{
+			const domain = this.domain;
+			const codomain = this.codomain;
+			const sz = domain.getSize();
+			root.appendChild(H3.tr(H3.td(H3.small('Domain')), H3.td(H3.small('Codomain'))));
+			root.appendChild(H3.tr(	H3.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), '.smallBold'),
+									H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold')));
+			const dataRow = (d,i) =>
+			{
+				if (d !== null)
+				{
+//					const editDataBtn = D.getIcon('editData', 'edit', e => R.Actions.run.editData(e, i), {title:'Set data'});
+//					root.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d), H3.td(editDataBtn)));
+					// TODO delete
+					root.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d)));
+				}
+			};
+			if (sz < Number.MAX_VALUE && 'data' in this)
+			{
+				for (let i=0; i<sz; ++i)
+				{
+					const value = this.data.has(i) ? this.data.get(i) : null;
+					const input = R.Actions.javascript.getInputHtml(codomain, value, i, [], i);
+					dataRow(input, i);
+				}
+				// TODO domain not numeric
+				root.appendChild(H3.tr(h3.th('Data in Morphism', {colspan:2})));
+				canMakeData = false;
+			}
+			else
+			{
+				const addDataBtn = D.getIcon('addInput', 'edit', e => R.Actions.run.addInput(infoDisplay), {title:'Add data'});
+				root.appendChild(H3.tr(H3.td(R.Actions.javascript.getInputHtml(domain, null, 'dom')), H3.td(R.Actions.javascript.getInputHtml(codomain, null, 'cod')), H3.td(addDataBtn)));
+				root.appendChild(H3.tr(H3.th('Data in Morphism', {colspan:2})));
+				'data' in this && this.data.forEach(dataRow);
+			}
+		}
+		if (canMakeData)
+		{
+			const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), {title:'Add data'}), '##info-createDataBtn', {display:'none'});
+			root.appendChild(infoDisplay);
+			root.appendChild(createDataBtn);
+			const btn = document.getElementById('info-createDataBtn');
+			const watcher = (mutationsList, observer) =>
+			{
+				for(const m of mutationsList)
+					btn.style.display = m.target.children.length > 0 ? 'block' : 'none';
+			};
+			const observer = new MutationObserver(watcher);
+			const childList = true;
+			observer.observe(infoDisplay, {childList});
+		}
 	}
 	decrRefcnt()
 	{
@@ -11970,8 +12061,13 @@ class Identity extends Morphism
 		nuArgs.basename = Identity.Basename(diagram, {domain:nuArgs.domain, codomain:nuArgs.codomain});
 		nuArgs.properName = 'properName' in nuArgs ? U.HtmlEntitySafe(nuArgs.properName) : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		super(diagram, nuArgs);
-		this.signature = Identity.Signature(diagram, this.domain);
+//		this.signature = Identity.Signature(diagram, this.domain);
+		this.setSignature();
 		isGUI && this.constructor.name === 'Identity' && D.emitElementEvent(diagram, 'new', this);
+	}
+	setSignature()
+	{
+		this.signature = Identity.Signature(this.diagram, this.domain);
 	}
 	loadItem()
 	{
@@ -11990,11 +12086,10 @@ class Identity extends Morphism
 			R.loadSigs(this.diagram, this, [this], [op]);
 		}
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Identity')));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Identity')));
 	}
 	getGraph(data = {position:0})
 	{
@@ -12099,7 +12194,8 @@ class NamedObject extends CatObject	// name of an object
 		super(diagram, nuArgs);
 		this.source = source;
 		this.base = this.getBase();
-		this.signature = this.base.signature;
+//		this.signature = this.base.signature;
+		this.setSignature();
 		this.source.incrRefcnt();
 		this.idFrom = diagram.get('Identity', {properName:'&#8797;', domain:this, codomain:this.source});
 		this.idTo = diagram.get('Identity', {properName:'&#8797;', domain:this.source, codomain:this});
@@ -12107,6 +12203,10 @@ class NamedObject extends CatObject	// name of an object
 		this.idTo.incrRefcnt();
 		this.refcnt = 0;	// id's increased it so set it back
 		isGUI && this.constructor.name === 'NamedObject' && D.emitElementEvent(diagram, 'new', this);
+	}
+	setSignature()
+	{
+		this.signature = this.base.signature;
 	}
 	json()
 	{
@@ -12124,11 +12224,10 @@ class NamedObject extends CatObject	// name of an object
 		if (this.refcnt <= 0)
 			this.source.decrRefcnt();
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Named object of:'), H3.td(this.source.properName)));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Named object of:'), H3.td(this.source.properName)));
 	}
 	getBase()
 	{
@@ -12201,11 +12300,17 @@ class NamedMorphism extends Morphism	// name of a morphism
 		super(diagram, nuArgs);
 		this.source = source;
 		this.base = this.getBase();
-		this.signature = this.base.signature;
 		this.source.incrRefcnt();
-		if (this.constructor.name === 'NamedMorphism')
-			this.signature = this.source.signature;
+//		if (this.constructor.name === 'NamedMorphism')
+//			this.signature = this.source.signature;
+//		else
+//			this.signature = this.base.signature;
+		this.setSignature();
 		isGUI && this.constructor.name === 'NamedMorphism' && D.emitElementEvent(diagram, 'new', this);
+	}
+	setSignature()
+	{
+		this.signature = this.constructor.name === 'NamedMorphism' ? this.source.signature : this.base.signature;
 	}
 	json()
 	{
@@ -12223,11 +12328,10 @@ class NamedMorphism extends Morphism	// name of a morphism
 		if (this.refcnt <= 0)
 			this.source && this.source.decrRefcnt();
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Named morphism of:'), H3.td(this.source.properName)));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Named morphism of:'), H3.td(this.source.properName)));
 	}
 	loadItem()	// don't call in Morphism constructor since signature may change
 	{
@@ -12304,6 +12408,7 @@ class IndexMorphism extends Morphism
 			this.attributes.set('flipName', nuArgs.flipName);
 		if (!this.attributes.has('flipName'))
 			this.attributes.set('flipName', false);
+		this.constructor.name === 'IndexMorphism' && this.setSignature();
 		isGUI && this.constructor.name === 'IndexMorphism' && D.emitElementEvent(diagram, 'new', this);
 	}
 	setHomsetIndex(args)
@@ -12331,15 +12436,14 @@ class IndexMorphism extends Morphism
 		super.setCodomain(cod);
 		cat.addMorphism(this);
 	}
-	help()
+	help(root)
 	{
-		const help = this.to.help(this);
+		this.to.help(root, this);
 		if (this.isEditable())
 		{
 			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseInt(e.target.value)), min:0, max:100, width:2, value:this.homsetIndex};
-			help.appendChild(H3.tr(H3.td('Homset Index'), H3.td(H3.input('.in100', inputArgs))));
+			root.appendChild(H3.tr(H3.td('Homset Index'), H3.td(H3.input('.in100', inputArgs))));
 		}
-		return help;
 	}
 	decrRefcnt()
 	{
@@ -12848,7 +12952,7 @@ class Cell extends DiagramCore
 		R.Actions.help.html(e, this.diagram, [this]);
 		return assert;
 	}
-	help()
+	help(root)
 	{
 		const rows = [H3.tr(H3.th('Cell'))];
 		const buttons = [];
@@ -12878,7 +12982,7 @@ class Cell extends DiagramCore
 		this.left.map(m => rows.push(m.to.getHtmlRow()));
 		rows.push(H3.tr(H3.th('Right leg:')));
 		this.right.map(m => rows.push(m.to.getHtmlRow()));
-		return H3.table(rows);
+		root.appendChild(H3.table(rows));
 	}
 	setCommutes(com)
 	{
@@ -13139,6 +13243,7 @@ class DiagramComposite extends IndexMorphism
 		super(diagram, args);
 		this.morphisms = args.morphisms.map(m => diagram.domain.getElement(m));
 		this.morphisms.map((m, i) => { m.incrRefcnt(); });
+		this.constructor.name === 'DiagramComposite' && this.setSignature();
 		isGUI && this.constructor.name === 'DiagramComposite' && D.emitElementEvent(diagram, 'new', this);
 	}
 	decrRefcnt()
@@ -13193,11 +13298,10 @@ class IndexCategory extends Category
 		});
 		isGUI && this.constructor.name === 'IndexCategory' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Index Category')));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Index Category')));
 	}
 	clear()
 	{
@@ -13351,14 +13455,18 @@ class MultiMorphism extends Morphism
 		const morphisms = diagram.getElements(nuArgs.morphisms);
 		Object.defineProperty(this, 'morphisms', {value:morphisms, writable:true}); 	// TODO back to false
 		this.morphisms.map(m => m.incrRefcnt());
+//		this.signature = U.SigArray(this.expand().map(m => m.signature));
+		this.setSignature();
+	}
+	setSignature()
+	{
 		this.signature = U.SigArray(this.expand().map(m => m.signature));
 	}
-	help(hdr)
+	help(root, hdr)
 	{
-		const help = super.help();
-		help.appendChild(hdr);
-		this.morphisms.map(m => help.appendChild(H3.tr(H3.td({colspan:2}, m.getHtmlRep()))));
-		return help;
+		super.help(root);
+		root.appendChild(hdr);
+		this.morphisms.map(m => root.appendChild(H3.tr(H3.td({colspan:2}, m.getHtmlRep()))));
 	}
 	decrRefcnt()
 	{
@@ -13454,9 +13562,9 @@ class Composite extends MultiMorphism
 		super(diagram, nuArgs);
 		isGUI && this.constructor.name === 'Composite' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td('Composite')));
+		super.help(root, H3.tr(H3.td('Type:'), H3.td('Composite')));
 	}
 	getDecoration()
 	{
@@ -13545,8 +13653,13 @@ class ProductMorphism extends MultiMorphism
 		nuArgs.morphisms = morphisms;
 		nuArgs.properName = ProductMorphism.ProperName(morphisms, dual);
 		super(diagram, nuArgs);
-		this.signature = ProductMorphism.Signature(this.morphisms.map(m => m.signature), dual);
+//		this.signature = ProductMorphism.Signature(this.morphisms.map(m => m.signature), dual);
+		this.setSignature();
 		isGUI && this.constructor.name === 'ProductMorphism' && D.emitElementEvent(diagram, 'new', this);
+	}
+	setSignature()
+	{
+		this.signature = ProductMorphism.Signature(this.morphisms.map(m => m.signature), this.dual);
 	}
 	json(delBasename = true)
 	{
@@ -13555,9 +13668,9 @@ class ProductMorphism extends MultiMorphism
 			a.dual = true;
 		return a;
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td(this.dual ? 'Coproduct' : 'Product')));
+		return super.help(root, H3.tr(H3.td('Type:'), H3.td(this.dual ? 'Coproduct' : 'Product')));
 	}
 	getGraph(data = {position:0})
 	{
@@ -13639,9 +13752,9 @@ class ProductAssembly extends MultiMorphism
 		super(diagram, nuArgs);
 		isGUI && this.constructor.name === 'ProductAssembly' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td(`${this.dual ? 'Co' : 'P'}roduct assembly`)));
+		return super.help(root, H3.tr(H3.td('Type:'), H3.td(`${this.dual ? 'Co' : 'P'}roduct assembly`)));
 	}
 	getGraph(data = {position:0})
 	{
@@ -13715,14 +13828,18 @@ class FactorMorphism extends Morphism
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.factors = nuArgs.factors;
-		this.signature = FactorMorphism.Signature(this.diagram, nuArgs.domain, nuArgs.factors, dual, nuArgs.cofactors);
+//		this.signature = FactorMorphism.Signature(this.diagram, nuArgs.domain, nuArgs.factors, dual, nuArgs.cofactors);
+		this.setSignature();
 		isGUI && this.constructor.name === 'FactorMorphism' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	setSignature()
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td(`${this.dual ? 'Cofactor' : 'Factor'} morphism: ${this.factors}`)));
-		return help;
+		this.signature = FactorMorphism.Signature(this.diagram, this.domain, this.factors, this.dual, this.cofactors);
+	}
+	help(root)
+	{
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td(`${this.dual ? 'Cofactor' : 'Factor'} morphism: ${this.factors}`)));
 	}
 	json()
 	{
@@ -13977,22 +14094,26 @@ class LambdaMorphism extends Morphism
 		this.preCurry.incrRefcnt();
 		this.domFactors = args.domFactors;
 		this.homFactors = nuArgs.homFactors;
-		this.signature = this.getLambdaSignature();
+//		this.signature = this.getLambdaSignature();
+		this.setSignature();
 		isGUI && this.constructor.name === 'LambdaMorphism' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	setSignature()
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Lambda')));
-		help.appendChild(H3.tr(H3.td('Pre-Curry:'), H3.td(this.preCurry.properName)));
-		help.appendChild(H3.tr(H3.td('Domain Factors:'), H3.td(this.domFactors)));
-		help.appendChild(H3.tr(H3.td('Codomain Factors:'), H3.td(this.homFactors)));
-		return help;
+		this.signature = U.SigArray([this.signature, this.preCurry.signature, U.Sig(JSON.stringify(this.domFactors)), U.Sig(JSON.stringify(this.homFactors))]);
 	}
-	getLambdaSignature()
+	help(root)
 	{
-		return U.SigArray([this.signature, this.preCurry.signature, U.Sig(JSON.stringify(this.domFactors)), U.Sig(JSON.stringify(this.homFactors))]);
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Lambda')));
+		root.appendChild(H3.tr(H3.td('Pre-Curry:'), H3.td(this.preCurry.properName)));
+		root.appendChild(H3.tr(H3.td('Domain Factors:'), H3.td(this.domFactors)));
+		root.appendChild(H3.tr(H3.td('Codomain Factors:'), H3.td(this.homFactors)));
 	}
+//	getLambdaSignature()
+//	{
+//		return U.SigArray([this.signature, this.preCurry.signature, U.Sig(JSON.stringify(this.domFactors)), U.Sig(JSON.stringify(this.homFactors))]);
+//	}
 	json()
 	{
 		const a = super.json();
@@ -14236,9 +14357,9 @@ class HomMorphism extends MultiMorphism
 		super(diagram, nuArgs);
 		isGUI && this.constructor.name === 'HomMorphism' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td('Hom')));
+		super.help(root, H3.tr(H3.td('Type:'), H3.td('Hom')));
 	}
 	needsParens()
 	{
@@ -14297,11 +14418,10 @@ class Evaluation extends Morphism
 		super(diagram, nuArgs);
 		isGUI && this.constructor.name === 'Evaluation' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Evaluation')));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Evaluation')));
 	}
 	getGraph()
 	{
@@ -14360,11 +14480,10 @@ class Distribute extends Morphism
 		this.side = nuArgs.side;
 		isGUI && this.constructor.name === 'Distribute' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Distribute')));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Distribute')));
 	}
 	hasInverse()
 	{
@@ -14454,11 +14573,10 @@ class Dedistribute extends Morphism	// TODO what about side?
 		super(diagram, nuArgs);
 		isGUI && this.constructor.name === 'Dedistribute' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Dedistribute')));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Dedistribute')));
 	}
 	hasInverse()
 	{
@@ -14528,11 +14646,10 @@ class Functor extends Morphism
 		super(diagram, nuArgs);
 		isGUI && this.constructor.name === 'Functor' && D.emitElementEvent(diagram, 'new', this);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Functor')));
-		return help;
+		super.help(root);
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Functor')));
 	}
 }
 
@@ -14615,10 +14732,10 @@ class Diagram extends Functor
 		!isIndex && this.elements.set(elt.basename, elt);
 		cat.elements.set(elt.name, elt);
 	}
-	help()
+	help(root)
 	{
-		const help = super.help();
-		help.appendChild(H3.tr(H3.td('Type:'), H3.td('Diagram')));
+		super.help();
+		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Diagram')));
 		const toolbar2 = D.toolbar.element.querySelector('div #help-toolbar2');
 		if (R.user.status === 'logged-in' && R.cloud && this.user === R.user.name)
 		{
@@ -14633,7 +14750,6 @@ class Diagram extends Functor
 		toolbar2.appendChild(D.getIcon('json', 'download-json', e => this.downloadJSON(e), {title:'Download JSON'}));
 		toolbar2.appendChild(D.getIcon('png', 'download-png', e => window.open(`diagram/${this.name}.png`, btnSize,
 					`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), {title:'View PNG'}));
-		return help;
 	}
 	purge()
 	{
@@ -16282,9 +16398,9 @@ class ActionDiagram extends Diagram
 			ops:		{value:nuArgs.ops,	writable:	false},
 		});
 	}
-	help()
+	help(root)
 	{
-		return super.help(H3.tr(H3.td('Type:'), H3.td('Action')));
+		return super.help(root, H3.tr(H3.td('Type:'), H3.td('Action')));
 	}
 	action(e, diagram, ary)
 	{
