@@ -275,7 +275,13 @@ let JWK = null;
 function fetchJWK()
 {
 	const url = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}/.well-known/jwks.json`;
-	fetch(url).then(res => res.json()).then(json => {JWK = json;});
+	fetch(url).then(response =>
+	{
+		if (response.ok)
+			response.json().then(json => {JWK = json;});
+		else
+			console.error('ERROR in fetchJWK: ', response.statusText);
+	});
 }
 fetchJWK();
 
