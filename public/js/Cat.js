@@ -8888,12 +8888,6 @@ class Assertion extends Element
 {
 	constructor(diagram, args)
 	{
-if (typeof args.cell === 'string')		// TODO remove
-{
-args.signature = args.cell;
-delete args.cell;
-console.log('fixup in diagram', diagram.name);
-}
 		const nuArgs = U.Clone(args);
 		let idx = 0;
 		const left = nuArgs.left.map(name => diagram.domain.getElement(name));
@@ -8947,10 +8941,9 @@ console.log('fixup in diagram', diagram.name);
 	json()
 	{
 		const a = super.json();
-		a.signature = this.signature;
 		a.equal = this.equal;
-		a.left = this.left.map(m => m.name);
-		a.right = this.right.map(m => m.name);
+		a.left = this.left.map(m => m.basename);
+		a.right = this.right.map(m => m.basename);
 		delete a.basename;
 		return a;
 	}
@@ -11547,9 +11540,14 @@ if (args.codomain === 'hdole/PFS')	// TODO remove
 	}
 	getElement(name)
 	{
+		let element = null;
 		if (typeof name === 'string')
-			return this.elements.get(name);
-		if (name && 'name' in name && this.elements.has(name.name))
+			element = this.elements.get(name);
+		if (!element && this.indexedDiagram)
+			element = this.elements.get(this.indexedDiagram.name + '/' + name);
+		if (element)
+			return element;
+		if (name && name instanceof Object && 'name' in name && this.elements.has(name.name))
 			return name;
 		return null;
 	}
