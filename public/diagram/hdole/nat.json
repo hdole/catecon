@@ -3,6 +3,7 @@
   "basename": "nat",
   "name": "hdole/nat",
   "prototype": "Diagram",
+  "properName": "hdole/nat",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "code": {
@@ -3726,7 +3727,7 @@
       "description": "An unsigned byte",
       "basename": "N8",
       "prototype": "FiniteObject",
-      "properName": "256",
+      "properName": "ℕ₈",
       "code": {
         "cpp": "typedef uint8_t %0;\n"
       },
@@ -3931,7 +3932,6 @@
       "prototype": "Morphism",
       "properName": "0",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
         "cpp": "%0 = 0;"
       },
       "domain": "hdole/nat/#1",
@@ -3943,7 +3943,6 @@
       "prototype": "Morphism",
       "properName": "1",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
         "cpp": "%0 = 1;"
       },
       "domain": "hdole/nat/#1",
@@ -3955,7 +3954,6 @@
       "prototype": "Morphism",
       "properName": "&infin;",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn Number.MAX_SAFE_INTEGER;\n}\n",
         "cpp": "%0 = ULONG_MAX;"
       },
       "domain": "hdole/nat/#1",
@@ -3967,7 +3965,6 @@
       "prototype": "Morphism",
       "properName": "addr",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0] + args[1];\n}\n",
         "cpp": "%2 = %0 + %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
@@ -3979,7 +3976,6 @@
       "prototype": "Morphism",
       "properName": "lt",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0] < args[1];\n}\n",
         "cpp": "%2 = %0 < %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
@@ -3991,7 +3987,6 @@
       "prototype": "Morphism",
       "properName": "lte",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0] <= args[1];\n}\n",
         "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
@@ -4003,7 +3998,6 @@
       "prototype": "Morphism",
       "properName": "equ",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0] === args[1];\n}\n",
         "cpp": "%2 = %0 == %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
@@ -4015,7 +4009,6 @@
       "prototype": "Morphism",
       "properName": "\n\n0",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
         "cpp": "%0 = 0;"
       },
       "domain": "hdole/nat/#1",
@@ -4027,7 +4020,6 @@
       "prototype": "Morphism",
       "properName": "1",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
         "cpp": "%0 = 1;"
       },
       "domain": "hdole/nat/#1",
@@ -4039,7 +4031,6 @@
       "prototype": "Morphism",
       "properName": "&infin;",
       "code": {
-        "js": "function %Type(args)\n{\n\treturn 65535;\n}\n",
         "cpp": "%0 = 65535;"
       },
       "domain": "hdole/nat/#1",
@@ -5352,12 +5343,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632777122803,
+  "timestamp": 1635272223336,
   "version": 0,
   "viewport": {
-    "x": 1298,
-    "y": 593,
-    "scale": 0.7278263341801406
-  },
-  "properName": "hdole/nat"
+    "x": 575,
+    "y": 218,
+    "scale": 0.2252030301846835
+  }
 }
