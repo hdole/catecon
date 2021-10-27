@@ -280,7 +280,7 @@ class U		// utilities
 	{
 		if (elts.length === 0)
 			return 0;
-		else if (elts.length === 1)
+		else if (elts.length === 1 && typeof elts[0] === 'string')
 			return elts[0];	// no sig change for array of length 1
 		return U.Sig(elts.map(e => Array.isArray(e) ? U.SigArray(e) : e).join());
 	}
@@ -474,6 +474,10 @@ class U		// utilities
 	static limit(str, lim = 100)
 	{
 		return str.length < lim ? str : str.substr(0, lim) + '...';
+	}
+	static dataSig(data)
+	{
+		return U.SigArray([...data]);
 	}
 }
 Object.defineProperties(U,
@@ -3152,12 +3156,14 @@ class Display
 					{
 						D.toolbar.show();
 						D.elementTool.Diagram.html(e);
+						e.preventDefault();
 					},
 					ShiftKeyD(e)
 					{
 						D.toolbar.show();
 						D.elementTool.Diagram.html(e);
 						D.elementTool.Diagram.showSection('new');
+						e.preventDefault();
 					},
 		//			ControlKeyD(e)		BROWSER RESERVED: bookmark current page
 					KeyE(e)
@@ -3179,7 +3185,7 @@ class Display
 						{
 							D.toolbar.show();
 							R.diagram.actionHtml(e, 'homset');
-							D.toolbar.help.querySelector('#new-basename').focus();
+//							D.toolbar.help.querySelector('#new-basename').focus();
 							e.preventDefault();
 						}
 					},
@@ -3212,6 +3218,7 @@ class Display
 					{
 						D.toolbar.show();
 						D.elementTool.Morphism.html(e);
+						e.preventDefault();
 					},
 					ShiftKeyM(e)
 					{
@@ -3226,6 +3233,7 @@ class Display
 					{
 						D.toolbar.show();
 						D.elementTool.Object.html(e);
+						e.preventDefault();
 					},
 					ShiftKeyO(e)
 					{
@@ -3270,6 +3278,7 @@ class Display
 					{
 						D.toolbar.show();
 						D.elementTool.Text.html(e);
+						e.preventDefault();
 					},
 					ShiftKeyT(e)
 					{
@@ -3336,6 +3345,15 @@ class Display
 							const before = svg.previousSibling;
 							before && svg.parentNode.insertBefore(svg, before);
 						}
+					},
+					ShiftSlash(e)
+					{
+						if (Cat.R.diagram && Cat.R.diagram.selected.length === 1)
+						{
+							D.toolbar.show(e);
+							R.diagram.actionHtml(e, 'help');
+						}
+						e.preventDefault();
 					},
 					Space(e)
 					{
@@ -6840,6 +6858,7 @@ class Element
 		let pNameBtn = '';
 		if (this.isEditable() && this.diagram.isEditable())
 		{
+			const id = 'help-body';
 			switch(this.constructor.name)	// the others have auto-generated names
 			{
 				case 'CatObject':
@@ -11679,13 +11698,14 @@ class Morphism extends Element
 		this.constructor.name === 'Morphism' && this.setSignature();
 		isGUI && this.constructor.name === 'Morphism' && D.emitElementEvent(diagram, 'new', this);
 	}
-//	setSignature()
-//	{
-//		if ('data' in this)
+	setSignature()
+	{
+		if ('data' in this)
 //			this.signature = U.SigArray([...this.data]);
-//		else
-//			this.signature = super.setSignature();
-//	}
+			this.signature = U.dataSig(this.data);
+		else
+			this.signature = super.setSignature();
+	}
 	setDomain(dom)
 	{
 		if (dom === this.domain)
@@ -11743,10 +11763,10 @@ class Morphism extends Element
 			const btn = this.isEditable() ? D.getIcon('delete', 'delete', deleteRecursor, {title:'Delete recursor'}) : '';
 			root.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.properName, btn)));
 		}
-		let canMakeData = true;
 		const infoDisplay = H3.tr(H3.td('##info-display', {colspan:2}));
 		if (R.canFormat(this))
 		{
+			let canMakeData = true;
 			const domain = this.domain;
 			const codomain = this.codomain;
 			const sz = domain.getSize();
@@ -11775,27 +11795,27 @@ class Morphism extends Element
 				canMakeData = false;
 				// TODO domain not numeric
 			}
-			else
+			else if (this.isEditable())
 			{
 				const addDataBtn = D.getIcon('addInput', 'edit', e => R.Actions.run.addInput(infoDisplay), {title:'Add data'});
 				root.appendChild(H3.tr(H3.td(R.Actions.javascript.getInputHtml(domain, null, 'dom'), R.Actions.javascript.getInputHtml(codomain, null, 'cod')), H3.td(addDataBtn)));
 				'data' in this && this.data.forEach(dataRow);
 			}
-		}
-		if (canMakeData)
-		{
-			const createDataBtn = D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), {title:'Add data'});
-			createDataBtn.style.display = 'none';
-			root.appendChild(infoDisplay);
-			root.appendChild(H3.tr(H3.td(createDataBtn, {colspan:2})));
-			const watcher = (mutationsList, observer) =>
+			if (canMakeData)
 			{
-				for(const m of mutationsList)
-					createDataBtn.style.display = m.target.children.length > 0 ? 'block' : 'none';
-			};
-			const observer = new MutationObserver(watcher);
-			const childList = true;
-			observer.observe(infoDisplay, {childList});
+				const createDataBtn = D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), {title:'Add data'});
+				createDataBtn.style.display = 'none';
+				root.appendChild(infoDisplay);
+				root.appendChild(H3.tr(H3.td(createDataBtn, {colspan:2})));
+				const watcher = (mutationsList, observer) =>
+				{
+					for(const m of mutationsList)
+						createDataBtn.style.display = m.target.children.length > 0 ? 'block' : 'none';
+				};
+				const observer = new MutationObserver(watcher);
+				const childList = true;
+				observer.observe(infoDisplay, {childList});
+			}
 		}
 	}
 	decrRefcnt()
@@ -11878,6 +11898,14 @@ class Morphism extends Element
 		}
 		if (this.diagram.codomain.actions.has('coproduct'))
 			R.loadSigs(diagram, this, [FactorMorphism.Signature(diagram, this.domain)], [sig, FactorMorphism.Signature(diagram, this.codomain)]);
+		if ('data' in this)
+			this.data.forEach((d, i) => 
+			{
+				const left = [U.dataSig([0, i]), this.signature];
+				const right =[ U.dataSig([0, d]) ];
+				R.loadItem(diagram, this, left, right);
+console.log('load data', left, right);
+			});
 	}
 	textWidth()
 	{
@@ -14607,15 +14635,15 @@ class Diagram extends Functor
 		if ('domainElements' in nuArgs)
 			this.domain.process(this, nuArgs.domainElements);
 		R.setDiagramInfo(this);
-		if ('hiddenCells' in nuArgs)
-			nuArgs.hiddenCells.map(sig => this.domain.hiddenCells.add(sig));
 		if ('viewport' in nuArgs)
 			this.viewport = nuArgs.viewport;
+		this.domain.findCells(this);
+		if ('hiddenCells' in nuArgs)
+			nuArgs.hiddenCells.map(name => this.domain.cells.has(name) && this.domain.hiddenCells.add(name));
 		this.postProcess();
 	}
 	postProcess()
 	{
-		this.domain.findCells(this);
 		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());	// TODO not used currently by mysql.js
 		this.elements.forEach(elt => 'postload' in elt && elt.postload());
 		this.domain.forEachAssertion(a => a.initialize());
