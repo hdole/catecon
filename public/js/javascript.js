@@ -388,12 +388,13 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 					{
 						const f = this.formatters.get(object.signature);
 						const out = window[U.Token(f)]([id, value !== null ? [0, value] : [1, 0]]);
-						const span = document.createElement('span');
-						span.innerHTML = out[0].trim();
-						html = span;
+//						const span = document.createElement('span');
+//						span.innerHTML = out[0].trim();
+//						html = span;
+						html = H3.span(out[0].trim());
 					}
-					else
-						D.RecordError('object has no formatter');
+//					else
+//						D.RecordError('object has no formatter');
 					break;
 				case 'ProductObject':
 					if (object.dual)
@@ -420,17 +421,20 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 						html = `(${html})`;
 					break;
 				case 'FiniteObject':
-					const dv = typeof value === 'number' ? ` value="${value.toString()}"` : '';
+//					const dv = typeof value === 'number' ? ` value="${value.toString()}"` : '';
 					if ('size' in object)
 					{
 						if (object.size === 1)
 							return '0';
 						else if (object.size === 0)
 							return '';
-						html = `<input type="number" min="0" id="${id}" max="${object.size}"${dv}/>`;
+//						html = `<input type="number" min="0" id="${id}" max="${object.size}"${dv}/>`;
+						html = H3.input({type:'number', min:'0', id, max:object.size,
+							value:typeof value === 'number' ? ` value="${value.toString()}"` : ''});
 					}
 					else
-						html = `<input type="number" min="0" id="${id}"${dv}/>`;
+//						html = `<input type="number" min="0" id="${id}"${dv}/>`;
+						html = H3.input({type:'number', min:'0', id, value:typeof value === 'number' ? ` value="${value.toString()}"` : ''});
 					break;
 				case 'HomObject':
 					const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
