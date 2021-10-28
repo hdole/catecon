@@ -42,6 +42,8 @@ var Cat = Cat || require('./Cat.js');
 		{
 			let code = '';
 			const proto = morphism.constructor.name;
+			if (morphism instanceof Cat.Diagram)
+				return this.generateDiagram(morphism);
 			if (!generated.has(morphism.name))
 			{
 				if (morphism instanceof Cat.MultiMorphism)
@@ -280,6 +282,21 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				nuCode = `	return ${U.Token(preCurry)}${homArgs};`;
 			}
 			return nuCode + ';';
+		}
+		generateDiagram(diagram)
+		{
+			const generated = new Set();
+			generated.add('');		// no exec
+			const that = this;
+			this.currentDiagram = null;
+			this.diagram = diagram;
+			let code = `// Catecon Diagram ${diagram.name} @ ${Date.now()}`;
+			diagram.elements.forEach(elt =>
+			{
+				if ((elt instanceof Cat.Morphism || elt instanceof Cat.CatObject) && !generated.has(elt))
+					code += this.generate(elt, generated);
+			});
+			return code;
 		}
 		convertData(obj, data)	// hom elements have to be converted from objects to their name
 		{
@@ -636,6 +653,18 @@ ${this.generate(morphism)}
 		{
 			return `\n}\n`;
 		}
+		template(elt)
+		{
+			return elt instanceof Cat.Morphism ? (`${this.isAsync(elt) ? 'async ' : ''}function %Type(args)\n{\n\t\n}\n`) : '';
+		}
+		getEditHtml(textarea, elt)
+		{
+			super.getEditHtml(textarea, elt);
+// TODO			const asyncAttrs = {class:'textButton', onclick:e => e.target.classList.toggle('blueRow')};
+// TODO			if (this.isAsync(elt))
+// TODO				asyncAttrs.class += ' blueRow';
+			return textarea;
+		}
 		static AddMessageListener(w, fn = null)
 		{
 			w.addEventListener('message', function(msg)
@@ -680,18 +709,6 @@ ${this.generate(morphism)}
 						break;
 				}
 			});
-		}
-		template(elt)
-		{
-			return `${this.isAsync(elt) ? 'async ' : ''}function %Type(args)\n{\n\t\n}\n`;
-		}
-		getEditHtml(textarea, elt)
-		{
-			super.getEditHtml(textarea, elt);
-// TODO			const asyncAttrs = {class:'textButton', onclick:e => e.target.classList.toggle('blueRow')};
-// TODO			if (this.isAsync(elt))
-// TODO				asyncAttrs.class += ' blueRow';
-			return textarea;
 		}
 		static ObjectLength(o)
 		{
