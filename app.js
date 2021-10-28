@@ -145,7 +145,6 @@ function mysqlKeepAlive()
 	});
 }
 
-/*
 function saveHTMLjs()
 {
 	Cat.R.SelectDiagram('hdole/HTML', diagram =>
@@ -155,7 +154,6 @@ function saveHTMLjs()
 		res.end('ok');
 	});
 }
-*/
 
 function getDiagramInfo(diagram)
 {
