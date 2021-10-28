@@ -1,0 +1,477 @@
+{
+  "description": "",
+  "basename": "sha256",
+  "name": "hdole/sha256",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/sha256_Index",
+  "codomain": "zf/Set",
+  "references": [
+    "hdole/str"
+  ],
+  "domainElements": [
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N8",
+      "xy": {
+        "x": 300,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 800
+      }
+    },
+    {
+      "description": "SHA256",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 100,
+        "y": 300
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_2",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N16",
+      "xy": {
+        "x": 300,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 300,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_7",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 300,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": 300,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_9",
+      "prototype": "IndexObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": 300,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_10",
+      "prototype": "IndexObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 300,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "IndexObject",
+      "to": "hdole/int/Z32",
+      "xy": {
+        "x": 300,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_12",
+      "prototype": "IndexObject",
+      "to": "hdole/int/Z64",
+      "xy": {
+        "x": 300,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "IndexObject",
+      "to": "hdole/int/Z128",
+      "xy": {
+        "x": 300,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_14",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 300,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_15",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 300,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_16",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_17",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_18",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_19",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_20",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_21",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 2600
+      }
+    },
+    {
+      "basename": "o_22",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 2800
+      }
+    },
+    {
+      "basename": "o_23",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 3000
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "IndexObject",
+      "to": "hdole/sha256/Hash",
+      "xy": {
+        "x": 500,
+        "y": 600
+      }
+    },
+    {
+      "description": "The Hash object represents the space of all 256bit SHA hashes.",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -500,
+        "y": 600
+      },
+      "height": "24"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_0",
+      "codomain": "hdole/sha256/o_1",
+      "to": "hdole/sha256/N8ToHash"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_2",
+      "codomain": "hdole/sha256/o_3",
+      "to": "hdole/sha256/N16ToHash"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_6",
+      "codomain": "hdole/sha256/o_4",
+      "to": "hdole/sha256/N32ToHash"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_7",
+      "codomain": "hdole/sha256/o_5",
+      "to": "hdole/sha256/N64ToHash"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_8",
+      "codomain": "hdole/sha256/o_16",
+      "to": "hdole/sha256/N128ToHash"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_9",
+      "codomain": "hdole/sha256/o_17",
+      "to": "hdole/sha256/Z8ToHash"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_10",
+      "codomain": "hdole/sha256/o_18",
+      "to": "hdole/sha256/Z16ToHash"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_11",
+      "codomain": "hdole/sha256/o_19",
+      "to": "hdole/sha256/Z32ToHash"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_12",
+      "codomain": "hdole/sha256/o_20",
+      "to": "hdole/sha256/Z64ToHash"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_13",
+      "codomain": "hdole/sha256/o_21",
+      "to": "hdole/sha256/Z128ToHash"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_14",
+      "codomain": "hdole/sha256/o_22",
+      "to": "hdole/sha256/F32ToHash"
+    },
+    {
+      "basename": "m_11",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/sha256/o_15",
+      "codomain": "hdole/sha256/o_23",
+      "to": "hdole/sha256/F64ToHash"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "Hash",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "N8ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "N16ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "N32ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "N64ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "N128ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "Z8ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "Z16ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "Z32ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "Z64ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "Z128ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "F32ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/sha256/Hash"
+    },
+    {
+      "basename": "F64ToHash",
+      "prototype": "Morphism",
+      "properName": "hash",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
+      },
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/sha256/Hash"
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1635371136780,
+  "version": 0,
+  "viewport": {
+    "x": 299,
+    "y": -258,
+    "scale": 0.3998551249547266
+  },
+  "properName": "hdole/sha256"
+}
