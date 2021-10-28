@@ -353,7 +353,7 @@ class U		// utilities
 		}
 		return ret;
 	}
-	static RefcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : b.refcnt < a.refcnt ? 1 : 0; }		// high to low
+	static refcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : b.refcnt < a.refcnt ? 1 : 0; }		// high to low
 	static TimestampSorter(a, b) { return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0; }
 	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
 	static IsIndexElement(elt)
@@ -3185,7 +3185,6 @@ class Display
 						{
 							D.toolbar.show();
 							R.diagram.actionHtml(e, 'homset');
-//							D.toolbar.help.querySelector('#new-basename').focus();
 							e.preventDefault();
 						}
 					},
@@ -3199,6 +3198,16 @@ class Display
 					{
 						if (R.Actions.identity.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.identity.action(e, R.diagram, R.diagram.selected[0]);
+					},
+					KeyJ(e)
+					{
+						if (Cat.R.diagram && Cat.R.diagram.selected.length === 1)
+						{
+							D.toolbar.show(e);
+							R.diagram.actionHtml(e, 'help');
+							R.Actions.javascript.html(e, Cat.R.diagram, Cat.R.diagram.selected);
+						}
+						e.preventDefault();
 					},
 		//			ControlKeyJ(e)		BROWSER RESERVED: open download history
 		//			ControlKeyK(e)		BROWSER RESERVED: focus on search box
@@ -7035,7 +7044,7 @@ class Element
 		buttons.map(btn => tools.appendChild(btn));
 		const actions =
 		{
-			onclick:		e => Cat.R.diagram.placeElement(this, D.mouse.diagramPosition(R.diagram)),
+			onclick:		e => Cat.R.diagram.placeElement(this, Cat.R.diagram.userToDiagramCoords(D.mouse.down)),
 			onmouseenter:	e => R.diagram.emphasis(this, true),
 			onmouseleave:	e => R.diagram.emphasis(this, false),
 		};
@@ -9062,6 +9071,10 @@ class Action extends CatObject
 	action(e, diagram, ary) {}	// fitb
 	hasForm(diagram, ary) {return false;}	// fitb
 	hidden() { return false; }		// fitb
+	html()
+	{
+		D.removeChildren(D.toolbar.help);
+	}
 }
 
 class CompositeAction extends Action
@@ -10333,6 +10346,7 @@ class LambdaMorphismAction extends Action
 	}
 	html(e, diagram, ary)
 	{
+		super.html();
 		const domain = ary[0].domain.to;
 		const codomain = ary[0].codomain.to;
 		let obj = codomain;
@@ -10425,7 +10439,9 @@ class LambdaMorphismAction extends Action
 	{
 		const factors = [[]];
 		const m = diagram.get('LambdaMorphism', {preCurry:from.to, domFactors:[], homFactors:[[0]]});
-		return diagram.placeMorphism(from, diagram, m);
+		const xyDom = diagram.findEmptySpot(from.domain.getXY());
+		const xyCod = diagram.findEmptySpot(from.codomain.getXY());
+		return diagram.placeMorphism(m, xyDom, xyCod);
 	}
 }
 
@@ -10521,18 +10537,18 @@ class LanguageAction extends Action
 		const body = help.querySelector('#help-body');
 		D.removeChildren(body);
 		body.appendChild(textarea);
-		if (elt instanceof Morphism || elt instanceof CatObject)
+		if (elt instanceof Diagram)
+		{
+			this.genDiagram = diagram;
+			this.currentDiagram = null;
+			textarea.value = this.generate(elt);
+		}
+		else if (elt instanceof Morphism || elt instanceof CatObject)
 		{
 			this.getEditHtml(textarea, elt);
 			if (this.checkEditable(elt))
 				body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
 			body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download ${this.properName}`}));
-		}
-		else
-		{
-			this.genDiagram = diagram;
-			this.currentDiagram = null;
-			textarea.appendChild(H3.p(this.generate(elt), `##element-${this.ext}.code`));
 		}
 	}
 	setEditorSize(textarea)
@@ -10542,12 +10558,16 @@ class LanguageAction extends Action
 		if (textarea.scrollHeight - Math.abs(textarea.scrollTop) !== textarea.clientHeight)
 			textarea.style.height = Math.min(D.height()/2, textarea.scrollHeight) + 'px';
 	}
+	template(elt)		// return something useful if a template is required for an element
+	{
+		return '';
+	}
 	getEditHtml(textarea, elt)	// handler when the language is just a string
 	{
 		let code = '';
 		const id = `element-${this.ext}`;
 		if (elt.constructor.name === 'Morphism' || elt instanceof Diagram || elt instanceof CatObject)
-			code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : '';
+			code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : this.template(elt);
 		else if (elt instanceof Morphism)
 			code = this.generate(R.diagram, elt);
 		textarea.value = code;
@@ -11701,10 +11721,9 @@ class Morphism extends Element
 	setSignature()
 	{
 		if ('data' in this)
-//			this.signature = U.SigArray([...this.data]);
 			this.signature = U.dataSig(this.data);
 		else
-			this.signature = super.setSignature();
+			super.setSignature();
 	}
 	setDomain(dom)
 	{
@@ -14640,6 +14659,7 @@ class Diagram extends Functor
 		this.domain.findCells(this);
 		if ('hiddenCells' in nuArgs)
 			nuArgs.hiddenCells.map(name => this.domain.cells.has(name) && this.domain.hiddenCells.add(name));
+		this.setSignature();
 		this.postProcess();
 	}
 	postProcess()
@@ -14673,7 +14693,7 @@ class Diagram extends Functor
 	}
 	help(root)
 	{
-		super.help();
+		super.help(root);
 		root.appendChild(H3.tr(H3.td('Type:'), H3.td('Diagram')));
 		const toolbar2 = D.toolbar.element.querySelector('div #help-toolbar2');
 		if (R.user.status === 'logged-in' && R.cloud && this.user === R.user.name)
