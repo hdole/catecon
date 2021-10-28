@@ -108,7 +108,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{HTML,CPo{hdole/int/Z32,#1}oPC}oP",
       "xy": {
-        "x": 1300,
+        "x": 1700,
         "y": 1600
       }
     },
@@ -117,7 +117,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z32}oH}oP",
       "xy": {
-        "x": 1700,
+        "x": 2100,
         "y": 1600
       }
     },
@@ -154,8 +154,8 @@
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": 200,
-        "y": 1670
+        "x": -60,
+        "y": 1990
       },
       "height": 24
     },
@@ -210,7 +210,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{HTML,CPo{hdole/str/str,#1}oPC}oP",
       "xy": {
-        "x": 1300,
+        "x": 1700,
         "y": 2200
       }
     },
@@ -219,7 +219,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/str/str}oH}oP",
       "xy": {
-        "x": 1700,
+        "x": 2100,
         "y": 2200
       }
     },
@@ -238,7 +238,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{HTML,CPo{hdole/nat/N64,#1}oPC}oP",
       "xy": {
-        "x": 1300,
+        "x": 1700,
         "y": 1000
       }
     },
@@ -247,7 +247,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N64}oH}oP",
       "xy": {
-        "x": 1700,
+        "x": 2100,
         "y": 1000
       }
     },
@@ -256,7 +256,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{HTML,CPo{hdole/nat/N8,#1}oPC}oP",
       "xy": {
-        "x": 1300,
+        "x": 1700,
         "y": 400
       }
     },
@@ -265,7 +265,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N8}oH}oP",
       "xy": {
-        "x": 1700,
+        "x": 2100,
         "y": 400
       }
     },
@@ -274,7 +274,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{HTML,CPo{hdole/nat/N16,#1}oPC}oP",
       "xy": {
-        "x": 1300,
+        "x": 1700,
         "y": 600
       }
     },
@@ -283,7 +283,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N16}oH}oP",
       "xy": {
-        "x": 1700,
+        "x": 2100,
         "y": 600
       }
     },
@@ -292,7 +292,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{HTML,CPo{hdole/int/Z64,#1}oPC}oP",
       "xy": {
-        "x": 1300,
+        "x": 1700,
         "y": 1800
       }
     },
@@ -301,7 +301,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z64}oH}oP",
       "xy": {
-        "x": 1700,
+        "x": 2100,
         "y": 1800
       }
     },
@@ -310,7 +310,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{HTML,CPo{hdole/floats/F64,#1}oPC}oP",
       "xy": {
-        "x": 1300,
+        "x": 1700,
         "y": 2000
       }
     },
@@ -319,7 +319,7 @@
       "prototype": "IndexObject",
       "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/floats/F64}oH}oP",
       "xy": {
-        "x": 1700,
+        "x": 2100,
         "y": 2000
       }
     },
@@ -343,6 +343,294 @@
       },
       "height": "300",
       "weight": "bold"
+    },
+    {
+      "basename": "o_29",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N32",
+      "xy": {
+        "x": 1000,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_30",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/HTML",
+      "xy": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_35",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Po{HTML,CPo{hdole/nat/N32,#1}oPC}oP",
+      "xy": {
+        "x": 1700,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_38",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N32}oH}oP",
+      "xy": {
+        "x": 2100,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_31",
+      "prototype": "IndexObject",
+      "to": "hdole/int/Z8",
+      "xy": {
+        "x": 1000,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "IndexObject",
+      "to": "hdole/int/Z16",
+      "xy": {
+        "x": 1000,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_33",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/HTML",
+      "xy": {
+        "x": 800,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_34",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/HTML",
+      "xy": {
+        "x": 800,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_41",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z8}oH}oP",
+      "xy": {
+        "x": 2100,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_42",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Po{HTML,hdole/int/CPo{Z8,#1}oPC}oP",
+      "xy": {
+        "x": 1700,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_44",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z16}oH}oP",
+      "xy": {
+        "x": 2100,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_45",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Po{HTML,hdole/int/CPo{Z16,#1}oPC}oP",
+      "xy": {
+        "x": 1700,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_36",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_37",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/nat/N8}oH",
+      "xy": {
+        "x": 1400,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_39",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_40",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/nat/N16}oH",
+      "xy": {
+        "x": 1400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_43",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_46",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/nat/N32}oH",
+      "xy": {
+        "x": 1400,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_47",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_48",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/nat/N64}oH",
+      "xy": {
+        "x": 1400,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_49",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_50",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/int/Z8}oH",
+      "xy": {
+        "x": 1400,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_51",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_52",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/int/Z16}oH",
+      "xy": {
+        "x": 1400,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_53",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_54",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/int/Z32}oH",
+      "xy": {
+        "x": 1400,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_55",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_56",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/int/Z64}oH",
+      "xy": {
+        "x": 1400,
+        "y": 1800
+      }
+    },
+    {
+      "basename": "o_57",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_58",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/floats/F64}oH",
+      "xy": {
+        "x": 1400,
+        "y": 2000
+      }
+    },
+    {
+      "basename": "o_59",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/#1",
+      "xy": {
+        "x": 1200,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_60",
+      "prototype": "IndexObject",
+      "to": "hdole/HTML/Ho{HTML,hdole/str/str}oH",
+      "xy": {
+        "x": 1400,
+        "y": 2200
+      }
     },
     {
       "basename": "m_0",
@@ -441,6 +729,104 @@
       "domain": "hdole/HTML/o_27",
       "codomain": "hdole/HTML/o_28",
       "to": "hdole/HTML/html2Float"
+    },
+    {
+      "basename": "m_14",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_30",
+      "codomain": "hdole/HTML/o_29",
+      "to": "hdole/HTML/html2N32"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_35",
+      "codomain": "hdole/HTML/o_38",
+      "to": "hdole/HTML/html2N32F"
+    },
+    {
+      "basename": "m_16",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_36",
+      "codomain": "hdole/HTML/o_37",
+      "to": "hdole/HTML/Lm{html2N8:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_17",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_39",
+      "codomain": "hdole/HTML/o_40",
+      "to": "hdole/HTML/Lm{html2N16:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_18",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_43",
+      "codomain": "hdole/HTML/o_46",
+      "to": "hdole/HTML/Lm{html2N32:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_19",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_47",
+      "codomain": "hdole/HTML/o_48",
+      "to": "hdole/HTML/Lm{html2N64:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_20",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_33",
+      "codomain": "hdole/HTML/o_31",
+      "to": "hdole/HTML/html2Z8"
+    },
+    {
+      "basename": "m_21",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_34",
+      "codomain": "hdole/HTML/o_32",
+      "to": "hdole/HTML/html2Z16"
+    },
+    {
+      "basename": "m_22",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_49",
+      "codomain": "hdole/HTML/o_50",
+      "to": "hdole/HTML/Lm{html2Z8:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_23",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_51",
+      "codomain": "hdole/HTML/o_52",
+      "to": "hdole/HTML/Lm{html2Z16:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_24",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_53",
+      "codomain": "hdole/HTML/o_54",
+      "to": "hdole/HTML/Lm{html2Z32:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_25",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_55",
+      "codomain": "hdole/HTML/o_56",
+      "to": "hdole/HTML/Lm{html2Z:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_26",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_57",
+      "codomain": "hdole/HTML/o_58",
+      "to": "hdole/HTML/Lm{html2F:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_27",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_59",
+      "codomain": "hdole/HTML/o_60",
+      "to": "hdole/HTML/Lm{html2Str:[]:[[0]]}mL"
     }
   ],
   "elements": [
@@ -666,12 +1052,86 @@
       ]
     },
     {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N32",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/nat/N32,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to ℕ₃₂",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/nat/N32"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/nat/N32}oH"
+      ]
+    },
+    {
+      "description": "The homset from HTML to ℤ₈",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/int/Z8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/int/Z8}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "hdole/int/CPo{Z8,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to &Zopf;&#8321;&#8326;",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/int/Z16"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/int/Z16}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "hdole/int/CPo{Z16,#1}oPC"
+      ]
+    },
+    {
       "description": "Read a natural number from an HTML input tag",
       "basename": "html2N64",
       "prototype": "Morphism",
       "properName": "input",
       "code": {
-        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\treturn r;\n}\n"
+        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r > Number.MAX_SAFE_INTEGER)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(8);\n\tconst rslt = new Uint64Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
       },
       "domain": "hdole/HTML/HTML",
       "codomain": "hdole/nat/N64"
@@ -693,7 +1153,7 @@
       "prototype": "Morphism",
       "properName": "input",
       "code": {
-        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < 0 || r > 65536)\n\t\tthrow 'out of range';\n\treturn r;\n}\n"
+        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < 0 || r > 65536)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(2);\n\tconst rslt = new Uint16Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
       },
       "domain": "hdole/HTML/HTML",
       "codomain": "hdole/nat/N16"
@@ -704,7 +1164,7 @@
       "prototype": "Morphism",
       "properName": "input",
       "code": {
-        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < -2417483648 || r > 2417483647)\n\t\tthrow 'out of range';\n\treturn r;\n}\n"
+        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < -2417483648 || r > 2417483647)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(4);\n\tconst rslt = new Int32Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
       },
       "domain": "hdole/HTML/HTML",
       "codomain": "hdole/int/Z32"
@@ -818,10 +1278,180 @@
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/floats/F64,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/floats/F64}oH}oP"
+    },
+    {
+      "basename": "html2N32",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < 0 || r > 4294967295)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(4);\n\tconst rslt = new Uint32Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/nat/N32"
+    },
+    {
+      "basename": "html2N32F",
+      "prototype": "Morphism",
+      "properName": "N32",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"4294967295\" id=\"' + args[0] + '\" placeholder=\"0 to 4,294,967,295\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N32__br__rb___br_0_rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N32,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N32}oH}oP"
+    },
+    {
+      "basename": "Lm{html2N8:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N8}oH",
+      "preCurry": "hdole/HTML/html2N8",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2N16:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N16}oH",
+      "preCurry": "hdole/HTML/html2N16",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2N32:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N32}oH",
+      "preCurry": "hdole/HTML/html2N32",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2N64:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N64}oH",
+      "preCurry": "hdole/HTML/html2N64",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "html2Z8",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif ((r < -128) || (r > 127))\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(1);\n\tconst rslt = new Int8Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "html2Z16",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif ((r < -32768) || (r > 32767))\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(2);\n\tconst rslt = new Int16Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "Lm{html2Z8:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z8}oH",
+      "preCurry": "hdole/HTML/html2Z8",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2Z16:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z16}oH",
+      "preCurry": "hdole/HTML/html2Z16",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2Z32:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z32}oH",
+      "preCurry": "hdole/HTML/html2Z32",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2Z:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z64}oH",
+      "preCurry": "hdole/HTML/html2Z",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2F:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/floats/F64}oH",
+      "preCurry": "hdole/HTML/html2F",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2Str:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/str/str}oH",
+      "preCurry": "hdole/HTML/html2Str",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1635286695222,
+  "timestamp": 1635378838208,
   "version": 0,
   "viewport": {
     "x": 236,
