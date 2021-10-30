@@ -34,7 +34,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 100,
+        "x": 90,
         "y": 300
       },
       "height": "200",
@@ -466,11 +466,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1635371136780,
+  "timestamp": 1635399098489,
   "version": 0,
   "viewport": {
     "x": 299,
-    "y": -258,
+    "y": 12,
     "scale": 0.3998551249547266
   },
   "properName": "hdole/sha256"
