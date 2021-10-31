@@ -486,17 +486,15 @@ ${this.generateMain(diagram)}
 	//
 	// Loading
 	//
-	const pfs = Cat.R.$CAT.getElement('sys/pfs');
 	if (typeof module !== 'undefined')
 	{
 		module.exports.CppAction = CppAction;
-		Cat.R.Actions.cpp = new CppAction(pfs);
+		Cat.R.Actions.cpp = new CppAction(Cat.R.$CAT);
 	}
 	else
 	{
 		window.CppAction = CppAction;
-//		window.addEventListener('load', _ => {window.Cat.R.Actions.cpp = new CppAction(Cat.R.Actions)});
-		window.Cat.R.Actions.cpp = new CppAction(pfs);
+		window.Cat.R.Actions.cpp = new CppAction(Cat.R.$CAT);
 	}
 
 		/*

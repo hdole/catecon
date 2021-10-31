@@ -721,16 +721,15 @@ ${this.generate(morphism)}
 		}
 	}
 
-	const pfs = Cat.R.$CAT.getElement('sys/pfs');
 	if (typeof module !== 'undefined')
 	{
 		module.exports.JavascriptAction = JavascriptAction;
-		R.Actions.javascript = new JavascriptAction(pfs);
+		R.Actions.javascript = new JavascriptAction(Cat.R.$CAT);
 	}
 	else
 	{
 		window.JavascriptAction = JavascriptAction;
-		Cat.R.Actions.javascript = new JavascriptAction(pfs);
+		Cat.R.Actions.javascript = new JavascriptAction(Cat.R.$CAT);
 	}
 
 })();	// end anon function
