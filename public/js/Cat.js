@@ -1089,10 +1089,13 @@ args.codomain = 'zf/Set';
 			diagrams.map(d =>
 			{
 				const info = Diagram.GetInfo(d);
-				info.localTimestamp = this.localTimestamp(d.name);
-				info.references = JSON.parse(d.refs);
-				delete info.refs;
-				this.catalog.set(info.name, info);
+				const localTimestamp = this.localTimestamp(d.name);
+				if (localTimestamp < info.timestamp)	// override with cloud info
+				{
+					info.references = JSON.parse(d.refs);
+					delete info.refs;
+					this.catalog.set(info.name, info);
+				}
 			});
 			fn();
 		};
@@ -7627,7 +7630,7 @@ class CatObject extends Element
 	}
 	getGraph(data = {position:0})
 	{
-		const width = D.textWidth(this.properName);
+		const width = D ? D.textWidth(this.properName) : 0;
 		const position = data.position;
 		data.position += width;
 		return new Graph(this.diagram, {position, width, name:this.name});
