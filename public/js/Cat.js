@@ -7684,13 +7684,17 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 			nuArgs.name = FiniteObject.Codename(diagram, {basename:nuArgs.basename, size:'size' in nuArgs ? nuArgs.size : ''});
 		super(diagram, nuArgs);
 		if ('size' in nuArgs && nuArgs.size !== '')
+		{
 			Object.defineProperty(this, 'size', {value:	Number.parseInt(nuArgs.size), writable:	false});
+			Object.defineProperty(this, 'min', {value:	'min' in nuArgs ? Number.parseInt(nuArgs.min) : 0, writable:	false});
+			Object.defineProperty(this, 'max', {value:	'max' in nuArgs ? Number.parseInt(nuArgs.max) : this.size, writable:	false});
+		}
 		this.setSignature();
 		isGUI && D.emitElementEvent(diagram, 'new', this);
 	}
 	setSignature()
 	{
-		this.signature = 'size' in this ? U.Sig(this.size.toString()) : super.setSignature();
+		this.signature = 'size' in this ? U.SigArray([this.size.toString(), this.min.toString(), this.max.toString()]) : super.setSignature();
 	}
 	help(root)
 	{
@@ -7701,7 +7705,11 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	{
 		const d = super.json();
 		if ('size' in this)
-			d.size = Number.parseInt(this.size);
+		{
+			d.size = this.size;
+			d.min = this.min;
+			d.max = this.max;
+		}
 		return d;
 	}
 	getSize() { return 'size' in this ? this.size : super.getSize(); }
