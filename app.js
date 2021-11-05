@@ -145,6 +145,7 @@ function mysqlKeepAlive()
 	});
 }
 
+/*
 function saveHTMLjs()
 {
 	Cat.R.SelectDiagram('hdole/HTML', diagram =>
@@ -154,6 +155,7 @@ function saveHTMLjs()
 		res.end('ok');
 	});
 }
+*/
 
 function getDiagramInfo(diagram)
 {
@@ -192,6 +194,20 @@ function saveDiagramPng(name, inbuf)
 			fs.close(pngFD, error => { if (error) throw error; });
 		});
 	}));
+}
+
+function saveDiagramJavascript(name)
+{
+	Cat.Runtime.SelectDiagram(name, null, diagram =>
+	{
+		const js = Cat.R.Actions.javascript.generateDiagram(diagram);
+		if (js)
+		{
+			const jsFile = path.join(process.env.HTTP_DIR, 'js', name + '.js');
+			fs.mkdirSync(path.dirname(jsFile), {recursive:true});
+			fs.writeFile(jsFile, js, error => {if (error) throw error;});
+		}
+	});
 }
 
 function evaluateMorphism(diagram, morphism, args)
@@ -337,7 +353,6 @@ function updateDiagramTable(name, info, fn, cloudTimestamp, update = true)
 	const updateSql = (update ? 'UPDATE ' : 'INSERT INTO ') + 'Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ?, category = ?, prototype = ?' +
 						(update ? ' WHERE name = ?' : '');
 	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, info.category, info.prototype, name];
-//console.log('updating diagram table', args);
 	dbcon.query(updateSql, args, fn);
 }
 
@@ -376,7 +391,6 @@ function findDiagramJsons(dir)
 		return;
 	}
 	const files = fs.readdirSync(dir);
-//console.log({files});
 	const diagrams = files.filter(f => fs.lstatSync(path.join(dir, f)).isFile() && path.extname(f) === '.json').map(f => path.join(dir, f));
 	const subdirs = files.filter(f => fs.lstatSync(path.join(dir, f)).isDirectory());
 	subdirs.map(subdir => diagrams.push(...findDiagramJsons(`${dir}/${subdir}`)));
@@ -410,8 +424,10 @@ async function serve()
 					console.error('mysql initialization for Catecon', {error});
 					process.exit();
 				}
+				// main runtime initialization
 				Cat.R.initialize(_ =>
 				{
+					// initialize server
 					console.log('Catecon runtime initialized');
 					updateSQLDiagramsByCatalog();
 					result.map(r =>
@@ -422,7 +438,7 @@ async function serve()
 							Cat.R.catalog.set(r.name, r);
 						}
 					});
-					// load diagrams from storage
+					// load diagrams from local storage
 					const dir = path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram');
 					const fsDiagrams = findDiagramJsons(dir);
 					fsDiagrams.map(f => fs.readFile(f, (error, data) =>
@@ -829,6 +845,29 @@ async function serve()
 				}
 			}
 			res.status(HTTP.OK).json(diagrams.map(d => d.name)).end();
+		});
+
+		app.use('/saveJavascript', (req, res) =>
+		{
+			if (hasPermission(req.body.user, 'admin'))
+			{
+				const name = req.body.diagram;
+				try
+				{
+					saveDiagramJavascript(name)
+					res.status(HTTP.OK).end();
+				}
+				catch(error)
+				{
+					res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:error}).end();
+					return;
+				}
+			}
+			else
+			{
+				console.error(`ERROR: user does not have permission: ${req.body.user} ${name}`);
+				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:`user does not have permission for diagram: ${req.body.user}`}).end();
+			}
 		});
 
 		// catch 404 and forward to error handler
