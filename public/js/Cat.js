@@ -951,7 +951,7 @@ args.codomain = 'zf/Set';
 			}
 			if (R.diagram && R.diagram.name === name)	// already selected
 			{
-				D.emitCATEvent('default', R.diagram, eventAction);
+				isGUI && D.emitCATEvent('default', R.diagram, eventAction);
 				fn && fn(R.diagram);
 				return;
 			}
@@ -971,7 +971,7 @@ args.codomain = 'zf/Set';
 			if (!diagram)
 				throw 'no such diagram';
 			R.diagram = diagram;
-			D.emitCATEvent('default', diagram, eventAction);
+			isGUI && D.emitCATEvent('default', diagram, eventAction);
 			fn && fn(diagram);
 		}
 		catch(x)
@@ -5453,7 +5453,7 @@ class Display
 	{
 		const files = e.target.files;
 		const json = JSON.parse(txt);
-		if (json.user !== this.user.name && !this.user.isAdmin())
+		if (json.user !== this.user.name && !R.user.isAdmin())
 		{
 			isGUI && D.statusbar.show(e, `User ${json.user} is not the logged in user ${this.user.name}`);
 			return;
@@ -10553,6 +10553,8 @@ class LanguageAction extends Action
 			this.genDiagram = diagram;
 			this.currentDiagram = null;
 			textarea.value = this.generate(elt);
+			this.setEditorSize(textarea);
+			R.user.isAdmin() && body.appendChild(D.getIcon('saveJavascript', 'saveJavascript', e => this.saveToServer(diagram.name), {title:`Save generated Javascript to server: ${this.properName}`}));
 		}
 		else if (elt instanceof Morphism || elt instanceof CatObject)
 		{
