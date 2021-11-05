@@ -276,7 +276,11 @@
 		<polygon points="320 0, 200 160, 320 320" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-javascript" class="icon" viewbox="0 0 320 320">
-			<text text-anchor="middle" x="160" y="240" style="font-size:240px;font-weight:bold;stroke:#000;fill:black;">JS</text>
+		<text text-anchor="middle" x="160" y="240" style="font-size:240px;font-weight:bold;stroke:#000;fill:black;">JS</text>
+	</symbol>
+	<symbol id="icon-saveJavascript" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0" x1="160" y1="300" x2="160" y2="20" marker-end="url(#arrowhead)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:160px;font-weight:bold;stroke:#000;fill:black;">JS</text>
 	</symbol>
 	<symbol id="icon-lambda" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>
