@@ -665,6 +665,17 @@ ${this.generate(morphism)}
 // TODO				asyncAttrs.class += ' blueRow';
 			return textarea;
 		}
+		saveToServer(name)
+		{
+			const headers = {'Content-Type':'application/json;charset=utf-8', token:Cat.R.user.token};
+			fetch(Cat.R.getURL('saveJavascript'), {method:'POST', body:JSON.stringify({user:Cat.R.user.name, diagram:name}), headers}).then(response =>
+			{
+				if (response.ok)
+					response.json().then(json => Cat.D.statusbar.show(null, json.join('\n')));
+				else
+					throw 'error saving diagram javascript to server: ' + response.statusText;
+			}).catch(err => D.recordError(err));
+		}
 		static AddMessageListener(w, fn = null)
 		{
 			w.addEventListener('message', function(msg)
