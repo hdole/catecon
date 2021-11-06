@@ -7,7 +7,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "code": {
-    "cpp": "#include <sys/types.h>\n#include <time.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <math.h>\n#include <stdint.h>\n#include \"errno.h\"\n#include <stdio.h>"
+    "cpp": "#include <sys/types.h>\n#include <time.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <math.h>\n#include <stdint.h>\n#include \"errno.h\"\n#include <stdio.h>\n#include <byteswap.h>"
   },
   "domain": "hdole/cpp_Index",
   "codomain": "zf/Set",
@@ -1297,7 +1297,7 @@
       "basename": "t_46",
       "prototype": "DiagramText",
       "xy": {
-        "x": -340,
+        "x": -350,
         "y": -180
       },
       "height": "700",
@@ -2045,6 +2045,15 @@
       }
     },
     {
+      "basename": "o_174",
+      "prototype": "IndexObject",
+      "to": "hdole/cpp/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 0
+      }
+    },
+    {
       "basename": "m_1",
       "prototype": "IndexMorphism",
       "domain": "hdole/cpp/o_2",
@@ -2676,7 +2685,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "description": "The standard input object reads from a tty device.",
@@ -2820,6 +2831,17 @@
       "description": "Structure containing the number of seconds since the epoch and the number of nanoseconds",
       "basename": "timespec",
       "prototype": "CatObject"
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "code": {
+        "cpp": "typedef bool %0;"
+      },
+      "objects": [
+        "#1",
+        "#1"
+      ]
     },
     {
       "description": "return string describing error",
@@ -3142,7 +3164,7 @@
       "prototype": "Morphism",
       "properName": "to",
       "code": {
-        "cpp": "#include <byteswap.h>\n%1 = ::bswap_16(%0);"
+        "cpp": "%1 = ::bswap_16(%0);"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/nat/N16"
@@ -3153,7 +3175,7 @@
       "prototype": "Morphism",
       "properName": "to",
       "code": {
-        "cpp": "#include <byteswap.h>\n%1 = ::bswap_32(%0);"
+        "cpp": "%1 = ::bswap_32(%0);"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/int/Z32"
@@ -3669,11 +3691,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632032021339,
+  "timestamp": 1636166526617,
   "version": 0,
   "viewport": {
     "x": 725,
-    "y": 617,
+    "y": 696,
     "scale": 0.7701227548626174
   }
 }

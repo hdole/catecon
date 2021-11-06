@@ -531,8 +531,8 @@
       "basename": "t_31",
       "prototype": "DiagramText",
       "xy": {
-        "x": -850,
-        "y": -470
+        "x": -860,
+        "y": -490
       },
       "height": "500",
       "weight": "bold"
@@ -4015,7 +4015,9 @@
       "code": {
         "cpp": "typedef int8_t %0;\n"
       },
-      "size": 256
+      "size": 256,
+      "min": -128,
+      "max": 127
     },
     {
       "prototype": "ProductObject",
@@ -4030,14 +4032,16 @@
       "prototype": "CatObject",
       "properName": "&Zopf;&#8321;&#8326;",
       "code": {
-        "cpp": "typedef int16_t  %0;\n"
+        "cpp": "typedef int16_t %0;\n"
       }
     },
     {
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -5694,7 +5698,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632120965182,
+  "timestamp": 1636081472966,
   "version": 0,
   "viewport": {
     "x": 1215,

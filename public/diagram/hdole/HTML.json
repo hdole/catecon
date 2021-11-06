@@ -338,8 +338,8 @@
       "basename": "t_16",
       "prototype": "DiagramText",
       "xy": {
-        "x": 70,
-        "y": -50
+        "x": 80,
+        "y": -70
       },
       "height": "500",
       "weight": "bold"
@@ -633,6 +633,16 @@
       }
     },
     {
+      "description": "Morphisms in this column are referred to as formatters.\nThe take an HTML input and a default starting value (or not).\nThe output is a string and the conversion function to convert\nthe string to the final value.",
+      "basename": "t_1",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1580,
+        "y": 150
+      },
+      "height": "24"
+    },
+    {
       "basename": "m_0",
       "prototype": "IndexMorphism",
       "domain": "hdole/HTML/o_1",
@@ -721,7 +731,7 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/HTML/o_25",
       "codomain": "hdole/HTML/o_26",
-      "to": "hdole/HTML/html2Int"
+      "to": "hdole/HTML/html2Z64F"
     },
     {
       "basename": "m_13",
@@ -827,6 +837,20 @@
       "domain": "hdole/HTML/o_59",
       "codomain": "hdole/HTML/o_60",
       "to": "hdole/HTML/Lm{html2Str:[]:[[0]]}mL"
+    },
+    {
+      "basename": "m_28",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_42",
+      "codomain": "hdole/HTML/o_41",
+      "to": "hdole/HTML/html2Z8F"
+    },
+    {
+      "basename": "m_29",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/HTML/o_45",
+      "codomain": "hdole/HTML/o_44",
+      "to": "hdole/HTML/html2Z16F"
     }
   ],
   "elements": [
@@ -834,7 +858,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "&#10034;",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "description": "The HTML object intereacts with web devices",
@@ -1258,10 +1284,10 @@
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N16}oH}oP"
     },
     {
-      "description": "Input an integer from HTML",
-      "basename": "html2Int",
+      "description": "Input a 64-bit integer from HTML",
+      "basename": "html2Z64F",
       "prototype": "Morphism",
-      "properName": "&Zopf;",
+      "properName": "ℤ₆₄",
       "code": {
         "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z__br__rb___br_0_rb__rB_mL];\n}\n"
       },
@@ -1448,14 +1474,32 @@
           0
         ]
       ]
+    },
+    {
+      "basename": "html2Z8F",
+      "prototype": "Morphism",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-128\" max=\"127\" id=\"' + args[0] + '\" placeholder=\"8-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z8__br__rb___br_0_rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,hdole/int/CPo{Z8,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z8}oH}oP"
+    },
+    {
+      "basename": "html2Z16F",
+      "prototype": "Morphism",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-32768\" max=\"32767\" id=\"' + args[0] + '\" placeholder=\"16-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z16__br__rb___br_0_rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,hdole/int/CPo{Z16,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z16}oH}oP"
     }
   ],
   "user": "hdole",
-  "timestamp": 1635393960112,
+  "timestamp": 1636178350340,
   "version": 0,
   "viewport": {
-    "x": 236,
-    "y": 224,
-    "scale": 0.3742858424125638
+    "x": 323,
+    "y": 519,
+    "scale": 1.0113213212090653
   }
 }

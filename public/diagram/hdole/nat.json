@@ -564,7 +564,7 @@
       "basename": "t_31",
       "prototype": "DiagramText",
       "xy": {
-        "x": -1390,
+        "x": -1360,
         "y": -380
       },
       "height": "350",
@@ -3731,7 +3731,9 @@
       "code": {
         "cpp": "typedef uint8_t %0;\n"
       },
-      "size": 256
+      "size": 256,
+      "min": 0,
+      "max": 256
     },
     {
       "prototype": "ProductObject",
@@ -3753,7 +3755,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -5343,11 +5347,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1635272223336,
+  "timestamp": 1635723798040,
   "version": 0,
   "viewport": {
-    "x": 575,
-    "y": 218,
-    "scale": 0.2252030301846835
+    "x": 1381,
+    "y": 583,
+    "scale": 0.8050509662301694
   }
 }
