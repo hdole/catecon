@@ -21,6 +21,12 @@ var Cat = Cat || require('./Cat.js');
 			Cat.R.$CAT.getElement('Set').actions.set(args.basename, this);
 			Cat.Runtime.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
 		}
+		html(e, diagram, ary)
+		{
+			super.html(e, diagram, ary);
+			const body = D.toolbar.help.querySelector('#help-body');
+			R.user.isAdmin() && body.appendChild(D.getIcon('saveJavascript', 'saveJavascript', e => this.saveToServer(diagram.name), {title:`Save generated Javascript to server: ${this.properName}`}));
+		}
 		getType(elt, first = true)
 		{
 			return Cat.U.Token(elt);
@@ -287,10 +293,9 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		{
 			const generated = new Set();
 			generated.add('');		// no exec
-			const that = this;
 			this.currentDiagram = null;
 			this.diagram = diagram;
-			let code = `// Catecon Diagram ${diagram.name} @ ${Date.now()}`;
+			let code = `// Catecon Diagram ${diagram.name} @ ${Date()}`;
 			diagram.elements.forEach(elt =>
 			{
 				if ((elt instanceof Cat.Morphism || elt instanceof Cat.CatObject) && !generated.has(elt))
@@ -428,7 +433,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 								const ob = object.objects[i];
 								const f = [...factor, i];
 								const oid = `dv_${ob.name} ${f.toString()}`;
-								divs += H.div(this.getInputHtml(ob, value !== null && value[0] === i ? value[1] : null, prefix, [...factor, i]), 'nodisplay', oid, false);
+								html += H3.div(this.getInputHtml(ob, value !== null && value[0] === i ? value[1] : null, prefix, [...factor, i]), 'nodisplay', oid, false);
 							}
 						}
 					}
