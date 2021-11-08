@@ -1811,7 +1811,7 @@ class Toolbar
 		let actions = [...diagram.codomain.actions.values()];
 		actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
 		actions.map(action => !action.hidden() && action.hasForm(diagram, diagram.selected) &&
-				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram['html' in action ? 'actionHtml' : 'activate'](e, action.basename), {title:action.description})));
+				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram[action.actionOnly ? 'activate' : 'actionHtml'](e, action.basename), {title:action.description})));
 		R.userSessionActions.forEachMorphism(action => action.hasForm(diagram, diagram.selected) && btns.push(H3.button(action.name, {onclick:e => Cat.R.diagram.activate(e, action.name)})));
 		btns.push(D.getIcon('view', 'view', e => Cat.R.diagram.viewElements(...R.diagram.selected), {title:'Home'}));
 		this.buttons = H3.td(btns);
@@ -3374,6 +3374,52 @@ class Display
 					},
 					ShiftLeft(e) { D.shiftKey = true; },
 					ShiftRight(e) { D.shiftKey = true; },
+					Tab(e)
+					{
+						const diagram = Cat.R.diagram;
+						if (diagram && diagram.selected.length === 1)
+						{
+							const element = diagram.getSelected();
+							let items = [];
+							if (element instanceof CatObject)
+								items = diagram.domain.getObjects();
+							else if (element instanceof Morphism)
+								items = diagram.domain.getMorphisms();
+							else
+								return;
+							items = items.filter(itm => itm.to === element.to);
+							let ndx = items.indexOf(element);
+							if (ndx === items.length -1)
+								ndx = 0;
+							else
+								ndx++;
+							diagram.makeSelected(items[ndx]);
+							e.preventDefault();
+						}
+					},
+					ShiftTab(e)
+					{
+						const diagram = Cat.R.diagram;
+						if (diagram && diagram.selected.length === 1)
+						{
+							const element = diagram.getSelected();
+							let items = [];
+							if (element instanceof CatObject)
+								items = diagram.domain.getObjects();
+							else if (element instanceof Morphism)
+								items = diagram.domain.getMorphisms();
+							else
+								return;
+							items = items.filter(itm => itm.to === element.to);
+							let ndx = items.indexOf(element);
+							if (ndx === 0)
+								ndx = items.length -1;
+							else
+								ndx--;
+							diagram.makeSelected(items[ndx]);
+							e.preventDefault();
+						}
+					},
 		//			ControlTab(e)	 BROWSER RESERVED
 		//			ControlShiftTab(e)	 BROWSER RESERVED
 				},
@@ -7045,13 +7091,27 @@ class Element
 		html.appendChild(tools);
 		const buttons = this.getButtons();
 		buttons.map(btn => tools.appendChild(btn));
-		const actions =
+		const onmouseenter = e =>
 		{
-			onclick:		e => Cat.R.diagram.placeElement(this, Cat.R.diagram.userToDiagramCoords(D.mouse.down)),
-			onmouseenter:	e => R.diagram.emphasis(this, true),
-			onmouseleave:	e => R.diagram.emphasis(this, false),
+			const element = R.diagram.getElement(R.diagram.emphasis(this, true));
+			if (element)
+			{
+				e.target.onclick = e => R.diagram.makeSelected(element);
+				e.target.classList.add('clickable');
+				e.target.title = 'Click to select';
+			}
 		};
-		return H3.tr(H3.td(html, '.clickable'), actions);
+		const onmouseleave = e =>
+		{
+			if (R.diagram.emphasis(this, false))
+			{
+				e.target.onclick = null;
+				e.target.classList.remove('clickable');
+				e.target.title = '';
+			}
+		};
+		const actions = {onmouseenter, onmouseleave};
+		return H3.tr(H3.td(html), actions);
 	}
 	mouseenter(e)
 	{
@@ -7082,6 +7142,7 @@ class Element
 	{
 		return true;
 	}
+	isTerminal() { return false; }		// fitb
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return `${diagram ? diagram.name : 'sys'}/${args.basename}`; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
@@ -7208,35 +7269,40 @@ class Graph
 		else
 			this.graphs.map((g, i) => g.traceLinks(top, U.pushFactor(ndx, i)));
 	}
-	funLinks(top, doLeaf, doit, ndx = [])
+	scanCheck(check, process, ndx = [])
 	{
-		if (this.isLeaf() && doLeaf(this, ndx))		// links are at the leaves of the graph
+		if (check(this, ndx))
+			process(this, ndx);
+		else
+			this.graphs.map((g, i) => g.scanCheck(check, process, U.pushFactor(ndx, i)));
+	}
+	scanLinks(top, check, process, ndx = [])
+	{
+		this.scanCheck(check, (g, n) =>
 		{
-			doit(this, ndx);
-			const links = this.links.slice();
-			this.visited = new Set();
-			while(links.length > 0)
+			process(g, n);
+			const links = g.links.slice();
+			g.visited = new Set();
+			while(links.length > 0)		// propagate along links
 			{
 				const lnk = links.pop();
 				if (ndx.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
 					continue;
-				if (this.visited.has(lnk.toString()))
+				if (g.visited.has(lnk.toString()))
 					continue;
 				const g = top.getFactor(lnk);
-				doit(g, lnk);
+				process(g, lnk);
 				for (let j=0; j<g.links.length; ++j)
 				{
 					const glnk = g.links[j];
-					if (this.visited.has(glnk.toString()))
+					if (g.visited.has(glnk.toString()))
 						continue;
 					const lnkFactor = top.getFactor(glnk);
-					doLeaf(lnkFactor, glnk) && doit(lnkFactor, glnk);
+					check(lnkFactor, glnk) && process(lnkFactor, glnk);
 				}
-				this.visited.add(lnk.toString());
+				g.visited.add(lnk.toString());
 			}
-		}
-		else
-			this.graphs.map((g, i) => g.funLinks(top, doLeaf, doit, U.pushFactor(ndx, i)));
+		}, ndx);
 	}
 	mergeGraphs(data) // data: {from, base, inbound, outbound}
 	{
@@ -7498,14 +7564,6 @@ class Graph
 	{
 		return this.graphs.length === 0 ? this.tags.includes(tag) : this.graphs.reduce((r, g) => r && g.hasTag(tag), true);
 	}
-	/*
-	noTag(tag)
-	{
-		let hasTag = false;
-		this.scan((g, ndx) => hasTag = hasTag || g.hasTag(tag));
-		return !hasTag;
-	}
-	*/
 	addTag(tag)
 	{
 		if (this.graphs.length === 0)
@@ -7524,23 +7582,6 @@ class Graph
 			return result;
 		}
 	}
-	/*
-	newGraph(ndx)
-	{
-		if (this.getFactor(ndx))
-			throw 'graph already there';
-		let g = this;
-		let scan = ndx.slice();
-		while(scan.length > 0)
-		{
-			const k = scan.shift();
-			if (g.graphs[k] === undefined)
-				g.graphs[k] = new Graph(diagram);
-			g = graphs[k];
-		}
-		return g;
-	}
-	*/
 	reduceLinks(ndx)	// for sequence graphs
 	{
 		if (this.isLeaf())
@@ -7637,14 +7678,12 @@ class CatObject extends Element
 		const width = D ? D.textWidth(this.properName) : 0;
 		const position = data.position;
 		data.position += width;
-//		return new Graph(this.diagram, {position, width, name:this.name});
-		return new Graph(this, {position, width, name:this.name});
+		return new Graph(this, {position, width});
 	}
 	getFactorProperName(indices)
 	{
 		return this.properName;
 	}
-	isTerminal() { return false; }		// fitb
 	isInitial() { return false; }
 	getSize() { return Number.MAX_VALUE; }
 	getHtmlRep(idPrefix)
@@ -9078,7 +9117,11 @@ class Action extends CatObject
 		const nuArgs = U.Clone(args);
 		nuArgs.category = diagram ? diagram.codomain : null;
 		super(diagram, nuArgs);
-		Object.defineProperty(this, 'priority', {value:U.GetArg(args, 'priority', 0),	writable:	false});
+		Object.defineProperties(this,
+		{
+			actionOnly:		{value:U.GetArg(nuArgs, 'actionOnly', false),	writable:	false},
+			priority:		{value:U.GetArg(nuArgs, 'priority', 0),			writable:	false},
+		});
 	}
 	help(table, body)
 	{
@@ -9101,6 +9144,7 @@ class CompositeAction extends Action
 		{
 			description:	'Create composite',
 			basename:		'composite',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9157,6 +9201,7 @@ class IdentityAction extends Action
 		{
 			description:	'Create identity morphism',
 			basename:		'identity',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9291,6 +9336,7 @@ class CopyAction extends Action
 		{
 			description:	'Copy an element',
 			basename:		'copy',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9358,6 +9404,7 @@ class FlipNameAction extends Action
 			description:	'Flip the name',
 			basename:		'flipName',
 			priority:		89,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9395,6 +9442,7 @@ class ProductAction extends Action
 			description:	`Create ${dual ? 'co' : ''}product of two or more objects or morphisms`,
 			basename:		dual ? 'coproduct' : 'product',
 			dual,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9657,6 +9705,7 @@ class PullbackAction extends Action
 			description:	`Create a ${dual ? 'pushout' : 'pullback'} of two or more morphisms with a common ${dual ? 'domain' : 'codomain'}`,
 			basename,
 			dual,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9701,6 +9750,7 @@ class ProductAssemblyAction extends Action
 			description:	`Create a ${dual ? 'co' : ''}product assembly of two or more morphisms with a common ${dual ? 'co' : ''}domain`,
 			basename:		`${dual ? 'co' : ''}productAssembly`,
 			dual,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9733,6 +9783,7 @@ class ConeAssemblyAction extends Action
 			description:	`Create a ${dual ? 'pullout' : 'pullback'} assembly of two or more morphisms with a cone that commutes`,
 			basename:		`${dual ? 'co' : ''}coneAssembly`,
 			dual,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -9845,6 +9896,7 @@ class HomAction extends Action
 		const args =
 		{	description:	'Create a hom object or morphism from two such items',
 			basename:		'hom',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -10046,6 +10098,7 @@ class DetachDomainAction extends Action
 			basename:		dual ? 'detachCodomain' : 'detachDomain',
 			description:	`Detach a morphism's ${dual ? 'co' : ''}domain`,
 			dual,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -10097,6 +10150,7 @@ class DeleteAction extends Action
 			description:	'Delete elements',
 			basename:		'delete',
 			priority:		98,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -10525,7 +10579,6 @@ class LanguageAction extends Action
 	checkEditable(m)
 	{
 		return m.isEditable() &&
-//			((m.constructor.name === 'Morphism' && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial()) || m.constructor.name === 'CatObject' || m instanceof Diagram);
 			((m.constructor.name === 'Morphism' && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial()) || m instanceof CatObject || m instanceof Diagram);
 	}
 	html(e, diagram, ary)
@@ -10556,19 +10609,8 @@ class LanguageAction extends Action
 		const body = help.querySelector('#help-body');
 		D.removeChildren(body);
 		body.appendChild(textarea);
-		/*
-		if (elt instanceof Diagram)
-		{
-			this.genDiagram = diagram;
-			this.currentDiagram = null;
-			textarea.value = 'code' in elt && this.ext in elt.code ? elt.code[this.ext] : '';
-			this.setEditorSize(textarea);
-		}
-		*/
 		if (elt instanceof Morphism || elt instanceof CatObject || elt instanceof Diagram)
-//		{
 			this.getEditHtml(textarea, elt);
-//		}
 		this.checkEditable(elt) && body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
 		body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download ${this.properName}`}));
 	}
@@ -10585,13 +10627,7 @@ class LanguageAction extends Action
 	}
 	getEditHtml(textarea, elt)	// handler when the language is just a string
 	{
-		let code = '';
-		const id = `element-${this.ext}`;
-//		if (elt.constructor.name === 'Morphism' || elt instanceof Diagram || elt instanceof CatObject)
-			code = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : this.template(elt);
-//		else if (elt instanceof Morphism)
-//			code = this.generate(R.diagram, elt);
-		textarea.value = code;
+		textarea.value = 'code' in elt ? (this.hasCode(elt) ? elt.code[this.ext] : '') : this.template(elt);
 		this.setEditorSize(textarea);
 	}
 	hasCode(elt)
@@ -10624,7 +10660,6 @@ class LanguageAction extends Action
 	evaluateMorphism(e, diagram, name, fn) {}
 	download(e, elt)
 	{
-//		const code = D.toolbar.element.querySelector(`textarea#element-${this.basename}`).value;
 		const code = this.generate(elt);
 		const blob = new Blob([code], {type:`application/${this.ext}`});
 		const url = D.url.createObjectURL(blob);
@@ -10697,7 +10732,6 @@ class RunAction extends Action
 				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:this.js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), {title:'Evaluate inputs'}));
 		}
 		this.display = H3.tr(H3.td('##run-display'), H3.td(createDataBtn));
-//		root.appendChild(this.display);
 		this.data = new Map();
 	}
 	postResult(result)
@@ -10882,6 +10916,7 @@ class EvaluateAction extends Action
 		{
 			description:	'Create an evaluation morphism',
 			basename:		'evaluate',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 	}
@@ -10955,6 +10990,7 @@ class AlignHorizontalAction extends Action
 		{
 			description:	'Align elements horizontally',
 			basename:		'alignHorizontal',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -11009,6 +11045,7 @@ class AlignVerticalAction extends Action
 		{
 			description:	'Align elements vertically',
 			basename:		'alignVertical',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 		isGUI && D.replayCommands.set(this.basename, this);
@@ -11065,6 +11102,7 @@ class TensorAction extends Action
 		{
 			description:	'Create a tensor product of two or more objects or morphisms',
 			basename:		'tensor',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 	}
@@ -11101,6 +11139,7 @@ class RecursionAction extends Action
 		{
 			description:	'Set the recursor for a recursive morphism.',
 			basename:		'recursion',
+			actionOnly:		true,
 		};
 		super(diagram, args);
 	}
@@ -11122,9 +11161,12 @@ class GraphAction extends Action
 {
 	constructor(diagram)
 	{
-		const args = {	description:	'Show morphism graph',
-						basename:		'graph',
-						priority:		97,
+		const args =
+		{
+			description:	'Show morphism graph',
+			basename:		'graph',
+			priority:		97,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 	}
@@ -11144,9 +11186,12 @@ class SwapAction extends Action
 {
 	constructor(diagram)
 	{
-		const args = {	description:	'Swap domain and codomain',
-						basename:		'swap',
-						priority:		90,
+		const args =
+		{
+			description:	'Swap domain and codomain',
+			basename:		'swap',
+			priority:		90,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 	}
@@ -11183,9 +11228,12 @@ class ReferenceMorphismAction extends Action
 {
 	constructor(diagram)
 	{
-		const args = {	description:	'Set projection or injection as an assembly morphism',
-						basename:		'referenceMorphism',
-						priority:		80,
+		const args =
+		{
+			description:	'Set projection or injection as an assembly morphism',
+			basename:		'referenceMorphism',
+			priority:		80,
+			actionOnly:		true,
 		};
 		super(diagram, args);
 	}
@@ -11666,6 +11714,18 @@ if (args.codomain === 'hdole/PFS')	// TODO remove
 		const elements = [...this.elements.values()];
 		this.replaceElements(elements);
 	}
+	getObjects()
+	{
+		const objects = [];
+		this.forEachObject(o => objects.push(o));
+		return objects;
+	}
+	getMorphisms()
+	{
+		const morphisms = [];
+		this.forEachMorphism(m => morphisms.push(m));
+		return morphisms;
+	}
 	static IsSink(ary)
 	{
 		if (ary.length < 2)		// just don't bother
@@ -11778,14 +11838,12 @@ class Morphism extends Element
 				domainElt = H3.select('##new-domain.w100', {onchange: e => from.setToDomain(R.diagram.getElement(e.target.value))});
 				domainElt.appendChild(H3.option(this.domain.properName, {value:this.domain.properName, selected:true, disabled:false}));
 				objects.map(o => o.name !== this.domain.name && domainElt.appendChild(H3.option(o.properName, {value:o.name})));
-//				table.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
 			}
 			if (from.codomain.refcnt === 2)
 			{
 				codomainElt = H3.select('##new-codomain.w100', {onchange: e => from.setToCodomain(R.diagram.getElement(e.target.value))});
 				codomainElt.appendChild(H3.option(this.codomain.properName, {value:this.codomain.properName, selected:true, disabled:true}));
 				objects.map(o => o.name !== this.codomain.name && codomainElt.appendChild(H3.option(o.properName, {value:o.name})));
-//				table.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
 			}
 		}
 		if (!domainElt)
@@ -15617,22 +15675,29 @@ class Diagram extends Functor
 	}
 	emphasis(c, on)
 	{
+		let rtrn = null;
 		const elt = this.getElement(c);
 		D.mouseover = on ? elt : null;
 		if (elt)
 		{
 			if (elt instanceof IndexMorphism || elt instanceof IndexObject || elt instanceof DiagramText)
+			{
 				elt.emphasis(on);
+				rtrn = elt.name;
+			}
 			else
 			{
 				const emphs = [...this.svgRoot.querySelectorAll(`[data-to="${elt.name}"]`)];
 				emphs.map(emph => on ? emph.classList.add('emphasis') : emph.classList.remove('emphasis'));
+				if (emphs.length > 0)
+					rtrn = emphs[0].dataset.name;
 			}
 		}
 		else if (this.domain.cells.has(c))
 			this.domain.cells.get(c).emphasis(on);
 		if (!on && this.selected.length === 1 && 'dragAlternates' in this.selected[0])
 			this.removeDragAlternates();
+		return rtrn;
 	}
 	removeDragAlternates()
 	{
