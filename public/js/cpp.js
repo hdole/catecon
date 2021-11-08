@@ -106,7 +106,8 @@ var Cat = Cat || require('./Cat.js');
 			{
 				const d = R.$CAT.getElement(dgrm);
 				this.references.set(d.name, new Set());
-				let nuCode = 'code' in d && this.ext in d.code ? d.code[this.ext] : '';
+//				let nuCode = 'code' in d && this.ext in d.code ? d.code[this.ext] : '';
+				let nuCode = this.getCode(d);
 				if (nuCode !== '' && nuCode.slice(-1) !== '\n')
 					nuCode = nuCode + '\n';
 				code += nuCode;
@@ -118,18 +119,17 @@ var Cat = Cat || require('./Cat.js');
 		}
 		generateProductObject(object, generated)
 		{
-			if ('code' in object && this.ext in object.code)
+//			if ('code' in object && this.ext in object.code)
+			if (this.hasCode(object))
 				return this.instantiate(object);
 			const name = this.getType(object);
-//			const comments = this.getComments(object);
 			let code = object.objects.map(o => this.generateObject(o, generated)).join('');
-//			const members = object.objects.map((o, i) => `${object.dual ? '\t\t\t' : '\t\t'}${this.getType(o)} m_${i};`).join('\n');
 			const members = object.objects.map((o, i) => this.cline(`${this.getType(o)} m_${i};`, object.dual ? 1 : 0)).join('\n');
 			if (object.dual)
 				code +=
 `struct ${name}
 {
-	unsigned long index;
+	unsigned long c;
 	union
 	{
 ${members}
@@ -194,13 +194,13 @@ ${members}
 						code += this.generateProductObject(object, generated);
 						break;
 					case 'HomObject':
-//						code += this.cline(`${this.getComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);`);
+//						code += this.cline(`${this.generateComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);`);
 						break;
 					default:
 						break;
 				}
 			}
-			return this.getComments(object) + code;
+			return this.generateComments(object) + code;
 		}
 		findObjects(object, generated)		// recursive
 		{
@@ -280,16 +280,22 @@ ${members}
 			downFactor = [cnt];
 			graph.graphs[cnt].scan(fn);
 		}
-		// label the leafs in the graphs with a variable name
-		generateVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor)		// assume morphism is flattened composite
+		// label nodes in the graphs with a variable name
+		generateVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor)
 		{
 			if (upGraph)
 				this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor);
-			const doLeaf = (g, f) => !('var' in g);
-			const codes = [];
-			const doit = (g, ndx) =>
+			const check = (g, f) => g.element instanceof Cat.CatObject &&
+				(	(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct
+					(g.isLeaf() && !('var' in g)));		// process a leaf
+			const args = [];
+			let index = 0;
+			const process = (g, ndx) =>
 			{
 				if (g.element.isTerminal())
+					return;
+				const code = this.getCode(g.element);
+				if (code === '//')
 					return;
 				const indexes = g.links.filter(lnk => ndxMap.has(lnk.toString()));
 				const strNdx = ndx.toString();
@@ -311,13 +317,24 @@ ${members}
 					{
 						const v = `var_${this.varCount++}`;
 						ndxMap.set(strNdx, v);
-						codes.push(`${this.getType(this.context.getElement(g.name))} ${ndx.length === 1 && ndx[0] === 1 ? '& ' : ''}${v}`);
+						args.push(`${this.getType(this.context.getElement(g.element.name))} ${ndx.length === 1 && ndx[0] === 1 ? '& ' : ''}${v}`);
 					}
 					g.var = ndxMap.get(strNdx);
 				}
 			};
-			graph.funLinks(graph, doLeaf, doit);
-			return codes.join(', ');
+			// domain args
+			const domGraph = graph.graphs[0];
+			if (domGraph.element instanceof Cat.ProductObject && !domGraph.element.dual && domGraph.graphs.length > 0)
+				graph.graphs[0].graphs.map((g, i) => process(g, U.pushFactor([0], i)));
+			else
+				process(domGraph, [0]);
+			// codomain args
+			const codGraph = graph.graphs[1];
+			if (codGraph.element instanceof Cat.ProductObject && !codGraph.element.dual && codGraph.graphs.length > 0)
+				graph.graphs[0].graphs.map((g, i) => process(g, U.pushFactor([1], i)));
+			else
+				process(codGraph, [1]);
+			return args.join(', ');
 		}
 		generateComposite(morphism, generated, ndxMap, upGraph = null, domFactor = [], codFactor = [])
 		{
@@ -327,24 +344,18 @@ ${members}
 			const varCode = this.generateVariables(morphism, graph, nuNdxMap, upGraph, domFactor, codFactor);
 			let code = varCode + morphism.morphisms.map((m, i) => this.generateMorphism(m, generated, nuNdxMap, [i], [i+1], graph)).join('');
 			this.tab--;
-			if (varCode !== '')
-				code = this.cline('{\n' + code + '}\n');
-			return code;
+//			if (varCode !== '')
+//				code = this.cline('{\n' + code + '}\n');
+			return this.cline(code);
 		}
-		generateMorphism(morphism, generated, ndxMap, domFactor, codFactor, graph, top = false)		// recursive
+		generateMorphism(morphism, generated, ndxMap, domFactor, codFactor, graph)		// recursive
 		{
 			if (generated.has(morphism.name))
 				return '';
 			generated.add(morphism.name);
-//			const morphGraph = morphism.getGraph();
-//			this.tab++;
 			const vars = this.generateVariables(morphism, graph, ndxMap, graph, domFactor, codFactor);
-//			if (code !== '')
-//				code += '\n';
 			const type = this.getType(morphism);
-			let code = this.getComments(morphism) + this.cline(`void ${type}(${vars})\n{\n`);;
-//			if (top)
-//				code += this.generateInputs(morphGraph);
+			let code = this.generateComments(morphism) + this.cline(`void ${type}(${vars})\n{\n`);;
 			switch(morphism.constructor.name)
 			{
 				case 'Morphism':
@@ -358,7 +369,7 @@ ${members}
 					const domCnt = dom.isTerminal() ? 0 : (!dom.dual && 'objects' in dom ? dom.objects.filter(o => !o.isTerminal()).length : 1);
 					const codCnt = !cod.dual && 'objects' in cod ? cod.objects.filter(o => !o.isTerminal()).length : 1;
 					this.tab++;
-					let nuCode = 'code' in morphism && this.ext in morphism.code ? morphism.code[this.ext] : '';
+					let nuCode = this.getCode(morphism);
 					if (domCnt > 1)
 					{
 						for (let i=0; i<domCnt; ++i)
@@ -405,18 +416,12 @@ ${members}
 						code += morphism.morphisms.map((m, i) => this.generateMorphism(m, generated, ndxMap, domFactor, Cat.U.pushFactor(codFactor, i), graph)).join('');
 					break;
 				case 'HomMorphism':
-					code += morphism.morphisms.map(m => this.generateMorphism(m, generated, ndxMap)).join('');
+					code += morphism.morphisms.map(m => this.generateMorphism(m, generated, ndxMap)).join('');		// TODO wrong number of arguments
 					break;
 				case 'NamedMorphism':
 					code += this.generateMorphism(morphism.base, generated, ndxMap, domFactor, codFactor, graph);
 					break;
 			}
-//			if (top)
-//				code += this.generateOutputs(morphGraph);
-//			this.tab--;
-//			if (code !== '')
-//				code = this.cline('{') + code + this.cline('}');
-//			return this.getComments(morphism) + code + this.cline('}');;
 			return code + this.cline('}');;
 		}
 		generateInputs(graph)
@@ -444,8 +449,7 @@ ${members}
 			if (morphism instanceof Cat.Diagram)
 				return this.generateDiagram(morphism);
 			this.initialize(morphism.diagram);
-//			const morphismCode = this.generateMorphism(morphism, new Map(), [0], [1], morphism.getGraph(), true);
-			return this.generateMorphism(morphism, generated, new Map(), [0], [1], morphism.getGraph(), true);
+			return this.generateMorphism(morphism, generated, new Map(), [0], [1], morphism.getGraph());
 			/*
 			let code =
 `
@@ -492,22 +496,27 @@ ${morphismCode}
 		{
 			return Array.isArray(factor) ? factor.map(i => `m_${i}`).join('.') : `m_${factor}`;
 		}
-		getComments(m)
+		generateComments(element)
 		{
 			let name = '';
-			switch(m.constructor.name)
+			switch(element.constructor.name)
 			{
 				case 'ProductObject':
-					name = m.dual ? 'Coproduct object' : 'Product object';
+					name = element.dual ? 'Coproduct object' : 'Product object';
 					break;
 				case 'ProductMorphism':
-					name = m.dual ? 'Coproduct morphism' : 'Product morphism';
+					name = element.dual ? 'Coproduct morphism' : 'Product morphism';
 					break;
 				default:
-					name = m.constructor.name;
+					name = element.constructor.name;
 					break;
 			}
-			return this.cline(`//\n// ${name}\n// ${m.name}\n${m.description !== '' ? '// ' + m.description + '\n' : ''}//`);
+			let txt = `//\n// ${name}\n// ${element.name}\n`;
+			if (element.description !== '')
+				txt += `// ${element.description}\n`;
+			if (element instanceof Cat.Morphism)
+				txt += `// ${element.domain.name} --> ${element.codomain.name}\n`;
+			return this.cline(txt + '//\n');
 		}
 		generateDiagram(diagram)
 		{
@@ -536,7 +545,7 @@ namespace ${this.getNamespace(diagram)}
 			diagram.forEachMorphism(m =>
 			{
 				this.initialize(m.diagram);
-				code += this.generateMorphism(m, generated, new Map(), [0], [1], m.getGraph(), true);
+				code += this.generateMorphism(m, generated, new Map(), [0], [1], m.getGraph());
 			});
 			code += '}\n';
 			return code;
@@ -579,7 +588,7 @@ namespace ${this.getNamespace(diagram)}
 				{
 					case 'Composite':
 						code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						code += header;
 						const lngth = morphism.morphisms.length;
 						for (let i=0; i<lngth; ++i)
@@ -592,12 +601,12 @@ namespace ${this.getNamespace(diagram)}
 						code += tail;
 						break;
 					case 'Identity':
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						code += `${header}\t\tout = args;${tail}`;
 						break;
 					case 'ProductMorphism':
 						code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						if (morphism.dual)
 						{
 							const subcode = morphism.morphisms.map((m, i) => this.getType(m).join(',\n\t\t\t'));
@@ -610,7 +619,7 @@ namespace ${this.getNamespace(diagram)}
 						code += `${header}\t\t${morphism.morphisms.map((m, i) => this.cline(2, `${this.getType(m)}(args, out.m_${i});\n`)).join('')}${tail}`;
 						break;
 					case 'Morphism':
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						code += this.instantiate(morphism);
 						if ('recursor' in morphism)
 						{
@@ -620,7 +629,7 @@ namespace ${this.getNamespace(diagram)}
 						if ('data' in morphism)
 						{
 							const data = JSON.stringify(U.JsonMap(morphism.data));
-							code += this.getComments(morphism);
+							code += this.generateComments(morphism);
 							code +=
 `
 const ${name}_Data = new Map(${data});
@@ -648,18 +657,18 @@ ${tail}`;
 						break;
 					case 'Distribute':
 					case 'Dedistribute':
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						code +=
 `${header}	out.m_0 = args.m_1.m_0;
 out.m_1.m+0 = args.m_0;
 out.m_1.m_2 = args.m_1.m_1;${tail}`;
 						break;
 					case 'Evaluation':
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						code += `${header}\t\targs.m_0(args.m_1, out);${tail}`;
 						break;
 					case 'FactorMorphism':
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						if (morphism.dual)
 						{
 							// TODO
@@ -678,7 +687,7 @@ out.m_1.m_2 = args.m_1.m_1;${tail}`;
 						break;
 					case 'HomMorphism':
 						code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						const top = morphism.morphisms[0];
 						const btm = morphism.morphisms[1];
 						const obj0 = this.getType(top.domain);
@@ -698,7 +707,7 @@ ${tail}`;
 						break;
 					case 'LambdaMorphism':
 						code += this.generate(morphism.preCurry, generated);
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						const inputs = new Array(this.ObjectLength(morphism.preCurry.domain));
 						const domLength = this.ObjectLength(morphism.domain);
 						const homLength = morphism.homFactors.length;
@@ -744,7 +753,7 @@ ${tail}`;
 						break;
 					case 'NamedMorphism':
 						code += this.generate(morphism.source, generated);
-						code += this.getComments(morphism);
+						code += this.generateComments(morphism);
 						code += `${header}\t\t${this.getType(morphism.source)}(args, out);${tail}`;
 						break;
 				}
