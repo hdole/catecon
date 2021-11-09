@@ -44,6 +44,13 @@ var Cat = Cat || require('./Cat.js');
 			code += '\treturn result;\n';
 			return this.header(morphism) + code + this.tail();
 		}
+		instantiate(element)
+		{
+			let code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
+			if (element instanceof Morphism)
+				code = code.replace(/%Dom/g, this.getType(element.domain)).replace(/%Cod/g, this.getType(element.codomain));
+			return code;
+		}
 		generate(morphism, generated = new Set())
 		{
 			let code = '';
