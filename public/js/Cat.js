@@ -827,7 +827,7 @@ args.codomain = 'zf/Set';
 			const diagram = new Cat[args.prototype](userDiagram, args);
 			const png = U.readfile(`${diagram.name}.png`);
 			isGUI && png && D.diagramPNGs.set(diagram.name, png);
-			this.setDiagramInfo(diagram);
+//			this.setDiagramInfo(diagram);
 			isGUI && D.emitCATEvent('load', diagram);
 			this.sync = sync;
 			const errors = diagram.check();
@@ -1090,12 +1090,11 @@ args.codomain = 'zf/Set';
 			{
 				const info = Diagram.GetInfo(d);
 				const localTimestamp = this.localTimestamp(d.name);
+				info.references = JSON.parse(d.refs);
+				delete info.refs;
 				if (localTimestamp < info.timestamp)	// override with cloud info
-				{
-					info.references = JSON.parse(d.refs);
-					delete info.refs;
-					this.catalog.set(info.name, info);
-				}
+					info.timestamp = info.timestamp;
+				this.catalog.set(info.name, info);
 			});
 			fn();
 		};
@@ -3590,7 +3589,7 @@ class Display
 		this.url = window.URL || window.webkitURL || window;
 		R.loadScript('js/javascript.js');
 		R.loadScript('js/cpp.js');
-		R.loadScript('js/mysql.js');
+// TODO?		R.loadScript('js/mysql.js');
 		this.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
 		if (isGUI)
 			this.local = document.location.hostname === 'localhost';
@@ -10664,14 +10663,6 @@ class LanguageAction extends Action
 		const blob = new Blob([code], {type:`application/${this.ext}`});
 		const url = D.url.createObjectURL(blob);
 		D.download(url, `${this.getType(elt)}.${this.ext}`);
-	}
-	// TODO need version for JS only
-	instantiate(element)
-	{
-		let code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
-		if (element instanceof Morphism)
-			code = code.replace(/%Dom/g, this.getType(element.domain)).replace(/%Cod/g, this.getType(element.codomain));
-		return code;
 	}
 	hidden() { return true; }
 }
