@@ -15,7 +15,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 1000,
+        "x": 980,
         "y": 350
       },
       "height": "200",
@@ -582,7 +582,7 @@
       "height": "48"
     },
     {
-      "description": "Show the help info for the selected element.",
+      "description": "Have the morphism represent a reference in an assembly.",
       "basename": "t_55",
       "prototype": "DiagramText",
       "xy": {
@@ -1049,7 +1049,7 @@
         "x": 1200,
         "y": 2700
       },
-      "height": "24"
+      "height": "36"
     },
     {
       "description": "<icon>referenceMorphism</icon>",
@@ -1091,15 +1091,87 @@
         "y": 1600
       },
       "height": "48"
+    },
+    {
+      "description": "Tab",
+      "basename": "t_104",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1000,
+        "y": 4800
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "shift-Tab",
+      "basename": "t_105",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1000,
+        "y": 4900
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "If one element selected, then select the next element of the same type.",
+      "basename": "t_106",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1300,
+        "y": 4800
+      },
+      "height": "24"
+    },
+    {
+      "description": "If one element selected, then select the prior element of the same type.",
+      "basename": "t_107",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1300,
+        "y": 4900
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>edit</icon>",
+      "basename": "t_108",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1200,
+        "y": 2200
+      },
+      "height": "48"
+    },
+    {
+      "description": "<icon>edit</icon>",
+      "basename": "t_109",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1200,
+        "y": 2000
+      },
+      "height": "48"
+    },
+    {
+      "description": "<icon>edit</icon>",
+      "basename": "t_110",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1200,
+        "y": 2800
+      },
+      "height": "48"
     }
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1635724234941,
+  "timestamp": 1636611537764,
   "version": 0,
   "viewport": {
-    "x": -1258,
-    "y": -249,
-    "scale": 1.5274899189205784
+    "x": -1247,
+    "y": -248,
+    "scale": 1.5244005324126952
   }
 }

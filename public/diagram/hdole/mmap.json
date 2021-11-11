@@ -217,7 +217,7 @@
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": -1700,
+        "x": -1710,
         "y": -1840
       },
       "height": "200",
@@ -400,6 +400,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/voidPtr_0}aF"
@@ -412,6 +416,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -426,6 +434,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_2}aF"
@@ -439,6 +451,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/int/Z32_3}aF"
@@ -451,6 +467,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -466,6 +486,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/Fa{hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP,hdole/cpp/off_t_5}aF"
@@ -478,6 +502,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -520,6 +548,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/Fa{hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP,hdole/int/Z32_1}aF"
@@ -533,6 +565,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{file,Errno}oPC,hdole/cpp/Errno_1}aFC"
@@ -545,6 +581,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -608,6 +648,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{stat,Errno}oPC,hdole/cpp/Errno_1}aFC"
@@ -620,6 +664,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -679,6 +727,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{#1,Errno}oPC,hdole/cpp/Errno_1}aFC"
@@ -698,6 +750,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -719,6 +775,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/voidPtr_0}aFC"
@@ -731,6 +791,10 @@
       "attributes": [
         [
           "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
           true
         ]
       ],
@@ -745,9 +809,13 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
-      "homsetIndex": 12,
+      "homsetIndex": 14,
       "to": "hdole/mmap/Fa{Po{hdole/cpp/voidPtr,hdole/cpp/file}oP,hdole/cpp/file_1}aF"
     },
     {
@@ -773,6 +841,10 @@
         [
           "assyMorphism",
           true
+        ],
+        [
+          "referenceMorphism",
+          true
         ]
       ],
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{#1,Errno}oPC,#1_0}aFC"
@@ -783,7 +855,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "&#10034;",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -963,16 +1037,12 @@
       ]
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631765065126,
+  "timestamp": 1636612316101,
   "version": 0,
-  "hiddenCells": [
-    "d58e28e939d18867e93625fbf1dcb88fc843a3199abc4d3f6ea09f0e593d093e"
-  ],
   "viewport": {
-    "x": 1295,
-    "y": 774,
-    "scale": 0.34901005338939073
+    "x": 3439,
+    "y": 3845,
+    "scale": 1.8664906744170677
   }
 }

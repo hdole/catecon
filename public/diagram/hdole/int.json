@@ -5651,7 +5651,7 @@
       "prototype": "Morphism",
       "properName": "abs",
       "code": {
-        "cpp": "{\n\tuint8_t temp = %0 >> 7;\n\t%1 ^= temp;\n\t%1 += temp & 1;\n}"
+        "cpp": "%1 = ::abs(%0);"
       },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/nat/N8"
@@ -5661,7 +5661,7 @@
       "prototype": "Morphism",
       "properName": "abs",
       "code": {
-        "cpp": "{\n\tuint16_t temp = %0 >> 15;\n\t%1 ^= temp;\n\t%1 += temp & 1;\n}"
+        "cpp": "%1 = ::abs(%0);"
       },
       "domain": "hdole/int/Z16",
       "codomain": "hdole/nat/N16"
@@ -5671,7 +5671,7 @@
       "prototype": "Morphism",
       "properName": "abs",
       "code": {
-        "cpp": "{\n\tuint8_t temp = %0 >> 31;\n\t%1 ^= temp;\n\t%1 += temp & 1;\n}"
+        "cpp": "%1 = ::abs(%0);"
       },
       "domain": "hdole/int/Z32",
       "codomain": "hdole/nat/N32"
@@ -5681,7 +5681,7 @@
       "prototype": "Morphism",
       "properName": "abs",
       "code": {
-        "cpp": "{\n\tuint8_t temp = %0 >> 63;\n\t%1 ^= temp;\n\t%1 += temp & 1;\n}"
+        "cpp": "%1 = ::abs(%0);"
       },
       "domain": "hdole/int/Z64",
       "codomain": "hdole/nat/N64"
@@ -5691,18 +5691,18 @@
       "prototype": "Morphism",
       "properName": "abs",
       "code": {
-        "cpp": "{\n\tuint8_t temp = %0 >> 127;\n\t%1 ^= temp;\n\t%1 += temp & 1;\n}"
+        "cpp": "%1 = ::abs(%0);"
       },
       "domain": "hdole/int/Z128",
       "codomain": "hdole/nat/N128"
     }
   ],
   "user": "hdole",
-  "timestamp": 1636081472966,
+  "timestamp": 1636413560301,
   "version": 0,
   "viewport": {
     "x": 1215,
-    "y": 836,
+    "y": -3496,
     "scale": 0.7299003489746418
   }
 }

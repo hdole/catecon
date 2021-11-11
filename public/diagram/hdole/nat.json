@@ -5276,6 +5276,7 @@
       "codomain": "hdole/nat/N8"
     },
     {
+      "description": "The high order 16 bits.",
       "basename": "hi16",
       "prototype": "Morphism",
       "properName": "hi",
@@ -5296,6 +5297,7 @@
       "codomain": "hdole/nat/N16"
     },
     {
+      "description": "The high order 32 bits.",
       "basename": "hi32",
       "prototype": "Morphism",
       "properName": "hi",
@@ -5347,7 +5349,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1635723798040,
+  "timestamp": 1636362356955,
   "version": 0,
   "viewport": {
     "x": 1381,

@@ -3,6 +3,7 @@
   "basename": "str",
   "name": "hdole/str",
   "prototype": "Diagram",
+  "properName": "hdole/str",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/str_Index",
@@ -321,7 +322,7 @@
     {
       "basename": "o_28",
       "prototype": "IndexObject",
-      "to": "TTY",
+      "to": "hdole/str/TTY",
       "xy": {
         "x": 400,
         "y": 2600
@@ -609,7 +610,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "&#10034;",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -629,7 +632,7 @@
       "basename": "str",
       "prototype": "CatObject",
       "code": {
-        "cpp": "}\n\n#include <string>;\n\t\t\nnamespace %Namespace\n{\n\ttypedef std::string str;\n"
+        "cpp": "typedef std::string %0;\n"
       }
     },
     {
@@ -828,7 +831,7 @@
         "cpp": "#include <iostream>\nstd::cout << %0;"
       },
       "domain": "hdole/str/str",
-      "codomain": "TTY"
+      "codomain": "hdole/str/TTY"
     },
     {
       "basename": "N8ToStr",
@@ -887,14 +890,12 @@
       "codomain": "hdole/str/CPo{hdole/nat/N128,#1}oPC"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631779446556,
+  "timestamp": 1636412887977,
   "version": 0,
   "viewport": {
     "x": 1412,
     "y": 477,
     "scale": 1.543796350380586
-  },
-  "properName": "hdole/str"
+  }
 }
