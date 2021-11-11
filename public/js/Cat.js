@@ -10611,7 +10611,7 @@ class LanguageAction extends Action
 		if (elt instanceof Morphism || elt instanceof CatObject || elt instanceof Diagram)
 			this.getEditHtml(textarea, elt);
 		this.checkEditable(elt) && body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
-		body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download ${this.properName}`}));
+		body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download generated ${this.properName}`}));
 	}
 	setEditorSize(textarea)
 	{
