@@ -15506,7 +15506,7 @@ class Diagram extends Functor
 	}
 	getElements(ary)
 	{
-		return ary.map(e => this.getElement(e)).filter(e => e !== undefined);
+		return ary.map(e => this.getElement(e)).filter(e => e !== undefined && e !== null);
 	}
 	hasIndexedElement(name)
 	{
@@ -16000,6 +16000,11 @@ class Diagram extends Functor
 	viewElements(...elts)
 	{
 		const elements = this.getElements(elts);
+		elts.filter(e => e instanceof Cell).map(cell =>
+		{
+			cell.left.map(m => elements.push(m));
+			cell.right.map(m => elements.push(m));
+		});
 		if (elements.length > 0)
 		{
 			const bbox = this.diagramToSessionCoords(D2.Merge(...elements.map(a => a.getBBox())));
