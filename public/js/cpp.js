@@ -1,4 +1,4 @@
-// (C) 2018-2020 Harry Dole
+// (C) 2018-2021 Harry Dole
 // Catecon:  The Categorical Console
 //
 var Cat = Cat || require('./Cat.js');
@@ -17,12 +17,22 @@ var Cat = Cat || require('./Cat.js');
 		{
 			const args = {basename:'cpp', description:'C++ support', ext:'cpp'};
 			super(diagram, args);
-			Object.defineProperty(this, 'currentDiagram', {value:null, writable:true});
-			Cat.R.languages.set(this.basename, this);
-			Cat.R.$CAT.getElement('Set').actions.set(args.basename, this);
-			this.tab = 3;
-			this.context = null;
-			this.references = new Map();
+			Object.defineProperties(this,
+			{
+				currentDiagram:			{value:	null,	writable:	true},
+				context:				{value:	null,	writable:	true},
+				references:				{value:	new Map(),	writable:	false},
+				tab:					{value:	1,		writable:	true},
+			});
+			R.languages.set(this.basename, this);
+			R.$CAT.getElement('Set').actions.set(args.basename, this);
+			this.initialize(null);
+		}
+		initialize(diagram)
+		{
+			this.varCount = 0;
+			this.tab = 1;
+			this.context = diagram;
 		}
 		incTab()
 		{
@@ -36,7 +46,7 @@ var Cat = Cat || require('./Cat.js');
 		{
 			super.html(e, diagram, ary);
 			const body = document.getElementById('help-body');
-			const textarea = body.querySelector('#element-cpp');
+			const textarea = body.querySelector(`#element-${this.ext}`);
 			body.insertBefore(H3.h5('Inline code'), textarea);
 		}
 		cline(line, extra = 0)
@@ -108,7 +118,7 @@ var Cat = Cat || require('./Cat.js');
 			const refs = this.context.getAllReferenceDiagrams();
 			let code = '';
 			this.references = new Map();
-			[...refs.keys()].map(dgrm =>
+			[...refs.keys()].reverse().map(dgrm =>
 			{
 				const d = R.$CAT.getElement(dgrm);
 				this.references.set(d.name, new Set());
@@ -222,15 +232,47 @@ ${members}
 					break;
 			}
 		}
-		scanObjects()		// not recursive
+		_findAllObjects(morphism, generated)		// recursive
 		{
-			const generated = new Set();
-			this.diagram.forEachObject(o => this.findObjects(o, generated));
-			this.diagram.forEachMorphism(m =>
+			switch(morphism.constructor.name)
 			{
-				this.findObjects(m.domain, generated);
-				this.findObjects(m.codomain, generated);
-			});
+				case 'Identity':
+					this.findObjects(morphism.domain, generated);
+					break;
+				case 'Morphism':
+				case 'FactorMorphism':
+					this.findObjects(morphism.domain, generated);
+					this.findObjects(morphism.codomain, generated);
+					break;
+				case 'HomMorphism':
+				case 'ProductAssembly':
+				case 'ProductMorphism':
+					morphism.morphisms.map(m => this._findAllObjects(m, generated));
+					break;
+				case 'LambdaMorphism':
+				case 'Distribute':
+				case 'DeDistribute':
+				case 'Evaluation':
+					// TODO
+					break;
+			}
+		}
+		findAllObjects(m)		// not recursive
+		{
+			if (m instanceof Cat.Morphism)
+			{
+
+			}
+			else
+			{
+				const generated = new Set();
+				this.context.forEachObject(o => this.findObjects(o, generated));
+				this.context.forEachMorphism(m =>
+				{
+					this.findObjects(m.domain, generated);
+					this.findObjects(m.codomain, generated);
+				});
+			}
 		}
 		generateObjects()		// not recursive
 		{
@@ -256,12 +298,6 @@ ${members}
 			if (code !== '')
 				code = '// objects from diagrams\n' + code;
 			return code;
-		}
-		initialize(diagram)
-		{
-			this.varCount = 0;
-			this.tab = 1;
-			this.context = diagram;
 		}
 		copyVariables(graph, ndxMap, upGraph, domFactor, codFactor)
 		{
@@ -341,7 +377,7 @@ ${members}
 			}
 			return code;
 		}
-		generateVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor, asFunction = true)
+		setupVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor)
 		{
 			if (upGraph)
 				this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor);
@@ -383,15 +419,14 @@ ${members}
 				return '';
 			generated.add(morphism.name);
 			const code = this.cline(this.generateComments(morphism)) +
-				this.instantiateMorphism(true, morphism);
+				this.instantiateMorphism(this.getType(morphism), morphism);
 			return code;
 		}
 		// upGraph has the morphisms input and output variables at the domFactor and codFactor locations
-		instantiateMorphism(isTop, morphism, ndxMap = new Map(), upGraph = null, domFactor = [0], codFactor = [1])		// recursive
+		instantiateMorphism(symbol, morphism, ndxMap = new Map(), upGraph = null, domFactor = [0], codFactor = [1])		// recursive
 		{
 			let code = '';
 			const graph = morphism.getGraph();
-			upGraph && this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor)
 			switch(morphism.constructor.name)
 			{
 				case 'Morphism':
@@ -400,9 +435,9 @@ ${members}
 						const data = JSON.stringify(U.JsonMap(morphism.data));
 						code += this.cline(`std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${type}_data ${data};\n`);
 					}
-					this.generateVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor, isTop);
-					code += this.cline(isTop ? `void ${this.getType(morphism)}(${this.generateFunctionInterface(graph)})\n{\n` : this.generateInternalVariables(graph));
-					isTop && this.incTab();
+					this.setupVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor);
+					code += this.cline(symbol ? `void ${symbol}(${this.generateFunctionInterface(graph)})\n{\n` : this.generateInternalVariables(graph));
+					symbol && this.incTab();
 					const dom = morphism.domain;
 					const cod = morphism.codomain;
 					const domCnt = dom.isTerminal() ? 0 : (!dom.dual && 'objects' in dom ? dom.objects.filter(o => !o.isTerminal()).length : 1);
@@ -445,10 +480,15 @@ if (v === undefined)debugger;
 						}
 					}
 					code += this.cline(nuCode);
-					isTop && this.decTab();
+					if (symbol)
+					{
+						this.decTab();
+						code = code + this.cline('}');
+					}
 					break;
 				case 'Identity':
 				case 'FactorMorphism':
+					break;
 				case 'LambdaMorphism':
 				case 'Distribute':
 				case 'DeDistribute':
@@ -456,43 +496,39 @@ if (v === undefined)debugger;
 					// TODO
 					break;
 				case 'Composite':
-					code += this.instantiateComposite(morphism, ndxMap, graph, domFactor, codFactor, isTop);
+					code += this.instantiateComposite(morphism, ndxMap, graph, domFactor, codFactor, symbol);
 					break;
 				case 'ProductMorphism':
-					morphism.morphisms.map((m, i) => this.instantiateMorphism(false, m, ndxMap, graph, Cat.U.pushFactor(domFactor, i), Cat.U.pushFactor(codFactor, i+1)));
+					morphism.morphisms.map((m, i) => this.instantiateMorphism(null, m, ndxMap, graph, Cat.U.pushFactor(domFactor, i), Cat.U.pushFactor(codFactor, i+1)));
 					break;
 				case 'ProductAssembly':
 					if (!morphism.dual)
-						code += morphism.morphisms.map((m, i) => this.instantiateMorphism(false, m, ndxMap, graph, domFactor, Cat.U.pushFactor(codFactor, i))).join('');
+						code += morphism.morphisms.map((m, i) => this.instantiateMorphism(null, m, ndxMap, graph, domFactor, Cat.U.pushFactor(codFactor, i))).join('');
 					break;
 				case 'HomMorphism':
-					code += morphism.morphisms.map(m => this.instantiateMorphism(false, m, ndxMap, graph)).join('');		// TODO wrong number of arguments
+					code += morphism.morphisms.map(m => this.instantiateMorphism(null, m, ndxMap, graph)).join('');		// TODO wrong number of arguments
 					break;
 				case 'NamedMorphism':
-					this.generateVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor, isTop);
-					code += this.cline(isTop ? `void ${this.getType(morphism)}(${this.generateFunctionInterface(graph)})\n{\n` : this.generateInternalVariables(graph));
-					isTop && this.incTab();
-					this.decTab();
-					code += this.instantiateMorphism(false, morphism.base, ndxMap, graph, domFactor, codFactor);
-					isTop && this.decTab();
-					this.incTab();
+					// instantiate the named morphism's base
+					code += this.instantiateMorphism(symbol, morphism.base, ndxMap, graph, domFactor, codFactor);
 					break;
 			}
-			code = code + (isTop ? this.cline('}') : '');
 			return code;
 		}
-		instantiateComposite(morphism, ndxMap, upGraph, domFactor, codFactor, isTop)
+		instantiateComposite(morphism, ndxMap, upGraph, domFactor, codFactor, symbol)
 		{
 			const seqGraph = morphism.getSequenceGraph();
-			this.generateVariables(morphism, seqGraph, ndxMap, upGraph, domFactor, codFactor, isTop);
+			this.setupVariables(morphism, seqGraph, ndxMap, upGraph, domFactor, codFactor);
 			let code = '';
-			if (isTop)
-				code += this.cline(`void ${this.getType(morphism)}(${this.generateFunctionInterface(seqGraph)})\n{\n`);
+			if (symbol)
+				code += this.cline(`void ${symbol}(${this.generateFunctionInterface(seqGraph)})\n{\n`);
 			this.incTab();
 			code += this.cline(this.generateInternalVariables(seqGraph));
-			const body = morphism.morphisms.map((m, i) => this.instantiateMorphism(false, m, ndxMap, seqGraph, [i], [i+1])).join('');
+			code += morphism.morphisms.map((m, i) => this.instantiateMorphism(null, m, ndxMap, seqGraph, [i], [i+1])).join('');
 			this.decTab();
-			return code + body;
+			if (symbol)
+				code += this.cline('}');
+			return code;
 		}
 		generateInputs(graph)
 		{
@@ -592,7 +628,6 @@ ${morphismCode}
 		{
 			this.initialize(diagram);
 			this.currentDiagram = null;
-			this.diagram = diagram;
 			let code =
 `// Catecon Diagram ${diagram.name} @ ${Date()}
 #include <iostream>
@@ -603,7 +638,7 @@ ${morphismCode}
 
 ${this.generateHeader()}
 `;
-			this.scanObjects();
+			this.findAllObjects();
 			code += this.generateObjects();
 			code +=
 `
@@ -615,7 +650,6 @@ namespace ${this.getNamespace(diagram)}
 			diagram.forEachMorphism(m =>
 			{
 				this.initialize(this.context);
-//				code += this.generateMorphism(m, generated, new Map(), [0], [1], m.getGraph());
 				code += this.generateMorphism(m, generated);
 			});
 			code += '}\n';
@@ -646,8 +680,6 @@ namespace ${this.getNamespace(diagram)}
 				code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
 			const header = this.header(morphism);
 			const tail = this.tail();
-//			const domainStruct = this.getType(morphism.domain);
-//			const codomainStruct = this.getType(morphism.codomain);
 			if (morphism.domain.isInitial())
 				code += `${header}	return;	// abandon computation\n'${tail}\n${tail}`;	// domain is null, yuk
 			else if (morphism.codomain.isTerminal())
