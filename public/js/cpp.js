@@ -299,12 +299,17 @@ ${members}
 				code = '// objects from diagrams\n' + code;
 			return code;
 		}
+		// Copy variables from the upGraph to the graph, and set the ndxMap as to where the variables are located.
+		// The domFactor and codFactor give the location of the morphism's graph in the upGraph.
 		copyVariables(graph, ndxMap, upGraph, domFactor, codFactor)
 		{
 			let factor = domFactor;	// scan the domain
-			let downFactor = [0];
+			let downFactor = [0];		// domain
 			const fn = (g, i) =>
 			{
+				const upG = upGraph.getFactor(factor);
+				if (upG.element.isTerminal())
+					return;
 				const upFactor = U.pushFactor(factor, i);
 				const up = upGraph.getFactor(upFactor);
 				if ('var' in up)
@@ -317,7 +322,7 @@ ${members}
 			graph.graphs[0].scan(fn);
 			factor = codFactor;		// now scan the codomain
 			const cnt = graph.graphs.length -1;
-			downFactor = [cnt];
+			downFactor = [cnt];		// codomain
 			graph.graphs[cnt].scan(fn);
 		}
 		// label nodes in the graphs with a variable name
@@ -382,8 +387,9 @@ ${members}
 			if (upGraph)
 				this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor);
 			const check = (g, f) => g.element instanceof Cat.CatObject &&
-				(	(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct
-					(g.isLeaf() && !('var' in g)));		// process a leaf
+				(	(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct as var
+					(g.element instanceof Cat.HomObject) ||								// process a hom object as var
+					(g.isLeaf() && !('var' in g)));		// process a leaf as var
 			const process = (g, ndx) =>
 			{
 				if (g.element.isTerminal() || this.getCode(g.element) === '//')		// skip this element as it is a terminal or global variable '//'
@@ -411,6 +417,12 @@ ${members}
 			};
 			graph.scanLinks(graph, check, process);
 		}
+		__findVars(graph, ndx)
+		{
+			if ('var' in graph)
+				console.log('var', ndx, graph.var);
+			graph.graphs.map((g, i) => this.__findVars(g, U.pushFactor(ndx, i)));
+		}
 		// generate code for the morphism as a function
 		// not recursive
 		generateMorphism(morphism, generated)
@@ -425,6 +437,8 @@ ${members}
 		// upGraph has the morphisms input and output variables at the domFactor and codFactor locations
 		instantiateMorphism(symbol, morphism, ndxMap = new Map(), upGraph = null, domFactor = [0], codFactor = [1])		// recursive
 		{
+if (upGraph && upGraph.getFactor(domFactor) === undefined) debugger;
+if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 			let code = '';
 			const graph = morphism.getGraph();
 			switch(morphism.constructor.name)
@@ -433,15 +447,15 @@ ${members}
 					if ('data' in morphism)
 					{
 						const data = JSON.stringify(U.JsonMap(morphism.data));
-						code += this.cline(`std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${type}_data ${data};\n`);
+						code += this.cline(`std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${symbol}_data ${data};\n`);
 					}
-					this.setupVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor);
+					this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
 					code += this.cline(symbol ? `void ${symbol}(${this.generateFunctionInterface(graph)})\n{\n` : this.generateInternalVariables(graph));
 					symbol && this.incTab();
 					const dom = morphism.domain;
 					const cod = morphism.codomain;
 					const domCnt = dom.isTerminal() ? 0 : (!dom.dual && 'objects' in dom ? dom.objects.filter(o => !o.isTerminal()).length : 1);
-					const codCnt = !cod.dual && 'objects' in cod ? cod.objects.filter(o => !o.isTerminal()).length : 1;
+					const codCnt = cod instanceof Cat.ProductObject && !cod.dual && 'objects' in cod ? cod.objects.filter(o => !o.isTerminal()).length : 1;
 					let nuCode = this.getCode(morphism);
 					// handle domain variables
 					if (domCnt > 1)
@@ -474,8 +488,8 @@ if (v === undefined)debugger;
 						if (this.getCode(g.element) !== '//')
 						{
 							const v = g.var;
-							const rx = new RegExp(`%${domCnt}`, 'g');
 if (v === undefined)debugger;
+							const rx = new RegExp(`%${domCnt}`, 'g');
 							nuCode = nuCode.replace(rx, v);
 						}
 					}
@@ -496,28 +510,30 @@ if (v === undefined)debugger;
 					// TODO
 					break;
 				case 'Composite':
-					code += this.instantiateComposite(morphism, ndxMap, graph, domFactor, codFactor, symbol);
+					code += this.instantiateComposite(morphism, upGraph, domFactor, codFactor, symbol);
 					break;
 				case 'ProductMorphism':
-					morphism.morphisms.map((m, i) => this.instantiateMorphism(null, m, ndxMap, graph, Cat.U.pushFactor(domFactor, i), Cat.U.pushFactor(codFactor, i+1)));
+					code += morphism.morphisms.map((m, i) => this.instantiateMorphism(null, m, ndxMap, upGraph, Cat.U.pushFactor(domFactor, i), Cat.U.pushFactor(codFactor, i))).join('');
 					break;
 				case 'ProductAssembly':
 					if (!morphism.dual)
-						code += morphism.morphisms.map((m, i) => this.instantiateMorphism(null, m, ndxMap, graph, domFactor, Cat.U.pushFactor(codFactor, i))).join('');
+						code += morphism.morphisms.map((m, i) => this.instantiateMorphism(null, m, ndxMap, upGraph, domFactor, Cat.U.pushFactor(codFactor, i))).join('');
 					break;
 				case 'HomMorphism':
-					code += morphism.morphisms.map(m => this.instantiateMorphism(null, m, ndxMap, graph)).join('');		// TODO wrong number of arguments
+					code += morphism.morphisms.map(m => this.instantiateMorphism(null, m, ndxMap, upGraph)).join('');		// TODO wrong number of arguments
 					break;
 				case 'NamedMorphism':
 					// instantiate the named morphism's base
-					code += this.instantiateMorphism(symbol, morphism.base, ndxMap, graph, domFactor, codFactor);
+					code += this.instantiateMorphism(symbol, morphism.base, ndxMap, upGraph, domFactor, codFactor);
 					break;
 			}
 			return code;
 		}
-		instantiateComposite(morphism, ndxMap, upGraph, domFactor, codFactor, symbol)
+//		instantiateComposite(morphism, ndxMap, upGraph, domFactor, codFactor, symbol)
+		instantiateComposite(morphism, upGraph, domFactor, codFactor, symbol)
 		{
 			const seqGraph = morphism.getSequenceGraph();
+			const ndxMap = new Map();
 			this.setupVariables(morphism, seqGraph, ndxMap, upGraph, domFactor, codFactor);
 			let code = '';
 			if (symbol)
