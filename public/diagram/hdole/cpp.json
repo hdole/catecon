@@ -1297,8 +1297,8 @@
       "basename": "t_46",
       "prototype": "DiagramText",
       "xy": {
-        "x": -350,
-        "y": -180
+        "x": -440,
+        "y": -130
       },
       "height": "700",
       "weight": "bold"
@@ -2660,6 +2660,12 @@
       "prototype": "DiagramComposite",
       "domain": "hdole/cpp/o_160",
       "codomain": "hdole/cpp/o_163",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC",
       "morphisms": [
         "hdole/cpp/m_31",
@@ -2678,7 +2684,7 @@
           true
         ]
       ],
-      "homsetIndex": 1,
+      "homsetIndex": 5,
       "to": "hdole/cpp/off_tToSize_t"
     },
     {
@@ -3731,11 +3737,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1636610118195,
+  "timestamp": 1637311787080,
   "version": 0,
   "viewport": {
-    "x": 1199,
-    "y": -2765,
-    "scale": 0.364669649090627
+    "x": 789,
+    "y": 694,
+    "scale": 0.877916768020823
   }
 }
