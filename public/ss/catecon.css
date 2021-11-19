@@ -441,7 +441,7 @@ p
 	box-shadow:			4px 4px 2px 1px #bdd9;
 	cursor:				none;
 	display:			inline-block;
-	font-size:			18px;
+	font-size:			12px;
 	margin:				2px;
 	overflow:			hidden;
 	padding:			4px;
@@ -888,6 +888,7 @@ basename
 	white-space:	nowrap;
 	overflow:		hidden;
 	text-overflow:	ellipsis;
+	width:			200px;
 }
 
 description
@@ -1181,4 +1182,9 @@ tspan
 {
 	cursor:			none;
 	user-select:	none;
+}
+
+#help-table
+{
+	margin:	5px;
 }
