@@ -258,6 +258,16 @@ class D2
 		const height = Math.max(...boxes.map(bx => bx.y + bx.height - y));
 		return {x, y, width, height};
 	}
+	static BBox(...coords)
+	{
+		const x = Math.min(...coords.map(c => c.x));
+		const y = Math.min(...coords.map(c => c.y));
+		const maxX = Math.max(...coords.map(c => c.x));
+		const maxY = Math.max(...coords.map(c => c.y));
+		const width = maxX - x;
+		const height = maxY - y;
+		return {x, y, width, height};
+	}
 	static Hull(ary)
 	{
 		const cnt = ary.length;
