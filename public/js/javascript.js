@@ -417,13 +417,8 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 					{
 						const f = this.formatters.get(object.signature);
 						const out = window[U.Token(f)]([id, value !== null ? [0, value] : [1, 0]]);
-//						const span = document.createElement('span');
-//						span.innerHTML = out[0].trim();
-//						html = span;
 						html = H3.span(out[0].trim());
 					}
-//					else
-//						D.RecordError('object has no formatter');
 					break;
 				case 'ProductObject':
 					if (object.dual)
