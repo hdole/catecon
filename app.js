@@ -330,6 +330,11 @@ function validate(req, res, fn)
 		res.status(HTTP.UNAUTHORIZED).end('Error:  bad identity pool');
 		return false;
 	}
+	if (JWK === null)
+	{
+		res.status(HTTP.UNAUTHORIZED).end('Error:  no JWK');
+		return;
+	}
 	const key = JWK.keys.find(k => k.kid === decjwt.header.kid);
 	if (typeof key === 'undefined')
 	{
@@ -424,11 +429,13 @@ async function serve()
 					console.error('mysql initialization for Catecon', {error});
 					process.exit();
 				}
+				console.log('initialize Cat runtime');
 				// main runtime initialization
 				Cat.R.initialize(_ =>
 				{
 					// initialize server
 					console.log('Catecon runtime initialized');
+					console.log('update SQL diagrams by catalog');
 					updateSQLDiagramsByCatalog();
 					result.map(r =>
 					{
@@ -443,6 +450,7 @@ async function serve()
 					const fsDiagrams = findDiagramJsons(dir);
 					fsDiagrams.map(f => fs.readFile(f, (error, data) =>
 					{
+						console.log('readfile', f);
 						if (error)
 						{
 							console.error('ERROR: cannot read diageram file', f, error);
@@ -461,22 +469,6 @@ async function serve()
 				});
 			});
 		});
-		/*
-		dbcon.query('SELECT * FROM Catecon.diagrams', (error, diagrams) =>
-		{
-			if (error)
-			{
-				console.error({error});
-				return;
-			}
-			diagrams.filter(d => !Cat.R.catalog.has(d.name)).map(d =>
-			{
-				d.references = JSON.parse(d.refs);
-				delete d.refs;
-				Cat.R.catalog.set(d.name, d);
-			});
-		});
-		*/
 
 		app.use(express.static(path.join(process.env.CAT_DIR, process.env.HTTP_DIR)));
 
