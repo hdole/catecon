@@ -328,10 +328,9 @@
 		<circle cx="160" cy="160" r="160" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-place" class="icon" viewbox="0 0 320 320">
-		<circle cx="40" cy="40" r="80" fill="url(#radgrad1)"/>
-		<path class="arrow9" d="M120,40 C260,40 260,80 260,140" marker-end="url(#arrowhead)"/>
-		<line class="arrow0" x1="220" y1="240" x2="300" y2="240"/>
-		<line class="arrow0" x1="280" y1="180" x2="240" y2="300"/>
+		<circle cx="100" cy="100" r="180" fill="url(#radgrad1)"/>
+		<line class="arrow0" x1="160" y1="240" x2="320" y2="240"/>
+		<line class="arrow0" x1="280" y1="160" x2="200" y2="320"/>
 	</symbol>
 	<symbol id="icon-play" class="icon" viewbox="0 0 320 320">
 		<text text-anchor="middle" x="160" y="260" style="font-size:240px;stroke:#000;fill:black;">&#9654;</text>
