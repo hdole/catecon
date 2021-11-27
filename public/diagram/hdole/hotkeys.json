@@ -16,7 +16,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 980,
-        "y": 320
+        "y": 330
       },
       "height": "200",
       "weight": "bold"
@@ -1115,7 +1115,7 @@
       "weight": "bold"
     },
     {
-      "description": "If one element selected, then select the next element of the same type.",
+      "description": "If one element is selected, then select the next element of the same type.",
       "basename": "t_106",
       "prototype": "DiagramText",
       "xy": {
@@ -1125,7 +1125,7 @@
       "height": "24"
     },
     {
-      "description": "If one element selected, then select the prior element of the same type.",
+      "description": "If one element is selected, then select the prior element of the same type.",
       "basename": "t_107",
       "prototype": "DiagramText",
       "xy": {
@@ -1167,11 +1167,11 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1637186895046,
+  "timestamp": 1637393499677,
   "version": 0,
   "viewport": {
-    "x": -1247,
-    "y": -96,
-    "scale": 1.5244005324126952
+    "x": -1041,
+    "y": -169,
+    "scale": 1.329201171303448
   }
 }

@@ -319,7 +319,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -382,11 +384,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632475617760,
+  "timestamp": 1637487415683,
   "version": 0,
   "hiddenCells": [
-    "8901823568e5dafc364b7e06357dd9d01318f1b37269e38f12a42911ec7b9800",
-    "ce18ae784869bc058864cf12812c165721df1800bcbf615259df86efbe164d76"
+    "hdole/while/{m_0,m_2},{m_9,m_4}",
+    "hdole/while/{m_7,m_3},{m_8,m_2}"
   ],
   "viewport": {
     "x": 504,

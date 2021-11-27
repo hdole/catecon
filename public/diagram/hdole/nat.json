@@ -565,7 +565,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -1360,
-        "y": -380
+        "y": -390
       },
       "height": "350",
       "weight": "bold"
@@ -4155,7 +4155,7 @@
       "basename": "decr",
       "prototype": "Morphism",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -4238,7 +4238,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -4302,7 +4302,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4324,7 +4324,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4550,7 +4550,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "%1 = %0--;// TODO exception"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -5349,11 +5349,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1636362356955,
+  "timestamp": 1637750550898,
   "version": 0,
   "viewport": {
-    "x": 1381,
-    "y": 583,
-    "scale": 0.8050509662301694
+    "x": 1233,
+    "y": 523,
+    "scale": 0.713931073591234
   }
 }

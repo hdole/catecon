@@ -381,8 +381,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
       "xy": {
-        "x": 760,
-        "y": 370
+        "x": 700,
+        "y": 450
       }
     },
     {
@@ -390,8 +390,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/Point",
       "xy": {
-        "x": 1100,
-        "y": 370
+        "x": 1040,
+        "y": 450
       }
     },
     {
@@ -732,8 +732,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/CPo{A,B}oPC",
       "xy": {
-        "x": 700,
-        "y": 400
+        "x": 400,
+        "y": 380
       }
     },
     {
@@ -782,6 +782,12 @@
       "prototype": "DiagramComposite",
       "domain": "hdole/test/o_4",
       "codomain": "hdole/test/o_8",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/test/Cm{f,g}mC",
       "morphisms": [
         "hdole/test/m_5",
@@ -1308,20 +1314,6 @@
       "to": "hdole/test/Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD"
     },
     {
-      "basename": "m_31",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/test/o_4",
-      "codomain": "hdole/test/o_8",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 3,
-      "to": "hdole/test/comp"
-    },
-    {
       "basename": "m_35",
       "prototype": "IndexMorphism",
       "domain": "hdole/test/o_28",
@@ -1399,7 +1391,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -1828,13 +1822,6 @@
       "codomain": "hdole/test/CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
     },
     {
-      "basename": "comp",
-      "prototype": "NamedMorphism",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/C",
-      "source": "hdole/test/Cm{f,g}mC"
-    },
-    {
       "basename": "a/dist",
       "prototype": "NamedMorphism",
       "domain": "hdole/test/Po{CPo{A,B}oPC,C}oP",
@@ -1843,14 +1830,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632032798565,
+  "timestamp": 1637958496779,
   "version": 0,
-  "hiddenCells": [
-    "2dd088f7e4610b2018d8eda5bb33f4354302ee76c868fae9ec187fc6f5e97ba0"
-  ],
   "viewport": {
-    "x": 991,
-    "y": 669,
-    "scale": 0.5783020241735838
+    "x": -715,
+    "y": 828,
+    "scale": 1.2623607929783527
   }
 }
