@@ -194,6 +194,31 @@ table.smallTable
 	border-collapse:	collapse;
 }
 
+table.verticalTools
+{
+	width:				auto;
+	margin:				0px;
+	border-collapse:	collapse;
+	box-shadow:			2px 2px 2px 2px #bbbb;
+	opacity:			0;
+	position:			absolute;
+	top:				0px;
+	right:				6px;
+	transition:			0.3s;
+}
+
+table.center
+{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+table.left
+{
+	margin-left:0px;
+	margin-right:auto;
+}
+
 #catalog-display
 {
 	display:				grid;
@@ -413,6 +438,27 @@ p
 	margin:		4px;
 }
 
+.toolbar-element
+{
+	background-color:	#eee;
+	border-collapse:	collapse;
+	border-width: 		0px;
+	border-radius:		4px;
+	box-shadow:			2px 2px 2px 2px #bbbb;
+	display:			inline-block;
+	margin:				0px;
+	overflow:			hidden;
+	opacity:			0;
+	padding:			0px;
+	position:			absolute;
+	right:				6px;
+	text-align:			left;
+	top:				0px;
+	transition:			opacity 1s, height 0s;
+	width:				auto;
+	z-index:			2;
+}
+
 .hidden
 {
 	opacity:	0;			/* needed for instant transition */
@@ -458,7 +504,7 @@ p
 {
 	fill:				none;
 	stroke:				black;
-	stroke-dasharray:	2,2;
+	stroke-dasharray:	10,10;
 	stroke-width:		20px;
 	stroke-miterlimit:	2.61313;
 }
@@ -540,12 +586,6 @@ p
 	box-sizing:			border-box;
 }
 
-table.center
-{
-	margin-left:auto;
-	margin-right:auto;
-}
-
 .diagramText
 {
 	font-size:	18px;
@@ -588,26 +628,23 @@ table.center
 .buttonBarRight
 {
 	background-color:	#fff;
-	height:			32px;
-	margin-bottom:	0px;
-	margin-right:	0px;
-	margin-top:		0px;
-	margin-left:	auto;
-	padding:		0px;
-	text-align:		right;
-	width:				auto;
+	margin-bottom:		0px;
+	margin-right:		0px;
+	margin-left:		auto;
+	margin-top:			0px;
+	padding:			0px;
+	text-align:			right;
 }
 
 .buttonBarLeft
 {
 	background-color:	#fff;
-	height:			32px;
-	margin-bottom:	0px;
-	margin-right:	auto;
-	margin-left:	0px;
-	margin-top:		0px;
-	padding:		0px;
-	text-align:		left;
+	margin-bottom:		0px;
+	margin-right:		auto;
+	margin-left:		0px;
+	margin-top:			0px;
+	padding:			0px;
+	text-align:			left;
 }
 
 .textButton
@@ -848,6 +885,7 @@ use.emphasis
 	border-radius:		5px;
 	margin:				1px;
 	padding:			2px;
+	position:			relative;
 }
 
 .element:hover
@@ -1063,19 +1101,6 @@ span[contenteditable="true"].selected
 	box-shadow:			2px 2px 2px 2px #bbbb;
 }
 
-table.verticalTools
-{
-	width:				auto;
-	margin:				0px;
-	border-collapse:	collapse;
-	box-shadow:			2px 2px 2px 2px #bbbb;
-	opacity:			0;
-	position:			absolute;
-	top:				0px;
-	right:				6px;
-	transition:			0.3s;
-}
-
 tspan
 {
 	white-space:		pre;
@@ -1084,7 +1109,6 @@ tspan
 .clickable
 {
 	cursor:				pointer;
-	transition:			0.3s
 }
 
 .assyError
