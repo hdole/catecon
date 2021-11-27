@@ -1080,7 +1080,7 @@ args.codomain = 'zf/Set';
 	}
 	fetchCatalog(fn)
 	{
-		const process = (data, fn) =>
+		const process = data =>
 		{
 			if (isGUI)
 				this.cloudURL = data.cloudURL;
@@ -1097,13 +1097,20 @@ args.codomain = 'zf/Set';
 			});
 			fn();
 		};
-		(isGUI || this.cloudURL) && fetch(this.getURL('catalog')).then(response =>
+		if (isGUI || this.cloudURL)
 		{
-			if (response.ok)
-				response.json().then(data => process(data, fn));
-			else
-				console.error('error downloading catalog', url, response.statusText);
-		});
+			console.log('fetch catalog from server');
+			const url = this.getURL('catalog');
+			fetch(url).then(response =>
+			{
+				if (response.ok)
+					response.json().then(data => process(data));
+				else
+					console.error('error downloading catalog', url, response.statusText);
+			});
+		}
+		else
+			fn();
 	}
 	canDeleteDiagram(d)
 	{
@@ -1200,7 +1207,7 @@ args.codomain = 'zf/Set';
 		const bodyStr = JSON.stringify(body);
 		const headers = {'Content-Type':'application/json;charset=utf-8', token:this.user.token};
 		const args = {method:'POST', body:bodyStr, headers};
-		return fetch(url, args);
+		return fetch(url, args).catch(err => D.recordError(err));
 	}
 	updateRefcnts()
 	{
@@ -2486,7 +2493,7 @@ class DiagramTool extends ElementTool
 					buttons.push(D.getIcon('cpp', 'download-cpp', e => diagram.downloadCPP(e), {title:'Download C++'}));
 				}
 				buttons.push(D.getIcon('json', 'download-json', e => diagram.downloadJSON(e), {title:'Download JSON'}));
-				buttons.push(D.getIcon('png', 'download-png', e => window.open(`diagram/${name}.png`, btnSize,
+				buttons.push(D.getIcon('png', 'download-png', e => window.open(`diagram/${name}.png`, 'Diagram PNG',
 					`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), {title:'View PNG'}));
 			}
 		}
@@ -4898,7 +4905,7 @@ class Display
 					return;
 				node = node.parentNode;
 			}
-			if (this.session.mode === 'diagram')
+			if (this.session.mode === 'diagram' && R.diagram)
 			{
 				const dirX = Math.max(-1, Math.min(1, e.wheelDeltaX));
 				const dirY = Math.max(-1, Math.min(1, e.wheelDeltaY));
@@ -5225,6 +5232,63 @@ class Display
 		img.crossOrigin = "";
 		img.src = url;
 	}
+	/*
+	svg2canvas(diagram, fn)
+	{
+		if (!diagram.svgRoot)
+			return;
+//		const svg = diagram.svgBase;
+		const svg = diagram.svgRoot;
+		const copy = svg.cloneNode(true);
+		const top = H3.svg();
+		const markers = ['arrowhead', 'arrowheadRev'];
+		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
+		top.appendChild(copy);
+		const ssWidth = this.snapshotWidth;
+		const ssHeight = this.snapshotHeight;
+		const ssRat = ssHeight / ssWidth;
+		const winWidth = window.innerWidth;
+		const winHeight = window.innerHeight;
+		const winRat = winHeight / winWidth;
+		const vp = D.session.getViewport(diagram.name);
+//		const placement = D.session.getPlacement(diagram.name);
+//		copy.setAttribute('transform', `translate(${vp.x} ${vp.y}) scale(${vp.scale} ${vp.scale})`);
+//		const scale = vp.scale;
+		const scale = 0.01;
+		const x = -500;
+		const y = -500;
+//		copy.setAttribute('transform', `translate(${vp.x} ${vp.y}) scale(${scale} ${scale})`);
+		copy.setAttribute('transform', `translate(${x} ${y}) scale(${scale} ${scale})`);
+		// copy from the original tree to the copy
+		const width = winWidth * (ssRat < winRat ? winRat / ssRat : 1);
+		const height = winHeight * (ssRat > winRat ? ssRat / winRat : 1);
+debugger;
+		this.copyStyles(copy, svg, new D2({x:0, y:0, width, height}));
+		const topData = (new XMLSerializer()).serializeToString(top);
+		const svgBlob = new Blob([topData], {type: "image/svg+xml;charset=utf-8"});
+		const url = this.url.createObjectURL(svgBlob);
+		const img = new Image(ssWidth, ssHeight);
+		img.onload = _ =>
+		{
+			const canvas = document.createElement('canvas');
+			canvas.width = ssWidth;
+			canvas.height = ssHeight;
+			const ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, ssWidth, ssHeight);
+			ctx.fillStyle = 'white';
+			ctx.fillRect(0, 0, ssWidth, ssHeight);
+			ctx.drawImage(img, 0, 0);
+			this.url.revokeObjectURL(url);
+			if (fn)
+			{
+				const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+				fn(cargo, `${diagram.name}.png`);
+			}
+		};
+		img.crossOrigin = "";
+		img.src = url;
+	}
+	*/
 	onEnter(e, fn, that = null)
 	{
 		if (e.key === 'Enter')
@@ -5723,7 +5787,7 @@ class Display
 	{
 		this.setSessionViewport(this.getViewportByBBoxBottom(bbox));
 	}
-	userToSessionCoords(xy)
+	userToSessionCoords(xy, showit = false)
 	{
 		const viewport = this.session.getCurrentViewport();
 		const scale = 1.0 / viewport.scale;
@@ -5735,9 +5799,11 @@ class Display
 		{
 			d2.width = scale * xy.width;
 			d2.height = scale * xy.height;
+			if (showit)
+				R.diagram.svgTranslate.appendChild(H3.circle('.ball', {cx:d2.x + d2.width, cy:d2.y + d2.height, r:5, fill:'red'}));
 		}
-		if (false)
-			this.svgTranslate.appendChild(H3.circle('.ball', {cx:d2.x, cy:d2.y, r:5, fill:'red'}));
+		if (showit)
+			R.diagram.svgTranslate.appendChild(H3.circle('.ball', {cx:d2.x, cy:d2.y, r:5, fill:'red'}));
 		return d2;
 	}
 	sessionToUserCoords(xy)
@@ -8000,7 +8066,7 @@ class ProductObject extends MultiObject
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : ProductObject.ProperName(nuArgs.objects, dual);
 		super(diagram, nuArgs);
 		this.setSignature();
-		isGUI && this.constructor.name === 'ProductObject' && D.emitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'ProductObject' && ('silent' in args ? !args.silent : true) && D.emitElementEvent(diagram, 'new', this);
 	}
 	setSignature()
 	{
@@ -9892,7 +9958,7 @@ class ConeAssemblyAction extends Action
 				for(let i=1; i<source.length; ++i)
 				{
 					const snk = sink[i];
-					diagram.checkEquivalence([source[0], sink[0]], [source[i], sink[i]]);
+//					diagram.checkEquivalence([source[0], sink[0]], [source[i], sink[i]]);
 				}
 			}
 		}
@@ -13470,7 +13536,7 @@ class IndexCategory extends Category
 	}
 	getCell(name)
 	{
-		return this.cells.get(name);
+		return typeof name === 'string' ? this.cells.get(name) : name instanceof Cell ? name : null;
 	}
 	findCells(diagram)
 	{
@@ -13701,7 +13767,7 @@ class Composite extends MultiMorphism
 		const graphs = this.morphisms.map(m => m.getGraph());
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
-		const sequence = this.diagram.get('ProductObject', {objects});
+		const sequence = this.diagram.get('ProductObject', {objects, silent:true});
 		// bare graph to hang links on
 		const seqGraph = sequence.getGraph();
 		// merge the individual graphs into the sequence graph
@@ -14869,7 +14935,7 @@ class Diagram extends Functor
 				toolbar2.appendChild(H3.td(D.getIcon('downcloud', 'downcloud', e => this.download(e, false), {title:'Download from cloud ' + R.cloudURL})));
 		}
 		toolbar2.appendChild(H3.td(D.getIcon('json', 'download-json', e => this.downloadJSON(e), {title:'Download JSON'})));
-		toolbar2.appendChild(H3.td(D.getIcon('png', 'download-png', e => window.open(`diagram/${this.name}.png`, btnSize,
+		toolbar2.appendChild(H3.td(D.getIcon('png', 'download-png', e => window.open(`diagram/${this.name}.png`, 'Diagram PNG',
 					`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), {title:'View PNG'})));
 	}
 	purge()
@@ -17200,37 +17266,6 @@ class Assembler
 			// thus each morphism has the current domain as its own domain;
 			// the codomain is something else
 			//
-			/*
-			const step1s = [];
-			const step2s = [];
-			const step3s = [];
-			coreferences.map(insert =>
-			{
-				const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
-				// get the morphisms attached to each element
-				const starters = [...insert.domain.codomains].filter(m => !this.references.has(m));
-				const comps = this.composites.get(insert.domain);
-				comps.map(cmp => starters.push(cmp[0]));
-				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index));
-				const homMorph = diagram.prod(...homMorphs);
-				step1s[fctr] = diagram.fctr(homMorph.domain, [-1, []]);	// A --> * x A
-				const homObj = diagram.hom(homMorph.domain, homMorph.codomain);
-				homMorph.incrRefcnt();
-				const data = new Map();
-				data.set(0, homMorph);	// 0 is the value since the domain is the terminal object
-				const dataMorph = new Morphism(diagram, {basename:diagram.getAnon('s'), domain:terminal, codomain:homObj, data});
-				dataMorphs[fctr] = dataMorph;
-				step2s[fctr] = diagram.prod(dataMorph, diagram.id(homMorph.domain));
-				step3s[fctr] = diagram.eval(homMorph.domain, homMorph.codomain);
-			});
-			// map each coproduct factor A to 1xA
-			const step1 = diagram.coprod(...step1s);
-			// coproduct of hom-morphs and id's
-			const step2 = diagram.coprod(...step2s);
-			// get the evaluation maps
-			const step3 = diagram.coprod(...step3s);
-			*/
-
 			const subs = [];
 			coreferences.map(insert =>
 			{
