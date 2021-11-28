@@ -899,7 +899,7 @@ args.codomain = 'zf/Set';
 			let diagrams = [];
 			const downloader = async _ =>
 			{
-				const promises = downloads.map(url => fetch(url));
+				const promises = downloads.map(url => fetch(url).catch(err => D.recordError(err)));
 				const responses = await Promise.all(promises);
 				const jsons = (await Promise.all(responses.map(async res => await res.ok ? res.json() : null))).filter(j => j);
 				diagrams = jsons.map(json =>
@@ -1082,6 +1082,7 @@ args.codomain = 'zf/Set';
 	{
 		const process = data =>
 		{
+			console.log('processing catalog data');
 			if (isGUI)
 				this.cloudURL = data.cloudURL;
 			const diagrams = data.diagrams;
@@ -1103,11 +1104,12 @@ args.codomain = 'zf/Set';
 			const url = this.getURL('catalog');
 			fetch(url).then(response =>
 			{
+				console.log('diagram catalog response received');
 				if (response.ok)
 					response.json().then(data => process(data));
 				else
 					console.error('error downloading catalog', url, response.statusText);
-			});
+			}).catch(err => D.recordError(err));
 		}
 		else
 			fn();
@@ -1148,7 +1150,11 @@ args.codomain = 'zf/Set';
 				else
 					this.catalog.delete(name);
 				R.sync = 1;
-			}).catch(err => D.recordError(err));
+			}).catch(err =>
+			{
+				R.sync = 1;
+				D.recordError(err);
+			});
 		}
 	}
 	getDiagramInfo(name)
@@ -1170,7 +1176,7 @@ args.codomain = 'zf/Set';
 	}
 	diagramSearch(search, fn)
 	{
-		fetch(this.getURL(`search?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams));
+		fetch(this.getURL(`search?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams)).catch(err => D.recordError(err));
 	}
 	getURL(suffix, local = true)
 	{
@@ -1209,14 +1215,12 @@ args.codomain = 'zf/Set';
 		const args = {method:'POST', body:bodyStr, headers};
 		return fetch(url, args).catch(err => D.recordError(err));
 	}
-	updateRefcnts()
+	updateRefcnts()		// admin action
 	{
 		const headers = {'Content-Type':'application/json;charset=utf-8', token:this.user.token};
-		fetch(this.getURL('refcnts'), {method:'POST', body:JSON.stringify({user:this.user.name}), headers}).then(response => response.json()).then(
-		{
-		}).catch(err => D.recordError(err));
+		fetch(this.getURL('refcnts'), {method:'POST', body:JSON.stringify({user:this.user.name}), headers}).then(response => response.json()).then({}).catch(err => D.recordError(err));
 	}
-	rewriteDiagrams()
+	rewriteDiagrams()		// admin action
 	{
 		const headers = {'Content-Type':'application/json;charset=utf-8', token:this.user.token};
 		fetch(this.getURL('rewrite'), {method:'POST', body:JSON.stringify({user:this.user.name}), headers}).then(response =>
@@ -3494,6 +3498,7 @@ class Display
 			// the svg text element being editted
 			editElement:	{value: null,		writable: true},
 			elementTool:	{value: null,		writable: true},
+			gradients:		{value: {radgrad1:null, radgrad2:null},	writable: false},
 			gridding:		{value: true,		writable: true},
 			helpPanel:		{value: null,		writable: true},
 			id:				{value: 0,			writable: true},
@@ -4169,6 +4174,8 @@ class Display
 			}
 			return false;
 		};
+		this.gradients.radgrad1 = document.getElementById('radgrad1');		// these gradients use url's
+		this.gradients.radgrad2 = document.getElementById('radgrad2');
 	}
 	readDefaults()	// assume run only one per loading
 	{
@@ -5128,7 +5135,7 @@ class Display
 				break;
 		}
 	}
-	copyStyles(dest, src, wndow)
+	copyStyles(dest, src, wndow = null)
 	{
 		for (var cd = 0; cd < dest.childNodes.length; cd++)
 		{
@@ -5159,7 +5166,7 @@ class Display
 				if (elt)
 				{
 					const bbox = R.diagram.diagramToUserCoords(elt.getBBox());
-					if (!D2.Overlap(wndow, bbox))
+					if (wndow && !D2.Overlap(wndow, bbox))
 						hidden = true;
 				}
 			}
@@ -5192,9 +5199,11 @@ class Display
 			return;
 		const svg = diagram.svgBase;
 		const copy = svg.cloneNode(true);
+		const radgrad1 = D.gradients.radgrad1.cloneNode(true);
 		const top = H3.svg();
 		const markers = ['arrowhead', 'arrowheadRev'];
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
+		top.appendChild(radgrad1);
 		top.appendChild(copy);
 		const width = this.snapshotWidth;
 		const height = this.snapshotHeight;
