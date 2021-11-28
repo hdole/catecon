@@ -5205,10 +5205,12 @@ class Display
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
 		top.appendChild(radgrad1);
 		top.appendChild(copy);
-		const width = this.snapshotWidth;
-		const height = this.snapshotHeight;
-		const wRat = window.innerWidth / width;
-		const hRat = window.innerHeight / height;
+		const ssWidth = this.snapshotWidth;
+		const ssHeight = this.snapshotHeight;
+		const winWidth = window.innerWidth;
+		const winHeight = window.innerHeight;
+		const wRat = winWidth / ssWidth;
+		const hRat = winHeight / ssHeight;
 		const rat = hRat < wRat ? wRat : hRat;
 		const p = D.session.getPlacement(diagram.name);
 		const vp = D.session.getViewport(diagram.name);
@@ -5216,62 +5218,10 @@ class Display
 		const y = (p.y * vp.scale + vp.y) / rat;
 		const s = vp.scale * p.scale / rat;
 		copy.setAttribute('transform', `translate(${x} ${y}) scale(${s} ${s})`);
-		this.copyStyles(copy, svg, new D2({x:0, y:0, width:D.width(), height:D.height()}));
-		const topData = (new XMLSerializer()).serializeToString(top);
-		const svgBlob = new Blob([topData], {type: "image/svg+xml;charset=utf-8"});
-		const url = this.url.createObjectURL(svgBlob);
-		const img = new Image(width, height);
-		img.onload = _ =>
-		{
-			const canvas = document.createElement('canvas');
-			canvas.width = width;
-			canvas.height = height;
-			const ctx = canvas.getContext('2d');
-			ctx.clearRect(0, 0, width, height);
-			ctx.fillStyle = 'white';
-			ctx.fillRect(0, 0, width, height);
-			ctx.drawImage(img, 0, 0);
-			this.url.revokeObjectURL(url);
-			if (fn)
-			{
-				const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-				fn(cargo, `${diagram.name}.png`);
-			}
-		};
-		img.crossOrigin = "";
-		img.src = url;
-	}
-	/*
-	svg2canvas(diagram, fn)
-	{
-		if (!diagram.svgRoot)
-			return;
-//		const svg = diagram.svgBase;
-		const svg = diagram.svgRoot;
-		const copy = svg.cloneNode(true);
-		const top = H3.svg();
-		const markers = ['arrowhead', 'arrowheadRev'];
-		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
-		top.appendChild(copy);
-		const ssWidth = this.snapshotWidth;
-		const ssHeight = this.snapshotHeight;
 		const ssRat = ssHeight / ssWidth;
-		const winWidth = window.innerWidth;
-		const winHeight = window.innerHeight;
 		const winRat = winHeight / winWidth;
-		const vp = D.session.getViewport(diagram.name);
-//		const placement = D.session.getPlacement(diagram.name);
-//		copy.setAttribute('transform', `translate(${vp.x} ${vp.y}) scale(${vp.scale} ${vp.scale})`);
-//		const scale = vp.scale;
-		const scale = 0.01;
-		const x = -500;
-		const y = -500;
-//		copy.setAttribute('transform', `translate(${vp.x} ${vp.y}) scale(${scale} ${scale})`);
-		copy.setAttribute('transform', `translate(${x} ${y}) scale(${scale} ${scale})`);
-		// copy from the original tree to the copy
 		const width = winWidth * (ssRat < winRat ? winRat / ssRat : 1);
 		const height = winHeight * (ssRat > winRat ? ssRat / winRat : 1);
-debugger;
 		this.copyStyles(copy, svg, new D2({x:0, y:0, width, height}));
 		const topData = (new XMLSerializer()).serializeToString(top);
 		const svgBlob = new Blob([topData], {type: "image/svg+xml;charset=utf-8"});
@@ -5297,7 +5247,6 @@ debugger;
 		img.crossOrigin = "";
 		img.src = url;
 	}
-	*/
 	onEnter(e, fn, that = null)
 	{
 		if (e.key === 'Enter')
