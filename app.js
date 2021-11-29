@@ -289,13 +289,17 @@ let JWK = null;
 function fetchJWK()
 {
 	const url = `https://cognito-idp.${process.env.AWS_USER_COG_REGION}.amazonaws.com/${process.env.AWS_USER_IDENTITY_POOL}/.well-known/jwks.json`;
+	console.log('fetch JWK', url);
 	fetch(url).then(response =>
 	{
 		if (response.ok)
+		{
+			console.log('JWK received');
 			response.json().then(json => {JWK = json;});
+		}
 		else
 			console.error('ERROR in fetchJWK: ', response.statusText);
-	});
+	}).catch(err => console.error('ERROR in fetchJWK: ', err));
 }
 fetchJWK();
 
@@ -372,7 +376,7 @@ function updateSQLDiagramsByCatalog()
 		const localDiagrams = new Set(diagrams.map(info => info.name));
 		diagrams.map(info =>
 		{
-			if (info.user !== 'sys')
+			if (Cat.R.canUploadUser(info.user))
 			{
 				const cloudInfo = Cat.R.catalog.get(info.name);
 				if (cloudInfo && cloudInfo.timestamp > info.timestamp)		// cloud is newer
@@ -383,7 +387,7 @@ function updateSQLDiagramsByCatalog()
 		remaining.forEach(name =>
 		{
 			const info = Cat.R.catalog.get(name);
-			updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp, localDiagrams.has(name));
+			Cat.R.canUploadUser(info.user) && updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp, localDiagrams.has(name));
 		});
 	});
 }
@@ -450,7 +454,7 @@ async function serve()
 					const fsDiagrams = findDiagramJsons(dir);
 					fsDiagrams.map(f => fs.readFile(f, (error, data) =>
 					{
-						console.log('readfile', f);
+						console.log('load local diagram:', f);
 						if (error)
 						{
 							console.error('ERROR: cannot read diageram file', f, error);
@@ -463,9 +467,10 @@ async function serve()
 						cloudTimestamp = cloudTimestamp ? cloudTimestamp: 0;
 						updateDiagramTable(info.name, info, _ => {}, cloudTimestamp, inCloud)
 					}));
+					console.log('load javascript.js');
 					require('./' + path.join(process.env.HTTP_DIR, 'js', 'javascript.js'));
 					determineRefcnts();
-					log('server started');
+					console.log('server started', new Date().toLocaleString());
 				});
 			});
 		});
