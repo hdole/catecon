@@ -899,7 +899,17 @@ args.codomain = 'zf/Set';
 			let diagrams = [];
 			const downloader = async _ =>
 			{
-				const promises = downloads.map(url => fetch(url).catch(err => D.recordError(err)));
+				const promises = downloads.map((url, i) => fetch(url).then(res =>
+				{
+					if (!res.ok)
+					{
+						D.recordError(`Cannot download ${url}`);
+						D.recordError('Removed from session');
+						D.session.remove(cloudDiagrams[i]);
+						D.session.save();
+					}
+					return res;
+				}).catch(err => D.recordError(err)));
 				const responses = await Promise.all(promises);
 				const jsons = (await Promise.all(responses.map(async res => await res.ok ? res.json() : null))).filter(j => j);
 				diagrams = jsons.map(json =>
@@ -1364,6 +1374,10 @@ args.codomain = 'zf/Set';
 			leftLeg:cell.left.map(m => m instanceof IndexMorphism ? m.to.signature : m.signature),
 			rightLeg:cell.right.map(m => m instanceof IndexMorphism ? m.to.signature : m.signature)
 		});
+	}
+	canUploadUser(name)
+	{
+		return name !== 'sys' && name !== 'zf';
 	}
 }
 
@@ -2657,7 +2671,7 @@ class DiagramTool extends ElementTool
 		this.bpd.descriptionElt.onkeydown = e => Cat.D.onEnter(e, action);
 		this.codomainElt = H3.select('##new-codomain.w100');
 		for (const [name, e] of R.$CAT.elements)
-			if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
+			if (e instanceof Category && !(e instanceof IndexCategory) && R.canUploadUser(e.user))
 				this.codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
 		this.codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
 		const tbl = newSection.querySelector('table');
@@ -2669,7 +2683,7 @@ class DiagramTool extends ElementTool
 	{
 		const diagrams = [];
 		const filter = document.getElementById(`${this.type}-search-value`).value;
-		R.catalog.forEach((info, name) => info.user !== 'sys' && name.includes(filter) &&
+		R.catalog.forEach((info, name) => R.canUploadUser(info.user) && name.includes(filter) &&
 			info.basename !== info.user &&
 			diagrams.push(info));
 		diagrams.sort(this.searchArgs.sorter);
@@ -2858,7 +2872,7 @@ class Catalog extends DiagramTool		// GUI only
 	{
 		const codomainElt = H3.select('##catalog-select-codomain');
 		for (const [name, e] of R.$CAT.elements)
-			if (e instanceof Category && !(e instanceof IndexCategory) && e.user !== 'sys')
+			if (e instanceof Category && !(e instanceof IndexCategory) && R.canUploadUser(e.user))
 				codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
 		codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
 		const span = document.getElementById('catalog-select-codomain-span');
@@ -3154,9 +3168,7 @@ class Catalog extends DiagramTool		// GUI only
 	}
 	diagramFilter(diagram)
 	{
-		if (diagram.user === 'sys')
-			return false;
-		return true;
+		return R.canUploadUser(diagram.user);
 	}
 	onwheel(e)
 	{
