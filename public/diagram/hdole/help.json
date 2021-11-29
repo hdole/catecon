@@ -16,13 +16,13 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 150,
-        "y": -240
+        "y": -220
       },
       "height": "200",
       "weight": "bold"
     },
     {
-      "description": "For general categorial concepts, see ncatlab.org.",
+      "description": "For general categorial concepts, see NLab at ncatlab.org.",
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
@@ -54,7 +54,7 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1637477796398,
+  "timestamp": 1638138406093,
   "version": 0,
   "viewport": {
     "x": -283,

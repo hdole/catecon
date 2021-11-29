@@ -15,7 +15,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 980,
+        "x": 990,
         "y": 330
       },
       "height": "200",
@@ -1167,7 +1167,7 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1637393499677,
+  "timestamp": 1638138519353,
   "version": 0,
   "viewport": {
     "x": -1041,

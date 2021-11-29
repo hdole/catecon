@@ -204,8 +204,8 @@
       "basename": "t_7",
       "prototype": "DiagramText",
       "xy": {
-        "x": 140,
-        "y": 10
+        "x": 160,
+        "y": 40
       },
       "height": "200",
       "weight": "bold"
@@ -368,11 +368,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632822258991,
+  "timestamp": 1638160559811,
   "version": 0,
   "viewport": {
     "x": 544,
-    "y": 280,
+    "y": 212,
     "scale": 1
   }
 }
