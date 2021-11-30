@@ -1698,11 +1698,9 @@ class Navbar
 		left.push(D.getIcon('loginPanelToggle', 'login', _ => Cat.D.loginPanel.toggle(), {title:'Login', scale, help:'hdole/user'}));
 		left.push(D.getIcon('helpPanelToggle', 'help', _ => Cat.D.helpPanel.toggle(), {title:'Help', scale, help:'hdole/help'}));
 		left.push(D.getIcon('settingsPanelToggle', 'settings', _ => Cat.D.settingsPanel.toggle(), {title:'Settings', scale}));
+		left.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), {title:'Console', scale}));
 		if (D.session.mode === 'diagram')
-		{
-			left.push(D.getIcon('ttyPanelToggle', 'tty', _ => Cat.D.ttyPanel.toggle(), {title:'Console', scale}));
 			left.push(D.getIcon('threeDPanelToggle', 'threeD', _ => Cat.D.threeDPanel.toggle(), {title:'3D view', scale, help:'hdole/threeD'}));
-		}
 		// TODO
 		if (false)	// view all icons, sorta
 		{
@@ -2273,8 +2271,8 @@ class BPD			// basename, proper name, description
 		rows.push(H3.tr(H3.td(this.descriptionElt)));
 		const elts = [H3.h5(headline)];
 		elts.push(H3.table(rows));
-		elts.push(H3.span(D.getIcon(action.name, 'edit', action, {title:headline})));
-		return H3.tr(H3.td(elts, `##${id}`, {colspan:2}));
+		elts.push(D.getIcon(action.name, 'edit', action, {title:headline}));
+		return H3.tr(H3.td(elts, {colspan:2}), `##${id}`);
 	}
 	reset()
 	{
@@ -2664,7 +2662,8 @@ class DiagramTool extends ElementTool
 	addNewSection()
 	{
 		const newSection = this.bpd.getNewSection(R.$CAT, 'Diagram-new', e => this.create(e), this.headline);
-		newSection.appendChild(D.getIcon('copy', 'copy', e => this.copy(e), {title:'Copy diagram'}));
+		const copyIt = D.getIcon('copy', 'copy', e => this.copy(e), {title:'Copy diagram'});
+		newSection.querySelector('td').appendChild(copyIt);
 		const action = e => this.create(e);
 		this.bpd.basenameElt.onkeydown = e => Cat.D.onEnter(e, action);
 		this.bpd.properNameElt.onkeydown = e => Cat.D.onEnter(e, action);
@@ -2676,8 +2675,7 @@ class DiagramTool extends ElementTool
 		this.codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
 		const tbl = newSection.querySelector('table');
 		tbl.appendChild(H3.tr(H3.td(this.codomainElt)));
-		const elts = [newSection, H3.hr()];
-		D.toolbar.table.appendChild(H3.tr(H3.td(newSection)));
+		D.toolbar.table.appendChild(newSection);
 	}
 	getMatchingElements()
 	{
@@ -2708,9 +2706,9 @@ class DiagramTool extends ElementTool
 	}
 	copy(e)
 	{
-		const args = this.bpd.getArgs();
 		try
 		{
+			const args = this.bpd.getArgs();
 			const diagram = R.diagram.copy(args.basename, args.properName, args.description);
 			if (typeof diagram === 'string')
 				D.toolbar.showError(diagram);		// did not work
@@ -3613,7 +3611,7 @@ class Display
 					ControlRight(e) { D.ctrlKey = true; },
 					Digit1(e)
 					{
-						if (R.diagram && e.target === document.body)
+						if (R.diagram)
 						{
 							const diagram = R.diagram;
 							if (diagram.selected.length === 1)
@@ -3632,12 +3630,28 @@ class Display
 					},
 					Digit2(e)
 					{
-						if (R.diagram && e.target === document.body)
+						if (R.diagram)
 						{
 							const diagram = R.diagram;
-							const one = diagram.get('FiniteObject', {size:1});
-							const two = diagram.coprod(one, one);
-							diagram.placeObject(two, D.mouse.diagramPosition(diagram));
+							if (diagram.selected.length === 1)
+							{
+								const from = diagram.selected[0];
+								if ('to' in from)
+								{
+									const to = from.to;
+									const pos = D.mouse.diagramPosition(diagram);
+									if (to instanceof CatObject)
+										diagram.placeObject(diagram.prod(to, to), pos);
+									else if (to instanceof Morphism)
+										diagram.placeMorphism(diagram.prod(to, to), pos, null, true);
+								}
+							}
+							else if (diagram.selected.length === 0)
+							{
+								const one = diagram.get('FiniteObject', {size:1});
+								const two = diagram.coprod(one, one);
+								diagram.placeObject(two, D.mouse.diagramPosition(diagram));
+							}
 						}
 					},
 					Delete(e)
@@ -4002,10 +4016,10 @@ class Display
 					{
 						return this.xy[this.xy.length -1];
 					},
-					clientEvent()
+					clientEvent()	// create bogus event
 					{
 						const xy = this.clientPosition();
-						return {clientX:xy.x, clientY:xy.y, target:{dataset:R.diagram.name}};
+						return {clientX:xy.x, clientY:xy.y, target:{dataset:{name:R.diagram.name}}};
 					},
 					sessionPosition()			// return session coords
 					{
@@ -4332,9 +4346,9 @@ class Display
 			{
 				const pnt = diagram.mouseDiagramPosition(e);
 				if (this.mouseover)
-					!diagram.selected.includes(this.mouseover) && !this.shiftKey && diagram.deselectAll(e);
+					!diagram.selected.includes(this.mouseover) && !this.shiftKey && diagram.deselectAll();
 				else
-					diagram.deselectAll(e);
+					diagram.deselectAll();
 				this.dragStart = this.mouse.sessionPosition();
 				if (this.getTool() === 'pan' || !this.drag)
 					this.drag = true;
@@ -4462,7 +4476,7 @@ class Display
 								if (a && a.hasForm(diagram, ary))
 								{
 									diagram.drop(e, a, from, target);
-									diagram.deselectAll(e);
+									diagram.deselectAll();
 								}
 							}
 							else if (from instanceof IndexObject && target instanceof IndexObject)
@@ -5368,7 +5382,7 @@ class Display
 			return;
 		}
 		const copies = this.doPaste(e, mouse, this.pasteBuffer);
-		diagram.deselectAll(e);
+		diagram.deselectAll();
 		copies.map(e => diagram.addSelected(e));
 		diagram.log({command:'paste', elements:this.pasteBuffer.map(e => e.name), xy:{x:mouse.x, y:mouse.y}});
 		diagram.antilog({command:'delete', elements:copies.map(e => e.name)});
@@ -7315,10 +7329,7 @@ class Graph
 			if (k === -1)
 				return null;	// object is terminal object One
 			if (fctr.graphs.length > 0)
-			{
-if (fctr.graphs[k] === undefined) debugger;
 				fctr = fctr.graphs[k];
-			}
 			else
 				throw 'bad index for factor';
 		}
@@ -8147,7 +8158,8 @@ class ProductObject extends MultiObject
 	}
 	static CanFlatten(obj)
 	{
-		return obj.getBase() instanceof ProductObject;
+		const base = obj.getBase();
+		return base instanceof ProductObject && base.objects.reduce((r, o) => r || (o instanceof ProductObject && o.dual === obj.dual), false);
 	}
 	static Signature(diagram, objects, dual = false)
 	{
@@ -9827,7 +9839,7 @@ class PullbackAction extends Action
 		const pb = this.doit(e, diagram, morphisms);
 		diagram.log({command:this.name, morphisms:names});
 		// 	TODO antilog
-		diagram.deselectAll(e);
+		diagram.deselectAll();
 		diagram.addSelected(pb);
 	}
 	doit(e, diagram, source)
@@ -13760,17 +13772,33 @@ class Composite extends MultiMorphism
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
 		return graph;
 	}
-	getFirstMorphism()
-	{
-		const m = this.morphisms[0];
-		if (m instanceof Composite)
-			return m.getFirstMorphism();
-		return m;
-	}
 	loadItem()
 	{
 		super.loadItem();
 		R.loadItem(this.diagram, this, [this], this.morphisms);
+	}
+	getCompositeGraph()
+	{
+		const graph = this.getSequenceGraph();
+		graph.traceLinks(graph);
+		const _scan = (morphism, g, domFctr, codFctr) =>
+		{
+			switch(morphism.constructor.name)
+			{
+				case 'Composite':
+					const cnt = this.morphisms.length -1;
+					morphism.morphisms.map((m, i) =>
+					{
+						const dom = g.graphs[i];
+						const cod = g.graphs[i+1];
+						dom.dom = m;
+						cod.cod = m;
+					});
+					break;
+			}
+		};
+		_scan(this, graph, [0], [this.morphisms.length -1]);
+		return graph;
 	}
 	static Basename(diagram, args)
 	{
@@ -13969,7 +13997,6 @@ class FactorMorphism extends Morphism
 		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
 		nuArgs.cofactors = U.GetArg(args, 'cofactors', null);
-if (args.factors.length === 1 && args.factors[0].length === 0) debugger;
 		if (dual)
 		{
 			nuArgs.codomain = diagram.getElement(args.codomain);
@@ -15074,20 +15101,16 @@ class Diagram extends Functor
 	}
 	makeSelected(...elts)
 	{
-		if (this.selected.length > 0)
-		{
-			this.selected.map(elt => elt.showSelected(false));
-			this.selected.filter(elt => !this.selected.includes(elt)).map(elt => D.emitDiagramEvent(this, 'deselect', elt));
-			this.selected.length = 0;
-		}
+		this.deselectAll();
 		if (elts.length > 0)
 			elts.map(elt => this.addSelected(elt));
 		else
 			D.emitDiagramEvent(this, 'select', null);
 	}
-	deselectAll(e)
+	deselectAll()
 	{
-		this.makeSelected();
+		this.selected.map(elt => D.emitDiagramEvent(this, 'deselect', elt));
+		this.selected.length = 0;
 	}
 	selectAll()
 	{
@@ -15116,7 +15139,7 @@ class Diagram extends Functor
 			this.addSelected(cell);
 		}
 		else
-			this.deselectAll(e);	// error?
+			this.deselectAll();	// error?
 	}
 	areaSelect(e)
 	{
@@ -15143,7 +15166,7 @@ class Diagram extends Functor
 	{
 		D.toolbar.hide();
 		D.statusbar.hide();
-		let delta = D.mouse.sessionPosition().subtract(D.dragStart);
+		let delta = D.mouse.sessionPosition().subtract(D.dragStart);	// TODO diagramPosition()?
 		const placement = D.session.getPlacement(this.name);
 		delta = delta.scale(1.0 / placement.scale);
 		const dragObjects = new Set();
@@ -16027,7 +16050,7 @@ class Diagram extends Functor
 	}
 	drop(e, action, from, target, log = true)
 	{
-		this.deselectAll(e);
+		this.deselectAll();
 		target.show(false);
 		const fromName = from.name;
 		const targetName = target.name;
@@ -16049,7 +16072,7 @@ class Diagram extends Functor
 			target.finishMove();
 		}
 		this.selected.map(s => s.updateFusible(e, false));
-		this.deselectAll(e);
+		this.deselectAll();
 		if (identFuse)
 		{
 			const m = [...from.codomains][0];
@@ -16412,6 +16435,9 @@ class Diagram extends Functor
 			elt.diagram = name;
 			switch(elt.prototype)
 			{
+				case 'Assertion':
+					elt.cell = change(elt.cell);
+					break;
 				case 'CatObject':
 				case 'FiniteObject':
 					break;
@@ -16468,9 +16494,7 @@ class Diagram extends Functor
 					elt.morphisms = elt.morphisms.map(m => change(m));
 					break;
 				case 'Assertion':
-					elt.left = elt.left.map(m => change(m));
-					elt.right = elt.right.map(m => change(m));
-					elt.cell = Cell.Signature(elt.left, elt.right);
+					elt.cell = change(elt.cell);
 					break;
 			}
 		});
