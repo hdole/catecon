@@ -1723,9 +1723,11 @@ class Navbar
 		const info = R.diagram ? Diagram.GetInfo(R.diagram) : R.catalog.get(D.session.getCurrentDiagram());
 		if (info)
 		{
-			const cat = R.$CAT.getElement(info.category);
-			if (cat)
+			const cat = R.$CAT.getElement(info.codomain);
+			if (cat && D.session.mode === 'diagram')
 				this.categoryElt.innerHTML = U.HtmlEntitySafe(cat.properName);
+			else
+				this.categoryElt.innerHTML = '';
 			D.removeChildren(this.diagramElt);
 			this.diagramElt.appendChild(H3.span('.navtxt-link', info.properName, {onclick:e => Runtime.SelectDiagram(info.name, 'default'), title:`View diagram ${info.name}`}));
 			this.diagramElt.appendChild(H3.span('.italic', ' by ', info.user));
@@ -9114,6 +9116,8 @@ class Assertion extends Element
 		if (typeof this.cell === 'string')		// convert name to object
 			this.cell = this.diagram.getCell(this.cell);
 		const cell = this.cell;
+		if (!cell)
+			throw 'Cannot find cell';
 		this.left = cell.left.map(name => this.diagram.domain.getElement(name));
 		this.right = cell.right.map(name => this.diagram.domain.getElement(name));
 		cell.setCommutes('assertion');
@@ -14891,7 +14895,20 @@ class Diagram extends Functor
 	{
 		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());	// TODO not used currently by mysql.js
 		this.elements.forEach(elt => 'postload' in elt && elt.postload());
-		this.domain.forEachAssertion(a => a.initialize());
+		this.domain.forEachAssertion(a =>
+		{
+			try
+			{
+				a.initialize();
+			}
+			catch(err)
+			{
+				this.domain.elements.delete(a.name);
+				this.assertions.delete(a.name);
+				D.recordError(err);
+				D.recordError(`Removed assertion ${a.name}`);
+			}
+		});
 	}
 	decrRefcnt()
 	{
@@ -15099,18 +15116,17 @@ class Diagram extends Functor
 			D.emitDiagramEvent(this, 'select', elt);
 		}
 	}
+	deselectAll()
+	{
+		this.selected.map(elt => D.emitDiagramEvent(this, 'deselect', elt));
+		this.selected.length = 0;
+		D.emitDiagramEvent(this, 'select', null);
+	}
 	makeSelected(...elts)
 	{
 		this.deselectAll();
 		if (elts.length > 0)
 			elts.map(elt => this.addSelected(elt));
-		else
-			D.emitDiagramEvent(this, 'select', null);
-	}
-	deselectAll()
-	{
-		this.selected.map(elt => D.emitDiagramEvent(this, 'deselect', elt));
-		this.selected.length = 0;
 	}
 	selectAll()
 	{
@@ -15812,7 +15828,7 @@ class Diagram extends Functor
 	}
 	loadCells()
 	{
-		this.domain.loadCells(this);
+		this.domain.cells.size === 0 && this.domain.loadCells(this);
 	}
 	emphasis(c, on)
 	{
