@@ -404,20 +404,19 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		getInputHtml(object, value = null, prefix = '', factor = [], index = null, first = true)
 		{
 			const from = R.diagram.selected[0];
-			const morph = from.to;
-			let html = '';
+			const html = H3.span();
 			const id = this.getInputId(prefix, object, factor);
 			switch(object.constructor.name)
 			{
 				case 'NamedObject':
-					html = this.getInputHtml(object.getBase(), value, prefix, factor);
+					html.appendChild(this.getInputHtml(object.getBase(), value, prefix, factor));
 					break;
 				case 'CatObject':
 					if (this.formatters.has(object.signature))
 					{
 						const f = this.formatters.get(object.signature);
 						const out = window[U.Token(f)]([id, value !== null ? [0, value] : [1, 0]]);
-						html = H3.span(out[0].trim());
+						html.innerHTML = out[0].trim();
 					}
 					break;
 				case 'ProductObject':
@@ -425,51 +424,52 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 					{
 						const isNumeric = Cat.U.IsNumeric(object);
 						if (U.IsNumeric(object))
-							html += `<input id="${id}" type="number" min="0" max="${object.objects.length -1}"${typeof value === 'number' ? ' value="' + value.toString() + '"' : ''}/>`;
+							html.innerHTML = `<input id="${id}" type="number" min="0" max="${object.objects.length -1}"${typeof value === 'number' ? ' value="' + value.toString() + '"' : ''}/>`;
 						else
 						{
-							html = H3.select({id, onchange:_ => Cat.D.ShowInput(object.name, id, factor.length === 0 ? [] : factor.toString())});
-							html.appendChild(H3.option('Choose'));
+							const selector = H3.select({id, onchange:_ => Cat.D.ShowInput(object.name, id, factor.length === 0 ? [] : factor.toString())});
+							html.appendChild(selector);
+							selector.appendChild(H3.option('Choose'));
 							for (let i=0; i<object.objects.length; ++i)
 							{
 								const ob = object.objects[i];
 								const f = [...factor, i];
 								const oid = `dv_${ob.name} ${f.toString()}`;
-								html += H3.div(this.getInputHtml(ob, value !== null && value[0] === i ? value[1] : null, prefix, [...factor, i]), 'nodisplay', oid, false);
+								// TODO?
 							}
 						}
 					}
 					else
-						html += object.objects.map((ob, i) => this.getInputHtml(ob, value !== null ? value[i] : null, prefix, [...factor, i], null, false));
+						object.objects.map((ob, i) => html.appendChild(this.getInputHtml(ob, value !== null ? value[i] : null, prefix, [...factor, i], null, false)));
 					if (!first)
-						html = `(${html})`;
+					{
+						html.insertAdjacentHTML('beforebegin', '(');
+						html.insertAdjacentHTML('afterend', ')');
+					}
 					break;
 				case 'FiniteObject':
-//					const dv = typeof value === 'number' ? ` value="${value.toString()}"` : '';
 					if ('size' in object)
 					{
 						if (object.size === 1)
 							return '0';
 						else if (object.size === 0)
 							return '';
-//						html = `<input type="number" min="0" id="${id}" max="${object.size}"${dv}/>`;
-						html = H3.input({type:'number', min:'0', id, max:object.size,
-							value:typeof value === 'number' ? ` value="${value.toString()}"` : ''});
+						html.appendChild(H3.input({type:'number', min:'0', id, max:object.size, value:typeof value === 'number' ? ` value="${value.toString()}"` : ''}));
 					}
 					else
-//						html = `<input type="number" min="0" id="${id}"${dv}/>`;
-						html = H3.input({type:'number', min:'0', id, value:typeof value === 'number' ? ` value="${value.toString()}"` : ''});
+						html.appendChild(H3.input({type:'number', min:'0', id, value:typeof value === 'number' ? ` value="${value.toString()}"` : ''}));
 					break;
 				case 'HomObject':
 					const homset = R.diagram.codomain.getHomset(object.objects[0], object.objects[1]);
-					html = H3.select({dataIndex:index, id:`help-run-homset-${index ? index : 'next'}`, onchange:_ => R.Actions.javascript(setHomValue(this))});
-					html.appendChild(H3.option('Choose'));
+					const selector = H3.select({dataIndex:index, id:`help-run-homset-${index ? index : 'next'}`, onchange:_ => R.Actions.javascript(setHomValue(this))});
+					html.appendChild(H3.select(selector));
+					selector.appendChild(H3.option('Choose'));
 					homset.map(m =>
 					{
 						const args = {value:m.name};
 						if (m.name === value.name)
 							args.selected = "selected";
-						html.appendChild(H3.option(args, m.properName));
+						selector.appendChild(H3.option(args, m.properName));
 					});
 					break;
 			}
@@ -478,17 +478,17 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 		setHomValue(selector)		// TODO work hierarchically
 		{
 			const from = R.diagram.selected[0];
-			const morph = from.to;
+			const morphism = from.to;
 			const index = Number.parseInt(selector.dataset.index);
 			const value = selector.value;
 			const selected = R.diagram.getElement(value);
 			if (selected)
 			{
-				morph.data.set(index, selected);
+				morphism.data.set(index, selected);
 				R.emitMorphismEvent(Cat.R.diagram, 'update', from);
 			}
 			else
-				morph.data.delete(index);
+				morphism.data.delete(index);
 		}
 		getInputValue(domain, prefix = '', factor = [])
 		{
