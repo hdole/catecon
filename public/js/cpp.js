@@ -42,13 +42,13 @@ var Cat = Cat || require('./Cat.js');
 		{
 			this.tab--;
 		}
-		html(e, diagram, ary)
-		{
-			super.html(e, diagram, ary);
-			const body = document.getElementById('help-body');
-			const textarea = body.querySelector(`#element-${this.ext}`);
-			body.insertBefore(H3.h5('Inline code'), textarea);
-		}
+//		html(e, diagram, ary)
+//		{
+//			super.html(e, diagram, ary);
+//			const body = document.getElementById('help-body');
+//			const textarea = body.querySelector(`#element-${this.ext}`);
+//			body.insertBefore(H3.h5('Inline code'), textarea);
+//		}
 		cline(line, extra = 0)
 		{
 			const lines = line.split('\n');
@@ -444,7 +444,7 @@ ${members}
 if (upGraph && upGraph.getFactor(domFactor) === undefined) debugger;
 if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 //			let code = '';
-			let code = this.cline(`// ${morphism.constructor.name} ${morphism.name}`);
+			let code = this.cline(`// ${this.getStd(morphism)} ${morphism.name}`);		// TODO really debug code
 			const graph = morphism.getGraph();
 			switch(morphism.constructor.name)
 			{
@@ -456,9 +456,16 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 						const data = JSON.stringify(U.JsonMap(morphism.data));
 						code += this.cline(`std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${symbol}_data ${data};\n`);
 						*/
-						if (morphism.domain.isTerminal())
+						if (morphism.domain.isTerminal() && morphism.codomain instanceof Cat.HomObject)
 						{
-							graph.graphs[1].var = morphism.data.get(0);
+							if (codFactor.length > 1)
+							{
+								const upFactor = codFactor.slice();
+								upFactor.pop();
+								const upper = upGraph.getFactor(upFactor);
+								if ('dom' in upper && upper.dom instanceof Cat.Evaluation)
+									upper.eval = morphism.data.get(0);
+							}
 						}
 						else
 						{
@@ -518,7 +525,12 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 					}
 					break;
 				case 'Identity':
+					break;
 				case 'FactorMorphism':
+					if (morphism.dual)
+					{
+						debugger;
+					}
 					break;
 				case 'LambdaMorphism':
 				case 'Distribute':
@@ -526,8 +538,15 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 					// TODO
 					break;
 				case 'Evaluation':
-					const toEval = graph.getFactor([0, 0]);
-					code += this.instantiateMorphism(null, toEval, ndxMap, upGraph, Cat.U.pushFactor(domFactor, 0), Cat.U.pushFactor(domFactor, 1));
+//					const toEval = graph.getFactor([0, 0]);
+//					const homNdx = Cat.U.pushFactor(domFactor, 0);
+//					const homNod = upGraph.getFactor(homNdx);
+					const domGraph = upGraph.getFactor(domFactor);
+					if ('eval' in domGraph)
+					{
+						const domNdx = Cat.U.pushFactor(domFactor, 1);
+						code += this.instantiateMorphism(null, domGraph.eval, ndxMap, upGraph, domNdx, codFactor);
+					}
 					break;
 				case 'Composite':
 					code += this.instantiateComposite(morphism, upGraph, domFactor, codFactor, symbol);
@@ -598,7 +617,9 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 		}
 		instantiateComposite(morphism, upGraph, domFactor, codFactor, symbol)
 		{
-			const seqGraph = morphism.getSequenceGraph();
+//			const seqGraph = morphism.getSequenceGraph();
+//			seqGraph.traceLinks(seqGraph);
+			const seqGraph = morphism.getCompositeGraph();
 			const ndxMap = new Map();
 			this.setupVariables(morphism, seqGraph, ndxMap, upGraph, domFactor, codFactor);
 			let code = '';
@@ -688,7 +709,7 @@ ${morphismCode}
 		{
 			return Array.isArray(factor) ? factor.map(i => `m_${i}`).join('.') : `m_${factor}`;
 		}
-		generateComments(element)
+		getStd(element)
 		{
 			let name = '';
 			switch(element.constructor.name)
@@ -703,6 +724,11 @@ ${morphismCode}
 					name = element.constructor.name;
 					break;
 			}
+			return name;
+		}
+		generateComments(element)
+		{
+			const name = this.getStd(element);
 			let txt = `//\n// ${name}\n// ${element.name}\n`;
 			if (element.description !== '')
 				txt += `// ${element.description}\n`;
