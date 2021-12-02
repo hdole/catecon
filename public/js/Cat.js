@@ -4755,30 +4755,50 @@ class Display
 				return;
 			const args = e.detail;
 			const diagram = args.diagram;
-			if (!diagram || diagram !== R.diagram)
+//			if (!diagram || diagram.svgBase === null)
+			if (!diagram)
 				return;
-			const elt = args.element;
-			if (elt instanceof IndexObject)
-			{
-				args.diagram.updateBackground();
-				if (args.command === 'fuse')
-				{
-					args.diagram.domain.findCells(diagram);
-					diagram.domain.checkCells();
-				}
-			}
-			else if (args.command === 'new')
-				'loadItem' in args.element && args.element.loadItem();
+			const element = args.element;
+			if (element instanceof IndexObject)
+				diagram.updateBackground();
+			let autosav = true;
 			switch(args.command)
 			{
-				case 'delete':
-				case 'fuse':
+				case 'fuse':	// scan all 1-connected objects to refresh
+					const homObjs = new Set();
+					function addCod(m) { homObjs.add(m.codomain); }
+					function addDom(m) { homObjs.add(m.domain); }
+					element.domains.forEach(addCod);
+					element.codomains.forEach(addDom);
+					if ('target' in args)
+					{
+						const target = args.target;
+						homObjs.clear();
+						target.domains.forEach(addCod);
+						target.codomains.forEach(addDom);
+					}
+					diagram.domain.findCells(diagram);
+					diagram.domain.checkCells();
+					break;
 				case 'move':
-				case 'new':
+					element.finishMove();
+					if (element instanceof IndexObject)
+						element.update();
+					break;
+				case 'delete':
+					break;
 				case 'update':
-					this.autosave(args.diagram);
+				case 'new':
+					if (element instanceof IndexObject)
+						element.update();
+					'loadItem' in element && element.loadItem();
+					break;
+				default:
+					autosav = false;
 					break;
 			}
+			this.updateDisplay(e);
+			autosav && this.autosave(args.diagram);
 		});
 		window.addEventListener('Text', e =>
 		{
@@ -4907,7 +4927,6 @@ class Display
 		window.addEventListener('keydown', e => this.autohide(e));
 		window.addEventListener('Assertion', e => this.updateDisplay(e));
 		window.addEventListener('Morphism', e => this.updateMorphismDisplay(e));
-		window.addEventListener('Object', e => this.updateObjectDisplay(e));
 		window.addEventListener('Text', e => this.updateTextDisplay(e));
 		window.addEventListener('mousemove', e => this.mousemove(e));
 		this.topSVG.addEventListener('mousedown', e => this.mousedown(e), true);
@@ -5108,6 +5127,7 @@ class Display
 				break;
 		}
 	}
+	/*
 	updateObjectDisplay(e)		// event handler
 	{
 		const args = e.detail;
@@ -5144,6 +5164,7 @@ class Display
 		}
 		this.updateDisplay(e);
 	}
+	*/
 	updateTextDisplay(e)		// event handler
 	{
 		this.updateDisplay(e);
@@ -6997,17 +7018,19 @@ class Element
 		}
 		this[attribute] = U.HtmlEntitySafe(value);
 		if (attribute === 'basename')
-		{
-			this.name = Element.Codename(this.diagram, {basename:this.basename});
-			this.setSignature();
-			this.diagram.reconstituteElements();
-		}
+			this.diagram.updateBasenames(this);
 		else if (attribute === 'properName')
-			this.diagram.updateProperName(this);
+			this.diagram.updateProperNames(this);
 		return old;
 	}
 	updateProperName()
 	{}
+	updateBasename()
+	{
+		this.name = Element.Codename(diagram, {basename:this.basename});
+		this.setSignature();
+		this.diagram.reconstituteElements();
+	}
 	help()
 	{
 		let baseBtn = '';
@@ -7990,6 +8013,11 @@ class MultiObject extends CatObject
 	{
 		this.objects.map(o => o.updateProperName());
 	}
+	updateBasename()
+	{
+		this.objects.map(o => o.updateBasename());
+		super.updateBasename();
+	}
 	isIterable()	// Default is for a MultiObject to be iterable if all its morphisms are iterable.
 	{
 		return this.objects.reduce((r, o) => r && o.isIterable(), true);
@@ -8136,6 +8164,11 @@ class ProductObject extends MultiObject
 	{
 		super.updateProperName();
 		this.properName = MultiObject.ProperName(this.dual ? '&plus;' : '&times;', this.objects);
+	}
+	updateBasename()
+	{
+		this.basename = ProductObject.Basename(this.diagram, this);
+		super.updateBasename();
 	}
 	static Basename(diagram, args)
 	{
@@ -8319,6 +8352,11 @@ class HomObject extends MultiObject
 	{
 		super.updateProperName();
 		this.properName = HomObject.ProperName(this.objects);
+	}
+	updateBasename()
+	{
+		this.basename = HomObject.Basename(this.diagram, this);
+		super.updateBasename();
 	}
 	static Basename(diagram, args)
 	{
@@ -10663,10 +10701,10 @@ class HelpAction extends Action
 		super.html();
 		const from = ary[0];
 		const js = R.Actions.javascript;
-		const toolbar2 = [];
-		R.languages.forEach(lang => lang.hasForm(diagram, ary) && toolbar2.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), {title:lang.description})));
-		if (toolbar2.length > 0)
-			D.toolbar.table.appendChild(H3.tr(H3.td(H3.table('.buttonBarLeft', H3.tr(H3.td(toolbar2.map(btn => H3.td(btn))), '##help-toolbar2')), {colspan:2})));
+		const tools = [];
+		R.languages.forEach(lang => lang.hasForm(diagram, ary) && tools.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), {title:lang.description})));
+		if (tools.length > 0)
+			D.toolbar.table.appendChild(H3.tr(H3.td(H3.span(tools, '.buttonBarLeft'), {colspan:2}), '##help-toolbar2'));
 		from.help();
 	}
 }
@@ -10707,50 +10745,56 @@ class LanguageAction extends Action
 	}
 	html(e, diagram, ary)
 	{
-		super.html();
-		const elt = ary.length === 1 ? ary[0].to : diagram;
-		const id = `element-${this.ext}`;
-		const textarea = H3.textarea('.code.w100',	{
-													id,
-													disabled:true,
-													onkeydown:e =>
-													{
-														e.stopPropagation();
-														D.cancelAutohide();
-														if (e.key === 'Tab')	// insert tab character
-														{
-															e.preventDefault();
-															const target = e.target;
-															const start = target.selectionStart;
-															target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
-															target.selectionStart = target.selectionEnd = start +1;
-														}
-														else if (e.key === 'Enter' && e.ctrlKey)
-															this.setCode(e, id, this.basename);
-													},
-													oninput: e => this.setEditorSize(e.target),
-												});
 		const toolbar = D.toolbar;
-		toolbar.body.appendChild(textarea);
-		if (elt instanceof Morphism || elt instanceof CatObject || elt instanceof Diagram)
-			this.getEditHtml(textarea, elt);
-		this.checkEditable(elt) && toolbar.body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
-		toolbar.body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download generated ${this.properName}`}));
-		const resizeObserver = new ResizeObserver(entries =>
+		const toolbar2 = toolbar.table.querySelector('#help-toolbar2');
+		super.html();
+		toolbar.table.appendChild(toolbar2);
+		const elt = ary.length === 1 ? ary[0].to : diagram;
+		if (this.checkEditable(elt))
 		{
-			for (let entry of entries)
+			const id = `element-${this.ext}`;
+			const textarea = H3.textarea('.code.w100',	{
+														id,
+														disabled:true,
+														onkeydown:e =>
+														{
+															e.stopPropagation();
+															D.cancelAutohide();
+															if (e.key === 'Tab')	// insert tab character
+															{
+																e.preventDefault();
+																const target = e.target;
+																const start = target.selectionStart;
+																target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
+																target.selectionStart = target.selectionEnd = start +1;
+															}
+															else if (e.key === 'Enter' && e.ctrlKey)
+																this.setCode(e, id, this.basename);
+														},
+														oninput: e => this.setEditorSize(e.target),
+													});
+			toolbar.body.appendChild(H3.h5('Inline code'));
+			toolbar.body.appendChild(textarea);
+			if (elt instanceof Morphism || elt instanceof CatObject || elt instanceof Diagram)
+				this.getEditHtml(textarea, elt);
+			toolbar.body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
+			const resizeObserver = new ResizeObserver(entries =>
 			{
-				if(entry.contentBoxSize)	// firefox, chrome
+				for (let entry of entries)
 				{
-					// Firefox implements `contentBoxSize` as a single content rect, rather than an array
-					const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-					const width = parseFloat(D.toolbar.element.style.width);
-					if (contentBoxSize.inlineSize > width)
-						D.toolbar.element.style.width = `${contentBoxSize.inlineSize}px`;
+					if(entry.contentBoxSize)	// firefox, chrome
+					{
+						// Firefox implements `contentBoxSize` as a single content rect, rather than an array
+						const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+						const width = parseFloat(D.toolbar.element.style.width);
+						if (contentBoxSize.inlineSize > width)
+							D.toolbar.element.style.width = `${contentBoxSize.inlineSize}px`;
+					}
 				}
-			}
-		});
-		resizeObserver.observe(textarea);
+			});
+			resizeObserver.observe(textarea);
+		}
+		toolbar.body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download generated ${this.properName}`}));
 	}
 	setEditorSize(textarea)
 	{
@@ -10942,6 +10986,16 @@ class RunAction extends Action
 		morphism.to.data.set(i, val);
 		D.emitMorphismEvent(R.diagram, 'update', morphism);
 		D.statusbar.show(e, `Data for morphism ${morphism.to.properName} saved`, false);
+	}
+	deleteData(e, morphism, data, key)
+	{
+		morphism.data.delete(key);
+		if (morphism.data.size === 0)
+			delete morphism.data;
+		const row = e.target.parentElement.parentElement.parentElement.parentElement;
+		row.parentElement.removeChild(row);
+		D.emitMorphismEvent(R.diagram, 'update', morphism);
+		D.statusbar.show(e, `Data deleted for morphism ${morphism.properName}`, false);
 	}
 	hasForm(diagram, ary)
 	{
@@ -11993,7 +12047,7 @@ class Morphism extends Element
 				document.getElementById('help-recursor').remove();
 			};
 			const btn = this.isEditable() ? D.getIcon('delete', 'delete', deleteRecursor, {title:'Delete recursor'}) : '';
-			table.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.properName, btn)));
+			table.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.diagram.name, ':', this.recursor.properName, btn)));
 		}
 		const infoDisplay = H3.tr(H3.td('##info-display', {colspan:2}));
 		if (R.canFormat(this) && !('code' in this))
@@ -12002,20 +12056,19 @@ class Morphism extends Element
 			const domain = this.domain;
 			const codomain = this.codomain;
 			const sz = domain.getSize();
-			table.appendChild(H3.tr(H3.td(H3.small('Domain')), H3.td(H3.small('Codomain'))));
-			table.appendChild(H3.tr(H3.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), '.smallBold'),
-									H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold')));
 			const dataRow = (d,i) =>
 			{
 				if (d !== null)
 				{
 //					const editDataBtn = D.getIcon('editData', 'edit', e => R.Actions.run.editData(e, i), {title:'Set data'});
 //					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d), H3.td(editDataBtn)));
-					// TODO delete
-					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d)));
+					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d, D.getIcon('delete', 'delete', e => R.Actions.run.deleteData(e, this, d, i), {title:'Remove data'}))));
 				}
 			};
 			table.appendChild(H3.tr(H3.th('Data in Morphism', {colspan:2})));
+			table.appendChild(H3.tr(H3.td(H3.small('Domain')), H3.td(H3.small('Codomain'))));
+			table.appendChild(H3.tr(H3.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), '.smallBold'),
+									H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold')));
 			if (sz < Number.MAX_VALUE && 'data' in this)
 			{
 				for (let i=0; i<sz; ++i)
@@ -12030,7 +12083,7 @@ class Morphism extends Element
 			else if (this.isEditable())
 			{
 				const addDataBtn = D.getIcon('addInput', 'edit', e => R.Actions.run.addInput(infoDisplay), {title:'Add data'});
-				table.appendChild(H3.tr(H3.td(R.Actions.javascript.getInputHtml(domain, null, 'dom'), R.Actions.javascript.getInputHtml(codomain, null, 'cod')), H3.td(addDataBtn)));
+				table.appendChild(H3.tr(H3.td(R.Actions.javascript.getInputHtml(domain, null, 'dom')), H3.td(R.Actions.javascript.getInputHtml(codomain, null, 'cod'), addDataBtn)));
 				'data' in this && this.data.forEach(dataRow);
 			}
 			if (canMakeData)
@@ -12606,6 +12659,7 @@ class IndexMorphism extends Morphism
 	}
 	help()
 	{
+		D.toolbar.table.appendChild(H3.tr(H3.td('From', '.italic.small'), H3.td(this.basename, '.italic.small')));
 		this.to.help(this);
 		if (this.isEditable())
 		{
@@ -13713,6 +13767,11 @@ class MultiMorphism extends Morphism
 	{
 		this.morphisms.map(m => m.updateProperName());
 	}
+	updateBasename()
+	{
+		this.morphisms.map(m => m.updateBasename());
+		super.updateBasename();
+	}
 	isBare()
 	{
 		return false;
@@ -13893,7 +13952,12 @@ class ProductMorphism extends MultiMorphism
 	updateProperName()
 	{
 		super.updateProperName();
-		this.properName = MultiMorphism.ProperName(this.morphisms, this.dual);
+		this.properName = MultiObject.ProperName(this.dual ? '&plus;' : '&times;', this.morphisms, this.dual);
+	}
+	updateBasename()
+	{
+		this.basename = ProductMorphism.Basename(this.diagram, this);
+		super.updateBasename();
 	}
 	static Basename(diagram, args)
 	{
@@ -14937,7 +15001,7 @@ class Diagram extends Functor
 	{
 		super.help();
 		D.toolbar.table.appendChild(H3.tr(H3.td('Type:'), H3.td('Diagram')));
-		const toolbar2 = D.toolbar.element.querySelector('tr #help-toolbar2');
+		const toolbar2 = D.toolbar.element.querySelector('#help-toolbar2');
 		if (R.user.status === 'logged-in' && R.cloud && this.user === R.user.name)
 		{
 			if (R.isLocalNewer(this.name))
@@ -15599,7 +15663,12 @@ class Diagram extends Functor
 		this.antilog({command:'editText', name:elt.name, attribute, value:old});	// use new name
 		e && e instanceof Event && e.stopPropagation();
 		if (!(elt instanceof DiagramText))
-			this.updateProperName(elt);
+		{
+			if (attribute === 'properName')
+				this.updateProperNames(elt);
+			else if (attribute === 'basename')
+				this.updateBasenames(elt);
+		}
 		D.emitElementEvent(this, 'update', elt);
 	}
 	editElementText(e, elt, id, attribute)
@@ -16148,10 +16217,18 @@ class Diagram extends Functor
 		D.ttyPanel.logSection.diagram = null;
 		D.ttyPanel.logSection.update();
 	}
-	updateProperName(to)	// TODO change to event 'update'
+	updateProperNames(to)
 	{
-		this.elements.forEach(elt => elt !== to && elt.uses(to) && elt.updateProperName(to));
-		this.domain.elements.forEach(from => from.to && from.to.uses(to) && from.updateProperName(to));
+		this.elements.forEach(elt => elt !== to && elt.uses(to) && elt.updateProperName());
+		this.domain.elements.forEach(from => from.to && from.to.uses(to) && from.updateProperName());
+	}
+	updateBasenames(to)
+	{
+		if (this.elements.has(to))
+		{
+			this.elements.forEach(elt => elt !== to && elt.uses(to) && elt.updateBasename());
+			this.domain.elements.forEach(from => from.to && from.to.uses(to) && from.updateBasename());
+		}
 	}
 	logViewCommand()
 	{
@@ -17302,24 +17379,28 @@ class Assembler
 			// get the evaluation maps
 			const costeps = diagram.coprod(...subs);
 			// fold the outputs
-			const codObjects = costeps.codomain.objects;
+			const codObjects = 'objects' in costeps.codomain ? costeps.codomain.objects : [costeps.codomain];
 			let foldFactors = codObjects.map(o => codObjects.indexOf(o));
-			// all factors equal?
-			let foldCod = null;
-			if (foldFactors.every((v, i) => v === foldFactors[0]))
+			if (foldFactors.length > 0)
 			{
-				foldFactors = foldFactors.map(_ => []);
-				foldCod = codObjects[0];
+				// all factors equal?
+				let foldCod = null;
+				if (foldFactors.every((v, i) => v === foldFactors[0]))
+				{
+					foldFactors = foldFactors.map(_ => []);
+					foldCod = codObjects[0];
+				}
+				else
+				{
+					const foldCods = [];
+					foldFactors.map(f => f + 1 > foldCods.length && foldCods.push(codObjects[f]));
+					foldFactors = foldFactors.map(f => [f]);
+					foldCod = diagram.coprod(...foldCods);
+				}
+				const foldStep = diagram.cofctr(foldCod, foldFactors);
+				return diagram.comp(costeps, foldStep);
 			}
-			else
-			{
-				const foldCods = [];
-				foldFactors.map(f => f + 1 > foldCods.length && foldCods.push(codObjects[f]));
-				foldFactors = foldFactors.map(f => [f]);
-				foldCod = diagram.coprod(...foldCods);
-			}
-			const foldStep = diagram.cofctr(foldCod, foldFactors);
-			return diagram.comp(costeps, foldStep);
+			return diagram.comp(costeps);
 		}
 	}
 	// recursive
