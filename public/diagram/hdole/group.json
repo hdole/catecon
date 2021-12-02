@@ -6,7 +6,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/group_Index",
-  "codomain": "zf/Set",
+  "codomain": "sys/Cat",
   "references": [],
   "domainElements": [
     {
@@ -80,7 +80,7 @@
       "to": "hdole/group/G",
       "xy": {
         "x": 0,
-        "y": 1700
+        "y": 600
       }
     },
     {
@@ -89,7 +89,7 @@
       "to": "hdole/group/Po{G,G}oP",
       "xy": {
         "x": 200,
-        "y": 1700
+        "y": 600
       }
     },
     {
@@ -98,7 +98,7 @@
       "to": "hdole/group/Po{G,G}oP",
       "xy": {
         "x": 400,
-        "y": 1700
+        "y": 600
       }
     },
     {
@@ -107,7 +107,7 @@
       "to": "hdole/group/G",
       "xy": {
         "x": 400,
-        "y": 1900
+        "y": 800
       }
     },
     {
@@ -116,7 +116,7 @@
       "to": "hdole/group/#1",
       "xy": {
         "x": 0,
-        "y": 1900
+        "y": 800
       }
     },
     {
@@ -125,7 +125,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -260,
-        "y": 1700
+        "y": 600
       },
       "height": "24"
     },
@@ -135,7 +135,7 @@
       "to": "hdole/group/G",
       "xy": {
         "x": 0,
-        "y": 2000
+        "y": 900
       }
     },
     {
@@ -144,7 +144,7 @@
       "to": "hdole/group/Po{G,G}oP",
       "xy": {
         "x": 200,
-        "y": 2000
+        "y": 900
       }
     },
     {
@@ -153,7 +153,7 @@
       "to": "hdole/group/Po{G,G}oP",
       "xy": {
         "x": 400,
-        "y": 2000
+        "y": 900
       }
     },
     {
@@ -162,7 +162,7 @@
       "to": "hdole/group/G",
       "xy": {
         "x": 400,
-        "y": 2200
+        "y": 1100
       }
     },
     {
@@ -171,7 +171,7 @@
       "to": "hdole/group/#1",
       "xy": {
         "x": 0,
-        "y": 2200
+        "y": 1100
       }
     },
     {
@@ -180,145 +180,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -260,
-        "y": 1990
-      },
-      "height": "24"
-    },
-    {
-      "basename": "o_29",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G,G}oP",
-      "xy": {
-        "x": 0,
-        "y": 700
-      }
-    },
-    {
-      "basename": "o_30",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 420,
-        "y": 700
-      }
-    },
-    {
-      "basename": "o_32",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 0,
-        "y": 900
-      }
-    },
-    {
-      "basename": "o_31",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 420,
-        "y": 900
-      }
-    },
-    {
-      "description": "Associativity:  (g * h) * i = g * (h * i)",
-      "basename": "t_3",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -870,
-        "y": 690
-      },
-      "height": "24"
-    },
-    {
-      "basename": "o_19",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 1100
-      }
-    },
-    {
-      "basename": "o_22",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,#1}oP",
-      "xy": {
-        "x": 200,
-        "y": 1100
-      }
-    },
-    {
-      "basename": "o_24",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 400,
-        "y": 1300
-      }
-    },
-    {
-      "basename": "o_26",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 400,
-        "y": 1100
-      }
-    },
-    {
-      "basename": "o_20",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 1400
-      }
-    },
-    {
-      "basename": "o_21",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{#1,G}oP",
-      "xy": {
-        "x": 200,
-        "y": 1400
-      }
-    },
-    {
-      "basename": "o_23",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 400,
-        "y": 1600
-      }
-    },
-    {
-      "basename": "o_27",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 400,
-        "y": 1400
-      }
-    },
-    {
-      "description": "g * 1 = g",
-      "basename": "t_4",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -260,
-        "y": 1100
-      },
-      "height": "24"
-    },
-    {
-      "description": "1 * g = g",
-      "basename": "t_5",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": -260,
-        "y": 1400
+        "y": 890
       },
       "height": "24"
     },
@@ -333,30 +195,39 @@
       "height": "24"
     },
     {
-      "basename": "o_0",
+      "basename": "o_34",
       "prototype": "IndexObject",
       "to": "hdole/group/Po{G,G}oP",
       "xy": {
-        "x": -260,
-        "y": 700
+        "x": 620,
+        "y": 210
       }
     },
     {
-      "basename": "o_25",
+      "basename": "o_35",
       "prototype": "IndexObject",
       "to": "hdole/group/G",
       "xy": {
-        "x": -260,
-        "y": 900
+        "x": 820,
+        "y": 210
       }
     },
     {
-      "basename": "o_28",
+      "basename": "o_36",
+      "prototype": "IndexObject",
+      "to": "hdole/group/#1",
+      "xy": {
+        "x": 620,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_37",
       "prototype": "IndexObject",
       "to": "hdole/group/G",
       "xy": {
-        "x": -120,
-        "y": 800
+        "x": 820,
+        "y": 300
       }
     },
     {
@@ -451,135 +322,49 @@
       "to": "hdole/group/Pm{inv,Id{G}dI}mP"
     },
     {
-      "basename": "m_26",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_29",
-      "codomain": "hdole/group/o_30",
-      "to": "hdole/group/Pa{Cm{Fa{Po{G,G,G}oP,G_0,G_1}aF,mult}mC,Fa{Po{G,G,G}oP,G_2}aF}aP"
+      "description": "The assertion that the composite of morphisms &Delta;G,id&times;inv,mult equals that of &#119901;,unit.",
+      "prototype": "Assertion",
+      "equal": true,
+      "cell": "hdole/group/{m_3,m_8,m_6},{m_7,m_4}"
     },
     {
-      "basename": "m_27",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_29",
-      "codomain": "hdole/group/o_32",
-      "to": "hdole/group/Pa{Fa{Po{G,G,G}oP,G_0}aF,Cm{Fa{Po{G,G,G}oP,G_1,G_2}aF,mult}mC}aP"
+      "description": "The assertion that the composite of morphisms &Delta;G,inv&times;id,mult equals that of &#119901;,unit.",
+      "prototype": "Assertion",
+      "equal": true,
+      "cell": "hdole/group/{m_11,m_12},{m_9,m_13,m_10}"
     },
     {
-      "basename": "m_28",
+      "basename": "m_35",
       "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_32",
-      "codomain": "hdole/group/o_31",
+      "domain": "hdole/group/o_34",
+      "codomain": "hdole/group/o_35",
       "to": "hdole/group/mult"
     },
     {
-      "basename": "m_29",
+      "basename": "m_36",
       "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_30",
-      "codomain": "hdole/group/o_31",
-      "to": "hdole/group/mult"
+      "domain": "hdole/group/o_36",
+      "codomain": "hdole/group/o_37",
+      "to": "hdole/group/unit"
     },
     {
-      "basename": "m_14",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_19",
-      "codomain": "hdole/group/o_22",
-      "to": "hdole/group/Fa{G,G_,G_-1}aF"
+      "basename": "o_38",
+      "prototype": "IndexObject",
+      "to": "hdole/group/G",
+      "xy": {
+        "x": 650,
+        "y": 100
+      }
     },
     {
-      "basename": "m_15",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_19",
-      "codomain": "hdole/group/o_24",
-      "to": "hdole/group/Id{G}dI"
-    },
-    {
-      "basename": "m_16",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_22",
-      "codomain": "hdole/group/o_26",
-      "to": "hdole/group/Pm{Id{G}dI,unit}mP"
-    },
-    {
-      "basename": "m_17",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_26",
-      "codomain": "hdole/group/o_24",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_18",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_20",
-      "codomain": "hdole/group/o_21",
-      "to": "hdole/group/Fa{G,G_-1,G_}aF"
-    },
-    {
-      "basename": "m_19",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_20",
-      "codomain": "hdole/group/o_23",
-      "to": "hdole/group/Id{G}dI"
-    },
-    {
-      "basename": "m_20",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_21",
-      "codomain": "hdole/group/o_27",
-      "to": "hdole/group/Pm{unit,Id{G}dI}mP"
-    },
-    {
-      "basename": "m_21",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_27",
-      "codomain": "hdole/group/o_23",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_22",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_29",
-      "codomain": "hdole/group/o_0",
-      "to": "hdole/group/Fa{Po{G,G,G}oP,G_1,G_2}aF"
-    },
-    {
-      "basename": "m_23",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_0",
-      "codomain": "hdole/group/o_25",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_24",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_29",
-      "codomain": "hdole/group/o_28",
-      "to": "hdole/group/Fa{Po{G,G,G}oP,G_0}aF"
-    },
-    {
-      "basename": "m_25",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_32",
-      "codomain": "hdole/group/o_28",
-      "attributes": [
-        [
-          "referenceMorphism",
-          true
-        ]
-      ],
-      "to": "hdole/group/Fa{Po{G,G}oP,G_0}aF"
-    },
-    {
-      "basename": "m_30",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_32",
-      "codomain": "hdole/group/o_25",
-      "attributes": [
-        [
-          "referenceMorphism",
-          true
-        ]
-      ],
-      "to": "hdole/group/Fa{Po{G,G}oP,G_1}aF"
+      "description": "G is a monoid.",
+      "basename": "t_7",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 760,
+        "y": 100
+      },
+      "height": "24"
     }
   ],
   "elements": [
@@ -601,14 +386,6 @@
       "size": 1,
       "min": 0,
       "max": 1
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "G",
-        "G",
-        "G"
-      ]
     },
     {
       "prototype": "ProductObject",
@@ -652,31 +429,11 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G}oP",
-      "codomain": "hdole/group/G",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
       "basename": "Id{G}dI",
       "prototype": "Identity",
       "properName": "id",
       "domain": "hdole/group/G",
       "codomain": "hdole/group/G"
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G}oP",
-      "codomain": "hdole/group/G",
-      "factors": [
-        [
-          1
-        ]
-      ]
     },
     {
       "prototype": "FactorMorphism",
@@ -706,102 +463,11 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
-      "factors": [
-        [
-          0
-        ],
-        [
-          1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/G",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
-      "factors": [
-        [
-          1
-        ],
-        [
-          2
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/G",
-      "factors": [
-        [
-          2
-        ]
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/G",
-      "morphisms": [
-        "Fa{Po{G,G,G}oP,G_0,G_1}aF",
-        "mult"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/G",
-      "morphisms": [
-        "Fa{Po{G,G,G}oP,G_1,G_2}aF",
-        "mult"
-      ]
-    },
-    {
-      "prototype": "ProductAssembly",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
-      "morphisms": [
-        "Fa{Po{G,G,G}oP,G_0}aF",
-        "Cm{Fa{Po{G,G,G}oP,G_1,G_2}aF,mult}mC"
-      ]
-    },
-    {
-      "prototype": "ProductAssembly",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
-      "morphisms": [
-        "Cm{Fa{Po{G,G,G}oP,G_0,G_1}aF,mult}mC",
-        "Fa{Po{G,G,G}oP,G_2}aF"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
       "domain": "hdole/group/G",
       "codomain": "hdole/group/Po{G,#1}oP",
       "factors": [
         [],
         -1
-      ]
-    },
-    {
-      "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{G,#1}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
-      "morphisms": [
-        "Id{G}dI",
-        "unit"
       ]
     },
     {
@@ -812,28 +478,21 @@
         -1,
         []
       ]
-    },
-    {
-      "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{#1,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
-      "morphisms": [
-        "unit",
-        "Id{G}dI"
-      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1638137862424,
+  "timestamp": 1638267343520,
   "version": 0,
   "hiddenCells": [
     "hdole/group/{m_22,m_23},{m_27,m_30}",
-    "hdole/group/{m_24},{m_27,m_25}"
+    "hdole/group/{m_24},{m_27,m_25}",
+    "hdole/group/{m_26,m_34},{m_5,m_31}",
+    "hdole/group/{m_26,m_33},{m_32}"
   ],
   "viewport": {
-    "x": 1582,
-    "y": 232,
-    "scale": 1.5152365703853312
+    "x": 1254,
+    "y": 171,
+    "scale": 1.013200050828074
   },
   "properName": "hdole/group"
 }

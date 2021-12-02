@@ -145,7 +145,7 @@
       "prototype": "IndexObject",
       "to": "hdole/nat/N128",
       "xy": {
-        "x": 800,
+        "x": 930,
         "y": 1400
       }
     },
@@ -154,7 +154,7 @@
       "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
-        "x": 800,
+        "x": 930,
         "y": 1600
       }
     },
@@ -208,8 +208,8 @@
       "prototype": "IndexObject",
       "to": "hdole/nat/N128",
       "xy": {
-        "x": 530,
-        "y": 1880
+        "x": 600,
+        "y": 1910
       }
     },
     {
@@ -217,8 +217,8 @@
       "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
-        "x": 420,
-        "y": 2100
+        "x": 600,
+        "y": 2120
       }
     },
     {
@@ -237,6 +237,96 @@
       "xy": {
         "x": 400,
         "y": 2300
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -1290,
+        "y": 820
+      }
+    },
+    {
+      "basename": "o_25",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -830,
+        "y": 820
+      }
+    },
+    {
+      "basename": "o_26",
+      "prototype": "IndexObject",
+      "to": "hdole/pfs/factorial/CPo{hdole/nat/N64,hdole/nat/#1}oPC",
+      "xy": {
+        "x": -1270,
+        "y": 1060
+      }
+    },
+    {
+      "basename": "o_27",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -850,
+        "y": 1060
+      }
+    },
+    {
+      "basename": "o_28",
+      "prototype": "IndexObject",
+      "to": "hdole/pfs/factorial/CPo{hdole/nat/N64,hdole/nat/#1}oPC",
+      "xy": {
+        "x": -1310,
+        "y": 1280
+      }
+    },
+    {
+      "basename": "o_29",
+      "prototype": "IndexObject",
+      "to": "hdole/pfs/factorial/CPo{hdole/nat/N64,hdole/nat/N64}oPC",
+      "xy": {
+        "x": -920,
+        "y": 1280
+      }
+    },
+    {
+      "basename": "o_30",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/#1",
+      "xy": {
+        "x": -1190,
+        "y": 1460
+      }
+    },
+    {
+      "basename": "o_31",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -990,
+        "y": 1460
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -1210,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "o_33",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -1010,
+        "y": 1600
       }
     },
     {
@@ -473,6 +563,41 @@
       "domain": "hdole/pfs/factorial/o_14",
       "codomain": "hdole/pfs/factorial/o_15",
       "to": "hdole/pfs/factorial/Pa{Cm{hdole/nat/decr,Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_3,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_2,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC}mC,Id{hdole/nat/N64}dI}aP"
+    },
+    {
+      "basename": "m_23",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/pfs/factorial/o_24",
+      "codomain": "hdole/pfs/factorial/o_25",
+      "to": "hdole/pfs/factorial/Cm{hdole/nat/decr,Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_3,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_2,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC}mC"
+    },
+    {
+      "basename": "m_24",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/pfs/factorial/o_26",
+      "codomain": "hdole/pfs/factorial/o_27",
+      "to": "hdole/pfs/factorial/Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_3,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_2,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC"
+    },
+    {
+      "basename": "m_25",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/pfs/factorial/o_28",
+      "codomain": "hdole/pfs/factorial/o_29",
+      "to": "hdole/pfs/factorial/CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_3,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_2,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC"
+    },
+    {
+      "basename": "m_26",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/pfs/factorial/o_30",
+      "codomain": "hdole/pfs/factorial/o_31",
+      "to": "hdole/pfs/factorial/Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_2,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC"
+    },
+    {
+      "basename": "m_27",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/pfs/factorial/o_32",
+      "codomain": "hdole/pfs/factorial/o_33",
+      "to": "hdole/pfs/factorial/Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_3,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC"
     }
   ],
   "elements": [
@@ -627,12 +752,11 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
+      "basename": "Id{hdole/nat/#1}dI",
+      "prototype": "Identity",
+      "properName": "id",
       "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/#1",
-      "factors": [
-        []
-      ]
+      "codomain": "hdole/nat/#1"
     },
     {
       "basename": "s_0",
@@ -934,11 +1058,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1637534798062,
+  "timestamp": 1638406933227,
   "version": 0,
   "viewport": {
-    "x": 1130,
-    "y": -469,
-    "scale": 0.7501708403626532
+    "x": 449,
+    "y": -924,
+    "scale": 8.337535696172978
   }
 }

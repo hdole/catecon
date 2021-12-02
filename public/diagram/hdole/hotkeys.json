@@ -16,7 +16,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 990,
-        "y": 330
+        "y": 350
       },
       "height": "200",
       "weight": "bold"
@@ -749,7 +749,7 @@
       "weight": "bold"
     },
     {
-      "description": "If nothing selected, pan in the indicated direction\nfor either single or multi-diagram viewing. \nOtherwise move the selected elements.",
+      "description": "If nothing selected, pan in the indicated direction for either single or multi-diagram viewing. \nOtherwise move the selected elements.",
       "basename": "t_73",
       "prototype": "DiagramText",
       "xy": {
@@ -775,7 +775,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3500
+        "y": 3400
       },
       "height": "36",
       "weight": "bold"
@@ -786,7 +786,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1200,
-        "y": 3500
+        "y": 3400
       },
       "height": "48"
     },
@@ -796,7 +796,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3500
+        "y": 3400
       },
       "height": "24"
     },
@@ -806,7 +806,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3600
+        "y": 3500
       },
       "height": "36",
       "weight": "bold"
@@ -817,17 +817,17 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3600
+        "y": 3500
       },
       "height": "24"
     },
     {
-      "description": "Digit '1'",
+      "description": "Digit 1",
       "basename": "t_80",
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3700
+        "y": 3600
       },
       "height": "36",
       "weight": "bold"
@@ -838,7 +838,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3700
+        "y": 3600
       },
       "height": "24"
     },
@@ -864,7 +864,7 @@
       "height": "24"
     },
     {
-      "description": "Equal '='",
+      "description": "Plus",
       "basename": "t_84",
       "prototype": "DiagramText",
       "xy": {
@@ -1163,15 +1163,36 @@
         "y": 2800
       },
       "height": "48"
+    },
+    {
+      "description": "Digit 2",
+      "basename": "t_111",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1000,
+        "y": 3700
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "If nothing selected, place object 2 at mouse location.  If an object a or morphism m is\nselected, then aXa or mXm is placed.",
+      "basename": "t_112",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1300,
+        "y": 3700
+      },
+      "height": "24"
     }
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1638138519353,
+  "timestamp": 1638237675622,
   "version": 0,
   "viewport": {
-    "x": -1041,
-    "y": -169,
-    "scale": 1.329201171303448
+    "x": -1063,
+    "y": -197,
+    "scale": 1.338128231212834
   }
 }

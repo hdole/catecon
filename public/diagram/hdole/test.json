@@ -445,7 +445,7 @@
       "to": "hdole/test/A",
       "xy": {
         "x": 1900,
-        "y": -300
+        "y": -290
       }
     },
     {
@@ -454,7 +454,7 @@
       "to": "hdole/test/B",
       "xy": {
         "x": 2100,
-        "y": -300
+        "y": -290
       }
     },
     {
@@ -761,6 +761,15 @@
       "xy": {
         "x": 800,
         "y": 0
+      }
+    },
+    {
+      "basename": "o_41",
+      "prototype": "IndexObject",
+      "to": "hdole/test/Po{Po{C,B}oP,Po{C,B}oP}oP",
+      "xy": {
+        "x": 1650,
+        "y": -270
       }
     },
     {
@@ -1552,6 +1561,13 @@
       ]
     },
     {
+      "prototype": "ProductObject",
+      "objects": [
+        "Po{C,B}oP",
+        "Po{C,B}oP"
+      ]
+    },
+    {
       "basename": "f",
       "prototype": "Morphism",
       "domain": "hdole/test/A",
@@ -1830,7 +1846,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1637958496779,
+  "timestamp": 1638237402462,
   "version": 0,
   "viewport": {
     "x": -715,
