@@ -42,13 +42,6 @@ var Cat = Cat || require('./Cat.js');
 		{
 			this.tab--;
 		}
-//		html(e, diagram, ary)
-//		{
-//			super.html(e, diagram, ary);
-//			const body = document.getElementById('help-body');
-//			const textarea = body.querySelector(`#element-${this.ext}`);
-//			body.insertBefore(H3.h5('Inline code'), textarea);
-//		}
 		cline(line, extra = 0)
 		{
 			const lines = line.split('\n');
@@ -71,7 +64,7 @@ var Cat = Cat || require('./Cat.js');
 			switch(elt.constructor.name)
 			{
 				case 'CatObject':
-					basetype = elt.basename;
+					basetype = elt.name;
 					break;
 				case 'ProductObject':
 					basetype = (elt.dual ? 'Copr_' : 'Pr_') + elt.objects.map(o => this.getType(o, false)).join('_c_');
@@ -86,7 +79,7 @@ var Cat = Cat || require('./Cat.js');
 					basetype = `hom_${this.getType(elt.morphisms[0], false)}_c_${this.getType(elt.morphisms[1], false)}`;
 					break;
 				case 'Morphism':
-					basetype = elt.basename;
+					basetype = elt.name;
 					break;
 				case 'Identity':
 					basetype = `id_${this.getType(elt.domain, false)}`;
@@ -104,7 +97,7 @@ var Cat = Cat || require('./Cat.js');
 					basetype = (elt.dual ? 'CoPrAs_' : 'PrAs_') + elt.morphisms.map(m => this.getType(m, false)).join('_c_');
 					break;
 				default:
-					basetype = U.Token(elt.basename);
+					basetype = U.Token(elt.name);
 					break;
 			}
 			if (!first && elt.needsParens())
@@ -299,16 +292,19 @@ ${members}
 				code = '// objects from diagrams\n' + code;
 			return code;
 		}
+		static CheckGraph(g)
+		{
+			return g.element instanceof Cat.CatObject &&
+				(	(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct as var
+					(g.element instanceof Cat.HomObject) ||								// process a hom object as var
+					(g.isLeaf() && !('var' in g)));										// process a leaf as var
+		}
 		// Copy variables from the upGraph to the graph, and set the ndxMap as to where the variables are located.
 		// The domFactor and codFactor give the location of the morphism's graph in the upGraph.
 		copyVariables(graph, ndxMap, upGraph, domFactor, codFactor)
 		{
 			let factor = domFactor;	// scan the domain
 			let downFactor = [0];		// domain
-			const check = (g, ndx) => g.element instanceof Cat.CatObject &&
-				(	(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct as var
-					(g.element instanceof Cat.HomObject) ||								// process a hom object as var
-					(g.isLeaf() && !('var' in g)));		// process a leaf as var
 			const process = (g, i) =>
 			{
 				const upG = upGraph.getFactor(factor);
@@ -321,25 +317,31 @@ ${members}
 					g.var = up.var;
 					const thisFactor = U.pushFactor(downFactor, i);
 					ndxMap.set(thisFactor.toString(), g.var);
+					if (up.element instanceof Cat.ProductObject && up.element.dual)		// distribute coproduct terms
+					{
+						up.element.objects.map((o, i) =>
+						{
+							const v = `${g.var}.m_${i}`;
+							g.graphs[i].var = v;
+							const iFactor = U.pushFactor(factor, i);
+							ndxMap.set(iFactor.toString(), v);
+						});
+					}
 				}
 			};
-			graph.graphs[0].scanCheck(check, process);
+			graph.graphs[0].scanCheck(CppAction.CheckGraph, process);
 			factor = codFactor;		// now scan the codomain
 			const cnt = graph.graphs.length -1;
 			downFactor = [cnt];		// codomain
-			graph.graphs[cnt].scanCheck(check, process);
+			graph.graphs[cnt].scanCheck(CppAction.CheckGraph, process);
 		}
 		setupVariables(morphism, graph, ndxMap, upGraph, domFactor, codFactor)
 		{
 			if (upGraph)
 				this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor);
-			const check = (g, ndx) => g.element instanceof Cat.CatObject &&
-				(	(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct as var
-					(g.element instanceof Cat.HomObject) ||								// process a hom object as var
-					(g.isLeaf() && !('var' in g)));		// process a leaf as var
 			const process = (g, ndx) =>
 			{
-				if (g.element.isTerminal() || this.getCode(g.element) === '//')		// skip this element as it is a terminal or global variable '//'
+				if (g.element.isTerminal() || this.getCode(g.element) === '//' || 'var' in g)		// skip this element as it is a terminal or global variable '//'
 					return;
 				const indexes = g.links.filter(lnk => ndxMap.has(lnk.toString()));
 				const strNdx = ndx.toString();
@@ -349,8 +351,7 @@ ${members}
 					g.var = v;
 					if (ndxMap.has(strNdx))
 					{
-						if (ndxMap.get(strNdx) !== v)
-							debugger;
+if (ndxMap.get(strNdx) !== v) debugger;
 						return;
 					}
 					ndxMap.set(strNdx, v);
@@ -362,7 +363,7 @@ ${members}
 					g.var = ndxMap.get(strNdx);
 				}
 			};
-			graph.scanLinks(graph, check, process);
+			graph.scanLinks(graph, CppAction.CheckGraph, process);
 		}
 		// label nodes in the graphs with a variable name
 		generateFunctionInterface(graph)
@@ -380,6 +381,30 @@ ${members}
 				else
 					constant = 'const ';
 				args.push(`${constant}${this.getType(this.context.getElement(g.element.name))} ${modifier}${g.var}`);
+			};
+			// domain args
+			const domGraph = graph.graphs[0];
+			if (domGraph.element instanceof Cat.ProductObject && !domGraph.element.dual && domGraph.graphs.length > 0)
+				graph.graphs[0].graphs.map((g, i) => process(g, U.pushFactor([0], i)));
+			else
+				process(domGraph, [0]);
+			// codomain args
+			const codGraph = graph.graphs[codNdx];
+			if (codGraph.element instanceof Cat.ProductObject && !codGraph.element.dual && codGraph.graphs.length > 0)
+				codGraph.graphs.map((g, i) => process(g, U.pushFactor([codNdx], i)));
+			else
+				process(codGraph, [codNdx]);
+			return args.join(', ');
+		}
+		generateFunctionInvocation(graph)
+		{
+			const args = [];
+			const codNdx = graph.graphs.length -1;
+			const process = (g, ndx) =>
+			{
+				if (g.element.isTerminal() || this.getCode(g.element) === '//')		// skip this element as it is a terminal or global variable '//'
+					return;
+				args.push(g.var);
 			};
 			// domain args
 			const domGraph = graph.graphs[0];
@@ -444,7 +469,9 @@ ${members}
 if (upGraph && upGraph.getFactor(domFactor) === undefined) debugger;
 if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 //			let code = '';
-			let code = this.cline(`// ${this.getStd(morphism)} ${morphism.name}`);		// TODO really debug code
+//			let code = this.cline(`// ${this.getStd(morphism)} ${morphism.name}`);		// TODO really debug code
+			const span = H3.span(morphism.properName);
+			let code = this.cline(`// ${this.getStd(morphism)} ${span.innerHTML}`);		// TODO really debug code
 			const graph = morphism.getGraph();
 			switch(morphism.constructor.name)
 			{
@@ -480,43 +507,51 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 						const domCnt = dom.isTerminal() ? 0 : (!dom.dual && 'objects' in dom ? dom.objects.filter(o => !o.isTerminal()).length : 1);
 						const codCnt = cod instanceof Cat.ProductObject && !cod.dual && 'objects' in cod ? cod.objects.filter(o => !o.isTerminal()).length : 1;
 						let nuCode = this.getCode(morphism);
-						// handle domain variables
-						if (domCnt > 1)
+						if (nuCode !== '')
 						{
-							for (let i=0; i<domCnt; ++i)
+							// handle domain variables
+							if (domCnt > 1)
 							{
-								const arg = `%${i}`;
-								const rx = new RegExp(arg, 'g');
-								const v = graph.getFactor([0, i]).var;
-	if (v === undefined)debugger;
-								nuCode = nuCode.replace(rx, v);
+								for (let i=0; i<domCnt; ++i)
+								{
+									const arg = `%${i}`;
+									const rx = new RegExp(arg, 'g');
+									const v = graph.getFactor([0, i]).var;
+		if (v === undefined)debugger;
+									nuCode = nuCode.replace(rx, v);
+								}
 							}
-						}
-						else if (domCnt === 1)
-							nuCode = nuCode.replace(/%0/g, graph.getFactor([0]).var);
-						// handle codomain variables
-						if (codCnt > 1)
-						{
-							for (let i=domCnt; i<domCnt+codCnt; ++i)
+							else if (domCnt === 1)
+								nuCode = nuCode.replace(/%0/g, graph.getFactor([0]).var);
+							// handle codomain variables
+							if (codCnt > 1)
 							{
-								const rx = new RegExp(`%${i}`, 'g');
-								const v = graph.getFactor([1, i - domCnt]).var;
-	if (v === undefined)debugger;
-								nuCode = nuCode.replace(rx, v);
+								for (let i=domCnt; i<domCnt+codCnt; ++i)
+								{
+									const rx = new RegExp(`%${i}`, 'g');
+									const v = graph.getFactor([1, i - domCnt]).var;
+		if (v === undefined)debugger;
+									nuCode = nuCode.replace(rx, v);
+								}
 							}
+							else
+							{
+								const g = graph.getFactor([1]);
+								if (this.getCode(g.element) !== '//')
+								{
+									const v = g.var;
+		if (v === undefined)debugger;
+									const rx = new RegExp(`%${domCnt}`, 'g');
+									nuCode = nuCode.replace(rx, v);
+								}
+							}
+							code += this.cline(nuCode);
 						}
 						else
 						{
-							const g = graph.getFactor([1]);
-							if (this.getCode(g.element) !== '//')
-							{
-								const v = g.var;
-	if (v === undefined)debugger;
-								const rx = new RegExp(`%${domCnt}`, 'g');
-								nuCode = nuCode.replace(rx, v);
-							}
+							// no data or code; treat as function call
+							code += this.cline(`${symbol ? symbol : this.getType(morphism)}(${this.generateFunctionInvocation(graph)});`);
 						}
-						code += this.cline(nuCode);
 						if (symbol)
 						{
 							this.decTab();
@@ -529,7 +564,14 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 				case 'FactorMorphism':
 					if (morphism.dual)
 					{
-						debugger;
+						this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
+						if (morphism.factors.reduce((r, f) => r && f.length === 0))		// morphism is a fold
+							code += this.cline(`${graph.graphs[1].var} = ${graph.graphs[0].var}.m_0;`);
+						else
+							debugger;
+					}
+					else
+					{
 					}
 					break;
 				case 'LambdaMorphism':
@@ -538,14 +580,15 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 					// TODO
 					break;
 				case 'Evaluation':
-//					const toEval = graph.getFactor([0, 0]);
-//					const homNdx = Cat.U.pushFactor(domFactor, 0);
-//					const homNod = upGraph.getFactor(homNdx);
 					const domGraph = upGraph.getFactor(domFactor);
 					if ('eval' in domGraph)
 					{
 						const domNdx = Cat.U.pushFactor(domFactor, 1);
 						code += this.instantiateMorphism(null, domGraph.eval, ndxMap, upGraph, domNdx, codFactor);
+					}
+					else
+					{
+						// TODO
 					}
 					break;
 				case 'Composite':
@@ -556,42 +599,44 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 					if (morphism.dual)		// coproduct
 					{
 						const cnt = morphism.morphisms.length;
-						if (cnt === 2)
+						if (cnt === 2)	// if-then-else
 						{
 							code += this.cline(`if (${graph.graphs[0].var}.c)\n{`);
 							this.incTab();
-							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, upGraph, Cat.U.pushFactor(domFactor, 1), Cat.U.pushFactor(codFactor, 1));
+							code += this.cline(`${graph.graphs[1].var}.c = 1;`);
+							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, graph, [0, 1], [1, 1]);
 							this.decTab();
 							code += this.cline('}\nelse\n{');
 							this.incTab();
-							code += this.instantiateMorphism(null, morphism.morphisms[0], ndxMap, upGraph, Cat.U.pushFactor(domFactor, 0), Cat.U.pushFactor(codFactor, 0));
+							code += this.cline(`${graph.graphs[1].var}.c = 0;`);
+							code += this.instantiateMorphism(null, morphism.morphisms[0], ndxMap, graph, [0, 0], [1, 0]);
 							this.decTab();
 							code += this.cline('}');
 						}
-						else if (cnt === 3)
+						else if (cnt === 3)	// if 0 else if 1 else
 						{
 							code += this.cline(`if (${graph.graphs[0].var}.c === 0)\n{`);
 							this.incTab();
-							code += this.instantiateMorphism(null, morphism.morphisms[0], ndxMap, upGraph, Cat.U.pushFactor(domFactor, 0), Cat.U.pushFactor(codFactor, 0));
+							code += this.instantiateMorphism(null, morphism.morphisms[0], ndxMap, graph, [0, 0], [1, 0]);
 							this.decTab();
 							code += this.cline(`}\nelse if (${graph.graphs[0].var}.c == 1)\n{`);
 							this.incTab();
-							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, upGraph, Cat.U.pushFactor(domFactor, 1), Cat.U.pushFactor(codFactor, 1));
+							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, graph, [0, 1], [1, 1]);
 							this.decTab();
 							code += this.cline('}\nelse\n{');
 							this.incTab();
-							code += this.instantiateMorphism(null, morphism.morphisms[2], ndxMap, upGraph, Cat.U.pushFactor(domFactor, 2), Cat.U.pushFactor(codFactor, 2));
+							code += this.instantiateMorphism(null, morphism.morphisms[2], ndxMap, graph, [0, 2], [1, 2]);
 							this.decTab();
 							code += this.cline(`}`);
 						}
-						else
+						else		// switch
 						{
 							code += this.cline(`switch(${graph.graphs[0].var})\n{`);
 							this.incTab();
 							for (let i=0; i<cnt; ++i)
 							{
 								code += this.cline(`case ${i}:`);
-								code += code += this.instantiateMorphism(null, morphism.morphisms[i], ndxMap, upGraph, Cat.U.pushFactor(domFactor, i), Cat.U.pushFactor(codFactor, i));
+								code += code += this.instantiateMorphism(null, morphism.morphisms[i], ndxMap, graph, [0, i], [1, i]);
 								code += this.cline('break;');
 							}
 							this.decTab();
@@ -617,8 +662,6 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 		}
 		instantiateComposite(morphism, upGraph, domFactor, codFactor, symbol)
 		{
-//			const seqGraph = morphism.getSequenceGraph();
-//			seqGraph.traceLinks(seqGraph);
 			const seqGraph = morphism.getCompositeGraph();
 			const ndxMap = new Map();
 			this.setupVariables(morphism, seqGraph, ndxMap, upGraph, domFactor, codFactor);
@@ -719,6 +762,9 @@ ${morphismCode}
 					break;
 				case 'ProductMorphism':
 					name = element.dual ? 'Coproduct morphism' : 'Product morphism';
+					break;
+				case 'FactorMorphism':
+					name = element.dual ? 'Cofactor morphism' : 'Factor morphism';
 					break;
 				default:
 					name = element.constructor.name;
