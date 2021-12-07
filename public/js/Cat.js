@@ -725,39 +725,6 @@ class Runtime
 		new Diagram(this.$CAT, {basename:'set', codomain:'Actions', description:'diagram for Set actions', user:'zf', timestamp:0});
 		new Category(this.$CAT, {basename:'Set', user:'zf', properName:'&Sopf;&eopf;&topf;', actionDiagrams:['diagram', 'product', 'coproduct', 'hom', 'distribute'] });
 	}
-	initTestProcedure()
-	{
-		const head = document.getElementsByTagName('HEAD')[0];
-		const link = H3.link({rel:'stylesheet', href:"https://code.jquery.com/qunit/qunit-2.10.1.css", type:'text/css'});
-		head.appendChild(link);
-		const body = document.getElementsByTagName('BODY')[0];
-		body.prepend(H3.div({id:"qunit-fixture"}));
-		body.prepend(H3.div({id:"qunit"}));
-		const dbName = 'testInfo';
-		window.infoDB = null;
-		let refStore = null;
-		let transaction = null;
-		const request = indexedDB.open(dbName);
-		request.onerror = e => alert('error');
-		request.onsuccess = e =>
-		{
-			infoDB = e.target.result;
-			transaction = infoDB.transaction(['elements'], 'readwrite');
-			transaction.complete = function(e) {};
-			transaction.onerror = e => alert('refStore error');
-			refStore = transaction.objectStore('elements');
-		};
-		request.onupgradeneeded = e =>
-		{
-			console.log('upgrading database');
-			infoDB = e.target.result;
-			refStore = infoDB.createObjectStore('elements', {keyPath:'key'});
-			refStore.transaction.complete = function(e){};
-		};
-		this.loadScript("https://code.jquery.com/qunit/qunit-2.10.1.js", _ =>
-			this.loadScript("https://unpkg.com/qunit-dom/dist/qunit-dom.js", _ =>
-				this.loadScript(window.location.origin + window.location.pathname + 'js/tests.js', function(){})));
-	}
 	initialize(fn = null)
 	{
 		const start = Date.now();
@@ -1773,7 +1740,7 @@ class Toolbar
 			else if (!this.closed)
 				this.element.classList.remove('hidden');
 		});
-		window.addEventListener('Login', e => this.hide());
+		window.addEventListener('Login', e => !D.params.has('select') && this.hide());
 		window.addEventListener('View', e => e.detail.command === 'catalog' ? this.hide() : null);
 		window.addEventListener('CAT', e => e.detail.command === 'new' || e.detail.command === 'default' ? this.hide() : null);
 		this.table = H3.table('##help-table');
@@ -3486,6 +3453,7 @@ class Display
 					layoutGrid:		10,		// px
 					majorGridMult:	10,
 					margin:			5,		// px
+					viewMargin:		0.5,	// pure
 					pan:			{scale:	0.05},
 					panel:			{width:	230},		// px
 					scale:			{base:1.05},
@@ -3890,6 +3858,10 @@ class Display
 							R.Actions.morphismAssembly.action(e, R.diagram, R.diagram.selected);
 						}
 					},
+					KeyZ(e)
+					{
+						R.diagram.selected.length > 0 && R.diagram.viewElements(...R.diagram.selected);
+					},
 					ControlKeyZ(e)
 					{
 						Cat.R.diagram.undo(e);
@@ -4140,17 +4112,12 @@ class Display
 		this.autohide();
 		this.setupReplay();
 		this.url = window.URL || window.webkitURL || window;
-		R.loadScript('js/javascript.js');
-		R.loadScript('js/cpp.js');
+		R.loadScript('js/javascript.js', _ => console.log('javascript loaded'));
+		R.loadScript('js/cpp.js');		// TODO add to ready?
 // TODO?		R.loadScript('js/mysql.js');
 		this.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
 		if (isGUI)
 			this.local = document.location.hostname === 'localhost';
-		if (this.params.has('test'))
-		{
-			this.initTestProcedure();
-			return;
-		}
 		if (this.params.has('d'))	// check for short form
 		{
 			this.params.set('diagram', this.params.get('d'));
@@ -4755,7 +4722,6 @@ class Display
 				return;
 			const args = e.detail;
 			const diagram = args.diagram;
-//			if (!diagram || diagram.svgBase === null)
 			if (!diagram)
 				return;
 			const element = args.element;
@@ -5056,6 +5022,32 @@ class Display
 									D.statusbar.show(null, `cannot load diagram ${name}`);
 									D.emitViewEvent('catalog');
 								}
+								const select = diagram.getElement(this.params.get('select'));
+								if (select)
+								{
+									const doit = _ =>
+									{
+										if (diagram.ready === 0 && R.Actions.javascript !== undefined && R.Actions.cpp !== undefined)		// TODO change ready?
+										{
+											diagram.makeSelected(select);
+											const action = this.params.get('action');
+											if (action && action in R.Actions)
+											{
+												const act = R.Actions[action];
+												if (act.hasForm(diagram, diagram.selected))
+												{
+													if (!act.actionOnly)
+														act.html(e, diagram, diagram.selected);
+													else
+														act.action(e, diagram, diagram.selected);
+												}
+											}
+										}
+										else
+											setTimeout(_ => doit(), 10);
+									};
+									doit();
+								}
 							});
 						}
 					}
@@ -5127,7 +5119,7 @@ class Display
 				break;
 		}
 	}
-	/*
+	/*  TODO?
 	updateObjectDisplay(e)		// event handler
 	{
 		const args = e.detail;
@@ -9982,7 +9974,7 @@ class ConeAssemblyAction extends Action
 				for(let i=1; i<source.length; ++i)
 				{
 					const snk = sink[i];
-//					diagram.checkEquivalence([source[0], sink[0]], [source[i], sink[i]]);
+					// TODO
 				}
 			}
 		}
@@ -12060,8 +12052,8 @@ class Morphism extends Element
 			{
 				if (d !== null)
 				{
-//					const editDataBtn = D.getIcon('editData', 'edit', e => R.Actions.run.editData(e, i), {title:'Set data'});
-//					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d), H3.td(editDataBtn)));
+	// TODO?					const editDataBtn = D.getIcon('editData', 'edit', e => R.Actions.run.editData(e, i), {title:'Set data'});
+	// TODO?					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d), H3.td(editDataBtn)));
 					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d, D.getIcon('delete', 'delete', e => R.Actions.run.deleteData(e, this, d, i), {title:'Remove data'}))));
 				}
 			};
@@ -16258,7 +16250,9 @@ class Diagram extends Functor
 		if (elements.length > 0)
 		{
 			const bbox = this.diagramToSessionCoords(D2.Merge(...elements.map(a => a.getBBox())));
-			D.setSessionViewportByBBox(bbox);
+			const dist = Math.max(bbox.width, bbox.height) * D.default.viewMargin;
+			const vbox = D2.Expand(bbox, dist);
+			D.setSessionViewportByBBox(vbox);
 			D.emitViewEvent('diagram', R.diagram);
 		}
 	}
