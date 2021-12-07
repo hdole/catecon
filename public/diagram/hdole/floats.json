@@ -2531,7 +2531,7 @@
       "properName": "log",
       "code": {
         "js": "function %Type(args)\n{\nif (args <= 0.0)\n\treturn [1, 0];\nreturn [0, Math.log(args)];\n}\n",
-        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/floats/F64",
       "codomain": "hdole/floats/CPo{F64,#1}oPC"
@@ -2543,7 +2543,7 @@
       "properName": "pow",
       "code": {
         "js": "function %Type(args)\n{\n\tif (args[0] === 0 && args[1] === 0)\n\t\treturn [1, 0];\n\treturn [0, Math.pow(args[0], args[1])];\n}\n",
-        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = ::pow(%0, %1);\n}\n"
+        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n"
       },
       "domain": "hdole/floats/Po{F64,F64}oP",
       "codomain": "hdole/floats/CPo{F64,#1}oPC"
@@ -2950,7 +2950,7 @@
       "prototype": "Morphism",
       "properName": "log",
       "code": {
-        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/floats/F32",
       "codomain": "hdole/floats/CPo{F32,#1}oPC"
@@ -2960,7 +2960,7 @@
       "prototype": "Morphism",
       "properName": "log",
       "code": {
-        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.v = ::log(%0);\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/floats/F128",
       "codomain": "hdole/floats/CPo{F128,#1}oPC"
@@ -2970,7 +2970,7 @@
       "prototype": "Morphism",
       "properName": "pow",
       "code": {
-        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = ::pow(%0, %1);\n}\n"
+        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n"
       },
       "domain": "hdole/floats/Po{F32,F32}oP",
       "codomain": "hdole/floats/CPo{F32,#1}oPC"
@@ -2980,7 +2980,7 @@
       "prototype": "Morphism",
       "properName": "pow",
       "code": {
-        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = ::pow(%0, %1);\n}\n"
+        "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n"
       },
       "domain": "hdole/floats/Po{F128,F128}oP",
       "codomain": "hdole/floats/CPo{F128,#1}oPC"

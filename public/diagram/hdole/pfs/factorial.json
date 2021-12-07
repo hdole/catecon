@@ -3,7 +3,6 @@
   "basename": "pfs/factorial",
   "name": "hdole/pfs/factorial",
   "prototype": "Diagram",
-  "properName": "hdole/factorial",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/pfs/factorial_Index",
@@ -1058,11 +1057,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1638406933227,
+  "timestamp": 1638518249313,
   "version": 0,
   "viewport": {
     "x": 449,
     "y": -924,
     "scale": 8.337535696172978
-  }
+  },
+  "properName": "hdole/pfs/factorial"
 }

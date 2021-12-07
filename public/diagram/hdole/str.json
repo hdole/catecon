@@ -733,7 +733,7 @@
       "properName": "index",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\tconst i = args[0].indexOf(args[1]);\n\treturn i > -1 ? [0, i] : [1, 1]\n}\n",
-        "cpp": "{auto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.v = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.v = 0;\n}\n}"
+        "cpp": "{auto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.m_0 = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.m_0 = 0;\n}\n}"
       },
       "domain": "hdole/str/Po{str,str}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -768,7 +768,7 @@
       "properName": "to",
       "code": {
         "js": "function %Type(args)\n{\n\tconst v = parseInt(args);\n\tif (!isNan(v) && v >= 0)\n\t\treturn [0, v];\n\telse\n\t\treturn [1, 0];\n}\n",
-        "cpp": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
+        "cpp": "try\n{\n\t%1.m_0 = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/str/str",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -792,7 +792,7 @@
       "properName": "to",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t\t%1.v = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t\t%1.c = 0;\n}"
+        "cpp": "try\n{\n\t\t%1.m_0 = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t\t%1.c = 0;\n}"
       },
       "domain": "hdole/str/str",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -804,7 +804,7 @@
       "properName": "to",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
+        "cpp": "try\n{\n\t%1.m_0 = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/floats/F64",
       "codomain": "hdole/str/str"
@@ -816,7 +816,7 @@
       "properName": "to",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
+        "cpp": "try\n{\n\t%1.m_0 = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/str/str",
       "codomain": "hdole/floats/CPo{F64,#1}oPC"

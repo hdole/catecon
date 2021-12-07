@@ -15,7 +15,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 990,
+        "x": 970,
         "y": 350
       },
       "height": "200",
@@ -645,7 +645,7 @@
       "weight": "bold"
     },
     {
-      "description": "View the selected elements.",
+      "description": "Pan to the selected elements.",
       "basename": "t_63",
       "prototype": "DiagramText",
       "xy": {
@@ -728,7 +728,7 @@
       "height": "48"
     },
     {
-      "description": "Possibly undo the last edit action.",
+      "description": "Zoom to the selected elements.",
       "basename": "t_71",
       "prototype": "DiagramText",
       "xy": {
@@ -738,7 +738,7 @@
       "height": "24"
     },
     {
-      "description": "ctrl-Z",
+      "description": "Z",
       "basename": "t_72",
       "prototype": "DiagramText",
       "xy": {
@@ -754,7 +754,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3300
+        "y": 3400
       },
       "height": "24"
     },
@@ -764,7 +764,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3300
+        "y": 3400
       },
       "height": "36",
       "weight": "bold"
@@ -775,7 +775,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3400
+        "y": 3500
       },
       "height": "36",
       "weight": "bold"
@@ -786,7 +786,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1200,
-        "y": 3400
+        "y": 3500
       },
       "height": "48"
     },
@@ -796,7 +796,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3400
+        "y": 3500
       },
       "height": "24"
     },
@@ -806,7 +806,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3500
+        "y": 3600
       },
       "height": "36",
       "weight": "bold"
@@ -817,7 +817,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3500
+        "y": 3600
       },
       "height": "24"
     },
@@ -827,7 +827,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3600
+        "y": 3700
       },
       "height": "36",
       "weight": "bold"
@@ -838,7 +838,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3600
+        "y": 3700
       },
       "height": "24"
     },
@@ -848,7 +848,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3800
+        "y": 3900
       },
       "height": "36",
       "weight": "bold"
@@ -859,7 +859,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3800
+        "y": 3900
       },
       "height": "24"
     },
@@ -869,7 +869,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3900
+        "y": 4000
       },
       "height": "36",
       "weight": "bold"
@@ -880,7 +880,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3900
+        "y": 4000
       },
       "height": "24"
     },
@@ -890,7 +890,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4000
+        "y": 4100
       },
       "height": "24"
     },
@@ -900,7 +900,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4000
+        "y": 4100
       },
       "height": "36",
       "weight": "bold"
@@ -911,7 +911,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4100
+        "y": 4200
       },
       "height": "24"
     },
@@ -921,7 +921,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4100
+        "y": 4200
       },
       "height": "36",
       "weight": "bold"
@@ -932,7 +932,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1200,
-        "y": 4100
+        "y": 4200
       },
       "height": "48"
     },
@@ -942,7 +942,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4200
+        "y": 4300
       },
       "height": "36",
       "weight": "bold"
@@ -953,7 +953,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4200
+        "y": 4300
       },
       "height": "24"
     },
@@ -963,7 +963,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4300
+        "y": 4400
       },
       "height": "36",
       "weight": "bold"
@@ -974,7 +974,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4300
+        "y": 4400
       },
       "height": "24"
     },
@@ -984,7 +984,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4400
+        "y": 4500
       },
       "height": "36",
       "weight": "bold"
@@ -995,7 +995,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4400
+        "y": 4500
       },
       "height": "24"
     },
@@ -1005,7 +1005,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4500
+        "y": 4600
       },
       "height": "36",
       "weight": "bold"
@@ -1016,7 +1016,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4500
+        "y": 4600
       },
       "height": "24"
     },
@@ -1026,7 +1026,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4700
+        "y": 4800
       },
       "height": "36",
       "weight": "bold"
@@ -1037,7 +1037,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4700
+        "y": 4800
       },
       "height": "24"
     },
@@ -1098,7 +1098,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4800
+        "y": 4900
       },
       "height": "36",
       "weight": "bold"
@@ -1109,7 +1109,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4900
+        "y": 5000
       },
       "height": "36",
       "weight": "bold"
@@ -1120,7 +1120,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4800
+        "y": 4900
       },
       "height": "24"
     },
@@ -1130,7 +1130,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4900
+        "y": 5000
       },
       "height": "24"
     },
@@ -1170,7 +1170,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3700
+        "y": 3800
       },
       "height": "36",
       "weight": "bold"
@@ -1181,18 +1181,49 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3700
+        "y": 3800
       },
       "height": "24"
+    },
+    {
+      "description": "Possibly undo the last edit action.",
+      "basename": "t_113",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1300,
+        "y": 3300
+      },
+      "height": "24"
+    },
+    {
+      "description": "ctrl-Z",
+      "basename": "t_114",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1000,
+        "y": 3300
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "<icon>view</icon>",
+      "basename": "t_115",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1200,
+        "y": 3200
+      },
+      "height": "48"
     }
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1638237675622,
+  "timestamp": 1638522607562,
   "version": 0,
   "viewport": {
-    "x": -1063,
-    "y": -197,
-    "scale": 1.338128231212834
+    "x": -1062,
+    "y": -143,
+    "scale": 1.3378517383902508
   }
 }

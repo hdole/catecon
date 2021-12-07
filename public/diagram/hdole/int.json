@@ -4428,7 +4428,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 < 0x7fffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+        "cpp": "if (%0 < 0x7fffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z64",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -4511,7 +4511,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 < 0x7fffffff)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+        "cpp": "if (%0 < 0x7fffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z32",
       "codomain": "hdole/int/CPo{Z32,#1}oPC"
@@ -4542,7 +4542,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 < 0x7fff)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+        "cpp": "if (%0 < 0x7fff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z16",
       "codomain": "hdole/int/CPo{Z16,#1}oPC"
@@ -4597,7 +4597,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 < 0x7f)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+        "cpp": "if (%0 < 0x7f)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z8",
       "codomain": "hdole/int/CPo{Z8,#1}oPC"
@@ -4652,7 +4652,7 @@
       "prototype": "Morphism",
       "properName": "add",
       "code": {
-        "cpp": "%2.m0 = %0 + %1;\n%2.c = %2.m0 < %0;"
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
       "domain": "hdole/int/Po{Z16,Z16}oP",
       "codomain": "hdole/int/CPo{Z16,#1}oPC"
@@ -4663,7 +4663,7 @@
       "prototype": "Morphism",
       "properName": "add",
       "code": {
-        "cpp": "%2.m0 = %0 + %1;\n%2.c = %2.m0 < %0;"
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
       "domain": "hdole/int/Po{Z8,Z8}oP",
       "codomain": "hdole/int/CPo{Z8,#1}oPC"
@@ -4707,7 +4707,7 @@
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
-        "cpp": "%2.m0 = %0 - %1;\n%2.c = %2.m0 > %0;"
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
       "domain": "hdole/int/Po{Z64,Z64}oP",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -4718,7 +4718,7 @@
       "prototype": "Morphism",
       "properName": "add",
       "code": {
-        "cpp": "%2.m0 = %0 + %1;\n%2.c = %2.m0 < %0;"
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
       "domain": "hdole/int/Po{Z64,Z64}oP",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -4729,7 +4729,7 @@
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
-        "cpp": "%2.m0 = %0 - %1;\n%2.c = %2.m0 > %0;"
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
       "domain": "hdole/int/Po{Z32,Z32}oP",
       "codomain": "hdole/int/CPo{Z32,#1}oPC"
@@ -4751,7 +4751,7 @@
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
-        "cpp": "%2.m0 = %0 - %1;\n%2.c = %2.m0 > %0;"
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
       "domain": "hdole/int/Po{Z8,Z8}oP",
       "codomain": "hdole/int/CPo{Z8,#1}oPC"
@@ -4824,7 +4824,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 < 0x7fffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+        "cpp": "if (%0 < 0x7fffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
       "domain": "hdole/int/Z128",
       "codomain": "hdole/int/CPo{Z128,#1}oPC"
@@ -4854,7 +4854,7 @@
       "prototype": "Morphism",
       "properName": "add",
       "code": {
-        "cpp": "%2.m0 = %0 + %1;\n%2.c = %2.m0 < %0;"
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
       "domain": "hdole/int/Po{Z32,Z32}oP",
       "codomain": "hdole/int/CPo{Z32,#1}oPC"
@@ -4864,7 +4864,7 @@
       "prototype": "Morphism",
       "properName": "add",
       "code": {
-        "cpp": "%2.m0 = %0 + %1;\n%2.c = %2.m0 < %0;"
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
       "domain": "hdole/int/Po{Z128,Z128}oP",
       "codomain": "hdole/int/CPo{Z128,#1}oPC"
@@ -4874,7 +4874,7 @@
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
-        "cpp": "%2.m0 = %0 - %1;\n%2.c = %2.m0 > %0;"
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
       "domain": "hdole/int/Po{Z128,Z128}oP",
       "codomain": "hdole/int/CPo{Z128,#1}oPC"
@@ -5166,7 +5166,7 @@
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
-        "cpp": "%2.m0 = %0 - %1;\n%2.c = %2.m0 > %0;"
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
       "domain": "hdole/int/Po{Z16,Z16}oP",
       "codomain": "hdole/int/CPo{Z16,#1}oPC"
@@ -5176,7 +5176,7 @@
       "prototype": "Morphism",
       "properName": "mult",
       "code": {
-        "cpp": "// TODO\n%2.c = 0;\n%2.m0 = %0 * %1;"
+        "cpp": "// TODO\n%2.c = 0;\n%2.m_0 = %0 * %1;"
       },
       "domain": "hdole/int/Po{Z128,Z128}oP",
       "codomain": "hdole/int/CPo{Z128,#1}oPC"

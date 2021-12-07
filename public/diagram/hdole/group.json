@@ -3,6 +3,7 @@
   "basename": "group",
   "name": "hdole/group",
   "prototype": "Diagram",
+  "properName": "hdole/group",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/group_Index",
@@ -14,8 +15,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -570,
-        "y": 40
+        "x": -600,
+        "y": 30
       },
       "height": "200",
       "weight": "bold"
@@ -135,7 +136,7 @@
       "to": "hdole/group/G",
       "xy": {
         "x": 0,
-        "y": 900
+        "y": 1000
       }
     },
     {
@@ -144,7 +145,7 @@
       "to": "hdole/group/Po{G,G}oP",
       "xy": {
         "x": 200,
-        "y": 900
+        "y": 1000
       }
     },
     {
@@ -153,7 +154,7 @@
       "to": "hdole/group/Po{G,G}oP",
       "xy": {
         "x": 400,
-        "y": 900
+        "y": 1000
       }
     },
     {
@@ -162,7 +163,7 @@
       "to": "hdole/group/G",
       "xy": {
         "x": 400,
-        "y": 1100
+        "y": 1200
       }
     },
     {
@@ -171,7 +172,7 @@
       "to": "hdole/group/#1",
       "xy": {
         "x": 0,
-        "y": 1100
+        "y": 1200
       }
     },
     {
@@ -180,7 +181,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -260,
-        "y": 890
+        "y": 990
       },
       "height": "24"
     },
@@ -229,6 +230,25 @@
         "x": 820,
         "y": 300
       }
+    },
+    {
+      "basename": "o_38",
+      "prototype": "IndexObject",
+      "to": "hdole/group/G",
+      "xy": {
+        "x": 650,
+        "y": 100
+      }
+    },
+    {
+      "description": "G is a monoid.",
+      "basename": "t_7",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 760,
+        "y": 100
+      },
+      "height": "24"
     },
     {
       "basename": "m_0",
@@ -346,25 +366,6 @@
       "domain": "hdole/group/o_36",
       "codomain": "hdole/group/o_37",
       "to": "hdole/group/unit"
-    },
-    {
-      "basename": "o_38",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 650,
-        "y": 100
-      }
-    },
-    {
-      "description": "G is a monoid.",
-      "basename": "t_7",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 760,
-        "y": 100
-      },
-      "height": "24"
     }
   ],
   "elements": [
@@ -386,20 +387,6 @@
       "size": 1,
       "min": 0,
       "max": 1
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "G",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "#1",
-        "G"
-      ]
     },
     {
       "basename": "mult",
@@ -460,39 +447,14 @@
         "inv",
         "Id{G}dI"
       ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/Po{G,#1}oP",
-      "factors": [
-        [],
-        -1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/Po{#1,G}oP",
-      "factors": [
-        -1,
-        []
-      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1638267343520,
+  "timestamp": 1638518170590,
   "version": 0,
-  "hiddenCells": [
-    "hdole/group/{m_22,m_23},{m_27,m_30}",
-    "hdole/group/{m_24},{m_27,m_25}",
-    "hdole/group/{m_26,m_34},{m_5,m_31}",
-    "hdole/group/{m_26,m_33},{m_32}"
-  ],
   "viewport": {
     "x": 1254,
-    "y": 171,
+    "y": 239,
     "scale": 1.013200050828074
-  },
-  "properName": "hdole/group"
+  }
 }
