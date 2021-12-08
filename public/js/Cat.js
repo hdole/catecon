@@ -1346,6 +1346,10 @@ args.codomain = 'zf/Set';
 	{
 		return name !== 'sys' && name !== 'zf';
 	}
+	isReady()
+	{
+		this.initialized && R.Actions.javascript !== undefined && R.Actions.cpp !== undefined;
+	}
 }
 
 class Cloud		// fitb
@@ -1731,7 +1735,13 @@ class Toolbar
 		});
 		this.element.onmouseenter = _ => D.mouse.onGUI = this;
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
-		window.addEventListener('Diagram', e => (this.element.classList.contains('hidden') || R.diagram.selected.length > 0) ? this.show(e) : this.hide());
+		window.addEventListener('Diagram', e =>
+		{
+			if ((this.element.classList.contains('hidden') || R.diagram.selected.length > 0) && e.detail.command === 'select')
+				this.show(e);
+			else
+				this.hide();
+		});
 		window.addEventListener('mouseenter', e => D.mouse.saveClientPosition(e));
 		window.addEventListener('Autohide', e =>
 		{
@@ -1872,7 +1882,6 @@ class Toolbar
 			this.showSessionToolbar(btns);
 		this.updateTop();
 		this.automove(diagram);
-		D.drag = false;
 	}
 	addButtons(buttons)
 	{
@@ -4113,7 +4122,7 @@ class Display
 		this.setupReplay();
 		this.url = window.URL || window.webkitURL || window;
 		R.loadScript('js/javascript.js', _ => console.log('javascript loaded'));
-		R.loadScript('js/cpp.js');		// TODO add to ready?
+		R.loadScript('js/cpp.js');
 // TODO?		R.loadScript('js/mysql.js');
 		this.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
 		if (isGUI)
@@ -4334,7 +4343,7 @@ class Display
 			const diagram = R.diagram;
 			if (!diagram)
 				return;
-			this.drag = this.mouseIsDown && diagram.selected.length > 0 && (e.movementX !== 0 || e.movementY !== 0);
+			this.drag = this.mouseIsDown && diagram.selected.length > 0;
 			const xy = diagram.mouseDiagramPosition(e);
 			xy.width = 2;
 			xy.height = 2;
@@ -4469,25 +4478,26 @@ class Display
 					const elts = new Map();
 					const orig = new Map();
 					const movables = new Set();
+					const undoing = obj =>
+					{
+						if (obj.hasMoved())
+						{
+							movables.add(obj);
+							elts.set(obj.name, obj.getXY());
+							!orig.has(obj) && orig.set(obj, obj.orig);
+						}
+					};
 					diagram.selected.map(e =>
 					{
 						if (e instanceof IndexMorphism)
 						{
-							elts.set(e.domain.name, e.domain.getXY());
-							elts.set(e.codomain.name, e.codomain.getXY());
-							!orig.has(e.domain) && orig.set(e.domain, e.domain.orig);
-							!orig.has(e.codomain) && orig.set(e.codomain, e.codomain.orig);
-							movables.add(e.domain);
-							movables.add(e.codomain);
+							undoing(e.domain);
+							undoing(e.codomain);
 						}
 						else if (e instanceof Cell)
-							e.getObjects().map(o => movables.add(o));
+							e.getObjects().map(o => o.hasMoved() && movables.add(o));
 						else if (!(e instanceof Cell))
-						{
-							!orig.has(e) && orig.set(e, {x:e.orig.x, y:e.orig.y});
-							elts.set(e.name, e.getXY());
-							movables.add(e);
-						}
+							undoing(e);
 						e.finishMove();
 					});
 					const elements = [...elts];
@@ -5027,7 +5037,7 @@ class Display
 								{
 									const doit = _ =>
 									{
-										if (diagram.ready === 0 && R.Actions.javascript !== undefined && R.Actions.cpp !== undefined)		// TODO change ready?
+										if (diagram.ready === 0 && R.isReady())
 										{
 											diagram.makeSelected(select);
 											const action = this.params.get('action');
@@ -5044,7 +5054,7 @@ class Display
 											}
 										}
 										else
-											setTimeout(_ => doit(), 10);
+											setTimeout(_ => doit(), 10);	// try again
 									};
 									doit();
 								}
@@ -9054,6 +9064,10 @@ class IndexObject extends CatObject
 	{
 		return false;
 	}
+	hasMoved()
+	{
+		return 'orig' in this && (this.orig.x !== this.x || this.orig.y !== this.y);
+	}
 }
 
 class IndexPullback extends IndexObject
@@ -12180,7 +12194,6 @@ class Morphism extends Element
 				const left = [U.dataSig([0, i]), this.signature];
 				const right =[ U.dataSig([0, d]) ];
 				R.loadItem(diagram, this, left, right);
-console.log('load data', left, right);
 			});
 	}
 	textWidth()
