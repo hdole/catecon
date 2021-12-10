@@ -23,6 +23,9 @@ var Cat = Cat || require('./Cat.js');
 				context:				{value:	null,	writable:	true},
 				references:				{value:	new Map(),	writable:	false},
 				tab:					{value:	1,		writable:	true},
+				dependencies:			{value: new Set(),	writable:	false},		// from element name t0 symbol
+				generated:				{value: new Set(),	writable:	false},		// elements already produced
+				objects:				{value: new Set(),	writable:	false},		// elements already produced
 			});
 			R.languages.set(this.basename, this);
 			R.$CAT.getElement('Set').actions.set(args.basename, this);
@@ -33,6 +36,16 @@ var Cat = Cat || require('./Cat.js');
 			this.varCount = 0;
 			this.tab = 1;
 			this.context = diagram;
+			this.dependencies.clear();
+			this.generated.clear();
+			this.references.clear();
+			this.objects.clear();
+			if (diagram)
+			{
+				this.references.set(diagram.name, new Set());
+				const refs = this.context.getAllReferenceDiagrams();
+				refs.forEach((dgrm, name) => this.references.set(name, new Set()));
+			}
 		}
 		incTab()
 		{
@@ -63,9 +76,6 @@ var Cat = Cat || require('./Cat.js');
 			let basetype = '';
 			switch(elt.constructor.name)
 			{
-				case 'CatObject':
-					basetype = elt.name;
-					break;
 				case 'ProductObject':
 					basetype = (elt.dual ? 'Copr_' : 'Pr_') + elt.objects.map(o => this.getType(o, false)).join('_c_');
 					break;
@@ -77,9 +87,6 @@ var Cat = Cat || require('./Cat.js');
 					break;
 				case 'HomMorphism':
 					basetype = `hom_${this.getType(elt.morphisms[0], false)}_c_${this.getType(elt.morphisms[1], false)}`;
-					break;
-				case 'Morphism':
-					basetype = elt.name;
 					break;
 				case 'Identity':
 					basetype = `id_${this.getType(elt.domain, false)}`;
@@ -102,16 +109,13 @@ var Cat = Cat || require('./Cat.js');
 			}
 			if (!first && elt.needsParens())
 				basetype = `Pa_${basetype}_aP`;
-			basetype = isLocal ? basetype : `${this.getNamespace(elt.diagram)}::${basetype}`;
 			this.currentDiagram = priorDiagram;
 			return !first ? U.Token(basetype) : basetype;
 		}
 		generateHeader()
 		{
-			const refs = this.context.getAllReferenceDiagrams();
 			let code = '';
-			this.references = new Map();
-			[...refs.keys()].reverse().map(dgrm =>
+			[...this.references.keys()].reverse().map(dgrm =>
 			{
 				const d = R.$CAT.getElement(dgrm);
 				this.references.set(d.name, new Set());
@@ -120,17 +124,16 @@ var Cat = Cat || require('./Cat.js');
 					nuCode = nuCode + '\n';
 				code += nuCode;
 			});
-			this.references.set(this.context.name, new Set());
 			if (code !== '')
 				code = '// from diagrams\n' + code;
 			return code;
 		}
-		generateProductObject(object, generated)
+		generateProductObject(object)
 		{
 			if (this.hasCode(object))
 				return this.generateRuntime(object);
 			const name = this.getType(object);
-			let code = object.objects.map(o => this.generateObject(o, generated)).join('');
+			let code = object.objects.map(o => this.generateObject(o)).join('');
 			const members = object.objects.filter(o => !o.isTerminal()).map((o, i) => this.cline(`${this.getType(o)} m_${i};`, object.dual ? 1 : 0)).join('\n');
 			if (object.dual)
 				code +=
@@ -152,7 +155,7 @@ ${object.objects.map((o, i) => this.cline(`case 0:\n\tin >> obj.m_${i};\n\tbreak
 		}
 		friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
 		{ 
-			out ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
+			out ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) && !o.isTerminal() ? ` << obj.m_${i} << " "` : '').join('')};
 			return out;            
 		}
 	};
@@ -165,12 +168,12 @@ ${object.objects.map((o, i) => this.cline(`case 0:\n\tin >> obj.m_${i};\n\tbreak
 ${members}
 	friend std::istream & operator>>(std::istream  & in, ${name} & obj )
 	{ 
-		in ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) ? ` >> obj.m_${i}` : '').join('')};
+		in ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) && !o.isTerminal() ? ` >> obj.m_${i}` : '').join('')};
 		return in;            
 	}
 	friend std::ostream & operator<<(std::ostream  & out, const ${name} & obj )
 	{ 
-		out ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) ? ` << obj.m_${i} << " "` : '').join('')};
+		out ${object.objects.map((o, i) => !(o instanceof Cat.HomObject) && !o.isTerminal() ? ` << obj.m_${i} << " "` : '').join('')};
 		return out;            
 	}
 };
@@ -181,11 +184,11 @@ ${members}
 		{
 			return this.cline(this.getCode(element).replace(/%0/g, this.getType(element)));
 		}
-		generateObject(object, generated = new Set())
+		generateObject(object, force = false)
 		{
-			if (generated.has(object.name))
+			if (!force && this.generated.has(object.name))
 				return '';
-			generated.add(object.name);
+			this.generated.add(object.name);
 			const proto = object.constructor.name;
 			let code = '';
 			const name = this.getType(object);
@@ -198,10 +201,10 @@ ${members}
 						code += this.generateRuntime(object);
 						break;
 					case 'ProductObject':
-						code += this.generateProductObject(object, generated);
+						code += this.generateProductObject(object);
 						break;
 					case 'HomObject':
-//						code += this.cline(`${this.generateComments(object)}\ttypedef void (*${name})(const ${this.getType(object.objects[0])} &, ${this.getType(object.objects[1])} &);`);
+						code += this.generateFunctionPointer(object);
 						break;
 					default:
 						break;
@@ -209,11 +212,11 @@ ${members}
 			}
 			return this.cline(this.generateComments(object)) + code;
 		}
-		findObjects(object, generated)		// recursive
+		findObjects(object)		// recursive
 		{
-			if (generated.has(object.name))
+			if (this.generated.has(object.name))
 				return;
-			generated.add(object.name);
+			this.generated.add(object.name);
 			this.references.get(object.diagram.name).add(object);
 			switch(object.constructor.name)
 			{
@@ -221,26 +224,26 @@ ${members}
 					break;
 				case 'ProductObject':
 				case 'HomObject':
-					object.objects.map(o => this.findObjects(o, generated));
+					object.objects.map(o => this.findObjects(o));
 					break;
 			}
 		}
-		_findAllObjects(morphism, generated)		// recursive
+		_findAllObjects(morphism, found)		// recursive
 		{
 			switch(morphism.constructor.name)
 			{
 				case 'Identity':
-					this.findObjects(morphism.domain, generated);
+					this.findObjects(morphism.domain, found);
 					break;
 				case 'Morphism':
 				case 'FactorMorphism':
-					this.findObjects(morphism.domain, generated);
-					this.findObjects(morphism.codomain, generated);
+					this.findObjects(morphism.domain, found);
+					this.findObjects(morphism.codomain, found);
 					break;
 				case 'HomMorphism':
 				case 'ProductAssembly':
 				case 'ProductMorphism':
-					morphism.morphisms.map(m => this._findAllObjects(m, generated));
+					morphism.morphisms.map(m => this._findAllObjects(m, found));
 					break;
 				case 'LambdaMorphism':
 				case 'Distribute':
@@ -254,22 +257,22 @@ ${members}
 		{
 			if (m instanceof Cat.Morphism)
 			{
-
+				this.findObjects(m.domain);
+				this.findObjects(m.codomain);
 			}
 			else
 			{
-				const generated = new Set();
-				this.context.forEachObject(o => this.findObjects(o, generated));
+				const found = new Set();
+				this.context.forEachObject(o => this.findObjects(o, found));
 				this.context.forEachMorphism(m =>
 				{
-					this.findObjects(m.domain, generated);
-					this.findObjects(m.codomain, generated);
+					this.findObjects(m.domain, found);
+					this.findObjects(m.codomain, found);
 				});
 			}
 		}
 		generateObjects()		// not recursive
 		{
-			const generated = new Set();
 			let code = '';
 			const oldIndent = this.tab;
 			this.tab = 0;
@@ -280,7 +283,7 @@ ${members}
 				{
 					this.incTab();
 					this.currentDiagram = diagram;
-					const objectCode = [...set].map(o => this.generateObject(o, generated)).join('');
+					const objectCode = [...set].map(o => this.generateObject(o)).join('');
 					this.decTab();
 					if (objectCode !== '')
 						code += this.cline(`namespace ${this.getNamespace(diagram)}\n{\n${objectCode}\n}\n`);
@@ -350,10 +353,7 @@ ${members}
 					const v = ndxMap.get(indexes[0].toString());
 					g.var = v;
 					if (ndxMap.has(strNdx))
-					{
-if (ndxMap.get(strNdx) !== v) debugger;
 						return;
-					}
 					ndxMap.set(strNdx, v);
 				}
 				else
@@ -364,6 +364,10 @@ if (ndxMap.get(strNdx) !== v) debugger;
 				}
 			};
 			graph.scanLinks(graph, CppAction.CheckGraph, process);
+		}
+		generateFunctionPointer(hom)
+		{
+			return `${this.generateComments(object)}\ttypedef void (*${U.Token(hom.name)});`;		// TODO
 		}
 		// label nodes in the graphs with a variable name
 		generateFunctionInterface(graph)
@@ -454,28 +458,47 @@ if (ndxMap.get(strNdx) !== v) debugger;
 		}
 		// generate code for the morphism as a function
 		// not recursive
-		generateMorphism(morphism, generated)
+		generateMorphism(morphism)
 		{
-			if (generated.has(morphism.name))
+			if (this.generated.has(morphism.name))
 				return '';
-			generated.add(morphism.name);
+			this.generated.add(morphism.name);
 			const code = this.cline(this.generateComments(morphism)) +
 				this.instantiateMorphism(this.getType(morphism), morphism);
 			return code;
 		}
+		objectScanner(object)		// recursive
+		{
+			if (this.objects.has(object))
+				return;
+			this.objects.add(object);
+			switch(object.constructor.name)
+			{
+				case 'ProductObject':
+				case 'HomObject':
+					object.objects.map(o => this.objectScanner(o));
+					break;
+				default:
+					break;
+			}
+		}
 		// upGraph has the morphisms input and output variables at the domFactor and codFactor locations
 		instantiateMorphism(symbol, morphism, ndxMap = new Map(), upGraph = null, domFactor = [0], codFactor = [1])		// recursive
 		{
-if (upGraph && upGraph.getFactor(domFactor) === undefined) debugger;
-if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
-//			let code = '';
-//			let code = this.cline(`// ${this.getStd(morphism)} ${morphism.name}`);		// TODO really debug code
+			this.objectScanner(morphism.domain);
+			this.objectScanner(morphism.codomain);
 			const span = H3.span(morphism.properName);
 			let code = this.cline(`// ${this.getStd(morphism)} ${span.innerHTML}`);		// TODO really debug code
 			const graph = morphism.getGraph();
 			switch(morphism.constructor.name)
 			{
 				case 'Morphism':
+					if ('recursor' in morphism)
+					{
+						const name = morphism.recursor.name;
+						if (!this.generated.has(name) && !this.dependencies.has(name))
+							this.dependencies.add(name);
+					}
 					this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
 					if ('data' in morphism)
 					{
@@ -547,6 +570,8 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 							}
 							code += this.cline(nuCode);
 						}
+						else if ('recursor' in morphism)
+							code += this.cline(`${this.getType(morphism.recursor)}(${this.generateFunctionInvocation(graph)});`);
 						else
 						{
 							// no data or code; treat as function call
@@ -698,14 +723,37 @@ if (upGraph && upGraph.getFactor(codFactor) === undefined) debugger;
 			});
 			return code;
 		}
-		generate(morphism, generated = new Set())
+		generate(morphism)		// not recursive
 		{
-			if (generated.has(morphism.name))
+			if (this.generated.has(morphism.name))
 				return '';
 			if (morphism instanceof Cat.Diagram)
 				return this.generateDiagram(morphism);
 			this.initialize(morphism.diagram);
-			return this.generateMorphism(morphism, generated)
+			this.dependencies.add(morphism.name);
+			const morphCode = new Map();
+			let code =
+`
+#include <iostream>
+#include <string>
+#include <stdlib.h>
+#include <map>
+#include <cstring>
+
+`;
+			this.decTab();
+			while(this.dependencies.size > 0)
+			{
+				const name = [...this.dependencies].shift();
+				this.dependencies.delete(name);
+				const m = this.context.getElement(name);
+				morphCode.set(name, this.generateMorphism(m));
+			}
+			this.incTab();
+			this.objectScanner(morphism.domain);
+			this.objectScanner(morphism.codomain);
+			[...this.objects].reverse().map(o => code += this.generateObject(o, true)).join('\n');
+			return code + [...morphCode.values()].reverse().join('\n');
 			/*
 			let code =
 `
@@ -804,11 +852,10 @@ namespace ${this.getNamespace(diagram)}
 {
 `
 ;
-			const generated = new Set();
 			diagram.forEachMorphism(m =>
 			{
 				this.initialize(this.context);
-				code += this.generateMorphism(m, generated);
+				code += this.generateMorphism(m);
 			});
 			code += '}\n';
 			return code;
@@ -828,343 +875,4 @@ namespace ${this.getNamespace(diagram)}
 		window.Cat.R.Actions.cpp = new CppAction(Cat.R.$CAT);
 	}
 
-		/*
-		generateMorphism(morphism, generated)
-		{
-			const proto = morphism.constructor.name;
-			const name = this.getType(morphism);
-			let code = '';
-			if (morphism instanceof Cat.MultiMorphism)
-				code += morphism.morphisms.map(n => this.generate(n, generated)).join('\n');
-			const header = this.header(morphism);
-			const tail = this.tail();
-			if (morphism.domain.isInitial())
-				code += `${header}	return;	// abandon computation\n'${tail}\n${tail}`;	// domain is null, yuk
-			else if (morphism.codomain.isTerminal())
-				code += `${header}	out = 0;${tail}`;
-			else if (morphism.codomain.isInitial())
-				code += `${header}	throw 'do not do this';${tail}`;
-			else
-				switch(proto)
-				{
-					case 'Composite':
-						code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
-						code += this.generateComments(morphism);
-						code += header;
-						const lngth = morphism.morphisms.length;
-						for (let i=0; i<lngth; ++i)
-						{
-							const m = morphism.morphisms[i];
-							if (i !== lngth -1)
-								code += this.cline(2, `${this.getType(m.codomain)} out_${i};`);
-							code += this.cline(2, `${this.getType(m)}(${i === 0 ? 'args' : `out_${i -1}`}, ${i !== lngth -1 ? `out_${i}` : 'out'});${i !== lngth -1 ? '\n' : ''}`);
-						}
-						code += tail;
-						break;
-					case 'Identity':
-						code += this.generateComments(morphism);
-						code += `${header}\t\tout = args;${tail}`;
-						break;
-					case 'ProductMorphism':
-						code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
-						code += this.generateComments(morphism);
-						if (morphism.dual)
-						{
-							const subcode = morphism.morphisms.map((m, i) => this.getType(m).join(',\n\t\t\t'));
-							code += `${header}		const void (*)(void*)[] fns = {${subcode}};\n\t\tfns[args.index]();${tail}`;
-						}
-						else
-							code += `${header}\t\t${morphism.morphisms.map((m, i) => this.cline(2, `${this.getType(m)}(args.m_${i}, out.m_${i});`)).join('')}${tail}`;
-						break;
-					case 'ProductAssembly':
-						code += `${header}\t\t${morphism.morphisms.map((m, i) => this.cline(2, `${this.getType(m)}(args, out.m_${i});\n`)).join('')}${tail}`;
-						break;
-					case 'Morphism':
-						code += this.generateComments(morphism);
-						code += this.generateRuntime(morphism);
-						if ('recursor' in morphism)
-						{
-							generated.add(morphism.name);	// add early to avoid infinite loop
-							code += this.generate(morphism.recursor, generated);
-						}
-						if ('data' in morphism)
-						{
-							const data = JSON.stringify(U.JsonMap(morphism.data));
-							code += this.generateComments(morphism);
-							code +=
-`
-const ${name}_Data = new Map(${data});
-function ${name}_Iterator(fn)
-{
-	const result = new Map();
-	${name}_Data.forEach(function(d, i)		// TODO? not C++
-	{
-		result.set(i, fn(i));
-	});
-	return result;
-}
-`;
-						}
-						if ('recursor' in morphism)
-							code +=
-`${header}	if (${name}_Data.has(args))
-return ${name}_Data.get(args);
-return ${this.getType(morphism.recursor)}(args);
-${tail}`;
-				else
-					code +=
-`
-	${header}	return ${name}_Data.get(args);${tail}`;
-						break;
-					case 'Distribute':
-					case 'Dedistribute':
-						code += this.generateComments(morphism);
-						code +=
-`${header}	out.m_0 = args.m_1.m_0;
-out.m_1.m+0 = args.m_0;
-out.m_1.m_2 = args.m_1.m_1;${tail}`;
-						break;
-					case 'Evaluation':
-						code += this.generateComments(morphism);
-						code += `${header}\t\targs.m_0(args.m_1, out);${tail}`;
-						break;
-					case 'FactorMorphism':
-						code += this.generateComments(morphism);
-						if (morphism.dual)
-						{
-							// TODO
-						}
-						else
-						{
-							const factors = morphism.factors;
-							if (factors.length === 1)
-								code += `${header}\t\tout = args.${this.getFactorAccessor(factors[0])};${tail}`;
-							else
-							{
-								const factorCode = $this.factors.map((factor, i) => `\t\tout.m_${i} = args.${this.getFactorAccessor(factors[i])};\n`).join('');
-								code += `${header}${factorCode}${tail}`;
-							}
-						}
-						break;
-					case 'HomMorphism':
-						code += morphism.morphisms.map(m => this.generate(m, generated)).join('');
-						code += this.generateComments(morphism);
-						const top = morphism.morphisms[0];
-						const btm = morphism.morphisms[1];
-						const obj0 = this.getType(top.domain);
-						const obj1 = this.getType(top.codomain);
-						const obj2 = this.getType(btm.domain);
-						const obj3 = this.getType(btm.codomain);
-						code +=
-`${header}	out = [&](const ${obj0} & _morph, ${obj3} & _out)
-{
-${obj2} _args2;
-${this.getType(top)}(_args, _args2);
-${obj3} _args3;
-_morph(_args2, _args3);
-${this.getType(btm)}(_args3, _out);
-}
-${tail}`;
-						break;
-					case 'LambdaMorphism':
-						code += this.generate(morphism.preCurry, generated);
-						code += this.generateComments(morphism);
-						const inputs = new Array(this.ObjectLength(morphism.preCurry.domain));
-						const domLength = this.ObjectLength(morphism.domain);
-						const homLength = morphism.homFactors.length;
-						if (homLength > 0)
-						{
-							const domArgs = m.homFactors.map((f, i) => `\t\tlargs.${this.getFactorAccessor(f)} = args.m_${i}`).join('\n');
-							const homArgs = m.domFactors.map((f, i) => `\t\tlargs.${this.getFactorAccessor(f)} = _args.m_${i}`).join('\n');
-							code +=
-`${header}	
-out = void [&](const ${this.getType(m.codomain.objects[0])} & args, ${this.getType(m.codomain.objects[1])} & out)
-{
-${this.getType(m.preCurry.domain)} largs;
-${homArgs};
-${domArgs};
-${this.getType(m.preCurry)}(largs, out);
-};
-${tail}`;
-						}
-						else	// must evaluate lambda!
-						{
-							const preMap = new Map();
-							const postMap = new Map();
-							for (let i=0; i<morphism.domFactors.length; ++i)
-							{
-								const f = morphism.domFactors[i];
-								if (f[0] === 1 && f.length === 2)
-									preMap.set(f[1], i);
-								else if (f[0] === 0 && f.length === 2)
-									postMap.set(f[1], i);
-							}
-							let preInput = '';
-							for (let i=0; i<preMap.size; ++i)
-								preInput += `${i > 0 ? ', ' : ''}args[${preMap.get(i)}]`;
-							if (preMap.size > 1)
-								preInput = `[${preInput}]`;
-							let postInput = '';
-							for (let i=0; i<postMap.size; ++i)
-								postInput += `${i > 0 ? ', ' : ''}args[${postMap.get(i)}]`;
-							if (postMap.size > 1)
-								postInput = `[${postInput}]`;
-							code += `${header}	out = ${this.getType(morphism.preCurry)}(${preInput})(${postInput});${tail}`;
-						}
-						break;
-					case 'NamedMorphism':
-						code += this.generate(morphism.source, generated);
-						code += this.generateComments(morphism);
-						code += `${header}\t\t${this.getType(morphism.source)}(args, out);${tail}`;
-						break;
-				}
-			return code;
-		}
-		evalComposite(morphism, factor)
-		{
-			let code = '';
-			switch(morphism.constructor.name)
-			{
-				case 'Morphism':
-					break;
-				case 'Evaluation':
-					break;
-				case 'Composite':
-					break;
-				case 'Identity':
-				case 'FactorMorphism':
-				case 'LambdaMorphism':
-				case 'Distribute':
-				case 'DeDistribute':
-					break;
-				case 'ProductMorphism':
-				case 'ProductAssembly':
-				case 'HomMorphism':
-					morphism.morphisms.map((mm, i) => evalComposite(mm, Cat.U.pushFactor(factor, i)));
-					break;
-				case 'NamedMorphism':
-					evalComposite(morphism.base);
-					break;
-			}
-			return code;
-		}
-		generate(element, generated = new Set())
-		{
-			if (generated.has(element.name))
-				return '';
-			generated.add(element.name);
-			let code = '';
-			let addNamespace = false;
-			const namespace = this.getNamespace(element.diagram);
-			if (this.currentDiagram !== element.diagram)
-			{
-				addNamespace = true;
-				code += this.currentDiagram ? '} // eons\n\n' : '';
-				code += `namespace ${this.getNamespace(element.diagram)}\n{\n`;
-				this.currentDiagram = element.diagram;
-			}
-			if (element instanceof Cat.CatObject)
-				code += this.generateObject(element, generated);
-			else if (element instanceof Cat.Morphism)
-				code += this.generateMorphism(element, generated);
-			return code;
-		}
-		generateMain(diagram)
-		{
-			this.currentDiagram = null;
-			const namedMorphisms = new Set();
-			diagram.forEachMorphism(m =>
-			{
-				if (m instanceof Cat.NamedMorphism)
-					namedMorphisms.add(m);
-			});
-			const named = [...namedMorphisms];
-			const nameCode = named.map(nm => `\t\t{"${nm.basename}", (CatFn)${this.getType(nm)}}`).join(',\n');
-			let code =
-`}
-
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-#include <map>
-#include <cstring>
-
-int main(int argc, char ** argv)
-{
-	unsigned long index = 0;
-	typedef void (*CatFn)(void*);
-	std::map<std::string, CatFn> str2fn =
-	{
-${nameCode}
-	};
-	const std::string help("${diagram.description}");
-	try
-	{
-		if (argc > 1 && (strcmp("-s", argv[1]) || strcmp("--signatures", argv[1])))
-		{
-${named.map(nm => `std::cout << "${nm.basename}:\t${nm.signature}" << std::endl\n`).join('')}
-		}
-		if (argc > 1 && (strcmp("-h", argv[1]) || strcmp("--help", argv[1])))
-`;
-			if (named.size > 1)
-				code +=
-`		{
-			std::cout << help << std::endl << "Select one of the following to execute from the command line:" << std::endl;
-			${named.map((nm, i) => `\tstd::cout << "\t${i}:\t${nm.basename}" << std::endl;`).join(',\n')}
-			return 1;
-		}
-		std::cout << "Enter a number for which morphism to run:" << std::endl;
-${named.map((nm, i) => `\t\tstd::cout << '\t' << ${i} << ":\t${nm.basename}" << std::endl;`)}
-		std::cin >> index;
-		switch (index)
-		{
-			${named.map((nm, i) =>
-`
-			case ${i}:
-			{
-				${this.getType(nm.domain)} args;
-				std::cin >> args;
-				${this.getType(nm.codomain)} out;
-				${this.getType(nm)}(args, out);
-				std::cout << out;
-				break;
-			}
-`).join('')}
-			default:
-				std::cerr << "Bad choice" << std::endl;
-				return 1;
-		}
-		return 0;
-`;
-			else if (named.size === 1)
-			{
-				let nm = [...named][0];
-				code +=
-`		{
-			std::cout << help << std::endl << "${nm.description}" << std::endl;
-			return 1;
-		}
-		${this.getType(nm.domain)} args;
-		std::cin >> args;
-		${this.getType(nm.codomain)} out;
-		${this.getType(nm)}(args, out);
-		std::cout << out << std::endl;
-		return 0;
-`;
-			}
-			else
-			{
-			}
-			code +=
-`	}
-	catch(std::exception x)
-	{
-		std::cerr << "An error occurred" << std::endl;
-		return 1;
-	}
-}
-`;
-			return code;
-		}
-		*/
 })();	// end anon function
