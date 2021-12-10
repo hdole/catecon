@@ -10854,12 +10854,14 @@ class LanguageAction extends Action
 	evaluateMorphism(e, diagram, name, fn) {}
 	download(e, elt)
 	{
+		this.initialize(R.diagram);
 		const code = this.generate(elt);
 		const blob = new Blob([code], {type:`application/${this.ext}`});
 		const url = D.url.createObjectURL(blob);
 		D.download(url, `${this.getType(elt)}.${this.ext}`);
 	}
 	hidden() { return true; }
+	initialize()	{}		// fitb
 }
 
 class RunAction extends Action
