@@ -4225,6 +4225,7 @@ class Display
 		const scale = diagram !== null ? D.session.getPlacement(diagram.name).scale : 1.0;
 		const width = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 		const height = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
+		this.updateBorder();
 		if (this.topSVG)
 		{
 			this.topSVG.setAttribute('width', width);
@@ -4234,7 +4235,6 @@ class Display
 		}
 		this.panels.resize();
 		this.screenPan = this.getScreenPan();
-		this.updateBorder();
 	}
 	cancelAutohide()
 	{
@@ -5054,7 +5054,7 @@ class Display
 											}
 										}
 										else
-											setTimeout(_ => doit(), 10);	// try again
+											setTimeout(doit, 10);	// try again
 									};
 									doit();
 								}
@@ -6131,7 +6131,7 @@ class Display
 		if (!R.diagram)
 			return;
 		if (R.diagram.ready !== 0)
-			setTimeout(_ => this.updateBorder(), 10);
+			setTimeout(_ => this.updateBorder(), 10);		// wait for it
 		else if (D.default.fullscreen)
 		{
 			const dgrmBbox = R.diagram.svgRoot.getBBox();
@@ -8787,6 +8787,10 @@ class DiagramText extends Element
 		text.update();
 		D.emitTextEvent(R.diagram, 'update', text);
 	}
+	hasMoved()
+	{
+		return 'orig' in this && (this.orig.x !== this.x || this.orig.y !== this.y);
+	}
 }
 
 class TensorObject extends MultiObject
@@ -9862,7 +9866,8 @@ class ProductEditAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length === 1 && ary[0].isEditable() && ary[0].to instanceof ProductObject && ary[0].to.dual === this.dual && ary[0].refcnt === 1;
+// TODO		return ary.length === 1 && ary[0].isEditable() && ary[0].to instanceof ProductObject && ary[0].to.dual === this.dual && ary[0].refcnt === 1;
+		return false;
 	}
 }
 
@@ -9937,7 +9942,8 @@ class ProductAssemblyAction extends Action
 	{
 		const morphisms = diagramMorphisms.map(m => m.to);
 		const m = diagram.get('ProductAssembly', {morphisms, dual:this.dual});
-		return diagram.placeMorphismByObject(e, 'domain', diagramMorphisms[0].domain, m);
+		const obj = this.dual ? diagramMorphisms[0].codomain : diagramMorphisms[0].domain;
+		return diagram.placeMorphismByObject(e, this.dual ? 'codomain' : 'domain', obj, m);
 	}
 	hasForm(diagram, ary)
 	{
@@ -14034,8 +14040,13 @@ class ProductAssembly extends MultiMorphism
 		super.loadItem();
 		this.morphisms.map((m, i) =>
 		{
-			const pCod = this.diagram.get('FactorMorphism', {domain:this.codomain, factors:[i], dual:this.dual});
-			R.loadItem(this.diagram, this, [m], this.dual ? [this, pCod] : [pCod, this]);
+			const args = {factors:[i], dual:this.dual};
+			if (this.dual)
+				args.codomain = this.codomain;
+			else
+				args.domain = this.domain;
+			const obj = this.diagram.get('FactorMorphism', args);
+			R.loadItem(this.diagram, this, [m], this.dual ? [this, obj] : [obj, this]);
 		});
 	}
 	static Basename(diagram, args)
@@ -14051,11 +14062,17 @@ class ProductAssembly extends MultiMorphism
 	}
 	static Domain(diagram, morphisms, dual)
 	{
-		return morphisms[0].domain;
+		if (dual)
+			return diagram.coprod(...morphisms.map(m => m.domain));
+		else
+			return morphisms[0].domain;
 	}
 	static Codomain(diagram, morphisms, dual)
 	{
-		return diagram.get('ProductObject', {objects:morphisms.map(m => m.codomain)});
+		if (dual)
+			return morphisms[0].codomain;
+		else
+			return diagram.prod(...morphisms.map(m => m.codomain));
 	}
 	static ProperName(morphisms, dual)
 	{
@@ -14576,7 +14593,7 @@ class LambdaMorphism extends Morphism
 			{
 				const g = f.slice();
 				g.shift();
-				return g.length > 0 ? `[${g.toString()}]` : '';
+				return g.map(i => U.subscript(i)).join('&#8202');
 			}
 			return f.toString();	// for -1
 		}).join();
@@ -14589,10 +14606,10 @@ class LambdaMorphism extends Morphism
 			{
 				const g = f.slice();
 				g.shift();
-				hf += g.length > 0 ? `[${g.toString()}]` : '';
+				hf += g.map(i => U.subscript(i)).join('&#8202');
 			}
 		}).join();
-		return `&lambda;&lt;${preCurry.properName}${df}${df !== '' || hf !== '' ? '::' : ''}${hf}&gt;`;
+		return `&lambda;&lt;${preCurry.properName}${df}${df !== '' || hf !== '' ? '&#8331;' : ''}${hf}&gt;`;
 	}
 }
 
