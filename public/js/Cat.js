@@ -258,7 +258,7 @@ class U		// utilities
 		const s = typeof e === 'string' ? e : e.name;
 		const r = s.replace(/\//g, '_').replace(/{/g, '_Br_').replace(/}/g, '_rB_').replace(/,/g, '_c_').replace(/:/g, '_').replace(/#/g, '_n_')
 			.replace(/\[/g, '_br_')
-			.replace(/-/g, '_minus_')
+			.replace(/-/g, '_m_')
 			.replace(/\]/g, '_rb_');
 		return r;
 	}
@@ -545,6 +545,7 @@ class Runtime
 					status:	'unauthorized',
 					cloud:	null,
 					isAdmin:	_ => this.user.cloud && this.user.cloud.permissions.includes('admin'),
+					canUpload:	_ => this.user.status === 'logged-in',
 				},
 				writable:true
 			},	// TODO fix after bootstrap removed	writable:true,
@@ -1210,7 +1211,7 @@ args.codomain = 'zf/Set';
 	}
 	upload(e, diagram, local, fn)
 	{
-		if (this.user.status !== 'logged-in')
+		if (!this.user.canUpload())
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:this.user.name};
 		body.png = D.getPng(diagram.name);
@@ -1348,7 +1349,7 @@ args.codomain = 'zf/Set';
 	}
 	isReady()
 	{
-		this.initialized && R.Actions.javascript !== undefined && R.Actions.cpp !== undefined;
+		return this.initialized && R.Actions.javascript !== undefined && R.Actions.cpp !== undefined;
 	}
 }
 
@@ -2472,7 +2473,7 @@ class DiagramTool extends ElementTool
 		const diagram = R.$CAT.getElement(name);
 		if (diagram)
 		{
-			if (R.user.status === 'logged-in' && R.cloud && info.user === R.user.name)
+			if (R.user.canUpload() && R.cloud && info.user === R.user.name)
 			{
 				if (!nobuts.has('upload') && R.isLocalNewer(diagram.name))
 					buttons.push(D.getIcon('upload', 'upload', e => diagram.upload(e, false), {title:'Upload to cloud ' + R.cloudURL, aniId:'diagramUploadBtn'}));
@@ -2571,10 +2572,13 @@ class DiagramTool extends ElementTool
 		super.html(e);
 		const diagram = R.diagram;
 		const toolbar2 = D.toolbar.element.querySelector('tr #Diagram-toolbar2');
-		toolbar2.appendChild(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload-json'), {title:'Upload', id:`${this.type}-upload-json-icon`}));
-		const form = D.uploadJSONForm();
-		toolbar2.appendChild(form);
-		form.insertBefore(H3.h4('Upload Diagram JSON'), form.firstChild);
+		if (R.user.canUpload())
+		{
+			toolbar2.appendChild(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload-json'), {title:'Upload', id:`${this.type}-upload-json-icon`}));
+			const form = D.uploadJSONForm();
+			toolbar2.appendChild(form);
+			form.insertBefore(H3.h4('Upload Diagram JSON'), form.firstChild);
+		}
 		const searchTable = document.getElementById(`${this.type}-search-results`);
 		this.infoElement = H3.div(`##${this.type}-search-info`);
 		searchTable.parentNode.insertBefore(this.infoElement, searchTable);
@@ -2792,7 +2796,7 @@ class Catalog extends DiagramTool		// GUI only
 					div && this.searchArgs.sessionOnly && div.remove();		// remove image in catalog search
 					break;
 				case 'delete':		// delete diagram
-					div = this.catalog.querySelector(`div[data-name="${diagram.name}"]`);
+					div = this.catalog.querySelector(`div[data-name="${diagram.name}"]`);	// find catalog entry
 					div && div.remove();		// remove image in catalog
 					this.diagrams = this.diagrams.filter(d => d.name !== diagram.name);
 					break;
@@ -3039,7 +3043,7 @@ class Catalog extends DiagramTool		// GUI only
 		if (status.hasGreenGlow)
 		{
 			const div = H3.div(H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'));
-			if (R.user.status === 'logged-in')
+			if (R.user.canUpload())
 				div.appendChild(H3.button(`Upload all newer diagrams to ${D.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.uploadNewer()}));
 			this.infoElement.appendChild(div);
 		}
@@ -5032,7 +5036,7 @@ class Display
 									D.statusbar.show(null, `cannot load diagram ${name}`);
 									D.emitViewEvent('catalog');
 								}
-								const select = diagram.getElement(this.params.get('select'));
+								const select = diagram.domain.getElement(this.params.get('select'));
 								if (select)
 								{
 									const doit = _ =>
@@ -5737,7 +5741,7 @@ class Display
 		const vp = this.session.getViewport(R.diagram.name);
 		const oldScale = vp.scale;
 		this.session.setCurrentViewport(viewport);
-		oldScale > viewport.scale && R.diagram.updateBackground();		// due to transition effect on diagramSVG
+		R.diagram.updateBackground();		// due to transition effect on diagramSVG
 		this.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
 	}
 	getViewportByBBox(bbox)	// bbox in session coordinates
@@ -10753,7 +10757,7 @@ class LanguageAction extends Action
 	checkEditable(m)
 	{
 		return m.isEditable() &&
-			((m.constructor.name === 'Morphism' && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial()) || m instanceof CatObject || m instanceof Diagram);
+			((m.constructor.name === 'Morphism' && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial() && !('recursor' in m)) || m instanceof CatObject || m instanceof Diagram);
 	}
 	html(e, diagram, ary)
 	{
@@ -13856,7 +13860,6 @@ class Composite extends MultiMorphism
 	getCompositeGraph()
 	{
 		const graph = this.getSequenceGraph();
-		graph.traceLinks(graph);
 		const _scan = (morphism, g, domFctr, codFctr) =>
 		{
 			switch(morphism.constructor.name)
@@ -13874,6 +13877,7 @@ class Composite extends MultiMorphism
 			}
 		};
 		_scan(this, graph, [0], [this.morphisms.length -1]);
+		graph.element = this;
 		return graph;
 	}
 	static Basename(diagram, args)
@@ -15026,7 +15030,7 @@ class Diagram extends Functor
 		super.help();
 		D.toolbar.table.appendChild(H3.tr(H3.td('Type:'), H3.td('Diagram')));
 		const toolbar2 = D.toolbar.element.querySelector('#help-toolbar2');
-		if (R.user.status === 'logged-in' && R.cloud && this.user === R.user.name)
+		if (R.user.canUpload() && R.cloud && this.user === R.user.name)
 		{
 			if (R.isLocalNewer(this.name))
 			{
@@ -15568,7 +15572,7 @@ class Diagram extends Functor
 	}
 	upload(e, local = true)
 	{
-		if (R.cloud && ((this.user === R.user.name && R.user.status === 'logged-in') || R.user.isAdmin()))
+		if (R.cloud && ((this.user === R.user.name && R.user.canUpload()) || R.user.isAdmin()))
 		{
 			const start = Date.now();
 			this.savePng(e, e =>
@@ -15748,7 +15752,11 @@ class Diagram extends Functor
 			if (this.elements.has(name))
 				return this.elements.get(name);
 			if (this.codomain.elements.has(name))
-				return this.codomain.getElement(name);
+			{
+				elt = this.codomain.getElement(name);
+				if (elt.diagram !== this && this.diagram && this.name !== 'sys/$CAT' && !this.allReferences.has(elt.diagram.name))
+					return null;		// cannot access outside of reference diagrams
+			}
 			const refs = this.allReferences.keys();
 			let nxtref = refs.next();
 			while(!elt && !nxtref.done)
