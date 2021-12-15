@@ -1,0 +1,235 @@
+{
+  "description": "",
+  "basename": "iso",
+  "name": "hdole/iso",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/iso_Index",
+  "codomain": "sys/Cat",
+  "references": [],
+  "domainElements": [
+    {
+      "description": "Isomorphism",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 360,
+        "y": 370
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 900,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1100,
+        "y": 600
+      }
+    },
+    {
+      "basename": "m_0",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_0",
+      "codomain": "hdole/iso/o_1",
+      "to": "hdole/iso/f"
+    },
+    {
+      "basename": "o_2",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 900,
+        "y": 740
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1100,
+        "y": 740
+      }
+    },
+    {
+      "basename": "m_1",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_3",
+      "codomain": "hdole/iso/o_2",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/iso/finv"
+    },
+    {
+      "basename": "o_4",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 770,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 970,
+        "y": 900
+      }
+    },
+    {
+      "basename": "m_2",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_4",
+      "codomain": "hdole/iso/o_5",
+      "to": "hdole/iso/f"
+    },
+    {
+      "basename": "o_7",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 970,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "m_3",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_5",
+      "codomain": "hdole/iso/o_7",
+      "to": "hdole/iso/finv"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_4",
+      "codomain": "hdole/iso/o_7",
+      "to": "hdole/iso/Id{A}dI"
+    },
+    {
+      "basename": "o_6",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 1270,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1270,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "m_5",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_6",
+      "codomain": "hdole/iso/o_8",
+      "to": "hdole/iso/f"
+    },
+    {
+      "basename": "o_9",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1070,
+        "y": 900
+      }
+    },
+    {
+      "basename": "m_6",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_9",
+      "codomain": "hdole/iso/o_6",
+      "to": "hdole/iso/finv"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/iso/o_9",
+      "codomain": "hdole/iso/o_8",
+      "to": "hdole/iso/Id{B}dI"
+    },
+    {
+      "description": "The assertion that the composite of morphisms f,f⁻¹ equals that of id.",
+      "prototype": "Assertion",
+      "equal": true,
+      "cell": "hdole/iso/{m_2,m_3},{m_4}"
+    },
+    {
+      "description": "The assertion that the composite of morphisms f⁻¹,f equals that of id.",
+      "prototype": "Assertion",
+      "equal": true,
+      "cell": "hdole/iso/{m_6,m_5},{m_7}"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/iso/A",
+      "codomain": "hdole/iso/B"
+    },
+    {
+      "description": "Inverse of f",
+      "basename": "finv",
+      "prototype": "Morphism",
+      "properName": "f⁻¹",
+      "domain": "hdole/iso/B",
+      "codomain": "hdole/iso/A"
+    },
+    {
+      "basename": "Id{A}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/iso/A",
+      "codomain": "hdole/iso/A"
+    },
+    {
+      "basename": "Id{B}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/iso/B",
+      "codomain": "hdole/iso/B"
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1639464982994,
+  "version": 0,
+  "viewport": {
+    "x": -351,
+    "y": -287,
+    "scale": 1.7026228329061697
+  },
+  "properName": "hdole/iso"
+}

@@ -1,0 +1,581 @@
+{
+  "description": "",
+  "basename": "monoid",
+  "name": "hdole/monoid",
+  "prototype": "Diagram",
+  "properName": "hdole/monoid",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/monoid_Index",
+  "codomain": "sys/Cat",
+  "references": [],
+  "domainElements": [
+    {
+      "description": "Monoid",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -570,
+        "y": 40
+      },
+      "height": "200",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_2",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,G}oP",
+      "xy": {
+        "x": 0,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": 200,
+        "y": 300
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/#1",
+      "xy": {
+        "x": 0,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": 200,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_30",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,G}oP",
+      "xy": {
+        "x": 400,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,G}oP",
+      "xy": {
+        "x": 100,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_31",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": 400,
+        "y": 700
+      }
+    },
+    {
+      "description": "Associativity:  (g * h) * i = g * (h * i)",
+      "basename": "t_3",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -870,
+        "y": 490
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_19",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": -200,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_22",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,#1}oP",
+      "xy": {
+        "x": -200,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": 0,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_26",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,G}oP",
+      "xy": {
+        "x": 0,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_20",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": 200,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_21",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{#1,G}oP",
+      "xy": {
+        "x": 200,
+        "y": 900
+      }
+    },
+    {
+      "basename": "o_23",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": 400,
+        "y": 1100
+      }
+    },
+    {
+      "basename": "o_27",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,G}oP",
+      "xy": {
+        "x": 400,
+        "y": 900
+      }
+    },
+    {
+      "description": "g * 1 = g",
+      "basename": "t_4",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -150,
+        "y": 1210
+      },
+      "height": "24"
+    },
+    {
+      "description": "1 * g = g",
+      "basename": "t_5",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 270,
+        "y": 1220
+      },
+      "height": "24"
+    },
+    {
+      "description": "M is a monoid object when supplied with a multiplier,\nand a unit in the monoid.  The following diagrams for\nassociativity, left and right units, must all be satisfied.",
+      "basename": "t_6",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -860,
+        "y": 190
+      },
+      "height": "24"
+    },
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/G",
+      "xy": {
+        "x": 0,
+        "y": 180
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,G,G}oP",
+      "xy": {
+        "x": -200,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{Po{G,G}oP,G}oP",
+      "xy": {
+        "x": 100,
+        "y": 500
+      }
+    },
+    {
+      "basename": "o_12",
+      "prototype": "IndexObject",
+      "to": "hdole/monoid/Po{G,Po{G,G}oP}oP",
+      "xy": {
+        "x": -200,
+        "y": 700
+      }
+    },
+    {
+      "basename": "m_0",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_2",
+      "codomain": "hdole/monoid/o_1",
+      "to": "hdole/monoid/mult"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_3",
+      "codomain": "hdole/monoid/o_4",
+      "to": "hdole/monoid/unit"
+    },
+    {
+      "basename": "m_28",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_32",
+      "codomain": "hdole/monoid/o_31",
+      "to": "hdole/monoid/mult"
+    },
+    {
+      "basename": "m_29",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_30",
+      "codomain": "hdole/monoid/o_31",
+      "to": "hdole/monoid/mult"
+    },
+    {
+      "basename": "m_15",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_19",
+      "codomain": "hdole/monoid/o_24",
+      "to": "hdole/monoid/Id{G}dI"
+    },
+    {
+      "basename": "m_16",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_22",
+      "codomain": "hdole/monoid/o_26",
+      "to": "hdole/monoid/Pm{Id{G}dI,unit}mP"
+    },
+    {
+      "basename": "m_17",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_26",
+      "codomain": "hdole/monoid/o_24",
+      "to": "hdole/monoid/mult"
+    },
+    {
+      "basename": "m_19",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_20",
+      "codomain": "hdole/monoid/o_23",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/monoid/Id{G}dI"
+    },
+    {
+      "basename": "m_20",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_21",
+      "codomain": "hdole/monoid/o_27",
+      "to": "hdole/monoid/Pm{unit,Id{G}dI}mP"
+    },
+    {
+      "basename": "m_21",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_27",
+      "codomain": "hdole/monoid/o_23",
+      "to": "hdole/monoid/mult"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_19",
+      "codomain": "hdole/monoid/o_22",
+      "to": "hdole/monoid/Fa{G,G_,G_-1}aF"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_20",
+      "codomain": "hdole/monoid/o_21",
+      "to": "hdole/monoid/Fa{G,G_-1,G_}aF"
+    },
+    {
+      "description": "The assertion that the composite of morphisms &#119901;,,id&times;unit,mult equals that of id.",
+      "prototype": "Assertion",
+      "equal": true,
+      "cell": "hdole/monoid/{m_15},{m_2,m_16,m_17}"
+    },
+    {
+      "description": "The assertion that the composite of morphisms &#119901;,,unit&times;id,mult equals that of id.",
+      "prototype": "Assertion",
+      "equal": true,
+      "cell": "hdole/monoid/{m_19},{m_3,m_20,m_21}"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_8",
+      "codomain": "hdole/monoid/o_11",
+      "to": "hdole/monoid/Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_8",
+      "codomain": "hdole/monoid/o_12",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/monoid/Pa{Fa{Po{G,G,G}oP,G_0}aF,Fa{Po{G,G,G}oP,G_1,G_2}aF}aP"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_12",
+      "codomain": "hdole/monoid/o_32",
+      "to": "hdole/monoid/Pm{Id{G}dI,mult}mP"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monoid/o_11",
+      "codomain": "hdole/monoid/o_30",
+      "to": "hdole/monoid/Pm{mult,Id{G}dI}mP"
+    },
+    {
+      "description": "The assertion that the composite of morphisms &Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;,id&times;mult,mult equals that of &Pi;&lt;&#119901;&#8202;&#x2080;,&#8202;&#x2081;,&#119901;&#8202;&#x2082;&gt;,mult&times;id,mult.",
+      "prototype": "Assertion",
+      "equal": true,
+      "cell": "hdole/monoid/{m_6,m_8,m_29},{m_7,m_5,m_28}"
+    }
+  ],
+  "elements": [
+    {
+      "basename": "G",
+      "prototype": "CatObject",
+      "properName": "M"
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "G",
+        "G"
+      ]
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "G",
+        "G",
+        "G"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "G",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "#1",
+        "G"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Po{G,G}oP",
+        "G"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "G",
+        "Po{G,G}oP"
+      ]
+    },
+    {
+      "basename": "mult",
+      "prototype": "Morphism",
+      "domain": "hdole/monoid/Po{G,G}oP",
+      "codomain": "hdole/monoid/G"
+    },
+    {
+      "basename": "unit",
+      "prototype": "Morphism",
+      "domain": "hdole/monoid/#1",
+      "codomain": "hdole/monoid/G"
+    },
+    {
+      "basename": "Id{G}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/monoid/G",
+      "codomain": "hdole/monoid/G"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/monoid/Po{G,G,G}oP",
+      "codomain": "hdole/monoid/Po{G,G}oP",
+      "factors": [
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/monoid/Po{G,G,G}oP",
+      "codomain": "hdole/monoid/G",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/monoid/Po{G,G,G}oP",
+      "codomain": "hdole/monoid/Po{G,G}oP",
+      "factors": [
+        [
+          1
+        ],
+        [
+          2
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/monoid/Po{G,G,G}oP",
+      "codomain": "hdole/monoid/G",
+      "factors": [
+        [
+          2
+        ]
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/monoid/Po{G,#1}oP",
+      "codomain": "hdole/monoid/Po{G,G}oP",
+      "morphisms": [
+        "Id{G}dI",
+        "unit"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/monoid/Po{#1,G}oP",
+      "codomain": "hdole/monoid/Po{G,G}oP",
+      "morphisms": [
+        "unit",
+        "Id{G}dI"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/monoid/G",
+      "codomain": "hdole/monoid/Po{G,#1}oP",
+      "factors": [
+        [],
+        -1
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/monoid/G",
+      "codomain": "hdole/monoid/Po{#1,G}oP",
+      "factors": [
+        -1,
+        []
+      ]
+    },
+    {
+      "prototype": "ProductAssembly",
+      "domain": "hdole/monoid/Po{G,G,G}oP",
+      "codomain": "hdole/monoid/Po{Po{G,G}oP,G}oP",
+      "morphisms": [
+        "Fa{Po{G,G,G}oP,G_0,G_1}aF",
+        "Fa{Po{G,G,G}oP,G_2}aF"
+      ]
+    },
+    {
+      "prototype": "ProductAssembly",
+      "domain": "hdole/monoid/Po{G,G,G}oP",
+      "codomain": "hdole/monoid/Po{G,Po{G,G}oP}oP",
+      "morphisms": [
+        "Fa{Po{G,G,G}oP,G_0}aF",
+        "Fa{Po{G,G,G}oP,G_1,G_2}aF"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/monoid/Po{G,Po{G,G}oP}oP",
+      "codomain": "hdole/monoid/Po{G,G}oP",
+      "morphisms": [
+        "Id{G}dI",
+        "mult"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/monoid/Po{Po{G,G}oP,G}oP",
+      "codomain": "hdole/monoid/Po{G,G}oP",
+      "morphisms": [
+        "mult",
+        "Id{G}dI"
+      ]
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1639293965114,
+  "version": 0,
+  "viewport": {
+    "x": 1449,
+    "y": 156,
+    "scale": 0.808877870357121
+  }
+}

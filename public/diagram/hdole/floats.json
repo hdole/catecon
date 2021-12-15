@@ -2213,7 +2213,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1,
       "min": 0,
       "max": 1
@@ -3099,11 +3099,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1638138535009,
+  "timestamp": 1639393137954,
   "version": 0,
   "viewport": {
     "x": 1061,
-    "y": 285,
+    "y": -599,
     "scale": 1.1403909698667742
   }
 }

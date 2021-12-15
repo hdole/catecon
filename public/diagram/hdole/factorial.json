@@ -1,0 +1,607 @@
+{
+  "description": "",
+  "basename": "factorial",
+  "name": "hdole/factorial",
+  "prototype": "Diagram",
+  "properName": "hdole/factorial",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/factorial_Index",
+  "codomain": "zf/Set",
+  "references": [
+    "hdole/nat"
+  ],
+  "domainElements": [
+    {
+      "description": "Factorial",
+      "basename": "t_0",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": -90,
+        "y": 80
+      },
+      "height": "133",
+      "weight": "bold"
+    },
+    {
+      "basename": "o_5",
+      "prototype": "IndexObject",
+      "to": "hdole/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "xy": {
+        "x": 0,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_10",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 200,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 0,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_12",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 200,
+        "y": 200
+      }
+    },
+    {
+      "basename": "o_13",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 200,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_16",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/CPo{N64,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 0,
+        "y": 400
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": 0,
+        "y": 1000
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 0,
+        "y": 1200
+      }
+    },
+    {
+      "basename": "o_7",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/#1",
+      "xy": {
+        "x": 400,
+        "y": 600
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 400,
+        "y": 800
+      }
+    },
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": -140,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "IndexObject",
+      "to": "hdole/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "xy": {
+        "x": 460,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N128",
+      "xy": {
+        "x": 800,
+        "y": 1400
+      }
+    },
+    {
+      "basename": "o_9",
+      "prototype": "IndexObject",
+      "to": "hdole/nat/N64",
+      "xy": {
+        "x": 800,
+        "y": 1600
+      }
+    },
+    {
+      "basename": "m_11",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_13",
+      "codomain": "hdole/factorial/o_10",
+      "to": "hdole/factorial/factorial"
+    },
+    {
+      "basename": "m_7",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_2",
+      "codomain": "hdole/factorial/o_16",
+      "to": "hdole/nat/decr"
+    },
+    {
+      "basename": "m_2",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_5",
+      "codomain": "hdole/factorial/o_2",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/factorial/Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_0}aF"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_5",
+      "codomain": "hdole/factorial/o_10",
+      "attributes": [
+        [
+          "assyMorphism",
+          true
+        ],
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/factorial/Fa{Po{hdole/nat/N64,hdole/nat/N64}oP,hdole/nat/N64_1}aF"
+    },
+    {
+      "basename": "m_4",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_5",
+      "codomain": "hdole/factorial/o_1",
+      "to": "hdole/nat/mult64"
+    },
+    {
+      "basename": "m_5",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_1",
+      "codomain": "hdole/factorial/o_4",
+      "to": "hdole/nat/lo64"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_13",
+      "codomain": "hdole/factorial/o_16",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/factorial/CFa{hdole/nat/CPo{N64,#1}oPC,hdole/nat/N64_0}aFC"
+    },
+    {
+      "basename": "m_10",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_7",
+      "codomain": "hdole/factorial/o_8",
+      "to": "hdole/nat/one64"
+    },
+    {
+      "basename": "m_0",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_0",
+      "codomain": "hdole/factorial/o_3",
+      "to": "hdole/factorial/Pa{Cm{hdole/nat/decr,Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC}mC,Id{hdole/nat/N64}dI}aP"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_3",
+      "codomain": "hdole/factorial/o_6",
+      "to": "hdole/nat/mult64"
+    },
+    {
+      "basename": "m_8",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_6",
+      "codomain": "hdole/factorial/o_9",
+      "to": "hdole/nat/lo64"
+    },
+    {
+      "basename": "m_12",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_0",
+      "codomain": "hdole/factorial/o_9",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/factorial/Cm{Pa{Cm{hdole/nat/decr,Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC}mC,Id{hdole/nat/N64}dI}aP,Cm{hdole/nat/mult64,hdole/nat/lo64}mC}mC"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_7",
+      "codomain": "hdole/factorial/o_16",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/factorial/CFa{hdole/nat/CPo{N64,#1}oPC,#1_1}aFC"
+    },
+    {
+      "basename": "m_13",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_11",
+      "codomain": "hdole/factorial/o_12",
+      "to": "hdole/factorial/factorial"
+    }
+  ],
+  "elements": [
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/nat/N64",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "#1",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "description": "The homset from ℕ&#x2086;&#x2084; to ℕ&#x2086;&#x2084;",
+      "prototype": "HomObject",
+      "objects": [
+        "hdole/nat/N64",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Ho{hdole/nat/N64,hdole/nat/N64}oH",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "#1",
+        "hdole/nat/#1"
+      ]
+    },
+    {
+      "description": "The homset from 1 to ℕ&#x2086;&#x2084;",
+      "prototype": "HomObject",
+      "objects": [
+        "hdole/nat/#1",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Ho{hdole/nat/#1,hdole/nat/N64}oH",
+        "hdole/nat/#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N64",
+        "hdole/nat/#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N64",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "basename": "factorial",
+      "prototype": "Morphism",
+      "properName": "n!",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64",
+      "recursor": "hdole/factorial/Cm{Pa{Cm{hdole/nat/decr,Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC}mC,Id{hdole/nat/N64}dI}aP,Cm{hdole/nat/mult64,hdole/nat/lo64}mC}mC"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "codomain": "hdole/nat/N64",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "codomain": "hdole/nat/N64",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "Id{hdole/nat/N64}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64",
+      "morphisms": [
+        "factorial",
+        "Id{hdole/nat/N64}dI"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/factorial/Po{#1,hdole/nat/N64}oP",
+      "factors": [
+        -1,
+        []
+      ]
+    },
+    {
+      "basename": "s_0",
+      "prototype": "Morphism",
+      "domain": "hdole/factorial/#1",
+      "codomain": "hdole/factorial/Ho{hdole/nat/N64,hdole/nat/N64}oH",
+      "data": [
+        [
+          0,
+          "hdole/factorial/Cm{factorial,Id{hdole/nat/N64}dI}mC"
+        ]
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/factorial/Po{#1,hdole/nat/N64}oP",
+      "codomain": "hdole/factorial/Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP",
+      "morphisms": [
+        "s_0",
+        "Id{hdole/nat/N64}dI"
+      ]
+    },
+    {
+      "basename": "Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE",
+      "prototype": "Evaluation",
+      "properName": "&#119890;",
+      "domain": "hdole/factorial/Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64",
+      "morphisms": [
+        "Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF",
+        "Pm{s_0,Id{hdole/nat/N64}dI}mP",
+        "Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/factorial/Po{#1,hdole/nat/#1}oP",
+      "factors": [
+        -1,
+        []
+      ]
+    },
+    {
+      "basename": "Id{hdole/nat/#1}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/#1"
+    },
+    {
+      "basename": "s_1",
+      "prototype": "Morphism",
+      "domain": "hdole/factorial/#1",
+      "codomain": "hdole/factorial/Ho{hdole/nat/#1,hdole/nat/N64}oH",
+      "data": [
+        [
+          0,
+          "hdole/nat/one64"
+        ]
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/factorial/Po{#1,hdole/nat/#1}oP",
+      "codomain": "hdole/factorial/Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP",
+      "morphisms": [
+        "s_1",
+        "Id{hdole/nat/#1}dI"
+      ]
+    },
+    {
+      "basename": "Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE",
+      "prototype": "Evaluation",
+      "properName": "&#119890;",
+      "domain": "hdole/factorial/Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N64",
+      "morphisms": [
+        "Fa{hdole/nat/#1,#1_-1,#1_}aF",
+        "Pm{s_1,Id{hdole/nat/#1}dI}mP",
+        "Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "dual": true,
+      "domain": "hdole/factorial/CPo{hdole/nat/N64,hdole/nat/#1}oPC",
+      "codomain": "hdole/factorial/CPo{hdole/nat/N64,hdole/nat/N64}oPC",
+      "morphisms": [
+        "Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC",
+        "Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/factorial/CPo{hdole/nat/N64,hdole/nat/N64}oPC",
+      "codomain": "hdole/nat/N64",
+      "factors": [
+        [],
+        []
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/factorial/CPo{hdole/nat/N64,hdole/nat/#1}oPC",
+      "codomain": "hdole/nat/N64",
+      "morphisms": [
+        "CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC",
+        "CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64",
+      "morphisms": [
+        "hdole/nat/decr",
+        "Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC"
+      ]
+    },
+    {
+      "prototype": "ProductAssembly",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/factorial/Po{hdole/nat/N64,hdole/nat/N64}oP",
+      "morphisms": [
+        "Cm{hdole/nat/decr,Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC}mC",
+        "Id{hdole/nat/N64}dI"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64",
+      "morphisms": [
+        "hdole/nat/mult64",
+        "hdole/nat/lo64"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64",
+      "morphisms": [
+        "Pa{Cm{hdole/nat/decr,Cm{CPm{Cm{Fa{hdole/nat/N64,hdole/nat/N64_-1,hdole/nat/N64_}aF,Pm{s_0,Id{hdole/nat/N64}dI}mP,Ev{Po{Ho{hdole/nat/N64,hdole/nat/N64}oH,hdole/nat/N64}oP}vE}mC,Cm{Fa{hdole/nat/#1,#1_-1,#1_}aF,Pm{s_1,Id{hdole/nat/#1}dI}mP,Ev{Po{Ho{hdole/nat/#1,hdole/nat/N64}oH,hdole/nat/#1}oP}vE}mC}mPC,CFa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_}aFC}mC}mC,Id{hdole/nat/N64}dI}aP",
+        "Cm{hdole/nat/mult64,hdole/nat/lo64}mC"
+      ]
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1639278248942,
+  "version": 0,
+  "viewport": {
+    "x": 1033,
+    "y": -366,
+    "scale": 0.7347936065792082
+  }
+}
