@@ -1798,6 +1798,12 @@ class Toolbar
 		this.error.classList.add('hidden');
 		this.error.innerHTML = '';
 	}
+	showError(msg)
+	{
+		D.toolbar.error.classList.add('error');
+		D.toolbar.error.classList.remove('hidden');
+		D.toolbar.error.appendChild(typeof msg === 'string' ? H3.div(msg) : msg);
+	}
 	clearHeader()
 	{
 		D.removeChildren(this.header);
@@ -1815,12 +1821,20 @@ class Toolbar
 		this.element.style.bottom = 'unset';
 		this.element.style.width = 'auto';
 	}
+	appendError(x)
+	{
+		this.error.classList.remove('hidden');
+		if (x instanceof HTMLElement)
+			this.error.appendChild(x);
+		else if (typeof x === 'string')
+			this.error.appendChild(H3.div(x));
+		else
+			this.error.innerHTML = 'Error ' + U.GetError(x);
+	}
 	showError(x)
 	{
 		this.clearError();
-		this.error.classList.remove('hidden');
-		this.error.classList.add('error');
-		this.error.innerHTML = 'Error ' + U.GetError(x);
+		this.appendError(x);
 	}
 	hide()
 	{
@@ -5051,7 +5065,16 @@ class Display
 												if (act.hasForm(diagram, diagram.selected))
 												{
 													if (!act.actionOnly)
+													{
 														act.html(e, diagram, diagram.selected);
+														const btn = this.params.get('btn');
+														if (btn)
+														{
+															const elt = D.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
+															if (elt && elt.onclick)
+																elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+														}
+													}
 													else
 														act.action(e, diagram, diagram.selected);
 												}
@@ -7343,6 +7366,29 @@ class Graph
 		}
 		return nuIndices;
 	}
+	hasFactor(indices)
+	{
+		if (typeof indices === 'number')
+			return indices >= 0 && indices < this.graphs.length;
+		if (indices.length === 1 && indices[0] === -1)
+			return true;
+		if (this.graphs.length === 0)
+			return true;
+		if (indices.length === 1 && indices[0].length === 0)
+			return true;
+		let fctr = this;
+		for (let i=0; i<indices.length; ++i)
+		{
+			const k = indices[i];
+			if (k === -1)
+				return true;	// object is terminal object One
+			if (fctr.graphs.length > 0)
+				fctr = fctr.graphs[k];
+			else
+				return false;
+		}
+		return true;
+	}
 	getFactor(indices)
 	{
 		if (typeof indices === 'number')
@@ -7365,6 +7411,22 @@ class Graph
 				throw 'bad index for factor';
 		}
 		return fctr;
+	}
+	checkLinks()
+	{
+		let rslt = true;
+		this.scan((g, ndx) =>
+		{
+			g.links.map(lnk =>
+			{
+				if (!this.hasFactor(lnk))
+				{
+					console.log('getFactor bad link at index: ', lnk, ndx);
+					debugger;
+				}
+			});
+		});
+		return rslt;
 	}
 	tagGraph(tag)
 	{
@@ -7399,6 +7461,7 @@ class Graph
 				U.ArrayMerge(this.tags, g.tags);
 				this.visited.add(lnk.toString());
 			}
+nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 			if (ndx.length === 1 && (ndx[0] === 0 || ndx[0] === top.graphs.length -1))
 				this.links = nuLinks.filter(lnk => lnk[0] === 0 || lnk[0] === top.graphs.length -1);
 			else
@@ -8874,7 +8937,8 @@ class IndexObject extends CatObject
 	}
 	help()
 	{
-		return this.to.help();
+		D.toolbar.table.appendChild(H3.tr(H3.td('From', '.italic.small'), H3.td(this.basename, '.italic.small')));
+		this.to.help();
 	}
 	json()
 	{
@@ -10030,6 +10094,7 @@ class MorphismAssemblyAction extends Action
 	}
 	action(e, diagram, ary)
 	{
+		D.toolbar.clearError();
 		const elt = this.doit(e, diagram, ary);
 		const rows = this.assembler.issues.map(isu =>
 		{
@@ -10043,7 +10108,10 @@ class MorphismAssemblyAction extends Action
 			else
 				return H3.tr(H3.td(isu.message), H3.td(isu.element.properName));
 		});
-		D.toolbar.table.appendChild(this.assembler.issues.length > 0 ? rows : H3.tr(H3.td('No issues were detected')));
+		if (rows.length > 0)
+			D.toolbar.showError(H3.table(rows));
+		else
+			D.statusbar.show(null, 'No issues detected');
 		diagram.log({command:this.name, source:ary[0].name});
 		diagram.antilog({command:'delete', elements:[ary[0].name]});
 	}
@@ -10152,7 +10220,11 @@ class HomObjectAction extends Action
 			});
 			D.toolbar.clear();
 			D.toolbar.table.appendChild(H3.tr(H3.td(H3.small(`Place morphisms ${this.dual ? 'to' : 'from'} ${to.properName}`, '.italic'))));
-			rows.map(row => D.toolbar.table.appendChild(row));
+			const table = H3.table('.matching-table');
+			const div = H3.div(table);
+			div.style.maxHeight = `${0.75 * D.height()}px`;
+			D.toolbar.table.appendChild(H3.tr(H3.td(div, '.tool-search-results')));
+			rows.map(row => table.appendChild(row));
 		}
 	}
 	doit(e, diagram, domain, morphism, save = true)
@@ -12177,7 +12249,9 @@ class Morphism extends Element
 		const codData = U.Clone(data);
 		const domGraph = this.domain.getGraph(data);
 		const codGraph = this.codomain.getGraph(codData);
-		return new Graph(this, {position:data.position, width:0, graphs:[domGraph, codGraph]});
+		const graph = new Graph(this, {position:data.position, width:0, graphs:[domGraph, codGraph]});
+		graph.checkLinks();
+		return graph;
 	}
 	hasInverse()
 	{
@@ -13809,7 +13883,7 @@ class Composite extends MultiMorphism
 			if (!morphisms[i].codomain.isEquivalent(morphisms[i+1].domain))
 			{
 				console.error(`composite morphism codomain/domain mismatch at ${i}: ${morphisms[i].codomain.name} vs ${morphisms[i+1].domain.name}`);
-				throw `domain and codomain are not the same\n${morphisms[i].codomain.properName}\n${morphisms[i+1].domain.properName}`;
+				throw `domain and codomain are not the same\n${morphisms[i].codomain.properName}\n${morphisms[i+1].domain.properName} at index ${i}`;
 			}
 		nuArgs.properName = Composite.ProperName(morphisms);
 		nuArgs.category = diagram.codomain;
@@ -13827,6 +13901,7 @@ class Composite extends MultiMorphism
 	getSequenceGraph()
 	{
 		const graphs = this.morphisms.map(m => m.getGraph());
+graphs.map((g, i) => g.checkLinks());
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = this.diagram.get('ProductObject', {objects, silent:true});
@@ -13843,6 +13918,7 @@ class Composite extends MultiMorphism
 	getGraph(data = {position:0})
 	{
 		const seqGraph = this.getSequenceGraph();
+seqGraph.checkLinks();
 		seqGraph.traceLinks(seqGraph);
 		const cnt = this.morphisms.length;
 		seqGraph.graphs[0].reduceLinks(cnt);
@@ -14150,6 +14226,7 @@ class FactorMorphism extends Morphism
 		else
 		{
 			let offset = 0;
+			const hardFactorLength = this.factors.filter(f => f !== -1).length;
 			this.factors.map((index, i) =>
 			{
 				const ndx = Array.isArray(index) ? index.slice() : [index];
@@ -14181,15 +14258,16 @@ class FactorMorphism extends Morphism
 						++offset;
 						return;
 					}
-					cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
+					cod = hardFactorLength === 1 ? factorGraph : factorGraph.getFactor([i]);
 					domRoot = ndx.slice();
 					domRoot.unshift(0);
-					codRoot = this.factors.length > 1 ? [1, i] : [1];
+					codRoot = hardFactorLength > 1 ? [1, i] : [1];
 					factor.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
 				}
 			});
 			graph.tagGraph(this.dual ? 'Cofactor' : 'Factor');
 		}
+		graph.checkLinks();
 		return graph;
 	}
 	loadItem()
@@ -14229,6 +14307,10 @@ class FactorMorphism extends Morphism
 		const nuConfig = U.Clone(config);
 		nuConfig.addbase = false;
 		return super.getHtmlRep(idPrefix, nuConfig);
+	}
+	isFold()
+	{
+		return this.dual && this.factors.length > 1 && this.factors.reduce((r, f) => r && f.length === 0, true);
 	}
 	static Basename(diagram, args)
 	{
@@ -16476,8 +16558,8 @@ class Diagram extends Functor
 				{
 					bkgnd.setAttribute('x', `${pnt.x}px`);
 					bkgnd.setAttribute('y', `${pnt.y}px`);
-					bkgnd.setAttribute('width', `${scale * D.width()}px`);
-					bkgnd.setAttribute('height', `${scale * D.height()}px`);
+					bkgnd.setAttribute('width', `${2 * scale * D.width()}px`);		// 2x for margin due to transitions
+					bkgnd.setAttribute('height', `${2 * scale * D.height()}px`);
 				}
 				else
 				{
@@ -17267,6 +17349,7 @@ class Assembler
 					else if (refIds.length === 0)
 					{
 						const factors = [];
+						// TODO check references going to same pre-fold nodes as they cause duplicate factors but are the same ref
 						refs.map(ref => factors.push(...ref.to.factors));
 						if (FactorMorphism.isReference(factors))
 						{
@@ -17276,7 +17359,7 @@ class Assembler
 						}
 						else
 						{
-							this.issues.push({message:'Factor morphism is not a reference', element:r});
+							this.issues.push('Duplicate factors found');
 							this.addError('Duplicate factors found', src);
 						}
 					}	// else the single identity as reference covers everything
@@ -17337,9 +17420,10 @@ class Assembler
 				const morphisms = comp.map(m =>m.to);
 				// codomain index object
 				const codomain = comp[last].codomain;
+				const to = comp[last].codomain.to;
 				if (!this.origins.has(codomain))
 				{
-					if (codomain.dual && codomain instanceof ProductObject)
+					if (false && to instanceof ProductObject && to.dual)	// TODO for some reason this doesn't work
 					{
 						//
 						const injections = [...codomain.codomains].filter(m => this.coreferences.has(m));
@@ -17353,7 +17437,7 @@ class Assembler
 					}
 					else
 					{
-						const continuance = this.formMorphism(scanning, codomain, codomain.to, index);
+						const continuance = this.formMorphism(scanning, codomain, to, index);
 						continuance && morphisms.push(continuance);
 					}
 				}
@@ -17392,7 +17476,7 @@ class Assembler
 			{
 				const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
 				// get the morphisms attached to each element
-				const starters = [...insert.domain.codomains].filter(m => !this.references.has(m));
+				const starters = [...insert.domain.codomains];
 				const comps = this.composites.get(insert.domain);
 				comps.map(cmp => starters.push(cmp[0]));
 				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index));
@@ -17434,7 +17518,7 @@ class Assembler
 				const foldStep = diagram.cofctr(foldCod, foldFactors);
 				return diagram.comp(costeps, foldStep);
 			}
-			return diagram.comp(costeps);
+			return costeps;
 		}
 	}
 	// recursive
@@ -17502,10 +17586,19 @@ class Assembler
 	getBlobMorphism()
 	{
 		let ndx = 0;
-		const scanning = [];
-		// ignore inputs that are terminals; the rest form the domain
-		[...this.inputs].filter(input => !input.isTerminal()).map(input => scanning.push({domain:input, currentDomain:input.to, index:this.inputs.size === 1 ? [] : [ndx++]}));
-		const components = [];
+		let scanning = [];
+		const inputs = [...this.inputs];
+		inputs.map(input => scanning.push({domain:input, currentDomain:input.to, index:inputs.length === 1 ? [] : [ndx++]}));
+		const scanInputs = scanning.slice();
+		const inputMorphs = scanInputs.map(i => this.formMorphism(scanning, i.domain, i.currentDomain, i.index));
+		scanning = scanning.slice(scanInputs.length);
+		const input = this.diagram.prod(...inputMorphs);
+		// TODO factor morphism from domain stripped of 1's
+		const domain = this.diagram.prod(...inputs.filter(input => !input.to.isTerminal()).map(input => input.to));
+		ndx = 0;
+		const setupFactors = inputs.map((input, i) => input.to.isTerminal() ? -1 : [ndx++]);
+		const setup = this.diagram.fctr(domain, setupFactors);
+		const components = [setup, input];
 		while(scanning.length > 0)
 		{
 			const args = scanning.shift();

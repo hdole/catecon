@@ -373,9 +373,10 @@ ${members}
 					ndxMap.set(thisFactor.toString(), g.var);
 					if (up.element instanceof Cat.ProductObject && up.element.dual)		// distribute coproduct terms
 					{
+						const isFold = 'dom' in up && up.dom instanceof Cat.FactorMorphism && up.dom.isFold();
 						up.element.objects.map((o, i) =>
 						{
-							const v = `${g.var}.m_${i}`;
+							const v = isFold ? g.var : `${g.var}.m_${i}`;
 							g.graphs[i].var = v;
 							const iFactor = U.pushFactor(factor, i);
 							ndxMap.set(iFactor.toString(), v);
@@ -397,19 +398,6 @@ ${members}
 		setupEvaluations(graph)
 		{
 			const check = g => 'dom' in g && 'cod' in g && g.dom instanceof Cat.Evaluation && g.cod instanceof Cat.ProductMorphism && g.cod.morphisms[0].domain.isTerminal();
-					/*
-						if (morphism.domain.isTerminal() && morphism.codomain instanceof Cat.HomObject)
-						{
-							if (codFactor.length > 1)
-							{
-								const upFactor = codFactor.slice();
-								upFactor.pop();
-								const upper = upGraph.getFactor(upFactor);
-								if ('dom' in upper && upper.dom instanceof Cat.Evaluation)
-									upper.eval = morphism.data.get(0);
-							}
-						}
-						*/
 			const process = (g, ndx) =>
 			{
 				const m = g.cod.morphisms[0];
@@ -564,7 +552,8 @@ ${members}
 					modifier = '& ';
 				else
 					constant = 'const ';
-				code += `${this.getType(this.context.getElement(g.element.name))} ${g.var};\n`;
+				const isFold = 'dom' in g && g.dom instanceof Cat.FactorMorphism && g.dom.isFold();
+				code += `${this.getType(this.context.getElement(isFold ? g.element.objects[0].name : g.element.name))} ${g.var};\n`;
 			};
 			graph.scanCheck(CppAction.CheckGraph, process);
 			return code;
@@ -616,7 +605,7 @@ ${members}
 			this.objectScanner(morphism.domain);
 			this.objectScanner(morphism.codomain);
 			let code = '';
-			if (this.debug || true)
+			if (this.debug)
 			{
 				const span = H3.span(morphism.properName);
 				code += this.cline(`// ${this.getStd(morphism)} ${span.innerHTML} ${domFactor.toString()} ${codFactor.toString()}`);
@@ -723,8 +712,8 @@ ${members}
 					if (morphism.dual)
 					{
 						this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
-						if (morphism.factors.reduce((r, f) => r && f.length === 0))		// morphism is a fold
-							code += this.cline(`${graph.graphs[1].var} = ${graph.graphs[0].var}.m_0;`);
+						if (morphism.isFold())
+							code += this.cline(`${graph.graphs[1].var} = ${graph.graphs[0].var};`);
 						else
 							debugger;
 					}
@@ -742,7 +731,7 @@ ${members}
 					if ('eval' in domGraph)
 					{
 						const domNdx = Cat.U.pushFactor(domFactor, 1);
-						delete domGraph.graphs[0].var;
+						delete domGraph.graphs[0].var;		// variable is consumed here
 						domGraph.graphs[0].alloc = true;
 						code += this.instantiateMorphism(null, domGraph.eval, ndxMap, upGraph, domNdx, codFactor);
 					}
@@ -758,28 +747,31 @@ ${members}
 					this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
 					if (morphism.dual)		// coproduct
 					{
+						const up = upGraph.getFactor(codFactor);
+						const upperDomainMorph = 'dom' in up ? up.dom : null;
+						const isFold = upperDomainMorph && upperDomainMorph instanceof Cat.FactorMorphism && upperDomainMorph.isFold();
 						const cnt = morphism.morphisms.length;
 						if (cnt === 2)	// if-then-else
 						{
 							code += this.cline(`if (${graph.graphs[0].var}.c)\n{`);
 							this.incTab();
-							code += this.cline(`${graph.graphs[1].var}.c = 1;`);
+							code += isFold ? '' : this.cline(`${graph.graphs[1].var}.c = 1;`);
 							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, graph, [0, 1], [1, 1]);
 							this.decTab();
 							code += this.cline('}\nelse\n{');
 							this.incTab();
-							code += this.cline(`${graph.graphs[1].var}.c = 0;`);
+							code += isFold ? '' : this.cline(`${graph.graphs[1].var}.c = 0;`);
 							code += this.instantiateMorphism(null, morphism.morphisms[0], ndxMap, graph, [0, 0], [1, 0]);
 							this.decTab();
 							code += this.cline('}');
 						}
 						else if (cnt === 3)	// if 0 else if 1 else
 						{
-							code += this.cline(`if (${graph.graphs[0].var}.c === 0)\n{`);
+							code += isFold ? '' : this.cline(`if (${graph.graphs[0].var}.c === 0)\n{`);
 							this.incTab();
 							code += this.instantiateMorphism(null, morphism.morphisms[0], ndxMap, graph, [0, 0], [1, 0]);
 							this.decTab();
-							code += this.cline(`}\nelse if (${graph.graphs[0].var}.c == 1)\n{`);
+							code += isFold ? '' : this.cline(`}\nelse if (${graph.graphs[0].var}.c == 1)\n{`);
 							this.incTab();
 							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, graph, [0, 1], [1, 1]);
 							this.decTab();
@@ -796,9 +788,15 @@ ${members}
 							for (let i=0; i<cnt; ++i)
 							{
 								code += this.cline(`case ${i}:`);
-								code += code += this.instantiateMorphism(null, morphism.morphisms[i], ndxMap, graph, [0, i], [1, i]);
+								this.incTab();
+								code += this.instantiateMorphism(null, morphism.morphisms[i], ndxMap, graph, [0, i], [1, i]);
 								code += this.cline('break;');
+								this.decTab();
 							}
+							code += this.cline('default:');
+							this.incTab();
+							// TODO default case
+							code += this.cline('break;');
 							this.decTab();
 							code += this.cline('}');
 						}
@@ -893,6 +891,35 @@ ${this.generateHeader()}
 			this.objectScanner(morphism.codomain);
 			[...this.objects].reverse().map(o => code += this.generateObject(o)).join('\n');
 			code += [...morphCode.values()].reverse().join('\n');
+			code +=
+`
+int main(int argc, char ** argv)
+{
+	try
+	{
+		if (argc == 2 && (strcmp("-h", argv[1]) || strcmp("--help", argv[1])))
+		{
+			std::cout << "Diagram: ${this.context.name}" << std::endl;
+			std::cout << "Morphism: ${morphism.name}" << std::endl;
+`;
+			if (morphism.description !== '')
+				code +=
+`			std::cout << "Description: ${morphism.description}" << std::endl;
+`;
+			code +=
+`			return 1;
+		}
+
+		return 0;
+	}
+	catch(std::exception x)
+	{
+		std::cerr << "An error occurred" << std::endl;
+		return 1;
+	}
+}
+`;
+
 			return this.cline(code);
 			/*
 			let code =
