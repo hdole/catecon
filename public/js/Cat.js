@@ -16554,19 +16554,20 @@ class Diagram extends Functor
 				const viewport = D.session.getCurrentViewport();
 				const scale = 1 / viewport.scale;
 				const pnt = D.userToSessionCoords({x:0, y:0});
+				const box = D2.Expand(new D2({x:pnt.x, y:pnt.y, width:scale * D.width(), height:scale * D.height()}), D.height()/2);
 				if (bkgnd)
 				{
-					bkgnd.setAttribute('x', `${pnt.x}px`);
-					bkgnd.setAttribute('y', `${pnt.y}px`);
-					bkgnd.setAttribute('width', `${2 * scale * D.width()}px`);		// 2x for margin due to transitions
-					bkgnd.setAttribute('height', `${2 * scale * D.height()}px`);
+					bkgnd.setAttribute('x', `${box.x}px`);
+					bkgnd.setAttribute('y', `${box.y}px`);
+					bkgnd.setAttribute('width', `${box.width}px`);		// 2x for margin due to transitions
+					bkgnd.setAttribute('height', `${box.height}px`);
 				}
 				else
 				{
 					const args = {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
-																		x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.width()}px`, height:`${scale * D.height()}px`};
+																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`};
 					bkgnd = H3.rect('.diagramBackgroundActive', {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
-																		x:`${pnt.x}px`, y:`${pnt.y}px`, width:`${scale * D.width()}px`, height:`${scale * D.height()}px`});
+																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`});
 				}
 				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
 				dgrmBkgnd.classList.add('hidden');
