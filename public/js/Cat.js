@@ -3480,7 +3480,6 @@ class Display
 					layoutGrid:		10,		// px
 					majorGridMult:	10,
 					margin:			5,		// px
-					viewMargin:		0.5,	// pure
 					pan:			{scale:	0.05},
 					panel:			{width:	230},		// px
 					scale:			{base:1.05},
@@ -3494,6 +3493,7 @@ class Display
 									},
 					title:			{height:76, weight:'bold'},
 					toolbar:		{x:15, y:70},
+					viewMargin:		0.25,	// pure
 				},
 				writable:		true,
 			},
@@ -14168,24 +14168,23 @@ class FactorMorphism extends Morphism
 	{
 		const dual = U.GetArg(args, 'dual', false);
 		const nuArgs = U.Clone(args);
-		nuArgs.cofactors = U.GetArg(args, 'cofactors', null);
 		if (dual)
 		{
 			nuArgs.codomain = diagram.getElement(args.codomain);
-			nuArgs.domain = FactorMorphism.Codomain(diagram, nuArgs.codomain, nuArgs.factors, dual, nuArgs.coFactors);
+			nuArgs.domain = FactorMorphism.Codomain(diagram, nuArgs.codomain, nuArgs.factors, dual);
 		}
 		else
 		{
 			nuArgs.domain = diagram.getElement(args.domain);
-			nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors, dual, nuArgs.coFactors);
+			nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors, dual);
 		}
-		const bargs = {factors:nuArgs.factors, dual, cofactors:nuArgs.cofactors};
+		const bargs = {factors:nuArgs.factors, dual};
 		if (dual)
 			bargs.codomain = nuArgs.codomain;
 		else
 			bargs.domain = nuArgs.domain;
 		nuArgs.basename = FactorMorphism.Basename(diagram, bargs);
-		nuArgs.properName = FactorMorphism.ProperName(diagram, dual ? nuArgs.codomain : nuArgs.domain, nuArgs.factors, dual, nuArgs.cofactors);
+		nuArgs.properName = FactorMorphism.ProperName(diagram, dual ? nuArgs.codomain : nuArgs.domain, nuArgs.factors, dual);
 		nuArgs.category = diagram.codomain;
 		super(diagram, nuArgs);
 		this.factors = nuArgs.factors;
@@ -14194,7 +14193,7 @@ class FactorMorphism extends Morphism
 	}
 	setSignature()
 	{
-		this.signature = FactorMorphism.Signature(this.diagram, this.domain, this.factors, this.dual, this.cofactors);
+		this.signature = FactorMorphism.Signature(this.diagram, this.domain, this.factors, this.dual);
 	}
 	help()
 	{
@@ -14207,8 +14206,6 @@ class FactorMorphism extends Morphism
 		delete a.basename;		// will regenerate
 		delete a.properName;	// will regenerate
 		a.factors = this.factors.slice();
-		if (this.cofactors)
-			a.cofactors = this.cofactors.slice();
 		return a;
 	}
 	canChangeProperName()
@@ -14219,66 +14216,55 @@ class FactorMorphism extends Morphism
 	{
 		const graph = super.getGraph(data, first);
 		const factorGraph = graph.graphs[this.dual ? 0 : 1];
-		if (this.cofactors)
+		let offset = 0;
+		const hardFactorLength = this.factors.filter(f => f !== -1).length;
+		this.factors.map((index, i) =>
 		{
-			// TODO
-		}
-		else
-		{
-			let offset = 0;
-			const hardFactorLength = this.factors.filter(f => f !== -1).length;
-			this.factors.map((index, i) =>
+			const ndx = Array.isArray(index) ? index.slice() : [index];
+			let cod = null;
+			let domRoot = null;
+			let coNdx = null;
+			let codRoot = null;
+			if (this.dual)
 			{
-				const ndx = Array.isArray(index) ? index.slice() : [index];
-				let cod = null;
-				let domRoot = null;
-				let coNdx = null;
-				let codRoot = null;
-				if (this.dual)
+				const codomain = graph.graphs[1];
+				const factor = codomain.getFactor(ndx);
+				if (factor === null)
 				{
-					const codomain = graph.graphs[1];
-					const factor = codomain.getFactor(ndx);
-					if (factor === null)
-					{
-						++offset;
-						return;
-					}
-					cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
-					domRoot = ndx.slice();
-					domRoot.unshift(1);
-					codRoot = this.factors.length > 1 ? [0, i] : [0];
-					factor.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot, offset});
+					++offset;
+					return;
 				}
-				else
+				cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
+				domRoot = ndx.slice();
+				domRoot.unshift(1);
+				codRoot = this.factors.length > 1 ? [0, i] : [0];
+				factor.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot, offset});
+			}
+			else
+			{
+				const domain = graph.graphs[0];
+				const factor = domain.getFactor(ndx);
+				if (factor === null)
 				{
-					const domain = graph.graphs[0];
-					const factor = domain.getFactor(ndx);
-					if (factor === null)
-					{
-						++offset;
-						return;
-					}
-					cod = hardFactorLength === 1 ? factorGraph : factorGraph.getFactor([i]);
-					domRoot = ndx.slice();
+					++offset;
+					return;
+				}
+				cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
+				domRoot = ndx.slice();
+				if (this.domain instanceof ProductObject && !this.domain.dual && this.domain.objects.length > 1)
 					domRoot.unshift(0);
-					codRoot = hardFactorLength > 1 ? [1, i] : [1];
-					factor.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
-				}
-			});
-			graph.tagGraph(this.dual ? 'Cofactor' : 'Factor');
-		}
+				codRoot = this.factors.length > 1 ? [1, i] : [1];
+				factor.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
+			}
+		});
+		graph.tagGraph(this.dual ? 'Cofactor' : 'Factor');
 		graph.checkLinks();
 		return graph;
 	}
 	loadItem()
 	{
 		super.loadItem();
-		if (this.cofactors)
-		{
-			// TODO
-		}
-		else if (this.factors.length > 1)
-		{
+		if (this.factors.length > 1)
 			this.factors.map((f, i) =>
 			{
 				// TODO
@@ -14300,7 +14286,6 @@ class FactorMorphism extends Morphism
 				if (!this.dual && this.domain.isTerminal() && this.codomain.isTerminal())
 					R.loadItem(this.diagram, this, [base], [fm, this]);
 			});
-		}
 	}
 	getHtmlRep(idPrefix, config = {})
 	{
@@ -14318,7 +14303,6 @@ class FactorMorphism extends Morphism
 		if (factors.length === 0 || (factors.length === 1 && factors[0].length === 0))
 			return Identity.Basename(diagram, args);
 		const dual = 'dual' in args ? args.dual : false;
-		const cofactors = 'cofactors' in args ? args.cofactors : null;
 		const c = args.dual ? 'C' : '';
 		const obj = diagram.getElement(dual ? args.codomain : args.domain);
 		let basename = `${c}Fa{${obj.refName(diagram)},`;
@@ -14334,8 +14318,6 @@ class FactorMorphism extends Morphism
 			if (i !== factors.length -1)
 				basename += ',';
 		}
-		if (cofactors)
-			basename += `__${cofactors.toString()}`;
 		basename += `}aF${c}`;
 		return basename;
 	}
@@ -14343,38 +14325,11 @@ class FactorMorphism extends Morphism
 	{
 		return Element.Codename(diagram, {basename:FactorMorphism.Basename(diagram, args)});
 	}
-	static Codomain(diagram, domain, factors, dual, cofactors = null)
+	static Codomain(diagram, domain, factors, dual)
 	{
-		if (cofactors)
-		{
-			const refs = factors.map(f => domain.getFactor(f));
-			const objects = [];
-			for (let i=0; i<cofactors.length; ++i)
-			{
-				const cof = cofactors[i].slice();
-				let level = objects;
-				while (cof.length > 0)
-				{
-					const ndx = cof[0];
-					const isLast = cof.length === 1;
-					if (level[ndx] === undefined)
-					{
-						level[ndx] = isLast ? refs[i] : [];
-						level = level[ndx];
-					}
-					else if (isLast)
-						level[ndx] = refs[i];
-					else
-						level = level[ndx];
-					cof.shift();
-				}
-			}
-			return diagram.get('ProductObject', {objects, dual});
-		}
-		else
-			return factors.length > 1 ? diagram.get('ProductObject', {objects:factors.map(f =>
-				f === -1 ? diagram.getTerminal(dual) : domain.getFactor(f)
-			), dual}) : (factors[0] === -1 ? diagram.getTerminal(dual) : domain.getFactor(factors[0]));
+		return factors.length > 1 ? diagram.get('ProductObject', {objects:factors.map(f =>
+			f === -1 ? diagram.getTerminal(dual) : domain.getFactor(f)
+		), dual}) : (factors[0] === -1 ? diagram.getTerminal(dual) : domain.getFactor(factors[0]));
 	}
 	static allFactorsEqual(factors)
 	{
@@ -14386,7 +14341,7 @@ class FactorMorphism extends Morphism
 			return left.reduce((r, ary, i) => U.ArrayEquals(ary, right[i]));
 		return false;
 	}
-	static ProperName(diagram, domain, factors, dual, cofactors = null)
+	static ProperName(diagram, domain, factors, dual)
 	{
 		const obj = domain instanceof NamedObject ? domain.source : domain;
 		if (FactorMorphism.isIdentity(factors, 'objects' in obj ? obj.objects.length : 1))
@@ -14395,15 +14350,12 @@ class FactorMorphism extends Morphism
 			return (dual ? '&nabla;' : '&Delta;') + domain.properName;
 		return `${dual ? '&#119894;' : '&#119901;'}${factors.map(f => f === -1 || f.length === 0 ? '' : `&#8202;${U.subscript(f)}`).join(',')}`;
 	}
-	static Signature(diagram, domain, factors = [-1], dual = false, cofactors = null)	// default to terminal morphism
+	static Signature(diagram, domain, factors = [-1], dual = false)
 	{
 		if (!dual && domain.isTerminal())
 			return Identity.Signature(diagram, diagram.getTerminal(dual));
 		const sigs = [dual];
-		if (!cofactors)
-			factors.map(f => sigs.push(Identity.Signature(diagram, f === -1 ? diagram.getTerminal(this.dual) : domain.getFactor(f)), f));
-		else
-			throw 'TODO';
+		factors.map(f => sigs.push(Identity.Signature(diagram, f === -1 ? diagram.getTerminal(this.dual) : domain.getFactor(f)), f));
 		return U.SigArray(sigs);
 	}
 	static isReference(factors)		// no duplicate factors
@@ -16980,29 +16932,11 @@ class Assembler
 		this.inputs = new Set();
 		this.outputs = new Set();
 		this.composites = new Map();	// origins+inputs to array of morphisms to compose
-		this.ref2factor = new Map();
 		this.obj2flat = new Map();
 		this.processed = new Set();
 		this.issues = [];
 		this.finished = false;
-	}
-	reset()
-	{
-		this.finished = false;
-		this.objects.clear();
-		this.morphisms.clear();
-		this.origins.clear();
-		this.references.clear();
-		this.coreferences.clear();
-		this.overloaded.clear();
-		this.propagated.clear();
-		this.inputs.clear();
-		this.outputs.clear();
-		this.composites.clear();
-		this.obj2flat.clear();
-		this.processed.clear();
-		this.issues = [];
-		this.clearGraphics();
+		this.inCoproduct = false;
 	}
 	clearGraphics()
 	{
@@ -17106,6 +17040,11 @@ class Assembler
 		this.outputs.add(obj);
 		Assembler.addBall('Output', 'output', 'assyOutput', obj);
 	}
+	deleteOutput(obj)
+	{
+		this.outputs.delete(obj);
+		this.deleteEllipse('output', obj);
+	}
 	addOverloaded(ovr)
 	{
 		this.overloaded.add(ovr);
@@ -17141,7 +17080,6 @@ class Assembler
 	}
 	findBlob(obj)		// establish connected graph and issues therein, starting at the diagram object obj
 	{
-		this.reset();
 		const scanning = [obj];
 		const scanned = new Set();
 		while(scanning.length > 0)	// find loops or homsets > 1
@@ -17431,6 +17369,7 @@ class Assembler
 						injections.map((inj, i) =>
 						{
 							const fctr = U.pushFactor(index, i);
+// TODO why not save returns from formMorphism
 							this.formMorphism(scanning, inj.domain, inj.domain.to, fctr);
 							const references = [...inj.domain.codomains].filter(m => this.references.has(m));
 							references.map((ref, j) => this.formMorphism(scanning, ref.domain, ref.domain.to, U.pushFactor(fctr, j)));
@@ -17463,6 +17402,8 @@ class Assembler
 		const domain = from.to;
 		if (coreferences.length > 0)
 		{
+			const lastInCoproduct = this.inCoproduct;
+			this.inCoproduct = true;
 			const dataMorphs = [];
 			const homMorphs = [];
 			const productAssemblies = [];
@@ -17480,8 +17421,9 @@ class Assembler
 				const starters = [...insert.domain.codomains];
 				const comps = this.composites.get(insert.domain);
 				comps.map(cmp => starters.push(cmp[0]));
-				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index));
+				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index, false));
 				const homMorph = diagram.prod(...homMorphs);
+				/*
 				const step1 = diagram.fctr(homMorph.domain, [-1, []]);	// A --> * x A
 				const homObj = diagram.hom(homMorph.domain, homMorph.codomain);
 				homMorph.incrRefcnt();
@@ -17492,6 +17434,8 @@ class Assembler
 				const step2 = diagram.prod(dataMorph, diagram.id(homMorph.domain));
 				const step3 = diagram.eval(homMorph.domain, homMorph.codomain);
 				subs[fctr] = diagram.comp(step1, step2, step3);
+				*/
+				subs[fctr] = homMorph;
 			});
 			// map each coproduct factor A to 1xA
 			// coproduct of hom-morphs and id's
@@ -17519,14 +17463,17 @@ class Assembler
 				const foldStep = diagram.cofctr(foldCod, foldFactors);
 				return diagram.comp(costeps, foldStep);
 			}
+			this.inCoproduct = lastInCoproduct;
 			return costeps;
 		}
+		return null;
 	}
 	// recursive
 	formMorphism(scanning, domain, currentDomain, index = [])
 	{
 		if (this.processed.has(domain))
 			return null;
+		let morphism = null;
 		// if the domain is an origin then build its preamble
 		let preamble = null;
 		if (this.origins.has(domain) || this.outputs.has(domain))
@@ -17569,20 +17516,18 @@ class Assembler
 		let morphisms = this.getCompositeMorphisms(scanning, domain, currentDomain, index);
 		const coreferences = [...domain.codomains].filter(m => this.coreferences.has(m));
 		coreferences.length > 0 && morphisms.push(this.assembleCoreferences(scanning, coreferences, domain, index));
-		// add references from the domain
-		if (this.referenceUseCount(domain) > 0)
-		{
-			morphisms.push(this.diagram.id(domain.to));
-			this.ref2factor.set(domain, [morphisms.length -1]);
-		}
 		// add preamble morphism if required
 		if (preamble && !Morphism.isIdentity(preamble))
 			morphisms = morphisms.map(m => this.diagram.comp(preamble, m));
 		// if we got more than one morphism formed, make a product assembly
 		if (morphisms.length > 0)
-			return this.diagram.assy(...morphisms);
+			morphism = this.diagram.assy(...morphisms);
 		else
-			return preamble;
+			morphism = preamble;
+		console.log('formMorphism', domain.basename, domain.svg, morphism);
+		if (morphism === null && this.outputs.has(domain) && this.inCoproduct)
+			this.deleteOutput(domain);
+		return morphism;
 	}
 	getBlobMorphism()
 	{
@@ -17611,7 +17556,6 @@ class Assembler
 	// try to form a morphism from a blob
 	assemble(e, base)
 	{
-		this.reset();
 		//
 		// establish connected graph and issues therein
 		//
