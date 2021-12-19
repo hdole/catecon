@@ -3493,7 +3493,7 @@ class Display
 									},
 					title:			{height:76, weight:'bold'},
 					toolbar:		{x:15, y:70},
-					viewMargin:		0.25,	// pure
+					viewMargin:		0.1,	// pure
 				},
 				writable:		true,
 			},
@@ -5279,7 +5279,7 @@ class Display
 		const copy = svg.cloneNode(true);
 		const radgrad1 = D.gradients.radgrad1.cloneNode(true);
 		const top = H3.svg();
-		const markers = ['arrowhead', 'arrowheadRev'];
+		const markers = ['arrowhead', 'arrowheadRev', 'var-arrowhead'];
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
 		top.appendChild(radgrad1);
 		top.appendChild(copy);
@@ -6807,7 +6807,7 @@ class HelpPanel extends Panel
 	{
 		super('help');
 		const date = '04/11/2021 00:00:01 AM';
-		// TODO move to pdf
+		// TODO convert to diagram
 		const elements = [
 			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn())), '.buttonBarRight'),
 			H3.h3('Catecon'),
@@ -6956,6 +6956,8 @@ class SettingsPanel extends Panel
 			showEventsChkbox.checked = true;
 		const settings = [	H3.tr(	H3.td(gridChkbox),
 									H3.td('Snap objects to a grid.', '.left')),
+							H3.tr(	H3.td(H3.input({type:"checkbox", onchange:e => e.target.checked ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme')})),
+									H3.td('Dark mode', '.left')),
 							H3.tr(	H3.td(debugChkbox),
 									H3.td('Debug', '.left')),
 							H3.tr(	H3.td(showEventsChkbox),
@@ -12854,7 +12856,7 @@ class IndexMorphism extends Morphism
 		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':this.name, class:'grabme grabbable', id:`${id}_path2`, d:coords});
 		g.appendChild(this.svg_path2);
 		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
-		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, class:cls, id:`${id}_path`, d:coords, 'marker-end':'url(#arrowhead)'});
+		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, class:cls, id:`${id}_path`, d:coords, 'marker-end':'url(#var-arrowhead)'});
 		g.appendChild(this.svg_path);
 		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${id}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
 			this.to.properName);
@@ -14234,6 +14236,8 @@ class FactorMorphism extends Morphism
 					++offset;
 					return;
 				}
+				else if (factor === codomain)
+					ndx.push(1);
 				cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
 				domRoot = ndx.slice();
 				domRoot.unshift(1);
@@ -14249,6 +14253,8 @@ class FactorMorphism extends Morphism
 					++offset;
 					return;
 				}
+				else if (factor === domain)
+					ndx.push(0);
 				cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
 				domRoot = ndx.slice();
 				if (this.domain instanceof ProductObject && !this.domain.dual && this.domain.objects.length > 1)
