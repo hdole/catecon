@@ -12341,12 +12341,13 @@ class Identity extends Morphism
 	constructor (diagram, args)
 	{
 		const nuArgs = U.Clone(args);
-		const domain = diagram ? diagram.getElement(args.domain) : args.domain;
-		nuArgs.domain = domain;
+		nuArgs.domain = diagram ? diagram.getElement(args.domain) : args.domain;
 		if ('codomain' in args && args.codomain)
 			nuArgs.codomain = diagram ? diagram.getElement(args.codomain) : args.codomain;
 		else
 			nuArgs.codomain = nuArgs.domain;
+		if (nuArgs.codomain && nuArgs.domain === null)
+			nuArgs.domain = nuArgs.codomain;
 		nuArgs.basename = Identity.Basename(diagram, {domain:nuArgs.domain, codomain:nuArgs.codomain});
 		nuArgs.properName = 'properName' in nuArgs ? U.HtmlEntitySafe(nuArgs.properName) : Identity.ProperName(nuArgs.domain, nuArgs.codomain);
 		super(diagram, nuArgs);
@@ -14221,7 +14222,7 @@ class FactorMorphism extends Morphism
 				}
 				cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
 				domRoot = ndx.slice();
-				if (this.domain instanceof ProductObject && !this.domain.dual && this.domain.objects.length > 1)
+				if ((this.domain instanceof ProductObject && !this.domain.dual && this.domain.objects.length > 1) || ndx.length === 0)
 					domRoot.unshift(0);
 				codRoot = this.factors.length > 1 ? [1, i] : [1];
 				factor.bindGraph({cod, index:[], tag:this.constructor.name, domRoot, codRoot, offset});	// TODO dual name
@@ -17320,7 +17321,7 @@ class Assembler
 			this.startComposites(scanning);
 	}
 	// recursive
-	formMorphism(scanning, domain, currentDomain, index = [])
+	formMorphism(scanning, domain)
 	{
 		if (this.processed.has(domain))
 			return null;
@@ -17358,15 +17359,15 @@ class Assembler
 		// advance scanning
 		//
 		if (scanning.filter(scan => scan.domain === domain).length === 0)		// our domain is not to be scanned again, then add references to it to the scan list
-			referencesTo.map(m => scanning.push({domain:m.domain, currentDomain, index}));
+			referencesTo.map(m => scanning.push({domain:m.domain}));
 		//
 		// we get outbound morphisms from the domain from the composites shown in the directed graph,
 		// or from the domain being a coproduct assembly of elements
 		//
 		// first the outbound composites from the domain
 		//
-		let assembly = this.getCompositeMorphisms(scanning, domain, currentDomain, index);
-		coreferences.length > 0 && assembly.push(this.assembleCoreferences(scanning, coreferences, domain, index));
+		let assembly = this.getCompositeMorphisms(scanning, domain);
+		coreferences.length > 0 && assembly.push(this.assembleCoreferences(scanning, coreferences, domain));
 		// add preamble morphism if required
 		if (preamble && !Morphism.isIdentity(preamble))
 			assembly = assembly.map(m => this.diagram.comp(preamble, m));
@@ -17380,7 +17381,7 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 			this.deleteOutput(domain);
 		return morphism ? morphism : this.diagram.id(domain.to);
 	}
-	getCompositeMorphisms(scanning, domain, currentDomain, index)
+	getCompositeMorphisms(scanning, domain)
 	{
 		if (this.composites.has(domain))
 		{
@@ -17400,25 +17401,20 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 						const injections = [...codomain.codomains].filter(m => this.coreferences.has(m));
 						injections.map((inj, i) =>
 						{
-							const fctr = U.pushFactor(index, i);
 // TODO why not save returns from formMorphism
-							this.formMorphism(scanning, inj.domain, inj.domain.to, fctr);
+							this.formMorphism(scanning, inj.domain);
 							const references = [...inj.domain.codomains].filter(m => this.references.has(m));
-							references.map((ref, j) => this.formMorphism(scanning, ref.domain, ref.domain.to, U.pushFactor(fctr, j)));
+							references.map((ref, j) => this.formMorphism(scanning, ref.domain));
 						});
 					}
 					else
 					{
-						const continuance = this.formMorphism(scanning, codomain, to, index);
+						const continuance = this.formMorphism(scanning, codomain, to);
 						continuance && !Morphism.isIdentity(continuance) && morphisms.push(continuance);
 					}
 				}
 				else
-				{
-					const nuNdx = index.slice();
-					nuNdx.pop();
-					scanning.unshift({domain:codomain, currentDomain, nuNdx});
-				}
+					scanning.unshift({domain:codomain});
 				// get the composite so far
 				let composite = this.diagram.comp(...morphisms);
 				return composite;
@@ -17427,7 +17423,7 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 		else
 			return [];
 	}
-	assembleCoreferences(scanning, coreferences, from, index)
+	assembleCoreferences(scanning, coreferences, from)
 	{
 		if (coreferences.length > 0)
 		{
@@ -17447,7 +17443,7 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 				const starters = [...insert.domain.codomains];
 				const comps = this.composites.get(insert.domain);
 				comps.map(cmp => starters.push(cmp[0]));
-				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index, false));
+				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain));
 				const homMorph = diagram.prod(...homMorphs);
 				subs[fctr] = homMorph;
 			});
@@ -17487,9 +17483,9 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 		let ndx = 0;
 		let scanning = [];
 		const inputs = [...this.inputs];
-		inputs.map(input => scanning.push({domain:input, currentDomain:input.to, index:inputs.length === 1 ? [] : [ndx++]}));
+		inputs.map(input => scanning.push({domain:input}));
 		const scanInputs = scanning.slice();
-		const inputMorphs = scanInputs.map(i => this.formMorphism(scanning, i.domain, i.currentDomain, i.index));
+		const inputMorphs = scanInputs.map(i => this.formMorphism(scanning, i.domain));
 		scanning = scanning.slice(scanInputs.length);
 		const input = this.diagram.prod(...inputMorphs);
 		// TODO factor morphism from domain stripped of 1's
@@ -17501,7 +17497,7 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 		while(scanning.length > 0)
 		{
 			const args = scanning.shift();
-			const morphism = this.formMorphism(scanning, args.domain, args.currentDomain, args.index);
+			const morphism = this.formMorphism(scanning, args.domain);
 			morphism && !(morphism instanceof Identity) && components.push(morphism);
 		}
 		return this.diagram.comp(...components);
