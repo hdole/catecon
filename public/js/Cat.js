@@ -3462,6 +3462,7 @@ class Display
 					borderMargin:	20,		// px
 					borderMinOpacity:	0.15,
 					button:		{tiny:0.4, small:0.66, large:1.0},	// inches
+					darkmode:		false,
 					diagram:
 					{
 						imageScale:		1.0,
@@ -5156,44 +5157,6 @@ class Display
 				break;
 		}
 	}
-	/*  TODO?
-	updateObjectDisplay(e)		// event handler
-	{
-		const args = e.detail;
-		const diagram = args.diagram;
-		if (!diagram || diagram.svgBase === null)
-			return;
-		const element = args.element;
-		switch(args.command)
-		{
-			case 'fuse':	// scan all 1-connected objects to refresh
-				const homObjs = new Set();
-				function addCod(m) { homObjs.add(m.codomain); }
-				function addDom(m) { homObjs.add(m.domain); }
-				element.domains.forEach(addCod);
-				element.codomains.forEach(addDom);
-				if ('target' in args)
-				{
-					const target = args.target;
-					homObjs.clear();
-					target.domains.forEach(addCod);
-					target.codomains.forEach(addDom);
-				}
-				break;
-			case 'move':
-				element.finishMove();
-				if (element instanceof IndexObject)
-					element.update();
-				break;
-			case 'update':
-			case 'new':
-				if (element instanceof IndexObject)
-					element.update();
-				break;
-		}
-		this.updateDisplay(e);
-	}
-	*/
 	updateTextDisplay(e)		// event handler
 	{
 		this.updateDisplay(e);
@@ -6198,10 +6161,10 @@ class Display
 			const borders = D.topSVG.querySelectorAll('.borderAlert');
 			borders.forEach(elt => elt.remove());
 			const margin = D.default.borderMargin;
-			lftOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${lftOpa}`, x:0, y:0, width:margin, height:hgt, fill:'url(#borderLftGrad)'}));
-			rgtOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${rgtOpa}`, x:wid - margin, y:0, width:margin, height:hgt, fill:'url(#borderRgtGrad)'}));
-			topOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${topOpa}`, x:0, y:D.default.icon, width:wid, height:margin, fill:'url(#borderTopGrad)'}));
-			botOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${botOpa}`, x:0, y:hgt - margin, width:wid, height:margin, fill:'url(#borderBotGrad)'}));
+			lftOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${lftOpa}`, x:0, y:0, width:margin, height:hgt, fill:this.darkmode ? 'url(#borderLftGradDM)' : 'url(#borderLftGrad)'}));
+			rgtOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${rgtOpa}`, x:wid - margin, y:0, width:margin, height:hgt, fill:this.darkmode ? 'url(#borderRgtGradDM)' : 'url(#borderRgtGrad)'}));
+			topOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${topOpa}`, x:0, y:D.default.icon, width:wid, height:margin, fill:this.darkmode ? 'url(#borderTopGradDM)' : 'url(#borderTopGrad)'}));
+			botOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${botOpa}`, x:0, y:hgt - margin, width:wid, height:margin, fill:this.darkmode ? 'url(#borderBotGradDM)' : 'url(#borderBotGrad)'}));
 		}
 	}
 	setTopBorderHeight(y)
@@ -6209,6 +6172,12 @@ class Display
 		const borderTop = this.topSVG.querySelector('#borderTop');
 		if (borderTop)
 			borderTop.setAttribute('y', y);
+	}
+	setDarkmode(mode)
+	{
+		mode ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme');
+		this.darkmode = mode;
+		this.updateBorder();
 	}
 	static Resize()
 	{
@@ -6956,7 +6925,7 @@ class SettingsPanel extends Panel
 			showEventsChkbox.checked = true;
 		const settings = [	H3.tr(	H3.td(gridChkbox),
 									H3.td('Snap objects to a grid.', '.left')),
-							H3.tr(	H3.td(H3.input({type:"checkbox", onchange:e => e.target.checked ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme')})),
+							H3.tr(	H3.td(H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked)})),
 									H3.td('Dark mode', '.left')),
 							H3.tr(	H3.td(debugChkbox),
 									H3.td('Debug', '.left')),
@@ -14225,7 +14194,6 @@ class FactorMorphism extends Morphism
 			const ndx = Array.isArray(index) ? index.slice() : [index];
 			let cod = null;
 			let domRoot = null;
-			let coNdx = null;
 			let codRoot = null;
 			if (this.dual)
 			{
@@ -14236,8 +14204,6 @@ class FactorMorphism extends Morphism
 					++offset;
 					return;
 				}
-				else if (factor === codomain)
-					ndx.push(1);
 				cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
 				domRoot = ndx.slice();
 				domRoot.unshift(1);
@@ -14253,8 +14219,6 @@ class FactorMorphism extends Morphism
 					++offset;
 					return;
 				}
-				else if (factor === domain)
-					ndx.push(0);
 				cod = this.factors.length === 1 ? factorGraph : factorGraph.getFactor([i]);
 				domRoot = ndx.slice();
 				if (this.domain instanceof ProductObject && !this.domain.dual && this.domain.objects.length > 1)
@@ -16943,6 +16907,7 @@ class Assembler
 		this.issues = [];
 		this.finished = false;
 		this.inCoproduct = false;
+		this.clearGraphics();
 	}
 	clearGraphics()
 	{
@@ -17354,6 +17319,67 @@ class Assembler
 		while(scanning.length > 0)
 			this.startComposites(scanning);
 	}
+	// recursive
+	formMorphism(scanning, domain, currentDomain, index = [])
+	{
+		if (this.processed.has(domain))
+			return null;
+		this.processed.add(domain);
+		let morphism = null;
+		// if the domain is an origin then build its preamble
+		let preamble = null;
+		if (this.origins.has(domain) || this.outputs.has(domain))
+		{
+			// references attached to the domain; these are used to build up the domain's value
+			const refs = [...domain.domains].filter(m => this.references.has(m));
+			// all references satisfied?
+			if (refs.length > 0)
+			{
+				// at most one id is allowed as a ref
+				const idCnt = refs.filter(r => Morphism.isIdentity(r.to)).length;
+				if (idCnt > 1)
+				{
+					this.issues.push({message:`Too many identities as references (${idCnt})`, element:domain});
+					return  null;
+				}
+				// TODO id's
+				const factors = [];
+				refs.map(ref => factors.concat(Morphism.getProductFactors(ref.to).filter(f => f !== -1)));
+				if (factors.length > 0)
+					preamble = !FactorMorphism.isIdentity(factors, 'objects' in domain.to ? domain.to.objects.length : 1) ? this.diagram.fctr(domain.to, factors) : null;
+				else
+					preamble = this.diagram.id(domain.to);
+			}
+		}
+		const codomains = [...domain.codomains];
+		const referencesTo = codomains.filter(m => this.references.has(m));
+		const coreferences = codomains.filter(m => this.coreferences.has(m));
+		//
+		// advance scanning
+		//
+		if (scanning.filter(scan => scan.domain === domain).length === 0)		// our domain is not to be scanned again, then add references to it to the scan list
+			referencesTo.map(m => scanning.push({domain:m.domain, currentDomain, index}));
+		//
+		// we get outbound morphisms from the domain from the composites shown in the directed graph,
+		// or from the domain being a coproduct assembly of elements
+		//
+		// first the outbound composites from the domain
+		//
+		let assembly = this.getCompositeMorphisms(scanning, domain, currentDomain, index);
+		coreferences.length > 0 && assembly.push(this.assembleCoreferences(scanning, coreferences, domain, index));
+		// add preamble morphism if required
+		if (preamble && !Morphism.isIdentity(preamble))
+			assembly = assembly.map(m => this.diagram.comp(preamble, m));
+		// if we got more than one morphism formed, make a product assembly
+		if (assembly.length > 0)
+			morphism = this.diagram.assy(...assembly);
+		else
+			morphism = preamble;
+console.log('formMorphism', domain.basename, domain.svg, morphism);
+		if (morphism === null && this.outputs.has(domain) && this.inCoproduct)
+			this.deleteOutput(domain);
+		return morphism ? morphism : this.diagram.id(domain.to);
+	}
 	getCompositeMorphisms(scanning, domain, currentDomain, index)
 	{
 		if (this.composites.has(domain))
@@ -17384,7 +17410,7 @@ class Assembler
 					else
 					{
 						const continuance = this.formMorphism(scanning, codomain, to, index);
-						continuance && morphisms.push(continuance);
+						continuance && !Morphism.isIdentity(continuance) && morphisms.push(continuance);
 					}
 				}
 				else
@@ -17403,22 +17429,16 @@ class Assembler
 	}
 	assembleCoreferences(scanning, coreferences, from, index)
 	{
-		const diagram = this.diagram;
-		const terminal = diagram.getTerminal();
-		const domain = from.to;
 		if (coreferences.length > 0)
 		{
+			const diagram = this.diagram;
+			const terminal = diagram.getTerminal();
+			const domain = from.to;
 			const lastInCoproduct = this.inCoproduct;
 			this.inCoproduct = true;
 			const dataMorphs = [];
 			const homMorphs = [];
 			const productAssemblies = [];
-			//
-			// each element creates its own morphism;
-			// that morphism will need its own factor morphism to set it up for evaluation;
-			// thus each morphism has the current domain as its own domain;
-			// the codomain is something else
-			//
 			const subs = [];
 			coreferences.map(insert =>
 			{
@@ -17429,18 +17449,6 @@ class Assembler
 				comps.map(cmp => starters.push(cmp[0]));
 				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, m.domain.to, index, false));
 				const homMorph = diagram.prod(...homMorphs);
-				/*
-				const step1 = diagram.fctr(homMorph.domain, [-1, []]);	// A --> * x A
-				const homObj = diagram.hom(homMorph.domain, homMorph.codomain);
-				homMorph.incrRefcnt();
-				const data = new Map();
-				data.set(0, homMorph);	// 0 is the value since the domain is the terminal object
-				const dataMorph = new Morphism(diagram, {basename:diagram.getAnon('s'), domain:terminal, codomain:homObj, data});
-				dataMorphs[fctr] = dataMorph;
-				const step2 = diagram.prod(dataMorph, diagram.id(homMorph.domain));
-				const step3 = diagram.eval(homMorph.domain, homMorph.codomain);
-				subs[fctr] = diagram.comp(step1, step2, step3);
-				*/
 				subs[fctr] = homMorph;
 			});
 			// map each coproduct factor A to 1xA
@@ -17473,67 +17481,6 @@ class Assembler
 			return costeps;
 		}
 		return null;
-	}
-	// recursive
-	formMorphism(scanning, domain, currentDomain, index = [])
-	{
-		if (this.processed.has(domain))
-			return null;
-		let morphism = null;
-		// if the domain is an origin then build its preamble
-		let preamble = null;
-		if (this.origins.has(domain) || this.outputs.has(domain))
-		{
-			// references attached to the domain
-			const refs = [...domain.domains].filter(m => this.references.has(m));
-			// all references satisfied?
-			if (refs.length === 0)
-				this.processed.add(domain);
-			else
-			{
-				// at most one id is allowed as a ref
-				const idCnt = refs.filter(r => Morphism.isIdentity(r.to)).length;
-				if (idCnt > 1)
-				{
-					this.issues.push({message:`Too many identities as references (${idCnt})`, element:domain});
-					return  null;
-				}
-				// TODO id's
-				const factors = [];
-				refs.map(ref => factors.concat(Morphism.getProductFactors(ref.to).filter(f => f !== -1)));
-				if (factors.length > 0)
-					preamble = !FactorMorphism.isIdentity(factors, 'objects' in domain.to ? domain.to.objects.length : 1) ? this.diagram.fctr(domain.to, factors) : null;
-				else
-					preamble = this.diagram.id(domain.to);
-				this.processed.add(domain);
-			}
-		}
-		//
-		// advance scanning
-		//
-		if (scanning.filter(scan => scan.domain === domain).length === 0)
-			[...domain.codomains].map((m, i) => this.references.has(m) && scanning.push({domain:m.domain, currentDomain, index}));
-		//
-		// we get outbound morphisms from the domain from the composites shown in the directed graph,
-		// or from the domain being a coproduct assembly of elements
-		//
-		// first the outbound composites from the domain
-		//
-		let morphisms = this.getCompositeMorphisms(scanning, domain, currentDomain, index);
-		const coreferences = [...domain.codomains].filter(m => this.coreferences.has(m));
-		coreferences.length > 0 && morphisms.push(this.assembleCoreferences(scanning, coreferences, domain, index));
-		// add preamble morphism if required
-		if (preamble && !Morphism.isIdentity(preamble))
-			morphisms = morphisms.map(m => this.diagram.comp(preamble, m));
-		// if we got more than one morphism formed, make a product assembly
-		if (morphisms.length > 0)
-			morphism = this.diagram.assy(...morphisms);
-		else
-			morphism = preamble;
-		console.log('formMorphism', domain.basename, domain.svg, morphism);
-		if (morphism === null && this.outputs.has(domain) && this.inCoproduct)
-			this.deleteOutput(domain);
-		return morphism;
 	}
 	getBlobMorphism()
 	{
@@ -17611,7 +17558,7 @@ class Assembler
 			if (morphism instanceof Composite)
 			{
 				const compObjs = D.placeComposite(e, this.diagram, morphism);
-				this.diagram.viewElements(...this.objects, ...compObjs);
+				this.diagram.viewElements(...compObjs);
 				D.emitCellEvent(this.diagram, 'check');
 			}
 			else
