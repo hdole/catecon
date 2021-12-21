@@ -3507,6 +3507,7 @@ class Display
 			editElement:	{value: null,		writable: true},
 			elementTool:	{value: null,		writable: true},
 			gradients:		{value: {radgrad1:null, radgrad2:null},	writable: false},
+			graphColors:	{value: [],			writable: false},
 			gridding:		{value: true,		writable: true},
 			helpPanel:		{value: null,		writable: true},
 			id:				{value: 0,			writable: true},
@@ -4144,6 +4145,11 @@ class Display
 		R.loadScript('js/cpp.js');
 // TODO?		R.loadScript('js/mysql.js');
 		this.params = isGUI ? (new URL(document.location)).searchParams : new Map();	// TODO node.js
+		if (this.params.has('debug'))
+		{
+			R.default.debug = true;
+			console.log('debug mode turned on');
+		}
 		if (isGUI)
 			this.local = document.location.hostname === 'localhost';
 		if (this.params.has('d'))	// check for short form
@@ -4199,6 +4205,7 @@ class Display
 		};
 		this.gradients.radgrad1 = document.getElementById('radgrad1');		// these gradients use url's
 		this.gradients.radgrad2 = document.getElementById('radgrad2');
+		this.generateGraphColors();
 	}
 	readDefaults()	// assume run only one per loading
 	{
@@ -5051,14 +5058,15 @@ class Display
 									D.statusbar.show(null, `cannot load diagram ${name}`);
 									D.emitViewEvent('catalog');
 								}
-								const select = diagram.domain.getElement(this.params.get('select'));
-								if (select)
+								const select = diagram.domain.getElement(this.params.get('select'));	// TODO change to getElements
+								const action = this.params.get('action');
+								if (select || action)
 								{
 									const doit = _ =>
 									{
 										if (diagram.ready === 0 && R.isReady())
 										{
-											diagram.makeSelected(select);
+											select && diagram.makeSelected(select);
 											const action = this.params.get('action');
 											if (action && action in R.Actions)
 											{
@@ -6178,6 +6186,24 @@ class Display
 		mode ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme');
 		this.darkmode = mode;
 		this.updateBorder();
+	}
+	generateGraphColors()
+	{
+		for (let intensity=6; intensity < 15; intensity=intensity +3)
+		{
+			for (let bnd=0; bnd<3; bnd++)
+			{
+				const color = [intensity, intensity, intensity];
+				color[bnd] = 15;
+				this.graphColors.push(`#${color[0].toString(16)}${color[1].toString(16)}${color[2].toString(16)}`);
+			}
+			for (let bnd=0; bnd<3; bnd++)
+			{
+				const color = [15, 15, 15];
+				color[bnd] = intensity;
+				this.graphColors.push(`#${color[0].toString(16)}${color[1].toString(16)}${color[2].toString(16)}`);
+			}
+		}
 	}
 	static Resize()
 	{
@@ -7343,6 +7369,8 @@ class Graph
 			return indices >= 0 && indices < this.graphs.length;
 		if (indices.length === 1 && indices[0] === -1)
 			return true;
+		if (this.graphs.length === 0 && indices.length > 0)
+			return false;
 		if (this.graphs.length === 0)
 			return true;
 		if (indices.length === 1 && indices[0].length === 0)
@@ -7366,6 +7394,7 @@ class Graph
 			return this.graphs[indices];
 		if (indices.length === 1 && indices[0] === -1)
 			return null;
+if (this.graphs.length === 0 && indices.length > 0) debugger;
 		if (this.graphs.length === 0)
 			return this;
 		if (indices.length === 1 && indices[0].length === 0)
@@ -7383,7 +7412,7 @@ class Graph
 		}
 		return fctr;
 	}
-	checkLinks()
+	check()
 	{
 		let rslt = true;
 		this.scan((g, ndx) =>
@@ -7393,7 +7422,14 @@ class Graph
 				if (!this.hasFactor(lnk))
 				{
 					console.log('getFactor bad link at index: ', lnk, ndx);
-					debugger;
+					rslt = false;
+				}
+				const linked = this.getFactor(lnk);
+				const isLinked = linked.links.reduce((r, olnk) => r || U.ArrayEquals(olnk, ndx), false);
+				if (!isLinked)
+				{
+					console.log('no link back:', ...ndx, ' link:', ...lnk);
+					rslt = false;
 				}
 			});
 		});
@@ -7404,7 +7440,7 @@ class Graph
 		this.addTag(tag);
 		this.graphs.map(g => g.tagGraph(tag));
 	}
-	traceLinks(top, ndx = [])
+	traceLinks(top, ndx = [])		// only used by composites
 	{
 		if (this.isLeaf())		// links are at the leaves of the graph
 		{
@@ -7414,7 +7450,7 @@ class Graph
 			while(links.length > 0)
 			{
 				const lnk = links.pop();
-				if (ndx.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
+				if (U.ArrayEquals(ndx, lnk))
 					continue;
 				if (this.visited.has(lnk.toString()))
 					continue;
@@ -7424,7 +7460,7 @@ class Graph
 					const glnk = g.links[j];
 					if (this.visited.has(glnk.toString()))
 						continue;
-					if (ndx.reduce((isEqual, lvl, i) => lvl === glnk[i] && isEqual, true))	// ignore links back to where we came from
+					if (U.ArrayEquals(ndx, glnk))	// ignore links back to where we came from
 						continue;
 					U.HasFactor(nuLinks, glnk) === -1 && nuLinks.push(glnk);
 					U.HasFactor(links, glnk) === -1 && links.push(glnk);
@@ -7432,7 +7468,6 @@ class Graph
 				U.ArrayMerge(this.tags, g.tags);
 				this.visited.add(lnk.toString());
 			}
-nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 			if (ndx.length === 1 && (ndx[0] === 0 || ndx[0] === top.graphs.length -1))
 				this.links = nuLinks.filter(lnk => lnk[0] === 0 || lnk[0] === top.graphs.length -1);
 			else
@@ -7532,7 +7567,7 @@ nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 				{
 					const pair = data.map[j];
 					const fromLnk = pair[0];
-					if (fromLnk.reduce((isEqual, ml, i) => ml === lnk[i] && isEqual, true))
+					if (fromLnk.reduce((isEqual, ml, i) => ml === lnk[i] && isEqual, true))		// equal to a certain level
 					{
 						const lnkClip = lnk.slice(fromLnk.length);
 						const nuLnk = pair[1].slice();
@@ -7612,13 +7647,13 @@ nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 					color = diagram.colorIndex2color[colorIndex];
 				else
 				{
-					color = U.Sig(colorIndex).substring(0, 6);
+					color = D.graphColors[5 * colorIndex % D.graphColors.length];
 					diagram.colorIndex2color[colorIndex] = color;
 				}
 				data.visited.push(idxStr + ' ' + visitedStr);
 				data.visited.push(visitedStr + ' ' + idxStr);
 				const filter = vertical ? '' : 'url(#softGlow)';
-				const path = H3.path('.string', {'data-link':`${visitedStr} ${idxStr}`, id:linkId, style:`stroke:#${color}AA`, d:coords, filter, onmouseover:showStatusBar});
+				const path = H3.path('.string', {'data-link':`${visitedStr} ${idxStr}`, id:linkId, style:`stroke:${color}A`, d:coords, filter, onmouseover:showStatusBar});
 				node.appendChild(path);
 			}
 		}
@@ -7646,8 +7681,11 @@ nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 		const adx = Math.abs(dx);
 		const ady = Math.abs(dy);
 		const normal = dy === 0 ? ((this.xy.y - this.xy.y) > 0 ? new D2({x:0, y:-1}) : new D2({x:0, y:1})) : cod.subtract(this.xy).normal().normalize();
-		const h = (adx - ady) / (1.0 * adx);
-		const v = normal.scale(cod.dist(this.xy) * h / 4.0);
+		let h = (adx - ady) / (1.0 * adx);
+		const dist = cod.dist(this.xy);
+		if (dist < 100)
+			h = 2 * h;
+		const v = normal.scale(dist * h / 3.0);
 		const cp1 = v.add(this.xy).trunc();		// more stable in testing than round()
 		const cp2 = v.add(cod).trunc();
 		return {coords:adx < ady ? `M${this.xy.x},${this.xy.y} L${cod.x},${cod.y}` : `M${this.xy.x},${this.xy.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${cod.x},${cod.y}`,
@@ -7693,7 +7731,7 @@ nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 				if (lnkElt)
 				{
 					lnkElt.setAttribute('d', coords);
-					lnkElt.setAttribute('style', `stroke:#${color}AA`);
+					lnkElt.setAttribute('style', `stroke:${color}A`);
 					lnkElt.setAttribute('filter', vertical ? '' : 'url(#softGlow)');
 				}
 				data.visited.push(idxStr + ' ' + lnkStr);
@@ -7767,7 +7805,8 @@ nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 			}
 			this.links = [...nuLinks];
 		}
-		else this.graphs.map((g, i) => g.reduceLinks(ndx));
+		else
+			this.graphs.map((g, i) => g.reduceLinks(ndx));
 	}
 	// utility function to determine if this graph or one of its subgraphs is covered.
 	_hasSomeCoverage()
@@ -7819,6 +7858,11 @@ nuLinks.map(lnk => {if (this.getFactor(lnk) === undefined) debugger;});
 			return isCovered;
 		}
 		return false;
+	}
+	showLinks(ndx = [])
+	{
+		console.log(...ndx, '::', ...this.links);
+		this.graphs.map((g, i) => g.showLinks(U.pushFactor(ndx, i)));
 	}
 }
 
@@ -11419,13 +11463,18 @@ class GraphAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		ary.map(m => diagram.showGraph(m));
-		diagram.log({command:this.name, morphisms:ary.map(m => m.name)});
-		diagram.antilog({command:this.name, morphisms:ary.map(m => m.name)});
+		if (ary.length === 0)
+			diagram.showGraphs();
+		else
+		{
+			ary.map(m => diagram.showGraph(m));
+			diagram.log({command:this.name, morphisms:ary.map(m => m.name)});
+			diagram.antilog({command:this.name, morphisms:ary.map(m => m.name)});
+		}
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length >= 1 && ary.reduce((r, m) => r && m instanceof IndexMorphism, true);	// all morphisms
+		return ary.length === 0 || ary.length > 0 && ary.reduce((r, m) => r && m instanceof IndexMorphism, true);	// all morphisms
 	}
 }
 
@@ -12221,7 +12270,7 @@ class Morphism extends Element
 		const domGraph = this.domain.getGraph(data);
 		const codGraph = this.codomain.getGraph(codData);
 		const graph = new Graph(this, {position:data.position, width:0, graphs:[domGraph, codGraph]});
-		graph.checkLinks();
+		R.default.debug && graph.check();
 		return graph;
 	}
 	hasInverse()
@@ -13873,7 +13922,7 @@ class Composite extends MultiMorphism
 	getSequenceGraph()
 	{
 		const graphs = this.morphisms.map(m => m.getGraph());
-graphs.map((g, i) => g.checkLinks());
+		R.default.debug && graphs.map((g, i) => g.check());
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = this.diagram.get('ProductObject', {objects, silent:true});
@@ -13885,19 +13934,19 @@ graphs.map((g, i) => g.checkLinks());
 			seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
 			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
+		R.default.debug && seqGraph.check();
 		return seqGraph;
 	}
 	getGraph(data = {position:0})
 	{
 		const seqGraph = this.getSequenceGraph();
-seqGraph.checkLinks();
 		seqGraph.traceLinks(seqGraph);
 		const cnt = this.morphisms.length;
 		seqGraph.graphs[0].reduceLinks(cnt);
 		seqGraph.graphs[cnt].reduceLinks(cnt);
 		const graph = super.getGraph(data);
-		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[cnt], [1]]]});
-		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]]]});
+		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[0], [0]], [[cnt], [1]]]});
+		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]], [[cnt], [1]]]});
 		return graph;
 	}
 	loadItem()
@@ -14229,7 +14278,7 @@ class FactorMorphism extends Morphism
 			}
 		});
 		graph.tagGraph(this.dual ? 'Cofactor' : 'Factor');
-		graph.checkLinks();
+		R.default.debug && graph.check();
 		return graph;
 	}
 	loadItem()
@@ -14441,6 +14490,7 @@ class LambdaMorphism extends Morphism
 		let base = [1, 0];
 		const homFactors = this.homFactors;
 		let k = 0;
+		// setup map for factors living in the domain of the homset
 		const codFactor = [1, 1];
 		if (homFactors.length === 1 && U.ArrayEquals(homFactors[0], [0]))	// check for entire domain
 			homMap[0] = [homFactors[0], [1, 0]];
@@ -14460,7 +14510,7 @@ class LambdaMorphism extends Morphism
 				}
 				else
 				{
-					if (k === 0)
+					if (k === 0 && homFactors.length > 1)
 						base.push(k++);
 					else
 					{
@@ -14481,7 +14531,7 @@ class LambdaMorphism extends Morphism
 		}
 		// copy hom codomain links
 		obj = this.codomain;
-		let homCod = graph.graphs[1];
+		let homCod = cod;
 		while (obj instanceof HomObject)
 		{
 			homCod = homCod.graphs[1];
@@ -14489,12 +14539,12 @@ class LambdaMorphism extends Morphism
 		}
 		homCod.copyGraph({map:factorMap, src:preCurryHomCodGraph});
 		// copy dom factor links
-		const domGraph = graph.graphs[0];
-		domFactors.map((ndx, i) =>
-		{
-			const src = preCurryGraph.getFactor(ndx);
-			domGraph.graphs[i].copyGraph({map:factorMap, src});
-		});
+		if (domFactors.length === 1)
+			dom.copyGraph({map:factorMap, src:preCurryGraph.getFactor(domFactors[0])});
+		else
+			domFactors.map((ndx, i) =>
+				dom.graphs[i].copyGraph({map:factorMap, src:preCurryGraph.getFactor(ndx)})
+			);
 		// copy hom factor links
 		if (homFactors.length === 1 && U.ArrayEquals(homFactors[0], [0]))	// check for entire domain
 		{
@@ -14652,12 +14702,15 @@ class HomMorphism extends MultiMorphism
 	getGraph(data = {position:0})
 	{
 		const graph = super.getGraph(data);
-		this.morphisms.map((m, i) =>
-		{
-			const g = m.getGraph(data);
-			graph.graphs[0].graphs[i].copyGraph({src:g.graphs[i === 0 ? 1 : 0], map:[[[i === 0 ? 0 : 1], [1, i]]]});
-			graph.graphs[1].graphs[i].copyGraph({src:g.graphs[i === 0 ? 0 : 1], map:[[[i === 0 ? 1 : 0], [0, i]]]});
-		});
+		const loMap = [[[0], [1, 0]], [[1], [0, 0]]];		// map to rebuild links for contravariant
+		const hiMap = [[[0], [0, 1]], [[1], [1, 1]]];		// map to rebuild links for covariant
+		const lo = this.morphisms[0].getGraph(data);
+		const hi = this.morphisms[1].getGraph(data);
+		graph.graphs[0].graphs[0].copyGraph({src:lo.graphs[1], map:loMap});		// codomain of lo
+		graph.graphs[1].graphs[0].copyGraph({src:lo.graphs[0], map:loMap});		// domain of lo
+		graph.graphs[0].graphs[1].copyGraph({src:hi.graphs[0], map:hiMap});		// domain of hi
+		graph.graphs[1].graphs[1].copyGraph({src:hi.graphs[1], map:hiMap});		// codomain of hi
+		R.default.debug && graph.check();
 		return graph;
 	}
 	static Basename(diagram, args)
@@ -14716,6 +14769,7 @@ class Evaluation extends Morphism
 		domain.graphs[1].bindGraph({cod:domHom.graphs[0],	index:[], domRoot:[0, 1],	codRoot:[0, 0, 0],	offset:0});
 		domHom.graphs[1].bindGraph({cod:codomain, 			index:[], domRoot:[0, 0, 1], codRoot:[1],		offset:0});
 		graph.tagGraph(this.constructor.name);
+		R.default.debug && graph.check();
 		return graph;
 	}
 	getHtmlRep(idPrefix, config = {})
