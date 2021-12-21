@@ -1,19 +1,25 @@
 :root
 {
 	--color-bg:			#fff;
+	--color-emphasis:	#00f;
 	--color-text:		#000;
 	--color-toolbar-bg:	#eee;
 	--color-object:		#000;
 	--color-morphism:	#000;
+	--color-panel-bg:	#f7f7f7;
+	--color-panel-shadow:	#f0f0f0d0;
 }
 
 [data-theme="dark"]
 {
-	--color-bg:			#000;
+	--color-bg:			#222;
+	--color-emphasis:	#0ff;
 	--color-text:		#fff;
-	--color-toolbar-bg:	#eee;
+	--color-toolbar-bg:	#777;
 	--color-object:		#fff;
 	--color-morphism:	#fff;
+	--color-panel-bg:	#777;
+	--color-panel-shadow:	#505050d0;
 }
 
 html, body
@@ -171,7 +177,7 @@ h5
 
 .sidenavPnl
 {
-	background-color:	#f7f7f7;
+	background-color:	var(--color-panel-bg);
 	height:				100%;
 	margin:				0px;
 	overflow-x:			hidden;
@@ -287,13 +293,13 @@ br
 
 .sidenavLeftPnl
 {
-	box-shadow:	4px 0px 2px 0px #f0f0f0d0;
+	box-shadow:	4px 0px 2px 0px var(--color-panel-shadow);
 	left:		0;
 }
 
 .sidenavRightPnl
 {
-	box-shadow:-4px 0px 2px 0px #f0f0f0d0;
+	box-shadow:-4px 0px 2px 0px var(--color-panel-shadow);
 	right:		0;
 }
 
@@ -773,13 +779,13 @@ p
 
 text.emphasis
 {
-	fill:		#00f;
+	fill:		var(--color-emphasis);
 	stroke:		none;
 }
 
 circle.emphasis
 {
-	fill:		#00f;
+	fill:		var(--color-emphasis);
 }
 
 svg path
@@ -798,8 +804,8 @@ svg line
 svg line.emphasis
 {
 	stroke-dasharray:	5,5;
-	stroke:		#00fa;
-	fill:		#00fa;
+	stroke:		var(--color-emphasis);
+	fill:		var(--color-emphasis);
 }
 
 path.emphasis
@@ -821,14 +827,14 @@ rect.emphasis
 
 .emphasis
 {
-	stroke:		#00fa;
-	fill:		blue;
+	stroke:		var(--color-emphasis);
+	fill:		var(--color-emphasis);
 }
 
 use.emphasis
 {
-	stroke:		#00fa;
-	fill:		blue;
+	stroke:		var(--color-emphasis);
+	fill:		var(--color-emphasis);
 }
 
 .selected
