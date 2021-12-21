@@ -8074,7 +8074,7 @@ class MultiObject extends CatObject
 		const cap = this.objects.length - 1;
 		const graphs = this.objects.map((o, i) =>
 			{
-				const g = o.getGraph(data, false);
+				const g = o.getGraph(data, !this.needsParens());
 				if (this.resetPosition())
 					data.position = 0;
 				else if (i < cap)
@@ -8417,7 +8417,7 @@ class HomObject extends MultiObject
 	getGraph(data = {position:0})
 	{
 		data.position += D.bracketWidth;
-		const g = super.getGraph(this.constructor.name, data, 0, D.commaWidth, false);
+		const g = super.getGraph(this.constructor.name, data, 0, D.commaWidth);
 		data.position += D.bracketWidth;
 		return g;
 	}
