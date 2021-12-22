@@ -4510,7 +4510,7 @@ class Display
 					const movables = new Set();
 					const undoing = obj =>
 					{
-						if 'hasNoved' in obj && (obj.hasMoved())
+						if (obj.hasMoved())
 						{
 							movables.add(obj);
 							elts.set(obj.name, obj.getXY());
