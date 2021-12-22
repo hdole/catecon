@@ -1,25 +1,35 @@
 :root
 {
 	--color-bg:			#fff;
+	--color-body:		#000;
+	--color-button:		#fff;
+	--color-button-hover:		#ccc;
 	--color-emphasis:	#00f;
+	--color-hover:		#555;
 	--color-text:		#000;
 	--color-toolbar-bg:	#eee;
 	--color-object:		#000;
 	--color-morphism:	#000;
 	--color-panel-bg:	#f7f7f7;
 	--color-panel-shadow:	#f0f0f0d0;
+	--color-sidenav-acc:	#eee;
 }
 
 [data-theme="dark"]
 {
 	--color-bg:			#222;
+	--color-body:		#fff;
+	--color-button:		#444;
+	--color-button-hover:		#888;
 	--color-emphasis:	#0ff;
+	--color-hover:		#aaa;
 	--color-text:		#fff;
 	--color-toolbar-bg:	#777;
 	--color-object:		#fff;
 	--color-morphism:	#fff;
 	--color-panel-bg:	#777;
 	--color-panel-shadow:	#505050d0;
+	--color-sidenav-acc:	#555;
 }
 
 html, body
@@ -28,6 +38,7 @@ html, body
 	height:		100%;
 	margin:		0px 0px 0px 0px;
 	background-color:	var(--color-bg);
+	color:		var(--color-body);
 }
 
 label
@@ -432,7 +443,7 @@ p
 	background-color:	var(--color-toolbar-bg);
 	border-width: 		0px;
 	border-radius:		4px;
-	box-shadow:			8px 8px 4px 2px #bbbb;
+	box-shadow:			4px 4px 2px 2px #bbbb;
 	display:			inline-block;
 	margin:				0px;
 	overflow:			hidden;
@@ -446,13 +457,18 @@ p
 
 #toolbar-error
 {
-	margin:		4px;
-	padding:	4px;
+	margin:		0px;
+	padding:	0px;
 }
 
 #toolbar-help
 {
-	margin:		4px;
+	margin:		0px;
+}
+
+#help-table
+{
+	margin:	0px;
 }
 
 .toolbar-element
@@ -591,9 +607,9 @@ p
 
 .sidenavAccordion
 {
-	background-color:	#eee;
+	background-color:	var(--color-sidenav-acc);
 	border:				none;
-	color:				#444;
+	color:				var(--color-body);
 	cursor:				pointer;
 	font-weight:		bold;
 	font-size:			14px;
@@ -607,7 +623,7 @@ p
 .sidenavAccordion:hover
 {
 	background-color:	#777;
-	color:				var(--color-bg);
+	color:				var(--color-hover);
 }
 
 .sidenavAccordion::after
@@ -702,18 +718,19 @@ p
 {
 	margin:				4px;
 	border:				solid;
-	background-color:	#fff;
+	background-color:	var(--color-button);
 	border-color:		#999;
 	border-radius:		4px;
 	border-width:		2px;
 	box-shadow:			3px 3px 2px 1px #bbbb;
+	color:				var(--color-body);
 	cursor:				pointer;
 	padding:			4px;
 }
 
 .textButton:hover
 {
-	background-color:	#ccc;
+	background-color:	var(--color-button-hover);
 }
 
 .svg
@@ -1257,9 +1274,4 @@ tspan
 {
 	cursor:			none;
 	user-select:	none;
-}
-
-#help-table
-{
-	margin:	5px;
 }
