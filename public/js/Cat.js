@@ -1070,8 +1070,12 @@ args.codomain = 'zf/Set';
 				const localTimestamp = this.localTimestamp(d.name);
 				info.references = JSON.parse(d.refs);
 				delete info.refs;
-				if (localTimestamp < info.timestamp)	// override with cloud info
+				if (0 < localTimestamp && localTimestamp < info.timestamp)	// override with cloud info
+				{
+					console.log('downloading newer diagram from server', info.name, 'local:', new Date(localTimestamp).toLocaleString(), 'remote:', new Date(info.timestamp).toLocaleString());
+					R.downloadDiagramData(info.name, false, null, Number.parseInt(info.timestamp));		// TODO may be sync problem
 					info.timestamp = info.timestamp;
+				}
 				this.catalog.set(info.name, info);
 			});
 			fn();
@@ -4506,7 +4510,7 @@ class Display
 					const movables = new Set();
 					const undoing = obj =>
 					{
-						if (obj.hasMoved())
+						if 'hasNoved' in obj && (obj.hasMoved())
 						{
 							movables.add(obj);
 							elts.set(obj.name, obj.getXY());
@@ -4940,7 +4944,7 @@ class Display
 		window.addEventListener('keydown', e =>
 		{
 			const name = this.getKeyName(e);
-			if (this.session.mode === 'diagram' && e.target === document.body)
+			if (this.session.mode === 'diagram' && e.target === document.body || name === 'Escape')
 				name in this.keyboardDown && this.keyboardDown[name](e);
 		});
 		window.onkeyup = e =>
@@ -9333,6 +9337,10 @@ class Assertion extends Element
 	{
 		return this.cell.getBBox();
 	}
+	hasMoved()
+	{
+		return false;
+	}
 	// get the two legs from a given (presumably selected) array
 	static GetLegs(ary)
 	{
@@ -11547,7 +11555,7 @@ class ReferenceMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return  ary.reduce((r, elt) => r && elt instanceof IndexMorphism && (Assembler.isReference(elt.to) || Assembler.isCoreference(elt.to)), true);
+		return  diagram.isEditable() && ary.reduce((r, elt) => r && elt instanceof IndexMorphism && (Assembler.isReference(elt.to) || Assembler.isCoreference(elt.to)), true);
 	}
 }
 
@@ -11776,7 +11784,7 @@ class ActionAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (ary.length > 1)
+		if (diagram.isEditable() && ary.length > 1)
 		{
 			const last = ary[ary.length -1];
 			if ('to' in last && R.isNamed(last.to))
@@ -15333,7 +15341,7 @@ class Diagram extends Functor
 	{
 		D.toolbar.hide();
 		D.statusbar.hide();
-		let delta = D.mouse.sessionPosition().subtract(D.dragStart);	// TODO diagramPosition()?
+		let delta = D.mouse.sessionPosition().subtract(D.dragStart);
 		const placement = D.session.getPlacement(this.name);
 		delta = delta.scale(1.0 / placement.scale);
 		const dragObjects = new Set();
@@ -16690,6 +16698,8 @@ class Diagram extends Functor
 	}
 	moveElements(offset, ...elements)
 	{
+		if (!this.isEditable())
+			return;
 		const off = new D2(offset);
 		const items = new Set();
 		elements.map(elt =>
