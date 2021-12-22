@@ -15,7 +15,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -580,
+        "x": -570,
         "y": 50
       },
       "height": "200",
@@ -63,7 +63,7 @@
       "to": "hdole/monoid/Po{G,G}oP",
       "xy": {
         "x": 400,
-        "y": 500
+        "y": 600
       }
     },
     {
@@ -72,7 +72,7 @@
       "to": "hdole/monoid/Po{G,G}oP",
       "xy": {
         "x": 100,
-        "y": 700
+        "y": 800
       }
     },
     {
@@ -81,7 +81,7 @@
       "to": "hdole/monoid/G",
       "xy": {
         "x": 400,
-        "y": 700
+        "y": 800
       }
     },
     {
@@ -90,7 +90,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -870,
-        "y": 490
+        "y": 590
       },
       "height": "24"
     },
@@ -100,7 +100,7 @@
       "to": "hdole/monoid/G",
       "xy": {
         "x": -200,
-        "y": 1100
+        "y": 1200
       }
     },
     {
@@ -109,7 +109,7 @@
       "to": "hdole/monoid/Po{G,#1}oP",
       "xy": {
         "x": -200,
-        "y": 900
+        "y": 1000
       }
     },
     {
@@ -118,7 +118,7 @@
       "to": "hdole/monoid/G",
       "xy": {
         "x": 0,
-        "y": 1100
+        "y": 1200
       }
     },
     {
@@ -127,7 +127,7 @@
       "to": "hdole/monoid/Po{G,G}oP",
       "xy": {
         "x": 0,
-        "y": 900
+        "y": 1000
       }
     },
     {
@@ -136,7 +136,7 @@
       "to": "hdole/monoid/G",
       "xy": {
         "x": 200,
-        "y": 1100
+        "y": 1200
       }
     },
     {
@@ -145,7 +145,7 @@
       "to": "hdole/monoid/Po{#1,G}oP",
       "xy": {
         "x": 200,
-        "y": 900
+        "y": 1000
       }
     },
     {
@@ -154,7 +154,7 @@
       "to": "hdole/monoid/G",
       "xy": {
         "x": 400,
-        "y": 1100
+        "y": 1200
       }
     },
     {
@@ -163,7 +163,7 @@
       "to": "hdole/monoid/Po{G,G}oP",
       "xy": {
         "x": 400,
-        "y": 900
+        "y": 1000
       }
     },
     {
@@ -172,7 +172,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -150,
-        "y": 1210
+        "y": 1310
       },
       "height": "24"
     },
@@ -182,7 +182,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 270,
-        "y": 1220
+        "y": 1320
       },
       "height": "24"
     },
@@ -211,7 +211,7 @@
       "to": "hdole/monoid/Po{G,G,G}oP",
       "xy": {
         "x": -200,
-        "y": 500
+        "y": 600
       }
     },
     {
@@ -220,7 +220,7 @@
       "to": "hdole/monoid/Po{Po{G,G}oP,G}oP",
       "xy": {
         "x": 100,
-        "y": 500
+        "y": 600
       }
     },
     {
@@ -229,7 +229,7 @@
       "to": "hdole/monoid/Po{G,Po{G,G}oP}oP",
       "xy": {
         "x": -200,
-        "y": 700
+        "y": 800
       }
     },
     {
@@ -571,11 +571,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1639564274523,
+  "timestamp": 1639905171060,
   "version": 0,
   "viewport": {
-    "x": 1602,
-    "y": 236,
-    "scale": 1.5389377573483074
+    "x": 1473,
+    "y": 160,
+    "scale": 0.9248089284964818
   }
 }

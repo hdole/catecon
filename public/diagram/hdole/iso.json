@@ -15,7 +15,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 360,
-        "y": 370
+        "y": 410
       },
       "height": "200",
       "weight": "bold"
@@ -25,7 +25,7 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/A",
       "xy": {
-        "x": 900,
+        "x": 800,
         "y": 600
       }
     },
@@ -34,8 +34,80 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/B",
       "xy": {
-        "x": 1100,
+        "x": 1000,
         "y": 600
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 800,
+        "y": 733.3333333333334
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1000.0000000000001,
+        "y": 733.3333333333334
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 600,
+        "y": 860
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 800,
+        "y": 860
+      }
+    },
+    {
+      "basename": "o_7",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 800,
+        "y": 1060
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 1200,
+        "y": 860
+      }
+    },
+    {
+      "basename": "o_8",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1200,
+        "y": 1060
+      }
+    },
+    {
+      "basename": "o_9",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1000,
+        "y": 860
       }
     },
     {
@@ -44,24 +116,6 @@
       "domain": "hdole/iso/o_0",
       "codomain": "hdole/iso/o_1",
       "to": "hdole/iso/f"
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 900,
-        "y": 740
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1100,
-        "y": 740
-      }
     },
     {
       "basename": "m_1",
@@ -77,38 +131,11 @@
       "to": "hdole/iso/finv"
     },
     {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 770,
-        "y": 900
-      }
-    },
-    {
-      "basename": "o_5",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 970,
-        "y": 900
-      }
-    },
-    {
       "basename": "m_2",
       "prototype": "IndexMorphism",
       "domain": "hdole/iso/o_4",
       "codomain": "hdole/iso/o_5",
       "to": "hdole/iso/f"
-    },
-    {
-      "basename": "o_7",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 970,
-        "y": 1100
-      }
     },
     {
       "basename": "m_3",
@@ -122,25 +149,13 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/iso/o_4",
       "codomain": "hdole/iso/o_7",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/iso/Id{A}dI"
-    },
-    {
-      "basename": "o_6",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 1270,
-        "y": 900
-      }
-    },
-    {
-      "basename": "o_8",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1270,
-        "y": 1100
-      }
     },
     {
       "basename": "m_5",
@@ -148,15 +163,6 @@
       "domain": "hdole/iso/o_6",
       "codomain": "hdole/iso/o_8",
       "to": "hdole/iso/f"
-    },
-    {
-      "basename": "o_9",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1070,
-        "y": 900
-      }
     },
     {
       "basename": "m_6",
@@ -170,6 +176,12 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/iso/o_9",
       "codomain": "hdole/iso/o_8",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/iso/Id{B}dI"
     },
     {
@@ -224,12 +236,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1639464982994,
+  "timestamp": 1640156659061,
   "version": 0,
   "viewport": {
-    "x": -351,
-    "y": -287,
-    "scale": 1.7026228329061697
+    "x": -96,
+    "y": -304,
+    "scale": 1.4369085688896608
   },
   "properName": "hdole/iso"
 }

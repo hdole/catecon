@@ -404,7 +404,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 4100
+        "y": 5200
       },
       "height": 24
     },
@@ -414,7 +414,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 600,
-        "y": 4100
+        "y": 5200
       }
     },
     {
@@ -423,7 +423,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 800,
-        "y": 4100
+        "y": 5200
       }
     },
     {
@@ -432,7 +432,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 4300
+        "y": 5400
       },
       "height": 24
     },
@@ -442,7 +442,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 600,
-        "y": 4300
+        "y": 5400
       }
     },
     {
@@ -451,7 +451,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 800,
-        "y": 4300
+        "y": 5400
       }
     },
     {
@@ -460,7 +460,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 4500
+        "y": 5600
       },
       "height": 24
     },
@@ -470,7 +470,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 600,
-        "y": 4500
+        "y": 5600
       }
     },
     {
@@ -479,7 +479,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 800,
-        "y": 4500
+        "y": 5600
       }
     },
     {
@@ -488,7 +488,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 4700
+        "y": 5800
       },
       "height": 24
     },
@@ -498,7 +498,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 600,
-        "y": 4700
+        "y": 5800
       }
     },
     {
@@ -507,7 +507,7 @@
       "to": "hdole/int/Z64",
       "xy": {
         "x": 800,
-        "y": 4700
+        "y": 5800
       }
     },
     {
@@ -516,7 +516,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 4900
+        "y": 6000
       },
       "height": 24
     },
@@ -526,7 +526,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 600,
-        "y": 4900
+        "y": 6000
       }
     },
     {
@@ -535,7 +535,7 @@
       "to": "hdole/floats/CPo{F64,#1}oPC",
       "xy": {
         "x": 800,
-        "y": 4900
+        "y": 6000
       }
     },
     {
@@ -544,7 +544,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 5100
+        "y": 6200
       },
       "height": 24
     },
@@ -554,7 +554,7 @@
       "to": "hdole/floats/Po{F64,F64}oP",
       "xy": {
         "x": 600,
-        "y": 5100
+        "y": 6200
       }
     },
     {
@@ -563,7 +563,7 @@
       "to": "hdole/floats/CPo{F64,#1}oPC",
       "xy": {
         "x": 800,
-        "y": 5100
+        "y": 6200
       }
     },
     {
@@ -572,7 +572,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 5300
+        "y": 6400
       },
       "height": 24
     },
@@ -582,7 +582,7 @@
       "to": "hdole/floats/Po{F64,F64}oP",
       "xy": {
         "x": 600,
-        "y": 5300
+        "y": 6400
       }
     },
     {
@@ -591,7 +591,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 800,
-        "y": 5300
+        "y": 6400
       }
     },
     {
@@ -600,7 +600,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": -700,
-        "y": 5500
+        "y": 6600
       },
       "height": 24
     },
@@ -610,7 +610,7 @@
       "to": "hdole/floats/Po{F64,F64}oP",
       "xy": {
         "x": 600,
-        "y": 5500
+        "y": 6600.000000000001
       }
     },
     {
@@ -619,7 +619,7 @@
       "to": "hdole/floats/F64",
       "xy": {
         "x": 800,
-        "y": 5500
+        "y": 6600.000000000001
       }
     },
     {
@@ -627,8 +627,8 @@
       "basename": "t_27",
       "prototype": "DiagramText",
       "xy": {
-        "x": -690,
-        "y": 50
+        "x": -700,
+        "y": 60
       },
       "height": "300",
       "weight": "bold"
@@ -1216,7 +1216,7 @@
       "to": "hdole/floats/F32",
       "xy": {
         "x": 200,
-        "y": 4100
+        "y": 5200
       }
     },
     {
@@ -1224,8 +1224,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
-        "x": 1000,
-        "y": 4100
+        "x": 1000.0000000000001,
+        "y": 5200
       }
     },
     {
@@ -1234,7 +1234,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
-        "y": 4100
+        "y": 5200
       }
     },
     {
@@ -1243,7 +1243,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1200,
-        "y": 4100
+        "y": 5200
       }
     },
     {
@@ -1252,7 +1252,7 @@
       "to": "hdole/floats/F32",
       "xy": {
         "x": 200,
-        "y": 4300
+        "y": 5400
       }
     },
     {
@@ -1261,7 +1261,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
-        "y": 4300
+        "y": 5400
       }
     },
     {
@@ -1269,8 +1269,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
-        "x": 1000,
-        "y": 4300
+        "x": 1000.0000000000001,
+        "y": 5400
       }
     },
     {
@@ -1279,7 +1279,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1200,
-        "y": 4300
+        "y": 5400
       }
     },
     {
@@ -1288,7 +1288,7 @@
       "to": "hdole/floats/F32",
       "xy": {
         "x": 200,
-        "y": 4500
+        "y": 5600
       }
     },
     {
@@ -1297,7 +1297,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
-        "y": 4500
+        "y": 5600
       }
     },
     {
@@ -1305,8 +1305,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
-        "x": 1000,
-        "y": 4500
+        "x": 1000.0000000000001,
+        "y": 5600
       }
     },
     {
@@ -1315,7 +1315,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1200,
-        "y": 4500
+        "y": 5600
       }
     },
     {
@@ -1324,7 +1324,7 @@
       "to": "hdole/floats/F32",
       "xy": {
         "x": 200,
-        "y": 4700
+        "y": 5800
       }
     },
     {
@@ -1333,7 +1333,7 @@
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
-        "y": 4700
+        "y": 5800
       }
     },
     {
@@ -1341,8 +1341,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
-        "x": 1000,
-        "y": 4700
+        "x": 1000.0000000000001,
+        "y": 5800
       }
     },
     {
@@ -1351,7 +1351,7 @@
       "to": "hdole/int/Z128",
       "xy": {
         "x": 1200,
-        "y": 4700
+        "y": 5800
       }
     },
     {
@@ -1360,7 +1360,7 @@
       "to": "hdole/floats/CPo{F32,#1}oPC",
       "xy": {
         "x": 400,
-        "y": 4900
+        "y": 6000
       }
     },
     {
@@ -1369,7 +1369,7 @@
       "to": "hdole/floats/CPo{F128,#1}oPC",
       "xy": {
         "x": 1200,
-        "y": 4900
+        "y": 6000
       }
     },
     {
@@ -1377,8 +1377,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F128",
       "xy": {
-        "x": 1000,
-        "y": 4900
+        "x": 1000.0000000000001,
+        "y": 6000
       }
     },
     {
@@ -1387,7 +1387,7 @@
       "to": "hdole/floats/F32",
       "xy": {
         "x": 200,
-        "y": 4900
+        "y": 6000
       }
     },
     {
@@ -1396,7 +1396,7 @@
       "to": "hdole/floats/CPo{F32,#1}oPC",
       "xy": {
         "x": 400,
-        "y": 5100
+        "y": 6200
       }
     },
     {
@@ -1405,7 +1405,7 @@
       "to": "hdole/floats/CPo{F128,#1}oPC",
       "xy": {
         "x": 1200,
-        "y": 5100
+        "y": 6200
       }
     },
     {
@@ -1414,7 +1414,7 @@
       "to": "hdole/floats/Po{F32,F32}oP",
       "xy": {
         "x": 200,
-        "y": 5100
+        "y": 6200
       }
     },
     {
@@ -1422,8 +1422,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/Po{F128,F128}oP",
       "xy": {
-        "x": 1000,
-        "y": 5100
+        "x": 1000.0000000000001,
+        "y": 6200
       }
     },
     {
@@ -1432,7 +1432,7 @@
       "to": "hdole/floats/Po{F32,F32}oP",
       "xy": {
         "x": 200,
-        "y": 5300
+        "y": 6400
       }
     },
     {
@@ -1440,8 +1440,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/Po{F128,F128}oP",
       "xy": {
-        "x": 1000,
-        "y": 5300
+        "x": 1000.0000000000001,
+        "y": 6400
       }
     },
     {
@@ -1450,7 +1450,7 @@
       "to": "hdole/floats/Po{F32,F32}oP",
       "xy": {
         "x": 200,
-        "y": 5500
+        "y": 6600.000000000001
       }
     },
     {
@@ -1458,8 +1458,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/Po{F128,F128}oP",
       "xy": {
-        "x": 1000,
-        "y": 5500
+        "x": 1000.0000000000001,
+        "y": 6600.000000000001
       }
     },
     {
@@ -1468,7 +1468,7 @@
       "to": "hdole/floats/F32",
       "xy": {
         "x": 400,
-        "y": 5300
+        "y": 6400
       }
     },
     {
@@ -1477,7 +1477,7 @@
       "to": "hdole/floats/F32",
       "xy": {
         "x": 400,
-        "y": 5500
+        "y": 6600.000000000001
       }
     },
     {
@@ -1486,7 +1486,7 @@
       "to": "hdole/floats/F128",
       "xy": {
         "x": 1200,
-        "y": 5300
+        "y": 6400
       }
     },
     {
@@ -1495,7 +1495,7 @@
       "to": "hdole/floats/F128",
       "xy": {
         "x": 1200,
-        "y": 5500
+        "y": 6600.000000000001
       }
     },
     {
@@ -1667,6 +1667,249 @@
       "xy": {
         "x": 1200,
         "y": 1700
+      }
+    },
+    {
+      "basename": "o_157",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1100,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_158",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_159",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1200,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_160",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 1200,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_161",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1100,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_162",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F128",
+      "xy": {
+        "x": 1000,
+        "y": 4600
+      }
+    },
+    {
+      "basename": "o_163",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F128,#1}oP",
+      "xy": {
+        "x": 1200,
+        "y": 4600
+      }
+    },
+    {
+      "basename": "o_164",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F128,F128}oP",
+      "xy": {
+        "x": 1200,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_165",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 1200,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_166",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 600,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_167",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 500,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_168",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 700,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_169",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 600,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_170",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 700,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_171",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 500,
+        "y": 4600
+      }
+    },
+    {
+      "basename": "o_172",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F64,#1}oP",
+      "xy": {
+        "x": 700,
+        "y": 4600
+      }
+    },
+    {
+      "basename": "o_173",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F64,F64}oP",
+      "xy": {
+        "x": 700,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_174",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 700,
+        "y": 5000
+      }
+    },
+    {
+      "basename": "o_175",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 200,
+        "y": 4200
+      }
+    },
+    {
+      "basename": "o_176",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 100,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_177",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 300,
+        "y": 4100
+      }
+    },
+    {
+      "basename": "o_178",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 300,
+        "y": 4000
+      }
+    },
+    {
+      "basename": "o_179",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 200,
+        "y": 4400
+      }
+    },
+    {
+      "basename": "o_180",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F32",
+      "xy": {
+        "x": 100,
+        "y": 4600
+      }
+    },
+    {
+      "basename": "o_181",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F32,#1}oP",
+      "xy": {
+        "x": 300,
+        "y": 4600
+      }
+    },
+    {
+      "basename": "o_182",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/Po{F32,F32}oP",
+      "xy": {
+        "x": 300,
+        "y": 4800
+      }
+    },
+    {
+      "basename": "o_183",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 300,
+        "y": 5000
       }
     },
     {
@@ -2207,6 +2450,258 @@
       "domain": "hdole/floats/o_155",
       "codomain": "hdole/floats/o_156",
       "to": "hdole/floats/N128toF128"
+    },
+    {
+      "basename": "m_77",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_157",
+      "codomain": "hdole/floats/o_158",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Fa{Po{F128,F128}oP,F128_0}aF"
+    },
+    {
+      "basename": "m_78",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_157",
+      "codomain": "hdole/floats/o_159",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Fa{Po{F128,F128}oP,F128_1}aF"
+    },
+    {
+      "basename": "m_79",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_160",
+      "codomain": "hdole/floats/o_159",
+      "to": "hdole/floats/zero128"
+    },
+    {
+      "basename": "m_80",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_157",
+      "codomain": "hdole/floats/o_161",
+      "to": "hdole/floats/eq128"
+    },
+    {
+      "basename": "m_81",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_162",
+      "codomain": "hdole/floats/o_163",
+      "to": "hdole/floats/Fa{F128,F128_0,F128_-1}aF"
+    },
+    {
+      "basename": "m_82",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_163",
+      "codomain": "hdole/floats/o_164",
+      "to": "hdole/floats/Pm{Id{F128}dI,zero128}mP"
+    },
+    {
+      "basename": "m_83",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_164",
+      "codomain": "hdole/floats/o_165",
+      "to": "hdole/floats/eq128"
+    },
+    {
+      "basename": "m_84",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_162",
+      "codomain": "hdole/floats/o_165",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Cm{Fa{F128,F128_0,F128_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
+    },
+    {
+      "basename": "m_85",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_162",
+      "codomain": "hdole/floats/o_165",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 7,
+      "to": "hdole/floats/equ0_128"
+    },
+    {
+      "basename": "m_86",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_166",
+      "codomain": "hdole/floats/o_167",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Fa{Po{F64,F64}oP,F64_0}aF"
+    },
+    {
+      "basename": "m_87",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_166",
+      "codomain": "hdole/floats/o_168",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Fa{Po{F64,F64}oP,F64_1}aF"
+    },
+    {
+      "basename": "m_88",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_166",
+      "codomain": "hdole/floats/o_169",
+      "to": "hdole/floats/eq64"
+    },
+    {
+      "basename": "m_89",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_170",
+      "codomain": "hdole/floats/o_168",
+      "to": "hdole/floats/zero64"
+    },
+    {
+      "basename": "m_90",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_171",
+      "codomain": "hdole/floats/o_172",
+      "to": "hdole/floats/Fa{F64,F64_0,F64_-1}aF"
+    },
+    {
+      "basename": "m_91",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_172",
+      "codomain": "hdole/floats/o_173",
+      "to": "hdole/floats/Pm{Id{F64}dI,zero64}mP"
+    },
+    {
+      "basename": "m_92",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_173",
+      "codomain": "hdole/floats/o_174",
+      "to": "hdole/floats/eq64"
+    },
+    {
+      "basename": "m_93",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_171",
+      "codomain": "hdole/floats/o_174",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Cm{Fa{F64,F64_0,F64_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
+    },
+    {
+      "basename": "m_94",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_171",
+      "codomain": "hdole/floats/o_174",
+      "homsetIndex": 7,
+      "to": "hdole/floats/eq0_64"
+    },
+    {
+      "basename": "m_95",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_175",
+      "codomain": "hdole/floats/o_176",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Fa{Po{F32,F32}oP,F32_0}aF"
+    },
+    {
+      "basename": "m_96",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_175",
+      "codomain": "hdole/floats/o_177",
+      "attributes": [
+        [
+          "referenceMorphism",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Fa{Po{F32,F32}oP,F32_1}aF"
+    },
+    {
+      "basename": "m_97",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_178",
+      "codomain": "hdole/floats/o_177",
+      "to": "hdole/floats/zero32"
+    },
+    {
+      "basename": "m_98",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_175",
+      "codomain": "hdole/floats/o_179",
+      "to": "hdole/floats/eq32"
+    },
+    {
+      "basename": "m_99",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_180",
+      "codomain": "hdole/floats/o_181",
+      "to": "hdole/floats/Fa{F32,F32_0,F32_-1}aF"
+    },
+    {
+      "basename": "m_100",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_181",
+      "codomain": "hdole/floats/o_182",
+      "to": "hdole/floats/Pm{Id{F32}dI,zero32}mP"
+    },
+    {
+      "basename": "m_101",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_182",
+      "codomain": "hdole/floats/o_183",
+      "to": "hdole/floats/eq32"
+    },
+    {
+      "basename": "m_102",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_180",
+      "codomain": "hdole/floats/o_183",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/floats/Cm{Fa{F32,F32_0,F32_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
+    },
+    {
+      "basename": "m_103",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/floats/o_180",
+      "codomain": "hdole/floats/o_183",
+      "homsetIndex": 7,
+      "to": "hdole/floats/eq0_32"
     }
   ],
   "elements": [
@@ -2318,6 +2813,27 @@
       "dual": true,
       "objects": [
         "Po{F32,F32}oP",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "F128",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "F64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "F32",
         "#1"
       ]
     },
@@ -3096,14 +3612,197 @@
       "properName": "&sub;",
       "domain": "hdole/nat/N128",
       "codomain": "hdole/floats/F128"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/F128",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F128,F128}oP",
+      "codomain": "hdole/floats/F128",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "Id{F128}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/floats/F128"
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/floats/Po{F128,#1}oP",
+      "codomain": "hdole/floats/Po{F128,F128}oP",
+      "morphisms": [
+        "Id{F128}dI",
+        "zero128"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/floats/Po{F128,#1}oP",
+      "factors": [
+        [
+          0
+        ],
+        -1
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC",
+      "morphisms": [
+        "Fa{F128,F128_0,F128_-1}aF",
+        "Pm{Id{F128}dI,zero128}mP",
+        "eq128"
+      ]
+    },
+    {
+      "basename": "equ0_128",
+      "prototype": "NamedMorphism",
+      "properName": "=0",
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC",
+      "source": "hdole/floats/Cm{Fa{F128,F128_0,F128_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/F64",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F64,F64}oP",
+      "codomain": "hdole/floats/F64",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "Id{F64}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/floats/Po{F64,#1}oP",
+      "codomain": "hdole/floats/Po{F64,F64}oP",
+      "morphisms": [
+        "Id{F64}dI",
+        "zero64"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/Po{F64,#1}oP",
+      "factors": [
+        [
+          0
+        ],
+        -1
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC",
+      "morphisms": [
+        "Fa{F64,F64_0,F64_-1}aF",
+        "Pm{Id{F64}dI,zero64}mP",
+        "eq64"
+      ]
+    },
+    {
+      "basename": "eq0_64",
+      "prototype": "NamedMorphism",
+      "properName": "=0",
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC",
+      "source": "hdole/floats/Cm{Fa{F64,F64_0,F64_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/F32",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F32,F32}oP",
+      "codomain": "hdole/floats/F32",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "Id{F32}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/floats/Po{F32,#1}oP",
+      "codomain": "hdole/floats/Po{F32,F32}oP",
+      "morphisms": [
+        "Id{F32}dI",
+        "zero32"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/Po{F32,#1}oP",
+      "factors": [
+        [
+          0
+        ],
+        -1
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC",
+      "morphisms": [
+        "Fa{F32,F32_0,F32_-1}aF",
+        "Pm{Id{F32}dI,zero32}mP",
+        "eq32"
+      ]
+    },
+    {
+      "basename": "eq0_32",
+      "prototype": "NamedMorphism",
+      "properName": "=0",
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/CPo{#1,#1}oPC",
+      "source": "hdole/floats/Cm{Fa{F32,F32_0,F32_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1639643020599,
+  "timestamp": 1640156855353,
   "version": 0,
   "viewport": {
-    "x": 965,
-    "y": 251,
-    "scale": 1.003402586866011
+    "x": 966,
+    "y": 249,
+    "scale": 1.0029064537512111
   }
 }

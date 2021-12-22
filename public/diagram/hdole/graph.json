@@ -50,7 +50,7 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/A",
       "xy": {
-        "x": 500,
+        "x": 466.6666666666667,
         "y": 1100
       }
     },
@@ -124,7 +124,7 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/CPo{A,A}oPC",
       "xy": {
-        "x": 900,
+        "x": 933.3333333333334,
         "y": 1100
       }
     },
@@ -994,12 +994,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640120843141,
+  "timestamp": 1640156362953,
   "version": 0,
   "viewport": {
-    "x": -131,
-    "y": -354,
-    "scale": 0.9844828995657078
+    "x": 160,
+    "y": -1549,
+    "scale": 1.6025416796799101
   },
   "properName": "hdole/graph"
 }
