@@ -794,6 +794,17 @@ p
 	user-select:	none;
 }
 
+.referenceMorphism
+{
+	fill:			none;
+	margin:			2px;
+	padding:		2px;
+	stroke:			var(--color-morphism);
+	stroke-dasharray:	7,5;
+	stroke-width:	2.5px;
+	user-select:	none;
+}
+
 text.emphasis
 {
 	fill:		var(--color-emphasis);
@@ -1236,16 +1247,6 @@ tspan
 	ry:					35;
 	stroke:				#aaa3;
 	stroke-width:		10;
-}
-.referenceMorphism
-{
-	fill:			none;
-	margin:			2px;
-	padding:		2px;
-	stroke:			var(--color-morphism);
-	stroke-dasharray:	7,5;
-	stroke-width:	2.5px;
-	user-select:	none;
 }
 
 #catalog-diagram-new
