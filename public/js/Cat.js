@@ -4396,6 +4396,7 @@ class Display
 								diagram.updateDragObjects(e.shiftKey);
 								fusible = diagram.updateFusible(e);
 								let msg = '';
+console.log('mouseover', this.mouseover, e.target);
 								if (this.mouseover && diagram.selected.length === 1)
 								{
 									if (diagram.isIsolated(from) && diagram.isIsolated(this.mouseover) &&
@@ -4753,6 +4754,8 @@ class Display
 				case 'new':
 				case 'update':
 					this.autosave(element instanceof Diagram ? element : diagram);
+					if (diagram.domain.morphismToCells.has(element))
+						diagram.domain.morphismToCells.get(element).map(cell => cell.update());
 					break;
 			}
 		});
@@ -8479,7 +8482,7 @@ class DiagramCore		// only used by class Cell
 			x:				{value:	xy.x,														writable:	true},
 			y:				{value:	xy.y,														writable:	true},
 			width:			{value:	U.GetArg(nuArgs, 'width', 0),								writable:	true},
-			height:			{value:	U.GetArg(nuArgs, 'height', D.default.font.height),			writable:	true},
+			height:			{value:	U.GetArg(nuArgs, 'height', D ? D.default.font.height : 0),			writable:	true},
 			description:	{value:	U.GetArg(nuArgs, 'description', 'Lorem ipsum categoricum'), writable:	true},
 		});
 	}
@@ -12783,7 +12786,7 @@ class IndexMorphism extends Morphism
 		this.to.help(this);
 		if (this.isEditable())
 		{
-			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseInt(e.target.value)), min:0, max:100, width:2, value:this.homsetIndex};
+			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseFloat(e.target.value)), min:-100, max:100, width:2, value:this.homsetIndex};
 			D.toolbar.table.appendChild(H3.tr(H3.td('Homset Index'), H3.td(H3.input('.in100', inputArgs))));
 		}
 	}
@@ -13034,18 +13037,13 @@ class IndexMorphism extends Morphism
 	adjustByHomset()
 	{
 		let ndx = this.homsetIndex;
-		if (ndx >= 1)
+		if (ndx !== 0)
 		{
-			ndx--;
 			const midpoint = {x:(this.start.x + this.end.x)/2, y:(this.start.y + this.end.y)/2};
 			const normal = this.end.subtract(this.start).normal().normalize();
-			const halfNdx = ndx/2;
-			const band = Math.trunc(halfNdx);
-			const alt = ndx % 2;
-			const sign = alt > 0 ? -1 : 1;
 			const scale = 2;
-			const offset = normal.scale(scale * D.default.font.height * (band + 1) * sign);
-			const w = normal.scale(10 * (1 + (halfNdx)) * sign);
+			const offset = normal.scale(scale * D.default.font.height * ndx);
+			const w = normal.scale(10 * ndx);
 			this.start = this.start.add(w).round();
 			this.end = this.end.add(w).round();
 			let cp1 = offset.add(this.start.add(midpoint).scale(0.5)).round();
@@ -13357,6 +13355,13 @@ class Cell extends DiagramCore
 	register()
 	{
 		this.getObjects().map(o => o.nodes.add(this));
+		[...this.left, ...this.right].map(m =>
+		{
+			if (!(this.diagram.domain.morphismToCells.has(m)))
+				this.diagram.domain.morphismToCells.set(m, []);
+			const cells = this.diagram.domain.morphismToCells.get(m);
+			cells.push(this);
+		});
 	}
 	deregister()
 	{
@@ -13405,6 +13410,9 @@ class Cell extends DiagramCore
 			setTimeout(_ => this.update());
 			return;
 		}
+		// hide cells that have references in them
+		const properName = this.left.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ||
+							this.right.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ? '' : this.properName;
 		const xy = this.getXY();
 		if (isNaN(xy.x) || isNaN(xy.y))
 			throw 'NaN!';
@@ -13412,8 +13420,8 @@ class Cell extends DiagramCore
 		this.y = xy.y;
 		if (this.svg)
 		{
-			this.svg.innerHTML = this.properName;
-			const bbox = {x:xy.x, y:xy.y - D.default.font.height, width:D.textWidth(this.properName, 'cellTxt'), height:D.default.font.height};
+			this.svg.innerHTML = properName;
+			const bbox = {x:xy.x, y:xy.y - D.default.font.height, width:D.textWidth(properName, 'cellTxt'), height:D.default.font.height};
 			if (true)
 			{
 				const place = this.diagram.autoplaceSvg(bbox, this.name);
@@ -13648,6 +13656,7 @@ class IndexCategory extends Category
 			'cells':			{value:new Map(), writable: false},
 			'hiddenCells':		{value:new Set(), writable: false},
 			'indexedDiagram':	{value:null, writable: true},
+			morphismToCells:			{value:new Map(),	writable:false},
 		});
 		isGUI && this.constructor.name === 'IndexCategory' && D.emitElementEvent(diagram, 'new', this);
 	}
@@ -13701,8 +13710,7 @@ class IndexCategory extends Category
 	findCells(diagram)
 	{
 		this.cells.forEach(cell => cell.deregister());
-		if (!('morphismToCells' in this))
-			this.morphismToCells = new Map();
+		this.morphismToCells.clear();
 		this.forEachObject(o =>
 		{
 			if (o.domains.size > 1)
@@ -14232,6 +14240,7 @@ class FactorMorphism extends Morphism
 	json()
 	{
 		const a = super.json();
+//if (!(this.domain instanceof ProductObject)) this.factors = this.factors.map(f => U.ArrayEquals(f, [0]) ? [] : f);
 		delete a.basename;		// will regenerate
 		delete a.properName;	// will regenerate
 		a.factors = this.factors.slice();
@@ -17431,7 +17440,8 @@ class Assembler
 		// first the outbound composites from the domain
 		//
 		let assembly = this.getCompositeMorphisms(scanning, domain);
-		coreferences.length > 0 && assembly.push(this.assembleCoreferences(scanning, coreferences, domain));
+		const corefFactors = [];
+		coreferences.length > 0 && assembly.push(this.assembleCoreferences(scanning, coreferences, domain, corefFactors));
 		// add preamble morphism if required
 		if (preamble && !Morphism.isIdentity(preamble))
 			assembly = assembly.map(m => this.diagram.comp(preamble, m));
@@ -17487,7 +17497,7 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 		else
 			return [];
 	}
-	assembleCoreferences(scanning, coreferences, from)
+	assembleCoreferences(scanning, coreferences, from, refFactors)
 	{
 		if (coreferences.length > 0)
 		{
@@ -17500,20 +17510,16 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 			const homMorphs = [];
 			const productAssemblies = [];
 			const subs = [];
-			coreferences.map(insert =>
+			coreferences.map((insert, i) =>
 			{
 				const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
 				// get the morphisms attached to each element
 				const starters = [...insert.domain.codomains];
 				const comps = this.composites.get(insert.domain);
 				comps.map(cmp => starters.push(cmp[0]));
-				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain));
-				const homMorph = diagram.prod(...homMorphs);
-				subs[fctr] = homMorph;
+				const homMorphs = starters.map(m => this.formMorphism(scanning, m.domain, refFactors));
+				subs[fctr] = diagram.prod(...homMorphs);
 			});
-			// map each coproduct factor A to 1xA
-			// coproduct of hom-morphs and id's
-			// get the evaluation maps
 			const costeps = diagram.coprod(...subs);
 			// fold the outputs
 			const codObjects = 'objects' in costeps.codomain ? costeps.codomain.objects : [costeps.codomain];
@@ -17555,7 +17561,9 @@ console.log('formMorphism', domain.basename, domain.svg, morphism);
 		// TODO factor morphism from domain stripped of 1's
 		const domain = this.diagram.prod(...inputs.filter(input => !input.to.isTerminal()).map(input => input.to));
 		ndx = 0;
-		const setupFactors = inputs.map((input, i) => input.to.isTerminal() ? -1 : [ndx++]);
+		let setupFactors = inputs.map((input, i) => input.to.isTerminal() ? -1 : [ndx++]);
+		if (!(domain instanceof ProductObject))
+			setupFactors = setupFactors.map(f => U.ArrayEquals(f, [0]) ? [] : f);
 		const setup = this.diagram.fctr(domain, setupFactors);
 		const components = [setup, input];
 		while(scanning.length > 0)
