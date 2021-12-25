@@ -4,8 +4,12 @@
 	--color-body:		#000;
 	--color-button:		#fff;
 	--color-button-hover:		#ccc;
+	--color-element-bg:	#f4f4f4;
+	--color-element-border-color:		#ccc #ddd #eee #ccc;
 	--color-emphasis:	#00f;
 	--color-hover:		#555;
+	--color-statusbar:	#000;
+	--color-statusbar-bg:	#ffe;
 	--color-text:		#000;
 	--color-toolbar-bg:	#eee;
 	--color-object:		#000;
@@ -21,13 +25,17 @@
 	--color-body:		#fff;
 	--color-button:		#444;
 	--color-button-hover:		#888;
+	--color-element-bg:	#555;
+	--color-element-border-color:		#333 #444 #222 #333;
 	--color-emphasis:	#0ff;
 	--color-hover:		#aaa;
+	--color-statusbar:	#fff;
+	--color-statusbar-bg:	#554;
 	--color-text:		#fff;
-	--color-toolbar-bg:	#777;
+	--color-toolbar-bg:	#666;
 	--color-object:		#fff;
 	--color-morphism:	#fff;
-	--color-panel-bg:	#777;
+	--color-panel-bg:	#666;
 	--color-panel-shadow:	#505050d0;
 	--color-sidenav-acc:	#555;
 }
@@ -512,12 +520,13 @@ p
 
 #statusbar
 {
-	background-color:	#ffe;
+	background-color:	var(--color-statusbar-bg);
 	border:				solid;
 	border-color: 		red;
 	border-width: 		2px;
 	border-radius:		6px;
 	box-shadow:			4px 4px 2px 1px #bdd9;
+	color:				var(--color-statusbar);
 	cursor:				none;
 	display:			inline-block;
 	font-size:			12px;
@@ -957,11 +966,12 @@ use.emphasis
 
 .element
 {
-	background-color:	#f4f4f4;
+	background-color:	var(--color-element-bg);
 	border:				2px solid;
 	border-collapse:	separate;
-	border-color:		#ccc #ddd #eee #ccc;
+	border-color:		var(--color-element-border-color);
 	border-radius:		5px;
+	color:				var(--color-body);
 	margin:				1px;
 	padding:			2px;
 	position:			relative;
