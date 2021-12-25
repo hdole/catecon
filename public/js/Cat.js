@@ -4228,6 +4228,7 @@ class Display
 		{
 			Object.keys(defaults.R).map(k => this.default[k] = defaults.R[k]);		// merge the R defaults
 			isGUI && Object.keys(defaults.D).map(k => this.default[k] = defaults.D[k]);		// merge the D defaults
+			this.setDarkmode(this.default.darkmode)
 		}
 	}
 	updateDisplay(e)
@@ -4396,7 +4397,6 @@ class Display
 								diagram.updateDragObjects(e.shiftKey);
 								fusible = diagram.updateFusible(e);
 								let msg = '';
-console.log('mouseover', this.mouseover, e.target);
 								if (this.mouseover && diagram.selected.length === 1)
 								{
 									if (diagram.isIsolated(from) && diagram.isIsolated(this.mouseover) &&
@@ -6191,8 +6191,9 @@ console.log('mouseover', this.mouseover, e.target);
 	setDarkmode(mode)
 	{
 		mode ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme');
-		this.darkmode = mode;
+		this.default.darkmode = mode;
 		this.updateBorder();
+		R.saveDefaults();
 	}
 	generateGraphColors()
 	{
@@ -7534,7 +7535,7 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 		else
 			this.graphs.map((g, i) => g.mergeGraphs({from:data.from.graphs[i], base:data.base, inbound:data.inbound, outbound:data.outbound}));
 	}
-	bindGraph(data)	// data: {cod, index, tag, domRoot, codRoot, offset, dual}
+	bindGraph(data)	// data: {cod, tag, domRoot, codRoot, offset, dual}
 	{
 		if (this.isLeaf())
 		{
@@ -7551,9 +7552,6 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 		else this.graphs.map((g, i) =>
 		{
 			const args = U.Clone(data);
-			const index = data.index.slice();
-			index.push(i + data.offset);
-			args.index = index;
 			args.cod = data.cod.graphs[i];
 			args.domRoot.push(i);
 			args.codRoot.push(i);
@@ -7871,6 +7869,12 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 		console.log(...ndx, '::', ...this.links);
 		this.graphs.map((g, i) => g.showLinks(U.pushFactor(ndx, i)));
 	}
+	find(term, ndx = [])
+	{
+		if (term in this)
+			console.log(...ndx, term, this[term]);
+		this.graphs.map((g, i) => g.find(term, U.pushFactor(ndx, i)));
+	}
 }
 
 class CatObject extends Element
@@ -8076,8 +8080,8 @@ class MultiObject extends CatObject
 	{
 		const doit = !first && this.needsParens();
 		const pw = doit ? parenWidth : 0;
-		const position = data.position;
 		data.position += pw;
+		const position = data.position;
 		const cap = this.objects.length - 1;
 		const graphs = this.objects.map((o, i) =>
 			{
@@ -10852,10 +10856,9 @@ class LanguageAction extends Action
 	{
 		return (ary.length === 1 && (ary[0] instanceof CatObject || ary[0] instanceof Morphism)) || ary.length === 0;
 	}
-	checkEditable(m)
+	canHaveCode(elt)
 	{
-		return m.isEditable() &&
-			((m.constructor.name === 'Morphism' && !m.domain.isInitial() && !m.codomain.isTerminal() && !m.codomain.isInitial() && !('recursor' in m)) || m instanceof CatObject || m instanceof Diagram);
+		return (elt.constructor.name === 'Morphism' && !elt.domain.isInitial() && !elt.codomain.isTerminal() && !elt.codomain.isInitial() && !('recursor' in elt)) || elt instanceof CatObject || elt instanceof Diagram;
 	}
 	html(e, diagram, ary)
 	{
@@ -10864,34 +10867,34 @@ class LanguageAction extends Action
 		super.html();
 		toolbar.table.appendChild(toolbar2);
 		const elt = ary.length === 1 ? ary[0].to : diagram;
-		if (this.checkEditable(elt))
+		const id = `element-${this.ext}`;
+		if (this.canHaveCode(elt))
 		{
-			const id = `element-${this.ext}`;
 			const textarea = H3.textarea('.code.w100',	{
-														id,
-														disabled:true,
-														onkeydown:e =>
-														{
-															e.stopPropagation();
-															D.cancelAutohide();
-															if (e.key === 'Tab')	// insert tab character
+															id,
+															disabled:true,
+															onkeydown:e =>
 															{
-																e.preventDefault();
-																const target = e.target;
-																const start = target.selectionStart;
-																target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
-																target.selectionStart = target.selectionEnd = start +1;
-															}
-															else if (e.key === 'Enter' && e.ctrlKey)
-																this.setCode(e, id, this.basename);
-														},
-														oninput: e => this.setEditorSize(e.target),
-													});
+																e.stopPropagation();
+																D.cancelAutohide();
+																if (e.key === 'Tab')	// insert tab character
+																{
+																	e.preventDefault();
+																	const target = e.target;
+																	const start = target.selectionStart;
+																	target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
+																	target.selectionStart = target.selectionEnd = start +1;
+																}
+																else if (e.key === 'Enter' && e.ctrlKey)
+																	this.setCode(e, id, this.basename);
+															},
+															oninput: e => this.setEditorSize(e.target),
+														});
 			toolbar.body.appendChild(H3.h5('Inline code'));
 			toolbar.body.appendChild(textarea);
 			if (elt instanceof Morphism || elt instanceof CatObject || elt instanceof Diagram)
 				this.getEditHtml(textarea, elt);
-			toolbar.body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
+			elt.isEditable() && toolbar.body.appendChild(D.getIcon(this.name, 'edit', e => this.setCode(e, id, this.basename), {title:'Edit code'}));
 			const resizeObserver = new ResizeObserver(entries =>
 			{
 				for (let entry of entries)
@@ -13935,7 +13938,7 @@ class Composite extends MultiMorphism
 	{
 		return D.default.composite;
 	}
-	getSequenceGraph()
+	getCompositeGraph()
 	{
 		const graphs = this.morphisms.map(m => m.getGraph());
 		R.default.debug && graphs.map((g, i) => g.check());
@@ -13943,19 +13946,25 @@ class Composite extends MultiMorphism
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = this.diagram.get('ProductObject', {objects, silent:true});
 		// bare graph to hang links on
-		const seqGraph = sequence.getGraph();
+		const graph = sequence.getGraph();
 		// merge the individual graphs into the sequence graph
 		graphs.map((g, i) =>
 		{
-			seqGraph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
-			seqGraph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
+			graph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
+			graph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
 		});
-		R.default.debug && seqGraph.check();
-		return seqGraph;
+		this.morphisms.map((m, i) =>
+		{
+			graph.graphs[i].dom = m;
+			graph.graphs[i+1].cod = m;
+		});
+		graph.element = this;
+		R.default.debug && graph.check();
+		return graph;
 	}
 	getGraph(data = {position:0})
 	{
-		const seqGraph = this.getSequenceGraph();
+		const seqGraph = this.getCompositeGraph();
 		seqGraph.traceLinks(seqGraph);
 		const cnt = this.morphisms.length;
 		seqGraph.graphs[0].reduceLinks(cnt);
@@ -13973,23 +13982,11 @@ class Composite extends MultiMorphism
 	getCompositeGraph()
 	{
 		const graph = this.getSequenceGraph();
-		const _scan = (morphism, g, domFctr, codFctr) =>
+		this.morphisms.map((m, i) =>
 		{
-			switch(morphism.constructor.name)
-			{
-				case 'Composite':
-					const cnt = this.morphisms.length -1;
-					morphism.morphisms.map((m, i) =>
-					{
-						const dom = g.graphs[i];
-						const cod = g.graphs[i+1];
-						dom.dom = m;
-						cod.cod = m;
-					});
-					break;
-			}
-		};
-		_scan(this, graph, [0], [this.morphisms.length -1]);
+			graph.graphs[i].dom = m;
+			graph.graphs[i+1].cod = m;
+		});
 		graph.element = this;
 		return graph;
 	}
@@ -14240,7 +14237,6 @@ class FactorMorphism extends Morphism
 	json()
 	{
 		const a = super.json();
-//if (!(this.domain instanceof ProductObject)) this.factors = this.factors.map(f => U.ArrayEquals(f, [0]) ? [] : f);
 		delete a.basename;		// will regenerate
 		delete a.properName;	// will regenerate
 		a.factors = this.factors.slice();
@@ -14418,7 +14414,7 @@ class FactorMorphism extends Morphism
 			return false;
 		if (factors.length === 1 && Array.isArray(factors[0]) && factors[0].length === 0)
 			return true;
-		return factors.reduce((r, fctr, i) => r && typeof fctr === 'number' ? i === fctr : i === fctr[0] && fctr.length === 1, true);
+		return factors.reduce((r, fctr, i) => r && (typeof fctr === 'number' ? i === fctr : i === fctr[0] && fctr.length === 1), true);
 	}
 }
 
@@ -14873,9 +14869,10 @@ class Distribute extends Morphism
 			const sideFctr = side ? 1 : 0;
 			const opFctr = side ? 0 : 1;
 			g.graphs[sideFctr].bindGraph({cod:dtorGraph, index:[1, i, sideFctr], tag:this.constructor.name, domRoot:[1, i, sideFctr], codRoot:[0, sideFctr], offset:offset++});
-			g.graphs[opFctr].bindGraph({cod:dteeGraph, index:[1, i, opFctr], tag:this.constructor.name, domRoot:[1, i, opFctr], codRoot:[0, opFctr, i], offset:offset++});
+			g.graphs[opFctr].bindGraph({cod:dteeGraph.graphs[i], index:[1, i, opFctr], tag:this.constructor.name, domRoot:[1, i, opFctr], codRoot:[0, opFctr, i], offset:offset++});
 		});
 		graph.tagGraph('distribute');
+		R.default.debug && graph.check();
 		return graph;
 	}
 	static Basename(diagram, args)
@@ -17394,10 +17391,11 @@ class Assembler
 			this.startComposites(scanning);
 	}
 	// recursive
-	formMorphism(scanning, domain)
+	formMorphism(scanning, domain, refFactors)
 	{
 		if (this.processed.has(domain))
 			return null;
+console.log('formMorphism', domain.basename, domain.svg);
 		this.processed.add(domain);
 		let morphism = null;
 		// if the domain is an origin then build its preamble
@@ -17450,7 +17448,6 @@ class Assembler
 			morphism = this.diagram.assy(...assembly);
 		else
 			morphism = preamble;
-console.log('formMorphism', domain.basename, domain.svg, morphism);
 		if (morphism === null && this.outputs.has(domain) && this.inCoproduct)
 			this.deleteOutput(domain);
 		return morphism ? morphism : this.diagram.id(domain.to);
