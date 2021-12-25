@@ -49,10 +49,15 @@ var Cat = Cat || require('./Cat.js');
 				const refs = this.context.getAllReferenceDiagrams();
 				refs.forEach((dgrm, name) => this.references.set(name, new Set()));
 			}
+			this.bool = diagram ? diagram.coprod(diagram.getTerminal(), diagram.getTerminal()).signature : null;
 		}
 		incTab()
 		{
 			this.tab++;
+		}
+		isBool(obj)
+		{
+			return obj.signature === this.bool;
 		}
 		decTab()
 		{
@@ -158,6 +163,8 @@ var Cat = Cat || require('./Cat.js');
 			const objects = object.objects.filter(o => !o.isTerminal()  && !this.hasHomObject(o));
 			if (object.dual)		// coproduct object
 			{
+				if (objects.length > 0)
+				{
 				code +=
 `
 ${this.generateComments(object)}
@@ -169,9 +176,9 @@ struct ${name}
 ${members}
 	};
 `;
-				if (objects.length > 0 && !this.hasHomObject(object))
-				{
-					code +=
+					if (!this.hasHomObject(object))
+					{
+						code +=
 `	friend std::istream & operator>>(std::istream & in, ${name} & obj)
 	{
 		in >> obj.c;
@@ -195,8 +202,22 @@ ${objects.map((o, i) => `\t\t\tcase ${i}:\n\t\t\t\tout << obj.m_${i};\n\t\t\t\tb
 		return out;            
 	}
 `;
+					}
+					code += '};\n';
 				}
-				code += '};\n';
+				else
+				{
+					if (object.objects.length === 2)
+						code +=
+`
+typedef bool ${name};
+`;
+					else
+						code +=
+`
+typedef unsigned long ${name};
+`;
+				}
 			}
 			else	// product object
 			{
@@ -245,7 +266,9 @@ ${members}
 						code += this.generateRuntime(object);
 						break;
 					case 'ProductObject':
-						code += this.generateProductObject(object);
+//						code += this.generateProductObject(object);
+						if (this.isBool(object))		// TODO sz > 2
+							code += this.generateProductObject(object);
 						break;
 					case 'HomObject':
 						code += this.generateFunctionPointer(object);
@@ -342,7 +365,8 @@ ${members}
 		static CheckGraph(g)
 		{
 			return g.element instanceof Cat.CatObject &&
-				(	(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct as var
+				(	
+					(g.element instanceof Cat.ProductObject && g.element.dual) ||		// process a coproduct as var
 					(g.element instanceof Cat.HomObject) ||								// process a hom object as var
 					('var' in g) ||														// variable declared
 					(g.isLeaf() && !('var' in g)));										// process a leaf as var
@@ -353,13 +377,13 @@ ${members}
 		{
 			let factor = domFactor;	// scan the domain
 			let downFactor = [0];		// domain
-			const process = (g, i) =>
+			const process = (g, ndx) =>
 			{
 				const upG = upGraph.getFactor(factor);
-				const upFactor = U.pushFactor(factor, i);
+				const upFactor = U.pushFactor(factor, ndx);
 				const up = upGraph.getFactor(upFactor);
-				if ('alloc' in up)
-					g.alloc = up.alloc;
+//				if ('alloc' in up)
+//					g.alloc = up.alloc;
 				if ('dom' in up)
 					g.dom = up.dom;
 				if ('cod' in up)
@@ -369,9 +393,10 @@ ${members}
 				if ('var' in up)
 				{
 					g.var = up.var;
-					const thisFactor = U.pushFactor(downFactor, i);
+					const thisFactor = U.pushFactor(downFactor, ndx);
 					ndxMap.set(thisFactor.toString(), g.var);
-					if (up.element instanceof Cat.ProductObject && up.element.dual)		// distribute coproduct terms
+						/*
+					if (up.element instanceof Cat.ProductObject && up.element.dual && !this.isBool(up.element))		// distribute coproduct terms  TODO process >2
 					{
 						const isFold = 'dom' in up && up.dom instanceof Cat.FactorMorphism && up.dom.isFold();
 						up.element.objects.map((o, i) =>
@@ -382,12 +407,15 @@ ${members}
 							ndxMap.set(iFactor.toString(), v);
 						});
 					}
+						*/
 				}
-				g.graphs.map((subg, i) =>
-				{
-					if ('alloc' in up.graphs[i])
-						subg.alloc = true;
-				});
+				if (up.element instanceof Cat.ProductObject && up.element.dual)
+					g.graphs.map((subg, i) => subg.scanCheck(CppAction.CheckGraph, process, U.pushFactor(ndx, i)));
+//				g.graphs.map((subg, i) =>
+//				{
+//					if ('alloc' in up.graphs[i])
+//						subg.alloc = true;
+//				});
 			};
 			graph.graphs[0].scanCheck(CppAction.CheckGraph, process);
 			factor = codFactor;		// now scan the codomain
@@ -410,11 +438,11 @@ ${members}
 		{
 			if (upGraph)
 				this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor);
-			let alloc = false;
+//			let alloc = false;
 			const check = g =>
 			{
-				if ('alloc' in g)
-					alloc = g.alloc;
+//				if ('alloc' in g)
+//					alloc = g.alloc;
 				return CppAction.CheckGraph(g);
 			};
 			const process = (g, ndx) =>
@@ -423,8 +451,8 @@ ${members}
 					return;
 				const indexes = g.links.filter(lnk => ndxMap.has(lnk.toString()));
 				const strNdx = ndx.toString();
-				if (alloc)
-					g.alloc = alloc;
+//				if (alloc)
+//					g.alloc = alloc;
 				if (indexes.length > 0)
 				{
 					const v = ndxMap.get(indexes[0].toString());
@@ -442,13 +470,34 @@ ${members}
 						if ('eval' in up)		// do not need to allocate space for this eval
 							return;
 					}
+					if (g.cod instanceof Cat.Distribute)
+					{
+						const dtor = ndx.slice(0, -1);
+						dtor.push(ndx[ndx.length -1] -1, 0);	// TODO fix for side
+						const strDtor = dtor.toString();
+						if (ndxMap.has(strDtor))
+							ndxMap.set(strNdx, ndxMap.get(strDtor));
+					}
+					else if (g.cod instanceof Cat.ProductMorphism && g.cod.dual)
+					{
+						const preFctr = ndx.slice(0, -1);
+						preFctr.push(ndx[ndx.length -1] -1);
+						const strPreFctr = preFctr.toString();
+						if (ndxMap.has(strPreFctr))
+							ndxMap.set(strNdx, ndxMap.get(strPreFctr));
+					}
 					if (!ndxMap.has(strNdx))
 					{
 						ndxMap.set(strNdx, `var_${this.varCount++}`);
-						if (g.element instanceof Cat.ProductObject && g.element.dual)
-							g.graphs.map(subg => subg.alloc = true);
+//						if (g.element instanceof Cat.ProductObject && g.element.dual)
+//							g.graphs.map(subg => subg.alloc = true);
 					}
+//					if (g.element instanceof Cat.ProductObject && g.element.dual)
+//						g.graphs.map(subg => subg.alloc = true);
 					g.var = ndxMap.get(strNdx);
+					if (g.element instanceof Cat.ProductObject && g.element.dual && !this.isBool(g.element))
+//						g.graphs.map((g, i) => process(g, U.pushFactor(ndx, i)));
+						g.graphs.map((subg, i) => subg.scanLinks(subg, check, process));
 				}
 			};
 			graph.scanLinks(graph, check, process);
@@ -529,8 +578,8 @@ ${members}
 			{
 				if (g.element.isTerminal() || this.getCode(g.element) === '//')		// skip this element as it is a terminal or global variable '//'
 					return;
-				if ('alloc' in g && g.alloc)
-					return;
+//				if ('alloc' in g && g.alloc)
+//					return;
 				if (g.links.reduce((r, lnk) => r || lnk[0] === codNdx, false))		// return if linked to output
 					return;
 				if (ndx.length > 1)
@@ -579,7 +628,7 @@ ${members}
 			this.generated.add(morphism.name);
 			const ndxMap = new Map();
 			const graph = morphism.getGraph();
-			this.setupVariables(morphism, graph, ndxMap);
+			this.setupVariables(morphism, graph, ndxMap, graph, [0], [1]);
 			const code = this.cline(this.generateComments(morphism)) +
 				this.instantiateMorphism(this.getType(morphism), morphism, new Map(), graph);
 			return code;
@@ -645,7 +694,6 @@ ${members}
 					else
 					{
 						code += this.cline(symbol ? `void ${symbol}(${this.generateFunctionInterface(graph)})\n{\n` : this.generateInternalVariables(graph));
-
 						symbol && this.incTab();
 						const dom = morphism.domain;
 						const cod = morphism.codomain;
@@ -709,6 +757,7 @@ ${members}
 				case 'Identity':
 					break;
 				case 'FactorMorphism':
+				/*
 					if (morphism.dual)
 					{
 						this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
@@ -720,6 +769,7 @@ ${members}
 					else
 					{
 					}
+					*/
 					break;
 				case 'LambdaMorphism':
 				case 'Distribute':
@@ -732,7 +782,7 @@ ${members}
 					{
 						const domNdx = Cat.U.pushFactor(domFactor, 1);
 						delete domGraph.graphs[0].var;		// variable is consumed here
-						domGraph.graphs[0].alloc = true;
+//						domGraph.graphs[0].alloc = true;
 						code += this.instantiateMorphism(null, domGraph.eval, ndxMap, upGraph, domNdx, codFactor);
 					}
 					else
@@ -753,7 +803,8 @@ ${members}
 						const cnt = morphism.morphisms.length;
 						if (cnt === 2)	// if-then-else
 						{
-							code += this.cline(`if (${graph.graphs[0].var}.c)\n{`);
+//							code += this.cline(`if (${graph.graphs[0].var}${this.isBool(graph.graphs[0].element) ? '' : '.c'})\n{`);
+							code += this.cline(`if (${graph.graphs[0].var})\n{`);
 							this.incTab();
 							code += isFold ? '' : this.cline(`${graph.graphs[1].var}.c = 1;`);
 							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, graph, [0, 1], [1, 1]);
@@ -866,6 +917,7 @@ ${members}
 			this.initialize(morphism.diagram);
 			this.dependencies.add(morphism.name);
 			const morphCode = new Map();
+			const graph = morphism.getGraph();
 			let code =
 `
 #include <iostream>
@@ -909,7 +961,7 @@ int main(int argc, char ** argv)
 			code +=
 `			return 1;
 		}
-
+		${this.getType(morphism)}(${this.generateFunctionInvocation(graph)});
 		return 0;
 	}
 	catch(std::exception x)
