@@ -5254,6 +5254,8 @@ class Display
 		if (!diagram.svgRoot)
 			return;
 		const svg = diagram.svgBase;
+		const oldMode = D.default.darkmode;
+		oldMode && D.setDarkmode(false);
 		const copy = svg.cloneNode(true);
 		const radgrad1 = D.gradients.radgrad1.cloneNode(true);
 		const top = H3.svg();
@@ -5279,6 +5281,7 @@ class Display
 		const width = winWidth * (ssRat < winRat ? winRat / ssRat : 1);
 		const height = winHeight * (ssRat > winRat ? ssRat / winRat : 1);
 		this.copyStyles(copy, svg, new D2({x:0, y:0, width, height}));
+		oldMode && D.setDarkmode(true);
 		const topData = (new XMLSerializer()).serializeToString(top);
 		const svgBlob = new Blob([topData], {type: "image/svg+xml;charset=utf-8"});
 		const url = this.url.createObjectURL(svgBlob);
@@ -6176,10 +6179,10 @@ class Display
 			const borders = D.topSVG.querySelectorAll('.borderAlert');
 			borders.forEach(elt => elt.remove());
 			const margin = D.default.borderMargin;
-			lftOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${lftOpa}`, x:0, y:0, width:margin, height:hgt, fill:this.darkmode ? 'url(#borderLftGradDM)' : 'url(#borderLftGrad)'}));
-			rgtOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${rgtOpa}`, x:wid - margin, y:0, width:margin, height:hgt, fill:this.darkmode ? 'url(#borderRgtGradDM)' : 'url(#borderRgtGrad)'}));
-			topOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${topOpa}`, x:0, y:D.default.icon, width:wid, height:margin, fill:this.darkmode ? 'url(#borderTopGradDM)' : 'url(#borderTopGrad)'}));
-			botOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${botOpa}`, x:0, y:hgt - margin, width:wid, height:margin, fill:this.darkmode ? 'url(#borderBotGradDM)' : 'url(#borderBotGrad)'}));
+			lftOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${lftOpa}`, x:0, y:0, width:margin, height:hgt, fill:this.default.darkmode ? 'url(#borderLftGradDM)' : 'url(#borderLftGrad)'}));
+			rgtOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${rgtOpa}`, x:wid - margin, y:0, width:margin, height:hgt, fill:this.default.darkmode ? 'url(#borderRgtGradDM)' : 'url(#borderRgtGrad)'}));
+			topOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${topOpa}`, x:0, y:D.default.icon, width:wid, height:margin, fill:this.default.darkmode ? 'url(#borderTopGradDM)' : 'url(#borderTopGrad)'}));
+			botOpa > 0 && D.topSVG.appendChild(H3.rect('.borderAlert.trans', {style:`opacity:${botOpa}`, x:0, y:hgt - margin, width:wid, height:margin, fill:this.default.darkmode ? 'url(#borderBotGradDM)' : 'url(#borderBotGrad)'}));
 		}
 	}
 	setTopBorderHeight(y)
@@ -8481,6 +8484,7 @@ class DiagramCore		// only used by class Cell
 		Object.defineProperties(this,
 		{
 			diagram:		{value: diagram,													writable:	false},
+			basename:		{value: nuArgs.basename,											writable:	false},
 			name:			{value: nuArgs.name,												writable:	false},
 			refcnt:			{value: 0,															writable:	true},
 			x:				{value:	xy.x,														writable:	true},
@@ -9226,18 +9230,13 @@ class Assertion extends Element
 		const nuArgs = U.Clone(args);
 		let idx = 0;
 		let cell = null
-		if (nuArgs.cell instanceof Cell)
-		{
-			cell = nuArgs.cell;
-			nuArgs.basename = cell.name;
-		}
-		else if (typeof nuArgs.cell === 'string')
-		{
-			cell = diagram.domain.cells.get(nuArgs.cell);
-			if (!cell)
-				cell = nuArgs.cell;
-			nuArgs.basename = nuArgs.cell;
-		}
+if ('cell' in args)
+{
+	nuArgs.basename = args.cell.slice(diagram.name.length + 1);
+	cell = args.cell;
+}
+else
+		cell = `${diagram.name}/${nuArgs.basename}`;
 		super(diagram, nuArgs);
 		Object.defineProperties(this,
 		{
@@ -9293,8 +9292,7 @@ class Assertion extends Element
 	{
 		const a = super.json();
 		a.equal = this.equal;
-		delete a.basename;
-		a.cell = this.cell.name;
+		delete a.name;
 		return a;
 	}
 	showSelected(state = true)
@@ -10979,6 +10977,7 @@ class RunAction extends Action
 		Object.defineProperties(this,
 		{
 			data:			{value:	new Map(),	writable:	true},
+			display:		{value: null,		writable:	true},
 			js:				{value:	null,		writable:	true},
 			postResultFun:	{value:	null,		writable:	true},
 			workers:		{value:	[],			writable:	false},
@@ -10989,9 +10988,10 @@ class RunAction extends Action
 		super.html();
 		const from = ary[0];
 		const to = from.to;
+		const toolbar = D.toolbar;
 		const createDataBtn = H3.div(D.getIcon('createData', 'table', e => this.createData(e, Cat.R.diagram, from.name), {title:'Add data'}), '##run-createDataBtn', {display:'none'});
 		this.display = H3.tr(H3.td('##run-display'), H3.td(createDataBtn));
-		const addDataBtn = D.getIcon('addInput', 'edit', e => this.addInput(this.display), {title:'Add data'});
+		toolbar.table.appendChild(this.display);
 		const {properName, description} = to;
 		const elements = [H3.h3(properName)];
 		description !== '' && elements.push(H3.p(description, '.smallPrint.italic'));
@@ -10999,7 +10999,7 @@ class RunAction extends Action
 		let codomain = null;
 		const source = to instanceof NamedObject ? to.base : to;
 		if (from instanceof IndexObject)
-			this.js.canFormat(source) && elements.push(this.js.getInputHtml(source), addDataBtn);
+			this.js.canFormat(source) && elements.push(this.js.getInputHtml(source), D.getIcon('addInput', 'edit', e => this.addInput(this.display), {title:'Add data'}));
 		else	// morphism
 		{
 			domain = to.domain;
@@ -11023,9 +11023,11 @@ class RunAction extends Action
 			if (to.isIterable())
 				elements.push(D.getIcon('evaluate', 'edit', e => this.evaluateMorphism(e, Cat.R.diagram, to.name, this.postResults), {title:'Evaluate morphism'}));
 			else		// try to evaluate an input
-				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:this.js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), {title:'Evaluate inputs'}));
+//				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:this.js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), {title:'Evaluate inputs'}));
+				elements.push(H3.h5('Evaluate the Morphism'), H3.span(this.js.getInputHtml(domain)), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), {title:'Evaluate inputs'}));
 		}
-		this.display = H3.tr(H3.td('##run-display'), H3.td(createDataBtn));
+		elements.map(elt => elt && D.toolbar.body.appendChild(elt));
+//		this.display = H3.tr(H3.td('##run-display'), H3.td(createDataBtn));
 		this.data = new Map();
 	}
 	postResult(result)
@@ -12895,8 +12897,7 @@ class IndexMorphism extends Morphism
 			this.to.properName);
 		const width = D.textWidth(this.to.properName, 'morphTxt');
 		const bbox = {x:off.x, y:off.y, width, height:D.default.font.height};
-		const place = this.diagram.autoplaceSvg(bbox, this.name);
-		this.svg_nameGroup = H3.g({transform:`translate(${place.x}, ${place.y + D.default.font.height})`}, this.svg_name);
+		this.svg_nameGroup = H3.g({transform:`translate(${bbox.x}, ${bbox.y + D.default.font.height})`}, this.svg_name);
 		g.appendChild(this.svg_nameGroup);
 		this.updateDecorations();
 	}
@@ -13255,6 +13256,7 @@ class Cell extends DiagramCore
 	constructor(diagram, args)
 	{
 		const nuArgs = U.Clone(args);
+		nuArgs.basename = Cell.Basename(diagram, nuArgs.left, nuArgs.right);
 		nuArgs.name = Cell.Name(diagram, nuArgs.left, nuArgs.right);
 		super(diagram, nuArgs);
 		this.properName = U.GetArg(nuArgs, 'properName', '');
@@ -13369,7 +13371,7 @@ class Cell extends DiagramCore
 	deregister()
 	{
 		this.getObjects().map(o => o.nodes.delete(this));
-		this.diagram.domain.cells.delete(this.name);
+		this.diagram.domain.cells.delete(this.basename);
 		isGUI && this.removeSVG();
 	}
 	getXY()
@@ -13377,7 +13379,6 @@ class Cell extends DiagramCore
 		const r = D.baryHull([...this.left, ...this.right]).round();
 		if (isNaN(r.x) || isNaN(r.y))
 			return new D2();
-		r.y += D.default.font.height/2;
 		return r;
 	}
 	getSVG(node)
@@ -13416,23 +13417,19 @@ class Cell extends DiagramCore
 		// hide cells that have references in them
 		const properName = this.left.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ||
 							this.right.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ? '' : this.properName;
+		const width = D.textWidth(properName, 'cellTxt');
 		const xy = this.getXY();
 		if (isNaN(xy.x) || isNaN(xy.y))
 			throw 'NaN!';
-		this.x = xy.x;
+		this.x = xy.x + width/2;
 		this.y = xy.y;
 		if (this.svg)
 		{
 			this.svg.innerHTML = properName;
-			const bbox = {x:xy.x, y:xy.y - D.default.font.height, width:D.textWidth(properName, 'cellTxt'), height:D.default.font.height};
-			if (true)
-			{
-				const place = this.diagram.autoplaceSvg(bbox, this.name);
-				this.svg.setAttribute('x', place.x + bbox.width / 2);
-				this.svg.setAttribute('y', place.y + D.default.font.height);
-			}
-			else
-				this.diagram.autoplaceSvg2(this.svg, xy, this.name);
+			const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height, width, height:D.default.font.height};
+			const place = this.diagram.autoplaceSvg(bbox, this.name);
+			this.svg.setAttribute('x', place.x + width/2);
+			this.svg.setAttribute('y', place.y + D.default.font.height);
 		}
 	}
 	getObjects()
@@ -13495,14 +13492,14 @@ class Cell extends DiagramCore
 	}
 	show()
 	{
-		this.diagram.domain.hiddenCells.delete(this.name);
+		this.diagram.domain.hiddenCells.delete(this.basename);
 		this.setCommutes('unknown');
 		this.svg && this.update();
 		D.emitCellEvent(this.diagram, 'show');
 	}
 	hide()
 	{
-		this.diagram.domain.hiddenCells.add(this.name);
+		this.diagram.domain.hiddenCells.add(this.basename);
 		this.setCommutes('hidden');
 		this.svg && this.update();
 		D.emitCellEvent(this.diagram, 'hide');
@@ -13519,7 +13516,18 @@ class Cell extends DiagramCore
 	{
 		const buttons = [];
 		if (this.isEditable())
-			buttons.push(D.getIcon('delete', 'delete', _ => Cat.R.Actions.delete.action(this.name, Cat.R.diagram, [this]), {title:'Delete assertion'}));
+		{
+			if (this.commutes === 'hidden')
+				buttons.push(D.getIcon('delete', 'delete', e =>
+					{
+						this.show();
+						e.target.parentNode.parentNode.remove();
+						R.autosave(R.diagram);
+					},
+					{title:'Reveal cell'}));
+			else if (this.commutes === 'assertion')
+				buttons.push(D.getIcon('delete', 'delete', e => Cat.R.Actions.delete.action(e, Cat.R.diagram, [this]), {title:'Remove assertion'}));
+		}
 		buttons.push(D.getIcon('viewCell', 'view', e => R.diagram.viewElements(this)));
 		return buttons;
 	}
@@ -13534,14 +13542,14 @@ class Cell extends DiagramCore
 		const actions =
 		{
 			onclick:		e => {},
-			onmouseenter:	e => R.diagram.emphasis(this, true),
-			onmouseleave:	e => R.diagram.emphasis(this, false),
+			onmouseenter:	e => R.diagram.emphasis(this.name, true),
+			onmouseleave:	e => R.diagram.emphasis(this.name, false),
 		};
 		return H3.tr(H3.td(html, '.w100'), actions);
 	}
 	isEditable()
 	{
-		return super.isEditable() ? this.commutes === 'assertion' : false;
+		return super.isEditable() ? (this.commutes === 'assertion' || this.commutes === 'hidden') : false;
 	}
 	static Signature(left, right)
 	{
@@ -13574,6 +13582,9 @@ class Cell extends DiagramCore
 		};
 		const cellCheck = (cell, left, right) =>
 		{
+			if (left.length === 1 && left[0] instanceof DiagramComposite && U.ArrayEquals(left[0].morphisms, right) ||
+					right.length === 1 && right[0] instanceof DiagramComposite && U.ArrayEquals(right[0].morphisms, left))
+				return false;
 			let leftCommon = Cell.CommonLink(cell.left, left);
 			let rightCommon = Cell.CommonLink(cell.right, right);
 			if (leftCommon.length > 0 && rightCommon.length > 0)
@@ -14380,7 +14391,7 @@ class FactorMorphism extends Morphism
 		if (FactorMorphism.isIdentity(factors, 'objects' in obj ? obj.objects.length : 1))
 			return 'id';
 		if (factors.length > 1 && FactorMorphism.allFactorsEqual(factors))
-			return (dual ? '&nabla;' : '&Delta;') + domain.properName;
+			return (dual ? '&nabla;' : '&Delta;') + (domain.needsParens() ? '(' : '') + domain.properName + (domain.needsParens() ? ')' : '');
 		return `${dual ? '&#119894;' : '&#119901;'}${factors.map(f => f === -1 || f.length === 0 ? '' : `&#8202;${U.subscript(f)}`).join(',')}`;
 	}
 	static Signature(diagram, domain, factors = [-1], dual = false)
@@ -15548,8 +15559,13 @@ class Diagram extends Functor
 			const elt = this.getElement(svg.dataset.name);
 			if (svg instanceof SVGPathElement)
 			{
-				if (!elt.bezier && D2.lineBoxIntersect(elt.start, elt.end, box))
+				if (elt.bezier)
+				{
+					if (D2.BoxBezierIntersection(elt.start, elt.bezier.cp1, elt.bezier.cp2, elt.end, box))
 						return true;
+				}
+				else if (D2.lineBoxIntersect(elt.start, elt.end, box))
+					return true;
 				continue;
 			}
 			let compBox = null;
@@ -15996,7 +16012,7 @@ class Diagram extends Functor
 	}
 	addAssertion(cell, equal)
 	{
-		const a = this.get('Assertion', {cell:cell.name, equal});
+		const a = this.get('Assertion', {basename:cell.basename, equal});
 		a.initialize();
 		return a;
 	}
@@ -16016,6 +16032,8 @@ class Diagram extends Functor
 				elt.emphasis(on);
 				rtrn = elt.name;
 			}
+			else if (elt instanceof Assertion)
+				elt.cell.emphasis(on);
 			else
 			{
 				const emphs = [...this.svgRoot.querySelectorAll(`[data-sig="${elt.signature}"]`)];
@@ -16511,19 +16529,24 @@ class Diagram extends Functor
 	autoplaceSvg(bbox, name)
 	{
 		let nubox = new D2(bbox);
-		nubox.x -= D.default.margin;
-		nubox.width += D.default.margin;
 		let elt = null;
 		let ndx = 0;
 		const scl = 4;
 		let offset = new D2();
+// DEBUG let rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
+// DEBUG this.svgBase.appendChild(rect);
 		while(this.hasOverlap(nubox, name))
 		{
 			nubox = new D2(bbox);
 			const dir = D.directions[ndx % 8];
 			offset = dir.scale(scl * Math.trunc((8 + ndx)/8));
 			nubox = nubox.add(offset.getXY());
+// DEBUG rect.remove();
+// DEBUG rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
+// DEBUG this.svgBase.appendChild(rect);
 			ndx++;
+			if (ndx > 100)
+				break;
 		}
 		return offset.add(bbox);
 	}
