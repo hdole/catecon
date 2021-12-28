@@ -7,7 +7,8 @@
 	--color-element-bg:	#f4f4f4;
 	--color-element-border-color:		#ccc #ddd #eee #ccc;
 	--color-emphasis:	#00f;
-	--color-hover:		#555;
+	--color-hidden-cell:#ddd;
+	--color-hover:		#777;
 	--color-statusbar:	#000;
 	--color-statusbar-bg:	#ffe;
 	--color-text:		#000;
@@ -28,6 +29,7 @@
 	--color-element-bg:	#555;
 	--color-element-border-color:		#333 #444 #222 #333;
 	--color-emphasis:	#0ff;
+	--color-hidden-cell:#444;
 	--color-hover:		#aaa;
 	--color-statusbar:	#fff;
 	--color-statusbar-bg:	#554;
@@ -1035,7 +1037,7 @@ description
 
 .hiddenCell
 {
-	fill:			lightgray;
+	fill:			var(--color-hidden-cell);
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	user-select:	none;
 }

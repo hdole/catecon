@@ -142,7 +142,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 40,
-        "y": -530
+        "y": -510
       },
       "height": "200",
       "weight": "bold"
@@ -360,34 +360,6 @@
       "to": "hdole/category/cod"
     },
     {
-      "description": "The assertion that the composite of morphisms id,dom equals that of 1.",
-      "basename": "a_0",
-      "prototype": "Assertion",
-      "signature": "1f06915fdeaba6743f830eb93ca02fdb39529dc624f11c15ba39f32c6325cb2b",
-      "equal": true,
-      "left": [
-        "hdole/category/m_3",
-        "hdole/category/m_5"
-      ],
-      "right": [
-        "hdole/category/m_4"
-      ]
-    },
-    {
-      "description": "The assertion that the composite of morphisms id,cod equals that of 1.",
-      "basename": "a_1",
-      "prototype": "Assertion",
-      "signature": "231fe9d5bb7a66e1d9481063c5e9cff48898db78caebdbfa69fa044ce8fb64d3",
-      "equal": true,
-      "left": [
-        "hdole/category/m_6",
-        "hdole/category/m_8"
-      ],
-      "right": [
-        "hdole/category/m_7"
-      ]
-    },
-    {
       "basename": "m_9",
       "prototype": "IndexMorphism",
       "domain": "hdole/category/o_14",
@@ -467,6 +439,18 @@
         "hdole/category/m_14",
         "hdole/category/m_15"
       ]
+    },
+    {
+      "description": "The assertion that the composite of morphisms id,dom equals that of 1.",
+      "basename": "{m_3,m_5},{m_4}",
+      "prototype": "Assertion",
+      "equal": true
+    },
+    {
+      "description": "The assertion that the composite of morphisms id,cod equals that of 1.",
+      "basename": "{m_6,m_8},{m_7}",
+      "prototype": "Assertion",
+      "equal": true
     }
   ],
   "elements": [
@@ -567,11 +551,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1631957433118,
+  "timestamp": 1640662021537,
   "version": 0,
   "viewport": {
     "x": 544,
-    "y": 816,
+    "y": 870,
     "scale": 1
   }
 }

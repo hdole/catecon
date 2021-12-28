@@ -15,7 +15,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -570,
+        "x": -540,
         "y": 40
       },
       "height": "200",
@@ -453,15 +453,15 @@
     },
     {
       "description": "The assertion that the composite of morphisms &Delta;G,id&times;inv,mult equals that of &#119901;,unit.",
+      "basename": "{m_3,m_8,m_6},{m_7,m_4}",
       "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/group/{m_3,m_8,m_6},{m_7,m_4}"
+      "equal": true
     },
     {
       "description": "The assertion that the composite of morphisms &Delta;G,inv&times;id,mult equals that of &#119901;,unit.",
+      "basename": "{m_11,m_12},{m_9,m_13,m_10}",
       "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/group/{m_11,m_12},{m_9,m_13,m_10}"
+      "equal": true
     },
     {
       "basename": "m_17",
@@ -507,9 +507,9 @@
     },
     {
       "description": "The assertion that the composite of morphisms &Pi;&lt;&#119901;&#8202;&#x2080;,&#8202;&#x2081;,&#119901;&#8202;&#x2082;&gt;,mult&times;id,mult equals that of &Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;,id&times;mult,mult.",
+      "basename": "{m_17,m_5,m_15},{m_18,m_19,m_14}",
       "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/group/{m_17,m_5,m_15},{m_18,m_19,m_14}"
+      "equal": true
     },
     {
       "basename": "m_16",
@@ -541,9 +541,9 @@
     },
     {
       "description": "The assertion that the composite of morphisms &#119901;,,id&times;unit,mult equals that of id.",
+      "basename": "{m_20,m_22,m_16},{m_21}",
       "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/group/{m_20,m_22,m_16},{m_21}"
+      "equal": true
     },
     {
       "basename": "m_23",
@@ -575,9 +575,9 @@
     },
     {
       "description": "The assertion that the composite of morphisms &#119901;,,unit&times;id,mult equals that of id.",
+      "basename": "{m_23,m_24,m_25},{m_26}",
       "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/group/{m_23,m_24,m_25},{m_26}"
+      "equal": true
     }
   ],
   "elements": [
@@ -816,7 +816,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640169957486,
+  "timestamp": 1640662833303,
   "version": 0,
   "viewport": {
     "x": 1341,

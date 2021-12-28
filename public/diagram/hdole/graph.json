@@ -68,7 +68,7 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": -80,
+        "x": -70,
         "y": 300
       },
       "height": "200",
@@ -994,12 +994,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640156362953,
+  "timestamp": 1640329458900,
   "version": 0,
   "viewport": {
-    "x": 160,
-    "y": -1549,
-    "scale": 1.6025416796799101
+    "x": 323,
+    "y": -149,
+    "scale": 1.4375722819363121
   },
   "properName": "hdole/graph"
 }

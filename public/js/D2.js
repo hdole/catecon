@@ -385,11 +385,10 @@ class D2
 		{
 			const S = D2.Sign(R + Math.sqrt(D))*Math.pow(Math.abs(R + Math.sqrt(D)),(1/3));
 			const T = D2.Sign(R - Math.sqrt(D))*Math.pow(Math.abs(R - Math.sqrt(D)),(1/3));
-	 
 			t[0] = -A/3 + (S + T);                    // real root
 			t[1] = -A/3 - (S + T)/2;                  // real part of complex root
 			t[2] = -A/3 - (S + T)/2;                  // real part of complex root
-			Im = Math.abs(Math.sqrt(3)*(S - T)/2);    // complex part of root pair   
+			Im = Math.abs(Math.sqrt(3)*(S - T)/2);    // complex part of root pair
 			// discard complex roots
 			if (Im != 0)
 			{
@@ -406,7 +405,7 @@ class D2
 			Im = 0.0;
 		}
 		// discard out of spec roots
-		for (let i = 0;i<3;i++) 
+		for (let i = 0;i<3;i++)
 			if (t[i] < 0 || t[i] > 1.0 || isNaN(t[i]))
 				t[i] = -1;
 		// sort but place -1 at the end
@@ -444,7 +443,7 @@ class D2
 			if (t === -1)
 				return false;
 			X[0] = bx[0]*t*t*t+bx[1]*t*t+bx[2]*t+bx[3];
-			X[1] = by[0]*t*t*t+by[1]*t*t+by[2]*t+by[3];            
+			X[1] = by[0]*t*t*t+by[1]*t*t+by[2]*t+by[3];
 			//above is intersection point assuming infinitely long line segment, make sure we are also in bounds of the line
 			let s;
 			if ((lineEnd.x-lineStart.x)!=0)           // if not vertical line
@@ -454,7 +453,7 @@ class D2
 			// in bounds?
 			if (!(t<0 || t>1.0 || s<0 || s>1.0))
 				return true;
-		}    
+		}
 		return false;
 	}
 	static BoxBezierIntersection(start, cp1, cp2, end, box)

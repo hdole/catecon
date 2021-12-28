@@ -7,7 +7,7 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "code": {
-    "cpp": "%0 = 1;"
+    "cpp": ""
   },
   "domain": "hdole/int_Index",
   "codomain": "zf/Set",
@@ -5698,7 +5698,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1638138419893,
+  "timestamp": 1640296691491,
   "version": 0,
   "viewport": {
     "x": 1261,
