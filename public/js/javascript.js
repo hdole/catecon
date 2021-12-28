@@ -47,7 +47,7 @@ var Cat = Cat || require('./Cat.js');
 		instantiate(element)
 		{
 			let code = this.getCode(element).replace(/%Type/g, this.getType(element)).replace(/%Namespace/gm, this.getNamespace(element.diagram));
-			if (element instanceof Morphism)
+			if (element instanceof Cat.Morphism)
 				code = code.replace(/%Dom/g, this.getType(element.domain)).replace(/%Cod/g, this.getType(element.codomain));
 			return code;
 		}
