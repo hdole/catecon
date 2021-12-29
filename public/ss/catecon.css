@@ -552,7 +552,7 @@ p
 {
 	fill:			none;
 	stroke:			var(--color-morphism);
-	stroke-width:	10px
+	stroke-width:	20px
 }
 
 .svgstr3
@@ -783,6 +783,7 @@ p
 	margin:			2px;
 	padding:		2px;
 	stroke:			var(--color-text);
+	stroke-linecap:	round;
 	stroke-width:	2.5px;
 	user-select:	none;
 }
