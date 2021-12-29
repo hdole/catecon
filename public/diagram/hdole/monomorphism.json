@@ -181,7 +181,6 @@
       "prototype": "DiagramComposite",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
-      "homsetIndex": 1,
       "to": "hdole/monomorphism/Cm{h,f}mC",
       "morphisms": [
         "hdole/monomorphism/m_2",
@@ -289,7 +288,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640662080884,
+  "timestamp": 1640749673002,
   "version": 0,
   "hiddenCells": [
     "hdole/monomorphism/{m_1},{m_2}"

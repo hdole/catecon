@@ -4,10 +4,10 @@
   "name": "hdole/category",
   "prototype": "Diagram",
   "properName": "hdole/category",
-  "category": "sys/CAT",
+  "category": "sys/Cat",
   "diagram": "hdole/hdole",
   "domain": "hdole/category_Index",
-  "codomain": "sys/Cat",
+  "codomain": "zf/Set",
   "references": [],
   "domainElements": [
     {
@@ -551,11 +551,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640662021537,
+  "timestamp": 1640749080837,
   "version": 0,
   "viewport": {
-    "x": 544,
-    "y": 870,
-    "scale": 1
+    "x": -1080,
+    "y": -1807,
+    "scale": 2.826147260495738
   }
 }

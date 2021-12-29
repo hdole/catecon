@@ -15,7 +15,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 360,
-        "y": 410
+        "y": 420
       },
       "height": "200",
       "weight": "bold"
@@ -36,24 +36,6 @@
       "xy": {
         "x": 1000,
         "y": 600
-      }
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 800,
-        "y": 700
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1000,
-        "y": 700
       }
     },
     {
@@ -120,14 +102,9 @@
     {
       "basename": "m_1",
       "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_3",
-      "codomain": "hdole/iso/o_2",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
+      "domain": "hdole/iso/o_1",
+      "codomain": "hdole/iso/o_0",
+      "homsetIndex": -1,
       "to": "hdole/iso/finv"
     },
     {
@@ -236,7 +213,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640689323080,
+  "timestamp": 1640767272300,
   "version": 0,
   "viewport": {
     "x": -96,
