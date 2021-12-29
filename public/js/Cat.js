@@ -2597,9 +2597,9 @@ class DiagramTool extends ElementTool
 			toolbar2.appendChild(form);
 			form.insertBefore(H3.h4('Upload Diagram JSON'), form.firstChild);
 		}
-		const searchTable = document.getElementById(`${this.type}-search-results`);
-		this.infoElement = H3.div(`##${this.type}-search-info`);
-		searchTable.parentNode.insertBefore(this.infoElement, searchTable);
+		const searchTable = document.getElementById(`${this.type}-search-tools`);
+		this.infoElement = H3.tr(H3.td(`##${this.type}-search-info`));
+		searchTable.appendChild(this.infoElement);
 	}
 	setTimeSorter(search = true)
 	{
@@ -3734,11 +3734,6 @@ class Display
 						e.preventDefault();
 					},
 		//			ControlKeyD(e)		BROWSER RESERVED: bookmark current page
-					KeyE(e)
-					{
-						if (R.Actions.composite.hasForm(R.diagram, R.diagram.selected))
-							R.Actions.composite.action(e, R.diagram, R.diagram.selected);
-					},
 		//			ControlKeyF(e)		BROWSER RESERVED: search on page
 					KeyG(e)
 					{
@@ -3778,6 +3773,11 @@ class Display
 						e.preventDefault();
 					},
 		//			ControlKeyJ(e)		BROWSER RESERVED: open download history
+					KeyK(e)
+					{
+						if (R.Actions.composite.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.composite.action(e, R.diagram, R.diagram.selected);
+					},
 		//			ControlKeyK(e)		BROWSER RESERVED: focus on search box
 					KeyL(e)
 					{
@@ -4884,7 +4884,6 @@ class Display
 					diagram.loadCells();
 					break;
 				case 'default':		// make it the viewable diagram
-					let saveSession = true;
 					if (diagram)
 					{
 						D.session.setCurrentDiagram(diagram);
@@ -5259,7 +5258,8 @@ class Display
 		const copy = svg.cloneNode(true);
 		const radgrad1 = D.gradients.radgrad1.cloneNode(true);
 		const top = H3.svg();
-		const markers = ['arrowhead', 'arrowheadRev', 'var-arrowhead'];
+//		const markers = ['arrowhead', 'arrowheadRev', 'var-arrowhead'];
+		const markers = ['arrowhead', 'arrowheadRev'];
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
 		top.appendChild(radgrad1);
 		top.appendChild(copy);
@@ -6962,7 +6962,7 @@ class SettingsPanel extends Panel
 			showEventsChkbox.checked = true;
 		const settings = [	H3.tr(	H3.td(gridChkbox),
 									H3.td('Snap objects to a grid.', '.left')),
-							H3.tr(	H3.td(H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked)})),
+							H3.tr(	H3.td(H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked), id:'check-darkmode'})),
 									H3.td('Dark mode', '.left')),
 							H3.tr(	H3.td(debugChkbox),
 									H3.td('Debug', '.left')),
@@ -6999,6 +6999,7 @@ class SettingsPanel extends Panel
 	}
 	update()
 	{
+		document.getElementById('check-darkmode').checked = D.default.darkmode;
 		if (R.user.cloud && R.user.cloud.permissions.includes('admin'))
 		{
 			const tbl = this.elt.querySelector('#settings-table');
@@ -12868,73 +12869,70 @@ class IndexMorphism extends Morphism
 			return new D2();
 		return D2.Round(r);
 	}
-	getSVG(node)
+	adjustByHomset()
 	{
-		this.predraw();
-		const off = this.getNameOffset();
-		if (isNaN(off.x) || isNaN(off.y))
-			throw 'bad name offset';
-		const coords = this.bezier ?
-				`M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`
-			:
-				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
-		const id = this.elementId();
-		const g = H3.g();
-		const name = this.name;
-		g.onmouseenter = e => this.mouseenter(e);
-		g.onmouseout = e => this.mouseout(e);
-		g.onmouseover = e => this.mouseover(e);
-		g.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
-		node.appendChild(g);
-		this.svg = g;
-		g.setAttributeNS(null, 'id', id);
-		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':this.name, class:'grabme grabbable', id:`${id}_path2`, d:coords});
-		g.appendChild(this.svg_path2);
-		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
-		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, class:cls, id:`${id}_path`, d:coords, 'marker-end':'url(#var-arrowhead)'});
-		g.appendChild(this.svg_path);
-		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${id}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
-			this.to.properName);
-		const width = D.textWidth(this.to.properName, 'morphTxt');
-		const bbox = {x:off.x, y:off.y, width, height:D.default.font.height};
-		this.svg_nameGroup = H3.g({transform:`translate(${bbox.x}, ${bbox.y + D.default.font.height})`}, this.svg_name);
-		g.appendChild(this.svg_nameGroup);
-		this.updateDecorations();
-	}
-	getNameSvgOffset()
-	{
-		const matrix = this.svg_name.parentElement.transform.baseVal.getItem(0).matrix;
-		return new D2(matrix.e, matrix.f);
-	}
-	showSelected(state = true)
-	{
-		[this.svg_path, this.svg_name, this.svg].map(svg => svg.classList[state ? 'add' : 'remove']('selected'));
-		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);	// move front or back depending on state
-	}
-	updateFusible(e, on)
-	{
-		const path = this.svg_path;
-		const name = this.svg_name;
-		if (on)
+		let ndx = this.homsetIndex;
+		if (ndx !== 0)
 		{
-			D.statusbar.show(e, 'Fuse');
-			path.classList.add(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
-			path.classList.remove(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
-			path.classList.add(...['fuseMorphism']);
-			path.classList.remove(...['selected', 'grabbable', 'morphism']);
-			name.classList.add(...['fuseMorphism']);
-			name.classList.remove(...['morphTxt', 'selected', 'grabbable']);
-			this.updateGlow(true, 'glow');
+			const midpoint = {x:(this.start.x + this.end.x)/2, y:(this.start.y + this.end.y)/2};
+			const scale = 2;
+			const offset = this.normal.scale(scale * D.default.font.height * ndx);
+			const w = this.normal.scale(10 * ndx);
+			this.start = this.start.add(w).round();
+			this.end = this.end.add(w).round();
+			let cp1 = offset.add(this.start.add(midpoint).scale(0.5)).round();
+			let cp2 = offset.add(this.end.add(midpoint).scale(0.5)).round();
+			this.bezier = {cp1, cp2, index:ndx, offset};
+		}
+		else
+			this.bezier = null;
+	}
+	predraw()
+	{
+		const domBBox = D2.Expand(this.domain.svg.getBBox(), D.default.margin).add(this.domain.getXY());
+		const codBBox = D2.Expand(this.codomain.svg.getBBox(), D.default.margin).add(this.codomain.getXY());
+		const delta = D2.Subtract(this.codomain, this.domain);
+		let start = null;
+		let end = null;
+		if (delta.x === 0)
+		{
+			if (delta.y > 0)
+			{
+				start = this.intersect(domBBox, 'bottom');
+				end = this.intersect(codBBox, 'top');
+			}
+			else
+			{
+				start = this.intersect(domBBox, 'top');
+				end = this.intersect(codBBox, 'bottom');
+			}
+		}
+		else if (delta.y === 0)
+		{
+			if (delta.x > 0)
+			{
+				start = this.intersect(domBBox, 'right');
+				end = this.intersect(codBBox, 'left');
+			}
+			else
+			{
+				start = this.intersect(domBBox, 'left');
+				end = this.intersect(codBBox, 'right');
+			}
 		}
 		else
 		{
-			D.statusbar.show(e, '');
-			path.classList.add(...['selected', 'grabbable', 'morphism']);
-			path.classList.remove(...['fuseMorphism']);
-			name.classList.add(...['morphTxt', 'selected', 'grabbable']);
-			name.classList.remove(...['fuseMorphism']);
-			this.updateGlow(false, '');
+			start = this.closest(domBBox, this.codomain);
+			end = this.closest(codBBox, this.domain);
 		}
+		start = start ? start.round() : new D2(this.domain.x, this.domain.y);
+		end = end ? end.round() : new D2(this.codomain.x, this.codomain.y);
+		this.angle = delta.angle();
+		this.start = start;
+		this.end = end;
+		this.normal = this.end.subtract(this.start).normal().normalize();
+		this.adjustByHomset();
+		return end !== false;
 	}
 	updateDecorations()
 	{
@@ -12984,78 +12982,42 @@ class IndexMorphism extends Morphism
 		if (svg.style.textAnchor !== anchor)
 			svg.style.textAnchor = anchor;
 	}
-	getSvgNameBBox()
+	getBasicCoords()
 	{
-		return this.getNameSvgOffset().add(this.svg_name.getBBox());
+		return this.bezier ?
+				`M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`
+			:
+				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
 	}
-	getBBox()
+	getSVG(node)
 	{
-		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), this.getSvgNameBBox());
-	}
-	predraw()
-	{
-		const domBBox = D2.Expand(this.domain.svg.getBBox(), D.default.margin).add(this.domain.getXY());
-		const codBBox = D2.Expand(this.codomain.svg.getBBox(), D.default.margin).add(this.codomain.getXY());
-		const delta = D2.Subtract(this.codomain, this.domain);
-		let start = null;
-		let end = null;
-		if (delta.x === 0)
-		{
-			if (delta.y > 0)
-			{
-				start = this.intersect(domBBox, 'bottom');
-				end = this.intersect(codBBox, 'top');
-			}
-			else
-			{
-				start = this.intersect(domBBox, 'top');
-				end = this.intersect(codBBox, 'bottom');
-			}
-		}
-		else if (delta.y === 0)
-		{
-			if (delta.x > 0)
-			{
-				start = this.intersect(domBBox, 'right');
-				end = this.intersect(codBBox, 'left');
-			}
-			else
-			{
-				start = this.intersect(domBBox, 'left');
-				end = this.intersect(codBBox, 'right');
-			}
-		}
-		else
-		{
-			start = this.closest(domBBox, this.codomain);
-			end = this.closest(codBBox, this.domain);
-		}
-		start = start ? start.round() : new D2(this.domain.x, this.domain.y);
-		end = end ? end.round() : new D2(this.codomain.x, this.codomain.y);
-		this.angle = delta.angle();
-		this.start = start;
-		this.end = end;
-		this.adjustByHomset();
-		return end !== false;
-	}
-	adjustByHomset()
-	{
-		let ndx = this.homsetIndex;
-		if (ndx !== 0)
-		{
-			const midpoint = {x:(this.start.x + this.end.x)/2, y:(this.start.y + this.end.y)/2};
-			const normal = this.end.subtract(this.start).normal().normalize();
-			const scale = 2;
-			const offset = normal.scale(scale * D.default.font.height * ndx);
-			const w = normal.scale(10 * ndx);
-			this.start = this.start.add(w).round();
-			this.end = this.end.add(w).round();
-			let cp1 = offset.add(this.start.add(midpoint).scale(0.5)).round();
-			let cp2 = offset.add(this.end.add(midpoint).scale(0.5)).round();
-			this.bezier = {cp1, cp2, index:ndx, offset};
-		}
-		else
-			this.bezier = null;
+		this.predraw();
+		const off = this.getNameOffset();
+		if (isNaN(off.x) || isNaN(off.y))
+			throw 'bad name offset';
+		const coords = this.getBasicCoords();
+		const id = this.elementId();
+		const g = H3.g();
+		const name = this.name;
+		g.onmouseenter = e => this.mouseenter(e);
+		g.onmouseout = e => this.mouseout(e);
+		g.onmouseover = e => this.mouseover(e);
+		g.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
+		node.appendChild(g);
+		this.svg = g;
+		g.setAttributeNS(null, 'id', id);
+		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':this.name, class:'grabme grabbable', id:`${id}_path2`, d:coords});
+		g.appendChild(this.svg_path2);
+		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
+		this.svg_path = H3.path({'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, class:cls, id:`${id}_path`, d:coords});
+		g.appendChild(this.svg_path);
+		this.svg_name = H3.text('.morphTxt.grabbable', {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${id}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])},
+			this.to.properName);
+		const width = D.textWidth(this.to.properName, 'morphTxt');
+		const bbox = {x:off.x, y:off.y, width, height:D.default.font.height};
+		this.svg_nameGroup = H3.g({transform:`translate(${bbox.x}, ${bbox.y + D.default.font.height})`}, this.svg_name);
+		g.appendChild(this.svg_nameGroup);
+		this.update();
 	}
 	update()
 	{
@@ -13073,11 +13035,35 @@ class IndexMorphism extends Morphism
 		const end = this.end;
 		if (svg !== null && start.x !== undefined)
 		{
-			let coords = '';
+			let coords = this.getBasicCoords();
+			// arrowhead
+			let negv = null
+			let normal = null;
 			if (this.bezier)
-				coords = `M${start.x},${start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${end.x},${end.y}`;
+			{
+				negv = this.bezier.cp2.sub(this.end).normalize();
+				normal = negv.normal().normalize();
+			}
 			else
-				coords = `M${start.x},${start.y} L${end.x},${end.y}`;
+			{
+				negv = this.start.sub(this.end).normalize();
+				normal = this.normal;
+			}
+			const barb = D.default.font.height / 4;
+			const upBarb = this.end.add(normal.scale(barb)).add(negv.scale(barb)).round();;
+			const dwBarb = this.end.add(normal.scale(-barb)).add(negv.scale(barb)).round();;
+			coords += ` M${this.end.x},${this.end.y} L${upBarb.x},${upBarb.y} M${this.end.x},${this.end.y} L${dwBarb.x},${dwBarb.y}`;
+			/*
+			if (this.to instanceof Identity)
+			{
+				const radius = D.default.font.height/2;
+				const xy = normal.scale(radius).add(this.start).round();
+				const negv = this.start.sub(this.end).normalize();
+				const control1 = negv.scale(radius).add(this.start).round();
+				const control2 = negv.scale(radius).add(normal.scale(radius)).add(this.start).round();
+				coords = `M${this.start.x},${this.start.y} C${control1.x},${control1.y} ${control2.x},${control2.y} ${xy.x},${xy.y} ` + coords;
+			}
+			*/
 			svg.setAttribute('d', coords);
 			this.svg_path2.setAttribute('d', coords);
 			this.updateDecorations();
@@ -13094,6 +13080,49 @@ class IndexMorphism extends Morphism
 		}
 		if ('graph' in this)
 			this.graph.updateGraph({root:this.graph, index:[], dom:this.domain.name, cod:this.codomain.name, visited:[], elementId:this.elementId()});
+	}
+	getNameSvgOffset()
+	{
+		const matrix = this.svg_name.parentElement.transform.baseVal.getItem(0).matrix;
+		return new D2(matrix.e, matrix.f);
+	}
+	showSelected(state = true)
+	{
+		[this.svg_path, this.svg_name, this.svg].map(svg => svg.classList[state ? 'add' : 'remove']('selected'));
+		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);	// move front or back depending on state
+	}
+	updateFusible(e, on)
+	{
+		const path = this.svg_path;
+		const name = this.svg_name;
+		if (on)
+		{
+			D.statusbar.show(e, 'Fuse');
+			path.classList.add(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
+			path.classList.remove(...['selected', 'grabbable', 'morphism', 'fuseMorphism']);
+			path.classList.add(...['fuseMorphism']);
+			path.classList.remove(...['selected', 'grabbable', 'morphism']);
+			name.classList.add(...['fuseMorphism']);
+			name.classList.remove(...['morphTxt', 'selected', 'grabbable']);
+			this.updateGlow(true, 'glow');
+		}
+		else
+		{
+			D.statusbar.show(e, '');
+			path.classList.add(...['selected', 'grabbable', 'morphism']);
+			path.classList.remove(...['fuseMorphism']);
+			name.classList.add(...['morphTxt', 'selected', 'grabbable']);
+			name.classList.remove(...['fuseMorphism']);
+			this.updateGlow(false, '');
+		}
+	}
+	getSvgNameBBox()
+	{
+		return this.getNameSvgOffset().add(this.svg_name.getBBox());
+	}
+	getBBox()
+	{
+		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), this.getSvgNameBBox());
 	}
 	intersect(bbox, side, m = D.default.arrow.margin)
 	{
@@ -13989,17 +14018,6 @@ class Composite extends MultiMorphism
 	{
 		super.loadItem();
 		R.loadItem(this.diagram, this, [this], this.morphisms);
-	}
-	getCompositeGraph()
-	{
-		const graph = this.getSequenceGraph();
-		this.morphisms.map((m, i) =>
-		{
-			graph.graphs[i].dom = m;
-			graph.graphs[i+1].cod = m;
-		});
-		graph.element = this;
-		return graph;
 	}
 	static Basename(diagram, args)
 	{
