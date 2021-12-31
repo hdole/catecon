@@ -2001,8 +2001,8 @@ class ElementTool
 			headline:			{value: headline,					writable: false},
 			hasDiagramOnlyButton:		{value: true,				writable: true},
 			searchArgs:			{value: {
-											diagramOnly: false, 
-											userOnly: false, 
+											diagramOnly: false,
+											userOnly: false,
 											sessionOnly: false,
 											actionOnly: false,
 											referenceOnly: false,
@@ -3381,10 +3381,7 @@ class Session
 				this.mode = 'catalog';
 		}
 	}
-	loadAction(action)
-	{
-		
-	}
+	loadAction(action) { }
 	loadDiagrams()
 	{
 		this.diagrams.forEach((v, d) => Runtime.DownloadDiagram(d, _ =>
@@ -3773,31 +3770,31 @@ class Display
 						e.preventDefault();
 					},
 		//			ControlKeyJ(e)		BROWSER RESERVED: open download history
-					KeyK(e)
+					KeyK(e)		// compose
 					{
 						if (R.Actions.composite.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.composite.action(e, R.diagram, R.diagram.selected);
 					},
 		//			ControlKeyK(e)		BROWSER RESERVED: focus on search box
-					KeyL(e)
+					KeyL(e)		// lambda
 					{
 						if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.lambda.html(e, R.diagram, R.diagram.selected);
 					},
 		//			ControlKeyL(e)		BROWSER RESERVED: focus on address bok
-					ControlKeyL(e)
+					ControlKeyL(e)		// open log panel
 					{
 						D.ttyPanel.open();
 						D.ttyPanel.logSection.open();
 						e.preventDefault();
 					},
-					KeyM(e)
+					KeyM(e)		// morphism tool
 					{
 						D.toolbar.show();
 						D.elementTool.Morphism.html(e);
 						e.preventDefault();
 					},
-					ShiftKeyM(e)
+					ShiftKeyM(e)	// new morphism
 					{
 						D.toolbar.show();
 						D.elementTool.Morphism.html(e);
@@ -3806,13 +3803,13 @@ class Display
 						e.preventDefault();
 					},
 		//			ControlKeyN(e)		BROWSER RESERVED: open a new browser window
-					KeyO(e)
+					KeyO(e)		// object tool
 					{
 						D.toolbar.show();
 						D.elementTool.Object.html(e);
 						e.preventDefault();
 					},
-					ShiftKeyO(e)
+					ShiftKeyO(e)		// new object
 					{
 						D.toolbar.show();
 						D.elementTool.Object.html(e);
@@ -3821,7 +3818,7 @@ class Display
 						e.preventDefault();
 					},
 		//			ControlKeyO(e)		BROWSER RESERVED: open local page
-					KeyP(e)
+					KeyP(e)		// product
 					{
 						if (R.Actions.productAssembly.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.productAssembly.action(e, R.diagram, R.diagram.selected);
@@ -3830,7 +3827,7 @@ class Display
 						else if (R.Actions.project.hasForm(R.diagram, R.diagram.selected))
 							R.diagram.actionHtml(e, 'project');
 					},
-					ShiftKeyP(e)
+					ShiftKeyP(e)		// coproduct
 					{
 						if (R.Actions.coproductAssembly.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.coproductAssembly.action(e, R.diagram, R.diagram.selected);
@@ -3840,12 +3837,12 @@ class Display
 							R.diagram.actionHtml(e, 'inject');
 					},
 		//			ControlKeyP(e)		BROWSER RESERVED: print page
-					KeyQ(e)
+					KeyQ(e)		// help
 					{
 						if (R.Actions.help.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.help.html(e, R.diagram, R.diagram.selected);
 					},
-					KeyR(e)
+					KeyR(e)		// reference
 					{
 						if (R.Actions.referenceMorphism.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.referenceMorphism.action(e, R.diagram, R.diagram.selected);
@@ -4070,7 +4067,7 @@ class Display
 			snapshotHeight:	{value: 768,		writable: true},
 			statusbar:		{value: isGUI ? new StatusBar(): null,	writable: false},
 			svgContainers:	{value: ['svg', 'g', 'symbol', 'use'],	writable: false},
-			svgStyles:	
+			svgStyles:
 			{
 				value:
 				{
@@ -8829,7 +8826,6 @@ class DiagramText extends Element
 		document.body.appendChild(hidden);
 		const div = H3.div('##foreign-text.text-editor', this.description,
 		{
-	
 			style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap; word-wrap: break-word; width: fit-content;`,
 			contentEditable:true,
 		});
@@ -12312,7 +12308,7 @@ class Morphism extends Element
 		if (this.diagram.codomain.actions.has('coproduct'))
 			R.loadSigs(diagram, this, [FactorMorphism.Signature(diagram, this.domain)], [sig, FactorMorphism.Signature(diagram, this.codomain)]);
 		if ('data' in this)
-			this.data.forEach((d, i) => 
+			this.data.forEach((d, i) =>
 			{
 				const left = [U.dataSig([0, i]), this.signature];
 				const right =[ U.dataSig([0, d]) ];
@@ -12747,12 +12743,13 @@ class IndexMorphism extends Morphism
 		Object.defineProperties(this,
 		{
 			attributes:	{value: attributes,	writable: false},
-			bezier:		{value: null,		writable: true,	enumerable: true},
-			homsetIndex:{value: this.setHomsetIndex(args, 'homsetIndex'),	writable: true,	enumerable: true},
-			svg_path:	{value: null,		writable: true,	enumerable: true},
-			svg_path2:	{value: null,		writable: true,	enumerable: true},
-			svg_name:	{value: null,		writable: true,	enumerable: true},
-			svg_nameGroup:	{value: null,	writable: true,	enumerable: true},
+			bezier:		{value: null,		writable: true},
+			homsetIndex:{value: this.setHomsetIndex(args, 'homsetIndex'),	writable: true},
+			svg_path:	{value: null,		writable: true},
+			svg_path2:	{value: null,		writable: true},
+			svg_name:	{value: null,		writable: true},
+			svg_nameGroup:	{value: null,	writable: true},
+			type:		{value: 'std',		writable: true},	// mono, epi, iso, element, ...
 		});
 		if ('flipName' in nuArgs)	// TODO remove; for reading old files
 			this.attributes.set('flipName', nuArgs.flipName);
@@ -12927,6 +12924,14 @@ class IndexMorphism extends Morphism
 		}
 		start = start ? start.round() : new D2(this.domain.x, this.domain.y);
 		end = end ? end.round() : new D2(this.codomain.x, this.codomain.y);
+		switch(this.type)
+		{
+			case 'element':
+			case 'mono':
+				const radius = this.decoRadius();
+				start = start.add(end.sub(start).normalize().scale(this.decoRadius));	// shorten the arrow to adjust for decoration
+				break;
+		}
 		this.angle = delta.angle();
 		this.start = start;
 		this.end = end;
@@ -12997,7 +13002,7 @@ class IndexMorphism extends Morphism
 			throw 'bad name offset';
 		const coords = this.getBasicCoords();
 		const id = this.elementId();
-		const g = H3.g();
+		const g = H3.g({id});
 		const name = this.name;
 		g.onmouseenter = e => this.mouseenter(e);
 		g.onmouseout = e => this.mouseout(e);
@@ -13005,7 +13010,7 @@ class IndexMorphism extends Morphism
 		g.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
 		node.appendChild(g);
 		this.svg = g;
-		g.setAttributeNS(null, 'id', id);
+//		g.setAttributeNS(null, 'id', id);
 		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':this.name, class:'grabme grabbable', id:`${id}_path2`, d:coords});
 		g.appendChild(this.svg_path2);
 		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
@@ -13018,6 +13023,14 @@ class IndexMorphism extends Morphism
 		this.svg_nameGroup = H3.g({transform:`translate(${bbox.x}, ${bbox.y + D.default.font.height})`}, this.svg_name);
 		g.appendChild(this.svg_nameGroup);
 		this.update();
+	}
+	barbLength()
+	{
+		return D.default.font.height / 4;
+	}
+	decoRadius()
+	{
+		return D.default.font.height/2;
 	}
 	update()
 	{
@@ -13049,7 +13062,7 @@ class IndexMorphism extends Morphism
 				negv = this.start.sub(this.end).normalize();
 				normal = this.normal;
 			}
-			const barb = D.default.font.height / 4;
+			const barb = this.barbLength();
 			const upBarb = this.end.add(normal.scale(barb)).add(negv.scale(barb)).round();;
 			const dwBarb = this.end.add(normal.scale(-barb)).add(negv.scale(barb)).round();;
 			coords += ` M${this.end.x},${this.end.y} L${upBarb.x},${upBarb.y} M${this.end.x},${this.end.y} L${dwBarb.x},${dwBarb.y}`;
@@ -13349,7 +13362,7 @@ class Cell extends DiagramCore
 								D.getIcon('hide', 'hide', e => this.action(e, 'hidden'), {title:'Hide this cell'}));
 				break;
 		}
-		rows.push(	
+		rows.push(
 					H3.tr(H3.td(H3.table(H3.tr(H3.td('.left', 'Commutativity:'), H3.td('.right', U.Cap(this.commutes))), '.w100'))),
 					H3.tr(H3.td(buttons)),
 					H3.tr(H3.th('Left leg:')));
@@ -15567,7 +15580,7 @@ class Diagram extends Functor
 	}
 	hasOverlap(box, except = '')
 	{
-		const elts = this.svgBase.querySelectorAll('.object, .diagramText, .morphTxt, .cellTxt, .morphism');
+		const elts = this.svgRoot.querySelectorAll('.object, .diagramText, .morphTxt, .cellTxt, .morphism');
 		let r = null;
 		for (let i=0; i<elts.length; ++i)
 		{
@@ -16551,17 +16564,17 @@ class Diagram extends Functor
 		let ndx = 0;
 		const scl = 4;
 		let offset = new D2();
-// DEBUG let rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
-// DEBUG this.svgBase.appendChild(rect);
+//DEBUG let rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
+//DEBUG this.svgBase.appendChild(rect);
 		while(this.hasOverlap(nubox, name))
 		{
 			nubox = new D2(bbox);
 			const dir = D.directions[ndx % 8];
 			offset = dir.scale(scl * Math.trunc((8 + ndx)/8));
 			nubox = nubox.add(offset.getXY());
-// DEBUG rect.remove();
-// DEBUG rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
-// DEBUG this.svgBase.appendChild(rect);
+//DEBUG rect.remove();
+//DEBUG rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
+//DEBUG this.svgBase.appendChild(rect);
 			ndx++;
 			if (ndx > 100)
 				break;
