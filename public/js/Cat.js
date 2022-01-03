@@ -1903,10 +1903,12 @@ class Toolbar
 	}
 	addButtons(buttons)
 	{
-		this.buttons = H3.td(H3.table(H3.tr(buttons.map(btn => H3.td(btn))), '.buttonBarLeft'));
+//		this.buttons = H3.td(H3.table(H3.tr(buttons.map(btn => H3.td(btn))), '.buttonBarLeft'));
+		this.buttons = H3.td(buttons, '.buttonBarLeft');
 		const closeBtn = H3.table(H3.tr(H3.td(this.getCloseToolbarBtn())), '.buttonBarRight');
 		this.tools = H3.table(H3.tr(this.buttons, H3.td(closeBtn)), '.w100');
 		this.header.appendChild(this.tools);
+		this.buttons.setAttribute('width', `${buttons.reduce((r, btn) => r + btn.getBoundingClientRect().width, 0)}px`);
 	}
 	showSelectedElementsToolbar(diagram, btns)
 	{
@@ -3512,6 +3514,7 @@ class Display
 			// the svg text element being editted
 			editElement:	{value: null,		writable: true},
 			elementTool:	{value: null,		writable: true},
+			emphasized:		{value: new Set(),	writable: false},
 			gradients:		{value: {radgrad1:null, radgrad2:null},	writable: false},
 			graphColors:	{value: [],			writable: false},
 			gridding:		{value: true,		writable: true},
@@ -3611,6 +3614,16 @@ class Display
 							D.panHandler(e, 'right');
 						else
 							R.diagram.moveElements({x:D.gridSize(), y:0}, ...R.diagram.selected);
+					},
+					BracketRight(e)
+					{
+						if (R.Actions.detachCodomain.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.detachCodomain.action(e, R.diagram, R.diagram.selected);
+					},
+					BracketLeft(e)
+					{
+						if (R.Actions.detachDomain.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.detachDomain.action(e, R.diagram, R.diagram.selected);
 					},
 					ControlLeft(e) { D.ctrlKey = true; },
 					ControlRight(e) { D.ctrlKey = true; },
@@ -4846,9 +4859,9 @@ class Display
 					case 'update':
 						this.autosave(diagram);
 						break;
-					case 'loadCells':
-						diagram.loadCells();
-						break;
+//					case 'loadCells':
+//						diagram.loadCells();
+//						break;
 				}
 			this.autohide(e);
 		});
@@ -4929,7 +4942,7 @@ class Display
 		window.addEventListener('mousemove', e => this.autohide(e));
 		window.addEventListener('mousedown', e => this.autohide(e));
 		window.addEventListener('keydown', e => this.autohide(e));
-		window.addEventListener('Cell', e => this.updateDisplay(e));
+//		window.addEventListener('Cell', e => this.updateDisplay(e));
 		window.addEventListener('Morphism', e => this.updateMorphismDisplay(e));
 		window.addEventListener('Text', e => this.updateTextDisplay(e));
 		window.addEventListener('mousemove', e => this.mousemove(e));
@@ -6210,6 +6223,10 @@ class Display
 			}
 		}
 	}
+	deEmphasize()
+	{
+		this.emphasized.forEach(elt => elt.emphasis(false));
+	}
 	static Resize()
 	{
 		D.resize();
@@ -7219,7 +7236,11 @@ class Element
 		}
 		return -1;
 	}
-	emphasis(on)					{ D.setClass('emphasis', on, this.svg.querySelector('text')); }
+	emphasis(on)	// or override as needed
+	{
+		on ? D.emphasized.add(this) : D.emphasized.delete(this);
+		D.setClass('emphasis', on, this.svg.querySelector('text'));
+	}
 	find(elt, index = [])			{ return elt === this ? index : []; }
 	basic()							{ return 'base' in this ? this.base : this; }
 	getBase()						{ return this; }
@@ -7594,7 +7615,7 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 		else
 			this.graphs.map(g => g.updateXY(xy));
 	}
-	makeSVG(node, data, first = true)	// data {index, root, dom:name, cod:name, visited, elementId}
+	_makeSVG(node, data, first = true)	// data {index, root, dom:name, cod:name, visited, elementId}		// recursive
 	{
 		const diagram = this.element.diagram;
 		if (this.isLeaf() && this.links.length > 0)
@@ -7612,7 +7633,13 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 			while(colorIndex in diagram.colorIndex2colorIndex)	// look for new color
 				colorIndex = diagram.colorIndex2colorIndex[colorIndex];
 			let path = null;
-			const showStatusBar = e => Cat.D.statusbar.show(e, this.tags.sort().join());
+			const onmouseover = e =>
+			{
+				Cat.D.statusbar.show(e, this.tags.sort().join(', '));
+				D.deEmphasize();
+			};
+//			const onmouseleave = e => this.emphasis(false);
+//			const onmousedown = e => Cat.R.diagram.userSelectElement(e, this.name);
 			for (let i=0; i<this.links.length; ++i)
 			{
 				const lnk = this.links[i];
@@ -7656,24 +7683,25 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 				data.visited.push(idxStr + ' ' + visitedStr);
 				data.visited.push(visitedStr + ' ' + idxStr);
 				const filter = vertical ? '' : 'url(#softGlow)';
-				const path = H3.path('.string', {'data-link':`${visitedStr} ${idxStr}`, id:linkId, style:`stroke:${color}A`, d:coords, filter, onmouseover:showStatusBar});
+				const path = H3.path('.string', {'data-link':`${visitedStr} ${idxStr}`, id:linkId, style:`stroke:${color}A`, d:coords, filter, onmouseover});
 				node.appendChild(path);
 			}
 		}
 		let svg = this.graphs.map((g, i) =>
 		{
 			data.index.push(i);
-			g.makeSVG(node, data, false);
+			g._makeSVG(node, data, false);
 			data.index.pop();
 		});
 	}
-	getSVG(node, id, data)
+	makeSVG(node, id, data)
 	{
 		const name = this.name;
-		const g = H3.g({id, onmouseenter:e => Cat.R.diagram.emphasis(name, true), onmouseleave:e => Cat.R.diagram.emphasis(name, false), onmousedown:e => Cat.R.diagram.userSelectElement(e, name)});
+//		const g = H3.g({id, onmouseenter:e => Cat.R.diagram.emphasis(name, true), onmouseleave:e => Cat.R.diagram.emphasis(name, false), onmousedown:e => Cat.R.diagram.userSelectElement(e, name)});
+		const g = H3.g({id});
 		node.appendChild(g);
 		this.svg = g;
-		this.makeSVG(g, data);
+		this._makeSVG(g, data);
 	}
 	svgLinkUpdate(lnk, data)	// data {root, dom:{x,y}, cod:{x,y}}
 	{
@@ -8607,10 +8635,10 @@ class DiagramText extends Element
 		this.svgText = H3.text(this.isEditable ? '.grabbable' : null, {'text-anchor':'left', style:this.ssStyle(), ondblclick:e => this.textEditor()});
 		this.svg.appendChild(this.svgText);
 	}
-	getSVG(node)
+	makeSVG(node)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `NaN in getSVG`;
+			throw `NaN in makeSVG`;
 		const name = this.name;
 		const svg = H3.g('.diagramText', {'data-type':'text', 'data-name':name, 'text-anchor':'left', id:this.elementId(),
 			transform:`translate(${this.x} ${this.y + D.default.font.height/2})`});
@@ -8697,14 +8725,16 @@ class DiagramText extends Element
 	}
 	emphasis(on)
 	{
+		on ? D.emphasized.add(this) : D.emphasized.delete(this);
 		this.svg.querySelectorAll('circle, path, text, polyline, rect, use').forEach(elt => D.setClass('emphasis', on, elt));
 	}
 	getHtmlRep(idPrefix)
 	{
 		const id = this.elementId(idPrefix);
 		const div = H3.div(H3.tag('description', this.description), {id});
-		div.onmouseenter = _ => Cat.R.diagram.emphasis(this.name, true);
-		div.onmouseleave = _ => Cat.R.diagram.emphasis(this.name, false);
+//		div.onmouseenter = _ => Cat.R.diagram.emphasis(this.name, true);
+		div.onmouseenter = _ => this.emphasis(true);
+		div.onmouseleave = _ => this.emphasis(false);
 		return div;
 	}
 	textEditor()
@@ -8960,6 +8990,7 @@ class IndexObject extends CatObject
 	}
 	emphasis(on)
 	{
+		on ? D.emphasized.add(this) : D.emphasized.delete(this);
 		!on && this.svg.querySelectorAll('rect').forEach(rect => rect.remove());
 	}
 	placeProjection(e)		// or injection
@@ -8976,10 +9007,10 @@ class IndexObject extends CatObject
 		}
 		this.diagram.placeMorphismByObject(e, e.shiftKey ? 'codomain' : 'domain', this, this.diagram.id(this.to));
 	}
-	getSVG(node)
+	makeSVG(node)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `NaN in getSVG`;
+			throw `NaN in makeSVG`;
 		const name = this.name;
 		const txt = H3.text(this.to.properName, {'text-anchor':'middle', y:D.default.font.height/2});
 		const svg = H3.g(txt, '.grabbable.object', {draggable:true, transform:`translate(${this.x}, ${this.y})`, 'data-type':'object', 'data-name':this.name, 'data-sig':this.to.signature, id:this.elementId()});
@@ -9869,9 +9900,12 @@ class MorphismAssemblyAction extends Action
 			if ('to' in isu.element)
 				return H3.tr(H3.td(isu.message), H3.td(H3.button(isu.element.to.properName,
 				{
-					onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
-					onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
-					onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
+//					onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
+					onmouseenter:	_ => diagram.emphasis(isu.element, true),
+//					onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
+					onmouseleave:	_ => diagram.emphasis(isu.element, false),
+//					onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
+					onclick: 		_ => R.diagram.viewElements(isu.element),
 				})));
 			else
 				return H3.tr(H3.td(isu.message), H3.td(isu.element.properName));
@@ -12738,7 +12772,7 @@ class IndexMorphism extends Morphism
 			:
 				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
 	}
-	getSVG(node)
+	makeSVG(node)
 	{
 		this.predraw();
 		const off = this.getNameOffset();
@@ -12952,7 +12986,7 @@ class IndexMorphism extends Morphism
 			xy = new D2({x:cod.x - cod.width()/2, y:cod.y}).round();
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 			const id = this.graphId();
-			this.graph.getSVG(this.svg, id,
+			this.graph.makeSVG(this.svg, id,
 				{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:this.signature.substring(0, 6)});
 		}
 		else
@@ -13179,16 +13213,17 @@ class Cell
 			return new D2();
 		return r;
 	}
-	getSVG(node)
+	makeSVG(node)
 	{
 		if (isNaN(this.x) || isNaN(this.y))
-			throw `NaN in getSVG`;
+			throw `NaN in makeSVG`;
 		if (this.svg)
 			this.svg.remove();
 		const name = this.name;
 		const svg = H3.text('.grabbable', {id:this.cellId(), 'data-type':'cell', 'data-name':this.name, 'text-anchor':'middle', 'x':this.x, 'y':this.y + D.default.font.height/2}, this.properName);
-		svg.onmouseenter = _ => Cat.R.diagram.emphasis(name, true);
-		svg.onmouseleave = _ => Cat.R.diagram.emphasis(name, false);
+//		svg.onmouseenter = _ => Cat.R.diagram.emphasis(name, true);
+		svg.onmouseenter = _ => this.emphasis(true);
+		svg.onmouseleave = _ => this.emphasis(false);
 		svg.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
 		node.appendChild(svg);
 		this.svg = svg;
@@ -13213,7 +13248,7 @@ class Cell
 			return;
 		}
 		if (!this.svg)
-			this.getSVG(this.diagram.svgRoot);
+			this.makeSVG(this.diagram.svgRoot);
 		// hide cells that have references in them
 		const properName = this.left.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ||
 							this.right.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ? '' : this.properName;
@@ -13277,12 +13312,14 @@ class Cell
 	{
 		this.getObjects().map(o => o.finishMove());
 	}
+	/*
 	emphasis(on)
 	{
 		super.emphasis(on);
 		this.left.map(m => m.emphasis(on));
 		this.right.map(m => m.emphasis(on));
 	}
+	*/
 	getBBox()
 	{
 		return D2.Merge(...[...this.left, ...this.right].map(a => a.getBBox()));
@@ -13342,8 +13379,9 @@ class Cell
 		const actions =
 		{
 			onclick:		e => {},
-			onmouseenter:	e => R.diagram.emphasis(this.name, true),
-			onmouseleave:	e => R.diagram.emphasis(this.name, false),
+//			onmouseenter:	e => R.diagram.emphasis(this.name, true),
+			onmouseenter:	e => this.emphasis(true),
+			onmouseleave:	e => this.emphasis(false),
 		};
 		return H3.tr(H3.td(html), actions);
 	}
@@ -13359,20 +13397,21 @@ class Cell
 	{}
 	updateGlow(state, glow)	// same as Element
 	{
-		!this.svg && this.getSVG(this.diagram.svgBase);
+		!this.svg && this.makeSVG(this.diagram.svgBase);
 		this.svg.classList.remove(...['glow', 'badGlow']);
 		state && this.svg.classList.add(glow);
 	}
 	emphasis(on)
 	{
-		!this.svg && this.getSVG(this.diagram.svgBase);
+		on ? D.emphasized.add(this) : D.emphasized.delete(this);
+		!this.svg && this.makeSVG(this.diagram.svgBase);
 		D.setClass('emphasis', on, this.svg);
 		this.left.map(m => m.emphasis(on));
 		this.right.map(m => m.emphasis(on));
 	}
 	showSelected(state = true)
 	{
-		!this.svg && this.getSVG(this.diagram.svgBase);
+		!this.svg && this.makeSVG(this.diagram.svgBase);
 		this.svg.classList[state ? 'add' : 'remove']('selected');
 		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
 	}
@@ -13555,6 +13594,7 @@ class IndexCategory extends Category
 	loadCells(diagram)
 	{
 		this.morphismToCells.clear();
+		const foundCells = new Set();
 		this.forEachObject(o =>
 		{
 			if (o.domains.size > 1)
@@ -13610,10 +13650,15 @@ class IndexCategory extends Category
 						}
 					});	// TODO circularity test
 				}
-				cells.map(cell => cell.register());
-				cells.map(cell => cell.update());
+				cells.map(cell =>
+				{
+					cell.register();
+					cell.update();
+					foundCells.add(cell);
+				});
 			}
 		});
+		this.cells.forEach(cell => !foundCells.has(cell) && cell.deregister());
 	}
 	checkCells()
 	{
@@ -15035,7 +15080,7 @@ class Diagram extends Functor
 	}
 	addSVG(element)
 	{
-		this.svgBase && element.getSVG(this.svgBase);
+		this.svgBase && element.makeSVG(this.svgBase);
 	}
 	actionHtml(e, name, args = {})
 	{
@@ -15447,7 +15492,7 @@ class Diagram extends Functor
 				this.ready++;
 				setTimeout(_ =>
 				{
-					elt.getSVG(this.svgRoot);
+					elt.makeSVG(this.svgRoot);
 					this.ready--;
 				}, 0);
 			});
