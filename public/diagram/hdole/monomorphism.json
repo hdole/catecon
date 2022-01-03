@@ -59,24 +59,6 @@
       "height": "24"
     },
     {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/C",
-      "xy": {
-        "x": -200,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/A",
-      "xy": {
-        "x": 100,
-        "y": 400
-      }
-    },
-    {
       "basename": "o_5",
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/A",
@@ -131,6 +113,33 @@
       }
     },
     {
+      "basename": "o_3",
+      "prototype": "IndexObject",
+      "to": "hdole/monomorphism/A",
+      "xy": {
+        "x": 480,
+        "y": -170
+      }
+    },
+    {
+      "basename": "o_4",
+      "prototype": "IndexObject",
+      "to": "hdole/monomorphism/B",
+      "xy": {
+        "x": 670,
+        "y": -170
+      }
+    },
+    {
+      "basename": "o_11",
+      "prototype": "IndexObject",
+      "to": "hdole/monomorphism/C",
+      "xy": {
+        "x": 230,
+        "y": -170
+      }
+    },
+    {
       "basename": "m_0",
       "prototype": "IndexMorphism",
       "domain": "hdole/monomorphism/o_0",
@@ -181,33 +190,12 @@
       "prototype": "DiagramComposite",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
+      "homsetIndex": 1,
       "to": "hdole/monomorphism/Cm{h,f}mC",
       "morphisms": [
         "hdole/monomorphism/m_2",
         "hdole/monomorphism/m_0"
       ]
-    },
-    {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_3",
-      "codomain": "hdole/monomorphism/o_4",
-      "homsetIndex": -1,
-      "to": "hdole/monomorphism/h"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_3",
-      "codomain": "hdole/monomorphism/o_4",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 1,
-      "to": "hdole/monomorphism/g"
     },
     {
       "basename": "m_7",
@@ -231,10 +219,38 @@
       "to": "hdole/monomorphism/h"
     },
     {
-      "description": "The assertion that the composite of morphisms f&#8728;h equals that of f&#8728;g.",
-      "basename": "{m_3},{m_4}",
-      "prototype": "Assertion",
-      "equal": true
+      "basename": "m_5",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monomorphism/o_3",
+      "codomain": "hdole/monomorphism/o_4",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "to": "hdole/monomorphism/f"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monomorphism/o_11",
+      "codomain": "hdole/monomorphism/o_3",
+      "to": "hdole/monomorphism/h"
+    },
+    {
+      "basename": "m_6",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/monomorphism/o_11",
+      "codomain": "hdole/monomorphism/o_3",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 1,
+      "to": "hdole/monomorphism/g"
     }
   ],
   "elements": [
@@ -288,14 +304,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640749673002,
+  "timestamp": 1641175302800,
   "version": 0,
-  "hiddenCells": [
-    "hdole/monomorphism/{m_1},{m_2}"
-  ],
   "viewport": {
-    "x": 1713,
-    "y": 255,
-    "scale": 4.310709833108816
+    "x": 1053,
+    "y": 800,
+    "scale": 1.4749867797346796
   }
 }

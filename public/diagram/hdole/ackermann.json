@@ -14,7 +14,7 @@
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 600,
@@ -22,17 +22,8 @@
       }
     },
     {
-      "basename": "o_2",
-      "prototype": "DiagramObject",
-      "to": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
-      "xy": {
-        "x": 600,
-        "y": 300
-      }
-    },
-    {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/ackermann/Po{hdole/nat/N64,#1}oP",
       "xy": {
         "x": 800,
@@ -41,7 +32,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/ackermann/#1",
       "xy": {
         "x": 1200,
@@ -50,7 +41,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "xy": {
         "x": 1000,
@@ -59,7 +50,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/ackermann/CPo{#1,#1}oPC",
       "xy": {
         "x": 1200,
@@ -68,8 +59,8 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
-      "to": "#1",
+      "prototype": "IndexObject",
+      "to": "hdole/ackermann/#1",
       "xy": {
         "x": 1200,
         "y": 700
@@ -77,7 +68,7 @@
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N64",
       "xy": {
         "x": 600,
@@ -89,47 +80,29 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 540,
-        "y": 20
+        "x": 230,
+        "y": 70
       },
-      "height": "72",
+      "height": "200",
       "weight": "bold"
     },
     {
-      "basename": "o_1",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 800,
-        "y": 300
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "DiagramObject",
-      "to": "hdole/nat/N64",
-      "xy": {
-        "x": 800,
-        "y": 100
-      }
-    },
-    {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/ackermann/o_0",
       "codomain": "hdole/ackermann/o_4",
       "to": "hdole/ackermann/Fa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_-1}aF"
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/ackermann/o_4",
       "codomain": "hdole/ackermann/o_10",
       "to": "hdole/ackermann/Pm{Id{hdole/nat/N64}dI,hdole/nat/zero64}mP"
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/ackermann/o_7",
       "codomain": "hdole/ackermann/o_11",
       "attributes": [
@@ -146,7 +119,7 @@
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/ackermann/o_13",
       "codomain": "hdole/ackermann/o_11",
       "attributes": [
@@ -159,7 +132,7 @@
     },
     {
       "basename": "m_9",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/ackermann/o_6",
       "codomain": "hdole/ackermann/o_0",
       "attributes": [
@@ -172,35 +145,14 @@
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/ackermann/o_6",
       "codomain": "hdole/ackermann/o_13",
       "to": "hdole/ackermann/Fa{hdole/nat/N64,hdole/nat/N64_-1}aF"
     },
     {
-      "basename": "m_3",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/ackermann/o_1",
-      "codomain": "hdole/ackermann/o_3",
-      "to": "hdole/ackermann/Id{hdole/nat/N64}dI"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/ackermann/o_2",
-      "codomain": "hdole/ackermann/o_1",
-      "to": "hdole/ackermann/ack"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "DiagramMorphism",
-      "domain": "hdole/ackermann/o_2",
-      "codomain": "hdole/ackermann/o_3",
-      "to": "hdole/ackermann/ack"
-    },
-    {
       "basename": "m_6",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/ackermann/o_10",
       "codomain": "hdole/ackermann/o_11",
       "to": "hdole/nat/equ64"
@@ -211,14 +163,16 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "&#10034;",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/ackermann/#1",
-        "hdole/ackermann/#1"
+        "#1",
+        "#1"
       ]
     },
     {
@@ -232,7 +186,7 @@
       "prototype": "ProductObject",
       "objects": [
         "hdole/nat/N64",
-        "hdole/ackermann/#1"
+        "#1"
       ]
     },
     {
@@ -243,13 +197,6 @@
       ]
     },
     {
-      "basename": "ack",
-      "prototype": "Morphism",
-      "domain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
-      "codomain": "hdole/nat/N64"
-    },
-    {
-      "basename": "Fa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_-1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/nat/N64",
       "codomain": "hdole/ackermann/Po{hdole/nat/N64,#1}oP",
@@ -260,15 +207,12 @@
     },
     {
       "basename": "Id{hdole/nat/N64}dI",
-      "prototype": "FactorMorphism",
+      "prototype": "Identity",
+      "properName": "id",
       "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/N64",
-      "factors": [
-        []
-      ]
+      "codomain": "hdole/nat/N64"
     },
     {
-      "basename": "Fa{hdole/nat/N64,hdole/nat/N64_-1}aF",
       "prototype": "FactorMorphism",
       "domain": "hdole/nat/N64",
       "codomain": "hdole/ackermann/#1",
@@ -281,12 +225,11 @@
       "domain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/#1}oP",
       "codomain": "hdole/ackermann/Po{hdole/nat/N64,hdole/nat/N64}oP",
       "morphisms": [
-        "hdole/ackermann/Id{hdole/nat/N64}dI",
+        "Id{hdole/nat/N64}dI",
         "hdole/nat/zero64"
       ]
     },
     {
-      "basename": "CFa{CPo{#1,#1}oPC,#1_1}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/ackermann/#1",
@@ -296,7 +239,6 @@
       ]
     },
     {
-      "basename": "CFa{CPo{#1,#1}oPC,#1_0}aFC",
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/ackermann/#1",
@@ -306,11 +248,12 @@
       ]
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1627982560478,
+  "timestamp": 1641182437740,
   "version": 0,
-  "hiddenCells": [
-    "3c39be35906145755726c52affca1f3cb6a991ca8626c11213299db4797cfdb9"
-  ]
+  "viewport": {
+    "x": 0,
+    "y": 340,
+    "scale": 1
+  }
 }

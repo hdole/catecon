@@ -12,7 +12,7 @@
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 200,
@@ -25,13 +25,13 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 200,
-        "y": 470
+        "y": 460
       },
       "height": 24
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/Po{q,q}oP",
       "xy": {
         "x": 200,
@@ -60,7 +60,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 200,
@@ -69,7 +69,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 400,
@@ -88,7 +88,7 @@
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/#1",
       "xy": {
         "x": 200,
@@ -97,7 +97,7 @@
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 400,
@@ -116,7 +116,7 @@
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 200,
@@ -125,7 +125,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 400,
@@ -144,7 +144,7 @@
     },
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 200,
@@ -153,7 +153,7 @@
     },
     {
       "basename": "o_9",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 400,
@@ -172,7 +172,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 200,
@@ -181,7 +181,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 400,
@@ -200,7 +200,7 @@
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 200,
@@ -209,7 +209,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gates/q",
       "xy": {
         "x": 400,
@@ -218,50 +218,44 @@
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gates/o_2",
       "codomain": "hdole/gates/o_3",
-      "flipName": false,
       "to": "hdole/gates/Id{q}dI"
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gates/o_4",
       "codomain": "hdole/gates/o_5",
-      "flipName": false,
       "to": "hdole/gates/basis0"
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gates/o_6",
       "codomain": "hdole/gates/o_7",
-      "flipName": false,
       "to": "hdole/gates/X"
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gates/o_8",
       "codomain": "hdole/gates/o_9",
-      "flipName": false,
       "to": "hdole/gates/Y"
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gates/o_10",
       "codomain": "hdole/gates/o_11",
-      "flipName": false,
       "to": "hdole/gates/Z"
     },
     {
       "basename": "m_5",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gates/o_12",
       "codomain": "hdole/gates/o_13",
-      "flipName": false,
       "to": "hdole/gates/H"
     }
   ],
@@ -274,12 +268,19 @@
     },
     {
       "description": "A pair of qubits",
-      "basename": "Po{q,q}oP",
       "prototype": "TensorObject",
       "objects": [
-        "hdole/gates/q",
-        "hdole/gates/q"
+        "q",
+        "q"
       ]
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "description": "Identity for the object &Qopf;",
@@ -291,12 +292,6 @@
       },
       "domain": "hdole/gates/q",
       "codomain": "hdole/gates/q"
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "&#10034;",
-      "size": 1
     },
     {
       "description": "the 0 basis vector",
@@ -350,8 +345,12 @@
       "codomain": "hdole/gates/q"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1596154116788,
-  "version": 0
+  "timestamp": 1641182495028,
+  "version": 0,
+  "viewport": {
+    "x": 632,
+    "y": -625,
+    "scale": 2.0863004005486023
+  }
 }

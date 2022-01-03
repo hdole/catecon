@@ -14,7 +14,7 @@
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/etBoundary",
       "xy": {
         "x": 200,
@@ -23,7 +23,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -32,7 +32,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/etPath",
       "xy": {
         "x": 200,
@@ -41,7 +41,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -50,7 +50,7 @@
     },
     {
       "basename": "o_4",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/etSref",
       "xy": {
         "x": 200,
@@ -59,7 +59,7 @@
     },
     {
       "basename": "o_5",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -68,7 +68,7 @@
     },
     {
       "basename": "o_6",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/etAref",
       "xy": {
         "x": 200,
@@ -77,7 +77,7 @@
     },
     {
       "basename": "o_7",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -86,7 +86,7 @@
     },
     {
       "basename": "o_8",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/etText",
       "xy": {
         "x": 200,
@@ -95,7 +95,7 @@
     },
     {
       "basename": "o_9",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -104,7 +104,7 @@
     },
     {
       "basename": "o_10",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/EltType",
       "xy": {
         "x": 200,
@@ -113,7 +113,7 @@
     },
     {
       "basename": "o_11",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC",
       "xy": {
         "x": 600,
@@ -122,7 +122,7 @@
     },
     {
       "basename": "o_12",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/DBU",
       "xy": {
         "x": 200,
@@ -131,7 +131,7 @@
     },
     {
       "basename": "o_13",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
@@ -140,7 +140,7 @@
     },
     {
       "basename": "o_14",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Strname",
       "xy": {
         "x": 200,
@@ -149,7 +149,7 @@
     },
     {
       "basename": "o_15",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -158,7 +158,7 @@
     },
     {
       "basename": "o_16",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Layer",
       "xy": {
         "x": 200,
@@ -167,7 +167,7 @@
     },
     {
       "basename": "o_17",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 400,
@@ -176,7 +176,7 @@
     },
     {
       "basename": "o_18",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Datatype",
       "xy": {
         "x": 200,
@@ -185,7 +185,7 @@
     },
     {
       "basename": "o_19",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 400,
@@ -194,7 +194,7 @@
     },
     {
       "basename": "o_20",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Point",
       "xy": {
         "x": 200,
@@ -203,7 +203,7 @@
     },
     {
       "basename": "o_21",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
       "xy": {
         "x": 400,
@@ -212,7 +212,7 @@
     },
     {
       "basename": "o_22",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Points",
       "xy": {
         "x": 200,
@@ -221,7 +221,7 @@
     },
     {
       "basename": "o_23",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Ho{hdole/nat/N16,Point}oH",
       "xy": {
         "x": 400,
@@ -230,7 +230,7 @@
     },
     {
       "basename": "o_24",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Property",
       "xy": {
         "x": 200,
@@ -239,7 +239,7 @@
     },
     {
       "basename": "o_25",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP",
       "xy": {
         "x": 400,
@@ -248,7 +248,7 @@
     },
     {
       "basename": "o_26",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Properties",
       "xy": {
         "x": 200,
@@ -257,7 +257,7 @@
     },
     {
       "basename": "o_27",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Ho{hdole/nat/N16,Property}oH",
       "xy": {
         "x": 400,
@@ -266,7 +266,7 @@
     },
     {
       "basename": "o_28",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Boundary",
       "xy": {
         "x": 200,
@@ -275,7 +275,7 @@
     },
     {
       "basename": "o_29",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP",
       "xy": {
         "x": 600,
@@ -284,7 +284,7 @@
     },
     {
       "basename": "o_30",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/ptFlush",
       "xy": {
         "x": 200,
@@ -293,7 +293,7 @@
     },
     {
       "basename": "o_31",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -302,7 +302,7 @@
     },
     {
       "basename": "o_32",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/ptRound",
       "xy": {
         "x": 200,
@@ -311,7 +311,7 @@
     },
     {
       "basename": "o_33",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -320,7 +320,7 @@
     },
     {
       "basename": "o_34",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/ptSquare",
       "xy": {
         "x": 200,
@@ -329,7 +329,7 @@
     },
     {
       "basename": "o_35",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/#1",
       "xy": {
         "x": 400,
@@ -338,7 +338,7 @@
     },
     {
       "basename": "o_36",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/ptVariable",
       "xy": {
         "x": 200,
@@ -347,7 +347,7 @@
     },
     {
       "basename": "o_37",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
       "xy": {
         "x": 400,
@@ -356,7 +356,7 @@
     },
     {
       "basename": "o_38",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/EndType",
       "xy": {
         "x": 200,
@@ -365,7 +365,7 @@
     },
     {
       "basename": "o_39",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC",
       "xy": {
         "x": 600,
@@ -374,7 +374,7 @@
     },
     {
       "basename": "o_40",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Width",
       "xy": {
         "x": 200,
@@ -383,7 +383,7 @@
     },
     {
       "basename": "o_41",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -392,7 +392,7 @@
     },
     {
       "basename": "o_42",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Path",
       "xy": {
         "x": 200,
@@ -401,7 +401,7 @@
     },
     {
       "basename": "o_43",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP",
       "xy": {
         "x": 800,
@@ -410,7 +410,7 @@
     },
     {
       "basename": "o_44",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Sname",
       "xy": {
         "x": 200,
@@ -419,7 +419,7 @@
     },
     {
       "basename": "o_45",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -428,7 +428,7 @@
     },
     {
       "basename": "o_46",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Reflection",
       "xy": {
         "x": 200,
@@ -437,8 +437,8 @@
     },
     {
       "basename": "o_47",
-      "prototype": "DiagramObject",
-      "to": "CPo{#1,#1}oPC",
+      "prototype": "IndexObject",
+      "to": "hdole/gds/CPo{#1,#1}oPC",
       "xy": {
         "x": 400,
         "y": 4800
@@ -446,7 +446,7 @@
     },
     {
       "basename": "o_48",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Angle",
       "xy": {
         "x": 200,
@@ -455,7 +455,7 @@
     },
     {
       "basename": "o_49",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
@@ -464,7 +464,7 @@
     },
     {
       "basename": "o_50",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Mag",
       "xy": {
         "x": 200,
@@ -473,7 +473,7 @@
     },
     {
       "basename": "o_51",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
         "x": 400,
@@ -482,7 +482,7 @@
     },
     {
       "basename": "o_52",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Sref",
       "xy": {
         "x": 200,
@@ -491,7 +491,7 @@
     },
     {
       "basename": "o_53",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP",
       "xy": {
         "x": 800,
@@ -500,7 +500,7 @@
     },
     {
       "basename": "o_54",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Rows",
       "xy": {
         "x": 200,
@@ -509,7 +509,7 @@
     },
     {
       "basename": "o_55",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 400,
@@ -518,7 +518,7 @@
     },
     {
       "basename": "o_56",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Cols",
       "xy": {
         "x": 200,
@@ -527,7 +527,7 @@
     },
     {
       "basename": "o_57",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 400,
@@ -536,7 +536,7 @@
     },
     {
       "basename": "o_58",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/RowPitch",
       "xy": {
         "x": 200,
@@ -545,7 +545,7 @@
     },
     {
       "basename": "o_59",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 400,
@@ -554,7 +554,7 @@
     },
     {
       "basename": "o_60",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/ColPitch",
       "xy": {
         "x": 200,
@@ -563,7 +563,7 @@
     },
     {
       "basename": "o_61",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/nat/N16",
       "xy": {
         "x": 400,
@@ -572,7 +572,7 @@
     },
     {
       "basename": "o_62",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Aref",
       "xy": {
         "x": 200,
@@ -581,7 +581,7 @@
     },
     {
       "basename": "o_63",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP",
       "xy": {
         "x": 1000,
@@ -590,7 +590,7 @@
     },
     {
       "basename": "o_64",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Text",
       "xy": {
         "x": 200,
@@ -599,7 +599,7 @@
     },
     {
       "basename": "o_65",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
       "xy": {
         "x": 600,
@@ -608,7 +608,7 @@
     },
     {
       "basename": "o_66",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/Element",
       "xy": {
         "x": 200,
@@ -617,7 +617,7 @@
     },
     {
       "basename": "o_67",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC",
       "xy": {
         "x": 600,
@@ -629,246 +629,246 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 0,
-        "y": 0
+        "x": -60,
+        "y": -10
       },
       "height": 96,
       "weight": "bold"
     },
     {
       "basename": "m_0",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_0",
       "codomain": "hdole/gds/o_1",
       "to": "hdole/gds/Id{etBoundary,#1}dI"
     },
     {
       "basename": "m_1",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_2",
       "codomain": "hdole/gds/o_3",
       "to": "hdole/gds/Id{etPath,#1}dI"
     },
     {
       "basename": "m_2",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_4",
       "codomain": "hdole/gds/o_5",
       "to": "hdole/gds/Id{etSref,#1}dI"
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_6",
       "codomain": "hdole/gds/o_7",
       "to": "hdole/gds/Id{etAref,#1}dI"
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_8",
       "codomain": "hdole/gds/o_9",
       "to": "hdole/gds/Id{etText,#1}dI"
     },
     {
       "basename": "m_5",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_10",
       "codomain": "hdole/gds/o_11",
       "to": "hdole/gds/Id{EltType,CPo{etBoundary,etPath,etSref,etAref,etText}oPC}dI"
     },
     {
       "basename": "m_6",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_12",
       "codomain": "hdole/gds/o_13",
       "to": "hdole/gds/Id{DBU,hdole/floats/F64}dI"
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_14",
       "codomain": "hdole/gds/o_15",
       "to": "hdole/gds/Id{Strname,hdole/str/str}dI"
     },
     {
       "basename": "m_8",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_16",
       "codomain": "hdole/gds/o_17",
       "to": "hdole/gds/Id{Layer,hdole/nat/N16}dI"
     },
     {
       "basename": "m_9",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_18",
       "codomain": "hdole/gds/o_19",
       "to": "hdole/gds/Id{Datatype,hdole/nat/N16}dI"
     },
     {
       "basename": "m_10",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_20",
       "codomain": "hdole/gds/o_21",
       "to": "hdole/gds/Id{Point,Po{hdole/int/Z32,hdole/int/Z32}oP}dI"
     },
     {
       "basename": "m_11",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_22",
       "codomain": "hdole/gds/o_23",
       "to": "hdole/gds/Id{Points,Ho{hdole/nat/N16,Point}oH}dI"
     },
     {
       "basename": "m_12",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_24",
       "codomain": "hdole/gds/o_25",
       "to": "hdole/gds/Id{Property,Po{hdole/nat/N16,hdole/str/str}oP}dI"
     },
     {
       "basename": "m_13",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_26",
       "codomain": "hdole/gds/o_27",
       "to": "hdole/gds/Id{Properties,Ho{hdole/nat/N16,Property}oH}dI"
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_28",
       "codomain": "hdole/gds/o_29",
       "to": "hdole/gds/Id{Boundary,Po{Layer,Datatype,Points,Properties}oP}dI"
     },
     {
       "basename": "m_15",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_30",
       "codomain": "hdole/gds/o_31",
       "to": "hdole/gds/Id{ptFlush,#1}dI"
     },
     {
       "basename": "m_16",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_32",
       "codomain": "hdole/gds/o_33",
       "to": "hdole/gds/Id{ptRound,#1}dI"
     },
     {
       "basename": "m_17",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_34",
       "codomain": "hdole/gds/o_35",
       "to": "hdole/gds/Id{ptSquare,#1}dI"
     },
     {
       "basename": "m_18",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_36",
       "codomain": "hdole/gds/o_37",
       "to": "hdole/gds/Id{ptVariable,Po{hdole/int/Z32,hdole/int/Z32}oP}dI"
     },
     {
       "basename": "m_19",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_38",
       "codomain": "hdole/gds/o_39",
       "to": "hdole/gds/Id{EndType,CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC}dI"
     },
     {
       "basename": "m_20",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_40",
       "codomain": "hdole/gds/o_41",
       "to": "hdole/gds/Id{Width,hdole/int/Z32}dI"
     },
     {
       "basename": "m_21",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_42",
       "codomain": "hdole/gds/o_43",
       "to": "hdole/gds/Id{Path,Po{Layer,Datatype,Points,Width,EndType,Properties}oP}dI"
     },
     {
       "basename": "m_22",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_44",
       "codomain": "hdole/gds/o_45",
       "to": "hdole/gds/Id{Sname,hdole/str/str}dI"
     },
     {
       "basename": "m_23",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_46",
       "codomain": "hdole/gds/o_47",
       "to": "hdole/gds/Id{Reflection,CPo{#1,#1}oPC}dI"
     },
     {
       "basename": "m_24",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_48",
       "codomain": "hdole/gds/o_49",
       "to": "hdole/gds/Id{Angle,hdole/floats/F64}dI"
     },
     {
       "basename": "m_25",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_50",
       "codomain": "hdole/gds/o_51",
       "to": "hdole/gds/Id{Mag,hdole/floats/F64}dI"
     },
     {
       "basename": "m_26",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_52",
       "codomain": "hdole/gds/o_53",
       "to": "hdole/gds/Id{Sref,Po{Sname,Point,Reflection,Angle,Mag,Properties}oP}dI"
     },
     {
       "basename": "m_27",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_54",
       "codomain": "hdole/gds/o_55",
       "to": "hdole/gds/Id{Rows,hdole/nat/N16}dI"
     },
     {
       "basename": "m_28",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_56",
       "codomain": "hdole/gds/o_57",
       "to": "hdole/gds/Id{Cols,hdole/nat/N16}dI"
     },
     {
       "basename": "m_29",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_58",
       "codomain": "hdole/gds/o_59",
       "to": "hdole/gds/Id{RowPitch,hdole/nat/N16}dI"
     },
     {
       "basename": "m_30",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_60",
       "codomain": "hdole/gds/o_61",
       "to": "hdole/gds/Id{ColPitch,hdole/nat/N16}dI"
     },
     {
       "basename": "m_31",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_62",
       "codomain": "hdole/gds/o_63",
       "to": "hdole/gds/Id{Aref,Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP}dI"
     },
     {
       "basename": "m_32",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_64",
       "codomain": "hdole/gds/o_65",
       "to": "hdole/gds/Id{Text,Po{Layer,Datatype,hdole/str/str,Point,Properties}oP}dI"
     },
     {
       "basename": "m_33",
-      "prototype": "DiagramMorphism",
+      "prototype": "IndexMorphism",
       "domain": "hdole/gds/o_66",
       "codomain": "hdole/gds/o_67",
       "to": "hdole/gds/Id{Element,CPo{Boundary,Path,Sref,Aref,Text}oPC}dI"
@@ -879,7 +879,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "&#10034;",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -993,11 +995,11 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/gds/etBoundary",
-        "hdole/gds/etPath",
-        "hdole/gds/etSref",
-        "hdole/gds/etAref",
-        "hdole/gds/etText"
+        "etBoundary",
+        "etPath",
+        "etSref",
+        "etAref",
+        "etText"
       ]
     },
     {
@@ -1133,7 +1135,7 @@
       "prototype": "HomObject",
       "objects": [
         "hdole/nat/N16",
-        "hdole/gds/Point"
+        "Point"
       ]
     },
     {
@@ -1188,7 +1190,7 @@
       "prototype": "HomObject",
       "objects": [
         "hdole/nat/N16",
-        "hdole/gds/Property"
+        "Property"
       ]
     },
     {
@@ -1213,10 +1215,10 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gds/Layer",
-        "hdole/gds/Datatype",
-        "hdole/gds/Points",
-        "hdole/gds/Properties"
+        "Layer",
+        "Datatype",
+        "Points",
+        "Properties"
       ]
     },
     {
@@ -1323,10 +1325,10 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/gds/ptFlush",
-        "hdole/gds/ptRound",
-        "hdole/gds/ptSquare",
-        "hdole/gds/ptVariable"
+        "ptFlush",
+        "ptRound",
+        "ptSquare",
+        "ptVariable"
       ]
     },
     {
@@ -1373,12 +1375,12 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gds/Layer",
-        "hdole/gds/Datatype",
-        "hdole/gds/Points",
-        "hdole/gds/Width",
-        "hdole/gds/EndType",
-        "hdole/gds/Properties"
+        "Layer",
+        "Datatype",
+        "Points",
+        "Width",
+        "EndType",
+        "Properties"
       ]
     },
     {
@@ -1426,20 +1428,20 @@
       "basename": "Reflection",
       "prototype": "NamedObject",
       "dual": true,
-      "source": "CPo{#1,#1}oPC"
+      "source": "hdole/gds/CPo{#1,#1}oPC"
     },
     {
       "basename": "Id{Reflection,CPo{#1,#1}oPC}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
       "domain": "hdole/gds/Reflection",
-      "codomain": "CPo{#1,#1}oPC"
+      "codomain": "hdole/gds/CPo{#1,#1}oPC"
     },
     {
       "basename": "Id{CPo{#1,#1}oPC,Reflection}dI",
       "prototype": "Identity",
       "properName": "&#8797;",
-      "domain": "CPo{#1,#1}oPC",
+      "domain": "hdole/gds/CPo{#1,#1}oPC",
       "codomain": "hdole/gds/Reflection"
     },
     {
@@ -1485,12 +1487,12 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gds/Sname",
-        "hdole/gds/Point",
-        "hdole/gds/Reflection",
-        "hdole/gds/Angle",
-        "hdole/gds/Mag",
-        "hdole/gds/Properties"
+        "Sname",
+        "Point",
+        "Reflection",
+        "Angle",
+        "Mag",
+        "Properties"
       ]
     },
     {
@@ -1596,16 +1598,16 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gds/Sname",
-        "hdole/gds/Point",
-        "hdole/gds/Reflection",
-        "hdole/gds/Angle",
-        "hdole/gds/Mag",
-        "hdole/gds/Rows",
-        "hdole/gds/Cols",
-        "hdole/gds/RowPitch",
-        "hdole/gds/ColPitch",
-        "hdole/gds/Properties"
+        "Sname",
+        "Point",
+        "Reflection",
+        "Angle",
+        "Mag",
+        "Rows",
+        "Cols",
+        "RowPitch",
+        "ColPitch",
+        "Properties"
       ]
     },
     {
@@ -1631,11 +1633,11 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "hdole/gds/Layer",
-        "hdole/gds/Datatype",
+        "Layer",
+        "Datatype",
         "hdole/str/str",
-        "hdole/gds/Point",
-        "hdole/gds/Properties"
+        "Point",
+        "Properties"
       ]
     },
     {
@@ -1662,11 +1664,11 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/gds/Boundary",
-        "hdole/gds/Path",
-        "hdole/gds/Sref",
-        "hdole/gds/Aref",
-        "hdole/gds/Text"
+        "Boundary",
+        "Path",
+        "Sref",
+        "Aref",
+        "Text"
       ]
     },
     {
@@ -1691,13 +1693,12 @@
       "codomain": "hdole/gds/Element"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1629663206315,
+  "timestamp": 1641182457404,
   "version": 0,
   "viewport": {
-    "x": 265.46723767505705,
-    "y": 121.23536850879145,
+    "x": 265,
+    "y": 121,
     "scale": 0.9363004692136897
   }
 }
