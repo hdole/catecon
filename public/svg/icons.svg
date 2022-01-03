@@ -1,11 +1,11 @@
 <svg class="iconSet" id="CatIcons">
 	<radialGradient id="radgrad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:1"></stop>
-		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"></stop>
+		<stop offset="0%" class="radgrad0"></stop>
+		<stop offset="100%" class="radgrad1"></stop>
 	</radialGradient>
 	<radialGradient id="radgrad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-		<stop offset="0%" style="stop-color:rgb(127,127,127);stop-opacity:1"></stop>
-		<stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0"></stop>
+		<stop offset="0%" class="radgrad2"></stop>
+		<stop offset="100%" class="radgrad1"></stop>
 	</radialGradient>	
 	<marker id="arrowhead" viewBox="6 12 60 90" refX="50" refY="50" markerUnits="strokeWidth" markerWidth="6" markerHeight="5" orient="auto">
 		<path class="svgstr3" d="M10 20 L60 50 L10 80"/>
@@ -100,7 +100,6 @@
 		<line class="arrow0" x1="80" y1="160" x2="240" y2="160"/>
 	</symbol>
 	<symbol id="icon-copy" class="icon" viewbox="0 0 320 320">
-		<circle cx="200" cy="200" r="160" fill="#fff"/>
 		<circle cx="200" cy="200" r="160" fill="url(#radgrad1)"/>
 		<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>
 	</symbol>
