@@ -13,6 +13,7 @@
 	--color-statusbar-bg:	#ffe;
 	--color-text:		#000;
 	--color-toolbar-bg:	#eee;
+	--color-toolbar-shadow:	#bbb;
 	--color-object:		#000;
 	--color-morphism:	#000;
 	--color-panel-bg:	#f7f7f7;
@@ -35,6 +36,7 @@
 	--color-statusbar-bg:	#554;
 	--color-text:		#fff;
 	--color-toolbar-bg:	#666;
+	--color-toolbar-shadow:	#666;
 	--color-object:		#fff;
 	--color-morphism:	#fff;
 	--color-panel-bg:	#666;
@@ -453,7 +455,7 @@ p
 	background-color:	var(--color-toolbar-bg);
 	border-width: 		0px;
 	border-radius:		4px;
-	box-shadow:			4px 4px 2px 2px #bbbb;
+	box-shadow:			4px 4px 2px 2px var(--color-toolbar-shadow);
 	display:			inline-block;
 	margin:				0px;
 	overflow:			hidden;
@@ -543,54 +545,51 @@ p
 .svgstr1
 {
 	fill:				none;
-	stroke:				black;
+	stroke:				var(--color-morphism);
 	stroke-width:		20px;
 	stroke-linecap:		round;
 	stroke-linejoin:	round;
 }
 
-.var-arrowhead
-{
-	fill:			none;
-	stroke:			var(--color-morphism);
-	stroke-width:	20px
-}
-
 .svgstr3
 {
 	fill:			none;
-	stroke:			black;
+	stroke:			var(--color-morphism);
 	stroke-width:	10px
 }
 
 .svgstr4
 {
 	fill:none;
-	stroke:black;
+	stroke:var(--color-morphism);
 	stroke-width:20px
 }
 
 .arrow0
 {
-	fill:none;
-	stroke:black;
-	stroke-width:20px;
-	stroke-miterlimit:2.61313;
+	fill:			none;
+	stroke:			var(--color-morphism);
+	stroke-width:	20px;
 }
 
 .arrow0dash
 {
 	fill:				none;
-	stroke:				black;
+	stroke:				var(--color-morphism);
 	stroke-dasharray:	10,10;
 	stroke-width:		20px;
-	stroke-miterlimit:	2.61313;
 }
-.arrow0rnd {fill:none;	stroke:black; stroke-width:20px; stroke-miterlimit:2.61313;	stroke-linecap:round;}
+.arrow0rnd
+{
+	fill:			none;
+	stroke:			var(--color-morphism);
+	stroke-width:	20px;
+	stroke-linecap:round;
+}
 .arrow0-30px
 {
 	fill:			none;
-	stroke:			black;
+	stroke:			var(--color-morphism);
 	stroke-linecap:	round;
 	stroke-width:	30px;
 }
@@ -598,14 +597,26 @@ p
 .arrow6 {fill:none; stroke:#666; stroke-width:20px;}
 .arrow9 {fill:none; stroke:#999; stroke-width:20px;}
 .arrowF {fill:none; stroke:#FFF; stroke-width:20px;}
-.svgstrThinGray {fill:none; stroke:#777; stroke-width:10px;}
-.svgfil0 {fill:black;fill-rule:nonzero;}
+.svgstrThinGray
+{
+	fill:none;
+	stroke:#777;
+	stroke-width:10px;
+}
+.svgfil0
+{
+	fill:var(--color-morphism);
+	fill-rule:nonzero;
+}
 .svgfill
 {
 	fill:#bbb;
 	fill-opacity:	0.7;
 }
-.svgfil3 {fill:#333333;}
+.svgfil3
+{
+	fill:#333333;
+}
 .svgfil4
 {
 	fill:			#fff
@@ -706,7 +717,7 @@ p
 
 .buttonBarRight
 {
-	background-color:	#fff;
+	background-color:	var(--color-bg);
 	margin-bottom:		0px;
 	margin-right:		0px;
 	margin-left:		auto;
@@ -717,7 +728,7 @@ p
 
 .buttonBarLeft
 {
-	background-color:	#fff;
+	background-color:	var(--color-bg);
 	margin-bottom:		0px;
 	margin-right:		auto;
 	margin-left:		0px;
@@ -1067,7 +1078,7 @@ description
 .search
 {
 	fill:			none;
-	stroke:			black;
+	stroke:			var(--color-body);
 	stroke-linecap:	round;
 	stroke-width:	20px;
 }
@@ -1087,7 +1098,7 @@ description
 
 .icon-background
 {
-	fill:				#fff;
+	fill:				var(--color-bg);
 	width:				0.32in;
 	height:				0.32in;
 	fill-opacity:		1;
@@ -1095,7 +1106,7 @@ description
 
 .icon-table
 {
-	background-color:	#fff;
+	background-color:	var(--color-bg);
 }
 
 .icon-active
@@ -1276,10 +1287,12 @@ tspan
 
 .text-editor
 {
-	white-space:	pre-wrap;
-	word-wrap:		break-word;
-	width:			fit-content;
-	font-family:	"Fira Sans",sans-serif;
+	background-color:	var(--color-bg);
+	color:				var(--color-body);
+	white-space:		pre-wrap;
+	word-wrap:			break-word;
+	width:				fit-content;
+	font-family:		"Fira Sans",sans-serif;
 }
 
 .ifocus
@@ -1290,4 +1303,20 @@ tspan
 {
 	cursor:			none;
 	user-select:	none;
+}
+
+.radgrad0
+{
+	stop-color:		var(--color-body);
+	stop-opacity:	1;
+}
+.radgrad1
+{
+	stop-color:		var(--color-bg);
+	stop-opacity:	0;
+}
+.radgrad2
+{
+	stop-color:		#888;
+	stop-opacity:	1;
 }
