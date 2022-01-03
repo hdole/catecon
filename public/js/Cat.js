@@ -7,9 +7,10 @@
 //		Autohide		parts of the GUI are to disapear					-
 //			show															[D.autohide]
 //			hide															[D.autohide]
-// 		Assertion															-
-// 			new			an assertion was created							[Assertion.constructor]
-// 			delete															[Assertion.decrRefcnt]
+// 		Cell															-
+// 			new			an cell was created									[Cell.constructor]
+// 			delete															[Cell.deregister]
+// 			check															[D.mouseup, D.setupReplay, ,CompositeAction.doit, NameAction.doit, CopyAction.doit, PullbackAction.doit]
 // 		CAT																	-
 //			close		remove diagram from session							[DiagramTool.getButtons, Diagram.close]
 // 			default		diagram is now the default diagram for viewing		[R.SelectDiagram]
@@ -358,7 +359,7 @@ class U		// utilities
 	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
 	static IsIndexElement(elt)
 	{
-		return elt instanceof IndexObject || elt instanceof IndexMorphism || elt instanceof DiagramComposite || elt instanceof Assertion || elt instanceof DiagramText;
+		return elt instanceof IndexObject || elt instanceof IndexMorphism || elt instanceof DiagramComposite || elt instanceof DiagramText;
 	}
 	static HasFactor(factors, someFactor)
 	{
@@ -565,34 +566,32 @@ class Runtime
 			{
 				case 'CheckEquivalence':
 					const diagram = this.$CAT.getElement(args.diagram);
-					const cell = diagram.domain.cells.get(args.cell);
+					const cell = diagram.getCell(args.cell);
 					if (!cell)
 						return;	// TODO bad cell request
-					cell.removeSVG();
-					const assertion = diagram.getAssertion(cell.name);
-					if (assertion)
-						assertion.setCell(cell);
-					let type = '';
-					if (args.isEqual === 'unknown')
-						type = diagram.domain.hiddenCells.has(args.cell) ? 'hidden' : 'unknown';
-					else if (args.isEqual === true)
+					if (cell.commutes !== args.isEqual)
 					{
-						if (assertion)
-							type = 'assertion';
-						else if (DiagramComposite.CellIsComposite(cell))
-							type = 'composite';
-						else if (cell.isNamedMorphism())
-							type = 'named';
+						cell.removeSVG();
+						let type = '';
+						if (args.isEqual === true)
+						{
+							if (cell.commutes === 'assertion')
+								type = 'assertion';
+							else if (DiagramComposite.CellIsComposite(cell))
+								type = 'composite';
+							else if (cell.isNamedMorphism())
+								type = 'named';
+							else
+								type = 'computed';
+						}
 						else
-							type = 'computed';
+							type = 'notequal';
+						cell.setCommutes(type);
+						const objs = cell.getObjects();
+						if (!cell.svg)
+							diagram.addSVG(cell);
+						cell.update();
 					}
-					else
-						type = 'notequal';
-					cell.setCommutes(type);
-					const objs = cell.getObjects();
-					if (!cell.svg)
-						diagram.addSVG(cell);
-					cell.update();
 					break;
 				case 'start':
 				case 'LoadDiagrams':
@@ -1758,7 +1757,7 @@ class Toolbar
 		window.addEventListener('Login', e => !D.params.has('select') && this.hide());
 		window.addEventListener('View', e => e.detail.command === 'catalog' ? this.hide() : null);
 		window.addEventListener('CAT', e => e.detail.command === 'new' || e.detail.command === 'default' ? this.hide() : null);
-		this.table = H3.table('##help-table');
+		this.table = H3.table('##help-table.w100');
 		this.help.appendChild(this.table);
 		this.body = H3.div('##help-body');
 		this.help.appendChild(this.body);
@@ -1932,7 +1931,7 @@ class Toolbar
 		btns.push(D.getIcon('diagram', 'diagram', e => setActive(e, 'diagram', ee => Cat.D.elementTool.Diagram.html(ee)), {title:'Diagrams', help:'hdole/diagram'}));
 		btns.push(D.getIcon('object', 'object', e => setActive(e, 'object', ee =>Cat.D.elementTool.Object.html(ee)), {title:'Objects', help:'hdole/object'}));
 		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), {title:'Morphisms', help:'hdole/morphism'}));
-		btns.push(D.getIcon('cell', 'cell', e => setActive(e, 'cell', ee => Cat.D.elementTool.Assert.html(ee)), {title:'Assertions'}));
+		btns.push(D.getIcon('cell', 'cell', e => setActive(e, 'cell', ee => Cat.D.elementTool.Cell.html(ee)), {title:'Cells'}));
 		btns.push(D.getIcon('text', 'text', e => setActive(e, 'text', ee => Cat.D.elementTool.Text.html(ee)), {title:'Text'}));
 		btns.push(D.getIcon('help', 'help', e => setActive(e, 'help', ee => R.Actions.help.html(e, diagram, [diagram]), {title:'Show help'})));
 		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), {title:'Show graphs in diagram'}));
@@ -3225,7 +3224,7 @@ class CellTool extends ElementTool
 {
 	constructor(type, headline)
 	{
-		super('Assert', D.toolbar.help, headline, ['search']);
+		super('Cell', D.toolbar.help, headline, ['search']);
 		this.hasDiagramOnlyButton = false;
 		Object.defineProperties(this,
 		{
@@ -3237,6 +3236,12 @@ class CellTool extends ElementTool
 	addNewSection()
 	{
 		this.toolbar.appendChild(H3.tr(H3.td((`##${this.type}-new.hidden`))));
+	}
+	html(e)
+	{
+		super.html();
+		const searchbar = D.toolbar.help.querySelector('#Cell-search-tools');
+		searchbar.classList.add('hidden');
 	}
 	getRows(tbl, cells)
 	{
@@ -3692,12 +3697,12 @@ class Display
 					KeyA(e)
 					{
 						D.toolbar.show();
-						D.elementTool.Assert.html(e);
+						D.elementTool.Cell.html(e);
 					},
 					ShiftKeyA(e)
 					{
 						D.toolbar.show();
-						D.elementTool.Assert.html(e);
+						D.elementTool.Cell.html(e);
 						e.preventDefault();
 					},
 					ControlKeyA(e)
@@ -4135,7 +4140,7 @@ class Display
 			Object:		new ObjectTool('Create a new object in this diagram'),
 			Morphism:	new MorphismTool('Create a new morphism in this diagram'),
 			Text:		new TextTool('Create new text in this diagram'),
-			Assert:		new CellTool('Create new assertion in this diagram'),
+			Cell:		new CellTool('Modify cell attributes in this diagram'),
 		},
 		this.readDefaults();
 		this.resize();
@@ -4702,7 +4707,7 @@ class Display
 			this.resize();
 			R.diagram && R.diagram.updateBackground();
 		});
-		window.addEventListener('Assertion', e =>
+		window.addEventListener('Cell', e =>
 		{
 			if (!R.sync)
 				return;
@@ -4716,6 +4721,8 @@ class Display
 					break;
 				case 'new':
 				case 'update':
+				case 'show':
+				case 'hide':
 					this.autosave(args.diagram);
 					break;
 			}
@@ -4738,7 +4745,7 @@ class Display
 						element.update();
 						diagram.domain.updateCells(element);
 				}
-				diagram.domain.findCells(diagram);
+				diagram.domain.loadCells(diagram);
 				diagram.domain.checkCells();
 				diagram.updateBackground();
 			}
@@ -4770,20 +4777,12 @@ class Display
 			let autosav = true;
 			switch(args.command)
 			{
-				case 'fuse':	// scan all 1-connected objects to refresh
-					const homObjs = new Set();
-					function addCod(m) { homObjs.add(m.codomain); }
-					function addDom(m) { homObjs.add(m.domain); }
-					element.domains.forEach(addCod);
-					element.codomains.forEach(addDom);
-					if ('target' in args)
-					{
-						const target = args.target;
-						homObjs.clear();
-						target.domains.forEach(addCod);
-						target.codomains.forEach(addDom);
-					}
-					diagram.domain.findCells(diagram);
+				case 'fuse':
+					const objects = new Set();		// objects to which the target has homsets
+					element.domains.forEach(m => objects.add(m.codomain));
+					element.codomains.forEach(m => objects.add(m.domain));
+					objects.forEach(obj => diagram.domain.uniquifyHomsetIndices(element, obj));
+					diagram.domain.loadCells(diagram);
 					diagram.domain.checkCells();
 					break;
 				case 'move':
@@ -4930,7 +4929,7 @@ class Display
 		window.addEventListener('mousemove', e => this.autohide(e));
 		window.addEventListener('mousedown', e => this.autohide(e));
 		window.addEventListener('keydown', e => this.autohide(e));
-		window.addEventListener('Assertion', e => this.updateDisplay(e));
+		window.addEventListener('Cell', e => this.updateDisplay(e));
 		window.addEventListener('Morphism', e => this.updateMorphismDisplay(e));
 		window.addEventListener('Text', e => this.updateTextDisplay(e));
 		window.addEventListener('mousemove', e => this.mousemove(e));
@@ -5106,6 +5105,12 @@ class Display
 					break;
 			}
 		});
+		window.addEventListener('Cell', e =>
+		{
+			const args = e.detail;
+			const cell = args.cell;
+			cell && cell.update();
+		});
 	}
 	textWidth(txt, cls = 'object')
 	{
@@ -5255,7 +5260,6 @@ class Display
 		const copy = svg.cloneNode(true);
 		const radgrad1 = D.gradients.radgrad1.cloneNode(true);
 		const top = H3.svg();
-//		const markers = ['arrowhead', 'arrowheadRev', 'var-arrowhead'];
 		const markers = ['arrowhead', 'arrowheadRev'];
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
 		top.appendChild(radgrad1);
@@ -5439,7 +5443,7 @@ class Display
 			let copy = null;
 			switch(elt.constructor.name)
 			{
-				case 'Assertion':
+				case 'Cell':
 					break;
 				case 'DiagramComposite':
 				case 'IndexMorphism':
@@ -6057,11 +6061,6 @@ class Display
 		const args = {detail, bubbles:true, cancelable:true};
 		return window.dispatchEvent(new CustomEvent('Morphism', args));
 	}
-	emitAssertionEvent(diagram, command, element)
-	{
-		R.default.showEvents && console.log('emit ASSERTION event', {command, name:element.name});
-		return window.dispatchEvent(new CustomEvent('Assertion', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
-	}
 	emitTextEvent(diagram, command, element)
 	{
 		R.default.showEvents && console.log('emit TEXT event', {command, name:element.name});
@@ -6075,8 +6074,6 @@ class Display
 			this.emitMorphismEvent(diagram, command, elt);
 		else if (elt instanceof DiagramText)
 			this.emitTextEvent(diagram, command, elt);
-		else if (elt instanceof Assertion)
-			this.emitAssertionEvent(diagram, command, elt);
 	}
 	emitCellEvent(diagram, command, cell = null)	// like something happened to a cell
 	{
@@ -8431,6 +8428,7 @@ class HomObject extends MultiObject
 		data.position += D.bracketWidth;
 		const g = super.getGraph(this.constructor.name, data, 0, D.commaWidth);
 		data.position += D.bracketWidth;
+		g.width += 2 * D.bracketWidth;
 		return g;
 	}
 	needsParens()
@@ -8470,109 +8468,6 @@ class HomObject extends MultiObject
 	static Signature(diagram, objects)
 	{
 		return U.SigArray([2, ...objects.map(o => o.signature)]);
-	}
-}
-
-class DiagramCore		// only used by class Cell
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		const xy = U.GetArg(args, 'xy', new D2());
-		Object.defineProperties(this,
-		{
-			diagram:		{value: diagram,													writable:	false},
-			basename:		{value: nuArgs.basename,											writable:	false},
-			name:			{value: nuArgs.name,												writable:	false},
-			refcnt:			{value: 0,															writable:	true},
-			x:				{value:	xy.x,														writable:	true},
-			y:				{value:	xy.y,														writable:	true},
-			width:			{value:	U.GetArg(nuArgs, 'width', 0),								writable:	true},
-			height:			{value:	U.GetArg(nuArgs, 'height', D ? D.default.font.height : 0),			writable:	true},
-			description:	{value:	U.GetArg(nuArgs, 'description', 'Lorem ipsum categoricum'), writable:	true},
-		});
-	}
-	incrRefcnt()
-	{
-		this.refcnt++;
-	}
-	decrRefcnt()
-	{
-		this.refcnt--;
-		this.refcnt <= 0 && this.svg !== null && this.svg.remove();
-	}
-	setXY(xy, grid = true)
-	{
-		this.x = grid ? D.grid(xy.x) : xy.x;
-		this.y = grid ? D.grid(xy.y) : xy.y;
-	}
-	getXY()
-	{
-		return {x:this.x, y:this.y};
-	}
-	json()
-	{
-		const a =
-		{
-			name:		this.name,
-			description:this.description,
-			height:		this.height,
-			xy:			this.getXY(),
-			prototype:	this.constructor.name,
-		};
-		return a;
-	}
-	showSelected(state = true)
-	{
-		!this.svg && this.getSVG(this.diagram.svgBase);
-		this.svg.classList[state ? 'add' : 'remove']('selected');
-		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
-	}
-	elementId()
-	{
-		return U.SafeId(`${this.constructor.name}_${this.name}`);
-	}
-	getDecoration()		// for commutative cells
-	{
-		return '&#10226;';
-	}
-	isDeletable()
-	{
-		return true;
-	}
-	isEquivalent(t)
-	{
-		return t && this.name === t.name;
-	}
-	update(xy = null)
-	{
-		this.setXY(xy ? xy : this.getXY());
-		if (this.svg && this.svg.hasAttribute('x'))
-		{
-			this.svg.setAttribute('x', this.x);
-			this.svg.setAttribute('y', this.y);
-		}
-	}
-	isFusible()	// fitb
-	{
-		return false;
-	}
-	updateFusible(e)	// fitb
-	{}
-	updateGlow(state, glow)	// same as Element
-	{
-		!this.svg && this.getSVG(this.diagram.svgBase);
-		this.svg.classList.remove(...['glow', 'badGlow']);
-		state && this.svg.classList.add(glow);
-	}
-	emphasis(on)
-	{
-		!this.svg && this.getSVG(this.diagram.svgBase);
-		D.setClass('emphasis', on, this.svg);
-	}
-	isEditable()
-	{
-		return R.diagram && this.diagram && R.diagram.name === this.diagram.name && (this.diagram.user === R.user.name || R.user.isAdmin());
 	}
 }
 
@@ -9063,6 +8958,10 @@ class IndexObject extends CatObject
 		const emphRect = this.svg.querySelector('rect.emphasis');
 		!emphRect && this.svg.appendChild(H3.rect('.emphasis', args));
 	}
+	emphasis(on)
+	{
+		!on && this.svg.querySelectorAll('rect').forEach(rect => rect.remove());
+	}
 	placeProjection(e)		// or injection
 	{
 		if (this.to instanceof ProductObject)
@@ -9217,162 +9116,6 @@ class IndexPullback extends IndexObject
 			objs.add(m.codomain);
 		});
 		return [...objs];
-	}
-}
-
-class Assertion extends Element
-{
-	constructor(diagram, args)
-	{
-		const nuArgs = U.Clone(args);
-		let idx = 0;
-		let cell = null
-if ('cell' in args)
-{
-	nuArgs.basename = args.cell.slice(diagram.name.length + 1);
-	cell = args.cell;
-}
-else
-		cell = `${diagram.name}/${nuArgs.basename}`;
-		super(diagram, nuArgs);
-		Object.defineProperties(this,
-		{
-			left:			{value: null,								writable:true},
-			right:			{value: null,								writable:true},
-			cell:			{value: cell,								writable:true},
-			equal:			{value: U.GetArg(nuArgs, 'equal', true),	writable:false},
-			signature:		{value: nuArgs.signature,					writable:true},
-		});
-		this.incrRefcnt();
-		diagram.assertions.set(this.name, this);
-		diagram.addElement(this);
-		this.cell instanceof Cell && this.initialize();
-		isGUI && D.emitElementEvent(diagram, 'new', this);
-	}
-	initialize()
-	{
-		if (typeof this.cell === 'string')		// convert name to object
-			this.cell = this.diagram.getCell(this.cell);
-		const cell = this.cell;
-		if (!cell)
-			throw 'Cannot find cell';
-		this.left = cell.left.map(name => this.diagram.domain.getElement(name));
-		this.right = cell.right.map(name => this.diagram.domain.getElement(name));
-		cell.setCommutes('assertion');
-		this.setSignature();
-		cell.left.map(m => m.incrRefcnt());
-		cell.right.map(m => m.incrRefcnt());
-		this.description = `The assertion that the composite of morphisms ${cell.left.map(m => m.to.properName).join()} equals that of ${cell.right.map(m => m.to.properName).join()}.`;
-		this.setCell(cell);
-		this.loadItem();
-	}
-	setSignature()
-	{
-		this.signature = this.cell.signature;
-	}
-	decrRefcnt()
-	{
-		super.decrRefcnt();
-		if (this.refcnt <= 0)
-		{
-			this.cell.left.map(m => m.decrRefcnt());
-			this.cell.right.map(m => m.decrRefcnt());
-			this.cell.assertion = null;
-			this.cell.setCommutes('unknown');
-			this.diagram.domain.deleteElement(this);
-			this.removeItem();
-			this.diagram.assertions.delete(this.name);
-			D.emitAssertionEvent(this.diagram, 'delete', this);
-		}
-	}
-	json()
-	{
-		const a = super.json();
-		a.equal = this.equal;
-		delete a.name;
-		return a;
-	}
-	showSelected(state = true)
-	{
-		if (this.cell.svg)
-		{
-			this.cell.svg.classList[state ? 'add' : 'remove']('selected');
-			this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.cell.svg);
-		}
-	}
-	canSave()
-	{
-		return true;
-	}
-	loadItem()
-	{
-		R.loadItem(this.diagram, this.cell, this.cell.left.map(m => m.to), this.cell.right.map(m => m.to), this.equal);
-	}
-	removeItem()
-	{
-		R.removeEquivalences(this.diagram, this.cell.name);
-		R.loadDiagramEquivalences(this.diagram);
-	}
-	isFusible()
-	{
-		return false;
-	}
-	updateFusible()
-	{}
-	finishMove()
-	{}
-	setCell(cell)
-	{
-		cell.assertion = this;
-		this.cell = cell;
-		if (isGUI)
-		{
-			cell.removeSVG();
-			this.diagram.svgBase && cell.getSVG(this.diagram.svgBase);
-		}
-	}
-	getXY()
-	{
-		return this.cell.getXY();
-	}
-	getBBox()
-	{
-		return this.cell.getBBox();
-	}
-	hasMoved()
-	{
-		return false;
-	}
-	// get the two legs from a given (presumably selected) array
-	static GetLegs(ary)
-	{
-		const legs = [[], []];
-		if (!ary.reduce((r, m) => r && m instanceof IndexMorphism, true))
-			return legs;		// not all morphisms
-		let domain = ary[0].domain;
-		let leg = 0;
-		for (let i=0; i<ary.length; ++i)
-		{
-			const m = ary[i];
-			if (m.domain !== domain)
-			{
-				if (leg > 0) // oops not a diagram cell: too many legs
-					break;
-				leg = 1;
-			}
-			domain = m.codomain;
-			legs[leg].push(m);
-		}
-		return legs;
-	}
-	static HasForm(diagram, left, right)
-	{
-		const length0 = left.length;
-		const length1 = right.length;
-		if (length0 === 0 || length1 === 0)
-			return false;	// bad legs
-		const cell = diagram.getCell(Cell.Name(diagram, left, right));
-		return cell && !cell.comuutes && left[0].domain === right[0].domain && left[length0 -1].codomain === right[length1 -1].codomain;	// legs have same domain and codomain
 	}
 }
 
@@ -9629,7 +9372,7 @@ class CopyAction extends Action
 				const xy = diagram.findEmptySpot(from.getXY());
 				args = {command: 'copy', source:from.description, xy, height:from.height, weight:from.weight};
 			}
-			else if (from instanceof Assertion)
+			else if (from instanceof Cell)
 				return;
 			const elt = this.doit(e, diagram, args);
 			args.source = args.source.name;
@@ -10413,7 +10156,7 @@ class DetachDomainAction extends Action
 			let soFar = from.isDeletable() && this.dual ? from.codomain.domains.size + from.codomain.codomains.size > 1 :
 													from.domain.domains.size + from.domain.codomains.size > 1;
 			if (soFar)
-				return ![...from.domain.nodes].reduce((r, cell) => r || ([...cell.left, ...cell.right].includes(from) && diagram.getAssertion(cell.name)), false);
+				return ![...from.domain.nodes].reduce((r, cell) => r || ([...cell.left, ...cell.right].includes(from) && cell.assertion), false);
 			return soFar;
 		}
 		return false;
@@ -10436,8 +10179,8 @@ class DeleteAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		const names = ary.map(m => m.name);
-		const elements = ary.map(elt => elt instanceof Cell ? diagram.getAssertion(elt.name) : elt);		// convert cells to assertions
+		const elements = ary.slice();
+		const names = elements.map(m => m.name);
 		diagram.deselectAll();
 		const notDeleted = this.doit(e,diagram, elements);
 		notDeleted.map(elt => diagram.addSelected(elt));	// reselect items that were not deleted
@@ -11899,8 +11642,8 @@ if (args.codomain === 'hdole/PFS')	// TODO remove
 	args.codomain = 'zf/Set';
 				switch(args.prototype)
 				{
-					case 'DiagramObject':		// TODO remove
-						args.prototype = 'IndexObject';
+case 'DiagramObject':		// TODO remove
+	args.prototype = 'IndexObject';
 					case 'CatObject':
 					case 'FiniteObject':
 					case 'ProductObject':
@@ -11919,8 +11662,8 @@ if (args.codomain === 'hdole/PFS')	// TODO remove
 			{
 				switch(args.prototype)
 				{
-					case 'DiagramMorphism':		// TODO remove
-						args.prototype = 'IndexMorphism';
+case 'DiagramMorphism':		// TODO remove
+	args.prototype = 'IndexMorphism';
 					case 'Morphism':
 					case 'IndexMorphism':
 					case 'FactorMorphism':
@@ -11935,9 +11678,10 @@ if (args.codomain === 'hdole/PFS')	// TODO remove
 					case 'Evaluation':
 					case 'Distribute':
 					case 'Dedistribute':
-					case 'Assertion':
 						procElt(args, ndx);
 						break;
+case 'Assertion':		// TODO remove
+	break;
 				}
 			});
 			if (errMsg !== '')
@@ -13010,7 +12754,6 @@ class IndexMorphism extends Morphism
 		g.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
 		node.appendChild(g);
 		this.svg = g;
-//		g.setAttributeNS(null, 'id', id);
 		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':this.name, class:'grabme grabbable', id:`${id}_path2`, d:coords});
 		g.appendChild(this.svg_path2);
 		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
@@ -13066,7 +12809,7 @@ class IndexMorphism extends Morphism
 			const upBarb = this.end.add(normal.scale(barb)).add(negv.scale(barb)).round();;
 			const dwBarb = this.end.add(normal.scale(-barb)).add(negv.scale(barb)).round();;
 			coords += ` M${this.end.x},${this.end.y} L${upBarb.x},${upBarb.y} M${this.end.x},${this.end.y} L${dwBarb.x},${dwBarb.y}`;
-			/*
+			/* TODO dev subset, element-of
 			if (this.to instanceof Identity)
 			{
 				const radius = D.default.font.height/2;
@@ -13293,30 +13036,45 @@ class IndexMorphism extends Morphism
 	}
 }
 
-class Cell extends DiagramCore
+class Cell
 {
 	constructor(diagram, args)
 	{
-		const nuArgs = U.Clone(args);
-		nuArgs.basename = Cell.Basename(diagram, nuArgs.left, nuArgs.right);
-		nuArgs.name = Cell.Name(diagram, nuArgs.left, nuArgs.right);
-		super(diagram, nuArgs);
-		this.properName = U.GetArg(nuArgs, 'properName', '');
 		Object.defineProperties(this,
 		{
-			assertion:		{value:null,			writable:true},
-			hidden:			{value:false,			writable:true},
-			left:			{value:nuArgs.left,		writable:true},
-			right:			{value:nuArgs.right,	writable:true},
-			commutes:		{value:'unknown',		writable:true},
-			signature:		{value:Cell.Signature(nuArgs.left, nuArgs.right),	writable:false},
-			svg:			{value:null,			writable:true},
+			assertion:		{value: null,											writable:true},		// specified by user
+			basename:		{value: Cell.Basename(diagram, args.left, args.right),	writable:false},
+			commutes:		{value: 'commutes' in args ? args.commutes : 'unknown',	writable:true},		// as determined by the equality engine
+			diagram:		{value: diagram,										writable:false},
+			hidden:			{value: 'hidden' in args ? args.hidden : false,			writable:true},
+			left:			{value: args.left.slice(),								writable:true},		// morphisms, one side of the cell
+			name:			{value: Cell.Name(diagram, args.left, args.right),		writable:false},
+			right:			{value: args.right.slice(),								writable:true},		// morphisms, other side of the cell
+			properName:		{value: D.cellMap['commutes' in args ? args.commutes : 'unknown'],	writable:true},
+			signature:		{value: Cell.Signature(args.left, args.right),			writable:false},
+			svg:			{value: null,											writable:true},
+			x:				{value:	0,												writable:true},
+			y:				{value:	0,												writable:true},
 		});
-		this.description = '';
+		D.emitCellEvent(this.diagram, 'new', this);
+	}
+	json()
+	{
+		const a =
+		{
+			left:		this.left.map(m => m.basename),
+			right:		this.right.map(m => m.basename),
+			assertion:	this.assertion,
+			hidden:		this.hidden,
+		};
+		return a;
+	}
+	cellId(aux = null)
+	{
+		return U.SafeId(`Cell_${aux ? aux + '_' : ''}${this.name}`);
 	}
 	action(e, act)
 	{
-		let assert = null;
 		switch(act)
 		{
 			case 'hidden':
@@ -13326,18 +13084,16 @@ class Cell extends DiagramCore
 				this.show();
 				break;
 			case 'remove':
-				this.assertion.decrRefcnt();
+				this.commutes = 'unknown';
+				this.assertion = null;
 				break;
 			case 'equal':
 			case 'notEqual':
-				assert = this.diagram.addAssertion(this, act === 'equal' ? true : false);
-				const parent = this.svg.parentNode;
-				const dom = this.left[0].domain;
-				D.emitCellEvent(this.diagram, 'check');
+				this.setAssertion(act);
+				D.emitCellEvent(this.diagram, 'check', this);
 				break;
 		}
 		R.Actions.help.html(e, this.diagram, [this]);
-		return assert;
 	}
 	help()
 	{
@@ -13364,18 +13120,13 @@ class Cell extends DiagramCore
 		}
 		rows.push(
 					H3.tr(H3.td(H3.table(H3.tr(H3.td('.left', 'Commutativity:'), H3.td('.right', U.Cap(this.commutes))), '.w100'))),
+					H3.tr(H3.td(`Index: ${this.basename}`)),
 					H3.tr(H3.td(buttons)),
 					H3.tr(H3.th('Left leg:')));
 		this.left.map(m => rows.push(m.to.getHtmlRow()));
 		rows.push(H3.tr(H3.th('Right leg:')));
 		this.right.map(m => rows.push(m.to.getHtmlRow()));
 		rows.map(r => D.toolbar.table.appendChild(r));
-	}
-	setCommutes(com)
-	{
-		this.commutes = com;
-		this.properName = D.cellMap[com];
-		this.setGlow();
 	}
 	setGlow()
 	{
@@ -13384,14 +13135,12 @@ class Cell extends DiagramCore
 			this.svg.classList.remove('cellTxt');
 			this.svg.classList.remove('badCell');
 			this.svg.classList.remove('hiddenCell');
+			this.hidden && this.classList.add('hiddenCell');
 			let cls = '';
 			switch(this.commutes)
 			{
 				case 'unknown':
 					cls = 'badCell';
-					break;
-				case 'hidden':
-					cls = 'hiddenCell';
 					break;
 				default:
 					cls = 'cellTxt';
@@ -13399,7 +13148,13 @@ class Cell extends DiagramCore
 			this.svg.classList.add(cls);
 		}
 	}
-	register()
+	setAssertion(act)
+	{
+		this.assertion = act;
+		this.properName = D.cellMap[com];
+		this.setGlow();
+	}
+	register()		// for new cells
 	{
 		this.getObjects().map(o => o.nodes.add(this));
 		[...this.left, ...this.right].map(m =>
@@ -13410,11 +13165,12 @@ class Cell extends DiagramCore
 			cells.push(this);
 		});
 	}
-	deregister()
+	deregister()		// for cells that no longer exist
 	{
-		this.getObjects().map(o => o.nodes.delete(this));
+		this.getObjects().map(o => o.nodes.delete(this));		// remove cell from objects on the cell
 		this.diagram.domain.cells.delete(this.basename);
 		isGUI && this.removeSVG();
+		D.emitCellEvent(this.diagram, 'delete', this);
 	}
 	getXY()
 	{
@@ -13430,20 +13186,20 @@ class Cell extends DiagramCore
 		if (this.svg)
 			this.svg.remove();
 		const name = this.name;
-		const svg = H3.text('.grabbable', {id:this.elementId('cell'), 'data-type':'cell', 'data-name':this.name, 'text-anchor':'middle', 'x':this.x, 'y':this.y + D.default.font.height/2}, this.properName);
+		const svg = H3.text('.grabbable', {id:this.cellId(), 'data-type':'cell', 'data-name':this.name, 'text-anchor':'middle', 'x':this.x, 'y':this.y + D.default.font.height/2}, this.properName);
 		svg.onmouseenter = _ => Cat.R.diagram.emphasis(name, true);
 		svg.onmouseleave = _ => Cat.R.diagram.emphasis(name, false);
 		svg.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
 		node.appendChild(svg);
 		this.svg = svg;
 		this.setGlow();
-		this.diagram.selected.filter(elt => elt instanceof Assertion && elt.name === this.name).map(assert => assert.showSelected());
+		this.diagram.selected.filter(elt => elt instanceof Cell && elt.name === this.name).map(cell => cell.showSelected());
 	}
 	removeSVG()
 	{
 		if (this.diagram.svgBase)
 		{
-			const svg = this.diagram.svgBase.querySelector('#' + this.elementId('cell'));
+			const svg = this.diagram.svgBase.querySelector('#' + this.cellId());
 			svg && svg.remove();
 			this.svg && this.svg.remove();
 			this.svg = null;
@@ -13451,11 +13207,13 @@ class Cell extends DiagramCore
 	}
 	update()
 	{
-		if (this.diagram.ready > 0)
+		if (this.diagram.ready !== 0)
 		{
 			setTimeout(_ => this.update());
 			return;
 		}
+		if (!this.svg)
+			this.getSVG(this.diagram.svgRoot);
 		// hide cells that have references in them
 		const properName = this.left.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ||
 							this.right.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ? '' : this.properName;
@@ -13468,7 +13226,7 @@ class Cell extends DiagramCore
 		if (this.svg)
 		{
 			this.svg.innerHTML = properName;
-			const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height, width, height:D.default.font.height};
+			const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
 			const place = this.diagram.autoplaceSvg(bbox, this.name);
 			this.svg.setAttribute('x', place.x + width/2);
 			this.svg.setAttribute('y', place.y + D.default.font.height);
@@ -13502,9 +13260,6 @@ class Cell extends DiagramCore
 		};
 		if (!checkObjects(this.left) || !checkObjects(this.right))
 			return false;
-		const objects = new Set([this.left[0], ...this.left.map(m => m.codomain), ...this.right.map(m => m.codomain)]);
-		if (objects.size !== this.left.length + this.right.length)	// no sharing objects between legs
-			return false;
 		return true;
 	}
 	isNamedMorphism()
@@ -13532,24 +13287,28 @@ class Cell extends DiagramCore
 	{
 		return D2.Merge(...[...this.left, ...this.right].map(a => a.getBBox()));
 	}
+	setCommutes(type)
+	{
+		this.commutes = type;
+		this.properName = D.cellMap[type];
+	}
 	show()
 	{
-		this.diagram.domain.hiddenCells.delete(this.basename);
-		this.setCommutes('unknown');
+		this.hidden = false;
 		this.svg && this.update();
-		D.emitCellEvent(this.diagram, 'show');
+		D.emitCellEvent(this.diagram, 'show', this);
 	}
 	hide()
 	{
-		this.diagram.domain.hiddenCells.add(this.basename);
-		this.setCommutes('hidden');
+		this.hidden = true;
 		this.svg && this.update();
-		D.emitCellEvent(this.diagram, 'hide');
+		D.emitCellEvent(this.diagram, 'hide', this);
 	}
 	getHtmlRep(idPrefix)
 	{
-		const id = this.elementId(idPrefix);
-		const items = [H3.h5(U.Cap(this.commutes)), H3.br()];
+		const id = this.cellId(idPrefix);
+		const headline = `${this.properName}${this.assertion ? this.assertion : ''} ${this.commutes}`;
+		const items = [H3.h5(U.Cap(headline)), H3.br()];
 		items.push(H3.span('Left: ', this.left.map(m => m.to.properName).join(', '), '.tinyPrint'));
 		items.push(H3.span(' Right: ', this.right.map(m => m.to.properName).join(', '), '.tinyPrint'));
 		return H3.div({id}, items);
@@ -13559,16 +13318,15 @@ class Cell extends DiagramCore
 		const buttons = [];
 		if (this.isEditable())
 		{
-			if (this.commutes === 'hidden')
-				buttons.push(D.getIcon('delete', 'delete', e =>
-					{
-						this.show();
-						e.target.parentNode.parentNode.remove();
-						R.autosave(R.diagram);
-					},
-					{title:'Reveal cell'}));
-			else if (this.commutes === 'assertion')
+			if (this.isHidden)
+				buttons.push(D.getIcon('delete', 'delete', e => this.action(e, 'show', {title:'Reveal cell'})));
+			else
+				D.getIcon('hide', 'hide', e => this.action(e, 'hidden'), {title:'Hide this cell'});
+			if (this.assertion)
 				buttons.push(D.getIcon('delete', 'delete', e => Cat.R.Actions.delete.action(e, Cat.R.diagram, [this]), {title:'Remove assertion'}));
+			else if (this.commutes === 'unknown')
+				buttons.push(	D.getIcon('cell', 'cell', e => this.action(e, 'equal'), {title:'Set to equal'}),
+								D.getIcon('notEqual', 'notEqual', e => this.action(e, 'notEqual'), {title:'Set to not equal'}));
 		}
 		buttons.push(D.getIcon('viewCell', 'view', e => R.diagram.viewElements(this)));
 		return buttons;
@@ -13587,11 +13345,36 @@ class Cell extends DiagramCore
 			onmouseenter:	e => R.diagram.emphasis(this.name, true),
 			onmouseleave:	e => R.diagram.emphasis(this.name, false),
 		};
-		return H3.tr(H3.td(html, '.w100'), actions);
+		return H3.tr(H3.td(html), actions);
 	}
 	isEditable()
 	{
-		return super.isEditable() ? (this.commutes === 'assertion' || this.commutes === 'hidden') : false;
+		return this.diagram.isEditable();
+	}
+	isFusible()	// fitb
+	{
+		return false;
+	}
+	updateFusible(e)	// fitb
+	{}
+	updateGlow(state, glow)	// same as Element
+	{
+		!this.svg && this.getSVG(this.diagram.svgBase);
+		this.svg.classList.remove(...['glow', 'badGlow']);
+		state && this.svg.classList.add(glow);
+	}
+	emphasis(on)
+	{
+		!this.svg && this.getSVG(this.diagram.svgBase);
+		D.setClass('emphasis', on, this.svg);
+		this.left.map(m => m.emphasis(on));
+		this.right.map(m => m.emphasis(on));
+	}
+	showSelected(state = true)
+	{
+		!this.svg && this.getSVG(this.diagram.svgBase);
+		this.svg.classList[state ? 'add' : 'remove']('selected');
+		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
 	}
 	static Signature(left, right)
 	{
@@ -13606,38 +13389,39 @@ class Cell extends DiagramCore
 		if (diagram.domain.cells.has(name))
 			cell = diagram.getCell(Cell.Name(diagram, left, right));
 		else
-		{
-			cell = new Cell(diagram, {left, right, properName:''});
-			diagram.domain.cells.set(cell.name, cell);
-		}
+			cell = new Cell(diagram, {left, right});
+			diagram.domain.cells.set(name, cell);
 		return cell;
 	}
 	static CommonLink(left, right)
 	{
 		return left.filter(m => right.includes(m));
 	}
-	static HasSubCell(cells, left, right)
+	static HasSubCells(cells, left, right)
 	{
-		const legHasObject = (leg, obj) =>
+		if (left.length === 1 && left[0] instanceof DiagramComposite && U.ArrayEquals(left[0].morphisms, right) ||
+				right.length === 1 && right[0] instanceof DiagramComposite && U.ArrayEquals(right[0].morphisms, left))
+			return false;
+		const lefties = new Set(left);
+		let blobCount = 0;
+		let firstInBlob = true;
+		for (let i=0; i<right.length; ++i)
 		{
-			return leg.reduce((r, m) => r || m.codomain === obj, false);
-		};
-		const cellCheck = (cell, left, right) =>
-		{
-			if (left.length === 1 && left[0] instanceof DiagramComposite && U.ArrayEquals(left[0].morphisms, right) ||
-					right.length === 1 && right[0] instanceof DiagramComposite && U.ArrayEquals(right[0].morphisms, left))
-				return false;
-			let leftCommon = Cell.CommonLink(cell.left, left);
-			let rightCommon = Cell.CommonLink(cell.right, right);
-			if (leftCommon.length > 0 && rightCommon.length > 0)
-				return true;
-			leftCommon = Cell.CommonLink(cell.left, right);
-			rightCommon = Cell.CommonLink(cell.right, left);
-			return leftCommon.length > 0 && rightCommon.length > 0;
-		};
-		let result = false;
-		cells.forEach(cell => result = result || cellCheck(cell, left, right));
-		return result;
+			const m = right[i];
+			if (lefties.has(m))
+			{
+				firstInBlob = true;
+			}
+			else
+			{
+				if (firstInBlob)
+				{
+					firstInBlob = false;
+					blobCount++;
+				}
+			}
+		}
+		return blobCount > 1;
 	}
 	static Basename(diagram, leftLeg, rightLeg)
 	{
@@ -13710,7 +13494,6 @@ class IndexCategory extends Category
 		Object.defineProperties(this,
 		{
 			'cells':			{value:new Map(), writable: false},
-			'hiddenCells':		{value:new Set(), writable: false},
 			'indexedDiagram':	{value:null, writable: true},
 			morphismToCells:			{value:new Map(),	writable:false},
 		});
@@ -13720,6 +13503,12 @@ class IndexCategory extends Category
 	{
 		super.help();
 		D.toolbar.table.appendChild(H3.tr(H3.td('Type:'), H3.td('Index Category')));
+	}
+	json()
+	{
+		const a = super.json();
+		a.cells = [...this.cells.values()].map(cell => cell.json());
+		return a;
 	}
 	clear()
 	{
@@ -13763,9 +13552,8 @@ class IndexCategory extends Category
 	{
 		return typeof name === 'string' ? this.cells.get(name) : name instanceof Cell ? name : null;
 	}
-	findCells(diagram)
+	loadCells(diagram)
 	{
-		this.cells.forEach(cell => cell.deregister());
 		this.morphismToCells.clear();
 		this.forEachObject(o =>
 		{
@@ -13786,7 +13574,7 @@ class IndexCategory extends Category
 						for (let i=0; i<alts.length; ++i)
 						{
 							const alt = alts[i];
-							if (Cell.HasSubCell(this.cells, leg, alt))
+							if (Cell.HasSubCells(this.cells, leg, alt))
 							{
 								const badCells = new Set();
 								cells.map(cell => (Cell.CommonLink(cell.left, alt).length > 0 || Cell.CommonLink(cell.right, alt).length > 0) && badCells.add(cell));
@@ -13822,14 +13610,10 @@ class IndexCategory extends Category
 						}
 					});	// TODO circularity test
 				}
+				cells.map(cell => cell.register());
+				cells.map(cell => cell.update());
 			}
 		});
-		this.cells.forEach(cell => cell.register());
-	}
-	loadCells(diagram)
-	{
-		this.findCells(diagram);
-		this.cells.forEach(cell => cell.register());
 	}
 	checkCells()
 	{
@@ -13849,13 +13633,19 @@ class IndexCategory extends Category
 				cell.update();
 		});
 	}
-	forEachAssertion(fn)
+	uniquifyHomsetIndices(dom, cod)
 	{
-		this.elements.forEach(elt => elt instanceof Assertion && fn(elt), this);
-	}
-	static HomKey(domain, codomain)
-	{
-		return `${domain instanceof CatObject ? domain.name : domain} ${codomain instanceof CatObject ? codomain.name : codomain}`;
+		const indices = [];
+		const homset = this.getHomset(dom, cod);
+		homset.map(m =>
+		{
+			if (indices.includes(m.homsetIndex))
+			{
+				m.homsetIndex = Math.max(...indices) + 1;
+				m.update();
+			}
+			indices.push(m.homsetIndex);
+		});
 	}
 }
 
@@ -15064,7 +14854,6 @@ class Diagram extends Functor
 		const _antilog = 'antilog' in nuArgs ? nuArgs.antilog : [];
 		Object.defineProperties(this,
 		{
-			assertions:					{value:new Map(),	writable:false},
 			colorIndex2colorIndex:		{value:{},			writable:true},
 			colorIndex2color:			{value:{},			writable:true},
 			colorIndex:					{value:0,			writable:true},
@@ -15092,9 +14881,7 @@ class Diagram extends Functor
 		R.setDiagramInfo(this);
 		if ('viewport' in nuArgs)
 			this.viewport = nuArgs.viewport;
-		this.domain.findCells(this);
-		if ('hiddenCells' in nuArgs)
-			nuArgs.hiddenCells.map(name => this.domain.cells.has(name) && this.domain.hiddenCells.add(name));
+		this.domain.loadCells(this);
 		this.setSignature();
 		this.postProcess();
 	}
@@ -15102,20 +14889,7 @@ class Diagram extends Functor
 	{
 		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());	// TODO not used currently by mysql.js
 		this.elements.forEach(elt => 'postload' in elt && elt.postload());
-		this.domain.forEachAssertion(a =>
-		{
-			try
-			{
-				a.initialize();
-			}
-			catch(err)
-			{
-				this.domain.elements.delete(a.name);
-				this.assertions.delete(a.name);
-				D.recordError(err);
-				D.recordError(`Removed assertion ${a.name}`);
-			}
-		});
+		this.domain.cells.forEach(cell => cell.update());
 	}
 	decrRefcnt()
 	{
@@ -15201,8 +14975,6 @@ class Diagram extends Functor
 		a.user = this.user;
 		a.timestamp = this.timestamp;
 		a.version = this.version;
-		if (this.domain.hiddenCells.size > 0)
-			a.hiddenCells = U.Clone([...this.domain.hiddenCells]);
 		a.viewport = U.Clone(this.viewport);
 		return a;
 	}
@@ -15263,8 +15035,7 @@ class Diagram extends Functor
 	}
 	addSVG(element)
 	{
-		if (this.svgBase && !(element instanceof Assertion))
-			element.getSVG(this.svgBase);
+		this.svgBase && element.getSVG(this.svgBase);
 	}
 	actionHtml(e, name, args = {})
 	{
@@ -15339,7 +15110,6 @@ class Diagram extends Functor
 	{
 		this.deselectAll();
 		this.domain.elements.forEach(e => this.addSelected(e));
-		this.assertions.forEach(e =>this.addSelected(e));
 	}
 	userSelectElement(e, name)
 	{
@@ -15377,13 +15147,6 @@ class Diagram extends Functor
 				selected.push(elt);
 		});
 		selected.map(elt => this.addSelected(elt));
-	}
-	getAssertion(name)
-	{
-		for (const [n, a] of this.assertions)
-			if (name === a.name)
-				return a;
-		return null;
 	}
 	updateDragObjects(majorGrid)
 	{
@@ -15424,6 +15187,41 @@ class Diagram extends Functor
 			}
 		});
 		this.updateBackground();
+	}
+	hasOverlap(box, except = '')
+	{
+		const elts = this.svgRoot.querySelectorAll('text, .morphism');
+		let r = null;
+		for (let i=0; i<elts.length; ++i)
+		{
+			const svg = elts[i];
+			if (svg.dataset.name === except)
+				continue;
+			const elt = this.getElement(svg.dataset.name);
+			if (svg instanceof SVGPathElement)
+			{
+				if (elt.bezier)
+				{
+					if (D2.BoxBezierIntersection(elt.start, elt.bezier.cp1, elt.bezier.cp2, elt.end, box))
+						return true;
+				}
+				else if (D2.lineBoxIntersect(elt.start, elt.end, box))
+					return true;
+				continue;
+			}
+			let compBox = null;
+			if (elt instanceof IndexObject)
+				compBox = elt.getBBox();
+			else if (elt instanceof DiagramText)
+				compBox = elt.getBBox();
+			else if (elt instanceof IndexMorphism)
+				compBox = elt.getSvgNameBBox();
+			else
+				compBox = svg.getBBox();
+			if (D2.Overlap(box, new D2(compBox)))
+				return true;
+		}
+		return false;
 	}
 	placeText(description, xy, height = '24', weight = 'normal', select = true)
 	{
@@ -15577,41 +15375,6 @@ class Diagram extends Functor
 			elt.updateFusible(e, elt.isFusible(D.mouseover));
 		}
 		return fusible;
-	}
-	hasOverlap(box, except = '')
-	{
-		const elts = this.svgRoot.querySelectorAll('.object, .diagramText, .morphTxt, .cellTxt, .morphism');
-		let r = null;
-		for (let i=0; i<elts.length; ++i)
-		{
-			const svg = elts[i];
-			if (svg.dataset.name === except)
-				continue;
-			const elt = this.getElement(svg.dataset.name);
-			if (svg instanceof SVGPathElement)
-			{
-				if (elt.bezier)
-				{
-					if (D2.BoxBezierIntersection(elt.start, elt.bezier.cp1, elt.bezier.cp2, elt.end, box))
-						return true;
-				}
-				else if (D2.lineBoxIntersect(elt.start, elt.end, box))
-					return true;
-				continue;
-			}
-			let compBox = null;
-			if (elt instanceof IndexObject)
-				compBox = elt.getBBox();
-			else if (elt instanceof DiagramText)
-				compBox = elt.getBBox();
-			else if (elt instanceof IndexMorphism)
-				compBox = elt.getSvgNameBBox();
-			else
-				compBox = svg.getBBox();
-			if (D2.Overlap(box, new D2(compBox)))
-				return true;
-		}
-		return false;
 	}
 	getSelected()
 	{
@@ -16004,11 +15767,6 @@ class Diagram extends Functor
 	clear(save = true)
 	{
 		this.deselectAll();
-		Array.from(this.assertions).reverse().map(a =>
-		{
-			const assertion = a[1];
-			assertion.decrRefcnt();
-		});
 		this.domain.clear();
 		Array.from(this.elements).reverse().map(a => a[1].decrRefcnt());
 		save && R.saveLocal(this);		// TODO replace with event?
@@ -16041,12 +15799,6 @@ class Diagram extends Functor
 		this.forEachText(tx => texts.push(tx));
 		return texts;
 	}
-	addAssertion(cell, equal)
-	{
-		const a = this.get('Assertion', {basename:cell.basename, equal});
-		a.initialize();
-		return a;
-	}
 	loadCells()
 	{
 		this.domain.cells.size === 0 && this.domain.loadCells(this);
@@ -16063,8 +15815,8 @@ class Diagram extends Functor
 				elt.emphasis(on);
 				rtrn = elt.name;
 			}
-			else if (elt instanceof Assertion)
-				elt.cell.emphasis(on);
+			else if (elt instanceof Cell)
+				cell.emphasis(on);
 			else
 			{
 				const emphs = [...this.svgRoot.querySelectorAll(`[data-sig="${elt.signature}"]`)];
@@ -16199,7 +15951,7 @@ class Diagram extends Functor
 				if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 					args.actions.map(a => elt.actions.set(a, R.Actions[a]));
 			}
-			if (!(elt instanceof IndexMorphism) && !(elt instanceof Assertion) && 'loadItem' in elt)
+			if (!(elt instanceof IndexMorphism) && 'loadItem' in elt)
 				elt.loadItem();
 			return elt;
 		}
@@ -16579,6 +16331,7 @@ class Diagram extends Functor
 			if (ndx > 100)
 				break;
 		}
+//DEBUG console.log('autoplace ndx', name, ndx);
 		return offset.add(bbox);
 	}
 	updateBackground()
@@ -16690,8 +16443,8 @@ class Diagram extends Functor
 			elt.diagram = name;
 			switch(elt.prototype)
 			{
-				case 'Assertion':
-					elt.cell = change(elt.cell);
+				case 'Cell':
+					// TODO?
 					break;
 				case 'CatObject':
 				case 'FiniteObject':
@@ -16748,8 +16501,8 @@ class Diagram extends Functor
 					elt.codomain = change(elt.codomain);
 					elt.morphisms = elt.morphisms.map(m => change(m));
 					break;
-				case 'Assertion':
-					elt.cell = change(elt.cell);
+				case 'Cell':
+					// TODO
 					break;
 			}
 		});
@@ -16789,7 +16542,6 @@ class Diagram extends Functor
 			{
 				case 'CatObject':
 				case 'Morphism':
-				case 'Assertion':
 				case 'DiagramText':
 				case 'IndexObject':
 				case 'IndexMorphism':
@@ -17709,7 +17461,6 @@ const Cat =
 	U,
 	Action,
 	ActionDiagram,
-	Assertion,
 	Category,
 	CatObject,
 	Cell,
