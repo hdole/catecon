@@ -62,15 +62,15 @@
 		<line class="arrow0" x1="40" y1="80" x2="220" y2="260" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-cell" class="icon" viewbox="0 0 320 320">
-		<path class="svgfilNone svgstr1" d="M 230 89 A 100 100 0 1 0 260 160" marker-end="url(#arrowheadWide)"/>
+		<path class="svgstr1" d="M 230 89 A 100 100 0 1 0 260 160 M 260 150 L 220 190 M 260 150 L 300 190"/>
 	</symbol>
 	<symbol id="icon-chevronLeft" class="icon" viewbox="0 0 320 320">
-		<path class="svgfilNone svgstr1" d="M120,40 80,160 120,280"/>
-		<path class="svgfilNone svgstr1" d="M200,40 160,160 200,280"/>
+		<path class="svgstr1" d="M120,40 80,160 120,280"/>
+		<path class="svgstr1" d="M200,40 160,160 200,280"/>
 	</symbol>
 	<symbol id="icon-chevronRight" class="icon" viewbox="0 0 320 320">
-		<path class="svgfilNone svgstr1" d="M120,40 160,160 120,280"/>
-		<path class="svgfilNone svgstr1" d="M200,40 240,160 200,280"/>
+		<path class="svgstr1" d="M120,40 160,160 120,280"/>
+		<path class="svgstr1" d="M200,40 240,160 200,280"/>
 	</symbol>
 	<symbol id="icon-clock" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="140" fill="none" stroke="#aaa" stroke-width="20px"/>
@@ -110,7 +110,7 @@
 	</symbol>
 	<symbol id="icon-delete" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
-		<path class="svgfilNone svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>
+		<path class="svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>
 	</symbol>
 	<symbol id="icon-derive" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="60" y1="300" x2="60" y2="40" marker-end="url(#arrowhead)"/>
@@ -194,7 +194,7 @@
 		<polyline class="svgstr3" points="190,40 210,40 210,120 190,120"/>
 		<circle cx="260" cy="80" r="60" fill="url(#radgrad1)"/>
 		<circle cx="160" cy="280" r="60" fill="url(#radgrad1)"/>
-		<path class="svgfilNone svgstrThinGray" d="M80 100 A40 40 1 0 0 260 100"/>
+		<path class="svgstrThinGray" d="M80 100 A40 40 1 0 0 260 100"/>
 		<line class="svgstrThinGray" x1="160" y1="100" x2="160" y2="170"/>
 		<line class="svgstrThinGray" x1="160" y1="210" x2="160" y2="250"/>
 	</symbol>
@@ -304,9 +304,9 @@
 		<line class="arrow0" x1="180" y1="100" x2="280" y2="260" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-move" class="icon" viewbox="0 0 320 320">
-		<line class="svgfilNone arrow0-30px" x1="60" y1="80" x2="240" y2="80" />
-		<line class="svgfilNone arrow0-30px" x1="60" y1="160" x2="240" y2="160" />
-		<line class="svgfilNone arrow0-30px" x1="60" y1="240" x2="240" y2="240" />
+		<line class="arrow0-30px" x1="60" y1="80" x2="240" y2="80" />
+		<line class="arrow0-30px" x1="60" y1="160" x2="240" y2="160" />
+		<line class="arrow0-30px" x1="60" y1="240" x2="240" y2="240" />
 	</symbol>
 	<symbol id="icon-mysql" class="icon" viewbox="0 0 320 320">
 		<text text-anchor="middle" x="160" y="160" style="font-size:180px;font-weight:bold;stroke:#000;fill:black;">My</text>
@@ -321,8 +321,8 @@
 	</symbol>
 	<symbol id="icon-new" class="icon" viewbox="0 0 320 320">
 		<circle class="svgstr3" cx="80" cy="70" r="70"/>
-		<line class="svgfilNone arrow0" x1="80" y1="20" x2="80" y2= "120" />
-		<line class="svgfilNone arrow0" x1="30" y1="70" x2="130" y2= "70" />
+		<line class="arrow0" x1="80" y1="20" x2="80" y2= "120" />
+		<line class="arrow0" x1="30" y1="70" x2="130" y2= "70" />
 	</symbol>
 	<symbol id="icon-object" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="160" fill="url(#radgrad1)"/>
@@ -414,8 +414,8 @@
 	<symbol id="icon-swap" class="icon" viewbox="0 0 320 320">
 		<circle cx="260" cy="160" r="60" fill="url(#radgrad1)"/>
 		<circle cx="60" cy="160" r="60" fill="url(#radgrad1)"/>
-		<path class="svgfilNone svgstr1" d="M 260 80 A 100 75 0 1 0 60 80" marker-end="url(#arrowheadWide)"/>
-		<path class="svgfilNone svgstr1" d="M 60 240 A -100 -75 0 1 0 260 240" marker-end="url(#arrowheadWide)"/>
+		<path class="svgstr1" d="M 260 80 A 100 75 0 1 0 60 80" marker-end="url(#arrowheadWide)"/>
+		<path class="svgstr1" d="M 60 240 A -100 -75 0 1 0 260 240" marker-end="url(#arrowheadWide)"/>
 	</symbol>
 	<symbol id="icon-table" class="icon" viewbox="0 0 320 320">
 		<circle cx="80" cy="80" r="60" fill="url(#radgrad2)"/>
@@ -431,7 +431,7 @@
 	<symbol id="icon-tensor" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="103" y1="216" x2="216" y2="103"/>
 		<line class="arrow0" x1="216" y1="216" x2="103" y2="103"/>
-		<circle cx="160" cy="160" r="80" class="svgfilNone svgstr1"/>
+		<circle cx="160" cy="160" r="80" class="svgstr1"/>
 	</symbol>
 	<symbol id="icon-text" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
@@ -504,11 +504,11 @@
 	</symbol>
 	<symbol id="icon-view" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="120" fill="url(#radgrad1)"/>
-		<path class="svgfilNone svgstrThinGray" d="M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160" marker-end="url(#arrowheadWide)"/>
+		<path class="svgstrThinGray" d="M20 160 A40 25 0 0 0 300 160 A40 25 0 0 0 20 160" marker-end="url(#arrowheadWide)"/>
 	</symbol>
 	<symbol id="icon-view-png" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="120" r="120" fill="url(#radgrad1)"/>
-		<path class="svgfilNone svgstrThinGray" d="M20 120 A40 25 0 0 0 300 120 A40 25 0 0 0 20 120" marker-end="url(#arrowheadWide)"/>
+		<path class="svgstrThinGray" d="M20 120 A40 25 0 0 0 300 120 A40 25 0 0 0 20 120" marker-end="url(#arrowheadWide)"/>
 		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">PNG</text>
 	</symbol>
 </svg>
