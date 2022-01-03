@@ -6,14 +6,14 @@
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/mysql_Index",
-  "codomain": "hdole/PFS",
+  "codomain": "zf/Set",
   "references": [
     "hdole/HTML"
   ],
   "domainElements": [
     {
       "basename": "o_0",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/str/str",
       "xy": {
         "x": 400,
@@ -22,7 +22,7 @@
     },
     {
       "basename": "o_1",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -31,7 +31,7 @@
     },
     {
       "basename": "o_2",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/int/Z32",
       "xy": {
         "x": 400,
@@ -40,7 +40,7 @@
     },
     {
       "basename": "o_3",
-      "prototype": "DiagramObject",
+      "prototype": "IndexObject",
       "to": "hdole/mysql/timestamp",
       "xy": {
         "x": 400,
@@ -52,8 +52,8 @@
       "basename": "t_0",
       "prototype": "DiagramText",
       "xy": {
-        "x": 160,
-        "y": -380
+        "x": 140,
+        "y": -320
       },
       "height": "48"
     }
@@ -65,8 +65,13 @@
       "prototype": "CatObject"
     }
   ],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1600924731490,
-  "version": 0
+  "timestamp": 1641182554843,
+  "version": 0,
+  "viewport": {
+    "x": 589,
+    "y": 674,
+    "scale": 1.5024233003637482
+  },
+  "properName": "hdole/mysql"
 }
