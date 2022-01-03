@@ -542,10 +542,11 @@ p
 
 .svgstr1
 {
-	stroke:black;
-	stroke-width:20px;
-	stroke-linejoin:round;
-	stroke-miterlimit:2.61313;
+	fill:				none;
+	stroke:				black;
+	stroke-width:		20px;
+	stroke-linecap:		round;
+	stroke-linejoin:	round;
 }
 
 .var-arrowhead
@@ -571,7 +572,8 @@ p
 
 .arrow0
 {
-	fill:none;	stroke:black;
+	fill:none;
+	stroke:black;
 	stroke-width:20px;
 	stroke-miterlimit:2.61313;
 }
@@ -597,7 +599,6 @@ p
 .arrow9 {fill:none; stroke:#999; stroke-width:20px;}
 .arrowF {fill:none; stroke:#FFF; stroke-width:20px;}
 .svgstrThinGray {fill:none; stroke:#777; stroke-width:10px;}
-.svgfilNone {fill:none;}
 .svgfil0 {fill:black;fill-rule:nonzero;}
 .svgfill
 {
@@ -784,6 +785,7 @@ p
 	padding:		2px;
 	stroke:			var(--color-text);
 	stroke-linecap:	round;
+	stroke-linejoin:round;
 	stroke-width:	2.5px;
 	user-select:	none;
 }
