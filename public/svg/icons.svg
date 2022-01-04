@@ -104,8 +104,8 @@
 		<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>
 	</symbol>
 	<symbol id="icon-cpp" class="icon" viewbox="0 0 320 320">
-			<text text-anchor="middle" x="160" y="200" style="font-size:220px;font-weight:bold;stroke:#000;fill:black;">C</text>
-			<text text-anchor="middle" x="160" y="330" style="font-size:200px;font-weight:bold;stroke:#000;fill:black;">++</text>
+			<text text-anchor="middle" x="160" y="200" style="font-size:220px">C</text>
+			<text text-anchor="middle" x="160" y="330" style="font-size:200px">++</text>
 	</symbol>
 	<symbol id="icon-delete" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
@@ -152,27 +152,27 @@
 	</symbol>
 	<symbol id="icon-download-cpp" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">C++</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px">C++</text>
 	</symbol>
 	<symbol id="icon-download-error" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">ERR</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px">ERR</text>
 	</symbol>
 	<symbol id="icon-download-js" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">JS</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px">JS</text>
 	</symbol>
 	<symbol id="icon-download-json" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">JSON</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px">JSON</text>
 	</symbol>
 	<symbol id="icon-download-log" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">LOG</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px">LOG</text>
 	</symbol>
 	<symbol id="icon-download-png" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="40" x2="160" y2="160" marker-end="url(#arrowhead)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">PNG</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px">PNG</text>
 	</symbol>
 	<symbol id="icon-edit" class="icon" viewbox="0 0 320 320">
 		<path class="svgstr4" d="M280 40 160 280 80 240" marker-end="url(#arrowhead)"/>
@@ -275,11 +275,11 @@
 		<polygon points="320 0, 200 160, 320 320" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-javascript" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="240" style="font-size:240px;font-weight:bold;stroke:#000;fill:black;">JS</text>
+		<text text-anchor="middle" x="160" y="240" style="font-size:240px">JS</text>
 	</symbol>
 	<symbol id="icon-saveJavascript" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="160" y1="300" x2="160" y2="20" marker-end="url(#arrowhead)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:160px;font-weight:bold;stroke:#000;fill:black;">JS</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:160px">JS</text>
 	</symbol>
 	<symbol id="icon-lambda" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="40" x2="280" y2="280" marker-end="url(#arrowhead)"/>
@@ -308,8 +308,8 @@
 		<line class="arrow0-30px" x1="60" y1="240" x2="240" y2="240" />
 	</symbol>
 	<symbol id="icon-mysql" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="160" style="font-size:180px;font-weight:bold;stroke:#000;fill:black;">My</text>
-		<text text-anchor="middle" x="160" y="300" style="font-size:180px;font-weight:bold;stroke:#000;fill:black;">SQL</text>
+		<text text-anchor="middle" x="160" y="160" style="font-size:180px">My</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:180px">SQL</text>
 	</symbol>
 	<symbol id="icon-name" class="icon" viewbox="0 0 320 320">
 		<circle cx="80" cy="240" r="90" fill="url(#radgrad1)"/>
@@ -499,7 +499,7 @@
 	<symbol id="icon-upload-json" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="80" r="140" fill="url(#radgrad1)"/>
 		<line class="arrowF" x1="160" y1="200" x2="160" y2="50" marker-end="url(#arrowheadF)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">JSON</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;">JSON</text>
 	</symbol>
 	<symbol id="icon-view" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="120" fill="url(#radgrad1)"/>
@@ -508,6 +508,6 @@
 	<symbol id="icon-view-png" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="120" r="120" fill="url(#radgrad1)"/>
 		<path class="svgstrThinGray" d="M20 120 A40 25 0 0 0 300 120 A40 25 0 0 0 20 120" marker-end="url(#arrowheadWide)"/>
-		<text text-anchor="middle" x="160" y="300" style="font-size:140px;font-weight:bold;stroke:#000;">PNG</text>
+		<text text-anchor="middle" x="160" y="300" style="font-size:140px;">PNG</text>
 	</symbol>
 </svg>
