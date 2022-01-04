@@ -480,6 +480,28 @@ class U		// utilities
 	{
 		return U.SigArray([...data]);
 	}
+	static cellMap(type)
+	{
+		switch(type)
+		{
+			case 'assertion':
+				return '&#10609;';
+			case 'computed':
+				return '&#10226;';
+			case 'composite':
+				return '&#8797;';
+			case 'hidden':
+				return '&#9676;';
+			case 'notequal':
+				return '&#8800;';
+			case 'named':
+				return '&#8797;';
+			case 'unknown':
+				return '&#8799;';
+			default:
+				return '???';
+		}
+	}
 }
 Object.defineProperties(U,
 {
@@ -575,8 +597,8 @@ class Runtime
 						let type = '';
 						if (args.isEqual === true)
 						{
-							if (cell.commutes === 'assertion')
-								type = 'assertion';
+							if (cell.commutes === 'equals')
+								type = 'equals';
 							else if (DiagramComposite.CellIsComposite(cell))
 								type = 'composite';
 							else if (cell.isNamedMorphism())
@@ -1903,7 +1925,6 @@ class Toolbar
 	}
 	addButtons(buttons)
 	{
-//		this.buttons = H3.td(H3.table(H3.tr(buttons.map(btn => H3.td(btn))), '.buttonBarLeft'));
 		this.buttons = H3.td(buttons, '.buttonBarLeft');
 		const closeBtn = H3.table(H3.tr(H3.td(this.getCloseToolbarBtn())), '.buttonBarRight');
 		this.tools = H3.table(H3.tr(this.buttons, H3.td(closeBtn)), '.w100');
@@ -1918,7 +1939,7 @@ class Toolbar
 		actions.map(action => !action.hidden() && action.hasForm(diagram, diagram.selected) &&
 				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram[action.actionOnly ? 'activate' : 'actionHtml'](e, action.basename), {title:action.description})));
 		R.userSessionActions.forEachMorphism(action => action.hasForm(diagram, diagram.selected) && btns.push(H3.button(action.name, {onclick:e => Cat.R.diagram.activate(e, action.name)})));
-		btns.push(D.getIcon('view', 'view', e => Cat.R.diagram.viewElements(...R.diagram.selected), {title:'Home'}));
+		btns.push(D.getIcon('view', 'view', e => Cat.R.diagram.viewElements(...R.diagram.selected), {title:'Zoom to'}));
 		this.addButtons(btns);
 	}
 	showDiagramToolbar(diagram, btns)
@@ -3445,15 +3466,6 @@ class Display
 			commaWidth:		{value: 0,			writable: true},
 			copyDiagram:	{value:	null,		writable: true},
 			ctrlKey:		{value: false,		writable: true},
-			cellMap:		{value: {
-										assertion:		'&#10609;',
-										computed:		'&#10226;',
-										composite:		'&#8797;',
-										hidden:			'&#9676;',
-										notequal:		'&#8800;',
-										named:			'&#8797;',
-										unknown:		'&#8799;',
-									},			writable: false},
 			default:
 			{
 				value:
@@ -4859,9 +4871,6 @@ class Display
 					case 'update':
 						this.autosave(diagram);
 						break;
-//					case 'loadCells':
-//						diagram.loadCells();
-//						break;
 				}
 			this.autohide(e);
 		});
@@ -4942,7 +4951,6 @@ class Display
 		window.addEventListener('mousemove', e => this.autohide(e));
 		window.addEventListener('mousedown', e => this.autohide(e));
 		window.addEventListener('keydown', e => this.autohide(e));
-//		window.addEventListener('Cell', e => this.updateDisplay(e));
 		window.addEventListener('Morphism', e => this.updateMorphismDisplay(e));
 		window.addEventListener('Text', e => this.updateTextDisplay(e));
 		window.addEventListener('mousemove', e => this.mousemove(e));
@@ -7638,8 +7646,6 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 				Cat.D.statusbar.show(e, this.tags.sort().join(', '));
 				D.deEmphasize();
 			};
-//			const onmouseleave = e => this.emphasis(false);
-//			const onmousedown = e => Cat.R.diagram.userSelectElement(e, this.name);
 			for (let i=0; i<this.links.length; ++i)
 			{
 				const lnk = this.links[i];
@@ -7697,7 +7703,6 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 	makeSVG(node, id, data)
 	{
 		const name = this.name;
-//		const g = H3.g({id, onmouseenter:e => Cat.R.diagram.emphasis(name, true), onmouseleave:e => Cat.R.diagram.emphasis(name, false), onmousedown:e => Cat.R.diagram.userSelectElement(e, name)});
 		const g = H3.g({id});
 		node.appendChild(g);
 		this.svg = g;
@@ -8632,7 +8637,7 @@ class DiagramText extends Element
 	}
 	setSvgText()
 	{
-		this.svgText = H3.text(this.isEditable ? '.grabbable' : null, {'text-anchor':'left', style:this.ssStyle(), ondblclick:e => this.textEditor()});
+		this.svgText = H3.text(this.isEditable ? '.grabbable' : null, {'text-anchor':'left', style:this.ssStyle(), ondblclick:e => this.textEditor(), 'data-name':this.name});
 		this.svg.appendChild(this.svgText);
 	}
 	makeSVG(node)
@@ -8732,7 +8737,6 @@ class DiagramText extends Element
 	{
 		const id = this.elementId(idPrefix);
 		const div = H3.div(H3.tag('description', this.description), {id});
-//		div.onmouseenter = _ => Cat.R.diagram.emphasis(this.name, true);
 		div.onmouseenter = _ => this.emphasis(true);
 		div.onmouseleave = _ => this.emphasis(false);
 		return div;
@@ -8990,7 +8994,7 @@ class IndexObject extends CatObject
 	}
 	emphasis(on)
 	{
-		on ? D.emphasized.add(this) : D.emphasized.delete(this);
+		super.emphasis(on);
 		!on && this.svg.querySelectorAll('rect').forEach(rect => rect.remove());
 	}
 	placeProjection(e)		// or injection
@@ -9900,11 +9904,8 @@ class MorphismAssemblyAction extends Action
 			if ('to' in isu.element)
 				return H3.tr(H3.td(isu.message), H3.td(H3.button(isu.element.to.properName,
 				{
-//					onmouseenter:	`Cat.R.diagram.emphasis('${isu.element.name}', true)`,
 					onmouseenter:	_ => diagram.emphasis(isu.element, true),
-//					onmouseleave:	`Cat.R.diagram.emphasis('${isu.element.name}', false)`,
 					onmouseleave:	_ => diagram.emphasis(isu.element, false),
-//					onclick: 		`Cat.R.diagram.viewElements('${isu.element.name}')`,
 					onclick: 		_ => R.diagram.viewElements(isu.element),
 				})));
 			else
@@ -13084,7 +13085,7 @@ class Cell
 			left:			{value: args.left.slice(),								writable:true},		// morphisms, one side of the cell
 			name:			{value: Cell.Name(diagram, args.left, args.right),		writable:false},
 			right:			{value: args.right.slice(),								writable:true},		// morphisms, other side of the cell
-			properName:		{value: D.cellMap['commutes' in args ? args.commutes : 'unknown'],	writable:true},
+			properName:		{value: U.cellMap('commutes' in args ? args.commutes : 'unknown'),	writable:true},
 			signature:		{value: Cell.Signature(args.left, args.right),			writable:false},
 			svg:			{value: null,											writable:true},
 			x:				{value:	0,												writable:true},
@@ -13119,23 +13120,49 @@ class Cell
 				break;
 			case 'remove':
 				this.commutes = 'unknown';
-				this.assertion = null;
+				this.setAssertion(null);
+				D.emitCellEvent(this.diagram, 'check', this);
 				break;
 			case 'equal':
 			case 'notEqual':
 				this.setAssertion(act);
 				D.emitCellEvent(this.diagram, 'check', this);
 				break;
+			case 'unknown':
+				this.setAssertion(act);
+				D.emitCellEvent(this.diagram, 'check', this);
+				break;
 		}
 		R.Actions.help.html(e, this.diagram, [this]);
+	}
+	getButtons()
+	{
+		const buttons = [];
+		if (this.isEditable())
+		{
+			if (this.isHidden)
+				buttons.push(D.getIcon('delete', 'delete', e => this.action(e, 'show', {title:'Reveal cell'})));
+			else
+				D.getIcon('hide', 'hide', e => this.action(e, 'hidden'), {title:'Hide this cell'});
+			if (this.assertion)
+				buttons.push(D.getIcon('delete', 'delete', e => Cat.R.Actions.delete.action(e, Cat.R.diagram, [this]), {title:'Remove assertion'}));
+			else if (this.commutes === 'unknown')
+				buttons.push(	D.getIcon('cell', 'cell', e => this.action(e, 'equal'), {title:'Set to equal'}),
+								D.getIcon('help', 'help', e => this.action(e, 'unknown'), {title:'Set to unknown'}),
+								D.getIcon('notEqual', 'notEqual', e => this.action(e, 'notEqual'), {title:'Set to not equal'}));
+		}
+		buttons.push(D.getIcon('viewCell', 'view', e => R.diagram.viewElements(this), {title:'View cell'}));
+		return buttons;
 	}
 	help()
 	{
 		const rows = [H3.tr(H3.th('Cell'))];
+		const buttons = this.getButtons();
+		/*
 		const buttons = [];
 		switch(this.commutes)
 		{
-			case 'assertion':
+			case 'equals':
 			case 'notequal':
 				buttons.push(D.getIcon('delete', 'delete', e => this.action(e, 'remove'), {title:'Remove assertion'}));
 				break;
@@ -13152,8 +13179,8 @@ class Cell
 								D.getIcon('hide', 'hide', e => this.action(e, 'hidden'), {title:'Hide this cell'}));
 				break;
 		}
-		rows.push(
-					H3.tr(H3.td(H3.table(H3.tr(H3.td('.left', 'Commutativity:'), H3.td('.right', U.Cap(this.commutes))), '.w100'))),
+		*/
+		rows.push(	H3.tr(H3.td(H3.table(H3.tr(H3.td('.left', 'Commutativity:'), H3.td('.right', U.Cap(this.commutes))), '.w100'))),
 					H3.tr(H3.td(`Index: ${this.basename}`)),
 					H3.tr(H3.td(buttons)),
 					H3.tr(H3.th('Left leg:')));
@@ -13184,8 +13211,18 @@ class Cell
 	}
 	setAssertion(act)
 	{
-		this.assertion = act;
-		this.properName = D.cellMap[com];
+		switch(act)
+		{
+			case null:
+			case 'equals':
+			case 'notEquals':
+			case 'unknown':
+				this.assertion = act;
+				break;
+			default:
+				throw 'Not allowed';
+		}
+		this.properName = U.cellMap(act);
 		this.setGlow();
 	}
 	register()		// for new cells
@@ -13221,7 +13258,6 @@ class Cell
 			this.svg.remove();
 		const name = this.name;
 		const svg = H3.text('.grabbable', {id:this.cellId(), 'data-type':'cell', 'data-name':this.name, 'text-anchor':'middle', 'x':this.x, 'y':this.y + D.default.font.height/2}, this.properName);
-//		svg.onmouseenter = _ => Cat.R.diagram.emphasis(name, true);
 		svg.onmouseenter = _ => this.emphasis(true);
 		svg.onmouseleave = _ => this.emphasis(false);
 		svg.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
@@ -13312,14 +13348,6 @@ class Cell
 	{
 		this.getObjects().map(o => o.finishMove());
 	}
-	/*
-	emphasis(on)
-	{
-		super.emphasis(on);
-		this.left.map(m => m.emphasis(on));
-		this.right.map(m => m.emphasis(on));
-	}
-	*/
 	getBBox()
 	{
 		return D2.Merge(...[...this.left, ...this.right].map(a => a.getBBox()));
@@ -13327,7 +13355,7 @@ class Cell
 	setCommutes(type)
 	{
 		this.commutes = type;
-		this.properName = D.cellMap[type];
+		this.properName = U.cellMap(type);
 	}
 	show()
 	{
@@ -13350,24 +13378,6 @@ class Cell
 		items.push(H3.span(' Right: ', this.right.map(m => m.to.properName).join(', '), '.tinyPrint'));
 		return H3.div({id}, items);
 	}
-	getButtons()
-	{
-		const buttons = [];
-		if (this.isEditable())
-		{
-			if (this.isHidden)
-				buttons.push(D.getIcon('delete', 'delete', e => this.action(e, 'show', {title:'Reveal cell'})));
-			else
-				D.getIcon('hide', 'hide', e => this.action(e, 'hidden'), {title:'Hide this cell'});
-			if (this.assertion)
-				buttons.push(D.getIcon('delete', 'delete', e => Cat.R.Actions.delete.action(e, Cat.R.diagram, [this]), {title:'Remove assertion'}));
-			else if (this.commutes === 'unknown')
-				buttons.push(	D.getIcon('cell', 'cell', e => this.action(e, 'equal'), {title:'Set to equal'}),
-								D.getIcon('notEqual', 'notEqual', e => this.action(e, 'notEqual'), {title:'Set to not equal'}));
-		}
-		buttons.push(D.getIcon('viewCell', 'view', e => R.diagram.viewElements(this)));
-		return buttons;
-	}
 	getHtmlRow()
 	{
 		const html = this.getHtmlRep();
@@ -13379,7 +13389,6 @@ class Cell
 		const actions =
 		{
 			onclick:		e => {},
-//			onmouseenter:	e => R.diagram.emphasis(this.name, true),
 			onmouseenter:	e => this.emphasis(true),
 			onmouseleave:	e => this.emphasis(false),
 		};
