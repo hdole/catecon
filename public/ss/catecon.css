@@ -5,20 +5,21 @@
 	--color-button:		#fff;
 	--color-button-hover:		#ccc;
 	--color-element-bg:	#f4f4f4;
+	--color-element-bg-hover:	#ddd;
 	--color-element-border-color:		#ccc #ddd #eee #ccc;
 	--color-emphasis:	#00f;
 	--color-hidden-cell:#ddd;
 	--color-hover:		#777;
+	--color-morphism:	#000;
+	--color-object:		#000;
+	--color-panel-bg:	#f7f7f7;
+	--color-panel-shadow:	#f0f0f0d0;
+	--color-sidenav-acc:	#eee;
 	--color-statusbar:	#000;
 	--color-statusbar-bg:	#ffe;
 	--color-text:		#000;
 	--color-toolbar-bg:	#eee;
 	--color-toolbar-shadow:	#bbb;
-	--color-object:		#000;
-	--color-morphism:	#000;
-	--color-panel-bg:	#f7f7f7;
-	--color-panel-shadow:	#f0f0f0d0;
-	--color-sidenav-acc:	#eee;
 }
 
 [data-theme="dark"]
@@ -28,20 +29,21 @@
 	--color-button:		#444;
 	--color-button-hover:		#888;
 	--color-element-bg:	#555;
+	--color-element-bg-hover:	#777;
 	--color-element-border-color:		#333 #444 #222 #333;
 	--color-emphasis:	#0ff;
 	--color-hidden-cell:#444;
 	--color-hover:		#aaa;
-	--color-statusbar:	#fff;
-	--color-statusbar-bg:	#554;
-	--color-text:		#fff;
-	--color-toolbar-bg:	#666;
-	--color-toolbar-shadow:	#666;
-	--color-object:		#fff;
 	--color-morphism:	#fff;
+	--color-object:		#fff;
 	--color-panel-bg:	#666;
 	--color-panel-shadow:	#505050d0;
 	--color-sidenav-acc:	#555;
+	--color-statusbar:	#fff;
+	--color-statusbar-bg:	#554;
+	--color-text:		#fff;
+	--color-toolbar-bg:	#444;
+	--color-toolbar-shadow:	#333;
 }
 
 html, body
@@ -114,15 +116,16 @@ th
 	text-align:		left;
 }
 
+/*
 .description
 {
-	color:			inherit;
-	margin:			5px 10px 5px 10px;
-	overflow:		hidden;
-	text-align:		left;
-	text-overflow:	ellipsis;
-	font-size:		10px;
+	margin:				5px 10px 5px 10px;
+	overflow:			hidden;
+	text-align:			left;
+	text-overflow:		ellipsis;
+	font-size:			10px;
 }
+*/
 
 .italic
 {
@@ -911,7 +914,8 @@ use.emphasis
 
 [contenteditable="true"]
 {
-	background:	white;
+	background:	var(--color-bg);
+	color:		var(--color--body);
 	outline:	1px solid;
 }
 
@@ -995,8 +999,8 @@ use.emphasis
 
 .element:hover
 {
-	background-color:	#ddd;
-	color: 				#000;
+	background-color:	var(--color-element-bg-hover);
+	color: 				var(--color-body);
 }
 
 .playedCmd
@@ -1036,10 +1040,11 @@ basename
 
 description
 {
-	border:			none;
-	color:			var(--color-text);
-	text-align:		left;
-	white-space:	pre;
+	border:				none;
+	background-color:	var(--color-panel-bg);
+	color:				var(--color-body);
+	text-align:			left;
+	white-space:		pre;
 }
 
 .cellTxt
@@ -1062,7 +1067,7 @@ description
 	font:			28px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
-	text-shadow: 0 0 10px #f00, 0 0 20px #fff, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00;
+	text-shadow:	0 0 10px #f00, 0 0 20px #fff, 0 0 30px #f00, 0 0 40px #f00, 0 0 50px #f00;
 }
 
 .display
@@ -1083,17 +1088,20 @@ description
 	stroke-width:	20px;
 }
 
+.icon
+{
+	font-weight:	bold;
+	fill:			var(--color-body);
+	position:		relative;
+	stroke:			none;
+	top:			0.3em;
+}
+
 .iconSet
 {
 	width:				0px;
 	height:				0px;
 	position:			fixed;
-}
-
-.icon
-{
-	position:			relative;
-	top:				0.3em;
 }
 
 .icon-background
