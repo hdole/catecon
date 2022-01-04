@@ -10,24 +10,6 @@
   "references": [],
   "domainElements": [
     {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/graph/A",
-      "xy": {
-        "x": 500,
-        "y": 700
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/graph/Po{A,#1}oP",
-      "xy": {
-        "x": 600,
-        "y": 700
-      }
-    },
-    {
       "basename": "o_2",
       "prototype": "IndexObject",
       "to": "hdole/graph/A",
@@ -165,7 +147,7 @@
       }
     },
     {
-      "description": "This diagram is to show various string graphs.",
+      "description": "This diagram shows various string graphs.",
       "basename": "t_1",
       "prototype": "DiagramText",
       "xy": {
@@ -382,11 +364,22 @@
       }
     },
     {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/graph/o_0",
-      "codomain": "hdole/graph/o_1",
-      "to": "hdole/graph/Fa{A,A_,A_-1}aF"
+      "basename": "o_23",
+      "prototype": "IndexObject",
+      "to": "hdole/graph/A",
+      "xy": {
+        "x": 500,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_24",
+      "prototype": "IndexObject",
+      "to": "hdole/graph/Po{A,#1}oP",
+      "xy": {
+        "x": 600,
+        "y": 700
+      }
     },
     {
       "basename": "m_1",
@@ -574,6 +567,13 @@
       "domain": "hdole/graph/o_46",
       "codomain": "hdole/graph/o_47",
       "to": "hdole/graph/Di{Po{CPo{A,B}oPC,Po{A,B}oP}oP}-LiD"
+    },
+    {
+      "basename": "m_17",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/graph/o_23",
+      "codomain": "hdole/graph/o_24",
+      "to": "hdole/graph/Fa{A,A_,A_-1}aF"
     }
   ],
   "elements": [
@@ -994,12 +994,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640329458900,
+  "timestamp": 1641288479800,
   "version": 0,
   "viewport": {
-    "x": 323,
-    "y": -149,
-    "scale": 1.4375722819363121
+    "x": -689,
+    "y": -7528,
+    "scale": 2.7028737960164304
   },
   "properName": "hdole/graph"
 }

@@ -16,7 +16,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 950,
-        "y": 340
+        "y": 330
       },
       "height": "200",
       "weight": "bold"
@@ -697,7 +697,7 @@
       "height": "24"
     },
     {
-      "description": "Product and coproduct assemblies.",
+      "description": "Product and coproduct assemblies",
       "basename": "t_68",
       "prototype": "DiagramText",
       "xy": {
@@ -749,16 +749,6 @@
       "weight": "bold"
     },
     {
-      "description": "If nothing selected, pan in the indicated direction for either single or multi-diagram viewing. \nOtherwise move the selected elements.",
-      "basename": "t_73",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 1300,
-        "y": 3400
-      },
-      "height": "24"
-    },
-    {
       "description": "Arrow",
       "basename": "t_74",
       "prototype": "DiagramText",
@@ -775,7 +765,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3500
+        "y": 3700
       },
       "height": "36",
       "weight": "bold"
@@ -786,17 +776,17 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1200,
-        "y": 3500
+        "y": 3700
       },
       "height": "48"
     },
     {
-      "description": "Delete the selected elements.",
+      "description": "Delete the selected elements",
       "basename": "t_77",
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3500
+        "y": 3700
       },
       "height": "24"
     },
@@ -806,7 +796,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3600
+        "y": 3800
       },
       "height": "36",
       "weight": "bold"
@@ -817,7 +807,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3600
+        "y": 3800
       },
       "height": "24"
     },
@@ -827,7 +817,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3700
+        "y": 3900
       },
       "height": "36",
       "weight": "bold"
@@ -838,7 +828,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3700
+        "y": 3900
       },
       "height": "24"
     },
@@ -848,7 +838,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3900
+        "y": 4100
       },
       "height": "36",
       "weight": "bold"
@@ -859,7 +849,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3900
+        "y": 4100
       },
       "height": "24"
     },
@@ -869,7 +859,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4000
+        "y": 4200
       },
       "height": "36",
       "weight": "bold"
@@ -880,7 +870,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4000
+        "y": 4200
       },
       "height": "24"
     },
@@ -890,7 +880,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4100
+        "y": 4300
       },
       "height": "24"
     },
@@ -900,7 +890,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4100
+        "y": 4300
       },
       "height": "36",
       "weight": "bold"
@@ -911,7 +901,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4200
+        "y": 4400
       },
       "height": "24"
     },
@@ -921,7 +911,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4200
+        "y": 4400
       },
       "height": "36",
       "weight": "bold"
@@ -932,7 +922,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1200,
-        "y": 4200
+        "y": 4400
       },
       "height": "48"
     },
@@ -942,7 +932,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4300
+        "y": 4500
       },
       "height": "36",
       "weight": "bold"
@@ -953,7 +943,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4300
+        "y": 4500
       },
       "height": "24"
     },
@@ -963,18 +953,18 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4400
+        "y": 4600
       },
       "height": "36",
       "weight": "bold"
     },
     {
-      "description": "Zoom out.",
+      "description": "Zoom out",
       "basename": "t_94",
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4400
+        "y": 4600
       },
       "height": "24"
     },
@@ -984,7 +974,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4500
+        "y": 4700
       },
       "height": "36",
       "weight": "bold"
@@ -995,7 +985,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4500
+        "y": 4700
       },
       "height": "24"
     },
@@ -1005,7 +995,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4600
+        "y": 4800
       },
       "height": "36",
       "weight": "bold"
@@ -1016,7 +1006,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4600
+        "y": 4800
       },
       "height": "24"
     },
@@ -1026,7 +1016,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4800
+        "y": 5000
       },
       "height": "36",
       "weight": "bold"
@@ -1037,7 +1027,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4800
+        "y": 5000
       },
       "height": "24"
     },
@@ -1098,7 +1088,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 4900
+        "y": 5100
       },
       "height": "36",
       "weight": "bold"
@@ -1109,7 +1099,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 5000
+        "y": 5200
       },
       "height": "36",
       "weight": "bold"
@@ -1120,7 +1110,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 4900
+        "y": 5100
       },
       "height": "24"
     },
@@ -1130,7 +1120,7 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 5000
+        "y": 5200
       },
       "height": "24"
     },
@@ -1170,18 +1160,18 @@
       "prototype": "DiagramText",
       "xy": {
         "x": 1000,
-        "y": 3800
+        "y": 4000
       },
       "height": "36",
       "weight": "bold"
     },
     {
-      "description": "If nothing selected, place object 2 at mouse location.  If an object a or morphism m is\nselected, then aXa or mXm is placed.",
+      "description": "If nothing selected, place object '2' at mouse location.  If an object A or morphism m is\nselected, then AxA or mxm is placed.",
       "basename": "t_112",
       "prototype": "DiagramText",
       "xy": {
         "x": 1300,
-        "y": 3800
+        "y": 4000
       },
       "height": "24"
     },
@@ -1207,23 +1197,95 @@
       "weight": "bold"
     },
     {
-      "description": "<icon>view</icon>",
+      "description": "<icon>detachCodomain</icon>",
       "basename": "t_115",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1200,
+        "y": 3600
+      },
+      "height": "48"
+    },
+    {
+      "description": "<icon>view</icon>",
+      "basename": "t_116",
       "prototype": "DiagramText",
       "xy": {
         "x": 1200,
         "y": 3200
       },
       "height": "48"
+    },
+    {
+      "description": "<icon>detachDomain</icon>",
+      "basename": "t_117",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1200,
+        "y": 3500
+      },
+      "height": "48"
+    },
+    {
+      "description": "If nothing selected, pan in the indicated direction for either single or multi-diagram viewing. \nOtherwise move the selected elements.",
+      "basename": "t_118",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1300,
+        "y": 3400
+      },
+      "height": "24"
+    },
+    {
+      "description": "Left bracket:  Detach domain",
+      "basename": "t_119",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1300,
+        "y": 3500
+      },
+      "height": "24"
+    },
+    {
+      "description": "Right bracket:  Detach codomain",
+      "basename": "t_73",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1300,
+        "y": 3600
+      },
+      "height": "24"
+    },
+    {
+      "description": "[",
+      "basename": "t_120",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1000,
+        "y": 3500
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "]",
+      "basename": "t_121",
+      "prototype": "DiagramText",
+      "xy": {
+        "x": 1000,
+        "y": 3600
+      },
+      "height": "36",
+      "weight": "bold"
     }
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1640749615427,
+  "timestamp": 1641289803169,
   "version": 0,
   "viewport": {
-    "x": -997,
-    "y": -167,
-    "scale": 1.3113842973029795
+    "x": -1557,
+    "y": -234,
+    "scale": 2.0937969754159145
   }
 }

@@ -117,7 +117,7 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/A",
       "xy": {
-        "x": 480,
+        "x": 360,
         "y": -170
       }
     },
@@ -126,7 +126,7 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/B",
       "xy": {
-        "x": 670,
+        "x": 570,
         "y": -170
       }
     },
@@ -135,7 +135,7 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/C",
       "xy": {
-        "x": 230,
+        "x": 130,
         "y": -170
       }
     },
@@ -304,11 +304,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641175302800,
+  "timestamp": 1641278433415,
   "version": 0,
   "viewport": {
-    "x": 1053,
-    "y": 800,
-    "scale": 1.4749867797346796
+    "x": -389,
+    "y": 1708,
+    "scale": 6.801722545628848
   }
 }
