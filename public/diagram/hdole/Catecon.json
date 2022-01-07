@@ -13,7 +13,7 @@
     {
       "description": "Catecon",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 570,
         "y": 400
@@ -22,19 +22,30 @@
       "weight": "bold"
     },
     {
-      "description": "This is an artifice for drawing categorical diagrams.\n\nThe user specifies a target category, refers to referenced diagrams, and places\naccessible morphisms into their current diagram.  The user then forms composites,\nproducts, coproducts, lambdas, and as such depending on the target category.\n\nUsers may assert in a diagram which of its cells are commutative, if not otherwise\ndetermined to be equal.\n\nMorphisms from some categories, such as Set, may be used for computation, JavaScript\nor C++ code can be emitted for computation.\n\nIn short, the primary notion is a morphism.  All notions herein encode as morphisms.\n\nIf configured properly, a local Catecon server communicates with its next level server\nultimately leading to catecon.net.  The naming convention for elements is global and\ndepends on your username, typically /user/diagram/element.  Choose your username\nwisely.\n\nThe initial starting view shows several diagrams.  Click on one to view it or search by\nname.  Return to the catalog view by clicking on Catecon on the title bar.\n\nIn your diagram, a referenced diagram is removable if nothing is used from the referenced\ndiagram.\n\nFor more see <diagram name=\"hdole/help\">Help</diagram>.",
+      "description": "An artifice for drawing categorical diagrams\n\nThe user specifies a target category, refers to referenced diagrams, and places\naccessible morphisms into their current diagram.  The user then forms composites,\nproducts, coproducts, lambdas, and as such depending on the target category.\n\nUsers may assert in a diagram which of its cells are commutative, if not otherwise\ndetermined to be equal.\n\nMorphisms from some categories, such as Set, may be used for computation, JavaScript\nor C++ code can be emitted for computation.\n\nIn short, the primary notion is a morphism.  All notions herein encode as morphisms.\n\nIf configured properly, a local Catecon server communicates with its next level server\nultimately leading to catecon.net.  The naming convention for elements is global and\ndepends on your username, typically /user/diagram/element.  Choose your username\nwisely.\n\nThe initial starting view shows several diagrams.  Click on one to view it or search by\nname.  Return to the catalog view by clicking on Catecon on the title bar.\n\nIn your diagram, a referenced diagram is removable if nothing is used from the referenced\ndiagram.\n\nFor more see <diagram name=\"hdole/help\">Help</diagram>.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 580,
         "y": 540
       },
       "height": "24"
+    },
+    {
+      "description": "The Categorical Console",
+      "basename": "t_2",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 580,
+        "y": 470
+      },
+      "height": "66",
+      "weight": "bolder"
     }
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1639103080343,
+  "timestamp": 1641505124720,
   "version": 0,
   "viewport": {
     "x": -1057,

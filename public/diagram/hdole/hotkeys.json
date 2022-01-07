@@ -13,10 +13,10 @@
     {
       "description": "Hot Keys",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 950,
-        "y": 330
+        "y": 320
       },
       "height": "200",
       "weight": "bold"
@@ -24,7 +24,7 @@
     {
       "description": "A",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 500
@@ -33,9 +33,9 @@
       "weight": "bold"
     },
     {
-      "description": "Form a morphism assembly from a selected object.",
+      "description": "Form a morphism assembly",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 500
@@ -45,7 +45,7 @@
     {
       "description": "ctrl-A",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 600
@@ -54,9 +54,9 @@
       "weight": "bold"
     },
     {
-      "description": "Select all elements.",
+      "description": "Select all elements",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 600
@@ -66,7 +66,7 @@
     {
       "description": "C",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 700
@@ -77,7 +77,7 @@
     {
       "description": "Copy the selected elements from the current diagram.",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 700
@@ -87,7 +87,7 @@
     {
       "description": "ctrl-C",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 800
@@ -98,7 +98,7 @@
     {
       "description": "Copy selected elements from the current diagram into the paste buffer.",
       "basename": "t_8",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 800
@@ -108,7 +108,7 @@
     {
       "description": "D",
       "basename": "t_9",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 900
@@ -119,7 +119,7 @@
     {
       "description": "Show diagram tool.",
       "basename": "t_10",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 900
@@ -129,7 +129,7 @@
     {
       "description": "<icon>morphismAssembly</icon>",
       "basename": "t_11",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 500
@@ -139,7 +139,7 @@
     {
       "description": "<icon>copy</icon>",
       "basename": "t_12",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 700
@@ -149,7 +149,7 @@
     {
       "description": "<icon>diagram</icon>",
       "basename": "t_13",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 900
@@ -159,7 +159,7 @@
     {
       "description": "shift-D",
       "basename": "t_14",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1000
@@ -170,7 +170,7 @@
     {
       "description": "Show new diagram tool.",
       "basename": "t_15",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1000
@@ -180,7 +180,7 @@
     {
       "description": "K",
       "basename": "t_16",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1600
@@ -191,7 +191,7 @@
     {
       "description": "<icon>composite</icon>",
       "basename": "t_17",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1600
@@ -201,7 +201,7 @@
     {
       "description": "Form the composite of the selected morphisms.",
       "basename": "t_18",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1600
@@ -211,7 +211,7 @@
     {
       "description": "G",
       "basename": "t_19",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1100
@@ -222,7 +222,7 @@
     {
       "description": "<icon>graph</icon>",
       "basename": "t_20",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1100
@@ -232,7 +232,7 @@
     {
       "description": "Show the string graphs of the morphisms.",
       "basename": "t_21",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1100
@@ -242,7 +242,7 @@
     {
       "description": "H",
       "basename": "t_22",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1200
@@ -253,7 +253,7 @@
     {
       "description": "<icon>homset</icon>",
       "basename": "t_23",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1200
@@ -263,7 +263,7 @@
     {
       "description": "Show the new morphism toolbar with the chosen domain and\ncodomain corresponding to the two selected objects.",
       "basename": "t_24",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1200
@@ -273,7 +273,7 @@
     {
       "description": "Form the hom action on two objects or two morphisms.",
       "basename": "t_25",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1300
@@ -283,7 +283,7 @@
     {
       "description": "shift-H",
       "basename": "t_26",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1300
@@ -294,7 +294,7 @@
     {
       "description": "<icon>hom</icon>",
       "basename": "t_27",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1300
@@ -304,7 +304,7 @@
     {
       "description": "Create an identity from the selected object.",
       "basename": "t_28",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1400
@@ -314,7 +314,7 @@
     {
       "description": "I",
       "basename": "t_29",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1400
@@ -325,7 +325,7 @@
     {
       "description": "<icon>identity</icon>",
       "basename": "t_30",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1400
@@ -335,7 +335,7 @@
     {
       "description": "Show the lambda morphism tool.",
       "basename": "t_31",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1700
@@ -345,7 +345,7 @@
     {
       "description": "L",
       "basename": "t_32",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1700
@@ -356,7 +356,7 @@
     {
       "description": "<icon>lambda</icon>",
       "basename": "t_33",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1700
@@ -366,7 +366,7 @@
     {
       "description": "ctrl-L",
       "basename": "t_34",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1800
@@ -377,7 +377,7 @@
     {
       "description": "Open the TTY panel.",
       "basename": "t_35",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1800
@@ -387,7 +387,7 @@
     {
       "description": "Show the morphism tool.",
       "basename": "t_36",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1900
@@ -397,7 +397,7 @@
     {
       "description": "M",
       "basename": "t_37",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1900
@@ -408,7 +408,7 @@
     {
       "description": "<icon>morphism</icon>",
       "basename": "t_38",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1900
@@ -418,7 +418,7 @@
     {
       "description": "Show the new morphism tool.",
       "basename": "t_39",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2000
@@ -428,7 +428,7 @@
     {
       "description": "shift-M",
       "basename": "t_40",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2000
@@ -439,7 +439,7 @@
     {
       "description": "Show the object tool.",
       "basename": "t_41",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2100
@@ -449,7 +449,7 @@
     {
       "description": "O",
       "basename": "t_42",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2100
@@ -460,7 +460,7 @@
     {
       "description": "<icon>object</icon>",
       "basename": "t_43",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2100
@@ -470,7 +470,7 @@
     {
       "description": "shift-O",
       "basename": "t_44",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2200
@@ -481,7 +481,7 @@
     {
       "description": "Show the new object tool.",
       "basename": "t_45",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2200
@@ -491,7 +491,7 @@
     {
       "description": "Form the product of the selected objects or morphisms.",
       "basename": "t_46",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2300
@@ -501,7 +501,7 @@
     {
       "description": "P",
       "basename": "t_47",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2300
@@ -512,7 +512,7 @@
     {
       "description": "<icon>product</icon>",
       "basename": "t_48",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2310
@@ -522,7 +522,7 @@
     {
       "description": "Form the coproduct of the selected objects or morphisms.",
       "basename": "t_49",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2400
@@ -532,7 +532,7 @@
     {
       "description": "shift-P",
       "basename": "t_50",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2400
@@ -543,7 +543,7 @@
     {
       "description": "<icon>coproduct</icon>",
       "basename": "t_51",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2400
@@ -553,7 +553,7 @@
     {
       "description": "Show the help info for the selected element.",
       "basename": "t_52",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2500
@@ -563,7 +563,7 @@
     {
       "description": "Q",
       "basename": "t_53",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2500
@@ -574,7 +574,7 @@
     {
       "description": "<icon>help</icon>",
       "basename": "t_54",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2500
@@ -584,7 +584,7 @@
     {
       "description": "Have the morphism represent a reference in an assembly.",
       "basename": "t_55",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2600
@@ -594,7 +594,7 @@
     {
       "description": "R",
       "basename": "t_56",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2600
@@ -605,7 +605,7 @@
     {
       "description": "Show the text tool.",
       "basename": "t_58",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2700
@@ -615,7 +615,7 @@
     {
       "description": "T",
       "basename": "t_59",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2700
@@ -626,7 +626,7 @@
     {
       "description": "Show the new text tool.",
       "basename": "t_61",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2800
@@ -636,7 +636,7 @@
     {
       "description": "shift-T",
       "basename": "t_62",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2800
@@ -647,7 +647,7 @@
     {
       "description": "Pan to the selected elements.",
       "basename": "t_63",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 2900
@@ -657,7 +657,7 @@
     {
       "description": "V",
       "basename": "t_64",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 2900
@@ -668,7 +668,7 @@
     {
       "description": "<icon>view</icon>",
       "basename": "t_65",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2900
@@ -678,7 +678,7 @@
     {
       "description": "ctrl-V",
       "basename": "t_66",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3000
@@ -689,7 +689,7 @@
     {
       "description": "Paste the contents of the paste buffer at the curosor.",
       "basename": "t_67",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3000
@@ -699,7 +699,7 @@
     {
       "description": "Product and coproduct assemblies",
       "basename": "t_68",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3100
@@ -709,7 +709,7 @@
     {
       "description": "Y",
       "basename": "t_69",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3100
@@ -720,7 +720,7 @@
     {
       "description": "<icon>productAssembly</icon><icon>coproductAssembly</icon>",
       "basename": "t_70",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1190,
         "y": 3110
@@ -730,7 +730,7 @@
     {
       "description": "Zoom to the selected elements.",
       "basename": "t_71",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3200
@@ -740,7 +740,7 @@
     {
       "description": "Z",
       "basename": "t_72",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3200
@@ -751,7 +751,7 @@
     {
       "description": "Arrow",
       "basename": "t_74",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3400
@@ -762,7 +762,7 @@
     {
       "description": "Delete",
       "basename": "t_75",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3700
@@ -773,7 +773,7 @@
     {
       "description": "<icon>delete</icon>",
       "basename": "t_76",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 3700
@@ -783,7 +783,7 @@
     {
       "description": "Delete the selected elements",
       "basename": "t_77",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3700
@@ -793,7 +793,7 @@
     {
       "description": "shift-Delete",
       "basename": "t_78",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3800
@@ -804,7 +804,7 @@
     {
       "description": "If morphisms are selected, delete their objects as well if possible.",
       "basename": "t_79",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3800
@@ -814,7 +814,7 @@
     {
       "description": "Digit 1",
       "basename": "t_80",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3900
@@ -825,7 +825,7 @@
     {
       "description": "Place terminal object at mouse location.  If an object is selected, then a morphism is\nplaced from that object to the terminal object.",
       "basename": "t_81",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3900
@@ -835,7 +835,7 @@
     {
       "description": "ctrl-End",
       "basename": "t_82",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4100
@@ -846,7 +846,7 @@
     {
       "description": "View bottom of diagram.",
       "basename": "t_83",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4100
@@ -856,7 +856,7 @@
     {
       "description": "Plus",
       "basename": "t_84",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4200
@@ -867,7 +867,7 @@
     {
       "description": "Zoom in.",
       "basename": "t_85",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4200
@@ -877,7 +877,7 @@
     {
       "description": "Close toolbar, close panels, change view mode between single diagram view (for editing) and multi-diagram view.",
       "basename": "t_86",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4300
@@ -887,7 +887,7 @@
     {
       "description": "Escape",
       "basename": "t_87",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4300
@@ -898,7 +898,7 @@
     {
       "description": "View everything.",
       "basename": "t_88",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4400
@@ -908,7 +908,7 @@
     {
       "description": "Home",
       "basename": "t_89",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4400
@@ -919,7 +919,7 @@
     {
       "description": "<icon>home</icon>",
       "basename": "t_90",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 4400
@@ -929,7 +929,7 @@
     {
       "description": "ctrl-Home",
       "basename": "t_91",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4500
@@ -940,7 +940,7 @@
     {
       "description": "View top of diagram.",
       "basename": "t_92",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4500
@@ -950,7 +950,7 @@
     {
       "description": "Minus",
       "basename": "t_93",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4600
@@ -961,7 +961,7 @@
     {
       "description": "Zoom out",
       "basename": "t_94",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4600
@@ -971,7 +971,7 @@
     {
       "description": "Numpad",
       "basename": "t_95",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4700
@@ -982,7 +982,7 @@
     {
       "description": "Pan in indicated direction.",
       "basename": "t_96",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4700
@@ -992,7 +992,7 @@
     {
       "description": "Page Up\nPage Down",
       "basename": "t_97",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4800
@@ -1003,7 +1003,7 @@
     {
       "description": "In multi-diagram viewing, the current diagram’s Z-order in the view changes up or down accordingly.",
       "basename": "t_98",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4800
@@ -1013,7 +1013,7 @@
     {
       "description": "Spacebar",
       "basename": "t_99",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 5000
@@ -1024,7 +1024,7 @@
     {
       "description": "Press the spacebar and move the mouse to pan the current diagram’s view.",
       "basename": "t_100",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 5000
@@ -1034,7 +1034,7 @@
     {
       "description": "<icon>text</icon>",
       "basename": "t_60",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2700
@@ -1044,7 +1044,7 @@
     {
       "description": "<icon>referenceMorphism</icon>",
       "basename": "t_57",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2600
@@ -1054,7 +1054,7 @@
     {
       "description": "J",
       "basename": "t_101",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 1500
@@ -1065,7 +1065,7 @@
     {
       "description": "Show element's Javascript code.",
       "basename": "t_102",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 1500
@@ -1075,7 +1075,7 @@
     {
       "description": "<icon>javascript</icon>",
       "basename": "t_103",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 1500
@@ -1085,7 +1085,7 @@
     {
       "description": "Tab",
       "basename": "t_104",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 5100
@@ -1096,7 +1096,7 @@
     {
       "description": "shift-Tab",
       "basename": "t_105",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 5200
@@ -1107,7 +1107,7 @@
     {
       "description": "If one element is selected, then select the next element of the same type.",
       "basename": "t_106",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 5100
@@ -1117,7 +1117,7 @@
     {
       "description": "If one element is selected, then select the prior element of the same type.",
       "basename": "t_107",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 5200
@@ -1127,7 +1127,7 @@
     {
       "description": "<icon>edit</icon>",
       "basename": "t_108",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2200
@@ -1137,7 +1137,7 @@
     {
       "description": "<icon>edit</icon>",
       "basename": "t_109",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2000
@@ -1147,7 +1147,7 @@
     {
       "description": "<icon>edit</icon>",
       "basename": "t_110",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 2800
@@ -1157,7 +1157,7 @@
     {
       "description": "Digit 2",
       "basename": "t_111",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 4000
@@ -1168,7 +1168,7 @@
     {
       "description": "If nothing selected, place object '2' at mouse location.  If an object A or morphism m is\nselected, then AxA or mxm is placed.",
       "basename": "t_112",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 4000
@@ -1178,7 +1178,7 @@
     {
       "description": "Possibly undo the last edit action.",
       "basename": "t_113",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3300
@@ -1188,7 +1188,7 @@
     {
       "description": "ctrl-Z",
       "basename": "t_114",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3300
@@ -1199,7 +1199,7 @@
     {
       "description": "<icon>detachCodomain</icon>",
       "basename": "t_115",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 3600
@@ -1209,7 +1209,7 @@
     {
       "description": "<icon>view</icon>",
       "basename": "t_116",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 3200
@@ -1219,7 +1219,7 @@
     {
       "description": "<icon>detachDomain</icon>",
       "basename": "t_117",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1200,
         "y": 3500
@@ -1229,7 +1229,7 @@
     {
       "description": "If nothing selected, pan in the indicated direction for either single or multi-diagram viewing. \nOtherwise move the selected elements.",
       "basename": "t_118",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3400
@@ -1239,7 +1239,7 @@
     {
       "description": "Left bracket:  Detach domain",
       "basename": "t_119",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3500
@@ -1249,7 +1249,7 @@
     {
       "description": "Right bracket:  Detach codomain",
       "basename": "t_73",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1300,
         "y": 3600
@@ -1259,7 +1259,7 @@
     {
       "description": "[",
       "basename": "t_120",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3500
@@ -1270,7 +1270,7 @@
     {
       "description": "]",
       "basename": "t_121",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1000,
         "y": 3600
@@ -1281,7 +1281,7 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641289803169,
+  "timestamp": 1641547679886,
   "version": 0,
   "viewport": {
     "x": -1557,

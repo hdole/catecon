@@ -44,7 +44,7 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
-        "x": -170,
+        "x": -150,
         "y": -400
       }
     },
@@ -69,7 +69,7 @@
     {
       "description": "Multiply-Add",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -190,
         "y": -800
@@ -199,7 +199,7 @@
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/madd/o_12",
       "codomain": "hdole/madd/o_25",
       "attributes": [
@@ -236,7 +236,7 @@
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/madd/o_12",
       "codomain": "hdole/madd/o_35",
       "to": "hdole/madd/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC",
@@ -458,7 +458,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1637959502070,
+  "timestamp": 1641588613265,
   "version": 0,
   "viewport": {
     "x": 532,

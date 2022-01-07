@@ -13,9 +13,9 @@
     {
       "description": "<icon>morphism</icon>Morphism",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": 50,
+        "x": 40,
         "y": 1740
       },
       "height": "164",
@@ -24,7 +24,7 @@
     {
       "description": "A morphism f in a category has domain and codomain objects \nand is generally shown as an arrow emanating from the\ndomain object and terminating at the codomain.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 120,
         "y": 1890
@@ -52,7 +52,7 @@
     {
       "description": "In Catecon, if you are the owner of the diagram that describes\nthe morphism, and the element is unreferenced, then you may\nchange the base name, proper name, description as well as the\ndomain and codomain.",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 140,
         "y": 2210
@@ -84,7 +84,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1636006297918,
+  "timestamp": 1641589177741,
   "version": 0,
   "viewport": {
     "x": 16,

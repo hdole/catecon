@@ -48,9 +48,9 @@
     {
       "description": "<icon>graph</icon>String Graphs",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -70,
+        "x": -60,
         "y": 300
       },
       "height": "200",
@@ -149,7 +149,7 @@
     {
       "description": "This diagram shows various string graphs.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 430,
         "y": 480
@@ -278,8 +278,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,B}oH,B}oH,C}oH",
       "xy": {
-        "x": 400,
-        "y": 3100
+        "x": 760,
+        "y": 3090
       }
     },
     {
@@ -287,8 +287,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,C}oH,D}oH,D}oH",
       "xy": {
-        "x": 900,
-        "y": 3100
+        "x": 760,
+        "y": 3310
       }
     },
     {
@@ -505,7 +505,7 @@
     },
     {
       "basename": "m_16",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/graph/o_18",
       "codomain": "hdole/graph/o_33",
       "attributes": [
@@ -994,12 +994,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641288479800,
+  "timestamp": 1641543416384,
   "version": 0,
   "viewport": {
-    "x": -689,
-    "y": -7528,
-    "scale": 2.7028737960164304
+    "x": 309,
+    "y": -3644,
+    "scale": 1.4375519616710546
   },
   "properName": "hdole/graph"
 }

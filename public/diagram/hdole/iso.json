@@ -12,10 +12,10 @@
     {
       "description": "Isomorphism",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 360,
-        "y": 420
+        "y": 450
       },
       "height": "200",
       "weight": "bold"
@@ -93,6 +93,24 @@
       }
     },
     {
+      "basename": "o_2",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/B",
+      "xy": {
+        "x": 1000,
+        "y": 700
+      }
+    },
+    {
+      "basename": "o_3",
+      "prototype": "IndexObject",
+      "to": "hdole/iso/A",
+      "xy": {
+        "x": 800,
+        "y": 700
+      }
+    },
+    {
       "basename": "m_0",
       "prototype": "IndexMorphism",
       "domain": "hdole/iso/o_0",
@@ -154,36 +172,6 @@
       "to": "hdole/iso/Id{B}dI"
     },
     {
-      "description": "The assertion that the composite of morphisms f,f⁻¹ equals that of id.",
-      "basename": "{m_2,m_3},{m_4}",
-      "prototype": "Assertion",
-      "equal": true
-    },
-    {
-      "description": "The assertion that the composite of morphisms f⁻¹,f equals that of id.",
-      "basename": "{m_6,m_5},{m_7}",
-      "prototype": "Assertion",
-      "equal": true
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1000,
-        "y": 700
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 800,
-        "y": 700
-      }
-    },
-    {
       "basename": "m_1",
       "prototype": "IndexMorphism",
       "domain": "hdole/iso/o_2",
@@ -230,7 +218,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640850175494,
+  "timestamp": 1641589046177,
   "version": 0,
   "viewport": {
     "x": -96,

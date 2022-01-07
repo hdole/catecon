@@ -3,6 +3,7 @@
   "basename": "diagram",
   "name": "hdole/diagram",
   "prototype": "Diagram",
+  "properName": "hdole/diagram",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/diagram_Index",
@@ -14,10 +15,10 @@
     {
       "description": "<icon>diagram</icon> Diagram",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -210,
-        "y": 200
+        "y": 210
       },
       "height": "200",
       "weight": "bold"
@@ -25,7 +26,7 @@
     {
       "description": "A diagram D is a functor whose domain\ncategory is an Index category with some\ntarget category C.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -200,
         "y": 400
@@ -53,7 +54,7 @@
     {
       "description": "A list of diagrams may be given that provide\nmorphisms that may be instantiated in this diagram.",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -200,
         "y": 580
@@ -81,7 +82,7 @@
     {
       "description": "A user is associated with the diagram as the\nowner of the diagram.",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -200,
         "y": 800
@@ -100,7 +101,7 @@
     {
       "description": "A timestamp is associated with the diagram\nrepresenting the time the diagram was last\nmodified.",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -190,
         "y": 980
@@ -119,7 +120,7 @@
     {
       "description": "A viewport gives the default view for the diagram.\nThe first number is x, then y, and lastly scale.",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -200,
         "y": 1200
@@ -221,7 +222,9 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
-      "size": 1
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -265,12 +268,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632474067199,
+  "timestamp": 1641588946189,
   "version": 0,
   "viewport": {
-    "x": 727,
-    "y": -44,
-    "scale": 2.3178817193305195
-  },
-  "properName": "hdole/diagram"
+    "x": 669,
+    "y": -30,
+    "scale": 2.0356019245259898
+  }
 }

@@ -627,10 +627,10 @@
     {
       "description": "The GDSII Graphics Design Standard Specification",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -60,
-        "y": -10
+        "x": -70,
+        "y": 40
       },
       "height": 96,
       "weight": "bold"
@@ -1694,7 +1694,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641182457404,
+  "timestamp": 1641588987723,
   "version": 0,
   "viewport": {
     "x": 265,

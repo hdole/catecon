@@ -11725,20 +11725,8 @@ class Category extends CatObject
 			R.setSync(false);
 			data.filter((args, ndx) =>
 			{
-if (args.category === 'hdole/PFS')	// TODO remove
-	args.category = 'zf/Set';
-if (args.codomain === 'hdole/PFS')	// TODO remove
-	args.codomain = 'zf/Set';
 				switch(args.prototype)
 				{
-case 'DiagramObject':		// TODO remove
-args.prototype = 'IndexObject';
-procElt(args, ndx);
-break;
-case 'DiagramText':
-args.prototype = 'IndexText';
-procElt(args, ndx);
-break;
 					case 'CatObject':
 					case 'FiniteObject':
 					case 'ProductObject':
@@ -11757,14 +11745,6 @@ break;
 			{
 				switch(args.prototype)
 				{
-case 'DiagramMorphism':		// TODO remove
-args.prototype = 'IndexMorphism';
-procElt(args, ndx);
-break;
-case 'DiagramComposite':
-args.prototype = 'IndexComposite';
-procElt(args, ndx);
-break;
 					case 'Morphism':
 					case 'Composite':
 					case 'IndexMorphism':
@@ -11781,8 +11761,6 @@ break;
 					case 'Dedistribute':
 						procElt(args, ndx);
 						break;
-case 'Assertion':		// TODO remove
-	break;
 				}
 			});
 			if (errMsg !== '')

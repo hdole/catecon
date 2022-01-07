@@ -27,7 +27,7 @@
     {
       "description": "Floating point numbers",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 300
@@ -37,7 +37,7 @@
     {
       "description": "The floating point zero",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 500
@@ -65,7 +65,7 @@
     {
       "description": "The first interesting real number, or Euler&#39;s constant",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 890
@@ -93,7 +93,7 @@
     {
       "description": "A random number between 0.0 and 1.0",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 2300
@@ -121,7 +121,7 @@
     {
       "description": "Ratio of a circle&#39;s circumference to its diameter",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 1100
@@ -149,7 +149,7 @@
     {
       "description": "Every integer is (sort of) a floating point number",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 1900
@@ -177,7 +177,7 @@
     {
       "description": "The absolute value of a floating point number",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 2500
@@ -205,7 +205,7 @@
     {
       "description": "Addition of two floating point numbers",
       "basename": "t_8",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 2700
@@ -233,7 +233,7 @@
     {
       "description": "Subtraction of two floating point numbers",
       "basename": "t_9",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 2900
@@ -261,7 +261,7 @@
     {
       "description": "Multiplication of two floating point numbers",
       "basename": "t_10",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 3100
@@ -289,7 +289,7 @@
     {
       "description": "Division of two floating point numbers or an exception",
       "basename": "t_12",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 3300
@@ -317,7 +317,7 @@
     {
       "description": "Is the first given floating point number less than the second",
       "basename": "t_14",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 3500
@@ -345,7 +345,7 @@
     {
       "description": "Is the first floating point number less than or equal to the second",
       "basename": "t_15",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 3700
@@ -373,7 +373,7 @@
     {
       "description": "Compare two floating point numbers for equality",
       "basename": "t_16",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 3900
@@ -401,7 +401,7 @@
     {
       "description": "The smallest integer greater than or equal to a given floating point number",
       "basename": "t_17",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 5200
@@ -429,7 +429,7 @@
     {
       "description": "The nearest integer to a given floating point number",
       "basename": "t_18",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 5400
@@ -457,7 +457,7 @@
     {
       "description": "The greatest integer smaller than or equal to a given floating point number",
       "basename": "t_19",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 5600
@@ -485,7 +485,7 @@
     {
       "description": "The integer portion of a floating point number",
       "basename": "t_20",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 5800
@@ -513,7 +513,7 @@
     {
       "description": "the natural logarithm of a given floating point number or an exception",
       "basename": "t_21",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 6000
@@ -541,7 +541,7 @@
     {
       "description": "raise the first number to the second number as exponent or an exception",
       "basename": "t_22",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 6200
@@ -569,7 +569,7 @@
     {
       "description": "The maximum floating point number of the given pair",
       "basename": "t_24",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 6400
@@ -597,7 +597,7 @@
     {
       "description": "The minimum floating point number of the given pair",
       "basename": "t_25",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 6600
@@ -625,10 +625,10 @@
     {
       "description": "Floating Point",
       "basename": "t_27",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
-        "y": 50
+        "y": 20
       },
       "height": "300",
       "weight": "bold"
@@ -654,7 +654,7 @@
     {
       "description": "The floating point one",
       "basename": "t_28",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -700,
         "y": 700
@@ -1809,7 +1809,7 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F32",
       "xy": {
-        "x": 200,
+        "x": 170,
         "y": 4600
       }
     },
@@ -2678,7 +2678,13 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/floats/o_162",
       "codomain": "hdole/floats/o_165",
-      "homsetIndex": 1,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 4,
       "to": "hdole/floats/eq0_32"
     },
     {
@@ -2686,7 +2692,13 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/floats/o_171",
       "codomain": "hdole/floats/o_174",
-      "homsetIndex": 1,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 4,
       "to": "hdole/floats/eq0_64"
     },
     {
@@ -3798,11 +3810,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641292259341,
+  "timestamp": 1641421508178,
   "version": 0,
   "viewport": {
-    "x": 998,
-    "y": 343,
+    "x": 798,
+    "y": -2516,
     "scale": 0.6890637261455346
   }
 }

@@ -24,7 +24,7 @@
     {
       "description": "The space of all strings",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 200
@@ -52,7 +52,7 @@
     {
       "description": "Length of a string",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 600
@@ -80,7 +80,7 @@
     {
       "description": "Append two strings",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 800
@@ -108,7 +108,7 @@
     {
       "description": "Is the first string included in the second",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 1000
@@ -136,7 +136,7 @@
     {
       "description": "Where in the first string is the second",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 1200
@@ -164,7 +164,7 @@
     {
       "description": "The n&#39;th character in the string",
       "basename": "t_10",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 1400
@@ -192,7 +192,7 @@
     {
       "description": "Convert a natural number to a string and back again.\nNot all strings form a number so an exception may\noccur.",
       "basename": "t_11",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 1600
@@ -229,7 +229,7 @@
     {
       "description": "Convert an integer to a string and back again.",
       "basename": "t_12",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 2200
@@ -266,7 +266,7 @@
     {
       "description": "Convert a floating point number to a string and back again.",
       "basename": "t_13",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 2400
@@ -303,7 +303,7 @@
     {
       "description": "Emit the string to the TTY",
       "basename": "t_14",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 2600
@@ -331,10 +331,10 @@
     {
       "description": "String",
       "basename": "t_16",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -580,
-        "y": 20
+        "x": -590,
+        "y": 10
       },
       "height": "300",
       "weight": "bold"
@@ -342,7 +342,7 @@
     {
       "description": "The string of no length",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 400
@@ -900,7 +900,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1638138605577,
+  "timestamp": 1641588867837,
   "version": 0,
   "viewport": {
     "x": 1222,

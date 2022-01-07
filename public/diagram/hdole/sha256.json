@@ -33,10 +33,10 @@
     {
       "description": "SHA256",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -160,
-        "y": 370
+        "x": -170,
+        "y": 390
       },
       "height": "200",
       "weight": "bold"
@@ -251,7 +251,7 @@
     {
       "description": "The Hash object represents the space of all 256bit SHA hashes.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -500,
         "y": 600
@@ -467,7 +467,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1638166523479,
+  "timestamp": 1641589171121,
   "version": 0,
   "viewport": {
     "x": 1166,

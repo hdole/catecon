@@ -15,10 +15,10 @@
     {
       "description": "<icon>login</icon> User",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -820,
-        "y": -240
+        "x": -830,
+        "y": -230
       },
       "height": "200",
       "weight": "bold"
@@ -71,7 +71,7 @@
     {
       "description": "This diagram shows the Catecon user info in the AWS Cognito user pool.\nThe privileges string is a list of space separated tokens giving the user&#39;s\naccess tokens.  The maxDiagrams refers to the maximum number of\ndiagrams the user may have on the server.  The phoneNumber is for\nAWS multi-factor authentication and is not stored by Catecon.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -520,
         "y": -40
@@ -81,7 +81,7 @@
     {
       "description": "The Access panel allows login access to the server for uploading diagrams.\nWhen logged in the panel shows the username, email, and permissions on the\nserver.  The user may log out or reset the account’s password.",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -520,
         "y": 230
@@ -162,7 +162,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1632988677255,
+  "timestamp": 1641589209442,
   "version": 0,
   "viewport": {
     "x": 2017,

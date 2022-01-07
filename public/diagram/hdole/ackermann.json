@@ -78,10 +78,10 @@
     {
       "description": "Ackermann&#39;s Function",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 230,
-        "y": 70
+        "y": 40
       },
       "height": "200",
       "weight": "bold"
@@ -249,7 +249,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641182437740,
+  "timestamp": 1641588879385,
   "version": 0,
   "viewport": {
     "x": 0,

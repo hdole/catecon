@@ -79,10 +79,10 @@
     {
       "description": "Describes basic information gathered about a diagram",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": 700,
-        "y": 50
+        "x": 200,
+        "y": -770
       },
       "height": "37"
     },
@@ -253,7 +253,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641182235554,
+  "timestamp": 1641588839891,
   "version": 0,
   "viewport": {
     "x": 0,

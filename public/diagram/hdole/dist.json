@@ -15,10 +15,10 @@
     {
       "description": "Distribute",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -380,
-        "y": -820
+        "y": -800
       },
       "height": "240",
       "weight": "bold"
@@ -98,7 +98,7 @@
     {
       "description": "Left distributions",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -300,
         "y": -600
@@ -108,7 +108,7 @@
     {
       "description": "Right distributions",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 300,
         "y": -600
@@ -311,7 +311,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641182510541,
+  "timestamp": 1641588958801,
   "version": 0,
   "viewport": {
     "x": 1108,

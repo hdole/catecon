@@ -168,7 +168,7 @@
     {
       "description": "Take a string as a file name, open the file and memory map it.\nGive errors on stderr in all cases in which something can go wrong.",
       "basename": "hdole/gdsReader/t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "properName": "t_0",
       "xy": {
         "x": -1700,
@@ -215,10 +215,10 @@
     {
       "description": "Memory Map",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1710,
-        "y": -1840
+        "y": -1830
       },
       "height": "200",
       "weight": "bold"
@@ -361,7 +361,7 @@
     {
       "description": "Good housekeeping is to close the file after memory mapping.",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -800,
         "y": 1200
@@ -682,7 +682,7 @@
     },
     {
       "basename": "m_23",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/mmap/o_22",
       "codomain": "hdole/mmap/o_175",
       "attributes": [
@@ -1038,11 +1038,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640229746474,
+  "timestamp": 1641588688637,
   "version": 0,
   "viewport": {
-    "x": 2407,
-    "y": 884,
-    "scale": 0.9940029754512787
+    "x": 3393,
+    "y": 3170,
+    "scale": 1.6302984735579227
   }
 }

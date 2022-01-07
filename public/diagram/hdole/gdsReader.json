@@ -439,7 +439,7 @@
     {
       "description": "Memory map a file",
       "basename": "hdole/gdsReader/t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "properName": "t_1",
       "xy": {
         "x": -570,
@@ -450,7 +450,7 @@
     {
       "description": "Assemble the initial condition for State",
       "basename": "hdole/gdsReader/t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "properName": "t_2",
       "xy": {
         "x": -1480,
@@ -578,7 +578,7 @@
     {
       "description": "The first unsigned short is the length of the record.",
       "basename": "hdole/gdsReader/t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "properName": "t_3",
       "xy": {
         "x": -340,
@@ -643,7 +643,7 @@
     {
       "description": "3 UNITS\nThe units record handler",
       "basename": "hdole/gdsReader/t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "properName": "t_4",
       "xy": {
         "x": 2840,
@@ -789,7 +789,7 @@
     {
       "description": "0 HEADER/NO-OP\nNo operation other than updating the memory location.\n",
       "basename": "hdole/gdsReader/t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "properName": "t_5",
       "xy": {
         "x": 1570,
@@ -800,7 +800,7 @@
     {
       "description": "4 ENDLIB",
       "basename": "hdole/gdsReader/t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "properName": "t_6",
       "xy": {
         "x": 3530,
@@ -1054,12 +1054,12 @@
     {
       "description": "GDS Reader",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -3010,
-        "y": -2560
+        "x": -3000,
+        "y": -2430
       },
-      "height": "400",
+      "height": "423",
       "weight": "bold"
     },
     {
@@ -1536,7 +1536,7 @@
     },
     {
       "basename": "m_48",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/gdsReader/o_37",
       "codomain": "hdole/gdsReader/o_62",
       "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC",
@@ -2046,7 +2046,7 @@
     },
     {
       "basename": "m_94",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/gdsReader/o_112",
       "codomain": "hdole/gdsReader/o_119",
       "to": "hdole/gdsReader/Cm{State2voidSxN16,Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP,hdole/cpp/voidPtrPlusN}mC",
@@ -3520,7 +3520,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641292288226,
+  "timestamp": 1641588665422,
   "version": 0,
   "viewport": {
     "x": 1112,

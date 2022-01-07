@@ -15,10 +15,10 @@
     {
       "description": "Select",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -70,
-        "y": 170
+        "x": -90,
+        "y": 160
       },
       "height": "200",
       "weight": "bold"
@@ -188,7 +188,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641182470458,
+  "timestamp": 1641589125565,
   "version": 0,
   "viewport": {
     "x": 763,

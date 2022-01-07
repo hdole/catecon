@@ -50,10 +50,10 @@
     {
       "description": "Objects supported by mysql",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": 140,
-        "y": -320
+        "x": 120,
+        "y": -300
       },
       "height": "48"
     }
@@ -66,7 +66,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641182554843,
+  "timestamp": 1641589083301,
   "version": 0,
   "viewport": {
     "x": 589,

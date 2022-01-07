@@ -182,8 +182,8 @@ function saveDiagramJson(name, diagramString)
 function saveDiagramPng(name, inbuf)
 {
 	const buf = typeof inbuf === 'string' ? new Buffer.from(inbuf.replace(/^data:image\/octet-stream;base64,/,""), 'base64') : inbuf;
-	if (buf.length > 128 * 1024)
-		throw 'PNG file too large';
+	if (buf.length > process.env.HTTP_PNG_LIMIT * 1024)
+		throw `PNG file too large: ${name} ${buf.length}`;
 	const pngFile = path.join(process.env.HTTP_DIR, 'diagram', name + '.png');
 	fs.mkdir(path.dirname(pngFile), {recursive:true}, _ => fs.open(pngFile, 'w', (error, pngFD) =>
 	{
@@ -636,108 +636,122 @@ async function serve()
 		//
 		app.use('/upload', (req, res) =>
 		{
-			console.log('/upload', req.body.diagram.name);
-			//
-			// check for good request
-			//
-			if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
+			try
 			{
-				reqlog(req, 'upload: bad request', req.body);
-				res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'missing info in body'}).end();
-				return;
-			}
-			reqlog(req, 'upload', req.body.diagram.name);
-			const {diagram, user, png} = req.body;
-			//
-			// diagram user must be same as validated user or have admin privileges
-			//
-			if (!hasPermission(req.body.user, 'admin'))
-			{
-				if (req.body.user !== diagram.user)
+				console.log('/upload', req.body.diagram.name);
+				//
+				// check for good request
+				//
+				if (!('body' in req) || !('diagram' in req.body) || !('name' in req.body.diagram))
 				{
-					console.log('*** unauthorized req.body.user', req.body.user, 'diagram.user', diagram.user);
-					return res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'diagram owner not the validated user'});
+					reqlog(req, 'upload: bad request', req.body);
+					res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'missing info in body'}).end();
+					return;
 				}
-				// diagram name must be first of diagram name
-				if (diagram.name.split('/')[0] !== req.body.user)
+				reqlog(req, 'upload', req.body.diagram.name);
+				const {diagram, user, png} = req.body;
+				//
+				// diagram user must be same as validated user or have admin privileges
+				//
+				if (!hasPermission(req.body.user, 'admin'))
 				{
-					console.log('*** name mismatch req.body.user', req.body.user, 'diagram.user', diagram.user);
-					return res.status(HTTP.UNAUTHORIZED).send('diagram user and name mismatch').end();
+					if (req.body.user !== diagram.user)
+					{
+						console.log('*** unauthorized req.body.user', req.body.user, 'diagram.user', diagram.user);
+						return res.status(HTTP.UNAUTHORIZED).json({ok:false, statusText:'diagram owner not the validated user'});
+					}
+					// diagram name must be first of diagram name
+					if (diagram.name.split('/')[0] !== req.body.user)
+					{
+						console.log('*** name mismatch req.body.user', req.body.user, 'diagram.user', diagram.user);
+						return res.status(HTTP.UNAUTHORIZED).send('diagram user and name mismatch').end();
+					}
 				}
-			}
-			const name = diagram.name;
-			if (!('properName' in diagram))
-				diagram.properName = diagram.name;
-			function finalProcessing()
-			{
-				saveDiagramJson(name, JSON.stringify(diagram, null, 2));
-				if (png)
-					saveDiagramPng(name, png);
-			}
-			//
-			// check cache
-			//
-			if (Cat.R.catalog.has(name))
-			{
-				const info = Cat.R.catalog.get(name);
-				if (info.timestamp < diagram.timestamp || Cat.R.localTimestamp(name) < info.timestamp)
+				const name = diagram.name;
+				if (!('properName' in diagram))
+					diagram.properName = diagram.name;
+				function finalProcessing()
 				{
-					const oldrefs = Cat.U.Clone(info.references);
-					const nuInfo = Cat.Diagram.GetInfo(diagram);
-					Cat.R.catalog.set(name, nuInfo);
-					updateDiagramTable(name, diagram, (error, result) =>
+					saveDiagramJson(name, JSON.stringify(diagram, null, 2));
+					if (png)
+						saveDiagramPng(name, png);
+				}
+				//
+				// check cache
+				//
+				if (Cat.R.catalog.has(name))
+				{
+					const info = Cat.R.catalog.get(name);
+					if (info.timestamp < diagram.timestamp || Cat.R.localTimestamp(name) < info.timestamp)
+					{
+						const oldrefs = Cat.U.Clone(info.references);
+						const nuInfo = Cat.Diagram.GetInfo(diagram);
+						Cat.R.catalog.set(name, nuInfo);
+						updateDiagramTable(name, diagram, (error, result) =>
+						{
+							if (error)
+							{
+								console.log({error});
+								res.status(HTTP.INTERNAL_ERROR).send('cannot update diagram info').end();
+								return;
+							}
+							try
+							{
+								finalProcessing();
+								updateRefcnts(oldrefs, diagram.references);
+								res.status(HTTP.OK).end();
+							}
+							catch(x)
+							{
+								res.status(HTTP.INSUFFICIENT_STORAGE).end();
+							}
+						}, info.cloudTimestamp);
+					}
+					if (png)
+						saveDiagramPng(name, png);
+					res.status(HTTP.OK).end();
+					return;
+				}
+				else
+				{
+					const user = userInfo.get(req.body.user);
+					//
+					// max number of diagrams for user?
+					//
+					if (user.diagramCount >= process.env.CAT_DIAGRAM_USER_LIMIT)
+					{
+						res.status(HTTP.INSUFFICIENT_STORAGE).end('too many diagrams');
+						return;
+					}
+					//
+					// new diagram to system
+					// no need to set refcnt; it must be 0
+					//
+					const sql = 'INSERT into Catecon.diagrams (name, basename, user, description, properName, refs, timestamp, codomain, category, prototype) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+					dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain, diagram.category, diagram.prototype], (error, result) =>
 					{
 						if (error)
 						{
 							console.log({error});
-							res.status(HTTP.INTERNAL_ERROR).send('cannot update diagram info').end();
+							res.status(HTTP.INTERNAL_ERROR).send('cannot insert new diagram').end();
 							return;
 						}
+						const info = Cat.Diagram.GetInfo(diagram);
+						info.refcnt = 0;
+						updateRefcnts([], info.references);
+						Cat.R.catalog.set(name, info);
+						//
+						// user owns one more
+						//
+						user.diagramCount++;
 						finalProcessing();
-						updateRefcnts(oldrefs, diagram.references);
 						res.status(HTTP.OK).end();
-					}, info.cloudTimestamp);
+					});
 				}
-				if (png)
-					saveDiagramPng(name, png);
-				res.status(HTTP.OK).end();
-				return;
 			}
-			else
+			catch(x)
 			{
-				const user = userInfo.get(req.body.user);
-				//
-				// max number of diagrams for user?
-				//
-				if (user.diagramCount >= process.env.CAT_DIAGRAM_USER_LIMIT)
-				{
-					res.status(HTTP.INSUFFICIENT_STORAGE).end('too many diagrams');
-					return;
-				}
-				//
-				// new diagram to system
-				// no need to set refcnt; it must be 0
-				//
-				const sql = 'INSERT into Catecon.diagrams (name, basename, user, description, properName, refs, timestamp, codomain, category, prototype) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-				dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain, diagram.category, diagram.prototype], (error, result) =>
-				{
-					if (error)
-					{
-						console.log({error});
-						res.status(HTTP.INTERNAL_ERROR).send('cannot insert new diagram').end();
-						return;
-					}
-					const info = Cat.Diagram.GetInfo(diagram);
-					info.refcnt = 0;
-					updateRefcnts([], info.references);
-					Cat.R.catalog.set(name, info);
-					//
-					// user owns one more
-					//
-					user.diagramCount++;
-					finalProcessing();
-					res.status(HTTP.OK).end();
-				});
+				res.status(HTTP.INSUFFICIENT_STORAGE).end();
 			}
 		});
 

@@ -16,7 +16,7 @@
     {
       "description": "Factorial",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -260,
         "y": -220
@@ -452,7 +452,7 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
-        "x": 1990,
+        "x": 2000,
         "y": -150
       }
     },
@@ -461,7 +461,7 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
-        "x": 2190,
+        "x": 2200,
         "y": -150
       }
     },
@@ -526,6 +526,42 @@
       "xy": {
         "x": 2200,
         "y": 0
+      }
+    },
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/#1",
+      "xy": {
+        "x": 2450,
+        "y": -50
+      }
+    },
+    {
+      "basename": "o_2",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 2600,
+        "y": -50
+      }
+    },
+    {
+      "basename": "o_5",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/F64",
+      "xy": {
+        "x": 2450,
+        "y": 50
+      }
+    },
+    {
+      "basename": "o_6",
+      "prototype": "IndexObject",
+      "to": "hdole/floats/CPo{#1,#1}oPC",
+      "xy": {
+        "x": 2600,
+        "y": 50
       }
     },
     {
@@ -623,10 +659,6 @@
         [
           "referenceMorphism",
           true
-        ],
-        [
-          "flipName",
-          true
         ]
       ],
       "to": "hdole/factorial/Fa{Po{hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_1}aF"
@@ -659,10 +691,6 @@
       "attributes": [
         [
           "referenceMorphism",
-          true
-        ],
-        [
-          "flipName",
           true
         ]
       ],
@@ -708,12 +736,6 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/factorial/o_14",
       "codomain": "hdole/factorial/o_18",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
       "to": "hdole/factorial/Cm{Fa{hdole/floats/F128,hdole/floats/F128_,hdole/floats/F128_-1}aF,Pm{Id{hdole/floats/F128}dI,hdole/floats/one128}mP,hdole/floats/sub128}mC"
     },
     {
@@ -728,12 +750,6 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/factorial/o_14",
       "codomain": "hdole/factorial/o_18",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
       "homsetIndex": 4,
       "to": "hdole/factorial/decr"
     },
@@ -765,6 +781,10 @@
       "attributes": [
         [
           "referenceMorphism",
+          true
+        ],
+        [
+          "flipName",
           true
         ]
       ],
@@ -828,15 +848,9 @@
     },
     {
       "basename": "m_61",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/factorial/o_74",
       "codomain": "hdole/factorial/o_52",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
       "to": "hdole/factorial/Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF,hdole/floats/one64}mC",
       "morphisms": [
         "hdole/factorial/m_56",
@@ -859,15 +873,9 @@
     },
     {
       "basename": "m_71",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/factorial/o_65",
       "codomain": "hdole/factorial/o_66",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
       "to": "hdole/factorial/Cm{hdole/cpp/stdinToF64,fact64,hdole/cpp/F64ToStdout}mC",
       "morphisms": [
         "hdole/factorial/m_69",
@@ -988,7 +996,7 @@
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/factorial/o_1",
       "codomain": "hdole/factorial/o_48",
       "attributes": [
@@ -1012,7 +1020,7 @@
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/factorial/o_92",
       "codomain": "hdole/factorial/o_85",
       "attributes": [
@@ -1037,15 +1045,9 @@
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/factorial/o_41",
       "codomain": "hdole/factorial/o_90",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
       "to": "hdole/factorial/Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aF,Pm{hdole/floats/eq0_64,Id{hdole/floats/F64}dI}mP,Di{Po{hdole/floats/CPo{#1,#1}oPC,hdole/floats/F64}oP}-LiD,CPm{Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_1}aF,Pm{Id{hdole/floats/F64}dI,Cm{decr64,fact64}mC}mP,hdole/floats/mult64}mC,Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF,hdole/floats/one64}mC}mPC,CFa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aFC}mC",
       "morphisms": [
         "hdole/factorial/m_42",
@@ -1061,6 +1063,20 @@
       "domain": "hdole/factorial/o_3",
       "codomain": "hdole/factorial/o_4",
       "to": "hdole/factorial/Pm{Id{hdole/floats/F64}dI,hdole/floats/one64}mP"
+    },
+    {
+      "basename": "m_1",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_0",
+      "codomain": "hdole/factorial/o_2",
+      "to": "hdole/floats/one64"
+    },
+    {
+      "basename": "m_9",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/factorial/o_5",
+      "codomain": "hdole/factorial/o_6",
+      "to": "hdole/floats/eq0_64"
     }
   ],
   "elements": [
@@ -1741,11 +1757,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640661849516,
+  "timestamp": 1641448698576,
   "version": 0,
   "viewport": {
-    "x": -453,
-    "y": 525,
-    "scale": 1.0151796176922578
+    "x": -649,
+    "y": 327,
+    "scale": 0.8391570883567222
   }
 }

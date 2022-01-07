@@ -40,9 +40,9 @@
     {
       "description": "Monomorphism",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -270,
+        "x": -250,
         "y": -640
       },
       "height": "48",
@@ -51,7 +51,7 @@
     {
       "description": "f is a monomorphism iff for any two h and g\nwith fg = fh then g = h",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -210,
         "y": -560
@@ -72,7 +72,7 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/B",
       "xy": {
-        "x": 0,
+        "x": -50,
         "y": -400
       }
     },
@@ -82,7 +82,7 @@
       "to": "hdole/monomorphism/C",
       "xy": {
         "x": -200,
-        "y": -290
+        "y": -300
       }
     },
     {
@@ -90,8 +90,8 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/A",
       "xy": {
-        "x": 0,
-        "y": -290
+        "x": -50,
+        "y": -300
       }
     },
     {
@@ -100,7 +100,7 @@
       "to": "hdole/monomorphism/C",
       "xy": {
         "x": -200,
-        "y": -170
+        "y": -200
       }
     },
     {
@@ -108,8 +108,8 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/A",
       "xy": {
-        "x": 0,
-        "y": -170
+        "x": -50,
+        "y": -200
       }
     },
     {
@@ -117,8 +117,8 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/A",
       "xy": {
-        "x": 360,
-        "y": -170
+        "x": 300,
+        "y": -100
       }
     },
     {
@@ -126,8 +126,8 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/B",
       "xy": {
-        "x": 570,
-        "y": -170
+        "x": 550,
+        "y": -100
       }
     },
     {
@@ -135,8 +135,8 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/C",
       "xy": {
-        "x": 130,
-        "y": -170
+        "x": 50,
+        "y": -100
       }
     },
     {
@@ -175,7 +175,7 @@
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
       "homsetIndex": -2,
@@ -187,7 +187,7 @@
     },
     {
       "basename": "m_4",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
       "homsetIndex": 1,
@@ -304,11 +304,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641278433415,
+  "timestamp": 1641589060856,
   "version": 0,
   "viewport": {
-    "x": -389,
-    "y": 1708,
-    "scale": 6.801722545628848
+    "x": 1057,
+    "y": 1028,
+    "scale": 1.4437439241788566
   }
 }

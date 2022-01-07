@@ -13,9 +13,9 @@
     {
       "description": "Monoid",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -570,
+        "x": -530,
         "y": 50
       },
       "height": "200",
@@ -87,7 +87,7 @@
     {
       "description": "Associativity:  (g * h) * i = g * (h * i)",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -870,
         "y": 590
@@ -169,7 +169,7 @@
     {
       "description": "g * 1 = g",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -150,
         "y": 1310
@@ -179,7 +179,7 @@
     {
       "description": "1 * g = g",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 270,
         "y": 1320
@@ -189,7 +189,7 @@
     {
       "description": "M is a monoid object when supplied with a multiplier,\nand a unit in the monoid.  The following diagrams for\nassociativity, left and right units, must all be satisfied.",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -860,
         "y": 190
@@ -323,18 +323,6 @@
       "to": "hdole/monoid/Fa{G,G_-1,G_}aF"
     },
     {
-      "description": "The assertion that the composite of morphisms &#119901;,,id&times;unit,mult equals that of id.",
-      "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/monoid/{m_15},{m_2,m_16,m_17}"
-    },
-    {
-      "description": "The assertion that the composite of morphisms &#119901;,,unit&times;id,mult equals that of id.",
-      "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/monoid/{m_19},{m_3,m_20,m_21}"
-    },
-    {
       "basename": "m_6",
       "prototype": "IndexMorphism",
       "domain": "hdole/monoid/o_8",
@@ -367,12 +355,6 @@
       "domain": "hdole/monoid/o_11",
       "codomain": "hdole/monoid/o_30",
       "to": "hdole/monoid/Pm{mult,Id{G}dI}mP"
-    },
-    {
-      "description": "The assertion that the composite of morphisms &Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;,id&times;mult,mult equals that of &Pi;&lt;&#119901;&#8202;&#x2080;,&#8202;&#x2081;,&#119901;&#8202;&#x2082;&gt;,mult&times;id,mult.",
-      "prototype": "Assertion",
-      "equal": true,
-      "cell": "hdole/monoid/{m_6,m_8,m_29},{m_7,m_5,m_28}"
     }
   ],
   "elements": [
@@ -571,7 +553,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1639905171060,
+  "timestamp": 1641589067230,
   "version": 0,
   "viewport": {
     "x": 1473,

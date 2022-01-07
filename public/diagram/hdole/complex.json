@@ -22,18 +22,9 @@
       }
     },
     {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/floats/Po{F64,F64}oP",
-      "xy": {
-        "x": 400,
-        "y": 200
-      }
-    },
-    {
       "description": "The complex number zero",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 400
@@ -43,7 +34,7 @@
     {
       "basename": "o_2",
       "prototype": "IndexObject",
-      "to": "#1",
+      "to": "hdole/complex/#1",
       "xy": {
         "x": 200,
         "y": 400
@@ -61,7 +52,7 @@
     {
       "description": "The first interesting complex number",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 600
@@ -71,7 +62,7 @@
     {
       "basename": "o_4",
       "prototype": "IndexObject",
-      "to": "#1",
+      "to": "hdole/complex/#1",
       "xy": {
         "x": 200,
         "y": 600
@@ -89,7 +80,7 @@
     {
       "description": "Euler&#39;s constant",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 800
@@ -99,7 +90,7 @@
     {
       "basename": "o_6",
       "prototype": "IndexObject",
-      "to": "#1",
+      "to": "hdole/complex/#1",
       "xy": {
         "x": 200,
         "y": 800
@@ -117,7 +108,7 @@
     {
       "description": "The real part of a complex number",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 1000
@@ -134,18 +125,9 @@
       }
     },
     {
-      "basename": "o_9",
-      "prototype": "IndexObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 400,
-        "y": 1000
-      }
-    },
-    {
       "description": "The imaginary part of a complex numbers",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 1200
@@ -162,32 +144,14 @@
       }
     },
     {
-      "basename": "o_11",
-      "prototype": "IndexObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 400,
-        "y": 1200
-      }
-    },
-    {
       "description": "Every floating point number is a complex number",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 1400
       },
       "height": 24
-    },
-    {
-      "basename": "o_12",
-      "prototype": "IndexObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 200,
-        "y": 1400
-      }
     },
     {
       "basename": "o_13",
@@ -201,7 +165,7 @@
     {
       "description": "Conjugate of a complex number",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 1600
@@ -229,7 +193,7 @@
     {
       "description": "The absolute value of a complex number",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 1800
@@ -246,27 +210,9 @@
       }
     },
     {
-      "basename": "o_17",
-      "prototype": "IndexObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 400,
-        "y": 1800
-      }
-    },
-    {
-      "basename": "o_18",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/Po{C,C}oP",
-      "xy": {
-        "x": 200,
-        "y": 2000
-      }
-    },
-    {
       "description": "A pair of complex numbers",
       "basename": "t_8",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 2000
@@ -276,21 +222,12 @@
     {
       "description": "Addition of two complex numbers",
       "basename": "t_9",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 2200
       },
       "height": 24
-    },
-    {
-      "basename": "o_19",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/Po{C,C}oP",
-      "xy": {
-        "x": 200,
-        "y": 2200
-      }
     },
     {
       "basename": "o_20",
@@ -304,21 +241,12 @@
     {
       "description": "Subtraction of two complex numbers",
       "basename": "t_10",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 2400
       },
       "height": 24
-    },
-    {
-      "basename": "o_21",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/Po{C,C}oP",
-      "xy": {
-        "x": 200,
-        "y": 2400
-      }
     },
     {
       "basename": "o_22",
@@ -332,21 +260,12 @@
     {
       "description": "Multiplication of two complex numbers",
       "basename": "t_11",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 2600
       },
       "height": 24
-    },
-    {
-      "basename": "o_23",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/Po{C,C}oP",
-      "xy": {
-        "x": 200,
-        "y": 2600
-      }
     },
     {
       "basename": "o_24",
@@ -358,18 +277,9 @@
       }
     },
     {
-      "basename": "o_25",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/CPo{C,#1}oPC",
-      "xy": {
-        "x": 200,
-        "y": 2800
-      }
-    },
-    {
       "description": "A complex number or an exception",
       "basename": "t_12",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 2800
@@ -379,35 +289,17 @@
     {
       "description": "Division of two complex numbers or an exception",
       "basename": "t_13",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 3000
       },
       "height": 24
-    },
-    {
-      "basename": "o_26",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/Po{C,C}oP",
-      "xy": {
-        "x": 200,
-        "y": 3000
-      }
-    },
-    {
-      "basename": "o_27",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/CPo{C,#1}oPC",
-      "xy": {
-        "x": 400,
-        "y": 3000
-      }
     },
     {
       "description": "Raise the first number to the second number\nas exponent or an exception",
       "basename": "t_14",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -400,
         "y": 3200
@@ -415,27 +307,9 @@
       "height": 24
     },
     {
-      "basename": "o_28",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/Po{C,C}oP",
-      "xy": {
-        "x": 200,
-        "y": 3200
-      }
-    },
-    {
-      "basename": "o_29",
-      "prototype": "IndexObject",
-      "to": "hdole/complex/CPo{C,#1}oPC",
-      "xy": {
-        "x": 400,
-        "y": 3200
-      }
-    },
-    {
       "description": "References: &Fopf; Arithmetic",
       "basename": "t_16",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -120,
         "y": 110
@@ -445,41 +319,23 @@
     {
       "description": "Complex Numbers",
       "basename": "t_17",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -490,
-        "y": -70
+        "x": -500,
+        "y": -100
       },
       "height": "200",
       "weight": "bold"
     },
     {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_0",
-      "codomain": "hdole/complex/o_1",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 1,
-      "to": "hdole/complex/Id{C,hdole/floats/Po{F64,F64}oP}dI"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_1",
-      "codomain": "hdole/complex/o_0",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 1,
-      "to": "hdole/complex/Id{hdole/floats/Po{F64,F64}oP,C}dI"
+      "description": "C++ implementation uses std::complex.",
+      "basename": "t_15",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 750,
+        "y": 110
+      },
+      "height": "24"
     },
     {
       "basename": "m_2",
@@ -503,84 +359,11 @@
       "to": "hdole/complex/e"
     },
     {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_8",
-      "codomain": "hdole/complex/o_9",
-      "to": "hdole/complex/real"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_10",
-      "codomain": "hdole/complex/o_11",
-      "to": "hdole/complex/imag"
-    },
-    {
-      "basename": "m_7",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_12",
-      "codomain": "hdole/complex/o_13",
-      "to": "hdole/complex/F2C"
-    },
-    {
       "basename": "m_8",
       "prototype": "IndexMorphism",
       "domain": "hdole/complex/o_14",
       "codomain": "hdole/complex/o_15",
       "to": "hdole/complex/conjugate"
-    },
-    {
-      "basename": "m_9",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_16",
-      "codomain": "hdole/complex/o_17",
-      "to": "hdole/complex/abs"
-    },
-    {
-      "basename": "m_10",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_19",
-      "codomain": "hdole/complex/o_20",
-      "to": "hdole/complex/add"
-    },
-    {
-      "basename": "m_11",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_21",
-      "codomain": "hdole/complex/o_22",
-      "to": "hdole/complex/subtract"
-    },
-    {
-      "basename": "m_12",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_23",
-      "codomain": "hdole/complex/o_24",
-      "to": "hdole/complex/multiply"
-    },
-    {
-      "basename": "m_13",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_26",
-      "codomain": "hdole/complex/o_27",
-      "to": "hdole/complex/divide"
-    },
-    {
-      "basename": "m_14",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/complex/o_28",
-      "codomain": "hdole/complex/o_29",
-      "to": "hdole/complex/pow"
-    },
-    {
-      "description": "C++ implementation uses std::complex.",
-      "basename": "t_15",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 750,
-        "y": 110
-      },
-      "height": "24"
     }
   ],
   "elements": [
@@ -588,51 +371,13 @@
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "&#10034;",
-      "size": 1
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "#1",
-        "#1"
-      ]
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "basename": "C",
-      "prototype": "NamedObject",
-      "properName": "&Copf;",
-      "code": "}\n\n#include <complex>\n#include <cmath>\n\nnamespace %Namespace\n{\n",
-      "source": "hdole/floats/Po{F64,F64}oP"
-    },
-    {
-      "basename": "Id{C,hdole/floats/Po{F64,F64}oP}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/Po{F64,F64}oP"
-    },
-    {
-      "basename": "Id{hdole/floats/Po{F64,F64}oP,C}dI",
-      "prototype": "Identity",
-      "properName": "&#8797;",
-      "domain": "hdole/floats/Po{F64,F64}oP",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "C",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "C",
-        "#1"
-      ]
+      "prototype": "CatObject"
     },
     {
       "description": "The complex number zero",
@@ -643,7 +388,7 @@
         "js": "function %Type(args)\n{\n\treturn 0.0;\n}\n",
         "cpp": "%0 = std::complex(0.0);\n"
       },
-      "domain": "#1",
+      "domain": "hdole/complex/#1",
       "codomain": "hdole/complex/C"
     },
     {
@@ -654,7 +399,7 @@
         "js": "function %Type(args)\n{\n\treturn [0, 1];\n}\n",
         "cpp": "%0 = std::complex<double>(0, 1);"
       },
-      "domain": "#1",
+      "domain": "hdole/complex/#1",
       "codomain": "hdole/complex/C"
     },
     {
@@ -665,41 +410,7 @@
         "js": "function %Type(args)\n{\n\treturn [Math.E, 0];\n}\n",
         "cpp": "%0 = std::complex(std::numbers::e_v);"
       },
-      "domain": "#1",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "the real part of a complex numbers",
-      "basename": "real",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0];\n}\n",
-        "cpp": "%1 = %0.real();"
-      },
-      "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/F64"
-    },
-    {
-      "description": "the imaginary part of a complex numbers",
-      "basename": "imag",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[1];\n}\n",
-        "cpp": "%1 = %0.imag();"
-      },
-      "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/F64"
-    },
-    {
-      "description": "every floating point number is a complex number",
-      "basename": "F2C",
-      "prototype": "Morphism",
-      "properName": "&sub;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn [args, 0];\n}\n",
-        "cpp": "%1 = std::complex(%0);"
-      },
-      "domain": "hdole/floats/F64",
+      "domain": "hdole/complex/#1",
       "codomain": "hdole/complex/C"
     },
     {
@@ -713,86 +424,14 @@
       },
       "domain": "hdole/complex/C",
       "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "the absolute value of a complex number",
-      "basename": "abs",
-      "prototype": "Morphism",
-      "properName": "||",
-      "code": {
-        "js": "%1 = std::abs(%0);",
-        "cpp": "void %Type(const %Dom & args, %Cod & out)\n{\n\tout = args.abs();\n}\n"
-      },
-      "domain": "hdole/complex/C",
-      "codomain": "hdole/floats/F64"
-    },
-    {
-      "description": "Addition of two complex numbers",
-      "basename": "add",
-      "prototype": "Morphism",
-      "properName": "+",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn [args[0][0] + args[1][0], args[0][1] + args[1][1]];\n}\n",
-        "cpp": "%2 = %0 + %1;"
-      },
-      "domain": "hdole/complex/Po{C,C}oP",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "subtraction of two complex numbers",
-      "basename": "subtract",
-      "prototype": "Morphism",
-      "properName": "&ndash;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn [args[0][0] - args[1][0], args[0][1] - args[1][1]];\n}\n",
-        "cpp": "%2 = %0 - %1;"
-      },
-      "domain": "hdole/complex/Po{C,C}oP",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "Multiplication of two complex numbers",
-      "basename": "multiply",
-      "prototype": "Morphism",
-      "properName": "&sdot;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn [args[0][0] * args[1][0] - args[0][1] * args[1][1], args[0][0] * args[1][1] + args[0][1] * args[1][0]];\n}\n",
-        "cpp": "%2 = %0 * %1;"
-      },
-      "domain": "hdole/complex/Po{C,C}oP",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "division of two complex numbers or an exception",
-      "basename": "divide",
-      "prototype": "Morphism",
-      "properName": "&div;",
-      "code": {
-        "js": "function %Type(args)\n{\nconst x = args[1][0];\nconst y = args[1][1];\nconst n = x * x + y * y;\nif (n === 0.0)\n\treturn [1, [0, 0]];\t\t// exception\nreturn [0, [(args[0][0] * x + args[0][1] * y) / n, (args[0][0] * y - args[0][1] * x) / n]];\n}\n",
-        "cpp": "if (%1 != 0)\n{\n\t%1.c = 0;\n\t%1.v = %0 / %1;\n}\nelse\n\t%1.c = 1;\n\n"
-      },
-      "domain": "hdole/complex/Po{C,C}oP",
-      "codomain": "hdole/complex/CPo{C,#1}oPC"
-    },
-    {
-      "description": "raise the first number to the second number as exponent or an exception",
-      "basename": "pow",
-      "prototype": "Morphism",
-      "properName": "x&#x02b8;",
-      "code": {
-        "js": "function %Type(args)\n{\nif (args[0] === 0 && args[1] === 0)\n\treturn [1, 0];\nreturn [0, Math.pow(args[0], args[1])];\n}\n",
-        "cpp": "if (%0 == 0i && %1 == 0i)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.v = std::pow(%0, %1);\n}"
-      },
-      "domain": "hdole/complex/Po{C,C}oP",
-      "codomain": "hdole/complex/CPo{C,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1632634227875,
+  "timestamp": 1641588927476,
   "version": 0,
   "viewport": {
-    "x": 987,
-    "y": 753,
-    "scale": 1.1471280424051202
+    "x": 874,
+    "y": 388,
+    "scale": 1.2230534509222923
   }
 }

@@ -24,7 +24,7 @@
     {
       "description": "The HTML object intereacts with web devices",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 100,
         "y": 200
@@ -124,7 +124,7 @@
     {
       "description": "Read an integer from an HTML input tag",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 100,
         "y": 1200
@@ -152,7 +152,7 @@
     {
       "description": "Read a floating point number from an HTML input tag",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -60,
         "y": 1990
@@ -180,7 +180,7 @@
     {
       "description": "Read a string from an HTML input tag",
       "basename": "t_8",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 100,
         "y": 2200
@@ -226,7 +226,7 @@
     {
       "description": "Input a natural number from HTML",
       "basename": "t_10",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 100,
         "y": 400
@@ -326,7 +326,7 @@
     {
       "description": "References: str",
       "basename": "t_15",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 100
@@ -336,10 +336,10 @@
     {
       "description": "HTML",
       "basename": "t_16",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": 70,
-        "y": -70
+        "x": 90,
+        "y": -130
       },
       "height": "500",
       "weight": "bold"
@@ -635,7 +635,7 @@
     {
       "description": "Morphisms in this column are referred to as formatters.\nThe take an HTML input and a default starting value (or not).\nThe output is a string and the conversion function to convert\nthe string to the final value.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1580,
         "y": 150
@@ -1495,7 +1495,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1638138565239,
+  "timestamp": 1641588855902,
   "version": 0,
   "viewport": {
     "x": 168,

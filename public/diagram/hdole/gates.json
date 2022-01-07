@@ -22,9 +22,9 @@
     {
       "description": "The quantum qubit",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": 200,
+        "x": 220,
         "y": 460
       },
       "height": 24
@@ -41,7 +41,7 @@
     {
       "description": "A pair of qubits",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 670
@@ -51,7 +51,7 @@
     {
       "description": "Identity for the object &Qopf;",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 870
@@ -79,7 +79,7 @@
     {
       "description": "the 0 basis vector",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1070
@@ -107,7 +107,7 @@
     {
       "description": "Pauli-X gate",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1270
@@ -135,7 +135,7 @@
     {
       "description": "Pauli-Y gate",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1470
@@ -163,7 +163,7 @@
     {
       "description": "Pauli-Z gate",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1670
@@ -191,7 +191,7 @@
     {
       "description": "hademard gate",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1870
@@ -346,11 +346,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641182495028,
+  "timestamp": 1641588976674,
   "version": 0,
   "viewport": {
-    "x": 632,
-    "y": -625,
-    "scale": 2.0863004005486023
+    "x": -868,
+    "y": -2562,
+    "scale": 6.91743105187686
   }
 }

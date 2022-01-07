@@ -13,10 +13,10 @@
     {
       "description": "Group",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -540,
-        "y": 40
+        "x": -410,
+        "y": 30
       },
       "height": "200",
       "weight": "bold"
@@ -123,7 +123,7 @@
     {
       "description": "g * g⁻¹ = 1",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -260,
         "y": 1600
@@ -178,7 +178,7 @@
     {
       "description": "g⁻¹ * g = 1",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -260,
         "y": 1890
@@ -188,7 +188,7 @@
     {
       "description": "G is a group object when supplied with a multiplier,\na unit in the group, and an inverse for the group\nand the following cells must commute.",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -860,
         "y": 190
@@ -252,7 +252,7 @@
     {
       "description": "g*(h*i) = (g*h)*i",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -300,
         "y": 1300
@@ -334,7 +334,7 @@
     {
       "description": "g = g*1",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -200,
         "y": 700
@@ -344,7 +344,7 @@
     {
       "description": "g = 1*g",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -200,
         "y": 1000
@@ -452,18 +452,6 @@
       "to": "hdole/group/Pm{inv,Id{G}dI}mP"
     },
     {
-      "description": "The assertion that the composite of morphisms &Delta;G,id&times;inv,mult equals that of &#119901;,unit.",
-      "basename": "{m_3,m_8,m_6},{m_7,m_4}",
-      "prototype": "Assertion",
-      "equal": true
-    },
-    {
-      "description": "The assertion that the composite of morphisms &Delta;G,inv&times;id,mult equals that of &#119901;,unit.",
-      "basename": "{m_11,m_12},{m_9,m_13,m_10}",
-      "prototype": "Assertion",
-      "equal": true
-    },
-    {
       "basename": "m_17",
       "prototype": "IndexMorphism",
       "domain": "hdole/group/o_19",
@@ -506,12 +494,6 @@
       "to": "hdole/group/mult"
     },
     {
-      "description": "The assertion that the composite of morphisms &Pi;&lt;&#119901;&#8202;&#x2080;,&#8202;&#x2081;,&#119901;&#8202;&#x2082;&gt;,mult&times;id,mult equals that of &Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;,id&times;mult,mult.",
-      "basename": "{m_17,m_5,m_15},{m_18,m_19,m_14}",
-      "prototype": "Assertion",
-      "equal": true
-    },
-    {
       "basename": "m_16",
       "prototype": "IndexMorphism",
       "domain": "hdole/group/o_9",
@@ -540,12 +522,6 @@
       "to": "hdole/group/Pm{Id{G}dI,unit}mP"
     },
     {
-      "description": "The assertion that the composite of morphisms &#119901;,,id&times;unit,mult equals that of id.",
-      "basename": "{m_20,m_22,m_16},{m_21}",
-      "prototype": "Assertion",
-      "equal": true
-    },
-    {
       "basename": "m_23",
       "prototype": "IndexMorphism",
       "domain": "hdole/group/o_24",
@@ -572,12 +548,6 @@
       "domain": "hdole/group/o_24",
       "codomain": "hdole/group/o_26",
       "to": "hdole/group/Id{G}dI"
-    },
-    {
-      "description": "The assertion that the composite of morphisms &#119901;,,unit&times;id,mult equals that of id.",
-      "basename": "{m_23,m_24,m_25},{m_26}",
-      "prototype": "Assertion",
-      "equal": true
     }
   ],
   "elements": [
@@ -816,7 +786,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640662833304,
+  "timestamp": 1641588999708,
   "version": 0,
   "viewport": {
     "x": 1341,

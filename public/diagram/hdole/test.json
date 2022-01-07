@@ -195,7 +195,7 @@
     {
       "description": "Test",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1090,
         "y": -830
@@ -915,38 +915,20 @@
       }
     },
     {
-      "basename": "o_99",
-      "prototype": "IndexObject",
-      "to": "hdole/test/A",
-      "xy": {
-        "x": 2970,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_100",
-      "prototype": "IndexObject",
-      "to": "hdole/test/B",
-      "xy": {
-        "x": 3050,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_101",
-      "prototype": "IndexObject",
-      "to": "hdole/test/Ho{A,B}oH",
-      "xy": {
-        "x": 2970,
-        "y": -100
-      }
-    },
-    {
       "basename": "o_102",
       "prototype": "IndexObject",
       "to": "hdole/test/Po{Ho{A,B}oH,A}oP",
       "xy": {
         "x": 2940,
+        "y": 20
+      }
+    },
+    {
+      "basename": "o_103",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 3140,
         "y": 20
       }
     },
@@ -966,7 +948,7 @@
     },
     {
       "basename": "m_7",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/test/o_4",
       "codomain": "hdole/test/o_8",
       "attributes": [
@@ -1054,7 +1036,7 @@
     },
     {
       "basename": "m_26",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/test/o_17",
       "codomain": "hdole/test/o_33",
       "attributes": [
@@ -1086,7 +1068,7 @@
     },
     {
       "basename": "m_3",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/test/o_12",
       "codomain": "hdole/test/o_25",
       "attributes": [
@@ -1123,7 +1105,7 @@
     },
     {
       "basename": "m_14",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/test/o_12",
       "codomain": "hdole/test/o_35",
       "to": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC",
@@ -1685,15 +1667,6 @@
         ]
       ],
       "to": "hdole/test/CPa{j,kk,l}aPC"
-    },
-    {
-      "basename": "o_103",
-      "prototype": "IndexObject",
-      "to": "hdole/test/B",
-      "xy": {
-        "x": 3140,
-        "y": 20
-      }
     },
     {
       "basename": "m_79",
@@ -2571,7 +2544,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1639106331755,
+  "timestamp": 1641588577895,
   "version": 0,
   "viewport": {
     "x": -4106,

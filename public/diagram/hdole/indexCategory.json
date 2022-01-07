@@ -3,6 +3,7 @@
   "basename": "indexCategory",
   "name": "hdole/indexCategory",
   "prototype": "Diagram",
+  "properName": "hdole/indexCategory",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/indexCategory_Index",
@@ -12,10 +13,10 @@
     {
       "description": "Index Category",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": 120,
-        "y": -440
+        "x": 100,
+        "y": -360
       },
       "height": "200",
       "weight": "bold"
@@ -23,7 +24,7 @@
     {
       "description": "An index category is a category that serves as the domain of a Catecon diagram.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 190,
         "y": -160
@@ -33,7 +34,7 @@
     {
       "description": "The objects in the index category map to an XY location.",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 190,
         "y": -10
@@ -43,7 +44,7 @@
     {
       "description": "The objects in the index category map to an XY location.",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 100
@@ -53,7 +54,7 @@
     {
       "description": "A morphism in an index category has a flag which indicates if the target morphism&#39;s name\nis flipped to one side or the other of the plotted arrow between the two index objects.",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 230
@@ -62,14 +63,12 @@
     }
   ],
   "elements": [],
-  "readonly": false,
   "user": "hdole",
-  "timestamp": 1631781882073,
+  "timestamp": 1641589025253,
   "version": 0,
   "viewport": {
     "x": 103,
     "y": 900,
     "scale": 1.428905813932552
-  },
-  "properName": "hdole/indexCategory"
+  }
 }

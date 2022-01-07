@@ -36,7 +36,7 @@
     {
       "description": "Return string describing error",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 700
@@ -73,7 +73,7 @@
     {
       "description": "The standard input object reads from a tty device.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 900
@@ -83,7 +83,7 @@
     {
       "description": "Read a natural number from standard input",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 1100
@@ -111,7 +111,7 @@
     {
       "description": "Read an integer from standard input",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 1300
@@ -139,7 +139,7 @@
     {
       "description": "Read a floating point number from standard input",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 1500
@@ -167,7 +167,7 @@
     {
       "description": "Read a string from standard input",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 1700
@@ -204,7 +204,7 @@
     {
       "description": "The standard output object writes to a tty device.",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 1900
@@ -214,7 +214,7 @@
     {
       "description": "Write a natural number to standard out.",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 2100
@@ -242,7 +242,7 @@
     {
       "description": "Write an integer to standard out.",
       "basename": "t_8",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 2300
@@ -270,7 +270,7 @@
     {
       "description": "Write a floating point number to standard out.",
       "basename": "t_9",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 2500
@@ -298,7 +298,7 @@
     {
       "description": "Write a string to standard out.",
       "basename": "t_10",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 2700
@@ -335,7 +335,7 @@
     {
       "description": "The standard error object writes to the error stream.",
       "basename": "t_11",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 2900
@@ -345,7 +345,7 @@
     {
       "description": "Write a natural number to standard error.",
       "basename": "t_12",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 3100
@@ -373,7 +373,7 @@
     {
       "description": "Write an integer to standard error.",
       "basename": "t_13",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 3300
@@ -401,7 +401,7 @@
     {
       "description": "Write a floating point number to standard error.",
       "basename": "t_14",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 3500
@@ -429,7 +429,7 @@
     {
       "description": "Write a string to standard error.",
       "basename": "t_15",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 3700
@@ -466,7 +466,7 @@
     {
       "description": "File descriptor",
       "basename": "t_16",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 3900
@@ -521,7 +521,7 @@
     {
       "description": "The file is opened in read only mode",
       "basename": "t_17",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 4900
@@ -549,7 +549,7 @@
     {
       "description": "The file is opened in write only mode",
       "basename": "t_18",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 5100
@@ -577,7 +577,7 @@
     {
       "description": "The file is opened in read/write mode",
       "basename": "t_19",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 5300
@@ -605,7 +605,7 @@
     {
       "description": "The file is opened in append mode",
       "basename": "t_20",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 5500
@@ -633,7 +633,7 @@
     {
       "description": "The file is opened in async mode",
       "basename": "t_21",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 5700
@@ -661,7 +661,7 @@
     {
       "description": "The file is newly created",
       "basename": "t_22",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 5900
@@ -689,7 +689,7 @@
     {
       "description": "Open a file.",
       "basename": "t_23",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 6100
@@ -717,7 +717,7 @@
     {
       "description": "Close a file.",
       "basename": "t_24",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 6300
@@ -754,7 +754,7 @@
     {
       "description": "Buffer for file status",
       "basename": "t_25",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 7300
@@ -764,7 +764,7 @@
     {
       "description": "Get file status",
       "basename": "t_26",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 7500
@@ -792,7 +792,7 @@
     {
       "description": "Get file size",
       "basename": "t_27",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 7700
@@ -811,7 +811,7 @@
     {
       "description": "Pages may be read",
       "basename": "t_28",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 8100
@@ -839,7 +839,7 @@
     {
       "description": "Pages may be written",
       "basename": "t_29",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 8300
@@ -867,7 +867,7 @@
     {
       "description": "Share this mapping",
       "basename": "t_30",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 8500
@@ -895,7 +895,7 @@
     {
       "description": "Do not share this mapping",
       "basename": "t_31",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 8700
@@ -923,7 +923,7 @@
     {
       "description": "Map anonymous memory",
       "basename": "t_32",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 8900
@@ -951,7 +951,7 @@
     {
       "description": "Memory map a file.",
       "basename": "t_33",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 9100
@@ -979,7 +979,7 @@
     {
       "description": "Unmap a memory mapped file",
       "basename": "t_34",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 9300
@@ -1007,7 +1007,7 @@
     {
       "description": "Get an unsigned byte from memory",
       "basename": "t_35",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 9500
@@ -1035,7 +1035,7 @@
     {
       "description": "Get an unsigned short from memory",
       "basename": "t_36",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 9700
@@ -1063,7 +1063,7 @@
     {
       "description": "Get an integer from memory",
       "basename": "t_37",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 9900
@@ -1091,7 +1091,7 @@
     {
       "description": "Get a floating point number from memory",
       "basename": "t_38",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 10100
@@ -1119,7 +1119,7 @@
     {
       "description": "Get an IBM S/360 floating point number from memory",
       "basename": "t_39",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 10300
@@ -1147,7 +1147,7 @@
     {
       "description": "Get a string from memory",
       "basename": "t_40",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 10500
@@ -1175,7 +1175,7 @@
     {
       "description": "Get a string from memory with a specified limiting size",
       "basename": "t_41",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 10700
@@ -1203,7 +1203,7 @@
     {
       "description": "Increment void pointer",
       "basename": "t_42",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 10900
@@ -1267,7 +1267,7 @@
     {
       "description": "Increment void pointer by a natural number",
       "basename": "t_45",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 11100
@@ -1295,10 +1295,10 @@
     {
       "description": "C++",
       "basename": "t_46",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": -490,
-        "y": -90
+        "x": -520,
+        "y": -80
       },
       "height": "700",
       "weight": "bold"
@@ -1891,7 +1891,7 @@
     {
       "description": "The null pointer",
       "basename": "t_43",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 4700
@@ -1955,7 +1955,7 @@
     {
       "description": "As it happens the fstat function\ngives the file size in off_t, but other\nfunctions want size_t.",
       "basename": "t_44",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1270,
         "y": 4290
@@ -1992,7 +1992,7 @@
     {
       "description": "The number of seconds since the start of this epoch.",
       "basename": "t_47",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 6500
@@ -2056,7 +2056,7 @@
     {
       "description": "The C++ type for a Boolean value is bool.",
       "basename": "t_48",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -600,
         "y": 300
@@ -2657,7 +2657,7 @@
     },
     {
       "basename": "m_82",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/cpp/o_160",
       "codomain": "hdole/cpp/o_163",
       "attributes": [
@@ -3737,7 +3737,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1639566055622,
+  "timestamp": 1641588646420,
   "version": 0,
   "viewport": {
     "x": 725,

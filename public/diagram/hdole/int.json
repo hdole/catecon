@@ -27,7 +27,7 @@
     {
       "description": "The 64-bit integers",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 760,
         "y": -80
@@ -100,7 +100,7 @@
     {
       "description": "The successor function for the integers with carry",
       "basename": "t_8",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 1400
@@ -164,7 +164,7 @@
     {
       "description": "The 16-bit integers",
       "basename": "t_14",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -40,
         "y": -80
@@ -183,7 +183,7 @@
     {
       "description": "The first number:  zero",
       "basename": "t_16",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 400
@@ -211,7 +211,7 @@
     {
       "description": "After zero there is one",
       "basename": "t_17",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 600
@@ -239,7 +239,7 @@
     {
       "description": "Addition of two integers with rollover",
       "basename": "t_19",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 2000
@@ -267,7 +267,7 @@
     {
       "description": "Subtraction of two integers",
       "basename": "t_20",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 2400
@@ -295,7 +295,7 @@
     {
       "description": "Multiplication of two integers",
       "basename": "t_21",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 2600
@@ -323,7 +323,7 @@
     {
       "description": "Bit-wise and of two integers",
       "basename": "t_22",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 3000
@@ -351,7 +351,7 @@
     {
       "description": "Bit-wise or of two integers",
       "basename": "t_23",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 3200
@@ -379,7 +379,7 @@
     {
       "description": "Bit-wise exclusive or",
       "basename": "t_24",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 3400
@@ -407,7 +407,7 @@
     {
       "description": "Division of one integer of the other, or an exception",
       "basename": "t_25",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 3600
@@ -435,7 +435,7 @@
     {
       "description": "Modulus of one integer of the other, or an exception",
       "basename": "t_26",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 3800
@@ -463,7 +463,7 @@
     {
       "description": "Compare two numbers for equality",
       "basename": "t_27",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 4000
@@ -473,7 +473,7 @@
     {
       "description": "Is the first number less than the second",
       "basename": "t_28",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 4200
@@ -501,7 +501,7 @@
     {
       "description": "Is the first number less than or equal to the second",
       "basename": "t_29",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 4400
@@ -529,10 +529,10 @@
     {
       "description": "Integers",
       "basename": "t_31",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -910,
-        "y": -490
+        "y": -440
       },
       "height": "500",
       "weight": "bold"
@@ -594,7 +594,7 @@
     {
       "description": "The 8-bit integers",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -440,
         "y": -80
@@ -604,7 +604,7 @@
     {
       "description": "The 32-bit integers",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 360,
         "y": -80
@@ -2301,7 +2301,7 @@
     {
       "description": "Bit-wise not operation of an integer",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 2800
@@ -2311,7 +2311,7 @@
     {
       "description": "Addition of two integers with carry",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 1800
@@ -2321,7 +2321,7 @@
     {
       "description": "Subtraction of two integers with underflow",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 2200
@@ -2331,7 +2331,7 @@
     {
       "description": "The predecessor function for the integers with underflow",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 1600
@@ -2413,7 +2413,7 @@
     {
       "description": "The 128-bit integers",
       "basename": "t_10",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 1170,
         "y": -80
@@ -2603,7 +2603,7 @@
     {
       "description": "The first interesting integer:  -1",
       "basename": "t_11",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 800
@@ -2793,7 +2793,7 @@
     {
       "description": "The last integer",
       "basename": "t_12",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 1000
@@ -2803,7 +2803,7 @@
     {
       "description": "The first integer",
       "basename": "t_13",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 1200
@@ -2903,7 +2903,7 @@
     {
       "description": "Is the first number greater than the second",
       "basename": "t_9",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 4600
@@ -2913,7 +2913,7 @@
     {
       "description": "Is the first number greater than or equal to the second",
       "basename": "t_15",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 4800
@@ -2923,7 +2923,7 @@
     {
       "description": "Right shift the first number by the amount given by the second",
       "basename": "t_18",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 5000
@@ -2933,7 +2933,7 @@
     {
       "description": "Left shift the first number by the amount given by the second",
       "basename": "t_30",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 5200
@@ -2943,7 +2943,7 @@
     {
       "description": "The maximum of two integers",
       "basename": "t_33",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 5400
@@ -2953,7 +2953,7 @@
     {
       "description": "The minimum of two integers",
       "basename": "t_32",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 5600
@@ -2963,7 +2963,7 @@
     {
       "description": "The absolute value of an integer is a natural number",
       "basename": "t_34",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -1200,
         "y": 5800
@@ -5698,7 +5698,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640296691491,
+  "timestamp": 1641589038800,
   "version": 0,
   "viewport": {
     "x": 1261,

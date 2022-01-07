@@ -76,10 +76,10 @@
     {
       "description": "While",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
-        "x": 40,
-        "y": 60
+        "x": -20,
+        "y": 80
       },
       "height": "200",
       "weight": "bold"
@@ -105,7 +105,7 @@
     {
       "description": "The purpose of a &#39;while&#39; statement in a\nvernacular programming language is to\ntest an expression and if true run an\nupdate function on our state.",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 400,
         "y": 190
@@ -115,7 +115,7 @@
     {
       "description": "The assembly of the above diagram shows a composite of three stages.\nThe first stage runs the test and maintains access to the original state..\nThe second stage selects a function depending on the first stage.\nThe choices are maintaining state or doing the update followed by while.\nThe last stage evaluates the given function of the second stage to get the final result.\n",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 490,
         "y": 1010
@@ -125,7 +125,7 @@
     {
       "description": "The portion of the diagram on the left side represents what happens if the test returns false.\nNamely, the identity id represents that the state does not update.\nThe right side is run if the test returns true, whereupon the update function is invoked, followed by &#39;while&#39;.",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 780,
         "y": 590
@@ -135,7 +135,7 @@
     {
       "description": "Next we set the recursor to while to be the morphism just assembled.\nLastly, we give a named version of &#39;while&#39; as &#39;While&#39; as that marks it as externally available.",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 490,
         "y": 1410
@@ -384,12 +384,8 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1637487415683,
+  "timestamp": 1641589219992,
   "version": 0,
-  "hiddenCells": [
-    "hdole/while/{m_0,m_2},{m_9,m_4}",
-    "hdole/while/{m_7,m_3},{m_8,m_2}"
-  ],
   "viewport": {
     "x": 504,
     "y": 165,

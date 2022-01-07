@@ -4,7 +4,7 @@
   "name": "hdole/category",
   "prototype": "Diagram",
   "properName": "hdole/category",
-  "category": "sys/Cat",
+  "category": "zf/Set",
   "diagram": "hdole/hdole",
   "domain": "hdole/category_Index",
   "codomain": "zf/Set",
@@ -139,7 +139,7 @@
     {
       "description": "Category",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 40,
         "y": -510
@@ -150,7 +150,7 @@
     {
       "description": "The collection of objects in the category",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -100,
         "y": -200
@@ -160,7 +160,7 @@
     {
       "description": "The collection of morphisms in the category",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -100,
         "y": 0
@@ -170,7 +170,7 @@
     {
       "description": "The mapping of objects to their identity morphism",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": -100,
         "y": 200
@@ -262,7 +262,7 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 1040,
+        "x": 1000,
         "y": 2300
       }
     },
@@ -280,7 +280,7 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 1040,
+        "x": 1000,
         "y": 2500
       }
     },
@@ -431,7 +431,7 @@
     },
     {
       "basename": "m_17",
-      "prototype": "DiagramComposite",
+      "prototype": "IndexComposite",
       "domain": "hdole/category/o_20",
       "codomain": "hdole/category/o_22",
       "to": "hdole/category/Cm{dom,id}mC",
@@ -439,18 +439,6 @@
         "hdole/category/m_14",
         "hdole/category/m_15"
       ]
-    },
-    {
-      "description": "The assertion that the composite of morphisms id,dom equals that of 1.",
-      "basename": "{m_3,m_5},{m_4}",
-      "prototype": "Assertion",
-      "equal": true
-    },
-    {
-      "description": "The assertion that the composite of morphisms id,cod equals that of 1.",
-      "basename": "{m_6,m_8},{m_7}",
-      "prototype": "Assertion",
-      "equal": true
     }
   ],
   "elements": [
@@ -551,11 +539,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1640749080837,
+  "timestamp": 1641588631209,
   "version": 0,
   "viewport": {
-    "x": -1080,
-    "y": -1807,
-    "scale": 2.826147260495738
+    "x": 1088,
+    "y": 320,
+    "scale": 0.3905938902952756
   }
 }

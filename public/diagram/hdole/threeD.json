@@ -24,7 +24,7 @@
     {
       "description": "The 3D object interacts with graphic devices",
       "basename": "t_0",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 270
@@ -34,7 +34,7 @@
     {
       "description": "visualize a number in 3D",
       "basename": "t_1",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 470
@@ -62,7 +62,7 @@
     {
       "description": "visualize a pair of numbers in 3D",
       "basename": "t_2",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 670
@@ -108,7 +108,7 @@
     {
       "description": "visualize a triplet of numbers in 3D",
       "basename": "t_3",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1070
@@ -136,7 +136,7 @@
     {
       "description": "visualize two points as a line in 3D",
       "basename": "t_4",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1270
@@ -164,7 +164,7 @@
     {
       "description": "visualize three points as a Bezier curve in 3D",
       "basename": "t_5",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1470
@@ -192,7 +192,7 @@
     {
       "description": "References: str",
       "basename": "t_6",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 200,
         "y": 1600
@@ -202,10 +202,10 @@
     {
       "description": "3D",
       "basename": "t_7",
-      "prototype": "DiagramText",
+      "prototype": "IndexText",
       "xy": {
         "x": 160,
-        "y": 40
+        "y": 60
       },
       "height": "200",
       "weight": "bold"
@@ -368,7 +368,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1638160559811,
+  "timestamp": 1641589197202,
   "version": 0,
   "viewport": {
     "x": 544,
