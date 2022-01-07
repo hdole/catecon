@@ -677,7 +677,7 @@ p
 	box-sizing:			border-box;
 }
 
-.diagramText
+.indexText
 {
 	fill:		var(--color-text);
 	font-size:	18px;
