@@ -1693,6 +1693,7 @@ class Navbar
 	catalogView()
 	{
 		D.catalog.mode = 'search';
+		D.catalog.search();
 		D.emitViewEvent('catalog', 'search');
 	}
 	update()
@@ -3466,9 +3467,10 @@ class Display
 		Object.defineProperties(this,
 		{
 			bracketWidth:	{value: 0,			writable: true},
+			commaWidth:		{value: 0,			writable: true},
+			parenWidth:		{value: 0,			writable: true},
 			catalog:		{value: null,		writable: true},
 			category:		{value: null,		writable: true},
-			commaWidth:		{value: 0,			writable: true},
 			copyDiagram:	{value:	null,		writable: true},
 			ctrlKey:		{value: false,		writable: true},
 			default:
@@ -4102,7 +4104,7 @@ class Display
 			snapshotHeight:	{value: 768,		writable: true},
 			statusbar:		{value: isGUI ? new StatusBar(): null,	writable: false},
 			svgContainers:	{value: ['svg', 'g', 'symbol', 'use'],	writable: false},
-			svgStyles:
+			svgStyles:		// required to create styles for png files
 			{
 				value:
 				{
@@ -4111,6 +4113,7 @@ class Display
 					line:		['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
 					path:		['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
 					polyline:	['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
+					stop:		['stop-color', 'stop-opacity'],
 					text:		['fill', 'font', 'margin', 'stroke', 'text-anchor'],
 				},
 				writable:	false,
@@ -4139,7 +4142,7 @@ class Display
 		this.addEventListeners();
 		this.parenWidth =		this.textWidth('(');
 		this.commaWidth =		this.textWidth(',&nbsp;'),
-		this.bracketWidth =	this.textWidth('[');
+		this.bracketWidth =		this.textWidth('[');
 		this.screenPan =		this.getScreenPan();
 		this.Panel = 			Panel;
 		this.panels =		new Panels();
@@ -5078,41 +5081,44 @@ class Display
 									D.statusbar.show(null, `cannot load diagram ${name}`);
 									D.emitViewEvent('catalog');
 								}
-								const select = diagram.domain.getElements(this.params.get('select').split(','));
-								const action = this.params.get('action');
-								if (select.length > 0 || action)
+								if (this.params.has('select'))
 								{
-									const doit = _ =>
+									const select = diagram.domain.getElements(this.params.get('select').split(','));
+									const action = this.params.get('action');
+									if (select.length > 0 || action)
 									{
-										if (diagram.ready === 0 && R.isReady())
+										const doit = _ =>
 										{
-											select && diagram.makeSelected(...select);
-											const action = this.params.get('action');
-											if (action && action in R.Actions)
+											if (diagram.ready === 0 && R.isReady())
 											{
-												const act = R.Actions[action];
-												if (act.hasForm(diagram, diagram.selected))
+												select && diagram.makeSelected(...select);
+												const action = this.params.get('action');
+												if (action && action in R.Actions)
 												{
-													if (!act.actionOnly)
+													const act = R.Actions[action];
+													if (act.hasForm(diagram, diagram.selected))
 													{
-														act.html(e, diagram, diagram.selected);
-														const btn = this.params.get('btn');
-														if (btn)
+														if (!act.actionOnly)
 														{
-															const elt = D.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
-															if (elt && elt.onclick)
-																elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+															act.html(e, diagram, diagram.selected);
+															const btn = this.params.get('btn');
+															if (btn)
+															{
+																const elt = D.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
+																if (elt && elt.onclick)
+																	elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+															}
 														}
+														else
+															act.action(e, diagram, diagram.selected);
 													}
-													else
-														act.action(e, diagram, diagram.selected);
 												}
 											}
-										}
-										else
-											setTimeout(doit, 10);	// try again
-									};
-									doit();
+											else
+												setTimeout(doit, 10);	// try again
+										};
+										doit();
+									}
 								}
 							});
 						}
@@ -5271,10 +5277,13 @@ class Display
 		oldMode && D.setDarkmode(false);
 		const copy = svg.cloneNode(true);
 		const radgrad1 = D.gradients.radgrad1.cloneNode(true);
+		this.copyStyles(radgrad1, D.gradients.radgrad1);
+		const radgrad2 = D.gradients.radgrad2.cloneNode(true);
 		const top = H3.svg();
 		const markers = ['arrowhead', 'arrowheadRev'];
 		markers.map(mrk => top.appendChild(document.getElementById(mrk).cloneNode(true)));
 		top.appendChild(radgrad1);
+		top.appendChild(radgrad2);
 		top.appendChild(copy);
 		const ssWidth = this.snapshotWidth;
 		const ssHeight = this.snapshotHeight;
@@ -8224,7 +8233,7 @@ class ProductObject extends MultiObject
 	{
 		if ('dual' in data && this.dual !== data.dual)	// TODO ????
 			return new Graph(this);
-		return super.getGraph(this.constructor.name, data, D.textWidth('('), D.textWidth(this.dual ? '&plus;' : '&times;'), first);
+		return super.getGraph(this.constructor.name, data, D.parenWidth, D.textWidth(this.dual ? '&plus;' : '&times;'), first);
 	}
 	allSame()
 	{
@@ -8828,7 +8837,7 @@ class TensorObject extends MultiObject
 	}
 	getGraph(data = {position:0}, first = true)
 	{
-		return super.getGraph(this.constructor.name, data, D.textWidth('('), D.textWidth('&otimes;'), first);
+		return super.getGraph(this.constructor.name, data, D.parenWidth, D.textWidth('&otimes;'), first);
 	}
 	static Basename(diagram, args)
 	{
@@ -8949,15 +8958,16 @@ class IndexObject extends CatObject
 		let pos = 0;
 		let factor = -1;
 		let g = null;
-		for (let i=0; i<graph.graphs.length; ++i)
-		{
-			g = graph.graphs[i];
-			if (xy.x >= g.position && xy.x <= g.position + g.width)
+		if (!(this.to instanceof HomObject))
+			for (let i=0; i<graph.graphs.length; ++i)
 			{
-				factor = i;
-				break;
+				g = graph.graphs[i];
+				if (xy.x >= g.position && xy.x <= g.position + g.width)
+				{
+					factor = i;
+					break;
+				}
 			}
-		}
 		return {factor, graph};
 	}
 	mousemove(e)
@@ -8970,7 +8980,14 @@ class IndexObject extends CatObject
 			{
 				const g = result.graph.graphs[result.factor];
 				args.x = g.position - result.graph.width/2;
-				args.width = g.width;
+				if (g.element.needsParens())
+				{
+					args.x -= D.parenWidth;
+					args.width += D.parenWidth;
+				}
+				else if (g.element instanceof HomObject)
+					args.x -= D.bracketWidth;
+				args.width += g.width;
 			}
 			else
 			{
