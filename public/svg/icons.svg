@@ -227,8 +227,8 @@
 		<line class="arrow0" x1="60" y1="260" x2="260" y2="260"/>
 	</symbol>
 	<symbol id="icon-help" class="icon" viewbox="0 0 320 320">
-		<circle cx="160" cy="240" r="60" fill="url(#radgrad1)"/>
-		<path class="svgstr4" d="M110,120 C100,40 280,40 210,120 S170,170 160,200"/>
+		<circle cx="160" cy="260" r="60" fill="url(#radgrad1)"/>
+		<path class="svgstr1" d="M110,120 C110,40 210,40 210,120 C210,160 160,160 160,200"/>
 	</symbol>
 	<symbol id="icon-hide" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="160" fill="url(#radgrad1)"/>
