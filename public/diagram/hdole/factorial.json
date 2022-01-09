@@ -516,7 +516,7 @@
       "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/#1}oP",
       "xy": {
         "x": 2000,
-        "y": 0
+        "y": -50
       }
     },
     {
@@ -525,7 +525,7 @@
       "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/F64}oP",
       "xy": {
         "x": 2200,
-        "y": 0
+        "y": -50
       }
     },
     {
@@ -851,6 +851,12 @@
       "prototype": "IndexComposite",
       "domain": "hdole/factorial/o_74",
       "codomain": "hdole/factorial/o_52",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/factorial/Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF,hdole/floats/one64}mC",
       "morphisms": [
         "hdole/factorial/m_56",
@@ -1757,7 +1763,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641448698576,
+  "timestamp": 1641686829567,
   "version": 0,
   "viewport": {
     "x": -649,

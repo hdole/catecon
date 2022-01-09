@@ -14,8 +14,8 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": 360,
-        "y": 450
+        "x": 420,
+        "y": 460
       },
       "height": "200",
       "weight": "bold"
@@ -26,7 +26,7 @@
       "to": "hdole/iso/A",
       "xy": {
         "x": 800,
-        "y": 600
+        "y": 800
       }
     },
     {
@@ -35,7 +35,7 @@
       "to": "hdole/iso/B",
       "xy": {
         "x": 1000,
-        "y": 600
+        "y": 800
       }
     },
     {
@@ -43,8 +43,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/A",
       "xy": {
-        "x": 600,
-        "y": 860
+        "x": 800,
+        "y": 1050
       }
     },
     {
@@ -52,8 +52,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/B",
       "xy": {
-        "x": 800,
-        "y": 860
+        "x": 1000,
+        "y": 1050
       }
     },
     {
@@ -61,8 +61,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/A",
       "xy": {
-        "x": 800,
-        "y": 1060
+        "x": 1000,
+        "y": 1250
       }
     },
     {
@@ -70,8 +70,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/A",
       "xy": {
-        "x": 1200,
-        "y": 860
+        "x": 1000,
+        "y": 1350
       }
     },
     {
@@ -79,8 +79,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/B",
       "xy": {
-        "x": 1200,
-        "y": 1060
+        "x": 1000,
+        "y": 1550
       }
     },
     {
@@ -88,8 +88,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/B",
       "xy": {
-        "x": 1000,
-        "y": 860
+        "x": 800,
+        "y": 1350
       }
     },
     {
@@ -98,7 +98,7 @@
       "to": "hdole/iso/B",
       "xy": {
         "x": 1000,
-        "y": 700
+        "y": 900
       }
     },
     {
@@ -107,7 +107,7 @@
       "to": "hdole/iso/A",
       "xy": {
         "x": 800,
-        "y": 700
+        "y": 900
       }
     },
     {
@@ -177,6 +177,16 @@
       "domain": "hdole/iso/o_2",
       "codomain": "hdole/iso/o_3",
       "to": "hdole/iso/finv"
+    },
+    {
+      "description": "For f in the category C, f is an isomorphism iff there exists a morphism f⁻¹ such that the following diagrams commute.",
+      "basename": "t_1",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 420,
+        "y": 600
+      },
+      "height": "24"
     }
   ],
   "elements": [
@@ -218,12 +228,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641589046177,
+  "timestamp": 1641635386821,
   "version": 0,
   "viewport": {
-    "x": -96,
-    "y": -304,
-    "scale": 1.4369085688896608
+    "x": 173,
+    "y": -210,
+    "scale": 1.155420458037912
   },
   "properName": "hdole/iso"
 }

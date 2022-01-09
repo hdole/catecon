@@ -15,8 +15,8 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": 950,
-        "y": 320
+        "x": 1050,
+        "y": 350
       },
       "height": "200",
       "weight": "bold"
@@ -26,11 +26,12 @@
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 500
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Form a morphism assembly",
@@ -47,11 +48,12 @@
       "basename": "t_3",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 600
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Select all elements",
@@ -68,11 +70,12 @@
       "basename": "t_5",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 700
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Copy the selected elements from the current diagram.",
@@ -89,11 +92,12 @@
       "basename": "t_7",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 800
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Copy selected elements from the current diagram into the paste buffer.",
@@ -110,11 +114,12 @@
       "basename": "t_9",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 900
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Show diagram tool.",
@@ -161,11 +166,12 @@
       "basename": "t_14",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1000
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Show new diagram tool.",
@@ -182,11 +188,12 @@
       "basename": "t_16",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1600
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>composite</icon>",
@@ -213,11 +220,12 @@
       "basename": "t_19",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1100
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>graph</icon>",
@@ -244,11 +252,12 @@
       "basename": "t_22",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1200
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>homset</icon>",
@@ -285,11 +294,12 @@
       "basename": "t_26",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1300
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>hom</icon>",
@@ -316,11 +326,12 @@
       "basename": "t_29",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1400
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>identity</icon>",
@@ -347,11 +358,12 @@
       "basename": "t_32",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1700
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>lambda</icon>",
@@ -368,11 +380,12 @@
       "basename": "t_34",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1800
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Open the TTY panel.",
@@ -399,11 +412,12 @@
       "basename": "t_37",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1900
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>morphism</icon>",
@@ -430,11 +444,12 @@
       "basename": "t_40",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2000
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Show the object tool.",
@@ -451,11 +466,12 @@
       "basename": "t_42",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2100
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>object</icon>",
@@ -472,11 +488,12 @@
       "basename": "t_44",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2200
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Show the new object tool.",
@@ -503,11 +520,12 @@
       "basename": "t_47",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2300
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>product</icon>",
@@ -534,11 +552,12 @@
       "basename": "t_50",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2400
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>coproduct</icon>",
@@ -565,11 +584,12 @@
       "basename": "t_53",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2500
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>help</icon>",
@@ -596,11 +616,12 @@
       "basename": "t_56",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2600
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Show the text tool.",
@@ -617,11 +638,12 @@
       "basename": "t_59",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2700
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Show the new text tool.",
@@ -638,11 +660,12 @@
       "basename": "t_62",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2800
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Pan to the selected elements.",
@@ -659,11 +682,12 @@
       "basename": "t_64",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 2900
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>view</icon>",
@@ -680,11 +704,12 @@
       "basename": "t_66",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3000
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Paste the contents of the paste buffer at the curosor.",
@@ -711,11 +736,12 @@
       "basename": "t_69",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3100
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>productAssembly</icon><icon>coproductAssembly</icon>",
@@ -742,33 +768,36 @@
       "basename": "t_72",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3200
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Arrow",
       "basename": "t_74",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3400
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Delete",
       "basename": "t_75",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3700
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>delete</icon>",
@@ -795,11 +824,12 @@
       "basename": "t_78",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3800
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "If morphisms are selected, delete their objects as well if possible.",
@@ -816,11 +846,12 @@
       "basename": "t_80",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3900
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Place terminal object at mouse location.  If an object is selected, then a morphism is\nplaced from that object to the terminal object.",
@@ -837,11 +868,12 @@
       "basename": "t_82",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4100
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "View bottom of diagram.",
@@ -858,11 +890,12 @@
       "basename": "t_84",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4200
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Zoom in.",
@@ -889,11 +922,12 @@
       "basename": "t_87",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4300
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "View everything.",
@@ -910,11 +944,12 @@
       "basename": "t_89",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4400
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>home</icon>",
@@ -931,11 +966,12 @@
       "basename": "t_91",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4500
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "View top of diagram.",
@@ -952,11 +988,12 @@
       "basename": "t_93",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4600
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Zoom out",
@@ -973,11 +1010,12 @@
       "basename": "t_95",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4700
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Pan in indicated direction.",
@@ -994,11 +1032,12 @@
       "basename": "t_97",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4800
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "In multi-diagram viewing, the current diagram’s Z-order in the view changes up or down accordingly.",
@@ -1015,11 +1054,12 @@
       "basename": "t_99",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 5000
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Press the spacebar and move the mouse to pan the current diagram’s view.",
@@ -1056,11 +1096,12 @@
       "basename": "t_101",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 1500
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "Show element's Javascript code.",
@@ -1087,22 +1128,24 @@
       "basename": "t_104",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 5100
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "shift-Tab",
       "basename": "t_105",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 5200
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "If one element is selected, then select the next element of the same type.",
@@ -1159,11 +1202,12 @@
       "basename": "t_111",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 4000
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "If nothing selected, place object '2' at mouse location.  If an object A or morphism m is\nselected, then AxA or mxm is placed.",
@@ -1190,11 +1234,12 @@
       "basename": "t_114",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3300
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "<icon>detachCodomain</icon>",
@@ -1261,31 +1306,53 @@
       "basename": "t_120",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3500
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
     },
     {
       "description": "]",
       "basename": "t_121",
       "prototype": "IndexText",
       "xy": {
-        "x": 1000,
+        "x": 1150,
         "y": 3600
       },
       "height": "36",
-      "weight": "bold"
+      "weight": "bold",
+      "textAnchor": "end"
+    },
+    {
+      "description": "<icon>edit</icon>",
+      "basename": "t_122",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 1200,
+        "y": 1000
+      },
+      "height": "48"
+    },
+    {
+      "description": "<icon>tty</icon>",
+      "basename": "t_123",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 1200,
+        "y": 1800
+      },
+      "height": "48"
     }
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641547679886,
+  "timestamp": 1641718725233,
   "version": 0,
   "viewport": {
-    "x": -1557,
-    "y": -234,
-    "scale": 2.0937969754159145
+    "x": -873,
+    "y": -156,
+    "scale": 1.2612228746611283
   }
 }

@@ -161,7 +161,7 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Po{Ho{A,B}oH,A}oP",
       "xy": {
-        "x": 400,
+        "x": 500,
         "y": 1900
       }
     },
@@ -170,7 +170,7 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/B",
       "xy": {
-        "x": 600,
+        "x": 850,
         "y": 1900
       }
     },
@@ -179,8 +179,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/A",
       "xy": {
-        "x": 800,
-        "y": 1900
+        "x": 500,
+        "y": 2100
       }
     },
     {
@@ -188,8 +188,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{A,B}oH,B}oH",
       "xy": {
-        "x": 1000,
-        "y": 1900
+        "x": 850,
+        "y": 2100
       }
     },
     {
@@ -197,8 +197,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,B}oH,B}oH,C}oH",
       "xy": {
-        "x": 600,
-        "y": 2100
+        "x": 550,
+        "y": 2300
       }
     },
     {
@@ -206,8 +206,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{A,C}oH",
       "xy": {
-        "x": 900,
-        "y": 2100
+        "x": 850,
+        "y": 2300
       }
     },
     {
@@ -215,8 +215,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Po{Ho{Ho{A,C}oH,D}oH,Ho{A,C}oH}oP",
       "xy": {
-        "x": 600,
-        "y": 2300
+        "x": 550,
+        "y": 2500
       }
     },
     {
@@ -224,8 +224,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/D",
       "xy": {
-        "x": 900,
-        "y": 2300
+        "x": 850,
+        "y": 2500
       }
     },
     {
@@ -233,8 +233,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{A,C}oH",
       "xy": {
-        "x": 600,
-        "y": 2500
+        "x": 550,
+        "y": 2700
       }
     },
     {
@@ -242,8 +242,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,C}oH,D}oH,D}oH",
       "xy": {
-        "x": 900,
-        "y": 2500
+        "x": 850,
+        "y": 2700
       }
     },
     {
@@ -251,8 +251,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,B}oH,B}oH,C}oH",
       "xy": {
-        "x": 600,
-        "y": 2700
+        "x": 550,
+        "y": 2900
       }
     },
     {
@@ -260,8 +260,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{A,C}oH",
       "xy": {
-        "x": 900,
-        "y": 2700
+        "x": 850,
+        "y": 2900
       }
     },
     {
@@ -269,8 +269,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,C}oH,D}oH,D}oH",
       "xy": {
-        "x": 900,
-        "y": 2900
+        "x": 850,
+        "y": 3100
       }
     },
     {
@@ -278,8 +278,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,B}oH,B}oH,C}oH",
       "xy": {
-        "x": 760,
-        "y": 3090
+        "x": 750,
+        "y": 3300
       }
     },
     {
@@ -287,8 +287,8 @@
       "prototype": "IndexObject",
       "to": "hdole/graph/Ho{Ho{Ho{A,C}oH,D}oH,D}oH",
       "xy": {
-        "x": 760,
-        "y": 3310
+        "x": 750,
+        "y": 3550
       }
     },
     {
@@ -994,12 +994,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641543416384,
+  "timestamp": 1641621993121,
   "version": 0,
   "viewport": {
-    "x": 309,
-    "y": -3644,
-    "scale": 1.4375519616710546
+    "x": 294,
+    "y": -2050,
+    "scale": 1.4375483685131893
   },
   "properName": "hdole/graph"
 }
