@@ -4197,21 +4197,22 @@ class Display
 	{
 		const request = indexedDB.open('Catecon');
 		request.onerror = e => alert('Error: ' + e);
-		let refStore = null;
 		request.onsuccess = e =>
 		{
 			this.store = e.target.result;
 			const transaction = this.store.transaction(['elements'], 'readwrite');
 			transaction.complete = e => console.log('initialize storage complete');
 			transaction.onerror = e => alert('storage error');
-			refStore = transaction.objectStore('elements');
+			const refStore = transaction.objectStore('elements');
 		};
 		request.onupgradeneeded = e =>
 		{
 			console.log('upgrading Catecon database');
 			this.store = e.target.result;
-			refStore = this.store.createObjectStore('elements', {keyPath:'key'});
-			refStore.complete = e => console.log('database upgrade complete');
+			const dgrmStore = this.store.createObjectStore('diagrams', {keyPath:'key'});
+			dgrmStore.complete = e => console.log('database diagrams upgrade complete');
+			const pngStore = this.store.createObjectStore('PNGs', {keyPath:'key'});
+			pngStore.complete = e => console.log('database png upgrade complete');
 		};
 	}
 	initialize()

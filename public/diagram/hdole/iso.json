@@ -111,6 +111,16 @@
       }
     },
     {
+      "description": "For f in the category C, f is an isomorphism iff there exists a morphism f⁻¹ such that the following diagrams commute.",
+      "basename": "t_1",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 420,
+        "y": 600
+      },
+      "height": "24"
+    },
+    {
       "basename": "m_0",
       "prototype": "IndexMorphism",
       "domain": "hdole/iso/o_0",
@@ -176,17 +186,13 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/iso/o_2",
       "codomain": "hdole/iso/o_3",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/iso/finv"
-    },
-    {
-      "description": "For f in the category C, f is an isomorphism iff there exists a morphism f⁻¹ such that the following diagrams commute.",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 420,
-        "y": 600
-      },
-      "height": "24"
     }
   ],
   "elements": [
@@ -228,7 +234,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641635386821,
+  "timestamp": 1641723161522,
   "version": 0,
   "viewport": {
     "x": 173,
