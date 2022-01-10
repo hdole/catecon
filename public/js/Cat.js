@@ -7,10 +7,6 @@
 //		Autohide		parts of the GUI are to disapear					-
 //			show															[D.autohide]
 //			hide															[D.autohide]
-// 		Cell															-
-// 			new			an cell was created									[Cell.constructor]
-// 			delete															[Cell.deregister]
-// 			check															[D.mouseup, D.setupReplay, ,CompositeAction.doit, NameAction.doit, CopyAction.doit, PullbackAction.doit]
 // 		CAT																	-
 //			close		remove diagram from session							[DiagramTool.getButtons, Diagram.close]
 // 			default		diagram is now the default diagram for viewing		[R.SelectDiagram]
@@ -21,6 +17,12 @@
 // 			png																[Diagram.savePng]
 // 			unload		diagram unloaded from session
 // 			upload		diagram sent to server								[Diagram.upload]
+// 		Category
+// 			new																[CategoryTool]
+// 		Cell															-
+// 			new			an cell was created									[Cell.constructor]
+// 			delete															[Cell.deregister]
+//			check															[D.mouseup, doit: CompositeAction, NameAction, CopyAction, FlipNameAction, PullbackAction, HomSetAction, DetachDomainAction, DeleteAction, setupReplay]
 // 		Diagram																-
 // 			addReference													[Diagram.addReference]
 //			deselect														[Diagram.deselect]
@@ -49,8 +51,6 @@
 //		View																-
 //			catalog															[Navbar.catalogView, Catalog.search .toggle]
 //			diagram		view a diagram										[D.eventListener 'CAT','default'; keyboard events, D.zoom, D.replay, D.panHandler, D.uploadJSON, Diagram.viewElements, Diagram.panToElements]
-//		Cell																-
-//			check															[D.mouseup, doit: CompositeAction, NameAction.CopyAction, FlipNameAction, PullbackAction, HomSetAction, DetachDomainAction, DeleteAction]
 //
 // Coordinate frames:
 //		User:		mouse {clientX, clientY}
@@ -391,7 +391,20 @@ class U		// utilities
 	}
 	static writefile(filename, data)
 	{
-		isGUI ?  localStorage.setItem(filename, data) : fs.writeFileSync('public/diagram/' + filename, data);
+		if (isGUI)
+		{
+			try
+			{
+				localStorage.setItem(filename, data);
+			}
+			catch(x)
+			{
+				D.recordError(x);
+				// TODO
+			}
+		}
+		else
+			fs.writeFileSync('public/diagram/' + filename, data);
 	}
 	static removefile(filename)
 	{
@@ -542,7 +555,7 @@ class Runtime
 			CAT:				{value:null,		writable:true},		// working nat trans
 			$CAT:				{value:null,		writable:true},
 			catalog:			{value:new Map(),	writable:true},
-			Categories:			{value:new Map(),	writable:false},	// available categories
+			categories:			{value:new Map(),	writable:false},	// available categories
 			cellToCallback:		{value:new Map(),	writable:false},	// cell sig to array of handlers
 			clear:				{value:false,		writable:true},
 			cloud:				{value:null,		writable:true},		// the authentication cloud we're using
@@ -656,7 +669,7 @@ class Runtime
 			basename:		'CAT',
 			user:			'sys',
 			properName:		'CAT',
-			description:	'top category',
+			description:	'category of categories',
 		};
 		this.CAT = new Category(null, CATargs);
 		const $CATargs =
@@ -1895,10 +1908,31 @@ class Toolbar
 		let xy = U.Clone(D.mouse.down);
 		if (R.diagram)
 			this.mouseCoords = R.diagram.userToDiagramCoords(xy);
-		xy.y = xy.y + D.default.margin + 20;
 		const toolbox = this.element.getBoundingClientRect();
-		this.element.style.left = `${xy.x - toolbox.width/2}px`;
+		xy.x = xy.x - toolbox.width/2;
+		this.element.style.left = xy.x + toolbox.width < D.width() ? `${xy.x}px` : `${D.mouse.down.x - toolbox.width - 4 * D.default.margin}px`;
 		this.element.style.top = xy.y + toolbox.height < D.height() ? `${xy.y}px` : `${D.mouse.down.y - toolbox.height - 4 * D.default.margin}px`;
+	}
+	automove(diagram)		// vertically or horizontally displace the toolbar to avoid selected items
+	{
+		if (!diagram)
+			return;
+		const selected = diagram.selected;
+		const toolBbox = new D2(this.element.getBoundingClientRect());
+		const oldBox = diagram.userToDiagramCoords(this.element.getBoundingClientRect());
+		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height, 4, this.mouseCoords));
+		const wid = D.width();
+		const hgt = D.height();
+		if (nuBox.x < 0)
+			nuBox.x = 0;
+		if (nuBox.y < D.default.icon)		// take the navbar into account
+			nuBox.y = D.default.icon;
+		if (nuBox.x + nuBox.width > wid)
+			nuBox.x = wid - nuBox.width;
+		if (nuBox.y + nuBox.height > hgt)
+			nuBox.y = hgt - nuBox.height;
+		this.element.style.left = `${nuBox.x}px`;
+		this.element.style.top = `${nuBox.y}px`;
 	}
 	show(e)
 	{
@@ -1981,22 +2015,6 @@ class Toolbar
 	getCloseToolbarBtn(btns)
 	{
 		return D.getIcon('closeToolbar', 'close', _ => Cat.D.toolbar.hide(), {title:'Close'});
-	}
-	automove(diagram)		// vertically displace the toolbar to avoid selected items
-	{
-		if (!diagram)
-			return;
-		const selected = diagram.selected;
-		const toolBbox = new D2(this.element.getBoundingClientRect());
-		selected.map(obj =>
-		{
-			if (obj instanceof IndexObject)
-			{
-				const selBbox = R.diagram.diagramToUserCoords(obj.svg.getBBox());
-				if (D2.Overlap(toolBbox, selBbox))
-					this.element.style.top = `${selBbox.y + selBbox.height}px`;
-			}
-		});
 	}
 	isVisible()
 	{
@@ -2500,6 +2518,36 @@ class MorphismTool extends ElementTool
 		{
 			D.toolbar.showError(x);
 		}
+	}
+}
+
+class CategoryTool extends ElementTool
+{
+	constructor(headline)
+	{
+		super('Category', D.toolbar.help, headline, ['new', 'search']);
+		Object.defineProperties(this,
+		{
+			bpd:			{value: new BPD(),				writable: false},
+		});
+	}
+	addNewSection()
+	{
+		const newSection = this.bpd.getNewSection(R.diagram, 'Category-new', e => this.create(e), this.headline);
+		D.toolbar.table.appendChild(newSection);
+		const table = newSection.querySelector('table');
+	}
+	getMatchingElements()
+	{
+		const filter = document.getElementById(`${this.type}-search-value`).value;
+		return [...R.categories.values()].sort(this.searchArgs.sorter);
+	}
+	doit(e, diagram, args)
+	{
+		const cat = new Category();
+	}
+	create(e)
+	{
 	}
 }
 
@@ -3532,7 +3580,14 @@ class Display
 			},
 			diagramPNGs:	{value: new Map(),	writable: true},	// a map of the loaded diagram png's
 			diagramSVG:		{value: null,		writable: true},	// the svg g element containing the session transform
-			directions:		{value: [new D2(0, -1), new D2(-1, -1), new D2(-1, 0), new D2(-1, 1), new D2(0, 1), new D2(1, 1), new D2(1, 0), new D2(1, -1)]},
+			directions:		{value: [	new D2(0, -1),
+										new D2(1, 0),
+										new D2(-1, 0),
+										new D2(0, 1),
+										new D2(-1, -1),
+										new D2(-1, 1),
+										new D2(1, 1),
+										new D2(1, -1)]},
 			drag:			{value: false,		writable: true},
 			dragStart:		{value: new D2(),	writable: true},
 			// the svg text element being editted
@@ -4108,6 +4163,7 @@ class Display
 			snapshotWidth:	{value: 1024,		writable: true},
 			snapshotHeight:	{value: 768,		writable: true},
 			statusbar:		{value: isGUI ? new StatusBar(): null,	writable: false},
+			store:			{value: null,		writable: true},
 			svgContainers:	{value: ['svg', 'g', 'symbol', 'use'],	writable: false},
 			svgStyles:		// required to create styles for png files
 			{
@@ -4135,6 +4191,28 @@ class Display
 			session:		{value: new Session(),											writable: false},
 			xmlns:			{value: 'http://www.w3.org/2000/svg',							writable: false},
 		});
+		this.initializeStorage();
+	}
+	initializeStorage()
+	{
+		const request = indexedDB.open('Catecon');
+		request.onerror = e => alert('Error: ' + e);
+		let refStore = null;
+		request.onsuccess = e =>
+		{
+			this.store = e.target.result;
+			const transaction = this.store.transaction(['elements'], 'readwrite');
+			transaction.complete = e => console.log('initialize storage complete');
+			transaction.onerror = e => alert('storage error');
+			refStore = transaction.objectStore('elements');
+		};
+		request.onupgradeneeded = e =>
+		{
+			console.log('upgrading Catecon database');
+			this.store = e.target.result;
+			refStore = this.store.createObjectStore('elements', {keyPath:'key'});
+			refStore.complete = e => console.log('database upgrade complete');
+		};
 	}
 	initialize()
 	{
@@ -4144,7 +4222,6 @@ class Display
 		this.navbar =			new Navbar();
 		this.uiSVG.style.left = '0px';
 		this.uiSVG.style.top = '0px';
-		this.addEventListeners();
 		this.parenWidth =		this.textWidth('(');
 		this.commaWidth =		this.textWidth(',&nbsp;'),
 		this.bracketWidth =		this.textWidth('[');
@@ -4174,6 +4251,7 @@ class Display
 		this.catalog.show(this.session.mode === 'catalog');
 		this.elementTool =
 		{
+			Category:	new CategoryTool('Category', this.toolbar.help, 'Create a new category'),
 			Diagram:	new DiagramTool('Diagram', this.toolbar.help, 'Create a new diagram'),
 			Object:		new ObjectTool('Create a new object in this diagram'),
 			Morphism:	new MorphismTool('Create a new morphism in this diagram'),
@@ -5134,6 +5212,17 @@ class Display
 					break;
 			}
 		});
+		window.addEventListener('Category', e =>
+		{
+			const args = e.detail;
+			const category = args.category;
+			switch (args.command)
+			{
+				case 'new':
+					R.categories.set(category.name, category)
+					break;
+			}
+		});
 	}
 	textWidth(txt, cls = 'object')
 	{
@@ -6067,6 +6156,11 @@ class Display
 		R.default.showEvents && console.log('emit CAT event', {command, diagram, action});
 		return window.dispatchEvent(new CustomEvent('CAT', {detail:	{command, diagram, action}, bubbles:true, cancelable:true}));
 	}
+	emitCategoryEvent(command, category)
+	{
+		R.default.showEvents && console.log('emit Category event', {command, category, action});
+		return window.dispatchEvent(new CustomEvent('Category', {detail:	{command, category}, bubbles:true, cancelable:true}));
+	}
 	emitDiagramEvent(diagram, command, arg = '')	// like something happened in a diagram
 	{
 		R.default.showEvents && console.log('emit DIAGRAM event', {diagram, command, arg});
@@ -6998,8 +7092,7 @@ class SettingsPanel extends Panel
 			H3.table(H3.tr(H3.td(this.closeBtnCell())), '.buttonBarRight.stdBackground'),
 			H3.button('Settings', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-actions')}),
 			H3.div(H3.table('##settings-table', settings), '##settings-actions.section'),
-			H3.button('Defaults', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-defaults')}),
-			H3.div('##settings-defaults.section'),
+//			H3.div('##settings-defaults.section'),
 			H3.button('Equality Info', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-equality')}),
 			H3.div('##settings-equality.section')
 		];
@@ -7025,16 +7118,14 @@ class SettingsPanel extends Panel
 	update()
 	{
 		document.getElementById('check-darkmode').checked = D.default.darkmode;
+		const tbl = this.elt.querySelector('#settings-table');
+		tbl.appendChild(H3.tr(H3.td(H3.button('Reset Defaults', '.textButton', {onclick:_ => Cat.D.resetDefaults()}), {colspan:2})));
 		if (R.user.cloud && R.user.cloud.permissions.includes('admin'))
 		{
-			const tbl = this.elt.querySelector('#settings-table');
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Rewrite diagrams', '.textButton', {onclick:_ => Cat.R.rewriteDiagrams()}), {colspan:2})));
 		}
-		this.defaultsElt = document.getElementById('settings-defaults');
-		D.removeChildren(this.defaultsElt);
-		this.defaultsElt.appendChild(H3.button('Reset Defaults', '.textButton', {onclick:_ => Cat.D.resetDefaults()}));
-		D.pretty(D.default, this.defaultsElt);
+		tbl.appendChild(H3.tr(H3.td(D.pretty(D.default, H3.div()))));
 	}
 }
 
@@ -7126,10 +7217,7 @@ class Element
 	}
 	isEditable()		// can only edit the current diagram
 	{
-		if (this instanceof Diagram)
-			return (this.user === R.user.name || R.user.isAdmin());
-		else
-			return R.diagram && this.diagram && (R.diagram.name === this.diagram.name || R.diagram.name === this.name) && (this.diagram.user === R.user.name || R.user.isAdmin());
+		return R.diagram && this.diagram && (R.diagram.name === this.diagram.name || R.diagram.name === this.name) && (this.diagram.user === R.user.name || R.user.isAdmin());
 	}
 	isIterable()
 	{
@@ -7268,23 +7356,15 @@ class Element
 	}
 	getButtons()
 	{
-		const buttons = [];
-		return buttons;
+		return [];
 	}
 	getHtmlRow()
 	{
 		const html = this.getHtmlRep();
 		html.classList.add('element');
-		const buttons = this.getButtons();
-		if (buttons.length > 0)
-		{
-			const tools = H3.span('.tool-entry-actions');
-			html.appendChild(tools);
-			buttons.map(btn => tools.appendChild(btn));
-		}
 		let elementToolbar = null;
 		if (R.diagram.isEditable())
-			elementToolbar = H3.table('.toolbar-element', H3.tr(H3.td(D.getIcon('Place element', 'place', e => R.diagram.placeElement(this, D.mouse.diagramPosition(R.diagram)), {title:'Place element', scale:D.default.button.tiny}))));
+			elementToolbar = H3.table('.toolbar-element', H3.tr(H3.td(this.getButtons())));
 		const onmouseenter = e =>
 		{
 			const element = R.diagram.getElement(R.diagram.emphasis(this, true));
@@ -7923,6 +8003,10 @@ class CatObject extends Element
 		this.constructor.name === 'CatObject' && this.setSignature();
 		isGUI && this.constructor.name === 'CatObject' && D.emitElementEvent(diagram, 'new', this);
 	}
+	getButtons()
+	{
+		return [D.getIcon('place-object', 'place', e => R.diagram.placeElement(this, D.mouse.diagramPosition(this.diagram)), {title:'Place object'})];
+	}
 	help()
 	{
 		super.help();
@@ -8526,11 +8610,11 @@ class IndexText extends Element
 		{
 			x:				{value:	xy.x,												writable:	true},
 			y:				{value:	xy.y,												writable:	true},
-			height:			{value:	U.GetArg(nuArgs, 'height', 0),						writable:	true},
+			height:			{value:	U.GetArg(nuArgs, 'height', isGUI ? D.default.font.height : 0),	writable:	true},
 			weight:			{value:	U.GetArg(nuArgs, 'weight', 'normal'),				writable:	true},
-			textAnchor:	{value: U.GetArg(nuArgs, 'textAnchor', 'start'),				writable:	true},
+			textAnchor:		{value: U.GetArg(nuArgs, 'textAnchor', 'start'),			writable:	true},
 		});
-		this.refcnt = 1;
+		this.refcnt = 1;		// keep the text
 		diagram && diagram.addElement(this);
 		isGUI && D.emitElementEvent(diagram, 'new', this);
 	}
@@ -8666,7 +8750,7 @@ class IndexText extends Element
 			throw `NaN in makeSVG`;
 		const name = this.name;
 		const svg = H3.g('.indexText', {'data-type':'text', 'data-name':name, 'text-anchor':'start', id:this.elementId(),
-			transform:`translate(${this.x} ${this.y + D.default.font.height/2})`});
+			transform:`translate(${this.x} ${this.y})`});
 		svg.onmousedown = e => this.diagram.userSelectElement(e, name);
 		svg.onmouseenter = e => this.mouseenter(e);
 		svg.onmouseout = e => this.mouseout(e);
@@ -8731,7 +8815,7 @@ class IndexText extends Element
 		!this.svg && this.diagram.addSVG(this);
 		if (this.svg)
 		{
-			this.svg.setAttribute('transform', `translate(${this.x} ${this.y + D.default.font.height/2})`);
+			this.svg.setAttribute('transform', `translate(${this.x} ${this.y})`);
 			this.svgText.style.fontSize = `${this.height}px`;
 			this.svgText.style.fontWeight = this.weight;
 			this.svgText.style.textAnchor = this.textAnchor;
@@ -11717,7 +11801,7 @@ class Category extends CatObject
 				nuArgs.actionDiagrams.map(a => this.addActions(a));
 		}
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
-		isGUI && this.constructor.name === 'Category' && D.emitElementEvent(diagram, 'new', this);
+		isGUI && this.constructor.name === 'Category' && D.emitCategoryEvent('new', this);		// do not track index categories
 	}
 	help()
 	{
@@ -11892,6 +11976,33 @@ class Category extends CatObject
 		this.forEachMorphism(m => morphisms.push(m));
 		return morphisms;
 	}
+	getButtons()
+	{
+		const buttons = [];
+		if (this.isEditable())
+		{
+			if (this.refcnt === 0)
+				buttons.push(D.getIcon('delete', 'delete', e => this.decrRefcnt(), {title:'Delete category'}));
+			if (this !== R.diagram.codomain)
+				buttons.push(D.getIcon('edit', 'edit', e => this.action(e, 'default'), {title:'Set default category'}));
+		}
+		return buttons;
+	}
+	getHtmlRep(idPrefix)
+	{
+		const div = super.getHtmlRep(idPrefix);
+		div.appendChild(H3.br());
+		if (this.category)
+		{
+			div.appendChild(H3.span('Parent category:', '.tinyPrint'));
+			div.appendChild(H3.span(this.category.name));
+		}
+		return div;
+	}
+	isEditable()
+	{
+		return this.refcnt === 0 && this.user === R.user.name || R.user.isAdmin();
+	}
 	static IsSink(ary)
 	{
 		if (ary.length < 2)		// just don't bother
@@ -11965,6 +12076,10 @@ class Morphism extends Element
 		diagram && (!('addElement' in args) || args.addElement) && diagram.addElement(this);
 		this.constructor.name === 'Morphism' && this.setSignature();
 		isGUI && this.constructor.name === 'Morphism' && D.emitElementEvent(diagram, 'new', this);
+	}
+	getButtons()
+	{
+		return [D.getIcon('place-morphism', 'place', e => R.diagram.placeElement(this, D.mouse.diagramPosition(this.diagram)), {title:'Place morphism'})];
 	}
 	setSignature()
 	{
@@ -15003,6 +15118,10 @@ class Diagram extends Functor
 		this.setSignature();
 		this.postProcess();
 	}
+	isEditable()
+	{
+		return (this.user === R.user.name || R.user.isAdmin());
+	}
 	postProcess()
 	{
 		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());	// TODO not used currently by mysql.js
@@ -15343,6 +15462,8 @@ class Diagram extends Functor
 				compBox = elt.getSvgNameBBox();
 			else
 				compBox = svg.getBBox();
+			if (R.default.debug && svg instanceof SVGTextElement)
+				this.svgBase.appendChild(H3.rect({x:`${compBox.x}px`, y:`${compBox.y}px`, width:`${compBox.width}px`, height:`${compBox.height}px`, fill:'none', stroke:'blue'}));
 			if (D2.Overlap(box, new D2(compBox)))
 				return true;
 		}
@@ -16437,29 +16558,35 @@ class Diagram extends Functor
 		R.setSync(true);
 		D.default.arrow.dir = oldArrowDir;
 	}
-	autoplaceSvg(bbox, name)
+	autoplaceSvg(bbox, name, scale = 4, modulo = 8, mouseLoc = null)
 	{
 		let nubox = new D2(bbox);
 		let elt = null;
 		let ndx = 0;
-		const scl = 4;
 		let offset = new D2();
-//DEBUG let rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
-//DEBUG this.svgBase.appendChild(rect);
-		while(this.hasOverlap(nubox, name))
+		let rect = null;
+		if (R.default.debug)
+		{
+			rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red', 'stroke-width':'0.1px'});
+			this.svgBase.appendChild(rect);
+		}
+		while((mouseLoc && nubox.contains(mouseLoc)) || this.hasOverlap(nubox, name))
 		{
 			nubox = new D2(bbox);
-			const dir = D.directions[ndx % 8];
-			offset = dir.scale(scl * Math.trunc((8 + ndx)/8));
+			const dir = D.directions[ndx % modulo];
+			offset = dir.scale(scale * Math.trunc((modulo + ndx)/modulo));
 			nubox = nubox.add(offset.getXY());
-//DEBUG rect.remove();
-//DEBUG rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
-//DEBUG this.svgBase.appendChild(rect);
+			if (R.default.debug)
+			{
+				//R.default.debug && rect.remove();
+				rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
+				this.svgBase.appendChild(rect);
+			}
 			ndx++;
 			if (ndx > 100)	// give up; too complex
 				break;
 		}
-//DEBUG console.log('autoplace ndx', name, ndx);
+		R.default.debug && console.log('autoplace ndx', name, ndx);
 		return offset.add(bbox);
 	}
 	updateBackground()
@@ -16773,9 +16900,9 @@ class ActionDiagram extends Diagram
 		{
 			named = this.getElement(namedMorph);
 			if (named === undefined)
-				alert(`cannot find named element ${nuArgs.named}`);
+				console.log(`cannot find named element ${nuArgs.named}`);
 			if (!(named instanceof NamedMorphism || named instanceof NamedObject || 'recursor' in named))
-				alert(`provided element is not a named element: ${named.name}`);
+				console.log(`provided element is not a named element: ${named.name}`);
 		}
 		const attributes = new Map('attributes' in nuArgs ? nuArgs.attributes : []);
 		attributes.set('priority', U.GetArg(args, 'priority', 0));
@@ -17630,6 +17757,7 @@ if (isGUI)
 {
 	window.Cat = Cat;
 	window.addEventListener('load', _ => R.initialize());
+	Cat.D.addEventListeners();
 }
 else
 	Object.keys(Cat).forEach(cls => exports[cls] = Cat[cls]);
