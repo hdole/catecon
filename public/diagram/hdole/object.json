@@ -15,8 +15,8 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": 180,
-        "y": 1570
+        "x": 170,
+        "y": 1610
       },
       "height": "200",
       "weight": "bold"
@@ -30,39 +30,15 @@
         "y": 1760
       },
       "height": "24"
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/object/A",
-      "xy": {
-        "x": 280,
-        "y": 2040
-      }
-    },
-    {
-      "description": "In Catecon, if you are the owner of the diagram first expressing the object,\nand the object is heretofore unreferenced, then you may change the object&#39;s\nbase name, proper name, and description.",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 260,
-        "y": 2150
-      },
-      "height": "24"
     }
   ],
-  "elements": [
-    {
-      "basename": "A",
-      "prototype": "CatObject"
-    }
-  ],
+  "elements": [],
   "user": "hdole",
-  "timestamp": 1641595146142,
+  "timestamp": 1641892640321,
   "version": 0,
   "viewport": {
-    "x": 324,
-    "y": -1886,
-    "scale": 1.4251570069980262
+    "x": -195,
+    "y": -3500,
+    "scale": 2.537893927981801
   }
 }

@@ -2706,7 +2706,13 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/floats/o_180",
       "codomain": "hdole/floats/o_183",
-      "homsetIndex": 1,
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 4,
       "to": "hdole/floats/eq0_128"
     }
   ],
@@ -3810,7 +3816,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641421508178,
+  "timestamp": 1641883185753,
   "version": 0,
   "viewport": {
     "x": 798,

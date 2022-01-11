@@ -15,8 +15,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
-        "x": 0,
-        "y": 600
+        "x": 650,
+        "y": 650
       }
     },
     {
@@ -24,8 +24,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/#1",
       "xy": {
-        "x": -200,
-        "y": 800
+        "x": 450,
+        "y": 850
       }
     },
     {
@@ -33,8 +33,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/#1",
       "xy": {
-        "x": 200,
-        "y": 800
+        "x": 850,
+        "y": 850
       }
     },
     {
@@ -42,8 +42,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
-        "x": -200,
-        "y": 600
+        "x": 450,
+        "y": 650
       }
     },
     {
@@ -51,8 +51,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
-        "x": 200,
-        "y": 600
+        "x": 850,
+        "y": 650
       }
     },
     {
@@ -60,8 +60,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
-        "x": 400,
-        "y": 600
+        "x": 1050,
+        "y": 650
       }
     },
     {
@@ -69,8 +69,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
-        "x": 600,
-        "y": 600
+        "x": 1250,
+        "y": 650
       }
     },
     {
@@ -78,8 +78,8 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": -20,
-        "y": 80
+        "x": -60,
+        "y": 70
       },
       "height": "250",
       "weight": "bold"
@@ -89,8 +89,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
-        "x": 0,
-        "y": 190
+        "x": 450,
+        "y": 200
       }
     },
     {
@@ -98,8 +98,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/S",
       "xy": {
-        "x": 190,
-        "y": 190
+        "x": 650,
+        "y": 200
       }
     },
     {
@@ -107,8 +107,8 @@
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
-        "x": 400,
-        "y": 190
+        "x": -50,
+        "y": 200
       },
       "height": "24"
     },
@@ -117,8 +117,8 @@
       "basename": "t_3",
       "prototype": "IndexText",
       "xy": {
-        "x": 490,
-        "y": 1010
+        "x": -50,
+        "y": 1000
       },
       "height": "24"
     },
@@ -127,8 +127,8 @@
       "basename": "t_2",
       "prototype": "IndexText",
       "xy": {
-        "x": 780,
-        "y": 590
+        "x": -50,
+        "y": 490
       },
       "height": "24"
     },
@@ -137,8 +137,8 @@
       "basename": "t_4",
       "prototype": "IndexText",
       "xy": {
-        "x": 490,
-        "y": 1410
+        "x": -50,
+        "y": 1550
       },
       "height": "24"
     },
@@ -147,8 +147,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/CPo{#1,#1}oPC",
       "xy": {
-        "x": 0,
-        "y": 390
+        "x": 450,
+        "y": 400
       }
     },
     {
@@ -156,8 +156,8 @@
       "prototype": "IndexObject",
       "to": "hdole/while/CPo{#1,#1}oPC",
       "xy": {
-        "x": 0,
-        "y": 800
+        "x": 650,
+        "y": 850
       }
     },
     {
@@ -384,11 +384,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641595939663,
+  "timestamp": 1641893366262,
   "version": 0,
   "viewport": {
-    "x": 504,
-    "y": 165,
-    "scale": 1.0835432710266413
+    "x": 341,
+    "y": 330,
+    "scale": 1.5558792517896811
   }
 }

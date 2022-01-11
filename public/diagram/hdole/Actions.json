@@ -21,7 +21,7 @@
       "weight": "bold"
     },
     {
-      "description": "The actions listed here are standard for all categories.",
+      "description": "The actions listed here are standard for all categories.  Many are editing functions\non the index category for the diagram.",
       "basename": "t_3",
       "prototype": "IndexText",
       "xy": {
@@ -36,17 +36,17 @@
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 300
+        "y": 850
       },
       "height": "24"
     },
     {
-      "description": "<icon>graph</icon>  Graph:  Show the string graphs for all or selected morphisms.",
+      "description": "<icon>graph</icon>  <diagram name=\"hdole/graph\">Graph</diagram>:  Show the string graphs.",
       "basename": "t_5",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 350
+        "y": 750
       },
       "height": "24"
     },
@@ -66,9 +66,9 @@
       "prototype": "IndexText",
       "xy": {
         "x": 250,
-        "y": 0
+        "y": -40
       },
-      "height": 76,
+      "height": "400",
       "weight": "bold"
     },
     {
@@ -77,27 +77,27 @@
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 400
+        "y": 1300
       },
       "height": "24"
     },
     {
-      "description": "<icon>action</icon>  Action:  If allowed, have the selected elements generalize to a new action.",
+      "description": "<icon>action</icon>  <diagram name=\"hdole/actionAction\">Action</diagram>:  Generalize the selected elements to a new action.",
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 450
+        "y": 300
       },
       "height": "24"
     },
     {
-      "description": "     Reference:  The factor or cofactor morphism is designated as a reference.",
+      "description": "<icon>referenceMorphism</icon>  Reference Morphism:  The projection or injeciton morphism is designated as a reference.",
       "basename": "t_6",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 500
+        "y": 1200
       },
       "height": "24"
     },
@@ -107,7 +107,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 550
+        "y": 1100
       },
       "height": "24"
     },
@@ -117,47 +117,47 @@
       "prototype": "IndexText",
       "xy": {
         "x": 300,
+        "y": 450
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>detachDomain</icon>  Detach Domain:  Disconnect the morphism's domain from the blob.",
+      "basename": "t_11",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 550
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>detachCodomain</icon>  Detach Codomain:  Disconnect the morphism's codomain from the blob.",
+      "basename": "t_12",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
         "y": 600
       },
       "height": "24"
     },
     {
-      "description": "<icon>detachDomain</icon>  Detach Domain:  The selected morphism's domain is disconnected.",
-      "basename": "t_11",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 650
-      },
-      "height": "24"
-    },
-    {
-      "description": "<icon>detachCodomain</icon>  Detach Codomain:  The selected morphism's codomain is disconnected.",
-      "basename": "t_12",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 700
-      },
-      "height": "24"
-    },
-    {
-      "description": "<icon>homRight</icon>  Hom Right:  Show the morphisms with the same domain.",
+      "description": "<icon>homLeft</icon>  Hom Left:  Show the morphisms with the same codomain.",
       "basename": "t_13",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 750
+        "y": 900
       },
       "height": "24"
     },
     {
-      "description": "<icon>homLeft</icon>  Hom Left:  Show the morphisms with the same codomain.",
+      "description": "<icon>morphismAssembly</icon>  Morphism Assembly:  Build a morphism from a blob using references.",
       "basename": "t_14",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 800
+        "y": 1050
       },
       "height": "24"
     },
@@ -167,7 +167,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 850
+        "y": 650
       },
       "height": "24"
     },
@@ -177,17 +177,17 @@
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 900
+        "y": 500
       },
       "height": "24"
     },
     {
-      "description": "<icon>flipName</icon>  Flip Name:  The selected morphism's name appears on the opposite side.",
+      "description": "<icon>flipName</icon>  Flip Name:  Move the morphism's name to the opposite side.",
       "basename": "t_17",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 950
+        "y": 700
       },
       "height": "24"
     },
@@ -197,49 +197,252 @@
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 1000
+        "y": 800
       },
       "height": "24"
     },
     {
-      "description": "<icon>run</icon>  Run:  If possible evaluate the morphism.",
+      "description": "<icon>run</icon>  Run:  Evaluate the morphism.",
       "basename": "t_19",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 1050
+        "y": 1250
       },
       "height": "24"
     },
     {
-      "description": "<icon>alignHorizontal</icon>  Align Horizontal:  Have the selected elements align horizontally.",
+      "description": "<icon>alignHorizontal</icon>  Align Horizontal:  Align elements horizontally.",
       "basename": "t_20",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
-        "y": 1100
+        "y": 350
       },
       "height": "24"
     },
     {
-      "description": "<icon>alignVertical</icon>  Align Vertical:  Have the selected elements align vertically.",
+      "description": "<icon>alignVertical</icon>  Align Vertical:  Align elements vertically.",
       "basename": "t_21",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 400
+      },
+      "height": "24"
+    },
+    {
+      "description": "Product Actions",
+      "basename": "t_22",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 250,
+        "y": 1400
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "<icon>product</icon>  Product:  Form the product of objects or morphisms.",
+      "basename": "t_23",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1500
+      },
+      "height": "24"
+    },
+    {
+      "description": "These actions are associated with categories that have products or pullbacks.",
+      "basename": "t_24",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 250,
+        "y": 1450
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>project</icon>  Project:  Form projection morphisms from a product object.",
+      "basename": "t_25",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1550
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>productAssembly</icon>  Product Assembly:  Form the product assembly of morphisms with a common domain.",
+      "basename": "t_26",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1600
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>recursion</icon>  Recursion:  Set the recursor for a morphism if the other morphism uses it.",
+      "basename": "t_27",
       "prototype": "IndexText",
       "xy": {
         "x": 300,
         "y": 1150
       },
       "height": "24"
+    },
+    {
+      "description": "<icon>homRight</icon>  Hom Right:  Show the morphisms with the same domain.",
+      "basename": "t_28",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 950
+      },
+      "height": "24"
+    },
+    {
+      "description": "Coproduct Actions",
+      "basename": "t_29",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 250,
+        "y": 1750
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "<icon>coproduct</icon>  Coproduct:  Form the coproduct of objects or morphisms.",
+      "basename": "t_30",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1850
+      },
+      "height": 24
+    },
+    {
+      "description": "These actions are associated with categories that have coproducts.",
+      "basename": "t_31",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 250,
+        "y": 1800
+      },
+      "height": 24
+    },
+    {
+      "description": "<icon>inject</icon>  Inject:  Form injection morphisms to a coproduct object.",
+      "basename": "t_32",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1900
+      },
+      "height": 24
+    },
+    {
+      "description": "<icon>coproductAssembly</icon>  Coproduct Assembly:  Form the coproduct assembly of morphisms with a common codomain.",
+      "basename": "t_33",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1950
+      },
+      "height": 24
+    },
+    {
+      "description": "<icon>finiteObject</icon>  Finite Object:  With coproducts and a terminal object you get finite objects.",
+      "basename": "t_34",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 2000
+      },
+      "height": 24
+    },
+    {
+      "description": "<icon>pullback</icon>  Pullback:  Form the pullback of a sink.",
+      "basename": "t_35",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1650
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>pushout</icon>  Pushout:  Form the pushout of a source.",
+      "basename": "t_36",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 2050
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>homset</icon>  Homset:  Create a morphism between two objects.",
+      "basename": "t_37",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 1000
+      },
+      "height": "24"
+    },
+    {
+      "description": "Homset Actions",
+      "basename": "t_38",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 250,
+        "y": 2150
+      },
+      "height": "36",
+      "weight": "bold"
+    },
+    {
+      "description": "For categories with internal homset, these actions are provided.",
+      "basename": "t_39",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 250,
+        "y": 2200
+      },
+      "height": 24
+    },
+    {
+      "description": "<icon>evaluate</icon>  Evaluate:  Place an evaluation morphism from an appropriate object.",
+      "basename": "t_40",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 2250
+      },
+      "height": "24"
+    },
+    {
+      "description": "<icon>lambda</icon>  Lambda:  Form a lambda morphism by selecting factors.",
+      "basename": "t_41",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 300,
+        "y": 2300
+      },
+      "height": "24"
     }
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641807345487,
+  "timestamp": 1641892161843,
   "version": 0,
   "viewport": {
-    "x": -169,
-    "y": 288,
-    "scale": 2.109422956774244
+    "x": -91,
+    "y": 631,
+    "scale": 1.4869019286768277
   },
   "properName": "hdole/Actions"
 }

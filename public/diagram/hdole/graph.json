@@ -3,6 +3,7 @@
   "basename": "graph",
   "name": "hdole/graph",
   "prototype": "Diagram",
+  "properName": "hdole/graph",
   "category": "sys/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/graph_Index",
@@ -51,7 +52,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": -60,
-        "y": 300
+        "y": 310
       },
       "height": "200",
       "weight": "bold"
@@ -574,6 +575,16 @@
       "domain": "hdole/graph/o_23",
       "codomain": "hdole/graph/o_24",
       "to": "hdole/graph/Fa{A,A_,A_-1}aF"
+    },
+    {
+      "description": "And now you see the origin of the graph <icon>graph</icon> button.",
+      "basename": "t_2",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -40,
+        "y": 3310
+      },
+      "height": "24"
     }
   ],
   "elements": [
@@ -994,12 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641621993121,
+  "timestamp": 1641893473264,
   "version": 0,
   "viewport": {
     "x": 294,
-    "y": -2050,
-    "scale": 1.4375483685131893
-  },
-  "properName": "hdole/graph"
+    "y": -3937,
+    "scale": 1.4375463860889526
+  }
 }

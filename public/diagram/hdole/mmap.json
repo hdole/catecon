@@ -218,7 +218,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": -1710,
-        "y": -1830
+        "y": -1820
       },
       "height": "200",
       "weight": "bold"
@@ -269,15 +269,6 @@
       }
     },
     {
-      "basename": "o_113",
-      "prototype": "IndexObject",
-      "to": "hdole/mmap/#1",
-      "xy": {
-        "x": -700,
-        "y": -500
-      }
-    },
-    {
       "basename": "o_178",
       "prototype": "IndexObject",
       "to": "hdole/cpp/file",
@@ -305,29 +296,11 @@
       }
     },
     {
-      "basename": "o_181",
-      "prototype": "IndexObject",
-      "to": "hdole/mmap/#1",
-      "xy": {
-        "x": -500,
-        "y": 1300
-      }
-    },
-    {
       "basename": "o_183",
       "prototype": "IndexObject",
       "to": "hdole/cpp/Errno",
       "xy": {
         "x": -900,
-        "y": 500
-      }
-    },
-    {
-      "basename": "o_184",
-      "prototype": "IndexObject",
-      "to": "hdole/mmap/#1",
-      "xy": {
-        "x": -680,
         "y": 500
       }
     },
@@ -699,19 +672,6 @@
       ]
     },
     {
-      "basename": "m_87",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/mmap/o_86",
-      "codomain": "hdole/mmap/o_113",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC"
-    },
-    {
       "basename": "m_143",
       "prototype": "IndexMorphism",
       "domain": "hdole/mmap/o_178",
@@ -736,13 +696,6 @@
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{#1,Errno}oPC,hdole/cpp/Errno_1}aFC"
     },
     {
-      "basename": "m_171",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/mmap/o_180",
-      "codomain": "hdole/mmap/o_181",
-      "to": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC"
-    },
-    {
       "basename": "m_173",
       "prototype": "IndexMorphism",
       "domain": "hdole/mmap/o_183",
@@ -758,13 +711,6 @@
         ]
       ],
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/Errno_1}aFC"
-    },
-    {
-      "basename": "m_174",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/mmap/o_183",
-      "codomain": "hdole/mmap/o_184",
-      "to": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC"
     },
     {
       "basename": "m_33",
@@ -848,6 +794,68 @@
         ]
       ],
       "to": "hdole/mmap/CFa{hdole/cpp/CPo{#1,Errno}oPC,#1_0}aFC"
+    },
+    {
+      "basename": "m_3",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/mmap/o_22",
+      "codomain": "hdole/mmap/o_175",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
+      "homsetIndex": 3,
+      "to": "hdole/mmap/error"
+    },
+    {
+      "basename": "o_4",
+      "prototype": "IndexObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -900,
+        "y": -350
+      }
+    },
+    {
+      "basename": "m_5",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/mmap/o_86",
+      "codomain": "hdole/mmap/o_4",
+      "to": "hdole/mmap/error"
+    },
+    {
+      "basename": "o_5",
+      "prototype": "IndexObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -900,
+        "y": 650
+      }
+    },
+    {
+      "basename": "m_6",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/mmap/o_183",
+      "codomain": "hdole/mmap/o_5",
+      "to": "hdole/mmap/error"
+    },
+    {
+      "basename": "o_6",
+      "prototype": "IndexObject",
+      "to": "hdole/mmap/#1",
+      "xy": {
+        "x": -700,
+        "y": 1450
+      }
+    },
+    {
+      "basename": "m_7",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/mmap/o_180",
+      "codomain": "hdole/mmap/o_6",
+      "to": "hdole/mmap/error"
     }
   ],
   "elements": [
@@ -1035,14 +1043,21 @@
       "factors": [
         0
       ]
+    },
+    {
+      "basename": "error",
+      "prototype": "NamedMorphism",
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/mmap/#1",
+      "source": "hdole/mmap/Cm{hdole/cpp/strerror,hdole/cpp/StrToStderr,Fa{hdole/cpp/stderr,hdole/cpp/stderr_-1}aF}mC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1641588688637,
+  "timestamp": 1641892920177,
   "version": 0,
   "viewport": {
-    "x": 3393,
-    "y": 3170,
-    "scale": 1.6302984735579227
+    "x": 3049,
+    "y": 3301,
+    "scale": 1.6295598777750366
   }
 }

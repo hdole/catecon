@@ -104,25 +104,6 @@
       }
     },
     {
-      "description": "The successor function for the natural numbers with carry.\n\n",
-      "basename": "t_8",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 1100
-      },
-      "height": 24
-    },
-    {
-      "basename": "t_9",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 1300
-      },
-      "height": 24
-    },
-    {
       "basename": "o_17",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N64,N64}oP",
@@ -186,16 +167,6 @@
       }
     },
     {
-      "description": "Zero, or the first interesting natural number",
-      "basename": "t_16",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1210,
-        "y": 480
-      },
-      "height": 24
-    },
-    {
       "basename": "o_27",
       "prototype": "IndexObject",
       "to": "hdole/nat/#1",
@@ -212,16 +183,6 @@
         "x": 190,
         "y": 480
       }
-    },
-    {
-      "description": "One, or the next interesting natural number",
-      "basename": "t_17",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1210,
-        "y": 680
-      },
-      "height": 24
     },
     {
       "basename": "o_29",
@@ -242,16 +203,6 @@
       }
     },
     {
-      "description": "Last number allowed",
-      "basename": "t_18",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1210,
-        "y": 880
-      },
-      "height": 24
-    },
-    {
       "basename": "o_31",
       "prototype": "IndexObject",
       "to": "hdole/nat/#1",
@@ -268,16 +219,6 @@
         "x": 190,
         "y": 880
       }
-    },
-    {
-      "description": "Addition of two natural numbers",
-      "basename": "t_19",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 1500
-      },
-      "height": 24
     },
     {
       "basename": "o_33",
@@ -298,16 +239,6 @@
       }
     },
     {
-      "description": "Subtraction of two natural numbers",
-      "basename": "t_20",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 1900
-      },
-      "height": 24
-    },
-    {
       "basename": "o_35",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -324,16 +255,6 @@
         "x": 200,
         "y": 1900
       }
-    },
-    {
-      "description": "Multiplication of two natural numbers",
-      "basename": "t_21",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 2300
-      },
-      "height": 24
     },
     {
       "basename": "o_37",
@@ -354,16 +275,6 @@
       }
     },
     {
-      "description": "Bit-wise and of two natural numbers",
-      "basename": "t_22",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 2700
-      },
-      "height": 24
-    },
-    {
       "basename": "o_39",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -380,16 +291,6 @@
         "x": 200,
         "y": 2700
       }
-    },
-    {
-      "description": "Bit-wise or of two natural numbers",
-      "basename": "t_23",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 2900
-      },
-      "height": 24
     },
     {
       "basename": "o_41",
@@ -410,16 +311,6 @@
       }
     },
     {
-      "description": "Bit-wise exclusive or",
-      "basename": "t_24",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 3100
-      },
-      "height": 24
-    },
-    {
       "basename": "o_43",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -436,16 +327,6 @@
         "x": 200,
         "y": 3100
       }
-    },
-    {
-      "description": "Division of one natural number of the other, or an exception",
-      "basename": "t_25",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 3300
-      },
-      "height": 24
     },
     {
       "basename": "o_45",
@@ -466,16 +347,6 @@
       }
     },
     {
-      "description": "Modulus of one natural number of the other, or an exception",
-      "basename": "t_26",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 3500
-      },
-      "height": 24
-    },
-    {
       "basename": "o_47",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -492,26 +363,6 @@
         "x": 200,
         "y": 3500
       }
-    },
-    {
-      "description": "Compare two numbers for equality",
-      "basename": "t_27",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 3700
-      },
-      "height": 24
-    },
-    {
-      "description": "Is the first number less than the second",
-      "basename": "t_28",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 3900
-      },
-      "height": 24
     },
     {
       "basename": "o_51",
@@ -532,16 +383,6 @@
       }
     },
     {
-      "description": "Is the first number less than or equal to the second",
-      "basename": "t_29",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 4100
-      },
-      "height": 24
-    },
-    {
       "basename": "o_53",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -558,17 +399,6 @@
         "x": 200,
         "y": 4100
       }
-    },
-    {
-      "description": "Natural Numbers",
-      "basename": "t_31",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1270,
-        "y": -370
-      },
-      "height": "350",
-      "weight": "bold"
     },
     {
       "basename": "o_14",
@@ -2375,55 +2205,6 @@
       }
     },
     {
-      "description": "Bit-wise not operation of a natural number",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 2500
-      },
-      "height": 24
-    },
-    {
-      "description": "Addition of two natural numbers with carry",
-      "basename": "t_3",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 1700
-      },
-      "height": 24
-    },
-    {
-      "description": "Subtraction of two natural numbers with underflow",
-      "basename": "t_4",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 2100
-      },
-      "height": 24
-    },
-    {
-      "basename": "t_6",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1210,
-        "y": 1290
-      },
-      "height": "24"
-    },
-    {
-      "description": "The predecessor function for the natural numbers with underflow",
-      "basename": "t_7",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 1300
-      },
-      "height": "24"
-    },
-    {
       "basename": "o_245",
       "prototype": "IndexObject",
       "to": "hdole/nat/N16",
@@ -2638,66 +2419,6 @@
         "x": 1390,
         "y": 80
       }
-    },
-    {
-      "description": "Is the first number greater than the second",
-      "basename": "t_11",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 4300
-      },
-      "height": 24
-    },
-    {
-      "description": "Is the first number greater than or equal to the second",
-      "basename": "t_12",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 4500
-      },
-      "height": 24
-    },
-    {
-      "description": "Left shift the first number by the number of positions\ngiven by the second",
-      "basename": "t_13",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 4700
-      },
-      "height": 24
-    },
-    {
-      "description": "Right shift the first number by the number of positions\ngiven by the second",
-      "basename": "t_15",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 4900
-      },
-      "height": 24
-    },
-    {
-      "description": "Give the maximum of the two values",
-      "basename": "t_30",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 5100
-      },
-      "height": 24
-    },
-    {
-      "description": "Give the minimum of the two values",
-      "basename": "t_32",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -1200,
-        "y": 5300
-      },
-      "height": 24
     },
     {
       "basename": "o_133",
@@ -4101,7 +3822,7 @@
       "prototype": "Morphism",
       "properName": "div",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 / %1;\n\t%2.m1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC"
@@ -4112,7 +3833,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4145,7 +3866,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -4155,7 +3876,7 @@
       "basename": "decr",
       "prototype": "Morphism",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -4228,7 +3949,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -4238,7 +3959,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -4258,7 +3979,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4302,7 +4023,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4313,7 +4034,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4324,7 +4045,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4540,7 +4261,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -4550,7 +4271,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -4650,7 +4371,7 @@
       "prototype": "Morphism",
       "properName": "div",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 / %1;\n\t%2.m1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
       "codomain": "hdole/nat/CPo{Po{N8,N8}oP,#1}oPC"
@@ -4660,7 +4381,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4750,7 +4471,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -4810,7 +4531,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -4840,7 +4561,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -5349,7 +5070,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641635177069,
+  "timestamp": 1637750550898,
   "version": 0,
   "viewport": {
     "x": 1233,
