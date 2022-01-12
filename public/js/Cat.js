@@ -775,7 +775,7 @@ class Runtime
 	{
 		const start = Date.now();
 		this.setupWorkers();
-		this.fetchCatalog2( _ =>
+		this.fetchCatalog( _ =>
 		{
 			this.setupCore();
 			this.setupActions();
@@ -808,56 +808,7 @@ class Runtime
 		this.userDiagram.set(user, d);
 		return d;
 	}
-	/*
-	saveLocal(diagram)
-	{
-		U.writefile(`${diagram.name}.json`, diagram.stringify());
-		const info = this.catalog.get(diagram.name);
-		info.localTimestamp = diagram.timestamp;
-
-		this.saveDiagram(diagram, e => console.log('saveDiagram', diagram.name));
-	}
-	hasLocal(name)
-	{
-		return U.readfile(`${name}.json`) !== null;
-	}
-	*/
-//	readLocal(name, clear = false)
-	/*
-	readLocal(name)
-	{
-		let sync = this.sync;
-		this.sync = false;
-		const data = U.readfile(`${name}.json`);
-		if (data)
-		{
-			const args = JSON.parse(data);
-			const userDiagram = this.getUserDiagram(args.user);
-//			if (clear)	// debugging feature
-//			{
-//				args.elements = [];
-//				args.domainElements = [];
-//				args.timestamp = Date.now();
-//			}
-			const localLog = D ? U.readfile(`${name}.log`) : null;
-			if (localLog)
-				args.log = JSON.parse(localLog);
-			const diagram = new Cat[args.prototype](userDiagram, args);
-			const png = U.readfile(`${diagram.name}.png`);
-			D && png && D.diagramPNGs.set(diagram.name, png);
-			D && D.emitCATEvent('load', diagram);
-			this.sync = sync;
-			diagram.check();
-
-//			this.hasDiagram(name, _ => this.readDiagram(name, _ => alert('read it')));
-
-			return diagram;
-		}
-		this.sync = sync;
-		return null;
-	}
-	*/
-	saveDiagram(diagram, fn, e = null)
+	saveDiagram(diagram, fn = null, e = null)
 	{
 		if (D)
 		{
@@ -881,6 +832,25 @@ class Runtime
 			diagram instanceof Diagram && diagram.savePng();
 		}
 	}
+	async readPNG(name, fn = null)
+	{
+		const tx = D.store.transaction('PNGs');
+		tx.onerror = e => R.recordError(e);
+		const pngStore = tx.objectStore('PNGs');
+		const pngRep = pngStore.get(name);
+		pngRep.onsuccess = e =>
+		{
+			if (e.target.result)
+			{
+				const png = e.target.result.png;
+				D.diagramPNGs.set(name, png);
+				fn && fn(png);
+				D.emitPNGEvent('load', name, png);		// TODO keep?
+			}
+			else
+				fn && fn(null);
+		};
+	}
 	async readDiagram(name, fn = null)
 	{
 		console.log('readDiagram', name);
@@ -888,7 +858,7 @@ class Runtime
 		{
 			const preload = [...R.getReferences(name)].reverse().filter(ref => ref !== name && !this.$CAT.getElement(ref));
 			if (preload.length > 0)
-				await Promise.all(preload.reverse().filter(ref => this.loadDiagram2(ref)));
+				await Promise.all(preload.reverse().filter(ref => this.loadDiagram(ref)));
 			const setup = _ => new Promise((resolve, reject) =>
 			{
 				let diagram = null;
@@ -910,6 +880,9 @@ class Runtime
 					if (e.target.result)
 					{
 						const args = e.target.result;
+						const localLog = U.readfile(`${name}.log`);
+						if (localLog)
+							args.log = JSON.parse(localLog);
 						const userDiagram = this.getUserDiagram(args.user);
 						diagram = new Cat[args.prototype](userDiagram, args);
 						diagram.check();
@@ -921,9 +894,6 @@ class Runtime
 						return;
 					}
 					this.sync = sync;
-	//TODO			const localLog = isGUI ? U.readfile(`${name}.log`) : null;
-	//TODO			if (localLog)
-	//TODO				args.log = JSON.parse(localLog);
 				};
 				const pngStore = tx.objectStore('PNGs');
 				const reqPng = pngStore.get(name);
@@ -934,8 +904,6 @@ class Runtime
 						D.diagramPNGs.set(name, e.target.result.png);
 						D.emitPNGEvent('load', name, e.target.result.png);
 					}
-					else
-						console.log('readDiagram, png not found', name);
 				};
 			});
 			await setup();
@@ -997,12 +965,6 @@ class Runtime
 				R.recordError('Morphism in URL could not be loaded.');
 		}
 	}
-	localTimestamp(name)
-	{
-		const filename = `${name}.json`;
-		const data = U.readfile(filename);
-		return data ? JSON.parse(data).timestamp : 0;
-	}
 	isLocalNewer(name)
 	{
 		const info = this.catalog.get(name);
@@ -1013,61 +975,10 @@ class Runtime
 		const info = this.catalog.get(name);
 		return info && info.cloudTimestamp > info.localTimestamp;
 	}
-	/*
 	static async DownloadDiagram(name, fn = null, e = null)
 	{
 		let diagram = null;
-		const cloudDiagrams = [...R.getReferences(name)].reverse().filter(d => R.localTimestamp(d) === 0);
-		if (cloudDiagrams.length > 0)
-		{
-			const downloads = cloudDiagrams.map(d => R.getDiagramURL(d + '.json'));
-			let diagrams = [];
-			const downloader = async _ =>
-			{
-				const promises = downloads.map((url, i) => fetch(url).then(res =>
-				{
-					if (!res.ok)
-					{
-						D && R.recordError(`Cannot download ${url}`);
-						D && R.recordError('Removed from session');
-						D && D.session.remove(cloudDiagrams[i]);
-						D && D.session.save();
-					}
-					return res;
-				}).catch(err => R.recordError(err)));
-				const responses = await Promise.all(promises);
-				const jsons = (await Promise.all(responses.map(async res => await res.ok ? res.json() : null))).filter(j => j);
-				diagrams = jsons.map(json =>
-				{
-					try
-					{
-						const diagram = new Cat[json.prototype](R.getUserDiagram(json.user), json);
-						D && D.emitCATEvent('download', diagram);
-						D && D.emitCATEvent('load', diagram);
-						return diagram;
-					}
-					catch(x)
-					{
-						console.error('Cannot load diagram ' + json.name);
-						return null;
-					}
-				});
-			};
-			await downloader();
-			diagram = diagrams[diagrams.length -1];
-		}
-		else if (R.canLoad(name))
-			diagram = R.loadDiagram(name);		// immediate loading
-		else
-			return null;
-		fn && fn(e);
-		return diagram;
-	}
-	*/
-	static async DownloadDiagram2(name, fn = null, e = null)
-	{
-		let diagram = null;
-		const cloudDiagrams = [...R.getReferences(name)].reverse().filter(d => !R.catalog.get(d).isLocal);
+		const cloudDiagrams = [...R.getReferences(name)].reverse().filter(d => D ? !R.catalog.get(d).isLocal : false);
 		if (cloudDiagrams.length > 0)
 		{
 			const downloads = cloudDiagrams.map(d => R.getDiagramURL(d + '.json'));
@@ -1107,7 +1018,7 @@ class Runtime
 			diagram = diagrams[diagrams.length -1];
 		}
 		else if (R.canLoad(name))
-			diagram = await R.loadDiagram2(name, fn);
+			diagram = await R.loadDiagram(name, fn);
 		if (!diagram)
 			return null;
 		fn && fn(e);
@@ -1144,12 +1055,7 @@ class Runtime
 			let diagram = name instanceof Diagram ? name : name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
 			if (!diagram)
 			{
-				/*
-				if (name)		// try to download from server
-					diagram = await Runtime.DownloadDiagram(name);		// we're already async
-				*/
-				diagram = await this.DownloadDiagram2(name);
-
+				diagram = await this.DownloadDiagram(name);
 				if (!diagram)	// did not find it
 					return;
 			}
@@ -1200,7 +1106,7 @@ class Runtime
 		if (all.length === refs.length)
 			return this.$CAT.getElement(name);
 	}
-	async loadDiagram2(name, fn)
+	async loadDiagram(name, fn)
 	{
 		const refs = [...this.getReferences(name)].reverse();
 		for (let i=0; i<refs.length; ++i)
@@ -1248,9 +1154,9 @@ class Runtime
 		this.cloud && this.cloud.fetchDiagram(name, false).then(data =>
 		{
 			this.diagram.clear();
-			U.writefile(`${name}.json`, JSON.stringify(data));
+			R.saveDiagram(data);
 			svg && svg.remove();
-			this.diagram.decrRefcnt();
+			this.diagram.decrRefcnt();	// remove current diagram
 			Runtime.SelectDiagram(name);
 		});
 	}
@@ -1285,7 +1191,7 @@ class Runtime
 		fn && script.addEventListener('load', fn);
 		document.body.appendChild(script);
 	}
-	fetchCatalog2(fn)
+	fetchCatalog(fn)
 	{
 		const process = data =>
 		{
@@ -1408,10 +1314,6 @@ class Runtime
 	{
 		return elt.constructor.name === 'Morphism' && (elt.isIterable() || this.Actions.javascript.canFormat(elt));
 	}
-	hasLocalDiagram(name)
-	{
-		return !!U.readfile(`${name}.json`);
-	}
 	diagramSearch(search, fn)
 	{
 		fetch(this.getURL(`search?search=${search}`)).then(response => response.json()).then(diagrams => fn(diagrams)).catch(err => R.recordError(err));
@@ -1440,8 +1342,6 @@ class Runtime
 				alert(`Warning! timestamp discrepancy ${json.timestamp} vs ${timestamp}`);
 				json.timestamp = timestamp;
 			}
-//			U.writefile(`${json.name}.json`, JSON.stringify(json));
-//			this.setDiagramInfo(json);
 			R.saveDiagram(json, e => console.log('doanloadDiagramData', json.name));
 		});
 	}
@@ -1474,31 +1374,19 @@ class Runtime
 		if (!this.user.canUpload())
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:this.user.name};
-		body.png = D.getPng(diagram.name);
+		const png = D.diagramPNGs.get(name);
+		if (png)
+			body.png = png;
 		console.log('uploading', diagram.name);
 		if (local)
 			return this.authFetch(this.getURL('upload', local), body).then(res => fn(res)).catch(err => R.recordError(err));
 		// keep local server up to date after update to cloud
 		return this.authFetch(this.getURL('upload', false), body).then(res => this.upload(e, diagram, true, fn)).catch(err => R.recordError(err));
 	}
-	/*
-	addReference(e, name)
-	{
-		const ref = this.$CAT.getElement(name);
-		if (!ref)
-			throw 'no diagram';
-		const diagram = this.diagram;
-		diagram.addReference(name);
-		this.catalog.get(name).refcnt++;
-		D.statusbar.show(e, `Diagram ${ref.properName} now referenced`);
-		diagram.log({command:'addReference', name});
-		diagram.antilog({command:'removeReference', name});
-	}
-	*/
-	addReference2(e, name, fn = null)
+	addReference(e, name, fn = null)
 	{
 		const diagram = this.diagram;
-		diagram.addReference2(name, _ =>
+		diagram.addReference(name, _ =>
 		{
 			D.statusbar.show(e, `Diagram ${ref.properName} now referenced`);
 			diagram.log({command:'addReference', name});
@@ -1634,7 +1522,7 @@ class Runtime
 			if (typeof err === 'object' && 'stack' in err && err.stack !== '')
 				elements.push(H3.br(), H3.small('Stack Trace'), H3.pre(err.stack));
 			elements.map(elt => D.ttyPanel.error.appendChild(elt));
-			this.ttyPanel.open();
+			D.ttyPanel.open();
 			Panel.SectionOpen('tty-error-section');
 		}
 		else
@@ -2865,11 +2753,11 @@ class DiagramTool extends ElementTool
 				{
 					const addRef = (e, name) =>
 					{
-						Runtime.DownloadDiagram2(name, ev =>
+						Runtime.DownloadDiagram(name, ev =>
 						{
 							try		// TODO remove?
 							{
-								R.addReference2(ev, name, _ => this.search());
+								R.addReference(ev, name, _ => this.search());
 							}
 							catch(x)
 							{
@@ -3143,10 +3031,7 @@ class Catalog extends DiagramTool		// GUI only
 					break;
 				case 'upload':
 					if (this.mode === 'search')
-					{
-						img = this.catalogDisplay.querySelector(`img[data-name="${diagram.name}"]`);
-						img && ['greenGlow', 'warningGlow'].map(glow => img.classList.remove(glow));
-					}
+						this.updateImage(diagram);
 					break;
 				case 'png':
 				case 'load':
@@ -3161,7 +3046,6 @@ class Catalog extends DiagramTool		// GUI only
 			switch(args.command)
 			{
 				case 'catalog':
-					document.body.style.overflow = '';		// turn on scrollbars
 					this.show();
 					this.updateDiagramCodomain();
 					this.update();
@@ -3223,56 +3107,17 @@ class Catalog extends DiagramTool		// GUI only
 			elt = elt.nextSibling;
 		}
 	}
-	display(info)
+	setupImg(div, info, img)
 	{
-		const args =
-		{
-			onclick:_ =>
-			{
-				D.setFullscreen(true, false);
-				Runtime.SelectDiagram(info.name, 'defaultView');
-			},
-			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
-			'data-name':	info.name,
-		};
-		let img = null;		// diagram png
-		let diagramToolbar = null;
-		let div = this.catalog.querySelector(`div[data-name="${info.name}"]`);
-		if (div)
-		{
-			div.classList.remove('hidden');
-			img = div.querySelector('img');
-			if (Number.parseInt(div.dataset.time) < info.timestamp)		// regenerate png if timestamp expired
-			{
-				const parent = img.parentNode;
-				img && img.remove();
-				parent.appendChild(D.getImageElement(info.name, args));
-				div.dataset.time = info.timestamp;
-			}
-			diagramToolbar = div.querySelector('.verticalTools');
-		}
-		else
-		{
-			diagramToolbar = H3.table('.verticalTools.stdBackground');
-			diagramToolbar.onmouseenter = e => {diagramToolbar.style.opacity = 100;};
-			diagramToolbar.onmouseleave = e => {diagramToolbar.style.opacity = 0;};
-			img = D.getImageElement(info.name, args);
-			const imgDiv = H3.div({style:'position:relative;'}, img, diagramToolbar);
-			div = H3.div('.catalogEntry', {'data-name':info.name, 'data-time':info.timestamp},
-				H3.table(	[
-								H3.tr(H3.td('.stdBackground', {colspan:2}, imgDiv)),
-								H3.tr(H3.td(D.getDiagramHtml(info))),
-							], '.smallTable'));
-			div.style.margin = "20px 0px 0px 0px";
-		}
-		this.glowMap.has(info.name) && img.classList.add(this.glowMap.get(info.name));
 		if (this.mode !== 'reference')
 		{
 			let listener = null;
+			img.classList.add('catalog-img');
 			img.onmouseenter = evnt =>
 			{
 				const showToolbar = e =>
 				{
+					const diagramToolbar = div.querySelector('.verticalTools');
 					D.removeChildren(diagramToolbar);
 					super.getButtons(info).map(btn => diagramToolbar.appendChild(H3.tr(H3.td(btn))));
 					diagramToolbar.style.opacity = 100;
@@ -3294,6 +3139,7 @@ class Catalog extends DiagramTool		// GUI only
 			};
 			img.onmouseleave = e =>
 			{
+				const diagramToolbar = div.querySelector('.verticalTools');
 				diagramToolbar.style.opacity = 0;
 				window.removeEventListener('CAT', listener);
 			};
@@ -3311,7 +3157,66 @@ class Catalog extends DiagramTool		// GUI only
 				diagramToolbar.classList.add('hidden');
 			};
 		}
-		this.catalogDisplay.appendChild(div);
+	}
+	getDiagramDiv(name)
+	{
+		return this.catalog.querySelector(`div[data-name="${name}"]`);
+	}
+	getArgs(name)
+	{
+		const args =
+		{
+			onclick:_ =>
+			{
+				D.setFullscreen(true, false);
+				Runtime.SelectDiagram(name, 'defaultView');
+			},
+			style:			'cursor:pointer; transition:0.5s; height:auto; width:100%',
+			'data-name':	name,
+		};
+		return args;
+	}
+	updateImage(info)
+	{
+		const div = this.getDiagramDiv(info.name);
+		const img = div.querySelector('img');
+		const parent = img.parentNode;
+		img && img.remove();
+		div.dataset.time = info.timestamp;
+		D.getImageElement(info.name, png =>
+		{
+			this.setupImg(div, info, png);
+			parent.appendChild(png);
+		}, this.getArgs(info.name));
+	}
+	display(info)
+	{
+		let img = null;		// diagram png
+		let diagramToolbar = null;
+		let div = this.catalog.querySelector(`div[data-name="${info.name}"]`);
+		if (div)
+		{
+			div.classList.remove('hidden');
+			this.catalogDisplay.appendChild(div);
+			img = div.querySelector('img');
+			if (Number.parseInt(div.dataset.time) < info.timestamp)		// regenerate png if timestamp expired
+				this.updateImage(info);
+		}
+		else
+		{
+			diagramToolbar = H3.table('.verticalTools.stdBackground');
+			diagramToolbar.onmouseenter = e => {diagramToolbar.style.opacity = 100;};
+			diagramToolbar.onmouseleave = e => {diagramToolbar.style.opacity = 0;};
+			const td = H3.td('.stdBackground', {colspan:2});
+			div = H3.div('.catalogEntry', {'data-name':info.name, 'data-time':info.timestamp}, H3.table(	H3.tr(td),
+																											H3.tr(H3.td(D.getDiagramHtml(info))), '.smallTable'));
+			this.catalogDisplay.appendChild(div);
+			D.getImageElement(info.name, png =>
+			{
+				td.appendChild(H3.div({style:'position:relative;'}, png, diagramToolbar), div.firstChild);
+				this.setupImg(div, info, png);
+			}, this.getArgs(info.name));
+		}
 	}
 	remove(name)
 	{
@@ -3341,72 +3246,6 @@ class Catalog extends DiagramTool		// GUI only
 		this.diagrams = [];
 		R.catalog.forEach((info, name) => info.localTimestamp > 0 && this.diagramFilter(info) && this.diagrams.push(info));
 	}
-	doLookup()
-	{
-		this.referenceSearch();
-		if (this.mode === 'search')
-			this.outOfDateGlow();
-		else
-			this.referenceGlow();
-	}
-	reference()
-	{
-		this.clear();
-		this.mode = 'reference';
-		this.title.innerHTML = `References for ${U.HtmlSafe(R.diagram.name)}`;
-		this.doLookup();
-		D.emitViewEvent('catalog');
-	}
-	outOfDateGlow()
-	{
-		D.removeChildren(this.infoElement);
-		this.glowMap = new Map();
-		const status = {hasWarningGlow:false, hasGreenGlow:false};
-		this.diagrams.forEach(info =>
-		{
-			if (info.timestamp > 0)
-			{
-				if (info.timestamp > info.cloudTimestamp)
-				{
-					this.glowMap.set(info.name, 'greenGlow');
-					status.hasGreenGlow = true;
-				}
-				if (info.timestamp < info.cloudTimestamp)
-				{
-					this.glowMap.set(info.name, 'warningGlow');
-					status.hasWarningGlow = true;
-				}
-			}
-		});
-		if (status.hasWarningGlow)
-			this.infoElement.appendChild(H3.div([	H3.span('Local diagram is ', H3.span('older', '.warningGlow'), ' than cloud', '.display'),
-													H3.button(`Download all newer diagrams from ${D.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.downloadNewer()})]));
-		if (status.hasGreenGlow)
-		{
-			const div = H3.div(H3.span('Local diagram is ', H3.span('newer', '.greenGlow'), ' than cloud', '.display'));
-			if (R.user.canUpload())
-				div.appendChild(H3.button(`Upload all newer diagrams to ${D.local ? 'local server' : 'cloud'}.`, '.textButton', {onclick:_ => this.uploadNewer()}));
-			this.infoElement.appendChild(div);
-		}
-		if (!status.hasWarningGlow && !status.hasGreenGlow)
-			this.infoElement.appendChild(H3.p(`All diagrams synced to ${D.local ? 'local server' : 'cloud'}.`, '.center'));
-	}
-	referenceGlow()
-	{
-		D.removeChildren(this.infoElement);
-		const status = {hasWarningGlow:false, hasGreenGlow:false};
-		const refs = R.diagram.references;
-		this.diagrams.forEach(info =>
-		{
-			const name = info.name;
-			if (refs.has(name))
-				this.glowMap.set(name, 'greenGlow');
-			else if (R.diagram.allReferences.has(name))
-				this.glowMap.set(name, 'warningGlow');
-		});
-		this.infoElement.appendChild(H3.div(H3.span('Directly referenced ', H3.span('diagrams', '.greenGlow'), '&nbsp;&nbsp;&nbsp;&nbsp;Indirectly referenced ', H3.span('diagrams', '.warningGlow'), '.display')));
-		D.emitViewEvent('catalog');
-	}
 	hide()
 	{
 		this.catalog.classList.add('hidden');
@@ -3414,34 +3253,6 @@ class Catalog extends DiagramTool		// GUI only
 	show(visible = true)
 	{
 		visible ? this.catalog.classList.remove('hidden') : this.hide();
-	}
-	async downloadNewer()
-	{
-		const items = this.catalogDisplay.querySelectorAll('.warningGlow');
-		const promises = [];
-		items.forEach(elt =>
-		{
-			const name = elt.dataset.name;
-			promises.push(R.downloadDiagramData(name, false, Number.parseInt(elt.dataset.timestamp)));
-		});
-		await Promise.all(promises);
-		this.askCloud();
-	}
-	async uploadNewer()
-	{
-		const items = this.catalogDisplay.querySelectorAll('.greenGlow');
-		const promises = [];
-		items.forEach(elt =>
-		{
-			const name = elt.dataset.name;
-			const data = U.readfile(`${name}.json`);
-			const json = JSON.parse(data);
-			if (json.user !== R.user.name)
-				return;
-			promises.push(R.upload(null, json, false, _ => {}));
-		});
-		await Promise.all(promises);
-		this.askCloud();
 	}
 	getButtons(exclude = [])
 	{
@@ -3711,21 +3522,9 @@ class Session
 		}
 	}
 	loadAction(action) { }
-	/*
 	loadDiagrams()
 	{
 		this.diagrams.forEach((v, d) => Runtime.DownloadDiagram(d, _ =>
-		{
-			const diagram = R.$CAT.getElement(d);
-			if (diagram instanceof ActionDiagram)
-			{
-			}
-		}));
-	}
-	*/
-	loadDiagrams2()
-	{
-		this.diagrams.forEach((v, d) => Runtime.DownloadDiagram2(d, _ =>
 		{
 			const diagram = R.$CAT.getElement(d);
 			if (diagram instanceof ActionDiagram)
@@ -4932,7 +4731,7 @@ class Display
 				return;
 			let elt = diagram.getElement(name);
 			if (!elt)
-				Runtime.DownloadDiagram2(name, ev => R.addReference2(ev, name), e);
+				Runtime.DownloadDiagram(name, ev => R.addReference(ev, name), e);
 			else
 			{
 				let from = null;
@@ -5383,7 +5182,7 @@ class Display
 			switch (args.command)
 			{
 				case 'start':
-					this.session.loadDiagrams2();
+					this.session.loadDiagrams();
 					this.setFullscreen(this.default.fullscreen);
 					const name = this.params.get('diagram');
 					if (D.session.mode === 'diagram')
@@ -5855,27 +5654,33 @@ class Display
 		const largeArc = endAngle - startAngle <= 180 ? '0' : '1';
 		return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
 	}
-	getPng(name)
+	getPng(name, fn)
 	{
 		let png = this.diagramPNGs.get(name);
 		if (!png)
 		{
-			png = U.readfile(`${name}.png`);
-			if (png)
-				this.diagramPNGs.set(name, png);
+			R.readPNG(name, png =>
+			{
+				if (png)
+					this.diagramPNGs.set(name, png);
+				fn(png);
+			});
+			return;
 		}
-		return png;
+		fn(png);
 	}
-	getImageElement(name, args = {})
+	getImageElement(name, fn = null, args = {})
 	{
-		const nuArgs = U.Clone(args);
-		nuArgs.src = this.getPng(name);
-		nuArgs.id = U.SafeId(`img-el_${name}`);
-		if (!nuArgs.src && R.cloud)
-			nuArgs.src = R.getDiagramURL(name + '.png');
-		if (!('alt' in nuArgs))
-			nuArgs.alt = 'Image not available';
-		return H3.img('.stdBackground', nuArgs);
+		this.getPng(name, png =>
+		{
+			const nuArgs = U.Clone(args);
+			nuArgs.id = U.SafeId(`img-el_${name}`);
+			if (!nuArgs.src && R.cloud)
+				nuArgs.src = R.getDiagramURL(name + '.png');
+			if (!('alt' in nuArgs))
+				nuArgs.alt = 'Image not available';
+			fn && fn(H3.img('.stdBackground', nuArgs));
+		});
 	}
 	placeComposite(e, diagram, comp)
 	{
@@ -6021,7 +5826,7 @@ class Display
 		{
 			replay(e, diagram, args)
 			{
-				R.addReference2(e, args.name);		// TODO async
+				R.addReference(e, args.name);		// TODO async
 			}
 		};
 		this.replayCommands.set('addReference', replayAddReference);
@@ -6202,11 +6007,6 @@ class Display
 			offset = new D2(e.movementX * viewport.scale, e.movementY * viewport.scale);
 		this.setSessionViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
 		this.emitViewEvent(this.session.mode, R.diagram);
-	}
-	readViewport(name)
-	{
-		const str = U.readfile(`${name}-viewport.json`);
-		return str ? JSON.parse(str) : null;
 	}
 	textEditActive()
 	{
@@ -8904,11 +8704,17 @@ class IndexText extends Element
 	}
 	tspan()
 	{
+		const args =
+		{
+			onmousedown:e => this.diagram.userSelectElement(e, this.name),
+			onmouseenter:e => this.mouseenter(e),
+			onmouseout:e => this.mouseout(e)
+		};
 		this.setSvgText();
 		const div = H3.div();
 		const wrapTspan = (t, i, x) =>
 		{
-			return H3.tspan(t === '' ? '&ZeroWidthSpace;' : t, {'text-anchor':"left", x, dy:i > 0 ? this.lineDeltaY() : ''});
+			return H3.tspan(t === '' ? '&ZeroWidthSpace;' : t, {'text-anchor':"left", x, dy:i > 0 ? this.lineDeltaY() : ''}, args);
 		};
 		let tspan = null;
 		let x = 0;
@@ -8940,7 +8746,9 @@ class IndexText extends Element
 						if (matches[1] === 'icon')
 						{
 							const height = Number.parseInt(this.height);
-							const use = H3.use({href:`#icon-${matches[3]}`, width:this.height, height:this.height, x, y:- 0.8 * height});
+							const oldOffset = - 0.8 * height;
+							const offset = -0.8 * height + 1.5 * i * height;
+							const use = H3.use({href:`#icon-${matches[3]}`, width:this.height, height:this.height, x, y:offset});
 							this.svg.appendChild(use);
 							x += height;
 							tx = tx.substring(matches.index + matches[0].length);
@@ -8951,9 +8759,10 @@ class IndexText extends Element
 							const nameResults = matches[2].match(/\s*name="(.*)"/);
 							if (nameResults)
 							{
-								tspan.onclick = _ => Runtime.SelectDiagram(nameResults[1]);
-								tspan.style.fill = 'gold';
-								tspan.style.stroke = 'gold';
+								const name = U.HtmlSafe(nameResults[1]);
+								tspan.onmousedown = _ => Runtime.SelectDiagram(name);
+								tspan.onmouseenter = e => D.statusbar.show(e, `Go to ${name}`);
+								tspan.classList.add('link');
 							}
 							tx = tx.substring(matches.index + matches[0].length);
 							line = 0;
@@ -8986,9 +8795,6 @@ class IndexText extends Element
 		const name = this.name;
 		const svg = H3.g('.indexText', {'data-type':'text', 'data-name':name, 'text-anchor':'start', id:this.elementId(),
 			transform:`translate(${this.x} ${this.y})`});
-		svg.onmousedown = e => this.diagram.userSelectElement(e, name);
-		svg.onmouseenter = e => this.mouseenter(e);
-		svg.onmouseout = e => this.mouseout(e);
 		node.appendChild(svg);
 		this.svg = svg;
 		this.tspan();
@@ -15342,12 +15148,11 @@ class Diagram extends Functor
 			viewport:					{value:{x:0, y:0, scale:1.0},					writable:true},
 		});
 		if ('references' in args)
-			args.references.map(r => this.addReference2(r, null, false));
+			args.references.map(r => this.addReference(r, null, false));
 		if ('elements' in nuArgs)
 			this.codomain.process(this, nuArgs.elements, this.elements);
 		if ('domainElements' in nuArgs)
 			this.domain.process(this, nuArgs.domainElements);
-//		R.setDiagramInfo(this);
 		if ('viewport' in nuArgs)
 			this.viewport = nuArgs.viewport;
 		this.domain.loadCells(this);
@@ -16232,26 +16037,7 @@ class Diagram extends Functor
 			}
 		}
 	}
-	/*
-	addReference(elt, emit = true)	// immediate, no background fn
-	{
-		const name = elt instanceof Diagram ? elt.name : elt;
-		if (name === this.name)
-			throw 'Do not reference yourself';
-		const diagram = R.loadDiagram(name);
-		if (!diagram)
-			throw 'cannot load diagram';
-		if (this.allReferences.has(diagram.name))
-			throw `Diagram ${diagram.name} is already referenced `;
-		if (diagram.allReferences.has(this.name))
-			throw `Diagram ${diagram.name} already references this one`;
-		this.references.set(name, diagram);
-		diagram.incrRefcnt();
-		this.allReferences = this.getAllReferenceDiagrams();
-		emit && D.emitDiagramEvent(this, 'addReference', diagram);
-	}
-	*/
-	async addReference2(elt, fn = null, emit = true)
+	async addReference(elt, fn = null, emit = true)
 	{
 		const name = elt instanceof Diagram ? elt.name : elt;
 		if (name === this.name)
@@ -16274,7 +16060,7 @@ class Diagram extends Functor
 		if (R.load(elt))
 			setup();
 		else
-			R.loadDiagram2(name, setup);
+			R.loadDiagram(name, setup);
 	}
 	clear(save = true)
 	{
@@ -16919,14 +16705,11 @@ class Diagram extends Functor
 		!D.textEditActive() && D.svg2canvas(this, (png, pngName) =>
 		{
 			D.diagramPNGs.set(this.name, png);
-			U.writefile(`${this.name}.png`, png);
-
 			const tx = D.store.transaction(['PNGs'], 'readwrite');
-			tx.oncomplete = e => console.log('png stored', this.name);
+			tx.onsuccess = e => console.log('png stored', this.name);
 			tx.onerror = e => R.recordError(e);
 			const pngStore = tx.objectStore('PNGs');
 			pngStore.put({name:this.name, png});
-
 			D.emitCATEvent('png', this);
 			fn && fn(e);
 		});
@@ -17260,7 +17043,6 @@ class ActionDiagram extends Diagram
 	}
 	doit(e, diagram, ary)
 	{
-debugger;
 		const eltMap = new Map();
 		if (this.hasForm(diagram, ary, eltMap))
 		{
