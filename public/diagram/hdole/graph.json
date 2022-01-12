@@ -148,7 +148,7 @@
       }
     },
     {
-      "description": "This diagram shows various string graphs.",
+      "description": "This diagram shows various string graphs.\nBe sure to click on the toolbar's <icon>graph</icon> button to view them.",
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
@@ -383,6 +383,16 @@
       }
     },
     {
+      "description": "And now you see the origin of the graph <icon>graph</icon> button.\n\nBy setting B, C, D to the underlying field for a category\nof vector spaces one gets a different morphism from\nthe triple dual of A to itself than just the identity.",
+      "basename": "t_2",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -40,
+        "y": 3310
+      },
+      "height": "24"
+    },
+    {
       "basename": "m_1",
       "prototype": "IndexMorphism",
       "domain": "hdole/graph/o_2",
@@ -575,16 +585,6 @@
       "domain": "hdole/graph/o_23",
       "codomain": "hdole/graph/o_24",
       "to": "hdole/graph/Fa{A,A_,A_-1}aF"
-    },
-    {
-      "description": "And now you see the origin of the graph <icon>graph</icon> button.",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -40,
-        "y": 3310
-      },
-      "height": "24"
     }
   ],
   "elements": [
@@ -1005,11 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641893473264,
+  "timestamp": 1641960463099,
   "version": 0,
   "viewport": {
     "x": 294,
-    "y": -3937,
+    "y": -129,
     "scale": 1.4375463860889526
   }
 }

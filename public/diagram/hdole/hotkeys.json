@@ -15,7 +15,7 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": 1050,
+        "x": 1040,
         "y": 350
       },
       "height": "200",
@@ -78,7 +78,7 @@
       "textAnchor": "end"
     },
     {
-      "description": "Copy the selected elements from the current diagram.",
+      "description": "Copy the selected elements.",
       "basename": "t_6",
       "prototype": "IndexText",
       "xy": {
@@ -1348,11 +1348,11 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641718725233,
+  "timestamp": 1641898819569,
   "version": 0,
   "viewport": {
-    "x": -873,
-    "y": -156,
-    "scale": 1.2612228746611283
+    "x": -1950,
+    "y": -309,
+    "scale": 2.12573767207485
   }
 }

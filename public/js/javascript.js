@@ -20,7 +20,7 @@ var Cat = Cat || require('./Cat.js');
 			R.languages.set(this.basename, this);
 			Cat.R.$CAT.getElement('Set').actions.set(args.basename, this);
 //			Cat.Runtime.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
-			Cat.Runtime.DownloadDiagram2('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
+			Cat.Runtime.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
 		}
 		html(e, diagram, ary)
 		{

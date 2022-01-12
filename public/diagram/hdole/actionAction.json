@@ -11,14 +11,14 @@
   "references": [],
   "domainElements": [
     {
-      "description": " Action Action",
+      "description": "The Action Action",
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": -150,
-        "y": 160
+        "x": -180,
+        "y": 180
       },
-      "height": "200",
+      "height": "175",
       "weight": "bold"
     },
     {
@@ -34,11 +34,11 @@
   ],
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641892201015,
+  "timestamp": 1641957677751,
   "version": 0,
   "viewport": {
-    "x": 506,
-    "y": 89,
-    "scale": 1.6251834906054272
+    "x": 482,
+    "y": 42,
+    "scale": 1.46490695389616
   }
 }

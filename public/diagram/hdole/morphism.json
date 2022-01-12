@@ -36,8 +36,8 @@
       "prototype": "IndexObject",
       "to": "hdole/morphism/A",
       "xy": {
-        "x": 100,
-        "y": 2100
+        "x": 450,
+        "y": 2050
       }
     },
     {
@@ -45,8 +45,8 @@
       "prototype": "IndexObject",
       "to": "hdole/morphism/B",
       "xy": {
-        "x": 230,
-        "y": 2100
+        "x": 580,
+        "y": 2050
       }
     },
     {
@@ -84,7 +84,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641589177741,
+  "timestamp": 1641894357178,
   "version": 0,
   "viewport": {
     "x": 16,
