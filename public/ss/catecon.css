@@ -10,6 +10,7 @@
 	--color-emphasis:	#00f;
 	--color-hidden-cell:#ddd;
 	--color-hover:		#777;
+	--color-link:		#33f;
 	--color-morphism:	#000;
 	--color-object:		#000;
 	--color-panel-bg:	#f7f7f7;
@@ -34,6 +35,7 @@
 	--color-emphasis:	#0ff;
 	--color-hidden-cell:#444;
 	--color-hover:		#aaa;
+	--color-link:		gold;
 	--color-morphism:	#fff;
 	--color-object:		#fff;
 	--color-panel-bg:	#666;
@@ -233,7 +235,7 @@ table.verticalTools
 	box-shadow:			2px 2px 2px 2px #bbbb;
 	opacity:			0;
 	position:			absolute;
-	top:				10px;
+	top:				8px;
 	right:				6px;
 	transition:			0.3s;
 }
@@ -271,6 +273,7 @@ h1.catalog
 .catalogEntry
 {
 	background-color:	var(--color-bg);
+	margin:				20px 0px 0px 0px;
 	padding:			10px;
 }
 
@@ -283,6 +286,14 @@ h1.catalog
 {
 	width:				100%;
 	position:			absolute;
+}
+
+.catalog-img
+{
+	cursor:	pointer;
+	transition:	0.5s;
+	height:	auto;
+	width:	100%;
 }
 
 .left
@@ -323,8 +334,11 @@ br
 a
 {
 	text-decoration:	none;
+	color:				var(--color-link);
+	fill:				var(--color-link);
 	cursor:				pointer;
 	display:			block;
+	stroke:				var(--color-link);
 	transition:			0.3s
 }
 
@@ -332,6 +346,17 @@ a:hover, .offcanvas a:focus
 {
 	color: #ddd;
 	background-color:	#777a;
+}
+
+.link
+{
+	text-decoration:	none;
+	color:				var(--color-link);
+	fill:				var(--color-link);
+	cursor:				pointer;
+	display:			block;
+	stroke:				var(--color-link);
+	transition:			0.3s
 }
 
 p
