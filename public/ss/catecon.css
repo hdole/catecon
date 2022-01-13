@@ -545,7 +545,7 @@ p
 {
 	background-color:	var(--color-statusbar-bg);
 	border:				solid;
-	border-color: 		red;
+	border-color: 		yellow;
 	border-width: 		2px;
 	border-radius:		6px;
 	box-shadow:			4px 4px 2px 1px #bdd9;
