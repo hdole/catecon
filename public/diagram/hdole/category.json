@@ -52,7 +52,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 600,
-        "y": 400
+        "y": 350
       }
     },
     {
@@ -61,7 +61,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
-        "y": 400
+        "y": 350
       }
     },
     {
@@ -70,7 +70,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 600,
-        "y": 600
+        "y": 500
       }
     },
     {
@@ -79,7 +79,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
-        "y": 600
+        "y": 500
       }
     },
     {
@@ -88,7 +88,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 600,
-        "y": 800
+        "y": 650
       }
     },
     {
@@ -97,7 +97,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
-        "y": 800
+        "y": 650
       }
     },
     {
@@ -106,7 +106,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
-        "y": 1000
+        "y": 850
       }
     },
     {
@@ -115,7 +115,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 600,
-        "y": 1200
+        "y": 1000
       }
     },
     {
@@ -124,7 +124,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
-        "y": 1200
+        "y": 1000
       }
     },
     {
@@ -133,7 +133,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
-        "y": 1400
+        "y": 1200
       }
     },
     {
@@ -183,7 +183,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 600,
-        "y": 1800
+        "y": 1550
       }
     },
     {
@@ -192,7 +192,7 @@
       "to": "hdole/category/C0",
       "xy": {
         "x": 800,
-        "y": 1800
+        "y": 1550
       }
     },
     {
@@ -201,7 +201,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
-        "y": 1600
+        "y": 1350
       }
     },
     {
@@ -210,15 +210,15 @@
       "to": "hdole/category/Pb{cod,dom}bP",
       "xy": {
         "x": 600,
-        "y": 1600
+        "y": 1350
       },
       "morphisms": [
         "hdole/category/m_10",
         "hdole/category/m_9"
       ],
       "cone": [
-        "hdole/category/m_11",
-        "hdole/category/m_12"
+        "hdole/category/m_31",
+        "hdole/category/m_32"
       ]
     },
     {
@@ -227,7 +227,7 @@
       "to": "hdole/category/Pb{cod,dom}bP",
       "xy": {
         "x": 600,
-        "y": 2000
+        "y": 1700
       }
     },
     {
@@ -236,7 +236,7 @@
       "to": "hdole/category/C1",
       "xy": {
         "x": 800,
-        "y": 2000
+        "y": 1700
       }
     },
     {
@@ -244,8 +244,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 600,
-        "y": 2300
+        "x": 1150,
+        "y": 1550
       }
     },
     {
@@ -253,8 +253,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 800,
-        "y": 2200
+        "x": 1350,
+        "y": 1550
       }
     },
     {
@@ -262,17 +262,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 1000,
-        "y": 2300
-      }
-    },
-    {
-      "basename": "o_23",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 600,
-        "y": 2500
+        "x": 1550,
+        "y": 1550
       }
     },
     {
@@ -280,8 +271,152 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 1000,
+        "x": 1550,
+        "y": 1750
+      }
+    },
+    {
+      "basename": "o_23",
+      "prototype": "IndexObject",
+      "to": "hdole/category/Pb{cod,dom}bP",
+      "xy": {
+        "x": 600,
+        "y": 1850
+      }
+    },
+    {
+      "basename": "o_25",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 600,
+        "y": 2050
+      }
+    },
+    {
+      "basename": "o_26",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 800,
+        "y": 1850
+      }
+    },
+    {
+      "basename": "o_27",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 800,
+        "y": 2050
+      }
+    },
+    {
+      "basename": "o_28",
+      "prototype": "IndexObject",
+      "to": "hdole/category/Pb{cod,dom}bP",
+      "xy": {
+        "x": 600,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_29",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 600,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_30",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 800,
+        "y": 2200
+      }
+    },
+    {
+      "basename": "o_31",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 800,
+        "y": 2400
+      }
+    },
+    {
+      "basename": "o_32",
+      "prototype": "IndexObject",
+      "to": "hdole/category/Pb{cod,dom}bP",
+      "xy": {
+        "x": 1330,
+        "y": 2480
+      }
+    },
+    {
+      "basename": "o_33",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 850,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_34",
+      "prototype": "IndexObject",
+      "to": "hdole/category/Pb{cod,dom}bP",
+      "xy": {
+        "x": 600,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_35",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 1490,
         "y": 2500
+      }
+    },
+    {
+      "basename": "o_36",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 1640,
+        "y": 2650
+      }
+    },
+    {
+      "basename": "o_37",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 1350,
+        "y": 2700
+      }
+    },
+    {
+      "basename": "o_38",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 1050,
+        "y": 2900
+      }
+    },
+    {
+      "basename": "o_39",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 1050,
+        "y": 2750
       }
     },
     {
@@ -409,17 +544,16 @@
       "to": "hdole/category/id"
     },
     {
-      "basename": "m_16",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_20",
-      "codomain": "hdole/category/o_23",
-      "to": "hdole/category/Id{C1}dI"
-    },
-    {
       "basename": "m_18",
       "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_23",
+      "domain": "hdole/category/o_20",
       "codomain": "hdole/category/o_24",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/category/dom"
     },
     {
@@ -430,17 +564,1202 @@
       "to": "hdole/category/cod"
     },
     {
+      "basename": "m_16",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_23",
+      "codomain": "hdole/category/o_25",
+      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+    },
+    {
       "basename": "m_17",
-      "prototype": "IndexComposite",
-      "domain": "hdole/category/o_20",
-      "codomain": "hdole/category/o_22",
-      "to": "hdole/category/Cm{dom,id}mC",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_23",
+      "codomain": "hdole/category/o_26",
+      "to": "hdole/category/comp"
+    },
+    {
+      "basename": "m_20",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_26",
+      "codomain": "hdole/category/o_27",
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_21",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_25",
+      "codomain": "hdole/category/o_27",
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_22",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_28",
+      "codomain": "hdole/category/o_29",
+      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+    },
+    {
+      "basename": "m_23",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_28",
+      "codomain": "hdole/category/o_30",
+      "to": "hdole/category/comp"
+    },
+    {
+      "basename": "m_24",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_30",
+      "codomain": "hdole/category/o_31",
+      "to": "hdole/category/cod"
+    },
+    {
+      "basename": "m_25",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_29",
+      "codomain": "hdole/category/o_31",
+      "to": "hdole/category/cod"
+    },
+    {
+      "basename": "m_27",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_34",
+      "codomain": "hdole/category/o_33",
+      "to": "hdole/category/comp"
+    },
+    {
+      "basename": "m_28",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_35",
+      "codomain": "hdole/category/o_36",
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_26",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_32",
+      "codomain": "hdole/category/o_37",
+      "to": "hdole/category/comp"
+    },
+    {
+      "basename": "m_29",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_33",
+      "codomain": "hdole/category/o_38",
+      "to": "hdole/category/dom"
+    },
+    {
+      "basename": "m_30",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_39",
+      "codomain": "hdole/category/o_38",
+      "to": "hdole/category/cod"
+    },
+    {
+      "basename": "m_31",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_17",
+      "codomain": "hdole/category/o_16",
+      "homsetIndex": 1,
+      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+    },
+    {
+      "basename": "m_32",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_17",
+      "codomain": "hdole/category/o_14",
+      "homsetIndex": 1,
+      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+    },
+    {
+      "basename": "o_40",
+      "prototype": "IndexPullback",
+      "to": "hdole/category/Pb{m_27,m_29,m_30}bP",
+      "xy": {
+        "x": 600,
+        "y": 2750
+      },
       "morphisms": [
-        "hdole/category/m_14",
-        "hdole/category/m_15"
+        "hdole/category/m_27",
+        "hdole/category/m_29",
+        "hdole/category/m_30"
+      ],
+      "cone": [
+        "hdole/category/m_33",
+        "hdole/category/m_34"
       ]
+    },
+    {
+      "basename": "m_33",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_40",
+      "codomain": "hdole/category/o_34",
+      "to": "hdole/category/Fa{Pb{m_27,m_29,m_30}bP,o_34_0}aF"
+    },
+    {
+      "basename": "m_34",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/category/o_40",
+      "codomain": "hdole/category/o_39",
+      "to": "hdole/category/Fa{Pb{m_27,m_29,m_30}bP,o_33_1}aF"
     }
   ],
+  "domainInfo": {
+    "description": "index category for diagram hdole/category",
+    "basename": "category_Index",
+    "name": "hdole/category_Index",
+    "prototype": "IndexCategory",
+    "category": "sys/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "",
+        "basename": "o_0",
+        "name": "hdole/category/o_0",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 600,
+          "y": -200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_1",
+        "name": "hdole/category/o_1",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 600,
+          "y": 0
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_2",
+        "name": "hdole/category/o_2",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 600,
+          "y": 200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_3",
+        "name": "hdole/category/o_3",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 800,
+          "y": 200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_4",
+        "name": "hdole/category/o_4",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 600,
+          "y": 350
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_5",
+        "name": "hdole/category/o_5",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 800,
+          "y": 350
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_6",
+        "name": "hdole/category/o_6",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 600,
+          "y": 500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_7",
+        "name": "hdole/category/o_7",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 800,
+          "y": 500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_8",
+        "name": "hdole/category/o_8",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 600,
+          "y": 650
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_9",
+        "name": "hdole/category/o_9",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 800,
+          "y": 650
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_10",
+        "name": "hdole/category/o_10",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 800,
+          "y": 850
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_11",
+        "name": "hdole/category/o_11",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 600,
+          "y": 1000
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_12",
+        "name": "hdole/category/o_12",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 800,
+          "y": 1000
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_13",
+        "name": "hdole/category/o_13",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 800,
+          "y": 1200
+        }
+      },
+      {
+        "description": "Category",
+        "basename": "t_0",
+        "name": "hdole/category/t_0",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": 40,
+          "y": -510
+        },
+        "height": "200",
+        "weight": "bold"
+      },
+      {
+        "description": "The collection of objects in the category",
+        "basename": "t_1",
+        "name": "hdole/category/t_1",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -100,
+          "y": -200
+        },
+        "height": "24"
+      },
+      {
+        "description": "The collection of morphisms in the category",
+        "basename": "t_2",
+        "name": "hdole/category/t_2",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -100,
+          "y": 0
+        },
+        "height": "24"
+      },
+      {
+        "description": "The mapping of objects to their identity morphism",
+        "basename": "t_3",
+        "name": "hdole/category/t_3",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -100,
+          "y": 200
+        },
+        "height": "24"
+      },
+      {
+        "description": "",
+        "basename": "o_14",
+        "name": "hdole/category/o_14",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 600,
+          "y": 1550
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_15",
+        "name": "hdole/category/o_15",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 800,
+          "y": 1550
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_16",
+        "name": "hdole/category/o_16",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 800,
+          "y": 1350
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_17",
+        "name": "hdole/category/o_17",
+        "prototype": "IndexPullback",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 600,
+          "y": 1350
+        },
+        "morphisms": [
+          "hdole/category/m_10",
+          "hdole/category/m_9"
+        ],
+        "cone": [
+          "hdole/category/m_31",
+          "hdole/category/m_32"
+        ]
+      },
+      {
+        "description": "",
+        "basename": "o_18",
+        "name": "hdole/category/o_18",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 600,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_19",
+        "name": "hdole/category/o_19",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 800,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_20",
+        "name": "hdole/category/o_20",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 1150,
+          "y": 1550
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_21",
+        "name": "hdole/category/o_21",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 1350,
+          "y": 1550
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_22",
+        "name": "hdole/category/o_22",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 1550,
+          "y": 1550
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_24",
+        "name": "hdole/category/o_24",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 1550,
+          "y": 1750
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_23",
+        "name": "hdole/category/o_23",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 600,
+          "y": 1850
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_25",
+        "name": "hdole/category/o_25",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 600,
+          "y": 2050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_26",
+        "name": "hdole/category/o_26",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 800,
+          "y": 1850
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_27",
+        "name": "hdole/category/o_27",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 800,
+          "y": 2050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_28",
+        "name": "hdole/category/o_28",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 600,
+          "y": 2200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_29",
+        "name": "hdole/category/o_29",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 600,
+          "y": 2400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_30",
+        "name": "hdole/category/o_30",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 800,
+          "y": 2200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_31",
+        "name": "hdole/category/o_31",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 800,
+          "y": 2400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_32",
+        "name": "hdole/category/o_32",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 1330,
+          "y": 2480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_33",
+        "name": "hdole/category/o_33",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 850,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_34",
+        "name": "hdole/category/o_34",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 600,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_35",
+        "name": "hdole/category/o_35",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 1490,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_36",
+        "name": "hdole/category/o_36",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 1640,
+          "y": 2650
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_37",
+        "name": "hdole/category/o_37",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 1350,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_38",
+        "name": "hdole/category/o_38",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 1050,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_39",
+        "name": "hdole/category/o_39",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 1050,
+          "y": 2750
+        }
+      },
+      {
+        "description": "",
+        "basename": "m_0",
+        "name": "hdole/category/m_0",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_2",
+        "codomain": "hdole/category/o_3",
+        "to": "hdole/category/id"
+      },
+      {
+        "description": "",
+        "basename": "m_1",
+        "name": "hdole/category/m_1",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_4",
+        "codomain": "hdole/category/o_5",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_2",
+        "name": "hdole/category/m_2",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_6",
+        "codomain": "hdole/category/o_7",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_3",
+        "name": "hdole/category/m_3",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_8",
+        "codomain": "hdole/category/o_9",
+        "to": "hdole/category/id"
+      },
+      {
+        "description": "",
+        "basename": "m_4",
+        "name": "hdole/category/m_4",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_8",
+        "codomain": "hdole/category/o_10",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/category/Id{C0}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_5",
+        "name": "hdole/category/m_5",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_9",
+        "codomain": "hdole/category/o_10",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_6",
+        "name": "hdole/category/m_6",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_11",
+        "codomain": "hdole/category/o_12",
+        "to": "hdole/category/id"
+      },
+      {
+        "description": "",
+        "basename": "m_7",
+        "name": "hdole/category/m_7",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_11",
+        "codomain": "hdole/category/o_13",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/category/Id{C0}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_8",
+        "name": "hdole/category/m_8",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_12",
+        "codomain": "hdole/category/o_13",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_9",
+        "name": "hdole/category/m_9",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_14",
+        "codomain": "hdole/category/o_15",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_10",
+        "name": "hdole/category/m_10",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_16",
+        "codomain": "hdole/category/o_15",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_11",
+        "name": "hdole/category/m_11",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_17",
+        "codomain": "hdole/category/o_16",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_12",
+        "name": "hdole/category/m_12",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_17",
+        "codomain": "hdole/category/o_14",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_13",
+        "name": "hdole/category/m_13",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_18",
+        "codomain": "hdole/category/o_19",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_14",
+        "name": "hdole/category/m_14",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_20",
+        "codomain": "hdole/category/o_21",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_15",
+        "name": "hdole/category/m_15",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_21",
+        "codomain": "hdole/category/o_22",
+        "to": "hdole/category/id"
+      },
+      {
+        "description": "",
+        "basename": "m_18",
+        "name": "hdole/category/m_18",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_20",
+        "codomain": "hdole/category/o_24",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_19",
+        "name": "hdole/category/m_19",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_22",
+        "codomain": "hdole/category/o_24",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_16",
+        "name": "hdole/category/m_16",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_23",
+        "codomain": "hdole/category/o_25",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_17",
+        "name": "hdole/category/m_17",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_23",
+        "codomain": "hdole/category/o_26",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_20",
+        "name": "hdole/category/m_20",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_26",
+        "codomain": "hdole/category/o_27",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_21",
+        "name": "hdole/category/m_21",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_25",
+        "codomain": "hdole/category/o_27",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_22",
+        "name": "hdole/category/m_22",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_28",
+        "codomain": "hdole/category/o_29",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_23",
+        "name": "hdole/category/m_23",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_28",
+        "codomain": "hdole/category/o_30",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_24",
+        "name": "hdole/category/m_24",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_30",
+        "codomain": "hdole/category/o_31",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_25",
+        "name": "hdole/category/m_25",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_29",
+        "codomain": "hdole/category/o_31",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_27",
+        "name": "hdole/category/m_27",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_34",
+        "codomain": "hdole/category/o_33",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_28",
+        "name": "hdole/category/m_28",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_35",
+        "codomain": "hdole/category/o_36",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_26",
+        "name": "hdole/category/m_26",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_32",
+        "codomain": "hdole/category/o_37",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_29",
+        "name": "hdole/category/m_29",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_33",
+        "codomain": "hdole/category/o_38",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_30",
+        "name": "hdole/category/m_30",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_39",
+        "codomain": "hdole/category/o_38",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_31",
+        "name": "hdole/category/m_31",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_17",
+        "codomain": "hdole/category/o_16",
+        "homsetIndex": 1,
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_32",
+        "name": "hdole/category/m_32",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_17",
+        "codomain": "hdole/category/o_14",
+        "homsetIndex": 1,
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "o_40",
+        "name": "hdole/category/o_40",
+        "prototype": "IndexPullback",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{m_27,m_29,m_30}bP",
+        "xy": {
+          "x": 600,
+          "y": 2750
+        },
+        "morphisms": [
+          "hdole/category/m_27",
+          "hdole/category/m_29",
+          "hdole/category/m_30"
+        ],
+        "cone": [
+          "hdole/category/m_33",
+          "hdole/category/m_34"
+        ]
+      },
+      {
+        "description": "",
+        "basename": "m_33",
+        "name": "hdole/category/m_33",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_40",
+        "codomain": "hdole/category/o_34",
+        "to": "hdole/category/Fa{Pb{m_27,m_29,m_30}bP,o_34_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_34",
+        "name": "hdole/category/m_34",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_40",
+        "codomain": "hdole/category/o_39",
+        "to": "hdole/category/Fa{Pb{m_27,m_29,m_30}bP,o_33_1}aF"
+      }
+    ],
+    "cells": [
+      {
+        "name": "hdole/category/{m_3,m_5},{m_4}",
+        "left": [
+          "m_3",
+          "m_5"
+        ],
+        "right": [
+          "m_4"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/category/{m_6,m_8},{m_7}",
+        "left": [
+          "m_6",
+          "m_8"
+        ],
+        "right": [
+          "m_7"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/category/{m_14,m_15,m_19},{m_18}",
+        "left": [
+          "m_14",
+          "m_15",
+          "m_19"
+        ],
+        "right": [
+          "m_18"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
+  },
   "elements": [
     {
       "description": "objects in this category",
@@ -522,28 +1841,46 @@
       "codomain": "hdole/category/C1"
     },
     {
-      "basename": "Id{C1}dI",
-      "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/category/C1",
-      "codomain": "hdole/category/C1"
+      "prototype": "PullbackObject",
+      "objects": [
+        "o_34",
+        "o_33",
+        "o_39"
+      ],
+      "morphisms": [
+        "m_27",
+        "m_29",
+        "m_30"
+      ],
+      "cone": [
+        "hdole/category/Fa{Pb{m_27,m_29,m_30}bP,o_34_0}aF",
+        "hdole/category/Fa{Pb{m_27,m_29,m_30}bP,o_33_1}aF",
+        "hdole/category/Fa{Pb{m_27,m_29,m_30}bP,o_39_2}aF"
+      ]
     },
     {
-      "prototype": "Composite",
-      "domain": "hdole/category/C1",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "dom",
-        "id"
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{m_27,m_29,m_30}bP",
+      "codomain": "hdole/category/o_34",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{m_27,m_29,m_30}bP",
+      "codomain": "hdole/category/o_33",
+      "factors": [
+        1
       ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1641588631209,
+  "timestamp": 1642119458248,
   "version": 0,
   "viewport": {
-    "x": 1088,
-    "y": 320,
-    "scale": 0.3905938902952756
+    "x": 790,
+    "y": -1152,
+    "scale": 0.7542442267767415
   }
 }

@@ -317,8 +317,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/F64",
       "xy": {
-        "x": 2990,
-        "y": 1060
+        "x": 3090,
+        "y": 530
       }
     },
     {
@@ -326,8 +326,8 @@
       "prototype": "IndexObject",
       "to": "hdole/floats/#1",
       "xy": {
-        "x": 2990,
-        "y": 860
+        "x": 3090,
+        "y": 330
       }
     },
     {
@@ -344,8 +344,8 @@
       "prototype": "IndexObject",
       "to": "hdole/factorial/Po{hdole/floats/#1,hdole/floats/F64}oP",
       "xy": {
-        "x": 2790,
-        "y": 860
+        "x": 2890,
+        "y": 330
       }
     },
     {
@@ -1054,6 +1054,12 @@
       "prototype": "IndexComposite",
       "domain": "hdole/factorial/o_41",
       "codomain": "hdole/factorial/o_90",
+      "attributes": [
+        [
+          "flipName",
+          true
+        ]
+      ],
       "to": "hdole/factorial/Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aF,Pm{hdole/floats/eq0_64,Id{hdole/floats/F64}dI}mP,Di{Po{hdole/floats/CPo{#1,#1}oPC,hdole/floats/F64}oP}-LiD,CPm{Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_1}aF,Pm{Id{hdole/floats/F64}dI,Cm{decr64,fact64}mC}mP,hdole/floats/mult64}mC,Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF,hdole/floats/one64}mC}mPC,CFa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aFC}mC",
       "morphisms": [
         "hdole/factorial/m_42",
@@ -1085,6 +1091,1565 @@
       "to": "hdole/floats/eq0_64"
     }
   ],
+  "domainInfo": {
+    "description": "index category for diagram hdole/factorial",
+    "basename": "factorial_Index",
+    "name": "hdole/factorial_Index",
+    "prototype": "IndexCategory",
+    "category": "sys/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Factorial",
+        "basename": "t_0",
+        "name": "hdole/factorial/t_0",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/factorial",
+        "xy": {
+          "x": -260,
+          "y": -220
+        },
+        "height": "200",
+        "weight": "bold"
+      },
+      {
+        "description": "",
+        "basename": "o_19",
+        "name": "hdole/factorial/o_19",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 300,
+          "y": 200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_21",
+        "name": "hdole/factorial/o_21",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 500,
+          "y": 200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_24",
+        "name": "hdole/factorial/o_24",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/#1",
+        "xy": {
+          "x": 700,
+          "y": 400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_25",
+        "name": "hdole/factorial/o_25",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 700,
+          "y": 1400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_26",
+        "name": "hdole/factorial/o_26",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/#1",
+        "xy": {
+          "x": 500,
+          "y": 400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_27",
+        "name": "hdole/factorial/o_27",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/Po{F128,F128}oP",
+        "xy": {
+          "x": 300,
+          "y": 1200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_28",
+        "name": "hdole/factorial/o_28",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 300,
+          "y": 1400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_29",
+        "name": "hdole/factorial/o_29",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 500,
+          "y": 600
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_20",
+        "name": "hdole/factorial/o_20",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F128,hdole/floats/F128}oP",
+        "xy": {
+          "x": -300,
+          "y": 400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_22",
+        "name": "hdole/factorial/o_22",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": -300,
+          "y": 600
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_23",
+        "name": "hdole/factorial/o_23",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": -200,
+          "y": 300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_43",
+        "name": "hdole/factorial/o_43",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/#1",
+        "xy": {
+          "x": -200,
+          "y": 200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_44",
+        "name": "hdole/factorial/o_44",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": -400,
+          "y": 300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_30",
+        "name": "hdole/factorial/o_30",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 500,
+          "y": 800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_62",
+        "name": "hdole/factorial/o_62",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 500,
+          "y": 1000
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_63",
+        "name": "hdole/factorial/o_63",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 100,
+          "y": 10
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_64",
+        "name": "hdole/factorial/o_64",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 300,
+          "y": 10
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_14",
+        "name": "hdole/factorial/o_14",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": -500,
+          "y": 800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_15",
+        "name": "hdole/factorial/o_15",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F128,#1}oP",
+        "xy": {
+          "x": -300,
+          "y": 800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_17",
+        "name": "hdole/factorial/o_17",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F128,hdole/floats/F128}oP",
+        "xy": {
+          "x": -300,
+          "y": 950
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_18",
+        "name": "hdole/factorial/o_18",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": -300,
+          "y": 1150
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_32",
+        "name": "hdole/factorial/o_32",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 2600,
+          "y": 500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_33",
+        "name": "hdole/factorial/o_33",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2500,
+          "y": 400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_34",
+        "name": "hdole/factorial/o_34",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2700,
+          "y": 400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_35",
+        "name": "hdole/factorial/o_35",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/#1",
+        "xy": {
+          "x": 2700,
+          "y": 300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_36",
+        "name": "hdole/factorial/o_36",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2600,
+          "y": 700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_41",
+        "name": "hdole/factorial/o_41",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 1400,
+          "y": 1400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_42",
+        "name": "hdole/factorial/o_42",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 1700,
+          "y": 1400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_47",
+        "name": "hdole/factorial/o_47",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2200,
+          "y": 500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_48",
+        "name": "hdole/factorial/o_48",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2200,
+          "y": 700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_49",
+        "name": "hdole/factorial/o_49",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2000,
+          "y": 2000
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_50",
+        "name": "hdole/factorial/o_50",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2200,
+          "y": 2000
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_52",
+        "name": "hdole/factorial/o_52",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 3090,
+          "y": 530
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_53",
+        "name": "hdole/factorial/o_53",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/#1",
+        "xy": {
+          "x": 3090,
+          "y": 330
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_59",
+        "name": "hdole/factorial/o_59",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/CPo{#1,#1}oPC,hdole/floats/F64}oP",
+        "xy": {
+          "x": 1900,
+          "y": 1400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_74",
+        "name": "hdole/factorial/o_74",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/#1,hdole/floats/F64}oP",
+        "xy": {
+          "x": 2890,
+          "y": 330
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_65",
+        "name": "hdole/factorial/o_65",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/cpp/stdin",
+        "xy": {
+          "x": 2000,
+          "y": 2200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_66",
+        "name": "hdole/factorial/o_66",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/cpp/stdout",
+        "xy": {
+          "x": 2200,
+          "y": 2200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_67",
+        "name": "hdole/factorial/o_67",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/CPo{hdole/floats/F128,hdole/floats/F128}oPC",
+        "xy": {
+          "x": 500,
+          "y": 1600
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_82",
+        "name": "hdole/factorial/o_82",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F128",
+        "xy": {
+          "x": 500,
+          "y": 1800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_68",
+        "name": "hdole/factorial/o_68",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/Po{F64,F64}oP",
+        "xy": {
+          "x": 2200,
+          "y": 900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_85",
+        "name": "hdole/factorial/o_85",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2200,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_84",
+        "name": "hdole/factorial/o_84",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/CPo{Po{hdole/floats/#1,hdole/floats/F64}oP,Po{hdole/floats/#1,hdole/floats/F64}oP}oPC",
+        "xy": {
+          "x": 2200,
+          "y": 1400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_92",
+        "name": "hdole/factorial/o_92",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/#1,hdole/floats/F64}oP",
+        "xy": {
+          "x": 1700,
+          "y": 900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_93",
+        "name": "hdole/factorial/o_93",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 1900,
+          "y": 900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_89",
+        "name": "hdole/factorial/o_89",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/CPo{hdole/floats/F64,hdole/floats/F64}oPC",
+        "xy": {
+          "x": 2200,
+          "y": 1600
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_90",
+        "name": "hdole/factorial/o_90",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2200,
+          "y": 1800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_46",
+        "name": "hdole/factorial/o_46",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2000,
+          "y": -150
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_54",
+        "name": "hdole/factorial/o_54",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2200,
+          "y": -150
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_31",
+        "name": "hdole/factorial/o_31",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 1700,
+          "y": 100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_45",
+        "name": "hdole/factorial/o_45",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F64,#1}oP",
+        "xy": {
+          "x": 2000,
+          "y": 100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_55",
+        "name": "hdole/factorial/o_55",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 2200,
+          "y": 100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_56",
+        "name": "hdole/factorial/o_56",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2200,
+          "y": 300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_1",
+        "name": "hdole/factorial/o_1",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2000,
+          "y": 500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_3",
+        "name": "hdole/factorial/o_3",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/#1}oP",
+        "xy": {
+          "x": 2000,
+          "y": -50
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_4",
+        "name": "hdole/factorial/o_4",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/factorial/Po{hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 2200,
+          "y": -50
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_0",
+        "name": "hdole/factorial/o_0",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/#1",
+        "xy": {
+          "x": 2450,
+          "y": -50
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_2",
+        "name": "hdole/factorial/o_2",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2600,
+          "y": -50
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_5",
+        "name": "hdole/factorial/o_5",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2450,
+          "y": 50
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_6",
+        "name": "hdole/factorial/o_6",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 2600,
+          "y": 50
+        }
+      },
+      {
+        "description": "",
+        "basename": "m_23",
+        "name": "hdole/factorial/m_23",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_24",
+        "codomain": "hdole/factorial/o_21",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/CFa{hdole/floats/CPo{#1,#1}oPC,#1_1}aFC"
+      },
+      {
+        "description": "",
+        "basename": "m_24",
+        "name": "hdole/factorial/m_24",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_24",
+        "codomain": "hdole/factorial/o_25",
+        "to": "hdole/floats/one128"
+      },
+      {
+        "description": "",
+        "basename": "m_25",
+        "name": "hdole/factorial/m_25",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_26",
+        "codomain": "hdole/factorial/o_21",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/CFa{hdole/floats/CPo{#1,#1}oPC,#1_0}aFC"
+      },
+      {
+        "description": "",
+        "basename": "m_28",
+        "name": "hdole/factorial/m_28",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_27",
+        "codomain": "hdole/factorial/o_28",
+        "to": "hdole/floats/mult128"
+      },
+      {
+        "description": "",
+        "basename": "m_29",
+        "name": "hdole/factorial/m_29",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_29",
+        "codomain": "hdole/factorial/o_26",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{hdole/floats/F128,hdole/floats/F128_-1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_30",
+        "name": "hdole/factorial/m_30",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_29",
+        "codomain": "hdole/factorial/o_19",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Id{hdole/floats/F128}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_26",
+        "name": "hdole/factorial/m_26",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_27",
+        "codomain": "hdole/factorial/o_19",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{hdole/floats/Po{F128,F128}oP,hdole/floats/F128_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_19",
+        "name": "hdole/factorial/m_19",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_20",
+        "codomain": "hdole/factorial/o_22",
+        "to": "hdole/floats/sub128"
+      },
+      {
+        "description": "",
+        "basename": "m_20",
+        "name": "hdole/factorial/m_20",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_20",
+        "codomain": "hdole/factorial/o_23",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{Po{hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_21",
+        "name": "hdole/factorial/m_21",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_43",
+        "codomain": "hdole/factorial/o_23",
+        "to": "hdole/floats/one128"
+      },
+      {
+        "description": "",
+        "basename": "m_22",
+        "name": "hdole/factorial/m_22",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_20",
+        "codomain": "hdole/factorial/o_44",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{Po{hdole/floats/F128,hdole/floats/F128}oP,hdole/floats/F128_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_27",
+        "name": "hdole/factorial/m_27",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_27",
+        "codomain": "hdole/factorial/o_62",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{hdole/floats/Po{F128,F128}oP,hdole/floats/F128_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_59",
+        "name": "hdole/factorial/m_59",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_30",
+        "codomain": "hdole/factorial/o_62",
+        "to": "hdole/factorial/fact"
+      },
+      {
+        "description": "",
+        "basename": "m_60",
+        "name": "hdole/factorial/m_60",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_63",
+        "codomain": "hdole/factorial/o_64",
+        "to": "hdole/factorial/fact"
+      },
+      {
+        "description": "",
+        "basename": "m_14",
+        "name": "hdole/factorial/m_14",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_14",
+        "codomain": "hdole/factorial/o_15",
+        "to": "hdole/factorial/Fa{hdole/floats/F128,hdole/floats/F128_,hdole/floats/F128_-1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_15",
+        "name": "hdole/factorial/m_15",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_15",
+        "codomain": "hdole/factorial/o_17",
+        "to": "hdole/factorial/Pm{Id{hdole/floats/F128}dI,hdole/floats/one128}mP"
+      },
+      {
+        "description": "",
+        "basename": "m_16",
+        "name": "hdole/factorial/m_16",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_17",
+        "codomain": "hdole/factorial/o_18",
+        "to": "hdole/floats/sub128"
+      },
+      {
+        "description": "",
+        "basename": "m_17",
+        "name": "hdole/factorial/m_17",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_14",
+        "codomain": "hdole/factorial/o_18",
+        "to": "hdole/factorial/Cm{Fa{hdole/floats/F128,hdole/floats/F128_,hdole/floats/F128_-1}aF,Pm{Id{hdole/floats/F128}dI,hdole/floats/one128}mP,hdole/floats/sub128}mC"
+      },
+      {
+        "description": "",
+        "basename": "m_18",
+        "name": "hdole/factorial/m_18",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_19",
+        "codomain": "hdole/factorial/o_21",
+        "to": "hdole/floats/eq0_128"
+      },
+      {
+        "description": "",
+        "basename": "m_31",
+        "name": "hdole/factorial/m_31",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_14",
+        "codomain": "hdole/factorial/o_18",
+        "homsetIndex": 4,
+        "to": "hdole/factorial/decr"
+      },
+      {
+        "description": "",
+        "basename": "m_32",
+        "name": "hdole/factorial/m_32",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_29",
+        "codomain": "hdole/factorial/o_30",
+        "to": "hdole/factorial/decr"
+      },
+      {
+        "description": "",
+        "basename": "m_33",
+        "name": "hdole/factorial/m_33",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_32",
+        "codomain": "hdole/factorial/o_33",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_34",
+        "name": "hdole/factorial/m_34",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_32",
+        "codomain": "hdole/factorial/o_34",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ],
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_35",
+        "name": "hdole/factorial/m_35",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_35",
+        "codomain": "hdole/factorial/o_34",
+        "to": "hdole/floats/one64"
+      },
+      {
+        "description": "",
+        "basename": "m_36",
+        "name": "hdole/factorial/m_36",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_32",
+        "codomain": "hdole/factorial/o_36",
+        "to": "hdole/floats/sub64"
+      },
+      {
+        "description": "",
+        "basename": "m_42",
+        "name": "hdole/factorial/m_42",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_41",
+        "codomain": "hdole/factorial/o_42",
+        "to": "hdole/factorial/Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_44",
+        "name": "hdole/factorial/m_44",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_47",
+        "codomain": "hdole/factorial/o_48",
+        "to": "hdole/factorial/fact64"
+      },
+      {
+        "description": "",
+        "basename": "m_45",
+        "name": "hdole/factorial/m_45",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_49",
+        "codomain": "hdole/factorial/o_50",
+        "to": "hdole/factorial/fact64"
+      },
+      {
+        "description": "",
+        "basename": "m_48",
+        "name": "hdole/factorial/m_48",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_53",
+        "codomain": "hdole/factorial/o_52",
+        "to": "hdole/floats/one64"
+      },
+      {
+        "description": "",
+        "basename": "m_51",
+        "name": "hdole/factorial/m_51",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_42",
+        "codomain": "hdole/factorial/o_59",
+        "to": "hdole/factorial/Pm{hdole/floats/eq0_64,Id{hdole/floats/F64}dI}mP"
+      },
+      {
+        "description": "",
+        "basename": "m_56",
+        "name": "hdole/factorial/m_56",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_74",
+        "codomain": "hdole/factorial/o_53",
+        "to": "hdole/factorial/Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_61",
+        "name": "hdole/factorial/m_61",
+        "prototype": "IndexComposite",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_74",
+        "codomain": "hdole/factorial/o_52",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF,hdole/floats/one64}mC",
+        "morphisms": [
+          "hdole/factorial/m_56",
+          "hdole/factorial/m_48"
+        ]
+      },
+      {
+        "description": "",
+        "basename": "m_69",
+        "name": "hdole/factorial/m_69",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_65",
+        "codomain": "hdole/factorial/o_49",
+        "to": "hdole/cpp/stdinToF64"
+      },
+      {
+        "description": "",
+        "basename": "m_70",
+        "name": "hdole/factorial/m_70",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_50",
+        "codomain": "hdole/factorial/o_66",
+        "to": "hdole/cpp/F64ToStdout"
+      },
+      {
+        "description": "",
+        "basename": "m_71",
+        "name": "hdole/factorial/m_71",
+        "prototype": "IndexComposite",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_65",
+        "codomain": "hdole/factorial/o_66",
+        "to": "hdole/factorial/Cm{hdole/cpp/stdinToF64,fact64,hdole/cpp/F64ToStdout}mC",
+        "morphisms": [
+          "hdole/factorial/m_69",
+          "hdole/factorial/m_45",
+          "hdole/factorial/m_70"
+        ]
+      },
+      {
+        "description": "",
+        "basename": "m_72",
+        "name": "hdole/factorial/m_72",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_28",
+        "codomain": "hdole/factorial/o_67",
+        "to": "hdole/factorial/CFa{CPo{hdole/floats/F128,hdole/floats/F128}oPC,hdole/floats/F128_0}aFC"
+      },
+      {
+        "description": "",
+        "basename": "m_73",
+        "name": "hdole/factorial/m_73",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_25",
+        "codomain": "hdole/factorial/o_67",
+        "to": "hdole/factorial/CFa{CPo{hdole/floats/F128,hdole/floats/F128}oPC,hdole/floats/F128_1}aFC"
+      },
+      {
+        "description": "",
+        "basename": "m_74",
+        "name": "hdole/factorial/m_74",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_67",
+        "codomain": "hdole/factorial/o_82",
+        "to": "hdole/factorial/CFa{hdole/floats/F128,hdole/floats/F128_,hdole/floats/F128_}aFC"
+      },
+      {
+        "description": "",
+        "basename": "m_67",
+        "name": "hdole/factorial/m_67",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_68",
+        "codomain": "hdole/factorial/o_85",
+        "to": "hdole/floats/mult64"
+      },
+      {
+        "description": "",
+        "basename": "m_68",
+        "name": "hdole/factorial/m_68",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_59",
+        "codomain": "hdole/factorial/o_84",
+        "to": "hdole/factorial/Di{Po{hdole/floats/CPo{#1,#1}oPC,hdole/floats/F64}oP}-LiD"
+      },
+      {
+        "description": "",
+        "basename": "m_82",
+        "name": "hdole/factorial/m_82",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_92",
+        "codomain": "hdole/factorial/o_93",
+        "to": "hdole/factorial/Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_81",
+        "name": "hdole/factorial/m_81",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_89",
+        "codomain": "hdole/factorial/o_90",
+        "to": "hdole/factorial/CFa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aFC"
+      },
+      {
+        "description": "",
+        "basename": "m_49",
+        "name": "hdole/factorial/m_49",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_31",
+        "codomain": "hdole/factorial/o_45",
+        "to": "hdole/factorial/Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_-1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_50",
+        "name": "hdole/factorial/m_50",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_45",
+        "codomain": "hdole/factorial/o_55",
+        "to": "hdole/factorial/Pm{Id{hdole/floats/F64}dI,hdole/floats/one64}mP"
+      },
+      {
+        "description": "",
+        "basename": "m_53",
+        "name": "hdole/factorial/m_53",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_55",
+        "codomain": "hdole/factorial/o_56",
+        "to": "hdole/floats/sub64"
+      },
+      {
+        "description": "",
+        "basename": "m_54",
+        "name": "hdole/factorial/m_54",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_31",
+        "codomain": "hdole/factorial/o_56",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_-1}aF,Pm{Id{hdole/floats/F64}dI,hdole/floats/one64}mP,hdole/floats/sub64}mC"
+      },
+      {
+        "description": "",
+        "basename": "m_0",
+        "name": "hdole/factorial/m_0",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_31",
+        "codomain": "hdole/factorial/o_56",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "homsetIndex": 4,
+        "to": "hdole/factorial/decr64"
+      },
+      {
+        "description": "",
+        "basename": "m_5",
+        "name": "hdole/factorial/m_5",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_46",
+        "codomain": "hdole/factorial/o_54",
+        "to": "hdole/factorial/fact64"
+      },
+      {
+        "description": "",
+        "basename": "m_2",
+        "name": "hdole/factorial/m_2",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_1",
+        "codomain": "hdole/factorial/o_47",
+        "to": "hdole/factorial/decr64"
+      },
+      {
+        "description": "",
+        "basename": "m_3",
+        "name": "hdole/factorial/m_3",
+        "prototype": "IndexComposite",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_1",
+        "codomain": "hdole/factorial/o_48",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Cm{decr64,fact64}mC",
+        "morphisms": [
+          "hdole/factorial/m_2",
+          "hdole/factorial/m_44"
+        ]
+      },
+      {
+        "description": "",
+        "basename": "m_6",
+        "name": "hdole/factorial/m_6",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_93",
+        "codomain": "hdole/factorial/o_68",
+        "to": "hdole/factorial/Pm{Id{hdole/floats/F64}dI,Cm{decr64,fact64}mC}mP"
+      },
+      {
+        "description": "",
+        "basename": "m_7",
+        "name": "hdole/factorial/m_7",
+        "prototype": "IndexComposite",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_92",
+        "codomain": "hdole/factorial/o_85",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_1}aF,Pm{Id{hdole/floats/F64}dI,Cm{decr64,fact64}mC}mP,hdole/floats/mult64}mC",
+        "morphisms": [
+          "hdole/factorial/m_82",
+          "hdole/factorial/m_6",
+          "hdole/factorial/m_67"
+        ]
+      },
+      {
+        "description": "",
+        "basename": "m_8",
+        "name": "hdole/factorial/m_8",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_84",
+        "codomain": "hdole/factorial/o_89",
+        "to": "hdole/factorial/CPm{Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_1}aF,Pm{Id{hdole/floats/F64}dI,Cm{decr64,fact64}mC}mP,hdole/floats/mult64}mC,Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF,hdole/floats/one64}mC}mPC"
+      },
+      {
+        "description": "",
+        "basename": "m_4",
+        "name": "hdole/factorial/m_4",
+        "prototype": "IndexComposite",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_41",
+        "codomain": "hdole/factorial/o_90",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aF,Pm{hdole/floats/eq0_64,Id{hdole/floats/F64}dI}mP,Di{Po{hdole/floats/CPo{#1,#1}oPC,hdole/floats/F64}oP}-LiD,CPm{Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_1}aF,Pm{Id{hdole/floats/F64}dI,Cm{decr64,fact64}mC}mP,hdole/floats/mult64}mC,Cm{Fa{Po{hdole/floats/#1,hdole/floats/F64}oP,#1_0}aF,hdole/floats/one64}mC}mPC,CFa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aFC}mC",
+        "morphisms": [
+          "hdole/factorial/m_42",
+          "hdole/factorial/m_51",
+          "hdole/factorial/m_68",
+          "hdole/factorial/m_8",
+          "hdole/factorial/m_81"
+        ]
+      },
+      {
+        "description": "",
+        "basename": "m_10",
+        "name": "hdole/factorial/m_10",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_3",
+        "codomain": "hdole/factorial/o_4",
+        "to": "hdole/factorial/Pm{Id{hdole/floats/F64}dI,hdole/floats/one64}mP"
+      },
+      {
+        "description": "",
+        "basename": "m_1",
+        "name": "hdole/factorial/m_1",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_0",
+        "codomain": "hdole/factorial/o_2",
+        "to": "hdole/floats/one64"
+      },
+      {
+        "description": "",
+        "basename": "m_9",
+        "name": "hdole/factorial/m_9",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_5",
+        "codomain": "hdole/factorial/o_6",
+        "to": "hdole/floats/eq0_64"
+      }
+    ],
+    "cells": []
+  },
   "elements": [
     {
       "prototype": "ProductObject",
@@ -1763,11 +3328,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641686829567,
+  "timestamp": 1642056054522,
   "version": 0,
   "viewport": {
     "x": -649,
-    "y": 327,
+    "y": -149,
     "scale": 0.8391570883567222
   }
 }

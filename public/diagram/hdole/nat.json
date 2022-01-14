@@ -104,6 +104,25 @@
       }
     },
     {
+      "description": "The successor function for the natural numbers with carry.\n\n",
+      "basename": "t_8",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 1100
+      },
+      "height": 24
+    },
+    {
+      "basename": "t_9",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 1300
+      },
+      "height": 24
+    },
+    {
       "basename": "o_17",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N64,N64}oP",
@@ -167,6 +186,16 @@
       }
     },
     {
+      "description": "Zero, or the first interesting natural number",
+      "basename": "t_16",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1210,
+        "y": 480
+      },
+      "height": 24
+    },
+    {
       "basename": "o_27",
       "prototype": "IndexObject",
       "to": "hdole/nat/#1",
@@ -183,6 +212,16 @@
         "x": 190,
         "y": 480
       }
+    },
+    {
+      "description": "One, or the next interesting natural number",
+      "basename": "t_17",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1210,
+        "y": 680
+      },
+      "height": 24
     },
     {
       "basename": "o_29",
@@ -203,6 +242,16 @@
       }
     },
     {
+      "description": "Last number allowed",
+      "basename": "t_18",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1210,
+        "y": 880
+      },
+      "height": 24
+    },
+    {
       "basename": "o_31",
       "prototype": "IndexObject",
       "to": "hdole/nat/#1",
@@ -219,6 +268,16 @@
         "x": 190,
         "y": 880
       }
+    },
+    {
+      "description": "Addition of two natural numbers",
+      "basename": "t_19",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 1500
+      },
+      "height": 24
     },
     {
       "basename": "o_33",
@@ -239,6 +298,16 @@
       }
     },
     {
+      "description": "Subtraction of two natural numbers",
+      "basename": "t_20",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 1900
+      },
+      "height": 24
+    },
+    {
       "basename": "o_35",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -255,6 +324,16 @@
         "x": 200,
         "y": 1900
       }
+    },
+    {
+      "description": "Multiplication of two natural numbers",
+      "basename": "t_21",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 2300
+      },
+      "height": 24
     },
     {
       "basename": "o_37",
@@ -275,6 +354,16 @@
       }
     },
     {
+      "description": "Bit-wise and of two natural numbers",
+      "basename": "t_22",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 2700
+      },
+      "height": 24
+    },
+    {
       "basename": "o_39",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -291,6 +380,16 @@
         "x": 200,
         "y": 2700
       }
+    },
+    {
+      "description": "Bit-wise or of two natural numbers",
+      "basename": "t_23",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 2900
+      },
+      "height": 24
     },
     {
       "basename": "o_41",
@@ -311,6 +410,16 @@
       }
     },
     {
+      "description": "Bit-wise exclusive or",
+      "basename": "t_24",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 3100
+      },
+      "height": 24
+    },
+    {
       "basename": "o_43",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -327,6 +436,16 @@
         "x": 200,
         "y": 3100
       }
+    },
+    {
+      "description": "Division of one natural number of the other, or an exception",
+      "basename": "t_25",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 3300
+      },
+      "height": 24
     },
     {
       "basename": "o_45",
@@ -347,6 +466,16 @@
       }
     },
     {
+      "description": "Modulus of one natural number of the other, or an exception",
+      "basename": "t_26",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 3500
+      },
+      "height": 24
+    },
+    {
       "basename": "o_47",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -363,6 +492,26 @@
         "x": 200,
         "y": 3500
       }
+    },
+    {
+      "description": "Compare two numbers for equality",
+      "basename": "t_27",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 3700
+      },
+      "height": 24
+    },
+    {
+      "description": "Is the first number less than the second",
+      "basename": "t_28",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 3900
+      },
+      "height": 24
     },
     {
       "basename": "o_51",
@@ -383,6 +532,16 @@
       }
     },
     {
+      "description": "Is the first number less than or equal to the second",
+      "basename": "t_29",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 4100
+      },
+      "height": 24
+    },
+    {
       "basename": "o_53",
       "prototype": "IndexObject",
       "to": "hdole/nat/Po{N16,N16}oP",
@@ -399,6 +558,17 @@
         "x": 200,
         "y": 4100
       }
+    },
+    {
+      "description": "ℕ Natural Numbers",
+      "basename": "t_31",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1440,
+        "y": -350
+      },
+      "height": "350",
+      "weight": "bold"
     },
     {
       "basename": "o_14",
@@ -2205,6 +2375,55 @@
       }
     },
     {
+      "description": "Bit-wise not operation of a natural number",
+      "basename": "t_2",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 2500
+      },
+      "height": 24
+    },
+    {
+      "description": "Addition of two natural numbers with carry",
+      "basename": "t_3",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 1700
+      },
+      "height": 24
+    },
+    {
+      "description": "Subtraction of two natural numbers with underflow",
+      "basename": "t_4",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 2100
+      },
+      "height": 24
+    },
+    {
+      "basename": "t_6",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1210,
+        "y": 1290
+      },
+      "height": "24"
+    },
+    {
+      "description": "The predecessor function for the natural numbers with underflow",
+      "basename": "t_7",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 1300
+      },
+      "height": "24"
+    },
+    {
       "basename": "o_245",
       "prototype": "IndexObject",
       "to": "hdole/nat/N16",
@@ -2419,6 +2638,66 @@
         "x": 1390,
         "y": 80
       }
+    },
+    {
+      "description": "Is the first number greater than the second",
+      "basename": "t_11",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 4300
+      },
+      "height": 24
+    },
+    {
+      "description": "Is the first number greater than or equal to the second",
+      "basename": "t_12",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 4500
+      },
+      "height": 24
+    },
+    {
+      "description": "Left shift the first number by the number of positions\ngiven by the second",
+      "basename": "t_13",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 4700
+      },
+      "height": 24
+    },
+    {
+      "description": "Right shift the first number by the number of positions\ngiven by the second",
+      "basename": "t_15",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 4900
+      },
+      "height": 24
+    },
+    {
+      "description": "Give the maximum of the two values",
+      "basename": "t_30",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 5100
+      },
+      "height": 24
+    },
+    {
+      "description": "Give the minimum of the two values",
+      "basename": "t_32",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -1200,
+        "y": 5300
+      },
+      "height": 24
     },
     {
       "basename": "o_133",
@@ -3443,6 +3722,5455 @@
       "to": "hdole/nat/equ128"
     }
   ],
+  "domainInfo": {
+    "description": "index category for diagram hdole/nat",
+    "basename": "nat_Index",
+    "name": "hdole/nat_Index",
+    "prototype": "IndexCategory",
+    "category": "sys/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "",
+        "basename": "o_0",
+        "name": "hdole/nat/o_0",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 990,
+          "y": 280
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_2",
+        "name": "hdole/nat/o_2",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 790,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_3",
+        "name": "hdole/nat/o_3",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 990,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_4",
+        "name": "hdole/nat/o_4",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 790,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_5",
+        "name": "hdole/nat/o_5",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 990,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_6",
+        "name": "hdole/nat/o_6",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 790,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_7",
+        "name": "hdole/nat/o_7",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 990,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_9",
+        "name": "hdole/nat/o_9",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_10",
+        "name": "hdole/nat/o_10",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_11",
+        "name": "hdole/nat/o_11",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 2300
+        }
+      },
+      {
+        "description": "The successor function for the natural numbers with carry.\n\n",
+        "basename": "t_8",
+        "name": "hdole/nat/t_8",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 1100
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "t_9",
+        "name": "hdole/nat/t_9",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 1300
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_17",
+        "name": "hdole/nat/o_17",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_18",
+        "name": "hdole/nat/o_18",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_19",
+        "name": "hdole/nat/o_19",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_20",
+        "name": "hdole/nat/o_20",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_21",
+        "name": "hdole/nat/o_21",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_22",
+        "name": "hdole/nat/o_22",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_25",
+        "name": "hdole/nat/o_25",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 190,
+          "y": 280
+        }
+      },
+      {
+        "description": "Zero, or the first interesting natural number",
+        "basename": "t_16",
+        "name": "hdole/nat/t_16",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1210,
+          "y": 480
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_27",
+        "name": "hdole/nat/o_27",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": -10,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_28",
+        "name": "hdole/nat/o_28",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 190,
+          "y": 480
+        }
+      },
+      {
+        "description": "One, or the next interesting natural number",
+        "basename": "t_17",
+        "name": "hdole/nat/t_17",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1210,
+          "y": 680
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_29",
+        "name": "hdole/nat/o_29",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": -10,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_30",
+        "name": "hdole/nat/o_30",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 190,
+          "y": 680
+        }
+      },
+      {
+        "description": "Last number allowed",
+        "basename": "t_18",
+        "name": "hdole/nat/t_18",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1210,
+          "y": 880
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_31",
+        "name": "hdole/nat/o_31",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": -10,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_32",
+        "name": "hdole/nat/o_32",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 190,
+          "y": 880
+        }
+      },
+      {
+        "description": "Addition of two natural numbers",
+        "basename": "t_19",
+        "name": "hdole/nat/t_19",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 1500
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_33",
+        "name": "hdole/nat/o_33",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_34",
+        "name": "hdole/nat/o_34",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 1500
+        }
+      },
+      {
+        "description": "Subtraction of two natural numbers",
+        "basename": "t_20",
+        "name": "hdole/nat/t_20",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 1900
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_35",
+        "name": "hdole/nat/o_35",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_36",
+        "name": "hdole/nat/o_36",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 1900
+        }
+      },
+      {
+        "description": "Multiplication of two natural numbers",
+        "basename": "t_21",
+        "name": "hdole/nat/t_21",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 2300
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_37",
+        "name": "hdole/nat/o_37",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_38",
+        "name": "hdole/nat/o_38",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 200,
+          "y": 2300
+        }
+      },
+      {
+        "description": "Bit-wise and of two natural numbers",
+        "basename": "t_22",
+        "name": "hdole/nat/t_22",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 2700
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_39",
+        "name": "hdole/nat/o_39",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_40",
+        "name": "hdole/nat/o_40",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 2700
+        }
+      },
+      {
+        "description": "Bit-wise or of two natural numbers",
+        "basename": "t_23",
+        "name": "hdole/nat/t_23",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 2900
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_41",
+        "name": "hdole/nat/o_41",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_42",
+        "name": "hdole/nat/o_42",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 2900
+        }
+      },
+      {
+        "description": "Bit-wise exclusive or",
+        "basename": "t_24",
+        "name": "hdole/nat/t_24",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 3100
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_43",
+        "name": "hdole/nat/o_43",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_44",
+        "name": "hdole/nat/o_44",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 3100
+        }
+      },
+      {
+        "description": "Division of one natural number of the other, or an exception",
+        "basename": "t_25",
+        "name": "hdole/nat/t_25",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 3300
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_45",
+        "name": "hdole/nat/o_45",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_46",
+        "name": "hdole/nat/o_46",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 3300
+        }
+      },
+      {
+        "description": "Modulus of one natural number of the other, or an exception",
+        "basename": "t_26",
+        "name": "hdole/nat/t_26",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 3500
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_47",
+        "name": "hdole/nat/o_47",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_48",
+        "name": "hdole/nat/o_48",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 3500
+        }
+      },
+      {
+        "description": "Compare two numbers for equality",
+        "basename": "t_27",
+        "name": "hdole/nat/t_27",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 3700
+        },
+        "height": 24
+      },
+      {
+        "description": "Is the first number less than the second",
+        "basename": "t_28",
+        "name": "hdole/nat/t_28",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 3900
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_51",
+        "name": "hdole/nat/o_51",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_52",
+        "name": "hdole/nat/o_52",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 3900
+        }
+      },
+      {
+        "description": "Is the first number less than or equal to the second",
+        "basename": "t_29",
+        "name": "hdole/nat/t_29",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 4100
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_53",
+        "name": "hdole/nat/o_53",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_54",
+        "name": "hdole/nat/o_54",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 4100
+        }
+      },
+      {
+        "description": "ℕ Natural Numbers",
+        "basename": "t_31",
+        "name": "hdole/nat/t_31",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1440,
+          "y": -350
+        },
+        "height": "350",
+        "weight": "bold"
+      },
+      {
+        "description": "",
+        "basename": "o_14",
+        "name": "hdole/nat/o_14",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 800,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_55",
+        "name": "hdole/nat/o_55",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_13",
+        "name": "hdole/nat/o_13",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_15",
+        "name": "hdole/nat/o_15",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 800,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_8",
+        "name": "hdole/nat/o_8",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_16",
+        "name": "hdole/nat/o_16",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_23",
+        "name": "hdole/nat/o_23",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 390,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_50",
+        "name": "hdole/nat/o_50",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 590,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_56",
+        "name": "hdole/nat/o_56",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 390,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_57",
+        "name": "hdole/nat/o_57",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 590,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_58",
+        "name": "hdole/nat/o_58",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -10,
+          "y": 280
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_62",
+        "name": "hdole/nat/o_62",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 590,
+          "y": 280
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_1",
+        "name": "hdole/nat/o_1",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -210,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_24",
+        "name": "hdole/nat/o_24",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -210,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_65",
+        "name": "hdole/nat/o_65",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 590,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_66",
+        "name": "hdole/nat/o_66",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 400,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_67",
+        "name": "hdole/nat/o_67",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 10,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_68",
+        "name": "hdole/nat/o_68",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 390,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_70",
+        "name": "hdole/nat/o_70",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_71",
+        "name": "hdole/nat/o_71",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_73",
+        "name": "hdole/nat/o_73",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 400,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_59",
+        "name": "hdole/nat/o_59",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_74",
+        "name": "hdole/nat/o_74",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": -410,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_75",
+        "name": "hdole/nat/o_75",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": -410,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_49",
+        "name": "hdole/nat/o_49",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": -410,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_76",
+        "name": "hdole/nat/o_76",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -210,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_79",
+        "name": "hdole/nat/o_79",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_80",
+        "name": "hdole/nat/o_80",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_81",
+        "name": "hdole/nat/o_81",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -400,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_82",
+        "name": "hdole/nat/o_82",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 0,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_77",
+        "name": "hdole/nat/o_77",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_78",
+        "name": "hdole/nat/o_78",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -400,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_83",
+        "name": "hdole/nat/o_83",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_84",
+        "name": "hdole/nat/o_84",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -410,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_85",
+        "name": "hdole/nat/o_85",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_86",
+        "name": "hdole/nat/o_86",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_89",
+        "name": "hdole/nat/o_89",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_90",
+        "name": "hdole/nat/o_90",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_91",
+        "name": "hdole/nat/o_91",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_92",
+        "name": "hdole/nat/o_92",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_87",
+        "name": "hdole/nat/o_87",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_88",
+        "name": "hdole/nat/o_88",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_93",
+        "name": "hdole/nat/o_93",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_94",
+        "name": "hdole/nat/o_94",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_95",
+        "name": "hdole/nat/o_95",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 600,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_97",
+        "name": "hdole/nat/o_97",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_98",
+        "name": "hdole/nat/o_98",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_101",
+        "name": "hdole/nat/o_101",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1390,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_102",
+        "name": "hdole/nat/o_102",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1390,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_103",
+        "name": "hdole/nat/o_103",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1000,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_104",
+        "name": "hdole/nat/o_104",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_105",
+        "name": "hdole/nat/o_105",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_106",
+        "name": "hdole/nat/o_106",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_107",
+        "name": "hdole/nat/o_107",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_108",
+        "name": "hdole/nat/o_108",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_109",
+        "name": "hdole/nat/o_109",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": -200,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_110",
+        "name": "hdole/nat/o_110",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_111",
+        "name": "hdole/nat/o_111",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_112",
+        "name": "hdole/nat/o_112",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_113",
+        "name": "hdole/nat/o_113",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_114",
+        "name": "hdole/nat/o_114",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_115",
+        "name": "hdole/nat/o_115",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_116",
+        "name": "hdole/nat/o_116",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": -10,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_118",
+        "name": "hdole/nat/o_118",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 390,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_121",
+        "name": "hdole/nat/o_121",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 790,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_122",
+        "name": "hdole/nat/o_122",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1190,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_63",
+        "name": "hdole/nat/o_63",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 1190,
+          "y": 480
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_64",
+        "name": "hdole/nat/o_64",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 1190,
+          "y": 680
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_72",
+        "name": "hdole/nat/o_72",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1390,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_100",
+        "name": "hdole/nat/o_100",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/#1",
+        "xy": {
+          "x": 1190,
+          "y": 880
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_124",
+        "name": "hdole/nat/o_124",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_125",
+        "name": "hdole/nat/o_125",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1200,
+          "y": 1100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_126",
+        "name": "hdole/nat/o_126",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1200,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_127",
+        "name": "hdole/nat/o_127",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_128",
+        "name": "hdole/nat/o_128",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_129",
+        "name": "hdole/nat/o_129",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_130",
+        "name": "hdole/nat/o_130",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_131",
+        "name": "hdole/nat/o_131",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_132",
+        "name": "hdole/nat/o_132",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_134",
+        "name": "hdole/nat/o_134",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_136",
+        "name": "hdole/nat/o_136",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 1900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_138",
+        "name": "hdole/nat/o_138",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_139",
+        "name": "hdole/nat/o_139",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_141",
+        "name": "hdole/nat/o_141",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_143",
+        "name": "hdole/nat/o_143",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_140",
+        "name": "hdole/nat/o_140",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_142",
+        "name": "hdole/nat/o_142",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_144",
+        "name": "hdole/nat/o_144",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_145",
+        "name": "hdole/nat/o_145",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{Po{N32,N32}oP,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_146",
+        "name": "hdole/nat/o_146",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_147",
+        "name": "hdole/nat/o_147",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_148",
+        "name": "hdole/nat/o_148",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_150",
+        "name": "hdole/nat/o_150",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_149",
+        "name": "hdole/nat/o_149",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_151",
+        "name": "hdole/nat/o_151",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_152",
+        "name": "hdole/nat/o_152",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_153",
+        "name": "hdole/nat/o_153",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_154",
+        "name": "hdole/nat/o_154",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_155",
+        "name": "hdole/nat/o_155",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_156",
+        "name": "hdole/nat/o_156",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_157",
+        "name": "hdole/nat/o_157",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_158",
+        "name": "hdole/nat/o_158",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_159",
+        "name": "hdole/nat/o_159",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_160",
+        "name": "hdole/nat/o_160",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_161",
+        "name": "hdole/nat/o_161",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_162",
+        "name": "hdole/nat/o_162",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_163",
+        "name": "hdole/nat/o_163",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_164",
+        "name": "hdole/nat/o_164",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_165",
+        "name": "hdole/nat/o_165",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_166",
+        "name": "hdole/nat/o_166",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_167",
+        "name": "hdole/nat/o_167",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_168",
+        "name": "hdole/nat/o_168",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{Po{N64,N64}oP,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_169",
+        "name": "hdole/nat/o_169",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_170",
+        "name": "hdole/nat/o_170",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_171",
+        "name": "hdole/nat/o_171",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_172",
+        "name": "hdole/nat/o_172",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_173",
+        "name": "hdole/nat/o_173",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_174",
+        "name": "hdole/nat/o_174",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_175",
+        "name": "hdole/nat/o_175",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_176",
+        "name": "hdole/nat/o_176",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_177",
+        "name": "hdole/nat/o_177",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_178",
+        "name": "hdole/nat/o_178",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_179",
+        "name": "hdole/nat/o_179",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 2700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_180",
+        "name": "hdole/nat/o_180",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 2900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_181",
+        "name": "hdole/nat/o_181",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 3100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_182",
+        "name": "hdole/nat/o_182",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{Po{N128,N128}oP,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_183",
+        "name": "hdole/nat/o_183",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_184",
+        "name": "hdole/nat/o_184",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1390,
+          "y": 280
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_186",
+        "name": "hdole/nat/o_186",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_187",
+        "name": "hdole/nat/o_187",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_188",
+        "name": "hdole/nat/o_188",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 3700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_189",
+        "name": "hdole/nat/o_189",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 3900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_190",
+        "name": "hdole/nat/o_190",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 4100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_191",
+        "name": "hdole/nat/o_191",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{Po{N8,N8}oP,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 3300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_192",
+        "name": "hdole/nat/o_192",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 3500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_193",
+        "name": "hdole/nat/o_193",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_194",
+        "name": "hdole/nat/o_194",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_195",
+        "name": "hdole/nat/o_195",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_196",
+        "name": "hdole/nat/o_196",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": -200,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_197",
+        "name": "hdole/nat/o_197",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_198",
+        "name": "hdole/nat/o_198",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_199",
+        "name": "hdole/nat/o_199",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_200",
+        "name": "hdole/nat/o_200",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_201",
+        "name": "hdole/nat/o_201",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -400,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_202",
+        "name": "hdole/nat/o_202",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_203",
+        "name": "hdole/nat/o_203",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_204",
+        "name": "hdole/nat/o_204",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_205",
+        "name": "hdole/nat/o_205",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_206",
+        "name": "hdole/nat/o_206",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 410,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_207",
+        "name": "hdole/nat/o_207",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_208",
+        "name": "hdole/nat/o_208",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 2100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_209",
+        "name": "hdole/nat/o_209",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_210",
+        "name": "hdole/nat/o_210",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_211",
+        "name": "hdole/nat/o_211",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_212",
+        "name": "hdole/nat/o_212",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 1700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_12",
+        "name": "hdole/nat/o_12",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 2300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_99",
+        "name": "hdole/nat/o_99",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 0,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_135",
+        "name": "hdole/nat/o_135",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_213",
+        "name": "hdole/nat/o_213",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 400,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_214",
+        "name": "hdole/nat/o_214",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_215",
+        "name": "hdole/nat/o_215",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 800,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_216",
+        "name": "hdole/nat/o_216",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_217",
+        "name": "hdole/nat/o_217",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1200,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_218",
+        "name": "hdole/nat/o_218",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 2500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_225",
+        "name": "hdole/nat/o_225",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_226",
+        "name": "hdole/nat/o_226",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_227",
+        "name": "hdole/nat/o_227",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N8,N8}oP",
+        "xy": {
+          "x": -400,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_228",
+        "name": "hdole/nat/o_228",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": -200,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_270",
+        "name": "hdole/nat/o_270",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_271",
+        "name": "hdole/nat/o_271",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_272",
+        "name": "hdole/nat/o_272",
+        "prototype": "IndexObject",
+        "properName": "o_273",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_273",
+        "name": "hdole/nat/o_273",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_280",
+        "name": "hdole/nat/o_280",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_281",
+        "name": "hdole/nat/o_281",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_282",
+        "name": "hdole/nat/o_282",
+        "prototype": "IndexObject",
+        "properName": "o_283",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_283",
+        "name": "hdole/nat/o_283",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_290",
+        "name": "hdole/nat/o_290",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_291",
+        "name": "hdole/nat/o_291",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_292",
+        "name": "hdole/nat/o_292",
+        "prototype": "IndexObject",
+        "properName": "o_293",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_293",
+        "name": "hdole/nat/o_293",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_300",
+        "name": "hdole/nat/o_300",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_301",
+        "name": "hdole/nat/o_301",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 5100
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_302",
+        "name": "hdole/nat/o_302",
+        "prototype": "IndexObject",
+        "properName": "o_303",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_303",
+        "name": "hdole/nat/o_303",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 5300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_229",
+        "name": "hdole/nat/o_229",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_230",
+        "name": "hdole/nat/o_230",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_231",
+        "name": "hdole/nat/o_231",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_232",
+        "name": "hdole/nat/o_232",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_233",
+        "name": "hdole/nat/o_233",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_234",
+        "name": "hdole/nat/o_234",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_235",
+        "name": "hdole/nat/o_235",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_236",
+        "name": "hdole/nat/o_236",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 4300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_237",
+        "name": "hdole/nat/o_237",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N16}oP",
+        "xy": {
+          "x": 0,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_238",
+        "name": "hdole/nat/o_238",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 200,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_239",
+        "name": "hdole/nat/o_239",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N32}oP",
+        "xy": {
+          "x": 400,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_240",
+        "name": "hdole/nat/o_240",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 600,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_241",
+        "name": "hdole/nat/o_241",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N64}oP",
+        "xy": {
+          "x": 800,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_242",
+        "name": "hdole/nat/o_242",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_243",
+        "name": "hdole/nat/o_243",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N128}oP",
+        "xy": {
+          "x": 1200,
+          "y": 4500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_244",
+        "name": "hdole/nat/o_244",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1400,
+          "y": 4500
+        }
+      },
+      {
+        "description": "Bit-wise not operation of a natural number",
+        "basename": "t_2",
+        "name": "hdole/nat/t_2",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 2500
+        },
+        "height": 24
+      },
+      {
+        "description": "Addition of two natural numbers with carry",
+        "basename": "t_3",
+        "name": "hdole/nat/t_3",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 1700
+        },
+        "height": 24
+      },
+      {
+        "description": "Subtraction of two natural numbers with underflow",
+        "basename": "t_4",
+        "name": "hdole/nat/t_4",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 2100
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "t_6",
+        "name": "hdole/nat/t_6",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1210,
+          "y": 1290
+        },
+        "height": "24"
+      },
+      {
+        "description": "The predecessor function for the natural numbers with underflow",
+        "basename": "t_7",
+        "name": "hdole/nat/t_7",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 1300
+        },
+        "height": "24"
+      },
+      {
+        "description": "",
+        "basename": "o_245",
+        "name": "hdole/nat/o_245",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_246",
+        "name": "hdole/nat/o_246",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N8}oP",
+        "xy": {
+          "x": 0,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_247",
+        "name": "hdole/nat/o_247",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_248",
+        "name": "hdole/nat/o_248",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N8}oP",
+        "xy": {
+          "x": 400,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_249",
+        "name": "hdole/nat/o_249",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_250",
+        "name": "hdole/nat/o_250",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N8}oP",
+        "xy": {
+          "x": 800,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_251",
+        "name": "hdole/nat/o_251",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_252",
+        "name": "hdole/nat/o_252",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N8}oP",
+        "xy": {
+          "x": 1200,
+          "y": 4700
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_96",
+        "name": "hdole/nat/o_96",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 200,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_253",
+        "name": "hdole/nat/o_253",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N16,N8}oP",
+        "xy": {
+          "x": 0,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_254",
+        "name": "hdole/nat/o_254",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 600,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_255",
+        "name": "hdole/nat/o_255",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N32,N8}oP",
+        "xy": {
+          "x": 400,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_256",
+        "name": "hdole/nat/o_256",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1000,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_257",
+        "name": "hdole/nat/o_257",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N64,N8}oP",
+        "xy": {
+          "x": 800,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_258",
+        "name": "hdole/nat/o_258",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1400,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_259",
+        "name": "hdole/nat/o_259",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/Po{N128,N8}oP",
+        "xy": {
+          "x": 1200,
+          "y": 4900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_117",
+        "name": "hdole/nat/o_117",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": 190,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_119",
+        "name": "hdole/nat/o_119",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N8",
+        "xy": {
+          "x": 190,
+          "y": 80
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_120",
+        "name": "hdole/nat/o_120",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 590,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_123",
+        "name": "hdole/nat/o_123",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 590,
+          "y": 80
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_260",
+        "name": "hdole/nat/o_260",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 990,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_261",
+        "name": "hdole/nat/o_261",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 990,
+          "y": 80
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_262",
+        "name": "hdole/nat/o_262",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1390,
+          "y": -120
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_263",
+        "name": "hdole/nat/o_263",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1390,
+          "y": 80
+        }
+      },
+      {
+        "description": "Is the first number greater than the second",
+        "basename": "t_11",
+        "name": "hdole/nat/t_11",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 4300
+        },
+        "height": 24
+      },
+      {
+        "description": "Is the first number greater than or equal to the second",
+        "basename": "t_12",
+        "name": "hdole/nat/t_12",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 4500
+        },
+        "height": 24
+      },
+      {
+        "description": "Left shift the first number by the number of positions\ngiven by the second",
+        "basename": "t_13",
+        "name": "hdole/nat/t_13",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 4700
+        },
+        "height": 24
+      },
+      {
+        "description": "Right shift the first number by the number of positions\ngiven by the second",
+        "basename": "t_15",
+        "name": "hdole/nat/t_15",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 4900
+        },
+        "height": 24
+      },
+      {
+        "description": "Give the maximum of the two values",
+        "basename": "t_30",
+        "name": "hdole/nat/t_30",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 5100
+        },
+        "height": 24
+      },
+      {
+        "description": "Give the minimum of the two values",
+        "basename": "t_32",
+        "name": "hdole/nat/t_32",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -1200,
+          "y": 5300
+        },
+        "height": 24
+      },
+      {
+        "description": "",
+        "basename": "o_133",
+        "name": "hdole/nat/o_133",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": -10,
+          "y": 80
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_137",
+        "name": "hdole/nat/o_137",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 390,
+          "y": 80
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_219",
+        "name": "hdole/nat/o_219",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 790,
+          "y": 80
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_220",
+        "name": "hdole/nat/o_220",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N128",
+        "xy": {
+          "x": 1190,
+          "y": 80
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_26",
+        "name": "hdole/nat/o_26",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N16",
+        "xy": {
+          "x": 390,
+          "y": 280
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_60",
+        "name": "hdole/nat/o_60",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N32",
+        "xy": {
+          "x": 790,
+          "y": 280
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_61",
+        "name": "hdole/nat/o_61",
+        "prototype": "IndexObject",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 1190,
+          "y": 280
+        }
+      },
+      {
+        "description": "",
+        "basename": "m_0",
+        "name": "hdole/nat/m_0",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_2",
+        "codomain": "hdole/nat/o_3",
+        "to": "hdole/nat/zero64"
+      },
+      {
+        "description": "",
+        "basename": "m_1",
+        "name": "hdole/nat/m_1",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_4",
+        "codomain": "hdole/nat/o_5",
+        "to": "hdole/nat/one64"
+      },
+      {
+        "description": "",
+        "basename": "m_2",
+        "name": "hdole/nat/m_2",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_6",
+        "codomain": "hdole/nat/o_7",
+        "to": "hdole/nat/inf64"
+      },
+      {
+        "description": "",
+        "basename": "m_3",
+        "name": "hdole/nat/m_3",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_9",
+        "codomain": "hdole/nat/o_10",
+        "to": "hdole/nat/add64"
+      },
+      {
+        "description": "",
+        "basename": "m_7",
+        "name": "hdole/nat/m_7",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_17",
+        "codomain": "hdole/nat/o_18",
+        "to": "hdole/nat/lt64"
+      },
+      {
+        "description": "",
+        "basename": "m_8",
+        "name": "hdole/nat/m_8",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_19",
+        "codomain": "hdole/nat/o_20",
+        "to": "hdole/nat/lteq64"
+      },
+      {
+        "description": "",
+        "basename": "m_9",
+        "name": "hdole/nat/m_9",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_21",
+        "codomain": "hdole/nat/o_22",
+        "to": "hdole/nat/equ64"
+      },
+      {
+        "description": "",
+        "basename": "m_11",
+        "name": "hdole/nat/m_11",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_27",
+        "codomain": "hdole/nat/o_28",
+        "to": "hdole/nat/zero16"
+      },
+      {
+        "description": "",
+        "basename": "m_12",
+        "name": "hdole/nat/m_12",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_29",
+        "codomain": "hdole/nat/o_30",
+        "to": "hdole/nat/one16"
+      },
+      {
+        "description": "",
+        "basename": "m_13",
+        "name": "hdole/nat/m_13",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_31",
+        "codomain": "hdole/nat/o_32",
+        "to": "hdole/nat/inf16"
+      },
+      {
+        "description": "",
+        "basename": "m_14",
+        "name": "hdole/nat/m_14",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_33",
+        "codomain": "hdole/nat/o_34",
+        "to": "hdole/nat/add16"
+      },
+      {
+        "description": "",
+        "basename": "m_16",
+        "name": "hdole/nat/m_16",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_37",
+        "codomain": "hdole/nat/o_38",
+        "to": "hdole/nat/mult16"
+      },
+      {
+        "description": "",
+        "basename": "m_17",
+        "name": "hdole/nat/m_17",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_39",
+        "codomain": "hdole/nat/o_40",
+        "to": "hdole/nat/and16"
+      },
+      {
+        "description": "",
+        "basename": "m_18",
+        "name": "hdole/nat/m_18",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_41",
+        "codomain": "hdole/nat/o_42",
+        "to": "hdole/nat/or16"
+      },
+      {
+        "description": "",
+        "basename": "m_19",
+        "name": "hdole/nat/m_19",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_43",
+        "codomain": "hdole/nat/o_44",
+        "to": "hdole/nat/xor16"
+      },
+      {
+        "description": "",
+        "basename": "m_20",
+        "name": "hdole/nat/m_20",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_45",
+        "codomain": "hdole/nat/o_46",
+        "to": "hdole/nat/div16"
+      },
+      {
+        "description": "",
+        "basename": "m_21",
+        "name": "hdole/nat/m_21",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_47",
+        "codomain": "hdole/nat/o_48",
+        "to": "hdole/nat/mod16"
+      },
+      {
+        "description": "",
+        "basename": "m_23",
+        "name": "hdole/nat/m_23",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_51",
+        "codomain": "hdole/nat/o_52",
+        "to": "hdole/nat/lt16"
+      },
+      {
+        "description": "",
+        "basename": "m_24",
+        "name": "hdole/nat/m_24",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_53",
+        "codomain": "hdole/nat/o_54",
+        "to": "hdole/nat/lteq16"
+      },
+      {
+        "description": "",
+        "basename": "m_5",
+        "name": "hdole/nat/m_5",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_14",
+        "codomain": "hdole/nat/o_55",
+        "to": "hdole/nat/succ64"
+      },
+      {
+        "description": "",
+        "basename": "m_6",
+        "name": "hdole/nat/m_6",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_15",
+        "codomain": "hdole/nat/o_13",
+        "to": "hdole/nat/decr"
+      },
+      {
+        "description": "",
+        "basename": "m_22",
+        "name": "hdole/nat/m_22",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_8",
+        "codomain": "hdole/nat/o_16",
+        "to": "hdole/nat/equ16"
+      },
+      {
+        "description": "",
+        "basename": "m_25",
+        "name": "hdole/nat/m_25",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_23",
+        "codomain": "hdole/nat/o_50",
+        "to": "hdole/nat/zero32"
+      },
+      {
+        "description": "",
+        "basename": "m_26",
+        "name": "hdole/nat/m_26",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_56",
+        "codomain": "hdole/nat/o_57",
+        "to": "hdole/nat/one32"
+      },
+      {
+        "description": "",
+        "basename": "m_27",
+        "name": "hdole/nat/m_27",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_58",
+        "codomain": "hdole/nat/o_25",
+        "to": "hdole/nat/N8ToN16"
+      },
+      {
+        "description": "",
+        "basename": "m_32",
+        "name": "hdole/nat/m_32",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_66",
+        "codomain": "hdole/nat/o_70",
+        "to": "hdole/nat/succ32"
+      },
+      {
+        "description": "",
+        "basename": "m_33",
+        "name": "hdole/nat/m_33",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_73",
+        "codomain": "hdole/nat/o_71",
+        "to": "hdole/nat/decr32"
+      },
+      {
+        "description": "",
+        "basename": "m_34",
+        "name": "hdole/nat/m_34",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_68",
+        "codomain": "hdole/nat/o_65",
+        "to": "hdole/nat/inf32"
+      },
+      {
+        "description": "",
+        "basename": "m_38",
+        "name": "hdole/nat/m_38",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_67",
+        "codomain": "hdole/nat/o_59",
+        "to": "hdole/nat/succ16"
+      },
+      {
+        "description": "",
+        "basename": "m_39",
+        "name": "hdole/nat/m_39",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_74",
+        "codomain": "hdole/nat/o_1",
+        "to": "hdole/nat/zero8"
+      },
+      {
+        "description": "",
+        "basename": "m_40",
+        "name": "hdole/nat/m_40",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_75",
+        "codomain": "hdole/nat/o_24",
+        "to": "hdole/nat/one8"
+      },
+      {
+        "description": "",
+        "basename": "m_41",
+        "name": "hdole/nat/m_41",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_49",
+        "codomain": "hdole/nat/o_76",
+        "to": "hdole/nat/inf8"
+      },
+      {
+        "description": "",
+        "basename": "m_43",
+        "name": "hdole/nat/m_43",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_81",
+        "codomain": "hdole/nat/o_79",
+        "to": "hdole/nat/decr8"
+      },
+      {
+        "description": "",
+        "basename": "m_44",
+        "name": "hdole/nat/m_44",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_78",
+        "codomain": "hdole/nat/o_77",
+        "to": "hdole/nat/succ8"
+      },
+      {
+        "description": "",
+        "basename": "m_45",
+        "name": "hdole/nat/m_45",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_82",
+        "codomain": "hdole/nat/o_80",
+        "to": "hdole/nat/decr16"
+      },
+      {
+        "description": "",
+        "basename": "m_46",
+        "name": "hdole/nat/m_46",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_86",
+        "codomain": "hdole/nat/o_85",
+        "to": "hdole/nat/add32"
+      },
+      {
+        "description": "",
+        "basename": "m_42",
+        "name": "hdole/nat/m_42",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_84",
+        "codomain": "hdole/nat/o_83",
+        "to": "hdole/nat/add8"
+      },
+      {
+        "description": "",
+        "basename": "m_47",
+        "name": "hdole/nat/m_47",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_90",
+        "codomain": "hdole/nat/o_89",
+        "to": "hdole/nat/sub32"
+      },
+      {
+        "description": "",
+        "basename": "m_51",
+        "name": "hdole/nat/m_51",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_11",
+        "codomain": "hdole/nat/o_103",
+        "to": "hdole/nat/mult64"
+      },
+      {
+        "description": "",
+        "basename": "m_52",
+        "name": "hdole/nat/m_52",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_87",
+        "codomain": "hdole/nat/o_95",
+        "to": "hdole/nat/mult32"
+      },
+      {
+        "description": "",
+        "basename": "m_53",
+        "name": "hdole/nat/m_53",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_91",
+        "codomain": "hdole/nat/o_92",
+        "to": "hdole/nat/sub64"
+      },
+      {
+        "description": "",
+        "basename": "m_57",
+        "name": "hdole/nat/m_57",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_105",
+        "codomain": "hdole/nat/o_106",
+        "to": "hdole/nat/sub8"
+      },
+      {
+        "description": "",
+        "basename": "m_59",
+        "name": "hdole/nat/m_59",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_108",
+        "codomain": "hdole/nat/o_109",
+        "to": "hdole/nat/mult8"
+      },
+      {
+        "description": "",
+        "basename": "m_61",
+        "name": "hdole/nat/m_61",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_110",
+        "codomain": "hdole/nat/o_111",
+        "to": "hdole/nat/and8"
+      },
+      {
+        "description": "",
+        "basename": "m_62",
+        "name": "hdole/nat/m_62",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_112",
+        "codomain": "hdole/nat/o_113",
+        "to": "hdole/nat/or8"
+      },
+      {
+        "description": "",
+        "basename": "m_71",
+        "name": "hdole/nat/m_71",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_63",
+        "codomain": "hdole/nat/o_101",
+        "to": "hdole/nat/zero128"
+      },
+      {
+        "description": "",
+        "basename": "m_72",
+        "name": "hdole/nat/m_72",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_64",
+        "codomain": "hdole/nat/o_102",
+        "to": "hdole/nat/one128"
+      },
+      {
+        "description": "",
+        "basename": "m_73",
+        "name": "hdole/nat/m_73",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_100",
+        "codomain": "hdole/nat/o_72",
+        "to": "hdole/nat/inf128"
+      },
+      {
+        "description": "",
+        "basename": "m_74",
+        "name": "hdole/nat/m_74",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_125",
+        "codomain": "hdole/nat/o_124",
+        "to": "hdole/nat/succ128"
+      },
+      {
+        "description": "",
+        "basename": "m_75",
+        "name": "hdole/nat/m_75",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_126",
+        "codomain": "hdole/nat/o_127",
+        "to": "hdole/nat/decr128"
+      },
+      {
+        "description": "",
+        "basename": "m_76",
+        "name": "hdole/nat/m_76",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_129",
+        "codomain": "hdole/nat/o_128",
+        "to": "hdole/nat/add127"
+      },
+      {
+        "description": "",
+        "basename": "m_96",
+        "name": "hdole/nat/m_96",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_139",
+        "codomain": "hdole/nat/o_140",
+        "to": "hdole/nat/and32"
+      },
+      {
+        "description": "",
+        "basename": "m_97",
+        "name": "hdole/nat/m_97",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_161",
+        "codomain": "hdole/nat/o_162",
+        "to": "hdole/nat/and64"
+      },
+      {
+        "description": "",
+        "basename": "m_98",
+        "name": "hdole/nat/m_98",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_171",
+        "codomain": "hdole/nat/o_179",
+        "to": "hdole/nat/and128"
+      },
+      {
+        "description": "",
+        "basename": "m_102",
+        "name": "hdole/nat/m_102",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_114",
+        "codomain": "hdole/nat/o_115",
+        "to": "hdole/nat/xor8"
+      },
+      {
+        "description": "",
+        "basename": "m_103",
+        "name": "hdole/nat/m_103",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_187",
+        "codomain": "hdole/nat/o_191",
+        "to": "hdole/nat/div8"
+      },
+      {
+        "description": "",
+        "basename": "m_104",
+        "name": "hdole/nat/m_104",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_186",
+        "codomain": "hdole/nat/o_192",
+        "to": "hdole/nat/mod8"
+      },
+      {
+        "description": "",
+        "basename": "m_105",
+        "name": "hdole/nat/m_105",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_188",
+        "codomain": "hdole/nat/o_158",
+        "to": "hdole/nat/equ8"
+      },
+      {
+        "description": "",
+        "basename": "m_106",
+        "name": "hdole/nat/m_106",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_150",
+        "codomain": "hdole/nat/o_152",
+        "to": "hdole/nat/equ32"
+      },
+      {
+        "description": "",
+        "basename": "m_107",
+        "name": "hdole/nat/m_107",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_189",
+        "codomain": "hdole/nat/o_159",
+        "to": "hdole/nat/lt8"
+      },
+      {
+        "description": "",
+        "basename": "m_109",
+        "name": "hdole/nat/m_109",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_149",
+        "codomain": "hdole/nat/o_153",
+        "to": "hdole/nat/lt32"
+      },
+      {
+        "description": "",
+        "basename": "m_110",
+        "name": "hdole/nat/m_110",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_141",
+        "codomain": "hdole/nat/o_142",
+        "to": "hdole/nat/or32"
+      },
+      {
+        "description": "",
+        "basename": "m_111",
+        "name": "hdole/nat/m_111",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_163",
+        "codomain": "hdole/nat/o_164",
+        "to": "hdole/nat/or64"
+      },
+      {
+        "description": "",
+        "basename": "m_112",
+        "name": "hdole/nat/m_112",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_172",
+        "codomain": "hdole/nat/o_180",
+        "to": "hdole/nat/or128"
+      },
+      {
+        "description": "",
+        "basename": "m_113",
+        "name": "hdole/nat/m_113",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_151",
+        "codomain": "hdole/nat/o_154",
+        "to": "hdole/nat/lteq32"
+      },
+      {
+        "description": "",
+        "basename": "m_114",
+        "name": "hdole/nat/m_114",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_148",
+        "codomain": "hdole/nat/o_147",
+        "to": "hdole/nat/mod32"
+      },
+      {
+        "description": "",
+        "basename": "m_115",
+        "name": "hdole/nat/m_115",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_146",
+        "codomain": "hdole/nat/o_145",
+        "to": "hdole/nat/div32"
+      },
+      {
+        "description": "",
+        "basename": "m_116",
+        "name": "hdole/nat/m_116",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_143",
+        "codomain": "hdole/nat/o_144",
+        "to": "hdole/nat/xor32"
+      },
+      {
+        "description": "",
+        "basename": "m_117",
+        "name": "hdole/nat/m_117",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_178",
+        "codomain": "hdole/nat/o_157",
+        "to": "hdole/nat/lteq128"
+      },
+      {
+        "description": "",
+        "basename": "m_118",
+        "name": "hdole/nat/m_118",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_165",
+        "codomain": "hdole/nat/o_166",
+        "to": "hdole/nat/xor64"
+      },
+      {
+        "description": "",
+        "basename": "m_119",
+        "name": "hdole/nat/m_119",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_167",
+        "codomain": "hdole/nat/o_168",
+        "to": "hdole/nat/div64"
+      },
+      {
+        "description": "",
+        "basename": "m_120",
+        "name": "hdole/nat/m_120",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_170",
+        "codomain": "hdole/nat/o_169",
+        "to": "hdole/nat/mod64"
+      },
+      {
+        "description": "",
+        "basename": "m_121",
+        "name": "hdole/nat/m_121",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_173",
+        "codomain": "hdole/nat/o_181",
+        "to": "hdole/nat/xor128"
+      },
+      {
+        "description": "",
+        "basename": "m_122",
+        "name": "hdole/nat/m_122",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_174",
+        "codomain": "hdole/nat/o_182",
+        "to": "hdole/nat/div128"
+      },
+      {
+        "description": "",
+        "basename": "m_123",
+        "name": "hdole/nat/m_123",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_175",
+        "codomain": "hdole/nat/o_183",
+        "to": "hdole/nat/mod128"
+      },
+      {
+        "description": "",
+        "basename": "m_125",
+        "name": "hdole/nat/m_125",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_177",
+        "codomain": "hdole/nat/o_156",
+        "to": "hdole/nat/lt128"
+      },
+      {
+        "description": "",
+        "basename": "m_126",
+        "name": "hdole/nat/m_126",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_193",
+        "codomain": "hdole/nat/o_195",
+        "to": "hdole/nat/gt8"
+      },
+      {
+        "description": "",
+        "basename": "m_127",
+        "name": "hdole/nat/m_127",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_194",
+        "codomain": "hdole/nat/o_196",
+        "to": "hdole/nat/gteq8"
+      },
+      {
+        "description": "",
+        "basename": "m_128",
+        "name": "hdole/nat/m_128",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_197",
+        "codomain": "hdole/nat/o_198",
+        "to": "hdole/nat/lshf8"
+      },
+      {
+        "description": "",
+        "basename": "m_129",
+        "name": "hdole/nat/m_129",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_199",
+        "codomain": "hdole/nat/o_200",
+        "to": "hdole/nat/rshf8"
+      },
+      {
+        "description": "",
+        "basename": "m_130",
+        "name": "hdole/nat/m_130",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_201",
+        "codomain": "hdole/nat/o_202",
+        "to": "hdole/nat/not8"
+      },
+      {
+        "description": "",
+        "basename": "m_131",
+        "name": "hdole/nat/m_131",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_136",
+        "codomain": "hdole/nat/o_131",
+        "to": "hdole/nat/sub128"
+      },
+      {
+        "description": "",
+        "basename": "m_15",
+        "name": "hdole/nat/m_15",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_35",
+        "codomain": "hdole/nat/o_36",
+        "to": "hdole/nat/sub16"
+      },
+      {
+        "description": "",
+        "basename": "m_49",
+        "name": "hdole/nat/m_49",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_203",
+        "codomain": "hdole/nat/o_93",
+        "to": "hdole/nat/add8c"
+      },
+      {
+        "description": "",
+        "basename": "m_58",
+        "name": "hdole/nat/m_58",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_204",
+        "codomain": "hdole/nat/o_107",
+        "to": "hdole/nat/sub8u"
+      },
+      {
+        "description": "",
+        "basename": "m_92",
+        "name": "hdole/nat/m_92",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_205",
+        "codomain": "hdole/nat/o_94",
+        "to": "hdole/nat/sub16c"
+      },
+      {
+        "description": "",
+        "basename": "m_56",
+        "name": "hdole/nat/m_56",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_206",
+        "codomain": "hdole/nat/o_104",
+        "to": "hdole/nat/sub32u"
+      },
+      {
+        "description": "",
+        "basename": "m_54",
+        "name": "hdole/nat/m_54",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_207",
+        "codomain": "hdole/nat/o_98",
+        "to": "hdole/nat/sub64u"
+      },
+      {
+        "description": "",
+        "basename": "m_79",
+        "name": "hdole/nat/m_79",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_208",
+        "codomain": "hdole/nat/o_132",
+        "to": "hdole/nat/sub128c"
+      },
+      {
+        "description": "",
+        "basename": "m_80",
+        "name": "hdole/nat/m_80",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_209",
+        "codomain": "hdole/nat/o_130",
+        "to": "hdole/nat/add128"
+      },
+      {
+        "description": "",
+        "basename": "m_55",
+        "name": "hdole/nat/m_55",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_210",
+        "codomain": "hdole/nat/o_97",
+        "to": "hdole/nat/add64o"
+      },
+      {
+        "description": "",
+        "basename": "m_77",
+        "name": "hdole/nat/m_77",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_211",
+        "codomain": "hdole/nat/o_138",
+        "to": "hdole/nat/add32c"
+      },
+      {
+        "description": "",
+        "basename": "m_48",
+        "name": "hdole/nat/m_48",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_212",
+        "codomain": "hdole/nat/o_88",
+        "to": "hdole/nat/add16c"
+      },
+      {
+        "description": "",
+        "basename": "m_81",
+        "name": "hdole/nat/m_81",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_12",
+        "codomain": "hdole/nat/o_134",
+        "to": "hdole/nat/mult128c"
+      },
+      {
+        "description": "",
+        "basename": "m_4",
+        "name": "hdole/nat/m_4",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_99",
+        "codomain": "hdole/nat/o_135",
+        "to": "hdole/nat/not16"
+      },
+      {
+        "description": "",
+        "basename": "m_50",
+        "name": "hdole/nat/m_50",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_213",
+        "codomain": "hdole/nat/o_214",
+        "to": "hdole/nat/not32"
+      },
+      {
+        "description": "",
+        "basename": "m_60",
+        "name": "hdole/nat/m_60",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_215",
+        "codomain": "hdole/nat/o_216",
+        "to": "hdole/nat/not64"
+      },
+      {
+        "description": "",
+        "basename": "m_82",
+        "name": "hdole/nat/m_82",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_217",
+        "codomain": "hdole/nat/o_218",
+        "to": "hdole/nat/not128"
+      },
+      {
+        "description": "",
+        "basename": "m_95",
+        "name": "hdole/nat/m_95",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_225",
+        "codomain": "hdole/nat/o_226",
+        "to": "hdole/nat/max8"
+      },
+      {
+        "description": "",
+        "basename": "m_132",
+        "name": "hdole/nat/m_132",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_227",
+        "codomain": "hdole/nat/o_228",
+        "to": "hdole/nat/min8"
+      },
+      {
+        "description": "",
+        "basename": "m_200",
+        "name": "hdole/nat/m_200",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_270",
+        "codomain": "hdole/nat/o_271",
+        "to": "hdole/nat/max16"
+      },
+      {
+        "description": "",
+        "basename": "m_201",
+        "name": "hdole/nat/m_201",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_272",
+        "codomain": "hdole/nat/o_273",
+        "to": "hdole/nat/min16"
+      },
+      {
+        "description": "",
+        "basename": "m_202",
+        "name": "hdole/nat/m_202",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_280",
+        "codomain": "hdole/nat/o_281",
+        "to": "hdole/nat/max32"
+      },
+      {
+        "description": "",
+        "basename": "m_203",
+        "name": "hdole/nat/m_203",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_282",
+        "codomain": "hdole/nat/o_283",
+        "to": "hdole/nat/min32"
+      },
+      {
+        "description": "",
+        "basename": "m_204",
+        "name": "hdole/nat/m_204",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_290",
+        "codomain": "hdole/nat/o_291",
+        "to": "hdole/nat/max64"
+      },
+      {
+        "description": "",
+        "basename": "m_205",
+        "name": "hdole/nat/m_205",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_292",
+        "codomain": "hdole/nat/o_293",
+        "to": "hdole/nat/min64"
+      },
+      {
+        "description": "",
+        "basename": "m_206",
+        "name": "hdole/nat/m_206",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_300",
+        "codomain": "hdole/nat/o_301",
+        "to": "hdole/nat/max128"
+      },
+      {
+        "description": "",
+        "basename": "m_207",
+        "name": "hdole/nat/m_207",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_302",
+        "codomain": "hdole/nat/o_303",
+        "to": "hdole/nat/min128"
+      },
+      {
+        "description": "",
+        "basename": "m_133",
+        "name": "hdole/nat/m_133",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_229",
+        "codomain": "hdole/nat/o_230",
+        "to": "hdole/nat/gt16"
+      },
+      {
+        "description": "",
+        "basename": "m_134",
+        "name": "hdole/nat/m_134",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_231",
+        "codomain": "hdole/nat/o_232",
+        "to": "hdole/nat/gt32"
+      },
+      {
+        "description": "",
+        "basename": "m_135",
+        "name": "hdole/nat/m_135",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_233",
+        "codomain": "hdole/nat/o_234",
+        "to": "hdole/nat/gt64"
+      },
+      {
+        "description": "",
+        "basename": "m_136",
+        "name": "hdole/nat/m_136",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_235",
+        "codomain": "hdole/nat/o_236",
+        "to": "hdole/nat/gt128"
+      },
+      {
+        "description": "",
+        "basename": "m_137",
+        "name": "hdole/nat/m_137",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_237",
+        "codomain": "hdole/nat/o_238",
+        "to": "hdole/nat/gte16"
+      },
+      {
+        "description": "",
+        "basename": "m_108",
+        "name": "hdole/nat/m_108",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_190",
+        "codomain": "hdole/nat/o_160",
+        "to": "hdole/nat/lteq8"
+      },
+      {
+        "description": "",
+        "basename": "m_138",
+        "name": "hdole/nat/m_138",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_246",
+        "codomain": "hdole/nat/o_245",
+        "to": "hdole/nat/lshf16"
+      },
+      {
+        "description": "",
+        "basename": "m_139",
+        "name": "hdole/nat/m_139",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_248",
+        "codomain": "hdole/nat/o_247",
+        "to": "hdole/nat/lshf32"
+      },
+      {
+        "description": "",
+        "basename": "m_140",
+        "name": "hdole/nat/m_140",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_239",
+        "codomain": "hdole/nat/o_240",
+        "to": "hdole/nat/gteq32"
+      },
+      {
+        "description": "",
+        "basename": "m_141",
+        "name": "hdole/nat/m_141",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_241",
+        "codomain": "hdole/nat/o_242",
+        "to": "hdole/nat/gteq64"
+      },
+      {
+        "description": "",
+        "basename": "m_142",
+        "name": "hdole/nat/m_142",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_243",
+        "codomain": "hdole/nat/o_244",
+        "to": "hdole/nat/gteq128"
+      },
+      {
+        "description": "",
+        "basename": "m_143",
+        "name": "hdole/nat/m_143",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_250",
+        "codomain": "hdole/nat/o_249",
+        "to": "hdole/nat/lshf64"
+      },
+      {
+        "description": "",
+        "basename": "m_144",
+        "name": "hdole/nat/m_144",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_252",
+        "codomain": "hdole/nat/o_251",
+        "to": "hdole/nat/lshf128"
+      },
+      {
+        "description": "",
+        "basename": "m_145",
+        "name": "hdole/nat/m_145",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_253",
+        "codomain": "hdole/nat/o_96",
+        "to": "hdole/nat/rshf16"
+      },
+      {
+        "description": "",
+        "basename": "m_146",
+        "name": "hdole/nat/m_146",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_255",
+        "codomain": "hdole/nat/o_254",
+        "to": "hdole/nat/rshf32"
+      },
+      {
+        "description": "",
+        "basename": "m_147",
+        "name": "hdole/nat/m_147",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_257",
+        "codomain": "hdole/nat/o_256",
+        "to": "hdole/nat/rshf64"
+      },
+      {
+        "description": "",
+        "basename": "m_148",
+        "name": "hdole/nat/m_148",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_259",
+        "codomain": "hdole/nat/o_258",
+        "to": "hdole/nat/rshf128"
+      },
+      {
+        "description": "",
+        "basename": "m_10",
+        "name": "hdole/nat/m_10",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_116",
+        "codomain": "hdole/nat/o_117",
+        "to": "hdole/nat/hi8"
+      },
+      {
+        "description": "",
+        "basename": "m_29",
+        "name": "hdole/nat/m_29",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_118",
+        "codomain": "hdole/nat/o_120",
+        "to": "hdole/nat/hi16"
+      },
+      {
+        "description": "",
+        "basename": "m_63",
+        "name": "hdole/nat/m_63",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_121",
+        "codomain": "hdole/nat/o_260",
+        "to": "hdole/nat/hi32"
+      },
+      {
+        "description": "",
+        "basename": "m_65",
+        "name": "hdole/nat/m_65",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_122",
+        "codomain": "hdole/nat/o_262",
+        "to": "hdole/nat/hi64"
+      },
+      {
+        "description": "",
+        "basename": "m_28",
+        "name": "hdole/nat/m_28",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_133",
+        "codomain": "hdole/nat/o_119",
+        "to": "hdole/nat/lo8"
+      },
+      {
+        "description": "",
+        "basename": "m_35",
+        "name": "hdole/nat/m_35",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_137",
+        "codomain": "hdole/nat/o_123",
+        "to": "hdole/nat/lo16"
+      },
+      {
+        "description": "",
+        "basename": "m_64",
+        "name": "hdole/nat/m_64",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_219",
+        "codomain": "hdole/nat/o_261",
+        "to": "hdole/nat/lo32"
+      },
+      {
+        "description": "",
+        "basename": "m_66",
+        "name": "hdole/nat/m_66",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_220",
+        "codomain": "hdole/nat/o_263",
+        "to": "hdole/nat/lo64"
+      },
+      {
+        "description": "",
+        "basename": "m_30",
+        "name": "hdole/nat/m_30",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_26",
+        "codomain": "hdole/nat/o_62",
+        "to": "hdole/nat/N16ToN32"
+      },
+      {
+        "description": "",
+        "basename": "m_31",
+        "name": "hdole/nat/m_31",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_60",
+        "codomain": "hdole/nat/o_0",
+        "to": "hdole/nat/N32ToN64"
+      },
+      {
+        "description": "",
+        "basename": "m_99",
+        "name": "hdole/nat/m_99",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_61",
+        "codomain": "hdole/nat/o_184",
+        "to": "hdole/nat/N62toN128"
+      },
+      {
+        "description": "",
+        "basename": "m_36",
+        "name": "hdole/nat/m_36",
+        "prototype": "IndexMorphism",
+        "category": "hdole/nat_Index",
+        "diagram": "hdole/nat",
+        "domain": "hdole/nat/o_176",
+        "codomain": "hdole/nat/o_155",
+        "to": "hdole/nat/equ128"
+      }
+    ],
+    "cells": []
+  },
   "elements": [
     {
       "description": "An unsigned byte",
@@ -3822,7 +9550,7 @@
       "prototype": "Morphism",
       "properName": "div",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 / %1;\n\t%2.m1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC"
@@ -3833,7 +9561,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -3866,7 +9594,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -3876,7 +9604,7 @@
       "basename": "decr",
       "prototype": "Morphism",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N64",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -3949,7 +9677,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -3959,7 +9687,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -3979,7 +9707,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4023,7 +9751,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4034,7 +9762,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4045,7 +9773,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/CPo{N16,#1}oPC"
@@ -4261,7 +9989,7 @@
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
-        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -4271,7 +9999,7 @@
       "prototype": "Morphism",
       "properName": "decr",
       "code": {
-        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -4371,7 +10099,7 @@
       "prototype": "Morphism",
       "properName": "div",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 / %1;\n\t%2.m1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
       "codomain": "hdole/nat/CPo{Po{N8,N8}oP,#1}oPC"
@@ -4381,7 +10109,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
@@ -4471,7 +10199,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -4531,7 +10259,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -4561,7 +10289,7 @@
       "prototype": "Morphism",
       "properName": "mod",
       "code": {
-        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -5070,7 +10798,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1637750550898,
+  "timestamp": 1642115408628,
   "version": 0,
   "viewport": {
     "x": 1233,
