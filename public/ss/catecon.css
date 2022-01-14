@@ -1026,10 +1026,11 @@ proper-name
 	border:			none;
 	color:			var(--color-text);
 	display:		inline-block;
-	font:			12px sans-serif;
-	white-space:	nowrap;
+	font:			16px sans-serif;
+	font-weight:	bold;
 	overflow:		hidden;
 	text-overflow:	ellipsis;
+	white-space:	nowrap;
 }
 
 basename
