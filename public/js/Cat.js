@@ -35,7 +35,8 @@
 // 			delete
 // 			fuse															[Diagram.fuse]
 // 			move															[D.mouseup, AlignHorizontalAction.doit, AlignVerticalAction.doit, Diagram.moveElements]
-// 			new																[constructors: CatObject, FiniteObject, ProductObject, PullbackObject, HomObject, TensorObject, IndexObject; IndexPullback.postLoad]
+//// 			new																[constructors: CatObject, FiniteObject, ProductObject, PullbackObject, HomObject, TensorObject, IndexObject; IndexPullback.postLoad]
+// 			new																[constructors: CatObject, FiniteObject, ProductObject, PullbackObject, HomObject, TensorObject, IndexObject];
 // 			update															[LanguageAction.action, FiniteObjectAction.doit]
 // 		Morphism															-
 // 			detach		detach index morphism domain or codomain			[DetachDomainAction.doit]
@@ -4710,10 +4711,7 @@ class Display
 							undoing(e);
 						e.finishMove();
 					});
-//					const elements = [...elts];
-//					diagram.selected.filter(item => item instanceof Cell).map(cell => elements.push(...cell.getObjects()));
 					const originals = [...orig];
-//					if (elements.length > 0)
 					if (movables.size > 0)
 					{
 						diagram.log({command: 'move', movables:[...movables]});
@@ -5621,7 +5619,6 @@ class Display
 					copy = new IndexMorphism(diagram, {domain, codomain, to, attributes:[['flipName', true]]});
 					break;
 				case 'IndexObject':
-				case 'IndexPullback':
 					copy = pasteObject(elt);
 					copy.update();
 					break;
@@ -8080,11 +8077,6 @@ class CatObject extends Element
 	{
 		return [D.getIcon('place-object', 'place', e => R.diagram.placeElement(this, D.mouse.diagramPosition(this.diagram)), {title:'Place object'})];
 	}
-//	help()
-//	{
-//		super.help();
-//		D.toolbar.table.appendChild(H3.tr(H3.td('Category:'), H3.td(this.category.properName)));
-//	}
 	decrRefcnt()
 	{
 		super.decrRefcnt();
@@ -8506,48 +8498,26 @@ class PullbackObject extends ProductObject
 		nuArgs.name = PullbackObject.Codename(diagram, {morphisms:nuArgs.morphisms});
 		super(diagram, nuArgs);
 		this.morphisms = nuArgs.morphisms;
-		if ('cone' in nuArgs)
-			this.cone = nuArgs.cone;
-		if (this.morphisms.reduce((r, m) => r && m instanceof Morphism, true))		// ready to postload
+		if (this.morphisms.reduce((r, m) => r && m instanceof Morphism, true))
 			this.postload();
 		else
 			this.init = false;
 	}
 	postload()
 	{
-		this.morphisms = this.morphisms.map(m =>
+		if (!this.init)
 		{
-			const mo = this.diagram.getElement(m);
-			mo.incrRefcnt();
-			return mo;
-		});
-		this.legs = Category.GetLegs(this.morphisms);
-		this.cone = this.legs.map((leg, index) =>
-		{
-				const to = this.diagram.get('FactorMorphism', {domain:this.to, factors:[index], dual:this.dual});
-				const from = new IndexMorphism(this.diagram, {to, anon:'pb', domain:this, codomain:leg[this.dual ? leg.length -1 : 0].domain});
-				return from.name;
-		});
-		this.properName = PullbackObject.ProperName(this.morphisms);
-		this.loadItem();
-		D && D.emitElementEvent(this.diagram, 'new', this);
-		/*
-		this.morphisms = this.morphisms.map(m => this.diagram.getElement(m));
-		this.morphisms.map(m => m.incrRefcnt());
-		if (!('cone' in this))
-		{
-			this.cone = [];
-			this.morphisms.map((m, i) =>
+			this.morphisms = this.morphisms.map(m =>
 			{
-				const pbm = this.diagram.get('FactorMorphism', {domain:this, factors:[i], dual:this.dual});
-				this.cone.push(pbm.name);
+				const mo = this.diagram.getElement(m);
+				mo.incrRefcnt();
+				return mo;
 			});
+			this.properName = PullbackObject.ProperName(this.morphisms);
+			this.init = true;
+			this.loadItem();
+			D && D.emitElementEvent(this.diagram, 'new', this);
 		}
-		this.properName = PullbackObject.ProperName(this.morphisms);
-		this.init = true;
-		this.loadItem();
-		D && D.emitElementEvent(this.diagram, 'new', this);
-		*/
 	}
 	help()
 	{
@@ -8564,7 +8534,6 @@ class PullbackObject extends ProductObject
 		const a = super.json(delBasename);
 		delete a.properName;
 		a.morphisms = this.morphisms.map(m => m.refName(this.diagram));
-		a.cone = this.cone;
 		return a;
 	}
 	needsParens()
@@ -8579,11 +8548,11 @@ class PullbackObject extends ProductObject
 	{
 		if (this.init)
 		{
-			const cone = this.cone.map(c => this.diagram.getElement(c));
-			const base = this.dual ? [this.morphisms[0], cone[0]] : [cone[0], this.morphisms[0]];
-			for (let i=1; i<this.cone.length; ++i)
+			const base = this.dual ? [this.morphisms[0], this.diagram.cofctr(this, [0])] : [this.diagram.fctr(this, [0]), this.morphisms[0]];
+			for (let i=1; i<this.morphisms.length; ++i)		// for all other legs
 			{
-				const leg = this.dual ? [this.morphisms[i], cone[i]] : [cone[i], this.morphisms[i]];
+				const factor = this.dual ? this.diagram.cofctr(this, [i]) : this.diagram.fctr(this, [i]);
+				const leg = this.dual ? [this.morphisms[i], factor] : [factor, this.morphisms[i]];
 				R.loadItem(this.diagram, this, base, leg);
 			}
 		}
@@ -9322,63 +9291,6 @@ class IndexObject extends CatObject
 	}
 }
 
-class IndexPullback extends IndexObject
-{
-	constructor(diagram, args)
-	{
-		super(diagram, args);
-//		if ('cone' in args)
-//			this.cone = args.cone;
-//		this.morphisms = args.morphisms.slice();
-		Object.defineProperties(this,
-		{
-			indexMorphisms:		{value:args.morphisms.slice(),	writable:true},
-			legs:				{value:null,					writable:true},
-			cone:				{value:null,					writable:true},
-		});
-	}
-	postload()
-	{
-		this.indexMorphisms = this.indexMorphisms.map(m =>
-		{
-			const mo = this.diagram.getElement(m);
-			mo.incrRefcnt();
-			return mo;
-		});
-//		if (!('cone' in this))
-//		{
-//			this.legs = Category.GetLegs(this.morphisms).map(leg => leg.map(m => m.to)).map(leg => diagram.comp(...leg));
-			this.legs = Category.GetLegs(this.indexMorphisms);
-			this.cone = this.legs.map((leg, index) =>
-			{
-				const to = this.diagram.get('FactorMorphism', {domain:this.to, factors:[index], dual:this.dual});
-//				const from = new IndexMorphism(this.diagram, {to, anon:'pb', domain:this, codomain:this.legs[index][0].domain});
-				const from = new IndexMorphism(this.diagram, {to, anon:'pb', domain:this, codomain:leg[this.dual ? leg.length -1 : 0].domain});
-				return from.name;
-			});
-//		}
-		D && D.emitElementEvent(this.diagram, 'new', this);
-	}
-	json()
-	{
-		let a = super.json();
-		a.morphisms = this.indexMorphisms.map(m => m.name);
-		a.cone = this.cone;
-		return a;
-	}
-	getObjects()		// includes objects on interior of legs
-	{
-		const objs = new Set();
-		objs.add(this);
-		this.morphisms && this.indexMorphisms.map(m =>
-		{
-			objs.add(m.domain);
-			objs.add(m.codomain);
-		});
-		return [...objs];
-	}
-}
-
 class Action extends CatObject
 {
 	constructor(diagram, args)
@@ -9437,24 +9349,6 @@ class CompositeAction extends Action
 		const morphisms = diagram.getElements(args.morphisms);
 		this.doit(null, diagram, morphisms);
 	}
-	/*
-	hasForm(diagram, ary)
-	{
-		if (diagram.isEditable() && ary.length > 1 && ary.reduce((hasIt, r) => hasIt && r instanceof IndexMorphism, true))
-		{
-			let cod = ary[0].codomain;
-			for(let i=1; i<ary.length; ++i)
-			{
-				const m = ary[i];
-				if (m.domain.name !== cod.name)
-					return false;
-				cod = m.codomain;
-			}
-			return true;
-		}
-		return false;
-	}
-	*/
 	hasForm(diagram, ary)
 	{
 		if (diagram.isEditable() && ary.length > 1)
@@ -10001,19 +9895,30 @@ class PullbackAction extends Action		// pullback or pushout
 		diagram.deselectAll();
 		diagram.addSelected(pb);
 	}
-	doit(e, diagram, morphisms)
+	doit(e, diagram, indexMorphisms)
 	{
-//		const morphisms = sink.map(m => m.to);
-//		const morphisms = Category.GetLegs(sink.map(m => m.to)).map(leg => diagram.comp(...leg));
-		const to = diagram.get('PullbackObject', {morphisms:morphisms.map(m => m.to), dual:this.dual});
-		const bary = D.barycenter(morphisms.map(m => m.domain));
-		const obj = this.dual ? morphisms[0].domain : morphisms[0].codomain;
+		const legs = Category.GetLegs(indexMorphisms);
+		const morphisms = legs.map(leg => leg.map(m => m.to)).map(leg => diagram.comp(...leg));
+		const pb = diagram.get('PullbackObject', {morphisms, dual:this.dual});
+		const objects = new Set()
+		indexMorphisms.map(m => this.dual ? objects.add(m.codomain) : objects.add(m.domain));
+		const bary = D.barycenter([...objects]);
+		const obj = this.dual ? indexMorphisms[0].domain : indexMorphisms[0].codomain;
 		const xy = bary.add(bary.subtract(obj));
-		const pb = new IndexPullback(diagram, {xy, to, morphisms, dual:this.dual});
-		pb.update();
-		pb.postload();
-		pb.checkCells();
-		return pb;
+		const pbx = new IndexObject(diagram, {xy, to:pb});
+		pbx.update();
+		const cone = [];
+		legs.map((leg, i) =>
+		{
+			const args = {dual:this.dual, factors:[i]};
+			args[this.dual ? 'codomain' : 'domain'] = pbx;
+			args[this.dual ? 'domain' : 'codomain'] = leg[this.dual ? leg.length -1 : 0][this.dual ? 'codomain' : 'domain'];
+			args.to = this.dual ? this.diagram.cofctr(pb, [i]) : diagram.fctr(pb, [i]);
+			cone.push(new IndexMorphism(diagram, args));
+		});
+		pbx.checkCells();
+		diagram.makeSelected(...cone);
+		return pbx;
 	}
 	replay(e, diagram, args)
 	{
@@ -10094,7 +9999,6 @@ class ConeAssemblyAction extends Action
 		{
 			const source = ary.filter((m, i) => i % 2 === 0);
 			const sink = ary.filter((m, i) => i % 2 === 1);
-//			if (!Category.IsSource(source) || !Category.IsSink(sink))
 			if (!Category.IsSink(source, true) || !Category.IsSink(sink))
 				return false;
 			if (this.dual)
@@ -11975,7 +11879,6 @@ class Category extends CatObject
 					case 'HomObject':
 					case 'NamedObject':
 					case 'IndexObject':
-					case 'IndexPullback':
 					case 'IndexText':
 					case 'TensorObject':
 					case 'PullbackObject':
@@ -12018,7 +11921,6 @@ class Category extends CatObject
 	{
 		const a = super.json();
 		a.elements = U.jsonArray(this.elements);
-//		a.actionDiagrams = new Array(this.actionDiagrams.keys());
 		return a;
 	}
 	getElement(name)
@@ -12165,35 +12067,6 @@ class Category extends CatObject
 		}
 		return legs;
 	}
-	/*
-	static IsSink(ary, dual = false)		// dual for a source
-	{
-		if (ary.length < 2)		// just don't bother
-			return false;
-		if (!ary.reduce((r, m) => r && m instanceof IndexMorphism, true))	// all morphisms
-			return false;
-		const domain = dual ? ary[0].domain : ary[ary.length -1].codomain;
-		let last = null;
-		for(let i=0; i<ary.length; ++i)
-		{
-			const morphism = ary[i];
-			if (dual ? morphism.domain !== domain : morphism.codomain !== domain)
-			{
-				if (!last)
-				{
-					last = morphism;		// first of a leg?
-					continue;
-				}
-				if (morphism.domain !== last.codomain)
-					return false;
-				last = morphism;
-			}
-			else
-				last = null;
-		}
-		return true;
-	}
-	*/
 	static IsSink(ary, dual = false)		// dual for a source
 	{
 		if (ary.length < 2)		// just don't bother
@@ -13632,7 +13505,6 @@ class Cell
 		this.getObjects().map(o => o.nodes.delete(this));		// remove cell from objects on the cell
 		this.diagram.domain.cells.delete(this.name);
 		D && this.removeSVG();
-//		D && D.emitCellEvent(this.diagram, 'delete', this);
 	}
 	getXY()
 	{
@@ -15348,7 +15220,6 @@ class Diagram extends Functor
 		{
 			const info = nuArgs.domainInfo;
 			this.domain.process(this, info.elements);
-//			if (info.cells.length > 0)
 			this.domain.loadCells(info.cells);
 		}
 		else
@@ -16119,6 +15990,8 @@ class Diagram extends Functor
 	}
 	getElement(name)
 	{
+		if (name instanceof IndexObject && name.diagram === this)
+			return name;
 		let elt = this.domain.getElement(name);		// does the requested element live in the domain category?
 		if (elt)
 			return elt;
@@ -17982,7 +17855,6 @@ const Cat =
 	IndexComposite,
 	IndexMorphism,
 	IndexObject,
-	IndexPullback,
 	IndexText,
 	Distribute,
 	Element,
