@@ -8686,7 +8686,7 @@ class IndexText extends Element
 		if (canEdit)
 		{
 			div.appendChild(D.getIcon('EditElementText', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'description'), {title:'Commit editing', scale:D.default.button.tiny}));
-			const selectAnchor = H3.select({onchange:e => Cat.IndexText.UpdateAnchor(this.name, e.target.value), value:this.weight},
+			const selectAnchor = H3.select({onchange:e => this.UpdateAnchor(e.target.value), value:this.weight},
 				['start', 'middle', 'end'].map(w =>
 				{
 					const args = {value:w};
@@ -8694,7 +8694,7 @@ class IndexText extends Element
 						args.selected = 'selected';
 					return H3.option(args, w);
 				}));
-			const selectWeight = H3.select({onchange:e => Cat.IndexText.UpdateWeight(this.name, e.target.value), value:this.weight},
+			const selectWeight = H3.select({onchange:e => this.UpdateWeight(e.target.value), value:this.weight},
 				['normal', 'bold', 'lighter', 'bolder'].map(w =>
 				{
 					const args = {value:w};
@@ -8703,7 +8703,7 @@ class IndexText extends Element
 					return H3.option(args, w);
 				}));
 			const inId = 'toolbar-help-text-height';
-			const inputArgs = {type:"number", onchange:e => Cat.IndexText.UpdateHeight(this.name, e.target.value), min:3, max:500, width:8, value:this.height};
+			const inputArgs = {type:"number", onchange:e => this.updateHeight(e.target.value), min:3, max:500, width:8, value:this.height};
 			div.appendChild(H3.table(
 				H3.tr(H3.td('Anchor:'), H3.td(selectAnchor)),
 				H3.tr(H3.td('Height:'), H3.td(H3.input(`##${inId}.in100`, inputArgs))),
@@ -8969,23 +8969,28 @@ class IndexText extends Element
 		D.mouseover = this;
 		this.emphasis(true);
 	}
-	static UpdateAnchor(name, anchor)
+	wipeSvg()
 	{
-		const text = R.diagram.getElement(name);
-		text.textAnchor = anchor;
-		D.emitTextEvent(R.diagram, 'update', text);
+		this.svg.remove();
+		this.svg = null;
 	}
-	static UpdateHeight(name, height)
+	updateHeight(height)
 	{
-		const text = R.diagram.getElement(name);
-		text.height = height;
-		D.emitTextEvent(R.diagram, 'update', text);
+		this.height = height;
+		this.wipeSvg();
+		D.emitTextEvent(R.diagram, 'update', this);
 	}
-	static UpdateWeight(name, weight)
+	updateAnchor(anchor)
 	{
-		const text = R.diagram.getElement(name);
-		text.weight = weight;
-		D.emitTextEvent(R.diagram, 'update', text);
+		this.textAnchor = anchor;
+		this.wipeSvg();
+		D.emitTextEvent(R.diagram, 'update', this);
+	}
+	updateWeight(weight)
+	{
+		this.weight = weight;
+		this.wipeSvg();
+		D.emitTextEvent(R.diagram, 'update', this);
 	}
 	hasMoved()
 	{
