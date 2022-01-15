@@ -579,9 +579,16 @@ p
 
 .svgstr4
 {
-	fill:none;
-	stroke:var(--color-morphism);
-	stroke-width:20px
+	fill:			none;
+	stroke:			var(--color-morphism);
+	stroke-width:	20px
+}
+
+.svgstr5
+{
+	fill:			none;
+	stroke:			var(--color-morphism);
+	stroke-width:	30px
 }
 
 .arrow0
