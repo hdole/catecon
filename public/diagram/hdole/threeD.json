@@ -204,7 +204,7 @@
       "basename": "t_7",
       "prototype": "IndexText",
       "xy": {
-        "x": 180,
+        "x": 170,
         "y": 90
       },
       "height": "200",
@@ -537,7 +537,7 @@
         "category": "zf/Set",
         "diagram": "hdole/threeD",
         "xy": {
-          "x": 180,
+          "x": 170,
           "y": 90
         },
         "height": "200",
@@ -731,7 +731,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642113951431,
+  "timestamp": 1642220983916,
   "version": 0,
   "viewport": {
     "x": -246,

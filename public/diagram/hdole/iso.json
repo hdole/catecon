@@ -14,8 +14,8 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": 420,
-        "y": 450
+        "x": 430,
+        "y": 600
       },
       "height": "200",
       "weight": "bold"
@@ -43,7 +43,7 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/A",
       "xy": {
-        "x": 800,
+        "x": 600,
         "y": 1050
       }
     },
@@ -52,7 +52,7 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/B",
       "xy": {
-        "x": 1000,
+        "x": 800,
         "y": 1050
       }
     },
@@ -61,7 +61,7 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/A",
       "xy": {
-        "x": 1000,
+        "x": 800,
         "y": 1250
       }
     },
@@ -70,8 +70,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/A",
       "xy": {
-        "x": 1000,
-        "y": 1350
+        "x": 1200,
+        "y": 1050
       }
     },
     {
@@ -79,8 +79,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/B",
       "xy": {
-        "x": 1000,
-        "y": 1550
+        "x": 1200,
+        "y": 1250
       }
     },
     {
@@ -88,8 +88,8 @@
       "prototype": "IndexObject",
       "to": "hdole/iso/B",
       "xy": {
-        "x": 800,
-        "y": 1350
+        "x": 1000,
+        "y": 1050
       }
     },
     {
@@ -115,8 +115,8 @@
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
-        "x": 420,
-        "y": 600
+        "x": 400,
+        "y": 700
       },
       "height": "24"
     },
@@ -195,6 +195,305 @@
       "to": "hdole/iso/finv"
     }
   ],
+  "domainInfo": {
+    "description": "index category for diagram hdole/iso",
+    "basename": "iso_Index",
+    "name": "hdole/iso_Index",
+    "prototype": "IndexCategory",
+    "category": "sys/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Isomorphism",
+        "basename": "t_0",
+        "name": "hdole/iso/t_0",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/iso",
+        "xy": {
+          "x": 430,
+          "y": 600
+        },
+        "height": "200",
+        "weight": "bold"
+      },
+      {
+        "description": "",
+        "basename": "o_0",
+        "name": "hdole/iso/o_0",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/A",
+        "xy": {
+          "x": 800,
+          "y": 800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_1",
+        "name": "hdole/iso/o_1",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/B",
+        "xy": {
+          "x": 1000,
+          "y": 800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_4",
+        "name": "hdole/iso/o_4",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/A",
+        "xy": {
+          "x": 600,
+          "y": 1050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_5",
+        "name": "hdole/iso/o_5",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/B",
+        "xy": {
+          "x": 800,
+          "y": 1050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_7",
+        "name": "hdole/iso/o_7",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/A",
+        "xy": {
+          "x": 800,
+          "y": 1250
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_6",
+        "name": "hdole/iso/o_6",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/A",
+        "xy": {
+          "x": 1200,
+          "y": 1050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_8",
+        "name": "hdole/iso/o_8",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/B",
+        "xy": {
+          "x": 1200,
+          "y": 1250
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_9",
+        "name": "hdole/iso/o_9",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/B",
+        "xy": {
+          "x": 1000,
+          "y": 1050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_2",
+        "name": "hdole/iso/o_2",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/B",
+        "xy": {
+          "x": 1000,
+          "y": 900
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_3",
+        "name": "hdole/iso/o_3",
+        "prototype": "IndexObject",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "to": "hdole/iso/A",
+        "xy": {
+          "x": 800,
+          "y": 900
+        }
+      },
+      {
+        "description": "For f in the category C, f is an isomorphism iff there exists a morphism f⁻¹ such that the following diagrams commute.",
+        "basename": "t_1",
+        "name": "hdole/iso/t_1",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/iso",
+        "xy": {
+          "x": 400,
+          "y": 700
+        },
+        "height": "24"
+      },
+      {
+        "description": "",
+        "basename": "m_0",
+        "name": "hdole/iso/m_0",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_0",
+        "codomain": "hdole/iso/o_1",
+        "to": "hdole/iso/f"
+      },
+      {
+        "description": "",
+        "basename": "m_2",
+        "name": "hdole/iso/m_2",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_4",
+        "codomain": "hdole/iso/o_5",
+        "to": "hdole/iso/f"
+      },
+      {
+        "description": "",
+        "basename": "m_3",
+        "name": "hdole/iso/m_3",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_5",
+        "codomain": "hdole/iso/o_7",
+        "to": "hdole/iso/finv"
+      },
+      {
+        "description": "",
+        "basename": "m_4",
+        "name": "hdole/iso/m_4",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_4",
+        "codomain": "hdole/iso/o_7",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/iso/Id{A}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_5",
+        "name": "hdole/iso/m_5",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_6",
+        "codomain": "hdole/iso/o_8",
+        "to": "hdole/iso/f"
+      },
+      {
+        "description": "",
+        "basename": "m_6",
+        "name": "hdole/iso/m_6",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_9",
+        "codomain": "hdole/iso/o_6",
+        "to": "hdole/iso/finv"
+      },
+      {
+        "description": "",
+        "basename": "m_7",
+        "name": "hdole/iso/m_7",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_9",
+        "codomain": "hdole/iso/o_8",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/iso/Id{B}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_1",
+        "name": "hdole/iso/m_1",
+        "prototype": "IndexMorphism",
+        "category": "hdole/iso_Index",
+        "diagram": "hdole/iso",
+        "domain": "hdole/iso/o_2",
+        "codomain": "hdole/iso/o_3",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/iso/finv"
+      }
+    ],
+    "cells": [
+      {
+        "name": "hdole/iso/{m_2,m_3},{m_4}",
+        "left": [
+          "m_2",
+          "m_3"
+        ],
+        "right": [
+          "m_4"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/iso/{m_6,m_5},{m_7}",
+        "left": [
+          "m_6",
+          "m_5"
+        ],
+        "right": [
+          "m_7"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
+  },
   "elements": [
     {
       "basename": "A",
@@ -234,12 +533,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641857083088,
+  "timestamp": 1642147904896,
   "version": 0,
   "viewport": {
-    "x": 173,
-    "y": -210,
-    "scale": 1.155420458037912
+    "x": -385,
+    "y": -639,
+    "scale": 1.6186006032688938
   },
   "properName": "hdole/iso"
 }

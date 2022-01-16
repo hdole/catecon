@@ -18,7 +18,7 @@
         "x": 1040,
         "y": 350
       },
-      "height": "200",
+      "height": "250",
       "weight": "bold"
     },
     {
@@ -602,7 +602,7 @@
       "height": "48"
     },
     {
-      "description": "Have the morphism represent a reference in an assembly.",
+      "description": "The morphism is to represent a reference in an assembly.",
       "basename": "t_55",
       "prototype": "IndexText",
       "xy": {
@@ -1346,13 +1346,1731 @@
       "height": "48"
     }
   ],
+  "domainInfo": {
+    "description": "index category for diagram hdole/hotkeys",
+    "basename": "hotkeys_Index",
+    "name": "hdole/hotkeys_Index",
+    "prototype": "IndexCategory",
+    "category": "sys/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Hot Keys",
+        "basename": "t_0",
+        "name": "hdole/hotkeys/t_0",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1040,
+          "y": 350
+        },
+        "height": "250",
+        "weight": "bold"
+      },
+      {
+        "description": "A",
+        "basename": "t_1",
+        "name": "hdole/hotkeys/t_1",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 500
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Form a morphism assembly",
+        "basename": "t_2",
+        "name": "hdole/hotkeys/t_2",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 500
+        },
+        "height": "24"
+      },
+      {
+        "description": "ctrl-A",
+        "basename": "t_3",
+        "name": "hdole/hotkeys/t_3",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 600
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Select all elements",
+        "basename": "t_4",
+        "name": "hdole/hotkeys/t_4",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 600
+        },
+        "height": "24"
+      },
+      {
+        "description": "C",
+        "basename": "t_5",
+        "name": "hdole/hotkeys/t_5",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 700
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Copy the selected elements.",
+        "basename": "t_6",
+        "name": "hdole/hotkeys/t_6",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 700
+        },
+        "height": "24"
+      },
+      {
+        "description": "ctrl-C",
+        "basename": "t_7",
+        "name": "hdole/hotkeys/t_7",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 800
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Copy selected elements from the current diagram into the paste buffer.",
+        "basename": "t_8",
+        "name": "hdole/hotkeys/t_8",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 800
+        },
+        "height": "24"
+      },
+      {
+        "description": "D",
+        "basename": "t_9",
+        "name": "hdole/hotkeys/t_9",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 900
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Show diagram tool.",
+        "basename": "t_10",
+        "name": "hdole/hotkeys/t_10",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 900
+        },
+        "height": "24"
+      },
+      {
+        "description": "<icon>morphismAssembly</icon>",
+        "basename": "t_11",
+        "name": "hdole/hotkeys/t_11",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 500
+        },
+        "height": "48"
+      },
+      {
+        "description": "<icon>copy</icon>",
+        "basename": "t_12",
+        "name": "hdole/hotkeys/t_12",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 700
+        },
+        "height": "48"
+      },
+      {
+        "description": "<icon>diagram</icon>",
+        "basename": "t_13",
+        "name": "hdole/hotkeys/t_13",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 900
+        },
+        "height": "48"
+      },
+      {
+        "description": "shift-D",
+        "basename": "t_14",
+        "name": "hdole/hotkeys/t_14",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1000
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Show new diagram tool.",
+        "basename": "t_15",
+        "name": "hdole/hotkeys/t_15",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1000
+        },
+        "height": "24"
+      },
+      {
+        "description": "K",
+        "basename": "t_16",
+        "name": "hdole/hotkeys/t_16",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1600
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>composite</icon>",
+        "basename": "t_17",
+        "name": "hdole/hotkeys/t_17",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1600
+        },
+        "height": "48"
+      },
+      {
+        "description": "Form the composite of the selected morphisms.",
+        "basename": "t_18",
+        "name": "hdole/hotkeys/t_18",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1600
+        },
+        "height": "24"
+      },
+      {
+        "description": "G",
+        "basename": "t_19",
+        "name": "hdole/hotkeys/t_19",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1100
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>graph</icon>",
+        "basename": "t_20",
+        "name": "hdole/hotkeys/t_20",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1100
+        },
+        "height": "48"
+      },
+      {
+        "description": "Show the string graphs of the morphisms.",
+        "basename": "t_21",
+        "name": "hdole/hotkeys/t_21",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1100
+        },
+        "height": "24"
+      },
+      {
+        "description": "H",
+        "basename": "t_22",
+        "name": "hdole/hotkeys/t_22",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1200
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>homset</icon>",
+        "basename": "t_23",
+        "name": "hdole/hotkeys/t_23",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1200
+        },
+        "height": "48"
+      },
+      {
+        "description": "Show the new morphism toolbar with the chosen domain and\ncodomain corresponding to the two selected objects.",
+        "basename": "t_24",
+        "name": "hdole/hotkeys/t_24",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1200
+        },
+        "height": "24"
+      },
+      {
+        "description": "Form the hom action on two objects or two morphisms.",
+        "basename": "t_25",
+        "name": "hdole/hotkeys/t_25",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1300
+        },
+        "height": "24"
+      },
+      {
+        "description": "shift-H",
+        "basename": "t_26",
+        "name": "hdole/hotkeys/t_26",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1300
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>hom</icon>",
+        "basename": "t_27",
+        "name": "hdole/hotkeys/t_27",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1300
+        },
+        "height": "48"
+      },
+      {
+        "description": "Create an identity from the selected object.",
+        "basename": "t_28",
+        "name": "hdole/hotkeys/t_28",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1400
+        },
+        "height": "24"
+      },
+      {
+        "description": "I",
+        "basename": "t_29",
+        "name": "hdole/hotkeys/t_29",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1400
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>identity</icon>",
+        "basename": "t_30",
+        "name": "hdole/hotkeys/t_30",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1400
+        },
+        "height": "48"
+      },
+      {
+        "description": "Show the lambda morphism tool.",
+        "basename": "t_31",
+        "name": "hdole/hotkeys/t_31",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1700
+        },
+        "height": "24"
+      },
+      {
+        "description": "L",
+        "basename": "t_32",
+        "name": "hdole/hotkeys/t_32",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1700
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>lambda</icon>",
+        "basename": "t_33",
+        "name": "hdole/hotkeys/t_33",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1700
+        },
+        "height": "48"
+      },
+      {
+        "description": "ctrl-L",
+        "basename": "t_34",
+        "name": "hdole/hotkeys/t_34",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1800
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Open the TTY panel.",
+        "basename": "t_35",
+        "name": "hdole/hotkeys/t_35",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1800
+        },
+        "height": "24"
+      },
+      {
+        "description": "Show the morphism tool.",
+        "basename": "t_36",
+        "name": "hdole/hotkeys/t_36",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1900
+        },
+        "height": "24"
+      },
+      {
+        "description": "M",
+        "basename": "t_37",
+        "name": "hdole/hotkeys/t_37",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1900
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>morphism</icon>",
+        "basename": "t_38",
+        "name": "hdole/hotkeys/t_38",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1900
+        },
+        "height": "48"
+      },
+      {
+        "description": "Show the new morphism tool.",
+        "basename": "t_39",
+        "name": "hdole/hotkeys/t_39",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2000
+        },
+        "height": "24"
+      },
+      {
+        "description": "shift-M",
+        "basename": "t_40",
+        "name": "hdole/hotkeys/t_40",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2000
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Show the object tool.",
+        "basename": "t_41",
+        "name": "hdole/hotkeys/t_41",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2100
+        },
+        "height": "24"
+      },
+      {
+        "description": "O",
+        "basename": "t_42",
+        "name": "hdole/hotkeys/t_42",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2100
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>object</icon>",
+        "basename": "t_43",
+        "name": "hdole/hotkeys/t_43",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2100
+        },
+        "height": "48"
+      },
+      {
+        "description": "shift-O",
+        "basename": "t_44",
+        "name": "hdole/hotkeys/t_44",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2200
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Show the new object tool.",
+        "basename": "t_45",
+        "name": "hdole/hotkeys/t_45",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2200
+        },
+        "height": "24"
+      },
+      {
+        "description": "Form the product of the selected objects or morphisms.",
+        "basename": "t_46",
+        "name": "hdole/hotkeys/t_46",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2300
+        },
+        "height": "24"
+      },
+      {
+        "description": "P",
+        "basename": "t_47",
+        "name": "hdole/hotkeys/t_47",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2300
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>product</icon>",
+        "basename": "t_48",
+        "name": "hdole/hotkeys/t_48",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2310
+        },
+        "height": "48"
+      },
+      {
+        "description": "Form the coproduct of the selected objects or morphisms.",
+        "basename": "t_49",
+        "name": "hdole/hotkeys/t_49",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2400
+        },
+        "height": "24"
+      },
+      {
+        "description": "shift-P",
+        "basename": "t_50",
+        "name": "hdole/hotkeys/t_50",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2400
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>coproduct</icon>",
+        "basename": "t_51",
+        "name": "hdole/hotkeys/t_51",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2400
+        },
+        "height": "48"
+      },
+      {
+        "description": "Show the help info for the selected element.",
+        "basename": "t_52",
+        "name": "hdole/hotkeys/t_52",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2500
+        },
+        "height": "24"
+      },
+      {
+        "description": "Q",
+        "basename": "t_53",
+        "name": "hdole/hotkeys/t_53",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2500
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>help</icon>",
+        "basename": "t_54",
+        "name": "hdole/hotkeys/t_54",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2500
+        },
+        "height": "48"
+      },
+      {
+        "description": "The morphism is to represent a reference in an assembly.",
+        "basename": "t_55",
+        "name": "hdole/hotkeys/t_55",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2600
+        },
+        "height": "24"
+      },
+      {
+        "description": "R",
+        "basename": "t_56",
+        "name": "hdole/hotkeys/t_56",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2600
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Show the text tool.",
+        "basename": "t_58",
+        "name": "hdole/hotkeys/t_58",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2700
+        },
+        "height": "24"
+      },
+      {
+        "description": "T",
+        "basename": "t_59",
+        "name": "hdole/hotkeys/t_59",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2700
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Show the new text tool.",
+        "basename": "t_61",
+        "name": "hdole/hotkeys/t_61",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2800
+        },
+        "height": "24"
+      },
+      {
+        "description": "shift-T",
+        "basename": "t_62",
+        "name": "hdole/hotkeys/t_62",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2800
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Pan to the selected elements.",
+        "basename": "t_63",
+        "name": "hdole/hotkeys/t_63",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 2900
+        },
+        "height": "24"
+      },
+      {
+        "description": "V",
+        "basename": "t_64",
+        "name": "hdole/hotkeys/t_64",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 2900
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>view</icon>",
+        "basename": "t_65",
+        "name": "hdole/hotkeys/t_65",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2900
+        },
+        "height": "48"
+      },
+      {
+        "description": "ctrl-V",
+        "basename": "t_66",
+        "name": "hdole/hotkeys/t_66",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3000
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Paste the contents of the paste buffer at the curosor.",
+        "basename": "t_67",
+        "name": "hdole/hotkeys/t_67",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3000
+        },
+        "height": "24"
+      },
+      {
+        "description": "Product and coproduct assemblies",
+        "basename": "t_68",
+        "name": "hdole/hotkeys/t_68",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3100
+        },
+        "height": "24"
+      },
+      {
+        "description": "Y",
+        "basename": "t_69",
+        "name": "hdole/hotkeys/t_69",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3100
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>productAssembly</icon><icon>coproductAssembly</icon>",
+        "basename": "t_70",
+        "name": "hdole/hotkeys/t_70",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1190,
+          "y": 3110
+        },
+        "height": "48"
+      },
+      {
+        "description": "Zoom to the selected elements.",
+        "basename": "t_71",
+        "name": "hdole/hotkeys/t_71",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3200
+        },
+        "height": "24"
+      },
+      {
+        "description": "Z",
+        "basename": "t_72",
+        "name": "hdole/hotkeys/t_72",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3200
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Arrow",
+        "basename": "t_74",
+        "name": "hdole/hotkeys/t_74",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3400
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Delete",
+        "basename": "t_75",
+        "name": "hdole/hotkeys/t_75",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3700
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>delete</icon>",
+        "basename": "t_76",
+        "name": "hdole/hotkeys/t_76",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 3700
+        },
+        "height": "48"
+      },
+      {
+        "description": "Delete the selected elements",
+        "basename": "t_77",
+        "name": "hdole/hotkeys/t_77",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3700
+        },
+        "height": "24"
+      },
+      {
+        "description": "shift-Delete",
+        "basename": "t_78",
+        "name": "hdole/hotkeys/t_78",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3800
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "If morphisms are selected, delete their objects as well if possible.",
+        "basename": "t_79",
+        "name": "hdole/hotkeys/t_79",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3800
+        },
+        "height": "24"
+      },
+      {
+        "description": "Digit 1",
+        "basename": "t_80",
+        "name": "hdole/hotkeys/t_80",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3900
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Place terminal object at mouse location.  If an object is selected, then a morphism is\nplaced from that object to the terminal object.",
+        "basename": "t_81",
+        "name": "hdole/hotkeys/t_81",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3900
+        },
+        "height": "24"
+      },
+      {
+        "description": "ctrl-End",
+        "basename": "t_82",
+        "name": "hdole/hotkeys/t_82",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4100
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "View bottom of diagram.",
+        "basename": "t_83",
+        "name": "hdole/hotkeys/t_83",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4100
+        },
+        "height": "24"
+      },
+      {
+        "description": "Plus",
+        "basename": "t_84",
+        "name": "hdole/hotkeys/t_84",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4200
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Zoom in.",
+        "basename": "t_85",
+        "name": "hdole/hotkeys/t_85",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4200
+        },
+        "height": "24"
+      },
+      {
+        "description": "Close toolbar, close panels, change view mode between single diagram view (for editing) and multi-diagram view.",
+        "basename": "t_86",
+        "name": "hdole/hotkeys/t_86",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4300
+        },
+        "height": "24"
+      },
+      {
+        "description": "Escape",
+        "basename": "t_87",
+        "name": "hdole/hotkeys/t_87",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4300
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "View everything.",
+        "basename": "t_88",
+        "name": "hdole/hotkeys/t_88",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4400
+        },
+        "height": "24"
+      },
+      {
+        "description": "Home",
+        "basename": "t_89",
+        "name": "hdole/hotkeys/t_89",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4400
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>home</icon>",
+        "basename": "t_90",
+        "name": "hdole/hotkeys/t_90",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 4400
+        },
+        "height": "48"
+      },
+      {
+        "description": "ctrl-Home",
+        "basename": "t_91",
+        "name": "hdole/hotkeys/t_91",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4500
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "View top of diagram.",
+        "basename": "t_92",
+        "name": "hdole/hotkeys/t_92",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4500
+        },
+        "height": "24"
+      },
+      {
+        "description": "Minus",
+        "basename": "t_93",
+        "name": "hdole/hotkeys/t_93",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4600
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Zoom out",
+        "basename": "t_94",
+        "name": "hdole/hotkeys/t_94",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4600
+        },
+        "height": "24"
+      },
+      {
+        "description": "Numpad",
+        "basename": "t_95",
+        "name": "hdole/hotkeys/t_95",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4700
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Pan in indicated direction.",
+        "basename": "t_96",
+        "name": "hdole/hotkeys/t_96",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4700
+        },
+        "height": "24"
+      },
+      {
+        "description": "Page Up\nPage Down",
+        "basename": "t_97",
+        "name": "hdole/hotkeys/t_97",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4800
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "In multi-diagram viewing, the current diagram’s Z-order in the view changes up or down accordingly.",
+        "basename": "t_98",
+        "name": "hdole/hotkeys/t_98",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4800
+        },
+        "height": "24"
+      },
+      {
+        "description": "Spacebar",
+        "basename": "t_99",
+        "name": "hdole/hotkeys/t_99",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 5000
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Press the spacebar and move the mouse to pan the current diagram’s view.",
+        "basename": "t_100",
+        "name": "hdole/hotkeys/t_100",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 5000
+        },
+        "height": "24"
+      },
+      {
+        "description": "<icon>text</icon>",
+        "basename": "t_60",
+        "name": "hdole/hotkeys/t_60",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2700
+        },
+        "height": "36"
+      },
+      {
+        "description": "<icon>referenceMorphism</icon>",
+        "basename": "t_57",
+        "name": "hdole/hotkeys/t_57",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2600
+        },
+        "height": "36"
+      },
+      {
+        "description": "J",
+        "basename": "t_101",
+        "name": "hdole/hotkeys/t_101",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 1500
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Show element's Javascript code.",
+        "basename": "t_102",
+        "name": "hdole/hotkeys/t_102",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 1500
+        },
+        "height": "24"
+      },
+      {
+        "description": "<icon>javascript</icon>",
+        "basename": "t_103",
+        "name": "hdole/hotkeys/t_103",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1500
+        },
+        "height": "48"
+      },
+      {
+        "description": "Tab",
+        "basename": "t_104",
+        "name": "hdole/hotkeys/t_104",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 5100
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "shift-Tab",
+        "basename": "t_105",
+        "name": "hdole/hotkeys/t_105",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 5200
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "If one element is selected, then select the next element of the same type.",
+        "basename": "t_106",
+        "name": "hdole/hotkeys/t_106",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 5100
+        },
+        "height": "24"
+      },
+      {
+        "description": "If one element is selected, then select the prior element of the same type.",
+        "basename": "t_107",
+        "name": "hdole/hotkeys/t_107",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 5200
+        },
+        "height": "24"
+      },
+      {
+        "description": "<icon>edit</icon>",
+        "basename": "t_108",
+        "name": "hdole/hotkeys/t_108",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2200
+        },
+        "height": "48"
+      },
+      {
+        "description": "<icon>edit</icon>",
+        "basename": "t_109",
+        "name": "hdole/hotkeys/t_109",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2000
+        },
+        "height": "48"
+      },
+      {
+        "description": "<icon>edit</icon>",
+        "basename": "t_110",
+        "name": "hdole/hotkeys/t_110",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 2800
+        },
+        "height": "48"
+      },
+      {
+        "description": "Digit 2",
+        "basename": "t_111",
+        "name": "hdole/hotkeys/t_111",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 4000
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "If nothing selected, place object '2' at mouse location.  If an object A or morphism m is\nselected, then AxA or mxm is placed.",
+        "basename": "t_112",
+        "name": "hdole/hotkeys/t_112",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 4000
+        },
+        "height": "24"
+      },
+      {
+        "description": "Possibly undo the last edit action.",
+        "basename": "t_113",
+        "name": "hdole/hotkeys/t_113",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3300
+        },
+        "height": "24"
+      },
+      {
+        "description": "ctrl-Z",
+        "basename": "t_114",
+        "name": "hdole/hotkeys/t_114",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3300
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>detachCodomain</icon>",
+        "basename": "t_115",
+        "name": "hdole/hotkeys/t_115",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 3600
+        },
+        "height": "48"
+      },
+      {
+        "description": "<icon>view</icon>",
+        "basename": "t_116",
+        "name": "hdole/hotkeys/t_116",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 3200
+        },
+        "height": "48"
+      },
+      {
+        "description": "<icon>detachDomain</icon>",
+        "basename": "t_117",
+        "name": "hdole/hotkeys/t_117",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 3500
+        },
+        "height": "48"
+      },
+      {
+        "description": "If nothing selected, pan in the indicated direction for either single or multi-diagram viewing. \nOtherwise move the selected elements.",
+        "basename": "t_118",
+        "name": "hdole/hotkeys/t_118",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3400
+        },
+        "height": "24"
+      },
+      {
+        "description": "Left bracket:  Detach domain",
+        "basename": "t_119",
+        "name": "hdole/hotkeys/t_119",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3500
+        },
+        "height": "24"
+      },
+      {
+        "description": "Right bracket:  Detach codomain",
+        "basename": "t_73",
+        "name": "hdole/hotkeys/t_73",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1300,
+          "y": 3600
+        },
+        "height": "24"
+      },
+      {
+        "description": "[",
+        "basename": "t_120",
+        "name": "hdole/hotkeys/t_120",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3500
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "]",
+        "basename": "t_121",
+        "name": "hdole/hotkeys/t_121",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1150,
+          "y": 3600
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "<icon>edit</icon>",
+        "basename": "t_122",
+        "name": "hdole/hotkeys/t_122",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1000
+        },
+        "height": "48"
+      },
+      {
+        "description": "<icon>tty</icon>",
+        "basename": "t_123",
+        "name": "hdole/hotkeys/t_123",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1200,
+          "y": 1800
+        },
+        "height": "48"
+      }
+    ],
+    "cells": []
+  },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641898819569,
+  "timestamp": 1642147934759,
   "version": 0,
   "viewport": {
-    "x": -1950,
-    "y": -309,
-    "scale": 2.12573767207485
+    "x": -980,
+    "y": -188,
+    "scale": 1.3052054173627434
   }
 }

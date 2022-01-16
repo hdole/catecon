@@ -53,7 +53,7 @@
       "prototype": "IndexObject",
       "to": "hdole/test/C",
       "xy": {
-        "x": 1010,
+        "x": 1090,
         "y": -680
       }
     },
@@ -80,8 +80,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/B",
       "xy": {
-        "x": 670,
-        "y": -670
+        "x": 680,
+        "y": -690
       }
     },
     {
@@ -98,8 +98,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 740,
-        "y": -490
+        "x": 680,
+        "y": -430
       }
     },
     {
@@ -107,8 +107,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/B",
       "xy": {
-        "x": 740,
-        "y": -340
+        "x": 680,
+        "y": -280
       }
     },
     {
@@ -116,8 +116,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/C",
       "xy": {
-        "x": 890,
-        "y": -340
+        "x": 830,
+        "y": -280
       }
     },
     {
@@ -379,8 +379,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 890,
-        "y": -490
+        "x": 830,
+        "y": -430
       }
     },
     {
@@ -397,8 +397,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/C",
       "xy": {
-        "x": 1830,
-        "y": -750
+        "x": 1750,
+        "y": -800
       }
     },
     {
@@ -415,7 +415,7 @@
       "prototype": "IndexObject",
       "to": "hdole/test/Po{C,B}oP",
       "xy": {
-        "x": 1800,
+        "x": 1760,
         "y": -400
       }
     },
@@ -433,8 +433,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/B",
       "xy": {
-        "x": 2150,
-        "y": -470
+        "x": 2200,
+        "y": -200
       }
     },
     {
@@ -568,7 +568,7 @@
       "prototype": "IndexObject",
       "to": "hdole/test/CPo{Po{C,A}oP,Po{C,B}oP}oPC",
       "xy": {
-        "x": 980,
+        "x": 950,
         "y": 1030
       }
     },
@@ -649,8 +649,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 1970,
-        "y": -530
+        "x": 2050,
+        "y": -200
       }
     },
     {
@@ -703,8 +703,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/Po{A,B}oP",
       "xy": {
-        "x": 1520,
-        "y": -930
+        "x": 1150,
+        "y": -1100
       }
     },
     {
@@ -712,8 +712,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/C",
       "xy": {
-        "x": 1710,
-        "y": -930
+        "x": 1350,
+        "y": -1100
       }
     },
     {
@@ -721,8 +721,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/B",
       "xy": {
-        "x": 1520,
-        "y": -840
+        "x": 1150,
+        "y": -1000
       }
     },
     {
@@ -730,8 +730,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/Ho{A,C}oH",
       "xy": {
-        "x": 1710,
-        "y": -840
+        "x": 1350,
+        "y": -1000
       }
     },
     {
@@ -739,8 +739,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/#1",
       "xy": {
-        "x": 1520,
-        "y": -750
+        "x": 1150,
+        "y": -900
       }
     },
     {
@@ -748,8 +748,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/Ho{Po{A,B}oP,C}oH",
       "xy": {
-        "x": 1710,
-        "y": -750
+        "x": 1350,
+        "y": -900
       }
     },
     {
@@ -838,8 +838,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/CPo{A,B,C}oPC",
       "xy": {
-        "x": 2690,
-        "y": -110
+        "x": 2770,
+        "y": -200
       }
     },
     {
@@ -847,8 +847,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 2400,
-        "y": -200
+        "x": 2520,
+        "y": -420
       }
     },
     {
@@ -856,8 +856,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/CPo{A,A,B,B,C,C}oPC",
       "xy": {
-        "x": 2350,
-        "y": -90
+        "x": 2390,
+        "y": -200
       }
     },
     {
@@ -865,8 +865,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/B",
       "xy": {
-        "x": 2290,
-        "y": 150
+        "x": 2380,
+        "y": 430
       }
     },
     {
@@ -874,8 +874,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 2400,
-        "y": -10
+        "x": 2490,
+        "y": 270
       }
     },
     {
@@ -883,8 +883,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/C",
       "xy": {
-        "x": 2400,
-        "y": 210
+        "x": 2490,
+        "y": 490
       }
     },
     {
@@ -892,8 +892,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/D",
       "xy": {
-        "x": 2510,
-        "y": 150
+        "x": 2600,
+        "y": 430
       }
     },
     {
@@ -901,8 +901,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/CPo{B,C,D}oPC",
       "xy": {
-        "x": 2690,
-        "y": -10
+        "x": 2780,
+        "y": 270
       }
     },
     {
@@ -933,21 +933,140 @@
       }
     },
     {
-      "basename": "o_99",
-      "prototype": "IndexPullback",
-      "to": "hdole/test/Pb{f,Fa{Po{A,B}oP,B_1}aF}bP",
+      "description": "BUG:  getting graph of this coproduct assy",
+      "basename": "t_0",
+      "prototype": "IndexText",
       "xy": {
-        "x": 1610,
-        "y": -90
+        "x": 2450,
+        "y": 220
       },
-      "morphisms": [
-        "hdole/test/m_41",
-        "hdole/test/m_49"
-      ],
-      "cone": [
-        "hdole/test/m_83",
-        "hdole/test/m_84"
-      ]
+      "height": "24"
+    },
+    {
+      "basename": "o_99",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 2200,
+        "y": -350
+      }
+    },
+    {
+      "basename": "o_100",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 2200,
+        "y": -250
+      }
+    },
+    {
+      "basename": "o_101",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 2200,
+        "y": -500
+      }
+    },
+    {
+      "basename": "o_104",
+      "prototype": "IndexObject",
+      "to": "hdole/test/A",
+      "xy": {
+        "x": 2050,
+        "y": -500
+      }
+    },
+    {
+      "basename": "o_105",
+      "prototype": "IndexObject",
+      "to": "hdole/test/A",
+      "xy": {
+        "x": 2050,
+        "y": -450
+      }
+    },
+    {
+      "basename": "o_106",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 2200,
+        "y": -450
+      }
+    },
+    {
+      "basename": "o_107",
+      "prototype": "IndexObject",
+      "to": "hdole/test/A",
+      "xy": {
+        "x": 2050,
+        "y": -400
+      }
+    },
+    {
+      "basename": "o_108",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 2200,
+        "y": -400
+      }
+    },
+    {
+      "basename": "o_109",
+      "prototype": "IndexObject",
+      "to": "hdole/test/A",
+      "xy": {
+        "x": 2050,
+        "y": -350
+      }
+    },
+    {
+      "basename": "o_110",
+      "prototype": "IndexObject",
+      "to": "hdole/test/A",
+      "xy": {
+        "x": 2050,
+        "y": -250
+      }
+    },
+    {
+      "basename": "o_111",
+      "prototype": "IndexObject",
+      "to": "hdole/test/A",
+      "xy": {
+        "x": 2050,
+        "y": -150
+      }
+    },
+    {
+      "basename": "o_112",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 2200,
+        "y": -150
+      }
+    },
+    {
+      "basename": "o_113",
+      "prototype": "IndexObject",
+      "to": "hdole/test/A",
+      "xy": {
+        "x": 2050,
+        "y": -300
+      }
+    },
+    {
+      "basename": "o_114",
+      "prototype": "IndexObject",
+      "to": "hdole/test/B",
+      "xy": {
+        "x": 2200,
+        "y": -300
+      }
     },
     {
       "basename": "m_5",
@@ -999,7 +1118,7 @@
           true
         ]
       ],
-      "homsetIndex": 1,
+      "homsetIndex": -2,
       "to": "hdole/test/h"
     },
     {
@@ -1514,17 +1633,20 @@
       "to": "hdole/test/Fa{Po{A,B}oP,B_1}aF"
     },
     {
-      "basename": "m_31",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/test/o_45",
-      "codomain": "hdole/test/o_52",
-      "to": "hdole/test/f"
-    },
-    {
       "basename": "m_45",
       "prototype": "IndexMorphism",
       "domain": "hdole/test/o_45",
       "codomain": "hdole/test/o_55",
+      "attributes": [
+        [
+          "base",
+          "includes"
+        ],
+        [
+          "start",
+          "includes"
+        ]
+      ],
       "to": "hdole/test/f"
     },
     {
@@ -1714,18 +1836,107 @@
       "to": "hdole/test/Pa{Pa{h,f}aP,f}aP"
     },
     {
+      "basename": "m_85",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/test/o_104",
+      "codomain": "hdole/test/o_101",
+      "attributes": [
+        [
+          "quantifier",
+          "forall"
+        ]
+      ],
+      "to": "hdole/test/f"
+    },
+    {
+      "basename": "m_86",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/test/o_105",
+      "codomain": "hdole/test/o_106",
+      "attributes": [
+        [
+          "quantifier",
+          "exists"
+        ]
+      ],
+      "to": "hdole/test/f"
+    },
+    {
+      "basename": "m_31",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/test/o_107",
+      "codomain": "hdole/test/o_108",
+      "attributes": [
+        [
+          "base",
+          "element"
+        ],
+        [
+          "quantifier",
+          "existsUnique"
+        ]
+      ],
+      "to": "hdole/test/f"
+    },
+    {
       "basename": "m_83",
       "prototype": "IndexMorphism",
-      "domain": "hdole/test/o_99",
-      "codomain": "hdole/test/o_47",
-      "to": "hdole/test/Fa{Pb{f,Fa{Po{A,B}oP,B_1}aF}bP,A_0}aF"
+      "domain": "hdole/test/o_109",
+      "codomain": "hdole/test/o_99",
+      "attributes": [
+        [
+          "base",
+          "mono"
+        ],
+        [
+          "start",
+          "element"
+        ]
+      ],
+      "to": "hdole/test/f"
     },
     {
       "basename": "m_84",
       "prototype": "IndexMorphism",
-      "domain": "hdole/test/o_99",
-      "codomain": "hdole/test/o_42",
-      "to": "hdole/test/Fa{Pb{f,Fa{Po{A,B}oP,B_1}aF}bP,Po{A,B}oP_1}aF"
+      "domain": "hdole/test/o_110",
+      "codomain": "hdole/test/o_100",
+      "attributes": [
+        [
+          "end",
+          "epi"
+        ]
+      ],
+      "to": "hdole/test/f"
+    },
+    {
+      "basename": "m_87",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/test/o_111",
+      "codomain": "hdole/test/o_112",
+      "attributes": [
+        [
+          "start",
+          "mono"
+        ],
+        [
+          "end",
+          "epi"
+        ]
+      ],
+      "to": "hdole/test/f"
+    },
+    {
+      "basename": "m_88",
+      "prototype": "IndexMorphism",
+      "domain": "hdole/test/o_113",
+      "codomain": "hdole/test/o_114",
+      "attributes": [
+        [
+          "start",
+          "mono"
+        ]
+      ],
+      "to": "hdole/test/f"
     }
   ],
   "domainInfo": {
@@ -1797,7 +2008,7 @@
         "diagram": "hdole/test",
         "to": "hdole/test/C",
         "xy": {
-          "x": 1010,
+          "x": 1090,
           "y": -680
         }
       },
@@ -1836,8 +2047,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/B",
         "xy": {
-          "x": 670,
-          "y": -670
+          "x": 680,
+          "y": -690
         }
       },
       {
@@ -1862,8 +2073,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/A",
         "xy": {
-          "x": 740,
-          "y": -490
+          "x": 680,
+          "y": -430
         }
       },
       {
@@ -1875,8 +2086,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/B",
         "xy": {
-          "x": 740,
-          "y": -340
+          "x": 680,
+          "y": -280
         }
       },
       {
@@ -1888,8 +2099,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/C",
         "xy": {
-          "x": 890,
-          "y": -340
+          "x": 830,
+          "y": -280
         }
       },
       {
@@ -2266,8 +2477,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/A",
         "xy": {
-          "x": 890,
-          "y": -490
+          "x": 830,
+          "y": -430
         }
       },
       {
@@ -2292,8 +2503,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/C",
         "xy": {
-          "x": 1830,
-          "y": -750
+          "x": 1750,
+          "y": -800
         }
       },
       {
@@ -2318,7 +2529,7 @@
         "diagram": "hdole/test",
         "to": "hdole/test/Po{C,B}oP",
         "xy": {
-          "x": 1800,
+          "x": 1760,
           "y": -400
         }
       },
@@ -2344,8 +2555,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/B",
         "xy": {
-          "x": 2150,
-          "y": -470
+          "x": 2200,
+          "y": -200
         }
       },
       {
@@ -2539,7 +2750,7 @@
         "diagram": "hdole/test",
         "to": "hdole/test/CPo{Po{C,A}oP,Po{C,B}oP}oPC",
         "xy": {
-          "x": 980,
+          "x": 950,
           "y": 1030
         }
       },
@@ -2656,8 +2867,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/A",
         "xy": {
-          "x": 1970,
-          "y": -530
+          "x": 2050,
+          "y": -200
         }
       },
       {
@@ -2734,8 +2945,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/Po{A,B}oP",
         "xy": {
-          "x": 1520,
-          "y": -930
+          "x": 1150,
+          "y": -1100
         }
       },
       {
@@ -2747,8 +2958,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/C",
         "xy": {
-          "x": 1710,
-          "y": -930
+          "x": 1350,
+          "y": -1100
         }
       },
       {
@@ -2760,8 +2971,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/B",
         "xy": {
-          "x": 1520,
-          "y": -840
+          "x": 1150,
+          "y": -1000
         }
       },
       {
@@ -2773,8 +2984,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/Ho{A,C}oH",
         "xy": {
-          "x": 1710,
-          "y": -840
+          "x": 1350,
+          "y": -1000
         }
       },
       {
@@ -2786,8 +2997,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/#1",
         "xy": {
-          "x": 1520,
-          "y": -750
+          "x": 1150,
+          "y": -900
         }
       },
       {
@@ -2799,8 +3010,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/Ho{Po{A,B}oP,C}oH",
         "xy": {
-          "x": 1710,
-          "y": -750
+          "x": 1350,
+          "y": -900
         }
       },
       {
@@ -2929,8 +3140,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/CPo{A,B,C}oPC",
         "xy": {
-          "x": 2690,
-          "y": -110
+          "x": 2770,
+          "y": -200
         }
       },
       {
@@ -2942,8 +3153,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/A",
         "xy": {
-          "x": 2400,
-          "y": -200
+          "x": 2520,
+          "y": -420
         }
       },
       {
@@ -2955,8 +3166,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/CPo{A,A,B,B,C,C}oPC",
         "xy": {
-          "x": 2350,
-          "y": -90
+          "x": 2390,
+          "y": -200
         }
       },
       {
@@ -2968,8 +3179,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/B",
         "xy": {
-          "x": 2290,
-          "y": 150
+          "x": 2380,
+          "y": 430
         }
       },
       {
@@ -2981,8 +3192,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/A",
         "xy": {
-          "x": 2400,
-          "y": -10
+          "x": 2490,
+          "y": 270
         }
       },
       {
@@ -2994,8 +3205,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/C",
         "xy": {
-          "x": 2400,
-          "y": 210
+          "x": 2490,
+          "y": 490
         }
       },
       {
@@ -3007,8 +3218,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/D",
         "xy": {
-          "x": 2510,
-          "y": 150
+          "x": 2600,
+          "y": 430
         }
       },
       {
@@ -3020,8 +3231,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/CPo{B,C,D}oPC",
         "xy": {
-          "x": 2690,
-          "y": -10
+          "x": 2780,
+          "y": 270
         }
       },
       {
@@ -3064,25 +3275,199 @@
         }
       },
       {
+        "description": "BUG:  getting graph of this coproduct assy",
+        "basename": "t_0",
+        "name": "hdole/test/t_0",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/test",
+        "xy": {
+          "x": 2450,
+          "y": 220
+        },
+        "height": "24"
+      },
+      {
         "description": "",
         "basename": "o_99",
         "name": "hdole/test/o_99",
-        "prototype": "IndexPullback",
+        "prototype": "IndexObject",
         "category": "hdole/test_Index",
         "diagram": "hdole/test",
-        "to": "hdole/test/Pb{f,Fa{Po{A,B}oP,B_1}aF}bP",
+        "to": "hdole/test/B",
         "xy": {
-          "x": 1610,
-          "y": -90
-        },
-        "morphisms": [
-          "hdole/test/m_41",
-          "hdole/test/m_49"
-        ],
-        "cone": [
-          "hdole/test/m_83",
-          "hdole/test/m_84"
-        ]
+          "x": 2200,
+          "y": -350
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_100",
+        "name": "hdole/test/o_100",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/B",
+        "xy": {
+          "x": 2200,
+          "y": -250
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_101",
+        "name": "hdole/test/o_101",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/B",
+        "xy": {
+          "x": 2200,
+          "y": -500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_104",
+        "name": "hdole/test/o_104",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/A",
+        "xy": {
+          "x": 2050,
+          "y": -500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_105",
+        "name": "hdole/test/o_105",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/A",
+        "xy": {
+          "x": 2050,
+          "y": -450
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_106",
+        "name": "hdole/test/o_106",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/B",
+        "xy": {
+          "x": 2200,
+          "y": -450
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_107",
+        "name": "hdole/test/o_107",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/A",
+        "xy": {
+          "x": 2050,
+          "y": -400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_108",
+        "name": "hdole/test/o_108",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/B",
+        "xy": {
+          "x": 2200,
+          "y": -400
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_109",
+        "name": "hdole/test/o_109",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/A",
+        "xy": {
+          "x": 2050,
+          "y": -350
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_110",
+        "name": "hdole/test/o_110",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/A",
+        "xy": {
+          "x": 2050,
+          "y": -250
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_111",
+        "name": "hdole/test/o_111",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/A",
+        "xy": {
+          "x": 2050,
+          "y": -150
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_112",
+        "name": "hdole/test/o_112",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/B",
+        "xy": {
+          "x": 2200,
+          "y": -150
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_113",
+        "name": "hdole/test/o_113",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/A",
+        "xy": {
+          "x": 2050,
+          "y": -300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_114",
+        "name": "hdole/test/o_114",
+        "prototype": "IndexObject",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "to": "hdole/test/B",
+        "xy": {
+          "x": 2200,
+          "y": -300
+        }
       },
       {
         "description": "",
@@ -3154,7 +3539,7 @@
             true
           ]
         ],
-        "homsetIndex": 1,
+        "homsetIndex": -2,
         "to": "hdole/test/h"
       },
       {
@@ -3882,17 +4267,6 @@
       },
       {
         "description": "",
-        "basename": "m_31",
-        "name": "hdole/test/m_31",
-        "prototype": "IndexMorphism",
-        "category": "hdole/test_Index",
-        "diagram": "hdole/test",
-        "domain": "hdole/test/o_45",
-        "codomain": "hdole/test/o_52",
-        "to": "hdole/test/f"
-      },
-      {
-        "description": "",
         "basename": "m_45",
         "name": "hdole/test/m_45",
         "prototype": "IndexMorphism",
@@ -3900,6 +4274,16 @@
         "diagram": "hdole/test",
         "domain": "hdole/test/o_45",
         "codomain": "hdole/test/o_55",
+        "attributes": [
+          [
+            "base",
+            "includes"
+          ],
+          [
+            "start",
+            "includes"
+          ]
+        ],
         "to": "hdole/test/f"
       },
       {
@@ -4182,14 +4566,79 @@
       },
       {
         "description": "",
+        "basename": "m_85",
+        "name": "hdole/test/m_85",
+        "prototype": "IndexMorphism",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "domain": "hdole/test/o_104",
+        "codomain": "hdole/test/o_101",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ]
+        ],
+        "to": "hdole/test/f"
+      },
+      {
+        "description": "",
+        "basename": "m_86",
+        "name": "hdole/test/m_86",
+        "prototype": "IndexMorphism",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "domain": "hdole/test/o_105",
+        "codomain": "hdole/test/o_106",
+        "attributes": [
+          [
+            "quantifier",
+            "exists"
+          ]
+        ],
+        "to": "hdole/test/f"
+      },
+      {
+        "description": "",
+        "basename": "m_31",
+        "name": "hdole/test/m_31",
+        "prototype": "IndexMorphism",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "domain": "hdole/test/o_107",
+        "codomain": "hdole/test/o_108",
+        "attributes": [
+          [
+            "base",
+            "element"
+          ],
+          [
+            "quantifier",
+            "existsUnique"
+          ]
+        ],
+        "to": "hdole/test/f"
+      },
+      {
+        "description": "",
         "basename": "m_83",
         "name": "hdole/test/m_83",
         "prototype": "IndexMorphism",
         "category": "hdole/test_Index",
         "diagram": "hdole/test",
-        "domain": "hdole/test/o_99",
-        "codomain": "hdole/test/o_47",
-        "to": "hdole/test/Fa{Pb{f,Fa{Po{A,B}oP,B_1}aF}bP,A_0}aF"
+        "domain": "hdole/test/o_109",
+        "codomain": "hdole/test/o_99",
+        "attributes": [
+          [
+            "base",
+            "mono"
+          ],
+          [
+            "start",
+            "element"
+          ]
+        ],
+        "to": "hdole/test/f"
       },
       {
         "description": "",
@@ -4198,9 +4647,53 @@
         "prototype": "IndexMorphism",
         "category": "hdole/test_Index",
         "diagram": "hdole/test",
-        "domain": "hdole/test/o_99",
-        "codomain": "hdole/test/o_42",
-        "to": "hdole/test/Fa{Pb{f,Fa{Po{A,B}oP,B_1}aF}bP,Po{A,B}oP_1}aF"
+        "domain": "hdole/test/o_110",
+        "codomain": "hdole/test/o_100",
+        "attributes": [
+          [
+            "end",
+            "epi"
+          ]
+        ],
+        "to": "hdole/test/f"
+      },
+      {
+        "description": "",
+        "basename": "m_87",
+        "name": "hdole/test/m_87",
+        "prototype": "IndexMorphism",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "domain": "hdole/test/o_111",
+        "codomain": "hdole/test/o_112",
+        "attributes": [
+          [
+            "start",
+            "mono"
+          ],
+          [
+            "end",
+            "epi"
+          ]
+        ],
+        "to": "hdole/test/f"
+      },
+      {
+        "description": "",
+        "basename": "m_88",
+        "name": "hdole/test/m_88",
+        "prototype": "IndexMorphism",
+        "category": "hdole/test_Index",
+        "diagram": "hdole/test",
+        "domain": "hdole/test/o_113",
+        "codomain": "hdole/test/o_114",
+        "attributes": [
+          [
+            "start",
+            "mono"
+          ]
+        ],
+        "to": "hdole/test/f"
       }
     ],
     "cells": []
@@ -4598,21 +5091,6 @@
       "objects": [
         "Po{C,B}oP",
         "B"
-      ]
-    },
-    {
-      "prototype": "PullbackObject",
-      "objects": [
-        "A",
-        "Po{A,B}oP"
-      ],
-      "morphisms": [
-        "f",
-        "Fa{Po{A,B}oP,B_1}aF"
-      ],
-      "cone": [
-        "hdole/test/Fa{Pb{f,Fa{Po{A,B}oP,B_1}aF}bP,A_0}aF",
-        "hdole/test/Fa{Pb{f,Fa{Po{A,B}oP,B_1}aF}bP,Po{A,B}oP_1}aF"
       ]
     },
     {
@@ -5112,30 +5590,14 @@
         "Pa{h,f}aP",
         "f"
       ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Pb{f,Fa{Po{A,B}oP,B_1}aF}bP",
-      "codomain": "hdole/test/A",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Pb{f,Fa{Po{A,B}oP,B_1}aF}bP",
-      "codomain": "hdole/test/Po{A,B}oP",
-      "factors": [
-        1
-      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1642113601024,
+  "timestamp": 1642319499984,
   "version": 0,
   "viewport": {
-    "x": -1326,
-    "y": 931,
-    "scale": 1.1999973520549472
+    "x": -3911,
+    "y": 1513,
+    "scale": 2.4034186172011616
   }
 }

@@ -565,7 +565,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": -1440,
-        "y": -350
+        "y": -340
       },
       "height": "350",
       "weight": "bold"
@@ -3720,6 +3720,16 @@
       "domain": "hdole/nat/o_176",
       "codomain": "hdole/nat/o_155",
       "to": "hdole/nat/equ128"
+    },
+    {
+      "description": "BUG: C++",
+      "basename": "t_0",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -60,
+        "y": 30
+      },
+      "height": "24"
     }
   ],
   "domainInfo": {
@@ -4506,7 +4516,7 @@
         "diagram": "hdole/nat",
         "xy": {
           "x": -1440,
-          "y": -350
+          "y": -340
         },
         "height": "350",
         "weight": "bold"
@@ -9167,6 +9177,19 @@
         "domain": "hdole/nat/o_176",
         "codomain": "hdole/nat/o_155",
         "to": "hdole/nat/equ128"
+      },
+      {
+        "description": "BUG: C++",
+        "basename": "t_0",
+        "name": "hdole/nat/t_0",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/nat",
+        "xy": {
+          "x": -60,
+          "y": 30
+        },
+        "height": "24"
       }
     ],
     "cells": []
@@ -10798,7 +10821,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642115408628,
+  "timestamp": 1642242366948,
   "version": 0,
   "viewport": {
     "x": 1233,
