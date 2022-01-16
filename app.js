@@ -751,6 +751,7 @@ async function serve()
 			}
 			catch(x)
 			{
+				console.log('something happened', x);
 				res.status(HTTP.INSUFFICIENT_STORAGE).end();
 			}
 		});
