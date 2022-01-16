@@ -544,6 +544,36 @@ Object.defineProperties(U,
 	},
 });
 
+const _factorial = [1, 1, 2, 6];
+class Bezier
+{
+	constructor(points)
+	{
+		this.points = points.map(pnt => new D2(pnt));
+	}
+	degree()
+	{
+		return this.points.length -1;
+	}
+	C(u)
+	{
+		const degree = this.degree();
+		return this.points.map((cpnt, i) => cpnt.scale(this.B(degree, i, u))).reduce((r, bpnt) => r.add(bpnt), new D2());
+	}
+	B(n, i, u)
+	{
+		return (_factorial[n] / (_factorial[i] * _factorial[n - i])) * Math.pow(u, i) * Math.pow(1 - u, n - i);
+	}
+	derivative()
+	{
+		const points = [];
+		const degree = this.points.length -1;
+		for (let i=0; i<degree; i++)
+			points.push(this.points[i+1].sub(this.points[i]).scale(degree));
+		return new Bezier(points);
+	}
+}
+
 class Runtime
 {
 	constructor()
@@ -3433,7 +3463,7 @@ class StatusBar
 			this.xy = new D2(e.clientX, e.clientY);
 		else
 			this.xy = D.mouse.clientPosition();
-		this.xy = D2.Add(this.xy, new D2(20, -60));
+		this.xy = D2.add(this.xy, new D2(20, -60));
 		elt.style.left = `${this.xy.x}px`;
 		elt.style.top = `${this.xy.y}px`;
 		elt.style.display = 'block';
@@ -5066,7 +5096,7 @@ class Display
 		this.topSVG.addEventListener('mousedown', e => this.mousedown(e), true);
 		this.topSVG.addEventListener('mouseup', e => this.mouseup(e), true);
 		this.topSVG.addEventListener('drop', e => this.drop(e), true);
-		this.topSVG.addEventListener('mousemove', e => this.statusbar.element.style.display === 'block' && D2.Dist(this.statusbar.xy, {x:e.clientX, y:e.clientY}) > this.default.statusbar.hideDistance && this.statusbar.hide());
+		this.topSVG.addEventListener('mousemove', e => this.statusbar.element.style.display === 'block' && D2.dist(this.statusbar.xy, {x:e.clientX, y:e.clientY}) > this.default.statusbar.hideDistance && this.statusbar.hide());
 		this.topSVG.ondragover = e => e.preventDefault();
 		this.topSVG.addEventListener('drop', e => e.preventDefault(), true);
 		window.addEventListener('keydown', e =>
@@ -5286,6 +5316,9 @@ class Display
 					cell.update();
 					cell.loadItem();
 					break;
+				case 'unknown':
+					cell.update();
+					break;
 				default:
 					throw 'Cell event listener unknown command ' + args.command;
 					break;
@@ -5384,7 +5417,7 @@ class Display
 				if (elt)
 				{
 					const bbox = R.diagram.diagramToUserCoords(elt.getBBox());
-					if (wndow && !D2.Overlap(wndow, bbox))
+					if (wndow && !D2.overlap(wndow, bbox))
 						hidden = true;
 				}
 			}
@@ -5520,7 +5553,7 @@ class Display
 	}
 	baryHull(ary)
 	{
-		return this.barycenter(D2.Hull([...this.getObjects(ary)]));
+		return this.barycenter(D2.hull([...this.getObjects(ary)]));
 	}
 	TestAndFireAction(e, name, ary)
 	{
@@ -5596,7 +5629,7 @@ class Display
 		{
 			if (!pasteMap.has(o))
 			{
-				const oxy = this.grid(D2.Add(txy, D2.Subtract(o.getXY(), base)));
+				const oxy = this.grid(D2.add(txy, D2.subtract(o.getXY(), base)));
 				const copy = diagram.placeObject(o.to, oxy, false);
 				pasteMap.set(o, copy);
 				return copy;
@@ -5623,7 +5656,7 @@ class Display
 					copy.update();
 					break;
 				case 'IndexText':
-					const txy = D2.Add(xy, D2.Subtract(elt.getXY(), base));
+					const txy = D2.add(xy, D2.subtract(elt.getXY(), base));
 					copy = new IndexText(diagram, {xy:txy, description:elt.description});
 					break;
 			}
@@ -5674,18 +5707,18 @@ class Display
 			if (o.svg)
 			{
 				o.svg.classList.remove('badGlow');
-				const bx = D2.Add(o.svg.getBBox(), o.getXY());
+				const bx = D2.add(o.svg.getBBox(), o.getXY());
 				objects.push(bx);
 				for (let i=0; i<objects.length -1; ++i)
-					if (D2.Overlap(objects[i], bx))
+					if (D2.overlap(objects[i], bx))
 						o.svg.classList.add('badGlow');
 			}
 		});
 	}
 	getArc(cx, cy, r, startAngle, endAngle)
 	{
-		const start = D2.Polar(cx, cy, r, startAngle);
-		const end = D2.Polar(cx, cy, r, endAngle);
+		const start = D2.polar(cx, cy, r, startAngle);
+		const end = D2.polar(cx, cy, r, endAngle);
 		const largeArc = endAngle - startAngle <= 180 ? '0' : '1';
 		return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
 	}
@@ -6327,10 +6360,10 @@ class Display
 			const box = this.sessionToUserCoords(dgrmBbox);
 			const wid = this.width();
 			const hgt = this.height();
-			const topLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y, box.x + box.width, box.y);
-			const topRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y, box.x + box.width, box.y);
-			const botLft = D2.SegmentIntersect(0, 0, 0, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);
-			const botRgt = D2.SegmentIntersect(wid, 0, wid, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);
+			const topLft = D2.segmentIntersect(0, 0, 0, hgt, box.x, box.y, box.x + box.width, box.y);
+			const topRgt = D2.segmentIntersect(wid, 0, wid, hgt, box.x, box.y, box.x + box.width, box.y);
+			const botLft = D2.segmentIntersect(0, 0, 0, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);
+			const botRgt = D2.segmentIntersect(wid, 0, wid, hgt, box.x, box.y + box.height, box.x + box.width, box.y + box.height);
 			const vpLftTop = new D2();
 			const vpTopRgt = new D2(wid, 0);
 			const vpLftBot = new D2(0, hgt);
@@ -6338,10 +6371,10 @@ class Display
 			const boxLftBot = box.add({x:0, y:box.height});
 			const boxRgtTop = box.add({x:box.width, y:0});
 			const boxRgtBot = boxRgtTop.add({x:box.width, y:box.height});
-			const lftDst = topLft ? D2.SegmentDistance(topLft, box, boxLftBot) : botLft ? D2.SegmentDistance(botLft, box, boxLftBot) : D2.SegmentDistance(vpLftTop, box, boxLftBot);
-			const rgtDst = topRgt ? D2.SegmentDistance(topRgt, boxRgtTop, boxRgtBot) : botRgt ? D2.SegmentDistance(botRgt, boxRgtTop, boxRgtBot) : D2.SegmentDistance(vpTopRgt, boxRgtTop, boxRgtBot);
-			const topDst = topRgt ? D2.SegmentDistance(topRgt, box, boxRgtTop) : topLft ? D2.SegmentDistance(topLft, box, boxRgtTop) : D2.SegmentDistance(vpLftTop, box, boxRgtTop);
-			const botDst = botRgt ? D2.SegmentDistance(botRgt, boxLftBot, boxRgtBot) : botLft ? D2.SegmentDistance(botLft, boxLftBot, boxRgtBot) : D2.SegmentDistance(vpLftBot, boxLftBot, boxRgtBot);
+			const lftDst = topLft ? D2.segmentDistance(topLft, box, boxLftBot) : botLft ? D2.segmentDistance(botLft, box, boxLftBot) : D2.segmentDistance(vpLftTop, box, boxLftBot);
+			const rgtDst = topRgt ? D2.segmentDistance(topRgt, boxRgtTop, boxRgtBot) : botRgt ? D2.segmentDistance(botRgt, boxRgtTop, boxRgtBot) : D2.segmentDistance(vpTopRgt, boxRgtTop, boxRgtBot);
+			const topDst = topRgt ? D2.segmentDistance(topRgt, box, boxRgtTop) : topLft ? D2.segmentDistance(topLft, box, boxRgtTop) : D2.segmentDistance(vpLftTop, box, boxRgtTop);
+			const botDst = botRgt ? D2.segmentDistance(botRgt, boxLftBot, boxRgtBot) : botLft ? D2.segmentDistance(botLft, boxLftBot, boxRgtBot) : D2.segmentDistance(vpLftBot, boxLftBot, boxRgtBot);
 			const maxLvl = this.default.borderAlert;
 			const opacMag = 0.5;
 			const minOpc = this.default.borderMinOpacity;
@@ -7014,9 +7047,10 @@ class HelpPanel extends Panel
 			H3.button('Terms and Conditions', '##TermsPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'TermsPnl')}),
 			H3.div(	H3.p('No hate.'), '##TermsPnl.section'),
 			H3.button('License', '##licensePnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'licensePnl')}),
-			H3.div(	H3.p('Vernacular code generated by the Categorical Console is freely usable by those with a cortex. Machines are good to go, too.'),
-					H3.p('Upload a diagram to Catecon and others there are expected to make full use of it.'),
-					H3.p('Inelegant or unreferenced diagrams are removed.  See T&amp;C\'s'), '##licensePnl.section'),
+			H3.div('How to license category theory?'),
+//			H3.div(	H3.p('Vernacular code generated by the Categorical Console is freely usable by those with a cortex. Machines are good to go, too.'),
+//					H3.p('Upload a diagram to Catecon and others there are expected to make full use of it.'),
+//					H3.p('Inelegant or unreferenced diagrams are removed.  See T&amp;C\'s'), '##licensePnl.section'),
 			H3.button('Credits', '##creditaPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'creditsPnl')}),
 			H3.div(	H3.a('Saunders Mac Lane', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"}),
 					H3.a('Harry Dole', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"}), '##creditsPnl.section'),
@@ -10791,26 +10825,27 @@ class LanguageAction extends Action
 		const id = `element-${this.ext}`;
 		if (this.canHaveCode(elt))
 		{
-			const textarea = H3.textarea('.code.w100',	{
-															id,
-															disabled:true,
-															onkeydown:e =>
-															{
-																e.stopPropagation();
-																D.cancelAutohide();
-																if (e.key === 'Tab')	// insert tab character
-																{
-																	e.preventDefault();
-																	const target = e.target;
-																	const start = target.selectionStart;
-																	target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
-																	target.selectionStart = target.selectionEnd = start +1;
-																}
-																else if (e.key === 'Enter' && e.ctrlKey)
-																	this.setCode(e, id, this.basename);
-															},
-															oninput: e => this.setEditorSize(e.target),
-														});
+			const textarea = H3.textarea('.code.w100',
+			{
+				id,
+				disabled:true,
+				onkeydown:e =>
+				{
+					e.stopPropagation();
+					D.cancelAutohide();
+					if (e.key === 'Tab')	// insert tab character
+					{
+						e.preventDefault();
+						const target = e.target;
+						const start = target.selectionStart;
+						target.value = target.value.substring(0, start) + '\t' + target.value.substring(target.selectionEnd);
+						target.selectionStart = target.selectionEnd = start +1;
+					}
+					else if (e.key === 'Enter' && e.ctrlKey)
+						this.setCode(e, id, this.basename);
+				},
+				oninput: e => this.setEditorSize(e.target),
+			});
 			toolbar.body.appendChild(H3.h5('Inline code'));
 			toolbar.body.appendChild(textarea);
 			if (elt instanceof Morphism || elt instanceof CatObject || elt instanceof Diagram)
@@ -12906,12 +12941,12 @@ class IndexMorphism extends Morphism
 			pt2 = this.end;
 			mid = pt1.add(pt2).scale(0.5);
 		}
-		const normal = D2.Subtract(pt2, pt1).normal().scale(this.attributes.get('flipName') ? 1 : -1).normalize();
+		const normal = D2.subtract(pt2, pt1).normal().scale(this.attributes.get('flipName') ? 1 : -1).normalize();
 		const adj = (normal.y < 0 && this.bezier) ? 0.5 : 0.0;
 		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : adj + 0.5) * D.default.font.height).add(mid);
 		if (isNaN(r.x) || isNaN(r.y))
 			return new D2();
-		return D2.Round(r);
+		return D2.round(r);
 	}
 	adjustByHomset()
 	{
@@ -12933,9 +12968,9 @@ class IndexMorphism extends Morphism
 	}
 	predraw()
 	{
-		const domBBox = D2.Expand(this.domain.svg.getBBox(), D.default.margin).add(this.domain.getXY());
-		const codBBox = D2.Expand(this.codomain.svg.getBBox(), D.default.margin).add(this.codomain.getXY());
-		const delta = D2.Subtract(this.codomain, this.domain);
+		const domBBox = D2.expand(this.domain.svg.getBBox(), D.default.margin).add(this.domain.getXY());
+		const codBBox = D2.expand(this.codomain.svg.getBBox(), D.default.margin).add(this.codomain.getXY());
+		const delta = D2.subtract(this.codomain, this.domain);
 		let start = null;
 		let end = null;
 		if (delta.x === 0)
@@ -13094,35 +13129,161 @@ class IndexMorphism extends Morphism
 		const end = this.end;
 		if (svg !== null && start.x !== undefined)
 		{
-			let coords = this.getBasicCoords();
-			// arrowhead
-			let negv = null
-			let normal = null;
+			let startNormal = null;
+			let endNormal = null;
+			let bezier = null;
+			let startTangent = null;
+			let endTangent = null;
 			if (this.bezier)
 			{
-				negv = this.bezier.cp2.sub(this.end).normalize();
-				normal = negv.normal().normalize();
+				bezier = new Bezier([this.start, this.bezier.cp1, this.bezier.cp2, this.end]);
+				let dbzr = bezier.derivative();
+				startTangent = dbzr.C(0).normalize().scale(-1);
+				endTangent = dbzr.C(1).normalize().scale(-1);
 			}
 			else
 			{
-				negv = this.start.sub(this.end).normalize();
-				normal = this.normal;
+				endTangent = this.start.sub(this.end).normalize();
+				startTangent = endTangent;
 			}
+			startNormal = startTangent.normal();
+			endNormal = endTangent.normal();
 			const barb = this.barbLength();
-			const upBarb = this.end.add(normal.scale(barb)).add(negv.scale(barb)).round();;
-			const dwBarb = this.end.add(normal.scale(-barb)).add(negv.scale(barb)).round();;
-			coords += ` M${this.end.x},${this.end.y} L${upBarb.x},${upBarb.y} M${this.end.x},${this.end.y} L${dwBarb.x},${dwBarb.y}`;
-			/* TODO dev subset, element-of
-			if (this.to instanceof Identity)
+			let startCoords = ''
+			let bodyCoords = '';
+			let endCoords = '';
+			// base style
+			if (this.attributes.has('start'))
 			{
-				const radius = D.default.font.height/2;
-				const xy = normal.scale(radius).add(this.start).round();
-				const negv = this.start.sub(this.end).normalize();
-				const control1 = negv.scale(radius).add(this.start).round();
-				const control2 = negv.scale(radius).add(normal.scale(radius)).add(this.start).round();
-				coords = `M${this.start.x},${this.start.y} C${control1.x},${control1.y} ${control2.x},${control2.y} ${xy.x},${xy.y} ` + coords;
+				const width = D.default.font.height/2;
+				this.start = this.start.add(startTangent.scale(-width/2));
+				let largeArc = 0;
+				if (D2.innerProduct(startNormal, new D2({x:0, y:1})) > 0)
+				{
+					startNormal = startNormal.scale(-1);
+					largeArc = 1;
+				}
+				const attr = this.attributes.get('start');
+				switch(this.attributes.get('start'))
+				{
+					case 'includes':
+						{
+							const xy = startNormal.scale(width).add(this.start).round();
+							startCoords = `M${xy.x},${xy.y} A${width/2},${width/2} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
+						}
+						break;
+					case 'element':
+						{
+							const xy = startNormal.scale(width).add(this.start).round();
+							const mid1 = xy.add(this.start).scale(0.5);
+							const mid2 = mid1.add(startTangent.scale(width/2));
+							const r = D2.dist(mid1, mid2)/2;
+							startCoords = `M${mid2.x},${mid2.y} L${mid1.x},${mid1.y} M${xy.x},${xy.y} A${r},${r} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
+						}
+						break;
+					case 'mono':
+						{
+							const upBarb = this.start.add(startNormal.scale(barb)).add(startTangent.scale(barb)).round();;
+							const dwBarb = this.start.add(startNormal.scale(-barb)).add(startTangent.scale(barb)).round();;
+							startCoords = `M${upBarb.x},${upBarb.y} L${this.start.x},${this.start.y} M${dwBarb.x},${dwBarb.y} L${this.start.x},${this.start.y}`;
+						}
+						break;
+					default:
+						console.error('IndexMorphism.update:  unknown attribute.start value', attr);
+						break;
+				}
 			}
-			*/
+			let quantifier = this.svg.querySelector('.quantifier');
+			quantifier && quantifier.remove();
+			if (this.attributes.has('quantifier'))
+			{
+				const midpoint = this.start.add(this.end).scale(0.5);
+				const vector = this.start.sub(this.end).normalize();
+				let midv = vector.scale(this.barbLength());
+				const mid = this.bezier ? bezier.C(0.5) : midpoint;
+				let normal = vector.normal().normalize().scale(this.decoRadius()/2);
+				const attr = this.attributes.get('quantifier');
+				switch(attr)
+				{
+					case 'forall':
+						/*
+						{
+							if (D2.innerProduct(normal, new D2({x:0, y:1})) > 0)
+								normal = normal.scale(-1);
+							const a0 = mid.add(normal).add(midv).round();
+							const a1 = mid.sub(normal).round();
+							const a2 = mid.add(normal).sub(midv).round();
+							quantifier = H3.path('.quantifier', {d:`M${a0.x},${a0.y} L${a1.x},${a1.y} L${a2.x},${a2.y}`});
+						}
+						*/
+						quantifier = H3.text('&#8704;', '.quantifier', {x:mid.x, y:mid.y + D.default.font.height/3});
+						break;
+					case 'exists':
+						quantifier = H3.text('&#8707;', '.quantifier', {x:mid.x, y:mid.y + D.default.font.height/3});
+						break;
+					case 'existsUnique':
+						{
+							/*
+							if (D2.innerProduct(normal, new D2({x:0, y:1})) > 0)
+								normal = normal.scale(-1);
+							if (D2.innerProduct(vector, new D2({x:1, y:0})) > 0)
+								midv = midv.scale(-1);
+							const a1 = mid.sub(normal).round();
+							const a2 = mid.add(normal).round();
+							const a0 = a1.add(midv).round();
+							const a3 = a2.add(midv).round();
+							let coords = `M${a0.x},${a0.y} L${a1.x},${a1.y} L${a2.x},${a2.y} L${a3.x},${a3.y} `;
+							if (attr === 'existsUnique')
+							{
+								const ex0 = a2.sub(midv);
+								const ex2 = a1.sub(midv);
+								const ex1 = ex0.add(ex2).scale(0.5);
+								coords += ` M${ex0.x},${ex0.y} L${ex1.x},${ex1.y} M${ex2.x},${ex2.y} L${ex2.x},${ex2.y} `;
+							}
+//							quantifier = H3.path('.quantifier', {d:coords});
+							*/
+							quantifier = H3.text('&#8707;!', '.quantifier', {x:mid.x, y:mid.y + D.default.font.height/3});
+						}
+						break;
+					default:
+						quantifier = null;
+						console.error('IndexMorphism.update: bad quantifier attributes', attr);
+						break;
+				}
+				if (quantifier)
+					this.svg.appendChild(quantifier);
+			}
+			let level = this.svg.querySelector('.level');
+			level && level.remove();
+			if (this.attributes.has('level'))
+			{
+				const loc = this.bezier ? bezier.C(0.25) : this.start.scale(0.75).sub(this.end.scale(0.25));
+			}
+			bodyCoords = this.getBasicCoords();
+			// end style
+			const upBarb = this.end.add(endNormal.scale(barb)).add(endTangent.scale(barb)).round();;
+			const dwBarb = this.end.add(endNormal.scale(-barb)).add(endTangent.scale(barb)).round();;
+			endCoords = ` M${this.end.x},${this.end.y} L${upBarb.x},${upBarb.y} M${this.end.x},${this.end.y} L${dwBarb.x},${dwBarb.y}`;
+			if (this.attributes.has('end'))
+			{
+				const attr = this.attributes.get('end');
+				switch(attr)
+				{
+					case 'epi':
+						{
+							const off = endTangent.scale(barb);
+							const up = upBarb.add(off);
+							const dw = dwBarb.add(off);
+							const md = this.end.add(off);
+							endCoords += ` M${up.x},${up.y} L${md.x},${md.y} M${dw.x},${dw.y} L${md.x},${md.y}`;
+						}
+						break;
+					default:
+						console.error('IndexMorphism.update:  unknown attribute.end value', attr);
+						break;
+				}
+			}
+			const coords = startCoords + bodyCoords + endCoords;
 			svg.setAttribute('d', coords);
 			this.svg_path2.setAttribute('d', coords);
 			this.updateDecorations();
@@ -13181,7 +13342,7 @@ class IndexMorphism extends Morphism
 	}
 	getBBox()
 	{
-		return D2.Merge(this.domain.getBBox(), this.codomain.getBBox(), this.getSvgNameBBox());
+		return D2.merge(this.domain.getBBox(), this.codomain.getBBox(), this.getSvgNameBBox());
 	}
 	intersect(bbox, side, m = D.default.arrow.margin)
 	{
@@ -13193,16 +13354,16 @@ class IndexMorphism extends Morphism
 		switch(side)
 		{
 		case 'top':
-			pnt = D2.SegmentIntersect(x, y, x + width, y, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			pnt = D2.segmentIntersect(x, y, x + width, y, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 			break;
 		case 'bottom':
-			pnt = D2.SegmentIntersect(x, y + height, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			pnt = D2.segmentIntersect(x, y + height, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 			break;
 		case 'left':
-			pnt = D2.SegmentIntersect(x, y, x, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			pnt = D2.segmentIntersect(x, y, x, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 			break;
 		case 'right':
-			pnt = D2.SegmentIntersect(x + width, y, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			pnt = D2.segmentIntersect(x + width, y, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
 			break;
 		}
 		return pnt;
@@ -13215,13 +13376,13 @@ class IndexMorphism extends Morphism
 		const pntRgt = this.intersect(bbox, 'right');
 		let r = {x:Number.MAX_VALUE, y:Number.MAX_VALUE};
 		if (pntTop)
-			r = D2.UpdatePoint(pntTop, r, pnt);
+			r = D2.updatePoint(pntTop, r, pnt);
 		if (pntBtm)
-			r = D2.UpdatePoint(pntBtm, r, pnt);
+			r = D2.updatePoint(pntBtm, r, pnt);
 		if (pntLft)
-			r = D2.UpdatePoint(pntLft, r, pnt);
+			r = D2.updatePoint(pntLft, r, pnt);
 		if (pntRgt)
-			r = D2.UpdatePoint(pntRgt, r, pnt);
+			r = D2.updatePoint(pntRgt, r, pnt);
 		if (r.x === Number.MAX_VALUE)
 			r = new D2({x:pnt.x, y:pnt.y});
 		return r;
@@ -13525,7 +13686,7 @@ class Cell
 		if (this.svg)
 			this.svg.remove();
 		const name = this.name;
-		const svg = H3.text('.grabbable', {id:this.cellId(), 'data-type':'cell', 'data-name':this.name, 'text-anchor':'middle', 'x':this.x, 'y':this.y + D.default.font.height/2}, this.properName);
+		const svg = H3.text('.grabbable', {id:this.cellId(), 'data-type':'cell', 'data-name':this.name, 'text-anchor':'middle', x:this.x, y:this.y + D.default.font.height/2}, this.properName);
 		svg.onmouseenter = _ => this.emphasis(true);
 		svg.onmouseleave = _ => this.emphasis(false);
 		svg.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
@@ -13615,7 +13776,7 @@ class Cell
 	}
 	getBBox()
 	{
-		return D2.Merge(...[...this.left, ...this.right].map(a => a.getBBox()));
+		return D2.merge(...[...this.left, ...this.right].map(a => a.getBBox()));
 	}
 	setCommutes(type)
 	{
@@ -15186,10 +15347,7 @@ class Diagram extends Functor
 		if (!(nuArgs.codomain instanceof Category))
 			nuArgs.codomain = diagram ? diagram.getElement(nuArgs.codomain) : R.Cat;
 		const indexName = `${nuArgs.basename}_Index`;
-//		if ('domainInfo' in nuArgs)
-//			nuArgs.domain = new IndexCategory(diagram, nuArgs.domainInfo);
-//		else
-			nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
+		nuArgs.domain = new IndexCategory(diagram, {basename:indexName, description:`index category for diagram ${nuArgs.name}`, user:nuArgs.user});
 		super(diagram, nuArgs);
 		nuArgs.domain.indexedDiagram = this;		// TODO remove
 		const _log = 'log' in nuArgs ? nuArgs.log : [];
@@ -15227,7 +15385,7 @@ class Diagram extends Functor
 			this.domain.process(this, info.elements);
 			this.domain.loadCells(info.cells);
 		}
-		else
+		else		// TODO remove
 		{
 			if ('domainElements' in nuArgs)
 				this.domain.process(this, nuArgs.domainElements);
@@ -15504,9 +15662,9 @@ class Diagram extends Functor
 		let selected = [];
 		this.domain.elements.forEach(elt =>
 		{
-			if (elt instanceof IndexMorphism && D2.Inside(p, elt.domain, q) && D2.Inside(p, elt.codomain, q))
+			if (elt instanceof IndexMorphism && D2.inside(p, elt.domain, q) && D2.inside(p, elt.codomain, q))
 				selected.push(elt);
-			else if (D2.Inside(p, elt, q))
+			else if (D2.inside(p, elt, q))
 				selected.push(elt);
 		});
 		selected.map(elt => this.addSelected(elt));
@@ -15565,7 +15723,7 @@ class Diagram extends Functor
 			{
 				if (elt.bezier)
 				{
-					if (D2.BoxBezierIntersection(elt.start, elt.bezier.cp1, elt.bezier.cp2, elt.end, box))
+					if (D2.boxBezierIntersection(elt.start, elt.bezier.cp1, elt.bezier.cp2, elt.end, box))
 						return true;
 				}
 				else if (D2.lineBoxIntersect(elt.start, elt.end, box))
@@ -15583,7 +15741,7 @@ class Diagram extends Functor
 				compBox = svg.getBBox();
 			if (R.default.debug && svg instanceof SVGTextElement)
 				this.svgBase.appendChild(H3.rect({x:`${compBox.x}px`, y:`${compBox.y}px`, width:`${compBox.width}px`, height:`${compBox.height}px`, fill:'none', stroke:'blue'}));
-			if (D2.Overlap(box, new D2(compBox)))
+			if (D2.overlap(box, new D2(compBox)))
 				return true;
 		}
 		return false;
@@ -15674,8 +15832,8 @@ class Diagram extends Functor
 			if (!to[dir].isEquivalent(toObj))
 				throw `Source and target do not have same signature: ${to[dir].properName} vs ${toObj.properName}`;
 			const angles = [];
-			fromObj.domains.forEach(m => angles.push(D2.Angle(fromObj, m.codomain)));
-			fromObj.codomains.forEach(m => angles.push(D2.Angle(fromObj, m.domain)));
+			fromObj.domains.forEach(m => angles.push(D2.angle(fromObj, m.codomain)));
+			fromObj.codomains.forEach(m => angles.push(D2.angle(fromObj, m.domain)));
 			const arrowLength = Cat.D.getArrowLength(to);
 			if (!xy)
 			{
@@ -15706,7 +15864,7 @@ class Diagram extends Functor
 					const cosAngle = Math.cos(angle);
 					const sinAngle = Math.sin(angle);
 					const length = Math.max(D.default.arrow.length, Math.abs(cosAngle * arrowLength));
-					xy = D.grid(D2.Scale(length, {x:cosAngle, y:sinAngle}).add(fromObj));
+					xy = D.grid(D2.scale(length, {x:cosAngle, y:sinAngle}).add(fromObj));
 				}
 				else
 				{
@@ -16545,9 +16703,9 @@ class Diagram extends Functor
 		const elements = this.collectElements(elts);
 		if (elements.length > 0)
 		{
-			const bbox = this.diagramToSessionCoords(D2.Merge(...elements.map(a => a.getBBox())));
+			const bbox = this.diagramToSessionCoords(D2.merge(...elements.map(a => a.getBBox())));
 			const dist = Math.max(bbox.width, bbox.height) * D.default.viewMargin;
-			const vbox = D2.Expand(bbox, dist);
+			const vbox = D2.expand(bbox, dist);
 			D.setSessionViewportByBBox(vbox);
 			D.emitViewEvent('diagram', R.diagram);
 		}
@@ -16570,7 +16728,7 @@ class Diagram extends Functor
 				else if (elt instanceof IndexText)
 					coords.push(elt.getXY());	// TODO change to bbox center of text
 			});
-			const bbox = D2.BBox(...coords);
+			const bbox = D2.bBox(...coords);
 			const eltCenter = new D2(bbox.x + bbox.width/2, bbox.y + bbox.height/2);
 			const elementXY = this.diagramToUserCoords(eltCenter);
 			const viewport = D.session.getCurrentViewport();
@@ -16741,7 +16899,7 @@ class Diagram extends Functor
 				const viewport = D.session.getCurrentViewport();
 				const scale = 1 / viewport.scale;
 				const pnt = D.userToSessionCoords({x:0, y:0});
-				const box = D2.Expand(new D2({x:pnt.x, y:pnt.y, width:scale * D.width(), height:scale * D.height()}), D.height()/2);
+				const box = D2.expand(new D2({x:pnt.x, y:pnt.y, width:scale * D.width(), height:scale * D.height()}), D.height()/2);
 				if (bkgnd)
 				{
 					bkgnd.setAttribute('x', `${box.x}px`);
