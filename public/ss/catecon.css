@@ -819,6 +819,17 @@ p
 	user-select:	none;
 }
 
+.quantifier
+{
+	fill:			var(--color-bg);
+	font:			24px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
+	stroke:			var(--color-text);
+	stroke-width:	0.5px;
+	text-anchor:	middle;
+	text-shadow:	0 0 20px #ffff, 0 0 30px #7777, 0 0 40px #fff7, 0 0 50px #8887, 0 0 60px #bbb7;
+	user-select:	none;
+}
+
 .grabme
 {
 	fill:			none;
@@ -925,6 +936,13 @@ use.emphasis
 	height:		95%;
 	max-height:	100%;
 	max-width:	100%;
+}
+
+textarea
+{
+	background-color:	var(--color-element-bg);
+	border-color:		var(--color-element-border-color);
+	color:				var(--color-body);
 }
 
 [contenteditable="true"]
