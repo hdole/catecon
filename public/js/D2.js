@@ -52,14 +52,14 @@ class D2
 	}
 	contains(d)
 	{
-		return D2.Inbetween(this.x, d.x, this.x + this.width) &&
-		D2.Inbetween(this.y, d.y, this.y + this.height) &&
-		D2.Inbetween(this.x, d.x + d.width, this.x + this.width) &&
-		D2.Inbetween(this.y, d.y + d.height, this.y + this.height);
+		return D2.inbetween(this.x, d.x, this.x + this.width) &&
+		D2.inbetween(this.y, d.y, this.y + this.height) &&
+		D2.inbetween(this.x, d.x + d.width, this.x + this.width) &&
+		D2.inbetween(this.y, d.y + d.height, this.y + this.height);
 	}
 	dist(v)
 	{
-		return D2.Dist(this, v);
+		return D2.dist(this, v);
 	}
 	equals(v)
 	{
@@ -79,7 +79,7 @@ class D2
 	}
 	inner()
 	{
-		return D2.Inner(this);
+		return D2.inner(this);
 	}
 	length()
 	{
@@ -87,7 +87,7 @@ class D2
 	}
 	merge(box)
 	{
-		const merge = D2.Merge(this, box);
+		const merge = D2.merge(this, box);
 		this.x = merge.x;
 		this.y = merge.y;
 		this.width = merge.width;
@@ -95,7 +95,7 @@ class D2
 	}
 	normal()
 	{
-		return D2.Normal(this);
+		return D2.normal(this);
 	}
 	normalize()
 	{
@@ -104,7 +104,7 @@ class D2
 	}
 	pointInside(pnt)
 	{
-		return D2.Inbetween(this.x, pnt.x, this.x + this.width) && D2.Inbetween(this.y, pnt.y, this.y + this.height);
+		return D2.inbetween(this.x, pnt.x, this.x + this.width) && D2.inbetween(this.y, pnt.y, this.y + this.height);
 	}
 	round()
 	{
@@ -116,15 +116,15 @@ class D2
 	}
 	scale(a)
 	{
-		return D2.Scale(a, this);
+		return D2.scale(a, this);
 	}
 	sub(w)
 	{
-		return D2.Subtract(this, w);
+		return D2.subtract(this, w);
 	}
 	subtract(w)
 	{
-		return D2.Subtract(this, w);
+		return D2.subtract(this, w);
 	}
 	getXY()
 	{
@@ -134,39 +134,43 @@ class D2
 	{
 		return this.x !== 0 || this.y !== 0;
 	}
-	static Add(v, w)
+	static add(v, w)
 	{
 		return new D2(v.x + w.x, v.y + w.y);
 	}
-	static Dist2(v, w)
+	static dist2(v, w)
 	{
-		return D2.Inner(D2.Subtract(v, w));
+		return D2.inner(D2.subtract(v, w));
 	}
-	static Dist(v, w)
+	static dist(v, w)
 	{
-		return Math.sqrt(D2.Dist2(v, w));
+		return Math.sqrt(D2.dist2(v, w));
 	}
-	static Cross(o, a, b)
+	static cross(o, a, b)
 	{
 		return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
 	}
-	static Inner(v)
+	static inner(v)
 	{
 		return v.x * v.x + v.y * v.y;
 	}
-	static Length(v)
+	static innerProduct(v, w)
 	{
-		return Math.sqrt(D2.Inner(v));
+		return v.x * w.x + v.y * w.y;
 	}
-	static Normal(v)
+	static length(v)
+	{
+		return Math.sqrt(D2.inner(v));
+	}
+	static normal(v)
 	{
 		return new D2(-v.y, v.x);
 	}
-	static Round(v)
+	static round(v)
 	{
 		return new D2(Math.round(v.x), Math.round(v.y));
 	}
-	static Scale(a, v)
+	static scale(a, v)
 	{
 		const args = {x:v.x * a, y:v.y * a};
 		if ('width' in v)
@@ -176,32 +180,32 @@ class D2
 		}
 		return new D2(args);
 	}
-	static Subtract(v, w)
+	static subtract(v, w)
 	{
 		return new D2(v.x - w.x, v.y - w.y);
 	}
-	static SegmentDistance(p, v, w)
+	static segmentDistance(p, v, w)
 	{
-		const l2 = D2.Dist2(v, w);
+		const l2 = D2.dist2(v, w);
 		if (l2 === 0)
-			return D2.Dist(p, v);
+			return D2.dist(p, v);
 		let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
 		t = Math.max(0, Math.min(1, t));
-		return D2.Dist(p, {x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y)});
+		return D2.dist(p, {x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y)});
 	}
-	static UpdatePoint(p, c, basePoint)
+	static updatePoint(p, c, basePoint)
 	{
-		return D2.Dist2(c, basePoint) < D2.Dist2(p, basePoint) ? c : p;
+		return D2.dist2(c, basePoint) < D2.dist2(p, basePoint) ? c : p;
 	}
-	static Inbetween(a, b, c)
+	static inbetween(a, b, c)
 	{
-		return (a - D2.Eps() <= b && b <= c + D2.Eps()) || (c - D2.Eps() <= b && b <= a + D2.Eps());
+		return (a - D2.eps() <= b && b <= c + D2.eps()) || (c - D2.eps() <= b && b <= a + D2.eps());
 	}
-	static Inside(a, b, c)
+	static inside(a, b, c)
 	{
-		return D2.Inbetween(a.x, b.x, c.x) && D2.Inbetween(a.y, b.y, c.y);
+		return D2.inbetween(a.x, b.x, c.x) && D2.inbetween(a.y, b.y, c.y);
 	}
-	static SegmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
+	static segmentIntersect(x1, y1, x2, y2, x3, y3, x4, y4)
 	{
 		const deltaX12 = x1 - x2;
 		const deltaX34 = x3 - x4;
@@ -218,19 +222,19 @@ class D2
 		const y = (deltaX1Y1_X2Y1 * deltaY34 - deltaY12 * deltaX3Y4_X4Y3) / denom;
 		if (denom === 0.0)
 			return null;
-		if (!(D2.Inbetween(x2, x, x1) && D2.Inbetween(y2, y, y1) && D2.Inbetween(x3, x, x4) && D2.Inbetween(y3, y, y4)))
+		if (!(D2.inbetween(x2, x, x1) && D2.inbetween(y2, y, y1) && D2.inbetween(x3, x, x4) && D2.inbetween(y3, y, y4)))
 			return null;
 		return new D2(x, y);
 	}
-	static Angle(from, to)
+	static angle(from, to)
 	{
-		return D2.Subtract(to, from).angle();
+		return D2.subtract(to, from).angle();
 	}
-	static Eps()
+	static eps()
 	{
 		return(0.0000001);
 	}
-	static Overlap(abox, bbox)	// do two bounding boxes overlap?
+	static overlap(abox, bbox)	// do two bounding boxes overlap?
 	{
 		const aLeft = abox.x;
 		const aRight = abox.x + abox.width;
@@ -240,17 +244,17 @@ class D2
 		const bRight = bbox.x + bbox.width;
 		const bTop = bbox.y;
 		const bBottom = bbox.y + bbox.height;
-		const h =	D2.Inbetween(aLeft, bLeft, aRight) ||
-					D2.Inbetween(aLeft, bRight, aRight) ||
-					D2.Inbetween(bLeft, aLeft, bRight) ||
-					D2.Inbetween(bLeft, aRight, bRight);
-		const w =	D2.Inbetween(bBottom, aBottom, bTop) ||
-					D2.Inbetween(bBottom, aTop, bTop) ||
-					D2.Inbetween(aBottom, bBottom, aTop) ||
-					D2.Inbetween(aBottom, bTop, aTop);
+		const h =	D2.inbetween(aLeft, bLeft, aRight) ||
+					D2.inbetween(aLeft, bRight, aRight) ||
+					D2.inbetween(bLeft, aLeft, bRight) ||
+					D2.inbetween(bLeft, aRight, bRight);
+		const w =	D2.inbetween(bBottom, aBottom, bTop) ||
+					D2.inbetween(bBottom, aTop, bTop) ||
+					D2.inbetween(aBottom, bBottom, aTop) ||
+					D2.inbetween(aBottom, bTop, aTop);
 		return h && w;
 	}
-	static Merge(...boxes)
+	static merge(...boxes)
 	{
 		const x = Math.min(...boxes.map(bx => bx.x));
 		const y = Math.min(...boxes.map(bx => bx.y));
@@ -258,7 +262,7 @@ class D2
 		const height = Math.max(...boxes.map(bx => bx.y + bx.height - y));
 		return {x, y, width, height};
 	}
-	static BBox(...coords)
+	static bBox(...coords)
 	{
 		const x = Math.min(...coords.map(c => c.x));
 		const y = Math.min(...coords.map(c => c.y));
@@ -268,7 +272,7 @@ class D2
 		const height = maxY - y;
 		return {x, y, width, height};
 	}
-	static Hull(ary)
+	static hull(ary)
 	{
 		const cnt = ary.length;
 		if (cnt <= 3)
@@ -278,37 +282,37 @@ class D2
 		const r = [];
 		for (let i=0; i<cnt; ++i)
 		{
-			while(k >= 2 && D2.Cross(r[k -2], r[k -1], ary[i]) <= 0)
+			while(k >= 2 && D2.cross(r[k -2], r[k -1], ary[i]) <= 0)
 				k--;
 			r[k++] = ary[i];
 		}
 		let t = k + 1;
 		for (let i=cnt -1; i>0; --i)
 		{
-			while(k >= t && D2.Cross(r[k -2], r[k -1], ary[i -1]) <= 0)
+			while(k >= t && D2.cross(r[k -2], r[k -1], ary[i -1]) <= 0)
 				k--;
 			r[k++] = ary[i -1];
 		}
 		return r;
 	}
-	static Expand(box, dist)
+	static expand(box, dist)
 	{
 		return new D2({x:box.x - dist, y:box.y - dist, width:box.width + 2 * dist, height:box.height + 2 * dist});
 	}
-	static Polar(cx, cy, r, angleDeg)
+	static polar(cx, cy, r, angleDeg)
 	{
 		const angleRad = angleDeg * Math.PI / 180.0;
 		return new D2({x:cx + r * Math.cos(angleRad), y:cy + r * -Math.sin(angleRad)});
 	}
 	static lineBoxIntersect(pt0, pt1, box)
 	{
-		return	D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y, box.x + box.width, box.y) ||			// top edge
-				D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y, box.x, box.y + box.height) ||		// left edge
-				D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y + box.height, box.x + box.width, box.y + box.height) ||	// bottom edge
-				D2.SegmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x + box.width, box.y, box.x + box.width, box.y + box.height);		// right edge
+		return	D2.segmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y, box.x + box.width, box.y) ||			// top edge
+				D2.segmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y, box.x, box.y + box.height) ||		// left edge
+				D2.segmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x, box.y + box.height, box.x + box.width, box.y + box.height) ||	// bottom edge
+				D2.segmentIntersect(pt0.x, pt0.y, pt1.x, pt1.y, box.x + box.width, box.y, box.x + box.width, box.y + box.height);		// right edge
 	}
 	// https://www.particleincell.com/2013/cubic-line-intersection/
-	static SortSpecial(a)
+	static sortSpecial(a)
 	{
 		let flip;
 		let temp;
@@ -330,12 +334,12 @@ class D2
 		while (flip);
 		return a;
 	}
-	static Sign(x)
+	static sign(x)
 	{
 		return x < 0.0 ? -1 : 1;
 	}
 	// based on http://mysite.verizon.net/res148h4j/javascript/script_exact_cubic.html#the%20source%20code
-	static CubicRoots(P)
+	static cubicRoots(P)
 	{
 		let t = [];
 		if(P[0] === 0)
@@ -350,7 +354,7 @@ class D2
 					if (t[i] > 1.0)
 						t[i] = -1;
 				// sort but place -1 at the end
-				t = D2.SortSpecial(t);
+				t = D2.sortSpecial(t);
 				return t;
 			}
 			// quadratic
@@ -366,7 +370,7 @@ class D2
 					if (t[i] > 1.0)
 						t[i]=-1;
 				// sort but place -1 at the end
-				t = D2.SortSpecial(t);
+				t = D2.sortSpecial(t);
 				return t;
 			}
 		}
@@ -383,8 +387,8 @@ class D2
 		const D = Math.pow(Q, 3) + Math.pow(R, 2);    // polynomial discriminant
 		if (D >= 0)                                 // complex or duplicate roots
 		{
-			const S = D2.Sign(R + Math.sqrt(D))*Math.pow(Math.abs(R + Math.sqrt(D)),(1/3));
-			const T = D2.Sign(R - Math.sqrt(D))*Math.pow(Math.abs(R - Math.sqrt(D)),(1/3));
+			const S = D2.sign(R + Math.sqrt(D))*Math.pow(Math.abs(R + Math.sqrt(D)),(1/3));
+			const T = D2.sign(R - Math.sqrt(D))*Math.pow(Math.abs(R - Math.sqrt(D)),(1/3));
 			t[0] = -A/3 + (S + T);                    // real root
 			t[1] = -A/3 - (S + T)/2;                  // real part of complex root
 			t[2] = -A/3 - (S + T)/2;                  // real part of complex root
@@ -409,10 +413,10 @@ class D2
 			if (t[i] < 0 || t[i] > 1.0 || isNaN(t[i]))
 				t[i] = -1;
 		// sort but place -1 at the end
-		t = D2.SortSpecial(t);
+		t = D2.sortSpecial(t);
 		return t;
 	}
-	static BezierCoeffs(P0, P1, P2, P3)
+	static bezierCoeffs(P0, P1, P2, P3)
 	{
 		const Z = [];
 		Z[0] = -P0 + 3*P1 + -3*P2 + P3;
@@ -422,20 +426,20 @@ class D2
 		return Z;
 	}
 	// computes intersection between a cubic spline and a line segment
-	static HasBezierIntersection(start, end, cp1, cp2, lineStart, lineEnd)
+	static hasBezierIntersection(start, end, cp1, cp2, lineStart, lineEnd)
 	{
 		let X = [];
 		const A = lineEnd.y-lineStart.y;	    //A=y2-y1
 		const B = lineStart.x-lineEnd.x;	    //B=x1-x2
 		const C = lineStart.x * (lineStart.y - lineEnd.y) + lineStart.y*(lineEnd.x-lineStart.x);	//C=x1*(y1-y2)+y1*(x2-x1)
-		const bx = D2.BezierCoeffs(start.x, cp1.x, cp2.x, end.x);
-		const by = D2.BezierCoeffs(start.y, cp1.y, cp2.y, end.y);
+		const bx = D2.bezierCoeffs(start.x, cp1.x, cp2.x, end.x);
+		const by = D2.bezierCoeffs(start.y, cp1.y, cp2.y, end.y);
 		const P = [];
 		P[0] = A*bx[0]+B*by[0];		// t^3
 		P[1] = A*bx[1]+B*by[1];		// t^2
 		P[2] = A*bx[2]+B*by[2];		// t
 		P[3] = A*bx[3]+B*by[3] + C;	// 1
-		const r = D2.CubicRoots(P);
+		const r = D2.cubicRoots(P);
 		// verify the roots are in bounds of the linear segment
 		for (let i = 0; i<3;i++)
 		{
@@ -456,15 +460,15 @@ class D2
 		}
 		return false;
 	}
-	static BoxBezierIntersection(start, cp1, cp2, end, box)
+	static boxBezierIntersection(start, cp1, cp2, end, box)
 	{
-		if (D2.HasBezierIntersection(start, end, cp1, cp2, {x:box.x, y:box.y}, {x:box.x + box.width, y:box.y}))
+		if (D2.hasBezierIntersection(start, end, cp1, cp2, {x:box.x, y:box.y}, {x:box.x + box.width, y:box.y}))
 			return true;
-		if (D2.HasBezierIntersection(start, end, cp1, cp2, {x:box.x, y:box.y}, {x:box.x, y:box.y + box.height}))
+		if (D2.hasBezierIntersection(start, end, cp1, cp2, {x:box.x, y:box.y}, {x:box.x, y:box.y + box.height}))
 			return true;
-		if (D2.HasBezierIntersection(start, end, cp1, cp2, {x:box.x, y:box.y + box.height}, {x:box.x + box.width, y:box.y + box.height}))
+		if (D2.hasBezierIntersection(start, end, cp1, cp2, {x:box.x, y:box.y + box.height}, {x:box.x + box.width, y:box.y + box.height}))
 			return true;
-		if (D2.HasBezierIntersection(start, end, cp1, cp2, {x:box.x + box.width, y:box.y}, {x:box.x + box.width, y:box.y + box.height}))
+		if (D2.hasBezierIntersection(start, end, cp1, cp2, {x:box.x + box.width, y:box.y}, {x:box.x + box.width, y:box.y + box.height}))
 			return true;
 		return false;
 	}
