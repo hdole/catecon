@@ -69,6 +69,7 @@ class H3
 	static button(...args)		{ return H3._h('button', args); }
 	static code(...args)		{ return H3._h('code', args); }
 	static div(...args)			{ return H3._h('div', args); }
+	static em(...args)			{ return H3._h('em', args); }
 	static form(...args)		{ return H3._h('form', args); }
 	static h1(...args)			{ return H3._h('h1', args); }
 	static h2(...args)			{ return H3._h('h2', args); }
@@ -79,6 +80,7 @@ class H3
 	static img(...args)			{ return H3._h('img', args); }
 	static input(...args)		{ return H3._h('input', args); }
 	static label(...args)		{ return H3._h('label', args); }
+	static mark(...args)		{ return H3._h('mark', args); }
 	static option(...args)		{ return H3._h('option', args); }
 	static p(...args)			{ return H3._h('p', args); }
 	static pre(...args)			{ return H3._h('pre', args); }
