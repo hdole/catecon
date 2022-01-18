@@ -472,6 +472,10 @@ class D2
 			return true;
 		return false;
 	}
+	static inLineSegment(t, u, v)
+	{
+		return u.scale(1 - t).add(v.scale(t));
+	}
 }
 
 if (typeof window === 'object')
