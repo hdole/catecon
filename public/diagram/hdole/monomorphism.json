@@ -42,7 +42,7 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": -260,
+        "x": -210,
         "y": -620
       },
       "height": "76",
@@ -63,7 +63,7 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/A",
       "xy": {
-        "x": 30,
+        "x": 100,
         "y": -390
       }
     },
@@ -72,7 +72,7 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/B",
       "xy": {
-        "x": 180,
+        "x": 250,
         "y": -390
       }
     },
@@ -81,9 +81,29 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/C",
       "xy": {
-        "x": -190,
+        "x": -120,
         "y": -390
       }
+    },
+    {
+      "description": "Known as a 'monic' in [CWMp19].",
+      "basename": "t_2",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -200,
+        "y": -130
+      },
+      "height": "24"
+    },
+    {
+      "description": "In other words, f is a monomorphism if it can always\nbe cancelled on the left:  fh = fg implies h = g.",
+      "basename": "t_3",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -200,
+        "y": -250
+      },
+      "height": "24"
     },
     {
       "basename": "m_0",
@@ -121,27 +141,19 @@
     },
     {
       "basename": "m_3",
-      "prototype": "IndexComposite",
+      "prototype": "IndexMorphism",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
       "homsetIndex": -2,
-      "to": "hdole/monomorphism/Cm{g,f}mC",
-      "morphisms": [
-        "hdole/monomorphism/m_1",
-        "hdole/monomorphism/m_0"
-      ]
+      "to": "hdole/monomorphism/Cm{g,f}mC"
     },
     {
       "basename": "m_4",
-      "prototype": "IndexComposite",
+      "prototype": "IndexMorphism",
       "domain": "hdole/monomorphism/o_2",
       "codomain": "hdole/monomorphism/o_1",
       "homsetIndex": 1,
-      "to": "hdole/monomorphism/Cm{h,f}mC",
-      "morphisms": [
-        "hdole/monomorphism/m_2",
-        "hdole/monomorphism/m_0"
-      ]
+      "to": "hdole/monomorphism/Cm{h,f}mC"
     },
     {
       "basename": "m_5",
@@ -238,7 +250,7 @@
         "category": "sys/Cat",
         "diagram": "hdole/monomorphism",
         "xy": {
-          "x": -260,
+          "x": -210,
           "y": -620
         },
         "height": "76",
@@ -266,7 +278,7 @@
         "diagram": "hdole/monomorphism",
         "to": "hdole/monomorphism/A",
         "xy": {
-          "x": 30,
+          "x": 100,
           "y": -390
         }
       },
@@ -279,7 +291,7 @@
         "diagram": "hdole/monomorphism",
         "to": "hdole/monomorphism/B",
         "xy": {
-          "x": 180,
+          "x": 250,
           "y": -390
         }
       },
@@ -292,9 +304,35 @@
         "diagram": "hdole/monomorphism",
         "to": "hdole/monomorphism/C",
         "xy": {
-          "x": -190,
+          "x": -120,
           "y": -390
         }
+      },
+      {
+        "description": "Known as a 'monic' in [CWMp19].",
+        "basename": "t_2",
+        "name": "hdole/monomorphism/t_2",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/monomorphism",
+        "xy": {
+          "x": -200,
+          "y": -130
+        },
+        "height": "24"
+      },
+      {
+        "description": "In other words, f is a monomorphism if it can always\nbe cancelled on the left:  fh = fg implies h = g.",
+        "basename": "t_3",
+        "name": "hdole/monomorphism/t_3",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/monomorphism",
+        "xy": {
+          "x": -200,
+          "y": -250
+        },
+        "height": "24"
       },
       {
         "description": "",
@@ -346,33 +384,25 @@
         "description": "",
         "basename": "m_3",
         "name": "hdole/monomorphism/m_3",
-        "prototype": "IndexComposite",
+        "prototype": "IndexMorphism",
         "category": "hdole/monomorphism_Index",
         "diagram": "hdole/monomorphism",
         "domain": "hdole/monomorphism/o_2",
         "codomain": "hdole/monomorphism/o_1",
         "homsetIndex": -2,
-        "to": "hdole/monomorphism/Cm{g,f}mC",
-        "morphisms": [
-          "hdole/monomorphism/m_1",
-          "hdole/monomorphism/m_0"
-        ]
+        "to": "hdole/monomorphism/Cm{g,f}mC"
       },
       {
         "description": "",
         "basename": "m_4",
         "name": "hdole/monomorphism/m_4",
-        "prototype": "IndexComposite",
+        "prototype": "IndexMorphism",
         "category": "hdole/monomorphism_Index",
         "diagram": "hdole/monomorphism",
         "domain": "hdole/monomorphism/o_2",
         "codomain": "hdole/monomorphism/o_1",
         "homsetIndex": 1,
-        "to": "hdole/monomorphism/Cm{h,f}mC",
-        "morphisms": [
-          "hdole/monomorphism/m_2",
-          "hdole/monomorphism/m_0"
-        ]
+        "to": "hdole/monomorphism/Cm{h,f}mC"
       },
       {
         "description": "",
@@ -435,8 +465,9 @@
         "right": [
           "m_9"
         ],
-        "assertion": "unknown",
-        "hidden": false
+        "assertion": "equals",
+        "hidden": false,
+        "level": 1
       },
       {
         "name": "hdole/monomorphism/{m_6,m_5},{m_9,m_5}",
@@ -449,7 +480,8 @@
           "m_5"
         ],
         "assertion": "equals",
-        "hidden": false
+        "hidden": false,
+        "level": 0
       }
     ]
   },
@@ -504,11 +536,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642323998807,
+  "timestamp": 1642482097416,
   "version": 0,
   "viewport": {
-    "x": 1303,
-    "y": 2400,
-    "scale": 4.374127592446123
+    "x": 854,
+    "y": 1822,
+    "scale": 2.685334901681007
   }
 }
