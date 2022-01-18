@@ -821,12 +821,25 @@ p
 
 .quantifier
 {
+	cursor:			grab;
 	fill:			var(--color-bg);
 	font:			24px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	stroke:			var(--color-text);
 	stroke-width:	0.5px;
 	text-anchor:	middle;
 	text-shadow:	0 0 20px #ffff, 0 0 30px #7777, 0 0 40px #fff7, 0 0 50px #8887, 0 0 60px #bbb7;
+	user-select:	none;
+}
+
+.svgQuantifier
+{
+	fill:			var(--color-text);
+	font:			'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
+	font-weight:	bold;
+	/* stroke:			var(--color-text); */
+	/* stroke-width:	0.5px; */
+	text-anchor:	middle;
+	text-shadow:	0 0 200px #ffff, 0 0 300px #7777, 0 0 400px #fff7, 0 0 500px #8887, 0 0 600px #bbb7;
 	user-select:	none;
 }
 
@@ -1361,4 +1374,34 @@ tspan
 {
 	stop-color:		#888;
 	stop-opacity:	1;
+}
+
+.level
+{
+	fill:			none;
+	stroke:			var(--color-text);
+	stroke-linecap:	square;
+	stroke-linejoin:round;
+	stroke-width:	1.5px;
+	user-select:	none;
+}
+
+.term
+{
+	background-color:	var(--color-element-bg);
+	border:				2px solid;
+	border-color:		var(--color-element-border-color);
+	border-collapse:	separate;
+	border-radius:		5px;
+	color:				var(--color-body);
+	font:				14px "Fira Sans",sans-serif;
+	margin:				2px 2px 2px 2px;
+	padding:			2px;
+	position:			relative;
+}
+
+.term:hover
+{
+	background-color:	var(--color-element-bg-hover);
+	color: 				var(--color-body);
 }
