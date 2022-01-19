@@ -197,6 +197,21 @@
 		<line class="svgstrThinGray" x1="160" y1="100" x2="160" y2="170"/>
 		<line class="svgstrThinGray" x1="160" y1="210" x2="160" y2="250"/>
 	</symbol>
+	<symbol id="icon-expression" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:300px">&#8704;</text>
+	</symbol>
+	<symbol id="icon-expression-none" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#128711;</text>
+	</symbol>
+	<symbol id="icon-expression-forall" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#8704;</text>
+	</symbol>
+	<symbol id="icon-expression-exists" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#8707;</text>
+	</symbol>
+	<symbol id="icon-expression-existsUnique" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#8707;!</text>
+	</symbol>
 	<symbol id="icon-finiteObject" class="icon" viewbox="0 0 320 320">
 		<circle cx="80" cy="80" r="60" fill="url(#radgrad2)"/>
 		<circle cx="80" cy="160" r="60" fill="url(#radgrad1)"/>
@@ -362,21 +377,6 @@
 		<line class="arrow0" x1="60" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
 		<line class="arrow0" x1="40" y1="60" x2="40" y2="260" marker-end="url(#arrowhead)"/>
 		<path class="svgstr5" d="M140,260 140,140 260,140"/>
-	</symbol>
-	<symbol id="icon-quantifier" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:300px">&#8704;</text>
-	</symbol>
-	<symbol id="icon-quantifier-none" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#128711;</text>
-	</symbol>
-	<symbol id="icon-quantifier-forall" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#8704;</text>
-	</symbol>
-	<symbol id="icon-quantifier-exists" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#8707;</text>
-	</symbol>
-	<symbol id="icon-quantifier-existsUnique" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#8707;!</text>
 	</symbol>
 	<symbol id="icon-recursion" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
