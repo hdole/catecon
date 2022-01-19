@@ -684,7 +684,7 @@ async function serve()
 					const info = Cat.R.catalog.get(name);
 					if (info.timestamp < diagram.timestamp || Cat.R.localTimestamp(name) < info.timestamp)
 					{
-						const oldrefs = Cat.U.Clone(info.references);
+						const oldrefs = Cat.U.clone(info.references);
 						const nuInfo = Cat.Diagram.GetInfo(diagram);
 						Cat.R.catalog.set(name, nuInfo);
 						updateDiagramTable(name, diagram, (error, result) =>
