@@ -260,7 +260,6 @@ table.left
 	grid-template-columns:	repeat(auto-fill, minmax(330px, 1fr));
 	text-align:				center;
 	width:					100vw;
-	/* height:					100vh; */
 }
 
 h1.catalog
@@ -350,12 +349,11 @@ a:hover, .offcanvas a:focus
 
 .link
 {
-	text-decoration:	none;
 	color:				var(--color-link);
 	fill:				var(--color-link);
 	cursor:				pointer;
 	display:			block;
-	stroke:				var(--color-link);
+	text-decoration:	underline;
 	transition:			0.3s
 }
 
@@ -802,7 +800,7 @@ p
 .morphTxt
 {
 	fill:			var(--color-morphism);
-	font:			20px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
+	font:			24px 'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
 	margin:			2px;
 	user-select:	none;
 }
@@ -828,18 +826,6 @@ p
 	stroke-width:	0.5px;
 	text-anchor:	middle;
 	text-shadow:	0 0 20px #ffff, 0 0 30px #7777, 0 0 40px #fff7, 0 0 50px #8887, 0 0 60px #bbb7;
-	user-select:	none;
-}
-
-.svgQuantifier
-{
-	fill:			var(--color-text);
-	font:			'Source Sans Pro',Roboto,"San Francisco","Segoe UI",sans-serif;
-	font-weight:	bold;
-	/* stroke:			var(--color-text); */
-	/* stroke-width:	0.5px; */
-	text-anchor:	middle;
-	text-shadow:	0 0 200px #ffff, 0 0 300px #7777, 0 0 400px #fff7, 0 0 500px #8887, 0 0 600px #bbb7;
 	user-select:	none;
 }
 
@@ -875,7 +861,6 @@ p
 text.emphasis
 {
 	fill:		var(--color-emphasis);
-	stroke:		none;
 }
 
 circle.emphasis
@@ -1198,7 +1183,6 @@ description
 
 .catalogTop
 {
-	/* background-color:	var(--color-bg); */
 	text-align:			center;
 	top:				32px;
 	width:				100%;
