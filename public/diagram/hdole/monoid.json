@@ -16,7 +16,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": -760,
-        "y": 70
+        "y": 60
       },
       "height": "400",
       "weight": "bold"
@@ -172,8 +172,8 @@
       "basename": "t_4",
       "prototype": "IndexText",
       "xy": {
-        "x": -550,
-        "y": 1000
+        "x": -450,
+        "y": 1010
       },
       "height": "24",
       "textAnchor": "end"
@@ -183,8 +183,8 @@
       "basename": "t_5",
       "prototype": "IndexText",
       "xy": {
-        "x": 100,
-        "y": 1000
+        "x": 210,
+        "y": 1010
       },
       "height": "24",
       "textAnchor": "end"
@@ -377,7 +377,7 @@
         "diagram": "hdole/monoid",
         "xy": {
           "x": -760,
-          "y": 70
+          "y": 60
         },
         "height": "400",
         "weight": "bold"
@@ -599,8 +599,8 @@
         "category": "sys/Cat",
         "diagram": "hdole/monoid",
         "xy": {
-          "x": -550,
-          "y": 1000
+          "x": -450,
+          "y": 1010
         },
         "height": "24",
         "textAnchor": "end"
@@ -613,8 +613,8 @@
         "category": "sys/Cat",
         "diagram": "hdole/monoid",
         "xy": {
-          "x": 100,
-          "y": 1000
+          "x": 210,
+          "y": 1010
         },
         "height": "24",
         "textAnchor": "end"
@@ -1113,11 +1113,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642243168889,
+  "timestamp": 1642589527220,
   "version": 0,
   "viewport": {
     "x": 1371,
-    "y": 450,
+    "y": 518,
     "scale": 1.4216155054841884
   }
 }

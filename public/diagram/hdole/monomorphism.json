@@ -11,50 +11,23 @@
   "references": [],
   "domainElements": [
     {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/A",
-      "xy": {
-        "x": -570,
-        "y": 140
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/B",
-      "xy": {
-        "x": -370,
-        "y": 140
-      }
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/C",
-      "xy": {
-        "x": -570,
-        "y": -60
-      }
-    },
-    {
       "description": "Monomorphism",
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": -210,
-        "y": -620
+        "x": -200,
+        "y": -600
       },
       "height": "76",
       "weight": "bold"
     },
     {
-      "description": "f is a monomorphism iff for any two h and g\nwith fg = fh then g = h",
+      "description": "f is a monomorphism iff for any two h and g\nwith fg = fh then g = h.",
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
-        "x": -210,
-        "y": -560
+        "x": -200,
+        "y": -550
       },
       "height": "24"
     },
@@ -64,7 +37,7 @@
       "to": "hdole/monomorphism/A",
       "xy": {
         "x": 100,
-        "y": -390
+        "y": -400
       }
     },
     {
@@ -72,8 +45,8 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/B",
       "xy": {
-        "x": 250,
-        "y": -390
+        "x": 300,
+        "y": -400
       }
     },
     {
@@ -81,8 +54,8 @@
       "prototype": "IndexObject",
       "to": "hdole/monomorphism/C",
       "xy": {
-        "x": -120,
-        "y": -390
+        "x": -150,
+        "y": -400
       }
     },
     {
@@ -91,7 +64,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": -200,
-        "y": -130
+        "y": -80
       },
       "height": "24"
     },
@@ -104,56 +77,6 @@
         "y": -250
       },
       "height": "24"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_0",
-      "codomain": "hdole/monomorphism/o_1",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/monomorphism/f"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_2",
-      "codomain": "hdole/monomorphism/o_0",
-      "to": "hdole/monomorphism/g"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_2",
-      "codomain": "hdole/monomorphism/o_0",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 1,
-      "to": "hdole/monomorphism/h"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_2",
-      "codomain": "hdole/monomorphism/o_1",
-      "homsetIndex": -2,
-      "to": "hdole/monomorphism/Cm{g,f}mC"
-    },
-    {
-      "basename": "m_4",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_2",
-      "codomain": "hdole/monomorphism/o_1",
-      "homsetIndex": 1,
-      "to": "hdole/monomorphism/Cm{h,f}mC"
     },
     {
       "basename": "m_5",
@@ -171,6 +94,10 @@
         [
           "quantifier",
           "forall"
+        ],
+        [
+          "level",
+          1
         ]
       ],
       "homsetIndex": -1,
@@ -189,10 +116,24 @@
         [
           "quantifier",
           "forall"
+        ],
+        [
+          "level",
+          1
         ]
       ],
       "homsetIndex": 1,
       "to": "hdole/monomorphism/g"
+    },
+    {
+      "description": "Compare the dual notion of <diagram name=\"hdole/epimorphism\">epimorphism</diagram>",
+      "basename": "t_5",
+      "prototype": "IndexText",
+      "xy": {
+        "x": -200,
+        "y": -150
+      },
+      "height": "24"
     }
   ],
   "domainInfo": {
@@ -204,45 +145,6 @@
     "diagram": "hdole/hdole",
     "elements": [
       {
-        "description": "",
-        "basename": "o_0",
-        "name": "hdole/monomorphism/o_0",
-        "prototype": "IndexObject",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "to": "hdole/monomorphism/A",
-        "xy": {
-          "x": -570,
-          "y": 140
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_1",
-        "name": "hdole/monomorphism/o_1",
-        "prototype": "IndexObject",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "to": "hdole/monomorphism/B",
-        "xy": {
-          "x": -370,
-          "y": 140
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_2",
-        "name": "hdole/monomorphism/o_2",
-        "prototype": "IndexObject",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "to": "hdole/monomorphism/C",
-        "xy": {
-          "x": -570,
-          "y": -60
-        }
-      },
-      {
         "description": "Monomorphism",
         "basename": "t_0",
         "name": "hdole/monomorphism/t_0",
@@ -250,22 +152,22 @@
         "category": "sys/Cat",
         "diagram": "hdole/monomorphism",
         "xy": {
-          "x": -210,
-          "y": -620
+          "x": -200,
+          "y": -600
         },
         "height": "76",
         "weight": "bold"
       },
       {
-        "description": "f is a monomorphism iff for any two h and g\nwith fg = fh then g = h",
+        "description": "f is a monomorphism iff for any two h and g\nwith fg = fh then g = h.",
         "basename": "t_1",
         "name": "hdole/monomorphism/t_1",
         "prototype": "IndexText",
         "category": "sys/Cat",
         "diagram": "hdole/monomorphism",
         "xy": {
-          "x": -210,
-          "y": -560
+          "x": -200,
+          "y": -550
         },
         "height": "24"
       },
@@ -279,7 +181,7 @@
         "to": "hdole/monomorphism/A",
         "xy": {
           "x": 100,
-          "y": -390
+          "y": -400
         }
       },
       {
@@ -291,8 +193,8 @@
         "diagram": "hdole/monomorphism",
         "to": "hdole/monomorphism/B",
         "xy": {
-          "x": 250,
-          "y": -390
+          "x": 300,
+          "y": -400
         }
       },
       {
@@ -304,8 +206,8 @@
         "diagram": "hdole/monomorphism",
         "to": "hdole/monomorphism/C",
         "xy": {
-          "x": -120,
-          "y": -390
+          "x": -150,
+          "y": -400
         }
       },
       {
@@ -317,7 +219,7 @@
         "diagram": "hdole/monomorphism",
         "xy": {
           "x": -200,
-          "y": -130
+          "y": -80
         },
         "height": "24"
       },
@@ -333,76 +235,6 @@
           "y": -250
         },
         "height": "24"
-      },
-      {
-        "description": "",
-        "basename": "m_0",
-        "name": "hdole/monomorphism/m_0",
-        "prototype": "IndexMorphism",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "domain": "hdole/monomorphism/o_0",
-        "codomain": "hdole/monomorphism/o_1",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "hdole/monomorphism/f"
-      },
-      {
-        "description": "",
-        "basename": "m_1",
-        "name": "hdole/monomorphism/m_1",
-        "prototype": "IndexMorphism",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "domain": "hdole/monomorphism/o_2",
-        "codomain": "hdole/monomorphism/o_0",
-        "to": "hdole/monomorphism/g"
-      },
-      {
-        "description": "",
-        "basename": "m_2",
-        "name": "hdole/monomorphism/m_2",
-        "prototype": "IndexMorphism",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "domain": "hdole/monomorphism/o_2",
-        "codomain": "hdole/monomorphism/o_0",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "homsetIndex": 1,
-        "to": "hdole/monomorphism/h"
-      },
-      {
-        "description": "",
-        "basename": "m_3",
-        "name": "hdole/monomorphism/m_3",
-        "prototype": "IndexMorphism",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "domain": "hdole/monomorphism/o_2",
-        "codomain": "hdole/monomorphism/o_1",
-        "homsetIndex": -2,
-        "to": "hdole/monomorphism/Cm{g,f}mC"
-      },
-      {
-        "description": "",
-        "basename": "m_4",
-        "name": "hdole/monomorphism/m_4",
-        "prototype": "IndexMorphism",
-        "category": "hdole/monomorphism_Index",
-        "diagram": "hdole/monomorphism",
-        "domain": "hdole/monomorphism/o_2",
-        "codomain": "hdole/monomorphism/o_1",
-        "homsetIndex": 1,
-        "to": "hdole/monomorphism/Cm{h,f}mC"
       },
       {
         "description": "",
@@ -428,6 +260,10 @@
           [
             "quantifier",
             "forall"
+          ],
+          [
+            "level",
+            1
           ]
         ],
         "homsetIndex": -1,
@@ -450,10 +286,27 @@
           [
             "quantifier",
             "forall"
+          ],
+          [
+            "level",
+            1
           ]
         ],
         "homsetIndex": 1,
         "to": "hdole/monomorphism/g"
+      },
+      {
+        "description": "Compare the dual notion of <diagram name=\"hdole/epimorphism\">epimorphism</diagram>",
+        "basename": "t_5",
+        "name": "hdole/monomorphism/t_5",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/monomorphism",
+        "xy": {
+          "x": -200,
+          "y": -150
+        },
+        "height": "24"
       }
     ],
     "cells": [
@@ -467,7 +320,12 @@
         ],
         "assertion": "equals",
         "hidden": false,
-        "level": 1
+        "attributes": [
+          [
+            "level",
+            2
+          ]
+        ]
       },
       {
         "name": "hdole/monomorphism/{m_6,m_5},{m_9,m_5}",
@@ -480,8 +338,7 @@
           "m_5"
         ],
         "assertion": "equals",
-        "hidden": false,
-        "level": 0
+        "hidden": false
       }
     ]
   },
@@ -515,32 +372,14 @@
       "prototype": "Morphism",
       "domain": "hdole/monomorphism/C",
       "codomain": "hdole/monomorphism/A"
-    },
-    {
-      "prototype": "Composite",
-      "domain": "hdole/monomorphism/C",
-      "codomain": "hdole/monomorphism/B",
-      "morphisms": [
-        "g",
-        "f"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "hdole/monomorphism/C",
-      "codomain": "hdole/monomorphism/B",
-      "morphisms": [
-        "h",
-        "f"
-      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1642482097416,
+  "timestamp": 1642579672572,
   "version": 0,
   "viewport": {
-    "x": 854,
-    "y": 1822,
-    "scale": 2.685334901681007
+    "x": 1109,
+    "y": 1461,
+    "scale": 2.108766049424619
   }
 }

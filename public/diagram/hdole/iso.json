@@ -14,7 +14,7 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": 430,
+        "x": 390,
         "y": 600
       },
       "height": "200",
@@ -111,12 +111,22 @@
       }
     },
     {
-      "description": "For f in the category C, f is an isomorphism iff there exists a morphism f⁻¹ such that the following diagrams commute.",
+      "description": "f is invertible (an isomorphism) if there exists a morphism f⁻¹ such that the following diagrams commute.",
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
         "x": 400,
         "y": 700
+      },
+      "height": "24"
+    },
+    {
+      "description": "[CWMp19]",
+      "basename": "t_2",
+      "prototype": "IndexText",
+      "xy": {
+        "x": 420,
+        "y": 1340
       },
       "height": "24"
     },
@@ -211,7 +221,7 @@
         "category": "sys/Cat",
         "diagram": "hdole/iso",
         "xy": {
-          "x": 430,
+          "x": 390,
           "y": 600
         },
         "height": "200",
@@ -348,7 +358,7 @@
         }
       },
       {
-        "description": "For f in the category C, f is an isomorphism iff there exists a morphism f⁻¹ such that the following diagrams commute.",
+        "description": "f is invertible (an isomorphism) if there exists a morphism f⁻¹ such that the following diagrams commute.",
         "basename": "t_1",
         "name": "hdole/iso/t_1",
         "prototype": "IndexText",
@@ -357,6 +367,19 @@
         "xy": {
           "x": 400,
           "y": 700
+        },
+        "height": "24"
+      },
+      {
+        "description": "[CWMp19]",
+        "basename": "t_2",
+        "name": "hdole/iso/t_2",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/iso",
+        "xy": {
+          "x": 420,
+          "y": 1340
         },
         "height": "24"
       },
@@ -533,7 +556,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642147904896,
+  "timestamp": 1642587194987,
   "version": 0,
   "viewport": {
     "x": -385,

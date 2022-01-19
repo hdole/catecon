@@ -11,30 +11,12 @@
   "references": [],
   "domainElements": [
     {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 600,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 600,
-        "y": 0
-      }
-    },
-    {
       "basename": "o_2",
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 600,
-        "y": 200
+        "x": 550,
+        "y": -100
       }
     },
     {
@@ -42,8 +24,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 800,
-        "y": 200
+        "x": 750,
+        "y": -100
       }
     },
     {
@@ -51,8 +33,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 600,
-        "y": 350
+        "x": 550,
+        "y": 0
       }
     },
     {
@@ -60,8 +42,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 800,
-        "y": 350
+        "x": 750,
+        "y": 0
       }
     },
     {
@@ -69,8 +51,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 600,
-        "y": 500
+        "x": 550,
+        "y": 100
       }
     },
     {
@@ -78,8 +60,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 800,
-        "y": 500
+        "x": 750,
+        "y": 100
       }
     },
     {
@@ -87,8 +69,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 600,
-        "y": 650
+        "x": 550,
+        "y": 200
       }
     },
     {
@@ -96,8 +78,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 800,
-        "y": 650
+        "x": 750,
+        "y": 200
       }
     },
     {
@@ -105,8 +87,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 800,
-        "y": 850
+        "x": 750,
+        "y": 400
       }
     },
     {
@@ -114,8 +96,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 600,
-        "y": 1000
+        "x": 550,
+        "y": 500
       }
     },
     {
@@ -123,8 +105,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 800,
-        "y": 1000
+        "x": 750,
+        "y": 500
       }
     },
     {
@@ -132,8 +114,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 800,
-        "y": 1200
+        "x": 750,
+        "y": 700
       }
     },
     {
@@ -152,8 +134,8 @@
       "basename": "t_1",
       "prototype": "IndexText",
       "xy": {
-        "x": -100,
-        "y": -200
+        "x": 0,
+        "y": -300
       },
       "height": "24"
     },
@@ -162,8 +144,8 @@
       "basename": "t_2",
       "prototype": "IndexText",
       "xy": {
-        "x": -100,
-        "y": 0
+        "x": -50,
+        "y": -200
       },
       "height": "24"
     },
@@ -173,7 +155,7 @@
       "prototype": "IndexText",
       "xy": {
         "x": -100,
-        "y": 200
+        "y": -100
       },
       "height": "24"
     },
@@ -182,8 +164,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 600,
-        "y": 1550
+        "x": 550,
+        "y": 1000
       }
     },
     {
@@ -191,8 +173,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C0",
       "xy": {
-        "x": 800,
-        "y": 1550
+        "x": 750,
+        "y": 1000
       }
     },
     {
@@ -200,161 +182,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/C1",
       "xy": {
-        "x": 800,
-        "y": 1350
-      }
-    },
-    {
-      "basename": "o_19",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 800,
-        "y": 1700
-      }
-    },
-    {
-      "basename": "o_20",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 1150,
-        "y": 1550
-      }
-    },
-    {
-      "basename": "o_21",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 1350,
-        "y": 1550
-      }
-    },
-    {
-      "basename": "o_22",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 1550,
-        "y": 1550
-      }
-    },
-    {
-      "basename": "o_24",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 1550,
-        "y": 1750
-      }
-    },
-    {
-      "basename": "o_25",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 600,
-        "y": 2050
-      }
-    },
-    {
-      "basename": "o_26",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 800,
-        "y": 1850
-      }
-    },
-    {
-      "basename": "o_27",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 800,
-        "y": 2050
-      }
-    },
-    {
-      "basename": "o_29",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 600,
-        "y": 2400
-      }
-    },
-    {
-      "basename": "o_30",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 800,
-        "y": 2200
-      }
-    },
-    {
-      "basename": "o_31",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 800,
-        "y": 2400
-      }
-    },
-    {
-      "basename": "o_33",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 850,
-        "y": 2900
-      }
-    },
-    {
-      "basename": "o_35",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 1490,
-        "y": 2500
-      }
-    },
-    {
-      "basename": "o_36",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 1640,
-        "y": 2650
-      }
-    },
-    {
-      "basename": "o_37",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 1350,
-        "y": 2700
-      }
-    },
-    {
-      "basename": "o_38",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 1050,
-        "y": 2900
-      }
-    },
-    {
-      "basename": "o_39",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 1050,
-        "y": 2750
+        "x": 750,
+        "y": 800
       }
     },
     {
@@ -362,8 +191,8 @@
       "prototype": "IndexObject",
       "to": "hdole/category/Pb{cod,dom}bP",
       "xy": {
-        "x": 600,
-        "y": 1350
+        "x": 550,
+        "y": 800
       }
     },
     {
@@ -456,89 +285,6 @@
       "to": "hdole/category/cod"
     },
     {
-      "basename": "m_14",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_20",
-      "codomain": "hdole/category/o_21",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_15",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_21",
-      "codomain": "hdole/category/o_22",
-      "to": "hdole/category/id"
-    },
-    {
-      "basename": "m_18",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_20",
-      "codomain": "hdole/category/o_24",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_19",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_22",
-      "codomain": "hdole/category/o_24",
-      "to": "hdole/category/cod"
-    },
-    {
-      "basename": "m_20",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_26",
-      "codomain": "hdole/category/o_27",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_21",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_25",
-      "codomain": "hdole/category/o_27",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_24",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_30",
-      "codomain": "hdole/category/o_31",
-      "to": "hdole/category/cod"
-    },
-    {
-      "basename": "m_25",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_29",
-      "codomain": "hdole/category/o_31",
-      "to": "hdole/category/cod"
-    },
-    {
-      "basename": "m_28",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_35",
-      "codomain": "hdole/category/o_36",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_29",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_33",
-      "codomain": "hdole/category/o_38",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_30",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_39",
-      "codomain": "hdole/category/o_38",
-      "to": "hdole/category/cod"
-    },
-    {
       "basename": "m_11",
       "prototype": "IndexMorphism",
       "domain": "hdole/category/o_17",
@@ -551,6 +297,24 @@
       "domain": "hdole/category/o_17",
       "codomain": "hdole/category/o_14",
       "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+    },
+    {
+      "basename": "o_0",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C1",
+      "xy": {
+        "x": 550,
+        "y": -200
+      }
+    },
+    {
+      "basename": "o_1",
+      "prototype": "IndexObject",
+      "to": "hdole/category/C0",
+      "xy": {
+        "x": 550,
+        "y": -300
+      }
     }
   ],
   "domainInfo": {
@@ -563,32 +327,6 @@
     "elements": [
       {
         "description": "",
-        "basename": "o_0",
-        "name": "hdole/category/o_0",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C0",
-        "xy": {
-          "x": 600,
-          "y": -200
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_1",
-        "name": "hdole/category/o_1",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 600,
-          "y": 0
-        }
-      },
-      {
-        "description": "",
         "basename": "o_2",
         "name": "hdole/category/o_2",
         "prototype": "IndexObject",
@@ -596,8 +334,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 600,
-          "y": 200
+          "x": 550,
+          "y": -100
         }
       },
       {
@@ -609,8 +347,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 800,
-          "y": 200
+          "x": 750,
+          "y": -100
         }
       },
       {
@@ -622,8 +360,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 600,
-          "y": 350
+          "x": 550,
+          "y": 0
         }
       },
       {
@@ -635,8 +373,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 800,
-          "y": 350
+          "x": 750,
+          "y": 0
         }
       },
       {
@@ -648,8 +386,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 600,
-          "y": 500
+          "x": 550,
+          "y": 100
         }
       },
       {
@@ -661,8 +399,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 800,
-          "y": 500
+          "x": 750,
+          "y": 100
         }
       },
       {
@@ -674,8 +412,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 600,
-          "y": 650
+          "x": 550,
+          "y": 200
         }
       },
       {
@@ -687,8 +425,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 800,
-          "y": 650
+          "x": 750,
+          "y": 200
         }
       },
       {
@@ -700,8 +438,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 800,
-          "y": 850
+          "x": 750,
+          "y": 400
         }
       },
       {
@@ -713,8 +451,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 600,
-          "y": 1000
+          "x": 550,
+          "y": 500
         }
       },
       {
@@ -726,8 +464,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 800,
-          "y": 1000
+          "x": 750,
+          "y": 500
         }
       },
       {
@@ -739,8 +477,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 800,
-          "y": 1200
+          "x": 750,
+          "y": 700
         }
       },
       {
@@ -765,8 +503,8 @@
         "category": "zf/Set",
         "diagram": "hdole/category",
         "xy": {
-          "x": -100,
-          "y": -200
+          "x": 0,
+          "y": -300
         },
         "height": "24"
       },
@@ -778,8 +516,8 @@
         "category": "zf/Set",
         "diagram": "hdole/category",
         "xy": {
-          "x": -100,
-          "y": 0
+          "x": -50,
+          "y": -200
         },
         "height": "24"
       },
@@ -792,7 +530,7 @@
         "diagram": "hdole/category",
         "xy": {
           "x": -100,
-          "y": 200
+          "y": -100
         },
         "height": "24"
       },
@@ -805,8 +543,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 600,
-          "y": 1550
+          "x": 550,
+          "y": 1000
         }
       },
       {
@@ -818,8 +556,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C0",
         "xy": {
-          "x": 800,
-          "y": 1550
+          "x": 750,
+          "y": 1000
         }
       },
       {
@@ -831,229 +569,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 800,
-          "y": 1350
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_19",
-        "name": "hdole/category/o_19",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 800,
-          "y": 1700
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_20",
-        "name": "hdole/category/o_20",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 1150,
-          "y": 1550
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_21",
-        "name": "hdole/category/o_21",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C0",
-        "xy": {
-          "x": 1350,
-          "y": 1550
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_22",
-        "name": "hdole/category/o_22",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 1550,
-          "y": 1550
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_24",
-        "name": "hdole/category/o_24",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C0",
-        "xy": {
-          "x": 1550,
-          "y": 1750
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_25",
-        "name": "hdole/category/o_25",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 600,
-          "y": 2050
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_26",
-        "name": "hdole/category/o_26",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 800,
-          "y": 1850
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_27",
-        "name": "hdole/category/o_27",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C0",
-        "xy": {
-          "x": 800,
-          "y": 2050
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_29",
-        "name": "hdole/category/o_29",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 600,
-          "y": 2400
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_30",
-        "name": "hdole/category/o_30",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 800,
-          "y": 2200
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_31",
-        "name": "hdole/category/o_31",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C0",
-        "xy": {
-          "x": 800,
-          "y": 2400
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_33",
-        "name": "hdole/category/o_33",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 850,
-          "y": 2900
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_35",
-        "name": "hdole/category/o_35",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 1490,
-          "y": 2500
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_36",
-        "name": "hdole/category/o_36",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C0",
-        "xy": {
-          "x": 1640,
-          "y": 2650
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_37",
-        "name": "hdole/category/o_37",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 1350,
-          "y": 2700
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_38",
-        "name": "hdole/category/o_38",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C0",
-        "xy": {
-          "x": 1050,
-          "y": 2900
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_39",
-        "name": "hdole/category/o_39",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 1050,
-          "y": 2750
+          "x": 750,
+          "y": 800
         }
       },
       {
@@ -1065,8 +582,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
-          "x": 600,
-          "y": 1350
+          "x": 550,
+          "y": 800
         }
       },
       {
@@ -1204,133 +721,6 @@
       },
       {
         "description": "",
-        "basename": "m_14",
-        "name": "hdole/category/m_14",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_20",
-        "codomain": "hdole/category/o_21",
-        "to": "hdole/category/dom"
-      },
-      {
-        "description": "",
-        "basename": "m_15",
-        "name": "hdole/category/m_15",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_21",
-        "codomain": "hdole/category/o_22",
-        "to": "hdole/category/id"
-      },
-      {
-        "description": "",
-        "basename": "m_18",
-        "name": "hdole/category/m_18",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_20",
-        "codomain": "hdole/category/o_24",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "hdole/category/dom"
-      },
-      {
-        "description": "",
-        "basename": "m_19",
-        "name": "hdole/category/m_19",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_22",
-        "codomain": "hdole/category/o_24",
-        "to": "hdole/category/cod"
-      },
-      {
-        "description": "",
-        "basename": "m_20",
-        "name": "hdole/category/m_20",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_26",
-        "codomain": "hdole/category/o_27",
-        "to": "hdole/category/dom"
-      },
-      {
-        "description": "",
-        "basename": "m_21",
-        "name": "hdole/category/m_21",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_25",
-        "codomain": "hdole/category/o_27",
-        "to": "hdole/category/dom"
-      },
-      {
-        "description": "",
-        "basename": "m_24",
-        "name": "hdole/category/m_24",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_30",
-        "codomain": "hdole/category/o_31",
-        "to": "hdole/category/cod"
-      },
-      {
-        "description": "",
-        "basename": "m_25",
-        "name": "hdole/category/m_25",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_29",
-        "codomain": "hdole/category/o_31",
-        "to": "hdole/category/cod"
-      },
-      {
-        "description": "",
-        "basename": "m_28",
-        "name": "hdole/category/m_28",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_35",
-        "codomain": "hdole/category/o_36",
-        "to": "hdole/category/dom"
-      },
-      {
-        "description": "",
-        "basename": "m_29",
-        "name": "hdole/category/m_29",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_33",
-        "codomain": "hdole/category/o_38",
-        "to": "hdole/category/dom"
-      },
-      {
-        "description": "",
-        "basename": "m_30",
-        "name": "hdole/category/m_30",
-        "prototype": "IndexMorphism",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "domain": "hdole/category/o_39",
-        "codomain": "hdole/category/o_38",
-        "to": "hdole/category/cod"
-      },
-      {
-        "description": "",
         "basename": "m_11",
         "name": "hdole/category/m_11",
         "prototype": "IndexMorphism",
@@ -1350,6 +740,32 @@
         "domain": "hdole/category/o_17",
         "codomain": "hdole/category/o_14",
         "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "o_0",
+        "name": "hdole/category/o_0",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 550,
+          "y": -200
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_1",
+        "name": "hdole/category/o_1",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 550,
+          "y": -300
+        }
       }
     ],
     "cells": [
@@ -1363,7 +779,8 @@
           "m_4"
         ],
         "assertion": "equals",
-        "hidden": false
+        "hidden": false,
+        "level": 0
       },
       {
         "name": "hdole/category/{m_6,m_8},{m_7}",
@@ -1375,20 +792,8 @@
           "m_7"
         ],
         "assertion": "equals",
-        "hidden": false
-      },
-      {
-        "name": "hdole/category/{m_14,m_15,m_19},{m_18}",
-        "left": [
-          "m_14",
-          "m_15",
-          "m_19"
-        ],
-        "right": [
-          "m_18"
-        ],
-        "assertion": "equals",
-        "hidden": false
+        "hidden": false,
+        "level": 0
       }
     ]
   },
@@ -1463,11 +868,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642318609326,
+  "timestamp": 1642492867535,
   "version": 0,
   "viewport": {
-    "x": 378,
-    "y": 838,
-    "scale": 1.1602586599515679
+    "x": 1032,
+    "y": 500,
+    "scale": 0.7182233057314235
   }
 }

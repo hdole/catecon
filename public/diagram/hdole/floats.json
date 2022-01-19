@@ -2678,13 +2678,7 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/floats/o_162",
       "codomain": "hdole/floats/o_165",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 4,
+      "homsetIndex": 5,
       "to": "hdole/floats/eq0_32"
     },
     {
@@ -2692,13 +2686,7 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/floats/o_171",
       "codomain": "hdole/floats/o_174",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 4,
+      "homsetIndex": 5,
       "to": "hdole/floats/eq0_64"
     },
     {
@@ -2706,13 +2694,7 @@
       "prototype": "IndexMorphism",
       "domain": "hdole/floats/o_180",
       "codomain": "hdole/floats/o_183",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "homsetIndex": 4,
+      "homsetIndex": 5,
       "to": "hdole/floats/eq0_128"
     }
   ],
@@ -6603,13 +6585,7 @@
         "diagram": "hdole/floats",
         "domain": "hdole/floats/o_162",
         "codomain": "hdole/floats/o_165",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "homsetIndex": 4,
+        "homsetIndex": 5,
         "to": "hdole/floats/eq0_32"
       },
       {
@@ -6621,13 +6597,7 @@
         "diagram": "hdole/floats",
         "domain": "hdole/floats/o_171",
         "codomain": "hdole/floats/o_174",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "homsetIndex": 4,
+        "homsetIndex": 5,
         "to": "hdole/floats/eq0_64"
       },
       {
@@ -6639,13 +6609,7 @@
         "diagram": "hdole/floats",
         "domain": "hdole/floats/o_180",
         "codomain": "hdole/floats/o_183",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "homsetIndex": 4,
+        "homsetIndex": 5,
         "to": "hdole/floats/eq0_128"
       }
     ],
@@ -7751,11 +7715,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642113876470,
+  "timestamp": 1642590065176,
   "version": 0,
   "viewport": {
     "x": 965,
-    "y": 293,
+    "y": -4467,
     "scale": 1.0032172412565237
   }
 }

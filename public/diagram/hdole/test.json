@@ -847,8 +847,8 @@
       "prototype": "IndexObject",
       "to": "hdole/test/A",
       "xy": {
-        "x": 2520,
-        "y": -360
+        "x": 2570,
+        "y": -500
       }
     },
     {
@@ -1827,6 +1827,10 @@
         [
           "quantifier",
           "forall"
+        ],
+        [
+          "level",
+          1
         ]
       ],
       "to": "hdole/test/f"
@@ -1840,6 +1844,10 @@
         [
           "quantifier",
           "exists"
+        ],
+        [
+          "level",
+          1
         ]
       ],
       "to": "hdole/test/f"
@@ -1895,6 +1903,10 @@
         [
           "quantifier",
           "existsUnique"
+        ],
+        [
+          "level",
+          1
         ]
       ],
       "to": "hdole/test/f"
@@ -3144,8 +3156,8 @@
         "diagram": "hdole/test",
         "to": "hdole/test/A",
         "xy": {
-          "x": 2520,
-          "y": -360
+          "x": 2570,
+          "y": -500
         }
       },
       {
@@ -4551,6 +4563,10 @@
           [
             "quantifier",
             "forall"
+          ],
+          [
+            "level",
+            1
           ]
         ],
         "to": "hdole/test/f"
@@ -4568,6 +4584,10 @@
           [
             "quantifier",
             "exists"
+          ],
+          [
+            "level",
+            1
           ]
         ],
         "to": "hdole/test/f"
@@ -4635,6 +4655,10 @@
           [
             "quantifier",
             "existsUnique"
+          ],
+          [
+            "level",
+            1
           ]
         ],
         "to": "hdole/test/f"
@@ -5575,10 +5599,10 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642470986014,
+  "timestamp": 1642588953445,
   "version": 0,
   "viewport": {
-    "x": -3911,
+    "x": -4863,
     "y": 1513,
     "scale": 2.4034186172011616
   }
