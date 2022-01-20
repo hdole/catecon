@@ -1,4 +1,4 @@
-// (C) 2021 Harry Dole
+// (C) 2000-2022 Harry Dole
 // Catecon equality worker
 
 const sig2legs = new Map();		// sig to the list of pairs [leg, item]
@@ -6,6 +6,7 @@ const equals = new Map();		// sig maps to a set of sigs that are equal to each o
 const notEquals = new Map();		// sig maps to a set of sigs that are not equal to each other
 const items = new Map();		// equivalences loaded by the client can be tracked by an item; typically the name of the element
 const identities = new Set();	// sigs of identities
+const cellToItem = new Map()	// cell sig to item
 let maxLegLength = 0;			// keep track of this since no point substituting legs bigger than our biggest leg
 let spoiled = false;			// gets spoiled by editting deleting something
 let diagramItems = new Map();	// tracks which items belong to which diagram
@@ -19,6 +20,7 @@ onmessage = e =>
 	{
 		const command = args.command;
 		let val = {};
+		let item = null;
 		switch(command)
 		{
 			case 'start':
@@ -122,10 +124,13 @@ function loadItem(diagram, item, leftLeg, rightLeg, equal)
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	!items.has(item) && items.set(item, new Map());
-	items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg, equal]);
+//	items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg, equal]);
+	const cellSig = Sig(leftSig, rightSig);
+	items.get(item).set(cellSig, [leftLeg, rightLeg, equal]);
 	!diagramItems.has(diagram) && diagramItems.set(diagram, new Set());
 	diagramItems.get(diagram).add(item);
 	loadEquivalences(diagram, leftLeg, rightLeg, equal);
+	cellToItem.set(cellSig, item);
 }
 
 function compareSigs(leftSig, rightSig)
@@ -144,15 +149,19 @@ function removeIdentities(leg)
 	return leg.filter(s => !identities.has(s));
 }
 
-function scanLeg(leg, sig, scanned)		// recursive scanning of the leg trying to match the sig
+function scanLeg(leg, sig, scanned, sigs)		// recursive scanning of the leg trying to match the sig
 {
 	const len = leg.length;
 	if (len > 1)
 	{
 		for (let ndx=0; ndx < len; ++ndx)
-			for (let cnt=1; cnt <= Math.min(maxLegLength, len - ndx); ++cnt)
-				if (checkLeg(leg, ndx, cnt, sig, scanned))
+		{
+			const maxCnt = Math.min(maxLegLength, ndx > 0 ? len - ndx : 1);
+//			for (let cnt=1; cnt <= Math.min(maxLegLength, len - ndx); ++cnt)
+			for (let cnt=1; cnt <= maxCnt; ++cnt)
+				if (checkLeg(leg, ndx, cnt, sig, scanned, sigs))
 					return true;
+		}
 	}
 	else		// expand leg
 	{
@@ -170,7 +179,7 @@ function scanLeg(leg, sig, scanned)		// recursive scanning of the leg trying to 
 					nuLeg.push(...otherLegs[l]);
 					if (i === 0)
 						nuLeg.push(leg[1]);
-					if (scanLeg(nuLeg, sig, scanned))
+					if (scanLeg(nuLeg, sig, scanned, sigs))
 						return true;
 				}
 			}
@@ -179,7 +188,7 @@ function scanLeg(leg, sig, scanned)		// recursive scanning of the leg trying to 
 	return false;
 }
 
-function checkLeg(leg, ndx, cnt, sig, scanned)
+function checkLeg(leg, ndx, cnt, sig, scanned, sigs)
 {
 	let isEqual = false;
 	const subLeg = leg.slice(ndx, ndx + cnt);
@@ -195,7 +204,11 @@ function checkLeg(leg, ndx, cnt, sig, scanned)
 			!identities.has(equ) && nuLeg.push(equ)						// replace sub-leg with sig
 			if (ndx + cnt < leg.length)			// add rest of original leg
 				nuLeg.push(...leg.slice(ndx + cnt, leg.length));
-			if (Sig(...nuLeg) === sig)
+			const nuLegSig = Sig(...nuLeg);
+			if (sigs.has(nuLegSig))
+				return true;
+			sigs.add(nuLegSig);
+			if (nuLegSig === sig)
 				return true;
 		}
 	}
@@ -213,7 +226,7 @@ function checkLeg(leg, ndx, cnt, sig, scanned)
 				const nuSig = Sig(nuLeg);
 				isEqual = sig === nuSig ? true : equals.has(sig) && equals.get(sig).has(nuSig);
 				if (!isEqual)
-					isEqual = scanLeg(nuLeg, sig, scanned);
+					isEqual = scanLeg(nuLeg, sig, scanned, sigs);
 				if (isEqual)
 					loadEquivalences(null, leg, nuLeg, true);
 			}
@@ -232,6 +245,15 @@ function loadDiagrams(diagrams)
 	spoiled = false;
 }
 
+function getItem(leftLeg, rightLeg)
+{
+	const leftSig = Sig(...leftLeg);
+	const rightSig = Sig(...rightLeg);
+	let item = cellToItem.get(Sig(leftSig, rightSig));
+	if (!item)
+		item = cellToItem.get(Sig(rightSig, leftSig));
+	return item ? item : null;
+}
 // cell: tracking token for client; typically the sig of a cell
 function checkEquivalence(diagram, cell, lLeg, rLeg)
 {
@@ -245,12 +267,14 @@ function checkEquivalence(diagram, cell, lLeg, rLeg)
 	const scanned = new Set();
 	if (typeof isEqual === 'string')
 	{
-		let equal = scanLeg(leftLeg, rightSig, scanned);
+		const sigs = new Set();
+		let equal = scanLeg(leftLeg, rightSig, scanned, sigs);
 		if (!equal)
-			equal = scanLeg(rightLeg, leftSig, scanned);
+			equal = scanLeg(rightLeg, leftSig, scanned, sigs);
 		isEqual = equal ? true : 'unknown';
 	}
-	return {diagram, cell, isEqual};
+	const item = getItem(lLeg, rLeg);
+	return {diagram, cell, isEqual, item};
 }
 
 function removeEquivalences(diagram, delItems)		// when deletion occurs due to editting
