@@ -306,6 +306,12 @@
 		<line class="arrow0" x1="200" y1="200" x2="280" y2="280" marker-end="url(#arrowhead)"/>
 		<line class="arrow0" x1="120" y1="200" x2="40" y2="280" marker-end="url(#arrowhead)"/>
 	</symbol>
+	<symbol id="icon-level-down" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" style="font-size:300px">(-)</text>
+	</symbol>
+	<symbol id="icon-level-up" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" style="font-size:300px">(+)</text>
+	</symbol>
 	<symbol id="icon-login" class="icon" viewbox="0 0 320 320">
 		<polyline class="svgstr4" points="160,60 160,200 70,280 70,40 250,40 250,280"/>
 	</symbol>
