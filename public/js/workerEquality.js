@@ -147,10 +147,10 @@ function removeIdentities(leg)
 function scanLeg(leg, sig, scanned)		// recursive scanning of the leg trying to match the sig
 {
 	const len = leg.length;
-	if (len > 2)
+	if (len > 1)
 	{
-		for (let ndx=0; ndx < len-1; ++ndx)
-			for (let cnt=2; cnt <= Math.min(maxLegLength, len - ndx); ++cnt)
+		for (let ndx=0; ndx < len; ++ndx)
+			for (let cnt=1; cnt <= Math.min(maxLegLength, len - ndx); ++cnt)
 				if (checkLeg(leg, ndx, cnt, sig, scanned))
 					return true;
 	}
@@ -185,7 +185,7 @@ function checkLeg(leg, ndx, cnt, sig, scanned)
 	const subLeg = leg.slice(ndx, ndx + cnt);
 	const subSig = Sig(...subLeg);
 	const equs = equals.get(subSig);
-	if (equs)		// try substituting sigs equal to the sub-leg
+	if (equs && equs.size > 1)		// try substituting sigs equal to the sub-leg
 	{
 		for (const equ of equs)
 		{
