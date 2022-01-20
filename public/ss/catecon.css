@@ -349,12 +349,16 @@ a:hover, .offcanvas a:focus
 
 .link
 {
-	color:				var(--color-link);
-	fill:				var(--color-link);
 	cursor:				pointer;
 	display:			block;
+	fill:				var(--color-text);
 	text-decoration:	underline;
 	transition:			0.3s
+}
+
+.link:hover
+{
+	background-color:	#777a;
 }
 
 p
@@ -703,7 +707,6 @@ p
 	fill:		var(--color-text);
 	font-size:	18px;
 	height:		auto;
-	stroke:		var(--color-text);
 	width:		auto;
 }
 
