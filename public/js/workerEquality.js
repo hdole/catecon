@@ -124,7 +124,6 @@ function loadItem(diagram, item, leftLeg, rightLeg, equal)
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	!items.has(item) && items.set(item, new Map());
-//	items.get(item).set(Sig(leftSig, rightSig), [leftLeg, rightLeg, equal]);
 	const cellSig = Sig(leftSig, rightSig);
 	items.get(item).set(cellSig, [leftLeg, rightLeg, equal]);
 	!diagramItems.has(diagram) && diagramItems.set(diagram, new Set());
@@ -151,13 +150,21 @@ function removeIdentities(leg)
 
 function scanLeg(leg, sig, scanned, sigs)		// recursive scanning of the leg trying to match the sig
 {
+	const sigEqu = equals.get(sig);
+	const legEqu = equals.get(Sig(...leg));
+	if (sigEqu && legEqu)
+	{
+		const sigEquAry = [...sigEqu];
+		for (let i=0; i < sigEquAry.length; ++i)
+			if (legEqu.has(sigEquAry[i]))
+				return true;
+	}
 	const len = leg.length;
 	if (len > 1)
 	{
 		for (let ndx=0; ndx < len; ++ndx)
 		{
 			const maxCnt = Math.min(maxLegLength, ndx > 0 ? len - ndx : 1);
-//			for (let cnt=1; cnt <= Math.min(maxLegLength, len - ndx); ++cnt)
 			for (let cnt=1; cnt <= maxCnt; ++cnt)
 				if (checkLeg(leg, ndx, cnt, sig, scanned, sigs))
 					return true;
@@ -228,7 +235,10 @@ function checkLeg(leg, ndx, cnt, sig, scanned, sigs)
 				if (!isEqual)
 					isEqual = scanLeg(nuLeg, sig, scanned, sigs);
 				if (isEqual)
+				{
 					loadEquivalences(null, leg, nuLeg, true);
+					sigs.add(nuSig);
+				}
 			}
 		}
 	}
@@ -254,6 +264,7 @@ function getItem(leftLeg, rightLeg)
 		item = cellToItem.get(Sig(rightSig, leftSig));
 	return item ? item : null;
 }
+
 // cell: tracking token for client; typically the sig of a cell
 function checkEquivalence(diagram, cell, lLeg, rLeg)
 {
@@ -268,9 +279,14 @@ function checkEquivalence(diagram, cell, lLeg, rLeg)
 	if (typeof isEqual === 'string')
 	{
 		const sigs = new Set();
+		sigs.add(leftSig);
 		let equal = scanLeg(leftLeg, rightSig, scanned, sigs);
 		if (!equal)
+		{
+			sigs.clear();
+			sigs.add(rightSig);
 			equal = scanLeg(rightLeg, leftSig, scanned, sigs);
+		}
 		isEqual = equal ? true : 'unknown';
 	}
 	const item = getItem(lLeg, rLeg);
