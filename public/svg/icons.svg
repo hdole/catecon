@@ -198,7 +198,7 @@
 		<line class="svgstrThinGray" x1="160" y1="210" x2="160" y2="250"/>
 	</symbol>
 	<symbol id="icon-expression" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:300px">&#8704;</text>
+		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#8704;</text>
 	</symbol>
 	<symbol id="icon-expression-none" class="icon" viewbox="0 0 320 320">
 		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#128711;</text>
