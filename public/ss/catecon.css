@@ -276,10 +276,6 @@ h1.catalog
 	padding:			10px;
 }
 
-#modeToolbar
-{
-	margin:				32px 0px 0px 0px;
-}
 
 #catalog
 {
@@ -486,6 +482,12 @@ p
 	text-align:			left;
 	transition:			opacity 1s, height 0s;
 	z-index:			1;
+}
+
+.toolbar-buttons
+{
+	margin:	1px;
+	width:	100%;
 }
 
 #toolbar-error
@@ -1229,11 +1231,6 @@ span[contenteditable="true"].selected
 {
 	margin:		4px;
 	width:		95%;
-}
-
-#modeToolbar
-{
-	width:	100%;
 }
 
 .tool-entry-actions
