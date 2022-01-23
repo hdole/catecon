@@ -102,12 +102,14 @@ class U		// utilities
 	{
 		return U.Sig(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
 	}
-	static GetError(err)
+	static getError(err)
 	{
 		return typeof err === 'string' ? err : `${err.name}: ${err.message}`;
 	}
-	static ObjClone(o)
+	static clone(o)
 	{
+		if (null === o || o instanceof Element || (typeof o === 'object' && typeof Blob === 'object' && o instanceof Blob))
+			return o;
 		if (typeof o === 'object')
 		{
 			if (Array.isArray(o))
@@ -126,12 +128,6 @@ class U		// utilities
 			}
 		}
 		return o;
-	}
-	static clone(o)
-	{
-		if (null === o || o instanceof Element || (typeof Blob === 'object' && o instanceof Blob))
-			return o;
-		return U.ObjClone(o);
 	}
 	static getArg(args, key, dflt)
 	{
@@ -301,7 +297,7 @@ class U		// utilities
 	{
 		return obj instanceof ProductObject && obj.dual && obj.objects.reduce((r, oi) => r && oi.getBase().isTerminal(), true);	// convert to numeric?
 	}
-	static ConvertData(obj, data)	// hom elements have to be converted from objects to their name
+	static convertData(obj, data)	// hom elements have to be converted from objects to their name
 	{
 		if (data === undefined || data === null)
 		{
@@ -317,15 +313,15 @@ class U		// utilities
 				break;
 			case 'ProductObject':
 				if (obj.dual)
-					ret = U.isNumeric(obj) ? data : [data[0], U.ConvertData(obj.objects[data[0]], data[1])];
+					ret = U.isNumeric(obj) ? data : [data[0], U.convertData(obj.objects[data[0]], data[1])];
 				else
-					ret = obj.objects.map((o, i) => U.ConvertData(o, data[i]));
+					ret = obj.objects.map((o, i) => U.convertData(o, data[i]));
 				break;
 			case 'HomObject':
 				ret = data.name;
 				break;
 			case 'NamedObject':
-				ret = U.ConvertData(obj.base, data);
+				ret = U.convertData(obj.base, data);
 				break;
 		}
 		return ret;
@@ -357,7 +353,7 @@ class U		// utilities
 	static refcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : b.refcnt < a.refcnt ? 1 : 0; }		// high to low
 	static TimestampSorter(a, b) { return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0; }
 	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
-	static IsIndexElement(elt)
+	static isIndexElement(elt)
 	{
 		return elt instanceof IndexObject || elt instanceof IndexMorphism || elt instanceof IndexText;
 	}
@@ -493,32 +489,6 @@ class U		// utilities
 	{
 		return U.SigArray([...data]);
 	}
-	static cellMap(type)
-	{
-		switch(type)
-		{
-			case 'equals':
-				return '&#10226;';
-			case 'computed':
-				return Cat.R.default.debug ? '&#10226;' : '';
-			case 'composite':
-				return '&#8797;';
-			case 'hidden':
-				return '&#9676;';
-			case 'notEqual':
-				return '&#8800;';
-			case 'named':
-				return '&#8797;';
-			case 'unknown':
-				return '&#8799;';
-			case 'pullback':
-				return '&#8988;';	// upper left corner
-			case 'pushout':
-				return '&#8891;';	// bottom right corner
-			default:
-				return '???';
-		}
-	}
 }
 Object.defineProperties(U,
 {
@@ -600,6 +570,7 @@ class Runtime
 				writable:	true,
 			},
 			diagram:			{value:null,		writable:true},		// current diagram
+			factoryDefaults:	{value:null,		writable:true},
 			initialized:		{value:false,		writable:true},		// Have we finished the boot sequence and initialized properly?
 			languages:			{value:new Map(),	writable:false},
 			sync:				{value:false,		writable:true},		// when to turn on sync of gui and local storage
@@ -809,6 +780,7 @@ class Runtime
 	initialize(fn = null)
 	{
 		const start = Date.now();
+		this.factoryDefaults = U.clone(this.default);
 		this.setupWorkers();
 		this.fetchCatalog( _ =>
 		{
@@ -1345,10 +1317,6 @@ class Runtime
 			diagram = this.sys.Actions.getElement(name);
 		return Diagram.GetInfo(diagram);
 	}
-	saveDefaults()
-	{
-		U.writefile('defaults.json', JSON.stringify({R:this.default, D:D.default}));
-	}
 	canFormat(elt)
 	{
 		return elt.constructor.name === 'Morphism' && (elt.isIterable() || this.Actions.javascript.canFormat(elt));
@@ -1552,7 +1520,7 @@ class Runtime
 	}
 	recordError(err)
 	{
-		const errTxt = U.GetError(err);
+		const errTxt = U.getError(err);
 		if (D)
 		{
 			const elements = [H3.br(), H3.span(errTxt)];
@@ -2053,7 +2021,7 @@ class Toolbar
 		else if (typeof x === 'string')
 			this.error.appendChild(H3.div(x));
 		else
-			this.error.innerHTML = 'Error ' + U.GetError(x);
+			this.error.innerHTML = 'Error ' + U.getError(x);
 	}
 	showError(x)
 	{
@@ -2332,14 +2300,17 @@ class ElementTool
 	}
 	setupToolbar()
 	{
-		const toolbar = D.toolbar;
-		const toolbar2 = [];
-		const tType = U.Decap(this.type);
-		const elementBtn = D.getIcon(tType, tType, e => this.showSection('search'), {title:this.type, id:`${this.type}-search-icon`});
-		toolbar2.push(elementBtn);
-		R.diagram.isEditable() && toolbar2.push(D.getIcon('new', 'edit', _ => this.showSection('new'), {title:'New', id:`${this.type}-new-icon`}));
-		this.toolbar2 = H3.tr(H3.td(toolbar2, `##${this.type}-toolbar2`, {colspan:2}));
-		toolbar.table.appendChild(this.toolbar2);
+		if (this.sections.length > 1)
+		{
+			const toolbar = D.toolbar;
+			const toolbar2 = [];
+			const tType = U.Decap(this.type);
+			const elementBtn = D.getIcon(tType, tType, e => this.showSection('search'), {title:this.type, id:`${this.type}-search-icon`});
+			toolbar2.push(elementBtn);
+			R.diagram.isEditable() && toolbar2.push(D.getIcon('new', 'edit', _ => this.showSection('new'), {title:'New', id:`${this.type}-new-icon`}));
+			this.toolbar2 = H3.tr(H3.td(toolbar2, `##${this.type}-toolbar2`, {colspan:2}));
+			toolbar.table.appendChild(this.toolbar2);
+		}
 	}
 	clearSearch()
 	{
@@ -3364,7 +3335,7 @@ class Catalog extends DiagramTool		// GUI only
 		D.default.diagram.imageScale = D.default.diagram.imageScale * nuScale;
 		D.default.diagram.imageScale = D.default.diagram.imageScale * nuScale;
 		this.setImageScale();
-		R.saveDefaults();
+		D.saveDefaults();
 	}
 	createDiagram()
 	{
@@ -3431,6 +3402,9 @@ class CellTool extends ElementTool
 		super.html();
 		const searchbar = D.toolbar.help.querySelector('#Cell-search-tools');
 		searchbar.classList.add('hidden');
+		const h3 = D.toolbar.table.querySelector('h3');
+		h3.innerHTML = 'Cells';
+		h3.parentNode.appendChild(H3.span(H3.input({type:"checkbox", onchange:e => D.setShowComputedCells(e), id:'check-computed-cells', checked:D.default.showComputedCells}), H3.span('Show computed cells')));
 	}
 	getRows(tbl, cells)
 	{
@@ -3672,6 +3646,7 @@ class Display
 					panel:			{width:	230},		// px
 					scale:			{base:1.05},
 					scale3D:		1,
+					showComputedCells:false,
 					stdOffset:		new D2(50, 50),
 					stdArrow:		new D2(150, 0),
 					statusbar:		{
@@ -3701,6 +3676,7 @@ class Display
 			editElement:	{value: null,		writable: true},
 			elementTool:	{value: null,		writable: true},
 			emphasized:		{value: new Set(),	writable: false},
+			factoryDefaults:{value: null,		writable: true},
 			gradients:		{value: {radgrad1:null, radgrad2:null},	writable: false},
 			graphColors:	{value: [],			writable: false},
 			gridding:		{value: true,		writable: true},
@@ -4326,6 +4302,7 @@ class Display
 	}
 	initialize()
 	{
+		this.factoryDefaults = U.clone(this.default);
 		this.local = document.location.hostname === 'localhost';
 		this.diagramSVG = document.getElementById('diagramSVG');
 		this.session.read();
@@ -4438,16 +4415,20 @@ class Display
 		this.gradients.radgrad2 = document.getElementById('radgrad2');
 		this.generateGraphColors();
 	}
+	saveDefaults()
+	{
+		U.writefile('defaults.json', JSON.stringify({R:this.default, D:this.default}));
+	}
 	readDefaults()	// assume run only one per loading
 	{
-		this.factoryDefaults = U.clone(this.default);
+		R.factoryDefaults = U.clone(this.default);
 		const file = 'defaults.json';
 		let contents = null;
 		contents = U.readfile(file);
 		const defaults = contents ? JSON.parse(contents) : null;
 		if (defaults)
 		{
-			defaults.R && Object.keys(defaults.R).map(k => this.default[k] = defaults.R[k]);		// merge the R defaults
+			defaults.R && Object.keys(defaults.R).map(k => R.default[k] = defaults.R[k]);		// merge the R defaults
 			defaults.D && Object.keys(defaults.D).map(k => this.default[k] = defaults.D[k]);		// merge the D defaults
 			this.setDarkmode(this.default.darkmode)
 		}
@@ -4883,7 +4864,7 @@ class Display
 		const diagram = R.$CAT.getElement(e.target.dataset.name);
 		const zoomDgrm = diagram && !this.default.fullscreen &&
 						(e.target.dataset.type === 'diagram' || e.target.dataset.type === 'object' || e.target.dataset.type === 'morphism' || e.target.dataset.type === 'cell' || e.target.constructor.name === 'SVGTextElement');
-		const viewport = zoomDgrm ? diagram.getPlacement() : this.session.getCurrentViewport();
+		const viewport = zoomDgrm ? D.session.getPlacement(diagram.name) : this.session.getCurrentViewport();
 		const vpScale = viewport.scale;
 		let inc = Math.log(vpScale)/Math.log(this.default.scale.base) + scalar;
 		let scale = this.default.scale.base ** inc;
@@ -4956,7 +4937,7 @@ class Display
 				case 'new':
 				case 'update':
 					this.autosave(element instanceof Diagram ? element : diagram);
-					if (U.IsIndexElement(element) && diagram.domain.morphismToCells.has(element))
+					if (U.isIndexElement(element) && diagram.domain.morphismToCells.has(element))
 						diagram.domain.morphismToCells.get(element).map(cell => cell.update());
 					break;
 			}
@@ -5099,7 +5080,7 @@ class Display
 					break;
 			}
 		});
-		window.onresize = Display.Resize;
+		window.onresize = _ => this.resize();
 		window.addEventListener('mousemove', e => this.autohide(e));
 		window.addEventListener('mousedown', e => this.autohide(e));
 		window.addEventListener('keydown', e => this.autohide(e));
@@ -5138,21 +5119,35 @@ class Display
 			}
 			if (this.session.mode === 'diagram' && R.diagram)
 			{
-				const dirX = Math.max(-1, Math.min(1, e.wheelDeltaX));
-				const dirY = Math.max(-1, Math.min(1, e.wheelDeltaY));
-				if (e.shiftKey)
+				node = e.target;
+				let isDiagram = false;
+				while(node)
 				{
-					this.toolbar.hide();
-					this.zoom(e, dirY);
+					if (node === this.topSVG)
+					{
+						isDiagram = true;
+						break;
+					}
+					node = node.parentNode;
 				}
-				else
+				if (isDiagram)
 				{
-					let compass = '';
-					if (dirY !== 0)
-						compass = dirY < 0 ? 'down' : 'up';
+					const dirX = Math.max(-1, Math.min(1, e.wheelDeltaX));
+					const dirY = Math.max(-1, Math.min(1, e.wheelDeltaY));
+					if (e.shiftKey)
+					{
+						this.toolbar.hide();
+						this.zoom(e, dirY);
+					}
 					else
-						compass = dirX < 0 ? 'right' : 'left';
-					this.panHandler(e, compass);
+					{
+						let compass = '';
+						if (dirY !== 0)
+							compass = dirY < 0 ? 'down' : 'up';
+						else
+							compass = dirX < 0 ? 'right' : 'left';
+						this.panHandler(e, compass);
+					}
 				}
 			}
 			else if (this.session.mode === 'catalog' && e.shiftKey)
@@ -6107,7 +6102,7 @@ class Display
 	setFullscreen(full, emit = true)
 	{
 		this.default.fullscreen = full;
-		R.saveDefaults();
+		D.saveDefaults();
 		if (emit)
 		{
 			const diagrams = [];
@@ -6226,7 +6221,7 @@ class Display
 	{
 		U.removefile('defaults.json');
 		R.default = U.clone(R.factoryDefaults);
-		this.default = U.clone(this.factoryDefaults);
+		this.default = U.clone(D.factoryDefaults);
 		this.statusbar.show(null, 'Defaults reset to original values');
 		this.panels.panels.settings.update();
 	}
@@ -6425,7 +6420,7 @@ class Display
 		mode ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme');
 		this.default.darkmode = mode;
 		this.updateBorder();
-		R.saveDefaults();
+		D.saveDefaults();
 	}
 	generateGraphColors()
 	{
@@ -6449,9 +6444,11 @@ class Display
 	{
 		this.emphasized.forEach(elt => elt.emphasis(false));
 	}
-	static Resize()
+	setShowComputedCells(e)
 	{
-		D.resize();
+		D.default.showComputedCells = !D.default.showComputedCells;
+		D.saveDefaults();
+		R.diagram.domain.checkCells();
 	}
 }
 
@@ -7182,11 +7179,11 @@ class SettingsPanel extends Panel
 	constructor()
 	{
 		super('settings');
-		const debugChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.debug = !Cat.R.default.debug; Cat.R.saveDefaults();}, id:'check-debug'});
-		const gridChkbox = H3.input({type:"checkbox", onchange:e => {Cat.D.gridding = !D.gridding; R.saveDefaults();}});
+		const debugChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.debug = !Cat.R.default.debug; D.saveDefaults();}, id:'check-debug'});
+		const gridChkbox = H3.input({type:"checkbox", onchange:e => {Cat.D.gridding = !D.gridding; D.saveDefaults();}});
 		if (D.gridding)
 			gridChkbox.checked = true;
-		const showEventsChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.showEvents = !Cat.R.default.showEvents; Cat.R.saveDefaults();}});
+		const showEventsChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.showEvents = !Cat.R.default.showEvents; D.saveDefaults();}});
 		if (R.default.showEvents)
 			showEventsChkbox.checked = true;
 		const settings = [	H3.tr(	H3.td(gridChkbox),
@@ -9529,7 +9526,7 @@ class NameAction extends Action
 		catch(x)
 		{
 			D.toolbar.error.classList.add('error');
-			D.toolbar.error.innerHTML = 'Error ' + U.GetError(x);
+			D.toolbar.error.innerHTML = 'Error ' + U.getError(x);
 		}
 	}
 	doit(e, diagram, args)
@@ -9991,7 +9988,7 @@ class LimitAction extends Action
 		const args =
 		{
 			description:	`Create a ${dual ? 'pullout' : 'pullback'} assembly of two or more morphisms with a cone that commutes`,
-			basename:		`${dual ? 'co' : ''}coneAssembly`,
+			basename:		`${dual ? 'co' : ''}limit`,
 			dual,
 			actionOnly:		true,
 		};
@@ -10008,26 +10005,76 @@ class LimitAction extends Action
 	doit(e, diagram, diagramMorphisms)
 	{
 		const morphisms = diagramMorphisms.map(m => m.to);
-		const m = diagram.get('ConeAssembly', {morphisms, dual:this.dual});
+		const m = diagram.get('ProductAssembly', {morphisms, dual:this.dual});
 		return diagram.placeMorphismByObject(e, 'domain', diagramMorphisms[0].domain, m);
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable())
+		if (diagram.isEditable() && ary.length === 2 && ary[0] instanceof Cell && 'to' in ary[1] && ary[1].to instanceof PullbackObject)
 		{
-			const source = ary.filter((m, i) => i % 2 === 0);
-			const sink = ary.filter((m, i) => i % 2 === 1);
-			if (!Category.isSink(source, true) || !Category.isSink(sink))
-				return false;
-			if (this.dual)
+			const cell = ary[0];
+			const pboNdx = ary[1];
+			const leftObjects = new Set(cell.left.map(m => m.codomain));
+			const rightObjects = new Set(cell.right.map(m => m.codomain));
+			if (pboNdx.dual)		// pushout
 			{
 			}
-			else
+			else		// pullback
 			{
-				for(let i=1; i<source.length; ++i)
+				let factors = []
+				const projections = [];
+				const objects = [];
+				pboNdx.domains.forEach(m =>
 				{
-					const snk = sink[i];
-					// TODO
+					if (m.to instanceof FactorMorphism && m.to.factors.length === 1 && (leftObjects.has(m.codomain) || rightObjects.has(m.codomain)))
+					{
+						factors.push(m.to.factors);
+						projections.push(m);
+						objects.push(m.codomain);
+					}
+				});
+				const legHasObject = (leg, object) =>
+				{
+					let ndx = -1;
+					for (let i=0; i < leg.length -1; ++i)
+						if (leg[i].codomain === object)
+						{
+							ndx = i + 1;
+							break;
+						}
+					return ndx;
+				}
+
+				if (factors.length === 2)		// TODO bigger pbs
+				{
+					factors = factors.map(f => f[0]);
+					if (factors[0] === factors[1] || factors[0] < 0 || factors[1] < 0)		// must have different non-negative factors
+						return false;
+
+//					if ((cell.left.includes(objects[0]) && cell.left.includes(objects[1])) || (cell.right.includes(objects[0]) && cell.right.includes(objects[1])))		// difference legs
+//						return false;
+					let left = null;
+					let right = null;
+					const leftNdx0 = legHasObject(cell.left, objects[0]);
+					const rightNdx0 = legHasObject(cell.right, objects[0]);
+					const leftNdx1 = legHasObject(cell.left, objects[1]);
+					const rightNdx1 = legHasObject(cell.right, objects[1]);
+					if ((leftNdx0 < 0 && leftNdx1 < 0) || (rightNdx0 < 0 && rightNdx1 < 0))		// objects must not be on same leg
+						return false;
+					const checkBase = (leg, object, ndx) =>
+					{
+						if (ndx > -1)	// check for base
+						{
+							const sub = leg.slice(ndx);
+							const base = diagram.comp(...sub.map(m => m.to));
+							return pboNdx.to.morphisms.includes(base);
+						}
+						return false;
+					};
+					if (leftNdx0 && rightNdx1)
+						return checkBase(cell.left, objects[0], leftNdx0) && checkBase(cell.right, objects[1], rightNdx1);
+					else
+						return checkBase(cell.left, objects[1], leftNdx1) && checkBase(cell.right, objects[0], rightNdx0);
 				}
 			}
 		}
@@ -10965,8 +11012,8 @@ class RunAction extends Action
 	{
 		const that = R.Actions.run;
 		const morphism = R.diagram.getSelected();
-		const domInfo = JSON.stringify(U.ConvertData(morphism.domain.to, result[0]));
-		const codInfo = JSON.stringify(U.ConvertData(morphism.codomain.to, result[1]));
+		const domInfo = JSON.stringify(U.convertData(morphism.domain.to, result[0]));
+		const codInfo = JSON.stringify(U.convertData(morphism.codomain.to, result[1]));
 		const div = H3.div([H3.span(domInfo), H3.span('&rarr;'), H3.span(codInfo)]);
 		if (that.display.children.length === 0)
 			that.display.appendChild(H3.h3('Data'));
@@ -11028,7 +11075,7 @@ class RunAction extends Action
 		}
 		catch(x)
 		{
-			D.toolbar.showError('Error: ' + U.GetError(x));
+			D.toolbar.showError('Error: ' + U.getError(x));
 		}
 	}
 	editData(e, i)
@@ -12467,7 +12514,7 @@ class Morphism extends Element
 		{
 			const saved = new Map();
 			const codomain = this.codomain;
-			this.data.forEach((d, k) => d && saved.set(k, U.ConvertData(codomain, d)));		// drop undefined data
+			this.data.forEach((d, k) => d && saved.set(k, U.convertData(codomain, d)));		// drop undefined data
 			a.data = U.jsonMap(saved);
 		}
 		if ('recursor' in this && this.recursor)
@@ -13787,9 +13834,9 @@ class Cell
 	{
 		let properName = '';
 		if (this.assertion)
-			properName = U.cellMap(this.assertion);
+			properName = this.cellMap(this.assertion);
 		else
-			properName = U.cellMap(this.commutes);
+			properName = this.cellMap(this.commutes);
 		const level = this.getLevel();
 		this.properName = '('.repeat(level) + properName + ')'.repeat(level);
 	}
@@ -13855,6 +13902,17 @@ class Cell
 		this.removeItem();
 		D.emitCellEvent(this.diagram, 'delete', this);
 	}
+	getObjects()
+	{
+		const morphs = [...this.left, ...this.right];
+		const objs = new Set();
+		morphs.map(m =>
+		{
+			objs.add(m.domain);
+			objs.add(m.codomain);
+		});
+		return [...objs];
+	}
 	register()		// for new cells
 	{
 		this.getObjects().map(o => o.cells.add(this));
@@ -13918,7 +13976,7 @@ class Cell
 			return;
 		}
 		if (!this.svg)
-			this.makeSVG(this.diagram.svgRoot);
+			this.makeSVG(this.diagram.svgBase);
 		this.setProperName();
 		const hideit = this.left.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ||
 							this.right.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false);
@@ -13936,17 +13994,6 @@ class Cell
 		const place = this.diagram.autoplaceSvg(bbox, this.name);
 		this.svg.setAttribute('x', place.x + width/2);
 		this.svg.setAttribute('y', place.y + D.default.font.height);
-	}
-	getObjects()
-	{
-		const morphs = [...this.left, ...this.right];
-		const objs = new Set();
-		morphs.map(m =>
-		{
-			objs.add(m.domain);
-			objs.add(m.codomain);
-		});
-		return [...objs];
 	}
 	isSimple()
 	{
@@ -14074,6 +14121,32 @@ class Cell
 	check(fn = null)
 	{
 		R.checkEquivalence(this, fn);
+	}
+	cellMap(type)
+	{
+		switch(type)
+		{
+			case 'equals':
+				return '&#10226;';
+			case 'computed':
+				return D && D.default.showComputedCells ? '&#10226;' : '';
+			case 'composite':
+				return '&#8797;';
+			case 'hidden':
+				return '&#9676;';
+			case 'notEqual':
+				return '&#8800;';
+			case 'named':
+				return '&#8797;';
+			case 'unknown':
+				return '&#8799;';
+			case 'pullback':
+				return '&#8988;';	// upper left corner
+			case 'pushout':
+				return '&#8891;';	// bottom right corner
+			default:
+				return '???';
+		}
 	}
 	static Signature(left, right)
 	{
@@ -15696,7 +15769,7 @@ class Diagram extends Functor
 	}
 	addElement(elt)
 	{
-		const isIndex = U.IsIndexElement(elt);
+		const isIndex = U.isIndexElement(elt);
 		const cat = isIndex ? this.domain : this.codomain;
 		if (cat.elements.has(elt.name))
 			throw `Element with given name ${U.HtmlSafe(elt.name)} already exists in category ${U.HtmlSafe(cat.name)}`;
