@@ -81,6 +81,11 @@
 		<line class="arrow0 str0" x1="40" y1="40" x2="280" y2="280"/>
 		<line class="arrow0 str0" x1="280" y1="40" x2="40" y2="280"/>
 	</symbol>
+	<symbol id="icon-colimit" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0-30px" x1="60" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+		<line class="arrow9" x1="280" y1="280" x2="280" y2="100" marker-end="url(#arrowhead)"/>
+		<line class="arrow9" x1="120" y1="260" x2="240" y2="100" marker-end="url(#arrowhead)"/>
+	</symbol>
 	<symbol id="icon-composite" class="icon" viewbox="0 0 320 320">
 		<line class="arrow0" x1="40" y1="40" x2="260" y2="40" marker-end="url(#arrowhead)"/>
 		<line class="arrow0" x1="260" y1="80" x2="260" y2="260" marker-end="url(#arrowhead)"/>
@@ -311,6 +316,11 @@
 	</symbol>
 	<symbol id="icon-level-up" class="icon" viewbox="0 0 320 320">
 		<text text-anchor="middle" x="160" y="280" style="font-size:300px">(+)</text>
+	</symbol>
+	<symbol id="icon-limit" class="icon" viewbox="0 0 320 320">
+		<line class="arrow0-30px" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
+		<line class="arrow9" x1="40" y1="80" x2="40" y2="280" marker-end="url(#arrowhead)"/>
+		<line class="arrow9" x1="60" y1="80" x2="160" y2="240" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-login" class="icon" viewbox="0 0 320 320">
 		<polyline class="svgstr4" points="160,60 160,200 70,280 70,40 250,40 250,280"/>
