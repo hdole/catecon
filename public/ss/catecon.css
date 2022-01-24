@@ -595,13 +595,6 @@ p
 	stroke-width:	30px
 }
 
-.arrow0
-{
-	fill:			none;
-	stroke:			var(--color-morphism);
-	stroke-width:	20px;
-}
-
 .arrow0dash
 {
 	fill:				none;
@@ -609,19 +602,28 @@ p
 	stroke-dasharray:	10,10;
 	stroke-width:		20px;
 }
+
 .arrow0rnd
 {
 	fill:			none;
 	stroke:			var(--color-morphism);
 	stroke-width:	20px;
-	stroke-linecap:round;
+	stroke-linecap:	round;
 }
+
 .arrow0-30px
 {
 	fill:			none;
 	stroke:			var(--color-morphism);
 	stroke-linecap:	round;
 	stroke-width:	30px;
+}
+
+.arrow0
+{
+	fill:			none;
+	stroke:			var(--color-morphism);
+	stroke-width:	20px;
 }
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
 .arrow6 {fill:none; stroke:#666; stroke-width:20px;}
@@ -1327,11 +1329,15 @@ tspan
 .text-editor
 {
 	background-color:	var(--color-bg);
+	border:				blue;
+	border-width:		1px;
+	box-shadow:			1px 1px 1px 1px #bbbb;
 	color:				var(--color-body);
-	white-space:		pre-wrap;
-	word-wrap:			break-word;
-	width:				fit-content;
 	font-family:		"Fira Sans",sans-serif;
+	margin:				2px;
+	white-space:		pre-wrap;
+	width:				fit-content;
+	word-wrap:			break-word;
 }
 
 .ifocus
