@@ -9,314 +9,6 @@
   "domain": "hdole/category_Index",
   "codomain": "zf/Set",
   "references": [],
-  "domainElements": [
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 550,
-        "y": -100
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 750,
-        "y": -100
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 550,
-        "y": 0
-      }
-    },
-    {
-      "basename": "o_5",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 750,
-        "y": 0
-      }
-    },
-    {
-      "basename": "o_6",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 550,
-        "y": 100
-      }
-    },
-    {
-      "basename": "o_7",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 750,
-        "y": 100
-      }
-    },
-    {
-      "basename": "o_8",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 550,
-        "y": 200
-      }
-    },
-    {
-      "basename": "o_9",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 750,
-        "y": 200
-      }
-    },
-    {
-      "basename": "o_10",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 750,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_11",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 550,
-        "y": 500
-      }
-    },
-    {
-      "basename": "o_12",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 750,
-        "y": 500
-      }
-    },
-    {
-      "basename": "o_13",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 750,
-        "y": 700
-      }
-    },
-    {
-      "description": "Category",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -130,
-        "y": -450
-      },
-      "height": "200",
-      "weight": "bold"
-    },
-    {
-      "description": "The collection of objects in the category",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 0,
-        "y": -300
-      },
-      "height": "24"
-    },
-    {
-      "description": "The collection of morphisms in the category",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -50,
-        "y": -200
-      },
-      "height": "24"
-    },
-    {
-      "description": "The mapping of objects to their identity morphism",
-      "basename": "t_3",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -100,
-        "y": -100
-      },
-      "height": "24"
-    },
-    {
-      "basename": "o_14",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 550,
-        "y": 1000
-      }
-    },
-    {
-      "basename": "o_15",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 750,
-        "y": 1000
-      }
-    },
-    {
-      "basename": "o_16",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 750,
-        "y": 800
-      }
-    },
-    {
-      "basename": "o_17",
-      "prototype": "IndexObject",
-      "to": "hdole/category/Pb{cod,dom}bP",
-      "xy": {
-        "x": 550,
-        "y": 800
-      }
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_2",
-      "codomain": "hdole/category/o_3",
-      "to": "hdole/category/id"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_4",
-      "codomain": "hdole/category/o_5",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_6",
-      "codomain": "hdole/category/o_7",
-      "to": "hdole/category/cod"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_8",
-      "codomain": "hdole/category/o_9",
-      "to": "hdole/category/id"
-    },
-    {
-      "basename": "m_4",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_8",
-      "codomain": "hdole/category/o_10",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/category/Id{C0}dI"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_9",
-      "codomain": "hdole/category/o_10",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_11",
-      "codomain": "hdole/category/o_12",
-      "to": "hdole/category/id"
-    },
-    {
-      "basename": "m_7",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_11",
-      "codomain": "hdole/category/o_13",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/category/Id{C0}dI"
-    },
-    {
-      "basename": "m_8",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_12",
-      "codomain": "hdole/category/o_13",
-      "to": "hdole/category/cod"
-    },
-    {
-      "basename": "m_9",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_14",
-      "codomain": "hdole/category/o_15",
-      "to": "hdole/category/dom"
-    },
-    {
-      "basename": "m_10",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_16",
-      "codomain": "hdole/category/o_15",
-      "to": "hdole/category/cod"
-    },
-    {
-      "basename": "m_11",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_17",
-      "codomain": "hdole/category/o_16",
-      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
-    },
-    {
-      "basename": "m_12",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/category/o_17",
-      "codomain": "hdole/category/o_14",
-      "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C1",
-      "xy": {
-        "x": 550,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/category/C0",
-      "xy": {
-        "x": 550,
-        "y": -300
-      }
-    }
-  ],
   "domainInfo": {
     "description": "index category for diagram hdole/category",
     "basename": "category_Index",
@@ -335,7 +27,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": -100
+          "y": -50
         }
       },
       {
@@ -348,7 +40,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": -100
+          "y": -50
         }
       },
       {
@@ -361,7 +53,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": 0
+          "y": 50
         }
       },
       {
@@ -374,7 +66,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 0
+          "y": 50
         }
       },
       {
@@ -387,7 +79,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": 100
+          "y": 150
         }
       },
       {
@@ -400,7 +92,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 100
+          "y": 150
         }
       },
       {
@@ -413,7 +105,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": 200
+          "y": 650
         }
       },
       {
@@ -426,7 +118,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 200
+          "y": 650
         }
       },
       {
@@ -439,7 +131,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 400
+          "y": 850
         }
       },
       {
@@ -452,7 +144,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": 500
+          "y": 950
         }
       },
       {
@@ -465,7 +157,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 500
+          "y": 950
         }
       },
       {
@@ -478,7 +170,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 700
+          "y": 1150
         }
       },
       {
@@ -489,8 +181,8 @@
         "category": "zf/Set",
         "diagram": "hdole/category",
         "xy": {
-          "x": -130,
-          "y": -450
+          "x": -120,
+          "y": -500
         },
         "height": "200",
         "weight": "bold"
@@ -503,8 +195,8 @@
         "category": "zf/Set",
         "diagram": "hdole/category",
         "xy": {
-          "x": 0,
-          "y": -300
+          "x": -190,
+          "y": -260
         },
         "height": "24"
       },
@@ -516,23 +208,49 @@
         "category": "zf/Set",
         "diagram": "hdole/category",
         "xy": {
-          "x": -50,
-          "y": -200
+          "x": -190,
+          "y": -160
         },
         "height": "24"
       },
       {
-        "description": "The mapping of objects to their identity morphism",
+        "description": "Map objects to their identity morphism",
         "basename": "t_3",
         "name": "hdole/category/t_3",
         "prototype": "IndexText",
         "category": "zf/Set",
         "diagram": "hdole/category",
         "xy": {
-          "x": -100,
-          "y": -100
+          "x": -190,
+          "y": -40
         },
         "height": "24"
+      },
+      {
+        "description": "",
+        "basename": "o_0",
+        "name": "hdole/category/o_0",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 550,
+          "y": -150
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_1",
+        "name": "hdole/category/o_1",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 550,
+          "y": -250
+        }
       },
       {
         "description": "",
@@ -543,8 +261,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 550,
-          "y": 1000
+          "x": 750,
+          "y": 250
         }
       },
       {
@@ -557,7 +275,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 1000
+          "y": 400
         }
       },
       {
@@ -569,8 +287,8 @@
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 750,
-          "y": 800
+          "x": 550,
+          "y": 400
         }
       },
       {
@@ -583,8 +301,308 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 550,
-          "y": 800
+          "y": 250
         }
+      },
+      {
+        "description": "",
+        "basename": "o_18",
+        "name": "hdole/category/o_18",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 550,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_19",
+        "name": "hdole/category/o_19",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 750,
+          "y": 1300
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_20",
+        "name": "hdole/category/o_20",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 550,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_21",
+        "name": "hdole/category/o_21",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 750,
+          "y": 1500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_22",
+        "name": "hdole/category/o_22",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 550,
+          "y": 1600
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_23",
+        "name": "hdole/category/o_23",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 750,
+          "y": 1600
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_24",
+        "name": "hdole/category/o_24",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 550,
+          "y": 1800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_25",
+        "name": "hdole/category/o_25",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 750,
+          "y": 1800
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_26",
+        "name": "hdole/category/o_26",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 550,
+          "y": 500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_27",
+        "name": "hdole/category/o_27",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 750,
+          "y": 500
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_28",
+        "name": "hdole/category/o_28",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 840,
+          "y": 2290
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_29",
+        "name": "hdole/category/o_29",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 850,
+          "y": 2530
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_30",
+        "name": "hdole/category/o_30",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 580,
+          "y": 2530
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_32",
+        "name": "hdole/category/o_32",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 570,
+          "y": 2290
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_31",
+        "name": "hdole/category/o_31",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 390,
+          "y": 1970
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_34",
+        "name": "hdole/category/o_34",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 140,
+          "y": 2160
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_33",
+        "name": "hdole/category/o_33",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 140,
+          "y": 1970
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_35",
+        "name": "hdole/category/o_35",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
+        "xy": {
+          "x": 390,
+          "y": 2160
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_37",
+        "name": "hdole/category/o_37",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 1230,
+          "y": 2570
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_38",
+        "name": "hdole/category/o_38",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 1000,
+          "y": 2830
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_39",
+        "name": "hdole/category/o_39",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C0",
+        "xy": {
+          "x": 1230,
+          "y": 2830
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_36",
+        "name": "hdole/category/o_36",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
+        "xy": {
+          "x": 1000,
+          "y": 2570
+        }
+      },
+      {
+        "description": "Internal Definition",
+        "basename": "t_4",
+        "name": "hdole/category/t_4",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -100,
+          "y": -350
+        },
+        "height": "48",
+        "weight": "bold"
       },
       {
         "description": "",
@@ -706,7 +724,7 @@
         "diagram": "hdole/category",
         "domain": "hdole/category/o_14",
         "codomain": "hdole/category/o_15",
-        "to": "hdole/category/dom"
+        "to": "hdole/category/cod"
       },
       {
         "description": "",
@@ -717,7 +735,7 @@
         "diagram": "hdole/category",
         "domain": "hdole/category/o_16",
         "codomain": "hdole/category/o_15",
-        "to": "hdole/category/cod"
+        "to": "hdole/category/dom"
       },
       {
         "description": "",
@@ -727,7 +745,7 @@
         "category": "hdole/category_Index",
         "diagram": "hdole/category",
         "domain": "hdole/category/o_17",
-        "codomain": "hdole/category/o_16",
+        "codomain": "hdole/category/o_14",
         "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
       },
       {
@@ -738,34 +756,540 @@
         "category": "hdole/category_Index",
         "diagram": "hdole/category",
         "domain": "hdole/category/o_17",
-        "codomain": "hdole/category/o_14",
+        "codomain": "hdole/category/o_16",
         "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
         "description": "",
-        "basename": "o_0",
-        "name": "hdole/category/o_0",
+        "basename": "m_13",
+        "name": "hdole/category/m_13",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_18",
+        "codomain": "hdole/category/o_19",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_14",
+        "name": "hdole/category/m_14",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_18",
+        "codomain": "hdole/category/o_20",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_15",
+        "name": "hdole/category/m_15",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_20",
+        "codomain": "hdole/category/o_21",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_16",
+        "name": "hdole/category/m_16",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_19",
+        "codomain": "hdole/category/o_21",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_17",
+        "name": "hdole/category/m_17",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_22",
+        "codomain": "hdole/category/o_23",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_18",
+        "name": "hdole/category/m_18",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_22",
+        "codomain": "hdole/category/o_24",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_19",
+        "name": "hdole/category/m_19",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_24",
+        "codomain": "hdole/category/o_25",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_20",
+        "name": "hdole/category/m_20",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_23",
+        "codomain": "hdole/category/o_25",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_21",
+        "name": "hdole/category/m_21",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_26",
+        "codomain": "hdole/category/o_27",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_22",
+        "name": "hdole/category/m_22",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_28",
+        "codomain": "hdole/category/o_29",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_23",
+        "name": "hdole/category/m_23",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_30",
+        "codomain": "hdole/category/o_29",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_25",
+        "name": "hdole/category/m_25",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_32",
+        "codomain": "hdole/category/o_30",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_24",
+        "name": "hdole/category/m_24",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_32",
+        "codomain": "hdole/category/o_28",
+        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_26",
+        "name": "hdole/category/m_26",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_31",
+        "codomain": "hdole/category/o_33",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/category/Id{C0}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_27",
+        "name": "hdole/category/m_27",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_34",
+        "codomain": "hdole/category/o_33",
+        "to": "hdole/category/dom"
+      },
+      {
+        "description": "",
+        "basename": "m_28",
+        "name": "hdole/category/m_28",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_35",
+        "codomain": "hdole/category/o_31",
+        "to": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_29",
+        "name": "hdole/category/m_29",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_35",
+        "codomain": "hdole/category/o_34",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_31",
+        "name": "hdole/category/m_31",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_34",
+        "codomain": "hdole/category/o_30",
+        "to": "hdole/category/Id{C1}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_30",
+        "name": "hdole/category/m_30",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_31",
+        "codomain": "hdole/category/o_28",
+        "to": "hdole/category/id"
+      },
+      {
+        "description": "",
+        "basename": "m_34",
+        "name": "hdole/category/m_34",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_38",
+        "codomain": "hdole/category/o_39",
+        "to": "hdole/category/Id{C0}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_35",
+        "name": "hdole/category/m_35",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_37",
+        "codomain": "hdole/category/o_39",
+        "to": "hdole/category/cod"
+      },
+      {
+        "description": "",
+        "basename": "m_32",
+        "name": "hdole/category/m_32",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_36",
+        "codomain": "hdole/category/o_37",
+        "to": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_33",
+        "name": "hdole/category/m_33",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_36",
+        "codomain": "hdole/category/o_38",
+        "to": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_36",
+        "name": "hdole/category/m_36",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_38",
+        "codomain": "hdole/category/o_30",
+        "to": "hdole/category/id"
+      },
+      {
+        "description": "",
+        "basename": "m_37",
+        "name": "hdole/category/m_37",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_37",
+        "codomain": "hdole/category/o_28",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/category/Id{C1}dI"
+      },
+      {
+        "description": "",
+        "basename": "m_38",
+        "name": "hdole/category/m_38",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_35",
+        "codomain": "hdole/category/o_32",
+        "to": "hdole/category/Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC}uP"
+      },
+      {
+        "description": "",
+        "basename": "m_39",
+        "name": "hdole/category/m_39",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_36",
+        "codomain": "hdole/category/o_32",
+        "to": "hdole/category/Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC}uP"
+      },
+      {
+        "description": "",
+        "basename": "o_40",
+        "name": "hdole/category/o_40",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
+        "xy": {
+          "x": 250,
+          "y": 3050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_41",
+        "name": "hdole/category/o_41",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 650,
+          "y": 3050
+        }
+      },
+      {
+        "description": "",
+        "basename": "m_40",
+        "name": "hdole/category/m_40",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_40",
+        "codomain": "hdole/category/o_41",
+        "to": "hdole/category/Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC}uP"
+      },
+      {
+        "description": "",
+        "basename": "o_42",
+        "name": "hdole/category/o_42",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
+        "xy": {
+          "x": 1050,
+          "y": 3050
+        }
+      },
+      {
+        "description": "",
+        "basename": "m_41",
+        "name": "hdole/category/m_41",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_42",
+        "codomain": "hdole/category/o_41",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/category/Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC}uP"
+      },
+      {
+        "description": "",
+        "basename": "o_43",
+        "name": "hdole/category/o_43",
         "prototype": "IndexObject",
         "category": "hdole/category_Index",
         "diagram": "hdole/category",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 550,
-          "y": -200
+          "x": 650,
+          "y": 3350
         }
       },
       {
         "description": "",
-        "basename": "o_1",
-        "name": "hdole/category/o_1",
-        "prototype": "IndexObject",
+        "basename": "m_42",
+        "name": "hdole/category/m_42",
+        "prototype": "IndexMorphism",
         "category": "hdole/category_Index",
         "diagram": "hdole/category",
-        "to": "hdole/category/C0",
+        "domain": "hdole/category/o_41",
+        "codomain": "hdole/category/o_43",
+        "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "m_43",
+        "name": "hdole/category/m_43",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_42",
+        "codomain": "hdole/category/o_43",
+        "to": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
+      },
+      {
+        "description": "",
+        "basename": "m_44",
+        "name": "hdole/category/m_44",
+        "prototype": "IndexMorphism",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "domain": "hdole/category/o_40",
+        "codomain": "hdole/category/o_43",
+        "to": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
+      },
+      {
+        "description": "BUG: should not commute",
+        "basename": "t_5",
+        "name": "hdole/category/t_5",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
         "xy": {
-          "x": 550,
-          "y": -300
-        }
+          "x": 520,
+          "y": 3000
+        },
+        "height": 24
+      },
+      {
+        "description": "Form the pullbacks of objects and morphisms\nand lift to the pullback of composable pairs of\nidentities and morphisms.",
+        "basename": "t_6",
+        "name": "hdole/category/t_6",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -490,
+          "y": 1960
+        },
+        "height": 24
+      },
+      {
+        "description": "Form the pullback of composable morphisms\nwhere the first's codomain equals the second's\ndomain.",
+        "basename": "t_7",
+        "name": "hdole/category/t_7",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 260
+        },
+        "height": 24
+      },
+      {
+        "description": "From the above pullback there must be a morphism\ngiving the composition of the two.",
+        "basename": "t_8",
+        "name": "hdole/category/t_8",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 500
+        },
+        "height": 24
+      },
+      {
+        "description": "The domain of the composite must be the domain\nof the first morphism.",
+        "basename": "t_9",
+        "name": "hdole/category/t_9",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 1300
+        },
+        "height": 24
+      },
+      {
+        "description": "The codomain of the composite must be the codomain\nof the latter morphism.",
+        "basename": "t_10",
+        "name": "hdole/category/t_10",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 1600
+        },
+        "height": 24
+      },
+      {
+        "description": "The codomain of the identity of an object is\nthat object itself.",
+        "basename": "t_11",
+        "name": "hdole/category/t_11",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 960
+        },
+        "height": 24
+      },
+      {
+        "description": "The domain of the identity of an object is\nthat object itself.",
+        "basename": "t_12",
+        "name": "hdole/category/t_12",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 670
+        },
+        "height": 24
       }
     ],
     "cells": [
@@ -779,8 +1303,7 @@
           "m_4"
         ],
         "assertion": "equals",
-        "hidden": false,
-        "level": 0
+        "hidden": false
       },
       {
         "name": "hdole/category/{m_6,m_8},{m_7}",
@@ -792,8 +1315,33 @@
           "m_7"
         ],
         "assertion": "equals",
-        "hidden": false,
-        "level": 0
+        "hidden": false
+      },
+      {
+        "name": "hdole/category/{m_13,m_16},{m_14,m_15}",
+        "left": [
+          "m_14",
+          "m_15"
+        ],
+        "right": [
+          "m_13",
+          "m_16"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/category/{m_17,m_20},{m_18,m_19}",
+        "left": [
+          "m_18",
+          "m_19"
+        ],
+        "right": [
+          "m_17",
+          "m_20"
+        ],
+        "assertion": "equals",
+        "hidden": false
       }
     ]
   },
@@ -822,9 +1370,32 @@
       ]
     },
     {
+      "prototype": "PullbackObject",
+      "objects": [
+        "C0",
+        "C1"
+      ],
+      "morphisms": [
+        "Id{C0}dI",
+        "dom"
+      ]
+    },
+    {
+      "prototype": "PullbackObject",
+      "objects": [
+        "C1",
+        "C0"
+      ],
+      "morphisms": [
+        "cod",
+        "Id{C0}dI"
+      ]
+    },
+    {
       "description": "identity morphism of an object",
       "basename": "id",
       "prototype": "Morphism",
+      "properName": "i",
       "domain": "hdole/category/C0",
       "codomain": "hdole/category/C1"
     },
@@ -865,14 +1436,113 @@
       "factors": [
         1
       ]
+    },
+    {
+      "basename": "comp",
+      "prototype": "Morphism",
+      "domain": "hdole/category/Pb{cod,dom}bP",
+      "codomain": "hdole/category/C1"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
+      "codomain": "hdole/category/C0",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
+      "codomain": "hdole/category/C1",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "basename": "Id{C1}dI",
+      "prototype": "Identity",
+      "properName": "id",
+      "domain": "hdole/category/C1",
+      "codomain": "hdole/category/C1"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
+      "codomain": "hdole/category/C1",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
+      "codomain": "hdole/category/C0",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
+      "codomain": "hdole/category/C1",
+      "morphisms": [
+        "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF",
+        "Id{C1}dI"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
+      "codomain": "hdole/category/C1",
+      "morphisms": [
+        "Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF",
+        "id"
+      ]
+    },
+    {
+      "prototype": "PullbackAssembly",
+      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
+      "codomain": "hdole/category/Pb{cod,dom}bP",
+      "morphisms": [
+        "Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC",
+        "Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
+      "codomain": "hdole/category/C1",
+      "morphisms": [
+        "Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF",
+        "id"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
+      "codomain": "hdole/category/C1",
+      "morphisms": [
+        "Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF",
+        "Id{C1}dI"
+      ]
+    },
+    {
+      "prototype": "PullbackAssembly",
+      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
+      "codomain": "hdole/category/Pb{cod,dom}bP",
+      "morphisms": [
+        "Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC",
+        "Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC"
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1642492867535,
+  "timestamp": 1643020485644,
   "version": 0,
   "viewport": {
-    "x": 1032,
-    "y": 500,
-    "scale": 0.7182233057314235
+    "x": 872,
+    "y": 764,
+    "scale": 1.149449403318969
   }
 }

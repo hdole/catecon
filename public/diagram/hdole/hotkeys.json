@@ -15,8 +15,8 @@
       "basename": "t_0",
       "prototype": "IndexText",
       "xy": {
-        "x": 1040,
-        "y": 350
+        "x": 1030,
+        "y": 380
       },
       "height": "250",
       "weight": "bold"
@@ -78,7 +78,7 @@
       "textAnchor": "end"
     },
     {
-      "description": "Copy the selected elements.",
+      "description": "Copy the selected elements to the mouse location.",
       "basename": "t_6",
       "prototype": "IndexText",
       "xy": {
@@ -1362,8 +1362,8 @@
         "category": "sys/Cat",
         "diagram": "hdole/hotkeys",
         "xy": {
-          "x": 1040,
-          "y": 350
+          "x": 1030,
+          "y": 380
         },
         "height": "250",
         "weight": "bold"
@@ -1440,7 +1440,7 @@
         "textAnchor": "end"
       },
       {
-        "description": "Copy the selected elements.",
+        "description": "Copy the selected elements to the mouse location.",
         "basename": "t_6",
         "name": "hdole/hotkeys/t_6",
         "prototype": "IndexText",
@@ -3066,7 +3066,7 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1642147934759,
+  "timestamp": 1642847642145,
   "version": 0,
   "viewport": {
     "x": -980,
