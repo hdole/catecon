@@ -8,203 +8,6 @@
   "domain": "hdole/iso_Index",
   "codomain": "sys/Cat",
   "references": [],
-  "domainElements": [
-    {
-      "description": "Isomorphism",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 390,
-        "y": 600
-      },
-      "height": "200",
-      "weight": "bold"
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 800,
-        "y": 800
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1000,
-        "y": 800
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 600,
-        "y": 1050
-      }
-    },
-    {
-      "basename": "o_5",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 800,
-        "y": 1050
-      }
-    },
-    {
-      "basename": "o_7",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 800,
-        "y": 1250
-      }
-    },
-    {
-      "basename": "o_6",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 1200,
-        "y": 1050
-      }
-    },
-    {
-      "basename": "o_8",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1200,
-        "y": 1250
-      }
-    },
-    {
-      "basename": "o_9",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1000,
-        "y": 1050
-      }
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/B",
-      "xy": {
-        "x": 1000,
-        "y": 900
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/iso/A",
-      "xy": {
-        "x": 800,
-        "y": 900
-      }
-    },
-    {
-      "description": "f is invertible (an isomorphism) if there exists a morphism f⁻¹ such that the following diagrams commute.",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 400,
-        "y": 700
-      },
-      "height": "24"
-    },
-    {
-      "description": "[CWMp19]",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 420,
-        "y": 1340
-      },
-      "height": "24"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_0",
-      "codomain": "hdole/iso/o_1",
-      "to": "hdole/iso/f"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_4",
-      "codomain": "hdole/iso/o_5",
-      "to": "hdole/iso/f"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_5",
-      "codomain": "hdole/iso/o_7",
-      "to": "hdole/iso/finv"
-    },
-    {
-      "basename": "m_4",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_4",
-      "codomain": "hdole/iso/o_7",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/iso/Id{A}dI"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_6",
-      "codomain": "hdole/iso/o_8",
-      "to": "hdole/iso/f"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_9",
-      "codomain": "hdole/iso/o_6",
-      "to": "hdole/iso/finv"
-    },
-    {
-      "basename": "m_7",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_9",
-      "codomain": "hdole/iso/o_8",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/iso/Id{B}dI"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/iso/o_2",
-      "codomain": "hdole/iso/o_3",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/iso/finv"
-    }
-  ],
   "domainInfo": {
     "description": "index category for diagram hdole/iso",
     "basename": "iso_Index",
@@ -222,7 +25,7 @@
         "diagram": "hdole/iso",
         "xy": {
           "x": 390,
-          "y": 600
+          "y": 610
         },
         "height": "200",
         "weight": "bold"
@@ -556,7 +359,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642587194987,
+  "timestamp": 1643054751255,
   "version": 0,
   "viewport": {
     "x": -385,

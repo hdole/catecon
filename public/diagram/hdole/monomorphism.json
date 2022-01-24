@@ -9,133 +9,6 @@
   "domain": "hdole/monomorphism_Index",
   "codomain": "sys/Cat",
   "references": [],
-  "domainElements": [
-    {
-      "description": "Monomorphism",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -200,
-        "y": -600
-      },
-      "height": "76",
-      "weight": "bold"
-    },
-    {
-      "description": "f is a monomorphism iff for any two h and g\nwith fg = fh then g = h.",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -200,
-        "y": -550
-      },
-      "height": "24"
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/A",
-      "xy": {
-        "x": 100,
-        "y": -400
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/B",
-      "xy": {
-        "x": 300,
-        "y": -400
-      }
-    },
-    {
-      "basename": "o_11",
-      "prototype": "IndexObject",
-      "to": "hdole/monomorphism/C",
-      "xy": {
-        "x": -150,
-        "y": -400
-      }
-    },
-    {
-      "description": "Known as a 'monic' in [CWMp19].",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -200,
-        "y": -80
-      },
-      "height": "24"
-    },
-    {
-      "description": "In other words, f is a monomorphism if it can always\nbe cancelled on the left:  fh = fg implies h = g.",
-      "basename": "t_3",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -200,
-        "y": -250
-      },
-      "height": "24"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_3",
-      "codomain": "hdole/monomorphism/o_4",
-      "to": "hdole/monomorphism/f"
-    },
-    {
-      "basename": "m_9",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_11",
-      "codomain": "hdole/monomorphism/o_3",
-      "attributes": [
-        [
-          "quantifier",
-          "forall"
-        ],
-        [
-          "level",
-          1
-        ]
-      ],
-      "homsetIndex": -1,
-      "to": "hdole/monomorphism/h"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/monomorphism/o_11",
-      "codomain": "hdole/monomorphism/o_3",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ],
-        [
-          "quantifier",
-          "forall"
-        ],
-        [
-          "level",
-          1
-        ]
-      ],
-      "homsetIndex": 1,
-      "to": "hdole/monomorphism/g"
-    },
-    {
-      "description": "Compare the dual notion of <diagram name=\"hdole/epimorphism\">epimorphism</diagram>",
-      "basename": "t_5",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -200,
-        "y": -150
-      },
-      "height": "24"
-    }
-  ],
   "domainInfo": {
     "description": "index category for diagram hdole/monomorphism",
     "basename": "monomorphism_Index",
@@ -152,7 +25,7 @@
         "category": "sys/Cat",
         "diagram": "hdole/monomorphism",
         "xy": {
-          "x": -200,
+          "x": -210,
           "y": -600
         },
         "height": "76",
@@ -237,6 +110,19 @@
         "height": "24"
       },
       {
+        "description": "Compare the dual notion of <diagram name=\"hdole/epimorphism\">epimorphism</diagram>",
+        "basename": "t_5",
+        "name": "hdole/monomorphism/t_5",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/monomorphism",
+        "xy": {
+          "x": -200,
+          "y": -150
+        },
+        "height": "24"
+      },
+      {
         "description": "",
         "basename": "m_5",
         "name": "hdole/monomorphism/m_5",
@@ -294,19 +180,6 @@
         ],
         "homsetIndex": 1,
         "to": "hdole/monomorphism/g"
-      },
-      {
-        "description": "Compare the dual notion of <diagram name=\"hdole/epimorphism\">epimorphism</diagram>",
-        "basename": "t_5",
-        "name": "hdole/monomorphism/t_5",
-        "prototype": "IndexText",
-        "category": "sys/Cat",
-        "diagram": "hdole/monomorphism",
-        "xy": {
-          "x": -200,
-          "y": -150
-        },
-        "height": "24"
       }
     ],
     "cells": [
@@ -375,7 +248,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642579672572,
+  "timestamp": 1643054739714,
   "version": 0,
   "viewport": {
     "x": 1109,

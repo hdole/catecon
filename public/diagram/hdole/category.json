@@ -181,8 +181,8 @@
         "category": "zf/Set",
         "diagram": "hdole/category",
         "xy": {
-          "x": -120,
-          "y": -500
+          "x": -210,
+          "y": -470
         },
         "height": "200",
         "weight": "bold"
@@ -603,6 +603,162 @@
         },
         "height": "48",
         "weight": "bold"
+      },
+      {
+        "description": "",
+        "basename": "o_40",
+        "name": "hdole/category/o_40",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
+        "xy": {
+          "x": 250,
+          "y": 3050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_41",
+        "name": "hdole/category/o_41",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,dom}bP",
+        "xy": {
+          "x": 650,
+          "y": 3050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_42",
+        "name": "hdole/category/o_42",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
+        "xy": {
+          "x": 1050,
+          "y": 3050
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_43",
+        "name": "hdole/category/o_43",
+        "prototype": "IndexObject",
+        "category": "hdole/category_Index",
+        "diagram": "hdole/category",
+        "to": "hdole/category/C1",
+        "xy": {
+          "x": 650,
+          "y": 3350
+        }
+      },
+      {
+        "description": "BUG: should not commute",
+        "basename": "t_5",
+        "name": "hdole/category/t_5",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": 520,
+          "y": 3000
+        },
+        "height": 24
+      },
+      {
+        "description": "Form the pullbacks of objects and morphisms\nand lift to the pullback of composable pairs of\nidentities and morphisms.",
+        "basename": "t_6",
+        "name": "hdole/category/t_6",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -490,
+          "y": 1960
+        },
+        "height": 24
+      },
+      {
+        "description": "Form the pullback of composable morphisms\nwhere the first's codomain equals the second's\ndomain.",
+        "basename": "t_7",
+        "name": "hdole/category/t_7",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 260
+        },
+        "height": 24
+      },
+      {
+        "description": "From the above pullback there must be a morphism\ngiving the composition of the two.",
+        "basename": "t_8",
+        "name": "hdole/category/t_8",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 500
+        },
+        "height": 24
+      },
+      {
+        "description": "The domain of the composite must be the domain\nof the first morphism.",
+        "basename": "t_9",
+        "name": "hdole/category/t_9",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 1300
+        },
+        "height": 24
+      },
+      {
+        "description": "The codomain of the composite must be the codomain\nof the latter morphism.",
+        "basename": "t_10",
+        "name": "hdole/category/t_10",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 1600
+        },
+        "height": 24
+      },
+      {
+        "description": "The codomain of the identity of an object is\nthat object itself.",
+        "basename": "t_11",
+        "name": "hdole/category/t_11",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 960
+        },
+        "height": 24
+      },
+      {
+        "description": "The domain of the identity of an object is\nthat object itself.",
+        "basename": "t_12",
+        "name": "hdole/category/t_12",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/category",
+        "xy": {
+          "x": -190,
+          "y": 670
+        },
+        "height": 24
       },
       {
         "description": "",
@@ -1076,32 +1232,6 @@
       },
       {
         "description": "",
-        "basename": "o_40",
-        "name": "hdole/category/o_40",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
-        "xy": {
-          "x": 250,
-          "y": 3050
-        }
-      },
-      {
-        "description": "",
-        "basename": "o_41",
-        "name": "hdole/category/o_41",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/Pb{cod,dom}bP",
-        "xy": {
-          "x": 650,
-          "y": 3050
-        }
-      },
-      {
-        "description": "",
         "basename": "m_40",
         "name": "hdole/category/m_40",
         "prototype": "IndexMorphism",
@@ -1110,19 +1240,6 @@
         "domain": "hdole/category/o_40",
         "codomain": "hdole/category/o_41",
         "to": "hdole/category/Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC}uP"
-      },
-      {
-        "description": "",
-        "basename": "o_42",
-        "name": "hdole/category/o_42",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
-        "xy": {
-          "x": 1050,
-          "y": 3050
-        }
       },
       {
         "description": "",
@@ -1140,19 +1257,6 @@
           ]
         ],
         "to": "hdole/category/Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC}uP"
-      },
-      {
-        "description": "",
-        "basename": "o_43",
-        "name": "hdole/category/o_43",
-        "prototype": "IndexObject",
-        "category": "hdole/category_Index",
-        "diagram": "hdole/category",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 650,
-          "y": 3350
-        }
       },
       {
         "description": "",
@@ -1186,110 +1290,6 @@
         "domain": "hdole/category/o_40",
         "codomain": "hdole/category/o_43",
         "to": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
-      },
-      {
-        "description": "BUG: should not commute",
-        "basename": "t_5",
-        "name": "hdole/category/t_5",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": 520,
-          "y": 3000
-        },
-        "height": 24
-      },
-      {
-        "description": "Form the pullbacks of objects and morphisms\nand lift to the pullback of composable pairs of\nidentities and morphisms.",
-        "basename": "t_6",
-        "name": "hdole/category/t_6",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": -490,
-          "y": 1960
-        },
-        "height": 24
-      },
-      {
-        "description": "Form the pullback of composable morphisms\nwhere the first's codomain equals the second's\ndomain.",
-        "basename": "t_7",
-        "name": "hdole/category/t_7",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": -190,
-          "y": 260
-        },
-        "height": 24
-      },
-      {
-        "description": "From the above pullback there must be a morphism\ngiving the composition of the two.",
-        "basename": "t_8",
-        "name": "hdole/category/t_8",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": -190,
-          "y": 500
-        },
-        "height": 24
-      },
-      {
-        "description": "The domain of the composite must be the domain\nof the first morphism.",
-        "basename": "t_9",
-        "name": "hdole/category/t_9",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": -190,
-          "y": 1300
-        },
-        "height": 24
-      },
-      {
-        "description": "The codomain of the composite must be the codomain\nof the latter morphism.",
-        "basename": "t_10",
-        "name": "hdole/category/t_10",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": -190,
-          "y": 1600
-        },
-        "height": 24
-      },
-      {
-        "description": "The codomain of the identity of an object is\nthat object itself.",
-        "basename": "t_11",
-        "name": "hdole/category/t_11",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": -190,
-          "y": 960
-        },
-        "height": 24
-      },
-      {
-        "description": "The domain of the identity of an object is\nthat object itself.",
-        "basename": "t_12",
-        "name": "hdole/category/t_12",
-        "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/category",
-        "xy": {
-          "x": -190,
-          "y": 670
-        },
-        "height": 24
       }
     ],
     "cells": [
@@ -1538,7 +1538,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643020485644,
+  "timestamp": 1643054225858,
   "version": 0,
   "viewport": {
     "x": 872,
