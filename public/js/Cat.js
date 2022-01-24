@@ -1089,9 +1089,7 @@ class Runtime
 	{
 		const notLoaded = [...this.getReferences(name)].reverse().filter(ref => !this.$CAT.getElement(ref));
 		if (notLoaded.length > 0)
-		{
 			return notLoaded.reduce((r, ref) => r && this.catalog.has(ref) && this.catalog.get(ref).isLocal, true);
-		}
 		return true;
 	}
 	load(name)
@@ -1195,7 +1193,7 @@ class Runtime
 				info.references = JSON.parse(d.refs);
 				delete info.refs;
 				info.isLocal = false;
-				this.catalog.set(info.name, info);
+				this.setDiagramInfo(info);
 			});
 			if (D)		// now locally stored diagrams in the indexedDB
 			{
@@ -1219,7 +1217,7 @@ class Runtime
 								const nuInfo = Diagram.GetInfo(diagram);
 								nuInfo.timestamp = info.timestamp;
 								nuInfo.isLocal = true;
-								this.catalog.set(diagram.name, nuInfo);
+								this.setDiagramInfo(nuInfo, true);
 							}
 						}
 						cursor.continue();
@@ -1361,7 +1359,7 @@ class Runtime
 		if (!this.user.canUpload())
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:this.user.name};
-		const png = D.diagramPNGs.get(name);
+		const png = D.diagramPNGs.get(diagram.name);
 		if (png)
 			body.png = png;
 		console.log('uploading', diagram.name);
@@ -16451,7 +16449,7 @@ class Diagram extends Functor
 					R.default.debug && console.log('uploaded', this.name);
 					const info = R.getDiagramInfo(this.name);
 					info.cloudTimestamp = info.timestamp;
-					R.catalog.set(this.name, info);
+					this.setDiagramInfo(info, true);
 					const delta = Date.now() - start;
 					if (e)
 					{
