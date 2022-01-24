@@ -177,7 +177,7 @@ class U		// utilities
 	{
 		return str.replace(/(^|\s)\S/, l => l.toLowerCase());
 	}
-	static DePunctuate(str)
+	static dePunctuate(str)
 	{
 		return str.replace(/[.;:!?]$/, l => '');
 	}
@@ -188,7 +188,7 @@ class U		// utilities
 	}
 	static Formal(s)
 	{
-		return U.Cap(U.DePunctuate(s)) + '.';
+		return U.Cap(U.dePunctuate(s)) + '.';
 	}
 	static arraySet(a, f, v)
 	{
@@ -217,17 +217,6 @@ class U		// utilities
 		if (a.length !== b.length)
 			return false;
 		return a.reduce((r, suba, i) => r && U.ArrayEquals(suba, b[i]), true);
-	}
-	static GetFactorsById(id)
-	{
-		const btns = document.getElementById(id).querySelectorAll('button');
-		let factors = [];
-		btns.forEach(b =>
-		{
-			const idx = JSON.parse(`[${b.dataset.indices}]`);
-			factors.push(idx.length === 1 && idx[0] === -1 ? idx[0] : idx);
-		});
-		return factors;
 	}
 	static SetInputFilter(textbox, inputFilter)
 	{
@@ -617,7 +606,7 @@ class Runtime
 						{
 							if (cell.commutes === 'equals')
 								type = 'equals';
-							else if (Cell.cellIsComposite(cell))
+							else if (cell.cellIsComposite())
 								type = 'composite';
 							else if (cell.isNamedMorphism())
 								type = 'named';
@@ -737,7 +726,7 @@ class Runtime
 		new ProjectAction(productDiagram);
 		new PullbackAction(productDiagram, false);
 		new ProductAssemblyAction(productDiagram);
-		new LimitAction(productDiagram);
+		new PullbackAssemblyAction(productDiagram);
 		new MorphismAssemblyAction(productDiagram);
 		setup(productDiagram);
 		const coproductDiagram = new Diagram(this.$CAT, {basename:'coproduct', codomain:'Actions', description:'diagram for coproduct actions', user:'sys'});
@@ -747,7 +736,7 @@ class Runtime
 		new ProjectAction(coproductDiagram, true);
 		new PullbackAction(coproductDiagram, true);
 		new ProductAssemblyAction(coproductDiagram, true);
-		new LimitAction(coproductDiagram, true);
+		new PullbackAssemblyAction(coproductDiagram, true);
 		new FiniteObjectAction(coproductDiagram);
 		setup(coproductDiagram);
 		const homDiagram = new Diagram(this.$CAT, {basename:'hom', codomain:'Actions', description:'diagram for hom actions', user:'sys'});
@@ -1192,15 +1181,6 @@ class Runtime
 	loadDiagramEquivalences(diagram)
 	{
 		this.workers.equality.postMessage({command:'LoadDiagrams', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
-	}
-	loadScript(url, fn = null)
-	{
-		const script = H3.script();
-		script.type = 'text/javascript';
-		script.async = true;
-		script.src = url;
-		fn && script.addEventListener('load', fn);
-		document.body.appendChild(script);
 	}
 	fetchCatalog(fn)
 	{
@@ -3404,7 +3384,7 @@ class CellTool extends ElementTool
 		searchbar.classList.add('hidden');
 		const h3 = D.toolbar.table.querySelector('h3');
 		h3.innerHTML = 'Cells';
-		h3.parentNode.appendChild(H3.span(H3.input({type:"checkbox", onchange:e => D.setShowComputedCells(e), id:'check-computed-cells', checked:D.default.showComputedCells}), H3.span('Show computed cells')));
+		h3.parentNode.appendChild(H3.span(H3.input({type:"checkbox", onchange:e => D.toggleShowComputedCells(e), id:'check-computed-cells', checked:D.default.showComputedCells}), H3.span('Show computed cells')));
 	}
 	getRows(tbl, cells)
 	{
@@ -3958,16 +3938,12 @@ class Display
 		//			ControlKeyK(e)		BROWSER RESERVED: focus on search box
 					KeyL(e)		// lambda
 					{
-						if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
+						if (R.diagram.selected.length === 0)
+							D.toggleShowComputedCells();
+						else if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.lambda.html(e, R.diagram, R.diagram.selected);
 					},
 		//			ControlKeyL(e)		BROWSER RESERVED: focus on address bok
-					ControlKeyL(e)		// open log panel
-					{
-						D.ttyPanel.open();
-						D.ttyPanel.logSection.open();
-						e.preventDefault();
-					},
 					KeyM(e)		// morphism tool
 					{
 						D.toolbar.show();
@@ -4300,6 +4276,15 @@ class Display
 			pngStore.complete = e => console.log('database png upgrade complete');
 		};
 	}
+	loadScript(url, fn = null)
+	{
+		const script = H3.script();
+		script.type = 'text/javascript';
+		script.async = true;
+		script.src = url;
+		fn && script.addEventListener('load', fn);
+		document.body.appendChild(script);
+	}
 	initialize()
 	{
 		this.factoryDefaults = U.clone(this.default);
@@ -4350,9 +4335,9 @@ class Display
 		this.autohide();
 		this.setupReplay();
 		this.url = window.URL || window.webkitURL || window;
-		R.loadScript('js/javascript.js', _ => console.log('javascript loaded'));
-		R.loadScript('js/cpp.js');
-// TODO?		R.loadScript('js/mysql.js');
+		this.loadScript('js/javascript.js', _ => console.log('javascript loaded'));
+		this.loadScript('js/cpp.js');
+// TODO?		this.loadScript('js/mysql.js');
 		this.params = (new URL(document.location)).searchParams;	// TODO node.js
 		if (this.params.has('debug'))
 		{
@@ -6257,15 +6242,11 @@ class Display
 	}
 	emitDiagramEvent(diagram, command, arg = '')
 	{
-		if (diagram && !diagram.sync)
-			return;
 		R.default.showEvents && console.log('emit DIAGRAM event', {diagram, command, arg});
 		return window.dispatchEvent(new CustomEvent('Diagram', {detail:	{diagram, command, arg}, bubbles:true, cancelable:true}));
 	}
 	emitObjectEvent(diagram, command, element, extra = {})	// like an object changed
 	{
-		if (diagram && !diagram.sync)
-			return;
 		R.default.showEvents && console.log('emit OBJECT event', {command, name:element.name});
 		const detail = { diagram, command, element, };
 		Object.keys(extra).map(k => detail[k] = extra[k]);		// merge the defaults
@@ -6284,8 +6265,6 @@ class Display
 	}
 	emitTextEvent(diagram, command, element)
 	{
-		if (diagram && !diagram.sync)
-			return;
 		R.default.showEvents && console.log('emit TEXT event', {command, name:element.name});
 		return window.dispatchEvent(new CustomEvent('Text', {detail:	{diagram, command, element}, bubbles:true, cancelable:true}));
 	}
@@ -6305,8 +6284,6 @@ class Display
 	}
 	emitPNGEvent(diagram, command, png)
 	{
-		if (diagram && !diagram.sync)
-			return;
 		R.default.showEvents && console.log('emit PNG event', {diagram, command, name});
 		return window.dispatchEvent(new CustomEvent('PNG', {detail:	{diagram, command, png}, bubbles:true, cancelable:true}));
 	}
@@ -6444,7 +6421,7 @@ class Display
 	{
 		this.emphasized.forEach(elt => elt.emphasis(false));
 	}
-	setShowComputedCells(e)
+	toggleShowComputedCells(e)
 	{
 		D.default.showComputedCells = !D.default.showComputedCells;
 		D.saveDefaults();
@@ -6623,6 +6600,17 @@ class Panel
 	}
 	update()	// fitb
 	{}
+	static GetFactorsById(id)
+	{
+		const btns = document.getElementById(id).querySelectorAll('button');
+		let factors = [];
+		btns.forEach(b =>
+		{
+			const idx = JSON.parse(`[${b.dataset.indices}]`);
+			factors.push(idx.length === 1 && idx[0] === -1 ? idx[0] : idx);
+		});
+		return factors;
+	}
 	static SectionToggle(e, btn, pnlId)
 	{
 		e.preventDefault();
@@ -6681,9 +6669,9 @@ class ThreeDPanel extends Panel
 			const index = url.indexOf('index.html');
 			if (index !== -1)
 				url = url.substring(0, index);
-			R.loadScript(url + '/js/three.min.js', _ =>
+			D.loadScript(url + '/js/three.min.js', _ =>
 			{
-				R.loadScript(url + '/js/OrbitControls.js', _ =>
+				D.loadScript(url + '/js/OrbitControls.js', _ =>
 				{
 					this.shapeGeometry = new THREE.BoxBufferGeometry(D.default.scale3D, D.default.scale3D, D.default.scale3D);
 					this.bbox =
@@ -8971,11 +8959,11 @@ class IndexText extends Element
 		document.body.appendChild(hidden);
 		const div = H3.div('##foreign-text.text-editor', this.description,
 		{
-			style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap; word-wrap: break-word; width: fit-content;`,
+			style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap; word-wrap:break-word; width:fit-content;`,
 			contentEditable:true,
 		});
 		div.addEventListener('mousedown', e => e.stopPropagation());
-		const foreign = H3.foreignObject(div, {width:bbox.width + 'px', height:bbox.height + 'px', y:`-${this.height}px`});
+		const foreign = H3.foreignObject(div, {width:4 + bbox.width + 'px', height:4 + bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
 			hidden.innerHTML = div.innerHTML;
@@ -9275,15 +9263,18 @@ class IndexObject extends CatObject
 		this.cells.forEach(n => n.update());
 		this.domains.forEach(o => o.update());
 		this.codomains.forEach(o => o.update());
-		const txt = this.svg.querySelector('text');
-		const quant = this.getQuantifier();
-		let properName = this.to.properName;
-		if (quant)
+		if (this.svg)
 		{
-			const level = this.getLevel();
-			properName = '('.repeat(level) + R.Actions.quantifier.symbols[quant] + properName + ')'.repeat(level);
+			const txt = this.svg.querySelector('text');
+			const quant = this.getQuantifier();
+			let properName = this.to.properName;
+			if (quant)
+			{
+				const level = this.getLevel();
+				properName = '('.repeat(level) + R.Actions.quantifier.symbols[quant] + properName + ')'.repeat(level);
+			}
+			txt.innerHTML = properName;
 		}
-		txt.innerHTML = properName;
 	}
 	showSelected(state = true)
 	{
@@ -9981,32 +9972,58 @@ class ProductAssemblyAction extends Action
 	}
 }
 
-class LimitAction extends Action
+class PullbackAssemblyAction extends Action
 {
 	constructor(diagram, dual = false)
 	{
 		const args =
 		{
-			description:	`Create a ${dual ? 'pullout' : 'pullback'} assembly of two or more morphisms with a cone that commutes`,
-			basename:		`${dual ? 'co' : ''}limit`,
+			description:	`Create a ${dual ? 'pushout' : 'pullback'} assembly of two or more morphisms with a common ${dual ? 'co' : ''}domain`,
+			basename:		`${dual ? 'pushout' : 'pullback'}Assembly`,
 			dual,
 			actionOnly:		true,
 		};
 		super(diagram, args);
 		D && D.replayCommands.set(this.basename, this);
 	}
-	action(e, diagram, morphisms)
+	action(e, diagram, ary)
 	{
-		const names = morphisms.map(m => m.name);
-		const elt = this.doit(e, diagram, morphisms);
-		diagram.log({command:this.name, morphisms:names});
+		const cell = ary[0];
+		const pbo = ary[1];
+		let left = null;
+		let right = null;
+		if (this.dual)
+		{
+			left = cell.left.slice(1).map(m => m.to);
+			right = cell.right.slice(1).map(m => m.to);
+		}
+		else
+		{
+			left = cell.left.slice(0, cell.left.length -1).map(m => m.to);
+			right = cell.right.slice(0, cell.right.length -1).map(m => m.to);
+		}
+		const morphisms = [diagram.comp(...left), diagram.comp(...right)];
+		const source = cell.left[0].domain;		// index object
+		const elt = this.doit(e, diagram, morphisms, source, pbo);
+		diagram.log({command:this.name, morphisms:morphisms.map(m => m.name)});
 		diagram.antilog({command:'delete', elements:[elt.name]});
 	}
-	doit(e, diagram, diagramMorphisms)
+	doit(e, diagram, morphisms, source, pboNdx)
 	{
-		const morphisms = diagramMorphisms.map(m => m.to);
-		const m = diagram.get('ProductAssembly', {morphisms, dual:this.dual});
-		return diagram.placeMorphismByObject(e, 'domain', diagramMorphisms[0].domain, m);
+		const args = {morphisms, dual:this.dual};
+		if (this.dual)
+		{
+			args.domain = pboNdx.to;
+			args.codomain = source.to;
+		}
+		else
+		{
+			args.domain = source.to;
+			args.codomain = pboNdx.to;
+		}
+		const assyMorphism = diagram.get('PullbackAssembly', args);
+		const obj = this.dual ? morphisms[0].codomain : morphisms[0].domain;
+		return diagram.placeMorphism(assyMorphism, this.dual ? pboNdx : source, this.dual ? source : pboNdx);
 	}
 	hasForm(diagram, ary)
 	{
@@ -10033,32 +10050,17 @@ class LimitAction extends Action
 						objects.push(m.codomain);
 					}
 				});
-				const legHasObject = (leg, object) =>
-				{
-					let ndx = -1;
-					for (let i=0; i < leg.length -1; ++i)
-						if (leg[i].codomain === object)
-						{
-							ndx = i + 1;
-							break;
-						}
-					return ndx;
-				}
-
 				if (factors.length === 2)		// TODO bigger pbs
 				{
 					factors = factors.map(f => f[0]);
 					if (factors[0] === factors[1] || factors[0] < 0 || factors[1] < 0)		// must have different non-negative factors
 						return false;
-
-//					if ((cell.left.includes(objects[0]) && cell.left.includes(objects[1])) || (cell.right.includes(objects[0]) && cell.right.includes(objects[1])))		// difference legs
-//						return false;
 					let left = null;
 					let right = null;
-					const leftNdx0 = legHasObject(cell.left, objects[0]);
-					const rightNdx0 = legHasObject(cell.right, objects[0]);
-					const leftNdx1 = legHasObject(cell.left, objects[1]);
-					const rightNdx1 = legHasObject(cell.right, objects[1]);
+					const leftNdx0 = Cell.legHasObject(cell.left, objects[0]);
+					const rightNdx0 = Cell.legHasObject(cell.right, objects[0]);
+					const leftNdx1 = Cell.legHasObject(cell.left, objects[1]);
+					const rightNdx1 = Cell.legHasObject(cell.right, objects[1]);
 					if ((leftNdx0 < 0 && leftNdx1 < 0) || (rightNdx0 < 0 && rightNdx1 < 0))		// objects must not be on same leg
 						return false;
 					const checkBase = (leg, object, ndx) =>
@@ -10524,7 +10526,7 @@ class ProjectAction extends Action
 	action(e, diagram, elements)
 	{
 		const from = elements[0];
-		const factors = U.GetFactorsById(this.dual ? 'inject-domain' : 'project-codomain');
+		const factors = D.getFactorsById(this.dual ? 'inject-domain' : 'project-codomain');
 		const elt = this.doit(e, diagram, from, factors);
 		diagram.log({command:this.name, object:from.name, factors});
 		diagram.antilog({command:'delete', elements:[elt.name]});
@@ -10642,8 +10644,8 @@ class LambdaMorphismAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const domFactors = U.GetFactorsById('lambda-domain');
-		const homFactors = U.GetFactorsById('lambda-codomain');
+		const domFactors = D.getFactorsById('lambda-domain');
+		const homFactors = D.getFactorsById('lambda-codomain');
 		try
 		{
 			const elt = this.doit(e, diagram, from, domFactors, homFactors);
@@ -11642,6 +11644,7 @@ class ActionAction extends Action
 			namedBareValues.map((elt, i) => nameMap.set(elt.name, names[i]));
 			const postLoad = new Set();
 			const genMap = new Map();
+			const get = name => action.getElement(nameMap.get(name));
 			const _build = elt =>
 			{
 				if (genMap.has(elt.name))
@@ -11671,13 +11674,13 @@ class ActionAction extends Action
 					case 'Morphism':
 						{
 							basename = nameMap.get(elt.name);
-							domain = action.getElement(nameMap.get(elt.domain.name));
-							const codomain = action.getElement(nameMap.get(elt.codomain.name));
+							domain = get(elt.domain.name);
+							const codomain = get(elt.codomain.name);
 							const args = {basename, domain, codomain};
 							newElt = action.get(constructor, {basename, domain, codomain});
 							if ('recursor' in elt)
 							{
-								newElt.postLoad = _ => newElt.setRecursor(action.getElement(nameMap.get(elt.recursor.name)));
+								newElt.postLoad = _ => newElt.setRecursor(get(elt.recursor.name));
 								postLoad.add(newElt);
 							}
 						}
@@ -11703,13 +11706,21 @@ class ActionAction extends Action
 					case 'ProductAssembly':
 					case 'ProductMorphism':
 					case 'HomMorphism':
-						const morphisms = elt.morphisms.map(m => _build(m));
-						newElt = action.get(constructor, {morphisms, dual:elt.dual});
+						{
+							const morphisms = elt.morphisms.map(m => _build(m));
+							newElt = action.get(constructor, {morphisms, dual:elt.dual});
+						}
+						break;
+					case 'PullbackAssembly':
+						{
+							const morphisms = elt.morphisms.map(m => _build(m));
+							newElt = action.get(constructor, {morphisms, dual:elt.dual, domain:get(elt.domain), codomain:get(elt.codomain)});
+						}
 						break;
 					case 'FactorMorphism':
 						const args = {factors:elt.factors, dual:elt.dual};
 						const side = elt.dual ? 'codomain' : 'domain';
-						args[side] = action.getElement(nameMap.get(elt[side].name));
+						args[side] = get(elt[side].name);
 						newElt = action.get(constructor, args);
 						break;
 					case 'LambdaMorphism':
@@ -12141,6 +12152,7 @@ if (args.prototype === 'IndexComposite') args.prototype = 'IndexMorphism';		// T
 					case 'NamedMorphism':
 					case 'ProductMorphism':
 					case 'ProductAssembly':
+					case 'PullbackAssembly':
 					case 'LambdaMorphism':
 					case 'HomMorphism':
 					case 'Evaluation':
@@ -14148,6 +14160,20 @@ class Cell
 				return '???';
 		}
 	}
+	cellIsComposite()
+	{
+		function fn(left, right)
+		{
+			if (left.length === 1 && left[0].to instanceof Composite)
+			{
+				const morphisms = left[0].to.morphisms;
+				if (morphisms.length === right.length)
+					return morphisms.reduce((r, m, i) => r && m === right[i], true);
+			}
+			return false;
+		}
+		return fn(this.left, this.right) || fn(this.right, this.left);
+	}
 	static Signature(left, right)
 	{
 		const leftLeg = U.SigArray(left.map(m => m.signature));
@@ -14206,19 +14232,16 @@ class Cell
 	{
 		return diagram.name + '/' + Cell.Basename(diagram, leftLeg, rightLeg);
 	}
-	static cellIsComposite(cell)
+	static legHasObject(leg, object)
 	{
-		function fn(left, right)
-		{
-			if (left.length === 1 && left[0].to instanceof Composite)
+		let ndx = -1;
+		for (let i=0; i < leg.length -1; ++i)
+			if (leg[i].codomain === object)
 			{
-				const morphisms = left[0].to.morphisms;
-				if (morphisms.length === right.length)
-					return morphisms.reduce((r, m, i) => r && m === right[i], true);
+				ndx = i + 1;
+				break;
 			}
-			return false;
-		}
-		return fn(cell.left, cell.right) || fn(cell.right, cell.left);
+		return ndx;
 	}
 }
 
@@ -14825,8 +14848,8 @@ class ProductAssembly extends MultiMorphism
 				args.codomain = this.codomain;
 			else
 				args.domain = this.domain;
-			const obj = this.diagram.get('FactorMorphism', args);
-			R.loadItem(this.diagram, this, [m], this.dual ? [this, obj] : [obj, this]);
+			const factorMorphism = this.diagram.get('FactorMorphism', args);
+			R.loadItem(this.diagram, this, [m], this.dual ? [this, factorMorphism] : [factorMorphism, this]);
 		});
 	}
 	static Basename(diagram, args)
@@ -14853,6 +14876,82 @@ class ProductAssembly extends MultiMorphism
 			return morphisms[0].codomain;
 		else
 			return diagram.prod(...morphisms.map(m => m.codomain));
+	}
+	static ProperName(morphisms, dual)
+	{
+		return `${dual ? '&Sigma;' : '&Pi;'}<${morphisms.map(m => m.properName).join(',')}>`;
+	}
+}
+
+class PullbackAssembly extends MultiMorphism
+{
+	constructor(diagram, args)
+	{
+		const dual = U.getArg(args, 'dual', false);
+		const nuArgs = U.clone(args);
+		const target = dual ? 'domain' : 'codomain';
+		const source = dual ? 'codomain' : 'domain';
+		nuArgs.morphisms = diagram.getElements(args.morphisms);
+		nuArgs[source] = diagram.getElement(args[source]);
+		nuArgs[target] = diagram.getElement(args[target]);
+		if (!(nuArgs[target] instanceof PullbackObject) || dual !== nuArgs[target].dual)
+			throw 'bad object definition for pullback/pushout';
+		nuArgs.basename = PullbackAssembly.Basename(diagram, {morphisms:nuArgs.morphisms, dual});
+		nuArgs.properName = PullbackAssembly.ProperName(nuArgs.morphisms, dual);
+		super(diagram, nuArgs);
+		D && this.constructor.name === 'PullbackAssembly' && D.emitElementEvent(diagram, 'new', this);
+	}
+	help()
+	{
+		return super.help(H3.tr(H3.td('Type:'), H3.td(`${this.dual ? 'Co' : 'P'}roduct assembly`)));
+	}
+	getGraph(data = {position:0})
+	{
+		const graph = super.getGraph(data);
+		this.morphisms.map((m, i) =>
+		{
+			const g = m.getGraph(data);
+			graph.graphs[0].copyGraph({src:g.graphs[0], map:[[[1], [1, i]]]});
+			graph.graphs[1].graphs[i].copyGraph({src:g.graphs[1], map:[[[0], [0]]]});
+		});
+		return graph;
+	}
+	loadItem()
+	{
+		super.loadItem();
+		const dual = this.dual;
+		const diagram = this.diagram;
+		this.morphisms.map((m, i) =>
+		{
+			const args = {factors:[i], dual};
+			if (dual)
+				args.codomain = this.codomain;
+			else
+				args.domain = this.domain;
+			const factorMorphism = diagram.get('FactorMorphism', args);
+			const target = dual ? 'domain' : 'codomain';
+			const source = dual ? 'codomain' : 'domain';
+			const side = dual ? [diagram.comp(this.domain.morphisms[i]), m] : [diagram.comp(m, this.codomain.morphisms[i])];
+			R.loadItem(diagram, this, side, dual ? [this, factorMorphism] : [factorMorphism, this]);
+		});
+	}
+	static Basename(diagram, args)
+	{
+		const dual = 'dual' in args ? args.dual : false;
+		const c = dual ? 'C' : '';
+		const basename = `${c}Pu{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}uP${c}`;
+		return basename;
+	}
+	static Codename(diagram, args)
+	{
+		return Element.Codename(diagram, {basename:PullbackAssembly.Basename(diagram, args)});
+	}
+	static Domain(diagram, morphisms, dual)
+	{
+		if (dual)
+			return diagram.coprod(...morphisms.map(m => m.domain));
+		else
+			return morphisms[0].domain;
 	}
 	static ProperName(morphisms, dual)
 	{
@@ -15814,23 +15913,15 @@ class Diagram extends Functor
 			cnt = [...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => e.decrRefcnt()).length;
 		}
 		while(cnt > 0);
+		this.domain.elements.forEach(elt => elt instanceof IndexText && elt.description === '' && elt.decrRefcnt());
 		this.sync = sync;
 	}
 	json(delBasename = true)
 	{
 		const a = super.json();
 		a.references = [...this.references.keys()];
-		a.domainElements = [...this.domain.elements.values()].filter(e => ((e.to && e.to.canSave()) || (!('to' in e)))).map(e => e.json());
-		a.domainElements.map(elt =>
-		{
-			delete elt.diagram;
-			delete elt.name;
-			delete elt.category;
-			if (elt.description === '')
-				delete elt.description;
-		});
-		a.domainInfo = this.domain.json();
 		this.purge();
+		a.domainInfo = this.domain.json();
 		a.elements = [...this.elements.values()].filter(e => e.canSave()).map(e => e.json(delBasename));
 		const procJson = elt =>
 		{
@@ -16887,6 +16978,14 @@ class Diagram extends Functor
 	{
 		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual:true}) : morphisms[0];
 	}
+	pbAssy(...morphisms)
+	{
+		return morphisms.length > 1 ? this.get('PullbackAssembly', {morphisms, dual:false}) : morphisms[0];
+	}
+	poAssy(...morphisms)
+	{
+		return morphisms.length > 1 ? this.get('PullbackAssembly', {morphisms, dual:true}) : morphisms[0];
+	}
 	hom(...elements)
 	{
 		return elements[0] instanceof CatObject ? this.get('HomObject', {objects:elements}) : this.get('HomMorphism', {morphisms:elements});
@@ -17232,6 +17331,15 @@ class Diagram extends Functor
 		R.default.debug && console.log('autoplace ndx', name, ndx);
 		return offset.add(bbox);
 	}
+	newText(e)
+	{
+		const xy = this.userToDiagramCoords({x:e.clientX, y:e.clientY});
+		const oldSync = this.sync;
+		this.sync = false;
+		const text = new IndexText(this, {xy, description:''});
+		text.textEditor();
+		this.sync = oldSync;
+	}
 	updateBackground()
 	{
 		if (this.svgRoot)
@@ -17263,7 +17371,7 @@ class Diagram extends Functor
 					const args = {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
 																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`};
 					bkgnd = H3.rect('.diagramBackgroundActive', {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
-																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`});
+																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`, ondblclick:e => this.newText(e)});
 				}
 				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
 				dgrmBkgnd.classList.add('hidden');
@@ -17376,6 +17484,7 @@ class Diagram extends Functor
 				case 'Composite':
 				case 'ProductMorphism':
 				case 'ProductAssembly':
+				case 'PullbackAssembly':
 				case 'HomMorphism':
 					elt.domain = change(elt.domain);
 					elt.codomain = change(elt.codomain);
@@ -17603,6 +17712,8 @@ class ActionDiagram extends Diagram
 					return diagram.hom(...morphisms);
 				if (ref instanceof ProductAssembly)
 					return diagram[ref.dual ? 'coassy' : 'assy'](...morphisms);
+				if (ref instanceof PullbackAssembly)
+					return diagram[ref.dual ? 'poAssy' : 'pbAssy'](...morphisms);
 			}
 			else
 				switch(ref.constructor.name)
@@ -18383,6 +18494,7 @@ const Cat =
 	ProductMorphism,
 	ProductAssembly,
 	PullbackObject,
+	PullbackAssembly,
 	Runtime,
 	TensorObject,
 };
