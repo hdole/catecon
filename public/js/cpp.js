@@ -240,7 +240,7 @@ ${members}
 		out${objects.map((o, i) => ` << obj.m_${i} << " "`).join('')};
 		return out;            
 	}
-`
+`;
 				code += '};\n';
 			}
 			return this.cline(code);
@@ -710,7 +710,6 @@ ${members}
 									const arg = `%${i}`;
 									const rx = new RegExp(arg, 'g');
 									const v = graph.getFactor([0, i]).var;
-		if (v === undefined)debugger;
 									nuCode = nuCode.replace(rx, v);
 								}
 							}
@@ -723,7 +722,6 @@ ${members}
 								{
 									const rx = new RegExp(`%${i}`, 'g');
 									const v = graph.getFactor([1, i - domCnt]).var;
-		if (v === undefined)debugger;
 									nuCode = nuCode.replace(rx, v);
 								}
 							}
@@ -733,7 +731,6 @@ ${members}
 								if (this.getCode(g.element) !== '//')
 								{
 									const v = g.var;
-		if (v === undefined)debugger;
 									const rx = new RegExp(`%${domCnt}`, 'g');
 									nuCode = nuCode.replace(rx, v);
 								}
