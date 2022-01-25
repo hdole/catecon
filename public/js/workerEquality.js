@@ -6,7 +6,7 @@ const equals = new Map();		// sig maps to a set of sigs that are equal to each o
 const notEquals = new Map();		// sig maps to a set of sigs that are not equal to each other
 const items = new Map();		// equivalences loaded by the client can be tracked by an item; typically the name of the element
 const identities = new Set();	// sigs of identities
-const cellToItem = new Map()	// cell sig to item
+const cellToItem = new Map();	// cell sig to item
 let maxLegLength = 0;			// keep track of this since no point substituting legs bigger than our biggest leg
 let spoiled = false;			// gets spoiled by editting deleting something
 let diagramItems = new Map();	// tracks which items belong to which diagram
@@ -208,7 +208,7 @@ function checkLeg(leg, ndx, cnt, sig, scanned, sigs)
 			if (scanned.has(equ))
 				continue;
 			const nuLeg = leg.slice(0, ndx);	// first part of leg
-			!identities.has(equ) && nuLeg.push(equ)						// replace sub-leg with sig
+			!identities.has(equ) && nuLeg.push(equ);						// replace sub-leg with sig
 			if (ndx + cnt < leg.length)			// add rest of original leg
 				nuLeg.push(...leg.slice(ndx + cnt, leg.length));
 			const nuLegSig = Sig(...nuLeg);
