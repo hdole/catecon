@@ -465,7 +465,7 @@ async function serve()
 						const inCloud = Cat.R.catalog.has(info.name);
 						let cloudTimestamp = inCloud ? Cat.R.catalog.get(info.name).cloudTimestamp : 0;
 						cloudTimestamp = cloudTimestamp ? cloudTimestamp: 0;
-						updateDiagramTable(info.name, info, _ => {}, cloudTimestamp, inCloud)
+						updateDiagramTable(info.name, info, _ => {}, cloudTimestamp, inCloud);
 					}));
 					console.log('load javascript.js');
 					require('./' + path.join(process.env.HTTP_DIR, 'js', 'javascript.js'));
@@ -866,7 +866,7 @@ async function serve()
 				const name = req.body.diagram;
 				try
 				{
-					saveDiagramJavascript(name)
+					saveDiagramJavascript(name);
 					res.status(HTTP.OK).end();
 				}
 				catch(error)
