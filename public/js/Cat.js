@@ -7483,14 +7483,14 @@ class Element
 		D.mouseover = this;
 		if ((this instanceof IndexObject || this instanceof IndexMorphism) && this.to.description !== '')
 			D.statusbar.show(e, this.to.description);
-		this.diagram.emphasis(this.to, true);
+		this.diagram.emphasis('to' in this ? this.to : this, true);
 	}
 	mouseout(e)
 	{
 		if (D.mouseover === this)
 		{
 			D.mouseover = null;
-			this.diagram.emphasis(this.to, false);
+			this.diagram.emphasis('to' in this ? this.to : this, false);
 		}
 	}
 	mouseover(e)
@@ -8978,11 +8978,6 @@ class IndexText extends Element
 		div.addEventListener('keydown', onkeydown);
 		div.addEventListener('keyup', onkeydown);
 		D.editElement = div;
-	}
-	mouseenter(e)
-	{
-		D.mouseover = this;
-		this.diagram.emphasis(this, true);
 	}
 	wipeSvg()
 	{
