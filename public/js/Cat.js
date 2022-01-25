@@ -208,7 +208,7 @@ class U		// utilities
 	{
 		b.map(v => !a.includes(v) ? a.push(v) : null);
 	}
-	static ArrayEquals(a, b)
+	static arrayEquals(a, b)
 	{
 		if (a === b)
 			return true;
@@ -216,7 +216,7 @@ class U		// utilities
 			return false;
 		if (a.length !== b.length)
 			return false;
-		return a.reduce((r, suba, i) => r && U.ArrayEquals(suba, b[i]), true);
+		return a.reduce((r, suba, i) => r && U.arrayEquals(suba, b[i]), true);
 	}
 	static SetInputFilter(textbox, inputFilter)
 	{
@@ -344,12 +344,12 @@ class U		// utilities
 	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
 	static isIndexElement(elt)
 	{
-		return elt instanceof IndexObject || elt instanceof IndexMorphism || elt instanceof IndexText;
+		return elt instanceof IndexObject || elt instanceof IndexMorphism || elt instanceof IndexText || elt instanceof IndexElement;
 	}
 	static HasFactor(factors, someFactor)
 	{
 		for(let i=0; i<factors.length; ++i)
-			if (U.ArrayEquals(someFactor, factors[i]))
+			if (U.arrayEquals(someFactor, factors[i]))
 				return i;
 		return -1;
 	}
@@ -716,6 +716,8 @@ class Runtime
 		new AlignVerticalAction(diagramDiagram);
 		new RecursionAction(diagramDiagram);
 		new ExpressionAction(diagramDiagram);
+		new TerminalAction(diagramDiagram);
+		new ElementOfAction(diagramDiagram);
 		setup(diagramDiagram);
 		this.userSessionActions = new Diagram(this.$CAT, {basename:'userSessionActions', codomain:'Actions', description:'diagram for user defined actions', user:'sys'});
 		this.userSessionActions.sync = false;
@@ -1094,7 +1096,7 @@ class Runtime
 	}
 	load(name)
 	{
-		const refs = [...this.getReferences(name)]
+		const refs = [...this.getReferences(name)];
 		const all = refs.filter(dgrm => this.$CAT.getElement(dgrm));
 		if (all.length === refs.length)
 			return this.$CAT.getElement(name);
@@ -1269,18 +1271,21 @@ class Runtime
 			const sync = diagram.sync;
 			this.authFetch(this.getURL('delete'), {diagram:name}).then(res =>
 			{
+				const diagram = this.$CAT.getElement(name);
 				if (!res.ok)
 				{
 					R.recordError(res.statusText);
-					diagram.sync = sync;
+					if (diagram)
+						diagram.sync = sync;
 					return;
 				}
-				const diagram = this.$CAT.getElement(name);
 				if (diagram)
+				{
 					diagram.decrRefcnt();
+					diagram.sync = sync;
+				}
 				else
 					this.catalog.delete(name);
-				diagram.sync = sync;
 			}).catch(err =>
 			{
 				diagram.sync = sync;
@@ -1461,6 +1466,7 @@ class Runtime
 					case 'LambdaMorphism':
 						if (U.sameForm(ref.preCurry, test.preCurry, eltMap))
 							return FactorMorphism.equalFactors(ref.domFactors, test.domFactors) && FactorMorphism.equalFactors(ref.homFactors, test.homFactors);
+						break;
 					case 'Evaluation':
 						return true;
 					case 'Distribute':
@@ -1893,7 +1899,6 @@ class Toolbar
 			'diagram':		{value: null,										writable: true},
 			'buttons':		{value:	null,										writable: true},
 			'closed':		{value:	false,										writable: true},
-			'diagram':		{value: null,										writable: true},
 			'element':		{value: document.getElementById('toolbar'),			writable: false},
 			'error':		{value: document.getElementById('toolbar-error'),	writable: false},
 			'header':		{value: document.getElementById('toolbar-header'),	writable: false},
@@ -1951,7 +1956,7 @@ class Toolbar
 					}
 				}
 			}
-			this.adjustPosition()
+			this.adjustPosition();
 		};
 		const bodyObserver = new MutationObserver(watcher);
 		bodyObserver.observe(this.body, {childList:true, subtree:true});
@@ -1968,11 +1973,20 @@ class Toolbar
 		this.error.classList.add('hidden');
 		this.error.innerHTML = '';
 	}
+	appendError(x)
+	{
+		this.error.classList.remove('hidden');
+		if (x instanceof HTMLElement)
+			this.error.appendChild(x);
+		else if (typeof x === 'string')
+			this.error.appendChild(H3.div(x));
+		else
+			this.error.innerHTML = 'Error ' + U.getError(x);
+	}
 	showError(msg)
 	{
-		D.toolbar.error.classList.add('error');
-		D.toolbar.error.classList.remove('hidden');
-		D.toolbar.error.appendChild(typeof msg === 'string' ? H3.div(msg) : msg);
+		this.clearError();
+		this.appendError(x);
 	}
 	clearHeader()
 	{
@@ -1990,21 +2004,6 @@ class Toolbar
 		this.element.style.right = 'unset';
 		this.element.style.bottom = 'unset';
 		this.element.style.width = 'auto';
-	}
-	appendError(x)
-	{
-		this.error.classList.remove('hidden');
-		if (x instanceof HTMLElement)
-			this.error.appendChild(x);
-		else if (typeof x === 'string')
-			this.error.appendChild(H3.div(x));
-		else
-			this.error.innerHTML = 'Error ' + U.getError(x);
-	}
-	showError(x)
-	{
-		this.clearError();
-		this.appendError(x);
 	}
 	hide()
 	{
@@ -3769,22 +3768,8 @@ class Display
 					ControlRight(e) { D.ctrlKey = true; },
 					Digit1(e)
 					{
-						if (R.diagram)
-						{
-							const diagram = R.diagram;
-							if (diagram.selected.length === 1)
-							{
-								const elt = diagram.getSelected();
-								if (elt instanceof IndexObject)
-								{
-									const morphism = R.diagram.fctr(elt.to, [-1]);
-									diagram.placeMorphismByObject(e, 'domain', elt, morphism);
-									return;
-								}
-							}
-							const one = diagram.get('FiniteObject', {size:1});
-							diagram.placeObject(one, D.mouse.diagramPosition(diagram));
-						}
+						if (R.Actions.terminal.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.terminal.action(e, R.diagram, R.diagram.selected);
 					},
 					Digit2(e)
 					{
@@ -3915,7 +3900,7 @@ class Display
 					KeyI(e)
 					{
 						if (R.Actions.identity.hasForm(R.diagram, R.diagram.selected))
-							R.Actions.identity.action(e, R.diagram, R.diagram.selected[0]);
+							R.Actions.identity.action(e, R.diagram, R.diagram.selected);
 					},
 					KeyJ(e)
 					{
@@ -3936,9 +3921,7 @@ class Display
 		//			ControlKeyK(e)		BROWSER RESERVED: focus on search box
 					KeyL(e)		// lambda
 					{
-						if (R.diagram.selected.length === 0)
-							D.toggleShowComputedCells();
-						else if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
+						if (R.Actions.lambda.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.lambda.html(e, R.diagram, R.diagram.selected);
 					},
 		//			ControlKeyL(e)		BROWSER RESERVED: focus on address bok
@@ -4019,6 +4002,10 @@ class Display
 		//			ControlKeyT(e)		BROWSER RESERVED: open a new tab
 		//			ControlShiftKeyT(e)	BROWSER RESERVED: reopen last closed tab
 		//			ControlKeyU(e)		BROWSER RESERVED: open current page source code
+					KeyU(e)
+					{
+						D.toggleShowComputedCells();
+					},
 					KeyV(e)
 					{
 						R.diagram.selected.length > 0 && R.diagram.panToElements(...R.diagram.selected);
@@ -4413,7 +4400,7 @@ class Display
 		{
 			defaults.R && Object.keys(defaults.R).map(k => R.default[k] = defaults.R[k]);		// merge the R defaults
 			defaults.D && Object.keys(defaults.D).map(k => this.default[k] = defaults.D[k]);		// merge the D defaults
-			this.setDarkmode(this.default.darkmode)
+			this.setDarkmode(this.default.darkmode);
 		}
 	}
 	updateDisplay(e)
@@ -4907,8 +4894,11 @@ class Display
 						element.update();
 						diagram.domain.updateCells(element);
 				}
-				diagram.domain.loadCells();
-				diagram.domain.checkCells();
+				if (element.domain.cells.size > 0 || element.codomain.cells.size > 0)
+				{
+					diagram.domain.loadCells();
+					diagram.domain.checkCells();
+				}
 				diagram.updateBackground();
 			}
 			else if (args.command === 'new' && 'loadItem' in element)
@@ -4989,7 +4979,7 @@ class Display
 					case 'addReference':
 					case 'removeReference':
 						R.loadDiagramEquivalences(diagram);
-						diagram.loadCells();
+						diagram.checkCells();
 						diagram.domain.checkCells();
 						this.autosave(diagram);
 						break;
@@ -5266,7 +5256,7 @@ class Display
 			switch (args.command)
 			{
 				case 'new':
-					R.categories.set(category.name, category)
+					R.categories.set(category.name, category);
 					break;
 			}
 		});
@@ -5296,9 +5286,8 @@ class Display
 					else
 						diagram.checkCells();
 					break;
-				case 'delete':
+				case 'removeAssertion':
 					cell.update();
-					diagram.domain.loadCells();
 					diagram.domain.checkCells();
 					diagram.updateTimestamp();
 					this.autosave(diagram);
@@ -5316,7 +5305,6 @@ class Display
 					break;
 				default:
 					throw 'Cell event listener unknown command ' + args.command;
-					break;
 			}
 		});
 	}
@@ -5916,7 +5904,7 @@ class Display
 		R.busyBtn = btn;
 		svg.appendChild(btn);
 		if (msg !== '')
-			btn.appendChild(H3.text(msg, {x:-size, y:size + window.innerHeight * .25, textAnchor:'middle', style:'"Fira Sans",sans-serif;font-size:96px;font-weight:bold'}));
+			btn.appendChild(H3.text(msg, {x:-size, y:size + window.innerHeight * 0.25, textAnchor:'middle', style:'"Fira Sans",sans-serif;font-size:96px;font-weight:bold'}));
 	}
 	notBusy()
 	{
@@ -7440,7 +7428,6 @@ class Element
 	emphasis(on)	// or override as needed
 	{
 		on ? D.emphasized.add(this) : D.emphasized.delete(this);
-		D.setClass('emphasis', on, this.svg.querySelector('text'));
 	}
 	find(elt, index = [])			{ return elt === this ? index : []; }
 	basic()							{ return 'base' in this ? this.base : this; }
@@ -7496,21 +7483,21 @@ class Element
 		D.mouseover = this;
 		if ((this instanceof IndexObject || this instanceof IndexMorphism) && this.to.description !== '')
 			D.statusbar.show(e, this.to.description);
-		this.emphasis(true);
+		this.diagram.emphasis(this.to, true);
 	}
 	mouseout(e)
 	{
 		if (D.mouseover === this)
 		{
 			D.mouseover = null;
-			this.emphasis(false);
+			this.diagram.emphasis(this.to, false);
 		}
 	}
 	mouseover(e)
 	{
 		D.mouseover = this;
 		this.description !== '' && D.statusbar.show(e, this.description);
-		this.emphasis(true);
+		this.diagram.emphasis(this.to, true);
 	}
 	getFactor(factor)
 	{
@@ -7614,7 +7601,6 @@ class Graph
 			return this.graphs[indices];
 		if (indices.length === 1 && indices[0] === -1)
 			return null;
-if (this.graphs.length === 0 && indices.length > 0) debugger;
 		if (this.graphs.length === 0)
 			return this;
 		if (indices.length === 1 && indices[0].length === 0)
@@ -7645,7 +7631,7 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 					rslt = false;
 				}
 				const linked = this.getFactor(lnk);
-				const isLinked = linked.links.reduce((r, olnk) => r || U.ArrayEquals(olnk, ndx), false);
+				const isLinked = linked.links.reduce((r, olnk) => r || U.arrayEquals(olnk, ndx), false);
 				if (!isLinked)
 				{
 					console.log('no link back:', ...ndx, ' link:', ...lnk);
@@ -7670,7 +7656,7 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 			while(links.length > 0)
 			{
 				const lnk = links.pop();
-				if (U.ArrayEquals(ndx, lnk))
+				if (U.arrayEquals(ndx, lnk))
 					continue;
 				if (this.visited.has(lnk.toString()))
 					continue;
@@ -7680,7 +7666,7 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 					const glnk = g.links[j];
 					if (this.visited.has(glnk.toString()))
 						continue;
-					if (U.ArrayEquals(ndx, glnk))	// ignore links back to where we came from
+					if (U.arrayEquals(ndx, glnk))	// ignore links back to where we came from
 						continue;
 					U.HasFactor(nuLinks, glnk) === -1 && nuLinks.push(glnk);
 					U.HasFactor(links, glnk) === -1 && links.push(glnk);
@@ -7715,19 +7701,19 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 				const lnk = links.pop();
 				if (ndx.reduce((isEqual, lvl, i) => lvl === lnk[i] && isEqual, true))
 					continue;
-				if (g.visited.has(lnk.toString()))
+				const f = top.getFactor(lnk);
+				if (f.visited.has(lnk.toString()))
 					continue;
-				const g = top.getFactor(lnk);
-				process(g, lnk);
-				for (let j=0; j<g.links.length; ++j)
+				process(f, lnk);
+				for (let j=0; j<f.links.length; ++j)
 				{
-					const glnk = g.links[j];
-					if (g.visited.has(glnk.toString()))
+					const glnk = f.links[j];
+					if (f.visited.has(glnk.toString()))
 						continue;
 					const lnkFactor = top.getFactor(glnk);
 					check(lnkFactor, glnk) && process(lnkFactor, glnk);
 				}
-				g.visited.add(lnk.toString());
+				f.visited.add(lnk.toString());
 			}
 		}, ndx);
 	}
@@ -8057,7 +8043,7 @@ if (this.graphs.length === 0 && indices.length > 0) debugger;
 		{
 			if (r)
 			{
-				if (U.ArrayEquals(ndx, [-2]))	// skip
+				if (U.arrayEquals(ndx, [-2]))	// skip
 					return true;
 				const factor = this.getFactor(ndx);
 				if (factor._hasSomeCoverage())	// if already covered then cannot cover further up
@@ -8932,7 +8918,7 @@ class IndexText extends Element
 	}
 	emphasis(on)
 	{
-		on ? D.emphasized.add(this) : D.emphasized.delete(this);
+		super.emphasis(on);
 		this.svg.querySelectorAll('circle, path, text, polyline, rect, use').forEach(elt => D.setClass('emphasis', on, elt));
 	}
 	getHtmlRep(idPrefix)
@@ -8996,7 +8982,7 @@ class IndexText extends Element
 	mouseenter(e)
 	{
 		D.mouseover = this;
-		this.emphasis(true);
+		this.diagram.emphasis(this, true);
 	}
 	wipeSvg()
 	{
@@ -9215,11 +9201,6 @@ class IndexObject extends CatObject
 		}
 		const emphRect = this.svg.querySelector('rect.emphasis');
 		!emphRect && this.svg.appendChild(H3.rect('.emphasis', args));
-	}
-	emphasis(on)
-	{
-		super.emphasis(on);
-		!on && this.svg.querySelectorAll('rect').forEach(rect => rect.remove());
 	}
 	placeProjection(e)		// or injection
 	{
@@ -9905,7 +9886,7 @@ class PullbackAction extends Action		// pullback or pushout
 		const legs = Category.getLegs(indexMorphisms);
 		const morphisms = legs.map(leg => leg.map(m => m.to)).map(leg => diagram.comp(...leg));
 		const pb = diagram.get('PullbackObject', {morphisms, dual:this.dual});
-		const objects = new Set()
+		const objects = new Set();
 		indexMorphisms.map(m => this.dual ? objects.add(m.codomain) : objects.add(m.domain));
 		const bary = D.barycenter([...objects]);
 		const obj = this.dual ? indexMorphisms[0].domain : indexMorphisms[0].codomain;
@@ -10036,7 +10017,7 @@ class PullbackAssemblyAction extends Action
 			}
 			else		// pullback
 			{
-				let factors = []
+				let factors = [];
 				const projections = [];
 				const objects = [];
 				pboNdx.domains.forEach(m =>
@@ -11739,7 +11720,7 @@ class ActionAction extends Action
 				nameMap.set(elt.name, newElt.basename);
 				genMap.set(elt.name, newElt);
 				return newElt;
-			}
+			};
 			namedBareValues.map(elt => _build(elt));
 			if ('recursor' in namedSource)
 				_build(namedSource.recursor);
@@ -12054,8 +12035,78 @@ class ExpressionAction extends Action
 	}
 }
 
-class PresentationAction extends Action
+class TerminalAction extends Action
 {
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Create a terminal morphism or object',
+			basename:		'terminal',
+			actionOnly:		true,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const elt = this.doit(e, diagram, ary);
+		diagram.log({command:'terminal', from:ary[0].name});
+		diagram.antilog({command:'delete', elements:[elt.name]});
+	}
+	doit(e, diagram, ary)
+	{
+		if (ary.length === 1)
+		{
+			const elt = diagram.getSelected();
+			const morphism = R.diagram.fctr(elt.to, [-1]);
+			return diagram.placeMorphismByObject(e, 'domain', elt, morphism);
+		}
+		const one = diagram.get('FiniteObject', {size:1});
+		return diagram.placeObject(one, D.mouse.diagramPosition(diagram));
+	}
+	hasForm(diagram, ary)	// one object or nothing
+	{
+		if (!diagram.isEditable() || ary.length > 1)
+			return false;
+		if (ary.length > 0)
+		{
+			const elt = ary[0];
+			return elt instanceof IndexObject && elt.to.category.actions.has('terminal');
+		}
+		return true;		// nothing selected
+	}
+}
+
+class ElementOfAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Show an element of an object',
+			basename:		'elementOf',
+			actionOnly:		true,
+		};
+		super(diagram, args);
+	}
+	action(e, diagram, ary)
+	{
+		const from = ary[0];
+		const elt = this.doit(e, diagram, from);
+		diagram.log({command:'distribute', from:from.name});
+		diagram.antilog({command:'delete', elements:[elt.name]});
+	}
+	doit(e, diagram, element)
+	{
+		return new IndexElement(diagram, {domain:ndx, codomain:element});
+	}
+	hasForm(diagram, ary)	// one object
+	{
+		if (!diagram.isEditable() || ary.length !== 1)
+			return false;
+		const elt = ary[0];
+		return elt instanceof IndexObject && elt.to.category.actions.has('terminal');
+	}
 }
 
 class Category extends CatObject
@@ -13013,19 +13064,439 @@ class NamedMorphism extends Morphism	// name of a morphism
 	}
 }
 
+const Arrow =
+{
+	setupArrow(args)
+	{
+		Object.defineProperties(this,
+		{
+			bezier:		{value: null,		writable: true},
+			homsetIndex:{value: U.getArg(args, 'homsetIndex', 0),	writable: true},
+			svg:		{value: null,		writable: true},
+			svg_path:	{value: null,		writable: true},
+			svg_path2:	{value: null,		writable: true},
+			svg_name:	{value: null,		writable: true},
+			svg_nameGroup:	{value: null,	writable: true},
+		});
+	},
+	setHomsetIndex(args)
+	{
+		if ('homsetIndex' in args)
+			return args.homsetIndex;
+		else
+		{
+			const homsetLength = this.diagram.domain.getHomset(this.domain, this.codomain).length;
+			const cohomsetLength = this.diagram.domain.getHomset(this.codomain, this.domain).length;
+			return (cohomsetLength > 0 ? 1 : 0) + homsetLength - 1;
+		}
+	},
+	getNameOffset()
+	{
+		let pt1 = null;
+		let pt2 = null;
+		let mid = null;
+		if (this.bezier)
+		{
+			pt1 = this.bezier.cp1;
+			pt2 = this.bezier.cp2;
+			const scale = 0.125;
+			const c0 = this.start.scale(scale);
+			const c1 = pt1.scale(3 * scale);
+			const c2 = pt2.scale(3 * scale);
+			const c3 = this.end.scale(scale);
+			mid = U.bezier(this.start, this.bezier.cp1, this.bezier.cp2, this.end, 0.5);
+		}
+		else
+		{
+			pt1 = this.start;
+			pt2 = this.end;
+			mid = pt1.add(pt2).scale(0.5);
+		}
+		const normal = D2.subtract(pt2, pt1).normal().scale(this.attributes.get('flipName') ? 1 : -1).normalize();
+		const adj = (normal.y < 0 && this.bezier) ? 0.5 : 0.0;
+		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : adj + 0.5) * D.default.font.height).add(mid);
+		if (isNaN(r.x) || isNaN(r.y))
+			return new D2();
+		return D2.round(r);
+	},
+	adjustByHomset()
+	{
+		let ndx = this.homsetIndex;
+		if (ndx !== 0)
+		{
+			const midpoint = {x:(this.start.x + this.end.x)/2, y:(this.start.y + this.end.y)/2};
+			const scale = 2;
+			const offset = this.normal.scale(scale * D.default.font.height * ndx);
+			const w = this.normal.scale(10 * ndx);
+			this.start = this.start.add(w).round();
+			this.end = this.end.add(w).round();
+			let cp1 = offset.add(this.start.add(midpoint).scale(0.5)).round();
+			let cp2 = offset.add(this.end.add(midpoint).scale(0.5)).round();
+			this.bezier = {cp1, cp2, index:ndx, offset};
+		}
+		else
+			this.bezier = null;
+	},
+	predraw()
+	{
+		const domBBox = D2.expand(this.domain.svg.getBBox(), D.default.margin).add(this.domain.getXY());
+		const codBBox = D2.expand(this.codomain.svg.getBBox(), D.default.margin).add(this.codomain.getXY());
+		const delta = D2.subtract(this.codomain, this.domain);
+		let start = null;
+		let end = null;
+		if (delta.x === 0)
+		{
+			if (delta.y > 0)
+			{
+				start = this.intersect(domBBox, 'bottom');
+				end = this.intersect(codBBox, 'top');
+			}
+			else
+			{
+				start = this.intersect(domBBox, 'top');
+				end = this.intersect(codBBox, 'bottom');
+			}
+		}
+		else if (delta.y === 0)
+		{
+			if (delta.x > 0)
+			{
+				start = this.intersect(domBBox, 'right');
+				end = this.intersect(codBBox, 'left');
+			}
+			else
+			{
+				start = this.intersect(domBBox, 'left');
+				end = this.intersect(codBBox, 'right');
+			}
+		}
+		else
+		{
+			start = this.closest(domBBox, this.codomain);
+			end = this.closest(codBBox, this.domain);
+		}
+		start = start ? start.round() : new D2(this.domain.x, this.domain.y);
+		end = end ? end.round() : new D2(this.codomain.x, this.codomain.y);
+		this.angle = delta.angle();
+		this.start = start;
+		this.end = end;
+		this.normal = this.end.subtract(this.start).normal().normalize();
+		this.adjustByHomset();
+		return end !== false;
+	},
+	updateDecorations()
+	{
+		const off = this.getNameOffset();
+		if (isNaN(off.x) || isNaN(off.y))
+			throw 'NaN';
+		const svg = this.svg_nameGroup;
+		svg.setAttribute('transform', `translate (${off.x}, ${off.y})`);
+		const bbox = svg.getBBox();
+		// odd; sometimes the bbox does not have the x set correctly
+		bbox.x = off.x;
+		bbox.y = off.y;		// just in case since x is weird
+		const pntTop = this.intersect(bbox, 'top');
+		const pntBtm = this.intersect(bbox, 'bottom');
+		const pntLft = this.intersect(bbox, 'left');
+		const pntRgt = this.intersect(bbox, 'right');
+		let anchor = 'middle';
+		if (pntTop || pntBtm || pntLft || pntRgt)	// intersection
+		{
+			if (this.domain.y !== this.codomain.y)
+			{
+				if (this.start.x < this.end.x)
+				{
+					if (this.start.y < this.end.y)
+						anchor = this.attributes.get('flipName') ? 'end' : 'start';
+					else
+						anchor = this.attributes.get('flipName') ? 'start' : 'end';
+				}
+				else
+				{
+					if (this.start.y < this.end.y)
+						anchor = this.attributes.get('flipName') ? 'end' : 'start';
+					else
+						anchor = this.attributes.get('flipName') ? 'start' : 'end';
+				}
+			}
+		}
+		else
+		{
+			const angle = this.angle;
+			const bnd = Math.PI/12;
+			if (angle > Math.PI + bnd && angle < 2 * Math.PI - bnd)
+				anchor = this.attributes.get('flipName') ? 'start' : 'end';
+			else if (angle > bnd && angle < Math.PI - bnd)
+				anchor = this.attributes.get('flipName') ? 'end' : 'start';
+		}
+		if (svg.style.textAnchor !== anchor)
+			svg.style.textAnchor = anchor;
+	},
+	getBasicCoords()
+	{
+		return this.bezier ?
+				`M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`
+			:
+				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
+	},
+	updateName()
+	{
+		this.updateQuantifier();
+		if (this.to.properName === '')
+		{
+			this.svg_name && this.svg_name.remove();
+			this.svg_name = null;
+			return;
+		}
+		let properName = this.to.properName;
+		const quant = this.getQuantifier();
+		if (quant)
+		{
+			const level = this.getLevel() -1;
+			properName = '('.repeat(level) + R.Actions.expression.symbols[quant] + properName + ')'.repeat(level);
+		}
+		this.svg_name = H3.text('.morphTxt.grabbable',
+			{'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${this.elementId()}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this]),
+				onmouseenter:e => this.mouseenter(e), onmouseout:e => this.mouseout(e), onmouseover:e => this.mouseover(e), onmousedown:e => Cat.R.diagram.userSelectElement(e, this.name)}, properName);
+		const width = D.textWidth(properName, 'morphTxt');
+		const off = this.getNameOffset();
+		if (isNaN(off.x) || isNaN(off.y))
+			throw 'bad name offset';
+		const bbox = {x:off.x, y:off.y, width, height:D.default.font.height};
+		this.svg_nameGroup && this.svg_nameGroup.remove();
+		this.svg_nameGroup = H3.g({transform:`translate(${bbox.x}, ${bbox.y + D.default.font.height})`}, this.svg_name);
+		this.svg.appendChild(this.svg_nameGroup);
+	},
+	makeSVG(node)
+	{
+		this.predraw();
+		const coords = this.getBasicCoords();
+		const id = this.elementId();
+		const g = H3.g({id});
+		const name = this.name;
+		const onmouseenter = e => this.mouseenter(e);
+		const onmouseout = e => this.mouseout(e);
+		const onmouseover = e => this.mouseover(e);
+		const onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
+		node.appendChild(g);
+		this.svg = g;
+		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':name, class:'grabme grabbable', id:`${id}_path2`, d:coords, onmouseenter, onmouseout, onmouseover, onmousedown});
+		g.appendChild(this.svg_path2);
+		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
+		this.svg_path = H3.path({'data-type':'morphism', 'data-name':name, 'data-to':this.to.name, 'data-sig':this.to.signature, class:cls, id:`${id}_path`, d:coords, onmouseenter, onmouseout, onmouseover, onmousedown});
+		g.appendChild(this.svg_path);
+		this.update();
+	},
+	update()
+	{
+		!this.svg && this.diagram.addSVG(this);
+		this.predraw();
+		this.updateName();
+		const svg = this.svg_path;
+		const start = this.start;
+		const end = this.end;
+		if (svg !== null && start.x !== undefined)
+		{
+			let startNormal = null;
+			let endNormal = null;
+			let bezier = null;
+			let dbzr = null;
+			let startTangent = null;
+			let endTangent = null;
+			if (this.bezier)
+			{
+				bezier = new Bezier([this.start, this.bezier.cp1, this.bezier.cp2, this.end]);
+				dbzr = bezier.derivative();
+				startTangent = dbzr.C(0).normalize().scale(-1);
+				endTangent = dbzr.C(1).normalize().scale(-1);
+			}
+			else
+			{
+				endTangent = this.start.sub(this.end).normalize();
+				startTangent = endTangent;
+			}
+			startNormal = startTangent.normal();
+			endNormal = endTangent.normal();
+			const barb = D.default.font.height / 4;
+			let startCoords = '';
+			let bodyCoords = '';
+			let endCoords = '';
+			// base style
+			if (this.attributes.has('start'))
+			{
+				const width = D.default.font.height/2;
+				this.start = this.start.add(startTangent.scale(-width/2));
+				let largeArc = 0;
+				if (D2.innerProduct(startNormal, new D2({x:0, y:1})) > 0)
+				{
+					startNormal = startNormal.scale(-1);
+					largeArc = 1;
+				}
+				const attr = this.attributes.get('start');
+				switch(this.attributes.get('start'))
+				{
+					case 'includes':
+						{
+							const xy = startNormal.scale(width).add(this.start).round();
+							startCoords = `M${xy.x},${xy.y} A${width/2},${width/2} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
+						}
+						break;
+					case 'element':
+						{
+							const xy = startNormal.scale(width).add(this.start).round();
+							const mid1 = xy.add(this.start).scale(0.5);
+							const mid2 = mid1.add(startTangent.scale(width/2));
+							const r = D2.dist(mid1, mid2)/2;
+							startCoords = `M${mid2.x},${mid2.y} L${mid1.x},${mid1.y} M${xy.x},${xy.y} A${r},${r} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
+						}
+						break;
+					case 'mono':
+						{
+							const upBarb = this.start.add(startNormal.scale(barb)).add(startTangent.scale(barb)).round();
+							const dwBarb = this.start.add(startNormal.scale(-barb)).add(startTangent.scale(barb)).round();
+							startCoords = `M${upBarb.x},${upBarb.y} L${this.start.x},${this.start.y} M${dwBarb.x},${dwBarb.y} L${this.start.x},${this.start.y}`;
+						}
+						break;
+					default:
+						console.error('IndexMorphism.update:  unknown attribute.start value', attr);
+						break;
+				}
+			}
+			bodyCoords = this.getBasicCoords();
+			// end style
+			const upBarb = this.end.add(endNormal.scale(barb)).add(endTangent.scale(barb)).round();
+			const dwBarb = this.end.add(endNormal.scale(-barb)).add(endTangent.scale(barb)).round();
+			endCoords = ` M${this.end.x},${this.end.y} L${upBarb.x},${upBarb.y} M${this.end.x},${this.end.y} L${dwBarb.x},${dwBarb.y}`;
+			if (this.attributes.has('end'))
+			{
+				const attr = this.attributes.get('end');
+				switch(attr)
+				{
+					case 'epi':
+						{
+							const off = endTangent.scale(barb);
+							const up = upBarb.add(off);
+							const dw = dwBarb.add(off);
+							const md = this.end.add(off);
+							endCoords += ` M${up.x},${up.y} L${md.x},${md.y} M${dw.x},${dw.y} L${md.x},${md.y}`;
+						}
+						break;
+					default:
+						console.error('IndexMorphism.update:  unknown attribute.end value', attr);
+						break;
+				}
+			}
+			const coords = startCoords + bodyCoords + endCoords;
+			svg.setAttribute('d', coords);
+			this.svg_path2.setAttribute('d', coords);
+			this.updateDecorations();
+			if (this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism'))
+			{
+				this.svg_path.classList.remove('morphism');
+				this.svg_path.classList.add('referenceMorphism');
+			}
+			else
+			{
+				this.svg_path.classList.remove('referenceMorphism');
+				this.svg_path.classList.add('morphism');
+			}
+		}
+		if ('graph' in this)
+			this.graph.updateGraph({root:this.graph, index:[], dom:this.domain.name, cod:this.codomain.name, visited:[], elementId:this.elementId()});
+	},
+	getNameSvgOffset()
+	{
+		const matrix = this.svg_name.parentElement.transform.baseVal.getItem(0).matrix;
+		return new D2(matrix.e, matrix.f);
+	},
+	showSelected(state = true)
+	{
+		[this.svg_path, this.svg_name, this.svg].map(svg => svg.classList[state ? 'add' : 'remove']('selected'));
+		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);	// move front or back depending on state
+	},
+	getSvgNameBBox()
+	{
+		return this.getNameSvgOffset().add(this.svg_name.getBBox());
+	},
+	getBBox()
+	{
+		return D2.merge(this.domain.getBBox(), this.codomain.getBBox(), this.getSvgNameBBox());
+	},
+	intersect(bbox, side, m = D.default.arrow.margin)
+	{
+		let pnt = new D2();
+		const x = bbox.x - m/2;
+		const y = bbox.y;
+		const width = bbox.width + m;
+		const height = bbox.height;
+		switch(side)
+		{
+		case 'top':
+			pnt = D2.segmentIntersect(x, y, x + width, y, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			break;
+		case 'bottom':
+			pnt = D2.segmentIntersect(x, y + height, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			break;
+		case 'left':
+			pnt = D2.segmentIntersect(x, y, x, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			break;
+		case 'right':
+			pnt = D2.segmentIntersect(x + width, y, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
+			break;
+		}
+		return pnt;
+	},
+	closest(bbox, pnt)
+	{
+		const pntTop = this.intersect(bbox, 'top');
+		const pntBtm = this.intersect(bbox, 'bottom');
+		const pntLft = this.intersect(bbox, 'left');
+		const pntRgt = this.intersect(bbox, 'right');
+		let r = {x:Number.MAX_VALUE, y:Number.MAX_VALUE};
+		if (pntTop)
+			r = D2.updatePoint(pntTop, r, pnt);
+		if (pntBtm)
+			r = D2.updatePoint(pntBtm, r, pnt);
+		if (pntLft)
+			r = D2.updatePoint(pntLft, r, pnt);
+		if (pntRgt)
+			r = D2.updatePoint(pntRgt, r, pnt);
+		if (r.x === Number.MAX_VALUE)
+			r = new D2({x:pnt.x, y:pnt.y});
+		return r;
+	},
+	isFusible(m)
+	{
+		return false;
+	},
+	finishMove()
+	{
+		const dom = this.domain.finishMove();
+		const cod = this.codomain.finishMove();
+		return dom || cod;
+	},
+	updateHomsetIndex(ndx)
+	{
+		if (this.homsetIndex !== ndx)
+		{
+			this.homsetIndex = ndx;
+			D.emitMorphismEvent(this.diagram, 'update', this);
+		}
+	},
+};
+
 class IndexMorphism extends Morphism
 {
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.index = true;
 		nuArgs.basename = U.getArg(args, 'basename', diagram.getAnon('m'));
 		nuArgs.category = diagram.domain;
 		const to = diagram.getElement(nuArgs.to);
 		if (!to)
 			throw 'no morphism to attach to index: ' + nuArgs.to;
-		const domain = diagram.getElement(nuArgs.domain);
-		const codomain = diagram.getElement(nuArgs.codomain);
+		const domain = diagram.domain.getElement(nuArgs.domain);
+		const codomain = diagram.domain.getElement(nuArgs.codomain);
 		if (domain.to !== to.domain)
 			'index morphism domain mismatched to target morphism';
 		if (codomain.to !== to.codomain)
@@ -13038,26 +13509,10 @@ class IndexMorphism extends Morphism
 		Object.defineProperties(this,
 		{
 			attributes:	{value: attributes,	writable: false},
-			bezier:		{value: null,		writable: true},
-			homsetIndex:{value: this.setHomsetIndex(args, 'homsetIndex'),	writable: true},
-			svg_path:	{value: null,		writable: true},
-			svg_path2:	{value: null,		writable: true},
-			svg_name:	{value: null,		writable: true},
-			svg_nameGroup:	{value: null,	writable: true},
 		});
+		this.setupArrow(nuArgs);
 		this.constructor.name === 'IndexMorphism' && this.setSignature();
 		D && this.constructor.name === 'IndexMorphism' && D.emitElementEvent(diagram, 'new', this);
-	}
-	setHomsetIndex(args)
-	{
-		if ('homsetIndex' in args)
-			return args.homsetIndex;
-		else
-		{
-			const homsetLength = this.diagram.domain.getHomset(this.domain, this.codomain).length;
-			const cohomsetLength = this.diagram.domain.getHomset(this.codomain, this.domain).length;
-			return (cohomsetLength > 0 ? 1 : 0) + homsetLength - 1;
-		}
 	}
 	setDomain(dom)
 	{
@@ -13128,155 +13583,6 @@ class IndexMorphism extends Morphism
 		this.to = to;
 		return true;
 	}
-	getNameOffset()
-	{
-		let pt1 = null;
-		let pt2 = null;
-		let mid = null;
-		if (this.bezier)
-		{
-			pt1 = this.bezier.cp1;
-			pt2 = this.bezier.cp2;
-			const scale = 0.125;
-			const c0 = this.start.scale(scale);
-			const c1 = pt1.scale(3 * scale);
-			const c2 = pt2.scale(3 * scale);
-			const c3 = this.end.scale(scale);
-			mid = U.bezier(this.start, this.bezier.cp1, this.bezier.cp2, this.end, 0.5);
-		}
-		else
-		{
-			pt1 = this.start;
-			pt2 = this.end;
-			mid = pt1.add(pt2).scale(0.5);
-		}
-		const normal = D2.subtract(pt2, pt1).normal().scale(this.attributes.get('flipName') ? 1 : -1).normalize();
-		const adj = (normal.y < 0 && this.bezier) ? 0.5 : 0.0;
-		const r = normal.scale((normal.y > 0 ? 1 + normal.y/2 : adj + 0.5) * D.default.font.height).add(mid);
-		if (isNaN(r.x) || isNaN(r.y))
-			return new D2();
-		return D2.round(r);
-	}
-	adjustByHomset()
-	{
-		let ndx = this.homsetIndex;
-		if (ndx !== 0)
-		{
-			const midpoint = {x:(this.start.x + this.end.x)/2, y:(this.start.y + this.end.y)/2};
-			const scale = 2;
-			const offset = this.normal.scale(scale * D.default.font.height * ndx);
-			const w = this.normal.scale(10 * ndx);
-			this.start = this.start.add(w).round();
-			this.end = this.end.add(w).round();
-			let cp1 = offset.add(this.start.add(midpoint).scale(0.5)).round();
-			let cp2 = offset.add(this.end.add(midpoint).scale(0.5)).round();
-			this.bezier = {cp1, cp2, index:ndx, offset};
-		}
-		else
-			this.bezier = null;
-	}
-	predraw()
-	{
-		const domBBox = D2.expand(this.domain.svg.getBBox(), D.default.margin).add(this.domain.getXY());
-		const codBBox = D2.expand(this.codomain.svg.getBBox(), D.default.margin).add(this.codomain.getXY());
-		const delta = D2.subtract(this.codomain, this.domain);
-		let start = null;
-		let end = null;
-		if (delta.x === 0)
-		{
-			if (delta.y > 0)
-			{
-				start = this.intersect(domBBox, 'bottom');
-				end = this.intersect(codBBox, 'top');
-			}
-			else
-			{
-				start = this.intersect(domBBox, 'top');
-				end = this.intersect(codBBox, 'bottom');
-			}
-		}
-		else if (delta.y === 0)
-		{
-			if (delta.x > 0)
-			{
-				start = this.intersect(domBBox, 'right');
-				end = this.intersect(codBBox, 'left');
-			}
-			else
-			{
-				start = this.intersect(domBBox, 'left');
-				end = this.intersect(codBBox, 'right');
-			}
-		}
-		else
-		{
-			start = this.closest(domBBox, this.codomain);
-			end = this.closest(codBBox, this.domain);
-		}
-		start = start ? start.round() : new D2(this.domain.x, this.domain.y);
-		end = end ? end.round() : new D2(this.codomain.x, this.codomain.y);
-		this.angle = delta.angle();
-		this.start = start;
-		this.end = end;
-		this.normal = this.end.subtract(this.start).normal().normalize();
-		this.adjustByHomset();
-		return end !== false;
-	}
-	updateDecorations()
-	{
-		const off = this.getNameOffset();
-		if (isNaN(off.x) || isNaN(off.y))
-			throw 'NaN';
-		const svg = this.svg_nameGroup;
-		svg.setAttribute('transform', `translate (${off.x}, ${off.y})`);
-		const bbox = svg.getBBox();
-		// odd; sometimes the bbox does not have the x set correctly
-		bbox.x = off.x;
-		bbox.y = off.y;		// just in case since x is weird
-		const pntTop = this.intersect(bbox, 'top');
-		const pntBtm = this.intersect(bbox, 'bottom');
-		const pntLft = this.intersect(bbox, 'left');
-		const pntRgt = this.intersect(bbox, 'right');
-		let anchor = 'middle';
-		if (pntTop || pntBtm || pntLft || pntRgt)	// intersection
-		{
-			if (this.domain.y !== this.codomain.y)
-			{
-				if (this.start.x < this.end.x)
-				{
-					if (this.start.y < this.end.y)
-						anchor = this.attributes.get('flipName') ? 'end' : 'start';
-					else
-						anchor = this.attributes.get('flipName') ? 'start' : 'end';
-				}
-				else
-				{
-					if (this.start.y < this.end.y)
-						anchor = this.attributes.get('flipName') ? 'end' : 'start';
-					else
-						anchor = this.attributes.get('flipName') ? 'start' : 'end';
-				}
-			}
-		}
-		else
-		{
-			const angle = this.angle;
-			const bnd = Math.PI/12;
-			if (angle > Math.PI + bnd && angle < 2 * Math.PI - bnd)
-				anchor = this.attributes.get('flipName') ? 'start' : 'end';
-			else if (angle > bnd && angle < Math.PI - bnd)
-				anchor = this.attributes.get('flipName') ? 'end' : 'start';
-		}
-		if (svg.style.textAnchor !== anchor)
-			svg.style.textAnchor = anchor;
-	}
-	getBasicCoords()
-	{
-		return this.bezier ?
-				`M${this.start.x},${this.start.y} C${this.bezier.cp1.x},${this.bezier.cp1.y} ${this.bezier.cp2.x},${this.bezier.cp2.y} ${this.end.x},${this.end.y}`
-			:
-				`M${this.start.x},${this.start.y} L${this.end.x},${this.end.y}`;
-	}
 	setQuantifier(quant)
 	{
 		if (quant)
@@ -13304,190 +13610,6 @@ class IndexMorphism extends Morphism
 	{
 		return this.attributes.has('level') ? this.attributes.get('level') : 0;
 	}
-	updateName()
-	{
-		this.updateQuantifier();
-		let properName = this.to.properName;
-		const quant = this.getQuantifier();
-		if (quant)
-		{
-			const level = this.getLevel() -1;
-			properName = '('.repeat(level) + R.Actions.expression.symbols[quant] + properName + ')'.repeat(level);
-		}
-		this.svg_name = H3.text('.morphTxt.grabbable',
-			{'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${this.elementId()}_name`, ondblclick:e => Cat.R.Actions.flipName.action(e, this.diagram, [this]),
-				onmouseenter:e => this.mouseenter(e), onmouseout:e => this.mouseout(e), onmouseover:e => this.mouseover(e), onmousedown:e => Cat.R.diagram.userSelectElement(e, this.name)}, properName);
-		const width = D.textWidth(properName, 'morphTxt');
-		const off = this.getNameOffset();
-		if (isNaN(off.x) || isNaN(off.y))
-			throw 'bad name offset';
-		const bbox = {x:off.x, y:off.y, width, height:D.default.font.height};
-		this.svg_nameGroup && this.svg_nameGroup.remove();
-		this.svg_nameGroup = H3.g({transform:`translate(${bbox.x}, ${bbox.y + D.default.font.height})`}, this.svg_name);
-		this.svg.appendChild(this.svg_nameGroup);
-	}
-	makeSVG(node)
-	{
-		this.predraw();
-		const coords = this.getBasicCoords();
-		const id = this.elementId();
-		const g = H3.g({id});
-		const name = this.name;
-		const onmouseenter = e => this.mouseenter(e);
-		const onmouseout = e => this.mouseout(e);
-		const onmouseover = e => this.mouseover(e);
-		const onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
-		node.appendChild(g);
-		this.svg = g;
-		this.svg_path2 = H3.path('.grabme.grabbable', {'data-type':'morphism', 'data-name':name, class:'grabme grabbable', id:`${id}_path2`, d:coords, onmouseenter, onmouseout, onmouseover, onmousedown});
-		g.appendChild(this.svg_path2);
-		const cls = this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism') ? 'referenceMorphism grabbable' : 'morphism grabbable';
-		this.svg_path = H3.path({'data-type':'morphism', 'data-name':name, 'data-to':this.to.name, 'data-sig':this.to.signature, class:cls, id:`${id}_path`, d:coords, onmouseenter, onmouseout, onmouseover, onmousedown});
-		g.appendChild(this.svg_path);
-		this.update();
-	}
-	barbLength()
-	{
-		return D.default.font.height / 4;
-	}
-	decoRadius()
-	{
-		return D.default.font.height / 2;
-	}
-	update()
-	{
-		if (this.graph)
-		{
-			let xy = new D2({x:this.domain.x - this.domain.width()/2, y:this.domain.y}).round();
-			this.graph.graphs[0].updateXY(xy);	// set locations inside domain
-			xy = new D2({x:this.codomain.x - this.codomain.width()/2, y:this.codomain.y}).round();
-			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
-		}
-		!this.svg && this.diagram.addSVG(this);
-		this.predraw();
-		this.updateName();
-		const svg = this.svg_path;
-		const start = this.start;
-		const end = this.end;
-		if (svg !== null && start.x !== undefined)
-		{
-			let startNormal = null;
-			let endNormal = null;
-			let bezier = null;
-			let dbzr = null;
-			let startTangent = null;
-			let endTangent = null;
-			if (this.bezier)
-			{
-				bezier = new Bezier([this.start, this.bezier.cp1, this.bezier.cp2, this.end]);
-				dbzr = bezier.derivative();
-				startTangent = dbzr.C(0).normalize().scale(-1);
-				endTangent = dbzr.C(1).normalize().scale(-1);
-			}
-			else
-			{
-				endTangent = this.start.sub(this.end).normalize();
-				startTangent = endTangent;
-			}
-			startNormal = startTangent.normal();
-			endNormal = endTangent.normal();
-			const barb = this.barbLength();
-			let startCoords = ''
-			let bodyCoords = '';
-			let endCoords = '';
-			// base style
-			if (this.attributes.has('start'))
-			{
-				const width = D.default.font.height/2;
-				this.start = this.start.add(startTangent.scale(-width/2));
-				let largeArc = 0;
-				if (D2.innerProduct(startNormal, new D2({x:0, y:1})) > 0)
-				{
-					startNormal = startNormal.scale(-1);
-					largeArc = 1;
-				}
-				const attr = this.attributes.get('start');
-				switch(this.attributes.get('start'))
-				{
-					case 'includes':
-						{
-							const xy = startNormal.scale(width).add(this.start).round();
-							startCoords = `M${xy.x},${xy.y} A${width/2},${width/2} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
-						}
-						break;
-					case 'element':
-						{
-							const xy = startNormal.scale(width).add(this.start).round();
-							const mid1 = xy.add(this.start).scale(0.5);
-							const mid2 = mid1.add(startTangent.scale(width/2));
-							const r = D2.dist(mid1, mid2)/2;
-							startCoords = `M${mid2.x},${mid2.y} L${mid1.x},${mid1.y} M${xy.x},${xy.y} A${r},${r} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
-						}
-						break;
-					case 'mono':
-						{
-							const upBarb = this.start.add(startNormal.scale(barb)).add(startTangent.scale(barb)).round();;
-							const dwBarb = this.start.add(startNormal.scale(-barb)).add(startTangent.scale(barb)).round();;
-							startCoords = `M${upBarb.x},${upBarb.y} L${this.start.x},${this.start.y} M${dwBarb.x},${dwBarb.y} L${this.start.x},${this.start.y}`;
-						}
-						break;
-					default:
-						console.error('IndexMorphism.update:  unknown attribute.start value', attr);
-						break;
-				}
-			}
-			bodyCoords = this.getBasicCoords();
-			// end style
-			const upBarb = this.end.add(endNormal.scale(barb)).add(endTangent.scale(barb)).round();;
-			const dwBarb = this.end.add(endNormal.scale(-barb)).add(endTangent.scale(barb)).round();;
-			endCoords = ` M${this.end.x},${this.end.y} L${upBarb.x},${upBarb.y} M${this.end.x},${this.end.y} L${dwBarb.x},${dwBarb.y}`;
-			if (this.attributes.has('end'))
-			{
-				const attr = this.attributes.get('end');
-				switch(attr)
-				{
-					case 'epi':
-						{
-							const off = endTangent.scale(barb);
-							const up = upBarb.add(off);
-							const dw = dwBarb.add(off);
-							const md = this.end.add(off);
-							endCoords += ` M${up.x},${up.y} L${md.x},${md.y} M${dw.x},${dw.y} L${md.x},${md.y}`;
-						}
-						break;
-					default:
-						console.error('IndexMorphism.update:  unknown attribute.end value', attr);
-						break;
-				}
-			}
-			const coords = startCoords + bodyCoords + endCoords;
-			svg.setAttribute('d', coords);
-			this.svg_path2.setAttribute('d', coords);
-			this.updateDecorations();
-			if (this.attributes.has('referenceMorphism') && this.attributes.get('referenceMorphism'))
-			{
-				this.svg_path.classList.remove('morphism');
-				this.svg_path.classList.add('referenceMorphism');
-			}
-			else
-			{
-				this.svg_path.classList.remove('referenceMorphism');
-				this.svg_path.classList.add('morphism');
-			}
-		}
-		if ('graph' in this)
-			this.graph.updateGraph({root:this.graph, index:[], dom:this.domain.name, cod:this.codomain.name, visited:[], elementId:this.elementId()});
-	}
-	getNameSvgOffset()
-	{
-		const matrix = this.svg_name.parentElement.transform.baseVal.getItem(0).matrix;
-		return new D2(matrix.e, matrix.f);
-	}
-	showSelected(state = true)
-	{
-		[this.svg_path, this.svg_name, this.svg].map(svg => svg.classList[state ? 'add' : 'remove']('selected'));
-		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);	// move front or back depending on state
-	}
 	updateFusible(e, on)
 	{
 		const path = this.svg_path;
@@ -13512,61 +13634,6 @@ class IndexMorphism extends Morphism
 			name.classList.remove('fuseMorphism');
 			this.updateGlow(false, '');
 		}
-	}
-	getSvgNameBBox()
-	{
-		return this.getNameSvgOffset().add(this.svg_name.getBBox());
-	}
-	getBBox()
-	{
-		return D2.merge(this.domain.getBBox(), this.codomain.getBBox(), this.getSvgNameBBox());
-	}
-	intersect(bbox, side, m = D.default.arrow.margin)
-	{
-		let pnt = new D2();
-		const x = bbox.x - m/2;
-		const y = bbox.y;
-		const width = bbox.width + m;
-		const height = bbox.height;
-		switch(side)
-		{
-		case 'top':
-			pnt = D2.segmentIntersect(x, y, x + width, y, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
-			break;
-		case 'bottom':
-			pnt = D2.segmentIntersect(x, y + height, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
-			break;
-		case 'left':
-			pnt = D2.segmentIntersect(x, y, x, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
-			break;
-		case 'right':
-			pnt = D2.segmentIntersect(x + width, y, x + width, y + height, this.domain.x, this.domain.y, this.codomain.x, this.codomain.y);
-			break;
-		}
-		return pnt;
-	}
-	closest(bbox, pnt)
-	{
-		const pntTop = this.intersect(bbox, 'top');
-		const pntBtm = this.intersect(bbox, 'bottom');
-		const pntLft = this.intersect(bbox, 'left');
-		const pntRgt = this.intersect(bbox, 'right');
-		let r = {x:Number.MAX_VALUE, y:Number.MAX_VALUE};
-		if (pntTop)
-			r = D2.updatePoint(pntTop, r, pnt);
-		if (pntBtm)
-			r = D2.updatePoint(pntBtm, r, pnt);
-		if (pntLft)
-			r = D2.updatePoint(pntLft, r, pnt);
-		if (pntRgt)
-			r = D2.updatePoint(pntRgt, r, pnt);
-		if (r.x === Number.MAX_VALUE)
-			r = new D2({x:pnt.x, y:pnt.y});
-		return r;
-	}
-	isFusible(m)
-	{
-		return false;
 	}
 	removeGraph()
 	{
@@ -13608,21 +13675,6 @@ class IndexMorphism extends Morphism
 		const svg = this.graph ? this.graph.svg : null;
 		return svg ? svg.classList.contains('hidden') : true;
 	}
-	finishMove()
-	{
-		const dom = this.domain.finishMove();
-		const cod = this.codomain.finishMove();
-		return dom || cod;
-	}
-	getXY()
-	{
-		return D.barycenter([this.domain.getXY(), this.codomain.getXY()]);
-	}
-	emphasis(on)
-	{
-		super.emphasis(on);
-		D.setClass('emphasis', on, this.svg_path);
-	}
 	isEndo()
 	{
 		return this.domain === this.codomain;
@@ -13632,14 +13684,6 @@ class IndexMorphism extends Morphism
 		const nuConfig = U.clone(config);
 		nuConfig.addbase = false;
 		return this.to.getHtmlRep(idPrefix, nuConfig);
-	}
-	updateHomsetIndex(ndx)
-	{
-		if (this.homsetIndex !== ndx)
-		{
-			this.homsetIndex = ndx;
-			D.emitMorphismEvent(this.diagram, 'update', this);
-		}
 	}
 	setToDomain(obj, dual = false)
 	{
@@ -13659,10 +13703,6 @@ class IndexMorphism extends Morphism
 		this.codomain.update();
 		D.emitMorphismEvent(this.diagram, 'update', this);
 	}
-	updateProperName()
-	{
-		this.svg_name.innerHTML = this.to.properName;
-	}
 	isBare()
 	{
 		return false;
@@ -13677,6 +13717,13 @@ class IndexMorphism extends Morphism
 	{
 		this.getCells().forEach(cell => D.emitCellEvent(this.diagram, 'check', cell));
 	}
+	emphasis(on)
+	{
+		super.emphasis(on);
+		D.setClass('emphasis', on, this.svg_path);
+		D.setClass('emphasis', on, this.svg_name);
+		D.setClass('emphasis', on, this.svg_nameGroup);
+	}
 	static LinkId(data, lnk)
 	{
 		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
@@ -13686,6 +13733,98 @@ class IndexMorphism extends Morphism
 		return `${lnk[0] === 0 ? dom : cod} ${lnk.slice(1).toString()}`;	// TODO use U.a2s?
 	}
 }
+
+Object.assign(IndexMorphism.prototype, Arrow);
+
+class IndexElement extends Element
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.basename = U.getArg(args, 'basename', diagram.getAnon('e'));
+		nuArgs.category = diagram.domain;
+		const domain = diagram.domain.getElement(nuArgs.domain);
+		const codomain = diagram.domain.getElement(nuArgs.codomain);
+		if (!IndexElement.hasForm(domain, codomain))
+			throw 'bad form';
+		if (!(domain instanceof IndexObject || domain instanceof IndexMorphism) && codomain instanceof IndexMorphism)
+			throw 'bad domain or codomain';
+		if (!codomain.to.elements.has(domain.to))
+			throw 'source not an element of target';
+		super(diagram, nuArgs);
+		this.incrRefcnt();
+		this.diagram.domain.addElement(this);
+		const attributes = new Map('attributes' in nuArgs ? nuArgs.attributes : []);
+		attributes.set('start', 'element');
+		Object.defineProperties(this,
+		{
+			attributes:	{value: attributes,	writable: false},
+		});
+		this.setupArrow(args);
+		this.constructor.name === 'IndexElement' && this.setSignature();
+		D && this.constructor.name === 'IndexElement' && D.emitElementEvent(diagram, 'new', this);
+	}
+	help()
+	{
+		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, '.italic.small')));
+		this.to.help(this);
+		if (this.isEditable())
+		{
+			const inputArgs = {type:"number", onchange:e => this.updateHomsetIndex(Number.parseFloat(e.target.value)), min:-100, max:100, width:2, value:this.homsetIndex};
+			D.toolbar.table.appendChild(H3.tr(H3.td('Homset Index'), H3.td(H3.input('.in100', inputArgs))));
+			D.toolbar.table.appendChild(H3.tr(H3.td('Flip name'), H3.td(H3.input({type:"checkbox", onchange:e => Cat.R.Actions.flipName.action(e, this.diagram, [this])}))));
+		}
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt <= 1)
+		{
+			if (this.to)
+			{
+				this.to.decrRefcnt();
+				this.removeSVG();
+			}
+			this.domain.domains.delete(this);
+			this.codomain.codomains.delete(this);
+		}
+		super.decrRefcnt();
+	}
+	json()
+	{
+		const json = super.json();
+		json.domain = this.domain.name;
+		json.codomain = this.codomain.name;
+		if (this.homsetIndex !== 0)
+			json.homsetIndex = this.homsetIndex;
+		return json;
+	}
+	getStart(tangent)
+	{
+		let normal = tangent.normal();
+		const width = D.default.font.height/2;
+		this.start = this.start.add(tangent.scale(-width/2));
+		let largeArc = 0;
+		if (D2.innerProduct(normal, new D2({x:0, y:1})) > 0)
+		{
+			normal = normal.scale(-1);
+			largeArc = 1;
+		}
+		const xy = normal.scale(width).add(this.start).round();
+		const mid1 = xy.add(this.start).scale(0.5);
+		const mid2 = mid1.add(tangent.scale(width/2));
+		const r = D2.dist(mid1, mid2)/2;
+		return `M${mid2.x},${mid2.y} L${mid1.x},${mid1.y} M${xy.x},${xy.y} A${r},${r} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
+	}
+	static hasForm(domain, codomain)
+	{
+		if (!(domain instanceof IndexObject || domain instanceof IndexMorphism) && codomain instanceof IndexMorphism)
+			return false;
+		if (!codomain.to.elements.has(domain.to))
+			return false;
+	}
+}
+
+Object.assign(IndexElement.prototype, Arrow);
 
 class Cell
 {
@@ -13759,7 +13898,6 @@ class Cell
 				break;
 			default:
 				throw 'Cell:  unknown action ' + act;
-				break;
 		}
 		R.Actions.help.html(e, this.diagram, [this]);
 	}
@@ -13863,7 +14001,6 @@ class Cell
 				throw 'Not allowed';
 		}
 		this.setProperName();
-		this.setGlow();
 		this.loadItem();
 		D.emitCellEvent(this.diagram, act, this);
 	}
@@ -13905,12 +14042,10 @@ class Cell
 	}
 	removeAssertion()
 	{
+		this.removeItem();
 		this.assertion = null;
 		this.commutes = 'unknown';
-		this.setProperName();
-		this.setGlow();
-		this.removeItem();
-		D.emitCellEvent(this.diagram, 'delete', this);
+		D.emitCellEvent(this.diagram, 'removeAssertion', this);
 	}
 	getObjects()
 	{
@@ -13965,7 +14100,6 @@ class Cell
 		svg.onmousedown = e => Cat.R.diagram.userSelectElement(e, name);
 		node.appendChild(svg);
 		this.svg = svg;
-		this.setGlow();
 		this.diagram.selected.filter(elt => elt instanceof Cell && elt.name === this.name).map(cell => cell.showSelected());
 	}
 	removeSVG()
@@ -13988,22 +14122,26 @@ class Cell
 		if (!this.svg)
 			this.makeSVG(this.diagram.svgBase);
 		this.setProperName();
+		this.setGlow();
 		const hideit = this.left.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false) ||
 							this.right.reduce((r, m) => r || (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism')), false);
 		if (hideit)
 			this.svg.innerHTML = '';
 		else
 			this.svg.innerHTML = this.properName;
-		const width = D.textWidth(this.properName, 'cellTxt');
-		const xy = this.getXY();
-		if (isNaN(xy.x) || isNaN(xy.y))
-			throw 'NaN!';
-		this.x = xy.x + width/2;
-		this.y = xy.y;
-		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
-		const place = this.diagram.autoplaceSvg(bbox, this.name);
-		this.svg.setAttribute('x', place.x + width/2);
-		this.svg.setAttribute('y', place.y + D.default.font.height);
+		if (this.properName !== '')
+		{
+			const width = D.textWidth(this.properName, 'cellTxt');
+			const xy = this.getXY();
+			if (isNaN(xy.x) || isNaN(xy.y))
+				throw 'NaN!';
+			this.x = xy.x + width/2;
+			this.y = xy.y;
+			const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
+			const place = this.diagram.autoplaceSvg(bbox, this.name);
+			this.svg.setAttribute('x', place.x + width/2);
+			this.svg.setAttribute('y', place.y + D.default.font.height);
+		}
 	}
 	isSimple()
 	{
@@ -14166,7 +14304,7 @@ class Cell
 			{
 				const morphisms = left[0].to.morphisms;
 				if (morphisms.length === right.length)
-					return morphisms.reduce((r, m, i) => r && m === right[i], true);
+					return morphisms.reduce((r, m, i) => r && m === right[i].to, true);
 			}
 			return false;
 		}
@@ -15131,12 +15269,12 @@ class FactorMorphism extends Morphism
 	}
 	static allFactorsEqual(factors)
 	{
-		return factors.every((v, i) => U.ArrayEquals(v, factors[0]));
+		return factors.every((v, i) => U.arrayEquals(v, factors[0]));
 	}
 	static equalFactors(left, right)
 	{
 		if (left.length === right.lenght)
-			return left.reduce((r, ary, i) => U.ArrayEquals(ary, right[i]));
+			return left.reduce((r, ary, i) => U.arrayEquals(ary, right[i]));
 		return false;
 	}
 	static ProperName(diagram, domain, factors, dual)
@@ -15167,7 +15305,7 @@ class FactorMorphism extends Morphism
 					continue;
 				if (factor.length === 0)
 					return false;
-				if (unique.length > 0 && unique.reduce((r, f) => r || U.ArrayEquals(factor, f), false))
+				if (unique.length > 0 && unique.reduce((r, f) => r || U.arrayEquals(factor, f), false))
 					return false;
 				unique.push(factor);
 			}
@@ -15270,17 +15408,17 @@ class LambdaMorphism extends Morphism
 		let k = 0;
 		// setup map for factors living in the domain of the homset
 		const codFactor = [1, 1];
-		if (homFactors.length === 1 && U.ArrayEquals(homFactors[0], [0]))	// check for entire domain
+		if (homFactors.length === 1 && U.arrayEquals(homFactors[0], [0]))	// check for entire domain
 			homMap[0] = [homFactors[0], [1, 0]];
 		else
 			homFactors.map((f, i) =>
 			{
-				if (i < homFactors.length -1 && U.ArrayEquals(homFactors[i+1], [-2]))
+				if (i < homFactors.length -1 && U.arrayEquals(homFactors[i+1], [-2]))
 				{
 					homMap.push([f, base.slice()]);
 					k = 0;
 				}
-				else if (U.ArrayEquals(f, [-2]))
+				else if (U.arrayEquals(f, [-2]))
 				{
 					base[base.length -1] = 1;	// switch to hom cod
 					codFactor.push(1);
@@ -15324,7 +15462,7 @@ class LambdaMorphism extends Morphism
 				dom.graphs[i].copyGraph({map:factorMap, src:preCurryGraph.getFactor(ndx)})
 			);
 		// copy hom factor links
-		if (homFactors.length === 1 && U.ArrayEquals(homFactors[0], [0]))	// check for entire domain
+		if (homFactors.length === 1 && U.arrayEquals(homFactors[0], [0]))	// check for entire domain
 		{
 			const src = preCurryGraph.getFactor(homFactors[0]);
 			const target = cod.graphs[0];
@@ -15336,7 +15474,7 @@ class LambdaMorphism extends Morphism
 			k = 0;
 			homFactors.map((ndx, i) =>
 			{
-				if (i < homFactors.length -1 && U.ArrayEquals(homFactors[i+1], [-2]))
+				if (i < homFactors.length -1 && U.arrayEquals(homFactors[i+1], [-2]))
 				{
 					const src = preCurryGraph.getFactor(ndx);
 					base.push(0);
@@ -15345,7 +15483,7 @@ class LambdaMorphism extends Morphism
 					target.copyGraph({map:factorMap, src});
 					k = 0;
 				}
-				else if (U.ArrayEquals(ndx, [-2]))
+				else if (U.arrayEquals(ndx, [-2]))
 				{
 					base.push(1);
 					k = 0;
@@ -15406,13 +15544,13 @@ class LambdaMorphism extends Morphism
 		while(fctrs.length > 0)
 		{
 			const f = fctrs.pop();
-			if (U.ArrayEquals(f, [-2]))	// form hom level
+			if (U.arrayEquals(f, [-2]))	// form hom level
 			{
 				codomain = diagram.hom(diagram.prod(...objects), codomain);
 				objects = [];
 				isProd = false;
 			}
-			else if (U.ArrayEquals(f, [-1]))	// add to products at this level
+			else if (U.arrayEquals(f, [-1]))	// add to products at this level
 				isProd = true;
 			else
 				objects.push(seq.getFactor(f));
@@ -15443,7 +15581,7 @@ class LambdaMorphism extends Morphism
 		let hf = '';
 		homFactors.map(f =>
 		{
-			if (U.ArrayEquals(f, [-2]))
+			if (U.arrayEquals(f, [-2]))
 				hf += '/';
 			else
 			{
@@ -16153,12 +16291,14 @@ class Diagram extends Functor
 	{
 		const elts = this.svgRoot.querySelectorAll('text, .morphism');
 		let r = null;
-		for (let i=0; i<elts.length; ++i)
+		const debug = R.default.debug;
+		for (let i=0; i<elts.length; ++i)		// for since we return
 		{
 			const svg = elts[i];
-			if (svg.dataset.name === except)
+			const name = svg.dataset.name;
+			if (name === except)
 				continue;
-			const elt = this.getElement(svg.dataset.name);
+			const elt = this.getElement(name);
 			if (svg instanceof SVGPathElement)
 			{
 				if (elt.bezier)
@@ -16179,7 +16319,7 @@ class Diagram extends Functor
 				compBox = elt.getSvgNameBBox();
 			else
 				compBox = svg.getBBox();
-			if (R.default.debug && svg instanceof SVGTextElement)
+			if (debug && svg instanceof SVGTextElement)
 				this.svgBase.appendChild(H3.rect({x:`${compBox.x}px`, y:`${compBox.y}px`, width:`${compBox.width}px`, height:`${compBox.height}px`, fill:'none', stroke:'blue'}));
 			if (D2.overlap(box, new D2(compBox)))
 				return true;
@@ -16449,7 +16589,7 @@ class Diagram extends Functor
 					R.default.debug && console.log('uploaded', this.name);
 					const info = R.getDiagramInfo(this.name);
 					info.cloudTimestamp = info.timestamp;
-					this.setDiagramInfo(info, true);
+					R.setDiagramInfo(info, true);
 					const delta = Date.now() - start;
 					if (e)
 					{
@@ -16786,11 +16926,10 @@ class Diagram extends Functor
 	emphasis(c, on)
 	{
 		let rtrn = null;
-		const elt = this.getElement(c);
-		D.mouseover = on ? elt : null;
+		let elt = this.getElement(c);
 		if (elt)
 		{
-			if (elt instanceof IndexMorphism || elt instanceof IndexObject || elt instanceof IndexText)
+			if (elt instanceof IndexText)
 			{
 				elt.emphasis(on);
 				rtrn = elt.name;
@@ -16799,14 +16938,14 @@ class Diagram extends Functor
 				cell.emphasis(on);
 			else
 			{
+				if (elt instanceof IndexMorphism || elt instanceof IndexObject)
+					elt = elt.to;
 				const emphs = [...this.svgRoot.querySelectorAll(`[data-sig="${elt.signature}"]`)];
 				emphs.map(emph => on ? emph.classList.add('emphasis') : emph.classList.remove('emphasis'));
 				if (emphs.length > 0)
 					rtrn = emphs[0].dataset.name;
 			}
 		}
-		else if (this.domain.cells.has(c))
-			this.domain.cells.get(c).emphasis(on);
 		if (!on && this.selected.length === 1 && 'dragAlternates' in this.selected[0])
 			this.removeDragAlternates();
 		return rtrn;
@@ -17008,7 +17147,7 @@ class Diagram extends Functor
 	}
 	lambda(preCurry, domFactors, homFactors)
 	{
-		return this.get('LambdaMorphism', {preCurry, domFactors, homFactors});;
+		return this.get('LambdaMorphism', {preCurry, domFactors, homFactors});
 	}
 	log(cmd)
 	{
@@ -17752,7 +17891,7 @@ class ActionDiagram extends Diagram
 		let allObjects = false;
 		let allMorphisms = false;
 		let isBinaryOp = false;
-		if (this.match.length === ary.length && ary.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism).length == ary.length)
+		if (this.match.length === ary.length && ary.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism).length === ary.length)
 			return this.match.reduce((r, ref, i) => r && R.sameForm(ref, ary[i].to, eltMap), true);	// do all elements have the same form?
 		return false;
 	}
@@ -18074,37 +18213,35 @@ class Assembler
 	{
 		const scanning = [...this.inputs];
 		const scanned = new Set();
+		const domScanner = (dm, input) =>
+		{
+			if (this.references.has(dm))
+			{
+				if (dm.codomain.assyGraph.hasTag('info'))
+					this.inputs.delete(input);
+			}
+			if (!scanned.has(dm.codomain))
+			{
+				this.propTag(dm, dm.to, dm.graph, Assembler.getBarGraph(dm), 'info', true);
+				!scanning.includes(dm.codomain) && scanning.push(dm.codomain);
+			}
+		};
+		const codScanner = dm =>
+		{
+			if (this.references.has(dm))
+			{
+				if (!this.propagated.has(dm))
+				{
+					this.backLinkTag(dm, dm.graph, Assembler.getBarGraph(dm), 'info');
+					!scanning.includes(dm.domain) && scanning.push(dm.domain);
+				}
+			}
+		};
 		while(scanning.length > 0)
 		{
 			const input = scanning.pop();
 			const hasTag = input.assyGraph.hasTag('info');
-			const scan = scanning;		// jshint
-			const inputs2 = this.inputs;		// jshint
-			const domScanner = dm =>
-			{
-				if (this.references.has(dm))
-				{
-					if (dm.codomain.assyGraph.hasTag('info'))
-						inputs2.delete(input);
-				}
-				if (!scanned.has(dm.codomain))
-				{
-					this.propTag(dm, dm.to, dm.graph, Assembler.getBarGraph(dm), 'info', true);
-					!scan.includes(dm.codomain) && scan.push(dm.codomain);
-				}
-			};
-			input.domains.forEach(domScanner);
-			const codScanner = dm =>
-			{
-				if (this.references.has(dm))
-				{
-					if (!this.propagated.has(dm))
-					{
-						this.backLinkTag(dm, dm.graph, Assembler.getBarGraph(dm), 'info');
-						!scan.includes(dm.domain) && scan.push(dm.domain);
-					}
-				}
-			};
+			input.domains.forEach(o => domScanner(o, input));
 			input.codomains.forEach(codScanner);
 			scanned.add(input);
 		}
@@ -18369,7 +18506,7 @@ console.log('formMorphism', domain.basename, domain.svg);
 		ndx = 0;
 		let setupFactors = inputs.map((input, i) => input.to.isTerminal() ? -1 : [ndx++]);
 		if (!(domain instanceof ProductObject))
-			setupFactors = setupFactors.map(f => U.ArrayEquals(f, [0]) ? [] : f);
+			setupFactors = setupFactors.map(f => U.arrayEquals(f, [0]) ? [] : f);
 		const setup = this.diagram.fctr(domain, setupFactors);
 		const components = [setup, input];
 		while(scanning.length > 0)
