@@ -543,7 +543,6 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 			const morphism = diagram.getElement(morphismName);
 			const args = this.getInputValue(morphism.domain);
 			const type = this.getType(morphism);
-debugger;
 			const code =
 `// Catecon javascript code generator ${Date()}
 onmessage = function(e)
