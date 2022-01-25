@@ -1809,7 +1809,6 @@ class Navbar
 		});
 		window.addEventListener('View', e => this.update(e));
 		window.addEventListener('Application', e => this.update(e));
-		window.addEventListener('Morphism', e => e.detail.command === 'update' && e.detail.element instanceof Diagram && this.update());
 		this.update();
 	}
 	updateByUserStatus()
@@ -7262,7 +7261,7 @@ class Element
 			this.diagram.updateProperNames(this);
 		return old;
 	}
-	updateProperName()
+	updateProperName()		// fitb
 	{}
 	updateBasename()
 	{
@@ -7299,7 +7298,7 @@ class Element
 			H3.tr(H3.td('Category:', '.left'), H3.td(this.category ? this.category.properName : '', '.left')),
 			H3.tr(H3.td('Diagram:', '.left'), H3.td(this.diagram ? this.diagram.properName : '', '.left')),
 			H3.tr(H3.td('User:', '.left'), H3.td(this.diagram ? this.diagram.user : '', '.left')),
-			H3.tr(H3.td('Ref. count:', '.left'), H3.td(this.diagram ? this.refcnt : '', '.left')),
+			H3.tr(H3.td('Ref. count:', '.left'), H3.td(this.diagram ? this.refcnt.toString() : '', '.left')),
 		].map(row => D.toolbar.table.appendChild(row));
 	}
 	isEditable()		// can only edit the current diagram
@@ -16019,7 +16018,7 @@ class Diagram extends Functor
 			if (R.isLocalNewer(this.name))
 			{
 				const btn = D.getIcon('upload', 'upload', e => this.upload(e, false), {title:'Upload to cloud ' + R.cloudURL, aniId:'diagramUploadBtn'});
-				toolbar2Right.appendChild(btn);
+				toolbar2right.appendChild(btn);
 			}
 			if (R.isCloudNewer(this.name))
 				toolbar2right.appendChild(D.getIcon('downcloud', 'downcloud', e => this.download(e, false), {title:'Download from cloud ' + R.cloudURL}));
@@ -16681,7 +16680,10 @@ class Diagram extends Functor
 			else if (attribute === 'basename')
 				this.updateBasenames(elt);
 		}
-		D.emitElementEvent(this, 'update', elt);
+		if (elt instanceof Diagram)
+			D.emitViewEvent(D.session.mode, R.diagram);
+		else
+			D.emitElementEvent(this, 'update', elt);
 	}
 	editElementText(e, elt, id, attribute)
 	{
