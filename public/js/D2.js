@@ -1,3 +1,7 @@
+// (C) 2018-2022 Harry Dole
+
+(function()
+{
 'use strict';
 
 class D2
@@ -394,7 +398,7 @@ class D2
 			t[2] = -A/3 - (S + T)/2;                  // real part of complex root
 			Im = Math.abs(Math.sqrt(3)*(S - T)/2);    // complex part of root pair
 			// discard complex roots
-			if (Im != 0)
+			if (Im !== 0)
 			{
 				t[1] = -1;
 				t[2] = -1;
@@ -443,17 +447,17 @@ class D2
 		// verify the roots are in bounds of the linear segment
 		for (let i = 0; i<3;i++)
 		{
-			t = r[i];
+			const t = r[i];
 			if (t === -1)
 				return false;
 			X[0] = bx[0]*t*t*t+bx[1]*t*t+bx[2]*t+bx[3];
 			X[1] = by[0]*t*t*t+by[1]*t*t+by[2]*t+by[3];
 			//above is intersection point assuming infinitely long line segment, make sure we are also in bounds of the line
 			let s;
-			if ((lineEnd.x-lineStart.x)!=0)           // if not vertical line
-				s = (X[0]-lineStart.x)/(lineEnd.x-lineStart.x);
+			if ((lineEnd.x-lineStart.x) !== 0)           // if not vertical line
+				s = (X[0]-lineStart.x) / (lineEnd.x-lineStart.x);
 			else
-				s = (X[1]-lineStart.y)/(lineEnd.y-lineStart.y);
+				s = (X[1]-lineStart.y) / (lineEnd.y-lineStart.y);
 			// in bounds?
 			if (!(t<0 || t>1.0 || s<0 || s>1.0))
 				return true;
@@ -482,3 +486,5 @@ if (typeof window === 'object')
 	window.D2 = D2;
 else
 	module.exports = D2;
+
+})();
