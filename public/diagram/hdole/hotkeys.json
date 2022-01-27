@@ -1723,17 +1723,30 @@
           "y": 1800
         },
         "height": "48"
+      },
+      {
+        "description": "<icon>terminal</icon>",
+        "basename": "t_124",
+        "name": "hdole/hotkeys/t_124",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/hotkeys",
+        "xy": {
+          "x": 1180,
+          "y": 3900
+        },
+        "height": "48"
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1643054773765,
+  "timestamp": 1643105053135,
   "version": 0,
   "viewport": {
     "x": -980,
-    "y": -188,
+    "y": -4364,
     "scale": 1.3052054173627434
   }
 }

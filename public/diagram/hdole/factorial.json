@@ -239,7 +239,7 @@
         "to": "hdole/floats/F128",
         "xy": {
           "x": 100,
-          "y": 10
+          "y": 0
         }
       },
       {
@@ -251,8 +251,8 @@
         "diagram": "hdole/factorial",
         "to": "hdole/floats/F128",
         "xy": {
-          "x": 300,
-          "y": 10
+          "x": 400,
+          "y": 0
         }
       },
       {
@@ -329,8 +329,8 @@
         "diagram": "hdole/factorial",
         "to": "hdole/floats/F64",
         "xy": {
-          "x": 2500,
-          "y": 400
+          "x": 2200,
+          "y": 300
         }
       },
       {
@@ -712,19 +712,6 @@
       },
       {
         "description": "",
-        "basename": "o_56",
-        "name": "hdole/factorial/o_56",
-        "prototype": "IndexObject",
-        "category": "hdole/factorial_Index",
-        "diagram": "hdole/factorial",
-        "to": "hdole/floats/F64",
-        "xy": {
-          "x": 2200,
-          "y": 300
-        }
-      },
-      {
-        "description": "",
         "basename": "o_1",
         "name": "hdole/factorial/o_1",
         "prototype": "IndexObject",
@@ -1058,6 +1045,12 @@
         "diagram": "hdole/factorial",
         "domain": "hdole/factorial/o_14",
         "codomain": "hdole/factorial/o_18",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "hdole/factorial/Cm{Fa{hdole/floats/F128,hdole/floats/F128_,hdole/floats/F128_-1}aF,Pm{Id{hdole/floats/F128}dI,hdole/floats/one128}mP,hdole/floats/sub128}mC"
       },
       {
@@ -1080,7 +1073,13 @@
         "diagram": "hdole/factorial",
         "domain": "hdole/factorial/o_14",
         "codomain": "hdole/factorial/o_18",
-        "homsetIndex": 4,
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "homsetIndex": 5,
         "to": "hdole/factorial/decr"
       },
       {
@@ -1093,23 +1092,6 @@
         "domain": "hdole/factorial/o_29",
         "codomain": "hdole/factorial/o_30",
         "to": "hdole/factorial/decr"
-      },
-      {
-        "description": "",
-        "basename": "m_33",
-        "name": "hdole/factorial/m_33",
-        "prototype": "IndexMorphism",
-        "category": "hdole/factorial_Index",
-        "diagram": "hdole/factorial",
-        "domain": "hdole/factorial/o_32",
-        "codomain": "hdole/factorial/o_33",
-        "attributes": [
-          [
-            "referenceMorphism",
-            true
-          ]
-        ],
-        "to": "hdole/factorial/Fa{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0}aF"
       },
       {
         "description": "",
@@ -1377,7 +1359,7 @@
         "category": "hdole/factorial_Index",
         "diagram": "hdole/factorial",
         "domain": "hdole/factorial/o_55",
-        "codomain": "hdole/factorial/o_56",
+        "codomain": "hdole/factorial/o_33",
         "to": "hdole/floats/sub64"
       },
       {
@@ -1388,7 +1370,7 @@
         "category": "hdole/factorial_Index",
         "diagram": "hdole/factorial",
         "domain": "hdole/factorial/o_31",
-        "codomain": "hdole/factorial/o_56",
+        "codomain": "hdole/factorial/o_33",
         "attributes": [
           [
             "flipName",
@@ -1405,7 +1387,7 @@
         "category": "hdole/factorial_Index",
         "diagram": "hdole/factorial",
         "domain": "hdole/factorial/o_31",
-        "codomain": "hdole/factorial/o_56",
+        "codomain": "hdole/factorial/o_33",
         "attributes": [
           [
             "flipName",
@@ -1542,6 +1524,49 @@
         "domain": "hdole/factorial/o_5",
         "codomain": "hdole/factorial/o_6",
         "to": "hdole/floats/eq0_64"
+      },
+      {
+        "description": "",
+        "basename": "o_8",
+        "name": "hdole/factorial/o_8",
+        "prototype": "IndexObject",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2500,
+          "y": 400
+        }
+      },
+      {
+        "description": "",
+        "basename": "m_33",
+        "name": "hdole/factorial/m_33",
+        "prototype": "IndexMorphism",
+        "category": "hdole/factorial_Index",
+        "diagram": "hdole/factorial",
+        "domain": "hdole/factorial/o_32",
+        "codomain": "hdole/factorial/o_8",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "hdole/factorial/Fa{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0}aF"
+      },
+      {
+        "description": "BUG: selecting F64 shows upside A.\nInstead, the blob has a reference and so 'forall' should not appear.",
+        "basename": "t_1",
+        "name": "hdole/factorial/t_1",
+        "prototype": "IndexText",
+        "category": "zf/Set",
+        "diagram": "hdole/factorial",
+        "xy": {
+          "x": 2700,
+          "y": 690
+        },
+        "height": 24
       }
     ],
     "cells": []
@@ -2224,11 +2249,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643054889413,
+  "timestamp": 1643099396910,
   "version": 0,
   "viewport": {
-    "x": 574,
-    "y": 276,
-    "scale": 0.5501790408619031
+    "x": 670,
+    "y": 235,
+    "scale": 0.4815080649358615
   }
 }
