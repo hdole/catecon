@@ -258,7 +258,7 @@ class D2
 					D2.inbetween(aBottom, bTop, aTop);
 		return h && w;
 	}
-	static merge(...boxes)
+	static mergeBoxes(...boxes)
 	{
 		const x = Math.min(...boxes.map(bx => bx.x));
 		const y = Math.min(...boxes.map(bx => bx.y));
