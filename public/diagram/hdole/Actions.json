@@ -8,441 +8,629 @@
   "domain": "hdole/Actions_Index",
   "codomain": "sys/Cat",
   "references": [],
-  "domainElements": [
-    {
-      "description": "Standard Actions",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 150
+  "domainInfo": {
+    "description": "index category for diagram hdole/Actions",
+    "basename": "Actions_Index",
+    "name": "hdole/Actions_Index",
+    "prototype": "IndexCategory",
+    "category": "sys/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Standard Actions",
+        "basename": "t_2",
+        "name": "hdole/Actions/t_2",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 150
+        },
+        "height": "36",
+        "weight": "bold"
       },
-      "height": "36",
-      "weight": "bold"
-    },
-    {
-      "description": "The actions listed here are standard for all categories.  Many are editing functions\non the index category for the diagram.",
-      "basename": "t_3",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 200
+      {
+        "description": "The actions listed here are standard for all categories.  Many are editing functions\non the index category for the diagram.",
+        "basename": "t_3",
+        "name": "hdole/Actions/t_3",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 200
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>identity</icon>  Identity:  Place the identity morphism.",
-      "basename": "t_4",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 850
+      {
+        "description": "<icon>identity</icon>  Identity:  Place the identity morphism.",
+        "basename": "t_4",
+        "name": "hdole/Actions/t_4",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 900
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>graph</icon>  <diagram name=\"hdole/graph\">Graph</diagram>:  Show the string graphs.",
-      "basename": "t_5",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 750
+      {
+        "description": "<icon>graph</icon>  <diagram name=\"hdole/graph\">Graph</diagram>:  Show the string graphs.",
+        "basename": "t_5",
+        "name": "hdole/Actions/t_5",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 800
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "This diagram describes the various actions that are available in which types of categories.",
-      "basename": "t_9",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 50
+      {
+        "description": "This diagram describes the various actions that are available in which types of categories.",
+        "basename": "t_9",
+        "name": "hdole/Actions/t_9",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 50
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "Actions",
-      "basename": "t_10",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": -40
+      {
+        "description": "Actions",
+        "basename": "t_10",
+        "name": "hdole/Actions/t_10",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": -30
+        },
+        "height": "400",
+        "weight": "bold"
       },
-      "height": "400",
-      "weight": "bold"
-    },
-    {
-      "description": "<icon>swap</icon>  Swap:  If allowed, swap the morphism's domain and codomain.",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1300
+      {
+        "description": "<icon>swap</icon>  Swap:  If allowed, swap the morphism's domain and codomain.",
+        "basename": "t_0",
+        "name": "hdole/Actions/t_0",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1300
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>action</icon>  <diagram name=\"hdole/actionAction\">Action</diagram>:  Generalize the selected elements to a new action.",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 300
+      {
+        "description": "<icon>action</icon>  <diagram name=\"hdole/actionAction\">Action</diagram>:  Generalize the selected elements to a new action.",
+        "basename": "t_1",
+        "name": "hdole/Actions/t_1",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 300
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>referenceMorphism</icon>  Reference Morphism:  The projection or injeciton morphism is designated as a reference.",
-      "basename": "t_6",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1200
+      {
+        "description": "<icon>referenceMorphism</icon>  Reference Morphism:  The projection or injeciton morphism is designated as a reference.",
+        "basename": "t_6",
+        "name": "hdole/Actions/t_6",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1250
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>name</icon>  Name:  Create a named element for the selected element.",
-      "basename": "t_7",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1100
+      {
+        "description": "<icon>name</icon>  Name:  Create a named element for the selected element.",
+        "basename": "t_7",
+        "name": "hdole/Actions/t_7",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1150
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>composite</icon>  Composite:  Form a composite of appropriately selected morphisms.",
-      "basename": "t_8",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 450
+      {
+        "description": "<icon>composite</icon>  Composite:  Form a composite of appropriately selected morphisms.",
+        "basename": "t_8",
+        "name": "hdole/Actions/t_8",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 450
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>detachDomain</icon>  Detach Domain:  Disconnect the morphism's domain from the blob.",
-      "basename": "t_11",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 550
+      {
+        "description": "<icon>detachDomain</icon>  Detach Domain:  Disconnect the morphism's domain from the blob.",
+        "basename": "t_11",
+        "name": "hdole/Actions/t_11",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 550
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>detachCodomain</icon>  Detach Codomain:  Disconnect the morphism's codomain from the blob.",
-      "basename": "t_12",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 600
+      {
+        "description": "<icon>detachCodomain</icon>  Detach Codomain:  Disconnect the morphism's codomain from the blob.",
+        "basename": "t_12",
+        "name": "hdole/Actions/t_12",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 600
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>homLeft</icon>  Hom Left:  Show the morphisms with the same codomain.",
-      "basename": "t_13",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 900
+      {
+        "description": "<icon>homLeft</icon>  Hom Left:  Show the morphisms with the same codomain.",
+        "basename": "t_13",
+        "name": "hdole/Actions/t_13",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 950
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>morphismAssembly</icon>  Morphism Assembly:  Build a morphism from a blob using references.",
-      "basename": "t_14",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1050
+      {
+        "description": "<icon>morphismAssembly</icon>  Morphism Assembly:  Build a morphism from a blob using references.",
+        "basename": "t_14",
+        "name": "hdole/Actions/t_14",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1100
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>delete</icon>  Delete:  Remove the selected elements from the diagram.",
-      "basename": "t_15",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 650
+      {
+        "description": "<icon>expression</icon>  Expression:  Form an expression from a blob.",
+        "basename": "t_15",
+        "name": "hdole/Actions/t_15",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 700
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>copy</icon>  Copy:  Copy the selected elements.",
-      "basename": "t_16",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 500
+      {
+        "description": "<icon>copy</icon>  Copy:  Copy the selected elements.",
+        "basename": "t_16",
+        "name": "hdole/Actions/t_16",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 500
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>flipName</icon>  Flip Name:  Move the morphism's name to the opposite side.",
-      "basename": "t_17",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 700
+      {
+        "description": "<icon>flipName</icon>  Flip Name:  Move the morphism's name to the opposite side.",
+        "basename": "t_17",
+        "name": "hdole/Actions/t_17",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 750
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>help</icon>  Help:  Show information regarding the element.",
-      "basename": "t_18",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 800
+      {
+        "description": "<icon>help</icon>  Help:  Show information regarding the element.",
+        "basename": "t_18",
+        "name": "hdole/Actions/t_18",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 850
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>run</icon>  Run:  Evaluate the morphism.",
-      "basename": "t_19",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1250
+      {
+        "description": "<icon>run</icon>  Run:  Evaluate the morphism.",
+        "basename": "t_19",
+        "name": "hdole/Actions/t_19",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1550
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>alignHorizontal</icon>  Align Horizontal:  Align elements horizontally.",
-      "basename": "t_20",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 350
+      {
+        "description": "<icon>alignHorizontal</icon>  Align Horizontal:  Align elements horizontally.",
+        "basename": "t_20",
+        "name": "hdole/Actions/t_20",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 350
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>alignVertical</icon>  Align Vertical:  Align elements vertically.",
-      "basename": "t_21",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 400
+      {
+        "description": "<icon>alignVertical</icon>  Align Vertical:  Align elements vertically.",
+        "basename": "t_21",
+        "name": "hdole/Actions/t_21",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 400
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "Product Actions",
-      "basename": "t_22",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 1400
+      {
+        "description": "Product Actions",
+        "basename": "t_22",
+        "name": "hdole/Actions/t_22",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 1650
+        },
+        "height": "36",
+        "weight": "bold"
       },
-      "height": "36",
-      "weight": "bold"
-    },
-    {
-      "description": "<icon>product</icon>  Product:  Form the product of objects or morphisms.",
-      "basename": "t_23",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1500
+      {
+        "description": "<icon>product</icon>  Product:  Form the product of objects or morphisms.",
+        "basename": "t_23",
+        "name": "hdole/Actions/t_23",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1750
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "These actions are associated with categories that have products or pullbacks.",
-      "basename": "t_24",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 1450
+      {
+        "description": "These actions are associated with categories that have products or pullbacks.",
+        "basename": "t_24",
+        "name": "hdole/Actions/t_24",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 1700
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>project</icon>  Project:  Form projection morphisms from a product object.",
-      "basename": "t_25",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1550
+      {
+        "description": "<icon>project</icon>  Project:  Form projection morphisms from a product object.",
+        "basename": "t_25",
+        "name": "hdole/Actions/t_25",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1800
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>productAssembly</icon>  Product Assembly:  Form the product assembly of morphisms with a common domain.",
-      "basename": "t_26",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1600
+      {
+        "description": "<icon>productAssembly</icon>  Product Assembly:  Form the product assembly of morphisms with a common domain.",
+        "basename": "t_26",
+        "name": "hdole/Actions/t_26",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1850
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>recursion</icon>  Recursion:  Set the recursor for a morphism if the other morphism uses it.",
-      "basename": "t_27",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1150
+      {
+        "description": "<icon>recursion</icon>  Recursion:  Set the recursor for a morphism if the other morphism uses it.",
+        "basename": "t_27",
+        "name": "hdole/Actions/t_27",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1200
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>homRight</icon>  Hom Right:  Show the morphisms with the same domain.",
-      "basename": "t_28",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 950
+      {
+        "description": "<icon>homRight</icon>  Hom Right:  Show the morphisms with the same domain.",
+        "basename": "t_28",
+        "name": "hdole/Actions/t_28",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1000
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "Coproduct Actions",
-      "basename": "t_29",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 1750
+      {
+        "description": "Coproduct Actions",
+        "basename": "t_29",
+        "name": "hdole/Actions/t_29",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 2000
+        },
+        "height": "36",
+        "weight": "bold"
       },
-      "height": "36",
-      "weight": "bold"
-    },
-    {
-      "description": "<icon>coproduct</icon>  Coproduct:  Form the coproduct of objects or morphisms.",
-      "basename": "t_30",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1850
+      {
+        "description": "<icon>coproduct</icon>  Coproduct:  Form the coproduct of objects or morphisms.",
+        "basename": "t_30",
+        "name": "hdole/Actions/t_30",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 2100
+        },
+        "height": 24
       },
-      "height": 24
-    },
-    {
-      "description": "These actions are associated with categories that have coproducts.",
-      "basename": "t_31",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 1800
+      {
+        "description": "These actions are associated with categories that have coproducts.",
+        "basename": "t_31",
+        "name": "hdole/Actions/t_31",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 2050
+        },
+        "height": 24
       },
-      "height": 24
-    },
-    {
-      "description": "<icon>inject</icon>  Inject:  Form injection morphisms to a coproduct object.",
-      "basename": "t_32",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1900
+      {
+        "description": "<icon>inject</icon>  Inject:  Form injection morphisms to a coproduct object.",
+        "basename": "t_32",
+        "name": "hdole/Actions/t_32",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 2150
+        },
+        "height": 24
       },
-      "height": 24
-    },
-    {
-      "description": "<icon>coproductAssembly</icon>  Coproduct Assembly:  Form the coproduct assembly of morphisms with a common codomain.",
-      "basename": "t_33",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1950
+      {
+        "description": "<icon>coproductAssembly</icon>  Coproduct Assembly:  Form the coproduct assembly of morphisms with a common codomain.",
+        "basename": "t_33",
+        "name": "hdole/Actions/t_33",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 2200
+        },
+        "height": 24
       },
-      "height": 24
-    },
-    {
-      "description": "<icon>finiteObject</icon>  Finite Object:  With coproducts and a terminal object you get finite objects.",
-      "basename": "t_34",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 2000
+      {
+        "description": "<icon>finiteObject</icon>  Finite Object:  With coproducts and a terminal object you get finite objects.",
+        "basename": "t_34",
+        "name": "hdole/Actions/t_34",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 2250
+        },
+        "height": 24
       },
-      "height": 24
-    },
-    {
-      "description": "<icon>pullback</icon>  Pullback:  Form the pullback of a sink.",
-      "basename": "t_35",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1650
+      {
+        "description": "<icon>pullback</icon>  Pullback:  Form the pullback of a sink.",
+        "basename": "t_35",
+        "name": "hdole/Actions/t_35",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1900
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>pushout</icon>  Pushout:  Form the pushout of a source.",
-      "basename": "t_36",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 2050
+      {
+        "description": "<icon>pushout</icon>  Pushout:  Form the pushout of a source.",
+        "basename": "t_36",
+        "name": "hdole/Actions/t_36",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 2300
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>homset</icon>  Homset:  Create a morphism between two objects.",
-      "basename": "t_37",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 1000
+      {
+        "description": "<icon>homset</icon>  Homset:  Create a morphism between two objects.",
+        "basename": "t_37",
+        "name": "hdole/Actions/t_37",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1050
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "Homset Actions",
-      "basename": "t_38",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 2150
+      {
+        "description": "Homset Actions",
+        "basename": "t_38",
+        "name": "hdole/Actions/t_38",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 2400
+        },
+        "height": "36",
+        "weight": "bold"
       },
-      "height": "36",
-      "weight": "bold"
-    },
-    {
-      "description": "For categories with internal homset, these actions are provided.",
-      "basename": "t_39",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 250,
-        "y": 2200
+      {
+        "description": "For categories with internal homset, these actions are provided.",
+        "basename": "t_39",
+        "name": "hdole/Actions/t_39",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 2450
+        },
+        "height": 24
       },
-      "height": 24
-    },
-    {
-      "description": "<icon>evaluate</icon>  Evaluate:  Place an evaluation morphism from an appropriate object.",
-      "basename": "t_40",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 2250
+      {
+        "description": "<icon>evaluate</icon>  Evaluate:  Place an evaluation morphism from an appropriate object.",
+        "basename": "t_40",
+        "name": "hdole/Actions/t_40",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 2500
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "description": "<icon>lambda</icon>  Lambda:  Form a lambda morphism by selecting factors.",
-      "basename": "t_41",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": 2300
+      {
+        "description": "<icon>lambda</icon>  Lambda:  Form a lambda morphism by selecting factors.",
+        "basename": "t_41",
+        "name": "hdole/Actions/t_41",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 2550
+        },
+        "height": "24"
       },
-      "height": "24"
-    }
-  ],
+      {
+        "description": "<icon>delete</icon>  Delete:  Remove the selected elements from the diagram.",
+        "basename": "t_42",
+        "name": "hdole/Actions/t_42",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 650
+        },
+        "height": 24
+      },
+      {
+        "description": "General Actions",
+        "basename": "t_43",
+        "name": "hdole/Actions/t_43",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 1400
+        },
+        "height": "36",
+        "weight": "bold"
+      },
+      {
+        "description": "<icon>terminal</icon>  Terminal:  Form the terminal morphism from an object to the terminal object.",
+        "basename": "t_44",
+        "name": "hdole/Actions/t_44",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 300,
+          "y": 1500
+        },
+        "height": 24
+      },
+      {
+        "description": "These actions are available in some categories.",
+        "basename": "t_45",
+        "name": "hdole/Actions/t_45",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/Actions",
+        "xy": {
+          "x": 250,
+          "y": 1450
+        },
+        "height": 24
+      }
+    ],
+    "cells": []
+  },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641956663185,
+  "timestamp": 1643264094585,
   "version": 0,
   "viewport": {
-    "x": -91,
-    "y": 631,
-    "scale": 1.4869019286768277
+    "x": -96,
+    "y": 614,
+    "scale": 1.490215090126815
   },
   "properName": "hdole/Actions"
 }

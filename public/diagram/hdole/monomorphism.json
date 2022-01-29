@@ -97,7 +97,7 @@
         "height": "24"
       },
       {
-        "description": "In other words, f is a monomorphism if it can always\nbe cancelled on the left:  fh = fg implies h = g.",
+        "description": "In other words, f is a monomorphism if it can always\nbe cancelled on the left:  fg = fh implies g = h.",
         "basename": "t_3",
         "name": "hdole/monomorphism/t_3",
         "prototype": "IndexText",
@@ -248,7 +248,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643054739714,
+  "timestamp": 1643276682695,
   "version": 0,
   "viewport": {
     "x": 1109,
