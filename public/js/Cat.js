@@ -3381,7 +3381,10 @@ class CellTool extends ElementTool
 		searchbar.classList.add('hidden');
 		const h3 = D.toolbar.table.querySelector('h3');
 		h3.innerHTML = 'Cells';
-		h3.parentNode.appendChild(H3.span(H3.input({type:"checkbox", onchange:e => D.toggleShowComputedCells(e), id:'check-computed-cells', checked:D.default.showComputedCells}), H3.span('Show computed cells')));
+		const args = {type:"checkbox", onchange:e => D.toggleShowComputedCells(e), id:'check-computed-cells'};
+		if (D.default.showComputedCells)
+			args.checked = true;
+		h3.parentNode.appendChild(H3.span(H3.input(args), H3.span('Show computed cells')));
 	}
 	getRows(tbl, cells)
 	{
@@ -9911,22 +9914,24 @@ class PullbackAction extends Action		// pullback or pushout
 	doit(e, diagram, indexMorphisms)
 	{
 		const legs = Category.getLegs(indexMorphisms);
-		const morphisms = legs.map(leg => leg.map(m => m.to)).map(leg => diagram.comp(...leg));
-		const pb = diagram.get('PullbackObject', {morphisms, dual:this.dual});
+		const dual = this.dual;
+		const baseLegs = legs.map(leg => leg.map(m => m.to));
+		const morphisms = baseLegs.map(leg => diagram.comp(...leg));
+		const pb = diagram.get('PullbackObject', {morphisms, dual});
 		const objects = new Set();
-		indexMorphisms.map(m => this.dual ? objects.add(m.codomain) : objects.add(m.domain));
+		indexMorphisms.map(m => dual ? objects.add(m.codomain) : objects.add(m.domain));
 		const bary = D.barycenter([...objects]);
-		const obj = this.dual ? indexMorphisms[0].domain : indexMorphisms[0].codomain;
+		const obj = dual ? indexMorphisms[0].domain : indexMorphisms[0].codomain;
 		const xy = bary.add(bary.subtract(obj));
 		const pbx = new IndexObject(diagram, {xy, to:pb});
 		pbx.update();
 		const cone = [];
 		legs.map((leg, i) =>
 		{
-			const args = {dual:this.dual, factors:[i]};
-			args[this.dual ? 'codomain' : 'domain'] = pbx;
-			args[this.dual ? 'domain' : 'codomain'] = leg[this.dual ? leg.length -1 : 0][this.dual ? 'codomain' : 'domain'];
-			args.to = this.dual ? this.diagram.cofctr(pb, [i]) : diagram.fctr(pb, [i]);
+			const args = {dual, factors:[i]};
+			args[dual ? 'codomain' : 'domain'] = pbx;
+			args[dual ? 'domain' : 'codomain'] = leg[dual ? leg.length -1 : 0][dual ? 'codomain' : 'domain'];
+			args.to = dual ? this.diagram.cofctr(pb, [i]) : diagram.fctr(pb, [i]);
 			cone.push(new IndexMorphism(diagram, args));
 		});
 		pbx.checkCells();
@@ -9994,23 +9999,15 @@ class PullbackAssemblyAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		const cell = ary[0];
-		const pbo = ary[1];
-		let left = null;
-		let right = null;
-		if (this.dual)
-		{
-			left = cell.left.slice(1).map(m => m.to);
-			right = cell.right.slice(1).map(m => m.to);
-		}
-		else
-		{
-			left = cell.left.slice(0, cell.left.length -1).map(m => m.to);
-			right = cell.right.slice(0, cell.right.length -1).map(m => m.to);
-		}
-		const morphisms = [diagram.comp(...left), diagram.comp(...right)];
-		const source = cell.left[0].domain;		// index object
-		const elt = this.doit(e, diagram, morphisms, source, pbo);
+		const pboNdx = ary[ary.length -1];
+		const legs = Category.getLegs(ary);
+		const left = legs[0];
+		const right = legs[1];
+		left.pop();
+		right.pop();
+		const morphisms = [diagram.comp(...left.map(m => m.to)), diagram.comp(...right.map(m => m.to))];
+		const source = left[0].domain;		// index object
+		const elt = this.doit(e, diagram, morphisms, source, pboNdx);
 		diagram.log({command:this.name, morphisms:morphisms.map(m => m.name)});
 		diagram.antilog({command:'delete', elements:[elt.name]});
 	}
@@ -10033,57 +10030,23 @@ class PullbackAssemblyAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 2 && ary[0] instanceof Cell && 'to' in ary[1] && ary[1].to instanceof PullbackObject)
+		if (diagram.isEditable() && ary[ary.length -1].to instanceof PullbackObject)
 		{
-			const cell = ary[0];
-			const pboNdx = ary[1];
-			const leftObjects = new Set(cell.left.map(m => m.codomain));
-			const rightObjects = new Set(cell.right.map(m => m.codomain));
-			if (pboNdx.dual)		// pushout
+			const legs = Category.getLegs(ary);
+			if (legs.length !== 2)
+				return false;
+			const left = legs[0];
+			const right = legs[1];
+			if (left[0].domain !== right[0].domain)
+				return false;
+			if (left[left.length -1].codomain !== right[right.length -1].codomain)
+				return false;
+			const pboNdx = ary[ary.length -1];
+			if (pboNdx.to.morphisms.reduce((r, m, i) => r && m === legs[i][legs[i].length -1].to, true))
 			{
-			}
-			else		// pullback
-			{
-				let factors = [];
-				const projections = [];
-				const objects = [];
-				pboNdx.domains.forEach(m =>
-				{
-					if (m.to instanceof FactorMorphism && m.to.factors.length === 1 && (leftObjects.has(m.codomain) || rightObjects.has(m.codomain)))
-					{
-						factors.push(m.to.factors);
-						projections.push(m);
-						objects.push(m.codomain);
-					}
-				});
-				if (factors.length === 2)		// TODO bigger pbs
-				{
-					factors = factors.map(f => f[0]);
-					if (factors[0] === factors[1] || factors[0] < 0 || factors[1] < 0)		// must have different non-negative factors
-						return false;
-					let left = null;
-					let right = null;
-					const leftNdx0 = Cell.legHasObject(cell.left, objects[0]);
-					const rightNdx0 = Cell.legHasObject(cell.right, objects[0]);
-					const leftNdx1 = Cell.legHasObject(cell.left, objects[1]);
-					const rightNdx1 = Cell.legHasObject(cell.right, objects[1]);
-					if ((leftNdx0 < 0 && leftNdx1 < 0) || (rightNdx0 < 0 && rightNdx1 < 0))		// objects must not be on same leg
-						return false;
-					const checkBase = (leg, object, ndx) =>
-					{
-						if (ndx > -1)	// check for base
-						{
-							const sub = leg.slice(ndx);
-							const base = diagram.comp(...sub.map(m => m.to));
-							return pboNdx.to.morphisms.includes(base);
-						}
-						return false;
-					};
-					if (leftNdx0 && rightNdx1)
-						return checkBase(cell.left, objects[0], leftNdx0) && checkBase(cell.right, objects[1], rightNdx1);
-					else
-						return checkBase(cell.left, objects[1], leftNdx1) && checkBase(cell.right, objects[0], rightNdx0);
-				}
+				const cellName = Cell.Name(diagram, legs[0], legs[1]);
+				const cell = diagram.getCell(cellName);
+				return cell && cell.isEqual();
 			}
 		}
 		return false;
@@ -10803,7 +10766,6 @@ class HelpAction extends Action
 	{
 		super.html();
 		const from = ary[0];
-		const js = R.Actions.javascript;
 		const tools = [];
 		if (R.Actions.elementOf.hasForm(diagram, ary))
 			tools.push(D.getIcon('elementOf', 'elementOf', e => Cat.R.Actions.elementOf.action(e, Cat.R.diagram, R.diagram.selected), {title:'Show element of'}));
@@ -12421,7 +12383,7 @@ if (args.prototype === 'IndexComposite') args.prototype = 'IndexMorphism';		// T
 	}
 	static getLegs(ary)
 	{
-		let morphs = ary.slice();
+		let morphs = ary.filter(elt => elt instanceof Morphism);
 		const legs = [];
 		while(morphs.length > 0)
 		{
@@ -12906,7 +12868,7 @@ class Identity extends Morphism
 	}
 	static ProperName(domain, codomain = null)
 	{
-		return 'id';
+		return '1';
 	}
 	static Signature(diagram, obj)
 	{
@@ -14643,7 +14605,7 @@ class IndexCategory extends Category
 		this.forEachObject(o =>
 		{
 			const paths = [];
-			o.domains.forEach(m => o instanceof IndexMorphism && paths.push([m]));
+			o.domains.forEach(m => m instanceof IndexMorphism && paths.push([m]));
 			const legs = [];
 			const visited = new Map();	// object to leg that gets there
 			let cells = [];
@@ -15197,11 +15159,13 @@ class PullbackAssembly extends MultiMorphism
 				args.codomain = this.codomain;
 			else
 				args.domain = this.domain;
-			const factorMorphism = diagram.get('FactorMorphism', args);
-			const target = dual ? 'domain' : 'codomain';
-			const source = dual ? 'codomain' : 'domain';
-			const side = dual ? [diagram.comp(this.domain.morphisms[i]), m] : [diagram.comp(m, this.codomain.morphisms[i])];
-			R.loadItem(diagram, this, side, dual ? [this, factorMorphism] : [factorMorphism, this]);
+			const domainFactor = diagram.get('FactorMorphism', args);
+			if (dual)
+				args.codomain = this.domain;
+			else
+				args.domain = this.codomain;
+			const codomainFactor = diagram.get('FactorMorphism', args);
+			R.loadItem(diagram, this, [m], dual ? [domainFactor, this] : [this, codomainFactor]);
 		});
 	}
 	static Basename(diagram, args)
@@ -15426,7 +15390,7 @@ class FactorMorphism extends Morphism
 	{
 		if (!dual && domain.isTerminal())
 			return Identity.Signature(diagram, diagram.getTerminal(dual));
-		const sigs = [dual];
+		const sigs = [domain.signature, dual];
 		factors.map(f => sigs.push(Identity.Signature(diagram, f === -1 ? diagram.getTerminal(this.dual) : domain.getFactor(f)), f));
 		return U.SigArray(sigs);
 	}
@@ -18541,7 +18505,6 @@ class Assembler
 	{
 		if (this.processed.has(domain))
 			return null;
-console.log('formMorphism', domain.basename, domain.svg);
 		this.processed.add(domain);
 		let morphism = null;
 		// if the domain is an origin then build its preamble
