@@ -75,10 +75,22 @@ function Sig(...elts)
 	return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(elts.join()));
 }
 
+function arrayEquals(a, b)
+{
+	if (a === b)
+		return true;
+	if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length)
+		return false;
+	return a.reduce((r, suba, i) => r && arrayEquals(suba, b[i]), true);
+}
+
 function loadSigLeg(sig, leg)
 {
 	!sig2legs.has(sig) && sig2legs.set(sig, []);
 	const equs = sig2legs.get(sig);
+	for (let i=0; i<equs.length; ++i)
+		if (arrayEquals(equs[i], leg))
+			return;
 	equs.push(leg);
 }
 
@@ -161,7 +173,6 @@ function scanLeg(leg, sig, scanned, sigs)		// recursive scanning of the leg tryi
 	}
 	const len = leg.length;
 	if (len > 1)
-	{
 		for (let ndx=0; ndx < len; ++ndx)
 		{
 			const maxCnt = Math.min(maxLegLength, ndx > 0 ? len - ndx : 1);
@@ -169,29 +180,6 @@ function scanLeg(leg, sig, scanned, sigs)		// recursive scanning of the leg tryi
 				if (checkLeg(leg, ndx, cnt, sig, scanned, sigs))
 					return true;
 		}
-	}
-	else		// expand leg
-	{
-		for (let i=0; i<2; i++)
-		{
-			const otherLegs = sig2legs.get(leg[i]);
-			if (otherLegs && !scanned.has(leg[0]))
-			{
-				scanned.add(leg[0]);
-				for(let l=0; l<otherLegs.length; l++)
-				{
-					const nuLeg = [];
-					if (i === 1)
-						nuLeg.push(leg[0]);
-					nuLeg.push(...otherLegs[l]);
-					if (i === 0)
-						nuLeg.push(leg[1]);
-					if (scanLeg(nuLeg, sig, scanned, sigs))
-						return true;
-				}
-			}
-		}
-	}
 	return false;
 }
 
@@ -265,27 +253,56 @@ function getItem(leftLeg, rightLeg)
 	return item ? item : null;
 }
 
+function trimLegs(inLeft, inRight)
+{
+	if (inLeft.length <= 1 || inRight.length <= 1)
+		return {left:inLeft, right:inRight};
+	let min = Math.min(inLeft.length, inRight.length);
+	let left = null;
+	let right = null;
+	for (let i=0; i<min; ++i)
+	{
+		if (inLeft[i] === inRight[i])
+			continue;
+		left = inLeft.slice(i);
+		right = inRight.slice(i);
+		break;
+	}
+	min = Math.min(left.length, right.length);
+	for (let i=0; i<min; ++i)
+	{
+		if (left[left.length -1 - i] === right[right.length -1 - i])
+			continue;
+		left = left.slice(0, left.length - i);
+		right = right.slice(0, right.length - i);
+		break;
+	}
+	return {left, right};
+}
+
 // cell: tracking token for client; typically the sig of a cell
 function checkEquivalence(diagram, cell, lLeg, rLeg)
 {
 	if (spoiled)		// spoilage comes from editting
 		loadDiagrams(contextDiagrams);
-	const leftLeg = lLeg.length > 1 ? removeIdentities(lLeg) : lLeg;
-	const rightLeg = rLeg.length > 1 ? removeIdentities(rLeg) : rLeg;
-	const leftSig = Sig(...leftLeg);
-	const rightSig = Sig(...rightLeg);
+	const leftIdless = lLeg.length > 1 ? removeIdentities(lLeg) : lLeg;
+	const rightIdless = rLeg.length > 1 ? removeIdentities(rLeg) : rLeg;
+//	const {left, right} = {left:leftIdless, right:rightIdless};
+	const {left, right} = trimLegs(leftIdless, rightIdless);
+	const leftSig = Sig(...left);
+	const rightSig = Sig(...right);
 	let isEqual = compareSigs(leftSig, rightSig);
 	const scanned = new Set();
 	if (typeof isEqual === 'string')
 	{
 		const sigs = new Set();
 		sigs.add(leftSig);
-		let equal = scanLeg(leftLeg, rightSig, scanned, sigs);
+		let equal = scanLeg(left, rightSig, scanned, sigs);
 		if (!equal)
 		{
 			sigs.clear();
 			sigs.add(rightSig);
-			equal = scanLeg(rightLeg, leftSig, scanned, sigs);
+			equal = scanLeg(right, leftSig, scanned, sigs);
 		}
 		isEqual = equal ? true : 'unknown';
 	}
