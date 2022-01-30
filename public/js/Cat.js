@@ -35,7 +35,7 @@
 // 			delete
 // 			fuse															[Diagram.fuse]
 // 			move															[D.mouseup, AlignHorizontalAction.doit, AlignVerticalAction.doit, Diagram.moveElements]
-//// 			new																[constructors: CatObject, FiniteObject, ProductObject, PullbackObject, HomObject, TensorObject, IndexObject; IndexPullback.postLoad]
+//// 			new																[constructors: CatObject, FiniteObject, ProductObject, PullbackObject, HomObject, TensorObject, IndexObject; IndexPullback.posTLoad]
 // 			new																[constructors: CatObject, FiniteObject, ProductObject, PullbackObject, HomObject, TensorObject, IndexObject];
 // 			update															[LanguageAction.action, FiniteObjectAction.doit]
 // 		Morphism															-
@@ -1167,8 +1167,10 @@ class Runtime
 	}
 	loadItem(diagram, item, leftLeg, rightLeg, equal = true)
 	{
-		const leftSigs = leftLeg.map(m => m.signature);
-		const rightSigs = rightLeg.map(m => m.signature);
+		const leftSigs = [];
+		leftLeg.map(m => m instanceof Composite ? m.getSignatures().map(sig => leftSigs.push(sig)) : leftSigs.push(m.signature));
+		const rightSigs = [];
+		rightLeg.map(m => m instanceof Composite ? m.getSignatures().map(sig => rightSigs.push(sig)) : rightSigs.push(m.signature));
 		this.loadSigs(diagram, item, leftSigs, rightSigs, equal);
 	}
 	loadSigs(diagram, item, leftLeg, rightLeg, equal = true)
@@ -4963,9 +4965,7 @@ class Display
 					break;
 				case 'update':
 				case 'new':
-					if (element instanceof IndexObject)
-						element.update();
-					'loadItem' in element && element.loadItem();
+					element instanceof IndexObject && element.update();
 					break;
 				default:
 					autosav = false;
@@ -8258,11 +8258,6 @@ class MultiObject extends CatObject
 		super(diagram, nuArgs);
 		Object.defineProperty(this, 'objects', {value:	nuArgs.objects.map(o => this.diagram.getElement(o)), writable:	false});
 		this.objects.map(o => o.incrRefcnt());
-		this.setSignature();
-	}
-	setSignature()
-	{
-		this.signature = U.SigArray([U.sig((this.dual ? 'Co' : '') + this.constructor.name), ...this.objects.map(o => o.signature)]);
 	}
 	help(hdr)
 	{
@@ -8409,8 +8404,11 @@ class ProductObject extends MultiObject
 		nuArgs.basename = 'basename' in nuArgs ? nuArgs.basename : ProductObject.Basename(diagram, {objects:nuArgs.objects, dual});
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : ProductObject.ProperName(nuArgs.objects, dual);
 		super(diagram, nuArgs);
-		this.setSignature();
-		D && this.constructor.name === 'ProductObject' && ('silent' in args ? !args.silent : true) && D.emitElementEvent(diagram, 'new', this);
+		if (this.constructor.name === 'ProductObject')
+		{
+			this.setSignature();
+			('silent' in args ? !args.silent : true) && D.emitElementEvent(diagram, 'new', this);
+		}
 	}
 	setSignature()
 	{
@@ -8548,24 +8546,28 @@ class PullbackObject extends ProductObject
 		this.morphisms = nuArgs.morphisms;
 		if (this.morphisms.reduce((r, m) => r && m instanceof Morphism, true))
 			this.postload();
-		else
-			this.init = false;
+		if (this.constructor.name === 'PullbackObject')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
+	}
+	setSignature()
+	{
+		this.signature = PullbackObject.Signature(this.diagram, this.morphisms, this.dual);
 	}
 	postload()
 	{
-		if (!this.init)
+		this.morphisms = this.morphisms.map(m =>
 		{
-			this.morphisms = this.morphisms.map(m =>
-			{
-				const mo = this.diagram.getElement(m);
-				mo.incrRefcnt();
-				return mo;
-			});
-			this.properName = PullbackObject.ProperName(this.morphisms);
-			this.init = true;
-			this.loadItem();
-			D && D.emitElementEvent(this.diagram, 'new', this);
-		}
+			const mo = this.diagram.getElement(m);
+			mo.incrRefcnt();
+			return mo;
+		});
+		this.properName = PullbackObject.ProperName(this.morphisms);
+		this.setSignature();
+		this.loadItem();
+		D && D.emitElementEvent(this.diagram, 'new', this);
 	}
 	help()
 	{
@@ -8574,8 +8576,7 @@ class PullbackObject extends ProductObject
 	decrRefcnt()
 	{
 		super.decrRefcnt();
-		if (this.refcnt <= 0)
-			this.morphisms.map(m => m.decrRefcnt());
+		this.refcnt <= 0 && this.morphisms.map(m => m.decrRefcnt());
 	}
 	json(delBasename = true)
 	{
@@ -8594,15 +8595,12 @@ class PullbackObject extends ProductObject
 	}
 	loadItem()
 	{
-		if (this.init)
+		const base = this.dual ? [this.morphisms[0], this.diagram.cofctr(this, [0])] : [this.diagram.fctr(this, [0]), this.morphisms[0]];
+		for (let i=1; i<this.morphisms.length; ++i)		// for all other legs
 		{
-			const base = this.dual ? [this.morphisms[0], this.diagram.cofctr(this, [0])] : [this.diagram.fctr(this, [0]), this.morphisms[0]];
-			for (let i=1; i<this.morphisms.length; ++i)		// for all other legs
-			{
-				const factor = this.dual ? this.diagram.cofctr(this, [i]) : this.diagram.fctr(this, [i]);
-				const leg = this.dual ? [this.morphisms[i], factor] : [factor, this.morphisms[i]];
-				R.loadItem(this.diagram, this, base, leg);
-			}
+			const factor = this.dual ? this.diagram.cofctr(this, [i]) : this.diagram.fctr(this, [i]);
+			const leg = this.dual ? [this.morphisms[i], factor] : [factor, this.morphisms[i]];
+			R.loadItem(this.diagram, this, base, leg);
 		}
 	}
 	getDecoration()
@@ -8619,8 +8617,12 @@ class PullbackObject extends ProductObject
 	}
 	static ProperName(morphisms, dual = false)
 	{
-		return morphisms.map(m => m.domain.needsParens() ? `(${m.domain.properName})` : m.domain.properName).join(dual ? '&plus' : '&times;') + '/' +
-			morphisms[0].codomain.properName;
+		return morphisms.filter(m => m).map(m => m.domain.needsParens() ? `(${m.domain.properName})` : m.domain.properName).join(dual ? '&plus' : '&times;') + '/' +
+			(morphisms[0] ? morphisms[0].codomain.properName : 'null');
+	}
+	static Signature(diagram, morphisms, dual = false)
+	{
+		return U.SigArray([dual, ...morphisms.map(m => typeof m === 'string' ? (m.includes('/') ? m : `${diagram.name}/${m}`) : m.name)]);
 	}
 }
 
@@ -9132,6 +9134,8 @@ class IndexObject extends CatObject
 		if (this.attributes.size > 0)
 			a.attributes = U.jsonMap(this.attributes);
 		a.xy = this.getXY();
+		if (a.description === '')
+			delete a.description;
 		return a;
 	}
 	setObject(to)
@@ -9905,11 +9909,10 @@ class PullbackAction extends Action		// pullback or pushout
 	action(e, diagram, morphisms)
 	{
 		const names = morphisms.map(m => m.name);
-		const pb = this.doit(e, diagram, morphisms);
+		const {object, cone} = this.doit(e, diagram, morphisms);
 		diagram.log({command:this.name, morphisms:names});
 		// 	TODO antilog
-		diagram.deselectAll();
-		diagram.addSelected(pb);
+		diagram.makeSelected(...cone);
 	}
 	doit(e, diagram, indexMorphisms)
 	{
@@ -9923,20 +9926,20 @@ class PullbackAction extends Action		// pullback or pushout
 		const bary = D.barycenter([...objects]);
 		const obj = dual ? indexMorphisms[0].domain : indexMorphisms[0].codomain;
 		const xy = bary.add(bary.subtract(obj));
-		const pbx = new IndexObject(diagram, {xy, to:pb});
-		pbx.update();
+		const object = new IndexObject(diagram, {xy, to:pb});
+		object.update();
 		const cone = [];
 		legs.map((leg, i) =>
 		{
 			const args = {dual, factors:[i]};
-			args[dual ? 'codomain' : 'domain'] = pbx;
+			args[dual ? 'codomain' : 'domain'] = object;
 			args[dual ? 'domain' : 'codomain'] = leg[dual ? leg.length -1 : 0][dual ? 'codomain' : 'domain'];
 			args.to = dual ? this.diagram.cofctr(pb, [i]) : diagram.fctr(pb, [i]);
 			cone.push(new IndexMorphism(diagram, args));
 		});
-		pbx.checkCells();
+		object.checkCells();
 		diagram.makeSelected(...cone);
-		return pbx;
+		return {object, cone};
 	}
 	replay(e, diagram, args)
 	{
@@ -12788,6 +12791,16 @@ class Identity extends Morphism
 	{
 		this.signature = Identity.Signature(this.diagram, this.domain);
 	}
+	json()
+	{
+		const a = super.json();
+		delete a.properName;
+		delete a.basename;
+		delete a.name;
+		if (a.codomain === a.domain)
+			delete a.codomain;
+		return a;
+	}
 	loadItem()
 	{
 		R.loadIdentity(this.diagram, this);
@@ -12868,7 +12881,7 @@ class Identity extends Morphism
 	}
 	static ProperName(domain, codomain = null)
 	{
-		return '1';
+		return 'Id';
 	}
 	static Signature(diagram, obj)
 	{
@@ -13621,6 +13634,8 @@ class IndexMorphism extends Morphism
 		if (this.homsetIndex !== 0)
 			mor.homsetIndex = this.homsetIndex;
 		mor.to = this.to.name;
+		if (mor.description === '')
+			delete mor.description;
 		return mor;
 	}
 	setMorphism(to)
@@ -14370,8 +14385,10 @@ class Cell
 	}
 	static Signature(left, right)
 	{
-		const leftLeg = U.SigArray(left.map(m => m.signature));
-		const rightLeg = U.SigArray(right.map(m => m.signature));
+		const leftLeg = [];
+		left.map(m => m instanceof Composite ? m.getSignatures().map(sig => leftLeg.push(sig)) : leftLeg.push(m.signature));
+		const rightLeg = [];
+		right.map(m => m instanceof Composite ? m.getSignatures().map(sig => rightLeg.push(sig)) : rightLeg.push(m.signature));
 		return U.SigArray([leftLeg, rightLeg]);
 	}
 	static Get(diagram, left, right)
@@ -14556,6 +14573,7 @@ class IndexCategory extends Category
 	json()
 	{
 		const a = super.json();
+		a.elements.map(elt => {delete elt.category; delete elt.diagram; delete elt.name;});
 		a.cells = [...this.cells.values()].filter(cell => cell.assertion !== null || cell.hidden).map(cell => cell.json());
 		return a;
 	}
@@ -14845,8 +14863,13 @@ class Composite extends MultiMorphism
 		if (this.constructor.name === 'Composite')
 		{
 			this.setSignature();
+			this.loadItem();
 			D && D.emitElementEvent(diagram, 'new', this);
 		}
+	}
+	setSignature()
+	{
+		this.signature = U.SigArray(this.expand().map(m => m.signature));
 	}
 	help()
 	{
@@ -14863,10 +14886,8 @@ class Composite extends MultiMorphism
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = this.diagram.get('ProductObject', {objects, silent:true});
-		// bare graph to hang links on
-		const graph = sequence.getGraph();
-		// merge the individual graphs into the sequence graph
-		graphs.map((g, i) =>
+		const graph = sequence.getGraph();		// bare graph to hang links on
+		graphs.map((g, i) =>					// merge the individual graphs into the sequence graph
 		{
 			graph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
 			graph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
@@ -14896,6 +14917,11 @@ class Composite extends MultiMorphism
 	{
 		super.loadItem();
 		R.loadItem(this.diagram, this, [this], this.morphisms);
+	}
+	getSignatures(sigs = [])
+	{
+		this.morphisms.map(m => m instanceof Composite ? m.getSignatures(sigs) : sigs.push(m.signature));
+		return sigs;
 	}
 	static Basename(diagram, args)
 	{
@@ -15391,7 +15417,7 @@ class FactorMorphism extends Morphism
 		if (!dual && domain.isTerminal())
 			return Identity.Signature(diagram, diagram.getTerminal(dual));
 		const sigs = [domain.signature, dual];
-		factors.map(f => sigs.push(Identity.Signature(diagram, f === -1 ? diagram.getTerminal(this.dual) : domain.getFactor(f)), f));
+		factors.map(f => sigs.push(Identity.Signature(diagram, f === -1 ? diagram.getTerminal(this.dual).signature : domain.getFactor(f).signature), f));
 		return U.SigArray(sigs);
 	}
 	static isReference(factors)		// no duplicate factors
@@ -16928,6 +16954,9 @@ class Diagram extends Functor
 	}
 	getElements(ary)
 	{
+		const elements = ary.map(e => this.getElement(e))
+		if (elements.filter(e => e === undefined || e === null).length > 0)
+			throw 'cannot fetch elemnt';
 		return ary.map(e => this.getElement(e)).filter(e => e !== undefined && e !== null);
 	}
 	hasIndexedElement(name)
@@ -17234,7 +17263,7 @@ class Diagram extends Functor
 				if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
 					args.actions.map(a => elt.actions.set(a, R.Actions[a]));
 			}
-			if (!(elt instanceof IndexMorphism) && 'loadItem' in elt)
+			if (!(elt instanceof IndexMorphism) && 'loadItem' in elt && !('postload' in elt))
 				elt.loadItem();
 			return elt;
 		}
