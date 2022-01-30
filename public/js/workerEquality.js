@@ -31,6 +31,7 @@ onmessage = e =>
 				break;
 			case 'LoadItem':
 				loadItem(args.diagram, args.item, args.leftLeg, args.rightLeg, args.equal);
+				val.item = args.item;
 				break;
 			case 'CheckEquivalence':
 				val = checkEquivalence(args.diagram, args.cell, args.leftLeg, args.rightLeg);
@@ -287,7 +288,6 @@ function checkEquivalence(diagram, cell, lLeg, rLeg)
 		loadDiagrams(contextDiagrams);
 	const leftIdless = lLeg.length > 1 ? removeIdentities(lLeg) : lLeg;
 	const rightIdless = rLeg.length > 1 ? removeIdentities(rLeg) : rLeg;
-//	const {left, right} = {left:leftIdless, right:rightIdless};
 	const {left, right} = trimLegs(leftIdless, rightIdless);
 	const leftSig = Sig(...left);
 	const rightSig = Sig(...right);
