@@ -100,6 +100,32 @@ function loadIdentity(diagram, item, sig)
 	identities.add(sig);
 }
 
+function getEquals(sig)
+{
+	if (equals.has(sig))
+		return equals.get(sig);
+	const sigs = new Set();
+	equals.set(sig, sigs);
+	return sigs;
+}
+
+function setEquals(leftLeg, rightLeg)
+{
+	const leftSig = Sig(...leftLeg);
+	const rightSig = Sig(...rightLeg);
+	const leftSigs = getEquals(leftSig);
+	const rightSigs = getEquals(rightSig);
+	leftSigs.add(rightSig);
+	rightSigs.forEach(s => leftSigs.add(s));
+	leftSigs.add(leftSig);
+	leftSigs.add(rightSig);
+	equals.set(rightSig, leftSigs);	// since equal set is same
+	loadSigLeg(leftSig, leftLeg);
+	loadSigLeg(leftSig, rightLeg);
+	loadSigLeg(rightSig, rightLeg);
+	loadSigLeg(rightSig, leftLeg);
+}
+
 function loadEquivalences(diagram, lLeg, rLeg, equal)
 {
 	const leftLeg = lLeg.length > 1 ? removeIdentities(lLeg) : lLeg;
@@ -108,18 +134,7 @@ function loadEquivalences(diagram, lLeg, rLeg, equal)
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
 	if (equal)
-	{
-		const leftSigs = equals.has(leftSig) ? equals.get(leftSig) : new Set();
-		const rightSigs = equals.has(rightSig) ? equals.get(rightSig) : new Set();
-		leftSigs.add(rightSig);
-		rightSigs.forEach(s => leftSigs.add(s));
-		leftSigs.add(leftSig);
-		leftSigs.add(rightSig);
-		equals.set(leftSig, leftSigs);
-		equals.set(rightSig, leftSigs);	// since equal set is same
-		loadSigLeg(leftSig, rightLeg);
-		leftSig !== rightSig && loadSigLeg(rightSig, leftLeg);
-	}
+		setEquals(leftLeg, rightLeg);
 	else
 	{
 		const leftSigs = notEquals.has(leftSig) ? notEquals.get(leftSig) : new Set();
@@ -147,8 +162,8 @@ function loadItem(diagram, item, leftLeg, rightLeg, equal)
 
 function compareSigs(leftSig, rightSig)
 {
-	const equ = equals.get(leftSig);
-	if (equ && equ.has(rightSig))
+	const equs = getEquals(leftSig);
+	if (equs.has(rightSig))
 		return true;
 	const notEqu = notEquals.get(leftSig);
 	if (notEqu && notEqu.has(rightSig))
@@ -163,25 +178,21 @@ function removeIdentities(leg)
 
 function scanLeg(leg, sig, scanned, sigs)		// recursive scanning of the leg trying to match the sig
 {
-	const sigEqu = equals.get(sig);
-	const legEqu = equals.get(Sig(...leg));
-	if (sigEqu && legEqu)
+	const result = compareSigs(sig, Sig(...leg));
+	if (result === 'unknown')
 	{
-		const sigEquAry = [...sigEqu];
-		for (let i=0; i < sigEquAry.length; ++i)
-			if (legEqu.has(sigEquAry[i]))
-				return true;
+		const len = leg.length;
+		if (len > 1)
+			for (let ndx=0; ndx < len; ++ndx)
+			{
+				const maxCnt = Math.min(maxLegLength, ndx > 0 ? len - ndx : 1);
+				for (let cnt=1; cnt <= maxCnt; ++cnt)
+					if (checkLeg(leg, ndx, cnt, sig, scanned, sigs))
+						return true;
+			}
+		return false;
 	}
-	const len = leg.length;
-	if (len > 1)
-		for (let ndx=0; ndx < len; ++ndx)
-		{
-			const maxCnt = Math.min(maxLegLength, ndx > 0 ? len - ndx : 1);
-			for (let cnt=1; cnt <= maxCnt; ++cnt)
-				if (checkLeg(leg, ndx, cnt, sig, scanned, sigs))
-					return true;
-		}
-	return false;
+	return result;
 }
 
 function checkLeg(leg, ndx, cnt, sig, scanned, sigs)
@@ -189,23 +200,30 @@ function checkLeg(leg, ndx, cnt, sig, scanned, sigs)
 	let isEqual = false;
 	const subLeg = leg.slice(ndx, ndx + cnt);
 	const subSig = Sig(...subLeg);
-	const equs = equals.get(subSig);
+	const equs = getEquals(subSig);
 	if (equs && equs.size > 1)		// try substituting sigs equal to the sub-leg
 	{
 		for (const equ of equs)
 		{
-			if (scanned.has(equ))
+			if (scanned.has(equ) || equ === subSig)
 				continue;
 			const nuLeg = leg.slice(0, ndx);	// first part of leg
-			!identities.has(equ) && nuLeg.push(equ);						// replace sub-leg with sig
-			if (ndx + cnt < leg.length)			// add rest of original leg
-				nuLeg.push(...leg.slice(ndx + cnt, leg.length));
-			const nuLegSig = Sig(...nuLeg);
-			if (sigs.has(nuLegSig))
-				return true;
-			sigs.add(nuLegSig);
-			if (nuLegSig === sig)
-				return true;
+			const equalLegs = sig2legs.get(equ);
+			for (let i=0; i < equalLegs.length; ++i)
+			{
+				const equLeg = equalLegs[i];
+				if (Sig(...equLeg) === equ)
+					continue;
+				nuLeg.push(...equLeg);
+				if (ndx + cnt < leg.length)			// add rest of original leg
+					nuLeg.push(...leg.slice(ndx + cnt, leg.length));
+				const nuLegSig = Sig(...nuLeg);
+				if (sigs.has(nuLegSig))
+					return true;
+				sigs.add(nuLegSig);
+				if (nuLegSig === sig)
+					return true;
+			}
 		}
 	}
 	if (sig2legs.has(subSig) && !scanned.has(subSig))		// try substituting shorter legs for the sub-leg and scanning that leg
@@ -307,6 +325,8 @@ function checkEquivalence(diagram, cell, lLeg, rLeg)
 		isEqual = equal ? true : 'unknown';
 	}
 	const item = getItem(lLeg, rLeg);
+	if (isEqual === true)
+		setEquals(left, right);
 	return {diagram, cell, isEqual, item};
 }
 
