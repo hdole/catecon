@@ -8,6 +8,7 @@
 	--color-element-bg-hover:	#ddd;
 	--color-element-border-color:		#ccc #ddd #eee #ccc;
 	--color-emphasis:	#00f;
+	--color-emphasis2:	#77c;
 	--color-hidden-cell:#ddd;
 	--color-hover:		#777;
 	--color-link:		#33f;
@@ -33,6 +34,7 @@
 	--color-element-bg-hover:	#777;
 	--color-element-border-color:		#333 #444 #222 #333;
 	--color-emphasis:	#0ff;
+	--color-emphasis2:	#77c;
 	--color-hidden-cell:#444;
 	--color-hover:		#aaa;
 	--color-link:		gold;
@@ -619,12 +621,13 @@ p
 	stroke-width:	30px;
 }
 
-.arrow0
+.icon-std
 {
 	fill:			none;
 	stroke:			var(--color-morphism);
 	stroke-width:	20px;
 }
+
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
 .arrow6 {fill:none; stroke:#666; stroke-width:20px;}
 .arrow9 {fill:none; stroke:#999; stroke-width:20px;}
@@ -866,16 +869,6 @@ p
 	user-select:	none;
 }
 
-text.emphasis
-{
-	fill:		var(--color-emphasis);
-}
-
-circle.emphasis
-{
-	fill:		var(--color-emphasis);
-}
-
 svg path
 {
 	stroke-dasharray:	inherit;
@@ -887,6 +880,16 @@ svg line
 	stroke-dasharray:	inherit;
 	stroke:				inherit;
 	fill:				inherit;
+}
+
+text.emphasis
+{
+	fill:		var(--color-emphasis);
+}
+
+circle.emphasis
+{
+	fill:		var(--color-emphasis);
 }
 
 svg line.emphasis
@@ -923,6 +926,46 @@ use.emphasis
 {
 	stroke:		var(--color-emphasis);
 	fill:		var(--color-emphasis);
+}
+
+.emphasis2
+{
+}
+
+text.emphasis2
+{
+}
+
+circle.emphasis2
+{
+}
+
+svg line.emphasis2
+{
+	stroke-dasharray:	5,5;
+}
+
+path.emphasis2
+{
+	stroke-dasharray:	5,5;
+	fill:				none;
+}
+
+polyline.emphasis2
+{
+	stroke-dasharray:	5,5;
+}
+
+rect.emphasis2
+{
+	fill:		none;
+	stroke-dasharray:	5,5;
+}
+
+use.emphasis2
+{
+	stroke:		var(--color-emphasis2);
+	fill:		var(--color-emphasis2);
 }
 
 .selected
