@@ -1,0 +1,258 @@
+{
+  "description": "",
+  "basename": "epimorphism",
+  "name": "hdole/epimorphism",
+  "prototype": "Diagram",
+  "category": "sys/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/epimorphism_Index",
+  "codomain": "sys/Cat",
+  "references": [],
+  "domainInfo": {
+    "description": "index category for diagram hdole/epimorphism",
+    "basename": "epimorphism_Index",
+    "name": "hdole/epimorphism_Index",
+    "prototype": "IndexCategory",
+    "category": "sys/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Epimorphism",
+        "basename": "t_0",
+        "name": "hdole/epimorphism/t_0",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/epimorphism",
+        "xy": {
+          "x": 540,
+          "y": 310
+        },
+        "height": "76",
+        "weight": "bold"
+      },
+      {
+        "description": "",
+        "basename": "o_0",
+        "name": "hdole/epimorphism/o_0",
+        "prototype": "IndexObject",
+        "category": "hdole/epimorphism_Index",
+        "diagram": "hdole/epimorphism",
+        "to": "hdole/epimorphism/A",
+        "xy": {
+          "x": 550,
+          "y": 550
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_1",
+        "name": "hdole/epimorphism/o_1",
+        "prototype": "IndexObject",
+        "category": "hdole/epimorphism_Index",
+        "diagram": "hdole/epimorphism",
+        "to": "hdole/epimorphism/B",
+        "xy": {
+          "x": 750,
+          "y": 550
+        }
+      },
+      {
+        "description": "",
+        "basename": "o_2",
+        "name": "hdole/epimorphism/o_2",
+        "prototype": "IndexObject",
+        "category": "hdole/epimorphism_Index",
+        "diagram": "hdole/epimorphism",
+        "to": "hdole/epimorphism/C",
+        "xy": {
+          "x": 1000,
+          "y": 550
+        }
+      },
+      {
+        "description": "f is a epimorphism iff for any two h and g\nwith gf = hf then g = h.",
+        "basename": "t_1",
+        "name": "hdole/epimorphism/t_1",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/epimorphism",
+        "xy": {
+          "x": 550,
+          "y": 400
+        },
+        "height": "24"
+      },
+      {
+        "description": "In other words, f is a epimorphism if it can always\nbe cancelled on the right:  gf = hf implies g = h.",
+        "basename": "t_2",
+        "name": "hdole/epimorphism/t_2",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/epimorphism",
+        "xy": {
+          "x": 540,
+          "y": 690
+        },
+        "height": "24"
+      },
+      {
+        "description": "Compare the dual notion of <diagram name=\"hdole/monomorphism\">monomorphism</diagram>",
+        "basename": "t_3",
+        "name": "hdole/epimorphism/t_3",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/epimorphism",
+        "xy": {
+          "x": 540,
+          "y": 830
+        },
+        "height": "24"
+      },
+      {
+        "description": "Known as &#39;epi&#39; in [CWMp19].",
+        "basename": "t_4",
+        "name": "hdole/epimorphism/t_4",
+        "prototype": "IndexText",
+        "category": "sys/Cat",
+        "diagram": "hdole/epimorphism",
+        "xy": {
+          "x": 540,
+          "y": 920
+        },
+        "height": "24"
+      },
+      {
+        "description": "",
+        "basename": "m_0",
+        "name": "hdole/epimorphism/m_0",
+        "prototype": "IndexMorphism",
+        "category": "hdole/epimorphism_Index",
+        "diagram": "hdole/epimorphism",
+        "domain": "hdole/epimorphism/o_0",
+        "codomain": "hdole/epimorphism/o_1",
+        "to": "hdole/epimorphism/f"
+      },
+      {
+        "description": "",
+        "basename": "m_1",
+        "name": "hdole/epimorphism/m_1",
+        "prototype": "IndexMorphism",
+        "category": "hdole/epimorphism_Index",
+        "diagram": "hdole/epimorphism",
+        "domain": "hdole/epimorphism/o_1",
+        "codomain": "hdole/epimorphism/o_2",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ]
+        ],
+        "homsetIndex": -1,
+        "to": "hdole/epimorphism/g"
+      },
+      {
+        "description": "",
+        "basename": "m_2",
+        "name": "hdole/epimorphism/m_2",
+        "prototype": "IndexMorphism",
+        "category": "hdole/epimorphism_Index",
+        "diagram": "hdole/epimorphism",
+        "domain": "hdole/epimorphism/o_1",
+        "codomain": "hdole/epimorphism/o_2",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ],
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ]
+        ],
+        "homsetIndex": 1,
+        "to": "hdole/epimorphism/h"
+      }
+    ],
+    "cells": [
+      {
+        "name": "hdole/epimorphism/{m_0,m_1},{m_0,m_2}",
+        "left": [
+          "m_0",
+          "m_2"
+        ],
+        "right": [
+          "m_0",
+          "m_1"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/epimorphism/{m_1},{m_2}",
+        "left": [
+          "m_2"
+        ],
+        "right": [
+          "m_1"
+        ],
+        "assertion": "equals",
+        "hidden": false,
+        "attributes": [
+          [
+            "level",
+            2
+          ]
+        ]
+      }
+    ]
+  },
+  "elements": [
+    {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "C",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/epimorphism/A",
+      "codomain": "hdole/epimorphism/B"
+    },
+    {
+      "basename": "g",
+      "prototype": "Morphism",
+      "domain": "hdole/epimorphism/B",
+      "codomain": "hdole/epimorphism/C"
+    },
+    {
+      "basename": "h",
+      "prototype": "Morphism",
+      "domain": "hdole/epimorphism/B",
+      "codomain": "hdole/epimorphism/C"
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1643276721075,
+  "version": 0,
+  "viewport": {
+    "x": -174,
+    "y": -363,
+    "scale": 1.8020534874640475
+  },
+  "properName": "hdole/epimorphism"
+}

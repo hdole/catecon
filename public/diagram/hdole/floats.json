@@ -23,12 +23,8 @@
     "diagram": "hdole/hdole",
     "elements": [
       {
-        "description": "",
         "basename": "o_0",
-        "name": "hdole/floats/o_0",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 700,
@@ -38,10 +34,7 @@
       {
         "description": "Floating point numbers",
         "basename": "t_0",
-        "name": "hdole/floats/t_0",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 300
@@ -51,10 +44,7 @@
       {
         "description": "The floating point zero",
         "basename": "t_1",
-        "name": "hdole/floats/t_1",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 500
@@ -62,12 +52,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_1",
-        "name": "hdole/floats/o_1",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 600,
@@ -75,12 +61,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_2",
-        "name": "hdole/floats/o_2",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -90,10 +72,7 @@
       {
         "description": "The first interesting real number, or Euler&#39;s constant",
         "basename": "t_2",
-        "name": "hdole/floats/t_2",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 890
@@ -101,12 +80,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_3",
-        "name": "hdole/floats/o_3",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 600,
@@ -114,12 +89,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_4",
-        "name": "hdole/floats/o_4",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -129,10 +100,7 @@
       {
         "description": "A random number between 0.0 and 1.0",
         "basename": "t_3",
-        "name": "hdole/floats/t_3",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 2300
@@ -140,12 +108,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_5",
-        "name": "hdole/floats/o_5",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 600,
@@ -153,12 +117,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_6",
-        "name": "hdole/floats/o_6",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -168,10 +128,7 @@
       {
         "description": "Ratio of a circle&#39;s circumference to its diameter",
         "basename": "t_4",
-        "name": "hdole/floats/t_4",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 1100
@@ -179,12 +136,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_7",
-        "name": "hdole/floats/o_7",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 600,
@@ -192,12 +145,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_8",
-        "name": "hdole/floats/o_8",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -207,10 +156,7 @@
       {
         "description": "Every integer is (sort of) a floating point number",
         "basename": "t_5",
-        "name": "hdole/floats/t_5",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 1900
@@ -218,12 +164,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_9",
-        "name": "hdole/floats/o_9",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z64",
         "xy": {
           "x": 600,
@@ -231,12 +173,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_10",
-        "name": "hdole/floats/o_10",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -246,10 +184,7 @@
       {
         "description": "The absolute value of a floating point number",
         "basename": "t_6",
-        "name": "hdole/floats/t_6",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 2500
@@ -257,12 +192,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_11",
-        "name": "hdole/floats/o_11",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -270,12 +201,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_12",
-        "name": "hdole/floats/o_12",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -285,10 +212,7 @@
       {
         "description": "Addition of two floating point numbers",
         "basename": "t_8",
-        "name": "hdole/floats/t_8",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 2700
@@ -296,12 +220,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_14",
-        "name": "hdole/floats/o_14",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -309,12 +229,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_15",
-        "name": "hdole/floats/o_15",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -324,10 +240,7 @@
       {
         "description": "Subtraction of two floating point numbers",
         "basename": "t_9",
-        "name": "hdole/floats/t_9",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 2900
@@ -335,12 +248,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_16",
-        "name": "hdole/floats/o_16",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -348,12 +257,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_17",
-        "name": "hdole/floats/o_17",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -363,10 +268,7 @@
       {
         "description": "Multiplication of two floating point numbers",
         "basename": "t_10",
-        "name": "hdole/floats/t_10",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 3100
@@ -374,12 +276,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_18",
-        "name": "hdole/floats/o_18",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -387,12 +285,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_19",
-        "name": "hdole/floats/o_19",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -402,10 +296,7 @@
       {
         "description": "Division of two floating point numbers or an exception",
         "basename": "t_12",
-        "name": "hdole/floats/t_12",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 3300
@@ -413,12 +304,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_21",
-        "name": "hdole/floats/o_21",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -426,12 +313,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_22",
-        "name": "hdole/floats/o_22",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{Po{F64,F64}oP,#1}oPC",
         "xy": {
           "x": 800,
@@ -441,10 +324,7 @@
       {
         "description": "Is the first given floating point number less than the second",
         "basename": "t_14",
-        "name": "hdole/floats/t_14",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 3500
@@ -452,12 +332,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_25",
-        "name": "hdole/floats/o_25",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -465,12 +341,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_26",
-        "name": "hdole/floats/o_26",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 800,
@@ -480,10 +352,7 @@
       {
         "description": "Is the first floating point number less than or equal to the second",
         "basename": "t_15",
-        "name": "hdole/floats/t_15",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 3700
@@ -491,12 +360,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_27",
-        "name": "hdole/floats/o_27",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -504,12 +369,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_28",
-        "name": "hdole/floats/o_28",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 800,
@@ -519,10 +380,7 @@
       {
         "description": "Compare two floating point numbers for equality",
         "basename": "t_16",
-        "name": "hdole/floats/t_16",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 3900
@@ -530,12 +388,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_29",
-        "name": "hdole/floats/o_29",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -543,12 +397,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_30",
-        "name": "hdole/floats/o_30",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 800,
@@ -558,10 +408,7 @@
       {
         "description": "The smallest integer greater than or equal to a given floating point number",
         "basename": "t_17",
-        "name": "hdole/floats/t_17",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 5200
@@ -569,12 +416,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_31",
-        "name": "hdole/floats/o_31",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -582,12 +425,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_32",
-        "name": "hdole/floats/o_32",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z64",
         "xy": {
           "x": 800,
@@ -597,10 +436,7 @@
       {
         "description": "The nearest integer to a given floating point number",
         "basename": "t_18",
-        "name": "hdole/floats/t_18",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 5400
@@ -608,12 +444,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_33",
-        "name": "hdole/floats/o_33",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -621,12 +453,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_34",
-        "name": "hdole/floats/o_34",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z64",
         "xy": {
           "x": 800,
@@ -636,10 +464,7 @@
       {
         "description": "The greatest integer smaller than or equal to a given floating point number",
         "basename": "t_19",
-        "name": "hdole/floats/t_19",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 5600
@@ -647,12 +472,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_35",
-        "name": "hdole/floats/o_35",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -660,12 +481,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_36",
-        "name": "hdole/floats/o_36",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z64",
         "xy": {
           "x": 800,
@@ -675,10 +492,7 @@
       {
         "description": "The integer portion of a floating point number",
         "basename": "t_20",
-        "name": "hdole/floats/t_20",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 5800
@@ -686,12 +500,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_37",
-        "name": "hdole/floats/o_37",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -699,12 +509,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_38",
-        "name": "hdole/floats/o_38",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z64",
         "xy": {
           "x": 800,
@@ -714,10 +520,7 @@
       {
         "description": "the natural logarithm of a given floating point number or an exception",
         "basename": "t_21",
-        "name": "hdole/floats/t_21",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 6000
@@ -725,12 +528,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_39",
-        "name": "hdole/floats/o_39",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -738,12 +537,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_40",
-        "name": "hdole/floats/o_40",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{F64,#1}oPC",
         "xy": {
           "x": 800,
@@ -753,10 +548,7 @@
       {
         "description": "raise the first number to the second number as exponent or an exception",
         "basename": "t_22",
-        "name": "hdole/floats/t_22",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 6200
@@ -764,12 +556,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_41",
-        "name": "hdole/floats/o_41",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -777,12 +565,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_42",
-        "name": "hdole/floats/o_42",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{F64,#1}oPC",
         "xy": {
           "x": 800,
@@ -792,10 +576,7 @@
       {
         "description": "The maximum floating point number of the given pair",
         "basename": "t_24",
-        "name": "hdole/floats/t_24",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 6400
@@ -803,12 +584,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_44",
-        "name": "hdole/floats/o_44",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -816,12 +593,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_45",
-        "name": "hdole/floats/o_45",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -831,10 +604,7 @@
       {
         "description": "The minimum floating point number of the given pair",
         "basename": "t_25",
-        "name": "hdole/floats/t_25",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 6600
@@ -842,12 +612,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_46",
-        "name": "hdole/floats/o_46",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 600,
@@ -855,12 +621,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_47",
-        "name": "hdole/floats/o_47",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -870,24 +632,17 @@
       {
         "description": "𝔽 Floating Point",
         "basename": "t_27",
-        "name": "hdole/floats/t_27",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -830,
-          "y": 70
+          "y": 60
         },
         "height": "300",
         "weight": "bold"
       },
       {
-        "description": "",
         "basename": "o_48",
-        "name": "hdole/floats/o_48",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 600,
@@ -895,12 +650,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_49",
-        "name": "hdole/floats/o_49",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -910,10 +661,7 @@
       {
         "description": "The floating point one",
         "basename": "t_28",
-        "name": "hdole/floats/t_28",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/floats",
         "xy": {
           "x": -700,
           "y": 700
@@ -921,12 +669,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_13",
-        "name": "hdole/floats/o_13",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 300,
@@ -934,12 +678,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_20",
-        "name": "hdole/floats/o_20",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 200,
@@ -947,12 +687,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_43",
-        "name": "hdole/floats/o_43",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -960,12 +696,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_50",
-        "name": "hdole/floats/o_50",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 200,
@@ -973,12 +705,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_51",
-        "name": "hdole/floats/o_51",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -986,12 +714,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_52",
-        "name": "hdole/floats/o_52",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 200,
@@ -999,12 +723,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_53",
-        "name": "hdole/floats/o_53",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1012,12 +732,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_54",
-        "name": "hdole/floats/o_54",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 200,
@@ -1025,12 +741,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_55",
-        "name": "hdole/floats/o_55",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1038,12 +750,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_56",
-        "name": "hdole/floats/o_56",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1100,
@@ -1051,12 +759,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_57",
-        "name": "hdole/floats/o_57",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 1000,
@@ -1064,12 +768,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_58",
-        "name": "hdole/floats/o_58",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1077,12 +777,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_59",
-        "name": "hdole/floats/o_59",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 1000,
@@ -1090,12 +786,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_60",
-        "name": "hdole/floats/o_60",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1103,12 +795,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_61",
-        "name": "hdole/floats/o_61",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 1000,
@@ -1116,12 +804,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_62",
-        "name": "hdole/floats/o_62",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1129,12 +813,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_63",
-        "name": "hdole/floats/o_63",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 1000,
@@ -1142,12 +822,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_64",
-        "name": "hdole/floats/o_64",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1155,12 +831,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_65",
-        "name": "hdole/floats/o_65",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 200,
@@ -1168,12 +840,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_66",
-        "name": "hdole/floats/o_66",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1181,12 +849,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_67",
-        "name": "hdole/floats/o_67",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 1000,
@@ -1194,12 +858,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_68",
-        "name": "hdole/floats/o_68",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1207,12 +867,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_69",
-        "name": "hdole/floats/o_69",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1220,12 +876,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_70",
-        "name": "hdole/floats/o_70",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z32",
         "xy": {
           "x": 200,
@@ -1233,12 +885,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_71",
-        "name": "hdole/floats/o_71",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z128",
         "xy": {
           "x": 1000,
@@ -1246,12 +894,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_72",
-        "name": "hdole/floats/o_72",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1259,12 +903,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_73",
-        "name": "hdole/floats/o_73",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 600,
@@ -1272,12 +912,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_74",
-        "name": "hdole/floats/o_74",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -1285,12 +921,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_75",
-        "name": "hdole/floats/o_75",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 1000,
@@ -1298,12 +930,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_76",
-        "name": "hdole/floats/o_76",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1311,12 +939,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_77",
-        "name": "hdole/floats/o_77",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 200,
@@ -1324,12 +948,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_78",
-        "name": "hdole/floats/o_78",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1337,12 +957,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_79",
-        "name": "hdole/floats/o_79",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1350,12 +966,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_80",
-        "name": "hdole/floats/o_80",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000,
@@ -1363,12 +975,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_81",
-        "name": "hdole/floats/o_81",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -1376,12 +984,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_82",
-        "name": "hdole/floats/o_82",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1389,12 +993,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_83",
-        "name": "hdole/floats/o_83",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000,
@@ -1402,12 +1002,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_84",
-        "name": "hdole/floats/o_84",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1415,12 +1011,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_85",
-        "name": "hdole/floats/o_85",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -1428,12 +1020,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_86",
-        "name": "hdole/floats/o_86",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1441,12 +1029,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_87",
-        "name": "hdole/floats/o_87",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000,
@@ -1454,12 +1038,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_88",
-        "name": "hdole/floats/o_88",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1467,12 +1047,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_89",
-        "name": "hdole/floats/o_89",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -1480,12 +1056,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_90",
-        "name": "hdole/floats/o_90",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -1493,12 +1065,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_91",
-        "name": "hdole/floats/o_91",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000,
@@ -1506,12 +1074,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_92",
-        "name": "hdole/floats/o_92",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -1519,12 +1083,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_95",
-        "name": "hdole/floats/o_95",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{Po{F128,F128}oP,#1}oPC",
         "xy": {
           "x": 1240,
@@ -1532,12 +1092,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_93",
-        "name": "hdole/floats/o_93",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -1545,12 +1101,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_96",
-        "name": "hdole/floats/o_96",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000,
@@ -1558,12 +1110,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_23",
-        "name": "hdole/floats/o_23",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -1571,12 +1119,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_24",
-        "name": "hdole/floats/o_24",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 400,
@@ -1584,12 +1128,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_97",
-        "name": "hdole/floats/o_97",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000,
@@ -1597,12 +1137,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_98",
-        "name": "hdole/floats/o_98",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 1200,
@@ -1610,12 +1146,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_99",
-        "name": "hdole/floats/o_99",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -1623,12 +1155,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_100",
-        "name": "hdole/floats/o_100",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 400,
@@ -1636,12 +1164,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_101",
-        "name": "hdole/floats/o_101",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000,
@@ -1649,12 +1173,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_102",
-        "name": "hdole/floats/o_102",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 1200,
@@ -1662,12 +1182,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_103",
-        "name": "hdole/floats/o_103",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -1675,12 +1191,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_104",
-        "name": "hdole/floats/o_104",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 400,
@@ -1688,12 +1200,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_105",
-        "name": "hdole/floats/o_105",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000,
@@ -1701,12 +1209,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_106",
-        "name": "hdole/floats/o_106",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 1200,
@@ -1714,12 +1218,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_107",
-        "name": "hdole/floats/o_107",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 200,
@@ -1727,12 +1227,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_108",
-        "name": "hdole/floats/o_108",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000.0000000000001,
@@ -1740,12 +1236,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_109",
-        "name": "hdole/floats/o_109",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z32",
         "xy": {
           "x": 400,
@@ -1753,12 +1245,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_110",
-        "name": "hdole/floats/o_110",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z128",
         "xy": {
           "x": 1200,
@@ -1766,12 +1254,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_111",
-        "name": "hdole/floats/o_111",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 200,
@@ -1779,12 +1263,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_112",
-        "name": "hdole/floats/o_112",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z32",
         "xy": {
           "x": 400,
@@ -1792,12 +1272,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_113",
-        "name": "hdole/floats/o_113",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000.0000000000001,
@@ -1805,12 +1281,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_114",
-        "name": "hdole/floats/o_114",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z128",
         "xy": {
           "x": 1200,
@@ -1818,12 +1290,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_115",
-        "name": "hdole/floats/o_115",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 200,
@@ -1831,12 +1299,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_116",
-        "name": "hdole/floats/o_116",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z32",
         "xy": {
           "x": 400,
@@ -1844,12 +1308,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_117",
-        "name": "hdole/floats/o_117",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000.0000000000001,
@@ -1857,12 +1317,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_118",
-        "name": "hdole/floats/o_118",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z128",
         "xy": {
           "x": 1200,
@@ -1870,12 +1326,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_119",
-        "name": "hdole/floats/o_119",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 200,
@@ -1883,12 +1335,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_120",
-        "name": "hdole/floats/o_120",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z32",
         "xy": {
           "x": 400,
@@ -1896,12 +1344,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_121",
-        "name": "hdole/floats/o_121",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000.0000000000001,
@@ -1909,12 +1353,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_122",
-        "name": "hdole/floats/o_122",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z128",
         "xy": {
           "x": 1200,
@@ -1922,12 +1362,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_124",
-        "name": "hdole/floats/o_124",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{F32,#1}oPC",
         "xy": {
           "x": 400,
@@ -1935,12 +1371,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_125",
-        "name": "hdole/floats/o_125",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{F128,#1}oPC",
         "xy": {
           "x": 1200,
@@ -1948,12 +1380,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_126",
-        "name": "hdole/floats/o_126",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000.0000000000001,
@@ -1961,12 +1389,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_123",
-        "name": "hdole/floats/o_123",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 200,
@@ -1974,12 +1398,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_127",
-        "name": "hdole/floats/o_127",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{F32,#1}oPC",
         "xy": {
           "x": 400,
@@ -1987,12 +1407,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_128",
-        "name": "hdole/floats/o_128",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{F128,#1}oPC",
         "xy": {
           "x": 1200,
@@ -2000,12 +1416,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_129",
-        "name": "hdole/floats/o_129",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -2013,12 +1425,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_130",
-        "name": "hdole/floats/o_130",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000.0000000000001,
@@ -2026,12 +1434,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_131",
-        "name": "hdole/floats/o_131",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -2039,12 +1443,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_132",
-        "name": "hdole/floats/o_132",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000.0000000000001,
@@ -2052,12 +1452,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_133",
-        "name": "hdole/floats/o_133",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 200,
@@ -2065,12 +1461,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_134",
-        "name": "hdole/floats/o_134",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1000.0000000000001,
@@ -2078,12 +1470,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_135",
-        "name": "hdole/floats/o_135",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -2091,12 +1479,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_136",
-        "name": "hdole/floats/o_136",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -2104,12 +1488,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_137",
-        "name": "hdole/floats/o_137",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2117,12 +1497,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_138",
-        "name": "hdole/floats/o_138",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2130,12 +1506,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_139",
-        "name": "hdole/floats/o_139",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{Po{F32,F32}oP,#1}oPC",
         "xy": {
           "x": 400,
@@ -2143,12 +1515,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_94",
-        "name": "hdole/floats/o_94",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/nat/N32",
         "xy": {
           "x": 200,
@@ -2156,12 +1524,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_140",
-        "name": "hdole/floats/o_140",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -2169,12 +1533,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_141",
-        "name": "hdole/floats/o_141",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z32",
         "xy": {
           "x": 600,
@@ -2182,12 +1542,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_142",
-        "name": "hdole/floats/o_142",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -2195,12 +1551,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_143",
-        "name": "hdole/floats/o_143",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z32",
         "xy": {
           "x": 1000,
@@ -2208,12 +1560,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_144",
-        "name": "hdole/floats/o_144",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2221,12 +1569,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_145",
-        "name": "hdole/floats/o_145",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/int/Z64",
         "xy": {
           "x": 1000,
@@ -2234,12 +1578,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_146",
-        "name": "hdole/floats/o_146",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2247,12 +1587,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_147",
-        "name": "hdole/floats/o_147",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/nat/N32",
         "xy": {
           "x": 600,
@@ -2260,12 +1596,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_148",
-        "name": "hdole/floats/o_148",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -2273,12 +1605,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_149",
-        "name": "hdole/floats/o_149",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/nat/N32",
         "xy": {
           "x": 1000,
@@ -2286,12 +1614,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_150",
-        "name": "hdole/floats/o_150",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2299,12 +1623,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_151",
-        "name": "hdole/floats/o_151",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/nat/N64",
         "xy": {
           "x": 600,
@@ -2312,12 +1632,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_152",
-        "name": "hdole/floats/o_152",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -2325,12 +1641,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_153",
-        "name": "hdole/floats/o_153",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/nat/N64",
         "xy": {
           "x": 1000,
@@ -2338,12 +1650,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_154",
-        "name": "hdole/floats/o_154",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2351,12 +1659,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_155",
-        "name": "hdole/floats/o_155",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/nat/N128",
         "xy": {
           "x": 1000,
@@ -2364,12 +1668,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_156",
-        "name": "hdole/floats/o_156",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2377,12 +1677,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_157",
-        "name": "hdole/floats/o_157",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1100,
@@ -2390,12 +1686,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_158",
-        "name": "hdole/floats/o_158",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000,
@@ -2403,12 +1695,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_159",
-        "name": "hdole/floats/o_159",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1200,
@@ -2416,12 +1704,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_160",
-        "name": "hdole/floats/o_160",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 1200,
@@ -2429,12 +1713,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_161",
-        "name": "hdole/floats/o_161",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 1100,
@@ -2442,12 +1722,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_166",
-        "name": "hdole/floats/o_166",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 700,
@@ -2455,12 +1731,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_167",
-        "name": "hdole/floats/o_167",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -2468,12 +1740,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_168",
-        "name": "hdole/floats/o_168",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 800,
@@ -2481,12 +1749,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_169",
-        "name": "hdole/floats/o_169",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 700,
@@ -2494,12 +1758,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_170",
-        "name": "hdole/floats/o_170",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 800,
@@ -2507,12 +1767,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_175",
-        "name": "hdole/floats/o_175",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 300,
@@ -2520,12 +1776,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_176",
-        "name": "hdole/floats/o_176",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 200,
@@ -2533,12 +1785,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_177",
-        "name": "hdole/floats/o_177",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 400,
@@ -2546,12 +1794,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_178",
-        "name": "hdole/floats/o_178",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/#1",
         "xy": {
           "x": 400,
@@ -2559,12 +1803,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_179",
-        "name": "hdole/floats/o_179",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 300,
@@ -2572,12 +1812,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_162",
-        "name": "hdole/floats/o_162",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F32",
         "xy": {
           "x": 170,
@@ -2585,12 +1821,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_163",
-        "name": "hdole/floats/o_163",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,#1}oP",
         "xy": {
           "x": 400,
@@ -2598,12 +1830,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_164",
-        "name": "hdole/floats/o_164",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F32,F32}oP",
         "xy": {
           "x": 400,
@@ -2611,12 +1839,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_165",
-        "name": "hdole/floats/o_165",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 400,
@@ -2624,12 +1848,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_171",
-        "name": "hdole/floats/o_171",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 600,
@@ -2637,12 +1857,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_172",
-        "name": "hdole/floats/o_172",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,#1}oP",
         "xy": {
           "x": 800,
@@ -2650,12 +1866,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_173",
-        "name": "hdole/floats/o_173",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 800,
@@ -2663,12 +1875,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_174",
-        "name": "hdole/floats/o_174",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 800,
@@ -2676,12 +1884,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_180",
-        "name": "hdole/floats/o_180",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/F128",
         "xy": {
           "x": 1000,
@@ -2689,12 +1893,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_181",
-        "name": "hdole/floats/o_181",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,#1}oP",
         "xy": {
           "x": 1200,
@@ -2702,12 +1902,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_182",
-        "name": "hdole/floats/o_182",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/Po{F128,F128}oP",
         "xy": {
           "x": 1200,
@@ -2715,12 +1911,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_183",
-        "name": "hdole/floats/o_183",
         "prototype": "IndexObject",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "to": "hdole/floats/CPo{#1,#1}oPC",
         "xy": {
           "x": 1200,
@@ -2728,859 +1920,547 @@
         }
       },
       {
-        "description": "",
         "basename": "m_0",
-        "name": "hdole/floats/m_0",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_1",
         "codomain": "hdole/floats/o_2",
         "to": "hdole/floats/zero64"
       },
       {
-        "description": "",
         "basename": "m_1",
-        "name": "hdole/floats/m_1",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_3",
         "codomain": "hdole/floats/o_4",
         "to": "hdole/floats/e64"
       },
       {
-        "description": "",
         "basename": "m_2",
-        "name": "hdole/floats/m_2",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_5",
         "codomain": "hdole/floats/o_6",
         "to": "hdole/floats/rand64"
       },
       {
-        "description": "",
         "basename": "m_3",
-        "name": "hdole/floats/m_3",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_7",
         "codomain": "hdole/floats/o_8",
         "to": "hdole/floats/pi64"
       },
       {
-        "description": "",
         "basename": "m_4",
-        "name": "hdole/floats/m_4",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_9",
         "codomain": "hdole/floats/o_10",
         "to": "hdole/floats/Z64toF64"
       },
       {
-        "description": "",
         "basename": "m_5",
-        "name": "hdole/floats/m_5",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_11",
         "codomain": "hdole/floats/o_12",
         "to": "hdole/floats/abs64"
       },
       {
-        "description": "",
         "basename": "m_6",
-        "name": "hdole/floats/m_6",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_14",
         "codomain": "hdole/floats/o_15",
         "to": "hdole/floats/add64"
       },
       {
-        "description": "",
         "basename": "m_7",
-        "name": "hdole/floats/m_7",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_16",
         "codomain": "hdole/floats/o_17",
         "to": "hdole/floats/sub64"
       },
       {
-        "description": "",
         "basename": "m_8",
-        "name": "hdole/floats/m_8",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_18",
         "codomain": "hdole/floats/o_19",
         "to": "hdole/floats/mult64"
       },
       {
-        "description": "",
         "basename": "m_9",
-        "name": "hdole/floats/m_9",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_21",
         "codomain": "hdole/floats/o_22",
         "to": "hdole/floats/div64"
       },
       {
-        "description": "",
         "basename": "m_11",
-        "name": "hdole/floats/m_11",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_25",
         "codomain": "hdole/floats/o_26",
         "to": "hdole/floats/lt64"
       },
       {
-        "description": "",
         "basename": "m_12",
-        "name": "hdole/floats/m_12",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_27",
         "codomain": "hdole/floats/o_28",
         "to": "hdole/floats/lte64"
       },
       {
-        "description": "",
         "basename": "m_13",
-        "name": "hdole/floats/m_13",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_29",
         "codomain": "hdole/floats/o_30",
         "to": "hdole/floats/eq64"
       },
       {
-        "description": "",
         "basename": "m_14",
-        "name": "hdole/floats/m_14",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_31",
         "codomain": "hdole/floats/o_32",
         "to": "hdole/floats/ceil64"
       },
       {
-        "description": "",
         "basename": "m_15",
-        "name": "hdole/floats/m_15",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_33",
         "codomain": "hdole/floats/o_34",
         "to": "hdole/floats/rnd64"
       },
       {
-        "description": "",
         "basename": "m_16",
-        "name": "hdole/floats/m_16",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_35",
         "codomain": "hdole/floats/o_36",
         "to": "hdole/floats/floor64"
       },
       {
-        "description": "",
         "basename": "m_17",
-        "name": "hdole/floats/m_17",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_37",
         "codomain": "hdole/floats/o_38",
         "to": "hdole/floats/trunc64"
       },
       {
-        "description": "",
         "basename": "m_18",
-        "name": "hdole/floats/m_18",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_39",
         "codomain": "hdole/floats/o_40",
         "to": "hdole/floats/log64"
       },
       {
-        "description": "",
         "basename": "m_19",
-        "name": "hdole/floats/m_19",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_41",
         "codomain": "hdole/floats/o_42",
         "to": "hdole/floats/pow64"
       },
       {
-        "description": "",
         "basename": "m_20",
-        "name": "hdole/floats/m_20",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_44",
         "codomain": "hdole/floats/o_45",
         "to": "hdole/floats/max64"
       },
       {
-        "description": "",
         "basename": "m_21",
-        "name": "hdole/floats/m_21",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_46",
         "codomain": "hdole/floats/o_47",
         "to": "hdole/floats/min64"
       },
       {
-        "description": "",
         "basename": "m_22",
-        "name": "hdole/floats/m_22",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_48",
         "codomain": "hdole/floats/o_49",
         "to": "hdole/floats/one64"
       },
       {
-        "description": "",
         "basename": "m_23",
-        "name": "hdole/floats/m_23",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_20",
         "codomain": "hdole/floats/o_43",
         "to": "hdole/floats/zero32"
       },
       {
-        "description": "",
         "basename": "m_24",
-        "name": "hdole/floats/m_24",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_50",
         "codomain": "hdole/floats/o_51",
         "to": "hdole/floats/one32"
       },
       {
-        "description": "",
         "basename": "m_25",
-        "name": "hdole/floats/m_25",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_52",
         "codomain": "hdole/floats/o_53",
         "to": "hdole/floats/e32"
       },
       {
-        "description": "",
         "basename": "m_26",
-        "name": "hdole/floats/m_26",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_57",
         "codomain": "hdole/floats/o_58",
         "to": "hdole/floats/zero128"
       },
       {
-        "description": "",
         "basename": "m_27",
-        "name": "hdole/floats/m_27",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_59",
         "codomain": "hdole/floats/o_60",
         "to": "hdole/floats/one128"
       },
       {
-        "description": "",
         "basename": "m_28",
-        "name": "hdole/floats/m_28",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_54",
         "codomain": "hdole/floats/o_55",
         "to": "hdole/floats/rand32"
       },
       {
-        "description": "",
         "basename": "m_29",
-        "name": "hdole/floats/m_29",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_61",
         "codomain": "hdole/floats/o_62",
         "to": "hdole/floats/e128"
       },
       {
-        "description": "",
         "basename": "m_30",
-        "name": "hdole/floats/m_30",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_63",
         "codomain": "hdole/floats/o_64",
         "to": "hdole/floats/rand128"
       },
       {
-        "description": "",
         "basename": "m_31",
-        "name": "hdole/floats/m_31",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_65",
         "codomain": "hdole/floats/o_66",
         "to": "hdole/floats/pi32"
       },
       {
-        "description": "",
         "basename": "m_32",
-        "name": "hdole/floats/m_32",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_67",
         "codomain": "hdole/floats/o_68",
         "to": "hdole/floats/pi128"
       },
       {
-        "description": "",
         "basename": "m_33",
-        "name": "hdole/floats/m_33",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_70",
         "codomain": "hdole/floats/o_69",
         "to": "hdole/floats/Z32toF32"
       },
       {
-        "description": "",
         "basename": "m_34",
-        "name": "hdole/floats/m_34",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_71",
         "codomain": "hdole/floats/o_72",
         "to": "hdole/floats/Z128toF128"
       },
       {
-        "description": "",
         "basename": "m_35",
-        "name": "hdole/floats/m_35",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_73",
         "codomain": "hdole/floats/o_74",
         "to": "hdole/floats/F32toF64"
       },
       {
-        "description": "",
         "basename": "m_36",
-        "name": "hdole/floats/m_36",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_75",
         "codomain": "hdole/floats/o_76",
         "to": "hdole/floats/F64toF128"
       },
       {
-        "description": "",
         "basename": "m_37",
-        "name": "hdole/floats/m_37",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_77",
         "codomain": "hdole/floats/o_78",
         "to": "hdole/floats/abs32"
       },
       {
-        "description": "",
         "basename": "m_38",
-        "name": "hdole/floats/m_38",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_80",
         "codomain": "hdole/floats/o_79",
         "to": "hdole/floats/abs128"
       },
       {
-        "description": "",
         "basename": "m_39",
-        "name": "hdole/floats/m_39",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_81",
         "codomain": "hdole/floats/o_82",
         "to": "hdole/floats/add32"
       },
       {
-        "description": "",
         "basename": "m_40",
-        "name": "hdole/floats/m_40",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_83",
         "codomain": "hdole/floats/o_84",
         "to": "hdole/floats/add128"
       },
       {
-        "description": "",
         "basename": "m_41",
-        "name": "hdole/floats/m_41",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_85",
         "codomain": "hdole/floats/o_86",
         "to": "hdole/floats/sub32"
       },
       {
-        "description": "",
         "basename": "m_42",
-        "name": "hdole/floats/m_42",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_87",
         "codomain": "hdole/floats/o_88",
         "to": "hdole/floats/sub128"
       },
       {
-        "description": "",
         "basename": "m_43",
-        "name": "hdole/floats/m_43",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_89",
         "codomain": "hdole/floats/o_90",
         "to": "hdole/floats/mult32"
       },
       {
-        "description": "",
         "basename": "m_44",
-        "name": "hdole/floats/m_44",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_91",
         "codomain": "hdole/floats/o_92",
         "to": "hdole/floats/mult128"
       },
       {
-        "description": "",
         "basename": "m_46",
-        "name": "hdole/floats/m_46",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_96",
         "codomain": "hdole/floats/o_95",
         "to": "hdole/floats/div128"
       },
       {
-        "description": "",
         "basename": "m_10",
-        "name": "hdole/floats/m_10",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_23",
         "codomain": "hdole/floats/o_24",
         "to": "hdole/floats/lt32"
       },
       {
-        "description": "",
         "basename": "m_47",
-        "name": "hdole/floats/m_47",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_97",
         "codomain": "hdole/floats/o_98",
         "to": "hdole/floats/lt128"
       },
       {
-        "description": "",
         "basename": "m_48",
-        "name": "hdole/floats/m_48",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_99",
         "codomain": "hdole/floats/o_100",
         "to": "hdole/floats/lte32"
       },
       {
-        "description": "",
         "basename": "m_49",
-        "name": "hdole/floats/m_49",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_101",
         "codomain": "hdole/floats/o_102",
         "to": "hdole/floats/lte128"
       },
       {
-        "description": "",
         "basename": "m_50",
-        "name": "hdole/floats/m_50",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_103",
         "codomain": "hdole/floats/o_104",
         "to": "hdole/floats/eq32"
       },
       {
-        "description": "",
         "basename": "m_51",
-        "name": "hdole/floats/m_51",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_105",
         "codomain": "hdole/floats/o_106",
         "to": "hdole/floats/eq128"
       },
       {
-        "description": "",
         "basename": "m_52",
-        "name": "hdole/floats/m_52",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_108",
         "codomain": "hdole/floats/o_110",
         "to": "hdole/floats/ceil128"
       },
       {
-        "description": "",
         "basename": "m_53",
-        "name": "hdole/floats/m_53",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_107",
         "codomain": "hdole/floats/o_109",
         "to": "hdole/floats/ceil32"
       },
       {
-        "description": "",
         "basename": "m_54",
-        "name": "hdole/floats/m_54",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_111",
         "codomain": "hdole/floats/o_112",
         "to": "hdole/floats/rnd32"
       },
       {
-        "description": "",
         "basename": "m_55",
-        "name": "hdole/floats/m_55",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_113",
         "codomain": "hdole/floats/o_114",
         "to": "hdole/floats/rnd128"
       },
       {
-        "description": "",
         "basename": "m_56",
-        "name": "hdole/floats/m_56",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_115",
         "codomain": "hdole/floats/o_116",
         "to": "hdole/floats/floor32"
       },
       {
-        "description": "",
         "basename": "m_57",
-        "name": "hdole/floats/m_57",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_117",
         "codomain": "hdole/floats/o_118",
         "to": "hdole/floats/florr128"
       },
       {
-        "description": "",
         "basename": "m_58",
-        "name": "hdole/floats/m_58",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_119",
         "codomain": "hdole/floats/o_120",
         "to": "hdole/floats/trunc32"
       },
       {
-        "description": "",
         "basename": "m_59",
-        "name": "hdole/floats/m_59",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_121",
         "codomain": "hdole/floats/o_122",
         "to": "hdole/floats/trnuc128"
       },
       {
-        "description": "",
         "basename": "m_60",
-        "name": "hdole/floats/m_60",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_123",
         "codomain": "hdole/floats/o_124",
         "to": "hdole/floats/log32"
       },
       {
-        "description": "",
         "basename": "m_61",
-        "name": "hdole/floats/m_61",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_126",
         "codomain": "hdole/floats/o_125",
         "to": "hdole/floats/log128"
       },
       {
-        "description": "",
         "basename": "m_62",
-        "name": "hdole/floats/m_62",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_129",
         "codomain": "hdole/floats/o_127",
         "to": "hdole/floats/pow32"
       },
       {
-        "description": "",
         "basename": "m_63",
-        "name": "hdole/floats/m_63",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_130",
         "codomain": "hdole/floats/o_128",
         "to": "hdole/floats/pow128"
       },
       {
-        "description": "",
         "basename": "m_45",
-        "name": "hdole/floats/m_45",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_93",
         "codomain": "hdole/floats/o_139",
         "to": "hdole/floats/div32"
       },
       {
-        "description": "",
         "basename": "m_64",
-        "name": "hdole/floats/m_64",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_132",
         "codomain": "hdole/floats/o_137",
         "to": "hdole/floats/max128"
       },
       {
-        "description": "",
         "basename": "m_65",
-        "name": "hdole/floats/m_65",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_131",
         "codomain": "hdole/floats/o_135",
         "to": "hdole/floats/max32"
       },
       {
-        "description": "",
         "basename": "m_66",
-        "name": "hdole/floats/m_66",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_133",
         "codomain": "hdole/floats/o_136",
         "to": "hdole/floats/min32"
       },
       {
-        "description": "",
         "basename": "m_67",
-        "name": "hdole/floats/m_67",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_134",
         "codomain": "hdole/floats/o_138",
         "to": "hdole/floats/min128"
       },
       {
-        "description": "",
         "basename": "m_68",
-        "name": "hdole/floats/m_68",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_94",
         "codomain": "hdole/floats/o_140",
         "to": "hdole/floats/N32toF32"
       },
       {
-        "description": "",
         "basename": "m_69",
-        "name": "hdole/floats/m_69",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_141",
         "codomain": "hdole/floats/o_142",
         "to": "hdole/floats/Z32toF64"
       },
       {
-        "description": "",
         "basename": "m_70",
-        "name": "hdole/floats/m_70",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_143",
         "codomain": "hdole/floats/o_144",
         "to": "hdole/floats/Z32toF128"
       },
       {
-        "description": "",
         "basename": "m_71",
-        "name": "hdole/floats/m_71",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_145",
         "codomain": "hdole/floats/o_146",
         "to": "hdole/floats/Z64toF128"
       },
       {
-        "description": "",
         "basename": "m_72",
-        "name": "hdole/floats/m_72",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_147",
         "codomain": "hdole/floats/o_148",
         "to": "hdole/floats/N32toF64"
       },
       {
-        "description": "",
         "basename": "m_73",
-        "name": "hdole/floats/m_73",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_149",
         "codomain": "hdole/floats/o_150",
         "to": "hdole/floats/N32toF128"
       },
       {
-        "description": "",
         "basename": "m_74",
-        "name": "hdole/floats/m_74",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_151",
         "codomain": "hdole/floats/o_152",
         "to": "hdole/floats/N64toF64"
       },
       {
-        "description": "",
         "basename": "m_75",
-        "name": "hdole/floats/m_75",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_153",
         "codomain": "hdole/floats/o_154",
         "to": "hdole/floats/N64toF128"
       },
       {
-        "description": "",
         "basename": "m_76",
-        "name": "hdole/floats/m_76",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_155",
         "codomain": "hdole/floats/o_156",
         "to": "hdole/floats/N128toF128"
       },
       {
-        "description": "",
         "basename": "m_77",
-        "name": "hdole/floats/m_77",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_157",
         "codomain": "hdole/floats/o_158",
         "attributes": [
@@ -3592,12 +2472,8 @@
         "to": "hdole/floats/Fa{Po{F128,F128}oP,F128_0}aF"
       },
       {
-        "description": "",
         "basename": "m_78",
-        "name": "hdole/floats/m_78",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_157",
         "codomain": "hdole/floats/o_159",
         "attributes": [
@@ -3609,34 +2485,22 @@
         "to": "hdole/floats/Fa{Po{F128,F128}oP,F128_1}aF"
       },
       {
-        "description": "",
         "basename": "m_79",
-        "name": "hdole/floats/m_79",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_160",
         "codomain": "hdole/floats/o_159",
         "to": "hdole/floats/zero128"
       },
       {
-        "description": "",
         "basename": "m_80",
-        "name": "hdole/floats/m_80",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_157",
         "codomain": "hdole/floats/o_161",
         "to": "hdole/floats/eq128"
       },
       {
-        "description": "",
         "basename": "m_86",
-        "name": "hdole/floats/m_86",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_166",
         "codomain": "hdole/floats/o_167",
         "attributes": [
@@ -3648,12 +2512,8 @@
         "to": "hdole/floats/Fa{Po{F64,F64}oP,F64_0}aF"
       },
       {
-        "description": "",
         "basename": "m_87",
-        "name": "hdole/floats/m_87",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_166",
         "codomain": "hdole/floats/o_168",
         "attributes": [
@@ -3665,34 +2525,22 @@
         "to": "hdole/floats/Fa{Po{F64,F64}oP,F64_1}aF"
       },
       {
-        "description": "",
         "basename": "m_88",
-        "name": "hdole/floats/m_88",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_166",
         "codomain": "hdole/floats/o_169",
         "to": "hdole/floats/eq64"
       },
       {
-        "description": "",
         "basename": "m_89",
-        "name": "hdole/floats/m_89",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_170",
         "codomain": "hdole/floats/o_168",
         "to": "hdole/floats/zero64"
       },
       {
-        "description": "",
         "basename": "m_95",
-        "name": "hdole/floats/m_95",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_175",
         "codomain": "hdole/floats/o_176",
         "attributes": [
@@ -3704,12 +2552,8 @@
         "to": "hdole/floats/Fa{Po{F32,F32}oP,F32_0}aF"
       },
       {
-        "description": "",
         "basename": "m_96",
-        "name": "hdole/floats/m_96",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_175",
         "codomain": "hdole/floats/o_177",
         "attributes": [
@@ -3721,67 +2565,43 @@
         "to": "hdole/floats/Fa{Po{F32,F32}oP,F32_1}aF"
       },
       {
-        "description": "",
         "basename": "m_97",
-        "name": "hdole/floats/m_97",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_178",
         "codomain": "hdole/floats/o_177",
         "to": "hdole/floats/zero32"
       },
       {
-        "description": "",
         "basename": "m_98",
-        "name": "hdole/floats/m_98",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_175",
         "codomain": "hdole/floats/o_179",
         "to": "hdole/floats/eq32"
       },
       {
-        "description": "",
         "basename": "m_81",
-        "name": "hdole/floats/m_81",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_162",
         "codomain": "hdole/floats/o_163",
         "to": "hdole/floats/Fa{F32,F32_,F32_-1}aF"
       },
       {
-        "description": "",
         "basename": "m_82",
-        "name": "hdole/floats/m_82",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_163",
         "codomain": "hdole/floats/o_164",
         "to": "hdole/floats/Pm{Id{F32}dI,zero32}mP"
       },
       {
-        "description": "",
         "basename": "m_83",
-        "name": "hdole/floats/m_83",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_164",
         "codomain": "hdole/floats/o_165",
         "to": "hdole/floats/eq32"
       },
       {
-        "description": "",
         "basename": "m_84",
-        "name": "hdole/floats/m_84",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_162",
         "codomain": "hdole/floats/o_165",
         "attributes": [
@@ -3793,45 +2613,29 @@
         "to": "hdole/floats/Cm{Fa{F32,F32_,F32_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
       },
       {
-        "description": "",
         "basename": "m_85",
-        "name": "hdole/floats/m_85",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_171",
         "codomain": "hdole/floats/o_172",
         "to": "hdole/floats/Fa{F64,F64_,F64_-1}aF"
       },
       {
-        "description": "",
         "basename": "m_90",
-        "name": "hdole/floats/m_90",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_172",
         "codomain": "hdole/floats/o_173",
         "to": "hdole/floats/Pm{Id{F64}dI,zero64}mP"
       },
       {
-        "description": "",
         "basename": "m_91",
-        "name": "hdole/floats/m_91",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_173",
         "codomain": "hdole/floats/o_174",
         "to": "hdole/floats/eq64"
       },
       {
-        "description": "",
         "basename": "m_92",
-        "name": "hdole/floats/m_92",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_171",
         "codomain": "hdole/floats/o_174",
         "attributes": [
@@ -3843,45 +2647,29 @@
         "to": "hdole/floats/Cm{Fa{F64,F64_,F64_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
       },
       {
-        "description": "",
         "basename": "m_93",
-        "name": "hdole/floats/m_93",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_180",
         "codomain": "hdole/floats/o_181",
         "to": "hdole/floats/Fa{F128,F128_,F128_-1}aF"
       },
       {
-        "description": "",
         "basename": "m_94",
-        "name": "hdole/floats/m_94",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_181",
         "codomain": "hdole/floats/o_182",
         "to": "hdole/floats/Pm{Id{F128}dI,zero128}mP"
       },
       {
-        "description": "",
         "basename": "m_99",
-        "name": "hdole/floats/m_99",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_182",
         "codomain": "hdole/floats/o_183",
         "to": "hdole/floats/eq128"
       },
       {
-        "description": "",
         "basename": "m_100",
-        "name": "hdole/floats/m_100",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_180",
         "codomain": "hdole/floats/o_183",
         "attributes": [
@@ -3893,36 +2681,24 @@
         "to": "hdole/floats/Cm{Fa{F128,F128_,F128_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
       },
       {
-        "description": "",
         "basename": "m_101",
-        "name": "hdole/floats/m_101",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_162",
         "codomain": "hdole/floats/o_165",
         "homsetIndex": 5,
         "to": "hdole/floats/eq0_32"
       },
       {
-        "description": "",
         "basename": "m_102",
-        "name": "hdole/floats/m_102",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_171",
         "codomain": "hdole/floats/o_174",
         "homsetIndex": 5,
         "to": "hdole/floats/eq0_64"
       },
       {
-        "description": "",
         "basename": "m_103",
-        "name": "hdole/floats/m_103",
         "prototype": "IndexMorphism",
-        "category": "hdole/floats_Index",
-        "diagram": "hdole/floats",
         "domain": "hdole/floats/o_180",
         "codomain": "hdole/floats/o_183",
         "homsetIndex": 5,
@@ -4901,11 +3677,8 @@
       ]
     },
     {
-      "basename": "Id{F32}dI",
       "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/floats/F32",
-      "codomain": "hdole/floats/F32"
+      "domain": "hdole/floats/F32"
     },
     {
       "prototype": "ProductMorphism",
@@ -4936,11 +3709,8 @@
       ]
     },
     {
-      "basename": "Id{F64}dI",
       "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/floats/F64",
-      "codomain": "hdole/floats/F64"
+      "domain": "hdole/floats/F64"
     },
     {
       "prototype": "ProductMorphism",
@@ -4971,11 +3741,8 @@
       ]
     },
     {
-      "basename": "Id{F128}dI",
       "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/floats/F128",
-      "codomain": "hdole/floats/F128"
+      "domain": "hdole/floats/F128"
     },
     {
       "prototype": "ProductMorphism",
@@ -5031,11 +3798,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643054808514,
+  "timestamp": 1643698627305,
   "version": 0,
   "viewport": {
     "x": 1040,
-    "y": 241,
+    "y": 309,
     "scale": 0.9373898509126939
   }
 }

@@ -18,12 +18,8 @@
     "diagram": "hdole/hdole",
     "elements": [
       {
-        "description": "",
         "basename": "o_8",
-        "name": "hdole/while/o_8",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/S",
         "xy": {
           "x": 650,
@@ -31,12 +27,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_10",
-        "name": "hdole/while/o_10",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/#1",
         "xy": {
           "x": 450,
@@ -44,12 +36,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_11",
-        "name": "hdole/while/o_11",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/#1",
         "xy": {
           "x": 850,
@@ -57,12 +45,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_13",
-        "name": "hdole/while/o_13",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/S",
         "xy": {
           "x": 450,
@@ -70,12 +54,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_12",
-        "name": "hdole/while/o_12",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/S",
         "xy": {
           "x": 850,
@@ -83,12 +63,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_14",
-        "name": "hdole/while/o_14",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/S",
         "xy": {
           "x": 1050,
@@ -96,12 +72,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_15",
-        "name": "hdole/while/o_15",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/S",
         "xy": {
           "x": 1250,
@@ -111,10 +83,7 @@
       {
         "description": "While",
         "basename": "t_0",
-        "name": "hdole/while/t_0",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/while",
         "xy": {
           "x": -50,
           "y": 80
@@ -123,12 +92,8 @@
         "weight": "bold"
       },
       {
-        "description": "",
         "basename": "o_4",
-        "name": "hdole/while/o_4",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/S",
         "xy": {
           "x": 450,
@@ -136,12 +101,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_7",
-        "name": "hdole/while/o_7",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/S",
         "xy": {
           "x": 650,
@@ -151,10 +112,7 @@
       {
         "description": "The purpose of a &#39;while&#39; statement in a\nvernacular programming language is to\ntest an expression and if true run an\nupdate function on our state.",
         "basename": "t_1",
-        "name": "hdole/while/t_1",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/while",
         "xy": {
           "x": -50,
           "y": 200
@@ -164,10 +122,7 @@
       {
         "description": "The assembly of the above diagram shows a composite of three stages.\nThe first stage runs the test and maintains access to the original state..\nThe second stage selects a function depending on the first stage.\nThe choices are maintaining state or doing the update followed by while.\nThe last stage evaluates the given function of the second stage to get the final result.\n",
         "basename": "t_3",
-        "name": "hdole/while/t_3",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/while",
         "xy": {
           "x": -50,
           "y": 1000
@@ -177,10 +132,7 @@
       {
         "description": "The portion of the diagram on the left\nside represents what happens if the\ntest returns false.  Namely, the identity\nid represents that the state does not\nupdate.  The right side is run if the\ntest returns true, whereupon the\nupdate function is invoked, followed\nby 'while'.",
         "basename": "t_2",
-        "name": "hdole/while/t_2",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/while",
         "xy": {
           "x": -50,
           "y": 660
@@ -190,10 +142,7 @@
       {
         "description": "Next we set the recursor to while to be the morphism just assembled.\nLastly, we give a named version of &#39;while&#39; as &#39;While&#39; as that marks it as externally available.",
         "basename": "t_4",
-        "name": "hdole/while/t_4",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/while",
         "xy": {
           "x": -50,
           "y": 1550
@@ -201,12 +150,8 @@
         "height": "24"
       },
       {
-        "description": "",
         "basename": "o_1",
-        "name": "hdole/while/o_1",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/CPo{#1,#1}oPC",
         "xy": {
           "x": 450,
@@ -214,12 +159,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_3",
-        "name": "hdole/while/o_3",
         "prototype": "IndexObject",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "to": "hdole/while/CPo{#1,#1}oPC",
         "xy": {
           "x": 650,
@@ -227,12 +168,8 @@
         }
       },
       {
-        "description": "",
         "basename": "m_7",
-        "name": "hdole/while/m_7",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_13",
         "codomain": "hdole/while/o_10",
         "attributes": [
@@ -252,12 +189,8 @@
         "to": "hdole/while/Fa{S,S_-1}aF"
       },
       {
-        "description": "",
         "basename": "m_8",
-        "name": "hdole/while/m_8",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_13",
         "codomain": "hdole/while/o_8",
         "attributes": [
@@ -273,12 +206,8 @@
         "to": "hdole/while/Id{S}dI"
       },
       {
-        "description": "",
         "basename": "m_9",
-        "name": "hdole/while/m_9",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_12",
         "codomain": "hdole/while/o_11",
         "attributes": [
@@ -294,34 +223,22 @@
         "to": "hdole/while/Fa{S,S_-1}aF"
       },
       {
-        "description": "",
         "basename": "m_10",
-        "name": "hdole/while/m_10",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_12",
         "codomain": "hdole/while/o_14",
         "to": "hdole/while/update"
       },
       {
-        "description": "",
         "basename": "m_11",
-        "name": "hdole/while/m_11",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_14",
         "codomain": "hdole/while/o_15",
         "to": "hdole/while/while"
       },
       {
-        "description": "",
         "basename": "m_0",
-        "name": "hdole/while/m_0",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_12",
         "codomain": "hdole/while/o_8",
         "attributes": [
@@ -341,45 +258,29 @@
         "to": "hdole/while/Id{S}dI"
       },
       {
-        "description": "",
         "basename": "m_14",
-        "name": "hdole/while/m_14",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_4",
         "codomain": "hdole/while/o_7",
         "to": "hdole/while/update"
       },
       {
-        "description": "",
         "basename": "m_1",
-        "name": "hdole/while/m_1",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_4",
         "codomain": "hdole/while/o_1",
         "to": "hdole/while/test"
       },
       {
-        "description": "",
         "basename": "m_2",
-        "name": "hdole/while/m_2",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_8",
         "codomain": "hdole/while/o_3",
         "to": "hdole/while/test"
       },
       {
-        "description": "",
         "basename": "m_3",
-        "name": "hdole/while/m_3",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_10",
         "codomain": "hdole/while/o_3",
         "attributes": [
@@ -395,12 +296,8 @@
         "to": "hdole/while/CFa{CPo{#1,#1}oPC,#1_0}aFC"
       },
       {
-        "description": "",
         "basename": "m_4",
-        "name": "hdole/while/m_4",
         "prototype": "IndexMorphism",
-        "category": "hdole/while_Index",
-        "diagram": "hdole/while",
         "domain": "hdole/while/o_11",
         "codomain": "hdole/while/o_3",
         "attributes": [
@@ -464,11 +361,8 @@
       ]
     },
     {
-      "basename": "Id{S}dI",
       "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/S"
+      "domain": "hdole/while/S"
     },
     {
       "basename": "test",
@@ -496,11 +390,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643054903644,
+  "timestamp": 1643535635800,
   "version": 0,
   "viewport": {
-    "x": 341,
-    "y": 330,
-    "scale": 1.5558792517896811
+    "x": 1524,
+    "y": -345,
+    "scale": 0.5524324480412295
   }
 }
