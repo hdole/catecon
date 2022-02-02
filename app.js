@@ -50,6 +50,8 @@ Cat.R.cloudURL = process.env.CAT_PARENT;
 
 Cat.R.URL = process.env.CAT_URL;
 Cat.R.local = process.env.CAT_LOCAL === 'true';
+
+const issues = new Set();
 //
 // rotate access log files
 //
@@ -144,18 +146,6 @@ function mysqlKeepAlive()
 			throw error;
 	});
 }
-
-/*
-function saveHTMLjs()
-{
-	Cat.R.SelectDiagram('hdole/HTML', diagram =>
-	{
-		const js = Cat.R.Actions.javascript.generateDiagram(diagram);
-		fs.writeFile('js/HTML.js', js, error => {if (error) throw error;});
-		res.end('ok');
-	});
-}
-*/
 
 function getDiagramInfo(diagram)
 {
@@ -392,6 +382,15 @@ function updateSQLDiagramsByCatalog()
 	});
 }
 
+function downloadIssues()
+{
+	dbcon.query('SELECT diagram FROM Catecon.issues', (error, diagrams) =>
+	{
+		if (error) throw error;
+		diagrams.map(info => issues.add(info.diagram));
+	});
+}
+
 function findDiagramJsons(dir)
 {
 	if (!fs.existsSync(dir))
@@ -404,6 +403,44 @@ function findDiagramJsons(dir)
 	const subdirs = files.filter(f => fs.lstatSync(path.join(dir, f)).isDirectory());
 	subdirs.map(subdir => diagrams.push(...findDiagramJsons(`${dir}/${subdir}`)));
 	return diagrams;
+}
+
+	//			const sqlExists = `SELECT EXISTS(SELECT diagram,basename FROM Catecon.issues WHERE diagram = '${diagram.name}' AND basename = '${elt.basename}');`;
+	//			dbcon.query(sqlExists, [diagram.user, diagram.name, elt.basename, elt.description, diagram.timestamp], (error, result) =>
+function uploadBugs(diagram)
+{
+	const sqlExists = `SELECT diagram,basename FROM Catecon.issues WHERE diagram = '${diagram.name}';`;
+	dbcon.query(sqlExists, (error, result) =>
+	{
+		const issues = new Set();
+		result.map(r => issues.add(r.basename));
+		const elements = diagram.domainInfo.elements;
+		for (const elt of elements)
+		{
+			if (elt.prototype === 'IndexText' && elt.description.match(/^BUG:/))
+			{
+				const foundit = issues.has(elt.basename);
+				foundit && issues.delete(elt.basename);
+				const updateSql = (foundit ? 'UPDATE ' : 'INSERT INTO ') + 'Catecon.issues SET diagram = ?, basename = ?, user = ?, description = ?, timestamp = ? ' + (foundit ? ' WHERE diagram = ? AND basename = ?' : '');
+				const args = [diagram.name, elt.basename, diagram.user, elt.description, diagram.timestamp, diagram.name, elt.basename];
+				dbcon.query(updateSql, args, (error, result) =>
+				{
+					if (error)
+					{
+						console.log({error});
+						res.status(HTTP.INTERNAL_ERROR).send({error, message:'cannot save issue'}).end();
+						return;
+					}
+				});
+			}
+		}
+		issues.forEach(issue =>
+		{
+			dbcon.query('DELETE FROM Catecon.issues WHERE diagram=? AND basename=?', [diagram.name, issue], (error, result) =>
+			{
+			});
+		});
+	});
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,6 +478,7 @@ async function serve()
 					console.log('Catecon runtime initialized');
 					console.log('update SQL diagrams by catalog');
 					updateSQLDiagramsByCatalog();
+					downloadIssues();
 					result.map(r =>
 					{
 						if (!Cat.R.catalog.has(r.name))
@@ -664,7 +702,7 @@ async function serve()
 					if (diagram.name.split('/')[0] !== req.body.user)
 					{
 						console.log('*** name mismatch req.body.user', req.body.user, 'diagram.user', diagram.user);
-						return res.status(HTTP.UNAUTHORIZED).send('diagram user and name mismatch').end();
+						return res.status(HTTP.UNAUTHORIZED).send({message:'diagram user and name mismatch'}).end();
 					}
 				}
 				const name = diagram.name;
@@ -675,6 +713,7 @@ async function serve()
 					saveDiagramJson(name, JSON.stringify(diagram, null, 2));
 					if (png)
 						saveDiagramPng(name, png);
+					uploadBugs(diagram);
 				}
 				//
 				// check cache
@@ -692,7 +731,7 @@ async function serve()
 							if (error)
 							{
 								console.log({error});
-								res.status(HTTP.INTERNAL_ERROR).send('cannot update diagram info').end();
+								res.status(HTTP.INTERNAL_ERROR).send({message:'cannot update diagram info'}).end();
 								return;
 							}
 							try
@@ -733,7 +772,7 @@ async function serve()
 						if (error)
 						{
 							console.log({error});
-							res.status(HTTP.INTERNAL_ERROR).send('cannot insert new diagram').end();
+							res.status(HTTP.INTERNAL_ERROR).send({error, message:'cannot insert new diagram'}).end();
 							return;
 						}
 						const info = Cat.Diagram.GetInfo(diagram);
@@ -762,7 +801,7 @@ async function serve()
 			if (name.includes('..'))
 			{
 				console.log('/delete bad name', name);
-				res.status(HTTP.BAD_REQUEST).send('bad name').end();
+				res.status(HTTP.BAD_REQUEST).send({message:'bad name'}).end();
 				return;
 			}
 			Cat.R.catalog.delete(name);
@@ -771,7 +810,7 @@ async function serve()
 				if (error)
 				{
 					console.log({error});
-					res.status(HTTP.INTERNAL_ERROR).send(error).end();
+					res.status(HTTP.INTERNAL_ERROR).send({error, message:'Cannot select user'}).end();
 					return;
 				}
 				if (result.length > 0)		// found it
@@ -779,13 +818,13 @@ async function serve()
 					if (req.user !== result[0].user)
 					{
 						console.log('*** user not owner', req.user, result[0].user);
-						res.status(HTTP.UNAUTHORIZED).send('user not owner').end();
+						res.status(HTTP.UNAUTHORIZED).send({message:'user not owner'}).end();
 						return;
 					}
 					if (result[0].refcnt > 0)
 					{
 						console.log('diagram is referenced', result[0].refcnt);
-						res.status(HTTP.BAD_REQUEST).send('diagram is referenced').end();
+						res.status(HTTP.BAD_REQUEST).send({message:'diagram is referenced'}).end();
 						return;
 					}
 					dbcon.query('DELETE FROM Catecon.diagrams WHERE name=?', [name], (error, result) =>
@@ -793,7 +832,7 @@ async function serve()
 						if (error)
 						{
 							console.log({error});
-							res.status(HTTP.INTERNAL_ERROR).send(error).end();
+							res.status(HTTP.INTERNAL_ERROR).send({error, message:'Cannot delete diagram from DB'}).end();
 							return;
 						}
 						console.log('deleted from database', name);
