@@ -129,7 +129,11 @@ function setEquals(leftLeg, rightLeg)
 function loadEquivalences(diagram, lLeg, rLeg, equal)
 {
 	const leftLeg = lLeg.length > 1 ? removeIdentities(lLeg) : lLeg;
+	if (lLeg.length > leftLeg.length)
+		setEquals(lLeg, leftLeg);
 	const rightLeg = rLeg.length > 1 ? removeIdentities(rLeg) : rLeg;
+	if (rLeg.length > rightLeg.length)
+		setEquals(rLeg, rightLeg);
 	maxLegLength = Math.max(maxLegLength, leftLeg.length, rightLeg.length);
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
@@ -283,6 +287,8 @@ function trimLegs(inLeft, inRight)
 	{
 		if (inLeft[i] === inRight[i])
 			continue;
+		if (inLeft.length === i + 1 || inRight.length === i + 1)
+			break;
 		left = inLeft.slice(i);
 		right = inRight.slice(i);
 		break;
