@@ -285,10 +285,14 @@ function trimLegs(inLeft, inRight)
 	let right = null;
 	for (let i=0; i<min; ++i)
 	{
+		if (inLeft.length === i + 1 || inRight.length === i + 1)
+		{
+			left = inLeft.slice(i);
+			right = inRight.slice(i);
+			break;
+		}
 		if (inLeft[i] === inRight[i])
 			continue;
-		if (inLeft.length === i + 1 || inRight.length === i + 1)
-			break;
 		left = inLeft.slice(i);
 		right = inRight.slice(i);
 		break;
@@ -296,6 +300,12 @@ function trimLegs(inLeft, inRight)
 	min = Math.min(left.length, right.length);
 	for (let i=0; i<min; ++i)
 	{
+		if (inLeft.length === i + 1 || inRight.length === i + 1)
+		{
+			left = left.slice(0, left.length - i);
+			right = right.slice(0, right.length - i);
+			break;
+		}
 		if (left[left.length -1 - i] === right[right.length -1 - i])
 			continue;
 		left = left.slice(0, left.length - i);
