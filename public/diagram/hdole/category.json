@@ -7,14 +7,14 @@
   "category": "zf/Set",
   "diagram": "hdole/hdole",
   "domain": "hdole/category_Index",
-  "codomain": "sys/Cat",
+  "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
     "description": "index category for diagram hdole/category",
     "basename": "category_Index",
     "name": "hdole/category_Index",
     "prototype": "IndexCategory",
-    "category": "sys/CAT",
+    "category": "em/CAT",
     "diagram": "hdole/hdole",
     "elements": [
       {
@@ -23,7 +23,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": -50
+          "y": 50
         }
       },
       {
@@ -32,7 +32,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": -50
+          "y": 50
         }
       },
       {
@@ -41,7 +41,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": 50
+          "y": 150
         }
       },
       {
@@ -50,7 +50,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 50
+          "y": 150
         }
       },
       {
@@ -59,7 +59,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": 150
+          "y": 250
         }
       },
       {
@@ -68,7 +68,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 150
+          "y": 250
         }
       },
       {
@@ -77,7 +77,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": 650
+          "y": 750
         }
       },
       {
@@ -86,7 +86,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 650
+          "y": 750
         }
       },
       {
@@ -95,7 +95,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 850
+          "y": 950
         }
       },
       {
@@ -104,7 +104,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": 950
+          "y": 1050
         }
       },
       {
@@ -113,7 +113,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 950
+          "y": 1050
         }
       },
       {
@@ -122,7 +122,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 1150
+          "y": 1250
         }
       },
       {
@@ -130,8 +130,8 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -210,
-          "y": -470
+          "x": -190,
+          "y": -500
         },
         "height": "374",
         "weight": "bold"
@@ -142,7 +142,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": -260
+          "y": -160
         },
         "height": "24"
       },
@@ -152,7 +152,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": -160
+          "y": -60
         },
         "height": "24"
       },
@@ -162,7 +162,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": -40
+          "y": 60
         },
         "height": "24"
       },
@@ -172,7 +172,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": -160
+          "y": -50
         }
       },
       {
@@ -181,7 +181,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": -260
+          "y": -150
         }
       },
       {
@@ -190,7 +190,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 250
+          "y": 350
         }
       },
       {
@@ -199,7 +199,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 400
+          "y": 500
         }
       },
       {
@@ -208,7 +208,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": 400
+          "y": 500
         }
       },
       {
@@ -217,7 +217,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 550,
-          "y": 250
+          "y": 350
         }
       },
       {
@@ -226,7 +226,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 550,
-          "y": 1300
+          "y": 1400
         }
       },
       {
@@ -235,7 +235,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 1300
+          "y": 1400
         }
       },
       {
@@ -244,7 +244,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": 1500
+          "y": 1600
         }
       },
       {
@@ -253,7 +253,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 1500
+          "y": 1600
         }
       },
       {
@@ -262,7 +262,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 550,
-          "y": 1600
+          "y": 1700
         }
       },
       {
@@ -271,7 +271,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 1600
+          "y": 1700
         }
       },
       {
@@ -280,7 +280,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 550,
-          "y": 1800
+          "y": 1900
         }
       },
       {
@@ -289,7 +289,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 1800
+          "y": 1900
         }
       },
       {
@@ -298,7 +298,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 550,
-          "y": 500
+          "y": 600
         }
       },
       {
@@ -307,7 +307,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 500
+          "y": 600
         }
       },
       {
@@ -316,7 +316,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 1050,
-          "y": 2200
+          "y": 2300
         }
       },
       {
@@ -325,7 +325,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 1050,
-          "y": 2400
+          "y": 2500
         }
       },
       {
@@ -334,7 +334,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 850,
-          "y": 2400
+          "y": 2500
         }
       },
       {
@@ -343,7 +343,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 850,
-          "y": 2200
+          "y": 2300
         }
       },
       {
@@ -352,7 +352,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 1350,
-          "y": 1950
+          "y": 2050
         }
       },
       {
@@ -361,7 +361,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 1150,
-          "y": 2150
+          "y": 2250
         }
       },
       {
@@ -370,7 +370,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 1350,
-          "y": 2150
+          "y": 2250
         }
       },
       {
@@ -379,7 +379,7 @@
         "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
         "xy": {
           "x": 1150,
-          "y": 1950
+          "y": 2050
         }
       },
       {
@@ -388,7 +388,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 750,
-          "y": 2450
+          "y": 2550
         }
       },
       {
@@ -397,7 +397,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 550,
-          "y": 2650
+          "y": 2750
         }
       },
       {
@@ -406,7 +406,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 750,
-          "y": 2650
+          "y": 2750
         }
       },
       {
@@ -415,7 +415,7 @@
         "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
         "xy": {
           "x": 550,
-          "y": 2450
+          "y": 2550
         }
       },
       {
@@ -424,7 +424,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": -350
+          "y": -360
         },
         "height": "48",
         "weight": "bold"
@@ -435,7 +435,7 @@
         "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
         "xy": {
           "x": 550,
-          "y": 2900
+          "y": 3000
         }
       },
       {
@@ -444,7 +444,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 950,
-          "y": 2900
+          "y": 3000
         }
       },
       {
@@ -453,7 +453,7 @@
         "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
         "xy": {
           "x": 1350,
-          "y": 2900
+          "y": 3000
         }
       },
       {
@@ -462,7 +462,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 950,
-          "y": 3100
+          "y": 3200
         }
       },
       {
@@ -471,7 +471,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": 1950
+          "y": 2050
         },
         "height": 24
       },
@@ -481,7 +481,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": 260
+          "y": 360
         },
         "height": 24
       },
@@ -491,7 +491,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": 500
+          "y": 600
         },
         "height": 24
       },
@@ -501,7 +501,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": 1300
+          "y": 1400
         },
         "height": 24
       },
@@ -511,7 +511,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": 1600
+          "y": 1700
         },
         "height": 24
       },
@@ -521,7 +521,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": 960
+          "y": 1060
         },
         "height": 24
       },
@@ -531,7 +531,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -190,
-          "y": 670
+          "y": 770
         },
         "height": 24
       },
@@ -541,7 +541,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 880,
-          "y": 910
+          "y": 1010
         },
         "height": 24
       },
@@ -551,7 +551,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 870,
-          "y": 3530
+          "y": 3630
         }
       },
       {
@@ -560,7 +560,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 580,
-          "y": 3530
+          "y": 3630
         }
       },
       {
@@ -569,7 +569,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 870,
-          "y": 3390
+          "y": 3490
         }
       },
       {
@@ -578,7 +578,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 870,
-          "y": 3250
+          "y": 3350
         }
       },
       {
@@ -587,7 +587,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 1200,
-          "y": 4450
+          "y": 4550
         }
       },
       {
@@ -596,7 +596,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 1350,
-          "y": 4450
+          "y": 4550
         }
       },
       {
@@ -605,7 +605,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 1000,
-          "y": 4450
+          "y": 4550
         }
       },
       {
@@ -614,7 +614,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 1350,
-          "y": 4300
+          "y": 4400
         }
       },
       {
@@ -623,7 +623,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 800,
-          "y": 4000
+          "y": 4100
         }
       },
       {
@@ -632,7 +632,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 950,
-          "y": 4000
+          "y": 4100
         }
       },
       {
@@ -641,7 +641,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 950,
-          "y": 3700
+          "y": 3800
         }
       },
       {
@@ -650,7 +650,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 950,
-          "y": 3850
+          "y": 3950
         }
       },
       {
@@ -659,7 +659,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 800,
-          "y": 3850
+          "y": 3950
         }
       },
       {
@@ -668,7 +668,7 @@
         "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
           "x": 580,
-          "y": 3250
+          "y": 3350
         }
       },
       {
@@ -677,7 +677,7 @@
         "to": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
         "xy": {
           "x": 1000,
-          "y": 4300
+          "y": 4400
         }
       },
       {
@@ -686,7 +686,7 @@
         "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
           "x": 600,
-          "y": 3700
+          "y": 3800
         }
       },
       {
@@ -695,7 +695,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 600,
-          "y": 4000
+          "y": 4100
         }
       },
       {
@@ -704,7 +704,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 840,
-          "y": 2510
+          "y": 2610
         },
         "height": 24
       },
@@ -714,7 +714,7 @@
         "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
           "x": 600,
-          "y": 4150
+          "y": 4250
         }
       },
       {
@@ -723,7 +723,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 1350,
-          "y": 4150
+          "y": 4250
         }
       },
       {
@@ -731,8 +731,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
-          "x": 650,
-          "y": 5050
+          "x": 550,
+          "y": 5100
         }
       },
       {
@@ -740,8 +740,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
-          "x": 1100,
-          "y": 5050
+          "x": 1000,
+          "y": 5100
         }
       },
       {
@@ -750,7 +750,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 1000,
-          "y": 4600
+          "y": 4700
         }
       },
       {
@@ -759,7 +759,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 850,
-          "y": 4900
+          "y": 5000
         }
       },
       {
@@ -768,7 +768,7 @@
         "to": "hdole/category/C0",
         "xy": {
           "x": 1000,
-          "y": 4900
+          "y": 5000
         }
       },
       {
@@ -777,7 +777,7 @@
         "to": "hdole/category/C1",
         "xy": {
           "x": 1000,
-          "y": 4750
+          "y": 4850
         }
       },
       {
@@ -786,7 +786,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 650,
-          "y": 4900
+          "y": 5000
         }
       },
       {
@@ -795,7 +795,7 @@
         "to": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
         "xy": {
           "x": 650,
-          "y": 4600
+          "y": 4700
         }
       },
       {
@@ -804,7 +804,7 @@
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
           "x": 850,
-          "y": 4750
+          "y": 4850
         }
       },
       {
@@ -812,8 +812,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
         "xy": {
-          "x": 650,
-          "y": 5200
+          "x": 550,
+          "y": 5300
         }
       },
       {
@@ -821,8 +821,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
-          "x": 650,
-          "y": 5400
+          "x": 550,
+          "y": 5500
         }
       },
       {
@@ -830,8 +830,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 1100,
-          "y": 5400
+          "x": 1000,
+          "y": 5500
         }
       },
       {
@@ -839,18 +839,8 @@
         "basename": "t_17",
         "prototype": "IndexText",
         "xy": {
-          "x": -300,
-          "y": 5050
-        },
-        "height": 24
-      },
-      {
-        "description": "BUG:  cannot form pullback assembly with multi index arrows as base\nhttp://localhost:3000/?diagram=\"hdole/category\"&select=m_67,m_68,m_52,m_65,m_53,m_51,o_52",
-        "basename": "t_18",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -230,
-          "y": 4370
+          "x": -190,
+          "y": 5150
         },
         "height": 24
       },
@@ -859,9 +849,28 @@
         "prototype": "IndexObject",
         "to": "hdole/category/C",
         "xy": {
-          "x": 1020,
-          "y": -300
+          "x": 550,
+          "y": -250
         }
+      },
+      {
+        "basename": "o_76",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 700,
+          "y": -250
+        }
+      },
+      {
+        "description": "BUG:  hovering object does not highlight others with same sig",
+        "basename": "t_5",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 840,
+          "y": 350
+        },
+        "height": 24
       },
       {
         "basename": "m_0",
@@ -1041,6 +1050,12 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/category/o_30",
         "codomain": "hdole/category/o_29",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "hdole/category/dom"
       },
       {
@@ -1081,6 +1096,12 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/category/o_34",
         "codomain": "hdole/category/o_33",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "hdole/category/dom"
       },
       {
@@ -1122,6 +1143,12 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/category/o_38",
         "codomain": "hdole/category/o_39",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "hdole/category/Id{C0}dI"
       },
       {
@@ -1494,6 +1521,27 @@
         "domain": "hdole/category/o_66",
         "codomain": "hdole/category/o_65",
         "to": "hdole/category/comp"
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "hdole/category/o_45",
+        "codomain": "hdole/category/o_76"
+      },
+      {
+        "basename": "m_45",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/category/o_60",
+        "codomain": "hdole/category/o_52",
+        "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
+      },
+      {
+        "basename": "m_81",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/category/o_63",
+        "codomain": "hdole/category/o_74",
+        "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
       }
     ],
     "cells": [
@@ -1570,6 +1618,20 @@
         ],
         "assertion": "equals",
         "hidden": false
+      },
+      {
+        "name": "hdole/category/{m_66,m_80},{m_81,m_78,m_79}",
+        "left": [
+          "m_81",
+          "m_78",
+          "m_79"
+        ],
+        "right": [
+          "m_66",
+          "m_80"
+        ],
+        "assertion": "equals",
+        "hidden": false
       }
     ]
   },
@@ -1590,7 +1652,6 @@
     },
     {
       "prototype": "PullbackObject",
-      "category": "zf/Set",
       "objects": [
         "C1",
         "C1"
@@ -1602,7 +1663,6 @@
     },
     {
       "prototype": "PullbackObject",
-      "category": "zf/Set",
       "objects": [
         "C0",
         "C1"
@@ -1614,7 +1674,6 @@
     },
     {
       "prototype": "PullbackObject",
-      "category": "zf/Set",
       "objects": [
         "C1",
         "C0"
@@ -1626,7 +1685,6 @@
     },
     {
       "prototype": "PullbackObject",
-      "category": "zf/Set",
       "objects": [
         "Pb{cod,dom}bP",
         "C1"
@@ -1638,7 +1696,6 @@
     },
     {
       "prototype": "PullbackObject",
-      "category": "zf/Set",
       "objects": [
         "C1",
         "Pb{cod,dom}bP"
@@ -1650,12 +1707,10 @@
     },
     {
       "basename": "C",
-      "prototype": "CatObject",
-      "category": "zf/Set"
+      "prototype": "CatObject"
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,dom}bP",
       "codomain": "hdole/category/C1",
       "factors": [
@@ -1664,7 +1719,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,dom}bP",
       "codomain": "hdole/category/C1",
       "factors": [
@@ -1673,7 +1727,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
       "codomain": "hdole/category/C0",
       "factors": [
@@ -1682,7 +1735,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
       "codomain": "hdole/category/C1",
       "factors": [
@@ -1691,7 +1743,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
       "codomain": "hdole/category/C1",
       "factors": [
@@ -1700,7 +1751,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
       "codomain": "hdole/category/C0",
       "factors": [
@@ -1752,7 +1802,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1762,7 +1811,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1772,7 +1820,6 @@
     },
     {
       "prototype": "PullbackAssembly",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
       "codomain": "hdole/category/Pb{cod,dom}bP",
       "morphisms": [
@@ -1782,7 +1829,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1792,7 +1838,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1802,7 +1847,6 @@
     },
     {
       "prototype": "PullbackAssembly",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
       "codomain": "hdole/category/Pb{cod,dom}bP",
       "morphisms": [
@@ -1812,7 +1856,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,dom}bP",
       "codomain": "hdole/category/C0",
       "morphisms": [
@@ -1822,7 +1865,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
       "codomain": "hdole/category/Pb{cod,dom}bP",
       "factors": [
@@ -1831,7 +1873,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
       "codomain": "hdole/category/C1",
       "factors": [
@@ -1840,7 +1881,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,dom}bP",
       "codomain": "hdole/category/C0",
       "morphisms": [
@@ -1850,7 +1890,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
       "codomain": "hdole/category/C1",
       "factors": [
@@ -1859,7 +1898,6 @@
     },
     {
       "prototype": "FactorMorphism",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
       "codomain": "hdole/category/Pb{cod,dom}bP",
       "factors": [
@@ -1868,7 +1906,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1878,7 +1915,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1888,7 +1924,6 @@
     },
     {
       "prototype": "PullbackAssembly",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
       "codomain": "hdole/category/Pb{cod,dom}bP",
       "morphisms": [
@@ -1898,7 +1933,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1908,7 +1942,6 @@
     },
     {
       "prototype": "Composite",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
       "codomain": "hdole/category/C1",
       "morphisms": [
@@ -1918,21 +1951,29 @@
     },
     {
       "prototype": "PullbackAssembly",
-      "category": "zf/Set",
       "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
       "codomain": "hdole/category/Pb{cod,dom}bP",
       "morphisms": [
         "Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC",
         "Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC"
       ]
+    },
+    {
+      "prototype": "PullbackAssembly",
+      "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
+      "codomain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
+      "morphisms": [
+        "Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC",
+        "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1643764859402,
+  "timestamp": 1643859044951,
   "version": 0,
   "viewport": {
-    "x": 608,
-    "y": 606,
-    "scale": 1.1545366420395597
+    "x": 492,
+    "y": -5304,
+    "scale": 1.2048499965036843
   }
 }

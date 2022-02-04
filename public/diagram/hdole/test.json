@@ -908,8 +908,8 @@
         "prototype": "IndexObject",
         "to": "hdole/test/Po{Ho{A,B}oH,A}oP",
         "xy": {
-          "x": 2920,
-          "y": -10
+          "x": 2510,
+          "y": -60
         }
       },
       {
@@ -917,8 +917,8 @@
         "prototype": "IndexObject",
         "to": "hdole/test/B",
         "xy": {
-          "x": 3120,
-          "y": -10
+          "x": 2710,
+          "y": -60
         }
       },
       {
@@ -3043,7 +3043,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643690165719,
+  "timestamp": 1643783552914,
   "version": 0,
   "viewport": {
     "x": 241,

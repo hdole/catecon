@@ -4,69 +4,78 @@
   "name": "hdole/morphism",
   "prototype": "Diagram",
   "properName": "hdole/morphism",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/morphism_Index",
-  "codomain": "sys/Cat",
+  "codomain": "em/Cat",
   "references": [],
-  "domainElements": [
-    {
-      "description": "<icon>morphism</icon>Morphism",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 40,
-        "y": 1740
+  "domainInfo": {
+    "description": "index category for diagram hdole/morphism",
+    "basename": "morphism_Index",
+    "name": "hdole/morphism_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "<icon>morphism</icon>Morphism",
+        "basename": "t_0",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 40,
+          "y": 1750
+        },
+        "height": "164",
+        "weight": "bold"
       },
-      "height": "164",
-      "weight": "bold"
-    },
-    {
-      "description": "A morphism f in a category has domain and codomain objects \nand is generally shown as an arrow emanating from the\ndomain object and terminating at the codomain.",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 120,
-        "y": 1890
+      {
+        "description": "A morphism f in a category has domain and codomain objects \nand is generally shown as an arrow emanating from the\ndomain object and terminating at the codomain.",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 120,
+          "y": 1890
+        },
+        "height": "24"
       },
-      "height": "24"
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/morphism/A",
-      "xy": {
-        "x": 450,
-        "y": 2050
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "hdole/morphism/A",
+        "xy": {
+          "x": 450,
+          "y": 2050
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "hdole/morphism/B",
+        "xy": {
+          "x": 580,
+          "y": 2050
+        }
+      },
+      {
+        "description": "In Catecon, if you are the owner of the diagram that describes\nthe morphism, and the element is unreferenced, then you may\nchange the base name, proper name, description as well as the\ndomain and codomain.",
+        "basename": "t_2",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 140,
+          "y": 2210
+        },
+        "height": "24"
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/morphism/o_0",
+        "codomain": "hdole/morphism/o_1",
+        "to": "hdole/morphism/f"
       }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/morphism/B",
-      "xy": {
-        "x": 580,
-        "y": 2050
-      }
-    },
-    {
-      "description": "In Catecon, if you are the owner of the diagram that describes\nthe morphism, and the element is unreferenced, then you may\nchange the base name, proper name, description as well as the\ndomain and codomain.",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 140,
-        "y": 2210
-      },
-      "height": "24"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/morphism/o_0",
-      "codomain": "hdole/morphism/o_1",
-      "to": "hdole/morphism/f"
-    }
-  ],
+    ],
+    "cells": []
+  },
   "elements": [
     {
       "basename": "A",
@@ -84,7 +93,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641894357178,
+  "timestamp": 1643859879528,
   "version": 0,
   "viewport": {
     "x": 16,
