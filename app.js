@@ -366,6 +366,7 @@ function updateSQLDiagramsByCatalog()
 		const localDiagrams = new Set(diagrams.map(info => info.name));
 		diagrams.map(info =>
 		{
+			info.isLocal = false;
 			if (Cat.R.canUploadUser(info.user))
 			{
 				const cloudInfo = Cat.R.catalog.get(info.name);
@@ -490,10 +491,11 @@ async function serve()
 					// load diagrams from local storage
 					const dir = path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram');
 					const fsDiagrams = findDiagramJsons(dir);
-					fsDiagrams.map(f => fs.readFile(f, (error, data) =>
+					fsDiagrams.map(f =>
 					{
+						const data = fs.readFileSync(f);
 						console.log('load local diagram:', f);
-						if (error)
+						if (!data)
 						{
 							console.error('ERROR: cannot read diageram file', f, error);
 							return;
@@ -503,8 +505,9 @@ async function serve()
 						const inCloud = Cat.R.catalog.has(info.name);
 						let cloudTimestamp = inCloud ? Cat.R.catalog.get(info.name).cloudTimestamp : 0;
 						cloudTimestamp = cloudTimestamp ? cloudTimestamp: 0;
+						Cat.R.catalog.get(info.name).isLocal = true;
 						updateDiagramTable(info.name, info, _ => {}, cloudTimestamp, inCloud);
-					}));
+					});
 					console.log('load javascript.js');
 					require('./' + path.join(process.env.HTTP_DIR, 'js', 'javascript.js'));
 					determineRefcnts();
