@@ -731,8 +731,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
-          "x": 550,
-          "y": 5100
+          "x": 650,
+          "y": 5150
         }
       },
       {
@@ -740,8 +740,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
-          "x": 1000,
-          "y": 5100
+          "x": 1100,
+          "y": 5150
         }
       },
       {
@@ -812,8 +812,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
         "xy": {
-          "x": 550,
-          "y": 5300
+          "x": 650,
+          "y": 5350
         }
       },
       {
@@ -821,8 +821,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
-          "y": 5500
+          "x": 650,
+          "y": 5550
         }
       },
       {
@@ -830,8 +830,8 @@
         "prototype": "IndexObject",
         "to": "hdole/category/C1",
         "xy": {
-          "x": 1000,
-          "y": 5500
+          "x": 1100,
+          "y": 5550
         }
       },
       {
@@ -1083,12 +1083,6 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/category/o_31",
         "codomain": "hdole/category/o_33",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
         "to": "hdole/category/Id{C0}dI"
       },
       {
@@ -1542,6 +1536,16 @@
         "domain": "hdole/category/o_63",
         "codomain": "hdole/category/o_74",
         "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
+      },
+      {
+        "description": "BUG:  object emphasis not on across all such objects.",
+        "basename": "t_14",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1160,
+          "y": 2390
+        },
+        "height": 24
       }
     ],
     "cells": [
@@ -1969,11 +1973,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643859044951,
+  "timestamp": 1644054213867,
   "version": 0,
   "viewport": {
     "x": 492,
-    "y": -5304,
-    "scale": 1.2048499965036843
+    "y": -2244,
+    "scale": 1.204678908293253
   }
 }
