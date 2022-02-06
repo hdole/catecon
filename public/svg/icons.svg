@@ -219,11 +219,11 @@
 		<path class="icon-bold" d="M40,40 L160,280 L280,40 M100,140 L220,140"/>
 	</symbol>
 	<symbol id="icon-expression-exists" class="icon" viewbox="0 0 320 320">
-		<path class="icon-bold" d="M100,40 L200,40 L200,280 L100,280 M200,160 L120,160"/>
+		<path class="icon-bold" d="M100,40 L220,40 L220,280 L100,280 M220,160 L120,160"/>
 	</symbol>
 	<symbol id="icon-expression-existsUnique" class="icon" viewbox="0 0 320 320">
-		<path class="icon-bold" d="M80,40 L180,40 L180,280 L80,280 M180,160 L100,160"/>
-		<line class="icon-bold" x1="260" y1="40" x2="260" y2="220" marker-end="url(#arrowhead)"/>
+		<path class="icon-bold" d="M60,40 L160,40 L160,280 L60,280 M160,160 L80,160"/>
+		<line class="icon-bold" x1="260" y1="40" x2="260" y2="220"/>
 		<circle cx="260" cy="280" r="60" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-finiteObject" class="icon" viewbox="0 0 320 320">
