@@ -91,7 +91,7 @@ class D2
 	}
 	merge(box)
 	{
-		const merge = D2.merge(this, box);
+		const merge = D2.mergeBoxes(this, box);
 		this.x = merge.x;
 		this.y = merge.y;
 		this.width = merge.width;
