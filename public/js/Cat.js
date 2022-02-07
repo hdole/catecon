@@ -108,7 +108,7 @@ class U		// utilities
 	}
 	static clone(o)
 	{
-		if (null === o || o instanceof Element || (typeof o === 'object' && typeof Blob === 'object' && o instanceof Blob))
+		if (null === o || o instanceof Element || (typeof o === 'object' && typeof Blob === 'object' && o instanceof Blob))		// Blob not used in node.js
 			return o;
 		if (typeof o === 'object')
 		{
@@ -544,6 +544,7 @@ class Runtime
 			CAT:				{value:null,		writable:true},		// working nat trans
 			$CAT:				{value:null,		writable:true},
 			catalog:			{value:new Map(),	writable:true},
+			category:			{value:null,		writable:true},		// current category, typically R.diagram.category
 			categories:			{value:new Map(),	writable:false},	// available categories
 			cloud:				{value:null,		writable:true},		// the authentication cloud we're using
 			cloudURL:			{value:null,		writable:true},		// the server we upload to
@@ -661,6 +662,11 @@ class Runtime
 			description:	'category of categories',
 		};
 		this.CAT = new Category(null, CATargs);
+		this.CAT.newObject = basename =>
+		{
+			const cat = this.CAT.getElement(basename);
+			return cat ? cat : new Category(null, {basename});
+		};
 		const $CATargs =
 		{
 			codomain:		this.CAT,
@@ -680,6 +686,11 @@ class Runtime
 			properName:		'ℂ𝕒𝕥',
 			user:			'em',
 		});
+		this.Cat.newObject = basename =>
+		{
+			const cat = this.Cat.getElement(basename);
+			return cat ? cat : new Category(this$CAT, {basename});
+		};
 		this.sys.Actions = new Category(this.$CAT,
 		{
 			basename:		'Actions',
@@ -722,14 +733,12 @@ class Runtime
 		new ZoomAction(actionDiagram);
 		new DefinitionAction(actionDiagram);
 		new ProductAction(actionDiagram);
-		new ProductEditAction(actionDiagram);
 		new ProjectAction(actionDiagram);
 		new PullbackAction(actionDiagram, false);
 		new ProductAssemblyAction(actionDiagram);
 		new PullbackAssemblyAction(actionDiagram);
 		new MorphismAssemblyAction(actionDiagram);
 		new ProductAction(actionDiagram, true);
-		new ProductEditAction(actionDiagram, true);
 		new ProjectAction(actionDiagram, true);
 		new PullbackAction(actionDiagram, true);
 		new ProductAssemblyAction(actionDiagram, true);
@@ -747,9 +756,7 @@ class Runtime
 	}
 	setupSet()
 	{
-		const set = new Diagram(this.$CAT, {basename:'set', codomain:'Actions', description:'diagram for Set actions', user:'zf', timestamp:0});
-		set.sync = false;
-		new Category(this.$CAT, {basename:'Set', user:'zf', properName:'&Sopf;&eopf;&topf;', actionDiagrams:['diagram', 'product', 'coproduct', 'hom', 'distribute'] });
+		const set = new Category(this.$CAT, {basename:'Set', user:'zf', properName:'&Sopf;&eopf;&topf;', actionDiagrams:['diagram', 'product', 'coproduct', 'hom', 'distribute'] });
 	}
 	initialize(fn = null)
 	{
@@ -1004,8 +1011,6 @@ if (args.codomain === 'sys/Cat') args.codomain = 'em/Cat';		// TODO remove
 	//
 	static async SelectDiagram(name, eventAction = null, fn = null)
 	{
-		if (R.diagram && R.diagram.name === name)
-			return;
 		try
 		{
 			if (D)
@@ -1029,6 +1034,7 @@ if (args.codomain === 'sys/Cat') args.codomain = 'em/Cat';		// TODO remove
 			}
 			R.default.debug && console.log('SelectDiagram', name);
 			R.diagram = null;
+			R.category = null;
 			let diagram = name instanceof Diagram ? name : name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
 			if (!diagram)
 			{
@@ -1037,6 +1043,7 @@ if (args.codomain === 'sys/Cat') args.codomain = 'em/Cat';		// TODO remove
 					return;
 			}
 			R.diagram = diagram;
+			R.category = diagram.codomain;
 			D && D.emitCATEvent('default', diagram, eventAction);
 			fn && fn(diagram);
 		}
@@ -1050,7 +1057,7 @@ if (args.codomain === 'sys/Cat') args.codomain = 'em/Cat';		// TODO remove
 	{
 		if (name instanceof Category)
 			return name;
-		if (name === 'sys/CAT')
+		if (name === 'em/CAT')
 			return this.CAT;
 		else if (name === 'em/Cat')
 			return this.Cat;
@@ -1188,6 +1195,7 @@ if (args.codomain === 'sys/Cat') args.codomain = 'em/Cat';		// TODO remove
 					if (cursor)
 					{
 						const diagram = cursor.value;
+						R.default.debug && console.log('cataloging local diagram ' + diagram.name);
 						const info = this.catalog.get(diagram.name);
 						if (info)
 						{
@@ -1819,7 +1827,6 @@ class Navbar
 		});
 		window.addEventListener('View', e => this.update(e));
 		window.addEventListener('Application', e => this.update(e));
-		this.update();
 	}
 	updateByUserStatus()
 	{
@@ -1880,9 +1887,8 @@ class Navbar
 		const info = R.diagram ? Diagram.GetInfo(R.diagram) : R.catalog.get(D.session.getCurrentDiagram());
 		if (info)
 		{
-			const cat = R.$CAT.getElement(info.codomain);
-			if (cat && D.session.mode === 'diagram')
-				this.categoryElt.innerHTML = U.HtmlEntitySafe(cat.properName);
+			if (R.category && D.session.mode === 'diagram')
+				this.categoryElt.innerHTML = U.HtmlEntitySafe(R.category.properName);
 			else
 				this.categoryElt.innerHTML = '';
 			D.removeChildren(this.diagramElt);
@@ -3587,6 +3593,17 @@ class Session
 			this.current = null;
 			this.mode = 'catalog';
 		}
+	}
+	makeAllSvgs()
+	{
+		[...this.diagrams.keys()].map(name =>
+		{
+			const diagram = R.$CAT.getElement(name);
+			if (diagram)
+				diagram.makeSVG();
+			else
+				console.log('diagram not open', name);
+		});
 	}
 }
 
@@ -7540,28 +7557,17 @@ class Element
 		const html = this.getHtmlRep();
 		html.classList.add('element');
 		let elementToolbar = null;
-		if (R.diagram.isEditable())
+		if (this.diagram.isEditable())
 			elementToolbar = H3.table('.toolbar-element', H3.tr(H3.td(this.getButtons())));
 		const onmouseenter = e =>
 		{
-			const element = R.diagram.getElement(R.diagram.emphasis(this, true));
-			if (element)
-			{
-				e.target.onclick = e => R.diagram.makeSelected(element);
-				e.target.classList.add('clickable');
-				e.target.title = 'Click to select';
-			}
+			R.diagram.emphasis(this, true);
 			if (elementToolbar)
 				elementToolbar.style.opacity = 100;
 		};
 		const onmouseleave = e =>
 		{
-			if (R.diagram.emphasis(this, false))
-			{
-				e.target.onclick = null;
-				e.target.classList.remove('clickable');
-				e.target.title = '';
-			}
+			R.diagram.emphasis(this, false);
 			if (elementToolbar)
 				elementToolbar.style.opacity = 0;
 		};
@@ -8835,6 +8841,10 @@ class IndexText extends Element
 	{
 		return '1.5em';
 	}
+	ssStyle()
+	{
+		return `font-family:"Fira Sans",sans-serif;font-size:${this.height}px; font-weight:${this.weight}`;
+	}
 	setSvgText()
 	{
 		this.svgText = H3.text(this.isEditable ? '.grabbable' : null, {'text-anchor':this.textAnchor, style:this.ssStyle(), ondblclick:e => this.textEditor(), 'data-name':this.name});
@@ -8922,10 +8932,6 @@ class IndexText extends Element
 			}
 		};
 		this.description.split('\n').map((t, i) => procText(t, i));
-	}
-	ssStyle()
-	{
-		return `font-family:"Fira Sans",sans-serif;font-size:${this.height}px; font-weight:${this.weight}`;
 	}
 	makeSVG(node)
 	{
@@ -9351,7 +9357,7 @@ class IndexObject extends CatObject
 			if (quant)
 			{
 				const level = this.getLevel();
-				properName = '('.repeat(level) + R.Actions.quantifier.symbols[quant] + properName + ')'.repeat(level);
+				properName = '('.repeat(level) + R.Actions.expression.symbols[quant] + properName + ')'.repeat(level);
 			}
 			txt.innerHTML = properName;
 		}
@@ -9448,7 +9454,7 @@ class IndexObject extends CatObject
 	emphasis(on)
 	{
 		super.emphasis(on);
-		this.svg.querySelectorAll('*').forEach(elt => elt.classList.remove('emphasis2'));
+		this.svg.querySelectorAll('.emphasis2').forEach(elt => elt.classList.remove('emphasis2'));
 		this.svg.classList[on ? 'add' : 'remove']('emphasis');
 	}
 	getHtmlRep(idPrefix, config = {})
@@ -9759,217 +9765,6 @@ class ProductAction extends Action
 	}
 }
 
-class ProductEditAction extends Action
-{
-	constructor(diagram, dual = false)
-	{
-		const args =
-		{
-			description:	`Edit a ${dual ? 'co' : ''}product`,
-			basename:		dual ? 'coproductEdit' : 'productEdit',
-			dual,
-		};
-		super(diagram, args);
-		this.table = null;
-		D && D.replayCommands.set(this.basename, this);
-	}
-	html(e, diagram, ary)
-	{
-		super.html();
-		const elt = ary[0].to;
-		let top = null;
-		if (elt instanceof ProductObject)
-		{
-			const used = new Set();
-			diagram.codomain.forEachMorphism(m =>
-			{
-				if (m instanceof FactorMorphism && m.dual === this.dual)
-				{
-					let base = m[this.dual ? 'codomain' : 'domain'];
-					if (base instanceof NamedObject)
-						base = base.base;
-					m.factors.map(fctr => elt.objects.includes(base.objects[fctr]) && used.add(base.objects[fctr]));
-				}
-			});
-			this.table = H3.table(
-			[
-				...elt.objects.map((o, i) =>
-				{
-					const style = {style:'width:12px'};
-					const row = [
-						H3.td(style),
-						H3.td(style),
-						H3.td(!used.has(o) ? D.getIcon(this.name, 'delete', e => Cat.R.Actions[this.name].remove(e, this), {title:'Remove', scale:D.default.button.tiny}) : '&nbsp;', style),
-						H3.td(o.properName),
-					];
-					return H3.tr(row, {'data-ndx':i, 'data-name':o.name});
-				}),
-				this.getObjectSelectorRow(diagram),
-			]);
-			top = H3.div([	H3.h4(`Edit a ${this.dual ? 'Cop' : 'P'}roduct`),
-							this.table,
-							D.getIcon(this.name, 'edit', e => Cat.R.Actions[this.name].action(e, Cat.R.diagram, elt.name), {title:'Commit editing', scale:D.default.button.tiny})]);
-			this.updateTable();
-		}
-		D.toolbar.body.appendChild(top);
-	}
-	updateRow(row)
-	{
-		const cnt = this.table.children.length;
-		const up = row.children[0];
-		const down = row.children[1];
-		const i = row.rowIndex;
-		i === 0 && up.children.length > 0 && D.removeChildren(row.children[0].children);
-		i > 0 && up.children.length === 0 && up.appendChild(D.getIcon(this.name, 'up', e => Cat.R.Actions[this.name].up(e, this), {title:'Move down', scale:D.default.button.tiny}));
-		i < cnt -1 && down.children.length === 0 && down.appendChild(D.getIcon(this.name, 'down', e => Cat.R.Actions[this.name].down(e, this), {title:'Move down', scale:D.default.button.tiny}));
-	}
-	updateTable()
-	{
-		let row = this.table.firstElementChild;
-		while(row)
-		{
-			this.updateRow(row);
-			row = row.nextSibling;
-		}
-	}
-	getObjectSelectorRow(diagram)
-	{
-		const newFactor = _ =>
-		{
-			if (this.options.selectedIndex !== 0)
-			{
-				const editor = Cat.R.Actions[this.name];
-				editor.table.appendChild(editor.getObjectSelectorRow(diagram));
-				editor.updateTable();
-			}
-		};
-		return H3.tr([H3.td(''), H3.td(''), H3.td(''), H3.td(diagram.getObjectSelector('new-factor', 'Add object', newFactor))]);
-	}
-	getTableRow(elt)
-	{
-		while(elt.parentNode.constructor.name !== 'HTMLTableElement')
-			elt = elt.parentNode;
-		return elt;
-	}
-	up(e, elt)
-	{
-		const ndx = this.getTableRow(elt).rowIndex;
-		this.table.insertBefore(this.table.rows[ndx], this.table.rows[ndx -1]);
-		this.updateTable();
-	}
-	down(e, elt)
-	{
-		const ndx = this.getTableRow(elt).rowIndex;
-		this.table.insertBefore(this.table.rows[ndx +1], this.table.rows[ndx]);
-		this.updateTable();
-	}
-	remove(e, elt)
-	{
-		this.table.removeChild(this.getTableRow(elt));
-		this.updateTable();
-	}
-	action(e, diagram, objName, log = true)
-	{
-		const factors = [];
-		const rows = this.table.rows;
-		const sz = rows.length;
-		const elt = diagram.getElement(objName);
-		const objects = [];
-		let ndx = 0;
-		for (let i=0; i<sz; ++i)
-		{
-			const row = rows[i];
-			if (row.children[3].children.length === 0)
-			{
-				objects.push(diagram.getElement(row.dataset.name));
-				factors[Number.parseInt(row.dataset.ndx)] = ndx;
-			}
-			else	// new object
-			{
-				const val = row.children[3].children[0].value;
-				if (val !== 'Add object')
-				{
-					objects.push(diagram.getElement(val));
-					ndx++;
-				}
-			}
-		}
-		this.doit(e, diagram, elt, factors);
-		log && diagram.log({command:this.name, old:elt.name, factors});
-		// 	TODO antilog
-	}
-	doit(e, diagram, oldProd, factors)
-	{
-		const elt = elements[0];
-		const nuProd = diagram[this.dual ? 'coprod' : 'prod'](...objects);
-		if (elt instanceof IndexMorphism)
-		{
-			// TODO
-		}
-		else if (elt instanceof IndexObject)
-		{
-			const objMap = new Map();
-			diagram.elements.forEach(elt =>
-			{
-				let base = elt;
-				if (elt === oldProd)
-				{
-					const oldIndexes = diagram.domain.find(elt);
-					const nuIndexes = oldIndexes.map(o => new IndexObject(diagram, {to:nuProd, xy:o.getXY()}));
-					nuIndexes.map((ndx, i) => objMap.set(oldIndexes[i], ndx));
-				}
-				else if (elt instanceof NamedObject && elt.source === elt)
-				{
-					const nuNo = new NamedObject(diagram, {basename:elt.basename, source:nuProd});
-					const oldIndexes = diagram.domain.find(elt);
-				}
-				else if (elt instanceof Morphism)
-				{
-					const src = this.dual ? elt.codomain : elt.domain;
-					if ((elt instanceof FactorMorphism && src === oldProd) || (src instanceof NamedObject && src.base === oldProd))
-					{
-						const nuFactors = [];
-						for (let i=0; i<elt.factors.length; ++i)
-						{
-							const oldFctr = elt.factors[i];
-							factors.map(nuFctr =>
-							{
-								if (Array.isArray(oldFctr) && oldFctr[0] === nuFctr)		// is a sub-factor?
-								{
-									const repFctr = [nuFctr];
-									if (oldFctr.length > nuFctr.length)
-										repFctr.push(...oldFctr.slice(nuFctr.length, oldFctr.length));
-									nuFactors.push(repFctr);
-								}
-								else
-									nuFactors.push(nuFctr);
-							});
-						}
-						const nuFctrMorph = diagram.fctr(nuProd, nuFactors);
-						const oldIndexes = diagram.domain.find(elt);
-						oldIndexes.map(ndx =>
-						{
-							const domain = nuProd.dual ? objMap(elt.domain) : ndx.domain;
-							const codomain = nuProd.dual ? ndx.codomain : objMap(elt.codomain);
-							new IndexMorphism(diagram, {to:nuFctrMorph, domain, codomain});
-						});
-					}
-				}
-			});
-		}
-	}
-	replay(e, diagram, args)
-	{
-		const elements = diagram.getElements(args.elements);
-		this.doit(e, diagram, elements);	// TODO
-	}
-	hasForm(diagram, ary)
-	{
-// TODO		return ary.length === 1 && ary[0].isEditable() && ary[0].to instanceof ProductObject && ary[0].to.dual === this.dual && ary[0].refcnt === 1;
-		return false;
-	}
-}
-
 class PullbackAction extends Action		// pullback or pushout
 {
 	constructor(diagram, dual)
@@ -10225,7 +10020,7 @@ class MorphismAssemblyAction extends Action
 	{
 		if (ary.length === 1 && ary[0].isEditable() && ary[0] instanceof IndexObject)
 		{
-			if (diagram.blob && diagram.blob.objects.has(ary[0]) && diagram.blob.morphisms.size > 1)
+			if (diagram.blobs.length === 1 && diagram.blobs[0].objects.has(ary[0]) && diagram.blobs[0].morphisms.size > 1)
 				return true;
 		}
 		return false;
@@ -11733,7 +11528,6 @@ class ActionAction extends Action
 				return val;
 			});
 			const args = {basename, names, codomain:sourceDiagram.codomain, user:R.user.name, ops, references};
-//			const action = new ActionDiagram(R.userSessionActions, args);
 			action.sync = false;		// turn off autosave
 			const nameMap = new Map();
 			namedBareValues.map((elt, i) => nameMap.set(elt.name, names[i]));
@@ -11997,14 +11791,10 @@ class ExpressionAction extends Action
 	}
 	quantifierHtml(diagram, item)
 	{
-		let obj = null;
-		if (item instanceof IndexMorphism)
-			obj = item.domain;
-		else if (item instanceof IndexObject)
-			obj = item;
-		else if (item instanceof Cell)
-			obj = item.left[0].domain;
-		const blob = new DiagramBlob(obj);
+		const obj = item instanceof IndexMorphism ? item.domain : item instanceof Cell ? item.left[0].domain : item;
+		let blob = diagram.getBlob(obj);
+		if (!blob)
+			blob = new DiagramBlob(obj);
 		const body = D.toolbar.body;
 		body.appendChild(H3.h4('Expression from Blob'));
 		const selected = diagram.getSelected();
@@ -12072,18 +11862,27 @@ class ExpressionAction extends Action
 		super.html();
 		const body = D.toolbar.body;
 		const item = ary[0];
-		const oldQuant = 'getQuantifier' in this ? this.getQuantifier(item) : null;
-		body.appendChild(H3.h3('Quantifier'));
-		if (!(item instanceof Cell))
+		let oldQuant = 'getQuantifier' in this ? this.getQuantifier(item) : null;
+		body.appendChild(H3.h3('expression'));
+		let blob = diagram.getBlob(item);
+		if (!blob)
+			blob = new DiagramBlob(item);
+		let foundIt = false;
+		blob.morphisms.forEach(m =>
 		{
-			body.appendChild(H3.h4('Current: ' + this.symbols[oldQuant]));
+			if (m !== item && m.to.isEquivalent(item.to) && m.attributes.has('quantifier'))
+			{
+				foundIt = true;
+				oldQuant = this.getQuantifier(m);
+			}
+		});
+		body.appendChild(H3.h4('Current quantifier: ' + this.symbols[oldQuant]));
+		if (!foundIt)
+		{
 			const quantDiv = H3.div('.center');
 			body.appendChild(quantDiv);
-			if (oldQuant)
-			{
-				quantDiv.appendChild(D.getIcon('expression-none', 'expression-none', e => this.action(e, diagram, item, null), {title:'Remove quantifier'}));
-				this.quantifiers.filter(q => q !== oldQuant).map(q => quantDiv.appendChild(D.getIcon(`expression-${q}`, `expression-${q}`, e => this.action(e, diagram, item, q), {title:'Set quantifier'})));
-			}
+			oldQuant && quantDiv.appendChild(D.getIcon('expression-none', 'expression-none', e => this.action(e, diagram, item, null), {title:'Remove quantifier'}));
+			this.quantifiers.filter(q => q !== oldQuant).map(q => quantDiv.appendChild(D.getIcon(`expression-${q}`, `expression-${q}`, e => this.action(e, diagram, item, q), {title:'Set quantifier'})));
 		}
 		this.quantifierHtml(diagram, item);
 	}
@@ -12117,14 +11916,19 @@ class ExpressionAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && diagram.blob)
+		if (diagram.isEditable() && ary.length === 1)
 		{
 			const item = ary[0];
+			if (item instanceof IndexText)
+				return false;
+			let blob = diagram.getBlob(item);
+			if (!blob)
+				blob = new DiagramBlob(item);
 			if (item instanceof IndexMorphism)
 			{
 				if (item.to.isBare())
 				{
-					if (diagram.blob.morphisms.size > 1 && !diagram.blob.hasReference())
+					if (blob.morphisms.size > 1 && !blob.hasReference())
 						return true;
 				}
 			}
@@ -12132,12 +11936,10 @@ class ExpressionAction extends Action
 			{
 				if (item.to.isBare())
 				{
-					if (diagram.blob.morphisms.size > 1 && !diagram.blob.hasReference())
+					if (blob.morphisms.size > 1 && !blob.hasReference())
 						return true;
 				}
 			}
-			else if (item instanceof Cell)
-				return true;
 		}
 		return false;
 	}
@@ -12310,7 +12112,7 @@ class DefinitionAction extends Action
 		});
 		D.toolbar.body.appendChild(H3.h3('Create Definition'))
 		D.toolbar.body.appendChild(H3.small('Following are selected for the definition'))
-		const doit = elt => D.toolbar.table.appendChild(H3.tr(H3.td({colspan:2}, elt.getHtmlRow())));
+		const doit = elt => D.toolbar.table.appendChild(elt.getHtmlRow());
 		objects.forEach(doit);
 		morphisms.forEach(doit);
 		[...cells].sort((a, b) => a.getLevel() < b.getLevel() ? -1 : b.getLevel() > a.getLevel() ? 1 : 0).map(doit);;
@@ -12345,13 +12147,13 @@ class UserAction extends Action
 		super(diagram, nuArgs);
 		const attributes = new Map('attributes' in nuArgs ? nuArgs.attributes : []);
 		attributes.set('priority', U.getArg(args, 'priority', 0));
-		const match = 'match' in nuArgs ? nuArgs.match.map(elt => this.getElement(elt)) : null;
+		const sequence = 'sequence' in nuArgs ? nuArgs.sequence.map(elt => this.getElement(elt)) : null;		// TODO cell?
 		Object.defineProperties(this,
 		{
 			attributes:	{value:attributes,	writable:	false},
-			match:		{value:match,		writable:	true},
-			ops:		{value:nuArgs.ops,	writable:	false},
-			type:		{value:nuArgs.type,	writable:	false},
+			sequence:	{value:sequence,	writable:	true},
+			ops:		{value:nuArgs.ops,	writable:	false},		// TODO keep?
+			type:		{value:nuArgs.type,	writable:	false},		// definition, production
 		});
 	}
 	help()
@@ -12449,15 +12251,15 @@ class UserAction extends Action
 		let allObjects = false;
 		let allMorphisms = false;
 		let isBinaryOp = false;
-		if (this.match.length === ary.length && ary.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism).length === ary.length)
-			return this.match.reduce((r, ref, i) => r && R.sameForm(ref, ary[i].to, eltMap), true);	// do all elements have the same form?
+		if (this.sequence.length === ary.length && ary.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism).length === ary.length)
+			return this.sequence.reduce((r, ref, i) => r && R.sameForm(ref, ary[i].to, eltMap), true);	// do all elements have the same form?
 		return false;
 	}
 	json()
 	{
 		const a = super.json();
 		a.attributes = U.jsonMap(this.attributes);
-		a.match = this.match.map(elt => elt.name);
+		a.sequence = this.sequence.map(elt => elt.name);
 		a.named = this.named.name;
 		a.ops	= this.ops;
 		return a;
@@ -12480,17 +12282,31 @@ class Category extends CatObject
 			user:			{value:args.user,	writable:false},
 		});
 		if (R.$CAT)
-		{
-			this.addActions('category');
-			if ('actionDiagrams' in nuArgs)
-				nuArgs.actionDiagrams.map(a => this.addActions(a));
-		}
+			this.addActions('Action');
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
 		if (this.constructor.name === 'Category')
 		{
 			this.setSignature();
 			D && D.emitCategoryEvent('new', this);		// do not track index categories
 		}
+	}
+	newObject(basename)
+	{
+		const o = this.getElement(basename);
+		return o ? o : new CatObject(this.diagram, {basename});
+	}
+	newMorphism(basename, dom, cod)
+	{
+		const domain = this.getElement(dom);
+		const codomain = this.getElement(cod);
+		const m = this.getElement(basename);
+		if (m)
+		{
+			if (m.domain === domain && m.codomain === codomain)
+				return ;
+			throw 'morphism already exists new different domain or codomain';
+		}
+		return new Morphism(this.diagram, {basename, domain, codomain});
 	}
 	help()
 	{
@@ -12535,6 +12351,7 @@ class Category extends CatObject
 if (args.to === 'sys/Cat') args.to = 'em/Cat';		// TODO remove
 				switch(args.prototype)
 				{
+					case 'Category':
 					case 'CatObject':
 					case 'FiniteObject':
 					case 'ProductObject':
@@ -12557,6 +12374,7 @@ if (args.to === 'sys/Cat') args.to = 'em/Cat';		// TODO remove
 					case 'Composite':
 					case 'IndexMorphism':
 					case 'FactorMorphism':
+					case 'Functor':
 					case 'Identity':
 					case 'NamedMorphism':
 					case 'ProductMorphism':
@@ -13175,6 +12993,10 @@ class Identity extends Morphism
 		nuConfig.addbase = false;
 		return super.getHtmlRep(idPrefix, nuConfig);
 	}
+	isBare()
+	{
+		return true;
+	}
 	static Basename(diagram, args)
 	{
 		const domain = args.domain;
@@ -13712,7 +13534,7 @@ const Arrow =
 			else
 			{
 				endTangent = this.start.sub(this.end).normalize();
-				startTangent = endTangent;
+				startTangent = endTangent.scale(-1);
 			}
 			startNormal = startTangent.normal();
 			endNormal = endTangent.normal();
@@ -13724,12 +13546,12 @@ const Arrow =
 			if (this.attributes.has('start'))
 			{
 				const width = D.default.font.height/2;
-				this.start = this.start.add(startTangent.scale(-width/2));
+				this.start = this.start.add(startTangent.scale(width/2));
 				let largeArc = 0;
 				if (D2.innerProduct(startNormal, new D2({x:0, y:1})) > 0)
 				{
 					startNormal = startNormal.scale(-1);
-					largeArc = 1;
+					largeArc = 0;
 				}
 				const attr = this.attributes.get('start');
 				switch(this.attributes.get('start'))
@@ -13740,19 +13562,10 @@ const Arrow =
 							startCoords = `M${xy.x},${xy.y} A${width/2},${width/2} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
 						}
 						break;
-					case 'element':		// TODO remove
-						{
-							const xy = startNormal.scale(width).add(this.start).round();
-							const mid1 = xy.add(this.start).scale(0.5);
-							const mid2 = mid1.add(startTangent.scale(width/2));
-							const r = D2.dist(mid1, mid2)/2;
-							startCoords = `M${mid2.x},${mid2.y} L${mid1.x},${mid1.y} M${xy.x},${xy.y} A${r},${r} 0 0 ${largeArc} ${this.start.x},${this.start.y} `;
-						}
-						break;
 					case 'mono':
 						{
-							const upBarb = this.start.add(startNormal.scale(barb)).add(startTangent.scale(barb)).round();
-							const dwBarb = this.start.add(startNormal.scale(-barb)).add(startTangent.scale(barb)).round();
+							const upBarb = this.start.add(startNormal.scale(barb)).add(startTangent.scale(-barb)).round();
+							const dwBarb = this.start.add(startNormal.scale(-barb)).add(startTangent.scale(-barb)).round();
 							startCoords = `M${upBarb.x},${upBarb.y} L${this.start.x},${this.start.y} M${dwBarb.x},${dwBarb.y} L${this.start.x},${this.start.y}`;
 						}
 						break;
@@ -14216,17 +14029,21 @@ class IndexElement extends Element
 	getStart(tangent, normal)
 	{
 		const width = D.default.font.height/3;
-		const base = this.start.add(tangent.scale(-width));
-		let largeArc = 0;
+		const backTangent = tangent.scale(-1);
+		const base = this.start.add(backTangent.scale(-width));
+		let largeArc = 1;
 		if (D2.innerProduct(normal, new D2({x:0, y:1})) > 0)
 		{
 			normal = normal.scale(-1);
-			largeArc = 1;
+			largeArc = 0;
 		}
-		const xy = normal.scale(width).add(base).round();
-		const xy2 = normal.scale(-width).add(base).round();
-		const r = D2.dist(xy, xy2)/2;
-		return `M${xy.x},${xy.y} A${r},${r} 0 0 ${largeArc} ${xy2.x},${xy2.y} `;
+		const xy1 = normal.scale(width).add(base);
+		const ext = tangent.scale(0.9 * width);
+		const xy0 = xy1.add(ext);
+		const xy2 = normal.scale(-width).add(base);
+		const xy3 = xy2.add(ext);
+		const r = D2.dist(xy1, xy2)/2;
+		return `M${xy0.x},${xy0.y} L${xy1.x},${xy1.y} A${r},${r} 0 0 ${largeArc} ${xy2.x},${xy2.y} L${xy3.x},${xy3.y}`;
 	}
 	getQuantifier()
 	{
@@ -14871,7 +14688,7 @@ class DiagramBlob
 {
 	constructor(elt)		// index object or morphism
 	{
-		const ndxObj = elt instanceof IndexObject ? elt : elt.domain;
+		const ndxObj = DiagramBlob.getObject(elt);
 		const scanning = [ndxObj];
 		const scanned = new Set();
 		const objects = new Set();
@@ -14895,10 +14712,12 @@ class DiagramBlob
 			domain.codomains.forEach(m => !scanned.has(m.domain) && scan.push(m.domain));
 		}
 		const levels = [[...morphisms].filter(m => !m.getQuantifier())];		// level 0 are the ground terms
+		const quantifiers = new Set();
 		morphisms.forEach(m =>
 		{
 			if (m.getQuantifier())
 			{
+				quantifiers.add(m);
 				const lvl = m.getLevel();
 				if (levels[lvl] === undefined)
 					levels[lvl] = [];
@@ -14921,6 +14740,7 @@ class DiagramBlob
 			'morphisms':	{value:morphisms,	writable: false},
 			'levels':		{value:levels,		writable: false},
 			'cells':		{value:cells,		writable: false},
+			'quantifiers':	{value:quantifiers,	writable: false},
 		});
 	}
 	getLevel()
@@ -14974,6 +14794,19 @@ class DiagramBlob
 	has(...elts)
 	{
 		return elts.reduce((r, elt) => this.objects.has(elt) || this.morphisms.has(elt), true);
+	}
+	static getObject(elt)
+	{
+		if (elt instanceof IndexObject)
+			return elt;
+		else if (elt instanceof IndexMorphism)
+			return elt.domain;
+		else if (elt instanceof Cell)
+			return elt.left[0].domain;
+		else if (elt instanceof IndexElement)
+			return elt.domain;
+		else
+			return elt;
 	}
 }
 
@@ -16492,6 +16325,7 @@ class Diagram extends Functor
 {
 	constructor(diagram, args)
 	{
+console.log('diagram', args.basename);
 		const nuArgs = U.clone(args);
 		nuArgs.name = 'name' in nuArgs ? nuArgs.name : Diagram.Codename(args);
 		nuArgs.category = U.getArg(args, 'category', (diagram && 'codomain' in diagram) ? diagram.codomain : null);
@@ -16505,7 +16339,7 @@ class Diagram extends Functor
 		const _antilog = 'antilog' in nuArgs ? nuArgs.antilog : [];
 		Object.defineProperties(this,
 		{
-			blob:						{value:null,		writable:true},
+			blobs:						{value:[],			writable:true},
 			colorIndex2colorIndex:		{value:{},			writable:true},
 			colorIndex2color:			{value:{},			writable:true},
 			colorIndex:					{value:0,			writable:true},
@@ -16732,13 +16566,15 @@ class Diagram extends Functor
 	{
 		return this.userToDiagramCoords({x:e.clientX, y:e.clientY - D.topSVG.parentElement.offsetTop});
 	}
-	canFormBlob(...elts)
+	getBlob(elt)
 	{
-		const elements = elts.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism);
-		if (elements.length === elts.length)
+		if (elt instanceof IndexText)
+			return null;
+		const obj = elt instanceof IndexMorphism ? elt.domain : elt instanceof Cell ? elt.left[0].domain : elt;
+		for (let i=0; i<this.blobs.elngth; ++i)
 		{
-			const blob = new DiagramBlob(elts[0]);
-			if (elements.reduce((r, elt) => r && blob.has(elt), true))
+			const blob = this.blobs[i];
+			if (blob.objects.has(obj))
 				return blob;
 		}
 		return null;
@@ -16752,14 +16588,17 @@ class Diagram extends Functor
 			D.emitDiagramEvent(this, 'deselect', elt);
 		});
 		if (this.selected.length === 0)
-			this.blob = null;
-		else if (this.blob)
+			this.blobs.length = 0;
+		const newBlobs = [];
+		const currentBlobs = new Set();
+		this.selected.map(elt => currentBlobs.add(this.getBlob(elt)));
+		for (let i=0; i<this.blobs.length; ++i)
 		{
-			if (!this.blob.has(...this.selected))
-				this.blob = null;
+			const blob = this.blobs[i];
+			if (currentBlobs.has(blob))
+				newBlobs.push(blob);
 		}
-		else
-			this.blob = this.canFormBlob(...this.selected);
+		this.blobs = newBlobs;
 	}
 	addSelected(elt)
 	{
@@ -16773,19 +16612,11 @@ class Diagram extends Functor
 				elt.domain.finishMove();
 				elt.codomain.finishMove();
 			}
-			if (this.blob)
+			if (!(elt instanceof IndexText))
 			{
-				if (elt instanceof IndexText || elt instanceof IndexElement)		// no blob if selected outside of blob
-					this.blob = null;
-				else if (elt instanceof IndexMorphism && !this.blob.morphisms.has(elt))
-					this.blob = null;
-				else if (elt instanceof IndexObject && !this.blob.objects.has(elt))
-					this.blob = null;
+				const blob = this.getBlob(elt);
+				!blob && this.blobs.push(new DiagramBlob(elt));
 			}
-			else if (elt instanceof IndexObject || elt instanceof IndexMorphism)
-				this.blob = this.canFormBlob(...this.selected);
-			else if (elt instanceof Cell)
-				this.blob = this.canFormBlob(elt.left[0].domain);
 			this.selected.filter(m => m instanceof IndexMorphism || m instanceof IndexElement).map(m => this.deselect(m.domain, m.codomain));
 			D.emitDiagramEvent(this, 'select', elt);
 		}
@@ -17561,10 +17392,11 @@ class Diagram extends Functor
 			else
 			{
 				item.emphasis(on);
-				if (elt instanceof IndexMorphism || elt instanceof IndexObject)
-					elt = elt.to;
-				const emphs = [...this.svgRoot.querySelectorAll(`[data-sig="${elt.signature}"] > text, path[data-sig="${elt.signature}"]`)];
-				emphs.map(emph => on && elt.svg !== emph ? emph.classList.add('emphasis2') : emph.classList.remove('emphasis2'));
+				const emphs = [...this.svgRoot.querySelectorAll(`g[data-sig="${elt.signature}"], path[data-sig="${elt.signature}"], text[data-sig="${elt.signature}"]`)];
+				if (item instanceof IndexObject)
+					emphs.map(emph => item.svg !== emph && emph.querySelectorAll('text').forEach(text => text.classList[on ? 'add' : 'remove']('emphasis2')));
+				else
+					emphs.map(elt => item.svg_path !== elt && elt.classList[on ? 'add' : 'remove']('emphasis2'));
 				if (emphs.length > 0)
 					rtrn = emphs[0].dataset.name;
 			}
@@ -18019,13 +17851,13 @@ class Diagram extends Functor
 		}
 		this.domain.elements.forEach(elt =>
 		{
-			if (elt instanceof IndexObject)
+			if (elt instanceof IndexObject || elt instanceof IndexText)
 			{
 				indexed.add(elt.to);
 				if (elt.x === 0 && elt.y % grid === 0)
 					locations.push(elt.y);
 			}
-			else if (elt instanceof IndexMorphism)
+			else if (elt instanceof IndexMorphism || elt instanceof IndexElement)
 				indexed.add(elt.to);
 		});
 		locations.sort();
