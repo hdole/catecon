@@ -4,7 +4,6 @@
   "name": "hdole/mmap",
   "prototype": "Diagram",
   "properName": "hdole/mmap",
-  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/mmap_Index",
   "codomain": "zf/Set",
@@ -224,8 +223,8 @@
         "basename": "t_7",
         "prototype": "IndexText",
         "xy": {
-          "x": -1710,
-          "y": -1830
+          "x": -1720,
+          "y": -1920
         },
         "height": "200",
         "weight": "bold"
@@ -1051,11 +1050,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643858875469,
+  "timestamp": 1644129790984,
   "version": 0,
   "viewport": {
     "x": 3049,
     "y": 3377,
     "scale": 1.6295598777750366
-  }
+  },
+  "category": "CAT"
 }

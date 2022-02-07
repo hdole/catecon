@@ -4,7 +4,7 @@
   "name": "hdole/category",
   "prototype": "Diagram",
   "properName": "hdole/category",
-  "category": "zf/Set",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/category_Index",
   "codomain": "em/Cat",
@@ -130,8 +130,8 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": -500
+          "x": -210,
+          "y": -560
         },
         "height": "374",
         "weight": "bold"
@@ -141,8 +141,8 @@
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": -160
+          "x": -150,
+          "y": -150
         },
         "height": "24"
       },
@@ -151,8 +151,8 @@
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": -60
+          "x": -150,
+          "y": -50
         },
         "height": "24"
       },
@@ -161,8 +161,8 @@
         "basename": "t_3",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": 60
+          "x": -150,
+          "y": 50
         },
         "height": "24"
       },
@@ -423,8 +423,8 @@
         "basename": "t_4",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": -360
+          "x": -150,
+          "y": -400
         },
         "height": "48",
         "weight": "bold"
@@ -470,8 +470,8 @@
         "basename": "t_6",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": 2050
+          "x": -150,
+          "y": 2100
         },
         "height": 24
       },
@@ -480,8 +480,8 @@
         "basename": "t_7",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": 360
+          "x": -150,
+          "y": 350
         },
         "height": 24
       },
@@ -490,7 +490,7 @@
         "basename": "t_8",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
+          "x": -150,
           "y": 600
         },
         "height": 24
@@ -500,7 +500,7 @@
         "basename": "t_9",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
+          "x": -150,
           "y": 1400
         },
         "height": 24
@@ -510,7 +510,7 @@
         "basename": "t_10",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
+          "x": -150,
           "y": 1700
         },
         "height": 24
@@ -520,8 +520,8 @@
         "basename": "t_11",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": 1060
+          "x": -150,
+          "y": 1050
         },
         "height": 24
       },
@@ -530,8 +530,8 @@
         "basename": "t_12",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
-          "y": 770
+          "x": -150,
+          "y": 750
         },
         "height": 24
       },
@@ -839,7 +839,7 @@
         "basename": "t_17",
         "prototype": "IndexText",
         "xy": {
-          "x": -190,
+          "x": -150,
           "y": 5150
         },
         "height": 24
@@ -869,6 +869,16 @@
         "xy": {
           "x": 840,
           "y": 350
+        },
+        "height": 24
+      },
+      {
+        "description": "BUG:  object emphasis not on across all such objects.",
+        "basename": "t_14",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1160,
+          "y": 2390
         },
         "height": 24
       },
@@ -1536,16 +1546,6 @@
         "domain": "hdole/category/o_63",
         "codomain": "hdole/category/o_74",
         "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
-      },
-      {
-        "description": "BUG:  object emphasis not on across all such objects.",
-        "basename": "t_14",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 1160,
-          "y": 2390
-        },
-        "height": 24
       }
     ],
     "cells": [
@@ -1973,11 +1973,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644054213867,
+  "timestamp": 1644268232989,
   "version": 0,
   "viewport": {
     "x": 492,
-    "y": -2244,
-    "scale": 1.204678908293253
+    "y": 1007,
+    "scale": 1.0432965668237197
   }
 }

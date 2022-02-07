@@ -3,7 +3,6 @@
   "basename": "product",
   "name": "hdole/product",
   "prototype": "Diagram",
-  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/product_Index",
   "codomain": "em/Cat",
@@ -22,7 +21,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -10,
-          "y": -10
+          "y": -60
         },
         "height": "131",
         "weight": "bold"
@@ -317,12 +316,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643859812112,
+  "timestamp": 1644129768958,
   "version": 0,
   "viewport": {
     "x": 295,
     "y": 398,
     "scale": 3.2547152599851397
   },
-  "properName": "hdole/product"
+  "properName": "hdole/product",
+  "category": "CAT"
 }

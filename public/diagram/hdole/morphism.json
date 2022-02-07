@@ -4,7 +4,6 @@
   "name": "hdole/morphism",
   "prototype": "Diagram",
   "properName": "hdole/morphism",
-  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/morphism_Index",
   "codomain": "em/Cat",
@@ -22,8 +21,8 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 40,
-          "y": 1750
+          "x": 30,
+          "y": 1690
         },
         "height": "164",
         "weight": "bold"
@@ -93,11 +92,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643859879528,
+  "timestamp": 1644129753516,
   "version": 0,
   "viewport": {
     "x": 16,
     "y": -3479,
     "scale": 2.232456140350877
-  }
+  },
+  "category": "CAT"
 }

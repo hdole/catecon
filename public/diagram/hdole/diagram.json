@@ -4,7 +4,6 @@
   "name": "hdole/diagram",
   "prototype": "Diagram",
   "properName": "hdole/diagram",
-  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/diagram_Index",
   "codomain": "em/Cat",
@@ -25,7 +24,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -210,
-          "y": 220
+          "y": 120
         },
         "height": "200",
         "weight": "bold"
@@ -277,11 +276,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643859829931,
+  "timestamp": 1644129758166,
   "version": 0,
   "viewport": {
     "x": 669,
     "y": -30,
     "scale": 2.0356019245259898
-  }
+  },
+  "category": "CAT"
 }

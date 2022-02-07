@@ -4,7 +4,6 @@
   "name": "hdole/graph",
   "prototype": "Diagram",
   "properName": "hdole/graph",
-  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/graph_Index",
   "codomain": "em/Cat",
@@ -58,8 +57,8 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -60,
-          "y": 330
+          "x": -80,
+          "y": 250
         },
         "height": "200",
         "weight": "bold"
@@ -1005,11 +1004,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643859844448,
+  "timestamp": 1644129785894,
   "version": 0,
   "viewport": {
     "x": 319,
     "y": -141,
     "scale": 1.4200098743098604
-  }
+  },
+  "category": "CAT"
 }

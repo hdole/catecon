@@ -120,7 +120,7 @@
         "basename": "t_3",
         "prototype": "IndexText",
         "xy": {
-          "x": -600,
+          "x": -550,
           "y": 1300
         },
         "height": 24
@@ -1304,8 +1304,8 @@
         "basename": "t_46",
         "prototype": "IndexText",
         "xy": {
-          "x": -610,
-          "y": -50
+          "x": -700,
+          "y": 30
         },
         "height": "700",
         "weight": "bold"
@@ -3741,11 +3741,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643858369795,
+  "timestamp": 1644268245477,
   "version": 0,
   "viewport": {
     "x": 725,
-    "y": 578,
+    "y": 510,
     "scale": 0.7700330138565122
   }
 }

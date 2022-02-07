@@ -22,7 +22,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 320
+          "y": 330
         },
         "height": "76",
         "weight": "bold"
@@ -208,11 +208,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643870403265,
+  "timestamp": 1644268218390,
   "version": 0,
   "viewport": {
     "x": -1797,
-    "y": -1288,
+    "y": -880,
     "scale": 3.8134550121281725
   },
   "properName": "hdole/epimorphism"

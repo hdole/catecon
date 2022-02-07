@@ -4,7 +4,7 @@
   "name": "hdole/floats",
   "prototype": "Diagram",
   "properName": "&Fopf; Arithmetic",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "code": {
     "cpp": "#include <math.h>\n#include <climits>\n#include <random>\n"
@@ -19,7 +19,7 @@
     "basename": "floats_Index",
     "name": "hdole/floats_Index",
     "prototype": "IndexCategory",
-    "category": "sys/CAT",
+    "category": "em/CAT",
     "diagram": "hdole/hdole",
     "elements": [
       {
@@ -634,8 +634,8 @@
         "basename": "t_27",
         "prototype": "IndexText",
         "xy": {
-          "x": -830,
-          "y": 60
+          "x": -820,
+          "y": 90
         },
         "height": "300",
         "weight": "bold"
@@ -3798,7 +3798,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643698627305,
+  "timestamp": 1644268313971,
   "version": 0,
   "viewport": {
     "x": 1040,

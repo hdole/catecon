@@ -4,278 +4,24 @@
   "name": "hdole/threeD",
   "prototype": "Diagram",
   "properName": "3D",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/threeD_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/str"
   ],
-  "domainElements": [
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/threeD",
-      "xy": {
-        "x": 200,
-        "y": 200
-      }
-    },
-    {
-      "description": "The 3D object interacts with graphic devices",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 200,
-        "y": 270
-      },
-      "height": 24
-    },
-    {
-      "description": "visualize a number in 3D",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 200,
-        "y": 470
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/floats/F64",
-      "xy": {
-        "x": 200,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/threeD",
-      "xy": {
-        "x": 400,
-        "y": 400
-      }
-    },
-    {
-      "description": "visualize a pair of numbers in 3D",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 200,
-        "y": 670
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/floats/Po{F64,F64}oP",
-      "xy": {
-        "x": 200,
-        "y": 600
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/threeD",
-      "xy": {
-        "x": 400,
-        "y": 600
-      }
-    },
-    {
-      "basename": "o_5",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/F3",
-      "xy": {
-        "x": 200,
-        "y": 800
-      }
-    },
-    {
-      "basename": "o_6",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "xy": {
-        "x": 460,
-        "y": 800
-      }
-    },
-    {
-      "description": "visualize a triplet of numbers in 3D",
-      "basename": "t_3",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 200,
-        "y": 1070
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_7",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/F3",
-      "xy": {
-        "x": 200,
-        "y": 1000
-      }
-    },
-    {
-      "basename": "o_8",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/threeD",
-      "xy": {
-        "x": 400,
-        "y": 1000
-      }
-    },
-    {
-      "description": "visualize two points as a line in 3D",
-      "basename": "t_4",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 200,
-        "y": 1270
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_9",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/Po{F3,F3}oP",
-      "xy": {
-        "x": 200,
-        "y": 1200
-      }
-    },
-    {
-      "basename": "o_10",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/threeD",
-      "xy": {
-        "x": 400,
-        "y": 1200
-      }
-    },
-    {
-      "description": "visualize three points as a Bezier curve in 3D",
-      "basename": "t_5",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 200,
-        "y": 1470
-      },
-      "height": 24
-    },
-    {
-      "basename": "o_11",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/Po{F3,F3,F3}oP",
-      "xy": {
-        "x": 200,
-        "y": 1400
-      }
-    },
-    {
-      "basename": "o_12",
-      "prototype": "IndexObject",
-      "to": "hdole/threeD/threeD",
-      "xy": {
-        "x": 400,
-        "y": 1400
-      }
-    },
-    {
-      "description": "References: str",
-      "basename": "t_6",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 200,
-        "y": 1600
-      },
-      "height": 24
-    },
-    {
-      "description": "<icon>threeD</icon>3D",
-      "basename": "t_7",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 170,
-        "y": 90
-      },
-      "height": "200",
-      "weight": "bold"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/threeD/o_1",
-      "codomain": "hdole/threeD/o_2",
-      "to": "hdole/threeD/f2d3"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/threeD/o_3",
-      "codomain": "hdole/threeD/o_4",
-      "to": "hdole/threeD/ff2d3"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/threeD/o_5",
-      "codomain": "hdole/threeD/o_6",
-      "to": "hdole/threeD/Id{F3,Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP}dI"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/threeD/o_6",
-      "codomain": "hdole/threeD/o_5",
-      "homsetIndex": 1,
-      "to": "hdole/threeD/Id{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,F3}dI"
-    },
-    {
-      "basename": "m_4",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/threeD/o_7",
-      "codomain": "hdole/threeD/o_8",
-      "to": "hdole/threeD/fff2d3"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/threeD/o_9",
-      "codomain": "hdole/threeD/o_10",
-      "to": "hdole/threeD/fff2toLine"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/threeD/o_11",
-      "codomain": "hdole/threeD/o_12",
-      "to": "hdole/threeD/fff2toQB3"
-    }
-  ],
   "domainInfo": {
     "description": "index category for diagram hdole/threeD",
     "basename": "threeD_Index",
     "name": "hdole/threeD_Index",
     "prototype": "IndexCategory",
-    "category": "sys/CAT",
+    "category": "em/CAT",
     "diagram": "hdole/hdole",
     "elements": [
       {
-        "description": "",
         "basename": "o_0",
-        "name": "hdole/threeD/o_0",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/threeD",
         "xy": {
           "x": 200,
@@ -285,10 +31,7 @@
       {
         "description": "The 3D object interacts with graphic devices",
         "basename": "t_0",
-        "name": "hdole/threeD/t_0",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
           "x": 200,
           "y": 270
@@ -298,10 +41,7 @@
       {
         "description": "visualize a number in 3D",
         "basename": "t_1",
-        "name": "hdole/threeD/t_1",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
           "x": 200,
           "y": 470
@@ -309,12 +49,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_1",
-        "name": "hdole/threeD/o_1",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/floats/F64",
         "xy": {
           "x": 200,
@@ -322,12 +58,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_2",
-        "name": "hdole/threeD/o_2",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/threeD",
         "xy": {
           "x": 400,
@@ -337,10 +69,7 @@
       {
         "description": "visualize a pair of numbers in 3D",
         "basename": "t_2",
-        "name": "hdole/threeD/t_2",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
           "x": 200,
           "y": 670
@@ -348,12 +77,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_3",
-        "name": "hdole/threeD/o_3",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
           "x": 200,
@@ -361,12 +86,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_4",
-        "name": "hdole/threeD/o_4",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/threeD",
         "xy": {
           "x": 400,
@@ -374,12 +95,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_5",
-        "name": "hdole/threeD/o_5",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/F3",
         "xy": {
           "x": 200,
@@ -387,12 +104,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_6",
-        "name": "hdole/threeD/o_6",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
         "xy": {
           "x": 460,
@@ -402,10 +115,7 @@
       {
         "description": "visualize a triplet of numbers in 3D",
         "basename": "t_3",
-        "name": "hdole/threeD/t_3",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
           "x": 200,
           "y": 1070
@@ -413,12 +123,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_7",
-        "name": "hdole/threeD/o_7",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/F3",
         "xy": {
           "x": 200,
@@ -426,12 +132,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_8",
-        "name": "hdole/threeD/o_8",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/threeD",
         "xy": {
           "x": 400,
@@ -441,10 +143,7 @@
       {
         "description": "visualize two points as a line in 3D",
         "basename": "t_4",
-        "name": "hdole/threeD/t_4",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
           "x": 200,
           "y": 1270
@@ -452,12 +151,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_9",
-        "name": "hdole/threeD/o_9",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/Po{F3,F3}oP",
         "xy": {
           "x": 200,
@@ -465,12 +160,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_10",
-        "name": "hdole/threeD/o_10",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/threeD",
         "xy": {
           "x": 400,
@@ -480,10 +171,7 @@
       {
         "description": "visualize three points as a Bezier curve in 3D",
         "basename": "t_5",
-        "name": "hdole/threeD/t_5",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
           "x": 200,
           "y": 1470
@@ -491,12 +179,8 @@
         "height": 24
       },
       {
-        "description": "",
         "basename": "o_11",
-        "name": "hdole/threeD/o_11",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/Po{F3,F3,F3}oP",
         "xy": {
           "x": 200,
@@ -504,12 +188,8 @@
         }
       },
       {
-        "description": "",
         "basename": "o_12",
-        "name": "hdole/threeD/o_12",
         "prototype": "IndexObject",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "to": "hdole/threeD/threeD",
         "xy": {
           "x": 400,
@@ -519,10 +199,7 @@
       {
         "description": "References: str",
         "basename": "t_6",
-        "name": "hdole/threeD/t_6",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
           "x": 200,
           "y": 1600
@@ -532,91 +209,60 @@
       {
         "description": "<icon>threeD</icon>3D",
         "basename": "t_7",
-        "name": "hdole/threeD/t_7",
         "prototype": "IndexText",
-        "category": "zf/Set",
-        "diagram": "hdole/threeD",
         "xy": {
-          "x": 170,
-          "y": 90
+          "x": 160,
+          "y": 140
         },
         "height": "200",
         "weight": "bold"
       },
       {
-        "description": "",
         "basename": "m_0",
-        "name": "hdole/threeD/m_0",
         "prototype": "IndexMorphism",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "domain": "hdole/threeD/o_1",
         "codomain": "hdole/threeD/o_2",
         "to": "hdole/threeD/f2d3"
       },
       {
-        "description": "",
         "basename": "m_1",
-        "name": "hdole/threeD/m_1",
         "prototype": "IndexMorphism",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "domain": "hdole/threeD/o_3",
         "codomain": "hdole/threeD/o_4",
         "to": "hdole/threeD/ff2d3"
       },
       {
-        "description": "",
         "basename": "m_2",
-        "name": "hdole/threeD/m_2",
         "prototype": "IndexMorphism",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "domain": "hdole/threeD/o_5",
         "codomain": "hdole/threeD/o_6",
         "to": "hdole/threeD/Id{F3,Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP}dI"
       },
       {
-        "description": "",
         "basename": "m_3",
-        "name": "hdole/threeD/m_3",
         "prototype": "IndexMorphism",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "domain": "hdole/threeD/o_6",
         "codomain": "hdole/threeD/o_5",
         "homsetIndex": 1,
         "to": "hdole/threeD/Id{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,F3}dI"
       },
       {
-        "description": "",
         "basename": "m_4",
-        "name": "hdole/threeD/m_4",
         "prototype": "IndexMorphism",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "domain": "hdole/threeD/o_7",
         "codomain": "hdole/threeD/o_8",
         "to": "hdole/threeD/fff2d3"
       },
       {
-        "description": "",
         "basename": "m_5",
-        "name": "hdole/threeD/m_5",
         "prototype": "IndexMorphism",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "domain": "hdole/threeD/o_9",
         "codomain": "hdole/threeD/o_10",
         "to": "hdole/threeD/fff2toLine"
       },
       {
-        "description": "",
         "basename": "m_6",
-        "name": "hdole/threeD/m_6",
         "prototype": "IndexMorphism",
-        "category": "hdole/threeD_Index",
-        "diagram": "hdole/threeD",
         "domain": "hdole/threeD/o_11",
         "codomain": "hdole/threeD/o_12",
         "to": "hdole/threeD/fff2toQB3"
@@ -646,16 +292,12 @@
       "source": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
     },
     {
-      "basename": "Id{F3,Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP}dI",
       "prototype": "Identity",
-      "properName": "&#8797;",
       "domain": "hdole/threeD/F3",
       "codomain": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
     },
     {
-      "basename": "Id{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,F3}dI",
       "prototype": "Identity",
-      "properName": "&#8797;",
       "domain": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "codomain": "hdole/threeD/F3"
     },
@@ -731,11 +373,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1642220983916,
+  "timestamp": 1644268332218,
   "version": 0,
   "viewport": {
     "x": -246,
-    "y": 384,
+    "y": 180,
     "scale": 3.751518980707882
   }
 }

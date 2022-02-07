@@ -4,131 +4,140 @@
   "name": "hdole/user",
   "prototype": "Diagram",
   "properName": "hdole/user",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/user_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/HTML"
   ],
-  "domainElements": [
-    {
-      "description": "<icon>login</icon> User",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -830,
-        "y": -230
+  "domainInfo": {
+    "description": "index category for diagram hdole/user",
+    "basename": "user_Index",
+    "name": "hdole/user_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "<icon>login</icon> User",
+        "basename": "t_0",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -860,
+          "y": -170
+        },
+        "height": "200",
+        "weight": "bold"
       },
-      "height": "200",
-      "weight": "bold"
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/user/user",
-      "xy": {
-        "x": -800,
-        "y": 200
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/str/str",
-      "xy": {
-        "x": -600,
-        "y": 200
-      }
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/str/str",
-      "xy": {
-        "x": -800,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/str/str",
-      "xy": {
-        "x": -1000,
-        "y": 200
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/int/Z32",
-      "xy": {
-        "x": -800,
-        "y": 0
-      }
-    },
-    {
-      "description": "This diagram shows the Catecon user info in the AWS Cognito user pool.\nThe privileges string is a list of space separated tokens giving the user&#39;s\naccess tokens.  The maxDiagrams refers to the maximum number of\ndiagrams the user may have on the server.  The phoneNumber is for\nAWS multi-factor authentication and is not stored by Catecon.",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -520,
-        "y": -40
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "hdole/user/user",
+        "xy": {
+          "x": -800,
+          "y": 200
+        }
       },
-      "height": "24"
-    },
-    {
-      "description": "The Access panel allows login access to the server for uploading diagrams.\nWhen logged in the panel shows the username, email, and permissions on the\nserver.  The user may log out or reset the account’s password.",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -520,
-        "y": 230
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "hdole/str/str",
+        "xy": {
+          "x": -600,
+          "y": 200
+        }
       },
-      "height": "24"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/user/o_0",
-      "codomain": "hdole/user/o_1",
-      "to": "hdole/user/name"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/user/o_0",
-      "codomain": "hdole/user/o_2",
-      "to": "hdole/user/phoneNumber"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/user/o_0",
-      "codomain": "hdole/user/o_3",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/user/permissions"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/user/o_0",
-      "codomain": "hdole/user/o_4",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/user/maxDiagrams"
-    }
-  ],
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "hdole/str/str",
+        "xy": {
+          "x": -800,
+          "y": 400
+        }
+      },
+      {
+        "basename": "o_3",
+        "prototype": "IndexObject",
+        "to": "hdole/str/str",
+        "xy": {
+          "x": -1000,
+          "y": 200
+        }
+      },
+      {
+        "basename": "o_4",
+        "prototype": "IndexObject",
+        "to": "hdole/int/Z32",
+        "xy": {
+          "x": -800,
+          "y": 0
+        }
+      },
+      {
+        "description": "This diagram shows the Catecon user info in the AWS Cognito user pool.\nThe privileges string is a list of space separated tokens giving the user&#39;s\naccess tokens.  The maxDiagrams refers to the maximum number of\ndiagrams the user may have on the server.  The phoneNumber is for\nAWS multi-factor authentication and is not stored by Catecon.",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -520,
+          "y": -40
+        },
+        "height": "24"
+      },
+      {
+        "description": "The Access panel allows login access to the server for uploading diagrams.\nWhen logged in the panel shows the username, email, and permissions on the\nserver.  The user may log out or reset the account’s password.",
+        "basename": "t_2",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -520,
+          "y": 230
+        },
+        "height": "24"
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/user/o_0",
+        "codomain": "hdole/user/o_1",
+        "to": "hdole/user/name"
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/user/o_0",
+        "codomain": "hdole/user/o_2",
+        "to": "hdole/user/phoneNumber"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/user/o_0",
+        "codomain": "hdole/user/o_3",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/user/permissions"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/user/o_0",
+        "codomain": "hdole/user/o_4",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/user/maxDiagrams"
+      }
+    ],
+    "cells": []
+  },
   "elements": [
     {
       "basename": "user",
@@ -162,7 +171,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641589209442,
+  "timestamp": 1644268283287,
   "version": 0,
   "viewport": {
     "x": 2017,

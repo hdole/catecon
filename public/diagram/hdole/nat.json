@@ -4,7 +4,7 @@
   "name": "hdole/nat",
   "prototype": "Diagram",
   "properName": "hdole/nat",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "code": {
     "cpp": "#include <algorithm>"
@@ -17,7 +17,7 @@
     "basename": "nat_Index",
     "name": "hdole/nat_Index",
     "prototype": "IndexCategory",
-    "category": "sys/CAT",
+    "category": "em/CAT",
     "diagram": "hdole/hdole",
     "elements": [
       {
@@ -563,7 +563,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -1470,
-          "y": -330
+          "y": -490
         },
         "height": "350",
         "weight": "bold"
@@ -5350,7 +5350,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643783598562,
+  "timestamp": 1644129796472,
   "version": 0,
   "viewport": {
     "x": 1233,

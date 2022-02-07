@@ -3,165 +3,160 @@
   "basename": "nat/add",
   "name": "hdole/nat/add",
   "prototype": "Diagram",
-  "category": "sys/CAT",
+  "properName": "hdole/nat/add",
   "diagram": "hdole/hdole",
   "domain": "hdole/nat/add_Index",
-  "codomain": "sys/Cat",
+  "codomain": "em/Cat",
   "references": [
     "hdole/nat/nat"
   ],
-  "domainElements": [
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP",
-      "xy": {
-        "x": 20,
-        "y": 70
-      }
-    },
-    {
-      "basename": "o_5",
-      "prototype": "IndexObject",
-      "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
-      "xy": {
-        "x": 250,
-        "y": 70
-      }
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/nat/nat/nat",
-      "xy": {
-        "x": 250,
-        "y": 290
-      }
-    },
-    {
-      "basename": "o_8",
-      "prototype": "IndexObject",
-      "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
-      "xy": {
-        "x": 500,
-        "y": 70
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/nat/nat/nat",
-      "xy": {
-        "x": 500,
-        "y": 290
-      }
-    },
-    {
-      "description": "Addition of Natural Numbers",
-      "basename": "t_0",
-      "prototype": "DiagramText",
-      "xy": {
-        "x": 0,
-        "y": -10
+  "domainInfo": {
+    "description": "index category for diagram hdole/nat/add",
+    "basename": "nat/add_Index",
+    "name": "hdole/nat/add_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "basename": "o_4",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP",
+        "xy": {
+          "x": 20,
+          "y": 70
+        }
       },
-      "height": "37",
-      "weight": "bold"
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/nat/nat/nat",
-      "xy": {
-        "x": 20,
-        "y": 290
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+        "xy": {
+          "x": 260,
+          "y": 70
+        }
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/nat/nat",
+        "xy": {
+          "x": 260,
+          "y": 290
+        }
+      },
+      {
+        "basename": "o_8",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/add/Po{hdole/nat/nat/nat,hdole/nat/nat/nat}oP",
+        "xy": {
+          "x": 500,
+          "y": 70
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/nat/nat",
+        "xy": {
+          "x": 500,
+          "y": 290
+        }
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/nat/nat",
+        "xy": {
+          "x": 20,
+          "y": 290
+        }
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/nat/add/o_4",
+        "codomain": "hdole/nat/add/o_5",
+        "to": "hdole/nat/add/Pm{hdole/nat/nat/succ,hdole/nat/nat/zero}mP"
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/nat/add/o_5",
+        "codomain": "hdole/nat/add/o_0",
+        "to": "hdole/nat/add/add"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/nat/add/o_5",
+        "codomain": "hdole/nat/add/o_8",
+        "to": "hdole/nat/add/Pm{hdole/nat/nat/succ,Id{hdole/nat/nat/nat}dI}mP"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/nat/add/o_8",
+        "codomain": "hdole/nat/add/o_1",
+        "to": "hdole/nat/add/add"
+      },
+      {
+        "basename": "m_4",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/nat/add/o_0",
+        "codomain": "hdole/nat/add/o_1",
+        "to": "hdole/nat/nat/succ"
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/nat/add/o_4",
+        "codomain": "hdole/nat/add/o_2",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/nat/add/Fa{Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP,hdole/nat/nat/nat_0}aF"
+      },
+      {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/nat/add/o_2",
+        "codomain": "hdole/nat/add/o_0",
+        "to": "hdole/nat/nat/succ"
       }
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/nat/add/o_4",
-      "codomain": "hdole/nat/add/o_5",
-      "to": "hdole/nat/add/Pm{hdole/nat/nat/succ,hdole/nat/nat/zero}mP"
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/nat/add/o_5",
-      "codomain": "hdole/nat/add/o_0",
-      "to": "hdole/nat/add/add"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/nat/add/o_5",
-      "codomain": "hdole/nat/add/o_8",
-      "to": "hdole/nat/add/Pm{hdole/nat/nat/succ,Id{hdole/nat/nat/nat}dI}mP"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/nat/add/o_8",
-      "codomain": "hdole/nat/add/o_1",
-      "to": "hdole/nat/add/add"
-    },
-    {
-      "basename": "m_4",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/nat/add/o_0",
-      "codomain": "hdole/nat/add/o_1",
-      "to": "hdole/nat/nat/succ"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/nat/add/o_4",
-      "codomain": "hdole/nat/add/o_2",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/nat/add/Fa{Po{hdole/nat/nat/nat,hdole/nat/nat/one}oP,hdole/nat/nat/nat_0}aF"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/nat/add/o_2",
-      "codomain": "hdole/nat/add/o_0",
-      "to": "hdole/nat/nat/succ"
-    },
-    {
-      "description": "The assertion that the composite of morphisms &#119901;&#8202;&#x2080;,succ equals that of succ&times;0,add.",
-      "basename": "a_0",
-      "prototype": "Assertion",
-      "signature": "b2791d59f176081916de47fff726ba09997753b79ef80266fc273f9466427994",
-      "equal": true,
-      "left": [
-        "hdole/nat/add/m_1",
-        "hdole/nat/add/m_6"
-      ],
-      "right": [
-        "hdole/nat/add/m_2",
-        "hdole/nat/add/m_0"
-      ]
-    },
-    {
-      "description": "The assertion that the composite of morphisms succ&times;id,add equals that of add,succ.",
-      "basename": "a_1",
-      "prototype": "Assertion",
-      "signature": "6f6b3dcef0b4ed76d468ce634ea2f226efa01a60afa4745a8206dc36e252154b",
-      "equal": true,
-      "left": [
-        "hdole/nat/add/m_5",
-        "hdole/nat/add/m_3"
-      ],
-      "right": [
-        "hdole/nat/add/m_0",
-        "hdole/nat/add/m_4"
-      ]
-    }
-  ],
+    ],
+    "cells": [
+      {
+        "name": "hdole/nat/add/{m_1,m_6},{m_2,m_0}",
+        "left": [
+          "m_1",
+          "m_6"
+        ],
+        "right": [
+          "m_2",
+          "m_0"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/nat/add/{m_0,m_4},{m_5,m_3}",
+        "left": [
+          "m_5",
+          "m_3"
+        ],
+        "right": [
+          "m_0",
+          "m_4"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
+  },
   "elements": [
     {
       "prototype": "ProductObject",
@@ -193,11 +188,8 @@
       "codomain": "hdole/nat/nat/nat"
     },
     {
-      "basename": "Id{hdole/nat/nat/nat}dI",
       "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/nat/nat/nat",
-      "codomain": "hdole/nat/nat/nat"
+      "domain": "hdole/nat/nat/nat"
     },
     {
       "prototype": "ProductMorphism",
@@ -220,12 +212,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1631954764537,
+  "timestamp": 1644133919702,
   "version": 0,
   "viewport": {
-    "x": 309,
-    "y": 172,
-    "scale": 3.644051680742771
+    "x": 323,
+    "y": 74,
+    "scale": 3.5741292875607797
   },
-  "properName": "hdole/nat/add"
+  "category": "CAT"
 }

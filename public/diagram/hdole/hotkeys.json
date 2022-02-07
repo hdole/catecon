@@ -4,7 +4,6 @@
   "name": "hdole/hotkeys",
   "prototype": "Diagram",
   "properName": "hdole/hotkeys",
-  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/hotkeys_Index",
   "codomain": "em/Cat",
@@ -23,7 +22,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1010,
-          "y": 390
+          "y": 280
         },
         "height": "250",
         "weight": "bold"
@@ -1411,11 +1410,12 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1643862049690,
+  "timestamp": 1644129781308,
   "version": 0,
   "viewport": {
     "x": -973,
     "y": -202,
     "scale": 1.301176877358732
-  }
+  },
+  "category": "CAT"
 }
