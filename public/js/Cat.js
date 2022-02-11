@@ -4934,7 +4934,6 @@ class Display
 		if (!('name' in e.target.dataset))
 		{
 			console.error('zoom: no name in target');
-debugger;
 			return;
 		}
 		const diagram = R.$CAT.getElement(e.target.dataset.name);
@@ -10867,7 +10866,8 @@ class LanguageAction extends Action
 			});
 			resizeObserver.observe(textarea);
 		}
-		toolbar.body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download generated ${this.properName}`}));
+		if (('code' in elt && this.basename in elt.code) || elt instanceof Diagram)
+			toolbar.body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download ${this.properName}`}));
 	}
 	setEditorSize(textarea)
 	{
@@ -12744,102 +12744,6 @@ class Morphism extends Element
 		cod.incrRefcnt();
 		this.codomain = cod;
 	}
-	help(from = null)
-	{
-		super.help();
-		let domainElt = null;
-		let codomainElt = null;
-		const isNdx = this instanceof IndexMorphism;
-		const element = isNdx ? this.to : this;
-		const diagram = this.diagram;
-		if (this.isEditable() && element.refcnt <= 1)
-		{
-			const objects = this instanceof Diagram ?  R.getAvailableCategories() : this.diagram.getObjects();
-			if (!(this instanceof Diagram) && (!isNdx || (isNdx && this.domain.refcnt === 2)))
-			{
-				const setDomain = isNdx ? (e, dom) => this.setToDomain(diagram.getElement(e.target.value)) : (e, dom) => this.setDomain(this.diagram.getElement(e.target.value))
-				domainElt = H3.select('##new-domain.w100', {onchange: e => setDomain(e, diagram.getElement(e.target.value))});
-				domainElt.appendChild(H3.option(this.domain.properName, {value:this.domain.properName, selected:true, disabled:false}));
-				objects.map(o => o.name !== this.domain.name && domainElt.appendChild(H3.option(o.properName, {value:o.name})));
-			}
-			if (!isNdx || (isNdx && this.codomain.refcnt === 2))
-			{
-				const setCodomain = isNdx ? (e, dom) => this.setToCodomain(diagram.getElement(e.target.value)) : (e, dom) => this.setCodomain(this.diagram.getElement(e.target.value))
-				codomainElt = H3.select('##new-domain.w100', {onchange: e => setCodomain(e, diagram.getElement(e.target.value))});
-				codomainElt.appendChild(H3.option(this.codomain.properName, {value:this.codomain.properName, selected:true, disabled:true}));
-				objects.map(o => o.name !== this.codomain.name && codomainElt.appendChild(H3.option(o.properName, {value:o.name})));
-			}
-		}
-		if (!domainElt)
-			domainElt = this.domain.properName;
-		if (!codomainElt)
-			codomainElt = this.codomain.properName;
-		const table = D.toolbar.table;
-		table.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
-		table.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
-		if ('recursor' in this)
-		{
-			const deleteRecursor = e =>
-			{
-				this.setRecursor(null);
-				document.getElementById('help-recursor').remove();
-			};
-			const btn = this.isEditable() ? D.getIcon('delete', 'delete', deleteRecursor, {title:'Delete recursor'}) : '';
-			table.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(this.recursor.diagram.name, ':', this.recursor.properName, btn)));
-		}
-		const infoDisplay = H3.tr(H3.td('##info-display', {colspan:2}));
-		if (R.canFormat(this) && !('code' in this) && !('recursor' in this))
-		{
-			let canMakeData = true;
-			const domain = this.domain;
-			const codomain = this.codomain;
-			const sz = domain.getSize();
-			const dataRow = (d,i) =>
-			{
-				if (d !== null)
-				{
-	// TODO?					const editDataBtn = D.getIcon('editData', 'edit', e => R.Actions.run.editData(e, i), {title:'Set data'});
-	// TODO?					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d), H3.td(editDataBtn)));
-					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d, D.getIcon('delete', 'delete', e => R.Actions.run.deleteData(e, this, d, i), {title:'Remove data'}))));
-				}
-			};
-			table.appendChild(H3.tr(H3.th('Data in Morphism', {colspan:2})));
-			table.appendChild(H3.tr(H3.td(H3.small('Domain')), H3.td(H3.small('Codomain'))));
-			table.appendChild(H3.tr(H3.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), '.smallBold'),
-									H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold')));
-			if (sz < Number.MAX_VALUE && 'data' in this)
-			{
-				for (let i=0; i<sz; ++i)
-				{
-					const value = this.data.has(i) ? this.data.get(i) : null;
-					const input = R.Actions.javascript.getInputHtml(codomain, value, i, [], i);
-					dataRow(input, i);
-				}
-				canMakeData = false;
-				// TODO domain not numeric
-			}
-			else if (this.isEditable())
-			{
-				const addDataBtn = D.getIcon('addInput', 'edit', e => R.Actions.run.addInput(infoDisplay), {title:'Add data'});
-				table.appendChild(H3.tr(H3.td(R.Actions.javascript.getInputHtml(domain, null, 'dom')), H3.td(R.Actions.javascript.getInputHtml(codomain, null, 'cod'), addDataBtn)));
-				'data' in this && this.data.forEach(dataRow);
-			}
-			if (canMakeData)
-			{
-				const createDataBtn = D.getIcon('createData', 'table', e => this.createData(e, diagram, from.name), {title:'Add data'});
-				createDataBtn.style.display = 'none';
-				table.appendChild(infoDisplay);
-				table.appendChild(H3.tr(H3.td(createDataBtn, {colspan:2})));
-				const watcher = (mutationsList, observer) =>
-				{
-					for(const m of mutationsList)
-						createDataBtn.style.display = m.target.children.length > 0 ? 'block' : 'none';
-				};
-				const observer = new MutationObserver(watcher);
-				observer.observe(infoDisplay, {childList:true});
-			}
-		}
-	}
 	decrRefcnt()
 	{
 		if (this.refcnt <= 1)
@@ -13685,6 +13589,17 @@ const Arrow =
 		}
 		if ('graph' in this)
 			this.graph.updateGraph({root:this.graph, index:[], dom:this.domain.name, cod:this.codomain.name, visited:[], elementId:this.elementId()});
+		if (this instanceof IndexMorphism)		// debugging tool
+		{
+			if (!this.domain.to.isEquivalent(this.to.domain))
+				this.domain.svg.classList.add('badGlow');
+			else
+				this.domain.svg.classList.remove('badGlow');
+			if (!this.codomain.to.isEquivalent(this.to.codomain))
+				this.codomain.svg.classList.add('badGlow');
+			else
+				this.codomain.svg.classList.remove('badGlow');
+		}
 	},
 	getNameSvgOffset()
 	{
@@ -13784,9 +13699,9 @@ class IndexMorphism extends Morphism
 		const domain = diagram.domain.getElement(nuArgs.domain);
 		const codomain = diagram.domain.getElement(nuArgs.codomain);
 		if (domain.to !== to.domain)
-			'index morphism domain mismatched to target morphism';
+			throw 'index morphism domain mismatched to target morphism';
 		if (codomain.to !== to.codomain)
-			'index morphism codomain mismatched to target morphism';
+			throw 'index morphism codomain mismatched to target morphism';
 		super(diagram, nuArgs);
 		this.setMorphism(to);
 		this.incrRefcnt();
@@ -13822,8 +13737,99 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 	}
 	help()
 	{
-		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, '.italic.small')));
 		this.to.help();
+		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, '.italic.small')));
+		const to = this.to;
+		let domainElt = null;
+		let codomainElt = null;
+		const diagram = to.diagram;
+		if (this.isEditable() && this.refcnt <= 1)
+		{
+			const objects = this.diagram.getObjects();
+			if (this.domain.refcnt === 2)
+			{
+				const setDomain = (e, dom) => this.setToDomain(diagram.getElement(e.target.value));
+				domainElt = H3.select('##new-domain.w100', {onchange: e => setDomain(e, diagram.getElement(e.target.value))});
+				domainElt.appendChild(H3.option(to.domain.properName, {value:to.domain.properName, selected:true, disabled:false}));
+				objects.map(o => o.name !== to.domain.name && domainElt.appendChild(H3.option(o.properName, {value:o.name})));
+			}
+			if (this.codomain.refcnt === 2)
+			{
+				const setCodomain = (e, dom) => this.setToCodomain(diagram.getElement(e.target.value));
+				codomainElt = H3.select('##new-domain.w100', {onchange: e => setCodomain(e, diagram.getElement(e.target.value))});
+				codomainElt.appendChild(H3.option(to.codomain.properName, {value:to.codomain.properName, selected:true, disabled:false}));
+				objects.map(o => o.name !== to.codomain.name && codomainElt.appendChild(H3.option(o.properName, {value:o.name})));
+			}
+		}
+		if (!domainElt)
+			domainElt = to.domain.properName;
+		if (!codomainElt)
+			codomainElt = to.codomain.properName;
+		const table = D.toolbar.table;
+		table.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
+		table.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
+		if ('recursor' in to)
+		{
+			const deleteRecursor = e =>
+			{
+				to.setRecursor(null);
+				document.getElementById('help-recursor').remove();
+			};
+			const btn = to.isEditable() ? D.getIcon('delete', 'delete', deleteRecursor, {title:'Delete recursor'}) : '';
+			table.appendChild(H3.tr('##help-recursor', H3.td('Recursor:'), H3.td(to.recursor.diagram.name, ':', to.recursor.properName, btn)));
+		}
+		const infoDisplay = H3.tr(H3.td('##info-display', {colspan:2}));
+		if (R.canFormat(to) && !('code' in to) && !('recursor' in to))
+		{
+			let canMakeData = true;
+			const domain = to.domain;
+			const codomain = to.codomain;
+			const sz = domain.getSize();
+			const dataRow = (d,i) =>
+			{
+				if (d !== null)
+				{
+	// TODO?					const editDataBtn = D.getIcon('editData', 'edit', e => R.Actions.run.editData(e, i), {title:'Set data'});
+	// TODO?					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d), H3.td(editDataBtn)));
+					table.appendChild(H3.tr(H3.td(typeof i === 'number' ? i.toString() : i), H3.td(typeof d === 'number' ? d.toString() : d, D.getIcon('delete', 'delete', e => R.Actions.run.deleteData(e, to, d, i), {title:'Remove data'}))));
+				}
+			};
+			table.appendChild(H3.tr(H3.th('Data in Morphism', {colspan:2})));
+			table.appendChild(H3.tr(H3.td(H3.small('Domain')), H3.td(H3.small('Codomain'))));
+			table.appendChild(H3.tr(H3.td(domain.properName + (domain.getBase() !== domain ? ` [${domain.getBase().properName}]` : ''), '.smallBold'),
+									H3.td(codomain.properName + (codomain.getBase() !== codomain ? ` [${codomain.getBase().properName}]` : ''), '.smallBold')));
+			if (sz < Number.MAX_VALUE && 'data' in to)
+			{
+				for (let i=0; i<sz; ++i)
+				{
+					const value = to.data.has(i) ? to.data.get(i) : null;
+					const input = R.Actions.javascript.getInputHtml(codomain, value, i, [], i);
+					dataRow(input, i);
+				}
+				canMakeData = false;
+				// TODO domain not numeric
+			}
+			else if (to.isEditable())
+			{
+				const addDataBtn = D.getIcon('addInput', 'edit', e => R.Actions.run.addInput(infoDisplay), {title:'Add data'});
+				table.appendChild(H3.tr(H3.td(R.Actions.javascript.getInputHtml(domain, null, 'dom')), H3.td(R.Actions.javascript.getInputHtml(codomain, null, 'cod'), addDataBtn)));
+				'data' in to && to.data.forEach(dataRow);
+			}
+			if (canMakeData)
+			{
+				const createDataBtn = D.getIcon('createData', 'table', e => to.createData(e, diagram, from.name), {title:'Add data'});
+				createDataBtn.style.display = 'none';
+				table.appendChild(infoDisplay);
+				table.appendChild(H3.tr(H3.td(createDataBtn, {colspan:2})));
+				const watcher = (mutationsList, observer) =>
+				{
+					for(const m of mutationsList)
+						createDataBtn.style.display = m.target.children.length > 0 ? 'block' : 'none';
+				};
+				const observer = new MutationObserver(watcher);
+				observer.observe(infoDisplay, {childList:true});
+			}
+		}
 		if (this.isEditable())
 		{
 			const inputArgs = {type:"number", onchange:e => this.updateBezier(Number.parseFloat(e.target.value)), min:-100, max:100, width:2, value:this.attributes.get('bezier')};
@@ -14026,6 +14032,10 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 		const bbox = this.getBBox();
 		return new D2({x:bbox.x + bbox.width/2, y:bbox.y + bbox.height/2});
 	}
+	updateProperName()
+	{
+		this.svg_name.innerHTML = this.to.properName;
+	}
 	static LinkId(data, lnk)
 	{
 		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
@@ -14036,7 +14046,7 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 	}
 }
 
-Object.assign(IndexMorphism.prototype, Arrow);
+Object.assign(IndexMorphism.prototype, Arrow);		// max Arrow functions into IndexMorphism
 
 class IndexElement extends Element
 {
