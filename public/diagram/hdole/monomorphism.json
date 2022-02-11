@@ -29,7 +29,7 @@
         "weight": "bold"
       },
       {
-        "description": "f is a monomorphism iff for any two h and g\nwith fg = fh then g = h.",
+        "description": "f is a monomorphism iff for any two g and h\nwith fg = fh then g = h.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -209,7 +209,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268211190,
+  "timestamp": 1644307341401,
   "version": 0,
   "viewport": {
     "x": 1009,

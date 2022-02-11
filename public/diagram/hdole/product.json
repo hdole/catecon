@@ -3,6 +3,7 @@
   "basename": "product",
   "name": "hdole/product",
   "prototype": "Diagram",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/product_Index",
   "codomain": "em/Cat",
@@ -21,7 +22,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -10,
-          "y": -60
+          "y": 10
         },
         "height": "131",
         "weight": "bold"
@@ -245,8 +246,23 @@
       "prototype": "CatObject"
     },
     {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
       "basename": "B",
       "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "A",
+        "B"
+      ]
     },
     {
       "prototype": "ProductObject",
@@ -260,6 +276,14 @@
       "prototype": "CatObject"
     },
     {
+      "basename": "C",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "D",
+      "prototype": "CatObject"
+    },
+    {
       "basename": "D",
       "prototype": "CatObject"
     },
@@ -268,6 +292,20 @@
       "objects": [
         "A",
         "C"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "A",
+        "C"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "B",
+        "D"
       ]
     },
     {
@@ -288,6 +326,38 @@
     {
       "prototype": "FactorMorphism",
       "domain": "hdole/product/Po{A,B}oP",
+      "codomain": "hdole/product/A",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/product/Po{A,B}oP",
+      "codomain": "hdole/product/B",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/product/Po{A,B}oP",
       "codomain": "hdole/product/B",
       "factors": [
         1
@@ -298,6 +368,18 @@
       "prototype": "Morphism",
       "domain": "hdole/product/A",
       "codomain": "hdole/product/B"
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/product/A",
+      "codomain": "hdole/product/B"
+    },
+    {
+      "basename": "g",
+      "prototype": "Morphism",
+      "domain": "hdole/product/C",
+      "codomain": "hdole/product/D"
     },
     {
       "basename": "g",
@@ -313,16 +395,24 @@
         "f",
         "g"
       ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "hdole/product/Po{A,C}oP",
+      "codomain": "hdole/product/Po{B,D}oP",
+      "morphisms": [
+        "f",
+        "g"
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1644129768958,
+  "timestamp": 1644561233190,
   "version": 0,
   "viewport": {
     "x": 295,
     "y": 398,
     "scale": 3.2547152599851397
   },
-  "properName": "hdole/product",
-  "category": "CAT"
+  "properName": "hdole/product"
 }

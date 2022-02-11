@@ -4,7 +4,7 @@
   "name": "hdole/while",
   "prototype": "Diagram",
   "properName": "hdole/while",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/while_Index",
   "codomain": "zf/Set",
@@ -14,7 +14,7 @@
     "basename": "while_Index",
     "name": "hdole/while_Index",
     "prototype": "IndexCategory",
-    "category": "sys/CAT",
+    "category": "em/CAT",
     "diagram": "hdole/hdole",
     "elements": [
       {
@@ -86,7 +86,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -50,
-          "y": 80
+          "y": 90
         },
         "height": "250",
         "weight": "bold"
@@ -325,6 +325,18 @@
       "prototype": "CatObject"
     },
     {
+      "basename": "S",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
@@ -341,7 +353,27 @@
       ]
     },
     {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "#1",
+        "#1"
+      ]
+    },
+    {
       "basename": "while",
+      "prototype": "Morphism",
+      "domain": "hdole/while/S",
+      "codomain": "hdole/while/S"
+    },
+    {
+      "basename": "while",
+      "prototype": "Morphism",
+      "domain": "hdole/while/S",
+      "codomain": "hdole/while/S"
+    },
+    {
+      "basename": "update",
       "prototype": "Morphism",
       "domain": "hdole/while/S",
       "codomain": "hdole/while/S"
@@ -361,8 +393,26 @@
       ]
     },
     {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/while/S",
+      "codomain": "hdole/while/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
       "prototype": "Identity",
       "domain": "hdole/while/S"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "hdole/while/S"
+    },
+    {
+      "basename": "test",
+      "prototype": "Morphism",
+      "domain": "hdole/while/S",
+      "codomain": "hdole/while/CPo{#1,#1}oPC"
     },
     {
       "basename": "test",
@@ -385,16 +435,34 @@
       "domain": "hdole/while/#1",
       "codomain": "hdole/while/CPo{#1,#1}oPC",
       "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/while/#1",
+      "codomain": "hdole/while/CPo{#1,#1}oPC",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "hdole/while/#1",
+      "codomain": "hdole/while/CPo{#1,#1}oPC",
+      "factors": [
         1
       ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1643535635800,
+  "timestamp": 1644561277810,
   "version": 0,
   "viewport": {
-    "x": 1524,
-    "y": -345,
-    "scale": 0.5524324480412295
+    "x": 342,
+    "y": 259,
+    "scale": 1.555179706303616
   }
 }

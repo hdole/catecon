@@ -3,6 +3,7 @@
   "basename": "Actions",
   "name": "hdole/Actions",
   "prototype": "Diagram",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/Actions_Index",
   "codomain": "em/Cat",
@@ -71,8 +72,8 @@
         "basename": "t_10",
         "prototype": "IndexText",
         "xy": {
-          "x": 230,
-          "y": -250
+          "x": 240,
+          "y": -60
         },
         "height": "400",
         "weight": "bold"
@@ -486,13 +487,12 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1644129773460,
+  "timestamp": 1644307987952,
   "version": 0,
   "viewport": {
     "x": -96,
-    "y": 614,
+    "y": 682,
     "scale": 1.490215090126815
   },
-  "properName": "hdole/Actions",
-  "category": "CAT"
+  "properName": "hdole/Actions"
 }

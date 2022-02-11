@@ -120,8 +120,8 @@
         "basename": "t_3",
         "prototype": "IndexText",
         "xy": {
-          "x": -550,
-          "y": 1300
+          "x": -600,
+          "y": 1310
         },
         "height": 24
       },
@@ -2730,6 +2730,22 @@
       }
     },
     {
+      "description": "Set by system calls and some library functions when something goes wrong",
+      "basename": "Errno",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "//"
+      }
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
@@ -2740,6 +2756,22 @@
     {
       "description": "The standard input object reads from a tty device.",
       "basename": "stdin",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "//"
+      }
+    },
+    {
+      "description": "The standard input object reads from a tty device.",
+      "basename": "stdin",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "//"
+      }
+    },
+    {
+      "description": "The standard output object writes to a tty device.",
+      "basename": "stdout",
       "prototype": "CatObject",
       "code": {
         "cpp": "//"
@@ -2762,6 +2794,22 @@
       }
     },
     {
+      "description": "The standard error object writes to the error stream.",
+      "basename": "stderr",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "//"
+      }
+    },
+    {
+      "description": "file descriptor",
+      "basename": "file",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "typedef int %0;"
+      }
+    },
+    {
       "description": "file descriptor",
       "basename": "file",
       "prototype": "CatObject",
@@ -2778,9 +2826,28 @@
       }
     },
     {
+      "description": "Used for sizes of objects",
+      "basename": "size_t",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "typedef size_t %Name;"
+      }
+    },
+    {
       "description": "Used for file sizes",
       "basename": "off_t",
       "prototype": "CatObject"
+    },
+    {
+      "description": "Used for file sizes",
+      "basename": "off_t",
+      "prototype": "CatObject"
+    },
+    {
+      "description": "Pointer to void",
+      "basename": "voidPtr",
+      "prototype": "CatObject",
+      "properName": "void*"
     },
     {
       "description": "Pointer to void",
@@ -2797,11 +2864,34 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "hdole/int/Z32"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "file",
         "Errno"
       ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "file",
+        "Errno"
+      ]
+    },
+    {
+      "description": "Buffer for file status",
+      "basename": "stat",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "typedef stat %0;"
+      }
     },
     {
       "description": "Buffer for file status",
@@ -2824,6 +2914,25 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "voidPtr",
+        "size_t",
+        "hdole/int/Z32",
+        "hdole/int/Z32",
+        "file",
+        "off_t"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "voidPtr",
+        "Errno"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "voidPtr",
@@ -2841,7 +2950,28 @@
       "prototype": "ProductObject",
       "objects": [
         "voidPtr",
+        "size_t"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "voidPtr",
         "hdole/nat/N64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "voidPtr",
+        "hdole/nat/N64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "voidPtr",
+        "hdole/nat/N16"
       ]
     },
     {
@@ -2863,6 +2993,22 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
+        "#1",
+        "Errno"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "stat",
+        "Errno"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
         "stat",
         "Errno"
       ]
@@ -2876,9 +3022,33 @@
       }
     },
     {
+      "description": "Number of seconds since the start of this epoch.",
+      "basename": "time_t",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "typedef long int %0;"
+      }
+    },
+    {
       "description": "Structure containing the number of seconds since the epoch and the number of nanoseconds",
       "basename": "timespec",
       "prototype": "CatObject"
+    },
+    {
+      "description": "Structure containing the number of seconds since the epoch and the number of nanoseconds",
+      "basename": "timespec",
+      "prototype": "CatObject"
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "code": {
+        "cpp": "typedef bool %0;"
+      },
+      "objects": [
+        "#1",
+        "#1"
+      ]
     },
     {
       "prototype": "ProductObject",
@@ -2900,6 +3070,27 @@
       },
       "domain": "hdole/cpp/Errno",
       "codomain": "hdole/str/str"
+    },
+    {
+      "description": "return string describing error",
+      "basename": "strerror",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%1 = std::string(::strerror(::errno));"
+      },
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/str/str"
+    },
+    {
+      "description": "Read a natural number from standard input",
+      "basename": "stdinToN64",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/nat/N64"
     },
     {
       "description": "Read a natural number from standard input",
@@ -2924,6 +3115,28 @@
       "codomain": "hdole/int/Z64"
     },
     {
+      "description": "Read an integer from standard input",
+      "basename": "stdinToZ32",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Read a floating point number from standard input",
+      "basename": "stdinToF64",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/floats/F64"
+    },
+    {
       "description": "Read a floating point number from standard input",
       "basename": "stdinToF64",
       "prototype": "Morphism",
@@ -2946,6 +3159,17 @@
       "codomain": "hdole/str/str"
     },
     {
+      "description": "Read a string from standard input",
+      "basename": "stdinToStr",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/str/str"
+    },
+    {
       "description": "Write a natural number to standard out.",
       "basename": "N64ToStdout",
       "prototype": "Morphism",
@@ -2954,6 +3178,28 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "description": "Write a natural number to standard out.",
+      "basename": "N64ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "description": "Write an integer to standard out.",
+      "basename": "Z64ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/int/Z64",
       "codomain": "hdole/cpp/stdout"
     },
     {
@@ -2979,6 +3225,28 @@
       "codomain": "hdole/cpp/stdout"
     },
     {
+      "description": "Write a floating point number to standard out.",
+      "basename": "F64ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "description": "Write a string to standard out.",
+      "basename": "StrToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/str/str",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
       "description": "Write a string to standard out.",
       "basename": "StrToStdout",
       "prototype": "Morphism",
@@ -2998,6 +3266,28 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "description": "Write a natural number to standard error.",
+      "basename": "N64ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "description": "Write an integer to standard error.",
+      "basename": "Z64ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/int/Z32",
       "codomain": "hdole/cpp/stderr"
     },
     {
@@ -3023,6 +3313,28 @@
       "codomain": "hdole/cpp/stderr"
     },
     {
+      "description": "Write a floating point number to standard error.",
+      "basename": "F64ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "description": "Write a string to standard error.",
+      "basename": "StrToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/str/str",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
       "description": "Write a string to standard error.",
       "basename": "StrToStderr",
       "prototype": "Morphism",
@@ -3039,6 +3351,26 @@
       "prototype": "Morphism",
       "code": {
         "cpp": "%0 = ::O_RDONLY;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "The file is opened in read only mode",
+      "basename": "O_RDONLY",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::O_RDONLY;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "The file is opened in write only mode",
+      "basename": "O_WRONLY",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::O_WRONLY;"
       },
       "domain": "hdole/cpp/#1",
       "codomain": "hdole/int/Z32"
@@ -3064,11 +3396,41 @@
       "codomain": "hdole/int/Z32"
     },
     {
+      "description": "The file is opened in read/write mode",
+      "basename": "O_RDWR",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::O_RDWR;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
       "description": "The file is opened in append mode",
       "basename": "O_APPEND",
       "prototype": "Morphism",
       "code": {
         "cpp": "%0 = ::O_APPEND;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "The file is opened in append mode",
+      "basename": "O_APPEND",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::O_APPEND;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "The file is opened in async mode",
+      "basename": "O_ASYNC",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::O_ASYNC;"
       },
       "domain": "hdole/cpp/#1",
       "codomain": "hdole/int/Z32"
@@ -3094,6 +3456,16 @@
       "codomain": "hdole/int/Z32"
     },
     {
+      "description": "The file is newly created",
+      "basename": "O_CREAT",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::O_CREAT;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
       "description": "Open a file.",
       "basename": "open",
       "prototype": "Morphism",
@@ -3102,6 +3474,26 @@
       },
       "domain": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
       "codomain": "hdole/cpp/CPo{file,Errno}oPC"
+    },
+    {
+      "description": "Open a file.",
+      "basename": "open",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "{\n\tconst int fd = ::open(%0.c_str(), %1);\n\tif (fd >= 0)\n\t{\n\t\t%2.c = 0;\n\t\t%2.m_0 = fd;\n\t}\n\telse\n\t{\n\t\t%2.c = 1;\n\t\t%2.m_1 = ::errno;\n\t}\n}"
+      },
+      "domain": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
+      "codomain": "hdole/cpp/CPo{file,Errno}oPC"
+    },
+    {
+      "description": "Close a file.",
+      "basename": "close",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "if (::close(args) == 0)\n{\n\t%1.c = 0;\n}\nelse\n{\n\t%1.c = 1;\n\t%1.m_0 = ::errno;\n}"
+      },
+      "domain": "hdole/cpp/file",
+      "codomain": "hdole/cpp/CPo{#1,Errno}oPC"
     },
     {
       "description": "Close a file.",
@@ -3124,11 +3516,41 @@
       "codomain": "hdole/cpp/CPo{stat,Errno}oPC"
     },
     {
+      "description": "Get file status",
+      "basename": "fstat",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "\nif (::fstat(%0, & %1.m0))\n\t%1.c = 0;\nelse\n{\n\t%1.c = 1;\n\t%1.m_1 = ::errno;\n}"
+      },
+      "domain": "hdole/cpp/file",
+      "codomain": "hdole/cpp/CPo{stat,Errno}oPC"
+    },
+    {
       "description": "Pages may be read",
       "basename": "PROT_READ",
       "prototype": "Morphism",
       "code": {
         "cpp": "%0 = ::PROT_READ;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Pages may be read",
+      "basename": "PROT_READ",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::PROT_READ;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Pages may be written",
+      "basename": "PROT_WRITE",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::PROT_WRITE;"
       },
       "domain": "hdole/cpp/#1",
       "codomain": "hdole/int/Z32"
@@ -3154,11 +3576,41 @@
       "codomain": "hdole/int/Z32"
     },
     {
+      "description": "Share this mapping",
+      "basename": "MAP_SHARED",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::MAP_SHARED;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
       "description": "Do not share this mapping",
       "basename": "MAP_PRIVATE",
       "prototype": "Morphism",
       "code": {
         "cpp": "%0 = ::MAP_PRIVATE;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Do not share this mapping",
+      "basename": "MAP_PRIVATE",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::MAP_PRIVATE;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Map anonymous memory",
+      "basename": "MAP_ANONYMOUS",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = ::MAP_ANONYMOUS;"
       },
       "domain": "hdole/cpp/#1",
       "codomain": "hdole/int/Z32"
@@ -3184,6 +3636,16 @@
       "codomain": "hdole/cpp/CPo{voidPtr,Errno}oPC"
     },
     {
+      "description": "Memory map a file.",
+      "basename": "mmap",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "{\n\tvoid * ptr = ::mmap(%0, %1, %2, %3, %4, %5);\n\tif (ptr != MAP_FAILED)\n\t{\n\t\t%6.c = 0;\n\t\t%6.m_0 = ptr;\n\t}\n\telse\n\t{\n\t\t%6.c = 1;\n\t\t%6.m_1 = errno;\n\t}\n}"
+      },
+      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "hdole/cpp/CPo{voidPtr,Errno}oPC"
+    },
+    {
       "description": "Unmap a memory mapped file",
       "basename": "munmap",
       "prototype": "Morphism",
@@ -3192,6 +3654,27 @@
       },
       "domain": "hdole/cpp/Po{voidPtr,size_t}oP",
       "codomain": "hdole/cpp/CPo{#1,Errno}oPC"
+    },
+    {
+      "description": "Unmap a memory mapped file",
+      "basename": "munmap",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "if (::munmap(%0, %1) == 0)\n\t%1.c = 0;\nelse\n{\n\t%1.c = 1;\n\t%1.m_1 = ::errno;\n}"
+      },
+      "domain": "hdole/cpp/Po{voidPtr,size_t}oP",
+      "codomain": "hdole/cpp/CPo{#1,Errno}oPC"
+    },
+    {
+      "description": "Get an unsigned byte from memory",
+      "basename": "memToN8",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = *(unsigned char*)%0;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/nat/N8"
     },
     {
       "description": "Get an unsigned byte from memory",
@@ -3216,6 +3699,28 @@
       "codomain": "hdole/nat/N16"
     },
     {
+      "description": "Get an unsigned short from memory",
+      "basename": "memToN16",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = ::bswap_16(%0);"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Get a 32 bit integer from memory",
+      "basename": "memToZ32",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = ::bswap_32(%0);"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/int/Z32"
+    },
+    {
       "description": "Get a 32 bit integer from memory",
       "basename": "memToZ32",
       "prototype": "Morphism",
@@ -3233,6 +3738,28 @@
       "properName": "to",
       "code": {
         "cpp": "%0 = *(double*)%0;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "Get a double precision float from memory",
+      "basename": "memToF64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%0 = *(double*)%0;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "Get an IBM S/360 floating point number from memory",
+      "basename": "IBM360Float",
+      "prototype": "Morphism",
+      "properName": "IBM S/360 float",
+      "code": {
+        "cpp": "{\n\tstruct dbl\n\t{\n\t\tunsigned char mantissa:56;\n\t\tunsigned char exponent:7;\n\t\tunsigned char sign:1;\n\t};\n\tconst dbl data = ::bswap_64(%0);\n\tauto val = ldexp((double)(data.mantissa), 4 * dbl.exponent - 312);\n\t%1 = dbl.sign ? -val : val;\n}"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/floats/F64"
@@ -3260,6 +3787,28 @@
       "codomain": "hdole/str/str"
     },
     {
+      "description": "Get a string from memory having the form of a null terminated string",
+      "basename": "mem2str",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = std::string((const char *)%0);"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/str/str"
+    },
+    {
+      "description": "Get a string from memory with a specified size",
+      "basename": "memRec2str",
+      "prototype": "Morphism",
+      "properName": "str",
+      "code": {
+        "cpp": "%2 = std::string(%0, %1);"
+      },
+      "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N64}oP",
+      "codomain": "hdole/str/str"
+    },
+    {
       "description": "Get a string from memory with a specified size",
       "basename": "memRec2str",
       "prototype": "Morphism",
@@ -3277,6 +3826,28 @@
       "properName": "+2",
       "code": {
         "cpp": "%1 = %0 + 2;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
+      "description": "Increment void pointer by 2",
+      "basename": "voidPtrPlus2",
+      "prototype": "Morphism",
+      "properName": "+2",
+      "code": {
+        "cpp": "%1 = %0 + 2;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
+      "description": "Increment void pointer by 4",
+      "basename": "voidPtrPlus4",
+      "prototype": "Morphism",
+      "properName": "+4",
+      "code": {
+        "cpp": "%1 = %0 + 4;"
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/cpp/voidPtr"
@@ -3304,6 +3875,17 @@
       "codomain": "hdole/cpp/voidPtr"
     },
     {
+      "description": "Increment void pointer by 8",
+      "basename": "voidPtrPlus8",
+      "prototype": "Morphism",
+      "properName": "+8",
+      "code": {
+        "cpp": "%1 = %0 + 8;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
       "description": "Increment void pointer by an unsigned short",
       "basename": "voidPtrPlusN",
       "prototype": "Morphism",
@@ -3313,6 +3895,27 @@
       },
       "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N16}oP",
       "codomain": "hdole/cpp/voidPtr"
+    },
+    {
+      "description": "Increment void pointer by an unsigned short",
+      "basename": "voidPtrPlusN",
+      "prototype": "Morphism",
+      "properName": "+n",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N16}oP",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
+      "basename": "stdinToN8",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/nat/N8"
     },
     {
       "basename": "stdinToN8",
@@ -3335,6 +3938,26 @@
       "codomain": "hdole/nat/N16"
     },
     {
+      "basename": "stdinToN16",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "stdinToN32",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "basename": "stdinToN32",
       "prototype": "Morphism",
       "properName": "in",
@@ -3355,6 +3978,16 @@
       "codomain": "hdole/nat/N128"
     },
     {
+      "basename": "stdinToN128",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/nat/N128"
+    },
+    {
       "basename": "N8ToStdout",
       "prototype": "Morphism",
       "properName": "out",
@@ -3362,6 +3995,26 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/nat/N8",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "N8ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "N16ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/nat/N16",
       "codomain": "hdole/cpp/stdout"
     },
     {
@@ -3385,6 +4038,16 @@
       "codomain": "hdole/cpp/stdout"
     },
     {
+      "basename": "N32ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
       "basename": "N128ToStdout",
       "prototype": "Morphism",
       "properName": "out",
@@ -3393,6 +4056,26 @@
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "N128ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "stdinToZ8",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/int/Z8"
     },
     {
       "basename": "stdinToZ8",
@@ -3415,6 +4098,16 @@
       "codomain": "hdole/int/Z16"
     },
     {
+      "basename": "stdinToZ16",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/int/Z16"
+    },
+    {
       "basename": "stdinToZ64",
       "prototype": "Morphism",
       "properName": "in",
@@ -3423,6 +4116,26 @@
       },
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "stdinToZ64",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "stdinToZ128",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/int/Z128"
     },
     {
       "basename": "stdinToZ128",
@@ -3445,6 +4158,26 @@
       "codomain": "hdole/floats/F32"
     },
     {
+      "basename": "stdinToF32",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/floats/F32"
+    },
+    {
+      "basename": "stdinToF128",
+      "prototype": "Morphism",
+      "properName": "in",
+      "code": {
+        "cpp": "std::cin >> %1;"
+      },
+      "domain": "hdole/cpp/stdin",
+      "codomain": "hdole/floats/F128"
+    },
+    {
       "basename": "stdinToF128",
       "prototype": "Morphism",
       "properName": "in",
@@ -3462,6 +4195,26 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/int/Z8",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "Z8ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "Z16ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/int/Z16",
       "codomain": "hdole/cpp/stdout"
     },
     {
@@ -3485,6 +4238,16 @@
       "codomain": "hdole/cpp/stdout"
     },
     {
+      "basename": "Z32ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
       "basename": "Z128ToStdout",
       "prototype": "Morphism",
       "properName": "out",
@@ -3492,6 +4255,26 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/int/Z128",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "Z128ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
+      "basename": "F32ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/floats/F32",
       "codomain": "hdole/cpp/stdout"
     },
     {
@@ -3515,6 +4298,16 @@
       "codomain": "hdole/cpp/stdout"
     },
     {
+      "basename": "F128ToStdout",
+      "prototype": "Morphism",
+      "properName": "out",
+      "code": {
+        "cpp": "std::cout << %0;"
+      },
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/cpp/stdout"
+    },
+    {
       "basename": "N8ToStderr",
       "prototype": "Morphism",
       "properName": "err",
@@ -3522,6 +4315,26 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/nat/N8",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "basename": "N8ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "basename": "Z8ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/int/Z8",
       "codomain": "hdole/cpp/stderr"
     },
     {
@@ -3545,6 +4358,16 @@
       "codomain": "hdole/cpp/stderr"
     },
     {
+      "basename": "N16ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
       "basename": "Z16ToStderr",
       "prototype": "Morphism",
       "properName": "err",
@@ -3552,6 +4375,26 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/int/Z16",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "basename": "Z16ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "basename": "N32ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/nat/N32",
       "codomain": "hdole/cpp/stderr"
     },
     {
@@ -3575,10 +4418,37 @@
       "codomain": "hdole/cpp/stderr"
     },
     {
+      "basename": "Z32ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
       "basename": "F32ToStderr",
       "prototype": "Morphism",
       "properName": "err",
       "domain": "hdole/floats/F32",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "basename": "F32ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "basename": "N128ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/nat/N128",
       "codomain": "hdole/cpp/stderr"
     },
     {
@@ -3602,11 +4472,39 @@
       "codomain": "hdole/cpp/stderr"
     },
     {
+      "basename": "Z128ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "code": {
+        "cpp": "std::cerr << %0;"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
       "basename": "F128ToStderr",
       "prototype": "Morphism",
       "properName": "err",
       "domain": "hdole/floats/F128",
       "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "basename": "F128ToStderr",
+      "prototype": "Morphism",
+      "properName": "err",
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/cpp/stderr"
+    },
+    {
+      "description": "Convert size_t to N64",
+      "basename": "size_tToN64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/cpp/size_t",
+      "codomain": "hdole/nat/N64"
     },
     {
       "description": "Convert size_t to N64",
@@ -3630,6 +4528,16 @@
       "codomain": "hdole/int/Z64"
     },
     {
+      "basename": "off_tToZ64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/cpp/off_t",
+      "codomain": "hdole/int/Z64"
+    },
+    {
       "basename": "voidPtrToN64",
       "prototype": "Morphism",
       "properName": "to",
@@ -3638,6 +4546,26 @@
       },
       "domain": "hdole/cpp/voidPtr",
       "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "voidPtrToN64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/cpp/voidPtr",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "ErrnoToZ32",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = ::errno;"
+      },
+      "domain": "hdole/cpp/Errno",
+      "codomain": "hdole/int/Z32"
     },
     {
       "basename": "ErrnoToZ32",
@@ -3660,6 +4588,26 @@
       "codomain": "hdole/cpp/off_t"
     },
     {
+      "basename": "Z64toOff_t",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/cpp/off_t"
+    },
+    {
+      "basename": "N64toVoidPtr",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
       "basename": "N64toVoidPtr",
       "prototype": "Morphism",
       "properName": "to",
@@ -3679,6 +4627,15 @@
       "codomain": "hdole/cpp/voidPtr"
     },
     {
+      "basename": "NULL",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%0 = NULL;"
+      },
+      "domain": "hdole/cpp/#1",
+      "codomain": "hdole/cpp/voidPtr"
+    },
+    {
       "basename": "filesize",
       "prototype": "Morphism",
       "code": {
@@ -3686,6 +4643,25 @@
       },
       "domain": "hdole/cpp/stat",
       "codomain": "hdole/cpp/off_t"
+    },
+    {
+      "basename": "filesize",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%1 = %0.st_size;"
+      },
+      "domain": "hdole/cpp/stat",
+      "codomain": "hdole/cpp/off_t"
+    },
+    {
+      "basename": "N64toSize_t",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/cpp/size_t"
     },
     {
       "basename": "N64toSize_t",
@@ -3708,12 +4684,40 @@
       ]
     },
     {
+      "prototype": "Composite",
+      "domain": "hdole/cpp/off_t",
+      "codomain": "hdole/cpp/size_t",
+      "morphisms": [
+        "off_tToZ64",
+        "hdole/int/abs64",
+        "N64toSize_t"
+      ]
+    },
+    {
       "basename": "off_tToSize_t",
       "prototype": "NamedMorphism",
       "properName": "to",
       "domain": "hdole/cpp/off_t",
       "codomain": "hdole/cpp/size_t",
       "source": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
+    },
+    {
+      "basename": "off_tToSize_t",
+      "prototype": "NamedMorphism",
+      "properName": "to",
+      "domain": "hdole/cpp/off_t",
+      "codomain": "hdole/cpp/size_t",
+      "source": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
+    },
+    {
+      "description": "Time of last modification",
+      "basename": "modtime",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "%1 = %0.st_mtim;"
+      },
+      "domain": "hdole/cpp/stat",
+      "codomain": "hdole/cpp/time_t"
     },
     {
       "description": "Time of last modification",
@@ -3733,6 +4737,20 @@
       "codomain": "hdole/cpp/time_t"
     },
     {
+      "description": "Extract nanoseconds from the timespec",
+      "basename": "seconds",
+      "prototype": "Morphism",
+      "domain": "hdole/cpp/timespec",
+      "codomain": "hdole/cpp/time_t"
+    },
+    {
+      "description": "Extract the nanoseconds from the timespec",
+      "basename": "nanoseconds",
+      "prototype": "Morphism",
+      "domain": "hdole/cpp/timespec",
+      "codomain": "hdole/nat/N64"
+    },
+    {
       "description": "Extract the nanoseconds from the timespec",
       "basename": "nanoseconds",
       "prototype": "Morphism",
@@ -3741,11 +4759,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268245477,
+  "timestamp": 1644442489527,
   "version": 0,
   "viewport": {
     "x": 725,
-    "y": 510,
+    "y": -138,
     "scale": 0.7700330138565122
   }
 }

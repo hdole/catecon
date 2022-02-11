@@ -4,6 +4,7 @@
   "name": "hdole/morphism",
   "prototype": "Diagram",
   "properName": "hdole/morphism",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/morphism_Index",
   "codomain": "em/Cat",
@@ -22,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 30,
-          "y": 1690
+          "y": 1750
         },
         "height": "164",
         "weight": "bold"
@@ -81,6 +82,14 @@
       "prototype": "CatObject"
     },
     {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
       "basename": "B",
       "prototype": "CatObject"
     },
@@ -89,15 +98,36 @@
       "prototype": "Morphism",
       "domain": "hdole/morphism/A",
       "codomain": "hdole/morphism/B"
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/morphism/A",
+      "codomain": "hdole/morphism/B"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
     }
   ],
   "user": "hdole",
-  "timestamp": 1644129753516,
+  "timestamp": 1644561109810,
   "version": 0,
   "viewport": {
     "x": 16,
     "y": -3479,
     "scale": 2.232456140350877
-  },
-  "category": "CAT"
+  }
 }

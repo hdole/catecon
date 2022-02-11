@@ -21,8 +21,8 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 350,
-          "y": 600
+          "x": 330,
+          "y": 610
         },
         "height": "200",
         "weight": "bold"
@@ -59,7 +59,7 @@
         "prototype": "IndexObject",
         "to": "hdole/iso/B",
         "xy": {
-          "x": 800,
+          "x": 750,
           "y": 1050
         }
       },
@@ -68,7 +68,7 @@
         "prototype": "IndexObject",
         "to": "hdole/iso/A",
         "xy": {
-          "x": 800,
+          "x": 750,
           "y": 1250
         }
       },
@@ -77,8 +77,8 @@
         "prototype": "IndexObject",
         "to": "hdole/iso/A",
         "xy": {
-          "x": 1200,
-          "y": 1050
+          "x": 1000,
+          "y": 1250
         }
       },
       {
@@ -138,6 +138,16 @@
         "height": "24"
       },
       {
+        "description": "BUG: morphism fusion no longer works",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 860,
+          "y": 1300
+        },
+        "height": 24
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "hdole/iso/o_0",
@@ -190,12 +200,6 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/iso/o_9",
         "codomain": "hdole/iso/o_8",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
         "to": "hdole/iso/Id{B}dI"
       },
       {
@@ -245,8 +249,38 @@
       "prototype": "CatObject"
     },
     {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
       "basename": "B",
       "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/iso/A",
+      "codomain": "hdole/iso/B"
     },
     {
       "basename": "f",
@@ -263,8 +297,24 @@
       "codomain": "hdole/iso/A"
     },
     {
+      "description": "Inverse of f",
+      "basename": "finv",
+      "prototype": "Morphism",
+      "properName": "f⁻¹",
+      "domain": "hdole/iso/B",
+      "codomain": "hdole/iso/A"
+    },
+    {
       "prototype": "Identity",
       "domain": "hdole/iso/A"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "hdole/iso/A"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "hdole/iso/B"
     },
     {
       "prototype": "Identity",
@@ -272,12 +322,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268168037,
+  "timestamp": 1644561015150,
   "version": 0,
   "viewport": {
-    "x": -385,
-    "y": -639,
-    "scale": 1.6186006032688938
+    "x": -334,
+    "y": -693,
+    "scale": 1.7026181401092972
   },
   "properName": "hdole/iso"
 }

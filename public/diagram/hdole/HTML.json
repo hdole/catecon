@@ -345,8 +345,8 @@
         "basename": "t_16",
         "prototype": "IndexText",
         "xy": {
-          "x": 60,
-          "y": -160
+          "x": 70,
+          "y": -150
         },
         "height": "500",
         "weight": "bold"
@@ -872,6 +872,19 @@
       "max": 1
     },
     {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "&#10034;",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "description": "The HTML object intereacts with web devices",
+      "basename": "HTML",
+      "prototype": "CatObject"
+    },
+    {
       "description": "The HTML object intereacts with web devices",
       "basename": "HTML",
       "prototype": "CatObject"
@@ -882,6 +895,21 @@
       "objects": [
         "HTML",
         "hdole/int/Z32"
+      ]
+    },
+    {
+      "description": "The homset from HTML to &Zopf;₃₂",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/int/Z32"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/int/Z32}oH"
       ]
     },
     {
@@ -901,9 +929,32 @@
     },
     {
       "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Z32",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "objects": [
         "HTML",
         "CPo{hdole/int/Z32,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/int/Z32,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to str",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/str/str"
       ]
     },
     {
@@ -923,6 +974,21 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/str/str}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/str/str",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/str/str",
@@ -934,6 +1000,21 @@
       "objects": [
         "HTML",
         "CPo{hdole/str/str,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/str/str,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to ℕ&#x2086;&#x2084;",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/nat/N64"
       ]
     },
     {
@@ -953,6 +1034,21 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/nat/N64}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/nat/N64",
@@ -964,6 +1060,21 @@
       "objects": [
         "HTML",
         "CPo{hdole/nat/N64,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/nat/N64,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to ℕ₈",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/nat/N8"
       ]
     },
     {
@@ -983,6 +1094,21 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/nat/N8}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N8",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/nat/N8",
@@ -994,6 +1120,21 @@
       "objects": [
         "HTML",
         "CPo{hdole/nat/N8,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/nat/N8,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to &Nopf;&#8321;&#8326;",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/nat/N16"
       ]
     },
     {
@@ -1013,6 +1154,21 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/nat/N16}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N16",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/nat/N16",
@@ -1024,6 +1180,21 @@
       "objects": [
         "HTML",
         "CPo{hdole/nat/N16,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/nat/N16,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to &Zopf;&#x2086;&#x2084;",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/int/Z64"
       ]
     },
     {
@@ -1043,6 +1214,21 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/int/Z64}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/int/Z64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/int/Z64",
@@ -1054,6 +1240,21 @@
       "objects": [
         "HTML",
         "CPo{hdole/int/Z64,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/int/Z64,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to 𝔽₆₄",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/floats/F64"
       ]
     },
     {
@@ -1073,10 +1274,32 @@
     },
     {
       "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/floats/F64}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/floats/F64",
         "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/floats/F64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/floats/F64,#1}oPC"
       ]
     },
     {
@@ -1096,9 +1319,32 @@
     },
     {
       "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "hdole/nat/N32",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "objects": [
         "HTML",
         "CPo{hdole/nat/N32,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "CPo{hdole/nat/N32,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to ℕ₃₂",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/nat/N32"
       ]
     },
     {
@@ -1114,6 +1360,21 @@
       "objects": [
         "hdole/str/str",
         "Ho{HTML,hdole/nat/N32}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/nat/N32}oH"
+      ]
+    },
+    {
+      "description": "The homset from HTML to ℤ₈",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/int/Z8"
       ]
     },
     {
@@ -1134,8 +1395,30 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/int/Z8}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "HTML",
         "hdole/int/CPo{Z8,#1}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "hdole/int/CPo{Z8,#1}oPC"
+      ]
+    },
+    {
+      "description": "The homset from HTML to &Zopf;&#8321;&#8326;",
+      "prototype": "HomObject",
+      "objects": [
+        "HTML",
+        "hdole/int/Z16"
       ]
     },
     {
@@ -1156,9 +1439,34 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "hdole/str/str",
+        "Ho{HTML,hdole/int/Z16}oH"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "HTML",
         "hdole/int/CPo{Z16,#1}oPC"
       ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "HTML",
+        "hdole/int/CPo{Z16,#1}oPC"
+      ]
+    },
+    {
+      "description": "Read a natural number from an HTML input tag",
+      "basename": "html2N64",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r > Number.MAX_SAFE_INTEGER)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(8);\n\tconst rslt = new Uint64Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/nat/N64"
     },
     {
       "description": "Read a natural number from an HTML input tag",
@@ -1183,6 +1491,28 @@
       "codomain": "hdole/nat/N8"
     },
     {
+      "description": "Read a natural number between 0 and 255 from an HTML input tag",
+      "basename": "html2N8",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < 0 || r > 255)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(1);\n\tconst rslt = new Uint8Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "Read a natural number between 0 and 65535 from an HTML input tag",
+      "basename": "html2N16",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < 0 || r > 65536)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(2);\n\tconst rslt = new Uint16Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/nat/N16"
+    },
+    {
       "description": "Read a natural number between 0 and 65535 from an HTML input tag",
       "basename": "html2N16",
       "prototype": "Morphism",
@@ -1205,15 +1535,48 @@
       "codomain": "hdole/int/Z32"
     },
     {
+      "description": "Read a 32-bit integer from an HTML input tag",
+      "basename": "html2Z32",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < -2417483648 || r > 2417483647)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(4);\n\tconst rslt = new Int32Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/int/Z32"
+    },
+    {
       "description": "Input a 32-bit integer from HTML",
       "basename": "html2Z32F",
       "prototype": "Morphism",
       "properName": "&Zopf;&#8323;&#8322;",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-2417483648\" max=\"2417483647\" id=\"' + args[0] + '\" placeholder=\"32-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z32__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-2417483648\" max=\"2417483647\" id=\"' + args[0] + '\" placeholder=\"32-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z32__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/int/Z32,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z32}oH}oP"
+    },
+    {
+      "description": "Input a 32-bit integer from HTML",
+      "basename": "html2Z32F",
+      "prototype": "Morphism",
+      "properName": "&Zopf;&#8323;&#8322;",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-2417483648\" max=\"2417483647\" id=\"' + args[0] + '\" placeholder=\"32-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z32__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/int/Z32,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z32}oH}oP"
+    },
+    {
+      "description": "Read an integer from an HTML input tag",
+      "basename": "html2Z",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Number.parseInt(document.getElementById(args).value);\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/int/Z64"
     },
     {
       "description": "Read an integer from an HTML input tag",
@@ -1238,6 +1601,28 @@
       "codomain": "hdole/floats/F64"
     },
     {
+      "description": "Read a floating point number from an HTML input tag",
+      "basename": "html2F",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Number.parseFloat(document.getElementById(args).value);\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/floats/F64"
+    },
+    {
+      "description": "Read a string from an HTML input tag",
+      "basename": "html2Str",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn document.getElementById(args).value;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/str/str"
+    },
+    {
       "description": "Read a string from an HTML input tag",
       "basename": "html2Str",
       "prototype": "Morphism",
@@ -1254,7 +1639,18 @@
       "prototype": "Morphism",
       "properName": "line",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"text\" id=\"' + args[0] + '\" placeholder=\"Text\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Str__br__rb___br_0_rb__rB_mL]\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"text\" id=\"' + args[0] + '\" placeholder=\"Text\"' + dv + '/>', hdole_HTML_Lm_Br_html2Str__br__rb___br__br_0_rb__rb__rB_mL]\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/str/str,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/str/str}oH}oP"
+    },
+    {
+      "description": "Input a line of text from HTML",
+      "basename": "html2line",
+      "prototype": "Morphism",
+      "properName": "line",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"text\" id=\"' + args[0] + '\" placeholder=\"Text\"' + dv + '/>', hdole_HTML_Lm_Br_html2Str__br__rb___br__br_0_rb__rb__rB_mL]\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/str/str,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/str/str}oH}oP"
@@ -1265,7 +1661,18 @@
       "prototype": "Morphism",
       "properName": "&Nopf;",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" id=\"' + args[0] + '\" placeholder=\"Natural number\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" id=\"' + args[0] + '\" placeholder=\"Natural number\"' + dv + '/>', hdole_HTML_Lm_Br_html2N64__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N64,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N64}oH}oP"
+    },
+    {
+      "description": "Input a natural number from HTML",
+      "basename": "html2Nat",
+      "prototype": "Morphism",
+      "properName": "&Nopf;",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" id=\"' + args[0] + '\" placeholder=\"Natural number\"' + dv + '/>', hdole_HTML_Lm_Br_html2N64__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N64,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N64}oH}oP"
@@ -1276,7 +1683,18 @@
       "prototype": "Morphism",
       "properName": "&Nopf;&#8328;",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"255\" id=\"' + args[0] + '\" placeholder=\"0 to 255\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N8__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"255\" id=\"' + args[0] + '\" placeholder=\"0 to 255\"' + dv + '/>', hdole_HTML_Lm_Br_html2N8__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N8,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N8}oH}oP"
+    },
+    {
+      "description": "Input a natural number between 0 and 255 from HTML",
+      "basename": "html2N8F",
+      "prototype": "Morphism",
+      "properName": "&Nopf;&#8328;",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"255\" id=\"' + args[0] + '\" placeholder=\"0 to 255\"' + dv + '/>', hdole_HTML_Lm_Br_html2N8__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N8,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N8}oH}oP"
@@ -1287,7 +1705,18 @@
       "prototype": "Morphism",
       "properName": "&Nopf;&#8321;&#8326;",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"255\" id=\"' + args[0] + '\" placeholder=\"0 to 255\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N16__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"65535\" id=\"' + args[0] + '\" placeholder=\"0 to 65535\"' + dv + '/>', hdole_HTML_Lm_Br_html2N16__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N16,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N16}oH}oP"
+    },
+    {
+      "description": "Input a natural number between 0 and 255 from HTML",
+      "basename": "html2N16F",
+      "prototype": "Morphism",
+      "properName": "&Nopf;&#8321;&#8326;",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"65535\" id=\"' + args[0] + '\" placeholder=\"0 to 65535\"' + dv + '/>', hdole_HTML_Lm_Br_html2N16__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N16,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N16}oH}oP"
@@ -1298,7 +1727,18 @@
       "prototype": "Morphism",
       "properName": "ℤ₆₄",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/int/Z64,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z64}oH}oP"
+    },
+    {
+      "description": "Input a 64-bit integer from HTML",
+      "basename": "html2Z64F",
+      "prototype": "Morphism",
+      "properName": "ℤ₆₄",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/int/Z64,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z64}oH}oP"
@@ -1309,10 +1749,31 @@
       "prototype": "Morphism",
       "properName": "&Fopf;",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Float\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2F__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Float\"' + dv + '/>', hdole_HTML_Lm_Br_html2F__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/floats/F64,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/floats/F64}oH}oP"
+    },
+    {
+      "description": "Input a floating point number from the HTML input tag",
+      "basename": "html2Float",
+      "prototype": "Morphism",
+      "properName": "&Fopf;",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" id=\"' + args[0] + '\" placeholder=\"Float\"' + dv + '/>', hdole_HTML_Lm_Br_html2F__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/floats/F64,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/floats/F64}oH}oP"
+    },
+    {
+      "basename": "html2N32",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif (r < 0 || r > 4294967295)\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(4);\n\tconst rslt = new Uint32Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/nat/N32"
     },
     {
       "basename": "html2N32",
@@ -1329,7 +1790,17 @@
       "prototype": "Morphism",
       "properName": "N32",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"4294967295\" id=\"' + args[0] + '\" placeholder=\"0 to 4,294,967,295\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2N32__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"4294967295\" id=\"' + args[0] + '\" placeholder=\"0 to 4,294,967,295\"' + dv + '/>', hdole_HTML_Lm_Br_html2N32__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N32,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N32}oH}oP"
+    },
+    {
+      "basename": "html2N32F",
+      "prototype": "Morphism",
+      "properName": "N32",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"0\" max=\"4294967295\" id=\"' + args[0] + '\" placeholder=\"0 to 4,294,967,295\"' + dv + '/>', hdole_HTML_Lm_Br_html2N32__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,CPo{hdole/nat/N32,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/nat/N32}oH}oP"
@@ -1340,6 +1811,32 @@
       "domain": "hdole/HTML/#1",
       "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N8}oH",
       "preCurry": "hdole/HTML/html2N8",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2N8:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N8}oH",
+      "preCurry": "hdole/HTML/html2N8",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2N16:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N16}oH",
+      "preCurry": "hdole/HTML/html2N16",
       "domFactors": [],
       "homFactors": [
         [
@@ -1374,6 +1871,32 @@
       ]
     },
     {
+      "basename": "Lm{html2N32:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N32}oH",
+      "preCurry": "hdole/HTML/html2N32",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2N64:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/nat/N64}oH",
+      "preCurry": "hdole/HTML/html2N64",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
       "basename": "Lm{html2N64:[]:[[0]]}mL",
       "prototype": "LambdaMorphism",
       "domain": "hdole/HTML/#1",
@@ -1397,6 +1920,26 @@
       "codomain": "hdole/int/Z8"
     },
     {
+      "basename": "html2Z8",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif ((r < -128) || (r > 127))\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(1);\n\tconst rslt = new Int8Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "html2Z16",
+      "prototype": "Morphism",
+      "properName": "input",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst v = document.getElementById(args).value;\n\tif (v === '')\n\t\tthrow 'no input';\n\tconst r = Number.parseInt(v);\n\tif ((r < -32768) || (r > 32767))\n\t\tthrow 'out of range';\n\tconst bfr = new ArrayBuffer(2);\n\tconst rslt = new Int16Array(bfr);\n\trslt[0] = r;\n\treturn rslt;\n}\n"
+      },
+      "domain": "hdole/HTML/HTML",
+      "codomain": "hdole/int/Z16"
+    },
+    {
       "basename": "html2Z16",
       "prototype": "Morphism",
       "properName": "input",
@@ -1412,6 +1955,32 @@
       "domain": "hdole/HTML/#1",
       "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z8}oH",
       "preCurry": "hdole/HTML/html2Z8",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2Z8:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z8}oH",
+      "preCurry": "hdole/HTML/html2Z8",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2Z16:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z16}oH",
+      "preCurry": "hdole/HTML/html2Z16",
       "domFactors": [],
       "homFactors": [
         [
@@ -1446,11 +2015,50 @@
       ]
     },
     {
+      "basename": "Lm{html2Z32:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z32}oH",
+      "preCurry": "hdole/HTML/html2Z32",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
       "basename": "Lm{html2Z:[]:[[0]]}mL",
       "prototype": "LambdaMorphism",
       "domain": "hdole/HTML/#1",
       "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z64}oH",
       "preCurry": "hdole/HTML/html2Z",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2Z:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/int/Z64}oH",
+      "preCurry": "hdole/HTML/html2Z",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "basename": "Lm{html2F:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/floats/F64}oH",
+      "preCurry": "hdole/HTML/html2F",
       "domFactors": [],
       "homFactors": [
         [
@@ -1485,10 +2093,32 @@
       ]
     },
     {
+      "basename": "Lm{html2Str:[]:[[0]]}mL",
+      "prototype": "LambdaMorphism",
+      "domain": "hdole/HTML/#1",
+      "codomain": "hdole/HTML/Ho{HTML,hdole/str/str}oH",
+      "preCurry": "hdole/HTML/html2Str",
+      "domFactors": [],
+      "homFactors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
       "basename": "html2Z8F",
       "prototype": "Morphism",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-128\" max=\"127\" id=\"' + args[0] + '\" placeholder=\"8-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z8__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-128\" max=\"127\" id=\"' + args[0] + '\" placeholder=\"8-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z8__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,hdole/int/CPo{Z8,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z8}oH}oP"
+    },
+    {
+      "basename": "html2Z8F",
+      "prototype": "Morphism",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-128\" max=\"127\" id=\"' + args[0] + '\" placeholder=\"8-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z8__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,hdole/int/CPo{Z8,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z8}oH}oP"
@@ -1497,18 +2127,27 @@
       "basename": "html2Z16F",
       "prototype": "Morphism",
       "code": {
-        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-32768\" max=\"32767\" id=\"' + args[0] + '\" placeholder=\"16-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_hdole_HTML_html2Z16__br__rb___br_0_rb__rB_mL];\n}\n"
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-32768\" max=\"32767\" id=\"' + args[0] + '\" placeholder=\"16-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z16__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
+      },
+      "domain": "hdole/HTML/Po{HTML,hdole/int/CPo{Z16,#1}oPC}oP",
+      "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z16}oH}oP"
+    },
+    {
+      "basename": "html2Z16F",
+      "prototype": "Morphism",
+      "code": {
+        "js": "function %Type(args)\n{\n\tconst dv = args[1][0] !== 1 ? ' value=\"' + args[1][1].toString() + '\" ' : '';\n\treturn ['<input type=\"number\" min=\"-32768\" max=\"32767\" id=\"' + args[0] + '\" placeholder=\"16-bit integer\"' + dv + '/>', hdole_HTML_Lm_Br_html2Z16__br__rb___br__br_0_rb__rb__rB_mL];\n}\n"
       },
       "domain": "hdole/HTML/Po{HTML,hdole/int/CPo{Z16,#1}oPC}oP",
       "codomain": "hdole/HTML/Po{hdole/str/str,Ho{HTML,hdole/int/Z16}oH}oP"
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268253532,
+  "timestamp": 1644561027364,
   "version": 0,
   "viewport": {
-    "x": 168,
-    "y": 514,
-    "scale": 0.8320165537684936
+    "x": 315,
+    "y": 555,
+    "scale": 0.8876229089342731
   }
 }

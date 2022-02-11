@@ -151,24 +151,6 @@
         }
       },
       {
-        "basename": "o_21",
-        "prototype": "IndexObject",
-        "to": "hdole/int/Po{Z64,Z64}oP",
-        "xy": {
-          "x": 800,
-          "y": 4000
-        }
-      },
-      {
-        "basename": "o_22",
-        "prototype": "IndexObject",
-        "to": "hdole/int/CPo{#1,#1}oPC",
-        "xy": {
-          "x": 1000,
-          "y": 4000
-        }
-      },
-      {
         "description": "The 16-bit integers",
         "basename": "t_14",
         "prototype": "IndexText",
@@ -433,7 +415,7 @@
       {
         "basename": "o_46",
         "prototype": "IndexObject",
-        "to": "hdole/int/CPo{Po{Z16,Z16}oP,#1}oPC",
+        "to": "hdole/int/CPo{Z16,#1}oPC",
         "xy": {
           "x": 200,
           "y": 3600
@@ -538,7 +520,7 @@
         "basename": "t_31",
         "prototype": "IndexText",
         "xy": {
-          "x": -1360,
+          "x": -1340,
           "y": -340
         },
         "height": "600",
@@ -1190,7 +1172,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/Z128",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 2000
         }
       },
@@ -1208,7 +1190,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/CPo{Z128,#1}oPC",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 1800
         }
       },
@@ -1217,7 +1199,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/Z128",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 2400
         }
       },
@@ -1226,7 +1208,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/CPo{Z128,#1}oPC",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 2200
         }
       },
@@ -1235,7 +1217,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/CPo{Z128,#1}oPC",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 2600
         }
       },
@@ -1314,7 +1296,7 @@
       {
         "basename": "o_145",
         "prototype": "IndexObject",
-        "to": "hdole/int/CPo{Po{Z32,Z32}oP,#1}oPC",
+        "to": "hdole/int/CPo{Z32,#1}oPC",
         "xy": {
           "x": 600,
           "y": 3600
@@ -1406,7 +1388,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/CPo{#1,#1}oPC",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 4000
         }
       },
@@ -1521,7 +1503,7 @@
       {
         "basename": "o_168",
         "prototype": "IndexObject",
-        "to": "hdole/int/CPo{Po{Z64,Z64}oP,#1}oPC",
+        "to": "hdole/int/CPo{Z64,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 3600
@@ -1622,7 +1604,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/Z128",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 3000
         }
       },
@@ -1631,7 +1613,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/Z128",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 3200
         }
       },
@@ -1640,16 +1622,16 @@
         "prototype": "IndexObject",
         "to": "hdole/int/Z128",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 3400
         }
       },
       {
         "basename": "o_182",
         "prototype": "IndexObject",
-        "to": "hdole/int/CPo{Po{Z128,Z128}oP,#1}oPC",
+        "to": "hdole/int/CPo{Z128,#1}oPC",
         "xy": {
-          "x": 1500,
+          "x": 1450,
           "y": 3600
         }
       },
@@ -1658,7 +1640,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/CPo{Z128,#1}oPC",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 3800
         }
       },
@@ -1719,9 +1701,9 @@
       {
         "basename": "o_191",
         "prototype": "IndexObject",
-        "to": "hdole/int/CPo{Po{Z8,Z8}oP,#1}oPC",
+        "to": "hdole/int/CPo{Z8,#1}oPC",
         "xy": {
-          "x": -200,
+          "x": -190,
           "y": 3600
         }
       },
@@ -1973,7 +1955,7 @@
         "prototype": "IndexObject",
         "to": "hdole/int/Z128",
         "xy": {
-          "x": 1400,
+          "x": 1450,
           "y": 2800
         }
       },
@@ -3005,6 +2987,24 @@
         }
       },
       {
+        "basename": "o_21",
+        "prototype": "IndexObject",
+        "to": "hdole/int/Po{Z64,Z64}oP",
+        "xy": {
+          "x": 800,
+          "y": 4000
+        }
+      },
+      {
+        "basename": "o_22",
+        "prototype": "IndexObject",
+        "to": "hdole/int/CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1000,
+          "y": 4000
+        }
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "hdole/int/o_2",
@@ -3038,13 +3038,6 @@
         "domain": "hdole/int/o_19",
         "codomain": "hdole/int/o_20",
         "to": "hdole/int/lte64"
-      },
-      {
-        "basename": "m_9",
-        "prototype": "IndexMorphism",
-        "domain": "hdole/int/o_21",
-        "codomain": "hdole/int/o_22",
-        "to": "hdole/int/equ128"
       },
       {
         "basename": "m_11",
@@ -4011,11 +4004,30 @@
         "domain": "hdole/int/o_26",
         "codomain": "hdole/int/o_62",
         "to": "hdole/int/Z162Z32"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/int/o_21",
+        "codomain": "hdole/int/o_22",
+        "to": "hdole/int/equ64"
       }
     ],
     "cells": []
   },
   "elements": [
+    {
+      "description": "An 8-bit integer",
+      "basename": "Z8",
+      "prototype": "FiniteObject",
+      "properName": "ℤ₈",
+      "code": {
+        "cpp": "typedef int8_t %0;\n"
+      },
+      "size": 256,
+      "min": -128,
+      "max": 127
+    },
     {
       "description": "An 8-bit integer",
       "basename": "Z8",
@@ -4036,6 +4048,13 @@
       ]
     },
     {
+      "prototype": "ProductObject",
+      "objects": [
+        "Z8",
+        "Z8"
+      ]
+    },
+    {
       "description": "The 16-bit integers",
       "basename": "Z16",
       "prototype": "CatObject",
@@ -4043,6 +4062,23 @@
       "code": {
         "cpp": "typedef int16_t %0;\n"
       }
+    },
+    {
+      "description": "The 16-bit integers",
+      "basename": "Z16",
+      "prototype": "CatObject",
+      "properName": "&Zopf;&#8321;&#8326;",
+      "code": {
+        "cpp": "typedef int16_t %0;\n"
+      }
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
     },
     {
       "basename": "#1",
@@ -4062,10 +4098,34 @@
     },
     {
       "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "#1",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "objects": [
         "Z16",
         "Z16"
       ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Z16",
+        "Z16"
+      ]
+    },
+    {
+      "description": "The 32-bit integers",
+      "basename": "Z32",
+      "prototype": "CatObject",
+      "properName": "&Zopf;₃₂",
+      "code": {
+        "cpp": "typedef int32_t %0;\n"
+      }
     },
     {
       "description": "The 32-bit integers",
@@ -4084,6 +4144,22 @@
       ]
     },
     {
+      "prototype": "ProductObject",
+      "objects": [
+        "Z32",
+        "Z32"
+      ]
+    },
+    {
+      "description": "The 64-bit integers",
+      "basename": "Z64",
+      "prototype": "CatObject",
+      "properName": "&Zopf;&#x2086;&#x2084;",
+      "code": {
+        "cpp": "typedef int64_t %0;\n"
+      }
+    },
+    {
       "description": "The 64-bit integers",
       "basename": "Z64",
       "prototype": "CatObject",
@@ -4098,6 +4174,22 @@
         "Z64",
         "Z64"
       ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Z64",
+        "Z64"
+      ]
+    },
+    {
+      "description": "The 128-bit unsigned numbers",
+      "basename": "Z128",
+      "prototype": "CatObject",
+      "properName": "&Zopf;&#x2081;&#x2082;&#x2088;",
+      "code": {
+        "cpp": "typedef __int128_t %0;\n"
+      }
     },
     {
       "description": "The 128-bit unsigned numbers",
@@ -4120,7 +4212,31 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
+        "Z16",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
         "Z64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Z64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Z32",
         "#1"
       ]
     },
@@ -4144,6 +4260,22 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
+        "Z8",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Z128",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
         "Z128",
         "#1"
       ]
@@ -4158,7 +4290,28 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "Z128",
+        "Z128"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "Z16",
+        "Z8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Z16",
+        "Z8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Z32",
         "Z8"
       ]
     },
@@ -4179,55 +4332,41 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "Z64",
+        "Z8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "Z128",
         "Z8"
       ]
     },
     {
       "prototype": "ProductObject",
-      "dual": true,
       "objects": [
-        "Po{Z8,Z8}oP",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{Z16,Z16}oP",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{Z32,Z32}oP",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{Z64,Z64}oP",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{Z128,Z128}oP",
-        "#1"
+        "Z128",
+        "Z8"
       ]
     },
     {
       "description": "The 64-bit zero",
       "basename": "zero64",
       "prototype": "Morphism",
-      "properName": "0",
+      "properName": "0₆₄",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "The 64-bit zero",
+      "basename": "zero64",
+      "prototype": "Morphism",
+      "properName": "0₆₄",
       "code": {
         "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
         "cpp": "%0 = 0;"
@@ -4239,7 +4378,19 @@
       "description": "The 64-bit one",
       "basename": "one64",
       "prototype": "Morphism",
-      "properName": "1",
+      "properName": "1₆₄",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "The 64-bit one",
+      "basename": "one64",
+      "prototype": "Morphism",
+      "properName": "1₆₄",
       "code": {
         "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
         "cpp": "%0 = 1;"
@@ -4251,7 +4402,19 @@
       "description": "The maximum 64-bit integer 9,223,372,036,854,775,807",
       "basename": "inf64",
       "prototype": "Morphism",
-      "properName": "&infin;",
+      "properName": "∞₆₄",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn Number.MAX_SAFE_INTEGER;\n}\n",
+        "cpp": "%0 = 0x7fffffffffffffff;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "The maximum 64-bit integer 9,223,372,036,854,775,807",
+      "basename": "inf64",
+      "prototype": "Morphism",
+      "properName": "∞₆₄",
       "code": {
         "js": "function %Type(args)\n{\n\treturn Number.MAX_SAFE_INTEGER;\n}\n",
         "cpp": "%0 = 0x7fffffffffffffff;\n"
@@ -4263,7 +4426,19 @@
       "description": "Addition of two integers with rollover",
       "basename": "addr64",
       "prototype": "Morphism",
-      "properName": "addr",
+      "properName": "addr₆₄",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] + args[1];\n}\n",
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Addition of two integers with rollover",
+      "basename": "addr64",
+      "prototype": "Morphism",
+      "properName": "addr₆₄",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0] + args[1];\n}\n",
         "cpp": "%2 = %0 + %1;"
@@ -4275,7 +4450,19 @@
       "description": "Is the first 64-bit integer less than the second",
       "basename": "lt64",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt₆₄",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] < args[1];\n}\n",
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the first 64-bit integer less than the second",
+      "basename": "lt64",
+      "prototype": "Morphism",
+      "properName": "lt₆₄",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0] < args[1];\n}\n",
         "cpp": "%2 = %0 < %1;"
@@ -4287,7 +4474,19 @@
       "description": "Is the first integer less than or equal to the second",
       "basename": "lte64",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₆₄",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] <= args[1];\n}\n",
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the first integer less than or equal to the second",
+      "basename": "lte64",
+      "prototype": "Morphism",
+      "properName": "lte₆₄",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0] <= args[1];\n}\n",
         "cpp": "%2 = %0 <= %1;"
@@ -4299,19 +4498,43 @@
       "description": "compare two 64-bit integers for equality",
       "basename": "equ128",
       "prototype": "Morphism",
-      "properName": "equ",
+      "properName": "equ₁₂₈",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[0] === args[1];\n}\n",
         "cpp": "%2 = %0 == %1;"
       },
-      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "compare two 64-bit integers for equality",
+      "basename": "equ128",
+      "prototype": "Morphism",
+      "properName": "equ₁₂₈",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn args[0] === args[1];\n}\n",
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
       "codomain": "hdole/int/CPo{#1,#1}oPC"
     },
     {
       "description": "Sixteen bit zero",
       "basename": "zero16",
       "prototype": "Morphism",
-      "properName": "\n\n0",
+      "properName": "0₁₆",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Sixteen bit zero",
+      "basename": "zero16",
+      "prototype": "Morphism",
+      "properName": "0₁₆",
       "code": {
         "js": "function %Type(args)\n{\n\treturn 0;\n}\n",
         "cpp": "%0 = 0;"
@@ -4323,7 +4546,19 @@
       "description": "Sixteen bit one",
       "basename": "minus_one16",
       "prototype": "Morphism",
-      "properName": "-1",
+      "properName": "-1₁₆",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
+        "cpp": "%0 = -1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Sixteen bit one",
+      "basename": "minus_one16",
+      "prototype": "Morphism",
+      "properName": "-1₁₆",
       "code": {
         "js": "function %Type(args)\n{\n\treturn 1;\n}\n",
         "cpp": "%0 = -1;"
@@ -4344,10 +4579,33 @@
       "codomain": "hdole/int/Z16"
     },
     {
+      "description": "Max sixteen bit integer 32767",
+      "basename": "inf16",
+      "prototype": "Morphism",
+      "properName": "&infin;",
+      "code": {
+        "js": "function %Type(args)\n{\n\treturn 65535;\n}\n",
+        "cpp": "%0 = 0x7fff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
       "description": "Addition of two 16-bit integers with rollover",
       "basename": "addr16",
       "prototype": "Morphism",
-      "properName": "addr",
+      "properName": "addr₁₆",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Addition of two 16-bit integers with rollover",
+      "basename": "addr16",
+      "prototype": "Morphism",
+      "properName": "addr₁₆",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4358,7 +4616,18 @@
       "description": "Mulitiplication of two 16-bit integers",
       "basename": "mult16",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₁₆",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Mulitiplication of two 16-bit integers",
+      "basename": "mult16",
+      "prototype": "Morphism",
+      "properName": "mult₁₆",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -4369,7 +4638,18 @@
       "description": "Bit-wise and of two 16-bit integers",
       "basename": "and16",
       "prototype": "Morphism",
-      "properName": "and",
+      "properName": "and₁₆",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Bit-wise and of two 16-bit integers",
+      "basename": "and16",
+      "prototype": "Morphism",
+      "properName": "and₁₆",
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
@@ -4380,7 +4660,18 @@
       "description": "Bit-wise or of two 16-bit integers",
       "basename": "or16",
       "prototype": "Morphism",
-      "properName": "or",
+      "properName": "or₁₆",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Bit-wise or of two 16-bit integers",
+      "basename": "or16",
+      "prototype": "Morphism",
+      "properName": "or₁₆",
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
@@ -4391,7 +4682,18 @@
       "description": "Bit-wise exclusive or of two 16-bit integers",
       "basename": "xor16",
       "prototype": "Morphism",
-      "properName": "xor",
+      "properName": "xor₁₆",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Bit-wise exclusive or of two 16-bit integers",
+      "basename": "xor16",
+      "prototype": "Morphism",
+      "properName": "xor₁₆",
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
@@ -4402,7 +4704,18 @@
       "description": "Modulus of one 16-bit integer of the other, or an exception",
       "basename": "mod16",
       "prototype": "Morphism",
-      "properName": "mod",
+      "properName": "mod₁₆",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "description": "Modulus of one 16-bit integer of the other, or an exception",
+      "basename": "mod16",
+      "prototype": "Morphism",
+      "properName": "mod₁₆",
       "code": {
         "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
       },
@@ -4413,7 +4726,18 @@
       "description": "Is the 16-bit integer less than to the second",
       "basename": "lt16",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt₁₆",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the 16-bit integer less than to the second",
+      "basename": "lt16",
+      "prototype": "Morphism",
+      "properName": "lt₁₆",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
@@ -4424,7 +4748,18 @@
       "description": "Is the 16-bit integer less than or equal to the second",
       "basename": "lte16",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₁₆",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the 16-bit integer less than or equal to the second",
+      "basename": "lte16",
+      "prototype": "Morphism",
+      "properName": "lte₁₆",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
@@ -4435,7 +4770,18 @@
       "description": "The successor function for 64-bit integers",
       "basename": "succ64",
       "prototype": "Morphism",
-      "properName": "incr",
+      "properName": "incr₆₄",
+      "code": {
+        "cpp": "if (%0 < 0x7fffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "The successor function for 64-bit integers",
+      "basename": "succ64",
+      "prototype": "Morphism",
+      "properName": "incr₆₄",
       "code": {
         "cpp": "if (%0 < 0x7fffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
@@ -4446,6 +4792,18 @@
       "description": "Decrement function for integers",
       "basename": "decr",
       "prototype": "Morphism",
+      "properName": "decr₆₄",
+      "code": {
+        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "Decrement function for integers",
+      "basename": "decr",
+      "prototype": "Morphism",
+      "properName": "decr₆₄",
       "code": {
         "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
@@ -4456,7 +4814,18 @@
       "description": "Test for equality of two 16-bit integers",
       "basename": "Z16_equals",
       "prototype": "Morphism",
-      "properName": "equ",
+      "properName": "equ₁₆",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Test for equality of two 16-bit integers",
+      "basename": "Z16_equals",
+      "prototype": "Morphism",
+      "properName": "equ₁₆",
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
@@ -4467,7 +4836,18 @@
       "description": "32-bit zero",
       "basename": "zero32",
       "prototype": "Morphism",
-      "properName": "0",
+      "properName": "0₃₂",
+      "code": {
+        "cpp": "%0 = 0;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "32-bit zero",
+      "basename": "zero32",
+      "prototype": "Morphism",
+      "properName": "0₃₂",
       "code": {
         "cpp": "%0 = 0;\n"
       },
@@ -4478,12 +4858,33 @@
       "description": "The number one",
       "basename": "minus_one32",
       "prototype": "Morphism",
-      "properName": "-1",
+      "properName": "-1₃₂",
       "code": {
         "cpp": "%0 = -1;\n"
       },
       "domain": "hdole/int/#1",
       "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "The number one",
+      "basename": "minus_one32",
+      "prototype": "Morphism",
+      "properName": "-1₃₂",
+      "code": {
+        "cpp": "%0 = -1;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "Z82Z16",
+      "prototype": "Morphism",
+      "properName": "⊂",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/Z16"
     },
     {
       "basename": "Z82Z16",
@@ -4506,9 +4907,29 @@
       "codomain": "hdole/int/Z32"
     },
     {
-      "basename": "Z322Z64",
+      "basename": "Z162Z32",
       "prototype": "Morphism",
       "properName": "⊂",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "Z322Z64",
+      "prototype": "Morphism",
+      "properName": "⊂₃₂",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "Z322Z64",
+      "prototype": "Morphism",
+      "properName": "⊂₃₂",
       "code": {
         "cpp": "%1 = %0;\n"
       },
@@ -4518,7 +4939,17 @@
     {
       "basename": "succ32",
       "prototype": "Morphism",
-      "properName": "incr",
+      "properName": "incr₃₂",
+      "code": {
+        "cpp": "if (%0 < 0x7fffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "succ32",
+      "prototype": "Morphism",
+      "properName": "incr₃₂",
       "code": {
         "cpp": "if (%0 < 0x7fffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
@@ -4528,7 +4959,17 @@
     {
       "basename": "decr32",
       "prototype": "Morphism",
-      "properName": "decr",
+      "properName": "decr₃₂",
+      "code": {
+        "cpp": "if (%0 != 0xffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "decr32",
+      "prototype": "Morphism",
+      "properName": "decr₃₂",
       "code": {
         "cpp": "if (%0 != 0xffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
@@ -4539,7 +4980,18 @@
       "description": "The maximum 32-bit integer 2,147,483,647",
       "basename": "inf32",
       "prototype": "Morphism",
-      "properName": "∞",
+      "properName": "∞₃₂",
+      "code": {
+        "cpp": "%0 = 0x7fffffff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "The maximum 32-bit integer 2,147,483,647",
+      "basename": "inf32",
+      "prototype": "Morphism",
+      "properName": "∞₃₂",
       "code": {
         "cpp": "%0 = 0x7fffffff;"
       },
@@ -4549,7 +5001,17 @@
     {
       "basename": "succ16",
       "prototype": "Morphism",
-      "properName": "incr",
+      "properName": "incr₁₆",
+      "code": {
+        "cpp": "if (%0 < 0x7fff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "basename": "succ16",
+      "prototype": "Morphism",
+      "properName": "incr₁₆",
       "code": {
         "cpp": "if (%0 < 0x7fff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
@@ -4560,7 +5022,18 @@
       "description": "Zero for unsigned eight bit numbers",
       "basename": "zero8",
       "prototype": "Morphism",
-      "properName": "0",
+      "properName": "0₈",
+      "code": {
+        "cpp": "%0 = 0;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Zero for unsigned eight bit numbers",
+      "basename": "zero8",
+      "prototype": "Morphism",
+      "properName": "0₈",
       "code": {
         "cpp": "%0 = 0;\n"
       },
@@ -4571,7 +5044,18 @@
       "description": "One in the eight bit unsigned numbers",
       "basename": "minus_one8",
       "prototype": "Morphism",
-      "properName": "-1",
+      "properName": "-1₈",
+      "code": {
+        "cpp": "%0 = -1;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "One in the eight bit unsigned numbers",
+      "basename": "minus_one8",
+      "prototype": "Morphism",
+      "properName": "-1₈",
       "code": {
         "cpp": "%0 = -1;\n"
       },
@@ -4582,7 +5066,18 @@
       "description": "The maximum safe unsigned eight bit number",
       "basename": "inf8",
       "prototype": "Morphism",
-      "properName": "∞",
+      "properName": "∞₈",
+      "code": {
+        "cpp": "%0 = 0x7f;\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "The maximum safe unsigned eight bit number",
+      "basename": "inf8",
+      "prototype": "Morphism",
+      "properName": "∞₈",
       "code": {
         "cpp": "%0 = 0x7f;\n"
       },
@@ -4593,7 +5088,18 @@
       "description": "Decrement an eight bit unsigned number.",
       "basename": "decr8",
       "prototype": "Morphism",
-      "properName": "decr",
+      "properName": "decr₈",
+      "code": {
+        "cpp": "if (%0 != 0xff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "Decrement an eight bit unsigned number.",
+      "basename": "decr8",
+      "prototype": "Morphism",
+      "properName": "decr₈",
       "code": {
         "cpp": "if (%0 != 0xff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
@@ -4604,7 +5110,18 @@
       "description": "The successor for eight bit unsigned numbers.",
       "basename": "succ8",
       "prototype": "Morphism",
-      "properName": "incr",
+      "properName": "incr₈",
+      "code": {
+        "cpp": "if (%0 < 0x7f)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "The successor for eight bit unsigned numbers.",
+      "basename": "succ8",
+      "prototype": "Morphism",
+      "properName": "incr₈",
       "code": {
         "cpp": "if (%0 < 0x7f)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
@@ -4615,7 +5132,18 @@
       "description": "The decrement of a sixteen bit unsigned number.",
       "basename": "decr16",
       "prototype": "Morphism",
-      "properName": "decr",
+      "properName": "decr₁₆",
+      "code": {
+        "cpp": "if (%0 != 0xffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "description": "The decrement of a sixteen bit unsigned number.",
+      "basename": "decr16",
+      "prototype": "Morphism",
+      "properName": "decr₁₆",
       "code": {
         "cpp": "if (%0 != 0xffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
@@ -4626,7 +5154,18 @@
       "description": "Addition of two 32 bit unsigned numbers",
       "basename": "addr32",
       "prototype": "Morphism",
-      "properName": "addr",
+      "properName": "addr₃₂",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Addition of two 32 bit unsigned numbers",
+      "basename": "addr32",
+      "prototype": "Morphism",
+      "properName": "addr₃₂",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4637,7 +5176,18 @@
       "description": "Addition of eight bit unsigned numbers",
       "basename": "addr8",
       "prototype": "Morphism",
-      "properName": "addr",
+      "properName": "addr₈",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Addition of eight bit unsigned numbers",
+      "basename": "addr8",
+      "prototype": "Morphism",
+      "properName": "addr₈",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4648,7 +5198,18 @@
       "description": "Subtraction of two 32 bit numbers",
       "basename": "subr32",
       "prototype": "Morphism",
-      "properName": "subr",
+      "properName": "subr₃₂",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Subtraction of two 32 bit numbers",
+      "basename": "subr32",
+      "prototype": "Morphism",
+      "properName": "subr₃₂",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -4659,7 +5220,18 @@
       "description": "Addition with carry",
       "basename": "add16",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₁₆",
+      "code": {
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "description": "Addition with carry",
+      "basename": "add16",
+      "prototype": "Morphism",
+      "properName": "add₁₆",
       "code": {
         "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
@@ -4670,7 +5242,18 @@
       "description": "Addition with carry",
       "basename": "add8",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₈",
+      "code": {
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "Addition with carry",
+      "basename": "add8",
+      "prototype": "Morphism",
+      "properName": "add₈",
       "code": {
         "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
@@ -4681,7 +5264,18 @@
       "description": "Multiplication of two 64-bit numbers",
       "basename": "mult64",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₆₄",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "description": "Multiplication of two 64-bit numbers",
+      "basename": "mult64",
+      "prototype": "Morphism",
+      "properName": "mult₆₄",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -4692,7 +5286,18 @@
       "description": "Multiplication of two unsigned 32-bit numbers",
       "basename": "mult32",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₃₂",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Multiplication of two unsigned 32-bit numbers",
+      "basename": "mult32",
+      "prototype": "Morphism",
+      "properName": "mult₃₂",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -4703,7 +5308,18 @@
       "description": "Subtraction of two 64-bit unsigned numbers",
       "basename": "subr64",
       "prototype": "Morphism",
-      "properName": "subr",
+      "properName": "subr₆₄",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Subtraction of two 64-bit unsigned numbers",
+      "basename": "subr64",
+      "prototype": "Morphism",
+      "properName": "subr₆₄",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -4714,7 +5330,18 @@
       "description": "Subtraction of two 64-bit numbers with underflow",
       "basename": "sub64",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub₆₄",
+      "code": {
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "Subtraction of two 64-bit numbers with underflow",
+      "basename": "sub64",
+      "prototype": "Morphism",
+      "properName": "sub₆₄",
       "code": {
         "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
@@ -4725,7 +5352,18 @@
       "description": "Addition of two 64-bit numbers with overflow",
       "basename": "add64",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₆₄",
+      "code": {
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "description": "Addition of two 64-bit numbers with overflow",
+      "basename": "add64",
+      "prototype": "Morphism",
+      "properName": "add₆₄",
       "code": {
         "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
@@ -4736,7 +5374,18 @@
       "description": "Subtraction of two 32-bit unsigned numbers with underflow",
       "basename": "sub32",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub₃₂",
+      "code": {
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "description": "Subtraction of two 32-bit unsigned numbers with underflow",
+      "basename": "sub32",
+      "prototype": "Morphism",
+      "properName": "sub₃₂",
       "code": {
         "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
@@ -4747,7 +5396,18 @@
       "description": "Subtraction of two 8-bit numbers",
       "basename": "subr8",
       "prototype": "Morphism",
-      "properName": "subr",
+      "properName": "subr₈",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Subtraction of two 8-bit numbers",
+      "basename": "subr8",
+      "prototype": "Morphism",
+      "properName": "subr₈",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -4758,7 +5418,18 @@
       "description": "Subtraction of two 8-bit numbers with underflow",
       "basename": "sub8",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub₈",
+      "code": {
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "description": "Subtraction of two 8-bit numbers with underflow",
+      "basename": "sub8",
+      "prototype": "Morphism",
+      "properName": "sub₈",
       "code": {
         "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
@@ -4769,7 +5440,18 @@
       "description": "Multiplication of two 8-bit unsigned numbers",
       "basename": "mult8",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₈",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Multiplication of two 8-bit unsigned numbers",
+      "basename": "mult8",
+      "prototype": "Morphism",
+      "properName": "mult₈",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -4780,7 +5462,18 @@
       "description": "Bit-wise and of two 8-bit unsigned numbers",
       "basename": "and8",
       "prototype": "Morphism",
-      "properName": "and",
+      "properName": "and₈",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Bit-wise and of two 8-bit unsigned numbers",
+      "basename": "and8",
+      "prototype": "Morphism",
+      "properName": "and₈",
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
@@ -4791,7 +5484,18 @@
       "description": "Bit-wise or of two unsigned numbers",
       "basename": "or8",
       "prototype": "Morphism",
-      "properName": "or",
+      "properName": "or₈",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Bit-wise or of two unsigned numbers",
+      "basename": "or8",
+      "prototype": "Morphism",
+      "properName": "or₈",
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
@@ -4801,7 +5505,17 @@
     {
       "basename": "zero128",
       "prototype": "Morphism",
-      "properName": "0",
+      "properName": "0₁₂₈",
+      "code": {
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "zero128",
+      "prototype": "Morphism",
+      "properName": "0₁₂₈",
       "code": {
         "cpp": "%0 = 0;"
       },
@@ -4811,7 +5525,17 @@
     {
       "basename": "one128",
       "prototype": "Morphism",
-      "properName": "1",
+      "properName": "1₁₂₈",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "one128",
+      "prototype": "Morphism",
+      "properName": "1₁₂₈",
       "code": {
         "cpp": "%0 = 1;"
       },
@@ -4821,7 +5545,17 @@
     {
       "basename": "inf128",
       "prototype": "Morphism",
-      "properName": "&infin;",
+      "properName": "∞₁₂₈",
+      "code": {
+        "cpp": "%0 = 0x7fffffffffffffffffffffffffffffff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "inf128",
+      "prototype": "Morphism",
+      "properName": "∞₁₂₈",
       "code": {
         "cpp": "%0 = 0x7fffffffffffffffffffffffffffffff;"
       },
@@ -4831,7 +5565,17 @@
     {
       "basename": "succ128",
       "prototype": "Morphism",
-      "properName": "incr",
+      "properName": "incr₁₂₈",
+      "code": {
+        "cpp": "if (%0 < 0x7fffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "succ128",
+      "prototype": "Morphism",
+      "properName": "incr₁₂₈",
       "code": {
         "cpp": "if (%0 < 0x7fffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;"
       },
@@ -4841,7 +5585,17 @@
     {
       "basename": "decr128",
       "prototype": "Morphism",
-      "properName": "decr",
+      "properName": "decr₁₂₈",
+      "code": {
+        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "decr128",
+      "prototype": "Morphism",
+      "properName": "decr₁₂₈",
       "code": {
         "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
@@ -4851,7 +5605,17 @@
     {
       "basename": "addr128",
       "prototype": "Morphism",
-      "properName": "addr",
+      "properName": "addr₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "addr128",
+      "prototype": "Morphism",
+      "properName": "addr₁₂₈",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4861,7 +5625,17 @@
     {
       "basename": "add32",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₃₂",
+      "code": {
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "add32",
+      "prototype": "Morphism",
+      "properName": "add₃₂",
       "code": {
         "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
@@ -4871,7 +5645,17 @@
     {
       "basename": "add128",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₁₂₈",
+      "code": {
+        "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "add128",
+      "prototype": "Morphism",
+      "properName": "add₁₂₈",
       "code": {
         "cpp": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;"
       },
@@ -4881,7 +5665,17 @@
     {
       "basename": "sub128",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub₁₂₈",
+      "code": {
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "sub128",
+      "prototype": "Morphism",
+      "properName": "sub₁₂₈",
       "code": {
         "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
       },
@@ -4891,7 +5685,17 @@
     {
       "basename": "and32",
       "prototype": "Morphism",
-      "properName": "and",
+      "properName": "and₃₂",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "and32",
+      "prototype": "Morphism",
+      "properName": "and₃₂",
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
@@ -4901,7 +5705,17 @@
     {
       "basename": "and64",
       "prototype": "Morphism",
-      "properName": "and",
+      "properName": "and₆₄",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "and64",
+      "prototype": "Morphism",
+      "properName": "and₆₄",
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
@@ -4911,7 +5725,17 @@
     {
       "basename": "and128",
       "prototype": "Morphism",
-      "properName": "and",
+      "properName": "and₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "and128",
+      "prototype": "Morphism",
+      "properName": "and₁₂₈",
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
@@ -4921,7 +5745,17 @@
     {
       "basename": "N62toZ128",
       "prototype": "Morphism",
-      "properName": "⊂",
+      "properName": "⊂₆₄",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "N62toZ128",
+      "prototype": "Morphism",
+      "properName": "⊂₆₄",
       "code": {
         "cpp": "%1 = %0;\n"
       },
@@ -4931,7 +5765,17 @@
     {
       "basename": "xor8",
       "prototype": "Morphism",
-      "properName": "xor",
+      "properName": "xor₈",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "xor8",
+      "prototype": "Morphism",
+      "properName": "xor₈",
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
@@ -4941,7 +5785,17 @@
     {
       "basename": "mod8",
       "prototype": "Morphism",
-      "properName": "mod",
+      "properName": "mod₈",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "basename": "mod8",
+      "prototype": "Morphism",
+      "properName": "mod₈",
       "code": {
         "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
       },
@@ -4951,7 +5805,17 @@
     {
       "basename": "equ8",
       "prototype": "Morphism",
-      "properName": "equ",
+      "properName": "equ₈",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "equ8",
+      "prototype": "Morphism",
+      "properName": "equ₈",
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
@@ -4961,7 +5825,17 @@
     {
       "basename": "equ32",
       "prototype": "Morphism",
-      "properName": "equ",
+      "properName": "equ₃₂",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "equ32",
+      "prototype": "Morphism",
+      "properName": "equ₃₂",
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
@@ -4971,7 +5845,17 @@
     {
       "basename": "lt8",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt₈",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt8",
+      "prototype": "Morphism",
+      "properName": "lt₈",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
@@ -4981,7 +5865,17 @@
     {
       "basename": "lt32",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt₃₂",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt32",
+      "prototype": "Morphism",
+      "properName": "lt₃₂",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
@@ -4991,7 +5885,17 @@
     {
       "basename": "or32",
       "prototype": "Morphism",
-      "properName": "or",
+      "properName": "or₃₂",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "or32",
+      "prototype": "Morphism",
+      "properName": "or₃₂",
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
@@ -5001,7 +5905,17 @@
     {
       "basename": "or64",
       "prototype": "Morphism",
-      "properName": "or",
+      "properName": "or₆₄",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "or64",
+      "prototype": "Morphism",
+      "properName": "or₆₄",
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
@@ -5011,7 +5925,17 @@
     {
       "basename": "or128",
       "prototype": "Morphism",
-      "properName": "or",
+      "properName": "or₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "or128",
+      "prototype": "Morphism",
+      "properName": "or₁₂₈",
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
@@ -5021,7 +5945,17 @@
     {
       "basename": "lte32",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₃₂",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lte32",
+      "prototype": "Morphism",
+      "properName": "lte₃₂",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
@@ -5031,7 +5965,17 @@
     {
       "basename": "mod32",
       "prototype": "Morphism",
-      "properName": "mod",
+      "properName": "mod₃₂",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "mod32",
+      "prototype": "Morphism",
+      "properName": "mod₃₂",
       "code": {
         "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
       },
@@ -5041,7 +5985,17 @@
     {
       "basename": "xor32",
       "prototype": "Morphism",
-      "properName": "xor",
+      "properName": "xor₃₂",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "xor32",
+      "prototype": "Morphism",
+      "properName": "xor₃₂",
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
@@ -5051,7 +6005,17 @@
     {
       "basename": "lte128",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lte128",
+      "prototype": "Morphism",
+      "properName": "lte₁₂₈",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
@@ -5061,7 +6025,17 @@
     {
       "basename": "xor64",
       "prototype": "Morphism",
-      "properName": "xor",
+      "properName": "xor₆₄",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "xor64",
+      "prototype": "Morphism",
+      "properName": "xor₆₄",
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
@@ -5071,7 +6045,17 @@
     {
       "basename": "mod64",
       "prototype": "Morphism",
-      "properName": "mod",
+      "properName": "mod₆₄",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "basename": "mod64",
+      "prototype": "Morphism",
+      "properName": "mod₆₄",
       "code": {
         "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
       },
@@ -5081,7 +6065,17 @@
     {
       "basename": "xor128",
       "prototype": "Morphism",
-      "properName": "xor",
+      "properName": "xor₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "xor128",
+      "prototype": "Morphism",
+      "properName": "xor₁₂₈",
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
@@ -5091,7 +6085,17 @@
     {
       "basename": "mod128",
       "prototype": "Morphism",
-      "properName": "mod",
+      "properName": "mod₁₂₈",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "mod128",
+      "prototype": "Morphism",
+      "properName": "mod₁₂₈",
       "code": {
         "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n"
       },
@@ -5101,7 +6105,17 @@
     {
       "basename": "lt128",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt128",
+      "prototype": "Morphism",
+      "properName": "lt₁₂₈",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
@@ -5111,7 +6125,17 @@
     {
       "basename": "gt8",
       "prototype": "Morphism",
-      "properName": "gt",
+      "properName": "gt₈",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt8",
+      "prototype": "Morphism",
+      "properName": "gt₈",
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
@@ -5121,7 +6145,17 @@
     {
       "basename": "gte8",
       "prototype": "Morphism",
-      "properName": "gte",
+      "properName": "gte₈",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gte8",
+      "prototype": "Morphism",
+      "properName": "gte₈",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -5132,7 +6166,18 @@
       "description": "Arithmetic shift right",
       "basename": "rsh8",
       "prototype": "Morphism",
-      "properName": "rsh",
+      "properName": "rsh₈",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh8",
+      "prototype": "Morphism",
+      "properName": "rsh₈",
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
@@ -5143,7 +6188,18 @@
       "description": "Bit-wise not operation of an eight bit number",
       "basename": "not8",
       "prototype": "Morphism",
-      "properName": "not",
+      "properName": "not₈",
+      "code": {
+        "cpp": "%1 = ! %0;"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Bit-wise not operation of an eight bit number",
+      "basename": "not8",
+      "prototype": "Morphism",
+      "properName": "not₈",
       "code": {
         "cpp": "%1 = ! %0;"
       },
@@ -5153,7 +6209,17 @@
     {
       "basename": "subr128",
       "prototype": "Morphism",
-      "properName": "subr",
+      "properName": "subr₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "subr128",
+      "prototype": "Morphism",
+      "properName": "subr₁₂₈",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -5163,7 +6229,17 @@
     {
       "basename": "subr16",
       "prototype": "Morphism",
-      "properName": "subr",
+      "properName": "subr₁₆",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "subr16",
+      "prototype": "Morphism",
+      "properName": "subr₁₆",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -5181,9 +6257,29 @@
       "codomain": "hdole/int/CPo{Z16,#1}oPC"
     },
     {
+      "basename": "sub16",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
       "basename": "mult128c",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₁₂₈",
+      "code": {
+        "cpp": "// TODO\n%2.c = 0;\n%2.m_0 = %0 * %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "mult128c",
+      "prototype": "Morphism",
+      "properName": "mult₁₂₈",
       "code": {
         "cpp": "// TODO\n%2.c = 0;\n%2.m_0 = %0 * %1;"
       },
@@ -5193,7 +6289,17 @@
     {
       "basename": "not16",
       "prototype": "Morphism",
-      "properName": "not",
+      "properName": "not₁₆",
+      "code": {
+        "cpp": "%1 = ! %0;"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "not16",
+      "prototype": "Morphism",
+      "properName": "not₁₆",
       "code": {
         "cpp": "%1 = ! %0;"
       },
@@ -5203,7 +6309,17 @@
     {
       "basename": "not32",
       "prototype": "Morphism",
-      "properName": "not",
+      "properName": "not₃₂",
+      "code": {
+        "cpp": "%1 = ! %0;"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "not32",
+      "prototype": "Morphism",
+      "properName": "not₃₂",
       "code": {
         "cpp": "%1 = ! %0;"
       },
@@ -5213,7 +6329,17 @@
     {
       "basename": "not64",
       "prototype": "Morphism",
-      "properName": "not",
+      "properName": "not₆₄",
+      "code": {
+        "cpp": "%1 = ! %0;"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "not64",
+      "prototype": "Morphism",
+      "properName": "not₆₄",
       "code": {
         "cpp": "%1 = ! %0;"
       },
@@ -5223,7 +6349,17 @@
     {
       "basename": "not128",
       "prototype": "Morphism",
-      "properName": "not",
+      "properName": "not₁₂₈",
+      "code": {
+        "cpp": "%1 = ! %0;"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "not128",
+      "prototype": "Morphism",
+      "properName": "not₁₂₈",
       "code": {
         "cpp": "%1 = ! %0;"
       },
@@ -5233,7 +6369,17 @@
     {
       "basename": "max8",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₈",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "max8",
+      "prototype": "Morphism",
+      "properName": "max₈",
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
@@ -5243,7 +6389,17 @@
     {
       "basename": "min8",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₈",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "min8",
+      "prototype": "Morphism",
+      "properName": "min₈",
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
@@ -5253,7 +6409,17 @@
     {
       "basename": "gt16",
       "prototype": "Morphism",
-      "properName": "gt",
+      "properName": "gt₁₆",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt16",
+      "prototype": "Morphism",
+      "properName": "gt₁₆",
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
@@ -5263,7 +6429,17 @@
     {
       "basename": "gt32",
       "prototype": "Morphism",
-      "properName": "gt",
+      "properName": "gt₃₂",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt32",
+      "prototype": "Morphism",
+      "properName": "gt₃₂",
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
@@ -5273,7 +6449,17 @@
     {
       "basename": "gt64",
       "prototype": "Morphism",
-      "properName": "gt",
+      "properName": "gt₆₄",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt64",
+      "prototype": "Morphism",
+      "properName": "gt₆₄",
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
@@ -5283,7 +6469,17 @@
     {
       "basename": "gt128",
       "prototype": "Morphism",
-      "properName": "gt",
+      "properName": "gt₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt128",
+      "prototype": "Morphism",
+      "properName": "gt₁₂₈",
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
@@ -5293,7 +6489,17 @@
     {
       "basename": "gte16",
       "prototype": "Morphism",
-      "properName": "gte",
+      "properName": "gte₁₆",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gte16",
+      "prototype": "Morphism",
+      "properName": "gte₁₆",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -5303,7 +6509,17 @@
     {
       "basename": "lte8",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₈",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lte8",
+      "prototype": "Morphism",
+      "properName": "lte₈",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
@@ -5313,7 +6529,17 @@
     {
       "basename": "gte32",
       "prototype": "Morphism",
-      "properName": "gte",
+      "properName": "gte₃₂",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gte32",
+      "prototype": "Morphism",
+      "properName": "gte₃₂",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -5323,7 +6549,17 @@
     {
       "basename": "gte64",
       "prototype": "Morphism",
-      "properName": "gte",
+      "properName": "gte₆₄",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gte64",
+      "prototype": "Morphism",
+      "properName": "gte₆₄",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -5333,7 +6569,17 @@
     {
       "basename": "gte128",
       "prototype": "Morphism",
-      "properName": "gte",
+      "properName": "gte₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gte128",
+      "prototype": "Morphism",
+      "properName": "gte₁₂₈",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -5344,7 +6590,18 @@
       "description": "Arithmetic shift right",
       "basename": "rsh16",
       "prototype": "Morphism",
-      "properName": "rsh",
+      "properName": "rsh₁₆",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z8}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh16",
+      "prototype": "Morphism",
+      "properName": "rsh₁₆",
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
@@ -5355,7 +6612,18 @@
       "description": "Arithmetic shift right",
       "basename": "rsh32",
       "prototype": "Morphism",
-      "properName": "rsh",
+      "properName": "rsh₃₂",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z8}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh32",
+      "prototype": "Morphism",
+      "properName": "rsh₃₂",
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
@@ -5366,7 +6634,18 @@
       "description": "Arithmetic shift right",
       "basename": "rsh64",
       "prototype": "Morphism",
-      "properName": "rsh",
+      "properName": "rsh₆₄",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z8}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh64",
+      "prototype": "Morphism",
+      "properName": "rsh₆₄",
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
@@ -5377,7 +6656,18 @@
       "description": "Arithmetic shift right",
       "basename": "rsh128",
       "prototype": "Morphism",
-      "properName": "rsh",
+      "properName": "rsh₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z8}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "description": "Arithmetic shift right",
+      "basename": "rsh128",
+      "prototype": "Morphism",
+      "properName": "rsh₁₂₈",
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
@@ -5387,122 +6677,277 @@
     {
       "basename": "max16",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₁₆",
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "max16",
+      "prototype": "Morphism",
+      "properName": "max₁₆",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
     },
     {
       "basename": "min16",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₁₆",
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "min16",
+      "prototype": "Morphism",
+      "properName": "min₁₆",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/Z16"
     },
     {
       "basename": "max32",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₃₂",
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "max32",
+      "prototype": "Morphism",
+      "properName": "max₃₂",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
     },
     {
       "basename": "min32",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₃₂",
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "min32",
+      "prototype": "Morphism",
+      "properName": "min₃₂",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/Z32"
     },
     {
       "basename": "max64",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₆₄",
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "max64",
+      "prototype": "Morphism",
+      "properName": "max₆₄",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
     },
     {
       "basename": "min64",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₆₄",
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "min64",
+      "prototype": "Morphism",
+      "properName": "min₆₄",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/Z64"
     },
     {
       "basename": "max128",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₁₂₈",
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "max128",
+      "prototype": "Morphism",
+      "properName": "max₁₂₈",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
     },
     {
       "basename": "min128",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₁₂₈",
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/Z8"
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "min128",
+      "prototype": "Morphism",
+      "properName": "min₁₂₈",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/Z128"
     },
     {
       "basename": "div8",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₈",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
       "domain": "hdole/int/Po{Z8,Z8}oP",
-      "codomain": "hdole/int/CPo{Po{Z8,Z8}oP,#1}oPC"
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
+    },
+    {
+      "basename": "div8",
+      "prototype": "Morphism",
+      "properName": "div₈",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/CPo{Z8,#1}oPC"
     },
     {
       "basename": "div16",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₁₆",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
       "domain": "hdole/int/Po{Z16,Z16}oP",
-      "codomain": "hdole/int/CPo{Po{Z16,Z16}oP,#1}oPC"
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
+    },
+    {
+      "basename": "div16",
+      "prototype": "Morphism",
+      "properName": "div₁₆",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
+      "domain": "hdole/int/Po{Z16,Z16}oP",
+      "codomain": "hdole/int/CPo{Z16,#1}oPC"
     },
     {
       "basename": "div32",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₃₂",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
       "domain": "hdole/int/Po{Z32,Z32}oP",
-      "codomain": "hdole/int/CPo{Po{Z32,Z32}oP,#1}oPC"
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
+    },
+    {
+      "basename": "div32",
+      "prototype": "Morphism",
+      "properName": "div₃₂",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
+      "domain": "hdole/int/Po{Z32,Z32}oP",
+      "codomain": "hdole/int/CPo{Z32,#1}oPC"
     },
     {
       "basename": "div64",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₆₄",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
       "domain": "hdole/int/Po{Z64,Z64}oP",
-      "codomain": "hdole/int/CPo{Po{Z64,Z64}oP,#1}oPC"
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
+    },
+    {
+      "basename": "div64",
+      "prototype": "Morphism",
+      "properName": "div₆₄",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{Z64,#1}oPC"
     },
     {
       "basename": "div128",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₁₂₈",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
       "domain": "hdole/int/Po{Z128,Z128}oP",
-      "codomain": "hdole/int/CPo{Po{Z128,Z128}oP,#1}oPC"
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
+    },
+    {
+      "basename": "div128",
+      "prototype": "Morphism",
+      "properName": "div₁₂₈",
+      "code": {
+        "cpp": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}"
+      },
+      "domain": "hdole/int/Po{Z128,Z128}oP",
+      "codomain": "hdole/int/CPo{Z128,#1}oPC"
     },
     {
       "basename": "one8",
       "prototype": "Morphism",
-      "properName": "1",
+      "properName": "1₈",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "one8",
+      "prototype": "Morphism",
+      "properName": "1₈",
       "code": {
         "cpp": "%0 = 1;"
       },
@@ -5512,7 +6957,17 @@
     {
       "basename": "one16",
       "prototype": "Morphism",
-      "properName": "1",
+      "properName": "1₁₆",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "one16",
+      "prototype": "Morphism",
+      "properName": "1₁₆",
       "code": {
         "cpp": "%0 = 1;"
       },
@@ -5522,7 +6977,17 @@
     {
       "basename": "one32",
       "prototype": "Morphism",
-      "properName": "1",
+      "properName": "1₃₂",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "one32",
+      "prototype": "Morphism",
+      "properName": "1₃₂",
       "code": {
         "cpp": "%0 = 1;"
       },
@@ -5532,7 +6997,17 @@
     {
       "basename": "minus_one64",
       "prototype": "Morphism",
-      "properName": "-1",
+      "properName": "-1₆₄",
+      "code": {
+        "cpp": "%0 = -1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "basename": "minus_one64",
+      "prototype": "Morphism",
+      "properName": "-1₆₄",
       "code": {
         "cpp": "%0 = -1;"
       },
@@ -5542,7 +7017,17 @@
     {
       "basename": "minus_one128",
       "prototype": "Morphism",
-      "properName": "-1",
+      "properName": "-1₁₂₈",
+      "code": {
+        "cpp": "%0 = -1;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "minus_one128",
+      "prototype": "Morphism",
+      "properName": "-1₁₂₈",
       "code": {
         "cpp": "%0 = -1;"
       },
@@ -5552,7 +7037,17 @@
     {
       "basename": "minus_inf8",
       "prototype": "Morphism",
-      "properName": "-&infin;",
+      "properName": "-∞₈",
+      "code": {
+        "cpp": "%0 = 0xff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "basename": "minus_inf8",
+      "prototype": "Morphism",
+      "properName": "-∞₈",
       "code": {
         "cpp": "%0 = 0xff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
       },
@@ -5562,7 +7057,17 @@
     {
       "basename": "minus_inf16",
       "prototype": "Morphism",
-      "properName": "-&infin;",
+      "properName": "-∞₁₆",
+      "code": {
+        "cpp": "%0 = 0xffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "basename": "minus_inf16",
+      "prototype": "Morphism",
+      "properName": "-∞₁₆",
       "code": {
         "cpp": "%0 = 0xffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
       },
@@ -5572,7 +7077,17 @@
     {
       "basename": "minus_inf32",
       "prototype": "Morphism",
-      "properName": "-&infin;",
+      "properName": "-∞₃₂",
+      "code": {
+        "cpp": "%0 = 0xffffffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "basename": "minus_inf32",
+      "prototype": "Morphism",
+      "properName": "-∞₃₂",
       "code": {
         "cpp": "%0 = 0xffffffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
       },
@@ -5583,7 +7098,18 @@
       "description": "The minimum 64-bit integer -9,223,372,036,854,775,808",
       "basename": "minus_inf64",
       "prototype": "Morphism",
-      "properName": "-&infin;",
+      "properName": "-∞₆₄",
+      "code": {
+        "cpp": "%0 = 0xffffffffffffffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "The minimum 64-bit integer -9,223,372,036,854,775,808",
+      "basename": "minus_inf64",
+      "prototype": "Morphism",
+      "properName": "-∞₆₄",
       "code": {
         "cpp": "%0 = 0xffffffffffffffff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n"
       },
@@ -5593,7 +7119,17 @@
     {
       "basename": "minus_infin128",
       "prototype": "Morphism",
-      "properName": "-&infin;",
+      "properName": "-∞₁₂₈",
+      "code": {
+        "cpp": "%0 = 0xffffffffffffffffffffffffffffffff;"
+      },
+      "domain": "hdole/int/#1",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "basename": "minus_infin128",
+      "prototype": "Morphism",
+      "properName": "-∞₁₂₈",
       "code": {
         "cpp": "%0 = 0xffffffffffffffffffffffffffffffff;"
       },
@@ -5604,7 +7140,18 @@
       "description": "Logical shift left",
       "basename": "lshf8",
       "prototype": "Morphism",
-      "properName": "lsh",
+      "properName": "lsh₈",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/int/Po{Z8,Z8}oP",
+      "codomain": "hdole/int/Z8"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lshf8",
+      "prototype": "Morphism",
+      "properName": "lsh₈",
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
@@ -5615,7 +7162,18 @@
       "description": "Logical shift left",
       "basename": "lsh16",
       "prototype": "Morphism",
-      "properName": "lsh",
+      "properName": "lsh₁₆",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/int/Po{Z16,Z8}oP",
+      "codomain": "hdole/int/Z16"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh16",
+      "prototype": "Morphism",
+      "properName": "lsh₁₆",
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
@@ -5626,7 +7184,18 @@
       "description": "Logical shift left",
       "basename": "lsh32",
       "prototype": "Morphism",
-      "properName": "lsh",
+      "properName": "lsh₃₂",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/int/Po{Z32,Z8}oP",
+      "codomain": "hdole/int/Z32"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh32",
+      "prototype": "Morphism",
+      "properName": "lsh₃₂",
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
@@ -5637,7 +7206,18 @@
       "description": "Logical shift left",
       "basename": "lsh64",
       "prototype": "Morphism",
-      "properName": "lsh",
+      "properName": "lsh₆₄",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/int/Po{Z64,Z8}oP",
+      "codomain": "hdole/int/Z64"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh64",
+      "prototype": "Morphism",
+      "properName": "lsh₆₄",
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
@@ -5648,7 +7228,18 @@
       "description": "Logical shift left",
       "basename": "lsh128",
       "prototype": "Morphism",
-      "properName": "lsh",
+      "properName": "lsh₁₂₈",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/int/Po{Z128,Z8}oP",
+      "codomain": "hdole/int/Z128"
+    },
+    {
+      "description": "Logical shift left",
+      "basename": "lsh128",
+      "prototype": "Morphism",
+      "properName": "lsh₁₂₈",
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
@@ -5658,7 +7249,17 @@
     {
       "basename": "abs8",
       "prototype": "Morphism",
-      "properName": "abs",
+      "properName": "abs₈",
+      "code": {
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/int/Z8",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "basename": "abs8",
+      "prototype": "Morphism",
+      "properName": "abs₈",
       "code": {
         "cpp": "%1 = ::abs(%0);"
       },
@@ -5668,7 +7269,17 @@
     {
       "basename": "abs16",
       "prototype": "Morphism",
-      "properName": "abs",
+      "properName": "abs₁₆",
+      "code": {
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/int/Z16",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "abs16",
+      "prototype": "Morphism",
+      "properName": "abs₁₆",
       "code": {
         "cpp": "%1 = ::abs(%0);"
       },
@@ -5678,7 +7289,17 @@
     {
       "basename": "abs32",
       "prototype": "Morphism",
-      "properName": "abs",
+      "properName": "abs₃₂",
+      "code": {
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/int/Z32",
+      "codomain": "hdole/nat/N32"
+    },
+    {
+      "basename": "abs32",
+      "prototype": "Morphism",
+      "properName": "abs₃₂",
       "code": {
         "cpp": "%1 = ::abs(%0);"
       },
@@ -5688,7 +7309,17 @@
     {
       "basename": "abs64",
       "prototype": "Morphism",
-      "properName": "abs",
+      "properName": "abs₆₄",
+      "code": {
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/int/Z64",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "abs64",
+      "prototype": "Morphism",
+      "properName": "abs₆₄",
       "code": {
         "cpp": "%1 = ::abs(%0);"
       },
@@ -5698,20 +7329,44 @@
     {
       "basename": "abs128",
       "prototype": "Morphism",
-      "properName": "abs",
+      "properName": "abs₁₂₈",
       "code": {
         "cpp": "%1 = ::abs(%0);"
       },
       "domain": "hdole/int/Z128",
       "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "abs128",
+      "prototype": "Morphism",
+      "properName": "abs₁₂₈",
+      "code": {
+        "cpp": "%1 = ::abs(%0);"
+      },
+      "domain": "hdole/int/Z128",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "equ64",
+      "prototype": "Morphism",
+      "properName": "equ₆₄",
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "equ64",
+      "prototype": "Morphism",
+      "properName": "equ₆₄",
+      "domain": "hdole/int/Po{Z64,Z64}oP",
+      "codomain": "hdole/int/CPo{#1,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268323727,
+  "timestamp": 1644561004662,
   "version": 0,
   "viewport": {
-    "x": 1261,
-    "y": 797,
-    "scale": 0.8317334477943229
+    "x": 1232,
+    "y": 643,
+    "scale": 0.7134453874971234
   }
 }

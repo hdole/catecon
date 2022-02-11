@@ -4,147 +4,160 @@
   "name": "hdole/dist",
   "prototype": "Diagram",
   "properName": "hdole/dist",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/dist_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/HTML"
   ],
-  "domainElements": [
-    {
-      "description": "Distribute",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -380,
-        "y": -800
+  "domainInfo": {
+    "description": "index category for diagram hdole/dist",
+    "basename": "dist_Index",
+    "name": "hdole/dist_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Distribute",
+        "basename": "t_2",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -380,
+          "y": -820
+        },
+        "height": "240",
+        "weight": "bold"
       },
-      "height": "240",
-      "weight": "bold"
-    },
-    {
-      "basename": "o_75",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/Po{CPo{A,B}oPC,C}oP",
-      "xy": {
-        "x": 400,
-        "y": -400
-      }
-    },
-    {
-      "basename": "o_76",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/Po{C,CPo{A,B}oPC}oP",
-      "xy": {
-        "x": -200,
-        "y": -400
-      }
-    },
-    {
-      "basename": "o_80",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/CPo{Po{C,A}oP,Po{C,B}oP}oPC",
-      "xy": {
-        "x": -200,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_81",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
-      "xy": {
-        "x": 400,
-        "y": -200
-      }
-    },
-    {
-      "basename": "o_83",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
-      "xy": {
-        "x": 400,
-        "y": 0
-      }
-    },
-    {
-      "basename": "o_84",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/CPo{Po{A,CPo{C,D}oPC}oP,Po{B,CPo{C,D}oPC}oP}oPC",
-      "xy": {
-        "x": 400,
-        "y": 200
-      }
-    },
-    {
-      "basename": "o_85",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
-      "xy": {
-        "x": -200,
-        "y": 0
-      }
-    },
-    {
-      "basename": "o_86",
-      "prototype": "IndexObject",
-      "to": "hdole/dist/CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC",
-      "xy": {
-        "x": -200,
-        "y": 200
-      }
-    },
-    {
-      "description": "Left distributions",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -300,
-        "y": -600
+      {
+        "basename": "o_75",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/Po{CPo{A,B}oPC,C}oP",
+        "xy": {
+          "x": 400,
+          "y": -400
+        }
       },
-      "height": "48"
-    },
-    {
-      "description": "Right distributions",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": 300,
-        "y": -600
+      {
+        "basename": "o_76",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/Po{C,CPo{A,B}oPC}oP",
+        "xy": {
+          "x": -200,
+          "y": -400
+        }
       },
-      "height": "48"
-    },
-    {
-      "basename": "m_57",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/dist/o_76",
-      "codomain": "hdole/dist/o_80",
-      "to": "hdole/dist/Di{Po{C,CPo{A,B}oPC}oP}-RiD"
-    },
-    {
-      "basename": "m_58",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/dist/o_75",
-      "codomain": "hdole/dist/o_81",
-      "to": "hdole/dist/Di{Po{CPo{A,B}oPC,C}oP}-LiD"
-    },
-    {
-      "basename": "m_59",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/dist/o_83",
-      "codomain": "hdole/dist/o_84",
-      "to": "hdole/dist/Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-LiD"
-    },
-    {
-      "basename": "m_60",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/dist/o_85",
-      "codomain": "hdole/dist/o_86",
-      "to": "hdole/dist/Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD"
-    }
-  ],
+      {
+        "basename": "o_80",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/CPo{Po{C,A}oP,Po{C,B}oP}oPC",
+        "xy": {
+          "x": -200,
+          "y": -200
+        }
+      },
+      {
+        "basename": "o_81",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
+        "xy": {
+          "x": 400,
+          "y": -200
+        }
+      },
+      {
+        "basename": "o_83",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+        "xy": {
+          "x": 400,
+          "y": 0
+        }
+      },
+      {
+        "basename": "o_84",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/CPo{Po{A,CPo{C,D}oPC}oP,Po{B,CPo{C,D}oPC}oP}oPC",
+        "xy": {
+          "x": 400,
+          "y": 200
+        }
+      },
+      {
+        "basename": "o_85",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+        "xy": {
+          "x": -200,
+          "y": 0
+        }
+      },
+      {
+        "basename": "o_86",
+        "prototype": "IndexObject",
+        "to": "hdole/dist/CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC",
+        "xy": {
+          "x": -200,
+          "y": 200
+        }
+      },
+      {
+        "description": "Left distributions",
+        "basename": "t_0",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -300,
+          "y": -600
+        },
+        "height": "48"
+      },
+      {
+        "description": "Right distributions",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 300,
+          "y": -600
+        },
+        "height": "48"
+      },
+      {
+        "basename": "m_57",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/dist/o_76",
+        "codomain": "hdole/dist/o_80",
+        "to": "hdole/dist/Di{Po{C,CPo{A,B}oPC}oP}-RiD"
+      },
+      {
+        "basename": "m_58",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/dist/o_75",
+        "codomain": "hdole/dist/o_81",
+        "to": "hdole/dist/Di{Po{CPo{A,B}oPC,C}oP}-LiD"
+      },
+      {
+        "basename": "m_59",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/dist/o_83",
+        "codomain": "hdole/dist/o_84",
+        "to": "hdole/dist/Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-LiD"
+      },
+      {
+        "basename": "m_60",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/dist/o_85",
+        "codomain": "hdole/dist/o_86",
+        "to": "hdole/dist/Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD"
+      }
+    ],
+    "cells": []
+  },
   "elements": [
+    {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
     {
       "basename": "A",
       "prototype": "CatObject"
@@ -154,7 +167,19 @@
       "prototype": "CatObject"
     },
     {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
       "basename": "C",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "C",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "D",
       "prototype": "CatObject"
     },
     {
@@ -171,8 +196,30 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "C",
+        "B"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "A",
         "C"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "A",
+        "C"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "A",
+        "B"
       ]
     },
     {
@@ -193,8 +240,29 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "CPo{A,B}oPC",
+        "C"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "C",
         "CPo{A,B}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "C",
+        "CPo{A,B}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "B",
+        "C"
       ]
     },
     {
@@ -210,6 +278,21 @@
       "objects": [
         "Po{A,C}oP",
         "Po{B,C}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{A,C}oP",
+        "Po{B,C}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "C",
+        "A"
       ]
     },
     {
@@ -231,6 +314,22 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
+        "Po{C,A}oP",
+        "Po{C,B}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "C",
+        "D"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
         "C",
         "D"
       ]
@@ -245,7 +344,28 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "CPo{A,B}oPC",
+        "CPo{C,D}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "A",
+        "CPo{C,D}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "A",
+        "CPo{C,D}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "B",
         "CPo{C,D}oPC"
       ]
     },
@@ -266,9 +386,32 @@
     },
     {
       "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{A,CPo{C,D}oPC}oP",
+        "Po{B,CPo{C,D}oPC}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
       "objects": [
         "CPo{A,B}oPC",
         "D"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "CPo{A,B}oPC",
+        "D"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{CPo{A,B}oPC,C}oP",
+        "Po{CPo{A,B}oPC,D}oP"
       ]
     },
     {
@@ -287,6 +430,37 @@
       "codomain": "hdole/dist/CPo{Po{C,A}oP,Po{C,B}oP}oPC"
     },
     {
+      "basename": "Di{Po{C,CPo{A,B}oPC}oP}-RiD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "hdole/dist/Po{C,CPo{A,B}oPC}oP",
+      "codomain": "hdole/dist/CPo{Po{C,A}oP,Po{C,B}oP}oPC"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "Di{Po{CPo{A,B}oPC,C}oP}-LiD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "hdole/dist/Po{CPo{A,B}oPC,C}oP",
+      "codomain": "hdole/dist/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
+      "side": true
+    },
+    {
       "basename": "Di{Po{CPo{A,B}oPC,C}oP}-LiD",
       "prototype": "Distribute",
       "properName": "dist",
@@ -303,6 +477,21 @@
       "side": true
     },
     {
+      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-LiD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "hdole/dist/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+      "codomain": "hdole/dist/CPo{Po{A,CPo{C,D}oPC}oP,Po{B,CPo{C,D}oPC}oP}oPC",
+      "side": true
+    },
+    {
+      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "hdole/dist/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+      "codomain": "hdole/dist/CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
+    },
+    {
       "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD",
       "prototype": "Distribute",
       "properName": "dist",
@@ -311,7 +500,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641588958801,
+  "timestamp": 1644486248880,
   "version": 0,
   "viewport": {
     "x": 1108,

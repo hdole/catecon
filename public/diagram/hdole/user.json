@@ -24,10 +24,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -860,
-          "y": -170
+          "x": -1020,
+          "y": -140
         },
-        "height": "200",
+        "height": "316",
         "weight": "bold"
       },
       {
@@ -144,7 +144,40 @@
       "prototype": "CatObject"
     },
     {
+      "basename": "user",
+      "prototype": "CatObject"
+    },
+    {
       "basename": "name",
+      "prototype": "Morphism",
+      "domain": "hdole/user/user",
+      "codomain": "hdole/str/str"
+    },
+    {
+      "basename": "name",
+      "prototype": "Morphism",
+      "domain": "hdole/user/user",
+      "codomain": "hdole/str/str"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "description": "For MFA",
+      "basename": "phoneNumber",
       "prototype": "Morphism",
       "domain": "hdole/user/user",
       "codomain": "hdole/str/str"
@@ -164,6 +197,19 @@
       "codomain": "hdole/str/str"
     },
     {
+      "basename": "permissions",
+      "prototype": "Morphism",
+      "properName": "privileges",
+      "domain": "hdole/user/user",
+      "codomain": "hdole/str/str"
+    },
+    {
+      "basename": "maxDiagrams",
+      "prototype": "Morphism",
+      "domain": "hdole/user/user",
+      "codomain": "hdole/int/Z32"
+    },
+    {
       "basename": "maxDiagrams",
       "prototype": "Morphism",
       "domain": "hdole/user/user",
@@ -171,7 +217,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268283287,
+  "timestamp": 1644486147520,
   "version": 0,
   "viewport": {
     "x": 2017,

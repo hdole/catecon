@@ -459,7 +459,7 @@
         "prototype": "IndexObject",
         "to": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC",
         "xy": {
-          "x": 200,
+          "x": 230,
           "y": 3300
         }
       },
@@ -562,8 +562,8 @@
         "basename": "t_31",
         "prototype": "IndexText",
         "xy": {
-          "x": -1470,
-          "y": -490
+          "x": -1480,
+          "y": -370
         },
         "height": "350",
         "weight": "bold"
@@ -2752,16 +2752,6 @@
         }
       },
       {
-        "description": "BUG: C++",
-        "basename": "t_0",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -60,
-          "y": 30
-        },
-        "height": "24"
-      },
-      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "hdole/nat/o_2",
@@ -3737,11 +3727,39 @@
       "max": 256
     },
     {
+      "description": "An unsigned byte",
+      "basename": "N8",
+      "prototype": "FiniteObject",
+      "properName": "ℕ₈",
+      "code": {
+        "cpp": "typedef uint8_t %0;\n"
+      },
+      "size": 256,
+      "min": 0,
+      "max": 256
+    },
+    {
       "prototype": "ProductObject",
       "objects": [
         "N8",
         "N8"
       ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "N8",
+        "N8"
+      ]
+    },
+    {
+      "description": "The 16-bit natural (unsigned) numbers",
+      "basename": "N16",
+      "prototype": "CatObject",
+      "properName": "&Nopf;&#8321;&#8326;",
+      "code": {
+        "cpp": "typedef uint16_t %0;"
+      }
     },
     {
       "description": "The 16-bit natural (unsigned) numbers",
@@ -3761,11 +3779,34 @@
       "max": 1
     },
     {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "#1",
         "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "#1",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "N16",
+        "N16"
       ]
     },
     {
@@ -3785,6 +3826,22 @@
       }
     },
     {
+      "description": "The 32-bit natural numbers",
+      "basename": "N32",
+      "prototype": "CatObject",
+      "properName": "ℕ₃₂",
+      "code": {
+        "cpp": "typedef uint32_t %0;"
+      }
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "N32",
+        "N32"
+      ]
+    },
+    {
       "prototype": "ProductObject",
       "objects": [
         "N32",
@@ -3801,11 +3858,36 @@
       }
     },
     {
+      "description": "The 64-bit natural numbers",
+      "basename": "N64",
+      "prototype": "CatObject",
+      "properName": "ℕ&#x2086;&#x2084;",
+      "code": {
+        "cpp": "typedef uint64_t %0;"
+      }
+    },
+    {
       "prototype": "ProductObject",
       "objects": [
         "N64",
         "N64"
       ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "N64",
+        "N64"
+      ]
+    },
+    {
+      "description": "The 128-bit unsigned numbers",
+      "basename": "N128",
+      "prototype": "CatObject",
+      "properName": "ℕ&#x2081;&#x2082;&#x2088;",
+      "code": {
+        "cpp": "typedef unsigned __int128 %0;"
+      }
     },
     {
       "description": "The 128-bit unsigned numbers",
@@ -3828,7 +3910,31 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
+        "N16",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
         "N64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "N64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "N32",
         "#1"
       ]
     },
@@ -3852,6 +3958,22 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
+        "N8",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "N128",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
         "N128",
         "#1"
       ]
@@ -3866,7 +3988,28 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "N128",
+        "N128"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "N16",
+        "N8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "N16",
+        "N8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "N32",
         "N8"
       ]
     },
@@ -3887,6 +4030,20 @@
     {
       "prototype": "ProductObject",
       "objects": [
+        "N64",
+        "N8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "N128",
+        "N8"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
         "N128",
         "N8"
       ]
@@ -3896,6 +4053,22 @@
       "dual": true,
       "objects": [
         "Po{N8,N8}oP",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{N8,N8}oP",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{N16,N16}oP",
         "#1"
       ]
     },
@@ -3919,7 +4092,31 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
+        "Po{N32,N32}oP",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
         "Po{N64,N64}oP",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{N64,N64}oP",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{N128,N128}oP",
         "#1"
       ]
     },
@@ -3938,6 +4135,28 @@
       "properName": "0",
       "code": {
         "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "description": "The first interesting natural number",
+      "basename": "zero64",
+      "prototype": "Morphism",
+      "properName": "0",
+      "code": {
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "description": "The natural number one",
+      "basename": "one64",
+      "prototype": "Morphism",
+      "properName": "1",
+      "code": {
+        "cpp": "%0 = 1;"
       },
       "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N64"
@@ -3965,6 +4184,28 @@
       "codomain": "hdole/nat/N64"
     },
     {
+      "description": "The maximum safe natural number",
+      "basename": "inf64",
+      "prototype": "Morphism",
+      "properName": "&infin;",
+      "code": {
+        "cpp": "%0 = ULONG_MAX;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "description": "Addition of two natural numbers with rollover",
+      "basename": "add64",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
       "description": "Addition of two natural numbers with rollover",
       "basename": "add64",
       "prototype": "Morphism",
@@ -3982,6 +4223,28 @@
       "properName": "lt",
       "code": {
         "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the first 64-bit natural number less than the second",
+      "basename": "lt64",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the first natural number less than or equal to the second",
+      "basename": "lteq64",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
@@ -4009,10 +4272,32 @@
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
+      "description": "compare two 64-bit natural numbers for equality",
+      "basename": "equ64",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
       "description": "Sixteen bit zero",
       "basename": "zero16",
       "prototype": "Morphism",
-      "properName": "\n\n0",
+      "properName": "0₁₆",
+      "code": {
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Sixteen bit zero",
+      "basename": "zero16",
+      "prototype": "Morphism",
+      "properName": "0₁₆",
       "code": {
         "cpp": "%0 = 0;"
       },
@@ -4023,7 +4308,18 @@
       "description": "Sixteen bit one",
       "basename": "one16",
       "prototype": "Morphism",
-      "properName": "1",
+      "properName": "1₁₆",
+      "code": {
+        "cpp": "%0 = 1;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Sixteen bit one",
+      "basename": "one16",
+      "prototype": "Morphism",
+      "properName": "1₁₆",
       "code": {
         "cpp": "%0 = 1;"
       },
@@ -4034,7 +4330,18 @@
       "description": "Max sixteen bit number 65535",
       "basename": "inf16",
       "prototype": "Morphism",
-      "properName": "&infin;",
+      "properName": "∞₁₆",
+      "code": {
+        "cpp": "%0 = 65535;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Max sixteen bit number 65535",
+      "basename": "inf16",
+      "prototype": "Morphism",
+      "properName": "∞₁₆",
       "code": {
         "cpp": "%0 = 65535;"
       },
@@ -4045,7 +4352,18 @@
       "description": "Addition of two 16-bit natural (unsigned) numbers with rollover",
       "basename": "add16",
       "prototype": "Morphism",
-      "properName": "addr",
+      "properName": "addr₁₆",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Addition of two 16-bit natural (unsigned) numbers with rollover",
+      "basename": "add16",
+      "prototype": "Morphism",
+      "properName": "addr₁₆",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4056,7 +4374,18 @@
       "description": "Mulitiplication of two 16-bit natural (unsigned) numbers",
       "basename": "mult16",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₁₆",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
+      "description": "Mulitiplication of two 16-bit natural (unsigned) numbers",
+      "basename": "mult16",
+      "prototype": "Morphism",
+      "properName": "mult₁₆",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -4067,7 +4396,18 @@
       "description": "Bit-wise and of two 16-bit natural (unsigned) numbers",
       "basename": "and16",
       "prototype": "Morphism",
-      "properName": "and",
+      "properName": "and₁₆",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Bit-wise and of two 16-bit natural (unsigned) numbers",
+      "basename": "and16",
+      "prototype": "Morphism",
+      "properName": "and₁₆",
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
@@ -4078,7 +4418,18 @@
       "description": "Bit-wise or of two 16-bit natural (unsigned) numbers",
       "basename": "or16",
       "prototype": "Morphism",
-      "properName": "or",
+      "properName": "or₁₆",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Bit-wise or of two 16-bit natural (unsigned) numbers",
+      "basename": "or16",
+      "prototype": "Morphism",
+      "properName": "or₁₆",
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
@@ -4089,7 +4440,18 @@
       "description": "Bit-wise exclusive or of two 16-bit natural (unsigned) numbers",
       "basename": "xor16",
       "prototype": "Morphism",
-      "properName": "xor",
+      "properName": "xor₁₆",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Bit-wise exclusive or of two 16-bit natural (unsigned) numbers",
+      "basename": "xor16",
+      "prototype": "Morphism",
+      "properName": "xor₁₆",
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
@@ -4100,7 +4462,18 @@
       "description": "Division of one 16-bit natural (unsigned) number of the other, or an exception",
       "basename": "div16",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₁₆",
+      "code": {
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC"
+    },
+    {
+      "description": "Division of one 16-bit natural (unsigned) number of the other, or an exception",
+      "basename": "div16",
+      "prototype": "Morphism",
+      "properName": "div₁₆",
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
@@ -4111,7 +4484,18 @@
       "description": "Modulus of one 16-bit natural (unsigned) number of the other, or an exception",
       "basename": "mod16",
       "prototype": "Morphism",
-      "properName": "mod",
+      "properName": "mod₁₆",
+      "code": {
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+    },
+    {
+      "description": "Modulus of one 16-bit natural (unsigned) number of the other, or an exception",
+      "basename": "mod16",
+      "prototype": "Morphism",
+      "properName": "mod₁₆",
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
@@ -4122,7 +4506,18 @@
       "description": "Is the 16-bit natural number less than to the second",
       "basename": "lt16",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt₁₆",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the 16-bit natural number less than to the second",
+      "basename": "lt16",
+      "prototype": "Morphism",
+      "properName": "lt₁₆",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
@@ -4133,12 +4528,34 @@
       "description": "Is the 16-bit natural number less than or equal to the second",
       "basename": "lteq16",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₁₆",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Is the 16-bit natural number less than or equal to the second",
+      "basename": "lteq16",
+      "prototype": "Morphism",
+      "properName": "lte₁₆",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "The successor function for 64-bit natural numbers",
+      "basename": "succ64",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC"
     },
     {
       "description": "The successor function for 64-bit natural numbers",
@@ -4162,15 +4579,47 @@
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
     },
     {
+      "description": "Decrement function for natural numbers",
+      "basename": "decr",
+      "prototype": "Morphism",
+      "code": {
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+    },
+    {
       "description": "Test for equality of two 16-bit natural numbers",
       "basename": "equ16",
       "prototype": "Morphism",
-      "properName": "equ",
+      "properName": "equ₁₆",
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "Test for equality of two 16-bit natural numbers",
+      "basename": "equ16",
+      "prototype": "Morphism",
+      "properName": "equ₁₆",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "description": "32-bit zero",
+      "basename": "zero32",
+      "prototype": "Morphism",
+      "properName": "0",
+      "code": {
+        "cpp": "%0 = 0;\n"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N32"
     },
     {
       "description": "32-bit zero",
@@ -4195,14 +4644,45 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "description": "The number one",
+      "basename": "one32",
+      "prototype": "Morphism",
+      "properName": "1",
+      "code": {
+        "cpp": "%0 = 1;\n"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "basename": "N8ToN16",
       "prototype": "Morphism",
-      "properName": "to",
+      "properName": "to₁₆",
       "code": {
         "cpp": "%1 = %0;\n"
       },
       "domain": "hdole/nat/N8",
       "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "N8ToN16",
+      "prototype": "Morphism",
+      "properName": "to₁₆",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "N16ToN32",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/nat/N32"
     },
     {
       "basename": "N16ToN32",
@@ -4225,11 +4705,41 @@
       "codomain": "hdole/nat/N64"
     },
     {
+      "basename": "N32ToN64",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/nat/N64"
+    },
+    {
       "basename": "succ32",
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
         "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+    },
+    {
+      "basename": "succ32",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+    },
+    {
+      "basename": "decr32",
+      "prototype": "Morphism",
+      "properName": "decr",
+      "code": {
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
@@ -4255,9 +4765,29 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "basename": "inf32",
+      "prototype": "Morphism",
+      "properName": "∞",
+      "code": {
+        "cpp": "%0 = 0xffffffff;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "basename": "succ16",
       "prototype": "Morphism",
-      "properName": "incr",
+      "properName": "incr₁₆",
+      "code": {
+        "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+      },
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+    },
+    {
+      "basename": "succ16",
+      "prototype": "Morphism",
+      "properName": "incr₁₆",
       "code": {
         "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
@@ -4268,7 +4798,18 @@
       "description": "Zero for unsigned eight bit numbers",
       "basename": "zero8",
       "prototype": "Morphism",
-      "properName": "0",
+      "properName": "0₈",
+      "code": {
+        "cpp": "%0 = 0;\n"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "Zero for unsigned eight bit numbers",
+      "basename": "zero8",
+      "prototype": "Morphism",
+      "properName": "0₈",
       "code": {
         "cpp": "%0 = 0;\n"
       },
@@ -4279,7 +4820,18 @@
       "description": "One in the eight bit unsigned numbers",
       "basename": "one8",
       "prototype": "Morphism",
-      "properName": "1",
+      "properName": "1₈",
+      "code": {
+        "cpp": "%0 = 1;\n"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "One in the eight bit unsigned numbers",
+      "basename": "one8",
+      "prototype": "Morphism",
+      "properName": "1₈",
       "code": {
         "cpp": "%0 = 1;\n"
       },
@@ -4290,7 +4842,18 @@
       "description": "The maximum safe unsigned eight bit number",
       "basename": "inf8",
       "prototype": "Morphism",
-      "properName": "∞",
+      "properName": "∞₈",
+      "code": {
+        "cpp": "%0 = 0xff;\n"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "The maximum safe unsigned eight bit number",
+      "basename": "inf8",
+      "prototype": "Morphism",
+      "properName": "∞₈",
       "code": {
         "cpp": "%0 = 0xff;\n"
       },
@@ -4301,7 +4864,18 @@
       "description": "Decrement an eight bit unsigned number.",
       "basename": "decr8",
       "prototype": "Morphism",
-      "properName": "decr",
+      "properName": "decr₈",
+      "code": {
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+    },
+    {
+      "description": "Decrement an eight bit unsigned number.",
+      "basename": "decr8",
+      "prototype": "Morphism",
+      "properName": "decr₈",
       "code": {
         "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
@@ -4312,7 +4886,18 @@
       "description": "The successor for eight bit unsigned numbers.",
       "basename": "succ8",
       "prototype": "Morphism",
-      "properName": "incr",
+      "properName": "incr₈",
+      "code": {
+        "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+    },
+    {
+      "description": "The successor for eight bit unsigned numbers.",
+      "basename": "succ8",
+      "prototype": "Morphism",
+      "properName": "incr₈",
       "code": {
         "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
@@ -4323,7 +4908,18 @@
       "description": "The decrement of a sixteen bit unsigned number.",
       "basename": "decr16",
       "prototype": "Morphism",
-      "properName": "decr",
+      "properName": "decr₁₆",
+      "code": {
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
+      },
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+    },
+    {
+      "description": "The decrement of a sixteen bit unsigned number.",
+      "basename": "decr16",
+      "prototype": "Morphism",
+      "properName": "decr₁₆",
       "code": {
         "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
@@ -4342,10 +4938,32 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "description": "Addition of two 32 bit unsigned numbers",
+      "basename": "add32",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "description": "Addition of eight bit unsigned numbers",
       "basename": "add8",
       "prototype": "Morphism",
-      "properName": "addr",
+      "properName": "addr₈",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "Addition of eight bit unsigned numbers",
+      "basename": "add8",
+      "prototype": "Morphism",
+      "properName": "addr₈",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4364,10 +4982,32 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "description": "Subtraction of two 32 bit numbers",
+      "basename": "sub32",
+      "prototype": "Morphism",
+      "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "description": "Addition with carry",
       "basename": "add16c",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₁₆",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+    },
+    {
+      "description": "Addition with carry",
+      "basename": "add16c",
+      "prototype": "Morphism",
+      "properName": "add₁₆",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4378,12 +5018,34 @@
       "description": "Addition with carry",
       "basename": "add8c",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₈",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
       "domain": "hdole/nat/Po{N8,N8}oP",
       "codomain": "hdole/nat/CPo{N8,#1}oPC"
+    },
+    {
+      "description": "Addition with carry",
+      "basename": "add8c",
+      "prototype": "Morphism",
+      "properName": "add₈",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+    },
+    {
+      "description": "Multiplication of two 64-bit numbers",
+      "basename": "mult64",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N128"
     },
     {
       "description": "Multiplication of two 64-bit numbers",
@@ -4408,6 +5070,28 @@
       "codomain": "hdole/nat/N64"
     },
     {
+      "description": "Multiplication of two unsigned 32-bit numbers",
+      "basename": "mult32",
+      "prototype": "Morphism",
+      "properName": "mult",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "description": "Subtraction of two 64-bit unsigned numbers",
+      "basename": "sub64",
+      "prototype": "Morphism",
+      "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
       "description": "Subtraction of two 64-bit unsigned numbers",
       "basename": "sub64",
       "prototype": "Morphism",
@@ -4425,6 +5109,28 @@
       "properName": "sub",
       "code": {
         "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+    },
+    {
+      "description": "Subtraction of two 64-bit numbers with underflow",
+      "basename": "sub64u",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+    },
+    {
+      "description": "Addition of two 64-bit numbers with overflow",
+      "basename": "add64o",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -4452,10 +5158,32 @@
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
     },
     {
+      "description": "Subtraction of two 32-bit unsigned numbers with underflow",
+      "basename": "sub32u",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+    },
+    {
       "description": "Subtraction of two 8-bit numbers",
       "basename": "sub8",
       "prototype": "Morphism",
-      "properName": "subr",
+      "properName": "subr₈",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "Subtraction of two 8-bit numbers",
+      "basename": "sub8",
+      "prototype": "Morphism",
+      "properName": "subr₈",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -4466,7 +5194,18 @@
       "description": "Subtraction of two 8-bit numbers with underflow",
       "basename": "sub8u",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub₈",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+    },
+    {
+      "description": "Subtraction of two 8-bit numbers with underflow",
+      "basename": "sub8u",
+      "prototype": "Morphism",
+      "properName": "sub₈",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -4477,7 +5216,18 @@
       "description": "Multiplication of two 8-bit unsigned numbers",
       "basename": "mult8",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₈",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "Multiplication of two 8-bit unsigned numbers",
+      "basename": "mult8",
+      "prototype": "Morphism",
+      "properName": "mult₈",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -4488,7 +5238,18 @@
       "description": "Bit-wise and of two 8-bit unsigned numbers",
       "basename": "and8",
       "prototype": "Morphism",
-      "properName": "and",
+      "properName": "and₈",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "Bit-wise and of two 8-bit unsigned numbers",
+      "basename": "and8",
+      "prototype": "Morphism",
+      "properName": "and₈",
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
@@ -4499,7 +5260,18 @@
       "description": "Bit-wise or of two unsigned numbers",
       "basename": "or8",
       "prototype": "Morphism",
-      "properName": "or",
+      "properName": "or₈",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "Bit-wise or of two unsigned numbers",
+      "basename": "or8",
+      "prototype": "Morphism",
+      "properName": "or₈",
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
@@ -4512,6 +5284,26 @@
       "properName": "0",
       "code": {
         "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "zero128",
+      "prototype": "Morphism",
+      "properName": "0",
+      "code": {
+        "cpp": "%0 = 0;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "one128",
+      "prototype": "Morphism",
+      "properName": "1",
+      "code": {
+        "cpp": "%0 = 1;"
       },
       "domain": "hdole/nat/#1",
       "codomain": "hdole/nat/N128"
@@ -4537,11 +5329,41 @@
       "codomain": "hdole/nat/N128"
     },
     {
+      "basename": "inf128",
+      "prototype": "Morphism",
+      "properName": "&infin;",
+      "code": {
+        "cpp": "%0 = 0xffffffffffffffffffffffffffffffff;"
+      },
+      "domain": "hdole/nat/#1",
+      "codomain": "hdole/nat/N128"
+    },
+    {
       "basename": "succ128",
       "prototype": "Morphism",
       "properName": "incr",
       "code": {
         "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+      },
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+    },
+    {
+      "basename": "succ128",
+      "prototype": "Morphism",
+      "properName": "incr",
+      "code": {
+        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+      },
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+    },
+    {
+      "basename": "decr128",
+      "prototype": "Morphism",
+      "properName": "decr",
+      "code": {
+        "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -4567,6 +5389,26 @@
       "codomain": "hdole/nat/N128"
     },
     {
+      "basename": "add127",
+      "prototype": "Morphism",
+      "properName": "addr",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "add32c",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+    },
+    {
       "basename": "add32c",
       "prototype": "Morphism",
       "properName": "add",
@@ -4582,6 +5424,26 @@
       "properName": "add",
       "code": {
         "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+    },
+    {
+      "basename": "add128",
+      "prototype": "Morphism",
+      "properName": "add",
+      "code": {
+        "cpp": "%2 = %0 + %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+    },
+    {
+      "basename": "sub128c",
+      "prototype": "Morphism",
+      "properName": "sub",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
@@ -4607,6 +5469,16 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "basename": "and32",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "basename": "and64",
       "prototype": "Morphism",
       "properName": "and",
@@ -4615,6 +5487,26 @@
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "and64",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "and128",
+      "prototype": "Morphism",
+      "properName": "and",
+      "code": {
+        "cpp": "%2 = %0 & %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
     },
     {
       "basename": "and128",
@@ -4637,9 +5529,29 @@
       "codomain": "hdole/nat/N128"
     },
     {
+      "basename": "N62toN128",
+      "prototype": "Morphism",
+      "properName": "to",
+      "code": {
+        "cpp": "%1 = %0;\n"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N128"
+    },
+    {
       "basename": "xor8",
       "prototype": "Morphism",
-      "properName": "xor",
+      "properName": "xor₈",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "basename": "xor8",
+      "prototype": "Morphism",
+      "properName": "xor₈",
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
@@ -4649,7 +5561,17 @@
     {
       "basename": "div8",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₈",
+      "code": {
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{Po{N8,N8}oP,#1}oPC"
+    },
+    {
+      "basename": "div8",
+      "prototype": "Morphism",
+      "properName": "div₈",
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
@@ -4659,7 +5581,17 @@
     {
       "basename": "mod8",
       "prototype": "Morphism",
-      "properName": "mod",
+      "properName": "mod₈",
+      "code": {
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+    },
+    {
+      "basename": "mod8",
+      "prototype": "Morphism",
+      "properName": "mod₈",
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
@@ -4669,7 +5601,17 @@
     {
       "basename": "equ8",
       "prototype": "Morphism",
-      "properName": "equ",
+      "properName": "equ₈",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "equ8",
+      "prototype": "Morphism",
+      "properName": "equ₈",
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
@@ -4687,13 +5629,43 @@
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
+      "basename": "equ32",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
       "basename": "lt8",
+      "prototype": "Morphism",
+      "properName": "lt₈",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt8",
+      "prototype": "Morphism",
+      "properName": "lt₈",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lt32",
       "prototype": "Morphism",
       "properName": "lt",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
+      "domain": "hdole/nat/Po{N32,N32}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
@@ -4717,6 +5689,16 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "basename": "or32",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "basename": "or64",
       "prototype": "Morphism",
       "properName": "or",
@@ -4725,6 +5707,26 @@
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "or64",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "or128",
+      "prototype": "Morphism",
+      "properName": "or",
+      "code": {
+        "cpp": "%2 = %0 | %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
     },
     {
       "basename": "or128",
@@ -4747,6 +5749,16 @@
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
+      "basename": "lteq32",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
       "basename": "mod32",
       "prototype": "Morphism",
       "properName": "mod",
@@ -4755,6 +5767,26 @@
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
       "codomain": "hdole/nat/CPo{N32,#1}oPC"
+    },
+    {
+      "basename": "mod32",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+    },
+    {
+      "basename": "div32",
+      "prototype": "Morphism",
+      "properName": "div",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{Po{N32,N32}oP,#1}oPC"
     },
     {
       "basename": "div32",
@@ -4777,6 +5809,16 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "basename": "xor32",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "basename": "lteq128",
       "prototype": "Morphism",
       "properName": "lte",
@@ -4785,6 +5827,26 @@
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lteq128",
+      "prototype": "Morphism",
+      "properName": "lte",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "xor64",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
     },
     {
       "basename": "xor64",
@@ -4807,6 +5869,16 @@
       "codomain": "hdole/nat/CPo{Po{N64,N64}oP,#1}oPC"
     },
     {
+      "basename": "div64",
+      "prototype": "Morphism",
+      "properName": "div",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{Po{N64,N64}oP,#1}oPC"
+    },
+    {
       "basename": "mod64",
       "prototype": "Morphism",
       "properName": "mod",
@@ -4815,6 +5887,26 @@
       },
       "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
+    },
+    {
+      "basename": "mod64",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+    },
+    {
+      "basename": "xor128",
+      "prototype": "Morphism",
+      "properName": "xor",
+      "code": {
+        "cpp": "%2 = %0 ^ %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
     },
     {
       "basename": "xor128",
@@ -4837,6 +5929,26 @@
       "codomain": "hdole/nat/CPo{Po{N128,N128}oP,#1}oPC"
     },
     {
+      "basename": "div128",
+      "prototype": "Morphism",
+      "properName": "div",
+      "code": {
+        "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{Po{N128,N128}oP,#1}oPC"
+    },
+    {
+      "basename": "mod128",
+      "prototype": "Morphism",
+      "properName": "mod",
+      "code": {
+        "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+    },
+    {
       "basename": "mod128",
       "prototype": "Morphism",
       "properName": "mod",
@@ -4857,9 +5969,29 @@
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
+      "basename": "lt128",
+      "prototype": "Morphism",
+      "properName": "lt",
+      "code": {
+        "cpp": "%2 = %0 < %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
       "basename": "gt8",
       "prototype": "Morphism",
-      "properName": "gt",
+      "properName": "gt₈",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt8",
+      "prototype": "Morphism",
+      "properName": "gt₈",
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
@@ -4869,7 +6001,17 @@
     {
       "basename": "gteq8",
       "prototype": "Morphism",
-      "properName": "gte",
+      "properName": "gte₈",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gteq8",
+      "prototype": "Morphism",
+      "properName": "gte₈",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -4879,7 +6021,17 @@
     {
       "basename": "lshf8",
       "prototype": "Morphism",
-      "properName": "lsh",
+      "properName": "lsh₈",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "basename": "lshf8",
+      "prototype": "Morphism",
+      "properName": "lsh₈",
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
@@ -4889,7 +6041,17 @@
     {
       "basename": "rshf8",
       "prototype": "Morphism",
-      "properName": "rsh",
+      "properName": "rsh₈",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "basename": "rshf8",
+      "prototype": "Morphism",
+      "properName": "rsh₈",
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
@@ -4900,7 +6062,18 @@
       "description": "Bit-wise not operation of an eight bit number",
       "basename": "not8",
       "prototype": "Morphism",
-      "properName": "not",
+      "properName": "not₈",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "Bit-wise not operation of an eight bit number",
+      "basename": "not8",
+      "prototype": "Morphism",
+      "properName": "not₈",
       "code": {
         "cpp": "%1 = ~ %0;"
       },
@@ -4918,9 +6091,29 @@
       "codomain": "hdole/nat/N128"
     },
     {
-      "basename": "sub16",
+      "basename": "sub128",
       "prototype": "Morphism",
       "properName": "subr",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "sub16",
+      "prototype": "Morphism",
+      "properName": "subr₁₆",
+      "code": {
+        "cpp": "%2 = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "sub16",
+      "prototype": "Morphism",
+      "properName": "subr₁₆",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -4930,7 +6123,17 @@
     {
       "basename": "sub16c",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub₁₆",
+      "code": {
+        "cpp": "%2.c = 0;\n%2.v = %0 - %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+    },
+    {
+      "basename": "sub16c",
+      "prototype": "Morphism",
+      "properName": "sub₁₆",
       "code": {
         "cpp": "%2.c = 0;\n%2.v = %0 - %1;"
       },
@@ -4948,14 +6151,44 @@
       "codomain": "hdole/nat/CPo{N128,#1}oPC"
     },
     {
+      "basename": "mult128c",
+      "prototype": "Morphism",
+      "properName": "multr",
+      "code": {
+        "cpp": "%2 = %0 * %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+    },
+    {
       "basename": "not16",
       "prototype": "Morphism",
-      "properName": "not",
+      "properName": "not₁₆",
       "code": {
         "cpp": "%1 = ~ %0;"
       },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "not16",
+      "prototype": "Morphism",
+      "properName": "not₁₆",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "not32",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/nat/N32"
     },
     {
       "basename": "not32",
@@ -4978,6 +6211,26 @@
       "codomain": "hdole/nat/N64"
     },
     {
+      "basename": "not64",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "not128",
+      "prototype": "Morphism",
+      "properName": "not",
+      "code": {
+        "cpp": "%1 = ~ %0;"
+      },
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/nat/N128"
+    },
+    {
       "basename": "not128",
       "prototype": "Morphism",
       "properName": "not",
@@ -4990,7 +6243,17 @@
     {
       "basename": "max8",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₈",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "basename": "max8",
+      "prototype": "Morphism",
+      "properName": "max₈",
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
@@ -5000,7 +6263,17 @@
     {
       "basename": "min8",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₈",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "basename": "min8",
+      "prototype": "Morphism",
+      "properName": "min₈",
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
@@ -5010,11 +6283,31 @@
     {
       "basename": "gt16",
       "prototype": "Morphism",
-      "properName": "gt",
+      "properName": "gt₁₆",
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
       "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt16",
+      "prototype": "Morphism",
+      "properName": "gt₁₆",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt32",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
@@ -5038,6 +6331,26 @@
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
+      "basename": "gt64",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gt128",
+      "prototype": "Morphism",
+      "properName": "gt",
+      "code": {
+        "cpp": "%2 = %0 > %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
       "basename": "gt128",
       "prototype": "Morphism",
       "properName": "gt",
@@ -5050,7 +6363,17 @@
     {
       "basename": "gte16",
       "prototype": "Morphism",
-      "properName": "gte",
+      "properName": "gte₁₆",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gte16",
+      "prototype": "Morphism",
+      "properName": "gte₁₆",
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
@@ -5060,7 +6383,17 @@
     {
       "basename": "lteq8",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₈",
+      "code": {
+        "cpp": "%2 = %0 <= %1;"
+      },
+      "domain": "hdole/nat/Po{N8,N8}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lteq8",
+      "prototype": "Morphism",
+      "properName": "lte₈",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
@@ -5070,12 +6403,32 @@
     {
       "basename": "lshf16",
       "prototype": "Morphism",
-      "properName": "lsh",
+      "properName": "lsh₁₆",
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
       "domain": "hdole/nat/Po{N16,N8}oP",
       "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "lshf16",
+      "prototype": "Morphism",
+      "properName": "lsh₁₆",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N8}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "lshf32",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N8}oP",
+      "codomain": "hdole/nat/N32"
     },
     {
       "basename": "lshf32",
@@ -5095,6 +6448,26 @@
         "cpp": "%2 = %0 >= %1;"
       },
       "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gteq32",
+      "prototype": "Morphism",
+      "properName": "gte",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "gteq64",
+      "prototype": "Morphism",
+      "properName": "gte",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
@@ -5118,6 +6491,26 @@
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
     },
     {
+      "basename": "gteq128",
+      "prototype": "Morphism",
+      "properName": "gte",
+      "code": {
+        "cpp": "%2 = %0 >= %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "lshf64",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N8}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
       "basename": "lshf64",
       "prototype": "Morphism",
       "properName": "lsh",
@@ -5138,14 +6531,44 @@
       "codomain": "hdole/nat/N128"
     },
     {
+      "basename": "lshf128",
+      "prototype": "Morphism",
+      "properName": "lsh",
+      "code": {
+        "cpp": "%2 = %0 << %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N8}oP",
+      "codomain": "hdole/nat/N128"
+    },
+    {
       "basename": "rshf16",
       "prototype": "Morphism",
-      "properName": "rsh",
+      "properName": "rsh₁₆",
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
       "domain": "hdole/nat/Po{N16,N8}oP",
       "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "rshf16",
+      "prototype": "Morphism",
+      "properName": "rsh₁₆",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/nat/Po{N16,N8}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "rshf32",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/nat/Po{N32,N8}oP",
+      "codomain": "hdole/nat/N32"
     },
     {
       "basename": "rshf32",
@@ -5168,6 +6591,26 @@
       "codomain": "hdole/nat/N64"
     },
     {
+      "basename": "rshf64",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/nat/Po{N64,N8}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "rshf128",
+      "prototype": "Morphism",
+      "properName": "rsh",
+      "code": {
+        "cpp": "%2 = %0 >> %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N8}oP",
+      "codomain": "hdole/nat/N128"
+    },
+    {
       "basename": "rshf128",
       "prototype": "Morphism",
       "properName": "rsh",
@@ -5180,22 +6623,42 @@
     {
       "basename": "max16",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₁₆",
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "max16",
+      "prototype": "Morphism",
+      "properName": "max₁₆",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
     },
     {
       "basename": "min16",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₁₆",
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "min16",
+      "prototype": "Morphism",
+      "properName": "min₁₆",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N16,N16}oP",
+      "codomain": "hdole/nat/N16"
     },
     {
       "basename": "max32",
@@ -5204,8 +6667,18 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
+      "basename": "max32",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
     },
     {
       "basename": "min32",
@@ -5214,8 +6687,18 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
+    },
+    {
+      "basename": "min32",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N32,N32}oP",
+      "codomain": "hdole/nat/N32"
     },
     {
       "basename": "max64",
@@ -5224,8 +6707,18 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "max64",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
     },
     {
       "basename": "min64",
@@ -5234,8 +6727,18 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "min64",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N64,N64}oP",
+      "codomain": "hdole/nat/N64"
     },
     {
       "basename": "max128",
@@ -5244,8 +6747,18 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "max128",
+      "prototype": "Morphism",
+      "properName": "max",
+      "code": {
+        "cpp": "%2 = std::max(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
     },
     {
       "basename": "min128",
@@ -5254,14 +6767,35 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "basename": "min128",
+      "prototype": "Morphism",
+      "properName": "min",
+      "code": {
+        "cpp": "%2 = std::min(%0, %1);"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/N128"
+    },
+    {
+      "description": "The high order eight bits",
+      "basename": "hi8",
+      "prototype": "Morphism",
+      "properName": "hi₈",
+      "code": {
+        "cpp": "%1 = %0 >> 8;"
+      },
+      "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/N8"
     },
     {
       "description": "The high order eight bits",
       "basename": "hi8",
       "prototype": "Morphism",
-      "properName": "hi",
+      "properName": "hi₈",
       "code": {
         "cpp": "%1 = %0 >> 8;"
       },
@@ -5272,7 +6806,21 @@
       "description": "The low order eight bits",
       "basename": "lo8",
       "prototype": "Morphism",
-      "properName": "lo",
+      "properName": "lo₈",
+      "code": {
+        "cpp": "%1 = (uint8_t)%0;"
+      },
+      "domain": "hdole/nat/N16",
+      "codomain": "hdole/nat/N8"
+    },
+    {
+      "description": "The low order eight bits",
+      "basename": "lo8",
+      "prototype": "Morphism",
+      "properName": "lo₈",
+      "code": {
+        "cpp": "%1 = (uint8_t)%0;"
+      },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/nat/N8"
     },
@@ -5283,6 +6831,27 @@
       "properName": "hi",
       "code": {
         "cpp": "%1 = %1 >> 16;"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "description": "The high order 16 bits.",
+      "basename": "hi16",
+      "prototype": "Morphism",
+      "properName": "hi",
+      "code": {
+        "cpp": "%1 = %1 >> 16;"
+      },
+      "domain": "hdole/nat/N32",
+      "codomain": "hdole/nat/N16"
+    },
+    {
+      "basename": "lo16",
+      "prototype": "Morphism",
+      "properName": "lo",
+      "code": {
+        "cpp": "%1 = (uint16_t)%0;"
       },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/nat/N16"
@@ -5309,6 +6878,27 @@
       "codomain": "hdole/nat/N32"
     },
     {
+      "description": "The high order 32 bits.",
+      "basename": "hi32",
+      "prototype": "Morphism",
+      "properName": "hi",
+      "code": {
+        "cpp": "%1 = %0 >> 32;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N32"
+    },
+    {
+      "basename": "lo32",
+      "prototype": "Morphism",
+      "properName": "lo",
+      "code": {
+        "cpp": "%1 = (uint32_t)%0;"
+      },
+      "domain": "hdole/nat/N64",
+      "codomain": "hdole/nat/N32"
+    },
+    {
       "basename": "lo32",
       "prototype": "Morphism",
       "properName": "lo",
@@ -5324,6 +6914,26 @@
       "properName": "hi",
       "code": {
         "cpp": "%1 = %0 >> 64;"
+      },
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "hi64",
+      "prototype": "Morphism",
+      "properName": "hi",
+      "code": {
+        "cpp": "%1 = %0 >> 64;"
+      },
+      "domain": "hdole/nat/N128",
+      "codomain": "hdole/nat/N64"
+    },
+    {
+      "basename": "lo64",
+      "prototype": "Morphism",
+      "properName": "lo",
+      "code": {
+        "cpp": "%1 = (uint64_t)%0;"
       },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/nat/N64"
@@ -5347,14 +6957,24 @@
       },
       "domain": "hdole/nat/Po{N128,N128}oP",
       "codomain": "hdole/nat/CPo{#1,#1}oPC"
+    },
+    {
+      "basename": "equ128",
+      "prototype": "Morphism",
+      "properName": "equ",
+      "code": {
+        "cpp": "%2 = %0 == %1;"
+      },
+      "domain": "hdole/nat/Po{N128,N128}oP",
+      "codomain": "hdole/nat/CPo{#1,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1644129796472,
+  "timestamp": 1644617393367,
   "version": 0,
   "viewport": {
-    "x": 1233,
-    "y": 523,
-    "scale": 0.713931073591234
+    "x": 1253,
+    "y": 428,
+    "scale": 0.6697906863947081
   }
 }
