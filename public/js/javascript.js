@@ -422,8 +422,8 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 				case 'ProductObject':
 					if (object.dual)
 					{
-						const isNumeric = Cat.U.IsNumeric(object);
-						if (U.IsNumeric(object))
+						const isNumeric = Cat.U.isNumeric(object);
+						if (U.isNumeric(object))
 							html.innerHTML = `<input id="${id}" type="number" min="0" max="${object.objects.length -1}"${typeof value === 'number' ? ' value="' + value.toString() + '"' : ''}/>`;
 						else
 						{
