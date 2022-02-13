@@ -4775,11 +4775,16 @@ class Display
 									from.domains.forEach(m => domains.push(m.name));
 									const codomains = [];
 									from.codomains.forEach(m => m.domain !== m.codomain && codomains.push(m.name));
-									diagram.fuse(e, from, target);
+									diagram.fuseObjects(e, from, target);
 									diagram.log({command:'fuse', from:from.name, target:target.name});
 									diagram.antilog({command:'fuse', to:from.to, xy:{x:from.orig.x, y:from.orig.y}, domains, codomains, target});
 									target.checkCells();
 								}
+							}
+							else if (from instanceof IndexMorphism && target instanceof IndexMorphism && from.isFusible(target))
+							{
+								diagram.fuseMorphisms(e, from, target);
+								target.checkCells();
 							}
 						}
 						if (!(from instanceof IndexText))
@@ -4847,9 +4852,7 @@ class Display
 			if (name.length === 0)
 				return;
 			let elt = diagram.getElement(name);
-			if (!elt)
-				Runtime.DownloadDiagram(name, ev => R.addReference(ev, name), e);
-			else
+			if (elt)
 			{
 				let from = null;
 				if (elt instanceof CatObject)
@@ -5793,6 +5796,7 @@ class Display
 					pasteObject(elt);
 					break;
 				case 'IndexText':
+				case 'IndexCode':
 					const txy = D2.add(xy, D2.subtract(elt.getXY(), base));
 					const args = elt.json();
 					args.xy = txy;
@@ -5968,7 +5972,7 @@ class Display
 			},
 		};
 		this.replayCommands.set('move', replayMove);
-		const replayFuse =
+		const replayFuseObjects =
 		{
 			replay(e, diagram, args)
 			{
@@ -5976,7 +5980,7 @@ class Display
 				if ('from' in args)
 				{
 					const from = diagram.getElement(args.from);
-					diagram.fuse(e, from, target, false);
+					diagram.fuseObjects(e, from, target, false);
 				}
 				else	// undo
 				{
@@ -5997,7 +6001,7 @@ class Display
 				}
 			}
 		};
-		this.replayCommands.set('fuse', replayFuse);
+		this.replayCommands.set('fuseObject', replayFuseObjects);
 		const replayText =
 		{
 			replay(e, diagram, args)
@@ -7417,7 +7421,6 @@ class Element
 				category = args.category;
 			else if (args.category)
 			{
-	//			if (diagram && diagram.elements.has(args.category))
 				if (diagram)
 					category = diagram.getElement(args.category);
 				if (!category)
@@ -8292,7 +8295,11 @@ class CatObject extends Element
 		if (this.refcnt <= 0)
 		{
 			this.category && this.category.deleteElement(this);
-			this.diagram && this.diagram.elements.delete(this.name);
+			if (this.diagram)
+			{
+				this.diagram.elements.delete(this.name);
+				this.diagram.elements.delete(this.basename);
+			}
 		}
 	}
 	getFactor(factor)	// With no further structure the ony factor we could possibly return is the object itself.
@@ -8881,9 +8888,11 @@ class IndexText extends Element
 		nuArgs.basename = U.getArg(nuArgs, 'basename', diagram.getAnon('t'));
 		nuArgs.category = diagram.domain;
 		super(diagram, nuArgs);
+		const attributes = new Map('attributes' in nuArgs ? nuArgs.attributes : []);
 		const xy = U.getArg(nuArgs, 'xy', new D2());
 		Object.defineProperties(this,
 		{
+			attributes:		{value: attributes,											writable:	false},
 			x:				{value:	xy.x,												writable:	true},
 			y:				{value:	xy.y,												writable:	true},
 			height:			{value:	U.getArg(nuArgs, 'height', D ? D.default.font.height : 0),	writable:	true},
@@ -8902,7 +8911,7 @@ class IndexText extends Element
 		if (canEdit)
 		{
 			div.appendChild(D.getIcon('EditElementText', 'edit', e => Cat.R.diagram.editElementText(e, this, id, 'description'), {title:'Commit editing', scale:D.default.button.tiny}));
-			const selectAnchor = H3.select({onchange:e => this.UpdateAnchor(e.target.value), value:this.weight},
+			const selectAnchor = H3.select({onchange:e => this.updateAnchor(e.target.value), value:this.weight},
 				['start', 'middle', 'end'].map(w =>
 				{
 					const args = {value:w};
@@ -8919,7 +8928,7 @@ class IndexText extends Element
 					return H3.option(args, w);
 				}));
 			const inId = 'toolbar-help-text-height';
-			const inputArgs = {type:"number", onchange:e => this.updateHeight(e.target.value), min:3, max:500, width:8, value:this.height};
+			const inputArgs = {type:"number", onchange:e => this.updateHeight(e.target.value), min:3, style:'width: 8ch', value:this.height};
 			div.appendChild(H3.table(
 				H3.tr(H3.td('Anchor:'), H3.td(selectAnchor)),
 				H3.tr(H3.td('Height:'), H3.td(H3.input(`##${inId}.in100`, inputArgs))),
@@ -8937,11 +8946,11 @@ class IndexText extends Element
 	}
 	lineDeltaY()
 	{
-		return '1.5em';
+		return '1.1em';
 	}
 	ssStyle()
 	{
-		return `font-family:"Fira Sans",sans-serif;font-size:${this.height}px; font-weight:${this.weight}`;
+		return `font-size:${this.height}px; font-weight:${this.weight}`;
 	}
 	setSvgText()
 	{
@@ -8993,7 +9002,7 @@ class IndexText extends Element
 						{
 							const height = Number.parseInt(this.height);
 							const oldOffset = - 0.8 * height;
-							const offset = -0.8 * height + 1.5 * i * height;
+							const offset = -0.8 * height + i * height;
 							const use = H3.use({href:`#icon-${matches[3]}`, width:this.height, height:this.height, x, y:offset});
 							use.onmousedown = e => Cat.R.diagram.userSelectElement(e, this);
 							this.svg.appendChild(use);
@@ -9078,6 +9087,8 @@ class IndexText extends Element
 			a.weight = this.weight;
 		if (this.textAnchor !== 'start')
 			a.textAnchor = this.textAnchor;
+		if (this.attributes.size > 0)
+			a.attributes = U.jsonMap(this.attributes);
 		return a;
 	}
 	showSelected(state = true)
@@ -9207,6 +9218,33 @@ class IndexText extends Element
 	hasMoved()
 	{
 		return 'orig' in this && (this.orig.x !== this.x || this.orig.y !== this.y);
+	}
+}
+
+class IndexCode extends IndexText
+{
+	constructor(diagram, args)
+	{
+		super(diagram, args);
+		if ('code' in args)
+			this.attributes.set('code', args.code);
+		if ('morphism' in args)
+			this.attributes.set('morphism', args.morphism);
+	}
+	mouseenter(e)
+	{
+		super.mouseenter(e);
+		this.diagram.emphasis(this.diagram.getElement(this.attributes.get('morphism')), true);
+	}
+	mouseout(e)
+	{
+		super.mouseout(e);
+		this.diagram.emphasis(this.diagram.getElement(this.attributes.get('morphism')), false);
+	}
+	makeSvg()
+	{
+		super.makeSVG();
+		this.svg.querySelectorAll('tspan').forEach(tsp => tsp.classList.add('code'));
 	}
 }
 
@@ -10867,7 +10905,11 @@ class LanguageAction extends Action
 			resizeObserver.observe(textarea);
 		}
 		if (('code' in elt && this.basename in elt.code) || elt instanceof Diagram)
+		{
 			toolbar.body.appendChild(D.getIcon(this.basename, `download-${this.basename}`, e => this.download(e, elt), {title:`Download ${this.properName}`}));
+			const icon = `show-${this.ext}`;
+			toolbar.body.appendChild(Cat.D.getIcon(icon, icon, e => Cat.R.diagram.showCode(this.ext), {title:`Show code for ${this.properName}`}));
+		}
 	}
 	setEditorSize(textarea)
 	{
@@ -11448,7 +11490,7 @@ class GraphAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return ary.length === 0 || ary.length > 0 && ary.reduce((r, m) => r && m instanceof IndexMorphism, true);	// all morphisms
+		return ary.length === 0 || ary.length > 0 && ary.reduce((r, m) => r && m instanceof IndexMorphism && !('code' in m.to), true);
 	}
 }
 
@@ -12013,7 +12055,7 @@ class ExpressionAction extends Action
 				blob = new DiagramBlob(item);
 			if (item instanceof IndexMorphism)
 			{
-				if (item.to.isBare())
+				if (item.to.isBare() && !('code' in item.to))
 				{
 					if (blob.morphisms.size > 1 && !blob.hasReference())
 						return true;
@@ -12450,6 +12492,7 @@ if (args.to === 'sys/Cat') args.to = 'em/Cat';		// TODO remove
 					case 'NamedObject':
 					case 'IndexObject':
 					case 'IndexText':
+					case 'IndexCode':
 					case 'TensorObject':
 					case 'PullbackObject':
 						procElt(args, ndx);
@@ -12516,6 +12559,7 @@ if (args.to === 'sys/Cat') args.to = 'em/Cat';		// TODO remove
 		if (elt.diagram)
 		{
 			elt.diagram.elements.delete(elt.basename);
+			elt.diagram.elements.delete(elt.name);
 			if (!(elt instanceof IndexMorphism) && !(elt instanceof IndexObject))
 				R.removeEquivalences(elt.diagram, elt.name);
 			D && emit && D.emitElementEvent(elt.diagram, 'delete', elt);
@@ -12751,6 +12795,7 @@ class Morphism extends Element
 			this.domain.decrRefcnt();
 			this.codomain.decrRefcnt();
 			this.category && this.category.deleteElement(this);
+//			this.diagram && this.diagram.elements.delete(this.name);
 		}
 		super.decrRefcnt();
 	}
@@ -13593,12 +13638,8 @@ const Arrow =
 		{
 			if (!this.domain.to.isEquivalent(this.to.domain))
 				this.domain.svg.classList.add('badGlow');
-			else
-				this.domain.svg.classList.remove('badGlow');
 			if (!this.codomain.to.isEquivalent(this.to.codomain))
 				this.codomain.svg.classList.add('badGlow');
-			else
-				this.codomain.svg.classList.remove('badGlow');
 		}
 	},
 	getNameSvgOffset()
@@ -13665,10 +13706,6 @@ const Arrow =
 			r = new D2({x:pnt.x, y:pnt.y});
 		return r;
 	},
-	isFusible(m)
-	{
-		return false;
-	},
 	finishMove()
 	{
 		const dom = this.domain.finishMove();
@@ -13698,10 +13735,13 @@ class IndexMorphism extends Morphism
 			throw 'no morphism to attach to index: ' + nuArgs.to;
 		const domain = diagram.domain.getElement(nuArgs.domain);
 		const codomain = diagram.domain.getElement(nuArgs.codomain);
-		if (domain.to !== to.domain)
+if (true)
+{
+		if (!domain.to.isEquivalent(to.domain))
 			throw 'index morphism domain mismatched to target morphism';
-		if (codomain.to !== to.codomain)
+		if (!codomain.to.isEquivalent(to.codomain))
 			throw 'index morphism codomain mismatched to target morphism';
+}
 		super(diagram, nuArgs);
 		this.setMorphism(to);
 		this.incrRefcnt();
@@ -13742,7 +13782,7 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 		const to = this.to;
 		let domainElt = null;
 		let codomainElt = null;
-		const diagram = to.diagram;
+		const diagram = R.diagram;
 		if (this.isEditable() && this.refcnt <= 1)
 		{
 			const objects = this.diagram.getObjects();
@@ -13750,14 +13790,14 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 			{
 				const setDomain = (e, dom) => this.setToDomain(diagram.getElement(e.target.value));
 				domainElt = H3.select('##new-domain.w100', {onchange: e => setDomain(e, diagram.getElement(e.target.value))});
-				domainElt.appendChild(H3.option(to.domain.properName, {value:to.domain.properName, selected:true, disabled:false}));
+				domainElt.appendChild(H3.option(to.domain.properName, {value:to.domain.name, selected:true}));
 				objects.map(o => o.name !== to.domain.name && domainElt.appendChild(H3.option(o.properName, {value:o.name})));
 			}
 			if (this.codomain.refcnt === 2)
 			{
 				const setCodomain = (e, dom) => this.setToCodomain(diagram.getElement(e.target.value));
 				codomainElt = H3.select('##new-domain.w100', {onchange: e => setCodomain(e, diagram.getElement(e.target.value))});
-				codomainElt.appendChild(H3.option(to.codomain.properName, {value:to.codomain.properName, selected:true, disabled:false}));
+				codomainElt.appendChild(H3.option(to.codomain.properName, {value:to.codomain.name, selected:true}));
 				objects.map(o => o.name !== to.codomain.name && codomainElt.appendChild(H3.option(o.properName, {value:o.name})));
 			}
 		}
@@ -14036,6 +14076,12 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 	{
 		this.svg_name.innerHTML = this.to.properName;
 	}
+	isFusible(m)
+	{
+		if (!(m && m instanceof IndexMorphism))
+			return false;
+		return this.to.isEquivalent(m.to) || this.isIdentityFusible();
+	}
 	static LinkId(data, lnk)
 	{
 		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
@@ -14141,6 +14187,10 @@ class IndexElement extends Element
 	getLevel()
 	{
 		return this.attributes.has('level') ? this.attributes.get('level') : 0;
+	}
+	isFusible(m)
+	{
+		return false;
 	}
 	updateFusible()
 	{}
@@ -14322,7 +14372,7 @@ class Cell
 	{
 		const properName = this.cellMap();
 		const level = this.getLevel();
-		this.properName = '('.repeat(level) + properName + ')'.repeat(level);
+		this.properName = properName !== '' ? '('.repeat(level) + properName + ')'.repeat(level) : '';
 	}
 	setAssertion(act)
 	{
@@ -14588,11 +14638,11 @@ class Cell
 	{
 		return this.diagram.isEditable();
 	}
-	isFusible()	// fitb
+	isFusible()
 	{
 		return false;
 	}
-	updateFusible(e)	// fitb
+	updateFusible(e)
 	{}
 	updateGlow(state, glow)	// same as Element
 	{
@@ -15675,7 +15725,6 @@ class FactorMorphism extends Morphism
 		if (this.factors.length > 1)
 			this.factors.map((f, i) =>
 			{
-				// TODO
 				const args = {factors:[[i]], dual:this.dual};
 				const baseArgs = {factors:[this.factors[i]], dual:this.dual};
 				if (this.dual)
@@ -16008,7 +16057,7 @@ class LambdaMorphism extends Morphism
 	{
 		const seq = diagram.get('ProductObject', {objects:[preCurry.domain, preCurry.codomain]});
 		const dom = diagram.get('ProductObject', {objects:factors.map(f => seq.getFactor(f))});
-		seq.decrRefcnt();
+//		seq.decrRefcnt();
 		return dom;
 	}
 	static Codomain(diagram, preCurry, factors)
@@ -16035,7 +16084,7 @@ class LambdaMorphism extends Morphism
 		}
 		if (objects.length > 0)
 			codomain = diagram.get('HomObject', {objects: [diagram.get('ProductObject', {objects}), codomain]});
-		seq.decrRefcnt();
+//		seq.decrRefcnt();
 		return codomain;
 	}
 	static ProperName(preCurry, domFactors, homFactors)
@@ -16496,22 +16545,17 @@ class Diagram extends Functor
 		if (elt.category)
 		{
 			if (elt.category.elements.has(elt.name))
-				return;
+				throw `Element with given name ${U.HtmlSafe(elt.name)} already exists in category ${U.HtmlSafe(elt.category.name)}`;
 			elt.category.elements.set(elt.name, elt);
-			if (!isIndex)
+			if (!isIndex && elt.diagram === this)
 			{
+				if (this.elements.has(elt.basename))
+					throw `Element with given basename ${U.HtmlSafe(elt.basename)} already exists in diagram ${this.name}`;
 				this.elements.set(elt.basename, elt);
 				this.elements.set(elt.name, elt);
 			}
 			return;
 		}
-		const cat = isIndex ? this.domain : this.codomain;
-		if (cat.elements.has(elt.name))
-			throw `Element with given name ${U.HtmlSafe(elt.name)} already exists in category ${U.HtmlSafe(cat.name)}`;
-		if (this.elements.has(elt.basename))
-			throw `Element with given basename ${U.HtmlSafe(elt.basename)} already exists in diagram`;
-		!isIndex && this.elements.set(elt.basename, elt);
-		cat.elements.set(elt.name, elt);
 	}
 	help()
 	{
@@ -16556,9 +16600,11 @@ class Diagram extends Functor
 	{
 		const a = super.json();
 		a.references = [...this.references.keys()];
-//		this.purge();
+		this.purge();
 		a.domainInfo = this.domain.json();
-		a.elements = [...this.elements.values()].filter(e => e.canSave()).map(e => e.json(delBasename));
+		a.elements = [];
+		const saved = new Set();
+		this.elements.forEach((elt, name) => elt.canSave() && !saved.has(elt) && a.elements.push(elt.json(delBasename)) && saved.add(elt));
 		const procJson = elt =>
 		{
 			if (elt.diagram === this.name)
@@ -17228,7 +17274,22 @@ class Diagram extends Functor
 		D.closeActiveTextEdit();
 		txtbox.contentEditable = false;
 		const elt = this.getElement(name);
-		const value = txtbox.innerText.trimRight();	// cannot get rid of newlines on the end in a text box
+		let value = txtbox.innerText.trimRight();	// cannot get rid of newlines on the end in a text box
+		if (attribute === 'properName')
+		{
+			let nuVal = '';
+			let ndx = 0;
+			let match = value.match(/:[0-9]+/);		// map ":digits" to subscript digits
+			while (match)
+			{
+				nuVal += value.substring(ndx, match.index);
+				nuVal += U.subscript(match[0].substring(1));
+				ndx = match.index + match[0].length;
+				value = value.substring(ndx);
+				match = value.match(/:[0-9]+/);
+			}
+			value = nuVal + value;
+		}
 		txtbox.innerHTML = U.HtmlEntitySafe(value);
 		const old = elt.editText(e, attribute, value);
 		this.log({command:'editText', name, attribute, value});		// use old name
@@ -17760,7 +17821,7 @@ class Diagram extends Functor
 		from.decrRefcnt();
 		log && this.log({command:'drop', action:action.name, from:fromName, target:targetName});
 	}
-	fuse(e, from, target, save = true)
+	fuseObjects(e, from, target, save = true)
 	{
 		const isEquiv = from.to.isEquivalent(target.to);
 		const identFuse = from.isIdentityFusible() && !isEquiv;
@@ -17805,6 +17866,13 @@ class Diagram extends Functor
 		from.decrRefcnt();
 		D.emitObjectEvent(this, 'fuse', target);
 		return target;
+	}
+	fuseMorphisms(e, from, target, save = true)
+	{
+		this.fuseObjects(e, from.domain, target.domain, false);
+		this.fuseObjects(e, from.codomain, target.codomain, false);
+		from.refcnt === 1 && from.decrRefcnt();
+		this.makeSelected(target);
 	}
 	replay(e, cmd)
 	{
@@ -18302,6 +18370,7 @@ class Diagram extends Functor
 			{
 				case 'IndexObject':
 				case 'IndexText':
+				case 'IndexCode':
 					break;
 				case 'IndexMorphism':
 					elt.domain = change(elt.domain);
@@ -18349,6 +18418,7 @@ class Diagram extends Functor
 				case 'CatObject':
 				case 'Morphism':
 				case 'IndexText':
+				case 'IndexCode':
 				case 'IndexObject':
 				case 'IndexMorphism':
 					!U.isValidBasename(elt.basename) && errors.push(`Invalid basename: ${U.HtmlEntitySafe(elt.basename)}`);
@@ -18402,6 +18472,39 @@ class Diagram extends Functor
 		if (!category)
 			category = R.getCategory(cat);
 		return category;
+	}
+	showCode(ext)
+	{
+		const scanned = new Set();
+		this.forEachText(txt => txt.attributes.has('code') && txt.attributes.get('code') === ext && scanned.add(this.getElement(txt.attributes.get('morphism'))));
+		if (scanned.size > 0)
+		{
+			this.hideCode(ext);
+			return;
+		}
+		[...this.domain.elements.values()].map(elt =>
+		{
+			if (elt instanceof IndexMorphism && 'code' in elt.to && ext in elt.to.code)
+			{
+				if (!scanned.has(elt.to))
+				{
+					const foundIt = this.svgRoot.querySelector(`g[data-morphism="${elt.to.name}"]`);
+					if (!foundIt)
+					{
+						const description = elt.to.code[ext];
+						let xy = new D2(elt.start);
+						const height = 6;
+						xy = xy.add({x:0, y:height + D.default.font.height});
+						const txt = new IndexCode(this, {description, xy, height, weight:'normal', code:ext, morphism:elt.to.name});
+					}
+					scanned.add(elt.to);
+				}
+			}
+		});
+	}
+	hideCode(ext)
+	{
+		this.forEachText(txt => txt.attributes.has('code') && txt.attributes.get('code') === ext && txt.decrRefcnt());
 	}
 	static Codename(args)
 	{
@@ -19281,6 +19384,7 @@ const Cat =
 	Diagram,
 	IndexMorphism,
 	IndexObject,
+	IndexCode,
 	IndexText,
 	Distribute,
 	Element,
