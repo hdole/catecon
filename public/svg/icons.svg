@@ -104,8 +104,8 @@
 		<circle cx="120" cy="120" r="120" fill="url(#radgrad2)"/>
 	</symbol>
 	<symbol id="icon-cpp" class="icon" viewbox="0 0 320 320">
-			<text text-anchor="middle" x="160" y="200" style="font-size:220px">C</text>
-			<text text-anchor="middle" x="160" y="330" style="font-size:200px">++</text>
+		<text text-anchor="middle" x="160" y="200" style="font-size:220px">C</text>
+		<text text-anchor="middle" x="160" y="330" style="font-size:200px">++</text>
 	</symbol>
 	<symbol id="icon-delete" class="icon" viewbox="0 0 320 320">
 		<line class="icon-std" x1="160" y1="40" x2="160" y2="230" marker-end="url(#arrowhead)"/>
@@ -452,6 +452,16 @@
 		<line class="icon-std" x1="80" y1="260" x2="240" y2="60" marker-start="url(#arrowheadRev)" marker-end="url(#arrowhead)"/>
 		<circle class="svgfil4" cx="160" cy="160" r="60"/>
 		<circle cx="160" cy="160" r="60" fill="url(#radgrad1)"/>
+	</symbol>
+	<symbol id="icon-show-cpp" class="icon" viewbox="0 0 320 320">
+		<circle cx="160" cy="120" r="110" fill="url(#radgrad1)"/>
+		<ellipse class="svgstrThinGray" cx="160" cy="120" rx="140" ry="80" fill="url(#radgrad1)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:120px">C++</text>
+	</symbol>
+	<symbol id="icon-show-js" class="icon" viewbox="0 0 320 320">
+		<circle cx="160" cy="120" r="110" fill="url(#radgrad1)"/>
+		<ellipse class="svgstrThinGray" cx="160" cy="120" rx="140" ry="80" fill="url(#radgrad1)"/>
+		<text text-anchor="middle" x="160" y="300" style="font-size:120px">JS</text>
 	</symbol>
 	<symbol id="icon-string" class="icon" viewbox="0 0 320 320">
 		<line class="icon-std" x1="60" y1="40" x2="260" y2="200"/>
