@@ -1166,6 +1166,24 @@
         }
       },
       {
+        "basename": "o_123",
+        "prototype": "IndexObject",
+        "to": "hdole/test/B",
+        "xy": {
+          "x": 540,
+          "y": -200
+        }
+      },
+      {
+        "basename": "o_125",
+        "prototype": "IndexObject",
+        "to": "hdole/test/C",
+        "xy": {
+          "x": 990,
+          "y": -200
+        }
+      },
+      {
         "basename": "m_5",
         "prototype": "IndexMorphism",
         "domain": "hdole/test/o_4",
@@ -2129,6 +2147,20 @@
             -4.718447854656915e-16
           ]
         ]
+      },
+      {
+        "basename": "m_92",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/test/o_20",
+        "codomain": "hdole/test/o_123",
+        "to": "hdole/test/Id{B}dI"
+      },
+      {
+        "basename": "m_95",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/test/o_22",
+        "codomain": "hdole/test/o_125",
+        "to": "hdole/test/Id{C}dI"
       }
     ],
     "cells": []
@@ -2139,14 +2171,6 @@
       "prototype": "CatObject"
     },
     {
-      "basename": "A",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "B",
-      "prototype": "CatObject"
-    },
-    {
       "basename": "B",
       "prototype": "CatObject"
     },
@@ -2155,28 +2179,9 @@
       "prototype": "CatObject"
     },
     {
-      "basename": "C",
-      "prototype": "CatObject"
-    },
-    {
       "prototype": "ProductObject",
       "objects": [
         "hdole/floats/F64",
-        "hdole/floats/F64",
-        "hdole/floats/F64"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/floats/F64",
-        "hdole/floats/F64",
-        "hdole/floats/F64"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "hdole/floats/F64",
         "hdole/floats/F64"
       ]
@@ -2193,16 +2198,6 @@
       "prototype": "CatObject"
     },
     {
-      "basename": "D",
-      "prototype": "CatObject"
-    },
-    {
-      "description": "A pair of floating point numbers",
-      "basename": "Point",
-      "prototype": "NamedObject",
-      "source": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP"
-    },
-    {
       "description": "A pair of floating point numbers",
       "basename": "Point",
       "prototype": "NamedObject",
@@ -2215,26 +2210,8 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/test/Point",
-      "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP"
-    },
-    {
-      "prototype": "Identity",
       "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
       "codomain": "hdole/test/Point"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/test/Point"
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
     },
     {
       "basename": "#1",
@@ -2254,20 +2231,6 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "C",
-        "B"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "A",
         "C"
       ]
@@ -2282,30 +2245,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "B",
-        "A"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "A",
         "B"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
-        "B"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "#1",
-        "#1"
       ]
     },
     {
@@ -2328,32 +2269,8 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "Po{A,B}oP",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
         "C",
         "Po{A,B}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "C",
-        "Po{A,B}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "A",
-        "B"
       ]
     },
     {
@@ -2374,29 +2291,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "CPo{A,B}oPC",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "C",
         "CPo{A,B}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "C",
-        "CPo{A,B}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "B",
-        "C"
       ]
     },
     {
@@ -2412,21 +2308,6 @@
       "objects": [
         "Po{A,C}oP",
         "Po{B,C}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{A,C}oP",
-        "Po{B,C}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "C",
-        "A"
       ]
     },
     {
@@ -2448,22 +2329,6 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "Po{C,A}oP",
-        "Po{C,B}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "C",
-        "D"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
         "C",
         "D"
       ]
@@ -2478,28 +2343,7 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "CPo{A,B}oPC",
-        "CPo{C,D}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "A",
-        "CPo{C,D}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
-        "CPo{C,D}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "B",
         "CPo{C,D}oPC"
       ]
     },
@@ -2520,32 +2364,9 @@
     },
     {
       "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{A,CPo{C,D}oPC}oP",
-        "Po{B,CPo{C,D}oPC}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
       "objects": [
         "CPo{A,B}oPC",
         "D"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "CPo{A,B}oPC",
-        "D"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{CPo{A,B}oPC,C}oP",
-        "Po{CPo{A,B}oPC,D}oP"
       ]
     },
     {
@@ -2566,29 +2387,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "Po{C,B}oP",
-        "Po{C,B}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "CPo{A,B}oPC",
         "CPo{A,B}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "CPo{A,B}oPC",
-        "CPo{A,B}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Po{CPo{A,B}oPC,CPo{A,B}oPC}oP",
-        "Po{A,B}oP"
       ]
     },
     {
@@ -2608,29 +2408,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP",
-        "CPo{Po{A,B}oP,C}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP",
         "CPo{C,D}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP",
-        "CPo{C,D}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP",
-        "CPo{Po{A,C}oP,Po{B,C}oP}oPC"
       ]
     },
     {
@@ -2650,29 +2429,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP",
-        "CPo{C,Po{A,B}oP}oPC"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP",
         "Po{CPo{A,B}oPC,C}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP",
-        "Po{CPo{A,B}oPC,C}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "CPo{Po{A,B}oP,C}oPC",
-        "Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP"
       ]
     },
     {
@@ -2692,29 +2450,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP",
-        "Po{Po{C,B}oP,Po{C,B}oP}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
         "Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP",
         "Po{CPo{A,B}oPC,C}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP",
-        "Po{CPo{A,B}oPC,C}oP"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP",
-        "CPo{Po{A,C}oP,Po{B,C}oP}oPC"
       ]
     },
     {
@@ -2729,22 +2466,6 @@
       "prototype": "HomObject",
       "objects": [
         "A",
-        "C"
-      ]
-    },
-    {
-      "description": "The homset from A to C",
-      "prototype": "HomObject",
-      "objects": [
-        "A",
-        "C"
-      ]
-    },
-    {
-      "description": "The homset from A&times;B to C",
-      "prototype": "HomObject",
-      "objects": [
-        "Po{A,B}oP",
         "C"
       ]
     },
@@ -2768,25 +2489,6 @@
       "prototype": "ProductObject",
       "objects": [
         "A",
-        "B",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
-        "A",
-        "B",
-        "B",
-        "C",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
         "A",
         "B",
         "B",
@@ -2804,23 +2506,6 @@
     },
     {
       "prototype": "ProductObject",
-      "objects": [
-        "B",
-        "C",
-        "D"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "A",
-        "B",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "A",
@@ -2838,27 +2523,6 @@
         "B",
         "C",
         "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "A",
-        "A",
-        "B",
-        "B",
-        "C",
-        "C"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "B",
-        "C",
-        "D"
       ]
     },
     {
@@ -2879,32 +2543,10 @@
       ]
     },
     {
-      "description": "The homset from A to B",
-      "prototype": "HomObject",
-      "objects": [
-        "A",
-        "B"
-      ]
-    },
-    {
       "prototype": "ProductObject",
       "objects": [
         "Ho{A,B}oH",
         "A"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Ho{A,B}oH",
-        "A"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Po{C,B}oP",
-        "B"
       ]
     },
     {
@@ -2923,20 +2565,6 @@
       "max": 0
     },
     {
-      "basename": "#0",
-      "prototype": "FiniteObject",
-      "properName": "&empty;",
-      "size": 0,
-      "min": 0,
-      "max": 0
-    },
-    {
-      "basename": "f",
-      "prototype": "Morphism",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/B"
-    },
-    {
       "basename": "f",
       "prototype": "Morphism",
       "domain": "hdole/test/A",
@@ -2947,21 +2575,6 @@
       "prototype": "Morphism",
       "domain": "hdole/test/B",
       "codomain": "hdole/test/C"
-    },
-    {
-      "basename": "g",
-      "prototype": "Morphism",
-      "domain": "hdole/test/B",
-      "codomain": "hdole/test/C"
-    },
-    {
-      "prototype": "Composite",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/C",
-      "morphisms": [
-        "f",
-        "g"
-      ]
     },
     {
       "prototype": "Composite",
@@ -2980,33 +2593,10 @@
       "source": "hdole/test/Cm{f,g}mC"
     },
     {
-      "basename": "h",
-      "prototype": "NamedMorphism",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/C",
-      "source": "hdole/test/Cm{f,g}mC"
-    },
-    {
       "basename": "foo",
       "prototype": "Morphism",
       "domain": "hdole/test/A",
       "codomain": "hdole/test/B"
-    },
-    {
-      "basename": "foo",
-      "prototype": "Morphism",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/B"
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/floats/F64",
-      "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "factors": [
-        [],
-        [],
-        []
-      ]
     },
     {
       "prototype": "FactorMorphism",
@@ -3029,20 +2619,6 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/floats/F64",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/floats/F64"
-    },
-    {
       "prototype": "Identity",
       "domain": "hdole/floats/F64"
     },
@@ -3062,39 +2638,6 @@
       "codomain": "hdole/floats/F64",
       "factors": [
         [
-          1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/floats/F64",
-      "factors": [
-        [
-          2
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/floats/F64",
-      "factors": [
-        [
-          2
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "factors": [
-        [
-          1
-        ],
-        [
           2
         ]
       ]
@@ -3119,26 +2662,6 @@
       "factors": [
         [
           0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/floats/F64",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/floats/F64",
-      "factors": [
-        [
-          1
         ]
       ]
     },
@@ -3157,10 +2680,6 @@
       "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP"
     },
     {
-      "prototype": "Identity",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP"
-    },
-    {
       "prototype": "Composite",
       "domain": "hdole/floats/F64",
       "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
@@ -3168,29 +2687,6 @@
         "Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_,hdole/floats/F64_}aF",
         "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_2}aF",
         "Id{Po{hdole/floats/F64,hdole/floats/F64}oP}dI"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "hdole/floats/F64",
-      "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "morphisms": [
-        "Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_,hdole/floats/F64_}aF",
-        "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_2}aF",
-        "Id{Po{hdole/floats/F64,hdole/floats/F64}oP}dI"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "factors": [
-        [
-          0
-        ],
-        [
-          1
-        ]
       ]
     },
     {
@@ -3216,24 +2712,6 @@
       ]
     },
     {
-      "prototype": "Composite",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/floats/F64",
-      "morphisms": [
-        "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF",
-        "hdole/floats/mult64"
-      ]
-    },
-    {
-      "prototype": "ProductAssembly",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
-      "morphisms": [
-        "Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC",
-        "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF"
-      ]
-    },
-    {
       "prototype": "ProductAssembly",
       "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "codomain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64}oP",
@@ -3252,36 +2730,11 @@
       ]
     },
     {
-      "prototype": "Composite",
-      "domain": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
-      "codomain": "hdole/floats/F64",
-      "morphisms": [
-        "Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_2}aF}aP",
-        "hdole/floats/add64"
-      ]
-    },
-    {
       "prototype": "FactorMorphism",
       "domain": "hdole/floats/Po{F64,F64}oP",
       "codomain": "hdole/floats/F64",
       "factors": [
         0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/floats/Po{F64,F64}oP",
-      "codomain": "hdole/floats/F64",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/floats/Po{F64,F64}oP",
-      "codomain": "hdole/floats/F64",
-      "factors": [
-        1
       ]
     },
     {
@@ -3300,19 +2753,6 @@
       "codomain": "hdole/test/D"
     },
     {
-      "basename": "h2",
-      "prototype": "Morphism",
-      "properName": "h",
-      "domain": "hdole/test/C",
-      "codomain": "hdole/test/D"
-    },
-    {
-      "basename": "k",
-      "prototype": "Morphism",
-      "domain": "hdole/test/D",
-      "codomain": "hdole/test/A"
-    },
-    {
       "basename": "k",
       "prototype": "Morphism",
       "domain": "hdole/test/D",
@@ -3321,19 +2761,6 @@
     {
       "prototype": "Identity",
       "domain": "hdole/test/A"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/test/A"
-    },
-    {
-      "prototype": "ProductAssembly",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/Po{C,B}oP",
-      "morphisms": [
-        "h",
-        "f"
-      ]
     },
     {
       "prototype": "ProductAssembly",
@@ -3357,31 +2784,7 @@
       "domain": "hdole/test/A",
       "codomain": "hdole/test/A",
       "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/A",
-      "factors": [
         1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/A",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,C}oP",
-      "codomain": "hdole/test/A",
-      "factors": [
-        0
       ]
     },
     {
@@ -3402,36 +2805,11 @@
       ]
     },
     {
-      "prototype": "ProductAssembly",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/Po{B,A}oP",
-      "morphisms": [
-        "f",
-        "Id{A}dI"
-      ]
-    },
-    {
       "prototype": "FactorMorphism",
       "domain": "hdole/test/Po{A,B}oP",
       "codomain": "hdole/test/A",
       "factors": [
         0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,B}oP",
-      "codomain": "hdole/test/A",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,B}oP",
-      "codomain": "hdole/test/B",
-      "factors": [
-        1
       ]
     },
     {
@@ -3449,21 +2827,6 @@
       "codomain": "hdole/test/C"
     },
     {
-      "basename": "m",
-      "prototype": "Morphism",
-      "domain": "hdole/test/Po{A,B}oP",
-      "codomain": "hdole/test/C"
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/#1",
-      "codomain": "hdole/test/CPo{#1,#1}oPC",
-      "factors": [
-        0
-      ]
-    },
-    {
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/test/#1",
@@ -3477,21 +2840,6 @@
       "prototype": "Morphism",
       "domain": "hdole/test/#1",
       "codomain": "hdole/test/A"
-    },
-    {
-      "basename": "a",
-      "prototype": "Morphism",
-      "domain": "hdole/test/#1",
-      "codomain": "hdole/test/A"
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/#1",
-      "codomain": "hdole/test/CPo{#1,#1}oPC",
-      "factors": [
-        1
-      ]
     },
     {
       "prototype": "FactorMorphism",
@@ -3511,34 +2859,11 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/B",
-      "codomain": "hdole/test/#1",
-      "factors": [
-        -1
-      ]
-    },
-    {
       "basename": "Di{Po{C,CPo{A,B}oPC}oP}-RiD",
       "prototype": "Distribute",
       "properName": "dist",
       "domain": "hdole/test/Po{C,CPo{A,B}oPC}oP",
       "codomain": "hdole/test/CPo{Po{C,A}oP,Po{C,B}oP}oPC"
-    },
-    {
-      "basename": "Di{Po{C,CPo{A,B}oPC}oP}-RiD",
-      "prototype": "Distribute",
-      "properName": "dist",
-      "domain": "hdole/test/Po{C,CPo{A,B}oPC}oP",
-      "codomain": "hdole/test/CPo{Po{C,A}oP,Po{C,B}oP}oPC"
-    },
-    {
-      "basename": "Di{Po{CPo{A,B}oPC,C}oP}-LiD",
-      "prototype": "Distribute",
-      "properName": "dist",
-      "domain": "hdole/test/Po{CPo{A,B}oPC,C}oP",
-      "codomain": "hdole/test/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
-      "side": true
     },
     {
       "basename": "Di{Po{CPo{A,B}oPC,C}oP}-LiD",
@@ -3557,33 +2882,11 @@
       "side": true
     },
     {
-      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-LiD",
-      "prototype": "Distribute",
-      "properName": "dist",
-      "domain": "hdole/test/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
-      "codomain": "hdole/test/CPo{Po{A,CPo{C,D}oPC}oP,Po{B,CPo{C,D}oPC}oP}oPC",
-      "side": true
-    },
-    {
       "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD",
       "prototype": "Distribute",
       "properName": "dist",
       "domain": "hdole/test/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
       "codomain": "hdole/test/CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
-    },
-    {
-      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD",
-      "prototype": "Distribute",
-      "properName": "dist",
-      "domain": "hdole/test/Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
-      "codomain": "hdole/test/CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
-    },
-    {
-      "basename": "a/dist",
-      "prototype": "NamedMorphism",
-      "domain": "hdole/test/Po{CPo{A,B}oPC,C}oP",
-      "codomain": "hdole/test/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
-      "source": "hdole/test/Di{Po{CPo{A,B}oPC,C}oP}-LiD"
     },
     {
       "basename": "a/dist",
@@ -3603,31 +2906,7 @@
     {
       "prototype": "FactorMorphism",
       "domain": "hdole/test/Po{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP",
-      "codomain": "hdole/test/CPo{Po{A,C}oP,Po{B,C}oP}oPC",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP",
       "codomain": "hdole/test/Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP",
-      "codomain": "hdole/test/Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP",
-      "codomain": "hdole/test/Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP",
       "factors": [
         0
       ]
@@ -3646,32 +2925,6 @@
       "properName": "f",
       "domain": "hdole/test/Po{A,B}oP",
       "codomain": "hdole/test/C"
-    },
-    {
-      "basename": "func",
-      "prototype": "Morphism",
-      "properName": "f",
-      "domain": "hdole/test/Po{A,B}oP",
-      "codomain": "hdole/test/C"
-    },
-    {
-      "basename": "Lm{func:[[0,1]]:[[0,0]]}mL",
-      "prototype": "LambdaMorphism",
-      "domain": "hdole/test/B",
-      "codomain": "hdole/test/Ho{A,C}oH",
-      "preCurry": "hdole/test/func",
-      "domFactors": [
-        [
-          0,
-          1
-        ]
-      ],
-      "homFactors": [
-        [
-          0,
-          0
-        ]
-      ]
     },
     {
       "basename": "Lm{func:[[0,1]]:[[0,0]]}mL",
@@ -3706,27 +2959,6 @@
       ]
     },
     {
-      "basename": "Lm{func:[]:[[0]]}mL",
-      "prototype": "LambdaMorphism",
-      "domain": "hdole/test/#1",
-      "codomain": "hdole/test/Ho{Po{A,B}oP,C}oH",
-      "preCurry": "hdole/test/func",
-      "domFactors": [],
-      "homFactors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "basename": "hcomp",
-      "prototype": "NamedMorphism",
-      "properName": "h",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/C",
-      "source": "hdole/test/Cm{f,g}mC"
-    },
-    {
       "basename": "hcomp",
       "prototype": "NamedMorphism",
       "properName": "h",
@@ -3740,39 +2972,6 @@
       "codomain": "hdole/test/A",
       "factors": [
         0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,B,C}oP",
-      "codomain": "hdole/test/A",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,B,C}oP",
-      "codomain": "hdole/test/Po{A,A,B,B,C,C}oP",
-      "factors": [
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          2
-        ],
-        [
-          2
-        ]
       ]
     },
     {
@@ -3816,26 +3015,6 @@
       "codomain": "hdole/test/A",
       "factors": [
         [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,A,B,B,C,C}oP",
-      "codomain": "hdole/test/A",
-      "factors": [
-        [
-          1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,A,B,B,C,C}oP",
-      "codomain": "hdole/test/A",
-      "factors": [
-        [
           1
         ]
       ]
@@ -3847,26 +3026,6 @@
       "factors": [
         [
           2
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,A,B,B,C,C}oP",
-      "codomain": "hdole/test/B",
-      "factors": [
-        [
-          2
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,B,C}oP",
-      "codomain": "hdole/test/B",
-      "factors": [
-        [
-          1
         ]
       ]
     },
@@ -3893,40 +3052,10 @@
     {
       "prototype": "FactorMorphism",
       "domain": "hdole/test/Po{A,A,B,B,C,C}oP",
-      "codomain": "hdole/test/B",
-      "factors": [
-        [
-          3
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,A,B,B,C,C}oP",
       "codomain": "hdole/test/C",
       "factors": [
         [
           4
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,A,B,B,C,C}oP",
-      "codomain": "hdole/test/C",
-      "factors": [
-        [
-          4
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,B,C}oP",
-      "codomain": "hdole/test/C",
-      "factors": [
-        [
-          2
         ]
       ]
     },
@@ -3951,23 +3080,6 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/Po{A,A,B,B,C,C}oP",
-      "codomain": "hdole/test/C",
-      "factors": [
-        [
-          5
-        ]
-      ]
-    },
-    {
-      "basename": "hh",
-      "prototype": "Morphism",
-      "properName": "h",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/D"
-    },
-    {
       "basename": "hh",
       "prototype": "Morphism",
       "properName": "h",
@@ -3980,23 +3092,6 @@
       "properName": "g",
       "domain": "hdole/test/A",
       "codomain": "hdole/test/C"
-    },
-    {
-      "basename": "gg",
-      "prototype": "Morphism",
-      "properName": "g",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/C"
-    },
-    {
-      "prototype": "ProductAssembly",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/Po{B,C,D}oP",
-      "morphisms": [
-        "f",
-        "gg",
-        "hh"
-      ]
     },
     {
       "prototype": "ProductAssembly",
@@ -4018,54 +3113,11 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/A",
-      "factors": [
-        2
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/test/A",
       "codomain": "hdole/test/CPo{A,B,C}oPC",
       "factors": [
         0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/CPo{A,B,C}oPC",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
-      "codomain": "hdole/test/CPo{A,B,C}oPC",
-      "factors": [
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          1
-        ],
-        [
-          1
-        ],
-        [
-          2
-        ],
-        [
-          2
-        ]
       ]
     },
     {
@@ -4112,40 +3164,7 @@
       "codomain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
       "factors": [
         [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
-      "factors": [
-        [
           1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
-      "factors": [
-        [
-          1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/B",
-      "codomain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
-      "factors": [
-        [
-          2
         ]
       ]
     },
@@ -4168,28 +3187,6 @@
       "factors": [
         [
           1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/B",
-      "codomain": "hdole/test/CPo{A,B,C}oPC",
-      "factors": [
-        [
-          1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/B",
-      "codomain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
-      "factors": [
-        [
-          3
         ]
       ]
     },
@@ -4219,43 +3216,10 @@
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/test/C",
-      "codomain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
-      "factors": [
-        [
-          4
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/C",
       "codomain": "hdole/test/CPo{A,B,C}oPC",
       "factors": [
         [
           2
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/C",
-      "codomain": "hdole/test/CPo{A,B,C}oPC",
-      "factors": [
-        [
-          2
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/C",
-      "codomain": "hdole/test/CPo{A,A,B,B,C,C}oPC",
-      "factors": [
-        [
-          5
         ]
       ]
     },
@@ -4277,19 +3241,6 @@
       "codomain": "hdole/test/A"
     },
     {
-      "basename": "j",
-      "prototype": "Morphism",
-      "domain": "hdole/test/B",
-      "codomain": "hdole/test/A"
-    },
-    {
-      "basename": "kk",
-      "prototype": "Morphism",
-      "properName": "k",
-      "domain": "hdole/test/C",
-      "codomain": "hdole/test/A"
-    },
-    {
       "basename": "kk",
       "prototype": "Morphism",
       "properName": "k",
@@ -4302,24 +3253,6 @@
       "properName": "m",
       "domain": "hdole/test/D",
       "codomain": "hdole/test/A"
-    },
-    {
-      "basename": "l",
-      "prototype": "Morphism",
-      "properName": "m",
-      "domain": "hdole/test/D",
-      "codomain": "hdole/test/A"
-    },
-    {
-      "prototype": "ProductAssembly",
-      "dual": true,
-      "domain": "hdole/test/CPo{B,C,D}oPC",
-      "codomain": "hdole/test/A",
-      "morphisms": [
-        "j",
-        "kk",
-        "l"
-      ]
     },
     {
       "prototype": "ProductAssembly",
@@ -4347,34 +3280,7 @@
       "domain": "hdole/test/A",
       "codomain": "hdole/test/A",
       "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/A",
-      "factors": [
         1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/A",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/A",
-      "factors": [
-        2
       ]
     },
     {
@@ -4394,36 +3300,12 @@
       "codomain": "hdole/test/B"
     },
     {
-      "basename": "Ev{Po{Ho{A,B}oH,A}oP}vE",
-      "prototype": "Evaluation",
-      "properName": "&#119890;",
-      "domain": "hdole/test/Po{Ho{A,B}oH,A}oP",
-      "codomain": "hdole/test/B"
-    },
-    {
       "prototype": "ProductAssembly",
       "domain": "hdole/test/A",
       "codomain": "hdole/test/Po{Po{C,B}oP,B}oP",
       "morphisms": [
         "Pa{h,f}aP",
         "f"
-      ]
-    },
-    {
-      "prototype": "ProductAssembly",
-      "domain": "hdole/test/A",
-      "codomain": "hdole/test/Po{Po{C,B}oP,B}oP",
-      "morphisms": [
-        "Pa{h,f}aP",
-        "f"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/test/CPo{C,Po{A,B}oP}oPC",
-      "codomain": "hdole/test/#1",
-      "factors": [
-        -1
       ]
     },
     {
@@ -4446,24 +3328,6 @@
     {
       "prototype": "FactorMorphism",
       "dual": true,
-      "domain": "hdole/test/C",
-      "codomain": "hdole/test/CPo{C,Po{A,B}oP}oPC",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/test/Po{A,B}oP",
-      "codomain": "hdole/test/CPo{C,Po{A,B}oP}oPC",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
       "domain": "hdole/test/Po{A,B}oP",
       "codomain": "hdole/test/CPo{C,Po{A,B}oP}oPC",
       "factors": [
@@ -4473,14 +3337,6 @@
     {
       "prototype": "Identity",
       "domain": "hdole/test/C"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/test/C"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/test/B"
     },
     {
       "prototype": "Identity",
@@ -4488,11 +3344,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644475825225,
+  "timestamp": 1644713948241,
   "version": 0,
   "viewport": {
     "x": 533,
-    "y": 1537,
+    "y": 1061,
     "scale": 1.6529877031306695
   }
 }

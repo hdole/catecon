@@ -6,6 +6,9 @@
   "properName": "hdole/str",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
+  "code": {
+    "cpp": "#include <iostream>"
+  },
   "domain": "hdole/str_Index",
   "codomain": "zf/Set",
   "references": [
@@ -44,7 +47,7 @@
         "to": "hdole/str/#1",
         "xy": {
           "x": 200,
-          "y": 600
+          "y": 500
         }
       },
       {
@@ -53,7 +56,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 600
+          "y": 500
         }
       },
       {
@@ -62,7 +65,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 400
+          "y": 350
         },
         "height": 24
       },
@@ -72,7 +75,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 200,
-          "y": 400
+          "y": 350
         }
       },
       {
@@ -81,7 +84,7 @@
         "to": "hdole/nat/N64",
         "xy": {
           "x": 400,
-          "y": 400
+          "y": 350
         }
       },
       {
@@ -90,7 +93,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 800
+          "y": 650
         },
         "height": 24
       },
@@ -100,7 +103,7 @@
         "to": "hdole/str/Po{str,str}oP",
         "xy": {
           "x": 200,
-          "y": 800
+          "y": 650
         }
       },
       {
@@ -109,7 +112,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 800
+          "y": 650
         }
       },
       {
@@ -118,7 +121,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1000
+          "y": 800
         },
         "height": 24
       },
@@ -128,7 +131,7 @@
         "to": "hdole/str/Po{str,str}oP",
         "xy": {
           "x": 200,
-          "y": 1000
+          "y": 800
         }
       },
       {
@@ -137,7 +140,7 @@
         "to": "hdole/str/CPo{#1,#1}oPC",
         "xy": {
           "x": 400,
-          "y": 1000
+          "y": 800
         }
       },
       {
@@ -146,7 +149,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1200
+          "y": 950
         },
         "height": 24
       },
@@ -156,7 +159,7 @@
         "to": "hdole/str/Po{str,str}oP",
         "xy": {
           "x": 200,
-          "y": 1200
+          "y": 950
         }
       },
       {
@@ -165,7 +168,7 @@
         "to": "hdole/nat/CPo{N64,#1}oPC",
         "xy": {
           "x": 400,
-          "y": 1200
+          "y": 950
         }
       },
       {
@@ -174,7 +177,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1400
+          "y": 1150
         },
         "height": 24
       },
@@ -184,7 +187,7 @@
         "to": "hdole/str/Po{str,hdole/nat/N64}oP",
         "xy": {
           "x": 200,
-          "y": 1400
+          "y": 1150
         }
       },
       {
@@ -193,7 +196,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 1400
+          "y": 1150
         }
       },
       {
@@ -202,7 +205,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1600
+          "y": 1300
         },
         "height": 24
       },
@@ -212,7 +215,7 @@
         "to": "hdole/nat/N64",
         "xy": {
           "x": 200,
-          "y": 1900
+          "y": 1750
         }
       },
       {
@@ -221,7 +224,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 1900
+          "y": 1750
         }
       },
       {
@@ -230,7 +233,7 @@
         "to": "hdole/nat/CPo{N64,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1900
+          "y": 1750
         }
       },
       {
@@ -239,7 +242,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 2200
+          "y": 2050
         },
         "height": 24
       },
@@ -249,7 +252,7 @@
         "to": "hdole/int/Z64",
         "xy": {
           "x": 200,
-          "y": 2200
+          "y": 2050
         }
       },
       {
@@ -258,7 +261,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 2200
+          "y": 2050
         }
       },
       {
@@ -267,7 +270,7 @@
         "to": "hdole/int/CPo{Z64,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 2200
+          "y": 2050
         }
       },
       {
@@ -275,8 +278,8 @@
         "basename": "t_13",
         "prototype": "IndexText",
         "xy": {
-          "x": -500,
-          "y": 2400
+          "x": -530,
+          "y": 2210
         },
         "height": 24
       },
@@ -286,7 +289,7 @@
         "to": "hdole/floats/F64",
         "xy": {
           "x": 200,
-          "y": 2400
+          "y": 2200
         }
       },
       {
@@ -295,7 +298,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 2400
+          "y": 2200
         }
       },
       {
@@ -304,7 +307,7 @@
         "to": "hdole/floats/CPo{F64,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 2400
+          "y": 2200
         }
       },
       {
@@ -313,7 +316,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 2600
+          "y": 2350
         },
         "height": 24
       },
@@ -323,7 +326,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 200,
-          "y": 2600
+          "y": 2350
         }
       },
       {
@@ -332,7 +335,7 @@
         "to": "hdole/str/TTY",
         "xy": {
           "x": 400,
-          "y": 2600
+          "y": 2350
         }
       },
       {
@@ -341,9 +344,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -520,
-          "y": 20
+          "y": 60
         },
-        "height": "300",
+        "height": "337",
         "weight": "bold"
       },
       {
@@ -352,7 +355,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 600
+          "y": 500
         },
         "height": 24
       },
@@ -362,7 +365,7 @@
         "to": "hdole/nat/N8",
         "xy": {
           "x": 200,
-          "y": 1600
+          "y": 1300
         }
       },
       {
@@ -371,7 +374,7 @@
         "to": "hdole/nat/N32",
         "xy": {
           "x": 200,
-          "y": 1800
+          "y": 1600
         }
       },
       {
@@ -380,7 +383,7 @@
         "to": "hdole/nat/N128",
         "xy": {
           "x": 200,
-          "y": 2000
+          "y": 1900
         }
       },
       {
@@ -389,7 +392,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 2000
+          "y": 1900
         }
       },
       {
@@ -398,7 +401,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 1600
+          "y": 1300
         }
       },
       {
@@ -407,7 +410,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 1800
+          "y": 1600
         }
       },
       {
@@ -416,7 +419,7 @@
         "to": "hdole/str/CPo{hdole/nat/N8,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1600
+          "y": 1300
         }
       },
       {
@@ -425,7 +428,7 @@
         "to": "hdole/nat/N16",
         "xy": {
           "x": 200,
-          "y": 1700
+          "y": 1450
         }
       },
       {
@@ -434,7 +437,7 @@
         "to": "hdole/str/str",
         "xy": {
           "x": 400,
-          "y": 1700
+          "y": 1450
         }
       },
       {
@@ -443,7 +446,7 @@
         "to": "hdole/str/CPo{hdole/nat/N16,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1700
+          "y": 1450
         }
       },
       {
@@ -452,7 +455,7 @@
         "to": "hdole/str/CPo{hdole/nat/N32,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1800
+          "y": 1600
         }
       },
       {
@@ -461,7 +464,7 @@
         "to": "hdole/str/CPo{hdole/nat/N128,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 2000
+          "y": 1900
         }
       },
       {
@@ -610,6 +613,447 @@
         "domain": "hdole/str/o_15",
         "codomain": "hdole/str/o_37",
         "to": "hdole/str/strToN128"
+      },
+      {
+        "description": "%0 = std::string('');",
+        "basename": "t_2",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/empty"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = %0.length;",
+        "basename": "t_3",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 380
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/length"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_8",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 680
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/append"
+          ]
+        ]
+      },
+      {
+        "description": "%2.c = %0.find(%1) != std::string::npos ? 1 : 0;",
+        "basename": "t_9",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 830
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/includes"
+          ]
+        ]
+      },
+      {
+        "description": "{\n\tauto i = %0.find(%1);\n\tif (i != std::string::npos)\n\t{\n\t\t%2.c = 0;\n\t\t%2.m_0 = i;\n\t}\n\telse\n\t{\n\t\t%2.c = 1;\n\t\t%2.m_0 = 0;\n\t}\n}",
+        "basename": "t_15",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 980
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/indexOf"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = std::string(%0[%1]);",
+        "basename": "t_17",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 1180
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/charAt"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_18",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 240,
+          "y": 1780
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/N64ToStr"
+          ]
+        ]
+      },
+      {
+        "description": "try\n{\n\t%1.m_0 = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_19",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 430,
+          "y": 1780
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/strToN64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_20",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 2080
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/Z64ToStr"
+          ]
+        ]
+      },
+      {
+        "description": "try\n{\n\t%1.m_0 = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_21",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 430,
+          "y": 2080
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/strToZ64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_22",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 2230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/F64ToStr"
+          ]
+        ]
+      },
+      {
+        "description": "try\n{\n\t%1.m_0 = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_23",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 430,
+          "y": 2230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/strToF64"
+          ]
+        ]
+      },
+      {
+        "description": "std::cout << %0;",
+        "basename": "t_24",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 2380
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/str2tty"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_25",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 1330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/N8ToStr"
+          ]
+        ]
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_26",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 430,
+          "y": 1330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/strToN8"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_27",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 240,
+          "y": 1480
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/N16ToStr"
+          ]
+        ]
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_28",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 430,
+          "y": 1480
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/strToN16"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_29",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 240,
+          "y": 1630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/N32ToStr"
+          ]
+        ]
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_30",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 430,
+          "y": 1630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/strToN32"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_31",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 240,
+          "y": 1930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/N128ToStr"
+          ]
+        ]
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_32",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 430,
+          "y": 1930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/str/strToN128"
+          ]
+        ]
       }
     ],
     "cells": []
@@ -624,22 +1068,6 @@
       "max": 1
     },
     {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "&#10034;",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "#1",
-        "#1"
-      ]
-    },
-    {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -653,32 +1081,13 @@
       "prototype": "FiniteObject"
     },
     {
-      "description": "The TTY object interacts with serial devices",
-      "basename": "TTY",
-      "prototype": "FiniteObject"
-    },
-    {
       "description": "The space of all strings",
       "basename": "str",
       "prototype": "CatObject",
+      "properName": "Str",
       "code": {
         "cpp": "typedef std::string %0;\n"
       }
-    },
-    {
-      "description": "The space of all strings",
-      "basename": "str",
-      "prototype": "CatObject",
-      "code": {
-        "cpp": "typedef std::string %0;\n"
-      }
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "str",
-        "str"
-      ]
     },
     {
       "prototype": "ProductObject",
@@ -696,32 +1105,9 @@
     },
     {
       "prototype": "ProductObject",
-      "objects": [
-        "str",
-        "hdole/nat/N64"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
       "dual": true,
       "objects": [
         "hdole/nat/N8",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/nat/N8",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/nat/N16",
         "#1"
       ]
     },
@@ -745,37 +1131,9 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "hdole/nat/N32",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
         "hdole/nat/N128",
         "#1"
       ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "hdole/nat/N128",
-        "#1"
-      ]
-    },
-    {
-      "description": "The string with zero length",
-      "basename": "empty",
-      "prototype": "Morphism",
-      "properName": "&ldquo;&rdquo;",
-      "code": {
-        "cpp": "%0 = std::string('');"
-      },
-      "domain": "hdole/str/#1",
-      "codomain": "hdole/str/str",
-      "data": []
     },
     {
       "description": "The string with zero length",
@@ -801,28 +1159,6 @@
       "codomain": "hdole/nat/N64"
     },
     {
-      "description": "length of a string",
-      "basename": "length",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args.length;\n}\n",
-        "cpp": "%1 = %0.length;"
-      },
-      "domain": "hdole/str/str",
-      "codomain": "hdole/nat/N64"
-    },
-    {
-      "description": "append two strings",
-      "basename": "append",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0].concat(args[1]);\n}\n",
-        "cpp": "%2 = %0 + %1;"
-      },
-      "domain": "hdole/str/Po{str,str}oP",
-      "codomain": "hdole/str/str"
-    },
-    {
       "description": "append two strings",
       "basename": "append",
       "prototype": "Morphism",
@@ -839,18 +1175,7 @@
       "prototype": "Morphism",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args[1].includes(args[0]);\n}\n",
-        "cpp": "%2 = %0.find(%1) != std::string::npos;"
-      },
-      "domain": "hdole/str/Po{str,str}oP",
-      "codomain": "hdole/str/CPo{#1,#1}oPC"
-    },
-    {
-      "description": "is the second string included in the first",
-      "basename": "includes",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[1].includes(args[0]);\n}\n",
-        "cpp": "%2 = %0.find(%1) != std::string::npos;"
+        "cpp": "%2.c = %0.find(%1) != std::string::npos ? 1 : 0;"
       },
       "domain": "hdole/str/Po{str,str}oP",
       "codomain": "hdole/str/CPo{#1,#1}oPC"
@@ -862,19 +1187,7 @@
       "properName": "index",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\tconst i = args[0].indexOf(args[1]);\n\treturn i > -1 ? [0, i] : [1, 1]\n}\n",
-        "cpp": "{auto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.m_0 = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.m_0 = 0;\n}\n}"
-      },
-      "domain": "hdole/str/Po{str,str}oP",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC"
-    },
-    {
-      "description": "Where in the first string is the second",
-      "basename": "indexOf",
-      "prototype": "Morphism",
-      "properName": "index",
-      "code": {
-        "js": "\nfunction %Type(args)\n{\n\tconst i = args[0].indexOf(args[1]);\n\treturn i > -1 ? [0, i] : [1, 1]\n}\n",
-        "cpp": "{auto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.m_0 = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.m_0 = 0;\n}\n}"
+        "cpp": "{\n\tauto i = %0.find(%1);\n\tif (i != std::string::npos)\n\t{\n\t\t%2.c = 0;\n\t\t%2.m_0 = i;\n\t}\n\telse\n\t{\n\t\t%2.c = 1;\n\t\t%2.m_0 = 0;\n\t}\n}"
       },
       "domain": "hdole/str/Po{str,str}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -891,33 +1204,10 @@
       "codomain": "hdole/str/str"
     },
     {
-      "description": "the n&#39;th character in the string",
-      "basename": "charAt",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args[0].charAt(args[1]);\n}\n",
-        "cpp": "%2 = std::string(%0[%1]);"
-      },
-      "domain": "hdole/str/Po{str,hdole/nat/N64}oP",
-      "codomain": "hdole/str/str"
-    },
-    {
       "description": "convert a natural number to a string",
       "basename": "N64ToStr",
       "prototype": "Morphism",
-      "properName": "to",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "%1 = std::to_string(%0);"
-      },
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "description": "convert a natural number to a string",
-      "basename": "N64ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "N&#x2086;&#x2084;ToStr",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
         "cpp": "%1 = std::to_string(%0);"
@@ -929,19 +1219,7 @@
       "description": "convert a string to a natural number",
       "basename": "strToN64",
       "prototype": "Morphism",
-      "properName": "to",
-      "code": {
-        "js": "function %Type(args)\n{\n\tconst v = parseInt(args);\n\tif (!isNan(v) && v >= 0)\n\t\treturn [0, v];\n\telse\n\t\treturn [1, 0];\n}\n",
-        "cpp": "try\n{\n\t%1.m_0 = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
-      },
-      "domain": "hdole/str/str",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC"
-    },
-    {
-      "description": "convert a string to a natural number",
-      "basename": "strToN64",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "StrToN&#x2086;&#x2084;",
       "code": {
         "js": "function %Type(args)\n{\n\tconst v = parseInt(args);\n\tif (!isNan(v) && v >= 0)\n\t\treturn [0, v];\n\telse\n\t\treturn [1, 0];\n}\n",
         "cpp": "try\n{\n\t%1.m_0 = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
@@ -953,19 +1231,7 @@
       "description": "convert a 64-bit integer to a string",
       "basename": "Z64ToStr",
       "prototype": "Morphism",
-      "properName": "to",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "%1 = std::to_string(%0);"
-      },
-      "domain": "hdole/int/Z64",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "description": "convert a 64-bit integer to a string",
-      "basename": "Z64ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "Z&#x2086;&#x2084;ToStr",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
         "cpp": "%1 = std::to_string(%0);"
@@ -977,22 +1243,10 @@
       "description": "convert a string to an integer",
       "basename": "strToZ64",
       "prototype": "Morphism",
-      "properName": "to",
+      "properName": "StrToZ&#x2086;&#x2084;",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t\t%1.m_0 = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t\t%1.c = 0;\n}"
-      },
-      "domain": "hdole/str/str",
-      "codomain": "hdole/int/CPo{Z64,#1}oPC"
-    },
-    {
-      "description": "convert a string to an integer",
-      "basename": "strToZ64",
-      "prototype": "Morphism",
-      "properName": "to",
-      "code": {
-        "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t\t%1.m_0 = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t\t%1.c = 0;\n}"
+        "cpp": "try\n{\n\t%1.m_0 = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/str/str",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -1001,22 +1255,10 @@
       "description": "Convert a floating point number to a string",
       "basename": "F64ToStr",
       "prototype": "Morphism",
-      "properName": "to",
+      "properName": "F&#x2086;&#x2084;ToStr",
       "code": {
         "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t%1.m_0 = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
-      },
-      "domain": "hdole/floats/F64",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "description": "Convert a floating point number to a string",
-      "basename": "F64ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t%1.m_0 = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
+        "cpp": "%1 = std::to_string(%0);"
       },
       "domain": "hdole/floats/F64",
       "codomain": "hdole/str/str"
@@ -1025,19 +1267,7 @@
       "description": "convert a string to a floating point number",
       "basename": "strToF64",
       "prototype": "Morphism",
-      "properName": "to",
-      "code": {
-        "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t%1.m_0 = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
-      },
-      "domain": "hdole/str/str",
-      "codomain": "hdole/floats/CPo{F64,#1}oPC"
-    },
-    {
-      "description": "convert a string to a floating point number",
-      "basename": "strToF64",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "StrToF&#x2086;&#x2084;",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
         "cpp": "try\n{\n\t%1.m_0 = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
@@ -1052,142 +1282,98 @@
       "properName": "&#120451;&#120451;&#120456;",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\tpostMessage(['str2tty', args]);\n}\n",
-        "cpp": "#include <iostream>\nstd::cout << %0;"
+        "cpp": "std::cout << %0;"
       },
       "domain": "hdole/str/str",
       "codomain": "hdole/str/TTY"
     },
     {
-      "description": "emit the string to the TTY",
-      "basename": "str2tty",
+      "basename": "N8ToStr",
       "prototype": "Morphism",
-      "properName": "&#120451;&#120451;&#120456;",
+      "properName": "N₈ToStr",
       "code": {
-        "js": "\nfunction %Type(args)\n{\n\tpostMessage(['str2tty', args]);\n}\n",
-        "cpp": "#include <iostream>\nstd::cout << %0;"
+        "cpp": "%1 = std::to_string(%0);"
+      },
+      "domain": "hdole/nat/N8",
+      "codomain": "hdole/str/str"
+    },
+    {
+      "basename": "strToN8",
+      "prototype": "Morphism",
+      "properName": "StrToN₈",
+      "code": {
+        "cpp": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/str/str",
-      "codomain": "hdole/str/TTY"
-    },
-    {
-      "basename": "N8ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/nat/N8",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "N8ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/nat/N8",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "strToN8",
-      "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/str/str",
-      "codomain": "hdole/str/CPo{hdole/nat/N8,#1}oPC"
-    },
-    {
-      "basename": "strToN8",
-      "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/str/str",
       "codomain": "hdole/str/CPo{hdole/nat/N8,#1}oPC"
     },
     {
       "basename": "N16ToStr",
       "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "N16ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "N&#x2081;&#x2086;ToStr",
+      "code": {
+        "cpp": "%1 = std::to_string(%0);"
+      },
       "domain": "hdole/nat/N16",
       "codomain": "hdole/str/str"
     },
     {
       "basename": "strToN16",
       "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/str/str",
-      "codomain": "hdole/str/CPo{hdole/nat/N16,#1}oPC"
-    },
-    {
-      "basename": "strToN16",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "StrToN&#x2081;&#x2086;",
+      "code": {
+        "cpp": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
+      },
       "domain": "hdole/str/str",
       "codomain": "hdole/str/CPo{hdole/nat/N16,#1}oPC"
     },
     {
       "basename": "N32ToStr",
       "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "N32ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "N&#x2083;&#x2082;ToStr",
+      "code": {
+        "cpp": "%1 = std::to_string(%0);"
+      },
       "domain": "hdole/nat/N32",
       "codomain": "hdole/str/str"
     },
     {
       "basename": "strToN32",
       "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/str/str",
-      "codomain": "hdole/str/CPo{hdole/nat/N32,#1}oPC"
-    },
-    {
-      "basename": "strToN32",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "StrToN&#x2083;&#x2082;",
+      "code": {
+        "cpp": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
+      },
       "domain": "hdole/str/str",
       "codomain": "hdole/str/CPo{hdole/nat/N32,#1}oPC"
     },
     {
       "basename": "N128ToStr",
       "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/nat/N128",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "N128ToStr",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "N&#x2081;&#x2082;&#x2088;ToStr",
+      "code": {
+        "cpp": "%1 = std::to_string(%0);"
+      },
       "domain": "hdole/nat/N128",
       "codomain": "hdole/str/str"
     },
     {
       "basename": "strToN128",
       "prototype": "Morphism",
-      "properName": "to",
-      "domain": "hdole/str/str",
-      "codomain": "hdole/str/CPo{hdole/nat/N128,#1}oPC"
-    },
-    {
-      "basename": "strToN128",
-      "prototype": "Morphism",
-      "properName": "to",
+      "properName": "StrToN&#x2081;&#x2082;&#x2088;",
+      "code": {
+        "cpp": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
+      },
       "domain": "hdole/str/str",
       "codomain": "hdole/str/CPo{hdole/nat/N128,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1644486089307,
+  "timestamp": 1644748350569,
   "version": 0,
   "viewport": {
-    "x": 1412,
-    "y": 477,
-    "scale": 1.543796350380586
+    "x": 1176,
+    "y": 455,
+    "scale": 1.7244429262107404
   }
 }

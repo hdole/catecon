@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -600
+          "y": -590
         },
         "height": "76",
         "weight": "bold"
@@ -115,9 +115,12 @@
           [
             "level",
             1
+          ],
+          [
+            "bezier",
+            -1
           ]
         ],
-        "homsetIndex": -1,
         "to": "hdole/monomorphism/h"
       },
       {
@@ -137,9 +140,12 @@
           [
             "level",
             1
+          ],
+          [
+            "bezier",
+            1
           ]
         ],
-        "homsetIndex": 1,
         "to": "hdole/monomorphism/g"
       }
     ],
@@ -196,6 +202,14 @@
       "codomain": "hdole/monomorphism/B"
     },
     {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "basename": "g",
       "prototype": "Morphism",
       "domain": "hdole/monomorphism/C",
@@ -209,7 +223,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644307341401,
+  "timestamp": 1644713442503,
   "version": 0,
   "viewport": {
     "x": 1009,

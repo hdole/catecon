@@ -315,7 +315,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/floats/CPo{Po{F64,F64}oP,#1}oPC",
+        "to": "hdole/floats/CPo{F64,#1}oPC",
         "xy": {
           "x": 800,
           "y": 3300
@@ -1085,7 +1085,7 @@
       {
         "basename": "o_95",
         "prototype": "IndexObject",
-        "to": "hdole/floats/CPo{Po{F128,F128}oP,#1}oPC",
+        "to": "hdole/floats/CPo{F128,#1}oPC",
         "xy": {
           "x": 1240,
           "y": 3300
@@ -1508,9 +1508,9 @@
       {
         "basename": "o_139",
         "prototype": "IndexObject",
-        "to": "hdole/floats/CPo{Po{F32,F32}oP,#1}oPC",
+        "to": "hdole/floats/CPo{F32,#1}oPC",
         "xy": {
-          "x": 400,
+          "x": 420,
           "y": 3300
         }
       },
@@ -2685,7 +2685,12 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/floats/o_162",
         "codomain": "hdole/floats/o_165",
-        "homsetIndex": 5,
+        "attributes": [
+          [
+            "bezier",
+            5
+          ]
+        ],
         "to": "hdole/floats/eq0_32"
       },
       {
@@ -2693,7 +2698,12 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/floats/o_171",
         "codomain": "hdole/floats/o_174",
-        "homsetIndex": 5,
+        "attributes": [
+          [
+            "bezier",
+            5
+          ]
+        ],
         "to": "hdole/floats/eq0_64"
       },
       {
@@ -2701,8 +2711,1399 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/floats/o_180",
         "codomain": "hdole/floats/o_183",
-        "homsetIndex": 5,
+        "attributes": [
+          [
+            "bezier",
+            5
+          ]
+        ],
         "to": "hdole/floats/eq0_128"
+      },
+      {
+        "description": "%0 = 0.0;",
+        "basename": "t_7",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 620,
+          "y": 530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/zero64"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = std::numbers:e_v<double>;",
+        "basename": "t_11",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 620,
+          "y": 930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/e64"
+          ]
+        ]
+      },
+      {
+        "description": "std::random_device %Type_dev;\nstd::mt19937 %Type_rng(%Type_dev);\nstd::uniform_int_distribution<std::mt19937::result_type> %Type_dist;\n%0 = %Type_dist(%Type_rng);",
+        "basename": "t_13",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 620,
+          "y": 2330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/rand64"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = std::numbers::pi_v<double>;",
+        "basename": "t_23",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 620,
+          "y": 1130
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/pi64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = (F64)%0;",
+        "basename": "t_26",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 2030
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/Z64toF64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::abs(%0);",
+        "basename": "t_29",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 2530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/abs64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_30",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 2730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/add64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_31",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 2930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/sub64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_32",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 3130
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/mult64"
+          ]
+        ]
+      },
+      {
+        "description": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_33",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 3330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/div64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_34",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 3530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/lt64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_35",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 3730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/lte64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_36",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 3930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/eq64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::ceil(%0);",
+        "basename": "t_37",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 5230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/ceil64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::round(%0);\n",
+        "basename": "t_38",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 5430
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/rnd64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::floor(%0);",
+        "basename": "t_39",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 5630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/floor64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::trunc(%0);\n",
+        "basename": "t_40",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 5830
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/trunc64"
+          ]
+        ]
+      },
+      {
+        "description": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_41",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 6030
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/log64"
+          ]
+        ]
+      },
+      {
+        "description": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n",
+        "basename": "t_42",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 6230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/pow64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = *std::max_element(%0, %1);",
+        "basename": "t_43",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 6430
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/max64"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = *std::min_element(%0, %1);",
+        "basename": "t_44",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 660,
+          "y": 6630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/min64"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = 1.0;",
+        "basename": "t_45",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 620,
+          "y": 730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/one64"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = 0.0;",
+        "basename": "t_46",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 220,
+          "y": 530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/zero32"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = 1.0;",
+        "basename": "t_47",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 220,
+          "y": 730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/one32"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = std::numbers::e_v<float>;",
+        "basename": "t_48",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 220,
+          "y": 930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/e32"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = 0.0;",
+        "basename": "t_49",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1020,
+          "y": 530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/zero128"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = 1.0;",
+        "basename": "t_50",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1020,
+          "y": 730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/one128"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = std::numbers::e_v<__float128>;",
+        "basename": "t_51",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1020,
+          "y": 930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/e128"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = std::numbers::pi_v<float>;",
+        "basename": "t_52",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 220,
+          "y": 1130
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/pi32"
+          ]
+        ]
+      },
+      {
+        "description": "%0 = std::numbers::pi_v<__float128>;",
+        "basename": "t_53",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1020,
+          "y": 1130
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/pi128"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = (F32)%0;",
+        "basename": "t_54",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 1930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/Z32toF32"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = (F128)%0;",
+        "basename": "t_55",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1040,
+          "y": 2130
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/Z128toF128"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = (F64)%0;",
+        "basename": "t_56",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 630,
+          "y": 1330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/F32toF64"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = (F128)%0;",
+        "basename": "t_57",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1030,
+          "y": 1330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/F64toF128"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::abs(%0);",
+        "basename": "t_58",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 2530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/abs32"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::abs(%0);",
+        "basename": "t_59",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1040,
+          "y": 2530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/abs128"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_60",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 2730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/add32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_61",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 2730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/add128"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_62",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 2930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/sub32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_63",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 2930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/sub128"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_64",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 3130
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/mult32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_65",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 3130
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/mult128"
+          ]
+        ]
+      },
+      {
+        "description": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_66",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 3330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/div128"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_67",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 3530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/lt32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_68",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 3530
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/lt128"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_69",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 3730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/lte32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_70",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 3730
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/lte128"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_71",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 3930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/eq32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_72",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 3930
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/eq128"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::ceil(%0);",
+        "basename": "t_73",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1040,
+          "y": 5230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/ceil128"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::ceil(%0);",
+        "basename": "t_74",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 5230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/ceil32"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::round(%0);",
+        "basename": "t_75",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 5430
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/rnd32"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::round(%0);",
+        "basename": "t_76",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1040,
+          "y": 5430
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/rnd128"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::floor(%0);",
+        "basename": "t_77",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 5630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/floor32"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::floor(%0);",
+        "basename": "t_78",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1040,
+          "y": 5630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/florr128"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::trunc(%0);",
+        "basename": "t_79",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 5830
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/trunc32"
+          ]
+        ]
+      },
+      {
+        "description": "%1 = ::trunc(%0);",
+        "basename": "t_80",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1040,
+          "y": 5830
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/trnuc128"
+          ]
+        ]
+      },
+      {
+        "description": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_81",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 230,
+          "y": 6030
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/log32"
+          ]
+        ]
+      },
+      {
+        "description": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_82",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1040,
+          "y": 6030
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/log128"
+          ]
+        ]
+      },
+      {
+        "description": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n",
+        "basename": "t_83",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 6230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/pow32"
+          ]
+        ]
+      },
+      {
+        "description": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n",
+        "basename": "t_84",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 6230
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/pow128"
+          ]
+        ]
+      },
+      {
+        "description": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_85",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 3330
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/div32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = *std::max_element(%0, %1);",
+        "basename": "t_86",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 6430
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/max128"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = *std::max_element(%0, %1);",
+        "basename": "t_87",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 6430
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/max32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = *std::min_element(%0, %1);",
+        "basename": "t_88",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 260,
+          "y": 6630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/min32"
+          ]
+        ]
+      },
+      {
+        "description": "%2 = *std::min_element(%0, %1);",
+        "basename": "t_89",
+        "prototype": "IndexCode",
+        "code": "cpp",
+        "xy": {
+          "x": 1070,
+          "y": 6630
+        },
+        "height": 6,
+        "attributes": [
+          [
+            "code",
+            "cpp"
+          ],
+          [
+            "morphism",
+            "hdole/floats/min128"
+          ]
+        ]
       }
     ],
     "cells": []
@@ -2783,22 +4184,6 @@
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
-        "Po{F64,F64}oP",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{F128,F128}oP",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
         "F32",
         "#1"
       ]
@@ -2808,14 +4193,6 @@
       "dual": true,
       "objects": [
         "F128",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Po{F32,F32}oP",
         "#1"
       ]
     },
@@ -2954,10 +4331,11 @@
       "prototype": "Morphism",
       "properName": "div",
       "code": {
-        "js": "function %Type(args,)\n{\n\tif (args[1] === 0)\n\t\treturn [1, 0];\n\treturn [0, args[0] / args[1]];\n}\n"
+        "js": "function %Type(args,)\n{\n\tif (args[1] === 0)\n\t\treturn [1, 0];\n\treturn [0, args[0] / args[1]];\n}\n",
+        "cpp": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;"
       },
       "domain": "hdole/floats/Po{F64,F64}oP",
-      "codomain": "hdole/floats/CPo{Po{F64,F64}oP,#1}oPC"
+      "codomain": "hdole/floats/CPo{F64,#1}oPC"
     },
     {
       "description": "Is the first given floating point number less than the second",
@@ -3106,7 +4484,7 @@
       "description": "The 32-bit floating point zero",
       "basename": "zero32",
       "prototype": "Morphism",
-      "properName": "0.0",
+      "properName": "0.0&#x2083;&#x2082;",
       "code": {
         "cpp": "%0 = 0.0;"
       },
@@ -3117,7 +4495,7 @@
       "description": "The 32-bit floating point one",
       "basename": "one32",
       "prototype": "Morphism",
-      "properName": "1.0",
+      "properName": "1.0&#x2083;&#x2082;",
       "code": {
         "cpp": "%0 = 1.0;"
       },
@@ -3128,7 +4506,7 @@
       "description": "The 32-bit Euler number",
       "basename": "e32",
       "prototype": "Morphism",
-      "properName": "e",
+      "properName": "e&#x2083;&#x2082;",
       "code": {
         "cpp": "%0 = std::numbers::e_v<float>;"
       },
@@ -3160,7 +4538,7 @@
     {
       "basename": "rand32",
       "prototype": "Morphism",
-      "properName": "rand",
+      "properName": "rand&#x2083;&#x2082;",
       "domain": "hdole/floats/#1",
       "codomain": "hdole/floats/F32"
     },
@@ -3184,7 +4562,7 @@
     {
       "basename": "pi32",
       "prototype": "Morphism",
-      "properName": "&pi;",
+      "properName": "π&#x2083;&#x2082;",
       "code": {
         "cpp": "%0 = std::numbers::pi_v<float>;"
       },
@@ -3245,7 +4623,7 @@
       "description": "The absolute value of a 32-bit number",
       "basename": "abs32",
       "prototype": "Morphism",
-      "properName": "abs",
+      "properName": "abs&#x2083;&#x2082;",
       "code": {
         "cpp": "%1 = ::abs(%0);"
       },
@@ -3267,7 +4645,7 @@
       "description": "The addition of two 32-bit numbers",
       "basename": "add32",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -3289,7 +4667,7 @@
       "description": "The subtraction of two 32-bit numbers",
       "basename": "sub32",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -3311,7 +4689,7 @@
       "description": "The multiplication of two 32-bit floating point numbers",
       "basename": "mult32",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -3333,13 +4711,16 @@
       "basename": "div128",
       "prototype": "Morphism",
       "properName": "div",
+      "code": {
+        "cpp": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;"
+      },
       "domain": "hdole/floats/Po{F128,F128}oP",
-      "codomain": "hdole/floats/CPo{Po{F128,F128}oP,#1}oPC"
+      "codomain": "hdole/floats/CPo{F128,#1}oPC"
     },
     {
       "basename": "lt32",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
@@ -3359,7 +4740,7 @@
     {
       "basename": "lte32",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
@@ -3379,7 +4760,7 @@
     {
       "basename": "eq32",
       "prototype": "Morphism",
-      "properName": "eq",
+      "properName": "eq&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
@@ -3409,7 +4790,7 @@
     {
       "basename": "ceil32",
       "prototype": "Morphism",
-      "properName": "ceil",
+      "properName": "ceil&#x2083;&#x2082;",
       "code": {
         "cpp": "%1 = ::ceil(%0);"
       },
@@ -3419,7 +4800,7 @@
     {
       "basename": "rnd32",
       "prototype": "Morphism",
-      "properName": "round",
+      "properName": "round&#x2083;&#x2082;",
       "code": {
         "cpp": "%1 = ::round(%0);"
       },
@@ -3439,7 +4820,7 @@
     {
       "basename": "floor32",
       "prototype": "Morphism",
-      "properName": "floor",
+      "properName": "floor&#x2083;&#x2082;",
       "code": {
         "cpp": "%1 = ::floor(%0);"
       },
@@ -3459,7 +4840,7 @@
     {
       "basename": "trunc32",
       "prototype": "Morphism",
-      "properName": "trunc",
+      "properName": "trunc&#x2083;&#x2082;",
       "code": {
         "cpp": "%1 = ::trunc(%0);"
       },
@@ -3479,7 +4860,7 @@
     {
       "basename": "log32",
       "prototype": "Morphism",
-      "properName": "log",
+      "properName": "log&#x2083;&#x2082;",
       "code": {
         "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
@@ -3499,7 +4880,7 @@
     {
       "basename": "pow32",
       "prototype": "Morphism",
-      "properName": "pow",
+      "properName": "pow&#x2083;&#x2082;",
       "code": {
         "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n"
       },
@@ -3519,9 +4900,12 @@
     {
       "basename": "div32",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div&#x2083;&#x2082;",
+      "code": {
+        "cpp": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;"
+      },
       "domain": "hdole/floats/Po{F32,F32}oP",
-      "codomain": "hdole/floats/CPo{Po{F32,F32}oP,#1}oPC"
+      "codomain": "hdole/floats/CPo{F32,#1}oPC"
     },
     {
       "description": "The maximum value of the two 128-bit floating point numbers",
@@ -3538,7 +4922,7 @@
       "description": "The maximum value of two 32-bit floating point numbers",
       "basename": "max32",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = *std::max_element(%0, %1);"
       },
@@ -3548,7 +4932,7 @@
     {
       "basename": "min32",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min&#x2083;&#x2082;",
       "code": {
         "cpp": "%2 = *std::min_element(%0, %1);"
       },
@@ -3699,6 +5083,34 @@
       ]
     },
     {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F32,#1}oP",
+      "codomain": "hdole/floats/F32",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F32,#1}oP",
+      "codomain": "hdole/floats/#1",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/F32",
+      "codomain": "hdole/floats/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
       "prototype": "Composite",
       "domain": "hdole/floats/F32",
       "codomain": "hdole/floats/CPo{#1,#1}oPC",
@@ -3731,6 +5143,34 @@
       ]
     },
     {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F64,#1}oP",
+      "codomain": "hdole/floats/F64",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F64,#1}oP",
+      "codomain": "hdole/floats/#1",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/#1",
+      "factors": [
+        -1
+      ]
+    },
+    {
       "prototype": "Composite",
       "domain": "hdole/floats/F64",
       "codomain": "hdole/floats/CPo{#1,#1}oPC",
@@ -3759,6 +5199,34 @@
       "codomain": "hdole/floats/Po{F128,#1}oP",
       "factors": [
         [],
+        -1
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F128,#1}oP",
+      "codomain": "hdole/floats/F128",
+      "factors": [
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/Po{F128,#1}oP",
+      "codomain": "hdole/floats/#1",
+      "factors": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/F128",
+      "codomain": "hdole/floats/#1",
+      "factors": [
         -1
       ]
     },
@@ -3798,11 +5266,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268313971,
+  "timestamp": 1644737947858,
   "version": 0,
   "viewport": {
-    "x": 1040,
-    "y": 309,
-    "scale": 0.9373898509126939
+    "x": -1716,
+    "y": -10199,
+    "scale": 3.312792893649447
   }
 }

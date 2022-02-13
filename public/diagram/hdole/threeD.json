@@ -24,8 +24,8 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/threeD",
         "xy": {
-          "x": 200,
-          "y": 200
+          "x": 500,
+          "y": 240
         }
       },
       {
@@ -33,8 +33,8 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 200,
-          "y": 270
+          "x": -100,
+          "y": 250
         },
         "height": 24
       },
@@ -43,8 +43,8 @@
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
-          "x": 200,
-          "y": 470
+          "x": -100,
+          "y": 400
         },
         "height": 24
       },
@@ -53,8 +53,8 @@
         "prototype": "IndexObject",
         "to": "hdole/floats/F64",
         "xy": {
-          "x": 200,
-          "y": 400
+          "x": 510,
+          "y": 390
         }
       },
       {
@@ -62,8 +62,8 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/threeD",
         "xy": {
-          "x": 400,
-          "y": 400
+          "x": 710,
+          "y": 390
         }
       },
       {
@@ -71,8 +71,8 @@
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": 200,
-          "y": 670
+          "x": -100,
+          "y": 600
         },
         "height": 24
       },
@@ -81,8 +81,8 @@
         "prototype": "IndexObject",
         "to": "hdole/floats/Po{F64,F64}oP",
         "xy": {
-          "x": 200,
-          "y": 600
+          "x": 510,
+          "y": 590
         }
       },
       {
@@ -90,8 +90,8 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/threeD",
         "xy": {
-          "x": 400,
-          "y": 600
+          "x": 710,
+          "y": 590
         }
       },
       {
@@ -99,7 +99,7 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/F3",
         "xy": {
-          "x": 200,
+          "x": 510,
           "y": 800
         }
       },
@@ -108,17 +108,17 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
         "xy": {
-          "x": 460,
+          "x": 710,
           "y": 800
         }
       },
       {
-        "description": "visualize a triplet of numbers in 3D",
+        "description": "Visualize a triplet of numbers in 3D",
         "basename": "t_3",
         "prototype": "IndexText",
         "xy": {
-          "x": 200,
-          "y": 1070
+          "x": -100,
+          "y": 1020
         },
         "height": 24
       },
@@ -127,8 +127,8 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/F3",
         "xy": {
-          "x": 200,
-          "y": 1000
+          "x": 510,
+          "y": 1010
         }
       },
       {
@@ -136,17 +136,17 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/threeD",
         "xy": {
-          "x": 400,
-          "y": 1000
+          "x": 710,
+          "y": 1010
         }
       },
       {
-        "description": "visualize two points as a line in 3D",
+        "description": "Visualize two points as a line in 3D",
         "basename": "t_4",
         "prototype": "IndexText",
         "xy": {
-          "x": 200,
-          "y": 1270
+          "x": -100,
+          "y": 1220
         },
         "height": 24
       },
@@ -155,8 +155,8 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/Po{F3,F3}oP",
         "xy": {
-          "x": 200,
-          "y": 1200
+          "x": 510,
+          "y": 1210
         }
       },
       {
@@ -164,17 +164,17 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/threeD",
         "xy": {
-          "x": 400,
-          "y": 1200
+          "x": 710,
+          "y": 1210
         }
       },
       {
-        "description": "visualize three points as a Bezier curve in 3D",
+        "description": "Visualize three points as a Bezier curve in 3D",
         "basename": "t_5",
         "prototype": "IndexText",
         "xy": {
-          "x": 200,
-          "y": 1470
+          "x": -100,
+          "y": 1410
         },
         "height": 24
       },
@@ -183,7 +183,7 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/Po{F3,F3,F3}oP",
         "xy": {
-          "x": 200,
+          "x": 510,
           "y": 1400
         }
       },
@@ -192,7 +192,7 @@
         "prototype": "IndexObject",
         "to": "hdole/threeD/threeD",
         "xy": {
-          "x": 400,
+          "x": 710,
           "y": 1400
         }
       },
@@ -211,7 +211,7 @@
         "basename": "t_7",
         "prototype": "IndexText",
         "xy": {
-          "x": 160,
+          "x": 100,
           "y": 140
         },
         "height": "200",
@@ -243,7 +243,12 @@
         "prototype": "IndexMorphism",
         "domain": "hdole/threeD/o_6",
         "codomain": "hdole/threeD/o_5",
-        "homsetIndex": 1,
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
         "to": "hdole/threeD/Id{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,F3}dI"
       },
       {
@@ -266,6 +271,16 @@
         "domain": "hdole/threeD/o_11",
         "codomain": "hdole/threeD/o_12",
         "to": "hdole/threeD/fff2toQB3"
+      },
+      {
+        "description": "BUG: commutivity for some reason",
+        "basename": "t_8",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 510,
+          "y": 870
+        },
+        "height": 24
       }
     ],
     "cells": []
@@ -276,6 +291,20 @@
       "basename": "threeD",
       "prototype": "FiniteObject",
       "properName": "3D"
+    },
+    {
+      "description": "The 3D object interacts with graphic devices",
+      "basename": "threeD",
+      "prototype": "FiniteObject",
+      "properName": "3D"
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F64",
+        "hdole/floats/F64",
+        "hdole/floats/F64"
+      ]
     },
     {
       "prototype": "ProductObject",
@@ -292,6 +321,17 @@
       "source": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
     },
     {
+      "basename": "F3",
+      "prototype": "NamedObject",
+      "properName": "&Fopf;&sup3",
+      "source": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "hdole/threeD/F3",
+      "codomain": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
+    },
+    {
       "prototype": "Identity",
       "domain": "hdole/threeD/F3",
       "codomain": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
@@ -302,8 +342,28 @@
       "codomain": "hdole/threeD/F3"
     },
     {
+      "prototype": "Identity",
+      "domain": "hdole/threeD/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+      "codomain": "hdole/threeD/F3"
+    },
+    {
       "prototype": "ProductObject",
       "objects": [
+        "F3",
+        "F3"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "F3",
+        "F3"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "F3",
         "F3",
         "F3"
       ]
@@ -325,6 +385,44 @@
         "js": "\nfunction %Type(args)\n{\n\tpostMessage(['f2d3', args]);\n}\n"
       },
       "domain": "hdole/floats/F64",
+      "codomain": "hdole/threeD/threeD"
+    },
+    {
+      "description": "visualize a number in 3D",
+      "basename": "f2d3",
+      "prototype": "Morphism",
+      "properName": "1D",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tpostMessage(['f2d3', args]);\n}\n"
+      },
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/threeD/threeD"
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "description": "visualize a pair of numbers in 3D",
+      "basename": "ff2d3",
+      "prototype": "Morphism",
+      "properName": "2D",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tpostMessage(['ff2d3', args]);\n}\n"
+      },
+      "domain": "hdole/floats/Po{F64,F64}oP",
       "codomain": "hdole/threeD/threeD"
     },
     {
@@ -350,6 +448,28 @@
       "codomain": "hdole/threeD/threeD"
     },
     {
+      "description": "visualize a triplet of numbers in 3D",
+      "basename": "fff2d3",
+      "prototype": "Morphism",
+      "properName": "3D",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tpostMessage(['fff2d3', args]);\n}\n"
+      },
+      "domain": "hdole/threeD/F3",
+      "codomain": "hdole/threeD/threeD"
+    },
+    {
+      "description": "visualize two points as a line in 3D",
+      "basename": "fff2toLine",
+      "prototype": "Morphism",
+      "properName": "Line",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\n\tpostMessage(['fff2toLine', args]);\n}\n"
+      },
+      "domain": "hdole/threeD/Po{F3,F3}oP",
+      "codomain": "hdole/threeD/threeD"
+    },
+    {
       "description": "visualize two points as a line in 3D",
       "basename": "fff2toLine",
       "prototype": "Morphism",
@@ -370,14 +490,25 @@
       },
       "domain": "hdole/threeD/Po{F3,F3,F3}oP",
       "codomain": "hdole/threeD/threeD"
+    },
+    {
+      "description": "visualize three points as a Bezier curve in 3D",
+      "basename": "fff2toQB3",
+      "prototype": "Morphism",
+      "properName": "1D",
+      "code": {
+        "js": "\nfunction %Type(args)\n{\npostMessage(['fff2toQB3', args]);\n}\n"
+      },
+      "domain": "hdole/threeD/Po{F3,F3,F3}oP",
+      "codomain": "hdole/threeD/threeD"
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268332218,
+  "timestamp": 1644651280202,
   "version": 0,
   "viewport": {
-    "x": -246,
-    "y": 180,
-    "scale": 3.751518980707882
+    "x": 471,
+    "y": 99,
+    "scale": 2.076264243270887
   }
 }
