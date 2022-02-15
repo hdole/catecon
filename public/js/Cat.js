@@ -13,7 +13,7 @@
 //			delete		diagram is deleted
 // 			download	diagram came from server							[R.DownloadDiagram]
 // 			load		diagram now available for viewing, but may have no view yet		[R.readLocal, R.DownloadDiagram]
-// 			new			new diagram exists									[DiagramTool.create, .new, D.uploadJSON, Catalog.createDiagram]
+// 			new			new diagram exists									[DiagramTool.create, .new, D.uploadJSON, CatalogTool.createDiagram]
 // 			unload		diagram unloaded from session
 // 			upload		diagram sent to server								[Diagram.upload]
 // 		Category
@@ -51,7 +51,7 @@
 // 		PNG
 // 			new
 //		View																-
-//			catalog															[Navbar.catalogView, Catalog.search .toggle]
+//			catalog															[Navbar.catalogView, CatalogTool.search .toggle]
 //			diagram		view a diagram										[D.eventListener 'CAT','default'; keyboard events, D.zoom, D.replay, D.panHandler, D.uploadJSON, Diagram.viewElements, Diagram.panToElements]
 //
 // Coordinate frames:
@@ -393,7 +393,7 @@ class U		// utilities
 	}
 	static removefile(filename)
 	{
-		D ? localStorage.removeItem(filename) : fs.unlink('diagram/' + filename);
+		D ? localStorage.removeItem(filename) : fs.unlink('diagram/' + filename, _ => {});
 	}
 	static bezier(cp0, cp1, cp2, cp3, t)
 	{
@@ -477,6 +477,10 @@ class U		// utilities
 	static dataSig(data)
 	{
 		return U.SigArray([...data]);
+	}
+	static localtime(timestamp)
+	{
+		return new Date(timestamp).toLocaleString();
 	}
 }
 Object.defineProperties(U,
@@ -800,9 +804,9 @@ class Runtime
 		if (D)
 		{
 			const tx = D.store.transaction(['diagrams'], 'readwrite');
+			const info = this.catalog.get(diagram.name);		// get info here in case diagram disapears
 			tx.oncomplete = e =>
 			{
-				const info = this.catalog.get(diagram.name);
 				info.localTimestamp = diagram.timestamp;
 				info.isLocal = true;
 				fn && fn(e);
@@ -979,8 +983,8 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 					{
 						R.recordError(`Cannot download ${url}`);
 						R.recordError('Removed from session');
-						R.session.remove(cloudDiagrams[i]);
-						R.session.save();
+						D.session.remove(cloudDiagrams[i]);
+						D.session.save();
 					}
 					return res;
 				}).catch(err => R.recordError(err)));
@@ -1105,7 +1109,7 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 			return diagram;
 		return await this.readDiagram(name, _ => R.default.debug && console.log('loadOne', name));
 	}
-	setDiagramInfo(diagram, makeLocal = false)
+	setDiagramInfo(diagram, makeLocal = false, writeCatalog = true)
 	{
 		const info = Diagram.GetInfo(diagram);
 		info.localTimestamp = diagram.timestamp;
@@ -1120,6 +1124,7 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 		if (makeLocal)
 			info.isLocal = true;
 		this.catalog.set(diagram.name, info);
+		writeCatalog && this.writeCatalog();
 	}
 	getCategoriesInfo()
 	{
@@ -1182,46 +1187,56 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 				info.references = JSON.parse(d.refs);
 				delete info.refs;
 				info.isLocal = false;
-				this.setDiagramInfo(info);
+				this.setDiagramInfo(info, false, false);		// don't write local catalog.json yet
 			});
+			const localCatalog = this.readCatalog();
 			if (D)		// now locally stored diagrams in the indexedDB
 			{
-				const store = D.store.transaction('diagrams').objectStore('diagrams');
-				store.openCursor().onsuccess = e =>
+				if (localCatalog)
 				{
-					const cursor = e.target.result;
-					if (cursor)
+					R.catalog = new Map(localCatalog);
+					fn();
+				}
+				else
+				{
+					const store = D.store.transaction('diagrams').objectStore('diagrams');
+					store.openCursor().onsuccess = e =>
 					{
-						const diagram = cursor.value;
-						R.default.debug && console.log('cataloging local diagram ' + diagram.name);
-						const info = this.catalog.get(diagram.name);
-						if (info)
+						const cursor = e.target.result;
+						if (cursor)
 						{
-							if (0 < diagram.timestamp && diagram.timestamp < info.timestamp)	// override with cloud info
+							const diagram = cursor.value;
+							R.default.debug && console.log('cataloging local diagram ' + diagram.name);
+							const info = this.catalog.get(diagram.name);
+							if (info)
 							{
-								R.default.debug && console.log('downloading newer diagram from server', info.name, 'local:', new Date(diagram.timestamp).toLocaleString(), 'remote:', new Date(info.timestamp).toLocaleString());
-								this.downloadDiagramData(info.name, false, Number.parseInt(info.timestamp));		// TODO may be sync problem
+								if (0 < diagram.timestamp && diagram.timestamp < info.timestamp)	// override with cloud info
+								{
+									R.default.debug && console.log('downloading newer diagram from server', info.name, 'local:', U.localtime(diagram.timestamp), 'remote:', U.localtime(info.timestamp));
+									this.downloadDiagramData(info.name, false, Number.parseInt(info.timestamp));		// TODO may be sync problem
+								}
+								else
+								{
+									const nuInfo = Diagram.GetInfo(diagram);
+									nuInfo.timestamp = info.timestamp;
+									nuInfo.isLocal = true;
+									this.setDiagramInfo(nuInfo, true);
+								}
 							}
-							else
-							{
-								const nuInfo = Diagram.GetInfo(diagram);
-								nuInfo.timestamp = info.timestamp;
-								nuInfo.isLocal = true;
-								this.setDiagramInfo(nuInfo, true);
-							}
+							cursor.continue();
 						}
-						cursor.continue();
-					}
-					else
-					{
-						[...this.catalog.values()].map(info =>
+						else
 						{
-							if (!('isLocal' in info))
-								info.local = false;
-						});
-						fn();
-					}
-				};
+							[...this.catalog.values()].map(info =>
+							{
+								if (!('isLocal' in info))
+									info.local = false;
+							});
+							this.writeCatalog();
+							fn();
+						}
+					};
+				}
 			}
 			else
 				fn();
@@ -1241,6 +1256,15 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 		}
 		else
 			fn();
+	}
+	writeCatalog()
+	{
+		U.writefile('catalog.json', JSON.stringify(U.jsonMap(this.catalog)));
+	}
+	readCatalog()
+	{
+		const str = U.readfile('catalog.json');
+		return str ? JSON.parse(str) : {};
 	}
 	canDeleteDiagram(d)
 	{
@@ -1352,6 +1376,40 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 				response.json().then(json => D.statusbar.show(null, json.join('\n')));
 			else
 				throw 'error rewriting diagrams: ' + response.statusText;
+		}).catch(err => R.recordError(err));
+	}
+	updateBugReport()		// admin action
+	{
+		const headers = {'Content-Type':'application/json;charset=utf-8', token:this.user.token};
+		fetch(this.getURL('bugs'), {method:'POST', body:JSON.stringify({user:this.user.name}), headers}).then(response =>
+		{
+			if (response.ok)
+			{
+				response.json().then(json =>
+				{
+					R.saveDiagram(json);
+					const bugd = R.$CAT.getElement('dyn/bugs');
+					if (bugd)
+					{
+						bugd.svgRoot && bugd.svgRoot.remove();		// remove graphics
+						const isDefault = R.diagram === bugd;
+						bugd.decrRefcnt();	// remove diagram
+						this.setDiagramInfo(json);
+						if (D)
+						{
+							if (isDefault)
+							{
+								D.session.mode = 'catalog';
+								D.emitViewEvent('catalog');
+							}
+						}
+					}
+					else
+						this.setDiagramInfo(json);
+				});
+			}
+			else
+				throw 'error creating bug report: ' + response.statusText;
 		}).catch(err => R.recordError(err));
 	}
 	upload(e, diagram, local, fn)
@@ -2988,7 +3046,7 @@ class DiagramTool extends ElementTool
 	}
 }
 
-class Catalog extends DiagramTool		// GUI only
+class CatalogTool extends DiagramTool		// GUI only
 {
 	constructor()
 	{
@@ -3597,7 +3655,7 @@ class Session
 			this.mode = 'catalog';
 		}
 	}
-	makeAllSvgs()
+	makeAllSvgs()		// debug tool
 	{
 		[...this.diagrams.keys()].map(name =>
 		{
@@ -4412,7 +4470,7 @@ class Display
 		this.uiSVG.setAttribute('width', window.innerWidth);
 		this.uiSVG.setAttribute('height', window.innerHeight);
 		this.busy();
-		this.catalog = new Catalog();
+		this.catalog = new CatalogTool();
 		this.catalog.show(this.session.mode === 'catalog');
 		this.elementTool =
 		{
@@ -4452,19 +4510,6 @@ class Display
 			this.params.set('diagram', this.session.getCurrentDiagram());		// set default diagram
 		this.mouse.xy = [new D2(this.width()/2, this.height()/2)];				// in session coordinates
 		let delta = null;
-		const sessionMoveOld = e =>
-		{
-			this.toolbar.hide();
-			if (!R.diagram)
-			{
-				const vp = this.session.getCurrentViewport();
-				const viewport = {x:e.clientX - delta.x, y:e.clientY - delta.y, scale:vp.scale};
-				this.session.setCurrentViewport(viewport);
-				this.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
-				return true;
-			}
-			return false;
-		};
 		const sessionMove = e =>
 		{
 			this.toolbar.hide();
@@ -4651,7 +4696,7 @@ class Display
 		try
 		{
 			const diagram = R.diagram;
-			if (!diagram)
+			if (!diagram || this.session.mode !== 'diagram')
 				return;
 			this.drag = this.mouseIsDown && diagram.selected.length > 0;
 			const xy = diagram.mouseDiagramPosition(e);
@@ -5173,7 +5218,7 @@ class Display
 						if (!diagram.svgTranslate.attributes.transform)
 						{
 							const placement = this.session.getPlacement(diagram.name);
-							diagram.setPlacement(placement, true, 'default');
+							diagram.setPlacement(placement, false, 'default');		// do not emit view event
 						}
 						this.diagramSVG.classList.add('trans');
 						this.glowBadObjects(diagram);
@@ -5299,31 +5344,24 @@ class Display
 						diagram.autoplace();
 					this.diagramSVG.classList.remove('hidden');
 					diagram.show();
+					this.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					if (action === 'home')
 						diagram.home();
-					this.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
-					if (action === 'defaultView')
+					else if (action === 'defaultView')
 					{
 						const vp = new D2(diagram.viewport);
-						const placement = this.session.getPlacement(diagram.name);
-						const placePosition = new D2(placement);
-						const nuvp = vp.sub(placePosition);
-						this.setSessionViewport({x:nuvp.x, y:nuvp.y, scale:placement.scale * diagram.viewport.scale});
-					}
-					else
-					{
-						if (action === 'defaultView')
+						if (vp.x === 0 && vp.y === 0 && vp.height === 0 && vp.width === 0)
+							diagram.homeTop();
+						else
 						{
-							const currentVp = diagram.getViewport();
-							const vp = new D2(diagram.viewport);
 							const placement = this.session.getPlacement(diagram.name);
 							const placePosition = new D2(placement);
-							const nuvp = vp.add(placePosition);
+							const nuvp = vp.sub(placePosition);
 							this.setSessionViewport({x:nuvp.x, y:nuvp.y, scale:placement.scale * diagram.viewport.scale});
 						}
-						else
-							this.setSessionViewport(this.session.getViewport(diagram.name));
 					}
+					else
+							this.setSessionViewport(this.session.getViewport(diagram.name));
 					this.session.save();
 					diagram.updateBackground();
 					this.updateBorder();
@@ -6291,7 +6329,7 @@ class Display
 		info.description !== '' && items.push(H3.span('.diagramRowDescription', info.description));
 		items.push(H3.br(), H3.span(info.name, '.tinyPrint'));
 		items.push(H3.span(info.codomain instanceof Category ? info.codomain.name : info.codomain, '.smallPrint'));
-		items.push(H3.span(new Date(info.timestamp).toLocaleString(), '.smallPrint'));
+		items.push(H3.span(U.localtime(info.timestamp), '.smallPrint'));
 		return H3.div(items);
 	}
 	toggleIcon(icon, bool)
@@ -7397,6 +7435,7 @@ class SettingsPanel extends Panel
 		{
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Rewrite diagrams', '.textButton', {onclick:_ => Cat.R.rewriteDiagrams()}), {colspan:2})));
+			tbl.appendChild(H3.tr(	H3.td(H3.button('Update bug report', '.textButton', {onclick:_ => Cat.R.updateBugReport()}), {colspan:2})));
 		}
 		tbl.appendChild(H3.tr(H3.td(D.pretty(D.default, H3.div()))));
 	}
@@ -11023,11 +11062,9 @@ class RunAction extends Action
 			if (to.isIterable())
 				elements.push(D.getIcon('evaluate', 'edit', e => this.evaluateMorphism(e, Cat.R.diagram, to.name, this.postResults), {title:'Evaluate morphism'}));
 			else		// try to evaluate an input
-//				elements.push(H3.h5('Evaluate the Morphism'), H3.span({innerHTML:this.js.getInputHtml(domain)}), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), {title:'Evaluate inputs'}));
 				elements.push(H3.h5('Evaluate the Morphism'), H3.span(this.js.getInputHtml(domain)), D.getIcon('run', 'edit', e => this.js.evaluate(e, Cat.R.diagram, to.name, this.postResult), {title:'Evaluate inputs'}));
 		}
 		elements.map(elt => elt && D.toolbar.body.appendChild(elt));
-//		this.display = H3.tr(H3.td('##run-display'), H3.td(createDataBtn));
 		this.data = new Map();
 	}
 	postResult(result)
@@ -12795,7 +12832,6 @@ class Morphism extends Element
 			this.domain.decrRefcnt();
 			this.codomain.decrRefcnt();
 			this.category && this.category.deleteElement(this);
-//			this.diagram && this.diagram.elements.delete(this.name);
 		}
 		super.decrRefcnt();
 	}
@@ -15737,9 +15773,9 @@ class FactorMorphism extends Morphism
 					args.domain = this.codomain;
 					baseArgs.domain = this.domain;
 				}
-				const fm = this.diagram.get('FactorMorphism', args);
-				const base = this.diagram.get('FactorMorphism', baseArgs);
-				R.loadItem(this.diagram, this, [base], [fm, this]);
+				const fm = FactorMorphism.Signature(this.diagram, this.dual ? this.domain : this.codomain, [[i]], this.dual);
+				const base = FactorMorphism.Signature(this.diagram, this.dual ? this.codomain : this.domain, [this.factors[i]], this.dual);
+				R.loadSigs(this.diagram, this, [base], [fm, this.signature])
 				if (!this.dual && this.domain.isTerminal() && this.codomain.isTerminal())
 					R.loadItem(this.diagram, this, [base], [fm, this]);
 			});
@@ -16055,14 +16091,11 @@ class LambdaMorphism extends Morphism
 	}
 	static Domain(diagram, preCurry, factors)
 	{
-		const seq = diagram.get('ProductObject', {objects:[preCurry.domain, preCurry.codomain]});
-		const dom = diagram.get('ProductObject', {objects:factors.map(f => seq.getFactor(f))});
-//		seq.decrRefcnt();
+		const dom = diagram.get('ProductObject', {objects:factors.map(f => f[0] === 0 ? preCurry.domain.getFactor(f.slice(1)) : preCurry.codomain.getFactor(f.slice(1)))});
 		return dom;
 	}
 	static Codomain(diagram, preCurry, factors)
 	{
-		const seq = diagram.get('ProductObject', {objects:[preCurry.domain, preCurry.codomain]});
 		const isCodHom = preCurry.codomain instanceof HomObject;
 		let codomain = isCodHom ? preCurry.codomain.baseHomDom() : preCurry.codomain;
 		const fctrs = factors.slice();
@@ -16080,11 +16113,10 @@ class LambdaMorphism extends Morphism
 			else if (U.arrayEquals(f, [-1]))	// add to products at this level
 				isProd = true;
 			else
-				objects.push(seq.getFactor(f));
+				objects.push(f[0] === 0 ? preCurry.domain.getFactor(f.slice(1)) : preCurry.codomain.getFactor(f.slice(1)));
 		}
 		if (objects.length > 0)
 			codomain = diagram.get('HomObject', {objects: [diagram.get('ProductObject', {objects}), codomain]});
-//		seq.decrRefcnt();
 		return codomain;
 	}
 	static ProperName(preCurry, domFactors, homFactors)
@@ -16604,7 +16636,17 @@ class Diagram extends Functor
 		a.domainInfo = this.domain.json();
 		a.elements = [];
 		const saved = new Set();
-		this.elements.forEach((elt, name) => elt.canSave() && !saved.has(elt) && a.elements.push(elt.json(delBasename)) && saved.add(elt));
+		this.elements.forEach((elt, name) =>
+		{
+			if (elt.canSave())
+			{
+				if (!saved.has(elt))
+				{
+					a.elements.push(elt.json(delBasename));
+					saved.add(elt);
+				}
+			}
+		});
 		const procJson = elt =>
 		{
 			if (elt.diagram === this.name)
@@ -17093,7 +17135,7 @@ class Diagram extends Functor
 		const f4gnd = H3.rect(`##${this.elementId('foreground')}.diagramForeground`, {x:0, y:0, width:D.width(), height:D.height(), 'data-name':this.name, 'data-type':'diagram'});
 		f4gnd.ondblclick = e => R.diagram !== this && Runtime.SelectDiagram(this);
 		let origClick = null;	// the original mousedown location in session coords
-		let origLoc = null;		// the original diagram location in sesssion coords
+		let origLoc = null;		// the original diagram location in session coords
 		const onMouseMove = e =>
 		{
 			const viewport = D.session.getCurrentViewport();
