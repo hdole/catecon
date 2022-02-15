@@ -349,10 +349,21 @@ function updateDiagramTable(name, info, fn, cloudTimestamp, update = true)
 		info.prototype = 'Diagram';
 	if (!('codomain' in info))	// TODO remove
 		info.codomain = 'Cat';
-	const updateSql = (update ? 'UPDATE ' : 'INSERT INTO ') + 'Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ?, category = ?, prototype = ?' +
-						(update ? ' WHERE name = ?' : '');
-	const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, info.category, info.prototype, name];
-	dbcon.query(updateSql, args, fn);
+	const term = `EXISTS(SELECT name FROM Catecon.diagrams WHERE name = '${name}')`;
+	const sql = 'SELECT ' + term;
+	dbcon.query(sql, (error, result) =>
+	{
+		if (error)
+		{
+			console.error('ERROR', error);
+			return;
+		}
+		const update = result[0][term];
+		const updateSql = (update ? 'UPDATE ' : 'INSERT INTO ') + 'Catecon.diagrams SET name = ?, basename = ?, user = ?, description = ?, properName = ?, refs = ?, timestamp = ?, codomain = ?, refcnt = ?, cloudTimestamp = ?, category = ?, prototype = ?' +
+							(update ? ' WHERE name = ?' : '');
+		const args = [name, info.basename, info.user, info.description, info.properName, JSON.stringify(info.references), info.timestamp, info.codomain, 'refcnt' in info ? info.refcnt : 0, cloudTimestamp, info.category, info.prototype, name];
+		dbcon.query(updateSql, args, fn);
+	});
 }
 
 function updateSQLDiagramsByCatalog()
@@ -505,6 +516,7 @@ async function serve()
 						const inCloud = Cat.R.catalog.has(info.name);
 						let cloudTimestamp = inCloud ? Cat.R.catalog.get(info.name).cloudTimestamp : 0;
 						cloudTimestamp = cloudTimestamp ? cloudTimestamp: 0;
+						!inCloud && Cat.R.catalog.set(info.name, info);
 						Cat.R.catalog.get(info.name).isLocal = true;
 						updateDiagramTable(info.name, info, _ => {}, cloudTimestamp, inCloud);
 					});
@@ -922,6 +934,51 @@ async function serve()
 				console.error(`ERROR: user does not have permission: ${req.body.user} ${name}`);
 				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:`user does not have permission for diagram: ${req.body.user}`}).end();
 			}
+		});
+		//
+		// generate bug report
+		//
+		app.use('/bugs', (req, res) =>
+		{
+			if (!Cat.R.CAT)
+			{
+				res.status(HTTP.INTERNAL_ERROR).json({ok:false, statusText:'not ready for request'});
+				return;
+			}
+			// diagram = ?, basename = ?, user = ?, description = ?, timestamp = ?
+			dbcon.query('SELECT * FROM Catecon.issues ORDER BY timestamp;', (error, result) =>
+			{
+				if (error) throw error;
+				const height = 24;
+				const deltaY = new D2({x:0, y:1.2 * height});
+				const deltaX = new D2({x:200, y:0});
+				let bugd = Cat.R.$CAT.getElement('dyn/bugs');
+				bugd && bugd.decrRefcnt();
+				bugd = new Cat.Diagram(Cat.R.$CAT, {basename:'bugs', user:'dyn', category:Cat.R.CAT, codomain:'zf/Set', properName:'Bugs'});
+				let xy = new D2();
+				new Cat.IndexText(bugd, {xy, description:'Bugs', height:400, weight:'bold'});
+				xy = xy.add({x:0, y:200});
+				new Cat.IndexText(bugd, {xy, description:U.localtime(bugd.timestamp), height:20, weight:'bold'});
+				xy = xy.add(deltaY);
+				result.forEach(row =>
+				{
+					xy = xy.add(deltaY);
+					let roxy = new D2(xy);
+					let ts = U.localtime(row.timestamp);
+					new Cat.IndexText(bugd, {xy:roxy, description:ts, height, weight:'normal'});
+					roxy = roxy.add(deltaX.scale(1.2));
+					new Cat.IndexText(bugd, {xy:roxy, description:row.user, height, weight:'normal'});
+					roxy = roxy.add(deltaX);
+					new Cat.IndexText(bugd, {xy:roxy, description:`<diagram name="${row.diagram}">${row.diagram}</diagram>`, height, weight:'normal'});
+					xy = xy.add(deltaY);
+					new Cat.IndexText(bugd, {xy, description:row.description, height, weight:'normal'});
+					xy = xy.add(deltaY);
+				});
+				const out = JSON.stringify(bugd.json(), null, 2);
+				saveDiagramJson('dyn/bugs', out);
+				updateDiagramTable(bugd.name, Cat.Diagram.GetInfo(bugd), (error, result) => error && console.error({error}), bugd.timestamp);
+				res.end(out);
+			});
 		});
 
 		// catch 404 and forward to error handler
