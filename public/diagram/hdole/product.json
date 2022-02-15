@@ -28,7 +28,7 @@
         "weight": "bold"
       },
       {
-        "description": "Given two objects A and B in the category D,\nthe limit object of the two is called a product\nof A and B, and written AxB.",
+        "description": "Given two objects A and B in the category D,\nthe limit object of the two is called a product\nof A and B, and written A×B.",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
@@ -319,11 +319,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644742904800,
+  "timestamp": 1644783028123,
   "version": 0,
   "viewport": {
     "x": 383,
-    "y": 344,
+    "y": -88,
     "scale": 3.01305035789533
   },
   "properName": "hdole/product"

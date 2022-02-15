@@ -22,7 +22,7 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/A",
         "xy": {
-          "x": 500,
+          "x": 400,
           "y": 900
         }
       },
@@ -40,7 +40,7 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/A",
         "xy": {
-          "x": 466.6666666666667,
+          "x": 400,
           "y": 1100
         }
       },
@@ -78,7 +78,7 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/CPo{A,#0}oPC",
         "xy": {
-          "x": 900,
+          "x": 1000,
           "y": 700
         }
       },
@@ -96,7 +96,7 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/CPo{#0,A}oPC",
         "xy": {
-          "x": 890,
+          "x": 1000,
           "y": 900
         }
       },
@@ -114,7 +114,7 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/CPo{A,A}oPC",
         "xy": {
-          "x": 933.3333333333334,
+          "x": 1000,
           "y": 1100
         }
       },
@@ -322,15 +322,6 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/CPo{A,B}oPC",
         "xy": {
-          "x": 800,
-          "y": 1500
-        }
-      },
-      {
-        "basename": "o_42",
-        "prototype": "IndexObject",
-        "to": "hdole/graph/CPo{A,B}oPC",
-        "xy": {
           "x": 1000,
           "y": 1500
         }
@@ -367,7 +358,7 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/CPo{Po{A,Po{A,B}oP}oP,Po{B,Po{A,B}oP}oP}oPC",
         "xy": {
-          "x": 900,
+          "x": 1020,
           "y": 1700
         }
       },
@@ -376,7 +367,7 @@
         "prototype": "IndexObject",
         "to": "hdole/graph/A",
         "xy": {
-          "x": 500,
+          "x": 400,
           "y": 700
         }
       },
@@ -408,6 +399,25 @@
           "y": 2110
         },
         "height": 24
+      },
+      {
+        "description": "BUG:  Product and coproduct of A fail on load",
+        "basename": "t_4",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -70,
+          "y": 570
+        },
+        "height": 24
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "hdole/graph/CPo{A,B}oPC",
+        "xy": {
+          "x": 800,
+          "y": 1500
+        }
       },
       {
         "basename": "m_1",
@@ -559,13 +569,6 @@
         "to": "hdole/graph/Pm{Id{A}dI,Id{B}dI}mP"
       },
       {
-        "basename": "m_22",
-        "prototype": "IndexMorphism",
-        "domain": "hdole/graph/o_41",
-        "codomain": "hdole/graph/o_42",
-        "to": "hdole/graph/CPm{Id{A}dI,Id{B}dI}mPC"
-      },
-      {
         "basename": "m_23",
         "prototype": "IndexMorphism",
         "domain": "hdole/graph/o_39",
@@ -581,7 +584,7 @@
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
-        "domain": "hdole/graph/o_42",
+        "domain": "hdole/graph/o_41",
         "codomain": "hdole/graph/o_45",
         "to": "hdole/graph/Id{CPo{A,B}oPC}dI"
       },
@@ -598,6 +601,13 @@
         "domain": "hdole/graph/o_23",
         "codomain": "hdole/graph/o_24",
         "to": "hdole/graph/Fa{A,A_,A_-1}aF"
+      },
+      {
+        "basename": "m_22",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/graph/o_41",
+        "codomain": "hdole/graph/o_0",
+        "to": "hdole/graph/CPm{Id{A}dI,Id{B}dI}mPC"
       }
     ],
     "cells": []
@@ -614,75 +624,6 @@
       "size": 1,
       "min": 0,
       "max": 1
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
-        "#1"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "#1",
-        "A"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
-        "A"
-      ]
-    },
-    {
-      "basename": "#0",
-      "prototype": "FiniteObject",
-      "properName": "&empty;",
-      "size": 0,
-      "min": 0,
-      "max": 0
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "A",
-        "#0"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "#0",
-        "A"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "A",
-        "A"
-      ]
-    },
-    {
-      "description": "The homset from A to A&times;A",
-      "prototype": "HomObject",
-      "objects": [
-        "A",
-        "Po{A,A}oP"
-      ]
-    },
-    {
-      "description": "The homset from A&plus;A to A",
-      "prototype": "HomObject",
-      "objects": [
-        "CPo{A,A}oPC",
-        "A"
-      ]
     },
     {
       "basename": "B",
@@ -805,9 +746,8 @@
     {
       "prototype": "ProductObject",
       "objects": [
-        "Ho{Ho{Ho{A,B}oH,B}oH,C}oH",
-        "Ho{A,C}oH",
-        "Ho{Ho{Ho{A,C}oH,D}oH,D}oH"
+        "A",
+        "#1"
       ]
     },
     {
@@ -820,35 +760,14 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/Po{A,#1}oP",
-      "codomain": "hdole/graph/A",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
       "prototype": "Identity",
       "domain": "hdole/graph/A"
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/Po{A,#1}oP",
-      "codomain": "hdole/graph/#1",
-      "factors": [
-        [
-          1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/#1",
-      "factors": [
-        -1
+      "prototype": "ProductObject",
+      "objects": [
+        "#1",
+        "A"
       ]
     },
     {
@@ -861,23 +780,10 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/Po{#1,A}oP",
-      "codomain": "hdole/graph/#1",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/Po{#1,A}oP",
-      "codomain": "hdole/graph/A",
-      "factors": [
-        [
-          1
-        ]
+      "prototype": "ProductObject",
+      "objects": [
+        "A",
+        "A"
       ]
     },
     {
@@ -890,23 +796,19 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/Po{A,A}oP",
-      "codomain": "hdole/graph/A",
-      "factors": [
-        [
-          0
-        ]
-      ]
+      "basename": "#0",
+      "prototype": "FiniteObject",
+      "properName": "&empty;",
+      "size": 0,
+      "min": 0,
+      "max": 0
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/Po{A,A}oP",
-      "codomain": "hdole/graph/A",
-      "factors": [
-        [
-          1
-        ]
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "A",
+        "#0"
       ]
     },
     {
@@ -920,34 +822,11 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
+      "prototype": "ProductObject",
       "dual": true,
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/CPo{A,#0}oPC",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/graph/#0",
-      "codomain": "hdole/graph/CPo{A,#0}oPC",
-      "factors": [
-        [
-          1
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/graph/#0",
-      "codomain": "hdole/graph/A",
-      "factors": [
-        -1
+      "objects": [
+        "#0",
+        "A"
       ]
     },
     {
@@ -961,25 +840,11 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
+      "prototype": "ProductObject",
       "dual": true,
-      "domain": "hdole/graph/#0",
-      "codomain": "hdole/graph/CPo{#0,A}oPC",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/CPo{#0,A}oPC",
-      "factors": [
-        [
-          1
-        ]
+      "objects": [
+        "A",
+        "A"
       ]
     },
     {
@@ -993,25 +858,11 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/CPo{A,A}oPC",
-      "factors": [
-        [
-          0
-        ]
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/CPo{A,A}oPC",
-      "factors": [
-        [
-          1
-        ]
+      "description": "The homset from A to A&times;A",
+      "prototype": "HomObject",
+      "objects": [
+        "A",
+        "Po{A,A}oP"
       ]
     },
     {
@@ -1025,6 +876,14 @@
         [
           0
         ]
+      ]
+    },
+    {
+      "description": "The homset from A&plus;A to A",
+      "prototype": "HomObject",
+      "objects": [
+        "CPo{A,A}oPC",
+        "A"
       ]
     },
     {
@@ -1156,11 +1015,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644713937382,
+  "timestamp": 1644960141259,
   "version": 0,
   "viewport": {
-    "x": 323,
-    "y": -204,
-    "scale": 1.4376461335915518
+    "x": 1040,
+    "y": -11,
+    "scale": 0.36847893904438545
   }
 }
