@@ -666,10 +666,13 @@ class Runtime
 			description:	'category of categories',
 		};
 		this.CAT = new Category(null, CATargs);
-		this.CAT.newObject = basename =>
+		this.CAT.newObject = (diagram, basename) =>
 		{
-			const cat = this.CAT.getElement(basename);
-			return cat ? cat : new Category(null, {basename});
+			const name = `${diagram.name}/${basename}`;
+			let cat = this.CAT.getElement(name);
+			cat = cat ? cat : new Category(diagram, {name, basename});
+			this.CAT.elements.set(cat.name, cat);
+			return cat;
 		};
 		const $CATargs =
 		{
@@ -690,10 +693,22 @@ class Runtime
 			properName:		'ℂ𝕒𝕥',
 			user:			'em',
 		});
-		this.Cat.newObject = basename =>
+		const $CatArgs =
 		{
-			const cat = this.Cat.getElement(basename);
-			return cat ? cat : new Category(this$CAT, {basename});
+			codomain:		this.Cat,
+			basename:		'$Cat',
+			properName:		'$Cat',
+			description:	'Cat diagram',
+			user:			'em',
+		};
+		this.$Cat = new Diagram(null, $CatArgs);
+		this.Cat.newObject = (diagram, basename) =>
+		{
+			const name = `${diagram.name}/${basename}`;
+			let cat = this.Cat.getElement(name);
+			cat = cat ? cat : new Category(diagram, {name, basename});
+			this.Cat.elements.set(cat.name, cat);
+			return cat;
 		};
 		this.sys.Actions = new Category(this.$CAT,
 		{
@@ -1264,7 +1279,7 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 	readCatalog()
 	{
 		const str = U.readfile('catalog.json');
-		return str ? JSON.parse(str) : {};
+		return str ? JSON.parse(str) : null;
 	}
 	canDeleteDiagram(d)
 	{
@@ -1590,6 +1605,10 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 	isSysUser(user)
 	{
 		return user.length < 5;
+	}
+	setCategory(cat)
+	{
+		R.category = cat;
 	}
 }
 
@@ -5024,6 +5043,29 @@ class Display
 		name += e.code;
 		return name;
 	}
+	doAction(diagram, action)
+	{
+		if (action && action in R.Actions)
+		{
+			const act = R.Actions[action];
+			if (act.hasForm(diagram, diagram.selected))
+			{
+				if (!act.actionOnly)
+				{
+					act.html(e, diagram, diagram.selected);
+					const btn = this.params.get('btn');
+					if (btn)
+					{
+						const elt = this.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
+						if (elt && elt.onclick)
+							elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+					}
+				}
+				else
+					act.action(e, diagram, diagram.selected);
+			}
+		}
+	}
 	addEventListeners()
 	{
 		window.addEventListener('resize', e =>
@@ -5180,9 +5222,9 @@ class Display
 							const cats = new Set();
 							R.diagram && R.diagram.selected.map(elt => (elt instanceof IndexObject || elt instanceof IndexMorphism) && cats.add(elt.to.category));
 							if (cats.size === 1)
-								R.category = [...cats][0];
+								R.setCategory([...cats][0]);
 							else if (cats.size > 1)
-								R.category = null;		// TODO max cat?
+								R.setCategory(null);		// TODO max cat?
 						}
 
 						args.arg && args.arg.showSelected();
@@ -5222,7 +5264,7 @@ class Display
 						}
 						this.diagramSVG.classList.add('trans');
 						this.glowBadObjects(diagram);
-						R.category = diagram.codomain;
+						R.setCategory(diagram.codomain);
 					}
 					else
 						this.session.setNoCurrentDiagram();
@@ -8873,11 +8915,7 @@ class HomObject extends MultiObject
 	}
 	getGraph(data = {position:0})
 	{
-		data.position += D.bracketWidth;
-		const g = super.getGraph(this.constructor.name, data, 0, D.commaWidth, D.textWidth(this.properName));
-		data.position += D.bracketWidth;
-		g.width += 2 * D.bracketWidth;
-		return g;
+		return super.getGraph(this.constructor.name, data, 0, D.commaWidth, D.textWidth(this.properName));
 	}
 	needsParens()
 	{
@@ -9051,11 +9089,22 @@ class IndexText extends Element
 						else if (matches[1] === 'diagram')
 						{
 							placeText(matches[3], line);
-							const nameResults = matches[2].match(/\s*name="(.*)"/);
+							const nameResults = matches[2].match(/\s*name="(.+?)"/);
+							const selectResults = matches[2].match(/\s*select="(.+?)"/);
+							const actionResults = matches[2].match(/\s*action="(.+?)"/);
 							if (nameResults)
 							{
 								const name = U.HtmlSafe(nameResults[1]);
-								tspan.onmousedown = _ => Runtime.SelectDiagram(name);
+								if (selectResults && actionResults)
+									tspan.onmousedown = _ => Runtime.SelectDiagram(name, null, diagram =>
+									{
+										diagram.makeSelected(...selectResults[1].split(','));
+										D.doAction(diagram, actionResults[1]);
+									});
+								else if (selectResults)
+									tspan.onmousedown = _ => Runtime.SelectDiagram(name, null, diagram => diagram.makeSelected(...selectResults[1].split(',')));
+								else
+									tspan.onmousedown = _ => Runtime.SelectDiagram(name);
 								tspan.onmouseenter = e => D.statusbar.show(e, `Go to ${name}`);
 								tspan.classList.add('link');
 							}
@@ -9374,7 +9423,7 @@ class IndexObject extends CatObject
 	json()
 	{
 		let a = super.json();
-		a.to = this.to ? this.to.name : null;
+		a.to = this.diagram.elements.has(this.to.basename) ? this.to.basename : this.to.name;;
 		if (this.attributes.size > 0)
 			a.attributes = U.jsonMap(this.attributes);
 		a.xy = this.getXY();
@@ -9460,8 +9509,8 @@ class IndexObject extends CatObject
 			}
 			else
 			{
-				args.x = -result.correction - result.graph.width/2;
 				args.width = D.textWidth(this.to.properName);
+				args.x = - args.width/2;
 			}
 		}
 		else
@@ -10448,12 +10497,12 @@ class DetachDomainAction extends Action
 	}
 	hasForm(diagram, ary)	// one morphism with connected domain but not a def of something
 	{
-		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexMorphism && ary[0].refcnt === 1)
+		if (diagram.isEditable() && ary.length === 1 && (ary[0] instanceof IndexMorphism || ary[0] instanceof IndexElement) && ary[0].refcnt === 1)
 		{
 			const from = ary[0];
 			let soFar = from.isDeletable() && this.dual ? from.codomain.domains.size + from.codomain.codomains.size > 1 :
 													from.domain.domains.size + from.domain.codomains.size > 1;
-			if (soFar)
+			if (soFar && from.domain.cells.size > 0)
 				return ![...from.domain.cells].reduce((r, cell) => r || ([...cell.left, ...cell.right].includes(from) && cell.assertion), false);
 			return soFar;
 		}
@@ -12466,10 +12515,10 @@ class Category extends CatObject
 			D && D.emitCategoryEvent('new', this);		// do not track index categories
 		}
 	}
-	newObject(basename)
+	newObject(diagram, basename)
 	{
 		const o = this.getElement(basename);
-		return o ? o : new CatObject(this.diagram, {basename});
+		return o ? o : new CatObject(diagram, {basename});
 	}
 	newMorphism(basename, dom, cod)
 	{
@@ -13779,6 +13828,8 @@ if (true)
 			throw 'index morphism codomain mismatched to target morphism';
 }
 		super(diagram, nuArgs);
+		domain.domains.add(this);
+		codomain.codomains.add(this);
 		this.setMorphism(to);
 		this.incrRefcnt();
 		this.diagram.domain.addMorphism(this);
@@ -13930,6 +13981,8 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 	json()
 	{
 		const mor = super.json();
+		mor.domain = this.domain.basename;			// override global name to local
+		mor.codomain = this.codomain.basename;			// override global name to local
 		if (this.attributes.size > 0)
 		{
 			const keys = new Set(this.attributes.keys());
@@ -13942,7 +13995,7 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 			if (keys.size > 0)
 				mor.attributes = [...keys].map(key => [key, this.attributes.get(key)]);
 		}
-		mor.to = this.to.name;
+		mor.to = this.diagram.elements.has(this.to.basename) ? this.to.basename : this.to.name;;
 		if (mor.description === '')
 			delete mor.description;
 		return mor;
@@ -14150,9 +14203,9 @@ class IndexElement extends Element
 		Object.defineProperties(this,
 		{
 			attributes:	{value: attributes,	writable: false},
-			domain:		{value: domain,		writable: false},
+			domain:		{value: domain,		writable: true},
 			domains:	{value: new Set(),	writable: false},
-			codomain:	{value: codomain,	writable: false},
+			codomain:	{value: codomain,	writable: true},
 			codomains:	{value: new Set(),	writable: false},
 		});
 		domain.incrRefcnt();
@@ -14191,11 +14244,11 @@ class IndexElement extends Element
 	}
 	json()
 	{
-		const json = super.json();
-		json.domain = this.domain.name;
-		json.codomain = this.codomain.name;
-		json.attributes = U.jsonMap(this.attributes);
-		return json;
+		const a = super.json();
+		a.domain = this.domain.basename;
+		a.codomain = this.codomain.basename;
+		a.attributes = U.jsonMap(this.attributes);
+		return a;
 	}
 	getStart(tangent, normal)
 	{
@@ -14230,6 +14283,24 @@ class IndexElement extends Element
 	}
 	updateFusible()
 	{}
+	setDomain(dom)
+	{
+		if (dom === this.domain)
+			return;
+		if (this.domain)
+			this.domain.decrRefcnt();
+		dom.incrRefcnt();
+		this.domain = dom;
+	}
+	setCodomain(cod)
+	{
+		if (cod === this.codomain)
+			return;
+		if (this.codomain)
+			this.codomain.decrRefcnt();
+		cod.incrRefcnt();
+		this.codomain = cod;
+	}
 	static hasForm(domain, codomain)
 	{
 		if ((domain instanceof IndexObject || domain instanceof IndexMorphism) && codomain instanceof IndexObject)
@@ -16816,9 +16887,10 @@ class Diagram extends Functor
 	}
 	makeSelected(...elts)
 	{
+		const elements = this.getElements(elts);
 		this.deselectAll();
-		if (elts.length > 0)
-			elts.map(elt => this.addSelected(elt));
+		if (elements.length > 0)
+			elements.map(elt => this.addSelected(elt));
 	}
 	selectAll()
 	{
@@ -17897,12 +17969,12 @@ class Diagram extends Functor
 			[...from.domains].map(m =>
 			{
 				m.setDomain(target);
-				m.update();
+				D.emitElementEvent(R.diagram, 'update', m);
 			});
 			[...from.codomains].map(m =>
 			{
 				m.setCodomain(target);
-				m.update();
+				D.emitElementEvent(R.diagram, 'update', m);
 			});
 		}
 		from.decrRefcnt();
@@ -18188,7 +18260,7 @@ class Diagram extends Functor
 				div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
 				let elt = this.getElement(input);
 				if (!elt && type === 'object')
-					elt = new CatObject(R.diagram, {basename:input});
+					elt = R.category.newObject(this, input);
 				if (elt)
 				{
 					if (elt instanceof CatObject && type === 'object')
