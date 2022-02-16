@@ -958,22 +958,25 @@ async function serve()
 				let xy = new D2();
 				new Cat.IndexText(bugd, {xy, description:'Bugs', height:400, weight:'bold'});
 				xy = xy.add({x:0, y:200});
-				new Cat.IndexText(bugd, {xy, description:U.localtime(bugd.timestamp), height:20, weight:'bold'});
+				new Cat.IndexText(bugd, {xy, description:Cat.U.localtime(bugd.timestamp), height:20, weight:'bold'});
 				xy = xy.add(deltaY);
+				let timestamp = 0;
 				result.forEach(row =>
 				{
 					xy = xy.add(deltaY);
 					let roxy = new D2(xy);
-					let ts = U.localtime(row.timestamp);
+					let ts = Cat.U.localtime(row.timestamp);
+					timestamp = Math.max(timestamp, row.timestamp);
 					new Cat.IndexText(bugd, {xy:roxy, description:ts, height, weight:'normal'});
 					roxy = roxy.add(deltaX.scale(1.2));
 					new Cat.IndexText(bugd, {xy:roxy, description:row.user, height, weight:'normal'});
 					roxy = roxy.add(deltaX);
-					new Cat.IndexText(bugd, {xy:roxy, description:`<diagram name="${row.diagram}">${row.diagram}</diagram>`, height, weight:'normal'});
+					new Cat.IndexText(bugd, {xy:roxy, description:`<diagram name="${row.diagram}" select="${row.basename}" action="zoom">${row.diagram}</diagram>`, height, weight:'normal'});
 					xy = xy.add(deltaY);
 					new Cat.IndexText(bugd, {xy, description:row.description, height, weight:'normal'});
 					xy = xy.add(deltaY);
 				});
+				bugd.timestamp = timestamp;		// time of last bug
 				const out = JSON.stringify(bugd.json(), null, 2);
 				saveDiagramJson('dyn/bugs', out);
 				updateDiagramTable(bugd.name, Cat.Diagram.GetInfo(bugd), (error, result) => error && console.error({error}), bugd.timestamp);
