@@ -391,26 +391,6 @@
         "height": "24"
       },
       {
-        "description": "BUG:  hom graph positions are off",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 970,
-          "y": 2110
-        },
-        "height": 24
-      },
-      {
-        "description": "BUG:  Product and coproduct of A fail on load",
-        "basename": "t_4",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -70,
-          "y": 570
-        },
-        "height": 24
-      },
-      {
         "basename": "o_0",
         "prototype": "IndexObject",
         "to": "hdole/graph/CPo{A,B}oPC",
@@ -751,19 +731,6 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/Po{A,#1}oP",
-      "factors": [
-        [],
-        -1
-      ]
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/graph/A"
-    },
-    {
       "prototype": "ProductObject",
       "objects": [
         "#1",
@@ -771,28 +738,10 @@
       ]
     },
     {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/Po{#1,A}oP",
-      "factors": [
-        -1,
-        []
-      ]
-    },
-    {
       "prototype": "ProductObject",
       "objects": [
         "A",
         "A"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/graph/A",
-      "codomain": "hdole/graph/Po{A,A}oP",
-      "factors": [
-        [],
-        []
       ]
     },
     {
@@ -812,6 +761,69 @@
       ]
     },
     {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "#0",
+        "A"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "A",
+        "A"
+      ]
+    },
+    {
+      "description": "The homset from A to A&times;A",
+      "prototype": "HomObject",
+      "objects": [
+        "A",
+        "Po{A,A}oP"
+      ]
+    },
+    {
+      "description": "The homset from A&plus;A to A",
+      "prototype": "HomObject",
+      "objects": [
+        "CPo{A,A}oPC",
+        "A"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/graph/A",
+      "codomain": "hdole/graph/Po{A,#1}oP",
+      "factors": [
+        [],
+        -1
+      ]
+    },
+    {
+      "prototype": "Identity",
+      "domain": "hdole/graph/A"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/graph/A",
+      "codomain": "hdole/graph/Po{#1,A}oP",
+      "factors": [
+        -1,
+        []
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/graph/A",
+      "codomain": "hdole/graph/Po{A,A}oP",
+      "factors": [
+        [],
+        []
+      ]
+    },
+    {
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/graph/CPo{A,#0}oPC",
@@ -819,14 +831,6 @@
       "factors": [
         [],
         -1
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "#0",
-        "A"
       ]
     },
     {
@@ -840,14 +844,6 @@
       ]
     },
     {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "A",
-        "A"
-      ]
-    },
-    {
       "prototype": "FactorMorphism",
       "dual": true,
       "domain": "hdole/graph/CPo{A,A}oPC",
@@ -855,14 +851,6 @@
       "factors": [
         [],
         []
-      ]
-    },
-    {
-      "description": "The homset from A to A&times;A",
-      "prototype": "HomObject",
-      "objects": [
-        "A",
-        "Po{A,A}oP"
       ]
     },
     {
@@ -876,14 +864,6 @@
         [
           0
         ]
-      ]
-    },
-    {
-      "description": "The homset from A&plus;A to A",
-      "prototype": "HomObject",
-      "objects": [
-        "CPo{A,A}oPC",
-        "A"
       ]
     },
     {
@@ -1015,11 +995,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644960141259,
+  "timestamp": 1644969861028,
   "version": 0,
   "viewport": {
-    "x": 1040,
-    "y": -11,
-    "scale": 0.36847893904438545
+    "x": 554,
+    "y": -61,
+    "scale": 0.39111474371427446
   }
 }

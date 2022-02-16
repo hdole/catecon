@@ -3,6 +3,7 @@
   "basename": "product",
   "name": "hdole/product",
   "prototype": "Diagram",
+  "properName": "hdole/product",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "hdole/product_Index",
@@ -40,7 +41,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/product/Po{A,B}oP",
+        "to": "Po{A,B}oP",
         "xy": {
           "x": 250,
           "y": 370
@@ -59,7 +60,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/product/Po{A,B}oP",
+        "to": "Po{A,B}oP",
         "xy": {
           "x": 200,
           "y": 700
@@ -68,7 +69,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/product/A",
+        "to": "A",
         "xy": {
           "x": 350,
           "y": 700
@@ -77,7 +78,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/product/B",
+        "to": "B",
         "xy": {
           "x": 50,
           "y": 700
@@ -116,7 +117,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/product/A",
+        "to": "A",
         "xy": {
           "x": 50,
           "y": 370
@@ -125,7 +126,7 @@
       {
         "basename": "o_13",
         "prototype": "IndexObject",
-        "to": "hdole/product/B",
+        "to": "B",
         "xy": {
           "x": 450,
           "y": 370
@@ -134,57 +135,93 @@
       {
         "basename": "o_14",
         "prototype": "IndexObject",
-        "to": "hdole/product/X",
+        "to": "X",
         "xy": {
           "x": 250,
           "y": 210
         }
       },
       {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 410,
+          "y": 210
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 580,
+          "y": 190
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 640,
+          "y": 290
+        }
+      },
+      {
+        "basename": "o_7",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": null,
+          "y": null
+        }
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/product/o_3",
-        "codomain": "hdole/product/o_4",
-        "to": "hdole/product/Fa{Po{A,B}oP,A_0}aF"
+        "domain": "o_3",
+        "codomain": "o_4",
+        "to": "Fa{Po{A,B}oP,A_0}aF"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/product/o_3",
-        "codomain": "hdole/product/o_5",
+        "domain": "o_3",
+        "codomain": "o_5",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/product/Fa{Po{A,B}oP,B_1}aF"
+        "to": "Fa{Po{A,B}oP,B_1}aF"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/product/o_2",
-        "codomain": "hdole/product/o_12",
-        "to": "hdole/product/Fa{Po{A,B}oP,A_0}aF"
+        "domain": "o_2",
+        "codomain": "o_12",
+        "to": "Fa{Po{A,B}oP,A_0}aF"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/product/o_2",
-        "codomain": "hdole/product/o_13",
+        "domain": "o_2",
+        "codomain": "o_13",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/product/Fa{Po{A,B}oP,B_1}aF"
+        "to": "Fa{Po{A,B}oP,B_1}aF"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/product/o_14",
-        "codomain": "hdole/product/o_12",
+        "domain": "o_14",
+        "codomain": "o_12",
         "attributes": [
           [
             "flipName",
@@ -199,13 +236,13 @@
             1
           ]
         ],
-        "to": "hdole/product/f"
+        "to": "f"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/product/o_14",
-        "codomain": "hdole/product/o_13",
+        "domain": "o_14",
+        "codomain": "o_13",
         "attributes": [
           [
             "quantifier",
@@ -216,13 +253,13 @@
             1
           ]
         ],
-        "to": "hdole/product/g"
+        "to": "g"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/product/o_14",
-        "codomain": "hdole/product/o_2",
+        "domain": "o_14",
+        "codomain": "o_2",
         "attributes": [
           [
             "quantifier",
@@ -233,7 +270,53 @@
             1
           ]
         ],
-        "to": "hdole/product/h"
+        "to": "h"
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "o_0",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "description": "",
+        "basename": "e_1",
+        "prototype": "IndexElement",
+        "domain": "o_14",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "description": "",
+        "basename": "e_2",
+        "prototype": "IndexElement",
+        "domain": "m_3",
+        "codomain": "o_6",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "basename": "m_7",
+        "prototype": "IndexMorphism",
+        "domain": "o_6",
+        "codomain": "o_7",
+        "to": "Id{D}dI"
       }
     ],
     "cells": [
@@ -265,15 +348,112 @@
   },
   "elements": [
     {
+      "basename": "D",
+      "prototype": "Category",
+      "elements": [
+        {
+          "description": "",
+          "basename": "A",
+          "name": "hdole/product/A",
+          "prototype": "CatObject",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product"
+        },
+        {
+          "description": "",
+          "basename": "B",
+          "name": "hdole/product/B",
+          "prototype": "CatObject",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product"
+        },
+        {
+          "name": "hdole/product/Po{A,B}oP",
+          "prototype": "ProductObject",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product",
+          "objects": [
+            "A",
+            "B"
+          ]
+        },
+        {
+          "description": "",
+          "basename": "X",
+          "name": "hdole/product/X",
+          "prototype": "CatObject",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product"
+        },
+        {
+          "description": "",
+          "name": "hdole/product/Fa{Po{A,B}oP,A_0}aF",
+          "prototype": "FactorMorphism",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product",
+          "domain": "hdole/product/Po{A,B}oP",
+          "codomain": "hdole/product/A",
+          "factors": [
+            0
+          ]
+        },
+        {
+          "description": "",
+          "name": "hdole/product/Fa{Po{A,B}oP,B_1}aF",
+          "prototype": "FactorMorphism",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product",
+          "domain": "hdole/product/Po{A,B}oP",
+          "codomain": "hdole/product/B",
+          "factors": [
+            1
+          ]
+        },
+        {
+          "description": "",
+          "basename": "f",
+          "name": "hdole/product/f",
+          "prototype": "Morphism",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product",
+          "domain": "hdole/product/X",
+          "codomain": "hdole/product/A"
+        },
+        {
+          "description": "",
+          "basename": "g",
+          "name": "hdole/product/g",
+          "prototype": "Morphism",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product",
+          "domain": "hdole/product/X",
+          "codomain": "hdole/product/B"
+        },
+        {
+          "description": "",
+          "basename": "h",
+          "name": "hdole/product/h",
+          "prototype": "Morphism",
+          "category": "hdole/product/D",
+          "diagram": "hdole/product",
+          "domain": "hdole/product/X",
+          "codomain": "hdole/product/Po{A,B}oP"
+        }
+      ]
+    },
+    {
       "basename": "A",
-      "prototype": "CatObject"
+      "prototype": "CatObject",
+      "category": "hdole/product/D"
     },
     {
       "basename": "B",
-      "prototype": "CatObject"
+      "prototype": "CatObject",
+      "category": "hdole/product/D"
     },
     {
       "prototype": "ProductObject",
+      "category": "hdole/product/D",
       "objects": [
         "A",
         "B"
@@ -281,10 +461,12 @@
     },
     {
       "basename": "X",
-      "prototype": "CatObject"
+      "prototype": "CatObject",
+      "category": "hdole/product/D"
     },
     {
       "prototype": "FactorMorphism",
+      "category": "hdole/product/D",
       "domain": "hdole/product/Po{A,B}oP",
       "codomain": "hdole/product/A",
       "factors": [
@@ -293,6 +475,7 @@
     },
     {
       "prototype": "FactorMorphism",
+      "category": "hdole/product/D",
       "domain": "hdole/product/Po{A,B}oP",
       "codomain": "hdole/product/B",
       "factors": [
@@ -302,29 +485,35 @@
     {
       "basename": "f",
       "prototype": "Morphism",
+      "category": "hdole/product/D",
       "domain": "hdole/product/X",
       "codomain": "hdole/product/A"
     },
     {
       "basename": "g",
       "prototype": "Morphism",
+      "category": "hdole/product/D",
       "domain": "hdole/product/X",
       "codomain": "hdole/product/B"
     },
     {
       "basename": "h",
       "prototype": "Morphism",
+      "category": "hdole/product/D",
       "domain": "hdole/product/X",
       "codomain": "hdole/product/Po{A,B}oP"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "hdole/product/D"
     }
   ],
   "user": "hdole",
-  "timestamp": 1644783028123,
+  "timestamp": 1644994990980,
   "version": 0,
   "viewport": {
-    "x": 383,
-    "y": -88,
-    "scale": 3.01305035789533
-  },
-  "properName": "hdole/product"
+    "x": 933,
+    "y": 148,
+    "scale": 1.1541596572679558
+  }
 }
