@@ -140,7 +140,7 @@ class D2
 	}
 	static add(v, w)
 	{
-		return new D2(v.x + w.x, v.y + w.y);
+		return new D2(v).add(w);
 	}
 	static dist2(v, w)
 	{
