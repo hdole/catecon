@@ -344,7 +344,7 @@ class U		// utilities
 	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
 	static isIndexItem(elt)
 	{
-		return elt instanceof IndexObject || elt instanceof IndexMorphism || elt instanceof IndexText || elt instanceof IndexElement;
+		return elt instanceof IndexObject || elt instanceof IndexText || Arrow.isArrow(elt);
 	}
 	static HasFactor(factors, someFactor)
 	{
@@ -1421,6 +1421,7 @@ if (args.category === 'sys/CAT') args.category = 'em/CAT';		// TODO remove
 					}
 					else
 						this.setDiagramInfo(json);
+					D && D.statusbar.show(null, 'Bug report updated on server');
 				});
 			}
 			else
@@ -3603,8 +3604,11 @@ class Session
 	}
 	setCurrentViewport(vp = {x:0, y:0, scale:1.0, timestamp:0})
 	{
-		this.setViewport(R.diagram.name, vp);
-		this.current = R.diagram.name;
+		if (R.diagram)
+		{
+			this.setViewport(R.diagram.name, vp);
+			this.current = R.diagram.name;
+		}
 	}
 	save()
 	{
@@ -3855,7 +3859,7 @@ class Display
 						if (R.diagram.selected.length === 1)
 						{
 							const elt = R.diagram.getSelected();
-							if (elt instanceof IndexMorphism || elt instanceof IndexElement)
+							if (Arrow.isArrow(elt))
 							{
 								const bzr = elt.attributes.get('bezier');
 								elt.attributes.set('bezier', bzr +1);
@@ -3869,7 +3873,7 @@ class Display
 						if (R.diagram.selected.length === 1)
 						{
 							const elt = R.diagram.getSelected();
-							if (elt instanceof IndexMorphism || elt instanceof IndexElement)
+							if (Arrow.isArrow(elt))
 							{
 								const bzr = elt.attributes.get('bezier');
 								elt.attributes.set('bezier', bzr -1);
@@ -3883,7 +3887,7 @@ class Display
 						if (R.diagram.selected.length === 1)
 						{
 							const elt = R.diagram.getSelected();
-							if (elt instanceof IndexMorphism || elt instanceof IndexElement)
+							if (Arrow.isArrow(elt))
 							{
 								const bzr = elt.attributes.get('bezier');
 								elt.attributes.set('bezier', bzr + .1);
@@ -3897,7 +3901,7 @@ class Display
 						if (R.diagram.selected.length === 1)
 						{
 							const elt = R.diagram.getSelected();
-							if (elt instanceof IndexMorphism || elt instanceof IndexElement)
+							if (Arrow.isArrow(elt))
 							{
 								const bzr = elt.attributes.get('bezier');
 								elt.attributes.set('bezier', bzr - .1);
@@ -4786,7 +4790,7 @@ class Display
 		}
 		catch(x)
 		{
-			this.recordError(x);
+			R.recordError(x);
 		}
 	}
 	mouseup(e)
@@ -4892,7 +4896,7 @@ class Display
 			}
 			catch(x)
 			{
-				this.recordError(x);
+				R.recordError(x);
 			}
 			this.drag = false;
 		}
@@ -4934,7 +4938,7 @@ class Display
 		}
 		catch(err)
 		{
-			this.recordError(err);
+			R.recordError(err);
 		}
 	}
 	getIcon(name, buttonName, clickme, options = {})	// options = {title, scale, id, repeatCount, help}
@@ -5050,6 +5054,7 @@ class Display
 			const act = R.Actions[action];
 			if (act.hasForm(diagram, diagram.selected))
 			{
+				const e = new MouseEvent("click", {view: window, bubbles: false, cancelable: true});
 				if (!act.actionOnly)
 				{
 					act.html(e, diagram, diagram.selected);
@@ -5058,7 +5063,7 @@ class Display
 					{
 						const elt = this.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
 						if (elt && elt.onclick)
-							elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+							elt.onclick(e);
 					}
 				}
 				else
@@ -8970,6 +8975,7 @@ class IndexText extends Element
 		Object.defineProperties(this,
 		{
 			attributes:		{value: attributes,											writable:	false},
+			svg:			{value:	null,												writable:	true},
 			x:				{value:	xy.x,												writable:	true},
 			y:				{value:	xy.y,												writable:	true},
 			height:			{value:	U.getArg(nuArgs, 'height', D ? D.default.font.height : 0),	writable:	true},
@@ -9098,8 +9104,17 @@ class IndexText extends Element
 								if (selectResults && actionResults)
 									tspan.onmousedown = _ => Runtime.SelectDiagram(name, null, diagram =>
 									{
-										diagram.makeSelected(...selectResults[1].split(','));
-										D.doAction(diagram, actionResults[1]);
+										const doit = _ =>
+										{
+											if (diagram.ready === 0 && R.isReady())
+											{
+												diagram.makeSelected(...selectResults[1].split(','));
+												D.doAction(diagram, actionResults[1]);
+											}
+											else
+												setTimeout(doit, 0);	// try again
+										};
+										doit();
 									});
 								else if (selectResults)
 									tspan.onmousedown = _ => Runtime.SelectDiagram(name, null, diagram => diagram.makeSelected(...selectResults[1].split(',')));
@@ -10502,7 +10517,7 @@ class DetachDomainAction extends Action
 			const from = ary[0];
 			let soFar = from.isDeletable() && this.dual ? from.codomain.domains.size + from.codomain.codomains.size > 1 :
 													from.domain.domains.size + from.domain.codomains.size > 1;
-			if (soFar && from.domain.cells.size > 0)
+			if (soFar && 'cells' in from.domain && from.domain.cells.size > 0)
 				return ![...from.domain.cells].reduce((r, cell) => r || ([...cell.left, ...cell.right].includes(from) && cell.assertion), false);
 			return soFar;
 		}
@@ -10550,7 +10565,7 @@ class DeleteAction extends Action
 		let hasMorphism = false;
 		sorted.map(elt =>
 		{
-			hasMorphism = hasMorphism || elt instanceof IndexMorphism || elt instanceof IndexElement;
+			hasMorphism = hasMorphism || Arrow.isArrow(elt);
 			if (elt.refcnt === 1)
 			{
 				elt.decrRefcnt();
@@ -10564,7 +10579,7 @@ class DeleteAction extends Action
 		if (hasMorphism)
 		{
 			const objects = new Set();
-			sorted.filter(elt => elt instanceof IndexMorphism || elt instanceof IndexElement).map(m =>
+			sorted.filter(elt => Arrow.isArrow(elt)).map(m =>
 			{
 				m.domain.refcnt === 1 && objects.add(m.domain);
 				m.codomain.refcnt === 1 && objects.add(m.codomain);
@@ -11649,7 +11664,7 @@ class ReferenceMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return  diagram.isEditable() && ary.reduce((r, elt) => r && elt instanceof IndexMorphism && (Assembler.isReference(elt.to) || Assembler.isCoreference(elt.to)), true);
+		return  diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexMorphism && (Assembler.isReference(ary[0].to) || Assembler.isCoreference(ary[0].to));
 	}
 }
 
@@ -13390,8 +13405,8 @@ const Arrow =
 			svg:		{value: null,		writable: true},
 			svg_path:	{value: null,		writable: true},
 			svg_path2:	{value: null,		writable: true},
-			svg_name:	{value: null,		writable: true},
-			svg_nameGroup:	{value: null,	writable: true},
+			svg_name:	{value: null,		writable: true},		// optional, e.g., IndexElement
+			svg_nameGroup:	{value: null,	writable: true},		// optional, e.g., IndexElement
 		});
 		if (!this.attributes.has('bezier'))
 			this.attributes.set('bezier', 0);
@@ -13806,6 +13821,23 @@ const Arrow =
 			D.emitMorphismEvent(this.diagram, 'update', this);
 		}
 	},
+	emphasis(on)
+	{
+		on ? D.emphasized.add(this) : D.emphasized.delete(this);
+		this.svg_path.classList.remove('emphasis2');
+		if (this.svg_name)
+		{
+			this.svg_name.classList.remove('emphasis2');
+			this.svg_nameGroup.classList.remove('emphasis2');
+			D.setClass('emphasis', on, this.svg_name);
+		}
+		D.setClass('emphasis', on, this.svg_path);
+		this.svg_nameGroup && D.setClass('emphasis', on, this.svg_nameGroup);
+	},
+	isArrow(elt)
+	{
+		return elt instanceof IndexMorphism || elt instanceof IndexElement;
+	},
 };
 
 class IndexMorphism extends Morphism
@@ -14146,16 +14178,6 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 	{
 		this.getCells().forEach(cell => D.emitCellEvent(this.diagram, 'check', cell));
 	}
-	emphasis(on)
-	{
-		super.emphasis(on);
-		this.svg_path.classList.remove('emphasis2');
-		this.svg_name.classList.remove('emphasis2');
-		this.svg_nameGroup.classList.remove('emphasis2');
-		D.setClass('emphasis', on, this.svg_path);
-		D.setClass('emphasis', on, this.svg_name);
-		D.setClass('emphasis', on, this.svg_nameGroup);
-	}
 	getXY()
 	{
 		const bbox = this.getBBox();
@@ -14169,7 +14191,7 @@ if ('homsetIndex' in args) this.attributes.set('bezier', args.homsetIndex);
 	{
 		if (!(m && m instanceof IndexMorphism))
 			return false;
-		return this.to.isEquivalent(m.to) || this.isIdentityFusible();
+		return this.to.isEquivalent(m.to);
 	}
 	static LinkId(data, lnk)
 	{
@@ -14287,19 +14309,21 @@ class IndexElement extends Element
 	{
 		if (dom === this.domain)
 			return;
-		if (this.domain)
-			this.domain.decrRefcnt();
+		this.domain.decrRefcnt();
+		this.domain.domains.delete(this);
 		dom.incrRefcnt();
 		this.domain = dom;
+		this.domain.domains.add(this);
 	}
 	setCodomain(cod)
 	{
 		if (cod === this.codomain)
 			return;
-		if (this.codomain)
-			this.codomain.decrRefcnt();
+		this.codomain.decrRefcnt();
+		this.codomain.codomains.delete(this);
 		cod.incrRefcnt();
 		this.codomain = cod;
+		this.codomain.codomains.add(this);
 	}
 	static hasForm(domain, codomain)
 	{
@@ -16714,6 +16738,7 @@ class Diagram extends Functor
 				if (!saved.has(elt))
 				{
 					a.elements.push(elt.json(delBasename));
+					elt instanceof Category && elt.elements.forEach(elt => saved.add(elt));
 					saved.add(elt);
 				}
 			}
@@ -16866,7 +16891,7 @@ class Diagram extends Functor
 			this.selected.push(elt);
 			if (elt instanceof IndexObject || elt instanceof IndexText)
 				elt.finishMove();
-			else if (elt instanceof IndexMorphism || elt instanceof IndexElement)
+			else if (Arrow.isArrow(elt))
 			{
 				elt.domain.finishMove();
 				elt.codomain.finishMove();
@@ -16876,7 +16901,7 @@ class Diagram extends Functor
 				const blob = this.getBlob(elt);
 				!blob && this.blobs.push(new DiagramBlob(elt));
 			}
-			this.selected.filter(m => m instanceof IndexMorphism || m instanceof IndexElement).map(m => this.deselect(m.domain, m.codomain));
+			this.selected.filter(m => Arrow.isArrow(m)).map(m => this.deselect(m.domain, m.codomain));
 			D.emitDiagramEvent(this, 'select', elt);
 		}
 	}
@@ -16924,12 +16949,12 @@ class Diagram extends Functor
 		let selected = [];
 		this.domain.elements.forEach(elt =>
 		{
-			if (elt instanceof IndexMorphism && D2.inside(p, elt.domain, q) && D2.inside(p, elt.codomain, q))
+			if (Arrow.isArrow(elt) && D2.inside(p, elt.domain, q) && D2.inside(p, elt.codomain, q))
 				selected.push(elt);
 			else if (D2.inside(p, elt, q))
 				selected.push(elt);
 		});
-		selected.map(elt => this.addSelected(elt));
+		this.makeSelected(...selected);
 	}
 	updateDragObjects(majorGrid)
 	{
@@ -16942,7 +16967,7 @@ class Diagram extends Functor
 		const attachments = new Set();
 		this.selected.map(elt =>
 		{
-			if (elt instanceof IndexMorphism || elt instanceof IndexElement)
+			if (Arrow.isArrow(elt))
 			{
 				dragObjects.add(elt.domain);
 				dragObjects.add(elt.codomain);
@@ -17699,8 +17724,6 @@ class Diagram extends Functor
 		}
 		if (!on && this.selected.length === 1 && 'dragAlternates' in this.selected[0])
 			this.removeDragAlternates();
-		if (U.isIndexItem(item))
-			item.emphasis(on);
 		return rtrn;
 	}
 	removeDragAlternates()
@@ -18165,7 +18188,7 @@ class Diagram extends Functor
 				if (elt.x === 0 && elt.y % grid === 0)
 					locations.push(elt.y);
 			}
-			else if (elt instanceof IndexMorphism || elt instanceof IndexElement)
+			else if (Arrow.isArrow(elt))
 				indexed.add(elt.to);
 		});
 		locations.sort();
