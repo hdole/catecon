@@ -1,0 +1,220 @@
+{
+  "description": "",
+  "basename": "identity",
+  "name": "hdole/identity",
+  "prototype": "Diagram",
+  "category": "em/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "hdole/identity_Index",
+  "codomain": "em/Cat",
+  "references": [],
+  "domainInfo": {
+    "description": "index category for diagram hdole/identity",
+    "basename": "identity_Index",
+    "name": "hdole/identity_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Identity",
+        "basename": "t_0",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 460,
+          "y": 150
+        },
+        "height": "200",
+        "weight": "bold"
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "hdole/identity/A",
+        "attributes": [
+          [
+            "level",
+            1
+          ]
+        ],
+        "xy": {
+          "x": 950,
+          "y": 460
+        }
+      },
+      {
+        "basename": "o_3",
+        "prototype": "IndexObject",
+        "to": "hdole/identity/B",
+        "xy": {
+          "x": 760,
+          "y": 460
+        }
+      },
+      {
+        "basename": "o_4",
+        "prototype": "IndexObject",
+        "to": "hdole/identity/A",
+        "xy": {
+          "x": 950,
+          "y": 290
+        }
+      },
+      {
+        "basename": "o_7",
+        "prototype": "IndexObject",
+        "to": "hdole/identity/B",
+        "xy": {
+          "x": 1160,
+          "y": 290
+        }
+      },
+      {
+        "description": "A morphism id is said to be\nan identity given the following\ncommutative diagram.",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 470,
+          "y": 250
+        },
+        "height": 24
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/identity/o_2",
+        "codomain": "hdole/identity/o_3",
+        "to": "hdole/identity/f"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/identity/o_4",
+        "codomain": "hdole/identity/o_2",
+        "to": "hdole/identity/id"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/identity/o_7",
+        "codomain": "hdole/identity/o_4",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ],
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/identity/g"
+      },
+      {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/identity/o_7",
+        "codomain": "hdole/identity/o_2",
+        "to": "hdole/identity/g"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "hdole/identity/o_4",
+        "codomain": "hdole/identity/o_3",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ],
+          [
+            "level",
+            1
+          ],
+          [
+            "quantifier",
+            "forall"
+          ]
+        ],
+        "to": "hdole/identity/f"
+      },
+      {
+        "description": "BUG:  All quantified morphisms should show the quantifer.",
+        "basename": "t_2",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1060,
+          "y": 460
+        },
+        "height": 24
+      }
+    ],
+    "cells": [
+      {
+        "name": "hdole/identity/{m_2,m_1},{m_3}",
+        "left": [
+          "m_2",
+          "m_1"
+        ],
+        "right": [
+          "m_3"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/identity/{m_5,m_2},{m_6}",
+        "left": [
+          "m_5",
+          "m_2"
+        ],
+        "right": [
+          "m_6"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
+  },
+  "elements": [
+    {
+      "basename": "A",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "B",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "f",
+      "prototype": "Morphism",
+      "domain": "hdole/identity/A",
+      "codomain": "hdole/identity/B"
+    },
+    {
+      "basename": "id",
+      "prototype": "Morphism",
+      "domain": "hdole/identity/A",
+      "codomain": "hdole/identity/A"
+    },
+    {
+      "basename": "g",
+      "prototype": "Morphism",
+      "domain": "hdole/identity/B",
+      "codomain": "hdole/identity/A"
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1644747952216,
+  "version": 0,
+  "viewport": {
+    "x": -622,
+    "y": 146,
+    "scale": 2.30823697961899
+  },
+  "properName": "hdole/identity"
+}

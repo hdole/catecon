@@ -20,7 +20,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 550,
           "y": 50
@@ -29,7 +29,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 750,
           "y": 50
@@ -38,7 +38,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 550,
           "y": 150
@@ -47,34 +47,25 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 750,
           "y": 150
         }
       },
       {
-        "basename": "o_6",
-        "prototype": "IndexObject",
-        "to": "hdole/category/C1",
-        "xy": {
-          "x": 550,
-          "y": 200
-        }
-      },
-      {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 750,
-          "y": 200
+          "y": 250
         }
       },
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 550,
           "y": 700
@@ -83,7 +74,7 @@
       {
         "basename": "o_9",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 750,
           "y": 700
@@ -92,7 +83,7 @@
       {
         "basename": "o_10",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 750,
           "y": 850
@@ -101,7 +92,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 550,
           "y": 950
@@ -110,7 +101,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 750,
           "y": 950
@@ -119,7 +110,7 @@
       {
         "basename": "o_13",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 750,
           "y": 1150
@@ -159,7 +150,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 550,
           "y": -50
@@ -168,7 +159,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 550,
           "y": -150
@@ -177,7 +168,7 @@
       {
         "basename": "o_14",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 750,
           "y": 350
@@ -186,7 +177,7 @@
       {
         "basename": "o_15",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 750,
           "y": 500
@@ -195,7 +186,7 @@
       {
         "basename": "o_16",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 550,
           "y": 500
@@ -204,7 +195,7 @@
       {
         "basename": "o_17",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 550,
           "y": 350
@@ -213,7 +204,7 @@
       {
         "basename": "o_18",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 550,
           "y": 1250
@@ -222,7 +213,7 @@
       {
         "basename": "o_19",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 750,
           "y": 1250
@@ -231,7 +222,7 @@
       {
         "basename": "o_20",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 550,
           "y": 1450
@@ -240,7 +231,7 @@
       {
         "basename": "o_21",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 750,
           "y": 1450
@@ -249,7 +240,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 550,
           "y": 1550
@@ -258,7 +249,7 @@
       {
         "basename": "o_23",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 750,
           "y": 1550
@@ -267,7 +258,7 @@
       {
         "basename": "o_24",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 550,
           "y": 1750
@@ -276,7 +267,7 @@
       {
         "basename": "o_25",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 750,
           "y": 1750
@@ -285,7 +276,7 @@
       {
         "basename": "o_26",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 550,
           "y": 600
@@ -294,7 +285,7 @@
       {
         "basename": "o_27",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 750,
           "y": 600
@@ -303,108 +294,108 @@
       {
         "basename": "o_28",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
-          "x": 1050,
+          "x": 750,
           "y": 2100
         }
       },
       {
         "basename": "o_29",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
-          "x": 1050,
+          "x": 750,
           "y": 2300
         }
       },
       {
         "basename": "o_30",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
-          "x": 850,
+          "x": 550,
           "y": 2300
         }
       },
       {
         "basename": "o_32",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 850,
+          "x": 550,
           "y": 2100
         }
       },
       {
         "basename": "o_31",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
-          "x": 1350,
+          "x": 1050,
           "y": 1850
         }
       },
       {
         "basename": "o_34",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
-          "x": 1150,
+          "x": 850,
           "y": 2050
         }
       },
       {
         "basename": "o_33",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
-          "x": 1350,
+          "x": 1050,
           "y": 2050
         }
       },
       {
         "basename": "o_35",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
+        "to": "Pb{Id{C0}dI,dom}bP",
         "xy": {
-          "x": 1150,
+          "x": 850,
           "y": 1850
         }
       },
       {
         "basename": "o_37",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 450,
           "y": 2350
         }
       },
       {
         "basename": "o_38",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
-          "x": 550,
+          "x": 250,
           "y": 2550
         }
       },
       {
         "basename": "o_39",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 450,
           "y": 2550
         }
       },
       {
         "basename": "o_36",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
+        "to": "Pb{cod,Id{C0}dI}bP",
         "xy": {
-          "x": 550,
+          "x": 250,
           "y": 2350
         }
       },
@@ -422,36 +413,36 @@
       {
         "basename": "o_40",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{Id{C0}dI,dom}bP",
+        "to": "Pb{Id{C0}dI,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 250,
           "y": 2700
         }
       },
       {
         "basename": "o_41",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 950,
+          "x": 650,
           "y": 2700
         }
       },
       {
         "basename": "o_42",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,Id{C0}dI}bP",
+        "to": "Pb{cod,Id{C0}dI}bP",
         "xy": {
-          "x": 1350,
+          "x": 1050,
           "y": 2700
         }
       },
       {
         "basename": "o_43",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
-          "x": 950,
+          "x": 650,
           "y": 2900
         }
       },
@@ -528,7 +519,7 @@
       {
         "basename": "o_44",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 900,
           "y": 3350
@@ -537,7 +528,7 @@
       {
         "basename": "o_46",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 600,
           "y": 3350
@@ -546,7 +537,7 @@
       {
         "basename": "o_47",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 900,
           "y": 3200
@@ -555,7 +546,7 @@
       {
         "basename": "o_48",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 900,
           "y": 3050
@@ -564,7 +555,7 @@
       {
         "basename": "o_50",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 1200,
           "y": 4200
@@ -573,7 +564,7 @@
       {
         "basename": "o_51",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 1350,
           "y": 4200
@@ -582,7 +573,7 @@
       {
         "basename": "o_53",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 1000,
           "y": 4200
@@ -591,7 +582,7 @@
       {
         "basename": "o_54",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 1350,
           "y": 4050
@@ -600,7 +591,7 @@
       {
         "basename": "o_55",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 800,
           "y": 3750
@@ -609,7 +600,7 @@
       {
         "basename": "o_56",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 950,
           "y": 3750
@@ -618,7 +609,7 @@
       {
         "basename": "o_57",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 950,
           "y": 3450
@@ -627,7 +618,7 @@
       {
         "basename": "o_58",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 950,
           "y": 3600
@@ -636,7 +627,7 @@
       {
         "basename": "o_61",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 800,
           "y": 3600
@@ -645,7 +636,7 @@
       {
         "basename": "o_49",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
+        "to": "Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
           "x": 600,
           "y": 3050
@@ -654,7 +645,7 @@
       {
         "basename": "o_52",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
+        "to": "Pb{cod,Cm{comp,dom}mC}bP",
         "xy": {
           "x": 1000,
           "y": 4050
@@ -663,7 +654,7 @@
       {
         "basename": "o_59",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
+        "to": "Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
           "x": 600,
           "y": 3450
@@ -672,7 +663,7 @@
       {
         "basename": "o_62",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 600,
           "y": 3750
@@ -681,7 +672,7 @@
       {
         "basename": "o_60",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
+        "to": "Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
           "x": 600,
           "y": 3900
@@ -690,7 +681,7 @@
       {
         "basename": "o_64",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 1350,
           "y": 3900
@@ -699,7 +690,7 @@
       {
         "basename": "o_63",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
+        "to": "Pb{Cm{comp,cod}mC,dom}bP",
         "xy": {
           "x": 650,
           "y": 4800
@@ -708,7 +699,7 @@
       {
         "basename": "o_66",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 1100,
           "y": 4800
@@ -717,7 +708,7 @@
       {
         "basename": "o_67",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 1000,
           "y": 4350
@@ -726,7 +717,7 @@
       {
         "basename": "o_68",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 850,
           "y": 4650
@@ -735,7 +726,7 @@
       {
         "basename": "o_69",
         "prototype": "IndexObject",
-        "to": "hdole/category/C0",
+        "to": "C0",
         "xy": {
           "x": 1000,
           "y": 4650
@@ -744,7 +735,7 @@
       {
         "basename": "o_70",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 1000,
           "y": 4500
@@ -753,7 +744,7 @@
       {
         "basename": "o_71",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 650,
           "y": 4650
@@ -762,7 +753,7 @@
       {
         "basename": "o_72",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
+        "to": "Pb{cod,Cm{comp,dom}mC}bP",
         "xy": {
           "x": 650,
           "y": 4350
@@ -771,7 +762,7 @@
       {
         "basename": "o_73",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 850,
           "y": 4500
@@ -780,7 +771,7 @@
       {
         "basename": "o_74",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
+        "to": "Pb{cod,Cm{comp,dom}mC}bP",
         "xy": {
           "x": 650,
           "y": 5000
@@ -789,7 +780,7 @@
       {
         "basename": "o_75",
         "prototype": "IndexObject",
-        "to": "hdole/category/Pb{cod,dom}bP",
+        "to": "Pb{cod,dom}bP",
         "xy": {
           "x": 650,
           "y": 5200
@@ -798,7 +789,7 @@
       {
         "basename": "o_65",
         "prototype": "IndexObject",
-        "to": "hdole/category/C1",
+        "to": "C1",
         "xy": {
           "x": 1100,
           "y": 5200
@@ -817,7 +808,7 @@
       {
         "basename": "o_45",
         "prototype": "IndexObject",
-        "to": "hdole/category/D",
+        "to": "D",
         "xy": {
           "x": 550,
           "y": -250
@@ -835,7 +826,7 @@
       {
         "basename": "o_77",
         "prototype": "IndexObject",
-        "to": "hdole/category/D",
+        "to": "D",
         "xy": {
           "x": 740,
           "y": -150
@@ -844,7 +835,7 @@
       {
         "basename": "o_78",
         "prototype": "IndexObject",
-        "to": "hdole/category/D",
+        "to": "D",
         "xy": {
           "x": 740,
           "y": -50
@@ -873,653 +864,659 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_2",
-        "codomain": "hdole/category/o_3",
-        "to": "hdole/category/id"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "id"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_4",
-        "codomain": "hdole/category/o_5",
-        "to": "hdole/category/dom"
+        "domain": "o_4",
+        "codomain": "o_5",
+        "to": "dom"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_6",
-        "codomain": "hdole/category/o_7",
-        "to": "hdole/category/cod"
+        "domain": "o_4",
+        "codomain": "o_7",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "cod"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_8",
-        "codomain": "hdole/category/o_9",
-        "to": "hdole/category/id"
+        "domain": "o_8",
+        "codomain": "o_9",
+        "to": "id"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_8",
-        "codomain": "hdole/category/o_10",
+        "domain": "o_8",
+        "codomain": "o_10",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Id{C0}dI"
+        "to": "Id{C0}dI"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_9",
-        "codomain": "hdole/category/o_10",
-        "to": "hdole/category/dom"
+        "domain": "o_9",
+        "codomain": "o_10",
+        "to": "dom"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_11",
-        "codomain": "hdole/category/o_12",
-        "to": "hdole/category/id"
+        "domain": "o_11",
+        "codomain": "o_12",
+        "to": "id"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_11",
-        "codomain": "hdole/category/o_13",
+        "domain": "o_11",
+        "codomain": "o_13",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Id{C0}dI"
+        "to": "Id{C0}dI"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_12",
-        "codomain": "hdole/category/o_13",
-        "to": "hdole/category/cod"
+        "domain": "o_12",
+        "codomain": "o_13",
+        "to": "cod"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_14",
-        "codomain": "hdole/category/o_15",
-        "to": "hdole/category/cod"
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "cod"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_16",
-        "codomain": "hdole/category/o_15",
-        "to": "hdole/category/dom"
+        "domain": "o_16",
+        "codomain": "o_15",
+        "to": "dom"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_17",
-        "codomain": "hdole/category/o_14",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+        "domain": "o_17",
+        "codomain": "o_14",
+        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_17",
-        "codomain": "hdole/category/o_16",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+        "domain": "o_17",
+        "codomain": "o_16",
+        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_13",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_18",
-        "codomain": "hdole/category/o_19",
-        "to": "hdole/category/comp"
+        "domain": "o_18",
+        "codomain": "o_19",
+        "to": "comp"
       },
       {
         "basename": "m_14",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_18",
-        "codomain": "hdole/category/o_20",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+        "domain": "o_18",
+        "codomain": "o_20",
+        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
       },
       {
         "basename": "m_15",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_20",
-        "codomain": "hdole/category/o_21",
-        "to": "hdole/category/dom"
+        "domain": "o_20",
+        "codomain": "o_21",
+        "to": "dom"
       },
       {
         "basename": "m_16",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_19",
-        "codomain": "hdole/category/o_21",
-        "to": "hdole/category/dom"
+        "domain": "o_19",
+        "codomain": "o_21",
+        "to": "dom"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_22",
-        "codomain": "hdole/category/o_23",
-        "to": "hdole/category/comp"
+        "domain": "o_22",
+        "codomain": "o_23",
+        "to": "comp"
       },
       {
         "basename": "m_18",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_22",
-        "codomain": "hdole/category/o_24",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+        "domain": "o_22",
+        "codomain": "o_24",
+        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_24",
-        "codomain": "hdole/category/o_25",
-        "to": "hdole/category/cod"
+        "domain": "o_24",
+        "codomain": "o_25",
+        "to": "cod"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_23",
-        "codomain": "hdole/category/o_25",
-        "to": "hdole/category/cod"
+        "domain": "o_23",
+        "codomain": "o_25",
+        "to": "cod"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_26",
-        "codomain": "hdole/category/o_27",
-        "to": "hdole/category/comp"
+        "domain": "o_26",
+        "codomain": "o_27",
+        "to": "comp"
       },
       {
         "basename": "m_22",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_28",
-        "codomain": "hdole/category/o_29",
-        "to": "hdole/category/cod"
+        "domain": "o_28",
+        "codomain": "o_29",
+        "to": "cod"
       },
       {
         "basename": "m_23",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_30",
-        "codomain": "hdole/category/o_29",
+        "domain": "o_30",
+        "codomain": "o_29",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/dom"
+        "to": "dom"
       },
       {
         "basename": "m_25",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_32",
-        "codomain": "hdole/category/o_30",
+        "domain": "o_32",
+        "codomain": "o_30",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_32",
-        "codomain": "hdole/category/o_28",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+        "domain": "o_32",
+        "codomain": "o_28",
+        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
       },
       {
         "basename": "m_26",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_31",
-        "codomain": "hdole/category/o_33",
-        "to": "hdole/category/Id{C0}dI"
+        "domain": "o_31",
+        "codomain": "o_33",
+        "to": "Id{C0}dI"
       },
       {
         "basename": "m_27",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_34",
-        "codomain": "hdole/category/o_33",
+        "domain": "o_34",
+        "codomain": "o_33",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/dom"
+        "to": "dom"
       },
       {
         "basename": "m_28",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_35",
-        "codomain": "hdole/category/o_31",
-        "to": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF"
+        "domain": "o_35",
+        "codomain": "o_31",
+        "to": "Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF"
       },
       {
         "basename": "m_29",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_35",
-        "codomain": "hdole/category/o_34",
+        "domain": "o_35",
+        "codomain": "o_34",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
+        "to": "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_31",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_34",
-        "codomain": "hdole/category/o_30",
-        "to": "hdole/category/Id{C1}dI"
+        "domain": "o_34",
+        "codomain": "o_30",
+        "to": "Id{C1}dI"
       },
       {
         "basename": "m_30",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_31",
-        "codomain": "hdole/category/o_28",
-        "to": "hdole/category/id"
+        "domain": "o_31",
+        "codomain": "o_28",
+        "to": "id"
       },
       {
         "basename": "m_34",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_38",
-        "codomain": "hdole/category/o_39",
+        "domain": "o_38",
+        "codomain": "o_39",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Id{C0}dI"
+        "to": "Id{C0}dI"
       },
       {
         "basename": "m_35",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_37",
-        "codomain": "hdole/category/o_39",
-        "to": "hdole/category/cod"
+        "domain": "o_37",
+        "codomain": "o_39",
+        "to": "cod"
       },
       {
         "basename": "m_32",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_36",
-        "codomain": "hdole/category/o_37",
-        "to": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
+        "domain": "o_36",
+        "codomain": "o_37",
+        "to": "Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
       },
       {
         "basename": "m_33",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_36",
-        "codomain": "hdole/category/o_38",
+        "domain": "o_36",
+        "codomain": "o_38",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF"
+        "to": "Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF"
       },
       {
         "basename": "m_36",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_38",
-        "codomain": "hdole/category/o_30",
-        "to": "hdole/category/id"
+        "domain": "o_38",
+        "codomain": "o_30",
+        "to": "id"
       },
       {
         "basename": "m_37",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_37",
-        "codomain": "hdole/category/o_28",
-        "to": "hdole/category/Id{C1}dI"
+        "domain": "o_37",
+        "codomain": "o_28",
+        "to": "Id{C1}dI"
       },
       {
         "basename": "m_42",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_41",
-        "codomain": "hdole/category/o_43",
-        "to": "hdole/category/comp"
+        "domain": "o_41",
+        "codomain": "o_43",
+        "to": "comp"
       },
       {
         "basename": "m_43",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_42",
-        "codomain": "hdole/category/o_43",
-        "to": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
+        "domain": "o_42",
+        "codomain": "o_43",
+        "to": "Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
       },
       {
         "basename": "m_44",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_40",
-        "codomain": "hdole/category/o_43",
+        "domain": "o_40",
+        "codomain": "o_43",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
+        "to": "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_46",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_46",
-        "codomain": "hdole/category/o_44",
-        "to": "hdole/category/dom"
+        "domain": "o_46",
+        "codomain": "o_44",
+        "to": "dom"
       },
       {
         "basename": "m_47",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_47",
-        "codomain": "hdole/category/o_44",
-        "to": "hdole/category/cod"
+        "domain": "o_47",
+        "codomain": "o_44",
+        "to": "cod"
       },
       {
         "basename": "m_48",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_48",
-        "codomain": "hdole/category/o_47",
-        "to": "hdole/category/comp"
+        "domain": "o_48",
+        "codomain": "o_47",
+        "to": "comp"
       },
       {
         "basename": "m_51",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_50",
-        "codomain": "hdole/category/o_51",
-        "to": "hdole/category/dom"
+        "domain": "o_50",
+        "codomain": "o_51",
+        "to": "dom"
       },
       {
         "basename": "m_53",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_53",
-        "codomain": "hdole/category/o_50",
-        "to": "hdole/category/comp"
+        "domain": "o_53",
+        "codomain": "o_50",
+        "to": "comp"
       },
       {
         "basename": "m_52",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_54",
-        "codomain": "hdole/category/o_51",
-        "to": "hdole/category/cod"
+        "domain": "o_54",
+        "codomain": "o_51",
+        "to": "cod"
       },
       {
         "basename": "m_56",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_55",
-        "codomain": "hdole/category/o_56",
-        "to": "hdole/category/dom"
+        "domain": "o_55",
+        "codomain": "o_56",
+        "to": "dom"
       },
       {
         "basename": "m_58",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_58",
-        "codomain": "hdole/category/o_56",
-        "to": "hdole/category/cod"
+        "domain": "o_58",
+        "codomain": "o_56",
+        "to": "cod"
       },
       {
         "basename": "m_38",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_35",
-        "codomain": "hdole/category/o_32",
+        "domain": "o_35",
+        "codomain": "o_32",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
+        "to": "Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
       },
       {
         "basename": "m_39",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_36",
-        "codomain": "hdole/category/o_32",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
+        "domain": "o_36",
+        "codomain": "o_32",
+        "to": "Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
       },
       {
         "basename": "m_40",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_42",
-        "codomain": "hdole/category/o_41",
+        "domain": "o_42",
+        "codomain": "o_41",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
+        "to": "Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
       },
       {
         "basename": "m_41",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_40",
-        "codomain": "hdole/category/o_41",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
+        "domain": "o_40",
+        "codomain": "o_41",
+        "to": "Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
       },
       {
         "basename": "m_60",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_61",
-        "codomain": "hdole/category/o_58",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+        "domain": "o_61",
+        "codomain": "o_58",
+        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
       },
       {
         "basename": "m_62",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_61",
-        "codomain": "hdole/category/o_55",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+        "domain": "o_61",
+        "codomain": "o_55",
+        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_49",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_49",
-        "codomain": "hdole/category/o_48",
-        "to": "hdole/category/Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
+        "domain": "o_49",
+        "codomain": "o_48",
+        "to": "Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
       },
       {
         "basename": "m_50",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_49",
-        "codomain": "hdole/category/o_46",
-        "to": "hdole/category/Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF"
+        "domain": "o_49",
+        "codomain": "o_46",
+        "to": "Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_54",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_52",
-        "codomain": "hdole/category/o_54",
-        "to": "hdole/category/Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF"
+        "domain": "o_52",
+        "codomain": "o_54",
+        "to": "Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF"
       },
       {
         "basename": "m_55",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_52",
-        "codomain": "hdole/category/o_53",
+        "domain": "o_52",
+        "codomain": "o_53",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF"
+        "to": "Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF"
       },
       {
         "basename": "m_57",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_59",
-        "codomain": "hdole/category/o_57",
-        "to": "hdole/category/Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
+        "domain": "o_59",
+        "codomain": "o_57",
+        "to": "Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
       },
       {
         "basename": "m_59",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_59",
-        "codomain": "hdole/category/o_62",
+        "domain": "o_59",
+        "codomain": "o_62",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF"
+        "to": "Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_61",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_62",
-        "codomain": "hdole/category/o_55",
-        "to": "hdole/category/Id{C1}dI"
+        "domain": "o_62",
+        "codomain": "o_55",
+        "to": "Id{C1}dI"
       },
       {
         "basename": "m_63",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_57",
-        "codomain": "hdole/category/o_58",
-        "to": "hdole/category/comp"
+        "domain": "o_57",
+        "codomain": "o_58",
+        "to": "comp"
       },
       {
         "basename": "m_64",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_59",
-        "codomain": "hdole/category/o_61",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
+        "domain": "o_59",
+        "codomain": "o_61",
+        "to": "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
       },
       {
         "basename": "m_67",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_60",
-        "codomain": "hdole/category/o_64",
-        "to": "hdole/category/Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
+        "domain": "o_60",
+        "codomain": "o_64",
+        "to": "Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
       },
       {
         "basename": "m_68",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_64",
-        "codomain": "hdole/category/o_54",
-        "to": "hdole/category/comp"
+        "domain": "o_64",
+        "codomain": "o_54",
+        "to": "comp"
       },
       {
         "basename": "m_65",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_60",
-        "codomain": "hdole/category/o_53",
+        "domain": "o_60",
+        "codomain": "o_53",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
+        "to": "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
       },
       {
         "basename": "m_66",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_63",
-        "codomain": "hdole/category/o_66",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
+        "domain": "o_63",
+        "codomain": "o_66",
+        "to": "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
       },
       {
         "basename": "m_70",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_68",
-        "codomain": "hdole/category/o_69",
-        "to": "hdole/category/dom"
+        "domain": "o_68",
+        "codomain": "o_69",
+        "to": "dom"
       },
       {
         "basename": "m_71",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_70",
-        "codomain": "hdole/category/o_69",
-        "to": "hdole/category/cod"
+        "domain": "o_70",
+        "codomain": "o_69",
+        "to": "cod"
       },
       {
         "basename": "m_73",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_72",
-        "codomain": "hdole/category/o_71",
-        "to": "hdole/category/Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF"
+        "domain": "o_72",
+        "codomain": "o_71",
+        "to": "Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF"
       },
       {
         "basename": "m_74",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_73",
-        "codomain": "hdole/category/o_70",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF"
+        "domain": "o_73",
+        "codomain": "o_70",
+        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
       },
       {
         "basename": "m_75",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_73",
-        "codomain": "hdole/category/o_68",
-        "to": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF"
+        "domain": "o_73",
+        "codomain": "o_68",
+        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
         "basename": "m_76",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_72",
-        "codomain": "hdole/category/o_67",
-        "to": "hdole/category/Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF"
+        "domain": "o_72",
+        "codomain": "o_67",
+        "to": "Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF"
       },
       {
         "basename": "m_72",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_71",
-        "codomain": "hdole/category/o_68",
-        "to": "hdole/category/comp"
+        "domain": "o_71",
+        "codomain": "o_68",
+        "to": "comp"
       },
       {
         "basename": "m_69",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_67",
-        "codomain": "hdole/category/o_70",
-        "to": "hdole/category/Id{C1}dI"
+        "domain": "o_67",
+        "codomain": "o_70",
+        "to": "Id{C1}dI"
       },
       {
         "basename": "m_77",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_72",
-        "codomain": "hdole/category/o_73",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
+        "domain": "o_72",
+        "codomain": "o_73",
+        "to": "Pu{Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
       },
       {
         "basename": "m_78",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_74",
-        "codomain": "hdole/category/o_75",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
+        "domain": "o_74",
+        "codomain": "o_75",
+        "to": "Pu{Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
       },
       {
         "basename": "m_79",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_75",
-        "codomain": "hdole/category/o_65",
-        "to": "hdole/category/comp"
+        "domain": "o_75",
+        "codomain": "o_65",
+        "to": "comp"
       },
       {
         "basename": "m_80",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_66",
-        "codomain": "hdole/category/o_65",
-        "to": "hdole/category/comp"
+        "domain": "o_66",
+        "codomain": "o_65",
+        "to": "comp"
       },
       {
         "description": "",
         "basename": "e_0",
         "prototype": "IndexElement",
-        "domain": "hdole/category/o_45",
-        "codomain": "hdole/category/o_76",
+        "domain": "o_45",
+        "codomain": "o_76",
         "attributes": [
           [
             "bezier",
@@ -1530,23 +1527,23 @@
       {
         "basename": "m_45",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_60",
-        "codomain": "hdole/category/o_52",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
+        "domain": "o_60",
+        "codomain": "o_52",
+        "to": "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
       },
       {
         "basename": "m_81",
         "prototype": "IndexMorphism",
-        "domain": "hdole/category/o_63",
-        "codomain": "hdole/category/o_74",
-        "to": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
+        "domain": "o_63",
+        "codomain": "o_74",
+        "to": "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
       },
       {
         "description": "",
         "basename": "e_1",
         "prototype": "IndexElement",
-        "domain": "hdole/category/o_1",
-        "codomain": "hdole/category/o_77",
+        "domain": "o_1",
+        "codomain": "o_77",
         "attributes": [
           [
             "bezier",
@@ -1558,24 +1555,14 @@
         "description": "",
         "basename": "e_2",
         "prototype": "IndexElement",
-        "domain": "hdole/category/o_0",
-        "codomain": "hdole/category/o_78",
+        "domain": "o_0",
+        "codomain": "o_78",
         "attributes": [
           [
             "bezier",
             0
           ]
         ]
-      },
-      {
-        "description": "BUG:  category.json contains duplicates in D.json",
-        "basename": "t_13",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 430,
-          "y": -360
-        },
-        "height": 24
       }
     ],
     "cells": [
@@ -2132,370 +2119,14 @@
           ]
         }
       ]
-    },
-    {
-      "description": "objects in this category",
-      "basename": "C0",
-      "prototype": "CatObject",
-      "properName": "C&#8320;",
-      "category": "hdole/category/D"
-    },
-    {
-      "description": "morphisms in this category",
-      "basename": "C1",
-      "prototype": "CatObject",
-      "properName": "C&#8321;",
-      "category": "hdole/category/D"
-    },
-    {
-      "prototype": "PullbackObject",
-      "category": "hdole/category/D",
-      "objects": [
-        "C1",
-        "C1"
-      ],
-      "morphisms": [
-        "cod",
-        "dom"
-      ]
-    },
-    {
-      "prototype": "PullbackObject",
-      "category": "hdole/category/D",
-      "objects": [
-        "C0",
-        "C1"
-      ],
-      "morphisms": [
-        "Id{C0}dI",
-        "dom"
-      ]
-    },
-    {
-      "prototype": "PullbackObject",
-      "category": "hdole/category/D",
-      "objects": [
-        "C1",
-        "C0"
-      ],
-      "morphisms": [
-        "cod",
-        "Id{C0}dI"
-      ]
-    },
-    {
-      "prototype": "PullbackObject",
-      "category": "hdole/category/D",
-      "objects": [
-        "Pb{cod,dom}bP",
-        "C1"
-      ],
-      "morphisms": [
-        "Cm{comp,cod}mC",
-        "dom"
-      ]
-    },
-    {
-      "prototype": "PullbackObject",
-      "category": "hdole/category/D",
-      "objects": [
-        "C1",
-        "Pb{cod,dom}bP"
-      ],
-      "morphisms": [
-        "cod",
-        "Cm{comp,dom}mC"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,dom}bP",
-      "codomain": "hdole/category/C1",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,dom}bP",
-      "codomain": "hdole/category/C1",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
-      "codomain": "hdole/category/C0",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
-      "codomain": "hdole/category/C1",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
-      "codomain": "hdole/category/C1",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
-      "codomain": "hdole/category/C0",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "description": "identity morphism of an object",
-      "basename": "id",
-      "prototype": "Morphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/C0",
-      "codomain": "hdole/category/C1"
-    },
-    {
-      "description": "the domain object of a morphism",
-      "basename": "dom",
-      "prototype": "Morphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/C1",
-      "codomain": "hdole/category/C0"
-    },
-    {
-      "description": "the codomain object of a morphism",
-      "basename": "cod",
-      "prototype": "Morphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/C1",
-      "codomain": "hdole/category/C0"
-    },
-    {
-      "description": "Identity for the object C0",
-      "prototype": "Identity",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/C0"
-    },
-    {
-      "basename": "comp",
-      "prototype": "Morphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,dom}bP",
-      "codomain": "hdole/category/C1"
-    },
-    {
-      "prototype": "Identity",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/C1"
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF",
-        "id"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF",
-        "Id{C1}dI"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Id{C0}dI,dom}bP",
-      "codomain": "hdole/category/Pb{cod,dom}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC",
-        "Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF",
-        "Id{C1}dI"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF",
-        "id"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Id{C0}dI}bP",
-      "codomain": "hdole/category/Pb{cod,dom}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC",
-        "Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,dom}bP",
-      "codomain": "hdole/category/C0",
-      "morphisms": [
-        "comp",
-        "cod"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
-      "codomain": "hdole/category/Pb{cod,dom}bP",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
-      "codomain": "hdole/category/C1",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,dom}bP",
-      "codomain": "hdole/category/C0",
-      "morphisms": [
-        "comp",
-        "dom"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
-      "codomain": "hdole/category/C1",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
-      "codomain": "hdole/category/Pb{cod,dom}bP",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
-        "comp"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF",
-        "Id{C1}dI"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
-      "codomain": "hdole/category/Pb{cod,dom}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC",
-        "Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF",
-        "Id{C1}dI"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
-      "codomain": "hdole/category/C1",
-      "morphisms": [
-        "Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF",
-        "comp"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
-      "codomain": "hdole/category/Pb{cod,dom}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC",
-        "Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "category": "hdole/category/D",
-      "domain": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
-      "codomain": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC",
-        "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
-      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1644973281262,
+  "timestamp": 1645177118031,
   "version": 0,
   "viewport": {
-    "x": 513,
-    "y": 770,
-    "scale": 1.2553072365430828
+    "x": 527,
+    "y": 813,
+    "scale": 1.172496558151784
   }
 }
